@@ -372,12 +372,29 @@ def main():
     dv = np.load(DEPVEC, allow_pickle=True)
     syms = [str(x) for x in dv["syms"]]
     Zraw = dv["Z"].astype(np.float32)
-    # ESSENTIALITY IS COMPUTED FROM THE RAW GENE EFFECT, BEFORE STANDARDISATION. The first version of this
-    # module built it from a zero-length slice and therefore handed every token 0.0 -- a feature slot
-    # silently filled with a constant, which is the same failure as a join that matches nothing: the arm
-    # runs, the control passes, and nothing was measured.
-    ess_arr = (Zraw < -0.5).mean(1)
-    Zd = (Zraw - Zraw.mean(0)) / (Zraw.std(0) + 1e-6)
+    # depmap_vecs.npz IS PER-GENE Z-SCORED, NOT RAW GENE EFFECT. Checked rather than assumed: RPL3, a core
+    # ribosomal protein required by essentially every line, has mean exactly 0.000 in it, and every gene has
+    # sd 1. So NO LEVEL-DEPENDENT QUANTITY MAY BE DERIVED FROM THIS MATRIX. The second version of this module
+    # computed essentiality as (Zraw < -0.5).mean(1) from it and got 0.264 for the average gene and ZERO
+    # genes dependent in more than half of lines -- which is not essentiality, it is "fraction of lines below
+    # this gene's own -0.5 SD", about 28% for every gene by construction. The assertion below makes that
+    # class of error loud instead of plausible.
+    gm, gs = Zraw.mean(1), Zraw.std(1)
+    # THE TEST IS THE MEAN ALONE, AND THE FIRST VERSION OF THIS GUARD GOT THAT WRONG. It required per-gene
+    # mean ~0 AND per-gene sd ~1, and this file has sd ranging 0.141..1.000, so the guard printed "levels
+    # preserved" about a matrix in which every gene's mean is 9e-07. Whether LEVELS survive depends on
+    # centring only; scaling changes the units, not whether a level exists. A guard that passes on the
+    # condition it was written to catch is worse than no guard, because it licenses the thing it was
+    # supposed to stop.
+    is_centred = bool(np.abs(gm).max() < 1e-3)
+    report(f"  {DEPVEC.name} provenance check: per-gene mean |max| {np.abs(gm).max():.2e}, "
+           f"sd range {gs.min():.3f}..{gs.max():.3f} -> "
+           f"{'PER-GENE CENTRED: gene-effect LEVELS ARE DESTROYED' if is_centred else 'levels preserved'}")
+    if is_centred:
+        report(f"    nothing level-dependent may be derived from it -- essentiality below comes from the "
+               f"cell object instead, and the canary checks that it did")
+    is_z = is_centred
+    Zd = Zraw if is_z else (Zraw - Zraw.mean(0)) / (Zraw.std(0) + 1e-6)
     # a compact projection: 1,150 raw line-columns per token x 24 tokens is too wide for CPU attention
     U, s, Vt = np.linalg.svd(Zd - Zd.mean(0), full_matrices=False)
     Zp = (U[:, :64] * s[:64]).astype(np.float32)
@@ -387,9 +404,23 @@ def main():
     codep, cplx, ppi = load_layers(report)
     sig, sig_meta = load_signed(report, SIGN_MODE)
     deg = {g: len(v) for g, v in ppi.items()}
-    ess = {g: float(ess_arr[i]) for i, g in enumerate(syms)}
-    report(f"  essentiality per gene from raw DepMap effect: mean {np.mean(ess_arr):.3f}, "
-           f"{int((ess_arr > 0.5).sum()):,} genes dependent in >50% of lines")
+    # ESSENTIALITY FROM THE CELL OBJECT'S OWN `ess` FIELD -- the same source transformer_ko used, so the
+    # v1-vs-transformer_ko comparison is not confounded by a differently-defined feature.
+    dcell = json.load(gzip.open(NET, "rt"))
+    ess = {g["name"]: float(g.get("ess") or 0.0) for g in dcell["genes"]}
+    del dcell
+    # CANARY. A feature that is silently constant passes every control, so three genes no one disputes are
+    # required to score as essential. If they do not, the feature is not what its name says and the run
+    # stops rather than producing a number about a column of zeros.
+    canary = {g: ess.get(g) for g in ("RPL3", "EIF3B", "POLR2A", "RPS3", "SNRPD1")}
+    got = [g for g, v in canary.items() if v and v > 0.5]
+    report(f"  essentiality from the cell object: {sum(1 for v in ess.values() if v > 0.5):,} genes "
+           f"essential; canary {canary}")
+    if len(got) < 3:
+        raise SystemExit(
+            f"ESSENTIALITY CANARY FAILED: of {list(canary)}, only {got} score essential. These are core "
+            f"ribosome/spliceosome/polymerase genes; a definition under which they are not essential is not "
+            f"essentiality. Refusing to run an arm on a feature that is not what it is named.")
     # BASELINE K562 STATE, from the deposit's own per-gene mean expression rather than a constant.
     base_expr = {}
     try:
@@ -479,6 +510,10 @@ def main():
         "taken from CELLFORMER2.md rather than re-selected here",
         "assay and time metadata are CONSTANT in this deposit. The slot exists so v4 can vary it; it "
         "carries no information now and must not be read as a tested channel",
+        "depmap_vecs.npz is per-gene z-scored, so gene-effect LEVELS are not available from it and nothing "
+        "level-dependent may be derived from it. Essentiality therefore comes from the cell object's own "
+        "`ess` field -- the same source transformer_ko used -- and is guarded by a canary on five core "
+        "ribosome/spliceosome/polymerase genes",
         "the DepMap profile per token is compressed to 64 SVD components for CPU tractability, which is a "
         "lossy change from transformer_ko's raw 1,150-column profile and could by itself move the "
         "comparison. Any v1-vs-transformer_ko difference must be attributed to this before it is "

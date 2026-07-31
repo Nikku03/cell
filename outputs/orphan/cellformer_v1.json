@@ -1,0 +1,75 @@
+{
+ "model": "cellformer-v1-scaffold",
+ "scope": "v1 of a staged plan: typed relational attention + sign channel. Does NOT test mixed-curvature geometry, sheaf layers, hypergraph events, continuous time, multimodal heads or whole-cell simulation",
+ "sign_mode": "measured",
+ "sign_meta": {
+  "mode": "measured",
+  "n_measured": 537557
+ },
+ "assay_metadata": {
+  "assay": "CRISPRi Perturb-seq",
+  "readout": "steady-state mRNA",
+  "time_hours": 192.0,
+  "cell_type": "K562",
+  "note": "one value for every row here; present so v4 can vary it, not because it varies now"
+ },
+ "n_knockouts": 300,
+ "tokens_per_ko_mean": 15.913333333333334,
+ "token_type_fraction": {
+  "self": 0.06284038542103058,
+  "codep": 0.2832006702974445,
+  "complex": 0.14704650188521157,
+  "ppi": 0.295978215333054,
+  "reg": 0.21093422706325932
+ },
+ "power": {
+  "n_seeds": 1,
+  "assumed_seed_sd": 0.03,
+  "min_detectable_increment": 0.09,
+  "statement": "an arm inside this band is UNDERPOWERED, not null"
+ },
+ "priors_recorded_before_run": {
+  "transformer_ko6_regulatory_features": -0.021,
+  "transformer_signed_sign_over_shuffled": 0.0049,
+  "transformer_graphnet_real_vs_shuffled_wiring": 0.005,
+  "expectation": "v1 is expected to tie transformer_ko (0.490) and the sign arm is expected to be a wash. If it is, imputed signs are a layer with provenance and no measured use, which is worth knowing before anything is built on them"
+ },
+ "smoke": true,
+ "smoke_forward_ok": true,
+ "verdict": "SCAFFOLD ONLY -- structure built and forward-validated, no arm measured. The sign channel plugs in at SIGN_MODE=measured+imputed the moment outputs/orphan/impute_reg_sign.json exists, and raises rather than silently falling back to the measured edges if it does not.",
+ "limits": [
+  "this is v1 for the CURRENT task -- ranking specific movers for a held-out knockout in one cell type at one timepoint. It is not a whole-cell model and the staged versions above it are untested hypotheses",
+  "the readout has ~0.12 of headroom between the tide floor and the retrieval oracle, and six architectural levers have each moved it by <= 0.02. Metric 1 may be unable to separate v1 from transformer_ko whatever v1 is worth, which is why metric 2 is computed",
+  "metric 2's shared core is fitted on training perturbations only, so it is leak-free, but k=20 is taken from CELLFORMER2.md rather than re-selected here",
+  "assay and time metadata are CONSTANT in this deposit. The slot exists so v4 can vary it; it carries no information now and must not be read as a tested channel",
+  "the DepMap profile per token is compressed to 64 SVD components for CPU tractability, which is a lossy change from transformer_ko's raw 1,150-column profile and could by itself move the comparison. Any v1-vs-transformer_ko difference must be attributed to this before it is attributed to the architecture",
+  "token budget is capped at 24, split across four relation types, so a knockout with many partners is truncated. Which partners survive truncation is the list order, not a ranking"
+ ],
+ "log": [
+  "====================================================================================================",
+  "CELLFORMER v1 -- typed relational transformer, explicit tide baseline, two metrics",
+  "====================================================================================================",
+  "  SIGN_MODE=measured  seeds=1  smoke=True",
+  "  SCOPE: this is v1 of a staged plan. It tests typed relational attention plus a sign channel.",
+  "  It does NOT test mixed-curvature geometry, sheaf layers, hypergraph events, continuous time,",
+  "  multimodal heads or whole-cell simulation, and claims nothing about them.",
+  "  bench: 1,400 knockouts x 7,223 genes; 7,180 non-tide genes",
+  "  DepMap profiles: 18,443 genes -> 64 SVD components per token",
+  "  typed neighbours: codep 13,451 sources, complex 3,257, PPI 14,230",
+  "  measured signed edges (|robust z| >= 5): 537,557 over 7,621 sources",
+  "  essentiality per gene from raw DepMap effect: mean 0.264, 0 genes dependent in >50% of lines",
+  "  baseline K562 expression for 8,246 genes (median 0.381)",
+  "\n  POWER, BEFORE THE ARMS: at 1 seeds and the sd of 0.03 this readout has shown across",
+  "  six previous levers, the smallest increment separable at ~3 standard errors is +0.0900.",
+  "  Every architectural lever tried on this readout so far has produced |delta| <= 0.02. An arm",
+  "  that lands inside 0.0900 is UNDERPOWERED, not null, and is reported as such.",
+  "\n  1,385/1,400 knockouts have a DepMap profile",
+  "  SMOKE: restricted to 300 knockouts",
+  "  tokens per knockout: mean 15.9, cap 24",
+  "  token type mix: self 6%, codep 28%, complex 15%, ppi 30%, reg 21%",
+  "\n  SMOKE MODE: structure validated, arms not run. Flip CELLFORMER_SMOKE=0 for the real run,",
+  "  and CELLFORMER_SIGN=measured+imputed once outputs/orphan/impute_reg_sign.json exists.",
+  "  forward pass OK: embedding (16, 96), residual (16,), prob (16,), uncertainty (16,)",
+  "  relation-bias ablation path OK: (16, 96)"
+ ]
+}
