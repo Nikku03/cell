@@ -240,7 +240,7 @@ def main():
     report(f"\n  LAYER ADMISSION -- {N_CTRL} degree-matched controls each; the perturbational layer also "
            f"gets a source-matched control")
     report(f"    {'layer':20s} {'edges':>10s} {'hits':>9s} {'R2':>9s} {'delta':>9s} {'ctrl':>9s} "
-           f"{'verdict':>10s}")
+           f"{'sd':>8s} {'verdict':>10s}")
     R["layers"] = {}
     gresp = resp.mean(0)
     gq = np.digitize(gresp, np.quantile(gresp[gresp > 0], np.linspace(.1, .9, 9))) \
@@ -291,14 +291,21 @@ def main():
             continue
         sc = [r2(y, fit_oof(np.column_stack([base_X, feat]), y, np.array([(fold_of[g] + s) % 5 for g in P])))
               for s in SEEDS]
-        v = float(np.mean(sc))
+        v, sd = float(np.mean(sc)), float(np.std(sc))
         cv = [r2(y, fit_oof(np.column_stack([base_X, cf]), y, np.array([fold_of[g] for g in P])))
               for cf in ctrls]
         dl, cd = v - prev, float(np.max(cv)) - prev
-        ok = bool(dl > 0.001 and dl > cd)
-        report(f"    {lname:20s} {nedge:10,d} {hits:9.5f} {v:9.4f} {dl:+9.4f} {cd:+9.4f} "
+        # A MARGIN OVER THE CONTROL, NOT MERELY `>`. The first run of this gate admitted `regulatory` on
+        # delta +0.0015 against control +0.0015 -- identical at printed precision, separated somewhere in the
+        # fifth decimal. Every control here lands at +0.0015 to +0.0018, which is simply what adding ANY
+        # sparse binary column to this ladder buys; that is the noise floor, not a null a layer can beat by
+        # a hair. The layer must now exceed its strongest control by more than its own seed-to-seed
+        # variability, so an admission cannot rest on a difference smaller than the run-to-run wobble.
+        ok = bool(dl > 0.001 and dl > cd + sd)
+        report(f"    {lname:20s} {nedge:10,d} {hits:9.5f} {v:9.4f} {dl:+9.4f} {cd:+9.4f} {sd:8.4f} "
                f"{'ADMITTED' if ok else 'REJECTED':>10s}")
         R["layers"][lname] = {"n_edges": int(nedge), "hit_rate": hits, "r2": v, "delta": float(dl),
+                              "seed_sd": sd, "margin_required": float(cd + sd),
                               "control_delta_max": float(cd),
                               "control_deltas": [float(c - prev) for c in cv],
                               "n_controls": len(ctrls),
