@@ -40,6 +40,14 @@ WHAT WOULD FALSIFY THIS, each checked rather than argued:
       UNKNOWN, not "not co-localized", and it is run as its own third arm so the unknowns are never
       silently swept into the negative class.
 
+WHAT IS PRESPECIFIED AND WHAT IS NOT, because the difference decides how much the numbers are worth.
+Prespecified: the head-to-head, the three-way co/not/unknown split, and all four falsification checks
+above including the hub/non-hub split. NOT prespecified: the PER-COMPARTMENT breakdown at the end. It was
+added after the non-hub arm came back positive, in order to ask whether "compartment" was even the right
+unit -- and it turned out not to be, since three compartments carry the entire effect and four sit at or
+below 1.0. That breakdown is therefore EXPLORATORY. It is the most interesting thing in this file and it
+is the thing most in need of an independent replication, and those two facts are not in tension.
+
 PROVENANCE IS PINNED AND ASSERTED. One HPA release (25.1, checked against the atlas's own release table at
 run time, not trusted from a docstring), one file, one annotation modality (immunofluorescence in three cell
 lines), joined on ENSG -- the accession, never the symbol. The 4 rows whose ENSG the registry does not know
@@ -790,6 +798,10 @@ def main():
              "indicator, which the gene-responsiveness covariate already partly encodes; the hub/non-hub "
              "split is what separates the two and it was prespecified, not chosen after seeing the pooled "
              "result",
+             "the per-compartment breakdown is EXPLORATORY, not prespecified: it was run after the non-hub "
+             "arm came back positive. Seven compartments were tested against one pool with no multiplicity "
+             "correction, so the individual ratios are hypothesis-generating and the three positive ones "
+             "need an independent replication before they are used as a gate",
              "the readout is transcriptional response in K562 CRISPRi. An interaction can be real, "
              "compartment-consistent and produce no transcriptional consequence, so this test bounds the "
              "DECISION VALUE of compartment gating for this readout only -- it is not a test of whether "
