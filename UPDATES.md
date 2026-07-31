@@ -16001,3 +16001,68 @@ nothing about how protein moves after a perturbation, which is the arrow actuall
 
 Generic and K562-measured values are stored as **separate fields with a `measured` flag**. Nothing is
 substituted silently.
+
+---
+
+# Overnight, block E — the gate on RPE1: the perturbational layer is the first to clear it
+
+`colab/gate_transfer.py` → `outputs/orphan/gate_transfer.json`
+
+The first gate scored five layers on K562 CRISPRi → ΔRNA and admitted none. That result stands, but it cannot
+score the layer built since: `reg_perturb_k562` is **derived from** the Replogle K562 matrix, so scoring it
+there would be reporting its own training data. Replogle's RPE1 arm fixes this exactly — same assay, same
+lab, different cell type. On RPE1 **every** layer is out-of-sample.
+
+The ladder is rebuilt for this cell and reaches **R² 0.1356**, nearly ten times the K562 ladder, because a
+pseudobulk at median 80 cells/perturbation has strong gene-level noise structure that responsiveness predicts.
+That makes this a *harder* bar, not a softer one.
+
+| ladder rung | R² | Δ |
+|---|---:|---:|
+| gene responsiveness | 0.0583 | +0.0584 |
+| + perturbation strength | 0.0815 | +0.0231 |
+| + generic abundance | 0.1112 | +0.0297 |
+| **+ K562-measured protein** | 0.1351 | **+0.0239** |
+| + genomic distance | 0.1379 | +0.0028 |
+| + detection power | 0.1361 | −0.0018 |
+
+K562-measured protein adds **+0.0239 on an RPE1 task** — what it captures is largely conserved abundance, not
+K562 idiosyncrasy.
+
+## Layer verdicts
+
+| layer | edges | Δ R² | control | sd | verdict |
+|---|---:|---:|---:|---:|---|
+| regulatory | 610,256 | +0.0014 | +0.0010 | 0.0004 | REJECTED |
+| signalling | 17,432 | +0.0013 | +0.0011 | 0.0004 | REJECTED |
+| PPI | 191,447 | +0.0014 | +0.0009 | 0.0002 | **ADMITTED** |
+| co-dependency | 76,749 | +0.0013 | +0.0009 | 0.0004 | REJECTED |
+| **reg_perturb_k562** | 352,325 | **+0.0028** | +0.0013 | 0.0007 | **ADMITTED** |
+
+`complex co-member` did not finish before the run was stopped and is **untested here**, not rejected.
+
+**The perturbational layer is the largest effect in the table** — double the next best — and its control set
+included a *source-matched* permutation built specifically for it: keep each source's edge count, redirect
+targets to genes matched on RPE1 responsiveness. Edges were selected on K562 effect size, so perturbations
+carrying many edges are ones that did a lot in K562, and those tend to do a lot in RPE1 too. That is a
+row-level confound, and the layer clears it.
+
+## Two defects in my own harness, found here
+
+**Admission had no margin.** The first run admitted `regulatory` on Δ +0.0015 against control +0.0015, and
+`co-dependency` on +0.0018 against +0.0018 — identical at printed precision, separated in the fifth decimal.
+Every control landed at +0.0015–0.0018, which is just what adding *any* sparse binary column to this ladder
+buys. That is the noise floor, not a null to beat by a hair.
+
+**The seeds were vacuous.** The fix above used seed-to-seed sd as the margin — and sd printed `0.0000`. The
+seed loop was `(fold_of[g] + s) % 5`, which maps fold *k* to fold *(k+s)%5*: **the same partition with rotated
+labels.** Cross-validation over an identical partition returns identical out-of-fold predictions, so all three
+"seeds" refit the same folds and the margin was multiplying by nothing. Each seed now draws its own partition.
+
+The same construction exists in `chain_benchmark.py`, where the printed sd was likewise meaningless. **That
+gate's verdicts are unaffected** — every layer there scored a *negative* delta against its control, so no
+admission rested on the margin.
+
+Admission now requires clearing the strongest control **and** mean+2sd of the control distribution, plus the
+layer's own seed spread. Five controls are an empirical null; taking only their maximum treats one draw as the
+whole distribution.
