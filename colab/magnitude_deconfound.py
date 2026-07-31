@@ -72,7 +72,7 @@ N_PAIRS = 400_000       # sampled (perturbation, gene) pairs; the full grid is 9
 N_FOLDS = 5
 N_SEEDS = 3
 N_REWIRE = 5            # degree-matched rewirings of the biology block
-STRATA_BINS = 6         # per axis, so up to 216 power cells
+STRATA_BINS = 20        # quantile bins of the power model's own out-of-fold prediction
 
 
 def load_k562(report):
@@ -160,17 +160,39 @@ def fit_eval(Xtr, ytr, Xte, yte):
     return 1.0 - ss / max(st, 1e-12)
 
 
-def cv_r2(F, y, groups, seed, report=None):
-    """Held-out R2 with folds grouped by perturbed gene. Each seed draws a DIFFERENT partition."""
+def folds(groups, seed):
     ug = np.unique(groups)
     a = np.random.default_rng(7000 + seed).permutation(len(ug))
     fold_of = {g: int(a[i]) % N_FOLDS for i, g in enumerate(ug)}
-    fold = np.array([fold_of[g] for g in groups])
+    return np.array([fold_of[g] for g in groups])
+
+
+def cv_r2(F, y, groups, seed, report=None):
+    """Held-out R2 with folds grouped by perturbed gene. Each seed draws a DIFFERENT partition."""
+    fold = folds(groups, seed)
     out = []
     for k in range(N_FOLDS):
         te = fold == k
         out.append(fit_eval(F[~te], y[~te], F[te], y[te]))
     return float(np.mean(out))
+
+
+def cv_oof(F, y, groups, seed):
+    """Out-of-fold predictions from the nuisance block, on the same grouped folds.
+
+    Used to CONDITION on power rather than to score it: every row gets a predicted magnitude from a model
+    that never saw it, and rows with the same prediction are rows the power model cannot tell apart.
+    """
+    from sklearn.ensemble import HistGradientBoostingRegressor
+    fold = folds(groups, seed)
+    oof = np.zeros(len(y), dtype=np.float64)
+    for k in range(N_FOLDS):
+        te = fold == k
+        m = HistGradientBoostingRegressor(max_iter=100, learning_rate=0.1, max_depth=6,
+                                          early_stopping=False, random_state=0)
+        m.fit(F[~te], y[~te])
+        oof[te] = m.predict(F[te])
+    return oof
 
 
 def main():
@@ -279,25 +301,37 @@ def main():
     report(f"     -> degree-matched control adds {cm:+.4f} (sd {cs:.4f}); the real block adds "
            f"{delta:+.4f}, an excess of {delta-cm:+.4f}")
 
-    # ---- 3. the stratified arm: the closest available thing to the assay the entry asks for ----
-    report(f"\n  3. WITHIN POWER STRATA -- gene expression x gene variability x perturbation cells, "
-           f"{STRATA_BINS} bins each")
-    report(f"     Inside a cell, detection power is nearly constant, so power cannot stand in for size. "
-           f"This is\n     the reopens_if condition approximated by conditioning rather than by a new assay.")
-    qe = np.digitize(var["mean"][gi], np.quantile(var["mean"][gi], np.linspace(0, 1, STRATA_BINS + 1)[1:-1]))
-    qv = np.digitize(var["cv"][gi], np.quantile(var["cv"][gi], np.linspace(0, 1, STRATA_BINS + 1)[1:-1]))
-    qc = np.digitize(obs["num_cells_filtered"][pi],
-                     np.quantile(obs["num_cells_filtered"][pi], np.linspace(0, 1, STRATA_BINS + 1)[1:-1]))
-    cell = qe * STRATA_BINS * STRATA_BINS + qv * STRATA_BINS + qc
-    # Residualise the target within cell, which is exactly "hold power fixed", then ask the same question
-    # with the nuisance block REMOVED -- inside a cell it has little left to explain.
+    # ---- 3. conditioning on power, done with the power model rather than three of its axes ----
+    #
+    # WHAT THE FIRST VERSION OF THIS SECTION DID AND WHY IT WAS REPLACED. It binned pairs on a 6x6x6 grid of
+    # gene expression x gene variability x perturbation cell count and asserted that inside a cell detection
+    # power is nearly constant. The run reported 52 occupied cells and within-cell centring removing 0.5% of
+    # the variance in |lfc| -- against a power model that explains 20% of it. A conditioning that removes
+    # 0.5% is not holding power fixed, so the sentence was not supported by the operation underneath it.
+    #
+    # This version conditions on the power model's OWN out-of-fold prediction, binned into deciles-of-20.
+    # Two rows in the same bin are two rows the twelve-feature power model cannot tell apart, which is what
+    # "uniform detection power" means operationally when the assay that would deliver it does not exist. It
+    # is non-parametric in the residual -- the model supplies the ordering, the binning does the rest -- so
+    # it is not simply section 1's delta computed twice.
+    report(f"\n  3. CONDITIONING ON POWER -- {STRATA_BINS} quantile bins of the nuisance model's own "
+           f"out-of-fold prediction")
+    oof = cv_oof(NU, y, groups, 0)
+    edges = np.quantile(oof, np.linspace(0, 1, STRATA_BINS + 1)[1:-1])
+    cell = np.digitize(oof, edges)
     ymean = np.zeros_like(y)
     for c in np.unique(cell):
         m = cell == c
         ymean[m] = y[m].mean()
     yr = y - ymean
-    report(f"     {len(np.unique(cell)):,} occupied cells; within-cell centring removes "
-           f"{100*(1 - yr.var()/y.var()):.1f}% of the variance in |lfc|")
+    removed = float(1 - yr.var() / y.var())
+    report(f"     {len(np.unique(cell)):,} bins; within-bin centring removes {100*removed:.1f}% of the "
+           f"variance in |lfc|")
+    report(f"     (the 6x6x6 grid this replaces removed 0.5%, which is why it could not support the claim "
+           f"it was making)")
+    if removed < 0.05:
+        report(f"     WARNING: this conditioning is also weak. Read section 3 as uninformative rather than "
+               f"as a null.")
     s_bio = [cv_r2(BIO, yr, groups, s) for s in range(N_SEEDS)]
     s_nu = [cv_r2(NU, yr, groups, s) for s in range(N_SEEDS)]
     s_ctrl = []
@@ -307,11 +341,13 @@ def main():
                              rewire(sorted(codep), len(idx), rr) if codep else set(), g2c,
                              rewire(reg, len(idx), rr) if reg else set(), deg_ppi, None)
         s_ctrl.append(cv_r2(BIOr, yr, groups, 0))
-    report(f"     biology on within-cell residual   R2 {np.mean(s_bio):+.4f} (sd {np.std(s_bio):.4f})")
-    report(f"     nuisance on the same residual     R2 {np.mean(s_nu):+.4f} (sd {np.std(s_nu):.4f})")
-    report(f"     degree-matched biology            R2 {np.mean(s_ctrl):+.4f} (sd {np.std(s_ctrl):.4f})")
+    report(f"     biology on the within-bin residual   R2 {np.mean(s_bio):+.4f} (sd {np.std(s_bio):.4f})")
+    report(f"     nuisance on the same residual        R2 {np.mean(s_nu):+.4f} (sd {np.std(s_nu):.4f}) "
+           f"-- should be near zero if the binning worked")
+    report(f"     degree-matched biology               R2 {np.mean(s_ctrl):+.4f} "
+           f"(sd {np.std(s_ctrl):.4f})")
     strat_excess = float(np.mean(s_bio) - np.mean(s_ctrl))
-    report(f"     -> inside a power cell, biology beats its own rewired control by {strat_excess:+.4f}")
+    report(f"     -> with power held fixed, biology beats its own rewired control by {strat_excess:+.4f}")
 
     # ---- verdict ----
     #
@@ -358,8 +394,11 @@ def main():
          "arms": res, "biology_gain": delta, "seed_sd": seed_sd,
          "degree_matched_control": {"mean_gain": cm, "sd": cs, "per_draw": ctrl, "n_draws": N_REWIRE},
          "partner_specific_excess": excess, "bar": bar,
-         "stratified": {"n_cells": int(len(np.unique(cell))),
-                        "variance_removed_by_centring": float(1 - yr.var() / y.var()),
+         "stratified": {"conditioning": "quantile bins of the nuisance model's out-of-fold "
+                                        "prediction, replacing a 6x6x6 covariate grid that removed only "
+                                        "0.5% of the variance",
+                        "n_bins": int(len(np.unique(cell))),
+                        "variance_removed_by_centring": removed,
                         "biology_r2": float(np.mean(s_bio)), "biology_sd": float(np.std(s_bio)),
                         "nuisance_r2": float(np.mean(s_nu)),
                         "rewired_r2": float(np.mean(s_ctrl)), "rewired_sd": float(np.std(s_ctrl)),
@@ -368,9 +407,10 @@ def main():
          "limits": [
              "this is a DIFFERENT SYSTEM from the one the registry entry was measured on. It tests the "
              "general claim, not the enhancer result, and cannot overturn a measurement it did not repeat",
-             "no assay here has uniform detection power. Stratifying on expression x variability x cell "
-             "count makes power nearly constant inside a cell; it does not make it constant, and any "
-             "residual power gradient inside a cell is still available to the biology block",
+             "no assay here has uniform detection power. Binning on the power model's own out-of-fold "
+             "prediction makes power nearly constant inside a bin AS THAT MODEL SEES IT -- a power axis "
+             "the twelve features do not capture is not removed by conditioning on their prediction, and "
+             "is still available to the biology block",
              "the leave-one-out responsiveness term is a nuisance covariate by placement and a biological "
              "quantity by content -- how much a gene moves is partly what the gene is. Putting it in the "
              "nuisance block is the conservative choice and it makes the biology gain a LOWER bound",
