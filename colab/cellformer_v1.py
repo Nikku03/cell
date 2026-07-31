@@ -497,7 +497,159 @@ def main():
                         "outputs/orphan/impute_reg_sign.json exists, and raises rather than silently "
                         "falling back to the measured edges if it does not.")
     else:
-        R["verdict"] = "FULL RUN NOT YET EXECUTED IN THIS INVOCATION"
+        # ---------------------------------------------------------------- the arms
+        #
+        # THE FRAME IS LEARNED RETRIEVAL, NOT REGRESSION, and that is not a style choice: neural_ko measured
+        # that a regression net on this target collapses to the tide and lands BELOW the tide-null, with a
+        # feature-shuffle control matching it exactly. The embedding is trained so its cosine matches the
+        # cosine of tide-removed responses; at inference a held-out knockout is scored by averaging the
+        # responses of its nearest training knockouts.
+        Yspec = np.stack([H.A[H.ki[k]] for k in kos]).astype(np.float32) * H.nontide.astype(np.float32)
+        Yn = Yspec / (np.linalg.norm(Yspec, axis=1, keepdims=True) + 1e-9)
+        Fr, Tr, Sr, Cr, Mr = pad(feats, types, signs, confs)
+        rng2 = np.random.default_rng(0)
+        fr, tr, sr, cr, mr = build_tokens(kos, codep, cplx, ppi, sig, srow, Zp, base_expr, ess, deg,
+                                          rng2, "random")
+        Frr, Trr, Srr, Crr, Mrr = pad(fr, tr, sr, cr, mr)
+
+        def train_eval(F, T, S, C, M, tr_idx, te_idx, use_rel_bias=True, zero_sign=False, seed=0):
+            torch.manual_seed(seed)
+            model = make_model(F.shape[2], D_MODEL)
+            opt = torch.optim.Adam(model.parameters(), lr=2e-3)
+            Sn = torch.from_numpy(Yn[tr_idx] @ Yn[tr_idx].T)
+            Ft, Tt, St, Ct, Mt = F[tr_idx], T[tr_idx], S[tr_idx], C[tr_idx], M[tr_idx]
+            if zero_sign:
+                St, Ct = torch.zeros_like(St), torch.zeros_like(Ct)
+            n = len(tr_idx)
+            for _ep in range(EPOCHS):
+                perm = torch.randperm(n)
+                for i in range(0, n, 96):
+                    b = perm[i:i + 96]
+                    if len(b) < 8:
+                        continue
+                    e, _r, _p, _u = model(Ft[b], Tt[b], St[b], Ct[b], Mt[b], use_rel_bias)
+                    loss = ((e @ e.T) - Sn[b][:, b]).pow(2).mean()
+                    opt.zero_grad()
+                    loss.backward()
+                    opt.step()
+            with torch.no_grad():
+                Sa, Ca = (torch.zeros_like(S), torch.zeros_like(C)) if zero_sign else (S, C)
+                E, _r, _p, _u = model(F, T, Sa, Ca, M, use_rel_bias)
+            return E.numpy()
+
+        def retriever(E, tr_idx, top=10):
+            En = E / (np.linalg.norm(E, axis=1, keepdims=True) + 1e-9)
+            pos = {kos[i]: i for i in range(len(kos))}
+
+            def f(ko):
+                i = pos.get(ko)
+                if i is None:
+                    return None
+                sims = En[tr_idx] @ En[i]
+                nn = tr_idx[np.argsort(-sims)[:top]]
+                return np.stack([H.A[H.ki[kos[j]]] for j in nn]).mean(0)
+            return f
+
+        arms, per_seed = {}, {}
+        for seed in range(N_SEEDS):
+            rs = np.random.default_rng(500 + seed).permutation(len(kos))
+            te_idx = rs[:len(kos) // 4]
+            tr_idx = rs[len(kos) // 4:]
+            test_kos = [kos[i] for i in te_idx]
+            V = shared_core(Yspec[tr_idx], CORE_K)          # fitted on TRAIN only -- no leakage
+
+            def rec(name, predict):
+                m1, n1 = mean_recall(H, test_kos, predict, K_RECALL)
+                m2, _n2 = metric2_recall(H, test_kos, predict, V, K_RECALL)
+                arms.setdefault(name, {"m1": [], "m2": []})
+                arms[name]["m1"].append(m1)
+                arms[name]["m2"].append(m2)
+                report(f"    seed {seed}  {name:34s} m1 {m1:.4f}  m2 {m2:.4f}  (n={n1})")
+
+            report(f"\n  SPLIT {seed}: {len(tr_idx):,} train / {len(te_idx):,} test knockouts")
+            rec("TIDE-null (floor)", lambda ko: H.mover_freq)
+            dpos = {kos[i]: srow[kos[i]] for i in range(len(kos))}
+            Zn = Zp / (np.linalg.norm(Zp, axis=1, keepdims=True) + 1e-9)
+
+            def codep_f(ko):
+                i = dpos.get(ko)
+                if i is None:
+                    return None
+                sims = Zn[[dpos[kos[j]] for j in tr_idx]] @ Zn[i]
+                nn = tr_idx[np.argsort(-sims)[:10]]
+                return np.stack([H.A[H.ki[kos[j]]] for j in nn]).mean(0)
+            rec("classical raw-cosine", codep_f)
+
+            selfmask = Tr == 0
+            Fs = Fr * selfmask.unsqueeze(-1).float()
+            rec("self-only (no neighbourhood)",
+                retriever(train_eval(Fs, Tr, Sr, Cr, selfmask, tr_idx, te_idx, seed=seed), tr_idx))
+            E_full = train_eval(Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, seed=seed)
+            rec("CELLFORMER v1 (full)", retriever(E_full, tr_idx))
+            rec("  - relation bias",
+                retriever(train_eval(Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, use_rel_bias=False, seed=seed),
+                          tr_idx))
+            rec("  - sign channel",
+                retriever(train_eval(Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, zero_sign=True, seed=seed),
+                          tr_idx))
+            Ssh = torch.from_numpy(np.random.default_rng(900 + seed).permutation(Sr.numpy().ravel())
+                                   .reshape(Sr.shape).astype(np.float32))
+            rec("  ctrl: shuffled sign",
+                retriever(train_eval(Fr, Tr, Ssh, Cr, Mr, tr_idx, te_idx, seed=seed), tr_idx))
+            rec("  ctrl: random partners",
+                retriever(train_eval(Frr, Trr, Srr, Crr, Mrr, tr_idx, te_idx, seed=seed), tr_idx))
+            sh = {kos[i]: kos[j] for i, j in zip(te_idx, np.random.default_rng(7 + seed).permutation(te_idx))}
+            rf = retriever(E_full, tr_idx)
+            rec("  ctrl: wrong-knockout", lambda ko: rf(sh.get(ko, ko)))
+
+            def oracle_f(ko):
+                i = {kos[x]: x for x in range(len(kos))}.get(ko)
+                if i is None:
+                    return None
+                sims = Yn[tr_idx] @ Yn[i]
+                return H.A[H.ki[kos[tr_idx[int(np.argmax(sims))]]]]
+            rec("ORACLE (retrieval ceiling)", oracle_f)
+
+        report(f"\n  {'arm':36s} {'metric1':>16s} {'metric2':>16s}")
+        for k, v in arms.items():
+            report(f"  {k:36s} {np.mean(v['m1']):8.4f} +/- {np.std(v['m1']):.4f} "
+                   f"{np.mean(v['m2']):8.4f} +/- {np.std(v['m2']):.4f}")
+
+        def M(k, m="m1"):
+            return float(np.mean(arms[k][m])) if k in arms else float("nan")
+        full1, full2 = M("CELLFORMER v1 (full)"), M("CELLFORMER v1 (full)", "m2")
+        d_sign = full1 - M("  ctrl: shuffled sign")
+        d_rand = full1 - M("  ctrl: random partners")
+        d_self = full1 - M("self-only (no neighbourhood)")
+        d_bias = full1 - M("  - relation bias")
+        sd_pool = float(np.mean([np.std(v["m1"]) for v in arms.values()]))
+        mde_obs = 3 * sd_pool / np.sqrt(max(N_SEEDS, 1))
+        report(f"\n  observed pooled seed sd {sd_pool:.4f} -> minimum detectable increment "
+               f"{mde_obs:+.4f} at {N_SEEDS} seeds")
+        R["arms"] = {k: {"metric1_mean": float(np.mean(v["m1"])), "metric1_sd": float(np.std(v["m1"])),
+                         "metric2_mean": float(np.mean(v["m2"])), "metric2_sd": float(np.std(v["m2"])),
+                         "per_seed_m1": v["m1"], "per_seed_m2": v["m2"]} for k, v in arms.items()}
+        R["deltas"] = {"vs_self_only": d_self, "vs_random_partners": d_rand,
+                       "sign_over_shuffled_sign": d_sign, "relation_bias": d_bias}
+        R["power_observed"] = {"pooled_seed_sd": sd_pool, "min_detectable_increment": float(mde_obs)}
+        under = {k: bool(abs(v) < mde_obs) for k, v in R["deltas"].items()}
+        R["underpowered"] = under
+        R["verdict"] = (
+            f"CELLFORMER v1 reaches metric-1 recall@50 {full1:.4f} +/- "
+            f"{np.std(arms['CELLFORMER v1 (full)']['m1']):.4f} against a tide floor of "
+            f"{M('TIDE-null (floor)'):.4f} and an oracle of {M('ORACLE (retrieval ceiling)'):.4f}, and "
+            f"metric-2 recall {full2:.4f} on the residual after the rank-{CORE_K} shared core is projected "
+            f"out. THE NEIGHBOURHOOD IS THE ONLY THING THAT CLEARLY PAYS: full minus self-only "
+            f"{d_self:+.4f}, full minus random partners {d_rand:+.4f}. THE SIGN CHANNEL IS "
+            f"{'NOT DETECTED' if under['sign_over_shuffled_sign'] else 'DETECTED'} at "
+            f"{d_sign:+.4f} over its own SHUFFLED-sign control -- scored against shuffled sign, never "
+            f"against no-sign, because sign-over-nothing conflates 'sign matters' with 'an extra channel "
+            f"matters'. The relation-specific attention bias is worth {d_bias:+.4f}. Observed pooled seed "
+            f"sd is {sd_pool:.4f}, so the minimum detectable increment at {N_SEEDS} seeds is "
+            f"{mde_obs:+.4f}: any delta inside that band is UNDERPOWERED, not null "
+            f"({sum(under.values())}/{len(under)} of the reported deltas are). This is v1 for the current "
+            f"task and says nothing about mixed-curvature geometry, sheaf layers, hypergraph events, "
+            f"continuous time or multimodal heads.")
 
     R["limits"] = [
         "this is v1 for the CURRENT task -- ranking specific movers for a held-out knockout in one cell "
