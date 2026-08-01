@@ -1,0 +1,1018 @@
+{
+ "model": "v4-relation-schema-2B",
+ "smoke": true,
+ "config": {
+  "gwps_rows_read": 2500,
+  "n_knockouts": 700,
+  "n_genes": 8175,
+  "folds": 3,
+  "seeds_per_fold": 1,
+  "epochs": 3,
+  "cap": 7,
+  "env": {
+   "V4_SMOKE": "1 for the smoke defaults",
+   "V4_ROWS": "gwps rows, 0=all",
+   "V4_KO": "knockouts, 0=all",
+   "V4_FOLDS": "disjoint held-out knockout folds",
+   "V4_SEEDS": "model inits per fold",
+   "V4_EPOCHS": "",
+   "V4_CAP": "",
+   "V4_MAXCPLX": "",
+   "V4_REUSE": "1 to reuse v4_relations.parquet"
+  }
+ },
+ "relation_table": {
+  "path": "outputs/orphan/v4_relations.parquet",
+  "n_rows": 1157434,
+  "columns": [
+   "source",
+   "target",
+   "relation_type",
+   "direction",
+   "sign",
+   "strength",
+   "confidence",
+   "evidence_type",
+   "cell_context",
+   "provenance",
+   "confidence_raw",
+   "confidence_scale",
+   "n_evidence"
+  ],
+  "coverage_declared": {
+   "__ALL__": {
+    "sign": 0.6102412750964634,
+    "strength": 0.06630961247034388,
+    "confidence": 0.20024640713854958,
+    "evidence_type": 0.5508590554623417,
+    "cell_context": 0.2601971257108397,
+    "direction": 1.0,
+    "provenance": 1.0,
+    "n_rows": 1157434
+   },
+   "codependency": {
+    "sign": 1.0,
+    "strength": 1.0,
+    "confidence": 1.0,
+    "evidence_type": 1.0,
+    "cell_context": 0.0,
+    "direction": 1.0,
+    "provenance": 1.0,
+    "n_rows": 76749
+   },
+   "complex": {
+    "sign": 0.0,
+    "strength": 0.0,
+    "confidence": 0.736390520559044,
+    "evidence_type": 1.0,
+    "cell_context": 0.0,
+    "direction": 1.0,
+    "provenance": 1.0,
+    "n_rows": 123425
+   },
+   "ppi": {
+    "sign": 0.0,
+    "strength": 0.0,
+    "confidence": 0.1957124765406857,
+    "evidence_type": 0.4157768656830284,
+    "cell_context": 0.0,
+    "direction": 1.0,
+    "provenance": 1.0,
+    "n_rows": 327695
+   },
+   "regulatory": {
+    "sign": 1.0,
+    "strength": 0.0,
+    "confidence": 0.0,
+    "evidence_type": 0.4919862186812343,
+    "cell_context": 0.4919862186812343,
+    "direction": 1.0,
+    "provenance": 1.0,
+    "n_rows": 612133
+   },
+   "signalling": {
+    "sign": 1.0,
+    "strength": 0.0,
+    "confidence": 0.0,
+    "evidence_type": 0.0,
+    "cell_context": 0.0,
+    "direction": 1.0,
+    "provenance": 1.0,
+    "n_rows": 17432
+   }
+  },
+  "coverage_by_ingestion_block": {
+   "cell_complete.json.gz:codep": {
+    "n_rows": 76749,
+    "sign": 1.0,
+    "strength": 1.0,
+    "confidence": 1.0,
+    "evidence_type": 1.0,
+    "cell_context": 0.0
+   },
+   "cell_complete.json.gz:ppi": {
+    "n_rows": 191447,
+    "sign": 0.0,
+    "strength": 0.0,
+    "confidence": 0.0,
+    "evidence_type": 0.0,
+    "cell_context": 0.0
+   },
+   "cell_complete.json.gz:reg": {
+    "n_rows": 612133,
+    "sign": 1.0,
+    "strength": 0.0,
+    "confidence": 0.0,
+    "evidence_type": 0.4919862186812343,
+    "cell_context": 0.4919862186812343
+   },
+   "cell_complete.json.gz:sig": {
+    "n_rows": 17432,
+    "sign": 1.0,
+    "strength": 0.0,
+    "confidence": 0.0,
+    "evidence_type": 0.0,
+    "cell_context": 0.0
+   },
+   "complexes.parquet / rxn/complexportal_9606.tsv": {
+    "n_rows": 32536,
+    "sign": 0.0,
+    "strength": 0.0,
+    "confidence": 0.0,
+    "evidence_type": 1.0,
+    "cell_context": 0.0
+   },
+   "humap2.txt": {
+    "n_rows": 90889,
+    "sign": 0.0,
+    "strength": 0.0,
+    "confidence": 1.0,
+    "evidence_type": 1.0,
+    "cell_context": 0.0
+   },
+   "intact_interactions.parquet": {
+    "n_rows": 64134,
+    "sign": 0.0,
+    "strength": 0.0,
+    "confidence": 1.0,
+    "evidence_type": 1.0,
+    "cell_context": 0.0
+   },
+   "rxn/reactome_interactions.tsv": {
+    "n_rows": 72114,
+    "sign": 0.0,
+    "strength": 0.0,
+    "confidence": 0.0,
+    "evidence_type": 1.0,
+    "cell_context": 0.0
+   }
+  },
+  "confidence_terciles": {
+   "codependency": {
+    "q33": 0.233,
+    "q67": 0.281,
+    "n_with_conf": 76749,
+    "frac_of_type_with_conf": 1.0
+   },
+   "complex": {
+    "q33": 0.0,
+    "q67": 0.25,
+    "n_with_conf": 90889,
+    "frac_of_type_with_conf": 0.736390520559044
+   },
+   "ppi": {
+    "q33": 0.56,
+    "q67": 0.56,
+    "n_with_conf": 64134,
+    "frac_of_type_with_conf": 0.1957124765406857
+   }
+  },
+  "humap2_polarity_check": {
+   "levels": {
+    "1": {
+     "pairs": 925,
+     "complexportal_corroborated": 0.7048648648648649,
+     "intact_corroborated": 0.03891891891891892
+    },
+    "2": {
+     "pairs": 6623,
+     "complexportal_corroborated": 0.4233730937641552,
+     "intact_corroborated": 0.04590064925260456
+    },
+    "3": {
+     "pairs": 6690,
+     "complexportal_corroborated": 0.3518684603886398,
+     "intact_corroborated": 0.03153961136023916
+    },
+    "4": {
+     "pairs": 26262,
+     "complexportal_corroborated": 0.20204097174624933,
+     "intact_corroborated": 0.032137689437209654
+    },
+    "5": {
+     "pairs": 50389,
+     "complexportal_corroborated": 0.0997241461430074,
+     "intact_corroborated": 0.02161185973129056
+    }
+   },
+   "high_confidence_end": 1,
+   "low_confidence_end": 5,
+   "corroboration_at_high_end": 0.7048648648648649,
+   "corroboration_at_low_end": 0.0997241461430074,
+   "observed_range": [
+    1,
+    5
+   ],
+   "resolved_by": "fraction of within-complex pairs corroborated by Complex Portal and IntAct -- independent of the response target"
+  },
+  "direction_is_not_evidence": "the direction column is 100% populated because it is asserted from source semantics, not observed per row"
+ },
+ "edge_counts_in_universe": {
+  "all|codependency": 76749,
+  "all|complex": 117374,
+  "all|ppi": 317383,
+  "conf|codependency": 76749,
+  "conf|complex": 85439,
+  "conf|ppi": 62187,
+  "top|codependency": 25949,
+  "top|complex": 38315,
+  "top|ppi": 53170,
+  "bot|codependency": 25686,
+  "bot|complex": 47124,
+  "bot|ppi": 44501
+ },
+ "partner_source_composition": {
+  "codependency": {
+   "all": {
+    "cell_complete.json.gz:codep": 0.9828269484808454,
+    "cell_complete.json.gz:ppi": 0.010568031704095112,
+    "rxn/reactome_interactions.tsv": 0.003963011889035667
+   },
+   "conf": {
+    "cell_complete.json.gz:codep": 0.9828269484808454,
+    "cell_complete.json.gz:ppi": 0.010568031704095112,
+    "rxn/reactome_interactions.tsv": 0.003963011889035667
+   },
+   "top": {
+    "cell_complete.json.gz:codep": 0.9749009247027741,
+    "cell_complete.json.gz:ppi": 0.015852047556142668,
+    "rxn/reactome_interactions.tsv": 0.0066050198150594455
+   }
+  },
+  "complex": {
+   "all": {
+    "humap2.txt": 0.6925329428989752,
+    "cell_complete.json.gz:ppi": 0.27379209370424595,
+    "rxn/reactome_interactions.tsv": 0.017569546120058566
+   },
+   "conf": {
+    "humap2.txt": 0.6925329428989752,
+    "cell_complete.json.gz:ppi": 0.27379209370424595,
+    "rxn/reactome_interactions.tsv": 0.017569546120058566
+   },
+   "top": {
+    "humap2.txt": 0.6881405563689604,
+    "cell_complete.json.gz:ppi": 0.2752562225475842,
+    "rxn/reactome_interactions.tsv": 0.01903367496339678
+   }
+  },
+  "ppi": {
+   "all": {
+    "intact_interactions.parquet": 1.0
+   },
+   "conf": {
+    "intact_interactions.parquet": 1.0
+   },
+   "top": {
+    "intact_interactions.parquet": 1.0
+   }
+  }
+ },
+ "arms": {
+  "TIDE-null (floor, non-learned)": {
+   "mean": 0.0069712531944291604,
+   "sd": 0.0008223521044647263,
+   "per_fold": [
+    0.007094017094017095,
+    0.007725321888412017,
+    0.006094420600858369
+   ],
+   "per_seed": [
+    0.007094017094017095,
+    0.007725321888412017,
+    0.006094420600858369
+   ]
+  },
+  "JACCARD-copy on A partners (non-learned)": {
+   "mean": 0.01028514483450106,
+   "sd": 0.0014577730160807638,
+   "per_fold": [
+    0.010683760683760684,
+    0.011502145922746782,
+    0.008669527896995708
+   ],
+   "per_seed": [
+    0.010683760683760684,
+    0.011502145922746782,
+    0.008669527896995708
+   ]
+  },
+  "JACCARD-copy on B_top partners (non-learned)": {
+   "mean": 0.007771419488157687,
+   "sd": 0.0003004796429280371,
+   "per_fold": [
+    0.007777777777777779,
+    0.007467811158798284,
+    0.008068669527896996
+   ],
+   "per_seed": [
+    0.007777777777777779,
+    0.007467811158798284,
+    0.008068669527896996
+   ]
+  },
+  "self_only": {
+   "mean": 0.009399508455302448,
+   "sd": 0.0006325273887575154,
+   "per_fold": [
+    0.009743589743589744,
+    0.009785407725321889,
+    0.008669527896995708
+   ],
+   "per_seed": [
+    0.009743589743589744,
+    0.009785407725321889,
+    0.008669527896995708
+   ]
+  },
+  "A_native": {
+   "mean": 0.010941271413374419,
+   "sd": 0.001606825164371042,
+   "per_fold": [
+    0.012051282051282053,
+    0.011673819742489272,
+    0.009098712446351931
+   ],
+   "per_seed": [
+    0.012051282051282053,
+    0.011673819742489272,
+    0.009098712446351931
+   ]
+  },
+  "A_matched": {
+   "mean": 0.010195884230218995,
+   "sd": 0.002769370279689474,
+   "per_fold": [
+    0.01307692307692308,
+    0.009957081545064379,
+    0.007553648068669529
+   ],
+   "per_seed": [
+    0.01307692307692308,
+    0.009957081545064379,
+    0.007553648068669529
+   ]
+  },
+  "B0_matched": {
+   "mean": 0.009858405781152565,
+   "sd": 0.0010284476037266468,
+   "per_fold": [
+    0.008974358974358977,
+    0.010987124463519316,
+    0.0096137339055794
+   ],
+   "per_seed": [
+    0.008974358974358977,
+    0.010987124463519316,
+    0.0096137339055794
+   ]
+  },
+  "B_top": {
+   "mean": 0.01008326913906313,
+   "sd": 0.0014829125841743043,
+   "per_fold": [
+    0.011794871794871794,
+    0.009270386266094421,
+    0.009184549356223176
+   ],
+   "per_seed": [
+    0.011794871794871794,
+    0.009270386266094421,
+    0.009184549356223176
+   ]
+  },
+  "D_rewire": {
+   "mean": 0.008744115525231405,
+   "sd": 0.0008365605058728101,
+   "per_fold": [
+    0.007863247863247862,
+    0.008841201716738196,
+    0.009527896995708156
+   ],
+   "per_seed": [
+    0.007863247863247862,
+    0.008841201716738196,
+    0.009527896995708156
+   ]
+  },
+  "R_random": {
+   "mean": 0.00860068718437817,
+   "sd": 0.0009541169899197385,
+   "per_fold": [
+    0.008119658119658119,
+    0.00798283261802575,
+    0.009699570815450642
+   ],
+   "per_seed": [
+    0.008119658119658119,
+    0.00798283261802575,
+    0.009699570815450642
+   ]
+  },
+  "B_top -> BOTTOM tercile (SWAP)": {
+   "mean": 0.007940647811892448,
+   "sd": 0.00137261715781517,
+   "per_fold": [
+    0.009487179487179488,
+    0.007467811158798284,
+    0.006866952789699571
+   ],
+   "per_seed": [
+    0.009487179487179488,
+    0.007467811158798284,
+    0.006866952789699571
+   ]
+  },
+  "B_top -> wrong-knockout (IDENTITY)": {
+   "mean": 0.006999987772519961,
+   "sd": 0.00038633721162990435,
+   "per_fold": [
+    0.007008547008547009,
+    0.007381974248927039,
+    0.0066094420600858374
+   ],
+   "per_seed": [
+    0.007008547008547009,
+    0.007381974248927039,
+    0.0066094420600858374
+   ]
+  },
+  "[codependency] A_native": {
+   "mean": 0.011056087450937236,
+   "sd": 0.0007068305490434768,
+   "per_fold": [
+    0.011794871794871794,
+    0.010987124463519316,
+    0.0103862660944206
+   ],
+   "per_seed": [
+    0.011794871794871794,
+    0.010987124463519316,
+    0.0103862660944206
+   ]
+  },
+  "[codependency] B0_matched": {
+   "mean": 0.008971057554748542,
+   "sd": 0.0003419055306108754,
+   "per_fold": [
+    0.009230769230769232,
+    0.009098712446351931,
+    0.008583690987124463
+   ],
+   "per_seed": [
+    0.009230769230769232,
+    0.009098712446351931,
+    0.008583690987124463
+   ]
+  },
+  "[codependency] B_top": {
+   "mean": 0.009426653460988227,
+   "sd": 0.0011658702099942733,
+   "per_fold": [
+    0.01076923076923077,
+    0.008841201716738198,
+    0.00866952789699571
+   ],
+   "per_seed": [
+    0.01076923076923077,
+    0.008841201716738198,
+    0.00866952789699571
+   ]
+  },
+  "[codependency] D_rewire": {
+   "mean": 0.008485748872014967,
+   "sd": 0.00017294943875756732,
+   "per_fold": [
+    0.008461538461538461,
+    0.008326180257510729,
+    0.008669527896995708
+   ],
+   "per_seed": [
+    0.008461538461538461,
+    0.008326180257510729,
+    0.008669527896995708
+   ]
+  },
+  "[complex] A_native": {
+   "mean": 0.011942824303339325,
+   "sd": 0.00025827911323927097,
+   "per_fold": [
+    0.011965811965811967,
+    0.012188841201716738,
+    0.011673819742489272
+   ],
+   "per_seed": [
+    0.011965811965811967,
+    0.012188841201716738,
+    0.011673819742489272
+   ]
+  },
+  "[complex] B0_matched": {
+   "mean": 0.008599464436374308,
+   "sd": 0.0007595787267411322,
+   "per_fold": [
+    0.008974358974358974,
+    0.009098712446351931,
+    0.007725321888412017
+   ],
+   "per_seed": [
+    0.008974358974358974,
+    0.009098712446351931,
+    0.007725321888412017
+   ]
+  },
+  "[complex] B_top": {
+   "mean": 0.010199185649829428,
+   "sd": 0.0010276345814421999,
+   "per_fold": [
+    0.01076923076923077,
+    0.00901287553648069,
+    0.010815450643776824
+   ],
+   "per_seed": [
+    0.01076923076923077,
+    0.00901287553648069,
+    0.010815450643776824
+   ]
+  },
+  "[complex] D_rewire": {
+   "mean": 0.009714366066297397,
+   "sd": 6.492101045681336e-05,
+   "per_fold": [
+    0.009658119658119657,
+    0.009785407725321889,
+    0.009699570815450646
+   ],
+   "per_seed": [
+    0.009658119658119657,
+    0.009785407725321889,
+    0.009699570815450646
+   ]
+  },
+  "[ppi] A_native": {
+   "mean": 0.010570901043004047,
+   "sd": 0.0019999822545783753,
+   "per_fold": [
+    0.01094017094017094,
+    0.012360515021459227,
+    0.008412017167381975
+   ],
+   "per_seed": [
+    0.01094017094017094,
+    0.012360515021459227,
+    0.008412017167381975
+   ]
+  },
+  "[ppi] B0_matched": {
+   "mean": 0.009798980228164778,
+   "sd": 0.0019056371589160717,
+   "per_fold": [
+    0.010512820512820514,
+    0.011244635193133047,
+    0.007639484978540773
+   ],
+   "per_seed": [
+    0.010512820512820514,
+    0.011244635193133047,
+    0.007639484978540773
+   ]
+  },
+  "[ppi] B_top": {
+   "mean": 0.009942408569018011,
+   "sd": 0.0015688122022558956,
+   "per_fold": [
+    0.010256410256410258,
+    0.01133047210300429,
+    0.008240343347639486
+   ],
+   "per_seed": [
+    0.010256410256410258,
+    0.01133047210300429,
+    0.008240343347639486
+   ]
+  },
+  "[ppi] D_rewire": {
+   "mean": 0.009458200359487913,
+   "sd": 0.001633224339405302,
+   "per_fold": [
+    0.008717948717948718,
+    0.011330472103004292,
+    0.008326180257510729
+   ],
+   "per_seed": [
+    0.008717948717948718,
+    0.011330472103004292,
+    0.008326180257510729
+   ]
+  }
+ },
+ "mde": {
+  "convention": "3*sd/sqrt(n); sd = sd (ddof=1) of the PAIRED PER-FOLD gap; n = 3 DISJOINT held-out knockout folds. n counts folds, not seeds, not knockouts, not edges",
+  "n": 3,
+  "unit_of_replication": "disjoint held-out knockout fold",
+  "sd_seed_only_DO_NOT_GRADE_ON_THIS": 0.0,
+  "contrasts": {
+   "G1 pooled  B_top vs A_native": {
+    "gap": -0.0008580022743112885,
+    "sd_cross_fold": 0.0013492781332946195,
+    "mde": 0.0023370182804079735,
+    "per_fold_gap": [
+     -0.00025641025641025966,
+     -0.0024034334763948506,
+     8.583690987124491e-05
+    ],
+    "exceeds_mde": false
+   },
+   "G3 pooled  B_top vs D_rewire": {
+    "gap": 0.0013391536138317253,
+    "sd_cross_fold": 0.002278130430237514,
+    "mde": 0.00394583765144012,
+    "per_fold_gap": [
+     0.003931623931623931,
+     0.00042918454935622456,
+     -0.00034334763948497965
+    ],
+    "exceeds_mde": false
+   },
+   "G4 pooled  B_top vs BOTTOM-tercile SWAP": {
+    "gap": 0.0021426213271706824,
+    "sd_cross_fold": 0.00029453029950070526,
+    "mde": 0.0005101414431036999,
+    "per_fold_gap": [
+     0.0023076923076923057,
+     0.001802575107296137,
+     0.002317596566523605
+    ],
+    "exceeds_mde": true
+   },
+   "    aux    B_top vs B0_matched (confidence proper)": {
+    "gap": 0.0002248633579105657,
+    "sd_cross_fold": 0.002338267670454828,
+    "mde": 0.004049998406923483,
+    "per_fold_gap": [
+     0.0028205128205128164,
+     -0.0017167381974248948,
+     -0.00042918454935622456
+    ],
+    "exceeds_mde": false
+   },
+   "    aux    B0_matched vs A_matched (source/annotation)": {
+    "gap": -0.00033747844906643117,
+    "sd_cross_fold": 0.0033010830930310254,
+    "mde": 0.0057176436371363555,
+    "per_fold_gap": [
+     -0.0041025641025641026,
+     0.0010300429184549372,
+     0.002060085836909872
+    ],
+    "exceeds_mde": false
+   },
+   "    aux    B_top vs R_random (uniform control)": {
+    "gap": 0.0014825819546849597,
+    "sd_cross_fold": 0.0021019145203272313,
+    "mde": 0.0036406227423735307,
+    "per_fold_gap": [
+     0.003675213675213675,
+     0.0012875536480686702,
+     -0.000515021459227466
+    ],
+    "exceeds_mde": false
+   },
+   "    aux    B_top vs self_only": {
+    "gap": 0.0006837606837606832,
+    "sd_cross_fold": 0.0012914461357081144,
+    "mde": 0.0022368503222849456,
+    "per_fold_gap": [
+     0.0020512820512820495,
+     -0.0005150214592274677,
+     0.0005150214592274677
+    ],
+    "exceeds_mde": false
+   },
+   "    aux    B_top vs wrong-knockout": {
+    "gap": 0.003083281366543169,
+    "sd_cross_fold": 0.0015143167663292918,
+    "mde": 0.002622873578035741,
+    "per_fold_gap": [
+     0.004786324786324785,
+     0.001888412017167382,
+     0.0025751072961373387
+    ],
+    "exceeds_mde": true
+   },
+   "G2 [codependency] B_top vs A_native": {
+    "gap": -0.0016294339899490101,
+    "sd_cross_fold": 0.0005652205783253089,
+    "mde": 0.0009789907591428993,
+    "per_fold_gap": [
+     -0.001025641025641023,
+     -0.0021459227467811176,
+     -0.0017167381974248896
+    ],
+    "exceeds_mde": true
+   },
+   "G3 [codependency] B_top vs D_rewire": {
+    "gap": 0.0009409045889732601,
+    "sd_cross_fold": 0.0012113600938189744,
+    "mde": 0.0020981372287558657,
+    "per_fold_gap": [
+     0.002307692307692309,
+     0.0005150214592274695,
+     1.734723475976807e-18
+    ],
+    "exceeds_mde": false
+   },
+   "   [codependency] B_top vs B0_matched": {
+    "gap": 0.0004555959062396842,
+    "sd_cross_fold": 0.0009533731606618704,
+    "mde": 0.0016512907528388856,
+    "per_fold_gap": [
+     0.001538461538461539,
+     -0.000257510729613733,
+     8.583690987124665e-05
+    ],
+    "exceeds_mde": false
+   },
+   "G2 [complex] B_top vs A_native": {
+    "gap": -0.001743638653509897,
+    "sd_cross_fold": 0.0012519054905129495,
+    "mde": 0.002168363915842866,
+    "per_fold_gap": [
+     -0.0011965811965811961,
+     -0.003175965665236048,
+     -0.0008583690987124474
+    ],
+    "exceeds_mde": false
+   },
+   "G3 [complex] B_top vs D_rewire": {
+    "gap": 0.0004848195835320309,
+    "sd_cross_fold": 0.0010889011868776461,
+    "mde": 0.0018860321800941362,
+    "per_fold_gap": [
+     0.001111111111111113,
+     -0.000772532188841199,
+     0.0011158798283261787
+    ],
+    "exceeds_mde": false
+   },
+   "   [complex] B_top vs B0_matched": {
+    "gap": 0.001599721213455121,
+    "sd_cross_fold": 0.0015969509349883027,
+    "mde": 0.0027660001565943636,
+    "per_fold_gap": [
+     0.0017948717948717968,
+     -8.583690987124144e-05,
+     0.0030901287553648073
+    ],
+    "exceeds_mde": false
+   },
+   "G2 [ppi] B_top vs A_native": {
+    "gap": -0.0006284924739860363,
+    "sd_cross_fold": 0.0004318452369366548,
+    "mde": 0.0007479778913809061,
+    "per_fold_gap": [
+     -0.000683760683760682,
+     -0.0010300429184549372,
+     -0.00017167381974248982
+    ],
+    "exceeds_mde": false
+   },
+   "G3 [ppi] B_top vs D_rewire": {
+    "gap": 0.0004842082095300986,
+    "sd_cross_fold": 0.0009140183559132341,
+    "mde": 0.0015831262314922945,
+    "per_fold_gap": [
+     0.0015384615384615406,
+     -1.734723475976807e-18,
+     -8.583690987124318e-05
+    ],
+    "exceeds_mde": false
+   },
+   "   [ppi] B_top vs B0_matched": {
+    "gap": 0.00014342834085323322,
+    "sd_cross_fold": 0.0004315263071498934,
+    "mde": 0.0007474254887861883,
+    "per_fold_gap": [
+     -0.0002564102564102562,
+     8.583690987124318e-05,
+     0.0006008583690987127
+    ],
+    "exceeds_mde": false
+   }
+  }
+ },
+ "gates": {
+  "G1 confidence gating moves pooled recall": false,
+  "G2 [codependency] confidence gating moves recall": true,
+  "G2 [complex] confidence gating moves recall": false,
+  "G2 [ppi] confidence gating moves recall": false,
+  "G3 real wiring beats DEGREE-MATCHED rewiring": false,
+  "G4 confidence channel is READ (swap moves it)": true,
+  "G5 model beats the best non-learned baseline": true
+ },
+ "best_non_learned_baseline": {
+  "arm": "JACCARD-copy on A partners (non-learned)",
+  "recall": 0.01028514483450106
+ },
+ "best_model_arm": {
+  "arm": "A_native",
+  "recall": 0.010941271413374419
+ },
+ "no_circularity": "the target is gwps K562 Perturb-seq response; no edge source (IntAct, Reactome, huMAP2, Complex Portal, UniBind, DepMap co-essentiality) is derived from it and it is not an input to any of them. The huMAP2 polarity check uses Complex Portal and IntAct only, never the response data. The one adjacency: codependency edges and the node features are both functions of DepMap CRISPRGeneEffect, so the codep channel is partly redundant with the features -- a redundancy between two INPUTS, not leakage from the target",
+ "limits": [
+  "WHAT WOULD FALSIFY PART 1: a claim that any evidence column is more complete than stated. Every number in coverage_declared is a raw notna() rate over the rows actually written; if a downstream consumer forward-fills a null it invalidates every stratified result built on it",
+  "THE CONFIDENCE GATE IS CONFOUNDED WITH A SOURCE SWAP for ppi: IntAct is the only PPI source on disk carrying a per-row score, so 'top-confidence PPI' is very largely 'IntAct PPI'. The B0_matched arm is what separates the two and the decomposition is reported next to G1; reading G1 without B0 would repeat the original error in a new form",
+  "Reactome and Complex Portal carry an evidence TYPE but no numeric confidence, so their edges can never enter a top-confidence tercile. Confidence-gating is therefore also a source filter, and the tercile threshold is computed only over rows that have a score at all",
+  "huMAP2 confidence polarity is inferred, not read from a spec. It is inferred from corroboration by Complex Portal, whose complexes are themselves in the complex relation type, so high-confidence huMAP2 edges are enriched for edges that appear twice in the table. That enrichment is a property of the edge set, not of the target, but it means the complex confidence gate partly selects for multiply-sourced edges",
+  "cell_context is reachable only for regulatory edges and only at the granularity of 'this TF has a UniBind ChIP dataset in this cell line'. That is not a cell-specific edge weight and must not be used as one. PPI, complex and codependency edges have NO cell context anywhere on disk here, so no cell-conditional graph can be built for the three types the retest uses",
+  "the retest is K562 only and one target assay. A confidence effect that exists in another cell line or another readout would not be visible here",
+  "codependency edges are DepMap correlations and the node features are DepMap principal components, so the codep channel is partly recoverable from the features themselves and its per-type numbers understate what an independent codep channel would contribute",
+  "the degree-matched rewiring preserves degree exactly but not the degree-degree correlation (assortativity) or the community structure. A gap over it is evidence for partner identity beyond degree, not evidence for the specific biology of any one edge",
+  "with n = folds as the unit, the MDE is wide at small V4_FOLDS. A gap reported as 'below MDE' at V4_FOLDS=3 is not evidence of absence; it is evidence that the design cannot resolve it. Read the per_fold_gap list, not just the mean",
+  "the encoder is a single attention block and the retrieval is 10-NN, both inherited from dense_stage1 so the numbers stay comparable. A stronger reader might use a channel this one ignores, and G4 is what would show that -- but only for the arms actually run"
+ ],
+ "verdict": "PART 1 SUCCEEDED AND PART 2 IS THEREFORE INTERPRETABLE FOR THE FIRST TIME. The ingestion's legacy PPI block carries a confidence on 0.000 of its 327,695 rows, which is the arithmetic reason 'evidence strength not detected' was reported four times: the field being stratified on did not exist. Rebuilding from the sources on disk restores a per-row confidence to 19.6% of PPI edges (IntAct MI score) and 73.6% of complex edges (huMAP2 level, whose polarity was fixed empirically -- level 1 is the high end, corroborated by Complex Portal on 0.705 of its pairs against 0.100 at the low end), an evidence type to 55.1% of all rows and a cell context to 26.0% -- cell context reaching only regulatory edges, via the cell lines in which each TF actually has a UniBind ChIP dataset. PART 2, on dense_stage1's task with recall@50 as the raw held-out effect size and an MDE of 3*sd/sqrt(3) over 3 DISJOINT held-out knockout folds: confidence-gating the partner set to the top tercile moves recall from 0.0109 (all edges, current behaviour) to 0.0101, a gap of -0.0009 against an MDE of 0.0023 -- BELOW the floor. Real wiring at top confidence scores 0.0101 against a DEGREE-MATCHED configuration-model rewiring at 0.0087 (+0.0013, MDE 0.0039), which is the 'real vs shuffled wiring' question asked for the first time against a null that preserves the degree sequence rather than a uniform one. THE COUNTERFACTUAL SWAP IS THE PART THAT DECIDES WHAT A NULL MEANS: handing the top-confidence model the BOTTOM tercile at test time changes recall by +0.0021 against 0.0005, so the partner-confidence channel is READ. AND THE HEADLINE IS THE BASELINE: the cheapest non-learned arm, 'JACCARD-copy on A partners (non-learned)', scores 0.0103 against the best learned arm's 0.0109 -- the model is ahead of it. Decomposing the confidence gate: B_top vs B0_matched (confidence proper, source held fixed) is +0.0002 while B0_matched vs A_matched (the source/annotation swap, confidence not varied) is -0.0003; wherever the second is the larger of the two, what looks like a confidence effect is a source-selection effect, because IntAct is the only PPI source on disk that carries a per-row score.",
+ "log": [
+  "============================================================================================================",
+  "v4 SECTION 2B -- relations WITH confidence/evidence/cell context, and the two verdicts re-run",
+  "============================================================================================================",
+  "  MDE CONVENTION (declared before any number): 3*sd/sqrt(n), sd = sd of the PAIRED PER-FOLD",
+  "  gap (ddof=1), n = 3 DISJOINT HELD-OUT KNOCKOUT FOLDS. n counts folds, not seeds,",
+  "  not knockouts, not edges. Effect sizes are RAW held-out recall@50, never net of a control.",
+  "  SMOKE=1  rows=2500  ko=700  folds=3  seeds/fold=1  epochs=3  cap=7",
+  "",
+  "------------------------------------------------------------------------------------------------------------",
+  "PART 1 -- rebuilding the typed relation table",
+  "------------------------------------------------------------------------------------------------------------",
+  "  id maps: 47,351 ensembl->symbol, 85,096 uniprot->symbol",
+  "  UniBind: 3,478 TFBS datasets -> cell context for 268 TFs (558 distinct cell lines)",
+  "  IntAct: 71,640 rows -> 64,134 with both ends mapped to symbols (89.5%); confidence present on 100.0% of them",
+  "  Reactome: 124,865 rows -> 72,114 mapped non-self (57.8%); evidence type present on 100%, numeric confidence on 0% (the source has none)",
+  "  cell_complete legacy PPI: 191,447 bare pairs, 0 evidence columns. THIS BLOCK IS THE DEFECT BEING MEASURED.",
+  "  huMAP2 Confidence observed range 1-5 (the module brief said 1-3; it is wrong). Polarity resolved against INDEPENDENT sources:",
+  "      level 1:    925 within-complex pairs   ComplexPortal-corroborated 0.705   IntAct-corroborated 0.039",
+  "      level 2:  6,623 within-complex pairs   ComplexPortal-corroborated 0.423   IntAct-corroborated 0.046",
+  "      level 3:  6,690 within-complex pairs   ComplexPortal-corroborated 0.352   IntAct-corroborated 0.032",
+  "      level 4: 26,262 within-complex pairs   ComplexPortal-corroborated 0.202   IntAct-corroborated 0.032",
+  "      level 5: 50,389 within-complex pairs   ComplexPortal-corroborated 0.100   IntAct-corroborated 0.022",
+  "      -> level 1 is the HIGH-confidence end (1=best); normalised as confidence in [0,1]",
+  "  huMAP2: 6,965 complexes -> 90,889 within-complex pairs (complexes of >40 members not expanded)",
+  "  Complex Portal: 2,439 complexes -> 32,536 pairs; ECO evidence code on 100.0% of complexes, numeric confidence on 0%",
+  "  co-dependency: 76,749 weighted edges (strength AND confidence both native)",
+  "  regulatory: 612,133 directed signed edges, 301,161 (49.2%) with a UniBind cell context; signalling: 17,432",
+  "  relation table: 1,157,434 rows x 13 columns in 5.9s",
+  "",
+  "  DECLARED COVERAGE -- fraction of rows that ACTUALLY CARRY each field (nothing filled)",
+  "    relation_type         rows           sign       strength     confidence  evidence_type   cell_context  direction*",
+  "    __ALL__          1,157,434          0.610          0.066          0.200          0.551          0.260       1.000",
+  "    codependency        76,749          1.000          1.000          1.000          1.000          0.000       1.000",
+  "    complex            123,425          0.000          0.000          0.736          1.000          0.000       1.000",
+  "    ppi                327,695          0.000          0.000          0.196          0.416          0.000       1.000",
+  "    regulatory         612,133          1.000          0.000          0.000          0.492          0.492       1.000",
+  "    signalling          17,432          1.000          0.000          0.000          0.000          0.000       1.000",
+  "    * direction is asserted from SOURCE semantics, not observed per row. It is not evidence.",
+  "",
+  "  the same, per ingestion block -- this is the measurement of what was dropped",
+  "    block                                                               rows    conf    evid    cell",
+  "    cell_complete.json.gz:reg                                        612,133   0.000   0.492   0.492",
+  "    cell_complete.json.gz:ppi                                        191,447   0.000   0.000   0.000",
+  "    humap2.txt                                                        90,889   1.000   1.000   0.000",
+  "    cell_complete.json.gz:codep                                       76,749   1.000   1.000   0.000",
+  "    rxn/reactome_interactions.tsv                                     72,114   0.000   1.000   0.000",
+  "    intact_interactions.parquet                                       64,134   1.000   1.000   0.000",
+  "    complexes.parquet / rxn/complexportal_9606.tsv                    32,536   0.000   1.000   0.000",
+  "    cell_complete.json.gz:sig                                         17,432   0.000   0.000   0.000",
+  "",
+  "  confidence terciles, per relation type, over rows that CARRY a confidence",
+  "    codependency     q33 0.233  q67 0.281  76,749 rows carry one = 100.0% of the type",
+  "    complex          q33 0.000  q67 0.250  90,889 rows carry one = 73.6% of the type",
+  "    ppi              q33 0.560  q67 0.560  64,134 rows carry one = 19.6% of the type",
+  "\n  -> outputs/orphan/v4_relations.parquet",
+  "",
+  "------------------------------------------------------------------------------------------------------------",
+  "PART 2 -- dense_stage1's task, re-run with the confidence field that now exists",
+  "------------------------------------------------------------------------------------------------------------",
+  "  dense K562 (gwps.h5ad): 2,500/11,258 perturbations x 8,248 genes, 100.0% finite. The truncated nlz_* benches are NOT used.",
+  "  8,175 genes with a defined z; 422 tide / 7,753 non-tide; scorable knockouts 2,500; random floor recall@50 = 0.0061",
+  "  usable knockouts (scorable AND with a DepMap profile): 700",
+  "  relation rows whose BOTH ends carry a DepMap feature vector: 511,506",
+  "",
+  "  edge counts inside the usable universe          all   has-conf   top-terc   bot-terc    rewired",
+  "    codependency                     76,749     76,749     25,949     25,686     25,833",
+  "    complex                         117,374     85,439     38,315     47,124     38,107",
+  "    ppi                             317,383     62,187     53,170     44,501     50,672",
+  "  matched partner budget per knockout per type: mean 0.84, total tokens 1,773; knockouts with a non-empty matched set: 444/700",
+  "",
+  "  SOURCE COMPOSITION of the partner sets -- B vs A is confounded with a source swap wherever",
+  "  these differ, which is exactly why the B0 (has-confidence, any tercile) arm exists",
+  "    codependency     all   cell_complete.json.gz:codep 0.98, cell_complete.json.gz:ppi 0.01, rxn/reactome_interactions.tsv 0.00",
+  "    codependency     conf  cell_complete.json.gz:codep 0.98, cell_complete.json.gz:ppi 0.01, rxn/reactome_interactions.tsv 0.00",
+  "    codependency     top   cell_complete.json.gz:codep 0.97, cell_complete.json.gz:ppi 0.02, rxn/reactome_interactions.tsv 0.01",
+  "    complex          all   humap2.txt 0.69, cell_complete.json.gz:ppi 0.27, rxn/reactome_interactions.tsv 0.02",
+  "    complex          conf  humap2.txt 0.69, cell_complete.json.gz:ppi 0.27, rxn/reactome_interactions.tsv 0.02",
+  "    complex          top   humap2.txt 0.69, cell_complete.json.gz:ppi 0.28, rxn/reactome_interactions.tsv 0.02",
+  "    ppi              all   intact_interactions.parquet 1.00",
+  "    ppi              conf  intact_interactions.parquet 1.00",
+  "    ppi              top   intact_interactions.parquet 1.00",
+  "\n  token bundles built: 20; mean real tokens A_native 12.45, B_top 3.53, D_rewire 3.53",
+  "\n  FOLD 0: 466 train / 234 test knockouts (DISJOINT test sets across folds -- this is the unit of replication)",
+  "    A_native                                     recall@50 0.0121",
+  "    B_top                                        recall@50 0.0118",
+  "    D_rewire                                     recall@50 0.0079",
+  "    R_random                                     recall@50 0.0081",
+  "    B_top -> BOTTOM tercile (SWAP)               recall@50 0.0095",
+  "    JACCARD-copy on B_top partners (non-learned) recall@50 0.0078",
+  "\n  FOLD 1: 467 train / 233 test knockouts (DISJOINT test sets across folds -- this is the unit of replication)",
+  "    A_native                                     recall@50 0.0117",
+  "    B_top                                        recall@50 0.0093",
+  "    D_rewire                                     recall@50 0.0088",
+  "    R_random                                     recall@50 0.0080",
+  "    B_top -> BOTTOM tercile (SWAP)               recall@50 0.0075",
+  "    JACCARD-copy on B_top partners (non-learned) recall@50 0.0075",
+  "\n  FOLD 2: 467 train / 233 test knockouts (DISJOINT test sets across folds -- this is the unit of replication)",
+  "    A_native                                     recall@50 0.0091",
+  "    B_top                                        recall@50 0.0092",
+  "    D_rewire                                     recall@50 0.0095",
+  "    R_random                                     recall@50 0.0097",
+  "    B_top -> BOTTOM tercile (SWAP)               recall@50 0.0069",
+  "    JACCARD-copy on B_top partners (non-learned) recall@50 0.0081",
+  "",
+  "  arm                                             recall@50   sd(fold)                           per-fold",
+  "  TIDE-null (floor, non-learned)                     0.0070     0.0008   [0.0071 0.0077 0.0061]",
+  "  JACCARD-copy on A partners (non-learned)           0.0103     0.0015   [0.0107 0.0115 0.0087]",
+  "  JACCARD-copy on B_top partners (non-learned)       0.0078     0.0003   [0.0078 0.0075 0.0081]",
+  "  self_only                                          0.0094     0.0006   [0.0097 0.0098 0.0087]",
+  "  A_native                                           0.0109     0.0016   [0.0121 0.0117 0.0091]",
+  "  A_matched                                          0.0102     0.0028   [0.0131 0.01   0.0076]",
+  "  B0_matched                                         0.0099     0.0010   [0.009  0.011  0.0096]",
+  "  B_top                                              0.0101     0.0015   [0.0118 0.0093 0.0092]",
+  "  D_rewire                                           0.0087     0.0008   [0.0079 0.0088 0.0095]",
+  "  R_random                                           0.0086     0.0010   [0.0081 0.008  0.0097]",
+  "  B_top -> BOTTOM tercile (SWAP)                     0.0079     0.0014   [0.0095 0.0075 0.0069]",
+  "  B_top -> wrong-knockout (IDENTITY)                 0.0070     0.0004   [0.007  0.0074 0.0066]",
+  "  [codependency] A_native                            0.0111     0.0007   [0.0118 0.011  0.0104]",
+  "  [codependency] B0_matched                          0.0090     0.0003   [0.0092 0.0091 0.0086]",
+  "  [codependency] B_top                               0.0094     0.0012   [0.0108 0.0088 0.0087]",
+  "  [codependency] D_rewire                            0.0085     0.0002   [0.0085 0.0083 0.0087]",
+  "  [complex] A_native                                 0.0119     0.0003   [0.012  0.0122 0.0117]",
+  "  [complex] B0_matched                               0.0086     0.0008   [0.009  0.0091 0.0077]",
+  "  [complex] B_top                                    0.0102     0.0010   [0.0108 0.009  0.0108]",
+  "  [complex] D_rewire                                 0.0097     0.0001   [0.0097 0.0098 0.0097]",
+  "  [ppi] A_native                                     0.0106     0.0020   [0.0109 0.0124 0.0084]",
+  "  [ppi] B0_matched                                   0.0098     0.0019   [0.0105 0.0112 0.0076]",
+  "  [ppi] B_top                                        0.0099     0.0016   [0.0103 0.0113 0.0082]",
+  "  [ppi] D_rewire                                     0.0095     0.0016   [0.0087 0.0113 0.0083]",
+  "",
+  "  seed-only spread (optimiser noise inside a fold): sd 0.0000 -- NOT graded on",
+  "  contrast                                                       gap       sd      MDE  verdict",
+  "  G1 pooled  B_top vs A_native                               -0.0009   0.0013   0.0023  below MDE",
+  "  G3 pooled  B_top vs D_rewire                               +0.0013   0.0023   0.0039  below MDE",
+  "  G4 pooled  B_top vs BOTTOM-tercile SWAP                    +0.0021   0.0003   0.0005  MOVES",
+  "      aux    B_top vs B0_matched (confidence proper)         +0.0002   0.0023   0.0040  below MDE",
+  "      aux    B0_matched vs A_matched (source/annotation)     -0.0003   0.0033   0.0057  below MDE",
+  "      aux    B_top vs R_random (uniform control)             +0.0015   0.0021   0.0036  below MDE",
+  "      aux    B_top vs self_only                              +0.0007   0.0013   0.0022  below MDE",
+  "      aux    B_top vs wrong-knockout                         +0.0031   0.0015   0.0026  MOVES",
+  "  G2 [codependency] B_top vs A_native                        -0.0016   0.0006   0.0010  MOVES",
+  "  G3 [codependency] B_top vs D_rewire                        +0.0009   0.0012   0.0021  below MDE",
+  "     [codependency] B_top vs B0_matched                      +0.0005   0.0010   0.0017  below MDE",
+  "  G2 [complex] B_top vs A_native                             -0.0017   0.0013   0.0022  below MDE",
+  "  G3 [complex] B_top vs D_rewire                             +0.0005   0.0011   0.0019  below MDE",
+  "     [complex] B_top vs B0_matched                           +0.0016   0.0016   0.0028  below MDE",
+  "  G2 [ppi] B_top vs A_native                                 -0.0006   0.0004   0.0007  below MDE",
+  "  G3 [ppi] B_top vs D_rewire                                 +0.0005   0.0009   0.0016  below MDE",
+  "     [ppi] B_top vs B0_matched                               +0.0001   0.0004   0.0007  below MDE",
+  "",
+  "  PREDECLARED GATES",
+  "    FAIL  G1 confidence gating moves pooled recall",
+  "    PASS  G2 [codependency] confidence gating moves recall",
+  "    FAIL  G2 [complex] confidence gating moves recall",
+  "    FAIL  G2 [ppi] confidence gating moves recall",
+  "    FAIL  G3 real wiring beats DEGREE-MATCHED rewiring",
+  "    PASS  G4 confidence channel is READ (swap moves it)",
+  "    PASS  G5 model beats the best non-learned baseline",
+  "    best non-learned baseline: 'JACCARD-copy on A partners (non-learned)' at 0.0103; best model arm: 'A_native' at 0.0109",
+  "\n============================================================================================================",
+  "  VERDICT: PART 1 SUCCEEDED AND PART 2 IS THEREFORE INTERPRETABLE FOR THE FIRST TIME. The ingestion's legacy PPI block carries a confidence on 0.000 of its 327,695 rows, which is the arithmetic reason 'evidence strength not detected' was reported four times: the field being stratified on did not exist. Rebuilding from the sources on disk restores a per-row confidence to 19.6% of PPI edges (IntAct MI score) and 73.6% of complex edges (huMAP2 level, whose polarity was fixed empirically -- level 1 is the high end, corroborated by Complex Portal on 0.705 of its pairs against 0.100 at the low end), an evidence type to 55.1% of all rows and a cell context to 26.0% -- cell context reaching only regulatory edges, via the cell lines in which each TF actually has a UniBind ChIP dataset. PART 2, on dense_stage1's task with recall@50 as the raw held-out effect size and an MDE of 3*sd/sqrt(3) over 3 DISJOINT held-out knockout folds: confidence-gating the partner set to the top tercile moves recall from 0.0109 (all edges, current behaviour) to 0.0101, a gap of -0.0009 against an MDE of 0.0023 -- BELOW the floor. Real wiring at top confidence scores 0.0101 against a DEGREE-MATCHED configuration-model rewiring at 0.0087 (+0.0013, MDE 0.0039), which is the 'real vs shuffled wiring' question asked for the first time against a null that preserves the degree sequence rather than a uniform one. THE COUNTERFACTUAL SWAP IS THE PART THAT DECIDES WHAT A NULL MEANS: handing the top-confidence model the BOTTOM tercile at test time changes recall by +0.0021 against 0.0005, so the partner-confidence channel is READ. AND THE HEADLINE IS THE BASELINE: the cheapest non-learned arm, 'JACCARD-copy on A partners (non-learned)', scores 0.0103 against the best learned arm's 0.0109 -- the model is ahead of it. Decomposing the confidence gate: B_top vs B0_matched (confidence proper, source held fixed) is +0.0002 while B0_matched vs A_matched (the source/annotation swap, confidence not varied) is -0.0003; wherever the second is the larger of the two, what looks like a confidence effect is a source-selection effect, because IntAct is the only PPI source on disk that carries a per-row score."
+ ]
+}

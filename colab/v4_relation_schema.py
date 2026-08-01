@@ -881,6 +881,19 @@ def main():
     best_nl = max([nm for nm in arms if "non-learned" in nm], key=lambda nm: np.mean(per_fold[nm]))
     best_model = max([nm for nm in arms if "non-learned" not in nm and not nm.startswith("[")],
                      key=lambda nm: np.mean(per_fold[nm]))
+    # G0 IS THE GUARD AGAINST REPEATING THE EXACT ERROR THIS MODULE EXISTS TO FIX. If no arm is separated
+    # from the K/G random floor, then every gate below is comparing two quantities that are both noise
+    # around the same constant, and a PASS on any of them is an artefact of a 3-fold sd, not a finding.
+    # An underpowered configuration (small V4_ROWS/V4_KO/V4_EPOCHS -- i.e. the smoke) fails G0 by design.
+    floor_rand = float(K / A.shape[1])
+    g0_gap = float(np.mean(per_fold[best_model]) - floor_rand)
+    g0_sd = float(np.std(np.array(per_fold[best_model]) - floor_rand, ddof=1)) if N_FOLDS > 1 else 0.0
+    g0_mde = 3 * g0_sd / np.sqrt(N_FOLDS)
+    gapd["G0 best arm vs the K/G RANDOM FLOOR"] = {
+        "gap": g0_gap, "sd_cross_fold": g0_sd, "mde": g0_mde, "random_floor": floor_rand,
+        "per_fold_gap": (np.array(per_fold[best_model]) - floor_rand).tolist(),
+        "exceeds_mde": bool(g0_gap > g0_mde)}
+    gates["G0 ANY arm is separated from the random floor"] = bool(g0_gap > g0_mde)
     gates["G1 confidence gating moves pooled recall"] = gapd["G1 pooled  B_top vs A_native"]["exceeds_mde"]
     for rt in TYPES:
         gates[f"G2 [{rt}] confidence gating moves recall"] = \
@@ -892,11 +905,17 @@ def main():
     gates["G5 model beats the best non-learned baseline"] = bool(
         np.mean(per_fold[best_model]) > np.mean(per_fold[best_nl]))
     report("")
+    report(f"  G0 GUARD: best arm '{best_model}' at {np.mean(per_fold[best_model]):.4f} vs the K/G random "
+           f"floor {floor_rand:.4f} -> {g0_gap:+.4f} against MDE {g0_mde:.4f}")
     report("  PREDECLARED GATES")
     for k_, v in gates.items():
         report(f"    {'PASS' if v else 'FAIL'}  {k_}")
     report(f"    best non-learned baseline: '{best_nl}' at {np.mean(per_fold[best_nl]):.4f}; "
            f"best model arm: '{best_model}' at {np.mean(per_fold[best_model]):.4f}")
+    if not gates["G0 ANY arm is separated from the random floor"]:
+        report("    !! G0 FAILED: no arm clears the random floor, so G1-G5 are comparisons between two "
+               "noise terms and NONE of their PASS/FAIL labels is interpretable. This is the same defect "
+               "class the module was written to fix, and it is reported, not hidden.")
 
     cov_all = meta1["coverage"]
     ppi_conf = meta1["terciles"]["ppi"]["frac_of_type_with_conf"] if meta1["terciles"]["ppi"] else 0.0
@@ -939,7 +958,18 @@ def main():
         f"A_matched (the source/annotation swap, confidence not varied) is "
         f"{gapd['    aux    B0_matched vs A_matched (source/annotation)']['gap']:+.4f}; wherever the "
         f"second is the larger of the two, what looks like a confidence effect is a source-selection "
-        f"effect, because IntAct is the only PPI source on disk that carries a per-row score.")
+        f"effect, because IntAct is the only PPI source on disk that carries a per-row score."
+        + ("" if gates["G0 ANY arm is separated from the random floor"] else
+           f" READ NONE OF THE PART 2 GATES AS A RESULT IN THIS RUN: the G0 guard FAILED -- the best arm "
+           f"({np.mean(per_fold[best_model]):.4f}) is not separated from the {floor_rand:.4f} random "
+           f"floor ({g0_gap:+.4f} against MDE {g0_mde:.4f}), so every G1-G5 contrast is a difference "
+           f"between two noise terms around the same constant and a PASS on any of them is an artefact "
+           f"of a {N_FOLDS}-fold standard deviation. That is precisely the defect class this module "
+           f"exists to fix, so it is declared rather than reported as a finding. This configuration "
+           f"(V4_ROWS={N_ROWS or 'all'}, V4_KO={N_KO or 'all'}, V4_EPOCHS={EPOCHS}, V4_FOLDS={N_FOLDS}) "
+           f"is a plumbing check; the full-scale configuration is what carries the verdict. PART 1's "
+           f"coverage numbers above are exact regardless -- they are counts over the written table and "
+           f"do not depend on the model at all."))
     report("\n" + "=" * 108)
     report(f"  VERDICT: {verdict}")
 
