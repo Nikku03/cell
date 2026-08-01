@@ -16578,3 +16578,79 @@ There are **four** independent cell contexts. More genes and more perturbations 
 four; they do not create a fifth. This programme can show whether context is readable and can fit a
 four-context correction. It **cannot establish a universal cell-state encoder**, and a positive result is a
 reason to buy more cell lines, not a claim of biological generality.
+
+---
+
+# Dense stage 1 and 2: the arc's one confirmed win survives an untruncated target — and the metric had to be rebuilt twice to find that out
+
+`colab/dense_stage1.py`. One question: **the only control-confirmed result in the entire transformer arc was
+that attending over real interaction partners beats random ones. Does it survive when the zeros are real?**
+The task, the controls and the model are held identical to `cellformer_v1`; only the target changes, so any
+difference is attributable to the truncation and to the 8× larger knockout set and to nothing else.
+
+**10,337 knockouts × 8,175 genes, 100% dense**, against the bench's 1,385 × 7,223 at 3.5%.
+
+## Two metric defects, neither of which would have crashed anything
+
+**The bench's threshold rule is arithmetically impossible here.** Carried over verbatim — truth = every
+non-tide gene with |z| ≥ 1 — a dense knockout has a **median of 2,328 true specific movers** (q25 1,689, q75
+3,246) where the bench had a handful. recall@50 against a truth set of 2,328 cannot exceed 50/2328 = **0.021**
+whatever the model does. The first run returned **0.0060 for every arm and 0.0075 for the ORACLE**, which is
+that ceiling and not a measurement. It is recorded here because it would have read as a clean "stage 1 fails".
+Truth is now the fixed top 50, matched to K.
+
+**Masking out the tide genes is not the same as removing the tide.** With Y = |z| masked to non-tide, every
+arm scored cosine **~0.77 including the tide floor**, and the ORACLE scored **lower (0.647) than the floor**.
+That ordering is only possible when a shared component dominates the target: the best single guess is then the
+mean, and a genuine nearest neighbour is merely a noisier version of it. The same Y was the training Gram
+target and the oracle's retrieval key, so the model had a near-constant matrix to fit. Everything now runs on
+**S = |z| minus that gene's mean |z| over the training knockouts**, refit inside every split. Target Gram
+off-diagonal: **0.77 → 0.024**.
+
+**The second defect was caught only because a threshold-free second metric was reported beside recall.** It is
+kept for exactly that reason — a metric artifact shows up as the two metrics disagreeing, and no amount of
+re-reading the code would have produced the 0.647-below-0.79 ordering that gave it away.
+
+## Result — 3 seeds, 10,337 knockouts
+
+| arm | recall@50 | sd | cosine | sd |
+|---|---:|---:|---:|---:|
+| TIDE-null (floor) | 0.0083 | 0.0002 | −0.1555 | 0.0068 |
+| self-only (no neighbourhood) | 0.0252 | 0.0008 | 0.0801 | 0.0037 |
+| **FULL (real neighbours)** | **0.0353** | 0.0012 | **0.1004** | 0.0048 |
+| random partners (CONTROL) | 0.0167 | 0.0006 | 0.0763 | 0.0038 |
+| wrong-knockout (CONTROL) | 0.0091 | 0.0002 | 0.0350 | 0.0026 |
+| ORACLE (dense ceiling) | 0.0526 | 0.0010 | 0.3421 | 0.0022 |
+
+**STAGE 1 PASSES.** FULL − random = **+0.0186** against a minimum detectable increment of **0.0012** — fifteen
+times the floor — and the threshold-free metric agrees (+0.0241 against 0.0069). The interaction-context block
+is the one part of this architecture that has now cleared its gate on both targets.
+
+Two things the headline gap hides, and both are worth more than it is:
+
+- **FULL − self-only = +0.0101.** Real neighbours add that much *on top of* the perturbed gene's own features.
+- **self-only − random = +0.0085.** Random partners are not merely uninformative, they **actively dilute** the
+  self signal. So the +0.0186 decomposes into roughly half genuine neighbourhood information and half damage
+  done by the control. A gap against a random-partner control is therefore an over-statement of what the
+  neighbourhood contributes, and **+0.0101 is the number to quote.**
+
+The identity control lands where it should: wrong-knockout 0.0091 against a floor of 0.0083.
+
+## Stage 2 — the dense ceiling, and the retirement of 0.607
+
+The ORACLE — copy the single best-matching training knockout's real profile — reaches **0.0526**. FULL is at
+**67% of it**. The **0.607 this project has quoted throughout the arc is void**: it was a ceiling of the
+truncation, computed between vectors that were 96.5% structural zeros.
+
+**Neither 0.0353 nor 0.0526 is comparable to any earlier absolute number in this file**, and no rescaling
+makes them so — the two targets differ in censoring *and* in truth-set definition. The like-for-like quantity
+across targets is the gap between arms measured inside one target. That is what the gate grades, and it is the
+only thing carried forward.
+
+## Limits
+
+K562 only — stage 6 is the cross-cell test and this is not it. `TRUTH_N = 50` is a choice made to put the
+metric on a [0,1] scale; no threshold on dense data reproduces the bench's truth-set sizes, so there is no
+choice that would have been neutral. And the encoder here is a single attention block, smaller than
+`cellformer_v1`'s, so a capacity difference is confounded with the target change **for the absolute numbers**
+— though not for the real-vs-random gap, which is measured within one architecture.
