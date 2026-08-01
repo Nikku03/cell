@@ -262,7 +262,10 @@ def main():
         # a marginal that the normalisation has already destroyed would be the same error this stage exists
         # to prevent, running the other way. So two ORACLE diagnostics are added. They USE THE HELD-OUT
         # TRUTH and are not baselines; they exist to decompose where a head's gain actually comes from.
-        ko_scale = np.abs(Z[pe]).mean(1)                       # this knockout's own overall responsiveness
+        # Per UNIQUE knockout, then broadcast. Indexing Z by the full sampled vector would materialise a
+        # (n_pairs, n_genes) array -- 22.8 GiB at 750,000 pairs, which is exactly how the first run died.
+        _u, _inv = np.unique(pe, return_inverse=True)
+        ko_scale = np.abs(Z[_u]).mean(1)[_inv]                 # this knockout's own overall responsiveness
         out["ORACLE knockout-scale magnitude r"] = float(np.corrcoef(ko_scale, e_mg)[0, 1])
         out["ORACLE gene x knockout magnitude r"] = float(np.corrcoef(m_mag[ge] * ko_scale, e_mg)[0, 1])
         out["ORACLE knockout-scale responds AUC"] = auc(e_mv, ko_scale)
