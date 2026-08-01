@@ -14,13 +14,13 @@
   "note": "one value for every row here; present so v4 can vary it, not because it varies now"
  },
  "n_knockouts": 1385,
- "tokens_per_ko_mean": 16.135018050541515,
+ "tokens_per_ko_mean": 16.129963898916966,
  "token_type_fraction": {
-  "self": 0.06197699914977402,
-  "codep": 0.2774869109947644,
-  "complex": 0.15245894303485927,
-  "ppi": 0.2953864053340493,
-  "reg": 0.212690741486553
+  "self": 0.061996418979409135,
+  "codep": 0.27757385854968664,
+  "complex": 0.1521933751119069,
+  "ppi": 0.29547896150402864,
+  "reg": 0.21275738585496867
  },
  "power": {
   "n_seeds": 3,
@@ -38,125 +38,126 @@
  "heads": [
   {
    "seed": 0,
-   "prob_auc": 0.917556557030961,
-   "dir_auc_on_movers": 0.9796363862126949,
-   "uncertainty_vs_error_spearman": 0.5972547517116157,
-   "dir_base_rate": 0.7414748668670654
+   "prob_auc": 0.9110242820549341,
+   "prob_auc_pergene_baseline": 0.870013036646497,
+   "prob_delta": 0.04101124540843715,
+   "dir_auc_on_movers": 0.981644548719712,
+   "dir_auc_pergene_baseline": 0.9586542929701635,
+   "dir_delta": 0.022990255749548494,
+   "dir_base_rate": 0.7414748668670654,
+   "uncertainty_vs_error_spearman": 0.5735055728453342,
+   "uncertainty_baseline_totalmovement_spearman": 0.45172298660184995
   },
   {
    "seed": 1,
-   "prob_auc": 0.9097044926796427,
-   "dir_auc_on_movers": 0.9747122621940377,
-   "uncertainty_vs_error_spearman": 0.5590362370746128,
-   "dir_base_rate": 0.7096614837646484
+   "prob_auc": 0.9063745412889219,
+   "prob_auc_pergene_baseline": 0.8783886575604796,
+   "prob_delta": 0.02798588372844235,
+   "dir_auc_on_movers": 0.9751546849997036,
+   "dir_auc_pergene_baseline": 0.939066852367688,
+   "dir_delta": 0.03608783263201554,
+   "dir_base_rate": 0.7096614837646484,
+   "uncertainty_vs_error_spearman": 0.5706560306160657,
+   "uncertainty_baseline_totalmovement_spearman": 0.4254892942993946
   },
   {
    "seed": 2,
-   "prob_auc": 0.9077761865233656,
-   "dir_auc_on_movers": 0.9729813036263346,
-   "uncertainty_vs_error_spearman": 0.6447974343690543,
-   "dir_base_rate": 0.7221130728721619
+   "prob_auc": 0.9181100894004702,
+   "prob_auc_pergene_baseline": 0.8858737225441687,
+   "prob_delta": 0.03223636685630149,
+   "dir_auc_on_movers": 0.9752680070024725,
+   "dir_auc_pergene_baseline": 0.9586791666943713,
+   "dir_delta": 0.01658884030810126,
+   "dir_base_rate": 0.7221130728721619,
+   "uncertainty_vs_error_spearman": 0.6351626033189104,
+   "uncertainty_baseline_totalmovement_spearman": 0.42676805389679096
   }
  ],
  "metric3_transfer": {
   "RPE1": {
-   "model_mean": 0.08533512894086248,
-   "tide_mean": 0.0,
-   "delta": 0.08533512894086248,
+   "model_mean": 0.07531791907514451,
+   "tide_mean": 0.12608863198458573,
+   "random_mean": 0.00859344894026975,
+   "delta_vs_tide": -0.05077071290944121,
+   "delta_vs_random": 0.06672447013487476,
+   "cross_knockout": true,
    "per_seed_model": [
-    0.08272562220883861,
-    0.08749109457893368,
-    0.08578867003481513
+    0.07728323699421966,
+    0.06803468208092485,
+    0.08063583815028902
    ],
    "per_seed_tide": [
-    0.0,
-    0.0,
-    0.0
+    0.1323121387283237,
+    0.11959537572254333,
+    0.12635838150289017
    ],
    "n_kos": [
-    1382,
-    1382,
-    1382
-   ]
-  },
-  "HCT116": {
-   "model_mean": 0.06654867256637169,
-   "tide_mean": 0.02053097345132743,
-   "delta": 0.04601769911504426,
-   "per_seed_model": [
-    0.06761061946902656,
-    0.06566371681415929,
-    0.06637168141592921
-   ],
-   "per_seed_tide": [
-    0.02053097345132743,
-    0.02053097345132743,
-    0.02053097345132743
-   ],
-   "n_kos": [
-    113,
-    113,
-    113
+    346,
+    346,
+    346
    ]
   },
   "HepG2": {
-   "model_mean": 0.07759021764911665,
-   "tide_mean": 0.0,
-   "delta": 0.07759021764911665,
+   "model_mean": 0.07148362235067439,
+   "tide_mean": 0.09957610789980732,
+   "random_mean": 0.007745664739884393,
+   "delta_vs_tide": -0.028092485549132934,
+   "delta_vs_random": 0.06373795761079,
+   "cross_knockout": true,
    "per_seed_model": [
-    0.07517364823290432,
-    0.07974007344515387,
-    0.0778569312692918
+    0.07069364161849712,
+    0.0683815028901734,
+    0.0753757225433526
    ],
    "per_seed_tide": [
-    0.0,
-    0.0,
-    0.0
+    0.10138728323699421,
+    0.09601156069364164,
+    0.10132947976878613
    ],
    "n_kos": [
-    1384,
-    1384,
-    1384
+    346,
+    346,
+    346
    ]
   },
   "Jurkat": {
-   "model_mean": 0.11935847246449077,
-   "tide_mean": 0.11661476238829512,
-   "delta": 0.0027437100761956573,
+   "model_mean": 0.11589595375722545,
+   "tide_mean": 0.15075144508670524,
+   "random_mean": 0.007013487475915223,
+   "delta_vs_tide": -0.03485549132947979,
+   "delta_vs_random": 0.10888246628131022,
+   "cross_knockout": true,
    "per_seed_model": [
-    0.116298006839824,
-    0.11954076169738796,
-    0.12223664885626036
+    0.1106936416184971,
+    0.11803468208092487,
+    0.11895953757225435
    ],
    "per_seed_tide": [
-    0.11661476238829512,
-    0.11661476238829512,
-    0.11661476238829512
+    0.146242774566474,
+    0.15606936416184972,
+    0.14994219653179194
    ],
    "n_kos": [
-    1383,
-    1383,
-    1383
+    346,
+    346,
+    346
    ]
   },
-  "Melanoma": {
-   "model_mean": 0.053162393162393164,
-   "tide_mean": 0.038974358974358976,
-   "delta": 0.014188034188034188,
+  "HCT116": {
+   "model_mean": 0.08647058823529413,
+   "tide_mean": 0.021176470588235293,
+   "random_mean": 0.011176470588235296,
+   "delta_vs_tide": 0.06529411764705884,
+   "delta_vs_random": 0.07529411764705883,
+   "cross_knockout": true,
    "per_seed_model": [
-    0.05076923076923078,
-    0.05025641025641026,
-    0.05846153846153847
+    0.08647058823529413
    ],
    "per_seed_tide": [
-    0.038974358974358976,
-    0.038974358974358976,
-    0.038974358974358976
+    0.021176470588235293
    ],
    "n_kos": [
-    39,
-    39,
-    39
+    34
    ]
   }
  },
@@ -194,83 +195,83 @@
    ]
   },
   "self-only (no neighbourhood)": {
-   "metric1_mean": 0.3052773616140605,
-   "metric1_sd": 0.021934509780579734,
-   "metric2_mean": 0.014470134874759151,
-   "metric2_sd": 0.0009790632767562608,
+   "metric1_mean": 0.31633800149571467,
+   "metric1_sd": 0.028535489189690073,
+   "metric2_mean": 0.014181117533718693,
+   "metric2_sd": 0.0006159679138013792,
    "per_seed_m1": [
-    0.29251404318876656,
-    0.33614386013703246,
-    0.28717418151638247
+    0.30716863479796314,
+    0.35495727387860115,
+    0.2868880958105797
    ],
    "per_seed_m2": [
-    0.013179190751445089,
-    0.015549132947976878,
-    0.014682080924855491
+    0.014104046242774568,
+    0.014971098265895955,
+    0.01346820809248555
    ]
   },
   "CELLFORMER v1 (full)": {
-   "metric1_mean": 0.439301501020902,
-   "metric1_sd": 0.03147675670512088,
-   "metric2_mean": 0.02996146435452794,
-   "metric2_sd": 0.0014942193426081933,
+   "metric1_mean": 0.4301172450602788,
+   "metric1_sd": 0.03593297686062983,
+   "metric2_mean": 0.02967244701348748,
+   "metric2_sd": 0.002007000641233108,
    "per_seed_m1": [
-    0.3963250747503391,
-    0.4708370724044104,
-    0.45074235590795636
+    0.3998286570112537,
+    0.4805987618760236,
+    0.4099243162935593
    ],
    "per_seed_m2": [
-    0.031213872832369944,
-    0.030809248554913297,
-    0.027861271676300578
+    0.030635838150289023,
+    0.0315028901734104,
+    0.026878612716763006
    ]
   },
   "  - relation bias": {
-   "metric1_mean": 0.4279165918447377,
-   "metric1_sd": 0.039821731337171005,
-   "metric2_mean": 0.031156069364161848,
-   "metric2_sd": 0.0009544867881696191,
+   "metric1_mean": 0.42669288919220677,
+   "metric1_sd": 0.034564657712531664,
+   "metric2_mean": 0.0310597302504817,
+   "metric2_sd": 0.0010082062005357351,
    "per_seed_m1": [
-    0.3842852360879381,
-    0.48056867720118907,
-    0.4188958622450861
+    0.39223070803981114,
+    0.47394633638545436,
+    0.41390162315135476
    ],
    "per_seed_m2": [
-    0.032023121387283235,
-    0.03161849710982659,
-    0.029826589595375725
+    0.030346820809248554,
+    0.03248554913294798,
+    0.030346820809248554
    ]
   },
   "  - sign channel": {
-   "metric1_mean": 0.4194921944923453,
-   "metric1_sd": 0.020347730366432004,
-   "metric2_mean": 0.03140655105973025,
-   "metric2_sd": 0.0002230411734641651,
+   "metric1_mean": 0.42716460939889717,
+   "metric1_sd": 0.01977704712154856,
+   "metric2_mean": 0.03026974951830443,
+   "metric2_sd": 0.001771173054995202,
    "per_seed_m1": [
-    0.3912971261474409,
-    0.42860738108888957,
-    0.43857207624070543
+    0.40602745161853127,
+    0.45359549612866845,
+    0.42187088044949167
    ],
    "per_seed_m2": [
-    0.0315028901734104,
-    0.031618497109826595,
-    0.031098265895953763
+    0.03017341040462428,
+    0.032485549132947975,
+    0.028150289017341047
    ]
   },
   "  ctrl: shuffled sign": {
-   "metric1_mean": 0.44759541169919653,
-   "metric1_sd": 0.017806971025091347,
-   "metric2_mean": 0.030539499036608866,
-   "metric2_sd": 0.0011952263906952485,
+   "metric1_mean": 0.4217498374199819,
+   "metric1_sd": 0.027353392815503856,
+   "metric2_mean": 0.030096339113680152,
+   "metric2_sd": 0.0007859760329237445,
    "per_seed_m1": [
-    0.4224495087761055,
-    0.46134946445594205,
-    0.45898726186554223
+    0.38573802526450984,
+    0.4275216032852576,
+    0.45198988371017806
    ],
    "per_seed_m2": [
-    0.03219653179190752,
-    0.030000000000000002,
-    0.029421965317919074
+    0.029017341040462424,
+    0.030404624277456646,
+    0.030867052023121386
    ]
   },
   "  ctrl: random partners": {
@@ -290,35 +291,35 @@
    ]
   },
   "  ctrl: wrong-knockout": {
-   "metric1_mean": 0.10904296940583208,
-   "metric1_sd": 0.016743892765076047,
-   "metric2_mean": 0.008824662813102119,
-   "metric2_sd": 0.00016574807836305705,
+   "metric1_mean": 0.1117437114383316,
+   "metric1_sd": 0.00321085476276486,
+   "metric2_mean": 0.00816955684007707,
+   "metric2_sd": 0.0009641615416722003,
    "per_seed_m1": [
-    0.11035285700912673,
-    0.12886362237796892,
-    0.0879124288304006
+    0.11325867878388597,
+    0.10727906740784358,
+    0.11469338812326522
    ],
    "per_seed_m2": [
-    0.008843930635838151,
+    0.008670520231213872,
     0.009017341040462428,
-    0.00861271676300578
+    0.006820809248554914
    ]
   },
   "residual head (tide + learned)": {
-   "metric1_mean": 0.3658317513449094,
-   "metric1_sd": 0.03584342952251868,
-   "metric2_mean": 0.011445086705202313,
-   "metric2_sd": 0.0005741681859634433,
+   "metric1_mean": 0.37158964997536664,
+   "metric1_sd": 0.03295275981361954,
+   "metric2_mean": 0.011117533718689787,
+   "metric2_sd": 0.0008260482123401151,
    "per_seed_m1": [
-    0.32580074541310233,
-    0.4127780189299129,
-    0.35891648969171297
+    0.3431992238175203,
+    0.41778977433260855,
+    0.35377995177597105
    ],
    "per_seed_m2": [
-    0.011907514450867053,
-    0.011791907514450868,
-    0.010635838150289017
+    0.011098265895953757,
+    0.01213872832369942,
+    0.010115606936416185
    ]
   },
   "ORACLE (retrieval ceiling)": {
@@ -339,14 +340,14 @@
   }
  },
  "deltas": {
-  "vs_self_only": 0.1340241394068415,
-  "vs_random_partners": 0.18525016882406914,
-  "sign_over_shuffled_sign": -0.008293910678294547,
-  "relation_bias": 0.011384909176164304
+  "vs_self_only": 0.11377924356456415,
+  "vs_random_partners": 0.17606591286344597,
+  "sign_over_shuffled_sign": 0.00836740764029692,
+  "relation_bias": 0.0034243558680720487
  },
  "power_observed": {
-  "pooled_seed_sd": 0.02612527273320333,
-  "min_detectable_increment": 0.04525029973550199
+  "pooled_seed_sd": 0.025975468803594116,
+  "min_detectable_increment": 0.044990831718245375
  },
  "underpowered": {
   "vs_self_only": false,
@@ -354,7 +355,7 @@
   "sign_over_shuffled_sign": true,
   "relation_bias": true
  },
- "verdict": "CELLFORMER v1 reaches metric-1 recall@50 0.4393 +/- 0.0315 against a tide floor of 0.2910 and an oracle of 0.6395, and metric-2 recall 0.0300 on the residual after the rank-20 shared core is projected out. THE NEIGHBOURHOOD IS THE ONLY THING THAT CLEARLY PAYS: full minus self-only +0.1340, full minus random partners +0.1853. THE SIGN CHANNEL IS NOT DETECTED at -0.0083 over its own SHUFFLED-sign control -- scored against shuffled sign, never against no-sign, because sign-over-nothing conflates 'sign matters' with 'an extra channel matters'. The relation-specific attention bias is worth +0.0114. Observed pooled seed sd is 0.0261, so the minimum detectable increment at 3 seeds is +0.0453: any delta inside that band is UNDERPOWERED, not null (2/4 of the reported deltas are). This is v1 for the current task and says nothing about mixed-curvature geometry, sheaf layers, hypergraph events, continuous time or multimodal heads.",
+ "verdict": "CELLFORMER v1 reaches metric-1 recall@50 0.4301 +/- 0.0359 against a tide floor of 0.2910 and an oracle of 0.6395, and metric-2 recall 0.0297 on the residual after the rank-20 shared core is projected out. THE NEIGHBOURHOOD IS THE ONLY THING THAT CLEARLY PAYS: full minus self-only +0.1138, full minus random partners +0.1761. THE SIGN CHANNEL IS NOT DETECTED at +0.0084 over its own SHUFFLED-sign control -- scored against shuffled sign, never against no-sign, because sign-over-nothing conflates 'sign matters' with 'an extra channel matters'. The relation-specific attention bias is worth +0.0034. Observed pooled seed sd is 0.0260, so the minimum detectable increment at 3 seeds is +0.0450: any delta inside that band is UNDERPOWERED, not null (2/4 of the reported deltas are). This is v1 for the current task and says nothing about mixed-curvature geometry, sheaf layers, hypergraph events, continuous time or multimodal heads.",
  "limits": [
   "this is v1 for the CURRENT task -- ranking specific movers for a held-out knockout in one cell type at one timepoint. It is not a whole-cell model and the staged versions above it are untested hypotheses",
   "the readout has ~0.12 of headroom between the tide floor and the retrieval oracle, and six architectural levers have each moved it by <= 0.02. Metric 1 may be unable to separate v1 from transformer_ko whatever v1 is worth, which is why metric 2 is computed",
@@ -396,69 +397,69 @@
   "\n  SPLIT 0: 1,039 train / 346 test knockouts",
   "    seed 0  TIDE-null (floor)                  m1 0.2821  m2 0.0047  (n=176)",
   "    seed 0  classical raw-cosine               m1 0.2557  m2 0.0146  (n=176)",
-  "    seed 0  self-only (no neighbourhood)       m1 0.2925  m2 0.0132  (n=176)",
-  "    seed 0  CELLFORMER v1 (full)               m1 0.3963  m2 0.0312  (n=176)",
-  "    seed 0    - relation bias                  m1 0.3843  m2 0.0320  (n=176)",
-  "    seed 0    - sign channel                   m1 0.3913  m2 0.0315  (n=176)",
-  "    seed 0    ctrl: shuffled sign              m1 0.4224  m2 0.0322  (n=176)",
+  "    seed 0  self-only (no neighbourhood)       m1 0.3072  m2 0.0141  (n=176)",
+  "    seed 0  CELLFORMER v1 (full)               m1 0.3998  m2 0.0306  (n=176)",
+  "    seed 0    - relation bias                  m1 0.3922  m2 0.0303  (n=176)",
+  "    seed 0    - sign channel                   m1 0.4060  m2 0.0302  (n=176)",
+  "    seed 0    ctrl: shuffled sign              m1 0.3857  m2 0.0290  (n=176)",
   "    seed 0    ctrl: random partners            m1 0.2408  m2 0.0092  (n=176)",
-  "    seed 0    ctrl: wrong-knockout             m1 0.1104  m2 0.0088  (n=176)",
-  "    seed 0  residual head (tide + learned)     m1 0.3258  m2 0.0119  (n=176)",
-  "    seed 0  HEADS  response-prob AUC 0.9176 | direction AUC 0.9796 (base rate 0.741) | uncertainty-vs-error rho +0.5973",
-  "      METRIC 3 RPE1       model 0.0827  tide 0.0000  delta +0.0827  (1382 KOs, 6,254 shared genes)",
-  "      METRIC 3 HCT116     model 0.0676  tide 0.0205  delta +0.0471  (113 KOs, 5,950 shared genes)",
-  "      METRIC 3 HepG2      model 0.0752  tide 0.0000  delta +0.0752  (1384 KOs, 6,558 shared genes)",
-  "      METRIC 3 Jurkat     model 0.1163  tide 0.1166  delta -0.0003  (1383 KOs, 6,504 shared genes)",
-  "      METRIC 3 Melanoma   model 0.0508  tide 0.0390  delta +0.0118  (39 KOs, 6,476 shared genes)",
+  "    seed 0    ctrl: wrong-knockout             m1 0.1133  m2 0.0087  (n=176)",
+  "    seed 0  residual head (tide + learned)     m1 0.3432  m2 0.0111  (n=176)",
+  "    seed 0  HEADS  prob AUC 0.9110 (per-gene base 0.8700, delta +0.0410) | direction AUC 0.9816 (per-gene base 0.9587, delta +0.0230, base rate 0.741) | uncertainty rho +0.5735 (total-movement base +0.4517)",
+  "      METRIC 3 RPE1       model 0.0773  tide(non-tide universe) 0.1323  random 0.0084  delta-vs-tide -0.0550  (346 HELD-OUT KOs, 6,128 scored genes)",
+  "      HCT116: 28 shared HELD-OUT knockouts -- too thin, unavailable",
+  "      METRIC 3 HepG2      model 0.0707  tide(non-tide universe) 0.1014  random 0.0076  delta-vs-tide -0.0307  (346 HELD-OUT KOs, 6,503 scored genes)",
+  "      METRIC 3 Jurkat     model 0.1107  tide(non-tide universe) 0.1462  random 0.0066  delta-vs-tide -0.0355  (346 HELD-OUT KOs, 6,487 scored genes)",
+  "      Melanoma: 6 shared HELD-OUT knockouts -- too thin, unavailable",
   "    seed 0  ORACLE (retrieval ceiling)         m1 0.6408  m2 0.0833  (n=176)",
   "\n  SPLIT 1: 1,039 train / 346 test knockouts",
   "    seed 1  TIDE-null (floor)                  m1 0.3223  m2 0.0040  (n=160)",
   "    seed 1  classical raw-cosine               m1 0.3523  m2 0.0146  (n=160)",
-  "    seed 1  self-only (no neighbourhood)       m1 0.3361  m2 0.0155  (n=160)",
-  "    seed 1  CELLFORMER v1 (full)               m1 0.4708  m2 0.0308  (n=160)",
-  "    seed 1    - relation bias                  m1 0.4806  m2 0.0316  (n=160)",
-  "    seed 1    - sign channel                   m1 0.4286  m2 0.0316  (n=160)",
-  "    seed 1    ctrl: shuffled sign              m1 0.4613  m2 0.0300  (n=160)",
+  "    seed 1  self-only (no neighbourhood)       m1 0.3550  m2 0.0150  (n=160)",
+  "    seed 1  CELLFORMER v1 (full)               m1 0.4806  m2 0.0315  (n=160)",
+  "    seed 1    - relation bias                  m1 0.4739  m2 0.0325  (n=160)",
+  "    seed 1    - sign channel                   m1 0.4536  m2 0.0325  (n=160)",
+  "    seed 1    ctrl: shuffled sign              m1 0.4275  m2 0.0304  (n=160)",
   "    seed 1    ctrl: random partners            m1 0.2939  m2 0.0116  (n=160)",
-  "    seed 1    ctrl: wrong-knockout             m1 0.1289  m2 0.0090  (n=160)",
-  "    seed 1  residual head (tide + learned)     m1 0.4128  m2 0.0118  (n=160)",
-  "    seed 1  HEADS  response-prob AUC 0.9097 | direction AUC 0.9747 (base rate 0.710) | uncertainty-vs-error rho +0.5590",
-  "      METRIC 3 RPE1       model 0.0875  tide 0.0000  delta +0.0875  (1382 KOs, 6,254 shared genes)",
-  "      METRIC 3 HCT116     model 0.0657  tide 0.0205  delta +0.0451  (113 KOs, 5,950 shared genes)",
-  "      METRIC 3 HepG2      model 0.0797  tide 0.0000  delta +0.0797  (1384 KOs, 6,558 shared genes)",
-  "      METRIC 3 Jurkat     model 0.1195  tide 0.1166  delta +0.0029  (1383 KOs, 6,504 shared genes)",
-  "      METRIC 3 Melanoma   model 0.0503  tide 0.0390  delta +0.0113  (39 KOs, 6,476 shared genes)",
+  "    seed 1    ctrl: wrong-knockout             m1 0.1073  m2 0.0090  (n=160)",
+  "    seed 1  residual head (tide + learned)     m1 0.4178  m2 0.0121  (n=160)",
+  "    seed 1  HEADS  prob AUC 0.9064 (per-gene base 0.8784, delta +0.0280) | direction AUC 0.9752 (per-gene base 0.9391, delta +0.0361, base rate 0.710) | uncertainty rho +0.5707 (total-movement base +0.4255)",
+  "      METRIC 3 RPE1       model 0.0680  tide(non-tide universe) 0.1196  random 0.0083  delta-vs-tide -0.0516  (346 HELD-OUT KOs, 6,128 scored genes)",
+  "      HCT116: 26 shared HELD-OUT knockouts -- too thin, unavailable",
+  "      METRIC 3 HepG2      model 0.0684  tide(non-tide universe) 0.0960  random 0.0084  delta-vs-tide -0.0276  (346 HELD-OUT KOs, 6,503 scored genes)",
+  "      METRIC 3 Jurkat     model 0.1180  tide(non-tide universe) 0.1561  random 0.0076  delta-vs-tide -0.0380  (346 HELD-OUT KOs, 6,487 scored genes)",
+  "      Melanoma: 14 shared HELD-OUT knockouts -- too thin, unavailable",
   "    seed 1  ORACLE (retrieval ceiling)         m1 0.6518  m2 0.0762  (n=160)",
   "\n  SPLIT 2: 1,039 train / 346 test knockouts",
   "    seed 2  TIDE-null (floor)                  m1 0.2687  m2 0.0046  (n=179)",
   "    seed 2  classical raw-cosine               m1 0.2770  m2 0.0173  (n=179)",
-  "    seed 2  self-only (no neighbourhood)       m1 0.2872  m2 0.0147  (n=179)",
-  "    seed 2  CELLFORMER v1 (full)               m1 0.4507  m2 0.0279  (n=179)",
-  "    seed 2    - relation bias                  m1 0.4189  m2 0.0298  (n=179)",
-  "    seed 2    - sign channel                   m1 0.4386  m2 0.0311  (n=179)",
-  "    seed 2    ctrl: shuffled sign              m1 0.4590  m2 0.0294  (n=179)",
+  "    seed 2  self-only (no neighbourhood)       m1 0.2869  m2 0.0135  (n=179)",
+  "    seed 2  CELLFORMER v1 (full)               m1 0.4099  m2 0.0269  (n=179)",
+  "    seed 2    - relation bias                  m1 0.4139  m2 0.0303  (n=179)",
+  "    seed 2    - sign channel                   m1 0.4219  m2 0.0282  (n=179)",
+  "    seed 2    ctrl: shuffled sign              m1 0.4520  m2 0.0309  (n=179)",
   "    seed 2    ctrl: random partners            m1 0.2275  m2 0.0094  (n=179)",
-  "    seed 2    ctrl: wrong-knockout             m1 0.0879  m2 0.0086  (n=179)",
-  "    seed 2  residual head (tide + learned)     m1 0.3589  m2 0.0106  (n=179)",
-  "    seed 2  HEADS  response-prob AUC 0.9078 | direction AUC 0.9730 (base rate 0.722) | uncertainty-vs-error rho +0.6448",
-  "      METRIC 3 RPE1       model 0.0858  tide 0.0000  delta +0.0858  (1382 KOs, 6,254 shared genes)",
-  "      METRIC 3 HCT116     model 0.0664  tide 0.0205  delta +0.0458  (113 KOs, 5,950 shared genes)",
-  "      METRIC 3 HepG2      model 0.0779  tide 0.0000  delta +0.0779  (1384 KOs, 6,558 shared genes)",
-  "      METRIC 3 Jurkat     model 0.1222  tide 0.1166  delta +0.0056  (1383 KOs, 6,504 shared genes)",
-  "      METRIC 3 Melanoma   model 0.0585  tide 0.0390  delta +0.0195  (39 KOs, 6,476 shared genes)",
+  "    seed 2    ctrl: wrong-knockout             m1 0.1147  m2 0.0068  (n=179)",
+  "    seed 2  residual head (tide + learned)     m1 0.3538  m2 0.0101  (n=179)",
+  "    seed 2  HEADS  prob AUC 0.9181 (per-gene base 0.8859, delta +0.0322) | direction AUC 0.9753 (per-gene base 0.9587, delta +0.0166, base rate 0.722) | uncertainty rho +0.6352 (total-movement base +0.4268)",
+  "      METRIC 3 RPE1       model 0.0806  tide(non-tide universe) 0.1264  random 0.0090  delta-vs-tide -0.0457  (346 HELD-OUT KOs, 6,128 scored genes)",
+  "      METRIC 3 HCT116     model 0.0865  tide(non-tide universe) 0.0212  random 0.0112  delta-vs-tide +0.0653  (34 HELD-OUT KOs, 5,950 scored genes)",
+  "      METRIC 3 HepG2      model 0.0754  tide(non-tide universe) 0.1013  random 0.0073  delta-vs-tide -0.0260  (346 HELD-OUT KOs, 6,503 scored genes)",
+  "      METRIC 3 Jurkat     model 0.1190  tide(non-tide universe) 0.1499  random 0.0068  delta-vs-tide -0.0310  (346 HELD-OUT KOs, 6,487 scored genes)",
+  "      Melanoma: 8 shared HELD-OUT knockouts -- too thin, unavailable",
   "    seed 2  ORACLE (retrieval ceiling)         m1 0.6260  m2 0.0917  (n=179)",
   "\n  arm                                           metric1          metric2",
   "  TIDE-null (floor)                      0.2910 +/- 0.0227   0.0044 +/- 0.0003",
   "  classical raw-cosine                   0.2950 +/- 0.0414   0.0155 +/- 0.0013",
-  "  self-only (no neighbourhood)           0.3053 +/- 0.0219   0.0145 +/- 0.0010",
-  "  CELLFORMER v1 (full)                   0.4393 +/- 0.0315   0.0300 +/- 0.0015",
-  "    - relation bias                      0.4279 +/- 0.0398   0.0312 +/- 0.0010",
-  "    - sign channel                       0.4195 +/- 0.0203   0.0314 +/- 0.0002",
-  "    ctrl: shuffled sign                  0.4476 +/- 0.0178   0.0305 +/- 0.0012",
+  "  self-only (no neighbourhood)           0.3163 +/- 0.0285   0.0142 +/- 0.0006",
+  "  CELLFORMER v1 (full)                   0.4301 +/- 0.0359   0.0297 +/- 0.0020",
+  "    - relation bias                      0.4267 +/- 0.0346   0.0311 +/- 0.0010",
+  "    - sign channel                       0.4272 +/- 0.0198   0.0303 +/- 0.0018",
+  "    ctrl: shuffled sign                  0.4217 +/- 0.0274   0.0301 +/- 0.0008",
   "    ctrl: random partners                0.2541 +/- 0.0287   0.0101 +/- 0.0011",
-  "    ctrl: wrong-knockout                 0.1090 +/- 0.0167   0.0088 +/- 0.0002",
-  "  residual head (tide + learned)         0.3658 +/- 0.0358   0.0114 +/- 0.0006",
+  "    ctrl: wrong-knockout                 0.1117 +/- 0.0032   0.0082 +/- 0.0010",
+  "  residual head (tide + learned)         0.3716 +/- 0.0330   0.0111 +/- 0.0008",
   "  ORACLE (retrieval ceiling)             0.6395 +/- 0.0105   0.0837 +/- 0.0063",
-  "\n  observed pooled seed sd 0.0261 -> minimum detectable increment +0.0453 at 3 seeds"
+  "\n  observed pooled seed sd 0.0260 -> minimum detectable increment +0.0450 at 3 seeds"
  ]
 }
