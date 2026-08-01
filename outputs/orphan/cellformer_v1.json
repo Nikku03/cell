@@ -13,19 +13,19 @@
   "cell_type": "K562",
   "note": "one value for every row here; present so v4 can vary it, not because it varies now"
  },
- "n_knockouts": 300,
- "tokens_per_ko_mean": 15.913333333333334,
+ "n_knockouts": 1385,
+ "tokens_per_ko_mean": 16.135018050541515,
  "token_type_fraction": {
-  "self": 0.06284038542103058,
-  "codep": 0.2832006702974445,
-  "complex": 0.14704650188521157,
-  "ppi": 0.295978215333054,
-  "reg": 0.21093422706325932
+  "self": 0.06197699914977402,
+  "codep": 0.2774869109947644,
+  "complex": 0.15245894303485927,
+  "ppi": 0.2953864053340493,
+  "reg": 0.212690741486553
  },
  "power": {
-  "n_seeds": 1,
+  "n_seeds": 3,
   "assumed_seed_sd": 0.03,
-  "min_detectable_increment": 0.09,
+  "min_detectable_increment": 0.05196152422706632,
   "statement": "an arm inside this band is UNDERPOWERED, not null"
  },
  "priors_recorded_before_run": {
@@ -34,9 +34,186 @@
   "transformer_graphnet_real_vs_shuffled_wiring": 0.005,
   "expectation": "v1 is expected to tie transformer_ko (0.490) and the sign arm is expected to be a wash. If it is, imputed signs are a layer with provenance and no measured use, which is worth knowing before anything is built on them"
  },
- "smoke": true,
- "smoke_forward_ok": true,
- "verdict": "SCAFFOLD ONLY -- structure built and forward-validated, no arm measured. The sign channel plugs in at SIGN_MODE=measured+imputed the moment outputs/orphan/impute_reg_sign.json exists, and raises rather than silently falling back to the measured edges if it does not.",
+ "smoke": false,
+ "arms": {
+  "TIDE-null (floor)": {
+   "metric1_mean": 0.2910495706910185,
+   "metric1_sd": 0.022731665952870704,
+   "metric2_mean": 0.004431599229287091,
+   "metric2_sd": 0.00032125880540526163,
+   "per_seed_m1": [
+    0.28214948932021183,
+    0.32225188920811526,
+    0.26874733354472835
+   ],
+   "per_seed_m2": [
+    0.004739884393063584,
+    0.003988439306358381,
+    0.004566473988439307
+   ]
+  },
+  "classical raw-cosine": {
+   "metric1_mean": 0.29500614516075035,
+   "metric1_sd": 0.04143483407476052,
+   "metric2_mean": 0.015491329479768787,
+   "metric2_sd": 0.0012672896841930915,
+   "per_seed_m1": [
+    0.25569689750554847,
+    0.3522952677732548,
+    0.27702627020344767
+   ],
+   "per_seed_m2": [
+    0.014624277456647398,
+    0.014566473988439306,
+    0.017283236994219655
+   ]
+  },
+  "self-only (no neighbourhood)": {
+   "metric1_mean": 0.3083245228349153,
+   "metric1_sd": 0.030893957236170097,
+   "metric2_mean": 0.015375722543352602,
+   "metric2_sd": 0.00148574779565757,
+   "per_seed_m1": [
+    0.27613963833864336,
+    0.3500051420020247,
+    0.29882878816407776
+   ],
+   "per_seed_m2": [
+    0.013352601156069368,
+    0.016878612716763004,
+    0.015895953757225433
+   ]
+  },
+  "CELLFORMER v1 (full)": {
+   "metric1_mean": 0.4506176632133227,
+   "metric1_sd": 0.0421124216879284,
+   "metric2_mean": 0.03221579961464355,
+   "metric2_sd": 0.0008909154544660438,
+   "per_seed_m1": [
+    0.40441262577269915,
+    0.5062625385933139,
+    0.44117782527395494
+   ],
+   "per_seed_m2": [
+    0.03127167630057803,
+    0.03341040462427746,
+    0.03196531791907515
+   ]
+  },
+  "  - relation bias": {
+   "metric1_mean": 0.4650690367042108,
+   "metric1_sd": 0.03713766479705937,
+   "metric2_mean": 0.03235067437379576,
+   "metric2_sd": 0.0013657067550419532,
+   "per_seed_m1": [
+    0.42937166990553577,
+    0.5162806145013483,
+    0.44955482570574834
+   ],
+   "per_seed_m2": [
+    0.03127167630057803,
+    0.03427745664739884,
+    0.0315028901734104
+   ]
+  },
+  "  - sign channel": {
+   "metric1_mean": 0.44119465226050364,
+   "metric1_sd": 0.034581846088557675,
+   "metric2_mean": 0.0315028901734104,
+   "metric2_sd": 0.0020631870864248275,
+   "per_seed_m1": [
+    0.3988475649026292,
+    0.48355543885982694,
+    0.44118095301905463
+   ],
+   "per_seed_m2": [
+    0.02971098265895954,
+    0.030404624277456646,
+    0.03439306358381503
+   ]
+  },
+  "  ctrl: shuffled sign": {
+   "metric1_mean": 0.45531349340437677,
+   "metric1_sd": 0.05414490363006542,
+   "metric2_mean": 0.031040462427745663,
+   "metric2_sd": 0.0013036785991550905,
+   "per_seed_m1": [
+    0.39741467057433494,
+    0.5276599164657677,
+    0.44086589317302755
+   ],
+   "per_seed_m2": [
+    0.029364161849710982,
+    0.031213872832369944,
+    0.032543352601156074
+   ]
+  },
+  "  ctrl: random partners": {
+   "metric1_mean": 0.2664405923950953,
+   "metric1_sd": 0.027094720155001657,
+   "metric2_mean": 0.009460500963391136,
+   "metric2_sd": 0.00045839604059230493,
+   "per_seed_m1": [
+    0.2406515082688509,
+    0.30387852756845996,
+    0.2547917413479751
+   ],
+   "per_seed_m2": [
+    0.009942196531791908,
+    0.008843930635838151,
+    0.009595375722543353
+   ]
+  },
+  "  ctrl: wrong-knockout": {
+   "metric1_mean": 0.11034698823592082,
+   "metric1_sd": 0.003169885780277298,
+   "metric2_mean": 0.00789980732177264,
+   "metric2_sd": 0.00019074171361486864,
+   "per_seed_m1": [
+    0.11225896080161495,
+    0.11290248803036798,
+    0.10587951587577955
+   ],
+   "per_seed_m2": [
+    0.008150289017341042,
+    0.007861271676300578,
+    0.007687861271676301
+   ]
+  },
+  "ORACLE (retrieval ceiling)": {
+   "metric1_mean": 0.639534402948103,
+   "metric1_sd": 0.010548554439639455,
+   "metric2_mean": 0.08373795761078999,
+   "metric2_sd": 0.006308498200858253,
+   "per_seed_m1": [
+    0.640815560961435,
+    0.6517653808308623,
+    0.6260222670520117
+   ],
+   "per_seed_m2": [
+    0.08329479768786127,
+    0.07624277456647399,
+    0.09167630057803468
+   ]
+  }
+ },
+ "deltas": {
+  "vs_self_only": 0.1422931403784074,
+  "vs_random_partners": 0.18417707081822737,
+  "sign_over_shuffled_sign": -0.004695830191054073,
+  "relation_bias": -0.014451373490888098
+ },
+ "power_observed": {
+  "pooled_seed_sd": 0.030385045384233055,
+  "min_detectable_increment": 0.052628442395777845
+ },
+ "underpowered": {
+  "vs_self_only": false,
+  "vs_random_partners": false,
+  "sign_over_shuffled_sign": true,
+  "relation_bias": true
+ },
+ "verdict": "CELLFORMER v1 reaches metric-1 recall@50 0.4506 +/- 0.0421 against a tide floor of 0.2910 and an oracle of 0.6395, and metric-2 recall 0.0322 on the residual after the rank-20 shared core is projected out. THE NEIGHBOURHOOD IS THE ONLY THING THAT CLEARLY PAYS: full minus self-only +0.1423, full minus random partners +0.1842. THE SIGN CHANNEL IS NOT DETECTED at -0.0047 over its own SHUFFLED-sign control -- scored against shuffled sign, never against no-sign, because sign-over-nothing conflates 'sign matters' with 'an extra channel matters'. The relation-specific attention bias is worth -0.0145. Observed pooled seed sd is 0.0304, so the minimum detectable increment at 3 seeds is +0.0526: any delta inside that band is UNDERPOWERED, not null (2/4 of the reported deltas are). This is v1 for the current task and says nothing about mixed-curvature geometry, sheaf layers, hypergraph events, continuous time or multimodal heads.",
  "limits": [
   "this is v1 for the CURRENT task -- ranking specific movers for a held-out knockout in one cell type at one timepoint. It is not a whole-cell model and the staged versions above it are untested hypotheses",
   "the readout has ~0.12 of headroom between the tide floor and the retrieval oracle, and six architectural levers have each moved it by <= 0.02. Metric 1 may be unable to separate v1 from transformer_ko whatever v1 is worth, which is why metric 2 is computed",
@@ -50,28 +227,69 @@
   "====================================================================================================",
   "CELLFORMER v1 -- typed relational transformer, explicit tide baseline, two metrics",
   "====================================================================================================",
-  "  SIGN_MODE=measured  seeds=1  smoke=True",
+  "  SIGN_MODE=measured  seeds=3  smoke=False",
   "  SCOPE: this is v1 of a staged plan. It tests typed relational attention plus a sign channel.",
   "  It does NOT test mixed-curvature geometry, sheaf layers, hypergraph events, continuous time,",
   "  multimodal heads or whole-cell simulation, and claims nothing about them.",
   "  bench: 1,400 knockouts x 7,223 genes; 7,180 non-tide genes",
-  "  depmap_vecs.npz provenance check: per-gene mean |max| 9.11e-07, sd range 0.141..1.000 -> levels preserved",
+  "  depmap_vecs.npz provenance check: per-gene mean |max| 9.11e-07, sd range 0.141..1.000 -> PER-GENE CENTRED: gene-effect LEVELS ARE DESTROYED",
+  "    nothing level-dependent may be derived from it -- essentiality below comes from the cell object instead, and the canary checks that it did",
   "  DepMap profiles: 18,443 genes -> 64 SVD components per token",
   "  typed neighbours: codep 13,451 sources, complex 3,257, PPI 14,230",
   "  measured signed edges (|robust z| >= 5): 537,557 over 7,621 sources",
   "  essentiality from the cell object: 1,537 genes essential; canary {'RPL3': 1.0, 'EIF3B': 1.0, 'POLR2A': 1.0, 'RPS3': 1.0, 'SNRPD1': 1.0}",
   "  baseline K562 expression for 8,246 genes (median 0.381)",
-  "\n  POWER, BEFORE THE ARMS: at 1 seeds and the sd of 0.03 this readout has shown across",
-  "  six previous levers, the smallest increment separable at ~3 standard errors is +0.0900.",
+  "\n  POWER, BEFORE THE ARMS: at 3 seeds and the sd of 0.03 this readout has shown across",
+  "  six previous levers, the smallest increment separable at ~3 standard errors is +0.0520.",
   "  Every architectural lever tried on this readout so far has produced |delta| <= 0.02. An arm",
-  "  that lands inside 0.0900 is UNDERPOWERED, not null, and is reported as such.",
+  "  that lands inside 0.0520 is UNDERPOWERED, not null, and is reported as such.",
   "\n  1,385/1,400 knockouts have a DepMap profile",
-  "  SMOKE: restricted to 300 knockouts",
-  "  tokens per knockout: mean 15.9, cap 24",
+  "  tokens per knockout: mean 16.1, cap 24",
   "  token type mix: self 6%, codep 28%, complex 15%, ppi 30%, reg 21%",
-  "\n  SMOKE MODE: structure validated, arms not run. Flip CELLFORMER_SMOKE=0 for the real run,",
-  "  and CELLFORMER_SIGN=measured+imputed once outputs/orphan/impute_reg_sign.json exists.",
-  "  forward pass OK: embedding (16, 96), residual (16,), prob (16,), uncertainty (16,)",
-  "  relation-bias ablation path OK: (16, 96)"
+  "\n  SPLIT 0: 1,039 train / 346 test knockouts",
+  "    seed 0  TIDE-null (floor)                  m1 0.2821  m2 0.0047  (n=176)",
+  "    seed 0  classical raw-cosine               m1 0.2557  m2 0.0146  (n=176)",
+  "    seed 0  self-only (no neighbourhood)       m1 0.2761  m2 0.0134  (n=176)",
+  "    seed 0  CELLFORMER v1 (full)               m1 0.4044  m2 0.0313  (n=176)",
+  "    seed 0    - relation bias                  m1 0.4294  m2 0.0313  (n=176)",
+  "    seed 0    - sign channel                   m1 0.3988  m2 0.0297  (n=176)",
+  "    seed 0    ctrl: shuffled sign              m1 0.3974  m2 0.0294  (n=176)",
+  "    seed 0    ctrl: random partners            m1 0.2407  m2 0.0099  (n=176)",
+  "    seed 0    ctrl: wrong-knockout             m1 0.1123  m2 0.0082  (n=176)",
+  "    seed 0  ORACLE (retrieval ceiling)         m1 0.6408  m2 0.0833  (n=176)",
+  "\n  SPLIT 1: 1,039 train / 346 test knockouts",
+  "    seed 1  TIDE-null (floor)                  m1 0.3223  m2 0.0040  (n=160)",
+  "    seed 1  classical raw-cosine               m1 0.3523  m2 0.0146  (n=160)",
+  "    seed 1  self-only (no neighbourhood)       m1 0.3500  m2 0.0169  (n=160)",
+  "    seed 1  CELLFORMER v1 (full)               m1 0.5063  m2 0.0334  (n=160)",
+  "    seed 1    - relation bias                  m1 0.5163  m2 0.0343  (n=160)",
+  "    seed 1    - sign channel                   m1 0.4836  m2 0.0304  (n=160)",
+  "    seed 1    ctrl: shuffled sign              m1 0.5277  m2 0.0312  (n=160)",
+  "    seed 1    ctrl: random partners            m1 0.3039  m2 0.0088  (n=160)",
+  "    seed 1    ctrl: wrong-knockout             m1 0.1129  m2 0.0079  (n=160)",
+  "    seed 1  ORACLE (retrieval ceiling)         m1 0.6518  m2 0.0762  (n=160)",
+  "\n  SPLIT 2: 1,039 train / 346 test knockouts",
+  "    seed 2  TIDE-null (floor)                  m1 0.2687  m2 0.0046  (n=179)",
+  "    seed 2  classical raw-cosine               m1 0.2770  m2 0.0173  (n=179)",
+  "    seed 2  self-only (no neighbourhood)       m1 0.2988  m2 0.0159  (n=179)",
+  "    seed 2  CELLFORMER v1 (full)               m1 0.4412  m2 0.0320  (n=179)",
+  "    seed 2    - relation bias                  m1 0.4496  m2 0.0315  (n=179)",
+  "    seed 2    - sign channel                   m1 0.4412  m2 0.0344  (n=179)",
+  "    seed 2    ctrl: shuffled sign              m1 0.4409  m2 0.0325  (n=179)",
+  "    seed 2    ctrl: random partners            m1 0.2548  m2 0.0096  (n=179)",
+  "    seed 2    ctrl: wrong-knockout             m1 0.1059  m2 0.0077  (n=179)",
+  "    seed 2  ORACLE (retrieval ceiling)         m1 0.6260  m2 0.0917  (n=179)",
+  "\n  arm                                           metric1          metric2",
+  "  TIDE-null (floor)                      0.2910 +/- 0.0227   0.0044 +/- 0.0003",
+  "  classical raw-cosine                   0.2950 +/- 0.0414   0.0155 +/- 0.0013",
+  "  self-only (no neighbourhood)           0.3083 +/- 0.0309   0.0154 +/- 0.0015",
+  "  CELLFORMER v1 (full)                   0.4506 +/- 0.0421   0.0322 +/- 0.0009",
+  "    - relation bias                      0.4651 +/- 0.0371   0.0324 +/- 0.0014",
+  "    - sign channel                       0.4412 +/- 0.0346   0.0315 +/- 0.0021",
+  "    ctrl: shuffled sign                  0.4553 +/- 0.0541   0.0310 +/- 0.0013",
+  "    ctrl: random partners                0.2664 +/- 0.0271   0.0095 +/- 0.0005",
+  "    ctrl: wrong-knockout                 0.1103 +/- 0.0032   0.0079 +/- 0.0002",
+  "  ORACLE (retrieval ceiling)             0.6395 +/- 0.0105   0.0837 +/- 0.0063",
+  "\n  observed pooled seed sd 0.0304 -> minimum detectable increment +0.0526 at 3 seeds"
  ]
 }
