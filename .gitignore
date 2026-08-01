@@ -75,7 +75,9 @@ s2648.csv
 outputs/orphan/dark_function_ckpt.json
 
 # derived z-scored feature caches (built at runtime, persisted to Drive by persist.py — not committed)
-outputs/orphan/depmap_vecs.npz
+# EXCEPT depmap_vecs.npz: every dense module loads it, and regenerating it needs the 400 MB
+# CRISPRGeneEffect.csv. At 73 MB it is committed so a fresh clone (e.g. Colab) is self-sufficient.
+# outputs/orphan/depmap_vecs.npz
 outputs/orphan/expr_vecs.npz
 outputs/orphan/tahoe_vecs.npz
 outputs/orphan/pdb_cache/
