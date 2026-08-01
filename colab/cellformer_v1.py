@@ -698,8 +698,24 @@ def main():
             auc_p0 = _auc(Mov[ii].ravel(), np.tile(base_prob, (len(ii), 1)).ravel())
             auc_d = _auc(Sgn[ii][mv].ravel(), P_dir[ii][mv].ravel())
             auc_d0 = _auc(Sgn[ii][mv].ravel(), np.tile(base_dir, (len(ii), 1))[mv].ravel())
-            report(f"    seed {seed}  HEADS  response-prob AUC {auc_p:.4f} | direction AUC {auc_d:.4f} "
-                   f"(base rate {Sgn[ii][mv].mean():.3f}) | uncertainty-vs-error rho {rho_u:+.4f}")
+            # UNCERTAINTY NEEDS A BASELINE TOO: a knockout that moves more has more absolute error with
+            # no calibration involved at all, so total movement is the thing the head must beat.
+            from scipy import stats as _st
+            err = np.abs(P_res[ii] - Mag[ii]).mean(1)
+            rho_u = float(_st.spearmanr(P_lv[ii], err)[0])
+            rho_u0 = float(_st.spearmanr(Mag[ii].sum(1), err)[0])
+            head_rows.append({"seed": seed,
+                              "prob_auc": auc_p, "prob_auc_pergene_baseline": auc_p0,
+                              "prob_delta": auc_p - auc_p0,
+                              "dir_auc_on_movers": auc_d, "dir_auc_pergene_baseline": auc_d0,
+                              "dir_delta": auc_d - auc_d0,
+                              "dir_base_rate": float(Sgn[ii][mv].mean()),
+                              "uncertainty_vs_error_spearman": rho_u,
+                              "uncertainty_baseline_totalmovement_spearman": rho_u0})
+            report(f"    seed {seed}  HEADS  prob AUC {auc_p:.4f} (per-gene base {auc_p0:.4f}, "
+                   f"delta {auc_p-auc_p0:+.4f}) | direction AUC {auc_d:.4f} (per-gene base {auc_d0:.4f}, "
+                   f"delta {auc_d-auc_d0:+.4f}, base rate {Sgn[ii][mv].mean():.3f}) | uncertainty rho "
+                   f"{rho_u:+.4f} (total-movement base {rho_u0:+.4f})")
 
             # ---- METRIC 3: transfer to held-out CELL LINES, no retraining ----
             #
