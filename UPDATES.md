@@ -16654,3 +16654,102 @@ metric on a [0,1] scale; no threshold on dense data reproduces the bench's truth
 choice that would have been neutral. And the encoder here is a single attention block, smaller than
 `cellformer_v1`'s, so a capacity difference is confounded with the target change **for the absolute numbers**
 — though not for the real-vs-random gap, which is measured within one architecture.
+
+---
+
+# Dense stages 3 and 4: contrast training does not rescue the cell channel — 0 of 7 predeclared criteria
+
+`colab/dense_context.py`. `context_tests.py` established that the cell channel is *ignored* rather than
+merely unhelpful. The diagnosis was that the objective is at fault: with the same perturbation measured in
+every training cell and a conserved response dominating the loss, `Ŷ[c,p,g] ≈ shared response of p` is already
+optimal, so the cell index is free to drop out. This is the fix, run on the 100%-dense rectangle that
+`dense_response.py` rebuilt for exactly this purpose.
+
+    Y[c,p,g] = μ[p,g] + δ[c,p,g],   μ = mean over the THREE TRAINING cells only
+
+**The property that makes this a real test.** Because μ is the mean of the training cells, `Σ_c δ[c,p,g] = 0`
+exactly over those cells. On the training target, *any* feature depending on (p, g) alone — gene identity,
+perturbation identity, the shared response, the tide, anything cell-blind whatsoever — has an optimal
+prediction of **zero**. There is no cell-blind shortcut left. That is arithmetic, not regularisation, and it
+is why this objective can do what the absolute-response one could not.
+
+The held-out cell contributes its **baseline transcriptome and nothing else**. Its responses never enter μ,
+never enter a feature, never standardise anything.
+
+## The error bar was wrong first, and fixing it flipped the verdict from 4/7 to 0/7
+
+The run initially graded its criteria against the **seed** spread — model-init noise rotated inside one fold.
+That is the same error as rotating CV fold labels of a single partition and calling them independent seeds,
+which this project has already caught once.
+
+| | sd | MDE |
+|---|---:|---:|
+| seed spread (optimiser noise inside a fold) | 0.0155 | 0.027 |
+| **cross-cell spread (the unit of replication)** | **0.1132** | **0.170** |
+
+**7.3× larger.** The claim under test is *transfer to a cell the model has never seen*, so the cell line is
+the unit of replication and seeds say nothing about it. On the seed floor this experiment reported 4/7
+criteria met. On the correct floor it reports **0/7**, and that is what stands.
+
+## Result — 4 leave-one-cell-line-out folds × 3 seeds, 200,000 sampled (p,g) pairs per fold
+
+| arm | r | sign | total_r |
+|---|---:|---:|---:|
+| 0 zero contrast | +0.0000 | 0.5000 | +0.2655 |
+| 1 expression residual | +0.0564 | 0.5125 | +0.2648 |
+| **2 relational residual** | **+0.0622** | 0.5267 | +0.2634 |
+| 3 random neighbours (CONTROL) | +0.0242 | 0.5085 | +0.2635 |
+| 4 shuffled-cell training (CONTROL) | −0.0245 | 0.5103 | +0.2555 |
+| 2 SWAPPED context (CONTROL) | +0.0403 | 0.5072 | +0.2635 |
+| 2 SHUFFLED context (CONTROL) | +0.0271 | 0.5188 | +0.2587 |
+| 5 pairwise contrast | +0.0324 | 0.5121 | — |
+| C expression difference only | +0.0134 | 0.5088 | +0.2655 |
+| D shared × expression gate | +0.0105 | 0.5096 | +0.2656 |
+| **E nearest-cell copy** | **+0.0674** | 0.5349 | +0.2188 |
+
+Per-cell, which is where the pooled means fall apart:
+
+| | HepG2 | Jurkat | K562 | RPE1 | mean | t |
+|---|---:|---:|---:|---:|---:|---:|
+| relational residual | +0.112 | **−0.101** | +0.081 | +0.157 | +0.062 | +1.10 |
+| random neighbours | +0.057 | −0.075 | +0.052 | +0.063 | +0.024 | +0.73 |
+| **nearest-cell copy** | +0.082 | +0.009 | +0.067 | +0.112 | +0.067 | **+3.13** |
+| **swap gap** | +0.076 | **−0.137** | **−0.073** | **−0.015** | **−0.037** | −0.76 |
+
+## Three things this says, in order of how much they matter
+
+**The swap gap is negative.** −0.0375 against a 0.136 floor, and negative in three of four cells. Handing the
+trained model *the wrong cell's baseline* makes it very slightly **better**. Contrast training did not make
+the cell channel readable; it made the model confidently wrong about which cell it was in.
+
+**Jurkat is predicted backwards.** Every learned arm has a negative r on Jurkat while the other three folds
+are positive. A model fitted on HepG2, K562 and RPE1 gets the *sign* of Jurkat's cell-specific deviation
+wrong. That is not noise around zero — it is a systematic failure the pooled +0.062 conceals.
+
+**A trivial baseline beats the model, and it is the only thing that survives.** "Copy the deviation of
+whichever training cell has the closest baseline transcriptome" reaches +0.0674 at **t = +3.13**, above the
+model's +0.0622 at t = +1.10. Every learned arm is inside the cross-cell noise. The one method that transfers
+is the one with no architecture in it.
+
+## What the null means, and what it does not
+
+It was declared before the run that a null here would be much stronger than the previous one, and it is. The
+earlier null established only that the absolute-response objective gave the network *no reason* to look at the
+cell. This one says: **even when the objective is constructed so that cell information is the only thing that
+can pay, baseline RNA does not identify the cell-specific response function in these four lines.** That points
+at protein or chromatin state, or at more cell contexts — not at more RNA architecture and not at a better loss.
+
+**It does not prove the channel is unreadable.** The cross-cell MDE is 0.170 *because n = 4*. This is a null
+with very low power at the cell level, and saying so is the point rather than a hedge.
+
+## The finding that reframes the whole programme
+
+`dense_response.py` delivered **1,186× more usable cross-cell observations**, and on this question it changed
+**nothing**. Stage 1 improved enormously with dense data because its limiting axis was observations per
+knockout. Stage 3/4's limiting axis was never observations — it is **four cell lines**, and no amount of
+depth inside four points buys a fifth.
+
+That is the actionable result of this entire arc. The next thing worth building is not a bigger encoder, a
+different loss, or another rebuild of the same rectangle. It is **more cell contexts** — `hct116.h5ad`,
+`frangieh.h5ad`, `shifrut.h5ad` and `papalexi.h5ad` are on disk and unprocessed, and each one is worth more
+here than any architectural change measured in this project.

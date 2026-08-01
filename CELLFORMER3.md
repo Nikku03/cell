@@ -162,15 +162,39 @@ two to agree, or state the disagreement.
 
 Each stage declares its threshold **before** the numbers, and reports its minimum detectable increment.
 
-| # | test | question | gate to pass |
-|---|---|---|---|
-| 1 | dense retrieval baseline | does the arc's one confirmed win survive an untruncated target? | real-vs-random partners still ≫ 0 |
-| 2 | dense ceiling | what is the oracle on dense data? | report; 0.607 is void |
-| 3 | context, dense | is context still ignored at 1,186× the data? | swap gap > 0 |
-| 4 | contrast objective | does forcing the residual make context readable? | all 7 predeclared criteria |
-| 5 | heads vs marginals | does any head beat its own per-gene marginal? | delta > MDE |
-| 6 | cross-cell CASP | train on 3 lines, predict the 4th from baseline state only | beat that line's own tide |
-| 7 | full stack | everything that passed, together | beat the best single component |
+| # | test | question | gate to pass | result |
+|---|---|---|---|---|
+| 1 | dense retrieval baseline | does the arc's one confirmed win survive an untruncated target? | real-vs-random partners still ≫ 0 | **PASSED** — +0.0186 against a 0.0012 MDE on 10,337 knockouts, both metrics agreeing |
+| 2 | dense ceiling | what is the oracle on dense data? | report; 0.607 is void | **0.0526**; FULL reaches 67% of it. 0.607 retired |
+| 3 | context, dense | is context still ignored at 1,186× the data? | swap gap > 0 | **FAILED** — swap gap **−0.0375**, negative in 3 of 4 cells |
+| 4 | contrast objective | does forcing the residual make context readable? | all 7 predeclared criteria | **FAILED — 0/7** |
+| 5 | heads vs marginals | does any head beat its own per-gene marginal? | delta > MDE | pending |
+| 6 | cross-cell CASP | train on 3 lines, predict the 4th from baseline state only | beat that line's own tide | **subsumed by 3/4 and failed there** |
+| 7 | full stack | everything that passed, together | beat the best single component | **only block A/B passed; there is no stack to assemble yet** |
+
+**Stage 1's headline gap over-states the neighbourhood.** It decomposes into **+0.0101** of genuine
+neighbourhood information (FULL over self-only) and **+0.0085** of *damage the control does* — random
+partners actively dilute the perturbed gene's own signal rather than merely adding nothing. **+0.0101 is the
+number to quote.** A gap measured against a random-partner control is an upper bound on what a block
+contributes, not an estimate of it, and that applies to every such gap already recorded in this project.
+
+**The unit of replication is the cell line, not the seed.** Stage 3/4 first graded itself on seed spread
+(sd 0.0155) and reported 4/7. The spread across the four held-out cells is 0.1132 — **7.3× larger** — and on
+that floor it reports **0/7**. Seeds measure optimiser noise inside a fold; they say nothing about transfer
+to an unseen cell, which is the entire claim. Any future stage whose claim is cross-cell must use the
+cross-cell error bar.
+
+**The binding constraint is now known and it is not architectural.** The dense rebuild delivered 1,186× more
+usable cross-cell observations. Stage 1 improved enormously because its limiting axis was observations per
+knockout. Stage 3/4 did not move at all, because its limiting axis is **four cell lines**. `hct116.h5ad`,
+`frangieh.h5ad`, `shifrut.h5ad` and `papalexi.h5ad` are on disk and unprocessed; each is worth more to this
+programme than any architectural change measured in it.
+
+**Stage 1's headline gap over-states the neighbourhood.** It decomposes into **+0.0101** of genuine
+neighbourhood information (FULL over self-only) and **+0.0085** of *damage the control does* — random
+partners actively dilute the perturbed gene's own signal rather than merely adding nothing. **+0.0101 is the
+number to quote.** A gap measured against a random-partner control is an upper bound on what a block
+contributes, not an estimate of it, and that applies to every such gap already recorded in this project.
 
 **Nothing joins the stack that failed its own gate.** On current evidence that means the sign channel and the
 relation bias are out unless the dense target revives them.

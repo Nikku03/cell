@@ -356,29 +356,58 @@ def main():
     for k_ in arms:
         report(f"  {k_:36s} {agg(k_):+8.4f} {agg(k_,'sign'):8.4f} {agg(k_,'total_r'):+9.4f}")
 
-    sd = float(np.mean([np.std([x["r"] for x in res[ln][k_]]) for ln in lines for k_ in arms]))
-    mde = 3 * sd / np.sqrt(N_SEEDS)
-    # the sign metric lives on a different scale from r and needs its own detectable floor
-    sd_s = float(np.mean([np.std([x["sign"] for x in res[ln][k_]]) for ln in lines for k_ in arms]))
-    mde_s = 3 * sd_s / np.sqrt(N_SEEDS)
-    swap_gap = agg("2 relational residual") - max(agg("2 SWAPPED context (CONTROL)"),
-                                                  agg("2 SWAPPED context alt (CONTROL)"))
-    per_cell_swap = {ln: float(np.mean([x["r"] for x in res[ln]["2 relational residual"]])
-                               - max(np.mean([x["r"] for x in res[ln]["2 SWAPPED context (CONTROL)"]]),
-                                     np.mean([x["r"] for x in res[ln]["2 SWAPPED context alt (CONTROL)"]])))
-                     for ln in lines}
+    # THE UNIT OF REPLICATION IS THE CELL LINE, NOT THE SEED, and getting that wrong flips this experiment's
+    # verdict. Model-init seeds rotated inside one fold measure optimiser noise; they say nothing about
+    # whether a result transfers to a cell the model has never seen, which is the entire claim. The seed
+    # spread here is 0.0166 while the spread ACROSS the four held-out cells is 0.117 -- seven times larger.
+    # Grading on the seed floor would call a +0.060 pooled mean significant when three of its four cells
+    # disagree with each other. Both floors are reported; the cross-cell one is what the criteria use.
+    # (This is the same error as rotating CV fold labels of a single partition and calling them seeds.)
+    sd_seed = float(np.mean([np.std([x["r"] for x in res[ln][k_]]) for ln in lines for k_ in arms]))
+    mde_seed = 3 * sd_seed / np.sqrt(N_SEEDS)
+
+    def per_cell(k_, m="r"):
+        return np.array([np.mean([x[m] for x in res[ln][k_]]) for ln in lines])
+
+    def cell_mde(vec):
+        return 3 * float(np.std(vec, ddof=1)) / np.sqrt(len(lines))
+    sd = float(np.std(per_cell("2 relational residual"), ddof=1))
+    mde = cell_mde(per_cell("2 relational residual"))
+    sd_s = float(np.std(per_cell("2 relational residual", "sign"), ddof=1))
+    mde_s = cell_mde(per_cell("2 relational residual", "sign"))
+    # Per-cell first, THEN average. Pooling the arms and differencing the pooled values is a different
+    # quantity and it hid the sign flip: it reported +0.0198 where the mean of the per-cell gaps is negative.
+    # The more favourable of the two swap partners is used per cell, which is conservative for the model:
+    # with three training cells a swapped prediction can be structurally ANTI-correlated with the held-out
+    # truth, and taking the max stops that anti-correlation from inflating the gap.
+    gaps = np.array([np.mean([x["r"] for x in res[ln]["2 relational residual"]])
+                     - max(np.mean([x["r"] for x in res[ln]["2 SWAPPED context (CONTROL)"]]),
+                           np.mean([x["r"] for x in res[ln]["2 SWAPPED context alt (CONTROL)"]]))
+                     for ln in lines])
+    per_cell_swap = {ln: float(g) for ln, g in zip(lines, gaps)}
+    swap_gap = float(gaps.mean())
+    swap_mde = cell_mde(gaps)
     crit = {
         "1 beats zero contrast": agg("2 relational residual") > mde,
-        "2 real > random neighbours": agg("2 relational residual") - agg("3 random neighbours (CONTROL)") > mde,
-        "3 correct > SWAPPED context": swap_gap > mde,
+        "2 real > random neighbours":
+            float(np.mean(per_cell("2 relational residual") - per_cell("3 random neighbours (CONTROL)")))
+            > cell_mde(per_cell("2 relational residual") - per_cell("3 random neighbours (CONTROL)")),
+        "3 correct > SWAPPED context": swap_gap > swap_mde,
         "4 correct > SHUFFLED context":
             agg("2 relational residual") - agg("2 SHUFFLED context (CONTROL)") > mde,
         "5 swap gap holds in EVERY cell": all(v > 0 for v in per_cell_swap.values()),
         "6 sign above chance": agg("2 relational residual", "sign") - 0.5 > mde_s,
         "7 improves total response": agg("2 relational residual", "total_r") - agg("0 zero contrast", "total_r") > mde,
     }
-    report(f"\n  pooled seed sd {sd:.4f} -> minimum detectable increment {mde:+.4f} at {N_SEEDS} seeds "
-           f"(sign: sd {sd_s:.4f} -> MDE {mde_s:+.4f})")
+    report(f"\n  seed spread (optimiser noise inside a fold): sd {sd_seed:.4f} -> MDE {mde_seed:+.4f}")
+    report(f"  CROSS-CELL spread (the unit of replication): sd {sd:.4f} -> MDE {mde:+.4f} at "
+           f"{len(lines)} cells; sign sd {sd_s:.4f} -> MDE {mde_s:+.4f}")
+    report(f"  the cross-cell spread is {sd/max(sd_seed,1e-9):.1f}x the seed spread. The criteria below use "
+           f"the CROSS-CELL floor, because the claim is about a cell the model has never seen.")
+    for k_ in ("2 relational residual", "3 random neighbours (CONTROL)", "E nearest-cell copy"):
+        v = per_cell(k_)
+        report(f"    {k_:34s} per-cell {np.round(v, 4)}  mean {v.mean():+.4f}  "
+               f"t {v.mean()/(np.std(v, ddof=1)/np.sqrt(len(lines))):+.2f}")
     report("\n  PREDECLARED CRITERIA")
     for k_, v in crit.items():
         report(f"    {'PASS' if v else 'FAIL'}  {k_}")
@@ -392,9 +421,11 @@ def main():
     verdict = (
         f"{'CONTRAST TRAINING WORKS' if npass == 7 else f'{npass}/7 CRITERIA MET'}: on a 100%-dense 4-cell "
         f"rectangle with the shared response frozen out by construction, the relational residual reaches "
-        f"r {agg('2 relational residual'):+.4f} against a zero-contrast baseline of 0.0000 and a minimum "
-        f"detectable increment of {mde:.4f}. THE DECISIVE NUMBER is the counterfactual swap: handing the "
-        f"trained model another cell's baseline changes r by {swap_gap:+.4f}. In every previous experiment "
+        f"r {agg('2 relational residual'):+.4f} against a zero-contrast baseline of 0.0000 and a CROSS-CELL "
+        f"minimum detectable increment of {mde:.4f} (the seed-only floor of {mde_seed:.4f} is {sd/max(sd_seed,1e-9):.0f}x "
+        f"too small and is not what this is graded on -- seeds measure optimiser noise, not transfer to an "
+        f"unseen cell). THE DECISIVE NUMBER is the counterfactual swap: handing the "
+        f"trained model another cell's baseline changes r by {swap_gap:+.4f} against a {swap_mde:.4f} floor, per-cell before averaging. In every previous experiment "
         f"in this project that quantity was between -0.0007 and +0.0004 -- indistinguishable from the "
         f"channel not existing. {'It is now separated from zero, which means the cell channel is being READ' if crit['3 correct > SWAPPED context'] else 'It is STILL not separated from zero, which means the objective change did not make the channel readable and the limit is the information in baseline RNA, not the loss'}. "
         f"Real neighbours vs random partners: {agg('2 relational residual') - agg('3 random neighbours (CONTROL)'):+.4f}. "
@@ -416,7 +447,9 @@ def main():
                          for m in ("r", "sign", "total_r")} for k_ in arms},
          "baseline_ladder": ladder, "best_rung": best_rung,
          "model_beats_best_rung": bool(agg("2 relational residual") > ladder[best_rung]),
-         "mde": mde, "swap_gap": swap_gap, "per_cell_swap_gap": per_cell_swap,
+         "mde_cross_cell": mde, "mde_seed_only_DO_NOT_GRADE_ON_THIS": mde_seed,
+         "sd_cross_cell": sd, "sd_seed": sd_seed,
+         "swap_gap": swap_gap, "swap_gap_mde": swap_mde, "per_cell_swap_gap": per_cell_swap,
          "criteria": {k_: bool(v) for k_, v in crit.items()}, "criteria_met": npass,
          "limits": [
              "FOUR independent cell contexts. Genes and perturbations buy precision inside them; they do "
