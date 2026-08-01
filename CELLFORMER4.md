@@ -361,7 +361,7 @@ were removed.
 | Frangieh | context × immune-condition response | generic baseline state |
 | Sci-Plex | drug, dose, chemical-response training | genetic-perturbation equivalent without perturbation-type encoding |
 | Shifrut | primary T-cell transfer | same distribution as cancer lines |
-| Papalexi / ECCITE | RNA–protein multimodal bridge | full-proteome supervision |
+| Papalexi / ECCITE | RNA–protein bridge, but **only via the separate 1.1 MB protein file** (`PapalexiSatija2021_eccite_protein.h5ad`, X = 20,729 × **4 ADT tags**). `papalexi.h5ad` itself has obsm/layers/uns/obsp/varm/varp all **empty** | full-proteome supervision — it is FOUR proteins |
 | HCA | baseline cell-state pretraining | causal perturbation transitions |
 | LINCS | broad context, drug, dose, time | high-fidelity whole-transcriptome ground truth for every gene |
 | Multiome Perturb-seq | paired RNA–ATAC perturbation response | universal context diversity |
