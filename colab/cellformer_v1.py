@@ -592,6 +592,23 @@ def main():
             return (e.numpy(), (tide.numpy()[None, :] + res.numpy()), torch.sigmoid(prob).numpy(),
                     torch.sigmoid(dr).numpy(), lv.numpy(), model)
 
+        def retriever(E, tr_idx, top=10):
+            """Learned-retrieval readout: score a held-out knockout by averaging the responses of its
+            nearest TRAINING knockouts in the learned metric. This is the frame neural_ko established as
+            the only deep one that works here; the residual head below is the direct-regression arm and is
+            reported beside it rather than instead of it."""
+            En = E / (np.linalg.norm(E, axis=1, keepdims=True) + 1e-9)
+            pos = {kos[i]: i for i in range(len(kos))}
+
+            def f(ko):
+                i = pos.get(ko)
+                if i is None:
+                    return None
+                sims = En[tr_idx] @ En[i]
+                nn = tr_idx[np.argsort(-sims)[:top]]
+                return np.stack([H.A[H.ki[kos[j]]] for j in nn]).mean(0)
+            return f
+
         arms, per_seed = {}, {}
         head_rows, m3 = [], {}
         kgene_i = {g: i for i, g in enumerate(H.genes)}
