@@ -91,6 +91,9 @@ EPOCHS = 3 if SMOKE else 30
 CORE_K = 20             # rank of the shared core removed for metric 2, per CELLFORMER2.md
 K_RECALL = 50
 REL_TYPES = ["self", "codep", "complex", "ppi", "reg"]
+# METRIC 3: held-out CELL LINES. Benches already exist for all of these and none has ever been used to
+# score this transformer arc -- every published number in it is a held-out split of K562.
+TRANSFER_LINES = ["RPE1", "HCT116", "HepG2", "Jurkat", "Melanoma"]
 
 # assay/time metadata is CONSTANT in this deposit. It is carried explicitly rather than omitted, so that when
 # v4 adds timepoints the slot already exists and nothing has to be retrofitted into the token layout.
@@ -162,8 +165,12 @@ def load_signed(report, mode):
     mad = np.nanmedian(np.abs(X - med), axis=0) * 1.4826
     Z = (X - med) / np.where(mad < 1e-6, np.nan, mad)
     ei, ej = np.where(np.isfinite(Z) & (np.abs(Z) >= 5.0))
+    # CONFIDENCE IS |z|, NOT 1.0. The first version handed every measured edge a confidence of exactly 1.0,
+    # which is a constant column -- it cannot carry information and its ablation cannot fail. Evidence
+    # strength is the magnitude of the effect that defined the edge.
     for i, j in zip(ei, ej):
-        sig.setdefault(psym[i], []).append((gname[j], 1 if Z[i, j] > 0 else -1, 1.0))
+        sig.setdefault(psym[i], []).append((gname[j], 1 if Z[i, j] > 0 else -1,
+                                            float(min(abs(Z[i, j]) / 10.0, 3.0))))
     n_meas = sum(len(v) for v in sig.values())
     report(f"  measured signed edges (|robust z| >= 5): {n_meas:,} over {len(sig):,} sources")
     meta = {"mode": mode, "n_measured": n_meas}
@@ -197,7 +204,8 @@ def load_signed(report, mode):
     return sig, meta
 
 
-def build_tokens(kos, codep, cplx, ppi, sig, srow, Z, base_expr, ess, deg, rng, mode="real"):
+def build_tokens(kos, codep, cplx, ppi, sig, srow, Z, base_expr, ess, deg, rng, mode="real",
+                 pstrength=None):
     """One knockout -> (token features, token relation-type ids, token signs).
 
     `mode` is the control switch and it is deliberately inside the token builder rather than bolted on
@@ -209,12 +217,13 @@ def build_tokens(kos, codep, cplx, ppi, sig, srow, Z, base_expr, ess, deg, rng, 
     for k in kos:
         rows, rtypes, rsign, rconf = [], [], [], []
 
+        ps = float((pstrength or {}).get(k, 0.0))       # perturbation strength, a property of the KO
         def push(sym, t, sgn=0.0, cf=0.0):
             i = srow.get(sym)
             if i is None:
                 return
             rows.append(np.concatenate([Z[i], [base_expr.get(sym, 0.0), ess.get(sym, 0.0),
-                                               np.log1p(deg.get(sym, 0)), sgn, cf]]))
+                                               np.log1p(deg.get(sym, 0)), sgn, cf, ps]]))
             rtypes.append(REL_TYPES.index(t))
             rsign.append(sgn)
             rconf.append(cf)
@@ -235,7 +244,7 @@ def build_tokens(kos, codep, cplx, ppi, sig, srow, Z, base_expr, ess, deg, rng, 
             push(s, "reg", float(sg), float(cf))
 
         if not rows:
-            rows = [np.zeros(Z.shape[1] + 5, dtype=np.float32)]
+            rows = [np.zeros(Z.shape[1] + 6, dtype=np.float32)]
             rtypes, rsign, rconf = [0], [0.0], [0.0]
         feats.append(np.array(rows[:MAX_TOK], dtype=np.float32))
         types.append(np.array(rtypes[:MAX_TOK], dtype=np.int64))
@@ -264,12 +273,19 @@ def pad(feats, types, signs, confs):
             torch.from_numpy(M))
 
 
-def make_model(d_in, d_model):
-    """Typed tokens, relation-TYPE embedding, relation-specific attention BIAS, and three heads.
+def make_model(d_in, d_model, n_genes):
+    """Typed tokens, relation-type embedding, relation-specific attention bias, and FIVE supervised heads.
 
-    The attention bias is a learned scalar per relation type added to every attention logit into a token of
-    that type. That is the cheapest form of "relation-specific attention" that can be ablated cleanly: set
-    the bias vector to zero and the model is a plain set-transformer over the same tokens.
+    WHAT CHANGED FROM THE FIRST VERSION, AND IT MATTERS. The first version instantiated a residual head, a
+    probability head and an uncertainty head and then trained NONE of them -- the only loss term was the
+    retrieval metric. Three of the five declared outputs were dead code that the forward pass returned and
+    nothing supervised. They are now decoded to gene space and trained.
+
+    THE TIDE BASELINE IS AN ADDITIVE, NON-LEARNED TERM, which is the whole anti-collapse design. neural_ko
+    measured that a regression net on this target collapses to predicting the tide and lands BELOW the
+    tide-null. Here the per-gene training-set mean |z| is ADDED to the residual head's output before the
+    loss, so predicting the tide earns exactly zero -- the head can only be rewarded for what the tide does
+    not already explain.
     """
     import torch
     import torch.nn as nn
@@ -280,37 +296,49 @@ def make_model(d_in, d_model):
             self.proj = nn.Linear(d_in, d_model)
             self.rel = nn.Embedding(len(REL_TYPES), d_model)
             self.rel_bias = nn.Parameter(torch.zeros(len(REL_TYPES)))
-            self.sign_gate = nn.Linear(2, d_model)          # (sign, confidence) -> additive token term
+            self.sign_gate = nn.Linear(2, d_model)
             self.attn = nn.MultiheadAttention(d_model, 4, batch_first=True)
             self.ln1, self.ln2 = nn.LayerNorm(d_model), nn.LayerNorm(d_model)
             self.ff = nn.Sequential(nn.Linear(d_model, 2 * d_model), nn.GELU(),
                                     nn.Linear(2 * d_model, d_model))
-            self.metric = nn.Linear(d_model, d_model)        # retrieval embedding
-            self.resid = nn.Linear(d_model, 1)               # residual effect
-            self.prob = nn.Linear(d_model, 1)                # response probability
-            self.unc = nn.Linear(d_model, 1)                 # uncertainty (log variance)
+            self.metric = nn.Linear(d_model, d_model)          # retrieval embedding
+            self.dec_res = nn.Linear(d_model, n_genes)         # residual effect, on top of the tide
+            self.dec_prob = nn.Linear(d_model, n_genes)        # response probability
+            self.dec_dir = nn.Linear(d_model, n_genes)         # direction
+            self.unc = nn.Linear(d_model, 1)                   # per-knockout log variance
 
-        def forward(self, F, T, S, C, M, use_rel_bias=True):
+        def encode(self, F, T, S, C, M, use_rel_bias=True):
             h = self.proj(F) + self.rel(T) + self.sign_gate(torch.stack([S, C], -1))
-            # ONE float mask carrying BOTH the padding and the relation bias. Passing a float attn_mask
-            # beside a bool key_padding_mask is deprecated in torch and warned on every forward; folding
-            # padding into the same additive mask as -inf is equivalent and has one code path.
-            bias = self.rel_bias[T] if use_rel_bias else torch.zeros_like(self.rel_bias[T])
-            am = bias.masked_fill(~M, float("-inf"))         # (n, L)
-            attn_mask = am.unsqueeze(1).expand(-1, h.size(1), -1)
-            attn_mask = attn_mask.repeat_interleave(self.attn.num_heads, dim=0)
-            a, _ = self.attn(h, h, h, attn_mask=attn_mask, need_weights=False)
-            a = torch.nan_to_num(a)                           # an all-padding row yields NaN, not a value
+            bias = self.rel_bias[T] if use_rel_bias else torch.zeros_like(S)
+            am = bias.unsqueeze(1).expand(-1, h.size(1), -1)
+            am = am.repeat_interleave(self.attn.num_heads, dim=0)
+            a, _ = self.attn(h, h, h, key_padding_mask=~M, attn_mask=am, need_weights=False)
             h = self.ln1(h + a)
             h = self.ln2(h + self.ff(h))
-            mask = M.unsqueeze(-1).float()
-            pooled = (h * mask).sum(1) / mask.sum(1).clamp(min=1)
-            e = self.metric(pooled)
+            m = M.unsqueeze(-1).float()
+            return (h * m).sum(1) / m.sum(1).clamp(min=1)
+
+        def forward(self, F, T, S, C, M, use_rel_bias=True):
+            p = self.encode(F, T, S, C, M, use_rel_bias)
+            e = self.metric(p)
             e = e / (e.norm(dim=-1, keepdim=True) + 1e-9)
-            return e, self.resid(pooled).squeeze(-1), self.prob(pooled).squeeze(-1), \
-                self.unc(pooled).squeeze(-1)
+            return e, self.dec_res(p), self.dec_prob(p), self.dec_dir(p), self.unc(p).squeeze(-1)
 
     return Cellformer()
+
+
+def transfer_bench(cell_type, report):
+    """A held-out CELL LINE bench. Metric 3 in CELLFORMER2.md, and the one never run until now.
+
+    'This is the test AlphaFold's CASP is: held-out targets, not a held-out split of the same set.' Every
+    number this project has published for the transformer arc is a held-out split of K562.
+    """
+    from eval_harness import Harness
+    try:
+        return Harness(cell_type)
+    except Exception as e:
+        report(f"    {cell_type}: unavailable ({type(e).__name__}) -- reported as unavailable, not as a null")
+        return None
 
 
 def shared_core(Yspec_train, k):
@@ -483,12 +511,12 @@ def main():
     if SMOKE:
         report("\n  SMOKE MODE: structure validated, arms not run. Flip CELLFORMER_SMOKE=0 for the real run,")
         report("  and CELLFORMER_SIGN=measured+imputed once outputs/orphan/impute_reg_sign.json exists.")
-        model = make_model(Zp.shape[1] + 5, D_MODEL)
+        model = make_model(Zp.shape[1] + 6, D_MODEL, len(H.genes))
         F, T, S, C, M = pad(feats[:16], types[:16], signs[:16], confs[:16])
         with torch.no_grad():
-            e, resid, prob, unc = model(F, T, S, C, M)
+            e, resid, prob, dr, unc = model(F, T, S, C, M)
         report(f"  forward pass OK: embedding {tuple(e.shape)}, residual {tuple(resid.shape)}, "
-               f"prob {tuple(prob.shape)}, uncertainty {tuple(unc.shape)}")
+               f"prob {tuple(prob.shape)}, direction {tuple(dr.shape)}, uncertainty {tuple(unc.shape)}")
         report(f"  relation-bias ablation path OK: "
                f"{tuple(model(F, T, S, C, M, use_rel_bias=False)[0].shape)}")
         R["smoke_forward_ok"] = True
@@ -512,11 +540,23 @@ def main():
                                       rng2, "random")
         Frr, Trr, Srr, Crr, Mrr = pad(fr, tr, sr, cr)
 
-        def train_eval(F, T, S, C, M, tr_idx, te_idx, use_rel_bias=True, zero_sign=False, seed=0):
+        Mag = np.stack([H.A[H.ki[k]] for k in kos]).astype(np.float32)      # |z|, the magnitude target
+        Sgn = (np.stack([H.M[H.ki[k]] for k in kos]) > 0).astype(np.float32)  # direction, from the SIGNED
+        Mov = (Mag >= 1.0).astype(np.float32)                                  # response indicator
+        import torch.nn.functional as Fn
+
+        def train_eval(F, T, S, C, M, tr_idx, te_idx, use_rel_bias=True, zero_sign=False, seed=0,
+                       heads=True):
+            """Multi-task: retrieval metric + residual-on-top-of-tide + probability + direction +
+            uncertainty. The tide term is a CONSTANT added before the loss, so predicting it earns zero."""
             torch.manual_seed(seed)
-            model = make_model(F.shape[2], D_MODEL)
+            model = make_model(F.shape[2], D_MODEL, Mag.shape[1])
             opt = torch.optim.Adam(model.parameters(), lr=2e-3)
-            Sn = torch.from_numpy(Yn[tr_idx] @ Yn[tr_idx].T)
+            Yn_t = torch.from_numpy(Yn[tr_idx])
+            tide = torch.from_numpy(Mag[tr_idx].mean(0))          # THE TIDE, fitted on TRAIN only
+            Mg = torch.from_numpy(Mag[tr_idx])
+            Sg = torch.from_numpy(Sgn[tr_idx])
+            Mv = torch.from_numpy(Mov[tr_idx])
             Ft, Tt, St, Ct, Mt = F[tr_idx], T[tr_idx], S[tr_idx], C[tr_idx], M[tr_idx]
             if zero_sign:
                 St, Ct = torch.zeros_like(St), torch.zeros_like(Ct)
@@ -524,33 +564,42 @@ def main():
             for _ep in range(EPOCHS):
                 perm = torch.randperm(n)
                 for i in range(0, n, 96):
-                    b = perm[i:i + 96]
-                    if len(b) < 8:
+                    b_ = perm[i:i + 96]
+                    if len(b_) < 8:
                         continue
-                    e, _r, _p, _u = model(Ft[b], Tt[b], St[b], Ct[b], Mt[b], use_rel_bias)
-                    loss = ((e @ e.T) - Sn[b][:, b]).pow(2).mean()
+                    e, res, prob, dr, lv = model(Ft[b_], Tt[b_], St[b_], Ct[b_], Mt[b_], use_rel_bias)
+                    tgt = Yn_t[b_] @ Yn_t[b_].T
+                    loss = ((e @ e.T) - tgt).pow(2).mean()
+                    if heads:
+                        pred = tide.unsqueeze(0) + res                 # tide is NOT learned
+                        err = (pred - Mg[b_]).pow(2)
+                        loss = loss + err.mean()
+                        loss = loss + Fn.binary_cross_entropy_with_logits(prob, Mv[b_])
+                        w = Mv[b_]                                     # direction only where it moved
+                        if w.sum() > 0:
+                            loss = loss + (Fn.binary_cross_entropy_with_logits(dr, Sg[b_],
+                                                                               reduction="none")
+                                           * w).sum() / w.sum()
+                        # Gaussian NLL on the model's OWN magnitude error -- a calibrated uncertainty, not
+                        # a free parameter: it is rewarded for predicting where it will be wrong.
+                        loss = loss + 0.5 * (lv + err.mean(1).detach() / lv.exp().clamp(min=1e-4)).mean()
                     opt.zero_grad()
                     loss.backward()
                     opt.step()
             with torch.no_grad():
                 Sa, Ca = (torch.zeros_like(S), torch.zeros_like(C)) if zero_sign else (S, C)
-                E, _r, _p, _u = model(F, T, Sa, Ca, M, use_rel_bias)
-            return E.numpy()
-
-        def retriever(E, tr_idx, top=10):
-            En = E / (np.linalg.norm(E, axis=1, keepdims=True) + 1e-9)
-            pos = {kos[i]: i for i in range(len(kos))}
-
-            def f(ko):
-                i = pos.get(ko)
-                if i is None:
-                    return None
-                sims = En[tr_idx] @ En[i]
-                nn = tr_idx[np.argsort(-sims)[:top]]
-                return np.stack([H.A[H.ki[kos[j]]] for j in nn]).mean(0)
-            return f
+                e, res, prob, dr, lv = model(F, T, Sa, Ca, M, use_rel_bias)
+            return (e.numpy(), (tide.numpy()[None, :] + res.numpy()), torch.sigmoid(prob).numpy(),
+                    torch.sigmoid(dr).numpy(), lv.numpy(), model)
 
         arms, per_seed = {}, {}
+        head_rows, m3 = [], {}
+        kgene_i = {g: i for i, g in enumerate(H.genes)}
+        report("\n  METRIC 3 benches (held-out CELL LINES, the test never run in this arc):")
+        benches = {ct: transfer_bench(ct, report) for ct in TRANSFER_LINES}
+        for ct, b_ in benches.items():
+            if b_ is not None:
+                report(f"    {ct:10s} {len(b_.kos):,} knockouts x {len(b_.genes):,} genes")
         for seed in range(N_SEEDS):
             rs = np.random.default_rng(500 + seed).permutation(len(kos))
             te_idx = rs[:len(kos) // 4]
@@ -583,24 +632,88 @@ def main():
             selfmask = Tr == 0
             Fs = Fr * selfmask.unsqueeze(-1).float()
             rec("self-only (no neighbourhood)",
-                retriever(train_eval(Fs, Tr, Sr, Cr, selfmask, tr_idx, te_idx, seed=seed), tr_idx))
-            E_full = train_eval(Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, seed=seed)
+                retriever(train_eval(Fs, Tr, Sr, Cr, selfmask, tr_idx, te_idx, seed=seed)[0], tr_idx))
+            E_full, P_res, P_prob, P_dir, P_lv, model_full = train_eval(
+                Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, seed=seed)
             rec("CELLFORMER v1 (full)", retriever(E_full, tr_idx))
             rec("  - relation bias",
-                retriever(train_eval(Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, use_rel_bias=False, seed=seed),
-                          tr_idx))
+                retriever(train_eval(Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, use_rel_bias=False,
+                                     seed=seed)[0], tr_idx))
             rec("  - sign channel",
-                retriever(train_eval(Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, zero_sign=True, seed=seed),
-                          tr_idx))
+                retriever(train_eval(Fr, Tr, Sr, Cr, Mr, tr_idx, te_idx, zero_sign=True,
+                                     seed=seed)[0], tr_idx))
             Ssh = torch.from_numpy(np.random.default_rng(900 + seed).permutation(Sr.numpy().ravel())
                                    .reshape(Sr.shape).astype(np.float32))
             rec("  ctrl: shuffled sign",
-                retriever(train_eval(Fr, Tr, Ssh, Cr, Mr, tr_idx, te_idx, seed=seed), tr_idx))
+                retriever(train_eval(Fr, Tr, Ssh, Cr, Mr, tr_idx, te_idx, seed=seed)[0], tr_idx))
             rec("  ctrl: random partners",
-                retriever(train_eval(Frr, Trr, Srr, Crr, Mrr, tr_idx, te_idx, seed=seed), tr_idx))
+                retriever(train_eval(Frr, Trr, Srr, Crr, Mrr, tr_idx, te_idx, seed=seed)[0], tr_idx))
             sh = {kos[i]: kos[j] for i, j in zip(te_idx, np.random.default_rng(7 + seed).permutation(te_idx))}
             rf = retriever(E_full, tr_idx)
             rec("  ctrl: wrong-knockout", lambda ko: rf(sh.get(ko, ko)))
+
+            # ---- the residual head's OWN ranking, and the direction/probability/uncertainty heads ----
+            #
+            # This is the arm neural_ko warned about: a decoder to gene space that can collapse to the
+            # tide. Here the tide is ADDED as a constant, so collapsing earns zero -- reporting this arm
+            # beside the retrieval arm is what shows whether that design actually held.
+            kpos = {kos[i]: i for i in range(len(kos))}
+            rec("residual head (tide + learned)", lambda ko: (P_res[kpos[ko]] if ko in kpos else None))
+            te_set = [k for k in test_kos if k in kpos]
+            ii = np.array([kpos[k] for k in te_set])
+            mv = Mov[ii].astype(bool)
+            from sklearn.metrics import roc_auc_score
+            try:
+                auc_p = float(roc_auc_score(Mov[ii].ravel(), P_prob[ii].ravel()))
+            except Exception:
+                auc_p = float("nan")
+            try:
+                auc_d = float(roc_auc_score(Sgn[ii][mv].ravel(), P_dir[ii][mv].ravel()))
+            except Exception:
+                auc_d = float("nan")
+            err = np.abs(P_res[ii] - Mag[ii]).mean(1)
+            unc = P_lv[ii]
+            from scipy import stats as _st
+            rho_u = float(_st.spearmanr(unc, err)[0])
+            head_rows.append({"seed": seed, "prob_auc": auc_p, "dir_auc_on_movers": auc_d,
+                              "uncertainty_vs_error_spearman": rho_u,
+                              "dir_base_rate": float(Sgn[ii][mv].mean())})
+            report(f"    seed {seed}  HEADS  response-prob AUC {auc_p:.4f} | direction AUC {auc_d:.4f} "
+                   f"(base rate {Sgn[ii][mv].mean():.3f}) | uncertainty-vs-error rho {rho_u:+.4f}")
+
+            # ---- METRIC 3: transfer to held-out CELL LINES, no retraining ----
+            for ct in TRANSFER_LINES:
+                Ht = benches.get(ct)
+                if Ht is None:
+                    continue
+                shared = [g for g in Ht.genes if g in kgene_i]
+                col_t = np.array([Ht.gi[g] for g in shared])
+                col_k = np.array([kgene_i[g] for g in shared])
+                tk = [k for k in Ht.kos if k in kpos]
+                if len(tk) < 30 or len(shared) < 500:
+                    report(f"      {ct}: {len(tk)} shared KOs / {len(shared)} shared genes -- too thin, "
+                           f"reported as unavailable")
+                    continue
+                hit, base = [], []
+                for k in tk:
+                    r = Ht.ki[k]
+                    truth = set(int(i) for i in np.argsort(-Ht.A[r][col_t])[:K_RECALL]
+                                if Ht.nontide[col_t[i]])
+                    if not truth:
+                        continue
+                    pred = P_res[kpos[k]][col_k]
+                    top = set(int(i) for i in np.argsort(-pred)[:K_RECALL])
+                    hit.append(len(truth & top) / len(truth))
+                    bt = set(int(i) for i in np.argsort(-Ht.mover_freq[col_t])[:K_RECALL])
+                    base.append(len(truth & bt) / len(truth))
+                if hit:
+                    m3.setdefault(ct, {"model": [], "tide": [], "n": []})
+                    m3[ct]["model"].append(float(np.mean(hit)))
+                    m3[ct]["tide"].append(float(np.mean(base)))
+                    m3[ct]["n"].append(len(hit))
+                    report(f"      METRIC 3 {ct:10s} model {np.mean(hit):.4f}  tide {np.mean(base):.4f}  "
+                           f"delta {np.mean(hit)-np.mean(base):+.4f}  ({len(hit)} KOs, "
+                           f"{len(shared):,} shared genes)")
 
             def oracle_f(ko):
                 i = {kos[x]: x for x in range(len(kos))}.get(ko)
@@ -626,6 +739,12 @@ def main():
         mde_obs = 3 * sd_pool / np.sqrt(max(N_SEEDS, 1))
         report(f"\n  observed pooled seed sd {sd_pool:.4f} -> minimum detectable increment "
                f"{mde_obs:+.4f} at {N_SEEDS} seeds")
+        R["heads"] = head_rows
+        R["metric3_transfer"] = {ct: {"model_mean": float(np.mean(v["model"])),
+                                      "tide_mean": float(np.mean(v["tide"])),
+                                      "delta": float(np.mean(v["model"]) - np.mean(v["tide"])),
+                                      "per_seed_model": v["model"], "per_seed_tide": v["tide"],
+                                      "n_kos": v["n"]} for ct, v in m3.items()}
         R["arms"] = {k: {"metric1_mean": float(np.mean(v["m1"])), "metric1_sd": float(np.std(v["m1"])),
                          "metric2_mean": float(np.mean(v["m2"])), "metric2_sd": float(np.std(v["m2"])),
                          "per_seed_m1": v["m1"], "per_seed_m2": v["m2"]} for k, v in arms.items()}
