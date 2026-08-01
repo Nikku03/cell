@@ -102,6 +102,10 @@ THE GATES, DECLARED BEFORE ANY NUMBER IS PRODUCED.
     STABLE    The same gap must exceed the across-FOLD MDE, so a gain carried by one fold does not pass.
     FREE      MODEL must beat the best 0-parameter arm by more than the paired MDE. If a zero-parameter
               baseline matches or beats the trained network, THAT IS THE HEADLINE.
+    TRIVIAL   MODEL must beat the best arm carrying AT MOST ONE FITTED PARAMETER -- the 0-parameter arms
+              and the single-scalar shrunk partner mean -- by more than the paired MDE. FREE alone can be
+              cleared by a network that merely rescales a channel the zero-parameter arm left unscaled,
+              which is not a reason to build a network.
     PARTNER   The partner channel is credited only if MODEL beats the random-partner control AND the
               degree-matched rewiring control by more than the paired MDE.
     IGNORED   If MODEL does not beat the COUNTERFACTUAL PARTNER SWAP by more than the paired MDE, the
@@ -156,8 +160,8 @@ SEL_N = int(os.environ.get("VH_SELECTIVE", "300"))  # secondary universe: top-va
 # --- model ------------------------------------------------------------------------------------------
 DIM = int(os.environ.get("VH_DIM", "16"))           # gene / line embedding width
 HID = int(os.environ.get("VH_HID", "64"))
-EPOCHS = int(os.environ.get("VH_EPOCHS", "12"))
-PAIRS = int(os.environ.get("VH_PAIRS", "250000"))   # (line, gene) training pairs drawn per epoch
+EPOCHS = int(os.environ.get("VH_EPOCHS", "20"))
+PAIRS = int(os.environ.get("VH_PAIRS", "400000"))   # (line, gene) training pairs drawn per epoch
 BATCH = int(os.environ.get("VH_BATCH", "1024"))
 INIT_SEEDS = int(os.environ.get("VH_INIT_SEEDS", "3"))  # fold 0 only. REPORTED, NOT GRADED
 N_LINES = int(os.environ.get("VH_LINES", "0"))      # 0 = every cell line in the file
@@ -248,7 +252,6 @@ def main():
     # per-arm, per-LINE scores. Every list ends up with exactly NL entries, one per held-out line.
     per_line = {}
     per_fold = {}
-    order_lines = []
 
     def record(name, fold, rmse_v, r_v, resid_v, rmse_sel_v):
         d = per_line.setdefault(name, {"rmse": [], "r": [], "resid_r": [], "rmse_sel": []})
@@ -268,7 +271,6 @@ def main():
     for f in range(FOLDS):
         te = np.sort(blocks[f])
         tr = np.sort(np.concatenate([b for g, b in enumerate(blocks) if g != f]))
-        order_lines.extend(lines[te].tolist())
 
         # ---- marginals, TRAINING LINES ONLY, refit in this fold -------------------------------------
         mu = float(np.concatenate([Xe[tr].ravel(), Xp[tr].ravel()]).mean())
@@ -471,10 +473,12 @@ def main():
     ZERO = ["GLOBAL-mean (0 param)", "MARGINAL-gene (0 param)", "MARGINAL-line (0 param)", REF,
             "PARTNER-MEAN (0 param)"]
 
+    def lower_is_better(m):
+        return m.startswith("rmse")
+
     def gap(arm, ref=REF, m="rmse"):
         """POSITIVE = the arm is better. RMSE is lower-is-better, so the sign is flipped for it."""
-        d = A[ref][m] - A[arm][m]
-        return d if m == "rmse" else A[arm][m] - A[ref][m]
+        return A[ref][m] - A[arm][m] if lower_is_better(m) else A[arm][m] - A[ref][m]
 
     def bars(arm, ref=REF, m="rmse"):
         d = gap(arm, ref, m)
@@ -486,7 +490,7 @@ def main():
         pooled = float(np.mean([A[arm][m].std(ddof=1), A[ref][m].std(ddof=1)]))
         unpaired = 3 * pooled / np.sqrt(n)
         fd = np.array(per_fold[ref][m]) - np.array(per_fold[arm][m])
-        if m != "rmse":
+        if not lower_is_better(m):
             fd = -fd
         fold = 3 * float(np.std(fd, ddof=1)) / np.sqrt(FOLDS)
         return float(d.mean()), paired, unpaired, fold, float((d > 0).mean())
@@ -494,7 +498,10 @@ def main():
     g_model, mde_p, mde_u, mde_f, win = bars("MODEL (gene+line+partners)")
     g_model_r, mde_pr, _, _, _ = bars("MODEL (gene+line+partners)", m="r")
     best_zero = min(ZERO, key=lambda k: mean(k))
+    CHEAP = ZERO + ["PARTNER-MEAN shrunk (1 param)"]
+    best_cheap = min(CHEAP, key=lambda k: mean(k))
     g_free, mde_free, _, _, win_free = bars("MODEL (gene+line+partners)", best_zero)
+    g_triv, mde_triv, _, _, win_triv = bars("MODEL (gene+line+partners)", best_cheap)
     g_rand, mde_rand, _, _, _ = bars("MODEL (gene+line+partners)", "CONTROL random partners")
     g_cfg, mde_cfg, _, _, _ = bars("MODEL (gene+line+partners)", "CONTROL degree-matched rewiring")
     g_swap, mde_swap, _, _, _ = bars("MODEL (gene+line+partners)", "COUNTERFACTUAL partner swap")
@@ -525,6 +532,7 @@ def main():
         "HONEST   the same gap also exceeds the UNPAIRED across-line MDE": bool(g_model > mde_u),
         "STABLE   the same gap also exceeds the across-FOLD MDE": bool(g_model > mde_f),
         "FREE     MODEL beats the best 0-parameter arm by > MDE": bool(g_free > mde_free),
+        "TRIVIAL  MODEL beats the best <=1-fitted-parameter arm by > MDE": bool(g_triv > mde_triv),
         "PARTNER  MODEL beats random-partner AND degree-matched rewiring by > MDE":
             bool(g_rand > mde_rand and g_cfg > mde_cfg),
         "IGNORED  MODEL beats the COUNTERFACTUAL partner swap by > MDE": bool(g_swap > mde_swap),
@@ -538,6 +546,8 @@ def main():
            f"gap {g_model:+.5f} (paired MDE {mde_p:.5f}, unpaired {mde_u:.5f}, fold {mde_f:.5f})")
     report(f"    best 0-parameter arm = '{best_zero}' at {mean(best_zero):.4f}; MODEL is {g_free:+.5f} "
            f"better, and better on {100*win_free:.1f}% of held-out lines")
+    report(f"    best <=1-parameter arm = '{best_cheap}' at {mean(best_cheap):.4f}; MODEL is {g_triv:+.5f} "
+           f"better, and better on {100*win_triv:.1f}% of held-out lines")
     report(f"    MARGINAL-gene alone (the PAN-ESSENTIAL PRIOR) {mean('MARGINAL-gene (0 param)'):.4f}, "
            f"i.e. {g_gene:+.5f} vs MARGINAL-both; GLOBAL-mean {mean('GLOBAL-mean (0 param)'):.4f}")
     report(f"    partner attribution: vs random {g_rand:+.5f}, vs degree-matched rewiring {g_cfg:+.5f}, "
@@ -572,7 +582,28 @@ def main():
                f"mean nothing; they are printed rather than hidden so the denominator is visible.")
 
     pan_wins = mean("MARGINAL-gene (0 param)") <= mean("MODEL (gene+line+partners)")
-    zero_wins = mean(best_zero) <= mean("MODEL (gene+line+partners)")
+    zero_wins = mean(best_cheap) <= mean("MODEL (gene+line+partners)")
+    n_par_cheap = 0 if best_cheap in ZERO else 1
+    G_PRIM = "PRIMARY  MODEL beats MARGINAL-both by > paired across-line MDE"
+    G_HON = "HONEST   the same gap also exceeds the UNPAIRED across-line MDE"
+    G_STA = "STABLE   the same gap also exceeds the across-FOLD MDE"
+    G_AGR = "AGREE    per-line Pearson r reaches the same verdict as RMSE on the primary gap"
+    if not gates[G_PRIM]:
+        qual = ""
+    elif not gates[G_HON] and not gates[G_STA]:
+        qual = (" -- but the same gap clears NEITHER the unpaired across-line bar NOR the across-fold bar, "
+                "so it is real only as a paired within-line effect and is smaller than both the spread "
+                "between cell lines and the spread between folds")
+    elif not gates[G_HON]:
+        qual = (" -- but only on the paired bar: the gain is smaller than the line-to-line spread and must "
+                "be described that way")
+    elif not gates[G_STA]:
+        qual = " -- but it does not clear the across-fold bar, so it is not stable across the folds"
+    else:
+        qual = " on all three bars"
+    attr = (f"reproduces {100*frac(g_pm, denom):.0f}% of the trained model's gain" if repro_meaningful else
+            "cannot be expressed as a fraction of the trained model's gain, because that gain is itself at "
+            "or below the MDE and the ratio would be two undetected quantities divided by each other")
     verdict = (
         (f"SMOKE RUN ({NL:,} lines, {len(EV):,} eval genes, {EPOCHS} epochs, {FOLDS} folds) -- THIS IS A "
          f"PLUMBING CHECK AND NOT A RESULT. The network is undertrained, the co-dependency correlations "
@@ -591,33 +622,45 @@ def main():
         f"detectable increment of {mde_p:.5f} (3*sd/sqrt(n), n = {n:,} HELD-OUT CELL LINES, sd = the "
         f"per-line PAIRED difference sd; the unpaired bar is {mde_u:.5f} and the across-fold bar "
         f"{mde_f:.5f}), so criterion 3 for the viability head "
-        f"{'PASSES' if gates['PRIMARY  MODEL beats MARGINAL-both by > paired across-line MDE'] else 'FAILS'}"
-        f"{'' if gates['HONEST   the same gap also exceeds the UNPAIRED across-line MDE'] else ' on the paired bar only -- the gain is smaller than the line-to-line spread and must be described that way'}"
+        f"{'PASSES' if gates[G_PRIM] else 'FAILS'}{qual}"
         f". The model is better than the additive marginal on {100*win:.1f}% of held-out lines, with a "
         f"per-line gain spread of {gap('MODEL (gene+line+partners)').std(ddof=1):.4f} "
         f"(q10 {np.quantile(gap('MODEL (gene+line+partners)'), .10):+.4f}, "
         f"q90 {np.quantile(gap('MODEL (gene+line+partners)'), .90):+.4f}), which is the number a large n "
         f"buys and which a fold-level mean would have hidden. "
-        + (f"A ZERO-PARAMETER, UNTRAINED BASELINE ('{best_zero}', {mean(best_zero):.4f}) MATCHES OR BEATS "
-           f"THE TRAINED NETWORK by {-g_free:+.5f}, AND THAT IS THE HEADLINE, not a footnote. "
+        + (f"A {n_par_cheap}-PARAMETER, UNTRAINED BASELINE ('{best_cheap}', {mean(best_cheap):.4f}) "
+           f"MATCHES OR BEATS THE TRAINED NETWORK by {-g_triv:+.5f} and is better on "
+           f"{100*(1-win_triv):.1f}% of held-out lines, AND THAT IS THE HEADLINE, not a footnote. "
            if zero_wins else
-           f"The best zero-parameter arm ('{best_zero}') is {mean(best_zero):.4f}, i.e. {g_free:+.5f} "
-           f"behind the trained network. ") +
+           f"The best arm carrying at most one fitted parameter ('{best_cheap}') is "
+           f"{mean(best_cheap):.4f}, i.e. {g_triv:+.5f} behind the trained network. ") +
+        f"The best strictly ZERO-parameter arm is '{best_zero}' at {mean(best_zero):.4f} ({g_free:+.5f} "
+        f"vs the model). " +
         f"Attribution of the co-dependency partner channel, which section 11 places specifically in this "
         f"head: the untrained correlation-signed partner mean alone moves RMSE by {g_pm:+.5f} against "
-        f"MARGINAL-both and reproduces {100*frac(g_pm, denom):.0f}% of the trained model's gain; the model "
+        f"MARGINAL-both and {attr}; the model "
         f"beats uniformly random partners by {g_rand:+.5f} and a DEGREE-MATCHED configuration-model "
         f"rewiring by {g_cfg:+.5f}; removing the channel entirely from the identical network costs "
-        f"{g_abl:+.5f}. THE COUNTERFACTUAL SWAP, in which the trained network keeps the correct gene and "
+        f"{g_abl:+.5f}. RMSE over a panel that is mostly non-essential genes is however the least "
+        f"sensitive place to look for that channel, so the two sharper readouts are reported next to it: "
+        f"in RESIDUAL space, after both marginals are removed, the zero-parameter partner mean reaches "
+        f"per-line r {mean('PARTNER-MEAN (0 param)', 'resid_r'):+.4f} against the trained model's "
+        f"{mean('MODEL (gene+line+partners)', 'resid_r'):+.4f} and the random-partner control's "
+        f"{mean('PARTNER-MEAN random (0p CONTROL)', 'resid_r'):+.4f}; and on the SELECTIVE universe (the "
+        f"most variable eval genes by training lines alone) it reaches RMSE "
+        f"{mean('PARTNER-MEAN (0 param)', 'rmse_sel'):.4f} against MARGINAL-both's "
+        f"{mean(REF, 'rmse_sel'):.4f} and the model's "
+        f"{mean('MODEL (gene+line+partners)', 'rmse_sel'):.4f}. "
+        f"THE COUNTERFACTUAL SWAP, in which the trained network keeps the correct gene and "
         f"line features but is handed another held-out line's partner values, changes RMSE by "
         f"{g_swap:+.5f}, so the partner channel is "
         f"{'genuinely being read' if g_swap > mde_swap else 'IGNORED by the trained network rather than merely uninformative -- accuracy alone cannot separate those two and this is what separates them'}. "
         f"The identity control (the model's residual predictions permuted across held-out lines) is "
         f"{g_wl:+.5f}, which bounds how much of the gap the metric would concede to any line-shaped "
         f"prediction. The secondary per-line Pearson correlation "
-        f"{'AGREES' if gates['AGREE    per-line Pearson r reaches the same verdict as RMSE on the primary gap'] else 'DISAGREES'} "
+        f"{'AGREES' if gates[G_AGR] else 'DISAGREES'} "
         f"with RMSE on the primary gap ({g_model_r:+.5f} against a {mde_pr:.5f} bar)"
-        f"{'.' if gates['AGREE    per-line Pearson r reaches the same verdict as RMSE on the primary gap'] else ', and when the two metrics disagree the result is a metric artifact and is not reportable as biology.'} "
+        f"{'.' if gates[G_AGR] else ', and when the two metrics disagree the result is a metric artifact and is not reportable as biology.'} "
         f"Note by construction that a per-line constant offset cannot change a per-line correlation, so "
         f"MARGINAL-gene and MARGINAL-both are identical on r and differ only on RMSE; that is a property of "
         f"the metric, not a bug. All effect sizes above are RAW held-out values; the controls establish "
@@ -688,6 +731,9 @@ def main():
              "model_minus_marginal_both": float(g_model),
              "model_minus_best_zero_parameter_arm": float(g_free),
              "best_zero_parameter_arm": best_zero,
+             "model_minus_best_at_most_one_parameter_arm": float(g_triv),
+             "best_at_most_one_parameter_arm": best_cheap,
+             "fraction_of_held_out_lines_where_model_beats_that_arm": float(win_triv),
              "marginal_gene_minus_marginal_both": float(g_gene),
              "zero_param_partner_mean_minus_marginal_both": float(g_pm),
              "model_minus_random_partners": float(g_rand),
@@ -696,6 +742,20 @@ def main():
              "model_minus_counterfactual_partner_swap": float(g_swap),
              "model_minus_wrong_line_identity_control": float(g_wl),
              "model_minus_marginal_both_pearson_r": float(g_model_r),
+             "residual_space_r_zero_param_partner_mean": mean("PARTNER-MEAN (0 param)", "resid_r"),
+             "residual_space_r_model": mean("MODEL (gene+line+partners)", "resid_r"),
+             "residual_space_r_random_partner_zero_param_control":
+                 mean("PARTNER-MEAN random (0p CONTROL)", "resid_r"),
+             "residual_space_r_counterfactual_partner_swap":
+                 mean("COUNTERFACTUAL partner swap", "resid_r"),
+             "selective_rmse_marginal_both": mean(REF, "rmse_sel"),
+             "selective_rmse_zero_param_partner_mean": mean("PARTNER-MEAN (0 param)", "rmse_sel"),
+             "selective_rmse_model": mean("MODEL (gene+line+partners)", "rmse_sel"),
+             "selective_model_minus_marginal_both": float(bars(
+                 "MODEL (gene+line+partners)", REF, "rmse_sel")[0]),
+             "selective_zero_param_partner_mean_minus_marginal_both": float(bars(
+                 "PARTNER-MEAN (0 param)", REF, "rmse_sel")[0]),
+             "selective_paired_mde": float(bars("MODEL (gene+line+partners)", REF, "rmse_sel")[1]),
              "fraction_of_held_out_lines_where_model_beats_marginal_both": float(win),
              "fraction_of_held_out_lines_where_zero_param_partner_mean_beats_marginal_both": float(win_pm),
              "per_line_gain_sd": float(gap("MODEL (gene+line+partners)").std(ddof=1)),
@@ -741,6 +801,15 @@ def main():
              "subset: it discards library-specific and late-added genes. That filter is applied "
              "identically to every arm, so it cannot create a between-arm gap, but it does mean the "
              "absolute RMSE is for the always-screened gene universe",
+             "the 1-parameter shrinkage is fit on an inner 20% of the TRAINING lines with the correlations "
+             "re-estimated on the other 80%, so it is honest but noisy: it sees fewer lines than the arm "
+             "it shrinks. Its alpha is reported per fold in this JSON and an alpha far from 1 means the "
+             "unshrunk zero-parameter partner arm is badly scaled rather than uninformative",
+             "the random-partner and degree-matched controls recompute their weights by the same "
+             "training-line procedure, so a rewired pair gets its own (near-zero) correlation rather than "
+             "inheriting the real pair's weight magnitude. That makes them controls on the WIRING AND the "
+             "weights together. A variant that keeps the real weight magnitudes on rewired partners would "
+             "isolate the wiring alone and was NOT run",
              "the per-line paired MDE is the correct bar for a paired comparison but it is the SMALLEST of "
              "the three reported. A gap that clears the paired bar and not the unpaired bar is real yet "
              "smaller than the spread between cell lines, and both bars are in the JSON so the reader "

@@ -233,21 +233,25 @@ def main():
     lines = [str(x) for x in z["lines"]]
     perts = [str(x) for x in z["perts"]]
     genes = [str(x) for x in z["genes"]]
-    C, P0, G0 = Z.shape
+    C = Z.shape[0]
     report(f"\n  dense rectangle: {C} cells x {len(perts):,} perturbations x {len(genes):,} genes, "
            f"100% DENSE ({lines})")
     report(f"  NOT the nlz_* benches: those are 3.5% dense and their zeros mean NOT RECORDED, never a target")
 
     Zf = Z.astype(np.float32)
-    bad_g = ~np.isfinite(Zf).all(0).all(0)
-    n_clip = int((np.abs(np.nan_to_num(Zf, nan=0.0)) > ZCLIP).sum())
-    maxz = float(np.nanmax(np.abs(Zf)))
+    fin = np.isfinite(Zf)
+    bad_g = ~fin.all(0).all(0)
+    aZ = np.where(fin, np.abs(Zf), 0.0)
+    n_clip = int((aZ > ZCLIP).sum())
+    maxz = float(aZ.max())
+    del fin, aZ
     Zf = Zf[:, :, ~bad_g]
     genes = [g for g, b in zip(genes, bad_g) if not b]
     Z = np.clip(Zf, -ZCLIP, ZCLIP)
     del Zf
-    report(f"  dropped {int(bad_g.sum()):,} genes with an undefined robust z; clipped values at |z| = "
-           f"{ZCLIP:.0f} (max |z| was {maxz:.0f}, an artefact of a near-zero MAD, not a 357-sigma response)")
+    report(f"  dropped {int(bad_g.sum()):,} genes with an undefined robust z; clipped {n_clip:,} values "
+           f"({100*n_clip/Z.size:.4f}%) at |z| = {ZCLIP:.0f} -- max |z| was {maxz:.0f}, which is an "
+           f"artefact of a near-zero MAD, not a {maxz:.0f}-sigma biological response")
 
     prof = json.load(gzip.open(BASE, "rt"))["profiles"]
     keep_g = [i for i, g in enumerate(genes) if all(g in prof[ln] for ln in lines)]
@@ -298,9 +302,10 @@ def main():
     base_ctx = [np.zeros((C, 0), bool) for _ in range(P)]
     prow = {p: i for i, p in enumerate(perts)}
     acc = {}
-    for s, t, rt, _cc, _cf, _c2 in E.itertuples(index=False):
-        acc.setdefault(prow[s], []).append((gi[t], TYPE_ID.get(rt, 0),
-                                            tuple((s, t) in ctx_pairs[ln] for ln in lines)))
+    for r_ in E.itertuples(index=False):
+        acc.setdefault(prow[r_.source], []).append(
+            (gi[r_.target], TYPE_ID.get(r_.relation_type, 0),
+             tuple((r_.source, r_.target) in ctx_pairs[ln] for ln in lines)))
     for i, v in acc.items():
         base_idx[i] = np.array([x[0] for x in v], np.int64)
         base_typ[i] = np.array([x[1] for x in v], np.int64)
@@ -426,7 +431,8 @@ def main():
     NBT = {}
     empties = {}
     for k, f_ in SEL.items():
-        NBT[k], empties[k] = summarise(f_)[:3], summarise(f_)[3]
+        V_, S_, R_, e_ = summarise(f_)
+        NBT[k], empties[k] = (V_, S_, R_), e_
     # identity control: arm 2's neighbour block attached to the WRONG perturbation
     wperm = np.random.default_rng(17).permutation(P)
     NBT["9 wrong-perturbation set (identity CONTROL)"] = tuple(x[:, wperm] for x in NBT[
@@ -462,9 +468,11 @@ def main():
            + "  ".join(f"{k.split()[0]}:{v}" for k, v in empties.items()))
 
     # ------------------------------------------------------------------------------------ the folds
-    SHARED = 7          # xg, xp, dxg, dxp, mu, mu*dxg, mu*dxp   -- IDENTICAL in every arm
-    NBC = 5             # nb, dnb, mu*dnb, nbsd, retention       -- THE ONLY THING THAT VARIES
+    # column layout, fixed for every arm:
+    #   shared block (7)   xg, xp, dxg, dxp, mu, mu*dxg, mu*dxp   -- byte-IDENTICAL in every arm
+    #   neighbour block(5) nb, dnb, mu*dnb, nbsd, retention       -- THE ONLY THING THAT VARIES
     ARMS = list(NBT) + ["10 no neighbourhood"]
+    A11_KEY = "11 test-time neighbour-block SWAP (COUNTERFACTUAL)"
 
     def fold(h, seed):
         tr_c = [c for c in range(C) if c != h]
@@ -562,7 +570,7 @@ def main():
             if lin is not None:
                 lin_pred = lin
             if extra is not None:
-                out["11 test-time neighbour-block SWAP (COUNTERFACTUAL)"] = score(pd_["swap"])
+                out[A11_KEY] = score(pd_["swap"])
         out["LS least squares on arm 2's columns (0 param)"] = score(lin_pred)
         return out, lines[near]
 
@@ -579,7 +587,12 @@ def main():
             report(f"    {k:52s} r {np.mean([x['r'] for x in v]):+.4f}   "
                    f"sign {np.mean([x['sign'] for x in v]):.4f}")
 
-    ALL = list(res[lines[0]])
+    # display/JSON order: the 0-parameter arms first (rule: the cheapest baseline is reported NEXT TO the
+    # model, not after it), then the arms in the order the docstring declares them.
+    seen = list(res[lines[0]])
+    ORDER = ["Z zero contrast (0 param)", "NC nearest-cell copy (0 param)",
+             "LS least squares on arm 2's columns (0 param)"] + ARMS + [A11_KEY]
+    ALL = [k for k in ORDER if k in seen] + [k for k in seen if k not in ORDER]
 
     def per_cell(k, m="r"):
         return np.array([np.mean([x[m] for x in res[ln][k]]) for ln in lines])
@@ -599,11 +612,15 @@ def main():
     # a sign flip (+0.0198 pooled where the mean of the per-cell gaps was negative).
     def mde_of(vec):
         return 3 * float(np.std(np.asarray(vec), ddof=1)) / np.sqrt(C)
-    sd_pool = float(np.mean([np.std(per_cell(k), ddof=1) for k in ALL]))
+    # The zero-contrast arm is a CONSTANT by construction (r = 0 in every cell). Leaving it in the pooled sd
+    # would shrink the MDE and make every gate easier to pass, which is the wrong direction to be sloppy in.
+    VAR = [k for k in ALL if k != "Z zero contrast (0 param)"]
+    sd_pool = float(np.mean([np.std(per_cell(k), ddof=1) for k in VAR]))
     MDE = 3 * sd_pool / np.sqrt(C)
-    sd_pool_s = float(np.mean([np.std(per_cell(k, "sign"), ddof=1) for k in ALL]))
+    sd_pool_s = float(np.mean([np.std(per_cell(k, "sign"), ddof=1) for k in VAR]))
     MDE_S = 3 * sd_pool_s / np.sqrt(C)
-    sd_seed = float(np.mean([np.std([x["r"] for x in res[ln][k]]) for ln in lines for k in ALL]))
+    sd_seed = (float(np.mean([np.std([x["r"] for x in res[ln][k]], ddof=1)
+                              for ln in lines for k in VAR])) if N_SEEDS > 1 else float("nan"))
     mde_seed = 3 * sd_seed / np.sqrt(max(N_SEEDS, 2))
 
     def gap(a, b, m="r"):
@@ -614,7 +631,7 @@ def main():
     A4, A5 = "4 cell-context EVIDENCE preference", "5 SWAPPED-cell gating (COUNTERFACTUAL)"
     A6, A7 = "6 random gating, matched retention (CONTROL)", "7 degree-matched rewiring (CONTROL)"
     A8, A9 = "8 random partners (CONTROL)", "9 wrong-perturbation set (identity CONTROL)"
-    A10, A11 = "10 no neighbourhood", "11 test-time neighbour-block SWAP (COUNTERFACTUAL)"
+    A10, A11 = "10 no neighbourhood", A11_KEY
     FREE = ["Z zero contrast (0 param)", "NC nearest-cell copy (0 param)",
             "LS least squares on arm 2's columns (0 param)"]
     LEARNED = [A1, A2, A3, A4, A10]
@@ -638,9 +655,13 @@ def main():
     report(f"  generalisation to a cell never seen). Pooled across-cell sd {sd_pool:.4f} -> arm-level MDE "
            f"{MDE:+.4f}; sign MDE {MDE_S:+.4f}.")
     report(f"  Every GAP below carries its OWN paired MDE from the four per-cell differences.")
-    report(f"  For comparison only: the model-init-seed sd inside a fold is {sd_seed:.4f} (a {mde_seed:+.4f} "
-           f"floor), {sd_pool/max(sd_seed,1e-9):.1f}x smaller than the across-cell sd. Seeds measure "
-           f"optimiser noise inside a FIXED cell set and NOTHING HERE IS GRADED ON THEM.")
+    if np.isfinite(sd_seed):
+        report(f"  For comparison only: the model-init-seed sd inside a fold is {sd_seed:.4f} (a "
+               f"{mde_seed:+.4f} floor), {sd_pool/max(sd_seed,1e-9):.1f}x smaller than the across-cell sd. "
+               f"Seeds measure optimiser noise inside a FIXED cell set and NOTHING IS GRADED ON THEM.")
+    else:
+        report(f"  The model-init-seed floor is NOT ESTIMABLE at V4C_SEEDS={N_SEEDS}. It would not have "
+               f"been graded on in any case -- seeds measure optimiser noise inside a FIXED cell set.")
     report(f"  AT n = 4 THIS MODULE IS UNDERPOWERED BY DESIGN: the sd has 3 degrees of freedom, so the MDE "
            f"is itself poorly estimated and a null is a null of POWER, not a refutation of N_c(p).")
 
@@ -714,8 +735,9 @@ def main():
         f"block held IDENTICAL across arms so that ONLY THE MEMBERSHIP OF THE PARTNER SET VARIES, the "
         f"cell-gated partner set N_c(p) reaches r {agg(A2):+.4f} against the cell-invariant N(p)'s "
         f"{agg(A1):+.4f} -- a paired per-cell gap of {g_pri:+.4f} against a cross-cell minimum detectable "
-        f"increment of {m_pri:.4f} (3*sd/sqrt(n), n = {C} HELD-OUT CELL LINES; the model-init-seed floor of "
-        f"{mde_seed:.4f} measures optimiser noise inside a fixed cell set and is deliberately NOT what this "
+        f"increment of {m_pri:.4f} (3*sd/sqrt(n), n = {C} HELD-OUT CELL LINES; the model-init-seed floor, "
+        f"{'%.4f' % mde_seed if np.isfinite(mde_seed) else 'not estimable at this seed count'}, measures "
+        f"optimiser noise inside a fixed cell set and is deliberately NOT what this "
         f"is graded on). THE PRECONDITION COMES FIRST: the cell-invariant neighbour block beats having no "
         f"neighbourhood at all by {g_pre:+.4f} against a {m_pre:.4f} floor, so the neighbour channel "
         f"{'does carry signal and the gating comparison is interpretable' if gates[list(gates)[0]] else 'IS NOT DETECTED AS CARRYING ANY SIGNAL, which means every gating comparison below is a comparison between variants of a channel that contributes nothing and NO VERDICT ABOUT CELL-CONDITIONING CAN BE DRAWN FROM THEM'}. "
@@ -815,8 +837,10 @@ def main():
                                        "gated_minus_wrong_perturbation": float(m_idt),
                                        "gated_minus_testtime_nb_swap": float(m_nbs),
                                        "G5_best_learned_minus_best_free": float(m_free)},
-                "init_seed_sd_within_fold_DO_NOT_GRADE_ON_THIS": float(sd_seed),
-                "init_seed_mde_DO_NOT_GRADE_ON_THIS": float(mde_seed),
+                "init_seed_sd_within_fold_DO_NOT_GRADE_ON_THIS":
+                    (float(sd_seed) if np.isfinite(sd_seed) else None),
+                "init_seed_mde_DO_NOT_GRADE_ON_THIS":
+                    (float(mde_seed) if np.isfinite(mde_seed) else None),
                 "power_note": f"n = {C} gives the cross-cell sd 3 degrees of freedom, so the MDE is itself "
                               f"poorly estimated. CELLFORMER4.md sec 18 estimates ~30 contexts are needed "
                               f"at 3 sigma for an effect of this size. A NULL HERE IS UNDERPOWERED AND IS "
