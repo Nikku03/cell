@@ -211,11 +211,29 @@ features.
 1. real partners · 2. degree-matched random partners · 3. shuffled identities · 4. wrong-perturbation
 partners · 5. self-only · 6. **simple weighted mean** · 7. **Deep Sets** · 8. **Set Transformer**
 
-> **The transformer remains only if it beats simpler set encoders.** Arms 6–8 have never been run, and
-> this is now the highest-priority unrun test in the whole programme. Block B's existing result — real
-> wiring indistinguishable from shuffled wiring at the same density — predicts that a mean-pool baseline
-> may match the attention layer. If it does, the validated object is a *bag of typed partners* and the
-> attention is not earning its parameters. See §18.
+> **THE TRANSFORMER HAS BEEN REMOVED FROM THIS BLOCK. The rule above was executed and it says no.**
+>
+> Measured on 10,337 knockouts at a matched 108,160-parameter budget, 3 disjoint knockout partitions,
+> MDE 0.0015:
+>
+> | arm | params | recall@50 |
+> |---|---:|---:|
+> | **raw DepMap bag-of-partners, untrained** | **0** | **0.0341** |
+> | unweighted mean-pool | 108,161 | 0.0323 |
+> | Set Transformer, attention **frozen uniform** | 108,160 | 0.0317 |
+> | Deep Sets | 108,032 | 0.0303 |
+> | **Set Transformer** | 108,160 | **0.0297** |
+> | self-only | 108,161 | 0.0198 |
+> | degree-matched rewiring (CONTROL) | 108,160 | 0.0119 |
+>
+> The transformer is **−0.0026 below** the best simple encoder, **−0.0043 below** an untrained
+> zero-parameter baseline, and **−0.0020 below its own module with attention frozen to a constant 1/n**.
+> The attention pattern is not undetected — it is a cost. The threshold-free cosine metric agrees.
+>
+> **Block 3 is therefore specified as a mean-pool over typed partner tokens, not a Set Transformer.**
+> The neighbourhood is real and large — real vs degree-matched rewiring is **+0.0178** — but the
+> information is in *which genes are the partners*, and it is fully available from raw DepMap
+> co-dependency vectors with no training at all. See §18.
 
 ---
 
@@ -484,7 +502,7 @@ This section exists so the specification cannot be read as though nothing has be
 | criterion (§17) | status | number |
 |---|---|---|
 | 1 real > random partners, dense | **PASSED** | +0.0186 gap vs a 0.0012 MDE, 10,337 knockouts. Honest decomposition: **+0.0101** real gain, +0.0085 control dilution |
-| 2 simple set encoder cannot match it | **NEVER TESTED** | mean-pool / Deep Sets arms not run. Block B evidence (real vs shuffled wiring +0.005 ± 0.008) predicts this may fail |
+| 2 simple set encoder cannot match it | **FAILED** | transformer 0.0297 vs mean-pool 0.0323 (**−0.0026**) and vs an untrained 0-param arm 0.0341 (**−0.0043**), MDE 0.0015. Attention frozen uniform *beats* real attention by +0.0020 |
 | 3 every head beats its marginal | **in progress** | `dense_heads.py`, 3 partitions. Smoke: responds 0.5004 vs marginal 0.5039; direction 0.4948 vs 0.5056 — both at chance and *below* marginal |
 | 4 correct > swapped context | **FAILED** | swap gap **−0.0375**, negative in 3 of 4 cells |
 | 5 context residual improves held-out cell | **FAILED** | 0/7 predeclared criteria; a trivial nearest-cell copy (+0.0674, t=+3.13) beats the model (+0.0622, t=+1.10) |
@@ -516,10 +534,28 @@ because its limiting axis was never observations. Separately, leave-one-cell-out
 a cell encoder from **three training points** — that is an identifiability failure no sample size per cell
 can repair, and crossing roughly n ≈ 10 is what turns Block 6 from degenerate into an actual regression.
 
-### The two things worth doing before any of §13 stage 5 onward
+### What criterion 2's failure changes, and what it does not
 
-1. **Run controls 6–8 of §6.** If mean-pooling matches the Set Transformer, criterion 2 fails and the
-   validated object is a bag, not a transformer. This is cheap and it is decisive.
+**It does not touch the data-side finding.** Real partners beat degree-matched rewiring by +0.0178 and
+uniformly random partners by +0.0165. The typed partner list is the most reliable signal this project has
+found. What failed is every learned encoder placed on top of it — each control reproduces *more than all*
+of the transformer's gain over self-only (mean-pool 125.7%, frozen-uniform 120.4%, zero-parameter bag
+143.7%).
+
+**It removes the reason to train Block 3 at all.** A zero-parameter cosine retrieval on raw DepMap vectors
+is the best arm in the table. Any future Block 3 work must beat **0.0341**, not the transformer's 0.0297,
+and that is a much harder bar.
+
+**It narrows what the rest of the stack can inherit.** Blocks 5 and 6 both consume `z_partner[p,c]`. On this
+evidence that should be a mean-pool, which also makes the contrast experiment cheaper to re-run if more cell
+contexts arrive.
+
+**One limit that is not a hedge.** A knockout carries a mean of **11.87** partner tokens here. At that set
+size there may simply be nothing for attention to attend over, and the result should not be generalised to
+a regime with hundreds or thousands of tokens — which is exactly what Blocks 1 and 2 would introduce. The
+finding is specific to Block 3 as specified.
+
+### The remaining thing worth doing before §13 stage 5 onward
 2. **Acquire cell contexts — they cannot be recovered from disk.** This was audited and the result is
    negative. What a fifth cell buys is *shared perturbations* against the dense tensor's 1,763:
 

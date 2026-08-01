@@ -281,12 +281,14 @@ def main():
         # ---- co-dependency partners, rebuilt from TRAINING LINES ONLY -------------------------------
         # NOT cell_complete.json.gz's codep: that graph was built on all of DepMap and would leak the
         # held-out lines into the partner set. Rebuilding it per fold is the whole point.
-        Ae = Eres[tr] - Eres[tr].mean(0)
-        Ap = Pres[tr] - Pres[tr].mean(0)
-        se = np.maximum(Ae.std(0), 1e-6)
-        sp = np.maximum(Ap.std(0), 1e-6)
-        C = (Ae / se).T @ (Ap / sp) / len(tr)            # (G_EVAL, G_PROBE) train-line correlation
-        C = np.clip(C, -1.0, 1.0)
+        def codep(rows):
+            ae = Eres[rows] - Eres[rows].mean(0)
+            ap = Pres[rows] - Pres[rows].mean(0)
+            s_e = np.maximum(ae.std(0), 1e-6)
+            s_p = np.maximum(ap.std(0), 1e-6)
+            return np.clip((ae / s_e).T @ (ap / s_p) / len(rows), -1.0, 1.0), ae, ap, s_e
+
+        C, Ae, Ap, se = codep(tr)                        # (G_EVAL, G_PROBE) train-line correlation
         idx_real = np.argpartition(-np.abs(C), KPART, axis=1)[:, :KPART]
         W_real = np.take_along_axis(C, idx_real, 1)
 
@@ -325,8 +327,17 @@ def main():
         # part in the selection, so this secondary universe is not a leak.
         sel_g = np.argpartition(-se, min(SEL_N, len(EV) - 1))[:SEL_N]
 
-        # 1-PARAMETER shrinkage, closed form on TRAINING lines only
-        pv, ev_ = pc_real[tr].ravel(), Eres[tr].ravel()
+        # 1-PARAMETER shrinkage, closed form, on an INNER SPLIT OF THE TRAINING LINES. Fitting alpha on
+        # the same training lines that estimated C would fit it to C's own overfitting and return alpha
+        # near or above 1 -- the channel looks better in-sample than it is. The correlations are therefore
+        # re-estimated on 80% of the training lines and alpha is fit on the held-back 20%. Held-out lines
+        # take no part in either step.
+        inner = np.random.default_rng(600 + f).permutation(len(tr))
+        ia, ib = tr[inner[:int(.8 * len(tr))]], tr[inner[int(.8 * len(tr)):]]
+        Ci = codep(ia)[0]
+        ii = np.argpartition(-np.abs(Ci), KPART, axis=1)[:, :KPART]
+        pc_i = channel(ii, np.take_along_axis(Ci, ii, 1))
+        pv, ev_ = pc_i[ib].ravel(), Eres[ib].ravel()
         alpha = float(pv @ ev_ / max(pv @ pv, 1e-12))
 
         report(f"\n  FOLD {f}: {len(tr):,} training lines / {len(te):,} HELD-OUT lines. mu {mu:+.4f}; "
@@ -468,7 +479,11 @@ def main():
     def bars(arm, ref=REF, m="rmse"):
         d = gap(arm, ref, m)
         paired = 3 * float(d.std(ddof=1)) / np.sqrt(n)
-        pooled = float(np.mean([A[k][m].std(ddof=1) for k in A]))
+        # UNPAIRED: the across-line sd of a single arm's own score, averaged over the TWO arms being
+        # compared. Pooling over every arm would drag in the degenerate GLOBAL-mean / MARGINAL-line arms,
+        # which live at a completely different RMSE, and would inflate the bar for reasons unrelated to
+        # the comparison being made.
+        pooled = float(np.mean([A[arm][m].std(ddof=1), A[ref][m].std(ddof=1)]))
         unpaired = 3 * pooled / np.sqrt(n)
         fd = np.array(per_fold[ref][m]) - np.array(per_fold[arm][m])
         if m != "rmse":
