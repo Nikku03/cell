@@ -60,7 +60,22 @@ four; they do not create new cell states. So this can establish whether context 
 a four-context correction. It cannot establish a universal cell-state encoder, and a positive result is a
 reason to acquire more cell lines rather than a claim of biological generality.
 
-WHAT A NULL WOULD MEAN, and it is much stronger than the previous one: that baseline transcriptomic state
+DO NOT RUN THIS ON THE nlz BENCHES -- IT WAS TRIED AND IT IS VOID. Those benches record only each
+knockout's top ~250 genes, so 96.5% of every response matrix is exactly zero, and a zero there means NOT
+RECORDED for that perturbation rather than "no response". A contrast target built by sampling (p, g) cells is
+then overwhelmingly censored-minus-censored. Measured on the shared 4-line rectangle: the number of genes
+jointly observed in ALL FOUR cells for the same perturbation has a MEDIAN OF 3 and a mean of 7.0, 26% of
+perturbations have zero overlap at all, and the whole rectangle yields ~9,700 usable observations. No
+objective, gate, or context-conditioned attention repairs a target that is not there.
+
+WHAT WOULD MAKE IT RUNNABLE: dense response matrices, not more cell lines. A deposit truncated to top-N
+genes per knockout cannot support cross-cell contrasts at ANY number of cell lines, because the recorded
+gene sets barely intersect. The full matrices exist upstream -- rpe1.h5ad, nadig_hepg2.h5ad and
+nadig_jurkat.h5ad are cell-level, and colab/reliable_edges.py already pseudobulks RPE1 to a dense
+2,122 x 8,749 matrix. Rebuilding dense per-cell matrices from those is the prerequisite, and it is a
+pipeline job rather than a tweak.
+
+WHAT A NULL WOULD MEAN, once it can actually be run, and it is much stronger than the previous one: that baseline transcriptomic state
 does not identify the cell-specific response function in these four lines even when the objective forces the
 model to use it. That would point at protein or chromatin state, or at more cell contexts -- not at more RNA
 architecture. The previous null established only that the absolute-response objective gave the network no
