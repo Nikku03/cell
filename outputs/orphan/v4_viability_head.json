@@ -1,0 +1,675 @@
+{
+ "model": "v4-viability-head-v1",
+ "title": "V4 Block 8 -- viability head vs its own marginal (n = held-out CELL LINES, and it is large)",
+ "question": "CELLFORMER4.md sec 11 (Block 8 viability head, codependency belongs here) and sec 17 criterion 3 (every head beats its marginal by more than its MDE): does a learned viability head predict a gene's CRISPR effect in an UNSEEN CELL LINE better than the pan-essential gene marginal plus a line offset?",
+ "task": {
+  "data": "DepMap CRISPRGeneEffect.csv, 1,150 cell lines x 18,443 genes, 96.4% observed. NaN means NOT SCREENED and rows/columns with any NaN are DROPPED, never imputed as zero. A real 0.0 means 'no effect' and is a measurement -- unlike the nlz_* benches (3.5% dense, zeros = NOT RECORDED), which are never used here",
+  "lines_used": 200,
+  "genes_complete": 17109,
+  "eval_panel": 250,
+  "probe_panel": 250,
+  "panels_disjoint": true,
+  "setup": "cold-start cell line: a held-out line reveals only its PROBE genes; the scored EVAL genes are disjoint from the probe panel and are never revealed",
+  "primary_metric": "per-held-out-line RMSE in Chronos gene-effect units, over the eval panel (lower is better)",
+  "secondary_metric": "per-held-out-line Pearson r across the eval panel; a constant predictor is scored r = 0 by definition",
+  "diagnostic_metric": "residual-space per-line Pearson r after removing MARGINAL-both; MARGINAL-both scores exactly 0 there by construction",
+  "selective_universe": "top-60 eval genes by TRAINING-LINE sd, reselected per fold; no held-out line takes part in the selection",
+  "partners_per_gene": 8,
+  "model_params": 7553
+ },
+ "unit_of_replication": "a HELD-OUT CELL LINE. n = 200: the lines are split into 2 disjoint blocks and every line is held out exactly once. Model-init seeds are run on fold 0 only and are REPORTED, NOT GRADED",
+ "arms": {
+  "GLOBAL-mean (0 param)": {
+   "rmse_mean": 0.399393435259223,
+   "rmse_sd_across_held_out_lines": 0.0183146485949509,
+   "rmse_per_fold": [
+    0.40073215107914345,
+    0.3980547194393025
+   ],
+   "rmse_sd_across_folds": 0.001893230068694965,
+   "rmse_line_quantiles": [
+    0.37564039864880727,
+    0.38669707254165653,
+    0.39992860948393116,
+    0.41068653535056787,
+    0.4207475842321915
+   ],
+   "pearson_r_mean": 0.0,
+   "pearson_r_sd_across_held_out_lines": 0.0,
+   "pearson_r_per_fold": [
+    0.0,
+    0.0
+   ],
+   "residual_r_mean": 0.0030459246260171238,
+   "residual_r_per_fold": [
+    0.0024890730955788648,
+    0.003602776156455384
+   ],
+   "rmse_selective_mean": 0.7158179589669197,
+   "rmse_selective_per_fold": [
+    0.7181562705266704,
+    0.7134796474071688
+   ],
+   "n_held_out_lines": 200
+  },
+  "MARGINAL-gene (0 param)": {
+   "rmse_mean": 0.14914366160183243,
+   "rmse_sd_across_held_out_lines": 0.029661158050944544,
+   "rmse_per_fold": [
+    0.15219278656368374,
+    0.14609453663998115
+   ],
+   "rmse_sd_across_folds": 0.004312113874420445,
+   "rmse_line_quantiles": [
+    0.11377959795704737,
+    0.12419423218573818,
+    0.14766627959591017,
+    0.16831382465480926,
+    0.1862646243767494
+   ],
+   "pearson_r_mean": 0.9259168222367561,
+   "pearson_r_sd_across_held_out_lines": 0.028618082999701682,
+   "pearson_r_per_fold": [
+    0.9234973702251046,
+    0.9283362742484076
+   ],
+   "residual_r_mean": 0.0,
+   "residual_r_per_fold": [
+    0.0,
+    0.0
+   ],
+   "rmse_selective_mean": 0.23330962130552063,
+   "rmse_selective_per_fold": [
+    0.2388622383806895,
+    0.22775700423035175
+   ],
+   "n_held_out_lines": 200
+  },
+  "MARGINAL-line (0 param)": {
+   "rmse_mean": 0.39948127596896343,
+   "rmse_sd_across_held_out_lines": 0.018150932846151588,
+   "rmse_per_fold": [
+    0.4006466699824173,
+    0.39831588195550943
+   ],
+   "rmse_sd_across_folds": 0.0016481160193349844,
+   "rmse_line_quantiles": [
+    0.3762041642754559,
+    0.38706299966657143,
+    0.3993452099675753,
+    0.4108057869243027,
+    0.4207989839184557
+   ],
+   "pearson_r_mean": 0.0,
+   "pearson_r_sd_across_held_out_lines": 0.0,
+   "pearson_r_per_fold": [
+    0.0,
+    0.0
+   ],
+   "residual_r_mean": 0.003045924626017125,
+   "residual_r_per_fold": [
+    0.002489073095578868,
+    0.003602776156455382
+   ],
+   "rmse_selective_mean": 0.7157327447866477,
+   "rmse_selective_per_fold": [
+    0.7188886601281466,
+    0.712576829445149
+   ],
+   "n_held_out_lines": 200
+  },
+  "MARGINAL-both (0 param)": {
+   "rmse_mean": 0.14937753159664485,
+   "rmse_sd_across_held_out_lines": 0.02960690670877878,
+   "rmse_per_fold": [
+    0.15238982510774074,
+    0.146365238085549
+   ],
+   "rmse_sd_across_folds": 0.004260026337240253,
+   "rmse_line_quantiles": [
+    0.11405841752451742,
+    0.12518790927349505,
+    0.14731006067015176,
+    0.16876942764461014,
+    0.18682681173723842
+   ],
+   "pearson_r_mean": 0.9259168222367561,
+   "pearson_r_sd_across_held_out_lines": 0.028618082999701675,
+   "pearson_r_per_fold": [
+    0.9234973702251046,
+    0.9283362742484076
+   ],
+   "residual_r_mean": 0.0,
+   "residual_r_per_fold": [
+    0.0,
+    0.0
+   ],
+   "rmse_selective_mean": 0.23315556714544697,
+   "rmse_selective_per_fold": [
+    0.23861359902584972,
+    0.22769753526504427
+   ],
+   "n_held_out_lines": 200
+  },
+  "PARTNER-MEAN (0 param)": {
+   "rmse_mean": 0.15263682516154253,
+   "rmse_sd_across_held_out_lines": 0.03080053390296692,
+   "rmse_per_fold": [
+    0.15599270772132484,
+    0.14928094260176025
+   ],
+   "rmse_sd_across_folds": 0.0047459346297754595,
+   "rmse_line_quantiles": [
+    0.11520142159027491,
+    0.1286585363191618,
+    0.15124935450769944,
+    0.17194510217832826,
+    0.1921038334860291
+   ],
+   "pearson_r_mean": 0.9225137032224324,
+   "pearson_r_sd_across_held_out_lines": 0.030153307599232952,
+   "pearson_r_per_fold": [
+    0.9195531331083171,
+    0.9254742733365476
+   ],
+   "residual_r_mean": 0.14279200988613666,
+   "residual_r_per_fold": [
+    0.1395619453255502,
+    0.1460220744467232
+   ],
+   "rmse_selective_mean": 0.23047629411914644,
+   "rmse_selective_per_fold": [
+    0.23672847109903258,
+    0.22422411713926038
+   ],
+   "n_held_out_lines": 200
+  },
+  "PARTNER-MEAN random (0p CONTROL)": {
+   "rmse_mean": 0.16265553912973252,
+   "rmse_sd_across_held_out_lines": 0.0316084445073157,
+   "rmse_per_fold": [
+    0.16632932020479918,
+    0.15898175805466588
+   ],
+   "rmse_sd_across_folds": 0.005195511021548863,
+   "rmse_line_quantiles": [
+    0.12460044112761912,
+    0.13660578239601145,
+    0.16055797056074295,
+    0.18187734610940465,
+    0.20264876100336865
+   ],
+   "pearson_r_mean": 0.9121486240907438,
+   "pearson_r_sd_across_held_out_lines": 0.032402099740272486,
+   "pearson_r_per_fold": [
+    0.9088795118207448,
+    0.9154177363607431
+   ],
+   "residual_r_mean": 0.04415121525663186,
+   "residual_r_per_fold": [
+    0.044197979769025036,
+    0.04410445074423869
+   ],
+   "rmse_selective_mean": 0.2412145942850475,
+   "rmse_selective_per_fold": [
+    0.24597109268260461,
+    0.2364580958874904
+   ],
+   "n_held_out_lines": 200
+  },
+  "PARTNER-MEAN shrunk (1 param)": {
+   "rmse_mean": 0.15507771712517265,
+   "rmse_sd_across_held_out_lines": 0.03123253432640582,
+   "rmse_per_fold": [
+    0.1579023486950038,
+    0.15225308555534153
+   ],
+   "rmse_sd_across_folds": 0.0039946322747623966,
+   "rmse_line_quantiles": [
+    0.11643065899275273,
+    0.13080527654133722,
+    0.1540327290243471,
+    0.1747051554260592,
+    0.19507043729806198
+   ],
+   "pearson_r_mean": 0.9200628308481297,
+   "pearson_r_sd_across_held_out_lines": 0.03097027817595515,
+   "pearson_r_per_fold": [
+    0.9175752547437677,
+    0.922550406952492
+   ],
+   "residual_r_mean": 0.1427920098861367,
+   "residual_r_per_fold": [
+    0.1395619453255502,
+    0.14602207444672322
+   ],
+   "rmse_selective_mean": 0.2318877291492781,
+   "rmse_selective_per_fold": [
+    0.2378932740435461,
+    0.2258821842550102
+   ],
+   "n_held_out_lines": 200
+  },
+  "MODEL (gene+line+partners)": {
+   "rmse_mean": 0.15142581396284682,
+   "rmse_sd_across_held_out_lines": 0.029384193321022094,
+   "rmse_per_fold": [
+    0.1535189871018736,
+    0.14933264082382006
+   ],
+   "rmse_sd_across_folds": 0.0029601938416067165,
+   "rmse_line_quantiles": [
+    0.11720607922061209,
+    0.1287489653649294,
+    0.15015905972685623,
+    0.17003747402302252,
+    0.18971499323571364
+   ],
+   "pearson_r_mean": 0.9247718105389074,
+   "pearson_r_sd_across_held_out_lines": 0.028533138981555795,
+   "pearson_r_per_fold": [
+    0.9228833174372016,
+    0.9266603036406136
+   ],
+   "residual_r_mean": 0.05011588257649757,
+   "residual_r_per_fold": [
+    0.054589257164706285,
+    0.04564250798828886
+   ],
+   "rmse_selective_mean": 0.23530153022830297,
+   "rmse_selective_per_fold": [
+    0.24024628947023582,
+    0.23035677098637017
+   ],
+   "n_held_out_lines": 200
+  },
+  "ABLATION no-partner (same width)": {
+   "rmse_mean": 0.15183791141466738,
+   "rmse_sd_across_held_out_lines": 0.029390671941604517,
+   "rmse_per_fold": [
+    0.15359045345712632,
+    0.15008536937220845
+   ],
+   "rmse_sd_across_folds": 0.0024784687250744702,
+   "rmse_line_quantiles": [
+    0.1176382298780258,
+    0.1286958921618112,
+    0.15046414231933952,
+    0.17033588255525547,
+    0.19156671183573348
+   ],
+   "pearson_r_mean": 0.9245342029919034,
+   "pearson_r_sd_across_held_out_lines": 0.028635415920538827,
+   "pearson_r_per_fold": [
+    0.9226683777002375,
+    0.9264000282835694
+   ],
+   "residual_r_mean": 0.040990614775077934,
+   "residual_r_per_fold": [
+    0.04255070942170277,
+    0.03943052012845309
+   ],
+   "rmse_selective_mean": 0.23555566245867268,
+   "rmse_selective_per_fold": [
+    0.24010667801720584,
+    0.2310046469001395
+   ],
+   "n_held_out_lines": 200
+  },
+  "CONTROL random partners": {
+   "rmse_mean": 0.15114887753346384,
+   "rmse_sd_across_held_out_lines": 0.029678202268346096,
+   "rmse_per_fold": [
+    0.15340071272710315,
+    0.14889704233982454
+   ],
+   "rmse_sd_across_folds": 0.003184575871073752,
+   "rmse_line_quantiles": [
+    0.11591300937819807,
+    0.12757196940035948,
+    0.14884538178129503,
+    0.16993452853018348,
+    0.18741015831734012
+   ],
+   "pearson_r_mean": 0.9246759826699917,
+   "pearson_r_sd_across_held_out_lines": 0.028846840779788212,
+   "pearson_r_per_fold": [
+    0.9228223215087215,
+    0.9265296438312618
+   ],
+   "residual_r_mean": 0.04767294961769209,
+   "residual_r_per_fold": [
+    0.05013423722911845,
+    0.04521166200626573
+   ],
+   "rmse_selective_mean": 0.23504650732942728,
+   "rmse_selective_per_fold": [
+    0.23992583819478003,
+    0.23016717646407453
+   ],
+   "n_held_out_lines": 200
+  },
+  "CONTROL degree-matched rewiring": {
+   "rmse_mean": 0.1512603131921215,
+   "rmse_sd_across_held_out_lines": 0.029499328961576428,
+   "rmse_per_fold": [
+    0.15332556935373434,
+    0.14919505703050867
+   ],
+   "rmse_sd_across_folds": 0.0029207132735274725,
+   "rmse_line_quantiles": [
+    0.1156617940841284,
+    0.12810186521248318,
+    0.1488704137138649,
+    0.16935977940742,
+    0.1880675976447174
+   ],
+   "pearson_r_mean": 0.9246957144268737,
+   "pearson_r_sd_across_held_out_lines": 0.028682527545527824,
+   "pearson_r_per_fold": [
+    0.9230113193031122,
+    0.9263801095506351
+   ],
+   "residual_r_mean": 0.048218257843602855,
+   "residual_r_per_fold": [
+    0.05656309676084168,
+    0.039873418926364014
+   ],
+   "rmse_selective_mean": 0.2349565632837345,
+   "rmse_selective_per_fold": [
+    0.23957383026389073,
+    0.23033929630357824
+   ],
+   "n_held_out_lines": 200
+  },
+  "COUNTERFACTUAL partner swap": {
+   "rmse_mean": 0.15156220699282222,
+   "rmse_sd_across_held_out_lines": 0.02939571689140744,
+   "rmse_per_fold": [
+    0.15367083883807936,
+    0.14945357514756513
+   ],
+   "rmse_sd_across_folds": 0.002982055753614416,
+   "rmse_line_quantiles": [
+    0.11743394279744546,
+    0.1286724250497975,
+    0.15035679879618566,
+    0.17021417010434572,
+    0.18975923624746227
+   ],
+   "pearson_r_mean": 0.9246336808946932,
+   "pearson_r_sd_across_held_out_lines": 0.028573864739136173,
+   "pearson_r_per_fold": [
+    0.9227302758540185,
+    0.9265370859353682
+   ],
+   "residual_r_mean": 0.044892509956222286,
+   "residual_r_per_fold": [
+    0.048359071299444424,
+    0.04142594861300014
+   ],
+   "rmse_selective_mean": 0.23548435427793277,
+   "rmse_selective_per_fold": [
+    0.24043674930343584,
+    0.23053195925242967
+   ],
+   "n_held_out_lines": 200
+  },
+  "CONTROL wrong-line (identity)": {
+   "rmse_mean": 0.1530521570714008,
+   "rmse_sd_across_held_out_lines": 0.029182236377754113,
+   "rmse_per_fold": [
+    0.1552664974354583,
+    0.1508378167073433
+   ],
+   "rmse_sd_across_folds": 0.0031315501745602953,
+   "rmse_line_quantiles": [
+    0.11766295912403468,
+    0.13031015325351175,
+    0.1505519997624178,
+    0.17196495189154126,
+    0.18864661117716872
+   ],
+   "pearson_r_mean": 0.9231903826172629,
+   "pearson_r_sd_across_held_out_lines": 0.02876992509236392,
+   "pearson_r_per_fold": [
+    0.921120857272121,
+    0.9252599079624048
+   ],
+   "residual_r_mean": -0.002992124798041834,
+   "residual_r_per_fold": [
+    -0.012086681070723939,
+    0.006102431474640271
+   ],
+   "rmse_selective_mean": 0.2379075957422687,
+   "rmse_selective_per_fold": [
+    0.24308847718398635,
+    0.23272671430055095
+   ],
+   "n_held_out_lines": 200
+  },
+  "CONTROL wrong-gene (identity)": {
+   "rmse_mean": 0.15303509673087923,
+   "rmse_sd_across_held_out_lines": 0.029349257332836425,
+   "rmse_per_fold": [
+    0.15501629840458803,
+    0.15105389505717046
+   ],
+   "rmse_sd_across_folds": 0.002801842276755239,
+   "rmse_line_quantiles": [
+    0.11781206923167657,
+    0.13004337747720449,
+    0.15096021855640857,
+    0.171782452086348,
+    0.19052339713248692
+   ],
+   "pearson_r_mean": 0.9230593712339208,
+   "pearson_r_sd_across_held_out_lines": 0.028840706982235766,
+   "pearson_r_per_fold": [
+    0.9212376256719863,
+    0.9248811167958554
+   ],
+   "residual_r_mean": -0.0049297841808822705,
+   "residual_r_per_fold": [
+    -0.0026078458159229734,
+    -0.007251722545841568
+   ],
+   "rmse_selective_mean": 0.23574473258835782,
+   "rmse_selective_per_fold": [
+    0.24103989401934897,
+    0.23044957115736675
+   ],
+   "n_held_out_lines": 200
+  }
+ },
+ "mde": {
+  "convention": "3*sd/sqrt(n)",
+  "n": 200,
+  "n_counts": "held-out CELL LINES, each line held out exactly once",
+  "paired_value": 0.0008527014420670159,
+  "paired_definition": "sd of the PER-LINE difference between the two arms compared; arms see identical lines and identical genes so the comparison is paired",
+  "unpaired_value": 0.005989014114805134,
+  "unpaired_definition": "3 * (pooled across-line sd of a single arm's per-line RMSE) / sqrt(n); larger, because it contains between-line difficulty variance that cancels in a paired comparison",
+  "fold_value": 0.002757361116207321,
+  "fold_n": 2,
+  "init_seed_sd_fold0_DO_NOT_GRADE_ON_THIS": 0.0007664365616375241,
+  "init_seed_mde_DO_NOT_GRADE_ON_THIS": 0.0016258574702495837,
+  "init_seed_rmse_fold0": [
+   0.15405713433430443,
+   0.15297322935413804
+  ]
+ },
+ "gates": {
+  "PRIMARY  MODEL beats MARGINAL-both by > paired across-line MDE": false,
+  "HONEST   the same gap also exceeds the UNPAIRED across-line MDE": false,
+  "STABLE   the same gap also exceeds the across-FOLD MDE": false,
+  "FREE     MODEL beats the best 0-parameter arm by > MDE": false,
+  "PARTNER  MODEL beats random-partner AND degree-matched rewiring by > MDE": false,
+  "IGNORED  MODEL beats the COUNTERFACTUAL partner swap by > MDE": true,
+  "AGREE    per-line Pearson r reaches the same verdict as RMSE on the primary gap": true
+ },
+ "gaps_positive_means_better": {
+  "model_minus_marginal_both": -0.0020482823662019605,
+  "model_minus_best_zero_parameter_arm": -0.0022821523610143967,
+  "best_zero_parameter_arm": "MARGINAL-gene (0 param)",
+  "marginal_gene_minus_marginal_both": 0.00023386999481243628,
+  "zero_param_partner_mean_minus_marginal_both": -0.003259293564897673,
+  "model_minus_random_partners": -0.00027693642938297886,
+  "model_minus_degree_matched_rewiring": -0.00016550077072533065,
+  "model_minus_no_partner_ablation": 0.00041209745182054674,
+  "model_minus_counterfactual_partner_swap": 0.00013639302997540612,
+  "model_minus_wrong_line_identity_control": 0.0016263431085539798,
+  "model_minus_marginal_both_pearson_r": -0.0011450116978485687,
+  "fraction_of_held_out_lines_where_model_beats_marginal_both": 0.33,
+  "fraction_of_held_out_lines_where_zero_param_partner_mean_beats_marginal_both": 0.25,
+  "per_line_gain_sd": 0.0040196731467542325,
+  "per_line_gain_quantiles_10_50_90": [
+   -0.007604903099301364,
+   -0.0017961178220222973,
+   0.002809042045033011
+  ]
+ },
+ "controls_reproducing_the_effect": {
+  "0-parameter PARTNER-MEAN reproduces this fraction of MODEL's gain over MARGINAL-both": 1.5912325461949062,
+  "the 1-parameter shrunk partner mean reproduces this fraction": 2.7829100238251825,
+  "the no-partner ABLATION reproduces this fraction": 1.201191719765025,
+  "the RANDOM-partner control reproduces this fraction": 0.8647957752541269,
+  "the DEGREE-MATCHED rewiring control reproduces this fraction": 0.9192002169934163,
+  "the COUNTERFACTUAL partner swap reproduces this fraction": 1.0665889782707614,
+  "the WRONG-LINE identity control reproduces this fraction": 1.7940033734556022
+ },
+ "controls_reproducing_the_effect_are_meaningful": false,
+ "controls_reproducing_the_effect_note": "fractions of MODEL's raw RMSE gain over MARGINAL-both. If that denominator is itself at or below the MDE these ratios are meaningless and the flag above is false.",
+ "pan_essential_marginal_wins": true,
+ "zero_parameter_arm_wins": true,
+ "folds": [
+  {
+   "fold": 0,
+   "n_train_lines": 100,
+   "n_held_out_lines": 100,
+   "mu": -0.1581515405798135,
+   "alpha_1param": 1.111786425304332,
+   "median_abs_corr_real": 0.2845680535636115,
+   "median_abs_corr_random": 0.07905678529390961,
+   "median_abs_corr_degree_matched": 0.0833813768262457
+  },
+  {
+   "fold": 1,
+   "n_train_lines": 100,
+   "n_held_out_lines": 100,
+   "mu": -0.15769289922461138,
+   "alpha_1param": 1.1791156014450825,
+   "median_abs_corr_real": 0.29368935798507123,
+   "median_abs_corr_random": 0.08472927890523865,
+   "median_abs_corr_degree_matched": 0.08501211299460555
+  }
+ ],
+ "circularity_check": "features and target come from the SAME dataset, so the check is not 'different datasets' but 'no scored cell, and nothing derived from a held-out line, enters any input'. (i) mu, the gene marginal, the gene embedding, the line-embedding basis, the co-dependency correlations, the selective-gene selection and the 1-parameter shrinkage are all computed from TRAINING LINES ONLY and refit inside every fold; (ii) the only held-out-line information any arm sees is that line's PROBE genes, asserted disjoint from the scored EVAL genes; (iii) the prebuilt co-dependency graph in cell_complete.json.gz is deliberately NOT used because it was derived from all of DepMap including the held-out lines and would leak them into the partner set.",
+ "epochs": 2,
+ "smoke": true,
+ "limits": [
+  "WHAT WOULD FALSIFY THIS: a larger probe panel. Every line-specific quantity here flows through the probe genes, so the model's whole advantage over the gene marginal is bounded by how much 250 revealed genes say about a line. Rerunning at VH_PROBE_GENES=4000 and seeing the gap grow would show this is a probe-budget result, not a ceiling on the head",
+  "CONFOUNDED: 'the model' is one MLP at one width on one feature set. A null is a null for THIS head at THIS capacity, not for any learnable viability head. What is falsified is the claim as currently made, that a learned head beats the pan-essential marginal",
+  "the co-dependency partner graph is rebuilt from training lines inside every fold, which is what keeps it honest but also makes it noisier than the published DepMap co-dependency graph. With 2 folds each graph rests on ~100 lines, and partner correlations estimated on fewer lines are attenuated; using the prebuilt graph would score higher and would be leakage",
+  "eval genes are a seeded uniform subsample of the complete-data genes, so the panel is dominated by non-essential genes with almost no across-line variance. RMSE over that panel is easy for every arm and compresses all differences. The selective universe (top-variance genes by TRAINING lines) is reported per arm for exactly this reason and should be read alongside the primary number",
+  "dropping genes with any NaN removes genes not screened in every line, which is a biased subset: it discards library-specific and late-added genes. That filter is applied identically to every arm, so it cannot create a between-arm gap, but it does mean the absolute RMSE is for the always-screened gene universe",
+  "the per-line paired MDE is the correct bar for a paired comparison but it is the SMALLEST of the three reported. A gap that clears the paired bar and not the unpaired bar is real yet smaller than the spread between cell lines, and both bars are in the JSON so the reader picks the one matching the claim being made",
+  "cell lines are not independent replicates in the biological sense: DepMap contains related lineages and near-duplicate lines, so the effective n is below the nominal n and every MDE here is therefore optimistic. A lineage-blocked split (hold out an entire lineage) is the stricter test and was NOT run",
+  "Chronos gene effect is already normalised against common essentials, so part of the 'pan-essential prior' has been baked into the target by DepMap's own pipeline; the marginal arm's strength is partly a property of that preprocessing and is not purely biology",
+  "one screen type (CRISPR KO), one readout (proliferation). Nothing here speaks to drug response (PRISM), which section 11 also assigns to this head"
+ ],
+ "verdict": "SMOKE RUN (200 lines, 250 eval genes, 2 epochs, 2 folds) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. The network is undertrained, the co-dependency correlations are estimated from ~100 lines and are mostly noise, and n is a fraction of the real n so the MDE printed here is not the real MDE. No sentence below may be quoted as a finding. Rerun with VH_SMOKE unset. THE PAN-ESSENTIAL MARGINAL WINS: predicting every held-out cell line with nothing but the gene's mean effect across the training lines reaches RMSE 0.1491, which the trained viability head (0.1514) does not beat. CRITERION 3 of CELLFORMER4.md section 17 asks whether this head beats its marginal: against the additive MARGINAL-both (0.1494) the model is -0.00205 RMSE, versus a minimum detectable increment of 0.00085 (3*sd/sqrt(n), n = 200 HELD-OUT CELL LINES, sd = the per-line PAIRED difference sd; the unpaired bar is 0.00599 and the across-fold bar 0.00276), so criterion 3 for the viability head FAILS on the paired bar only -- the gain is smaller than the line-to-line spread and must be described that way. The model is better than the additive marginal on 33.0% of held-out lines, with a per-line gain spread of 0.0040 (q10 -0.0076, q90 +0.0028), which is the number a large n buys and which a fold-level mean would have hidden. A ZERO-PARAMETER, UNTRAINED BASELINE ('MARGINAL-gene (0 param)', 0.1491) MATCHES OR BEATS THE TRAINED NETWORK by +0.00228, AND THAT IS THE HEADLINE, not a footnote. Attribution of the co-dependency partner channel, which section 11 places specifically in this head: the untrained correlation-signed partner mean alone moves RMSE by -0.00326 against MARGINAL-both and reproduces 159% of the trained model's gain; the model beats uniformly random partners by -0.00028 and a DEGREE-MATCHED configuration-model rewiring by -0.00017; removing the channel entirely from the identical network costs +0.00041. THE COUNTERFACTUAL SWAP, in which the trained network keeps the correct gene and line features but is handed another held-out line's partner values, changes RMSE by +0.00014, so the partner channel is genuinely being read. The identity control (the model's residual predictions permuted across held-out lines) is +0.00163, which bounds how much of the gap the metric would concede to any line-shaped prediction. The secondary per-line Pearson correlation AGREES with RMSE on the primary gap (-0.00115 against a 0.00073 bar). Note by construction that a per-line constant offset cannot change a per-line correlation, so MARGINAL-gene and MARGINAL-both are identical on r and differ only on RMSE; that is a property of the metric, not a bug. All effect sizes above are RAW held-out values; the controls establish significance and attribution and nothing is reported net of a control.",
+ "log": [
+  "============================================================================================================",
+  "V4 BLOCK 8 -- the VIABILITY head vs its own marginal (CELLFORMER4.md sec 11 / criterion 3)",
+  "============================================================================================================",
+  "  GATE, declared before the run: MODEL must beat MARGINAL-both on held-out-line RMSE by more",
+  "  than MDE = 3*sd/sqrt(n) with n = THE NUMBER OF HELD-OUT CELL LINES and sd the PER-LINE PAIRED",
+  "  difference sd. The unpaired and across-fold bars are reported next to every gate. Model-init",
+  "  seeds are run on fold 0 and are REPORTED, NOT GRADED -- they measure optimiser noise.",
+  "\n  DepMap CRISPRGeneEffect: 1,150 cell lines x 18,443 genes, 96.4% observed",
+  "  genes complete across the 200 lines in use: 17,109  (NaN = NOT SCREENED and is DROPPED, never imputed as 0; a real 0.0 here means 'no effect' and is a measurement)",
+  "  gene effect: mean -0.1424  sd 0.4111  (Chronos units; -1 ~ the median common-essential)",
+  "  EVAL panel 250 genes (scored, never revealed) / PROBE panel 250 genes (revealed for a held-out line) -- DISJOINT, asserted",
+  "  no cell that is scored is ever an input to any arm; the only held-out-line information any arm sees is that line's PROBE values",
+  "\n  2 DISJOINT CELL-LINE folds; every one of the 200 lines is held out exactly once, so n = 200 held-out lines",
+  "\n  FOLD 0: 100 training lines / 100 HELD-OUT lines. mu -0.1582; gene marginal a_g sd 0.3682; line marginal b_c sd 0.0148",
+  "    train-line co-dependency: median |corr| of the 8 kept partners 0.285 (real) vs 0.079 (random) vs 0.083 (degree-matched); 1-param shrinkage alpha +1.112",
+  "    GLOBAL-mean (0 param)                  RMSE 0.4007  r +0.0000  resid-r +0.0025  RMSE(selective) 0.7182",
+  "    MARGINAL-gene (0 param)                RMSE 0.1522  r +0.9235  resid-r +0.0000  RMSE(selective) 0.2389",
+  "    MARGINAL-line (0 param)                RMSE 0.4006  r +0.0000  resid-r +0.0025  RMSE(selective) 0.7189",
+  "    MARGINAL-both (0 param)                RMSE 0.1524  r +0.9235  resid-r +0.0000  RMSE(selective) 0.2386",
+  "    PARTNER-MEAN (0 param)                 RMSE 0.1560  r +0.9196  resid-r +0.1396  RMSE(selective) 0.2367",
+  "    PARTNER-MEAN random (0p CONTROL)       RMSE 0.1663  r +0.9089  resid-r +0.0442  RMSE(selective) 0.2460",
+  "    PARTNER-MEAN shrunk (1 param)          RMSE 0.1579  r +0.9176  resid-r +0.1396  RMSE(selective) 0.2379",
+  "    MODEL (gene+line+partners)             RMSE 0.1535  r +0.9229  resid-r +0.0546  RMSE(selective) 0.2402",
+  "    ABLATION no-partner (same width)       RMSE 0.1536  r +0.9227  resid-r +0.0426  RMSE(selective) 0.2401",
+  "    CONTROL random partners                RMSE 0.1534  r +0.9228  resid-r +0.0501  RMSE(selective) 0.2399",
+  "    CONTROL degree-matched rewiring        RMSE 0.1533  r +0.9230  resid-r +0.0566  RMSE(selective) 0.2396",
+  "    COUNTERFACTUAL partner swap            RMSE 0.1537  r +0.9227  resid-r +0.0484  RMSE(selective) 0.2404",
+  "    CONTROL wrong-line (identity)          RMSE 0.1553  r +0.9211  resid-r -0.0121  RMSE(selective) 0.2431",
+  "    CONTROL wrong-gene (identity)          RMSE 0.1550  r +0.9212  resid-r -0.0026  RMSE(selective) 0.2410",
+  "    model-init seed spread on THIS FOLD ONLY (not graded): RMSE sd 0.00077 over 2 seeds",
+  "\n  FOLD 1: 100 training lines / 100 HELD-OUT lines. mu -0.1577; gene marginal a_g sd 0.3686; line marginal b_c sd 0.0142",
+  "    train-line co-dependency: median |corr| of the 8 kept partners 0.294 (real) vs 0.085 (random) vs 0.085 (degree-matched); 1-param shrinkage alpha +1.179",
+  "    GLOBAL-mean (0 param)                  RMSE 0.3981  r +0.0000  resid-r +0.0036  RMSE(selective) 0.7135",
+  "    MARGINAL-gene (0 param)                RMSE 0.1461  r +0.9283  resid-r +0.0000  RMSE(selective) 0.2278",
+  "    MARGINAL-line (0 param)                RMSE 0.3983  r +0.0000  resid-r +0.0036  RMSE(selective) 0.7126",
+  "    MARGINAL-both (0 param)                RMSE 0.1464  r +0.9283  resid-r +0.0000  RMSE(selective) 0.2277",
+  "    PARTNER-MEAN (0 param)                 RMSE 0.1493  r +0.9255  resid-r +0.1460  RMSE(selective) 0.2242",
+  "    PARTNER-MEAN random (0p CONTROL)       RMSE 0.1590  r +0.9154  resid-r +0.0441  RMSE(selective) 0.2365",
+  "    PARTNER-MEAN shrunk (1 param)          RMSE 0.1523  r +0.9226  resid-r +0.1460  RMSE(selective) 0.2259",
+  "    MODEL (gene+line+partners)             RMSE 0.1493  r +0.9267  resid-r +0.0456  RMSE(selective) 0.2304",
+  "    ABLATION no-partner (same width)       RMSE 0.1501  r +0.9264  resid-r +0.0394  RMSE(selective) 0.2310",
+  "    CONTROL random partners                RMSE 0.1489  r +0.9265  resid-r +0.0452  RMSE(selective) 0.2302",
+  "    CONTROL degree-matched rewiring        RMSE 0.1492  r +0.9264  resid-r +0.0399  RMSE(selective) 0.2303",
+  "    COUNTERFACTUAL partner swap            RMSE 0.1495  r +0.9265  resid-r +0.0414  RMSE(selective) 0.2305",
+  "    CONTROL wrong-line (identity)          RMSE 0.1508  r +0.9253  resid-r +0.0061  RMSE(selective) 0.2327",
+  "    CONTROL wrong-gene (identity)          RMSE 0.1511  r +0.9249  resid-r -0.0073  RMSE(selective) 0.2304",
+  "\n  arm                                        RMSE  sd/line  sd/fold        r  resid-r  RMSEsel",
+  "  GLOBAL-mean (0 param)                    0.3994   0.0183   0.0019  +0.0000  +0.0030   0.7158",
+  "  MARGINAL-gene (0 param)                  0.1491   0.0297   0.0043  +0.9259  +0.0000   0.2333",
+  "  MARGINAL-line (0 param)                  0.3995   0.0182   0.0016  +0.0000  +0.0030   0.7157",
+  "  MARGINAL-both (0 param)                  0.1494   0.0296   0.0043  +0.9259  +0.0000   0.2332",
+  "  PARTNER-MEAN (0 param)                   0.1526   0.0308   0.0047  +0.9225  +0.1428   0.2305",
+  "  PARTNER-MEAN random (0p CONTROL)         0.1627   0.0316   0.0052  +0.9121  +0.0442   0.2412",
+  "  PARTNER-MEAN shrunk (1 param)            0.1551   0.0312   0.0040  +0.9201  +0.1428   0.2319",
+  "  MODEL (gene+line+partners)               0.1514   0.0294   0.0030  +0.9248  +0.0501   0.2353",
+  "  ABLATION no-partner (same width)         0.1518   0.0294   0.0025  +0.9245  +0.0410   0.2356",
+  "  CONTROL random partners                  0.1511   0.0297   0.0032  +0.9247  +0.0477   0.2350",
+  "  CONTROL degree-matched rewiring          0.1513   0.0295   0.0029  +0.9247  +0.0482   0.2350",
+  "  COUNTERFACTUAL partner swap              0.1516   0.0294   0.0030  +0.9246  +0.0449   0.2355",
+  "  CONTROL wrong-line (identity)            0.1531   0.0292   0.0031  +0.9232  -0.0030   0.2379",
+  "  CONTROL wrong-gene (identity)            0.1530   0.0293   0.0028  +0.9231  -0.0049   0.2357",
+  "\n  MDE = 3*sd/sqrt(n), n = 200 HELD-OUT CELL LINES (every line held out exactly once). The unit of\n  replication is a CELL LINE because the claim is generalisation to an unseen cell line.",
+  "    PAIRED   (sd of the per-line MODEL-minus-MARGINAL-both difference)   0.00085   <- the gate",
+  "    UNPAIRED (pooled sd of a single arm's per-line RMSE)                 0.00599",
+  "    FOLD     (sd of the per-fold mean gap, n = 2)                            0.00276",
+  "    model-init-seed sd inside fold 0, REPORTED AND NOT GRADED: 0.00077 (a 0.00163 floor). It measures optimiser noise inside a FIXED line set.",
+  "  PER-LINE SPREAD, which is the point of a large n: MODEL-minus-MARGINAL-both RMSE gain has per-line sd 0.0040, q10 -0.0076, median -0.0018, q90 +0.0028; the model is better on 33.0% of held-out lines.",
+  "\n  PREDECLARED GATES",
+  "    FAIL  PRIMARY  MODEL beats MARGINAL-both by > paired across-line MDE",
+  "    FAIL  HONEST   the same gap also exceeds the UNPAIRED across-line MDE",
+  "    FAIL  STABLE   the same gap also exceeds the across-FOLD MDE",
+  "    FAIL  FREE     MODEL beats the best 0-parameter arm by > MDE",
+  "    FAIL  PARTNER  MODEL beats random-partner AND degree-matched rewiring by > MDE",
+  "    PASS  IGNORED  MODEL beats the COUNTERFACTUAL partner swap by > MDE",
+  "    PASS  AGREE    per-line Pearson r reaches the same verdict as RMSE on the primary gap",
+  "    MODEL 0.1514 vs MARGINAL-both 0.1494  gap -0.00205 (paired MDE 0.00085, unpaired 0.00599, fold 0.00276)",
+  "    best 0-parameter arm = 'MARGINAL-gene (0 param)' at 0.1491; MODEL is -0.00228 better, and better on 27.0% of held-out lines",
+  "    MARGINAL-gene alone (the PAN-ESSENTIAL PRIOR) 0.1491, i.e. +0.00023 vs MARGINAL-both; GLOBAL-mean 0.3994",
+  "    partner attribution: vs random -0.00028, vs degree-matched rewiring -0.00017, vs no-partner ablation +0.00041, vs counterfactual swap +0.00014",
+  "\n  CONTROLS THAT REPRODUCE THE EFFECT (reported as the finding, not as a footnote)",
+  "       159.1%  0-parameter PARTNER-MEAN reproduces this fraction of MODEL's gain over MARGINAL-both",
+  "       278.3%  the 1-parameter shrunk partner mean reproduces this fraction",
+  "       120.1%  the no-partner ABLATION reproduces this fraction",
+  "        86.5%  the RANDOM-partner control reproduces this fraction",
+  "        91.9%  the DEGREE-MATCHED rewiring control reproduces this fraction",
+  "       106.7%  the COUNTERFACTUAL partner swap reproduces this fraction",
+  "       179.4%  the WRONG-LINE identity control reproduces this fraction",
+  "    ^ the denominator, MODEL's gain over MARGINAL-both, is -0.00205, itself at or below the 0.00085 MDE. These percentages are ratios of two undetected quantities and mean nothing; they are printed rather than hidden so the denominator is visible.",
+  "\n============================================================================================================",
+  "  VERDICT: SMOKE RUN (200 lines, 250 eval genes, 2 epochs, 2 folds) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. The network is undertrained, the co-dependency correlations are estimated from ~100 lines and are mostly noise, and n is a fraction of the real n so the MDE printed here is not the real MDE. No sentence below may be quoted as a finding. Rerun with VH_SMOKE unset. THE PAN-ESSENTIAL MARGINAL WINS: predicting every held-out cell line with nothing but the gene's mean effect across the training lines reaches RMSE 0.1491, which the trained viability head (0.1514) does not beat. CRITERION 3 of CELLFORMER4.md section 17 asks whether this head beats its marginal: against the additive MARGINAL-both (0.1494) the model is -0.00205 RMSE, versus a minimum detectable increment of 0.00085 (3*sd/sqrt(n), n = 200 HELD-OUT CELL LINES, sd = the per-line PAIRED difference sd; the unpaired bar is 0.00599 and the across-fold bar 0.00276), so criterion 3 for the viability head FAILS on the paired bar only -- the gain is smaller than the line-to-line spread and must be described that way. The model is better than the additive marginal on 33.0% of held-out lines, with a per-line gain spread of 0.0040 (q10 -0.0076, q90 +0.0028), which is the number a large n buys and which a fold-level mean would have hidden. A ZERO-PARAMETER, UNTRAINED BASELINE ('MARGINAL-gene (0 param)', 0.1491) MATCHES OR BEATS THE TRAINED NETWORK by +0.00228, AND THAT IS THE HEADLINE, not a footnote. Attribution of the co-dependency partner channel, which section 11 places specifically in this head: the untrained correlation-signed partner mean alone moves RMSE by -0.00326 against MARGINAL-both and reproduces 159% of the trained model's gain; the model beats uniformly random partners by -0.00028 and a DEGREE-MATCHED configuration-model rewiring by -0.00017; removing the channel entirely from the identical network costs +0.00041. THE COUNTERFACTUAL SWAP, in which the trained network keeps the correct gene and line features but is handed another held-out line's partner values, changes RMSE by +0.00014, so the partner channel is genuinely being read. The identity control (the model's residual predictions permuted across held-out lines) is +0.00163, which bounds how much of the gap the metric would concede to any line-shaped prediction. The secondary per-line Pearson correlation AGREES with RMSE on the primary gap (-0.00115 against a 0.00073 bar). Note by construction that a per-line constant offset cannot change a per-line correlation, so MARGINAL-gene and MARGINAL-both are identical on r and differ only on RMSE; that is a property of the metric, not a bug. All effect sizes above are RAW held-out values; the controls establish significance and attribution and nothing is reported net of a control.",
+  "\n  wall clock 10.1s"
+ ]
+}

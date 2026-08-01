@@ -8,7 +8,7 @@
   "truth": "top 50 non-tide genes by centred |z|",
   "primary_metric": "recall@50 after nearest-10 training-knockout retrieval",
   "secondary_metric": "threshold-free cosine to the centred profile",
-  "n_knockouts": 800,
+  "n_knockouts": 10337,
   "n_genes": 8175,
   "random_floor_recall": 0.0061162079510703364,
   "only_thing_that_varies": "the encoder"
@@ -33,235 +33,235 @@
  },
  "arms": {
   "C TIDE-null floor (0 param)": {
-   "recall_mean": 0.006398674589094458,
-   "recall_sd": 0.0009549644285147649,
+   "recall_mean": 0.008338968411943369,
+   "recall_sd": 7.44014257074861e-05,
    "recall_per_seed": [
-    0.007191011235955056,
-    0.006666666666666668,
-    0.0053383458646616535
+    0.0083633197910621,
+    0.008398142774230993,
+    0.00825544267053701
    ],
-   "cosine_mean": -0.1331327390260043,
-   "cosine_sd": 0.050767508134115846,
+   "cosine_mean": -0.15081038850187525,
+   "cosine_sd": 0.012029022440169079,
    "cosine_per_seed": [
-    -0.18223156227138118,
-    -0.08084672614997288,
-    -0.13631992865665887
+    -0.15104937516058164,
+    -0.13866365338985168,
+    -0.16271813695519238
    ],
    "params": 0,
    "params_receiving_gradient": 0
   },
   "A raw DepMap self-vector (0 param)": {
-   "recall_mean": 0.008800747186317855,
-   "recall_sd": 0.0005297193762032836,
+   "recall_mean": 0.02406484116962769,
+   "recall_sd": 0.001532985954938968,
    "recall_per_seed": [
-    0.008614232209737829,
-    0.008389513108614233,
-    0.009398496240601503
+    0.025229251305861868,
+    0.024637260591990714,
+    0.022328011611030485
    ],
-   "cosine_mean": 0.019078024475384217,
-   "cosine_sd": 0.01305279879629211,
+   "cosine_mean": 0.08140693077343358,
+   "cosine_sd": 0.0018862338753837732,
    "cosine_per_seed": [
-    0.021586583123056394,
-    0.004953006767528484,
-    0.030694483535567772
+    0.07997590197405141,
+    0.08070047623388957,
+    0.08354441411235977
    ],
    "params": 0,
    "params_receiving_gradient": 0
   },
   "B raw DepMap bag-of-partners (0 param)": {
-   "recall_mean": 0.009227093952108738,
-   "recall_sd": 0.0015187559730931376,
+   "recall_mean": 0.034058201722280385,
+   "recall_sd": 0.0006172108419432371,
    "recall_per_seed": [
-    0.007940074906367042,
-    0.008838951310861425,
-    0.010902255639097747
+    0.034770748694138126,
+    0.03371445153801509,
+    0.03368940493468795
    ],
-   "cosine_mean": 0.013453711971111379,
-   "cosine_sd": 0.00899891390121927,
+   "cosine_mean": 0.08582440235651556,
+   "cosine_sd": 0.0022719517687374655,
    "cosine_per_seed": [
-    0.010007817702924944,
-    0.006686970599675238,
-    0.023666347610733957
+    0.08320114882816097,
+    0.08716192379100779,
+    0.08711013445037791
    ],
    "params": 0,
    "params_receiving_gradient": 0
   },
   "1 unweighted mean-pool": {
-   "recall_mean": 0.00975003050697906,
-   "recall_sd": 0.0015731756959889258,
+   "recall_mean": 0.0322743339002387,
+   "recall_sd": 0.000213035964683974,
    "recall_per_seed": [
-    0.008164794007490638,
-    0.011310861423220974,
-    0.009774436090225564
+    0.0322692977365061,
+    0.03248984329657574,
+    0.03206386066763425
    ],
-   "cosine_mean": 0.01361591240227806,
-   "cosine_sd": 0.007189852036814351,
+   "cosine_mean": 0.10453925764449584,
+   "cosine_sd": 0.010583552501596625,
    "cosine_per_seed": [
-    0.011018490904421713,
-    0.008085712294917457,
-    0.021743534007495013
+    0.10373808116616898,
+    0.09437906131327892,
+    0.11550063045403965
    ],
    "params": 108161,
    "params_receiving_gradient": 108161
   },
   "2 evidence-weighted mean-pool": {
-   "recall_mean": 0.009324434682211146,
-   "recall_sd": 0.00047131170575865624,
+   "recall_mean": 0.027621144924203436,
+   "recall_sd": 0.001271537320351166,
    "recall_per_seed": [
-    0.009812734082397004,
-    0.009288389513108614,
-    0.008872180451127821
+    0.02899013348810215,
+    0.026477074869413815,
+    0.027396226415094344
    ],
-   "cosine_mean": 0.023409795701804386,
-   "cosine_sd": 0.018358942435416005,
+   "cosine_mean": 0.10933725900599724,
+   "cosine_sd": 0.010837079048295539,
    "cosine_per_seed": [
-    0.024473656747417503,
-    0.004542055485841683,
-    0.041213674872153966
+    0.10936646245908753,
+    0.09848560774243548,
+    0.12015970681646869
    ],
    "params": 108161,
    "params_receiving_gradient": 108161
   },
   "3 Deep Sets (MLP-sum-MLP)": {
-   "recall_mean": 0.009699529723184365,
-   "recall_sd": 0.0017533843841344716,
+   "recall_mean": 0.030323985150954347,
+   "recall_sd": 0.0008377728125692756,
    "recall_per_seed": [
-    0.008164794007490638,
-    0.011610486891385767,
-    0.009323308270676692
+    0.03075449796865932,
+    0.03085896691816599,
+    0.029358490566037735
    ],
-   "cosine_mean": 0.008242148682166852,
-   "cosine_sd": 0.007292640562051582,
+   "cosine_mean": 0.10059298258512848,
+   "cosine_sd": 0.004794333332961115,
    "cosine_per_seed": [
-    0.011483387083410993,
-    -0.0001092495660102081,
-    0.013352308529099771
+    0.09696569033053484,
+    0.09878479281300001,
+    0.10602846461185059
    ],
    "params": 108032,
    "params_receiving_gradient": 108032
   },
   "4 Set Transformer": {
-   "recall_mean": 0.009950250157228278,
-   "recall_sd": 0.0005879238570712938,
+   "recall_mean": 0.02971651867881568,
+   "recall_sd": 0.0005724343341471285,
    "recall_per_seed": [
-    0.009288389513108612,
-    0.010411985018726594,
-    0.010150375939849625
+    0.03037724898432966,
+    0.029402205455600693,
+    0.029370101596516693
    ],
-   "cosine_mean": 0.016631670248770998,
-   "cosine_sd": 0.011466249378923698,
+   "cosine_mean": 0.11391683424348302,
+   "cosine_sd": 0.002883656217592938,
    "cosine_per_seed": [
-    0.022605874994195682,
-    0.0034119468499247854,
-    0.023877188902192526
+    0.1172213626914561,
+    0.11261888906169568,
+    0.11191025097729732
    ],
    "params": 108160,
    "params_receiving_gradient": 108160
   },
   "5 Set Transformer, attn FROZEN UNIFORM": {
-   "recall_mean": 0.009151342776416696,
-   "recall_sd": 0.0010331785809594937,
+   "recall_mean": 0.03174029107880771,
+   "recall_sd": 0.0006319419369249132,
    "recall_per_seed": [
-    0.008164794007490638,
-    0.009063670411985018,
-    0.010225563909774435
+    0.032391178177597214,
+    0.03170052234474753,
+    0.031129172714078376
    ],
-   "cosine_mean": 0.018044075229513366,
-   "cosine_sd": 0.01122780241390692,
+   "cosine_mean": 0.10830300974274336,
+   "cosine_sd": 0.0030863848990951284,
    "cosine_per_seed": [
-    0.018512521113330516,
-    0.006589381446941057,
-    0.029030323128268525
+    0.10971327181982433,
+    0.10476342242462773,
+    0.11043233498377798
    ],
    "params": 108160,
    "params_receiving_gradient": 75136
   },
   "6 self-only (no neighbourhood)": {
-   "recall_mean": 0.009375029333633711,
-   "recall_sd": 0.00022563620321609,
+   "recall_mean": 0.019775447073249283,
+   "recall_sd": 0.0016982145014480547,
    "recall_per_seed": [
-    0.00913857677902622,
-    0.009588014981273409,
-    0.009398496240601503
+    0.02171793383633198,
+    0.019036564132327335,
+    0.018571843251088533
    ],
-   "cosine_mean": 0.019509373958948684,
-   "cosine_sd": 0.011670602505729771,
+   "cosine_mean": 0.09472168646651742,
+   "cosine_sd": 0.010324266047976913,
    "cosine_per_seed": [
-    0.01652756656595872,
-    0.009618951662832841,
-    0.032381603648054494
+    0.09124896241305326,
+    0.08658153037370064,
+    0.1063345666127984
    ],
    "params": 108161,
    "params_receiving_gradient": 108161
   },
   "7 random partners (CONTROL)": {
-   "recall_mean": 0.008250589019364893,
-   "recall_sd": 0.0004658666163979986,
+   "recall_mean": 0.013253185999711916,
+   "recall_sd": 0.0020592990556679777,
    "recall_per_seed": [
-    0.007790262172284644,
-    0.008239700374531835,
-    0.008721804511278197
+    0.015490423679628556,
+    0.012832269297736508,
+    0.011436865021770682
    ],
-   "cosine_mean": 0.00940884088010589,
-   "cosine_sd": 0.017634872750564898,
+   "cosine_mean": 0.0778764426406424,
+   "cosine_sd": 0.008826022783458983,
    "cosine_per_seed": [
-    0.026954426973882804,
-    0.009586078190596843,
-    -0.008313982524161974
+    0.08381696446246557,
+    0.08207774561339447,
+    0.06773461784606714
    ],
    "params": 108160,
    "params_receiving_gradient": 108160
   },
   "8 degree-matched rewiring (CONTROL)": {
-   "recall_mean": 0.008550214487529685,
-   "recall_sd": 0.0004733677743855172,
+   "recall_mean": 0.011883398321072847,
+   "recall_sd": 0.0013619945497983716,
    "recall_per_seed": [
-    0.008913857677902622,
-    0.00801498127340824,
-    0.008721804511278197
+    0.013290771909460245,
+    0.011787579802669763,
+    0.010571843251088535
    ],
-   "cosine_mean": 0.020705280721089497,
-   "cosine_sd": 0.017492786242178072,
+   "cosine_mean": 0.08544674972893185,
+   "cosine_sd": 0.012323777789744663,
    "cosine_per_seed": [
-    0.027235987149299062,
-    0.0008866808261688577,
-    0.03399317418780057
+    0.0970718739665026,
+    0.07252659562292692,
+    0.08674177959736601
    ],
    "params": 108160,
    "params_receiving_gradient": 108160
   },
   "9 neighbour SWAP (COUNTERFACTUAL)": {
-   "recall_mean": 0.007300273154797105,
-   "recall_sd": 0.00029379103991942313,
+   "recall_mean": 0.01028145629816695,
+   "recall_sd": 0.0005512505386301468,
    "recall_per_seed": [
-    0.006966292134831461,
-    0.007415730337078652,
-    0.007518796992481203
+    0.010359837492745213,
+    0.010789320951828206,
+    0.009695210449927433
    ],
-   "cosine_mean": 0.00872800907742646,
-   "cosine_sd": 0.0072153957641723394,
+   "cosine_mean": 0.052965826282420324,
+   "cosine_sd": 0.0034092135599168797,
    "cosine_per_seed": [
-    0.0163911747418708,
-    0.007728184538755692,
-    0.002064667951652887
+    0.05684958625638696,
+    0.05046713084523638,
+    0.05158076174563763
    ],
    "params": 108160,
    "params_receiving_gradient": 108160
   },
   "10 wrong-knockout (identity CONTROL)": {
-   "recall_mean": 0.007150742023598322,
-   "recall_sd": 0.0005262244753203976,
+   "recall_mean": 0.008505383635444192,
+   "recall_sd": 0.0001304899800913948,
    "recall_per_seed": [
-    0.006741573033707865,
-    0.00696629213483146,
-    0.00774436090225564
+    0.008432965757399883,
+    0.008427161926871735,
+    0.008656023222060959
    ],
-   "cosine_mean": 0.006194270348385478,
-   "cosine_sd": 0.014068471028684415,
+   "cosine_mean": 0.045810173371338477,
+   "cosine_sd": 0.0030216367112662276,
    "cosine_per_seed": [
-    0.016392587985885963,
-    0.012045801695484033,
-    -0.009855578636213565
+    0.04410420691893416,
+    0.04402733656151295,
+    0.04929897663356834
    ],
    "params": 108160,
    "params_receiving_gradient": 108160
@@ -269,25 +269,23 @@
  },
  "unit_of_replication": "a DISJOINT KNOCKOUT PARTITION. The per_seed lists above hold one value per held-out partition (n = 3), NOT model-init seeds.",
  "mde": {
-  "value": 0.0013866132739850704,
+  "value": 0.0015392028339715864,
   "convention": "3*sd/sqrt(n)",
   "n": 3,
   "n_counts": "disjoint held-out knockout partitions",
-  "pooled_across_partition_sd": 0.0008005615469971887,
-  "cosine_mde": 0.026172198487968656,
-  "pooled_across_partition_sd_cosine": 0.01511052584231302,
-  "init_seed_sd_within_partition_0_DO_NOT_GRADE_ON_THIS": 0.0009433742067299847,
-  "init_seed_mde_DO_NOT_GRADE_ON_THIS": 0.001633972056606319,
+  "pooled_across_partition_sd": 0.0008886591705309303,
+  "cosine_mde": 0.011495105721695762,
+  "pooled_across_partition_sd_cosine": 0.006636702382784256,
+  "init_seed_sd_within_partition_0_DO_NOT_GRADE_ON_THIS": 4.924713507973724e-05,
+  "init_seed_mde_DO_NOT_GRADE_ON_THIS": 0.00010446894950667632,
   "init_seed_per_arm": {
    "4 Set Transformer": [
-    0.009812734082397004,
-    0.009812734082397004,
-    0.011086142322097379
+    0.029553105049332562,
+    0.029489262913522926
    ],
    "1 unweighted mean-pool": [
-    0.010636704119850189,
-    0.00853932584269663,
-    0.008764044943820224
+    0.03213580963435868,
+    0.032060359837492745
    ]
   }
  },
@@ -298,45 +296,45 @@
   "AGREE    the threshold-free cosine reaches the same verdict as recall@50": true
  },
  "gaps": {
-  "transformer_minus_best_simple": 0.0002002196502492188,
+  "transformer_minus_best_simple": -0.002557815221423017,
   "best_simple_arm": "1 unweighted mean-pool",
-  "transformer_minus_frozen_uniform_attention": 0.0007989073808115817,
-  "transformer_minus_best_zero_parameter_arm": 0.0007231562051195402,
+  "transformer_minus_frozen_uniform_attention": -0.0020237723999920257,
+  "transformer_minus_best_zero_parameter_arm": -0.004341683043464703,
   "best_zero_parameter_arm": "B raw DepMap bag-of-partners (0 param)",
-  "transformer_minus_self_only": 0.0005752208235945671,
-  "transformer_minus_random_partners": 0.0016996611378633855,
-  "transformer_minus_degree_matched_rewiring": 0.0014000356696985926,
-  "transformer_minus_neighbour_swap_counterfactual": 0.002649977002431173
+  "transformer_minus_self_only": 0.009941071605566398,
+  "transformer_minus_random_partners": 0.016463332679103763,
+  "transformer_minus_degree_matched_rewiring": 0.017833120357742836,
+  "transformer_minus_neighbour_swap_counterfactual": 0.01943506238064873
  },
  "controls_reproducing_the_effect": {
-  "5 frozen-uniform attention reproduces this fraction of arm 4's gain over self-only": -0.38887075718016,
-  "1 mean-pool reproduces this fraction of arm 4's gain over self-only": 0.6519255874673626,
-  "8 degree-matched rewiring reproduces this fraction of arm 4's gain over self-only": -1.4339099216710203,
-  "B 0-parameter bag-of-partners reproduces this fraction of arm 4's gain over self-only": -0.2571801566579628
+  "5 frozen-uniform attention reproduces this fraction of arm 4's gain over self-only": 1.2035768859022036,
+  "1 mean-pool reproduces this fraction of arm 4's gain over self-only": 1.2572977363919997,
+  "8 degree-matched rewiring reproduces this fraction of arm 4's gain over self-only": -0.7938831008678547,
+  "B 0-parameter bag-of-partners reproduces this fraction of arm 4's gain over self-only": 1.4367419545628888
  },
- "controls_reproducing_the_effect_are_meaningful": false,
+ "controls_reproducing_the_effect_are_meaningful": true,
  "controls_reproducing_the_effect_note": "these are fractions of arm 4's raw gain over self-only. If the denominator is itself below the MDE the ratios are meaningless and the flag above is false.",
  "evidence_prior_per_partition": [
   {
-   "1": 0.025520117953419685,
-   "2": 0.7921386361122131,
-   "3": 0.03838582709431648
+   "1": 0.06410855054855347,
+   "2": 0.10195472091436386,
+   "3": 0.04482908546924591
   },
   {
-   "1": 0.02789645455777645,
-   "2": 0.04133366793394089,
-   "3": 0.03031964972615242
+   "1": 0.05652714520692825,
+   "2": 0.08266405761241913,
+   "3": 0.04125437140464783
   },
   {
-   "1": 0.02460910938680172,
-   "2": 0.025043314322829247,
-   "3": 9.540560859022662e-05
+   "1": 0.06204310432076454,
+   "2": 0.10597705096006393,
+   "3": 0.04320323467254639
   }
  ],
  "circularity_check": "token features are DepMap CRISPR gene-effect PCs and the co-dependency edges are DepMap-derived; the scored target is Replogle Perturb-seq K562 transcriptomics. No feature is scored on the dataset it derives from. All target-side statistics (centring, truth sets, evidence prior) are refit on the training partition inside every fold.",
- "epochs": 3,
+ "epochs": 25,
  "folds": 3,
- "smoke": true,
+ "smoke": false,
  "limits": [
   "n = 3 partitions gives the sd 2 degrees of freedom, so the MDE is itself poorly estimated and a gap just under it is not evidence of equality. Raising V4_FOLDS is the cheapest way to falsify or confirm a near-threshold call",
   "a null here is a null for THIS encoder at THIS budget on THIS retrieval objective (Gram matching on centred |z| profiles). A deeper stack, more heads, or a contrastive objective could still separate the arms; what is falsified is the claim as currently made, that the single attention block in Block 3 is doing work a mean-pool cannot",
@@ -347,7 +345,7 @@
   "the retrieval head is a nearest-neighbour copier, so every arm is capped by the dense ORACLE (0.0526 in dense_stage1). Encoders can only be separated up to that ceiling and differences compress against it",
   "the evidence prior for arm 2 is estimated only from partners that are themselves knockouts in the screen, which is a biased subset of partners, and it is a single scalar per relation type -- a richer prior is a different arm and was not run"
  ],
- "verdict": "SMOKE RUN (800 knockouts, 3 epochs) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. Every arm sits within noise of the 0.0061 random floor at this size, the encoders cannot be separated, and no sentence below should be quoted as a finding. Rerun with V4_SMOKE unset. CRITERION 2 FAILS: on the dense untruncated K562 target (800 knockouts, 8,175 genes, 100% density) with the task, target, metric and retrieval held identical to dense_stage1 and ONLY the encoder varying at a matched budget of 108,160 parameters, the Set Transformer reaches recall@50 0.0100 while the best simple set encoder ('1 unweighted mean-pool') reaches 0.0098 -- a gap of +0.0002 against a cross-partition minimum detectable increment of 0.0014 (3*sd/sqrt(n), n = 3 DISJOINT KNOCKOUT PARTITIONS; the model-init-seed floor of 0.0016 measures optimiser noise inside one partition and is deliberately NOT what this is graded on). CELLFORMER4.md section 6 retains the transformer only if it beats simpler set encoders, so on this evidence Block 3 should be reimplemented as a mean-pool over typed partner tokens: the validated object is a BAG OF TYPED PARTNERS, not a transformer. THE SHARP ARM separates attention from depth: freezing the attention matrix to a uniform 1/n inside the identical module changes recall by +0.0008, so the attention PATTERN is not detected -- whatever arm 4 has over a plain mean-pool is depth and parameters, not content-based weighting. THE CHEAPEST NON-LEARNED ARM, a zero-parameter cosine retrieval on raw DepMap vectors, scores 0.0092 ('B raw DepMap bag-of-partners (0 param)'), i.e. +0.0007 below the transformer -- A TRIVIAL BASELINE WITH NO PARAMETERS MATCHES OR BEATS THE MODEL, which is the headline and not a footnote. Attribution of the neighbourhood itself: real vs uniformly random partners +0.0017, real vs a DEGREE-MATCHED configuration-model rewiring +0.0014, and the counterfactual test in which the trained network is handed another held-out knockout's neighbours +0.0026 -- a swap gap at or below the MDE would mean the neighbourhood channel is IGNORED rather than useless, which accuracy alone cannot distinguish. The threshold-free cosine metric AGREES with recall@50 on the primary gap (+0.0030 against a 0.0262 cosine MDE). All effect sizes quoted here are RAW held-out values; the control arms establish significance and attribution and nothing is reported net of a control.",
+ "verdict": "CRITERION 2 FAILS: on the dense untruncated K562 target (10,337 knockouts, 8,175 genes, 100% density) with the task, target, metric and retrieval held identical to dense_stage1 and ONLY the encoder varying at a matched budget of 108,160 parameters, the Set Transformer reaches recall@50 0.0297 while the best simple set encoder ('1 unweighted mean-pool') reaches 0.0323 -- a gap of -0.0026 against a cross-partition minimum detectable increment of 0.0015 (3*sd/sqrt(n), n = 3 DISJOINT KNOCKOUT PARTITIONS; the model-init-seed floor of 0.0001 measures optimiser noise inside one partition and is deliberately NOT what this is graded on). CELLFORMER4.md section 6 retains the transformer only if it beats simpler set encoders, so on this evidence Block 3 should be reimplemented as a mean-pool over typed partner tokens: the validated object is a BAG OF TYPED PARTNERS, not a transformer. THE SHARP ARM separates attention from depth: freezing the attention matrix to a uniform 1/n inside the identical module changes recall by -0.0020, so the attention PATTERN is not detected -- whatever arm 4 has over a plain mean-pool is depth and parameters, not content-based weighting. THE CHEAPEST NON-LEARNED ARM, a zero-parameter cosine retrieval on raw DepMap vectors, scores 0.0341 ('B raw DepMap bag-of-partners (0 param)'), i.e. -0.0043 below the transformer -- A TRIVIAL BASELINE WITH NO PARAMETERS MATCHES OR BEATS THE MODEL, which is the headline and not a footnote. Attribution of the neighbourhood itself: real vs uniformly random partners +0.0165, real vs a DEGREE-MATCHED configuration-model rewiring +0.0178, and the counterfactual test in which the trained network is handed another held-out knockout's neighbours +0.0194 -- a swap gap at or below the MDE would mean the neighbourhood channel is IGNORED rather than useless, which accuracy alone cannot distinguish. The threshold-free cosine metric AGREES with recall@50 on the primary gap (+0.0094 against a 0.0115 cosine MDE). All effect sizes quoted here are RAW held-out values; the control arms establish significance and attribution and nothing is reported net of a control.",
  "log": [
   "========================================================================================================",
   "V4 CRITERION 2 -- does a simple set encoder match the transformer? (CELLFORMER4.md sec 6/17/18)",
@@ -358,91 +356,90 @@
   "\n  dense K562: 11,258 perturbations x 8,248 genes, 100.0% finite  (NOT the nlz_* benches: 3.5% dense, zeros = NOT RECORDED)",
   "  8,175 genes with a defined robust z; 409 tide / 7,766 non-tide; scorable knockouts 11,258",
   "  truth = top 50 non-tide genes by TRAIN-CENTRED |z|; random floor recall@50 = 0.0061",
-  "  usable knockouts (DepMap profile AND >= 5 specific movers): 800",
-  "  tokens per knockout: real 9.84, random 9.84, degree-matched 9.84  (matched by construction)",
+  "  usable knockouts (DepMap profile AND >= 5 specific movers): 10,337",
+  "  tokens per knockout: real 11.87, random 11.87, degree-matched 11.87  (matched by construction)",
   "\n  MATCHED PARAMETER BUDGET (the Set Transformer's 108,160); hidden width bisected per arm:",
   "    mean             hidden   385  params  108,161  (+0.00% of budget)",
   "    evidence         hidden   385  params  108,161  (+0.00% of budget)",
   "    deepsets         hidden   192  params  108,032  (-0.12% of budget)",
   "    attn             hidden   128  params  108,160  (+0.00% of budget)",
   "    attn_uniform     hidden   128  params  108,160  (+0.00% of budget)  [33,024 of them receive NO gradient: q,k are unused when attention is frozen]",
-  "\n  PARTITION 0: 533 train / 267 held-out knockouts (disjoint from every other partition's held-out block)",
-  "    train-only evidence prior  codep 0.0255  complex 0.7921  ppi 0.0384  (self = 1.0000)",
-  "    C TIDE-null floor (0 param)                  recall@50 0.0072   cosine -0.1822",
-  "    A raw DepMap self-vector (0 param)           recall@50 0.0086   cosine +0.0216",
-  "    B raw DepMap bag-of-partners (0 param)       recall@50 0.0079   cosine +0.0100",
-  "    1 unweighted mean-pool                       recall@50 0.0082   cosine +0.0110",
-  "    2 evidence-weighted mean-pool                recall@50 0.0098   cosine +0.0245",
-  "    3 Deep Sets (MLP-sum-MLP)                    recall@50 0.0082   cosine +0.0115",
-  "    4 Set Transformer                            recall@50 0.0093   cosine +0.0226",
-  "    5 Set Transformer, attn FROZEN UNIFORM       recall@50 0.0082   cosine +0.0185",
-  "    6 self-only (no neighbourhood)               recall@50 0.0091   cosine +0.0165",
-  "    7 random partners (CONTROL)                  recall@50 0.0078   cosine +0.0270",
-  "    8 degree-matched rewiring (CONTROL)          recall@50 0.0089   cosine +0.0272",
-  "    9 neighbour SWAP (COUNTERFACTUAL)            recall@50 0.0070   cosine +0.0164",
-  "    10 wrong-knockout (identity CONTROL)         recall@50 0.0067   cosine +0.0164",
-  "    model-init seed spread on this partition ONLY (not graded): 4 Set Transformer sd 0.0007; 1 unweighted mean-pool sd 0.0012",
-  "\n  PARTITION 1: 533 train / 267 held-out knockouts (disjoint from every other partition's held-out block)",
-  "    train-only evidence prior  codep 0.0279  complex 0.0413  ppi 0.0303  (self = 1.0000)",
-  "    C TIDE-null floor (0 param)                  recall@50 0.0067   cosine -0.0808",
-  "    A raw DepMap self-vector (0 param)           recall@50 0.0084   cosine +0.0050",
-  "    B raw DepMap bag-of-partners (0 param)       recall@50 0.0088   cosine +0.0067",
-  "    1 unweighted mean-pool                       recall@50 0.0113   cosine +0.0081",
-  "    2 evidence-weighted mean-pool                recall@50 0.0093   cosine +0.0045",
-  "    3 Deep Sets (MLP-sum-MLP)                    recall@50 0.0116   cosine -0.0001",
-  "    4 Set Transformer                            recall@50 0.0104   cosine +0.0034",
-  "    5 Set Transformer, attn FROZEN UNIFORM       recall@50 0.0091   cosine +0.0066",
-  "    6 self-only (no neighbourhood)               recall@50 0.0096   cosine +0.0096",
-  "    7 random partners (CONTROL)                  recall@50 0.0082   cosine +0.0096",
-  "    8 degree-matched rewiring (CONTROL)          recall@50 0.0080   cosine +0.0009",
-  "    9 neighbour SWAP (COUNTERFACTUAL)            recall@50 0.0074   cosine +0.0077",
-  "    10 wrong-knockout (identity CONTROL)         recall@50 0.0070   cosine +0.0120",
-  "\n  PARTITION 2: 534 train / 266 held-out knockouts (disjoint from every other partition's held-out block)",
-  "    train-only evidence prior  codep 0.0246  complex 0.0250  ppi 0.0001  (self = 1.0000)",
-  "    C TIDE-null floor (0 param)                  recall@50 0.0053   cosine -0.1363",
-  "    A raw DepMap self-vector (0 param)           recall@50 0.0094   cosine +0.0307",
-  "    B raw DepMap bag-of-partners (0 param)       recall@50 0.0109   cosine +0.0237",
-  "    1 unweighted mean-pool                       recall@50 0.0098   cosine +0.0217",
-  "    2 evidence-weighted mean-pool                recall@50 0.0089   cosine +0.0412",
-  "    3 Deep Sets (MLP-sum-MLP)                    recall@50 0.0093   cosine +0.0134",
-  "    4 Set Transformer                            recall@50 0.0102   cosine +0.0239",
-  "    5 Set Transformer, attn FROZEN UNIFORM       recall@50 0.0102   cosine +0.0290",
-  "    6 self-only (no neighbourhood)               recall@50 0.0094   cosine +0.0324",
-  "    7 random partners (CONTROL)                  recall@50 0.0087   cosine -0.0083",
-  "    8 degree-matched rewiring (CONTROL)          recall@50 0.0087   cosine +0.0340",
-  "    9 neighbour SWAP (COUNTERFACTUAL)            recall@50 0.0075   cosine +0.0021",
-  "    10 wrong-knockout (identity CONTROL)         recall@50 0.0077   cosine -0.0099",
+  "\n  PARTITION 0: 6,891 train / 3,446 held-out knockouts (disjoint from every other partition's held-out block)",
+  "    train-only evidence prior  codep 0.0641  complex 0.1020  ppi 0.0448  (self = 1.0000)",
+  "    C TIDE-null floor (0 param)                  recall@50 0.0084   cosine -0.1510",
+  "    A raw DepMap self-vector (0 param)           recall@50 0.0252   cosine +0.0800",
+  "    B raw DepMap bag-of-partners (0 param)       recall@50 0.0348   cosine +0.0832",
+  "    1 unweighted mean-pool                       recall@50 0.0323   cosine +0.1037",
+  "    2 evidence-weighted mean-pool                recall@50 0.0290   cosine +0.1094",
+  "    3 Deep Sets (MLP-sum-MLP)                    recall@50 0.0308   cosine +0.0970",
+  "    4 Set Transformer                            recall@50 0.0304   cosine +0.1172",
+  "    5 Set Transformer, attn FROZEN UNIFORM       recall@50 0.0324   cosine +0.1097",
+  "    6 self-only (no neighbourhood)               recall@50 0.0217   cosine +0.0912",
+  "    7 random partners (CONTROL)                  recall@50 0.0155   cosine +0.0838",
+  "    8 degree-matched rewiring (CONTROL)          recall@50 0.0133   cosine +0.0971",
+  "    9 neighbour SWAP (COUNTERFACTUAL)            recall@50 0.0104   cosine +0.0568",
+  "    10 wrong-knockout (identity CONTROL)         recall@50 0.0084   cosine +0.0441",
+  "    model-init seed spread on this partition ONLY (not graded): 4 Set Transformer sd 0.0000; 1 unweighted mean-pool sd 0.0001",
+  "\n  PARTITION 1: 6,891 train / 3,446 held-out knockouts (disjoint from every other partition's held-out block)",
+  "    train-only evidence prior  codep 0.0565  complex 0.0827  ppi 0.0413  (self = 1.0000)",
+  "    C TIDE-null floor (0 param)                  recall@50 0.0084   cosine -0.1387",
+  "    A raw DepMap self-vector (0 param)           recall@50 0.0246   cosine +0.0807",
+  "    B raw DepMap bag-of-partners (0 param)       recall@50 0.0337   cosine +0.0872",
+  "    1 unweighted mean-pool                       recall@50 0.0325   cosine +0.0944",
+  "    2 evidence-weighted mean-pool                recall@50 0.0265   cosine +0.0985",
+  "    3 Deep Sets (MLP-sum-MLP)                    recall@50 0.0309   cosine +0.0988",
+  "    4 Set Transformer                            recall@50 0.0294   cosine +0.1126",
+  "    5 Set Transformer, attn FROZEN UNIFORM       recall@50 0.0317   cosine +0.1048",
+  "    6 self-only (no neighbourhood)               recall@50 0.0190   cosine +0.0866",
+  "    7 random partners (CONTROL)                  recall@50 0.0128   cosine +0.0821",
+  "    8 degree-matched rewiring (CONTROL)          recall@50 0.0118   cosine +0.0725",
+  "    9 neighbour SWAP (COUNTERFACTUAL)            recall@50 0.0108   cosine +0.0505",
+  "    10 wrong-knockout (identity CONTROL)         recall@50 0.0084   cosine +0.0440",
+  "\n  PARTITION 2: 6,892 train / 3,445 held-out knockouts (disjoint from every other partition's held-out block)",
+  "    train-only evidence prior  codep 0.0620  complex 0.1060  ppi 0.0432  (self = 1.0000)",
+  "    C TIDE-null floor (0 param)                  recall@50 0.0083   cosine -0.1627",
+  "    A raw DepMap self-vector (0 param)           recall@50 0.0223   cosine +0.0835",
+  "    B raw DepMap bag-of-partners (0 param)       recall@50 0.0337   cosine +0.0871",
+  "    1 unweighted mean-pool                       recall@50 0.0321   cosine +0.1155",
+  "    2 evidence-weighted mean-pool                recall@50 0.0274   cosine +0.1202",
+  "    3 Deep Sets (MLP-sum-MLP)                    recall@50 0.0294   cosine +0.1060",
+  "    4 Set Transformer                            recall@50 0.0294   cosine +0.1119",
+  "    5 Set Transformer, attn FROZEN UNIFORM       recall@50 0.0311   cosine +0.1104",
+  "    6 self-only (no neighbourhood)               recall@50 0.0186   cosine +0.1063",
+  "    7 random partners (CONTROL)                  recall@50 0.0114   cosine +0.0677",
+  "    8 degree-matched rewiring (CONTROL)          recall@50 0.0106   cosine +0.0867",
+  "    9 neighbour SWAP (COUNTERFACTUAL)            recall@50 0.0097   cosine +0.0516",
+  "    10 wrong-knockout (identity CONTROL)         recall@50 0.0087   cosine +0.0493",
   "\n  arm                                             params  recall@50      sd    cosine      sd",
-  "  C TIDE-null floor (0 param)                          0     0.0064  0.0010   -0.1331  0.0508",
-  "  A raw DepMap self-vector (0 param)                   0     0.0088  0.0005   +0.0191  0.0131",
-  "  B raw DepMap bag-of-partners (0 param)               0     0.0092  0.0015   +0.0135  0.0090",
-  "  1 unweighted mean-pool                         108,161     0.0098  0.0016   +0.0136  0.0072",
-  "  2 evidence-weighted mean-pool                  108,161     0.0093  0.0005   +0.0234  0.0184",
-  "  3 Deep Sets (MLP-sum-MLP)                      108,032     0.0097  0.0018   +0.0082  0.0073",
-  "  4 Set Transformer                              108,160     0.0100  0.0006   +0.0166  0.0115",
-  "  5 Set Transformer, attn FROZEN UNIFORM         108,160     0.0092  0.0010   +0.0180  0.0112",
-  "  6 self-only (no neighbourhood)                 108,161     0.0094  0.0002   +0.0195  0.0117",
-  "  7 random partners (CONTROL)                    108,160     0.0083  0.0005   +0.0094  0.0176",
-  "  8 degree-matched rewiring (CONTROL)            108,160     0.0086  0.0005   +0.0207  0.0175",
-  "  9 neighbour SWAP (COUNTERFACTUAL)              108,160     0.0073  0.0003   +0.0087  0.0072",
-  "  10 wrong-knockout (identity CONTROL)           108,160     0.0072  0.0005   +0.0062  0.0141",
-  "\n  MDE = 3*sd/sqrt(n), n = 3 DISJOINT KNOCKOUT PARTITIONS (the unit of replication -- the claim is\n  generalisation to unseen knockouts). pooled across-partition sd 0.0008 -> MDE +0.0014 recall@50; cosine MDE +0.0262",
-  "  for comparison only: the model-init-seed sd inside partition 0 is 0.0009 (a +0.0016 floor); the across-partition sd is 0.8x that. Seeds measure optimiser noise inside a FIXED knockout set and IT IS NOT WHAT ANYTHING HERE IS GRADED ON.",
+  "  C TIDE-null floor (0 param)                          0     0.0083  0.0001   -0.1508  0.0120",
+  "  A raw DepMap self-vector (0 param)                   0     0.0241  0.0015   +0.0814  0.0019",
+  "  B raw DepMap bag-of-partners (0 param)               0     0.0341  0.0006   +0.0858  0.0023",
+  "  1 unweighted mean-pool                         108,161     0.0323  0.0002   +0.1045  0.0106",
+  "  2 evidence-weighted mean-pool                  108,161     0.0276  0.0013   +0.1093  0.0108",
+  "  3 Deep Sets (MLP-sum-MLP)                      108,032     0.0303  0.0008   +0.1006  0.0048",
+  "  4 Set Transformer                              108,160     0.0297  0.0006   +0.1139  0.0029",
+  "  5 Set Transformer, attn FROZEN UNIFORM         108,160     0.0317  0.0006   +0.1083  0.0031",
+  "  6 self-only (no neighbourhood)                 108,161     0.0198  0.0017   +0.0947  0.0103",
+  "  7 random partners (CONTROL)                    108,160     0.0133  0.0021   +0.0779  0.0088",
+  "  8 degree-matched rewiring (CONTROL)            108,160     0.0119  0.0014   +0.0854  0.0123",
+  "  9 neighbour SWAP (COUNTERFACTUAL)              108,160     0.0103  0.0006   +0.0530  0.0034",
+  "  10 wrong-knockout (identity CONTROL)           108,160     0.0085  0.0001   +0.0458  0.0030",
+  "\n  MDE = 3*sd/sqrt(n), n = 3 DISJOINT KNOCKOUT PARTITIONS (the unit of replication -- the claim is\n  generalisation to unseen knockouts). pooled across-partition sd 0.0009 -> MDE +0.0015 recall@50; cosine MDE +0.0115",
+  "  for comparison only: the model-init-seed sd inside partition 0 is 0.0000 (a +0.0001 floor); the across-partition sd is 18.0x that. Seeds measure optimiser noise inside a FIXED knockout set and IT IS NOT WHAT ANYTHING HERE IS GRADED ON.",
   "\n  PREDECLARED GATES",
   "    FAIL  PRIMARY  Set Transformer beats the best of arms 1-3 by > MDE",
   "    FAIL  SHARP    attention beats FROZEN-UNIFORM attention by > MDE",
   "    FAIL  FREE     Set Transformer beats the best 0-parameter arm by > MDE",
   "    PASS  AGREE    the threshold-free cosine reaches the same verdict as recall@50",
-  "    best simple encoder = '1 unweighted mean-pool' at 0.0098; Set Transformer 0.0100; gap +0.0002 vs MDE 0.0014",
-  "    best 0-parameter arm = 'B raw DepMap bag-of-partners (0 param)' at 0.0092; gap +0.0007",
-  "    attention vs frozen-uniform attention: +0.0008; neighbourhood counterfactual swap: +0.0026; real vs degree-matched rewiring: +0.0014",
+  "    best simple encoder = '1 unweighted mean-pool' at 0.0323; Set Transformer 0.0297; gap -0.0026 vs MDE 0.0015",
+  "    best 0-parameter arm = 'B raw DepMap bag-of-partners (0 param)' at 0.0341; gap -0.0043",
+  "    attention vs frozen-uniform attention: -0.0020; neighbourhood counterfactual swap: +0.0194; real vs degree-matched rewiring: +0.0178",
   "\n  CONTROLS THAT REPRODUCE THE EFFECT (reported as the finding, not as a footnote)",
-  "     -38.9%  5 frozen-uniform attention reproduces this fraction of arm 4's gain over self-only",
-  "      65.2%  1 mean-pool reproduces this fraction of arm 4's gain over self-only",
-  "    -143.4%  8 degree-matched rewiring reproduces this fraction of arm 4's gain over self-only",
-  "     -25.7%  B 0-parameter bag-of-partners reproduces this fraction of arm 4's gain over self-only",
-  "    ^ arm 4's gain over self-only is +0.0006, which is itself below the 0.0014 MDE, so these percentages are ratios of two undetected quantities and mean nothing. They are printed rather than suppressed so the denominator is visible.",
+  "     120.4%  5 frozen-uniform attention reproduces this fraction of arm 4's gain over self-only",
+  "     125.7%  1 mean-pool reproduces this fraction of arm 4's gain over self-only",
+  "     -79.4%  8 degree-matched rewiring reproduces this fraction of arm 4's gain over self-only",
+  "     143.7%  B 0-parameter bag-of-partners reproduces this fraction of arm 4's gain over self-only",
   "\n========================================================================================================",
-  "  VERDICT: SMOKE RUN (800 knockouts, 3 epochs) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. Every arm sits within noise of the 0.0061 random floor at this size, the encoders cannot be separated, and no sentence below should be quoted as a finding. Rerun with V4_SMOKE unset. CRITERION 2 FAILS: on the dense untruncated K562 target (800 knockouts, 8,175 genes, 100% density) with the task, target, metric and retrieval held identical to dense_stage1 and ONLY the encoder varying at a matched budget of 108,160 parameters, the Set Transformer reaches recall@50 0.0100 while the best simple set encoder ('1 unweighted mean-pool') reaches 0.0098 -- a gap of +0.0002 against a cross-partition minimum detectable increment of 0.0014 (3*sd/sqrt(n), n = 3 DISJOINT KNOCKOUT PARTITIONS; the model-init-seed floor of 0.0016 measures optimiser noise inside one partition and is deliberately NOT what this is graded on). CELLFORMER4.md section 6 retains the transformer only if it beats simpler set encoders, so on this evidence Block 3 should be reimplemented as a mean-pool over typed partner tokens: the validated object is a BAG OF TYPED PARTNERS, not a transformer. THE SHARP ARM separates attention from depth: freezing the attention matrix to a uniform 1/n inside the identical module changes recall by +0.0008, so the attention PATTERN is not detected -- whatever arm 4 has over a plain mean-pool is depth and parameters, not content-based weighting. THE CHEAPEST NON-LEARNED ARM, a zero-parameter cosine retrieval on raw DepMap vectors, scores 0.0092 ('B raw DepMap bag-of-partners (0 param)'), i.e. +0.0007 below the transformer -- A TRIVIAL BASELINE WITH NO PARAMETERS MATCHES OR BEATS THE MODEL, which is the headline and not a footnote. Attribution of the neighbourhood itself: real vs uniformly random partners +0.0017, real vs a DEGREE-MATCHED configuration-model rewiring +0.0014, and the counterfactual test in which the trained network is handed another held-out knockout's neighbours +0.0026 -- a swap gap at or below the MDE would mean the neighbourhood channel is IGNORED rather than useless, which accuracy alone cannot distinguish. The threshold-free cosine metric AGREES with recall@50 on the primary gap (+0.0030 against a 0.0262 cosine MDE). All effect sizes quoted here are RAW held-out values; the control arms establish significance and attribution and nothing is reported net of a control."
+  "  VERDICT: CRITERION 2 FAILS: on the dense untruncated K562 target (10,337 knockouts, 8,175 genes, 100% density) with the task, target, metric and retrieval held identical to dense_stage1 and ONLY the encoder varying at a matched budget of 108,160 parameters, the Set Transformer reaches recall@50 0.0297 while the best simple set encoder ('1 unweighted mean-pool') reaches 0.0323 -- a gap of -0.0026 against a cross-partition minimum detectable increment of 0.0015 (3*sd/sqrt(n), n = 3 DISJOINT KNOCKOUT PARTITIONS; the model-init-seed floor of 0.0001 measures optimiser noise inside one partition and is deliberately NOT what this is graded on). CELLFORMER4.md section 6 retains the transformer only if it beats simpler set encoders, so on this evidence Block 3 should be reimplemented as a mean-pool over typed partner tokens: the validated object is a BAG OF TYPED PARTNERS, not a transformer. THE SHARP ARM separates attention from depth: freezing the attention matrix to a uniform 1/n inside the identical module changes recall by -0.0020, so the attention PATTERN is not detected -- whatever arm 4 has over a plain mean-pool is depth and parameters, not content-based weighting. THE CHEAPEST NON-LEARNED ARM, a zero-parameter cosine retrieval on raw DepMap vectors, scores 0.0341 ('B raw DepMap bag-of-partners (0 param)'), i.e. -0.0043 below the transformer -- A TRIVIAL BASELINE WITH NO PARAMETERS MATCHES OR BEATS THE MODEL, which is the headline and not a footnote. Attribution of the neighbourhood itself: real vs uniformly random partners +0.0165, real vs a DEGREE-MATCHED configuration-model rewiring +0.0178, and the counterfactual test in which the trained network is handed another held-out knockout's neighbours +0.0194 -- a swap gap at or below the MDE would mean the neighbourhood channel is IGNORED rather than useless, which accuracy alone cannot distinguish. The threshold-free cosine metric AGREES with recall@50 on the primary gap (+0.0094 against a 0.0115 cosine MDE). All effect sizes quoted here are RAW held-out values; the control arms establish significance and attribution and nothing is reported net of a control."
  ]
 }

@@ -16753,3 +16753,84 @@ That is the actionable result of this entire arc. The next thing worth building 
 different loss, or another rebuild of the same rectangle. It is **more cell contexts** — `hct116.h5ad`,
 `frangieh.h5ad`, `shifrut.h5ad` and `papalexi.h5ad` are on disk and unprocessed, and each one is worth more
 here than any architectural change measured in this project.
+
+---
+
+# Criterion 2: the transformer loses to a mean-pool, and to nothing at all
+
+`colab/v4_set_encoders.py`. CELLFORMER4 §6 states the rule plainly — *"the transformer remains only if it
+beats simpler set encoders"* — and lists weighted mean, Deep Sets and Set Transformer as mandatory controls.
+They had never been run against each other. This runs them, on the dense untruncated K562 target, with the
+task, target, metric, retrieval and controls held **identical to `dense_stage1.py`** and only the encoder
+varying, at a **matched parameter budget of 108,160** solved per architecture by bisecting hidden width.
+
+## Result — 10,337 knockouts, 8,175 genes, 3 disjoint knockout partitions
+
+| arm | params | recall@50 | sd | cosine |
+|---|---:|---:|---:|---:|
+| **B raw DepMap bag-of-partners** | **0** | **0.0341** | 0.0006 | +0.0858 |
+| 1 unweighted mean-pool | 108,161 | 0.0323 | 0.0002 | +0.1045 |
+| 5 Set Transformer, attn **FROZEN UNIFORM** | 108,160 | 0.0317 | 0.0006 | +0.1083 |
+| 3 Deep Sets | 108,032 | 0.0303 | 0.0008 | +0.1006 |
+| **4 Set Transformer** | 108,160 | **0.0297** | 0.0006 | +0.1139 |
+| 2 evidence-weighted mean-pool | 108,161 | 0.0276 | 0.0013 | +0.1093 |
+| A raw DepMap self-vector | 0 | 0.0241 | 0.0015 | +0.0814 |
+| 6 self-only | 108,161 | 0.0198 | 0.0017 | +0.0947 |
+| 7 random partners (CONTROL) | 108,160 | 0.0133 | 0.0021 | +0.0779 |
+| 8 degree-matched rewiring (CONTROL) | 108,160 | 0.0119 | 0.0014 | +0.0854 |
+| 9 neighbour SWAP (COUNTERFACTUAL) | 108,160 | 0.0103 | 0.0006 | +0.0530 |
+| 10 wrong-knockout (IDENTITY) | 108,160 | 0.0085 | 0.0001 | +0.0458 |
+| C tide floor | 0 | 0.0083 | 0.0001 | −0.1508 |
+
+MDE **0.0015** = 3·sd/√3 over disjoint knockout partitions.
+
+## Three gates fail, all in the same direction
+
+| gate | value | |
+|---|---:|---|
+| PRIMARY — transformer − best simple encoder | **−0.0026** | worse, by more than the MDE |
+| SHARP — attention − frozen-uniform attention | **−0.0020** | content-based weighting *costs* recall |
+| FREE — transformer − best zero-parameter arm | **−0.0043** | |
+| AGREE — cosine reaches the same verdict | **PASS** | not a metric artifact |
+
+The SHARP arm is the one that localises it. Arm 5 is the identical module — same depth, same residual, same
+108,160 parameters — with the attention matrix replaced by a constant 1/n over valid tokens. It **beats** the
+real thing. Whatever arm 4 has over a plain mean-pool is depth and parameters; the attention *pattern* is not
+merely undetected, it is a cost.
+
+## The neighbourhood is real. Everything built on top of it subtracts.
+
+| contrast | |
+|---|---:|
+| real partners vs **degree-matched** configuration-model rewiring | **+0.0178** |
+| real partners vs uniformly random partners | +0.0165 |
+| counterfactual neighbour swap | +0.0194 |
+
+Reported as the finding rather than a footnote, per this project's own rule — the fraction of arm 4's gain
+over self-only that each control reproduces: **mean-pool 125.7%**, **frozen-uniform attention 120.4%**,
+**zero-parameter bag-of-partners 143.7%**. Every one of them reproduces *more than all* of it.
+
+## The unit of replication, numerically
+
+Model-init seed sd inside partition 0: **0.0000** (a +0.0001 floor). Across-partition sd: **18.0× that**.
+Grading on seeds — which this project did once, and which flipped a verdict from 4/7 to 0/7 when corrected —
+would have returned a comfortable pass here.
+
+## What this does to the architecture
+
+Block 3 was the only block in the whole programme that had cleared a gate. Its validated content is now
+established as a **bag of typed partners**: the information is in *which genes are the partners*, and it is
+fully available from raw DepMap co-dependency vectors with no training whatsoever. The Set Transformer should
+be replaced by a mean-pool, and the honest baseline for anything that follows is the zero-parameter retrieval
+at 0.0341.
+
+`dense_stage1`'s headline 0.0353 is reproduced by arm B at 0.0341 with **no parameters and no training**.
+That number was never evidence for a transformer.
+
+## Limits
+
+K562 only. One task — tide-removed specific-mover retrieval — and a different task could rank encoders
+differently, though the burden is now on the transformer. The matched budget equalises parameters, not
+FLOPs or optimisation difficulty: a fairer reading is that at this budget and this data scale attention has
+nothing to attend over, since a knockout carries a mean of 11.87 partner tokens. Whether attention pays at
+1,000 tokens is untested and not addressed here.
