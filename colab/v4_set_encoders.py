@@ -88,8 +88,9 @@ THE GATE, DECLARED BEFORE ANY NUMBER IS PRODUCED.
               but not arm 5, the gain is depth and parameters, not attention.
     FREE      Any learned arm is worth building only if it beats the best 0-parameter arm (A/B/C) by more
               than the MDE. A trivial baseline that matches the model IS the headline, not a footnote.
-    AGREE     The gate is reported as sound only if the threshold-free cosine metric agrees in sign with
-              recall@50. Disagreement means metric artifact and the result is not reportable as biology.
+    AGREE     The gate is reported as sound only if the threshold-free cosine metric reaches the SAME
+              verdict as recall@50 on the primary gap. Disagreement means metric artifact and the result
+              is not reportable as biology.
 
 EFFECT SIZES ARE RAW HELD-OUT VALUES. The controls (arms 7-10, and the 0-parameter arms) establish
 significance and attribution; no arm is ever reported "net of" a control. Where a control reproduces most
@@ -138,7 +139,10 @@ N_KO = int(os.environ.get("V4_N", "0"))               # 0 = every usable knockou
 MAX_PAIRS = int(os.environ.get("V4_PRIOR_PAIRS", "20000"))
 SMOKE = os.environ.get("V4_SMOKE", "0") == "1"
 if SMOKE:
-    N_KO, EPOCHS, FOLDS, INIT_SEEDS = 800, 3, 3, 2
+    # A SMOKE RUN IS A PLUMBING CHECK AND NOT A RESULT. 800 knockouts and 3 epochs put every arm within
+    # noise of the K/G = 0.006 random floor; the arms cannot be separated at this size and the verdict
+    # string says so. The full-scale settings are the module defaults with V4_N left at 0.
+    N_KO, EPOCHS, FOLDS, INIT_SEEDS = 800, 3, 3, 3
 
 
 def robust_z(M):
@@ -332,7 +336,7 @@ def main():
                     # PATTERN is removed. self.q and self.k still exist and never receive a gradient;
                     # both the total and the effective parameter counts are reported.
                     wq = M[:, None, None, :].float()
-                    att = wq / wq.sum(-1, keepdim=True).clamp(min=1.0)
+                    att = (wq / wq.sum(-1, keepdim=True).clamp(min=1.0)).expand(B, 1, L, L)
                 a = self.o((att @ v).transpose(1, 2).reshape(B, L, D))
                 h = self.ln(h + a)
             elif self.kind == "deepsets":
@@ -576,9 +580,10 @@ def main():
     report(f"\n  MDE = 3*sd/sqrt(n), n = {FOLDS} DISJOINT KNOCKOUT PARTITIONS (the unit of replication -- the"
            f" claim is\n  generalisation to unseen knockouts). pooled across-partition sd {sd_rec:.4f} -> "
            f"MDE {MDE:+.4f} recall@{K}; cosine MDE {MDE_COS:+.4f}")
-    report(f"  the model-init-seed sd inside partition 0 is {sd_seed:.4f} -> a {mde_seed:+.4f} floor, "
-           f"{sd_rec/max(sd_seed,1e-9):.1f}x {'smaller' if sd_seed < sd_rec else 'larger'} than the "
-           f"across-partition one. IT IS NOT WHAT ANYTHING HERE IS GRADED ON.")
+    report(f"  for comparison only: the model-init-seed sd inside partition 0 is {sd_seed:.4f} (a "
+           f"{mde_seed:+.4f} floor); the across-partition sd is {sd_rec/max(sd_seed,1e-9):.1f}x that. "
+           f"Seeds measure optimiser noise inside a FIXED knockout set and IT IS NOT WHAT ANYTHING HERE "
+           f"IS GRADED ON.")
 
     SIMPLE = ["1 unweighted mean-pool", "2 evidence-weighted mean-pool", "3 Deep Sets (MLP-sum-MLP)"]
     FREEA = ["A raw DepMap self-vector (0 param)", "B raw DepMap bag-of-partners (0 param)",
@@ -597,9 +602,10 @@ def main():
         "PRIMARY  Set Transformer beats the best of arms 1-3 by > MDE": bool(g_simple > MDE),
         "SHARP    attention beats FROZEN-UNIFORM attention by > MDE": bool(g_attn > MDE),
         "FREE     Set Transformer beats the best 0-parameter arm by > MDE": bool(g_free > MDE),
-        "AGREE    the threshold-free cosine agrees in sign with recall@50":
+        "AGREE    the threshold-free cosine reaches the same verdict as recall@50":
             bool((g_simple > MDE) == (g_simple_cos > MDE_COS)),
     }
+    AGREE = "AGREE    the threshold-free cosine reaches the same verdict as recall@50"
     report("\n  PREDECLARED GATES")
     for k_, v in gates.items():
         report(f"    {'PASS' if v else 'FAIL'}  {k_}")
@@ -623,9 +629,18 @@ def main():
     report("\n  CONTROLS THAT REPRODUCE THE EFFECT (reported as the finding, not as a footnote)")
     for k_, v in repro.items():
         report(f"    {100*v:6.1f}%  {k_}")
+    repro_meaningful = bool(g_self > MDE)
+    if not repro_meaningful:
+        report(f"    ^ arm 4's gain over self-only is {g_self:+.4f}, which is itself below the {MDE:.4f} "
+               f"MDE, so these percentages are ratios of two undetected quantities and mean nothing. "
+               f"They are printed rather than suppressed so the denominator is visible.")
 
     passed = gates["PRIMARY  Set Transformer beats the best of arms 1-3 by > MDE"]
     verdict = (
+        (f"SMOKE RUN ({N:,} knockouts, {EPOCHS} epochs) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. "
+         f"Every arm sits within noise of the {K/A.shape[1]:.4f} random floor at this size, the encoders "
+         f"cannot be separated, and no sentence below should be quoted as a finding. Rerun with V4_SMOKE "
+         f"unset. " if SMOKE else "") +
         f"{'CRITERION 2 PASSES' if passed else 'CRITERION 2 FAILS'}: on the dense untruncated K562 target "
         f"({N:,} knockouts, {A.shape[1]:,} genes, 100% density) with the task, target, metric and retrieval "
         f"held identical to dense_stage1 and ONLY the encoder varying at a matched budget of "
@@ -648,9 +663,9 @@ def main():
         f"the trained network is handed another held-out knockout's neighbours {g_swap:+.4f} -- a swap gap "
         f"at or below the MDE would mean the neighbourhood channel is IGNORED rather than useless, which "
         f"accuracy alone cannot distinguish. The threshold-free cosine metric "
-        f"{'AGREES' if gates['AGREE    the threshold-free cosine agrees in sign with recall@50'] else 'DISAGREES'} "
+        f"{'AGREES' if gates[AGREE] else 'DISAGREES'} "
         f"with recall@{K} on the primary gap ({g_simple_cos:+.4f} against a {MDE_COS:.4f} cosine MDE)"
-        f"{'.' if gates['AGREE    the threshold-free cosine agrees in sign with recall@50'] else ', and when the two metrics disagree the result is a metric artifact and is not reportable as biology.'} "
+        f"{'.' if gates[AGREE] else ', and when the two metrics disagree the result is a metric artifact and is not reportable as biology.'} "
         f"All effect sizes quoted here are RAW held-out values; the control arms establish significance and "
         f"attribution and nothing is reported net of a control.")
     report("\n" + "=" * 104)
@@ -706,6 +721,10 @@ def main():
                   "transformer_minus_neighbour_swap_counterfactual": float(g_swap)},
          "controls_reproducing_the_effect": {k_: (float(v) if np.isfinite(v) else None)
                                              for k_, v in repro.items()},
+         "controls_reproducing_the_effect_are_meaningful": repro_meaningful,
+         "controls_reproducing_the_effect_note":
+             "these are fractions of arm 4's raw gain over self-only. If the denominator is itself below "
+             "the MDE the ratios are meaningless and the flag above is false.",
          "evidence_prior_per_partition": priors_log,
          "circularity_check": "token features are DepMap CRISPR gene-effect PCs and the co-dependency "
                               "edges are DepMap-derived; the scored target is Replogle Perturb-seq K562 "
