@@ -375,7 +375,7 @@ def build_relations(report):
            f"UniBind cell context; signalling: {nsig:,}")
     del d
 
-    R = pd.DataFrame(rows)
+    R = pd.concat(blocks, ignore_index=True)[COLS]
     report(f"  relation table: {len(R):,} rows x {R.shape[1]} columns in {time.time()-t0:.1f}s")
 
     # ---- DECLARED COVERAGE, per relation type. Nothing is filled. -----------------------------------
@@ -668,15 +668,24 @@ def main():
                 M[i, jj] = True
         return (torch.from_numpy(F), torch.from_numpy(T), torch.from_numpy(M))
 
-    def partner_sets(stratum, types=TYPES):
-        out = []
+    uidx = {gg: i for i, gg in enumerate(uni)}
+
+    def partner_matrix(stratum, matched=True):
+        """Binary (knockouts x universe) incidence of the partner set, for the NON-LEARNED baseline."""
+        from scipy import sparse
+        r_, c_ = [], []
         for i, k_ in enumerate(psym_k):
-            s = set()
-            for rt in types:
-                j = TYPES.index(rt)
-                s.update(PART[stratum][rt].get(k_, [])[:int(NMATCH[i, j])])
-            out.append(s)
-        return out
+            for j, rt in enumerate(TYPES):
+                n = int(NMATCH[i, j]) if matched else CAP
+                for p in PART[stratum][rt].get(k_, [])[:n]:
+                    r_.append(i)
+                    c_.append(uidx[p])
+        M = sparse.csr_matrix((np.ones(len(r_), np.float32), (r_, c_)),
+                              shape=(len(psym_k), len(uni)))
+        M.data[:] = 1.0
+        M.sum_duplicates()
+        M.data[:] = 1.0
+        return M
 
     class Enc(nn.Module):
         def __init__(self):
@@ -706,8 +715,8 @@ def main():
         for st, nm in (("all", "A_native"), ("conf", "B0_matched"), ("top", "B_top"),
                        ("rewire", "D_rewire")):
             BUN[f"{rt}|{nm}"] = tokens(st, types=[rt], matched=(nm != "A_native"))
-    PS_A = partner_sets("all")
-    PS_B = partner_sets("top")
+    PS_A = partner_matrix("all", matched=False)
+    PS_B = partner_matrix("top", matched=True)
     report(f"\n  token bundles built: {len(BUN)}; mean real tokens A_native "
            f"{BUN['A_native'][2].sum(1).float().mean():.2f}, B_top "
            f"{BUN['B_top'][2].sum(1).float().mean():.2f}, D_rewire "
@@ -755,21 +764,16 @@ def main():
                                                                (len(te), 1))))
         for nm, PS in (("JACCARD-copy on A partners (non-learned)", PS_A),
                        ("JACCARD-copy on B_top partners (non-learned)", PS_B)):
+            Pte, Ptr = PS[te], PS[tr]
+            ate = np.asarray(Pte.sum(1)).ravel()
+            atr = np.asarray(Ptr.sum(1)).ravel()
             pred = np.zeros((len(te), A.shape[1]), np.float32)
-            for j, i in enumerate(te):
-                si = PS[i]
-                best, bi = -1.0, int(tr[0])
-                if si:
-                    for t_ in tr:
-                        st_ = PS[t_]
-                        if not st_:
-                            continue
-                        inter = len(si & st_)
-                        if inter:
-                            jc = inter / len(si | st_)
-                            if jc > best:
-                                best, bi = jc, int(t_)
-                pred[j] = S[bi]
+            for i0 in range(0, len(te), 256):
+                blk = np.asarray((Pte[i0:i0 + 256] @ Ptr.T).todense(), np.float32)
+                den = ate[i0:i0 + 256, None] + atr[None, :] - blk
+                jac = np.where(den > 0, blk / np.maximum(den, 1e-9), 0.0)
+                bi = tr[np.argmax(jac, axis=1)]
+                pred[i0:i0 + 256] = S[bi]
             add(nm, score_arm(pred))
 
         for seed in range(N_SEEDS):
