@@ -108,9 +108,15 @@ MAX_PARTNERS = int(os.environ.get("ABC_PARTNERS", "16"))
 EPOCHS = int(os.environ.get("ABC_EPOCHS", "40"))
 SEEDS = int(os.environ.get("ABC_SEEDS", "2"))
 MIN_LINES = int(os.environ.get("ABC_MIN_LINES", "100"))
+# EXPLICIT, LOGGED SAMPLING CAPS. Regime B trains on ~16 million (line, gene) cells; materialising a
+# 64-column feature matrix over all of them is ~4 GB and was OOM-killed. Both sides are capped and the
+# number actually used is printed, because a silent cap reads as "scored everything" when it did not.
+N_TRAIN = int(os.environ.get("ABC_N_TRAIN", "1500000"))
+N_TEST = int(os.environ.get("ABC_N_TEST", "400000"))
 SMOKE = os.environ.get("ABC_SMOKE", "0") == "1"
 if SMOKE:
     N_GENE_BLOCKS, N_LINE_BLOCKS, EPOCHS, SEEDS = 3, 3, 6, 1
+    N_TRAIN, N_TEST = 200000, 80000
 
 # Fields in cell_complete.json.gz that are DERIVED FROM DepMap and would leak the label in B and C.
 BANNED = {"ess", "ess_src", "dep_frac"}
@@ -264,29 +270,39 @@ def main():
             return np.where(np.isfinite(out), out, mu)
         pm_real, pm_rand = partner_mean(PART), partner_mean(PART_R)
 
-        G, L = np.meshgrid(np.arange(len(genes)), np.arange(len(Y)))
+        # SAMPLE FIRST, THEN SCORE ON INDICES. Nothing here materialises a (lines x genes) array.
+        ti, tj = np.where(tr_mask)
+        ei, ej = np.where(te_mask)
+        n_tr_all, n_te_all = len(ti), len(ei)
+        if n_tr_all > N_TRAIN:
+            sel = rng0.choice(n_tr_all, N_TRAIN, replace=False)
+            ti, tj = ti[sel], tj[sel]
+        if n_te_all > N_TEST:
+            sel = rng0.choice(n_te_all, N_TEST, replace=False)
+            ei, ej = ei[sel], ej[sel]
+        y_te = Y[ei, ej]
         arms = {}
 
         def add(k, pred):
-            arms[k] = rmse(pred, Y, te_mask)
-        add("GLOBAL-mean (0p)", np.full_like(Y, mu))
-        add("MARGINAL-gene (0p)", np.broadcast_to(a_g_f[None, :], Y.shape).copy())
-        add("MARGINAL-line (0p)", np.broadcast_to((mu + b_c_f)[:, None], Y.shape).copy())
-        add("MARGINAL-both (0p)", a_g_f[None, :] + b_c_f[:, None])
-        add("PARTNER-MEAN non-DepMap (0p)", np.broadcast_to(pm_real[None, :], Y.shape).copy()
-            + b_c_f[:, None])
-        add("PARTNER-MEAN random (0p CONTROL)", np.broadcast_to(pm_rand[None, :], Y.shape).copy()
-            + b_c_f[:, None])
-
-        # ---- learned arms ----
-        ti, tj = np.where(tr_mask)
-        ei, ej = np.where(te_mask)
-        if SMOKE and len(ti) > 400000:
-            sel = rng0.choice(len(ti), 400000, replace=False)
-            ti, tj = ti[sel], tj[sel]
+            arms[k] = float(np.sqrt(np.mean((pred - y_te) ** 2)))
+        add("GLOBAL-mean (0p)", np.full(len(y_te), mu, np.float32))
+        add("MARGINAL-gene (0p)", a_g_f[ej])
+        add("MARGINAL-line (0p)", mu + b_c_f[ei])
+        add("MARGINAL-both (0p)", a_g_f[ej] + b_c_f[ei])
+        add("PARTNER-MEAN non-DepMap (0p)", pm_real[ej] + b_c_f[ei])
+        add("PARTNER-MEAN random (0p CONTROL)", pm_rand[ej] + b_c_f[ei])
         feats_tr = np.c_[F[tj], pm_real[tj, None], b_c_f[ti, None]].astype(np.float32)
         feats_te = np.c_[F[ej], pm_real[ej, None], b_c_f[ei, None]].astype(np.float32)
-        y_tr = Y[ti, tj]
+        # RESIDUAL TARGET. The learned arms predict Y minus MARGINAL-both and the marginal is added back
+        # at scoring time. Predicting the raw value instead made regime A score WORSE than its own
+        # marginal (0.1659 vs 0.1603), which is not a finding about generalisation -- it is an
+        # optimisation artifact of asking a small MLP to rediscover a per-gene constant that is handed to
+        # it for free. It also made the retained-fraction denominator negative. In regimes B and C the
+        # marginal for a held-out gene IS the global mean, so this changes nothing there and keeps all
+        # three regimes on one scale.
+        base_tr = a_g_f[tj] + b_c_f[ti]
+        base_te = a_g_f[ej] + b_c_f[ei]
+        y_tr = (Y[ti, tj] - base_tr).astype(np.float32)
 
         Fsh = F[rng0.permutation(len(genes))]
         sh_tr = np.c_[Fsh[tj], pm_real[tj, None], b_c_f[ti, None]].astype(np.float32)
@@ -303,19 +319,17 @@ def main():
                             ("FEATURES+PARTNERS", (feats_tr, feats_te)),
                             ("FULL (+gene lookup)", (lut_tr, lut_te)),
                             ("SHUFFLED-FEATURES (CONTROL)", (sh_tr, sh_te))):
-            ps = [fit_mlp(Xt, y_tr, Xe, s) for s in range(SEEDS)]
-            preds[k] = np.mean(ps, 0)
-            P = np.full_like(Y, np.nan)
-            P[ei, ej] = preds[k]
-            arms[k] = rmse(P, Y, te_mask)
-
-        wg = rng0.permutation(len(ej))
-        P = np.full_like(Y, np.nan)
-        P[ei, ej] = preds["FEATURES+PARTNERS"][wg]
-        arms["WRONG-GENE (identity CONTROL)"] = rmse(P, Y, te_mask)
+            ps = [fit_mlp(Xt, y_tr, Xe, sd_) for sd_ in range(SEEDS)]
+            preds[k] = np.mean(ps, 0) + base_te
+            add(k, preds[k])
+            del Xt, Xe
+        add("WRONG-GENE (identity CONTROL)",
+            preds["FEATURES+PARTNERS"][rng0.permutation(len(ej))])
 
         arms["_lookup_available"] = lookup_available
-        arms["_n_test"] = int(te_mask.sum())
+        arms["_n_test"] = int(n_te_all)
+        arms["_n_test_scored"] = int(len(ei))
+        arms["_n_train_scored"] = int(len(ti))
         return arms
 
     REG = {}
@@ -343,7 +357,11 @@ def main():
                        "lookup_available": float(np.mean([b["_lookup_available"] for b in blocks])),
                        "n_blocks": len(blocks),
                        "n_test": int(np.sum([b["_n_test"] for b in blocks]))}
-        report(f"\n  REGIME {regime}  ({len(blocks)} blocks, {REG[regime]['n_test']:,} scored values, "
+        ns = int(np.sum([b["_n_test_scored"] for b in blocks]))
+        nt = int(np.sum([b["_n_train_scored"] for b in blocks]))
+        REG[regime]["n_test_scored"] = ns
+        report(f"\n  REGIME {regime}  ({len(blocks)} blocks; {REG[regime]['n_test']:,} test cells exist, "
+               f"{ns:,} SAMPLED AND SCORED; {nt:,} training cells sampled; "
                f"gene lookup available for {100*REG[regime]['lookup_available']:.1f}% of test genes)")
         for k in keys:
             v = REG[regime]["arms"][k]
@@ -415,7 +433,7 @@ def main():
          "regimes": {k: {"arms": {a: {"mean": float(np.mean(v)), "per_block": v}
                                   for a, v in r["arms"].items()},
                          "lookup_available": r["lookup_available"], "n_blocks": r["n_blocks"],
-                         "n_test": r["n_test"]} for k, r in REG.items()},
+                         "n_test": r["n_test"], "n_test_scored": r.get("n_test_scored")} for k, r in REG.items()},
          "gates": gates, "summary": summary,
          "unit_of_replication": {"A": "held-out LINE block", "B": "held-out GENE block",
                                  "C": "held-out (gene, line) block pair"},
@@ -431,6 +449,9 @@ def main():
              "null in B bounds what THESE features recover and not what sequence could",
              "Test C pairs gene block b with line block b mod N_LINE_BLOCKS rather than running the full "
              "cartesian product, so its n is the number of gene blocks and not their product",
+             "both train and test cells are SUBSAMPLED (caps ABC_N_TRAIN / ABC_N_TEST) and the counts "
+             "actually used are printed per regime; RMSE is therefore a Monte-Carlo estimate over that "
+             "sample, not the exact value over every held-out cell",
              "DepMap gene effect is Chronos-scaled and already corrects for copy number and screen quality; "
              "a residual batch structure across screens is not removed here"],
          "verdict": verdict, "log": log}
