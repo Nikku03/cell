@@ -503,7 +503,7 @@ This section exists so the specification cannot be read as though nothing has be
 |---|---|---|
 | 1 real > random partners, dense | **PASSED** | +0.0186 gap vs a 0.0012 MDE, 10,337 knockouts. Honest decomposition: **+0.0101** real gain, +0.0085 control dilution |
 | 2 simple set encoder cannot match it | **FAILED** | transformer 0.0297 vs mean-pool 0.0323 (**−0.0026**) and vs an untrained 0-param arm 0.0341 (**−0.0043**), MDE 0.0015. Attention frozen uniform *beats* real attention by +0.0020 |
-| 3 every head beats its marginal | **in progress** | `dense_heads.py`, 3 partitions. Smoke: responds 0.5004 vs marginal 0.5039; direction 0.4948 vs 0.5056 — both at chance and *below* marginal |
+| 3 every head beats its marginal | **1 of 5 PASSES** | **viability head PASSES 8/8 gates**: 0.1473 vs marginal 0.1585, gap +0.01126 vs a 0.00080 paired MDE at **n = 1,150 held-out cell lines**, better on 96.8% of them. But a no-partner ablation reproduces **90.5%** of that gain. RNA head still running |
 | 4 correct > swapped context | **FAILED** | swap gap **−0.0375**, negative in 3 of 4 cells |
 | 5 context residual improves held-out cell | **FAILED** | 0/7 predeclared criteria; a trivial nearest-cell copy (+0.0674, t=+3.13) beats the model (+0.0622, t=+1.10) |
 | 6–9 | not reached | — |

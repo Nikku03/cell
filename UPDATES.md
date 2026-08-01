@@ -16834,3 +16834,89 @@ differently, though the burden is now on the transformer. The matched budget equ
 FLOPs or optimisation difficulty: a fairer reading is that at this budget and this data scale attention has
 nothing to attend over, since a knockout carries a mean of 11.87 partner tokens. Whether attention pays at
 1,000 tokens is untested and not addressed here.
+
+---
+
+# The viability head passes — 8 of 8 gates, at n = 1,150 — and 90% of the gain is not the partners
+
+`colab/v4_viability_head.py`. CELLFORMER4 §11 asserts that co-dependency belongs in the **viability**
+head rather than in transcription prediction, and §17 criterion 3 asks whether any head beats its own
+marginal. This is the first test in the programme to answer that with real statistical force, because it is
+the only one whose unit of replication is plentiful: the held-out object is a **DepMap cell line**, each
+held out exactly once across 5 disjoint blocks, so **n = 1,150** rather than the n = 4 that bounds
+everything cross-cell.
+
+## Result
+
+| arm | RMSE | resid-r |
+|---|---:|---:|
+| GLOBAL-mean | 0.4206 | — |
+| MARGINAL-gene (the pan-essential prior) | 0.1586 | 0.0000 |
+| **MARGINAL-both** | **0.1585** | 0.0000 |
+| PARTNER-MEAN (0 param) | 0.1543 | +0.3076 |
+| PARTNER-MEAN **random** (0 param CONTROL) | 0.1675 | +0.0867 |
+| PARTNER-MEAN shrunk (**1 param**) | 0.1502 | +0.3076 |
+| **MODEL (gene + line + partners)** | **0.1473** | **+0.3614** |
+| ABLATION no-partner, same width | 0.1483 | +0.3387 |
+| CONTROL random partners | 0.1483 | +0.3393 |
+| CONTROL degree-matched rewiring | 0.1483 | +0.3402 |
+| COUNTERFACTUAL partner swap | 0.1570 | +0.1996 |
+| CONTROL wrong-line (identity) | 0.1727 | +0.0025 |
+| CONTROL wrong-gene (identity) | 0.1726 | −0.0015 |
+
+**Gap +0.01126 against a paired MDE of 0.00080** — fourteen times the bar. It clears the unpaired bar
+(0.00244) and the across-fold bar (0.00068) as well, which is why three separate gates pass rather than
+one. **All 8 predeclared gates pass**, including AGREE (per-line Pearson reaches the same verdict as RMSE).
+
+Large n is not just a significance argument, it is a distributional one: the model is better on **96.8% of
+held-out lines**, median gain +0.0096, q10 +0.0024, q90 +0.0217. This is not a pooled mean concealing a
+sign flip, which is exactly what sank the cross-cell contrast experiment.
+
+## 90.5% of the gain is not the partner channel
+
+Reported as the finding rather than a footnote — the fraction of the model's gain over MARGINAL-both that
+each control reproduces:
+
+| control | reproduces |
+|---|---:|
+| **no-partner ablation** | **90.5%** |
+| random partners | 90.6% |
+| degree-matched rewiring | 91.0% |
+| 1-parameter shrunk partner mean | 74.2% |
+| counterfactual partner swap | 13.9% |
+
+Delete the partner channel entirely and 90.5% of the improvement remains. The partners are worth about
+**0.0011 RMSE** — statistically resolved at this n, and a tenth of the story. The rest is the gene and line
+embedding.
+
+**The one sharp detail.** The counterfactual swap (0.1570) is *worse* than having no partners at all
+(0.1483). A model trained with partners genuinely depends on them — unlike the cell-context channel, which
+the swap showed was never read. But a model never given partners recovers the same information from its
+gene embedding. The channel is **real, read, and replaceable**, and only running all three arms
+distinguishes those.
+
+**And the zero-parameter setting is where partners matter most.** PARTNER-MEAN 0.1543 against its random
+control 0.1675, resid-r +0.3076 vs +0.0867. Co-dependency carries a great deal — right up until a gene
+embedding fitted on 920 training lines learns the same thing.
+
+## What passes, precisely
+
+CELLFORMER4 §11's placement of co-dependency in the viability head is **confirmed**: real partners beat
+random and degree-matched rewiring by more than the MDE. §17 criterion 3 is **met for this head**, the
+first of five to manage it. What is *not* established is that the head needs the partner channel to do it.
+
+## The line marginal is worthless, and that is the n=4 wall again
+
+`MARGINAL-line` scores 0.4207 — identical to `GLOBAL-mean` 0.4206. Cell-line identity carries essentially
+nothing; gene identity carries nearly everything (`MARGINAL-gene` 0.1586 alone, within 0.0001 of the
+additive marginal). Even with 1,150 cell lines, what generalises is the **gene**, not the **cell**. That is
+the same finding the 0/7 contrast experiment produced, arrived at from the opposite direction and with 287×
+the replication.
+
+## Limits
+
+Viability, not transcription — this says nothing about the RNA head, and `depmap_codep` already measured
+that co-dependency predicts viability but not transcription. The eval-gene panel is a seeded,
+data-independent subsample and the probe panel is disjoint from it, but both are subsamples. DepMap gene
+effect is itself a modelled quantity (Chronos), not a raw measurement, so the target carries its own
+processing assumptions.
