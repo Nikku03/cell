@@ -680,25 +680,43 @@ def main():
             ii = np.array([kpos[k] for k in te_set])
             mv = Mov[ii].astype(bool)
             from sklearn.metrics import roc_auc_score
-            try:
-                auc_p = float(roc_auc_score(Mov[ii].ravel(), P_prob[ii].ravel()))
-            except Exception:
-                auc_p = float("nan")
-            try:
-                auc_d = float(roc_auc_score(Sgn[ii][mv].ravel(), P_dir[ii][mv].ravel()))
-            except Exception:
-                auc_d = float("nan")
-            err = np.abs(P_res[ii] - Mag[ii]).mean(1)
-            unc = P_lv[ii]
-            from scipy import stats as _st
-            rho_u = float(_st.spearmanr(unc, err)[0])
-            head_rows.append({"seed": seed, "prob_auc": auc_p, "dir_auc_on_movers": auc_d,
-                              "uncertainty_vs_error_spearman": rho_u,
-                              "dir_base_rate": float(Sgn[ii][mv].mean())})
+            # BASELINES, WITHOUT WHICH THESE AUCs MEAN NOTHING. A gene that usually moves in training
+            # usually moves in test, and a gene that usually moves UP usually moves up -- both are
+            # per-gene marginals available with no knockout information at all. The model only earns a
+            # head score to the extent it beats its own marginal.
+            base_prob = Mov[tr_idx].mean(0)                     # per-gene mover frequency = the tide
+            base_dir = np.clip(np.where(Mov[tr_idx] > 0, Sgn[tr_idx], np.nan), 0, 1)
+            with np.errstate(invalid="ignore"):
+                base_dir = np.nan_to_num(np.nanmean(base_dir, axis=0), nan=0.5)   # per-gene up-fraction
+
+            def _auc(y, p):
+                try:
+                    return float(roc_auc_score(y, p))
+                except Exception:
+                    return float("nan")
+            auc_p = _auc(Mov[ii].ravel(), P_prob[ii].ravel())
+            auc_p0 = _auc(Mov[ii].ravel(), np.tile(base_prob, (len(ii), 1)).ravel())
+            auc_d = _auc(Sgn[ii][mv].ravel(), P_dir[ii][mv].ravel())
+            auc_d0 = _auc(Sgn[ii][mv].ravel(), np.tile(base_dir, (len(ii), 1))[mv].ravel())
             report(f"    seed {seed}  HEADS  response-prob AUC {auc_p:.4f} | direction AUC {auc_d:.4f} "
                    f"(base rate {Sgn[ii][mv].mean():.3f}) | uncertainty-vs-error rho {rho_u:+.4f}")
 
             # ---- METRIC 3: transfer to held-out CELL LINES, no retraining ----
+            #
+            # TWO DEFECTS IN THE FIRST VERSION, BOTH OF WHICH FLATTERED THE MODEL, BOTH FIXED HERE.
+            #
+            # (i) IT WAS NOT CROSS-KNOCKOUT. The join took every K562 knockout present in the target
+            #     bench, which includes the 1,039 the model TRAINED on -- 1,382 scored where only the
+            #     346-knockout test split is legitimate. A model asked about a knockout it was fitted on,
+            #     in a different cell line, is being asked a much easier question. Restricted to the test
+            #     split now, and the count is printed so the restriction is visible.
+            #
+            # (ii) THE BASELINE WAS RIGGED. Truth is the top K by |z| restricted to NON-TIDE genes, and
+            #     the baseline ranked BY tide-ness -- so it selected exactly the genes the truth set
+            #     excludes and scored 0.0000 on RPE1 and HepG2 by construction. A baseline that cannot
+            #     score is not a baseline. Two honest ones are used instead: the target line's own mover
+            #     frequency computed WITHIN the non-tide genes (the tide, restricted to the same universe
+            #     the model is scored on), and a random ranking of the same universe.
             for ct in TRANSFER_LINES:
                 Ht = benches.get(ct)
                 if Ht is None:
@@ -706,31 +724,43 @@ def main():
                 shared = [g for g in Ht.genes if g in kgene_i]
                 col_t = np.array([Ht.gi[g] for g in shared])
                 col_k = np.array([kgene_i[g] for g in shared])
-                tk = [k for k in Ht.kos if k in kpos]
-                if len(tk) < 30 or len(shared) < 500:
-                    report(f"      {ct}: {len(tk)} shared KOs / {len(shared)} shared genes -- too thin, "
-                           f"reported as unavailable")
+                nt = Ht.nontide[col_t]                       # the scoring universe, in shared coordinates
+                if nt.sum() < 500:
+                    report(f"      {ct}: only {int(nt.sum())} shared non-tide genes -- unavailable")
                     continue
-                hit, base = [], []
+                tk = [k for k in Ht.kos if k in kpos and k in set(test_kos)]
+                if len(tk) < 30:
+                    report(f"      {ct}: {len(tk)} shared HELD-OUT knockouts -- too thin, unavailable")
+                    continue
+                rr3 = np.random.default_rng(4242 + seed)
+                tide_t = Ht.mover_freq[col_t].copy()
+                tide_t[~nt] = -np.inf                        # the tide, RESTRICTED to the scored universe
+                hit, base, rnd = [], [], []
                 for k in tk:
                     r = Ht.ki[k]
-                    truth = set(int(i) for i in np.argsort(-Ht.A[r][col_t])[:K_RECALL]
-                                if Ht.nontide[col_t[i]])
+                    a = Ht.A[r][col_t].copy()
+                    a[~nt] = -np.inf
+                    truth = set(int(i) for i in np.argsort(-a)[:K_RECALL] if np.isfinite(a[i]))
                     if not truth:
                         continue
-                    pred = P_res[kpos[k]][col_k]
-                    top = set(int(i) for i in np.argsort(-pred)[:K_RECALL])
-                    hit.append(len(truth & top) / len(truth))
-                    bt = set(int(i) for i in np.argsort(-Ht.mover_freq[col_t])[:K_RECALL])
-                    base.append(len(truth & bt) / len(truth))
+                    pred = P_res[kpos[k]][col_k].copy()
+                    pred[~nt] = -np.inf
+                    hit.append(len(truth & set(int(i) for i in np.argsort(-pred)[:K_RECALL])) / len(truth))
+                    base.append(len(truth & set(int(i) for i in np.argsort(-tide_t)[:K_RECALL]))
+                                / len(truth))
+                    rv = rr3.random(len(shared))
+                    rv[~nt] = -np.inf
+                    rnd.append(len(truth & set(int(i) for i in np.argsort(-rv)[:K_RECALL])) / len(truth))
                 if hit:
-                    m3.setdefault(ct, {"model": [], "tide": [], "n": []})
+                    m3.setdefault(ct, {"model": [], "tide": [], "random": [], "n": []})
                     m3[ct]["model"].append(float(np.mean(hit)))
                     m3[ct]["tide"].append(float(np.mean(base)))
+                    m3[ct]["random"].append(float(np.mean(rnd)))
                     m3[ct]["n"].append(len(hit))
-                    report(f"      METRIC 3 {ct:10s} model {np.mean(hit):.4f}  tide {np.mean(base):.4f}  "
-                           f"delta {np.mean(hit)-np.mean(base):+.4f}  ({len(hit)} KOs, "
-                           f"{len(shared):,} shared genes)")
+                    report(f"      METRIC 3 {ct:10s} model {np.mean(hit):.4f}  tide(non-tide universe) "
+                           f"{np.mean(base):.4f}  random {np.mean(rnd):.4f}  "
+                           f"delta-vs-tide {np.mean(hit)-np.mean(base):+.4f}  "
+                           f"({len(hit)} HELD-OUT KOs, {int(nt.sum()):,} scored genes)")
 
             def oracle_f(ko):
                 i = {kos[x]: x for x in range(len(kos))}.get(ko)
@@ -759,7 +789,10 @@ def main():
         R["heads"] = head_rows
         R["metric3_transfer"] = {ct: {"model_mean": float(np.mean(v["model"])),
                                       "tide_mean": float(np.mean(v["tide"])),
-                                      "delta": float(np.mean(v["model"]) - np.mean(v["tide"])),
+                                      "random_mean": float(np.mean(v["random"])),
+                                      "delta_vs_tide": float(np.mean(v["model"]) - np.mean(v["tide"])),
+                                      "delta_vs_random": float(np.mean(v["model"]) - np.mean(v["random"])),
+                                      "cross_knockout": True,
                                       "per_seed_model": v["model"], "per_seed_tide": v["tide"],
                                       "n_kos": v["n"]} for ct, v in m3.items()}
         R["arms"] = {k: {"metric1_mean": float(np.mean(v["m1"])), "metric1_sd": float(np.std(v["m1"])),
