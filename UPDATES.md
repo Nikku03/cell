@@ -16423,3 +16423,158 @@ The transcript arm returned **ratio 2.26 with an sd of 0.93** across draws (p_me
 p<0.05). Its interval spans 1.0 comfortably. Printing 2.26 without the spread would have read as a large
 effect; the module now refuses to call an arm informative unless its spread is under a quarter of its
 distance from 1.0.
+
+---
+
+# The censoring: every transformer in this arc trained against a target that is 96.5% not-recorded
+
+This is the largest single correction in the project and it invalidates a number this file has quoted
+repeatedly. It was not found by reading the model code. It was found by counting the target.
+
+The `nlz_*` benches store a **median of 250 genes per knockout out of 7,223**.
+
+| K562 bench | |
+|---|---:|
+| matrix cells | 10,112,200 |
+| values actually recorded | **349,999 (3.5%)** |
+| the remaining 96.5% | zeros that mean **NOT RECORDED** |
+
+`eval_harness` writes the recorded values into a zeros matrix, takes `A = |M|`, and thresholds
+`mover = A >= 1.0`. Nothing in that path distinguishes *measured to be zero* from *never written down*. The
+retrieval target — cosine between tide-removed response profiles — was therefore a cosine between vectors
+that are almost entirely structural zeros, and **two knockouts resembled each other partly because both were
+mostly zeros**.
+
+## What survives and what does not
+
+| | status |
+|---|---|
+| real-vs-random partner, wrong-knockout, shuffled-sign controls | **stand** — like-for-like, same target both sides |
+| absolute recalls quoted in this file | **not comparable to anything** |
+| the 0.607 "oracle" | **void** — a ceiling of the truncation, not of the biology |
+| "the gap to the oracle is representation-limited" | **withdrawn** — it was format-limited |
+
+The distinction matters and it is the reason the arc is not simply deleted. Every claim in it that was made
+as *arm A beats control B on the same target* is unaffected. Every claim made as *the model reaches X of a
+possible Y* is gone.
+
+## `colab/dense_response.py` — the data was never missing
+
+The cell-level deposits were on disk the whole time. Rebuilding the same four-line rectangle from them:
+
+| | benches | dense |
+|---|---:|---:|
+| mean density | 3.5% | **100.0%** |
+| genes jointly observed in all 4 lines, per perturbation | median **3** | median **6,550** |
+| usable cross-cell observations | 9,739 | **11,547,208** |
+
+A factor of **1,186**. No architecture change produces that; the target does.
+
+**The provenance asymmetry is left visible rather than hidden.** K562 is *not* re-derived — its deposit is
+already a pseudobulk log fold change from its own authors' pipeline, while HepG2, Jurkat and RPE1 are
+pseudobulked here. The cross-line variance correlation is the diagnostic:
+
+| | HepG2 | Jurkat | RPE1 | K562 |
+|---|---:|---:|---:|---:|
+| HepG2 | 1.00 | 0.658 | 0.560 | **0.158** |
+| Jurkat | 0.658 | 1.00 | 0.540 | **0.180** |
+| RPE1 | 0.560 | 0.540 | 1.00 | **0.196** |
+
+The three lines processed the same way agree at 0.54–0.66. K562 agrees with all of them at 0.16–0.20. That
+is a processing difference sitting along the axis, and it is printed rather than assumed away — checks of
+this kind have caught a real defect three times in this project.
+
+---
+
+# Five cheap context tests: the cell channel is not weak, it is IGNORED — and only the swap could show it
+
+The question was whether a knockout model can be told which cell it is in. Rather than building a large
+multimodal architecture and reading its accuracy, five narrow arms were run under a strict
+leave-one-cell-line-out rule: train on three lines, predict the fourth, with that line's own responses never
+an input.
+
+Raw held-out recall@50, per fold:
+
+| arm | K562 | RPE1 | HepG2 | Jurkat |
+|---|---:|---:|---:|---:|
+| A no context (cell-blind) | 0.0719 | 0.0497 | 0.0711 | 0.1038 |
+| B cell-line token | 0.0527 | 0.0417 | 0.0602 | 0.0781 |
+| C global baseline vector | 0.0545 | 0.0345 | 0.0629 | 0.0717 |
+| D gene-specific context | **0.0756** | **0.0515** | **0.0747** | 0.1062 |
+| E context-gated neighbours | 0.0710 | 0.0517 | 0.0700 | 0.0985 |
+| random floor | 0.0090 | 0.0092 | 0.0085 | 0.0089 |
+
+**The `delta_vs_tide` figures this module also emitted are retracted and are not reproduced here.** Its tide
+baseline ranked genes by tide-ness while the truth set excludes tide genes, so the baseline scored 0.0000 by
+construction on two of four folds — the third occurrence of that same rigged-baseline error in this project,
+committed two commits after the second one was fixed. Only the raw recalls and the swap below are load-bearing.
+
+## The counterfactual swap is the whole experiment
+
+Accuracy cannot separate *a channel the model uses but which does not help* from *a channel the model never
+reads*. Handing a trained model **another cell line's** context at test time can.
+
+| fold | arm D drop when swapped | arm E drop when swapped |
+|---|---:|---:|
+| K562 | +0.00008 | +0.00017 |
+| RPE1 | +0.00043 | −0.00067 |
+| HepG2 | +0.00008 | −0.00003 |
+| Jurkat | −0.00016 | −0.00025 |
+
+Give the model the wrong cell entirely and **nothing happens**, in eight of eight cases, in both directions.
+The context arms are not failing to help. They are **not being read**. That is a mechanically different
+finding from "context does not help", it points at a different fix, and no accuracy table could have produced it.
+
+## Why, and what follows
+
+With the same perturbation present in every training cell and a conserved response dominating the loss,
+`Ŷ[c,p,g] ≈ shared response of p` is already optimal — the cell index is free to drop out. The fix is not a
+bigger context encoder; it is an objective that makes the shared part unearnable:
+
+    Y[c,p,g] = μ[p,g] + δ[c,p,g]
+
+with μ estimated from training cells, **frozen**, and a residual branch trained on δ alone.
+
+## Two limits that are not negotiable
+
+Tests B and C fit a cell encoder from **three training points**. They are descriptive and are not identifiable
+at this rectangle. And accessibility is absent for all four lines, so D and E are RNA-baseline only — this is
+a test of whether *an* RNA context channel is read, not of whether *cell context* is readable in principle.
+
+## `colab/contrast_context.py` is VOID as run, and says so in its own header
+
+The contrast objective above was implemented in full — six arms, a six-rung baseline ladder, seven
+predeclared criteria — and then could not be scored, because the cross-cell target it needs is exactly the
+one that turned out to be 96.5% censored. δ between two cells is meaningless when both sides are mostly
+not-recorded. The module carries a `DO NOT RUN THIS ON THE nlz BENCHES` header and is unblocked by the dense
+rebuild above, not by any change to itself.
+
+---
+
+# `CELLFORMER3.md`: the specification rewritten around the target instead of the architecture
+
+The previous two specifications were built the right way round and pointed at the wrong object.
+`CELLFORMER.md` described an AlphaFold-shaped model; `CELLFORMER2.md` corrected its metric. Neither noticed
+the censoring. The third states it first and derives everything after it.
+
+Six ablatable blocks, each carrying **what has already been measured about it**, so nothing enters the stack
+on the strength of a description:
+
+| block | measured |
+|---|---|
+| A entity layer | typed neighbour tokens confirmed; relation sign + evidence strength **not detected, four times** |
+| B encoder | relation bias **+0.0034, not detected**; real wiring vs shuffled wiring of the same density **+0.005 ± 0.008** |
+| C context conditioning | **all four modes ignored** (swap moves recall by −0.0007 to +0.0004) |
+| D objective | the reason C is ignored; μ + δ with μ frozen |
+| E heads | five supervised, **every one reported against its own per-gene marginal** — direction 0.975 looks like the project's best result until the marginal reaches 0.949 of it |
+| F explicit non-learned tide | works; it is what prevented the `neural_ko` collapse below the tide floor |
+
+**Nothing joins the stack that failed its own gate.** On current evidence the sign channel and the relation
+bias are out unless a dense target revives them.
+
+## What this cannot become, stated in the file itself
+
+There are **four** independent cell contexts. More genes and more perturbations buy precision *inside* those
+four; they do not create a fifth. This programme can show whether context is readable and can fit a
+four-context correction. It **cannot establish a universal cell-state encoder**, and a positive result is a
+reason to buy more cell lines, not a claim of biological generality.
