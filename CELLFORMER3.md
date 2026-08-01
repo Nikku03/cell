@@ -186,9 +186,41 @@ cross-cell error bar.
 
 **The binding constraint is now known and it is not architectural.** The dense rebuild delivered 1,186× more
 usable cross-cell observations. Stage 1 improved enormously because its limiting axis was observations per
-knockout. Stage 3/4 did not move at all, because its limiting axis is **four cell lines**. `hct116.h5ad`,
-`frangieh.h5ad`, `shifrut.h5ad` and `papalexi.h5ad` are on disk and unprocessed; each is worth more to this
-programme than any architectural change measured in it.
+knockout. Stage 3/4 did not move at all, because its limiting axis is **four cell lines**.
+
+**CORRECTION.** An earlier version of this paragraph said `hct116.h5ad`, `frangieh.h5ad`, `shifrut.h5ad`
+and `papalexi.h5ad` were "on disk and unprocessed", and that processing them would take the design from
+four contexts to eight for free. Both halves were wrong, in opposite directions, and the measured position
+is worse than either.
+
+*Wrong in the first direction:* HCT116 and Frangieh **were** processed — `nlz_HCT116.pkl` (1,400 KOs) and
+`nlz_Melanoma.pkl` (218) were written on 2026-07-21. They are not unprocessed.
+
+*Wrong in the second direction, and this is the part that matters:* having a profile is not the same as
+being able to join it. What a fifth cell buys is **shared perturbations**, and measured against the dense
+tensor's 1,763:
+
+| candidate context | perturbations | shared with the dense set | clears the ≥100 bar? |
+|---|---:|---:|---|
+| K562 (reference) | 1,400 | **1,007** | — |
+| HCT116 | 1,400 | **125** | barely, and see below |
+| Frangieh / melanoma | 249 | **41** | **no** |
+| Shifrut / primary T | 33 | **0** | **no** |
+| Papalexi / THP-1 | 107 | **0** | **no** |
+
+A cell contributing 41 shared perturbations adds a nearly empty row to a (n, 1763, 6550) tensor. The
+project's own pre-declared bar of ≥100 shared perturbations — already applied to exclude Shifrut and
+Papalexi — excludes Frangieh too.
+
+**And HCT116 needs a provenance audit before it can be counted at all.** `hct116.h5ad` is (17,768 × 16,380)
+with an `obs` containing only `idx` — no perturbation column. Yet `nlz_HCT116.pkl` carries 1,400 KO labels
+whose intersection with the K562 bench's own 1,400 is just **113**. Two genome-scale screens should overlap
+far more than that. Where those labels came from is not established, and until it is, HCT116 is not a
+fifth context.
+
+**Net: the count stays at four.** Nothing currently on disk widens the cross-cell design. That does not
+make more contexts less important — it makes them the *only* thing that helps, and it means they have to
+be acquired rather than recovered.
 
 **Stage 1's headline gap over-states the neighbourhood.** It decomposes into **+0.0101** of genuine
 neighbourhood information (FULL over self-only) and **+0.0085** of *damage the control does* — random

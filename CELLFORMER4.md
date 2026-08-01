@@ -520,9 +520,30 @@ can repair, and crossing roughly n ≈ 10 is what turns Block 6 from degenerate 
 
 1. **Run controls 6–8 of §6.** If mean-pooling matches the Set Transformer, criterion 2 fails and the
    validated object is a bag, not a transformer. This is cheap and it is decisive.
-2. **Process the contexts already on disk.** `hct116.h5ad`, `frangieh.h5ad`, `shifrut.h5ad`,
-   `papalexi.h5ad` are staged and unprocessed. They cost no acquisition and move the one axis that
-   matters.
+2. **Acquire cell contexts — they cannot be recovered from disk.** This was audited and the result is
+   negative. What a fifth cell buys is *shared perturbations* against the dense tensor's 1,763:
+
+   | candidate | perturbations | shared with dense set | usable? |
+   |---|---:|---:|---|
+   | K562 (reference) | 1,400 | 1,007 | — |
+   | HCT116 | 1,400 | 125 | **provenance unresolved** |
+   | Frangieh / melanoma | 249 | 41 | no — below the ≥100 bar |
+   | Shifrut / primary T | 33 | 0 | no |
+   | Papalexi / THP-1 | 107 | 0 | no |
+
+   HCT116 and Frangieh **were** already processed (`nlz_HCT116.pkl`, `nlz_Melanoma.pkl`, written
+   2026-07-21) — an earlier claim in this project that they were "unprocessed" was wrong. But a profile
+   is not a join. Frangieh's 41 shared perturbations fall below the pre-declared ≥100 bar that already
+   excluded Shifrut and Papalexi. And `hct116.h5ad` is (17,768 × 16,380) with an `obs` containing only
+   `idx` — no perturbation column — while `nlz_HCT116.pkl` carries 1,400 KO labels intersecting the K562
+   bench's 1,400 by just **113**. §12 of this document already says HCT116 is "not automatically
+   comparable without a processing audit"; that line was right and the audit has not been done.
+
+   **Net: n = 4 stands, and nothing on disk moves it.** New contexts must be acquired. That is precisely
+   the case for X-Atlas/Orion (HEK293T as a genuinely new context, plus an independent HCT116 screen that
+   would settle the provenance question by replication), genome-scale primary CD4⁺ T cells (Shifrut's 33
+   perturbations cannot carry a primary-cell context; a genome-scale screen can), and the donor
+   perturbation map (a within-cell-type genetic-background axis this project has no access to at all).
 
 ---
 
