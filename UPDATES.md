@@ -17890,3 +17890,72 @@ session. It covers **27.4%** of the basis-oracle range, up from 19.2%. Full cove
 required, no other cell lines required.
 
 Still unmeasured: the mechanism. Nothing here scores a causal chain against ground truth.
+
+---
+
+# Proteomics, the TF network, and every other table in the cell: all three blocks add nothing
+
+`colab/adrn_ko_channels3.py`
+
+chan2a used the regulatory network only as **degree buckets** — "has a signed regulon", "upstream_tfs >= 5" — and
+never the identity of a single transcription factor. That was the largest obvious omission, and prior work gave it
+a real prior: curated causal edges predict measured knockout movers at **2.7× enrichment**. Proteomics,
+co-dependency, PTMs, drugs, 3D loops and cell-type breadth were also sitting unused in the same file.
+
+Three blocks, priced separately so a win in one could not hide a failure in another. 696 → 1,247 channels.
+
+    T  curated TF identity   300 cols  regulated_by:<TF> from SIGNED (SIGNOR/TRRUST) edges + NicheNet ligands
+    C  ChIP binding identity 220 cols  bound_by:<TF> from the 612k unsigned edges
+    P  proteomics/dependency  31 cols  ppm and abundance deciles, PTM classes, co-dependency degree and
+                                       strength, synthetic-lethal degree, drug targeting, cell-type breadth
+                                       from the emask bitmask, 3D loops, biomarker status
+
+Ridge penalty tuned per arm on a validation slice of training knockouts, so a wider design is not penalised by a
+penalty chosen for a narrower one.
+
+## Result: nothing moved, and the holdout got slightly worse
+
+| arm | cols | cohort 1 | cohort 2 |
+|---|---:|---:|---:|
+| **chan2a (penalty 10)** | 696 | **0.2337** | **0.2885** |
+| chan2atuned (penalty 100) | 696 | 0.2260 | 0.2858 |
+| chan3t (+ TF identity) | 996 | 0.2270 | 0.2845 |
+| chan3c (+ ChIP identity) | 1216 | 0.2240 | 0.2777 |
+| chan3p (+ proteomics) | 1247 | 0.2233 | 0.2742 |
+| chan3perm (permuted) | 1247 | 0.1623 | 0.1827 |
+
+    chan3t - chan2atuned  (TF net)      +0.0010 [-0.0025,+0.0045]  and  -0.0013 [-0.0043,+0.0017]  noise
+    chan3c - chan3t       (ChIP)        -0.0030 [-0.0102,+0.0043]  and  -0.0067 [-0.0152,+0.0015]  noise
+    chan3p - chan3c       (proteomics)  -0.0008 [-0.0050,+0.0033]  and  -0.0035 [-0.0083,+0.0012]  noise
+    chan3p - chan2atuned  (all three)   -0.0028 [-0.0110,+0.0053]  and  -0.0115 [-0.0203,-0.0028]  RESOLVED NEGATIVE
+
+**The ChIP block was predeclared inert and it is inert** — `bind_vs_reg.py` measured ChIP/Perturb-seq overlap at
+chance (fold 0.96, p = 0.68) and the regulon comparison put it at 1.1× against SIGNOR's 2.7×. That prediction held.
+
+**The TF block is the surprise.** Curated regulon membership enriches for measured movers at 2.7×, and it still
+adds nothing on top of pathway/GO/complex membership. The validation RMSE is *identical* to chan2a's (0.0461), so
+the 300 TF columns carry no signal the existing channels do not already encode. Pathway and GO membership appear
+to capture the same coarse grouping that regulon membership does, at this granularity.
+
+**Penalty tuning was not the confound.** `chan2atuned − chan2a` is within noise on both cohorts, so the wider arms
+were not handicapped — they simply had nothing to add.
+
+**Leakage control holds.** Permuted channels score below the frequency baseline on both cohorts, and
+`chan3p − permuted` is +0.0610 / +0.0915, RESOLVED.
+
+## What this does and does not say
+
+It does **not** say annotation is exhausted — the model still covers only 27% of the basis-oracle range. It says
+these *particular* additions are redundant with what 696 pathway/GO/complex/domain/structural channels already
+encode. Every source in `cell_complete.json` that was worth adding has now been added and measured.
+
+**`chan2a` remains the recommended model: 696 pure-annotation channels, K562 only, penalty 10, 0.2885 on the
+sealed holdout.**
+
+## A container rollback, and what it cost
+
+Mid-run the container reverted the working tree to `a52f0a7` for the second time this session, deleting all four
+of the session's commits locally and the rebuilt readout from scratch space. Everything was safe on origin and was
+recovered by fast-forward; the readout was rebuilt from `gwps.h5ad`. **Consistency check: chan2a re-scored to
+0.2337 / 0.2885 after the rebuild, identical to before it**, which confirms the rebuilt readout is the same matrix.
+Source is now committed before running rather than after.
