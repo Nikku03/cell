@@ -17303,3 +17303,76 @@ benchmark the transformer is not the thing to beat; the 338-parameter polynomial
 
 A published comparison scorecard covering ADRN-1, 2A and 2B against the transformer at matched budgets
 is at `https://claude.ai/code/artifact/f5ec4bc6-c13d-418c-98c8-389c8b30a6fd`.
+
+---
+
+# ADRN-3 direction 1 and 2: the router's failure was a constant, not a missing mechanism
+
+`colab/adrn3_routing.py`, output `outputs/orphan/adrn3_routing.json`. Isolated routing benchmark on
+ADRN-2B's own cue generator: 4 contexts, 6 phases, 256 probes per phase, 8 supervised steps per phase,
+8 seeds, chance 0.2500. Two prototype regimes — `known` (true prototypes installed, the decoding
+ceiling) and `learned` (estimated from the few supervised visits, the realistic case).
+
+## Direction 1, evidence accumulation: rejected, ≤ +0.037
+
+Replacing the shipped point-estimate transition prior with a full HMM forward filter — carry a
+distribution over contexts and propagate it — is worth almost nothing. Across 24 regimes the largest
+gain is **+0.0366** and several are negative. The mechanism is sound and it is live (verified below);
+it simply has nothing to add.
+
+## What the attempt uncovered instead, which is worth far more
+
+ADRN-2B ships `context_stickiness=0.25` with 4 real contexts. **At 4 contexts 0.25 == 1/4 exactly, so
+the transition matrix is uniform**: a forward filter multiplies by a constant every step and no history
+survives. Accumulation is arithmetically impossible at the shipped setting, which the harness reports
+as a liveness warning — `accumulate` is byte-identical to `single_draw` on 8/8 seeds there.
+
+Phases are 256 probes long, so the true per-step switch probability is ~1/256 and the dwell-matched
+stickiness is 0.9961. Fixing that one constant, with **no new mechanism and still a single draw**:
+
+| regime | stick=0.25 (shipped) | 0.85 | 0.98 | 0.9961 (dwell-matched) |
+|---|---|---|---|---|
+| easy / known | 0.9568 | 0.9911 | 0.9980 | 0.9992 |
+| medium / known | 0.8096 | 0.9628 | 0.9923 | **0.9967** |
+| hard / known | 0.5972 | 0.9262 | 0.9881 | **1.0000** |
+
+**+0.403 on the hard setting from correcting a miscalibrated constant.** The hypothesis that temporal
+integration is the bottleneck was right; the integration that matters is the *prior over how long a
+context persists*, not a posterior filter. Once the prior is correct a single draw is already
+near-perfect, which is exactly why direction 1 measures zero on top of it.
+
+## Direction 2, dentate-gyrus pattern separation: fails and wins exactly where predicted
+
+The docstring recorded the prediction before the run: expansive random projection + k-winner-take-all
+*should not* beat a correctly specified Gaussian decoder, because the cue noise is isotropic Gaussian by
+construction and any lossy recoding can only discard information. The informative case is the
+low-sample regime where the router must estimate its own prototypes.
+
+Both halves confirmed. With **known** prototypes separation is worse everywhere — 0.9568→0.8812,
+0.8096→0.6973, and at dwell-matched stickiness 1.0000→0.9379 on hard. With **learned** prototypes it
+wins, and by a lot:
+
+| regime (stick = 0.9961) | Gaussian decoder | + pattern separation | gain |
+|---|---|---|---|
+| easy / learned | 0.9678 | **1.0000** | +0.0322 |
+| medium / learned | 0.8767 | **0.9737** | +0.0970 |
+| hard / learned | 0.7223 | **0.9776** | **+0.2553** |
+
+The realistic regime is the learned one — a deployed router never has true prototypes. So direction 2
+is a keeper, for the stated reason: a sparse expansive code is robust to a badly estimated covariance
+in a way a Gaussian likelihood is not.
+
+The CA3 completion sweep is not a keeper: it is worse than plain separation in nearly every regime.
+
+## Controls and liveness
+
+The shuffled-cue control — accumulate cues drawn from a uniformly random context — sits at 0.2499–0.2882
+in every known-prototype regime, so no arm is gaining from accumulation-as-variance-reduction. In the
+learned regimes it floats to 0.44–0.49 because unvisited contexts are masked out and an early guess
+picks among fewer options; that is a property of the masking, not a leak, and it remains far below every
+real arm.
+
+Two mechanisms were caught inert during development and fixed rather than reported:
+`accumulate` byte-identical to `single_draw` (the uniform transition matrix above), and the CA3 sweep
+re-selecting the original code every time because the blend gain was 1.0 against cue units of value 1.0.
+Both now carry explicit liveness counters in the output.
