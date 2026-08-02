@@ -17529,3 +17529,66 @@ I reported 58% for the selection rule from the random control alone. Against the
 **63.9%** — the harder test made the claim slightly *larger*, not smaller, because selection-on-noise
 turned out to buy marginally less than uniform capacity. The earlier figure was conservative rather
 than wrong, but it was estimated against the weaker of the two controls and should be superseded.
+
+---
+
+# Test C: the gene-level signal is fully portable to cell populations never seen
+
+`colab/v4_abc_test_c.py`, output `outputs/orphan/v4_abc_test_c.json`. 8 gene blocks (~1,946 genes)
+paired with 8 **disjoint** line blocks (~144 lines). Unit of replication is the (gene block, line
+block) pair. All three regimes share one feature matrix, one arm set and one blocking.
+
+| arm | A: seen gene, unseen line | B: unseen gene, seen line | C: unseen gene, unseen line |
+|---|---|---|---|
+| baseline | 0.3964 | 0.3959 | 0.3960 |
+| per-gene lookup | **0.0153** | 0.3959 *(undefined → collapses)* | 0.3960 *(undefined → collapses)* |
+| ridge on annotation | 0.3291 | 0.3303 | **0.3305** |
+| + learned conjunctions | 0.3156 | 0.3177 | **0.3178** |
+| + random conjunctions | 0.3240 | 0.3266 | 0.3267 |
+| + label-shuffled conjunctions | 0.3236 | 0.3271 | 0.3272 |
+
+**The predeclared prediction held.** Ridge's gain over baseline is −0.0656 in B and −0.0656 in C —
+**99.9% retained**. Every arm moves by ≤0.0002 between B and C. Withholding the cell lines as well as
+the gene costs essentially nothing, so the Test B result was not population-specific: annotation
+predicts a never-measured gene's dependency just as well in cell lines the model never trained on.
+
+Paired per block, all resolved against their own MDE in all three regimes:
+
+| contrast | A | B | C |
+|---|---|---|---|
+| ridge − baseline | −0.0673 | −0.0656 | −0.0656 |
+| learned − ridge | −0.0136 | −0.0126 | −0.0126 |
+| learned − shuffled | −0.0081 | −0.0094 | −0.0094 |
+
+The conjunction mechanism survives into C unchanged. (`learned − shuffled` reads −0.0094 here against
+−0.0080 in the standalone Test B module; the two differ in target construction — training-line mean
+versus all-line mean — and in blocking, since this run pairs gene blocks with line blocks. Same sign,
+same resolution, slightly different magnitude, and the smaller figure is the one to quote.)
+
+## Test A is 99.85% solved by a lookup table
+
+The sharpest number in the run. In Test A the per-gene training-line mean predicts the held-out-line
+target at **RMSE 0.0153 against a baseline of 0.3964 — 99.85% of variance, from a lookup table with no
+model in it at all.**
+
+That is the concrete form of the objection to `v4_viability_head.py`'s 8/8 gates: Test A withholds the
+cell line, and cell line is nearly irrelevant, so Test A is adjudicating a question that a per-gene
+constant already answers almost exactly. Any model scored there is competing for the last 0.15%.
+
+The same number read the other way is a biological result worth stating on its own: **the mean gene
+effect reproduces across two disjoint cell-line populations to 4.0% of the signal sd.** That is why B
+and C are indistinguishable, and it is the measurement behind the earlier finding that the cell-line
+marginal (0.4207) is worth nothing over the global mean (0.4206).
+
+## Where the A/B/C programme now stands
+
+- **A** passes, and cannot fail — the lookup dominates.
+- **B** passes on real merit: −0.0656 from annotation alone, MDE 0.0109, for genes never measured.
+- **C** passes at 99.9% of B — the signal is portable across cell populations.
+- The ADRN-3 conjunction mechanism contributes **−0.0094** past a label-shuffled control in both B and
+  C, resolved on 8/8 blocks.
+
+What remains untested is the (gene, line) *interaction* — everything here predicts a per-gene quantity,
+and the finding that line identity carries nothing means the interaction is where any remaining
+cross-cell signal must live. That is the same n=4-contexts wall the dense-response work hit, arrived at
+from the opposite direction.
