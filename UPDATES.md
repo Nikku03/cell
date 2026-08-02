@@ -17034,3 +17034,35 @@ One understatement to note: `linear on 288` for `temporal_order` reads 0.8335, b
 targeted two-coordinate threshold reaches. That is the ridge readout minimising squared error across
 288 correlated coordinates, not a limit of the representation. The 2-coordinate figure is the honest
 measure of what is available.
+
+## And the three arms differ in feature geometry as well as information
+
+`colab/adrn2b_arm_geometry.py`, output `outputs/orphan/adrn2b_arm_geometry.json`. 1,200 random
+sequences, float64 SVD:
+
+| arm | mean L2 norm | norm ÷ control | effective rank (1% of s₁) | s₁ | s₁₆₉ | s₄₅₇ |
+|---|---|---|---|---|---|---|
+| polynomial control | 13.023 | 1.000 | **168** | 47.75 | 0.000 | 0.0000 |
+| workspace (GRU) | 21.504 | **1.651** | **442** | 339.93 | 28.882 | 2.3711 |
+| transformer | 14.259 | 1.095 | **179** | 200.90 | 22.002 | 0.0000 |
+
+Two things to be careful about here. `np.linalg.matrix_rank` calls all three arms rank 488 — its
+default tolerance sits around 1e-11, far below the scale of the appended coordinates, so it is the
+wrong instrument. `_fixed_expand` appends a fixed cosine projection scaled by `0.1/√168`, and its
+docstring says plainly that this is to leave "room for an added unit-scale workspace state to be
+identifiable by the common local delta rule." Effective rank at 1% is what a delta rule with finitely
+many labels can actually reach, and there the control spans **168** directions against the workspace
+arm's **442**.
+
+The second axis is step size. The adapter update is `outer(feature, error)`, so one labeled example
+moves the logit by `‖feature‖² × lr`. The workspace arm's norm ratio of 1.651 is a **2.73×** larger
+effective step at the same nominal rate — and `adapter_learning_rate` is tuned once, on
+`validation_workspace_oracle` (`adrn2b_experiment.py:1281`), then applied to every arm in the matrix
+including the polynomial control (`:1451`). The control runs at a rate chosen for a representation
+with a different norm.
+
+Neither observation says which arm *should* win — a too-large effective step can hurt, and in the
+smoke run `polynomial_oracle` did beat `workspace_oracle` on feedback-free return (0.8155 vs 0.6679).
+The point is narrower and firmer: Gates B and E compare arms that differ in at least three things at
+once — whether the answer is present as a coordinate, how many usable directions the adapter has, and
+how big a step each label takes — so neither gate can attribute its result to recurrence.

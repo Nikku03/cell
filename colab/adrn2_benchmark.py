@@ -829,11 +829,30 @@ def run_arm(arm: BaseArm, env: Adrn2Env, Wseq, seq_t, F):
     correct = np.zeros(n, np.int8)
     probe_hat = np.zeros(n, np.int8)
     t_pred = t_learn = 0.0
+
+    # ---- THE WITHHELD-WINDOW FREEZE ASSERTION ------------------------------------------------
+    # Retention leakage is the single defect that would void this entire benchmark: if any path let
+    # a label reach an arm's adaptive state inside a withheld window, "retention" would be measuring
+    # RELEARNING and every number here would be fiction. Until now that property rested on the
+    # environment's contract plus one `if st.feedback_available:` -- correct, but UNASSERTED. A
+    # mutation test that trained on every step using the scoring label passed every existing liveness
+    # check silently and raised retention from 0.6406 to 0.7188. So it is asserted now, on every arm,
+    # on every run: an arm's adaptive state, its encoder and its update count must be BYTE-IDENTICAL
+    # at the end of a withheld window to what they were at its start.
+    win_open = {w.start: (w.phase_id, w.segment) for w in env.windows
+                if w.segment in ("naive_probe", "retention_probe") and w.stop > w.start}
+    win_close = {w.stop - 1: (w.phase_id, w.segment, w.start) for w in env.windows
+                 if w.segment in ("naive_probe", "retention_probe") and w.stop > w.start}
+    snap = None
+    frozen = {"windows_checked": 0, "segments": []}
+
     for st in env.stream():
         t = st.t
         if not st.feedback_available and st.y_feedback is not None:
             raise LivenessError(f"FEEDBACK LEAK at t={t}: the environment offered a label on a withheld "
                                 f"step; the harness would have trained on the measurement window")
+        if t in win_open:
+            snap = (arm.n_updates, arm.state_sig(), arm.enc_sig())
         ob = {"seq": seq_t[t:t + 1], "flat": Wseq[t], "t": t, "probe": det.flag,
               "ctx": (CONTEXTS.index(st.context_id) if arm.uses_oracle else None)}
         probe_hat[t] = int(det.flag)
@@ -845,7 +864,22 @@ def run_arm(arm: BaseArm, env: Adrn2Env, Wseq, seq_t, F):
             c0 = time.perf_counter()
             arm.learn(ob, int(st.y_feedback))
             t_learn += time.perf_counter() - c0
+        if t in win_close and snap is not None:
+            pid, seg, start = win_close[t]
+            now = (arm.n_updates, arm.state_sig(), arm.enc_sig())
+            if now != snap:
+                raise LivenessError(
+                    f"RETENTION LEAKAGE at phase {pid} ({seg}, steps [{start},{t + 1})): arm "
+                    f"'{arm.name}' changed its adaptive state inside a FEEDBACK-WITHHELD window -- "
+                    f"updates {snap[0]}->{now[0]}, state {snap[1]:.12g}->{now[1]:.12g}, encoder "
+                    f"{snap[2]:.12g}->{now[2]:.12g}. A withheld window in which the model learns is "
+                    f"not measuring retention, it is measuring relearning, and every retention "
+                    f"number in this file would be void.")
+            frozen["windows_checked"] += 1
+            frozen["segments"].append(seg)
+            snap = None
         det.observe(t, st.feedback_available)
+    arm.withheld_freeze = frozen
     return correct, probe_hat, t_pred, t_learn
 
 
@@ -968,6 +1002,11 @@ def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, p
     rep["state_moved"] = abs(sig1_state - sig0_state)
     rep["encoder_moved"] = abs(sig1_enc - sig0_enc)
     rep["probe_flag_steps"] = int(probe_hat.sum())
+    rep["withheld_freeze"] = getattr(arm, "withheld_freeze", None)
+    if not rep["withheld_freeze"] or rep["withheld_freeze"]["windows_checked"] < 1:
+        bad.append("the withheld-window FREEZE assertion did not run: retention leakage is the one "
+                   "defect that would void every number in this file and it must be checked, not "
+                   "assumed")
 
     # -- every arm must actually have learned something online -----------------------------------
     if arm.n_updates == 0:
@@ -1005,6 +1044,14 @@ def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, p
             f"too late to be used, so retention at this cadence again measures staleness.")
     elif t.get("n_fallback", 0) == 0:
         bad.append("the probe detector fired but this arm never took its fallback path")
+    elif not t.get("fallback_is_noop_by_construction", False) and t.get("n_fallback_changed", 0) == 0:
+        # Counting that the fallback BRANCH was entered is not evidence that the fallback did
+        # anything; ADRN-1 shipped four mechanisms whose counters moved while the mechanism was off.
+        # Every arm that claims a change-detection fallback must have had it change a prediction.
+        bad.append(f"the change-detection fallback is a DECORATION for this arm: it was taken on "
+                   f"{t['n_fallback']} steps and changed the prediction on ZERO of them, so giving "
+                   f"every arm the probe flag bought this arm nothing and the claim that it did is "
+                   f"unsupported")
 
     if isinstance(arm, AdrnArm):
         m, tel = arm.model, arm.tel
@@ -1025,13 +1072,43 @@ def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, p
                 bad.append("fast adapter: final ||W_f|| is zero -- nothing was ever written")
 
         # -- 2. THE CONTEXT POSTERIOR MUST BE NON-DEGENERATE --------------------------------------
+        # TWO CORRECTIONS, both forced by a mutation test that the previous version passed silently.
+        #
+        # (a) MEASURE ONLY THE INFERRED STEPS. Inside a withheld window the harness OVERWRITES the
+        #     posterior with a uniform hedge, and the oracle arm overwrites it with a one-hot. Those
+        #     vectors are the harness's, not the mechanism's. Pooling them in defeated the collapse
+        #     test outright: a posterior hard-forced to slot 0 on every inferred step measured a
+        #     marginal entropy of 0.4011 against a floor of 0.25 and passed, because 192 injected
+        #     uniform hedges pulled the pooled statistic up. On the inferred steps alone the same run
+        #     measures 0.0841 and raises.
+        # (b) COMPARE AGAINST THE ENTROPY AVAILABLE AT THAT STEP. The uniformity test used
+        #     log(slots allocated by the END of the stream). A posterior forced to be exactly uniform
+        #     at every step still passed it, because early in the stream only one or two slots exist
+        #     and the achievable entropy is far below the final log k. The bound has to be per step.
         if f.context and m.k > 1:
-            P = np.asarray(arm.post_log, np.float64)
+            Pall = np.asarray(arm.post_log, np.float64)
+            inf = np.asarray(arm.post_inferred, bool)
+            Uall = np.asarray(arm.used_log, np.int64)
+            P = Pall[inf] if inf.any() else Pall
+            U = Uall[inf] if inf.any() else Uall
             ku = max(2, int(m.used.sum()))
+            ent_t = np.array([A2._ent(p) for p in P])
             h_marg = A2._ent(P.mean(0))
-            h_cond = float(np.mean([A2._ent(p) for p in P]))
+            h_cond = float(ent_t.mean())
+            # headroom below the maximum entropy AVAILABLE at each step, over the steps where more
+            # than one slot existed to be uncertain between (with one slot the posterior is one-hot
+            # by arithmetic and the test does not apply).
+            multi = U >= 2
+            headroom = (float(np.mean(np.log(np.maximum(2, U[multi])) - ent_t[multi]))
+                        if multi.any() else float("nan"))
+            n_argmax = int(len(set(P.argmax(1).tolist())))
             rep.update(posterior_marginal_entropy=h_marg, posterior_conditional_entropy=h_cond,
                        posterior_information=h_marg - h_cond, log_k_used=math.log(ku),
+                       posterior_steps_inferred=int(inf.sum()),
+                       posterior_steps_harness_forced=int((~inf).sum()),
+                       posterior_entropy_headroom_per_step=headroom,
+                       posterior_multi_slot_steps=int(multi.sum()),
+                       posterior_distinct_argmax_slots=n_argmax,
                        contexts_created_n=len(tel["created_at"]))
             # A posterior over ONE allocated slot is one-hot by arithmetic, not by malfunction. So the
             # degeneracy checks are raises only when the manager actually had more than one hypothesis
@@ -1050,15 +1127,25 @@ def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, p
             else:
                 if h_marg < 0.25:
                     bad.append(f"context posterior COLLAPSED: entropy of the time-averaged posterior "
-                               f"is {h_marg:.4f} nats -- effectively one context for the whole stream, "
-                               f"although {len(tel['created_at'])} slots were allocated")
-                if h_cond > math.log(ku) - 0.15:
-                    bad.append(f"context posterior is UNIFORM: mean per-step entropy {h_cond:.4f} "
-                               f"against log(k_used) = {math.log(ku):.4f} -- it is not deciding "
-                               f"anything")
+                               f"over the {int(inf.sum())} INFERRED steps is {h_marg:.4f} nats -- "
+                               f"effectively one context for the whole stream, although "
+                               f"{len(tel['created_at'])} slots were allocated")
+                if multi.any() and headroom <= 0.15:
+                    bad.append(f"context posterior is UNIFORM: over the {int(multi.sum())} inferred "
+                               f"steps at which more than one slot existed, its mean entropy sits only "
+                               f"{headroom:.4f} nats below the maximum entropy AVAILABLE at that step "
+                               f"-- it is not deciding anything. (The bound is per-step; comparing "
+                               f"against log of the FINAL slot count let an exactly-uniform posterior "
+                               f"pass, because early in the stream only one slot exists.)")
                 if h_marg - h_cond < 0.05:
                     bad.append(f"context posterior carries no information: marginal minus conditional "
                                f"entropy = {h_marg - h_cond:.4f} nats")
+                if int(m.used.sum()) >= 2 and n_argmax < 2:
+                    bad.append(f"context posterior never SELECTS a second context: over "
+                               f"{int(inf.sum())} inferred steps its argmax took {n_argmax} distinct "
+                               f"value(s) while {int(m.used.sum())} slots were allocated. A bank of "
+                               f"per-context adapters only one of which is ever addressed is one "
+                               f"adapter wearing a context manager's name.")
 
         # -- 3. CONSOLIDATED ADAPTERS MUST EXIST AND DIFFER FROM THE FAST ADAPTERS ----------------
         if f.consolidate:
@@ -1092,7 +1179,13 @@ def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, p
             e, l = np.asarray(tel["eta"]), np.asarray(tel["lam"])
             rep.update(eta_mean=float(e.mean()) if e.size else 0.0,
                        eta_sd=float(e.std()) if e.size else 0.0,
-                       lam_sd=float(l.std()) if l.size else 0.0)
+                       lam_sd=float(l.std()) if l.size else 0.0,
+                       # A non-zero sd is not the same as a mechanism doing work. The realised
+                       # coefficient of variation is recorded so "learned plasticity" cannot be
+                       # claimed off a network whose output is constant to within a fraction of a
+                       # percent; a threshold of 1e-8 does not distinguish those two cases.
+                       eta_cv=float(e.std() / abs(e.mean())) if e.size and abs(e.mean()) > 0 else 0.0,
+                       lam_cv=float(l.std() / abs(l.mean())) if l.size and abs(l.mean()) > 0 else 0.0)
             if e.size == 0:
                 bad.append("plasticity controller was never queried")
             elif e.std() < 1e-8 or l.std() < 1e-8:
@@ -1318,14 +1411,24 @@ def make_arm(name, M, cfg: BCfg, cfg2, hyper):
 
 
 def windows_for(env: Adrn2Env, hist):
+    """W[t] = [x(t-hist+1), ..., x(t-1), x(t)], so column -1-LAG is exactly the bit c4 depends on.
+
+    The lagged slots at t < hist-1 are filled from the environment's BURN-IN history rather than with
+    zeros. Zero padding put a window that the generative law never produces in front of the encoder on
+    the first steps of the stream; it happened to be harmless here (phase 1 is c1, which ignores the
+    lag) but it is a silent train/serve mismatch and the burn-in exists precisely so it is not needed.
+    """
     X = env.x.astype(np.float32)
     n = len(X)
+    pre = env._x_all[:LAG].astype(np.float32)          # the burn-in steps the stream never yields
+    Xp = np.concatenate([pre, X], 0)                   # index t + LAG == x(t)
     W = np.zeros((n, hist, N_BITS), np.float32)
     for j in range(hist):
         lag = hist - 1 - j
-        if lag == 0:
-            W[:, j] = X
-        else:
+        src = LAG - lag
+        if src >= 0:
+            W[:, j] = Xp[src:src + n]
+        else:                                           # deeper than the burn-in: zero-pad, as before
             W[lag:, j] = X[:-lag]
     return W, torch.from_numpy(W), W.reshape(n, -1)
 
@@ -1475,6 +1578,24 @@ def main():
     def stat(v):
         v = np.asarray(v, np.float64)
         return float(np.nanmean(v)), (float(np.nanstd(v, ddof=1)) if v.size > 1 else 0.0)
+
+    def credited(gap, mde, n):
+        """Is a positive gap CREDITABLE, or is its MDE simply not estimable?
+
+        A paired per-seed sample standard deviation of exactly zero does not mean the population sd
+        is zero -- it means n seeds happened to land on the same difference, which is easy when the
+        metric is a count over a fixed window. That yields MDE = 0.0000, and then ANY positive gap
+        clears it. That is not a small print issue: on this project's own record it produced a PASS
+        ('immediate | G3 consolidation contributes', gap +0.1000, MDE 0.0000, n=2) that is the only
+        substantive PASS in its condition. So: a gap that is not positive FAILS as usual (no MDE is
+        needed to know that), but a positive gap whose MDE is unestimable is UNSUPPORTED, never a
+        pass. Returns 'PASS' | 'FAIL' | 'UNSUPPORTED'.
+        """
+        if not (gap > 0):
+            return "FAIL"
+        if n < 2 or not np.isfinite(mde) or mde <= 0.0:
+            return "UNSUPPORTED"
+        return "PASS" if gap > mde else "FAIL"
 
     def paired(F, a, b, metric="retention"):
         x = np.asarray(res[F][a][metric], np.float64)
