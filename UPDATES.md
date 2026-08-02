@@ -17641,3 +17641,65 @@ One further limit: the gate audit confirmed `chance_corrected_recall_ratio` is e
 construction** for any oracle-keyed arm — the slot is untouched between visits, verified bit-for-bit
 identical on 4/4 returns. Absolute balanced accuracy for those arms is a real measurement; the
 retention *ratio* is not.
+
+## Interaction audit complete: 19 of 28 findings survived, and three published numbers were wrong
+
+Five angles, each finding handed to a skeptic told to refute it from source and data and to default
+to `survives=false`. **28 findings, all adjudicated: 19 survived, 5 killed, 4 unmatched by title.**
+One fatal, twelve major, six minor. Several survivors were narrowed by the skeptic, and the narrowed
+version is what stands.
+
+### The three corrections to what I published
+
+**1. "5.8% of the achievable ceiling" is rank-conditional and I never said so (fatal).** Holding seed
+and blocks fixed, the ratio runs **17.23 / 13.58 / 9.67 / 7.45 / 5.85 / 5.26 / 7.44 %** at rank
+1/2/4/8/16/32/64 — a 3.3× swing, non-monotone. The mechanism: the annotation gain moves 2.0× across
+that range while the oracle gain moves 6.4×. Rank 16 *is* recorded in the docstring, the log and the
+JSON, so the number is labelled — what is missing is any disclosure that it is rank-**conditional**,
+plus any sensitivity or error bar at all.
+
+**2. The ceiling was fitted on the data it was scored against.** `oracle_loading` estimates 16 free
+parameters per held-out gene from the same ~192 held-line cells it is then evaluated on. An unbiased
+estimate — loadings from two disjoint halves of the 958 training lines, combined so the quadratic term
+carries no noise-variance bias — gives gain −0.01601 against the published −0.0202. So **~21% of the
+published ceiling was self-fit and the honest fraction is ~7.4%**, not 5.8%. (The skeptic also
+corrected the auditor here: the 7.9% figure in the original finding used the train-line oracle, which
+is itself attenuated and is an upper bound.)
+
+**3. I never measured how much of the interaction is real.** Section 2 reports canonical correlations,
+which are scale-free and answer "does a reproducible direction exist" — not "how much reproducible
+variance is there", which is the quantity my own framing demanded. An unbiased out-of-sample estimator
+puts the **rank-16 reproducible share at 0.188**; calibration against known-truth surrogates puts the
+total real share at **~0.35–0.50**, i.e. 50–65% noise. So the annotation arm explains ~7.7% of the
+rank-16 signal and **0.22% of Var(Y)**.
+
+Also confirmed: the permutation floor is the wrong null (a sign-flip surrogate with provably zero
+cross-gene structure reaches 0.183 through my own pipeline while my recipe reports 0.051), so
+`factors_above_floor` should read **15 of 16**; rank 16 is well short of the optimum, which peaks at
+128–256; and the variance budget sums to 101.6% because the gene marginal is computed over the full
+rectangle while the total is over observed cells only — the interaction share of 15.10% is exactly
+right, only the gene share is off by 1.62 points.
+
+**And the predeclaration was never scored.** My prediction that the annotation arm would sit "at or
+near zero" was falsified in direction at 7.0× the module's own MDE, and the module reports that only
+as a table cell reading `BEATS zero`. The sibling `v4_abc_test_c.py` does close its loop; this one
+does not.
+
+### What the audit found that I had not looked for
+
+- **Co-dependency in the interaction is real and large**: the gene-gene correlation matrix reproduces
+  at **r = 0.573** across disjoint 575-line halves against a gene-permuted floor of 0.0004, and the
+  strongest pairs are recognisable complex co-membership — NDUF*, MRPL/MRPS*, POLE3/POLE4,
+  GART/MTHFD1.
+- **Annotation similarity is weak but not orthogonal to co-dependency**: top-200 annotation-cosine
+  neighbours carry **1.88×** the co-dependency signal of random pairs, against **9.97×** for
+  DepMap-selected partners. Too weak to close the gap, which is why annotation-driven unseen-gene
+  methods land at 1–2% of interaction variance — but "nearly orthogonal" overstated it.
+- **Annotation predicts interaction *magnitude* well** (held-out-gene R² = 0.323) — but log
+  interaction sd is 69.3% explained by the gene's own mean effect alone, and annotation's incremental
+  R² after residualising that out is **0.058**. It is a re-expression of the per-gene target, useful
+  as cheap triage, not a separate channel.
+- **The ~23% ceiling is what 575 training lines support for *training* genes**, and it has not
+  flattened — 862 lines reach ~0.238. The corrected increments per doubling are +0.040 / +0.044 /
+  +0.038 / +0.030. The skeptic's narrowing matters: the asymptote is not measured, "not by biology"
+  is unsupported, and **more lines do nothing for the unseen-gene regime the module actually poses**.
