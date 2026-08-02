@@ -17143,3 +17143,47 @@ candidates — and the harness labels it exactly that way in `structured_search_
 against 8 × 32 × 32) and it feeds no gate, so it was skipped here. What it establishes is already
 established: the task is solvable by search over the grammar, so the neural arms' 0.50–0.59 is not
 task difficulty.
+
+## Gate B decomposed: the workspace is not unnecessary, it is harmful
+
+`colab/adrn2b_gate_b_decomposition.py`, output `outputs/orphan/adrn2b_gate_b_decomposition.json`.
+Three full-scale runs, identical in every respect except `RecurrentWorkspaceRepresentation.learned_features`,
+each compared against the same `polynomial_oracle` control.
+
+| arm | Gate B delta | 95% CI | non-temporal control |
+|---|---|---|---|
+| shipped — `cat(digital[288], neural[32])` | +0.0190 | [−0.0062, +0.0425] | −0.1240 |
+| **digital_only — GRU switched off** | **+0.0982** | **[+0.0702, +0.1268]** | **−0.0138** |
+| recurrent_only — GRU, no digital block | −0.0096 | [−0.0305, +0.0105] | −0.1204 |
+
+Gate B's threshold is `≥0.05 and paired 95% lower bound >0`. **As shipped it fails both clauses. With
+the GRU switched off it passes both.** The gate named "workspace necessity" is passed by the arm
+without the workspace and failed by the arm with it.
+
+Marginal value of the GRU, holding the digital block fixed: **−0.0792**. Marginal value of the digital
+block, holding the GRU fixed: +0.0287. And the GRU is what drives the general penalty — the
+non-temporal control goes from −0.1240 with it to **−0.0138** without it, an order of magnitude.
+
+Per-operation:
+
+| operation | shipped | digital_only | recurrent_only |
+|---|---|---|---|
+| running_parity | +0.0417 | **+0.1417** | −0.0048 |
+| toggle_reset | +0.0318 | **+0.1209** | −0.0232 |
+| last_event | −0.0066 | **+0.1136** | −0.0332 |
+| temporal_order | +0.0368 | +0.0150 | +0.0355 |
+
+`temporal_order` is the one honest exception and worth stating plainly: it is the only operation where
+the GRU carries the signal (+0.0355 alone, against the digital block's +0.0150), and the shipped arm's
++0.0368 tracks the GRU rather than the digital block. The tabulation result says the answer *is*
+available in the digital block as a threshold on two `first_times` coordinates — but finding
+`w_j = +1, w_k = −1` among 288 coordinates from a handful of labels is harder for a delta rule than
+reading a direction the GRU already aligned. Representability and learnability come apart here, and on
+this one operation the recurrence earns its place.
+
+Everywhere else it does not. On the other three families the digital block alone is 3–17× the shipped
+delta, and the GRU's contribution is negative.
+
+**Verification.** All three arms report a machinery null self-delta of exactly 0.0 with CI [0.0, 0.0]
+over n=26, so the paired keys really are paired. The shipped arm reproduces the standalone full run's
+Gate B value to 18 significant digits (0.019019908559346082) from an independent process.
