@@ -818,10 +818,23 @@
      0.0006008583690987127
     ],
     "exceeds_mde": false
+   },
+   "G0 best arm vs the K/G RANDOM FLOOR": {
+    "gap": 0.004825063462304082,
+    "sd_cross_fold": 0.001606825164371042,
+    "mde": 0.0027831028235708573,
+    "random_floor": 0.0061162079510703364,
+    "per_fold_gap": [
+     0.005935074100211717,
+     0.005557611791418935,
+     0.002982504495281595
+    ],
+    "exceeds_mde": true
    }
   }
  },
  "gates": {
+  "G0 ANY arm is separated from the random floor": true,
   "G1 confidence gating moves pooled recall": false,
   "G2 [codependency] confidence gating moves recall": true,
   "G2 [complex] confidence gating moves recall": false,
@@ -880,7 +893,7 @@
   "  Complex Portal: 2,439 complexes -> 32,536 pairs; ECO evidence code on 100.0% of complexes, numeric confidence on 0%",
   "  co-dependency: 76,749 weighted edges (strength AND confidence both native)",
   "  regulatory: 612,133 directed signed edges, 301,161 (49.2%) with a UniBind cell context; signalling: 17,432",
-  "  relation table: 1,157,434 rows x 13 columns in 5.9s",
+  "  relation table: 1,157,434 rows x 13 columns in 5.4s",
   "",
   "  DECLARED COVERAGE -- fraction of rows that ACTUALLY CARRY each field (nothing filled)",
   "    relation_type         rows           sign       strength     confidence  evidence_type   cell_context  direction*",
@@ -1003,7 +1016,9 @@
   "  G3 [ppi] B_top vs D_rewire                                 +0.0005   0.0009   0.0016  below MDE",
   "     [ppi] B_top vs B0_matched                               +0.0001   0.0004   0.0007  below MDE",
   "",
+  "  G0 GUARD: best arm 'A_native' at 0.0109 vs the K/G random floor 0.0061 -> +0.0048 against MDE 0.0028",
   "  PREDECLARED GATES",
+  "    PASS  G0 ANY arm is separated from the random floor",
   "    FAIL  G1 confidence gating moves pooled recall",
   "    PASS  G2 [codependency] confidence gating moves recall",
   "    FAIL  G2 [complex] confidence gating moves recall",
