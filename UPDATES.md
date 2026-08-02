@@ -17703,3 +17703,96 @@ does not.
   flattened — 862 lines reach ~0.238. The corrected increments per doubling are +0.040 / +0.044 /
   +0.038 / +0.030. The skeptic's narrowing matters: the asymptote is not measured, "not by biology"
   is unsupported, and **more lines do nothing for the unseen-gene regime the module actually poses**.
+
+---
+
+# ADRN on the sealed knockout protocol: the ingestion wins, the mechanism fails for the fifth time
+
+`colab/adrn_ko_conjunctions.py` · `colab/adrn_ko_compare.py` · `colab/adrn_ko_stability.py`
+
+Two facts had never been put in the same experiment. **No neural model has ever been scored on the sealed
+protocol** — every method run through `ko_predict.py`'s cohorts is non-neural (NMF basis, neighbour transfer,
+Markov walk, 89-gene sensor menu), while both the transformer line and the ADRN line were developed on *proxies*.
+And **ADRN-3's conjunction growth requires an axis-aligned named basis** — `v4_conj_basis.py` measured 0.0% / 1.6%
+retention under rotation — which it had never been given here.
+
+The skeleton is `response_basis.py`'s, unchanged: `annotation → [SOMETHING] → mixture over 60 NMF components →
+ranked list`. Only the `[SOMETHING]` slot varies. Lesion classes are included as channels, so the incumbent's
+feature set is a strict subset.
+
+## Result: named channels are the best method on this task, and it is not close
+
+Per-knockout precision at 20 predicted genes, 200 knockouts per cohort.
+
+| arm | cohort 1 | vs freq | 95% CI | cohort 2 | vs freq | 95% CI |
+|---|---:|---:|---|---:|---:|---|
+| **adrnlin** — 170 named channels → ridge | **0.2127** | **+0.0390** | **[+0.0177, +0.0605]** | **0.2620** | **+0.0617** | **[+0.0360, +0.0877]** |
+| adrnconj — + 64 grown conjunctions | 0.2222 | +0.0485 | [+0.0258, +0.0715] | 0.2660 | +0.0657 | [+0.0400, +0.0920] |
+| adrnles — 9 lesion channels → ridge | 0.1960 | +0.0222 | [+0.0085, +0.0357] | 0.2062 | +0.0060 | [−0.0095, +0.0203] |
+| adrnperm — channels permuted across genes | 0.1462 | −0.0275 | [−0.0440, −0.0120] | 0.1710 | −0.0293 | [−0.0423, −0.0167] |
+| basis (incumbent) | 0.1873 | +0.0135 | [+0.0033, +0.0235] | 0.2013 | +0.0010 | [−0.0097, +0.0112] |
+| nbr (incumbent) | 0.1886 | +0.0074 | [−0.0236, +0.0376] | 0.2293 | +0.0294 | [−0.0045, +0.0635] |
+| multilayer | 0.0338 | −0.1492 | [−0.1851, −0.1130] | 0.0431 | −0.1772 | [−0.2143, −0.1415] |
+
+**`adrnlin` is the first method in this project to clear the frequency baseline on BOTH cohorts with a CI
+excluding zero.** `basis` cleared cohort 1 only; `nbr` cleared neither on this statistic. Head to head:
+
+    linear - basis    +0.0255 [+0.0065, +0.0453]    and    +0.0607 [+0.0382, +0.0840]    RESOLVED both
+    linear - nbr      +0.0290 [+0.0028, +0.0553]    and    +0.0409 [+0.0108, +0.0716]    RESOLVED both
+
+**It is not leakage.** `adrnperm` gives every knockout a real annotation profile belonging to *somebody else* and
+scores **below** the frequency baseline on both cohorts. The NMF basis and the ridge's shape explain none of it;
+the channels do. `linear − permuted` is +0.0665 and +0.0910, both RESOLVED.
+
+**Where the win comes from.** `lesion-only − basis` (+0.0088 RESOLVED / +0.0050 noise) is the estimator: fitting
+the classes beats averaging their training loadings. `linear − lesion-only` (+0.0168 noise / +0.0557 RESOLVED) is
+the extra 161 channels. On the holdout cohort the richer channel set is the bulk of it.
+
+## The ADRN mechanism itself fails every predeclared test
+
+Predeclared before running: succeeds only if `adrnconj` beats frequency **and** its own shuffle **and** its own
+linear part, with `adrnrot` losing most of the gain.
+
+    conj - linear     +0.0095 [+0.0022, +0.0172]  RESOLVED   |  +0.0040 [-0.0032, +0.0115]  within noise
+    conj - shuffled   +0.0100 [-0.0013, +0.0225]  noise      |  +0.0065 [-0.0020, +0.0150]  within noise
+    conj - random     +0.0025 [-0.0053, +0.0108]  noise      |  +0.0055 [-0.0010, +0.0120]  within noise
+    conj - rotated    +0.0052 [-0.0053, +0.0163]  noise      |  +0.0025 [-0.0083, +0.0130]  within noise
+
+It never clears its label-shuffled control, never clears 64 *random* conjunctions, and a PCA-rotated basis scores
+the same — so the axis-alignment prediction did not reproduce here either. The +0.004–0.010 it adds over the
+linear arm is what adding 64 arbitrary columns is worth.
+
+`adrn_ko_stability.py` says why. Of 20,000 candidates, **912 clear the threshold and 78 sit within 1% of the
+rank-64 cut**, with a gap of 0.0136 between the last kept and the first dropped. Independent candidate pools
+rediscover **6.3 of 64 products** on average (chance would be 0.2, so there is *some* real structure — channel-level
+Jaccard 0.44, concentrated on rRNA processing, ER stress, chromatin organisation) but the specific products are
+~90% arbitrary. The mechanism is choosing 64 from a flat plateau of near-ties.
+
+**This is the fifth independent failure of an ADRN mechanism on measurement** — after ADRN-1 structural ablation,
+the ADRN-2A workspace, ADRN-2B Gate B, and ADRN-4 online adaptation. The one thing that worked is exactly what
+`v4_conj_basis.py` pointed at, and it turned out to be the *input representation*, not the mechanism that
+representation was built to feed.
+
+## A reproducibility bug, found and fixed
+
+The first two runs of this file produced different conjunction sets from identical inputs and seeds, scoring
+`adrnconj` 0.2218 vs 0.2202. Cause: channel selection iterated a Python `set` and cut with `Counter.most_common()`,
+which breaks ties by first-insertion order — so hash randomisation between processes selected different tied
+pathways. Fixed by sorting the iteration and breaking ties by name; verified identical under `PYTHONHASHSEED=1`
+and `99`. The numbers above are from the fixed version. Growth was always deterministic *within* a process.
+
+## One reporting note
+
+The `nbr` figures here (0.1886 / 0.2293) are the mean of per-knockout precision; the previously published
+0.2047 / 0.2502 are **pooled** hits/predictions. The two differ for `nbr` because its prediction size varies per
+knockout (median 17.6), and not at all for the ADRN arms, which always predict exactly 20. The per-knockout mean
+is the correct unit for the paired test, and every arm in the table above is computed the same way.
+
+## What this changes for the deliverable
+
+Asked to name the 10 genes most affected by a knockout it has never seen perturbed, the best available model now
+returns **~2.6 of 10 correct on the holdout cohort** (0.2620) against 2.0 for a no-biology usual-suspects list —
+up from the previous best of ~2.3, and for the first time with both cohorts clearing significance. The route is
+`named annotation → ridge → response-component mixture`, it has full coverage (0/200 empty predictions, against
+neighbour transfer's 20–32), and it needs no measured neighbour. The mechanism story it can tell is still
+unscored: nothing here evaluates a causal chain against ground truth.
