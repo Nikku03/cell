@@ -154,31 +154,39 @@ class BCfg:
     """Every knob from an env var, with a SMOKE mode that shrinks the run and labels the output."""
 
     def __init__(self):
+        # SMOKE only changes the DEFAULTS; an explicit env var always wins, so the smoke run and the
+        # full run take byte-identical code paths and differ only in size.
         g = lambda k, d, f=int: f(os.environ.get(k, d))
-        self.seeds = g("ADRN2_SEEDS", 6)
-        self.phase_len = g("ADRN2_PHASE_LEN", 1024)
-        self.probe_len = g("ADRN2_W", 64)
-        self.relearn_feedbacks = g("ADRN2_RELEARN_FEEDBACKS", 4)
+        S = SMOKE
+        self.seeds = g("ADRN2_SEEDS", 2 if S else 6)
+        self.phase_len = g("ADRN2_PHASE_LEN", 256 if S else 1024)
+        self.probe_len = g("ADRN2_W", 32 if S else 64)
+        self.relearn_feedbacks = g("ADRN2_RELEARN_FEEDBACKS", 3 if S else 4)
         self.budget = g("ADRN2_BUDGET", 30000)
         self.hist = g("ADRN2_HIST", 3)          # input window; >= LAG+1 so c4's t-2 term is reachable
         self.k_slots = g("ADRN2_KSLOTS", 6)     # context slots available to the manager (4 true contexts)
         self.max_steps = g("ADRN2_MAXSTEPS", 3)
-        self.pre_n = g("ADRN2_PRE_N", 16384)
-        self.pre_epochs = g("ADRN2_PRE_EPOCHS", 10)
+        # Sized from a measurement, not a guess: c1 (x2 XOR x7) is the slow rule for every encoder
+        # family here and needs ~576 minibatches to become linearly decodable. Below that the
+        # competence assertion fires -- which is the assertion working, not a nuisance, and it is why
+        # SMOKE does not cut pretraining to the bone.
+        self.pre_n = g("ADRN2_PRE_N", 6144 if S else 16384)
+        self.pre_epochs = g("ADRN2_PRE_EPOCHS", 6 if S else 10)
         self.pre_bs = g("ADRN2_PRE_BS", 64)
         self.pre_restarts = g("ADRN2_RESTARTS", 2)
-        self.meta_iters = g("ADRN2_META", 40)
-        self.val_phases = g("ADRN2_VALPHASES", 2)   # phases of the validation draw used for calibration
+        self.meta_iters = g("ADRN2_META", 12 if S else 40)
+        # CALIBRATION DRAW. A separate environment draw whose schedule CONTAINS A RETURN, so a step size
+        # is chosen against both plasticity and stability. Calibrating on a return-free stream would
+        # silently reward whichever arm forgets fastest -- a handicap aimed squarely at the metric this
+        # benchmark exists to measure.
+        self.val_schedule = tuple(os.environ.get("ADRN2_VALSCHED", "c1,c2,c1").split(","))
+        self.val_phase_len = g("ADRN2_VALPHASELEN", 96 if S else 384)
         self.competence_min = g("ADRN2_COMPMIN", 0.85, float)
         self.ceiling = g("ADRN2_CEIL", 0.99, float)
         self.nn_k = g("ADRN2_NNK", 5)
         self.primary_F = g("ADRN2_PRIMARY_F", 4)
         self.cadences = tuple(int(v) for v in
                               os.environ.get("ADRN2_CADENCES", "1,4,16,64").split(","))
-        if SMOKE:
-            self.seeds = 2
-            self.phase_len, self.probe_len, self.relearn_feedbacks = 320, 32, 3
-            self.pre_n, self.pre_epochs, self.meta_iters = 6144, 8, 12
         self.chance = 0.5
         for f in self.cadences:
             if f not in SUPPORTED_FEEDBACK_EVERY:
@@ -704,30 +712,36 @@ class AdrnArm(BaseArm):
             if bool(ob["probe"]) and m.k == 1:
                 # arm 6's fallback: the stable decoder alone, with no adapter contribution.
                 self.n_fallback += 1
-                logits = m.dec(wa)
+                probs = torch.softmax(m.dec(wa), -1)
             else:
                 if hedge:
                     self.n_fallback += 1
-                logits = m.logits_mix(wa, pre)
-            pred = int(logits.argmax())
+                # POSTERIOR-PREDICTIVE MIXTURE, not a mixture of logits. Predicting under a context
+                # posterior means p(y|x) = sum_k p(c=k) p(y|x,c=k); averaging the ADAPTERS instead
+                # (which is what logits_mix does, and what ADRN-2A's local rule uses internally) is a
+                # different and much worse estimator whenever the posterior is genuinely spread, which
+                # is exactly the hedged case this benchmark hinges on. When the posterior is near
+                # one-hot the two coincide, so this changes nothing where nothing should change.
+                probs = (pre.unsqueeze(-1) * torch.softmax(m.logits_all(wa), -1)).sum(0)
+            pred = int(probs.argmax())
             self.tel["steps"].append(rec[0])
             if len(rec) > 1:
                 self.tel["wstd"].append(rec[1])
             self.tel["mod"].append(mod[0].numpy().copy())
             self.post_log.append(pre.numpy().copy())
-            m.err_ema = 0.98 * m.err_ema + 0.02 * float(
-                F.cross_entropy(logits.unsqueeze(0), torch.tensor([pred])))
-        self._cache = (w, wa, pre)
+        self._cache = (w, wa, pre, pred)
         self.step = ob["t"]
         return pred
 
     def learn(self, ob, y):
         m = self.model
-        w, wa, pre = self._cache
+        w, wa, pre, pred = self._cache
         yt = torch.tensor([y])
         with torch.no_grad():
-            ok = int(int(m.logits_mix(wa, pre).argmax()) == y)
+            ok = int(pred == y)
             m.acc_ema = 0.98 * m.acc_ema + 0.02 * ok
+            m.err_ema = 0.98 * m.err_ema + 0.02 * float(
+                F.cross_entropy(m.logits_mix(wa, pre).unsqueeze(0), yt))
             post, _ = m.posterior_post(pre, wa, yt, self.step)
             if self.oracle and m.k > 1:
                 post = pre
@@ -845,20 +859,23 @@ def window_references(env: Adrn2Env):
                         context memory.
     """
     out = {"per_window": {}}
-    b, s = [], []
+    b, s, ba = [], [], []
     for w in env.retention_windows():
         sl = slice(w.start, w.stop)
         xc, xl, y = env.x[sl], env.x_lag[sl], env.y[sl]
         seen = list(dict.fromkeys(list(env.schedule[:w.phase_id])))
         bb = blind_bayes_accuracy_over(seen, xc, xl, y)
+        ball = blind_bayes_accuracy_over(list(CONTEXTS), xc, xl, y)
         prev = env.schedule[w.phase_id - 2]
         stale = float((apply_rule(prev, xc, xl) == y).mean())
         out["per_window"][f"phase{w.phase_id}:{w.context_id}"] = {
-            "contexts_seen": seen, "blind_bayes_seen": bb, "stale_rule": stale,
-            "stale_context": prev, "n": int(w.stop - w.start)}
+            "contexts_seen": seen, "blind_bayes_seen": bb, "blind_bayes_all": ball,
+            "stale_rule": stale, "stale_context": prev, "n": int(w.stop - w.start)}
         b.append(bb)
+        ba.append(ball)
         s.append(stale)
     out["blind_bayes_seen"] = float(np.mean(b))
+    out["blind_bayes_all"] = float(np.mean(ba))
     out["stale_rule"] = float(np.mean(s))
     out["oracle"] = 1.0
     nb = []
@@ -871,7 +888,27 @@ def window_references(env: Adrn2Env):
 
 
 # ====================================================================== MECHANISM LIVENESS ASSERTIONS
-def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, primary):
+def detection_channel(env: Adrn2Env, F, probe_hat):
+    """How much of the withheld window the change-detection channel can actually cover.
+
+    The channel exists only where a CADENCE SLOT falls inside a withheld window: that is the only place
+    a missing label is observable. If W < F a probe window can contain no cadence slot at all and the
+    channel does not exist; if it contains only the last one, the flag arrives after the window has
+    closed. Both are structural properties of the protocol at that cadence, not implementation faults,
+    and both are measured here rather than assumed.
+    """
+    n = env.total_len
+    cadence = ((np.arange(n) + 1) % F) == 0
+    inprobe = env.feedback_withheld_by_probe
+    ret = env.segment.astype(str) == "retention_probe"
+    return {"cadence_slots_in_probe": int((cadence & inprobe).sum()),
+            "flag_steps": int(probe_hat.sum()),
+            "flag_steps_in_probe": int((probe_hat.astype(bool) & inprobe).sum()),
+            "probe_recall": float((probe_hat.astype(bool) & inprobe).sum() / max(1, inprobe.sum())),
+            "retention_recall": float((probe_hat.astype(bool) & ret).sum() / max(1, ret.sum()))}
+
+
+def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, primary, chan):
     """RAISE unless every mechanism this arm CLAIMS is numerically alive. No claim, no check -- but every
     claim is checked, with a number, and the numbers are returned for the record.
 
@@ -905,10 +942,23 @@ def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, p
     # -- the change-detection fallback must be live and must change predictions -------------------
     t = arm.tele()
     rep.update({k: v for k, v in t.items()})
-    if probe_hat.sum() == 0:
-        bad.append(f"the probe detector never fired at F={F}: the change-detection fallback that every "
-                   f"arm is given was switched off, so no arm exercised it")
-    if t.get("n_fallback", 0) == 0 and probe_hat.sum() > 0:
+    rep["detection_channel"] = chan
+    if chan["cadence_slots_in_probe"] == 0:
+        starved.append(
+            f"the change-detection channel DOES NOT EXIST at F={F}: no cadence slot falls inside any "
+            f"{cfg.probe_len}-step withheld window, so a missing label is unobservable and no arm -- "
+            f"proposal or control -- can detect the phase boundary. Every arm therefore runs the whole "
+            f"withheld window on its stale context, and retention here measures staleness, not memory.")
+    elif chan["flag_steps"] == 0:
+        bad.append(f"cadence slots DO fall inside withheld windows at F={F} "
+                   f"({chan['cadence_slots_in_probe']} of them) but the probe detector never fired: the "
+                   f"change-detection fallback every arm is given was switched off in code")
+    elif chan["retention_recall"] <= 0.0:
+        starved.append(
+            f"change detection at F={F} arrives only AFTER the withheld window has closed (0 of the "
+            f"retention-probe steps carry the flag): the phase boundary is detectable in principle but "
+            f"too late to be used, so retention at this cadence again measures staleness.")
+    elif t.get("n_fallback", 0) == 0:
         bad.append("the probe detector fired but this arm never took its fallback path")
 
     if isinstance(arm, AdrnArm):
@@ -1068,7 +1118,7 @@ LADDER = {
     "8_adrn2a_inferred_context": "ADRN-2A with INFERRED context",
 }
 CONTROLS = ARM_ORDER[:5]
-GRID = {"1_transformer_full": [1e-4, 3e-4, 1e-3],
+GRID = {"1_transformer_full": [1e-5, 1e-4, 1e-3],
         "2_transformer_frozen_head": [3e-3, 1e-2, 3e-2],
         "3_gru_head": [3e-3, 1e-2, 3e-2],
         "4_nn_lookup": [1, 5, 15],
@@ -1116,42 +1166,61 @@ def build_models(cfg: BCfg, seed, rep):
     for a, f in flags.items():
         d_h[a] = A2.width_for(cfg2, f, cfg.budget, 8, 160)
 
-    counts, comp = {}, {}
-    built = {}
-    for attempt in range(cfg.pre_restarts + 1):
-        try:
-            torch.manual_seed(9000 + seed + 100000 * attempt)
-            enc_t = TfmEncoder(d_tfm, cfg.hist)
-            bt, ht = pretrain_plain(enc_t, cfg.hist, cfg, rng, 9000 + seed + 100000 * attempt)
-            comp["transformer"] = assert_digital_competence(
-                f"transformer/seed{seed}", enc_t, ht, bt, cfg.hist, cfg,
-                np.random.default_rng(510000 + seed))
-            enc_g = GruEncoder(d_gru, cfg.hist)
-            bg, hg = pretrain_plain(enc_g, cfg.hist, cfg, rng, 9100 + seed + 100000 * attempt)
-            comp["gru"] = assert_digital_competence(
-                f"gru/seed{seed}", enc_g, hg, bg, cfg.hist, cfg,
-                np.random.default_rng(510100 + seed))
-            adrn_by_width = {}
-            for a, f in flags.items():
-                key = d_h[a]
-                if key not in adrn_by_width:
-                    proto = ADRN2A(cfg2, f, key)
-                    hh = pretrain_adrn(proto, cfg.hist, cfg, rng, 9200 + seed + 100000 * attempt)
-                    meta = meta_train_controller(proto, cfg, rng, 9300 + seed)
-                    comp[f"adrn_d{key}"] = assert_digital_competence(
-                        f"adrn_d{key}/seed{seed}",
-                        lambda X: adrn_expected_feature(proto, X)[0], hh, proto.dec, cfg.hist, cfg,
-                        np.random.default_rng(510200 + seed))
-                    comp[f"adrn_d{key}"].update(meta)
-                    adrn_by_width[key] = {k: v for k, v in proto.state_dict().items()
-                                          if not k.startswith(("W_f", "W_m", "keys"))}
-                built[a] = (adrn_by_width[key], key, f)
-            break
-        except MechanismInert as e:
-            if attempt >= cfg.pre_restarts:
-                raise
-            rep(f"      pretraining restart {attempt + 1}/{cfg.pre_restarts} after: "
-                f"{str(e).splitlines()[0]}")
+    counts, comp, built = {}, {}, {}
+
+    def with_restarts(tag, fn):
+        """Retry ONE family on a fresh init a bounded number of times. The criterion is the OFFLINE
+        probe, which no online mechanism under test can influence, so the retry cannot favour any arm;
+        and the retry is per-family so a marginal GRU does not silently re-roll the transformer too."""
+        for attempt in range(cfg.pre_restarts + 1):
+            try:
+                return fn(attempt)
+            except MechanismInert as e:
+                if attempt >= cfg.pre_restarts:
+                    raise
+                rep(f"      {tag}: pretraining restart {attempt + 1}/{cfg.pre_restarts} after: "
+                    f"{str(e).strip().splitlines()[-1].strip()}")
+
+    def build_tfm(attempt):
+        torch.manual_seed(9000 + seed + 100000 * attempt)
+        enc = TfmEncoder(d_tfm, cfg.hist)
+        b, h = pretrain_plain(enc, cfg.hist, cfg, rng, 9000 + seed + 100000 * attempt)
+        c = assert_digital_competence(f"transformer/seed{seed}", enc, h, b, cfg.hist, cfg,
+                                      np.random.default_rng(510000 + seed))
+        c["pretrain_restarts"] = attempt
+        return enc, b, c
+
+    def build_gru(attempt):
+        torch.manual_seed(9100 + seed + 100000 * attempt)
+        enc = GruEncoder(d_gru, cfg.hist)
+        b, h = pretrain_plain(enc, cfg.hist, cfg, rng, 9100 + seed + 100000 * attempt)
+        c = assert_digital_competence(f"gru/seed{seed}", enc, h, b, cfg.hist, cfg,
+                                      np.random.default_rng(510100 + seed))
+        c["pretrain_restarts"] = attempt
+        return enc, b, c
+
+    enc_t, bt, comp["transformer"] = with_restarts("transformer", build_tfm)
+    enc_g, bg, comp["gru"] = with_restarts("gru", build_gru)
+
+    adrn_by_width = {}
+    for a, f in flags.items():
+        key = d_h[a]
+        if key not in adrn_by_width:
+            def build_adrn(attempt, key=key, f=f):
+                torch.manual_seed(9200 + seed + 100000 * attempt)
+                proto = ADRN2A(cfg2, f, key)
+                hh = pretrain_adrn(proto, cfg.hist, cfg, rng, 9200 + seed + 100000 * attempt)
+                meta = meta_train_controller(proto, cfg, rng, 9300 + seed)
+                c = assert_digital_competence(
+                    f"adrn_d{key}/seed{seed}", lambda X: adrn_expected_feature(proto, X)[0], hh,
+                    proto.dec, cfg.hist, cfg, np.random.default_rng(510200 + seed))
+                c.update(meta)
+                c["pretrain_restarts"] = attempt
+                return proto, c
+            proto, comp[f"adrn_d{key}"] = with_restarts(f"adrn_d{key}", build_adrn)
+            adrn_by_width[key] = {k: v for k, v in proto.state_dict().items()
+                                  if not k.startswith(("W_f", "W_m", "keys"))}
+        built[a] = (adrn_by_width[key], key, f)
 
     counts["1_transformer_full"] = count_params(enc_t) + 2 * count_params(bt)
     counts["2_transformer_frozen_head"] = counts["1_transformer_full"]
@@ -1258,12 +1327,14 @@ def main():
                       "calibrated"):
                 res[F][a][k] = []
     liveness, refs, starved_at, pcounts, cal_log = {}, {}, {}, {}, {}
-    flagfx = None
+    flagfx, M0 = None, None
     fb_counts = {}
 
     for seed in range(cfg.seeds):
         rep(f"\n  ── seed {seed} " + "─" * 90)
         M = build_models(cfg, seed, rep)
+        if M0 is None:
+            M0 = M
         pcounts = M["counts"]
         c = M["comp"]
         rep(f"    digital half: per-context linear probe  " +
@@ -1284,10 +1355,10 @@ def main():
             refs.setdefault(F, []).append(window_references(env))
 
             # -- step-size calibration on a SEPARATE validation environment draw, same grid ---------
-            vsched = tuple(PHASE_SCHEDULE[:cfg.val_phases])
-            venv = Adrn2Env(900000 + seed, phase_len=cfg.phase_len, probe_len=cfg.probe_len,
+            vlen = max(cfg.val_phase_len, cfg.probe_len + cfg.relearn_feedbacks * F + 2 * F)
+            venv = Adrn2Env(900000 + seed, phase_len=vlen, probe_len=cfg.probe_len,
                             feedback_every=F, relearn_feedbacks=cfg.relearn_feedbacks,
-                            schedule=vsched)
+                            schedule=cfg.val_schedule)
             vW, vseq, vflat = windows_for(venv, cfg.hist)
             hyper = {}
             for a in ARM_ORDER:
@@ -1311,8 +1382,10 @@ def main():
                 s1, e1 = arm.state_sig(), arm.enc_sig()
 
                 # ---- LIVENESS RUNS HERE, BEFORE THE SCORE IS ALLOWED INTO THE TABLE ----
+                chan = detection_channel(env, F, probe_hat)
                 lv, starved = assert_liveness(f"{a}/F{F}/seed{seed}", arm, correct, probe_hat,
-                                              (s0, s1, e0, e1), F, cfg, primary=(F == cfg.primary_F))
+                                              (s0, s1, e0, e1), F, cfg,
+                                              primary=(F == cfg.primary_F), chan=chan)
                 liveness.setdefault(f"F{F}", {})[a] = lv
                 if starved:
                     starved_at.setdefault(F, {}).setdefault(a, []).extend(starved)
@@ -1356,7 +1429,8 @@ def main():
         return float(np.nanmean(x)), 3 * sd / math.sqrt(max(1, x.size))
 
     refmean = {F: {k: float(np.mean([r[k] for r in refs[F]]))
-                   for k in ("blind_bayes_seen", "stale_rule", "oracle", "naive_blind_bayes_seen")}
+                   for k in ("blind_bayes_seen", "blind_bayes_all", "stale_rule", "oracle",
+                             "naive_blind_bayes_seen")}
                for F in cfg.cadences}
 
     rep("\n" + "=" * W)
@@ -1366,8 +1440,8 @@ def main():
         if a == "5_online_logreg":
             note = "  <- BELOW budget by construction: a linear model on raw bits has no width to bisect"
         if a == "4_nn_lookup":
-            note = f"  <- {M['mem']} exemplars x {M['dim']} bits x 2 stores"
-        rep(f"    {a:28s} width {M['widths'][a]:>5}   params {pcounts[a]:>8,}{note}")
+            note = f"  <- {M0['mem']} exemplars x {M0['dim']} bits x 2 stores (memory cells, not weights)"
+        rep(f"    {a:28s} width {M0['widths'][a]:>5}   params {pcounts[a]:>8,}{note}")
 
     gates, gapinfo, cfinfo = {}, {}, {}
     for F in cfg.cadences:
@@ -1388,12 +1462,31 @@ def main():
                 f"{1000 * stat(res[F][a]['sec_per_example'])[0]:7.3f}")
         r = refmean[F]
         rep(f"    {'-- reference: stale rule':28s} {r['stale_rule']:>8.4f}          "
-            f"(FLOOR: keep applying the previous phase's rule)")
-        rep(f"    {'-- reference: blind Bayes':28s} {r['blind_bayes_seen']:>8.4f}          "
-            f"(CEILING for any non-oracle arm inside a withheld window)")
+            f"(FLOOR: keep applying the previous phase's rule -- no change detection, no context memory)")
+        rep(f"    {'-- ref: blind Bayes, all 4':28s} {r['blind_bayes_all']:>8.4f}          "
+            f"(ceiling for an arm that hedges over ALL contexts: arms 1,2,3,6)")
+        rep(f"    {'-- ref: blind Bayes, seen':28s} {r['blind_bayes_seen']:>8.4f}          "
+            f"(CEILING for any non-oracle arm: hedge over the contexts SEEN SO FAR -- arms 7,8)")
         rep(f"    {'-- reference: oracle':28s} {r['oracle']:>8.4f}          "
             f"(context handed over; 1.0 by construction)")
         rep(f"    {'-- chance':28s} {cfg.chance:>8.4f}")
+        ch = liveness[f"F{F}"]["8_adrn2a_inferred_context"]["detection_channel"]
+        rep(f"    CHANGE-DETECTION CHANNEL at F={F}: {ch['cadence_slots_in_probe']} cadence slots fall "
+            f"inside withheld windows; the derived flag covers {ch['probe_recall']:.2f} of all withheld "
+            f"steps and {ch['retention_recall']:.2f} of the RETENTION-window steps. That is a hard "
+            f"ceiling on how much of the retention window ANY arm can even know is a new context.")
+        flat_halt = [a for a in ARM_ORDER
+                     if liveness[f"F{F}"][a].get("steps_sd", 1.0) < 1e-9
+                     and "mean_steps" in liveness[f"F{F}"][a]]
+        if flat_halt:
+            rep(f"    NOTE: adaptive halting emits a CONSTANT step count "
+                f"({liveness[f'F{F}'][flat_halt[0]]['mean_steps']:.2f} of a "
+                f"{cfg.max_steps}-step cap) for {', '.join(flat_halt)}. It is not running to the cap and "
+                f"it is not adapting either; treat 'adaptive halting' for those arms as UNSUPPORTED.")
+        rep(f"    NOTE: upd/ex is identical across arms by construction -- every arm updates on exactly "
+            f"the {fb_counts[F]['total_feedback']} feedback steps the protocol delivers. That is a "
+            f"property of the protocol, not the defect-4 signature; the distinctness assertion runs on "
+            f"retention and overall accuracy, which are not identical.")
 
         # ------------------------------------------------ THE HEADLINE DIAGNOSTIC
         og, om, oper = paired(F, "7_adrn2a_oracle_context", "8_adrn2a_inferred_context")
@@ -1630,7 +1723,7 @@ def main():
          "secondary_metrics": ["relearning", "steady", "forgetting", "cost"],
          "mde_rule": "3*sd/sqrt(n) on the PAIRED per-seed gap",
          "ladder": LADDER,
-         "arms": {a: {"description": LADDER[a], "params": pcounts[a], "width": M["widths"][a],
+         "arms": {a: {"description": LADDER[a], "params": pcounts[a], "width": M0["widths"][a],
                       "results": {f"F{F}": {k: (v if k == "calibrated" else
                                                 {"mean": stat(v)[0], "sd": stat(v)[1],
                                                  "per_seed": [float(x) for x in v]})
