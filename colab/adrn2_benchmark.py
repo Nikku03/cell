@@ -159,9 +159,9 @@ class BCfg:
         g = lambda k, d, f=int: f(os.environ.get(k, d))
         S = SMOKE
         self.seeds = g("ADRN2_SEEDS", 2 if S else 6)
-        self.phase_len = g("ADRN2_PHASE_LEN", 256 if S else 1024)
+        self.phase_len = g("ADRN2_PHASE_LEN", 192 if S else 1024)
         self.probe_len = g("ADRN2_W", 32 if S else 64)
-        self.relearn_feedbacks = g("ADRN2_RELEARN_FEEDBACKS", 3 if S else 4)
+        self.relearn_feedbacks = g("ADRN2_RELEARN_FEEDBACKS", 2 if S else 4)
         self.budget = g("ADRN2_BUDGET", 30000)
         self.hist = g("ADRN2_HIST", 3)          # input window; >= LAG+1 so c4's t-2 term is reachable
         self.k_slots = g("ADRN2_KSLOTS", 6)     # context slots available to the manager (4 true contexts)
@@ -180,7 +180,7 @@ class BCfg:
         # silently reward whichever arm forgets fastest -- a handicap aimed squarely at the metric this
         # benchmark exists to measure.
         self.val_schedule = tuple(os.environ.get("ADRN2_VALSCHED", "c1,c2,c1").split(","))
-        self.val_phase_len = g("ADRN2_VALPHASELEN", 96 if S else 384)
+        self.val_phase_len = g("ADRN2_VALPHASELEN", 64 if S else 384)
         self.competence_min = g("ADRN2_COMPMIN", 0.85, float)
         self.ceiling = g("ADRN2_CEIL", 0.99, float)
         self.nn_k = g("ADRN2_NNK", 5)
@@ -986,19 +986,34 @@ def assert_liveness(tag, arm: BaseArm, correct, probe_hat, sigs, F, cfg: BCfg, p
             h_marg = A2._ent(P.mean(0))
             h_cond = float(np.mean([A2._ent(p) for p in P]))
             rep.update(posterior_marginal_entropy=h_marg, posterior_conditional_entropy=h_cond,
-                       posterior_information=h_marg - h_cond, log_k_used=math.log(ku))
-            if h_marg < 0.25:
-                bad.append(f"context posterior COLLAPSED: entropy of the time-averaged posterior is "
-                           f"{h_marg:.4f} nats -- effectively one context for the whole stream")
-            if h_cond > math.log(ku) - 0.15:
-                bad.append(f"context posterior is UNIFORM: mean per-step entropy {h_cond:.4f} against "
-                           f"log(k_used) = {math.log(ku):.4f} -- it is not deciding anything")
-            if h_marg - h_cond < 0.05:
-                bad.append(f"context posterior carries no information: marginal minus conditional "
-                           f"entropy = {h_marg - h_cond:.4f} nats")
-            if not f.oracle_context and len(tel["created_at"]) < 1:
-                starved.append(f"context CREATION never fired (the manager ran the whole stream on one "
-                               f"slot) with only {arm.n_updates} feedback events at F={F}")
+                       posterior_information=h_marg - h_cond, log_k_used=math.log(ku),
+                       contexts_created_n=len(tel["created_at"]))
+            # A posterior over ONE allocated slot is one-hot by arithmetic, not by malfunction. So the
+            # degeneracy checks are raises only when the manager actually had more than one hypothesis
+            # to be uncertain between; when creation never fired, the collapse is the DOWNSTREAM
+            # CONSEQUENCE of a starved manager and is recorded under that heading instead. Reporting it
+            # twice as two independent failures would overstate what went wrong.
+            manager_live = f.oracle_context or len(tel["created_at"]) >= 1
+            if not manager_live:
+                starved.append(
+                    f"context CREATION never fired at F={F}: {arm.n_updates} feedback events over the "
+                    f"whole stream against a min_obs_create of {m.cfg.min_obs_create} on the active "
+                    f"slot, so the manager ran everything on one slot and the posterior is one-hot by "
+                    f"arithmetic (marginal entropy {h_marg:.4f}, information {h_marg - h_cond:.4f}). "
+                    f"The posterior-degeneracy numbers are recorded as consequences of this, not as "
+                    f"separate faults.")
+            else:
+                if h_marg < 0.25:
+                    bad.append(f"context posterior COLLAPSED: entropy of the time-averaged posterior "
+                               f"is {h_marg:.4f} nats -- effectively one context for the whole stream, "
+                               f"although {len(tel['created_at'])} slots were allocated")
+                if h_cond > math.log(ku) - 0.15:
+                    bad.append(f"context posterior is UNIFORM: mean per-step entropy {h_cond:.4f} "
+                               f"against log(k_used) = {math.log(ku):.4f} -- it is not deciding "
+                               f"anything")
+                if h_marg - h_cond < 0.05:
+                    bad.append(f"context posterior carries no information: marginal minus conditional "
+                               f"entropy = {h_marg - h_cond:.4f} nats")
 
         # -- 3. CONSOLIDATED ADAPTERS MUST EXIST AND DIFFER FROM THE FAST ADAPTERS ----------------
         if f.consolidate:
@@ -1551,11 +1566,22 @@ def main():
                 f"{', '.join(f'{a} {v:.4f}' for a, v in below) or 'none'} ***")
 
         if F in starved_at:
-            rep(f"\n    *** MECHANISM STARVED AT F={F} (predeclared rule; this cadence's arm-8 gate "
-                f"readings are UNSUPPORTED, not a result): ***")
+            a8_starved = "8_adrn2a_inferred_context" in starved_at[F]
+            rep(f"\n    *** MECHANISM STARVED AT F={F} (predeclared rule) -- affected arms: "
+                f"{', '.join(sorted(starved_at[F]))} ***")
             for a, msgs in starved_at[F].items():
                 for msg in msgs:
                     rep(f"        {a}: {msg}")
+            rep("        GATE CONSEQUENCE: " + (
+                "arm 8's OWN mechanisms are starved at this cadence, so its gate readings here are "
+                "UNSUPPORTED and are not read as a result."
+                if a8_starved else
+                "arm 8's own mechanisms are LIVE at this cadence, so its gates remain readable; the "
+                "starvation above affects only the arms named, and any comparison involving those arms "
+                "must be read with that in mind."))
+        cfinfo[f"F{F}"]["starved_arms"] = sorted(starved_at.get(F, {}))
+        cfinfo[f"F{F}"]["arm8_supported"] = bool("8_adrn2a_inferred_context" not in
+                                                 starved_at.get(F, {}))
 
         assert_arms_distinct(res[F], f"F={F}")
 
@@ -1563,10 +1589,15 @@ def main():
     g3ok, g3d = True, {}
     for F in cfg.cadences:
         d = gapinfo[f"F{F}|G3"]
-        ok = bool(d["above_chance"] > d["mde"]) and (F not in starved_at)
+        # "supported" is arm-8-specific: another arm's mechanism being starved does not make arm 8's
+        # own number unreadable, and pretending it does would let a real failure hide behind a caveat.
+        sup = "8_adrn2a_inferred_context" not in starved_at.get(F, {})
+        ok = bool(d["above_chance"] > d["mde"]) and sup
         g3d[str(F)] = {"retention": d["arm8_raw"], "above_chance": d["above_chance"],
-                       "mde": d["mde"], "passes": ok,
-                       "supported": bool(F not in starved_at)}
+                       "mde": d["mde"], "passes": ok, "supported": bool(sup),
+                       "detection_recall_in_retention_window":
+                           liveness[f"F{F}"]["8_adrn2a_inferred_context"]["detection_channel"]
+                           ["retention_recall"]}
         g3ok = g3ok and ok
     gates[f"G3 arm 8 RETENTION above chance at ALL of F={list(cfg.cadences)}"] = bool(g3ok)
     gapinfo["G3_by_cadence"] = g3d
@@ -1630,7 +1661,20 @@ def main():
         f"what is achievable -- the stale-rule floor (keep applying the previous phase's rule) at "
         f"{rP['stale_rule']:.4f}, the context-blind Bayes ceiling for a non-oracle arm (detect the "
         f"change, average over the contexts seen so far) at {rP['blind_bayes_seen']:.4f}, and the "
-        f"oracle at 1.0000 -- and arm 8's {a8:.4f} sits {hedge_note}. The four metrics are reported "
+        f"oracle at 1.0000 -- and arm 8's {a8:.4f} sits {hedge_note}. G3 is answered per cadence and "
+        f"its answer is mechanistic rather than mysterious: a withheld window can only reveal itself "
+        f"where a CADENCE SLOT falls inside it, so the derived change-detection flag covers "
+        + ", ".join(f"{g3d[str(F)]['detection_recall_in_retention_window']:.2f} of the retention window "
+                    f"at F={F}" for F in cfg.cadences) +
+        f", and arm 8's retention across those cadences is "
+        + ", ".join(f"{g3d[str(F)]['retention']:.4f} at F={F}"
+                    f"{'' if g3d[str(F)]['supported'] else ' (UNSUPPORTED: its own mechanisms are starved there)'}"
+                    for F in cfg.cadences) +
+        f". Cadence and total supervision are the same knob in this specification -- "
+        + ", ".join(f"{fb_counts[F]['total_feedback']} labels at F={F}" for F in cfg.cadences) +
+        f" over an identical stream -- so a retention drop at long cadence cannot be attributed to "
+        f"delay rather than to starvation, and that confound is printed in the table rather than "
+        f"argued away. The four metrics are reported "
         f"separately and never averaged together: at F={P} arm 8 shows RETENTION {a8:.4f}, RELEARNING "
         f"{a8_rel:.4f} once feedback resumes, STEADY {a8_st:.4f} late within a phase, and FORGETTING "
         f"{a8_fg:+.4f} measured as the drop from a context's first-visit steady accuracy to its "

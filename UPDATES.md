@@ -16920,3 +16920,79 @@ that co-dependency predicts viability but not transcription. The eval-gene panel
 data-independent subsample and the probe panel is disjoint from it, but both are subsamples. DepMap gene
 effect is itself a modelled quantity (Chronos), not a raw measurement, so the target carries its own
 processing assumptions.
+
+---
+
+# ADRN-2A (external package) audit: the workspace is decorative and the routing metric measures nothing
+
+`colab/adrn2a_external_audit.py`. Two claims, both measured, on the ADRN-2A package supplied for review
+(`adrn2.py`, `adrn2_tasks.py`, `adrn2_baselines.py`, `adrn2_experiment.py` — a different codebase from
+`colab/adrn2.py`). Reproduce with `--package <dir>`; the numbers below are that script's output.
+
+## 1. `return_routing_recall` awards a perfect score to a model that does no routing
+
+| arm | accuracy | context purity | return_routing_recall | contexts |
+|---|---|---|---|---|
+| no_separation | 0.5977 | 0.3333 | **1.0000** | **1** |
+| oracle | 0.6393 | 1.0000 | 1.0000 | 4 |
+| inferred | 0.5833 | 0.6029 | **0.0000** | 4 |
+
+The single-context arm scores 1.0 because with one slot there is only one answer to give. The oracle scores
+1.0 because the key is handed in. The inferred arm scores 0.0 — and the diagnostic says why: in *both*
+return windows the reported context is the constant `'3'`, 32 out of 32 steps.
+
+That constant is not a routing failure, it is arithmetic. The metric is scored only where
+`in_return_recall_window` is true; `ADRN2Example.__post_init__` *forbids* feedback there; `predict()` never
+mutates `_active_context`, only `update()` does, and `update()` runs only on feedback. At prediction time
+the router scores contexts by `transition_log_prior + feature_likelihood_weight * feature_log_likelihood`,
+and the experiment sets `feature_likelihood_weight=0.0` — so with `context_stickiness=0.55 > 1/n` the argmax
+is always whatever is already active. The window is scored with the router frozen at the previous phase's
+context.
+
+Raising the likelihood weight would not save it. Distractors are Bernoulli(0.5) and the relevant bits cycle
+the complete truth table, so p(x|c) is uniform on {0,1}^48 for **every** c and p(c|x) = p(c). The
+experiment's own protocol block advertises this as `"input_distribution_identical_across_contexts": True`.
+Context inference from inputs is impossible in principle, and the one window where it is scored also
+withholds the only other evidence.
+
+Context *purity* is a real metric and does discriminate (0.33 / 1.00 / 0.60). `return_routing_recall` is not.
+
+## 2. The GRU workspace contributes nothing; the fixed digital basis does all the work
+
+`represent()` returns `cat(0.25*workspace[48], final_digital[136], first_values[16])`. The trailing 152
+coordinates are an unlearned function of the input, and all four rules are linearly separable in them alone:
+XOR(a,b) is exactly the signed pair product −a·b, AND is a pair product, majority in ±1 coding is
+sign(a+b+c), and c4's delayed operand x3(t−2) sits in `first_values`. Oracle context, 3 seeds:
+
+| arm | accuracy | mean phase-final balanced acc |
+|---|---|---|
+| full (workspace + digital) | 0.6332 ± 0.0105 | 0.6273 ± 0.0610 |
+| digital only, GRU zeroed | 0.6272 ± 0.0133 | 0.6296 ± 0.0487 |
+| workspace only, digital zeroed | 0.6085 ± 0.0151 | **0.4896 ± 0.0104** |
+
+Removing the GRU costs 0.0060 accuracy — well inside the seed spread — and the phase-final balanced accuracy
+goes *up* by 0.0023. Removing the digital block instead lands on chance. The third arm is the positive
+control: it establishes the mask is live, so the second arm's null is a null and not an inert ablation. And
+nothing is near ceiling (0.63 against 1.0), so this is not a saturation artifact.
+
+The `DigitalEncoder` docstring states the design intent openly — pair products are there so the online
+adapter need not discover XOR. That is defensible for a benchmark about *context memory*. It does mean
+ADRN-2A tests nothing about recurrence.
+
+## 3. Only one baseline is a fair comparator
+
+ADRN-2A's backbone receives 152 hand-built digital coordinates. The Transformer and GRU baselines see raw
+16-dim input, and their label-free reconstruction pretraining cannot teach pair products. Parameter counts
+are not matched either: backbone 16,658, Transformer 20,018, GRU 9,698.
+
+`online_polynomial_logistic` has raw 48 + 120 current-step pair products = 168 features (338 parameters) and
+can represent all four rules. It shares the representational basis, so the only thing separating it from
+ADRN-2 is the context banking. It — not the Transformer — is the comparator any ADRN-2A claim has to beat.
+
+## What is right and should be kept
+
+Prequential scoring throughout (predict strictly before update). `_examples_to_threshold` returns `None` on
+failure rather than a right-censored phase length. Balanced accuracy as the default threshold metric, so
+majority-class prediction cannot fake learning AND or OR. `_all_or_none_mean` refuses to average a list
+containing `None`. Phase lengths forced divisible by 8 so every truth-table case occurs equally often. In
+2B, Gate A refuses to report a routing ratio unless the oracle−shared denominator exceeds 0.05.
