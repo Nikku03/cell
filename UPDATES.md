@@ -17376,3 +17376,51 @@ Two mechanisms were caught inert during development and fixed rather than report
 `accumulate` byte-identical to `single_draw` (the uniform transition matrix above), and the CA3 sweep
 re-selecting the original code every time because the blend gain was 1.0 against cue units of value 1.0.
 Both now carry explicit liveness counters in the output.
+
+## Direction 3: online conjunction construction — the first real capability gain in the ADRN line
+
+`colab/adrn3_conjunctions.py`, output `outputs/orphan/adrn3_conjunctions.json`. 12 seeds, 2,048
+held-out draws, balanced accuracy, chance 0.5000. Tested on the rules the ADRN-2B audit proved the
+fixed 488-d basis cannot represent, so the floor is known in advance rather than assumed.
+
+| task | arm | A(8) | A(32) | A(128) | A(512) | found true conj. |
+|---|---|---|---|---|---|---|
+| parity3 | fixed 488-d basis | 0.4901 | 0.4987 | 0.4949 | 0.4988 | 0.00 |
+| parity3 | random conjunctions *(control)* | 0.4886 | 0.4941 | 0.4954 | 0.4957 | 0.00 |
+| parity3 | **learned conjunctions** | 0.4901 | **0.5697** | **0.7454** | **0.9425** | **1.00** |
+| parity3 | oracle conjunction *(ceiling)* | 0.5747 | 0.6437 | 0.7827 | 0.9610 | 1.00 |
+| parity5 | fixed 488-d basis | 0.4992 | 0.5009 | 0.4996 | 0.5014 | 0.00 |
+| parity5 | random conjunctions *(control)* | 0.5040 | 0.4981 | 0.5037 | 0.5005 | 0.00 |
+| parity5 | **learned conjunctions** | 0.4992 | **0.5507** | **0.7327** | **0.9477** | **1.00** |
+| parity5 | oracle conjunction *(ceiling)* | 0.5770 | 0.6439 | 0.7767 | 0.9557 | 1.00 |
+
+**The fixed basis is flat at the floor at every label budget**, including 512 — 0.4988 and 0.5014.
+More labels never help, exactly as the orthogonality argument predicts. A local, gradient-free
+coincidence-with-error rule takes it to **0.9425 and 0.9477**, which is **98.1%** of an oracle that was
+handed the true conjunction, and finds that conjunction on **12/12 seeds** for both rules.
+
+At A(128) the parity3 gain is **+0.2505 against a seed sd of 0.0227 — 11.1 standard deviations.**
+
+**The control is what makes this mean something.** `random_grow` gets the same 24-conjunction budget
+from step one, chosen without looking at a label, and it stays at the floor: 0.4957 and 0.5005, finding
+the true set on 0/12 seeds. So the gain comes from the selection rule, not from the extra capacity.
+
+**Specificity.** On `xor`, which the fixed basis already contains as a pair product, the mechanism is
+near-neutral: 0.9598 against the fixed basis's 0.9649, a cost of 0.0051. It grows a mean of 14.3
+features there against 24.0 on the parity tasks — it does less when there is less to find. (It cannot
+grow the xor pair itself: the candidate set is arities 3 and 5, precisely what the basis lacks.)
+
+## Why this one worked when ADRN-1's dendrites did not
+
+ADRN-1 implemented dendritic subunits and ablation showed they were worth **+0.0557 and +0.2315 to
+remove**. The difference is not the biological story, it is the learning rule. ADRN-1's subunits were
+trained by the same gradient as everything else, so they had no distinctive advantage and cost
+variance. Here the feature is *selected* by a running mean of (product x error) scored as a t-like
+statistic, then given an ordinary weight — a search over a discrete structure that gradient descent on
+a fixed basis cannot perform at all.
+
+That is the honest generalisation: what biology contributed was not a mechanism to copy, but the
+observation that a system should be able to *construct* a feature it lacks. The implementation that
+delivered it is a coincidence detector and a threshold, and the pruning path never fired once
+(`mean_pruned` 0.00 everywhere) — so even within this result, one of the three advertised components
+is unexercised and should not be claimed.
