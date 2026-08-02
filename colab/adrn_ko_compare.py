@@ -67,7 +67,8 @@ def main() -> int:
         print(text, flush=True)
         log.append(text)
 
-    ARMS = ["adrnlin", "adrnconj", "adrnshuf", "adrnrand", "adrnrot", "adrnles", "adrnperm"]
+    ARMS = ["chan2a", "chan2b", "chan2perm", "mlk562", "mlpool", "mlstrict", "mlother", "mlbank",
+            "adrnlin", "adrnconj", "adrnshuf", "adrnrand", "adrnrot", "adrnles", "adrnperm"]
     INCUMBENTS = ["basis", "nbr", "multilayer"]
     COHORTS = [("cohort 1", ""), ("cohort 2 (holdout)", "_holdout")]
 
@@ -109,7 +110,15 @@ def main() -> int:
 
         report(f"\n  the decisive within-ADRN contrasts on {label}")
         report(f"  {'contrast':<28} {'mean diff':>10} {'95% CI':>22} {'sign p':>8}  {'wins/losses':>12}  verdict")
-        for name, x, y in (("conj - linear (mechanism)", "adrnconj", "adrnlin"),
+        for name, x, y in (("chan2a - adrnlin (channels)", "chan2a", "adrnlin"),
+                           ("chan2b - chan2a (measured)", "chan2b", "chan2a"),
+                           ("chan2a - PERMUTED (leakage)", "chan2a", "chan2perm"),
+                           ("mlpool - mlk562 (pooling)", "mlpool", "mlk562"),
+                           ("mlstrict - mlk562 (scale)", "mlstrict", "mlk562"),
+                           ("mlpool - mlstrict (transfer)", "mlpool", "mlstrict"),
+                           ("mlbank - mlpool (banking)", "mlbank", "mlpool"),
+                           ("mlother - mlk562 (no K562)", "mlother", "mlk562"),
+                           ("conj - linear (mechanism)", "adrnconj", "adrnlin"),
                            ("conj - shuffled (noise)", "adrnconj", "adrnshuf"),
                            ("conj - random (structure)", "adrnconj", "adrnrand"),
                            ("conj - rotated (alignment)", "adrnconj", "adrnrot"),
