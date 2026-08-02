@@ -17481,3 +17481,51 @@ This measures the per-gene mean residual after the line marginal, not the full (
 it is the substance of Test B without its sampling machinery. Test C — unseen gene in an unseen line —
 is untouched. And 42% of the conjunction gain being reproducible by random features is a warning that
 the remaining 58% deserves a second control before it is built on.
+
+## The label-shuffled control: the claim survives, and the genuine share goes up
+
+Same rule, same 20,000-candidate pool, same `|mean| * sqrt(n)` scoring, same top-k pressure, same
+per-block count — applied to a **permuted** residual. Only the correspondence between a conjunction's
+product and the error is destroyed. Unlike uniform random draws, this prices the winner's curse of
+screening 20,000 candidates and keeping the best 54.
+
+| arm | RMSE | vs baseline |
+|---|---|---|
+| baseline (unseen gene → global mean) | 0.3959 | — |
+| ridge on annotation | 0.3303 | −0.0656 |
+| **+ learned conjunctions** | **0.3177** | **−0.0782** |
+| + random conjunctions | 0.3250 | −0.0708 |
+| + label-shuffled conjunctions | 0.3257 | −0.0702 |
+
+| contrast | gap | MDE | blocks | |
+|---|---|---|---|---|
+| learned − linear | −0.0126 | 0.0019 | 8/8 | resolved |
+| shuffled − linear | −0.0045 | 0.0038 | 7/8 | resolved |
+| **learned − shuffled** | **−0.0080** | **0.0039** | **8/8** | **resolved** |
+| shuffled − random | +0.0007 | 0.0053 | 3/8 | within noise |
+
+**The genuine component is −0.0080 at 2.1× its MDE, winning on 8/8 blocks.** The claim holds against a
+control the synthetic experiment never faced.
+
+Two things make this readable rather than merely favourable.
+
+**The partition is exact.** `shuffled − linear` (−0.0045) plus `learned − shuffled` (−0.0080) equals
+`learned − linear` (−0.0126) to five decimals. So **36.1% is nuisance** — capacity plus winner's curse
+— and **63.9% is genuine conjunction-finding**. (The `random − linear` figure of −0.0052 is a *second
+estimate of the same nuisance term by an independent route*, not a third component; reading all three
+as a partition would double-count and sum to 141%.)
+
+**The two nuisance estimates agree.** `shuffled − random` = +0.0007 against an MDE of 0.0053, 3/8
+blocks — indistinguishable. Selecting the extreme tail of a noise distribution buys no more than
+drawing uniformly, which is a cleaner outcome than expected and means the winner's curse is small here.
+
+**The control validated itself.** Overlap between the learned and shuffled conjunction sets is **0.2 of
+54.4** per block. Near zero is required; a high overlap would have meant the permutation failed to break
+the correspondence, invalidating the control rather than the result.
+
+## Correcting my own earlier number
+
+I reported 58% for the selection rule from the random control alone. Against the stricter control it is
+**63.9%** — the harder test made the claim slightly *larger*, not smaller, because selection-on-noise
+turned out to buy marginally less than uniform capacity. The earlier figure was conservative rather
+than wrong, but it was estimated against the weaker of the two controls and should be superseded.
