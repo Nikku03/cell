@@ -17261,3 +17261,45 @@ The conclusion about ADRN survives anyway, because it does not rest on the gates
 direct measurements: the 168-feature polynomial control beats the workspace arm at every routing mode,
 the GRU's marginal contribution to Gate B is −0.0792, and the benchmark's own non-temporal negative
 control fires at −0.1240 with the GRU and −0.0138 without it.
+
+---
+
+# ADRN-2A full baseline ladder: the one regime where ADRN genuinely wins
+
+`outputs/orphan/adrn2a_full_ladder.json`. Nine arms, 3 seeds × 4 feedback cadences, 99 s. Metric is
+retention — balanced accuracy inside the feedback-withheld window opening a returning context's phase.
+Chance 0.5000.
+
+| arm | F=1 | F=4 | F=16 | F=64 |
+|---|---|---|---|---|
+| **ADRN-2A, oracle context** | **0.8681** | **0.7170** | 0.5295 | 0.5017 |
+| online polynomial logistic (338 params) | 0.6510 | 0.6163 | **0.6007** | **0.5799** |
+| ADRN-2A, no context separation | 0.6111 | 0.6632 | 0.5972 | 0.5781 |
+| nearest neighbour | 0.5694 | 0.5503 | 0.5260 | 0.4740 |
+| online logistic regression | 0.5417 | 0.5972 | 0.5069 | 0.4462 |
+| ADRN-2A, inferred context | 0.5069 | 0.5295 | 0.5573 | 0.5365 |
+| transformer, frozen online head | 0.5312 | 0.4931 | 0.5139 | 0.4965 |
+| transformer, full online | 0.5052 | 0.5104 | 0.5104 | 0.5000 |
+| GRU, frozen online head | 0.4896 | 0.5069 | 0.5208 | 0.4670 |
+
+Three separable findings.
+
+**Given the context key, the banking works.** 0.8681 at F=1 and 0.7170 at F=4, clear of every baseline
+including the polynomial logistic at 0.6510/0.6163. This is the strongest positive result ADRN has
+produced anywhere and it should be stated as one.
+
+**It evaporates as feedback thins.** By F=16 the oracle arm is 0.5295 and by F=64 it is 0.5017 —
+chance — while a 338-parameter polynomial logistic holds 0.6007 and 0.5799, and ADRN's *own* no-context
+arm holds 0.5972 and 0.5781. The advantage lives only where labels are dense, which is the opposite of
+the regime continual learning is for.
+
+**Inferring the context is worse than not separating contexts at all**, at all four cadences: 0.5069 vs
+0.6111, 0.5295 vs 0.6632, 0.5573 vs 0.5972, 0.5365 vs 0.5781. Measured return-window routing recall is
+0.1667 for the inferred arm, against 1.0000 for the single-context model — the degenerate metric
+recorded earlier, now confirmed at full scale across 3 seeds.
+
+Both transformer arms sit at chance throughout (full-online 0.5052 / 0.5104 / 0.5104 / 0.5000). On this
+benchmark the transformer is not the thing to beat; the 338-parameter polynomial logistic is.
+
+A published comparison scorecard covering ADRN-1, 2A and 2B against the transformer at matched budgets
+is at `https://claude.ai/code/artifact/f5ec4bc6-c13d-418c-98c8-389c8b30a6fd`.
