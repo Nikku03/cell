@@ -188,12 +188,12 @@ def main() -> int:
         deg = np.zeros((n, 2), np.float32)
         for i, k in enumerate(ko_list):
             ts = per_gene.get(k, [])[:MAXT]
-            self_t[i, :len(ts)] = ts
+            self_t[i, :len(ts)] = [t + 1 for t in ts]
             self_m[i, :len(ts)] = 1.0
             ps = sorted(set(partners.get(k, [])))[:MAX_PARTNERS]
             for j, p in enumerate(ps):
                 pt = per_gene.get(p, [])[:MAXT]
-                part_t[i, j, :len(pt)] = pt
+                part_t[i, j, :len(pt)] = [t + 1 for t in pt]
                 part_m[i, j, :len(pt)] = 1.0
             deg[i] = [np.log1p(degrees.get(k, 0.0)), np.log1p(len(ps))]
         return (torch.from_numpy(self_t), torch.from_numpy(self_m),
@@ -213,8 +213,7 @@ def main() -> int:
 
         def forward(self, st, sm, pt, pm, dg):
             s = self.bag(st, sm)
-            p = self.bag(pt.reshape(pt.shape[0], -1, pt.shape[-1]),
-                         pm.reshape(pm.shape[0], -1, pm.shape[-1]))
+            p = self.bag(pt.reshape(pt.shape[0], -1), pm.reshape(pm.shape[0], -1))
             return self.head(self.trunk(torch.cat([s, p, dg], -1)))
 
     torch.manual_seed(A.SEED)

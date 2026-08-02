@@ -67,7 +67,7 @@ def main() -> int:
         print(text, flush=True)
         log.append(text)
 
-    ARMS = ["chan3t", "chan3c", "chan3p", "chan3perm", "chan2atuned", "chan2a", "chan2b", "chan2perm", "mlk562", "mlpool", "mlstrict", "mlother", "mlbank",
+    ARMS = ["e2e_full", "e2e_nmf", "trees", "chan3t", "chan3c", "chan3p", "chan3perm", "chan2atuned", "chan2a", "chan2b", "chan2perm", "mlk562", "mlpool", "mlstrict", "mlother", "mlbank",
             "adrnlin", "adrnconj", "adrnshuf", "adrnrand", "adrnrot", "adrnles", "adrnperm"]
     INCUMBENTS = ["basis", "nbr", "multilayer"]
     COHORTS = [("cohort 1", ""), ("cohort 2 (holdout)", "_holdout")]
@@ -110,7 +110,11 @@ def main() -> int:
 
         report(f"\n  the decisive within-ADRN contrasts on {label}")
         report(f"  {'contrast':<28} {'mean diff':>10} {'95% CI':>22} {'sign p':>8}  {'wins/losses':>12}  verdict")
-        for name, x, y in (("chan3t - chan2atuned (TF net)", "chan3t", "chan2atuned"),
+        for name, x, y in (("e2e_full - chan2a (LEARNED)", "e2e_full", "chan2a"),
+                           ("e2e_nmf - chan2a (LEARNED)", "e2e_nmf", "chan2a"),
+                           ("trees - chan2a (NONLINEAR)", "trees", "chan2a"),
+                           ("trees - e2e_nmf", "trees", "e2e_nmf"),
+                           ("chan3t - chan2atuned (TF net)", "chan3t", "chan2atuned"),
                            ("chan3c - chan3t (ChIP ident)", "chan3c", "chan3t"),
                            ("chan3p - chan3c (proteomics)", "chan3p", "chan3c"),
                            ("chan3p - chan2atuned (all new)", "chan3p", "chan2atuned"),

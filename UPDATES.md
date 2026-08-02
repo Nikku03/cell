@@ -18164,3 +18164,51 @@ except trees — and that is exactly why they were excluded: codep is a function
 Seven independent ADRN mechanism tests, seven failures: ADRN-1 structural ablation, ADRN-2A workspace, ADRN-2B
 Gate B, ADRN-4 online adaptation, sealed-protocol conjunctions, named partner packets, and now the cold-start
 entity learner — the setting the training spec argued was ADRN's strongest substrate.
+
+---
+
+# Letting it learn: end-to-end training on the sealed protocol, and it loses
+
+`colab/adrn_end_to_end.py`
+
+The objection was fair: every sealed-protocol number so far used features a human chose, and no learned
+end-to-end model had ever been scored on these cohorts — the transformer line was developed entirely on proxies.
+This closes that gap. The input is the **full un-curated annotation vocabulary** (13,600+ Reactome, GO, complex,
+Pfam and InterPro terms occurring ≥3 times; no top-N cut, no hand-cut buckets, no designed conjunctions), the
+gene and its partners go through the same learned embedding table so cold start is preserved, and the objective
+is the actual response profile.
+
+| arm | cohort 1 | cohort 2 |
+|---|---:|---:|
+| **trees (GBM → 60 loadings)** | **0.2348** | **0.2920** |
+| chan2a (hand-built linear) | 0.2337 | 0.2885 |
+| e2e_full (learned decoder over 8,246 genes) | 0.1789 | 0.2060 |
+| e2e_nmf (learned trunk, frozen basis) | 0.1437 | 0.1625 |
+
+    e2e_full - chan2a   -0.0548 [-0.0762,-0.0335]  and  -0.0825 [-0.1090,-0.0565]   RESOLVED, LEARNED WORSE
+    e2e_nmf  - chan2a   -0.0900 [-0.1160,-0.0648]  and  -0.1260 [-0.1512,-0.1007]   RESOLVED, LEARNED WORSE
+    trees    - chan2a   +0.0010 [-0.0125,+0.0140]  and  +0.0035 [-0.0102,+0.0175]   within noise
+    trees    - e2e_nmf  +0.0910 [+0.0650,+0.1178]  and  +0.1295 [+0.1015,+0.1578]   RESOLVED
+
+**The learned representation loses decisively, on both cohorts, by a wide margin.** Both networks stopped early
+(epochs 33 and 30) with clean validation curves, so this is not a training failure — it is 4,720 training
+knockouts being far too few to learn a representation that beats one already written down by curators.
+
+**Trees tie the hand-built linear model.** The non-linearity that was worth ~0.06 RMSE on DepMap cold-start
+(17,931 genes) is worth nothing here (+0.0010 / +0.0035, within noise on both cohorts). The difference is sample
+size: 17,931 rows against 4,720.
+
+## What this settles
+
+The question "would it do better if we stopped hand-designing and just let it learn?" now has a measured answer
+on the task that matters, and the answer is **no, by −0.08 to −0.13**. Not because learned representations are
+worse in principle — because at this data scale there is nothing to learn them from. Curated annotation is
+compressed prior knowledge from decades of experiments; 4,720 profiles cannot reconstruct it.
+
+The binding constraint on this project is **the number of measured perturbations**, and it is now the constraint
+that has survived every attempt to route around it: more channels (+0.027, then nothing), more datasets
+(nothing), more cell lines (+0.004), more mechanism (seven failures), more capacity (−0.08 to −0.13), more
+non-linearity (nothing at this scale).
+
+**`chan2a` stands: 696 curated annotation channels, ridge, K562 only, 0.2885 on the sealed holdout.** Trees are
+its equal and can be used interchangeably.
