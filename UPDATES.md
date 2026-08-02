@@ -17187,3 +17187,77 @@ delta, and the GRU's contribution is negative.
 **Verification.** All three arms report a machinery null self-delta of exactly 0.0 with CI [0.0, 0.0]
 over n=26, so the paired keys really are paired. The shipped arm reproduces the standalone full run's
 Gate B value to 18 significant digits (0.019019908559346082) from an independent process.
+
+## Six-dimension gate audit: 38 of 51 findings survive adversarial refutation
+
+`outputs/orphan/adrn2b_gate_audit.json`. Six independent auditors over gates A/C/D/E, the Bayesian
+comparator, and meta-initializer hygiene; every finding then handed to a skeptic instructed to refute
+it from the source and to default to `survives=false` under uncertainty. **38 survived, 12 were
+killed** — 9 fatal, 18 major, 11 minor. Several auditors wrote and ran verification code rather than
+reading only, and several confirmed claims are narrower than filed.
+
+**Gate C's threshold is unreachable by the arm it adjudicates.** The adapter is a linear threshold on
+a 488-d basis (`stable_logits` is a hard zero vector), and that basis contains no ≥3-way product. The
+`parity3`/`parity5` targets are exactly orthogonal to all 456 fixed coordinates: an out-of-sample
+linear fit on 20,000 labels reaches **0.495–0.501** balanced accuracy against 1.000 for `xor`. The 32
+learned GRU coordinates do not rescue it — a GRU trained *exclusively* on 24 parity3/parity5 tasks
+still yields a 488-d linear ceiling of 0.505. At the `full` preset those are 13 of 80 test contexts,
+16.25% pinned at chance inside an unweighted mean. Given every possible advantage — the real trained
+workspace, the real 80 test rules, perfectly balanced labels, oracle-selected ridge λ per draw, oracle
+routing, no cross-context contamination — the same estimator family reaches **0.605 at 8 labels and
+0.680 at 32**, both below the 0.65/0.75 bar. Gate C's FAIL therefore says nothing about ADRN.
+
+**A(k) does not mean k labels.** `support_buffers` is created once per *episode* (`:372`, outside the
+per-phase loop), keyed by router slot, capped at 128, and never cleared at a phase boundary. Measured
+on the exact Gate C arm: at `label_count=8` the mean support size is **79.5**, with only ~28% of those
+labels belonging to the probed context, and |support| == 8 for just 2 of 8 first-visit contexts; at
+`label_count=32` the mean is 32.75 with **0 of 8** contexts actually at 32. `creation_patience=8`
+makes this structural, not a smoke artifact — a newly entered context cannot own a slot until several
+labels in, so early checkpoints necessarily read a previous context's buffer.
+
+**The meta-initializer is inert.** Zeroing 10,251 of its 11,227 learned scalars moves held-out balanced
+accuracy by **+0.0031 [−0.0015, +0.0073]** at k=8 — indistinguishable from zero, and signed the wrong
+way. `initialize` adds `support_posterior_ridge=1.0` to a Gram whose diagonal is ≈489, so it is
+min-norm interpolation of the support labels, not regularized inference: it classifies its own support
+at exactly 1.0000 for every k from 2 to 128. And `workspace_learned` — the identical arm with no
+initializer, no ridge fit, no replay buffer — scores **0.5472/0.5780** against the finalist's
+0.5423/0.5756. The component named in Gate C's stated reason contributes nothing, exists in exactly one
+arm, and that arm is the sole source of Gates C, D **and** E. `__post_init__` rejects a 0.0
+`meta_initialization_scale`, so the tuner can choose how much to apply but never whether.
+
+**Gate D has no floor, and its ratio is an identity for oracle arms.** For ORACLE-keyed arms
+`chance_corrected_recall_ratio` is exactly 1.0 by construction — return records verified bit-for-bit
+identical to first endpoints on 4/4 returns, with intervening slot drift exactly 0.0. Two arms with
+zero stable learned parameters and no retention mechanism of any kind — `polynomial_oracle` (1.0 /
+0.8155) and the self-disclaimed `bayesian_rule_search_oracle` (1.0 / 1.0) — **clear both Gate D
+clauses in the same run where the finalist fails at 0.2523 / 0.5308**. Unlike A, B and E, Gate D has no
+comparator at all. The skeptic correctly narrowed this: the identity does *not* extend to
+`workspace_meta_learned`, where soft responsibilities above 0.03 write into other slots on 29/256
+intervening steps.
+
+**Gate A's bar is the cue's own decodability.** At the shipped `signature_difficulty="medium"`, Gate A's
+0.80 pass bar numerically equals the cue-validity target. An upper-bound router built on the oracle
+bank with *true* prototypes scores 0.836 / 0.665 / 0.851 / 0.108 / 0.785 across five seeds against a
+per-draw cue accuracy of 0.824–0.835. Gate A demands near-total exploitation of a cue that is only 80%
+decodable per draw, and cannot separate "the routing mechanism recovers context" from "the cue is 80%
+decodable". It also publishes an unclamped ratio of two 8-sample mean differences with no confidence
+interval, while structurally parallel Gate B gets a paired bootstrap: measured numerator sd is 0.129,
+so at a denominator of 0.051 — legal under the `>0.05` guard — one standard error moves the reported
+"fraction recovered" by 0.89.
+
+**What the skeptics killed.** Twelve findings, including four on Gate D and three on Gate E. Two worth
+recording because they defend the harness: `capacity_online_state_bytes` was alleged to use different
+accounting on each side and was refuted on the arithmetic (the discrepancy is ~0 on one side and 0.68%
+on the other, against a 4.4× gap); and the claim that `require_coverage` makes an honest non-oracle
+grammar unrunnable was refuted by execution — it is opt-in with one call site.
+
+## What this does and does not change
+
+Three of the six gates (A, C, D) cannot measure what they name, and Gate B is passed by the arm with
+the workspace removed. So **ADRN-2B's 1/6 is not an informative verdict on ADRN** — the instrument is
+broken in specific, identified ways, and Gate C in particular could never have passed.
+
+The conclusion about ADRN survives anyway, because it does not rest on the gates. It rests on the
+direct measurements: the 168-feature polynomial control beats the workspace arm at every routing mode,
+the GRU's marginal contribution to Gate B is −0.0792, and the benchmark's own non-temporal negative
+control fires at −0.1240 with the GRU and −0.0138 without it.
