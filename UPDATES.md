@@ -18263,3 +18263,69 @@ the remaining gap is not a data-volume problem past a certain point. Roughly hal
 exactly one knockout; a bespoke response cannot be learned from other knockouts at any n.
 
 **Caveat:** the n = 4,720 row has sd 0.0000 because it is the entire pool — one sample, not three.
+
+---
+
+# Pluripotent vs cancer context: origin does not govern transfer, lineage partly does
+
+`colab/adrn_stemcell_context.py`
+
+RENGE (GSE213069) — hiPSC, 23 pluripotency-TF CRISPR knockouts, genome-wide scRNA-seq at four time points — was
+already on disk and had only ever been used to ask whether time recovers mechanism. Here it is used as a
+**training context** for the sealed K562 protocol for the first time, alongside the five cancer lines.
+
+## A. Per-source transfer into the sealed K562 cohorts
+
+Fit `channels → loadings` on ONE context, score on K562. K562 is erythroleukaemia — haematopoietic.
+
+| source | lineage | n | cohort 1 | cohort 2 |
+|---|---|---:|---:|---:|
+| K562 (self) | erythroid | 4,720 | 0.2337 | 0.2885 |
+| **Jurkat** | **haematopoietic** | 1,865 | 0.1808 | **0.2197** |
+| HepG2 | endoderm | 1,865 | 0.1690 | 0.2158 |
+| RPE1 | neuroectoderm | 1,865 | 0.1400 | 0.1790 |
+| Melanoma | neural crest | 96 | 0.1445 | 0.1633 |
+| HCT116 | endoderm | 408 | 0.1135 | 0.1565 |
+| **hiPSC** | **PLURIPOTENT** | 52 | 0.0628 | **0.0943** |
+
+**Lineage shows up at matched sample size.** The three lines with exactly 1,865 knockouts order as predicted:
+Jurkat (same lineage as K562) 0.2197 > HepG2 (endoderm) 0.2158 > RPE1 (neuroectoderm) 0.1790. Same-lineage best,
+most-distant worst, a spread of +0.041. But Jurkat beats HepG2 by only +0.0039, so the ordering is driven by RPE1
+being bad rather than by blood being good — a partial result, not a clean one.
+
+**Developmental origin does not help.** The pluripotent context — upstream of every other cell in the table — is
+the **worst transferer of all**, and not only because it is small: Melanoma at n=96 reaches 0.1633 while hiPSC at
+n=52 reaches 0.0943. Being the common ancestor confers no transfer advantage.
+
+**Sample size explains most of the ranking.** Order the table by n and it is nearly monotone. Lineage explains the
+residual among the three size-matched lines; nothing explains a pluripotent advantage, because there is not one.
+
+## B. Adding the pluripotent context to the pool
+
+| pool | n | cohort 1 | cohort 2 | banked c1 | banked c2 |
+|---|---:|---:|---:|---:|---:|
+| K562 only | 4,720 | 0.2337 | 0.2885 | 0.2343 | 0.2853 |
+| K562 + cancer lines | 10,819 | 0.2023 | 0.2515 | 0.2398 | **0.2910** |
+| **K562 + hiPSC** | 4,772 | 0.2348 | **0.2888** | 0.2345 | 0.2848 |
+| K562 + cancer + hiPSC | 10,871 | 0.2027 | 0.2525 | 0.2398 | 0.2900 |
+
+Adding hiPSC moves the holdout by **+0.0003**. That is exactly what the volume bound predicted — 52 profiles
+against 4,720 — and it means this arm cannot distinguish "pluripotent data is useless" from "52 profiles are too
+few", so it is reported as uninformative rather than as evidence.
+
+## C. Timepoint
+
+day2 0.0705, day3 0.0838, day4 0.1212, day5 0.0932 (cohort 2). Non-monotone, **n = 13 per day**, and only 13 of
+the 23 hiPSC knockouts map into the channel universe at all. **These differences are not interpretable** and are
+recorded only so nobody reads a trend into them later.
+
+## Verdict on the developmental-origin idea
+
+The shared core the hypothesis rests on is **real and already exploited** — 86.5% of DepMap variance is the shared
+gene marginal, and that is the part the model predicts well. What the hypothesis adds beyond that is the claim
+that a *developmentally upstream* context should transfer better, and **that claim is not supported**: pluripotent
+transfers worst, and adding it changes nothing measurable.
+
+What did show up is **lineage proximity**, weakly, at matched n. If that is worth pursuing, the experiment is a
+size-matched panel across several lineage distances — not a stem-cell dataset. And the honest bound stays what
+the scaling curve said: 52 extra profiles cannot move a 4,720-profile model whatever cell they came from.
