@@ -28,6 +28,11 @@ Seeds inside a single environment draw would measure optimiser noise, not the cl
 
 MDE. 3 * sd / sqrt(n) computed on the PAIRED per-seed gap between the two arms being compared, since
 every arm sees the identical stream within a seed. An arm is credited only if its gap exceeds its MDE.
+A gap that is not positive FAILS without needing an MDE. A POSITIVE gap whose paired sample sd is
+exactly zero has an UNESTIMABLE MDE and is reported UNSUPPORTED, never as a pass: n seeds landing on
+the same difference is n coincidences on a count-valued metric, not evidence of zero population
+variance, and this file has already shipped a PASS off exactly that (G3 consolidation, gap +0.1000
+against MDE 0.0000, n=2, the only substantive PASS in its condition).
 
 GATES (all predeclared, evaluated per feedback condition):
   G1  full beats the BEST control arm on online_acc     (controls: frozen, sgd_head, sgd_full,
@@ -45,11 +50,14 @@ GATES (all predeclared, evaluated per feedback condition):
         so it must cost exactly nothing). This inverts ADRN-1's defect: byte-identical arms are here a
         PREDECLARED REQUIREMENT in one condition and a FAILURE in the other, and both are asserted.
 
-CEILING AND FLOOR. If the best arm reaches >= 0.99 the task cannot separate the arms that reach it and
-that condition is declared UNINFORMATIVE for those arms -- but an arm sitting more than one MDE BELOW a
-ceiling the others reach is highly informative and is reported as such. If every arm is within
-max(MDE, 0.02) of chance (1/n_classes) the task is too hard, the condition is declared UNINFORMATIVE
-and no gate from it is read as a result.
+CEILING AND FLOOR, ADJUDICATED PER METRIC -- on online_acc AND on retention_acc, because G1b and G3b
+are read on the latter and an earlier version checked only the former, leaving half the gates with no
+ceiling/floor check at all on a metric that sat near chance for every arm. If the best arm on a metric
+reaches >= 0.99 the metric cannot separate the arms that reach it and it is declared UNINFORMATIVE for
+those arms -- but an arm sitting more than one MDE BELOW a ceiling the others reach is highly
+informative and is reported as such. If every arm is within max(MDE, 0.02) of chance (1/n_classes) the
+metric is too hard, it is declared UNINFORMATIVE, and every gate read on it is moved out of the
+pass/fail tally into `gates_unsupported` rather than being reported as a result in either direction.
 
 --------------------------------------------------------------------------------------------------
 THE FOUR DEFECTS ADRN-1 SHIPPED, AND THE MACHINERY IN THIS FILE THAT MAKES EACH ONE IMPOSSIBLE
@@ -768,7 +776,12 @@ def assert_digital_competence(model: ADRN2A, env: ContextualStream, cfg: Cfg, rn
 def new_tel():
     return {"correct": [], "post": [], "steps": [], "wstd": [], "eta": [], "lam": [], "g": [],
             "dWf_rel": [], "dWf_abs": [], "n_consol": 0, "created_at": [], "n_elig": 0,
-            "mod": [], "ctx_true": [], "argmax": [], "block_start": [], "revisit_mask": []}
+            "mod": [], "ctx_true": [], "argmax": [], "block_start": [], "revisit_mask": [],
+            # slots ALLOCATED at each step. The uniformity bound on the posterior is log of THIS,
+            # not log of the slot count at the end of the stream: a posterior that is exactly
+            # uniform at every step still sits far below the final log k while the manager is
+            # still allocating, and comparing against the final value let that pass silently.
+            "used_at": []}
 
 
 def run_stream(model: ADRN2A, env: ContextualStream, blocks, cfg: Cfg, rng, delay: int,
@@ -822,6 +835,7 @@ def run_stream(model: ADRN2A, env: ContextualStream, blocks, cfg: Cfg, rng, dela
             ok = int(pred == int(y))
             tel["correct"].append(ok)
             tel["post"].append(pre.numpy().copy())
+            tel["used_at"].append(int(model.used.sum()))
             tel["argmax"].append(int(pre.argmax()))
             tel["ctx_true"].append(ctx)
             tel["revisit_mask"].append(int(revisit))
@@ -954,12 +968,25 @@ def assert_liveness(arm, model: ADRN2A, tel, cfg: Cfg, delay, enc_sig_before, en
     # -- 2. context posterior must be non-degenerate ----------------------------------------------
     if f.context and model.k > 1 and not f.oracle_context:
         P = np.asarray(tel["post"], np.float64)
+        U = np.asarray(tel["used_at"], np.int64)
         marg = P.mean(0)
         ku = max(2, int(model.used.sum()))
-        h_marg, h_cond = _ent(marg), float(np.mean([_ent(p) for p in P]))
+        ent_t = np.array([_ent(p) for p in P])
+        h_marg, h_cond = _ent(marg), float(ent_t.mean())
+        # HEADROOM below the entropy AVAILABLE at that step, over the steps where more than one slot
+        # existed to be uncertain between. Comparing against log of the FINAL slot count let a
+        # posterior that was forced to be exactly uniform pass, because while the manager is still
+        # allocating the achievable entropy is far below the final log k. Verified by mutation.
+        multi = U >= 2
+        headroom = (float(np.mean(np.log(np.maximum(2, U[multi])) - ent_t[multi]))
+                    if multi.any() else float("nan"))
+        n_argmax = int(len(set(P.argmax(1).tolist())))
         rep.update(posterior_marginal_entropy=h_marg, posterior_conditional_entropy=h_cond,
                    posterior_information=h_marg - h_cond, contexts_created=len(tel["created_at"]),
                    contexts_used=int(model.used.sum()), log_k_used=math.log(ku),
+                   posterior_entropy_headroom_per_step=headroom,
+                   posterior_multi_slot_steps=int(multi.sum()),
+                   posterior_distinct_argmax_slots=n_argmax,
                    created_at=list(tel["created_at"]),
                    slot_utility=[round(float(v), 4) for v in model.util],
                    slot_best_loss=[round(float(v), 4) for v in model.best_seen],
@@ -967,12 +994,18 @@ def assert_liveness(arm, model: ADRN2A, tel, cfg: Cfg, delay, enc_sig_before, en
         if h_marg < 0.25:
             bad.append(f"context posterior COLLAPSED: entropy of the time-averaged posterior is "
                        f"{h_marg:.4f} nats -- effectively one context for the whole stream")
-        if h_cond > math.log(ku) - 0.15:
-            bad.append(f"context posterior is UNIFORM: mean per-step entropy {h_cond:.4f} vs "
-                       f"log(k_used)={math.log(ku):.4f} -- it is not deciding anything")
+        if multi.any() and headroom <= 0.15:
+            bad.append(f"context posterior is UNIFORM: over the {int(multi.sum())} steps at which "
+                       f"more than one slot existed, its mean entropy sits only {headroom:.4f} nats "
+                       f"below the maximum entropy AVAILABLE at that step -- it is not deciding "
+                       f"anything")
         if h_marg - h_cond < 0.05:
             bad.append(f"context posterior carries no information: marginal - conditional entropy = "
                        f"{h_marg - h_cond:.4f} nats")
+        if int(model.used.sum()) >= 2 and n_argmax < 2:
+            bad.append(f"context posterior never SELECTS a second context: over {len(P)} steps its "
+                       f"argmax took {n_argmax} distinct value(s) while {int(model.used.sum())} slots "
+                       f"were allocated -- one adapter wearing a context manager's name")
         if len(tel["created_at"]) < 1:
             bad.append("context CREATION never fired: the manager ran the whole stream on one slot")
 
@@ -1006,7 +1039,13 @@ def assert_liveness(arm, model: ADRN2A, tel, cfg: Cfg, delay, enc_sig_before, en
     if f.controller and f.sgd == "none":
         e, l = np.asarray(tel["eta"]), np.asarray(tel["lam"])
         rep.update(eta_mean=float(e.mean()), eta_sd=float(e.std()), lam_mean=float(l.mean()),
-                   lam_sd=float(l.std()))
+                   lam_sd=float(l.std()),
+                   # A non-zero sd is not the same as a mechanism doing work. The coefficient of
+                   # variation is recorded so that "learned plasticity" cannot be claimed off a
+                   # network whose output is flat to a fraction of a percent; a 1e-8 threshold does
+                   # not distinguish that case from a live controller.
+                   eta_cv=float(e.std() / abs(e.mean())) if e.size and abs(e.mean()) > 0 else 0.0,
+                   lam_cv=float(l.std() / abs(l.mean())) if l.size and abs(l.mean()) > 0 else 0.0)
         if e.size == 0:
             bad.append("plasticity controller was never queried")
         elif e.std() < 1e-8 or l.std() < 1e-8:
@@ -1326,7 +1365,51 @@ def main():
         sd = float(np.nanstd(d, ddof=1)) if d.size > 1 else 0.0
         return float(np.nanmean(d)), 3 * sd / math.sqrt(max(1, d.size))
 
-    gates, gapinfo, cf = {}, {}, {}
+    def credited(gap, mde, n):
+        """'PASS' | 'FAIL' | 'UNSUPPORTED' for a gap that must exceed its MDE.
+
+        A paired per-seed sample sd of exactly zero does not mean the population sd is zero; it means
+        n seeds landed on the same difference, which is easy when the metric is a count over a fixed
+        stream. It yields MDE = 0.0000, and then any positive gap clears it. This file has already
+        shipped that: 'immediate | G3 consolidation contributes' passed on gap +0.1000 against MDE
+        0.0000 with n=2, and it was the only substantive PASS in its condition. A non-positive gap
+        still FAILS without needing an MDE; a positive gap with an unestimable MDE is UNSUPPORTED.
+        """
+        if not (gap > 0):
+            return "FAIL"
+        if n < 2 or not np.isfinite(mde) or mde <= 0.0:
+            return "UNSUPPORTED"
+        return "PASS" if gap > mde else "FAIL"
+
+    def floor_ceiling(cond, metric, chance, mde_ref):
+        """Ceiling AND floor adjudication for ONE metric, with the DECLARED max(MDE, 0.02) tolerance.
+
+        This used to be computed for `online_acc` only, while G1b and G3b are read on `retention_acc`
+        -- so half the gates were adjudicated against no ceiling/floor check at all, on a metric that
+        in this file's own smoke sat within 0.15 of chance for every arm. The declared rule is per
+        condition and says nothing about being restricted to one metric, so it is applied to both.
+        """
+        vals = {a: stats(results[cond][a][metric])[0] for a in ARMS}
+        best_arm = max(vals, key=vals.get)
+        tol = max(mde_ref, 0.02) if np.isfinite(mde_ref) else 0.02
+        all_floor = all(abs(v - chance) <= tol for v in vals.values())
+        hitters = [a for a, v in vals.items() if v >= cfg.ceiling]
+        below = []
+        if hitters:
+            for a in ARMS:
+                if a in hitters:
+                    continue
+                g, m = paired(cond, best_arm, a, metric)
+                if g > m > 0:
+                    below.append((a, vals[a]))
+        return {"metric": metric, "per_arm": vals, "best_arm": best_arm,
+                "best": vals[best_arm], "chance": chance, "floor_tolerance": tol,
+                "at_ceiling": bool(vals[best_arm] >= cfg.ceiling), "ceiling_hitters": hitters,
+                "informative_below_ceiling": below, "all_at_floor": bool(all_floor),
+                "uninformative": bool(all_floor or (vals[best_arm] >= cfg.ceiling
+                                                    and len(hitters) > 1 and not below))}
+
+    gates, gapinfo, cf, unsupported_gates = {}, {}, {}, {}
     for cond, delay in conditions:
         rep("\n" + "=" * 108)
         rep(f"  CONDITION: {cond} feedback (delay = {delay} steps)")
@@ -1350,44 +1433,59 @@ def main():
                 f"CONSTANT step count for {', '.join(flat)}. It is not costing anything and it is not "
                 f"adapting either; treat 'adaptive halting' for those arms as unsupported.")
 
-        best_arm = max(ARMS, key=lambda a: stats(results[cond][a]["online_acc"])[0])
-        best_val = stats(results[cond][best_arm]["online_acc"])[0]
-        all_at_floor = all(stats(results[cond][a]["online_acc"])[0] <= cfg.chance + 0.02
-                           for a in ARMS)
-        at_ceiling = best_val >= cfg.ceiling
-        ceil_hitters = [a for a in ARMS if stats(results[cond][a]["online_acc"])[0] >= cfg.ceiling]
-        below = []
-        if at_ceiling:
-            for a in ARMS:
-                g, m = paired(cond, best_arm, a)
-                if g > m and a not in ceil_hitters:
-                    below.append((a, stats(results[cond][a]["online_acc"])[0]))
-        cf[cond] = {"best_arm": best_arm, "best_online_acc": best_val, "chance": cfg.chance,
-                    "analytic_ceiling": analytic_ceiling, "at_ceiling": bool(at_ceiling),
-                    "ceiling_hitters": ceil_hitters, "informative_below_ceiling": below,
-                    "all_at_floor": bool(all_at_floor),
-                    "uninformative": bool(all_at_floor or (at_ceiling and len(ceil_hitters) > 1))}
-        if all_at_floor:
-            rep(f"\n    *** FLOOR: every arm is within 0.02 of chance ({cfg.chance:.3f}). The task is "
-                f"too hard at this scale; this condition is UNINFORMATIVE and no gate below is a "
-                f"result. ***")
-        if at_ceiling:
-            rep(f"\n    *** CEILING: '{best_arm}' reaches {best_val:.4f} >= {cfg.ceiling}. There is no "
-                f"separation AMONG the {len(ceil_hitters)} arm(s) at ceiling. Arms that fall BELOW it "
-                f"by more than their MDE remain informative: "
-                f"{', '.join(f'{a} {v:.4f}' for a, v in below) or 'none'} ***")
+        # CEILING AND FLOOR, PER METRIC. Previously this was computed for `online_acc` alone while
+        # G1b and G3b are read on `retention_acc` -- so half the gates were adjudicated against no
+        # ceiling/floor check at all. The declared rule is also max(MDE, 0.02) of chance, not a bare
+        # 0.02, and the MDE term had been dropped.
+        g1m = paired(cond, "adrn2a_full", max(CONTROLS,
+                     key=lambda a: stats(results[cond][a]["online_acc"])[0]))[1]
+        g1bm = paired(cond, "adrn2a_full", max(CONTROLS,
+                      key=lambda a: stats(results[cond][a]["retention_acc"])[0]), "retention_acc")[1]
+        cf_on = floor_ceiling(cond, "online_acc", cfg.chance, g1m)
+        cf_ret = floor_ceiling(cond, "retention_acc", cfg.chance, g1bm)
+        cf[cond] = {"online_acc": cf_on, "retention_acc": cf_ret,
+                    "analytic_ceiling": analytic_ceiling,
+                    # kept for continuity with earlier records
+                    "best_arm": cf_on["best_arm"], "best_online_acc": cf_on["best"],
+                    "chance": cfg.chance, "at_ceiling": cf_on["at_ceiling"],
+                    "ceiling_hitters": cf_on["ceiling_hitters"],
+                    "informative_below_ceiling": cf_on["informative_below_ceiling"],
+                    "all_at_floor": cf_on["all_at_floor"],
+                    "uninformative": cf_on["uninformative"]}
+        for tag, d in (("online_acc", cf_on), ("retention_acc", cf_ret)):
+            if d["all_at_floor"]:
+                rep(f"\n    *** FLOOR on {tag}: every arm is within {d['floor_tolerance']:.4f} of "
+                    f"chance ({cfg.chance:.3f}). This metric cannot separate the arms at this scale; "
+                    f"every gate read on it is UNINFORMATIVE and is not a result. ***")
+            if d["at_ceiling"]:
+                rep(f"\n    *** CEILING on {tag}: '{d['best_arm']}' reaches {d['best']:.4f} >= "
+                    f"{cfg.ceiling}. No separation AMONG the {len(d['ceiling_hitters'])} arm(s) at "
+                    f"ceiling. Arms falling BELOW it by more than their MDE remain informative: "
+                    f"{', '.join(f'{a} {v:.4f}' for a, v in d['informative_below_ceiling']) or 'none'} ***")
+
+        def record_gate(key, status):
+            """PASS/FAIL enter the tally; UNSUPPORTED is recorded separately and never counted."""
+            if status == "UNSUPPORTED":
+                unsupported_gates[key] = "UNSUPPORTED"
+            else:
+                gates[key] = (status == "PASS")
+
+        def metric_readable(met):
+            return not (cf_on if met == "online_acc" else cf_ret)["all_at_floor"]
 
         # -------- predeclared gates --------
         bc = max(CONTROLS, key=lambda a: stats(results[cond][a]["online_acc"])[0])
         g, m = paired(cond, "adrn2a_full", bc)
-        gates[f"{cond} | G1 full beats best control ({bc}) on online_acc"] = bool(g > m)
-        gapinfo[f"{cond}|G1"] = {"vs": bc, "gap": g, "mde": m,
+        s = credited(g, m, cfg.seeds) if metric_readable("online_acc") else "UNSUPPORTED"
+        record_gate(f"{cond} | G1 full beats best control ({bc}) on online_acc", s)
+        gapinfo[f"{cond}|G1"] = {"vs": bc, "gap": g, "mde": m, "status": s,
                                  "full_raw": stats(results[cond]["adrn2a_full"]["online_acc"])[0],
                                  "other_raw": stats(results[cond][bc]["online_acc"])[0]}
         bcr = max(CONTROLS, key=lambda a: stats(results[cond][a]["retention_acc"])[0])
         gr, mr = paired(cond, "adrn2a_full", bcr, "retention_acc")
-        gates[f"{cond} | G1b full beats best control ({bcr}) on retention_acc"] = bool(gr > mr)
-        gapinfo[f"{cond}|G1b"] = {"vs": bcr, "gap": gr, "mde": mr,
+        sr = credited(gr, mr, cfg.seeds) if metric_readable("retention_acc") else "UNSUPPORTED"
+        record_gate(f"{cond} | G1b full beats best control ({bcr}) on retention_acc", sr)
+        gapinfo[f"{cond}|G1b"] = {"vs": bcr, "gap": gr, "mde": mr, "status": sr,
                                   "full_raw": stats(results[cond]["adrn2a_full"]["retention_acc"])[0],
                                   "other_raw": stats(results[cond][bcr]["retention_acc"])[0]}
         for tag, other, met in (("G2 context manager", "global_fast", "online_acc"),
@@ -1397,18 +1495,23 @@ def main():
                                 ("G4 plasticity controller", "no_controller", "online_acc"),
                                 ("G5 recurrent workspace", "no_workspace", "online_acc")):
             g, m = paired(cond, "adrn2a_full", other, met)
-            gates[f"{cond} | {tag} contributes"] = bool(g > m)
-            gapinfo[f"{cond}|{tag}"] = {"vs": other, "metric": met, "gap": g, "mde": m,
+            s = credited(g, m, cfg.seeds) if metric_readable(met) else "UNSUPPORTED"
+            record_gate(f"{cond} | {tag} contributes", s)
+            gapinfo[f"{cond}|{tag}"] = {"vs": other, "metric": met, "gap": g, "mde": m, "status": s,
                                         "full_raw": stats(results[cond]["adrn2a_full"][met])[0],
                                         "other_raw": stats(results[cond][other][met])[0]}
         st = stats(results[cond]["adrn2a_full"]["mean_steps"])[0]
         g, m = paired(cond, "adrn2a_full", "no_halting")
-        gates[f"{cond} | G6 halting is live and not costly"] = bool(st < cfg.max_steps - 1e-9
-                                                                    and g > -m)
+        # G6 is a NON-INFERIORITY gate (gap > -MDE), so a zero MDE makes it strict rather than
+        # permissive and needs no UNSUPPORTED branch; only the floor check applies.
+        record_gate(f"{cond} | G6 halting is live and not costly",
+                    ("PASS" if (st < cfg.max_steps - 1e-9 and g > -m) else "FAIL")
+                    if metric_readable("online_acc") else "UNSUPPORTED")
         gapinfo[f"{cond}|G6"] = {"mean_steps": st, "cap": cfg.max_steps, "gap": g, "mde": m}
         g, m = paired(cond, "adrn2a_full", "no_eligibility")
         if delay > 0:
-            gates[f"{cond} | G7 eligibility earns its keep under delay"] = bool(g > m)
+            s = credited(g, m, cfg.seeds) if metric_readable("online_acc") else "UNSUPPORTED"
+            record_gate(f"{cond} | G7 eligibility earns its keep under delay", s)
         else:
             ident = np.allclose(results[cond]["adrn2a_full"]["online_acc"],
                                 results[cond]["no_eligibility"]["online_acc"], atol=0, rtol=0)
@@ -1426,6 +1529,13 @@ def main():
     for k, v in gates.items():
         rep(f"    {'PASS' if v else 'FAIL'}  {k}")
     npass = sum(gates.values())
+    if unsupported_gates:
+        rep("\n  GATES THAT ARE NOT READABLE, AND ARE THEREFORE NEITHER PASSED NOR FAILED")
+        rep("    (a metric on which every arm sits within max(MDE, 0.02) of chance cannot separate")
+        rep("     anything, and a positive gap whose paired sample sd is exactly zero has no")
+        rep("     estimable MDE. Both are excluded from the tally rather than counted either way.)")
+        for k in unsupported_gates:
+            rep(f"    UNSUPPORTED  {k}")
 
     # ============================================================== verdict
     def line(cond):
@@ -1446,14 +1556,20 @@ def main():
              f"workspace costs {gapinfo[f'{cond}|G5 recurrent workspace']['gap']:+.4f}. Realised "
              f"workspace steps averaged {gapinfo[f'{cond}|G6']['mean_steps']:.2f} against a cap of "
              f"{cfg.max_steps}.")
-        if c["uninformative"]:
-            s += (" THIS CONDITION IS DECLARED UNINFORMATIVE: " +
-                  ("every arm sits within 0.02 of chance, so the task is too hard to separate them."
-                   if c["all_at_floor"] else
-                   f"{len(c['ceiling_hitters'])} arms are at or above the {cfg.ceiling} ceiling, so no "
-                   f"separation among them can be read; arms that fall below that ceiling by more than "
-                   f"their MDE ("
-                   f"{', '.join(f'{a} at {v:.4f}' for a, v in c['informative_below_ceiling']) or 'none'}"
+        for met in ("online_acc", "retention_acc"):
+            k = c[met]
+            if not k["uninformative"]:
+                continue
+            s += (f" THE {met} METRIC IS DECLARED UNINFORMATIVE IN THIS CONDITION, and every gate "
+                  f"read on it is excluded from the tally rather than reported as a result: " +
+                  (f"every arm sits within {k['floor_tolerance']:.4f} of chance "
+                   f"({cfg.chance:.3f}) -- best arm {k['best_arm']} at {k['best']:.4f} -- so the "
+                   f"metric separates nothing."
+                   if k["all_at_floor"] else
+                   f"{len(k['ceiling_hitters'])} arms are at or above the {cfg.ceiling} ceiling, so "
+                   f"no separation among them can be read; arms that fall below that ceiling by more "
+                   f"than their MDE ("
+                   f"{', '.join(f'{a} at {v:.4f}' for a, v in k['informative_below_ceiling']) or 'none'}"
                    f") remain informative."))
         return s
 
@@ -1524,14 +1640,19 @@ def main():
          "unit_of_replication": "seed (independent initialisation AND independent environment draw)",
          "primary_metric": "online_acc = prequential held-out accuracy over the online stream (raw)",
          "secondary_metric": "retention_acc = accuracy on fresh examples per context, learning off",
-         "mde_rule": "3*sd/sqrt(n) on the PAIRED per-seed gap",
+         "mde_rule": "3*sd/sqrt(n) on the PAIRED per-seed gap; a positive gap whose paired sample sd "
+                     "is exactly zero has an UNESTIMABLE MDE and is reported UNSUPPORTED, never as a "
+                     "pass. Ceiling/floor is adjudicated per METRIC (online_acc AND retention_acc) "
+                     "with the declared max(MDE, 0.02) tolerance, and gates read on a floored metric "
+                     "are UNSUPPORTED rather than counted.",
          "arms": {a: {"flags": ARMS[a].asdict(), "params": pcounts[a],
                       "results": {c: {k: (v if k == "calibrated" else
                                           {"mean": stats(v)[0], "sd": stats(v)[1], "per_seed": v})
                                       for k, v in results[c][a].items()}
                                   for c, _ in conditions}} for a in ARMS},
          "mde": {k: {"gap": v.get("gap"), "mde": v.get("mde")} for k, v in gapinfo.items()},
-         "gaps": gapinfo, "gates": gates, "ceiling_floor": cf,
+         "gaps": gapinfo, "gates": gates, "gates_unsupported": unsupported_gates,
+         "ceiling_floor": cf,
          "liveness": _jsonable(liveness), "verdict": verdict, "limits": limits,
          "runtime_sec": time.time() - t0, "log": log}
     OUT.mkdir(parents=True, exist_ok=True)

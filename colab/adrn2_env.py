@@ -932,8 +932,16 @@ def schedule_validation(env: Adrn2Env, cfg: dict) -> dict:
         need = cfg["probe_len"] + cfg["relearn_feedbacks"] * F + 2 * F
         e = Adrn2Env(env.seed, phase_len=max(cfg["phase_len"], need), probe_len=cfg["probe_len"],
                      feedback_every=F, relearn_feedbacks=cfg["relearn_feedbacks"])
-        cadence = ((np.arange(e.total_len) + 1) % F) == 0
-        expected = int((cadence & ~e.feedback_withheld_by_probe).sum())
+        # The expected count must come from a CLOSED FORM, not from re-evaluating the generator's own
+        # expression. `(cadence & ~feedback_withheld_by_probe).sum()` is character-for-character how
+        # `feedback_available` is built, so comparing the two could never fail and G8's "cadence is
+        # exact" half was a gate with no way to detect a fault. Counted here from the schedule
+        # arithmetic instead: multiples of F in [0, n), minus multiples of F inside each phase's
+        # opening probe window. Number of t in [a, b) with (t+1) % F == 0 is b//F - a//F.
+        expected = e.total_len // F
+        for p in range(e.n_phases):
+            lo = p * e.phase_len
+            expected -= ((lo + e.probe_len) // F - lo // F)
         realised = int(e.feedback_available.sum())
         min_rl = min(int(e.feedback_available[w.start:w.stop].sum()) for w in e.relearn_windows())
         cad[str(F)] = {"phase_len": e.phase_len, "expected": expected, "realised": realised,
