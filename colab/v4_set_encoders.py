@@ -475,6 +475,63 @@ def main():
     Eself = np.stack([Zp[srow[g]] for g in psym_k])
     Ebag = (Fr.numpy() * Mr.numpy()[:, :, None]).sum(1) / Mr.numpy().sum(1)[:, None].clip(min=1)
 
+    # ---------------------------------------------------------------------- conjunction growth (ADRN-3)
+    # The one ADRN mechanism that survived controlled testing on real cell data: a local,
+    # gradient-free rule that GROWS product features, scored by |mean| * sqrt(n) on the residual the
+    # linear part cannot explain. On Boolean parity it went from a verified 0.4949 floor to 0.9425 with
+    # the random-conjunction control pinned at the floor; on DepMap held-out genes it bought -0.0094
+    # past a label-shuffled control. It has never been run on THIS task, which is the only one where
+    # the transformer was measured, so the head-to-head has never existed.
+    #
+    # PREDECLARED, before running: it should land NEAR the zero-parameter bag (0.0341), not above it.
+    # The bar here is not the Set Transformer's 0.0297 -- attention already lost to no attention, and
+    # graph wiring already lost to no wiring (+0.004 real-vs-shuffled in transformer_graphnet). An arm
+    # that beats the transformer but not the bag has shown nothing.
+    CONJ_MAX, CONJ_RANK, CONJ_CAND = 96, 24, 6000
+
+    def grow_conjunctions(base, S, tr, mode, seed):
+        """Return `base` widened by grown product features. Growth uses TRAINING knockouts only.
+
+        Supervised signal is the top-CONJ_RANK principal directions of the training knockouts'
+        centred profiles, residualised against a ridge fit from `base` -- so a conjunction earns its
+        place only by explaining what the linear part of the embedding could not.
+        """
+        rng = np.random.default_rng(seed)
+        thresh = np.median(base[tr], axis=0)
+        signed = np.where(base > thresh[None, :], 1.0, -1.0)
+
+        centred_S = S[tr] - S[tr].mean(0, keepdims=True)
+        _, _, vt = np.linalg.svd(centred_S, full_matrices=False)
+        P = (S - S[tr].mean(0, keepdims=True)) @ vt[:CONJ_RANK].T      # N x rank
+
+        design = np.concatenate([base[tr], np.ones((len(tr), 1))], axis=1)
+        ridge = np.linalg.solve(design.T @ design + 1e-2 * np.eye(design.shape[1]),
+                                design.T @ P[tr])
+        resid = P[tr] - design @ ridge
+        if mode == "shuffled":
+            resid = resid[rng.permutation(len(resid))]
+
+        d = base.shape[1]
+        pool, seen = [], set()
+        while len(pool) < CONJ_CAND:
+            arity = int(rng.integers(2, 4))
+            pick = tuple(sorted(rng.choice(d, size=arity, replace=False).tolist()))
+            if pick not in seen:
+                seen.add(pick); pool.append(pick)
+        if mode == "random":
+            chosen = pool[:CONJ_MAX]
+        else:
+            prod_tr = np.stack([np.prod(signed[tr][:, list(c)], axis=1) for c in pool])
+            align = prod_tr @ resid / len(tr)                          # cand x rank
+            score = np.linalg.norm(align, axis=1) * np.sqrt(len(tr))
+            chosen = [pool[int(i)] for i in np.argsort(-score)[:CONJ_MAX]]
+
+        grown = np.stack([np.prod(signed[:, list(c)], axis=1) for c in chosen], axis=1)
+        # Match the base's per-coordinate scale so retrieval is not dominated by whichever block is
+        # larger; every conjunction arm gets the identical treatment.
+        grown = grown * float(base.std())
+        return np.concatenate([base, grown], axis=1), len(chosen)
+
     order = np.random.default_rng(0).permutation(N)
     blocks = np.array_split(order, FOLDS)              # DISJOINT held-out knockout partitions
     res, extra = {}, {}
@@ -502,6 +559,18 @@ def main():
         add("C TIDE-null floor (0 param)", np.tile(np.where(nontide, freq, -np.inf), (len(te), 1)))
         add("A raw DepMap self-vector (0 param)", retrieve(Eself, Eself, te, tr, S))
         add("B raw DepMap bag-of-partners (0 param)", retrieve(Ebag, Ebag, te, tr, S))
+
+        # ---- ADRN-3 conjunction growth on top of the bag, with its two controls. The learned arm is
+        # only meaningful against BOTH: random says whether the extra coordinates alone explain it,
+        # shuffled says whether top-k selection over 6,000 candidates explains it (the winner's curse).
+        Ecl, n_cl = grow_conjunctions(Ebag, S, tr, "learned", 700 + f)
+        add("11 bag + LEARNED conjunctions (ADRN-3)", retrieve(Ecl, Ecl, te, tr, S))
+        Ecr, _ = grow_conjunctions(Ebag, S, tr, "random", 700 + f)
+        add("12 bag + random conjunctions (CONTROL)", retrieve(Ecr, Ecr, te, tr, S))
+        Ecs, _ = grow_conjunctions(Ebag, S, tr, "shuffled", 700 + f)
+        add("13 bag + shuffled-target conjunctions (CONTROL)", retrieve(Ecs, Ecs, te, tr, S))
+        report(f"    conjunctions grown {n_cl} of {CONJ_CAND} candidates, "
+               f"rank {CONJ_RANK} target directions")
 
         # ---- learned arms, all at the matched budget
         _, E1 = train("mean", Fr, Tr, Mr, tr, f, Yn)
