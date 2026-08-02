@@ -17959,3 +17959,82 @@ of the session's commits locally and the rebuilt readout from scratch space. Eve
 recovered by fast-forward; the readout was rebuilt from `gwps.h5ad`. **Consistency check: chan2a re-scored to
 0.2337 / 0.2885 after the rebuild, identical to before it**, which confirms the rebuilt readout is the same matrix.
 Source is now committed before running rather than after.
+
+---
+
+# Named per-partner packets: the ingestion premise fails, and the conjunction line ends
+
+`colab/adrn_partner_packets.py`
+
+Items 1–4 of the training spec are one experiment, and it is success condition 3: **does named partner ingestion
+beat the raw partner bag?** Criterion-2 is where ADRN lost to a zero-parameter bag (0.0319 vs 0.0340), and the
+spec's diagnosis was that partners entered as 64 DepMap principal components — a compression — while
+`v4_conj_basis.py` had measured that rotation destroys conjunction growth (0.0% / 1.6% retention).
+
+745 usable knockouts, 3 blocks, retrieval → recall@50, random floor 0.0061. Task, truth, retrieval and metric
+identical across arms; only how a partner is written down changes.
+
+| arm | recall@50 | sd |
+|---|---:|---:|
+| bag_pca (full-rank rotation) | 0.2179 | 0.0054 |
+| **bag_named (696 channels, 0 param)** | **0.2157** | 0.0089 |
+| bag_pca64 (lossy, 696 → 64) | 0.2144 | 0.0047 |
+| self_only (no partners) | 0.1993 | 0.0098 |
+| conj_random | 0.1795 | 0.0025 |
+| conj_shuffled | 0.1782 | 0.0056 |
+| conj_named (ADRN) | 0.1706 | 0.0071 |
+| bag_perm (permuted channels) | 0.1565 | 0.0034 |
+| partner_random | 0.0617 | 0.0048 |
+
+    bag_named - bag_pca64  (INGESTION)   +0.0013  MDE 0.0112   within noise   <- SUCCESS CONDITION 3 FAILS
+    bag_named - bag_perm   (leakage)     +0.0592  MDE 0.0201   RESOLVED
+    bag_named - self_only  (partners)    +0.0164  MDE 0.0066   RESOLVED
+    bag_named - partner_random (WHO)     +0.1540  MDE 0.0179   RESOLVED
+    conj_named - bag_named (MECHANISM)   -0.0450  MDE 0.0237   RESOLVED NEGATIVE
+    conj_named - conj_shuffled (noise)   -0.0076  MDE 0.0134   within noise
+    conj_named - conj_random (structure) -0.0088  MDE 0.0091   within noise
+
+## The ingestion premise does not survive
+
+Compressing 696 named channels to 64 principal components — exactly what criterion-2 did — costs **+0.0013,
+inside an MDE of 0.0112**. Named presentation buys nothing for partner ingestion. With 745 knockouts and 3 blocks
+this rules out effects larger than about 0.011, not effects of any size; but the spec predicted a recovery of the
+criterion-2 deficit, and that is an effect this test had ample power to see.
+
+**The axis-alignment result was narrower than I had been treating it.** It says a *sparse-product search* needs
+axis-aligned coordinates. It does not say representations generally need to be named. Averaging and cosine
+retrieval are linear, so they do not care about the basis — and most of what this project does downstream is
+linear.
+
+## A construction error, kept visible
+
+`bag_pca` was written as the ingestion test and **cannot be one**. A bag is a mean, a full-rank PCA is an
+orthogonal map, and cosine retrieval is invariant under orthogonal maps — so the two arms differ only by the
+centring and are near-identical by construction (measured −0.0022). I should have seen that before running it.
+`bag_pca64` — truncation, which is genuine information loss — is the arm that tests the claim, and it was added
+and run.
+
+## The conjunction line is finished
+
+`conj_named` was given the named, axis-aligned basis the mechanism was said to require, on the task where it
+originally lost, with every control matched. It scored **−0.0450 below the plain bag, RESOLVED** — it does not
+merely fail to help, it actively destroys performance — and it remains indistinguishable from conjunctions grown
+against a shuffled target and from conjunctions drawn at random.
+
+This is the **sixth** independent failure: ADRN-1 structural ablation, the ADRN-2A workspace, ADRN-2B Gate B,
+ADRN-4 online adaptation, the sealed-protocol conjunctions, and now named partner packets. The predeclaration in
+this file's header was explicit — *"a sixth failure on the basis it was said to need would end the conjunction
+line"* — and that is the outcome. No further conjunction machinery should be built.
+
+## What did survive, and it is not ADRN
+
+The partner results are strong and they are about **biology, not architecture**:
+
+- **who your partners are is worth +0.154** — real partners against count- and type-matched random ones, the
+  largest single effect measured anywhere in this line of work
+- **partners add +0.016 beyond the gene's own annotations**
+- **the annotations are real** — permuting them across genes costs −0.059
+
+The validated object remains what `v4_set_encoders.py` concluded it was: a **bag of typed partners**. Naming its
+coordinates does not improve it, compressing them does not harm it, and adding ADRN machinery to it makes it
+worse.

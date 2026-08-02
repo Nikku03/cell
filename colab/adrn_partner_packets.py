@@ -26,8 +26,16 @@ ARMS -- the spec's section 12 control matrix for the "Named channels" and "Partn
 
   representation of a partner
     bag_named        mean of the partners' 696 NAMED annotation channels.  0 parameters.  THE TEST.
-    bag_pca          the identical information, full-rank PCA rotated before averaging.  Invertible, so nothing
-                     is lost -- only the axis alignment.  If bag_named beats this, presentation is doing work.
+    bag_pca          the identical information, full-rank PCA rotated before averaging.  THIS ARM TESTS NOTHING
+                     AND THE ERROR IS KEPT VISIBLE RATHER THAN DELETED.  A bag is a mean, a full-rank PCA is an
+                     orthogonal map, and cosine retrieval is invariant under orthogonal maps -- so embed_pca and
+                     embed_named differ only by the centring, and the arms are near-identical BY CONSTRUCTION.
+                     It was written as the ingestion test and it cannot be one; measured -0.0022, MDE 0.0091.
+                     Rotation only bites where SPARSE PRODUCTS of coordinates are taken, i.e. the conjunction
+                     arms, which is exactly what v4_conj_basis.py measured.
+    bag_pca64        the arm that DOES test the spec's claim: PCA truncated to 64 components, which is lossy
+                     compression and is precisely what criterion-2 did by feeding 64 DepMap principal
+                     components.  If bag_named beats this, presentation is doing work.
     bag_perm         named channels permuted across genes: every partner keeps a real annotation profile, just
                      somebody else's.  Must lose.
 
@@ -41,7 +49,7 @@ ARMS -- the spec's section 12 control matrix for the "Named channels" and "Partn
     conj_random      conjunctions drawn at random from the same candidate pool, same count and arity mix.
 
 PREDECLARED, and this is the whole point of running it.
-    SUCCESS CONDITION 3 passes only if bag_named beats bag_pca past the MDE.  That is the ingestion claim.
+    SUCCESS CONDITION 3 passes only if bag_named beats bag_pca64 past the MDE.  That is the ingestion claim.
     The ADRN MECHANISM passes only if conj_named beats bag_named AND conj_shuffled AND conj_random.  It has
     failed that test five times; a sixth failure on the basis it was said to need would end the conjunction line.
     If bag_named also loses to bag_pca, then the named-basis story does not transfer to partner ingestion and
@@ -183,6 +191,7 @@ def main() -> int:
     _, _, vt = np.linalg.svd(centred, full_matrices=False)
     rotated = (centred @ vt.T).astype(np.float32)                       # full rank, invertible
     permuted = channels[np.random.default_rng(SEED + 3).permutation(len(channels))]
+    truncated = (centred @ vt[:64].T).astype(np.float32)               # LOSSY: 696 -> 64, as criterion-2 did
 
     def embed(matrix: np.ndarray, per_ko, include_self: bool) -> np.ndarray:
         E = np.zeros((N, matrix.shape[1]), np.float32)
@@ -197,6 +206,7 @@ def main() -> int:
     embeddings = {
         "bag_named": embed(channels, partners, True),
         "bag_pca": embed(rotated, partners, True),
+        "bag_pca64": embed(truncated, partners, True),
         "bag_perm": embed(permuted, partners, True),
         "self_only": embed(channels, [[(t, []) for t, _ in p] for p in partners], True),
         "partner_random": embed(channels, rand_partners, True),
@@ -292,7 +302,8 @@ def main() -> int:
 
     report(f"\n  {'contrast':<34} {'gap':>9} {'MDE':>8}  verdict")
     contrasts = [
-        ("bag_named - bag_pca (INGESTION)", "bag_named", "bag_pca"),
+        ("bag_named - bag_pca64 (INGESTION)", "bag_named", "bag_pca64"),
+        ("bag_named - bag_pca (rotation, nil)", "bag_named", "bag_pca"),
         ("bag_named - bag_perm (leakage)", "bag_named", "bag_perm"),
         ("bag_named - self_only (partners)", "bag_named", "self_only"),
         ("bag_named - partner_random (WHO)", "bag_named", "partner_random"),
