@@ -154,7 +154,8 @@ def main():
     report(f"  GATE, declared before any number: a model is credited on a task only if it beats the BEST")
     report(f"  baseline by more than MDE = 3*sd/sqrt(n), n = {N_SEEDS} SEEDS (independent init AND")
     report(f"  independent data draw), sd of the PAIRED per-seed gap. Beating the MLP alone is not a result;")
-    report(f"  the GRU is the baseline that matters. Parameter budget matched to ~{BUDGET:,} and printed.")
+    report(f"  the gate grades against the BEST of the four baselines, reported per task. Parameter")
+    report(f"  budget matched to ~{BUDGET:,} and printed per arm.")
 
     # ------------------------------------------------------------ baselines
     class MLP(nn.Module):
@@ -281,11 +282,23 @@ def main():
                 opt = torch.optim.Adam([p for p in net.parameters() if p.requires_grad], lr=3e-3)
                 Xt = torch.from_numpy(Xtr)
                 yt = torch.from_numpy(ytr)
+                # THE MODULATORY VECTOR MUST BE SUPPLIED OR ADRN IS NOT RUNNING.
+                # _plastic_update fires only when m_vec is not None. Calling net(x) with no m_vec leaves
+                # eligibility, neuromodulation, fast/slow weights, consolidation, homeostasis and pruning
+                # ALL INERT -- what trains is a dendritic spiking net under plain backprop, which is not
+                # ADRN. The tell was arms 6/7/8 returning byte-identical accuracy, energy and spike counts:
+                # ablating a system that was never on changes nothing.
+                #
+                # M(t) is built from the PREVIOUS batch's outcome, not this one. That is not a convenience:
+                # delayed credit is the entire reason eligibility traces exist (spec sec 4), so the
+                # modulatory signal must arrive after the activity it judges.
+                run_err, prev_m = None, None
+                is_adrn = arm.startswith(("5 ", "6 ", "7 ", "8 "))
                 for _ in range(EPOCHS):
                     perm = torch.randperm(len(Xt))
                     for i0 in range(0, len(Xt), 128):
                         b = perm[i0:i0 + 128]
-                        o = net(Xt[b])
+                        o = net(Xt[b], m_vec=prev_m) if is_adrn else net(Xt[b])
                         logits = o[0] if isinstance(o, tuple) else o
                         loss = nn.functional.cross_entropy(logits, yt[b])
                         opt.zero_grad()
@@ -293,6 +306,18 @@ def main():
                         torch.nn.utils.clip_grad_norm_(
                             [p for p in net.parameters() if p.requires_grad], 1.0)
                         opt.step()
+                        if is_adrn:
+                            with torch.no_grad():
+                                L = float(loss)
+                                run_err = L if run_err is None else 0.9 * run_err + 0.1 * L
+                                # 5 channels: reward, novelty, attention, uncertainty, error
+                                pr = torch.softmax(logits.detach(), -1)
+                                ent = float(-(pr * pr.clamp_min(1e-9).log()).sum(-1).mean())
+                                rew = float(np.clip(run_err - L, -1.0, 1.0))
+                                err = float(np.clip(L - run_err, -1.0, 1.0))
+                                prev_m = torch.tensor(
+                                    [[rew, ent, 1.0, ent, err]], dtype=torch.float32
+                                ).expand(len(b), 5).contiguous()
                 with torch.no_grad():
                     o = net(torch.from_numpy(Xte))
                     logits, info = (o if isinstance(o, tuple) else (o, {}))
