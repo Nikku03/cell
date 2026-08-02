@@ -18038,3 +18038,65 @@ The partner results are strong and they are about **biology, not architecture**:
 The validated object remains what `v4_set_encoders.py` concluded it was: a **bag of typed partners**. Naming its
 coordinates does not improve it, compressing them does not harm it, and adding ADRN machinery to it makes it
 worse.
+
+---
+
+# The mechanism decoder: the "why" is predictable, and much better than the "which genes"
+
+`colab/adrn_mechanism_decoder.py`
+
+Every result in this project scored a ranked **gene list**. The mechanism the system emits alongside it had never
+been graded against anything. This makes it gradeable: for a held-out knockout, rank Reactome pathways by
+over-representation among its movers; the truth is the same ranking computed from its **measured** movers.
+
+**The ceiling first, because a truth built from ~16 movers might be noise.** Split a knockout's true movers in
+half, enrich each half, compare top-10 lists: **0.5765 / 0.4953**. So the mechanism truth is substantially but not
+perfectly reproducible against itself, and every arm is read against that.
+
+| arm | cohort 1 | cohort 2 |
+|---|---:|---:|
+| oracle_half (CEILING) | 0.5765 | 0.4953 |
+| **from_genes — enrich the deployed model's prediction** | **0.3944** | **0.3592** |
+| direct — channels → pathways by ridge | 0.3056 | 0.3283 |
+| own_pathways — the gene's own Reactome sets | 0.0693 | 0.0246 |
+| frequency — most-often-disturbed pathways | 0.0492 | 0.0634 |
+| shuffled (floor) | 0.0078 | 0.0110 |
+
+    from_genes - own_pathways  +0.3251 [+0.2743,+0.3777]  and  +0.3346 [+0.2827,+0.3869]  RESOLVED both
+    from_genes - frequency     +0.3453 [+0.2860,+0.4034]  and  +0.2958 [+0.2408,+0.3529]  RESOLVED both
+    direct     - own_pathways  +0.2363 [+0.1782,+0.2961]  and  +0.3037 [+0.2482,+0.3592]  RESOLVED both
+    direct     - frequency     +0.2564 [+0.1989,+0.3156]  and  +0.2649 [+0.2084,+0.3215]  RESOLVED both
+
+**The predeclared condition passes on both cohorts, for both arms.** The deployed model's mechanism covers
+**68.0% / 71.9%** of the floor→ceiling range — against **27%** of the basis-oracle range on the gene-list task.
+
+## Three things worth stating plainly
+
+**The mechanism is easier than the genes.** You can name the disturbed process without naming the individual
+genes, and the model does exactly that. This is the first task in the project where the deployed system sits in
+the upper half of its own reachable range.
+
+**The naive mechanism answer is worthless.** "Knock out a ribosome subunit, disturb the ribosome" —
+`own_pathways` — scores 0.069 / 0.025, and on the holdout cohort it is RESOLVED *worse* than a baseline that
+ignores which gene was knocked out entirely (−0.0387, CI excluding zero). **The processes a knockout disturbs are
+not the processes the knocked-out gene belongs to.** That is a real biological finding and it is the reason a
+decoder is needed at all rather than a lookup.
+
+**It does not require predicting genes first.** `direct` maps the 696 named channels straight to pathway scores
+and clears both baselines on both cohorts, so the mechanism is independently predictable rather than a restatement
+of the gene ranking. That matters because `from_genes` is partly downstream of the gene prediction — `direct` is
+the clean test and it passes.
+
+## Limitations, not buried
+
+The `direct` ridge is fitted on only **438 training knockouts** — the gwps readout has 838 knockouts with ≥5
+specific movers and the sealed cohorts take 400 of them. That is a real power limit and the arm would likely
+improve with a lower mover threshold. Per-knockout variance is large (sd 0.38–0.40): many knockouts score 0 or
+1.0 at precision@10, so the means are meaningful but the distribution is not tight. And the pathway truth inherits
+Reactome's coverage and redundancy — 1,248 sets of 10–500 measured members, many overlapping.
+
+## Where the deliverable stands now
+
+Asked to knock out a gene it has never seen perturbed, the system returns **2.9 of 10 genes correct** and, for the
+first time with a number attached, a mechanism that is **~36–39% precise at 10 pathway terms against a ceiling of
+~50–58%**. The mechanism half of the original question is no longer unvalidated text.
