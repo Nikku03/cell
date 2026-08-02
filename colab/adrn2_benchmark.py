@@ -139,11 +139,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 torch.set_num_threads(int(os.environ.get("ADRN2_THREADS", "1")))
 
-from adrn2_env import (BIT_P, CONTEXTS, LAG, N_BITS, PHASE_SCHEDULE, SUPPORTED_FEEDBACK_EVERY,
-                       Adrn2Env, LivenessError, apply_rule)
+from adrn2_env import (BIT_P, CONTEXTS, LAG, N_BITS, SUPPORTED_FEEDBACK_EVERY, Adrn2Env,
+                       LivenessError, apply_rule)
 from adrn2_env import liveness_check as env_liveness_check
 import adrn2 as A2
-from adrn2 import ADRN2A, D_CTX, D_MOD, Flags, MechanismInert, _aug
+from adrn2 import ADRN2A, D_CTX, Flags, MechanismInert, _aug
 
 OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SMOKE = os.environ.get("ADRN2_SMOKE", "0") == "1"
@@ -183,7 +183,6 @@ class BCfg:
         self.val_phase_len = g("ADRN2_VALPHASELEN", 64 if S else 384)
         self.competence_min = g("ADRN2_COMPMIN", 0.85, float)
         self.ceiling = g("ADRN2_CEIL", 0.99, float)
-        self.nn_k = g("ADRN2_NNK", 5)
         self.primary_F = g("ADRN2_PRIMARY_F", 4)
         self.cadences = tuple(int(v) for v in
                               os.environ.get("ADRN2_CADENCES", "1,4,16,64").split(","))
@@ -516,13 +515,17 @@ class TorchHeadArm(BaseArm):
         self.ps = ps
         self.opt = torch.optim.Adam(ps, lr=lr)
         self.n_fallback = 0
+        self.n_fallback_changed = 0
 
     def predict(self, ob):
         with torch.no_grad():
             h = self.enc(ob["seq"])
             if ob["probe"]:
                 self.n_fallback += 1
-                return int(self.blind(h).argmax(-1))
+                p = int(self.blind(h).argmax(-1))
+                if p != int(self.head(h).argmax(-1)):
+                    self.n_fallback_changed += 1
+                return p
             return int(self.head(h).argmax(-1))
 
     def learn(self, ob, y):
@@ -545,7 +548,7 @@ class TorchHeadArm(BaseArm):
         return float(sum(p.detach().abs().sum() for p in self.enc.parameters()))
 
     def tele(self):
-        return {"n_fallback": self.n_fallback}
+        return {"n_fallback": self.n_fallback, "n_fallback_changed": self.n_fallback_changed}
 
 
 class LookupNNArm(BaseArm):
@@ -568,6 +571,7 @@ class LookupNNArm(BaseArm):
         self.seen = 0
         self.rng = np.random.default_rng(12345)
         self.n_fallback = 0
+        self.n_fallback_changed = 0
 
     def _vote(self, X, Y, n, q):
         if n == 0:
@@ -581,7 +585,10 @@ class LookupNNArm(BaseArm):
         q = ob["flat"]
         if ob["probe"]:
             self.n_fallback += 1
-            return self._vote(self.R_x, self.R_y, self.r_n, q)
+            p = self._vote(self.R_x, self.R_y, self.r_n, q)
+            if p != self._vote(self.F_x, self.F_y, self.f_n, q):
+                self.n_fallback_changed += 1
+            return p
         return self._vote(self.F_x, self.F_y, self.f_n, q)
 
     def learn(self, ob, y):
@@ -606,8 +613,8 @@ class LookupNNArm(BaseArm):
         return float(self.F_x[:self.f_n].sum() + self.F_y[:self.f_n].sum() + self.f_n)
 
     def tele(self):
-        return {"n_fallback": self.n_fallback, "fifo_filled": int(self.f_n),
-                "reservoir_filled": int(self.r_n)}
+        return {"n_fallback": self.n_fallback, "n_fallback_changed": self.n_fallback_changed,
+                "fifo_filled": int(self.f_n), "reservoir_filled": int(self.r_n)}
 
 
 class LogRegArm(BaseArm):
@@ -627,6 +634,7 @@ class LogRegArm(BaseArm):
         self.wbar = np.zeros(dim + 1, np.float64)
         self.lr = lr
         self.n_fallback = 0
+        self.n_fallback_changed = 0
 
     def _z(self, w, q):
         return float(w[:-1] @ q + w[-1])
@@ -635,7 +643,10 @@ class LogRegArm(BaseArm):
         q = ob["flat"].astype(np.float64)
         if ob["probe"]:
             self.n_fallback += 1
-            return int(self._z(self.wbar, q) > 0)
+            p = int(self._z(self.wbar, q) > 0)
+            if p != int(self._z(self.w, q) > 0):
+                self.n_fallback_changed += 1
+            return p
         return int(self._z(self.w, q) > 0)
 
     def learn(self, ob, y):
@@ -646,13 +657,13 @@ class LogRegArm(BaseArm):
         self.w[-1] += self.lr * g
         self.n_updates += 1
         self.wbar += (self.w - self.wbar) / self.n_updates
-        self.n_fb_used = self.n_updates
 
     def state_sig(self):
         return float(np.abs(self.w).sum())
 
     def tele(self):
-        return {"n_fallback": self.n_fallback, "w_norm": float(np.linalg.norm(self.w))}
+        return {"n_fallback": self.n_fallback, "n_fallback_changed": self.n_fallback_changed,
+                "w_norm": float(np.linalg.norm(self.w))}
 
 
 class AdrnArm(BaseArm):
@@ -683,7 +694,19 @@ class AdrnArm(BaseArm):
         self.tel = A2.new_tel()
         self.step = 0
         self.n_fallback = 0
+        self.n_fallback_changed = 0
         self.post_log = []
+        # The posterior-degeneracy assertion must be computed on the steps where the posterior was
+        # actually INFERRED. Inside a withheld window the harness OVERWRITES it with a uniform hedge
+        # (and the oracle arm overwrites it with a one-hot), and pooling those harness-injected
+        # vectors into the statistic defeats the assertion: a posterior hard-collapsed onto slot 0
+        # for every inferred step still measured a healthy marginal entropy of 0.40 (floor 0.25)
+        # because 192 injected uniform hedges pulled it up. Measured, not hypothesised -- see the
+        # mutation test in the review. So each step records whether it was inferred, and how many
+        # slots were ALLOCATED at that step, because the uniformity bound is log(slots allocated
+        # then), not log(slots allocated by the end of the stream.)
+        self.post_inferred = []
+        self.used_log = []
         self._cache = None
 
     def predict(self, ob):
@@ -709,26 +732,41 @@ class AdrnArm(BaseArm):
                                        # carries no context information here (env gate G9)
             else:
                 pre = m.posterior_pre(prior, w[0], self.step)
+            def _mix(p):
+                return (p.unsqueeze(-1) * torch.softmax(m.logits_all(wa), -1)).sum(0)
+
             if bool(ob["probe"]) and m.k == 1:
                 # arm 6's fallback: the stable decoder alone, with no adapter contribution.
                 self.n_fallback += 1
                 probs = torch.softmax(m.dec(wa), -1)
+                # A fallback that never CHANGES a prediction is a decoration. Counting that the
+                # branch was entered is not evidence that it did anything -- that is exactly the
+                # shape of ADRN-1's defect 3 -- so the counterfactual is computed and compared.
+                if int(probs.argmax()) != int(_mix(m.transition_prior()).argmax()):
+                    self.n_fallback_changed += 1
             else:
-                if hedge:
-                    self.n_fallback += 1
                 # POSTERIOR-PREDICTIVE MIXTURE, not a mixture of logits. Predicting under a context
                 # posterior means p(y|x) = sum_k p(c=k) p(y|x,c=k); averaging the ADAPTERS instead
                 # (which is what logits_mix does, and what ADRN-2A's local rule uses internally) is a
                 # different and much worse estimator whenever the posterior is genuinely spread, which
                 # is exactly the hedged case this benchmark hinges on. When the posterior is near
                 # one-hot the two coincide, so this changes nothing where nothing should change.
-                probs = (pre.unsqueeze(-1) * torch.softmax(m.logits_all(wa), -1)).sum(0)
+                probs = _mix(pre)
+                if hedge:
+                    self.n_fallback += 1
+                    if not self.oracle:
+                        sticky = m.transition_prior()
+                        alt = m.posterior_pre(sticky, w[0], self.step)
+                        if int(probs.argmax()) != int(_mix(alt).argmax()):
+                            self.n_fallback_changed += 1
             pred = int(probs.argmax())
             self.tel["steps"].append(rec[0])
             if len(rec) > 1:
                 self.tel["wstd"].append(rec[1])
             self.tel["mod"].append(mod[0].numpy().copy())
             self.post_log.append(pre.numpy().copy())
+            self.post_inferred.append(not (self.oracle or hedge))
+            self.used_log.append(int(m.used.sum()))
         self._cache = (w, wa, pre, pred)
         self.step = ob["t"]
         return pred
@@ -763,7 +801,14 @@ class AdrnArm(BaseArm):
 
     def tele(self):
         m = self.model
-        return {"n_fallback": self.n_fallback, "contexts_used": int(m.used.sum()),
+        return {"n_fallback": self.n_fallback,
+                "n_fallback_changed": self.n_fallback_changed,
+                # The ORACLE arm's "fallback" is a no-op BY CONSTRUCTION: it is handed the true
+                # context inside the window exactly as it is outside, so there is nothing for a
+                # change-detection fallback to change. Declared here rather than asserted, because
+                # asserting it would be asserting a mechanism this arm does not claim.
+                "fallback_is_noop_by_construction": bool(self.oracle),
+                "contexts_used": int(m.used.sum()),
                 "contexts_created": len(self.tel["created_at"]),
                 "created_at": list(self.tel["created_at"]),
                 "n_consolidations": int(self.tel["n_consol"]),

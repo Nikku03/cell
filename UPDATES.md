@@ -16996,3 +16996,41 @@ failure rather than a right-censored phase length. Balanced accuracy as the defa
 majority-class prediction cannot fake learning AND or OR. `_all_or_none_mean` refuses to average a list
 containing `None`. Phase lengths forced divisible by 8 so every truth-table case occurs equally often. In
 2B, Gate A refuses to report a routing ratio unless the oracle−shared denominator exceeds 0.05.
+
+---
+
+# ADRN-2B: the Gate B answer is a coordinate of the digital state block
+
+`colab/adrn2b_digital_tabulation.py`, output `outputs/orphan/adrn2b_digital_tabulation.json`. No
+training, no adapter, no episodes — just the two representations against the labels on 4,096 fresh
+random sequences, for all 26 held-out temporal rules in the full meta-test split.
+
+Gate B compares an arm carrying 288 exact `digital_temporal_state_tensor` coordinates against a
+polynomial control carrying none. Balanced accuracy, 0.5 = chance:
+
+| operation | rules | best single digital coord | best 2-coord digital | linear on 288 digital | linear on 168 polynomial |
+|---|---|---|---|---|---|
+| running_parity | 6 | **1.0000** | 0.5215 | **1.0000** | **0.5032** |
+| toggle_reset | 3 | **1.0000** | 0.9432 | **1.0000** | 0.8329 |
+| temporal_order | 6 | 0.5240 | **1.0000** | 0.8335 | **0.4994** |
+| last_event | 11 | 0.8747 | **1.0000** | 0.9547 | 0.9081 |
+| all | 26 | 0.8371 | 0.8830 | 0.9424 | 0.7117 |
+
+For `running_parity` and `toggle_reset`, **one coordinate of the digital block is the answer** —
+balanced accuracy exactly 1.0000, sign included. For `temporal_order` and `last_event`, a threshold
+on the difference of two occurrence-time coordinates is the answer, again exactly 1.0000.
+
+The control's side of the same rules: for `running_parity` (0.5032) and `temporal_order` (0.4994)
+the polynomial basis is at **chance** — and that is a least-squares readout fit on 2,048 labels,
+vastly more than any online adapter sees, so this measures *absence of the information*, not slow
+learning.
+
+So on 12 of 26 held-out temporal rules the comparison Gate B makes is between an arm holding the
+answer as a column and an arm holding nothing. Whatever Gate B reports, it cannot be read as
+"the recurrent workspace is necessary". The GRU is not involved in any number above:
+`digital_temporal_state_tensor` has no learned parameters.
+
+One understatement to note: `linear on 288` for `temporal_order` reads 0.8335, below the 1.0000 the
+targeted two-coordinate threshold reaches. That is the ridge readout minimising squared error across
+288 correlated coordinates, not a limit of the representation. The 2-coordinate figure is the honest
+measure of what is available.

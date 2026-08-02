@@ -23,7 +23,6 @@
   "val_phase_len": 64,
   "competence_min": 0.85,
   "ceiling": 0.99,
-  "nn_k": 5,
   "primary_F": 4,
   "cadences": [
    1,
@@ -116,11 +115,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.003428050608101153,
-      "sd": 0.00015170991030658476,
+      "mean": 0.0031436988198849905,
+      "sd": 2.1183941440766202e-05,
       "per_seed": [
-       0.003535325714452142,
-       0.003320775501750164
+       0.003158678128530015,
+       0.003128719511239966
       ]
      },
      "updates_per_example": {
@@ -194,11 +193,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0012832317461059814,
-      "sd": 4.8748152047080704e-05,
+      "mean": 0.0012096878142418494,
+      "sd": 7.244781115380923e-05,
       "per_seed": [
-       0.0012487615972231777,
-       0.001317701894988785
+       0.0011584594756928685,
+       0.0012609161527908303
       ]
      },
      "updates_per_example": {
@@ -272,11 +271,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.000758180427966061,
-      "sd": 5.174290090051774e-05,
+      "mean": 0.0007639838880082708,
+      "sd": 2.813117896056199e-05,
       "per_seed": [
-       0.0007947681840710806,
-       0.0007215926718610414
+       0.0007440921406024851,
+       0.0007838756354140565
       ]
      },
      "updates_per_example": {
@@ -350,11 +349,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0006135041293349433,
-      "sd": 3.8689634825066316e-05,
+      "mean": 0.0006333896666493249,
+      "sd": 9.602145858331778e-05,
       "per_seed": [
-       0.0006408618324813789,
-       0.0005861464261885077
+       0.0005654922421456376,
+       0.0007012870911530121
       ]
      },
      "updates_per_example": {
@@ -435,11 +434,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0017758737191794832,
-      "sd": 2.2052599889502617e-05,
+      "mean": 0.0016827331250234402,
+      "sd": 3.896683780781249e-05,
       "per_seed": [
-       0.0017914672621041443,
-       0.0017602801762548223
+       0.0017102868402787408,
+       0.0016551794097681397
       ]
      },
      "updates_per_example": {
@@ -513,11 +512,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0008472418233746264,
-      "sd": 7.081282745990357e-05,
+      "mean": 0.0008036242235378824,
+      "sd": 9.775169987657045e-06,
       "per_seed": [
-       0.0008973140538665171,
-       0.0007971695928827356
+       0.0007967121345523588,
+       0.0008105363125234059
       ]
      },
      "updates_per_example": {
@@ -591,11 +590,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.000662455527367298,
-      "sd": 7.221442235113831e-05,
+      "mean": 0.0006589188125174258,
+      "sd": 4.234887927513477e-05,
       "per_seed": [
-       0.0007135188351112573,
-       0.0006113922196233387
+       0.0006289736328063276,
+       0.0006888639922285241
       ]
      },
      "updates_per_example": {
@@ -669,11 +668,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0005677373637390638,
-      "sd": 9.170624980439971e-06,
+      "mean": 0.0006031103623911349,
+      "sd": 8.99447529493714e-05,
       "per_seed": [
-       0.0005612527526276759,
-       0.0005742219748504516
+       0.0005395098176484857,
+       0.0006667109071337842
       ]
      },
      "updates_per_example": {
@@ -754,11 +753,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.001254350008218176,
-      "sd": 5.383824915614072e-05,
+      "mean": 0.0011931973116314034,
+      "sd": 5.048581612451485e-06,
       "per_seed": [
-       0.001292419399283694,
-       0.001216280617152658
+       0.0011967671979249417,
+       0.0011896274253378654
       ]
      },
      "updates_per_example": {
@@ -832,11 +831,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0005392521297748784,
-      "sd": 2.947651404871884e-05,
+      "mean": 0.000544044769111925,
+      "sd": 3.4560309227015895e-05,
       "per_seed": [
-       0.0005600951727444681,
-       0.0005184090868052888
+       0.0005196069400975981,
+       0.000568482598126252
       ]
      },
      "updates_per_example": {
@@ -910,11 +909,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.00037707006552049427,
-      "sd": 3.807501233417938e-05,
+      "mean": 0.0003640889765613843,
+      "sd": 8.557758575862173e-06,
       "per_seed": [
-       0.00040399316493575397,
-       0.0003501469661052346
+       0.0003580377274406348,
+       0.00037014022568213376
       ]
      },
      "updates_per_example": {
@@ -988,11 +987,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0003189277313219287,
-      "sd": 2.670580902200831e-06,
+      "mean": 0.000330897301676853,
+      "sd": 2.9032384701909928e-05,
       "per_seed": [
-       0.00032081611718758215,
-       0.00031703934545627516
+       0.0003103683055801159,
+       0.0003514262977735901
       ]
      },
      "updates_per_example": {
@@ -1073,11 +1072,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 8.76796549320602e-05,
-      "sd": 2.626981302544764e-05,
+      "mean": 7.1561714428804e-05,
+      "sd": 3.720294361001201e-08,
       "per_seed": [
-       0.00010625521786285692,
-       6.910409200126348e-05
+       7.153540797509727e-05,
+       7.158802088251075e-05
       ]
      },
      "updates_per_example": {
@@ -1151,11 +1150,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 3.881164973762452e-05,
-      "sd": 6.474170424963887e-07,
+      "mean": 4.234991060769744e-05,
+      "sd": 1.6297043390998938e-06,
       "per_seed": [
-       3.9269442718629456e-05,
-       3.8353856756619585e-05
+       4.119753561819076e-05,
+       4.3502285597204114e-05
       ]
      },
      "updates_per_example": {
@@ -1229,11 +1228,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 2.516011847891125e-05,
-      "sd": 1.268900055312411e-06,
+      "mean": 2.651149090048143e-05,
+      "sd": 3.19615341847004e-07,
       "per_seed": [
-       2.6057366312670638e-05,
-       2.4262870645151856e-05
+       2.67374930760727e-05,
+       2.6285488724890154e-05
       ]
      },
      "updates_per_example": {
@@ -1307,11 +1306,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 2.1950248661855516e-05,
-      "sd": 4.935549909963744e-07,
+      "mean": 2.3238056866622024e-05,
+      "sd": 7.4704298350726e-07,
       "per_seed": [
-       2.2299244742877516e-05,
-       2.1601252580833512e-05
+       2.3766296026097836e-05,
+       2.270981770714621e-05
       ]
      },
      "updates_per_example": {
@@ -1392,11 +1391,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 1.7957294316614833e-05,
-      "sd": 6.178376144053577e-06,
+      "mean": 1.4013360684196465e-05,
+      "sd": 6.96724193690102e-07,
       "per_seed": [
-       2.232606598479631e-05,
-       1.3588522648433354e-05
+       1.4506019086171465e-05,
+       1.3520702282221464e-05
       ]
      },
      "updates_per_example": {
@@ -1470,11 +1469,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 7.576184438720348e-06,
-      "sd": 6.496930284273167e-07,
+      "mean": 7.227382815086811e-06,
+      "sd": 1.2959203958179268e-07,
       "per_seed": [
-       8.035586784810928e-06,
-       7.116782092629768e-06
+       7.13574740511073e-06,
+       7.319018225062892e-06
       ]
      },
      "updates_per_example": {
@@ -1548,11 +1547,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 5.284516503599611e-06,
-      "sd": 3.9616640243073643e-07,
+      "mean": 5.135486123069515e-06,
+      "sd": 8.196915406257698e-08,
       "per_seed": [
-       5.564648453236663e-06,
-       5.004384553962558e-06
+       5.077525178383742e-06,
+       5.193447067755288e-06
       ]
      },
      "updates_per_example": {
@@ -1626,11 +1625,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 4.749864586983676e-06,
-      "sd": 1.6831965043329244e-07,
+      "mean": 5.136120681154605e-06,
+      "sd": 5.990765457304614e-07,
       "per_seed": [
-       4.630844620755346e-06,
-       4.868884553212007e-06
+       4.712509593218783e-06,
+       5.559731769090427e-06
       ]
      },
      "updates_per_example": {
@@ -1711,11 +1710,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.00204860351648348,
-      "sd": 9.518901712823476e-05,
+      "mean": 0.002107275627992067,
+      "sd": 0.00014364537711786122,
       "per_seed": [
-       0.0021159123159893373,
-       0.001981294716977623
+       0.0022088482482382054,
+       0.002005703007745928
       ]
      },
      "updates_per_example": {
@@ -1789,11 +1788,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.001221069099809174,
-      "sd": 2.7914174471570608e-05,
+      "mean": 0.0012633206840470103,
+      "sd": 3.352336656587981e-05,
       "per_seed": [
-       0.0012408074018692458,
-       0.0012013307977491018
+       0.0012396160842200743,
+       0.0012870252838739463
       ]
      },
      "updates_per_example": {
@@ -1867,11 +1866,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.001053820741315153,
-      "sd": 2.132749450020785e-05,
+      "mean": 0.0010368928198695295,
+      "sd": 1.2130719418568935e-05,
       "per_seed": [
-       0.0010689015573019686,
-       0.001038739925328337
+       0.0010454705338310709,
+       0.001028315105907988
       ]
      },
      "updates_per_example": {
@@ -1945,11 +1944,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0010222295178026444,
-      "sd": 7.225485506062799e-05,
+      "mean": 0.0010000040763600282,
+      "sd": 5.968659610365176e-05,
       "per_seed": [
-       0.0010733214157896656,
-       0.0009711376198156233
+       0.0009577992795091935,
+       0.001042208873210863
       ]
      },
      "updates_per_example": {
@@ -2030,11 +2029,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.002112190878038847,
-      "sd": 2.071959732968326e-06,
+      "mean": 0.002144634692252604,
+      "sd": 1.52758530786761e-05,
       "per_seed": [
-       0.0021107257812613195,
-       0.002113655974816374
+       0.0021554363515529453,
+       0.002133833032952263
       ]
      },
      "updates_per_example": {
@@ -2108,11 +2107,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0012433889105925762,
-      "sd": 5.90830866149781e-05,
+      "mean": 0.0012594360642279095,
+      "sd": 4.869104886458198e-05,
       "per_seed": [
-       0.001201610859393693,
-       0.0012851669617914593
+       0.001293865835063141,
+       0.001225006293392678
       ]
      },
      "updates_per_example": {
@@ -2186,11 +2185,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.001024656821140329,
-      "sd": 7.856227397484102e-05,
+      "mean": 0.0010325174826538348,
+      "sd": 2.341945759182959e-05,
       "per_seed": [
-       0.0010802087378133745,
-       0.0009691049044672834
+       0.0010159574253789413,
+       0.0010490775399287283
       ]
      },
      "updates_per_example": {
@@ -2264,11 +2263,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0009878221354221572,
-      "sd": 2.385783199403435e-06,
+      "mean": 0.001000571965265509,
+      "sd": 0.00010955614402358511,
       "per_seed": [
-       0.0009861351319434182,
-       0.0009895091389008964
+       0.0009231040729057819,
+       0.001078039857625236
       ]
      },
      "updates_per_example": {
@@ -2349,11 +2348,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.002464124974367444,
-      "sd": 1.459926894803145e-06,
+      "mean": 0.002443505510829564,
+      "sd": 6.055807969609138e-06,
       "per_seed": [
-       0.0024630926501600925,
-       0.0024651572985747963
+       0.00243922340794869,
+       0.0024477876137104383
       ]
      },
      "updates_per_example": {
@@ -2427,11 +2426,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0014757994991406855,
-      "sd": 5.38114620043716e-05,
+      "mean": 0.0015206940338430286,
+      "sd": 2.0683616096087333e-05,
       "per_seed": [
-       0.001437749049451832,
-       0.0015138499488295389
+       0.0015353195590440312,
+       0.001506068508642026
       ]
      },
      "updates_per_example": {
@@ -2505,11 +2504,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.0012039212959820134,
-      "sd": 2.199409973503312e-05,
+      "mean": 0.001269683276496557,
+      "sd": 8.0219942792213e-05,
       "per_seed": [
-       0.0012194734730507485,
-       0.0011883691189132782
+       0.0012129592109617862,
+       0.0013264073420313277
       ]
      },
      "updates_per_example": {
@@ -2583,11 +2582,11 @@
       ]
      },
      "sec_per_example": {
-      "mean": 0.00127137674220279,
-      "sd": 8.21614340005349e-05,
+      "mean": 0.0012853410121359667,
+      "sd": 0.00014811522801710657,
       "per_seed": [
-       0.0013294736493365792,
-       0.0012132798350690008
+       0.001180607730008079,
+       0.0013900742942638544
       ]
      },
      "updates_per_example": {
@@ -4829,7 +4828,7 @@
   "L8_fitter_c1_heldout": 1.0,
   "L9_steps_checked": 1152
  },
- "verdict": "SMOKE RUN -- plumbing and liveness check, NOT a result; rerun with ADRN2_SMOKE unset. ADRN-2 SECTION 18 BASELINE LADDER: 5/14 predeclared gates pass over n=2 seeds, where one seed is an independent initialisation AND an independent environment draw, and every MDE is 3*sd/sqrt(n) on the PAIRED per-seed gap. At the primary cadence F=4, ADRN-2A with an INFERRED context (arm 8) reaches a raw held-out RETENTION of 0.5781 inside the feedback-withheld windows that open the two return phases, against 0.6953 for the best of arms 1-5 (2_transformer_frozen_head) -- a paired per-seed gap of -0.1172 against an MDE of 0.0234 -- and against 0.6250 for the same system with context separation switched off (arm 6), a gap of -0.0469 against an MDE of 0.2344. THE SECTION-18 DIAGNOSTIC, reported as a headline rather than a footnote: handing the context over (arm 7) gives 0.9375 against arm 8's 0.5781, a gap of +0.3594 against an MDE of 0.0938, so CONTEXT DETECTION IS THE BOTTLENECK -- the adapters hold what they are told to hold and it is the manager's identification of which context is active that limits retention. That gap has an information-theoretic explanation which is stated here rather than left to be discovered: the environment guarantees by construction that the input distribution is identical in every context and feedback is withheld for the entire window, so inside it there is NO evidence about which context is active and identification is impossible for any non-oracle system of any size. The three references computed on the realised windows bound what is achievable -- the stale-rule floor (keep applying the previous phase's rule) at 0.4453, the context-blind Bayes ceiling for a non-oracle arm (detect the change, average over the contexts seen so far) at 0.6875, and the oracle at 1.0000 -- and arm 8's 0.5781 sits at or below the context-blind Bayes ceiling for a withheld window, so it is best read as HEDGING over stored contexts rather than as RETRIEVING a particular one. G3 is answered per cadence and its answer is mechanistic rather than mysterious: a withheld window can only reveal itself where a CADENCE SLOT falls inside it, so the derived change-detection flag covers 0.97 of the retention window at F=1, 0.88 of the retention window at F=4, 0.50 of the retention window at F=16, 0.00 of the retention window at F=64, and arm 8's retention across those cadences is 0.6250 at F=1, 0.5781 at F=4, 0.5391 at F=16 (UNSUPPORTED: its own mechanisms are starved there), 0.6562 at F=64 (UNSUPPORTED: its own mechanisms are starved there). Cadence and total supervision are the same knob in this specification -- 960 labels at F=1, 240 labels at F=4, 60 labels at F=16, 18 labels at F=64 over an identical stream -- so a retention drop at long cadence cannot be attributed to delay rather than to starvation, and that confound is printed in the table rather than argued away. The four metrics are reported separately and never averaged together: at F=4 arm 8 shows RETENTION 0.5781, RELEARNING 0.6354 once feedback resumes, STEADY 0.8547 late within a phase, and FORGETTING +0.3232 measured as the drop from a context's first-visit steady accuracy to its retention on the return; COST is measured rather than asserted at 1.476 ms and 0.208 updates per example. Every arm was built to a matched budget of ~30,000 parameters by bisection with realised counts printed; the digital half of every neural arm was pretrained by a byte-identical context-blind recipe and had to pass a per-context linear-probe competence assertion before any online number was taken; every free scalar step size in arms 1-5 was calibrated per seed and per cadence on a SEPARATE validation environment draw over the same grid while the ADRN-2A arms received no calibrated scalar at all; and the change-detection signal derived from the feedback channel was given to all eight arms in the strongest form each architecture admits, so no baseline loses for being untuned or for being denied information the proposal was given. Before any number above was allowed into the table, every arm-run had to pass a mechanism liveness assertion proving numerically that its fast adapters changed between updates, that its context posterior was neither collapsed onto one context nor flat uniform, that its consolidated adapter existed and differed from the fast adapter by more than a copy, that its workspace moved across internal steps and did not simply run to the halting cap, that its plasticity controller emitted a varying rate, that its encoder was frozen where it claimed to be frozen and moved where it claimed to fine-tune, and that it actually performed online updates at all; separately, four component flags were toggled on one pretrained model and replayed over the SAME full stream with the prediction trace required to move, and no two differently-configured arms were permitted to return byte-identical per-seed metrics.",
+ "verdict": "SMOKE RUN -- plumbing and liveness check, NOT a result; rerun with ADRN2_SMOKE unset. ADRN-2 SECTION 18 BASELINE LADDER: 5/14 predeclared gates pass over n=2 seeds, where one seed is an independent initialisation AND an independent environment draw, and every MDE is 3*sd/sqrt(n) on the PAIRED per-seed gap. At the primary cadence F=4, ADRN-2A with an INFERRED context (arm 8) reaches a raw held-out RETENTION of 0.5781 inside the feedback-withheld windows that open the two return phases, against 0.6953 for the best of arms 1-5 (2_transformer_frozen_head) -- a paired per-seed gap of -0.1172 against an MDE of 0.0234 -- and against 0.6250 for the same system with context separation switched off (arm 6), a gap of -0.0469 against an MDE of 0.2344. THE SECTION-18 DIAGNOSTIC, reported as a headline rather than a footnote: handing the context over (arm 7) gives 0.9375 against arm 8's 0.5781, a gap of +0.3594 against an MDE of 0.0938, so CONTEXT DETECTION IS THE BOTTLENECK -- the adapters hold what they are told to hold and it is the manager's identification of which context is active that limits retention. That gap has an information-theoretic explanation which is stated here rather than left to be discovered: the environment guarantees by construction that the input distribution is identical in every context and feedback is withheld for the entire window, so inside it there is NO evidence about which context is active and identification is impossible for any non-oracle system of any size. The three references computed on the realised windows bound what is achievable -- the stale-rule floor (keep applying the previous phase's rule) at 0.4453, the context-blind Bayes ceiling for a non-oracle arm (detect the change, average over the contexts seen so far) at 0.6875, and the oracle at 1.0000 -- and arm 8's 0.5781 sits at or below the context-blind Bayes ceiling for a withheld window, so it is best read as HEDGING over stored contexts rather than as RETRIEVING a particular one. G3 is answered per cadence and its answer is mechanistic rather than mysterious: a withheld window can only reveal itself where a CADENCE SLOT falls inside it, so the derived change-detection flag covers 0.97 of the retention window at F=1, 0.88 of the retention window at F=4, 0.50 of the retention window at F=16, 0.00 of the retention window at F=64, and arm 8's retention across those cadences is 0.6250 at F=1, 0.5781 at F=4, 0.5391 at F=16 (UNSUPPORTED: its own mechanisms are starved there), 0.6562 at F=64 (UNSUPPORTED: its own mechanisms are starved there). Cadence and total supervision are the same knob in this specification -- 960 labels at F=1, 240 labels at F=4, 60 labels at F=16, 18 labels at F=64 over an identical stream -- so a retention drop at long cadence cannot be attributed to delay rather than to starvation, and that confound is printed in the table rather than argued away. The four metrics are reported separately and never averaged together: at F=4 arm 8 shows RETENTION 0.5781, RELEARNING 0.6354 once feedback resumes, STEADY 0.8547 late within a phase, and FORGETTING +0.3232 measured as the drop from a context's first-visit steady accuracy to its retention on the return; COST is measured rather than asserted at 1.521 ms and 0.208 updates per example. Every arm was built to a matched budget of ~30,000 parameters by bisection with realised counts printed; the digital half of every neural arm was pretrained by a byte-identical context-blind recipe and had to pass a per-context linear-probe competence assertion before any online number was taken; every free scalar step size in arms 1-5 was calibrated per seed and per cadence on a SEPARATE validation environment draw over the same grid while the ADRN-2A arms received no calibrated scalar at all; and the change-detection signal derived from the feedback channel was given to all eight arms in the strongest form each architecture admits, so no baseline loses for being untuned or for being denied information the proposal was given. Before any number above was allowed into the table, every arm-run had to pass a mechanism liveness assertion proving numerically that its fast adapters changed between updates, that its context posterior was neither collapsed onto one context nor flat uniform, that its consolidated adapter existed and differed from the fast adapter by more than a copy, that its workspace moved across internal steps and did not simply run to the halting cap, that its plasticity controller emitted a varying rate, that its encoder was frozen where it claimed to be frozen and moved where it claimed to fine-tune, and that it actually performed online updates at all; separately, four component flags were toggled on one pretrained model and replayed over the SAME full stream with the prediction trace required to move, and no two differently-configured arms were permitted to return byte-identical per-seed metrics.",
  "limits": [
   "FALSIFIER, and the most important one: inside a feedback-withheld window the environment guarantees the input distribution is identical across contexts, so no non-oracle arm can identify which context returned. If a future environment leaked ANY context information into x -- different input statistics, a marker channel, a temporal signature -- the retention metric would start measuring inference from inputs rather than retrieval from memory, every non-oracle arm would rise, and the oracle-minus-inferred gap reported here would shrink for reasons that have nothing to do with the context manager.",
   "FALSIFIER: the change-detection signal is derived from the FEEDBACK MASK -- a cadence slot that delivers no label reveals that a probe window has begun. If withholding were randomised so that gaps in feedback carried no information about phase boundaries, every arm's fallback would stop firing and retention should collapse to the stale-rule floor for all of them. That single protocol property is load-bearing for every retention number in this file and it is stated, not hidden.",
@@ -4845,7 +4844,7 @@
   "eligibility is switched OFF for every ADRN-2A arm and no claim is made about it, because feedback here is SPARSE rather than DELAYED -- the label at a feedback step refers to that step. A genuinely delayed-credit variant of this environment would be needed to test that mechanism.",
   "STAGE 2A ONLY: no dendrites, no episodic memory, no world model, no planner. Nothing in this file supports a claim about those, and nothing in it is evidence about biology data."
  ],
- "runtime_sec": 141.28841066360474,
+ "runtime_sec": 139.02863001823425,
  "log": [
   "================================================================================================================",
   "ADRN-2 SECTION 18 BASELINE LADDER -- eight arms on the latent-rule environment",
@@ -4895,14 +4894,14 @@
   "  CADENCE F = 1  (feedback every 1 steps -> 960 labels over 1152 steps, 160 per phase)",
   "  --------------------------------------------------------------------------------------------------------------",
   "    arm                                  RETENTION    naive  RELEARN   STEADY  overall   FORGET  upd/ex   ms/ex",
-  "    1_transformer_full             0.7188 \u00b1 0.0442   0.6328   0.5417   0.7110   0.7010   0.0487   0.833   3.428",
-  "    2_transformer_frozen_head      0.6953 \u00b1 0.0331   0.6367   0.4583   0.9151   0.8672   0.2477   0.833   1.776",
-  "    3_gru_head                     0.6641 \u00b1 0.0552   0.6016   0.5833   0.7716   0.7448   0.1318   0.833   1.254",
-  "    4_nn_lookup                    0.5469 \u00b1 0.1105   0.5352   0.3750   0.5501   0.5464  -0.0057   0.833   0.088",
-  "    5_online_logreg                0.6172 \u00b1 0.0773   0.5312   0.4167   0.5770   0.5725  -0.0840   0.833   0.018",
-  "    6_adrn2a_no_context            0.6484 \u00b1 0.0331   0.6641   0.5417   0.9747   0.9175   0.3342   0.833   2.049",
-  "    7_adrn2a_oracle_context        0.9375 \u00b1 0.0884   0.6445   0.6667   0.9921   0.9470   0.0514   0.833   2.112",
-  "    8_adrn2a_inferred_context      0.6250 \u00b1 0.0221   0.5508   0.5417   0.9757   0.9045   0.3592   0.833   2.464",
+  "    1_transformer_full             0.7188 \u00b1 0.0442   0.6328   0.5417   0.7110   0.7010   0.0487   0.833   3.144",
+  "    2_transformer_frozen_head      0.6953 \u00b1 0.0331   0.6367   0.4583   0.9151   0.8672   0.2477   0.833   1.683",
+  "    3_gru_head                     0.6641 \u00b1 0.0552   0.6016   0.5833   0.7716   0.7448   0.1318   0.833   1.193",
+  "    4_nn_lookup                    0.5469 \u00b1 0.1105   0.5352   0.3750   0.5501   0.5464  -0.0057   0.833   0.072",
+  "    5_online_logreg                0.6172 \u00b1 0.0773   0.5312   0.4167   0.5770   0.5725  -0.0840   0.833   0.014",
+  "    6_adrn2a_no_context            0.6484 \u00b1 0.0331   0.6641   0.5417   0.9747   0.9175   0.3342   0.833   2.107",
+  "    7_adrn2a_oracle_context        0.9375 \u00b1 0.0884   0.6445   0.6667   0.9921   0.9470   0.0514   0.833   2.145",
+  "    8_adrn2a_inferred_context      0.6250 \u00b1 0.0221   0.5508   0.5417   0.9757   0.9045   0.3592   0.833   2.444",
   "    -- reference: stale rule       0.4453          (FLOOR: keep applying the previous phase's rule -- no change detection, no context memory)",
   "    -- ref: blind Bayes, all 4     0.7031          (ceiling for an arm that hedges over ALL contexts: arms 1,2,3,6)",
   "    -- ref: blind Bayes, seen      0.6875          (CEILING for any non-oracle arm: hedge over the contexts SEEN SO FAR -- arms 7,8)",
@@ -4920,14 +4919,14 @@
   "  CADENCE F = 4  (feedback every 4 steps -> 240 labels over 1152 steps, 40 per phase)   *** PRIMARY ***",
   "  --------------------------------------------------------------------------------------------------------------",
   "    arm                                  RETENTION    naive  RELEARN   STEADY  overall   FORGET  upd/ex   ms/ex",
-  "    1_transformer_full             0.6328 \u00b1 0.0552   0.6055   0.6146   0.6897   0.6740   0.1073   0.208   1.283",
-  "    2_transformer_frozen_head      0.6953 \u00b1 0.0773   0.6211   0.5833   0.6913   0.6793   0.0399   0.208   0.847",
-  "    3_gru_head                     0.6328 \u00b1 0.0773   0.5938   0.6250   0.6694   0.6571   0.0070   0.208   0.539",
-  "    4_nn_lookup                    0.5234 \u00b1 0.0110   0.4844   0.4479   0.5285   0.5200  -0.0152   0.208   0.039",
-  "    5_online_logreg                0.5391 \u00b1 0.0331   0.5195   0.5208   0.5345   0.5326  -0.0259   0.208   0.008",
-  "    6_adrn2a_no_context            0.6250 \u00b1 0.0221   0.6602   0.6354   0.8772   0.8290   0.2697   0.208   1.221",
-  "    7_adrn2a_oracle_context        0.9375 \u00b1 0.0442   0.6445   0.7917   0.9605   0.9171   0.0115   0.208   1.243",
-  "    8_adrn2a_inferred_context      0.5781 \u00b1 0.0884   0.5586   0.6354   0.8547   0.7973   0.3232   0.208   1.476",
+  "    1_transformer_full             0.6328 \u00b1 0.0552   0.6055   0.6146   0.6897   0.6740   0.1073   0.208   1.210",
+  "    2_transformer_frozen_head      0.6953 \u00b1 0.0773   0.6211   0.5833   0.6913   0.6793   0.0399   0.208   0.804",
+  "    3_gru_head                     0.6328 \u00b1 0.0773   0.5938   0.6250   0.6694   0.6571   0.0070   0.208   0.544",
+  "    4_nn_lookup                    0.5234 \u00b1 0.0110   0.4844   0.4479   0.5285   0.5200  -0.0152   0.208   0.042",
+  "    5_online_logreg                0.5391 \u00b1 0.0331   0.5195   0.5208   0.5345   0.5326  -0.0259   0.208   0.007",
+  "    6_adrn2a_no_context            0.6250 \u00b1 0.0221   0.6602   0.6354   0.8772   0.8290   0.2697   0.208   1.263",
+  "    7_adrn2a_oracle_context        0.9375 \u00b1 0.0442   0.6445   0.7917   0.9605   0.9171   0.0115   0.208   1.259",
+  "    8_adrn2a_inferred_context      0.5781 \u00b1 0.0884   0.5586   0.6354   0.8547   0.7973   0.3232   0.208   1.521",
   "    -- reference: stale rule       0.4453          (FLOOR: keep applying the previous phase's rule -- no change detection, no context memory)",
   "    -- ref: blind Bayes, all 4     0.7031          (ceiling for an arm that hedges over ALL contexts: arms 1,2,3,6)",
   "    -- ref: blind Bayes, seen      0.6875          (CEILING for any non-oracle arm: hedge over the contexts SEEN SO FAR -- arms 7,8)",
@@ -4945,14 +4944,14 @@
   "  CADENCE F = 16  (feedback every 16 steps -> 60 labels over 1152 steps, 10 per phase)",
   "  --------------------------------------------------------------------------------------------------------------",
   "    arm                                  RETENTION    naive  RELEARN   STEADY  overall   FORGET  upd/ex   ms/ex",
-  "    1_transformer_full             0.7344 \u00b1 0.0884   0.6133   0.6823   0.6842   0.6788   0.0000   0.052   0.758",
-  "    2_transformer_frozen_head      0.7344 \u00b1 0.0221   0.5703   0.6562   0.6608   0.6541  -0.0156   0.052   0.662",
-  "    3_gru_head                     0.6328 \u00b1 0.1657   0.5938   0.6510   0.6615   0.6506   0.0312   0.052   0.377",
-  "    4_nn_lookup                    0.6562 \u00b1 0.0663   0.4961   0.4792   0.5286   0.5239  -0.1758   0.052   0.025",
+  "    1_transformer_full             0.7344 \u00b1 0.0884   0.6133   0.6823   0.6842   0.6788   0.0000   0.052   0.764",
+  "    2_transformer_frozen_head      0.7344 \u00b1 0.0221   0.5703   0.6562   0.6608   0.6541  -0.0156   0.052   0.659",
+  "    3_gru_head                     0.6328 \u00b1 0.1657   0.5938   0.6510   0.6615   0.6506   0.0312   0.052   0.364",
+  "    4_nn_lookup                    0.6562 \u00b1 0.0663   0.4961   0.4792   0.5286   0.5239  -0.1758   0.052   0.027",
   "    5_online_logreg                0.5625 \u00b1 0.0221   0.5156   0.5000   0.4818   0.4931  -0.0879   0.052   0.005",
-  "    6_adrn2a_no_context            0.5469 \u00b1 0.0221   0.6133   0.6562   0.7539   0.7105   0.2422   0.052   1.054",
-  "    7_adrn2a_oracle_context        0.8438 \u00b1 0.0663   0.6484   0.7578   0.8620   0.8199   0.0508   0.052   1.025",
-  "    8_adrn2a_inferred_context      0.5391 \u00b1 0.0552   0.5664   0.6198   0.7585   0.7018   0.2617   0.052   1.204",
+  "    6_adrn2a_no_context            0.5469 \u00b1 0.0221   0.6133   0.6562   0.7539   0.7105   0.2422   0.052   1.037",
+  "    7_adrn2a_oracle_context        0.8438 \u00b1 0.0663   0.6484   0.7578   0.8620   0.8199   0.0508   0.052   1.033",
+  "    8_adrn2a_inferred_context      0.5391 \u00b1 0.0552   0.5664   0.6198   0.7585   0.7018   0.2617   0.052   1.270",
   "    -- reference: stale rule       0.4453          (FLOOR: keep applying the previous phase's rule -- no change detection, no context memory)",
   "    -- ref: blind Bayes, all 4     0.7031          (ceiling for an arm that hedges over ALL contexts: arms 1,2,3,6)",
   "    -- ref: blind Bayes, seen      0.6875          (CEILING for any non-oracle arm: hedge over the contexts SEEN SO FAR -- arms 7,8)",
@@ -4977,14 +4976,14 @@
   "  CADENCE F = 64  (feedback every 64 steps -> 18 labels over 1152 steps, 2 per phase)",
   "  --------------------------------------------------------------------------------------------------------------",
   "    arm                                  RETENTION    naive  RELEARN   STEADY  overall   FORGET  upd/ex   ms/ex",
-  "    1_transformer_full             0.7031 \u00b1 0.0442   0.6406   0.6966   0.7057   0.6923   0.0391   0.016   0.614",
-  "    2_transformer_frozen_head      0.7344 \u00b1 0.0442   0.5664   0.6569   0.6693   0.6532  -0.0469   0.016   0.568",
-  "    3_gru_head                     0.6406 \u00b1 0.0884   0.6016   0.6654   0.6641   0.6567   0.0078   0.016   0.319",
-  "    4_nn_lookup                    0.4297 \u00b1 0.0552   0.5234   0.4935   0.4974   0.4939   0.0312   0.016   0.022",
+  "    1_transformer_full             0.7031 \u00b1 0.0442   0.6406   0.6966   0.7057   0.6923   0.0391   0.016   0.633",
+  "    2_transformer_frozen_head      0.7344 \u00b1 0.0442   0.5664   0.6569   0.6693   0.6532  -0.0469   0.016   0.603",
+  "    3_gru_head                     0.6406 \u00b1 0.0884   0.6016   0.6654   0.6641   0.6567   0.0078   0.016   0.331",
+  "    4_nn_lookup                    0.4297 \u00b1 0.0552   0.5234   0.4935   0.4974   0.4939   0.0312   0.016   0.023",
   "    5_online_logreg                0.4062 \u00b1 0.0442   0.4961   0.4915   0.4896   0.4870   0.0859   0.016   0.005",
-  "    6_adrn2a_no_context            0.6719 \u00b1 0.0442   0.6016   0.7109   0.7240   0.6988   0.0938   0.016   1.022",
-  "    7_adrn2a_oracle_context        0.8281 \u00b1 0.0884   0.6445   0.7734   0.8203   0.7700   0.0156   0.016   0.988",
-  "    8_adrn2a_inferred_context      0.6562 \u00b1 0.0442   0.5977   0.7031   0.7318   0.6936   0.1172   0.016   1.271",
+  "    6_adrn2a_no_context            0.6719 \u00b1 0.0442   0.6016   0.7109   0.7240   0.6988   0.0938   0.016   1.000",
+  "    7_adrn2a_oracle_context        0.8281 \u00b1 0.0884   0.6445   0.7734   0.8203   0.7700   0.0156   0.016   1.001",
+  "    8_adrn2a_inferred_context      0.6562 \u00b1 0.0442   0.5977   0.7031   0.7318   0.6936   0.1172   0.016   1.285",
   "    -- reference: stale rule       0.4453          (FLOOR: keep applying the previous phase's rule -- no change detection, no context memory)",
   "    -- ref: blind Bayes, all 4     0.7031          (ceiling for an arm that hedges over ALL contexts: arms 1,2,3,6)",
   "    -- ref: blind Bayes, seen      0.6875          (CEILING for any non-oracle arm: hedge over the contexts SEEN SO FAR -- arms 7,8)",
@@ -5027,14 +5026,14 @@
   "\n================================================================================================================",
   "  COST (measured, not asserted -- ADRN-1's efficiency claim was never measured)",
   "    arm                                         F=1                F=4               F=16               F=64",
-  "    1_transformer_full              3.428ms/0.833u    1.283ms/0.208u    0.758ms/0.052u    0.614ms/0.016u",
-  "    2_transformer_frozen_head       1.776ms/0.833u    0.847ms/0.208u    0.662ms/0.052u    0.568ms/0.016u",
-  "    3_gru_head                      1.254ms/0.833u    0.539ms/0.208u    0.377ms/0.052u    0.319ms/0.016u",
-  "    4_nn_lookup                     0.088ms/0.833u    0.039ms/0.208u    0.025ms/0.052u    0.022ms/0.016u",
-  "    5_online_logreg                 0.018ms/0.833u    0.008ms/0.208u    0.005ms/0.052u    0.005ms/0.016u",
-  "    6_adrn2a_no_context             2.049ms/0.833u    1.221ms/0.208u    1.054ms/0.052u    1.022ms/0.016u",
-  "    7_adrn2a_oracle_context         2.112ms/0.833u    1.243ms/0.208u    1.025ms/0.052u    0.988ms/0.016u",
-  "    8_adrn2a_inferred_context       2.464ms/0.833u    1.476ms/0.208u    1.204ms/0.052u    1.271ms/0.016u",
+  "    1_transformer_full              3.144ms/0.833u    1.210ms/0.208u    0.764ms/0.052u    0.633ms/0.016u",
+  "    2_transformer_frozen_head       1.683ms/0.833u    0.804ms/0.208u    0.659ms/0.052u    0.603ms/0.016u",
+  "    3_gru_head                      1.193ms/0.833u    0.544ms/0.208u    0.364ms/0.052u    0.331ms/0.016u",
+  "    4_nn_lookup                     0.072ms/0.833u    0.042ms/0.208u    0.027ms/0.052u    0.023ms/0.016u",
+  "    5_online_logreg                 0.014ms/0.833u    0.007ms/0.208u    0.005ms/0.052u    0.005ms/0.016u",
+  "    6_adrn2a_no_context             2.107ms/0.833u    1.263ms/0.208u    1.037ms/0.052u    1.000ms/0.016u",
+  "    7_adrn2a_oracle_context         2.145ms/0.833u    1.259ms/0.208u    1.033ms/0.052u    1.001ms/0.016u",
+  "    8_adrn2a_inferred_context       2.444ms/0.833u    1.521ms/0.208u    1.270ms/0.052u    1.285ms/0.016u",
   "\n  PREDECLARED GATES",
   "    FAIL  F1 | G1 arm 8 beats best of arms 1-5 (1_transformer_full) on RETENTION",
   "    FAIL  F1 | G2 arm 8 beats arm 6 (no context separation) on RETENTION",
@@ -5051,6 +5050,6 @@
   "    FAIL  G3 arm 8 RETENTION above chance at ALL of F=[1, 4, 16, 64]",
   "    PASS  G4 oracle minus inferred is REPORTED at every cadence",
   "\n================================================================================================================",
-  "  VERDICT: SMOKE RUN -- plumbing and liveness check, NOT a result; rerun with ADRN2_SMOKE unset. ADRN-2 SECTION 18 BASELINE LADDER: 5/14 predeclared gates pass over n=2 seeds, where one seed is an independent initialisation AND an independent environment draw, and every MDE is 3*sd/sqrt(n) on the PAIRED per-seed gap. At the primary cadence F=4, ADRN-2A with an INFERRED context (arm 8) reaches a raw held-out RETENTION of 0.5781 inside the feedback-withheld windows that open the two return phases, against 0.6953 for the best of arms 1-5 (2_transformer_frozen_head) -- a paired per-seed gap of -0.1172 against an MDE of 0.0234 -- and against 0.6250 for the same system with context separation switched off (arm 6), a gap of -0.0469 against an MDE of 0.2344. THE SECTION-18 DIAGNOSTIC, reported as a headline rather than a footnote: handing the context over (arm 7) gives 0.9375 against arm 8's 0.5781, a gap of +0.3594 against an MDE of 0.0938, so CONTEXT DETECTION IS THE BOTTLENECK -- the adapters hold what they are told to hold and it is the manager's identification of which context is active that limits retention. That gap has an information-theoretic explanation which is stated here rather than left to be discovered: the environment guarantees by construction that the input distribution is identical in every context and feedback is withheld for the entire window, so inside it there is NO evidence about which context is active and identification is impossible for any non-oracle system of any size. The three references computed on the realised windows bound what is achievable -- the stale-rule floor (keep applying the previous phase's rule) at 0.4453, the context-blind Bayes ceiling for a non-oracle arm (detect the change, average over the contexts seen so far) at 0.6875, and the oracle at 1.0000 -- and arm 8's 0.5781 sits at or below the context-blind Bayes ceiling for a withheld window, so it is best read as HEDGING over stored contexts rather than as RETRIEVING a particular one. G3 is answered per cadence and its answer is mechanistic rather than mysterious: a withheld window can only reveal itself where a CADENCE SLOT falls inside it, so the derived change-detection flag covers 0.97 of the retention window at F=1, 0.88 of the retention window at F=4, 0.50 of the retention window at F=16, 0.00 of the retention window at F=64, and arm 8's retention across those cadences is 0.6250 at F=1, 0.5781 at F=4, 0.5391 at F=16 (UNSUPPORTED: its own mechanisms are starved there), 0.6562 at F=64 (UNSUPPORTED: its own mechanisms are starved there). Cadence and total supervision are the same knob in this specification -- 960 labels at F=1, 240 labels at F=4, 60 labels at F=16, 18 labels at F=64 over an identical stream -- so a retention drop at long cadence cannot be attributed to delay rather than to starvation, and that confound is printed in the table rather than argued away. The four metrics are reported separately and never averaged together: at F=4 arm 8 shows RETENTION 0.5781, RELEARNING 0.6354 once feedback resumes, STEADY 0.8547 late within a phase, and FORGETTING +0.3232 measured as the drop from a context's first-visit steady accuracy to its retention on the return; COST is measured rather than asserted at 1.476 ms and 0.208 updates per example. Every arm was built to a matched budget of ~30,000 parameters by bisection with realised counts printed; the digital half of every neural arm was pretrained by a byte-identical context-blind recipe and had to pass a per-context linear-probe competence assertion before any online number was taken; every free scalar step size in arms 1-5 was calibrated per seed and per cadence on a SEPARATE validation environment draw over the same grid while the ADRN-2A arms received no calibrated scalar at all; and the change-detection signal derived from the feedback channel was given to all eight arms in the strongest form each architecture admits, so no baseline loses for being untuned or for being denied information the proposal was given. Before any number above was allowed into the table, every arm-run had to pass a mechanism liveness assertion proving numerically that its fast adapters changed between updates, that its context posterior was neither collapsed onto one context nor flat uniform, that its consolidated adapter existed and differed from the fast adapter by more than a copy, that its workspace moved across internal steps and did not simply run to the halting cap, that its plasticity controller emitted a varying rate, that its encoder was frozen where it claimed to be frozen and moved where it claimed to fine-tune, and that it actually performed online updates at all; separately, four component flags were toggled on one pretrained model and replayed over the SAME full stream with the prediction trace required to move, and no two differently-configured arms were permitted to return byte-identical per-seed metrics."
+  "  VERDICT: SMOKE RUN -- plumbing and liveness check, NOT a result; rerun with ADRN2_SMOKE unset. ADRN-2 SECTION 18 BASELINE LADDER: 5/14 predeclared gates pass over n=2 seeds, where one seed is an independent initialisation AND an independent environment draw, and every MDE is 3*sd/sqrt(n) on the PAIRED per-seed gap. At the primary cadence F=4, ADRN-2A with an INFERRED context (arm 8) reaches a raw held-out RETENTION of 0.5781 inside the feedback-withheld windows that open the two return phases, against 0.6953 for the best of arms 1-5 (2_transformer_frozen_head) -- a paired per-seed gap of -0.1172 against an MDE of 0.0234 -- and against 0.6250 for the same system with context separation switched off (arm 6), a gap of -0.0469 against an MDE of 0.2344. THE SECTION-18 DIAGNOSTIC, reported as a headline rather than a footnote: handing the context over (arm 7) gives 0.9375 against arm 8's 0.5781, a gap of +0.3594 against an MDE of 0.0938, so CONTEXT DETECTION IS THE BOTTLENECK -- the adapters hold what they are told to hold and it is the manager's identification of which context is active that limits retention. That gap has an information-theoretic explanation which is stated here rather than left to be discovered: the environment guarantees by construction that the input distribution is identical in every context and feedback is withheld for the entire window, so inside it there is NO evidence about which context is active and identification is impossible for any non-oracle system of any size. The three references computed on the realised windows bound what is achievable -- the stale-rule floor (keep applying the previous phase's rule) at 0.4453, the context-blind Bayes ceiling for a non-oracle arm (detect the change, average over the contexts seen so far) at 0.6875, and the oracle at 1.0000 -- and arm 8's 0.5781 sits at or below the context-blind Bayes ceiling for a withheld window, so it is best read as HEDGING over stored contexts rather than as RETRIEVING a particular one. G3 is answered per cadence and its answer is mechanistic rather than mysterious: a withheld window can only reveal itself where a CADENCE SLOT falls inside it, so the derived change-detection flag covers 0.97 of the retention window at F=1, 0.88 of the retention window at F=4, 0.50 of the retention window at F=16, 0.00 of the retention window at F=64, and arm 8's retention across those cadences is 0.6250 at F=1, 0.5781 at F=4, 0.5391 at F=16 (UNSUPPORTED: its own mechanisms are starved there), 0.6562 at F=64 (UNSUPPORTED: its own mechanisms are starved there). Cadence and total supervision are the same knob in this specification -- 960 labels at F=1, 240 labels at F=4, 60 labels at F=16, 18 labels at F=64 over an identical stream -- so a retention drop at long cadence cannot be attributed to delay rather than to starvation, and that confound is printed in the table rather than argued away. The four metrics are reported separately and never averaged together: at F=4 arm 8 shows RETENTION 0.5781, RELEARNING 0.6354 once feedback resumes, STEADY 0.8547 late within a phase, and FORGETTING +0.3232 measured as the drop from a context's first-visit steady accuracy to its retention on the return; COST is measured rather than asserted at 1.521 ms and 0.208 updates per example. Every arm was built to a matched budget of ~30,000 parameters by bisection with realised counts printed; the digital half of every neural arm was pretrained by a byte-identical context-blind recipe and had to pass a per-context linear-probe competence assertion before any online number was taken; every free scalar step size in arms 1-5 was calibrated per seed and per cadence on a SEPARATE validation environment draw over the same grid while the ADRN-2A arms received no calibrated scalar at all; and the change-detection signal derived from the feedback channel was given to all eight arms in the strongest form each architecture admits, so no baseline loses for being untuned or for being denied information the proposal was given. Before any number above was allowed into the table, every arm-run had to pass a mechanism liveness assertion proving numerically that its fast adapters changed between updates, that its context posterior was neither collapsed onto one context nor flat uniform, that its consolidated adapter existed and differed from the fast adapter by more than a copy, that its workspace moved across internal steps and did not simply run to the halting cap, that its plasticity controller emitted a varying rate, that its encoder was frozen where it claimed to be frozen and moved where it claimed to fine-tune, and that it actually performed online updates at all; separately, four component flags were toggled on one pretrained model and replayed over the SAME full stream with the prediction trace required to move, and no two differently-configured arms were permitted to return byte-identical per-seed metrics."
  ]
 }
