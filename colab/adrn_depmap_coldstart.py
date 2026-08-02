@@ -59,7 +59,7 @@ FOLDS = 5
 PENALTY = 10.0
 MAX_GROWN = 64
 CANDIDATES = 20_000
-THRESHOLD = 4.0
+THRESHOLD = float(os.environ.get("CS_THRESHOLD", "4.0"))
 ARITIES = (2, 3, 5)
 POLY_TOP = 40
 BANNED = {"ess", "ess_src", "ess_prob", "dep_frac"}
@@ -181,7 +181,11 @@ def main() -> int:
     extra, extra_names, tier_b_start = C.extra_channels(genes, set(genes), report)
     channels = np.concatenate([base, extra[:, :tier_b_start]], axis=1)
     names = base_names + extra_names[:tier_b_start]
-    leaked = {n for n in names if any(b in n.lower() for b in BANNED)}
+    # word-boundary match, not substring: the first version matched "ess" inside "processome",
+    # "repressor" and "apoptotic process" and aborted on five perfectly clean GO and complex channels.
+    import re
+    banned_re = re.compile(r"(?<![a-z0-9_])(" + "|".join(sorted(BANNED)) + r")(?![a-z0-9_])")
+    leaked = {n for n in names if banned_re.search(n.lower())}
     if leaked:
         raise SystemExit(f"LEAK: DepMap-derived channels reached the matrix: {sorted(leaked)[:5]}")
     report(f"  channels: {channels.shape[1]} named columns; asserted free of {sorted(BANNED)}")

@@ -18100,3 +18100,67 @@ Reactome's coverage and redundancy — 1,248 sets of 10–500 measured members, 
 Asked to knock out a gene it has never seen perturbed, the system returns **2.9 of 10 genes correct** and, for the
 first time with a number attached, a mechanism that is **~36–39% precise at 10 pathway terms against a ceiling of
 ~50–58%**. The mechanism half of the original question is no longer unvalidated text.
+
+---
+
+# DepMap cold-start entity learner: the gate fails, and gradient-boosted trees win by a wide margin
+
+`colab/adrn_depmap_coldstart.py`
+
+Predict a gene's mean CRISPR dependency (per-line marginal removed) for genes **never seen in training**, from
+annotation and partners only. 17,931 genes, 1,150 lines, 5 folds, four split types. `ess`/`ess_src`/`ess_prob`/
+`dep_frac` asserted absent at build time, and **co-dependency excluded from partners** because codep edges are
+correlations over this same DepMap matrix.
+
+## The gate, from the spec's Phase 2, fails on all four splits
+
+RMSE, lower is better, mechanism forced live (64 conjunctions every fold):
+
+| arm | random | pfam | complex | pathway |
+|---|---:|---:|---:|---:|
+| **trees (GBM)** | **0.2075** | **0.2109** | **0.2172** | **0.2224** |
+| sparse polynomial | 0.2445 | 0.2465 | 0.2555 | 0.2652 |
+| raw partner bag | 0.2670 | 0.2705 | 0.2821 | 0.2916 |
+| **adrn** | 0.2676 | 0.2709 | 0.2815 | 0.2890 |
+| annotation ridge | 0.2684 | 0.2717 | 0.2841 | 0.2930 |
+| partner mean | 0.3519 | 0.3566 | 0.3651 | 0.3721 |
+| global mean (floor) | 0.3828 | 0.3827 | 0.3794 | 0.3842 |
+| *partner mean w/ CODEP (LEAKY)* | *0.2394* | *0.2434* | *0.2538* | *0.2577* |
+
+    ADRN vs trees   +0.0602 / +0.0600 / +0.0644 / +0.0666   RESOLVED on all four -- ADRN WORSE
+    ADRN vs poly    +0.0231 / +0.0244 / +0.0260 / +0.0238   RESOLVED on all four -- ADRN WORSE
+    ADRN vs ridge   -0.0008 / -0.0008 / -0.0026 / -0.0039   within noise on all four
+    ADRN vs raw bag +0.0006 / +0.0004 / -0.0006 / -0.0026   within noise on all four
+
+ADRN clears only `partner_mean` and `global_mean` — the two weakest arms. It is **indistinguishable from a plain
+ridge on the same channels** and loses to a sparse polynomial and to gradient-boosted trees by margins far outside
+the MDE, on every split. **Gate failed.**
+
+## A liveness failure, caught and corrected
+
+At the standard threshold of 4.0 the mechanism grew **0 or 1 conjunctions** on most folds, making `adrn` and
+`ridge` numerically identical (gap −0.0000). That is a switched-off mechanism, not a null result, and this
+project's standard is to say so and re-run. Forcing the threshold to −inf gives 64 conjunctions on every fold;
+the numbers above are from that run. **Making it live changed almost nothing** — the gaps move by ~0.001.
+
+## What is genuinely positive here, and it is about the task
+
+**Cold-start generalisation is real.** Going from a random gene split to holding out whole Pfam families, whole
+complexes and whole pathways costs surprisingly little: trees degrade 0.2075 → 0.2109 → 0.2172 → 0.2224, about
+7% across the hardest contrast. Complex members share dependency almost by definition, so holding entire
+complexes out was expected to be punishing and it is not. **These models are not doing paralog lookup** — the
+predictive content survives removal of the family, the complex and the pathway.
+
+**Non-linearity is where the headroom is.** Trees beat the linear arms by ~0.06 RMSE everywhere, and the sparse
+polynomial sits between them. Whatever structure the target has, it is non-additive in the named channels — but
+ADRN's specific brand of non-additivity (sparse signed products of binarised channels) captures none of it, while
+a generic tree ensemble captures a lot.
+
+**The leaky arm is quoted so nobody re-derives it.** Co-dependency partners reach 0.2394 — better than everything
+except trees — and that is exactly why they were excluded: codep is a function of the answer.
+
+## Standing count
+
+Seven independent ADRN mechanism tests, seven failures: ADRN-1 structural ablation, ADRN-2A workspace, ADRN-2B
+Gate B, ADRN-4 online adaptation, sealed-protocol conjunctions, named partner packets, and now the cold-start
+entity learner — the setting the training spec argued was ADRN's strongest substrate.
