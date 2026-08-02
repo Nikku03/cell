@@ -17592,3 +17592,52 @@ What remains untested is the (gene, line) *interaction* — everything here pred
 and the finding that line identity carries nothing means the interaction is where any remaining
 cross-cell signal must live. That is the same n=4-contexts wall the dense-response work hit, arrived at
 from the opposite direction.
+
+---
+
+# Correction: the ADRN-2A oracle comparison was not apples-to-apples
+
+I wrote that ADRN-2A's oracle-context arm "genuinely wins — 0.8681 at F=1, clear of every baseline …
+the strongest positive result in the whole body of work". That overstated it, and the reason is
+checkable in the committed output.
+
+In the ADRN-2A ladder **only the three ADRN arms have any context machinery**. `context_purity`,
+`return_routing_recall` and `context_diagnostics` are present for `adrn2_oracle_context`,
+`adrn2_inferred_context` and `adrn2_no_context`, and absent for `transformer_full_online`,
+`transformer_frozen_online_head`, `gru_frozen_online_head`, `online_logistic_regression`,
+`online_polynomial_logistic` and `nearest_neighbor`. The baselines cannot receive a context key at all.
+So 0.8681 was compared against arms that were never given the thing that produced it.
+
+**The fair comparison exists in ADRN-2B**, where `polynomial_oracle` is the same oracle-keyed adapter
+bank on a 168-feature polynomial basis:
+
+| arm | feedback-free return | A(32) | A(128) | online state |
+|---|---|---|---|---|
+| **polynomial_oracle** | **0.6875** | **0.5916** | **0.6862** | 48,088 B |
+| workspace_oracle | 0.6235 | 0.5736 | 0.6344 | 48,088 B |
+
+The banking wins on every metric; ADRN's workspace subtracts from it. The defensible claim is
+**per-context adapter banking works and is architecture-agnostic** — not that ADRN wins. The internal
+comparison that remains valid is oracle 0.8681 against inferred 0.5069 within the same architecture,
+which measures the routing gap and is what motivated ADRN-3.
+
+## What an oracle arm is for, stated once
+
+Four distinct oracles appear in this work and they are not equally clean:
+
+| oracle | what it is given | status |
+|---|---|---|
+| context key (`*_oracle`) | which context, as an opaque id; not the answer | legitimate ceiling on routing |
+| `bayesian_rule_search_oracle` | a 400-candidate grammar that provably contains the test rule | disclosed generator-aware control; drops 1.0000 → 0.5871 with test rules removed |
+| `oracle_grow` | the true conjunction | pure ceiling |
+| `oracle_loading` | loadings computed from the held-out lines | pure ceiling, uses test data |
+
+An oracle is legitimate as a **denominator, not as a result**. "Annotation buys −0.0012" is
+uninterpretable; "annotation reaches 5.8% of what perfect loading knowledge buys" is. Reporting an
+oracle as though it were a competitor is the failure mode, and the ADRN-2A claim above came closer to
+it than it should have.
+
+One further limit: the gate audit confirmed `chance_corrected_recall_ratio` is exactly 1.0 **by
+construction** for any oracle-keyed arm — the slot is untouched between visits, verified bit-for-bit
+identical on 4/4 returns. Absolute balanced accuracy for those arms is a real measurement; the
+retention *ratio* is not.
