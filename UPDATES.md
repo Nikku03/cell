@@ -17424,3 +17424,60 @@ observation that a system should be able to *construct* a feature it lacks. The 
 delivered it is a coincidence detector and a threshold, and the pruning path never fired once
 (`mean_pruned` 0.00 everywhere) — so even within this result, one of the three advertised components
 is unexercised and should not be claimed.
+
+---
+
+# Test B on real DepMap: my predeclared prediction was wrong
+
+`colab/v4_abc_conjunctions.py`, output `outputs/orphan/v4_abc_conjunctions.json`. 1,150 cell lines ×
+17,931 genes, 15,567 with annotation and a finite target, 60 annotation features, 8 disjoint held-out
+**gene** blocks as the unit of replication. DepMap-derived fields excluded and asserted at build time.
+
+I recorded the expectation in the module docstring before running: conjunction growth *should not
+help*, because criterion 2 measured an untrained zero-parameter bag (0.0341) beating a real Set
+Transformer (0.0297) on this data at a matched budget, implying the limit is noise-fitting rather than
+capacity. **That prediction did not survive.**
+
+| arm | RMSE | sd | vs baseline | MDE | |
+|---|---|---|---|---|---|
+| baseline (unseen gene → global mean) | 0.3959 | 0.0174 | — | — | |
+| ridge on annotation | 0.3303 | 0.0085 | −0.0656 | 0.0109 | beats |
+| **+ learned conjunctions** | **0.3177** | 0.0076 | **−0.0782** | 0.0117 | beats |
+| + random conjunctions *(control)* | 0.3250 | 0.0104 | −0.0708 | 0.0099 | beats |
+
+**learned − plain ridge = −0.0126 against an MDE of 0.0019 — 6.6× resolved.** The mechanism that
+cleared a synthetic floor also works on real cell data.
+
+## But the control changes what can be claimed
+
+On the synthetic parity tasks the random-conjunction control was pinned at the floor (0.4957 against
+0.4949), so the entire gain was attributable to the selection rule. **Here it is not.** Randomly chosen
+conjunctions buy −0.0052 of the −0.0126:
+
+- **42% is capacity** — this data rewards extra nonlinear features somewhat indiscriminately
+- **58% is the selection rule** — learned − random = **−0.0074**, sd 0.0034, MDE 0.0036, and the
+  learned arm wins on **8/8 blocks**
+
+So the honest claim is narrower than the synthetic result licensed: the local coincidence-with-error
+rule does find better-than-random conjunctions on real annotation data, resolved but by a margin only
+just past its own MDE, and a substantial minority of the headline gain is nothing more than added
+capacity. The criterion-2 reasoning was not baseless — this data *does* reward indiscriminate feature
+addition — it was simply not the whole story.
+
+## The larger finding, which was not what I was testing
+
+`ridge_linear` beats the unseen-gene baseline by **−0.0656 against an MDE of 0.0109**. Annotation that
+never saw a viability screen — compartment, process, chromosome, LOEUF, PPI degree, pathway counts, TF
+flag — predicts a meaningful part of the dependency profile of a gene that has **never been measured**,
+cutting RMSE 16.6% below the fallback and explaining roughly 30% of the target variance (target sd
+0.3829).
+
+That is the Test B question the whole A/B/C design was built to ask, and it is a positive answer
+independent of any ADRN mechanism.
+
+## Limits
+
+This measures the per-gene mean residual after the line marginal, not the full (gene, line) surface, so
+it is the substance of Test B without its sampling machinery. Test C — unseen gene in an unseen line —
+is untouched. And 42% of the conjunction gain being reproducible by random features is a warning that
+the remaining 58% deserves a second control before it is built on.
