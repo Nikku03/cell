@@ -18212,3 +18212,54 @@ non-linearity (nothing at this scale).
 
 **`chan2a` stands: 696 curated annotation channels, ridge, K562 only, 0.2885 on the sealed holdout.** Trees are
 its equal and can be used interchangeably.
+
+---
+
+# The scaling curve: what one more measured perturbation is actually worth
+
+`colab/adrn_scaling_curve.py`
+
+Subsample the training pool, refit the NMF basis / channel selection / ridge, score on the same two sealed
+cohorts. Three subsamples per size.
+
+| training perturbations | cohort 1 | cohort 2 |
+|---:|---:|---:|
+| 250 | 0.1516 | 0.1872 |
+| 500 | 0.1798 | 0.2157 |
+| 1,000 | 0.1857 | 0.2292 |
+| 2,000 | 0.2106 | 0.2603 |
+| 3,200 | 0.2347 | 0.2800 |
+| 4,720 (all) | 0.2337 | 0.2885 |
+
+Observed increment per **doubling** (cohort 2): +0.0286, +0.0135, +0.0311, +0.0290, **+0.0152**. Log-linear fit
+`precision = −0.0050 + 0.0242·log2(n)`, R² = 0.990.
+
+**The last doubling returned half what the earlier ones did** (+0.0152 against ~+0.029). The curve is already
+bending, so the projections below are lower bounds and the real requirements are worse.
+
+## Projected perturbations required — LOWER BOUNDS
+
+| target | perturbations |
+|---|---:|
+| frequency baseline 0.2003 | 361 (have) |
+| current 0.2885 | 4,539 (have) |
+| **0.35 (3.5 of 10)** | **~26,500** |
+| **0.40 (4 of 10)** | **~111,000** |
+| basis oracle 0.5222 | ~3.7 million |
+| twin ceiling 0.6212 | ~63 million |
+
+## What that means in practice
+
+**3.5 of 10 is reachable.** ~26,500 perturbations is about 5× the current pool and within reach of existing
+genome-wide Perturb-seq — the full Replogle screen targets ~9,900 genes, and multiple screens or multiple guides
+per gene get to that scale. This is a real, fundable target.
+
+**4 of 10 is not, by single knockouts alone.** ~111,000 exceeds the number of protein-coding genes. Getting there
+requires combinatorial perturbations, multiple contexts, or perturbation types beyond CRISPR knockout — i.e. a
+different experiment, not a bigger one.
+
+**The oracle is unreachable by scaling.** 3.7 million perturbations to reach the basis oracle says plainly that
+the remaining gap is not a data-volume problem past a certain point. Roughly half of measured movers move for
+exactly one knockout; a bespoke response cannot be learned from other knockouts at any n.
+
+**Caveat:** the n = 4,720 row has sd 0.0000 because it is the entire pool — one sample, not three.
