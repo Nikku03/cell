@@ -17066,3 +17066,80 @@ smoke run `polynomial_oracle` did beat `workspace_oracle` on feedback-free retur
 The point is narrower and firmer: Gates B and E compare arms that differ in at least three things at
 once — whether the answer is present as a coordinate, how many usable directions the adapter has, and
 how big a step each label takes — so neither gate can attribute its result to recurrence.
+
+---
+
+# ADRN-2B, full scale: 1/6 gates, and the polynomial control wins the benchmark
+
+`outputs/orphan/adrn2b_full_gates.json`. 256 meta-train / 64 validation / 80 meta-test tasks, 12
+offline epochs, 23 min. The Bayesian ceiling and its stage were skipped (see below); every gate that
+does not depend on it is reported.
+
+| gate | value | threshold | |
+|---|---|---|---|
+| cue_validity | 0.8018 | within ±0.03 of target | **PASS** |
+| A routing recovery | 0.3824 | ≥0.80, denominator >0.05 | FAIL (denominator 0.1069, so the gate *is* readable) |
+| B workspace necessity | **0.0190**, CI [−0.0062, +0.0425], n=26 | ≥0.05 and CI low >0 | FAIL on both clauses |
+| C sparse acquisition | A(8) 0.5131, A(32) 0.5430 | 0.65 / 0.75 | FAIL |
+| D memory retention | 0.4695, absolute return 0.5488 | ≥0.90 and ≥0.70 | FAIL |
+| E efficiency | A(32) 0.5430 vs 0.5051; 1,239,292 B vs 270,924 B | no worse on both, one strict | FAIL on memory |
+
+## The benchmark's own negative control fires, hard
+
+`negative_control_workspace_delta` — workspace vs polynomial on the *non-temporal* operations, where
+a recurrent workspace should not help — is **−0.1240, CI [−0.1686, −0.0818]**, n=30. Significantly
+negative. The workspace arm is not merely failing to gain on temporal rules, it is losing badly
+everywhere else, and Gate B's +0.0190 has to be read against that.
+
+This is a good control and it did its job. Whatever the 288 digital coordinates buy on temporal rules
+is roughly +0.143 relative to how the same arm does elsewhere — real, but it only cancels a general
+penalty rather than producing an advantage.
+
+## The best arm has no recurrence, no attention, and 48 KB of state
+
+| model | return bal.acc | A(8) | A(32) | A(128) | online state |
+|---|---|---|---|---|---|
+| **polynomial_oracle** | **0.6875** | **0.5473** | **0.5916** | **0.6862** | **48,088 B** |
+| workspace_oracle | 0.6235 | 0.5385 | 0.5736 | 0.6344 | 48,088 B |
+| polynomial_learned | 0.5997 | 0.5122 | 0.5499 | 0.6190 | 48,088 B |
+| workspace_learned | 0.5575 | 0.5087 | 0.5402 | 0.5959 | 48,088 B |
+| workspace_meta_learned | 0.5488 | 0.5131 | 0.5430 | 0.6024 | 1,239,292 B |
+| transformer_head_shared | 0.5466 | 0.5043 | 0.5249 | 0.6085 | 48,088 B |
+| transformer_full_online | 0.5183 | 0.5019 | 0.5051 | 0.5129 | 270,924 B |
+
+The 168-feature polynomial control beats the workspace arm at **every** routing mode — shared
+0.5349 vs 0.5166, oracle 0.6875 vs 0.6235, learned 0.5997 vs 0.5575 — and beats everything else too,
+at the smallest state footprint on the board.
+
+## Gate E, and a correction
+
+Gate E is the direct ADRN-vs-Transformer comparison, and at full scale it does **not** go the way the
+smoke run suggested. ADRN's A(32) is 0.5430 against the full-online Transformer's 0.5051 — ADRN is
+*better* on accuracy, not worse — and fails only the memory clause, 1,239,292 B against 270,924 B
+(4.57×). The smoke run had it losing on both axes; that reversed.
+
+The reversal matters less than it sounds, because chance is 0.5. ADRN sits 0.043 above chance and the
+Transformer 0.005 above it. Neither architecture learns this task from 32 labels on a held-out rule.
+And the 1,239,292 B belongs to `workspace_meta_learned` alone — every other adapter arm, including
+`workspace_oracle`, runs on 48,088 B, so the meta-initializer arm carries **25.8×** the state of its
+own siblings.
+
+## A confirmed Gate D degeneracy
+
+`transformer_full_online` reports `chance_corrected_recall_ratio` = **5.5253**. A ratio above 5 is
+nonsense as a retention score; it arises because the first endpoint is itself at chance (A(128)
+0.5129), so the denominator is near zero. Gate D's ≥0.90 clause is unprotected against this — an arm
+that learned nothing can post an arbitrarily large "retention" figure. The absolute ≥0.70 clause is
+what stops it becoming a pass, so the conjunction saves the gate here; the ratio on its own does not
+mean what its name says.
+
+## On the skipped Bayesian ceiling
+
+`DisclosedRuleGrammar.from_rules(splits.all_rules)` plus `require_coverage(splits.test)`, which raises
+unless every held-out rule is a candidate, makes that arm an oracle-grammar upper bound over 400
+candidates — and the harness labels it exactly that way in `structured_search_disclosure`
+(`"generator_aware_control_not_learned_generalization": true`). At smoke scale it reached A(32) =
+1.0000. Its stage costs roughly 1000× more at full scale (80 episodes × 400 candidates × 256 probes
+against 8 × 32 × 32) and it feeds no gate, so it was skipped here. What it establishes is already
+established: the task is solvable by search over the grammar, so the neural arms' 0.50–0.59 is not
+task difficulty.
