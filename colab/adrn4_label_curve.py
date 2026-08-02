@@ -339,7 +339,7 @@ def main(argv: list[str] | None = None) -> int:
         report(f"\n  seed {seed}: {len(train_rules)} train / {len(validation_rules)} "
                f"validation / {len(test_rules)} held-out rules, all disjoint")
         rate = tune_rate(validation_rules, rng, probe=args.probe,
-                         candidates=(0.05, 0.15, 0.4, 1.0, 2.5), report=report)
+                         candidates=(0.4, 1.0, 2.5, 6.0, 15.0, 40.0), report=report)
 
         gru, attention = GRUEncoder(), AttentionEncoder()
         report("      pretraining GRU"); pretrain(gru, train_rules, rng,
