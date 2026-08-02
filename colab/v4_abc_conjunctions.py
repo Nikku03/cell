@@ -47,9 +47,19 @@ Arms
                          fallback for an unseen gene, and it is the number to beat.
     ridge_linear         ridge on the annotation features. The shipped capability.
     ridge_plus_learned   + conjunctions grown by the ADRN-3 local rule
-    ridge_plus_random    + the SAME NUMBER of conjunctions chosen without seeing a
-                         label. The control that separates "the rule works" from
-                         "more features".
+    ridge_plus_random    + the SAME NUMBER of conjunctions drawn UNIFORMLY from the
+                         same pool without seeing a label. Separates "the rule works"
+                         from "more features help".
+    ridge_plus_shuffled  + the SAME NUMBER of conjunctions chosen by the SAME RULE
+                         applied to a PERMUTED residual. This is the stricter control:
+                         it holds the candidate pool, the scoring machinery and the
+                         top-k selection pressure constant, and destroys only the
+                         correspondence between a product and the error. Random draws
+                         uniformly; shuffled draws from the extreme tail of a noise
+                         distribution, so it prices in the winner's curse of screening
+                         20,000 candidates. If learned does not clear shuffled, the
+                         rule is exploiting selection-on-noise rather than finding
+                         real conjunctions.
 
 Unit of replication is the held-out GENE BLOCK, not the gene and not a seed:
 MDE = 3 * sd / sqrt(n_blocks) on the PAIRED per-block gap.
@@ -220,9 +230,11 @@ def main(argv: list[str] | None = None) -> int:
     report(f"\n  held-out GENE blocks: {args.blocks} disjoint blocks of "
            f"~{len(blocks[0]):,} genes; unit of replication is the block")
 
-    arms = ("baseline_zero", "ridge_linear", "ridge_plus_learned", "ridge_plus_random")
+    arms = ("baseline_zero", "ridge_linear", "ridge_plus_learned",
+            "ridge_plus_random", "ridge_plus_shuffled")
     per_block: dict[str, list[float]] = {a: [] for a in arms}
     grown_counts: list[int] = []
+    overlap_counts: list[int] = []
 
     for number, held in enumerate(blocks):
         mask = np.ones(len(genes), bool)
@@ -261,8 +273,20 @@ def main(argv: list[str] | None = None) -> int:
                 seen.add(pick)
                 random_pick.append(pick)
 
+        # SAME rule, SAME pool, SAME count -- on a permuted residual. The threshold is
+        # dropped to -inf so the count matches `learned` exactly; the point is to price
+        # the top-k selection pressure over 20,000 candidates, not to ask whether noise
+        # clears a significance bar.
+        shuffled = grow_conjunctions(
+            signed_train, block_rng.permutation(residual), max_grown=len(learned),
+            arities=(2, 3, 5), min_obs=64, threshold=float("-inf"),
+            rng=np.random.default_rng(args.seed + 991 * (number + 1)),
+            candidates=args.candidates)
+        overlap_counts.append(len(set(learned) & set(shuffled)))
+
         for arm, conjunctions in (("ridge_plus_learned", learned),
-                                  ("ridge_plus_random", random_pick)):
+                                  ("ridge_plus_random", random_pick),
+                                  ("ridge_plus_shuffled", shuffled)):
             per_block[arm].append(ridge_rmse(
                 np.concatenate([train_x, expand(signed_train, conjunctions)], axis=1),
                 train_y,
@@ -296,19 +320,45 @@ def main(argv: list[str] | None = None) -> int:
         report(f"  {arm:22s} {values.mean():9.4f} {values.std(ddof=1):8.4f}   "
                f"{gap.mean():+12.4f} {mde:8.4f}  {verdict}")
 
-    learned_gap = np.array(per_block["ridge_plus_learned"]) - np.array(per_block["ridge_linear"])
-    random_gap = np.array(per_block["ridge_plus_random"]) - np.array(per_block["ridge_linear"])
-    sd = float(learned_gap.std(ddof=1)) if len(learned_gap) > 1 else 0.0
-    mde = 3.0 * sd / np.sqrt(len(learned_gap))
-    report(f"\n  THE QUESTION: learned conjunctions vs plain ridge, paired per block")
-    report(f"    learned - linear = {learned_gap.mean():+.4f}  (MDE {mde:.4f})  "
-           f"{'REAL' if abs(learned_gap.mean()) > mde else 'within noise'}")
-    report(f"    random  - linear = {random_gap.mean():+.4f}   <- the capacity control")
-    summary["learned_minus_linear"] = {
-        "mean": float(learned_gap.mean()), "mde": float(mde),
-        "resolved": bool(abs(learned_gap.mean()) > mde),
+    def paired(left: str, right: str) -> dict:
+        gap = np.array(per_block[left]) - np.array(per_block[right])
+        sd = float(gap.std(ddof=1)) if len(gap) > 1 else 0.0
+        mde = 3.0 * sd / np.sqrt(len(gap))
+        return {"mean": float(gap.mean()), "sd": sd, "mde": float(mde),
+                "resolved": bool(abs(gap.mean()) > mde),
+                "left_better_blocks": int((gap < 0).sum()), "n_blocks": len(gap),
+                "per_block": [float(v) for v in gap]}
+
+    report(f"\n  {'contrast':38s} {'gap':>9s} {'MDE':>9s}  blocks  verdict")
+    contrasts = {
+        "learned_minus_linear": ("ridge_plus_learned", "ridge_linear"),
+        "random_minus_linear": ("ridge_plus_random", "ridge_linear"),
+        "shuffled_minus_linear": ("ridge_plus_shuffled", "ridge_linear"),
+        "learned_minus_random": ("ridge_plus_learned", "ridge_plus_random"),
+        "learned_minus_shuffled": ("ridge_plus_learned", "ridge_plus_shuffled"),
+        "shuffled_minus_random": ("ridge_plus_shuffled", "ridge_plus_random"),
     }
-    summary["random_minus_linear"] = {"mean": float(random_gap.mean())}
+    for name, (left, right) in contrasts.items():
+        stats = paired(left, right)
+        summary[name] = stats
+        report(f"  {name:38s} {stats['mean']:+9.4f} {stats['mde']:9.4f}  "
+               f"{stats['left_better_blocks']}/{stats['n_blocks']}   "
+               f"{'RESOLVED' if stats['resolved'] else 'within noise'}")
+    report(f"\n  learned/shuffled conjunction overlap: mean "
+           f"{np.mean(overlap_counts):.1f} of {np.mean(grown_counts):.1f} "
+           f"-- near zero is expected; a high overlap would mean the permutation "
+           f"failed to break the correspondence")
+    summary["mean_learned_shuffled_overlap"] = float(np.mean(overlap_counts))
+    total = summary["learned_minus_linear"]["mean"]
+    report(f"\n  DECOMPOSITION of the learned arm's {total:+.4f} over plain ridge:")
+    for label, key in (("uniform capacity        ", "random_minus_linear"),
+                       ("selection-on-noise      ", "shuffled_minus_linear")):
+        part = summary[key]["mean"]
+        report(f"    {label} {part:+.4f}  ({100*part/total:5.1f}%)")
+    residual_gain = summary["learned_minus_shuffled"]["mean"]
+    report(f"    genuine conjunction find {residual_gain:+.4f}  "
+           f"({100*residual_gain/total:5.1f}%)  "
+           f"{'RESOLVED' if summary['learned_minus_shuffled']['resolved'] else 'WITHIN NOISE'}")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps({
