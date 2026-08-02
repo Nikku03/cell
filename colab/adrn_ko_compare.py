@@ -118,6 +118,7 @@ def main() -> int:
                            ("mlpool - mlstrict (transfer)", "mlpool", "mlstrict"),
                            ("mlbank - mlpool (banking)", "mlbank", "mlpool"),
                            ("mlother - mlk562 (no K562)", "mlother", "mlk562"),
+                           ("mlbank - mlk562 (NET pooling)", "mlbank", "mlk562"),
                            ("conj - linear (mechanism)", "adrnconj", "adrnlin"),
                            ("conj - shuffled (noise)", "adrnconj", "adrnshuf"),
                            ("conj - random (structure)", "adrnconj", "adrnrand"),

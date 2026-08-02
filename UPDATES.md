@@ -17796,3 +17796,97 @@ up from the previous best of ~2.3, and for the first time with both cohorts clea
 `named annotation → ridge → response-component mixture`, it has full coverage (0/200 empty predictions, against
 neighbour transfer's 20–32), and it needs no measured neighbour. The mechanism story it can tell is still
 unscored: nothing here evaluates a causal chain against ground truth.
+
+---
+
+# Three follow-ups on the sealed protocol: ceiling, channels, cell lines
+
+`colab/adrn_ko_ceiling.py` · `colab/adrn_ko_channels2.py` · `colab/adrn_ko_multiline.py`
+
+## 1. The ceiling — the model was at 19% of reachable, so there was room
+
+Four caps at 20 predicted genes, cohort 1 / cohort 2:
+
+| level | c1 | c2 | what it bounds |
+|---|---:|---:|---|
+| ABSOLUTE (answers in hand) | 0.6330 | 0.7097 | nothing can beat this |
+| twin ceiling | 0.5365 | 0.6212 | **any** function of the named channels |
+| basis oracle (60 components) | 0.4440 | 0.5222 | anything routing through the vocabulary |
+| profile_nn oracle | 0.4053 | 0.4680 | retrieval, if you already knew the profile |
+| deployed `adrnlin` | 0.2127 | 0.2620 | |
+| frequency floor | 0.1737 | 0.2003 | |
+
+The deployed model covered **14.4% / 19.2%** of the basis-oracle range. The vocabulary was *not* the binding
+constraint — which is what licensed spending effort on richer channels.
+
+**A correction to my own construction.** `channel_nn` — predict the movers of the nearest training knockout in
+channel space — was written as "the ceiling for any function of the named channels." It is not one: the deployed
+ridge beats it (0.2127 vs 0.1320, 0.2620 vs 0.1938), because pooling hundreds of training knockouts averages out
+noise a single donor carries. It is now reported as a baseline, and the **twin ceiling** — knockouts with an
+identical channel vector must receive an identical prediction, so give each such group its best possible single
+list — is the cap that actually binds. Exact twins turn out to be rarer than expected (median group size 1,
+max 52), so identifiability is not the limit either.
+
+## 2. Richer channels — the biggest single gain in this line of work
+
+170 → **696** channels, all pure annotation already sitting unused in `cell_complete.json`: 250 GO terms, 120
+complexes, 120 Pfam families, 120 InterPro domains, curated compartment and process, chromosome, LOEUF constraint,
+study-depth and regulatory-architecture buckets.
+
+    chan2a - adrnlin   +0.0210 [+0.0065, +0.0365]   and   +0.0265 [+0.0127, +0.0407]   RESOLVED both
+    chan2a             0.2337                             0.2885
+
+**Tier B — measured priors from other assays** (DepMap essentiality, protein abundance, FBA-predicted
+essentiality) — **adds nothing**: +0.0007 and −0.0032, both within noise. This was predeclared as the thing to
+check, and the answer is the clean one: the gain is annotation, not looked-up measurement. `coexpr` and `sig` were
+excluded from both tiers because co-expression derives from the same kind of data the target comes from.
+
+Permuted channels score 0.1233 / 0.1535, far *below* the frequency baseline. No leakage.
+
+## 3. Five cell lines as one — naive pooling hurts, banking repairs it, net gain ≈ zero
+
+6,099 usable profiles from HCT116, HepG2, Jurkat, RPE1 and Melanoma, projected onto the frozen K562 component
+basis so only the ridge's training set varies.
+
+| arm | c1 | c2 | |
+|---|---:|---:|---|
+| mlbank — pooled map + K562 correction | **0.2398** | **0.2910** | best overall |
+| mlk562 — K562 only (= chan2a) | 0.2337 | 0.2885 | |
+| mlpool — all lines, one ridge | 0.2023 | 0.2515 | |
+| mlstrict — pooled, sealed genes dropped everywhere | 0.1893 | 0.2510 | |
+| mlother — other lines only, no K562 | 0.1750 | 0.2183 | |
+
+    mlpool  - mlk562   -0.0315 [-0.0542,-0.0088]  and  -0.0370 [-0.0570,-0.0170]   RESOLVED both  (pooling HURTS)
+    mlstrict- mlk562   -0.0445 [-0.0615,-0.0285]  and  -0.0375 [-0.0513,-0.0237]   RESOLVED both
+    mlpool  - mlstrict +0.0130 [-0.0010,+0.0292]  and  +0.0005 [-0.0118,+0.0132]   within noise both
+    mlbank  - mlpool   +0.0375 [+0.0158,+0.0595]  and  +0.0395 [+0.0207,+0.0585]   RESOLVED both  (banking WORKS)
+    mlbank  - mlk562   +0.0060 [+0.0015,+0.0110]  and  +0.0025 [-0.0025,+0.0077]   NET: c1 only
+
+**Four things this settles.**
+
+*Naive pooling is not neutral, it is actively harmful* — −0.037 on the holdout, CI far from zero. Five extra lines
+made the model worse.
+
+*It is not about seeing the held-out gene elsewhere.* `mlpool − mlstrict` is within noise on both cohorts, so
+dropping every sealed gene from every other line changes nothing. The damage is generic interference, not a
+transfer effect — and equally, there is no transfer benefit to be had.
+
+*Banking works, and it is the same mechanism that worked in ADRN-2B.* A shared map plus a K562-specific correction
+recovers +0.039, RESOLVED on both cohorts. Per-context adapter banking is now 2 for 2.
+
+*But the net value of five cell lines is about +0.004.* `mlbank − mlk562` clears on cohort 1 (+0.0060) and is
+within noise on the holdout (+0.0025). Against richer channels' +0.027, pooling is roughly a sixth as valuable and
+inconsistent. **The honest recommendation is `chan2a`: K562 only, 696 annotation channels, no other lines needed,
+statistically indistinguishable from the banked pooled model and much simpler.**
+
+*Pure cross-line transfer is worthless*, independently confirming `ceiling_cartography`'s door 3 under a completely
+different architecture: `mlother` scores +0.0012 against the frequency baseline on cohort 1, CI straddling zero.
+
+## Where the deliverable stands
+
+Asked for the 10 genes most affected by a knockout it has never seen perturbed, the model now returns **2.9 of 10
+correct** on the sealed holdout (0.2885) against 2.0 for a no-biology baseline — up from 2.3 at the start of this
+session. It covers **27.4%** of the basis-oracle range, up from 19.2%. Full coverage, no measured neighbour
+required, no other cell lines required.
+
+Still unmeasured: the mechanism. Nothing here scores a causal chain against ground truth.
