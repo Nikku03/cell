@@ -176,6 +176,14 @@ def main(argv: list[str] | None = None) -> int:
         "--arms", default="shipped,digital_only,recurrent_only",
         help="comma-separated subset of the three learned_features variants",
     )
+    # Gate B reads only records["workspace_oracle"] and records["polynomial_oracle"], and
+    # _decision_gates never touches the Bayesian summaries.  The Bayesian stage is the
+    # dominant cost at full scale -- 80 episodes x 400 grammar candidates x 256 probes,
+    # against the smoke run's 8 x 32 x 32 -- so it is skipped by default here.  Gate E
+    # needs the full-online Transformer and is reported undefined without it; take that
+    # gate from a complete run instead of this decomposition.
+    parser.add_argument("--with-bayes", action="store_true")
+    parser.add_argument("--with-full-online", action="store_true")
     args = parser.parse_args(argv)
 
     experiment, models = _load(args.package)
@@ -221,7 +229,12 @@ def main(argv: list[str] | None = None) -> int:
         started = perf_counter()
         try:
             torch.manual_seed(settings.seed)
-            result = experiment.run_adrn2b_experiment(settings, verbose=True)
+            result = experiment.run_adrn2b_experiment(
+                settings,
+                include_bayes=args.with_bayes,
+                include_full_online=args.with_full_online,
+                verbose=True,
+            )
         finally:
             models.RecurrentWorkspaceRepresentation.learned_features = original
             experiment._decision_gates = original_gates
