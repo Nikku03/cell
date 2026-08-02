@@ -1,0 +1,1213 @@
+{
+ "model": "adrn2-latent-rule-environment-v1",
+ "smoke": true,
+ "config": {
+  "smoke": true,
+  "seeds": 3,
+  "seeds_start": 0,
+  "phase_len": 256,
+  "probe_len": 32,
+  "feedback_every": 4,
+  "relearn_feedbacks": 4,
+  "n_fit": 4000,
+  "n_eval": 4000,
+  "fit_cap": 2000,
+  "budget_cells": 8
+ },
+ "unit_of_replication": "seed (one independent environment draw: independent input stream AND independent i.i.d. rule-validation draws)",
+ "seeds": 3,
+ "env_spec": {
+  "seed": 0,
+  "phase_len": 256,
+  "probe_len_W": 32,
+  "feedback_every_F": 4,
+  "relearn_feedbacks": 4,
+  "relearn_len": 16,
+  "schedule": [
+   "c1",
+   "c2",
+   "c3",
+   "c1",
+   "c4",
+   "c2"
+  ],
+  "total_len": 1536,
+  "lag": 2,
+  "n_bits": 16,
+  "bit_marginals": [
+   0.5,
+   0.5,
+   0.29289321881345254,
+   0.7071067811865475,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.7071067811865475,
+   0.5,
+   0.29289321881345254,
+   0.5
+  ],
+  "rules": {
+   "c1": {
+    "kind": "xor",
+    "current_bits_1based": [
+     2,
+     7
+    ],
+    "lag2_bits_1based": [],
+    "analytic_p_y1": 0.5,
+    "memoryless_bayes": 1.0,
+    "history_bayes": 1.0
+   },
+   "c2": {
+    "kind": "and",
+    "current_bits_1based": [
+     4,
+     13
+    ],
+    "lag2_bits_1based": [],
+    "analytic_p_y1": 0.4999999999999999,
+    "memoryless_bayes": 1.0,
+    "history_bayes": 1.0
+   },
+   "c3": {
+    "kind": "majority",
+    "current_bits_1based": [
+     1,
+     8,
+     11
+    ],
+    "lag2_bits_1based": [],
+    "analytic_p_y1": 0.5,
+    "memoryless_bayes": 1.0,
+    "history_bayes": 1.0
+   },
+   "c4": {
+    "kind": "or",
+    "current_bits_1based": [
+     15
+    ],
+    "lag2_bits_1based": [
+     3
+    ],
+    "analytic_p_y1": 0.5000000000000001,
+    "memoryless_bayes": 0.7928932188134524,
+    "history_bayes": 1.0
+   }
+  },
+  "retention_windows": [
+   {
+    "phase_id": 4,
+    "context_id": "c1",
+    "segment": "retention_probe",
+    "start": 768,
+    "stop": 800,
+    "length": 32
+   },
+   {
+    "phase_id": 6,
+    "context_id": "c2",
+    "segment": "retention_probe",
+    "start": 1280,
+    "stop": 1312,
+    "length": 32
+   }
+  ],
+  "naive_windows": [
+   {
+    "phase_id": 1,
+    "context_id": "c1",
+    "segment": "naive_probe",
+    "start": 0,
+    "stop": 32,
+    "length": 32
+   },
+   {
+    "phase_id": 2,
+    "context_id": "c2",
+    "segment": "naive_probe",
+    "start": 256,
+    "stop": 288,
+    "length": 32
+   },
+   {
+    "phase_id": 3,
+    "context_id": "c3",
+    "segment": "naive_probe",
+    "start": 512,
+    "stop": 544,
+    "length": 32
+   },
+   {
+    "phase_id": 5,
+    "context_id": "c4",
+    "segment": "naive_probe",
+    "start": 1024,
+    "stop": 1056,
+    "length": 32
+   }
+  ],
+  "relearn_windows": [
+   {
+    "phase_id": 1,
+    "context_id": "c1",
+    "segment": "relearn",
+    "start": 32,
+    "stop": 48,
+    "length": 16
+   },
+   {
+    "phase_id": 2,
+    "context_id": "c2",
+    "segment": "relearn",
+    "start": 288,
+    "stop": 304,
+    "length": 16
+   },
+   {
+    "phase_id": 3,
+    "context_id": "c3",
+    "segment": "relearn",
+    "start": 544,
+    "stop": 560,
+    "length": 16
+   },
+   {
+    "phase_id": 4,
+    "context_id": "c1",
+    "segment": "relearn",
+    "start": 800,
+    "stop": 816,
+    "length": 16
+   },
+   {
+    "phase_id": 5,
+    "context_id": "c4",
+    "segment": "relearn",
+    "start": 1056,
+    "stop": 1072,
+    "length": 16
+   },
+   {
+    "phase_id": 6,
+    "context_id": "c2",
+    "segment": "relearn",
+    "start": 1312,
+    "stop": 1328,
+    "length": 16
+   }
+  ],
+  "n_feedback": 336
+ },
+ "liveness": {
+  "L1_y_rate": 0.5065104166666666,
+  "L1_x_rate": 0.4969482421875,
+  "L2_rule_disagreement": {
+   "c1_vs_c2": 0.50425,
+   "c1_vs_c3": 0.50025,
+   "c1_vs_c4": 0.49975,
+   "c2_vs_c3": 0.4915,
+   "c2_vs_c4": 0.5115,
+   "c3_vs_c4": 0.5065
+  },
+  "L3_c4_memoryless_fit": 0.79475,
+  "L3_c4_history_fit": 1.0,
+  "L3_c4_analytic_memoryless": 0.7928932188134524,
+  "L3_c4_history_disagreement": 0.18359375,
+  "L4_feedback_on_off": [
+   336,
+   384
+  ],
+  "L5_cadence_F1_F64": [
+   1728,
+   30
+  ],
+  "L6_min_feedback_per_relearn": 4,
+  "L7_fingerprint": "dcf0f45d807d6129",
+  "L8_fitter_c1_heldout": 1.0,
+  "L9_steps_checked": 1536
+ },
+ "class_balance": {
+  "c1": {
+   "iid_mean": 0.5026666666666667,
+   "iid_sd": 0.006196437148340446,
+   "analytic": 0.5,
+   "stream_mean": 0.5071614583333334,
+   "stream_sd": 0.009634536840461422,
+   "n_stream": 512
+  },
+  "c2": {
+   "iid_mean": 0.5000833333333333,
+   "iid_sd": 0.004474464586219592,
+   "analytic": 0.4999999999999999,
+   "stream_mean": 0.4895833333333333,
+   "stream_sd": 0.014659284178642842,
+   "n_stream": 512
+  },
+  "c3": {
+   "iid_mean": 0.4985833333333333,
+   "iid_sd": 0.0053870987862980006,
+   "analytic": 0.5,
+   "stream_mean": 0.5260416666666666,
+   "stream_sd": 0.01578692142315383,
+   "n_stream": 256
+  },
+  "c4": {
+   "iid_mean": 0.5016666666666666,
+   "iid_sd": 0.006884463184107649,
+   "analytic": 0.5000000000000001,
+   "stream_mean": 0.4791666666666667,
+   "stream_sd": 0.01578692142315383,
+   "n_stream": 256
+  }
+ },
+ "memoryless_vs_history": {
+  "c1": {
+   "memoryless_fit": 1.0,
+   "memoryless_fit_sd": 0.0,
+   "memoryless_bayes": 1.0,
+   "history_fit": 1.0,
+   "history_fit_sd": 0.0,
+   "history_bayes": 1.0,
+   "paired_gap": 0.0,
+   "mde": 0.0,
+   "cells": 8,
+   "memoryless_at_ceiling": true,
+   "note": "UNINFORMATIVE-BY-DESIGN"
+  },
+  "c2": {
+   "memoryless_fit": 1.0,
+   "memoryless_fit_sd": 0.0,
+   "memoryless_bayes": 1.0,
+   "history_fit": 1.0,
+   "history_fit_sd": 0.0,
+   "history_bayes": 1.0,
+   "paired_gap": 0.0,
+   "mde": 0.0,
+   "cells": 8,
+   "memoryless_at_ceiling": true,
+   "note": "UNINFORMATIVE-BY-DESIGN"
+  },
+  "c3": {
+   "memoryless_fit": 1.0,
+   "memoryless_fit_sd": 0.0,
+   "memoryless_bayes": 1.0,
+   "history_fit": 1.0,
+   "history_fit_sd": 0.0,
+   "history_bayes": 1.0,
+   "paired_gap": 0.0,
+   "mde": 0.0,
+   "cells": 8,
+   "memoryless_at_ceiling": true,
+   "note": "UNINFORMATIVE-BY-DESIGN"
+  },
+  "c4": {
+   "memoryless_fit": 0.7936666666666667,
+   "memoryless_fit_sd": 0.007795564978456256,
+   "memoryless_bayes": 0.7928932188134524,
+   "history_fit": 1.0,
+   "history_fit_sd": 0.0,
+   "history_bayes": 1.0,
+   "paired_gap": 0.20633333333333337,
+   "mde": 0.013502314616390816,
+   "cells": 8,
+   "memoryless_at_ceiling": false,
+   "note": "history REQUIRED"
+  }
+ },
+ "arms": {
+  "random": {
+   "params": 0,
+   "overall": 0.5032552083333334,
+   "overall_sd": 0.016431548781411405,
+   "per_context": {
+    "c1": 0.5279947916666666,
+    "c2": 0.4765625,
+    "c3": 0.4973958333333333,
+    "c4": 0.5130208333333334
+   },
+   "naive_probe": 0.4895833333333333,
+   "retention_probe": 0.4739583333333333,
+   "relearn": 0.4930555555555556,
+   "retention_sd": 0.023867581744561668,
+   "per_seed_overall": [
+    0.5110677083333334,
+    0.5143229166666666,
+    0.484375
+   ],
+   "per_seed_retention": [
+    0.453125,
+    0.5,
+    0.46875
+   ],
+   "per_seed_naive": [
+    0.5390625,
+    0.4921875,
+    0.4375
+   ],
+   "windows": {
+    "phase1:c1:naive_probe": 0.5104166666666666,
+    "phase1:c1:relearn": 0.4375,
+    "phase2:c2:naive_probe": 0.53125,
+    "phase2:c2:relearn": 0.4583333333333333,
+    "phase3:c3:naive_probe": 0.4166666666666667,
+    "phase3:c3:relearn": 0.5,
+    "phase4:c1:retention_probe": 0.4791666666666667,
+    "phase4:c1:relearn": 0.5416666666666666,
+    "phase5:c4:naive_probe": 0.5,
+    "phase5:c4:relearn": 0.5416666666666666,
+    "phase6:c2:retention_probe": 0.46875,
+    "phase6:c2:relearn": 0.4791666666666667
+   }
+  },
+  "constant-0": {
+   "params": 0,
+   "overall": 0.5002170138888888,
+   "overall_sd": 0.005907403467368132,
+   "per_context": {
+    "c1": 0.4928385416666667,
+    "c2": 0.5104166666666666,
+    "c3": 0.4739583333333333,
+    "c4": 0.5208333333333334
+   },
+   "naive_probe": 0.5104166666666666,
+   "retention_probe": 0.5260416666666666,
+   "relearn": 0.4444444444444445,
+   "retention_sd": 0.07045702738785772,
+   "per_seed_overall": [
+    0.4934895833333333,
+    0.5026041666666666,
+    0.5045572916666666
+   ],
+   "per_seed_retention": [
+    0.53125,
+    0.59375,
+    0.453125
+   ],
+   "per_seed_naive": [
+    0.53125,
+    0.4765625,
+    0.5234375
+   ],
+   "windows": {
+    "phase1:c1:naive_probe": 0.5416666666666666,
+    "phase1:c1:relearn": 0.4375,
+    "phase2:c2:naive_probe": 0.5520833333333334,
+    "phase2:c2:relearn": 0.4375,
+    "phase3:c3:naive_probe": 0.4583333333333333,
+    "phase3:c3:relearn": 0.4791666666666667,
+    "phase4:c1:retention_probe": 0.5833333333333334,
+    "phase4:c1:relearn": 0.5208333333333334,
+    "phase5:c4:naive_probe": 0.4895833333333333,
+    "phase5:c4:relearn": 0.375,
+    "phase6:c2:retention_probe": 0.46875,
+    "phase6:c2:relearn": 0.4166666666666667
+   }
+  },
+  "constant-1": {
+   "params": 0,
+   "overall": 0.4997829861111111,
+   "overall_sd": 0.005907403467368132,
+   "per_context": {
+    "c1": 0.5071614583333334,
+    "c2": 0.4895833333333333,
+    "c3": 0.5260416666666666,
+    "c4": 0.4791666666666667
+   },
+   "naive_probe": 0.4895833333333333,
+   "retention_probe": 0.4739583333333333,
+   "relearn": 0.5555555555555556,
+   "retention_sd": 0.07045702738785772,
+   "per_seed_overall": [
+    0.5065104166666666,
+    0.4973958333333333,
+    0.4954427083333333
+   ],
+   "per_seed_retention": [
+    0.46875,
+    0.40625,
+    0.546875
+   ],
+   "per_seed_naive": [
+    0.46875,
+    0.5234375,
+    0.4765625
+   ],
+   "windows": {
+    "phase1:c1:naive_probe": 0.4583333333333333,
+    "phase1:c1:relearn": 0.5625,
+    "phase2:c2:naive_probe": 0.4479166666666667,
+    "phase2:c2:relearn": 0.5625,
+    "phase3:c3:naive_probe": 0.5416666666666666,
+    "phase3:c3:relearn": 0.5208333333333334,
+    "phase4:c1:retention_probe": 0.4166666666666667,
+    "phase4:c1:relearn": 0.4791666666666667,
+    "phase5:c4:naive_probe": 0.5104166666666666,
+    "phase5:c4:relearn": 0.625,
+    "phase6:c2:retention_probe": 0.53125,
+    "phase6:c2:relearn": 0.5833333333333334
+   }
+  },
+  "majority-so-far": {
+   "params": 1,
+   "overall": 0.4954427083333333,
+   "overall_sd": 0.021166364852876138,
+   "per_context": {
+    "c1": 0.5032552083333334,
+    "c2": 0.5065104166666666,
+    "c3": 0.4765625,
+    "c4": 0.4765625
+   },
+   "naive_probe": 0.53125,
+   "retention_probe": 0.5677083333333334,
+   "relearn": 0.4583333333333333,
+   "retention_sd": 0.023867581744561665,
+   "per_seed_overall": [
+    0.4947916666666667,
+    0.5169270833333334,
+    0.474609375
+   ],
+   "per_seed_retention": [
+    0.5625,
+    0.59375,
+    0.546875
+   ],
+   "per_seed_naive": [
+    0.53125,
+    0.5546875,
+    0.5078125
+   ],
+   "windows": {
+    "phase1:c1:naive_probe": 0.5416666666666666,
+    "phase1:c1:relearn": 0.5208333333333334,
+    "phase2:c2:naive_probe": 0.5520833333333334,
+    "phase2:c2:relearn": 0.3958333333333333,
+    "phase3:c3:naive_probe": 0.4583333333333333,
+    "phase3:c3:relearn": 0.4791666666666667,
+    "phase4:c1:retention_probe": 0.5625,
+    "phase4:c1:relearn": 0.4375,
+    "phase5:c4:naive_probe": 0.5729166666666666,
+    "phase5:c4:relearn": 0.375,
+    "phase6:c2:retention_probe": 0.5729166666666666,
+    "phase6:c2:relearn": 0.5416666666666666
+   }
+  },
+  "recency-lookup": {
+   "params": 4,
+   "overall": 0.6004774305555556,
+   "overall_sd": 0.019964098319630096,
+   "per_context": {
+    "c1": 0.736328125,
+    "c2": 0.5592447916666666,
+    "c3": 0.5104166666666666,
+    "c4": 0.5013020833333334
+   },
+   "naive_probe": 0.484375,
+   "retention_probe": 0.453125,
+   "relearn": 0.5277777777777778,
+   "retention_sd": 0.05633673867912483,
+   "per_seed_overall": [
+    0.6165364583333334,
+    0.6067708333333334,
+    0.578125
+   ],
+   "per_seed_retention": [
+    0.5,
+    0.390625,
+    0.46875
+   ],
+   "per_seed_naive": [
+    0.4765625,
+    0.4296875,
+    0.546875
+   ],
+   "windows": {
+    "phase1:c1:naive_probe": 0.5416666666666666,
+    "phase1:c1:relearn": 0.4375,
+    "phase2:c2:naive_probe": 0.4895833333333333,
+    "phase2:c2:relearn": 0.5,
+    "phase3:c3:naive_probe": 0.4895833333333333,
+    "phase3:c3:relearn": 0.5625,
+    "phase4:c1:retention_probe": 0.5,
+    "phase4:c1:relearn": 0.6458333333333334,
+    "phase5:c4:naive_probe": 0.4166666666666667,
+    "phase5:c4:relearn": 0.5833333333333334,
+    "phase6:c2:retention_probe": 0.40625,
+    "phase6:c2:relearn": 0.4375
+   }
+  },
+  "oracle-memoryless": {
+   "params": 0,
+   "overall": 0.9683159722222222,
+   "overall_sd": 0.0037019796243992604,
+   "per_context": {
+    "c1": 1.0,
+    "c2": 1.0,
+    "c3": 1.0,
+    "c4": 0.8098958333333334
+   },
+   "naive_probe": 0.9479166666666666,
+   "retention_probe": 1.0,
+   "relearn": 0.9583333333333334,
+   "retention_sd": 0.0,
+   "per_seed_overall": [
+    0.9694010416666666,
+    0.9641927083333334,
+    0.9713541666666666
+   ],
+   "per_seed_retention": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "per_seed_naive": [
+    0.953125,
+    0.9296875,
+    0.9609375
+   ],
+   "windows": {
+    "phase1:c1:naive_probe": 1.0,
+    "phase1:c1:relearn": 1.0,
+    "phase2:c2:naive_probe": 1.0,
+    "phase2:c2:relearn": 1.0,
+    "phase3:c3:naive_probe": 1.0,
+    "phase3:c3:relearn": 1.0,
+    "phase4:c1:retention_probe": 1.0,
+    "phase4:c1:relearn": 1.0,
+    "phase5:c4:naive_probe": 0.7916666666666666,
+    "phase5:c4:relearn": 0.75,
+    "phase6:c2:retention_probe": 1.0,
+    "phase6:c2:relearn": 1.0
+   }
+  },
+  "oracle-full": {
+   "params": 0,
+   "overall": 1.0,
+   "overall_sd": 0.0,
+   "per_context": {
+    "c1": 1.0,
+    "c2": 1.0,
+    "c3": 1.0,
+    "c4": 1.0
+   },
+   "naive_probe": 1.0,
+   "retention_probe": 1.0,
+   "relearn": 1.0,
+   "retention_sd": 0.0,
+   "per_seed_overall": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "per_seed_retention": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "per_seed_naive": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "windows": {
+    "phase1:c1:naive_probe": 1.0,
+    "phase1:c1:relearn": 1.0,
+    "phase2:c2:naive_probe": 1.0,
+    "phase2:c2:relearn": 1.0,
+    "phase3:c3:naive_probe": 1.0,
+    "phase3:c3:relearn": 1.0,
+    "phase4:c1:retention_probe": 1.0,
+    "phase4:c1:relearn": 1.0,
+    "phase5:c4:naive_probe": 1.0,
+    "phase5:c4:relearn": 1.0,
+    "phase6:c2:retention_probe": 1.0,
+    "phase6:c2:relearn": 1.0
+   }
+  }
+ },
+ "mde": {
+  "definition": "3*sd/sqrt(n) on the PAIRED per-seed gap; n = number of seeds",
+  "n": 3,
+  "c4_history_minus_memoryless": {
+   "gap": 0.20633333333333337,
+   "mde": 0.013502314616390816,
+   "per_seed": [
+    0.20925000000000005,
+    0.21225000000000005,
+    0.1975
+   ]
+  },
+  "retention_headroom_oracle_minus_nomemory": {
+   "gap": 0.546875,
+   "mde": 0.09757809372497497,
+   "per_seed": [
+    0.5,
+    0.609375,
+    0.53125
+   ]
+  },
+  "per_context_history_gap": {
+   "c1": {
+    "gap": 0.0,
+    "mde": 0.0
+   },
+   "c2": {
+    "gap": 0.0,
+    "mde": 0.0
+   },
+   "c3": {
+    "gap": 0.0,
+    "mde": 0.0
+   },
+   "c4": {
+    "gap": 0.20633333333333337,
+    "mde": 0.013502314616390816
+   }
+  }
+ },
+ "gates": {
+  "G1 balance: every context P(y=1) within 5 sd of 0.5": true,
+  "G2 no constant/majority arm exceeds 0.55, overall or in any context": true,
+  "G3 c4 analytic memoryless Bayes <= 0.80 while history Bayes = 1.0": true,
+  "G4 c4 empirical: history beats memoryless by > MDE at a matched budget": true,
+  "G5 fitter liveness: memoryless fit >= 0.99 on c1, c2 and c3": true,
+  "G6 under c4 with the current cue clear, y is independent of every current bit": true,
+  "G7 retention windows: exactly 2, phases 4 and 6, c1 and c2, length W, feedback withheld": true,
+  "G8 feedback cadence exact and relearn windows fed for F in {1,4,16,64}": true,
+  "G9 the input distribution does not leak the context": true,
+  "G10 retention probe has headroom: oracle >= 0.99 and no-context-memory arm <= 0.60": true,
+  "G11 determinism: same seed reproduces, different seed differs": true
+ },
+ "gate_detail": {
+  "G1": {
+   "worst_context": "c1",
+   "worst_z": 0.33730961708463214,
+   "per_context_p_y1": {
+    "c1": 0.5026666666666667,
+    "c2": 0.5000833333333333,
+    "c3": 0.4985833333333333,
+    "c4": 0.5016666666666666
+   }
+  },
+  "G2": {
+   "worst_constant_accuracy": 0.5260416666666666,
+   "per_arm": {
+    "constant-0": {
+     "c1": 0.4928385416666667,
+     "c2": 0.5104166666666666,
+     "c3": 0.4739583333333333,
+     "c4": 0.5208333333333334
+    },
+    "constant-1": {
+     "c1": 0.5071614583333334,
+     "c2": 0.4895833333333333,
+     "c3": 0.5260416666666666,
+     "c4": 0.4791666666666667
+    },
+    "majority-so-far": {
+     "c1": 0.5032552083333334,
+     "c2": 0.5065104166666666,
+     "c3": 0.4765625,
+     "c4": 0.4765625
+    }
+   }
+  },
+  "G3": {
+   "memoryless_bayes_c4": 0.7928932188134524,
+   "history_bayes_c4": 1.0,
+   "headroom_requiring_history": 0.20710678118654757,
+   "note": "closed form from the generative model; bounds a memoryless predictor of ANY capacity, so no larger memoryless arm can close it"
+  },
+  "G4": {
+   "history_fit_c4": 1.0,
+   "memoryless_fit_c4": 0.7936666666666667,
+   "paired_gap": 0.20633333333333337,
+   "mde": 0.013502314616390816,
+   "per_seed_gap": [
+    0.20925000000000005,
+    0.21225000000000005,
+    0.1975
+   ],
+   "agrees_with_analytic_ceiling": true
+  },
+  "G5": {
+   "per_context": {
+    "c1": 1.0,
+    "c2": 1.0,
+    "c3": 1.0
+   },
+   "note": "without this, a low c4 number is indistinguishable from a broken fitter"
+  },
+  "G6": {
+   "per_seed": [
+    {
+     "subset": "c4 with current OR-bit clear",
+     "n": 2802,
+     "p_y1_on_subset": 0.2987152034261242,
+     "max_abs_dP": 0.0,
+     "at_bit_1based": -1,
+     "tol_5sd": 0.0,
+     "passes": true
+    },
+    {
+     "subset": "c4 with current OR-bit clear",
+     "n": 2844,
+     "p_y1_on_subset": 0.29852320675105487,
+     "max_abs_dP": 0.0,
+     "at_bit_1based": -1,
+     "tol_5sd": 0.0,
+     "passes": true
+    },
+    {
+     "subset": "c4 with current OR-bit clear",
+     "n": 2810,
+     "p_y1_on_subset": 0.28113879003558717,
+     "max_abs_dP": 0.0,
+     "at_bit_1based": -1,
+     "tol_5sd": 0.0,
+     "passes": true
+    }
+   ]
+  },
+  "G7": {
+   "windows": [
+    {
+     "phase_id": 4,
+     "context_id": "c1",
+     "segment": "retention_probe",
+     "start": 768,
+     "stop": 800,
+     "length": 32
+    },
+    {
+     "phase_id": 6,
+     "context_id": "c2",
+     "segment": "retention_probe",
+     "start": 1280,
+     "stop": 1312,
+     "length": 32
+    }
+   ],
+   "placement_ok": true,
+   "prior_exposures": [
+    256,
+    256
+   ],
+   "prior_ok": true,
+   "feedback_withheld_ok": true
+  },
+  "G8": {
+   "1": {
+    "phase_len": 256,
+    "expected": 1344,
+    "realised": 1344,
+    "match": true,
+    "min_feedback_in_relearn": 4,
+    "ok": true
+   },
+   "4": {
+    "phase_len": 256,
+    "expected": 336,
+    "realised": 336,
+    "match": true,
+    "min_feedback_in_relearn": 4,
+    "ok": true
+   },
+   "16": {
+    "phase_len": 256,
+    "expected": 84,
+    "realised": 84,
+    "match": true,
+    "min_feedback_in_relearn": 4,
+    "ok": true
+   },
+   "64": {
+    "phase_len": 416,
+    "expected": 36,
+    "realised": 36,
+    "match": true,
+    "min_feedback_in_relearn": 4,
+    "ok": true
+   }
+  },
+  "G9": {
+   "max_abs_dP": 0.0,
+   "tol_5sd": 0.0,
+   "at": "",
+   "structural_invariant": "single global BIT_P; the generator takes no context",
+   "passes": true
+  },
+  "G10": {
+   "oracle_retention": 1.0,
+   "no_memory_retention": 0.453125,
+   "no_memory_naive_control": 0.484375,
+   "paired_headroom": 0.546875,
+   "mde": 0.09757809372497497,
+   "note": "a no-context-memory arm scoring the same on the retention window as on the matched naive window is the correct null; the metric is calibrated"
+  },
+  "G11": {
+   "fingerprint": "dcf0f45d807d6129"
+  }
+ },
+ "ceiling_floor": {
+  "c1": {
+   "memoryless_fit": 1.0,
+   "best_non_oracle_stream_arm": 0.736328125,
+   "memoryless_at_ceiling": true,
+   "all_non_oracle_at_chance": false,
+   "status": "UNINFORMATIVE-BY-DESIGN for the history claim (memoryless already at ceiling)"
+  },
+  "c2": {
+   "memoryless_fit": 1.0,
+   "best_non_oracle_stream_arm": 0.5592447916666666,
+   "memoryless_at_ceiling": true,
+   "all_non_oracle_at_chance": false,
+   "status": "UNINFORMATIVE-BY-DESIGN for the history claim (memoryless already at ceiling)"
+  },
+  "c3": {
+   "memoryless_fit": 1.0,
+   "best_non_oracle_stream_arm": 0.5260416666666666,
+   "memoryless_at_ceiling": true,
+   "all_non_oracle_at_chance": true,
+   "status": "UNINFORMATIVE-BY-DESIGN for the history claim (memoryless already at ceiling)"
+  },
+  "c4": {
+   "memoryless_fit": 0.7936666666666667,
+   "best_non_oracle_stream_arm": 0.5208333333333334,
+   "memoryless_at_ceiling": false,
+   "all_non_oracle_at_chance": true,
+   "status": "INFORMATIVE for the history claim (memoryless falls 0.2063 below the ceiling the other contexts reach)"
+  }
+ },
+ "schedule_validation": {
+  "retention": {
+   "windows": [
+    {
+     "phase_id": 4,
+     "context_id": "c1",
+     "segment": "retention_probe",
+     "start": 768,
+     "stop": 800,
+     "length": 32
+    },
+    {
+     "phase_id": 6,
+     "context_id": "c2",
+     "segment": "retention_probe",
+     "start": 1280,
+     "stop": 1312,
+     "length": 32
+    }
+   ],
+   "placement_ok": true,
+   "prior_exposures": [
+    256,
+    256
+   ],
+   "prior_ok": true,
+   "feedback_withheld_ok": true
+  },
+  "naive": {
+   "windows": [
+    {
+     "phase_id": 1,
+     "context_id": "c1",
+     "segment": "naive_probe",
+     "start": 0,
+     "stop": 32,
+     "length": 32
+    },
+    {
+     "phase_id": 2,
+     "context_id": "c2",
+     "segment": "naive_probe",
+     "start": 256,
+     "stop": 288,
+     "length": 32
+    },
+    {
+     "phase_id": 3,
+     "context_id": "c3",
+     "segment": "naive_probe",
+     "start": 512,
+     "stop": 544,
+     "length": 32
+    },
+    {
+     "phase_id": 5,
+     "context_id": "c4",
+     "segment": "naive_probe",
+     "start": 1024,
+     "stop": 1056,
+     "length": 32
+    }
+   ],
+   "feedback_withheld_ok": true
+  },
+  "cadence": {
+   "1": {
+    "phase_len": 256,
+    "expected": 1344,
+    "realised": 1344,
+    "match": true,
+    "min_feedback_in_relearn": 4,
+    "ok": true
+   },
+   "4": {
+    "phase_len": 256,
+    "expected": 336,
+    "realised": 336,
+    "match": true,
+    "min_feedback_in_relearn": 4,
+    "ok": true
+   },
+   "16": {
+    "phase_len": 256,
+    "expected": 84,
+    "realised": 84,
+    "match": true,
+    "min_feedback_in_relearn": 4,
+    "ok": true
+   },
+   "64": {
+    "phase_len": 416,
+    "expected": 36,
+    "realised": 36,
+    "match": true,
+    "min_feedback_in_relearn": 4,
+    "ok": true
+   }
+  },
+  "context_leak": {
+   "max_abs_dP": 0.0,
+   "tol_5sd": 0.0,
+   "at": "",
+   "structural_invariant": "single global BIT_P; the generator takes no context",
+   "passes": true
+  }
+ },
+ "rule_validation_seed0": {
+  "kmax": 3,
+  "cells": 8,
+  "per_context": {
+   "c1": {
+    "n_eval": 4000,
+    "p_y1": 0.50975,
+    "p_y1_analytic": 0.5,
+    "p_y1_sd": 0.007905694150420948,
+    "memoryless_fit": 1.0,
+    "memoryless_bayes": 1.0,
+    "history_fit": 1.0,
+    "history_bayes": 1.0,
+    "memoryless_bits_1based": [
+     2,
+     7
+    ],
+    "history_features": [
+     "x2",
+     "x7"
+    ],
+    "candidates_memoryless": 696,
+    "candidates_history": 5488,
+    "params_cells": 8,
+    "independence": {
+     "subset": "n/a -- y is a deterministic function of x_t here",
+     "deterministic_in_x_t": 1.0,
+     "passes": true
+    }
+   },
+   "c2": {
+    "n_eval": 4000,
+    "p_y1": 0.499,
+    "p_y1_analytic": 0.4999999999999999,
+    "p_y1_sd": 0.007905694150420948,
+    "memoryless_fit": 1.0,
+    "memoryless_bayes": 1.0,
+    "history_fit": 1.0,
+    "history_bayes": 1.0,
+    "memoryless_bits_1based": [
+     4,
+     13
+    ],
+    "history_features": [
+     "x4",
+     "x13"
+    ],
+    "candidates_memoryless": 696,
+    "candidates_history": 5488,
+    "params_cells": 8,
+    "independence": {
+     "subset": "n/a -- y is a deterministic function of x_t here",
+     "deterministic_in_x_t": 1.0,
+     "passes": true
+    }
+   },
+   "c3": {
+    "n_eval": 4000,
+    "p_y1": 0.4925,
+    "p_y1_analytic": 0.5,
+    "p_y1_sd": 0.007905694150420948,
+    "memoryless_fit": 1.0,
+    "memoryless_bayes": 1.0,
+    "history_fit": 1.0,
+    "history_bayes": 1.0,
+    "memoryless_bits_1based": [
+     1,
+     8,
+     11
+    ],
+    "history_features": [
+     "x1",
+     "x8",
+     "x11"
+    ],
+    "candidates_memoryless": 696,
+    "candidates_history": 5488,
+    "params_cells": 8,
+    "independence": {
+     "subset": "n/a -- y is a deterministic function of x_t here",
+     "deterministic_in_x_t": 1.0,
+     "passes": true
+    }
+   },
+   "c4": {
+    "n_eval": 4000,
+    "p_y1": 0.50875,
+    "p_y1_analytic": 0.5000000000000001,
+    "p_y1_sd": 0.007905694150420948,
+    "memoryless_fit": 0.79075,
+    "memoryless_bayes": 0.7928932188134524,
+    "history_fit": 1.0,
+    "history_bayes": 1.0,
+    "memoryless_bits_1based": [
+     15
+    ],
+    "history_features": [
+     "x15",
+     "x3(t-2)"
+    ],
+    "candidates_memoryless": 696,
+    "candidates_history": 5488,
+    "params_cells": 8,
+    "independence": {
+     "subset": "c4 with current OR-bit clear",
+     "n": 2802,
+     "p_y1_on_subset": 0.2987152034261242,
+     "max_abs_dP": 0.0,
+     "at_bit_1based": -1,
+     "tol_5sd": 0.0,
+     "passes": true
+    }
+   }
+  }
+ },
+ "verdict": "SMOKE RUN -- plumbing check, NOT a result; rerun with ADRN2_SMOKE unset. ADRN-2 SECTION 18 LATENT-RULE ENVIRONMENT: 11/11 predeclared gates pass over n=3 seeds, where one seed is one independent environment draw (independent input stream and independent i.i.d. rule-validation draws) and the MDE is 3*sd/sqrt(n) on the paired per-seed gap. The four rules are implemented exactly as specified and are balanced not by altering them but by fixing one global per-bit input marginal vector -- P=1/sqrt(2) on the AND bits, P=1-1/sqrt(2) on the OR bits, P=0.5 elsewhere -- so every context's marginal P(y=1) is 0.5 by construction; the realised values are c1 0.5027, c2 0.5001, c3 0.4986, c4 0.5017. Because that same marginal vector is used in every context, the input distribution is identical across contexts and carries no information about which rule is active, so a system cannot bypass the retention measurement by reading the context off the input statistics. The temporal claim is established twice and in the strongest available form: analytically, the Bayes-optimal memoryless accuracy on c4 is 0.7929 against a with-history optimum of 1.0, a bound that holds for a memoryless predictor of arbitrary capacity; empirically, at a matched budget of 8 table cells differing only in whether the feature pool contains the lagged bits, the history arm reaches 1.0000 on c4 against the memoryless arm's 0.7937, a paired per-seed gap of +0.2063 against an MDE of 0.0135, with the memoryless arm landing on its analytic ceiling. The same fitting machinery reaches c1 1.0000, c2 1.0000, c3 1.0000 memorylessly on the non-temporal contexts, which is the positive control that makes the low c4 number a statement about c4 rather than about a broken fitter -- and it is also why c1, c2 and c3 are marked UNINFORMATIVE-BY-DESIGN for the history claim: they sit AT the ceiling, so they separate nothing among the arms that reach it, while c4 falling 0.2063 BELOW that same ceiling is exactly what carries the information. No constant can win: the best of constant-0, constant-1 and majority-so-far reaches 0.5260 overall or within any single context. The retention measurement is separated from relearning by construction and both are exposed with labels: retention is accuracy inside the feedback-withheld window that opens each of the two return phases (phase 4, c1, after c2 and c3 intervened; phase 6, c2, after c3, c1 and c4 intervened), relearning is accuracy over the window after feedback resumes, and every first visit opens with an identically sized withheld window that serves as the matched within-context naive control -- reported raw alongside retention and never subtracted from it. That window has verified headroom: an oracle scores 1.0000 inside it while a context-blind arm with no context memory scores 0.4531, against 0.4844 on its matched naive window, so the metric is calibrated and a memoryless system produces the correct null rather than a flattering one. Feedback cadences of 1, 4, 16 and 64 are all exercised with exact realised counts, and the relearning window is defined as a fixed number of feedback DELIVERIES rather than of examples so that it can never be measured while the learning signal is switched off. Nine mechanism-liveness assertions run before any score is computed and raise rather than warn, covering rule distinctness, the c4 history requirement, the retention mask, the cadence knob, seed determinism in both directions, fitter liveness and feedback leakage. THIS IS AN INSTRUMENT CHECK, NOT A RESULT ABOUT ANY MODEL: it establishes only that the environment can measure retention and relearning, that no arm can win on it by predicting a constant or by ignoring history, and that a failure on c4 would be attributable to the model rather than to the task.",
+ "limits": [
+  "This validates the ENVIRONMENT, not any model. Every gate here could pass while ADRN-2A learns nothing; a passing instrument check is a precondition for interpreting a model result, never evidence for one.",
+  "FALSIFIER: if a memoryless predictor of any capacity were shown to exceed 0.7929 on c4, the analytic ceiling would be wrong and the temporal claim of this environment would collapse. The bound is closed form from the generative model, so this is checkable by hand.",
+  "FALSIFIER: if a system could infer the context from the input distribution rather than from feedback, the retention window would measure input-statistics inference rather than retrieval. G9 tests this empirically and the generator enforces it structurally (a single global BIT_P with no context argument), but a system exploiting higher-order structure in the RNG stream would not be caught by a per-bit marginal test.",
+  "FALSIFIER: if the retention window were long enough for a system to re-derive the rule from unlabelled inputs alone, retention would be contaminated by unsupervised adaptation. W=32 and the rules are not self-identifying without labels, but this is an assumption, not a proof, and a model with a strong unsupervised prior could violate it.",
+  "The history arm searches a feature pool twice the size of the memoryless arm's, because history means more features. The MATCHED quantity is table capacity, not search-space size. The analytic ceiling makes the objection moot -- no memoryless model of any size beats it -- and that is why the analytic bound is reported alongside the fitted one rather than instead of it.",
+  "The exhaustive lookup fit is capped at subsets of <=3 bits for tractability. It is exactly sufficient for all four rules (2 bits for XOR/AND/OR, 3 for majority) and its liveness is asserted, but it is not a general-purpose learner and its numbers are ceilings for THESE rules only.",
+  "Only the phase schedule c1->c2->c3->c1->c4->c2 is validated. Two returns give n=2 return events per stream; per-seed variation in retention comes from the input draw, not from schedule variation, so a claim that generalises across schedules would need the schedule randomised.",
+  "The temporal context c4 appears exactly once, at phase 5, and is never returned to. Retention is therefore measured on c1 and c2 only -- both non-temporal. A claim about retaining a TEMPORAL rule is not supported by this schedule and would need c4 to recur.",
+  "Phase length 256 and W=32 are configuration, not findings. A shorter phase would leave less time to acquire the rule before the return, which would lower retention for reasons that have nothing to do with the mechanism under test."
+ ],
+ "log": [
+  "============================================================================================================",
+  "ADRN-2 SECTION 18 LATENT-RULE ENVIRONMENT -- self-validation",
+  "============================================================================================================",
+  "  *** SMOKE RUN -- plumbing check, NOT a result. Rerun with ADRN2_SMOKE unset. ***",
+  "  UNIT OF REPLICATION: the SEED -- one independent environment draw per seed. n = 3.",
+  "  MDE = 3*sd/sqrt(n) on the PAIRED per-seed gap. Effect size is always the RAW held-out value;",
+  "  controls establish significance only and are never subtracted from a reported number.",
+  "  Config: phase_len=256  W=32  F=4  relearn=4 feedback deliveries  n_fit=4000  n_eval=4000  table budget=8 cells",
+  "  Schedule: c1 -> c2 -> c3 -> c1 -> c4 -> c2   returns at phase 4 (c1) and phase 6 (c2)",
+  "\n  MECHANISM LIVENESS ASSERTIONS (run BEFORE any score; each RAISES on failure)",
+  "    OK  rules mutually distinct        min pairwise label disagreement 0.491",
+  "    OK  c4 truly needs history         memoryless fit 0.7947 (closed form 0.7929) vs history fit 1.0000; both directions asserted",
+  "    OK  retention windows live         feedback events W>0: 336  W=0: 384",
+  "    OK  cadence live                   F=1: 1728 events  F=64: 30 events",
+  "    OK  relearn windows fed            min feedback deliveries in any relearn window 4",
+  "    OK  seed is the unit               same seed reproduces, different seed differs (fp dcf0f45d807d6129)",
+  "    OK  FITTER positive control        budgeted lookup recovers c1 XOR at 1.0000 held out",
+  "    OK  feedback never leaks           1536 steps checked, y_feedback nulled on every withheld step",
+  "\n  REALISED CLASS BALANCE PER CONTEXT",
+  "    context  rule                            P(y=1) iid  analytic  P(y=1) stream  n stream",
+  "    c1       x2 XOR x7                           0.5027    0.5000         0.5072       512",
+  "    c2       x4 AND x13                          0.5001    0.5000         0.4896       512",
+  "    c3       majority(x1,x8,x11)                 0.4986    0.5000         0.5260       256",
+  "    c4       x3(t-2) OR x15(t)  [TEMPORAL]       0.5017    0.5000         0.4792       256",
+  "\n  MEMORYLESS vs HISTORY AT A MATCHED TABLE BUDGET (raw held-out accuracy, mean over seeds)",
+  "    table budget bisected to k=3 bits -> 8 cells; BOTH arms get the same 8 cells.",
+  "    the only difference is the feature pool: 16 current bits vs 16 current + 16 lagged.",
+  "    context   memoryless  analytic   history  analytic      gap      MDE  cells                    verdict",
+  "    c1            1.0000    1.0000    1.0000    1.0000  +0.0000   0.0000      8    UNINFORMATIVE-BY-DESIGN",
+  "    c2            1.0000    1.0000    1.0000    1.0000  +0.0000   0.0000      8    UNINFORMATIVE-BY-DESIGN",
+  "    c3            1.0000    1.0000    1.0000    1.0000  +0.0000   0.0000      8    UNINFORMATIVE-BY-DESIGN",
+  "    c4            0.7937    0.7929    1.0000    1.0000  +0.2063   0.0135      8           history REQUIRED",
+  "    c1-c3 sit AT the memoryless ceiling by construction, so they cannot separate a history-using",
+  "    system from a memoryless one -- uninformative about that claim, and that is by design. It is",
+  "    c4 falling FAR BELOW the same ceiling the others reach that carries the information.",
+  "\n  REFERENCE ARMS ON THE REALISED STREAM (raw held-out accuracy, mean over seeds)",
+  "    arm                   params  overall      c1      c2      c3      c4    naive   retain  relearn",
+  "    random                     0   0.5033  0.5280  0.4766  0.4974  0.5130   0.4896   0.4740   0.4931",
+  "    constant-0                 0   0.5002  0.4928  0.5104  0.4740  0.5208   0.5104   0.5260   0.4444",
+  "    constant-1                 0   0.4998  0.5072  0.4896  0.5260  0.4792   0.4896   0.4740   0.5556",
+  "    majority-so-far            1   0.4954  0.5033  0.5065  0.4766  0.4766   0.5312   0.5677   0.4583",
+  "    recency-lookup             4   0.6005  0.7363  0.5592  0.5104  0.5013   0.4844   0.4531   0.5278",
+  "    oracle-memoryless          0   0.9683  1.0000  1.0000  1.0000  0.8099   0.9479   1.0000   0.9583",
+  "    oracle-full                0   1.0000  1.0000  1.0000  1.0000  1.0000   1.0000   1.0000   1.0000",
+  "\n  RETENTION vs RELEARNING, THE TWO QUANTITIES THIS ENVIRONMENT EXISTS TO SEPARATE",
+  "    retention = accuracy inside the feedback-WITHHELD window that opens a RETURN phase.",
+  "    naive     = accuracy inside the identically sized feedback-withheld window that opens the",
+  "                FIRST visit to that same context. The matched control. Reported raw, never",
+  "                subtracted from retention.",
+  "    relearn   = accuracy over the window after feedback resumes. A different quantity.",
+  "    recency-lookup",
+  "        phase1:c1:naive_probe                      0.5417",
+  "        phase2:c2:naive_probe                      0.4896",
+  "        phase3:c3:naive_probe                      0.4896",
+  "        phase4:c1:retention_probe                  0.5000",
+  "        phase5:c4:naive_probe                      0.4167",
+  "        phase6:c2:retention_probe                  0.4062",
+  "    oracle-memoryless",
+  "        phase1:c1:naive_probe                      1.0000",
+  "        phase2:c2:naive_probe                      1.0000",
+  "        phase3:c3:naive_probe                      1.0000",
+  "        phase4:c1:retention_probe                  1.0000",
+  "        phase5:c4:naive_probe                      0.7917",
+  "        phase6:c2:retention_probe                  1.0000",
+  "    oracle-full",
+  "        phase1:c1:naive_probe                      1.0000",
+  "        phase2:c2:naive_probe                      1.0000",
+  "        phase3:c3:naive_probe                      1.0000",
+  "        phase4:c1:retention_probe                  1.0000",
+  "        phase5:c4:naive_probe                      1.0000",
+  "        phase6:c2:retention_probe                  1.0000",
+  "\n  CEILING AND FLOOR",
+  "    c1: UNINFORMATIVE-BY-DESIGN for the history claim (memoryless already at ceiling)",
+  "    c2: UNINFORMATIVE-BY-DESIGN for the history claim (memoryless already at ceiling)",
+  "    c3: UNINFORMATIVE-BY-DESIGN for the history claim (memoryless already at ceiling)",
+  "    c4: INFORMATIVE for the history claim (memoryless falls 0.2063 below the ceiling the other contexts reach)",
+  "\n  PREDECLARED GATES",
+  "    PASS  G1 balance: every context P(y=1) within 5 sd of 0.5",
+  "    PASS  G2 no constant/majority arm exceeds 0.55, overall or in any context",
+  "    PASS  G3 c4 analytic memoryless Bayes <= 0.80 while history Bayes = 1.0",
+  "    PASS  G4 c4 empirical: history beats memoryless by > MDE at a matched budget",
+  "    PASS  G5 fitter liveness: memoryless fit >= 0.99 on c1, c2 and c3",
+  "    PASS  G6 under c4 with the current cue clear, y is independent of every current bit",
+  "    PASS  G7 retention windows: exactly 2, phases 4 and 6, c1 and c2, length W, feedback withheld",
+  "    PASS  G8 feedback cadence exact and relearn windows fed for F in {1,4,16,64}",
+  "    PASS  G9 the input distribution does not leak the context",
+  "    PASS  G10 retention probe has headroom: oracle >= 0.99 and no-context-memory arm <= 0.60",
+  "    PASS  G11 determinism: same seed reproduces, different seed differs",
+  "\n============================================================================================================",
+  "  VERDICT: SMOKE RUN -- plumbing check, NOT a result; rerun with ADRN2_SMOKE unset. ADRN-2 SECTION 18 LATENT-RULE ENVIRONMENT: 11/11 predeclared gates pass over n=3 seeds, where one seed is one independent environment draw (independent input stream and independent i.i.d. rule-validation draws) and the MDE is 3*sd/sqrt(n) on the paired per-seed gap. The four rules are implemented exactly as specified and are balanced not by altering them but by fixing one global per-bit input marginal vector -- P=1/sqrt(2) on the AND bits, P=1-1/sqrt(2) on the OR bits, P=0.5 elsewhere -- so every context's marginal P(y=1) is 0.5 by construction; the realised values are c1 0.5027, c2 0.5001, c3 0.4986, c4 0.5017. Because that same marginal vector is used in every context, the input distribution is identical across contexts and carries no information about which rule is active, so a system cannot bypass the retention measurement by reading the context off the input statistics. The temporal claim is established twice and in the strongest available form: analytically, the Bayes-optimal memoryless accuracy on c4 is 0.7929 against a with-history optimum of 1.0, a bound that holds for a memoryless predictor of arbitrary capacity; empirically, at a matched budget of 8 table cells differing only in whether the feature pool contains the lagged bits, the history arm reaches 1.0000 on c4 against the memoryless arm's 0.7937, a paired per-seed gap of +0.2063 against an MDE of 0.0135, with the memoryless arm landing on its analytic ceiling. The same fitting machinery reaches c1 1.0000, c2 1.0000, c3 1.0000 memorylessly on the non-temporal contexts, which is the positive control that makes the low c4 number a statement about c4 rather than about a broken fitter -- and it is also why c1, c2 and c3 are marked UNINFORMATIVE-BY-DESIGN for the history claim: they sit AT the ceiling, so they separate nothing among the arms that reach it, while c4 falling 0.2063 BELOW that same ceiling is exactly what carries the information. No constant can win: the best of constant-0, constant-1 and majority-so-far reaches 0.5260 overall or within any single context. The retention measurement is separated from relearning by construction and both are exposed with labels: retention is accuracy inside the feedback-withheld window that opens each of the two return phases (phase 4, c1, after c2 and c3 intervened; phase 6, c2, after c3, c1 and c4 intervened), relearning is accuracy over the window after feedback resumes, and every first visit opens with an identically sized withheld window that serves as the matched within-context naive control -- reported raw alongside retention and never subtracted from it. That window has verified headroom: an oracle scores 1.0000 inside it while a context-blind arm with no context memory scores 0.4531, against 0.4844 on its matched naive window, so the metric is calibrated and a memoryless system produces the correct null rather than a flattering one. Feedback cadences of 1, 4, 16 and 64 are all exercised with exact realised counts, and the relearning window is defined as a fixed number of feedback DELIVERIES rather than of examples so that it can never be measured while the learning signal is switched off. Nine mechanism-liveness assertions run before any score is computed and raise rather than warn, covering rule distinctness, the c4 history requirement, the retention mask, the cadence knob, seed determinism in both directions, fitter liveness and feedback leakage. THIS IS AN INSTRUMENT CHECK, NOT A RESULT ABOUT ANY MODEL: it establishes only that the environment can measure retention and relearning, that no arm can win on it by predicting a constant or by ignoring history, and that a failure on c4 would be attributable to the model rather than to the task."
+ ]
+}
