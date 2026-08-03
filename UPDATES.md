@@ -18943,3 +18943,66 @@ pairs into the one-novel-gene regime is coverage breadth, not anchoring.
 That is the eighth time today a claim of mine was overturned by its own control, and the second in a row on this
 thread: first the too-broad "pair screens buy coverage not generalisation", now the anchor-design inference drawn
 from correcting it.
+
+---
+
+# ADRN Evidence Reasoner v1: the stores are redundant, and the query barely matters
+
+`colab/adrn_evidence_reasoner.py`
+
+Four evidence stores, three built (entity / experience / relationship), combined with weights fitted on 400
+training knockouts, ranked, scored on the sealed cohorts. Each store's solo value was already on record; the open
+question was whether **composition** beats the best single store.
+
+Fitted weights (entity, experience, relationship): **+2.094, +0.490, −0.590**.
+
+| arm | cohort 1 | cohort 2 |
+|---|---:|---:|
+| minus_relationship (entity + experience) | 0.2432 | **0.2965** |
+| **entity_only (= chan2a)** | **0.2340** | **0.2885** |
+| combined (all three) | 0.2258 | 0.2730 |
+| **wrong_query** (evidence for a *different* knockout) | 0.2283 | 0.2775 |
+| random_evidence | 0.2060 | 0.2520 |
+| experience_only | 0.1855 | 0.2375 |
+| minus_entity | 0.0572 | 0.0853 |
+| relationship_only | 0.0158 | 0.0215 |
+
+    GATE  combined - entity_only        -0.0083 / -0.0155   RESOLVED **WORSE**
+          combined - wrong_query        -0.0025 / -0.0045   within noise
+          combined - random_evidence    +0.0198 / +0.0210   RESOLVED
+          minus_relationship - combined +0.0175 / +0.0235   RESOLVED (dropping it HELPS)
+          minus_experience - combined   -0.0115 / -0.0143   RESOLVED
+
+## The gate fails, and one control is damning
+
+**`combined` is RESOLVED worse than `entity_only`.** The encyclopedia, assembled, predicts less well than the
+entity store alone.
+
+**`wrong_query` ties `combined`.** Retrieve the evidence for a *completely different knockout* and the answer is
+statistically unchanged (−0.0025 / −0.0045, within noise). The retrieval is barely query-specific: what it
+contributes is a generic prior over which genes respond, not evidence about *this* perturbation. `random_evidence`
+does score lower (+0.021, RESOLVED), so retrieval is not entirely inert — but the gap between "right query" and
+"wrong query" is nil, which is the gap that would have mattered.
+
+**The relationship store is actively harmful.** It gets a negative fitted weight (−0.590), scores 0.0158 / 0.0215
+alone — barely above random — and *removing it improves the combination* by +0.0175 / +0.0235, RESOLVED. That is
+the eighth consecutive negative result for the network stores.
+
+## The one positive
+
+**minus_relationship — entity + experience — reaches 0.2965 on the holdout, above chan2a's 0.2885.** That
+combination is not in the predeclared contrast set, so I am recording it as an observation to test properly, not
+as a result: it was selected by looking at the table, which is exactly the selection-on-noise this project keeps
+catching. The honest next step is to run entity+experience as a predeclared two-arm comparison against chan2a on
+its own.
+
+## What v1 says about the architecture
+
+The spec named the risk correctly — "the system may become a sophisticated nearest-neighbour retriever" — and the
+measurement is worse than that: it became a retriever whose *query is nearly irrelevant*. Combining stores did not
+add evidence, it added variance and a harmful store.
+
+The encyclopedia framing is sound and the failure here is specific, not general: retrieval by annotation cosine
+returns knockouts whose *generic* response resembles the query's, and the generic response is what the entity
+store already predicts. For retrieval to add anything it must return evidence that is specific to the query and
+not already implied by the query's own annotation — and nothing in the four stores currently does that.
