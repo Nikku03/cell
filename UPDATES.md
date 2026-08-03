@@ -19156,3 +19156,63 @@ The transfer claim is now measured rather than assumed, and it does not hold. Th
 responses; it does not predict drug responses from target annotation. Anything downstream that assumed
 drug-effect prediction — the disease/target-to-therapy chain in particular — has to be read as resting on the
 knockout side only.
+
+# Uncertainty-driven screen design: model confidence is a WORSE guide than random
+
+The scaling curve says the next tranche of perturbations buys +0.024 per doubling *if chosen randomly*. The
+best-validated capability here is calibrated abstention — the model knows which knockouts it cannot call. Those
+two facts compose into an obvious proposal: rank the unmeasured genes by how badly the model predicts them and
+measure those. This tests it by simulation — start from a 600-knockout seed, grow the training set by n more
+chosen by each strategy, refit NMF + channels + ridge, score on the same sealed cohorts. The only thing that
+varies is *which* knockouts were added. 3 repeats.
+
+| budget | strategy | cohort 1 | cohort 2 |
+|---|---|---:|---:|
+| 600 | uncertainty − random | −0.0031 ns | −0.0074 ns |
+| 600 | diversity − random | +0.0054 ns | −0.0058 ns |
+| 600 | **high_signal ORACLE − random** | **+0.0223 RESOLVED** | **+0.0333 RESOLVED** |
+| 1,200 | uncertainty − random | −0.0054 ns | **−0.0138 RESOLVED NEGATIVE** |
+| 1,200 | diversity − random | −0.0037 ns | **−0.0138 RESOLVED NEGATIVE** |
+| 1,200 | **high_signal ORACLE − random** | **+0.0122 RESOLVED** | **+0.0260 RESOLVED** |
+| 2,400 | uncertainty − random | −0.0045 ns | **−0.0120 RESOLVED NEGATIVE** |
+| 2,400 | diversity − random | −0.0055 ns | **−0.0155 RESOLVED NEGATIVE** |
+| 2,400 | high_signal ORACLE − random | +0.0047 ns | −0.0017 ns |
+
+**GATE FAIL.** A strategy had to beat random at more than one budget. Neither beat it at *any* budget.
+
+## The failure is stronger than the gate anticipated
+
+The predeclaration said "if uncertainty ties random, then model confidence carries no information about what is
+worth measuring". It did not tie — it **lost**, RESOLVED negative on cohort 2 at both larger budgets, with a
+negative sign in 5 of 6 cells. Spending budget on the knockouts the model predicts worst actively degrades it.
+
+The oracle column shows why. What pays is buying **large responders**; low-confidence knockouts are the
+sparsely-annotated, weakly-responding ones, so uncertainty selects close to the opposite of what helps. Two
+structurally independent acquisition rules — `uncertainty` (distance to the seed) and `diversity` (greedy
+farthest-first max-min against everything already held) — agree, which is evidence rather than duplication only
+because the dead-arm bug below was fixed first.
+
+## The oracle decays, which caps the whole idea
+
++0.0333 → +0.0260 → −0.0017 on cohort 2. **Even with the answer in hand**, targeted selection stops helping once
+the strong responders are bought; past ~2,400 the informative knockouts are exhausted and random catches up. That
+bounds what *any* acquisition rule could be worth here at roughly +0.03, and it is consistent with the scaling
+curve bending at +0.024 per doubling.
+
+Actionable read: design screens on **expected response magnitude** (biology), not on model confidence. The oracle
+is not runnable — it reads the answer — but it points at proxies knowable before a screen (DepMap essentiality,
+expression level). That is a testable follow-up, not a claim.
+
+**Scope, as predeclared:** this simulates acquisition inside an already-measured pool, so the candidates are genes
+the screen already covered. It bounds the value of the acquisition RULE, not of a real prospective screen.
+
+## The dead-arm bug this test shipped with, kept visible
+
+The first version of the `diversity` arm sorted `1 - conf` descending. That is the same permutation as sorting
+`conf` ascending, so it selected a **byte-identical set of knockouts to `uncertainty`** and tested nothing. It
+would have "agreed" with uncertainty at every budget for a reason that had nothing to do with acquisition, and
+that agreement would have been reported as corroboration. It is now real farthest-first — maximising the minimum
+distance to everything already held *including the picks made so far*, which is precisely what `uncertainty`
+cannot do, since it scores each candidate against the seed alone and will happily buy 600 near-duplicates of each
+other so long as all 600 are far from the seed. A liveness assertion now fails the run if the two arms ever select
+the same set again.
