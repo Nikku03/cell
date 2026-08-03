@@ -19006,3 +19006,54 @@ The encyclopedia framing is sound and the failure here is specific, not general:
 returns knockouts whose *generic* response resembles the query's, and the generic response is what the entity
 store already predicts. For retrieval to add anything it must return evidence that is specific to the query and
 not already implied by the query's own annotation — and nothing in the four stores currently does that.
+
+---
+
+# Entity + experience, predeclared: the 0.2965 does not replicate — and v1's "retrieval isn't query-specific" was wrong
+
+`colab/adrn_entity_experience.py`
+
+K swept on training knockouts only → **K=5, weights (+0.787 entity, +0.671 experience)**, a far more balanced
+combination than v1's three-store fit (+2.094 / +0.490).
+
+| arm | cohort 1 | cohort 2 |
+|---|---:|---:|
+| entity_only (chan2a) | **0.2340** | **0.2885** |
+| entity_experience | 0.2260 | 0.2860 |
+| random_evidence | 0.1988 | 0.2420 |
+| wrong_query | 0.1935 | 0.2345 |
+| experience_only | 0.1685 | 0.2263 |
+
+    GATE ent+exp - entity_only   -0.0080 [-0.0205,+0.0040]  and  -0.0025 [-0.0150,+0.0103]  within noise
+         wrong_query - entity    -0.0405 [-0.0528,-0.0283]  and  -0.0540 [-0.0690,-0.0393]  RESOLVED
+         ent+exp - wrong_query   +0.0325 [+0.0185,+0.0468]  and  +0.0515 [+0.0345,+0.0695]  RESOLVED
+         ent+exp - random_ev     +0.0272 [+0.0127,+0.0425]  and  +0.0440 [+0.0280,+0.0607]  RESOLVED
+
+## The 0.2965 was selection on noise — confirmed
+
+Under a predeclared two-arm test the gate **fails**: −0.0080 and −0.0025, within noise on both cohorts. The
+highest number measured in this project did not survive being tested on purpose. Flagging it as an observation
+rather than a result was correct, and this is what would have happened had it been published.
+
+## But v1's other conclusion was wrong, and this corrects it
+
+I wrote that the retrieval "is barely query-specific — retrieve evidence for a completely different knockout and
+the answer is statistically unchanged." **That was an artefact of the three-store weighting.** In v1 the entity
+store carried 4× the weight of experience, so the combination was nearly entity_only regardless of what retrieval
+returned, and swapping the query could not move it.
+
+With balanced two-store weights, **retrieval is decisively query-specific**: using the right knockout's neighbours
+beats using a different knockout's by **+0.0325 and +0.0515, RESOLVED on both cohorts**, and beats random
+retrieval by +0.0272 / +0.0440. `wrong_query` is also RESOLVED *worse* than entity alone — feeding the wrong
+evidence actively damages the prediction, which is exactly what a functioning retrieval system should do.
+
+## What both results together say
+
+Experience retrieval recovers **real, query-specific biological signal** — that is now established with controls
+on both cohorts. It simply does not add anything **beyond what the entity store already predicts**. The two
+sources are redundant, not independent.
+
+That is a more precise and more useful finding than either v1's version or the unreplicated 0.2965. For the
+evidence-reasoner architecture it sets a concrete requirement: a store earns its place only if it carries
+query-specific signal that the entity store does *not* already contain, and the wrong-query control is the
+instrument that measures exactly that.
