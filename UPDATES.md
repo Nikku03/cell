@@ -18573,3 +18573,50 @@ annotation cannot reconstruct it because genes that look identical genuinely res
 
 That is the same wall as everywhere else in this project, stated on a new axis: **the information is in the
 measurements, not in the annotation.**
+
+---
+
+# Source-side structured holdout: the encoder convergence is real, and the two sides differ
+
+`colab/adrn_source_holdout.py`
+
+The nine-encoder convergence was measured only on the fixed sealed cohorts, which are selected by functional-class
+round-robin — effectively a **random** source split. On the target side, encoders also tied on a random gene split
+and then separated sharply under a complex holdout. So the source-side result needed a hard split before it could
+be trusted. Whole complexes and whole pathways held out; programme basis and encoder refit per fold on
+training-fold sources only.
+
+*(These numbers score 438 held-out training-pool sources through a per-fold basis and are NOT comparable to the
+sealed cohorts' 0.2885.)*
+
+| split | gbm | ridge | knn | gbm − ridge | knn − ridge |
+|---|---:|---:|---:|---|---|
+| random | 0.3500 | 0.3481 | 0.3454 | +0.0019 [−0.0050,+0.0094] noise | −0.0026 noise |
+| complex | 0.2895 | 0.2909 | 0.2647 | −0.0014 [−0.0095,+0.0063] noise | **−0.0261 RESOLVED worse** |
+| pathway | 0.2392 | 0.2435 | 0.2290 | −0.0043 [−0.0131,+0.0045] noise | **−0.0145 RESOLVED worse** |
+
+**The convergence is real.** Trees do not separate from ridge on the source side even when whole complexes or
+whole pathways are held out — `gbm − ridge` is within noise on all three splits, and the point estimate is
+*negative* on both hard ones. The earlier conclusion stands rather than being an artefact of easy splits.
+
+## The two sides behave differently, consistently
+
+| | source side | target side |
+|---|---|---|
+| gbm − ridge, random split | +0.0019 noise | +0.006 RESOLVED |
+| gbm − ridge, hard split | −0.0014 / −0.0043 noise | **+0.024 RESOLVED** |
+| knn vs ridge, hard split | **−0.026 RESOLVED worse** | ties or beats ridge |
+
+Predicting **which programmes a knockout fires** is a well-conditioned linear problem in annotation space — a
+ridge is optimal and a local lookup actively hurts once the neighbourhood is removed. Predicting **how a gene
+responds to a programme** is not linear, and local structure survives the complex holdout there.
+
+That asymmetry is a real property of the biology, not of the fitting. It also explains why the sealed-protocol
+number has been so hard to move: the source map is already at its linear optimum, and the linear optimum is what
+the data supports.
+
+## Cost of hard splits
+
+Source precision falls 0.3481 → 0.2909 → 0.2435 (random → complex → pathway), about **30% from random to
+pathway**. Held-out-pathway knockouts are substantially harder than held-out-random ones, which is worth knowing
+for any future claim about cold-start generalisation on this task.
