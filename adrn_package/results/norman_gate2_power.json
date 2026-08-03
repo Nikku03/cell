@@ -1,0 +1,57 @@
+{
+  "test": "norman_gate2_power",
+  "n_pairs": 131,
+  "n_genes": 73,
+  "logo": {
+    "ridge": 0.276707394027024,
+    "marginal": 0.19508725028717452,
+    "shuffled": 0.06738968633046717
+  },
+  "contrasts": {
+    "ridge - marginal": {
+      "gap": 0.08162014373984945,
+      "ci": [
+        0.054315510273653465,
+        0.10812172448457531
+      ],
+      "mde": 0.03799171372058488,
+      "n": 262
+    },
+    "ridge - shuffled": {
+      "gap": 0.2093177076965568,
+      "ci": [
+        0.17527786424536027,
+        0.2432880459815564
+      ],
+      "mde": 0.04898466725099388,
+      "n": 262
+    },
+    "repeated ridge - marginal": {
+      "gap": 0.09058498637569606,
+      "mde": 0.01465352495150713,
+      "seeds": 20
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "GATE 2 AT MAXIMUM POWER: leave-one-gene-out, with the MDE stated",
+    "====================================================================================================",
+    "  105 singles, 131 pairs (the dataset's hard ceiling)",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 536 kept of 691 built  (TIER A 527, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  symmetric pair features 2091",
+    "  73 distinct genes across the pairs -> 73 LOGO folds",
+    "\n### LEAVE-ONE-GENE-OUT (73 folds)",
+    "  262 (gene, pair) test evaluations from 73 folds; training keeps 130 pairs on average vs ~26 before",
+    "  ridge      mean corr +0.2767   sd 0.2248",
+    "  marginal   mean corr +0.1951   sd 0.1794",
+    "  shuffled   mean corr +0.0674   sd 0.1871",
+    "  ridge - marginal      +0.0816 [+0.0543, +0.1081]  MDE 0.0380  RESOLVED  (n=262)",
+    "  ridge - shuffled      +0.2093 [+0.1753, +0.2433]  MDE 0.0490  RESOLVED  (n=262)",
+    "\n### REPEATED RANDOM GENE SPLITS (20 seeds, 5 folds each)",
+    "  ridge      mean over seeds +0.2896  sd 0.0256",
+    "  marginal   mean over seeds +0.1990  sd 0.0094",
+    "  shuffled   mean over seeds +0.0674  sd 0.0104",
+    "  ridge - marginal   +0.0906  MDE 0.0147  RESOLVED"
+  ]
+}

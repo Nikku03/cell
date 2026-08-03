@@ -1,0 +1,26 @@
+{
+  "test": "adrn_drug_liveness",
+  "n_drugs": 181,
+  "n_distinct_top10": 80,
+  "mean_pairwise_overlap": 0.3051903007980356,
+  "median_pairwise_overlap": 0.3,
+  "constant_core": 0,
+  "mean_channel_cosine": 0.6229081749916077,
+  "n_distinct_target_sets": 80,
+  "dead": false,
+  "log": [
+    "====================================================================================================",
+    "LIVENESS: does the drug -> target -> channel arm vary with the drug at all?",
+    "====================================================================================================",
+    "  181 scored drugs recovered from obs",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 15.2",
+    "  extra channels: 539 kept of 691 built  (TIER A 530, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "\n  distinct top-10 sets across 181 drugs : 80",
+    "  mean pairwise top-10 overlap                : 0.305  (1.000 = identical predictions)",
+    "  median pairwise top-10 overlap              : 0.300",
+    "  genes present in EVERY drug's top-10        : 0 of 20",
+    "  mean pairwise cosine of drug channel vectors: 0.623",
+    "  distinct target-gene sets                   : 80",
+    "\n  VERDICT: LIVE -- predictions genuinely vary by drug, so the shuffled tie is a real null"
+  ]
+}

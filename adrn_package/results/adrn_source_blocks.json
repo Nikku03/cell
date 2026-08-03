@@ -1,0 +1,180 @@
+{
+  "test": "adrn_source_blocks",
+  "means": {
+    "cohort1": {
+      "chan2a": 0.23274999999999998,
+      "chan2a+esm": 0.23199999999999998,
+      "chan2a+codep": 0.254,
+      "chan2a+ppi": 0.24675,
+      "chan2a+ppi_rw": 0.23125,
+      "chan2a+all": 0.25725000000000003,
+      "esm_only": 0.171,
+      "codep_only": 0.24100000000000002
+    },
+    "_holdout": {
+      "chan2a": 0.28925,
+      "chan2a+esm": 0.28175000000000006,
+      "chan2a+codep": 0.31275,
+      "chan2a+ppi": 0.30450000000000005,
+      "chan2a+ppi_rw": 0.272,
+      "chan2a+all": 0.32175,
+      "esm_only": 0.20675000000000004,
+      "codep_only": 0.28175000000000006
+    }
+  },
+  "gates": {
+    "G_esm": {
+      "contrast": "chan2a+esm - chan2a",
+      "cells": [
+        [
+          -0.0007499999999999962,
+          -0.008749999999999997,
+          0.007750000000000002
+        ],
+        [
+          -0.007499999999999999,
+          -0.0165,
+          0.0015000000000000002
+        ]
+      ],
+      "pass": false
+    },
+    "G_codep": {
+      "contrast": "chan2a+codep - chan2a",
+      "cells": [
+        [
+          0.02125,
+          0.008250000000000002,
+          0.035250000000000004
+        ],
+        [
+          0.0235,
+          0.01225,
+          0.03525
+        ]
+      ],
+      "pass": true
+    },
+    "G_ppi": {
+      "contrast": "chan2a+ppi - chan2a",
+      "cells": [
+        [
+          0.013999999999999999,
+          0.00075,
+          0.0275
+        ],
+        [
+          0.01525,
+          0.00024999999999999946,
+          0.0315
+        ]
+      ],
+      "pass": true
+    },
+    "G_ppiCTRL": {
+      "contrast": "chan2a+ppi - chan2a+ppi_rw",
+      "cells": [
+        [
+          0.0155,
+          0.0017499999999999974,
+          0.029500000000000002
+        ],
+        [
+          0.0325,
+          0.01625,
+          0.050499999999999996
+        ]
+      ],
+      "pass": true
+    },
+    "G_all": {
+      "contrast": "chan2a+all - chan2a",
+      "cells": [
+        [
+          0.0245,
+          0.009249999999999998,
+          0.04075000000000001
+        ],
+        [
+          0.0325,
+          0.0175,
+          0.049
+        ]
+      ],
+      "pass": true
+    }
+  },
+  "strata": {
+    "cohort1": {
+      "twinned": {
+        "n": 11,
+        "gain": 0.009090909090909084
+      },
+      "unique": {
+        "n": 189,
+        "gain": 0.02195767195767196
+      }
+    },
+    "_holdout": {
+      "twinned": {
+        "n": 19,
+        "gain": 0.013157894736842096
+      },
+      "unique": {
+        "n": 181,
+        "gain": 0.02458563535911602
+      }
+    }
+  },
+  "best_block": "G_codep",
+  "log": [
+    "====================================================================================================",
+    "SOURCE-SIDE BLOCKS: annotation vs sequence vs co-dependency vs PPI (with degree-matched control)",
+    "====================================================================================================",
+    "  PREDECLARED: a block must beat chan2a on BOTH cohorts; PPI must ALSO beat its rewired twin.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  codep: 1150 cell lines x 18,443 genes; missing for 134 of 5,120 universe genes",
+    "  ppi: 191,447 edges over 16,492 genes",
+    "    real: mean degree over universe 35.5",
+    "    rewired: mean degree over universe 35.5",
+    "  esm missing for 125 universe genes (training mean substituted)",
+    "  penalty chan2a           ->    30.0  (val 0.0378)",
+    "  penalty chan2a+esm       ->  1000.0  (val 0.0378)",
+    "  penalty chan2a+codep     ->  1000.0  (val 0.0382)",
+    "  penalty chan2a+ppi       ->  1000.0  (val 0.0390)",
+    "  penalty chan2a+ppi_rw    ->  1000.0  (val 0.0375)",
+    "  penalty chan2a+all       ->  1000.0  (val 0.0386)",
+    "  penalty esm_only         ->     1.0  (val 0.0257)",
+    "  penalty codep_only       ->  1000.0  (val 0.0336)",
+    "\n  === cohort1 (200 knockouts, 11 with an exact channel twin) ===",
+    "  chan2a             0.2327",
+    "  chan2a+esm         0.2320",
+    "  chan2a+codep       0.2540",
+    "  chan2a+ppi         0.2467",
+    "  chan2a+ppi_rw      0.2313",
+    "  chan2a+all         0.2573",
+    "  esm_only           0.1710",
+    "  codep_only         0.2410",
+    "\n  === _holdout (200 knockouts, 19 with an exact channel twin) ===",
+    "  chan2a             0.2893",
+    "  chan2a+esm         0.2818",
+    "  chan2a+codep       0.3127",
+    "  chan2a+ppi         0.3045",
+    "  chan2a+ppi_rw      0.2720",
+    "  chan2a+all         0.3217",
+    "  esm_only           0.2068",
+    "  codep_only         0.2818",
+    "\n  gate       contrast                                          cohort1                cohort2  verdict",
+    "  G_esm      chan2a+esm - chan2a                -0.0007 [-0.0087,+0.0078]  -0.0075 [-0.0165,+0.0015]  fail",
+    "  G_codep    chan2a+codep - chan2a              +0.0213 [+0.0083,+0.0353]  +0.0235 [+0.0123,+0.0352]  PASS",
+    "  G_ppi      chan2a+ppi - chan2a                +0.0140 [+0.0008,+0.0275]  +0.0152 [+0.0002,+0.0315]  PASS",
+    "  G_ppiCTRL  chan2a+ppi - chan2a+ppi_rw         +0.0155 [+0.0017,+0.0295]  +0.0325 [+0.0163,+0.0505]  PASS",
+    "  G_all      chan2a+all - chan2a                +0.0245 [+0.0092,+0.0408]  +0.0325 [+0.0175,+0.0490]  PASS",
+    "\n  twin strata for chan2a+codep (the twin hypothesis predicts a LARGER gain on twinned knockouts)",
+    "    cohort1   twinned   n= 11  gain +0.0091",
+    "    cohort1   unique    n=189  gain +0.0220",
+    "    _holdout  twinned   n= 19  gain +0.0132",
+    "    _holdout  unique    n=181  gain +0.0246"
+  ]
+}

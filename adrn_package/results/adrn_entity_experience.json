@@ -1,0 +1,122 @@
+{
+  "test": "adrn_entity_experience",
+  "K": 5,
+  "weights": [
+    0.7871367335319519,
+    0.670941174030304
+  ],
+  "summary": {
+    "cohort1": {
+      "means": {
+        "entity_experience": 0.226,
+        "entity_only": 0.23399999999999999,
+        "experience_only": 0.1685,
+        "wrong_query": 0.1935,
+        "random_evidence": 0.19875
+      },
+      "contrasts": {
+        "GATE ent+exp - entity_only": {
+          "gap": -0.008000000000000002,
+          "ci": [
+            -0.020499999999999997,
+            0.003999999999999995
+          ]
+        },
+        "wrong_query - entity_only": {
+          "gap": -0.0405,
+          "ci": [
+            -0.052750000000000005,
+            -0.02825
+          ]
+        },
+        "ent+exp - wrong_query": {
+          "gap": 0.0325,
+          "ci": [
+            0.018500000000000003,
+            0.04675000000000001
+          ]
+        },
+        "ent+exp - random_evidence": {
+          "gap": 0.027249999999999996,
+          "ci": [
+            0.01275,
+            0.0425
+          ]
+        }
+      }
+    },
+    "_holdout": {
+      "means": {
+        "entity_experience": 0.28600000000000003,
+        "entity_only": 0.28850000000000003,
+        "experience_only": 0.22625,
+        "wrong_query": 0.23450000000000004,
+        "random_evidence": 0.24200000000000002
+      },
+      "contrasts": {
+        "GATE ent+exp - entity_only": {
+          "gap": -0.0024999999999999983,
+          "ci": [
+            -0.014999999999999996,
+            0.010250000000000002
+          ]
+        },
+        "wrong_query - entity_only": {
+          "gap": -0.053999999999999986,
+          "ci": [
+            -0.06899999999999999,
+            -0.03925
+          ]
+        },
+        "ent+exp - wrong_query": {
+          "gap": 0.0515,
+          "ci": [
+            0.034499999999999996,
+            0.06949999999999999
+          ]
+        },
+        "ent+exp - random_evidence": {
+          "gap": 0.044,
+          "ci": [
+            0.027999999999999997,
+            0.06074999999999999
+          ]
+        }
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "PREDECLARED: does ENTITY + EXPERIENCE beat ENTITY alone?",
+    "====================================================================================================",
+    "  GATE: must beat entity_only on BOTH cohorts past a bootstrap CI.",
+    "  If wrong_query beats entity_only by the same margin, the gain is a generic prior, not evidence.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "    K=  5  weights (+0.787, +0.671)  training-holdout precision 0.4020",
+    "    K= 10  weights (+0.757, +0.663)  training-holdout precision 0.3875",
+    "    K= 20  weights (+0.763, +0.649)  training-holdout precision 0.3795",
+    "    K= 40  weights (+0.763, +0.632)  training-holdout precision 0.3695",
+    "  -> K=5, weights (+0.787, +0.671) selected on TRAINING only",
+    "\n### cohort 1  (200 knockouts)",
+    "  entity_experience    0.2260",
+    "  entity_only          0.2340",
+    "  experience_only      0.1685",
+    "  wrong_query          0.1935",
+    "  random_evidence      0.1988",
+    "  GATE ent+exp - entity_only    -0.0080 [-0.0205, +0.0040]  within noise",
+    "  wrong_query - entity_only     -0.0405 [-0.0528, -0.0283]  RESOLVED",
+    "  ent+exp - wrong_query         +0.0325 [+0.0185, +0.0468]  RESOLVED",
+    "  ent+exp - random_evidence     +0.0272 [+0.0127, +0.0425]  RESOLVED",
+    "\n### cohort 2 (holdout)  (200 knockouts)",
+    "  entity_experience    0.2860",
+    "  entity_only          0.2885",
+    "  experience_only      0.2263",
+    "  wrong_query          0.2345",
+    "  random_evidence      0.2420",
+    "  GATE ent+exp - entity_only    -0.0025 [-0.0150, +0.0103]  within noise",
+    "  wrong_query - entity_only     -0.0540 [-0.0690, -0.0393]  RESOLVED",
+    "  ent+exp - wrong_query         +0.0515 [+0.0345, +0.0695]  RESOLVED",
+    "  ent+exp - random_evidence     +0.0440 [+0.0280, +0.0607]  RESOLVED"
+  ]
+}
