@@ -19560,3 +19560,55 @@ real case, because the dummy value was also folded into the cohort label, so the
 different cohorts and no axis appeared inert. `duplicate_cells()` compares the numbers directly and catches it
 however the duplication was labelled: it reports 3 of 6 on a reproduction of the actual bug and 0 on a healthy
 sweep. The rule written to prevent one dishonesty had invited a smaller one.
+
+# LOCO: it does NOT learn biology. It learns functional classes and interpolates within them.
+
+Leave-one-functional-class-out, against a SIZE-MATCHED random-removal control so the comparison is about WHICH
+genes were removed rather than how many. Classes are k-means on the channel matrix -- the geometry the model
+actually sees. Swept over cluster count {8,16,32} x K {30,60,120}.
+
+| clusters | K | cohort 1 | cohort 2 |
+|---|---|---:|---:|
+| 8 | 60 | −0.0777 | −0.0695 |
+| 16 | 60 | −0.0778 | −0.0615 |
+| 32 | 60 | −0.0364 | −0.0474 |
+
+**HARMFUL -- 18 of 18 cells resolved NEGATIVE, sign-consistent.** Removing a whole functional class costs 0.028
+to 0.078 MORE than removing the same number of random genes. The penalty shrinks as classes get finer, exactly as
+a similarity lookup predicts: a finer partition leaves more related genes behind.
+
+## The absolute numbers settle it
+
+With a coarse class held out, cohort-1 LOCO scores **0.1517-0.1660 against a frequency baseline of 0.1615**. For a
+knockout whose functional class was never seen in training, **the model is no better than "the genes that usually
+move."**
+
+Both things are true at once and they do not contradict: ~15% of correct calls are off-annotation genes (real
+cross-function signal on the TARGET side), while the bulk of performance needs annotation-similar training
+examples on the SOURCE side. **It interpolates within functional space; it does not extrapolate across it.**
+
+## A structural consequence for every number this project has reported
+
+The two sealed cohorts were selected by FUNCTIONAL-CLASS ROUND-ROBIN, which guarantees each sealed gene's class is
+represented in training. So 0.2337 / 0.2885, and today's 0.2920 / 0.3593, are all measured in the **class-seen**
+regime by construction. The sealing is still valid -- predictions were committed before answers opened -- but the
+headline numbers describe INTERPOLATION, and they have been reported without that qualifier.
+
+## Limit on this test, stated because it cuts against the conclusion
+
+k-means clusters on the channel matrix are by construction the genes most similar in annotation space, so removing
+one removes precisely the most informative neighbours. That is closer to a worst case than a typical biological
+class. The finding -- it needs annotation-similar training examples -- is the right question, but the MAGNITUDE
+is an upper bound on the damage.
+
+## A leak in my own first draft, fixed before the run
+
+`fit_on` originally chose the ridge penalty by scoring candidates on the SEALED COHORTS. That is tuning on the
+test set: it would have inflated every number here and broken the sealed protocol the rest of the project rests
+on. The penalty is now chosen on a train-only slice carved from whatever survives the class removal, then refit on
+the full subset.
+
+## What this means for the cross-line question
+
+If the model cannot extrapolate across functional classes WITHIN K562, cross-line prediction of unseen classes is
+unlikely. Cross-line prediction of SEEN classes remains open and is the test worth running.
