@@ -19216,3 +19216,35 @@ distance to everything already held *including the picks made so far*, which is 
 cannot do, since it scores each candidate against the seed alone and will happily buy 600 near-duplicates of each
 other so long as all 600 are far from the seed. A liveness assertion now fails the run if the two arms ever select
 the same set again.
+
+# Correction: the extrude_gate re-run was redundant, and a stale artifact caused it
+
+On 3 Aug I ranked an `extrude_gate` re-run at higher `EXT_NSUB` as the top of three tests to run, on the grounds
+that it was "cheap, predeclared, self-identified". **All three of those were wrong**, and the error is worth
+recording because it was avoidable by reading this file.
+
+The instruction came from the `verdict` field of `outputs/orphan/extrude_gate.json` — "UNDERPOWERED ... Raise
+EXT_NSUB and re-run" — which is a **superseded artifact** from commit a7657e2 (395 pairs, CPU). Commit e1af01b
+had already run 2,984 pairs on an A100 and returned **NO-GO**: the shuffled control scored 0.6806 against the real
+simulation's 0.6779, net −0.0027 ± 0.0052, with `delta_shape_vs_moment` = +0.0000416. That result was confirmed on
+a second GPU generation and was already written up in this file at "Stage 2+3 at scale on an A100".
+
+**The string I obeyed was a fossil of a bug that the same commit fixed.** The verdict ladder tested
+`not consistent` before the sign of `net`, so when the control beat the simulation it asked for more pairs rather
+than returning NO-GO. I re-ran a closed gate on the strength of a message the codebase had already diagnosed as
+wrong.
+
+`outputs/orphan/extrude_gate.SUPERSEDED.md` now sits beside the stale JSON. The JSON itself is left byte-identical
+— a measurement is not edited after the fact — but the trap is labelled.
+
+## The one thing the wasted run measured
+
+The Langevin costs **41 s/pair on 4 CPU cores** (64 replicas x 3000 steps, 335 beads, idle machine, all threads)
+against **278 ms/pair on GPU** — ~150x. Windows are >= 201 beads by construction, since `off = lo - 200 kb` makes
+`n >= (400 kb)/2 kb + 1`, so there is no cheap-because-small CPU path. ~2,000 pairs is ~20 h of CPU against ~14 min
+of GPU. **This gate is GPU-only.**
+
+That also retires two wrong projections I gave during the run ("~90 minutes", then "~40-60 minutes"). Both assumed
+the 905 s in the first progress line was setup time. `t0` is set immediately before the loop and the line prints at
+the end of the body for `c=0`, so 905 s was **one pair** — the number was visible in the log the whole time and I
+misread which interval it covered.
