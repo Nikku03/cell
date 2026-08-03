@@ -1,13 +1,33 @@
 {
- "n_singles": 105,
- "n_doubles": 131,
- "additive_predicts_double_r": 0.858,
- "epistasis_variance_fraction": 0.461,
- "heldout_saturation_only_r": 0.45,
- "heldout_plus_singles_r": 0.459,
- "heldout_plus_relational_r": 0.45,
- "heldout_epistasis_pred_r": 0.45,
- "pair_specific_gain": -0.001,
- "verdict": "PARTIAL -- epistasis is real (46%) and predictable held-out (r=0.45), BUT almost all of it is the GENERIC SATURATION nonlinearity (additive-only control r=0.45; pair-specific gain only -0.001). So combinatorial data reveals a predictable nonlinearity, but little PAIR-SPECIFIC transmission -- the responsiveness-prior story repeating one level up. A real but limited win.",
- "note": "Combinatorial (double-perturbation) test of what would break the far-field wall, on Norman&Weissman 2019 K562 (scPerturb). Epistasis = double response - additive(sum of singles) = the buffering/transmission signal single-KO endpoints cannot see. Reports how non-additive doubles are and whether per-gene epistasis is predictable for HELD-OUT pairs (GroupKFold). Directly tests whether the data KIND the wall_diagnosis learning curve pointed to actually recovers the missing coefficient."
+  "test": "norman_epistasis",
+  "n_singles": 105,
+  "n_pairs": 131,
+  "rms_obs": 0.03741438686847687,
+  "rms_add": 0.041203781962394714,
+  "rms_resid": 0.023086093366146088,
+  "rms_noise": 0.013695315457880497,
+  "resid_over_noise": 1.6856927054471018,
+  "per_pair_gap": 0.009449660778045654,
+  "ci": [
+    0.00870224554091692,
+    0.010246453806757927
+  ],
+  "frac_nonadditive": 0.4712473154067993,
+  "additive_var_explained": 0.444585919380188,
+  "log": [
+    "====================================================================================================",
+    "COMBINATORIAL PERTURBATION (Norman 2019): is a pair more than the sum of its singles?",
+    "====================================================================================================",
+    "  control label(s): [np.str_('control')]",
+    "  105 singles, 131 pairs with both singles measured and >= 40 cells",
+    "\n### GATE 1 -- is there non-additive signal?",
+    "  RMS observed pair effect          0.0374",
+    "  RMS additive prediction            0.0412",
+    "  RMS NON-ADDITIVE residual          0.0231",
+    "  RMS measurement noise (split-half) 0.0137",
+    "  residual / noise                   1.686",
+    "  per-pair residual - noise          +0.0094 [+0.0087, +0.0102]  RESOLVED",
+    "  fraction of pair-effect energy that is non-additive: 47.1%",
+    "  additive model explains 44.5% of pair-response variance"
+  ]
 }

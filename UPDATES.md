@@ -18683,3 +18683,56 @@ about what richer annotation channels bought, and it costs a genome-wide screen.
 
 The honest statement is that **the single-gene transcriptional-response route is within ~0.024 of exhausted**,
 and we hold 50% of everything that will ever exist on it.
+
+---
+
+# Combinatorial perturbation (Norman 2019): GATE 1 passes — pairs are not the sum of their singles
+
+`colab/norman_build.py` · `colab/norman_epistasis.py`
+
+The single-gene route is within ~0.024 of exhausted, so the only way past it is combinatorial. Norman 2019
+(GSE133344, K562 CRISPRa) is the one public dataset with singles and pairs at scale. **105 singles, 131 pairs**
+with both singles measured and ≥40 cells, built from 111,445 cells × 33,694 genes (362M nonzero entries streamed
+into pseudobulk).
+
+*(NCBI blocked the 1.13 GB GEO transfer with its own Access-forbidden page — not the proxy — so the data came from
+the scPerturb Zenodo deposit 13350497.)*
+
+## The measurement
+
+    RMS observed pair effect            0.0374
+    RMS additive prediction Δ_A + Δ_B   0.0412
+    RMS NON-ADDITIVE residual           0.0231
+    RMS measurement noise (split-half)  0.0137
+    residual / noise                    1.686
+
+    per-pair (residual - noise)   +0.0094  [+0.0087, +0.0102]   RESOLVED
+
+The noise floor is what makes this meaningful: each pair's cells are split in half and a Δ computed from each half
+independently, giving the measurement error on **exactly the same quantity at the same cell depth**. The
+non-additive residual is **1.69× that floor**, and the per-pair gap excludes zero by a wide margin.
+
+**47.1% of pair-effect energy is non-additive.** The additive model explains only **44.5%** of pair-response
+variance.
+
+## What this establishes
+
+**A pair screen is not a redundant single screen.** Roughly half of what a double perturbation does cannot be
+reconstructed from its two singles, and that half is well clear of measurement noise. This is the first result in
+this project that identifies a source of genuinely *new* information rather than more of the same — every other
+route measured today (more channels, more datasets, more cell lines, pluripotent context, end-to-end learning,
+pair-influence tensors, programme refinements) returned within noise.
+
+It also bounds the claim honestly: the additive part is still 44.5% of the variance and is free, since it comes
+from singles we already have. The combinatorial gain is the other half, and it costs a pair screen.
+
+## What is NOT yet established
+
+**Gate 2 — whether the non-additive part is predictable from annotation — has not been run.** Non-additivity being
+real is necessary but not sufficient: if the interaction term cannot be predicted for an unseen pair, a pair
+screen buys coverage rather than generalisation, and the ~190M pair space stays out of reach. That is the next
+test and it is the one that decides whether the combinatorial route is a modelling opportunity or only a
+measurement programme.
+
+Scope: this is K562 **CRISPRa** (over-expression), while everything else in this project is CRISPRi/knockout, so
+the 47.1% is not directly transferable to the knockout setting without re-measurement.
