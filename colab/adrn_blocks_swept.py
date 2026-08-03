@@ -7,6 +7,8 @@ six cells -- the one that had been run first.  `SVD_K = 128` was an undeliberate
 TWO AXES, because there were two such defaults and sweeping only the one that already burned me would repeat the
 mistake at the next level up:
 
+    src          the PPI edge set: {mixed (cell_complete, unauditable provenance), bioplex (AP-MS, stated
+                 method, pInt>=0.75)}.  Applies to the ppi block only.
     rank / rep   the block's own representation size.   ppi {64,128,256} SVD components;
                  codep {svd64, svd256, raw 1150-d}.
     K            the NMF programme count, `A.K = 60`.   {30, 60, 120}.  This one sits UPSTREAM of every arm --
@@ -14,8 +16,9 @@ mistake at the next level up:
                  reported on the sealed cohorts is conditional on K=60, and none of them has ever been checked
                  against another value.
 
-9 configs x 2 cohorts = 18 cells per block.  `robustness.Sweeper` fixes the verdict ladder before the numbers
-arrive and raises on a single-cell verdict, so the failure mode cannot recur by forgetting.
+ppi: 2 sources x 3 ranks x 3 K x 2 cohorts = 36 cells.  codep: 3 reps x 3 K x 2 cohorts = 18 cells.
+`robustness.Sweeper` fixes the verdict ladder before the numbers arrive and raises on a single-cell verdict, so
+the failure mode cannot recur by forgetting.
 
 WHAT IS REALLY ON TRIAL HERE IS codep, not ppi.  ppi has already been corrected twice.  codep is the one surviving
 positive claim of the day (+0.0213 / +0.0235 over chan2a; 0.2410 / 0.2818 standing alone) and it was measured at
@@ -36,10 +39,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import adrn_ko_conjunctions as A
 import adrn_ko_channels2 as C
 from adrn_source_blocks import rewire, load_codep
+from adrn_ppi_replicate import bioplex_edges
 from robustness import Sweeper
 
 OUT, SP = A.OUT, A.SP
 PPI_RANKS = (64, 128, 256)
+PPI_SOURCES = ("mixed", "bioplex")   # the axis the first version of this sweep omitted -- see note below
 CODEP_REPS = ("svd64", "svd256", "raw")
 K_VALUES = (30, 60, 120)
 PENALTIES = (1.0, 10.0, 100.0, 1000.0)
@@ -57,7 +62,7 @@ def main():
     report("=" * 100)
     report("BLOCK ABLATION x ROBUSTNESS HARNESS -- swept over representation rank AND the NMF programme count K")
     report("=" * 100)
-    report(f"  axes: rank/rep {PPI_RANKS} / {CODEP_REPS}   x   K {K_VALUES}   = 9 configs x 2 cohorts per block")
+    report(f"  axes: ppi src {PPI_SOURCES} x rank {PPI_RANKS} x K {K_VALUES}; codep rep {CODEP_REPS} x K {K_VALUES}")
 
     z = np.load(SP / "nlz_K562_gwps.npz", allow_pickle=True)
     kos = [str(k) for k in z["kos"]]
@@ -105,12 +110,6 @@ def main():
         out[ok] = Z[rows_u[ok]]
         return out
 
-    report("  building the degree-matched rewiring ONCE (shared by every rank) ...")
-    t0 = time.time()
-    e_rw = rewire(edges, n, A.SEED)
-    report(f"    rewired in {time.time() - t0:.0f}s")
-    Areal, Arw = adj(edges), adj(e_rw)
-
     def prep(M, miss=None):
         M = M.astype(np.float32).copy()
         if miss is not None and miss.any():
@@ -120,10 +119,22 @@ def main():
 
     cz = prep(chan)
     kmax = max(PPI_RANKS)
-    Zr = TruncatedSVD(n_components=kmax, random_state=0).fit_transform(Areal)
-    Zw = TruncatedSVD(n_components=kmax, random_state=0).fit_transform(Arw)
-    PPI_SRC = {k: (np.concatenate([cz, prep(take(Zr, kmax)[:, :k])], 1),
-                   np.concatenate([cz, prep(take(Zw, kmax)[:, :k])], 1)) for k in PPI_RANKS}
+
+    # BOTH edge sets, because the first version of this sweep omitted the source axis -- and the source axis is
+    # exactly where PPI had already shown fragility (BioPlex beat its rewired twin at 1 of 3 ranks). Sweeping
+    # rank and K while holding the edge set fixed would have re-run the same mistake one axis over.
+    EDGE_SETS = {"mixed": edges, "bioplex": bioplex_edges(names, report)}
+    PPI_SRC = {}
+    for sname, e in EDGE_SETS.items():
+        t0 = time.time()
+        e_rw = rewire(e, n, A.SEED)          # rewired ONCE per source, then embedded at every rank
+        Zr = TruncatedSVD(n_components=kmax, random_state=0).fit_transform(adj(e))
+        Zw = TruncatedSVD(n_components=kmax, random_state=0).fit_transform(adj(e_rw))
+        Tr, Tw = take(Zr, kmax), take(Zw, kmax)
+        for k in PPI_RANKS:
+            PPI_SRC[(sname, k)] = (np.concatenate([cz, prep(Tr[:, :k])], 1),
+                                   np.concatenate([cz, prep(Tw[:, :k])], 1))
+        report(f"    {sname}: {len(e):,} edges, rewired + embedded in {time.time() - t0:.0f}s")
     Praw = np.nan_to_num(P.astype(np.float32))
     CODEP_SRC = {}
     for rep in CODEP_REPS:
@@ -146,8 +157,10 @@ def main():
     vtruth = {k: {genes[i] for i in np.where(Amat[ki[k]] >= A.TAU)[0] if not tide[i]} for k in val}
     frows = np.array([urow[k] for k in fitk])
 
-    sw_ppi_ctrl = Sweeper("chan2a+ppi - chan2a+ppi_rw", axes={"rank": list(PPI_RANKS), "K": list(K_VALUES)})
-    sw_ppi_base = Sweeper("chan2a+ppi - chan2a", axes={"rank": list(PPI_RANKS), "K": list(K_VALUES)})
+    sw_ppi_ctrl = Sweeper("chan2a+ppi - chan2a+ppi_rw",
+                          axes={"src": list(PPI_SOURCES), "rank": list(PPI_RANKS), "K": list(K_VALUES)})
+    sw_ppi_base = Sweeper("chan2a+ppi - chan2a",
+                          axes={"src": list(PPI_SOURCES), "rank": list(PPI_RANKS), "K": list(K_VALUES)})
     sw_codep = Sweeper("chan2a+codep - chan2a", axes={"rep": list(CODEP_REPS), "K": list(K_VALUES)})
     absolute = {}
 
@@ -184,16 +197,15 @@ def main():
         absolute[f"K={K}|chan2a"] = {nm: float(v.mean()) for nm, v in baseline.items()}
         report(f"\n  K={K}: chan2a " + "  ".join(f"{nm} {v.mean():.4f}" for nm, v in baseline.items()))
 
-        for rank in PPI_RANKS:
-            real, rw = PPI_SRC[rank]
+        for (src_name, rank), (real, rw) in PPI_SRC.items():
             wr, ww = fit_arm(real), fit_arm(rw)
-            cfg = {"rank": rank, "K": K}
+            cfg = {"src": src_name, "rank": rank, "K": K}
             for nm, (ks, truth) in cohorts.items():
                 pr = prec(score(real, wr, ks), ks, truth)
                 pw = prec(score(rw, ww, ks), ks, truth)
                 sw_ppi_ctrl.add(cfg, nm, pr - pw)
                 sw_ppi_base.add(cfg, nm, pr - baseline[nm])
-            absolute[f"K={K}|ppi{rank}"] = {nm: float(prec(score(real, wr, ks), ks, truth).mean())
+            absolute[f"K={K}|{src_name}_ppi{rank}"] = {nm: float(prec(score(real, wr, ks), ks, truth).mean())
                                             for nm, (ks, truth) in cohorts.items()}
         for rep in CODEP_REPS:
             src = CODEP_SRC[rep]
