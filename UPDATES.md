@@ -18452,3 +18452,64 @@ The permuted control confirms the channels carry real signal (+0.11 / +0.14, RES
 `chan2a` holds at **0.2885**, now against nine defeated alternatives. The programme decomposition was the right
 object — it is what the deployed model already was — and it is fully exploited at this data scale. The scaling
 curve remains the only measured lever: **~26,500 perturbations for 3.5 of 10.**
+
+---
+
+# The target decoder passes, and so does compositional cold start
+
+`colab/adrn_target_decoder.py`
+
+Every result until now held the **target side fixed**: only the knocked-out gene was held out, and the responding
+genes were always ones the model had watched respond thousands of times. This holds out the targets, and then
+both ends at once.
+
+`B_j` is gene *j*'s programme-susceptibility vector. For training genes it is read off the factorisation; for an
+unseen gene it must be predicted from annotation, `x_j → B̂_j`.
+
+**Scale note:** these numbers are NOT comparable to chan2a's 0.2885. The task ranks genes *within a held-out
+fifth of the transcriptome*, so truth sets are much smaller. Only within-table comparisons are meaningful.
+
+| | | **random split** | | **complex split** | |
+|---|---|---:|---:|---:|---:|
+| cohort 2 | arm | unseen TARGET | unseen BOTH | unseen TARGET | unseen BOTH |
+| | oracle_B (CEILING) | 0.3679 | 0.1998 | 0.3677 | 0.2035 |
+| | **ridge_B** | **0.1513** | **0.1003** | **0.1045** | **0.0680** |
+| | knn_B | 0.1434 | 0.1002 | 0.1120 | 0.0799 |
+| | marginal_B (floor) | 0.0060 | 0.0046 | 0.0070 | 0.0066 |
+| | shuffled_B | 0.0076 | 0.0068 | 0.0092 | 0.0076 |
+
+    ridge_B - marginal (unseen TARGET)   +0.1453 [+0.1325,+0.1589]  and  +0.0975 [+0.0865,+0.1088]  RESOLVED
+    knn_B   - marginal                   +0.1374 [+0.1246,+0.1507]  and  +0.1050 [+0.0927,+0.1176]  RESOLVED
+    ridge_B - shuffled                   +0.1437 [+0.1314,+0.1567]  and  +0.0953 [+0.0846,+0.1062]  RESOLVED
+    COMPOSITIONAL ridge_B - marginal     +0.0957 [+0.0842,+0.1078]  and  +0.0614 [+0.0516,+0.0715]  RESOLVED
+
+**All four contrasts RESOLVED, on both cohorts, under both split rules.** Cohort 1 shows the same pattern
+(+0.1062 / +0.0757 target, +0.0630 / +0.0505 compositional).
+
+## What passed
+
+**Programme susceptibility is predictable from annotation.** A gene's `B_j` — how it responds to each of the 64
+response programmes — is recoverable from its curated biology at roughly **25× the floor**, reaching **41% of the
+oracle ceiling** (0.1513 against 0.3679).
+
+**Compositional cold start works.** With neither the knocked-out gene nor the responding genes ever observed,
+`Ŷ = Â_iᵀ B̂_j` still beats the floor by +0.096, RESOLVED, and reaches **50% of the compositional oracle**
+(0.1003 against 0.1998). Nothing in this project had tested this before and there was no prior reason to expect
+it to work.
+
+**It survives the complex holdout.** Removing every complex member of a held-out gene costs about 31%
+(0.1513 → 0.1045) but stays far above floor. This is not paralog or complex lookup.
+
+**The encoder convergence reappears.** knn_B ≈ ridge_B on the random split and *beats* it on the complex split
+(0.1120 vs 0.1045) — the same signature as the source-side bake-off, where nine learners landed within 0.008.
+A 10-nearest-annotation-neighbour lookup is competitive with everything.
+
+## Why this matters more than the score
+
+The source side is saturated: nine encoders, five K values, signed and non-negative bases, end-to-end learning
+and trees all converge on 0.2885. The **target side was never tested and is not saturated** — the decoder reaches
+41% of its ceiling, leaving real headroom, and it is the only axis today where a gate passed rather than tied.
+
+It also changes what the model can be asked. Until now it could only speak about genes it had watched respond.
+It can now be asked about a gene that has never been measured as a *responder* — which is most of the
+transcriptome in most experiments.

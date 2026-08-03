@@ -115,10 +115,8 @@ def main() -> int:
     for split in ("random", "complex"):
         labels = grp[split]; uniq = sorted(set(labels.tolist()))
         rr = np.random.default_rng(A.SEED + 7)
-        assign = {u: i % FOLDS for i, u in enumerate(rr.permutation(len(uniq)))}
-        fold_of = np.array([assign[u] for u in
-                            [uniq[list(uniq).index(l)] if False else l for l in labels]]) \
-            if False else np.array([assign[l] for l in labels])
+        assign = {uniq[int(u)]: i % FOLDS for i, u in enumerate(rr.permutation(len(uniq)))}
+        fold_of = np.array([assign[l] for l in labels])
         Bhat = {a: np.zeros_like(B) for a in ("ridge_B", "knn_B", "marginal_B", "shuffled_B")}
         pmt = Xg[np.random.default_rng(A.SEED + 3).permutation(len(Xg))]
         for f in range(FOLDS):
