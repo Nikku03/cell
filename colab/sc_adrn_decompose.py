@@ -41,7 +41,14 @@ import adrn_ko_channels2 as C
 from robustness import Sweeper
 
 OUT, SP = A.OUT, A.SP
-BINS_SWEEP, SEED_SWEEP = (2, 3), (0, 1, 2)
+import os
+# bins swept WIDE deliberately. The 2-vs-3 run showed state beyond line is positive and tight at 3
+# bins (+0.021..+0.024 on all 6 cells) and RESOLVED NEGATIVE at 2. That is either a real resolution
+# effect -- too few bins cannot represent state, so the features add variance without information --
+# or a corner of the grid. Monotone improvement with bin count supports the first; a peak at 3 alone
+# supports the second. This is the falsifier for the only lead the decomposition left alive.
+BINS_SWEEP = tuple(int(x) for x in os.environ.get('SC_BINS', '2,3').split(','))
+SEED_SWEEP = (0, 1, 2)
 N_HOLDOUT, MIN_GROUP, PENALTIES, NPRED = 40, 25, (1.0, 10.0, 100.0, 1000.0), 20
 
 
@@ -181,7 +188,7 @@ def main():
 
     json.dump({"test": "sc_adrn_decompose", "bins": list(BINS_SWEEP), "seeds": list(SEED_SWEEP),
                "means": means, "verdicts": V, "log": log},
-              open(OUT / "sc_adrn_decompose.json", "w"), indent=2)
+              open(OUT / ("sc_adrn_decompose.json" if len(BINS_SWEEP) == 2 else "sc_adrn_decompose_bins.json"), "w"), indent=2)
     report(f"\n  total {time.time() - t0:.0f}s  -> {OUT / 'sc_adrn_decompose.json'}")
     return 0
 

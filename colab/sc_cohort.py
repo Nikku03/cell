@@ -41,7 +41,9 @@ import adrn_ko_channels2 as C
 
 OUT, SP = A.OUT, A.SP
 LINES = {"RPE1": "rpe1.h5ad", "Jurkat": "nadig_jurkat.h5ad", "HepG2": "nadig_hepg2.h5ad"}
-N_HVG, MIN_CELLS, TARGET, BLOCK = 400, 40, 200, 8192
+import os
+N_HVG, MIN_CELLS, BLOCK = 400, 40, 8192
+TARGET = int(os.environ.get('SC_TARGET', '200'))
 NTC_NAMES = ("non-targeting", "control", "nt", "ntc")
 
 
@@ -176,11 +178,11 @@ def main():
            f"{sum(1 for r in cohort if r['mean_disp_excess'] > 0)} of {len(cohort)} above their control")
     report(f"    first 12: {', '.join(r['gene'] for r in cohort[:12])}")
 
-    json.dump({"test": "sc_cohort", "n_hvg": N_HVG, "min_cells": MIN_CELLS,
+    json.dump({"test": "sc_cohort", "target": TARGET, "n_hvg": N_HVG, "min_cells": MIN_CELLS,
                "n_shared": len(shared), "n_after_ntc_filter": len(hard), "max_guides_observed": int(gmax),
                "cohort": [{k: v for k, v in r.items() if k != "per_line"} for r in cohort],
                "cohort_detail": {r["gene"]: r["per_line"] for r in cohort},
-               "log": log}, open(OUT / "sc_cohort.json", "w"), indent=2)
+               "log": log}, open(OUT / (f"sc_cohort{TARGET}.json" if TARGET != 200 else "sc_cohort.json"), "w"), indent=2)
     report(f"\n  total {time.time() - t0:.0f}s  -> {OUT / 'sc_cohort.json'}")
     return 0
 

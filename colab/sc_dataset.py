@@ -38,7 +38,14 @@ from adrn_cellstate_gate import S_GENES, G2M_GENES, _dec
 
 OUT, SP = A.OUT, A.SP
 LINES = {"RPE1": "rpe1.h5ad", "Jurkat": "nadig_jurkat.h5ad", "HepG2": "nadig_hepg2.h5ad"}
-N_HVG, BLOCK, MAX_GB = 2000, 8192, 2.5
+import os
+N_HVG = int(os.environ.get('SC_HVG', '2000'))
+BLOCK, MAX_GB = 8192, 2.5
+TARGET = int(os.environ.get('SC_TARGET', '200'))
+# float16 at scale: 1,000 perturbations x ~330k cells x 2,000 genes is 2.6 GB as float32 and the
+# disk had 4.1 GB free. log-CPM values sit in [0, ~10] where float16 has ~3 decimal digits, far
+# finer than the Poisson noise on a single cell, so the cast costs nothing measurable.
+DTYPE = np.float16 if TARGET > 400 else np.float32
 NTC_NAMES = ("non-targeting", "control", "nt", "ntc")
 
 
@@ -54,7 +61,7 @@ def main():
     report("STEP 2 -- build the per-cell cohort tensor")
     report("=" * 100)
 
-    cohort = [r["gene"] for r in json.load(open(OUT / "sc_cohort.json"))["cohort"]]
+    cohort = [r["gene"] for r in json.load(open(OUT / (f"sc_cohort{TARGET}.json" if TARGET != 200 else "sc_cohort.json")))["cohort"]]
     cset = set(cohort)
     report(f"  cohort: {len(cohort)} perturbations")
 
@@ -109,7 +116,7 @@ def main():
         report(f"  {line}: {len(idx):,} cells kept ({int(sel_p.sum()):,} perturbed, "
                f"{int((is_ntc & np.isin(batch, list(keep_batches))).sum()):,} NTC in shared batches)")
 
-        Xl = np.zeros((len(idx), len(hvg)), np.float32)
+        Xl = np.zeros((len(idx), len(hvg)), DTYPE)
         s_sc = np.zeros(len(idx))
         g_sc = np.zeros(len(idx))
         pos = 0
@@ -153,12 +160,12 @@ def main():
         report(f"    {line:<7} {int(m.sum()):>7,} cells, {int((m & ~ntc_a).sum()):>6,} perturbed, "
                f"{int((m & ntc_a).sum()):>6,} NTC")
 
-    np.savez(SP / "sc_cohort_cells.npz", X=X, genes=np.array(hvg), line=line_a, pert=pert_a,
+    np.savez(SP / (f"sc_cohort_cells{TARGET}.npz" if TARGET != 200 else "sc_cohort_cells.npz"), X=X, genes=np.array(hvg), line=line_a, pert=pert_a,
              guide=guide_a, batch=batch_a, s_score=s_a, g2m_score=g2_a, umi=umi_a, is_ntc=ntc_a)
     json.dump({"test": "sc_dataset", "n_cells": int(len(X)), "n_genes": len(hvg),
                "n_perts": len(set(pert_a[~ntc_a])), "n_guides": len(set(guide_a[~ntc_a])),
                "n_batches": len(set(batch_a.tolist())), "gb": gb, "log": log},
-              open(OUT / "sc_dataset.json", "w"), indent=2)
+              open(OUT / (f"sc_dataset{TARGET}.json" if TARGET != 200 else "sc_dataset.json"), "w"), indent=2)
     report(f"\n  total {time.time() - t0:.0f}s  -> {SP / 'sc_cohort_cells.npz'}")
     return 0
 
