@@ -1,217 +1,146 @@
-"""norman_epistasis — does a DIFFERENT KIND of data (combinatorial double-perturbation) recover the transmission/buffering
-signal that single-knockout data provably cannot (see wall_diagnosis.py)? Test on Norman & Weissman 2019 (K562, CRISPRa singles
-+ doubles; scPerturb NormanWeissman2019_filtered.h5ad).
+"""COMBINATORIAL PERTURBATION: is a pair's response more than the sum of its singles, and is that predictable?
 
-The logic: single-perturbation endpoints confound direct/indirect and never see buffering. A DOUBLE perturbation does: the
-deviation of the double response from the ADDITIVE sum of its singles IS the genetic interaction = epistasis = the buffering /
-transmission coefficient made observable. So:
-  response(P)   = pseudobulk mean(P) - mean(control)          per gene
-  additive(A,B) = response(A) + response(B)
-  epistasis(A,B)= response(AB) - additive(A,B)                <- the quantity single-KO data cannot provide
-Tests (the honest fork):
-  1. MAGNITUDE  how non-additive are doubles? corr(actual, additive) and the epistasis variance fraction. If doubles are ~purely
-                additive, combinatorial data adds little.
-  2. STRUCTURE  is per-gene epistasis PREDICTABLE for HELD-OUT pairs (GroupKFold by pair) from features (each single's effect on
-                that gene, whether A/B are graph-connected, expression)? vs the trivial additive baseline (predict 0 epistasis).
-                If held-out epistasis r > 0 meaningfully -> the buffering coefficient is REAL and LEARNABLE from this data type =
-                the wall is addressable with combinatorial data. If ~0 -> even this kind is noise-dominated at pseudobulk depth.
+WHY THIS IS THE TEST THAT MATTERS.  The perturbation inventory showed the single-gene route is within ~0.024 of
+exhausted: 26,500 perturbations exceeds the ~19,500 human protein-coding genes, so 3.5/10 is unreachable by more
+single knockouts.  The only route past that is COMBINATORIAL.  Norman 2019 (GSE133344, K562 CRISPRa) is the one
+public dataset with both singles and pairs at scale, so it can answer the question that decides whether the
+combinatorial route is worth anything:
+
+    GATE 1  IS THERE SIGNAL?   Does the pair response deviate from the additive prediction Delta_A + Delta_B by
+            more than measurement noise?  If pairs are just sums of singles, a pair screen adds no information
+            a single screen does not already contain, and the whole combinatorial argument collapses.
+
+    GATE 2  IS IT PREDICTABLE?  If the deviation is real, can it be predicted from the two genes' annotations,
+            past a shuffled control?  If not, pair data is measurable but not learnable, and a pair screen buys
+            coverage rather than generalisation.
+
+THE NOISE FLOOR, which is what makes gate 1 meaningful.  Non-additivity computed from noisy pseudobulk will be
+non-zero even if biology is perfectly additive.  So each pair's cells are SPLIT IN HALF and a Delta computed from
+each half independently; the half-to-half discrepancy is the measurement noise on exactly the same quantity, at
+exactly the same cell depth.  Non-additivity only counts if it exceeds that.
+
+CONTROLS.  Shuffled pairing (give pair A_B the additive prediction of an unrelated pair) prices how much of any
+apparent structure is generic.  Single-gene pairs of the form A_NegCtrl are treated as singles.
 """
-import os
-import json, collections, re
+import collections, json, os, sys
 from pathlib import Path
 import numpy as np
+import h5py
+
+SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/norman")
 OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
-SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
-H5 = f"{SP}/norman2019.h5ad"
+H5 = SP / "norman.h5ad"
+MIN_CELLS = 40
 
 
-def _load():
-    """load perturbation labels, gene names, and the full CP10k-log1p-normalized CSR into memory (one pass)."""
-    import h5py, scipy.sparse as sp
-    h = h5py.File(H5, "r")
-    dec = lambda a: [x.decode() if isinstance(x, bytes) else x for x in a]
-    obs = h["obs"]
-    def col(name):
-        g = obs[name]
-        if isinstance(g, h5py.Group) and "categories" in g:
-            cats = dec(g["categories"][:]); codes = g["codes"][:]
-            return [cats[c] if c >= 0 else "NA" for c in codes]
-        return dec(g[:])
-    perts = col("perturbation")
-    var = h["var"]
-    g = var["_index"]
-    genes = dec(g[:]) if not isinstance(g, h5py.Group) else dec(g["categories"][:])
-    n_var = len(genes); n_obs = len(perts)
-    X = h["X"]
-    data = X["data"][:].astype(np.float32); indices = np.asarray(X["indices"][:], dtype=np.int32)
-    indptr = np.asarray(X["indptr"][:], dtype=np.int64)
-    h.close()
-    stored_rows = len(indptr) - 1
-    if stored_rows == n_var and n_var != n_obs:                 # stored genes x cells -> transpose to cells x genes
-        M = sp.csr_matrix((data, indices, indptr), shape=(n_var, n_obs)).T.tocsr()
-        orient = "genes x cells (transposed)"
-    else:                                                       # stored cells x genes
-        M = sp.csr_matrix((data, indices, indptr), shape=(n_obs, n_var))
-        orient = "cells x genes"
-    del data, indices, indptr
-    rowsum = np.asarray(M.sum(1)).ravel().astype(np.float32); rowsum[rowsum == 0] = 1.0
-    M.data *= np.repeat((1e4 / rowsum).astype(np.float32), np.diff(M.indptr))   # CP10k per cell, in place
-    np.log1p(M.data, out=M.data)
-    print(f"  [load] {orient}: {M.shape[0]} cells x {M.shape[1]} genes", flush=True)
-    return perts, genes, n_var, M
-
-
-def _pseudobulk(M, rows, ngenes):
-    return np.asarray(M[rows].mean(0)).ravel()
-
-
-def _split(p):
-    """gene set from a perturbation label; control -> empty."""
-    s = str(p)
-    if s.lower() in ("control", "ctrl", "nan", "na", "none", ""):
-        return []
-    parts = re.split(r"[+_]", s)
-    return [x for x in parts if x and x.lower() not in ("ctrl", "control", "nt")]
+def cats(h, key):
+    g = h["obs"][key]
+    c = [x.decode() if isinstance(x, bytes) else str(x) for x in g["categories"][:]]
+    return np.array(c), g["codes"][:]
 
 
 def build():
-    perts, genes, ngenes, M = _load()
-    gidx = {g: i for i, g in enumerate(genes)}
-    groups = collections.defaultdict(list)
-    for i, p in enumerate(perts):
-        groups[p].append(i)
-    ctrl_key = None
-    for k in groups:
-        if str(k).lower() in ("control", "ctrl"):
-            ctrl_key = k; break
-    if ctrl_key is None:
-        ctrl_key = max(groups, key=lambda k: len(groups[k]))
-    ctrl = _pseudobulk(M, groups[ctrl_key], ngenes)
-    singles = {}; doubles = []
-    for p, rows in groups.items():
-        gs = _split(p)
-        if not gs or len(rows) < 25:
-            continue
-        r = _pseudobulk(M, rows, ngenes) - ctrl
-        if len(gs) == 1:
-            singles[gs[0]] = r
-        elif len(gs) == 2:
-            doubles.append((tuple(sorted(gs)), r))
-    usable = [(ab, r) for ab, r in doubles if ab[0] in singles and ab[1] in singles]
-    return genes, gidx, singles, usable
-
-
-def run():
-    genes, gidx, singles, doubles = build()
-    from scipy.stats import pearsonr
-    add_r = []; epi_frac = []
-    for (a, b), rab in doubles:
-        add = singles[a] + singles[b]
-        add_r.append(pearsonr(rab, add)[0])
-        epi = rab - add
-        epi_frac.append(np.var(epi) / (np.var(rab) + 1e-12))
-    res = {"n_singles": len(singles), "n_doubles": len(doubles),
-           "additive_predicts_double_r": round(float(np.mean(add_r)), 3),
-           "epistasis_variance_fraction": round(float(np.mean(epi_frac)), 3)}
-    # STRUCTURE test: predict per-gene epistasis for HELD-OUT pairs
-    import xgboost as xgb
-    from sklearn.model_selection import GroupKFold
-    # RELATIONAL pair features from our graph (does the GI literature's "are A,B connected" recover pair-specificity?)
-    try:
-        import propagate as pr
-        G = pr._load(); idx = G["idx"]; ppi = G["ppi"]; g2pw = G.get("g2pw", {}); trr = G["trrust"]
-        regset = set((e[0], e[1]) for e in G["reg_edges"])
-        def relfeat(a, b):
-            if a not in idx or b not in idx:
-                return [0.0, 0.0, 0.0]
-            ia, ib = idx[a], idx[b]
-            ppia = 1.0 if (ib in ppi.get(ia, ())) or (ia in ppi.get(ib, ())) else 0.0
-            rege = 1.0 if (ia, ib) in regset or (ib, ia) in regset else 0.0
-            pa = set(g2pw.get(ia, []) or g2pw.get(str(ia), []) or []); pb = set(g2pw.get(ib, []) or g2pw.get(str(ib), []) or [])
-            shared = float(len(pa & pb))
-            return [ppia, rege, shared]
-    except Exception:
-        def relfeat(a, b): return [0.0, 0.0, 0.0]
-    allresp = np.array([singles[a] + singles[b] for (a, b), _ in doubles])
-    genevar = allresp.var(0)
-    topg = np.argsort(-genevar)[:2000]
-    rows = []; y = []; grp = []
-    for pi, ((a, b), rab) in enumerate(doubles):
-        sa, sb = singles[a], singles[b]; rf = relfeat(a, b)
-        epi = rab - (sa + sb)
-        for j in topg:
-            rows.append([sa[j], sb[j], sa[j] * sb[j], abs(sa[j]) + abs(sb[j]), sa[j] + sb[j]] + rf)
-            y.append(epi[j]); grp.append(pi)
-    X = np.array(rows); y = np.array(y); grp = np.array(grp)
-    gkf = GroupKFold(n_splits=min(5, len(doubles)))
-    cols_all = ["sa", "sb", "sa*sb", "|sa|+|sb|", "sa+sb"]
-    def cv(mask):
-        pred = np.zeros(len(y))
-        for tr, te in gkf.split(X, y, grp):
-            m = xgb.XGBRegressor(n_estimators=200, max_depth=4, learning_rate=0.05, subsample=0.8,
-                                 colsample_bytree=0.8, n_jobs=4)
-            m.fit(X[tr][:, mask], y[tr]); pred[te] = m.predict(X[te][:, mask])
-        return float(pearsonr(y, pred)[0])
-    r_sat = cv([4])                                              # SATURATION-only control: epistasis from additive (sa+sb) alone
-    r_singles = cv([0, 1, 2, 3, 4])                              # + the two singles' per-gene effects
-    r_full = cv([0, 1, 2, 3, 4, 5, 6, 7])                        # + RELATIONAL pair features (ppi, reg-edge, shared-pathways)
-    res["heldout_saturation_only_r"] = round(r_sat, 3)
-    res["heldout_plus_singles_r"] = round(r_singles, 3)
-    res["heldout_plus_relational_r"] = round(r_full, 3)
-    res["heldout_epistasis_pred_r"] = round(r_full, 3)
-    res["pair_specific_gain"] = round(r_full - r_sat, 3)         # everything pair-identity adds over generic saturation
-    return res
+    if (SP / "pseudobulk.npz").exists():
+        z = np.load(SP / "pseudobulk.npz", allow_pickle=True)
+        return list(z["groups"]), list(z["genes"]), z["profile"], z["ncell"], z["half"]
+    with h5py.File(H5, "r") as h:
+        names, codes = cats(h, "perturbation")
+        n_cell, n_gene = h["X"].attrs["shape"]
+        gene = [x.decode() if isinstance(x, bytes) else str(x) for x in h["var"]["_index"][:]]
+        rng = np.random.default_rng(0)
+        half = rng.integers(0, 2, n_cell)
+        acc = np.zeros((len(names), n_gene), np.float64)
+        acc_h = np.zeros((2, len(names), n_gene), np.float64)
+        data, indices, indptr = h["X"]["data"], h["X"]["indices"], h["X"]["indptr"]
+        ptr = indptr[:]
+        print(f"  {n_cell:,} cells x {n_gene:,} genes, {len(names)} perturbations, "
+              f"{ptr[-1]:,} nonzero", flush=True)
+        CH = 512
+        for s in range(0, n_gene, CH):
+            e = min(s + CH, n_gene)
+            d = data[ptr[s]:ptr[e]]; ix = indices[ptr[s]:ptr[e]]
+            off = ptr[s]
+            for j in range(s, e):
+                a, b = ptr[j] - off, ptr[j + 1] - off
+                if a == b: continue
+                rows = ix[a:b]; vals = d[a:b]
+                grp = codes[rows]
+                acc[:, j] += np.bincount(grp, weights=vals, minlength=len(names))
+                for hh in (0, 1):
+                    m = half[rows] == hh
+                    if m.any():
+                        acc_h[hh, :, j] += np.bincount(grp[m], weights=vals[m], minlength=len(names))
+            if s % 8192 == 0: print(f"    gene {s:,}", flush=True)
+    ncell = np.bincount(codes, minlength=len(names))
+    def norm(A):
+        t = A.sum(1, keepdims=True); t[t == 0] = 1
+        return np.log1p(A / t * 1e4).astype(np.float32)
+    prof, ph = norm(acc), np.stack([norm(acc_h[0]), norm(acc_h[1])])
+    np.savez_compressed(SP / "pseudobulk.npz", groups=np.array(names), genes=np.array(gene),
+                        profile=prof, ncell=ncell, half=ph)
+    return list(names), gene, prof, ncell, ph
 
 
 def main():
-    print("=" * 100)
-    print("NORMAN EPISTASIS — does combinatorial (double-perturbation) data recover the buffering signal single-KO cannot?")
-    print("=" * 100)
-    r = run()
-    print(f"\n  Norman&Weissman 2019 K562: {r['n_singles']} singles, {r['n_doubles']} doubles (both singles measured).\n")
-    print(f"  additive (sum of singles) predicts the double response:  r = {r['additive_predicts_double_r']}")
-    print(f"  epistasis variance fraction (non-additive part of double): {r['epistasis_variance_fraction']:.1%}")
-    print(f"  HELD-OUT epistasis prediction (GroupKFold by pair):")
-    print(f"    - saturation-only (from additive sa+sb alone):         r = {r['heldout_saturation_only_r']}")
-    print(f"    - + the two singles' per-gene effects:                 r = {r['heldout_plus_singles_r']}")
-    print(f"    - + RELATIONAL pair features (ppi/reg/shared-pathway):  r = {r['heldout_plus_relational_r']}")
-    print(f"    => PAIR-SPECIFIC gain over generic saturation:         {r['pair_specific_gain']:+.3f}")
-    strong_epi = r["epistasis_variance_fraction"] > 0.1
-    predictable = r["heldout_epistasis_pred_r"] > 0.15
-    pair_specific = r["pair_specific_gain"] > 0.03
-    if strong_epi and predictable and pair_specific:
-        verdict = (f"YES -- combinatorial data recovers a REAL, LEARNABLE, PAIR-SPECIFIC buffering signal. Doubles are "
-                   f"substantially non-additive ({r['epistasis_variance_fraction']:.0%} epistasis variance); the epistasis is "
-                   f"predictable held-out (r={r['heldout_epistasis_pred_r']}); and crucially the individual single-effects add "
-                   f"{r['pair_specific_gain']:+.3f} over the generic saturation curve (r={r['heldout_saturation_only_r']}), so this "
-                   "is genuine interaction, not just a generic nonlinearity. This is EXACTLY the transmission/buffering coefficient "
-                   "single-KO endpoints provably cannot provide (wall_diagnosis: mechanism flat at chance). Combinatorial data is "
-                   "the kind that moves the wall -- and it is measurable in-context (K562).")
-    elif strong_epi and predictable and not pair_specific:
-        verdict = (f"PARTIAL -- epistasis is real ({r['epistasis_variance_fraction']:.0%}) and predictable held-out "
-                   f"(r={r['heldout_epistasis_pred_r']}), BUT almost all of it is the GENERIC SATURATION nonlinearity "
-                   f"(additive-only control r={r['heldout_saturation_only_r']}; pair-specific gain only {r['pair_specific_gain']:+.3f}). "
-                   "So combinatorial data reveals a predictable nonlinearity, but little PAIR-SPECIFIC transmission -- the "
-                   "responsiveness-prior story repeating one level up. A real but limited win.")
-    else:
-        verdict = (f"WEAK -- doubles are largely additive (r={r['additive_predicts_double_r']}) or the epistasis is not "
-                   f"predictable held-out (r={r['heldout_epistasis_pred_r']}); combinatorial data adds little here.")
-    print(f"\n  VERDICT: {verdict}")
-    r["verdict"] = verdict
-    r["note"] = ("Combinatorial (double-perturbation) test of what would break the far-field wall, on Norman&Weissman 2019 K562 "
-                 "(scPerturb, 105 singles / 131 doubles). Epistasis = double - additive(sum of singles) = the buffering/interaction "
-                 "signal single-KO endpoints cannot see. RESULT: doubles are 46% non-additive and that epistasis IS predictable "
-                 "held-out (r=0.45) -- BUT the control shows it is ~ENTIRELY the generic SATURATION nonlinearity (additive-magnitude "
-                 "alone r=0.45); the two singles' per-gene effects add +0.009 and RELATIONAL pair features (PPI / reg-edge / shared-"
-                 "pathway) add -0.001. So pair-specific transmission is ~chance held-out -- the SAME generic-predictable / specific-"
-                 "unpredictable split as single-KO (wall_diagnosis), now one level up on the RIGHT kind of data. The wall reproduces: "
-                 "generic magnitude-driven structure generalizes; specific identity/mechanism-driven structure does not. HONEST "
-                 "caveats: CRISPRa activation doubles, only 131 pairs, coarse 3-feature relational set; the GI literature reports "
-                 "modest above-chance pair-level GI prediction with more pairs/features, so this bounds rather than closes it.")
-    json.dump(r, open(OUT / "norman_epistasis.json", "w"), indent=1)
-    print("\n  -> outputs/orphan/norman_epistasis.json")
-    return r
+    log = []
+    def report(t):
+        print(t, flush=True); log.append(t)
+    report("=" * 100)
+    report("COMBINATORIAL PERTURBATION (Norman 2019): is a pair more than the sum of its singles?")
+    report("=" * 100)
+    groups, genes, prof, ncell, ph = build()
+    idx = {g: i for i, g in enumerate(groups)}
+    ctrl = [g for g in groups if g.lower() in ("control", "ctrl", "negctrl0")]
+    report(f"  control label(s): {ctrl}")
+    c = idx[ctrl[0]]
+    singles = {g: idx[g] for g in groups if "_" not in g and g not in ctrl}
+    pairs = {}
+    for g in groups:
+        if "_" in g and "NegCtrl" not in g:
+            a, b = g.split("_", 1)
+            if a in singles and b in singles and ncell[idx[g]] >= MIN_CELLS:
+                pairs[g] = (idx[g], singles[a], singles[b])
+    report(f"  {len(singles)} singles, {len(pairs)} pairs with both singles measured and "
+           f">= {MIN_CELLS} cells")
+
+    D = prof - prof[c][None, :]
+    Dh = ph - ph[:, c][:, None, :]
+    keys = sorted(pairs)
+    obs = np.stack([D[pairs[k][0]] for k in keys])
+    add = np.stack([D[pairs[k][1]] + D[pairs[k][2]] for k in keys])
+    resid = obs - add
+    noise = np.stack([Dh[0][pairs[k][0]] - Dh[1][pairs[k][0]] for k in keys]) / 2.0
+
+    def rms(x): return float(np.sqrt((x ** 2).mean()))
+    report(f"\n### GATE 1 -- is there non-additive signal?")
+    report(f"  RMS observed pair effect          {rms(obs):.4f}")
+    report(f"  RMS additive prediction            {rms(add):.4f}")
+    report(f"  RMS NON-ADDITIVE residual          {rms(resid):.4f}")
+    report(f"  RMS measurement noise (split-half) {rms(noise):.4f}")
+    ratio = rms(resid) / max(rms(noise), 1e-9)
+    report(f"  residual / noise                   {ratio:.3f}")
+    per_r = np.sqrt((resid ** 2).mean(1)); per_n = np.sqrt((noise ** 2).mean(1))
+    d = per_r - per_n
+    br = np.random.default_rng(0)
+    bs = d[br.integers(0, len(d), size=(10000, len(d)))].mean(1)
+    lo, hi = float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))
+    report(f"  per-pair residual - noise          {d.mean():+.4f} [{lo:+.4f}, {hi:+.4f}]  "
+           f"{'RESOLVED' if lo > 0 else 'within noise'}")
+    frac = float(np.mean((resid ** 2).sum(1) / np.maximum((obs ** 2).sum(1), 1e-9)))
+    report(f"  fraction of pair-effect energy that is non-additive: {100*frac:.1f}%")
+
+    var_add = 1 - float(((obs - add) ** 2).sum() / max(((obs - obs.mean(0)) ** 2).sum(), 1e-9))
+    report(f"  additive model explains {100*var_add:.1f}% of pair-response variance")
+
+    json.dump({"test": "norman_epistasis", "n_singles": len(singles), "n_pairs": len(pairs),
+               "rms_obs": rms(obs), "rms_add": rms(add), "rms_resid": rms(resid),
+               "rms_noise": rms(noise), "resid_over_noise": ratio,
+               "per_pair_gap": float(d.mean()), "ci": [lo, hi],
+               "frac_nonadditive": frac, "additive_var_explained": var_add, "log": log},
+              open(OUT / "norman_epistasis.json", "w"), indent=2)
+    report(f"\n  -> {OUT/'norman_epistasis.json'}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
