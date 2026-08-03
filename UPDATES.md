@@ -18329,3 +18329,64 @@ transfers worst, and adding it changes nothing measurable.
 What did show up is **lineage proximity**, weakly, at matched n. If that is worth pursuing, the experiment is a
 size-matched panel across several lineage distances — not a stem-cell dataset. And the honest bound stays what
 the scaling curve said: 52 extra profiles cannot move a 4,720-profile model whatever cell they came from.
+
+---
+
+# Phase 2+3: the pair reframing fails both gates, and my own argument for it was wrong
+
+`colab/adrn_pair_influence.py`
+
+The plan's load-bearing claim was that predicting the (perturbed gene *i*, responding gene *j*) **pair** turns
+4,720 training examples into ~39 million labels, attacking the data wall without new experiments. The file was
+written to count that number rather than assert it.
+
+    candidate pairs        38,907,120
+    POSITIVE pairs             17,066   (0.0439%)
+    training knockouts          4,720
+    -> supervision multiplied by ~4x per knockout, not 8,246x
+
+**The claim was wrong by three orders of magnitude.** Almost every pair is a non-event, so the informative
+supervision is 17,066 positives, not 39 million. Four times more than 4,720 rows — a real multiplication, and
+nowhere near enough to matter.
+
+## Both gates fail
+
+| arm | cohort 1 | cohort 2 |
+|---|---:|---:|
+| chan2a (incumbent) | **0.2337** | **0.2885** |
+| pair_shuffled (degree-matched rewiring) | 0.1823 | 0.2033 |
+| pair_full | 0.1793 | 0.2035 |
+| node_only | 0.1773 | 0.1980 |
+| j_only (responsiveness prior alone) | 0.1442 | 0.1933 |
+
+    PHASE 2  pair_full - node_only      +0.0020 [-0.0088,+0.0123]  and  +0.0055 [-0.0057,+0.0167]  noise
+    PHASE 2  pair_full - pair_shuffled  -0.0030 [-0.0105,+0.0043]  and  +0.0002 [-0.0075,+0.0080]  noise
+             pair_full - j_only         +0.0350 [+0.0188,+0.0503]  and  +0.0102 [-0.0045,+0.0245]  c1 only
+    PHASE 3  pair_full - chan2a         -0.0545 [-0.0757,-0.0345]  and  -0.0850 [-0.1110,-0.0597]  RESOLVED
+
+**Phase 2 fails.** Pair features add nothing over node features, and — the decisive one — **degree-matched
+rewiring scores identically**. Permute every edge while preserving every gene's degree and the model does not
+notice. The topology carries no information here; only the degrees do.
+
+**Phase 3 fails.** The pair model is worse than the incumbent by −0.055 and −0.085, both RESOLVED.
+
+By this file's own predeclaration, *"if phase 2 fails, the object is not carrying information and nothing
+downstream will save it"* — so phases 4 through 6 of the plan (propagation, chromatin gating, decoders) should not
+be built on this object.
+
+## Why the AlphaFold analogy breaks
+
+A distogram works because the pair object is **dense and geometrically constrained**: every residue pair has a
+distance, distances obey the triangle inequality, and evolutionary covariation informs pairs directly. The cell's
+pair object has none of those properties. It is **99.96% non-events**, there is no constraint linking pair (i,j)
+to pairs (i,k) and (k,j), and the relational graph we have — complexes, PPI, co-dependency, TF edges — is
+indistinguishable from its own degree-matched rewiring against this target.
+
+The analogy was mine and it was wrong. What made AlphaFold's intermediate work was not that it was pairwise; it
+was that it was **constrained**. This pair space has no equivalent constraint to exploit.
+
+## What stands
+
+`chan2a` — 696 curated annotation channels, ridge, K562 only, **0.2885** on the sealed holdout — remains the best
+model measured, now against eight defeated alternatives: ADRN mechanisms (×7), richer datasets, more cell lines,
+a pluripotent context, end-to-end learning, trees, and the pair reframing.
