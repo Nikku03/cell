@@ -292,7 +292,9 @@ def main():
     report(f"\n  scored {len(scored)} drugs; {int(cold.sum())} are true cold start "
            f"(no target gene was ever knocked out in training)")
 
-    report(f"\n  {'arm':<20} {'precision@10':>13}")
+    # interpolated, not hardcoded: the header said "precision@10" while A.NPRED is 20, and the run was reported
+    # once with the wrong label before the discrepancy was caught.  A literal cannot drift; this cannot.
+    report(f"\n  {'arm':<20} {'precision@' + str(A.NPRED):>13}")
     means = {}
     for k in ("split_half", "target_channels", "frequency_prior", "shuffled_targets", "random"):
         v = np.array(res[k])
