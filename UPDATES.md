@@ -19664,3 +19664,50 @@ K562.
 
 FEW-SHOT, not zero-shot: give the model 50-200 knockouts from the target line to pin its tide and basis, then
 predict the rest. That is the realistic deployment and the version worth running next.
+
+# Few-shot cross-line: K562 pretraining carries nothing. The tide fix worked; the answer stayed no.
+
+Two changes from adrn_crossline: each line's OWN tide removed from the key and from every arm (the previous run
+removed K562's tide from RPE1's key, which is why freq_line scored 0.6305), and the question reframed from
+zero-shot to few-shot, since conditioning on cell state requires data from that cell.
+
+| line | N | k562_plus_N | scratch_N | freq_N | within_full |
+|---|---:|---:|---:|---:|---:|
+| RPE1 | 25 | 0.0420 | 0.0315 | 0.0333 | 0.0752 |
+| RPE1 | 100 | 0.0415 | 0.0380 | 0.0377 | |
+| RPE1 | 400 | 0.0442 | **0.0608** | 0.0340 | |
+| Jurkat | 400 | 0.0350 | **0.0550** | 0.0430 | 0.0643 |
+| HepG2 | 400 | 0.0398 | **0.0633** | 0.0497 | 0.0788 |
+
+    k562_plus - scratch   N=400: RPE1 -0.0165, Jurkat -0.0200, HepG2 -0.0235, all RESOLVED NEGATIVE
+                          N=25/100: unresolved, signs mixed          -> FRAGILE, 0 positive of 9
+
+**`k562_plus` is FLAT at ~0.034-0.044 regardless of N** -- 4,720 K562 rows drown the new ones. `scratch` climbs
+with data (0.0315 -> 0.0380 -> 0.0608 on RPE1) and overtakes the prior at N=400 in every line.
+
+## The fix was real and it did not rescue the result
+
+Removing each line's own tide cut RPE1's key from 208 movers to 66 and eliminated the 0.6305 `freq_line` artifact
+that made the zero-shot test look catastrophic. **Roughly two-thirds of what the earlier test scored as correct
+was the line's shared programme.** Under the corrected, fair task, K562 knowledge still does not transfer.
+
+## Practical consequence
+
+For a new cell line: measure a few hundred knockouts and train from scratch. Do NOT reuse the K562 model -- past
+~400 samples it makes you worse.
+
+## Two honesty notes on the numbers
+
+1. Everything here is weak in absolute terms. `within_full` reaches 0.0752 -- about 1.5 correct of 20 against ~66
+   movers in ~5,300 genes (random ~1.2%). Removing the tide leaves a genuinely hard task for every arm.
+2. These are NOT comparable to the K562 sealed figures. K562's tide is 3 genes of 8,246; RPE1's is 817 of 6,149,
+   because the pkl profiles are top-250 truncated so "frequently in the top 250" catches far more genes.
+   Different tasks, different scales.
+
+## Where the "make it learn biology" programme stands
+
+Build 1 (tide-invariant targets) -- done, was a genuine bug fix in my own protocol, changed the numbers, did not
+change the verdict. Build 2 (condition on cell state) -- collapsed into this test, because conditioning needs
+line data and line data turns out to be worth more than the model. Build 3 (mechanism bottleneck) -- untested,
+and the only remaining idea worth defending, but LOCO gives it low odds: a model that cannot extrapolate across
+functional classes within one line is unlikely to have programme structure worth transferring across lines.
