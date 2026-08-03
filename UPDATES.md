@@ -18736,3 +18736,59 @@ measurement programme.
 
 Scope: this is K562 **CRISPRa** (over-expression), while everything else in this project is CRISPRi/knockout, so
 the 47.1% is not directly transferable to the knockout setting without re-measurement.
+
+---
+
+# Gate 2 fails: the interaction is real but not predictable for an unseen gene
+
+`colab/norman_gate2.py`
+
+Gate 1 showed 47.1% of pair-effect energy is non-additive at 1.69× the noise floor. Gate 2 asks whether that
+interaction can be **predicted** from the two genes' annotations. Symmetric pair features `[x_A+x_B, |x_A−x_B|,
+x_A·x_B]` over 697 named channels — 2,091 columns; all 105 Norman genes have annotation. Metric is the
+correlation between predicted and true residual per held-out pair.
+
+| arm | pair split | **gene split** |
+|---|---:|---:|
+| ridge | 0.3829 | 0.1017 |
+| knn | 0.3715 | 0.0925 |
+| gbm | 0.3411 | 0.1162 |
+| **marginal (floor)** | 0.2172 | **0.1232** |
+| shuffled | 0.0567 | 0.0502 |
+
+    pair split   ridge - marginal  +0.1657 [+0.1296,+0.2024]  RESOLVED
+                 gbm   - marginal  +0.1239 [+0.0890,+0.1576]  RESOLVED
+    gene split   ridge - marginal  -0.0215 [-0.0393,-0.0040]  RESOLVED **WORSE**
+                 gbm   - marginal  -0.0070 [-0.0185,+0.0037]  within noise
+                 ridge - shuffled  +0.0515 [+0.0244,+0.0781]  RESOLVED
+
+**The predeclared gate was the gene split, and it fails.** Under the pair split the model looks strong (+0.166,
+RESOLVED) — but a test pair there still shares genes with training pairs, so the model is recognising *the genes*,
+not the interaction. Remove that and the advantage disappears entirely: ridge is RESOLVED **worse** than a
+constant, gbm is within noise.
+
+This is exactly the failure mode the split was designed to catch, and it is why the pair-split number must not be
+quoted on its own.
+
+**Something faint survives.** `ridge − shuffled` stays +0.0515, RESOLVED, on the gene split: the annotations are
+not entirely inert, they just do not beat predicting the average interaction. And the marginal itself correlates
+at +0.1232 — **there is a generic interaction pattern shared across pairs**, and that generic part is most of what
+any model recovers.
+
+## What the two gates together establish
+
+    GATE 1  a pair screen is NOT redundant with a single screen        PASSES  (47.1% non-additive, 1.69x noise)
+    GATE 2  the interaction is NOT predictable for an unseen gene pair FAILS   (-0.0215 vs the floor)
+
+**A pair screen buys coverage, not generalisation.** Every pair you want to know about, you must measure. The
+~190M pair space cannot be reached by modelling from a measured subset — at least not from gene annotation, and
+not at n=131.
+
+## Power, stated plainly
+
+131 pairs, five folds, ~26 test pairs each. This detects large effects and cannot detect small ones. The honest
+reading of the gene split is **"no large predictable interaction signal from annotation"**, not "zero signal" —
+the surviving `ridge − shuffled` gap says a weak one is there. A larger pair screen could change this verdict,
+and that is a real reason to run one.
+
+Scope unchanged: Norman is K562 **CRISPRa**. The knockout setting may behave differently and has not been tested.
