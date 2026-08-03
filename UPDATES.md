@@ -19375,3 +19375,61 @@ ESM-2 fails both of its gates while PASSING liveness (esm - esm_shuffled +0.0298
 embeddings carry real gene-specific signal that simply is not signal about knockout response the annotation
 lacks. The likely reason is redundancy: 240 of chan2a's 736 channels are Pfam families and domains, themselves
 sequence-derived.
+
+# CORRECTION: the PPI gain does NOT replicate -- it was rank-128-and-mixed-edges specific
+
+The previous section reported PPI beating degree-matched rewiring (+0.0155 / +0.0325) and adding +0.0140 / +0.0152
+over chan2a, after three verification checks passed. **The replication fails.** Sweeping an independent,
+provenance-clean edge set (BioPlex AP-MS, pInt>=0.75) against embedding ranks 64 / 128 / 256:
+
+| source | rank | real | rewired | vs rewired | vs chan2a |
+|---|---:|---|---|---|---|
+| bioplex | 64 | 0.2405/0.2985 | 0.2355/0.2817 | +0.0050/+0.0168 | ~chan2a |
+| bioplex | 128 | 0.2397/0.2968 | 0.2348/0.2828 | +0.0050/+0.0140 | ~chan2a |
+| bioplex | 256 | 0.2415/0.2955 | 0.2248/0.2737 | **+0.0167/+0.0218 BEATS** | ~chan2a |
+| mixed | 64 | 0.2462/0.3003 | 0.2352/0.2795 | **+0.0110/+0.0207 BEATS** | ~chan2a |
+| mixed | 128 | 0.2467/0.3045 | 0.2313/0.2720 | **+0.0155/+0.0325 BEATS** | **>chan2a** |
+| mixed | 256 | 0.2422/0.3073 | 0.2332/0.2697 | +0.0090/+0.0375 | ~chan2a |
+
+**GATE FAIL** -- bioplex beats its rewired twin on both cohorts at 1 of 3 ranks; more than one was required.
+
+## The column that matters most is the last one
+
+`chan2a+ppi` beats `chan2a` in **one of six** configurations: the mixed edge set at rank 128 -- exactly the
+configuration originally run. Everywhere else PPI adds nothing over the annotation. The reported +0.0140 / +0.0152
+was the best cell of a configuration space that had never been swept.
+
+## Why the earlier verification did not catch this
+
+adrn_ppi_verify checked degree preservation (exact), swap acceptance (98.2% of edges moved), seed stability
+(0.1%) and leakage (co-response ratio 1.05x). All four passed and all four were necessary. But every one of them
+asks **"is the null valid?"** None asks **"is the effect robust to choices made without thinking?"** Rank 128 was
+an unexamined default written in a single line, and it carried the result. A sound control does not make a
+finding; it only makes the finding interpretable.
+
+## What actually survives
+
+All **12 of 12** point estimates against rewiring are positive (+0.0050 to +0.0375) across both edge sets, three
+ranks and two cohorts. A consistent sign in every cell is not nothing: it does contradict the flat claim that the
+graph carries **only** degree. But the effect is weak, resolvable in only 3 of 6 cells, and **does not reliably
+add to annotation the model already has**.
+
+Both earlier positions were therefore too strong, in opposite directions:
+  * "networks here are indistinguishable from degree-matched rewiring, PPI is dead" -- too strong.
+  * "PPI earns its place, +0.0140/+0.0152 over chan2a" -- also too strong.
+
+The defensible statement is: **PPI neighbourhood structure carries a small, sign-consistent signal beyond degree
+that is not reliably convertible into better knockout prediction on top of existing annotation.**
+
+## Consequence for chan2a+all
+
+`chan2a+all` (0.2573 / 0.3217) was built with PPI at the one configuration that worked. `chan2a+codep` alone is
+0.2540 / 0.3127, so PPI and ESM together contribute roughly +0.003 / +0.009 of that -- within noise. **The
+durable gain is codep**, which passed on its own terms (+0.0213 / +0.0235) and comes from a different assay in
+~1,100 other cell lines.
+
+## Independence caveat, stated before the result was known
+
+BioPlex and the mixed set overlap 71.4% (81,641 of 114,329 bioplex edges). This tests provenance and rank, not a
+disjoint interactome. A fully independent check would need STRING or BioGRID minus the BioPlex overlap, or
+another cell line.
