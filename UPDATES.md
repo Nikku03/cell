@@ -18620,3 +18620,66 @@ the data supports.
 Source precision falls 0.3481 → 0.2909 → 0.2435 (random → complex → pathway), about **30% from random to
 pathway**. Held-out-pathway knockouts are substantially harder than held-out-random ones, which is worth knowing
 for any future claim about cold-start generalisation on this task.
+
+---
+
+# How many perturbations exist — and a correction: 3.5 of 10 is not reachable by single-gene knockout
+
+## What we hold
+
+| source | perturbations | note |
+|---|---:|---|
+| **Replogle 2022 K562 genome-wide** | **5,120 usable** | 9,866 genes targeted, 11,258 rows, **5,192 detectable (52.6%)** |
+| nlz_HepG2 / Jurkat / RPE1 | 2,151 each | 2,394 distinct genes each (Nadig 2025 essential-scale) |
+| nlz_K562 (old truncated build) | 1,400 | subset of the above |
+| nlz_HCT116 | 1,400 | |
+| nlz_Replogle | 630 | |
+| nlz_Melanoma | 218 | |
+| sci-Plex | 189 compounds | drug, not knockout |
+| frangieh / papalexi / shifrut | 249 / 99 / 21 | |
+| RENGE hiPSC (4 timepoints) | 23 genes | |
+
+**15,221 rows on disk, of which 5,120 are usable K562 knockouts** — the only ones that train the sealed-protocol
+model, since pooling other lines was measured to hurt (−0.037) and banking recovered only +0.004.
+
+## What could be curated
+
+A survey of public K562 gene-targeting Perturb-seq (verified accessions): Adamson 2016 (82 genes, GSE90546),
+Dixit 2016 (24, GSE90063), Norman 2019 (~290 guide identities, GSE133344), Jost 2020 (25, GSE132080), Replogle
+2020 direct-capture (GSE146194). **Union with what we already hold: perhaps +400 distinct genes.**
+
+The large remaining K562 screens target **non-coding elements, not genes** — Gasperini 2019 (5,920 candidate
+enhancers, GSE120861), Schraivogel 2020 TAP-seq (1,778), DC-TAP-seq 2025 (~1,400), Xie 2019 Mosaic-seq (518).
+That is ~9,600 more perturbations, but of enhancers, so the 696 gene-annotation channels do not describe them.
+
+## The correction
+
+Earlier in this session I wrote that ~26,500 perturbations was *"a real, fundable target … within reach of
+existing genome-wide Perturb-seq — the full Replogle screen targets ~9,900 genes."* **That was wrong.** The
+9,866-gene screen *is* the genome-wide screen, and it is what we already have.
+
+**26,500 exceeds the number of human protein-coding genes (~19,500).** Single-gene knockout in one cell line
+cannot reach it, at any budget.
+
+    HAVE now                                        n =  5,120   0.2927   (2.93/10)
+    + every other K562 gene screen (~+400 genes)    n =  5,330   0.2941   (2.94/10)
+    perfect screen of ALL protein-coding genes      n = 10,261   0.3169   (3.17/10)
+    if every gene were detectable (unphysical)      n = 19,500   0.3393   (3.39/10)
+    the 3.5/10 target                               n = 26,506   0.3500   (3.50/10)
+
+At the **measured 52.6% detection rate**, screening every protein-coding gene in K562 yields ~10,300 usable
+perturbations and **3.17 of 10**. The entire remaining headroom in single-gene K562 knockout is **+0.024** —
+about what richer annotation channels bought, and it costs a genome-wide screen.
+
+## What that leaves
+
+1. **Non-coding perturbations** — ~9,600 available now, but they perturb enhancers; the model's vocabulary
+   describes genes and would need a different feature basis.
+2. **Combinatorial perturbations** — the only route past ~19,500. Norman 2019 is the existing example, and the
+   pair space is ~190 million.
+3. **Other contexts** — measured: pooling hurts, banking gives +0.004.
+4. **A different readout** — every number here is transcriptional response; viability, morphology and proteomic
+   readouts have their own scaling curves and none has been measured.
+
+The honest statement is that **the single-gene transcriptional-response route is within ~0.024 of exhausted**,
+and we hold 50% of everything that will ever exist on it.
