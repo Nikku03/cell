@@ -1,0 +1,66 @@
+{
+  "test": "sc_transformer",
+  "d_model": 128,
+  "layers": 2,
+  "epochs": 6,
+  "n_train_cells": 63111,
+  "n_groups": 216,
+  "results": {
+    "tf_gene": {
+      "params": 630352,
+      "r": 0.36975995233242087,
+      "p20": 0.21643518518518517
+    },
+    "tf_gene_state": {
+      "params": 630352,
+      "r": 0.4489429580062534,
+      "p20": 0.26412037037037034
+    }
+  },
+  "contrast": {
+    "r": {
+      "delta": 0.07918300567383244,
+      "lo": 0.06494342966925623,
+      "hi": 0.09391436404729746,
+      "verdict": "RESOLVED +"
+    },
+    "p@20": {
+      "delta": 0.04768518518518518,
+      "lo": 0.030555555555555555,
+      "hi": 0.06481481481481481,
+      "verdict": "RESOLVED +"
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "STEP 5 -- SMALL TRANSFORMER, same task / holdout / metric as the conditioned ADRN",
+    "====================================================================================================",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 15.0",
+    "  extra channels: 536 kept of 691 built  (TIER A 527, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  200 perturbations; channel vocabulary 697; mean active channels 44.6",
+    "  held out 40 perturbations entirely",
+    "  78,608 perturbed cells with a matched control group",
+    "  training cells 63,111 | state features 9",
+    "  held-out evaluation groups: 216",
+    "\n  tf_gene: 0.63M params, 63,111 cells, 6 epochs",
+    "    epoch 1/6  loss 0.26265  (119s)",
+    "    epoch 2/6  loss 0.25423  (111s)",
+    "    epoch 3/6  loss 0.25234  (113s)",
+    "    epoch 4/6  loss 0.25128  (114s)",
+    "    epoch 5/6  loss 0.25061  (111s)",
+    "    epoch 6/6  loss 0.25018  (114s)",
+    "    tf_gene: r 0.3698  p@20 0.2164",
+    "\n  tf_gene_state: 0.63M params, 63,111 cells, 6 epochs",
+    "    epoch 1/6  loss 0.25758  (118s)",
+    "    epoch 2/6  loss 0.24345  (110s)",
+    "    epoch 3/6  loss 0.24025  (113s)",
+    "    epoch 4/6  loss 0.23868  (108s)",
+    "    epoch 5/6  loss 0.23743  (114s)",
+    "    epoch 6/6  loss 0.23652  (106s)",
+    "    tf_gene_state: r 0.4489  p@20 0.2641",
+    "\n  tf_gene_state - tf_gene (r): +0.0792 [+0.0649,+0.0939] RESOLVED +",
+    "\n  tf_gene_state - tf_gene (p@20): +0.0477 [+0.0306,+0.0648] RESOLVED +",
+    "\n  NOTE: 1M-parameter model on 4 CPU cores. A null here bounds what is reachable at THIS scale;",
+    "  it does not establish that a large model would also fail."
+  ]
+}
