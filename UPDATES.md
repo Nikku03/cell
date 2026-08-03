@@ -18851,3 +18851,47 @@ rewiring. The problem was never the search procedure.
 This closes the network-mechanism route. The remaining measured leads are the underpowered Norman gate 2 (a weak
 signal survived the shuffled control at n=131) and the readouts with no scaling curve yet — viability, morphology,
 proteomics.
+
+---
+
+# Gate 2, at proper power: it PASSES for one novel gene, and my earlier "fails" was too broad
+
+`colab/norman_gate2_power.py`
+
+More pairs is impossible — Norman has exactly 105 singles + 131 pairs + 1 control, and the ≥40-cell filter
+excluded nothing (all 131 have ≥54 cells, median 301). So the fix was to stop wasting them.
+
+**The power leak.** The first gate-2 run used a 5-fold gene split that removed from training *every pair sharing
+either gene with the test fold*, leaving ~26 training pairs per fold. Leave-one-gene-out holds out one gene at a
+time, so training keeps **130 of 131 pairs**.
+
+| | ridge | marginal | shuffled | ridge − marginal | MDE |
+|---|---:|---:|---:|---|---:|
+| **leave-one-gene-out** (73 folds, 262 evals) | **0.2767** | 0.1951 | 0.0674 | **+0.0816 [+0.0543, +0.1081] RESOLVED** | 0.0380 |
+| **20 repeated random gene splits** | **0.2896** | 0.1990 | 0.0674 | **+0.0906 RESOLVED** | 0.0147 |
+| *5-fold with full exclusion (first run)* | *0.1017* | *0.1232* | *0.0502* | *−0.0215 RESOLVED WORSE* | — |
+
+## The correction, stated precisely
+
+I wrote that gate 2 fails and concluded **"a pair screen buys coverage, not generalisation."** That was too broad.
+The two runs are answering different questions, and both answers are real:
+
+- **One novel gene per pair** — the held-out gene appears in no training pair, its partner does. **PASSES**, ridge
+  beats the marginal by +0.0816 / +0.0906, both RESOLVED with the MDE stated.
+- **Both genes novel** — neither gene appears in any training pair. **FAILS**, −0.0215.
+
+The interaction *is* learnable when the model has seen one of the two genes interact with something else. It is
+not learnable when both genes are cold. My original conclusion applied the harder result to both cases.
+
+## What that means practically
+
+It changes the design of a pair screen rather than cancelling it. A screen that pairs **n genes against a shared
+anchor set** puts most unmeasured pairs in the "one novel gene" regime, which is the regime that works. A screen of
+disjoint gene pairs puts them in the "both novel" regime, which does not.
+
+Honest bounds on the positive result: 73 genes appear in pairs, not 105; a pair is tested twice under LOGO (once
+per constituent gene), so the 262 evaluations are not fully independent; and the marginal itself sits at 0.195,
+so a substantial part of any prediction is still the generic interaction pattern shared across pairs. The ridge
+advantage over that generic part is +0.08, and over the shuffled control +0.21.
+
+Scope unchanged: K562 **CRISPRa**, not knockout.
