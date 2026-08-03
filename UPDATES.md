@@ -19057,3 +19057,102 @@ That is a more precise and more useful finding than either v1's version or the u
 evidence-reasoner architecture it sets a concrete requirement: a store earns its place only if it carries
 query-specific signal that the entity store does *not* already contain, and the wrong-query control is the
 instrument that measures exactly that.
+
+# Drug-response cold start: the knockout-trained model does not transfer to chemical perturbation
+
+Every result above trains on CRISPR knockouts and tests on CRISPR knockouts. The implicit claim — that this is a
+cell model rather than a Perturb-seq interpolator — requires the machinery to survive a change of *modality*. A
+small molecule is that test: it inhibits a protein rather than deleting a transcript, it hits several proteins at
+once, it acts in hours rather than days, and nothing in the training data is a drug.
+
+The shortest available chain was used, so that a failure is attributable:
+
+    drug --(sci-Plex `target` annotation)--> gene symbol(s) --(mean channel vector)--> ridge --> programme mix
+         --(H)--> ranked genes,  scored against that drug's MEASURED movers in sci-Plex K562.
+
+sci-Plex's 87 target families are protein families, not HGNC symbols, so `TARGET_GENES` in
+`colab/adrn_drug_response.py` maps them. That map was written from the target strings alone, before any response
+was computed — prior knowledge of the same kind as the annotation channels, not a fitted parameter. Families with
+no defined protein target ("Others", "DNA alkylator", "Dehydrogenase") are absent on purpose: those drugs are
+dropped rather than guessed.
+
+**Measurement.** K562 (the training line), 24 h, the two highest doses pooled (1000 + 10000 nM) — 79,883 treated
+cells against 3,935 vehicle. Movers are |z| >= 2 standardised per gene across drugs. 181 of 188 drugs carried a
+mappable target and all 181 cleared the >= 20-mover floor. Perturb-seq tide genes are removed from the
+prediction, the answer key, and the frequency prior alike; masking one side only would rig the comparison.
+
+| arm | precision@20 |
+|---|---:|
+| split_half — CEILING, not a competitor | **0.1260** |
+| frequency_prior | **0.1011** |
+| target_channels | 0.0580 |
+| shuffled_targets | 0.0543 |
+| random | 0.0459 |
+
+    target_channels - frequency_prior   -0.0431 [-0.0575,-0.0282]  RESOLVED NEGATIVE
+    target_channels - shuffled_targets  +0.0038 [-0.0037,+0.0115]  unresolved
+    target_channels - random            +0.0122 [+0.0008,+0.0243]  RESOLVED positive
+
+**GATE FAIL.** The gate required beating *both* opponents.
+
+## The two failures are not equally damning, and the weaker one is the honest headline
+
+Losing to the frequency prior is against an unfair opponent, and that has to be said: the prior reads the measured
+movers of the other 180 drugs, while `target_channels` sees no drug data at all. On its own that contrast would be
+arguable.
+
+The **shuffled tie is not arguable**. It is internal, carries no such asymmetry, and says the target→channel chain
+does not use *which drug it is*. Permuting the drug→target map costs +0.0038 with a CI spanning zero.
+
+Stratifying by cold start does not rescue it — the prior wins in both strata:
+
+| stratum | n | target_channels | frequency_prior |
+|---|---:|---:|---:|
+| cold start (target never knocked out) | 46 | 0.0565 | 0.0772 |
+| target measured in training | 135 | 0.0585 | 0.1093 |
+
+## The ceiling explains why the prior is so strong
+
+Split-half of a drug's *own* cells reaches only 0.1260, and the frequency prior alone reaches 0.1011. **At most
+~0.025 of drug-specific headroom exists in this measurement, and the model captured none of it.** High-dose 24 h
+drug response is largely one shared stress programme; "the genes that always move" nearly saturates what is
+reproducible at this depth. This bounds what *any* model could have demonstrated here, and it is a statement about
+the assay, not about the model.
+
+## Liveness: the shuffled tie is a real null, not a switched-off mechanism
+
+A tie with a shuffled control has two opposite readings, and this project shipped a bug of the bad kind the same
+day (the screen-design `diversity` arm, below). `colab/adrn_drug_liveness.py` settles it, reading only `obs` and
+never the expression matrix:
+
+| check | value |
+|---|---:|
+| distinct top-20 predictions across 181 drugs | **80** |
+| distinct target-gene sets available (the maximum attainable) | **80** |
+| mean / median pairwise top-20 overlap | 0.305 / 0.300 |
+| genes present in EVERY drug's top-20 | **0** of 20 |
+| mean cosine between drug channel vectors | 0.623 |
+
+80 distinct predictions from 80 distinct target sets is the ceiling: every input the annotation can tell apart
+produces a distinguishable output, with no constant core. The chain genuinely varies with the drug — it varies in
+a way that carries no information about which genes that drug moves. **Honest negative, not a dead arm.**
+
+One residual caveat, stated because it favours the null: with 80 target sets shared across 181 drugs, a
+permutation can reassign a drug to a *different* drug with the *same* target set, inflating the shuffled arm
+toward the real one. That happens with probability ~0.7% per draw across 20 draws — far too rare to manufacture
+the tie.
+
+## Correction
+
+These numbers were first reported as precision@10. `A.NPRED` is **20**, so the metric is **precision@20**. The
+results-table header was a hardcoded literal that had drifted from the constant; it now interpolates `A.NPRED` so
+it cannot drift again. Every number and the verdict are unchanged — only the metric's name was wrong.
+`outputs/orphan/adrn_drug_response.json` still carries the wrong label inside its `log` transcript: the artifact
+is left as it was actually emitted rather than edited after the fact.
+
+## What this costs the project
+
+The transfer claim is now measured rather than assumed, and it does not hold. The model predicts knockout
+responses; it does not predict drug responses from target annotation. Anything downstream that assumed
+drug-effect prediction — the disease/target-to-therapy chain in particular — has to be read as resting on the
+knockout side only.
