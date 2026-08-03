@@ -65,8 +65,10 @@ def main():
     report("=" * 100)
     report("  PREDECLARED  G2a line>gene | G2b state>line THE CLAIM | G2c state-without-depth>line")
 
-    z = np.load(SP / "sc_cohort_cells.npz", allow_pickle=True)
-    X = z["X"]
+    TARGET = int(os.environ.get("SC_TARGET", "200"))
+    z = np.load(SP / (f"sc_cohort_cells{TARGET}.npz" if TARGET != 200 else "sc_cohort_cells.npz"),
+                allow_pickle=True)
+    X = z["X"].astype(np.float32)   # float16 at scale; cast once for the ridge
     line = np.array([str(x) for x in z["line"]])
     pert = np.array([str(x) for x in z["pert"]])
     batch, ntc = z["batch"], z["is_ntc"]
@@ -188,7 +190,7 @@ def main():
 
     json.dump({"test": "sc_adrn_decompose", "bins": list(BINS_SWEEP), "seeds": list(SEED_SWEEP),
                "means": means, "verdicts": V, "log": log},
-              open(OUT / ("sc_adrn_decompose.json" if len(BINS_SWEEP) == 2 else "sc_adrn_decompose_bins.json"), "w"), indent=2)
+              open(OUT / ("sc_adrn_decompose_%d_%s.json" % (TARGET, "-".join(map(str, BINS_SWEEP)))), "w"), indent=2)
     report(f"\n  total {time.time() - t0:.0f}s  -> {OUT / 'sc_adrn_decompose.json'}")
     return 0
 
