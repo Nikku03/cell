@@ -19433,3 +19433,64 @@ durable gain is codep**, which passed on its own terms (+0.0213 / +0.0235) and c
 BioPlex and the mixed set overlap 71.4% (81,641 of 114,329 bioplex edges). This tests provenance and rank, not a
 disjoint interactome. A fully independent check would need STRING or BioGRID minus the BioPlex overlap, or
 another cell line.
+
+# Final: the 3-axis sweep. codep ROBUST, PPI DIRECTIONAL, and the cohort asymmetry nobody predicted
+
+`adrn_blocks_swept.py` through `robustness.Sweeper`. ppi: 2 edge sets x 3 SVD ranks x 3 NMF K x 2 cohorts = 36
+cells. codep: 3 representations x 3 K x 2 cohorts = 18 cells. Verdict ladder fixed in the module before the run.
+
+| sweep | resolved | verdict |
+|---|---|---|
+| chan2a+codep - chan2a | 17 of 18 | **ROBUST** |
+| chan2a+ppi - chan2a+ppi_rw | 22 of 36 (24 needed) | **DIRECTIONAL** |
+| chan2a+ppi - chan2a | 17 of 36 | **DIRECTIONAL** |
+
+## Adding the source axis changed the verdict
+
+The first version of this sweep put rank and K on axes while holding the edge set at `mixed`, and returned ROBUST
+for both PPI contrasts. Adding BioPlex dropped both to DIRECTIONAL. **The omitted axis was carrying the verdict**
+-- the identical failure to `SVD_K = 128`, one level up, caught only because the harness forces the grid to be
+declared. Sweeping the defaults that have not yet embarrassed you, while pinning the one that has, is not a sweep.
+
+## The dominant structure is the COHORT, not any swept knob
+
+| contrast | cohort 1 | cohort 2 |
+|---|---|---|
+| ppi vs rewired | **5 / 18** | **17 / 18** |
+| ppi vs chan2a | **4 / 18** | **13 / 18** |
+| codep vs chan2a | 8 / 9 | 9 / 9 |
+
+PPI helps cohort 2 nearly everywhere and cohort 1 nearly nowhere; codep helps both. Both sealed cohorts were drawn
+by the same functional-class round-robin, so there is no design reason for this and **I have no explanation for
+it**. Recorded as an open question rather than rationalised. Consequence: any future PPI claim must be stated
+per-cohort, and the single-cohort numbers quoted earlier today were hiding this entirely.
+
+## What is settled
+
+**All 36 PPI cells are positive.** The sign never flips across 2 sources x 3 ranks x 3 K x 2 cohorts, so the flat
+claim that the graph carries only degree remains wrong. But it resolves in under two-thirds of configurations and
+concentrates in one cohort: real in direction, not bankable. The module printed the right caution without being
+asked -- "Real but not bankable; say so rather than quoting the best cell."
+
+**codep is the one durable gain of the day**: ROBUST at 17 of 18, across three representations and three programme
+counts, +0.0213 / +0.0235 over chan2a, reaching 0.2410 / 0.2818 standing alone -- close to the entire curated
+annotation stack, from measurement in ~1,100 other cell lines rather than from any vocabulary.
+
+## K is not carrying anything
+
+chan2a baseline: K=30 -> 0.2298 / 0.2830, K=60 -> 0.2337 / 0.2885, K=120 -> 0.2318 / 0.2900. A spread of ~0.004.
+**This retires the "every number is conditional on K=60" concern** raised when the harness was built. It was worth
+checking and it came back clean.
+
+## Ledger of today's four positions on PPI
+
+    1. "networks are indistinguishable from degree-matched rewiring"      too strong
+    2. "PPI earns its place, +0.0140/+0.0152 over chan2a"                 too strong (one of six cells)
+    3. "PPI beats chan2a in exactly 1 of 6 configurations"                overstated -- that rule required BOTH
+                                                                          cohorts to resolve at once; counting
+                                                                          cells gives 3 of 6
+    4. DIRECTIONAL: sign-consistent in 36/36, resolved in 22/36,          the one that survived a declared grid
+       concentrated in cohort 2
+
+Three of the four were mine and wrong in alternating directions. The harness is what stopped the fourth from
+joining them.
