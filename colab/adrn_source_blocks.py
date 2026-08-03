@@ -125,7 +125,10 @@ def ppi_blocks(universe, report):
     from scipy import sparse
     from sklearn.decomposition import TruncatedSVD
     D = json.load(open(OUT / "cell_complete.json"))
-    names = D["genes"]
+    # cell_complete's `genes` is a list of RECORDS, not symbols -- adrn_ko_conjunctions reads `names` the same
+    # way (it does `names[a]` on dicts only after extracting `name`).  The first draft here treated them as
+    # strings and died on `unhashable type: dict`.
+    names = [g["name"] if isinstance(g, dict) else str(g) for g in D["genes"]]
     idx = {g: i for i, g in enumerate(names)}
     edges = np.array([(a, b) for a, b in D["ppi"] if a < len(names) and b < len(names)], np.int64)
     n = len(names)
