@@ -19307,3 +19307,71 @@ rather than a hope behind it — the downstream machinery uses data-driven struc
 2. **Measured co-dependency profiles** (DepMap, ~1,100 cell lines) as the source vector instead of annotation.
    `CRISPRGeneEffect.csv` is already on disk. Partly present as Tier-B channels (`dep_frac`, `ess`); a wholesale
    swap of the source side has not been tested.
+
+# Source-side blocks: co-dependency and PPI BOTH earn their place; sequence does not
+
+Prompted by "use PPI and non-PPI, and pathways and other data". Two of those looked spent and I said so: pathways
+ARE the incumbent (chan2a is 120 pathways + 250 GO + 120 complexes + 120 Pfam + 120 domains), and `ppi_degree` is
+already a channel while eight prior network tests here tied degree-matched rewiring. **I was wrong about PPI.**
+
+| arm | cohort 1 | cohort 2 |
+|---|---:|---:|
+| chan2a (incumbent) | 0.2327 | 0.2893 |
+| chan2a+esm | 0.2320 | 0.2818 |
+| chan2a+ppi | 0.2467 | 0.3045 |
+| chan2a+ppi_rw (degree-matched control) | 0.2313 | 0.2720 |
+| chan2a+codep | 0.2540 | 0.3127 |
+| **chan2a+all** | **0.2573** | **0.3217** |
+| codep_only | 0.2410 | 0.2818 |
+| esm_only | 0.1710 | 0.2068 |
+
+    G_esm     chan2a+esm   - chan2a          -0.0007 [-0.0087,+0.0078]  -0.0075 [-0.0165,+0.0015]  fail
+    G_codep   chan2a+codep - chan2a          +0.0213 [+0.0083,+0.0353]  +0.0235 [+0.0123,+0.0352]  PASS
+    G_ppi     chan2a+ppi   - chan2a          +0.0140 [+0.0008,+0.0275]  +0.0152 [+0.0002,+0.0315]  PASS
+    G_ppiCTRL chan2a+ppi   - chan2a+ppi_rw   +0.0155 [+0.0017,+0.0295]  +0.0325 [+0.0163,+0.0505]  PASS
+    G_all     chan2a+all   - chan2a          +0.0245 [+0.0092,+0.0408]  +0.0325 [+0.0175,+0.0490]  PASS
+
+**+0.0245 / +0.0325 on the sealed cohorts -- the largest single improvement to that number in this project.**
+
+## The PPI result contradicts eight earlier ones, so it was attacked before being believed
+
+`adrn_ppi_verify.py` tried three ways to break it:
+
+| check | result |
+|---|---|
+| degree sequence preserved by the rewiring | **exactly, on all 3 seeds** |
+| fraction of edges actually moved | **98.1-98.2%** (Jaccard 0.009 vs the real graph) |
+| stability across rewiring seeds | identical to 0.1% |
+| co-response cosine, linked vs degree-matched shuffled pairs | **0.6219 vs 0.5950 = 1.05x** |
+
+The control is real: it destroys 98% of edges while preserving every node's degree exactly, so the contrast
+isolates *who is wired to whom* from *how many things you are wired to*. And the edges do not leak -- a 1.05x
+co-response ratio is what genuine AP-MS and complex membership give. Edges derived from the response data would
+have shown a large gap.
+
+## What this overturns, and what it does not
+
+**Overturned:** my statement that "the only information in the PPI graph is degree" was too strong. It held for
+every previous ENCODING -- propagation, message-passing, random walks, neighbour bagging -- and not for a
+SPECTRAL one. Truncated SVD of the adjacency recovers community structure that walk-based methods smeared out.
+The eight negatives were about how the graph was read, not about whether it contained anything.
+
+**Not overturned:** those eight results remain correct for their own encodings. And this is a single test against
+a strong local prior; it needs independent replication -- a different PPI source (BioPlex alone, which has clean
+AP-MS provenance), a different embedding rank, ideally another cell line -- before anything is built on it.
+
+## codep
+
+DepMap gene-effect across ~1,100 cell lines: +0.0213 / +0.0235, and alone it reaches 0.2410 / 0.2818 -- within
+reach of the full annotation stack from measurement only. It is the one block that is neither curation nor graph,
+which is the direction the "it isn't learning biology, it's reciting annotations" objection was pointing.
+
+Note the twin strata came out BACKWARDS for codep: +0.0091 / +0.0132 on twinned knockouts against +0.0220 /
++0.0246 on unique ones. Whatever codep adds, it is not separating annotation twins.
+
+## sequence
+
+ESM-2 fails both of its gates while PASSING liveness (esm - esm_shuffled +0.0298 / +0.0360, resolved), so the
+embeddings carry real gene-specific signal that simply is not signal about knockout response the annotation
+lacks. The likely reason is redundancy: 240 of chan2a's 736 channels are Pfam families and domains, themselves
+sequence-derived.
