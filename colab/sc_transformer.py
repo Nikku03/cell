@@ -116,10 +116,17 @@ def main():
     st_all = np.stack([(s_sc - s_sc.mean()) / (s_sc.std() + 1e-9),
                        (g2 - g2.mean()) / (g2.std() + 1e-9),
                        (np.log10(umi) - np.log10(umi).mean()) / (np.log10(umi).std() + 1e-9)], 1)
-    st_cells = np.concatenate([st_all[keep],
-                               np.eye(NBINS, dtype=np.float64)[binid[keep]],
-                               np.eye(len(lines), dtype=np.float64)[[lines.index(l) for l in line[keep]]]], 1)
-    n_state = st_cells.shape[1]
+    # NESTED blocks, not one bundle. The first version concatenated line one-hot INTO the state block, so
+    # tf_gene_state knew the cell line and tf_gene did not -- the identical confound the ADRN decomposition
+    # found, inherited here because I copied the feature block for comparability. Split so each increment is
+    # attributable: LINE is a free context label, STATE is what only single-cell data provides.
+    LINE1 = np.eye(len(lines), dtype=np.float64)[[lines.index(l) for l in line[keep]]]
+    STATE = np.concatenate([st_all[keep], np.eye(NBINS, dtype=np.float64)[binid[keep]]], 1)
+    BLOCKS = {"gene": np.zeros((len(keep), 0)),
+              "gene_line": LINE1,
+              "gene_line_state": np.concatenate([LINE1, STATE], 1)}
+    n_state = BLOCKS["gene_line_state"].shape[1]
+    st_cells = BLOCKS["gene_line_state"]
     is_hold_cell = np.array([pert[c] in hold for c in keep])
     tr_idx = np.where(~is_hold_cell)[0]
     report(f"  training cells {len(tr_idx):,} | state features {n_state}")
@@ -163,15 +170,23 @@ def main():
 
     gt = np.zeros((len(groups), MAX_TOK), np.int64)
     gs = np.zeros((len(groups), n_state), np.float64)
+    G_LINE = np.zeros((len(groups), len(lines)))
+    G_STATE = np.zeros((len(groups), NBINS + 3))
     for i, (ln, p, b) in enumerate(groups):
         t = tok[p]
         gt[i, :len(t)] = t
         m = (line == ln) & (pert == p) & ~ntc & (binid == b)
-        gs[i] = np.concatenate([st_all[m].mean(0), np.eye(NBINS)[b], np.eye(len(lines))[lines.index(ln)]])
+        G_LINE[i] = np.eye(len(lines))[lines.index(ln)]
+        G_STATE[i] = np.concatenate([st_all[m].mean(0), np.eye(NBINS)[b]])
+    GBLOCKS = {"gene": np.zeros((len(groups), 0)), "gene_line": G_LINE,
+               "gene_line_state": np.concatenate([G_LINE, G_STATE], 1)}
 
     results = {}
-    for arm, use_state in (("tf_gene", False), ("tf_gene_state", True)):
-        net = Net(use_state)
+    for arm in ("gene", "gene_line", "gene_line_state"):
+        blk = BLOCKS[arm]
+        st_cells = np.zeros((len(keep), n_state))
+        st_cells[:, :blk.shape[1]] = blk          # same input width for every arm; unused slots are zero
+        net = Net(arm != "gene")
         npar = sum(p.numel() for p in net.parameters())
         opt = torch.optim.AdamW(net.parameters(), lr=LR, weight_decay=1e-4)
         Tt = torch.from_numpy(TOKS[tr_idx])
@@ -193,8 +208,10 @@ def main():
                 nb += 1
             report(f"    epoch {ep+1}/{EPOCHS}  loss {tot/max(nb,1):.5f}  ({time.time()-te:.0f}s)")
         net.eval()
+        gsa = np.zeros((len(groups), n_state))
+        gsa[:, :GBLOCKS[arm].shape[1]] = GBLOCKS[arm]
         with torch.no_grad():
-            P = net(torch.from_numpy(gt), torch.from_numpy(gs).float()).numpy()
+            P = net(torch.from_numpy(gt), torch.from_numpy(gsa).float()).numpy()
         r = np.array([float(np.corrcoef(P[i], Yg[i])[0, 1]) if np.std(P[i]) > 0 else 0.0
                       for i in range(len(Yg))])
         pr = []
@@ -206,16 +223,20 @@ def main():
                         "r_vec": r.tolist(), "p_vec": pr.tolist()}
         report(f"    {arm}: r {r.mean():.4f}  p@20 {pr.mean():.4f}")
 
-    d_r = np.array(results["tf_gene_state"]["r_vec"]) - np.array(results["tf_gene"]["r_vec"])
-    d_p = np.array(results["tf_gene_state"]["p_vec"]) - np.array(results["tf_gene"]["p_vec"])
     br = np.random.default_rng(0)
     out = {}
-    for nm, d in (("r", d_r), ("p@20", d_p)):
+    pairs = []
+    for lab, a, b in (("TFa line-gene", "gene_line", "gene"),
+                      ("TFb state-line", "gene_line_state", "gene_line")):
+        for nm in ("r", "p"):
+            k = "r_vec" if nm == "r" else "p_vec"
+            pairs.append((f"{lab} ({nm})", np.array(results[a][k]) - np.array(results[b][k])))
+    for nm, d in pairs:
         bs = d[br.integers(0, len(d), size=(10000, len(d)))].mean(1)
         lo, hi = float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))
         out[nm] = {"delta": float(d.mean()), "lo": lo, "hi": hi,
                    "verdict": "RESOLVED +" if lo > 0 else ("RESOLVED -" if hi < 0 else "unresolved")}
-        report(f"\n  tf_gene_state - tf_gene ({nm}): {d.mean():+.4f} [{lo:+.4f},{hi:+.4f}] {out[nm]['verdict']}")
+        report(f"  {nm:<22}: {d.mean():+.4f} [{lo:+.4f},{hi:+.4f}] {out[nm]['verdict']}")
 
     report("\n  NOTE: 1M-parameter model on 4 CPU cores. A null here bounds what is reachable at THIS scale;")
     report("  it does not establish that a large model would also fail.")
