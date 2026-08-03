@@ -19248,3 +19248,62 @@ That also retires two wrong projections I gave during the run ("~90 minutes", th
 the 905 s in the first progress line was setup time. `t0` is set immediately before the loop and the line prints at
 the end of the body for `c=0`, so 905 s was **one pair** — the number was visible in the log the whole time and I
 misread which interval it covered.
+
+# Is it a parrot? Off-annotation predictions beat chance by 40-60x on both cohorts
+
+The charge: the source side is 696 curated annotation channels, so if every correct call is a gene sharing an
+annotation with the knockout, the model has learned nothing that was not already written down, cannot propose an
+unrecorded relationship, and "annotation lookup with a ridge on top" is the honest description.
+
+The charge is testable. For knockout k and gene g, **off-annotation** means their channel supports are DISJOINT —
+not one of 736 channels shared. No pathway, no complex, no GO term, no Pfam family, no domain, no compartment.
+
+| | on-annotation | off-annotation |
+|---|---:|---:|
+| **model**, cohort 1 | 0.2562 | **0.1696** |
+| frequency | 0.1676 | 0.1320 |
+| **CHANCE** (fraction of off-annotation genes that are movers) | 0.0026 | **0.0028** |
+| **model**, cohort 2 | 0.3058 | **0.2107** |
+| frequency | 0.2021 | 0.1837 |
+| **CHANCE** | 0.0050 | **0.0052** |
+
+    off-annotation precision 0.1696  [0.1438,0.1967]  vs chance 0.0028   BEATS CHANCE
+    off-annotation precision 0.2107  [0.1821,0.2406]  vs chance 0.0052   BEATS CHANCE
+
+**GATE PASS on both cohorts.** Novelty share: **14.6% / 16.8%** of everything the model gets right is a gene no
+database links to the knockout. It spends 18.4% / 19.2% of its 20 slots on off-annotation genes.
+
+## Why it can do this at all — the half of the architecture that is not annotation
+
+The chain is `annotation --ridge--> programme mix --H--> ranked genes`, and **H is estimated from measured data**:
+5,120 knockouts x 8,246 genes of real co-response. The annotation only selects *which programmes fire*. Which
+genes those programmes contain was learned from the expression matrix. The model routes through curation on the
+input and through measurement on the output, and the off-annotation hits come from the measured half.
+
+## What this does NOT license
+
+- Off-annotation precision (0.17/0.21) sits well below on-annotation (0.26/0.31). Most of its living is made on
+  the recited half.
+- The frequency baseline **also** beats chance off-annotation (0.132/0.184) — commonly-moving genes are common
+  everywhere. The model's genuine off-annotation edge over frequency is **+0.038 and +0.027**, real but a fraction
+  of the headline contrast against chance. Quoting the 40-60x without this would be dishonest.
+- **None of this is mechanism.** Predicting an unrecorded pairing from measured co-response is pattern extraction,
+  not causal reasoning. "Not a parrot" is established; "understands biology" is not, and no experiment here tests
+  it. Those are different claims and only the first is measurable with what is built.
+
+## The diagnosis this changes
+
+Earlier the same day I wrote that the model is limited to its annotations. That was too strong: **the architecture
+demonstrably carries non-annotation structure when it has it.** The bottleneck is that the SOURCE side is
+curation-bound — every gene enters as its annotation vector and 99 of 200 cohort-1 knockouts have an exact channel
+twin, so the model literally cannot tell them apart.
+
+That makes a source-side representation existing for every gene the right next build, and it now has a reason
+rather than a hope behind it — the downstream machinery uses data-driven structure when supplied with it:
+
+1. **Sequence (ESM-2)** — exists for every gene including unannotated ones, and is itself learned from ~250M
+   proteins rather than curated. No embeddings are cached for this gene universe; ~9,000 sequences would need
+   fetching and embedding.
+2. **Measured co-dependency profiles** (DepMap, ~1,100 cell lines) as the source vector instead of annotation.
+   `CRISPRGeneEffect.csv` is already on disk. Partly present as Tier-B channels (`dep_frac`, `ess`); a wholesale
+   swap of the source side has not been tested.
