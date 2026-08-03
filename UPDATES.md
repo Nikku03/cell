@@ -18895,3 +18895,51 @@ so a substantial part of any prediction is still the generic interaction pattern
 advantage over that generic part is +0.08, and over the shuffled control +0.21.
 
 Scope unchanged: K562 **CRISPRa**, not knockout.
+
+---
+
+# The anchor-set design is WRONG, and the diagnostic says why: spread the pairs, don't anchor them
+
+`colab/norman_anchor_design.py`
+
+I inferred from gate 2 that a screen pairing many genes against a shared **anchor set** would leave most unmeasured
+pairs with one familiar gene — the regime that works. Tested at matched cost on Norman's 131 pairs:
+
+| anchor | design | n_train | corr | test pairs with ≥1 warm gene |
+|---:|---|---:|---:|---:|
+| 4 | anchor_hub | 41 | 0.1474 | 62.2% |
+| | anchor_random | ~41 | 0.1654 | 49.9% |
+| | **random_pairs** | 41 | **0.2949** | **90.2%** |
+| 8 | anchor_hub | 70 | 0.1667 | 73.8% |
+| | **random_pairs** | 70 | **0.3413** | **96.9%** |
+| 12 | anchor_hub | 82 | 0.1720 | 67.3% |
+| | **random_pairs** | 82 | **0.3515** | **96.8%** |
+
+    anchor_hub - random_pairs   -0.1475 / -0.1551 / -0.1746 / -0.1716 / -0.1796
+                                RESOLVED at every anchor size, anchor WORSE
+
+**My inference was wrong, and the warm-gene column shows exactly how.** I assumed anchoring raises the fraction of
+test pairs containing a familiar gene. It does the opposite. An anchor spends its measurements re-measuring the
+same *k* genes, so training touches few distinct genes and only 62–74% of unmeasured pairs have a warm one.
+Randomly chosen pairs spread across nearly twice as many distinct genes for the same count, reaching **90–97%**.
+
+`anchor_random` also beats `anchor_hub` (0.165–0.207 vs 0.147–0.172): hubs concentrate coverage even harder, which
+is worse still. The effect is monotone in concentration, in the wrong direction.
+
+## The corrected design principle
+
+**Maximise the number of distinct genes your pairs touch. Do not concentrate them on anchors.**
+
+Every measured pair should ideally introduce two genes not already covered. The quantity to maximise is gene
+coverage per pair measured, and random pairing already does this well — a purpose-built design that explicitly
+maximises distinct-gene coverage would do slightly better.
+
+This is a real, actionable result and it is the opposite of what I proposed one message ago. The gate-2 finding
+that produced the idea still stands — one novel gene is learnable, both novel is not — but the way to *get* most
+pairs into the one-novel-gene regime is coverage breadth, not anchoring.
+
+## Standing correction count
+
+That is the eighth time today a claim of mine was overturned by its own control, and the second in a row on this
+thread: first the too-broad "pair screens buy coverage not generalisation", now the anchor-design inference drawn
+from correcting it.
