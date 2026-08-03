@@ -18792,3 +18792,62 @@ the surviving `ridge − shuffled` gap says a weak one is there. A larger pair s
 and that is a real reason to run one.
 
 Scope unchanged: Norman is K562 **CRISPRa**. The knockout setting may behave differently and has not been tested.
+
+---
+
+# Multi-hop path assembly: the seventh test of "learn the mechanism from the networks", and the seventh failure
+
+`colab/adrn_path_assembly.py`
+
+The last untested form of the idea. Every prior attempt used *hand-designed* propagation — a walk, a cascade, a
+rule — and the pair tensor used only *direct* edges. This gives a supervised learner 2-hop and 3-hop path counts,
+personalised PageRank, and per-layer typed path signatures over a 9,050-node graph with 550,370 edges across five
+layers (PPI 202k, ChIP 281k, codep 27k, complex 23k, curated TF 17k), and asks it to learn which matter.
+
+Every path feature is recomputed on a **degree-matched rewired** graph — configuration model per layer, every gene
+keeps its exact degree in every layer, only the wiring moves.
+
+| arm | cohort 1 | cohort 2 |
+|---|---:|---:|
+| resp_only (responsiveness prior) | **0.1492** | **0.1995** |
+| resp+rewire (CONTROL) | 0.1498 | 0.1823 |
+| resp+paths (TEST) | 0.1460 | 0.1855 |
+| paths_only | 0.0300 | 0.0377 |
+
+    GATE  paths - rewire    -0.0038 [-0.0152,+0.0072]  and  +0.0033 [-0.0067,+0.0135]   within noise BOTH
+          paths - resp_only -0.0033 [-0.0165,+0.0095]  and  -0.0140 [-0.0267,-0.0015]   RESOLVED WORSE on c2
+
+**The gate fails.** Real paths are indistinguishable from degree-matched rewired paths on both cohorts — permute
+every edge in every layer while preserving every degree, and the model scores the same. And adding path features
+to the responsiveness prior makes the holdout **worse**, RESOLVED.
+
+**Paths alone reach 0.0300 / 0.0377** — barely above a random draw, and far below the prior's 0.1492 / 0.1995.
+
+## The count is now seven
+
+    mmw_shuffled (shuffled network)   0.0151   BEATS the real walk
+    mmw_walk     (Markov multilayer)  0.0113
+    mmw_uniform  (no biology)         0.0110   equals the real walk
+    cascade                           0.0183
+    map                               0.0031
+    multilayer   (hand-written rules) 0.0338
+    pair tensor                       degree-matched rewiring scored IDENTICALLY
+    LEARNED multi-hop paths           rewiring scored identically again
+
+Plus, from other angles: Norman epistasis — relational pair features add **−0.001** over generic saturation;
+RENGE time-course — held-out mechanism lift flat at **~1.2×**; ChIP vs Perturb-seq regulation — overlap at
+**chance**.
+
+## What this closes
+
+The networks are real biology and they predict *degree* — how connected a gene is, how often it responds. That is
+exactly what the responsiveness prior already encodes, which is why every path method collapses to it or below.
+What they do not predict is **which** genes move for **which** knockout.
+
+Making the assembly *learned* rather than hand-written changes nothing, and the reason is now unambiguous: a
+learner cannot extract information from a graph that is statistically indistinguishable from its own degree-matched
+rewiring. The problem was never the search procedure.
+
+This closes the network-mechanism route. The remaining measured leads are the underpowered Norman gate 2 (a weak
+signal survived the shuffled control at n=131) and the readouts with no scaling curve yet — viability, morphology,
+proteomics.
