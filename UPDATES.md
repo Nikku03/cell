@@ -18513,3 +18513,63 @@ and trees all converge on 0.2885. The **target side was never tested and is not 
 It also changes what the model can be asked. Until now it could only speak about genes it had watched respond.
 It can now be asked about a gene that has never been measured as a *responder* — which is most of the
 transcriptome in most experiments.
+
+---
+
+# Pushing the target decoder: not features, partly the estimator, mostly irreducible
+
+`colab/adrn_target_push.py`
+
+The decoder sat at 41% of its oracle — the only unclaimed headroom in the project. Two tests: is the gap a
+**feature** problem or an **irreducible** one.
+
+## Identifiability caps it
+
+Genes with a byte-identical annotation vector must receive an identical `B̂`, so the cosine between the **true**
+`B_j` of annotation-twins is a hard ceiling on any decoder.
+
+    base           52 twin groups covering 1,075 genes; cosine(B_twin) +0.0708  vs random pairs +0.0024
+    base+TF        52 groups, 1,075 genes;               cosine +0.0708         vs +0.0004
+    base+TF+ChIP   51 groups, 1,073 genes;               cosine +0.0703         vs +0.0021
+
+Twins are ~30× more similar than random pairs — the annotation is doing real work — but **+0.07 is a low absolute
+cosine**. Two genes that are indistinguishable on paper share only about 7% of their programme-susceptibility
+direction. **Most of the remaining 59% is not recoverable from annotation at all**, and adding TF or ChIP channels
+does not move the cap (+0.0708 → +0.0708 → +0.0703).
+
+## Features: no. My hypothesis was wrong.
+
+I argued that `regulated_by:<TF>` failed on the source side but should work on the target side, because for a
+responding gene it states directly which programmes can reach it. It does not.
+
+    +TF      - base   +0.0027 / -0.0012 (random)   +0.0010 / -0.0011 (complex)   all within noise
+    +TF+ChIP - +TF    -0.0001 / -0.0017 (random)   +0.0019 / +0.0012 (complex)   all within noise
+    +TF      - base   COMPOSITIONAL: +0.0003 / -0.0014 / -0.0010 / +0.0005       all within noise
+
+## Estimator: yes — and this is the one place all day it mattered
+
+    gbm - ridge   +0.0068 [+0.0039,+0.0099]  and  +0.0057 [+0.0024,+0.0091]   random split,  RESOLVED
+                  +0.0247 [+0.0196,+0.0300]  and  +0.0241 [+0.0186,+0.0299]   complex split, RESOLVED
+
+**Gradient-boosted trees beat ridge on all four cells of the design**, and by 4× more on the harder complex split
+(+0.024) than on the random one (+0.006). The source side saw nine encoders converge within 0.008; the target
+side does not behave that way. Susceptibility is a genuinely non-linear function of annotation, and the harder
+the split, the more the non-linearity matters.
+
+Best target arm: **`base+TF | gbm`, 0.1558 (random) and 0.1276 (complex)** on cohort 2, against `base|ridge`'s
+0.1513 and 0.1045. On the complex split that is a **+22% relative improvement**.
+
+## What this settles
+
+| lever | verdict |
+|---|---|
+| more target features (TF identity, ChIP occupancy) | no — within noise everywhere |
+| better estimator | **yes, RESOLVED on all four**, +0.006 random / +0.024 complex |
+| remaining gap | **largely irreducible** — annotation-twins share only 0.07 cosine in true susceptibility |
+
+The target decoder is now at **0.1558 of a 0.3679 oracle (42%)**, and the identifiability bound says the ceiling
+a perfect annotation-only decoder could reach is far below that oracle. The oracle uses the *measured* `B_j`;
+annotation cannot reconstruct it because genes that look identical genuinely respond differently.
+
+That is the same wall as everywhere else in this project, stated on a new axis: **the information is in the
+measurements, not in the annotation.**
