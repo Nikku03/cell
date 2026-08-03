@@ -19612,3 +19612,55 @@ the full subset.
 
 If the model cannot extrapolate across functional classes WITHIN K562, cross-line prediction of unseen classes is
 unlikely. Cross-line prediction of SEEN classes remains open and is the test worth running.
+
+# Cross-line: a K562-trained model does NOT predict another cell line. HARMFUL, 9 of 9 cells.
+
+Held out 200 knockouts each from RPE1 / Jurkat / HepG2, predicted them with a model fitted on K562 training
+knockouts only, swept over K. Truth is each held-out knockout's ~200 movers inside that line's common gene space.
+
+| line | k562_model | within_line (ceiling) | **freq_line (opponent)** | freq_k562 | random |
+|---|---:|---:|---:|---:|---:|
+| RPE1 | 0.3262 | 0.6690 | **0.6305** | 0.2775 | 0.0330 |
+| Jurkat | 0.3440 | 0.4890 | **0.4122** | 0.2970 | 0.0370 |
+| HepG2 | 0.2487 | 0.4545 | **0.3875** | 0.1733 | 0.0295 |
+
+    k562_model - freq_line   RPE1 -0.3043   Jurkat -0.0683   HepG2 -0.1388   (K=60; all 9 cells RESOLVED NEGATIVE)
+
+**GATE FAIL, HARMFUL.** The model is not merely unable to transfer -- it loses to a lookup table of "genes that
+usually move in this line", which requires no model at all.
+
+## The stratification does not rescue it, and that is new
+
+Every other transfer result today was saved by the "gene seen before" stratum. This one is not:
+
+| line | gene seen (n) | model | freq | gene new (n) | model | freq |
+|---|---:|---:|---:|---:|---:|---:|
+| RPE1 | 142 | 0.3335 | 0.6687 | 58 | 0.3086 | 0.5371 |
+| Jurkat | 138 | 0.3591 | 0.4214 | 62 | 0.3105 | 0.3919 |
+| HepG2 | 141 | 0.2532 | 0.3869 | 59 | 0.2381 | 0.3890 |
+
+Having seen the gene in K562 helps slightly and loses in both strata for all three lines.
+
+## Why it fails is the useful part
+
+`freq_line` reaches **0.6305 on RPE1** -- the 20 most commonly moving genes cover 63% of a held-out knockout's
+movers. These profiles are highly stereotyped: **most of what is predictable in a cell line is that line's own
+shared response, and it cannot be known without measuring the line.** The K562 model masks K562's tide, but RPE1's
+tide genes are still in RPE1's answer key and the model has no way to identify them.
+
+## Two caveats against my own headline
+
+1. The handicap is specific and real: the model cannot estimate the target line's baseline. A model given even a
+   few target-line knockouts could. The test answers "zero-shot cross-line", not "cross-line".
+2. **Even `within_line` beats `freq_line` by only +0.038 to +0.077.** At this truncation depth (~200 movers of
+   ~6,200 genes) the task is tide-dominated and weakly discriminating. This measurement is better evidence that
+   transfer is ABSENT than a measurement of how much is missing.
+
+Consistent with, not additional to, the prior evidence: naive transfer 0.1835 against a 0.2498 floor; cross-line
+causal-edge reproduction 0.047-0.131; and LOCO showing no extrapolation across functional classes even within
+K562.
+
+## What is left open
+
+FEW-SHOT, not zero-shot: give the model 50-200 knockouts from the target line to pin its tide and basis, then
+predict the rest. That is the realistic deployment and the version worth running next.
