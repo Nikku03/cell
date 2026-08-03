@@ -76,6 +76,41 @@ class Sweeper:
             "config": dict(cfg), "cohort": cohort, "n": int(len(d)), "delta": float(d.mean()),
             "lo": float(np.percentile(bs, 2.5)), "hi": float(np.percentile(bs, 97.5))}
 
+    def inert_axes(self):
+        """Axes that change nothing. An axis whose values all produce identical numbers adds cells without
+        adding information, and inflates every count in the verdict.
+
+        This exists because I hit it: a block with no natural second axis was given a `dummy` axis purely to
+        satisfy the >=2-values rule, which duplicated every cell and turned 6 real observations into 12. The
+        rule written to prevent one dishonesty invited a smaller one. Note the dummy was never needed -- the K
+        axis already had three values -- so the guard is against carelessness, not against the rule.
+        """
+        cells = list(self._cells.values())
+        out = []
+        for ax in self.axes:
+            groups = {}
+            for c in cells:
+                key = (c["cohort"],) + tuple(v for k, v in sorted(c["config"].items()) if k != ax)
+                groups.setdefault(key, []).append(round(c["delta"], 12))
+            if groups and all(len(set(v)) == 1 and len(v) > 1 for v in groups.values()):
+                out.append(ax)
+        return out
+
+    def duplicate_cells(self):
+        """Cells whose numbers are byte-identical to another cell.
+
+        `inert_axes` misses the case that actually bit me, because the dummy axis value was also folded into the
+        COHORT label -- so the duplicated cells looked like different cohorts and no axis appeared inert.
+        Comparing the numbers directly catches it however the duplication was labelled.
+        """
+        seen, dup = set(), 0
+        for c in self._cells.values():
+            k = (round(c["delta"], 12), round(c["lo"], 12), round(c["hi"], 12), c["n"])
+            if k in seen:
+                dup += 1
+            seen.add(k)
+        return dup
+
     def verdict(self):
         cells = list(self._cells.values())
         if len(cells) < 2:
@@ -99,7 +134,9 @@ class Sweeper:
             v = "FRAGILE"
         if len(pos) == 1 and len(cells) >= 4 and v not in ("HARMFUL",):
             v = "FRAGILE"
-        return {"name": self.name, "verdict": v, "n_cells": len(cells), "n_resolved_pos": len(pos),
+        inert, dup = self.inert_axes(), self.duplicate_cells()
+        return {"name": self.name, "verdict": v, "n_cells": len(cells), "inert_axes": inert,
+                "n_duplicate_cells": dup, "n_effective_cells": len(cells) - dup, "n_resolved_pos": len(pos),
                 "n_resolved_neg": len(neg), "sign_consistent": bool(consistent),
                 "cells_needed_for_robust": need,
                 "passing_configs": [c["config"] for c in pos], "cells": cells}
@@ -117,6 +154,13 @@ class Sweeper:
         out.append(f"  -> {r['verdict']}   resolved +{r['n_resolved_pos']}/-{r['n_resolved_neg']} "
                    f"of {r['n_cells']} (>= {r['cells_needed_for_robust']} needed), "
                    f"sign-consistent {r['sign_consistent']}")
+        if r["n_duplicate_cells"]:
+            out.append(f"     WARNING: {r['n_duplicate_cells']} of {r['n_cells']} cells are numerically identical "
+                       f"to another cell -- they duplicate rather than test. Real observations: "
+                       f"{r['n_effective_cells']}.")
+        if r["inert_axes"]:
+            out.append(f"     WARNING: axes {r['inert_axes']} change nothing -- they duplicate cells rather than "
+                       f"test anything. Real observations: ~{r['n_effective_cells']}, not {r['n_cells']}.")
         if r["verdict"] == "FRAGILE":
             out.append("     FRAGILE means the effect lives in a corner of the grid -- the argmax of choices "
                        "nobody deliberated. Do not report it as a finding.")

@@ -19494,3 +19494,69 @@ checking and it came back clean.
 
 Three of the four were mine and wrong in alternating directions. The harness is what stopped the fourth from
 joining them.
+
+# The three missed blocks: xline is the largest gain ever measured here -- and it is TRANSFER, not cold start
+
+Built from the dataset audit: cross-line Perturb-seq response (`xline`), dense measured fields inside
+cell_complete (`coexpr`, `prot`), and interface-weighted PPI from 7.6M AlphaFold heterodimer models (`iface`).
+All swept over rank x K through `robustness.Sweeper`.
+
+| block | verdict | cells |
+|---|---|---|
+| **xline** | **ROBUST** | 18/18 |
+| codep | ROBUST | 17/18 |
+| **chan2a+ALL** | **ROBUST** | 18/18 |
+| coexpr | FRAGILE | 0 positive, 2 NEGATIVE |
+| prot | FRAGILE | 1 real cell of 6 |
+| iface_all | NULL | 0/18 |
+| iface_hq | NULL | 0/18 |
+| iface_all vs iface_rw | FRAGILE | 7/18, cohort-2 only |
+
+**New best sealed numbers: 0.2920 / 0.3593** against the 0.2337 / 0.2885 incumbent -- **+0.058 / +0.071**, resolved
+in all 18 configurations. ~5.8 and ~7.2 of 20 genes correct, up from 4.7 and 5.8. Essentially all of it is `xline`
+alone (0.2925 / 0.3605); the other blocks add nothing on top of it.
+
+## The stratification changes what the result means
+
+| cohort | block | measured elsewhere | gain | never measured | gain |
+|---|---|---:|---:|---:|---:|
+| 1 | xline | 178 | **+0.0666** | 22 | −0.0045 |
+| 2 | xline | 179 | **+0.0796** | 21 | +0.0071 |
+| 1 | codep | 193 | **+0.0184** | 7 | −0.0071 |
+| 2 | codep | 196 | **+0.0168** | 4 | −0.0125 |
+
+**The entire gain sits in the stratum where the gene was already perturbed somewhere else.** This is a TRANSFER
+capability -- "we measured this gene in RPE1, what does it do in K562?" -- and not the COLD START capability the
+sealed protocol was built to test. The model did not get better at genes nobody has ever perturbed.
+
+**This reclassifies codep too.** It was reported earlier today as the durable gain from measured data. It is --
+but DepMap measures the held-out gene's essentiality across ~1,100 lines, so codep is cross-context measurement of
+that gene, not annotation-style generalisation, and its gain is confined to the same stratum.
+
+**Honest limit:** the cold strata are n = 22, 21, 7 and 4. Four genes cannot resolve anything. The correct
+statement is that the gain is **not demonstrated** for cold start, not that it is **absent**. The contrast is
+stark and directionally consistent across all four rows, but the cold side is underpowered by construction.
+
+## The 2.3 GB of AlphaFold heterodimers is now scored, and it adds nothing
+
+486,362 human pairs weighted by predicted interface quality: **NULL**, zero resolved cells of 18 in either
+direction. The 4,404-pair high-confidence subgraph: also **NULL**. The control sweep is FRAGILE (7/18, all
+cohort 2), so the interface graph does not reliably beat its own degree-matched rewiring either. The largest
+unused file on disk has been tested rather than left as a maybe.
+
+## coexpr is mildly HARMFUL, not merely useless
+
+Zero positive cells and two resolved NEGATIVE (rank 256, both cohorts). Co-expression partners duplicate what the
+annotation channels already carry and add noise at high rank.
+
+## A flaw in my own harness, found by using it
+
+`prot` has no rank axis, so I gave it a `dummy` axis purely to satisfy Sweeper's >=2-values rule. That duplicated
+every cell and turned 6 real observations into 12. **The dummy was never needed** -- the K axis already had three
+values -- so this was carelessness, not a limitation of the rule.
+
+Two guards added and self-tested. `inert_axes()` flags an axis whose values change nothing. That one MISSED the
+real case, because the dummy value was also folded into the cohort label, so the duplicated cells looked like
+different cohorts and no axis appeared inert. `duplicate_cells()` compares the numbers directly and catches it
+however the duplication was labelled: it reports 3 of 6 on a reproduction of the actual bug and 0 on a healthy
+sweep. The rule written to prevent one dishonesty had invited a smaller one.
