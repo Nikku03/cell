@@ -112,12 +112,40 @@ def main():
     Am = Aabs[pidx].copy()
     Am[:, tide] = 0.0
     nmov = (Am >= A.TAU).sum(1)
-    depth = ncell[pidx].reshape(-1, 1) if ncell is not None else None
+    # THE DEPTH CONTROL, and a mistake I made and caught mid-run rather than reported.
+    #
+    # The first version fell back to TOTAL ABSOLUTE SIGNAL when no cell count was available. That is circular:
+    # the label is "count of genes with |z| >= tau" and the proxy was "sum of |z| over genes", which is very
+    # nearly the same quantity. It scored AUC 0.895 and would have read as "depth beats annotation, artefact"
+    # when it was really the label predicting itself. A control has to be independent of the label or it is not
+    # a control.
+    #
+    # The real cell counts are in gwps.h5ad's obs as `num_cells_filtered`, keyed by the same row index the
+    # rebuild parses (SYMBOL is field 1 of the underscore-separated obs index). So use those.
+    import h5py
+    depth = None
+    hp = SP / "gwps.h5ad"
+    if hp.exists():
+        with h5py.File(hp, "r") as f:
+            obs = f["obs"]
+            oi = [x.decode() for x in obs[obs.attrs.get("_index", "_index")][:]]
+            symb = [t.split("_")[1] if len(t.split("_")) > 1 else "" for t in oi]
+            nc = np.asarray(obs["num_cells_filtered"][:], np.float64)
+        best = {}
+        for sy, n in zip(symb, nc):
+            if sy:
+                best[sy] = max(best.get(sy, 0.0), float(n))
+        depth = np.array([[best.get(k, np.nan)] for k in pool], np.float64)
+        have = int(np.isfinite(depth).sum())
+        report(f"  REAL cell counts recovered for {have:,}/{len(pool):,} pool genes from gwps.h5ad "
+               f"(median {np.nanmedian(depth):.0f})")
+        depth[~np.isfinite(depth)] = np.nanmedian(depth)
     if depth is None:
-        report("  NOTE: no per-knockout cell count in the npz, so the n_cells control uses TOTAL ABSOLUTE")
-        report("  SIGNAL as a proxy for how well the row was measured. Weaker control, stated as such.")
-        depth = Am.sum(1, keepdims=True)
-    depth = (depth - depth.mean()) / (depth.std() + 1e-9)
+        report("  gwps.h5ad absent -- NO honest depth control is available, so the n_cells arm is DROPPED")
+        report("  rather than replaced with a proxy that correlates with the label by construction.")
+    else:
+        depth = np.log1p(depth)
+        depth = (depth - depth.mean()) / (depth.std() + 1e-9)
 
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import roc_auc_score, average_precision_score
@@ -126,8 +154,10 @@ def main():
     rngp = np.random.default_rng(A.SEED + 21)
     Cperm = Cp[rngp.permutation(len(Cp))]
 
-    FEATS = {"chan": Cp, "chan_perm": Cperm, "n_cells": depth,
-             "chan_ncells": np.concatenate([Cp, depth], 1)}
+    FEATS = {"chan": Cp, "chan_perm": Cperm}
+    if depth is not None:
+        FEATS["n_cells"] = depth
+        FEATS["chan_ncells"] = np.concatenate([Cp, depth], 1)
     sw_p = Sweeper("chan - chan_perm", axes={"threshold": list(THRESHOLDS), "C": list(CVALS)})
     sw_d = Sweeper("chan - n_cells", axes={"threshold": list(THRESHOLDS), "C": list(CVALS)})
     cells = {}
@@ -160,7 +190,8 @@ def main():
                 return np.array(d)
             cfg, tg = {"threshold": thr, "C": Cv}, f"t{thr}|C{Cv}"
             sw_p.add(cfg, tg, paired("chan", "chan_perm"))
-            sw_d.add(cfg, tg, paired("chan", "n_cells"))
+            if "n_cells" in FEATS:
+                sw_d.add(cfg, tg, paired("chan", "n_cells"))
             cells[tg] = {"base_rate": float(y.mean()),
                          **{nm: {"auc": v["auc"], "ap": v["ap"]} for nm, v in per.items()}}
             report(f"    C={Cv}: " + " | ".join(
@@ -170,17 +201,19 @@ def main():
         report("\n  nothing measurable")
         return 1
     for nm, s in (("perm", sw_p), ("depth", sw_d)):
+        if not s._cells:
+            continue
         report(s.report())
         if s.inert_axes() or s.duplicate_cells():
             report(f"  GUARD {nm}: inert axes {s.inert_axes()}, duplicate cells {s.duplicate_cells()}")
 
     ma = float(np.mean([c["chan"]["auc"] for c in cells.values()]))
     mp = float(np.mean([c["chan_perm"]["auc"] for c in cells.values()]))
-    md = float(np.mean([c["n_cells"]["auc"] for c in cells.values()]))
-    mb = float(np.mean([c["chan_ncells"]["auc"] for c in cells.values()]))
+    md = float(np.mean([c["n_cells"]["auc"] for c in cells.values()])) if "n_cells" in FEATS else float("nan")
+    mb = float(np.mean([c["chan_ncells"]["auc"] for c in cells.values()])) if "n_cells" in FEATS else float("nan")
     report(f"\n  MEAN AUC  chan {ma:.4f} | chan_perm {mp:.4f} | n_cells {md:.4f} | chan+n_cells {mb:.4f}")
     ppos = sum(1 for c in sw_p._cells.values() if c["lo"] > 0)
-    dpos = sum(1 for c in sw_d._cells.values() if c["lo"] > 0)
+    dpos = sum(1 for c in sw_d._cells.values() if c["lo"] > 0) if sw_d._cells else 0
     report("\n  READING")
     if ppos > len(sw_p._cells) / 2 and dpos > len(sw_d._cells) / 2:
         report(f"  Annotation predicts whether a knockout does anything at AUC {ma:.4f}, beating both its own")
