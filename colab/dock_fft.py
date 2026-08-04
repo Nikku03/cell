@@ -250,7 +250,7 @@ def prepare(pdb):
             "lcen": lcen, "offs_L": offs_L, "F_skin": F_skin, "F_core": F_core, "shape": solid_R.shape,
             "nat_inter": float(inter[k_nat]), "nat_clash": float(clash[k_nat]),
             "max_inter": float(inter.max()), "nat_frac": frac, "sane": bool(frac >= SANITY_FRAC),
-            "k_nat": k_nat, "nat_inter_field": inter, "nat_clash_field": clash, "sane": bool(sane)}
+            "k_nat": k_nat, "nat_inter_field": inter, "nat_clash_field": clash}
 
 
 def main():
