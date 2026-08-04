@@ -1,0 +1,152 @@
+{
+  "test": "cell_partslist",
+  "n_steps": 28528,
+  "n_genes": 16492,
+  "participant_types": {
+    "METABOLITE": 71877,
+    "PROTEIN": 13164,
+    "SET": 5299,
+    "COMPLEX": 18612,
+    "OTHER": 292,
+    "UNRESOLVED": 46450,
+    "DRUG": 190
+  },
+  "distinct_per_type": {
+    "METABOLITE": 5541,
+    "PROTEIN": 6222,
+    "SET": 2939,
+    "COMPLEX": 10139,
+    "OTHER": 174,
+    "UNRESOLVED": 1319,
+    "DRUG": 123
+  },
+  "nonprotein_pct": 79.61561160863207,
+  "reactions_with_catalyst": 10977,
+  "orphan_reactions": 17551,
+  "distinct_catalysts": 5282,
+  "catalysts_known": 4782,
+  "multi_gene_reactions": 5556,
+  "n_pathways": 2570,
+  "n_processes": 22,
+  "pathways_covered": 2474,
+  "processes_covered": 22,
+  "transport_checked": 26330,
+  "transport_crossing": 8326,
+  "scorecard": [
+    {
+      "link": "1 function",
+      "detail": "2,570 Reactome pathways + 22 GO processes",
+      "status": "ENUMERABLE"
+    },
+    {
+      "link": "2 reaction",
+      "detail": "28,528 steps",
+      "status": "ENUMERABLE"
+    },
+    {
+      "link": "3 parts",
+      "detail": "5,541 metabolites, 79% non-protein",
+      "status": "ENUMERABLE"
+    },
+    {
+      "link": "4 machine",
+      "detail": "38% of reactions have a catalyst",
+      "status": "PARTIAL -- 61% orphan is the biggest hole"
+    },
+    {
+      "link": "5 gene",
+      "detail": "4,782 catalyst genes matched (90%)",
+      "status": "ENUMERABLE"
+    },
+    {
+      "link": "6 product",
+      "detail": "gene-level only",
+      "status": "PARTIAL -- no isoforms, no biotype"
+    },
+    {
+      "link": "7 location",
+      "detail": "136 distinct compartments on participants",
+      "status": "ENUMERABLE"
+    },
+    {
+      "link": "8 transport",
+      "detail": "8,326/26,330 reactions cross a boundary (32%)",
+      "status": "ENUMERABLE"
+    },
+    {
+      "link": "conditions",
+      "detail": "no temperature; kinetics for a subset",
+      "status": "ABSENT"
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "THE CELL AS A PARTS LIST -- function -> reaction -> parts -> gene -> product -> transport",
+    "====================================================================================================",
+    "  This enumerates. It does not predict. Every link reports COVERAGE, and absent layers are named",
+    "  as absent rather than approximated.",
+    "\n  reaction network 28,528 steps | gene records 16,492",
+    "\n  [3] PARTS -- every participant across every reaction, by what it IS",
+    "    METABOLITE          71,877 occurrences    5,541 distinct  ( 46.1%)",
+    "    UNRESOLVED          46,450 occurrences    1,319 distinct  ( 29.8%)",
+    "    COMPLEX             18,612 occurrences   10,139 distinct  ( 11.9%)",
+    "    PROTEIN             13,164 occurrences    6,222 distinct  (  8.4%)",
+    "    SET                  5,299 occurrences    2,939 distinct  (  3.4%)",
+    "    OTHER                  292 occurrences      174 distinct  (  0.2%)",
+    "    DRUG                   190 occurrences      123 distinct  (  0.1%)",
+    "    -> NON-PROTEIN share of all participants: 79.6%  (the half a gene-centric view cannot see)",
+    "    cofactors / currency metabolites flagged: 79  e.g. ['113541', '113582', '113592', '113595', '169073', '189168', '195738', '195752', '29356', '29358', '29370', '29372']",
+    "\n  [7] LOCATION -- compartments carried by participants",
+    "    c                               28,946",
+    "    cytosol                         19,366",
+    "    nucleoplasm                     13,218",
+    "    plasma membrane                  8,394",
+    "    e                                7,665",
+    "    m                                5,854",
+    "    r                                5,365",
+    "    extracellular region             3,674",
+    "    x                                2,658",
+    "    l                                2,230",
+    "    mitochondrial matrix             2,074",
+    "    g                                1,618",
+    "\n  [8] TRANSPORT -- steps whose input and output compartments differ",
+    "    8,326 of 26,330 reactions cross a compartment boundary (31.6%)",
+    "\n  [4,5] MACHINE and GENE -- which reactions have a named catalyst, and is it a gene we know",
+    "    reactions with >=1 catalyst :  10,977 / 28,528 (38.5%)",
+    "    ORPHAN reactions, no catalyst:  17,551 (61.5%)  <- the biggest hole in the chain",
+    "    distinct catalyst symbols    :   5,282",
+    "    of those, in our gene records:   4,782 (90.5%)",
+    "    reactions needing >1 gene    :   5,556 (50.6%) -- complexes, i.e. AND logic",
+    "\n  [1] FUNCTION -- what the cell has to do, and how much of it has reactions attached",
+    "    Reactome pathways    2,570   GO processes     22",
+    "    pathway size: median 19, smallest 2 (3-Methylcrotonyl-CoA carboxylase deficie), largest 2622 (Signal Transduction)",
+    "    pathways with >=1 gene that catalyses a known reaction: 2,474/2,570 (96.3%)",
+    "    GO processes likewise: 22/22 (100.0%)",
+    "\n  [6] PRODUCT -- what each gene makes",
+    "    genes with comp    16,492 / 16,492 (100.0%)",
+    "    genes with proc    16,492 / 16,492 (100.0%)",
+    "    genes with tss     16,380 / 16,492 (99.3%)",
+    "    genes with chrom   16,380 / 16,492 (99.3%)",
+    "    genes with path    10,352 / 16,492 (62.8%)",
+    "    genes with tf       1,285 / 16,492 (7.8%)",
+    "    ABSENT: transcript isoforms / splice variants. The records are GENE-level, so 'which isoform'",
+    "    cannot be answered from this disk. Needs GENCODE or Ensembl transcript models.",
+    "    ABSENT: gene biotype, so tRNA / rRNA / snoRNA genes cannot be separated from coding ones here.",
+    "\n  [CONDITIONS] temperature, pH, concentrations",
+    "    ABSENT: no temperature anywhere in these sources. Metabolic models carry compartment pH and",
+    "    charge at best; Reactome carries neither. Kinetics (kcat/Km) exist only for the enzyme subset",
+    "    the earlier ecModel work covered, not genome-wide. Reported as a gap, not estimated.",
+    "\n====================================================================================================",
+    "  COVERAGE SCORECARD -- how much of the chain can actually be filled from this disk",
+    "====================================================================================================",
+    "    1 function   2,570 Reactome pathways + 22 GO processes            ENUMERABLE",
+    "    2 reaction   28,528 steps                                         ENUMERABLE",
+    "    3 parts      5,541 metabolites, 79% non-protein                   ENUMERABLE",
+    "    4 machine    38% of reactions have a catalyst                     PARTIAL -- 61% orphan is the biggest hole",
+    "    5 gene       4,782 catalyst genes matched (90%)                   ENUMERABLE",
+    "    6 product    gene-level only                                      PARTIAL -- no isoforms, no biotype",
+    "    7 location   136 distinct compartments on participants            ENUMERABLE",
+    "    8 transport  8,326/26,330 reactions cross a boundary (32%)        ENUMERABLE",
+    "    conditions   no temperature; kinetics for a subset                ABSENT"
+  ]
+}

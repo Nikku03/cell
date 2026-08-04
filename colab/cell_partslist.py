@@ -141,10 +141,16 @@ def main():
 
     # ---------------- 1. FUNCTION ----------------
     report("\n  [1] FUNCTION -- what the cell has to do, and how much of it has reactions attached")
+    # THE REAL HIERARCHY, not the gene record's coarse buckets. The first version read g["path"] and g["proc"]
+    # and got 72 "pathways" with names like "Y" and " ", median size 997 -- those fields are single-letter
+    # category codes, not Reactome. The hierarchy lives in ReactomePathways.gmt (one pathway per line).
     pw = defaultdict(set)
-    for name, g in genes.items():
-        for p in (g.get("path") or []):
-            pw[p].add(name)
+    gmt = SP / "ReactomePathways.gmt"
+    if gmt.exists():
+        for line in gmt.read_text().splitlines():
+            f = line.split("\t")
+            if len(f) > 3:
+                pw[f[0]] = {x for x in f[2:] if x}
     proc = defaultdict(set)
     for name, g in genes.items():
         for p in (g.get("proc") or []):
@@ -183,16 +189,26 @@ def main():
     report("\n" + "=" * 100)
     report("  COVERAGE SCORECARD -- how much of the chain can actually be filled from this disk")
     report("=" * 100)
+    # Computed from what the run actually found. The first version hard-coded "location: PARTIAL" and
+    # "transport: not yet built" on the assumption that the merged network dropped compartments. It did not --
+    # both worked. Pre-writing a conclusion is fine; pre-writing a RESULT is how a script lies about its own run.
+    loc_ok = bool(comp_of)
     rows = [
-        ("1 function", f"{len(pw):,} pathways + {len(proc):,} GO processes", "ENUMERABLE"),
+        ("1 function", f"{len(pw):,} Reactome pathways + {len(proc):,} GO processes",
+         "ENUMERABLE" if len(pw) > 500 else "PARTIAL -- hierarchy source thin"),
         ("2 reaction", f"{len(steps):,} steps", "ENUMERABLE"),
         ("3 parts", f"{len(part_names['METABOLITE']):,} metabolites, {nonprot*100//tot}% non-protein",
          "ENUMERABLE"),
-        ("4 machine", f"{100*len(with_cat)//len(steps)}% of reactions have a catalyst", "PARTIAL"),
-        ("5 gene", f"{len(known):,} catalyst genes matched", "ENUMERABLE"),
+        ("4 machine", f"{100*len(with_cat)//len(steps)}% of reactions have a catalyst",
+         "PARTIAL -- 61% orphan is the biggest hole"),
+        ("5 gene", f"{len(known):,} catalyst genes matched ({100*len(known)//max(len(allcat),1)}%)",
+         "ENUMERABLE"),
         ("6 product", "gene-level only", "PARTIAL -- no isoforms, no biotype"),
-        ("7 location", "per-gene and per-species, NOT per-reaction here", "PARTIAL"),
-        ("8 transport", "needs HumanGEM species suffixes", "RECOVERABLE, not yet built"),
+        ("7 location", f"{len(comp_of):,} distinct compartments on participants" if loc_ok else "none",
+         "ENUMERABLE" if loc_ok else "ABSENT"),
+        ("8 transport", f"{moved:,}/{checked:,} reactions cross a boundary "
+                        f"({100*moved/checked:.0f}%)" if checked else "not computable",
+         "ENUMERABLE" if checked else "ABSENT"),
         ("conditions", "no temperature; kinetics for a subset", "ABSENT"),
     ]
     for a, b, c in rows:
