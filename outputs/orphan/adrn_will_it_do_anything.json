@@ -1,0 +1,379 @@
+{
+  "test": "adrn_will_it_do_anything",
+  "thresholds": [
+    3,
+    5,
+    10
+  ],
+  "C_values": [
+    0.03,
+    0.3
+  ],
+  "cells": {
+    "t3|C0.03": {
+      "base_rate": 0.15063559322033898,
+      "chan": {
+        "auc": 0.7504081007606302,
+        "ap": 0.4322734758648435
+      },
+      "chan_perm": {
+        "auc": 0.4980900919485307,
+        "ap": 0.1531508034372776
+      },
+      "n_cells": {
+        "auc": 0.7118692856684274,
+        "ap": 0.3532314706107361
+      },
+      "chan_ncells": {
+        "auc": 0.8109759370530233,
+        "ap": 0.5102957283657007
+      }
+    },
+    "t3|C0.3": {
+      "base_rate": 0.15063559322033898,
+      "chan": {
+        "auc": 0.7415216255689117,
+        "ap": 0.4268212805232005
+      },
+      "chan_perm": {
+        "auc": 0.49741983490732355,
+        "ap": 0.15090374367320616
+      },
+      "n_cells": {
+        "auc": 0.7118612166226552,
+        "ap": 0.35313210974184506
+      },
+      "chan_ncells": {
+        "auc": 0.7999578304651382,
+        "ap": 0.4990366954788351
+      }
+    },
+    "t5|C0.03": {
+      "base_rate": 0.09279661016949152,
+      "chan": {
+        "auc": 0.7888383783449461,
+        "ap": 0.3798044909245444
+      },
+      "chan_perm": {
+        "auc": 0.5019682583353061,
+        "ap": 0.09521281479822158
+      },
+      "n_cells": {
+        "auc": 0.730983899897415,
+        "ap": 0.2624731483870324
+      },
+      "chan_ncells": {
+        "auc": 0.8424806826494681,
+        "ap": 0.4512364729720502
+      }
+    },
+    "t5|C0.3": {
+      "base_rate": 0.09279661016949152,
+      "chan": {
+        "auc": 0.7860450137455506,
+        "ap": 0.3676392381477332
+      },
+      "chan_perm": {
+        "auc": 0.5063926407452669,
+        "ap": 0.09512624610574566
+      },
+      "n_cells": {
+        "auc": 0.7308378067689105,
+        "ap": 0.26254150132822196
+      },
+      "chan_ncells": {
+        "auc": 0.8360968394831075,
+        "ap": 0.43143580893980055
+      }
+    },
+    "t10|C0.03": {
+      "base_rate": 0.0646186440677966,
+      "chan": {
+        "auc": 0.8102467370922525,
+        "ap": 0.33295001560941445
+      },
+      "chan_perm": {
+        "auc": 0.510013181590331,
+        "ap": 0.07168494631832717
+      },
+      "n_cells": {
+        "auc": 0.7519971037632511,
+        "ap": 0.21456403404066587
+      },
+      "chan_ncells": {
+        "auc": 0.8598681840966897,
+        "ap": 0.41725272062031243
+      }
+    },
+    "t10|C0.3": {
+      "base_rate": 0.0646186440677966,
+      "chan": {
+        "auc": 0.807403226704788,
+        "ap": 0.3372146710545017
+      },
+      "chan_perm": {
+        "auc": 0.5097781408387947,
+        "ap": 0.07161090783461693
+      },
+      "n_cells": {
+        "auc": 0.7518589755490783,
+        "ap": 0.21459790716597593
+      },
+      "chan_ncells": {
+        "auc": 0.8539969923695301,
+        "ap": 0.4037290270287078
+      }
+    }
+  },
+  "mean_auc": {
+    "chan": 0.7807438470361797,
+    "chan_perm": 0.5039436913942589,
+    "n_cells": 0.7315680480449563,
+    "chan_ncells": 0.8338960776861595
+  },
+  "sweeps": {
+    "perm": {
+      "name": "chan - chan_perm",
+      "verdict": "ROBUST",
+      "n_cells": 6,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 6,
+      "n_resolved_pos": 6,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 4,
+      "passing_configs": [
+        {
+          "threshold": 3,
+          "C": 0.03
+        },
+        {
+          "threshold": 3,
+          "C": 0.3
+        },
+        {
+          "threshold": 5,
+          "C": 0.03
+        },
+        {
+          "threshold": 5,
+          "C": 0.3
+        },
+        {
+          "threshold": 10,
+          "C": 0.03
+        },
+        {
+          "threshold": 10,
+          "C": 0.3
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "threshold": 3,
+            "C": 0.03
+          },
+          "cohort": "t3|C0.03",
+          "n": 200,
+          "delta": 0.25314096662638425,
+          "lo": 0.2510520164670873,
+          "hi": 0.25526070933268696
+        },
+        {
+          "config": {
+            "threshold": 3,
+            "C": 0.3
+          },
+          "cohort": "t3|C0.3",
+          "n": 200,
+          "delta": 0.24511233678558256,
+          "lo": 0.2430748395940572,
+          "hi": 0.2471069318569724
+        },
+        {
+          "config": {
+            "threshold": 5,
+            "C": 0.03
+          },
+          "cohort": "t5|C0.03",
+          "n": 200,
+          "delta": 0.2859687800083401,
+          "lo": 0.2831222577989168,
+          "hi": 0.2888165634035347
+        },
+        {
+          "config": {
+            "threshold": 5,
+            "C": 0.3
+          },
+          "cohort": "t5|C0.3",
+          "n": 200,
+          "delta": 0.27929607497516884,
+          "lo": 0.2766496197038652,
+          "hi": 0.2819259430834835
+        },
+        {
+          "config": {
+            "threshold": 10,
+            "C": 0.03
+          },
+          "cohort": "t10|C0.03",
+          "n": 200,
+          "delta": 0.2995302443736875,
+          "lo": 0.29604231739403264,
+          "hi": 0.302965395693799
+        },
+        {
+          "config": {
+            "threshold": 10,
+            "C": 0.3
+          },
+          "cohort": "t10|C0.3",
+          "n": 200,
+          "delta": 0.29703844128634793,
+          "lo": 0.29370767158330524,
+          "hi": 0.30034764791952145
+        }
+      ]
+    },
+    "depth": {
+      "name": "chan - n_cells",
+      "verdict": "ROBUST",
+      "n_cells": 6,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 6,
+      "n_resolved_pos": 6,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 4,
+      "passing_configs": [
+        {
+          "threshold": 3,
+          "C": 0.03
+        },
+        {
+          "threshold": 3,
+          "C": 0.3
+        },
+        {
+          "threshold": 5,
+          "C": 0.03
+        },
+        {
+          "threshold": 5,
+          "C": 0.3
+        },
+        {
+          "threshold": 10,
+          "C": 0.03
+        },
+        {
+          "threshold": 10,
+          "C": 0.3
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "threshold": 3,
+            "C": 0.03
+          },
+          "cohort": "t3|C0.03",
+          "n": 200,
+          "delta": 0.03987283346528264,
+          "lo": 0.03780944099495781,
+          "hi": 0.0419583467436435
+        },
+        {
+          "config": {
+            "threshold": 3,
+            "C": 0.3
+          },
+          "cohort": "t3|C0.3",
+          "n": 200,
+          "delta": 0.0306501961895161,
+          "lo": 0.02852659720976878,
+          "hi": 0.032766363768167
+        },
+        {
+          "config": {
+            "threshold": 5,
+            "C": 0.03
+          },
+          "cohort": "t5|C0.03",
+          "n": 200,
+          "delta": 0.05850252692311484,
+          "lo": 0.05582456724633487,
+          "hi": 0.061249433460980864
+        },
+        {
+          "config": {
+            "threshold": 5,
+            "C": 0.3
+          },
+          "cohort": "t5|C0.3",
+          "n": 200,
+          "delta": 0.05601604748130114,
+          "lo": 0.053305013768895466,
+          "hi": 0.05876630649375652
+        },
+        {
+          "config": {
+            "threshold": 10,
+            "C": 0.03
+          },
+          "cohort": "t10|C0.03",
+          "n": 200,
+          "delta": 0.059164685619528236,
+          "lo": 0.05629346430824829,
+          "hi": 0.062063504649512526
+        },
+        {
+          "config": {
+            "threshold": 10,
+            "C": 0.3
+          },
+          "cohort": "t10|C0.3",
+          "n": 200,
+          "delta": 0.0567616457755243,
+          "lo": 0.053894671895859676,
+          "hi": 0.05960923240855736
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "WILL THIS KNOCKOUT DO ANYTHING?  The 6x dataset we were throwing away",
+    "====================================================================================================",
+    "  PREDECLARED: chan > chan_perm AND chan > n_cells => a real, usable capability.",
+    "               chan ~ n_cells => we are predicting sequencing depth. Artefact.",
+    "               chan ~ chan_perm => the descriptors carry nothing even here.",
+    "\n  npz arrays: ['M', 'genes', 'kos']",
+    "  5,120 filtered rows; sealed 400 excluded; modelling pool 4,720",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  REAL cell counts recovered for 4,720/4,720 pool genes from gwps.h5ad (median 178)",
+    "\n  threshold >= 3 movers: 711 positive / 4,720 (15.1%)",
+    "    C=0.03: chan AUC 0.7504 AP 0.4323 | chan_perm AUC 0.4981 AP 0.1532 | n_cells AUC 0.7119 AP 0.3532 | chan_ncells AUC 0.8110 AP 0.5103",
+    "    C=0.3: chan AUC 0.7415 AP 0.4268 | chan_perm AUC 0.4974 AP 0.1509 | n_cells AUC 0.7119 AP 0.3531 | chan_ncells AUC 0.8000 AP 0.4990",
+    "\n  threshold >= 5 movers: 438 positive / 4,720 (9.3%)",
+    "    C=0.03: chan AUC 0.7888 AP 0.3798 | chan_perm AUC 0.5020 AP 0.0952 | n_cells AUC 0.7310 AP 0.2625 | chan_ncells AUC 0.8425 AP 0.4512",
+    "    C=0.3: chan AUC 0.7860 AP 0.3676 | chan_perm AUC 0.5064 AP 0.0951 | n_cells AUC 0.7308 AP 0.2625 | chan_ncells AUC 0.8361 AP 0.4314",
+    "\n  threshold >= 10 movers: 305 positive / 4,720 (6.5%)",
+    "    C=0.03: chan AUC 0.8102 AP 0.3330 | chan_perm AUC 0.5100 AP 0.0717 | n_cells AUC 0.7520 AP 0.2146 | chan_ncells AUC 0.8599 AP 0.4173",
+    "    C=0.3: chan AUC 0.8074 AP 0.3372 | chan_perm AUC 0.5098 AP 0.0716 | n_cells AUC 0.7519 AP 0.2146 | chan_ncells AUC 0.8540 AP 0.4037",
+    "\n  SWEEP chan - chan_perm   axes[threshold,C]  6 cells\n  config                       cohort         delta                 95% CI\n  threshold=3 C=0.03           t3|C0.03     +0.2531 [ +0.2511, +0.2553] RES+\n  threshold=3 C=0.3            t3|C0.3      +0.2451 [ +0.2431, +0.2471] RES+\n  threshold=5 C=0.03           t5|C0.03     +0.2860 [ +0.2831, +0.2888] RES+\n  threshold=5 C=0.3            t5|C0.3      +0.2793 [ +0.2766, +0.2819] RES+\n  threshold=10 C=0.03          t10|C0.03    +0.2995 [ +0.2960, +0.3030] RES+\n  threshold=10 C=0.3           t10|C0.3     +0.2970 [ +0.2937, +0.3003] RES+\n  -> ROBUST   resolved +6/-0 of 6 (>= 4 needed), sign-consistent True",
+    "\n  SWEEP chan - n_cells   axes[threshold,C]  6 cells\n  config                       cohort         delta                 95% CI\n  threshold=3 C=0.03           t3|C0.03     +0.0399 [ +0.0378, +0.0420] RES+\n  threshold=3 C=0.3            t3|C0.3      +0.0307 [ +0.0285, +0.0328] RES+\n  threshold=5 C=0.03           t5|C0.03     +0.0585 [ +0.0558, +0.0612] RES+\n  threshold=5 C=0.3            t5|C0.3      +0.0560 [ +0.0533, +0.0588] RES+\n  threshold=10 C=0.03          t10|C0.03    +0.0592 [ +0.0563, +0.0621] RES+\n  threshold=10 C=0.3           t10|C0.3     +0.0568 [ +0.0539, +0.0596] RES+\n  -> ROBUST   resolved +6/-0 of 6 (>= 4 needed), sign-consistent True",
+    "\n  MEAN AUC  chan 0.7807 | chan_perm 0.5039 | n_cells 0.7316 | chan+n_cells 0.8339",
+    "\n  READING",
+    "  Annotation predicts whether a knockout does anything at AUC 0.7807, beating both its own",
+    "  permutation (0.5039) and the depth control (0.7316). On 6x the examples and a far less",
+    "  noisy label than the top-20 task, the descriptors DO carry usable signal -- the sealed task",
+    "  was too noisy to show it. This is a capability, and it is the triage question a screening lab",
+    "  actually has."
+  ]
+}

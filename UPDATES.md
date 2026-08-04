@@ -20150,3 +20150,55 @@ Not more data, not a bigger network, not another annotation source -- all three 
 open question is a learned gene-to-gene similarity trained to predict RESPONSE similarity rather than to describe
 the gene. Note the trap: such a function must be trained on training-gene pairs only, and the sealed genes'
 responses can never enter it, or it becomes the oracle and means nothing.
+
+# The question we could always answer, on data we were throwing away
+
+`colab/adrn_will_it_do_anything.py`. Every score in this project comes from 838 scorable rows. The other 4,282
+rows kept in the readout are not missing data -- they are labels for a DIFFERENT question: *does knocking this
+gene out do anything measurable in K562 at all?*
+
+    MEAN AUC   chan 0.7807 | chan_perm 0.5039 | n_cells 0.7316 | chan + n_cells 0.8339
+
+    chan - chan_perm   +0.2451 to +0.2995   ROBUST 6/6, sign-consistent
+    chan - n_cells     +0.0307 to +0.0592   ROBUST 6/6, sign-consistent
+
+Monotone in the phenotype threshold, which is the shape an artefact would not have:
+
+    threshold   chan    chan_perm   n_cells   chan+n_cells   positives
+    >= 3       0.7504    0.4981     0.7119      0.8110       711 (15.1%)
+    >= 5       0.7888    0.5020     0.7310      0.8425       438 ( 9.3%)
+    >= 10      0.8102    0.5100     0.7520      0.8599       305 ( 6.5%)
+
+The genes with the LARGEST effects are the most predictable. Noise-driven results get weaker as the positive
+class shrinks; this gets stronger.
+
+## Why this matters after five failures
+
+Annotation channels have now failed five times at cold start on the sealed task -- twin ceiling, ESM-2, network
+topology, ChIP binding, response columns. This is the same descriptors, on the same cell line, reaching AUC
+0.7807 with their own permutation sitting exactly on chance (0.5039).
+
+**The descriptors were never empty. The sealed task was too noisy to show what they know.** 838 examples against
+a label that is 37% noise cannot resolve an effect that 4,720 examples against a stable label resolves easily.
+
+## What this is NOT
+
+It answers **whether** a knockout does something, not **what** it does. The top-20 task is untouched and still
+sits at 0.2920/0.3593. Nothing here transfers to it -- these are different questions with different labels, and
+conflating them would be exactly the overstatement this file exists to prevent.
+
+It is also, precisely, the triage question a screening lab has: *which of these 500 genes will show anything?*
+That is worth more than a noisy top-20 guess for a gene you were going to screen anyway.
+
+## A circular control I built, and caught mid-run
+
+The first version had no per-row cell count available and fell back to TOTAL ABSOLUTE SIGNAL as the depth proxy.
+The label is "count of genes with |z| >= tau"; the proxy was "sum of |z| over genes". Nearly the same quantity.
+It scored **AUC 0.8954** against annotation's 0.7504, and the script's own reading logic would have printed
+"we are predicting sequencing depth, not biology -- artefact" about a real result.
+
+Real counts were in `gwps.h5ad` obs as `num_cells_filtered`, recovered for 4,720/4,720 genes (median 178). With
+the honest control, depth scores 0.7316 and annotation BEATS it. One bad control inverted the conclusion.
+
+The rule this earns: **a control that correlates with the label by construction is worse than no control**, because
+it looks like rigour. The script now DROPS the arm rather than substituting a proxy if the real counts are absent.
