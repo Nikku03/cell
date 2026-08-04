@@ -20597,7 +20597,7 @@ B rigid-body rotated to a different orientation at the same centroid separation.
     term        native ranks 1st      mean z vs decoys
     vdw              7/10  (0.70)          +0.37
     contacts         0/10  (0.00)          -1.81
-    elec             0/10  (0.00)          -0.04
+    elec             0/10  (0.00)          +0.22   <- CORRECTED; was -0.04, see below
     induc            0/10  (0.00)          -0.63
     desolv           0/10  (0.00)          -0.95
     chance                 (0.06)
@@ -20614,15 +20614,34 @@ repulsive term.
 **So contact count is exactly the wrong objective for the loop.** Optimising it would drive the search into
 clashes while the number improved. This is the kind of thing that is invisible until you score decoys.
 
-## A dead arm found and fixed mid-run
+## A dead arm found, "fixed", and still dead -- caught only on the third look
 
-The first run reported `elec` as EXACTLY 0.000 in all ten complexes. Not a null -- `sidechain_vdw` derives
-residue-aware charges from a `wt=` resname argument, `flex_physics.table()` does not store resnames, and I never
-passed one. Electrostatics was never tested. Fixed by parsing resnames from the PDB directly; elec now computes
-(z -0.04) and still does not discriminate, which is now a real finding rather than a missing argument.
+The first run reported `elec` as EXACTLY 0.000 in all ten complexes. `sidechain_vdw` derives residue-aware
+charges from a `wt=` resname argument, `flex_physics.table()` does not store resnames, and I never passed one.
+I fixed that by parsing 3-letter resnames from the PDB, re-ran, got z -0.04, and wrote that down as "elec now
+computes and still does not discriminate, which is now a real finding rather than a missing argument."
 
-A liveness check is now in the script: any term exactly zero across every complex is reported as a dead arm
-before its row is read.
+**That was not a real finding. The fix did not work.** `sidechain_vdw` looks `wt=` up in `AA3`, which maps
+1-letter to 3-letter, so `AA3.get("ASP")` is `None`, `_charge_res` received `""`, and every charge came back
+zero exactly as before.
+
+What kept it hidden is the part worth keeping. The liveness check required a term to be zero in EVERY complex --
+and `OXT` is not in the backbone set, so a C-terminal carboxylate sitting at the interface leaked a non-zero
+value in 3 of 10 complexes. Seven were zero, three were an artifact of chain termini, the mean came out -0.04,
+and the gate stayed silent. **A term can be structurally dead without being uniformly zero.**
+
+Corrected, and both fixes are in place:
+
+    flex_physics.sidechain_vdw   accepts either convention: wt if wt in RESCHG else AA3.get(wt, "").
+                                 Verified equivalent on 34 charged interface residues of 1ACB, 0 disagreements.
+                                 The other seven callers pass 1-letter SKEMPI codes and were never affected.
+    nexus_pairs liveness         fires at HALF the complexes rather than all of them, and always prints the
+                                 per-term zero count instead of only speaking up on a total wipeout.
+
+Electrostatics is now live in 10/10 (23 of 57 interface residues of 1ACB carry charge, total 27.126 vs 0.000).
+The re-run moves elec from z -0.04 to **z +0.22** -- still 0/10 for ranking native first, so it does not
+discriminate on its own, but the earlier number was an artifact and this one is not. `vdw` is unchanged at
+7/10 and z +0.37, so the headline result of this entry stands.
 
 ## What this does and does not license
 
