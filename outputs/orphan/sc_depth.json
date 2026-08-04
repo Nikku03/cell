@@ -116,8 +116,8 @@
     "ceiling": 0.08433029600568177,
     "ratio": -0.1361018978092871
   },
-  "sweep": {
-    "name": "score - ceiling",
+  "sweep_liveness": {
+    "name": "score - ceiling (liveness only, negative by construction)",
     "verdict": "HARMFUL",
     "n_cells": 12,
     "inert_axes": [],
@@ -263,6 +263,112 @@
       }
     ]
   },
+  "sweep_gap_widening": {
+    "name": "gap widening: (ceiling-score) at high depth minus at low depth",
+    "verdict": "ROBUST",
+    "n_cells": 6,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 6,
+    "n_resolved_pos": 6,
+    "n_resolved_neg": 0,
+    "sign_consistent": true,
+    "cells_needed_for_robust": 4,
+    "passing_configs": [
+      {
+        "contrast": "d10->d35",
+        "seed": 0
+      },
+      {
+        "contrast": "d10->d35",
+        "seed": 1
+      },
+      {
+        "contrast": "d10->d35",
+        "seed": 2
+      },
+      {
+        "contrast": "d10->d60",
+        "seed": 0
+      },
+      {
+        "contrast": "d10->d60",
+        "seed": 1
+      },
+      {
+        "contrast": "d10->d60",
+        "seed": 2
+      }
+    ],
+    "cells": [
+      {
+        "config": {
+          "contrast": "d10->d35",
+          "seed": 0
+        },
+        "cohort": "d10v35|s0",
+        "n": 229,
+        "delta": 0.10087336244541485,
+        "lo": 0.08034934497816593,
+        "hi": 0.12161572052401748
+      },
+      {
+        "config": {
+          "contrast": "d10->d35",
+          "seed": 1
+        },
+        "cohort": "d10v35|s1",
+        "n": 229,
+        "delta": 0.11615720524017469,
+        "lo": 0.09563318777292577,
+        "hi": 0.13711790393013099
+      },
+      {
+        "config": {
+          "contrast": "d10->d35",
+          "seed": 2
+        },
+        "cohort": "d10v35|s2",
+        "n": 229,
+        "delta": 0.10218340611353711,
+        "lo": 0.08100436681222706,
+        "hi": 0.12401746724890829
+      },
+      {
+        "config": {
+          "contrast": "d10->d60",
+          "seed": 0
+        },
+        "cohort": "d10v60|s0",
+        "n": 229,
+        "delta": 0.15938864628820962,
+        "lo": 0.13646288209606988,
+        "hi": 0.18253275109170305
+      },
+      {
+        "config": {
+          "contrast": "d10->d60",
+          "seed": 1
+        },
+        "cohort": "d10v60|s1",
+        "n": 229,
+        "delta": 0.16746724890829695,
+        "lo": 0.14344978165938865,
+        "hi": 0.19192139737991268
+      },
+      {
+        "config": {
+          "contrast": "d10->d60",
+          "seed": 2
+        },
+        "cohort": "d10v60|s2",
+        "n": 229,
+        "delta": 0.15524017467248907,
+        "lo": 0.13209606986899564,
+        "hi": 0.17903930131004367
+      }
+    ]
+  },
   "log": [
     "====================================================================================================",
     "DEPTH TEST -- is the limit the model, or the precision of the answer key?",
@@ -292,7 +398,8 @@
     "      20    0.1590    0.2292    0.694",
     "      35    0.1705    0.2999    0.568",
     "      60    0.1905    0.3742    0.509",
-    "\n  SWEEP score - ceiling   axes[depth,seed]  12 cells\n  config                       cohort         delta                 95% CI\n  depth=10 seed=0              d10|s0       -0.0262 [ -0.0424, -0.0100] RES-\n  depth=10 seed=1              d10|s1       -0.0197 [ -0.0376, -0.0015] RES-\n  depth=10 seed=2              d10|s2       -0.0231 [ -0.0408, -0.0057] RES-\n  depth=20 seed=0              d20|s0       -0.0688 [ -0.0919, -0.0461] RES-\n  depth=20 seed=1              d20|s1       -0.0633 [ -0.0852, -0.0421] RES-\n  depth=20 seed=2              d20|s2       -0.0784 [ -0.1000, -0.0570] RES-\n  depth=35 seed=0              d35|s0       -0.1271 [ -0.1524, -0.1028] RES-\n  depth=35 seed=1              d35|s1       -0.1358 [ -0.1590, -0.1131] RES-\n  depth=35 seed=2              d35|s2       -0.1253 [ -0.1517, -0.0998] RES-\n  depth=60 seed=0              d60|s0       -0.1856 [ -0.2131, -0.1590] RES-\n  depth=60 seed=1              d60|s1       -0.1871 [ -0.2138, -0.1614] RES-\n  depth=60 seed=2              d60|s2       -0.1784 [ -0.2068, -0.1511] RES-\n  -> HARMFUL   resolved +0/-12 of 12 (>= 8 needed), sign-consistent True",
+    "\n  SWEEP score - ceiling (liveness only, negative by construction)   axes[depth,seed]  12 cells\n  config                       cohort         delta                 95% CI\n  depth=10 seed=0              d10|s0       -0.0262 [ -0.0424, -0.0100] RES-\n  depth=10 seed=1              d10|s1       -0.0197 [ -0.0376, -0.0015] RES-\n  depth=10 seed=2              d10|s2       -0.0231 [ -0.0408, -0.0057] RES-\n  depth=20 seed=0              d20|s0       -0.0688 [ -0.0919, -0.0461] RES-\n  depth=20 seed=1              d20|s1       -0.0633 [ -0.0852, -0.0421] RES-\n  depth=20 seed=2              d20|s2       -0.0784 [ -0.1000, -0.0570] RES-\n  depth=35 seed=0              d35|s0       -0.1271 [ -0.1524, -0.1028] RES-\n  depth=35 seed=1              d35|s1       -0.1358 [ -0.1590, -0.1131] RES-\n  depth=35 seed=2              d35|s2       -0.1253 [ -0.1517, -0.0998] RES-\n  depth=60 seed=0              d60|s0       -0.1856 [ -0.2131, -0.1590] RES-\n  depth=60 seed=1              d60|s1       -0.1871 [ -0.2138, -0.1614] RES-\n  depth=60 seed=2              d60|s2       -0.1784 [ -0.2068, -0.1511] RES-\n  -> HARMFUL   resolved +0/-12 of 12 (>= 8 needed), sign-consistent True",
+    "\n  SWEEP gap widening: (ceiling-score) at high depth minus at low depth   axes[contrast,seed]  6 cells\n  config                       cohort         delta                 95% CI\n  contrast=d10->d35 seed=0     d10v35|s0    +0.1009 [ +0.0803, +0.1216] RES+\n  contrast=d10->d35 seed=1     d10v35|s1    +0.1162 [ +0.0956, +0.1371] RES+\n  contrast=d10->d35 seed=2     d10v35|s2    +0.1022 [ +0.0810, +0.1240] RES+\n  contrast=d10->d60 seed=0     d10v60|s0    +0.1594 [ +0.1365, +0.1825] RES+\n  contrast=d10->d60 seed=1     d10v60|s1    +0.1675 [ +0.1434, +0.1919] RES+\n  contrast=d10->d60 seed=2     d10v60|s2    +0.1552 [ +0.1321, +0.1790] RES+\n  -> ROBUST   resolved +6/-0 of 6 (>= 4 needed), sign-consistent True",
     "\n  per doubling of depth:  score +0.0215   ceiling +0.0843   ratio -0.1361",
     "\n  READING",
     "  The ratio FALLS with depth: the ceiling climbs faster than the model follows. The MODEL",

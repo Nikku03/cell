@@ -19750,6 +19750,10 @@ the ceiling and the achievable score at once, on the same sequencing budget spen
 Falsifiable prediction, cheap to run on data already on disk: subsample cells per perturbation and both the
 split-half ceiling and the model score should fall together. If they do not, this reading is wrong.
 
+> **THE PREDICTION WAS RUN AND IT IS WRONG. See "The depth test" below. The two curves do not move together:
+> the ceiling climbs FOUR TIMES faster than the score. The reading above -- that depth is the lever -- does not
+> survive, and the paragraph is left standing as written so the correction has something to point at.**
+
 ## Second lever: break the twin ceiling
 
 The 0.5365 twin cap binds only ANNOTATION features -- genes with identical channel vectors are indistinguishable
@@ -19810,3 +19814,80 @@ sci-Plex Spearman 0.062 / Jaccard 0.128, and compared it against the cycle ratio
 the sci-Plex numbers have NO matched noise floor**, and low correlation between two noisy profiles is what noise
 produces. With a noise floor, time measures 1.151. I no longer have evidence that harvest timepoints beat more
 perturbations for screen budget.
+
+# The depth test: I predicted depth was the lever. It is not. The model is.
+
+`colab/sc_depth.py`, on the 1,000-perturbation single-cell cohort (421,610 cells; RPE1 161,058 / Jurkat 168,025 /
+HepG2 92,527). This was written to falsify the claim I had committed to this file an hour earlier -- that the
+0.633 absolute ceiling means ~37% of the answer key is noise, so buying **cells per perturbation** raises the
+ceiling and the score together.
+
+## The design
+
+At each depth *d*, on the **same 229 held-out (line, perturbation) groups at every depth** (fixed once by the
+largest depth, because "whatever has >= 2d cells" would let group composition drift with *d* -- a knockout that
+barely slows growth yields more cells and may have a weaker phenotype):
+
+    ceiling(d)   two DISJOINT samples of d cells each -> top-20 agreement. How well the measurement agrees with
+                 itself at that depth. No model can beat it.
+    score(d)     a model trained at FULL depth, scored against an answer key built from d cells. The model is
+                 held constant, so the only thing varying is the key's precision.
+
+## The result
+
+    depth     score   ceiling    ratio
+       10    0.1332    0.1562    0.853
+       20    0.1590    0.2292    0.694
+       35    0.1705    0.2999    0.568
+       60    0.1905    0.3742    0.509
+
+    per doubling of depth:   score +0.0215    ceiling +0.0843    ratio -0.1361
+
+**The ceiling climbs four times faster than the model follows.** At 10 cells the model captures 85% of what is
+measurable; at 60 cells, 51%. Sharpening the answer key exposes structure the model cannot use.
+
+Verdict on a paired per-group contrast -- does the gap `(ceiling - score)` WIDEN with depth? -- swept over
+contrast x seed:
+
+    d10 -> d35   +0.1009 / +0.1162 / +0.1022   all resolved positive
+    d10 -> d60   +0.1594 / +0.1675 / +0.1552   all resolved positive
+    -> ROBUST 6/6, sign-consistent
+
+## A harness bug I shipped and had to fix mid-test
+
+The first run swept `score - ceiling` and printed **"HARMFUL, resolved -12/12"**. That number is meaningless: a
+model cannot agree with an answer key better than the key agrees with itself, so the quantity is negative by
+construction and the sweep returns HARMFUL whatever the truth is. **It is a tautology dressed as a verdict, and
+I reported it as one.** It is now demoted to a liveness check with an assert -- a positive cell would mean the
+ceiling is mismeasured -- and the verdict moved to the gap-widening contrast above, which can go either way.
+The Sweeper's job is to stop me trusting a single number; it cannot stop me feeding it a number with one sign.
+
+## What this changes
+
+**Depth is not worthless -- it is just not the lever.** +0.0215 p@20 per doubling of cells per perturbation is a
+real gain. But it is slow, and it makes the system look *worse* relative to what is measurable, not better:
+
+    cells/pert    2x      4x      8x
+    score       +0.02   +0.04   +0.06
+    ceiling     +0.08   +0.17   +0.25     <- the gap widens at every step
+
+So the honest ranking of the three scaling levers is now measured, not guessed:
+
+| lever | measured effect |
+|---|---|
+| more perturbations | **-0.0009** on the last doubling (flat) |
+| more cells per perturbation | **+0.0215** per doubling, gap to ceiling widens |
+| a model that composes function | untested -- and now the only one left |
+
+This kills the "spend the sequencing budget on depth instead of breadth" recommendation I made an hour ago. It
+does not resurrect breadth. It says the binding constraint is **representational**, which is exactly what LOCO
+(HARMFUL 18/18, collapses to the frequency baseline when a functional class is absent) and cross-line (HARMFUL
+9/9) were already saying from the other direction. Three independent tests now agree on the same diagnosis:
+this system retrieves, and no amount of data changes what it does.
+
+## Scope, honestly
+
+Measured on RPE1/Jurkat/HepG2 per-cell data, because K562 exists on this disk only as pseudobulk -- so this
+demonstrates the principle, not the sealed K562 number. Depths 10-60 span 2.6 doublings; the slopes are fitted
+over that range and extrapolating far past 60 cells is not supported by these data. The model held constant is
+the gene+line ridge (penalty 100), not the best model in the repo.
