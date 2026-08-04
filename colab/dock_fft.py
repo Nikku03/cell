@@ -15,11 +15,18 @@ THE SCORE, Katchalski-Katzir, as two REAL correlations:
 
 THE FIRST VERSION OF THIS FILE WAS VOID, and the way it failed is the point of the rewrite.
 
-  (a) It rasterised ATOM CENTRES and dilated by one cell. At 1.4 A spacing a van der Waals contact is 3.5 A =
-      2.5 cells, and one cell of dilation on each side leaves a 0.5-cell GAP. The two shells never touched, so
-      the TRUE interface scored 8 out of a maximum of 989 -- near zero. Fixed by rasterising each atom to its
-      actual vdW radius and defining the receptor's shell as a 2-cell layer growing OUTWARD from the molecular
-      surface, which is exactly where a partner at contact distance sits. Native interlock 8 -> 177.
+  (a) It rasterised ATOM CENTRES, and put the receptor's contact shell AT those centres rather than outside
+      them. A van der Waals contact is ~3.5 A = 2.5 cells at this spacing, so two surfaces in contact have
+      their atom centres 2.5 cells apart and the grids never overlap. The TRUE interface scored an interlock
+      of 8 against a maximum of 989 -- near zero.
+
+      Both halves of the fix were needed, and measuring which one did the work mattered, because either alone
+      looks like a fix and is not. On 1ACB, native interlock as a fraction of the best placement's:
+
+          0.0000   atom centres, shell at the centres          (as shipped, broken)
+          0.0145   + 2-cell OUTWARD shell, still atom centres
+          0.0125   + vdW volume, shell still at the surface
+          0.1676   vdW volume AND a 2-cell outward shell       (correct)
 
   (b) It took chains[0] and chains[1], alphabetically. That is not the biological interface. 1AK4 A/B has
       ZERO atom pairs within 5 A (the real interface is B/C); 1BRS and 1B2S got crystal-packing contacts of
@@ -35,9 +42,15 @@ THE FIRST VERSION OF THIS FILE WAS VOID, and the way it failed is the point of t
   It never checked whether native INTERLOCK was non-trivial, which is where the bug actually lived. A gate that
   only tests the failure mode you thought of will confidently clear the one you did not.
 
-SO THIS FILE NOW CARRIES A HARD SANITY GATE. Before a complex is docked, its native pose must score interlock
-well above an arbitrary placement's. A complex that fails is reported as REPRESENTATION FAIL and excluded from
-the hit rates rather than silently dragging them down.
+SO THIS FILE NOW CARRIES A SANITY GATE, AND THE GATE ITSELF WAS TESTED. Before a complex is docked, its native
+interlock must be at least SANITY_FRAC of the best placement's; a complex that fails is reported as
+REPRESENTATION FAIL and excluded rather than silently dragging the hit rate down.
+
+The FIRST gate I wrote for this compared native interlock to the MEDIAN cell of the correlation field. That was
+vacuous: irfftn leaves float noise around 1e-13 in empty cells, so the median of positive cells is ~0 and
+anything passes -- including the broken representation it was written to catch. The gate now in place is
+verified against all four representations above, and it fires on three of them. A gate that has never been
+shown to fire is not a gate.
 
 THE CLASH WEIGHT IS TUNED ON A HELD-OUT SPLIT.  The weight matters enormously (top-18,218 at w=3, top-18 at
 w=10, top-3 at w=30), so picking it by looking at the complexes it is then scored on would be tuning on the test
@@ -92,7 +105,16 @@ PEAKS_PER_ROT, NMS_CELLS = 4, 4
 MIN_AT, MAX_AT = 250, 2600
 MIN_CONTACTS = 100               # atom pairs within 5 A required for a chain pair to count as an interface
 N_TOTAL, N_TUNE = 20, 8
-SANITY_RATIO = 5.0               # native interlock must beat the median placement by this factor
+SANITY_FRAC = 0.05               # native interlock must be at least this fraction of the best interlock
+# ^ this threshold is not arbitrary and the gate is VERIFIED TO FIRE. On 1ACB, native/max interlock is:
+#     0.0000  the original representation (atom centres, shell AT the centres)   <- the bug this missed once
+#     0.0145  outward shell but atom centres only
+#     0.0125  vdW volume but shell at the surface, not outside it
+#     0.1676  vdW volume AND a 2-cell outward shell  (shipped)
+# Neither correction alone is enough, which is why "I fixed the radii" would have been a false all-clear. The
+# first gate I wrote compared native interlock to the MEDIAN cell -- but irfftn leaves float noise ~1e-13 in
+# empty cells, so the median of positive cells is ~0 and the test was vacuous: it passed the broken
+# representation too. A gate that has never been shown to fire is not a gate.
 
 
 def rotations(n, seed=0):
@@ -223,11 +245,11 @@ def prepare(pdb):
     inter = np.fft.irfftn(F_skin * FL, solid_R.shape)
     clash = np.fft.irfftn(F_core * FL, solid_R.shape)
     k_nat = tuple(int(x) for x in (np.round((lcen - centre) / SPACING).astype(int) % GRID))
-    sane = float(inter[k_nat]) > SANITY_RATIO * float(np.median(inter[inter > 0])) if (inter > 0).any() else False
+    frac = float(inter[k_nat]) / max(float(inter.max()), 1e-9)
     return {"pdb": pdb, "ca": ca, "cb": cb, "n_contacts": n_ct, "R": R, "L": L, "centre": centre,
             "lcen": lcen, "offs_L": offs_L, "F_skin": F_skin, "F_core": F_core, "shape": solid_R.shape,
             "nat_inter": float(inter[k_nat]), "nat_clash": float(clash[k_nat]),
-            "med_inter": float(np.median(inter[inter > 0])) if (inter > 0).any() else 0.0,
+            "max_inter": float(inter.max()), "nat_frac": frac, "sane": bool(frac >= SANITY_FRAC),
             "k_nat": k_nat, "nat_inter_field": inter, "nat_clash_field": clash, "sane": bool(sane)}
 
 
@@ -269,14 +291,15 @@ def main():
     report(f"    {len(prepped)} usable   TUNE {[p['pdb'] for p in tune]}")
     report(f"                    TEST {[p['pdb'] for p in test]}")
     if insane:
-        report(f"    REPRESENTATION FAIL (native interlock not {SANITY_RATIO}x the median placement): {insane}")
+        report(f"    REPRESENTATION FAIL (native interlock < {SANITY_FRAC:.0%} of the best placement's): {insane}")
 
     # ---------------- SANITY: does the true interface register at all? ----------------
     report(f"\n  SANITY -- native pose components (the check the first version of this file did not have)")
-    report(f"    {'pdb':<6}{'pair':>6}{'contacts':>10}{'nat interlock':>15}{'nat clash':>11}{'median cell':>13}")
+    report(f"    {'pdb':<6}{'pair':>6}{'contacts':>10}{'nat interlock':>15}{'nat clash':>11}"
+           f"{'best cell':>11}{'nat/best':>10}")
     for p in prepped:
         report(f"    {p['pdb']:<6}{p['ca']+'/'+p['cb']:>6}{p['n_contacts']:>10}"
-               f"{p['nat_inter']:>15.0f}{p['nat_clash']:>11.0f}{p['med_inter']:>13.1f}")
+               f"{p['nat_inter']:>15.0f}{p['nat_clash']:>11.0f}{p['max_inter']:>11.0f}{p['nat_frac']:>10.4f}")
 
     # ---------------- TUNE the clash weight, on the TUNE split only ----------------
     report(f"\n  TUNING the clash weight on {len(tune)} held-out complexes: rank of the native TRANSLATION "
@@ -397,7 +420,8 @@ def main():
                "median_native_rot_best_rmsd": nbm,
                "sanity": [{"pdb": p["pdb"], "pair": p["ca"] + "/" + p["cb"], "n_contacts": p["n_contacts"],
                            "nat_interlock": p["nat_inter"], "nat_clash": p["nat_clash"],
-                           "median_cell": p["med_inter"]} for p in prepped],
+                           "max_interlock": p["max_inter"], "nat_over_best": p["nat_frac"]}
+                          for p in prepped],
                "log": log}, open(OUT / "dock_fft.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'dock_fft.json'}")
     return 0
