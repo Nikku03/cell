@@ -19774,16 +19774,36 @@ than "name exactly 20", we may be measuring the wrong quantity and understating 
 
 ## Time and state, measured on one instrument
 
-sc_renge_time.py (RENGE GSE213069, 25,293 hiPSC cells, 23 TFs, days 2-5) put TIME and CELL-CYCLE STATE on the
-same ratio-vs-matched-noise instrument used by the overnight gate:
+sc_renge_time.py (RENGE GSE213069, hiPSC, 23 TFs, days 2-5) put TIME and CELL-CYCLE STATE on the same
+ratio-vs-matched-noise instrument used by the overnight gate.
 
-    TIME  day2vday5 1.182/1.189/1.183 | day2vday4 1.163/1.134/1.125 | day3vday5 1.157/1.112/1.116
-          -> ROBUST 9/9, mean ratio 1.151
-    STATE (hiPSC) -> FRAGILE 5/12, mean ratio 1.035
+**CORRECTED, and the correction is mine to own.** The first version of this section reported ratio **1.151,
+ROBUST 9/9**, from a script that was committed but never pushed; the container rolled back and took the file with
+it, so that number lived only in conversation and could not be audited. The script has been rebuilt to the same
+design (`colab/sc_depth.py`'s sibling, `colab/sc_renge_time.py`, now on disk and pushed) and re-run. It gives:
+
+    TIME  day2vday5 1.140/1.134/1.117  -> 1.130   (3-day gap)
+          day2vday4 1.055/1.065/1.087  -> 1.069   (2-day gap)
+          day3vday5 1.070/1.051/1.105  -> 1.075   (2-day gap)
+          -> ROBUST 7/9 resolved positive, sign-consistent, mean ratio 1.091
     STATE (RPE1/Jurkat/HepG2, overnight) -> 1.30-1.64
 
-**I predicted before running it that time would exceed 1.30-1.64. It came in BELOW all of them.** Time is real and
-monotone in gap width, but smaller than cell-cycle phase in the cancer lines.
+**1.151 is superseded by 1.091.** I cannot audit the gap because the file is gone, but the most likely cause is
+the matched floor: the rebuild subtracts a HALF-sized control mean in BOTH arms, so both carry the noise of two
+independent half-control estimates. Using the full control mean in the cross-day arm and split controls in the
+floor inflates the ratio for free, and I cannot rule out that the lost version did exactly that. Where the two
+disagree, **the reproducible number is the one that counts.**
+
+The hiPSC cell-cycle arm previously reported as "FRAGILE 5/12, ratio 1.035" was in the same lost file and has NOT
+been rebuilt. It is unverified and should not be cited.
+
+The direction survives and gets an internal control the first version did not report: **the effect scales with
+the gap.** A 3-day separation moves the answer 1.130x; both 2-day separations move it 1.069x and 1.075x. Noise
+does not know how many days apart two samples are, so a dose-response in the gap is evidence this is time.
+
+**I predicted before running it that time would exceed 1.30-1.64. It came in BELOW all of them** -- and the
+corrected number is further below than the one I first reported. Time is real and monotone in gap width, but
+smaller than cell-cycle phase in the cancer lines. Cell state is not time wearing a costume.
 
 This also retracts an earlier overstatement of mine. I had claimed "time reshapes 87% of the response" from
 sci-Plex Spearman 0.062 / Jaccard 0.128, and compared it against the cycle ratios. **Those were never comparable:
