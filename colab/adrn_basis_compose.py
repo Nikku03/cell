@@ -102,20 +102,26 @@ def main():
 
     from sklearn.cluster import KMeans
     from sklearn.decomposition import NMF
-    from scipy.optimize import nnls
 
-    def reconstruct(fit_rows, test_rows, K):
-        """Fit the basis on fit_rows, project test_rows onto it with the TRUE response (oracle), score top-20."""
+    def fit_basis(fit_rows, K):
         nmf = NMF(n_components=K, init="nndsvda", max_iter=300, random_state=0)
         nmf.fit(M[fit_rows])
-        H = nmf.components_.astype(np.float64)
-        HT = H.T
-        out = []
-        for i in test_rows:
-            w, _ = nnls(HT, M[i].astype(np.float64))
-            rec = w @ H
-            out.append(len(set(np.argsort(-rec)[:A.NPRED].tolist()) & truth[i]) / float(A.NPRED))
-        return np.array(out)
+        return nmf
+
+    def score_on(nmf, test_rows):
+        """Project test_rows onto the basis using the TRUE response (oracle) and score top-20 recovery.
+
+        `nmf.transform` solves for non-negative coefficients against the FIXED basis -- the same objective the
+        basis was fitted under, and batched over all rows. An earlier draft did this with a per-profile
+        scipy.optimize.nnls, which is the same projection computed one row at a time and would have taken hours.
+        """
+        Wc = nmf.transform(M[test_rows])
+        rec = Wc @ nmf.components_
+        return np.array([len(set(np.argsort(-rec[j])[:A.NPRED].tolist()) & truth[i]) / float(A.NPRED)
+                         for j, i in enumerate(test_rows)])
+
+    def reconstruct(fit_rows, test_rows, K):
+        return score_on(fit_basis(fit_rows, K), test_rows)
 
     sw = Sweeper("class-holdout - random-holdout (>=0 is composition)",
                  axes={"clusters": list(N_CLUSTERS), "K": list(K_VALUES)})
@@ -134,16 +140,18 @@ def main():
                 fit = np.where(lab != c)[0]
                 if len(fit) < K * 2:
                     continue
-                cls_all.append(reconstruct(fit, test, K))
+                nmf_c = fit_basis(fit, K)                  # one fit serves the class arm and the ceiling arm
+                cls_all.append(score_on(nmf_c, test))
 
-                # MATCHED RANDOM HOLDOUT: same number removed, drawn from every class
+                # MATCHED RANDOM HOLDOUT: same number removed, drawn from every class. The fit sets are then
+                # the same SIZE in both arms, so the only difference is whether the removed set shares a function.
                 rtest = rng.choice(len(kos), len(test), replace=False)
                 rfit = np.setdiff1d(np.arange(len(kos)), rtest)
                 rnd_all.append(reconstruct(rfit, rtest, K))
 
                 # CEILING for the measure: perturbations that WERE in the basis fit
                 inb = rng.choice(fit, min(len(test), len(fit)), replace=False)
-                inb_all.append(reconstruct(fit, inb, K))
+                inb_all.append(score_on(nmf_c, inb))
             if not cls_all:
                 continue
             cl = np.concatenate(cls_all)
