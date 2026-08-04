@@ -68,7 +68,13 @@ def interface_residues(t, ch_a, ch_b, cut=8.0):
 def resnames(pdb):
     """residue NAMES keyed by (chain, resnum). flex_physics.table() drops these, and without them
     sidechain_vdw cannot assign residue-aware charges -- electrostatics came back EXACTLY 0.000 in all ten
-    complexes on the first run. That was a dead arm, not a null: the term was never tested."""
+    complexes on the first run. That was a dead arm, not a null: the term was never tested.
+
+    AND THE FIRST FIX DID NOT WORK, which took a second run to notice. These are 3-letter PDB resnames;
+    sidechain_vdw looked them up in AA3, which maps 1-letter -> 3-letter, so AA3.get("ASP") was None and every
+    charge came back zero anyway. The term still read as 'computes but does not discriminate' because OXT is
+    not in the backbone set, so a C-terminal carboxylate leaked through in 3 of 10 complexes and kept the
+    all-zero liveness check from firing. flex_physics now accepts either convention."""
     out = {}
     path = f"{fp.PDBDIR}/{pdb}.pdb"
     if not os.path.exists(path):
@@ -179,10 +185,15 @@ def main():
     # sign convention: more-negative vdw/elec = better; more contacts = better
     better = {"vdw": -1, "elec": -1, "induc": -1, "desolv": -1, "contacts": +1}
     res_tab = {}
-    dead = [t_ for t_ in terms
-            if all(abs(r["native"][t_]) < 1e-12 for r in rows)]
+    # LIVENESS. The first version required a term to be zero in EVERY complex, and that is too weak: `elec`
+    # was zero in 7 of 10 while 3 leaked a C-terminal carboxylate, so the check stayed silent on a term that
+    # was structurally dead. Half is the threshold now, and the per-term zero count is always printed.
+    zeros = {t_: sum(abs(r["native"][t_]) < 1e-12 for r in rows) for t_ in terms}
+    dead = [t_ for t_ in terms if zeros[t_] >= len(rows) / 2]
+    report(f"    LIVENESS: natives exactly zero in "
+           + ", ".join(f"{t_} {zeros[t_]}/{len(rows)}" for t_ in terms))
     if dead:
-        report(f"    LIVENESS: {dead} are exactly zero in every complex -- dead arms, not nulls. "
+        report(f"    LIVENESS: {dead} are zero in at least half the complexes -- dead arms, not nulls. "
                f"Their rows below mean nothing.")
     for term in terms:
         top1 = 0

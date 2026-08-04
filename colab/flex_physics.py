@@ -245,7 +245,11 @@ def sidechain_vdw(t, ch, pos, soft=False, wt=None):
         return {"vdw": 0.0, "contacts": 0, "elec": 0.0, "induc": 0.0, "desolv": 0.0}
     e = _lj_sum(scc, t["rad"][scm], t["co"][near], t["rad"][near], soft=soft)
     d = np.linalg.norm(scc[:, None, :] - t["co"][near][None, :, :], axis=2)
-    qa = _charge_res(AA3.get(wt, ""), t["nm"][scm]) if wt else np.zeros(scm.sum())
+    # `wt` may be a 1-letter code (SKEMPI records, the original callers) or a 3-letter PDB resname. AA3 maps
+    # 1->3 only, so AA3.get("ASP") is None and a 3-letter caller silently got ZERO charges: nexus_pairs passed
+    # PDB resnames and its electrostatics term was dead in 7 of 10 complexes while appearing to work in 3,
+    # because OXT is not in BB and so a C-terminal carboxylate leaked through the backbone fallback.
+    qa = _charge_res(wt if wt in RESCHG else AA3.get(wt, ""), t["nm"][scm]) if wt else np.zeros(scm.sum())
     qb = np.array([_charge_name(n) for n in t["nm"][near]])
     elec = _elec(scc, qa, t["co"][near], qb)
     induc = _induction(scc, t["el"][scm], t["co"][near], qb)
