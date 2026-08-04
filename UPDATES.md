@@ -19711,3 +19711,82 @@ change the verdict. Build 2 (condition on cell state) -- collapsed into this tes
 line data and line data turns out to be worth more than the model. Build 3 (mechanism bottleneck) -- untested,
 and the only remaining idea worth defending, but LOCO gives it low odds: a model that cannot extrapolate across
 functional classes within one line is unlikely to have programme structure worth transferring across lines.
+# Synthesis: this is a retrieval system, and its ceiling is measurement precision
+
+Sorting every result in this project by whether it worked exposes one distinction that explains all of them.
+
+**MEASUREMENT TRANSFER WORKS. GENERALISATION FAILS.**
+
+| worked | what it actually did |
+|---|---|
+| xline (+0.058 / +0.071) | the gene had been measured in another cell line |
+| codep (+0.021 / +0.024) | the gene had been measured across ~1,100 DepMap lines |
+| chan2a (0.234 / 0.289) | genes with similar annotation had been measured |
+| Norman pairs (+0.082 LOGO) | both parts of the pair had been measured |
+
+| failed | what it was asked to do |
+|---|---|
+| LOCO (HARMFUL, 18/18) | predict a functional class absent from training |
+| cross-line (HARMFUL, 9/9) | predict a context with no data |
+| few-shot cross-line (FRAGILE) | carry a prior into a new line |
+| drug response (ties shuffle) | cross a perturbation modality |
+| ESM-2 sequence (fails G1+G2) | infer function from sequence |
+| networks (8 tests + 36-cell sweep) | infer from topology beyond degree |
+
+Every success is retrieval; every failure is inference. **The system is a nearest-neighbour machine with extra
+steps, and its performance is set by the quality of the neighbours, not by the model.** That is a specification
+rather than an insult -- the product is an INDEX OVER MEASUREMENTS, which is useful and is not the same thing as
+a model that understands cells. Every claim in this repo should be read with that substitution made.
+
+## The consequence that matters most: we have been optimising against a one-third-noise target
+
+The absolute ceiling is **0.633** -- re-measuring the SAME knockout at the same depth agrees with itself only
+12.7 of 20. **About 37% of the answer key is measurement noise.**
+
+This reframes the scaling question. The scaling curve went FLAT at 4,720 perturbations (last doubling
+**-0.0009**), so more PERTURBATIONS buy nothing. But nobody has tested more CELLS PER PERTURBATION, which raises
+the ceiling and the achievable score at once, on the same sequencing budget spent on depth instead of breadth.
+
+Falsifiable prediction, cheap to run on data already on disk: subsample cells per perturbation and both the
+split-half ceiling and the model score should fall together. If they do not, this reading is wrong.
+
+## Second lever: break the twin ceiling
+
+The 0.5365 twin cap binds only ANNOTATION features -- genes with identical channel vectors are indistinguishable
+to the model. xline and codep escape it because they are gene-specific MEASUREMENTS, which is precisely why they
+are the two largest gains ever recorded here. Coverage is already 89% of sealed genes, so the remaining lever is
+profile QUALITY, and per-line estimation was still unsaturated at N=400 in the few-shot test.
+
+## What the evidence says will NOT work
+
+**More perturbations** -- measured at -0.0009 on the last doubling, and 26,500 exceeds the protein-coding genome.
+
+**Bigger models alone** -- the 0.63M transformer was marginally AHEAD of ridge at matched features, so capacity is
+not obviously exhausted; but LOCO says the failure is representational. A model that collapses to the frequency
+baseline when a functional class is absent does not need more parameters, it needs a representation in which
+function composes.
+
+## A caveat on our own metric
+
+In the single-cell work the same predictions scored **r = 0.459** and **p@20 = 0.273**. Precision@20 against a
+thresholded mover set discards magnitude and sign. If the downstream use is "rank genes for follow-up" rather
+than "name exactly 20", we may be measuring the wrong quantity and understating the model.
+
+## Time and state, measured on one instrument
+
+sc_renge_time.py (RENGE GSE213069, 25,293 hiPSC cells, 23 TFs, days 2-5) put TIME and CELL-CYCLE STATE on the
+same ratio-vs-matched-noise instrument used by the overnight gate:
+
+    TIME  day2vday5 1.182/1.189/1.183 | day2vday4 1.163/1.134/1.125 | day3vday5 1.157/1.112/1.116
+          -> ROBUST 9/9, mean ratio 1.151
+    STATE (hiPSC) -> FRAGILE 5/12, mean ratio 1.035
+    STATE (RPE1/Jurkat/HepG2, overnight) -> 1.30-1.64
+
+**I predicted before running it that time would exceed 1.30-1.64. It came in BELOW all of them.** Time is real and
+monotone in gap width, but smaller than cell-cycle phase in the cancer lines.
+
+This also retracts an earlier overstatement of mine. I had claimed "time reshapes 87% of the response" from
+sci-Plex Spearman 0.062 / Jaccard 0.128, and compared it against the cycle ratios. **Those were never comparable:
+the sci-Plex numbers have NO matched noise floor**, and low correlation between two noisy profiles is what noise
+produces. With a noise floor, time measures 1.151. I no longer have evidence that harvest timepoints beat more
+perturbations for screen budget.
