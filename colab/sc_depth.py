@@ -140,8 +140,14 @@ def main():
     Pev = A.ridge_apply(Fev, W)
     tops_pred = [top(Pev[i]) for i in range(len(ev))]
 
-    sw = Sweeper("score - ceiling", axes={"depth": list(DEPTHS), "seed": list(SEEDS)})
-    curves = {}
+    # NOT THE VERDICT, and calling it one would be a mistake I have to name because I made it on the first run.
+    # `score - ceiling` is negative by construction: a model cannot agree with an answer key better than the key
+    # agrees with itself. Sweeping it produces "resolved -12/12, HARMFUL" no matter what the truth is, which is a
+    # tautology dressed as a finding. It is kept only as a LIVENESS check -- if any cell came out positive, the
+    # ceiling would be mismeasured. The verdict lives in `swg` below, on a quantity that can go either way.
+    sw = Sweeper("score - ceiling (liveness only, negative by construction)",
+                 axes={"depth": list(DEPTHS), "seed": list(SEEDS)})
+    curves, per_group = {}, {}
     for d in DEPTHS:
         for seed in SEEDS:
             rng = np.random.default_rng(A.SEED + 31 * seed + d)
@@ -159,11 +165,29 @@ def main():
                 continue
             sc, ce = np.array(sc), np.array(ce)
             sw.add({"depth": d, "seed": seed}, f"d{d}|s{seed}", sc - ce)
+            per_group[(d, seed)] = (sc, ce)
             curves[f"d={d}|seed={seed}"] = {"n": len(sc), "score": float(sc.mean()),
                                             "ceiling": float(ce.mean()),
                                             "ratio": float(sc.mean() / max(ce.mean(), 1e-9))}
             report(f"  depth {d:>3} seed{seed}: n={len(sc):>4}  score {sc.mean():.4f}  "
                    f"ceiling {ce.mean():.4f}  ratio {sc.mean()/max(ce.mean(),1e-9):.3f}")
+
+    # THE ACTUAL VERDICT. Does the gap between what is measurable and what the model delivers WIDEN with depth?
+    # Paired per group, so the same 229 knockouts are compared to themselves at two depths. Positive delta means
+    # the model falls further behind as the key gets sharper -- MODEL-limited. Negative means the model closes on
+    # the key as noise is removed -- MEASUREMENT-limited, which is what I predicted. This one can go either way.
+    lo_d = min(DEPTHS)
+    hi_ds = [d for d in DEPTHS if d != lo_d][-2:]
+    swg = Sweeper("gap widening: (ceiling-score) at high depth minus at low depth",
+                  axes={"contrast": [f"d{lo_d}->d{h}" for h in hi_ds], "seed": list(SEEDS)})
+    for h in hi_ds:
+        for seed in SEEDS:
+            if (lo_d, seed) not in per_group or (h, seed) not in per_group:
+                continue
+            s0, c0 = per_group[(lo_d, seed)]
+            s1, c1 = per_group[(h, seed)]
+            swg.add({"contrast": f"d{lo_d}->d{h}", "seed": seed}, f"d{lo_d}v{h}|s{seed}",
+                    (c1 - s1) - (c0 - s0))
 
     report(f"\n  {'depth':>6} {'score':>9} {'ceiling':>9} {'ratio':>8}")
     trend = []
@@ -178,6 +202,13 @@ def main():
 
     report(sw.report())
     v = sw.verdict()
+    assert not [c for c in sw._cells.values() if c["lo"] > 0], \
+        "a cell scored ABOVE its own split-half ceiling -- the ceiling is mismeasured, not the model beaten"
+    report(swg.report())
+    vg = swg.verdict()
+    if swg.inert_axes() or swg.duplicate_cells():
+        report(f"  GUARD: inert axes {swg.inert_axes()}, duplicate cells {swg.duplicate_cells()}")
+
     if len(trend) >= 3:
         ds = np.log2([t[0] for t in trend])
         sl_s = float(np.polyfit(ds, [t[1] for t in trend], 1)[0])
@@ -202,7 +233,8 @@ def main():
                "curves": curves, "trend": [{"depth": t[0], "score": t[1], "ceiling": t[2], "ratio": t[3]}
                                            for t in trend],
                "slope_per_doubling": {"score": sl_s, "ceiling": sl_c, "ratio": sl_r},
-               "sweep": v, "log": log}, open(OUT / "sc_depth.json", "w"), indent=2)
+               "sweep_liveness": v, "sweep_gap_widening": vg, "log": log},
+              open(OUT / "sc_depth.json", "w"), indent=2)
     report(f"\n  total {time.time() - t0:.0f}s  -> {OUT / 'sc_depth.json'}")
     return 0
 
