@@ -20737,3 +20737,51 @@ docking is harder and is not what this measures.
                                               70% vs 6%. Complementary failures. The 2,400 poses per complex
                                               with known RMSDs are exactly the hard decoy set the NEXUS entry
                                               said it needed.
+
+# dMaSIF scaling, corrected: interface discrimination is DATA-limited, and 0.90 is reached
+
+`colab/dmasif_scaling.py`. The question nobody had asked: is the 0.846 interface AUC limited by data or by the
+model? The two answers point at completely different work -- fetch more complexes, or redesign the network.
+
+## The first run was confounded, in the same way the depth test had been
+
+It drew folds WITHIN each subset, so the test fold was ~12 complexes at N=35 and ~87 at N=260. The evaluation
+set changed composition along with the training size, and a curve built that way cannot separate "more training
+data" from "the complexes added at larger N happen to be easier". It reported 0.7481 / 0.7783 / 0.8343 / 0.8813.
+
+Corrected: **60 complexes carved off first and never trained on at any N**, nested training subsets drawn from
+the remaining 200, every point scored on the identical 60. Folds replaced by repeats -- same held-out set,
+different init and shuffle -- so the spread is a genuine noise floor rather than a fold-composition artifact.
+The floor is ENFORCED in the verdict, not printed beside it: the threshold is max(0.01, repeat sd).
+
+## The corrected curve
+
+    train N       AUC       sd     delta
+         25    0.7806   0.0057
+         50    0.8149   0.0167   +0.0343
+        100    0.8519   0.0129   +0.0370
+        200    0.9019   0.0012   +0.0500
+
+    mean across-repeat sd 0.0091 -- a step smaller than this is not a step
+    last step +0.0500 against a floor of 0.0100
+
+**STILL RISING, and the last step is the biggest.** That is the opposite of saturation. Interface
+discrimination is DATA-limited: more complexes buy AUC, the fetcher already exists and was verified to scale,
+and 0.90 is a matter of running it rather than redesigning anything.
+
+**The confound was not manufacturing the effect.** Correcting it moved the number UP, not down: the drifting-
+fold version reached 0.8813 with ~173 training complexes, the fixed-test version reaches 0.9019 with 200.
+
+## What the 0.90 is and is not
+
+    IS      interface point-pair discrimination on 60 unseen complexes: given pairs of surface points, does the
+            model score true cross-interface contact pairs above non-contact pairs. 0.9019 +/- 0.0012.
+    IS NOT  "predicts whether two proteins interact". No non-interacting pairs are in this test.
+    IS NOT  "produces the structure". This scores surface points; it does not place one chain against another.
+            That is the docking stage, and the entry above measured it separately at 0/12 top-10.
+
+## Contrast with the perturbation side, which is the point of having asked
+
+The depth test asked the same data-vs-model question of the perturbation stack and answered "the model is the
+limit": score rose +0.0215 per doubling while the achievable ceiling rose +0.0843, so the ratio FELL from 0.853
+to 0.509. Here the answer is the reverse. Same question, opposite verdicts, and only measuring told them apart.
