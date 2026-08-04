@@ -121,23 +121,40 @@ def main():
     def top(v):
         return set(np.argsort(-np.abs(v))[:NPRED].tolist())
 
+    # THE SAME GROUPS AT EVERY DEPTH.  If the evaluated set were "whatever has at least 2d cells", the group
+    # composition would change with d and the depth trend would be confounded with it -- deeply sequenced groups
+    # are not a random sample of groups (a knockout that barely slows growth yields more cells and may well have
+    # a weaker phenotype). So the set is fixed once, by the LARGEST depth, and every depth scores those groups.
+    ev = [(ln, p) for (ln, p) in cells
+          if p in hold and ln in ctrl and len(cells[(ln, p)]) >= 2 * max(DEPTHS)]
+    report(f"  evaluated on {len(ev):,} held-out groups with >= {2 * max(DEPTHS)} cells "
+           f"(the same groups at every depth)")
+    if len(ev) < 30:
+        report("  too few groups deep enough to run the test")
+        return 1
+
+    # predictions do not depend on depth or seed, so they are computed once
+    Fev = np.concatenate([np.ones((len(ev), 1), np.float32),
+                          chan[[urow[p] for (_, p) in ev]],
+                          np.eye(len(lines), dtype=np.float32)[[lines.index(l) for (l, _) in ev]]], 1)
+    Pev = A.ridge_apply(Fev, W)
+    tops_pred = [top(Pev[i]) for i in range(len(ev))]
+
     sw = Sweeper("score - ceiling", axes={"depth": list(DEPTHS), "seed": list(SEEDS)})
     curves = {}
     for d in DEPTHS:
         for seed in SEEDS:
             rng = np.random.default_rng(A.SEED + 31 * seed + d)
             sc, ce = [], []
-            for (ln, p), idx in cells.items():
-                if p not in hold or ln not in ctrl or len(idx) < 2 * d:
-                    continue
+            for i, (ln, p) in enumerate(ev):
+                idx = cells[(ln, p)]
                 pick = rng.choice(idx, 2 * d, replace=False)
                 a, b = pick[:d], pick[d:]
                 ya = X[a].mean(0) - ctrl[ln]
                 yb = X[b].mean(0) - ctrl[ln]
-                f = np.concatenate([[1.0], chan[urow[p]], np.eye(len(lines))[lines.index(ln)]])
-                pred = A.ridge_apply(f[None, :].astype(np.float32), W)[0]
-                sc.append(len(top(pred) & top(ya)) / float(NPRED))
-                ce.append(len(top(yb) & top(ya)) / float(NPRED))
+                ta = top(ya)
+                sc.append(len(tops_pred[i] & ta) / float(NPRED))
+                ce.append(len(top(yb) & ta) / float(NPRED))
             if len(sc) < 30:
                 continue
             sc, ce = np.array(sc), np.array(ce)
