@@ -329,8 +329,16 @@ def main():
         MK[tr_u] = (Wtr - mu) @ Vk
         for tag, keys in keys_all.items():
             MK[[urow[k] for k in keys]] = (Pm[tag]["all"] - mu) @ Vk
-        both_F = np.concatenate([chan, MK], 1)
-        both_F = both_F / (np.linalg.norm(both_F, axis=1, keepdims=True) + 1e-9)
+        # BLOCKS ARE NORMALISED SEPARATELY, and the first version did not do this.
+        # A walk distribution sums to 1 over 8,246 genes, so its entries are ~1e-4 and its row norm ~0.011.
+        # Channels are near-binary with ~15 active, row norm ~3.9. Concatenating and normalising the WHOLE row
+        # leaves the walk block ~352x smaller, and the ridge penalty then shrinks it to nothing: adrn_markov
+        # printed EXACTLY adrn to four decimals in all six cells. That is a dead arm wearing a null's clothes.
+        def _n(X):
+            return X / (np.linalg.norm(X, axis=1, keepdims=True) + 1e-9)
+        both_F = np.concatenate([_n(chan), _n(MK)], 1)
+        assert not np.allclose(both_F[:, chan.shape[1]:], 0), \
+            "the markov feature block is all zeros -- dead arm, not a null"
         w_both = fit_ridge(both_F)
         report(f"\n  alpha={alpha}")
         for npred in NPREDS:
