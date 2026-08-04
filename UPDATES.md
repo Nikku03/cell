@@ -20300,3 +20300,56 @@ That is the fourth time this session a sweep axis of mine has turned out inert o
 axis, the `mean` arm identical to `additive`, the seed axis on additive-dominant, and now K on the oracle
 contrast. The harness has caught all four. **The verdict on the signed oracle is 3 observations, not 9**, and the
 model contrast (where K genuinely matters) stands at a real 9/9.
+
+# Measured vs curated descriptors: I predicted measured would win. It loses.
+
+`colab/adrn_measured_vs_curated.py`. The reframe was: every feature that ever worked here was a MEASUREMENT,
+every one that failed was a DESCRIPTION, so for a gene nobody perturbed the right descriptor should be other
+assays of that gene rather than a better ontology. DepMap is the ideal test -- a different experiment (growth
+essentiality across 1,150 cell lines) covering 4,986 of our 5,120 genes, including 193/200 and 196/200 of the
+sealed cohorts whose Perturb-seq rows are hidden.
+
+    MEANS  frequency 0.1726 | curated 0.2521 | measured 0.2142 | both 0.2377
+           measured_perm 0.1757 | curated_perm 0.1737
+
+    measured - measured_perm   +0.0385   ROBUST 9/9   the DepMap block is LIVE
+    measured - curated         -0.0378   HARMFUL 9/9  and it loses to annotation
+
+**I predicted measured >= curated. It is the reverse, resolved in every cell.**
+
+DepMap essentiality genuinely carries gene-specific information about transcriptional perturbation response --
+it beats its own permutation everywhere, and 128 SVD dimensions capture 94.1% of its variance, so it is a
+well-structured signal, not noise. It is simply a WORSE descriptor than curated annotation for this task.
+
+## And it is redundant, not complementary
+
+`both` scores **0.2377 against curated's 0.2521**. Adding the measured block to annotation makes the model worse.
+Whatever DepMap knows about a gene's perturbation response, the annotation already knew.
+
+**The script's own auto-generated reading got this wrong and said "the useful arm is `both` ... the honest claim
+is complementarity".** I pre-wrote that branch assuming `both` would land above `curated`, and it did not.
+Predeclaring the interpretation is right; asserting an ORDERING inside it that the run has not checked is not.
+The reading text is a bug and the correct statement is redundancy, not complementarity.
+
+## What survives, and it is a distinction not a rescue
+
+This block used the DepMap profile as **coordinates** -- a 128-dim vector describing the gene. The original
+`codep` block, which did gain +0.021 (ROBUST 17/18), used the same data as **similarity**: ranked co-dependency
+partners with correlations, i.e. "which genes is this one's essentiality most correlated with".
+
+Same assay, two uses, opposite outcomes. That is the retrieval lesson again, now on an independent dataset:
+**measurements help by telling you WHICH GENES ARE ALIKE, not by describing a gene directly.** Every gain in
+this project has that shape and every coordinate-style descriptor has failed.
+
+## Where this leaves prediction without data
+
+    route                                     status
+    other assays as descriptors               CLOSED. measured loses to curated, HARMFUL 9/9, and is redundant.
+    other assays as a retrieval key           the only surviving form, and codep's +0.021 is its whole size
+    better annotation / ontologies            six failures
+    learned similarity over annotation        FRAGILE, -5.9% of the oracle gap
+    triage then screen                        WORKS. AUC 0.7807 for "will this do anything", ROBUST 6/6
+
+The honest answer to "how do we predict what we have no data for" is now: **for WHETHER a gene matters, we can
+(AUC 0.78). For WHAT it does, nothing on this disk gets there, and the +0.2128 the oracle proved is reachable
+remains unreachable by any descriptor we have tried -- curated or measured.**
