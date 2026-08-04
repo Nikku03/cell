@@ -16,8 +16,6 @@ problem than inventing them.
 ARMS.  Each is a rule for combining two measured single responses into a predicted double response.
 
     additive        r(A) + r(B).  The null model of no interaction, and what "effects compose" literally means.
-    mean            (r(A) + r(B)) / 2.  Additive up to scale; separated because top-20 ranking is scale-free in
-                    one gene but not across two, so the two rules differ in which genes they promote.
     dominant        whichever single has the larger response magnitude. Composition by masking rather than sum.
     single_A        one parent alone, chosen by name order. The control for "the double just looks like a single."
     best_single_ORACLE  whichever parent scores better AGAINST THE ANSWER. An oracle, reported as a denominator:
@@ -63,7 +61,13 @@ from robustness import Sweeper
 OUT, SP = A.OUT, A.SP
 NPREDS = (10, 20, 50)
 SEEDS = (0, 1, 2)
-MIN_CELLS = 50
+# MIN_CELLS is a real second sweep axis, not decoration: it changes WHICH pairs are scored, and the shallow ones
+# are exactly where a composition rule could be flattered by a noisy target. The first version of this file swept
+# npred x seed instead, and the harness caught it -- `additive`, `dominant` and the floor do not depend on the
+# seed at all (only `scrambled` draws a random pairing), so 6 of 9 cells were byte-identical duplicates and the
+# "ROBUST 9/9" on additive-dominant was really 3 observations. Seeds are now averaged WITHIN a cell, where they
+# belong, and the grid varies two things that actually move the numbers.
+MIN_CELLS_SWEEP = (50, 150)
 
 
 def main():
@@ -99,25 +103,15 @@ def main():
     ctrl_h = Ph[ctrl_rows].mean(0)          # (2, genes) -- one control per half, so the floor is matched
     report(f"  {len(groups)} programs, {len(genes):,} genes, {len(ctrl_rows)} control programs")
 
-    single = {}
-    double = {}
-    for i, g in enumerate(groups):
-        p = parts(g)
-        if len(p) == 1 and ncell[i] >= MIN_CELLS:
-            single[p[0]] = i
-        elif len(p) == 2 and ncell[i] >= MIN_CELLS and nch[i].min() >= MIN_CELLS // 2:
-            double[tuple(sorted(p))] = i
-    usable = [(k, v) for k, v in double.items() if k[0] in single and k[1] in single]
-    report(f"  singles {len(single)} | doubles {len(double)} | doubles with BOTH parents measured "
-           f"{len(usable)}")
-    if len(usable) < 30:
-        report("  too few usable pairs -- nothing to conclude")
-        return 1
-
-    # responses relative to control, computed once
-    rS = {g: Pf[i] - ctrl for g, i in single.items()}
-    rD = {k: Pf[i] - ctrl for k, i in usable}
-    rDh = {k: Ph[i] - ctrl_h for k, i in usable}          # (2, genes)
+    def cohort(min_cells):
+        single, double = {}, {}
+        for i, g in enumerate(groups):
+            p = parts(g)
+            if len(p) == 1 and ncell[i] >= min_cells:
+                single[p[0]] = i
+            elif len(p) == 2 and ncell[i] >= min_cells and nch[i].min() >= min_cells // 2:
+                double[tuple(sorted(p))] = i
+        return single, [(k, v) for k, v in double.items() if k[0] in single and k[1] in single]
 
     def top(v, n):
         return set(np.argsort(-np.abs(v))[:n].tolist())
@@ -125,18 +119,27 @@ def main():
     def prec(pred, truth, n):
         return len(top(pred, n) & top(truth, n)) / float(n)
 
-    keys = [k for k, _ in usable]
-    sw = Sweeper("additive - scrambled", axes={"npred": list(NPREDS), "seed": list(SEEDS)})
-    swd = Sweeper("additive - dominant", axes={"npred": list(NPREDS), "seed": list(SEEDS)})
+    sw = Sweeper("additive - scrambled", axes={"npred": list(NPREDS), "min_cells": list(MIN_CELLS_SWEEP)})
+    swd = Sweeper("additive - dominant", axes={"npred": list(NPREDS), "min_cells": list(MIN_CELLS_SWEEP)})
     cells = {}
-    for npred in NPREDS:
-        for seed in SEEDS:
-            rng = np.random.default_rng(A.SEED + 31 * seed + npred)
-            perm = rng.permutation(len(keys))
-            arms = {n: [] for n in ("additive", "mean", "dominant", "single_A",
+    for min_cells in MIN_CELLS_SWEEP:
+        single, usable = cohort(min_cells)
+        keys = [k for k, _ in usable]
+        report(f"  min_cells {min_cells}: singles {len(single)} | doubles with BOTH parents measured {len(keys)}")
+        if len(keys) < 30:
+            report(f"    fewer than 30 usable pairs -- skipped")
+            continue
+        rS = {g: Pf[i] - ctrl for g, i in single.items()}
+        rD = {k: Pf[i] - ctrl for k, i in usable}
+        rDh = {k: Ph[i] - ctrl_h for k, i in usable}
+        mean_d = np.mean([rD[k] for k in keys], 0)
+        for npred in NPREDS:
+            # `scrambled` is the ONLY arm with a random component, so the seeds are averaged inside the cell
+            # rather than being spread across the grid as if they were independent observations.
+            perms = [np.random.default_rng(A.SEED + 31 * s + npred).permutation(len(keys)) for s in SEEDS]
+            arms = {n: [] for n in ("additive", "dominant", "single_A",
                                     "best_single_ORACLE", "scrambled", "mean_double")}
             floor, rs = [], []
-            mean_d = np.mean([rD[k] for k in keys], 0)
             for j, k in enumerate(keys):
                 a, b = rS[k[0]], rS[k[1]]
                 # THE TARGET IS ONE HALF OF THE DOUBLE, and the floor is the OTHER half predicting it.  Scoring
@@ -147,43 +150,51 @@ def main():
                 # best estimate of the parts you have.
                 t = rDh[k][0]
                 arms["additive"].append(prec(a + b, t, npred))
-                arms["mean"].append(prec(0.5 * (a + b), t, npred))
+                # NOTE the arm that is NOT here. The first version also scored (a+b)/2 as a separate "mean" rule.
+                # It is provably identical to `additive`: top-N by |value| is invariant to positive rescaling of
+                # the whole vector, so halving it cannot change which genes are ranked first. It printed the same
+                # number to four decimals in every cell and tested nothing. The rationale I wrote for including
+                # it -- that ranking is "scale-free in one gene but not across two" -- was simply wrong.
                 dom = a if np.abs(a).sum() >= np.abs(b).sum() else b
                 arms["dominant"].append(prec(dom, t, npred))
                 arms["single_A"].append(prec(a, t, npred))
                 arms["best_single_ORACLE"].append(max(prec(a, t, npred), prec(b, t, npred)))
-                ko = keys[perm[j]]
-                arms["scrambled"].append(prec(rS[ko[0]] + rS[ko[1]], t, npred))
+                sc = []
+                for p in perms:
+                    ko = keys[p[j] if p[j] != j else (j + 1) % len(keys)]   # never scramble a pair to itself
+                    sc.append(prec(rS[ko[0]] + rS[ko[1]], t, npred))
+                arms["scrambled"].append(float(np.mean(sc)))
                 arms["mean_double"].append(prec(mean_d, t, npred))
                 floor.append(prec(rDh[k][1], t, npred))
-                v1, v2 = a + b, t
-                rs.append(float(np.corrcoef(v1, v2)[0, 1]))
+                rs.append(float(np.corrcoef(a + b, t)[0, 1]))
 
             arms = {n: np.array(v) for n, v in arms.items()}
             floor = np.array(floor)
-            sw.add({"npred": npred, "seed": seed}, f"n{npred}|s{seed}",
-                   arms["additive"] - arms["scrambled"])
-            swd.add({"npred": npred, "seed": seed}, f"n{npred}|s{seed}",
-                    arms["additive"] - arms["dominant"])
-            cells[f"npred={npred}|seed={seed}"] = {
+            cfg = {"npred": npred, "min_cells": min_cells}
+            tag = f"n{npred}|m{min_cells}"
+            sw.add(cfg, tag, arms["additive"] - arms["scrambled"])
+            swd.add(cfg, tag, arms["additive"] - arms["dominant"])
+            cells[f"npred={npred}|min_cells={min_cells}"] = {
                 "n_pairs": len(keys), "floor": float(floor.mean()),
                 "pearson_additive": float(np.mean(rs)),
                 **{n: float(v.mean()) for n, v in arms.items()}}
-            report(f"  N={npred:>2} seed{seed}: floor {floor.mean():.4f} | additive {arms['additive'].mean():.4f} "
-                   f"| scrambled {arms['scrambled'].mean():.4f} | dominant {arms['dominant'].mean():.4f} "
-                   f"| mean_double {arms['mean_double'].mean():.4f}")
+            report(f"  N={npred:>2} min{min_cells:>4}: n={len(keys):>3} floor {floor.mean():.4f} | "
+                   f"additive {arms['additive'].mean():.4f} | scrambled {arms['scrambled'].mean():.4f} | "
+                   f"dominant {arms['dominant'].mean():.4f} | mean_double {arms['mean_double'].mean():.4f}")
 
-    report(f"\n  {'N':>4} {'floor':>8} {'additive':>9} {'mean':>8} {'dominant':>9} {'single_A':>9} "
+    report(f"\n  {'N':>4} {'floor':>8} {'additive':>9} {'dominant':>9} {'single_A':>9} "
            f"{'ORACLE':>8} {'scrambled':>10} {'mean_dbl':>9} {'add/floor':>10}")
     summary = {}
     for npred in NPREDS:
         v = [c for k, c in cells.items() if k.startswith(f"npred={npred}|")]
+        if not v:
+            continue
         m = {n: float(np.mean([x[n] for x in v])) for n in
-             ("floor", "additive", "mean", "dominant", "single_A", "best_single_ORACLE",
+             ("floor", "additive", "dominant", "single_A", "best_single_ORACLE",
               "scrambled", "mean_double", "pearson_additive")}
         m["additive_over_floor"] = m["additive"] / max(m["floor"], 1e-9)
         summary[npred] = m
-        report(f"  {npred:>4} {m['floor']:>8.4f} {m['additive']:>9.4f} {m['mean']:>8.4f} {m['dominant']:>9.4f} "
+        report(f"  {npred:>4} {m['floor']:>8.4f} {m['additive']:>9.4f} {m['dominant']:>9.4f} "
                f"{m['single_A']:>9.4f} {m['best_single_ORACLE']:>8.4f} {m['scrambled']:>10.4f} "
                f"{m['mean_double']:>9.4f} {m['additive_over_floor']:>10.3f}")
 
