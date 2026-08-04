@@ -125,7 +125,12 @@ def main():
     pj = rng.choice(scorable, N_PAIRS)
     keep = pi != pj
     pi, pj = pi[keep], pj[keep]
-    y = (Rn[pi] * Rn[pj]).sum(1).astype(np.float32)
+    # CHUNKED. Rn[pi] fancy-indexes 400k rows of an 8,246-wide matrix -- 13.2 GB, and the OOM killer took the
+    # process twice with no traceback before I read dmesg. The dot products are computed in blocks instead.
+    y = np.empty(len(pi), np.float32)
+    for s0 in range(0, len(pi), 20_000):
+        s1 = min(s0 + 20_000, len(pi))
+        y[s0:s1] = (Rn[pi[s0:s1]] * Rn[pj[s0:s1]]).sum(1)
     report(f"  {len(pi):,} training pairs; target response-cosine mean {y.mean():.4f} sd {y.std():.4f}")
 
     # validation split by GENE, not by pair -- splitting pairs would put a gene in both halves
