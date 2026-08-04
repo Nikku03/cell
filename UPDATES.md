@@ -20253,3 +20253,50 @@ Set against the same day's positive result, the pair is the whole story of this 
 
     annotation predicts WHETHER a knockout does anything      AUC 0.7807, ROBUST 6/6
     annotation cannot predict WHICH genes it moves            six representations, all failed
+
+# The sign defect is real, and fixing it makes things worse
+
+`colab/adrn_signed.py`. The pipeline trains on `np.abs(M)`. Norman measured that effects compose ADDITIVELY. You
+cannot add magnitudes -- |a| + |b| != |a+b| the moment signs differ -- so the model is arithmetically incapable of
+the one composition rule this project has proved. That is a defect, not a hypothesis, and the fix was mechanical:
+split each gene into `[max(x,0), max(-x,0)]`, keeping NMF's non-negativity while preserving direction.
+
+There IS direction to keep: of 30,673 strong moves, **8,020 are DOWN (26.1%)**.
+
+    K    N    freq      abs    signed   absORACLE  sigORACLE
+    30  10   0.1975   0.3077   0.2735    0.6025     0.5487
+    30  20   0.1803   0.2526   0.2181    0.4619     0.4292
+    30  50   0.1400   0.1791   0.1536    0.2954     0.2765
+   120  10   0.1975   0.3143   0.2735    0.6025     0.5487
+   120  50   0.1400   0.1817   0.1573    0.2954     0.2765
+
+    signed - abs (model)     -0.0324   HARMFUL 9/9, sign-consistent
+    signed - abs (ORACLE)    -0.0351   HARMFUL, but see the count below
+
+## Why, and why the oracle arm is what makes it readable
+
+The **oracle** is the arm that cannot be blamed on our model: it picks the best neighbour with the true answer in
+hand. Signed retrieval loses to magnitude retrieval there too. So this is not "our model can't use direction" --
+it is that **the task is sign-blind by construction**. The answer key is "which 20 genes move", ranked on |value|.
+Direction is real and orthogonal to what is scored, and forcing it in costs twice: the split doubles the output
+width, halving the data per column, and signed similarity treats an up-mover and a down-mover of the same gene as
+opposites when the metric considers them identical.
+
+**So the honest statement is conditional, not a fix and not a null:**
+
+    for top-N mover prediction        abs() is CORRECT. Keep it. Signed costs -0.0324.
+    for anything that ADDS responses  you need sign, and you would pay about 0.03 p@20 for it.
+
+That is a trade with a price tag, which is more useful than either "bug fixed" or "no effect". I would have
+reported it wrong had I run only the model arms without the oracles.
+
+## Fourth inert-or-duplicated axis, caught again by the harness
+
+The oracle sweep printed **HARMFUL 9/9** and then: *"6 of 9 cells are numerically identical to another cell.
+Real observations: 3."* The oracles are pure retrieval and do not depend on the NMF rank at all, so K was inert
+for that contrast and every value of it produced the same three numbers three times.
+
+That is the fourth time this session a sweep axis of mine has turned out inert or duplicated -- the inert `rank`
+axis, the `mean` arm identical to `additive`, the seed axis on additive-dominant, and now K on the oracle
+contrast. The harness has caught all four. **The verdict on the signed oracle is 3 observations, not 9**, and the
+model contrast (where K genuinely matters) stands at a real 9/9.
