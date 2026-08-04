@@ -138,17 +138,45 @@ def main():
     ppi, trr, cplx, g2c, g2pw, pw2g = G["ppi"], G["trrust"], G["cplx"], G["g2c"], G["g2pw"], G["pw2g"]
     names = G["names"]
 
+    # KEYING, and three layers were silently empty until I checked it.
+    #   ppi, g2c, g2pw  are keyed by INTEGER gene index; passing a gene NAME returns nothing.
+    #   trrust, pw2g    are keyed by string name.
+    #   cplx            is empty for all 2,039 complexes, so the complex layer is built by INVERTING g2c.
+    #   pw2g values     are sets, not lists.
+    # The first run printed "ppi 0 edges / complex 0 edges / pathway 0 edges" and would have concluded that
+    # curated seeds are decoration, when three of five had never been populated. A dead arm is not a null.
+    gidx = G["idx"]
+    c2g = {}
+    for i, cs in g2c.items():
+        for c in (cs or []):
+            c2g.setdefault(c, []).append(i)
+    MAX_NBR = 300
+
+    def _nm(xs):
+        return [names[x] if isinstance(x, (int, np.integer)) else str(x) for x in xs]
+
     def nbrs_ppi(g):
-        return [names[x] if isinstance(x, (int, np.integer)) else x for x in ppi.get(g, [])]
+        i = gidx.get(g)
+        return _nm(ppi.get(i, [])) if i is not None else []
 
     def nbrs_tf(g):
-        return [t[0] if isinstance(t, (list, tuple)) else t for t in trr.get(g, [])]
+        return [t[0] if isinstance(t, (list, tuple)) else str(t) for t in trr.get(g, [])]
 
-    def nbrs_share(g, gmap, rmap):
+    def nbrs_complex(g):
+        i = gidx.get(g)
         out = []
-        for c in (gmap.get(g) or []):
-            out.extend(rmap.get(c) or [])
-        return out
+        for c in (g2c.get(i) or []) if i is not None else []:
+            out.extend(c2g.get(c, []))
+        return _nm(out[:MAX_NBR])
+
+    def nbrs_pathway(g):
+        i = gidx.get(g)
+        out = []
+        for pw in (g2pw.get(i) or []) if i is not None else []:
+            mem = pw2g.get(pw)
+            if mem and len(mem) <= MAX_NBR:      # skip giant catch-all pathways: they seed everything equally
+                out.extend(list(mem))
+        return _nm(out[:MAX_NBR])
 
     chan_base, chan_names = A.build_channels(universe, set(train), report)
     extra, extra_names, tb = C.extra_channels(universe, set(train), report)
@@ -161,9 +189,9 @@ def main():
         if layer == "tf":
             return nbrs_tf(g)
         if layer == "complex":
-            return nbrs_share(g, g2c, cplx)
+            return nbrs_complex(g)
         if layer == "pathway":
-            return nbrs_share(g, g2pw, pw2g)
+            return nbrs_pathway(g)
         if layer == "spatial":
             if not comp_cols or g not in urow:
                 return []
@@ -192,6 +220,8 @@ def main():
         for a, b in sw_pairs:
             d.setdefault(a, []).append(b)
         rew[L] = d
+        assert len(pairs) > 0, (f"layer {L} produced ZERO edges -- it is a dead arm, not a null result. "
+                                f"Check the key type (index vs name) before reading any verdict.")
         report(f"  layer {L:<9} {len(pairs):>7,} edges -> degree-matched rewired copy built")
 
     def seed_vec(g, layer, rewired):
