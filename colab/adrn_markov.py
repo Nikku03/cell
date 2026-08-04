@@ -206,20 +206,31 @@ def main():
     LAYERS = ("ppi", "tf", "complex", "pathway", "spatial")
     rng = np.random.default_rng(A.SEED + 77)
     # REWIRED versions: same degree sequence per layer, different topology
-    rew = {}
+    # THE REAL LAYER AND ITS REWIRING MUST HAVE THE SAME EDGES.  The first version capped only the rewired copy
+    # at 400k while the real arm kept full membership, so the control would have had FEWER edges than the layer
+    # it controls -- biasing the one gate that decides this test. Both arms are now built from the SAME
+    # (possibly subsampled) edge list, so they share an identical degree sequence by construction.
+    rew, real = {}, {}
     for L in LAYERS:
         pairs = []
         for g in universe:
             for h in seed_layer(g, L):
                 if h in urow and h != g:
                     pairs.append((g, h))
+        n_full = len(pairs)
         if len(pairs) > 400_000:
             pairs = [pairs[i] for i in rng.choice(len(pairs), 400_000, replace=False)]
+        dr = {}
+        for a, b in pairs:
+            dr.setdefault(a, []).append(b)
+        real[L] = dr
         sw_pairs = rewire(pairs, len(universe), rng)
         d = {}
         for a, b in sw_pairs:
             d.setdefault(a, []).append(b)
         rew[L] = d
+        if n_full != len(pairs):
+            report(f"    (layer {L} subsampled {n_full:,} -> {len(pairs):,} edges; BOTH arms use this set)")
         assert len(pairs) > 0, (f"layer {L} produced ZERO edges -- it is a dead arm, not a null result. "
                                 f"Check the key type (index vs name) before reading any verdict.")
         report(f"  layer {L:<9} {len(pairs):>7,} edges -> degree-matched rewired copy built")
@@ -232,7 +243,7 @@ def main():
                 col[np.array([tpos[k] for k in train]) == tpos.get(g, -1)] = 0.0
                 s = col[bi]
         else:
-            hs = (rew[layer].get(g, []) if rewired else seed_layer(g, layer))
+            hs = (rew[layer] if rewired else real[layer]).get(g, [])
             bpos = {k: i for i, k in enumerate(both)}
             for h in hs:
                 i = bpos.get(h)
