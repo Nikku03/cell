@@ -20466,3 +20466,64 @@ This is the first substantial positive from curated data all day, and the reason
 task. Curation is a CATALOGUE. Asked "what reaction does this gene catalyse", it answers well. Asked "what will
 happen if you knock this gene out in K562", it fails -- seven representations, seven failures. The distinction
 is not about data quality; it is about which question the data was assembled to answer.
+
+# Would we have found it? The 0.276 was recovery, not discovery -- and a prospective run would be ~42% worse
+
+`colab/cell_would_we_have_found_it.py`. The orphan test recovered hidden catalysts at recall@1 0.276 / @20 0.555
+against a 0.019 / 0.169 control. But it hid only the REACTION; the catalyst stayed in the vocabulary via its
+other reactions. Three tests to find out what that number is actually worth.
+
+## 1. It rides on annotation redundancy
+
+    other reactions the catalyst has     n      r@1     r@5    r@20   r@100
+    0  (gene leaves the vocabulary)    146    0.089   0.103   0.137   0.158
+    1                                  176    0.188   0.233   0.330   0.420
+    2-4                                294    0.218   0.395   0.524   0.605
+    5-19                               498    0.309   0.448   0.572   0.629
+    20+                                886    0.335   0.562   0.670   0.702
+
+Monotone, and a **5x spread** from singleton to well-connected. The method works best exactly where it is least
+needed. **1,932 of 5,282 catalysts (37%) sit in the bottom bucket.**
+
+The bottom bucket is 0.137 rather than 0.000 for a reason worth stating: a reaction can have several catalysts,
+and the bucket is assigned by the LEAST-connected one, so a well-connected co-catalyst can still be recovered.
+Where a reaction's only catalyst is a singleton, recall is structurally zero -- no score over a vocabulary can
+name a gene that is not in it.
+
+## 2. The prospective number is much worse than the retrospective one
+
+Reactome stable IDs increase with curation date. Index built on the 2,396 earlier reactions, tested on the 799
+later ones, against a matched random holdout of the same size:
+
+    arm                    r@1     r@5    r@20   r@100
+    temporal (later)     0.081   0.139   0.199   0.213
+    random holdout       0.198   0.288   0.344   0.375
+
+**Temporal is 0.145 worse at k=20 -- a 42% relative drop.** And 28% of the later reactions have a catalyst that
+was not in the earlier vocabulary at all, so they are unfindable at any k.
+
+So the honest reading of the headline: **0.555 was measured knowing the future.** Run prospectively, on what
+gets curated next, expect roughly 0.20. Still far above the 0.169 frequency control, but it is a different
+claim, and I would have reported the wrong one without this test.
+
+## 3. It is NOT just re-finding famous proteins -- the opposite
+
+    catalyst publications      n    r@20
+    <= 184                 1,513   0.567
+    185-370                  235   0.617
+    371-679                  127   0.496
+    > 679                    125   0.360
+
+Recall is HIGHEST on the least-studied enzymes and lowest on the most-studied. The likely reason is that
+heavily-published genes are pleiotropic -- their reactions are chemically heterogeneous, so chemistry-neighbour
+scoring has less to work with -- while obscure metabolic enzymes have tight, specific substrate chemistry.
+
+This is the one result today that came out better than predicted, and it matters: the method is not a
+textbook-biology re-finder.
+
+## The answer to "is it working"
+
+    expand the scope of an enzyme we already know    YES -- r@20 0.55 retrospective, ~0.20 prospective
+    propose an enzyme never annotated as one         NO -- structurally impossible, and 37% of catalysts
+                                                     would need exactly that
+    avoid bias toward well-studied proteins          YES -- and it is better on obscure ones

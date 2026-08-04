@@ -1,0 +1,102 @@
+{
+  "test": "cell_would_we_have_found_it",
+  "ks": [
+    1,
+    5,
+    20,
+    100
+  ],
+  "n_catalysts": 5282,
+  "singleton_catalysts": 1932,
+  "redundancy": {
+    "0 (gene leaves vocab)": {
+      "1": 0.08904109589041095,
+      "5": 0.10273972602739725,
+      "20": 0.136986301369863,
+      "100": 0.15753424657534246
+    },
+    "1": {
+      "1": 0.1875,
+      "5": 0.23295454545454544,
+      "20": 0.32954545454545453,
+      "100": 0.42045454545454547
+    },
+    "2-4": {
+      "1": 0.21768707482993196,
+      "5": 0.3945578231292517,
+      "20": 0.5238095238095238,
+      "100": 0.6054421768707483
+    },
+    "5-19": {
+      "1": 0.3092369477911647,
+      "5": 0.44779116465863456,
+      "20": 0.572289156626506,
+      "100": 0.6285140562248996
+    },
+    "20+": {
+      "1": 0.33521444695259595,
+      "5": 0.5620767494356659,
+      "20": 0.6704288939051919,
+      "100": 0.7020316027088036
+    }
+  },
+  "temporal": {
+    "n_test": 799,
+    "in_old_vocab": 575,
+    "temporal": {
+      "1": 0.08135168961201501,
+      "5": 0.13892365456821026,
+      "20": 0.19899874843554444,
+      "100": 0.2127659574468085
+    },
+    "random": {
+      "1": 0.19774718397997496,
+      "5": 0.2878598247809762,
+      "20": 0.344180225281602,
+      "100": 0.37546933667083854
+    }
+  },
+  "obscurity": {
+    "<=184": 0.5670852610707204,
+    "185-370": 0.6170212765957447,
+    "371-679": 0.49606299212598426,
+    ">679": 0.36
+  },
+  "log": [
+    "====================================================================================================",
+    "WOULD WE HAVE FOUND IT?  redundancy, temporal holdout, and obscurity",
+    "====================================================================================================",
+    "  PREDECLARED: recall at 0-other-reactions ~ 0 is STRUCTURAL, not failure -- the gene leaves the",
+    "  vocabulary. Temporal ~ random => not following curation order. Flat across pubs => not just fame.",
+    "\n  10,977 catalysed reactions | 5,282 distinct catalysts",
+    "  catalysts appearing in exactly ONE reaction: 1,932 (37%)",
+    "\n  [1] REDUNDANCY -- recall by how many OTHER reactions the true catalyst has",
+    "    bucket                        n       r@1       r@5      r@20     r@100",
+    "    0 (gene leaves vocab)       146     0.089     0.103     0.137     0.158",
+    "    1                           176     0.188     0.233     0.330     0.420",
+    "    2-4                         294     0.218     0.395     0.524     0.605",
+    "    5-19                        498     0.309     0.448     0.572     0.629",
+    "    20+                         886     0.335     0.562     0.670     0.702",
+    "\n  [2] TEMPORAL -- index built only on EARLIER-curated reactions, tested on later ones",
+    "    2,396 earlier reactions form the index; 799 later ones are the test set",
+    "    cutoff R-HSA-8,950,364",
+    "    of the later reactions, 575/799 (72%) have a catalyst that was",
+    "    ALREADY in the earlier vocabulary -- the rest cannot be found at any k, by construction",
+    "    arm                          r@1       r@5      r@20     r@100",
+    "    temporal (later)           0.081     0.139     0.199     0.213",
+    "    random holdout             0.198     0.288     0.344     0.375",
+    "\n  [3] OBSCURITY -- recall by the true catalyst's publication count",
+    "    publications              n      r@20",
+    "    <=184                 1,513     0.567",
+    "    185-370                 235     0.617",
+    "    371-679                 127     0.496",
+    "    >679                    125     0.360",
+    "\n  READING",
+    "  Recall for catalysts with NO other reaction is 0.158 at k=100. This is the structural limit,",
+    "  not a failure: the gene is not in the vocabulary, so no score over that vocabulary can name it.",
+    "  37% of all catalysts sit in that position. The method expands the scope of enzymes we already",
+    "  know; it does not nominate a protein that has never been annotated as catalysing anything.",
+    "  Temporal holdout is 0.145 WORSE than random at k=20. The headline number benefited from",
+    "  knowing the future; a prospective run would do worse than the retrospective one suggests."
+  ]
+}
