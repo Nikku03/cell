@@ -211,10 +211,9 @@ def main():
                 Qn = Q / (np.linalg.norm(Q, axis=1, keepdims=True) + 1e-9)
                 S_ann = Qn @ Cn.T
                 S_lin = E[[urow[k] for k in keys]] @ E[tr_u].T
-                S_pair = (Qn[:, None, :] * Cn[None, :, :]).reshape(-1, Cn.shape[1]) @ wpair \
-                    if len(keys) * len(Cn) < 4_000_000 else None
-                if S_pair is not None:
-                    S_pair = S_pair.reshape(len(keys), len(Cn))
+                # (Qn_i (*) Cn_j) . w  ==  (Qn_i * w) . Cn_j exactly, so there is no reason to materialise the
+                # 200 x 4,720 x 705 outer product (2.7 GB) the first version built.
+                S_pair = (Qn * wpair[None, :]) @ Cn.T
                 Qr = np.array([R[ki[k]] for k in keys], np.float32)
                 Qr = Qr / (np.linalg.norm(Qr, axis=1, keepdims=True) + 1e-9)
                 S_or = Qr @ Rn.T
@@ -230,9 +229,8 @@ def main():
                             arms.setdefault(f"{nm}{kk}", []).append(hit(Rtr[idx].mean(0), mv, npred, k))
                         idx = np.argsort(-(S_ann[i] + sc_mask))[:kk]
                         arms.setdefault(f"nn_scorable{kk}", []).append(hit(Rtr[idx].mean(0), mv, npred, k))
-                        if S_pair is not None:
-                            idx = np.argsort(-S_pair[i])[:kk]
-                            arms.setdefault(f"metric_pair{kk}", []).append(hit(Rtr[idx].mean(0), mv, npred, k))
+                        idx = np.argsort(-S_pair[i])[:kk]
+                        arms.setdefault(f"metric_pair{kk}", []).append(hit(Rtr[idx].mean(0), mv, npred, k))
             arms = {n: np.array(v) for n, v in arms.items()}
 
             def best(prefix):
