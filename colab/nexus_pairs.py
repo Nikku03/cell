@@ -65,13 +65,32 @@ def interface_residues(t, ch_a, ch_b, cut=8.0):
     return sorted(near)
 
 
-def score_interface(t, ch_a, ch_b, residues):
+def resnames(pdb):
+    """residue NAMES keyed by (chain, resnum). flex_physics.table() drops these, and without them
+    sidechain_vdw cannot assign residue-aware charges -- electrostatics came back EXACTLY 0.000 in all ten
+    complexes on the first run. That was a dead arm, not a null: the term was never tested."""
+    out = {}
+    path = f"{fp.PDBDIR}/{pdb}.pdb"
+    if not os.path.exists(path):
+        return out
+    for line in open(path):
+        if not line.startswith("ATOM"):
+            continue
+        try:
+            out[(line[21], int(line[22:26]))] = line[17:20].strip()
+        except ValueError:
+            continue
+    return out
+
+
+def score_interface(t, ch_a, ch_b, residues, rnames=None):
     """aggregate NEXUS cross-interface terms over chain A's interface residues"""
     tot = {"vdw": 0.0, "contacts": 0, "elec": 0.0, "induc": 0.0, "desolv": 0.0}
     n = 0
     for pos in residues:
         try:
-            sc = fp.sidechain_vdw(t, ch_a, pos)
+            wt = (rnames or {}).get((ch_a, int(pos)))
+            sc = fp.sidechain_vdw(t, ch_a, pos, wt=wt)
         except Exception:
             sc = None
         if not sc:
@@ -118,7 +137,8 @@ def main():
             continue
         res = res[:MAX_RES]
 
-        nat = score_interface(t, ca, cb, res)
+        rn_map = resnames(pdb)
+        nat = score_interface(t, ca, cb, res, rn_map)
         if nat["n_scored"] < 3:
             continue
 
@@ -140,7 +160,7 @@ def main():
             if len(r2) < 3:
                 dec.append(None)
                 continue
-            dec.append(score_interface(t2, ca, cb, r2[:MAX_RES]))
+            dec.append(score_interface(t2, ca, cb, r2[:MAX_RES], rn_map))
         good = [d for d in dec if d and d["n_scored"] >= 3]
         if len(good) < 5:
             continue
@@ -159,6 +179,11 @@ def main():
     # sign convention: more-negative vdw/elec = better; more contacts = better
     better = {"vdw": -1, "elec": -1, "induc": -1, "desolv": -1, "contacts": +1}
     res_tab = {}
+    dead = [t_ for t_ in terms
+            if all(abs(r["native"][t_]) < 1e-12 for r in rows)]
+    if dead:
+        report(f"    LIVENESS: {dead} are exactly zero in every complex -- dead arms, not nulls. "
+               f"Their rows below mean nothing.")
     for term in terms:
         top1 = 0
         zs = []

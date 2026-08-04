@@ -1,0 +1,228 @@
+{
+  "test": "nexus_pairs",
+  "n_pairs": 10,
+  "n_decoy": 15,
+  "chance_top1": 0.0625,
+  "per_term": {
+    "vdw": {
+      "native_top1": 0.7,
+      "mean_z": 0.37127126340581806
+    },
+    "contacts": {
+      "native_top1": 0.0,
+      "mean_z": -1.8128457063500651
+    },
+    "elec": {
+      "native_top1": 0.0,
+      "mean_z": -0.04161915467838388
+    },
+    "induc": {
+      "native_top1": 0.0,
+      "mean_z": -0.6339849646147164
+    },
+    "desolv": {
+      "native_top1": 0.0,
+      "mean_z": -0.9509331160152599
+    }
+  },
+  "complexes": [
+    {
+      "pdb": "1A22",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 60,
+      "native": {
+        "vdw": -25.46490528399209,
+        "contacts": 166,
+        "elec": 0.0,
+        "induc": -64.22254508979641,
+        "desolv": -12.960714975324384,
+        "n_scored": 58
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1A4Y",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 60,
+      "native": {
+        "vdw": -18.835855701687848,
+        "contacts": 121,
+        "elec": 0.0,
+        "induc": -29.3013709819029,
+        "desolv": -7.910809865386437,
+        "n_scored": 55
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1ACB",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "n_iface": 57,
+      "native": {
+        "vdw": -10.918560303424641,
+        "contacts": 79,
+        "elec": 0.0,
+        "induc": -6.992511090274303,
+        "desolv": -20.893379951670465,
+        "n_scored": 46
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1AHW",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 60,
+      "native": {
+        "vdw": -27.775110757356614,
+        "contacts": 171,
+        "elec": 0.0,
+        "induc": -32.18952174516568,
+        "desolv": -38.48073647802687,
+        "n_scored": 52
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1AO7",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 60,
+      "native": {
+        "vdw": -17.609743102897763,
+        "contacts": 89,
+        "elec": 0.0,
+        "induc": -31.674751038780297,
+        "desolv": -9.732867724764285,
+        "n_scored": 53
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1B2S",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 13,
+      "native": {
+        "vdw": -3.7601404740092494,
+        "contacts": 21,
+        "elec": -0.15651310583808709,
+        "induc": -4.291142382610017,
+        "desolv": 0.898311316676161,
+        "n_scored": 12
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1B2U",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 14,
+      "native": {
+        "vdw": -4.11766364800575,
+        "contacts": 28,
+        "elec": 5.409821539337188,
+        "induc": -4.777029167002995,
+        "desolv": 3.2324566492715103,
+        "n_scored": 13
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1B3S",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 13,
+      "native": {
+        "vdw": -3.628091550249553,
+        "contacts": 22,
+        "elec": 4.972467153804251,
+        "induc": -5.210473679229353,
+        "desolv": 0.5556240524781616,
+        "n_scored": 12
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1B41",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 60,
+      "native": {
+        "vdw": -16.337051223384027,
+        "contacts": 108,
+        "elec": 0.0,
+        "induc": -19.843720344571977,
+        "desolv": -22.32203500443541,
+        "n_scored": 54
+      },
+      "n_decoys": 15
+    },
+    {
+      "pdb": "1BD2",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_iface": 60,
+      "native": {
+        "vdw": -19.909901861855168,
+        "contacts": 110,
+        "elec": 0.0,
+        "induc": -39.59787238032623,
+        "desolv": -11.64541357071737,
+        "n_scored": 54
+      },
+      "n_decoys": 15
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "NEXUS ON 10 PAIRS -- native interface vs rigid-body decoys",
+    "====================================================================================================",
+    "  PREDECLARED: native ranks 1st well above chance (0.062) => the physics is a usable",
+    "  judge. Indistinguishable => no judge, and the docking pipeline stops here.",
+    "    1A22 A/B: 60 interface residues, 15/15 usable decoys | native vdw -25.5 contacts 166 elec 0.0",
+    "    1A4Y A/B: 60 interface residues, 15/15 usable decoys | native vdw -18.8 contacts 121 elec 0.0",
+    "    1ACB E/I: 57 interface residues, 15/15 usable decoys | native vdw -10.9 contacts 79 elec 0.0",
+    "    1AHW A/B: 60 interface residues, 15/15 usable decoys | native vdw -27.8 contacts 171 elec 0.0",
+    "    1AO7 A/B: 60 interface residues, 15/15 usable decoys | native vdw -17.6 contacts 89 elec 0.0",
+    "    1B2S A/B: 13 interface residues, 15/15 usable decoys | native vdw -3.8 contacts 21 elec -0.2",
+    "    1B2U A/B: 14 interface residues, 15/15 usable decoys | native vdw -4.1 contacts 28 elec 5.4",
+    "    1B3S A/B: 13 interface residues, 15/15 usable decoys | native vdw -3.6 contacts 22 elec 5.0",
+    "    1B41 A/B: 60 interface residues, 15/15 usable decoys | native vdw -16.3 contacts 108 elec 0.0",
+    "    1BD2 A/B: 60 interface residues, 15/15 usable decoys | native vdw -19.9 contacts 110 elec 0.0",
+    "\n  10 complexes scored\n",
+    "    vdw        native ranks 1st in 7/10 (0.70)   mean z vs decoys +0.37",
+    "    contacts   native ranks 1st in 0/10 (0.00)   mean z vs decoys -1.81",
+    "    elec       native ranks 1st in 0/10 (0.00)   mean z vs decoys -0.04",
+    "    induc      native ranks 1st in 0/10 (0.00)   mean z vs decoys -0.63",
+    "    desolv     native ranks 1st in 0/10 (0.00)   mean z vs decoys -0.95",
+    "    chance     0.06",
+    "\n  READING",
+    "  'vdw' puts the native interface first in 70% of complexes against a 6% chance rate.",
+    "  The physics IS a usable judge at this scale, so a search loop built on it has something real",
+    "  to converge toward. Next question is whether it survives softer decoys than random rotations."
+  ]
+}

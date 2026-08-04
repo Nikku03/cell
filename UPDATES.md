@@ -20582,3 +20582,52 @@ What is established:
 
 The missing list is now a list of open questions with, for some, a short ranked shortlist attached and a named
 source. That is what an unfillable list can honestly become without a wet lab.
+
+# NEXUS on 10 pairs: vdW is a usable judge, contact-counting is actively wrong
+
+`colab/nexus_pairs.py`. The proposed pipeline -- cover the protein in spheres, find partners, dock, compare,
+accept or reject, repeat -- has an accept/reject stage, and that stage is only as good as its judge. If the
+physics cannot rank a real interface above a scrambled one, the loop still runs, the score still improves, and
+it converges confidently on wrong structures. A broken judge does not look broken from inside the loop.
+
+One substitution, stated rather than glossed: NEXUS scores an interface that EXISTS. A non-interacting pair has
+no complex structure, so the honest equivalent is the real interface versus a wrong one -- chain A fixed, chain
+B rigid-body rotated to a different orientation at the same centroid separation.
+
+    term        native ranks 1st      mean z vs decoys
+    vdw              7/10  (0.70)          +0.37
+    contacts         0/10  (0.00)          -1.81
+    elec             0/10  (0.00)          -0.04
+    induc            0/10  (0.00)          -0.63
+    desolv           0/10  (0.00)          -0.95
+    chance                 (0.06)
+
+**vdW works: 70% against a 6% chance rate, ~11x.** That is a usable judge at this scale, and it means a search
+loop has something real to converge toward.
+
+## The contact result is the useful one, and it is a warning
+
+Decoys have MORE buried contacts than natives (z -1.81). A random rotation jams the two chains into each other,
+so raw proximity counting **rewards interpenetration**. vdW gets it right precisely because it carries the
+repulsive term.
+
+**So contact count is exactly the wrong objective for the loop.** Optimising it would drive the search into
+clashes while the number improved. This is the kind of thing that is invisible until you score decoys.
+
+## A dead arm found and fixed mid-run
+
+The first run reported `elec` as EXACTLY 0.000 in all ten complexes. Not a null -- `sidechain_vdw` derives
+residue-aware charges from a `wt=` resname argument, `flex_physics.table()` does not store resnames, and I never
+passed one. Electrostatics was never tested. Fixed by parsing resnames from the PDB directly; elec now computes
+(z -0.04) and still does not discriminate, which is now a real finding rather than a missing argument.
+
+A liveness check is now in the script: any term exactly zero across every complex is reported as a dead arm
+before its row is read.
+
+## What this does and does not license
+
+    a search loop has a working judge                 YES, via vdW, 70% vs 6%
+    that judge survives HARDER decoys                 UNTESTED -- random rotations are easy negatives;
+                                                      near-native poses within a few Angstrom are the real test
+    the pipeline can generate structures              NO -- NEXUS scores, it does not sample. Docking is still
+                                                      the missing stage and needs an engine we do not have
