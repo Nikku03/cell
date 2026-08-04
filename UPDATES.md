@@ -20202,3 +20202,54 @@ the honest control, depth scores 0.7316 and annotation BEATS it. One bad control
 
 The rule this earns: **a control that correlates with the label by construction is worse than no control**, because
 it looks like rigour. The script now DROPS the arm rather than substituting a proxy if the real counts are absent.
+
+# The learned metric fails, and that is the answer to "why haven't we found anything novel"
+
+`colab/adrn_learned_metric.py`. The lookup test left one live hypothesis: the oracle proved a much better answer
+is sitting in the training set (+0.2128 over annotation retrieval, ROBUST 6/6), and annotation cosine -- a
+hand-chosen metric nobody ever validated -- cannot find it. So learn the metric.
+
+    rank 32   linear 0.2875 / 0.2310 / 0.1584   vs annot 0.3130 / 0.2445 / 0.1702   (N = 10 / 20 / 50)
+    rank 64   linear 0.2993 / 0.2384 / 0.1663
+    pair      0.2270 / 0.1873 / 0.1384                       <- a ridge on SHARED labels, worse still
+
+    MEAN fraction of the oracle gap closed: **-5.9%**        FRAGILE, resolved +0/-3 of 6
+
+Both learned metrics score WORSE than the metric they were meant to improve.
+
+## The two diagnostics that make this interpretable
+
+**`metric_pair` reduces to annotation cosine when its weights are all 1.** So the fitted weights are actively
+worse than not fitting. This is not "learning did not help"; it is "learning hurt", which is what overfitting
+looks like.
+
+**Capacity converges toward cosine, not toward the oracle.** rank 32 closes -8.1% of the gap on average, rank 64
+closes -3.6%. More capacity walks the learned metric BACK to plain annotation cosine. Extrapolating the trend
+reaches 0% -- which means "as good as the metric we started with" -- not the large positive needed to reach the
+oracle. **The ceiling of this approach is annotation cosine itself.**
+
+## The caveat that keeps this from being definitive, stated plainly
+
+Only **465 training genes are scorable**, 93 held out for validation, leaving **372 genes** to fit on. "Cannot be
+learned" is confounded with "cannot be learned from 372 genes", and a 705-parameter ridge overfitting that badly
+is consistent with either. This is a real limit on the claim and it is not resolvable on data already here.
+
+I also over-stated one diagnostic earlier in conversation: I said the validation MSE (0.00734) exceeding the
+GLOBAL target variance (0.00576) proves negative R². The validation subset's own variance was never computed, so
+that is suggestive, not established. Corrected here rather than carried.
+
+## What it means, without inflation
+
+Six input representations have now failed at cold start on the sealed task: annotation (twin ceiling), ESM-2,
+network topology, ChIP binding, response columns, and now every similarity function learnable over the
+annotation. The oracle says the answer is in the training set. Nothing we can compute from the descriptors finds
+it.
+
+That is the sharp form of "why nothing novel": **the descriptors index the literature, and the literature does
+not encode which genes respond alike in K562.** Closing the +0.2128 needs new MEASUREMENTS of genes -- a
+descriptor derived from an experiment rather than from a curator -- not new mathematics over what is on disk.
+
+Set against the same day's positive result, the pair is the whole story of this project in two lines:
+
+    annotation predicts WHETHER a knockout does anything      AUC 0.7807, ROBUST 6/6
+    annotation cannot predict WHICH genes it moves            six representations, all failed
