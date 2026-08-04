@@ -20353,3 +20353,54 @@ this project has that shape and every coordinate-style descriptor has failed.
 The honest answer to "how do we predict what we have no data for" is now: **for WHETHER a gene matters, we can
 (AUC 0.78). For WHAT it does, nothing on this disk gets there, and the +0.2128 the oracle proved is reachable
 remains unreachable by any descriptor we have tried -- curated or measured.**
+
+# Markov propagation with a MEASURED operator: the ninth failure, and the best-controlled one
+
+`colab/adrn_markov.py`. Eight previous propagation tests used a CURATED graph as the whole model and all died
+against degree-matched rewiring. Today's evidence said measurements work and descriptions do not, so the roles
+were inverted: the transition operator is the perturbation data itself (T[i,j] = row-normalised |M[i,j]| over
+training rows, square on the 3,935 genes present on both axes), and the curated layers were demoted to seeding
+the walk -- answering only "where does a walk start for a gene whose row is hidden".
+
+    markov - REWIRED       +0.0008   FRAGILE, resolved +2/-0 of 9, sign-consistent FALSE
+    adrn_markov - adrn     +0.0003   FRAGILE, resolved +1/-1 of 9, sign-consistent FALSE
+
+    at alpha=0.3, N=10:  freq 0.1975 | best walk 0.2062 | best REWIRED 0.2037 | ADRN 0.3165
+    seeds:  column 0.1995  ppi 0.1875  pathway 0.1532  spatial 0.1140  complex 0.0932  tf 0.0093
+
+**A measured operator does not rescue propagation.** The walk barely clears the frequency floor, sits far below
+the plain ADRN, and is indistinguishable from the same walk on a degree-matched rewiring of its own seed graphs.
+Nine tests, one answer: these graphs carry node degree and nothing else this task can use.
+
+The `tf` seed at 0.0093 is under-powered rather than disproven -- TRRUST yields only 1,665 usable edges, so most
+sealed genes get an empty seed. Stated so it is not counted as evidence.
+
+## Three flaws in this script, all caught before they became findings
+
+This one test produced more self-inflicted errors than any other today, and every one of them would have printed
+the SAME conclusion the honest run printed -- which is exactly why they were dangerous.
+
+**1. Three layers silently empty.** The first run reported `ppi 0 edges / complex 0 edges / pathway 0 edges`.
+Cause: `ppi`, `g2c`, `g2pw` are keyed by INTEGER gene index while `trrust` and `pw2g` are keyed by name, and
+`cplx` is empty for all 2,039 complexes so the complex layer had to be rebuilt by inverting `g2c`. Three of five
+seeds had never been populated. **A dead arm is not a null.** Now assert-guarded.
+
+**2. An asymmetric control.** The 400k edge cap applied only to the REWIRED copy while the real arm kept full
+membership -- so the control would have had FEWER edges than the layer it controls, on the one gate that decides
+the test. Pathway (428k) and spatial (582k) both hit the cap; spatial would have given the real arm ~45% more
+edges than its null. Both arms now share one edge list by construction.
+
+**3. A dead ADRN+walk arm.** `adrn_markov` printed EXACTLY `adrn` to four decimals in six consecutive cells. A
+walk distribution sums to 1 over 8,246 genes (row norm ~0.011); channels are near-binary with ~15 active (row
+norm ~3.9). Concatenating and normalising the whole row left the walk block **352x smaller** and ridge shrank it
+to zero. Blocks are now normalised separately, with an assert.
+
+Only after all three fixes is the negative worth anything. Before them it was three different bugs wearing the
+same answer.
+
+## The count, updated
+
+Seven representations have now failed at cold start on the sealed task: annotation (twin ceiling), ESM-2,
+network topology, ChIP binding, the response column, every similarity function learnable over annotation, and
+now multi-layer Markov propagation with a measured operator. The retrieval oracle still says a much better
+answer sits in the training set (+0.2128, ROBUST 6/6). Nothing computable from what is on this disk finds it.
