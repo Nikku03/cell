@@ -20527,3 +20527,58 @@ textbook-biology re-finder.
     propose an enzyme never annotated as one         NO -- structurally impossible, and 37% of catalysts
                                                      would need exactly that
     avoid bias toward well-studied proteins          YES -- and it is better on obscure ones
+
+# Filling the missing list from the web: validated, real, and small
+
+`colab/cell_web_fill.py`. The vocabulary ceiling is structural -- a protein never annotated as a catalyst cannot
+be proposed by any score over a vocabulary of known catalysts -- so for the isolated orphans the vocabulary has
+to come from outside. UniProt (reviewed, human), queried by each reaction's own metabolite names.
+
+## The missing list, emitted before knowing whether anything could fill it
+
+    9,186   real orphan pool (not binding, not curator-abstracted)
+    2,583   share no non-currency metabolite with ANY catalysed reaction -- chemically isolated
+    1,636   have named metabolites and can be asked of a text database
+      947   carry only opaque IDs and cannot be queried at all
+
+-> `outputs/orphan/cell_missing_list.json`
+
+## The validation, and it separates cleanly
+
+A web query always returns something -- UniProt will hand back 25 kinases for anything mentioning ATP -- so the
+run was gated on recovering catalysts we already know, against the same query stripped of the reaction's own
+chemistry and left with only generic metabolites.
+
+    queries returning anything : 60/60
+    web query recall           : 0.150   (9/60)
+    stripped-query control     : 0.000   (0/60)
+
+**15% versus exactly zero.** Low in absolute terms, but the control does not score once in sixty attempts, so
+what comes back is specific to the reaction's chemistry rather than "some human enzymes".
+
+## What it filled, and the chemistry is coherent
+
+    R-HSA-901074   Man, H2O                 -> GANAB, MAN1B1, MAN1A1, EDEM3, MAN1A2
+    MAR00666       retinyl-ester            -> RPE65, PNPLA4, AWAT2, LRAT, DGAT2
+    MAR09429       testosterone             -> UGT2B17, SLC10A6, HSD17B1, SRD5A2, HSD17B2
+    MAR10491       16alpha-hydroxyestrone   -> UGT1A10, UGT2B7, CYP3A7, CYP2C8, CYP1A1
+
+Mannose trimming returns the ER mannosidase/glucosidase family. Retinyl ester returns retinoid hydrolases and
+acyltransferases. Testosterone returns androgen-metabolising HSD/SRD/UGT enzymes. These are the right families,
+not generic enzymes -- which is what the 0.000 control already implied and these make legible.
+
+**7 of 40 sampled missing reactions (17.5%) got any candidate at all.**
+
+## The honest size of this
+
+Do not multiply 1,636 x 17.5% x 15% and call it 43 discoveries. The 15% recall was measured on reactions whose
+catalyst IS in UniProt; for genuinely unknown ones the rate is not measurable from here and could be lower.
+What is established:
+
+    the web adds vocabulary we structurally could not have      YES, control 0.000
+    the candidates are chemically specific, not generic         YES, by control and by inspection
+    it fills most of the missing list                           NO -- 17.5% of a sample get anything
+    the candidates are verified                                 NO -- they are hypotheses with provenance
+
+The missing list is now a list of open questions with, for some, a short ranked shortlist attached and a named
+source. That is what an unfillable list can honestly become without a wet lab.
