@@ -1,0 +1,92 @@
+{
+  "test": "dmasif_scaling",
+  "sizes": [
+    35,
+    70,
+    140,
+    260
+  ],
+  "folds": 3,
+  "epochs": 30,
+  "n_available": 345,
+  "n_usable": 260,
+  "curve": [
+    {
+      "n": 35,
+      "auc": 0.748113090047133,
+      "folds": [
+        0.7490957296991498,
+        0.7426502586053148,
+        0.7525932818369346
+      ],
+      "secs": 48.71795678138733
+    },
+    {
+      "n": 70,
+      "auc": 0.7783374914199143,
+      "folds": [
+        0.7910275889016668,
+        0.7697147089796377,
+        0.7742701763784385
+      ],
+      "secs": 63.351768493652344
+    },
+    {
+      "n": 140,
+      "auc": 0.8342646433098825,
+      "folds": [
+        0.8357249093832185,
+        0.83888813597253,
+        0.8281808845738992
+      ],
+      "secs": 126.52596855163574
+    },
+    {
+      "n": 260,
+      "auc": 0.8813459620054807,
+      "folds": [
+        0.8899114694413399,
+        0.8711908675531435,
+        0.8829355490219585
+      ],
+      "secs": 227.02701020240784
+    }
+  ],
+  "best_auc": 0.8813459620054807,
+  "target": 0.9,
+  "log": [
+    "====================================================================================================",
+    "dMaSIF SCALING -- is interface discrimination data-limited or model-limited?",
+    "====================================================================================================",
+    "  PREDECLARED: judged on whether the LAST step still rises. A curve flat between the final two",
+    "  points is flat, however steep it looked earlier.",
+    "\n  345 PDB files in the cache; the published 0.846 used 70",
+    "\n  building surface-point clouds + APBS + KNN graphs (once, reused at every N)...",
+    "    25 usable (255s)",
+    "    50 usable (440s)",
+    "    75 usable (627s)",
+    "    100 usable (804s)",
+    "    125 usable (1049s)",
+    "    150 usable (1294s)",
+    "    175 usable (1652s)",
+    "    200 usable (1876s)",
+    "    225 usable (2207s)",
+    "    250 usable (2526s)",
+    "    260 usable complexes built in 2630s",
+    "    scaling curve at N = [35, 70, 140, 260]",
+    "    N=  35  AUC 0.7481   (folds [0.749, 0.743, 0.753])  49s",
+    "    N=  70  AUC 0.7783   (folds [0.791, 0.77, 0.774])  63s",
+    "    N= 140  AUC 0.8343   (folds [0.836, 0.839, 0.828])  127s",
+    "    N= 260  AUC 0.8813   (folds [0.89, 0.871, 0.883])  227s",
+    "\n       N       AUC     delta",
+    "      35    0.7481          ",
+    "      70    0.7783   +0.0302",
+    "     140    0.8343   +0.0559",
+    "     260    0.8813   +0.0471",
+    "\n  READING",
+    "  last step: +0.0471 going from N=140 to N=260",
+    "  STILL RISING. Interface discrimination is DATA-limited: more complexes buy AUC, the",
+    "  fetcher already exists, and 0.90 is a matter of running it rather than redesigning.",
+    "  target 0.90 | best here 0.8813"
+  ]
+}
