@@ -20016,3 +20016,70 @@ remains unsolved, and the list of things that have now failed at it is:
 
 Five independent input representations, five failures, one measured task. That is no longer a run of bad luck --
 it is the shape of the problem.
+
+# Multiplex is documentation, not architecture; and the basis result, honestly sized
+
+## Multiplex vs flat (`colab/adrn_multilayer.py`)
+
+The multi-layer whole-cell proposal has one sharp consequence: cross-layer structure must beat concatenation,
+because concatenation IS the flattened canvas it argues against. Layers were cut from channel provenance --
+`compartment:`/`go:C:` -> spatial, `pfam:`/`domain:` -> structure, `pathway:`/`go:P:` -> pathway, `go:F:` ->
+molfunc, `complex:`, `lesion:`+reaction-network -> network, `chrom:`+rest -> genomic, plus the response column.
+
+    K=60  ridge_all 0.2610
+    layer         alone  permuted   drop-it
+    pathway      0.2449    0.1776    0.2499     <- carries the most
+    spatial      0.2294    0.1783    0.2542
+    complex      0.2205    0.1811    0.2535
+    genomic      0.2060    0.1791    0.2601
+    molfunc      0.2056    0.1788    0.2601
+    network      0.2000    0.1786    0.2626     <- dropping it HELPS
+    response     0.1958    0.1775    0.2636     <- dropping it helps most
+    structure    0.1810    0.1800    0.2636     <- ~= its own permutation
+
+    G1  multiplex - flat   -0.0184   HARMFUL 5/6, sign-consistent
+    G2  all - best single  +0.0166   ROBUST, but see the count below
+    G3  decorative         structure
+
+**G1 fails.** At matched parameters (235,260 vs 239,411, 1.8% apart) cross-layer attention LOSES to
+concatenation. And both neural arms lose badly to the closed-form ridge: at K=60, multiplex 0.10-0.16 and flat
+0.14-0.17 against ridge 0.2610. The layers are a true account of where each number came from, and the model
+gains nothing from being told which layer a feature belongs to. **The multiplex structure is documentation.**
+
+**Localisation and pathway membership carry this task; sequence-derived structure does not.** `structure`
+(Pfam + InterPro) scores 0.1810 against its own permutation at 0.1800 -- real domain annotation is no better
+than randomly assigned domain annotation. That is the same finding as ESM-2 failing G1+G2, from a second
+direction: what a protein is built from does not predict the transcriptional consequence of removing it.
+
+**The harness caught me a fourth time.** G2 reported ROBUST 6/6, and `duplicate_cells()` printed "Real
+observations: 2." The ridge arms have no random component, so the seed axis duplicated every cell. **G2 is two
+observations, not six**, and I am recording it that way. This is the fourth inert-or-duplicated axis of mine the
+harness has caught today. The pattern is always the same and I keep repeating it: I put a deterministic arm on a
+seed axis. The rule I should have been applying is that an axis is only real if every arm in the sweep responds
+to it.
+
+## The basis composition test (`colab/adrn_basis_compose.py`), and where my pre-written reading overclaims
+
+    MEANS  class-holdout 0.5317 | random-holdout 0.5529 | in-basis ceiling 0.6013 | gap -0.0211
+
+    per cell:  8 clusters -0.0309 -0.0278 -0.0315 | 16 clusters -0.0199 -0.0249 -0.0231
+              32 clusters +0.0009 -0.0136 (+ final cell)
+
+Removing a whole functional class costs more than removing the same number of perturbations at random, resolved
+in a majority of cells. So classes do carry response directions the other classes do not fully span.
+
+**But the prose I wrote in advance for that branch says "a compositional model does NOT exist for this data",
+and a -0.0211 gap on a base of 0.5529 -- about 4% relative -- does not carry that sentence.** I predeclared a
+binary ladder and the result landed resolved-but-small; the branch text was written for a result that never
+arrived. The defensible statement is: **classes are somewhat private, by a small and consistent margin that
+shrinks as classes get finer** (-0.030 at 8 clusters, -0.019 at 16, -0.006 at 32).
+
+**This does not contradict Norman.** They are different questions. Norman combines two MEASURED singles into the
+double of the SAME genes and finds addition works at 82-87% of the noise floor. The basis test asks whether a
+class's responses lie in the span of OTHER classes' responses. Composition within measured parts is strong;
+extrapolation across functional boundaries is weakly but consistently penalised.
+
+The third column is the one worth carrying forward: **the in-basis ceiling is only 0.6013**. Even with the
+profile inside the basis fit and the true response in hand, an NMF reconstruction recovers 60% of its own top-20.
+That is a cap on the whole programme-basis idea, separate from the 0.633 measurement ceiling and not to be
+confused with it -- different data, different denominator.
