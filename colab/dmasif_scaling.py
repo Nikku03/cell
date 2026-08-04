@@ -19,10 +19,22 @@ complex so no complex appears in both train and test -- at increasing N, and rep
 This is the same question the depth test asked about perturbation data, where the answer was "the model is the
 limit". Here it has never been asked, and the two possible answers point at completely different work.
 
+THE CONFOUND THE FIRST RUN HAD, and it is the same one the depth test had.  The first version drew folds
+WITHIN each subset, so the test fold was ~12 complexes at N=35 and ~87 at N=260. The evaluation set changed
+composition along with the training size, and if the complexes added at larger N happen to be easier the curve
+rises for that reason rather than from data. It reported 0.7481 / 0.7783 / 0.8343 / 0.8813 and that number is
+kept, but it does not isolate what it claims to.
+
+Corrected here: a SINGLE held-out test set of N_HOLD complexes, never trained on at any N, with nested training
+subsets drawn from the rest. Every point on the curve is scored on the identical complexes, so training size is
+the only thing that varies.
+
 PREDECLARED, before any number:
     a rising curve is only evidence if the LAST step still rises. A curve that flattens between the last two
     points is flat, however steep it looked earlier -- that is exactly the mistake the perturbation scaling
     curve was built to avoid.
+    and the fixed test set must be LARGE enough that its AUC is stable: the per-seed spread across repeats is
+    reported, and a step smaller than that spread is not a step.
 
 COST.  Training is 5-fold x 60 epochs in the original. Folds and epochs are reduced here so the largest N is
 reachable on CPU, and BOTH are held constant across N -- otherwise the curve would measure training budget
@@ -41,8 +53,9 @@ import adrn_ko_conjunctions as A
 import dmasif as D
 
 OUT = A.OUT
-SIZES = (35, 70, 140, 260)
-FOLDS, EPOCHS = 3, 30
+SIZES = (25, 50, 100, 200)       # TRAINING sizes; the test set is fixed and disjoint from all of them
+N_HOLD = 60                      # held-out complexes, identical at every N
+REPEATS, EPOCHS = 3, 30          # repeats replace folds: same held-out set, different init/shuffle
 
 
 def main():
@@ -72,7 +85,7 @@ def main():
     data = {}
     tb = time.time()
     for pdb in have:
-        if len(data) >= max(SIZES):
+        if len(data) >= max(SIZES) + N_HOLD:
             break
         try:
             pc = D.point_cloud(pdb)
@@ -89,25 +102,27 @@ def main():
             continue
     allp = sorted(data)
     report(f"    {len(allp)} usable complexes built in {time.time()-tb:.0f}s")
-    sizes = [n for n in SIZES if n <= len(allp)]
-    if len(allp) > max(sizes):
-        sizes.append(len(allp))
-    report(f"    scaling curve at N = {sizes}")
-
     FD = data[allp[0]]["pc"]["feat"].shape[1]
     rng = np.random.default_rng(0)
     order = rng.permutation(len(allp))
+    # THE FIXED HELD-OUT SET. Carved off first and never trained on at any N, so every point on the curve is
+    # scored on the identical complexes. The first version drew folds inside each subset, which let the
+    # evaluation set change composition along with the training size.
+    HOLD = [allp[i] for i in order[:N_HOLD]]
+    POOL = [allp[i] for i in order[N_HOLD:]]
+    sizes = [n for n in SIZES if n <= len(POOL)]
+    if len(POOL) > max(sizes):
+        sizes.append(len(POOL))
+    report(f"    {len(HOLD)} complexes held out and never trained on; {len(POOL)} available for training")
+    report(f"    scaling curve at TRAINING N = {sizes}, every point scored on the same {len(HOLD)}")
 
     def run(n):
-        """identical model, identical budget, only N changes -- nested subsets so the curve is monotone in data"""
-        pdbs = [allp[i] for i in order[:n]]
-        folds = [set(np.array(pdbs)[np.arange(len(pdbs))[k::FOLDS]]) for k in range(FOLDS)]
+        """identical model, identical budget, identical test set -- only the TRAINING size changes"""
         aucs = []
-        for fi in range(FOLDS):
-            test = folds[fi]
-            train = [p for p in pdbs if p not in test]
-            torch.manual_seed(0)
-            net = D.__dict__.get("Net")
+        for rep in range(REPEATS):
+            test = set(HOLD)
+            train = list(POOL[:n])
+            torch.manual_seed(rep)
             # dmasif defines Net inside main(); rebuild the identical architecture here
             class GeoConv(nn.Module):
                 def __init__(s, din, dout):
@@ -146,6 +161,7 @@ def main():
                 return model(torch.tensor(pc["feat"]), torch.tensor(g["idx"]),
                              torch.tensor(g["lc"]), torch.tensor(g["dist"]))
 
+            np.random.seed(rep)
             for ep in range(EPOCHS):
                 np.random.shuffle(train)
                 model.train()
@@ -185,19 +201,27 @@ def main():
     for n in sizes:
         t1 = time.time()
         auc, per = run(n)
-        curve.append({"n": n, "auc": auc, "folds": per, "secs": time.time() - t1})
-        report(f"    N={n:>4}  AUC {auc:.4f}   (folds {[round(x,3) for x in per]})  {time.time()-t1:.0f}s")
+        sd = float(np.std(per)) if len(per) > 1 else float("nan")
+        curve.append({"n": n, "auc": auc, "repeats": per, "sd": sd, "secs": time.time() - t1})
+        report(f"    train N={n:>4}  AUC {auc:.4f} +/- {sd:.4f}  (repeats {[round(x,3) for x in per]})  "
+               f"{time.time()-t1:.0f}s")
 
-    report(f"\n  {'N':>6} {'AUC':>9} {'delta':>9}")
+    report(f"\n  {'train N':>8} {'AUC':>9} {'sd':>8} {'delta':>9}")
     for i, c in enumerate(curve):
         d = "" if i == 0 else f"{c['auc']-curve[i-1]['auc']:+.4f}"
-        report(f"  {c['n']:>6} {c['auc']:>9.4f} {d:>9}")
+        report(f"  {c['n']:>8} {c['auc']:>9.4f} {c['sd']:>8.4f} {d:>9}")
+    noise = float(np.mean([c["sd"] for c in curve]))
+    report(f"  mean across-repeat sd {noise:.4f} -- a step smaller than this is not a step")
 
     report("\n  READING")
     if len(curve) >= 2:
         last = curve[-1]["auc"] - curve[-2]["auc"]
-        report(f"  last step: {last:+.4f} going from N={curve[-2]['n']} to N={curve[-1]['n']}")
-        if last > 0.01:
+        # the noise floor is ENFORCED here, not merely printed: a step inside the across-repeat spread is
+        # indistinguishable from re-running the same configuration twice.
+        floor = max(0.01, noise)
+        report(f"  last step: {last:+.4f} going from train N={curve[-2]['n']} to {curve[-1]['n']}, "
+               f"against a floor of {floor:.4f} (max of the 0.01 threshold and the repeat spread)")
+        if last > floor:
             report("  STILL RISING. Interface discrimination is DATA-limited: more complexes buy AUC, the")
             report("  fetcher already exists, and 0.90 is a matter of running it rather than redesigning.")
         elif last > 0.0:
@@ -209,7 +233,8 @@ def main():
             report("  exact MSMS surface instead of the marching-cubes approximation.")
     report(f"  target 0.90 | best here {max(c['auc'] for c in curve):.4f}")
 
-    json.dump({"test": "dmasif_scaling", "sizes": sizes, "folds": FOLDS, "epochs": EPOCHS,
+    json.dump({"test": "dmasif_scaling", "sizes": sizes, "n_hold": N_HOLD, "repeats": REPEATS,
+               "held_out": HOLD, "epochs": EPOCHS, "fixed_test_set": True,
                "n_available": len(have), "n_usable": len(allp), "curve": curve,
                "best_auc": max(c["auc"] for c in curve), "target": 0.90, "log": log},
               open(OUT / "dmasif_scaling.json", "w"), indent=2)
