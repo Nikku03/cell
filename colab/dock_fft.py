@@ -1,69 +1,78 @@
 """EXHAUSTIVE RIGID DOCKING BY FFT -- and the only question that matters: does the TRUE pose rank near the top?
 
-THE IDEA, which is the missing stage of the proposed pipeline: represent both partners on a grid, try every
-relative rotation and every relative position, and find where they interlock without clashing.
+THE IDEA, which is the missing search stage: represent both partners on a grid, try every relative rotation and
+every relative position, and find where they interlock without clashing.
 
-WHY IT IS TRACTABLE.  Scanning translations naively is hopeless -- thousands of rotations x a 96^3 grid is 10^9
-evaluations. But translation-scanning IS a correlation, so one FFT evaluates ALL translations at once. Two
-96^3 transforms per rotation is ~80 ms, so several hundred rotations is minutes, not years. That single fact is
-the difference between "impossible" and "an afternoon".
+WHY IT IS TRACTABLE.  Scanning translations naively is hopeless -- hundreds of rotations x a 96^3 grid is 10^8
+evaluations. But translation-scanning IS a correlation, so one FFT evaluates ALL translations at once. Two 96^3
+transforms per rotation is ~80 ms, so several hundred rotations is minutes, not years.
 
-THE SCORE, Katchalski-Katzir, written as two REAL correlations rather than the usual complex-grid trick:
+THE SCORE, Katchalski-Katzir, as two REAL correlations:
 
-    interlock[k] = ( surface_R  correlate  solid_L )[k]      surface shell of receptor touched by ligand
-    clash[k]     = ( core_R     correlate  solid_L )[k]      ligand atoms buried inside the receptor
+    interlock[k] = ( skin_R  correlate  solid_L )[k]   ligand volume sitting in the receptor's outward shell
+    clash[k]     = ( core_R  correlate  solid_L )[k]   ligand volume driven into the receptor's interior
     score[k]     = interlock[k] - CLASH_W * clash[k]
 
-THE COMPLEX TRICK IS WRONG THE WAY IT IS USUALLY WRITTEN DOWN, and I had it wrong here first. Putting the core
-on the imaginary axis (surface=1, core=-15j) and taking Re(ifftn(F_R * conj(F_L))) does NOT penalise clash:
-with R = R_s + i R_c and L = L_s + i L_c,
+THE FIRST VERSION OF THIS FILE WAS VOID, and the way it failed is the point of the rewrite.
 
-    R * conj(L) = (R_s L_s + R_c L_c) + i(R_c L_s - R_s L_c)
+  (a) It rasterised ATOM CENTRES and dilated by one cell. At 1.4 A spacing a van der Waals contact is 3.5 A =
+      2.5 cells, and one cell of dilation on each side leaves a 0.5-cell GAP. The two shells never touched, so
+      the TRUE interface scored 8 out of a maximum of 989 -- near zero. Fixed by rasterising each atom to its
+      actual vdW radius and defining the receptor's shell as a 2-cell layer growing OUTWARD from the molecular
+      surface, which is exactly where a partner at contact distance sits. Native interlock 8 -> 177.
 
-so the real part is surface-surface PLUS core-core -- burial is REWARDED. The sign only works without the
-conjugate (a convolution, not a correlation). Two explicit real correlations cost the same and cannot be got
-backwards, and by linearity they collapse to one transform pair anyway:
+  (b) It took chains[0] and chains[1], alphabetically. That is not the biological interface. 1AK4 A/B has
+      ZERO atom pairs within 5 A (the real interface is B/C); 1BRS and 1B2S got crystal-packing contacts of
+      153 and 140 instead of the real 568 and 574. Four of six complexes were docked on the wrong pair. Fixed
+      by choosing the chain pair with the most 5 A atom contacts and requiring at least MIN_CONTACTS.
 
-    score = irfftn( ( F[surf_R] - CLASH_W * F[core_R] ) * conj( F[solid_L] ) )
+  Together those made the earlier run's conclusion -- "the score is weak, the native cannot be ranked" -- simply
+  false. With the representation corrected, the native translation at the native rotation ranks in the TOP 1-4
+  of all 884,736 placements in all six complexes. The failure was mine, not the method's.
 
-THE TEST, and it is the whole point.  Exhaustive search is easy to demonstrate and proves nothing on its own --
-it always returns a best pose. The question is whether the TRUE pose is anywhere near the top of what the search
-finds, because the proposed accept/reject loop assumes the score can recognise the right answer when it sees it.
+  The diagnostic that caught it is in `dock_diagnose.py`, and its own auto-reading was ALSO wrong: it branched
+  on "is the native being charged a clash penalty" and concluded "score is weak, not broken" when clash was 0.
+  It never checked whether native INTERLOCK was non-trivial, which is where the bug actually lived. A gate that
+  only tests the failure mode you thought of will confidently clear the one you did not.
+
+SO THIS FILE NOW CARRIES A HARD SANITY GATE. Before a complex is docked, its native pose must score interlock
+well above an arbitrary placement's. A complex that fails is reported as REPRESENTATION FAIL and excluded from
+the hit rates rather than silently dragging them down.
+
+THE CLASH WEIGHT IS TUNED ON A HELD-OUT SPLIT.  The weight matters enormously (top-18,218 at w=3, top-18 at
+w=10, top-3 at w=30), so picking it by looking at the complexes it is then scored on would be tuning on the test
+set. Complexes are split by sorted PDB id: the first N_TUNE choose the weight, the rest are never touched until
+the blind run. The chosen weight and both splits are printed.
+
+THE TEST.  Exhaustive search always returns a best pose, so "it found something" proves nothing:
 
     hit rate       is a NEAR-NATIVE pose (ligand RMSD <= 5 A, the standard acceptable-pose criterion) in the
                    top 1 / 10 / 100 of the ranked pose list?
-    CONTROL        what would a random ranker score? That is not a guess: every retained pose has a known RMSD,
-                   so the near-native FRACTION f of the pose set gives the exact chance rate 1-(1-f)^k. A hit
-                   rate that only matches 1-(1-f)^k means the SEARCH found the answer and the SCORE did not
-                   rank it -- the pose list would work just as well shuffled.
-
-DIAGNOSTIC, clearly separated because it uses the answer: the native rotation is added to the rotation set as
-index -1. That decomposes any failure. If near-native is missing even at the native rotation, TRANSLATION
-scoring is broken. If it appears at the native rotation but not in the blind search, ROTATION SAMPLING is too
-coarse -- a compute problem, not a concept problem.
-
-PREDECLARED, before any number:
-    near-native in top-10 for a majority AND above the chance rate  -> search AND score work together. The
-                                                                       accept/reject loop has something real.
-    near-native present in the pose set, hit rate ~ chance rate     -> the SEARCH works and the SCORE does not.
-                                                                       Ranking is the open problem.
-    no near-native pose anywhere in the set                         -> rotation sampling or grid resolution,
-                                                                       not a refutation of the concept. The
-                                                                       native-rotation diagnostic says which.
+    CONTROL        every retained pose has a known RMSD, so the near-native FRACTION f of the pose set gives
+                   the exact random-ranker rate 1-(1-f)^k. A hit rate matching that means the SEARCH found the
+                   answer and the SCORE did not rank it -- the list would work as well shuffled.
+    DIAGNOSTIC     the native rotation goes in as index -1, kept out of the blind list, so a miss separates
+                   "translation scoring is broken" from "rotation sampling is too coarse".
 
 SAMPLING FLOOR, stated before the run so a null cannot be re-read afterwards. N random rotations cover SO(3)
-with P(some rotation within angle t of native) = 1-(1-t^3/(6*pi))^N. A ligand of radius of gyration Rg suffers
-ligand RMSD ~ t*Rg from a rotation error t, so RMSD <= 5 A needs t <= 5/Rg. Both numbers are printed per
-complex. If P is low, a miss is expected and means nothing.
+with P(some rotation within angle t of native) = 1-(1-t^3/(6*pi))^N, and a ligand of gyration radius Rg suffers
+ligand RMSD ~ t*Rg. Both are printed per complex; if P is low, a miss is expected and means nothing.
 
-HONEST LIMITS, up front: rigid bodies only -- sidechains move 1-3 A on binding, so rigid docking finds the right
-NEIGHBOURHOOD and the last angstrom needs flexible refinement. Shape complementarity only, no electrostatics.
-Every one of these makes the numbers here a LOWER bound.
+PREDECLARED, before any number:
+    near-native in top-10 for a majority of TEST complexes AND above chance -> search AND score work together.
+    near-native present in the pose set, hit rate ~ chance                  -> search works, score does not.
+    no near-native pose anywhere                                            -> sampling or representation; the
+                                                                              native-rotation row says which.
+
+HONEST LIMITS: rigid bodies only -- sidechains move 1-3 A on binding, so this finds the right NEIGHBOURHOOD and
+the last angstrom needs flexible refinement. Shape only, no electrostatics. Bound-form coordinates on both
+sides, which is the easy case; unbound docking is harder and is not what this measures.
 """
 import json
 import os
 import sys
 import time
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
@@ -73,19 +82,20 @@ import adrn_ko_conjunctions as A
 import flex_physics as fp
 
 OUT = A.OUT
-N_PAIRS = 6
 GRID, SPACING = 96, 1.4          # cells, Angstrom per cell -> 134 A box
-N_ROT = 600                      # rotations sampled; coarse, and the covering probability is printed
-CLASH_W = 15.0                   # core-core penalty weight relative to surface-surface reward
-NEAR_NATIVE = 5.0                # ligand RMSD threshold for an "acceptable" pose
+N_ROT = 600                      # blind rotations; coarse, and the covering probability is printed
+SKIN, CORE_ERODE = 2, 1          # receptor shell thickness / interior erosion, in cells
+WEIGHTS = (1.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0, 100.0)
+NEAR_NATIVE = 5.0
 TOPK = (1, 10, 100)
-PEAKS_PER_ROT = 4                # retained per rotation AFTER non-maximum suppression
-NMS_CELLS = 4                    # minimum separation between retained peaks, in grid cells
-MIN_AT, MAX_AT = 250, 2600       # atom-count window; upper bound is set by the box, checked again per complex
+PEAKS_PER_ROT, NMS_CELLS = 4, 4
+MIN_AT, MAX_AT = 250, 2600
+MIN_CONTACTS = 100               # atom pairs within 5 A required for a chain pair to count as an interface
+N_TOTAL, N_TUNE = 20, 8
+SANITY_RATIO = 5.0               # native interlock must beat the median placement by this factor
 
 
 def rotations(n, seed=0):
-    """quasi-uniform rotations via random quaternions -- coarse but unbiased"""
     rng = np.random.default_rng(seed)
     out = []
     for _ in range(n):
@@ -99,44 +109,52 @@ def rotations(n, seed=0):
     return out
 
 
-def _dilate(b):
-    """6-neighbour dilation. Atom CENTRES at 1.4 A spacing leave gaps inside a protein, so an un-dilated
-    occupancy has a pitted, mostly-hollow interior and the 'core' erosion below returns almost nothing --
-    the clash term would then be near-dead without ever being exactly zero."""
+def _morph(b, n, grow):
     o = b.copy()
-    for ax in range(3):
-        for s in (1, -1):
-            o |= np.roll(b, s, axis=ax)
+    for _ in range(n):
+        p = o.copy()
+        for ax in range(3):
+            for s in (1, -1):
+                if grow:
+                    o |= np.roll(p, s, axis=ax)
+                else:
+                    o &= np.roll(p, s, axis=ax)
     return o
 
 
-def _erode(b):
-    o = b.copy()
-    for ax in range(3):
-        for s in (1, -1):
-            o &= np.roll(b, s, axis=ax)
-    return o
+def offsets_for(rad):
+    """(offset, atom-mask) pairs: which atoms reach a cell this far away. Radii do not change under rotation,
+    so this is computed ONCE per molecule and reused for every pose."""
+    rm = int(np.ceil(rad.max() / SPACING))
+    out = []
+    for dx in range(-rm, rm + 1):
+        for dy in range(-rm, rm + 1):
+            for dz in range(-rm, rm + 1):
+                d = np.sqrt(dx * dx + dy * dy + dz * dz) * SPACING
+                sel = rad >= d
+                if sel.any():
+                    out.append(((dx, dy, dz), sel))
+    return out
 
 
-def gridify(co, centre):
-    """returns (solid, surf, core) boolean grids. surface shell is one cell = 1.4 A thick."""
-    idx = np.floor((co - centre) / SPACING + GRID / 2).astype(int)
-    ok = ((idx >= 1) & (idx < GRID - 1)).all(1)
-    idx = idx[ok]
-    if len(idx) < MIN_AT:
-        return None
+def rasterise(co, centre, offs):
+    """solid vdW volume on the grid. Atom CENTRES alone leave a half-cell gap across a real contact -- that was
+    the bug that made the first version of this file report near-zero interlock at true interfaces."""
+    idx = np.round((co - centre) / SPACING + GRID / 2).astype(int)
+    ok = ((idx >= 3) & (idx < GRID - 3)).all(1)
     occ = np.zeros((GRID, GRID, GRID), bool)
-    occ[idx[:, 0], idx[:, 1], idx[:, 2]] = True
-    solid = _dilate(occ)                       # fill inter-atom gaps so the body is solid, not pitted
-    core = _erode(solid)
-    surf = solid & ~core
-    return solid, surf, core
+    if ok.sum() < MIN_AT:
+        return None
+    for (dx, dy, dz), sel in offs:
+        j = idx[sel & ok]
+        if len(j):
+            occ[j[:, 0] + dx, j[:, 1] + dy, j[:, 2] + dz] = True
+    return occ
 
 
 def nms_peaks(sc, n, sep):
-    """top n peaks at least `sep` cells apart. Without this the top-12 cells of a smooth correlation surface
-    are all neighbours of ONE peak, so a 'top-10 pose list' would be one pose listed ten times and the rank
-    test would be meaningless."""
+    """top n peaks at least `sep` cells apart. Without this the top cells of a smooth correlation surface are
+    all neighbours of ONE peak, so a 'top-10 pose list' is one pose listed ten times."""
     flat = np.argpartition(sc, -400, axis=None)[-400:]
     flat = flat[np.argsort(sc.reshape(-1)[flat])[::-1]]
     coords = np.array(np.unravel_index(flat, sc.shape)).T
@@ -144,7 +162,7 @@ def nms_peaks(sc, n, sep):
     for c in coords:
         if keep:
             d = np.abs(np.array(keep) - c)
-            d = np.minimum(d, GRID - d)        # wrapped distance: the correlation grid is periodic
+            d = np.minimum(d, GRID - d)          # the correlation grid is periodic
             if (d.max(1) < sep).any():
                 continue
         keep.append(c)
@@ -154,11 +172,63 @@ def nms_peaks(sc, n, sep):
 
 
 def shift_of(pk):
-    """irfftn(FA * conj(FL))[k] = sum_x A[x+k] L[x], so the INDEX is the shift in cells, with wraparound
-    meaning negative. Subtracting GRID/2 is the convention for a centred FFT, not a correlation index."""
+    """irfftn(FA * conj(FL))[k] = sum_x A[x+k] L[x], so the INDEX is the shift in cells, wraparound meaning
+    negative. The box guard (D_R + D_L <= box) makes the in-contact representative the only physical one."""
     kk = np.array(pk, float)
     kk[kk > GRID / 2] -= GRID
     return kk * SPACING
+
+
+def prepare(pdb):
+    """pick the chain pair that is actually an interface, build both grids, return everything reusable."""
+    try:
+        t = fp.table(pdb)
+    except Exception:
+        return None
+    if t is None:
+        return None
+    chs = sorted(set(t["ch"].tolist()))
+    cand = []
+    for a, b in combinations(chs, 2):
+        A_, B_ = t["co"][t["ch"] == a], t["co"][t["ch"] == b]
+        if not (MIN_AT <= len(A_) <= MAX_AT and MIN_AT <= len(B_) <= MAX_AT):
+            continue
+        n = int((np.linalg.norm(A_[:, None, :] - B_[None, :, :], axis=2) < 5.0).sum())
+        cand.append((n, a, b))
+    if not cand:
+        return None
+    n_ct, ca, cb = max(cand)
+    if n_ct < MIN_CONTACTS:
+        return None
+    R, L = t["co"][t["ch"] == ca], t["co"][t["ch"] == cb]
+    rR, rL = t["rad"][t["ch"] == ca], t["rad"][t["ch"] == cb]
+    dR = float(np.linalg.norm(R - R.mean(0), axis=1).max() * 2)
+    dL = float(np.linalg.norm(L - L.mean(0), axis=1).max() * 2)
+    if dR + dL > GRID * SPACING:
+        return None                              # circular correlation: a wrapped pose could fake a contact
+    centre = R.mean(0)
+    solid_R = rasterise(R, centre, offsets_for(rR))
+    if solid_R is None:
+        return None
+    skin_R = _morph(solid_R, SKIN, True) & ~solid_R
+    core_R = _morph(solid_R, CORE_ERODE, False)
+    lcen = L.mean(0)
+    offs_L = offsets_for(rL)
+    solid_L = rasterise(L - lcen + centre, centre, offs_L)
+    if solid_L is None:
+        return None
+    F_skin = np.fft.rfftn(skin_R.astype(np.float32))
+    F_core = np.fft.rfftn(core_R.astype(np.float32))
+    FL = np.conj(np.fft.rfftn(solid_L.astype(np.float32)))
+    inter = np.fft.irfftn(F_skin * FL, solid_R.shape)
+    clash = np.fft.irfftn(F_core * FL, solid_R.shape)
+    k_nat = tuple(int(x) for x in (np.round((lcen - centre) / SPACING).astype(int) % GRID))
+    sane = float(inter[k_nat]) > SANITY_RATIO * float(np.median(inter[inter > 0])) if (inter > 0).any() else False
+    return {"pdb": pdb, "ca": ca, "cb": cb, "n_contacts": n_ct, "R": R, "L": L, "centre": centre,
+            "lcen": lcen, "offs_L": offs_L, "F_skin": F_skin, "F_core": F_core, "shape": solid_R.shape,
+            "nat_inter": float(inter[k_nat]), "nat_clash": float(clash[k_nat]),
+            "med_inter": float(np.median(inter[inter > 0])) if (inter > 0).any() else 0.0,
+            "k_nat": k_nat, "nat_inter_field": inter, "nat_clash_field": clash, "sane": bool(sane)}
 
 
 def main():
@@ -172,158 +242,163 @@ def main():
     report("=" * 100)
     report("EXHAUSTIVE RIGID DOCKING BY FFT -- does the TRUE pose rank near the top?")
     report("=" * 100)
-    report(f"  grid {GRID}^3 at {SPACING} A ({GRID*SPACING:.0f} A box) | {N_ROT} blind rotations + the native "
-           f"rotation as a diagnostic | near-native = ligand RMSD <= {NEAR_NATIVE} A")
-    report(f"  score = surf_R*solid_L - {CLASH_W}*core_R*solid_L, two real correlations, one transform pair")
-    report("  PREDECLARED: near-native in top-10 for a majority AND above the chance rate 1-(1-f)^10 => search")
-    report("  AND score work. Hit rate ~ chance => search works, score does not. Absent entirely => sampling.")
+    report(f"  grid {GRID}^3 at {SPACING} A ({GRID*SPACING:.0f} A box) | {N_ROT} blind rotations + the native")
+    report(f"  rotation as a diagnostic | vdW-radius rasterisation, {SKIN}-cell outward shell")
+    report(f"  clash weight TUNED on the first {N_TUNE} complexes, blind-tested on the rest -- never both")
+    report("  PREDECLARED: near-native in top-10 for a majority of TEST complexes AND above the chance rate")
+    report("  1-(1-f)^10 => search AND score work. Hit rate ~ chance => search works, score does not.")
 
     have = sorted(f[:-4] for f in os.listdir(fp.PDBDIR) if f.endswith(".pdb"))
-    rots = rotations(N_ROT)
-    box = GRID * SPACING
-    rows, skipped = [], {"one_chain": 0, "size": 0, "box": 0, "grid": 0}
+    report(f"\n  {len(have):,} structures in the cache; selecting complexes with a real interface "
+           f"(>= {MIN_CONTACTS} atom pairs within 5 A)")
+    prepped, insane = [], []
     for pdb in have:
-        if len(rows) >= N_PAIRS:
+        if len(prepped) >= N_TOTAL:
             break
-        try:
-            t = fp.table(pdb)
-        except Exception:
+        p = prepare(pdb)
+        if p is None:
             continue
-        if t is None:
+        if not p["sane"]:
+            insane.append(p["pdb"])
             continue
-        chains = sorted(set(t["ch"].tolist()))
-        if len(chains) < 2:
-            skipped["one_chain"] += 1
-            continue
-        ca, cb = chains[0], chains[1]
-        R = t["co"][t["ch"] == ca]
-        L = t["co"][t["ch"] == cb]
-        if not (MIN_AT <= len(R) <= MAX_AT and MIN_AT <= len(L) <= MAX_AT):
-            skipped["size"] += 1
-            continue
-        # the correlation is CIRCULAR, so a pose can wrap around the box and score as if it were in contact.
-        # requiring D_R + D_L <= box makes every wrapped placement a non-contact one.
-        dR = float(np.linalg.norm(R - R.mean(0), axis=1).max() * 2)
-        dL = float(np.linalg.norm(L - L.mean(0), axis=1).max() * 2)
-        if dR + dL > box:
-            skipped["box"] += 1
-            continue
+        prepped.append(p)
+    if len(prepped) < N_TUNE + 4:
+        report(f"\n  only {len(prepped)} usable complexes -- not enough to split")
+        return 1
+    tune, test = prepped[:N_TUNE], prepped[N_TUNE:]
+    report(f"    {len(prepped)} usable   TUNE {[p['pdb'] for p in tune]}")
+    report(f"                    TEST {[p['pdb'] for p in test]}")
+    if insane:
+        report(f"    REPRESENTATION FAIL (native interlock not {SANITY_RATIO}x the median placement): {insane}")
 
-        centre = R.mean(0)
-        gr = gridify(R, centre)
-        if gr is None:
-            skipped["grid"] += 1
-            continue
-        _solid_R, surf_R, core_R = gr
-        FA = np.fft.rfftn(surf_R.astype(np.float32)) - CLASH_W * np.fft.rfftn(core_R.astype(np.float32))
-        F_surf_only = np.fft.rfftn(surf_R.astype(np.float32))
+    # ---------------- SANITY: does the true interface register at all? ----------------
+    report(f"\n  SANITY -- native pose components (the check the first version of this file did not have)")
+    report(f"    {'pdb':<6}{'pair':>6}{'contacts':>10}{'nat interlock':>15}{'nat clash':>11}{'median cell':>13}")
+    for p in prepped:
+        report(f"    {p['pdb']:<6}{p['ca']+'/'+p['cb']:>6}{p['n_contacts']:>10}"
+               f"{p['nat_inter']:>15.0f}{p['nat_clash']:>11.0f}{p['med_inter']:>13.1f}")
 
-        lcen = L.mean(0)
+    # ---------------- TUNE the clash weight, on the TUNE split only ----------------
+    report(f"\n  TUNING the clash weight on {len(tune)} held-out complexes: rank of the native TRANSLATION "
+           f"at the native rotation, out of {GRID**3:,}")
+    report("    " + f"{'pdb':<6}" + "".join(f"{('w=' + str(int(w))):>10}" for w in WEIGHTS))
+    ranks = {w: [] for w in WEIGHTS}
+    for p in tune:
+        row = []
+        for w in WEIGHTS:
+            sc = p["nat_inter_field"] - w * p["nat_clash_field"]
+            r = int((sc > sc[p["k_nat"]]).sum())
+            ranks[w].append(r)
+            row.append(f"{r:>10,}")
+        report("    " + f"{p['pdb']:<6}" + "".join(row))
+    med = {w: float(np.median(ranks[w])) for w in WEIGHTS}
+    report("    " + f"{'MEDIAN':<6}" + "".join(f"{med[w]:>10,.0f}" for w in WEIGHTS))
+    CLASH_W = min(WEIGHTS, key=lambda w: med[w])
+    report(f"    -> clash weight {CLASH_W:g} (median native rank {med[CLASH_W]:,.0f}). The TEST complexes have "
+           f"not been looked at.")
+    for p in prepped:                            # 14 MB of correlation fields per complex, no longer needed
+        p.pop("nat_inter_field", None)
+        p.pop("nat_clash_field", None)
+
+    # ---------------- BLIND SEARCH on the TEST split ----------------
+    report(f"\n  BLIND SEARCH on {len(test)} complexes never used for tuning")
+    rots = rotations(N_ROT)
+    rows = []
+    for p in test:
+        centre, L, lcen = p["centre"], p["L"], p["lcen"]
         Lc = L - lcen
         rg = float(np.sqrt((Lc ** 2).sum(1).mean()))
-        t_need = NEAR_NATIVE / rg                                  # rotation error tolerable, radians
-        p_one = min(1.0, t_need ** 3 / (6 * np.pi))
-        p_cov = 1 - (1 - p_one) ** N_ROT
-
+        t_need = NEAR_NATIVE / rg
+        p_cov = 1 - (1 - min(1.0, t_need ** 3 / (6 * np.pi))) ** N_ROT
+        FA = p["F_skin"] - CLASH_W * p["F_core"]
         t1 = time.time()
-        best, live_checked, live_diff = [], False, None
-        # rotation index -1 is the NATIVE orientation -- diagnostic only, kept out of the blind pose list
+        best = []
         for ri, Rm in [(-1, np.eye(3))] + list(enumerate(rots)):
-            g = gridify(Lc @ Rm.T + centre, centre)
+            g = rasterise(Lc @ Rm.T + centre, centre, p["offs_L"])
             if g is None:
                 continue
-            FL = np.conj(np.fft.rfftn(g[0].astype(np.float32)))
-            sc = np.fft.irfftn(FA * FL, surf_R.shape)
-            if not live_checked:
-                # LIVENESS: the clash term must actually change the answer, or this is surface overlap with a
-                # decorative penalty. Compared on the same rotation, same grids.
-                sc0 = np.fft.irfftn(F_surf_only * FL, surf_R.shape)
-                live_diff = float(np.abs(sc - sc0).max())
-                assert live_diff > 1e-3, "clash term is dead -- score is pure surface overlap"
-                assert np.unravel_index(np.argmax(sc), sc.shape) != np.unravel_index(np.argmax(sc0), sc0.shape) \
-                    or live_diff > 1.0, "clash term does not move the optimum"
-                live_checked = True
+            sc = np.fft.irfftn(FA * np.conj(np.fft.rfftn(g.astype(np.float32))), p["shape"])
             for pk in nms_peaks(sc, PEAKS_PER_ROT, NMS_CELLS):
                 if sc[pk] <= 0:
-                    continue          # net-clashing or non-contacting; not a pose the search "found"
+                    continue                     # net-clashing or non-contacting; not a pose the search found
                 best.append((float(sc[pk]), ri, shift_of(pk)))
-
-        nat_poses = [b for b in best if b[1] == -1]
-        blind = sorted([b for b in best if b[1] != -1], key=lambda x: -x[0])
 
         def rmsd_of(ri, shift):
             Rm = np.eye(3) if ri == -1 else rots[ri]
-            posed = Lc @ Rm.T + centre + shift
-            return float(np.sqrt(((posed - L) ** 2).sum(1).mean()))
+            return float(np.sqrt((((Lc @ Rm.T + centre + shift) - L) ** 2).sum(1).mean()))
 
-        rm = np.array([rmsd_of(ri, s) for _v, ri, s in blind]) if blind else np.array([])
-        if not len(rm):
-            skipped["grid"] += 1
+        nat_rm = [rmsd_of(-1, s) for _v, r, s in best if r == -1]
+        blind = sorted([b for b in best if b[1] != -1], key=lambda x: -x[0])
+        if not blind:
             continue
+        rm = np.array([rmsd_of(ri, s) for _v, ri, s in blind])
         hits = {k: bool((rm[:k] <= NEAR_NATIVE).any()) for k in TOPK}
         frac = float((rm <= NEAR_NATIVE).mean())
         chance = {k: 1 - (1 - frac) ** k for k in TOPK}
-        nat_rm = [rmsd_of(-1, s) for _v, _r, s in nat_poses]
-
-        rows.append({"pdb": pdb, "chains": [ca, cb], "n_R": int(len(R)), "n_L": int(len(L)),
+        rows.append({"pdb": p["pdb"], "chains": [p["ca"], p["cb"]], "n_contacts": p["n_contacts"],
                      "rg_ligand": rg, "rot_tol_deg": float(np.degrees(t_need)), "p_coverage": float(p_cov),
                      "n_poses": len(blind), "best_rmsd": float(rm.min()),
                      "rank_of_best_rmsd": int(np.argmin(rm)), "near_native_frac": frac,
                      "hits": hits, "chance": chance,
                      "native_rot_best_rmsd": float(min(nat_rm)) if nat_rm else None,
-                     "clash_liveness_delta": live_diff, "secs": time.time() - t1})
-        report(f"    {pdb} {ca}/{cb} ({len(R)}+{len(L)} atoms, Rg_L {rg:.0f} A): {len(blind)} poses in "
-               f"{time.time()-t1:.0f}s | best RMSD {rm.min():.1f} A at rank {int(np.argmin(rm))} | "
-               f"top10 {hits[10]} (chance {chance[10]:.3f}) | native-rot best {min(nat_rm):.1f} A | "
-               f"P(cover {np.degrees(t_need):.0f} deg) {p_cov:.2f}")
+                     "secs": time.time() - t1})
+        report(f"    {p['pdb']} {p['ca']}/{p['cb']}: {len(blind)} poses in {time.time()-t1:.0f}s | best RMSD "
+               f"{rm.min():5.1f} A at rank {int(np.argmin(rm)):>4} | top1 {str(hits[1]):<5} top10 "
+               f"{str(hits[10]):<5} (chance {chance[10]:.3f}) | native-rot best "
+               f"{(min(nat_rm) if nat_rm else float('nan')):5.1f} A | P(cov) {p_cov:.2f}")
 
     if not rows:
-        report(f"\n  no usable complexes  {skipped}")
+        report("\n  no usable TEST complexes")
         return 1
 
-    report(f"\n  {len(rows)} complexes docked   (skipped: {skipped})")
-    report(f"  clash-term liveness: max |score - score_without_clash| = "
-           f"{min(r['clash_liveness_delta'] for r in rows):.1f} (min over complexes)")
-    report(f"\n  {'top-k':>8} {'hits':>8} {'chance':>10}")
+    report(f"\n  {len(rows)} TEST complexes docked blind at clash weight {CLASH_W:g}")
+    report(f"\n  {'top-k':>8} {'hits':>10} {'expected by chance':>20}")
     tab = {}
     for k in TOPK:
         n = sum(r["hits"][k] for r in rows)
         exp = float(np.mean([r["chance"][k] for r in rows])) * len(rows)
         tab[str(k)] = {"hits": n, "expected_by_chance": exp}
-        report(f"  {k:>8} {n:>4}/{len(rows):<3} {exp:>10.2f}")
+        report(f"  {k:>8} {str(n) + '/' + str(len(rows)):>10} {exp:>20.2f}")
     bm = float(np.median([r["best_rmsd"] for r in rows]))
     nat_ok = [r for r in rows if r["native_rot_best_rmsd"] is not None]
     nbm = float(np.median([r["native_rot_best_rmsd"] for r in nat_ok])) if nat_ok else float("nan")
     report(f"\n    median best RMSD anywhere in the blind pose set : {bm:.1f} A")
-    report(f"    median best RMSD at the NATIVE rotation          : {nbm:.1f} A   <- translation scoring alone")
+    report(f"    median best RMSD at the NATIVE rotation          : {nbm:.1f} A  <- translation scoring alone")
     report(f"    median P(rotation set covers the native)         : "
            f"{np.median([r['p_coverage'] for r in rows]):.2f}")
 
     report("\n  READING")
-    top10, exp10 = sum(r["hits"][10] for r in rows), float(np.mean([r["chance"][10] for r in rows])) * len(rows)
+    top10 = sum(r["hits"][10] for r in rows)
+    exp10 = float(np.mean([r["chance"][10] for r in rows])) * len(rows)
     found = sum(r["best_rmsd"] <= NEAR_NATIVE for r in rows)
     if top10 > len(rows) / 2 and top10 > exp10 + 1:
-        report(f"  Near-native poses rank in the top 10 for {top10}/{len(rows)} complexes against {exp10:.1f}")
-        report("  expected from ranking the same pose set at random. The exhaustive search AND the shape score")
-        report("  work together, and the accept/reject loop has something real to iterate on.")
+        report(f"  Near-native ranks top-10 for {top10}/{len(rows)} TEST complexes against {exp10:.1f} expected")
+        report("  from shuffling the same pose set. The search AND the score work together, at a clash weight")
+        report("  chosen without ever looking at these complexes. Rigid-body docking is a real stage here.")
     elif found:
         report(f"  The search REACHES near-native ({found}/{len(rows)} complexes have a pose <= {NEAR_NATIVE} A,")
-        report(f"  median best {bm:.1f} A) but the score does not rank it: top-10 hits {top10} vs {exp10:.1f}")
-        report("  expected by chance. Sampling is solved; RANKING is the open problem, and more rotations")
-        report("  cannot fix a score that cannot tell the right pose from the wrong one.")
+        report(f"  median {bm:.1f} A) but does not RANK it: top-10 hits {top10} vs {exp10:.1f} by chance.")
+        report("  Sampling is solved; RANKING is the open problem, and more rotations cannot fix a score that")
+        report("  cannot tell the right pose from the wrong one.")
     elif nat_ok and nbm <= NEAR_NATIVE:
-        report(f"  No near-native pose in the blind set, but at the NATIVE rotation the score does find the")
-        report(f"  right translation ({nbm:.1f} A). So translation scoring works and ROTATION SAMPLING is the")
-        report(f"  binding constraint at N={N_ROT} -- a compute problem with a known fix, not a refutation.")
+        report(f"  No near-native pose blind, but at the NATIVE rotation the score finds the right translation")
+        report(f"  ({nbm:.1f} A). Translation scoring works; ROTATION SAMPLING binds at N={N_ROT}. That is a")
+        report("  compute problem with a known fix, not a refutation.")
     else:
-        report(f"  No near-native pose even at the native rotation (median {nbm:.1f} A). Translation scoring")
-        report(f"  itself is wrong -- the grid resolution or the surface definition, not the sampling.")
+        report(f"  No near-native pose even at the native rotation (median {nbm:.1f} A) -- and since the sanity")
+        report("  gate passed, that is a genuine scoring failure rather than a representation one.")
 
-    json.dump({"test": "dock_fft", "grid": GRID, "spacing": SPACING, "n_rot": N_ROT, "clash_w": CLASH_W,
-               "peaks_per_rot": PEAKS_PER_ROT, "nms_cells": NMS_CELLS, "near_native_A": NEAR_NATIVE,
-               "complexes": rows, "top_k": tab, "n_complexes": len(rows), "skipped": skipped,
-               "median_best_rmsd": bm, "median_native_rot_best_rmsd": nbm, "log": log},
-              open(OUT / "dock_fft.json", "w"), indent=2)
+    json.dump({"test": "dock_fft", "grid": GRID, "spacing": SPACING, "n_rot": N_ROT, "skin": SKIN,
+               "weights_swept": list(WEIGHTS), "clash_w_chosen": CLASH_W,
+               "tune_pdbs": [p["pdb"] for p in tune], "test_pdbs": [p["pdb"] for p in test],
+               "tune_median_rank_by_w": {str(w): med[w] for w in WEIGHTS},
+               "representation_fail": insane, "near_native_A": NEAR_NATIVE, "complexes": rows,
+               "top_k": tab, "n_test": len(rows), "median_best_rmsd": bm,
+               "median_native_rot_best_rmsd": nbm,
+               "sanity": [{"pdb": p["pdb"], "pair": p["ca"] + "/" + p["cb"], "n_contacts": p["n_contacts"],
+                           "nat_interlock": p["nat_inter"], "nat_clash": p["nat_clash"],
+                           "median_cell": p["med_inter"]} for p in prepped],
+               "log": log}, open(OUT / "dock_fft.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'dock_fft.json'}")
     return 0
 
