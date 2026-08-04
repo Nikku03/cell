@@ -20631,3 +20631,90 @@ before its row is read.
                                                       near-native poses within a few Angstrom are the real test
     the pipeline can generate structures              NO -- NEXUS scores, it does not sample. Docking is still
                                                       the missing stage and needs an engine we do not have
+
+# Exhaustive FFT docking: translation scoring is solved, orientation scoring is not
+
+`colab/dock_fft.py`. The NEXUS entry above ended by naming docking as the missing stage -- NEXUS scores an
+interface that exists, it does not sample one. This builds the sampler. Translation-scanning is a correlation,
+so one FFT evaluates every translation at once: ~18 s per complex for 601 rotations x 884,736 placements.
+
+## The first version was void, and finding that out was most of the work
+
+It reported that with the exactly correct orientation handed to it for free, the score still placed the ligand a
+median 21.3 A from the crystal position. I wrote `dock_diagnose.py` to decide whether that was a real property of
+shape complementarity or my own bug. **Its auto-reading said "the score is WEAK, not broken" and that was wrong.**
+
+The script predeclared one branch -- is the native pose being charged a clash penalty? -- found clash = 0, and
+took the "grid is fine" exit. The number printed immediately beside it was `native interlock 8` against
+`max interlock anywhere 989`, with 509 true atom contacts across the interface. The native pose was not being
+outranked; it was scoring nothing. And 1AK4 reported **zero atom pairs within 5 A across a crystal interface**,
+which is impossible.
+
+Two bugs, both mine:
+
+    the shells never touched   Atom CENTRES rasterised, with the receptor's contact shell AT those centres. A
+                               vdW contact is ~3.5 A = 2.5 cells at 1.4 A spacing, so two surfaces in contact
+                               have their grids 2.5 cells apart and never overlap.
+    wrong chain pair           chains[0], chains[1] is alphabetical, not biological. 1AK4 A/B has ZERO contacts
+                               (real pair B/C); 1BRS and 1B2S picked up crystal packing at 153 and 140 instead
+                               of the real 568 and 574. Four of six complexes were docked on a non-interface.
+
+Corrected, the native translation at the native rotation ranks in the **top 1-4 of all 884,736 placements in all
+six** -- the exact opposite of the conclusion the first run reached.
+
+## The gate written to catch that bug did not catch it either
+
+The rewrite added a sanity gate: native interlock must beat an arbitrary placement's. It compared against the
+MEDIAN cell of the correlation field. `irfftn` leaves float noise around 1e-13 in empty cells, so the median of
+positive cells is ~0 and **everything passes, including the broken representation it was written for.** All 20
+complexes cleared it, which looked like confirmation and was nothing.
+
+Replaced with native interlock as a fraction of the BEST placement's, and verified it fires. On 1ACB:
+
+    0.0000   atom centres, shell at the centres          as shipped, broken
+    0.0145   + 2-cell OUTWARD shell, still atom centres
+    0.0125   + vdW volume, shell still at the surface
+    0.1676   vdW volume AND a 2-cell outward shell       correct
+
+Neither half of the fix is sufficient alone, so "I corrected the radii" would have been a false all-clear.
+A gate that has never been shown to fire is not a gate.
+
+## The blind result
+
+Clash weight tuned on the first 8 complexes by sorted PDB id, blind-tested on the remaining 12, never both. The
+weight matters enormously -- median native rank 26,263 at w=1, 19 at w=10, 1 at w=50 -- so tuning it on the
+complexes it is scored on would have been tuning on the test set.
+
+    top-1     0/12     expected by chance 0.01
+    top-10    0/12     expected by chance 0.07
+    top-100   2/12     expected by chance 0.70
+
+    median best RMSD anywhere in the blind pose set : 4.9 A   (6/12 reach <= 5 A)
+    median best RMSD at the NATIVE rotation         : 1.4 A   (11/12 within 2.0 A)
+    median P(rotation set covers the native)        : 0.88
+
+The chance column is not a guess: every retained pose has a known RMSD, so the near-native fraction f gives the
+exact random-ranker rate 1-(1-f)^k. The pose lists would work as well shuffled.
+
+## What this decomposes into, which is sharper than "ranking is hard"
+
+**Translation scoring is solved. Orientation scoring is not.** Give the search the correct rotation and it puts
+the ligand within 2 A in 11 of 12 complexes -- a working docking engine for half the problem. Let it choose the
+rotation too and near-native never reaches the top 10. Wrong orientations generate more shape overlap than the
+right one, and rotation sampling is not the constraint (coverage 0.88).
+
+Two caveats stated rather than left to be inferred. The clash weight was tuned to maximise native rank AT THE
+NATIVE ROTATION -- that is, on the half of the problem that already works, which need not be the weight that
+best discriminates orientations. And these are bound-form coordinates on both sides, the easy case; unbound
+docking is harder and is not what this measures.
+
+## What it licenses
+
+    a sampler exists                          YES. 601 rotations x 884,736 translations in 18 s per complex,
+                                              and near-native is reachable in 6/12 blind, 11/12 given rotation.
+    shape alone can rank poses                NO. 0/12 in top-10 against a 0.07 chance rate.
+    the accept/reject loop can run yet        NO -- it would iterate on a score that cannot recognise the answer.
+    next test, already named as untested      FFT samples but cannot rank; NEXUS vdW ranks native over decoys at
+                                              70% vs 6%. Complementary failures. The 2,400 poses per complex
+                                              with known RMSDs are exactly the hard decoy set the NEXUS entry
+                                              said it needed.
