@@ -19891,3 +19891,75 @@ Measured on RPE1/Jurkat/HepG2 per-cell data, because K562 exists on this disk on
 demonstrates the principle, not the sealed K562 number. Depths 10-60 span 2.6 doublings; the slopes are fitted
 over that range and extrapolating far past 60 cells is not supported by these data. The model held constant is
 the gene+line ridge (penalty 100), not the best model in the repo.
+
+# Effects compose. Measured, not modelled.
+
+`colab/norman_compose.py` on Norman 2019 (GSE133344), streamed fresh today by `colab/norman_build_halves.py`.
+131 two-gene programs, every one of them with BOTH singles also measured, median 301 cells per double.
+
+## Why this is different from everything else in this file
+
+Every compositional claim here so far has been indirect. LOCO asks whether a MODEL trained without a functional
+class can predict it. `adrn_basis_compose` asks whether a class's responses lie in the span of other classes'
+responses. Both infer composition through a model, so a failure is ambiguous between "biology does not compose"
+and "our model cannot".
+
+Norman removes the model. For each pair the dataset contains A alone, B alone, and A+B, same cells, same batch,
+same readout. The question becomes arithmetic: **given the MEASURED response to A and the MEASURED response to B,
+does the MEASURED response to A+B follow?**
+
+## The numbers
+
+Every arm is scored against ONE HALF of the double, with the other half as the floor, so target depth and target
+noise are identical for the arms and the floor alike.
+
+     N    floor  additive  dominant  single_A   ORACLE  scrambled  mean_dbl  add/floor
+    10   0.8236    0.6781    0.5451    0.5115   0.6034     0.2142    0.3978      0.823
+    20   0.7819    0.6461    0.5386    0.5176   0.5906     0.2102    0.3575      0.826
+    50   0.7150    0.6250    0.5166    0.4749   0.5460     0.2271    0.3126      0.874
+
+    additive - scrambled   +0.4326   ROBUST 6/6, sign-consistent
+    additive - dominant    +0.1163   ROBUST 6/6, sign-consistent
+
+Four readings, in order of how much they matter:
+
+1. **Adding two measured singles beats the same arithmetic on the WRONG pair by +0.43.** That is the largest
+   resolved contrast ever recorded in this project. Effects compose.
+2. **Additive beats the best-single ORACLE** (0.6461 vs 0.5906 at N=20). The oracle picks whichever parent scores
+   better *knowing the answer*, and the sum still wins -- so a double is genuinely both parents, not the louder
+   one wearing the other's name.
+3. **Additive reaches 82-87% of the measurement's own self-agreement.** Simple addition captures most of what is
+   there to capture. Interaction terms have the remaining ~15% to fight over -- real, but not the main event.
+4. **Additive beats dominant** (+0.1163, ROBUST). Composition is summation, not masking.
+
+## The limit of this result, stated plainly
+
+**This uses MEASURED singles.** It shows that IF you have the parts, the whole follows. It says nothing about
+getting the parts for a gene nobody has perturbed -- which is precisely the cold-start case where xline scored
+-0.0045/+0.0071 and where the twin ceiling lives.
+
+So it splits the compositional model cleanly in two, and settles one half:
+
+    getting the parts      gene -> its own response. UNSOLVED. Twin ceiling, ESM-2 failure, network failure.
+    combining the parts    parts -> the joint response. SOLVED, by addition, at 82-87% of the noise floor.
+
+The second half was the half I could not rule out before today. It is no longer a risk.
+
+**SCOPE: Norman 2019 is CRISPRa -- ACTIVATION, not knockout.** Every other number in this project is CRISPRi
+knockdown or CRISPR KO. This measures that PERTURBATION EFFECTS compose in an activation screen. Carrying it to
+knockouts is an inference, and it is labelled as one wherever it is cited.
+
+## Two flaws the harness caught in my own setup
+
+**A dead arm.** I scored `(a+b)/2` as a separate "mean" rule alongside `additive`. Top-N by |value| is invariant
+to positive rescaling, so it is provably the same ranking -- it printed identical numbers to four decimals in
+every cell and tested nothing. The rationale I wrote for including it was wrong on its face. Removed.
+
+**A fake grid.** The first run swept `npred x seed` and reported ROBUST 9/9 on additive-dominant. But `additive`,
+`dominant` and the floor have no random component at all -- only `scrambled` draws a random pairing -- so 6 of
+the 9 cells were byte-identical. `duplicate_cells()` flagged it: "Real observations: 3." The grid now varies
+`npred x min_cells`, which genuinely changes which pairs are scored, and seeds are averaged inside a cell where
+they belong. Same conclusion, honestly counted: 6/6 rather than a padded 9/9.
+
+This is the third time a sweep axis of mine turned out to be inert or duplicated. The harness has now caught all
+three. It is doing the job it was built for, and I keep giving it work.
