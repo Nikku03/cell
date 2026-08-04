@@ -19963,3 +19963,56 @@ they belong. Same conclusion, honestly counted: 6/6 rather than a padded 9/9.
 
 This is the third time a sweep axis of mine turned out to be inert or duplicated. The harness has now caught all
 three. It is doing the job it was built for, and I keep giving it work.
+
+# The column carries real signal and adds nothing. My proposal, refuted.
+
+`colab/adrn_column_features.py`. I argued that a gene's COLUMN -- how it responds when other genes are perturbed
+-- was the missing input for cold start: a measurement rather than a description, available for genes nobody has
+ever perturbed, and gene-specific by construction so it could not be capped by the twin ceiling the way
+annotation is. I called it "the first crack in the cold-start wall" before running it.
+
+## The result
+
+Sealed cohorts, 188/200 and 191/200 of them have a column. Columns built from TRAINING rows only, diagonal
+dropped, SVD rotation fitted on training genes and sealed genes projected onto it. Swept over rank x penalty.
+
+    MEANS   frequency 0.1803 | chan 0.2214 | col 0.1932 | chan_col 0.2212 | col_perm 0.1771
+
+    col      - chan        HARMFUL 9/9
+    col_perm - chan        HARMFUL 9/9
+    chan_col - chan        **NULL 9/9** -- every cell ns, sign not even consistent
+    chan_col - frequency   ROBUST 9/9  (this is just the incumbent clearing the floor)
+
+**The column is real.** It beats its own permutation by +0.0161 and the frequency prior by +0.0129, so a gene's
+own responsiveness genuinely says something about its own effect that a randomly assigned column does not.
+
+**And it adds exactly nothing.** `chan_col` minus `chan` is **-0.0002**, NULL across all nine cells. Whatever the
+column knows, the annotation channels already knew.
+
+## What I got wrong, and what survives
+
+I predicted this would break the twin ceiling because two annotation twins cannot share a column. That reasoning
+was correct and irrelevant: twins do have different columns, and the difference does not carry information the
+model can use. **Being gene-specific is not the same as being informative.** I conflated them.
+
+What survives is narrower and worth keeping: the response matrix's second axis is not empty. `col` alone reaches
+0.1932 against a 0.1803 frequency floor using no annotation whatsoever -- a model that has never been told
+anything about a gene except how it reacts to other perturbations does slightly better than chance. That is a
+real if small fact, and it is the only measured cold-start signal found so far.
+
+But it is redundant with what we already have, so it is not a lever. Adding it to the ADRN would be adding
+128 dimensions for -0.0002.
+
+## Where this leaves "getting the parts"
+
+Norman settled COMBINING the parts (+0.4326 over scrambled, ROBUST 6/6). GETTING a part for an unperturbed gene
+remains unsolved, and the list of things that have now failed at it is:
+
+    annotation channels   twin ceiling 0.5365 / 0.6212
+    ESM-2 sequence        fails G1 and G2
+    network topology      8 tests + 36-cell sweep, killed by degree-matched rewiring
+    ChIP binding          AUC 0.5068 vs 0.4981 permuted, p = 0.22
+    the response column   NULL, this test
+
+Five independent input representations, five failures, one measured task. That is no longer a run of bad luck --
+it is the shape of the problem.
