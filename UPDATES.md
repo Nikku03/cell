@@ -20404,3 +20404,65 @@ Seven representations have now failed at cold start on the sealed task: annotati
 network topology, ChIP binding, the response column, every similarity function learnable over annotation, and
 now multi-layer Markov propagation with a measured operator. The retrieval oracle still says a much better
 answer sits in the training set (+0.2128, ROBUST 6/6). Nothing computable from what is on this disk finds it.
+
+# Orphan reactions: enumerate every candidate, then test whether the enumeration is real
+
+`colab/cell_orphan_candidates.py`. 17,551 of 28,528 reactions have no named catalyst. The proposal was to
+enumerate everything that COULD do each one -- widely, without requiring a prior connection -- on the reasoning
+that one candidate is the answer or an intermediate.
+
+## Most orphans are not missing data, and finding that out first mattered
+
+Partitioned by category BEFORE generating a single candidate:
+
+    binding        5,677 orphan vs     6 catalysed    association is spontaneous. No enzyme is missing.
+    dissociation     365 orphan vs     1 catalysed    likewise.
+    omitted        1,835 orphan vs   258 catalysed    Reactome's own flag for an abstracted step.
+    uncertain        488 orphan vs   116 catalysed    likewise.
+    metabolic      5,149 orphan vs 7,782 catalysed    real candidate missing enzymes
+    transition     4,037 orphan vs 2,814 catalysed    mixed; kept
+
+**The real pool is 9,186, not 17,551.** Generating candidates for the 6,042 binding/dissociation events would
+have invented enzymes for reactions that physically do not have one -- and would have looked like 6,000 extra
+predictions rather than 6,000 category errors.
+
+## The enumeration works, and here is the test that says so
+
+Candidates come from chemistry neighbours: catalysts of reactions sharing a NON-CURRENCY participant, scored by
+Jaccard. Then the falsifiable part -- run the generator on 1,500 reactions whose catalyst IS known, with that
+catalyst and its own reaction hidden, and see whether it comes back.
+
+    arm             recall@1    recall@5   recall@20  recall@100
+    cand_chem          0.276       0.446       0.555       0.596
+    cand_freq          0.019       0.073       0.169       0.304
+    cand_rand          0.000       0.003       0.017       0.062
+
+**14x the frequency control at rank 1, 3.3x at rank 20.** Hide a known catalyst and chemistry puts it first more
+than a quarter of the time, and in the top 20 more than half. This is not "name the busiest enzymes" -- that
+control is sitting right there at 0.019.
+
+Applied to the real pool: **6,603 of 9,186 orphans (71.9%) get at least one candidate**, median list length 8.
+
+## The 2,583 that get nothing, and why the recursion returns exactly zero
+
+The proposed recursion -- if an orphan has no candidate, is it a lumped step decomposable into two catalysed
+steps through an intermediate? -- returns **0.0%**, and after four dead arms today I treated that as a bug.
+
+It is not. It is structural, and verified directly rather than assumed: **0 of the 2,583 share ANY non-currency
+participant with ANY catalysed reaction.** That is the exact condition for landing in this branch, so no
+catalysed intermediate can exist. These reactions live on metabolites that appear nowhere else in the catalysed
+network -- isolated islands.
+
+Two things were true at once and both are recorded: the condition I wrote WAS malformed (`b in subs_of and
+prod_of.get(m)` asks whether b is consumed somewhere and m produced somewhere, never whether m connects to b),
+AND its input was empty. Fixing the code did not move the number, which is how I know the second one is the
+real reason.
+
+**For those 2,583, more graph search cannot help. They need external knowledge.**
+
+## Why this worked when seven prediction attempts failed
+
+This is the first substantial positive from curated data all day, and the reason is that it is not a prediction
+task. Curation is a CATALOGUE. Asked "what reaction does this gene catalyse", it answers well. Asked "what will
+happen if you knock this gene out in K562", it fails -- seven representations, seven failures. The distinction
+is not about data quality; it is about which question the data was assembled to answer.

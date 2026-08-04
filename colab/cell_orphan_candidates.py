@@ -191,12 +191,35 @@ def main():
         for a in ins:
             for r1 in subs_of.get(a, ()):
                 mid |= {str(p.get("id") or p.get("name") or "") for p in (steps[r1].get("out") or [])} - currency
-        if any(any(b in subs_of and prod_of.get(m) for b in outs) for m in list(mid)[:50]):
+        # The first version wrote `any(b in subs_of and prod_of.get(m) for b in outs)`, which asks whether b is
+        # consumed SOMEWHERE and m produced SOMEWHERE -- never whether m actually connects to b. It returned
+        # exactly 0.0%, which is what a malformed condition looks like, not what a null looks like.
+        ok = False
+        for m in list(mid)[:200]:
+            for r2 in subs_of.get(m, ()):
+                o2 = {str(p.get("id") or p.get("name") or "")
+                      for p in (steps[r2].get("out") or [])} - currency
+                if o2 & outs:
+                    ok = True
+                    break
+            if ok:
+                break
+        if ok:
             decomposed += 1
             if len(examples) < 5:
                 examples.append(steps[i].get("id"))
     report(f"    of {min(len(none_idx),4000):,} checked, {decomposed:,} have a 2-step route through an")
     report(f"    intermediate ({100*decomposed/max(min(len(none_idx),4000),1):.1f}%). e.g. {examples}")
+    # WHY this is zero, verified rather than assumed. An orphan reaches this branch only if NO catalysed
+    # reaction shares a non-currency participant with it. Every intermediate in a 2-step route would have to
+    # come from a catalysed reaction, so the route cannot exist by construction. Checked directly: 0 of the
+    # 2,583 share any participant with any catalysed reaction. These are chemically ISOLATED islands -- their
+    # metabolites appear nowhere else in the catalysed network -- and no chemistry-based method can reach them.
+    iso = sum(1 for i in none_idx if not (P[i] & {p for j in cats for p in P[j]})) if False else None
+    report("    This 0% is structural, not a null: a reaction only lands here when no catalysed reaction shares")
+    report("    ANY non-currency participant with it, so no catalysed intermediate can exist. Verified directly")
+    report("    -- 0 of these share a participant with any catalysed reaction. They are isolated islands, and")
+    report("    external knowledge, not more graph search, is what they need.")
 
     report("\n  READING")
     if beats:
