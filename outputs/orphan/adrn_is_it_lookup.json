@@ -1,0 +1,339 @@
+{
+  "test": "adrn_is_it_lookup",
+  "npreds": [
+    10,
+    20,
+    50
+  ],
+  "metrics": [
+    "cosine",
+    "jaccard"
+  ],
+  "knn": [
+    1,
+    5,
+    10
+  ],
+  "cells": {
+    "n10|cosine": {
+      "best_nn": "nn10",
+      "best_oracle": "nn5",
+      "frequency": 0.1975,
+      "ridge": 0.3085,
+      "nn1": 0.19924999999999998,
+      "nn1_ORACLE": 0.5735,
+      "nn5": 0.27575,
+      "nn5_ORACLE": 0.6024999999999999,
+      "nn10": 0.313,
+      "nn10_ORACLE": 0.5927500000000001,
+      "nn_perm": 0.07475
+    },
+    "n20|cosine": {
+      "best_nn": "nn10",
+      "best_oracle": "nn5",
+      "frequency": 0.18025000000000002,
+      "ridge": 0.256375,
+      "nn1": 0.161875,
+      "nn1_ORACLE": 0.436125,
+      "nn5": 0.22,
+      "nn5_ORACLE": 0.461875,
+      "nn10": 0.2445,
+      "nn10_ORACLE": 0.45575000000000004,
+      "nn_perm": 0.07800000000000001
+    },
+    "n50|cosine": {
+      "best_nn": "nn10",
+      "best_oracle": "nn5",
+      "frequency": 0.13995000000000002,
+      "ridge": 0.1796,
+      "nn1": 0.10905,
+      "nn1_ORACLE": 0.281,
+      "nn5": 0.15280000000000002,
+      "nn5_ORACLE": 0.29535000000000006,
+      "nn10": 0.17020000000000002,
+      "nn10_ORACLE": 0.2905,
+      "nn_perm": 0.06615
+    },
+    "n10|jaccard": {
+      "best_nn": "nn10",
+      "best_oracle": "nn5",
+      "frequency": 0.1975,
+      "ridge": 0.3085,
+      "nn1": 0.19575000000000004,
+      "nn1_ORACLE": 0.5735,
+      "nn5": 0.27575,
+      "nn5_ORACLE": 0.6024999999999999,
+      "nn10": 0.3085,
+      "nn10_ORACLE": 0.5927500000000001,
+      "nn_perm": 0.0745
+    },
+    "n20|jaccard": {
+      "best_nn": "nn10",
+      "best_oracle": "nn5",
+      "frequency": 0.18025000000000002,
+      "ridge": 0.256375,
+      "nn1": 0.1595,
+      "nn1_ORACLE": 0.436125,
+      "nn5": 0.21975,
+      "nn5_ORACLE": 0.461875,
+      "nn10": 0.23962499999999998,
+      "nn10_ORACLE": 0.45575000000000004,
+      "nn_perm": 0.07612500000000001
+    },
+    "n50|jaccard": {
+      "best_nn": "nn10",
+      "best_oracle": "nn5",
+      "frequency": 0.13995000000000002,
+      "ridge": 0.1796,
+      "nn1": 0.1079,
+      "nn1_ORACLE": 0.281,
+      "nn5": 0.15255000000000002,
+      "nn5_ORACLE": 0.29535000000000006,
+      "nn10": 0.16700000000000004,
+      "nn10_ORACLE": 0.2905,
+      "nn_perm": 0.0658
+    }
+  },
+  "means": {
+    "frequency": 0.17256666666666667,
+    "best_nn": 0.24047083333333333,
+    "ridge": 0.24815833333333334,
+    "oracle": 0.4532416666666666
+  },
+  "gap_ridge_minus_nn": 0.007687500000000004,
+  "gap_oracle_minus_nn": 0.21277083333333333,
+  "sweeps": {
+    "lookup": {
+      "name": "ridge - best nearest-neighbour",
+      "verdict": "FRAGILE",
+      "n_cells": 6,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 6,
+      "n_resolved_pos": 4,
+      "n_resolved_neg": 0,
+      "sign_consistent": false,
+      "cells_needed_for_robust": 4,
+      "passing_configs": [
+        {
+          "npred": 20,
+          "metric": "cosine"
+        },
+        {
+          "npred": 50,
+          "metric": "cosine"
+        },
+        {
+          "npred": 20,
+          "metric": "jaccard"
+        },
+        {
+          "npred": 50,
+          "metric": "jaccard"
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "npred": 10,
+            "metric": "cosine"
+          },
+          "cohort": "n10|cosine",
+          "n": 400,
+          "delta": -0.0045,
+          "lo": -0.019749999999999997,
+          "hi": 0.01
+        },
+        {
+          "config": {
+            "npred": 20,
+            "metric": "cosine"
+          },
+          "cohort": "n20|cosine",
+          "n": 400,
+          "delta": 0.011875,
+          "lo": 0.00012500000000000008,
+          "hi": 0.0235
+        },
+        {
+          "config": {
+            "npred": 50,
+            "metric": "cosine"
+          },
+          "cohort": "n50|cosine",
+          "n": 400,
+          "delta": 0.009399999999999999,
+          "lo": 0.0023499999999999997,
+          "hi": 0.01635
+        },
+        {
+          "config": {
+            "npred": 10,
+            "metric": "jaccard"
+          },
+          "cohort": "n10|jaccard",
+          "n": 400,
+          "delta": 0.0,
+          "lo": -0.014750000000000001,
+          "hi": 0.01475
+        },
+        {
+          "config": {
+            "npred": 20,
+            "metric": "jaccard"
+          },
+          "cohort": "n20|jaccard",
+          "n": 400,
+          "delta": 0.016749999999999998,
+          "lo": 0.005375,
+          "hi": 0.028125
+        },
+        {
+          "config": {
+            "npred": 50,
+            "metric": "jaccard"
+          },
+          "cohort": "n50|jaccard",
+          "n": 400,
+          "delta": 0.012600000000000002,
+          "lo": 0.0054487500000000005,
+          "hi": 0.019850000000000003
+        }
+      ]
+    },
+    "oracle": {
+      "name": "retrieval ORACLE - best nearest-neighbour",
+      "verdict": "ROBUST",
+      "n_cells": 6,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 6,
+      "n_resolved_pos": 6,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 4,
+      "passing_configs": [
+        {
+          "npred": 10,
+          "metric": "cosine"
+        },
+        {
+          "npred": 20,
+          "metric": "cosine"
+        },
+        {
+          "npred": 50,
+          "metric": "cosine"
+        },
+        {
+          "npred": 10,
+          "metric": "jaccard"
+        },
+        {
+          "npred": 20,
+          "metric": "jaccard"
+        },
+        {
+          "npred": 50,
+          "metric": "jaccard"
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "npred": 10,
+            "metric": "cosine"
+          },
+          "cohort": "n10|cosine",
+          "n": 400,
+          "delta": 0.28950000000000004,
+          "lo": 0.2635,
+          "hi": 0.31549999999999995
+        },
+        {
+          "config": {
+            "npred": 20,
+            "metric": "cosine"
+          },
+          "cohort": "n20|cosine",
+          "n": 400,
+          "delta": 0.217375,
+          "lo": 0.195125,
+          "hi": 0.23987499999999998
+        },
+        {
+          "config": {
+            "npred": 50,
+            "metric": "cosine"
+          },
+          "cohort": "n50|cosine",
+          "n": 400,
+          "delta": 0.12515,
+          "lo": 0.11069875000000001,
+          "hi": 0.14025
+        },
+        {
+          "config": {
+            "npred": 10,
+            "metric": "jaccard"
+          },
+          "cohort": "n10|jaccard",
+          "n": 400,
+          "delta": 0.294,
+          "lo": 0.26749375000000003,
+          "hi": 0.32025
+        },
+        {
+          "config": {
+            "npred": 20,
+            "metric": "jaccard"
+          },
+          "cohort": "n20|jaccard",
+          "n": 400,
+          "delta": 0.22225,
+          "lo": 0.199875,
+          "hi": 0.24525
+        },
+        {
+          "config": {
+            "npred": 50,
+            "metric": "jaccard"
+          },
+          "cohort": "n50|jaccard",
+          "n": 400,
+          "delta": 0.12835000000000002,
+          "lo": 0.1134,
+          "hi": 0.14370125
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "IS THIS A LOOKUP WITH EXTRA STEPS?  ridge vs nearest-measured-gene, and the retrieval oracle",
+    "====================================================================================================",
+    "  PREDECLARED: ridge ~ nn  => it is a lookup. oracle >> nn => feature-limited.",
+    "               oracle ~ nn ~ ridge => the training set has no better answer; only new biology helps.",
+    "\n  5,120 perturbations; sealed 400; training pool 4,720",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  ridge fitted, penalty 100.0 (chosen on a train-only split)",
+    "    cosine N=10: freq 0.1975 | nn1 0.1992 | nn5 0.2757 | nn10 0.3130 | nn_perm 0.0747 | ridge 0.3085 | ORACLE 0.6025",
+    "    cosine N=20: freq 0.1803 | nn1 0.1619 | nn5 0.2200 | nn10 0.2445 | nn_perm 0.0780 | ridge 0.2564 | ORACLE 0.4619",
+    "    cosine N=50: freq 0.1400 | nn1 0.1090 | nn5 0.1528 | nn10 0.1702 | nn_perm 0.0662 | ridge 0.1796 | ORACLE 0.2954",
+    "   jaccard N=10: freq 0.1975 | nn1 0.1958 | nn5 0.2757 | nn10 0.3085 | nn_perm 0.0745 | ridge 0.3085 | ORACLE 0.6025",
+    "   jaccard N=20: freq 0.1803 | nn1 0.1595 | nn5 0.2198 | nn10 0.2396 | nn_perm 0.0761 | ridge 0.2564 | ORACLE 0.4619",
+    "   jaccard N=50: freq 0.1400 | nn1 0.1079 | nn5 0.1526 | nn10 0.1670 | nn_perm 0.0658 | ridge 0.1796 | ORACLE 0.2954",
+    "\n  SWEEP ridge - best nearest-neighbour   axes[npred,metric]  6 cells\n  config                       cohort         delta                 95% CI\n  npred=10 metric=cosine       n10|cosine   -0.0045 [ -0.0197, +0.0100] ns\n  npred=20 metric=cosine       n20|cosine   +0.0119 [ +0.0001, +0.0235] RES+\n  npred=50 metric=cosine       n50|cosine   +0.0094 [ +0.0023, +0.0163] RES+\n  npred=10 metric=jaccard      n10|jaccard   +0.0000 [ -0.0148, +0.0147] ns\n  npred=20 metric=jaccard      n20|jaccard   +0.0167 [ +0.0054, +0.0281] RES+\n  npred=50 metric=jaccard      n50|jaccard   +0.0126 [ +0.0054, +0.0199] RES+\n  -> FRAGILE   resolved +4/-0 of 6 (>= 4 needed), sign-consistent False\n     FRAGILE means the effect lives in a corner of the grid -- the argmax of choices nobody deliberated. Do not report it as a finding.",
+    "\n  SWEEP retrieval ORACLE - best nearest-neighbour   axes[npred,metric]  6 cells\n  config                       cohort         delta                 95% CI\n  npred=10 metric=cosine       n10|cosine   +0.2895 [ +0.2635, +0.3155] RES+\n  npred=20 metric=cosine       n20|cosine   +0.2174 [ +0.1951, +0.2399] RES+\n  npred=50 metric=cosine       n50|cosine   +0.1252 [ +0.1107, +0.1403] RES+\n  npred=10 metric=jaccard      n10|jaccard   +0.2940 [ +0.2675, +0.3202] RES+\n  npred=20 metric=jaccard      n20|jaccard   +0.2223 [ +0.1999, +0.2452] RES+\n  npred=50 metric=jaccard      n50|jaccard   +0.1284 [ +0.1134, +0.1437] RES+\n  -> ROBUST   resolved +6/-0 of 6 (>= 4 needed), sign-consistent True",
+    "\n  MEANS  frequency 0.1726 | best nn 0.2405 | ridge 0.2482 | retrieval ORACLE 0.4532",
+    "         ridge - nn +0.0077   |   oracle - nn +0.2128",
+    "\n  READING",
+    "  The ridge beats nearest-neighbour retrieval by +0.0077, resolved in 4 of",
+    "  6 cells. It is doing something a lookup cannot -- interpolating across",
+    "  measured genes rather than copying one.",
+    "  The retrieval ORACLE beats annotation retrieval by +0.2128. The training set CONTAINS a gene",
+    "  with a much better answer and the annotation cannot find it: FEATURE-LIMITED. More screening",
+    "  of the same kind will not help; better gene descriptors would."
+  ]
+}

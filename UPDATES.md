@@ -20083,3 +20083,70 @@ The third column is the one worth carrying forward: **the in-basis ceiling is on
 profile inside the basis fit and the true response in hand, an NMF reconstruction recovers 60% of its own top-20.
 That is a cap on the whole programme-basis idea, separate from the 0.633 measurement ceiling and not to be
 confused with it -- different data, different denominator.
+
+# It IS a lookup. And the constraint is not data or capacity -- it is the gene descriptors.
+
+`colab/adrn_is_it_lookup.py`, written to test a criticism put to me directly: "it is nothing novel, you can get
+the same information with a few clicks." It also resolves a contradiction I had stated in the same breath --
+that we are data-limited (but the scaling curve is FLAT, -0.0009 per doubling) and model-limited (but a 42k
+ridge beats a 0.63M transformer). Neither can be the constraint if neither moves the number.
+
+## The numbers
+
+`nn_k` copies the measured response of the k nearest TRAINING genes in annotation space. No fitting, no basis,
+no parameters -- literally "find a similar gene someone already measured and report what happened."
+
+    metric   N   freq    nn1    nn5   nn10  nn_perm  ridge  ORACLE
+    cosine  10  0.1975 0.1992 0.2757 0.3130  0.0747  0.3085  0.6025
+    cosine  20  0.1803 0.1619 0.2200 0.2445  0.0780  0.2564  0.4619
+    cosine  50  0.1400 0.1090 0.1528 0.1702  0.0662  0.1796  0.2954
+    jaccard tracks cosine to within 0.005 everywhere
+
+    MEANS  frequency 0.1726 | best nn 0.2405 | ridge 0.2482 | retrieval ORACLE 0.4532
+    ridge  - nn   +0.0077   FRAGILE 4/6, sign NOT consistent
+    oracle - nn   +0.2128   ROBUST 6/6
+
+## Reading 1: the criticism is correct
+
+**The ridge beats a 10-nearest-neighbour lookup by +0.0077, and the harness calls it FRAGILE with inconsistent
+sign** -- at N=10 the lookup actually WINS (0.3130 vs 0.3085); at N=20 and N=50 the ridge edges ahead. Annotation
+channels, NMF basis, conjunction growth, penalty tuning: the whole apparatus is worth less than the noise between
+one choice of N and another, against copying the ten most similar measured genes.
+
+This is the sealed-protocol number 0.2920/0.3593 seen from the other side. It was never wrong; it was a lookup
+all along, and the synthesis in this file said so from the pattern of results. Now it is measured.
+
+The neighbours do matter -- `nn_perm` (neighbours by permuted similarity) collapses to 0.07. Similar genes really
+do have similar responses. It is retrieval, and retrieval works. It is just retrieval.
+
+## Reading 2: this corrects my own diagnosis, and the correction is the useful part
+
+**The retrieval ORACLE -- copy the training gene whose TRUE response is closest -- scores 0.4532 against
+annotation retrieval's 0.2405.** ROBUST 6/6.
+
+The training set already CONTAINS genes with far better answers than annotation similarity can find. So:
+
+    NOT data-limited     the answer is on disk. More screening of the same kind does not add it.
+    NOT model-limited    a parameter-free lookup matches the fitted model.
+    FEATURE-LIMITED      the map from a gene to its response-space neighbours is what is missing.
+
+An hour ago I told the user we were data-limited at 838 effective examples and that only new biology would help.
+**That was wrong, and this measurement is why.** There is roughly +0.21 of headroom sitting inside the existing
+training set, reachable by any function that can tell which measured gene a new gene will RESEMBLE IN RESPONSE.
+That is a much more tractable problem than "we need a wet lab", and it is the first well-controlled optimistic
+result on the getting-the-parts side.
+
+## The caveat that keeps this honest
+
+The oracle selects the argmax over 4,720 candidates using response cosine, which is correlated with the top-20
+score it is then graded on. Taking a maximum over that many candidates on a correlated criterion inflates the
+number. **0.4532 is a LOOSE upper bound, not an achievable target**, and the true headroom is smaller than
++0.2128. What survives the caveat is the direction and the ordering: perfect retrieval is far above annotation
+retrieval, and annotation retrieval is essentially the whole model.
+
+## What this says to try next
+
+Not more data, not a bigger network, not another annotation source -- all three are now measured dead ends. The
+open question is a learned gene-to-gene similarity trained to predict RESPONSE similarity rather than to describe
+the gene. Note the trap: such a function must be trained on training-gene pairs only, and the sealed genes'
+responses can never enter it, or it becomes the oracle and means nothing.
