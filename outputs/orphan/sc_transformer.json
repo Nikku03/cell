@@ -6,29 +6,46 @@
   "n_train_cells": 63111,
   "n_groups": 216,
   "results": {
-    "tf_gene": {
+    "gene": {
       "params": 630352,
-      "r": 0.36975995233242087,
-      "p20": 0.21643518518518517
+      "r": 0.36770916249022434,
+      "p20": 0.21666666666666667
     },
-    "tf_gene_state": {
+    "gene_line": {
       "params": 630352,
-      "r": 0.4489429580062534,
-      "p20": 0.26412037037037034
+      "r": 0.43476542913695126,
+      "p20": 0.26296296296296295
+    },
+    "gene_line_state": {
+      "params": 630352,
+      "r": 0.4410192311283546,
+      "p20": 0.25763888888888886
     }
   },
   "contrast": {
-    "r": {
-      "delta": 0.07918300567383244,
-      "lo": 0.06494342966925623,
-      "hi": 0.09391436404729746,
+    "TFa line-gene (r)": {
+      "delta": 0.06705626664672694,
+      "lo": 0.05339276625339759,
+      "hi": 0.08135577792297603,
       "verdict": "RESOLVED +"
     },
-    "p@20": {
-      "delta": 0.04768518518518518,
-      "lo": 0.030555555555555555,
-      "hi": 0.06481481481481481,
+    "TFa line-gene (p)": {
+      "delta": 0.046296296296296294,
+      "lo": 0.030324074074074076,
+      "hi": 0.062268518518518515,
       "verdict": "RESOLVED +"
+    },
+    "TFb state-line (r)": {
+      "delta": 0.006253801991403268,
+      "lo": -0.005731790668871324,
+      "hi": 0.017958935872114536,
+      "verdict": "unresolved"
+    },
+    "TFb state-line (p)": {
+      "delta": -0.005324074074074071,
+      "lo": -0.019444444444444445,
+      "hi": 0.009259259259259259,
+      "verdict": "unresolved"
     }
   },
   "log": [
@@ -42,24 +59,34 @@
     "  78,608 perturbed cells with a matched control group",
     "  training cells 63,111 | state features 9",
     "  held-out evaluation groups: 216",
-    "\n  tf_gene: 0.63M params, 63,111 cells, 6 epochs",
-    "    epoch 1/6  loss 0.26265  (119s)",
-    "    epoch 2/6  loss 0.25423  (111s)",
-    "    epoch 3/6  loss 0.25234  (113s)",
-    "    epoch 4/6  loss 0.25128  (114s)",
-    "    epoch 5/6  loss 0.25061  (111s)",
-    "    epoch 6/6  loss 0.25018  (114s)",
-    "    tf_gene: r 0.3698  p@20 0.2164",
-    "\n  tf_gene_state: 0.63M params, 63,111 cells, 6 epochs",
-    "    epoch 1/6  loss 0.25758  (118s)",
-    "    epoch 2/6  loss 0.24345  (110s)",
-    "    epoch 3/6  loss 0.24025  (113s)",
-    "    epoch 4/6  loss 0.23868  (108s)",
-    "    epoch 5/6  loss 0.23743  (114s)",
-    "    epoch 6/6  loss 0.23652  (106s)",
-    "    tf_gene_state: r 0.4489  p@20 0.2641",
-    "\n  tf_gene_state - tf_gene (r): +0.0792 [+0.0649,+0.0939] RESOLVED +",
-    "\n  tf_gene_state - tf_gene (p@20): +0.0477 [+0.0306,+0.0648] RESOLVED +",
+    "\n  gene: 0.63M params, 63,111 cells, 6 epochs",
+    "    epoch 1/6  loss 0.26265  (125s)",
+    "    epoch 2/6  loss 0.25423  (106s)",
+    "    epoch 3/6  loss 0.25234  (105s)",
+    "    epoch 4/6  loss 0.25128  (102s)",
+    "    epoch 5/6  loss 0.25061  (104s)",
+    "    epoch 6/6  loss 0.25018  (103s)",
+    "    gene: r 0.3677  p@20 0.2167",
+    "\n  gene_line: 0.63M params, 63,111 cells, 6 epochs",
+    "    epoch 1/6  loss 0.26232  (103s)",
+    "    epoch 2/6  loss 0.25278  (104s)",
+    "    epoch 3/6  loss 0.24977  (104s)",
+    "    epoch 4/6  loss 0.24831  (104s)",
+    "    epoch 5/6  loss 0.24737  (103s)",
+    "    epoch 6/6  loss 0.24668  (106s)",
+    "    gene_line: r 0.4348  p@20 0.2630",
+    "\n  gene_line_state: 0.63M params, 63,111 cells, 6 epochs",
+    "    epoch 1/6  loss 0.25852  (118s)",
+    "    epoch 2/6  loss 0.24373  (105s)",
+    "    epoch 3/6  loss 0.24028  (104s)",
+    "    epoch 4/6  loss 0.23869  (103s)",
+    "    epoch 5/6  loss 0.23758  (104s)",
+    "    epoch 6/6  loss 0.23657  (102s)",
+    "    gene_line_state: r 0.4410  p@20 0.2576",
+    "  TFa line-gene (r)     : +0.0671 [+0.0534,+0.0814] RESOLVED +",
+    "  TFa line-gene (p)     : +0.0463 [+0.0303,+0.0623] RESOLVED +",
+    "  TFb state-line (r)    : +0.0063 [-0.0057,+0.0180] unresolved",
+    "  TFb state-line (p)    : -0.0053 [-0.0194,+0.0093] unresolved",
     "\n  NOTE: 1M-parameter model on 4 CPU cores. A null here bounds what is reachable at THIS scale;",
     "  it does not establish that a large model would also fail."
   ]
