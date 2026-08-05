@@ -200,10 +200,28 @@ def main():
             report(f"    {n+1}/{len(tr)+len(tst)} complexes scored ({time.time()-tp:.0f}s)")
     report(f"    done in {time.time()-tp:.0f}s")
 
-    # ---- LIVENESS: a descriptor that never varies cannot rank anything ----
+    # ---- LIVENESS, and the weaker failure it does not catch ----
+    # A std<1e-12 test only catches a TOTALLY constant arm. `contiguity` and `n_patches` turned out to be
+    # near-degenerate on a smoke test -- 99.6% of poses are a single compact patch, because the FFT's
+    # non-maximum suppression and positive-score filter already discard scattered ones. That is my "scattered
+    # islands" hypothesis being wrong BEFORE the test, and it has to be visible in the output rather than
+    # quietly contributing nothing to the combiner.
     dead = [k for k in DESCS if all(float(pool[q]["D"][k].std()) < 1e-12 for q in tst)]
     if dead:
         report(f"\n    LIVENESS: {dead} constant across every test complex -- dead arms, rows below mean nothing.")
+    report(f"\n  DESCRIPTOR SPREAD on the test pose sets (a near-degenerate arm cannot rank, however alive)")
+    report(f"    {'descriptor':<13}{'std':>10}{'distinct':>10}{'modal share':>13}")
+    degen = []
+    for k in DESCS:
+        allv = np.concatenate([pool[q]["D"][k] for q in tst if len(pool[q]["D"][k])])
+        u, cnt = np.unique(np.round(allv, 6), return_counts=True)
+        share = float(cnt.max() / len(allv))
+        if share > 0.85:
+            degen.append(k)
+        report(f"    {k:<13}{allv.std():>10.4f}{len(u):>10}{share:>12.1%}"
+               + ("   <- NEAR-DEGENERATE" if share > 0.85 else ""))
+    if degen:
+        report(f"    {degen} take one value for most poses; they cannot contribute much whatever they score.")
 
     # ---- fit a combiner on TRAIN complexes only ----
     def zc(a):
