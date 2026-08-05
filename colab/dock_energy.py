@@ -127,6 +127,11 @@ def main():
     from scipy.spatial import cKDTree
     from scipy.stats import spearmanr
 
+    def f3(x):
+        """a dead arm has spearman None. Printing it must not kill the run that found it -- the first version
+        formatted None with :+.3f and crashed on the very first complex."""
+        return "  DEAD " if x is None else f"{x:+.3f}"
+
     report("=" * 100)
     report("ENERGY LEVELS IN EACH SPHERE -- NEXUS's real physics on FFT poses, which it has never seen")
     report("=" * 100)
@@ -212,10 +217,10 @@ def main():
         rows.append({"pdb": pdb, "n_poses": int(len(rm)), "near_native_frac": frac,
                      "best_rmsd": float(rm.min()), "mean_rmsd": float(rm.mean()), "arms": res})
         report(f"    {pdb}: {len(rm)} poses in {time.time()-t1:.0f}s, frac {frac:.4f} | "
-               f"shape {res['shape']['spearman']:+.3f}  "
-               f"soft_vdw_median {res['soft_vdw_median']['spearman']:+.3f}  "
-               f"raw_vdw_sum {res['raw_vdw_sum']['spearman']:+.3f}  "
-               f"soft_elec_median {res['soft_elec_median']['spearman']:+.3f}")
+               f"shape {f3(res['shape']['spearman'])}  "
+               f"soft_vdw_median_nz {f3(res['soft_vdw_median_nz']['spearman'])}  "
+               f"raw_vdw_sum {f3(res['raw_vdw_sum']['spearman'])}  "
+               f"soft_elec_sum {f3(res['soft_elec_sum']['spearman'])}")
 
     if not rows:
         report("\n  nothing scored")
@@ -241,16 +246,19 @@ def main():
     order = sorted(keys, key=lambda k: (tab[k]["spearman_median"] if tab[k]["spearman_median"] is not None else 9))
     report(f"\n  {'arm':<22}{'top-1':>7}{'top-10':>8}{'top-100':>9}{'Spearman':>11}{'top100 RMSD':>13}")
     report(f"  {'shape (baseline)':<22}{sh_['top']['1']:>7}{sh_['top']['10']:>8}{sh_['top']['100']:>9}"
-           f"{sh_['spearman_median']:>11.3f}{sh_['top100_mean_rmsd']:>13.1f}")
-    for k in order[:14]:
+           f"{f3(sh_['spearman_median']):>11}{sh_['top100_mean_rmsd']:>13.1f}")
+    for k in order[:16]:
         report(f"  {k:<22}{tab[k]['top']['1']:>7}{tab[k]['top']['10']:>8}{tab[k]['top']['100']:>9}"
-               f"{tab[k]['spearman_median']:>11.3f}{tab[k]['top100_mean_rmsd']:>13.1f}")
+               f"{f3(tab[k]['spearman_median']):>11}{tab[k]['top100_mean_rmsd']:>13.1f}")
     ch = {str(x): float(np.mean([1 - (1 - r["near_native_frac"]) ** x for r in tt])) * len(tt) for x in TOPK}
-    report(f"  {'chance':<22}{ch['1']:>7.2f}{ch['10']:>8.2f}{ch['100']:>9.2f}{0.0:>11.3f}{setmean:>13.1f}")
+    report(f"  {'chance':<22}{ch['1']:>7.2f}{ch['10']:>8.2f}{ch['100']:>9.2f}{0.0:>+11.3f}{setmean:>13.1f}")
     report(f"  (top-k denominator {len(tt)}; Spearman over all {len(rows)}; set mean RMSD {setmean:.1f} A)")
 
     best = order[0]
     bs = tab[best]["spearman_median"]
+    if bs is None:
+        report("\n  every arm is dead -- nothing to read")
+        return 1
     dominates = (bs < sh_["spearman_median"] - 0.02
                  and tab[best]["top"]["100"] >= sh_["top"]["100"]
                  and tab[best]["top100_mean_rmsd"] <= sh_["top100_mean_rmsd"])
@@ -259,8 +267,8 @@ def main():
         r_ = tab.get(f"raw_{term}_sum", {}).get("spearman_median")
         s_ = tab.get(f"soft_{term}_sum", {}).get("spearman_median")
         m_ = tab.get(f"soft_{term}_median", {}).get("spearman_median")
-        if r_ is not None:
-            report(f"    {term:<8} raw sum {r_:+.3f}   soft sum {s_:+.3f}   soft MEDIAN sphere {m_:+.3f}")
+        report(f"    {term:<8} raw sum {f3(r_)}   soft sum {f3(s_)}   soft median-nz sphere "
+               f"{f3(tab.get(f'soft_{term}_median_nz', {}).get('spearman_median'))}")
 
     report("\n  READING")
     if dominates:
