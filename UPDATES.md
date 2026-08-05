@@ -20908,3 +20908,66 @@ nothing, and it predicts that any pairwise-local scoring scheme will fail the sa
 This is the sixth independent failure of a non-steric term in this stack (electrostatics, induction,
 desolvation, flexibility, surface embeddings as ddG features, and now surface embeddings as a pose ranker).
 The cluster is the finding: the model has shape and nothing else, and shape does not determine orientation.
+
+# Looking at the interface as a whole: no gain, and charge complementarity measures nothing
+
+`colab/dock_global.py`. `dock_poserank` showed a local contact scorer cannot rank FFT poses (Spearman +0.003,
+worse than random weights), and the reason is structural: the FFT SELECTS its decoys for local shape fit, so
+locally a decoy patch IS a real patch. Whatever separates a real interface from a good fake has to be a property
+of the WHOLE patch. The proposed architecture -- local spheres to search fast, look at the whole structure once
+it settles -- is the right shape, and this tests it.
+
+One premise corrected: area does NOT cost exponentially. Scoring a fixed interface is linear in contacts with a
+spatial index (measured: 7 ms/pose) and the FFT is polynomial in grid size. The exponential cost in docking is
+CONFORMATIONAL search -- degrees of freedom, not area. So the local/global split is free, and the argument for
+it is the measurement above rather than compute.
+
+## The result: nothing beats the shape score on more than one metric
+
+    arm           Spearman  top-100  top100 RMSD   beats shape on...
+    shape           -0.059        2         36.4   (baseline, set mean 39.0)
+    elec_compl      -0.005        0         39.9   nothing
+    phob_compl      +0.011        0         40.4   nothing
+    contiguity      +0.153        1         40.4   nothing  (WRONG SIGN)
+    n_patches       +0.141        1         40.0   nothing  (WRONG SIGN)
+    bsa_proxy       -0.033        3         34.0   top-100, enrichment
+    packing         -0.149        0         37.6   Spearman
+    z_sum           +0.028        1         38.6   nothing
+    combiner        -0.065        1         38.6   nothing
+    chance                        0.70      39.0
+
+Every arm is 0/6 at top-1 and top-10.
+
+**Charge complementarity measures nothing (-0.005). Hydrophobic complementarity measures nothing (+0.011).**
+Those were the flagship global signals -- the whole reason to look at the patch rather than its contacts -- and
+they are indistinguishable from zero across 12 complexes and ~28,000 poses.
+
+## Two hypotheses of mine died, and one gate of mine was broken
+
+**The scattered-islands idea was wrong before the test ran.** I predicted real interfaces are one contiguous
+patch and fakes are scattered. 38.5% of poses take the modal value and contiguity's Spearman is +0.153 --
+the WRONG sign, meaning more contiguous is slightly WORSE. The FFT's non-maximum suppression and positive-score
+filter discard scattered poses before they are ever scored, so there was never room to discriminate. This was
+caught by a spread table added after a smoke test, not by the liveness check, which only catches std < 1e-12.
+
+**A gate that 0 >= 0 can pass is not a gate.** The script's auto-reading printed "LOOKING AT THE WHOLE WORKS"
+for `packing`, because the condition was "better Spearman AND top-10 at least shape's" -- and with every arm at
+0/6, that second clause was free. `packing` has ZERO top-100 hits against shape's two, and worse enrichment
+(37.6 vs 36.4). The verdict is NO GAIN. The gate now requires beating shape on Spearman while not losing on
+either of the other two, because different metrics pick different winners here and choosing the flattering one
+afterwards is how a null becomes a result.
+
+## The bsa_proxy sign flip, which was predeclared as needing explanation
+
+`bsa_proxy` (buried point count, close to raw contact count) has the best enrichment here, 34.0 vs a set mean of
+39.0. But `nexus_pairs` measured contact count as ACTIVELY WRONG, z -1.81. Both are correct, and the difference
+is the decoy generator: nexus_pairs decoys were random rotations jammed at fixed centroid separation, so they
+had MORE contacts than natives; FFT decoys are shape-optimised and clash-free, so they have FEWER (1,487 vs
+2,460 measured directly). **A descriptor whose sign flips with how you generate the wrong answers is measuring
+the decoy generator, not interface quality.** It is not bankable either way.
+
+## Where this leaves the two-stage architecture
+
+The split itself is not refuted -- it is the only place left for the signal, since local scoring is measured at
+zero. What is refuted is that these particular global descriptors carry it. Shape complementarity remains the
+best ranker available, at Spearman -0.059 and 2/6 in the top hundred, which is barely above nothing.

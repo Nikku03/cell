@@ -300,11 +300,28 @@ def main():
     report(f"  (top-k denominator is the {len(tt)} complexes with a near-native pose; Spearman uses all {len(rows)})")
 
     report("\n  READING")
-    base = tab["shape"]["spearman_median"]
+    # A GATE THAT 0 >= 0 CAN PASS IS NOT A GATE. The first version required only "better Spearman AND top-10
+    # at least shape's", and with every arm at 0/6 top-10 that second clause was free -- it declared victory
+    # for an arm with ZERO top-100 hits against shape's two and WORSE enrichment. An arm must now beat shape
+    # on Spearman and not LOSE on either of the other two, because different metrics pick different winners
+    # here and picking the flattering one after the fact is how a null becomes a result.
+    sh_ = tab["shape"]
+    base = sh_["spearman_median"]
     cands = {k: tab[k]["spearman_median"] for k in keys if k != "shape"}
     best = min(cands, key=lambda k: cands[k])
     bs, bh = cands[best], tab[best]["top"]["10"]
-    if bs < base - 0.02 and bh >= tab["shape"]["top"]["10"]:
+    dominates = (bs < base - 0.02
+                 and tab[best]["top"]["100"] >= sh_["top"]["100"]
+                 and tab[best]["top100_mean_rmsd"] <= sh_["top100_mean_rmsd"])
+    for k in keys:
+        if k == "shape":
+            continue
+        w = [m for m, ok in (("Spearman", tab[k]["spearman_median"] < base - 0.02),
+                             ("top-100", tab[k]["top"]["100"] > sh_["top"]["100"]),
+                             ("enrichment", tab[k]["top100_mean_rmsd"] < sh_["top100_mean_rmsd"])) if ok]
+        if w:
+            report(f"    {k} beats shape on: {', '.join(w)}")
+    if dominates:
         report(f"  LOOKING AT THE WHOLE WORKS. '{best}' reaches Spearman {bs:+.3f} against shape's {base:+.3f},")
         report(f"  with top-10 {bh}/{len(tt)} vs shape {tab['shape']['top']['10']}/{len(tt)}. Local scoring")
         report("  measured +0.003 on the same pose sets; a property of the whole patch does what no contact")
