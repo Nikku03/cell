@@ -20857,3 +20857,54 @@ The near-native fractions are brutal: 2 to 4 acceptable poses out of 2,400 per c
 0.7-1.7%. With 6 testable complexes this test can detect "the learned model fixes ranking" -- it does not -- but
 it CANNOT rule out a modest effect. The honest claim is that the join does not work as hoped, not that learned
 rescoring is worthless.
+
+# The negatives were not the problem: an untrained network ranks poses better than a trained one
+
+`colab/dock_poserank.py`. `dock_rescore` failed at 0/6 top-10 and I diagnosed the cause as the training
+negatives: the model's negatives were FAR-APART pairs inside the true complex, so it learned "are these patches
+near each other?" and had never seen a wrong pose. The fix was obvious and the data was now free -- the FFT
+search produces 2,400 poses per complex with known RMSD, so decoy-pose contacts could be the negatives.
+
+Built it. Positives = contacts at the native pose (98,411 across 40 training complexes); negatives = contacts
+at poses beyond 10 A RMSD taken from the FFT's own output (1,427,210). Architecture byte-identical to
+dock_rescore's so that ONLY the negatives differ. Test set pinned from dock_fft.json, never used to fit.
+
+    arm              top-1  top-10  top-100   Spearman  top100 RMSD   set mean
+    shape                0       0        2     -0.059         36.4       39.0
+    new_negatives        0       0        0     +0.003         41.1       39.0
+    old_negatives        0       0        0     +0.131         41.1       39.0
+    UNTRAINED            0       0        1     -0.075         39.0       39.0
+    chance            0.01    0.07     0.70      0.000                    39.0
+
+    (top-k denominator is the 6 complexes with a near-native pose; Spearman uses all 12, ~2,400 poses each)
+
+**The fix did nothing: Spearman +0.003, which is zero.** And the sharper result is the control -- **an UNTRAINED
+network at -0.075 beats both trained models**, one of which (+0.131) is actively anti-correlated. Whatever faint
+ordering exists comes from a random projection of the input surface features, not from anything learned.
+
+Per-complex Spearman swung from -0.215 to +0.715 for the untrained arm across the twelve, so these are unstable
+noise, not weak signal. `shape` was the only arm correct-signed in all 12, in a tight band (-0.133 to -0.016),
+and the only one with enrichment: top-100 mean RMSD 36.4 A against a 39.0 A set mean.
+
+## Why, and it was predictable from how the decoys are made
+
+FFT decoys are SELECTED FOR SHAPE COMPLEMENTARITY -- they are the poses that scored highly. So locally, a decoy
+contact patch looks exactly like a native one: well-packed, complementary, no clash. A model that scores contact
+pairs and averages them is asking a local question of negatives that were chosen to be locally perfect.
+
+**The information distinguishing a near-native pose from a shape-optimal decoy is not local.** Averaging local
+patch scores cannot work in principle here, whatever the negatives are. That is why better negatives changed
+nothing, and it predicts that any pairwise-local scoring scheme will fail the same way.
+
+## Where that leaves the docking stage
+
+    sampling        WORKS. 601 rotations x 884,736 translations in ~20 s; near-native reachable 6/12 blind.
+    translation     WORKS given the rotation: 11/12 within 2.0 A.
+    orientation     UNSOLVED. Shape: 0/6 top-10. Learned rescoring: 0/6, and worse than random weights.
+    what is ruled out   the negatives, as the cause. Local pairwise contact scoring, as the mechanism.
+    what is not         global/holistic pose scoring, which is a different architecture, not a different
+                        training set.
+
+This is the sixth independent failure of a non-steric term in this stack (electrostatics, induction,
+desolvation, flexibility, surface embeddings as ddG features, and now surface embeddings as a pose ranker).
+The cluster is the finding: the model has shape and nothing else, and shape does not determine orientation.
