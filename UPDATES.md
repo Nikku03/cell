@@ -21027,3 +21027,56 @@ constant in every complex.
 
 And the run then crashed formatting `None` with `:+.3f` -- **printing the dead arm its own liveness check had
 just correctly found.** Fixed with a None-safe formatter at all three format sites.
+
+# The answer was missing from half the pose sets, and five ranking experiments never checked
+
+`colab/dock_coverage.py`. Pure sampling recall, no ranking anywhere: how much sampling before the correct pose
+is PRESENT. The FFT score is recorded but never used to select, filter or order any pose entering a coverage
+number.
+
+    rotations     peaks=4    peaks=12    theory   poses/cx
+          600        6/12        6/12      10.1       7,200
+         1200       10/12       10/12      11.5      14,400
+         2400       12/12       12/12      11.9      28,800
+         4800       12/12       12/12      12.0      57,600
+
+    median best RMSD reachable   4.9 -> 3.7 -> 2.2 -> 2.2 A
+    median near-native count     1.0 -> 1.5 -> 4.5 -> 6.0 poses
+
+**6/12 -> 12/12 by quadrupling rotations.** At the 600-rotation budget every ranking experiment used, the
+correct answer was absent from half the test set. 1CHO went from a best of 14.7 A to 2.1 A; 1CSE from 5.9 A
+and zero near-native poses to 2.0 A and ten.
+
+## What this does and does not invalidate, stated precisely
+
+    top-k results       dock_fft's headline "0/12 in the top ten" was over 12 complexes of which only 6 could
+                        have succeeded. That framing was misleading as published. From dock_rescore onward the
+                        restricted 6-complex denominator was used, so those numbers were already correct.
+    Spearman results    unaffected. Spearman is computed over all ~2,400 poses across the whole RMSD range and
+                        does not require a near-native pose to exist. shape -0.059, learned +0.003, energies
+                        -0.142 all stand as measured.
+    what changes        at 2,400 rotations all 12 complexes are testable and the basin is ~6x larger, so the
+                        ranking question can now be asked properly rather than under a ceiling.
+
+## Three things the table settles
+
+**Translation sampling was never the constraint.** peaks=4 and peaks=12 give IDENTICAL coverage at every
+rotation count. `PEAKS_PER_ROT=4` was adequate throughout; rotation count was the entire bottleneck.
+
+**Observed lags theory at low N and converges at high N** -- 6 vs 10.1 predicted at 600 rotations, 12 vs 11.9
+at 2,400. Since the peak sweep rules out translation selection, the low-N shortfall is the RMSD ~ t*Rg
+approximation and grid discretisation, not a missing mechanism.
+
+**Best RMSD plateaus at 2.2 A while the near-native COUNT keeps rising** (4.5 -> 6.0 on the last doubling).
+More rotations stop improving the best pose and start filling the basin -- which is precisely the regime where
+cluster population becomes informative, and it did not exist at the old budget.
+
+## The methodological point, which is the expensive one
+
+Five experiments were spent on ranking before anyone asked whether the thing being ranked for was present.
+The check cost 27 minutes and one script. **Ranking a candidate set that does not contain the answer measures
+nothing**, and the honest order was coverage first, ranking second.
+
+One pass gave the whole curve: `rotations(600)` is exactly the first 600 of `rotations(4800)` -- verified
+elementwise before the run -- so recording each pose's rotation index yields every prefix, and recording its
+peak rank does the same for translation. Eight budgets, one pass.
