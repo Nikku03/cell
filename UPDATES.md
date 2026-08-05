@@ -20772,6 +20772,20 @@ and 0.90 is a matter of running it rather than redesigning anything.
 **The confound was not manufacturing the effect.** Correcting it moved the number UP, not down: the drifting-
 fold version reached 0.8813 with ~173 training complexes, the fixed-test version reaches 0.9019 with 200.
 
+## CORRECTION (same day, see the dock_rescore entry below): the 0.9019 is a BOUND-setting number
+
+`dmasif.point_cloud` builds the surface from the WHOLE COMPLEX's atoms and `precompute_graph` builds the KNN
+graph over ALL chains together, so at an interface a receptor point's neighbours include ligand points a few
+Angstrom away and the convolution aggregates ACROSS the interface before being asked whether those two points
+touch. Measured directly, at matched training size on the same 14 held-out complexes:
+
+    bound graph   (whole complex, cross-chain KNN)   AUC 0.7980
+    unbound graph (per chain, own APBS + own KNN)    AUC 0.7137
+    gap                                                  0.0843
+
+So the number relevant to docking -- where you have two proteins APART -- is the unbound one. The curve below is
+still a real scaling result and its SHAPE is unaffected, but its level is measured in the bound setting.
+
 ## What the 0.90 is and is not
 
     IS      interface point-pair discrimination on 60 unseen complexes: given pairs of surface points, does the
@@ -20785,3 +20799,61 @@ fold version reached 0.8813 with ~173 training complexes, the fixed-test version
 The depth test asked the same data-vs-model question of the perturbation stack and answered "the model is the
 limit": score rose +0.0215 per doubling while the achievable ceiling rose +0.0843, so the ratio FELL from 0.853
 to 0.509. Here the answer is the reverse. Same question, opposite verdicts, and only measuring told them apart.
+
+# The join fails: an interface-point model does not thereby rank docking poses
+
+`colab/dock_rescore.py`. Two results that failed in complementary ways -- FFT docking reaches near-native but
+ranks it 0/12 in the top ten, dMaSIF discriminates interface points at 0.90 -- looked like they should compose:
+the piece that works needs orientation, the piece at 0.90 constrains orientation. This re-ranks the SAME 2,400
+poses per complex with the learned model instead of with shape. Embeddings are pose-invariant, so they are
+computed once per chain and each pose only changes which point pairs are in contact.
+
+## First, the 0.9019 had to be re-measured, because it was not in the setting docking faces
+
+The surface came from the whole complex and the KNN graph reached across chains, so a point's embedding already
+encoded the partner sitting on it. The complex surface also BURIES the interface: 1ACB yields 122 cross-interface
+point pairs when each chain is surfaced alone, against 51 from the complex.
+
+    bound graph   (whole complex, cross-chain KNN)   AUC 0.7980
+    unbound graph (per chain, own APBS + own KNN)    AUC 0.7137
+    UNTRAINED     (random init, unbound)             AUC 0.5245
+    gap                                                  0.0843    on the same 14 held-out complexes
+
+Stated precisely, because it is not purely a leak term: the two settings differ in more than one way -- the
+unbound version also recovers interface points the complex buried, so the pair populations are not identical.
+Both changes are REQUIRED for docking honesty, so the practical conclusion holds either way. The useful part is
+the untrained floor at 0.5245: in the unbound setting the learning is doing real work, 0.71 against 0.52. It is
+just not 0.90.
+
+## The re-ranking, on the 6 complexes where a near-native pose actually exists
+
+Six of the twelve have no acceptable pose anywhere in their 2,400, so no ranker could succeed there and they are
+reported separately rather than diluting the denominator.
+
+    arm                 top-1   top-10   top-100      (denominator 6)
+    shape                   0        0         2
+    learned_mean            0        0         0
+    learned_sum             0        0         1
+    shape+learned           0        0         1
+    UNTRAINED               0        0         1
+    chance                             ~0.70
+
+**Every arm is 0/6 in the top ten, and the learned re-ranking is if anything WORSE than shape.** The untrained
+control lands in the same place as the trained one, which is the cleanest statement available: whatever ordering
+exists is not coming from what was learned.
+
+## Why, and it names what would have to change
+
+The model was trained to answer "are these two surface points in contact in the native structure?", with
+negatives drawn as FAR-APART pairs inside the true complex. At re-ranking time every pose presents contacting
+pairs, and the model was never shown a WRONG pose -- so it has no basis for calling a contact spurious.
+**Scoring the contacts of a given pose and choosing among poses are different problems, and the training
+negatives were the wrong negatives for the second one.** A pose-ranking model needs decoy-pose contacts as
+negatives, which the FFT search can now generate in bulk.
+
+## Power, stated so the null is not over-read
+
+The near-native fractions are brutal: 2 to 4 acceptable poses out of 2,400 per complex, so chance at top-10 is
+0.7-1.7%. With 6 testable complexes this test can detect "the learned model fixes ranking" -- it does not -- but
+it CANNOT rule out a modest effect. The honest claim is that the join does not work as hoped, not that learned
+rescoring is worthless.
