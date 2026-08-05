@@ -21080,3 +21080,59 @@ nothing**, and the honest order was coverage first, ranking second.
 One pass gave the whole curve: `rotations(600)` is exactly the first 600 of `rotations(4800)` -- verified
 elementwise before the run -- so recording each pose's rotation index yields every prefix, and recording its
 peak rank does the same for translation. Eight budgets, one pass.
+
+# Compartment and direction for orphan catalysts: both fail, and the baseline was non-deterministic
+
+`colab/cell_orphan_context.py`. Five context filters were proposed for narrowing missing-enzyme candidates.
+Honest accounting first:
+
+    "clear out proteins not in a cell"      ALREADY ENFORCED. The vocabulary is the 5,282 human catalysts from
+                                            Reactome + HumanGEM. Nothing foreign exists to remove.
+    "clear out molecules the cell won't use" ALREADY ENFORCED, same two human-curated sources.
+    compartment / spatial                   GENUINELY NEW. 28,498/28,528 reactions carry a compartment.
+    substrate/product direction             PARTLY NEW -- the baseline pools `in` and `out` into one bag.
+
+## Result: neither new lever helps
+
+    arm                        @1       @5      @20     @100
+    chem  (baseline)        0.249    0.407    0.552    0.611
+    chem_compart_any        0.249    0.407    0.552    0.611   <- VACUOUS, changed 0/1500 lists
+    chem_compart_dom        0.214    0.371    0.527    0.604
+    chem_compart_frac       0.241    0.395    0.545    0.609
+    chem_dir                0.213    0.415    0.567    0.612
+    compart_dom_perm        0.125    0.295    0.493    0.605   <- shuffled-map control
+    freq                    0.023    0.087    0.170    0.291
+    rand                    0.001    0.003    0.017    0.059
+
+**Compartment HURTS.** Both non-vacuous forms lose to chemistry alone. But the real map (0.527) clearly beats
+a SHUFFLED map (0.493), so location is not noise -- it simply adds nothing chemistry does not already carry.
+Reactions sharing metabolites tend to share a compartment, so the filter is redundant with the very neighbours
+it filters, while demoting correct multi-compartment enzymes (only 42% of catalysts sit in exactly one).
+
+**Direction is a trade, not a win.** Worse at k=1 (0.213 vs 0.249), better at k=5/20/100. Matching substrate
+to substrate and product to product buys deeper recall at the cost of top-1 precision.
+
+## The first version of the compartment filter was VACUOUS, and its own diagnostic caught it
+
+Testing "do the gene's compartments intersect the reaction's" changed **0 of 1,500** candidate lists: genes sit
+in several compartments and reactions span several, so everything matched everything. The script's auto-reading
+still printed "LOCATION ADDS NOTHING", which was not supported -- a vacuous filter is untested, not refuted.
+The shuffled-map control is what exposed it: the permuted map DID reorder, proving the real map was permissive
+precisely because it is correct. Replaced with dominant-compartment and graded-overlap variants, which change
+42% and 46% of lists respectively, and the liveness table now prints the change rate for each.
+
+## The baseline itself was non-deterministic, which affects a previously recorded number
+
+`for p in pi` iterates a set of STRINGS, and Python salts string hashes per process, so the order of TIED
+candidates varied run to run. Measured directly across PYTHONHASHSEED 0/1/2 with no code change:
+
+    recall@1   0.268 / 0.270 / 0.270          recall@20  0.559 / 0.562 / 0.559
+
+So **the 0.276 recorded for `cand_chem` in the orphan entry was one draw from a distribution**, not a fixed
+value. Fixing it exposed a second trap: sorting ties alphabetically is deterministic but BIASED toward genes
+early in the alphabet, and dropped recall@1 to 0.244. The tie-break is now an md5 of the gene name -- stable
+across processes, no alphabetical bias, matching the expected value of random tie-breaking.
+
+**Median 3 candidates share the top chemistry score, p90 is 20.** Tie-breaking alone moves recall@1 by ~0.03,
+which means the chemistry score is coarse enough that WHICH tied candidate lands first is a real component of
+recall@1. Any future comparison at k=1 smaller than that is noise.

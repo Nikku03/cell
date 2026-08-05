@@ -50,6 +50,7 @@ PREDECLARED, before any number:
 Recall is measured exactly as `cell_orphan_candidates` did -- hide a known catalyst, ask whether it comes back
 in the top k -- so the baseline column is directly comparable to the recorded 0.276 / 0.443 / 0.552 / 0.596.
 """
+import hashlib
 import json
 import sys
 import time
@@ -77,6 +78,15 @@ _PREFIX = [("cytosol", "cytosol"), ("cytoplasm", "cytosol"), ("nucleo", "nucleus
            ("endoplasmic", "er"), ("mitochondri", "mitochondrion"), ("golgi", "golgi"),
            ("lysosom", "lysosome"), ("peroxisom", "peroxisome"), ("endosom", "endosome"),
            ("ciliary", "cilium"), ("cilium", "cilium"), ("nuclear envelope", "nucleus")]
+
+
+def _tb(name):
+    """Deterministic, UNBIASED tie-break. Python salts string hashes per process, so raw set iteration made
+    tied candidates reorder run to run (recall@1 drifted 0.268-0.270 across PYTHONHASHSEED). Sorting ties
+    alphabetically fixes that but is BIASED -- it systematically favours genes early in the alphabet, and
+    recall@1 fell to 0.244 because of it. An md5 of the name is stable across processes and carries no
+    alphabetical bias, so it matches the expected value of random tie-breaking while staying reproducible."""
+    return hashlib.md5(name.encode()).hexdigest()
 
 
 def norm_comp(x):
@@ -160,15 +170,44 @@ def main():
             return {k for k, v in c.items() if v > 0}
         return set(c)
 
-    def rank(i, directional, comp_map):
-        """chemistry score, optionally directional, optionally partitioned by compartment consistency"""
+    def dominant(cnt):
+        return cnt.most_common(1)[0][0] if cnt else None
+
+    RCMP_DOM = [dominant(Counter(norm_comp(p.get("compartment"))
+                                 for w in ("in", "out") for p in (s_.get(w) or [])
+                                 if norm_comp(p.get("compartment")))) for s_ in steps]
+
+    def held_dom(g, held, mp):
+        """the gene's dominant compartment, with the held-out reaction's contribution removed"""
+        c = mp.get(g)
+        if not c:
+            return None
+        if held is not None and g in cats.get(held, ()):
+            c = Counter(c)
+            c.subtract(CMP[held])
+            c = Counter({k: v for k, v in c.items() if v > 0})
+        return c.most_common(1)[0][0] if c else None
+
+    def rank(i, directional, comp_map, mode="any", ret_ties=False):
+        """chemistry score, optionally directional, optionally re-ordered by compartment consistency.
+
+        mode='any' was the FIRST version and it is VACUOUS: genes sit in several compartments (only 42% in
+        exactly one) and reactions span several, so every candidate intersected every reaction and the
+        partition changed 0 of 1,500 top-20 lists. The permuted control DID reorder, which is what exposed it --
+        the real map is permissive precisely because it is correct. 'dom' and 'frac' are the non-vacuous forms.
+        """
         sc = defaultdict(float)
         pi, pin, pout = P[i], PIN[i], POUT[i]
         if not pi:
             return []
         seen = set()
-        for p in pi:
-            for j in cat_of_part.get(p, ()):
+        # sorted(), because `pi` is a set of STRINGS and Python salts string hashes per process: iterating it
+        # raw made the dict insertion order -- and therefore the order of TIED candidates -- vary run to run.
+        # Measured: recall@1 drifted 0.268-0.270 and @20 0.559-0.562 across PYTHONHASHSEED 0/1/2 with no code
+        # change. Differences smaller than that are noise, so ties are now broken by name and the whole thing
+        # is deterministic.
+        for p in sorted(pi):
+            for j in sorted(cat_of_part.get(p, ())):
                 if j in seen or j == i:
                     continue
                 seen.add(j)
@@ -182,12 +221,34 @@ def main():
                 for c in cats[j]:
                     if v > sc[c]:
                         sc[c] = v
-        order = [c for c, _ in sorted(sc.items(), key=lambda kv: -kv[1])]
+        order = [c for c, _ in sorted(sc.items(), key=lambda kv: (-kv[1], _tb(kv[0])))]
+        if ret_ties:
+            top = max(sc.values()) if sc else 0.0
+            return order, sum(1 for v in sc.values() if v == top)
         if comp_map is None:
             return order
         want = CMP[i]
         if not want:
             return order
+        if mode == "frac":
+            # graded: chemistry weighted by the SHARE of the gene's compartments that match. No hard cutoff.
+            out2 = []
+            for c in order:
+                gc = gene_comps(c, i, comp_map)
+                f = (len(gc & want) / len(gc)) if gc else 0.0
+                out2.append((sc[c] * (0.25 + 0.75 * f), c))
+            return [c for _, c in sorted(out2, key=lambda kv: (-kv[0], _tb(kv[1])))]
+        rdom = RCMP_DOM[i]
+        if mode == "dom":
+            # strict: the gene's DOMINANT compartment must be the reaction's dominant compartment
+            hit, miss = [], []
+            for c in order:
+                cnt = comp_map.get(c)
+                if held_dom(c, i, comp_map) == rdom and rdom is not None:
+                    hit.append(c)
+                else:
+                    miss.append(c)
+            return hit + miss
         hit = [c for c in order if gene_comps(c, i, comp_map) & want]
         miss = [c for c in order if c not in set(hit)]
         return hit + miss
@@ -199,29 +260,42 @@ def main():
     ev = [evalable[int(x)] for x in pick]
     report(f"  real orphan pool {len(real):,} | evaluating on {len(ev):,} reactions with a KNOWN catalyst, hidden")
 
-    ARMS = ("chem", "chem_compart", "chem_dir", "chem_dir_compart", "compart_perm", "freq", "rand")
+    ARMS = ("chem", "chem_compart_any", "chem_compart_dom", "chem_compart_frac", "chem_dir",
+            "chem_dir_compart_dom", "compart_dom_perm", "freq", "rand")
     hits = {a: {k: 0 for k in KS} for a in ARMS}
-    nmatch = 0
+    changed = {"any": 0, "dom": 0, "frac": 0}
+    ties = []
     for i in ev:
         truth = set(cats[i])
-        base = rank(i, False, None)
-        comp = rank(i, False, g2c)
+        base, top_tie = rank(i, False, None, ret_ties=True)
+        ties.append(top_tie)
+        cany = rank(i, False, g2c, "any")
+        cdom = rank(i, False, g2c, "dom")
+        cfrc = rank(i, False, g2c, "frac")
         dirn = rank(i, True, None)
-        dcmp = rank(i, True, g2c)
-        prm = rank(i, False, g2c_perm)
+        dcmp = rank(i, True, g2c, "dom")
+        prm = rank(i, False, g2c_perm, "dom")
         rnd = list(rng.choice(allcats, min(max(KS), len(allcats)), replace=False))
-        nmatch += bool(base and set(base[:20]) != set(comp[:20]))
+        for a, lst in (("any", cany), ("dom", cdom), ("frac", cfrc)):
+            changed[a] += bool(base and set(base[:20]) != set(lst[:20]))
         for k in KS:
             hits["chem"][k] += bool(truth & set(base[:k]))
-            hits["chem_compart"][k] += bool(truth & set(comp[:k]))
+            hits["chem_compart_any"][k] += bool(truth & set(cany[:k]))
+            hits["chem_compart_dom"][k] += bool(truth & set(cdom[:k]))
+            hits["chem_compart_frac"][k] += bool(truth & set(cfrc[:k]))
             hits["chem_dir"][k] += bool(truth & set(dirn[:k]))
-            hits["chem_dir_compart"][k] += bool(truth & set(dcmp[:k]))
-            hits["compart_perm"][k] += bool(truth & set(prm[:k]))
+            hits["chem_dir_compart_dom"][k] += bool(truth & set(dcmp[:k]))
+            hits["compart_dom_perm"][k] += bool(truth & set(prm[:k]))
             hits["freq"][k] += bool(truth & set(freq_rank[:k]))
             hits["rand"][k] += bool(truth & set(rnd[:k]))
     n = len(ev)
-    report(f"  compartment partition changed the top-20 for {nmatch:,}/{n:,} reactions "
-           f"({nmatch/n:.0%}) -- if this were ~0 the filter could not matter either way")
+    report(f"\n  TIE DENSITY -- median candidates sharing the TOP chemistry score: {int(np.median(ties))} "
+           f"(p90 {int(np.percentile(ties, 90))}). Tie-breaking moved recall@1 by ~0.03, so the chemistry")
+    report("  score is coarse enough that WHICH tied candidate lands first is a real part of recall@1.")
+    report(f"\n  LIVENESS -- did each compartment variant change anything? (0% = vacuous, not refuted)")
+    for a in ("any", "dom", "frac"):
+        flag = "   <- VACUOUS, its recall row means nothing" if changed[a] == 0 else ""
+        report(f"    {a:<6} changed the top-20 for {changed[a]:>6,}/{n:,}  ({changed[a]/n:>5.1%}){flag}")
 
     report(f"\n  RECALL@k  (n={n:,})")
     report(f"    {'arm':<20}" + "".join(f"{'@' + str(k):>9}" for k in KS))
@@ -231,9 +305,14 @@ def main():
         report(f"    {a:<20}" + "".join(f"{rec[a][str(k)]:>9.3f}" for k in KS))
 
     report("\n  READING")
-    c_beats_chem = all(rec["chem_compart"][str(k)] > rec["chem"][str(k)] for k in KS)
-    c_beats_perm = all(rec["chem_compart"][str(k)] >= rec["compart_perm"][str(k)] for k in KS) and \
-        any(rec["chem_compart"][str(k)] > rec["compart_perm"][str(k)] for k in KS)
+    best_c = max(("chem_compart_dom", "chem_compart_frac"),
+                 key=lambda a: rec[a]["20"] if changed[a.split("_")[-1]] else -1)
+    rec["chem_compart"] = rec[best_c]
+    rec["compart_perm"] = rec["compart_dom_perm"]
+    c_beats_chem = changed[best_c.split("_")[-1]] > 0 and \
+        all(rec[best_c][str(k)] > rec["chem"][str(k)] for k in KS)
+    c_beats_perm = all(rec[best_c][str(k)] >= rec["compart_dom_perm"][str(k)] for k in KS) and \
+        any(rec[best_c][str(k)] > rec["compart_dom_perm"][str(k)] for k in KS)
     d_beats = all(rec["chem_dir"][str(k)] > rec["chem"][str(k)] for k in KS)
     if c_beats_chem and c_beats_perm:
         report(f"  LOCATION IS INFORMATIVE. compartment lifts recall@20 from {rec['chem']['20']:.3f} to "
@@ -259,7 +338,7 @@ def main():
 
     json.dump({"test": "cell_orphan_context", "n_eval": n, "ks": list(KS), "recall": rec,
                "n_vocab": len(allcats), "n_compartments": ncomp, "n_catalysts_placed": len(g2c),
-               "frac_top20_changed": nmatch / n, "already_enforced": ["non-human proteins", "foreign molecules"],
+               "frac_top20_changed": {a: changed[a] / n for a in changed}, "already_enforced": ["non-human proteins", "foreign molecules"],
                "log": log}, open(OUT / "cell_orphan_context.json", "w"), indent=2)
     report(f"\n  total {time.time() - t0:.0f}s  -> {OUT / 'cell_orphan_context.json'}")
     return 0
