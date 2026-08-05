@@ -21136,3 +21136,68 @@ across processes, no alphabetical bias, matching the expected value of random ti
 **Median 3 candidates share the top chemistry score, p90 is 20.** Tie-breaking alone moves recall@1 by ~0.03,
 which means the chemistry score is coarse enough that WHICH tied candidate lands first is a real component of
 recall@1. Any future comparison at k=1 smaller than that is noise.
+
+# The distogram finds what Spearman structurally could not: an electrostatic near-native detector
+
+`colab/dock_distogram.py`. Every ranking arm had been judged by Spearman over the whole pose set and by top-k.
+Both share a blind spot: Spearman is GLOBAL and MONOTONIC, so an arm that flags near-native poses distinctively
+while wandering elsewhere reads as ~0; and top-k needs the answer to outrank 2,400 rivals, which 2-4
+near-native poses almost never do. A step, a U-shape and pure noise all produce the same recorded number.
+
+Asked as a distribution instead, on IDENTICAL pose sets (600 rotations, 4 peaks -- every complex reproduced its
+original best-RMSD exactly):
+
+    arm                     Spearman   AUC_far   AUC_close
+    e_elec_frac_fav           -0.047     0.884       0.811
+    g_bsa_proxy               -0.033     0.873       0.750
+    e_elec_sum                +0.107     0.718       0.733
+    shape                     -0.059     0.650       0.667
+    chance                    +0.000     0.500       0.500
+
+    AUC_far   = near-native (<=5 A) vs far (>10 A)        the easy separation
+    AUC_close = near-native vs CLOSE-WRONG (5-10 A)       the one a funnel actually needs
+
+## The distogram shows exactly why the statistic missed it
+
+    e_elec_frac_fav, median z per RMSD bin:
+      0-5    5-10   10-15   15-20   20-30   30-45   45-60    >60
+      1.63   -0.14   -0.11    0.14   -0.58   -0.57   -0.43    0.12
+
+**A step, not a slope.** A +1.63 z spike in the near-native bin and flat noise across the entire rest of the
+range. Spearman measures monotone association and is structurally incapable of reporting that shape; it read
+-0.047. The signal was present in every run recorded today and no statistic in use could see it.
+
+## The multiple-comparison control, which most of the table does not survive
+
+19 arms were tested and the maximum taken -- exactly how noise becomes a finding. Permutation test, RMSD labels
+shuffled within each complex, max over the same 19 arms, 400 permutations:
+
+    null median 0.675    95th pct 0.792    max 0.908
+    p(best-of-19 >= 0.811) = 0.020
+
+**The null median is 0.675**, so best-of-19 on 6 complexes with 2-4 positives reaches 0.675 by chance alone.
+`g_bsa_proxy` (0.750), `shape` (0.667) and `e_desolv_median_nz` (0.673) are therefore AT OR BELOW chance
+selection and are NOT findings. Exactly one arm clears the 95th percentile.
+
+## What the surviving arm is, and why the form matters
+
+`e_elec_frac_fav` is the FRACTION of interface spheres carrying favourable (negative) electrostatic energy --
+not the total, not the median. The ordering is informative: fraction 0.811, sum 0.733, median_nz 0.583. What
+discriminates is "most spheres are favourable", not "the total is favourable", which a few strong pairs can
+dominate. Mechanistically: at a true interface charged residues pair complementarily across the whole patch; a
+pose shifted by 5-10 A scrambles that pairing while keeping the contact count.
+
+This is also NOT the same quantity as `dock_global`'s `elec_compl` (APBS surface-potential correlation, AUC_close
+0.568, no gain). Physics-engine Coulomb per residue works where surface-potential correlation did not, which is
+coherent rather than contradictory -- they measure different things.
+
+## Status: promising, not established
+
+Six complexes, 2-4 positives each, p = 0.020 after multiple-comparison correction. That is a signal worth
+following, not a result to build on. **It needs replication at 2,400 rotations**, where the coverage sweep
+showed all 12 complexes contain a correct pose and basins hold 4-16 near-native members instead of 2-4 -- both a
+larger positive class and twice the complexes. Until then it is one arm clearing one threshold on an
+underpowered set.
+
+Also worth stating plainly: this vindicates asking for the DISTRIBUTION. Five ranking experiments reported
+nulls that were, for at least one arm, an artifact of the summary statistic rather than an absence of signal.
