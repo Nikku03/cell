@@ -20971,3 +20971,59 @@ the decoy generator, not interface quality.** It is not bankable either way.
 The split itself is not refuted -- it is the only place left for the signal, since local scoring is measured at
 zero. What is refuted is that these particular global descriptors carry it. Shape complementarity remains the
 best ranker available, at Spearman -0.059 and 2/6 in the top hundred, which is barely above nothing.
+
+# Energy levels in the spheres: the largest ranking signal yet, and the least trustworthy
+
+`colab/dock_energy.py`. Every pose-ranking attempt had been geometry or learned features -- grid shape -0.059,
+learned contacts +0.003, retrained on 1.4M decoy contacts +0.003, charge/phobic complementarity -0.005/+0.011.
+**The physics engine itself had never been run on these poses.** `sidechain_vdw` computes cross-interface LJ,
+electrostatics, induction and desolvation inside a sphere around each interface sidechain, so this measures the
+energy levels in each sphere and ranks the 2,400 poses per complex by them.
+
+## The numbers
+
+    arm                     median   correct-signed          range     top-100   enrich
+    soft_induc_frac_fav     -0.142        8/12       [-0.690, +0.559]        0     34.7
+    soft_vdw_frac_fav       -0.125        7/12       [-0.641, +0.497]        0     34.7
+    soft_vdw_median_nz      -0.121        8/12       [-0.429, +0.212]        0     40.8
+    soft_elec_frac_fav      -0.047        7/12       [-0.474, +0.608]        3     36.2
+    shape (baseline)        -0.059       12/12       [-0.133, -0.016]        2     36.4
+    chance                  +0.000                                        0.70     39.0
+
+**The largest median effect of the day, -0.142 against shape's -0.059 -- and the number not to trust.** Shape is
+correct-signed 12 of 12 in a tight band; the energy arms swing across +/-0.6 and get the sign right 7-8 times in
+12. A bigger median with that spread is a noisier estimator, not a better one. No arm dominates on the
+three-metric test: the best-Spearman arms are 0/6 in the top hundred against shape's 2/6. Verdict PARTIAL, which
+is what the (repaired) gate returned.
+
+Sign-consistency is a POST-HOC diagnostic. The predeclared readouts were the Spearman median and top-k; this
+column was added after seeing the spread and is labelled as such rather than presented as a planned result.
+
+## This answers a question the NEXUS entry left open, and the answer is a qualification
+
+`nexus_pairs` recorded vdW ranking the native interface first in 7/10 complexes against a 6% chance rate, and
+recorded explicitly that whether that judge "survives HARDER decoys than random rotations" was UNTESTED. It is
+now tested. Against shape-optimised, clash-filtered FFT decoys the same physics gives a median of -0.125 with
+7/12 sign consistency and **0/6 near-native in the top ten**. **The 70% was against easy negatives.** Random
+rotations clash grossly and vdW detects clashes; that is a much easier discrimination than the one docking needs.
+
+## Two predictions of mine that did not survive
+
+**The r^-12 outlier worry was largely moot.** I built raw and soft-core arms expecting the uncapped sum to be
+hostage to one bad atom pair -- a probe had hit 5.6e11. In the actual pose sets only 4 of 23 soft/raw pairs
+differ at all, and by ~0.002. The FFT's own clash filter already removes the poses where LJ explodes, so the
+capping had almost nothing to cap.
+
+**Two arms were dead and the liveness check caught them**: `soft_induc_worst` and `raw_induc_worst` were
+constant in every complex.
+
+## Two defects found by the smoke test, both of the same shape as the day's others
+
+    interface filter 8 A vs LJ cutoff 6 A   every sphere in the 6-8 A band scored EXACTLY zero, so the median
+                                            came out 0.0 for the native pose and a 27 A decoy alike. The
+                                            "robust" arm was measuring nothing.
+    median over ALL spheres                 elec/induc/desolv are zero for every UNCHARGED residue, so a plain
+                                            median is structurally zero whatever the pose does. Added median_nz.
+
+And the run then crashed formatting `None` with `:+.3f` -- **printing the dead arm its own liveness check had
+just correctly found.** Fixed with a None-safe formatter at all three format sites.
