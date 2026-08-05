@@ -21201,3 +21201,60 @@ underpowered set.
 
 Also worth stating plainly: this vindicates asking for the DISTRIBUTION. Five ranking experiments reported
 nulls that were, for at least one arm, an artifact of the summary statistic rather than an absence of signal.
+
+# Confirmatory test: the electrostatic detector is REAL and SMALL, and the gap is the selection effect
+
+`colab/dock_replicate.py`. `dock_distogram` was exploratory -- 19 arms, maximum taken. This pre-specifies ONE
+arm in the source before any number exists, so no multiple-comparison correction is needed, and runs it at the
+coverage-validated 2,400 rotations instead of the 600 that left the answer absent from half the test set.
+
+    exploratory   best of 19 arms,  6 complexes, 2-4 positives   AUC_close 0.811
+    confirmatory  pre-specified,   10 complexes, 3-8 positives   AUC_close 0.640
+
+    per complex   0.429  0.573  0.625  0.628  0.634  0.647  0.659  0.724  0.732  0.778
+    correct-signed in 9/10 | AUC_far median 0.814
+    permutation (2,000 shuffles, ONE arm, no max): null median 0.496, 95th 0.582 -> p = 0.0035
+
+**Verdict WEAKENED, by the gate set before the run.** 0.640 falls in the predeclared 0.55-0.70 band: real
+direction, not strong enough to act on.
+
+## The two nulls are the lesson
+
+    exploratory null (max over 19 arms, 6 complexes)   median 0.675
+    confirmatory null (one arm, 10 complexes)          median 0.496
+
+Chance is 0.5. Selecting the best of 19 arms on an underpowered set moved the *null* to 0.675 -- and the
+observed effect fell 0.811 -> 0.640 by almost exactly that inflation. **The gap between the two runs IS the
+selection effect, measured rather than argued about.** It also retroactively confirms the earlier call that
+`bsa_proxy` (0.750), `shape` (0.667) and `desolv_median_nz` (0.673) were not findings: they sat below the
+inflated null then, and nothing here rescues them.
+
+## What survives, precisely
+
+The arm is real: p = 0.0035 as a single pre-registered hypothesis, correct-signed in 9 of 10 complexes, on
+twice the complexes and roughly double the positives of the exploratory run. And `AUC_far` at 0.814 says it
+reliably rejects grossly wrong poses.
+
+But 0.640 on near-native vs close-wrong is the number that matters, and it is weak. A docking funnel has to
+tell right from nearly-right; rejecting absurd poses is a job the FFT clash filter already did before any arm
+saw them. So this does not rescue pose ranking -- it identifies one small, genuine, non-shape signal in a
+problem where five prior approaches found nothing at all.
+
+## Two structural facts worth keeping
+
+**Two complexes were SKIPPED for having no close-wrong class at all** -- 1CHO (1 near-native, 0 in 5-10 A) and
+1E96 (2, 0). Their basins are isolated poses with no nearly-right neighbours, so the discrimination is
+undefined there rather than failed.
+
+**Coverage and discriminability need different sampling.** The coverage sweep showed peaks-per-rotation was
+irrelevant to whether a correct pose exists (4 and 12 peaks both gave 12/12). But at 4 peaks 1E96 has zero
+close-wrong poses where 12 peaks gave it 5. Peak count does not change whether the answer is present; it
+changes whether there is anything to distinguish it from.
+
+## Context arms, explicitly not promotable
+
+    vdw_frac_fav 0.577 | desolv_frac_fav 0.618 | induc_frac_fav 0.653 | elec_sum 0.664 | vdw_median_nz 0.624
+
+None was pre-specified. `elec_sum` at 0.664 edges the pre-specified arm's 0.640 and that is a hypothesis for
+another run, not a result from this one -- promoting it here would repeat exactly the error this file was
+written to avoid.
