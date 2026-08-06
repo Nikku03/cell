@@ -154,11 +154,17 @@ def main():
         report("        it, so the two arms are not comparable and the gate below cannot be read cleanly.")
 
     report("\n  READING")
-    headroom = ob10 - BASE_TOP1["obscure"]
+    # The re-ranker re-ranks THIS shortlist, so its headroom is measured against THIS list's position-1,
+    # not against the older single-guess arm. Using 0.463 would credit the re-ranker with the +0.062 that
+    # asking for ten answers already delivered by itself.
+    headroom = ob10 - ob1
     if ob10 >= 0.70:
         report(f"  THE GATE CLEARS. On the obscure bin the answer is in the top 10 for {ob10:.3f} of reactions")
-        report(f"  against a single-guess {BASE_TOP1['obscure']:.3f} -- {headroom:+.3f} of headroom for a")
-        report("  re-ranker to convert. Step 2's discriminator has something real to sort.")
+        report(f"  while position 1 is right {ob1:.3f} of the time, so a re-ranker has {headroom:+.3f} to")
+        report("  convert. Step 2's discriminator has something real to sort.")
+        report(f"  NOTE the obscure-bin position-1 is {ob1:.3f} against {BASE_TOP1['obscure']:.3f} for the")
+        report("  single-guess arm: asking for ten ranked answers improved the FIRST one. That gain belongs to")
+        report("  the prompt, not to any re-ranker, and is excluded from the headroom above.")
     elif ob10 - ob1 < 0.10:
         report(f"  NINE RESTATEMENTS OF ONE IDEA. Obscure-bin recall@10 {ob10:.3f} against recall@1 {ob1:.3f}")
         report(f"  -- positions 2-10 add {ob10-ob1:+.3f}. The model has one hypothesis per reaction and pads")

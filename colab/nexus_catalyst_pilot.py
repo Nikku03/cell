@@ -65,7 +65,10 @@ FEATS = OUT / "catalyst_pilot_features.json"
 
 # A bigger box than dock_fft's 96: AlphaFold monomers are larger than the crystal chains that file was tuned
 # on, and the circular-correlation guard rejects any pair whose diameters do not fit.
-GRID, SPACING = 128, 1.4
+# 1.7 A cells rather than dock_fft's 1.4: a bigger box for the SAME FFT cost, which matters because
+# AlphaFold monomers of multi-domain proteins stay elongated even after pLDDT trimming (PRKAR1A is 136 A).
+# Coarser cells cost pose accuracy, which this test does not need -- it reads the score DISTRIBUTION.
+GRID, SPACING = 128, 1.7
 N_ROT = 300              # partner discrimination reads the score DISTRIBUTION, so it does not need the
                          # 2,400 rotations pose-finding needed -- that was measured in dock_coverage
 PLDDT_MIN = 70.0
@@ -152,20 +155,47 @@ def build_bench():
 
     vocab = sorted({c for i in cats for c in cats[i] if c in g2u and glen[c] <= 700})
     vlen = np.array([glen[g] for g in vocab])
-    pick = rng.choice(len(pool), min(N_RX * 3, len(pool)), replace=False)
-    bench = []
+    from concurrent.futures import ThreadPoolExecutor
+    BOX = GRID * SPACING
+    pick = rng.choice(len(pool), min(N_RX * 8, len(pool)), replace=False)
+    trial = []
     for k in pick:
         e = dict(pool[int(k)])
         L = e["cat_len"]
         ok = [g for g, n in zip(vocab, vlen)
               if abs(n - L) <= SIZE_TOL * L and g != e["catalyst"] and g not in cats[e["rx"]]]
-        if len(ok) < N_DECOY:
+        if len(ok) < N_DECOY * 2:
             continue
-        d = rng.choice(len(ok), N_DECOY, replace=False)
+        d = rng.choice(len(ok), N_DECOY * 2, replace=False)   # over-draw; some will not fit the box
         e["decoys"] = [ok[int(x)] for x in d]
+        trial.append(e)
+
+    need = sorted({g for e in trial for g in [e["catalyst"], e["substrate"]] + e["decoys"]})
+    print(f"  prefetching {len(need):,} AlphaFold structures ...")
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        list(ex.map(lambda g: fetch_af(g2u[g]), need))
+    diam = {}
+    for g in need:
+        st = load_struct(g2u[g])
+        diam[g] = st["diam"] if st else None
+    got = sum(1 for v in diam.values() if v)
+    print(f"  usable structures (pLDDT-trimmed, {MIN_AT}-{MAX_AT} atoms): {got:,}/{len(need):,}")
+
+    # SELECT ON MEASURED DIAMETER. Sequence length does not predict compactness, and the circular
+    # correlation makes an oversized pair report a wrapped placement as a contact.
+    bench = []
+    for e in trial:
+        ds, dc = diam.get(e["substrate"]), diam.get(e["catalyst"])
+        if not ds or not dc or ds + dc > BOX:
+            continue
+        fit = [g for g in e["decoys"] if diam.get(g) and ds + diam[g] <= BOX]
+        if len(fit) < N_DECOY:
+            continue
+        e["decoys"] = fit[:N_DECOY]
         bench.append(e)
         if len(bench) >= N_RX:
             break
+    print(f"  reactions surviving the {BOX:.0f} A box guard: {len(bench)}")
     json.dump({"bench": bench, "g2u": {g: g2u[g] for e in bench
                                        for g in [e["catalyst"], e["substrate"]] + e["decoys"]},
                "glen": {g: glen[g] for e in bench

@@ -21878,3 +21878,34 @@ candidate space.
 **Step 2 is only worth running if step 1 clears ~0.7.** Otherwise the discriminator is sorting a list that
 does not contain the answer — which is the 0.505 ceiling all over again, and this project has now paid for
 that lesson twice.
+
+---
+
+# Step 1: the shortlist gate — clears, at 0.713
+
+`cell_orphan_shortlist.py`. The proposed architecture is *LLM proposes ~10 candidates → structure re-ranks
+them*. A re-ranker cannot recover an answer that is not in the list, so **recall@10 is the ceiling of the
+whole design**, and it had to be measured before any docking result could mean anything.
+
+Same 400 literature-stratified reactions, same closed-book protocol, audit clean (16 tool calls, 8 solvers).
+
+    papers on true catalyst    n       @1       @3       @5      @10   @10-@1
+    0-20                      80    0.525    0.688    0.700    0.713   +0.188
+    21-50                     80    0.700    0.850    0.875    0.938   +0.238
+    51-150                    80    0.637    0.800    0.838    0.900   +0.263
+    151-500                   80    0.650    0.850    0.900    0.975   +0.325
+    501+                      80    0.762    0.925    0.925    0.950   +0.188
+    ALL                      400    0.655    0.823    0.848    0.895   +0.240
+
+**The gate clears.** On obscure enzymes — the population the 9,186 real gaps resemble — the answer is in the
+top 10 for **0.713** of reactions while position 1 is right 0.525 of the time. A perfect re-ranker would
+convert **+0.188**. Step 2's discriminator has something real to sort.
+
+**Two things worth separating.** The comparability check passed overall (recall@1 0.655 vs the single-guess
+arm's 0.645, +0.010). But in the obscure bin specifically, position 1 went **0.463 → 0.525** — asking for ten
+ranked answers improved the *first* one. That gain belongs to the prompt, not to any re-ranker, so the
+headroom above is measured against 0.525 rather than 0.463. Crediting the re-ranker with it would have
+inflated the design's apparent value by a third.
+
+**Ceiling for the whole design:** a perfect re-ranker on these shortlists reaches 0.895 overall and 0.713 on
+obscure enzymes, against 0.645 / 0.463 today.
