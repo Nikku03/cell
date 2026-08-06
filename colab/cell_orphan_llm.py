@@ -247,23 +247,24 @@ def main():
 
     # ---------------- the reasoning arms ----------------
     miss, offlist = Counter(), Counter()
-    for arm in ("tie", "open"):
+    for arm in ("tie", "open", "scram"):
         h = []
         for q, pid in enumerate(range(n)):
             a = _norm((ans.get(pid) or {}).get(arm))
             if not a:
                 miss[arm] += 1
-            if arm == "tie" and a and a not in {_norm(g) for g in tied[q]}:
+            if arm in ("tie", "scram") and a and a not in {_norm(g) for g in tied[q]}:
                 offlist[arm] += 1                        # answered off-list: scored as a miss, never silently
             h.append(bool(a) and a in {_norm(g) for g in truth[q]})
         hit["llm_" + arm] = h
 
-    ARMS = ("random", "freq", "logistic", "set_transformer", "llm_tie", "oracle", "llm_open")
+    ARMS = ("random", "llm_scram", "freq", "logistic", "set_transformer", "llm_tie", "oracle", "llm_open")
     report(f"\n  RECALL@1 on the identical {n} reactions")
     report(f"    {'arm':<20}{'@1':>8}{'right':>9}    note")
     NOTE = {"random": "floor", "oracle": "ceiling for every list-constrained arm",
             "set_transformer": f"8,929 params, {len(T.SEEDS)}-seed mean "
                                f"{np.mean(st_seed):.3f}+-{np.std(st_seed):.3f}",
+            "llm_scram": "SAME candidate lists, WRONG reaction -- chemistry-blind control",
             "llm_tie": "closed-book reasoning, same task as freq/logistic",
             "llm_open": "NO candidate list, ceiling 1.000 -- not a tie-break"}
     rec = {}
@@ -277,8 +278,9 @@ def main():
     # ---------------- paired tests against the arm each is trying to beat ----------------
     report(f"\n  PAIRED McNEMAR (n={n}; 1 reaction = {1/n:.3f} recall)")
     mcn = {}
-    for a, b in (("llm_tie", "freq"), ("llm_tie", "logistic"), ("llm_tie", "set_transformer"),
-                 ("llm_tie", "random"), ("llm_open", "llm_tie")):
+    for a, b in (("llm_tie", "llm_scram"), ("llm_tie", "freq"), ("llm_tie", "logistic"),
+                 ("llm_tie", "set_transformer"), ("llm_tie", "random"), ("llm_scram", "random"),
+                 ("llm_open", "llm_tie")):
         X, Y = np.array(hit[a]), np.array(hit[b])
         w, l = int((X & ~Y).sum()), int((~X & Y).sum())
         p = binomtest(w, w + l, 0.5).pvalue if w + l else 1.0
@@ -327,6 +329,17 @@ def main():
     # ---------------- reading ----------------
     report("\n  READING")
     lt, fq, lg = rec["llm_tie"], rec["freq"], rec["logistic"]
+    sc = rec["llm_scram"]
+    p_sc = mcn["llm_tie_vs_llm_scram"]["p"]
+    report(f"  CONTROL FIRST. The scrambled arm saw the SAME candidate lists attached to the WRONG reaction")
+    report(f"  and scored {sc:.3f}; the honest arm scored {lt:.3f} (paired p={p_sc:.4f}).")
+    if lt - sc <= 0.02 or p_sc >= 0.05:
+        report(f"  THE CHEMISTRY IS NOT BEING USED. Give the solver an unrelated reaction and it picks the same")
+        report("  candidates about as often. Whatever the honest arm scores, it is choosing on properties of")
+        report("  the LIST -- how familiar a gene looks -- not on what the reaction does. Read on accordingly.")
+    else:
+        report(f"  The reaction text IS doing work: {lt-sc:+.3f} over the same lists with the wrong chemistry.")
+        report("  So the honest arm is reading the reaction, not just picking the most familiar-looking gene.")
     op, orc = rec["llm_open"], rec["oracle"]
     p_fq = mcn["llm_tie_vs_freq"]["p"]
     d_rare = strat.get("rare  (<= median)", {}).get("llm_tie", 0) - \
