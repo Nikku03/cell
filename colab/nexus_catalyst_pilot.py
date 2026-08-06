@@ -73,7 +73,7 @@ N_ROT = 300              # partner discrimination reads the score DISTRIBUTION, 
                          # 2,400 rotations pose-finding needed -- that was measured in dock_coverage
 PLDDT_MIN = 70.0
 N_RX, N_DECOY = 60, 9
-SIZE_TOL = 0.25
+SIZE_TOL = 0.15          # on TRIMMED ATOM COUNT, not sequence length -- see build_bench
 MIN_AT, MAX_AT = 400, 12000
 SEED = 3
 
@@ -154,48 +154,53 @@ def build_bench():
     print(f"  candidate reactions (known catalyst + protein substrate, both <=700 aa): {len(pool):,}")
 
     vocab = sorted({c for i in cats for c in cats[i] if c in g2u and glen[c] <= 700})
-    vlen = np.array([glen[g] for g in vocab])
     from concurrent.futures import ThreadPoolExecutor
     BOX = GRID * SPACING
-    pick = rng.choice(len(pool), min(N_RX * 8, len(pool)), replace=False)
-    trial = []
+
+    # MATCH ON WHAT THE DOCKING ACTUALLY SEES. The first version matched decoys on UniProt sequence length
+    # and the size control came back at 0.392, not 0.5. Diagnosis: lengths were matched (390 vs 380 aa) but
+    # ATOMS AFTER pLDDT TRIMMING were not (2,240 vs 2,532; 5.94 vs 6.67 atoms per residue). The true
+    # catalysts -- signalling enzymes acting on protein substrates -- carry more disorder and lose more
+    # residues to the trim than decoys drawn from the compact metabolic majority. So every docking feature
+    # tracked size and the run could not be read. Matching is now on trimmed atom count.
+    need_all = sorted(set(vocab) | {e["substrate"] for e in pool} | {e["catalyst"] for e in pool})
+    print(f"  measuring {len(need_all):,} structures (cached where already fetched) ...")
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        list(ex.map(lambda g: fetch_af(g2u[g]), need_all))
+    size, diam = {}, {}
+    for g in need_all:
+        st = load_struct(g2u[g])
+        if st:
+            size[g], diam[g] = st["n"], st["diam"]
+    print(f"  usable structures (pLDDT-trimmed, {MIN_AT}-{MAX_AT} atoms): {len(size):,}/{len(need_all):,}")
+
+    vs = [g for g in vocab if g in size]
+    va = np.array([size[g] for g in vs])
+    pick = rng.choice(len(pool), min(N_RX * 12, len(pool)), replace=False)
+    bench = []
     for k in pick:
         e = dict(pool[int(k)])
-        L = e["cat_len"]
-        ok = [g for g, n in zip(vocab, vlen)
-              if abs(n - L) <= SIZE_TOL * L and g != e["catalyst"] and g not in cats[e["rx"]]]
-        if len(ok) < N_DECOY * 2:
-            continue
-        d = rng.choice(len(ok), N_DECOY * 2, replace=False)   # over-draw; some will not fit the box
-        e["decoys"] = [ok[int(x)] for x in d]
-        trial.append(e)
-
-    need = sorted({g for e in trial for g in [e["catalyst"], e["substrate"]] + e["decoys"]})
-    print(f"  prefetching {len(need):,} AlphaFold structures ...")
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        list(ex.map(lambda g: fetch_af(g2u[g]), need))
-    diam = {}
-    for g in need:
-        st = load_struct(g2u[g])
-        diam[g] = st["diam"] if st else None
-    got = sum(1 for v in diam.values() if v)
-    print(f"  usable structures (pLDDT-trimmed, {MIN_AT}-{MAX_AT} atoms): {got:,}/{len(need):,}")
-
-    # SELECT ON MEASURED DIAMETER. Sequence length does not predict compactness, and the circular
-    # correlation makes an oversized pair report a wrapped placement as a contact.
-    bench = []
-    for e in trial:
         ds, dc = diam.get(e["substrate"]), diam.get(e["catalyst"])
         if not ds or not dc or ds + dc > BOX:
             continue
-        fit = [g for g in e["decoys"] if diam.get(g) and ds + diam[g] <= BOX]
-        if len(fit) < N_DECOY:
+        A_ = size[e["catalyst"]]
+        ok = [g for g, n in zip(vs, va)
+              if abs(n - A_) <= SIZE_TOL * A_ and g != e["catalyst"] and g not in cats[e["rx"]]
+              and ds + diam[g] <= BOX]
+        if len(ok) < N_DECOY:
             continue
-        e["decoys"] = fit[:N_DECOY]
+        d = rng.choice(len(ok), N_DECOY, replace=False)
+        e["decoys"] = [ok[int(x)] for x in d]
+        e["cat_atoms"] = int(A_)
+        e["decoy_atoms"] = [int(size[g]) for g in e["decoys"]]
         bench.append(e)
         if len(bench) >= N_RX:
             break
-    print(f"  reactions surviving the {BOX:.0f} A box guard: {len(bench)}")
+    ta = np.array([e["cat_atoms"] for e in bench], float)
+    da = np.array([np.mean(e["decoy_atoms"]) for e in bench], float)
+    print(f"  reactions surviving box guard + atom matching: {len(bench)}")
+    print(f"  ATOM MATCH CHECK: true catalyst {ta.mean():.0f} vs decoy mean {da.mean():.0f} "
+          f"({(ta.mean()-da.mean())/da.mean():+.1%}) -- must be near zero or the control will fail again")
     json.dump({"bench": bench, "g2u": {g: g2u[g] for e in bench
                                        for g in [e["catalyst"], e["substrate"]] + e["decoys"]},
                "glen": {g: glen[g] for e in bench

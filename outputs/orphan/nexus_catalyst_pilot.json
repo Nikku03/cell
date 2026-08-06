@@ -1,0 +1,42 @@
+{
+  "test": "nexus_catalyst_pilot",
+  "n_reactions": 60,
+  "auc": {
+    "best": 0.394537037037037,
+    "top10": 0.38521604938271603,
+    "mean": 0.3701851851851852,
+    "top50cell": 0.3692592592592593,
+    "n_z2": 0.507608024691358,
+    "skew": 0.4630864197530864,
+    "std": 0.4347530864197531,
+    "clash": 0.38135802469135804,
+    "size_only": 0.3923148148148149
+  },
+  "best_feature": "top50cell",
+  "rank_mean": 6.3,
+  "top1": 0.03333333333333333,
+  "log": [
+    "====================================================================================================",
+    "STEP 2 -- can a binding calculation pick the catalyst out of a 10-candidate shortlist?",
+    "====================================================================================================",
+    "  PRIOR, measured: nexus_doesitbind put does-A-bind-B at AUC 0.456 with a size-only control of",
+    "  0.438 and permutation p=0.66. This is a better-powered re-test on enzyme-substrate pairs with",
+    "  size-matched decoys, not a new idea. Failure is the expected outcome.",
+    "\n  60 reactions scored (merged from 3 shards)",
+    "  60 true catalysts against 540 decoys",
+    "\n  feature            AUC   (0.5 = the shortlist is being reordered at random)",
+    "  best             0.395",
+    "  top10            0.385",
+    "  mean             0.370",
+    "  top50cell        0.369",
+    "  n_z2             0.508",
+    "  skew             0.463",
+    "  std              0.435",
+    "  clash            0.381",
+    "  size_only        0.392   <- THE ARTEFACT CONTROL",
+    "\n  rank of the true catalyst among its shortlist: mean 6.30, median 6, top-1 0.033 (chance ~0.100)",
+    "\n  READING",
+    "  DECOY MATCHING FAILED. size_only reaches 0.392, so the shortlists differ systematically",
+    "  in size and no docking number here is interpretable. Fix the matching before reading on."
+  ]
+}
