@@ -29,7 +29,9 @@ def collect(tdir):
     seen = defaultdict(set)
     for f in sorted(Path(tdir).glob("agent-*.jsonl")):
         txt = f.read_text(errors="replace")
-        tags = set(re.findall(r"(tie|open|scram)_b(\d+)\.txt", txt))
+        # pattern built from ARMS, not hardcoded -- a new arm name silently matched nothing and the
+        # partial-file guard was the only thing that caught it
+        tags = set(re.findall(r"(" + "|".join(map(re.escape, ARMS)) + r")_b(\d+)\.txt", txt))
         if len(tags) != 1:
             print(f"  SKIP {f.name}: batch file ambiguous ({sorted(tags)})")
             continue
