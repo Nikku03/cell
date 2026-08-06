@@ -306,7 +306,10 @@ def main():
             if not k:
                 continue
             f_, t_, o_ = (float(np.mean(np.array(hit[x])[m_])) for x in ("freq", "llm_tie", "llm_open"))
-            strat[nm.strip()] = {"n": k, "freq": f_, "llm_tie": t_, "llm_open": o_}
+            # key on the FIRST WORD. Keying on the padded label and looking it up with a differently
+            # padded literal is how the contamination verdict once printed "+0.000" and called the gain
+            # memorisation, while the table directly above it showed +0.099 in the other direction.
+            strat[nm.split()[0].lower()] = {"n": k, "freq": f_, "llm_tie": t_, "llm_open": o_}
             report(f"    {nm:<26}{k:>5}{f_:>9.3f}{t_:>10.3f}{o_:>10.3f}{t_-f_:>+11.3f}")
 
     block("CONTAMINATION DIAGNOSTIC -- is any advantage concentrated in FAMOUS enzymes?",
@@ -342,19 +345,22 @@ def main():
         report("  So the honest arm is reading the reaction, not just picking the most familiar-looking gene.")
     op, orc = rec["llm_open"], rec["oracle"]
     p_fq = mcn["llm_tie_vs_freq"]["p"]
-    d_rare = strat.get("rare  (<= median)", {}).get("llm_tie", 0) - \
-        strat.get("rare  (<= median)", {}).get("freq", 0)
+    d_rare = strat["rare"]["llm_tie"] - strat["rare"]["freq"]
+    d_fame = strat["famous"]["llm_tie"] - strat["famous"]["freq"]
+    # the STRONGEST baseline is the one that matters, not the weakest. Beating freq while tying the
+    # transformer is a much smaller claim than "reasoning beats counting" and must not be reported as one.
+    best_b = max(("freq", fq), ("logistic", lg), ("set_transformer", rec["set_transformer"]),
+                 key=lambda kv: kv[1])
+    p_best = mcn.get(f"llm_tie_vs_{best_b[0]}", {}).get("p", 1.0)
     if lt > max(fq, lg) and p_fq < 0.05:
-        report(f"  REASONING BEATS COUNTING. {lt:.3f} against freq {fq:.3f} and logistic {lg:.3f}, paired")
-        report(f"  p={p_fq:.4f}, against a {orc:.3f} ceiling -- "
-               f"{(lt-rec['random'])/max(orc-rec['random'],1e-9):.0%} of the headroom.")
+        report(f"  REASONING BEATS COUNTING. {lt:.3f} against freq {fq:.3f}, paired p={p_fq:.4f}, against a")
+        report(f"  {orc:.3f} ceiling -- {(lt-rec['random'])/max(orc-rec['random'],1e-9):.0%} of the headroom "
+               f"where six hand-built signals and a transformer claimed ~30%.")
         report(f"  What the feature arms lacked was reaction semantics, not capacity.")
-        if d_rare > 0.05:
-            report(f"  It holds for RARE catalysts too ({d_rare:+.3f} over freq there), so it is not purely")
-            report("  recall of famous enzymes -- though literature exposure still cannot be ruled out.")
-        else:
-            report(f"  BUT on rare catalysts the gain is only {d_rare:+.3f}. The advantage is concentrated in")
-            report("  well-known enzymes, which is what memorisation of the source literature looks like.")
+        if p_best >= 0.05:
+            report(f"  BUT NOT ESTABLISHED AGAINST THE STRONGEST BASELINE: {best_b[0]} reaches {best_b[1]:.3f}")
+            report(f"  and the paired test cannot separate it from {lt:.3f} (p={p_best:.4f}). At n={n} the")
+            report("  honest claim is 'beats frequency counting', not 'beats everything'.")
     elif abs(lt - fq) <= 0.05 or p_fq >= 0.05:
         report(f"  REASONING DOES NOT ORDER THE TIE GROUP EITHER. {lt:.3f} against freq {fq:.3f} "
                f"(paired p={p_fq:.4f}).")
@@ -364,6 +370,16 @@ def main():
     else:
         report(f"  COUNTING BEATS REASONING. {lt:.3f} against freq {fq:.3f} (paired p={p_fq:.4f}). How often an")
         report("  enzyme already catalyses anything is a stronger prior than what the reaction chemically is.")
+    report(f"\n  CONTAMINATION: the gain over freq is {d_rare:+.3f} on network-RARE catalysts and {d_fame:+.3f}")
+    if d_rare >= d_fame:
+        report("  on network-famous ones -- LARGER where the enzyme is rarer, which is the opposite of what")
+        report("  pure memorisation of famous enzymes would produce.")
+    else:
+        report("  on network-famous ones -- concentrated in well-known enzymes, which is what memorisation of")
+        report("  the source literature looks like.")
+    report("  Read that with care in BOTH directions: 'rare' here means the catalyst runs few OTHER reactions")
+    report("  in this network, which is not the same as rare in the literature. A one-reaction enzyme can still")
+    report("  be a textbook enzyme, so this bounds the contamination loosely rather than ruling it out.")
     report(f"\n  OPEN-ENDED, no candidate list: {op:.3f}. The list-constrained ceiling is {orc:.3f}, so the")
     if op > orc:
         report(f"  reasoning arm names the right enzyme MORE often with no list than any arm can achieve with")
