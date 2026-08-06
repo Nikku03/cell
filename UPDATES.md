@@ -21516,3 +21516,63 @@ denominator, `freq` is worth about +0.053 on recall@1.
 tie group for half of all orphans and four separate signals cannot reliably pick it out of a median of three
 candidates. That is now the sharpest open question on the missing-piece side, and unlike the docking ranking
 problem it comes with a measured ceiling worth chasing.
+
+---
+
+# A learned tie-breaker: attention over the tie group buys nothing over counting
+
+`cell_orphan_ties_nn.py`. The previous section left 69% of the tie headroom unclaimed and named it the
+sharpest open question. The obvious next move is a model with more capacity, so this tests one, with the
+mechanism stated in advance rather than "a network might help".
+
+**The mechanism under test.** Every hand-built tie-breaker scores candidates INDEPENDENTLY -- `freq(gene)`,
+`degree(gene)` -- so none of them can condition on who else is in the group. "Most frequent among these three"
+is a different question from "frequent in general". Self-attention can express that; counting cannot. If
+attention buys nothing, the mechanism was not there.
+
+**GeoConv was excluded, not attempted.** It consumes a surface point cloud plus a KNN graph per entity, and a
+tie group is a set of gene names with no geometry. The catalyst vocabulary is 5,282 genes against 311 cached
+structures -- 5.9% coverage at the absolute best. Running it would have been a category error.
+
+## Results, 458 held-out reactions, split by reaction
+
+    arm                                @1       @5      @20
+    random                          0.314    0.491    0.622   <- floor
+    freq                            0.367    0.513    0.627
+    logistic                        0.373    0.517    0.627
+    set_transformer                 0.365    0.511    0.618   (5-seed mean, sd 0.013)
+    set_transformer_untrained       0.315    0.476    0.624   (5-seed mean, sd 0.029)
+    oracle                          0.498    0.561    0.633   <- ceiling
+
+Two questions, deliberately kept apart, because collapsing them is how a null gets read as a win.
+
+**Did training help? Yes.** 0.365 against a random-init control at 0.315, with all 25 seed pairs favouring the
+trained model, p=0.0040. The listwise loss fell from 16.63 to ~2.2 and the architecture is not inert.
+
+**Did it beat the hand-built arms? No.** `freq` is 0.367 with ZERO parameters, `logistic` is 0.373 with ten,
+and the 8,929-parameter transformer is 0.365. Paired McNemar cannot separate it from `freq` (10.2 win / 11.0
+lose) or from `logistic` (9.8 win / 13.6 lose). Attention learns a real function of these features and every
+bit of it was already reachable by a linear fit on the same five numbers.
+
+**The headroom is untouched.** freq 29%, logistic 32%, transformer 28%. The extra capacity moved nothing.
+The likeliest reason is structural rather than architectural: the median tie group is 3, so there is almost
+nothing to attend over, and only 315 training groups have both a known answer and more than one candidate.
+
+## Two bugs this run caught, both conclusion-changing
+
+`for sd in SEEDS` shadowed the standardisation vector `sd = Xtr.std(0)`. After the loop `sd` was the scalar 4,
+so the logistic arm divided its eval features by 4 and scored 0.288 instead of 0.373 -- it would have been
+recorded as "the fitted linear baseline is worse than random", inverting the finding.
+
+The worst-p rule over the 5x5 trained-vs-untrained cross product asks whether every trained init beats every
+random init reaction-for-reaction. It returned p=1.000 while trained led on all five seeds by 0.050, and the
+first draft of the reading printed "capacity does not help" for a consistent, real gap. Whether training helps
+is a seed-level question and now gets a seed-level test; whether the model beats the baselines stays a
+per-reaction paired test.
+
+## The standing conclusion is unchanged and now better supported
+
+The truth sits in the top tie group for half of all orphans, and counting how often an enzyme already catalyses
+anything is still the best way to order that group. Six hand-built signals and a set transformer have now been
+measured against it, and the crudest one wins. Capacity is not the missing ingredient here -- the tie group is
+too small to carry information the per-candidate features do not already have.
