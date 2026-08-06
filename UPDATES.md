@@ -21671,3 +21671,69 @@ indistinguishable.
 
 freq **3.5**, the transformer **4.0**, closed-book reasoning **4.3** on the same task, **7.2** with no
 candidate list. Perfect tie-breaking would get **5.0** — which is now clearly the wrong target.
+
+---
+
+# Reasoning or memory? The obscurity test, and the answer is memory
+
+`cell_orphan_obscurity.py`. The 0.720 open-ended result carried one caveat that decided everything: these are
+curated reactions published before the training cutoff, so the score could be **recall of the literature the
+answer key was built from** rather than reasoning about chemistry. That distinction is the whole question --
+the ~9,200 unannotated enzyme-shaped reactions are, by construction, the ones nobody has written down.
+
+## The axis, and why the natural sample could not answer it
+
+Obscurity is measured with NCBI `gene2pubmed` -- the curated gene-to-paper table, joined **on gene ID**, 3.3M
+human links. Not by grepping symbols in PubMed: `CAT`, `SI`, `KL`, `PIGS` and `SET` are all real human symbols
+*and* common words, and string matching would file catalase alongside the household pet.
+
+Measured first, and it killed the obvious experiment: in the 200 already-scored reactions the median true
+catalyst has **230 linked papers and exactly 1 of 200 is under 20**. A gene is annotated as a catalyst
+*because* it was studied. So the benchmark was rebuilt **stratified** -- 80 reactions per literature bin,
+including 80 whose catalyst has under 20 papers.
+
+## Result, 400 reactions, closed-book, audit clean
+
+    papers on the true catalyst    n   accuracy         95% CI
+    0-20                          80      0.463   [0.350, 0.578]
+    21-50                         80      0.675   [0.561, 0.776]
+    51-150                        80      0.613   [0.497, 0.719]
+    151-500                       80      0.662   [0.548, 0.764]
+    501+                          80      0.812   [0.710, 0.891]
+
+**Accuracy rises with how much has been published about the answer. Top minus bottom: +0.350.**
+
+## The confounds both favoured the famous end, and were removed rather than adjusted for
+
+The bins are not like-for-like: the bottom bin is 96% metabolic against 45% at the top, and the top bin has 19
+puzzles whose answer is named in the reaction against 1 at the bottom. Stripping both:
+
+    subset                          n   bottom     top      gap    slope       p
+    all 400                       400    0.463   0.812   +0.350   +0.481  0.0037
+    giveaways removed             366    0.456   0.803   +0.348   +0.450  0.0120
+    metabolic only                313    0.455   0.778   +0.323   +0.408  0.0616
+
+The last two rows of the run coincide because **no metabolic puzzle is a giveaway** -- metabolite participants
+never carry a gene symbol, so both confounds live entirely in the signalling half. The direction is identical
+in every subset; significance weakens in the metabolic-only fit only because n falls to 313 with 36 in the top
+bin.
+
+## What this means for the backtrace idea
+
+**Memory is doing real work.** On genuinely obscure enzymes the arm scores **0.463, not 0.645**. The honest
+expected yield on the 9,186 unannotated enzyme-shaped reactions is the bottom bin, not the headline -- true
+gaps are obscure by construction, so the obscure bin is the population that resembles them.
+
+And **0.463 is an upper bound**, not an estimate. Every reaction in this benchmark has a curated catalyst,
+meaning its chemistry was clean enough for a curator to assign one. The unannotated reactions have not passed
+that filter and nothing measured here says they are as tractable.
+
+So the tool transcribes known-but-unlinked biology well and predicts genuinely unrecorded links at roughly a
+coin flip. That is still worth doing at 9,186-reaction scale -- but it is a curation accelerator that needs
+review, not a map-completion engine, and the 0.720 headline must never be quoted for orphan work.
+
+## The measurement that had to come first
+
+The single most useful thing here was measuring the sample before trusting it. The obvious version of this
+test -- score the existing 200 by literature volume -- would have run fine, produced a confident-looking
+curve, and been meaningless, because only one puzzle in it sat in the bin that decides the question.

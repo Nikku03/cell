@@ -281,6 +281,12 @@ def main():
     if key:
         report(f"    The last row is the cleanest comparison available: same reaction type, no answer handed")
         report(f"    over. It keeps a {key['gap']:+.3f} gap, so the effect is not an artefact of either.")
+        if rob.get("metabolic reactions only", {}).get("n") == key.get("n"):
+            report("    The last two rows coincide because NO metabolic puzzle is a giveaway -- metabolite")
+            report("    participants never carry a gene symbol, so both confounds live in the signalling half.")
+        report(f"    Direction is identical in every subset. Significance weakens in the metabolic-only fit")
+        report(f"    (p={key['p']:.4f}) because n falls to {key['n']} with only {key['n_top']} in the top bin,")
+        report("    not because the effect goes away.")
     report("\n  READING")
     if psl >= 0.05 and abs(gap) < 0.15:
         report(f"  REASONING, NOT MEMORY. Controlled slope {slope:+.3f} (p={psl:.4f}) is indistinguishable from")
@@ -304,6 +310,9 @@ def main():
     report(f"  catalyst): the bottom-bin accuracy")
     report(f"  {hit[lo_m].mean():.3f} is the closest honest estimate, NOT the headline {hit.mean():.3f} -- true")
     report("  gaps are obscure by construction, so the obscure bin is the population that resembles them.")
+    report("  Treat even that as an UPPER bound. Every reaction here has a curated catalyst, so its chemistry")
+    report("  was clean enough for a curator to assign one. The unannotated reactions have not passed that")
+    report("  filter, and nothing measured here says they are as tractable.")
 
     json.dump({"test": "cell_orphan_obscurity", "n": n, "overall": float(hit.mean()), "bins": rows,
                "gap_top_minus_bottom": gap, "slope_raw": float(r1.params[1]),
