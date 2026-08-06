@@ -21812,3 +21812,69 @@ unannotated enzyme-shaped reactions stays at the bottom-bin estimate of ~0.46, a
 bound. The remaining untested lever is structural -- substrate-pocket compatibility from the docking line --
 which is a claim about *acting on a substrate* rather than about co-behaviour, and is therefore the first
 channel whose mechanism actually matches the question.
+
+---
+
+# NEXUS for catalyst-finding: right mechanism, wrong scale — and the scale it is right for
+
+`nexus_screen_feasibility.py`. Proposal: cover the structures in spheres, model what two interactions do to
+the overall structure, introduce a third protein, and let the physics say which one is the catalyst.
+
+**The mechanism is the right one.** Unlike co-dependency (viability covariance) or co-expression (shared
+transcriptional control) — both just measured to add nothing — a binding calculation asks *does this enzyme
+act on this substrate*, which is literally the question. The problem is not relevance. It is sharpness
+against the size of the search.
+
+## The arithmetic, from AUCs this project measured itself
+
+For a ranker of AUC *A*, a positive scored against *N* negatives sits at expected rank `(1-A)·N + 1`.
+Candidate enzyme vocabulary: **5,282 genes**.
+
+    to place the true catalyst in the top 10 of 5,282   ->  AUC >= 0.9983
+    best structural number measured in this project     ->  AUC    0.814   (short by 0.184)
+    where that actually lands the true catalyst         ->  rank  ~983
+
+**NEXUS cannot be the search.** This is the same wall the docking line hit seven different ways — generation
+worked, ranking did not — and nothing about spheres or a third protein changes the size of the candidate
+space. No structural method reaches 0.998.
+
+## But the same arithmetic at small N says build it
+
+    shortlist   AUC 0.814 -> expected rank    NEXUS 0.755 -> expected rank
+        5                 1.7                             2.0
+       10                 2.7                             3.2
+       20                 4.5                             5.7
+
+That is exactly the regime where a physics score converts a near-miss into a hit. **And the shortlist
+generator already exists**: closed-book naming reaches 0.463 top-1 on precisely the obscure enzymes the gap is
+made of, and its top-10 will be well above that.
+
+So the composition the numbers support is
+
+    LLM proposes ~10 candidates  ->  structure/NEXUS discriminates within them
+
+the original instinct applied at the N where the physics can pay.
+
+## Scope, measured before designing
+
+Of the 9,186 enzyme-shaped gaps, **2,143 (23%) have a protein or complex participant** to dock against. The
+other 7,043 are metabolite-in-a-pocket — a different calculation than the protein-protein one NEXUS performs.
+Of the 2,143, **1,646 carry two or more distinct protein participants**, which is the "two interactions"
+premise the proposal rests on.
+
+## The structure blocker is gone
+
+Coverage was the reason GeoConv was ruled out earlier: 5,282 catalyst genes against 311 cached PDB structures,
+a 5.9% ceiling. **AlphaFold DB is reachable and covers the proteome** (v4 and v5 are 404; the current path is
+`AF-{ACC}-F1-model_v6.pdb`, resolved via `/api/prediction/{ACC}`). That removes the blocker for the whole
+candidate space.
+
+## Ordered plan, with a stop condition
+
+    1. top-10 accuracy of the closed-book arm  -- is the answer even in the shortlist?
+    2. AUC of the binding score, true catalyst vs 9 decoys, on AlphaFold structures
+    3. do 1 and 2 compose, against the 0.463 top-1 the LLM already delivers alone?
+
+**Step 2 is only worth running if step 1 clears ~0.7.** Otherwise the discriminator is sorting a list that
+does not contain the answer — which is the 0.505 ceiling all over again, and this project has now paid for
+that lesson twice.

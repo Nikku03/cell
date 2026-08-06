@@ -1,0 +1,120 @@
+{
+  "test": "nexus_screen_feasibility",
+  "candidate_space": 5282,
+  "shortlists": [
+    5,
+    10,
+    20,
+    50,
+    200,
+    1000,
+    5282
+  ],
+  "rows": {
+    "GeoConv, interface point pairs": {
+      "auc": 0.617,
+      "ranks": {
+        "5": 2.532,
+        "10": 4.447,
+        "20": 8.277000000000001,
+        "50": 19.767,
+        "200": 77.217,
+        "1000": 383.617,
+        "5282": 2023.623
+      }
+    },
+    "dMaSIF surface descriptor, unbound": {
+      "auc": 0.714,
+      "ranks": {
+        "5": 2.144,
+        "10": 3.5740000000000003,
+        "20": 6.434000000000001,
+        "50": 15.014000000000001,
+        "200": 57.91400000000001,
+        "1000": 286.71400000000006,
+        "5282": 1511.3660000000002
+      }
+    },
+    "NEXUS dual sensor (fold x bind)": {
+      "auc": 0.755,
+      "ranks": {
+        "5": 1.98,
+        "10": 3.205,
+        "20": 5.655,
+        "50": 13.004999999999999,
+        "200": 49.755,
+        "1000": 245.755,
+        "5282": 1294.845
+      }
+    },
+    "best docking rescore": {
+      "auc": 0.814,
+      "ranks": {
+        "5": 1.7440000000000002,
+        "10": 2.6740000000000004,
+        "20": 4.534000000000001,
+        "50": 10.114000000000003,
+        "200": 38.01400000000001,
+        "1000": 186.81400000000005,
+        "5282": 983.2660000000003
+      }
+    }
+  },
+  "auc_needed": {
+    "1": 1.0,
+    "5": 0.9992425676955122,
+    "10": 0.9982957773149025,
+    "50": 0.9907214542700247
+  },
+  "protein_shaped_gap": 2143,
+  "total_enzyme_gap": 9186,
+  "log": [
+    "====================================================================================================",
+    "CAN A STRUCTURAL DISCRIMINATOR FIND A CATALYST? -- the arithmetic that decides the design",
+    "====================================================================================================",
+    "  The mechanism is right: unlike co-dependency and co-expression, a binding calculation asks",
+    "  'does this enzyme act on this substrate', which IS the question. So the issue is not whether",
+    "  the signal is relevant. It is whether the signal is SHARP ENOUGH for the size of the search.",
+    "  Candidate enzyme vocabulary: 5,282 genes.",
+    "\n  WHERE THE TRUE CATALYST LANDS, by discriminator quality and shortlist size",
+    "  (expected rank of the true catalyst; a screen is only useful if this is single digits)",
+    "    discriminator                           AUC       N=5      N=10      N=20      N=50     N=200    N=1000    N=5282",
+    "    GeoConv, interface point pairs        0.617       2.5       4.4       8.3      19.8      77.2     383.6    2023.6",
+    "    dMaSIF surface descriptor, unbound    0.714       2.1       3.6       6.4      15.0      57.9     286.7    1511.4",
+    "    NEXUS dual sensor (fold x bind)       0.755       2.0       3.2       5.7      13.0      49.8     245.8    1294.8",
+    "    best docking rescore                  0.814       1.7       2.7       4.5      10.1      38.0     186.8     983.3",
+    "\n  THE AUC A FULL SCREEN WOULD REQUIRE",
+    "    to place the true catalyst in the top 1   of 5,282:  AUC >= 1.0000",
+    "    to place the true catalyst in the top 5   of 5,282:  AUC >= 0.9992",
+    "    to place the true catalyst in the top 10  of 5,282:  AUC >= 0.9983",
+    "    to place the true catalyst in the top 50  of 5,282:  AUC >= 0.9907",
+    "    best measured in this project: 0.814 (best docking rescore) -- short by 0.184",
+    "\n  READING",
+    "  NEXUS CANNOT BE THE SEARCH. Screening 5,282 enzymes needs AUC 0.9983 to reach a",
+    "  top-10; the best structural number this project has measured is 0.814, which leaves the",
+    "  true catalyst near rank 983. That is the same wall the",
+    "  docking line already hit seven different ways -- generation worked, ranking did not -- and",
+    "  nothing about spheres or a third protein changes the size of the candidate space.",
+    "",
+    "  NEXUS AS A TIE-BREAK IS A DIFFERENT PROPOSITION, and the arithmetic supports it. On a shortlist",
+    "    of  5: AUC 0.814 puts the true catalyst at expected rank 1.7, and the NEXUS sensor at 2.0",
+    "    of 10: AUC 0.814 puts the true catalyst at expected rank 2.7, and the NEXUS sensor at 3.2",
+    "    of 20: AUC 0.814 puts the true catalyst at expected rank 4.5, and the NEXUS sensor at 5.7",
+    "  which is exactly the regime where a physics score can convert a near-miss into a hit.",
+    "",
+    "  AND THIS SESSION ALREADY BUILT THE SHORTLIST GENERATOR. Closed-book naming reaches 0.463 top-1",
+    "  on the obscure enzymes that make up the gap; its top-10 will be well above that. So the",
+    "  composition the numbers support is:",
+    "      LLM proposes ~10 candidates  ->  structure/NEXUS discriminates within them",
+    "  That is the original instinct applied at the N where the physics can actually pay, and it is",
+    "  the design the pilot should test. What it needs measured next, in order:",
+    "     1. top-10 accuracy of the closed-book arm (is the answer even in the shortlist?)",
+    "     2. AUC of the binding score on true-catalyst vs 9 decoys, with AlphaFold structures",
+    "     3. whether 1 and 2 compose, against the 0.463 top-1 the LLM already delivers alone",
+    "  Step 2 is only worth running if step 1 clears roughly 0.7 -- otherwise the discriminator is",
+    "  sorting a list that does not contain the answer, which is the 0.505 ceiling all over again.",
+    "\n  SCOPE, measured separately: of the 9,186 enzyme-shaped gaps, 2,143 (23%) have a protein or",
+    "  complex participant to dock against. The other 7,043 are metabolite-in-a-pocket, a different",
+    "  calculation than the protein-protein one NEXUS performs."
+  ]
+}
