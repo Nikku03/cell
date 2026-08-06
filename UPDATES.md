@@ -21463,3 +21463,56 @@ that was corrected earlier are all measurements of interface-patch RECOGNITION, 
 The 0.5657 for the best single feature was sign-corrected AFTER seeing the eval data, which is selection on the
 test set and makes it slightly optimistic. The clean comparison is the fitted logistic at 0.5467 against
 GeoConv's 0.6171.
+
+# Breaking the ties: ranking the missing piece IS improvable, and a crude prior does it best
+
+`colab/cell_orphan_ties.py`. The headroom was measured before anything was built. The chemistry-neighbour
+max-Jaccard score collides constantly, and the truth is usually inside the collision:
+
+    tie-group size at the top score     median 3, mean 8.3, p90 21
+    truth IS in the top tie group       638/1,308 = 0.488  <- the ceiling for recall@1
+
+Every arm below differs ONLY in how that tie group is ordered; the rest of the ranking is identical.
+
+    arm                  @1       @5      @20
+    random            0.294    0.494    0.629   <- floor (what md5 does in expectation)
+    freq              0.355    0.518    0.635
+    pathway_ctx       0.324    0.512    0.631
+    ppi_degree        0.321    0.507    0.631
+    n_pathways        0.305    0.511    0.631
+    compartment       0.294    0.481    0.625
+    oracle            0.488    0.559    0.640   <- ceiling
+
+**Ordering within the tie group was a real, unexploited bottleneck.** `freq` lifts recall@1 from 0.294 to
+0.355 -- **31% of the available headroom** -- and this is the opposite of the docking case, where the answer
+sat at rank ~1,791 of 9,600 and no reordering could have helped.
+
+## The winner is the crudest signal, and that is the finding
+
+`freq` is just "how many reactions does this enzyme already catalyse". As a RANKER on its own it is nearly
+useless -- recall@1 0.023, barely above random. As a TIE-BREAKER it beats every mechanistic alternative.
+So the division of labour is: chemistry does the retrieval, a popularity prior does the ordering, and neither
+works without the other.
+
+`pathway_ctx` -- the arm with an actual mechanism, where a tied candidate shares pathways with the catalysts of
+this orphan's chemical neighbours -- reaches 0.324, real but below `freq`. Its control `n_pathways` (plain
+generality) only reaches 0.305, so pathway_ctx IS reading pathway relevance rather than gene generality. It is
+simply beaten by counting.
+
+**`compartment` lands at 0.294, exactly the floor.** Third independent measurement that location adds nothing
+to this problem: it hurt as a global filter, it hurt in the graded form, and within a tie group it does not
+move a single decision.
+
+## Two numbers not to confuse
+
+The 0.294 floor here is NOT directly comparable to the 0.249 recorded in `cell_orphan_context`. That run's
+denominator was 1,500 reactions including those with no candidate at all; this one evaluates the 1,308 that
+have candidates, since a tie-break cannot matter where there is nothing to tie. Mapped back onto the full
+denominator, `freq` is worth about +0.053 on recall@1.
+
+## What remains
+
+69% of the tie headroom is still unclaimed -- 0.355 against a 0.488 ceiling. The truth is sitting in the top
+tie group for half of all orphans and four separate signals cannot reliably pick it out of a median of three
+candidates. That is now the sharpest open question on the missing-piece side, and unlike the docking ranking
+problem it comes with a measured ceiling worth chasing.
