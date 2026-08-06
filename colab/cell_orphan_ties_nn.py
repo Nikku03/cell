@@ -75,31 +75,14 @@ SEEDS = (0, 1, 2, 3, 4)       # one run decides nothing: 458 eval reactions mean
 FEATS = ("log_freq", "log_deg", "n_pw", "pw_ctx", "comp")
 
 
-def main():
-    log = []
-    t0 = time.time()
+def build():
+    """The tie-group examples and the train/eval split, as one deterministic function.
 
-    def report(x):
-        print(x, flush=True)
-        log.append(x)
-
-    import torch
-    import torch.nn as nn
-    from sklearn.linear_model import LogisticRegression
+    Extracted so anything comparing itself to these arms -- `cell_orphan_llm` scores a reasoning arm against
+    them -- is guaranteed to be looking at the SAME reactions, the same candidate lists and the same held-out
+    split, rather than a re-implementation that has quietly drifted.
+    """
     import propagate as pr
-    torch.set_num_threads(4)
-
-    report("=" * 100)
-    report("A LEARNED TIE-BREAKER -- does set attention beat counting?")
-    report("=" * 100)
-    report("  Headroom: truth is in the top tie group 48.8% of the time; hand-built tie-breakers claimed 31%")
-    report("  of it and the winner was raw frequency. 69% unclaimed.")
-    report("  GeoConv is NOT included: it needs a surface point cloud per entity, and a tie group is gene")
-    report("  names -- 311 structures against 5,282 catalysts, 5.9% coverage at best. Category error.")
-    report("  The transformer IS applicable: every hand-built tie-breaker scores candidates INDEPENDENTLY and")
-    report("  cannot condition on who else is in the group. Attention can. That is the mechanism under test.")
-    report("  PREDECLARED: beats freq AND its untrained control => set context is real. ~ logistic => a fitted")
-    report("  combination is what helps. ~ untrained => capacity does not, which a median group of 3 predicts.")
 
     net = json.load(open(OUT / "reaction_network.json"))
     steps = net["steps"]
@@ -174,25 +157,57 @@ def main():
                        sum(ctx.get(x, 0) for x in pw.get(g, ())), len(comp_of(g) & want_c)]
                       for g in tied], float)
         y = np.array([1 if g in truth else 0 for g in tied])
-        examples.append({"rx": i, "tied": tied, "rest": rest, "X": X, "y": y,
+        examples.append({"rx": i, "tied": tied, "rest": rest, "X": X, "y": y, "neigh": neigh,
                          "has_truth": bool(y.sum())})
     n = len(examples)
-    tie = np.array([len(e["tied"]) for e in examples])
-    report(f"\n  {n:,} reactions with candidates | tie median {np.median(tie):.0f} mean {tie.mean():.1f} "
-           f"p90 {np.percentile(tie,90):.0f} | truth in tie group {sum(e['has_truth'] for e in examples)/n:.3f}")
 
     rs = np.random.default_rng(SEED)
     perm = rs.permutation(n)
     cut = int(n * 0.65)
     tr_i, ev_i = perm[:cut], perm[cut:]
-    report(f"  split by REACTION: train {len(tr_i):,} | eval {len(ev_i):,} (disjoint)")
 
     # within-group z-scores, so the model can express relative standing
     for e in examples:
         Z = e["X"] - e["X"].mean(0)
         s = e["X"].std(0)
         e["Xz"] = np.hstack([e["X"], np.divide(Z, s, out=np.zeros_like(Z), where=s > 1e-9)])
-    FD = examples[0]["Xz"].shape[1]
+
+    return {"steps": steps, "P": P, "CMP": CMP, "cats": cats, "freq": freq, "examples": examples,
+            "tr_i": tr_i, "ev_i": ev_i, "rs": rs, "n": n, "FD": examples[0]["Xz"].shape[1]}
+
+
+def main():
+    log = []
+    t0 = time.time()
+
+    def report(x):
+        print(x, flush=True)
+        log.append(x)
+
+    import torch
+    import torch.nn as nn
+    from sklearn.linear_model import LogisticRegression
+    torch.set_num_threads(4)
+
+    report("=" * 100)
+    report("A LEARNED TIE-BREAKER -- does set attention beat counting?")
+    report("=" * 100)
+    report("  Headroom: truth is in the top tie group 48.8% of the time; hand-built tie-breakers claimed 31%")
+    report("  of it and the winner was raw frequency. 69% unclaimed.")
+    report("  GeoConv is NOT included: it needs a surface point cloud per entity, and a tie group is gene")
+    report("  names -- 311 structures against 5,282 catalysts, 5.9% coverage at best. Category error.")
+    report("  The transformer IS applicable: every hand-built tie-breaker scores candidates INDEPENDENTLY and")
+    report("  cannot condition on who else is in the group. Attention can. That is the mechanism under test.")
+    report("  PREDECLARED: beats freq AND its untrained control => set context is real. ~ logistic => a fitted")
+    report("  combination is what helps. ~ untrained => capacity does not, which a median group of 3 predicts.")
+
+    B = build()
+    cats, freq, examples = B["cats"], B["freq"], B["examples"]
+    tr_i, ev_i, rs, n, FD = B["tr_i"], B["ev_i"], B["rs"], B["n"], B["FD"]
+    tie = np.array([len(e["tied"]) for e in examples])
+    report(f"\n  {n:,} reactions with candidates | tie median {np.median(tie):.0f} mean {tie.mean():.1f} "
+           f"p90 {np.percentile(tie,90):.0f} | truth in tie group {sum(e['has_truth'] for e in examples)/n:.3f}")
+    report(f"  split by REACTION: train {len(tr_i):,} | eval {len(ev_i):,} (disjoint)")
 
     class SetRanker(nn.Module):
         """each candidate attends to its competitors, so the score can depend on the group's composition --
