@@ -247,14 +247,22 @@ def dock_pair(sub, cand, rots, offs_cache):
             "n_atoms": int(cand["n"]), "diam": float(cand["diam"])}
 
 
-def run_dock():
+def run_dock(worker=0, nworker=1):
+    """Sharded and resumable. Each worker takes every nworker-th reaction and writes its OWN shard: a single
+    shared file rewritten by three processes would race and lose reactions silently, which on a 5-hour job is
+    the kind of loss you only notice at scoring time."""
     DF.GRID, DF.SPACING = GRID, SPACING          # dock_fft's helpers read these at call time
     d = json.load(open(BENCH))
     bench, g2u = d["bench"], d["g2u"]
+    bench = [e for k, e in enumerate(bench) if k % nworker == worker]
+    shard = FEATS.with_name(FEATS.stem + f"_w{worker}.json")
     rots = DF.rotations(N_ROT)
     rots = [np.asarray(r, float) for r in rots]
     out, t0, offs_cache = {}, time.time(), {}
-    done = json.load(open(FEATS)) if FEATS.exists() else {}
+    done = {}
+    for f in (FEATS, shard):                     # resume from the serial run AND this worker's own shard
+        if f.exists():
+            done.update(json.load(open(f)))
     for bi, e in enumerate(bench):
         key = str(e["rx"])
         if key in done:
@@ -274,10 +282,10 @@ def run_dock():
         if len(rec) >= 5 and e["catalyst"] in rec:
             out[key] = {"catalyst": e["catalyst"], "feats": rec}
         done.update(out)
-        json.dump(done, open(FEATS, "w"))
+        json.dump(done, open(shard, "w"))
         print(f"  [{bi+1}/{len(bench)}] rx {e['rx']} {e['catalyst']} vs {len(rec)-1} decoys "
               f"| {time.time()-t0:.0f}s elapsed", flush=True)
-    print(f"  docked {len(out)} reactions -> {FEATS}")
+    print(f"  worker {worker}: docked {len(out)} reactions -> {shard}")
     return 0
 
 
@@ -289,14 +297,17 @@ def score():
         print(x, flush=True)
         log.append(x)
 
-    d = json.load(open(FEATS))
+    d = {}
+    shards = sorted(FEATS.parent.glob(FEATS.stem + "_w*.json"))
+    for f in ([FEATS] if FEATS.exists() else []) + shards:
+        d.update(json.load(open(f)))
     report("=" * 100)
     report("STEP 2 -- can a binding calculation pick the catalyst out of a 10-candidate shortlist?")
     report("=" * 100)
     report("  PRIOR, measured: nexus_doesitbind put does-A-bind-B at AUC 0.456 with a size-only control of")
     report("  0.438 and permutation p=0.66. This is a better-powered re-test on enzyme-substrate pairs with")
     report("  size-matched decoys, not a new idea. Failure is the expected outcome.")
-    report(f"\n  {len(d)} reactions scored")
+    report(f"\n  {len(d)} reactions scored (merged from {len(shards)} shards)")
     if not d:
         report("  NOTHING DOCKED. Do not read this as a negative -- it is an empty run.")
         return 1
@@ -362,4 +373,6 @@ def score():
 
 if __name__ == "__main__":
     m = sys.argv[1] if len(sys.argv) > 1 else "score"
-    raise SystemExit({"bench": build_bench, "dock": run_dock, "score": score}[m]())
+    if m == "dock":
+        raise SystemExit(run_dock(int(sys.argv[2]), int(sys.argv[3])) if len(sys.argv) > 3 else run_dock())
+    raise SystemExit({"bench": build_bench, "score": score}[m]())
