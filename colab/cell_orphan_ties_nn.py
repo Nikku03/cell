@@ -240,14 +240,16 @@ def main():
     # ---------------- scoring ----------------
     Xtr = np.vstack([examples[k]["Xz"] for k in tr_i if examples[k]["has_truth"]])
     ytr = np.concatenate([examples[k]["y"] for k in tr_i if examples[k]["has_truth"]])
-    mu, sd = Xtr.mean(0), Xtr.std(0) + 1e-9
-    lr = LogisticRegression(max_iter=3000).fit((Xtr - mu) / sd, ytr)
+    # NB: named XSD, not sd -- a `for sd in SEEDS` loop below once shadowed this vector with the scalar 4,
+    # which silently divided the logistic arm's eval features by 4 and cost it 0.085 recall@1.
+    XMU, XSD = Xtr.mean(0), Xtr.std(0) + 1e-9
+    lr = LogisticRegression(max_iter=3000).fit((Xtr - XMU) / XSD, ytr)
 
     nets_t, nets_u, curves = [], [], []
-    for sd in SEEDS:
-        m, npar, cv = train_set(True, seed=sd)
+    for s_ in SEEDS:
+        m, npar, cv = train_set(True, seed=s_)
         nets_t.append(m); curves.append(cv)
-        mu_, _, _ = train_set(False, seed=1000 + sd)
+        mu_, _, _ = train_set(False, seed=1000 + s_)
         nets_u.append(mu_)
     net_t, net_u, curve = nets_t[0], nets_u[0], curves[0]
     # LIVENESS: if the loss never moved, every number below is about an untrained net wearing a trained label
@@ -266,7 +268,7 @@ def main():
         elif arm == "freq":
             k = {g: freq.get(g, 0) for g in t}
         elif arm == "logistic":
-            p = lr.predict_proba((e["Xz"] - mu) / sd)[:, 1]
+            p = lr.predict_proba((e["Xz"] - XMU) / XSD)[:, 1]
             k = dict(zip(t, p))
         elif arm in ("set_transformer", "set_transformer_untrained"):
             with torch.no_grad():
@@ -291,10 +293,12 @@ def main():
             for k in KS:
                 hits[a][k] += bool(truth & set(o[:k]))
     # every seed scored separately -- the spread across seeds is the yardstick any claimed gain must clear
+    hit1_seed = {a: [] for a in seed_r1}
     for a, nets in (("set_transformer", nets_t), ("set_transformer_untrained", nets_u)):
         for m in nets:
-            h = sum(bool(set(cats[e["rx"]]) & set(order_of(e, a, m)[:1])) for e in ev_ex)
-            seed_r1[a].append(h / ne)
+            v = np.array([bool(set(cats[e["rx"]]) & set(order_of(e, a, m)[:1])) for e in ev_ex])
+            hit1_seed[a].append(v)
+            seed_r1[a].append(float(v.mean()))
 
     report(f"\n  RECALL@k on {ne:,} held-out reactions, differing ONLY in tie-group order")
     report(f"    {'arm':<28}" + "".join(f"{'@' + str(k):>9}" for k in KS))
@@ -311,27 +315,39 @@ def main():
         report(f"    {a:<28}mean {v.mean():.3f}  sd {v.std():.3f}  range {v.min():.3f}-{v.max():.3f}")
     st_m, su_m = np.mean(seed_r1["set_transformer"]), np.mean(seed_r1["set_transformer_untrained"])
 
-    # PAIRED significance: same reactions, so only the reactions where two arms DISAGREE carry information
+    # PAIRED significance: same reactions, so only the reactions where two arms DISAGREE carry information.
+    # Any comparison involving a transformer arm is run ONCE PER SEED and the WORST p reported -- a gain that
+    # only shows up on a lucky init is not a gain.
     from scipy.stats import binomtest
-    report(f"\n  PAIRED McNEMAR vs the arm each comparison is trying to beat (n={ne:,}; 1 reaction = "
-           f"{1/ne:.3f} recall)")
+
+    def vecs(a):
+        return hit1_seed[a] if a in hit1_seed else [np.array(hit1[a])]
+
+    report(f"\n  PAIRED McNEMAR (n={ne:,}; 1 reaction = {1/ne:.3f} recall). Transformer arms are tested on")
+    report(f"  all {len(SEEDS)} seeds and judged by the WORST p -- a gain that needs a lucky init is not a gain.")
     pairs = [("set_transformer", "freq"), ("set_transformer", "logistic"),
              ("set_transformer", "set_transformer_untrained"), ("freq", "random"), ("logistic", "random")]
     mcn = {}
     for a, b in pairs:
-        A_, B_ = np.array(hit1[a]), np.array(hit1[b])
-        w, l = int((A_ & ~B_).sum()), int((~A_ & B_).sum())
-        p = binomtest(w, w + l, 0.5).pvalue if w + l else 1.0
-        mcn[f"{a}_vs_{b}"] = {"wins": w, "losses": l, "p": float(p)}
-        flag = "  SIGNIFICANT" if p < 0.05 else ""
-        report(f"    {a:<28} vs {b:<28} {w:>4} win {l:>4} lose   p={p:.3f}{flag}")
+        ps, ws, ls = [], [], []
+        for A_ in vecs(a):
+            for B_ in vecs(b):
+                w, l = int((A_ & ~B_).sum()), int((~A_ & B_).sum())
+                ws.append(w); ls.append(l)
+                ps.append(binomtest(w, w + l, 0.5).pvalue if w + l else 1.0)
+        pw = float(max(ps))
+        mcn[f"{a}_vs_{b}"] = {"wins_mean": float(np.mean(ws)), "losses_mean": float(np.mean(ls)),
+                              "p_worst": pw, "p_best": float(min(ps)), "n_tests": len(ps)}
+        flag = "  SIGNIFICANT" if pw < 0.05 else ""
+        report(f"    {a:<28} vs {b:<26} {np.mean(ws):>5.1f} win {np.mean(ls):>5.1f} lose   "
+               f"worst p={pw:.3f}{flag}")
 
     report("\n  READING")
     base, ceil = rec["random"]["1"], rec["oracle"]["1"]
     st, su = st_m, su_m                                # seed MEANS, not the one run that happened to be first
     fq, lg = rec["freq"]["1"], rec["logistic"]["1"]
-    p_fq = mcn["set_transformer_vs_freq"]["p"]
-    p_un = mcn["set_transformer_vs_set_transformer_untrained"]["p"]
+    p_fq = mcn["set_transformer_vs_freq"]["p_worst"]
+    p_un = mcn["set_transformer_vs_set_transformer_untrained"]["p_worst"]
 
     def share(v):
         return (v - base) / max(ceil - base, 1e-9)
