@@ -21737,3 +21737,78 @@ review, not a map-completion engine, and the 0.720 headline must never be quoted
 The single most useful thing here was measuring the sample before trusting it. The obvious version of this
 test -- score the existing 200 by literature volume -- would have run fine, produced a confident-looking
 curve, and been meaningless, because only one puzzle in it sat in the bin that decides the question.
+
+---
+
+# Co-expression and co-dependency added: no measurable help, and the reason was visible first
+
+`cell_orphan_evidence.py`, `cell_orphan_evidence_score.py`. The obscurity test showed closed-book naming is
+substantially memory -- 0.463 on enzymes with under 20 papers against 0.812 on those with over 500. The way
+past a literature prior is evidence the literature does not contain, so two channels were added, both
+measured across DepMap cell lines and both orthogonal to how much has been *written* about a gene:
+
+    CO-DEPENDENCY   DepMap 24Q2 CRISPRGeneEffect, 18,443 genes x 1,150 cell lines
+    CO-EXPRESSION   DepMap 24Q2 expression, 19,193 genes x 1,517 cell lines (md5-pinned to the release)
+
+Evidence is offered as **context, not a candidate list** -- the top 15 genes per channel whose profile
+resembles the reaction's neighbourhood, with the solver still free to name any human gene. The true catalyst
+is removed from every anchor set, or the evidence would be a paraphrase of the answer.
+
+## Both channels are live, and that is what makes the negative readable
+
+    positive control (anchor 2 subunits, find the 3rd)      negative control
+    codependency   SDHC 1, POLR2C 11, PSMA3 14, COPB2 1     TYR 13013, CPT1A 6257, ALB 4370
+    coexpression   COPB2 1, PSMA3 39, ATP6V1C1 58           6141, 5457, 13869
+
+A channel returning noise is indistinguishable from a channel returning a real negative, so this gate ran
+first and would have aborted the run.
+
+## Retrieval, measured before spending a single solver
+
+    channel            @1     @15     @50    @200   median rank   @15 obscure bin
+    codependency    0.007   0.043   0.072   0.140          3152             0.013
+    coexpression    0.007   0.025   0.040   0.090          5369             0.000
+
+**The evidence almost never contains the answer** -- median rank ~3,000 of 18,000.
+
+## The A/B, paired, same 400 reactions
+
+    papers on true catalyst     n   no evid  evidence    delta   win  lose        p
+    0-20                       80     0.463     0.512   +0.050     6     2   0.2891
+    21-50                      80     0.675     0.750   +0.075     7     1   0.0703
+    51-150                     80     0.613     0.650   +0.037     4     1   0.3750
+    151-500                    80     0.662     0.637   -0.025     2     4   0.6875
+    501+                       80     0.812     0.762   -0.050     1     5   0.2188
+    ALL                       400     0.645     0.662   +0.017    20    13   0.2962
+
+**No effect.** The obscure bin moves +0.050 on 6 wins against 2 losses -- p=0.29, which is eight reactions
+deciding a number, not a result.
+
+## The tempting number, and the control that killed it
+
+The solver answered with a gene *from* the evidence lists 19 times, and **18 of those 19 were correct** --
+94.7% against 64.8% elsewhere. That reads like a high-precision convergence filter worth deploying.
+
+It is not. The no-evidence arm already got **18 of those same 19**, 17 are the identical gene, and **0 wins
+are attributable to the evidence**. The precision is the chemistry working, on rows where the list happened to
+contain the gene the solver was going to name anyway. A filter built on this would select nothing the model
+could not already do alone.
+
+## Why these channels cannot work here, stated as mechanism rather than excuse
+
+Co-dependency is a claim about **viability covariance**: knock out A, does the cell die the way it does when
+you knock out B? Co-expression is a claim about **shared transcriptional control**. Neither is a claim that
+one gene *acts on another's substrate*, which is what the missing-piece task asks. And most metabolic enzymes
+are non-essential in culture, where the medium supplies whatever the pathway would make, so their CRISPR
+profiles are near-flat by construction -- exactly the enzymes the obscure bin is made of.
+
+The channels recover obligate complexes at rank 1 because that is what they measure. They do not recover
+pathway-adjacent enzymes because that is not.
+
+## Standing position
+
+Co-expression and dependency were the obvious lever and they do not move it. The expected yield on the ~9,186
+unannotated enzyme-shaped reactions stays at the bottom-bin estimate of ~0.46, and that remains an upper
+bound. The remaining untested lever is structural -- substrate-pocket compatibility from the docking line --
+which is a claim about *acting on a substrate* rather than about co-behaviour, and is therefore the first
+channel whose mechanism actually matches the question.
