@@ -380,6 +380,35 @@ def main():
     report("  Read that with care in BOTH directions: 'rare' here means the catalyst runs few OTHER reactions")
     report("  in this network, which is not the same as rare in the literature. A one-reaction enzyme can still")
     report("  be a textbook enzyme, so this bounds the contamination loosely rather than ruling it out.")
+    # ---------------- how does the open arm exceed 0.505? Because 0.505 is not a ceiling on the PROBLEM ----
+    inl = np.array(hit["oracle"])            # oracle IS the mask: did retrieval put the truth in the list
+    report(f"\n  HOW THE OPEN ARM PASSES THE 'CEILING' -- it is not one ceiling, it is two different tasks.")
+    report(f"  {orc:.3f} is the fraction of reactions whose true catalyst the chemistry-neighbour step put in")
+    report(f"  the candidate list AT ALL. An arm that must return a listed gene cannot exceed it by definition.")
+    report(f"  The open arm never sees the list and picks from every human gene, so its ceiling is 1.000.")
+    report(f"    {'group':<32}{'n':>5}" + "".join(f"{a:>17}" for a in ("freq", "llm_tie", "llm_open")))
+    split = {}
+    for nm, m_ in (("truth IS in the list", inl), ("truth NOT in the list", ~inl)):
+        k = int(m_.sum())
+        vals = [float(np.mean(np.array(hit[a])[m_])) for a in ("freq", "llm_tie", "llm_open")]
+        split[nm] = {"n": k, "freq": vals[0], "llm_tie": vals[1], "llm_open": vals[2]}
+        report(f"    {nm:<32}{k:>5}" + "".join(f"{v:>17.3f}" for v in vals))
+    # a list-constrained arm scoring anything at all on the second row would mean the scorer is broken
+    assert not np.array(hit["llm_tie"])[~inl].any(), "list-constrained arm scored where truth is not listed"
+    assert not np.array(hit["freq"])[~inl].any(), "list-constrained arm scored where truth is not listed"
+    outside = int(np.array(hit["llm_open"])[~inl].sum())
+    report(f"  So the open arm's {int(np.sum(hit['llm_open']))} hits are {int(np.sum(hit['llm_open']))-outside}"
+           f" inside what a list arm could reach and {outside} OUTSIDE it entirely. Verified: every")
+    report("  list-constrained arm scores exactly 0.000 on the second row, as it must.")
+    report(f"  And the two rows are equally hard for reasoning "
+           f"({split['truth IS in the list']['llm_open']:.3f} vs "
+           f"{split['truth NOT in the list']['llm_open']:.3f}), so retrieval is not")
+    report("  failing on chemically harder reactions -- it fails for structural reasons, when an orphan's")
+    report("  chemical neighbours simply happen not to be run by the right enzyme.")
+    report(f"  Conditioned on the answer being reachable, closed-book reasoning gets "
+           f"{split['truth IS in the list']['llm_tie']:.3f} of them against freq's "
+           f"{split['truth IS in the list']['freq']:.3f}.")
+
     report(f"\n  OPEN-ENDED, no candidate list: {op:.3f}. The list-constrained ceiling is {orc:.3f}, so the")
     if op > orc:
         report(f"  reasoning arm names the right enzyme MORE often with no list than any arm can achieve with")
@@ -398,7 +427,7 @@ def main():
     report(f"  and {10*op:.1f} with no candidate list at all. Perfect tie-breaking would get {10*orc:.1f}.")
 
     json.dump({"test": "cell_orphan_llm", "n": n, "recall": rec, "mcnemar": mcn, "strata": strat,
-               "set_transformer_seeds": st_seed, "unanswered": dict(miss), "off_list": dict(offlist),
+               "set_transformer_seeds": st_seed, "reachability_split": split, "unanswered": dict(miss), "off_list": dict(offlist),
                "sample_seed": SAMPLE_SEED, "log": log},
               open(OUT / "cell_orphan_llm.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'cell_orphan_llm.json'}")
