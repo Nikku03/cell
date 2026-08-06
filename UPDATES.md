@@ -21359,3 +21359,59 @@ meaningless.
 The search finds the answer in 12/12 complexes at a median 2.2 A. Nothing ranks it. That is now a
 well-characterised negative rather than an open question: per-pose scoring fails across geometry, learning and
 physics, and population fails because the poses do not concentrate.
+
+# Porting the ADRN transformer to the structural side does not help: architecture is not the limit
+
+`colab/dock_arch.py`. Two architectural lineages exist in this codebase and the structural side never got what
+the perturbation side has -- Cellformer runs MultiheadAttention, LayerNorm, GELU and typed-relation embeddings
+across 16 Linear layers, while dMaSIF is a 2-layer GeoConv with ~5k parameters and a K=16 neighbourhood. Since
+an UNTRAINED GeoConv had matched a trained one on pose ranking (the signature of a model too weak to learn),
+porting the bigger architecture across was the right response to a measured failure.
+
+Task is interface point-pair discrimination in the unbound setting, NOT pose ranking -- the pose-ranking
+information may not be in local contacts at all, so a bigger net on the same features would test the wrong
+hypothesis.
+
+    arm                        AUC    params   vs untrained
+    geoconv                 0.6171     5,858        +0.0791
+    transformer             0.5802    69,508        +0.1186
+    geoconv_untrained       0.5380     5,858
+    transformer_untrained   0.4616    69,508
+
+**The 5,858-parameter GeoConv beats the 69,508-parameter transformer.** Both learn -- each clears its own
+untrained control by a wide margin -- so neither is broken. Architecture is not the bottleneck here.
+
+## Two bugs, both exposed by the same tell: a below-chance UNTRAINED arm
+
+An untrained network should score ~0.5. It did not, twice, and each time that was the signal.
+
+**Saturated attention (untrained 0.3792).** PyTorch ADDS a float `attn_mask` to attention logits before
+softmax. Raw Angstrom distances (0-155 A) through an unnormalised MLP gave bias logits of -47 to +20 against
+attention logits of O(1) -- measured max attention weight 1.000 at init, every point attending to exactly one
+other through a softmax that barely passes gradient. Fixed by scaling distances by 10 A and zero-initialising
+the output layer so attention starts unbiased, the standard treatment for learned relative-position bias.
+Verified the bias is exactly 0.0000 at init and attention entropy is unchanged. Transformer 0.4730 -> 0.5546.
+
+**Input mismatch (untrained 0.3897).** I fed the surface NORMAL as a node feature, which GeoConv never
+receives -- it sees geometry only through local-frame neighbour coordinates. Contacting surfaces face each
+other, so their normals are anti-parallel: measured -0.465 for contacting pairs against +0.222 for far pairs.
+At init the embedding was largely linear in the normal, so contacting pairs anti-correlated. That both
+depressed the transformer's floor AND inflated its apparent gain over that floor. Matched to the same 5 node
+features, geometry reaching each architecture through its native channel. Untrained 0.3897 -> 0.4616.
+
+Neither bug would have announced itself in the trained number alone. The untrained control is what caught both.
+
+## What it means, with the caveat that matters
+
+**40 training complexes is small for a 69,508-parameter model**, and the comparison at this data volume
+naturally favours the smaller one. The honest claim is therefore narrow: at this data scale, architecture is
+not the lever.
+
+That agrees with the scaling curve, which found interface discrimination still rising at N=200 training
+complexes -- **DATA-limited, not model-limited**. Two independent measurements now point the same way: the
+structural side needs more complexes, not a bigger network. 260 of ~34,000 available are in use.
+
+The script's own verdict printed MIXED, because the "architecture is not the limit" branch required the two
+architectures to be within 0.02 and the gap is 0.037. That tolerance was arbitrary and too tight. I am NOT
+adjusting it after seeing the numbers -- the prose reading above is the honest one and the gate stays as
+written.
