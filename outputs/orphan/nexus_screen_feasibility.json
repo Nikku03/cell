@@ -11,8 +11,22 @@
     5282
   ],
   "rows": {
+    "nexus_doesitbind: DOES A BIND B": {
+      "auc": 0.456,
+      "task": "no complex needed -- THE APPLICABLE TASK",
+      "ranks": {
+        "5": 3.176,
+        "10": 5.896000000000001,
+        "20": 11.336,
+        "50": 27.656000000000002,
+        "200": 109.25600000000001,
+        "1000": 544.456,
+        "5282": 2873.864
+      }
+    },
     "GeoConv, interface point pairs": {
       "auc": 0.617,
+      "task": "needs the true complex",
       "ranks": {
         "5": 2.532,
         "10": 4.447,
@@ -25,6 +39,7 @@
     },
     "dMaSIF surface descriptor, unbound": {
       "auc": 0.714,
+      "task": "needs the true pair",
       "ranks": {
         "5": 2.144,
         "10": 3.5740000000000003,
@@ -37,6 +52,7 @@
     },
     "NEXUS dual sensor (fold x bind)": {
       "auc": 0.755,
+      "task": "needs the true complex + a mutation",
       "ranks": {
         "5": 1.98,
         "10": 3.205,
@@ -49,6 +65,7 @@
     },
     "best docking rescore": {
       "auc": 0.814,
+      "task": "needs the true complex",
       "ranks": {
         "5": 1.7440000000000002,
         "10": 2.6740000000000004,
@@ -78,11 +95,14 @@
     "  Candidate enzyme vocabulary: 5,282 genes.",
     "\n  WHERE THE TRUE CATALYST LANDS, by discriminator quality and shortlist size",
     "  (expected rank of the true catalyst; a screen is only useful if this is single digits)",
-    "    discriminator                           AUC       N=5      N=10      N=20      N=50     N=200    N=1000    N=5282",
-    "    GeoConv, interface point pairs        0.617       2.5       4.4       8.3      19.8      77.2     383.6    2023.6",
-    "    dMaSIF surface descriptor, unbound    0.714       2.1       3.6       6.4      15.0      57.9     286.7    1511.4",
-    "    NEXUS dual sensor (fold x bind)       0.755       2.0       3.2       5.7      13.0      49.8     245.8    1294.8",
-    "    best docking rescore                  0.814       1.7       2.7       4.5      10.1      38.0     186.8     983.3",
+    "    discriminator                           AUC      N=5     N=10     N=20     N=50    N=200   N=1000   N=5282   what it needs",
+    "    nexus_doesitbind: DOES A BIND B       0.456      3.2      5.9     11.3     27.7    109.3    544.5   2873.9   no complex needed -- THE APPLICABLE TASK",
+    "    GeoConv, interface point pairs        0.617      2.5      4.4      8.3     19.8     77.2    383.6   2023.6   needs the true complex",
+    "    dMaSIF surface descriptor, unbound    0.714      2.1      3.6      6.4     15.0     57.9    286.7   1511.4   needs the true pair",
+    "    NEXUS dual sensor (fold x bind)       0.755      2.0      3.2      5.7     13.0     49.8    245.8   1294.8   needs the true complex + a mutation",
+    "    best docking rescore                  0.814      1.7      2.7      4.5     10.1     38.0    186.8    983.3   needs the true complex",
+    "    Only the FIRST row is a discriminator catalyst-finding could actually use. Every other row",
+    "    is scored on a complex that already exists, which is the thing we do not have.",
     "\n  THE AUC A FULL SCREEN WOULD REQUIRE",
     "    to place the true catalyst in the top 1   of 5,282:  AUC >= 1.0000",
     "    to place the true catalyst in the top 5   of 5,282:  AUC >= 0.9992",
@@ -96,11 +116,14 @@
     "  docking line already hit seven different ways -- generation worked, ranking did not -- and",
     "  nothing about spheres or a third protein changes the size of the candidate space.",
     "",
-    "  NEXUS AS A TIE-BREAK IS A DIFFERENT PROPOSITION, and the arithmetic supports it. On a shortlist",
-    "    of  5: AUC 0.814 puts the true catalyst at expected rank 1.7, and the NEXUS sensor at 2.0",
-    "    of 10: AUC 0.814 puts the true catalyst at expected rank 2.7, and the NEXUS sensor at 3.2",
-    "    of 20: AUC 0.814 puts the true catalyst at expected rank 4.5, and the NEXUS sensor at 5.7",
-    "  which is exactly the regime where a physics score can convert a near-miss into a hit.",
+    "  AND THE TIE-BREAK VERSION IS NOT SAFE EITHER, on the number that actually applies. Shortlist:",
+    "    of  5: the APPLICABLE 0.456 gives expected rank 3.2 against 3.0 for shuffling; 0.814 would give 1.7",
+    "    of 10: the APPLICABLE 0.456 gives expected rank 5.9 against 5.5 for shuffling; 0.814 would give 2.7",
+    "    of 20: the APPLICABLE 0.456 gives expected rank 11.3 against 10.5 for shuffling; 0.814 would give 4.5",
+    "  An AUC of 0.456 is BELOW chance and its size-only control sat at 0.438 with",
+    "  permutation p=0.66, so on the evidence so far the discriminator reorders a shortlist at random.",
+    "  The 0.814 column is what this WOULD buy if a working does-A-bind-B score existed. That is the",
+    "  thing to go and get; it is not something already in hand.",
     "",
     "  AND THIS SESSION ALREADY BUILT THE SHORTLIST GENERATOR. Closed-book naming reaches 0.463 top-1",
     "  on the obscure enzymes that make up the gap; its top-10 will be well above that. So the",
