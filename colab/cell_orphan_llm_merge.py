@@ -20,6 +20,7 @@ import adrn_ko_conjunctions as A
 OUT = A.OUT
 ARMS = ("tie", "open", "scram")
 N_EXPECT = 200
+OUTNAME = "llm_answers.json"
 
 
 def collect(tdir):
@@ -58,7 +59,12 @@ def collect(tdir):
 
 
 def main():
+    global ARMS, N_EXPECT, OUTNAME
     tdir = sys.argv[1]
+    if len(sys.argv) > 2:                      # <transcripts> <arms,csv> <n> <outfile>
+        ARMS = tuple(sys.argv[2].split(","))
+        N_EXPECT = int(sys.argv[3])
+        OUTNAME = sys.argv[4]
     print("=" * 100)
     print("MERGE closed-book answers from solver transcripts")
     print("=" * 100)
@@ -79,11 +85,11 @@ def main():
         return 1
 
     merged = {str(p): {a: got[a][p] for a in ARMS} for p in range(N_EXPECT)}
-    json.dump(merged, open(OUT / "llm_answers.json", "w"), indent=1)
+    json.dump(merged, open(OUT / OUTNAME, "w"), indent=1)
     for a in ARMS:
         v = list(got[a].values())
         print(f"  {a:<7} distinct genes {len(set(v))}/{len(v)}")
-    print(f"\n  wrote {OUT/'llm_answers.json'}")
+    print(f"\n  wrote {OUT/OUTNAME}")
     return 0
 
 

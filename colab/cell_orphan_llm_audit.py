@@ -19,7 +19,7 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-ALLOWED_DIR = "scratchpad/puzzles/"
+ALLOWED_DIR = "scratchpad/puzzles/"   # overridable: argv[2], so a second benchmark can be audited
 FORBIDDEN = ("reaction_network", "llm_puzzles", "cell_orphan", "outputs/orphan", "UPDATES.md")
 
 
@@ -47,7 +47,10 @@ def walk(tdir):
 
 
 def main():
+    global ALLOWED_DIR
     tdir = sys.argv[1] if len(sys.argv) > 1 else None
+    if len(sys.argv) > 2:
+        ALLOWED_DIR = sys.argv[2]
     if not tdir or not Path(tdir).exists():
         print(f"usage: {sys.argv[0]} <workflow transcript dir>")
         return 2
