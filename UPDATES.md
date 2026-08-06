@@ -21415,3 +21415,51 @@ The script's own verdict printed MIXED, because the "architecture is not the lim
 architectures to be within 0.02 and the gap is 0.037. That tolerance was arbitrary and too tight. I am NOT
 adjusting it after seeing the numbers -- the prose reading above is the honest one and the gate stays as
 written.
+
+# What AUC 0.617 actually measures: mostly the easy version of an easier question
+
+`colab/dock_feature_floor.py`. GeoConv scores 0.617 on interface point-pair discrimination while seeing a ~6 A
+patch. Before reading that as learned structure, decompose it against what the five raw per-point features give
+with no model at all.
+
+    single feature, nothing fitted        product   similarity
+      apbs_potential                       0.4343     0.4736     <- BELOW chance = anti-correlated
+      curvature                            0.4633     0.5591
+      hydrophobicity                       0.4956     0.4739
+      charge                               0.5037     0.4669
+      hbond                                0.5152     0.5001
+
+    best single feature (sign-corrected)             0.5657
+    logistic over 10 pair features, fitted on train  0.5467
+    GeoConv                                          0.6171     -> +0.0704 over the features
+
+**The geodesic aggregation earns about +0.07.** Real, and small. The features alone reach 0.547.
+
+## The strongest single signal is electrostatic complementarity, and it appears as a NEGATIVE
+
+`apbs_potential` product scores 0.4343 -- below chance -- meaning contacting points carry OPPOSITE-sign
+potentials. Positive meets negative. That is the one piece of genuine binding chemistry in the feature set and
+it is the largest single contributor. Hydrophobicity (0.4956) and charge (0.5037) contribute nothing.
+
+Reporting only the raw value would have hidden this: a feature informative in the negative direction looks like
+a failure unless the sign is checked.
+
+## Two reasons 0.617 is weaker than it sounds
+
+**The negatives are easy.** They are pairs more than 12 A apart -- exactly the ones a clash filter already
+rejects. Nothing here is measured against near-misses.
+
+**The task is not what it appears to be.** Positives are cross-chain pairs within 4.5 A; negatives are pairs
+beyond 12 A. So both points of a positive are IN the interface while a negative has at least one point outside
+it. The task therefore reduces largely to "are BOTH of these interface points" -- a per-point property scored
+through a dot product -- rather than "do these two patches FIT". A model that merely recognised interface-like
+patches would score well without ever learning complementarity, which is the thing docking needs.
+
+That reframes the whole structural line: 0.714 unbound, 0.617 at the reduced 512-point sampling, and the 0.9019
+that was corrected earlier are all measurements of interface-patch RECOGNITION, not of surface complementarity.
+
+## One honesty note on my own number
+
+The 0.5657 for the best single feature was sign-corrected AFTER seeing the eval data, which is selection on the
+test set and makes it slightly optimistic. The clean comparison is the fitted logistic at 0.5467 against
+GeoConv's 0.6171.
