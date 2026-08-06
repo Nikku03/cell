@@ -341,6 +341,17 @@ def main():
         flag = "  SIGNIFICANT" if pw < 0.05 else ""
         report(f"    {a:<28} vs {b:<26} {np.mean(ws):>5.1f} win {np.mean(ls):>5.1f} lose   "
                f"worst p={pw:.3f}{flag}")
+    report("    (transformer-vs-untrained is a 5x5 cross product, so its worst p asks whether EVERY trained")
+    report("     init beats EVERY random init reaction-for-reaction -- too harsh for 'did training help'.)")
+
+    # DID TRAINING HELP? -- that is a seed-level question, not a per-reaction one. Exact rank test on 5 vs 5.
+    from scipy.stats import mannwhitneyu
+    st_v, su_v = np.array(seed_r1["set_transformer"]), np.array(seed_r1["set_transformer_untrained"])
+    p_seed = float(mannwhitneyu(st_v, su_v, alternative="greater").pvalue)
+    n_above = int(sum(1 for x in st_v for y in su_v if x > y))
+    report(f"\n  DID TRAINING HELP? seed-level rank test, {len(SEEDS)} trained vs {len(SEEDS)} random inits")
+    report(f"    trained {st_v.mean():.3f}+-{st_v.std():.3f}  untrained {su_v.mean():.3f}+-{su_v.std():.3f}  "
+           f"| {n_above}/{len(st_v)*len(su_v)} seed pairs favour trained | p={p_seed:.4f}")
 
     report("\n  READING")
     base, ceil = rec["random"]["1"], rec["oracle"]["1"]
@@ -351,26 +362,27 @@ def main():
 
     def share(v):
         return (v - base) / max(ceil - base, 1e-9)
-    if st > fq and p_fq < 0.05 and p_un < 0.05:
-        report(f"  SET CONTEXT IS REAL. The transformer averages {st:.3f} over {len(SEEDS)} seeds against freq")
-        report(f"  {fq:.3f} (paired p={p_fq:.3f}) and its untrained control {su:.3f} (p={p_un:.3f}) -- "
-               f"{share(st):.0%} of")
-        report(f"  the headroom versus {share(fq):.0%}. Conditioning on WHO ELSE is in the group carries")
-        report("  information no per-candidate score can.")
-    elif st <= su + 0.02 or p_un >= 0.05:
-        report(f"  CAPACITY DOES NOT HELP. Trained {st:.3f} vs untrained {su:.3f} over {len(SEEDS)} seeds, and")
-        report(f"  the paired test cannot separate them (p={p_un:.3f}). The optimiser worked -- listwise loss")
-        report(f"  fell to {min(c[-1] for c in curves):.2f} -- so this is a transfer failure, not a training")
-        report(f"  failure: it fit {n_fit:,} groups and none of that generalised. With a median tie group of")
-        report(f"  {np.median(tie):.0f} there is almost no set to attend over, which is the likeliest reason.")
-        if st < fq:
-            report(f"  It also does not beat plain frequency counting ({fq:.3f}), which has zero parameters.")
-    elif abs(st - lg) <= 0.02:
-        report(f"  A FITTED COMBINATION IS WHAT HELPS, not attention. transformer {st:.3f} vs logistic")
-        report(f"  {lg:.3f} vs freq {fq:.3f}. The set context adds nothing over weighting the same features.")
+    # TWO SEPARATE QUESTIONS, and conflating them is how a null gets read as a win.
+    trained_works = p_seed < 0.05 and st > su
+    beats_hand = st > max(fq, lg) and p_fq < 0.05
+    if trained_works:
+        report(f"  TRAINING DOES SOMETHING: {st:.3f} vs its random-init control {su:.3f} over {len(SEEDS)} seeds")
+        report(f"  (p={p_seed:.4f}). The listwise objective is learnable and the architecture is not inert.")
     else:
-        report(f"  MIXED: transformer {st:.3f}, logistic {lg:.3f}, freq {fq:.3f}, untrained {su:.3f}, ceiling")
-        report(f"  {ceil:.3f}. Read the per-arm numbers rather than a single verdict.")
+        report(f"  TRAINING DOES NOTHING: {st:.3f} vs its random-init control {su:.3f} (p={p_seed:.4f}). Loss")
+        report(f"  fell to {min(c[-1] for c in curves):.2f} on {n_fit:,} groups, so this is transfer failure.")
+    if beats_hand:
+        report(f"  AND IT BEATS THE HAND-BUILT ARMS: {st:.3f} against freq {fq:.3f} and logistic {lg:.3f},")
+        report(f"  paired p={p_fq:.3f}. Set context carries something no per-candidate score does.")
+    else:
+        report(f"  BUT IT BUYS NOTHING OVER COUNTING. freq is {fq:.3f} with ZERO parameters and logistic is")
+        report(f"  {lg:.3f} with ten; the {npar:,}-parameter transformer is {st:.3f}, and the paired test cannot")
+        report(f"  separate it from freq (worst p={p_fq:.3f}) or logistic (worst p="
+               f"{mcn['set_transformer_vs_logistic']['p_worst']:.3f}).")
+        report("  So attention learns a real function of these features, but everything it learns was already")
+        report("  reachable by a linear fit on the same five numbers. The set context is not the missing piece.")
+        report(f"  Likeliest reason: the median tie group is {np.median(tie):.0f}. There is almost nothing to")
+        report(f"  attend over, and only {n_fit:,} groups are usable for training at all.")
     report(f"\n  Headroom claimed at @1: freq {share(fq):.0%} | logistic {share(lg):.0%} | "
            f"transformer {share(st):.0%} | untrained {share(su):.0%}")
     report(f"  NOTE the untrained control sits at {su:.3f}, well above the {base:.3f} random floor. A random")
@@ -379,7 +391,7 @@ def main():
 
     json.dump({"test": "cell_orphan_ties_nn", "n_eval": ne, "n_train": int(len(tr_i)), "ks": list(KS),
                "recall": rec, "tie_median": float(np.median(tie)), "params": npar,
-               "seeds": list(SEEDS), "seed_recall1": seed_r1, "mcnemar": mcn,
+               "seeds": list(SEEDS), "seed_recall1": seed_r1, "mcnemar": mcn, "p_seed_trained_vs_untrained": p_seed,
                "loss_first": curves[0][0], "loss_last": [c[-1] for c in curves], "n_fit_groups": n_fit,
                "geoconv_excluded": "needs a surface point cloud per entity; 311 structures vs 5,282 catalysts",
                "log": log}, open(OUT / "cell_orphan_ties_nn.json", "w"), indent=2)
