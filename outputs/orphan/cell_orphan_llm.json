@@ -92,6 +92,20 @@
     0.385,
     0.395
   ],
+  "reachability_split": {
+    "truth IS in the list": {
+      "n": 101,
+      "freq": 0.7029702970297029,
+      "llm_tie": 0.8613861386138614,
+      "llm_open": 0.7128712871287128
+    },
+    "truth NOT in the list": {
+      "n": 99,
+      "freq": 0.0,
+      "llm_tie": 0.0,
+      "llm_open": 0.7272727272727273
+    }
+  },
   "unanswered": {},
   "off_list": {},
   "sample_seed": 7,
@@ -160,6 +174,19 @@
     "  Read that with care in BOTH directions: 'rare' here means the catalyst runs few OTHER reactions",
     "  in this network, which is not the same as rare in the literature. A one-reaction enzyme can still",
     "  be a textbook enzyme, so this bounds the contamination loosely rather than ruling it out.",
+    "\n  HOW THE OPEN ARM PASSES THE 'CEILING' -- it is not one ceiling, it is two different tasks.",
+    "  0.505 is the fraction of reactions whose true catalyst the chemistry-neighbour step put in",
+    "  the candidate list AT ALL. An arm that must return a listed gene cannot exceed it by definition.",
+    "  The open arm never sees the list and picks from every human gene, so its ceiling is 1.000.",
+    "    group                               n             freq          llm_tie         llm_open",
+    "    truth IS in the list              101            0.703            0.861            0.713",
+    "    truth NOT in the list              99            0.000            0.000            0.727",
+    "  So the open arm's 144 hits are 72 inside what a list arm could reach and 72 OUTSIDE it entirely. Verified: every",
+    "  list-constrained arm scores exactly 0.000 on the second row, as it must.",
+    "  And the two rows are equally hard for reasoning (0.713 vs 0.727), so retrieval is not",
+    "  failing on chemically harder reactions -- it fails for structural reasons, when an orphan's",
+    "  chemical neighbours simply happen not to be run by the right enzyme.",
+    "  Conditioned on the answer being reachable, closed-book reasoning gets 0.861 of them against freq's 0.703.",
     "\n  OPEN-ENDED, no candidate list: 0.720. The list-constrained ceiling is 0.505, so the",
     "  reasoning arm names the right enzyme MORE often with no list than any arm can achieve with",
     "  one (0.720 vs 0.505). The candidate list is a CEILING, not a help: the chemistry-",

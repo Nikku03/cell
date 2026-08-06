@@ -21625,6 +21625,27 @@ network-rare catalysts against +0.061 on famous ones** -- larger where the enzym
 opposite of what recall-of-famous-enzymes would produce. It bounds the effect loosely, not tightly: network
 rarity is not literature rarity, and a one-reaction enzyme can still be a textbook enzyme.
 
+## "How did you get past the ceiling?" -- it was never a ceiling on the problem
+
+0.505 is not a bound on the missing-piece task. It is the fraction of reactions whose true catalyst the
+chemistry-neighbour step put into the candidate list **at all**. An arm required to return a listed gene
+cannot exceed it by definition; an arm choosing from all ~20,000 human genes is not bound by it. Two
+different tasks, two different ceilings.
+
+    group                          n      freq   llm_tie   llm_open
+    truth IS in the list         101     0.703     0.861      0.713
+    truth NOT in the list         99     0.000     0.000      0.727
+
+The open arm's 144 hits are **72 inside what a list-constrained arm could reach, and 72 outside it entirely**.
+Every list-constrained arm scores exactly 0.000 on the second row -- asserted in the scorer, because if one
+ever scored above zero there the scorer would be broken.
+
+Two things fall out of that table. **Conditioned on the answer being reachable, closed-book reasoning gets
+0.861 of them against freq's 0.703** -- the tie-break is in much better shape than the headline 0.435
+suggests, because the headline is dragged down by 99 reactions that were unwinnable. And **the two rows are
+equally hard for reasoning (0.713 vs 0.727)**: retrieval is not failing on chemically harder reactions. It
+fails structurally, when an orphan's chemical neighbours simply happen not to be run by the right enzyme.
+
 ## The finding that matters is not the tie-break at all
 
 **0.720 with no candidate list, against a 0.505 ceiling for every arm that uses one.** The chemistry-neighbour
