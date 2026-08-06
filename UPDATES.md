@@ -21309,3 +21309,53 @@ Honest limits recorded: negatives are chains from different solved complexes, ne
 but not verified non-binders, as no gold-standard PPI negative set exists. Both partners are bound-form. And a
 pair that docks poorly may be two proteins that never fit this grid representation, a property of the method
 rather than of biology.
+
+# Clustering does not help either: the native basin is not the most populated region
+
+`colab/dock_cluster.py`. The last lever that is not a per-pose score. ClusPro wins CAPRI by clustering poses and
+ranking clusters by MEMBER COUNT rather than by score, on the logic that the native basin is an attractor while
+a spurious high-scoring pose is alone. It only became testable after the coverage sweep raised basins from 1
+member to 4-16.
+
+    arm                           top-1    top-3   top-10
+    cluster by POPULATION          1/12     1/12     2/12
+    cluster by best score          2/12     2/12     3/12
+    random subset, by pop          0/12     0/12     0/12
+    POSE by score (baseline)       2/12     2/12     2/12
+
+    median 580 clusters from 1,000 poses | median top-cluster size 9 | median near-native in the top-1000: 2
+
+**Population is WORSE than score**, and both are at the pose-level baseline. Nine sweep configurations (top
+300/1000/3000 x radius 6/9/12 A) change nothing: population never exceeds 1/12 at top-1 anywhere.
+
+## Why, and the reason is in the cluster sizes rather than the hit rates
+
+**580 clusters from 1,000 poses.** Average membership under two, largest nine. Nothing piles up anywhere, so
+member count cannot discriminate -- there is no attractor to detect. ClusPro starts from ~70,000 poses and gets
+clusters of 20-50; we generate 9,600 and cluster the top 1,000. The mechanism it relies on is a property of
+sampling density we do not reach, not of the scoring.
+
+That also fixes what "more sampling" would have to mean. The coverage sweep showed 2,400 rotations puts a
+correct pose in every pose set -- enough to FIND it. Clustering needs enough to make the basin the densest
+region, which is a different and much larger requirement.
+
+## The one arm that behaved exactly as designed
+
+`random subset, by pop` is 0/12 everywhere. Clustering a random 1,000 poses instead of the top-scoring 1,000
+finds nothing at all -- confirming that what little the population arm achieves comes from the score-based
+preselection, not from population. Had that arm scored like the real one, the whole comparison would have been
+meaningless.
+
+## Where the ranking effort now stands: seven approaches, no ranker
+
+    shape complementarity          rho -0.059, 12/12 sign-consistent -- best available, nearly useless
+    learned contact embeddings     +0.003, worse than random weights
+    retrained on decoy contacts    +0.003
+    global descriptors             charge/phobic complementarity ~0, contiguity wrong-signed
+    sphere energies                -0.142 median but only 8/12 sign-consistent
+    electrostatic detector         real (AUC_close 0.640, p=0.0035) and worth ~10 rank places out of 1,800
+    cluster population             1/12, worse than score
+
+The search finds the answer in 12/12 complexes at a median 2.2 A. Nothing ranks it. That is now a
+well-characterised negative rather than an open question: per-pose scoring fails across geometry, learning and
+physics, and population fails because the poses do not concentrate.
