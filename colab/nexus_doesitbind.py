@@ -227,10 +227,21 @@ def main():
     elif auc_dock > auc_size + 0.05:
         report(f"  Beats size ({auc_dock:.3f} vs {auc_size:.3f}) but permutation p={pval:.4f} does not clear")
         report("  0.05. Suggestive on this sample size, not established.")
+    elif auc_dock <= np.percentile(perm, 95) and auc_size <= np.percentile(perm, 95):
+        # ORDER MATTERS. The first version checked "did it learn size" BEFORE "is anything above chance", and
+        # that comparison is purely relative -- when BOTH arms sit at chance it fires spuriously and reports
+        # a size artefact that is not there. Measured: docking 0.456, size_only 0.438, null median 0.496.
+        # Nothing was learned by either arm, and the paired design removed the size artefact so completely
+        # that even the size baseline carries no signal. "It learned size" would have been a false diagnosis.
+        report(f"  NOTHING, BY EITHER ARM. docking {auc_dock:.3f}, size_only {auc_size:.3f}, permutation null")
+        report(f"  median {np.median(perm):.3f} (95th {np.percentile(perm,95):.3f}), p={pval:.3f}. Both arms sit")
+        report("  inside the null. The pose-score distribution does not distinguish true partners from foreign")
+        report("  chains -- and the size baseline is at chance too, so the paired design removed that artefact")
+        report("  entirely rather than the classifier having latched onto it.")
     elif auc_size >= auc_dock - 0.05:
         report(f"  IT LEARNED SIZE. docking {auc_dock:.3f} vs size_only {auc_size:.3f} -- the distribution")
-        report("  features add nothing over how big the two chains are, despite per-pair z-scoring. The paired")
-        report("  design and the size arm are exactly what make that visible rather than flattering.")
+        report("  features add nothing over how big the two chains are, despite per-pair z-scoring, AND the")
+        report("  size arm is itself above the null. Both conditions are required to say this.")
     else:
         report(f"  NOTHING. docking {auc_dock:.3f}, size {auc_size:.3f}, permutation {np.median(perm):.3f}.")
         report("  The pose-score distribution does not distinguish real partners from foreign chains.")

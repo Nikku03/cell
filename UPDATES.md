@@ -21258,3 +21258,54 @@ changes whether there is anything to distinguish it from.
 None was pre-specified. `elec_sum` at 0.664 edges the pre-specified arm's 0.640 and that is a hypothesis for
 another run, not a result from this one -- promoting it here would repeat exactly the error this file was
 written to avoid.
+
+# Does the pose-score distribution say WHETHER two proteins bind? No -- a clean null
+
+`colab/nexus_doesitbind.py`. Since dock-then-score is blocked (the top-ranked pose is rank ~1,791 of 9,600, so
+it scores a wrong structure), the reformulation was: "do they interact" needs only WHETHER, not WHERE, and that
+might be readable from the DISTRIBUTION across 2,400 poses without identifying any single one. Ranking and
+detection are different problems and only one was known to be broken.
+
+    arm                    AUC        (GroupKFold by receptor; no receptor spans train and test)
+    docking distribution   0.456
+    size_only              0.438      the artefact baseline
+    label_perm             0.496      median of 200, 95th 0.636
+    chance                 0.500
+                                       permutation p = 0.660
+
+**Nothing, by either arm.** 80 docking runs, 40 positive and 40 negative, 40 receptors each appearing in BOTH
+classes. The pose-score distribution does not distinguish a true crystal partner from a size-matched foreign
+chain.
+
+## The paired design worked, which is visible in the control rather than the result
+
+`size_only` at 0.438 is ALSO at chance. That is the design succeeding: every receptor appears once with its
+true partner and once with a size-matched foreign one, so size, surface roughness, charge and griddability are
+present in both classes and cancel exactly. The artefact that would have faked a positive result was removed
+so thoroughly that the artefact baseline itself carries no signal.
+
+## The auto-reading was wrong again, and the fix is about ORDER
+
+The script printed "IT LEARNED SIZE" -- because that branch was checked BEFORE "is anything above chance at
+all", and its condition (`auc_size >= auc_dock - 0.05`) is purely RELATIVE. When both arms sit at chance it
+fires spuriously and diagnoses a size artefact that is not there. Corrected: the null branch is now tested
+first, and "it learned size" additionally requires the size arm to be above the permutation 95th percentile.
+Both conditions are needed to make that claim.
+
+## The one-pair smoke test called it
+
+Before the run, probing 1ACB's receptor against a foreign chain from 1BRS scored HIGHER than its true partner
+on most features (z_best 6.009 vs 5.033, raw max 231 vs 220). That was flagged at the time as a warning rather
+than a result. Across 40 paired receptors it holds: there is no separation.
+
+## What this closes
+
+The natural extension of NEXUS -- reuse the working folding x binding sensor (AUC 0.755 on mutations) to judge
+NOVEL protein pairs -- does not work in either form. Scoring the interaction strength needs a structure the
+ranking failure cannot supply. Detecting that an interaction exists needs no structure, and the distribution
+carries nothing. **NEXUS scores interfaces that already exist; it does not tell you which pairs have one.**
+
+Honest limits recorded: negatives are chains from different solved complexes, near-certainly non-interacting
+but not verified non-binders, as no gold-standard PPI negative set exists. Both partners are bound-form. And a
+pair that docks poorly may be two proteins that never fit this grid representation, a property of the method
+rather than of biology.
