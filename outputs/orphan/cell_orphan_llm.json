@@ -1,0 +1,172 @@
+{
+  "test": "cell_orphan_llm",
+  "n": 200,
+  "recall": {
+    "random": 0.3,
+    "llm_scram": 0.32,
+    "freq": 0.355,
+    "logistic": 0.385,
+    "set_transformer": 0.395,
+    "llm_tie": 0.435,
+    "oracle": 0.505,
+    "llm_open": 0.72
+  },
+  "mcnemar": {
+    "llm_tie_vs_llm_scram": {
+      "wins": 25,
+      "losses": 2,
+      "p": 5.647540092468262e-06
+    },
+    "llm_tie_vs_freq": {
+      "wins": 23,
+      "losses": 7,
+      "p": 0.005222879350185395
+    },
+    "llm_tie_vs_logistic": {
+      "wins": 17,
+      "losses": 7,
+      "p": 0.06391465663909912
+    },
+    "llm_tie_vs_set_transformer": {
+      "wins": 17,
+      "losses": 9,
+      "p": 0.16863754391670227
+    },
+    "llm_tie_vs_random": {
+      "wins": 27,
+      "losses": 0,
+      "p": 1.4901161193847656e-08
+    },
+    "llm_scram_vs_random": {
+      "wins": 11,
+      "losses": 7,
+      "p": 0.480682373046875
+    },
+    "llm_open_vs_llm_tie": {
+      "wins": 76,
+      "losses": 19,
+      "p": 2.9990721379379377e-09
+    }
+  },
+  "strata": {
+    "rare": {
+      "n": 101,
+      "freq": 0.27722772277227725,
+      "llm_tie": 0.37623762376237624,
+      "llm_open": 0.7920792079207921
+    },
+    "famous": {
+      "n": 99,
+      "freq": 0.43434343434343436,
+      "llm_tie": 0.494949494949495,
+      "llm_open": 0.6464646464646465
+    },
+    "singleton": {
+      "n": 56,
+      "freq": 0.4642857142857143,
+      "llm_tie": 0.4642857142857143,
+      "llm_open": 0.6607142857142857
+    },
+    "2+": {
+      "n": 144,
+      "freq": 0.3125,
+      "llm_tie": 0.4236111111111111,
+      "llm_open": 0.7430555555555556
+    },
+    "answer": {
+      "n": 187,
+      "freq": 0.3315508021390374,
+      "llm_tie": 0.42780748663101603,
+      "llm_open": 0.7219251336898396
+    },
+    "clean_contest": {
+      "n": 137,
+      "freq": 0.291970802919708,
+      "llm_tie": 0.4233576642335766
+    }
+  },
+  "set_transformer_seeds": [
+    0.37,
+    0.37,
+    0.345,
+    0.385,
+    0.395
+  ],
+  "unanswered": {},
+  "off_list": {},
+  "sample_seed": 7,
+  "log": [
+    "====================================================================================================",
+    "CAN REASONING FIND THE MISSING PIECE WHERE COUNTING CANNOT?",
+    "====================================================================================================",
+    "  Six hand-built signals and an 8,929-parameter set transformer all land on recall@1 ~0.37 against",
+    "  a 0.498 ceiling. Every one of them sees candidates only as graph statistics and none of them",
+    "  knows what the reaction DOES. This arm is given the chemistry and nothing else.",
+    "  CAVEAT DECLARED FIRST: these are curated reactions published before the training cutoff, so a",
+    "  high score is partly recall of the literature the answer key was built from, NOT discovery.",
+    "  It is still a valid CEILING PROBE, and results are stratified by catalyst fame to measure how",
+    "  much of any advantage is memorisation.",
+    "  PREDECLARED: tie ~ 0.367 => the tie group is underdetermined and the ceiling is unreachable.",
+    "  tie >> 0.367 => the feature arms lacked reaction semantics, not capacity. open >> tie =>",
+    "  the bottleneck is retrieval, not ordering.",
+    "\n  200 held-out reactions | candidates median 3 | truth in candidate list 0.505 <- ceiling for every list-constrained arm",
+    "\n  RECALL@1 on the identical 200 reactions",
+    "    arm                       @1    right    note",
+    "    random                 0.300    60/200    floor",
+    "    llm_scram              0.320    64/200    SAME candidate lists, WRONG reaction -- chemistry-blind control",
+    "    freq                   0.355    71/200    ",
+    "    logistic               0.385    77/200    ",
+    "    set_transformer        0.395    79/200    8,929 params, 5-seed mean 0.373+-0.017",
+    "    llm_tie                0.435    87/200    closed-book reasoning, same task as freq/logistic",
+    "    oracle                 0.505   101/200    ceiling for every list-constrained arm",
+    "    llm_open               0.720   144/200    NO candidate list, ceiling 1.000 -- not a tie-break",
+    "\n  PAIRED McNEMAR (n=200; 1 reaction = 0.005 recall)",
+    "    llm_tie        vs llm_scram           25 win    2 lose   p=0.0000  SIGNIFICANT",
+    "    llm_tie        vs freq                23 win    7 lose   p=0.0052  SIGNIFICANT",
+    "    llm_tie        vs logistic            17 win    7 lose   p=0.0639",
+    "    llm_tie        vs set_transformer     17 win    9 lose   p=0.1686",
+    "    llm_tie        vs random              27 win    0 lose   p=0.0000  SIGNIFICANT",
+    "    llm_scram      vs random              11 win    7 lose   p=0.4807",
+    "    llm_open       vs llm_tie             76 win   19 lose   p=0.0000  SIGNIFICANT",
+    "\n  CONTAMINATION DIAGNOSTIC -- is any advantage concentrated in FAMOUS enzymes?",
+    "  Split by how many reactions the true catalyst runs elsewhere (median 31). If the gain lives only\n  in the famous half, that is recall of the source literature, not reasoning.",
+    "    stratum                       n     freq   llm_tie  llm_open   tie-freq",
+    "    rare   (<= median)          101    0.277     0.376     0.792     +0.099",
+    "    famous (>  median)           99    0.434     0.495     0.646     +0.061",
+    "\n  WHERE A TIE-BREAK CAN ACTUALLY MATTER",
+    "  56 of 200 puzzles have a ONE-gene candidate list, so every list-constrained arm is forced to\n  the same answer and contributes nothing to any difference. The bottom row is the real contest.",
+    "    stratum                       n     freq   llm_tie  llm_open   tie-freq",
+    "    singleton list               56    0.464     0.464     0.661     +0.000",
+    "    2+ candidates               144    0.312     0.424     0.743     +0.111",
+    "\n  THE GIVEAWAYS",
+    "  In 13 puzzles the true catalyst appears verbatim in a participant NAME -- a SUMO E2 loaded onto\n  its own substrate. Real biology, so they stay, but the reasoning arm can read those off.",
+    "    stratum                       n     freq   llm_tie  llm_open   tie-freq",
+    "    answer named in reaction     13    0.692     0.538     0.692     -0.154",
+    "    answer NOT named            187    0.332     0.428     0.722     +0.096",
+    "\n  READING",
+    "  CONTROL FIRST. The scrambled arm saw the SAME candidate lists attached to the WRONG reaction",
+    "  and scored 0.320; the honest arm scored 0.435 (paired p=0.0000).",
+    "  The reaction text IS doing work: +0.115 over the same lists with the wrong chemistry.",
+    "  So the honest arm is reading the reaction, not just picking the most familiar-looking gene.",
+    "  REASONING BEATS COUNTING. 0.435 against freq 0.355, paired p=0.0052, against a",
+    "  0.505 ceiling -- 66% of the headroom where six hand-built signals and a transformer claimed ~30%.",
+    "  What the feature arms lacked was reaction semantics, not capacity.",
+    "  BUT NOT ESTABLISHED AGAINST THE STRONGEST BASELINE: set_transformer reaches 0.395",
+    "  and the paired test cannot separate it from 0.435 (p=0.1686). At n=200 the",
+    "  honest claim is 'beats frequency counting', not 'beats everything'.",
+    "\n  CONTAMINATION: the gain over freq is +0.099 on network-RARE catalysts and +0.061",
+    "  on network-famous ones -- LARGER where the enzyme is rarer, which is the opposite of what",
+    "  pure memorisation of famous enzymes would produce.",
+    "  Read that with care in BOTH directions: 'rare' here means the catalyst runs few OTHER reactions",
+    "  in this network, which is not the same as rare in the literature. A one-reaction enzyme can still",
+    "  be a textbook enzyme, so this bounds the contamination loosely rather than ruling it out.",
+    "\n  OPEN-ENDED, no candidate list: 0.720. The list-constrained ceiling is 0.505, so the",
+    "  reasoning arm names the right enzyme MORE often with no list than any arm can achieve with",
+    "  one (0.720 vs 0.505). The candidate list is a CEILING, not a help: the chemistry-",
+    "  neighbour retrieval step is what limits this problem, and ranking work cannot fix it.",
+    "\n  CLEANEST COMPARISON -- 137 puzzles with 2+ candidates AND no answer named in the",
+    "  reaction: freq 0.292 vs closed-book reasoning 0.423 (+0.131).",
+    "\n  OUT OF 10: freq gets 3.5, the transformer 4.0, closed-book reasoning 4.3 on the same task,",
+    "  and 7.2 with no candidate list at all. Perfect tie-breaking would get 5.0."
+  ]
+}

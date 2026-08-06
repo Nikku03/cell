@@ -21576,3 +21576,77 @@ The truth sits in the top tie group for half of all orphans, and counting how of
 anything is still the best way to order that group. Six hand-built signals and a set transformer have now been
 measured against it, and the crudest one wins. Capacity is not the missing ingredient here -- the tie group is
 too small to carry information the per-candidate features do not already have.
+
+---
+
+# I tried it myself: closed-book reasoning on the missing piece
+
+`cell_orphan_llm.py`, `cell_orphan_llm_audit.py`, `cell_orphan_llm_merge.py`. Eight approaches had now landed
+on recall@1 ~0.37 against a 0.498 ceiling, and every one of them saw candidates only as graph statistics --
+how often a gene catalyses anything, its PPI degree, its pathway count. **Not one of them knew what the
+reaction does.** `dCDP + dGDP -> dCMP + dGTP` is a phosphate transfer between nucleotides and no frequency
+count can represent that. So the model was given the chemistry and nothing else.
+
+## The no-cheating protocol, enforced rather than promised
+
+1. Puzzles carry no catalyst, no reaction id and no database ids. **No answer key is written to disk at all** --
+   the scorer recomputes truth from the same deterministic `build()` the tie-breaker arms use.
+2. Predictions were committed to git *before* the scorer ran. Commit order is the audit trail.
+3. The 15 solvers were audited from their own transcripts: **30 tool calls total, one `Read` of its own batch
+   file each**, nothing touching the reaction network, the puzzle file, any output or the web.
+
+Two leaks the construction caught. Subunit gene lists named the true catalyst in **17 of 120** puzzles -- a
+SUMO ligase listed inside the complex it acts on -- worth up to +0.14 of free score; stripped. Participant
+*names* still contain it in 13 of 200 because that is the biology, so those stay and are scored separately.
+
+## Results, 200 held-out reactions, identical to the tie-breaker arms
+
+    arm                       @1    right
+    random                 0.300    60/200   <- floor
+    llm_scram              0.320    64/200   same lists, WRONG reaction -- chemistry-blind control
+    freq                   0.355    71/200
+    logistic               0.385    77/200
+    set_transformer        0.395    79/200   8,929 params
+    llm_tie                0.435    87/200   closed-book reasoning
+    oracle                 0.505   101/200   <- ceiling for any list-constrained arm
+    llm_open               0.720   144/200   NO candidate list
+
+**The control passes.** Given the same candidate lists attached to the wrong reaction, the solver scores 0.320
+against 0.435 (25 win / 2 lose, p<0.0001). It is reading the chemistry, not picking the most familiar-looking
+gene off a list.
+
+**Reasoning beats counting, but only against counting.** 0.435 vs freq 0.355 is significant (23 win / 7 lose,
+p=0.0052) and claims 66% of the tie headroom where the feature arms claimed ~30%. Against the *strongest*
+baseline it is not established: the set transformer reaches 0.395 and the paired test cannot separate them
+(p=0.169). The supportable claim is "beats frequency counting", not "beats everything".
+
+**Contamination runs the wrong way for the memorisation story.** The gain over freq is **+0.099 on
+network-rare catalysts against +0.061 on famous ones** -- larger where the enzyme is rarer. That is the
+opposite of what recall-of-famous-enzymes would produce. It bounds the effect loosely, not tightly: network
+rarity is not literature rarity, and a one-reaction enzyme can still be a textbook enzyme.
+
+## The finding that matters is not the tie-break at all
+
+**0.720 with no candidate list, against a 0.505 ceiling for every arm that uses one.** The chemistry-neighbour
+retrieval step is not helping — it is the binding constraint. Every ranking result in this project has been
+optimising inside a candidate set that excludes the right answer half the time, and no amount of reordering
+can reach 0.72 from inside it.
+
+That reframes the whole missing-piece line. Six hand-built signals, a set transformer and a tie-break headroom
+of 0.19 were all work on the wrong half of the problem. Retrieval was the bottleneck the entire time.
+
+## Two conclusion-changing bugs in the reading
+
+`block()` stored strata under a padded display label while the reading looked them up with a differently
+padded literal, so `.get()` missed and returned 0. The run printed *"on rare catalysts the gain is only +0.000
+-- the advantage is concentrated in well-known enzymes"* three lines below a table showing +0.099 on rare
+against +0.061 on famous. **The printed verdict was the exact opposite of the data it sat under.**
+
+The first draft also reported significance against `freq`, the weakest baseline, and would have recorded
+"reasoning beats counting" without mentioning that the transformer is 0.04 away and statistically
+indistinguishable.
+
+## Out of 10
+
+freq **3.5**, the transformer **4.0**, closed-book reasoning **4.3** on the same task, **7.2** with no
+candidate list. Perfect tie-breaking would get **5.0** — which is now clearly the wrong target.
