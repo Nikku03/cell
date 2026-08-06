@@ -71,6 +71,7 @@ EPOCHS = 40
 D_MODEL = 32
 N_HEADS = 4
 SEED = 0
+SEEDS = (0, 1, 2, 3, 4)       # one run decides nothing: 458 eval reactions means 1 reaction = 0.002 recall
 FEATS = ("log_freq", "log_deg", "n_pw", "pw_ctx", "comp")
 
 
@@ -231,7 +232,7 @@ def main():
                     loss = -torch.log_softmax(s_, 0)[torch.tensor(e["y"]).bool()].mean()
                     loss.backward()
                     opt.step()
-                    tot += float(loss)
+                    tot += float(loss.detach())
                 curve.append(tot / max(len(use), 1))
         net_.eval()
         return net_, npar, curve
@@ -242,18 +243,23 @@ def main():
     mu, sd = Xtr.mean(0), Xtr.std(0) + 1e-9
     lr = LogisticRegression(max_iter=3000).fit((Xtr - mu) / sd, ytr)
 
-    net_t, npar, curve = train_set(True)
-    net_u, _, _ = train_set(False, seed=1234)
+    nets_t, nets_u, curves = [], [], []
+    for sd in SEEDS:
+        m, npar, cv = train_set(True, seed=sd)
+        nets_t.append(m); curves.append(cv)
+        mu_, _, _ = train_set(False, seed=1000 + sd)
+        nets_u.append(mu_)
+    net_t, net_u, curve = nets_t[0], nets_u[0], curves[0]
     # LIVENESS: if the loss never moved, every number below is about an untrained net wearing a trained label
-    d_loss = curve[0] - curve[-1]
+    d_loss = min(c[0] - c[-1] for c in curves)
     n_fit = sum(1 for k in tr_i if examples[k]["has_truth"] and len(examples[k]["tied"]) > 1)
-    report(f"\n  training: {n_fit:,} usable groups (truth present, >1 candidate) | listwise loss "
-           f"{curve[0]:.4f} -> {curve[-1]:.4f}  (delta {d_loss:+.4f})")
+    report(f"\n  training: {n_fit:,} usable groups (truth present, >1 candidate) | {len(SEEDS)} seeds | "
+           f"listwise loss {curves[0][0]:.3f} -> " + "/".join(f"{c[-1]:.3f}" for c in curves))
     if d_loss < 0.01:
         report("  *** LOSS DID NOT MOVE -- the 'trained' arm is untrained in all but name. Numbers below are")
         report("      about optimisation failure, not about whether set context exists.")
 
-    def order_of(e, arm):
+    def order_of(e, arm, m=None):
         t = e["tied"]
         if arm == "random":
             k = {g: rs.random() for g in t}
@@ -263,7 +269,6 @@ def main():
             p = lr.predict_proba((e["Xz"] - mu) / sd)[:, 1]
             k = dict(zip(t, p))
         elif arm in ("set_transformer", "set_transformer_untrained"):
-            m = net_t if arm == "set_transformer" else net_u
             with torch.no_grad():
                 v = m(torch.tensor(e["Xz"], dtype=torch.float32)).numpy()
             k = dict(zip(t, v))
@@ -273,15 +278,23 @@ def main():
 
     ARMS = ("random", "freq", "logistic", "set_transformer", "set_transformer_untrained", "oracle")
     hits = {a: {k: 0 for k in KS} for a in ARMS}
-    ne = 0
-    for j in ev_i:
-        e = examples[j]
+    hit1 = {a: [] for a in ARMS}                      # per-reaction @1 hit, for PAIRED tests
+    seed_r1 = {"set_transformer": [], "set_transformer_untrained": []}
+    ev_ex = [examples[j] for j in ev_i]
+    ne = len(ev_ex)
+    for e in ev_ex:
         truth = set(cats[e["rx"]])
-        ne += 1
         for a in ARMS:
-            o = order_of(e, a)
+            m = net_t if a == "set_transformer" else (net_u if a == "set_transformer_untrained" else None)
+            o = order_of(e, a, m)
+            hit1[a].append(bool(truth & set(o[:1])))
             for k in KS:
                 hits[a][k] += bool(truth & set(o[:k]))
+    # every seed scored separately -- the spread across seeds is the yardstick any claimed gain must clear
+    for a, nets in (("set_transformer", nets_t), ("set_transformer_untrained", nets_u)):
+        for m in nets:
+            h = sum(bool(set(cats[e["rx"]]) & set(order_of(e, a, m)[:1])) for e in ev_ex)
+            seed_r1[a].append(h / ne)
 
     report(f"\n  RECALL@k on {ne:,} held-out reactions, differing ONLY in tie-group order")
     report(f"    {'arm':<28}" + "".join(f"{'@' + str(k):>9}" for k in KS))
@@ -292,30 +305,66 @@ def main():
         report(f"    {a:<28}" + "".join(f"{rec[a][str(k)]:>9.3f}" for k in KS) + mark)
     report(f"    set transformer parameters: {npar:,}")
 
+    report(f"\n  ACROSS {len(SEEDS)} SEEDS, recall@1 (the transformer arms only -- the rest are deterministic)")
+    for a in seed_r1:
+        v = np.array(seed_r1[a])
+        report(f"    {a:<28}mean {v.mean():.3f}  sd {v.std():.3f}  range {v.min():.3f}-{v.max():.3f}")
+    st_m, su_m = np.mean(seed_r1["set_transformer"]), np.mean(seed_r1["set_transformer_untrained"])
+
+    # PAIRED significance: same reactions, so only the reactions where two arms DISAGREE carry information
+    from scipy.stats import binomtest
+    report(f"\n  PAIRED McNEMAR vs the arm each comparison is trying to beat (n={ne:,}; 1 reaction = "
+           f"{1/ne:.3f} recall)")
+    pairs = [("set_transformer", "freq"), ("set_transformer", "logistic"),
+             ("set_transformer", "set_transformer_untrained"), ("freq", "random"), ("logistic", "random")]
+    mcn = {}
+    for a, b in pairs:
+        A_, B_ = np.array(hit1[a]), np.array(hit1[b])
+        w, l = int((A_ & ~B_).sum()), int((~A_ & B_).sum())
+        p = binomtest(w, w + l, 0.5).pvalue if w + l else 1.0
+        mcn[f"{a}_vs_{b}"] = {"wins": w, "losses": l, "p": float(p)}
+        flag = "  SIGNIFICANT" if p < 0.05 else ""
+        report(f"    {a:<28} vs {b:<28} {w:>4} win {l:>4} lose   p={p:.3f}{flag}")
+
     report("\n  READING")
     base, ceil = rec["random"]["1"], rec["oracle"]["1"]
-    st, su = rec["set_transformer"]["1"], rec["set_transformer_untrained"]["1"]
+    st, su = st_m, su_m                                # seed MEANS, not the one run that happened to be first
     fq, lg = rec["freq"]["1"], rec["logistic"]["1"]
+    p_fq = mcn["set_transformer_vs_freq"]["p"]
+    p_un = mcn["set_transformer_vs_set_transformer_untrained"]["p"]
+
     def share(v):
         return (v - base) / max(ceil - base, 1e-9)
-    if st > fq + 0.02 and st > su + 0.02:
-        report(f"  SET CONTEXT IS REAL. The transformer reaches {st:.3f} against freq {fq:.3f} and its own")
-        report(f"  untrained control {su:.3f} -- {share(st):.0%} of the headroom versus {share(fq):.0%}.")
-        report("  Conditioning on WHO ELSE is in the tie group carries information no per-candidate score can.")
-    elif st <= su + 0.02:
-        report(f"  CAPACITY DOES NOT HELP. transformer {st:.3f} vs its untrained control {su:.3f}. With a")
-        report(f"  median tie group of {np.median(tie):.0f} there is almost no set to attend over, which is the")
-        report("  most likely reason -- attention needs competitors to compare against.")
+    if st > fq and p_fq < 0.05 and p_un < 0.05:
+        report(f"  SET CONTEXT IS REAL. The transformer averages {st:.3f} over {len(SEEDS)} seeds against freq")
+        report(f"  {fq:.3f} (paired p={p_fq:.3f}) and its untrained control {su:.3f} (p={p_un:.3f}) -- "
+               f"{share(st):.0%} of")
+        report(f"  the headroom versus {share(fq):.0%}. Conditioning on WHO ELSE is in the group carries")
+        report("  information no per-candidate score can.")
+    elif st <= su + 0.02 or p_un >= 0.05:
+        report(f"  CAPACITY DOES NOT HELP. Trained {st:.3f} vs untrained {su:.3f} over {len(SEEDS)} seeds, and")
+        report(f"  the paired test cannot separate them (p={p_un:.3f}). The optimiser worked -- listwise loss")
+        report(f"  fell to {min(c[-1] for c in curves):.2f} -- so this is a transfer failure, not a training")
+        report(f"  failure: it fit {n_fit:,} groups and none of that generalised. With a median tie group of")
+        report(f"  {np.median(tie):.0f} there is almost no set to attend over, which is the likeliest reason.")
+        if st < fq:
+            report(f"  It also does not beat plain frequency counting ({fq:.3f}), which has zero parameters.")
     elif abs(st - lg) <= 0.02:
         report(f"  A FITTED COMBINATION IS WHAT HELPS, not attention. transformer {st:.3f} vs logistic")
         report(f"  {lg:.3f} vs freq {fq:.3f}. The set context adds nothing over weighting the same features.")
     else:
         report(f"  MIXED: transformer {st:.3f}, logistic {lg:.3f}, freq {fq:.3f}, untrained {su:.3f}, ceiling")
         report(f"  {ceil:.3f}. Read the per-arm numbers rather than a single verdict.")
+    report(f"\n  Headroom claimed at @1: freq {share(fq):.0%} | logistic {share(lg):.0%} | "
+           f"transformer {share(st):.0%} | untrained {share(su):.0%}")
+    report(f"  NOTE the untrained control sits at {su:.3f}, well above the {base:.3f} random floor. A random")
+    report("  projection of features that already correlate with the answer is not a random ordering, which is")
+    report("  why 'better than random' was never the bar and the untrained arm is the one that matters.")
 
     json.dump({"test": "cell_orphan_ties_nn", "n_eval": ne, "n_train": int(len(tr_i)), "ks": list(KS),
                "recall": rec, "tie_median": float(np.median(tie)), "params": npar,
-               "loss_first": curve[0], "loss_last": curve[-1], "n_fit_groups": n_fit,
+               "seeds": list(SEEDS), "seed_recall1": seed_r1, "mcnemar": mcn,
+               "loss_first": curves[0][0], "loss_last": [c[-1] for c in curves], "n_fit_groups": n_fit,
                "geoconv_excluded": "needs a surface point cloud per entity; 311 structures vs 5,282 catalysts",
                "log": log}, open(OUT / "cell_orphan_ties_nn.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'cell_orphan_ties_nn.json'}")
