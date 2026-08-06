@@ -193,7 +193,15 @@ def main():
         the structural analogue of Cellformer's typed-relation bias."""
         def __init__(s, fd, d=D_MODEL, h=N_HEADS, nblocks=2):
             super().__init__()
-            s.proj = nn.Linear(fd + 3, d)            # features + surface normal
+            # NODE INPUTS MUST MATCH GeoConv's EXACTLY or this is not an architecture comparison. The first
+            # version also fed the surface NORMAL, which GeoConv does not receive as a node feature (it sees
+            # geometry only through local-frame neighbour coordinates). Contacting surfaces face each other, so
+            # their normals are anti-parallel: measured -0.465 for contacting pairs vs +0.222 for far pairs.
+            # At init the embedding was largely linear in the normal, contacting pairs anti-correlated, and the
+            # UNTRAINED transformer scored 0.3897 -- below chance, which both depressed its floor and inflated
+            # its apparent gain over that floor. Same 5 node features for both now; geometry reaches each
+            # architecture through its own native channel (local frames for GeoConv, distance bias here).
+            s.proj = nn.Linear(fd, d)
             # LEARNED RELATIVE-POSITION BIAS, and it must start at ZERO. PyTorch ADDS a float attn_mask to the
             # attention logits before softmax. The first version fed raw Angstrom distances (0-155 A) into an
             # unnormalised MLP, giving bias logits from -47 to +20 against attention logits of O(1): max
@@ -211,8 +219,7 @@ def main():
 
         def forward(s, d_, g_):
             P = torch.tensor(d_["pts"])
-            x = torch.cat([torch.tensor(d_["feat"]), torch.tensor(d_["nrm"])], -1)
-            h = s.proj(x).unsqueeze(0)
+            h = s.proj(torch.tensor(d_["feat"])).unsqueeze(0)
             D2 = (torch.cdist(P, P) / DIST_SCALE).unsqueeze(-1)
             bias = s.dist_bias(D2).permute(2, 0, 1)          # (heads, n, n), exactly 0 at init
             for b in s.blocks:
