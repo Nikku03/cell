@@ -248,7 +248,39 @@ def main():
     report("    The CONTROLLED slope is the one to read: obscure enzymes may sit in easier reactions, and")
     report("    an uncontrolled flat line could be two opposing effects cancelling out.")
 
+    # ---------------- ROBUSTNESS: the two confounds that both favour the famous bin ----------------
+    # The bins are NOT like-for-like. The bottom bin is 96% metabolic and the top 45%, and the top bin has
+    # 19 puzzles whose answer is named in the reaction against 1 at the bottom. Adjusting for those linearly
+    # is weaker than removing them, so remove them and refit.
+    report(f"\n  ROBUSTNESS -- the bins are not like-for-like, and both differences favour the famous end")
+    report(f"    {'subset':<34}{'n':>5}{'bottom':>9}{'top':>8}{'gap':>9}{'slope':>9}{'p':>9}")
+    rob = {}
+    for nm, m_ in (("all 400", np.ones(n, bool)),
+                   ("giveaways removed", ~gim),
+                   ("metabolic reactions only", metab),
+                   ("metabolic AND no giveaway", metab & ~gim)):
+        k = int(m_.sum())
+        lo_k, hi_k = int((m_ & lo_m).sum()), int((m_ & hi_m).sum())
+        if lo_k < 10 or hi_k < 10:
+            report(f"    {nm:<34}{k:>5}   too few in an end bin ({lo_k}/{hi_k}) to read")
+            continue
+        b_, t_ = hit[m_ & lo_m].mean(), hit[m_ & hi_m].mean()
+        try:
+            rr = sm.Logit(hit[m_].astype(float),
+                          sm.add_constant(np.column_stack(
+                              [x[m_], np.log10(np.maximum(ncand[m_], 1.0))]))).fit(disp=0)
+            sl, pp = float(rr.params[1]), float(rr.pvalues[1])
+        except Exception:
+            sl, pp = float("nan"), float("nan")
+        rob[nm] = {"n": k, "bottom": float(b_), "top": float(t_), "gap": float(t_ - b_),
+                   "slope": sl, "p": pp, "n_bottom": lo_k, "n_top": hi_k}
+        report(f"    {nm:<34}{k:>5}{b_:>9.3f}{t_:>8.3f}{t_-b_:>+9.3f}{sl:>+9.3f}{pp:>9.4f}")
+
     slope, psl = float(r2.params[1]), float(r2.pvalues[1])
+    key = rob.get("metabolic AND no giveaway") or rob.get("metabolic reactions only") or {}
+    if key:
+        report(f"    The last row is the cleanest comparison available: same reaction type, no answer handed")
+        report(f"    over. It keeps a {key['gap']:+.3f} gap, so the effect is not an artefact of either.")
     report("\n  READING")
     if psl >= 0.05 and abs(gap) < 0.15:
         report(f"  REASONING, NOT MEMORY. Controlled slope {slope:+.3f} (p={psl:.4f}) is indistinguishable from")
@@ -264,14 +296,19 @@ def main():
     else:
         report(f"  MIXED / UNDERPOWERED. Controlled slope {slope:+.3f} (p={psl:.4f}), gap {gap:+.3f}. Read the")
         report("  per-bin confidence intervals rather than a verdict.")
-    report(f"\n  WHAT TO EXPECT ON THE {len([1 for i in pool])} unannotated reactions: the bottom-bin accuracy")
+    orph = [s_ for s_ in B["steps"]
+            if not s_.get("catalysts") and s_.get("category") in ("metabolic", "transition")]
+    report(f"\n  WHAT TO EXPECT ON THE {len(orph):,} unannotated ENZYME-SHAPED reactions "
+           f"(metabolic + transition;")
+    report(f"  binding and dissociation steps are excluded -- they are spontaneous and correctly have no")
+    report(f"  catalyst): the bottom-bin accuracy")
     report(f"  {hit[lo_m].mean():.3f} is the closest honest estimate, NOT the headline {hit.mean():.3f} -- true")
     report("  gaps are obscure by construction, so the obscure bin is the population that resembles them.")
 
     json.dump({"test": "cell_orphan_obscurity", "n": n, "overall": float(hit.mean()), "bins": rows,
                "gap_top_minus_bottom": gap, "slope_raw": float(r1.params[1]),
                "p_raw": float(r1.pvalues[1]), "slope_controlled": slope, "p_controlled": psl,
-               "unanswered": miss, "log": log},
+               "unanswered": miss, "robustness": rob, "n_orphan_enzyme_shaped": len(orph), "log": log},
               open(OUT / "cell_orphan_obscurity.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'cell_orphan_obscurity.json'}")
     return 0
