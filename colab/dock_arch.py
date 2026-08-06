@@ -71,6 +71,7 @@ N_TRAIN, N_EVAL = 40, 14
 EPOCHS = 25
 N_PTS = 512          # attention is O(n^2); BOTH architectures are capped here so the comparison is fair
 D_MODEL = 64
+DIST_SCALE = 10.0    # Angstrom; raw distances saturate the softmax, see PointFormer
 N_HEADS = 4
 SEED = 0
 
@@ -193,7 +194,17 @@ def main():
         def __init__(s, fd, d=D_MODEL, h=N_HEADS, nblocks=2):
             super().__init__()
             s.proj = nn.Linear(fd + 3, d)            # features + surface normal
-            s.dist_bias = nn.Sequential(nn.Linear(1, h), nn.GELU(), nn.Linear(h, h))
+            # LEARNED RELATIVE-POSITION BIAS, and it must start at ZERO. PyTorch ADDS a float attn_mask to the
+            # attention logits before softmax. The first version fed raw Angstrom distances (0-155 A) into an
+            # unnormalised MLP, giving bias logits from -47 to +20 against attention logits of O(1): max
+            # attention weight 1.000 at initialisation, i.e. every point attending to exactly one other point
+            # through a saturated softmax that barely passes gradient. The transformer scored 0.379 UNTRAINED,
+            # far below chance, which is what exposed it. Distances are now scaled by DIST_SCALE and the output
+            # layer is zero-initialised, so attention begins unbiased and learns the bias -- the standard
+            # treatment for relative-position bias.
+            s.dist_bias = nn.Sequential(nn.Linear(1, 4 * h), nn.GELU(), nn.Linear(4 * h, h))
+            nn.init.zeros_(s.dist_bias[-1].weight)
+            nn.init.zeros_(s.dist_bias[-1].bias)
             s.blocks = nn.ModuleList([Block(d, h) for _ in range(nblocks)])
             s.out = nn.Linear(d, 32)
             s.h = h
@@ -202,8 +213,8 @@ def main():
             P = torch.tensor(d_["pts"])
             x = torch.cat([torch.tensor(d_["feat"]), torch.tensor(d_["nrm"])], -1)
             h = s.proj(x).unsqueeze(0)
-            D2 = torch.cdist(P, P).unsqueeze(-1)
-            bias = s.dist_bias(D2).permute(2, 0, 1)          # (heads, n, n)
+            D2 = (torch.cdist(P, P) / DIST_SCALE).unsqueeze(-1)
+            bias = s.dist_bias(D2).permute(2, 0, 1)          # (heads, n, n), exactly 0 at init
             for b in s.blocks:
                 h = b(h, bias)
             e = s.out(h.squeeze(0))
