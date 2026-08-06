@@ -237,6 +237,34 @@ def main():
     json.dump({"reaction_ids": [int(i) for i in sel],
                "blocks": {str(i): v for i, v in blocks.items()}},
               open(EVID, "w"), indent=1)
+
+    # ---------------- write the solver batches: identical puzzles, now carrying the evidence ----------------
+    pz = json.load(open(PUZZLES))["puzzles"]
+    outdir = SP / "evid"
+    outdir.mkdir(exist_ok=True)
+
+    def part(q):
+        if q["type"] == "UNRESOLVED":
+            return "?unresolved"
+        c = q.get("compartment")
+        return f"{q['name']} [{q['type']}{', ' + c if c else ''}]"
+
+    txt = []
+    for pid, i in enumerate(sel):
+        p = pz[pid]
+        bl = blocks.get(i, {})
+        L = [f"#{p['pid']}  ({p['source']}, {p['category']}, "
+             f"{'reversible' if p['reversible'] else 'irreversible'})",
+             "  IN : " + "  +  ".join(part(q) for q in p["inputs"]),
+             "  OUT: " + "  +  ".join(part(q) for q in p["outputs"])]
+        for nm, key in (("CO-DEPENDENCY", "codependency"), ("CO-EXPRESSION", "coexpression")):
+            g = bl.get(key) or []
+            L.append(f"  {nm}: " + (", ".join(g) if g else "(none available)"))
+        txt.append("\n".join(L))
+    Bsz = 50
+    for b in range(0, len(txt), Bsz):
+        (outdir / f"evid_b{b//Bsz}.txt").write_text("\n\n".join(txt[b:b + Bsz]))
+    report(f"  wrote {len(txt)} evidence puzzles in {(len(txt)+Bsz-1)//Bsz} batches -> {outdir}")
     json.dump({"test": "cell_orphan_evidence", "liveness": live, "retrieval": retr, "topk": TOPK,
                "log": log}, open(OUT / "cell_orphan_evidence.json", "w"), indent=2)
     report(f"\n  wrote evidence blocks -> {EVID}")
