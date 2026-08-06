@@ -99,18 +99,34 @@ def main():
 
     # did the solver ever ACT on the evidence? a null is uninterpretable if the lines were simply ignored
     ev = json.load(open(O.OUT / "evidence_blocks.json"))["blocks"]
-    listed, listed_right = 0, 0
+    inlist = np.zeros(n, bool)
     for p_ in range(n):
         bl = ev.get(str(sel[p_])) or {}
         lst = {_n(g) for k in bl for g in bl[k]}
         g1 = _n((a1.get(str(p_)) or {}).get("evid"))
-        if g1 and g1 in lst:
-            listed += 1
-            listed_right += int(g1 in truth[p_])
+        inlist[p_] = bool(g1) and g1 in lst
+    listed = int(inlist.sum())
+    listed_right = int(h1[inlist].sum())
     report(f"\n  DID THE SOLVER USE THE LINES AT ALL? it answered with a gene FROM the evidence "
            f"{listed}/{n} times")
-    report(f"  ({listed_right} of those were correct). A null with zero uptake would mean the lines were")
-    report("  ignored; a null WITH uptake means they were weighed and were not informative.")
+    report(f"  ({listed_right} of those were correct -- {listed_right/max(listed,1):.1%}, against "
+           f"{h1[~inlist].mean():.1%} elsewhere).")
+    report("  A null with zero uptake would mean the lines were ignored; a null WITH uptake means they were")
+    report("  weighed and were not informative.")
+    # That high precision is the most tempting number in this run, so it gets the control it deserves:
+    # was the evidence SUPPLYING those answers, or listing a gene the chemistry already pointed at?
+    base_same = int(h0[inlist].sum())
+    new_wins = int((h1 & ~h0 & inlist).sum())
+    identical = sum(1 for p_ in range(n) if inlist[p_] and
+                    _n((a0.get(str(p_)) or {}).get("open")) == _n((a1.get(str(p_)) or {}).get("evid")))
+    report(f"\n  CONTROL ON THAT PRECISION -- did the NO-evidence arm already get those {listed} rows?")
+    report(f"    base arm correct on the same rows        {base_same}/{listed}")
+    report(f"    same gene named by BOTH arms             {identical}/{listed}")
+    report(f"    wins ATTRIBUTABLE to the evidence        {new_wins}")
+    if new_wins == 0:
+        report("    So the high precision is not the evidence working. It is the chemistry working, on rows")
+        report("    where the list happened to contain the gene the solver was going to name anyway. A")
+        report("    convergence filter built on this would select nothing the model could not already do.")
 
     ob = rows.get("0-20", {})
     report("\n  READING")
@@ -135,7 +151,9 @@ def main():
 
     json.dump({"test": "cell_orphan_evidence_score", "n": n, "rows": rows,
                "identical_answers": int(same.sum()), "answered_from_evidence": listed,
-               "answered_from_evidence_correct": listed_right, "log": log},
+               "answered_from_evidence_correct": listed_right,
+               "base_correct_same_rows": int(h0[inlist].sum()),
+               "wins_attributable_to_evidence": int((h1 & ~h0 & inlist).sum()), "log": log},
               open(OUT / "cell_orphan_evidence_score.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'cell_orphan_evidence_score.json'}")
     return 0
