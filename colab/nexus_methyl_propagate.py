@@ -98,6 +98,7 @@ K_BOND = 20.0       # pairs within 1.8 A are covalent; much stiffer, so the chai
 SPHERE_R = (8.0, 12.0, 16.0)
 OVERLAP = 0.35      # fraction of the radius that is Dirichlet boundary rather than solved interior
 MAX_SWEEP = 60
+PCG_MAX = 4000      # the accelerated arm must be allowed to ARRIVE; its iteration count is the result
 EPS_LJ = 0.10
 SEED = 31
 FCAP = 5.0          # per-pair force cap, kcal/mol/A
@@ -268,7 +269,7 @@ def factor_blocks(K, spheres):
     return facs
 
 
-def schwarz_pcg(K, Q, f, spheres, facs, w_atom, u_exact, maxiter=400):
+def schwarz_pcg(K, Q, f, spheres, facs, w_atom, u_exact, maxiter=PCG_MAX):
     """The SAME sphere tiling, used as a preconditioner for conjugate gradients instead of as a bare sweep.
 
     This exists to settle a question the plain sweeps cannot. schwarz_true converges toward the exact field
