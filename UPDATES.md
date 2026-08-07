@@ -22240,3 +22240,88 @@ subset is 53 reactions; the direction is unambiguous (10-0) but the magnitude ha
 
 That is still a curation accelerator rather than a map-completion engine, but it is a materially better one,
 and the thing that delivered it was the cheapest idea tried all session: show the model what it already knows.
+
+---
+
+# Sphere coverage for chromatin: the physics is right, and it is not the bottleneck
+
+`colab/chromatin_spheres.py`. `rouse_gate` computed chromatin contact analytically — Gaussian Network Model,
+closed form, no timestep — and found it real but redundant against simply counting CTCF sites. Its central
+approximation is that the fibre is a **phantom chain**: a Gaussian polymer that passes through itself.
+Self-avoidance is the single largest piece of physics the analytic form discards.
+
+Brute force restores it with Langevin dynamics — the ~1 GPU-day per region that Stage 3 of the 4D plan was
+costed at, and that we declined. Sphere coverage restores it for almost nothing: **cover the fibre in spheres,
+and excluded volume is just "spheres do not overlap."** Draw conformations straight from the analytic
+covariance the GNM already gives, then relax the overlaps out while holding the bonds. What comes back is
+self-avoiding but was never integrated — a geometric projection, no force law, no timestep, no trajectory.
+About a second per window.
+
+The initial structure cost nothing and came from data already on disk: CTCF peaks on chr22 give loop anchors,
+anchors give loop bonds, bonds give the Laplacian, and the Laplacian's pseudo-inverse **is** the equilibrium
+covariance. Scored against measured K562 Hi-C read straight out of a 32 GB remote `.hic` by range request —
+a 4 Mb window at 25 kb costs ~14 s and no disk.
+
+## The control that decides it, and it is not zero
+
+Most of any Hi-C map is genomic distance. So every arm is scored on **distance-controlled residuals** — both
+measured and predicted z-scored *within* each separation bin. An arm that only knows contacts fall off with
+distance scores 0.000 here, by construction.
+
+## Result: 8 windows of 4 Mb at 25 kb, swept over sphere radius
+
+    contact cutoff 3.0 x bond    phantom   spheres   shuffled anchors   P(s) exponent
+    radius 0.55 (95% reachable)    0.111     0.112        -0.020            -0.850
+    radius 0.75 (88% reachable)    0.111     0.101        -0.019            -0.946
+    radius 0.95 (75% reachable)    0.111     0.085        -0.015            -0.994
+    measured Hi-C                                                           -1.405
+    phantom chain                                                           -0.707
+
+**Self-avoidance never helps.** Best case it ties the phantom chain (0.112 vs 0.111); past that it gets
+steadily worse as the spheres grow. The relaxation demonstrably works — 71–89% of overlapping pairs removed,
+bonds intact at 1.001–1.010× their original length — so this is a real null, not a broken arm.
+
+**But the polymer model itself is not nothing.** Loops at real CTCF positions score 0.111; the same count and
+spacing relocated within the window scores −0.020. **Where the loops are carries the signal. Excluded volume
+adds nothing on top of it.**
+
+**And the physics behaves exactly as it should.** Crowding the chain steepens the contact decay monotonically,
+−0.707 → −0.850 → −0.946 → −0.994, every step toward the measured −1.405. Self-avoidance makes the fibre more
+compact, which is correct and visible. It simply does not change *which pairs touch*.
+
+## A trap I set for myself, and what caught it
+
+The first sweep ran at a contact cutoff of 2.0 bond lengths and showed a much steeper decline (0.095 → 0.084 →
+0.063) plus something impossible: at radius 0.95 the exponent went to **−0.836, flatter than the phantom
+chain's −0.961**. Self-avoidance cannot do that — a self-avoiding walk has ν=0.588 against 0.5 for an ideal
+chain, so P(s) must get *steeper*.
+
+My first hypothesis was jamming: the relaxation trading bonds away to make room. Adding a bond-stretch check
+refuted it — 1.001, 1.001, 1.010, bonds intact everywhere. The real cause was arithmetic between two of my own
+constants. Non-bonded centres cannot approach closer than 2·R_FRAC, so the shell in which a contact can still
+be *counted* is only 1 − (2·R_FRAC/CONTACT_R)³ of the sphere:
+
+    radius 0.55  excluded diameter 1.10 vs cutoff 2.0  ->  83% of contact volume reachable
+    radius 0.75  excluded diameter 1.50 vs cutoff 2.0  ->  58%
+    radius 0.95  excluded diameter 1.90 vs cutoff 2.0  ->  14%
+
+At radius 0.95 the spheres had **swallowed the contact shell**: excluded volume was no longer adding physics,
+it was deleting the contacts under measurement. That explained the flattened P(s) and the collapsed
+correlation at once, and neither was about chromatin. Re-run at a cutoff the spheres cannot reach, the
+exponent is monotone and correctly signed at every radius. The module now prints the reachable fraction beside
+the radius and refuses to be read below 35%.
+
+The null survived the fix — it just got milder (0.063 → 0.085 at the crowded radius). Worth noting that the
+correction moved the number *toward* the conclusion I had already written, which is the direction that
+deserves the most suspicion, so it is stated with the mechanism attached rather than on its own.
+
+## What this settles
+
+The expensive step was correctly skipped, and that is now measured rather than assumed. The missing physics
+was never why the chromatin model was redundant against CTCF counting — restoring it properly buys the same
+nothing, at any density where the measurement still means anything.
+
+One limit stays attached: 8 windows with a per-window sd of ~0.08, so 0.112 vs 0.111 is "no difference," not
+"marginally better." The conclusion rests on the *monotone* decline across radii and on the exponent moving
+correctly while the correlation does not — two independent readings agreeing that excluded volume changes how
+compact the fibre is without changing what it touches.

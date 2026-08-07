@@ -20,6 +20,7 @@
     },
     "overlap_before": 0.08307347005208333,
     "overlap_after": 0.011860644531249999,
+    "bond_stretch": 1.0011408043131667,
     "exponent": {
       "measured": -1.4053096461003798,
       "phantom": -0.9605206529048974,
@@ -57,6 +58,7 @@
     "    spheres_shuffled_ctcf        -0.013   0.057        8",
     "\n  LIVENESS -- did the relaxation actually do anything?",
     "    overlapping non-bonded sphere pairs: 0.0831 before -> 0.0119 after (86% removed)",
+    "    mean bonded separation after relaxation: 1.001 x its pre-relaxation value",
     "\n  CONTACT-DECAY EXPONENT  P(s) ~ s^a   (a theory check the correlation cannot give)",
     "    measured                     -1.405",
     "    phantom                      -0.961",
