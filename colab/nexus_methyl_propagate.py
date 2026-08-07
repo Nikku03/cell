@@ -95,8 +95,8 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 RC = 6.0            # elastic-network cutoff: atom pairs closer than this are springs
 K_NB = 1.0          # non-bonded spring constant
 K_BOND = 20.0       # pairs within 1.8 A are covalent; much stiffer, so the chain stays a chain
-SPHERE_R = (6.0, 8.0, 10.0, 14.0)
-OVERLAP = 0.5       # fraction of the radius that is Dirichlet boundary rather than solved interior
+SPHERE_R = (8.0, 12.0, 16.0)
+OVERLAP = 0.35      # fraction of the radius that is Dirichlet boundary rather than solved interior
 MAX_SWEEP = 60
 EPS_LJ = 0.10
 SEED = 31
@@ -207,34 +207,42 @@ def exact_solve(K, co, f, tol=1e-10):
 
 
 def build_spheres(co, R, overlap=OVERLAP):
-    """Tile with overlapping spheres on a grid of spacing R. Each sphere SOLVES its interior (radius
-    R*(1-overlap)) and holds the surrounding shell fixed -- textbook additive Schwarz with overlap. Without
-    the fixed shell each local block is singular in its own rigid modes and the sweep would inject drift."""
+    """Tile with overlapping spheres. Each sphere SOLVES its interior (radius R*(1-overlap)) and holds the
+    surrounding shell fixed -- textbook additive Schwarz with overlap. Without the fixed shell each local
+    block is singular in its own rigid modes and the sweep would inject drift.
+
+    THE GRID SPACING IS SET BY THE INTERIOR, NOT BY R, and getting that wrong is silent. Spheres of interior
+    radius Rin on a cubic grid of spacing s cover space only if Rin >= s*sqrt(3)/2, the corner-to-centre
+    distance. Spacing the grid by R while solving only out to Rin = 0.65 R leaves gaps at every cell corner,
+    and an atom in a gap is never solved by anything -- so the iteration cannot converge, and the failure
+    would look exactly like the local scheme being unable to carry the change. Spacing by Rin is safe
+    (Rin >= Rin*0.866) and the caller asserts full coverage anyway.
+    """
+    Rin = R * (1.0 - overlap)
     lo, hi = co.min(0) - 1e-6, co.max(0) + 1e-6
-    grids = [np.arange(lo[a], hi[a] + R, R) for a in range(3)]
+    grids = [np.arange(lo[a], hi[a] + Rin, Rin) for a in range(3)]
     G = np.stack(np.meshgrid(*grids, indexing="ij"), -1).reshape(-1, 3)
     out = []
-    Rin = R * (1.0 - overlap)
     for c in G:
         d = np.linalg.norm(co - c, axis=1)
         inner = np.where(d < Rin)[0]
         if len(inner) < 4:
             continue
-        outer = np.where(d < R)[0]
-        out.append((inner, outer))
+        out.append((inner, np.where(d < R)[0]))
     return out
 
 
 def factor_blocks(K, spheres):
-    """Pre-factorise each sphere's interior block once; the network does not change between sweeps, so
-    refactorising per sweep would multiply the cost by the sweep count for no reason."""
+    """Pre-factorise each sphere's interior block once. The network does not change between sweeps, so
+    refactorising per sweep would multiply cost by the sweep count for no reason -- and the LOCAL-ONLY arm
+    needs the block itself every sweep too, so that is kept here rather than re-sliced (sparse fancy-indexing
+    inside the sweep loop dominated everything else in a first draft)."""
     facs = []
-    for inner, outer in spheres:
-        dof = np.concatenate([3 * inner + a for a in range(3)])
-        dof.sort()
+    for inner, _ in spheres:
+        dof = np.sort(np.concatenate([3 * inner + a for a in range(3)]))
         A = K[dof][:, dof].toarray()
         A[np.diag_indices_from(A)] += 1e-8
-        facs.append((dof, np.linalg.inv(A)))
+        facs.append((dof, np.linalg.inv(A), A))
     return facs
 
 
@@ -254,12 +262,13 @@ def schwarz(K, co, f, spheres, facs, global_residual, u_exact, max_sweep=MAX_SWE
     for it in range(max_sweep):
         r = f.ravel() - K.dot(u) if global_residual else None
         du = np.zeros(3 * n)
-        for (inner, outer), (dof, Ainv) in zip(spheres, facs):
+        fr = f.ravel()
+        for (inner, outer), (dof, Ainv, A) in zip(spheres, facs):
             if global_residual:
                 loc = r[dof]
             else:
                 # the sphere sees only itself: its own forces minus its own block's internal reaction
-                loc = f.ravel()[dof] - K[dof][:, dof].dot(u[dof])
+                loc = fr[dof] - A.dot(u[dof])
             du[dof] += Ainv.dot(loc)
         u = project_rigid(co, u + du)
         err = np.linalg.norm(u - u_exact) / max(ne, 1e-30)
@@ -397,6 +406,16 @@ def main():
         report("  the whole network or only from the sphere's own atoms.")
         for R in SPHERE_R:
             sph = build_spheres(co, R)
+            # COVERAGE IS NOT OPTIONAL AND ITS FAILURE IS SILENT: an atom in no sphere's interior is never
+            # solved by anything, so the iteration stalls at a finite error that reads exactly like "the
+            # local scheme cannot carry the change". Checked, not assumed.
+            covered = np.zeros(n, bool)
+            for inner, _ in sph:
+                covered[inner] = True
+            if not covered.all():
+                report(f"    R={R:>4.0f} A | SKIPPED: {int((~covered).sum())} atoms lie in no sphere "
+                       f"interior, so any error here would be a tiling gap, not a physics result")
+                continue
             facs = factor_blocks(K, sph)
             out = {}
             for gname, gflag in (("schwarz_true", True), ("schwarz_local", False)):
