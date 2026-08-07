@@ -283,7 +283,12 @@ def main():
                 X = relax(X, R_FRAC * b0, N_RELAX)
                 ov1 = overlap_frac(X, R_FRAC * b0)
                 if arm == "spheres":
-                    ovs.append((ov0, ov1))
+                    # IS IT STILL A CHAIN? The relaxation trades off two constraints -- do not overlap, and
+                    # stay bonded -- and at high density they conflict. If the spheres win, bonds stretch and
+                    # the "conformation" is no longer a polymer, so any contact map it gives is meaningless.
+                    # Measured against b0, the SAME pre-relaxation bond length the radius is defined from.
+                    bl = np.linalg.norm(np.diff(X, axis=1), axis=2)
+                    ovs.append((ov0, ov1, float(bl.mean() / b0)))
             P = contact_map(X, CONTACT_R * b0)
             r, npts = dist_controlled(P, M)
             rows[arm].append(r)
@@ -314,6 +319,13 @@ def main():
         report(f"\n  LIVENESS -- did the relaxation actually do anything?")
         report(f"    overlapping non-bonded sphere pairs: {a0:.4f} before -> {a1:.4f} after "
                f"({(1-a1/max(a0,1e-9)):.0%} removed)")
+        bs = float(np.mean([o[2] for o in ovs]))
+        res["bond_stretch"] = bs
+        report(f"    mean bonded separation after relaxation: {bs:.3f} x its pre-relaxation value")
+        if bs > 1.15 or bs < 0.85:
+            report("    *** THE CHAIN IS JAMMED. Bonds moved more than 15% to make room for the spheres, so")
+            report("        this arm is not a self-avoiding POLYMER -- it is a sphere packing that used to be")
+            report("        one. Do not read its correlation or its exponent as physics.")
         if a0 < 1e-4:
             report("    *** THE PHANTOM ENSEMBLE BARELY OVERLAPS AT ALL, so there was nothing to fix and")
             report("        'spheres ~ phantom' is a statement about the sphere RADIUS, not about physics.")
