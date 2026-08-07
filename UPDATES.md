@@ -22402,3 +22402,79 @@ really is felt only ~10 Å, so chromatin genuinely is local and a sphere scheme 
 What the run rejects is the specific combination on offer — 4 Å, unscreened, energy-only. Screened at 10 Å is
 sound and affordable; but at that point the scheme has converged on what MD force-field codes already do each
 step, with 4.2× overhead, and it still buys one snapshot rather than a trajectory.
+
+# Methylation through connected spheres: the tiling is fine, the communication rule is not
+
+`colab/nexus_methyl_propagate.py`. The sharpened proposal: lay spheres over the chromosome, connect them so
+a change in one is felt by its neighbours, attach a methyl, and let the structural consequence spread on its
+own — without propagating false information.
+
+This is a different question from the energy one. `nexus_dna_spheres` showed energy does not stay inside a
+small sphere. But energy is a static sum; **structure is a solve**, and displacement genuinely does travel
+through contacts. So it gets its own run: real 5-methylcytosine on the 1KX5 nucleosome, an all-atom
+anisotropic elastic network built from the structure's own packing (263,765 springs), and the methyl entering
+as a node bonded to C5 that pushes by Lennard-Jones. Forces are central and pairwise, so net force and torque
+are exactly zero. The network is sparse, so the **exact** displacement field is available — every arm is
+graded against truth, not against another model.
+
+## How far a methyl is actually felt
+
+    distance from methyl   RMS |u|     scrambled control   noise floor
+    0-3 A                  0.252 A     1.145 A             0.000
+    3-6 A                  0.083 A     1.119 A             0.000
+    6-10 A                 0.064 A     1.205 A             0.000
+    10-15 A                0.044 A     1.357 A             0.000
+    15-25 A                0.030 A     1.384 A             0.000
+    25-40 A                0.015 A     4.228 A             0.000
+    40-70 A                0.020 A     5.745 A             0.000
+
+Movement falls ~15× by 15 Å and then **flattens rather than continuing to fall**. That floor is not noise —
+the zero-force control is exactly 0.000. It is the particle's soft global modes: a local push makes the whole
+nucleosome breathe slightly. Methylation is mostly local, not purely local. The scrambled control (same force
+vectors, random atoms) sits 20–200× higher and does not decay at all, so the localisation is real chemistry
+rather than a property of the network.
+
+## The result that matters: same spheres, one line different
+
+    R      spheres   scheme                        outcome
+    8 A      2898    sees only itself                4 sweeps -> 0.983   FIXED POINT
+    8 A      2898    corrected against the whole   2035 iters -> 1.6e-07
+    12 A     1221    sees only itself                4 sweeps -> 0.982   FIXED POINT
+    12 A     1221    corrected against the whole   1372 iters -> 8.9e-08
+    16 A      652    sees only itself                4 sweeps -> 0.979   FIXED POINT
+    16 A      652    corrected against the whole   1115 iters -> 1.9e-07
+
+**The tiling is fine.** The same spheres reach the exact displacement field to 1 part in 10⁷. Sphere coverage
+genuinely can carry a structural change — the geometry was never the problem.
+
+**Self-contained spheres converge to the wrong answer, and converge confidently.** They stop after 4 sweeps
+with updates at *exactly* zero — a fixed point, not an iteration limit — at 98% relative error. They settle
+onto the exact solution of a network cut at every sphere boundary. From inside the scheme this is
+indistinguishable from success. That is the false information: not noise, but a confident answer to a
+different question, and neither more sweeps nor smaller spheres repairs it. What repairs it is one
+whole-structure pass per sweep — precisely the thing the scheme was meant to avoid needing.
+
+The iteration count is the honest price: 1,100–2,000 accelerated iterations for one methyl on one nucleosome,
+improving with larger spheres (2035 → 1372 → 1115) exactly as one-level Schwarz theory predicts, since it has
+no coarse space and the response is dominated by the softest global modes.
+
+## Five bugs, each of which would have produced a confident wrong answer
+
+Recorded because the failure modes are the transferable part.
+
+1. **The reference diverged to 10⁹ Å.** K is singular in the six rigid-body modes and I projected only the
+   input and the output; CG regenerates a null component from roundoff every step and nothing restores it.
+   Fixed by projecting inside every matvec. Nothing had checked that the reference converged.
+2. **The summary called that failure a success.** Both arms sat at relative error 1.000 — both entirely wrong
+   — and the branch tested only whether they *differed*, so it printed *"both schemes reach the same place:
+   self-contained spheres do carry the structural change faithfully."* The exact opposite of the truth.
+3. **The tiling did not cover space.** Interior radius 0.5R on a grid of spacing R leaves a gap at every cell
+   corner; an atom in a gap is never solved, and the resulting stall reads exactly like the headline finding.
+   Now spaced by the interior radius, with a coverage assertion.
+4. **The sweeps diverged to 10⁴⁷** — because overlap is the mechanism *and* the bug. Each atom sits in ~4
+   spheres and each applied a full correction, overcorrecting fourfold per sweep. Fixed with a
+   parameter-free partition of unity.
+5. **The accelerated arm stalled at 0.88 and looked like proof the tiling was invalid.** Weighting on the
+   left only is restricted additive Schwarz — correct as a sweep, but *non-symmetric*, and CG requires an SPD
+   preconditioner. It does not error, it just fails to converge. Splitting the weight across both sides took
+   it from 0.88 to 1e-7.
