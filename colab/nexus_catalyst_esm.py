@@ -415,8 +415,9 @@ def main():
     report("\n  READING")
     rd, ed = res["reaction_disjoint"], res["homology_disjoint"]
     ez = res["enzyme_disjoint"]
-    report(f"  reaction-disjoint {rd_ := res['reaction_disjoint']['esm_pair']['auc']:.3f}  ->  gene-disjoint "
-           f"{ez['esm_pair']['auc']:.3f}  ->  HOMOLOGY-disjoint {ed['esm_pair']['auc']:.3f}")
+    a_rd = res["reaction_disjoint"]["esm_pair"]["auc"]
+    report(f"  reaction-disjoint {a_rd:.3f}  ->  gene-disjoint {ez['esm_pair']['auc']:.3f}  ->  "
+           f"HOMOLOGY-disjoint {ed['esm_pair']['auc']:.3f}")
     report("  The last column is the honest one: gene-disjoint still lets a ~93%-identical paralog sit in")
     report("  training, and recognising a paralog is not generalising to an unseen enzyme.")
     used_sub = ed["esm_pair"]["auc"] - ed["esm_enzyme_only"]["auc"]
