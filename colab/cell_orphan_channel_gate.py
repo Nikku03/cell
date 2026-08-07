@@ -148,22 +148,30 @@ def main():
            f"{len(pool):>9}")
 
     report("\n  READING -- the gate is the obscure column (0-20 papers), not the average.")
+    # A SLOPE IS ONLY LARGE RELATIVE TO SOMETHING, which is why `ppi` is on the table. An absolute
+    # threshold was the first version of this and it was wrong: it called the positive control broken at
+    # slope +0.026, when position coverage runs 0.953 -> 1.000 across a 25x range of literature and is
+    # flat for every practical purpose. Fame-loading is now judged as a FRACTION of the calibrator's slope,
+    # which is what the note at the bottom claimed all along.
+    cal = res["ppi"]["slope_vs_log_lit"]
     ob = 0
     for ch in CHANNELS:
         c = res[ch]["by_bin"][ob]
         sl = res[ch]["slope_vs_log_lit"]
+        frac = sl / cal if abs(cal) > 1e-9 else float("nan")
         if ch == "position":
-            # the positive control: chrom/tss is universal, so flat coverage here is what a WORKING check
-            # looks like. If this one slopes, the measurement is broken and no other row is readable.
-            verdict = "POSITIVE CONTROL" + (" -- flat, so the check itself is sound" if abs(sl) < 0.02
-                                            else " -- SLOPING, so this measurement is BROKEN")
+            verdict = ("POSITIVE CONTROL -- " + ("flat, so the check itself is sound"
+                       if frac < 0.25 else "SLOPING as steeply as the calibrator; measurement BROKEN"))
         elif c < 0.50:
             verdict = "DEAD for this task: the annotation is absent where the gaps are"
-        elif sl > 0.08:
-            verdict = f"usable but fame-loaded (slope {sl:+.3f}); test on the obscure bin alone"
+        elif frac > 0.5:
+            verdict = "usable but fame-loaded; test on the obscure bin alone, never the average"
+        elif sl < -0.05:
+            verdict = "VIABLE, AND ANTI-CORRELATED WITH FAME -- better where the gaps are"
         else:
             verdict = "VIABLE: present on obscure genes and not a fame proxy"
-        report(f"    {ch:<12} obscure coverage {c:.3f}  slope {sl:+.3f}   {verdict}")
+        report(f"    {ch:<12} obscure coverage {c:.3f}  slope {sl:+.3f} "
+               f"({frac:>5.2f} of the ppi calibrator)   {verdict}")
 
     report("\n  Note on `ppi`: it is included as a CALIBRATOR, not a proposal. Interaction degree is the")
     report("  textbook fame-driven annotation, so its slope is what a contaminated channel looks like on")
