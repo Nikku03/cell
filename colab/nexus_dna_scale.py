@@ -123,6 +123,11 @@ def main():
     report("  repays that when each sphere does a nonlinear local SOLVE whose cost is superlinear in m --")
     report("  a minimisation or an SCF. NEXUS's per-sphere operation is a pairwise SUM, so there is nothing")
     report("  to amortise and the overlap is pure overhead.")
+    report(f"  THAT COLUMN IS THE SAME {mult:.1f}x AT EVERY RADIUS, AND THAT IS NOT A COINCIDENCE IN THE DATA:")
+    report("  total tiled pairs = N*mult*(m-1)/2 and cell-list pairs = N*(m-1)/2, so the ratio is exactly the")
+    report("  overlap multiplicity (4/3)pi and the measured density cancels out. It is a geometric fact about")
+    report("  covering space with overlapping balls, not a measurement -- reported as such so it is not read")
+    report("  as an empirical finding that happened to come out constant.")
 
     # --- wall clock -----------------------------------------------------------------------------------
     report("\n  WALL CLOCK, from a measured pair rate on this machine.")
