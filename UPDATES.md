@@ -22177,3 +22177,66 @@ The language arm still stands alone at **0.463 top-1 on obscure enzymes**, and t
 shortlists contain the answer 0.920 of the time. That headroom is real and remains unclaimed: five channels
 have now been measured against it — six hand-built signals, a set transformer, co-expression, co-dependency,
 rigid-body docking, and a sequence model — and none has moved it.
+
+---
+
+# Give it the annotated half: the first thing that moves the number, and it moves it a lot
+
+`cell_orphan_incontext.py`. Half the cell is already solved — 10,596 enzyme-shaped reactions with a known
+catalyst — and none of it had ever been put in front of the model. Each query reaction now sees the **12
+chemically most similar SOLVED reactions with their catalysts**, as worked examples.
+
+This is not the candidate-list arm that capped at 0.505. That handed over a bag of gene names stripped of
+context. This shows the *reactions those genes catalyse*, so the model can see that ALDH3A2 handles long-chain
+aldehydes while ALDH1A1 handles retinal, and reason by analogy rather than by popularity.
+
+## Result, same 400 reactions as every earlier number
+
+    arm                    all   obscure   ans SHOWN   ans NOT shown
+    closed_book          0.645     0.463       0.670           0.620
+    examples             0.802     0.688       0.855           0.750
+    shuffled_examples    0.718     0.475       0.755           0.680
+    n                      400        80         200             200
+
+    paired vs closed_book, ALL                     +0.157   (71 win /  8 lose, p<0.0001)
+    paired vs closed_book, obscure bin             +0.225   (18 win /  0 lose, p<0.0001)
+    paired vs closed_book, answer NOT shown        +0.130   (26 win /  0 lose, p<0.0001)
+    paired vs closed_book, obscure AND not shown   +0.189   (10 win /  0 lose, p=0.0020)
+
+**On obscure enzymes — the population the 9,186 gaps are made of — top-1 goes 0.463 → 0.688.**
+
+## It is not copying, and the controls say so three ways
+
+**The answer is often simply there.** It appears among the 12 examples 49.5% of the time (33.8% on the obscure
+bin), so the run splits on exactly that line. The strict mask counts the answer as visible if it is an
+example's catalyst *or* merely appears in an example's participant names — the second path is 3.3% overall and
+**0.000 on the obscure bin**.
+
+**The gain survives where it is not shown: +0.130 overall, 26 wins against 0 losses.** On the 53 obscure
+reactions where the answer appears nowhere in the examples, +0.189 with 10 wins and 0 losses. That is
+generalisation from solved chemistry, not lookup.
+
+**Relevance is doing the work, and the split is informative.** Random solved reactions also help overall
+(0.718 vs 0.645) — a format effect worth about half the total gain. But on the obscure bin the shuffled
+control gains **+0.012 and the relevant examples gain +0.225**. So on the population that matters, essentially
+all of it is relevance. The format effect lives entirely on the famous enzymes.
+
+## What it changes
+
+Every earlier channel was measured against 0.463 and none moved it: six hand-built signals, a set transformer,
+co-expression, co-dependency, rigid-body docking, a learned head on docking features, and an ESM pair model.
+This moves it to **0.688** — the first compounding result in the line, and it needed no new data at all, only
+the half of the network that was already solved.
+
+Two limits stay attached. The examples come from a population 1% obscure and 27% famous, the inverse of the
+gaps, and 40% of annotated catalysts appear in exactly one reaction, so there is little repetition to
+generalise from — both of which make the +0.225 more surprising, not less. And the obscure-and-not-shown
+subset is 53 reactions; the direction is unambiguous (10-0) but the magnitude has a wide interval.
+
+## The revised orphan estimate
+
+    before   ~4.6 correct in 10, and an upper bound
+    now      ~6.9 correct in 10 on obscure enzymes
+
+That is still a curation accelerator rather than a map-completion engine, but it is a materially better one,
+and the thing that delivered it was the cheapest idea tried all session: show the model what it already knows.

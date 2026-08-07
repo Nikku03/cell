@@ -206,7 +206,12 @@ def main():
     n = len(sel)
     truth = [{g.upper() for g in cats[i]} for i in sel]
     bidx = np.array([O._binof(pool[i]) for i in sel])
-    vis = np.array([bool(shown.get(str(p), False)) for p in range(n)])
+    # STRICT mask: the answer counts as visible if it is an example's catalyst OR merely appears in an
+    # example's participant names. The second path is small (3.3% overall, 0.0% on the obscure bin) but it
+    # is a way to read the answer off, and the whole claim rests on the not-shown subset being clean.
+    strict = OUT / "incontext_shown_strict.json"
+    src = json.load(open(strict)) if strict.exists() else shown
+    vis = np.array([bool(src.get(str(p), False)) for p in range(n)])
 
     hits = {}
     for arm, d in ans.items():

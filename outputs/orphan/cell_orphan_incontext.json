@@ -1,0 +1,81 @@
+{
+  "test": "cell_orphan_incontext",
+  "n": 400,
+  "k": 12,
+  "results": {
+    "closed_book": {
+      "all": 0.645,
+      "obscure": 0.4625,
+      "shown": 0.67,
+      "not_shown": 0.62,
+      "obscure_not_shown": 0.41509433962264153
+    },
+    "examples": {
+      "all": 0.8025,
+      "obscure": 0.6875,
+      "shown": 0.855,
+      "not_shown": 0.75,
+      "obscure_not_shown": 0.6037735849056604
+    },
+    "shuffled_examples": {
+      "all": 0.7175,
+      "obscure": 0.475,
+      "shown": 0.755,
+      "not_shown": 0.68,
+      "obscure_not_shown": 0.41509433962264153
+    },
+    "paired": {
+      "ALL": {
+        "n": 400,
+        "wins": 71,
+        "losses": 8,
+        "p": 9.691123017072029e-14,
+        "delta": 0.15749999999999997
+      },
+      "obscure bin": {
+        "n": 80,
+        "wins": 18,
+        "losses": 0,
+        "p": 7.62939453125e-06,
+        "delta": 0.22499999999999998
+      },
+      "answer NOT shown": {
+        "n": 200,
+        "wins": 26,
+        "losses": 0,
+        "p": 2.9802322387695312e-08,
+        "delta": 0.13
+      },
+      "obscure AND not shown": {
+        "n": 53,
+        "wins": 10,
+        "losses": 0,
+        "p": 0.001953125,
+        "delta": 0.18867924528301883
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "GIVE IT THE ANNOTATED HALF -- 12 solved reactions, with catalysts, as worked examples",
+    "====================================================================================================",
+    "  Measured before running: the annotated catalysts are 1% obscure and 27% famous, the opposite of",
+    "  the gap; 40% of them appear in exactly one reaction. And the true catalyst is already visible",
+    "  among the 12 examples 35% of the time on the obscure bin -- where it is, the model can copy.",
+    "\n  TOP-1 ON THE SAME 400 REACTIONS",
+    "    arm                      all   obscure   ans SHOWN  ans NOT shown",
+    "    closed_book            0.645     0.463       0.670          0.620",
+    "    examples               0.802     0.688       0.855          0.750",
+    "    shuffled_examples      0.718     0.475       0.755          0.680",
+    "    n                        400        80         200            200",
+    "    paired vs closed_book, ALL                    +0.157  (71 win / 8 lose, p=0.0000)",
+    "    paired vs closed_book, obscure bin            +0.225  (18 win / 0 lose, p=0.0000)",
+    "    paired vs closed_book, answer NOT shown       +0.130  (26 win / 0 lose, p=0.0000)",
+    "    paired vs closed_book, obscure AND not shown  +0.189  (10 win / 0 lose, p=0.0020)",
+    "\n  READING",
+    "  overall +0.157 | where the answer WAS shown +0.185 | where it was NOT +0.130",
+    "  IT REASONS BY ANALOGY. The gain survives where the answer is NOT among the examples, so",
+    "  it is generalising from solved chemistry rather than copying. This raises the estimate.",
+    "  shuffled examples 0.718 vs relevant 0.802: relevance matters"
+  ]
+}
