@@ -21983,3 +21983,65 @@ protein-substrate reactions name the **modified residue** in the product (`p(Y70
 `monoSUMO1-K164,K254,K-PCNA`). That is a specific site, not a whole-surface question, and asking whether a
 candidate enzyme's catalytic cleft can reach *that residue* is a far sharper test than whether two whole
 proteins stick together — which is the question that just returned 0.5.
+
+---
+
+# Neural re-rankers on the docked pairs: the limit is the features, not the model
+
+`nexus_catalyst_nn.py`. The pilot scored eight docking statistics **one at a time** and all landed in
+[0.450, 0.549]. That is not the same claim as "no function of them separates the catalyst", and networks have
+earned real margins elsewhere here, so the combination got its own test: logistic over all eight, a
+per-candidate MLP, and a set transformer attending across the ten candidates — the only arm able to express
+*best among these*.
+
+## Result, 5-fold grouped CV by reaction, 5 seeds
+
+    arm                          AUC     sd   top-1
+    logistic                   0.473  0.000   0.100
+    mlp                        0.503  0.021   0.120
+    mlp_untrained              0.482  0.037   0.060
+    set_transformer            0.539  0.045   0.113
+    set_transformer_untrained  0.477  0.042   0.060
+    midpack (-|z| of best)     0.633      -   0.150   <- ONE RULE, zero parameters
+    best_single (pilot)        0.498      -       -
+    size_only (pilot control)  0.532      -       -
+
+**With 60 groups the null is not 0.5**, so every arm was judged against a within-group label permutation
+refit end to end 50 times:
+
+    logistic          perm median 0.501, 95th 0.565  | observed 0.473  p=0.640
+    set_transformer   perm median 0.509, 95th 0.572  | observed 0.539  p=0.100
+
+**No learned arm clears its own band.**
+
+## The number that nearly got away
+
+At toy settings (1 seed, 5 epochs, 3 permutations) the set transformer read **0.635** with its untrained twin
+at 0.438 — the exact shape of a real effect, and tempting to report. Two things killed it.
+
+**It was one rule.** A parameter-free *"prefer the least extreme candidate"* scores **0.633**. The network had
+rediscovered the mid-pack regularity the pilot flagged as a post-hoc oddity, and nothing beyond it.
+
+**And that rule is draw-specific.** Run 1 of the pilot sampled different decoys for the same 60 reactions —
+unusable as biology because of its size confound, but a genuinely independent sample of decoys, which is
+exactly what this control needs:
+
+    draw                       midpack AUC    true-catalyst z sd
+    this run (atom-matched)          0.633                 0.731
+    run 1 (length-matched)           0.491                 1.021   <- a random member has sd ~1.0
+
+So the mid-pack effect is a property of **which decoys were sampled**, not of catalysts. Keeping run 1's
+discarded features paid for itself.
+
+At proper settings the transformer fell from 0.635 to **0.539**, inside its permutation band. The toy number
+was undertrained overfit plus luck.
+
+## What this settles
+
+Capacity was never the bottleneck. Eight summary statistics off a rigid-body scan do not contain which of ten
+enzymes is the catalyst, and neither a weighted combination nor attention across the group conjures it from
+them. **A bigger head on the same features is not the next move; a different measurement is.**
+
+For contrast, where a network genuinely earned its margin in this project: GeoConv reached 0.617 against a
+0.566 best single feature — but that task is scored on a complex that **already exists**. The model was not the
+difference there either; having the true interface was.
