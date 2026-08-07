@@ -73,6 +73,8 @@ SEEDS = (0, 1, 2)
 EPOCHS = 25
 N_PERM = 20
 SEED = 5
+DECOY_SEED = 99      # FIXED and independent of the model seed: every arm must see the SAME candidate sets,
+                     # or an arm's margin is partly a luckier decoy draw rather than a better model
 
 
 def sequences():
@@ -223,16 +225,22 @@ def main():
         def forward(s, e, sub):
             return s.net(torch.cat([e, sub, e * sub, (e - sub).abs()], -1)).squeeze(-1)
 
-    def build_groups(idx, pool, rs):
-        """one group per reaction: true catalyst + N_DECOY drawn from `pool`."""
+    def build_groups(idx, pool, fold):
+        """one group per reaction: true catalyst + N_DECOY DISTINCT decoys from `pool`.
+
+        Keyed on (DECOY_SEED, fold, reaction) rather than on a running RNG, so every arm and every model seed
+        is scored on byte-identical candidate sets. With a running RNG the arms would differ by their decoy
+        draw as well as by their model, and a 0.03 margin could be either."""
         out = []
-        pool = list(pool)
+        pool = np.array(sorted(pool))
         for i in idx:
             r = rx[i]
-            d = [g for g in rs.choice(pool, N_DECOY * 3, replace=True)
-                 if g != r["cat"] and g not in cats[r["rx"]]][:N_DECOY]
-            if len(d) < N_DECOY:
+            rs = np.random.default_rng((DECOY_SEED, int(fold), int(r["rx"])))
+            bad = set(cats[r["rx"]]) | {r["cat"]}
+            ok = pool[~np.isin(pool, list(bad))]
+            if len(ok) < N_DECOY:
                 continue
+            d = list(rs.choice(ok, N_DECOY, replace=False))
             out.append({"i": i, "cands": [r["cat"]] + d, "sub": r["sub"], "y": 0})
         return out
 
@@ -278,14 +286,14 @@ def main():
         gid = fold_by[scheme]
         rs = np.random.default_rng(seed)
         ys, ps, t1 = [], [], []
-        for tr, te in gk.split(np.arange(len(rx)), groups=gid):
+        for fold, (tr, te) in enumerate(gk.split(np.arange(len(rx)), groups=gid)):
             # decoys drawn from the SAME fold under the enzyme-disjoint split, so the true catalyst and its
             # decoys have identical training exposure -- otherwise decoys are training positives and the
             # true one never is, which is a leak pointing the wrong way
             pool_tr = sorted({rx[i]["cat"] for i in tr}) if scheme == "enzyme_disjoint" else vocab
             pool_te = sorted({rx[i]["cat"] for i in te}) if scheme == "enzyme_disjoint" else vocab
-            trg = build_groups(tr, pool_tr, rs)
-            teg = build_groups(te, pool_te, rs)
+            trg = build_groups(tr, pool_tr, fold)
+            teg = build_groups(te, pool_te, 100 + fold)
             if shuffle_sub:
                 subs = [g["sub"] for g in teg]
                 rs.shuffle(subs)
@@ -301,12 +309,12 @@ def main():
         gid = fold_by[scheme]
         rs = np.random.default_rng(seed)
         ys, ps, t1 = [], [], []
-        for tr, te in gk.split(np.arange(len(rx)), groups=gid):
+        for fold, (tr, te) in enumerate(gk.split(np.arange(len(rx)), groups=gid)):
             cnt = {}
             for i in tr:
                 cnt[rx[i]["cat"]] = cnt.get(rx[i]["cat"], 0) + 1
             pool_te = sorted({rx[i]["cat"] for i in te}) if scheme == "enzyme_disjoint" else vocab
-            for g in build_groups(te, pool_te, rs):
+            for g in build_groups(te, pool_te, 100 + fold):
                 v = np.array([cnt.get(c, 0) for c in g["cands"]], float)
                 ys += [1] + [0] * (len(g["cands"]) - 1)
                 ps += list(v)
