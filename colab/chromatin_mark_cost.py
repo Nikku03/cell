@@ -84,7 +84,13 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 RREG = (8.0, 12.0, 16.0, 20.0, 25.0, 30.0, 40.0)
 DEBYE = 7.9
 SEED = 41
-NEAR_FRAC = 0.5          # convergence judged inside Rreg*NEAR_FRAC, away from the held boundary
+EVAL_R = 10.0            # convergence judged on a FIXED set of atoms within this radius of the mark.
+                         # It must not scale with Rreg. A first version judged inside Rreg/2, so the
+                         # evaluation set grew with the region and every point in the sweep scored a
+                         # DIFFERENT question -- at Rreg=8 it asked about a handful of atoms sitting on
+                         # top of the force, at Rreg=40 about everything within 20 A including the parts
+                         # that depend on suppressed global modes. Error rose with region size and looked
+                         # like bigger regions being worse, which is impossible.
 CHR22_MB = 50.8
 NUC_REPEAT = 200
 # charge model for the marked residue, same coarse convention as nexus_dna_spheres
@@ -148,7 +154,7 @@ def region_solve(K, co, f, k, Rreg, Q):
 
 def near_err(u, u_ex, co, k, Rreg):
     d = np.linalg.norm(co - co[k], axis=1)
-    m = d < Rreg * NEAR_FRAC
+    m = d < min(EVAL_R, Rreg * 0.9)     # fixed set, except where the region is smaller than the set
     if m.sum() < 5:
         return float("nan"), 0
     A = np.linalg.norm(u.reshape(-1, 3)[m], axis=1)
