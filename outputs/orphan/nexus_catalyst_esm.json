@@ -57,6 +57,33 @@
         "sd": 0.022642468900266024,
         "top1": 0.13148065142686388
       }
+    },
+    "homology_disjoint": {
+      "freq": {
+        "auc": 0.5,
+        "sd": 0.0,
+        "top1": 0.0
+      },
+      "esm_pair": {
+        "auc": 0.6817982647014337,
+        "sd": 0.0002530255480047988,
+        "top1": 0.27775287613925
+      },
+      "esm_enzyme_only": {
+        "auc": 0.5499483822109005,
+        "sd": 0.006491740386799727,
+        "top1": 0.1574779620499029
+      },
+      "esm_shuffled_substrate": {
+        "auc": 0.5285152409375466,
+        "sd": 0.0014772640547247547,
+        "top1": 0.10981622590766471
+      },
+      "esm_untrained": {
+        "auc": 0.5377590989817026,
+        "sd": 0.02532240665949058,
+        "top1": 0.12938891379052742
+      }
     }
   },
   "log": [
@@ -70,6 +97,8 @@
     "  THE DECIDING SPLIT is enzyme-disjoint -- no test enzyme is ever a training positive -- because",
     "  filling orphans means naming enzymes never seen catalysing anything.",
     "\n  2,231 reactions | catalyst vocabulary 5,251 | ESM esm2_t12_35M_UR50D, 480-dim",
+    "  homology clusters over 1,423 catalysts+substrates: 884 components (5-mer Jaccard >= 0.02 OR shared symbol stem)",
+    "    largest cluster 26 genes | singletons 653",
     "\n  SPLIT: reaction_disjoint",
     "    arm                            AUC     sd   top-1",
     "    freq (train counts)          0.857  0.000   0.665",
@@ -84,13 +113,23 @@
     "    esm_enzyme_only              0.578  0.005   0.179   <- substrate zeroed: THE control",
     "    esm_shuffled_substrate       0.541  0.003   0.136",
     "    esm_untrained                0.537  0.023   0.131   <- random init",
+    "\n  SPLIT: homology_disjoint",
+    "    arm                            AUC     sd   top-1",
+    "    freq (train counts)          0.500  0.000   0.000",
+    "    esm_pair                     0.682  0.000   0.278",
+    "    esm_enzyme_only              0.550  0.006   0.157   <- substrate zeroed: THE control",
+    "    esm_shuffled_substrate       0.529  0.001   0.110",
+    "    esm_untrained                0.538  0.025   0.129   <- random init",
     "\n  READING",
-    "  reaction-disjoint ESM 0.918 -> enzyme-disjoint 0.732  (drop +0.186)",
-    "  enzyme-disjoint: ESM 0.732 | enzyme_only 0.578 | freq 0.500",
-    "  IT IS A PAIRING MODEL AND IT TRANSFERS. The substrate is worth +0.153 over zeroing",
-    "  it, and the model beats counting by +0.232 on enzymes it never saw catalyse",
+    "  reaction-disjoint 0.918  ->  gene-disjoint 0.732  ->  HOMOLOGY-disjoint 0.682",
+    "  The last column is the honest one: gene-disjoint still lets a ~93%-identical paralog sit in",
+    "  training, and recognising a paralog is not generalising to an unseen enzyme.",
+    "  reaction-disjoint ESM 0.918 -> enzyme-disjoint 0.682  (drop +0.236)",
+    "  enzyme-disjoint: ESM 0.682 | enzyme_only 0.550 | freq 0.500",
+    "  IT IS A PAIRING MODEL AND IT TRANSFERS. The substrate is worth +0.132 over zeroing",
+    "  it, and the model beats counting by +0.182 on enzymes it never saw catalyse",
     "  anything. This is the first result here that would move the orphan estimate.",
-    "  AND NOTE THE SPLIT GAP: +0.186 lost when test enzymes are unseen. The flattering",
+    "  AND NOTE THE SPLIT GAP: +0.236 lost when test enzymes are unseen. The flattering",
     "  reaction-disjoint number is mostly memorised enzyme identity; quote the enzyme-disjoint one."
   ]
 }

@@ -423,14 +423,15 @@ def main():
     used_sub = ed["esm_pair"]["auc"] - ed["esm_enzyme_only"]["auc"]
     beat_freq = ed["esm_pair"]["auc"] - ed["freq"]["auc"]
     drop = rd["esm_pair"]["auc"] - ed["esm_pair"]["auc"]
-    report(f"  reaction-disjoint ESM {rd['esm_pair']['auc']:.3f} -> enzyme-disjoint "
+    report(f"  reaction-disjoint ESM {rd['esm_pair']['auc']:.3f} -> HOMOLOGY-disjoint "
            f"{ed['esm_pair']['auc']:.3f}  (drop {drop:+.3f})")
-    report(f"  enzyme-disjoint: ESM {ed['esm_pair']['auc']:.3f} | enzyme_only "
+    report(f"  homology-disjoint: ESM {ed['esm_pair']['auc']:.3f} | enzyme_only "
            f"{ed['esm_enzyme_only']['auc']:.3f} | freq {ed['freq']['auc']:.3f}")
     if used_sub > 0.03 and beat_freq > 0.03:
         report(f"  IT IS A PAIRING MODEL AND IT TRANSFERS. The substrate is worth {used_sub:+.3f} over zeroing")
-        report(f"  it, and the model beats counting by {beat_freq:+.3f} on enzymes it never saw catalyse")
-        report("  anything. This is the first result here that would move the orphan estimate.")
+        report(f"  it, and the model beats counting by {beat_freq:+.3f} on enzymes with no homolog above")
+        report("  ~50% identity anywhere in training. This is the first result here that would move the")
+        report("  orphan estimate off 0.463.")
     elif used_sub <= 0.03:
         report(f"  THE SUBSTRATE IS BEING IGNORED. Zeroing it costs {used_sub:+.3f}, so whatever AUC this")
         report("  reaches is a catalyst-PRIOR -- 'these proteins look like enzymes' -- not enzyme-substrate")
@@ -439,7 +440,8 @@ def main():
         report(f"  USES THE SUBSTRATE BUT DOES NOT BEAT COUNTING ({beat_freq:+.3f} vs freq). A 250M-sequence")
         report("  representation lands where six hand-built signals and a set transformer already were.")
     if drop > 0.10:
-        report(f"  AND NOTE THE SPLIT GAP: {drop:+.3f} lost when test enzymes are unseen. The flattering")
+        report(f"  AND NOTE THE SPLIT GAP: {drop:+.3f} lost when test enzymes have no homolog in training.")
+        report("  The flattering")
         report("  reaction-disjoint number is mostly memorised enzyme identity; quote the enzyme-disjoint one.")
 
     json.dump({"test": "nexus_catalyst_esm", "n_reactions": len(rx), "dim": dim, "model": MODEL,
