@@ -80,7 +80,13 @@ R_FRAC = float(os.environ.get("SPHERE_R_FRAC", 0.55))
                         # the pre-relaxation overlap fraction so the crowding is visible next to the answer.
 N_RELAX = 60            # overlap-relaxation sweeps. Not timesteps -- there is no velocity or force law,
                         # only a geometric projection, so this number is a convergence knob not a duration.
-CONTACT_R = 2.0         # contact if centres are within CONTACT_R * bond lengths
+CONTACT_R = float(os.environ.get("SPHERE_CONTACT_R", 2.0))
+                        # contact if centres are within CONTACT_R * bond lengths.
+                        # THIS CONSTANT AND R_FRAC INTERACT, and the interaction is a trap. Non-bonded
+                        # centres cannot come closer than 2*R_FRAC, so the volume in which a contact can
+                        # still occur is only 1 - (2*R_FRAC/CONTACT_R)^3 of the sphere being counted. Grow
+                        # the spheres toward the cutoff and excluded volume stops adding physics and starts
+                        # DELETING the contacts under measurement. Settable so the two can be separated.
 SEED = 11
 
 
@@ -252,6 +258,12 @@ def main():
     report("  fall off with distance' scores zero and only topology can earn anything.")
     report(f"  SPHERE RADIUS {R_FRAC:.2f} x bond length (0.50 = adjacent beads just touch). A null result here")
     report("  is only about chromatin if this is large enough to crowd the chain -- see the overlap fraction.")
+    acc = 1.0 - min(1.0, 2 * R_FRAC / CONTACT_R) ** 3
+    report(f"  CONTACT CUTOFF {CONTACT_R:.2f} x bond length. Excluded diameter {2*R_FRAC:.2f} leaves {acc:.0%} of")
+    report("  the contact volume reachable -- the spheres must not eat the thing being counted.")
+    if acc < 0.35:
+        report("  *** THE SPHERES HAVE SWALLOWED THE CONTACT SHELL. At this radius excluded volume is not")
+        report("      adding physics, it is deleting contacts. Raise SPHERE_CONTACT_R before reading this run.")
 
     rng = np.random.default_rng(SEED)
     rows = {a: [] for a in ("phantom", "spheres", "spheres_shuffled_ctcf")}
@@ -375,8 +387,11 @@ def main():
         report("  null sits at zero, so the polymer model earns its number -- excluded volume just is not the")
         report("  part that earns it.")
 
-    name = "chromatin_spheres.json" if abs(R_FRAC - 0.55) < 1e-9 else f"chromatin_spheres_r{R_FRAC:g}.json"
+    tag = "" if abs(R_FRAC - 0.55) < 1e-9 else f"_r{R_FRAC:g}"
+    tag += "" if abs(CONTACT_R - 2.0) < 1e-9 else f"_c{CONTACT_R:g}"
+    name = f"chromatin_spheres{tag}.json"
     json.dump({"test": "chromatin_spheres", "windows": used, "res": RES, "arms": res, "r_frac": R_FRAC,
+               "contact_r": CONTACT_R, "accessible_contact_volume": acc,
                "n_conf": N_CONF, "log": log}, open(OUT / name, "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/name}")
     return 0
