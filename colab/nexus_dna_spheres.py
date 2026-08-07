@@ -18,12 +18,16 @@ Every one of them is larger than the proposed 4 A sphere -- the engine already d
 still live past that distance. That is a reason to measure, not a proof: a cutoff is chosen conservatively,
 and the fraction of the answer living between 4 A and 10 A is an empirical quantity.
 
-WHY DNA IS THE HARD CASE, AND WHY THIS IS NOT A GENERIC POLYMER TEST.  DNA is a polyanion: one formal -1
-charge per phosphate, one phosphate every ~3.4 A of backbone, ~41 heavy atoms per base pair. Truncating
-Coulomb on a dense line of like charges is the textbook failure case for cutoffs, because the neglected tail
-is a sum of many same-signed terms that does not cancel. A protein's charges are sparse and mixed-sign and
-forgive short cutoffs; DNA's do not. If small spheres are going to fail anywhere, it is here -- which is
-exactly why the test has to be run on DNA and not on the protein complexes NEXUS was tuned against.
+WHY DNA, AND A PREDICTION OF MINE THAT THE RUN REFUTED.  DNA is a polyanion: one formal -1 per phosphate
+every ~3.4 A of backbone, ~41 heavy atoms per base pair (measured here, not assumed). I expected that to be
+the mechanism -- that truncating Coulomb along a dense LINE OF LIKE CHARGES leaves a tail of same-signed
+terms that does not cancel, where a protein's sparse mixed-sign charges would forgive a short cutoff.
+
+The controls say that is not the story. Neutralising every phosphate moves 4 A capture from 35% to 43%, and
+SHUFFLING the charges across atoms -- which destroys the backbone alignment entirely while keeping the
+charge multiset -- gives 46%. All three are the same failure. So the long tail is not about DNA's charge
+ARRANGEMENT; it is about an UNSCREENED 1/r^2 kernel in a dense medium, and DNA is merely a fair place to
+meet it. The one thing that does fix it is screening, which is a change to the physics, not to the geometry.
 
 THE SYSTEM.  Nucleosome core particle 1KX5 at 1.9 A: 147 bp of DNA on a histone octamer, 16,755 atoms with
 ordered waters. This IS chromatin at atomic resolution, and it is small enough that the EXACT all-atom
@@ -413,6 +417,16 @@ def main():
                                   "slope": sl, "pearson": r} for lo, hi, ntot, nlive, rel, sl, r in rows]
 
     report("\n  READING")
+    # the inside-the-sphere rows are the ones worth stating: truncation is not only losing the tail
+    near = res["shells"]["4.0"][0]
+    if near["slope"] < 0.5:
+        report(f"  TRUNCATION DOES NOT MERELY LOSE THE FAR FIELD, IT CORRUPTS THE NEAR ONE. In the 0-4 A shell")
+        report(f"  -- entirely INSIDE the 4 A sphere, where the scheme should be exact -- the slope against")
+        report(f"  the true response is {near['slope']:+.3f} and the correlation {near['pearson']:+.3f}.")
+        report("  The reason is induction: its energy is -1/2 (alpha/KE)|E|^2, a SQUARE of a sum, so the")
+        report("  change contains a cross term 2*E0.dE that multiplies the perturbation by the PRE-EXISTING")
+        report("  field. Truncating corrupts E0, and a wrong E0 inside the sphere is enough to flip the sign")
+        report("  of the answer there. No sphere size fixes a term that is a square of a truncated sum.")
     c4 = res["arms"]["dna_charged"]["captured"]["4.0"]
     c4s = res["arms"]["dna_screened"]["captured"]["4.0"]
     need = next((R for R in RADII if res["arms"]["dna_charged"]["captured"][str(R)] >= 0.90), None)
