@@ -142,7 +142,10 @@ def merge(tdir, arm):
     got = {}
     for f in sorted(Path(tdir).glob("agent-*.jsonl")):
         txt = f.read_text(errors="replace")
-        if len(set(re.findall(r"open_b(\d+)\.txt", txt))) != 1:
+        # both arms name their batches open_b*.txt, so the ARM must be told apart by directory or the two
+        # runs merge into each other and every number is a blend of the two
+        tags = set(re.findall(r"/(\w+)/open_b(\d+)\.txt", txt))
+        if len({t[0] for t in tags}) != 1 or {t[0] for t in tags} != {arm} or len(tags) != 1:
             continue
         for line in txt.splitlines():
             if '"answers"' not in line:
