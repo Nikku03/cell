@@ -67,7 +67,7 @@ from nexus_methyl_propagate import (elastic_network, rigid_basis, project, exact
                                     partition_weights, RC)
 
 OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
-HS = (4.0, 6.0, 8.0, 12.0, 16.0, 20.0)
+HS = (4.0, 5.0, 6.0, 8.0, 12.0, 16.0, 20.0)
 TOL = 1e-6
 MAXIT = 6000
 SEED = 53
@@ -91,9 +91,37 @@ def factor_small(K, spheres):
     return facs, build_flops, apply_flops
 
 
+def complete_coverage(co, sph, H, overlap=0.35):
+    """Add spheres centred on any atom the grid missed, until every atom is in some interior.
+
+    A cubic grid of spacing Rin covers the INFINITE lattice, but a molecule is not a box: atoms sitting in
+    surface pockets and at concave features fall outside every grid ball. At H = 4 A that left 137 atoms
+    uncovered and the radius was skipped entirely -- which would have silently removed the smallest sphere
+    size from a sweep whose whole purpose is to ask how small spheres can go. Patching by atom-centred
+    spheres costs a few extra blocks and makes the small radii testable rather than absent.
+    """
+    n = len(co)
+    Rin = H * (1.0 - overlap)
+    covered = np.zeros(n, bool)
+    for inner, _ in sph:
+        covered[inner] = True
+    added = 0
+    while not covered.all():
+        j = int(np.argmax(~covered))
+        d = np.linalg.norm(co - co[j], axis=1)
+        inner = np.where(d < Rin)[0]
+        if len(inner) == 0:
+            inner = np.array([j])
+        sph.append((inner, np.where(d < H)[0]))
+        covered[inner] = True
+        added += 1
+    return sph, added
+
+
 def run_tiling(K, Q, f, co, H, u_ex, nnz):
     sph = build_spheres(co, H)
     n = len(co)
+    sph, added = complete_coverage(co, sph, H)
     covered = np.zeros(n, bool)
     for inner, _ in sph:
         covered[inner] = True
@@ -125,7 +153,8 @@ def run_tiling(K, Q, f, co, H, u_ex, nnz):
     err = float(np.linalg.norm(u - u_ex) / max(np.linalg.norm(u_ex), 1e-30))
     # per iteration: one preconditioner application + one sparse matvec (2 flops per nonzero)
     per_it = aflops + 2.0 * nnz
-    return {"H": H, "n_spheres": len(sph), "iters": it["k"], "rel_err": err, "info": int(info),
+    return {"H": H, "n_spheres": len(sph), "patched": added, "iters": it["k"], "rel_err": err,
+            "info": int(info),
             "atoms_per_sphere": float(np.mean([len(i) for i, _ in sph])),
             "build_flops": bflops, "per_iter_flops": per_it,
             "total_flops": bflops + per_it * it["k"],
@@ -202,7 +231,8 @@ def main():
             continue
         rows.append(r)
         report(f"    {H:>5.0f}{r['n_spheres']:>10}{r['atoms_per_sphere']:>11.1f}{r['iters']:>8}"
-               f"{r['rel_err']:>11.2e}{r['total_flops']:>14.3g}{r['t_total']:>10.2f}")
+               f"{r['rel_err']:>11.2e}{r['total_flops']:>14.3g}{r['t_total']:>10.2f}"
+               f"{r['patched']:>9}")
 
     report("\n  READING")
     if len(rows) >= 2:
