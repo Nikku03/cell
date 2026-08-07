@@ -1,0 +1,96 @@
+{
+  "test": "nexus_catalyst_esm",
+  "n_reactions": 2231,
+  "dim": 480,
+  "model": "esm2_t12_35M_UR50D",
+  "results": {
+    "reaction_disjoint": {
+      "freq": {
+        "auc": 0.8566856233877975,
+        "sd": 0.0,
+        "top1": 0.6647243388614971
+      },
+      "esm_pair": {
+        "auc": 0.9179726149243731,
+        "sd": 0.0021895488403087552,
+        "top1": 0.7158225011205738
+      },
+      "esm_enzyme_only": {
+        "auc": 0.9000773926406205,
+        "sd": 0.0007815880206027687,
+        "top1": 0.6190049305244285
+      },
+      "esm_shuffled_substrate": {
+        "auc": 0.7958404061911523,
+        "sd": 0.0073793823016196115,
+        "top1": 0.4223815927088002
+      },
+      "esm_untrained": {
+        "auc": 0.5537094300016058,
+        "sd": 0.04123401880137177,
+        "top1": 0.1296877334528612
+      }
+    },
+    "enzyme_disjoint": {
+      "freq": {
+        "auc": 0.5,
+        "sd": 0.0,
+        "top1": 0.0
+      },
+      "esm_pair": {
+        "auc": 0.7315627922328943,
+        "sd": 0.0014044082286599248,
+        "top1": 0.3608247422680413
+      },
+      "esm_enzyme_only": {
+        "auc": 0.5784304804925371,
+        "sd": 0.004741562030258734,
+        "top1": 0.17869415807560138
+      },
+      "esm_shuffled_substrate": {
+        "auc": 0.5405836323483245,
+        "sd": 0.0030944813738477735,
+        "top1": 0.13581353653070372
+      },
+      "esm_untrained": {
+        "auc": 0.5374602383933232,
+        "sd": 0.022642468900266024,
+        "top1": 0.13148065142686388
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "ESM-2 EMBEDDINGS FOR CATALYST PREDICTION -- a learned representation, not a bigger head",
+    "====================================================================================================",
+    "  Docking statistics, a learned combination of them, and cell-line evidence have all failed on",
+    "  this task. Every failure was about the REPRESENTATION. This changes that and drops docking.",
+    "  THE DECIDING CONTROL is not the permutation: a model can score well by learning WHICH PROTEINS",
+    "  ARE ENZYMES and never reading the substrate. enzyme_only zeroes the substrate to expose that.",
+    "  THE DECIDING SPLIT is enzyme-disjoint -- no test enzyme is ever a training positive -- because",
+    "  filling orphans means naming enzymes never seen catalysing anything.",
+    "\n  2,231 reactions | catalyst vocabulary 5,251 | ESM esm2_t12_35M_UR50D, 480-dim",
+    "\n  SPLIT: reaction_disjoint",
+    "    arm                            AUC     sd   top-1",
+    "    freq (train counts)          0.857  0.000   0.665",
+    "    esm_pair                     0.918  0.002   0.716",
+    "    esm_enzyme_only              0.900  0.001   0.619   <- substrate zeroed: THE control",
+    "    esm_shuffled_substrate       0.796  0.007   0.422",
+    "    esm_untrained                0.554  0.041   0.130   <- random init",
+    "\n  SPLIT: enzyme_disjoint",
+    "    arm                            AUC     sd   top-1",
+    "    freq (train counts)          0.500  0.000   0.000",
+    "    esm_pair                     0.732  0.001   0.361",
+    "    esm_enzyme_only              0.578  0.005   0.179   <- substrate zeroed: THE control",
+    "    esm_shuffled_substrate       0.541  0.003   0.136",
+    "    esm_untrained                0.537  0.023   0.131   <- random init",
+    "\n  READING",
+    "  reaction-disjoint ESM 0.918 -> enzyme-disjoint 0.732  (drop +0.186)",
+    "  enzyme-disjoint: ESM 0.732 | enzyme_only 0.578 | freq 0.500",
+    "  IT IS A PAIRING MODEL AND IT TRANSFERS. The substrate is worth +0.153 over zeroing",
+    "  it, and the model beats counting by +0.232 on enzymes it never saw catalyse",
+    "  anything. This is the first result here that would move the orphan estimate.",
+    "  AND NOTE THE SPLIT GAP: +0.186 lost when test enzymes are unseen. The flattering",
+    "  reaction-disjoint number is mostly memorised enzyme identity; quote the enzyme-disjoint one."
+  ]
+}
