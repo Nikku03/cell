@@ -22325,3 +22325,80 @@ One limit stays attached: 8 windows with a per-window sd of ~0.08, so 0.112 vs 0
 "marginally better." The conclusion rests on the *monotone* decline across radii and on the exponent moving
 correctly while the correlation does not — two independent readings agreeing that excluded volume changes how
 compact the fibre is without changing what it touches.
+
+# NEXUS spheres on real DNA: 4 Å captures a third of the physics, and salt is what fixes it
+
+`colab/nexus_dna_spheres.py`, `colab/nexus_dna_scale.py`. The proposal: cover chromatin's DNA in ~4 Å
+overlapping spheres, run NEXUS's chemistry in each, and let the overlap carry a single-atom change across the
+structure — a Schwarz-type domain decomposition, and a real technique.
+
+The realisation that made it decidable rather than arguable: **a sphere of radius R around an atom IS an
+interaction truncation at R.** So "is 4 Å enough" has an exact answer on a real structure. System is the 1KX5
+nucleosome — 147 bp of DNA on a histone octamer at 1.9 Å, 16,755 atoms with ordered waters, chromatin at
+atomic resolution and small enough that the reference is the *truth* (every pair, no cutoff) rather than
+another model. One atom is perturbed: a phosphate oxygen's charge, by +1e.
+
+## Reach: fraction of the true response captured inside R
+
+    radius             4Å      8Å     12Å     20Å     40Å
+    unscreened      0.350   0.443   0.499   0.592   0.763
+    screened        0.721   0.886   0.937   0.977   0.998
+    neutral DNA     0.431   0.508   0.558   0.639   0.788
+    shuffled chg    0.456   0.542   0.577   0.653   0.789
+
+Unscreened never reaches 90% at any radius. The shell-integrated profile shows why, and it is the curve the
+design was rebuilt around after an adversarial review: per-shell contributions run **812, 216, 131, 112, 103,
+102, 123, 172 kcal/mol** from 0 Å out to 40 Å — flat, not decaying. Atom count grows as r² while the kernel
+falls as r⁻², so the sum stays flat while the *per-atom* response decays reassuringly the whole way. Plotting
+per-atom decay would have shown a convergent-looking picture for a sum that does not converge.
+
+## My stated mechanism was wrong, and its own control says so
+
+I predicted the tail came from DNA's polyanion backbone — a line of like charges whose neglected terms cannot
+cancel, where a protein's sparse mixed-sign charges would forgive a short cutoff. Neutralising every phosphate
+gives 0.431 at 4 Å. Shuffling charges across atoms — which destroys the backbone alignment entirely while
+keeping the charge multiset — gives 0.456. **Same failure.** It is the unscreened 1/r² kernel in a dense
+medium, not DNA's arrangement. DNA was a fair place to meet the problem, not the cause of it.
+
+## Truncation does not only lose the tail — it corrupts the interior
+
+In the 0–4 Å shell, *entirely inside* the 4 Å sphere where the scheme should be exact, the regression slope
+against truth is **−0.154** and the correlation **−0.532**. Sign-flipped.
+
+Induction energy is −½(α/K)|E|², a square of a sum, so its change carries a cross term 2·E₀·δE that multiplies
+the perturbation by the *pre-existing* field. A truncated E₀ is wrong, and that is enough to invert the answer
+inside the sphere. No sphere size repairs a term that is the square of a truncated sum. A bare correlation
+would have hidden this; the regression slope is what caught it, and slope was added precisely because Pearson
+is invariant under y → ay+b and overlapping spheres double-count by a multiplicity of ~4.
+
+## What would make it work, and what it costs
+
+At 150 mM salt (Debye 7.9 Å) the picture inverts: **90% captured at R = 10 Å, 99.8% by 40 Å.** Locality is
+real in vivo. But NEXUS does not screen — its ε(r)=r is a crude stand-in — so this is a change to the physics,
+not a vindication of the tiling as it stands.
+
+Cost, with density measured from the structure rather than assumed (41.0 DNA heavy atoms/bp, 12.5 neighbours
+inside 4 Å):
+
+    radius   atoms/sphere   spheres (diploid)   total pairs   core-years
+      4Å           13.5            1.5e11          1.3e13        0.04
+     10Å          164.0            1.3e10          1.7e14        0.51
+
+So one static energy evaluation of the whole diploid genome at the viable 10 Å radius is ~0.5 core-years —
+hours on a modest cluster. **The cost was never the blocker.** Two other things are:
+
+- **The tiling is 4.2× a plain cell list at the same cutoff**, and that ratio is geometric, not measured:
+  tiled pairs are N·mult·(m−1)/2 against a cell list's N·(m−1)/2, so it is exactly the overlap multiplicity
+  (4/3)π and the density cancels. Overlap is what the proposal needs for influence to pass between spheres, so
+  the multiplicity is intrinsic. A decomposition repays it only when each sphere does a nonlinear local *solve*
+  — a minimisation, an SCF. NEXUS's per-sphere operation is a pairwise sum, so there is nothing to amortise.
+- **MD's cost is the 10⁶–10⁹ time steps, not the per-step spatial sum.** A spatial decomposition organises one
+  step. It cannot substitute for dynamics, which is what "simulate a change" requires.
+
+## Where this leaves the idea
+
+The geometric instinct is right and the measurement supports it: at physiological salt a single-atom change
+really is felt only ~10 Å, so chromatin genuinely is local and a sphere scheme is the correct shape of answer.
+What the run rejects is the specific combination on offer — 4 Å, unscreened, energy-only. Screened at 10 Å is
+sound and affordable; but at that point the scheme has converged on what MD force-field codes already do each
+step, with 4.2× overhead, and it still buys one snapshot rather than a trajectory.
