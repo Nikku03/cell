@@ -200,17 +200,22 @@ def shell_profile(dE, dk, edges):
 
 def screen(r, debye):
     """Debye-Huckel screening factor. NEXUS does not screen -- its eps(r)=r is a crude stand-in -- so this
-    is applied only in the explicitly screened arm, never silently."""
-    return 1.0 if debye is None else np.exp(-r / debye)
+    is applied only in the explicitly screened arm, never silently. Returns an ARRAY in both branches: a
+    bare 1.0 would be silently unindexable and only fails on the unscreened path, i.e. the default one."""
+    return np.ones_like(r) if debye is None else np.exp(-r / debye)
 
 
-def fields_all_radii(co, q, radii, chunk=512):
+def fields_all_radii(co, q, radii, chunk=512, debye=None):
     """The static Coulomb field at every atom, computed simultaneously for the exact case and for EVERY
     truncation radius, in ONE O(N^2) pass.
 
     The obvious implementation loops the pass once per radius. One pass with a stack of masked accumulators
     gives identical numbers for a fraction of the cost, which is what makes the full radius sweep affordable
     on 16,755 atoms.
+
+    `radii` is passed EMPTY for arms that only need the exact field. Each extra radius is another reduction
+    over a (chunk x N x 3) array, and computing truncated fields for arms that never use them was most of
+    the first run's cost.
     """
     n = len(co)
     F = {R: np.zeros((n, 3)) for R in radii}
@@ -220,10 +225,10 @@ def fields_all_radii(co, q, radii, chunk=512):
         dv = co[s:e, None, :] - co[None, :, :]
         r = np.linalg.norm(dv, axis=2)
         r = np.maximum(r, 0.1)
-        inv3 = 1.0 / r ** 3
+        w = q[None, :] * screen(r, debye) / r ** 3
         for loc, glob in enumerate(range(s, e)):
-            inv3[loc, glob] = 0.0
-        base = dv * (q[None, :, None] * inv3[:, :, None])
+            w[loc, glob] = 0.0
+        base = dv * w[:, :, None]
         F["exact"][s:e] = KE * base.sum(1)
         for R in radii:
             F[R][s:e] = KE * np.where((r < R)[:, :, None], base, 0.0).sum(1)
@@ -353,12 +358,13 @@ def main():
 
     res = {"n_atoms": n, "n_dna": nd, "n_water": nw, "perturbed_atom": k, "arms": {}}
 
-    report("\n  Precomputing the static field at all 16k atoms for the exact case and every truncation")
-    report("  radius in a single O(N^2) pass...")
+    FID_R = (4.0, 8.0, 12.0, 20.0)      # the radii ARM 3 actually compares; only the case arm needs them
+    report("\n  Precomputing the static field at all 16k atoms in a single O(N^2) pass per arm...")
     fields = {}
-    for name, q, _ in ARMS:
-        fields[name] = fields_all_radii(co, q, RADII)
-    report(f"    done at {time.time()-t0:.0f}s")
+    for name, q, deb in ARMS:
+        need = FID_R if name.startswith("dna_charged") else ()
+        fields[name] = fields_all_radii(co, q, need, debye=deb)
+        report(f"    {name} done at {time.time()-t0:.0f}s")
 
     report("\n  ARM 1 -- REACH: fraction of the TOTAL |response| captured inside radius R.")
     report("  Absolute, not signed: a signed fraction can read 100% while a large positive and a large")
@@ -394,7 +400,7 @@ def main():
     key = "dna_charged  (the case)"
     dE_ex, q_case, deb_case = exact_store[key]
     res["shells"] = {}
-    for R in (4.0, 8.0, 12.0, 20.0):
+    for R in FID_R:
         dE_tr = response(co, q_case, alpha, k, dq, R, fields[key], debye=deb_case)
         rows = shell_agreement(dE_ex, dE_tr, dk)
         tot_ex, tot_tr = float(np.abs(dE_ex).sum()), float(np.abs(dE_tr).sum())
