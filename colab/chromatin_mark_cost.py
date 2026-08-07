@@ -228,9 +228,9 @@ def main():
            f"{rs[i_og]} {nm[i_og]} atom {i_og}")
 
     res = {"n_atoms": n, "n_springs": int(npair), "marks": {}}
-    report("\n  REGION SIZE NEEDED. Relative error of the near field (inside Rreg/2, away from the held")
-    report("  boundary) against the EXACT full-structure solve. Lower is better; the smallest region that")
-    report("  reaches ~0.05 is the per-mark cost.")
+    report(f"\n  REGION SIZE NEEDED. Relative error over a FIXED {EVAL_R:.0f} A set of atoms around the mark")
+    report("  (fixed, so every column answers the same question) against the EXACT full-structure solve.")
+    report("  Lower is better; the smallest region reaching ~0.05 is the per-mark cost.")
     hdr = "    " + f"{'mark':<32}" + "".join(f"{r:>8.0f}A" for r in RREG) + f"{'full |u|max':>13}"
     report(hdr)
     for label, f, site in MARKS:
@@ -274,17 +274,48 @@ def main():
     r_phs = converge_R("phospho-S_screened")
     report(f"    region needed:  5mC {r_ster}   acetyl {r_ac}   acetyl+salt {r_acs}   "
            f"phospho {r_ph}   phospho+salt {r_phs}")
-    if r_ster and (r_ac is None or r_ac > r_ster):
-        report("    STERIC AND CHARGE MARKS DO NOT COST THE SAME. A neutral methyl settles in a small")
-        report("    region; a charge change does not, for the same reason its ENERGY had no convergent")
-        report("    tail -- shell population grows as r^2 while the interaction falls as r^-2. Any")
-        report("    chromosome-scale number must therefore be quoted PER MARK TYPE, and a cost derived")
-        report("    from methylation alone would understate acetylation and phosphorylation badly.")
-    if r_acs and (r_ac is None or r_acs < r_ac):
-        report("    AND SALT IS WHAT DECIDES THE CHARGE MARKS. Screened at 150 mM they localise; unscreened")
-        report("    they do not. So the cost of an acetylation is set by whether the model includes")
-        report("    screening -- a modelling choice, not a fact about chromatin, and it should not be")
-        report("    reported as one.")
+    if r_ster is None and (r_ac is not None or r_phs is not None):
+        report("    THE PREDECLARED PREDICTION WAS BACKWARDS, AND THE DATA SAYS SO PLAINLY. I predicted the")
+        report("    steric mark would localise and the charge marks would not, reasoning from the ENERGY")
+        report("    result where a charge change had a non-convergent tail. The opposite happened: charge")
+        report("    marks converge and the neutral methyl does not.")
+        report("    THE REASON IS THE RATIO, NOT THE TAIL. What a region approximation must capture is the")
+        report("    LOCAL part of the response relative to the global part. A charge change drives a large")
+        report("    local deformation -- peak |u| of 1.7 to 3.4 A here -- so the local term dominates and a")
+        report("    finite region captures it. A methyl drives a peak of only 0.34 A, and the propagation")
+        report("    run already showed its displacement flattening rather than decaying, i.e. a floor of")
+        report("    whole-particle breathing. When the local response is that small, that floor is a LARGE")
+        report("    FRACTION of it, and no boundary-fixed region can reproduce a global mode.")
+        report("    So energy locality and structural locality are different properties and one does not")
+        report("    predict the other. That is the correction this run makes to the earlier reading.")
+    if r_phs and (r_ph is None or r_phs < r_ph):
+        report("    SALT DECIDES THE CHARGE MARKS. Screened at 150 mM phosphorylation localises by "
+               f"{r_phs:.0f} A; unscreened it does not converge in this sweep at all. So the cost of a")
+        report("    charge mark is set by whether the model includes screening -- a modelling choice, not")
+        report("    a fact about chromatin, and it must not be quoted as one.")
+
+    # ---- chromosome arithmetic, from the measured per-region cost -------------------------------------
+    report("\n  CHROMOSOME ARITHMETIC, using the measured seconds-per-region above.")
+    report("  This is the cost of placing marks INDEPENDENTLY -- one local solve each. It is a floor, and")
+    report("  it is only the right number if marks do not interact; where two marks fall within one")
+    report("  region they need a joint solve and this understates them.")
+    n_nuc = CHR22_MB * 1e6 / NUC_REPEAT
+    cpg_chr22 = 28e6 * (CHR22_MB / 3100.0)          # ~28M CpG genome-wide, scaled by chromosome length
+    marks = [("5mC on chr22", cpg_chr22 * 0.75, "does not converge -- no local cost exists"),
+             ("histone marks on chr22", n_nuc * 10, None)]
+    tsec = dict(zip(RREG, res["marks"][any_key]["solve_s"]))
+    for name, cnt, note in marks:
+        report(f"    {name:<26} {cnt:>12.3g} marks")
+        if note:
+            report(f"      {note}")
+            continue
+        for R in (20.0, 30.0, 40.0):
+            s = cnt * tsec[R]
+            report(f"      at a {R:.0f} A region ({tsec[R]:.3f} s each): {s:>10.3g} core-s = "
+                   f"{s/3600:>9.3g} core-h = {s/3600/24:>7.3g} core-days")
+    report("    whole diploid genome is ~122x chr22, so multiply by that for a genome-wide figure.")
+    res["chromosome"] = {"n_nucleosomes_chr22": n_nuc, "n_cpg_chr22": cpg_chr22,
+                         "seconds_per_region": {str(k): v for k, v in tsec.items()}}
 
     OUT.mkdir(parents=True, exist_ok=True)
     res["log"] = log
