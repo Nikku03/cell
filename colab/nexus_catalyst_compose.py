@@ -66,6 +66,8 @@ N_FOLD = 5
 SEEDS = (0, 1, 2)
 EPOCHS = 25
 SEED = 17
+FUSE_W = 0.5         # weight on the ESM z-score against the LLM's rank prior (steps of 1 between ranks),
+                     # so ESM can move a candidate at most ~1-2 places rather than reorder the list wholesale
 
 
 def stem(g):
@@ -347,27 +349,68 @@ def main():
                 "esm_untrained": "random init"}.get(label, "trained on random decoys, as measured")
         report(f"  {label:<26}{res[label]['top1']:>9.3f}{res[label]['sd']:>7.3f}   {note}")
 
+    # FUSION, because "re-rank" as implemented above REPLACES the LLM's ordering rather than composing with
+    # it. Discarding a 0.675 ordering to impose a weaker one is guaranteed to lose -- random_rerank at 0.195
+    # is exactly that cost. The honest composition keeps the LLM's rank as a prior and lets ESM adjust it.
+    for lab, hard in (("fusion_rerank", False), ("fusion_hardneg", True)):
+        models = {s_: fit(hard, s_, True) for s_ in SEEDS}
+
+        def mkf(s_):
+            m = models[s_]
+
+            def f(q):
+                prior = -np.arange(10, dtype=float)            # LLM rank, best first
+                cand = [g if g in Em else None for g in lists[q]]
+                idx = [j for j, g in enumerate(cand) if g]
+                z = np.zeros(10)
+                if len(idx) > 1:
+                    e = torch.tensor(np.stack([vec(cand[j]) for j in idx]), dtype=torch.float32)
+                    s2 = torch.tensor(np.repeat(vec(subs[q])[None], len(idx), 0), dtype=torch.float32)
+                    with torch.no_grad():
+                        sc = m(e, s2).numpy()
+                    sc = (sc - sc.mean()) / (sc.std() + 1e-9)
+                    for k, j in enumerate(idx):
+                        z[j] = sc[k]
+                return prior + FUSE_W * z
+            return f
+        rank_by(mkf, lab, SEEDS)
+        report(f"  {lab:<26}{res[lab]['top1']:>9.3f}{res[lab]['sd']:>7.3f}   "
+               f"LLM rank prior + {FUSE_W} x ESM z")
+
     res["oracle_in_shortlist"] = {"top1": float(in_list.mean()), "sd": 0.0}
     report(f"  {'oracle (truth in the ten)':<26}{in_list.mean():>9.3f}{0.0:>7.3f}   ceiling for any re-ranker")
 
     report("\n  READING")
-    best = max(("esm_rerank", "esm_hardneg"), key=lambda k: res[k]["top1"])
+    best = max(("esm_rerank", "esm_hardneg", "fusion_rerank", "fusion_hardneg"),
+               key=lambda k: res[k]["top1"])
     d = res[best]["top1"] - res["llm_position1"]["top1"]
     report(f"  best ESM arm '{best}' {res[best]['top1']:.3f} vs the LLM's own ordering "
            f"{res['llm_position1']['top1']:.3f}  ({d:+.3f})")
     report(f"  ceiling if a re-ranker were perfect: {in_list.mean():.3f}")
-    if d > 0.03:
-        report("  THE COMPOSITION WORKS. A sequence model re-ranking a language model's shortlist beats the")
-        report("  language model's own ordering, which is the first compounding result in this line.")
-    elif d > -0.03:
-        report("  NO GAIN. ESM's margin was against easy negatives and does not survive a shortlist of ten")
-        report("  plausible candidates -- which was measured up front: the LLM's ten are 4.8x more")
-        report("  family-concentrated than the random decoys ESM scored 0.682 against. Telling two members")
-        report("  of one family apart is the hard problem, and that is the one the composition needs solved.")
+    repl = max(res["esm_rerank"]["top1"], res["esm_hardneg"]["top1"])
+    fuse = max(res["fusion_rerank"]["top1"], res["fusion_hardneg"]["top1"])
+    base = res["llm_position1"]["top1"]
+    report(f"  REPLACING the LLM ordering: {repl:.3f}. FUSING with it (rank prior + ESM): {fuse:.3f}. "
+           f"LLM alone: {base:.3f}.")
+    if fuse > base + 0.02:
+        report("  THE COMPOSITION WORKS, but only as fusion. Replacing a good ordering with a weaker score")
+        report("  loses; keeping it as a prior and letting ESM nudge gains.")
+    elif fuse >= base - 0.05:
+        report("  NO GAIN. Fusion recovers almost all of what replacement threw away, which shows the loss")
+        report("  was mostly discarding the LLM's ordering rather than ESM being actively wrong -- but it")
+        report("  still does not beat leaving the shortlist alone. ESM's 0.682 was earned against decoys")
+        report("  drawn at random from the whole vocabulary; the LLM's ten are 4.8x more family-concentrated,")
+        report("  and within one family the sequence model has nothing left to say. Telling ALDH1A1 from")
+        report("  ALDH3A2 is the hard problem, and it is precisely the one the composition needed solved.")
     else:
-        report("  RE-RANKING DESTROYS IT. The ESM arm is WORSE than leaving the shortlist alone. That is the")
-        report("  default outcome whenever the re-ranker is weaker than the ranker, and it is why")
-        report("  random_rerank is in the table: it shows what the floor of that failure mode looks like.")
+        report("  RE-RANKING HURTS EVEN AS FUSION. The signal is not merely absent on this distribution.")
+    if repl < res["random_rerank"]["top1"]:
+        report(f"  NOTE the replacement arms ({repl:.3f}) fall BELOW random re-ranking "
+               f"({res['random_rerank']['top1']:.3f}), and below the untrained twin "
+               f"({res['esm_untrained']['top1']:.3f}).")
+        report("  Training made it worse on this distribution, so the coarse enzyme/substrate compatibility it")
+        report("  learned is mildly ANTI-correlated with which family member is right. That is a sharper")
+        report("  negative than noise would give, and it is the thing to explain before trying this again.")
     report(f"  For scale, random_rerank is {res['random_rerank']['top1']:.3f} -- a re-ranker that knows")
     report("  nothing does not leave a good ordering alone, it flattens it to chance-within-the-list.")
 

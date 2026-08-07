@@ -22110,3 +22110,70 @@ interface point pairs because it had the true interface. The set transformer bea
 summaries because eight summaries do not contain the answer. And ESM works here because a 250M-sequence
 representation carries what a rigid-body scan does not. **Capacity was never the variable; the representation
 always was.**
+
+---
+
+# The composition: LLM proposes ten, ESM re-ranks — no gain
+
+`nexus_catalyst_compose.py`. ESM reached 0.682 AUC on a homology-disjoint split with frequency pinned at
+0.500, and the shortlist gate had left +0.188 of headroom. This is the step the docking route could not earn.
+
+## Three things measured before running, all of which bound the result
+
+**The negatives are 4.8× harder here.** ESM's 0.682 was scored against decoys drawn at random from the
+catalyst vocabulary, where the largest single family holds 0.10 of a 10-candidate list. The LLM's top-10 has a
+largest-family share of **0.48** — it proposes ten plausible candidates, often ten members of one family. So a
+second model was trained on family-matched decoys to match test conditions.
+
+**40% of the reactions gave the answer away.** A first draw of 400 protein-substrate reactions had **159**
+whose catalyst is a named participant, against 34/400 on the metabolic benchmark — signalling steps routinely
+list the enzyme in the complex it acts through. 238 were dropped to fill a clean 400, with an assertion that
+none survive. That is the *more* faithful orphan setting: for a genuinely unannotated reaction the catalyst is
+by definition not in the participant list.
+
+**This population cannot speak to orphans.** Only 3 of 2,231 protein-substrate reactions have a catalyst under
+20 papers. Nothing here is an orphan number.
+
+## Result, 400 reactions, ESM trained homology-disjoint from every test catalyst
+
+    arm                        top-1     sd
+    llm_position1              0.675  0.000   the ordering to beat
+    fusion_hardneg             0.643  0.004   LLM rank prior + 0.5 x ESM z
+    fusion_rerank              0.632  0.007
+    freq_rerank                0.365  0.000   strongest hand-built signal
+    esm_untrained              0.210  0.011   random init
+    random_rerank              0.195  0.000
+    esm_hardneg                0.141  0.007   REPLACING the LLM ordering
+    esm_rerank                 0.122  0.010
+    oracle (truth in the ten)  0.920  0.000   ceiling for any re-ranker
+
+**No gain.** The best composition reaches 0.643 against the LLM's own 0.675.
+
+## Two things the controls separated that would otherwise have been one number
+
+**Most of the apparent damage was discarding the ordering, not ESM being wrong.** Replacement scores 0.141;
+fusion — keeping the LLM's rank as a prior and letting ESM nudge it — recovers to 0.643. `random_rerank` at
+0.195 is what throwing away a good ordering costs, and it is why that arm was in the table.
+
+**But the replacement arms fall BELOW random (0.141 vs 0.195) and below their own untrained twin (0.210).**
+Training made it worse on this distribution. The coarse enzyme/substrate compatibility ESM learned is mildly
+*anti*-correlated with which family member is right — a sharper negative than noise, and the thing to explain
+before trying this again.
+
+## Why it failed, stated as mechanism
+
+ESM's 0.682 is real but it is **coarse**: it separates a dehydrogenase from a transporter. The LLM has already
+done that work by the time it proposes ten candidates. What remains is telling ALDH1A1 from ALDH3A2 — one
+family, near-identical folds, differing in a few active-site residues — and a mean-pooled whole-sequence
+embedding averages exactly that distinction away.
+
+That also predicts what would be worth trying: a representation that is *local* rather than pooled — residues
+lining the binding pocket, or per-residue embeddings restricted to the active site — since the discrimination
+the composition needs lives in a handful of positions, not in the whole-protein mean.
+
+## Standing position, unchanged
+
+The language arm still stands alone at **0.463 top-1 on obscure enzymes**, and the oracle here says its
+shortlists contain the answer 0.920 of the time. That headroom is real and remains unclaimed: five channels
+have now been measured against it — six hand-built signals, a set transformer, co-expression, co-dependency,
+rigid-body docking, and a sequence model — and none has moved it.
