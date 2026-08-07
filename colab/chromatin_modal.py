@@ -72,8 +72,8 @@ from nexus_methyl_propagate import (elastic_network, rigid_basis, project, exact
 from chromatin_mark_cost import charges_of, charge_forces, DEBYE  # noqa: E402
 
 OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
-NMODE = 400              # how many of the lowest modes to compute; the sweep runs inside this
-KS = (10, 25, 50, 100, 200, 300, 400)
+NMODE = 300              # how many of the lowest modes to compute; the sweep runs inside this
+KS = (10, 25, 50, 100, 150, 200, 300)
 SEED = 61
 GENOME_MARKS = 3.5e8     # ~42M methylation + ~310M histone marks, diploid
 NUCLEOSOMES = 3.1e7
@@ -106,16 +106,19 @@ def main():
 
     # --- the modes: lowest NMODE of K, rigid modes shifted away so they are not returned ----------------
     report(f"\n  Computing the lowest {NMODE} modes (sparse Lanczos)...")
-    # K is singular in the 6 rigid modes; shift them up so eigsh returns the soft INTERNAL ones
-    Qs = sp.csr_matrix(Q)
-    shift = 1e3 * (Qs @ Qs.T)
-    Ksh = (K + shift).tocsc()
+    # K is singular in the six rigid modes, so shift-invert at exactly 0 has nothing to factorise. The fix
+    # is a SCALAR shift, which keeps the matrix sparse: factorise K + eps*I and discard the six near-zero
+    # modes afterwards.
+    #
+    # The first version projected the rigid modes out with 1e3 * (Q @ Q.T). Q is 40,875 x 6 and DENSE, so
+    # that product is a dense 40,875 x 40,875 matrix -- 1.7e9 entries, ~20 GB -- built as a "sparse" one.
+    # It was OOM-killed at 15.6 GB. A projector is an operator and must never be materialised.
     t1 = time.time()
-    vals, vecs = eigsh(Ksh, k=NMODE, sigma=0.0, which="LM")
+    vals, vecs = eigsh(K.tocsc(), k=NMODE, sigma=-1e-3, which="LM")
     t_eig = time.time() - t1
     order = np.argsort(vals)
     vals, vecs = vals[order], vecs[:, order]
-    keep = vals > 1e-6
+    keep = vals > 1e-6           # drops the six rigid modes the scalar shift lets through
     vals, vecs = vals[keep], vecs[:, keep]
     report(f"    {vecs.shape[1]} internal modes in {t_eig:.1f} s | "
            f"eigenvalue range {vals[0]:.3e} to {vals[-1]:.3e}")
