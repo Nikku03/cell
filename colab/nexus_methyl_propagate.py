@@ -268,8 +268,24 @@ def factor_blocks(K, spheres):
     return facs
 
 
-def schwarz(K, Q, f, spheres, facs, global_residual, u_exact, max_sweep=MAX_SWEEP):
-    """Additive Schwarz sweeps. `global_residual` is the ONE line that separates the two schemes.
+def partition_weights(spheres, n):
+    """Each atom's share, 1/(number of sphere interiors containing it).
+
+    WITHOUT THIS THE SWEEP DIVERGES, and the first run showed it: relative error 1e47. Overlap is the whole
+    point of the scheme -- an atom deliberately sits in several spheres so they can talk -- but if every
+    sphere applies the FULL correction for that atom, the atom is corrected ~4 times over on every sweep and
+    the iteration overshoots harder each pass. The overlap that carries the information is the same overlap
+    that double-counts the answer. Spheres have to share credit, which is exactly a partition of unity, and
+    it is parameter-free: no relaxation factor to tune, no answer to bias.
+    """
+    cnt = np.zeros(n)
+    for inner, _ in spheres:
+        cnt[inner] += 1.0
+    return 1.0 / np.maximum(cnt, 1.0)
+
+
+def schwarz(K, Q, f, spheres, facs, global_residual, u_exact, w_atom, max_sweep=MAX_SWEEP):
+    """Restricted additive Schwarz sweeps. `global_residual` is the ONE line that separates the two schemes.
 
     True Schwarz: r = f - K u using the WHOLE network, then each sphere corrects its interior from that.
     Local-only:   each sphere forms its residual from its own block alone, so no information about the rest
@@ -280,20 +296,19 @@ def schwarz(K, Q, f, spheres, facs, global_residual, u_exact, max_sweep=MAX_SWEE
     u = np.zeros(K.shape[0])
     hist = []
     ne = np.linalg.norm(u_exact)
+    w = np.repeat(w_atom, 3)
+    fr = f.ravel()
     for it in range(max_sweep):
-        r = f.ravel() - K.dot(u) if global_residual else None
+        r = fr - K.dot(u) if global_residual else None
         du = np.zeros(K.shape[0])
-        fr = f.ravel()
         for (inner, outer), (dof, Ainv, A) in zip(spheres, facs):
-            if global_residual:
-                loc = r[dof]
-            else:
-                # the sphere sees only itself: its own forces minus its own block's internal reaction
-                loc = fr[dof] - A.dot(u[dof])
-            du[dof] += Ainv.dot(loc)
+            loc = r[dof] if global_residual else (fr[dof] - A.dot(u[dof]))
+            du[dof] += w[dof] * Ainv.dot(loc)
         u = project(Q, u + du)
         err = np.linalg.norm(u - u_exact) / max(ne, 1e-30)
         hist.append(float(err))
+        if not np.isfinite(err) or err > 1e6:
+            break                                   # diverged; reported as such rather than run to overflow
         if len(hist) > 3 and abs(hist[-1] - hist[-2]) < 1e-6 * max(hist[-1], 1e-12):
             break
     return u, hist
@@ -445,10 +460,11 @@ def main():
                 report(f"    R={R:>4.0f} A | SKIPPED: {int((~covered).sum())} atoms lie in no sphere "
                        f"interior, so any error here would be a tiling gap, not a physics result")
                 continue
+            w_atom = partition_weights(sph, n)
             facs = factor_blocks(K, sph)
             out = {}
             for gname, gflag in (("schwarz_true", True), ("schwarz_local", False)):
-                u, hist = schwarz(K, Q, f, sph, facs, gflag, u_ex)
+                u, hist = schwarz(K, Q, f, sph, facs, gflag, u_ex, w_atom)
                 out[gname] = {"sweeps": len(hist), "final_rel_err": hist[-1], "hist": hist[:12]}
                 report(f"    R={R:>4.0f} A | {len(sph):>5} spheres | {gname:<14} "
                        f"{len(hist):>3} sweeps -> relative error {hist[-1]:.3e}")
