@@ -73,6 +73,10 @@ SEEDS = (0, 1, 2)
 EPOCHS = 25
 N_PERM = 20
 SEED = 5
+JACC_MIN = 0.02      # 5-mer Jaccard. Calibrated on known pairs: ~93% identity reads 0.610, ~84% reads
+                     # 0.307, ~50% reads 0.03, unrelated reads 0.000. So 0.02 catches paralogs down to
+                     # roughly 50% identity. It does NOT catch remote homology below that, which is why the
+                     # homology-split number is still an UPPER bound rather than a clean one.
 DECOY_SEED = 99      # FIXED and independent of the model seed: every arm must see the SAME candidate sets,
                      # or an arm's margin is partly a luckier decoy draw rather than a better model
 
@@ -151,6 +155,59 @@ def embed():
     return 0
 
 
+def family_of(gene_list, seq):
+    """Cluster catalysts so a split can be HOMOLOGY-disjoint, not merely gene-disjoint.
+
+    Gene-disjoint is not family-disjoint: PRKACA in train and PRKACB in test are ~93% identical, and a model
+    that merely recognises the paralog has not generalised to an unseen enzyme -- which is exactly what
+    filling orphans requires. Two edges are drawn and the connected components are the clusters:
+        sequence   5-mer Jaccard >= JACC_MIN
+        symbol     same family stem (PRKACA/PRKACB -> PRKAC, SLC7A5/SLC7A8 -> SLC7)
+    The symbol rule over-merges on purpose. Over-merging makes the split HARDER, which is the safe direction
+    for a number that is meant to be believed.
+    """
+    import re
+    from scipy.sparse import csr_matrix
+    from scipy.sparse.csgraph import connected_components
+    K, NB = 5, 1 << 20
+    rows, cols = [], []
+    for i, g in enumerate(gene_list):
+        sq = seq[g][:MAXLEN]
+        ks = {hash(sq[j:j + K]) % NB for j in range(len(sq) - K + 1)}
+        rows += [i] * len(ks)
+        cols += list(ks)
+    A = csr_matrix((np.ones(len(rows), np.float32), (rows, cols)), shape=(len(gene_list), NB))
+    n = np.asarray(A.sum(1)).ravel()
+    N = len(gene_list)
+    ei, ej = [], []
+    CH = 512
+    for a in range(0, N, CH):
+        blk = (A[a:a + CH] @ A.T).toarray()
+        for r in range(blk.shape[0]):
+            i = a + r
+            inter = blk[r]
+            jacc = inter / np.maximum(n[i] + n - inter, 1e-9)
+            hit = np.where(jacc >= JACC_MIN)[0]
+            for j in hit:
+                if j > i:
+                    ei.append(i); ej.append(int(j))
+
+    def stem(g):
+        t = re.sub(r"\d+$", "", g)
+        if len(t) > 3:
+            t = re.sub(r"[A-Z]$", "", t)
+        return t if len(t) >= 3 else g
+    by_stem = {}
+    for i, g in enumerate(gene_list):
+        by_stem.setdefault(stem(g), []).append(i)
+    for v in by_stem.values():
+        for j in v[1:]:
+            ei.append(v[0]); ej.append(j)
+    G = csr_matrix((np.ones(len(ei)), (ei, ej)), shape=(N, N))
+    ncomp, lab = connected_components(G, directed=False)
+    return {g: int(l) for g, l in zip(gene_list, lab)}, ncomp
+
+
 def load_bench():
     d = np.load(EMB, allow_pickle=True)
     E = {g: v for g, v in zip(d["genes"], d["E"])}
@@ -211,8 +268,17 @@ def main():
 
     rng = np.random.default_rng(SEED)
     cat_of = np.array([r["cat"] for r in rx])
+    seq = sequences()
+    cvocab = sorted({r["cat"] for r in rx} | {r["sub"] for r in rx})
+    fam, ncomp = family_of([g for g in cvocab if g in seq], seq)
+    report(f"  homology clusters over {len(cvocab):,} catalysts+substrates: {ncomp:,} components "
+           f"(5-mer Jaccard >= {JACC_MIN} OR shared symbol stem)")
+    biggest = max(np.bincount(np.array(list(fam.values()))))
+    report(f"    largest cluster {biggest} genes | singletons "
+           f"{int((np.bincount(np.array(list(fam.values()))) == 1).sum()):,}")
     fold_by = {"reaction_disjoint": np.arange(len(rx)),
-               "enzyme_disjoint": np.array([sorted(set(cat_of)).index(c) for c in cat_of])}
+               "enzyme_disjoint": np.array([sorted(set(cat_of)).index(c) for c in cat_of]),
+               "homology_disjoint": np.array([fam.get(c, -1 - k) for k, c in enumerate(cat_of)])}
 
     class Pair(nn.Module):
         """score(enzyme, substrate). The interaction terms are what make it a PAIRING model rather than two
@@ -290,8 +356,9 @@ def main():
             # decoys drawn from the SAME fold under the enzyme-disjoint split, so the true catalyst and its
             # decoys have identical training exposure -- otherwise decoys are training positives and the
             # true one never is, which is a leak pointing the wrong way
-            pool_tr = sorted({rx[i]["cat"] for i in tr}) if scheme == "enzyme_disjoint" else vocab
-            pool_te = sorted({rx[i]["cat"] for i in te}) if scheme == "enzyme_disjoint" else vocab
+            held = scheme in ("enzyme_disjoint", "homology_disjoint")
+            pool_tr = sorted({rx[i]["cat"] for i in tr}) if held else vocab
+            pool_te = sorted({rx[i]["cat"] for i in te}) if held else vocab
             trg = build_groups(tr, pool_tr, fold)
             teg = build_groups(te, pool_te, 100 + fold)
             if shuffle_sub:
@@ -313,7 +380,8 @@ def main():
             cnt = {}
             for i in tr:
                 cnt[rx[i]["cat"]] = cnt.get(rx[i]["cat"], 0) + 1
-            pool_te = sorted({rx[i]["cat"] for i in te}) if scheme == "enzyme_disjoint" else vocab
+            pool_te = (sorted({rx[i]["cat"] for i in te})
+                       if scheme in ("enzyme_disjoint", "homology_disjoint") else vocab)
             for g in build_groups(te, pool_te, 100 + fold):
                 v = np.array([cnt.get(c, 0) for c in g["cands"]], float)
                 ys += [1] + [0] * (len(g["cands"]) - 1)
@@ -322,7 +390,7 @@ def main():
         return float(roc_auc_score(ys, ps)), float(np.mean(t1))
 
     res = {}
-    for scheme in ("reaction_disjoint", "enzyme_disjoint"):
+    for scheme in ("reaction_disjoint", "enzyme_disjoint", "homology_disjoint"):
         report(f"\n  SPLIT: {scheme}")
         report(f"    {'arm':<26}{'AUC':>8}{'sd':>7}{'top-1':>8}")
         row = {}
@@ -345,7 +413,12 @@ def main():
         res[scheme] = row
 
     report("\n  READING")
-    rd, ed = res["reaction_disjoint"], res["enzyme_disjoint"]
+    rd, ed = res["reaction_disjoint"], res["homology_disjoint"]
+    ez = res["enzyme_disjoint"]
+    report(f"  reaction-disjoint {rd_ := res['reaction_disjoint']['esm_pair']['auc']:.3f}  ->  gene-disjoint "
+           f"{ez['esm_pair']['auc']:.3f}  ->  HOMOLOGY-disjoint {ed['esm_pair']['auc']:.3f}")
+    report("  The last column is the honest one: gene-disjoint still lets a ~93%-identical paralog sit in")
+    report("  training, and recognising a paralog is not generalising to an unseen enzyme.")
     used_sub = ed["esm_pair"]["auc"] - ed["esm_enzyme_only"]["auc"]
     beat_freq = ed["esm_pair"]["auc"] - ed["freq"]["auc"]
     drop = rd["esm_pair"]["auc"] - ed["esm_pair"]["auc"]
