@@ -21909,3 +21909,77 @@ inflated the design's apparent value by a third.
 
 **Ceiling for the whole design:** a perfect re-ranker on these shortlists reaches 0.895 overall and 0.713 on
 obscure enzymes, against 0.645 / 0.463 today.
+
+---
+
+# Steps 2 and 3: the binding calculation cannot pick the catalyst, and step 3 does not run
+
+`nexus_catalyst_pilot.py`. The proposal was to use NEXUS the way it was used for interactions — spheres over
+the structures, two interactions, a third protein — to say which candidate is the catalyst. Step 1 cleared its
+gate (obscure-bin recall@10 0.713 against position-1 0.525), so the discriminator had something real to sort.
+
+## The design was sized on the wrong number first, and that was my error
+
+I sized this on NEXUS at AUC 0.755 and docking rescore at 0.814. **Both are scored on a complex that already
+exists** — which point pairs contact, or whether a mutation breaks a known interface. Catalyst-finding has no
+complex; its primitive is *does A bind B*, and `nexus_doesitbind` had already measured that at **0.456**
+against a size-only control of 0.438, p=0.66. Sizing a design on 0.814 when the applicable value is 0.456
+overstates it by 0.36 of AUC.
+
+## Run 1 failed its own size control and was discarded
+
+60 reactions completed, then the artefact control fired: `size_only` **0.392**, not ~0.5. Decoys *were* matched
+on UniProt sequence length (390 vs 380 aa) but the docking sees atoms **after pLDDT trimming**, and those were
+2,240 for true catalysts against 2,532 for decoys — 5.94 vs 6.67 atoms per residue. The true catalysts here are
+signalling enzymes acting on protein substrates; they carry more disorder and lose more residues to the trim
+than decoys drawn from the compact metabolic majority. Every docking feature then tracked size (best 0.395 vs
+size_only 0.392).
+
+Read naively, that run said true-catalyst mean rank 6.3 of 10 and top-1 0.033 against 0.100 chance — a
+dramatic negative that was **an artefact of my decoy construction, not biology**. Rebuilt matching on trimmed
+atom count (+1.2% vs −11.5%), with the check printed at build time so it cannot silently fail again.
+
+## Run 2, clean: everything is at chance
+
+    feature       AUC          feature       AUC
+    best        0.498          n_z2        0.528
+    top10       0.488          skew        0.549
+    mean        0.450          std         0.545
+    top50cell   0.450          clash       0.452
+                               size_only   0.532   <- artefact control, now clean
+
+60 true catalysts against 540 atom-matched decoys, AlphaFold v6 structures, pLDDT<70 trimmed. **No feature
+separates the true catalyst from decoys.** This reproduces `nexus_doesitbind`'s 0.456 at more than seven times
+the sample size, on the population the task actually presents, with a clean size control.
+
+**One oddity, reported and deliberately not promoted.** The true catalyst's z within its own shortlist has mean
++0.004 (no direction) but sd **0.731** rather than ~1.0 — it sits closer to mid-pack than a random member
+would, which is why top-1 is 1/60 against 6 expected (p=0.028). That is one statistic out of ~10 examined after
+the fact, at n=60, while the pre-specified read — the AUCs — is flat. It would need its own pre-registered test
+to mean anything.
+
+## Step 3 was not run, by the predeclared gate
+
+Step 2 had to beat 0.5 *and* beat its size control to justify step 3. It did neither. **Reranking a shortlist
+by a chance-level score cannot beat the language arm** — it would move 0.525 to 0.525 in expectation. Running
+it would have cost ~600 more docks to measure nothing.
+
+Step 3 was also more expensive than it looked: the shortlist benchmark (400 reactions) and the docking
+benchmark (60) overlap by only **3** reactions, and step 2 docked size-matched decoys rather than the LLM's
+actual top-10, so it would have needed a fresh round of shortlists *and* dockings.
+
+## Where the backtrace plan stands
+
+The structural route is **closed with this machinery**. A full screen over 5,282 enzymes needs AUC 0.998; the
+applicable measured value is ~0.5. The tie-break version needed only ~0.75 to be worth running, and that is not
+available either.
+
+What survives is the language arm alone: **0.525 top-1 and 0.713 top-10 on obscure enzymes**, with 0.463 the
+honest single-guess expectation on the 9,186 real gaps. Three independent levers have now been measured against
+it and none moved it — co-expression (+0.017, p=0.30), co-dependency (same run), and structural binding (0.5).
+
+The remaining untested idea is the one the reaction data actually supports and nothing here used: many
+protein-substrate reactions name the **modified residue** in the product (`p(Y701)-STAT1`,
+`monoSUMO1-K164,K254,K-PCNA`). That is a specific site, not a whole-surface question, and asking whether a
+candidate enzyme's catalytic cleft can reach *that residue* is a far sharper test than whether two whole
+proteins stick together — which is the question that just returned 0.5.

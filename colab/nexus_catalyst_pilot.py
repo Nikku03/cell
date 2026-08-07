@@ -296,6 +296,7 @@ def run_dock(worker=0, nworker=1):
 
 def score():
     from sklearn.metrics import roc_auc_score
+    from scipy.stats import binomtest
     log = []
 
     def report(x):
@@ -320,7 +321,7 @@ def score():
     KEYS = ("best", "top10", "mean", "top50cell", "n_z2", "skew", "std", "clash")
     ys, per = [], {k: [] for k in KEYS}
     per["size_only"] = []
-    ranks = []
+    ranks, zcen = [], []
     for rx, rec in d.items():
         cat, F = rec["catalyst"], rec["feats"]
         gs = sorted(F)
@@ -336,6 +337,7 @@ def score():
         per["size_only"] += list((s - s.mean()) / (s.std() + 1e-9))
         b = np.array([F[g]["best"] for g in gs], float)
         ranks.append(int((b > b[gs.index(cat)]).sum()) + 1)
+        zcen.append((b[gs.index(cat)] - b.mean()) / (b.std() + 1e-9))
 
     y = np.array(ys)
     report(f"  {int(y.sum())} true catalysts against {int((1-y).sum())} decoys")
@@ -349,8 +351,19 @@ def score():
         report(f"  {k:<14}{a:>8.3f}{mark}")
     best_k = max((k for k in KEYS), key=lambda k: abs(aucs[k] - 0.5))
     rk = np.array(ranks)
-    report(f"\n  rank of the true catalyst among its shortlist: mean {rk.mean():.2f}, "
-           f"median {np.median(rk):.0f}, top-1 {np.mean(rk == 1):.3f} (chance ~{1/np.mean([1]*1)/10:.3f})")
+    ncand = int(np.median([len(rec["feats"]) for rec in d.values()]))
+    chance1 = 1.0 / max(ncand, 1)
+    p_top1 = float(binomtest(int((rk == 1).sum()), len(rk), chance1).pvalue)
+    report(f"\n  rank of the true catalyst among its shortlist of {ncand}: mean {rk.mean():.2f} "
+           f"(chance {(ncand+1)/2:.1f}), median {np.median(rk):.0f}, "
+           f"top-1 {np.mean(rk == 1):.3f} (chance {chance1:.3f}, p={p_top1:.4f})")
+    zc = np.array(zcen)
+    report(f"  true catalyst's z WITHIN its shortlist: mean {zc.mean():+.3f}, sd {zc.std():.3f}")
+    report(f"    A random member of a z-scored set of {ncand} has mean 0 and sd ~1. Mean {zc.mean():+.3f} says")
+    report(f"    no directional signal. sd {zc.std():.3f} says the true catalyst sits closer to MID-PACK than")
+    report("    a random member would, which is also why top-1 is short. Treat that as an oddity, not a")
+    report("    result: it is one statistic out of ~10 examined after the fact, at n=60, and the AUCs -- the")
+    report("    pre-specified read -- are flat. It would need its own pre-registered test to mean anything.")
 
     report("\n  READING")
     ba, sa = aucs[best_k], aucs["size_only"]
@@ -370,7 +383,9 @@ def score():
 
     json.dump({"test": "nexus_catalyst_pilot", "n_reactions": len(d), "auc": aucs,
                "best_feature": best_k, "rank_mean": float(rk.mean()),
-               "top1": float(np.mean(rk == 1)), "log": log},
+               "top1": float(np.mean(rk == 1)), "top1_p": p_top1,
+               "z_within_shortlist_mean": float(zc.mean()), "z_within_shortlist_sd": float(zc.std()),
+               "log": log},
               open(OUT / "nexus_catalyst_pilot.json", "w"), indent=2)
     report(f"\n  -> {OUT/'nexus_catalyst_pilot.json'}")
     return 0
