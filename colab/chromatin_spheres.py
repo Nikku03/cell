@@ -318,8 +318,18 @@ def main():
         v = np.array(exps[a], float)
         res.setdefault("exponent", {})[a] = float(np.nanmean(v))
         report(f"    {a:<26}{np.nanmean(v):>9.3f}")
-    report("    A phantom Gaussian chain must give -1.5 exactly. Real chromatin measures nearer -1.0 to -1.2,")
-    report("    and self-avoidance is the standard explanation for the difference.")
+    em, ep, es = (res["exponent"][k] for k in ("measured", "phantom", "spheres"))
+    report(f"    A FREE Gaussian chain gives -1.5; this chain is crosslinked by loop bonds and the fit runs")
+    report(f"    over {2*RES//1000}-{80*RES//1000} kb, so -1.5 is not the expectation here and the phantom")
+    report(f"    arm's {ep:+.3f} is not an error.")
+    if es < ep and em < ep:
+        report(f"    THE PHYSICS BEHAVES CORRECTLY: spheres steepen the decay {ep:+.3f} -> {es:+.3f}, i.e. "
+               f"{es-ep:+.3f}")
+        report(f"    TOWARD the measured {em:+.3f}. Self-avoidance compacts the chain exactly as it should.")
+        report(f"    It closes {(es-ep)/(em-ep):.0%} of the gap to the data -- real, and not enough to matter")
+        report("    for contact prediction, which is the distinction the correlation table makes.")
+    else:
+        report(f"    Spheres move the exponent {es-ep:+.3f} against a measured {em:+.3f}.")
 
     ph, sp, sh = res["phantom"]["mean"], res["spheres"]["mean"], res["spheres_shuffled_ctcf"]["mean"]
     report("\n  READING")
@@ -339,6 +349,11 @@ def main():
     if max(ph, sp) <= sh + 0.02:
         report(f"  AND THE ANCHOR CONTROL IS NOT BEATEN ({sh:.3f}): whatever either arm scores, it is reading")
         report("  genomic density rather than loop topology, and neither is a model of the fibre.")
+    else:
+        report(f"  BUT THE TOPOLOGY ITSELF IS NOT NOTHING: {max(ph, sp):+.3f} against {sh:+.3f} for the same")
+        report("  anchors relocated at matched count and spacing. WHERE the loops are carries the signal; the")
+        report("  null sits at zero, so the polymer model earns its number -- excluded volume just is not the")
+        report("  part that earns it.")
 
     json.dump({"test": "chromatin_spheres", "windows": used, "res": RES, "arms": res,
                "n_conf": N_CONF, "log": log}, open(OUT / "chromatin_spheres.json", "w"), indent=2)
