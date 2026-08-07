@@ -1,0 +1,231 @@
+{
+  "n_atoms": 13625,
+  "n_springs": 263765,
+  "marks": {
+    "5mC": {
+      "site": 5093,
+      "near_err": [
+        0.3995677018691048,
+        0.5712477003621621,
+        0.47428991181735064,
+        0.4340513492812184,
+        0.39056351092720565,
+        0.3727677583800923,
+        0.3495599358927072
+      ],
+      "solve_s": [
+        0.0034749507904052734,
+        0.008942842483520508,
+        0.03622245788574219,
+        0.10217523574829102,
+        0.24722862243652344,
+        0.5684106349945068,
+        2.990630626678467
+      ],
+      "atoms_in_region": [
+        93,
+        269,
+        555,
+        844,
+        1410,
+        2298,
+        4607
+      ],
+      "full_umax": 0.34281375124826474
+    },
+    "acetyl-K": {
+      "site": 9037,
+      "near_err": [
+        0.587918616576355,
+        0.5835320299154924,
+        0.4175676086607084,
+        0.2283577232691481,
+        0.11890317490662149,
+        0.07655991266291934,
+        0.03541719841034709
+      ],
+      "solve_s": [
+        0.00296783447265625,
+        0.016600370407104492,
+        0.03809094429016113,
+        0.09016275405883789,
+        0.18218207359313965,
+        0.562840461730957,
+        2.3542168140411377
+      ],
+      "atoms_in_region": [
+        116,
+        294,
+        515,
+        817,
+        1304,
+        2151,
+        4210
+      ],
+      "full_umax": 1.6537113960546053
+    },
+    "acetyl-K_screened": {
+      "site": 9037,
+      "near_err": [
+        0.3366981724207091,
+        0.3786229787892338,
+        0.26076839138183605,
+        0.14411020261965996,
+        0.07587959260323976,
+        0.053309839911432,
+        0.04572937659402032
+      ],
+      "solve_s": [
+        0.0030579566955566406,
+        0.017220735549926758,
+        0.03622102737426758,
+        0.08570432662963867,
+        0.17391204833984375,
+        0.4908428192138672,
+        2.2567942142486572
+      ],
+      "atoms_in_region": [
+        116,
+        294,
+        515,
+        817,
+        1304,
+        2151,
+        4210
+      ],
+      "full_umax": 0.949689365087993
+    },
+    "phospho-S": {
+      "site": 6868,
+      "near_err": [
+        0.2798545522609087,
+        0.37825114004538296,
+        0.30520214053200917,
+        0.29755477498829647,
+        0.28355135732023673,
+        0.2636323099507797,
+        0.17386834569631643
+      ],
+      "solve_s": [
+        0.0030345916748046875,
+        0.030841350555419922,
+        0.099395751953125,
+        0.2607576847076416,
+        0.53078293800354,
+        1.2289414405822754,
+        5.756314992904663
+      ],
+      "atoms_in_region": [
+        121,
+        354,
+        703,
+        1191,
+        2019,
+        3248,
+        6349
+      ],
+      "full_umax": 3.385064802412569
+    },
+    "phospho-S_screened": {
+      "site": 6868,
+      "near_err": [
+        0.17430684423177487,
+        0.10527207878983529,
+        0.059530475151343624,
+        0.04327202435284015,
+        0.01726138378459441,
+        0.024551536516676145,
+        0.038699729456173275
+      ],
+      "solve_s": [
+        0.003467082977294922,
+        0.040541648864746094,
+        0.12067770957946777,
+        0.28119802474975586,
+        0.7126336097717285,
+        1.5948996543884277,
+        6.558511257171631
+      ],
+      "atoms_in_region": [
+        121,
+        354,
+        703,
+        1191,
+        2019,
+        3248,
+        6349
+      ],
+      "full_umax": 1.341015110929067
+    }
+  },
+  "chromosome": {
+    "n_nucleosomes_chr22": 254000.0,
+    "n_cpg_chr22": 458838.7096774193,
+    "seconds_per_region": {
+      "8.0": 0.0034749507904052734,
+      "12.0": 0.008942842483520508,
+      "16.0": 0.03622245788574219,
+      "20.0": 0.10217523574829102,
+      "25.0": 0.24722862243652344,
+      "30.0": 0.5684106349945068,
+      "40.0": 2.990630626678467
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "WHAT DOES ONE CHROMATIN MARK COST, AND DOES IT DEPEND ON WHICH MARK?",
+    "====================================================================================================",
+    "  Displacement from a methyl falls ~15x within 15 A, so a mark should not need the whole",
+    "  structure solved -- only a local region. How large that region must be IS the per-mark cost,",
+    "  and it is measured here against the exact full-structure answer rather than assumed.",
+    "  Marks are not interchangeable: 5mC is STERIC and neutral, acetylation REMOVES a +1 charge,",
+    "  phosphorylation ADDS -2. A charge change was already shown to have a tail a steric change",
+    "  does not have, so the prediction stated before running is that they will cost differently.",
+    "\n  1KX5 no waters: 13625 atoms, 263765 springs. Same network as the propagation run, so the",
+    "  numbers are directly comparable to it.",
+    "\n  MARK SITES (chosen as the most buried of each type, so surroundings are comparable):",
+    "    5mC on DC C5 atom 5093 | acetyl on LYS NZ atom 9037 | phospho on THR OG1 atom 6868",
+    "\n  REGION SIZE NEEDED. Relative error over a FIXED 10 A set of atoms around the mark",
+    "  (fixed, so every column answers the same question) against the EXACT full-structure solve.",
+    "  Lower is better; the smallest region reaching ~0.05 is the per-mark cost.",
+    "    mark                                   8A      12A      16A      20A      25A      30A      40A  full |u|max",
+    "    5mC          steric, neutral        0.400    0.571    0.474    0.434    0.391    0.373    0.350    3.428e-01",
+    "    acetyl-K     +1 -> 0 charge         0.588    0.584    0.418    0.228    0.119    0.077    0.035    1.654e+00",
+    "    acetyl-K     screened 150mM         0.337    0.379    0.261    0.144    0.076    0.053    0.046    9.497e-01",
+    "    phospho-S    0 -> -2 charge         0.280    0.378    0.305    0.298    0.284    0.264    0.174    3.385e+00",
+    "    phospho-S    screened 150mM         0.174    0.105    0.060    0.043    0.017    0.025    0.039    1.341e+00",
+    "\n  COST OF ONE REGION SOLVE (seconds, sparse direct solve on this box)",
+    "    Rreg             8A        12A        16A        20A        25A        30A        40A",
+    "    atoms            93        269        555        844       1410       2298       4607",
+    "    seconds       0.003      0.009      0.036      0.102      0.247      0.568      2.991",
+    "\n  READING",
+    "    region needed:  5mC None   acetyl 40.0   acetyl+salt 40.0   phospho None   phospho+salt 20.0",
+    "    THE PREDECLARED PREDICTION WAS BACKWARDS, AND THE DATA SAYS SO PLAINLY. I predicted the",
+    "    steric mark would localise and the charge marks would not, reasoning from the ENERGY",
+    "    result where a charge change had a non-convergent tail. The opposite happened: charge",
+    "    marks converge and the neutral methyl does not.",
+    "    THE REASON IS THE RATIO, NOT THE TAIL. What a region approximation must capture is the",
+    "    LOCAL part of the response relative to the global part. A charge change drives a large",
+    "    local deformation -- peak |u| of 1.7 to 3.4 A here -- so the local term dominates and a",
+    "    finite region captures it. A methyl drives a peak of only 0.34 A, and the propagation",
+    "    run already showed its displacement flattening rather than decaying, i.e. a floor of",
+    "    whole-particle breathing. When the local response is that small, that floor is a LARGE",
+    "    FRACTION of it, and no boundary-fixed region can reproduce a global mode.",
+    "    So energy locality and structural locality are different properties and one does not",
+    "    predict the other. That is the correction this run makes to the earlier reading.",
+    "    SALT DECIDES THE CHARGE MARKS. Screened at 150 mM phosphorylation localises by 20 A; unscreened it does not converge in this sweep at all. So the cost of a",
+    "    charge mark is set by whether the model includes screening -- a modelling choice, not",
+    "    a fact about chromatin, and it must not be quoted as one.",
+    "\n  CHROMOSOME ARITHMETIC, using the measured seconds-per-region above.",
+    "  This is the cost of placing marks INDEPENDENTLY -- one local solve each. It is a floor, and",
+    "  it is only the right number if marks do not interact; where two marks fall within one",
+    "  region they need a joint solve and this understates them.",
+    "    5mC on chr22                   3.44e+05 marks",
+    "      does not converge -- no local cost exists",
+    "    histone marks on chr22         2.54e+06 marks",
+    "      at a 20 A region (0.102 s each):    2.6e+05 core-s =      72.1 core-h =       3 core-days",
+    "      at a 30 A region (0.568 s each):   1.44e+06 core-s =       401 core-h =    16.7 core-days",
+    "      at a 40 A region (2.991 s each):    7.6e+06 core-s =  2.11e+03 core-h =    87.9 core-days",
+    "    whole diploid genome is ~122x chr22, so multiply by that for a genome-wide figure."
+  ]
+}
