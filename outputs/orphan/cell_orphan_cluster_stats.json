@@ -1,0 +1,232 @@
+{
+  "n": 400,
+  "arms": {},
+  "subsets": {
+    "ALL": {
+      "n_reactions": 400,
+      "n_clusters": 293,
+      "largest_cluster": 19,
+      "largest_key": "SLC22A10",
+      "arms": {
+        "closed_book": {
+          "reaction_weighted": 0.645,
+          "cluster_weighted": 0.7012229806598407,
+          "ci": [
+            0.5626422438609227,
+            0.7230401583710406
+          ]
+        },
+        "examples": {
+          "reaction_weighted": 0.8025,
+          "cluster_weighted": 0.8116579845518233,
+          "ci": [
+            0.7391304347826086,
+            0.8606356968215159
+          ]
+        },
+        "shuffled_examples": {
+          "reaction_weighted": 0.7175,
+          "cluster_weighted": 0.7464448236632537,
+          "ci": [
+            0.6326530612244898,
+            0.7912371134020618
+          ]
+        }
+      },
+      "gain": {
+        "mean": 0.1575,
+        "ci": [
+          0.10395878873601645,
+          0.20963855421686747
+        ],
+        "wins": 71,
+        "losses": 8
+      }
+    },
+    "obscure": {
+      "n_reactions": 80,
+      "n_clusters": 38,
+      "largest_cluster": 19,
+      "largest_key": "SLC22A10",
+      "arms": {
+        "closed_book": {
+          "reaction_weighted": 0.4625,
+          "cluster_weighted": 0.6217105263157895,
+          "ci": [
+            0.2647058823529412,
+            0.723085106382978
+          ]
+        },
+        "examples": {
+          "reaction_weighted": 0.6875,
+          "cluster_weighted": 0.7398891966759003,
+          "ci": [
+            0.5230769230769231,
+            0.8732394366197183
+          ]
+        },
+        "shuffled_examples": {
+          "reaction_weighted": 0.475,
+          "cluster_weighted": 0.6304824561403508,
+          "ci": [
+            0.2745054659031755,
+            0.7321491448692147
+          ]
+        }
+      },
+      "gain": {
+        "mean": 0.225,
+        "ci": [
+          0.08,
+          0.3333333333333333
+        ],
+        "wins": 18,
+        "losses": 0
+      }
+    },
+    "answer NOT shown": {
+      "n_reactions": 200,
+      "n_clusters": 152,
+      "largest_cluster": 19,
+      "largest_key": "SLC22A10",
+      "arms": {
+        "closed_book": {
+          "reaction_weighted": 0.62,
+          "cluster_weighted": 0.7006578947368421,
+          "ci": [
+            0.490272373540856,
+            0.7444444444444445
+          ]
+        },
+        "examples": {
+          "reaction_weighted": 0.75,
+          "cluster_weighted": 0.7882617728531857,
+          "ci": [
+            0.6530593207432226,
+            0.846561598124098
+          ]
+        },
+        "shuffled_examples": {
+          "reaction_weighted": 0.68,
+          "cluster_weighted": 0.7450657894736842,
+          "ci": [
+            0.5397420722307862,
+            0.8010760114061664
+          ]
+        }
+      },
+      "gain": {
+        "mean": 0.13,
+        "ci": [
+          0.06629834254143646,
+          0.19262389081064812
+        ],
+        "wins": 26,
+        "losses": 0
+      }
+    },
+    "obscure AND not shown": {
+      "n_reactions": 53,
+      "n_clusters": 28,
+      "largest_cluster": 19,
+      "largest_key": "SLC22A10",
+      "arms": {
+        "closed_book": {
+          "reaction_weighted": 0.41509433962264153,
+          "cluster_weighted": 0.6428571428571429,
+          "ci": [
+            0.20430107526881722,
+            0.75
+          ]
+        },
+        "examples": {
+          "reaction_weighted": 0.6037735849056604,
+          "cluster_weighted": 0.743421052631579,
+          "ci": [
+            0.4461538461538462,
+            0.8648648648648649
+          ]
+        },
+        "shuffled_examples": {
+          "reaction_weighted": 0.41509433962264153,
+          "cluster_weighted": 0.6428571428571429,
+          "ci": [
+            0.20588235294117646,
+            0.7575757575757576
+          ]
+        }
+      },
+      "gain": {
+        "mean": 0.18867924528301888,
+        "ci": [
+          0.030303030303030304,
+          0.273972602739726
+        ],
+        "wins": 10,
+        "losses": 0
+      }
+    }
+  },
+  "concentration": {
+    "cluster": "SLC22A10",
+    "n": 19,
+    "of": 80,
+    "without": {
+      "closed_book": 0.6065573770491803,
+      "examples": 0.8032786885245902,
+      "shuffled_examples": 0.6229508196721312
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "OBSCURE NUMBERS, RESTATED CLUSTER-WEIGHTED",
+    "====================================================================================================",
+    "  The obscure bin's 80 reactions are not 80 independent trials: reactions sharing a catalyst",
+    "  are one fact seen several times, and a model gets a whole cluster right or wrong together.",
+    "  That does not move the estimate; it widens the interval, and the level is about to be fed",
+    "  into a cell model as a constant. The paired GAIN is robust to this. The LEVEL is not.",
+    "",
+    "  ALL: 400 reactions over 293 distinct catalyst sets | largest cluster 19 (SLC22A10)",
+    "    arm                   reaction-wtd  cluster-wtd        cluster 95% CI",
+    "    closed_book                  0.645        0.701      [0.563, 0.723]",
+    "    examples                     0.802        0.812      [0.739, 0.861]",
+    "    shuffled_examples            0.718        0.746      [0.633, 0.791]",
+    "    GAIN ex - closed             0.158                   [0.104, 0.210]  71w/8l  excludes 0",
+    "",
+    "  obscure: 80 reactions over 38 distinct catalyst sets | largest cluster 19 (SLC22A10)",
+    "    arm                   reaction-wtd  cluster-wtd        cluster 95% CI",
+    "    closed_book                  0.463        0.622      [0.265, 0.723]",
+    "    examples                     0.688        0.740      [0.523, 0.873]",
+    "    shuffled_examples            0.475        0.630      [0.275, 0.732]",
+    "    GAIN ex - closed             0.225                   [0.080, 0.333]  18w/0l  excludes 0",
+    "",
+    "  answer NOT shown: 200 reactions over 152 distinct catalyst sets | largest cluster 19 (SLC22A10)",
+    "    arm                   reaction-wtd  cluster-wtd        cluster 95% CI",
+    "    closed_book                  0.620        0.701      [0.490, 0.744]",
+    "    examples                     0.750        0.788      [0.653, 0.847]",
+    "    shuffled_examples            0.680        0.745      [0.540, 0.801]",
+    "    GAIN ex - closed             0.130                   [0.066, 0.193]  26w/0l  excludes 0",
+    "",
+    "  obscure AND not shown: 53 reactions over 28 distinct catalyst sets | largest cluster 19 (SLC22A10)",
+    "    arm                   reaction-wtd  cluster-wtd        cluster 95% CI",
+    "    closed_book                  0.415        0.643      [0.204, 0.750]",
+    "    examples                     0.604        0.743      [0.446, 0.865]",
+    "    shuffled_examples            0.415        0.643      [0.206, 0.758]",
+    "    GAIN ex - closed             0.189                   [0.030, 0.274]  10w/0l  excludes 0",
+    "",
+    "  CONCENTRATION -- a result that moves when one gene is dropped is a result about that gene.",
+    "    largest obscure cluster: SLC22A10 (19 of 80 reactions, 23.8%)",
+    "    arm                    obscure   without it    delta",
+    "    closed_book              0.463        0.607   +0.144",
+    "    examples                 0.688        0.803   +0.116",
+    "    shuffled_examples        0.475        0.623   +0.148",
+    "\n  READING",
+    "    LEVEL: 0.688 reaction-weighted is really 0.740 per distinct fact,",
+    "    with a cluster-bootstrap interval of [0.523, 0.873] -- far wider",
+    "    than the +-0.05 a 80-row standard error implies, because there are only 38 facts.",
+    "    ANY MODEL CONSUMING THIS NUMBER INHERITS THAT WIDTH and should carry it as an interval.",
+    "    GAIN: +0.225 with CI [0.080, 0.333], excluding zero.",
+    "    The in-context effect is real at the level of distinct facts, not just distinct rows.",
+    "    That is the claim worth keeping, and it is the one that survives."
+  ]
+}
