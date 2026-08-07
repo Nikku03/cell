@@ -81,7 +81,7 @@ from nexus_methyl_propagate import (elastic_network, rigid_basis, project, exact
                                     methyl_position, methyl_forces, FCAP)
 
 OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
-RREG = (8.0, 12.0, 16.0, 20.0, 25.0, 30.0, 40.0)
+RREG = (4.0, 5.0, 6.0, 8.0, 12.0, 16.0, 20.0, 25.0, 30.0, 40.0)
 DEBYE = 7.9
 SEED = 41
 EVAL_R = 10.0            # convergence judged on a FIXED set of atoms within this radius of the mark.
@@ -154,7 +154,11 @@ def region_solve(K, co, f, k, Rreg, Q):
 
 def near_err(u, u_ex, co, k, Rreg):
     d = np.linalg.norm(co - co[k], axis=1)
-    m = d < min(EVAL_R, Rreg * 0.9)     # fixed set, except where the region is smaller than the set
+    # STRICTLY FIXED, including when the region is SMALLER than the evaluation set. Clipping the set to
+    # the region would let a tiny sphere be graded only where it happens to have solved something, which
+    # is precisely the flattery being tested for: a 4 A region predicts exactly zero displacement beyond
+    # 4 A, and that zero IS its error. Grading it only inside itself would hide the entire failure.
+    m = d < EVAL_R
     if m.sum() < 5:
         return float("nan"), 0
     A = np.linalg.norm(u.reshape(-1, 3)[m], axis=1)
