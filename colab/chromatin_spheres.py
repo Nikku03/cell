@@ -96,7 +96,9 @@ def laplacian(nb, anchors, lo, shuffle_rng=None):
     sig = [w for _, w in anchors]
     if shuffle_rng is not None:
         # keep the COUNT and the signal values, relocate the positions: a density control, not a null model
-        pos = sorted(shuffle_rng.choice(nb, len(pos), replace=False).tolist())
+        # with replacement: real anchors also collide onto shared beads (151 anchors, 160 beads), so
+        # sampling without replacement would give the control a MORE spread-out topology than the truth
+        pos = sorted(shuffle_rng.choice(nb, len(pos), replace=True).tolist())
     L = np.zeros((nb, nb))
 
     def bond(i, j, k):
@@ -118,6 +120,17 @@ def sample(L, n_conf, rng):
     A = V[:, keep] / np.sqrt(w[keep])              # x = A z  gives Cov(x) = L^+
     z = rng.standard_normal((n_conf, 3, A.shape[1]))
     return np.einsum("ij,ncj->nci", A, z).transpose(0, 2, 1)    # (n_conf, n_beads, 3)
+
+
+def overlap_frac(X, r):
+    """fraction of non-bonded pairs whose spheres interpenetrate"""
+    n = X.shape[1]
+    d = np.linalg.norm(X[:, :, None, :] - X[:, None, :, :], axis=3)
+    iu = np.arange(n)
+    d[:, iu, iu] = np.inf
+    d[:, iu[:-1], iu[1:]] = np.inf
+    d[:, iu[1:], iu[:-1]] = np.inf
+    return float((d < 2 * r).mean())
 
 
 def relax(X, r, n_sweep):
@@ -237,6 +250,7 @@ def main():
     exps = {a: [] for a in ("measured", "phantom", "spheres")}
     nb = WIN // RES
     used = 0
+    ovs = []
     for (lo, hi) in WINDOWS:
         anch = ctcf_anchors(lo, hi)
         if len(anch) < 6:
@@ -257,7 +271,11 @@ def main():
             X = sample(L, N_CONF, np.random.default_rng(SEED + used))
             b0 = np.linalg.norm(np.diff(X, axis=1), axis=2).mean()
             if arm != "phantom":
+                ov0 = overlap_frac(X, R_FRAC * b0)
                 X = relax(X, R_FRAC * b0, N_RELAX)
+                ov1 = overlap_frac(X, R_FRAC * b0)
+                if arm == "spheres":
+                    ovs.append((ov0, ov1))
             P = contact_map(X, CONTACT_R * b0)
             r, npts = dist_controlled(P, M)
             rows[arm].append(r)
@@ -281,6 +299,19 @@ def main():
         v = np.array(rows[a], float)
         res[a] = {"mean": float(np.nanmean(v)), "sd": float(np.nanstd(v)), "n": int(np.isfinite(v).sum())}
         report(f"    {a:<26}{np.nanmean(v):>9.3f}{np.nanstd(v):>8.3f}{int(np.isfinite(v).sum()):>9}")
+
+    if ovs:
+        a0 = float(np.mean([o[0] for o in ovs])); a1 = float(np.mean([o[1] for o in ovs]))
+        res["overlap_before"], res["overlap_after"] = a0, a1
+        report(f"\n  LIVENESS -- did the relaxation actually do anything?")
+        report(f"    overlapping non-bonded sphere pairs: {a0:.4f} before -> {a1:.4f} after "
+               f"({(1-a1/max(a0,1e-9)):.0%} removed)")
+        if a0 < 1e-4:
+            report("    *** THE PHANTOM ENSEMBLE BARELY OVERLAPS AT ALL, so there was nothing to fix and")
+            report("        'spheres ~ phantom' is a statement about the sphere RADIUS, not about physics.")
+        elif a1 > 0.5 * a0:
+            report("    *** RELAXATION DID NOT CONVERGE -- most overlaps survive, so the spheres arm is not")
+            report("        actually self-avoiding and any null below is uninterpretable.")
 
     report(f"\n  CONTACT-DECAY EXPONENT  P(s) ~ s^a   (a theory check the correlation cannot give)")
     for a in ("measured", "phantom", "spheres"):
