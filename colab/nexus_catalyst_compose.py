@@ -79,9 +79,26 @@ def dump():
     E, rx, vocab, cats = M.load_bench()
     B = T.build()
     steps = B["steps"]
+    # DROP THE GIVEAWAYS. In protein-substrate reactions the enzyme is very often a named participant --
+    # 159 of a first draw of 400, against 34 of 400 on the metabolic benchmark. The language arm reads those
+    # off, which would inflate its ordering and leave a re-ranker nothing to improve, masking any real
+    # effect. Excluding them is also the more faithful orphan setting, not a less faithful one: for a
+    # genuinely unannotated reaction the catalyst is by definition not sitting in the participant list.
     rng = np.random.default_rng(SEED)
-    pick = rng.choice(len(rx), min(N_RX, len(rx)), replace=False)
-    sel = [rx[int(k)] for k in sorted(pick)]
+    order = rng.permutation(len(rx))
+    sel, drop = [], 0
+    for k in order:
+        r = rx[int(k)]
+        s_ = steps[r["rx"]]
+        names = " ".join((p.get("name") or "") for w in ("in", "out") for p in (s_.get(w) or []))
+        if any(g in names for g in B["cats"][r["rx"]]):
+            drop += 1
+            continue
+        sel.append(r)
+        if len(sel) >= N_RX:
+            break
+    sel = sorted(sel, key=lambda r: r["rx"])
+    print(f"  dropped {drop} reactions whose catalyst is named in the reaction (the giveaways)")
     out = []
     for pid, r in enumerate(sel):
         s = steps[r["rx"]]
@@ -117,7 +134,8 @@ def dump():
               if any(g in " ".join(q["name"] for w in ("inputs", "outputs") for q in out[pid][w])
                      for g in B["cats"][r["rx"]]))
     print(f"  wrote {len(out)} puzzles -> {PUZZLES}, batches in {dd}")
-    print(f"  answer named in the reaction: {gim}/{len(out)} (scored as a separate stratum)")
+    assert gim == 0, f"{gim} giveaways survived the filter"
+    print(f"  giveaways remaining: {gim} (asserted zero)")
     return 0
 
 
