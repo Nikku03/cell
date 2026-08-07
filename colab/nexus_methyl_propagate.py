@@ -268,6 +268,43 @@ def factor_blocks(K, spheres):
     return facs
 
 
+def schwarz_pcg(K, Q, f, spheres, facs, w_atom, u_exact, maxiter=400):
+    """The SAME sphere tiling, used as a preconditioner for conjugate gradients instead of as a bare sweep.
+
+    This exists to settle a question the plain sweeps cannot. schwarz_true converges toward the exact field
+    but slowly -- one-level Schwarz with no coarse space damps high-frequency error fast and low-frequency
+    error at a rate ~1 - (H/L)^2, and the response to a methyl is dominated by the softest, most global
+    modes. So "still at 0.95 after 60 sweeps" is ambiguous between 'slow' and 'wrong', and the distinction
+    is the whole point of the comparison.
+
+    CG accelerates the same operator without changing what it computes. If the tiling reaches the exact
+    field this way, then its fixed point was right all along and the sweeps were merely slow -- which is a
+    statement about cost. If it does not, the tiling is wrong -- a statement about validity. Those are very
+    different verdicts and they should not be conflated by an iteration budget.
+    """
+    n3 = K.shape[0]
+    w = np.repeat(w_atom, 3)
+
+    def M(v):
+        out = np.zeros(n3)
+        for (inner, outer), (dof, Ainv, A) in zip(spheres, facs):
+            out[dof] += w[dof] * Ainv.dot(v[dof])
+        return project(Q, out)
+
+    op = LinearOperator((n3, n3), matvec=lambda v: project(Q, K.dot(project(Q, v))), dtype=float)
+    pre = LinearOperator((n3, n3), matvec=M, dtype=float)
+    b = project(Q, f.ravel())
+    it = {"k": 0}
+
+    def cb(xk):
+        it["k"] += 1
+
+    u, info = cg(op, b, M=pre, rtol=1e-8, maxiter=maxiter, callback=cb)
+    u = project(Q, u)
+    err = float(np.linalg.norm(u - u_exact) / max(np.linalg.norm(u_exact), 1e-30))
+    return u, it["k"], err, int(info)
+
+
 def partition_weights(spheres, n):
     """Each atom's share, 1/(number of sphere interiors containing it).
 
@@ -465,30 +502,50 @@ def main():
             out = {}
             for gname, gflag in (("schwarz_true", True), ("schwarz_local", False)):
                 u, hist = schwarz(K, Q, f, sph, facs, gflag, u_ex, w_atom)
-                out[gname] = {"sweeps": len(hist), "final_rel_err": hist[-1], "hist": hist[:12]}
+                # DID IT STOP BECAUSE IT ARRIVED, OR BECAUSE IT STOPPED MOVING? Those are opposite verdicts
+                # and the error alone cannot tell them apart, so the per-sweep change is recorded too.
+                stalled = len(hist) < MAX_SWEEP
+                drift = abs(hist[-1] - hist[-2]) if len(hist) > 1 else float("nan")
+                out[gname] = {"sweeps": len(hist), "final_rel_err": hist[-1], "hist": hist[:12],
+                              "reached_fixed_point": bool(stalled), "last_change": float(drift)}
                 report(f"    R={R:>4.0f} A | {len(sph):>5} spheres | {gname:<14} "
-                       f"{len(hist):>3} sweeps -> relative error {hist[-1]:.3e}")
-                if gname == "schwarz_true":
-                    rows = shell_table(u_ex, u, dk)
+                       f"{len(hist):>3} sweeps -> rel err {hist[-1]:.3e}  "
+                       f"{'FIXED POINT' if stalled else 'still moving'} (last change {drift:.1e})")
+            up, nit, perr, pinfo = schwarz_pcg(K, Q, f, sph, facs, w_atom, u_ex)
+            out["schwarz_true_accelerated"] = {"iters": nit, "rel_err": perr, "info": pinfo}
+            report(f"    R={R:>4.0f} A | {len(sph):>5} spheres | {'same tiling + CG':<14} "
+                   f"{nit:>3} iters -> rel err {perr:.3e}")
             res["arms"][f"R{R:g}"] = {"n_spheres": len(sph), **out}
 
         report("\n  READING")
         a = res["arms"]
         if not a:
             report("  no radius produced a valid tiling; nothing to compare.")
-            json.dump({"test": "nexus_methyl_propagate", **res}, open(OUT / "nexus_methyl_propagate.json", "w"), indent=2)
+            json.dump({"test": "nexus_methyl_propagate", **res},
+                      open(OUT / "nexus_methyl_propagate.json", "w"), indent=2)
             return 0
         best_true = min(a[k]["schwarz_true"]["final_rel_err"] for k in a)
         best_loc = min(a[k]["schwarz_local"]["final_rel_err"] for k in a)
-        report(f"  best relative error:  schwarz_true {best_true:.3e}   schwarz_local {best_loc:.3e}")
-        if best_true > 0.1:
-            # THE COMPARISON IS ONLY MEANINGFUL IF THE CORRECT METHOD WORKED. Both arms sitting at 1.000
-            # means both failed, and the first version of this branch read that as "they agree" -- the two
-            # schemes reaching the same wrong place is the opposite of the claim it printed.
-            report("  NEITHER SCHEME CONVERGED. schwarz_true is textbook and should reach the exact field, so")
-            report(f"  a best error of {best_true:.3e} means the SETUP is wrong, not that spheres cannot carry")
-            report("  structure. No claim is made about the proposal from this run; the sweep count, the")
-            report("  overlap width and the local-block conditioning are the things to check first.")
+        best_acc = min(a[k]["schwarz_true_accelerated"]["rel_err"] for k in a)
+        loc_fixed = all(a[k]["schwarz_local"]["reached_fixed_point"] for k in a)
+        report(f"  best relative error:  schwarz_true {best_true:.3e}   schwarz_local {best_loc:.3e}"
+               f"   same tiling + CG {best_acc:.3e}")
+        if best_acc < 0.05 and best_loc > 0.5 and loc_fixed:
+            report("  THE TILING IS FINE. THE COMMUNICATION RULE IS WHAT DECIDES IT.")
+            report(f"  The SAME spheres reach the exact field to {best_acc:.1e} once each sphere is corrected")
+            report("  against a whole-structure residual. So sphere coverage genuinely can carry a structural")
+            report("  change -- the geometry was never the problem.")
+            report(f"  But spheres that see ONLY THEIR OWN ATOMS stop dead at {best_loc:.3f} relative error and")
+            report("  STOP BECAUSE THEY HAVE CONVERGED, not because they ran out of sweeps. They settle onto")
+            report("  the exact solution of a network cut at every sphere boundary, and from inside the scheme")
+            report("  that is indistinguishable from success: the updates go to zero, everything looks done.")
+            report("  THAT IS THE FALSE INFORMATION. It is not noise in the answer, it is a confident answer")
+            report("  to a different question, and no amount of extra sweeps or smaller spheres repairs it.")
+            report("  What repairs it is one global pass per sweep -- which is the thing the scheme was meant")
+            report("  to avoid needing.")
+        elif best_acc >= 0.05:
+            report("  THE CORRECT METHOD DID NOT REACH THE FIELD EITHER, so the setup is what is in question")
+            report("  and no verdict on the proposal is recorded from this run.")
         elif best_loc > 10 * max(best_true, 1e-12):
             report("  SELF-CONTAINED SPHERES CONVERGE TO THE WRONG ANSWER, AND CONVERGE CONFIDENTLY.")
             report("  Spheres that see only their own atoms settle to the exact solution of a network cut at")
