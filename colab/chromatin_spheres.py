@@ -70,8 +70,14 @@ WIN = 4_000_000         # 160 beads per window
 WINDOWS = [(16_000_000 + k * WIN, 16_000_000 + (k + 1) * WIN) for k in range(8)]
 N_CONF = 300            # conformations per window; the ensemble average is what is compared
 K_LOOP = 3.0            # loop-bond stiffness relative to backbone, as in rouse_gate
-R_FRAC = 0.55           # sphere radius as a fraction of the mean backbone bond length. 0.5 = adjacent
+R_FRAC = float(os.environ.get("SPHERE_R_FRAC", 0.55))
+                        # sphere radius as a fraction of the mean backbone bond length. 0.5 = adjacent
                         # spheres just touch; above that the chain is genuinely crowded.
+                        # THIS IS THE KNOB THE HEADLINE DEPENDS ON. "Self-avoidance changes nothing" is only
+                        # a claim about chromatin if the spheres were big enough to matter -- at a small
+                        # radius almost nothing overlaps and the result is a statement about the radius. So
+                        # it is settable, and the conclusion is only reportable after a sweep. The run prints
+                        # the pre-relaxation overlap fraction so the crowding is visible next to the answer.
 N_RELAX = 60            # overlap-relaxation sweeps. Not timesteps -- there is no velocity or force law,
                         # only a geometric projection, so this number is a convergence knob not a duration.
 CONTACT_R = 2.0         # contact if centres are within CONTACT_R * bond lengths
@@ -244,6 +250,8 @@ def main():
     report("  Scored against measured K562 Hi-C streamed from a 32 GB remote file by range request.")
     report("  EVERY ARM IS DISTANCE-CONTROLLED: both sides z-scored within each separation bin, so 'contacts")
     report("  fall off with distance' scores zero and only topology can earn anything.")
+    report(f"  SPHERE RADIUS {R_FRAC:.2f} x bond length (0.50 = adjacent beads just touch). A null result here")
+    report("  is only about chromatin if this is large enough to crowd the chain -- see the overlap fraction.")
 
     rng = np.random.default_rng(SEED)
     rows = {a: [] for a in ("phantom", "spheres", "spheres_shuffled_ctcf")}
@@ -355,9 +363,10 @@ def main():
         report("  null sits at zero, so the polymer model earns its number -- excluded volume just is not the")
         report("  part that earns it.")
 
-    json.dump({"test": "chromatin_spheres", "windows": used, "res": RES, "arms": res,
-               "n_conf": N_CONF, "log": log}, open(OUT / "chromatin_spheres.json", "w"), indent=2)
-    report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'chromatin_spheres.json'}")
+    name = "chromatin_spheres.json" if abs(R_FRAC - 0.55) < 1e-9 else f"chromatin_spheres_r{R_FRAC:g}.json"
+    json.dump({"test": "chromatin_spheres", "windows": used, "res": RES, "arms": res, "r_frac": R_FRAC,
+               "n_conf": N_CONF, "log": log}, open(OUT / name, "w"), indent=2)
+    report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/name}")
     return 0
 
 
