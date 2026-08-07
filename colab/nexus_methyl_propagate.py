@@ -86,7 +86,7 @@ from pathlib import Path
 
 import numpy as np
 import scipy.sparse as sp
-from scipy.sparse.linalg import cg
+from scipy.sparse.linalg import cg, LinearOperator
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from nexus_dna_spheres import fetch_pdb, load, VDW  # noqa: E402  -- same structure, same parser
@@ -100,6 +100,7 @@ OVERLAP = 0.35      # fraction of the radius that is Dirichlet boundary rather t
 MAX_SWEEP = 60
 EPS_LJ = 0.10
 SEED = 31
+FCAP = 5.0          # per-pair force cap, kcal/mol/A
 SHELLS = ((0, 3), (3, 6), (6, 10), (10, 15), (15, 25), (25, 40), (40, 70))
 
 
@@ -171,6 +172,10 @@ def methyl_forces(co, rad, mpos, anchor, cutoff=6.0):
     x = rmin / r[m]
     # dV/dr for V = eps (x^12 - 2 x^6);  positive dV/dr means attraction toward the methyl
     dVdr = EPS_LJ * (-12.0 * x ** 12 + 12.0 * x ** 6) / r[m]
+    # SOFT-CAP, as NEXUS itself soft-cores its LJ. Inserting a methyl into occupied space makes r^-12
+    # diverge, and one uncapped contact would set the entire response -- the field would be a picture of
+    # that single pair, not of methylation. Capped per pair, and the cap is reported with the result.
+    dVdr = np.clip(dVdr, -FCAP, FCAP)
     ev = d[m] / r[m][:, None]
     fj = (dVdr[:, None] * ev)                            # force on each neighbour j
     f[m] = fj
@@ -178,32 +183,49 @@ def methyl_forces(co, rad, mpos, anchor, cutoff=6.0):
     return f
 
 
-def project_rigid(co, v):
-    """Remove the six rigid-body modes. K is singular in them, so any component there is unphysical drift."""
+def rigid_basis(co):
+    """Orthonormal basis for the six rigid-body modes -- three translations and three rotations about the
+    centroid. K is exactly singular in these, and the network here is one connected component (checked), so
+    the null space is exactly six-dimensional and can be removed explicitly.
+
+    They are ORTHONORMALISED TOGETHER by QR rather than subtracted one at a time: the three rotation modes
+    are mutually orthogonal only for a body with symmetric inertia, which a nucleosome is not, so sequential
+    subtraction leaves a residual null component behind.
+    """
     n = len(co)
-    V = v.reshape(n, 3).copy()
-    V -= V.mean(0)
     c = co - co.mean(0)
-    for ax in range(3):
-        w = np.zeros((n, 3))
-        w[:, ax] = 1.0
-        w /= np.linalg.norm(w)
-        V -= (V * w).sum() * w
-    for ax in range(3):
+    B = np.zeros((3 * n, 6))
+    for a in range(3):
+        T = np.zeros((n, 3))
+        T[:, a] = 1.0
+        B[:, a] = T.ravel()
         e = np.zeros(3)
-        e[ax] = 1.0
-        w = np.cross(np.broadcast_to(e, c.shape), c)
-        nw = np.linalg.norm(w)
-        if nw > 1e-9:
-            w = w / nw
-            V -= (V * w).sum() * w
-    return V.ravel()
+        e[a] = 1.0
+        B[:, 3 + a] = np.cross(np.broadcast_to(e, c.shape), c).ravel()
+    Q, _ = np.linalg.qr(B)
+    return Q
 
 
-def exact_solve(K, co, f, tol=1e-10):
-    b = project_rigid(co, f.ravel())
-    u, info = cg(K, b, rtol=tol, maxiter=20000)
-    return project_rigid(co, u), info
+def project(Q, v):
+    return v - Q @ (Q.T @ v)
+
+
+def exact_solve(K, Q, f, tol=1e-10):
+    """Solve K u = f on the complement of the rigid modes.
+
+    THE PROJECTION HAS TO BE INSIDE THE ITERATION. Projecting the right-hand side once and the answer once
+    is not enough: CG regenerates a null-space component from roundoff at every step, and because K has no
+    restoring force there it grows without bound. A first run produced displacements of 1e9 A this way --
+    numerically enormous, physically meaningless, and it did not raise anything. So the operator handed to
+    CG is P K P, and convergence is checked rather than assumed.
+    """
+    n3 = K.shape[0]
+    op = LinearOperator((n3, n3), matvec=lambda v: project(Q, K.dot(project(Q, v))), dtype=float)
+    b = project(Q, f.ravel())
+    u, info = cg(op, b, rtol=tol, maxiter=20000)
+    u = project(Q, u)
+    resid = np.linalg.norm(project(Q, K.dot(u)) - b) / max(np.linalg.norm(b), 1e-30)
+    return u, info, float(resid)
 
 
 def build_spheres(co, R, overlap=OVERLAP):
@@ -246,7 +268,7 @@ def factor_blocks(K, spheres):
     return facs
 
 
-def schwarz(K, co, f, spheres, facs, global_residual, u_exact, max_sweep=MAX_SWEEP):
+def schwarz(K, Q, f, spheres, facs, global_residual, u_exact, max_sweep=MAX_SWEEP):
     """Additive Schwarz sweeps. `global_residual` is the ONE line that separates the two schemes.
 
     True Schwarz: r = f - K u using the WHOLE network, then each sphere corrects its interior from that.
@@ -255,8 +277,7 @@ def schwarz(K, co, f, spheres, facs, global_residual, u_exact, max_sweep=MAX_SWE
                   spheres communicating only through their overlaps -- and it converges happily to the
                   solution of a network that has been cut at every sphere boundary.
     """
-    n = len(co)
-    u = np.zeros(3 * n)
+    u = np.zeros(K.shape[0])
     hist = []
     ne = np.linalg.norm(u_exact)
     for it in range(max_sweep):
@@ -270,7 +291,7 @@ def schwarz(K, co, f, spheres, facs, global_residual, u_exact, max_sweep=MAX_SWE
                 # the sphere sees only itself: its own forces minus its own block's internal reaction
                 loc = fr[dof] - A.dot(u[dof])
             du[dof] += Ainv.dot(loc)
-        u = project_rigid(co, u + du)
+        u = project(Q, u + du)
         err = np.linalg.norm(u - u_exact) / max(ne, 1e-30)
         hist.append(float(err))
         if len(hist) > 3 and abs(hist[-1] - hist[-2]) < 1e-6 * max(hist[-1], 1e-12):
@@ -323,6 +344,7 @@ def main():
     report("  transmitting stress they cannot actually transmit.")
 
     K, npair = elastic_network(co)
+    Q = rigid_basis(co)
     report(f"  elastic network: {npair} springs within {RC} A (covalent pairs under 1.8 A stiffened {K_BOND:.0f}x)")
     report(f"    built at {time.time()-t0:.0f}s")
 
@@ -366,19 +388,26 @@ def main():
         fmag = float(np.linalg.norm(f))
         dk = np.linalg.norm(co - mpos, axis=1)
 
-        u_ex, info = exact_solve(K, co, f)
+        u_ex, info, resid = exact_solve(K, Q, f)
+        if info != 0 or resid > 1e-6 or not np.isfinite(u_ex).all():
+            # THE REFERENCE IS THE WHOLE EXPERIMENT. If it did not solve, every arm below is graded against
+            # nonsense, and a first run reported 1e9 A displacements plus a cheerful "both schemes agree"
+            # because nothing checked. Stop here instead.
+            report(f"  *** {label}: exact solve FAILED (cg info={info}, residual {resid:.2e}). Nothing is")
+            report("      reportable against a reference that did not converge; site skipped.")
+            continue
         U = np.linalg.norm(u_ex.reshape(-1, 3), axis=1)
+        report(f"  exact solve converged: residual {resid:.2e}, max |u| = {U.max():.3e} A")
 
         # controls
-        f0 = np.zeros_like(f)
-        u_noise, _ = exact_solve(K, co, f0)
+        u_noise, _, _ = exact_solve(K, Q, np.zeros_like(f))
         nz = np.linalg.norm(u_noise)
         fs = np.zeros_like(f)
         hit = np.where(np.linalg.norm(f, axis=1) > 0)[0]
         pick = rng.choice(n, size=len(hit), replace=False)
         fs[pick] = f[hit]
         fs -= fs.mean(0)                      # keep it net-force-free like the real one
-        u_scr, _ = exact_solve(K, co, fs)
+        u_scr, _, _ = exact_solve(K, Q, fs)
 
         report(f"\n  --- {label.upper()} SITE ---   |f| = {fmag:.3f} kcal/mol/A over {len(hit)} atoms")
         report(f"  REACH: RMS displacement (A) by distance from the methyl, EXACT solve.")
@@ -419,7 +448,7 @@ def main():
             facs = factor_blocks(K, sph)
             out = {}
             for gname, gflag in (("schwarz_true", True), ("schwarz_local", False)):
-                u, hist = schwarz(K, co, f, sph, facs, gflag, u_ex)
+                u, hist = schwarz(K, Q, f, sph, facs, gflag, u_ex)
                 out[gname] = {"sweeps": len(hist), "final_rel_err": hist[-1], "hist": hist[:12]}
                 report(f"    R={R:>4.0f} A | {len(sph):>5} spheres | {gname:<14} "
                        f"{len(hist):>3} sweeps -> relative error {hist[-1]:.3e}")
@@ -429,10 +458,22 @@ def main():
 
         report("\n  READING")
         a = res["arms"]
+        if not a:
+            report("  no radius produced a valid tiling; nothing to compare.")
+            json.dump({"test": "nexus_methyl_propagate", **res}, open(OUT / "nexus_methyl_propagate.json", "w"), indent=2)
+            return 0
         best_true = min(a[k]["schwarz_true"]["final_rel_err"] for k in a)
         best_loc = min(a[k]["schwarz_local"]["final_rel_err"] for k in a)
         report(f"  best relative error:  schwarz_true {best_true:.3e}   schwarz_local {best_loc:.3e}")
-        if best_loc > 10 * max(best_true, 1e-12):
+        if best_true > 0.1:
+            # THE COMPARISON IS ONLY MEANINGFUL IF THE CORRECT METHOD WORKED. Both arms sitting at 1.000
+            # means both failed, and the first version of this branch read that as "they agree" -- the two
+            # schemes reaching the same wrong place is the opposite of the claim it printed.
+            report("  NEITHER SCHEME CONVERGED. schwarz_true is textbook and should reach the exact field, so")
+            report(f"  a best error of {best_true:.3e} means the SETUP is wrong, not that spheres cannot carry")
+            report("  structure. No claim is made about the proposal from this run; the sweep count, the")
+            report("  overlap width and the local-block conditioning are the things to check first.")
+        elif best_loc > 10 * max(best_true, 1e-12):
             report("  SELF-CONTAINED SPHERES CONVERGE TO THE WRONG ANSWER, AND CONVERGE CONFIDENTLY.")
             report("  Spheres that see only their own atoms settle to the exact solution of a network cut at")
             report("  every sphere boundary. Their residual shrinks the whole way, so from inside the scheme")
