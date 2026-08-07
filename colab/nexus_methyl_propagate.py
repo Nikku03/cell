@@ -282,7 +282,7 @@ def schwarz(K, Q, f, spheres, facs, global_residual, u_exact, max_sweep=MAX_SWEE
     ne = np.linalg.norm(u_exact)
     for it in range(max_sweep):
         r = f.ravel() - K.dot(u) if global_residual else None
-        du = np.zeros(3 * n)
+        du = np.zeros(K.shape[0])
         fr = f.ravel()
         for (inner, outer), (dof, Ainv, A) in zip(spheres, facs):
             if global_residual:
