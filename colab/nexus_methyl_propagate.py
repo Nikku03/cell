@@ -283,13 +283,20 @@ def schwarz_pcg(K, Q, f, spheres, facs, w_atom, u_exact, maxiter=400):
     different verdicts and they should not be conflated by an iteration budget.
     """
     n3 = K.shape[0]
-    w = np.repeat(w_atom, 3)
+    # THE WEIGHT MUST BE SPLIT ACROSS BOTH SIDES. Applying it on the left only -- which is what the sweep
+    # does, and is the standard RESTRICTED additive Schwarz -- gives a NON-SYMMETRIC operator. RAS is a
+    # perfectly good stationary iteration and a fine preconditioner for GMRES, but CG requires a symmetric
+    # positive-definite one and silently fails to converge otherwise: a first run sat at 0.88 after 400
+    # iterations and looked like the tiling being invalid, when it was the preconditioner not being
+    # symmetric. D^(1/2) (sum R^T A^-1 R) D^(1/2) is symmetric by construction.
+    ws = np.sqrt(np.repeat(w_atom, 3))
 
     def M(v):
         out = np.zeros(n3)
+        vs = ws * v
         for (inner, outer), (dof, Ainv, A) in zip(spheres, facs):
-            out[dof] += w[dof] * Ainv.dot(v[dof])
-        return project(Q, out)
+            out[dof] += Ainv.dot(vs[dof])
+        return project(Q, ws * out)
 
     op = LinearOperator((n3, n3), matvec=lambda v: project(Q, K.dot(project(Q, v))), dtype=float)
     pre = LinearOperator((n3, n3), matvec=M, dtype=float)
