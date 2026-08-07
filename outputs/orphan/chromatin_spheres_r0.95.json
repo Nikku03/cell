@@ -1,0 +1,77 @@
+{
+  "test": "chromatin_spheres",
+  "windows": 8,
+  "res": 25000,
+  "arms": {
+    "phantom": {
+      "mean": 0.09968891787260052,
+      "sd": 0.07629098919163495,
+      "n": 8
+    },
+    "spheres": {
+      "mean": 0.06321513332091017,
+      "sd": 0.04614196271455727,
+      "n": 8
+    },
+    "spheres_shuffled_ctcf": {
+      "mean": -0.007593291836375034,
+      "sd": 0.03694915347113354,
+      "n": 8
+    },
+    "overlap_before": 0.13869964192708334,
+    "overlap_after": 0.015840364583333332,
+    "exponent": {
+      "measured": -1.4053096461003798,
+      "phantom": -0.9605206529048974,
+      "spheres": -0.8361395682561522
+    }
+  },
+  "r_frac": 0.95,
+  "n_conf": 300,
+  "log": [
+    "====================================================================================================",
+    "SPHERE COVERAGE FOR CHROMATIN -- excluded volume without an integrator",
+    "====================================================================================================",
+    "  rouse_gate's GNM treats the fibre as a PHANTOM chain that passes through itself. Self-avoidance",
+    "  is the largest piece of physics it discards. Brute force restores it with Langevin dynamics at",
+    "  ~1 GPU-day/region; spheres restore it as 'spheres do not overlap' -- a geometric projection on",
+    "  an ensemble drawn free from the analytic covariance. No timestep, no force law, no trajectory.",
+    "  Scored against measured K562 Hi-C streamed from a 32 GB remote file by range request.",
+    "  EVERY ARM IS DISTANCE-CONTROLLED: both sides z-scored within each separation bin, so 'contacts",
+    "  fall off with distance' scores zero and only topology can earn anything.",
+    "  SPHERE RADIUS 0.95 x bond length (0.50 = adjacent beads just touch). A null result here",
+    "  is only about chromatin if this is large enough to crowd the chain -- see the overlap fraction.",
+    "    window 16-20 Mb | 151 anchors | phantom +0.082  spheres +0.053  shuffled -0.016",
+    "    window 20-24 Mb | 198 anchors | phantom -0.000  spheres -0.003  shuffled -0.087",
+    "    window 24-28 Mb | 105 anchors | phantom +0.091  spheres +0.082  shuffled -0.019",
+    "    window 28-32 Mb | 114 anchors | phantom +0.145  spheres +0.073  shuffled +0.036",
+    "    window 32-36 Mb | 69 anchors | phantom +0.274  spheres +0.165  shuffled +0.031",
+    "    window 36-40 Mb | 183 anchors | phantom +0.049  spheres +0.024  shuffled +0.016",
+    "    window 40-44 Mb | 105 anchors | phantom +0.066  spheres +0.064  shuffled -0.024",
+    "    window 44-48 Mb | 93 anchors | phantom +0.091  spheres +0.048  shuffled +0.003",
+    "\n  DISTANCE-CONTROLLED SPEARMAN vs measured Hi-C, 8 windows of 4 Mb at 25 kb",
+    "    arm                          mean r      sd  windows",
+    "    distance_only (null)          0.000   0.000        8",
+    "    phantom                       0.100   0.076        8",
+    "    spheres                       0.063   0.046        8",
+    "    spheres_shuffled_ctcf        -0.008   0.037        8",
+    "\n  LIVENESS -- did the relaxation actually do anything?",
+    "    overlapping non-bonded sphere pairs: 0.1387 before -> 0.0158 after (89% removed)",
+    "\n  CONTACT-DECAY EXPONENT  P(s) ~ s^a   (a theory check the correlation cannot give)",
+    "    measured                     -1.405",
+    "    phantom                      -0.961",
+    "    spheres                      -0.836",
+    "    A FREE Gaussian chain gives -1.5; this chain is crosslinked by loop bonds and the fit runs",
+    "    over 50-2000 kb, so -1.5 is not the expectation here and the phantom",
+    "    arm's -0.961 is not an error.",
+    "    Spheres move the exponent +0.124 against a measured -1.405.",
+    "\n  READING",
+    "  SPHERES HURT. 0.063 vs phantom 0.100 -- the relaxation is destroying topology rather",
+    "  than adding physics; check the bond restoration before reading this as a statement about",
+    "  chromatin.",
+    "  BUT THE TOPOLOGY ITSELF IS NOT NOTHING: +0.100 against -0.008 for the same",
+    "  anchors relocated at matched count and spacing. WHERE the loops are carries the signal; the",
+    "  null sits at zero, so the polymer model earns its number -- excluded volume just is not the",
+    "  part that earns it."
+  ]
+}
