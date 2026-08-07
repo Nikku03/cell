@@ -182,6 +182,19 @@ def main():
         top1 = float(np.mean([ys[g][int(np.argmax(pred[g]))] == 1 for g in range(ng)]))
         return float(roc_auc_score(y, p)), top1
 
+    # THE ONE-RULE BASELINE. The pilot noticed the true catalyst's within-group z has sd 0.731 rather than
+    # ~1.0 -- it sits closer to mid-pack than a random member. A network handed within-group z-scores can
+    # learn exactly that rule and nothing else. If "prefer the least extreme candidate" alone matches the
+    # networks, then that is what they found, and it is one post-hoc regularity on 60 groups rather than
+    # chemistry. Parameter-free, so it cannot overfit and needs no CV.
+    y_all = np.concatenate([Y[g] for g in range(ng)])
+    mid = np.concatenate([-np.abs(X[g][:, KEYS.index("best")]) for g in range(ng)])
+    auc_mid = float(roc_auc_score(y_all, mid))
+    top1_mid = float(np.mean([Y[g][int(np.argmax(-np.abs(X[g][:, KEYS.index("best")])))] == 1
+                              for g in range(ng)]))
+    midall = np.concatenate([-np.abs(X[g]).mean(1) for g in range(ng)])
+    auc_mid_all = float(roc_auc_score(y_all, midall))
+
     ARMS = ("logistic", "mlp", "mlp_untrained", "set_transformer", "set_transformer_untrained")
     report(f"\n  {'arm':<28}{'AUC':>8}{'sd':>7}{'top-1':>8}   ({N_FOLD}-fold grouped CV x {len(SEEDS)} seeds)")
     res = {}
@@ -189,6 +202,10 @@ def main():
         a, t = zip(*[run_cv(Y, s, arm) for s in SEEDS])
         res[arm] = {"auc": float(np.mean(a)), "sd": float(np.std(a)), "top1": float(np.mean(t))}
         report(f"  {arm:<28}{np.mean(a):>8.3f}{np.std(a):>7.3f}{np.mean(t):>8.3f}")
+    res["midpack_best"] = {"auc": auc_mid, "sd": 0.0, "top1": top1_mid}
+    res["midpack_allfeat"] = {"auc": auc_mid_all, "sd": 0.0, "top1": 0.0}
+    report(f"  {'midpack (-|z| of best)':<28}{auc_mid:>8.3f}{'-':>7}{top1_mid:>8.3f}   <- ONE RULE, 0 params")
+    report(f"  {'midpack (-mean|z| all feats)':<28}{auc_mid_all:>8.3f}{'-':>7}{'-':>8}   <- ONE RULE, 0 params")
     report(f"  {'best_single (pilot)':<28}{BEST_SINGLE:>8.3f}{'-':>7}{'-':>8}")
     report(f"  {'size_only (pilot control)':<28}{SIZE_ONLY_REF:>8.3f}{'-':>7}{'-':>8}   <- artefact control")
 
@@ -215,6 +232,7 @@ def main():
 
     report("\n  READING")
     st, lg = res["set_transformer"], res["logistic"]
+    mx_mid = max(auc_mid, auc_mid_all)
     clears = [a for a in ("logistic", "set_transformer")
               if res[a]["auc"] > perm[a]["p95"] and perm[a]["p_value"] < 0.05]
     if not clears:
@@ -228,8 +246,56 @@ def main():
         report("  never the bottleneck here -- the representation is. A bigger head on the same features is")
         report("  not the next move; a different measurement is.")
     else:
-        report(f"  SIGNAL: {clears} clear the permutation band. Read against the untrained twins before")
-        report("  treating it as real, then re-run the composition step.")
+        report(f"  {clears} clear the permutation band.")
+        if st["auc"] <= mx_mid + 0.02:
+            report(f"  BUT IT IS THE ONE RULE, NOT CHEMISTRY. A parameter-free 'prefer the least extreme")
+            report(f"  candidate' scores {mx_mid:.3f} against the network's {st['auc']:.3f}. The network")
+            report("  rediscovered the mid-pack regularity the pilot already flagged as a post-hoc oddity on")
+            report("  60 groups -- it is a property of how these decoys were drawn, not of which enzyme")
+            report("  catalyses the reaction, and it would not survive a fresh decoy set.")
+        else:
+            report(f"  And it beats the one-rule baseline ({mx_mid:.3f}), so it is not merely the mid-pack")
+            report("  regularity. Read against the untrained twins, then re-run the composition step.")
+    # ---------------- THE DECISIVE CONTROL: does the rule survive a DIFFERENT decoy draw? ----------------
+    # Run 1 of the pilot drew a different decoy set for the same 60 reactions (matched on sequence length
+    # rather than trimmed atoms). It is size-confounded and unusable as a biology result, but it is a
+    # genuinely independent sample of decoys, which is exactly what is needed to ask whether the mid-pack
+    # regularity is a property of CATALYSTS or of one draw.
+    alt = sorted(glob(str(OUT / "decoy_draw1" / "catalyst_pilot_features*.json")))
+    if alt:
+        da = {}
+        for f in alt:
+            da.update(json.load(open(f)))
+        ya, ma, zv = [], [], []
+        for rx, rec in da.items():
+            cat, F = rec["catalyst"], rec["feats"]
+            gs = sorted(F)
+            if cat not in gs or len(gs) < 5:
+                continue
+            b = np.array([F[g]["best"] for g in gs], float)
+            z = (b - b.mean()) / (b.std() + 1e-9)
+            ya += [1 if g == cat else 0 for g in gs]
+            ma += list(-np.abs(z))
+            zv.append(z[gs.index(cat)])
+        auc_alt = float(roc_auc_score(np.array(ya), np.array(ma)))
+        sd_alt = float(np.std(zv))
+        sd_this = float(np.std([X[g][int(np.argmax(Y[g])), KEYS.index("best")] for g in range(ng)]))
+        report(f"\n  DOES THE MID-PACK RULE SURVIVE A DIFFERENT DECOY DRAW? (run 1 of the pilot, same 60")
+        report(f"  reactions, decoys drawn on a different criterion -- an independent sample of decoys)")
+        report(f"    {'draw':<34}{'midpack AUC':>13}{'true-catalyst z sd':>22}")
+        report(f"    {'this run (atom-matched)':<34}{mx_mid:>13.3f}{sd_this:>22.3f}")
+        report(f"    {'run 1 (length-matched)':<34}{auc_alt:>13.3f}{sd_alt:>22.3f}")
+        report(f"    A random member of a z-scored set of 10 has sd ~1.0.")
+        if auc_alt < 0.55 and sd_alt > 0.9:
+            report(f"    IT DOES NOT SURVIVE. On the other draw the rule is worth {auc_alt:.3f} and the true")
+            report(f"    catalyst's z has sd {sd_alt:.3f} -- indistinguishable from a random member. So the")
+            report("    mid-pack regularity is a property of WHICH DECOYS WERE SAMPLED, not of catalysts, and")
+            report("    the network's apparent margin is fitted to one draw. It would not transfer.")
+        else:
+            report(f"    It reproduces ({auc_alt:.3f}, sd {sd_alt:.3f}), so the regularity is not draw-specific")
+            report("    and deserves a pre-registered test of its own.")
+        res["midpack_alt_draw"] = {"auc": auc_alt, "z_sd": sd_alt}
+
     report("\n  For contrast, where a network DID earn its margin in this project: GeoConv reached 0.617 on")
     report("  interface point pairs against a 0.566 best single feature -- but that task is scored on a")
     report("  complex that already exists. The model was not the difference; having the true interface was.")
