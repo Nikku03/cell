@@ -22045,3 +22045,68 @@ them. **A bigger head on the same features is not the next move; a different mea
 For contrast, where a network genuinely earned its margin in this project: GeoConv reached 0.617 against a
 0.566 best single feature — but that task is scored on a complex that **already exists**. The model was not the
 difference there either; having the true interface was.
+
+---
+
+# ESM-2 embeddings: the first channel that moves
+
+`nexus_catalyst_esm.py`. Everything before this failed on the same axis. Docking statistics landed in
+[0.450, 0.549]; a learned head on them cleared no permutation null; co-expression and co-dependency added
++0.017 (p=0.30). Every failure was about the **representation**, so this changes the representation and drops
+docking entirely: ESM-2 embeddings, learned from ~250M sequences, of the enzyme and of the substrate.
+
+It also gets **37× more data**. Docking needed both partners compact enough for a 218 Å box; sequence does
+not. 2,231 reactions have a known catalyst and a protein substrate, against 60 that were dockable.
+
+## Three splits, and the gap between them is the result
+
+    split                ESM AUC
+    reaction_disjoint      0.918     enzyme may be a training positive -- the flattering number
+    enzyme_disjoint        0.732     no test enzyme ever a training positive
+    homology_disjoint      0.682     no paralog above ~50% identity shared with training
+
+**Removing paralogs costs only −0.050.** The signal is not paralog recognition — it transfers to enzyme
+families the model has not seen. That was the confound most likely to kill this result, and it didn't.
+
+## Homology-disjoint, the honest column
+
+    freq (train counts)      0.500   top-1 0.000   <- uninformative by construction, and that is the point
+    esm_pair                 0.682   top-1 0.278
+    esm_enzyme_only          0.550   top-1 0.157   <- substrate zeroed
+    esm_shuffled_substrate   0.529   top-1 0.110   <- paired with the WRONG substrate
+    esm_untrained            0.538   top-1 0.129
+
+Every control passes at the hardest split. The substrate is worth **+0.132** over zeroing it and **+0.153**
+over pairing with the wrong one, so this is enzyme–substrate matching and not a catalyst prior dressed up.
+Training is worth +0.144 over random init. Frequency sits at 0.500 by construction under this split, so none
+of it is popularity — and counting was the strongest hand-built signal this project ever found.
+
+**top-1 is 0.278 against 0.100 chance**: naming the right enzyme first, out of ten, for reactions whose
+catalyst has no close homolog anywhere in training.
+
+## Two design decisions that made the number readable
+
+**Decoys are keyed on (seed, fold, reaction), not drawn from a running RNG.** The first version gave each arm
+a different decoy draw, which would have made a 0.03 margin either a better model or a luckier sample.
+
+**Under the held-out splits, decoys come from the SAME fold as the true catalyst.** Otherwise decoys are
+training positives while the true catalyst never is — a leak pointing the wrong way, which would have made the
+honest splits look worse than they are.
+
+## What it does and does not license
+
+This is the first thing in the project that would move the orphan estimate off 0.463. Two limits stay attached:
+
+- The homology threshold catches paralogs to roughly 50% identity (calibrated: 0.610 at ~93%, 0.307 at ~84%,
+  0.03 at ~50%, 0.000 unrelated). It does **not** catch remote homology below that, so 0.682 remains an
+  upper bound.
+- It covers the **23%** of enzyme-shaped orphans that have a protein substrate. The metabolite-pocket
+  majority needs a different substrate representation than a protein sequence embedding.
+
+## The pattern across the whole line
+
+Three times now the answer has been the same and it was never the architecture. GeoConv beat hand features on
+interface point pairs because it had the true interface. The set transformer beat nothing on eight docking
+summaries because eight summaries do not contain the answer. And ESM works here because a 250M-sequence
+representation carries what a rigid-body scan does not. **Capacity was never the variable; the representation
+always was.**
