@@ -88,9 +88,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 CACHE = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
 PDB_ID = "1KX5"
-RADII = (4.0, 6.0, 8.0, 10.0, 12.0, 16.0, 20.0, 30.0, 40.0)
+RADII = (4.0, 6.0, 8.0, 10.0, 12.0, 16.0, 20.0, 24.0, 32.0, 40.0)
 SHELLS = ((0, 4), (4, 8), (8, 12), (12, 20), (20, 35), (35, 60))
 SEED = 17
+DEBYE = 7.9      # Debye length at 150 mM monovalent salt, Angstrom. Real chromatin sits in roughly this,
+                 # and screening is the one thing that could make a local scheme legitimate -- so it is an
+                 # ARM, not an assumption. NEXUS itself does not screen; that is the gap being measured.
+LIVE_FRAC = 1e-4  # an atom counts as "live" if |exact response| exceeds this fraction of the largest.
+                  # Correlating two vectors that are mostly matched zeros returns ~1 from the padding
+                  # alone; metrics are computed on live atoms only and the dead count is reported.
 KE = 332.06                              # kcal*A/(mol*e^2), as in flex_physics
 VDW = {"C": 1.70, "N": 1.55, "O": 1.52, "S": 1.80, "P": 1.80, "MN": 1.60, "CL": 1.75}
 POL = {"C": 1.05, "N": 1.10, "O": 0.80, "S": 2.90, "P": 2.10}
@@ -176,47 +182,39 @@ def polar_of(t):
     return np.array([POL.get(e, 1.00) for e in t["el"]])
 
 
-def response_exact(co, q, rad, alpha, k, dq, chunk=2048):
-    """EXACT per-atom energy response to changing atom k's charge by dq. No cutoff anywhere.
+def shell_profile(dE, dk, edges):
+    """Signed AND absolute response summed per spherical shell.
 
-    Only the charge changes, so LJ and desolvation are identical before and after and cancel exactly in the
-    DIFFERENCE. What survives is electrostatics -- linear in dq -- and induction, which is quadratic in the
-    total field and therefore does NOT cancel. Both are computed here; reporting only the linear part would
-    understate the tail, since induction is the term NEXUS uses to represent polarisation.
+    THIS IS THE DECISIVE CURVE, and it is not the per-atom magnitude. For NEXUS's kernel U ~ q q / r^2 the
+    number of atoms in a shell grows as r^2 while the interaction falls as r^-2, so the SHELL-INTEGRATED
+    contribution is flat in r even though the per-atom response decays cleanly. Plotting per-atom decay
+    would show a reassuring falloff while the neglected tail grows linearly with system size. So the shell
+    sum is what gets reported.
+    """
+    out = []
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        m = (dk >= lo) & (dk < hi)
+        out.append((lo, hi, int(m.sum()), float(dE[m].sum()), float(np.abs(dE[m]).sum())))
+    return out
 
-    Returns dE_i: the change in atom i's interaction energy, for every i. Sum over i counts each pair twice
-    for the electrostatic part, which is the standard convention and is applied consistently to every arm.
+
+def screen(r, debye):
+    """Debye-Huckel screening factor. NEXUS does not screen -- its eps(r)=r is a crude stand-in -- so this
+    is applied only in the explicitly screened arm, never silently."""
+    return 1.0 if debye is None else np.exp(-r / debye)
+
+
+def fields_all_radii(co, q, radii, chunk=512):
+    """The static Coulomb field at every atom, computed simultaneously for the exact case and for EVERY
+    truncation radius, in ONE O(N^2) pass.
+
+    The obvious implementation loops the pass once per radius. One pass with a stack of masked accumulators
+    gives identical numbers for a fraction of the cost, which is what makes the full radius sweep affordable
+    on 16,755 atoms.
     """
     n = len(co)
-    dE = np.zeros(n)
-    qk_new = q[k] + dq
-    for s in range(0, n, chunk):
-        e = min(s + chunk, n)
-        d = np.linalg.norm(co[s:e, None, :] - co[None, :, :], axis=2)
-        np.fill_diagonal(d[:, s:e], np.inf)
-        d = np.maximum(d, 0.1)
-        # electrostatics with eps(r)=r  ->  U = KE q_i q_j / r^2 ; only pairs involving k change
-        dq_vec = np.zeros(n)
-        dq_vec[k] = dq
-        dE[s:e] += KE * q[s:e] * (dq_vec[None, :] / d ** 2).sum(1)
-        # the changed atom itself feels every other atom
-        if s <= k < e:
-            dE[k] += KE * dq * (q / np.maximum(np.linalg.norm(co[k] - co, axis=1), 0.1) ** 2).sum()
-    # induction: field at every atom before and after, energy -1/2 (alpha/KE) |E|^2
-    E0 = field_at(co, q, chunk=chunk)
-    q2 = q.copy()
-    q2[k] = qk_new
-    E1 = field_at(co, q2, chunk=chunk)
-    u0 = -0.5 * (alpha / KE) * (E0 ** 2).sum(1)
-    u1 = -0.5 * (alpha / KE) * (E1 ** 2).sum(1)
-    dE += (u1 - u0)
-    return dE
-
-
-def field_at(co, q, chunk=2048):
-    """Coulomb field vector at every atom from every other atom. No cutoff."""
-    n = len(co)
-    F = np.zeros((n, 3))
+    F = {R: np.zeros((n, 3)) for R in radii}
+    F["exact"] = np.zeros((n, 3))
     for s in range(0, n, chunk):
         e = min(s + chunk, n)
         dv = co[s:e, None, :] - co[None, :, :]
@@ -225,38 +223,46 @@ def field_at(co, q, chunk=2048):
         inv3 = 1.0 / r ** 3
         for loc, glob in enumerate(range(s, e)):
             inv3[loc, glob] = 0.0
-        F[s:e] = KE * (dv * (q[None, :, None] * inv3[:, :, None])).sum(1)
+        base = dv * (q[None, :, None] * inv3[:, :, None])
+        F["exact"][s:e] = KE * base.sum(1)
+        for R in radii:
+            F[R][s:e] = KE * np.where((r < R)[:, :, None], base, 0.0).sum(1)
     return F
 
 
-def response_truncated(co, q, alpha, k, dq, R, chunk=2048):
-    """The same response with every interaction cut at R -- which is precisely what a sphere of radius R
-    around each atom computes. This is the sphere scheme, expressed exactly."""
+def response(co, q, alpha, k, dq, R, F0, debye=None):
+    """Per-atom energy response to changing atom k's charge by dq, truncated at R (R=None -> exact).
+
+    A sphere of radius R around each atom IS a truncation at R, so this one function expresses both the
+    reference and the sphere scheme, and they cannot drift apart through separate implementations.
+
+    Only the charge changes, so LJ and desolvation are bit-identical before and after and cancel exactly in
+    the difference. What survives:
+      ELECTROSTATICS, linear in dq -- only pairs involving k change, so this part is O(N), not O(N^2).
+      INDUCTION, quadratic in the TOTAL field, so it does NOT cancel. Writing E1 = E0 + dE_k, the change is
+        -1/2 (alpha/KE) ( 2 E0.dE_k + |dE_k|^2 )
+      and the cross term 2 E0.dE_k is FIRST ORDER in the pre-existing field. This is why induction is the
+      term least able to survive decomposition: it is not a sum over pairs that can be split, it is a square
+      of a sum, and truncating inside the square leaves an error that inherits the field's own long range.
+    """
     n = len(co)
+    d = np.linalg.norm(co - co[k], axis=1)
+    d = np.maximum(d, 0.1)
+    sc = screen(d, debye)
+    inr = np.ones(n, bool) if R is None else (d < R)
+    inr[k] = False
+
     dE = np.zeros(n)
-    dk = np.linalg.norm(co - co[k], axis=1)
-    inr = (dk < R) & (dk > 0.1)
-    dE[inr] += KE * q[inr] * dq / np.maximum(dk[inr], 0.1) ** 2
-    dE[k] += KE * dq * (q[inr] / np.maximum(dk[inr], 0.1) ** 2).sum()
-    E0 = field_at_trunc(co, q, R, chunk=chunk)
-    q2 = q.copy()
-    q2[k] = q[k] + dq
-    E1 = field_at_trunc(co, q2, R, chunk=chunk)
-    dE += -0.5 * (alpha / KE) * ((E1 ** 2).sum(1) - (E0 ** 2).sum(1))
+    dE[inr] = KE * q[inr] * dq * sc[inr] / d[inr] ** 2
+    dE[k] = KE * dq * (q[inr] * sc[inr] / d[inr] ** 2).sum()
+
+    dv = co - co[k]
+    dEk = KE * dq * (dv * (sc / d ** 3)[:, None])          # field change at every atom from dq at k
+    dEk[~inr] = 0.0
+    dEk[k] = 0.0
+    E0 = F0["exact"] if R is None else F0[R]
+    dE += -0.5 * (alpha / KE) * (2.0 * (E0 * dEk).sum(1) + (dEk ** 2).sum(1))
     return dE
-
-
-def field_at_trunc(co, q, R, chunk=2048):
-    n = len(co)
-    F = np.zeros((n, 3))
-    for s in range(0, n, chunk):
-        e = min(s + chunk, n)
-        dv = co[s:e, None, :] - co[None, :, :]
-        r = np.linalg.norm(dv, axis=2)
-        m = (r < R) & (r > 0.1)
-        inv3 = np.where(m, 1.0 / np.maximum(r, 0.1) ** 3, 0.0)
-        F[s:e] = KE * (dv * (q[None, :, None] * inv3[:, :, None])).sum(1)
-    return F
 
 
 def captured(dE_exact, dk, R):
@@ -272,23 +278,30 @@ def captured(dE_exact, dk, R):
 
 
 def shell_agreement(dE_exact, dE_trunc, dk):
-    """Agreement per distance shell. Pooling all atoms into one correlation is the trap this avoids: the
-    far shells are nearly all atoms and nearly all zero, so a pooled r is dominated by agreeing about
-    nothing. Reported as relative error, which cannot be inflated that way."""
+    """Agreement per distance shell, as relative error AND regression slope -- never as a bare correlation.
+
+    THREE WAYS A POOLED CORRELATION LIES HERE, all avoided:
+      1. Most atoms sit far away where both sides are ~0. Correlating two vectors padded with matched zeros
+         returns ~1 from the padding. So metrics run only over LIVE atoms and the dead count is printed.
+      2. Pearson r is invariant under y -> a*y + b. A scheme that gets every atom right up to a uniform
+         factor of six scores r = 1.0 while every energy is wrong by 500%. The regression SLOPE catches
+         exactly that, so it is reported beside r and is the number that matters.
+      3. Near-field atoms dominate any pooled statistic and they are the easy case. Hence per shell.
+    """
+    live = np.abs(dE_exact) > LIVE_FRAC * np.abs(dE_exact).max()
     out = []
     for lo, hi in SHELLS:
-        m = (dk >= lo) & (dk < hi)
+        m = (dk >= lo) & (dk < hi) & live
+        ntot = int(((dk >= lo) & (dk < hi)).sum())
         if m.sum() < 5:
-            out.append((lo, hi, int(m.sum()), float("nan"), float("nan")))
+            out.append((lo, hi, ntot, int(m.sum()), float("nan"), float("nan"), float("nan")))
             continue
         ex, tr = dE_exact[m], dE_trunc[m]
         den = np.abs(ex).sum()
         rel = float(np.abs(tr - ex).sum() / den) if den > 0 else float("nan")
-        if np.std(ex) > 0 and np.std(tr) > 0:
-            r = float(np.corrcoef(ex, tr)[0, 1])
-        else:
-            r = float("nan")
-        out.append((lo, hi, int(m.sum()), rel, r))
+        slope = float((ex * tr).sum() / (ex * ex).sum()) if (ex * ex).sum() > 0 else float("nan")
+        r = float(np.corrcoef(ex, tr)[0, 1]) if np.std(ex) > 0 and np.std(tr) > 0 else float("nan")
+        out.append((lo, hi, ntot, int(m.sum()), rel, slope, r))
     return out
 
 
@@ -318,9 +331,9 @@ def main():
     report(f"\n  {PDB_ID}: {n} atoms | {nd} DNA | {nw} ordered water | {n-nd-nw} histone+ion")
     report(f"  147 bp on a histone octamer at 1.9 A -- chromatin at atomic resolution, small enough to be exact.")
 
-    rng = np.random.default_rng(SEED)
     q_full = charges(t)
-    # the perturbed atom: a phosphate oxygen near the middle of the DNA, away from the ends
+    # the perturbed atom: a phosphate oxygen in the middle of the DNA, so the far field is not clipped by
+    # simply running out of structure in one direction
     ph = np.where(t["dna"] & np.isin(t["nm"], ["OP1", "O1P"]))[0]
     if len(ph) == 0:
         report("  *** no phosphate oxygens found; aborting")
@@ -332,49 +345,84 @@ def main():
 
     dk = np.linalg.norm(co - co[k], axis=1)
     ARMS = [
-        ("dna_charged   (the case)", charges(t)),
-        ("dna_neutral   (control)", charges(t, neutral_dna=True)),
-        ("lj_only       (control)", charges(t, zero_all=True)),
-        ("shuffled_chg  (control)", charges(t, shuffle_rng=np.random.default_rng(SEED + 3))),
+        ("dna_charged  (the case)", charges(t), None),
+        ("dna_screened (control)", charges(t), DEBYE),
+        ("dna_neutral  (control)", charges(t, neutral_dna=True), None),
+        ("shuffled_chg (control)", charges(t, shuffle_rng=np.random.default_rng(SEED + 3)), None),
     ]
 
     res = {"n_atoms": n, "n_dna": nd, "n_water": nw, "perturbed_atom": k, "arms": {}}
+
+    report("\n  Precomputing the static field at all 16k atoms for the exact case and every truncation")
+    report("  radius in a single O(N^2) pass...")
+    fields = {}
+    for name, q, _ in ARMS:
+        fields[name] = fields_all_radii(co, q, RADII)
+    report(f"    done at {time.time()-t0:.0f}s")
+
     report("\n  ARM 1 -- REACH: fraction of the TOTAL |response| captured inside radius R.")
     report("  Absolute, not signed: a signed fraction can read 100% while a large positive and a large")
     report("  negative in the far field merely cancel, and cancellation is not capture.")
-    hdr = "    " + f"{'arm':<26}" + "".join(f"{r:>7.0f}A" for r in RADII)
-    report(hdr)
+    report("    " + f"{'arm':<25}" + "".join(f"{r:>7.0f}A" for r in RADII))
     exact_store = {}
-    for name, q in ARMS:
-        if np.abs(q).sum() == 0:
-            # LJ-only: the perturbation is a CHARGE, so with all charges zero there is no response at all.
-            # Recorded explicitly rather than silently printing zeros -- it defines the arm's meaning.
-            report(f"    {name:<26}  (charge perturbation with all charges zero -> no response by "
-                   f"construction; see ARM 3, where the LJ control is a DISPLACEMENT and does apply)")
-            continue
-        dE = response_exact(co, q, radii_of(t), alpha, k, dq)
-        exact_store[name] = dE
+    for name, q, deb in ARMS:
+        dE = response(co, q, alpha, k, dq, None, fields[name], debye=deb)
+        exact_store[name] = (dE, q, deb)
         row = "".join(f"{captured(dE, dk, R):>8.3f}" for R in RADII)
-        report(f"    {name:<26}{row}")
+        report(f"    {name:<25}{row}")
         res["arms"][name.split()[0]] = {"captured": {str(R): captured(dE, dk, R) for R in RADII},
                                         "total_abs": float(np.abs(dE).sum())}
 
-    report("\n  ARM 2 -- FIDELITY per distance shell, truncated vs exact (relative error; lower is better).")
-    report("  A pooled correlation is not quoted: most atoms are far away where both sides are ~0, and")
-    report("  agreeing about zero manufactures a high number that says nothing about the near field.")
-    key = "dna_charged   (the case)"
-    dE_ex = exact_store[key]
-    q = dict(ARMS)[key]
+    report("\n  ARM 2 -- THE SHELL-INTEGRATED RESPONSE, which is the decisive curve and is NOT the per-atom")
+    report("  decay. For a kernel U ~ q q / r^2 the atom count in a shell grows as r^2 while the interaction")
+    report("  falls as r^-2, so the shell SUM can stay flat while the per-atom response decays reassuringly.")
+    report("  A per-atom plot would look convergent for a sum that is not.")
+    edges = [0, 4, 8, 12, 16, 20, 25, 30, 40, 50, 70]
+    for name, _, _ in ARMS:
+        dE = exact_store[name][0]
+        prof = shell_profile(dE, dk, edges)
+        report(f"    {name}   (kcal/mol per shell, |.| = absolute)")
+        report("      " + "".join(f"{f'{lo}-{hi}':>9}" for lo, hi, _, _, _ in prof))
+        report("      " + "".join(f"{a:>9.2f}" for _, _, _, _, a in prof))
+        res["arms"][name.split()[0]]["shell_abs"] = [{"lo": lo, "hi": hi, "n": c, "signed": s, "abs": a}
+                                                     for lo, hi, c, s, a in prof]
+
+    report("\n  ARM 3 -- FIDELITY per distance shell: truncated (= sphere of radius R) vs exact.")
+    report("  rel.err = sum|trunc-exact| / sum|exact|.  slope = regression of truncated on exact; a scheme")
+    report("  that is right up to a uniform factor scores pearson 1.0 and slope != 1, so slope is the")
+    report("  number that matters. Metrics over LIVE atoms only -- matched zeros would manufacture r ~ 1.")
+    key = "dna_charged  (the case)"
+    dE_ex, q_case, deb_case = exact_store[key]
     res["shells"] = {}
     for R in (4.0, 8.0, 12.0, 20.0):
-        dE_tr = response_truncated(co, q, alpha, k, dq, R)
+        dE_tr = response(co, q_case, alpha, k, dq, R, fields[key], debye=deb_case)
         rows = shell_agreement(dE_ex, dE_tr, dk)
-        report(f"    sphere R = {R:.0f} A")
-        report(f"      {'shell':<12}{'atoms':>8}{'rel.err':>10}{'pearson':>10}")
-        for lo, hi, cnt, rel, r in rows:
-            report(f"      {f'{lo}-{hi} A':<12}{cnt:>8}{rel:>10.3f}{r:>10.3f}")
-        res["shells"][str(R)] = [{"lo": lo, "hi": hi, "n": cnt, "rel_err": rel, "pearson": r}
-                                 for lo, hi, cnt, rel, r in rows]
+        tot_ex, tot_tr = float(np.abs(dE_ex).sum()), float(np.abs(dE_tr).sum())
+        report(f"    sphere R = {R:.0f} A     total |response| exact {tot_ex:.1f} vs truncated {tot_tr:.1f} "
+               f"kcal/mol ({tot_tr/tot_ex:.1%} of it)")
+        report(f"      {'shell':<12}{'atoms':>8}{'live':>7}{'rel.err':>10}{'slope':>8}{'pearson':>9}")
+        for lo, hi, ntot, nlive, rel, sl, r in rows:
+            report(f"      {f'{lo}-{hi} A':<12}{ntot:>8}{nlive:>7}{rel:>10.3f}{sl:>8.3f}{r:>9.3f}")
+        res["shells"][str(R)] = [{"lo": lo, "hi": hi, "n": ntot, "live": nlive, "rel_err": rel,
+                                  "slope": sl, "pearson": r} for lo, hi, ntot, nlive, rel, sl, r in rows]
+
+    report("\n  READING")
+    c4 = res["arms"]["dna_charged"]["captured"]["4.0"]
+    c4s = res["arms"]["dna_screened"]["captured"]["4.0"]
+    need = next((R for R in RADII if res["arms"]["dna_charged"]["captured"][str(R)] >= 0.90), None)
+    needs = next((R for R in RADII if res["arms"]["dna_screened"]["captured"][str(R)] >= 0.90), None)
+    report(f"  A 4 A sphere captures {c4:.1%} of the unscreened response and {c4s:.1%} of the screened one.")
+    if need is None:
+        report("  UNSCREENED: no radius in the sweep reaches 90%. The sphere scheme cannot represent bare")
+        report("  Coulomb on DNA at ANY size short of the whole particle -- the fix is not a bigger sphere,")
+        report("  it is a far-field channel (Ewald/multipole), which is a different proposal.")
+    else:
+        report(f"  UNSCREENED: 90% of the response is captured at R = {need:.0f} A. That is the minimum")
+        report("  viable sphere, and the genome-scale cost must be recomputed at that radius, not at 4 A.")
+    if needs is not None:
+        report(f"  SCREENED (150 mM, Debye 7.9 A): 90% captured at R = {needs:.0f} A. Screening is what makes")
+        report("  a local scheme legitimate -- but NEXUS does not screen, so this is a change to the physics")
+        report("  rather than a vindication of the tiling as it stands.")
 
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'nexus_dna_spheres.json'}")
     OUT.mkdir(parents=True, exist_ok=True)
