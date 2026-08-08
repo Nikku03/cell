@@ -1,0 +1,51 @@
+{
+  "test": "cell_orphan_chem_coverage",
+  "n_names": 601488,
+  "n_smiles": 201171,
+  "vocab": {
+    "distinct": 3975,
+    "resolved": 1462,
+    "token_coverage": 0.4618705035971223
+  },
+  "reactions": {
+    "orphans (the fill)": {
+      "n": 9186,
+      "no_metabolite": 2075,
+      "all_resolved": 2612,
+      "main_resolved": 3023
+    },
+    "held-out (the test)": {
+      "n": 333,
+      "no_metabolite": 61,
+      "all_resolved": 113,
+      "main_resolved": 151
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "CAN WE EVEN GET THE SUBSTRATES? -- coverage gate before any docking is written",
+    "====================================================================================================",
+    "  Three re-rankers have failed as per-protein priors because 68.5% of ranking errors are",
+    "  enzyme-against-enzyme. The one untested version is PAIR-specific: dock the real substrate",
+    "  into the candidate's pocket. That needs a 3D structure for the substrate, and the model",
+    "  stores names. If most reactions have an unresolvable participant, the method cannot reach",
+    "  them however well it works elsewhere, and that is decided here rather than after the build.",
+    "\n  ChEBI: 601488 names (incl. synonyms) -> id, 201171 ids with SMILES",
+    "\n  METABOLITE VOCABULARY over the 9186 orphan reactions",
+    "    distinct non-currency metabolites   3975",
+    "    resolved to a SMILES                1462  (36.8% of types)",
+    "    weighted by how often they occur                 46.2% of mentions",
+    "    most common unresolved: 2OG, L-Glu, LCFA(-), Ac-CoA, SUCCA, Glc, SM pool, DAG, CHOL, UDP-glucuronate",
+    "\n  REACTION COVERAGE -- the number that bounds the method",
+    "    population                  n  no metab  ALL resolved  MAIN resolved",
+    "    orphans (the fill)       9186      2075   2612 (28.4%)    3023 (32.9%)",
+    "    held-out (the test)       333        61    113 (33.9%)     151 (45.3%)",
+    "\n  READING",
+    "    22.6% of orphan reactions have NO non-currency metabolite at all -- protein-only steps,",
+    "    transport of complexes, modifications. A small-molecule docking screen has nothing to dock",
+    "    for these and they are outside the method by construction, not by failure.",
+    "    Only 32.9% have even a resolvable main substrate. The last untested version of",
+    "    structure-based re-ranking cannot reach most of the population, and the shortlist",
+    "    should go to a curator unmodified."
+  ]
+}
