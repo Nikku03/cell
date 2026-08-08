@@ -243,7 +243,7 @@ def cmd_rank():
     enormously and only one of them describes how the artifact would actually be used.
     """
     meta = json.load(open(OUT / "holdout_meta.json"))
-    f = OUT / "holdout_ranked.json"
+    f = OUT / (os.environ.get("RANKFILE") or "holdout_ranked.json")
     if not f.exists():
         print("  no ranked answers yet")
         return 1
@@ -252,7 +252,7 @@ def cmd_rank():
     ob = np.array([meta[p]["obscure"] for p in pids])
     sh = np.array([meta[p]["shown"] for p in pids])
     cell = np.array([meta[p]["cell"] for p in pids])
-    KS = (1, 5, 10, 20)
+    KS = tuple(int(x) for x in (os.environ.get("KS") or "1,5,10,20").split(","))
     hits = {k: [] for k in KS}
     nlist = []
     for p in pids:
@@ -283,10 +283,15 @@ def cmd_rank():
                                "obscure": float(hits[k][ob].mean()) if ob.sum() else None,
                                "obscure_not_shown": float(hits[k][ob & ~sh].mean())} for k in KS}}
     print(f"\n  READING")
-    o1, o10, o20 = (res["recall"][str(k)]["obscure"] for k in (1, 10, 20))
-    print(f"  On obscure enzymes the list is worth far more than its head: {o1:.3f} at rank 1 against")
-    print(f"  {o10:.3f} in a top-10 and {o20:.3f} in a top-20. A curator does not need the model to be")
-    print(f"  right, only to put the right gene somewhere they will look.")
+    ks = sorted(int(k) for k in res["recall"])
+    o1 = res["recall"][str(ks[0])]["obscure"]
+    oL = res["recall"][str(ks[-1])]["obscure"]
+    print(f"  On obscure enzymes: {o1:.3f} at rank 1 against {oL:.3f} at rank {ks[-1]}.")
+    print(f"  THE LAST NUMBER IS A CEILING, not just another point. Anything built on top of this -- a")
+    print(f"  re-ranker, constraint propagation between neighbouring reactions, an evidence model -- can")
+    print(f"  only REORDER this list. A gene that never appears is permanently lost, so {1-oL:.1%} of")
+    print(f"  obscure reactions cannot be recovered by any amount of downstream cleverness, and that is")
+    print(f"  the number to design against rather than the top-1.")
     json.dump(res, open(OUT / "cell_orphan_holdout_ranked.json", "w"), indent=2)
     return 0
 
