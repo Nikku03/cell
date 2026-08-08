@@ -95,6 +95,20 @@ def examples_for(i, P, cats, cat_of, k=K):
     return top, [sc[j] for j in top]
 
 
+_COMPMAP = (("cyto", "cytosol"), ("nucle", "nucleus"), ("mitoch", "mitochondrion"),
+            ("endoplasmic", "er"), (" er", "er"), ("golgi", "golgi"), ("lysosom", "lysosome"),
+            ("peroxisom", "peroxisome"), ("extracell", "extracellular"), ("secret", "extracellular"),
+            ("plasma", "membrane"), ("membrane", "membrane"), ("vesic", "vesicle"),
+            ("endosom", "endosome"), ("ribosom", "cytosol"), ("nucleol", "nucleus"))
+
+
+def _compvocab(s):
+    """Reduce a free-text compartment to a small controlled vocabulary, so 'nucleus' and 'nucleoplasm'
+    compare equal and 'mitochondrion' matches 'mitochondrial matrix'."""
+    s = (s or "").lower()
+    return {v for k, v in _COMPMAP if k in s}
+
+
 def cmd_dump(limit=None):
     B, real, cat_of = build_pool()
     steps, cats, P = B["steps"], B["cats"], B["P"]
@@ -144,26 +158,52 @@ def cmd_merge():
         return 1
     D = json.load(open(OUT / "cell_complete.json"))
     known = {g["name"].upper(): g for g in D["genes"]}
-    rows, nbad, ncopy, nstarve, ncompart = [], 0, 0, 0, 0
+    # VALIDITY IS HGNC, NOT THE MODEL'S OWN TABLE. Checking against cell_complete.json alone called 67
+    # predictions hallucinated; 65 of them were valid HGNC symbols -- PIK3CA, PRPS1, UCK2, TYMP -- simply
+    # absent from a 16,492-gene table when HGNC lists 19,296. That is a gap in the MODEL, not an error by
+    # the predictor, and conflating the two would have sent a curator to reject correct answers.
+    try:
+        hgnc = {x.upper() for x in json.load(open("data/hgnc_protein_coding.json"))}
+    except Exception:
+        hgnc = set()
+    MEMBRANE = ("membrane", "transporter", "channel")
+    rows, nbad, nmiss, ncopy, nstarve, ncompart = [], 0, 0, 0, 0, 0
     for pid, m in meta.items():
         a = ans.get(pid)
         if not a:
             continue
         gene = str(a.get("gene", "")).strip().upper()
         why = str(a.get("why", ""))[:300]
-        is_gene = gene in known
+        in_model = gene in known
+        is_gene = in_model or (gene in hgnc)
+        missing_from_model = is_gene and not in_model
         copied = gene in {g.upper() for g in m["example_catalysts"]}
         starved = m["n_examples"] < K
+        # COMPARTMENT: a membrane protein legitimately connects two compartments -- that is what a
+        # transporter IS. The first version flagged every SLC and every ecto-enzyme for spanning cytosol
+        # and extracellular, i.e. it flagged them for doing their job, and produced a 36% "mismatch" rate
+        # made almost entirely of correct predictions. Only a SOLUBLE protein in one specific compartment,
+        # proposed for a reaction wholly in a different one, is a genuine conflict.
         comp_ok = True
-        if is_gene and m["compartments"]:
-            gc = (known[gene].get("comp") or "").lower()
-            comp_ok = (not gc) or any(gc.split("/")[0][:4] in c.lower() for c in m["compartments"])
+        gc = (known[gene].get("comp") or "").lower() if in_model else ""
+        if gc and m["compartments"] and not any(w in gc for w in MEMBRANE):
+            # BOTH SIDES ARE FREE TEXT and they do not use the same words: a gene annotated "nucleus"
+            # catalyses reactions in "nucleoplasm", "mitochondrion" against "mitochondrial matrix".
+            # Substring matching on the raw strings failed on exactly those, so both sides are reduced to
+            # a small vocabulary first and only a DISJOINT pair in a single-compartment reaction is a
+            # conflict. This check stays advisory: compartment annotation is incomplete on both sides.
+            gv, rv = _compvocab(gc), set()
+            for c in m["compartments"]:
+                rv |= _compvocab(c)
+            comp_ok = (not gv) or (not rv) or bool(gv & rv) or len(m["compartments"]) > 1
         nbad += (not is_gene)
+        nmiss += missing_from_model
         ncopy += copied
         nstarve += starved
         ncompart += (not comp_ok)
         rows.append({"pid": pid, "step": m["step"], "id": m["id"], "name": m["name"],
                      "category": m["category"], "gene": gene, "is_gene": is_gene,
+                     "missing_from_model": missing_from_model,
                      "copied": copied, "starved": starved, "n_examples": m["n_examples"],
                      "top_sim": m["top_sim"], "compartment_ok": comp_ok,
                      "compartments": m["compartments"], "why": why})
@@ -178,8 +218,9 @@ def cmd_merge():
                                 f"{r['top_sim']:.3f}", r["compartment_ok"],
                                 ";".join(r["compartments"]), r["why"].replace("\t", " ")]) + "\n")
     res = {"test": "cell_orphan_fill", "n_meta": len(meta), "n_answered": got, "rows": rows,
-           "checks": {"not_a_real_gene": nbad, "copied_from_examples": ncopy,
-                      "starved": nstarve, "compartment_mismatch": ncompart}}
+           "checks": {"not_a_real_gene": nbad, "valid_but_missing_from_model": nmiss,
+                      "copied_from_examples": ncopy, "starved": nstarve,
+                      "compartment_mismatch": ncompart}}
     json.dump(res, open(OUT / "cell_orphan_fill.json", "w"), indent=1)
     print(f"  -> {OUT/'orphan_fill_review.tsv'}  and  {OUT/'cell_orphan_fill.json'}")
     return cmd_review()
@@ -199,7 +240,9 @@ def cmd_review():
     print(f"  {n} predictions from {res['n_meta']} orphan reactions")
     print(f"\n  AUTOMATIC CHECKS (these need no human)")
     print(f"    not a real gene symbol       {c['not_a_real_gene']:>6}  ({c['not_a_real_gene']/max(n,1):.1%})"
-          f"  <- hard reject, hallucinated")
+          f"  <- hard reject, hallucinated (checked against HGNC)")
+    print(f"    valid HGNC, ABSENT from model{c.get('valid_but_missing_from_model',0):>6}  "
+          f"({c.get('valid_but_missing_from_model',0)/max(n,1):.1%})  <- a gap in the MODEL, not an error")
     print(f"    compartment mismatch         {c['compartment_mismatch']:>6}  "
           f"({c['compartment_mismatch']/max(n,1):.1%})  <- flag, not reject; annotation is incomplete")
     print(f"\n  TRIAGE (these decide how hard to look)")
