@@ -235,8 +235,66 @@ def cmd_score():
     return 0
 
 
+def cmd_rank():
+    """Score RANKED answers: recall@k for k = 1, 5, 10, 20.
+
+    Top-1 is the wrong metric for a curation aid. A curator handed one wrong gene has nothing; a curator
+    handed a ranked twenty containing the right gene has a two-minute job. The two numbers can differ
+    enormously and only one of them describes how the artifact would actually be used.
+    """
+    meta = json.load(open(OUT / "holdout_meta.json"))
+    f = OUT / "holdout_ranked.json"
+    if not f.exists():
+        print("  no ranked answers yet")
+        return 1
+    ans = json.load(open(f))
+    pids = [p for p in meta if p in ans]
+    ob = np.array([meta[p]["obscure"] for p in pids])
+    sh = np.array([meta[p]["shown"] for p in pids])
+    cell = np.array([meta[p]["cell"] for p in pids])
+    KS = (1, 5, 10, 20)
+    hits = {k: [] for k in KS}
+    nlist = []
+    for p in pids:
+        lst = [str(g).upper() for g in (ans[p].get("genes") or [])]
+        nlist.append(len(lst))
+        tr = set(meta[p]["truth"])
+        for k in KS:
+            hits[k].append(bool(tr & set(lst[:k])))
+    for k in KS:
+        hits[k] = np.array(hits[k])
+    print("=" * 100)
+    print("RANKED RECALL on the independent held-out set")
+    print("=" * 100)
+    print(f"  {len(pids)} reactions | mean list length {np.mean(nlist):.1f}")
+    print(f"\n  {'population':<26}" + "".join(f"{'@'+str(k):>9}" for k in KS) + f"{'n':>7}")
+    for lab, m in (("ALL", np.ones(len(pids), bool)), ("obscure", ob),
+                   ("obscure, answer NOT shown", ob & ~sh)):
+        print(f"  {lab:<26}" + "".join(f"{hits[k][m].mean():>9.3f}" for k in KS) + f"{int(m.sum()):>7}")
+    print(f"\n  BY RETRIEVAL CELL (all reactions)")
+    print(f"    {'examples':<10}" + "".join(f"{'@'+str(k):>9}" for k in KS) + f"{'n':>7}")
+    for lab, _, _ in ECELLS:
+        m = cell == lab
+        if not m.sum():
+            continue
+        print(f"    {lab:<10}" + "".join(f"{hits[k][m].mean():>9.3f}" for k in KS) + f"{int(m.sum()):>7}")
+    res = {"test": "cell_orphan_holdout_ranked", "n": len(pids),
+           "recall": {str(k): {"all": float(hits[k].mean()),
+                               "obscure": float(hits[k][ob].mean()) if ob.sum() else None,
+                               "obscure_not_shown": float(hits[k][ob & ~sh].mean())} for k in KS}}
+    print(f"\n  READING")
+    o1, o10, o20 = (res["recall"][str(k)]["obscure"] for k in (1, 10, 20))
+    print(f"  On obscure enzymes the list is worth far more than its head: {o1:.3f} at rank 1 against")
+    print(f"  {o10:.3f} in a top-10 and {o20:.3f} in a top-20. A curator does not need the model to be")
+    print(f"  right, only to put the right gene somewhere they will look.")
+    json.dump(res, open(OUT / "cell_orphan_holdout_ranked.json", "w"), indent=2)
+    return 0
+
+
 if __name__ == "__main__":
     c = sys.argv[1] if len(sys.argv) > 1 else "score"
+    if c == "rank":
+        raise SystemExit(cmd_rank())
     if c == "dump":
         raise SystemExit(cmd_dump(int(sys.argv[2]) if len(sys.argv) > 2 else NTARGET))
     raise SystemExit(cmd_score())
