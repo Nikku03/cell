@@ -102,10 +102,23 @@ _COMPMAP = (("cyto", "cytosol"), ("nucle", "nucleus"), ("mitoch", "mitochondrion
             ("endosom", "endosome"), ("ribosom", "cytosol"), ("nucleol", "nucleus"))
 
 
+# THE MODEL MIXES TWO COMPARTMENT CONVENTIONS. Reactome steps carry full names ("cytosol",
+# "nucleoplasm"); HumanGEM/Recon steps carry single-letter BiGG codes (c, m, e, r, g, x, l, n).
+# Matching only the full names silently mapped 79% of held-out reactions to NO compartment at all, and
+# every spatial score on them was a quiet zero. Single letters must be matched EXACTLY -- substring
+# matching on "c" would hit every string in the table.
+_BIGG = {"c": "cytosol", "e": "extracellular", "m": "mitochondrion", "n": "nucleus",
+         "r": "er", "g": "golgi", "l": "lysosome", "x": "peroxisome",
+         "i": "mitochondrion", "s": "extracellular", "v": "vesicle"}
+
+
 def _compvocab(s):
     """Reduce a free-text compartment to a small controlled vocabulary, so 'nucleus' and 'nucleoplasm'
-    compare equal and 'mitochondrion' matches 'mitochondrial matrix'."""
-    s = (s or "").lower()
+    compare equal, 'mitochondrion' matches 'mitochondrial matrix', and the single-letter BiGG codes used
+    by the HumanGEM-sourced reactions resolve at all."""
+    s = (s or "").strip().lower()
+    if s in _BIGG:
+        return {_BIGG[s]}
     return {v for k, v in _COMPMAP if k in s}
 
 

@@ -1,0 +1,70 @@
+{
+  "test": "cell_orphan_spatial",
+  "n": 283,
+  "arms": {
+    "tournament": {
+      "@1": 0.7102473498233216,
+      "@3": 0.8268551236749117,
+      "@5": 0.8409893992932862,
+      "@1_obscure": 0.4794520547945205
+    },
+    "spatial": {
+      "@1": 0.6501766784452296,
+      "@3": 0.8127208480565371,
+      "@5": 0.8445229681978799,
+      "@1_obscure": 0.4657534246575342
+    },
+    "network": {
+      "@1": 0.657243816254417,
+      "@3": 0.8162544169611308,
+      "@5": 0.8409893992932862,
+      "@1_obscure": 0.410958904109589
+    },
+    "spatial_network": {
+      "@1": 0.607773851590106,
+      "@3": 0.8162544169611308,
+      "@5": 0.8445229681978799,
+      "@1_obscure": 0.4246575342465753
+    },
+    "shuffled_comp": {
+      "@1": 0.6395759717314488,
+      "@3": 0.7950530035335689,
+      "@5": 0.8480565371024735,
+      "@1_obscure": 0.4657534246575342
+    },
+    "random": {
+      "@1": 0.46996466431095407,
+      "@3": 0.6890459363957597,
+      "@5": 0.7985865724381626,
+      "@1_obscure": 0.1917808219178082
+    }
+  },
+  "comp_correct": 0.19148936170212766,
+  "comp_wrong": 0.41304347826086957,
+  "log": [
+    "====================================================================================================",
+    "SPATIAL AND NETWORK CONTEXT AS A RANKING SIGNAL",
+    "====================================================================================================",
+    "  Six re-rankers scored RESEMBLANCE -- embeddings, sequence pairing, pocket shape, docking,",
+    "  learned preference -- and all lost to the model's own ordering. Localisation is not a",
+    "  resemblance score, it is a physical CONSTRAINT, and constraints have never been tested here.",
+    "  But the prompts already show every compartment, so the real question is whether stating it",
+    "  explicitly adds anything the model did not already use.",
+    "\n  283 held-out reactions | 70 carry a compartment | 75 look like transport | 217 have a pathway neighbourhood",
+    "\n    arm                       @1      @3      @5   @1 obs",
+    "    tournament             0.710   0.827   0.841    0.479",
+    "    spatial                0.650   0.813   0.845    0.466",
+    "    network                0.657   0.816   0.841    0.411",
+    "    spatial_network        0.608   0.816   0.845    0.425",
+    "    shuffled_comp          0.640   0.795   0.848    0.466",
+    "    random                 0.470   0.689   0.799    0.192",
+    "\n  IS THE CONSTRAINT ALREADY SATISFIED? -- the question that decides whether this can help",
+    "  If the model's WRONG answers respect compartment as well as its right ones, then everything",
+    "  it proposes already satisfies the constraint and it cannot separate them.",
+    "    compartment score of CORRECT top-1 answers   +0.191  (n=47)",
+    "    compartment score of WRONG   top-1 answers   +0.413  (n=23)",
+    "    gap -0.222",
+    "\n  READING",
+    "  Seventh failure: best arm 0.657 against 0.710 for the ordering as given."
+  ]
+}
