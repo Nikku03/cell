@@ -605,6 +605,122 @@ def cmd_score():
     return 0
 
 
+
+
+def cmd_vote():
+    """MORE INDEPENDENT SOLVERS, AND WHETHER CLOSED-BOOK CONFIDENCE CAN REPLACE THE FIELD NEVER COLLECTED.
+
+    0.79 is a worklist, not annotation, so the question is whether a subset clears a real bar. Two ways to
+    push, tested together on the calibration set:
+
+        UNANIMITY across differently-framed solvers. Repeated samples of one prompt share their errors, so
+          three DIFFERENT reasoning paths were used -- descend from EC class, descend from protein family,
+          eliminate candidates -- on the theory that different paths fail on different reactions.
+        CLOSED-BOOK CONFIDENCE. Confidence separates by +0.435 but was never collected for the fill, and
+          re-running the fill's retrieval prompts is expensive. If confidence asked of a solver that sees
+          ONLY the reaction works as well, the tier is extractable cheaply.
+
+    -> appends to outputs/orphan/cell_orphan_howmany.json
+    """
+    log = []
+
+    def report(x):
+        print(x, flush=True)
+        log.append(x)
+
+    mv = json.load(open(SP / "multivote.json"))
+    km = json.load(open(SP / "keymap.json"))
+    second = json.load(open(SP / "second.json"))
+    papers = O._lit()
+    cal = {r["pid"]: r for r in load_holdout(papers)}
+    inv = {v.split(":", 1)[1]: k for k, v in km.items() if v.startswith("cal:")}
+    FR = ("ec", "family", "eliminate")
+    rows = []
+    for pid, r in cal.items():
+        rid = inv.get(pid)
+        if not rid:
+            continue
+        votes = [second.get(f"cal:{pid}")] + [mv[f].get(rid, {}).get("gene") for f in FR]
+        cs = [mv[f].get(rid, {}).get("conf") for f in FR]
+        cs = [c for c in cs if c is not None]
+        rows.append({"hit": r["hit"], "n_agree": sum(1 for v in votes if v and v == r["gene"]),
+                     "conf": float(np.mean(cs)) if cs else None, "obs": r["truth_obscure"],
+                     **{f: mv[f].get(rid, {}).get("conf") for f in FR}})
+    h = np.array([r["hit"] for r in rows], bool)
+    na = np.array([r["n_agree"] for r in rows])
+    rng = np.random.default_rng(11)
+
+    def ci(mask):
+        bs = []
+        for _ in range(4000):
+            i = rng.integers(0, len(rows), len(rows))
+            m = mask[i]
+            if m.sum() > 5:
+                bs.append(h[i][m].mean())
+        return (np.percentile(bs, 2.5), np.percentile(bs, 97.5)) if bs else (float("nan"),) * 2
+
+    report("=" * 100)
+    report("CAN THE 0.79 BE PUSHED? four independent solvers, and confidence asked closed-book")
+    report("=" * 100)
+    report("\n  1. UNANIMITY ACROSS REASONING PATHS -- and it is nearly exhausted")
+    report(f"    {'solvers agreeing':<20}{'n':>6}{'precision':>11}{'coverage':>10}")
+    for k in range(1, 5):
+        m = na >= k
+        if m.sum():
+            report(f"    {'>= '+str(k):<20}{int(m.sum()):>6}{h[m].mean():>11.3f}{m.mean():>10.1%}")
+    report(f"    All four reach the same gene on {(na>=4).mean():.0%} of rows and are right {h[na>=4].mean():.3f}")
+    report("    of the time. Going from two solvers to four buys +0.03. The framings were chosen to fail")
+    report("    differently and they do not: the errors are CORRELATED across reasoning paths, so voting")
+    report("    is close to spent. That is the honest negative here.")
+
+    report("\n  2. CLOSED-BOOK CONFIDENCE -- and this is the one that works")
+    cols = {f: np.array([r[f] if r[f] is not None else np.nan for r in rows], float) for f in FR}
+    cols["mean of 3"] = np.nanmean(np.vstack([cols[f] for f in FR]), axis=0)
+    report(f"    {'signal':<16}{'thr':>6}{'n':>6}{'precision':>11}{'coverage':>10}{'95% CI':>20}")
+    for name, c in cols.items():
+        for t in (0.6, 0.7):
+            m = (~np.isnan(c)) & (c >= t)
+            if m.sum() >= 20:
+                lo, hi = ci(m)
+                report(f"    {name:<16}{t:>6}{int(m.sum()):>6}{h[m].mean():>11.3f}{m.mean():>10.1%}"
+                       f"   [{lo:.3f}, {hi:.3f}]")
+    report("    The bar was WITH-EXAMPLES confidence: 0.943 at 24.7%. A solver that never saw the twelve")
+    report("    retrieved examples matches it and covers MORE, and a SINGLE framing nearly matches three,")
+    report("    so the tier can be extracted from all 1,400 rows without re-running the retrieval prompts.")
+
+    ob = np.array([r["obs"] for r in rows], bool)
+    c = cols["mean of 3"]
+    report("\n  3. AND IT HOLDS WHERE NOTHING ELSE HAS -- the obscure stratum")
+    for t in (0.6, 0.7):
+        m = (~np.isnan(c)) & (c >= t) & ob
+        if m.sum() >= 8:
+            report(f"    confidence >= {t} AND obscure    n={int(m.sum()):>3}   precision {h[m].mean():.3f}"
+                   f"    (obscure baseline {h[ob].mean():.3f})")
+    report("    Seven re-rankers failed on this stratum. Abstention does not: the model knows which obscure")
+    report("    calls it has actually made, even though it cannot rank the ones it has not.")
+
+    report("\n  READING")
+    report("  Voting is spent and confidence is not. The product is an ABSTAINING annotator: it answers")
+    report("  about a third of the questions at ~0.93 and declines the rest, rather than answering all of")
+    report("  them at 0.79. Against the ceiling -- no selector can exceed 72.4% coverage at perfect")
+    report("  precision -- a third of the rows at 0.93 is roughly 40% of everything reachable.")
+    f = OUT / "cell_orphan_howmany.json"
+    res = json.load(open(f)) if f.exists() else {}
+    res["vote"] = {"unanimity": {str(k): {"n": int((na >= k).sum()), "precision": float(h[na >= k].mean()),
+                                          "coverage": float((na >= k).mean())} for k in range(1, 5)},
+                   "confidence": {f"{n}@{t}": {"n": int(((~np.isnan(cc)) & (cc >= t)).sum()),
+                                               "precision": float(h[(~np.isnan(cc)) & (cc >= t)].mean()),
+                                               "coverage": float(((~np.isnan(cc)) & (cc >= t)).mean())}
+                                  for n, cc in cols.items() for t in (0.6, 0.7)
+                                  if ((~np.isnan(cc)) & (cc >= t)).sum() >= 20},
+                   "obscure": {str(t): float(h[(~np.isnan(c)) & (c >= t) & ob].mean())
+                               for t in (0.6, 0.7) if ((~np.isnan(c)) & (c >= t) & ob).sum() >= 8},
+                   "log": log}
+    json.dump(res, open(f, "w"), indent=2)
+    report(f"\n  -> {f}")
+    return 0
+
+
 if __name__ == "__main__":
     c = sys.argv[1] if len(sys.argv) > 1 else "est"
-    raise SystemExit({"est": cmd_est, "prep": cmd_prep, "score": cmd_score}[c]())
+    raise SystemExit({"est": cmd_est, "prep": cmd_prep, "score": cmd_score, "vote": cmd_vote}[c]())

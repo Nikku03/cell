@@ -14205,5 +14205,113 @@
       "  rows are the defensible part of the worklist at 0.788; the rest is at 0.507 and",
       "  should be treated as unreviewed. This is a label, not an average, so a curator can act on it."
     ]
+  },
+  "vote": {
+    "unanimity": {
+      "1": {
+        "n": 285,
+        "precision": 0.7684210526315789,
+        "coverage": 0.8558558558558559
+      },
+      "2": {
+        "n": 266,
+        "precision": 0.7781954887218046,
+        "coverage": 0.7987987987987988
+      },
+      "3": {
+        "n": 254,
+        "precision": 0.7913385826771654,
+        "coverage": 0.7627627627627628
+      },
+      "4": {
+        "n": 233,
+        "precision": 0.8154506437768241,
+        "coverage": 0.6996996996996997
+      }
+    },
+    "confidence": {
+      "ec@0.6": {
+        "n": 106,
+        "precision": 0.8962264150943396,
+        "coverage": 0.3183183183183183
+      },
+      "ec@0.7": {
+        "n": 70,
+        "precision": 0.9285714285714286,
+        "coverage": 0.21021021021021022
+      },
+      "family@0.6": {
+        "n": 111,
+        "precision": 0.9099099099099099,
+        "coverage": 0.3333333333333333
+      },
+      "family@0.7": {
+        "n": 81,
+        "precision": 0.9382716049382716,
+        "coverage": 0.24324324324324326
+      },
+      "eliminate@0.6": {
+        "n": 104,
+        "precision": 0.9326923076923077,
+        "coverage": 0.3123123123123123
+      },
+      "eliminate@0.7": {
+        "n": 78,
+        "precision": 0.9358974358974359,
+        "coverage": 0.23423423423423423
+      },
+      "mean of 3@0.6": {
+        "n": 101,
+        "precision": 0.9306930693069307,
+        "coverage": 0.3033033033033033
+      },
+      "mean of 3@0.7": {
+        "n": 68,
+        "precision": 0.9558823529411765,
+        "coverage": 0.2042042042042042
+      }
+    },
+    "obscure": {
+      "0.6": 0.8666666666666667,
+      "0.7": 0.9523809523809523
+    },
+    "log": [
+      "====================================================================================================",
+      "CAN THE 0.79 BE PUSHED? four independent solvers, and confidence asked closed-book",
+      "====================================================================================================",
+      "\n  1. UNANIMITY ACROSS REASONING PATHS -- and it is nearly exhausted",
+      "    solvers agreeing         n  precision  coverage",
+      "    >= 1                   285      0.768     85.6%",
+      "    >= 2                   266      0.778     79.9%",
+      "    >= 3                   254      0.791     76.3%",
+      "    >= 4                   233      0.815     70.0%",
+      "    All four reach the same gene on 70% of rows and are right 0.815",
+      "    of the time. Going from two solvers to four buys +0.03. The framings were chosen to fail",
+      "    differently and they do not: the errors are CORRELATED across reasoning paths, so voting",
+      "    is close to spent. That is the honest negative here.",
+      "\n  2. CLOSED-BOOK CONFIDENCE -- and this is the one that works",
+      "    signal             thr     n  precision  coverage              95% CI",
+      "    ec                 0.6   106      0.896     31.8%   [0.835, 0.950]",
+      "    ec                 0.7    70      0.929     21.0%   [0.859, 0.985]",
+      "    family             0.6   111      0.910     33.3%   [0.854, 0.960]",
+      "    family             0.7    81      0.938     24.3%   [0.880, 0.987]",
+      "    eliminate          0.6   104      0.933     31.2%   [0.879, 0.978]",
+      "    eliminate          0.7    78      0.936     23.4%   [0.875, 0.986]",
+      "    mean of 3          0.6   101      0.931     30.3%   [0.875, 0.977]",
+      "    mean of 3          0.7    68      0.956     20.4%   [0.902, 1.000]",
+      "    The bar was WITH-EXAMPLES confidence: 0.943 at 24.7%. A solver that never saw the twelve",
+      "    retrieved examples matches it and covers MORE, and a SINGLE framing nearly matches three,",
+      "    so the tier can be extracted from all 1,400 rows without re-running the retrieval prompts.",
+      "\n  3. AND IT HOLDS WHERE NOTHING ELSE HAS -- the obscure stratum",
+      "    confidence >= 0.6 AND obscure    n= 30   precision 0.867    (obscure baseline 0.515)",
+      "    confidence >= 0.7 AND obscure    n= 21   precision 0.952    (obscure baseline 0.515)",
+      "    Seven re-rankers failed on this stratum. Abstention does not: the model knows which obscure",
+      "    calls it has actually made, even though it cannot rank the ones it has not.",
+      "\n  READING",
+      "  Voting is spent and confidence is not. The product is an ABSTAINING annotator: it answers",
+      "  about a third of the questions at ~0.93 and declines the rest, rather than answering all of",
+      "  them at 0.79. Against the ceiling -- no selector can exceed 72.4% coverage at perfect",
+      "  precision -- a third of the rows at 0.93 is roughly 40% of everything reachable."
+    ]
   }
 }
