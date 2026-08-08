@@ -62,46 +62,69 @@ from cell_orphan_fill import build_pool  # noqa: E402
 
 OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+# THE MODEL'S OWN `currency` FLAG IS NARROWER THAN THE WORD SUGGESTS: H2O, H+ and O2 are all flagged
+# False, so filtering on it alone left water and protons as "substrates" and they dominated the
+# unresolved list. These are never the discriminating ligand in a docking screen, so they are excluded
+# explicitly and the list is written out rather than hidden in a flag.
+UBIQUITOUS = {"h2o", "h+", "o2", "co2", "pi", "ppi", "atp", "adp", "amp", "gtp", "gdp", "gmp",
+              "utp", "udp", "ump", "ctp", "cdp", "cmp", "nad+", "nadh", "nadp+", "nadph",
+              "fad", "fadh2", "fmn", "coa-sh", "coa", "na+", "k+", "cl-", "ca2+", "mg2+", "zn2+",
+              "fe2+", "fe3+", "mn2+", "cu2+", "h2o2", "nh4+", "nh3", "so4(2-)", "hco3-", "e-",
+              "s-adenosyl-l-methionine", "s-adenosyl-l-homocysteine", "adomet", "adohcy"}
 
 
 def load_chebi():
     """name -> ChEBI id, and ChEBI id -> SMILES. Names include synonyms; structures are the SMILES rows."""
+    # COLUMNS ARE READ BY NAME, LOWERCASED. The first version hardcoded upper-case header names that
+    # ChEBI does not use, every lookup missed, and the run reported 0.0% coverage -- which reads as a
+    # decisive negative and was entirely a parser fault. Resolving by header text, and asserting the
+    # columns were found, is the difference between a finding and a bug wearing one's clothes.
+    def cols(fh, want):
+        hdr = [h.strip().lower() for h in fh.readline().rstrip("\n").split("\t")]
+        idx = {w: hdr.index(w) for w in want if w in hdr}
+        missing = [w for w in want if w not in idx]
+        assert not missing, f"ChEBI columns not found: {missing} in {hdr[:12]}"
+        return idx
+
     name2id = {}
     with gzip.open(SP / "chebi_names.tsv.gz", "rt", errors="replace") as fh:
-        hdr = fh.readline().rstrip("\n").split("\t")
-        ci = hdr.index("COMPOUND_ID") if "COMPOUND_ID" in hdr else 1
-        ni = hdr.index("NAME") if "NAME" in hdr else 4
+        ix = cols(fh, ("compound_id", "name"))
         for line in fh:
             f = line.rstrip("\n").split("\t")
-            if len(f) <= max(ci, ni):
+            if len(f) <= max(ix.values()):
                 continue
-            name2id.setdefault(f[ni].strip().lower(), f[ci])
-    # the primary ChEBI name lives in compounds.tsv, not names.tsv -- without it the common metabolites
-    # miss, because their primary label is not repeated in the synonym table
+            name2id.setdefault(f[ix["name"]].strip().lower(), f[ix["compound_id"]])
+    # the primary label lives in compounds.tsv and is NOT repeated in the synonym table, so without this
+    # pass the most common metabolites are exactly the ones that miss
     with gzip.open(SP / "chebi_compounds.tsv.gz", "rt", errors="replace") as fh:
-        hdr = fh.readline().rstrip("\n").split("\t")
-        idx = {h: i for i, h in enumerate(hdr)}
-        ci, ni = idx.get("ID", 0), idx.get("NAME", 5)
+        ix = cols(fh, ("id", "name"))
         for line in fh:
             f = line.rstrip("\n").split("\t")
-            if len(f) <= max(ci, ni):
+            if len(f) <= max(ix.values()):
                 continue
-            nm = f[ni].strip().lower()
+            nm = f[ix["name"]].strip().lower()
             if nm and nm != "null":
-                name2id.setdefault(nm, f[ci])
+                name2id.setdefault(nm, f[ix["id"]])
+    # STRUCTURES.TSV CANNOT BE SPLIT LINE BY LINE. It carries a `molfile` column, and a molfile is
+    # inherently multi-line, quoted. Splitting on newlines walks straight through the middle of records and
+    # every field lands in the wrong column -- the symptom was id2smi coming back keyed by SMILES strings
+    # instead of compound ids, which then made every lookup miss and reported 0.0% coverage twice.
+    # csv.reader handles embedded newlines inside quotes; the naive loop cannot.
+    import csv as _csv
+    _csv.field_size_limit(10 ** 8)
     id2smi = {}
-    with gzip.open(SP / "chebi_structures.tsv.gz", "rt", errors="replace") as fh:
-        hdr = fh.readline().rstrip("\n").split("\t")
-        idx = {h: i for i, h in enumerate(hdr)}
-        ci = idx.get("COMPOUND_ID", 1)
-        si = idx.get("STRUCTURE", 2)
-        ti = idx.get("TYPE", 3)
-        for line in fh:
-            f = line.rstrip("\n").split("\t")
-            if len(f) <= max(ci, si, ti):
+    with gzip.open(SP / "chebi_structures.tsv.gz", "rt", errors="replace", newline="") as fh:
+        rd = _csv.reader(fh, delimiter="\t", quotechar='"')
+        hdr = [h.strip().lower() for h in next(rd)]
+        ci, si = hdr.index("compound_id"), hdr.index("smiles")
+        for f in rd:
+            if len(f) <= max(ci, si):
                 continue
-            if f[ti].strip().upper() == "SMILES":
-                id2smi.setdefault(f[ci], f[si].strip())
+            s = f[si].strip()
+            if s and s != "null":
+                id2smi.setdefault(f[ci].strip(), s)
+    assert len(name2id) > 100000 and len(id2smi) > 50000, \
+        f"ChEBI parse looks wrong: {len(name2id)} names, {len(id2smi)} smiles"
     return name2id, id2smi
 
 
@@ -136,7 +159,8 @@ def main():
     def parts(i):
         s = steps[i]
         return [q for q in (s.get("in") or []) + (s.get("out") or [])
-                if q.get("type") == "METABOLITE" and not q.get("currency")]
+                if q.get("type") == "METABOLITE" and not q.get("currency")
+                and (q.get("name") or "").strip().lower() not in UBIQUITOUS]
 
     # ---- vocabulary-level ---------------------------------------------------------------------------
     vocab = Counter()
@@ -169,7 +193,8 @@ def main():
             # main substrate = the longest-named non-currency input, a crude but consistent proxy for the
             # largest species, chosen because it does not need a structure to evaluate
             ins = [q for q in (steps[i].get("in") or [])
-                   if q.get("type") == "METABOLITE" and not q.get("currency")]
+                   if q.get("type") == "METABOLITE" and not q.get("currency")
+                   and (q.get("name") or "").strip().lower() not in UBIQUITOUS]
             if ins and resolve(max(ins, key=lambda q: len(q.get("name") or "")).get("name")):
                 nmain += 1
         n = len(idxs)
