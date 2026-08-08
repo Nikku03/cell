@@ -192,6 +192,39 @@ def main():
     ratio = POLY_INTERVAL / tau_slow
     report(f"    SEPARATION: the polymerase interval is {ratio:.3g}x the slowest relaxation time")
 
+    # ---- AND THE SCALE THAT ACTUALLY MATTERS, which is not this one --------------------------------
+    # A pass here licenses ONE nucleosome-scale particle. Tier 2 of the proposed architecture is a
+    # megabase rod, and polymer relaxation grows steeply with contour length: Rouse (free-draining, the
+    # same assumption the Stokes gamma above makes) gives tau ~ N^2, Zimm (with hydrodynamic coupling)
+    # gives tau ~ N^1.5. Extrapolating the MEASURED nucleosome time by both brackets the answer.
+    # THIS IS AN EXTRAPOLATION, NOT A MEASUREMENT, and the nucleosome's slowest mode is a whole-particle
+    # breathing mode rather than a polymer mode, so the prefactor is not trustworthy -- only the exponent
+    # argument is. It is here because the conclusion flips, and a flipped conclusion is worth a rough number.
+    report("\n  THE SCALE THAT ACTUALLY MATTERS, and this is an EXTRAPOLATION not a measurement")
+    NUC_BP = 147
+    report(f"    measured: tau_max {tau_slow*1e9:.1f} ns for one {NUC_BP} bp nucleosome-scale particle")
+    report(f"    {'contour':<14}{'N':>10}{'Rouse N^2':>14}{'Zimm N^1.5':>14}{'vs 30 ms':>22}")
+    rod = []
+    for lab, bp in (("10 kb", 1e4), ("100 kb", 1e5), ("1 Mb", 1e6), ("10 Mb", 1e7)):
+        N = bp / NUC_BP
+        t_rouse = tau_slow * N ** 2
+        t_zimm = tau_slow * N ** 1.5
+        rod.append({"contour": lab, "bp": bp, "tau_rouse_s": t_rouse, "tau_zimm_s": t_zimm})
+        verdict = ("BOTH fail" if t_zimm > POLY_INTERVAL else
+                   "Rouse fails" if t_rouse > POLY_INTERVAL else "both hold")
+        report(f"    {lab:<14}{N:>10.0f}{t_rouse:>14.3e}{t_zimm:>14.3e}{verdict:>22}")
+    report("    Polymer relaxation grows as N^1.5 to N^2 while the polymerase interval is fixed, so the")
+    report(f"    {ratio:.3g}x margin measured at nucleosome scale is consumed somewhere between 10 and 100 kb.")
+    report("    THE CONCLUSION FLIPS with contour length, which is the opposite of what a single global")
+    report("    'relaxation is fast' claim implies.")
+    report("")
+    report("    The resolution is that 'has it relaxed' is the wrong question asked globally. A polymerase")
+    report("    injects TWIST locally, and local torsional equilibration is fast. What is slow is global")
+    report("    conformational reorganisation -- writhe redistribution, plectoneme motion. So the honest")
+    report("    rule is per-channel, not per-system: quasi-static stepping is valid for the LOCAL torsional")
+    report("    response and INVALID for long-range chain conformation, which has to be integrated or")
+    report("    treated as a slowly-relaxing background that the event stepper does not equilibrate.")
+
     report("\n  READING")
     if ratio > 100:
         report(f"  THE SEPARATION HOLDS, by {ratio:.3g}x. Every elastic mode in the particle has relaxed")
@@ -217,6 +250,7 @@ def main():
                "lambda_min": lam_min, "lambda_max_bound": lam_max_est,
                "tau_max_s": float(tau_slow), "tau_min_s": float(tau_fast),
                "polymerase_interval_s": POLY_INTERVAL, "separation_ratio": float(ratio),
+               "rod_extrapolation": rod,
                "log": log}, open(OUT / "chromatin_timescale.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'chromatin_timescale.json'}")
     return 0
