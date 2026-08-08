@@ -117,14 +117,23 @@ def main():
     report(f"\n  estimating tr(K^+) over the {n3-6}-dimensional non-rigid space by Hutchinson probing")
     report(f"  ({NPROBE} probes, exact projected CG each -- no modal truncation, which would bias the")
     report("  spring scale upward and every relaxation time downward)")
-    ests = []
-    for p in range(NPROBE):
+    # CACHED. The probing is 24 exact CG solves and took 1,153 s; the eigensolve that follows it had to be
+    # rewritten and re-run, and repeating a completed 19-minute measurement to get the same number back is
+    # waste. The cache stores the per-probe estimates, so the mean and its standard error are recomputed
+    # from the raw values rather than trusted as a summary.
+    cache = OUT / "chromatin_timescale_trace.json"
+    ests = json.load(open(cache))["probes"] if cache.exists() else []
+    if ests:
+        report(f"    reusing {len(ests)} cached probes from {cache}")
+    for p in range(len(ests), NPROBE):
         z = project(Q, rng.choice([-1.0, 1.0], size=n3))
         x, info = cg(op, z, rtol=1e-8, maxiter=5000)
         ests.append(float(z @ x))
         if (p + 1) % 8 == 0:
             report(f"    probe {p+1}/{NPROBE}  running estimate {np.mean(ests):.4g}  "
                    f"(se {np.std(ests)/np.sqrt(len(ests)):.2g})  {time.time()-t0:.0f}s")
+    OUT.mkdir(parents=True, exist_ok=True)
+    json.dump({"probes": ests, "n_atoms": int(n)}, open(cache, "w"))
     tr_pinv = float(np.mean(ests))
     se = float(np.std(ests) / np.sqrt(len(ests)))
     report(f"  tr(K^+) = {tr_pinv:.4g} +/- {se:.2g}  (model units)")
@@ -155,9 +164,20 @@ def main():
 
     # ---- the spectrum, and the answer ----------------------------------------------------------------
     report(f"\n  slowest non-rigid modes ({time.time()-t0:.0f}s elapsed)")
-    vals = eigsh(op, k=12, sigma=None, which="SM", return_eigenvectors=False, tol=1e-6, maxiter=20000)
+    # SHIFT-INVERT, not which="SM". Asking Lanczos for the smallest eigenvalues directly makes it work in
+    # the part of the spectrum where eigenvalues are most crowded, which is the slow case: the first
+    # attempt ran 350 s without returning and had to be killed. Factorising K - sigma I once and running
+    # Lanczos on its inverse maps the smallest eigenvalues to the largest, where they are well separated.
+    SHIFT = -1e-4                       # slightly negative so K - sigma I is positive definite
+    vals = eigsh(K.tocsc(), k=14, sigma=SHIFT, which="LM", return_eigenvectors=False, tol=0)
     vals = np.sort(np.abs(vals))
-    lam = vals[vals > 1e-8]
+    report(f"    spectrum near zero: {np.array2string(vals[:10], precision=4)}")
+    # six rigid-body modes sit at numerical zero. The cut is placed off the sixth rather than at a fixed
+    # constant, and the gap either side is REPORTED so a bad separation is visible rather than silent.
+    zero_cut = max(1e-9, float(vals[5]) * 10)
+    lam = vals[vals > zero_cut]
+    report(f"    {int((vals <= zero_cut).sum())} modes below the cut {zero_cut:.3e} (expected 6), "
+           f"softest real mode {float(lam[0]):.4e}, gap {float(lam[0])/max(float(vals[5]),1e-30):.1f}x")
     lam_min = float(lam[0])
     lam_max_est = float(sp.linalg.norm(K, np.inf))
     S_SI = s_kcal * KCAL_MOL / 1e-20                   # kcal/mol/A^2 -> J/m^2 = N/m
