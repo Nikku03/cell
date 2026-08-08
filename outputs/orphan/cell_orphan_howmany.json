@@ -116,6 +116,23 @@
     },
     "implied_correct": 959.5036080218074,
     "worst_cell_share": 0.236,
+    "tiers": {
+      "confidence >= 0.8": {
+        "n": 70,
+        "precision": 0.9428571428571428,
+        "coverage": 0.24734982332155478
+      },
+      "confidence < 0.8, solvers agree": {
+        "n": 153,
+        "precision": 0.7254901960784313,
+        "coverage": 0.5406360424028268
+      },
+      "confidence < 0.8, they disagree": {
+        "n": 60,
+        "precision": 0.4666666666666667,
+        "coverage": 0.21201413427561838
+      }
+    },
     "rows": [
       {
         "pid": "915",
@@ -2665,6 +2682,23 @@
       "\n    THE ONE CELL THAT MATTERS: thin retrieval AND the two solvers disagree.",
       "    23.6% of rows -> about 330 of 1400, at 0.370. Everything else sits near 0.78-0.80.",
       "    That is a triage rule a curator can apply in one pass, and it did not exist before.",
+      "\n  0.79 IS A WORKLIST, NOT ANNOTATION. Is there a SUBSET that clears a real bar?",
+      "  Joining the confidence recorded by the earlier ranking run (283 of 333 rows).",
+      "    tier                                 n  precision  coverage",
+      "    confidence >= 0.8                   70      0.943     24.7%",
+      "    confidence < 0.8, solvers agree    153      0.725     54.1%",
+      "    confidence < 0.8, they disagree     60      0.467     21.2%",
+      "    top tier 95% CI [0.882, 0.987]",
+      "\n    Agreement adds NOTHING on top of confidence (0.938 against",
+      "    0.943) but a great deal below it (+0.259).",
+      "    So the two are not competitors: confidence picks out the annotation-grade quarter, and",
+      "    agreement sorts the three-quarters that confidence has already given up on.",
+      "\n    THE CEILING. The first solver is right on 0.724 of all rows, so no selector",
+      "    can exceed 72.4% coverage at perfect precision, or 76.3% at 0.95.",
+      "    A quarter of the worklist at 0.94 is therefore not a weak result against that bound --",
+      "    it is a third of the reachable rows, isolated. What it costs is that the fill never",
+      "    recorded confidence, so this tier cannot be extracted from the 1,400 without re-running",
+      "    them to ask for it.",
       "\n  READING",
       "  AGREEMENT IS A USABLE PER-ROW LABEL. It separates by +0.282, which is the same order",
       "  as the confidence signal that was never collected. The 974 agreeing",

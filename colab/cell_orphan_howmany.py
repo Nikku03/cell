@@ -459,6 +459,62 @@ def cmd_score():
     report("    That is a triage rule a curator can apply in one pass, and it did not exist before.")
     res_cells = {f"{a}|{b}": v for (a, b), v in cells.items()}
 
+    # ---- 0.79 IS NOT ANNOTATION. Is there a SUBSET that clears a real bar, and how big is it? -------
+    # The earlier ranking run recorded a confidence for 283 of these same reactions. It used a different
+    # protocol, so before using it: the two protocols name the SAME gene 86.2% of the time and confidence
+    # predicts either answer equally well (0.929 on its own, 0.943 on the fill's), which is what makes the
+    # transfer legitimate rather than convenient.
+    keep = json.load(open(OUT / "rankv2_meta.json"))
+    ans = json.load(open(OUT / "rankv2_answers.json"))
+    cf = {}
+    for p, m in keep.items():
+        a = ans.get(p)
+        if a and a.get("confidence") is not None:
+            cf[m["orig"]] = float(a["confidence"])
+    W = [r for r in ca if r.get("pid") in cf] if any("pid" in r for r in ca) else []
+    if not W:                                   # ca rows are built without pid; rebuild the join here
+        cal2 = {r["pid"]: r for r in load_holdout(papers)}
+        W = []
+        for k, g in second.items():
+            kind, pid = k.split(":", 1)
+            if kind == "cal" and pid in cal2 and pid in cf:
+                r = cal2[pid]
+                W.append({"hit": r["hit"], "agree": str(g).strip().upper() == r["gene"], "conf": cf[pid]})
+    if W:
+        hw = np.array([r["hit"] for r in W], bool)
+        cw = np.array([r["conf"] for r in W], float)
+        aw = np.array([r["agree"] for r in W], bool)
+        report(f"\n  0.79 IS A WORKLIST, NOT ANNOTATION. Is there a SUBSET that clears a real bar?")
+        report(f"  Joining the confidence recorded by the earlier ranking run ({len(W)} of {len(ca)} rows).")
+        report(f"    {'tier':<32}{'n':>6}{'precision':>11}{'coverage':>10}")
+        tiers = (("confidence >= 0.8", cw >= 0.8),
+                 ("confidence < 0.8, solvers agree", (cw < 0.8) & aw),
+                 ("confidence < 0.8, they disagree", (cw < 0.8) & ~aw))
+        for lab, m in tiers:
+            if m.sum():
+                report(f"    {lab:<32}{int(m.sum()):>6}{hw[m].mean():>11.3f}{m.mean():>10.1%}")
+        rb = []
+        for _ in range(5000):
+            i = rng.integers(0, len(W), len(W))
+            m = cw[i] >= 0.8
+            if m.sum() > 5:
+                rb.append(hw[i][m].mean())
+        report(f"    top tier 95% CI [{np.percentile(rb,2.5):.3f}, {np.percentile(rb,97.5):.3f}]")
+        report(f"\n    Agreement adds NOTHING on top of confidence ({hw[(cw>=.8)&aw].mean():.3f} against")
+        report(f"    {hw[cw>=.8].mean():.3f}) but a great deal below it (+{hw[(cw<.8)&aw].mean()-hw[(cw<.8)&~aw].mean():.3f}).")
+        report("    So the two are not competitors: confidence picks out the annotation-grade quarter, and")
+        report("    agreement sorts the three-quarters that confidence has already given up on.")
+        report(f"\n    THE CEILING. The first solver is right on {hw.mean():.3f} of all rows, so no selector")
+        report(f"    can exceed {hw.mean():.1%} coverage at perfect precision, or {hw.mean()/0.95:.1%} at 0.95.")
+        report("    A quarter of the worklist at 0.94 is therefore not a weak result against that bound --")
+        report("    it is a third of the reachable rows, isolated. What it costs is that the fill never")
+        report("    recorded confidence, so this tier cannot be extracted from the 1,400 without re-running")
+        report("    them to ask for it.")
+        res_tiers = {lab: {"n": int(m.sum()), "precision": float(hw[m].mean()),
+                           "coverage": float(m.mean())} for lab, m in tiers if m.sum()}
+    else:
+        res_tiers = {}
+
     report("\n  READING")
     if gap > 0.25 and 0.05 < ag.mean() < 0.95:
         report(f"  AGREEMENT IS A USABLE PER-ROW LABEL. It separates by {gap:+.3f}, which is the same order")
@@ -482,7 +538,7 @@ def cmd_score():
                         "second_solver_alone": float(sh.mean()), "implied_fill_accuracy": float(exp),
                         "first_wins_on_disagreement": [float(hi_[d].mean()), float(sh[d].mean())],
                         "cells": res_cells, "implied_correct": float(tot_exp),
-                        "worst_cell_share": float(bad.mean()), "rows": fa, "log": log}
+                        "worst_cell_share": float(bad.mean()), "tiers": res_tiers, "rows": fa, "log": log}
     json.dump(res, open(OUT / "cell_orphan_howmany.json", "w"), indent=2)
     # the labelled worklist itself -- one row per scored fill prediction, with its calibrated tier
     with open(OUT / "orphan_fill_labelled.tsv", "w") as fh:
