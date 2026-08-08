@@ -259,7 +259,31 @@ def cmd_est():
         report(f"    {lab:<40}{auc(sc, hit):>8.3f}")
     report("    a coin is 0.500. These are what a curator would have to triage on today.")
 
+    # ---- 5. what self-review was worth, now that there is a truth-based number to compare it to -------
+    report("\n  5. THE HAND CHECK, RE-READ AGAINST GROUND TRUTH. 30 rows were verified by hand early on --")
+    report("     10 full-retrieval, 10 partial, 10 zero-example, which is within 4 points of the fill's own")
+    report("     30/37/33 split -- and scored 26/30. It was flagged at the time as NOT independent, because")
+    report("     the reviewer was the model that made the predictions. Held-out gives the size of that.")
+    tier = lambda n: "zero" if n == 0 else ("full" if n >= K else "partial")
+    hand = {"full": (10, 10), "partial": (8, 10), "zero": (8, 10)}
+    report(f"    {'tier':<10}{'hand check':>13}{'measured':>11}{'n':>6}{'inflation':>11}")
+    infl = {}
+    for t in ("full", "partial", "zero"):
+        h = [r["hit"] for r in cal if tier(r["n_examples"]) == t]
+        a, b = hand[t]
+        infl[t] = a / b - float(np.mean(h))
+        report(f"    {t:<10}{a}/{b} = {a/b:>5.0%}{np.mean(h):>11.3f}{len(h):>6}{infl[t]:>+11.3f}")
+    ha_ = sum(a for a, _ in hand.values()) / 30
+    infl["all"] = ha_ - raw
+    report(f"    {'ALL':<10}{'26/30 = 87%':>13}{raw:>11.3f}{len(cal):>6}{infl['all']:>+11.3f}")
+    report("    Self-review inflates by +0.14 overall, and the inflation is ORDERED: largest where the")
+    report("    examples were in front of both the predictor and the reviewer (+0.21 at full retrieval),")
+    report("    almost nil where there was nothing to agree with (+0.04 at zero examples). A second look")
+    report("    at shared evidence mostly re-endorses the first look; a second look at bare chemistry does")
+    report("    not. That is the mechanism, and it is why the closed-book arm withholds the examples.")
+
     res = {"test": "cell_orphan_howmany", "n_cal": len(cal), "n_fill": len(fill),
+           "hand_check": {"score": "26/30", "rate": ha_, "inflation_vs_measured": infl},
            "held_out_raw": raw, "standardised": pt, "ci": [lo, hi],
            "fill_implied_obscure": float(fill_ob), "held_out_obscure": float(to.mean()),
            "p_truth_obscure_given_pred_obscure": float(p_ob_given_pred_ob),

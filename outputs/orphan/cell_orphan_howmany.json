@@ -2,6 +2,16 @@
   "test": "cell_orphan_howmany",
   "n_cal": 333,
   "n_fill": 1400,
+  "hand_check": {
+    "score": "26/30",
+    "rate": 0.8666666666666667,
+    "inflation_vs_measured": {
+      "full": 0.2142857142857143,
+      "partial": 0.1675213675213676,
+      "zero": 0.0368421052631579,
+      "all": 0.13993993993993992
+    }
+  },
   "held_out_raw": 0.7267267267267268,
   "standardised": 0.6952824301480748,
   "ci": [
@@ -59,6 +69,20 @@
     "    predicted-gene literature count            0.413",
     "    full retrieval (>=12 examples)             0.562",
     "    a coin is 0.500. These are what a curator would have to triage on today.",
+    "\n  5. THE HAND CHECK, RE-READ AGAINST GROUND TRUTH. 30 rows were verified by hand early on --",
+    "     10 full-retrieval, 10 partial, 10 zero-example, which is within 4 points of the fill's own",
+    "     30/37/33 split -- and scored 26/30. It was flagged at the time as NOT independent, because",
+    "     the reviewer was the model that made the predictions. Held-out gives the size of that.",
+    "    tier         hand check   measured     n  inflation",
+    "    full      10/10 =  100%      0.786   140     +0.214",
+    "    partial   8/10 =   80%      0.632   117     +0.168",
+    "    zero      8/10 =   80%      0.763    76     +0.037",
+    "    ALL         26/30 = 87%      0.727   333     +0.140",
+    "    Self-review inflates by +0.14 overall, and the inflation is ORDERED: largest where the",
+    "    examples were in front of both the predictor and the reviewer (+0.21 at full retrieval),",
+    "    almost nil where there was nothing to agree with (+0.04 at zero examples). A second look",
+    "    at shared evidence mostly re-endorses the first look; a second look at bare chemistry does",
+    "    not. That is the mechanism, and it is why the closed-book arm withholds the examples.",
     "\n  READING",
     "  Point estimate 0.695 on 1367 scorable rows = about 950 correct, interval",
     "  [875, 1022]. That is an AGGREGATE. Nothing above tells a curator WHICH",
