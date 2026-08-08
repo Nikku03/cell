@@ -5,9 +5,10 @@ accuracy could be measured. This turns the method on the reactions that are ACTU
 where there is no answer key and never was. That is the deliverable, and it is also why the output format
 matters more than the method: nothing downstream can check these against truth, so a human has to.
 
-THE MEASURED ACCURACY GOVERNS THE FORMAT.  Obscure top-1 is 0.688 reaction-weighted, and the cluster
-bootstrap puts the honest interval at [0.523, 0.873] over 38 distinct facts. So roughly one in three of
-these will be wrong, and WHICH third is not knowable from the prediction alone. A file of bare gene names
+THE MEASURED ACCURACY GOVERNS THE FORMAT.  Obscure top-1 is 0.515 under the independent check -- held-out
+reactions banned from every example pool, giveaways and associations dropped -- against 0.688 under the
+same-pool protocol, and the cluster bootstrap puts that one at [0.523, 0.873] over 38 distinct facts. So
+half of these will be wrong, and WHICH half is not knowable from the prediction alone. A file of bare names
 would therefore be actively harmful -- it would read as annotation. Every row here carries the evidence
 that produced it so a curator can accept or reject in seconds rather than re-deriving:
 
@@ -37,7 +38,7 @@ DISTRIBUTED BY CONSTRUCTION.  Prompts are written as independent batches so they
 parallel by separate workers, and the merge refuses partial writes -- a batch that fails leaves the row
 unfilled rather than silently absent.
 
-WHAT THIS IS NOT.  It is not a completed network. At 0.69 with a wide interval it is a ranked worklist that
+WHAT THIS IS NOT.  It is not a completed network. At 0.52 on the obscure end it is a ranked worklist that
 makes curation perhaps threefold faster, and the honest description of the artifact is "hypotheses with
 their evidence attached", which is what the file is shaped like.
 
@@ -67,6 +68,17 @@ BATCH = 50
 NONCAT = ("binding", "dissociation")
 ABSTRACT = ("omitted", "uncertain")
 SEED = 101
+# THE FIRST 1,400 ROWS WERE NOT A SAMPLE. `real[:limit]` is a contiguous prefix of a list built by walking
+# steps in file order, and the two sources are not interleaved: orphans[:1400] is 100% Reactome while the
+# fillable backlog is 4,037 Reactome and 5,149 HumanGEM. So every population statistic measured on the
+# answered rows -- 7.5% compartment mismatch, 69.9% starved, the gene-frequency table -- describes Reactome
+# orphans and does not transfer to the 56% of the backlog that is HumanGEM, which has different retrieval
+# support (top similarity 0.321 against 0.223, zero-example 23.5% against 35.2%).
+# Accuracy itself does transfer: the held-out set is 213 HumanGEM against 70 Reactome and scores 0.723
+# against 0.671, obscure 0.479 against 0.500. The defect is in what was SELECTED for filling, not in what
+# the method can do. The prefix stays frozen so the answered pids keep pointing at the same reactions; the
+# unanswered remainder is shuffled so any further tranche is representative.
+DUMPED = 1400
 
 
 def build_pool():
@@ -122,12 +134,33 @@ def _compvocab(s):
     return {v for k, v in _COMPMAP if k in s}
 
 
+def _selection_order(real):
+    """Frozen prefix, shuffled remainder -- see DUMPED. Taking real[:N] from a source-ordered list gave a
+    single-source worklist; keeping the answered prefix in place preserves the pid mapping while making
+    everything after it a proper sample of what is left."""
+    tail = list(real[DUMPED:])
+    np.random.default_rng(SEED).shuffle(tail)
+    return list(real[:DUMPED]) + tail
+
+
+def _by_source(steps, idx):
+    c = defaultdict(int)
+    for i in idx:
+        c[steps[i].get("source", "?")] += 1
+    return ", ".join(f"{k} {v}" for k, v in sorted(c.items()))
+
+
 def cmd_dump(limit=None):
     B, real, cat_of = build_pool()
     steps, cats, P = B["steps"], B["cats"], B["P"]
     print(f"  {len(real)} fillable orphans (metabolic/transition; binding, dissociation and "
           f"curator-abstractions excluded)")
+    print(f"  backlog by source: {_by_source(steps, real)}")
+    real = _selection_order(real)
     sel = real if limit is None else real[:limit]
+    print(f"  selecting {len(sel)}: {_by_source(steps, sel)}")
+    if limit and limit <= DUMPED:
+        print(f"  NOTE: the first {DUMPED} are the frozen already-answered prefix and are Reactome-only.")
     SP.mkdir(parents=True, exist_ok=True)
     meta, txt = {}, []
     for pid, i in enumerate(sel):
@@ -140,7 +173,11 @@ def cmd_dump(limit=None):
         body = _render(s, steps)
         txt.append(head + "\n" + body + "\n  --- SOLVED REACTIONS FOR REFERENCE ---\n" + "\n".join(ex)
                    if ex else head + "\n" + body + "\n  --- NO SIMILAR SOLVED REACTION FOUND ---")
-        meta[str(pid)] = {"step": int(i), "id": s.get("id", ""), "name": s.get("name", ""),
+        # FINGERPRINT. The selection order now reshuffles the unanswered tail, so a meta file and a set of
+        # prompt files written by different runs would silently disagree about which reaction a pid names,
+        # and merge's giveaway/association checks read the PROMPT text by pid. Storing a slice of the
+        # rendered body lets merge prove the two came from the same dump rather than assume it.
+        meta[str(pid)] = {"step": int(i), "fp": body[:80], "id": s.get("id", ""), "name": s.get("name", ""),
                           "category": s.get("category", ""), "source": s.get("source", ""),
                           "n_examples": len(top), "top_sim": float(sims[0]) if sims else 0.0,
                           "example_catalysts": sorted({g for j in top for g in cats[j]}),
@@ -197,6 +234,18 @@ def cmd_merge():
             return _cache[b][k].split("--- SOLVED")[0]
         except Exception:
             return ""
+    # the prompt files must come from the dump that wrote this meta -- see the fingerprint note in cmd_dump
+    nfp, badfp = 0, 0
+    for pid, m in meta.items():
+        if pid in ans and m.get("fp"):
+            nfp += 1
+            badfp += (m["fp"] not in _query_text(pid))
+    if nfp and badfp:
+        print(f"  STALE PROMPTS: {badfp} of {nfp} answered pids do not match the prompt text in {_SP}.")
+        print(f"  The meta and the prompt batches are from different dumps; re-run dump before merging.")
+        return 1
+    if nfp:
+        print(f"  prompt/meta fingerprint verified on {nfp} answered rows")
     rows, nbad, nmiss, ncopy, nstarve, ncompart, ngive, nassoc = [], 0, 0, 0, 0, 0, 0, 0
     for pid, m in meta.items():
         a = ans.get(pid)
@@ -247,7 +296,8 @@ def cmd_merge():
         nstarve += starved
         ncompart += (not comp_ok)
         rows.append({"pid": pid, "step": m["step"], "id": m["id"], "name": m["name"],
-                     "category": m["category"], "gene": gene, "is_gene": is_gene,
+                     "category": m["category"], "source": m.get("source", ""),
+                     "gene": gene, "is_gene": is_gene,
                      "missing_from_model": missing_from_model, "giveaway": giveaway,
                      "association": assoc,
                      "copied": copied, "starved": starved, "n_examples": m["n_examples"],
@@ -263,7 +313,11 @@ def cmd_merge():
                                 r["is_gene"], r["copied"], r["starved"], r["n_examples"],
                                 f"{r['top_sim']:.3f}", r["compartment_ok"],
                                 ";".join(r["compartments"]), r["why"].replace("\t", " ")]) + "\n")
+    bysrc = defaultdict(int)
+    for r in rows:
+        bysrc[r["source"] or "?"] += 1
     res = {"test": "cell_orphan_fill", "n_meta": len(meta), "n_answered": got, "rows": rows,
+           "by_source": dict(bysrc),
            "checks": {"not_a_real_gene": nbad, "valid_but_missing_from_model": nmiss,
                       "copied_from_examples": ncopy, "starved": nstarve,
                       "compartment_mismatch": ncompart, "giveaway": ngive,
@@ -285,6 +339,15 @@ def cmd_review():
     print("ORPHAN FILL -- what came back, and what a curator should look at first")
     print("=" * 100)
     print(f"  {n} predictions from {res['n_meta']} orphan reactions")
+    bs = res.get("by_source") or {}
+    if bs:
+        print(f"  by source: " + ", ".join(f"{k} {v}" for k, v in sorted(bs.items())))
+        if len(bs) == 1:
+            print(f"  WHICH IS ONE SOURCE ONLY. The selection took a contiguous prefix of a source-ordered")
+            print(f"  list, so these rows are {next(iter(bs))} and the 5,149 HumanGEM orphans -- 56% of the")
+            print(f"  fillable backlog -- are not represented. Every population figure below therefore")
+            print(f"  describes {next(iter(bs))} orphans. Accuracy transfers (held-out: 0.723 HumanGEM,")
+            print(f"  0.671 Reactome); retrieval support does not (top similarity 0.321 against 0.223).")
     print(f"\n  AUTOMATIC CHECKS (these need no human)")
     print(f"    not a real gene symbol       {c['not_a_real_gene']:>6}  ({c['not_a_real_gene']/max(n,1):.1%})"
           f"  <- hard reject, hallucinated (checked against HGNC)")
@@ -305,9 +368,12 @@ def cmd_review():
     lo = [r for r in rows if r["starved"] or not r["is_gene"]]
     print(f"\n  {len(hi)} rows ({len(hi)/max(n,1):.1%}) are real genes with full retrieval and no")
     print(f"  compartment conflict. {len(lo)} rows ({len(lo)/max(n,1):.1%}) are starved or invalid.")
-    print(f"\n  THE NUMBER THAT GOVERNS ALL OF THIS: measured obscure top-1 is 0.688, cluster interval")
-    print(f"  [0.523, 0.873]. About a third of these are wrong and the prediction does not say which.")
-    print(f"  This is a ranked worklist with its evidence attached, not annotation.")
+    print(f"\n  THE NUMBER THAT GOVERNS ALL OF THIS: obscure top-1 is 0.515 under the INDEPENDENT check")
+    print(f"  (held-out reactions banned from every example pool, giveaways and associations dropped).")
+    print(f"  The 0.688 quoted earlier came from the same-pool protocol and is the optimistic one; the")
+    print(f"  0.515 is what a curator should expect. About half of these are wrong on the obscure end and")
+    print(f"  the prediction does not say which. A ranked worklist with its evidence attached, not")
+    print(f"  annotation. The one usable separator is the model's own confidence: 0.891 against 0.456.")
     print(f"\n  distinct genes proposed: {len({r['gene'] for r in rows})}")
     from collections import Counter
     top = Counter(r["gene"] for r in rows).most_common(8)
