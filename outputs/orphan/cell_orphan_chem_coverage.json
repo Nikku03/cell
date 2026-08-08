@@ -4,21 +4,21 @@
   "n_smiles": 201171,
   "vocab": {
     "distinct": 3975,
-    "resolved": 1462,
-    "token_coverage": 0.4618705035971223
+    "resolved": 2321,
+    "token_coverage": 0.6223884892086331
   },
   "reactions": {
     "orphans (the fill)": {
       "n": 9186,
       "no_metabolite": 2075,
-      "all_resolved": 2612,
-      "main_resolved": 3023
+      "all_resolved": 4179,
+      "main_resolved": 4220
     },
     "held-out (the test)": {
       "n": 333,
       "no_metabolite": 61,
-      "all_resolved": 113,
-      "main_resolved": 151
+      "all_resolved": 121,
+      "main_resolved": 156
     }
   },
   "log": [
@@ -31,20 +31,22 @@
     "  stores names. If most reactions have an unresolvable participant, the method cannot reach",
     "  them however well it works elsewhere, and that is decided here rather than after the build.",
     "\n  ChEBI: 601488 names (incl. synonyms) -> id, 201171 ids with SMILES",
+    "  Reactome PE -> ChEBI cross-reference: 5257 entities",
     "\n  METABOLITE VOCABULARY over the 9186 orphan reactions",
     "    distinct non-currency metabolites   3975",
-    "    resolved to a SMILES                1462  (36.8% of types)",
-    "    weighted by how often they occur                 46.2% of mentions",
-    "    most common unresolved: 2OG, L-Glu, LCFA(-), Ac-CoA, SUCCA, Glc, SM pool, DAG, CHOL, UDP-glucuronate",
+    "    resolved to a SMILES                2321  (58.4% of types)",
+    "    weighted by how often they occur                 62.2% of mentions",
+    "    most common unresolved: SM pool, UDP-glucuronate, palmitolate, PE-LD pool, PC-LD pool, glucuronate, PI pool, dihomo-gamma-linolenate, gamma-linolenate, (6Z,9Z)-octadecadienoic ac",
+    "    resolution path: by Reactome ID 32.0%, by name 26.4%, missed 41.6%",
     "\n  REACTION COVERAGE -- the number that bounds the method",
     "    population                  n  no metab  ALL resolved  MAIN resolved",
-    "    orphans (the fill)       9186      2075   2612 (28.4%)    3023 (32.9%)",
-    "    held-out (the test)       333        61    113 (33.9%)     151 (45.3%)",
+    "    orphans (the fill)       9186      2075   4179 (45.5%)    4220 (45.9%)",
+    "    held-out (the test)       333        61    121 (36.3%)     156 (46.8%)",
     "\n  READING",
     "    22.6% of orphan reactions have NO non-currency metabolite at all -- protein-only steps,",
     "    transport of complexes, modifications. A small-molecule docking screen has nothing to dock",
     "    for these and they are outside the method by construction, not by failure.",
-    "    Only 32.9% have even a resolvable main substrate. The last untested version of",
+    "    Only 45.9% have even a resolvable main substrate. The last untested version of",
     "    structure-based re-ranking cannot reach most of the population, and the shortlist",
     "    should go to a curator unmodified."
   ]

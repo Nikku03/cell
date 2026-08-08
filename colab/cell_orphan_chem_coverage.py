@@ -152,9 +152,36 @@ def main():
     meta = json.load(open(OUT / "holdout_meta.json"))
     holdout = [m["step"] for m in meta.values()]
 
-    def resolve(nm):
-        cid = name2id.get((nm or "").strip().lower())
-        return id2smi.get(cid) if cid else None
+    # RESOLVE BY REACTOME'S OWN CHEBI CROSS-REFERENCE FIRST, name matching only as fallback.
+    # The first pass matched display labels against ChEBI names and reached 33%, but the misses were
+    # 2OG, L-Glu, Ac-CoA, SUCCA, Glc, DAG, CHOL -- Reactome ABBREVIATIONS, every one of which has a ChEBI
+    # entry under its full name. That number measured label formatting, not chemical availability, and
+    # would have closed a live line of work on a string-matching artefact. Reactome publishes the entity
+    # mapping directly, so the display label never needs to be parsed at all.
+    pe2chebi = {}
+    f = SP / "rx_ChEBI2Reactome_PE_All_Levels.txt"
+    if f.exists():
+        with open(f, errors="replace") as fh:
+            for line in fh:
+                c = line.split("\t")
+                if len(c) > 1 and c[1].startswith("R-ALL-"):
+                    pe2chebi.setdefault(c[1], c[0].strip())
+    report(f"  Reactome PE -> ChEBI cross-reference: {len(pe2chebi)} entities")
+
+    def resolve(q):
+        """q is the participant dict. ID first, label second, and which path won is counted."""
+        cid = pe2chebi.get(q.get("id"))
+        if cid and cid in id2smi:
+            _how["id"] += 1
+            return id2smi[cid]
+        cid2 = name2id.get((q.get("name") or "").strip().lower())
+        if cid2 and cid2 in id2smi:
+            _how["name"] += 1
+            return id2smi[cid2]
+        _how["miss"] += 1
+        return None
+
+    _how = Counter()
 
     def parts(i):
         s = steps[i]
@@ -167,7 +194,11 @@ def main():
     for i in orphans:
         for q in parts(i):
             vocab[q.get("name")] += 1
-    hit = {m for m in vocab if resolve(m)}
+    byname = {}
+    for i in orphans:
+        for q in parts(i):
+            byname.setdefault(q.get("name"), q)
+    hit = {m for m, q in byname.items() if resolve(q)}
     cov_tok = sum(vocab[m] for m in hit) / max(sum(vocab.values()), 1)
     report(f"\n  METABOLITE VOCABULARY over the {len(orphans)} orphan reactions")
     report(f"    distinct non-currency metabolites {len(vocab):>6}")
@@ -175,6 +206,9 @@ def main():
     report(f"    weighted by how often they occur                 {cov_tok:.1%} of mentions")
     miss = [m for m, _ in vocab.most_common() if m not in hit][:10]
     report(f"    most common unresolved: {', '.join(str(m)[:26] for m in miss)}")
+    tot_ = sum(_how.values()) or 1
+    report(f"    resolution path: by Reactome ID {_how['id']/tot_:.1%}, by name {_how['name']/tot_:.1%}, "
+           f"missed {_how['miss']/tot_:.1%}")
 
     # ---- reaction-level -----------------------------------------------------------------------------
     report(f"\n  REACTION COVERAGE -- the number that bounds the method")
@@ -187,7 +221,7 @@ def main():
             if not p:
                 nnone += 1
                 continue
-            sm = [resolve(q.get("name")) for q in p]
+            sm = [resolve(q) for q in p]
             if all(sm):
                 nall += 1
             # main substrate = the longest-named non-currency input, a crude but consistent proxy for the
@@ -195,7 +229,7 @@ def main():
             ins = [q for q in (steps[i].get("in") or [])
                    if q.get("type") == "METABOLITE" and not q.get("currency")
                    and (q.get("name") or "").strip().lower() not in UBIQUITOUS]
-            if ins and resolve(max(ins, key=lambda q: len(q.get("name") or "")).get("name")):
+            if ins and resolve(max(ins, key=lambda q: len(q.get("name") or ""))):
                 nmain += 1
         n = len(idxs)
         report(f"    {lab:<22}{n:>7}{nnone:>10}{nall:>7} ({nall/max(n,1):>5.1%}){nmain:>8} ({nmain/max(n,1):>5.1%})")
