@@ -215,6 +215,52 @@ def main():
     report(f"      refine the window + MTS            {secs(mts*FLOPS_BEAD_STEP/(FLOPS_PER_CORE*CORES)):>10}"
            f"   {1.0:>6.1f}x")
 
+    # ---- SEQUENTIAL REFINEMENT, which is cheaper again and buys something different -----------------
+    # Run the COARSE level for the full biological time, then refine level by level, each initialised
+    # from the one above. The modes that APPEAR when the bead is halved are exactly those with relaxation
+    # times between tau(b) and tau(2b) = 4 tau(b), so equilibrating them needs ~5 tau(2b) = 20 tau(b) of
+    # simulated time at dt = tau(b)/10 -- about 200 steps, INDEPENDENT of the level. The refinement is
+    # therefore nearly free and the whole hierarchy costs what its coarsest level costs.
+    report("\n  SEQUENTIAL REFINEMENT -- coarse for the full time, then break the beads down")
+    report("    The modes that appear on halving a bead have tau between tau(b) and 4 tau(b), so they")
+    report("    equilibrate in ~20 tau(b) at dt = tau(b)/10: about 200 steps per level, at every level.")
+    report(f"    {'level':<7}{'bead':>8}{'dt':>11}{'sim time':>12}{'steps':>10}{'beads':>8}{'bead-steps':>12}")
+    DOM = 1e6
+    seq, tot = [], 0.0
+    for i, b in enumerate((10_000, 5000, 2500, 1250, 625, 312, 200)):
+        tfk = TAU_NUC * (b / NUC_BP) ** 2
+        dtk = tfk / 10
+        nb = DOM / b
+        simt, stk = (TX, TX / dtk) if i == 0 else (20 * tfk, 200.0)
+        bs = stk * nb
+        tot += bs
+        seq.append({"level": i, "bead_bp": b, "dt_s": dtk, "sim_time_s": simt, "bead_steps": bs})
+        report(f"    L{i:<6}{b:>6.0f}bp{dtk*1e6:>9.4f}us{simt:>11.3g}s{stk:>10.0f}{nb:>8.0f}{bs:>12.3g}"
+               + ("  FULL biological time" if i == 0 else ""))
+    l0 = seq[0]["bead_steps"]
+    uni = (TX / ((TAU_NUC * (200 / NUC_BP) ** 2) / 10)) * (DOM / 200)
+    c_tot = tot * FLOPS_BEAD_STEP / (FLOPS_PER_CORE * CORES)
+    report(f"    TOTAL {tot:.3g} bead-steps = {secs(c_tot)} for 1 Mb on {CORES} cores")
+    report(f"    The coarse level is {l0/tot:.1%} of that; all six refinements together add {(tot-l0)/l0:.2%}.")
+    report(f"    Against uniform 200 bp for the whole {TX:.0f} s: "
+           f"{secs(uni*FLOPS_BEAD_STEP/(FLOPS_PER_CORE*CORES))}, a {uni/tot:.0f}x difference.")
+
+    report("\n    WHAT IT ACTUALLY BUYS, and this is the whole caveat. Sequential refinement gives an")
+    report("    EQUILIBRATED FINE SNAPSHOT, not a fine TRAJECTORY. It is legitimate because the fine")
+    report(f"    modes are slaved to the coarse ones -- tau(200 bp) = {TAU_NUC*(200/NUC_BP)**2*1e9:.0f} ns against "
+           f"tau(10 kb) = {TAU_NUC*(10000/NUC_BP)**2*1e6:.0f} us,")
+    report("    a factor of ~2,500 -- so the fine structure is a FUNCTION of the coarse state and can be")
+    report("    regenerated on demand rather than carried.")
+    report("    It breaks precisely when that stops being true:")
+    report("      HYSTERESIS   a plectoneme pinned at a sequence feature, a bubble that stays open. Then")
+    report("                   the fine state depends on history, not on the current coarse state.")
+    report("      FEEDBACK     a melted segment has C ~ 0 and ssDNA bending stiffness, which changes the")
+    report("                   COARSE rod's mechanics. Tier 1B is exactly this case, so denaturation")
+    report("                   cannot be a post-hoc refinement -- it has to run inside the loop wherever")
+    report("                   melting is possible.")
+    report("    So the practical scheme is both: sequential refinement everywhere for conformation and")
+    report("    topology, and a persistent fine window only where melting or polymerase activity lives.")
+
     report("\n    THE ENGINEERING RISK, and it is one thing rather than many. Splitting a 10 kb bead into")
     report("    fifty 200 bp beads and merging them back must conserve LINKING NUMBER EXACTLY. Lk is the")
     report("    quantity the whole model exists to track, it is topological rather than energetic, and a")
@@ -253,7 +299,7 @@ def main():
                "assumptions": {"nnz_per_bead": NNZ_BEAD, "n_coarse": N_COARSE,
                                "iters_cold": ITERS_COLD, "iters_warm": ITERS_WARM,
                                "flops_per_core": FLOPS_PER_CORE, "dt_bd": DT_BD},
-               "cores": CORES, "amr": amr, "log": log},
+               "cores": CORES, "amr": amr, "sequential": seq, "log": log},
               open(OUT / "chromatin_cost_model.json", "w"), indent=2)
     report(f"\n  -> {OUT/'chromatin_cost_model.json'}")
     return 0

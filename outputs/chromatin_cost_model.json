@@ -89,6 +89,57 @@
       "seconds_4core": 103937.59994532245
     }
   ],
+  "sequential": [
+    {
+      "level": 0,
+      "bead_bp": 10000,
+      "dt_s": 2.1851543338423805e-05,
+      "sim_time_s": 303.030303030303,
+      "bead_steps": 1386768423.3426836
+    },
+    {
+      "level": 1,
+      "bead_bp": 5000,
+      "dt_s": 5.462885834605951e-06,
+      "sim_time_s": 0.0010925771669211902,
+      "bead_steps": 40000.0
+    },
+    {
+      "level": 2,
+      "bead_bp": 2500,
+      "dt_s": 1.3657214586514878e-06,
+      "sim_time_s": 0.00027314429173029754,
+      "bead_steps": 80000.0
+    },
+    {
+      "level": 3,
+      "bead_bp": 1250,
+      "dt_s": 3.4143036466287195e-07,
+      "sim_time_s": 6.828607293257438e-05,
+      "bead_steps": 160000.0
+    },
+    {
+      "level": 4,
+      "bead_bp": 625,
+      "dt_s": 8.535759116571799e-08,
+      "sim_time_s": 1.7071518233143596e-05,
+      "bead_steps": 320000.0
+    },
+    {
+      "level": 5,
+      "bead_bp": 312,
+      "dt_s": 2.127116634735527e-08,
+      "sim_time_s": 4.254233269471054e-06,
+      "bead_steps": 641025.641025641
+    },
+    {
+      "level": 6,
+      "bead_bp": 200,
+      "dt_s": 8.740617335369522e-09,
+      "sim_time_s": 1.7481234670739044e-06,
+      "bead_steps": 1000000.0
+    }
+  ],
   "log": [
     "====================================================================================================",
     "WHAT 4D CHROMATIN WOULD COST -- multiplied out from what was actually measured here",
@@ -155,6 +206,34 @@
     "      uniform 200 bp everywhere          100.3 days      100x",
     "      refine the window, one global dt     3.0 days      3.0x",
     "      refine the window + MTS              1.0 days      1.0x",
+    "\n  SEQUENTIAL REFINEMENT -- coarse for the full time, then break the beads down",
+    "    The modes that appear on halving a bead have tau between tau(b) and 4 tau(b), so they",
+    "    equilibrate in ~20 tau(b) at dt = tau(b)/10: about 200 steps per level, at every level.",
+    "    level      bead         dt    sim time     steps   beads  bead-steps",
+    "    L0      10000bp  21.8515us        303s  13867684     100    1.39e+09  FULL biological time",
+    "    L1       5000bp   5.4629us    0.00109s       200     200       4e+04",
+    "    L2       2500bp   1.3657us   0.000273s       200     400       8e+04",
+    "    L3       1250bp   0.3414us   6.83e-05s       200     800     1.6e+05",
+    "    L4        625bp   0.0854us   1.71e-05s       200    1600     3.2e+05",
+    "    L5        312bp   0.0213us   4.25e-06s       200    3205    6.41e+05",
+    "    L6        200bp   0.0087us   1.75e-06s       200    5000       1e+06",
+    "    TOTAL 1.39e+09 bead-steps = 1.2 min for 1 Mb on 4 cores",
+    "    The coarse level is 99.8% of that; all six refinements together add 0.16%.",
+    "    Against uniform 200 bp for the whole 303 s: 100.3 days, a 124798x difference.",
+    "\n    WHAT IT ACTUALLY BUYS, and this is the whole caveat. Sequential refinement gives an",
+    "    EQUILIBRATED FINE SNAPSHOT, not a fine TRAJECTORY. It is legitimate because the fine",
+    "    modes are slaved to the coarse ones -- tau(200 bp) = 87 ns against tau(10 kb) = 219 us,",
+    "    a factor of ~2,500 -- so the fine structure is a FUNCTION of the coarse state and can be",
+    "    regenerated on demand rather than carried.",
+    "    It breaks precisely when that stops being true:",
+    "      HYSTERESIS   a plectoneme pinned at a sequence feature, a bubble that stays open. Then",
+    "                   the fine state depends on history, not on the current coarse state.",
+    "      FEEDBACK     a melted segment has C ~ 0 and ssDNA bending stiffness, which changes the",
+    "                   COARSE rod's mechanics. Tier 1B is exactly this case, so denaturation",
+    "                   cannot be a post-hoc refinement -- it has to run inside the loop wherever",
+    "                   melting is possible.",
+    "    So the practical scheme is both: sequential refinement everywhere for conformation and",
+    "    topology, and a persistent fine window only where melting or polymerase activity lives.",
     "\n    THE ENGINEERING RISK, and it is one thing rather than many. Splitting a 10 kb bead into",
     "    fifty 200 bp beads and merging them back must conserve LINKING NUMBER EXACTLY. Lk is the",
     "    quantity the whole model exists to track, it is topological rather than energetic, and a",
