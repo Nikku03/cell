@@ -123,6 +123,29 @@ def load_fill(papers):
     return rows
 
 
+def shape(steps, i):
+    """Is this row a catalyst question at all?  Found by reading the rows where an independent closed-book
+    solver answered NONE, which turned out not to be one class but three.
+
+        empty_out       the OUT side rendered with no participants. The model was asked which enzyme
+                        performs a reaction that has no products. Unanswerable, and it was answered.
+        translocation   the same protein species on both sides in different compartments, with no small
+                        molecule anywhere. That is vesicular trafficking, not an enzyme acting on a
+                        substrate. Reactome files some of it as 'transition' and it reached the fill.
+
+    THE CONTROL IS THE CALIBRATION SET. Every reaction there is annotated, so every one provably HAS a
+    catalyst -- and it contains ZERO translocation rows and one empty-out row in 333. A shape that never
+    occurs among catalysed reactions is not a hard case, it is a different kind of object."""
+    s = steps[i]
+    ins, outs = s.get("in") or [], s.get("out") or []
+    names_in = {q.get("name") for q in ins}
+    names_out = {q.get("name") for q in outs}
+    macro = lambda qs: bool(qs) and all((q.get("type") or "").upper() in ("PROTEIN", "COMPLEX", "SET")
+                                        for q in qs)
+    return {"empty_out": len(outs) == 0,
+            "translocation": bool(names_in) and names_in == names_out and macro(ins) and macro(outs)}
+
+
 def auc(score, label):
     """Rank AUC with ties at 0.5, written out because the separability question is entirely about whether
     a flag with three values can do the job of a continuous confidence."""
@@ -422,17 +445,45 @@ def cmd_score():
     # ---- an unplanned control that fell out: the solver could answer NONE ---------------------------
     nones = [r for r in fa if r["second"] == "NONE"]
     if nones:
-        base = float(np.mean([r["association"] for r in fa]))
-        got = float(np.mean([r["association"] for r in nones]))
-        report(f"\n  AN UNPLANNED CONTROL. The closed-book solver was allowed to answer NONE for a reaction")
-        report("  with no protein catalyst. It did so on "
-               f"{len(nones)} of {len(fa)} fill rows, and those rows carry the mechanical")
-        report(f"  'association' flag at {got:.1%} against a base rate of {base:.1%} -- a "
-               f"{got/max(base,1e-9):.0f}x enrichment.")
-        report("  An independent solver with no sight of that check rediscovered part of the same class,")
-        report(f"  which is the first outside confirmation it is real. The other {sum(1 for r in nones if not r['association'])}"
-               " NONEs are candidates the")
-        report("  mechanical check missed, and are worth reading before the check is trusted as complete.")
+        ncal = sum(1 for k, g in second.items() if k.startswith("cal:") and str(g).strip().upper() == "NONE")
+        report(f"\n  AN UNPLANNED CONTROL, AND IT PRICES ITSELF. The solver could answer NONE. Every")
+        report(f"  CALIBRATION reaction is annotated and therefore provably HAS a catalyst, so a NONE there")
+        report(f"  is a false alarm by construction: {ncal} of {len(ca)} = {ncal/max(len(ca),1):.1%}.")
+        report(f"  On the fill it answered NONE {len(nones)} times in {len(fa)} = {len(nones)/len(fa):.1%}.")
+        report(f"  The excess over the false-alarm rate is {len(nones)/len(fa)-ncal/max(len(ca),1):+.1%}, about "
+               f"{(len(nones)/len(fa)-ncal/max(len(ca),1))*len(fa):.0f} rows that")
+        report("  should carry no catalyst at all and were filled anyway.")
+
+        # reading those rows turned one flag into three -- see shape()
+        steps = T.build()["steps"]
+        sh = [shape(steps, fill[str(r["pid"])]["step"]) for r in fa]
+        shc = [shape(steps, r["step"]) for r in load_holdout(papers)]
+        nn = np.array([r["second"] == "NONE" for r in fa], bool)
+        asc = np.array([r["association"] for r in fa], bool)
+        report(f"\n  WHAT THOSE ROWS ACTUALLY ARE. Reading them turned one flag into three.")
+        report(f"    {'class':<26}{'fill':>8}{'':>3}{'calibration':>13}{'NONE rate':>12}")
+        for k in ("empty_out", "translocation"):
+            m = np.array([x[k] for x in sh], bool)
+            c = sum(x[k] for x in shc)
+            report(f"    {k:<26}{int(m.sum()):>5} {m.mean():>5.1%}{c:>8} {c/max(len(shc),1):>4.1%}"
+                   f"{(nn[m].mean() if m.any() else float('nan')):>12.0%}")
+        report(f"    {'association (mechanical)':<26}{int(asc.sum()):>5} {asc.mean():>5.1%}"
+               f"{'-':>8} {'-':>5}{(nn[asc].mean() if asc.any() else float('nan')):>12.0%}")
+        un = np.array([x["empty_out"] or x["translocation"] for x in sh], bool) | asc
+        report(f"\n    Translocation NEVER occurs among annotated catalysed reactions -- zero in 333. A shape")
+        report("    that never appears in the answer key is not a hard question, it is a different object.")
+        report(f"    Union of the three: {int(un.sum())} of {len(fa)} = {un.mean():.1%} of the worklist is not a")
+        report(f"    catalyst question. The solver says NONE on {nn[un].mean():.0%} of them against "
+               f"{nn[~un].mean():.0%} elsewhere,")
+        report(f"    which is independent confirmation. Removing them leaves {int((~un).sum())} real questions.")
+        res_shape = {"empty_out": int(sum(x["empty_out"] for x in sh)),
+                     "translocation": int(sum(x["translocation"] for x in sh)),
+                     "association": int(asc.sum()), "union": int(un.sum()),
+                     "cal_empty_out": int(sum(x["empty_out"] for x in shc)),
+                     "cal_translocation": int(sum(x["translocation"] for x in shc)),
+                     "none_rate_inside": float(nn[un].mean()), "none_rate_outside": float(nn[~un].mean())}
+    else:
+        res_shape, un = {}, np.zeros(len(fa), bool)
 
     # ---- the deliverable: a two-signal per-row label, with the rate measured for each cell -----------
     report("\n  THE LABEL. Retrieval tier and agreement, crossed, with the rate measured on held-out and")
@@ -444,15 +495,16 @@ def cmd_score():
             if m.sum() >= 10:
                 cells[(lab, alab)] = float(hi_[m].mean())
     ff = np.array([r["cell"] == "12" for r in fa], bool)
+    report(f"  Restricted to the {int((~un).sum())} rows that are catalyst questions at all.")
     report(f"    {'retrieval':<16}{'second opinion':<16}{'rate':>8}{'share':>9}{'rows':>8}")
     tot_exp = 0.0
     for (lab, alab), rate in sorted(cells.items()):
-        m = (ff if lab == "full retrieval" else ~ff) & (agf == (alab == "agrees"))
-        share = m.mean()
+        m = (ff if lab == "full retrieval" else ~ff) & (agf == (alab == "agrees")) & ~un
+        share = m.sum() / max((~un).sum(), 1)
         report(f"    {lab:<16}{alab:<16}{rate:>8.3f}{share:>9.1%}{share*n_fill:>8.0f}")
         tot_exp += share * n_fill * rate
-    report(f"    implied correct across the worklist: {tot_exp:.0f} of {n_fill}")
-    bad = (~ff) & (~agf)
+    report(f"    implied correct: {tot_exp*(~un).sum()/max(n_fill,1):.0f} of the {int((~un).sum())} real questions")
+    bad = (~ff) & (~agf) & ~un
     report(f"\n    THE ONE CELL THAT MATTERS: thin retrieval AND the two solvers disagree.")
     report(f"    {bad.mean():.1%} of rows -> about {bad.mean()*n_fill:.0f} of {n_fill}, at "
            f"{cells.get(('thin retrieval','disagrees'), float('nan')):.3f}. Everything else sits near 0.78-0.80.")
@@ -538,7 +590,7 @@ def cmd_score():
                         "second_solver_alone": float(sh.mean()), "implied_fill_accuracy": float(exp),
                         "first_wins_on_disagreement": [float(hi_[d].mean()), float(sh[d].mean())],
                         "cells": res_cells, "implied_correct": float(tot_exp),
-                        "worst_cell_share": float(bad.mean()), "tiers": res_tiers, "rows": fa, "log": log}
+                        "worst_cell_share": float(bad.mean()), "tiers": res_tiers, "shape": res_shape, "rows": fa, "log": log}
     json.dump(res, open(OUT / "cell_orphan_howmany.json", "w"), indent=2)
     # the labelled worklist itself -- one row per scored fill prediction, with its calibrated tier
     with open(OUT / "orphan_fill_labelled.tsv", "w") as fh:
