@@ -1,0 +1,131 @@
+{
+  "test": "chromatin_cost_model",
+  "measured": {
+    "n_atom_nucleosome": 13625,
+    "nnz_nucleosome": 4870395,
+    "t_direct": 21.868,
+    "t_fine": 1.544,
+    "tau_min": 7.232,
+    "tau_max": 48793.5
+  },
+  "atomistic": [
+    {
+      "scale": "one nucleosome",
+      "atoms": 13625,
+      "nnz": 4870395.0,
+      "bytes": 58444740.0
+    },
+    {
+      "scale": "chr1",
+      "atoms": 16963125000.0,
+      "nnz": 6063641775000.0,
+      "bytes": 72763701300000.0
+    },
+    {
+      "scale": "genome",
+      "atoms": 211187500000.0,
+      "nnz": 75491122500000.0,
+      "bytes": 905893470000000.0
+    }
+  ],
+  "event_scenarios": [
+    {
+      "scenario": "transcribe one 10 kb gene, 10 bp/event",
+      "events": 1000.0,
+      "s_per_iter": 0.81672,
+      "warm_s": 4083.6,
+      "cold_s": 52270.08
+    },
+    {
+      "scenario": "transcribe 1,000 genes concurrently",
+      "events": 1000000.0,
+      "s_per_iter": 0.81672,
+      "warm_s": 4083600.0,
+      "cold_s": 52270080.0
+    },
+    {
+      "scenario": "one replication fork, 1 kb/event, chr1",
+      "events": 249000.0,
+      "s_per_iter": 0.81672,
+      "warm_s": 1016816.4,
+      "cold_s": 13015249.92
+    },
+    {
+      "scenario": "full S phase, genome, 1 kb/event",
+      "events": 3100000.0,
+      "s_per_iter": 10.168,
+      "warm_s": 157604000.0,
+      "cold_s": 2017331199.9999998
+    }
+  ],
+  "assumptions": {
+    "nnz_per_bead": 256,
+    "n_coarse": 200,
+    "iters_cold": 64,
+    "iters_warm": 5,
+    "flops_per_core": 1000000000.0,
+    "dt_bd": 1e-08
+  },
+  "cores": 4,
+  "log": [
+    "====================================================================================================",
+    "WHAT 4D CHROMATIN WOULD COST -- multiplied out from what was actually measured here",
+    "====================================================================================================",
+    "\n  chr1 249 Mbp -> 1.2 M nucleosomes | genome 3.1 Gbp -> 15.5 M nucleosomes  (at 200 bp repeat)",
+    "\n  WALL 1 -- MEMORY. The atomistic route, priced from the measured sparsity.",
+    "    measured: 4,870,395 nonzeros over 13,625 atoms = 357 per atom",
+    "    one nucleosome       13.6 katoms       4.9 Mnonzeros       58.4 MB for the Hessian alone",
+    "    chr1                 17.0 Gatoms       6.1 Tnonzeros       72.8 TB for the Hessian alone",
+    "    genome              211.2 Gatoms      75.5 Tnonzeros      905.9 TB for the Hessian alone",
+    "    Chromosome-scale atomistics is not slow, it is impossible: the matrix does not fit, and",
+    "    no amount of waiting changes that. This is why the route below is coarse-grained.",
+    "\n  WALL 2 -- TIMESTEP. A twistable worm-like chain, one bead per nucleosome, integrated.",
+    "    4 degrees of freedom per bead (position + twist), 200 flops per bead-step (ESTIMATE)",
+    "    chr1       memory    39.8 MB | 0.1 s/step | transcribing one 10 kb gene takes 303 s biological",
+    "               = 30.3 Gsteps at dt=1e-08 s -> 59.8 years of compute",
+    "    genome     memory   496.0 MB | 0.8 s/step | transcribing one 10 kb gene takes 303 s biological",
+    "               = 30.3 Gsteps at dt=1e-08 s -> 744.7 years of compute",
+    "    Memory is now trivial and the wall has MOVED, not gone. Integration pays for every",
+    "    1e-08 s whether anything happened or not, and biology runs on seconds.",
+    "\n  WALL 3 -- OR NOT A WALL. Stop integrating. The measured relaxation spectrum says why.",
+    "    Chromatin is overdamped (Reynolds ~1e-9) and this repo measured its relaxation times",
+    "    spanning tau 7.2 to 48794 within a single nucleosome. A polymerase adds",
+    "    one base every 30 ms. If elastic re-equilibration is fast against that --",
+    "    and overdamped relaxation is -- then nothing is gained by resolving the interval. The",
+    "    scheme becomes: advance to the next EVENT, re-solve the static problem, repeat.",
+    "    That is exactly the closed-form solver already built here, used as a stepper.",
+    "",
+    "    AND THE PER-EVENT COST IS NOT A FULL RE-SOLVE, which is the whole point of the two-level",
+    "    machinery. Priced at the iteration level instead, because that is what the solver does:",
+    "      matvec        2 x nnz, with ~256 nonzeros per bead (bonded, bending, twist, excluded volume)",
+    "      coarse        2 x DOF x 200 modes -- project, solve a diagonal, prolong",
+    "      local solves  one small dense solve per sphere, ~one matvec in total at the measured H^1.2",
+    "    A COLD solve took 64 two-level iterations here. A polymerase step perturbs a few",
+    "    hundred base pairs and the previous state is an excellent initial guess, so a WARM restart",
+    "    should need far fewer -- 5 is assumed below and is the softest number in this file.",
+    "",
+    "    scenario                             events  per event        warm        cold",
+    "    transcribe one 10 kb gene, 10 bp/event    1.0 k      4.1 s       1.1 h      14.5 h",
+    "    transcribe 1,000 genes concurrently    1.0 M      4.1 s   47.3 days   1.7 years",
+    "    one replication fork, 1 kb/event, chr1  249.0 k      4.1 s   11.8 days  150.6 days",
+    "    full S phase, genome, 1 kb/event      3.1 M     50.8 s   5.0 years  64.0 years",
+    "    on 4 cores. These divide by cores almost exactly -- every operation above is a",
+    "    matvec or a dense projection, both of which parallelise without communication headaches.",
+    "    On 256 cores the S-phase row falls to 28.5 days.",
+    "\n  THE ASSUMPTION THAT CARRIES ALL OF IT, stated so it can be attacked.",
+    "    Quasi-static stepping is only valid if the structure re-equilibrates BETWEEN events. The",
+    "    slowest mode measured here is tau_max = 48794 in the solver's units, and those units",
+    "    are not seconds -- gamma was never calibrated to water. THAT CALIBRATION IS THE ONE",
+    "    MISSING NUMBER, and it decides whether this whole scheme is legitimate or a fiction.",
+    "    It is a small measurement (fit one mode's relaxation against a known diffusion",
+    "    coefficient) and it should be done before any of the costs above are quoted as real.",
+    "\n  READING",
+    "  Atomistic chromosome: ruled out on memory, permanently.",
+    "  Coarse-grained + integration: possible in principle, decades of compute, ruled out in practice.",
+    "  Coarse-grained + EVENT stepping: hours to days on hardware we have, because the cost stops",
+    "  scaling with simulated TIME and starts scaling with the number of things that HAPPEN.",
+    "  Twist and polymerase fit that scheme directly. Replication fits it as a topology edit between",
+    "  solves. Denaturation does NOT -- it is a bond-breaking event the harmonic model cannot",
+    "  represent at any cost, and needs a base-pair free-energy layer instead of more compute."
+  ]
+}
