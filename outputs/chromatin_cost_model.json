@@ -67,6 +67,28 @@
     "dt_bd": 1e-08
   },
   "cores": 4,
+  "amr": [
+    {
+      "domain": "100 kb",
+      "bead_steps": 1733585338336.455,
+      "seconds_4core": 86679.26691682274
+    },
+    {
+      "domain": "1 Mb",
+      "bead_steps": 1734833429917.4636,
+      "seconds_4core": 86741.67149587319
+    },
+    {
+      "domain": "10 Mb",
+      "bead_steps": 1747314345727.5476,
+      "seconds_4core": 87365.71728637737
+    },
+    {
+      "domain": "chr1 249 Mb",
+      "bead_steps": 2078751998906.449,
+      "seconds_4core": 103937.59994532245
+    }
+  ],
   "log": [
     "====================================================================================================",
     "WHAT 4D CHROMATIN WOULD COST -- multiplied out from what was actually measured here",
@@ -112,6 +134,36 @@
     "    on 4 cores. These divide by cores almost exactly -- every operation above is a",
     "    matvec or a dense projection, both of which parallelise without communication headaches.",
     "    On 256 cores the S-phase row falls to 28.5 days.",
+    "\n  ADAPTIVE REFINEMENT -- coarse everywhere, fine only where it is needed",
+    "    coarse 10 kb   dt  21.85 us   1.39e+07 steps",
+    "    fine   200 bp  dt   8.74 ns   3.47e+10 steps   (1.36 persistence lengths)",
+    "\n    THE DOMAIN IS ALMOST FREE. 10 kb fine window, multiple time stepping:",
+    "    domain          coarse beads    4 cores   256 cores",
+    "    100 kb                     9   1.0 days    22.6 min",
+    "    1 Mb                      99   1.0 days    22.6 min",
+    "    10 Mb                    999   1.0 days    22.8 min",
+    "    chr1 249 Mb            24899   1.2 days    27.1 min",
+    "    A 2,490-fold increase in domain costs 20% more, because the coarse level is nothing.",
+    "\n    IT IS ENTIRELY THE FINE WINDOW, and that is linear in window size:",
+    "    window          fine beads    4 cores   256 cores",
+    "    2 kb                    10      4.8 h     4.5 min",
+    "    10 kb                   50   1.0 days    22.6 min",
+    "    50 kb                  250   5.0 days       1.9 h",
+    "    100 kb                 500  10.0 days       3.8 h",
+    "\n    MULTIPLE TIME STEPPING IS NOT OPTIONAL. With one global dt, refining anywhere forces the",
+    "    fine timestep EVERYWHERE and most of the saving evaporates:",
+    "      uniform 200 bp everywhere          100.3 days      100x",
+    "      refine the window, one global dt     3.0 days      3.0x",
+    "      refine the window + MTS              1.0 days      1.0x",
+    "\n    THE ENGINEERING RISK, and it is one thing rather than many. Splitting a 10 kb bead into",
+    "    fifty 200 bp beads and merging them back must conserve LINKING NUMBER EXACTLY. Lk is the",
+    "    quantity the whole model exists to track, it is topological rather than energetic, and a",
+    "    small leak at a moving refinement boundary will not show up as an instability -- it will",
+    "    show up as slowly drifting supercoiling that looks like physics. Lk conservation across",
+    "    every refine and coarsen operation should be an assertion, not a hope.",
+    "    What is NOT a risk: the stiffness mapping. A persistence length is scale-free, so the",
+    "    discrete bending stiffness is just A/b at any level. Atomistic coarse-graining has no such",
+    "    luxury, and this is the one place the rod model is genuinely easier.",
     "\n  THE ASSUMPTION THAT CARRIES ALL OF IT, stated so it can be attacked.",
     "    Quasi-static stepping is only valid if the structure re-equilibrates BETWEEN events. The",
     "    slowest mode measured here is tau_max = 48794 in the solver's units, and those units",

@@ -166,6 +166,65 @@ def main():
     report("    matvec or a dense projection, both of which parallelise without communication headaches.")
     report(f"    On 256 cores the S-phase row falls to {secs(scen[-1]['warm_s']*CORES/256)}.")
 
+    # ---- ADAPTIVE REFINEMENT, which changes what the answer even depends on -------------------------
+    # chromatin_timescale measured tau_max = 47.2 ns for a 147 bp particle and showed the quasi-static
+    # separation FAILS above ~100 kb, so long-range conformation has to be integrated rather than
+    # event-stepped. Integration cost is then set by the timestep, and the timestep is bounded by the
+    # FASTEST retained mode -- which coarse-graining softens as b^2. So run coarse everywhere and refine
+    # only where resolution is needed. 200 bp is the floor and not an arbitrary one: DNA's persistence
+    # length is 147 bp, so at 200 bp a segment is 1.36 Lp and below that a worm-like chain has stopped
+    # being a meaningful model of anything.
+    report("\n  ADAPTIVE REFINEMENT -- coarse everywhere, fine only where it is needed")
+    TAU_NUC, NUC_BP = 4.7219e-8, 147          # MEASURED, chromatin_timescale.json
+    TX = GENE_BP / POL_RATE
+
+    def level(bp):
+        tf = TAU_NUC * (bp / NUC_BP) ** 2      # fastest retained mode after coarse-graining
+        dt = tf / 10                           # stability margin
+        return tf, dt, TX / dt
+
+    tf0, dt0, st0 = level(10_000)
+    tfF, dtF, stF = level(200)
+    report(f"    coarse 10 kb   dt {dt0*1e6:6.2f} us   {st0:.3g} steps")
+    report(f"    fine   200 bp  dt {dtF*1e9:6.2f} ns   {stF:.3g} steps   ({200/NUC_BP:.2f} persistence lengths)")
+    WIN = 1e4                                  # fine window tracking the polymerase
+    report(f"\n    THE DOMAIN IS ALMOST FREE. {WIN/1e3:.0f} kb fine window, multiple time stepping:")
+    report(f"    {'domain':<14}{'coarse beads':>14}{'4 cores':>11}{'256 cores':>12}")
+    amr = []
+    for lab, dom in (("100 kb", 1e5), ("1 Mb", 1e6), ("10 Mb", 1e7), ("chr1 249 Mb", 249e6)):
+        bs = st0 * ((dom - WIN) / 10_000) + stF * (WIN / 200)
+        c = bs * FLOPS_BEAD_STEP / (FLOPS_PER_CORE * CORES)
+        amr.append({"domain": lab, "bead_steps": bs, "seconds_4core": c})
+        report(f"    {lab:<14}{(dom-WIN)/1e4:>14.0f}{secs(c):>11}{secs(c*CORES/256):>12}")
+    report("    A 2,490-fold increase in domain costs 20% more, because the coarse level is nothing.")
+    report(f"\n    IT IS ENTIRELY THE FINE WINDOW, and that is linear in window size:")
+    report(f"    {'window':<14}{'fine beads':>12}{'4 cores':>11}{'256 cores':>12}")
+    for lab, w in (("2 kb", 2e3), ("10 kb", 1e4), ("50 kb", 5e4), ("100 kb", 1e5)):
+        bs = st0 * ((1e6 - w) / 10_000) + stF * (w / 200)
+        c = bs * FLOPS_BEAD_STEP / (FLOPS_PER_CORE * CORES)
+        report(f"    {lab:<14}{w/200:>12.0f}{secs(c):>11}{secs(c*CORES/256):>12}")
+    uni = stF * (1e6 / 200)
+    naive = stF * ((1e6 - WIN) / 10_000 + WIN / 200)
+    mts = st0 * ((1e6 - WIN) / 10_000) + stF * (WIN / 200)
+    report(f"\n    MULTIPLE TIME STEPPING IS NOT OPTIONAL. With one global dt, refining anywhere forces the")
+    report(f"    fine timestep EVERYWHERE and most of the saving evaporates:")
+    report(f"      uniform 200 bp everywhere          {secs(uni*FLOPS_BEAD_STEP/(FLOPS_PER_CORE*CORES)):>10}"
+           f"   {uni/mts:>6.0f}x")
+    report(f"      refine the window, one global dt   {secs(naive*FLOPS_BEAD_STEP/(FLOPS_PER_CORE*CORES)):>10}"
+           f"   {naive/mts:>6.1f}x")
+    report(f"      refine the window + MTS            {secs(mts*FLOPS_BEAD_STEP/(FLOPS_PER_CORE*CORES)):>10}"
+           f"   {1.0:>6.1f}x")
+
+    report("\n    THE ENGINEERING RISK, and it is one thing rather than many. Splitting a 10 kb bead into")
+    report("    fifty 200 bp beads and merging them back must conserve LINKING NUMBER EXACTLY. Lk is the")
+    report("    quantity the whole model exists to track, it is topological rather than energetic, and a")
+    report("    small leak at a moving refinement boundary will not show up as an instability -- it will")
+    report("    show up as slowly drifting supercoiling that looks like physics. Lk conservation across")
+    report("    every refine and coarsen operation should be an assertion, not a hope.")
+    report("    What is NOT a risk: the stiffness mapping. A persistence length is scale-free, so the")
+    report("    discrete bending stiffness is just A/b at any level. Atomistic coarse-graining has no such")
+    report("    luxury, and this is the one place the rod model is genuinely easier.")
+
     # ---- what the separation of timescales has to be for this to be legitimate --------------------
     report("\n  THE ASSUMPTION THAT CARRIES ALL OF IT, stated so it can be attacked.")
     report("    Quasi-static stepping is only valid if the structure re-equilibrates BETWEEN events. The")
@@ -194,7 +253,7 @@ def main():
                "assumptions": {"nnz_per_bead": NNZ_BEAD, "n_coarse": N_COARSE,
                                "iters_cold": ITERS_COLD, "iters_warm": ITERS_WARM,
                                "flops_per_core": FLOPS_PER_CORE, "dt_bd": DT_BD},
-               "cores": CORES, "log": log},
+               "cores": CORES, "amr": amr, "log": log},
               open(OUT / "chromatin_cost_model.json", "w"), indent=2)
     report(f"\n  -> {OUT/'chromatin_cost_model.json'}")
     return 0
