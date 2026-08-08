@@ -167,7 +167,24 @@ def cmd_merge():
     except Exception:
         hgnc = set()
     MEMBRANE = ("membrane", "transporter", "channel")
-    rows, nbad, nmiss, ncopy, nstarve, ncompart = [], 0, 0, 0, 0, 0
+    # THREE CHECKS ADDED AFTER HAND-VERIFYING 30 ROWS. Each caught a class of error that no amount of
+    # model quality would fix, because the fault is in the QUESTION rather than the answer.
+    import re as _re
+    from pathlib import Path as _P
+    _SP = _P("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/orphan_fill")
+    _sep = "\n\n" + "=" * 90 + "\n\n"
+    _cache = {}
+
+    def _query_text(pid):
+        b, k = int(pid) // BATCH, int(pid) % BATCH
+        if b not in _cache:
+            f = _SP / f"orphan_b{b}.txt"
+            _cache[b] = f.read_text().split(_sep) if f.exists() else []
+        try:
+            return _cache[b][k].split("--- SOLVED")[0]
+        except Exception:
+            return ""
+    rows, nbad, nmiss, ncopy, nstarve, ncompart, ngive, nassoc = [], 0, 0, 0, 0, 0, 0, 0
     for pid, m in meta.items():
         a = ans.get(pid)
         if not a:
@@ -196,14 +213,30 @@ def cmd_merge():
             for c in m["compartments"]:
                 rv |= _compvocab(c)
             comp_ok = (not gv) or (not rv) or bool(gv & rv) or len(m["compartments"]) > 1
+        # GIVEAWAY: the gene's own symbol is written into the reaction, e.g. a transporter step whose
+        # substrate set is literally named "ligands of SLC29A2", or a repair step listing APEX1 as a
+        # participant. Naming it back is reading a label, not predicting, and 6.7% of rows do this.
+        qt = _query_text(pid).upper()
+        giveaway = bool(gene) and bool(_re.search(r"\b" + _re.escape(gene) + r"\b", qt))
+        # ASSOCIATION: a step whose single output is a complex assembled from its own inputs is a binding
+        # event and should have no catalyst at all. The category filter removed steps LABELLED binding, but
+        # Reactome files some associations as "transition" and those slipped through -- hand review found a
+        # SREBP:NF-Y:SP1:gene complex-formation step that had been given a catalyst.
+        outl = [l for l in qt.split("\n") if l.strip().startswith("OUT")]
+        inl = [l for l in qt.split("\n") if l.strip().startswith("IN")]
+        assoc = bool(outl) and outl[0].count("[COMPLEX") == 1 and outl[0].count("+") == 0 \
+            and bool(inl) and inl[0].count("+") >= 1
         nbad += (not is_gene)
         nmiss += missing_from_model
+        ngive += giveaway
+        nassoc += assoc
         ncopy += copied
         nstarve += starved
         ncompart += (not comp_ok)
         rows.append({"pid": pid, "step": m["step"], "id": m["id"], "name": m["name"],
                      "category": m["category"], "gene": gene, "is_gene": is_gene,
-                     "missing_from_model": missing_from_model,
+                     "missing_from_model": missing_from_model, "giveaway": giveaway,
+                     "association": assoc,
                      "copied": copied, "starved": starved, "n_examples": m["n_examples"],
                      "top_sim": m["top_sim"], "compartment_ok": comp_ok,
                      "compartments": m["compartments"], "why": why})
@@ -220,7 +253,8 @@ def cmd_merge():
     res = {"test": "cell_orphan_fill", "n_meta": len(meta), "n_answered": got, "rows": rows,
            "checks": {"not_a_real_gene": nbad, "valid_but_missing_from_model": nmiss,
                       "copied_from_examples": ncopy, "starved": nstarve,
-                      "compartment_mismatch": ncompart}}
+                      "compartment_mismatch": ncompart, "giveaway": ngive,
+                      "association_should_have_no_catalyst": nassoc}}
     json.dump(res, open(OUT / "cell_orphan_fill.json", "w"), indent=1)
     print(f"  -> {OUT/'orphan_fill_review.tsv'}  and  {OUT/'cell_orphan_fill.json'}")
     return cmd_review()
@@ -245,6 +279,10 @@ def cmd_review():
           f"({c.get('valid_but_missing_from_model',0)/max(n,1):.1%})  <- a gap in the MODEL, not an error")
     print(f"    compartment mismatch         {c['compartment_mismatch']:>6}  "
           f"({c['compartment_mismatch']/max(n,1):.1%})  <- flag, not reject; annotation is incomplete")
+    print(f"    gene NAMED in the reaction   {c.get('giveaway',0):>6}  ({c.get('giveaway',0)/max(n,1):.1%})"
+          f"  <- reading a label, not predicting")
+    print(f"    association, no catalyst due {c.get('association_should_have_no_catalyst',0):>6}  "
+          f"({c.get('association_should_have_no_catalyst',0)/max(n,1):.1%})  <- should not be filled")
     print(f"\n  TRIAGE (these decide how hard to look)")
     print(f"    copied from a shown example  {c['copied_from_examples']:>6}  "
           f"({c['copied_from_examples']/max(n,1):.1%})  <- retrieval hit; check the chemistry matches")
