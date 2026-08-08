@@ -22478,3 +22478,212 @@ Recorded because the failure modes are the transferable part.
    left only is restricted additive Schwarz — correct as a sweep, but *non-symmetric*, and CG requires an SPD
    preconditioner. It does not error, it just fails to converge. Splitting the weight across both sides took
    it from 0.88 to 1e-7.
+
+# The cost of a mark, and the prediction that came out backwards
+
+`colab/chromatin_mark_cost.py`. If a sphere tiling has to carry a chemical modification, the question that
+decides whether it is affordable is how much structure has to be inside the region before the answer stops
+changing. Measured by growing the region around the mark and watching the displacement field on a **fixed**
+10 Å evaluation shell converge.
+
+    mark                      region needed
+    phosphorylation + salt      20 A
+    acetylation                 40 A
+    5-methylcytosine            never converges within the tested range
+
+I predicted the opposite ordering — that the small neutral methyl would be cheapest and the charge-changing
+phosphorylation dearest. It is backwards because screening is doing the work: at 150 mM the Debye length is
+7.9 Å, so a charge change is *contained* by the solvent, while a steric change is not screened by anything
+and keeps pushing on whatever the region happens to include.
+
+**A bug that made the result impossible before it made it wrong.** The evaluation shell was originally
+`Rreg*0.5`, so it grew with the region — error rose as more structure was added, which cannot happen for a
+converging quantity. Fixing the shell to a constant made the curves monotone. A result that is not merely
+wrong but *impossible* is the cheapest kind to catch, and I nearly reported it.
+
+# Two-level Schwarz: the coarse space is the whole difference
+
+`colab/chromatin_twolevel.py`. One-level Schwarz needed 1,100–2,000 iterations because it has no way to move
+information across the structure in one step, and the response to a local push is dominated by the softest
+global modes. Adding a coarse space fixes exactly that.
+
+    scheme                          iterations    time
+    one level                            1785     21.9 s (direct solve, for reference)
+    two level, modal coarse space          64      2.0 s
+    two level, rigid-body aggregates      151         —
+    coarse space alone (control)      does not converge (0.94)
+
+28× fewer iterations, and faster than solving the system directly. The control matters: the coarse space
+**by itself** stalls at 0.94, so this is not the coarse space quietly doing all the work with the spheres
+along for the ride — it is the combination, which is what the theory says and what a single number would not
+have shown.
+
+# Time evolution in closed form, because the cell is not inertial
+
+`colab/chromatin_time.py`. At nucleosome scale the Reynolds number is ~1e-9, so there is no inertia to
+integrate: γu' = f − Ku. Written around the endpoint rather than the origin,
+
+    u(t) = u_static − Σ_k (e_k·f / λ_k) exp(−λ_k t / γ) e_k
+
+the truncated part multiplies a *decaying* exponential, so every mode dropped for being too stiff has
+already relaxed by the time anyone looks. Verified against implicit Euler: exact from t/τ_slow ≥ 0.01.
+
+The physical result is that marks separate in time, not only in space. At the moment methylation's response
+is 34% complete, acetylation's is 86%. Two marks with similar static footprints are doing different things
+on the timescale a reader protein actually samples.
+
+# Per-bond energy: the strain never leaves the base
+
+`colab/chromatin_bond_energy.py`. The hoped-for bridge from a methyl to accessibility was that the added
+strain would redistribute onto the DNA–histone interface and change how tightly the region is held. It does
+not.
+
+    5mC interface energy ratio    1.60
+    shuffled control              1.64
+
+No selectivity — the shuffled control is if anything higher. Every top-ranked bond is *inside* the
+methylated cytosine itself. The energy stays where it was put. This closes the structural route from
+methylation to accessibility as attempted here; whatever couples them is not local mechanical strain.
+
+# Seven ways to re-rank a catalyst shortlist, and what survived
+
+The in-context method proposes a shortlist of catalyst genes for an unannotated reaction. Everything below
+tried to reorder that shortlist with something other than the language model's own judgement. The bar is the
+tournament ordering at **0.710** top-1, **0.479** on the obscure stratum.
+
+    method                                          module                        @1     obscure
+    tournament (the bar)                            cell_orphan_rank_v2         0.710       0.479
+    reciprocal rank fusion                          cell_orphan_rank_v2         0.714           —
+    spatial + network context                       cell_orphan_spatial         0.657       0.411
+    docking, selective                              cell_orphan_selective       0.693           —
+    docking, grid                                   nexus_dock_screen           0.600           —
+    ESM sequence pairing                            (earlier)                   0.122           —
+    ADRN trained on 10,249 annotated reactions      adrn_catalyst_rank          0.332       0.014
+    pocket + hinge                                  (earlier)                   0.483           —
+
+**Only the two that refine the model's own ordering improved on it** — tournament (pairwise instead of
+listwise, which matters because a long list is judged badly in one pass) and reciprocal rank fusion across
+samples, k=60, which keeps a candidate one sample ranks first and another ranks tenth where majority voting
+discards it. Every method that brought outside information lost.
+
+## The trained network is the sharpest negative
+
+`colab/adrn_catalyst_rank.py`. Given all 10,249 annotated reactions with their catalysts and asked to
+reorder the shortlist for the unknowns, with the model's confidence withheld:
+
+    adrn (trained)      0.332        freq (zero-parameter bag)   0.336
+    adrn (untrained)    0.343        shuffled-reaction control   0.290
+
+Training bought nothing a frequency count does not already have, and the *untrained* network scores slightly
+higher than the trained one. The shuffled-reaction control — same network, candidates scored against the
+wrong reaction — falls only to 0.290, which says most of what the trained model knows is which genes are
+popular, not which chemistry they do. On the obscure stratum it collapses to 0.014, where the language model
+holds 0.479. This is the second time a learned scorer here has landed on top of a counting baseline.
+
+## Spatial context fails differently, and the difference is the finding
+
+`colab/cell_orphan_spatial.py`. The six methods before it all scored *resemblance*. Localisation is a
+*constraint* — a cytosolic enzyme cannot catalyse a mitochondrial-matrix reaction — and constraints had not
+been tried.
+
+    tournament        0.710      spatial_network   0.569
+    network           0.657      shuffled_comp     0.516
+    spatial           0.615      random            0.470
+
+Real compartments beat shuffled ones (0.615 vs 0.516), so the signal is genuine. But the diagnostic that was
+predeclared as decisive says why it cannot help:
+
+    compartment score of CORRECT top-1    +0.281   (n=201)
+    compartment score of WRONG   top-1    +0.341   (n=82)
+
+The model's *wrong* answers respect compartment as well as its right ones. The prompts render every
+participant with its compartment, the model uses it, and everything it proposes is already
+compartment-consistent — so the constraint cannot separate candidates that all satisfy it. Not "too weak"
+but **already spent**, which is a different failure and points somewhere useful: compartment belongs as an
+audit filter on output, where the fill already puts it, never as a ranking term.
+
+## Why re-ranking fails at all: the answer is often not on the list
+
+`colab/cell_orphan_why_unsure.py`, `colab/cell_orphan_holdout.py`. Re-ranking can only help if the truth is
+present to be promoted.
+
+    recall @50, obscure                      0.808     19% is irrecoverable by any reordering
+    recall @10, model confident              0.980
+    recall @10, model unsure                 0.750
+
+On the half the model flags as unsure, one shortlist in four does not contain the answer at all. Reading its
+stated reasons, the doubt is almost never chemical — it is about **Reactome's curation convention**: whether
+a complex or one subunit is credited, whether a generic set was used. It is unsure about the answer key, not
+the biology.
+
+The confidence gap is the largest effect measured anywhere in this line: **0.891 correct when confident
+against 0.456 when not**, a spread of +0.435. Nothing external beat that, and it is free.
+
+# The independent check, and the number that replaces the headline
+
+`colab/cell_orphan_holdout.py`. The earlier 0.688 was measured with held-out reactions still reachable
+through the example pools. Banning them everywhere, and dropping the two leak classes hand-verification
+found — reactions that name the gene in their own text (6.7%), and association steps that should have no
+catalyst at all (2.2%):
+
+    overall   0.727        obscure   0.515
+
+**0.515, not 0.688,** is what a curator should expect on the obscure end. Every downstream statement has been
+updated to it.
+
+## What the truth sets are actually asking
+
+`colab/cell_orphan_truthset.py`. The catalyst field is a gene *list*, mean 3.34 genes, and only 5,421 of
+10,249 reactions are single-gene. Scoring counts any member correct.
+
+    multi-gene catalysts   0.807        single-gene catalysts   0.640
+
+The leniency is carrying part of the score — naming any of ten paralogs is a weaker requirement than naming
+the enzyme, and a passing answer can still be biochemically wrong (naming the GRB2 scaffold for a SOS1
+nucleotide exchange). The strict figure is 0.640. It does not change the obscure headline, though: **all 73
+obscure held-out reactions are single-gene**, so 0.515 was already the strict number where it matters.
+
+# The fill's worklist is one source, and the audit numbers say so now
+
+`colab/cell_orphan_fill.py`. 1,400 of 9,186 orphan reactions filled, each row carrying its evidence — the
+examples retrieved, the top similarity, whether the answer was copied from a shown example, whether the
+retrieval was starved.
+
+Recomputing the audit after a compartment-vocabulary fix showed the 7.5% mismatch rate unchanged, and the
+reason turned out to matter more than the number: **all 1,400 filled rows are Reactome.** `real[:limit]` is a
+contiguous prefix of a list built in file order and the sources are not interleaved. The backlog is 4,037
+Reactome and 5,149 HumanGEM, so "15.2% answered" is really 35% of one half and none of the other, and every
+population figure — 7.5% compartment mismatch, 69.9% starved, the gene-frequency table — describes Reactome
+orphans only.
+
+Accuracy transfers, which was worth checking rather than assuming: the held-out set is 213 HumanGEM against
+70 Reactome and scores 0.723 against 0.671 (obscure 0.479 against 0.500), and the obscure stratum carrying
+the headline is 71 of 73 HumanGEM. Retrieval support does *not* transfer — HumanGEM orphans have higher top
+similarity (0.321 vs 0.223) and fewer zero-example cases (23.5% vs 35.2%) but more starved rows (77.8% vs
+70.0%). The selection now freezes the answered prefix and shuffles the remainder so any further tranche
+samples both.
+
+## Four checks added by hand-verifying 1,400 rows, and one of them was my own bug
+
+    not a real gene symbol              2   (0.1%)
+    valid HGNC but absent from model   65   (4.6%)   a gap in the MODEL, not an error
+    compartment mismatch              105   (7.5%)   flag, not reject
+    gene named in the reaction         94   (6.7%)   reading a label, not predicting
+    association, no catalyst due       31   (2.2%)   should not be filled at all
+
+The first line was 67 before it was 2. Validating against the model's own 16,492-gene table instead of
+HGNC's 19,296 called PIK3CA, PRPS1, UCK2 and TYMP hallucinated — a 97% false-positive rate that would have
+sent a curator to reject correct answers. The compartment check has a similar history: its first version
+flagged every SLC and every ecto-enzyme for spanning two compartments, i.e. for doing their job, at a 36%
+"mismatch" rate made almost entirely of correct predictions.
+
+# Chemistry coverage, and two parsers that both reported zero
+
+`colab/cell_orphan_chem_coverage.py`. Resolving reaction participants to ChEBI structures so chemistry, not
+names, can be compared. Reactome physical entity → ChEBI coverage rose from 33% to 46%.
+
+Recorded because the module reported 0.0% coverage twice, for two unrelated reasons, and both were silent:
+the name table was loaded with hardcoded uppercase headers against a lowercase file and yielded 6 entries;
+and `structures.tsv` has a multi-line `molfile` column, so splitting on newlines misaligned every record and
+keyed the id→SMILES map by SMILES strings. Both now have assertions on the parsed row count, which is the
+check that would have caught either one in a second.
