@@ -89,5 +89,2587 @@
     "  950, because the one signal that separates well was never asked for. Part 3 of this",
     "  module -- an independent closed-book second opinion, calibrated on the same held-out set --",
     "  is the route to a per-row label. Run prep, then the agents, then score."
-  ]
+  ],
+  "agreement": {
+    "n_cal": 333,
+    "n_fill": 250,
+    "agree_cal": 0.7807807807807807,
+    "agree_fill": 0.696,
+    "p_correct_given_agree": 0.7884615384615384,
+    "p_correct_given_disagree": 0.5068493150684932,
+    "gap": 0.28161222339304526,
+    "gap_ci": [
+      0.15429388964888283,
+      0.40574293194087885
+    ],
+    "second_solver_alone": 0.6726726726726727,
+    "implied_fill_accuracy": 0.7028514225500526,
+    "first_wins_on_disagreement": [
+      0.5068493150684932,
+      0.2602739726027397
+    ],
+    "cells": {
+      "full retrieval|agrees": 0.7964601769911505,
+      "full retrieval|disagrees": 0.7407407407407407,
+      "thin retrieval|agrees": 0.782312925170068,
+      "thin retrieval|disagrees": 0.3695652173913043
+    },
+    "implied_correct": 959.5036080218074,
+    "worst_cell_share": 0.236,
+    "rows": [
+      {
+        "pid": "915",
+        "agree": true,
+        "second": "FPGS",
+        "first": "FPGS",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1304",
+        "agree": true,
+        "second": "MCOLN1",
+        "first": "MCOLN1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "314",
+        "agree": true,
+        "second": "MMP3",
+        "first": "MMP3",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "920",
+        "agree": false,
+        "second": "NONE",
+        "first": "FGFR3",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "890",
+        "agree": true,
+        "second": "SLC5A6",
+        "first": "SLC5A6",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "265",
+        "agree": false,
+        "second": "PLA2G4A",
+        "first": "PLA2G6",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "409",
+        "agree": true,
+        "second": "DPM1",
+        "first": "DPM1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "309",
+        "agree": true,
+        "second": "MMP13",
+        "first": "MMP13",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "243",
+        "agree": false,
+        "second": "PLA2G4A",
+        "first": "ABHD16A",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "68",
+        "agree": true,
+        "second": "POLR3A",
+        "first": "POLR3A",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1064",
+        "agree": false,
+        "second": "CYP2A6",
+        "first": "CYP2E1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "827",
+        "agree": false,
+        "second": "NONE",
+        "first": "CAPN1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "60",
+        "agree": true,
+        "second": "PNP",
+        "first": "PNP",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1350",
+        "agree": true,
+        "second": "PPP1CB",
+        "first": "PPP1CB",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "784",
+        "agree": false,
+        "second": "SLC27A2",
+        "first": "SLC27A5",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "394",
+        "agree": false,
+        "second": "KPNB1",
+        "first": "TNPO3",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1245",
+        "agree": true,
+        "second": "ESCO1",
+        "first": "ESCO1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "710",
+        "agree": true,
+        "second": "ALAS1",
+        "first": "ALAS1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "541",
+        "agree": true,
+        "second": "ZDHHC20",
+        "first": "ZDHHC20",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "521",
+        "agree": true,
+        "second": "FIG4",
+        "first": "FIG4",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "739",
+        "agree": true,
+        "second": "SRC",
+        "first": "SRC",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "866",
+        "agree": true,
+        "second": "COASY",
+        "first": "COASY",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "94",
+        "agree": true,
+        "second": "PRDX5",
+        "first": "PRDX5",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1102",
+        "agree": true,
+        "second": "CYP4F3",
+        "first": "CYP4F3",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "257",
+        "agree": false,
+        "second": "PLA2G6",
+        "first": "PLA2G4A",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "88",
+        "agree": true,
+        "second": "ADAM17",
+        "first": "ADAM17",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "666",
+        "agree": true,
+        "second": "INPP5A",
+        "first": "INPP5A",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1364",
+        "agree": true,
+        "second": "TXN",
+        "first": "TXN",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "994",
+        "agree": true,
+        "second": "DOHH",
+        "first": "DOHH",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1200",
+        "agree": false,
+        "second": "INMT",
+        "first": "TPMT",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "940",
+        "agree": true,
+        "second": "EXT1",
+        "first": "EXT1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1081",
+        "agree": true,
+        "second": "ABCB1",
+        "first": "ABCB1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1269",
+        "agree": false,
+        "second": "MMP19",
+        "first": "MMP3",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "236",
+        "agree": false,
+        "second": "LPGAT1",
+        "first": "LCLAT1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "565",
+        "agree": true,
+        "second": "XPO1",
+        "first": "XPO1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "132",
+        "agree": true,
+        "second": "MRI1",
+        "first": "MRI1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "951",
+        "agree": true,
+        "second": "NDST1",
+        "first": "NDST1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "174",
+        "agree": false,
+        "second": "NONE",
+        "first": "MTCH2",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1154",
+        "agree": false,
+        "second": "NONE",
+        "first": "NOTCH1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "412",
+        "agree": true,
+        "second": "PIGB",
+        "first": "PIGB",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1073",
+        "agree": false,
+        "second": "CTSS",
+        "first": "CTSL",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1334",
+        "agree": true,
+        "second": "HLCS",
+        "first": "HLCS",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "760",
+        "agree": true,
+        "second": "AKR1C4",
+        "first": "AKR1C4",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1067",
+        "agree": false,
+        "second": "CYP2E1",
+        "first": "CYP2F1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "815",
+        "agree": true,
+        "second": "HSD3B7",
+        "first": "HSD3B7",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1112",
+        "agree": true,
+        "second": "ALOX15",
+        "first": "ALOX15",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1162",
+        "agree": false,
+        "second": "HYAL1",
+        "first": "HYAL4",
+        "pred_obscure": true,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "789",
+        "agree": false,
+        "second": "KPNB1",
+        "first": "IPO7",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "238",
+        "agree": false,
+        "second": "PNPLA6",
+        "first": "PNPLA7",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "310",
+        "agree": true,
+        "second": "CYP3A4",
+        "first": "CYP3A4",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "492",
+        "agree": true,
+        "second": "PIK3CA",
+        "first": "PIK3CA",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "709",
+        "agree": true,
+        "second": "LCT",
+        "first": "LCT",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "619",
+        "agree": false,
+        "second": "SULT1A1",
+        "first": "SULT1C2",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1360",
+        "agree": true,
+        "second": "KDM1A",
+        "first": "KDM1A",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1016",
+        "agree": true,
+        "second": "CYP2R1",
+        "first": "CYP2R1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "370",
+        "agree": true,
+        "second": "GBA1",
+        "first": "GBA1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "592",
+        "agree": false,
+        "second": "NONE",
+        "first": "PLTP",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "207",
+        "agree": true,
+        "second": "ABCA4",
+        "first": "ABCA4",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1283",
+        "agree": false,
+        "second": "NONE",
+        "first": "GUCA1A",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1086",
+        "agree": true,
+        "second": "PRXL2B",
+        "first": "PRXL2B",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "804",
+        "agree": true,
+        "second": "AKR1D1",
+        "first": "AKR1D1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "764",
+        "agree": false,
+        "second": "NONE",
+        "first": "ANP32A",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": true,
+        "is_gene": true
+      },
+      {
+        "pid": "520",
+        "agree": true,
+        "second": "INPP4B",
+        "first": "INPP4B",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "851",
+        "agree": true,
+        "second": "TPK1",
+        "first": "TPK1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "336",
+        "agree": true,
+        "second": "UGT1A1",
+        "first": "UGT1A1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1335",
+        "agree": true,
+        "second": "HLCS",
+        "first": "HLCS",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "553",
+        "agree": true,
+        "second": "ETFDH",
+        "first": "ETFDH",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "667",
+        "agree": false,
+        "second": "PPIP5K1",
+        "first": "PPIP5K2",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "331",
+        "agree": false,
+        "second": "SERPINE1",
+        "first": "PLAT",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": true,
+        "is_gene": true
+      },
+      {
+        "pid": "467",
+        "agree": false,
+        "second": "RNGTT",
+        "first": "POLR2A",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "519",
+        "agree": true,
+        "second": "PIK3C2A",
+        "first": "PIK3C2A",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1091",
+        "agree": false,
+        "second": "PTGES",
+        "first": "PTGES3",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "663",
+        "agree": true,
+        "second": "PPIP5K1",
+        "first": "PPIP5K1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "428",
+        "agree": true,
+        "second": "GNS",
+        "first": "GNS",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "293",
+        "agree": true,
+        "second": "ETNK1",
+        "first": "ETNK1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1040",
+        "agree": true,
+        "second": "KPNB1",
+        "first": "KPNB1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "80",
+        "agree": false,
+        "second": "POLR2A",
+        "first": "TTF2",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "319",
+        "agree": true,
+        "second": "PSEN1",
+        "first": "PSEN1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "5",
+        "agree": true,
+        "second": "ECI1",
+        "first": "ECI1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "302",
+        "agree": true,
+        "second": "G6PD",
+        "first": "G6PD",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "387",
+        "agree": true,
+        "second": "SMPD2",
+        "first": "SMPD2",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1079",
+        "agree": true,
+        "second": "ABCC5",
+        "first": "ABCC5",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1141",
+        "agree": false,
+        "second": "BTK",
+        "first": "FYN",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "575",
+        "agree": false,
+        "second": "NONE",
+        "first": "RAB11A",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1164",
+        "agree": false,
+        "second": "GAA",
+        "first": "HYAL1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "685",
+        "agree": true,
+        "second": "IPMK",
+        "first": "IPMK",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1042",
+        "agree": true,
+        "second": "XPO1",
+        "first": "XPO1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "659",
+        "agree": false,
+        "second": "PLCG1",
+        "first": "PLCD1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1007",
+        "agree": true,
+        "second": "HS3ST1",
+        "first": "HS3ST1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "642",
+        "agree": true,
+        "second": "NMT1",
+        "first": "NMT1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "358",
+        "agree": true,
+        "second": "GGCX",
+        "first": "GGCX",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "967",
+        "agree": false,
+        "second": "NONE",
+        "first": "FGFR4",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "400",
+        "agree": false,
+        "second": "CBS",
+        "first": "CTH",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1129",
+        "agree": false,
+        "second": "ATP8A1",
+        "first": "ABCA1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "362",
+        "agree": true,
+        "second": "GGCX",
+        "first": "GGCX",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "503",
+        "agree": true,
+        "second": "FIG4",
+        "first": "FIG4",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1210",
+        "agree": true,
+        "second": "LYN",
+        "first": "LYN",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "23",
+        "agree": true,
+        "second": "ADK",
+        "first": "ADK",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1265",
+        "agree": true,
+        "second": "PPP2CA",
+        "first": "PPP2CA",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "743",
+        "agree": true,
+        "second": "FDFT1",
+        "first": "FDFT1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1243",
+        "agree": true,
+        "second": "RDH5",
+        "first": "RDH5",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "826",
+        "agree": true,
+        "second": "NSDHL",
+        "first": "NSDHL",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "186",
+        "agree": true,
+        "second": "PAOX",
+        "first": "PAOX",
+        "pred_obscure": true,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "286",
+        "agree": true,
+        "second": "SELENOI",
+        "first": "SELENOI",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "456",
+        "agree": true,
+        "second": "MBTPS1",
+        "first": "MBTPS1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "222",
+        "agree": true,
+        "second": "LPCAT1",
+        "first": "LPCAT1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1287",
+        "agree": true,
+        "second": "PCSK1",
+        "first": "PCSK1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "965",
+        "agree": false,
+        "second": "NONE",
+        "first": "FGFR3",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "13",
+        "agree": true,
+        "second": "NT5C2",
+        "first": "NT5C2",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1065",
+        "agree": true,
+        "second": "CYP2C9",
+        "first": "CYP2C9",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "87",
+        "agree": true,
+        "second": "BAX",
+        "first": "BAX",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "969",
+        "agree": true,
+        "second": "DROSHA",
+        "first": "DROSHA",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "150",
+        "agree": false,
+        "second": "KCNMA1",
+        "first": "KCNQ1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "356",
+        "agree": false,
+        "second": "PLA2G2A",
+        "first": "PLA2G10",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1184",
+        "agree": false,
+        "second": "NUDT1",
+        "first": "NUDT15",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1060",
+        "agree": false,
+        "second": "CYP3A4",
+        "first": "CYP3A5",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "665",
+        "agree": true,
+        "second": "IP6K1",
+        "first": "IP6K1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "440",
+        "agree": false,
+        "second": "NONE",
+        "first": "MRE11",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1199",
+        "agree": true,
+        "second": "TPMT",
+        "first": "TPMT",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1314",
+        "agree": true,
+        "second": "FYN",
+        "first": "FYN",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1053",
+        "agree": false,
+        "second": "CYP3A5",
+        "first": "CYP3A4",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1080",
+        "agree": true,
+        "second": "ADAL",
+        "first": "ADAL",
+        "pred_obscure": true,
+        "cell": "0",
+        "association": false,
+        "is_gene": false
+      },
+      {
+        "pid": "1221",
+        "agree": false,
+        "second": "LCK",
+        "first": "SYK",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "578",
+        "agree": true,
+        "second": "CDC14A",
+        "first": "CDC14A",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "418",
+        "agree": true,
+        "second": "PIGW",
+        "first": "PIGW",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "692",
+        "agree": true,
+        "second": "XYLT1",
+        "first": "XYLT1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "481",
+        "agree": true,
+        "second": "ERCC3",
+        "first": "ERCC3",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "869",
+        "agree": true,
+        "second": "FLAD1",
+        "first": "FLAD1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1388",
+        "agree": false,
+        "second": "EP300",
+        "first": "KAT5",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "405",
+        "agree": true,
+        "second": "PIGM",
+        "first": "PIGM",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1150",
+        "agree": true,
+        "second": "HLA-DMA",
+        "first": "HLA-DMA",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1219",
+        "agree": false,
+        "second": "NONE",
+        "first": "SREBF1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": true,
+        "is_gene": true
+      },
+      {
+        "pid": "18",
+        "agree": true,
+        "second": "NT5C3A",
+        "first": "NT5C3A",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1100",
+        "agree": true,
+        "second": "HPGDS",
+        "first": "HPGDS",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "228",
+        "agree": false,
+        "second": "DDHD1",
+        "first": "PNPLA8",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1227",
+        "agree": false,
+        "second": "AKR1B1",
+        "first": "RDH11",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1062",
+        "agree": false,
+        "second": "CYP2J2",
+        "first": "CYP2C8",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "559",
+        "agree": true,
+        "second": "PLK1",
+        "first": "PLK1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1171",
+        "agree": true,
+        "second": "NUDT5",
+        "first": "NUDT5",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "332",
+        "agree": false,
+        "second": "NONE",
+        "first": "PLAU",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": true,
+        "is_gene": true
+      },
+      {
+        "pid": "840",
+        "agree": false,
+        "second": "NONE",
+        "first": "CAPN1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "879",
+        "agree": false,
+        "second": "KPNB1",
+        "first": "KPNA2",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "66",
+        "agree": true,
+        "second": "TYMP",
+        "first": "TYMP",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "124",
+        "agree": true,
+        "second": "SEC61A1",
+        "first": "SEC61A1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "19",
+        "agree": true,
+        "second": "ACADM",
+        "first": "ACADM",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1220",
+        "agree": false,
+        "second": "NONE",
+        "first": "SREBF2",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": true,
+        "is_gene": true
+      },
+      {
+        "pid": "1324",
+        "agree": false,
+        "second": "SLC4A1",
+        "first": "SLC26A6",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "295",
+        "agree": true,
+        "second": "TAMM41",
+        "first": "TAMM41",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "793",
+        "agree": true,
+        "second": "HSD17B4",
+        "first": "HSD17B4",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "932",
+        "agree": true,
+        "second": "UST",
+        "first": "UST",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "779",
+        "agree": true,
+        "second": "CYP27A1",
+        "first": "CYP27A1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "791",
+        "agree": true,
+        "second": "CYP27A1",
+        "first": "CYP27A1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1278",
+        "agree": false,
+        "second": "KCNJ2",
+        "first": "KCNQ1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1377",
+        "agree": true,
+        "second": "SLC37A4",
+        "first": "SLC37A4",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1286",
+        "agree": false,
+        "second": "NONE",
+        "first": "RIPK3",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "854",
+        "agree": true,
+        "second": "FLAD1",
+        "first": "FLAD1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "444",
+        "agree": false,
+        "second": "NONE",
+        "first": "RAD52",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "37",
+        "agree": true,
+        "second": "AK1",
+        "first": "AK1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "165",
+        "agree": true,
+        "second": "CHCHD4",
+        "first": "CHCHD4",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "801",
+        "agree": true,
+        "second": "AKR1D1",
+        "first": "AKR1D1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1222",
+        "agree": false,
+        "second": "NONE",
+        "first": "SREBF2",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": true,
+        "is_gene": true
+      },
+      {
+        "pid": "1095",
+        "agree": false,
+        "second": "CYP1A2",
+        "first": "CYP1A1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1116",
+        "agree": true,
+        "second": "ALOX12B",
+        "first": "ALOX12B",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "350",
+        "agree": true,
+        "second": "SULT1A3",
+        "first": "SULT1A3",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1264",
+        "agree": false,
+        "second": "BMP1",
+        "first": "MMP7",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "870",
+        "agree": true,
+        "second": "QPRT",
+        "first": "QPRT",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1004",
+        "agree": true,
+        "second": "ACE",
+        "first": "ACE",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "450",
+        "agree": true,
+        "second": "TPT1",
+        "first": "TPT1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "690",
+        "agree": true,
+        "second": "FURIN",
+        "first": "FURIN",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1107",
+        "agree": true,
+        "second": "COQ7",
+        "first": "COQ7",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1320",
+        "agree": false,
+        "second": "CFTR",
+        "first": "CLCN1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1282",
+        "agree": true,
+        "second": "XPO1",
+        "first": "XPO1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "759",
+        "agree": true,
+        "second": "HSD17B4",
+        "first": "HSD17B4",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "855",
+        "agree": true,
+        "second": "CHST11",
+        "first": "CHST11",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "556",
+        "agree": true,
+        "second": "UCP1",
+        "first": "UCP1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "581",
+        "agree": true,
+        "second": "SLC35D1",
+        "first": "SLC35D1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "938",
+        "agree": false,
+        "second": "ACE",
+        "first": "CTSG",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "16",
+        "agree": true,
+        "second": "SLC28A1",
+        "first": "SLC28A1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "511",
+        "agree": true,
+        "second": "DNM2",
+        "first": "DNM2",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1056",
+        "agree": true,
+        "second": "CYP2E1",
+        "first": "CYP2E1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "507",
+        "agree": true,
+        "second": "PIP5K1A",
+        "first": "PIP5K1A",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "498",
+        "agree": true,
+        "second": "DNM2",
+        "first": "DNM2",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "111",
+        "agree": false,
+        "second": "NONE",
+        "first": "SEC61A1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "635",
+        "agree": true,
+        "second": "FEN1",
+        "first": "FEN1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "237",
+        "agree": false,
+        "second": "PLA2G4A",
+        "first": "PLA2G6",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "996",
+        "agree": false,
+        "second": "MAP2K4",
+        "first": "MAP2K7",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "730",
+        "agree": true,
+        "second": "LFNG",
+        "first": "LFNG",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "206",
+        "agree": true,
+        "second": "ABCB1",
+        "first": "ABCB1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1115",
+        "agree": true,
+        "second": "ALOX12",
+        "first": "ALOX12",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1347",
+        "agree": false,
+        "second": "KPNB1",
+        "first": "KPNA2",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "929",
+        "agree": true,
+        "second": "DSE",
+        "first": "DSE",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "210",
+        "agree": true,
+        "second": "CA4",
+        "first": "CA4",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1192",
+        "agree": true,
+        "second": "PSTK",
+        "first": "PSTK",
+        "pred_obscure": true,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "496",
+        "agree": true,
+        "second": "MTM1",
+        "first": "MTM1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "502",
+        "agree": false,
+        "second": "MTMR2",
+        "first": "MTM1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "717",
+        "agree": true,
+        "second": "UROD",
+        "first": "UROD",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "41",
+        "agree": true,
+        "second": "APEX1",
+        "first": "APEX1",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "560",
+        "agree": true,
+        "second": "PKMYT1",
+        "first": "PKMYT1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "379",
+        "agree": true,
+        "second": "GALC",
+        "first": "GALC",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1375",
+        "agree": false,
+        "second": "ORAI1",
+        "first": "TRPV6",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1224",
+        "agree": true,
+        "second": "LIPC",
+        "first": "LIPC",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "568",
+        "agree": false,
+        "second": "NONE",
+        "first": "RAB5A",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1083",
+        "agree": true,
+        "second": "PTGR1",
+        "first": "PTGR1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "447",
+        "agree": false,
+        "second": "NONE",
+        "first": "RNASEH1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "172",
+        "agree": true,
+        "second": "ABCA1",
+        "first": "ABCA1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "109",
+        "agree": true,
+        "second": "CAT",
+        "first": "CAT",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "846",
+        "agree": true,
+        "second": "ZDHHC3",
+        "first": "ZDHHC3",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "528",
+        "agree": true,
+        "second": "GUSB",
+        "first": "GUSB",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "538",
+        "agree": true,
+        "second": "KPNA4",
+        "first": "KPNA4",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1063",
+        "agree": true,
+        "second": "CYP2C9",
+        "first": "CYP2C9",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "942",
+        "agree": true,
+        "second": "ITK",
+        "first": "ITK",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1193",
+        "agree": true,
+        "second": "SCLY",
+        "first": "SCLY",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "17",
+        "agree": true,
+        "second": "NT5C1A",
+        "first": "NT5C1A",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "288",
+        "agree": true,
+        "second": "PLD1",
+        "first": "PLD1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "189",
+        "agree": true,
+        "second": "MAD1L1",
+        "first": "MAD1L1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "136",
+        "agree": true,
+        "second": "SLC4A1",
+        "first": "SLC4A1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "73",
+        "agree": false,
+        "second": "NELFE",
+        "first": "POLR2A",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "988",
+        "agree": true,
+        "second": "ELOVL2",
+        "first": "ELOVL2",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1125",
+        "agree": true,
+        "second": "GUSB",
+        "first": "GUSB",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "829",
+        "agree": false,
+        "second": "ARHGEF1",
+        "first": "ARHGEF12",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "516",
+        "agree": false,
+        "second": "PI4K2A",
+        "first": "PI4KA",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "263",
+        "agree": true,
+        "second": "LCLAT1",
+        "first": "LCLAT1",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "504",
+        "agree": true,
+        "second": "PIK3C3",
+        "first": "PIK3C3",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1399",
+        "agree": true,
+        "second": "GBE1",
+        "first": "GBE1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "289",
+        "agree": true,
+        "second": "LPIN1",
+        "first": "LPIN1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "654",
+        "agree": true,
+        "second": "ITPK1",
+        "first": "ITPK1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "287",
+        "agree": true,
+        "second": "PTDSS2",
+        "first": "PTDSS2",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "625",
+        "agree": true,
+        "second": "HYAL1",
+        "first": "HYAL1",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1088",
+        "agree": true,
+        "second": "SLC29A1",
+        "first": "SLC29A1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "788",
+        "agree": true,
+        "second": "SCP2",
+        "first": "SCP2",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "683",
+        "agree": true,
+        "second": "IP6K1",
+        "first": "IP6K1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1021",
+        "agree": true,
+        "second": "TPO",
+        "first": "TPO",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "363",
+        "agree": false,
+        "second": "PLA2G2A",
+        "first": "PLA2G1B",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "212",
+        "agree": false,
+        "second": "MMP1",
+        "first": "MMP8",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "449",
+        "agree": true,
+        "second": "TERT",
+        "first": "TERT",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "410",
+        "agree": true,
+        "second": "PIGK",
+        "first": "PIGK",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "195",
+        "agree": true,
+        "second": "TBC1D4",
+        "first": "TBC1D4",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "348",
+        "agree": true,
+        "second": "GGCX",
+        "first": "GGCX",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "153",
+        "agree": false,
+        "second": "KCNJ2",
+        "first": "KCNJ11",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "233",
+        "agree": true,
+        "second": "MBOAT7",
+        "first": "MBOAT7",
+        "pred_obscure": false,
+        "cell": "12",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "539",
+        "agree": false,
+        "second": "NUP62",
+        "first": "KPNB1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "180",
+        "agree": false,
+        "second": "NONE",
+        "first": "BAD",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "921",
+        "agree": true,
+        "second": "MTHFD1",
+        "first": "MTHFD1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "657",
+        "agree": true,
+        "second": "IPPK",
+        "first": "IPPK",
+        "pred_obscure": false,
+        "cell": "8-11",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "603",
+        "agree": true,
+        "second": "HNMT",
+        "first": "HNMT",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "1035",
+        "agree": true,
+        "second": "IYD",
+        "first": "IYD",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "964",
+        "agree": true,
+        "second": "KPNB1",
+        "first": "KPNB1",
+        "pred_obscure": false,
+        "cell": "1-3",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "604",
+        "agree": true,
+        "second": "NNMT",
+        "first": "NNMT",
+        "pred_obscure": false,
+        "cell": "4-7",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "54",
+        "agree": true,
+        "second": "RRM1",
+        "first": "RRM1",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      },
+      {
+        "pid": "168",
+        "agree": true,
+        "second": "DYRK1A",
+        "first": "DYRK1A",
+        "pred_obscure": false,
+        "cell": "0",
+        "association": false,
+        "is_gene": true
+      }
+    ],
+    "log": [
+      "====================================================================================================",
+      "INDEPENDENT AGREEMENT -- what a second closed-book solver buys, measured not assumed",
+      "====================================================================================================",
+      "\n  CALIBRATION on 333 held-out reactions where truth is known",
+      "    the two solvers agree on              78.1%",
+      "    first solver (with examples) correct  0.727",
+      "    second solver (closed-book) correct   0.673",
+      "\n    P(first answer correct | the two AGREE)      0.788   (n=260)",
+      "    P(first answer correct | they DISAGREE)     0.507   (n=73)",
+      "    gap +0.282",
+      "    for reference, the confidence signal that was never collected: 0.891 against 0.456 (+0.435)",
+      "    bootstrap 95% CI on the gap [+0.154, +0.406]",
+      "\n  WHERE THE SIGNAL LIVES -- it is not uniform, and that changes how it should be used",
+      "                                 agree  disagree      gap     n",
+      "    full retrieval               0.796     0.741   +0.056   140",
+      "    partial or zero examples     0.782     0.370   +0.413   193",
+      "    Agreement barely separates rows that already had 12 examples -- those are fine either way.",
+      "    It separates the thin-retrieval rows almost completely, and those are exactly the rows the",
+      "    existing flags could not touch. The two signals are complementary rather than redundant:",
+      "    full retrieval alone separates by only +0.102.",
+      "\n  ON A DISAGREEMENT, KEEP THE FIRST ANSWER -- the second is not a better answer, only a probe",
+      "    first solver correct  0.507   second solver correct 0.260   (n=73)",
+      "    neither correct       0.384   a disagreement usually means the reaction is hard,",
+      "    not that the first answer should be swapped for the second.",
+      "\n  APPLIED to 250 sampled fill rows",
+      "    the two solvers agree on 69.6% of them",
+      "    implied accuracy on the sample 0.703",
+      "    scaled to all 1400 rows: about 974 agreeing rows at 0.788,",
+      "    426 disagreeing at 0.507",
+      "\n  AN UNPLANNED CONTROL. The closed-book solver was allowed to answer NONE for a reaction",
+      "  with no protein catalyst. It did so on 22 of 250 fill rows, and those rows carry the mechanical",
+      "  'association' flag at 22.7% against a base rate of 2.4% -- a 9x enrichment.",
+      "  An independent solver with no sight of that check rediscovered part of the same class,",
+      "  which is the first outside confirmation it is real. The other 17 NONEs are candidates the",
+      "  mechanical check missed, and are worth reading before the check is trusted as complete.",
+      "\n  THE LABEL. Retrieval tier and agreement, crossed, with the rate measured on held-out and",
+      "  the row count projected onto all 1400 fill rows.",
+      "    retrieval       second opinion      rate    share    rows",
+      "    full retrieval  agrees             0.796    23.2%     325",
+      "    full retrieval  disagrees          0.741     6.8%      95",
+      "    thin retrieval  agrees             0.782    46.4%     650",
+      "    thin retrieval  disagrees          0.370    23.6%     330",
+      "    implied correct across the worklist: 960 of 1400",
+      "\n    THE ONE CELL THAT MATTERS: thin retrieval AND the two solvers disagree.",
+      "    23.6% of rows -> about 330 of 1400, at 0.370. Everything else sits near 0.78-0.80.",
+      "    That is a triage rule a curator can apply in one pass, and it did not exist before.",
+      "\n  READING",
+      "  AGREEMENT IS A USABLE PER-ROW LABEL. It separates by +0.282, which is the same order",
+      "  as the confidence signal that was never collected. The 974 agreeing",
+      "  rows are the defensible part of the worklist at 0.788; the rest is at 0.507 and",
+      "  should be treated as unreviewed. This is a label, not an average, so a curator can act on it."
+    ]
+  }
 }

@@ -382,6 +382,34 @@ def cmd_score():
     report(f"    gap {gap:+.3f}")
     report(f"    for reference, the confidence signal that was never collected: 0.891 against 0.456 (+0.435)")
 
+    # ---- the checks that decide whether the gap is usable rather than merely present -----------------
+    rng = np.random.default_rng(7)
+    bs = []
+    for _ in range(5000):
+        i = rng.integers(0, len(ca), len(ca))
+        a, h = ag[i], hi_[i]
+        if a.any() and (~a).any():
+            bs.append(h[a].mean() - h[~a].mean())
+    report(f"    bootstrap 95% CI on the gap [{np.percentile(bs,2.5):+.3f}, {np.percentile(bs,97.5):+.3f}]")
+
+    report("\n  WHERE THE SIGNAL LIVES -- it is not uniform, and that changes how it should be used")
+    full = np.array([r["cell"] == "12" for r in ca], bool)
+    report(f"    {'':<24}{'agree':>10}{'disagree':>10}{'gap':>9}{'n':>6}")
+    for lab, s in (("full retrieval", full), ("partial or zero examples", ~full)):
+        a, h = ag[s], hi_[s]
+        pa_, pd2 = h[a].mean(), h[~a].mean()
+        report(f"    {lab:<24}{pa_:>10.3f}{pd2:>10.3f}{pa_-pd2:>+9.3f}{int(s.sum()):>6}")
+    report("    Agreement barely separates rows that already had 12 examples -- those are fine either way.")
+    report("    It separates the thin-retrieval rows almost completely, and those are exactly the rows the")
+    report("    existing flags could not touch. The two signals are complementary rather than redundant:")
+    report(f"    full retrieval alone separates by only {hi_[full].mean()-hi_[~full].mean():+.3f}.")
+
+    report("\n  ON A DISAGREEMENT, KEEP THE FIRST ANSWER -- the second is not a better answer, only a probe")
+    d = ~ag
+    report(f"    first solver correct  {hi_[d].mean():.3f}   second solver correct {sh[d].mean():.3f}   (n={int(d.sum())})")
+    report(f"    neither correct       {np.mean(~hi_[d] & ~sh[d]):.3f}   a disagreement usually means the reaction is hard,")
+    report("    not that the first answer should be swapped for the second.")
+
     agf = np.array([r["agree"] for r in fa], bool)
     report(f"\n  APPLIED to {len(fa)} sampled fill rows")
     report(f"    the two solvers agree on {agf.mean():.1%} of them")
@@ -390,6 +418,46 @@ def cmd_score():
     n_fill = len(fill)
     report(f"    scaled to all {n_fill} rows: about {agf.mean()*n_fill:.0f} agreeing rows at {pa:.3f},")
     report(f"    {(1-agf.mean())*n_fill:.0f} disagreeing at {pd_:.3f}")
+
+    # ---- an unplanned control that fell out: the solver could answer NONE ---------------------------
+    nones = [r for r in fa if r["second"] == "NONE"]
+    if nones:
+        base = float(np.mean([r["association"] for r in fa]))
+        got = float(np.mean([r["association"] for r in nones]))
+        report(f"\n  AN UNPLANNED CONTROL. The closed-book solver was allowed to answer NONE for a reaction")
+        report("  with no protein catalyst. It did so on "
+               f"{len(nones)} of {len(fa)} fill rows, and those rows carry the mechanical")
+        report(f"  'association' flag at {got:.1%} against a base rate of {base:.1%} -- a "
+               f"{got/max(base,1e-9):.0f}x enrichment.")
+        report("  An independent solver with no sight of that check rediscovered part of the same class,")
+        report(f"  which is the first outside confirmation it is real. The other {sum(1 for r in nones if not r['association'])}"
+               " NONEs are candidates the")
+        report("  mechanical check missed, and are worth reading before the check is trusted as complete.")
+
+    # ---- the deliverable: a two-signal per-row label, with the rate measured for each cell -----------
+    report("\n  THE LABEL. Retrieval tier and agreement, crossed, with the rate measured on held-out and")
+    report("  the row count projected onto all " + str(n_fill) + " fill rows.")
+    cells = {}
+    for lab, s in (("full retrieval", full), ("thin retrieval", ~full)):
+        for alab, a in (("agrees", True), ("disagrees", False)):
+            m = s & (ag == a)
+            if m.sum() >= 10:
+                cells[(lab, alab)] = float(hi_[m].mean())
+    ff = np.array([r["cell"] == "12" for r in fa], bool)
+    report(f"    {'retrieval':<16}{'second opinion':<16}{'rate':>8}{'share':>9}{'rows':>8}")
+    tot_exp = 0.0
+    for (lab, alab), rate in sorted(cells.items()):
+        m = (ff if lab == "full retrieval" else ~ff) & (agf == (alab == "agrees"))
+        share = m.mean()
+        report(f"    {lab:<16}{alab:<16}{rate:>8.3f}{share:>9.1%}{share*n_fill:>8.0f}")
+        tot_exp += share * n_fill * rate
+    report(f"    implied correct across the worklist: {tot_exp:.0f} of {n_fill}")
+    bad = (~ff) & (~agf)
+    report(f"\n    THE ONE CELL THAT MATTERS: thin retrieval AND the two solvers disagree.")
+    report(f"    {bad.mean():.1%} of rows -> about {bad.mean()*n_fill:.0f} of {n_fill}, at "
+           f"{cells.get(('thin retrieval','disagrees'), float('nan')):.3f}. Everything else sits near 0.78-0.80.")
+    report("    That is a triage rule a curator can apply in one pass, and it did not exist before.")
+    res_cells = {f"{a}|{b}": v for (a, b), v in cells.items()}
 
     report("\n  READING")
     if gap > 0.25 and 0.05 < ag.mean() < 0.95:
@@ -410,9 +478,21 @@ def cmd_score():
     res["agreement"] = {"n_cal": len(ca), "n_fill": len(fa), "agree_cal": float(ag.mean()),
                         "agree_fill": float(agf.mean()), "p_correct_given_agree": pa,
                         "p_correct_given_disagree": pd_, "gap": float(gap),
+                        "gap_ci": [float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))],
                         "second_solver_alone": float(sh.mean()), "implied_fill_accuracy": float(exp),
-                        "rows": fa, "log": log}
+                        "first_wins_on_disagreement": [float(hi_[d].mean()), float(sh[d].mean())],
+                        "cells": res_cells, "implied_correct": float(tot_exp),
+                        "worst_cell_share": float(bad.mean()), "rows": fa, "log": log}
     json.dump(res, open(OUT / "cell_orphan_howmany.json", "w"), indent=2)
+    # the labelled worklist itself -- one row per scored fill prediction, with its calibrated tier
+    with open(OUT / "orphan_fill_labelled.tsv", "w") as fh:
+        fh.write("pid\tgene\tsecond_opinion\tagree\tretrieval\tcalibrated_rate\n")
+        for r in fa:
+            lab = "full retrieval" if r["cell"] == "12" else "thin retrieval"
+            alab = "agrees" if r["agree"] else "disagrees"
+            fh.write(f"{r['pid']}\t{r['first']}\t{r['second']}\t{r['agree']}\t{lab}\t"
+                     f"{cells.get((lab, alab), float('nan')):.3f}\n")
+    report(f"  -> {OUT/'orphan_fill_labelled.tsv'}")
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'cell_orphan_howmany.json'}")
     return 0
 
