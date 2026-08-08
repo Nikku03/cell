@@ -113,14 +113,22 @@ def main():
     report("\n  WITHIN THE OBSCURE BIN -- where the 9,186 gaps actually live")
     ob = bidx == 0
     obs_acc = {}
-    report(f"    {'example count':<16}{'n':>6}{'accuracy':>10}")
+    # MIN_N IS 20, NOT 5. A first version accepted any cell with 5 rows, which let an n=6 cell into the
+    # projection carrying 0.833 -- one reaction either way moves that by 0.17. A cell that thin is not a
+    # measurement, and letting it set the headline for a third of the deliverable is how a confident wrong
+    # number gets published.
+    MIN_N = 20
+    report(f"    {'example count':<16}{'n':>6}{'accuracy':>10}   (cells under {MIN_N} are not used)")
+    obs_n = {}
     for lab, lo, hi in CELLS:
         m = (ne_b >= lo) & (ne_b <= hi) & ob
-        if m.sum() >= 5:
+        obs_n[lab] = int(m.sum())
+        if m.sum() >= MIN_N:
             obs_acc[lab] = float(hit[m].mean())
             report(f"    {lab:<16}{m.sum():>6}{hit[m].mean():>10.3f}")
         else:
-            report(f"    {lab:<16}{m.sum():>6}{'NOT MEASURED':>10}")
+            shown = f"{hit[m].mean():.3f}" if m.sum() else "-"
+            report(f"    {lab:<16}{m.sum():>6}{shown:>10}   TOO THIN to use")
 
     report("\n  PROJECTION onto the real-orphan retrieval distribution, obscure cells only")
     num, den, unmeas = 0.0, 0.0, 0.0
@@ -133,12 +141,18 @@ def main():
             report(f"    {lab:<16}{share:>13.1%}{obs_acc[lab]:>13.3f}")
         else:
             unmeas += share
-            report(f"    {lab:<16}{share:>13.1%}{'unmeasured':>13}")
+            report(f"    {lab:<16}{share:>13.1%}{'unmeasured':>13}   (benchmark n={obs_n.get(lab,0)})")
     proj = num / den if den > 0 else float("nan")
 
     report("\n  READING")
-    report(f"    On the {den:.0%} of orphans whose retrieval depth HAS been measured on obscure reactions,")
-    report(f"    the projected top-1 is {proj:.3f}, against a headline of 0.688.")
+    report(f"    On the {den:.0%} of orphans whose retrieval depth HAS been measured on obscure reactions")
+    report(f"    at usable sample size, the projected top-1 is {proj:.3f} against a headline of 0.688.")
+    if den < 0.7:
+        report(f"    BUT {1-den:.0%} OF THE DELIVERABLE IS NOT COVERED BY ANY USABLE CELL, so this projection")
+        report("    describes a minority of the rows and must not be quoted as the table's accuracy. The")
+        report("    honest statement is that the transfer CANNOT be established from this benchmark: the")
+        report("    cells that matter are either unmeasured or too thin, and that is a fact about the")
+        report("    benchmark's design, not about the method.")
     report(f"    The other {unmeas:.0%} sit in a cell with no obscure measurement at all -- the benchmark")
     report("    contains no obscure reaction with zero examples, because a solved reaction almost always")
     report("    has chemical neighbours while a genuine orphan often does not. That share is reported as")
