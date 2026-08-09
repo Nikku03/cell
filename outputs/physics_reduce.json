@@ -1,0 +1,104 @@
+{
+  "test": "physics_reduce",
+  "n_dof": 40821,
+  "t_setup": 17.975186109542847,
+  "reductions": [
+    {
+      "name": "linearity -> superposition",
+      "holds": true,
+      "error": 2.813537891345581e-13,
+      "speedup": 867.3872502378687,
+      "note": "add 106 us against solve 92 ms"
+    },
+    {
+      "name": "reusable factorisation",
+      "holds": true,
+      "error": 0.0,
+      "speedup": 198.20379816984556,
+      "note": "setup 18.0 s, each solve 91 ms"
+    },
+    {
+      "name": "locality (norm) -> truncate",
+      "holds": false,
+      "error": 0.21615863872838748,
+      "speedup": 1.0,
+      "note": "even 30% of atoms carries only 0.78 of the norm"
+    },
+    {
+      "name": "modal truncation (54 modes)",
+      "holds": true,
+      "error": 0.07045108945182967,
+      "speedup": 755.9444444444445,
+      "note": "54 of 40821 dimensions reproduce 93.0% of a real response"
+    },
+    {
+      "name": "conserved directions (null space)",
+      "holds": true,
+      "error": 0.0,
+      "speedup": 1.0001470047776553,
+      "note": "6 directions at numerical zero, gap 1.4e+10 to the first real mode"
+    },
+    {
+      "name": "timescale separation -> event stepping",
+      "holds": true,
+      "error": 0.0,
+      "speedup": 8362059.640171235,
+      "note": "lambda spans 2.05e-05 to 1.71e+02, ratio 8.4e+06"
+    }
+  ],
+  "composed_speedup": 1086905999082084.0,
+  "score": "5/5",
+  "hand_check": {
+    "linearity exact (1.4e-13)": true,
+    "precompute ratio ~280x": true,
+    "norm-locality FAILS": true,
+    "null space exists": true,
+    "wide spectrum": true
+  },
+  "log": [
+    "====================================================================================================",
+    "AUTOMATED MODEL REDUCTION -- find the structure, prove it, price it",
+    "====================================================================================================",
+    "  A scored exam, not a demo: this system's structure was established by hand today, so every",
+    "  verdict below can be checked. A false positive is disqualifying.",
+    "\n  system: 13607 degrees of freedom x3 = 40821, 263270 couplings, 4861323 nonzeros",
+    "  setup (one factorisation): 18.0 s",
+    "\n  PROBING THE VOCABULARY",
+    "    linearity -> superposition             HOLDS  err 2.81e-13  speedup 867x",
+    "      add 106 us against solve 92 ms",
+    "    reusable factorisation                 HOLDS  err 0.00e+00  speedup 198x",
+    "      setup 18.0 s, each solve 91 ms",
+    "    locality -- two questions, and conflating them is a known trap:",
+    "            R   atoms    share   norm in   peak in",
+    "           10      32     0.2%     0.536     1.000",
+    "           20      78     0.6%     0.711     1.000",
+    "           30     127     0.9%     0.757     1.000",
+    "           50     234     1.7%     0.761     1.000",
+    "           70     896     6.6%     0.768     1.000",
+    "          100    4040    29.7%     0.784     1.000",
+    "    locality (norm) -> truncate            FAILS  err 2.16e-01  speedup 1x",
+    "      even 30% of atoms carries only 0.78 of the norm",
+    "    modal truncation (54 modes)            HOLDS  err 7.05e-02  speedup 756x",
+    "      54 of 40821 dimensions reproduce 93.0% of a real response",
+    "    conserved directions (null space)      HOLDS  err 0.00e+00  speedup 1x",
+    "      6 directions at numerical zero, gap 1.4e+10 to the first real mode",
+    "    timescale separation -> event stepping HOLDS  err 0.00e+00  speedup 8.36e+06x",
+    "      lambda spans 2.05e-05 to 1.71e+02, ratio 8.4e+06",
+    "\n  COMPOSED: 5 reductions hold, product of speedups 1.09e+15x",
+    "  REJECTED: 1 -- and these matter more, because they are what stops a scheme",
+    "    locality (norm) -> truncate: even 30% of atoms carries only 0.78 of the norm",
+    "\n  SCORING AGAINST THE HAND WORK",
+    "    match     linearity exact (1.4e-13)",
+    "    match     precompute ratio ~280x",
+    "    match     norm-locality FAILS",
+    "    match     null space exists",
+    "    match     wide spectrum",
+    "    5/5 recovered without being told",
+    "\n  READING",
+    "  The machine recovered every structural fact the hand work found, including the one that",
+    "  cost a misdiagnosis -- that the response is local in AMPLITUDE and global in NORM, so a",
+    "  truncated support is not a valid reduction here. It also priced each one. The next test",
+    "  is a system whose structure is NOT known in advance, because reproducing a known answer",
+    "  is a harness and finding an unknown one is a discoverer."
+  ]
+}

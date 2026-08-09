@@ -251,10 +251,26 @@ def main():
 
     held = [r for r in results if r[1]]
     failed = [r for r in results if not r[1]]
-    prod = 1.0
+    # COMPOSITION IS NOT A PRODUCT, and the first version printed one. Linearity and reusable
+    # factorisation both eliminate re-solving; multiplying them double-counts the same saving. Speedups
+    # only multiply across INDEPENDENT cost axes -- how many solves, how many dimensions, how many steps
+    # -- and within an axis the right combination is the best single one, not the product. The first
+    # version reported 1.09e15x, which is not achievable by anything.
+    AXIS = {"linearity -> superposition": "solves", "reusable factorisation": "solves",
+            "conserved directions (null space)": "dimensions",
+            "timescale separation -> event stepping": "steps"}
+    by_axis = {}
     for r in held:
-        prod *= max(r[3], 1.0)
-    report(f"\n  COMPOSED: {len(held)} reductions hold, product of speedups {prod:.3g}x")
+        ax = AXIS.get(r[0], "dimensions" if "modal" in r[0] else "other")
+        by_axis[ax] = max(by_axis.get(ax, 1.0), max(r[3], 1.0))
+    prod = 1.0
+    for v in by_axis.values():
+        prod *= v
+    report(f"\n  COMPOSED across independent cost axes -- NOT a product over reductions, because")
+    report(f"  linearity and reusable factorisation both eliminate re-solving and would double-count:")
+    for ax, v in sorted(by_axis.items()):
+        report(f"    {ax:<14}{v:>12.3g}x")
+    report(f"    {'TOTAL':<14}{prod:>12.3g}x   ({len(held)} reductions hold)")
     report(f"  REJECTED: {len(failed)} -- and these matter more, because they are what stops a scheme")
     for r in failed:
         report(f"    {r[0]}: {r[4]}")
