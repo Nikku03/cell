@@ -156,13 +156,27 @@ class System:
                 self.cut = floor
                 self.gap = float(vals[0] / max(floor, 1e-300))
             else:
+                # RATIOS AMONG VALUES THAT ARE ALL NUMERICALLY ZERO CARRY NO INFORMATION, and must not be
+                # allowed to win the argmax. The null cluster here spans 1e-20 to 1e-16 -- every one of
+                # those is zero to double precision -- yet their pairwise ratios came out 17x, 2.5x, and
+                # on one solve 2.7e+280, because ARPACK returned an eigenvalue of exactly 0.0 and the
+                # guard against dividing by it was 1e-300. That fake ratio beat the real gap of 1.3e+09
+                # and the cut collapsed to a single mode, reporting 1 null direction where there are 23.
+                # It is nondeterministic: the same system gave 17 on an earlier solve, because whether
+                # ARPACK lands exactly on zero depends on its random start vector.
+                #
+                # An eigenvalue below ||K|| * machine epsilon cannot be distinguished from zero by any
+                # algorithm in double precision, so clamp there and let the whole cluster compare equal.
+                # Ratios inside it become exactly 1.0 and only the jump OUT of it can win.
                 hi = min(eligible, len(vals) - 1)
-                pos = vals[: hi + 1]
-                ratios = pos[1:] / np.maximum(pos[:-1], 1e-300)
+                pos = np.maximum(vals[: hi + 1], self.scale * np.finfo(float).eps)
+                ratios = pos[1:] / pos[:-1]
                 j = int(np.argmax(ratios))
                 nn = j + 1
                 self.gap = float(ratios[j])
-                self.cut = float(vals[j]) * np.sqrt(max(self.gap, 1.0))
+                # from the CLAMPED value, not the raw one: a cut placed at 1e-20 * sqrt(gap) would sit
+                # below modes it is meant to be above.
+                self.cut = float(pos[j]) * np.sqrt(max(self.gap, 1.0))
             # STOP WHEN THE COUNT IS STABLE, not when the first non-null mode appears.
             #
             # The old rule -- stop as soon as some returned mode was above the floor -- is wrong whenever
