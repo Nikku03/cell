@@ -195,6 +195,36 @@ def probe_linearity(S, rng, log):
                    f"add {t_add*1e6:.0f} us against solve {t_solve*1e3:.0f} ms")
 
 
+def probe_finite_linearity(S, rng, log):
+    """Is the PHYSICS linear, or only the operator?
+
+    THE GAP THE ROD EXPOSED. probe_linearity tests whether solve(af1+bf2) equals a solve(f1)+b solve(f2).
+    For any linear solver that is true BY CONSTRUCTION -- it tests the algebra, not the system. Every
+    nonlinear system has a Hessian, and that Hessian is linear, so the existing probe would report
+    "linearity HOLDS" on a system where superposition is worthless. That is a false positive of exactly
+    the kind that disqualifies the tool.
+
+    The honest test uses FINITE AMPLITUDE against the true energy: minimise E under force f, then under
+    2f, and ask whether the second displacement is twice the first. A harmonic system says yes exactly.
+    Anything else does not, and the deviation grows with amplitude -- which is also the useful output,
+    since it says how far you may superpose before it stops being true.
+
+    Requires S.energy. Systems without one SKIP this probe and say so rather than silently passing.
+    """
+    if not hasattr(S, "energy") or S.energy is None:
+        return None
+    f = S.couple(int(rng.integers(S.n)), rng)
+    u1 = S.relax(f)
+    devs = []
+    for a in (2.0, 4.0, 8.0):
+        ua = S.relax(a * f)
+        devs.append(float(np.linalg.norm(ua - a * u1) / max(np.linalg.norm(a * u1), 1e-300)))
+    worst = max(devs)
+    return verdict("finite-amplitude linearity", worst, 1e-3, "below", 1.0,
+                   "deviation from exact scaling at 2x/4x/8x force: "
+                   + ", ".join(f"{d:.2e}" for d in devs), {"devs": devs})
+
+
 def probe_precompute(S, rng, log):
     """Is the expensive part reusable? A large setup-to-solve ratio means the cost is in BUILDING the
     inverse rather than applying it, so it should be built once."""
@@ -300,8 +330,12 @@ def main():
 
     results = []
     report("\n  PROBING THE VOCABULARY")
-    for fn in (probe_linearity, probe_precompute, probe_locality):
-        results.append(fn(S, rng, log))
+    for fn in (probe_linearity, probe_finite_linearity, probe_precompute, probe_locality):
+        r = fn(S, rng, log)
+        if r is None:
+            report("    finite-amplitude linearity            SKIPPED   no energy function supplied")
+            continue
+        results.append(r)
     rm, vals, n_zero = probe_modal(S, rng, log)
     results += [rm, probe_nullspace(vals, n_zero, S), probe_timescale(vals, S)]
     report(f"    {'reduction':<40}{'verdict':<10}{'quantity':>12}{'vs thr':>9}{'speedup':>11}")
