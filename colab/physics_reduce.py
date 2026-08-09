@@ -414,8 +414,12 @@ def probe_nullspace(vals, n_zero, S):
 
     The gap is recomputed here from an INDEPENDENT eigensolve (probe_modal's, with a different k) rather
     than read off S.gap, so a disagreement between the two is visible instead of hidden."""
+    # SAME RESOLUTION CLAMP AS THE CUT, or this reports a different number for the same quantity. Dividing
+    # by the raw largest near-zero eigenvalue gave 1.3e+09 here against setup's 2.7e+07, because that
+    # eigenvalue is below ||K|| * machine epsilon and is not a measurement of anything.
+    res = S.scale * np.finfo(float).eps
     nz = vals[vals > S.cut]
-    gap = float(nz[0] / max(vals[n_zero - 1], 1e-30)) if n_zero > 0 and len(nz) else float("inf")
+    gap = float(nz[0] / max(vals[n_zero - 1], res)) if n_zero > 0 and len(nz) else float("inf")
     if not S.calibrated:
         # A count of zero here means "could not tell", NOT "there are none", and the two must not read the
         # same. Rigid motion costs energy on this operator, so there is no direction known to be null to
