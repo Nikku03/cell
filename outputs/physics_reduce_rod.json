@@ -1,0 +1,176 @@
+{
+  "test": "physics_reduce_rod",
+  "n_bead": 28,
+  "bp": 1400.0,
+  "sigma": -0.05,
+  "n_null": 0,
+  "reductions": [
+    {
+      "name": "linearity -> superposition",
+      "quantity": 2.477330643697215e-14,
+      "threshold": 1e-08,
+      "direction": "below",
+      "verdict": "HOLDS",
+      "margin": 2.4773306436972147e-06,
+      "speedup": 2.890695573622403,
+      "note": "add 5 us against solve 0 ms",
+      "detail": {}
+    },
+    {
+      "name": "finite-amplitude linearity",
+      "quantity": 1.6595816543787556e-06,
+      "threshold": 0.001,
+      "direction": "below",
+      "verdict": "HOLDS",
+      "margin": 0.0016595816543787554,
+      "speedup": 1.0,
+      "note": "deviation from exact scaling at 2x/4x/8x force: 9.48e-07, 1.42e-06, 1.66e-06",
+      "detail": {
+        "devs": [
+          9.483323737660135e-07,
+          1.4224985608973838e-06,
+          1.6595816543787556e-06
+        ]
+      }
+    },
+    {
+      "name": "reusable factorisation",
+      "quantity": 33.89692250648869,
+      "threshold": 10.0,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 3.3896922506488694,
+      "speedup": 33.89692250648869,
+      "note": "setup 0.0 s, each solve 0 ms",
+      "detail": {}
+    },
+    {
+      "name": "locality (norm) -> truncate",
+      "quantity": 1.0,
+      "threshold": 0.25,
+      "direction": "below",
+      "verdict": "FAILS",
+      "margin": 4.0,
+      "speedup": 1.0,
+      "note": "100% of atoms carry 90% of the norm (R=10)",
+      "detail": {
+        "rows": [
+          {
+            "R": 10.0,
+            "atoms": 28,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 20.0,
+            "atoms": 28,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 30.0,
+            "atoms": 28,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 50.0,
+            "atoms": 28,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 70.0,
+            "atoms": 28,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 100.0,
+            "atoms": 28,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "modal truncation",
+      "quantity": 0.9999837769684458,
+      "threshold": 0.9,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 0.000162230315542411,
+      "speedup": 7.0,
+      "note": "12 of 84 dimensions capture 100.0% of a real response",
+      "detail": {
+        "n_modes": 12
+      }
+    },
+    {
+      "name": "conserved directions (null space)",
+      "quantity": 0.0,
+      "threshold": 1.0,
+      "direction": "above",
+      "verdict": "FAILS",
+      "margin": 0.0,
+      "speedup": 1.0,
+      "note": "0 directions at numerical zero, gap inf to the first real mode",
+      "detail": {
+        "n_null": 0,
+        "gap": Infinity
+      }
+    },
+    {
+      "name": "timescale separation -> event stepping",
+      "quantity": 2397990.194944172,
+      "threshold": 1000.0,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 2397.9901949441723,
+      "speedup": 2397990.194944172,
+      "note": "lambda spans 1.24e+11 to 2.96e+17",
+      "detail": {}
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "THE REDUCER MEETS A SYSTEM IT SHOULD FAIL ON -- the twistable rod",
+    "====================================================================================================",
+    "  Every system so far was a harmonic network where superposition is exact by construction.",
+    "  The rod's energy contains (dLk - Wr)^2 and Wr is a double integral over every segment pair.",
+    "  If the tool reports linearity HOLDS here it has produced a false positive on the property",
+    "  carrying its largest speedup, and it should be thrown away.",
+    "\n  rod: 28 beads, 1400 bp, sigma -0.05, dLk -6.67, Wr +0.000",
+    "  building a 84x84 numerical Hessian by finite differences...",
+    "  Hessian built in 15 s",
+    "  null space DISCOVERED: 0 directions (-6 beyond the six rigid ones)",
+    "\n    reduction                             verdict        quantity    speedup",
+    "    linearity -> superposition            HOLDS         2.477e-14      2.891",
+    "      add 5 us against solve 0 ms",
+    "    finite-amplitude linearity            HOLDS          1.66e-06          1",
+    "      deviation from exact scaling at 2x/4x/8x force: 9.48e-07, 1.42e-06, 1.66e-06",
+    "    reusable factorisation                HOLDS              33.9       33.9",
+    "      setup 0.0 s, each solve 0 ms",
+    "    locality (norm) -> truncate           FAILS                 1          1",
+    "      100% of atoms carry 90% of the norm (R=10)",
+    "    modal truncation                      HOLDS                 1          7",
+    "      12 of 84 dimensions capture 100.0% of a real response",
+    "    conserved directions (null space)     FAILS                 0          1",
+    "      0 directions at numerical zero, gap inf to the first real mode",
+    "    timescale separation -> event steppingHOLDS         2.398e+06  2.398e+06",
+    "      lambda spans 1.24e+11 to 2.96e+17",
+    "\n  THE QUESTION THIS FILE EXISTS FOR",
+    "    operator-level linearity   HOLDS      2.477e-14",
+    "    finite-amplitude linearity HOLDS      1.660e-06",
+    "    Finite-amplitude linearity HOLDS. Either the tested amplitudes never leave the",
+    "    harmonic well -- the deviation curve says which -- or the rod is not behaving as",
+    "    its energy states. Both need resolving before this is called a pass."
+  ]
+}

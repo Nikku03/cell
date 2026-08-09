@@ -108,11 +108,16 @@ class System:
             vals, vecs = eigsh(self.K.tocsc(), k=min(k, self.n3 - 2), sigma=-1e-4, which="LM")
             o = np.argsort(np.abs(vals))
             vals, vecs = np.abs(vals[o]), vecs[:, o]
-            nn = int((vals <= 1e-9).sum())
+            # RELATIVE cut. An absolute 1e-9 worked on the elastic networks only because their gap was
+            # 1e10-1e14. The rod's Hessian, rescaled by kT, has eigenvalues near 1e17, so the same
+            # constant found ZERO null directions where symmetry guarantees six.
+            cut = max(1e-12, float(np.max(np.abs(vals))) * 1e-9)
+            nn = int((vals <= cut).sum())
             if nn < len(vals) or k >= self.n3 - 2:
                 break
             k *= 2                       # every returned mode was null -- there are more
-        self.null = np.ascontiguousarray(vecs[:, vals <= 1e-9])
+        cut = max(1e-12, float(np.max(np.abs(vals))) * 1e-9)
+        self.null = np.ascontiguousarray(vecs[:, vals <= cut])
         self.n_null = self.null.shape[1]
         self._lu = splu((self.K + EPS * sp.identity(self.n3, format="csr")).tocsc())
         self.t_setup = time.time() - t
@@ -215,14 +220,30 @@ def probe_finite_linearity(S, rng, log):
         return None
     f = S.couple(int(rng.integers(S.n)), rng)
     u1 = S.relax(f)
+    # THE PROBE MUST CHECK THAT IT ACTUALLY PERTURBED SOMETHING. Everything is linear at zero amplitude,
+    # so a probe that applies a negligible force reports HOLDS on any system whatsoever -- a test that can
+    # only pass. The rod caught this: deviations of 1e-6 that were growing with amplitude, i.e. real
+    # nonlinearity, but far too small to grade, because the displacement was microscopic against the
+    # system's own length scale.
+    scale = float(np.median(np.linalg.norm(np.diff(S.co, axis=0), axis=1)))     # a bond length
+    amp1 = float(np.linalg.norm(u1.reshape(-1, 3), axis=1).max())
     devs = []
     for a in (2.0, 4.0, 8.0):
         ua = S.relax(a * f)
         devs.append(float(np.linalg.norm(ua - a * u1) / max(np.linalg.norm(a * u1), 1e-300)))
     worst = max(devs)
-    return verdict("finite-amplitude linearity", worst, 1e-3, "below", 1.0,
-                   "deviation from exact scaling at 2x/4x/8x force: "
-                   + ", ".join(f"{d:.2e}" for d in devs), {"devs": devs})
+    rel = amp1 / max(scale, 1e-300)
+    note = ("deviation from exact scaling at 2x/4x/8x force: " + ", ".join(f"{d:.2e}" for d in devs)
+            + f"   |  max displacement {rel:.2e} of a bond length")
+    if rel < 1e-3:
+        v = verdict("finite-amplitude linearity", worst, 1e-3, "below", 1.0, note,
+                    {"devs": devs, "rel_amp": rel})
+        v["verdict"] = "NOT TESTABLE"
+        v["note"] = (note + "  -- the perturbation moved almost nothing, so this cannot distinguish a "
+                     "linear system from any other")
+        return v
+    return verdict("finite-amplitude linearity", worst, 1e-3, "below", 1.0, note,
+                   {"devs": devs, "rel_amp": rel})
 
 
 def probe_precompute(S, rng, log):
@@ -268,7 +289,7 @@ def probe_modal(S, rng, log, k=N_MODES):
     vals, vecs = eigsh(S.K.tocsc(), k=k, sigma=-1e-4, which="LM")
     o = np.argsort(np.abs(vals))
     vals, vecs = np.abs(vals[o]), vecs[:, o]
-    live = vals > 1e-9
+    live = vals > max(1e-12, float(np.max(np.abs(vals))) * 1e-9)
     B = vecs[:, live]
     u = S.solve(S.couple(int(rng.integers(S.n)), rng))
     cap = float(np.linalg.norm(B @ (B.T @ u)) / max(np.linalg.norm(u), 1e-300))
@@ -281,7 +302,7 @@ def probe_modal(S, rng, log, k=N_MODES):
 def probe_nullspace(vals, n_zero, S):
     """A conserved quantity appears as a null space. Found by counting near-zero eigenvalues against the
     gap, not by being told. The quantity is the COUNT, which is what discriminates."""
-    nz = vals[vals > 1e-9]
+    nz = vals[vals > max(1e-12, float(np.max(np.abs(vals))) * 1e-9)]
     gap = float(nz[0] / max(vals[n_zero - 1], 1e-30)) if n_zero > 0 and len(nz) else float("inf")
     return verdict("conserved directions (null space)", float(n_zero), 1.0, "above",
                    float(S.n3) / max(S.n3 - n_zero, 1),
@@ -292,7 +313,7 @@ def probe_nullspace(vals, n_zero, S):
 def probe_timescale(vals, S):
     """A wide spectrum means fast modes are slaved to slow ones, which licenses stepping events rather
     than time."""
-    nz = vals[vals > 1e-9]
+    nz = vals[vals > max(1e-12, float(np.max(np.abs(vals))) * 1e-9)]
     lam_min = float(nz[0])
     lam_max = float(sp.linalg.norm(S.K, np.inf))
     sep = lam_max / lam_min

@@ -97,11 +97,16 @@ class RodSystem(PR.System):
         Hm = 0.5 * (Hm + Hm.T)
         return sp.csr_matrix(Hm / KT)          # in kT units so thresholds are comparable
 
-    def relax(self, f, steps=400, lr=None):
+    def relax(self, f, steps=300, lr=None):
         """Minimise the TRUE energy under an applied force, by gradient descent. This is what makes the
         finite-amplitude probe a test of the physics rather than of the linear algebra."""
+        # STEP SIZE FROM THE SYSTEM, NOT A CONSTANT. The first version used lr = 1e-22 and the
+        # displacement came out at 1e-8 of a bond length -- far too small to distinguish a linear system
+        # from any other, which is exactly what the probe then reported.
         x = self.co.ravel().copy()
-        lr = lr or 1e-22
+        g0 = self._grad(x) - f * KT
+        bond = float(np.median(np.linalg.norm(np.diff(self.co, axis=0), axis=1)))
+        lr = lr or (0.02 * bond / max(np.abs(g0).max(), 1e-300))
         for _ in range(steps):
             g = self._grad(x) - f * KT
             x = x - lr * g
