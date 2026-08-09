@@ -65,8 +65,12 @@ N_BEAD = 72
 BP_TOTAL = 3600.0                 # a small plasmid, so the chain is short enough to equilibrate
 D_EXCL = 5.0e-9                   # m, effective DNA diameter at ~150 mM salt
 K_EXCL = 20.0 * KT                # soft-core strength
-SWEEPS = 4000
-BURN = 1500
+# Sized from a measured cost, not guessed: one sweep is 240 ms at N=72 (72 crankshaft attempts, each a
+# full energy evaluation whose O(N^2) writhe dominates), so 4000 sweeps x 7 configurations was 112 minutes.
+# Acceptance runs at 0.79, so 500 burn-in sweeps is already ~28,000 accepted moves on a 72-bead chain --
+# generous. Cut to what the sampling actually needs rather than to a round number.
+SWEEPS = int(os.environ.get("SC_SWEEPS", 1500))
+BURN = int(os.environ.get("SC_BURN", 500))
 
 
 class Circle:
