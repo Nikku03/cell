@@ -157,10 +157,19 @@ def verdict(name, q, thr, direction, speedup, note, detail=None):
     Within a factor of BAND either way the answer is MARGINAL, because a threshold is a judgement and a
     measurement that lands on one should say so rather than pick a side.
     """
-    r = q / thr if thr else float("inf")
-    if direction == "below":
+    # A MULTIPLICATIVE band is wrong for a quantity bounded above by 1. A captured fraction of 0.9975
+    # against a 0.9 threshold is only 1.1x, so "HOLDS" was unreachable for any fraction and 54 modes
+    # capturing 99.8% of the response was graded MARGINAL. For bounded quantities the margin lives in the
+    # COMPLEMENT -- how much is left over, 0.0025 against 0.1, which is 40x clear.
+    bounded = direction == "above" and 0.0 <= q <= 1.0 and 0.0 < thr < 1.0
+    if bounded:
+        r = (1.0 - q) / (1.0 - thr)
+        v = "HOLDS" if r < 1 / BAND else ("FAILS" if r > BAND else "MARGINAL")
+    elif direction == "below":
+        r = q / thr if thr else float("inf")
         v = "HOLDS" if r < 1 / BAND else ("FAILS" if r > BAND else "MARGINAL")
     else:
+        r = q / thr if thr else float("inf")
         v = "HOLDS" if r > BAND else ("FAILS" if r < 1 / BAND else "MARGINAL")
     return {"name": name, "quantity": float(q), "threshold": float(thr), "direction": direction,
             "verdict": v, "margin": float(r), "speedup": float(speedup), "note": note,
@@ -216,9 +225,11 @@ def probe_locality(S, rng, log):
                      "norm_in": float(nm), "peak_in": float(pk)})
     hit = [r for r in rows if r["norm_in"] >= 0.9]
     frac = min((r["frac"] for r in hit), default=1.0)
-    R90 = min((r["R"] for r in hit), default=float("nan"))
+    note = (f"{frac:.0%} of atoms carry 90% of the norm (R={min(r['R'] for r in hit):.0f})" if hit
+            else f"NO radius up to {max(RADII):.0f} reaches 90% of the norm -- "
+                 f"the largest tested holds {rows[-1]['norm_in']:.2f}")
     return verdict("locality (norm) -> truncate", frac, 0.25, "below", 1.0 / max(frac, 1e-9),
-                   f"{frac:.0%} of atoms carry 90% of the norm (R={R90:.0f})", {"rows": rows})
+                   note, {"rows": rows})
 
 
 def probe_modal(S, rng, log, k=N_MODES):
