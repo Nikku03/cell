@@ -1,0 +1,94 @@
+{
+  "test": "chromatin_greens",
+  "n_atoms": 13607,
+  "nnz": 4861323,
+  "t_factorise": 25.132209300994873,
+  "factor_nnz": 77916232,
+  "t_column_ms": 82.76615540186565,
+  "t_cg_s": 46.082053661346436,
+  "err_vs_cg": 0.8160510228709981,
+  "err_superposition": 3.1664124586480357e-13,
+  "truncation": [
+    {
+      "R": 10.0,
+      "atoms": 103,
+      "frac": 0.0075696332769897845,
+      "rel_err": 0.9976675762698385
+    },
+    {
+      "R": 20.0,
+      "atoms": 508,
+      "frac": 0.037333725288454474,
+      "rel_err": 0.9933365801424936
+    },
+    {
+      "R": 30.0,
+      "atoms": 1320,
+      "frac": 0.09700889248181083,
+      "rel_err": 0.9885616667020192
+    },
+    {
+      "R": 50.0,
+      "atoms": 4970,
+      "frac": 0.3652531785110605,
+      "rel_err": 0.9781484789975277
+    },
+    {
+      "R": 70.0,
+      "atoms": 8771,
+      "frac": 0.6445946939075475,
+      "rel_err": 0.9658114084100892
+    },
+    {
+      "R": 100.0,
+      "atoms": 12852,
+      "frac": 0.9445138531638128,
+      "rel_err": 0.9287906491720787
+    }
+  ],
+  "t_event_us": 60.87791919708252,
+  "support_atoms": 4970,
+  "gates": {
+    "column": false,
+    "linearity": true,
+    "locality": false
+  },
+  "log": [
+    "====================================================================================================",
+    "SOLVE ONCE, SUPERPOSE FOREVER -- tested, because an identity that fails is a bug",
+    "====================================================================================================",
+    "  13607 atoms, 263270 springs, 4861323 Hessian nonzeros",
+    "\n  FACTORISING ONCE. K is singular in its 6 rigid modes, so K + 0.0001 I is factorised and",
+    "  the rigid components are projected out afterwards -- the shift is far below the softest",
+    "  real mode (2.05e-05, measured) so it perturbs nothing physical.",
+    "    factorisation 25.1 s, 77,916,232 nonzeros in the factors (16.0x fill-in over K)",
+    "\n  12 GREEN COLUMNS -- one per event site, each a triangular solve rather than an",
+    "  iterative one. This ratio is the entire argument of the file.",
+    "    per column 83 ms   against 25.1 s for the factorisation",
+    "    ratio 304x -- the cost is in producing K^-1 once, not in using it",
+    "\n  CONTROL 1 -- a single Green column against an independent iterative solve",
+    "    factorised 83 ms vs conjugate-gradient 46.1 s, relative difference 8.16e-01",
+    "\n  CONTROL 2 -- THE ONE THAT MATTERS. Superposing K columns against ONE solve of the summed",
+    "  force. Linearity is the whole basis of the scheme; if this fails nothing here is usable.",
+    "    12 superposed columns vs one direct solve: relative difference 3.17e-13",
+    "\n  CONTROL 3 -- truncation. Cutting each Green column at radius R turns the locality claim",
+    "  into a required support radius, and that radius IS the per-event cost.",
+    "       R (A)    atoms  share of N   rel error   captured",
+    "          10      103        0.8%       0.998      0.002",
+    "          20      508        3.7%       0.993      0.007",
+    "          30     1320        9.7%       0.989      0.011",
+    "          50     4970       36.5%       0.978      0.022",
+    "          70     8771       64.5%       0.966      0.034",
+    "         100    12852       94.5%       0.929      0.071",
+    "\n  PER-EVENT COST, measured rather than projected",
+    "    support at R=50 A: 4970 atoms | one superposition 60.9 us (single core, measured over 2000 repeats)",
+    "    1e+03 events: 0.0609 s of superposition, against 0.533 days if each were solved iteratively",
+    "    1e+06 events: 60.9 s of superposition, against 533 days if each were solved iteratively",
+    "\n  READING",
+    "    FAIL  Green column equals an independent solve",
+    "    PASS  superposition equals a direct solve of the sum",
+    "    FAIL  truncation error falls with radius",
+    "  A gate failed. Superposition is the load-bearing assumption of the whole event scheme, so",
+    "  a failure here removes the cost argument entirely, not just a refinement of it."
+  ]
+}

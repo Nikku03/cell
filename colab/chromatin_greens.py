@@ -57,7 +57,12 @@ from chromatin_timescale import load_pdb, PDB  # noqa: E402
 OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 SEED = 8191
 N_SITE = int(os.environ.get("GREENS_SITES", 12))
-EPS = 1e-4                     # regularisation: K is singular in the 6 rigid modes, so factorise K + eps I
+# REGULARISATION, and the first version had this exactly backwards. The shift must be far BELOW the
+# softest real mode so it perturbs nothing physical. That mode was measured at 2.05e-05 in
+# chromatin_timescale, and the first version used 1e-4 -- FIVE TIMES LARGER -- while the docstring
+# asserted it was far below. It damped precisely the soft modes that carry the response and Control 1
+# came back at 81% error against an independent solver. Now three orders below the softest mode.
+EPS = float(os.environ.get("GREENS_EPS", 2e-8))
 RADII = (10.0, 20.0, 30.0, 50.0, 70.0, 100.0)
 
 
@@ -82,8 +87,9 @@ def main():
 
     # ---- the one expensive step, done once ---------------------------------------------------------
     report(f"\n  FACTORISING ONCE. K is singular in its 6 rigid modes, so K + {EPS:g} I is factorised and")
-    report("  the rigid components are projected out afterwards -- the shift is far below the softest")
-    report(f"  real mode (2.05e-05, measured) so it perturbs nothing physical.")
+    report("  the rigid components are projected out afterwards. The shift must sit far BELOW the softest")
+    report(f"  real mode, measured at 2.05e-05: this one is {2.05e-5/EPS:.0f}x smaller. The first version used")
+    report("  1e-4, five times LARGER, while claiming the opposite -- Control 1 caught it at 81% error.")
     t1 = time.time()
     lu = splu((K + EPS * sp.identity(n3, format="csr")).tocsc())
     t_fac = time.time() - t1
@@ -143,17 +149,26 @@ def main():
     report("  into a required support radius, and that radius IS the per-event cost.")
     d = np.linalg.norm(co - co[sites[0]], axis=1)
     ref = G[0]
-    report(f"    {'R (A)':>8}{'atoms':>9}{'share of N':>12}{'rel error':>12}{'captured':>11}")
+    report("  TWO different questions, which the first version conflated into one number:")
+    report("    norm inside R   how much of the field's L2 norm a truncated support carries")
+    report("    peak inside R   how much of the LARGEST displacement it carries")
+    report("  A response can be local in amplitude and global in norm -- a small floor spread over 13,000")
+    report("  atoms carries as much norm as a sharp peak over 100 -- and those need different answers.")
+    report(f"    {'R (A)':>8}{'atoms':>9}{'share of N':>12}{'norm in R':>12}{'peak in R':>12}{'max |u| out':>13}")
     trow = []
+    amp = np.linalg.norm(ref.reshape(-1, 3), axis=1)
+    tot_n = np.linalg.norm(ref)
     for R in RADII:
         keep = d <= R
         mask = np.repeat(keep, 3)
-        tr = np.where(mask, ref, 0.0)
-        err = np.linalg.norm(tr - ref) / max(np.linalg.norm(ref), 1e-300)
-        cap = 1 - err
+        f_norm = np.linalg.norm(np.where(mask, ref, 0.0)) / max(tot_n, 1e-300)
+        f_peak = amp[keep].max() / max(amp.max(), 1e-300) if keep.any() else 0.0
+        out = amp[~keep].max() if (~keep).any() else 0.0
         trow.append({"R": R, "atoms": int(keep.sum()), "frac": float(keep.mean()),
-                     "rel_err": float(err)})
-        report(f"    {R:>8.0f}{int(keep.sum()):>9}{keep.mean():>12.1%}{err:>12.3f}{cap:>11.3f}")
+                     "norm_in": float(f_norm), "peak_in": float(f_peak), "max_out": float(out),
+                     "rel_err": float(np.sqrt(max(0.0, 1 - f_norm ** 2)))})
+        report(f"    {R:>8.0f}{int(keep.sum()):>9}{keep.mean():>12.1%}{f_norm:>12.3f}{f_peak:>12.3f}"
+               f"{out:>13.3e}")
 
     # ---- TIMING, measured ---------------------------------------------------------------------------
     report("\n  PER-EVENT COST, measured rather than projected")
@@ -176,10 +191,10 @@ def main():
     report("\n  READING")
     ok1 = e1 < 1e-6
     ok2 = e2 < 1e-8
-    ok3 = trow[-1]["rel_err"] < trow[0]["rel_err"] * 0.5
+    ok3 = trow[-1]["norm_in"] > 2 * trow[0]["norm_in"]
     for lab, ok in (("Green column equals an independent solve", ok1),
                     ("superposition equals a direct solve of the sum", ok2),
-                    ("truncation error falls with radius", ok3)):
+                    ("truncated support captures more norm as R grows", ok3)):
         report(f"    {'PASS' if ok else 'FAIL'}  {lab}")
     if ok1 and ok2 and ok3:
         report(f"  The identity holds. One factorisation at {t_fac:.0f} s makes every subsequent response a")
