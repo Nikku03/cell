@@ -80,13 +80,36 @@ class RodSystem(PR.System):
     """The rod dressed as something the reducer can probe: a numerical Hessian for the operator-level
     tests, and the TRUE energy for the finite-amplitude test."""
 
-    def __init__(self, circle):
+    def __init__(self, circle, minimise=True):
         self.ch = circle
+        if minimise:
+            circle.r = self._minimise(circle.r.copy())
         co = circle.r.copy()
         n = len(co)
         K = self._hessian(co)
         super().__init__(co, K, PR.rigid_basis(co))
         self.energy = self._E
+
+    def _minimise(self, co):
+        """RELAX TO A STATIONARY POINT FIRST, which the original version did not do.
+
+        Analysing the imposed circular configuration was wrong twice over. The Hessian at a non-stationary
+        point does not have rotations in its null space -- that is the theorem, and the measurement
+        confirmed it -- but more damagingly the probe's relaxation was then dominated by the rod falling
+        toward its own minimum rather than by the applied force. Eight times the force moved it 1.004x,
+        and the resulting deviation of 0.875 was reported as the rod's nonlinearity when it is (a-1)/a,
+        pure algebra. Both problems have the same cause and the same fix."""
+        # NONDIMENSIONALISE FIRST. Handing L-BFGS raw SI coordinates -- metres of order 1e-7, joules of
+        # order 1e-20 -- gives it no meaningful step size, and the first attempt came back with a LARGER
+        # gradient than it started with, 0.581 to 0.731 kT/nm. Lengths in bond lengths and energies in kT
+        # put every quantity near unity, which is the only regime the optimiser's default tolerances mean
+        # anything in.
+        from scipy.optimize import minimize
+        L0 = float(np.median(np.linalg.norm(np.diff(co, axis=0), axis=1)))
+        res = minimize(lambda z: self._E(z * L0) / KT, co.ravel() / L0,
+                       jac=lambda z: self._grad(z * L0) * L0 / KT, method="L-BFGS-B",
+                       options={"maxiter": 600, "ftol": 1e-14, "gtol": 1e-10})
+        return (res.x * L0).reshape(-1, 3)
 
     def _E(self, flat):
         old = self.ch.r

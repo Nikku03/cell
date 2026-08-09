@@ -336,18 +336,38 @@ def probe_finite_linearity(S, rng, log):
     # reported FAILS -- the right verdict for the wrong reason, which is still a wrong result. A test of
     # nonlinearity has to perturb enough to leave the harmonic well and little enough to stay on the
     # energy surface, and it must refuse to grade outside that window rather than pick a side.
-    if rel < 1e-3 or rel > 0.5:
+    # THIRD GUARD: THE RESPONSE MUST TRACK THE FORCE.
+    #
+    # The two-sided window above checks that the displacement is neither microscopic nor divergent. It
+    # does NOT check that the displacement came from the force, and on the rod it did not. Eight times the
+    # force produced 0.45% more displacement -- |u_a|/|u_1| of 1.0033, 1.0027, 1.0045 at a = 2, 4, 8 --
+    # because the Hessian was built at a configuration that is not a minimum, so the relaxation was
+    # dominated by the system falling toward its OWN minimum and barely noticed the applied force.
+    #
+    # A saturated response makes the deviation exactly 1 - 1/a: |u - a u|/|a u| = (a-1)/a. That is 0.500,
+    # 0.750, 0.875, which is precisely what was measured and reported as the rod's nonlinearity. The
+    # number was algebra, not physics, and it was the headline result of a whole file.
+    #
+    # So: measure the growth, and refuse to grade when it is absent. A response that ignores the force
+    # says nothing about whether the system is linear in it.
+    grow8 = float(np.linalg.norm(S.relax(8.0 * f)) / max(np.linalg.norm(u1), 1e-300))
+    saturated = grow8 < 2.0                      # eight times the force, less than twice the response
+    note += f"   |  8x force gives {grow8:.3f}x the displacement"
+    if rel < 1e-3 or rel > 0.5 or saturated:
         v = verdict("finite-amplitude linearity", worst, 1e-3, "below", 1.0, note,
-                    {"devs": devs, "rel_amp": rel})
+                    {"devs": devs, "rel_amp": rel, "growth_8x": grow8})
         v["verdict"] = "NOT TESTABLE"
         why = ("the perturbation moved almost nothing, so this cannot distinguish a linear system from "
                "any other" if rel < 1e-3 else
                "the relaxation left the energy surface entirely, so the deviation measures divergence "
-               "rather than nonlinearity")
+               "rather than nonlinearity" if rel > 0.5 else
+               f"the response does not track the force -- 8x the force moved it {grow8:.3f}x, so the "
+               f"deviation is (a-1)/a by algebra and measures the relaxation stalling, not nonlinearity. "
+               f"Usually means the reference configuration is not a minimum")
         v["note"] = note + "  -- " + why
         return v
     return verdict("finite-amplitude linearity", worst, 1e-3, "below", 1.0, note,
-                   {"devs": devs, "rel_amp": rel})
+                   {"devs": devs, "rel_amp": rel, "growth_8x": grow8})
 
 
 def probe_precompute(S, rng, log):
