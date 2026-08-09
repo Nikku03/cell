@@ -1,0 +1,3084 @@
+{
+  "test": "doctrine_audit",
+  "scores": {
+    "cell model": {
+      "modules": 35,
+      "with_recorded_output": 14,
+      "GIT_gate_before_output": 0.7857142857142857,
+      "OUTPUT_has_negative": 0.14285714285714285,
+      "OUTPUT_has_graded": 0.07142857142857142,
+      "TEXT_predeclared": 0.6285714285714286,
+      "TEXT_control": 0.4857142857142857,
+      "TEXT_heldout": 0.45714285714285713,
+      "TEXT_negative": 0.11428571428571428
+    },
+    "network": {
+      "modules": 11,
+      "with_recorded_output": 1,
+      "GIT_gate_before_output": 0.0,
+      "OUTPUT_has_negative": 0.0,
+      "OUTPUT_has_graded": 0.0,
+      "TEXT_predeclared": 0.0,
+      "TEXT_control": 0.0,
+      "TEXT_heldout": 0.36363636363636365,
+      "TEXT_negative": 0.09090909090909091
+    },
+    "nexus": {
+      "modules": 22,
+      "with_recorded_output": 5,
+      "GIT_gate_before_output": 0.6,
+      "OUTPUT_has_negative": 0.2,
+      "OUTPUT_has_graded": 0.0,
+      "TEXT_predeclared": 0.45454545454545453,
+      "TEXT_control": 0.5,
+      "TEXT_heldout": 0.22727272727272727,
+      "TEXT_negative": 0.18181818181818182
+    },
+    "4d chromatin": {
+      "modules": 14,
+      "with_recorded_output": 13,
+      "GIT_gate_before_output": 0.9230769230769231,
+      "OUTPUT_has_negative": 0.15384615384615385,
+      "OUTPUT_has_graded": 0.0,
+      "TEXT_predeclared": 0.9285714285714286,
+      "TEXT_control": 0.5714285714285714,
+      "TEXT_heldout": 0.0,
+      "TEXT_negative": 0.35714285714285715
+    },
+    "cell software": {
+      "modules": 99,
+      "with_recorded_output": 0,
+      "GIT_gate_before_output": null,
+      "OUTPUT_has_negative": null,
+      "OUTPUT_has_graded": null,
+      "TEXT_predeclared": 0.0,
+      "TEXT_control": 0.030303030303030304,
+      "TEXT_heldout": 0.020202020202020204,
+      "TEXT_negative": 0.08080808080808081
+    },
+    "physics_* (should score HIGH)": {
+      "modules": 5,
+      "with_recorded_output": 5,
+      "GIT_gate_before_output": 1.0,
+      "OUTPUT_has_negative": 1.0,
+      "OUTPUT_has_graded": 1.0,
+      "TEXT_predeclared": 1.0,
+      "TEXT_control": 0.2,
+      "TEXT_heldout": 0.0,
+      "TEXT_negative": 1.0
+    },
+    "prototype_p* (should score LOW)": {
+      "modules": 24,
+      "with_recorded_output": 0,
+      "GIT_gate_before_output": null,
+      "OUTPUT_has_negative": null,
+      "OUTPUT_has_graded": null,
+      "TEXT_predeclared": 0.0,
+      "TEXT_control": 0.25,
+      "TEXT_heldout": 0.16666666666666666,
+      "TEXT_negative": 0.375
+    }
+  },
+  "discriminates": true,
+  "modules": {
+    "cell model": [
+      {
+        "module": "colab/cell_conditions.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_levels.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_levels.json",
+        "output_has_negative": false,
+        "output_has_graded": true,
+        "gate_before_output": false
+      },
+      {
+        "module": "colab/cell_map.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_map.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": false
+      },
+      {
+        "module": "colab/cell_orphan_candidates.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_channel_gate.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_channel_gate.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_chem_coverage.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": true,
+          "graded": true,
+          "negative": true
+        },
+        "output": "outputs/orphan/cell_orphan_chem_coverage.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_cluster_stats.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_cluster_stats.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_context.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_evidence.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_evidence_score.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_fill.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/orphan/cell_orphan_fill.json",
+        "output_has_negative": true,
+        "output_has_graded": false,
+        "gate_before_output": false
+      },
+      {
+        "module": "colab/cell_orphan_holdout.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_holdout.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_howmany.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": true,
+          "graded": true,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_howmany.json",
+        "output_has_negative": true,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_incontext.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_llm.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_llm_audit.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_llm_merge.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_obscurity.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_rank_v2.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_rank_v2.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_selective.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_selective.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_shortlist.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_spatial.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_spatial.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_ties.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_ties_nn.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_orphan_transfer.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_transfer.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_truthset.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_truthset.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_orphan_why_unsure.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/cell_orphan_why_unsure.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/cell_partslist.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_pathway_map.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_qa.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_sim.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_state.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_stats.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_web_fill.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cell_would_we_have_found_it.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      }
+    ],
+    "network": [
+      {
+        "module": "colab/build_directed_network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/complete_network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/cond_network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/infer_network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/multiline_network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/network.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": false
+      },
+      {
+        "module": "colab/network_attribution.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/network_complete.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/network_requirement.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/orphan_network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/reaction_network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      }
+    ],
+    "nexus": [
+      {
+        "module": "colab/nexus.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/nexus.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": false
+      },
+      {
+        "module": "colab/nexus_catalyst_compose.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_catalyst_esm.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_catalyst_nn.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_catalyst_pilot.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_cell.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_dna_scale.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/nexus_dna_scale.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": false
+      },
+      {
+        "module": "colab/nexus_dna_spheres.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/orphan/nexus_dna_spheres.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/nexus_dock_screen.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/nexus_dock_screen.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/nexus_doesitbind.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_ko.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_ko_fetch.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_ko_struct.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_massaction.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_methyl_propagate.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_pairs.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_pocket_modes.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/orphan/nexus_pocket_modes.json",
+        "output_has_negative": true,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/nexus_regulate.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_screen_feasibility.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_train.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_txn.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/nexus_wall.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      }
+    ],
+    "4d chromatin": [
+      {
+        "module": "colab/chromatin_bond_energy.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/chromatin_bond_energy.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_cost_model.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/chromatin_cost_model.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": false
+      },
+      {
+        "module": "colab/chromatin_greens.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/chromatin_greens.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_mark_cost.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/orphan/chromatin_mark_cost.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_modal.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/chromatin_modal.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_resolution.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/chromatin_resolution.json",
+        "output_has_negative": true,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_rod.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/chromatin_rod.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_sphere_scaling.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/orphan/chromatin_sphere_scaling.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_spheres.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/chromatin_supercoil.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/chromatin_supercoil.json",
+        "output_has_negative": true,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_time.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/chromatin_time.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_timescale.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/chromatin_timescale.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_twist_energy.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/chromatin_twist_energy.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/chromatin_twolevel.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": "outputs/orphan/chromatin_twolevel.json",
+        "output_has_negative": false,
+        "output_has_graded": false,
+        "gate_before_output": true
+      }
+    ],
+    "cell software": [
+      {
+        "module": "cell_sim/patch_raise_clamp.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/__init__.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/atom_soup.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/atom_unit.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/chemistry_demo.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/element.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/essentiality_bridge.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/fission_demo.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/force_field.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/fusion_demo.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/integrator.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/ml_dataset.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/ml_model.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/molecule_builder.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/neural_force_field.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/pdb_importer.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/reaction_demo.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/vesicle.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/atom_engine/water_peptide_demo.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/__init__.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/batched_inference.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/cache_manifest.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/extractors/__init__.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/extractors/alphafold_extractor.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/extractors/esm2_extractor.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/extractors/esmfold_extractor.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/extractors/mace_off_extractor.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/features/feature_registry.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer0_genome/genome.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer0_genome/parser.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer0_genome/syn3a_real.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer1_atomic/engine.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer2_field/dynamics.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer2_field/fast_dynamics.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer2_field/next_reaction_dynamics.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer2_field/real_syn3a_rules.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer2_field/rust_dynamics.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/coupled.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/gene_expression.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/imb155_patches.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/kinetics.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/metabolite_smiles.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/network.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/novel_substrates.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/nutrient_uptake.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/reversible.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer3_reactions/sbml_parser.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/__init__.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/annotation_class_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/complex_assembly_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/composed_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/ensemble_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/gene_rule_map.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/harness.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/labels.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/metabolite_sink.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/metrics.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/per_rule_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/priors_only_predictor.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/real_simulator.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/redundancy_aware_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/short_window_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/sweep.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/layer6_essentiality/tier1_xgb_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/routing/controller.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/benchmark_priority3.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/compare_uptake.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/demo_priority3.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/render_movie.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/render_priority_15.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/render_priority_2.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/render_real_syn3a.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/render_whole_cell.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_alphafold_extractor.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_atom_engine.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_bench_scripts.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_end_to_end.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_esm2_extractor.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_esmfold_extractor.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_fast_equivalence.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_features_manifest.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_features_registry.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_imb155_patches.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_knockouts.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_layer0_genome.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_layer6_complex_and_annotation_detectors.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_layer6_ensemble_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_layer6_essentiality.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_layer6_per_rule_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_layer6_redundancy_aware.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_layer6_short_window_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_mace_off_extractor.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_next_reaction.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_pairwise_harness.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_populate_tier1_notebook.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_rust_equivalence.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_tier1_xgb_detector.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/test_train_multiorg.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "cell_sim/tests/viz_demo.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      }
+    ],
+    "physics_* (should score HIGH)": [
+      {
+        "module": "colab/physics_design.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": true
+        },
+        "output": "outputs/physics_design.json",
+        "output_has_negative": true,
+        "output_has_graded": true,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/physics_doctrine.py",
+        "text": {
+          "predeclared": true,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/physics_doctrine.json",
+        "output_has_negative": true,
+        "output_has_graded": true,
+        "gate_before_output": null
+      },
+      {
+        "module": "colab/physics_reduce.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": true,
+          "negative": true
+        },
+        "output": "outputs/physics_reduce.json",
+        "output_has_negative": true,
+        "output_has_graded": true,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/physics_reduce_rod.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/physics_reduce_rod.json",
+        "output_has_negative": true,
+        "output_has_graded": true,
+        "gate_before_output": true
+      },
+      {
+        "module": "colab/physics_reduce_unknown.py",
+        "text": {
+          "predeclared": true,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": "outputs/physics_reduce_unknown.json",
+        "output_has_negative": true,
+        "output_has_graded": true,
+        "gate_before_output": true
+      }
+    ],
+    "prototype_p* (should score LOW)": [
+      {
+        "module": "prototype_p0.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p1.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p10_learned_spatial.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p11_neural_pde.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p12_gauge.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p13_unitary.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p14_memory.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p15_rule_discovery.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p2_syn3a.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p2b_rebalance.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p3_compartments.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p3b_stamps.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p4_kinetics.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p4b_kinetics_coupled.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p5_boundary.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p6_physiological.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p7_learned_rates.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": true,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p7b_tuned.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p8_perm_invariant.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p8b_full_syn3a.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": true,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p8c_scaled.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": true
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p8d_diagnostic.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p8e_stable.py",
+        "text": {
+          "predeclared": false,
+          "control": true,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      },
+      {
+        "module": "prototype_p9_lsoda.py",
+        "text": {
+          "predeclared": false,
+          "control": false,
+          "heldout": false,
+          "graded": false,
+          "negative": false
+        },
+        "output": null,
+        "output_has_negative": null,
+        "output_has_graded": null,
+        "gate_before_output": null
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "THE DOCTRINE TURNED ON THE REST OF THE REPO",
+    "====================================================================================================",
+    "  The rules are about METHOD, so they apply to a knockout predictor as much as to an",
+    "  eigensolver. Evidence classes are kept apart and never summed:",
+    "    GIT     strong -- the commit graph records what happened rather than claiming it",
+    "    OUTPUT  medium -- a recorded run either contains a failing verdict or it does not",
+    "    TEXT    WEAK   -- the word 'control' in a file proves the author knew the word",
+    "  scanned cell model: 35 modules",
+    "  scanned network: 11 modules",
+    "  scanned nexus: 22 modules",
+    "  scanned 4d chromatin: 14 modules",
+    "  scanned cell software: 99 modules",
+    "  scanned physics_* (should score HIGH): 5 modules",
+    "  scanned prototype_p* (should score LOW): 24 modules",
+    "\n  subsystem                         mods  runs  GIT gate    neg  graded",
+    "  cell model                          35    14       79%    14%      7%",
+    "  network                             11     1        0%     0%      0%",
+    "  nexus                               22     5       60%    20%      0%",
+    "  4d chromatin                        14    13       92%    15%      0%",
+    "  cell software                       99     0      --     --      --  ",
+    "  physics_* (should score HIGH)        5     5      100%   100%    100%",
+    "  prototype_p* (should score LOW)     24     0      --     --      --  ",
+    "\n  TEXT checks -- weak evidence, kept separate on purpose",
+    "  subsystem                         predecl  control  heldout  negative",
+    "  cell model                            63%      49%      46%       11%",
+    "  network                                0%       0%      36%        9%",
+    "  nexus                                 45%      50%      23%       18%",
+    "  4d chromatin                          93%      57%       0%       36%",
+    "  cell software                          0%       3%       2%        8%",
+    "  physics_* (should score HIGH)        100%      20%       0%      100%",
+    "  prototype_p* (should score LOW)        0%      25%      17%       38%",
+    "\n  THE CONTROL -- can this audit tell good practice from its absence?",
+    "    prototype_p* was useless as a low set: 0 of 24 have a recorded output, so both",
+    "    STRONG checks were not comparable. Using oldest vs newest third of everything that HAS a",
+    "    recorded output instead -- 11 modules each, out of 33.",
+    "    GIT_gate_before_output         91% newest vs    55% oldest   SEPARATES",
+    "    OUTPUT_has_negative            27% newest vs     0% oldest   SEPARATES",
+    "    OUTPUT_has_graded               0% newest vs     9% oldest   does not separate",
+    "    TEXT_predeclared              100% physics vs     0% prototype   SEPARATES",
+    "",
+    "    The audit separates the two calibration sets, so the per-subsystem numbers above",
+    "    carry information. They still measure DECLARED practice, not correctness."
+  ]
+}
