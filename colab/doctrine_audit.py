@@ -66,6 +66,16 @@ CALIBRATION = {
     "physics_* (should score HIGH)":    ["colab/physics_*.py"],
     "prototype_p* (should score LOW)":  ["prototype_p*.py"],
 }
+# THE FIRST CALIBRATION SET WAS USELESS AND THE AUDIT SAID SO. prototype_p* has ZERO recorded outputs --
+# they are prototypes, they never wrote outputs/*.json -- so both STRONG checks came back "not
+# comparable" and the control rested on one weak regex. The audit correctly declared itself invalid.
+#
+# A control has to be able to run. So the real one splits every audited module that HAS a recorded output
+# by the age of its first commit: the doctrine was learned recently, so if this audit can see anything at
+# all, newer work must score higher than older work on the GIT and OUTPUT checks. That comparison is not
+# circular -- gate_before_output compares two commits of the SAME module, and an old module is perfectly
+# free to have committed its gate first.
+AGE_SPLIT = 3
 
 # TEXT checks -- weak by construction, reported apart from the rest.
 PATTERNS = {
@@ -222,17 +232,39 @@ def main():
         report(f"  {name:<32}{s['TEXT_predeclared']:>9.0%}{s['TEXT_control']:>9.0%}"
                f"{s['TEXT_heldout']:>9.0%}{s['TEXT_negative']:>10.0%}")
 
-    hi = scores["physics_* (should score HIGH)"]
-    lo = scores["prototype_p* (should score LOW)"]
-    report("\n  THE CONTROL -- can this audit tell good practice from its absence?")
-    sep = []
-    for k in ("GIT_gate_before_output", "OUTPUT_has_negative", "TEXT_predeclared", "TEXT_control"):
-        a, b = hi.get(k), lo.get(k)
-        if a is None or b is None:
-            report(f"    {k:<28}{_fmt(a)} vs {_fmt(b)}   not comparable")
+    # THE CONTROL THAT CAN ACTUALLY RUN: oldest vs newest third of everything with a recorded output.
+    pool = []
+    for name, recs in all_recs.items():
+        if name in CALIBRATION:
             continue
-        report(f"    {k:<28}{a:>6.0%} vs {b:>6.0%}   {'SEPARATES' if a - b > 0.2 else 'does not separate'}")
+        for r in recs:
+            if r["output"] and r["gate_before_output"] is not None:
+                t = first_commit(r["module"])
+                if t:
+                    pool.append((t, r))
+    pool.sort(key=lambda x: x[0])
+    k = max(len(pool) // AGE_SPLIT, 1)
+    old = [r for _, r in pool[:k]]
+    new = [r for _, r in pool[-k:]]
+    report(f"\n  THE CONTROL -- can this audit tell good practice from its absence?")
+    report(f"    prototype_p* was useless as a low set: {scores['prototype_p* (should score LOW)']['with_recorded_output']}"
+           f" of {scores['prototype_p* (should score LOW)']['modules']} have a recorded output, so both")
+    report("    STRONG checks were not comparable. Using oldest vs newest third of everything that HAS a")
+    report(f"    recorded output instead -- {len(old)} modules each, out of {len(pool)}.")
+    sep = []
+    for k2, getter in (("GIT_gate_before_output", lambda r: bool(r["gate_before_output"])),
+                       ("OUTPUT_has_negative", lambda r: bool(r["output_has_negative"])),
+                       ("OUTPUT_has_graded", lambda r: bool(r["output_has_graded"]))):
+        a = sum(getter(r) for r in new) / max(len(new), 1)
+        b = sum(getter(r) for r in old) / max(len(old), 1)
+        report(f"    {k2:<28}{a:>6.0%} newest vs {b:>6.0%} oldest   "
+               f"{'SEPARATES' if a - b > 0.2 else 'does not separate'}")
         sep.append(a - b > 0.2)
+    hi, lo = scores["physics_* (should score HIGH)"], scores["prototype_p* (should score LOW)"]
+    report(f"    {'TEXT_predeclared':<28}{hi['TEXT_predeclared']:>6.0%} physics vs "
+           f"{lo['TEXT_predeclared']:>6.0%} prototype   "
+           f"{'SEPARATES' if hi['TEXT_predeclared'] - lo['TEXT_predeclared'] > 0.2 else 'does not'}")
+    sep.append(hi["TEXT_predeclared"] - lo["TEXT_predeclared"] > 0.2)
     discriminates = sum(sep) >= 2
     report("")
     if discriminates:
