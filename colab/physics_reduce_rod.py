@@ -188,6 +188,10 @@ def main():
             report("    Finite-amplitude linearity HOLDS. Either the tested amplitudes never leave the")
             report("    harmonic well -- the deviation curve says which -- or the rod is not behaving as")
             report("    its energy states. Both need resolving before this is called a pass.")
+        elif fin["verdict"] == "NOT TESTABLE":
+            report("    The finite-amplitude probe DECLINED. It could not place the perturbation inside the")
+            report("    window where the question is meaningful, so it reports that rather than a verdict.")
+            report("    The operator-level result stands on its own; the system-level one is unmeasured.")
         else:
             report("    The operator-level probe did not hold, so the numerical Hessian is suspect and")
             report("    nothing else in this run should be read.")

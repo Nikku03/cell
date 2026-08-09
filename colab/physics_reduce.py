@@ -236,8 +236,27 @@ def probe_finite_linearity(S, rng, log):
     """
     if not hasattr(S, "energy") or S.energy is None:
         return None
-    f = S.couple(int(rng.integers(S.n)), rng)
-    u1 = S.relax(f)
+    f0 = S.couple(int(rng.integers(S.n)), rng)
+    scale0 = float(np.median(np.linalg.norm(np.diff(S.co, axis=0), axis=1)))
+    # SET the amplitude, do not hope a descent lands on it. Three attempts at tuning a step size gave
+    # 1e-8, then 6.6e3, then 1.3e-4 bond lengths -- the window is 1e-3 to 0.5 and none of them hit it.
+    # Bisecting the FORCE against the measured displacement puts the probe in the window by construction,
+    # which is what a test of finite-amplitude behaviour requires before it can mean anything.
+    TARGET = 0.05
+    lo, hi = 1e-6, 1e12
+    f, u1 = f0, S.relax(f0)
+    for _ in range(24):
+        mid = np.sqrt(lo * hi)
+        u = S.relax(mid * f0)
+        rel_ = float(np.linalg.norm(u.reshape(-1, 3), axis=1).max()) / max(scale0, 1e-300)
+        if not np.isfinite(rel_) or rel_ > TARGET:
+            hi = mid
+        else:
+            lo = mid
+        if 0.5 * TARGET < rel_ < 2 * TARGET:
+            f, u1 = mid * f0, u
+            break
+        f, u1 = mid * f0, u
     # THE PROBE MUST CHECK THAT IT ACTUALLY PERTURBED SOMETHING. Everything is linear at zero amplitude,
     # so a probe that applies a negligible force reports HOLDS on any system whatsoever -- a test that can
     # only pass. The rod caught this: deviations of 1e-6 that were growing with amplitude, i.e. real
