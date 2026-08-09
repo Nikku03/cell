@@ -64,6 +64,15 @@ SEED = 5150
 N_BEAD = 72
 BP_TOTAL = 3600.0                 # a small plasmid, so the chain is short enough to equilibrate
 D_EXCL = 5.0e-9                   # m, effective DNA diameter at ~150 mM salt
+# STRETCH MODULUS. The energy originally had NO bond term at all: bending compares tangent DIRECTIONS
+# against a fixed ds, twist depends on Lk and Wr, excluded volume sees only distances -- so stretching
+# every bond by 50% cost exactly 0.000 kT. Bond length was held by the MOVE SET rather than by the
+# energy, which is fine for Metropolis and fatal for anything gradient- or Hessian-based: the reduction
+# probe found 9 null directions where 6 are expected, and the three extra were free-stretch modes.
+# S = 1000 pN is the measured stretch modulus of B-DNA, so this is a real constant rather than a
+# numerical crutch, and it must not change any Monte Carlo result because crankshaft moves preserve
+# every bond length exactly.
+S_STRETCH = 1000e-12              # N, stretch modulus of B-DNA
 K_EXCL = 20.0 * KT                # soft-core strength
 # Sized from a measured cost, not guessed: one sweep is 240 ms at N=72 (72 crankshaft attempts, each a
 # full energy evaluation whose O(N^2) writhe dominates), so 4000 sweeps x 7 configurations was 112 minutes.
@@ -101,6 +110,14 @@ class Circle:
         wr = self.writhe() if wr is None else wr
         return 2 * np.pi ** 2 * self.C * (self.dlk - wr) ** 2 / self.L
 
+    def e_bond(self):
+        """Harmonic stretch about the reference bond length. Zero for any configuration the crankshaft
+        move set can reach, by construction -- which is the point: it changes nothing about the sampling
+        and makes the energy a genuine potential on R^3N rather than a function on a constrained manifold."""
+        b = np.linalg.norm(np.roll(self.r, -1, axis=0) - self.r, axis=1)
+        b0 = self.L / self.n
+        return float(0.5 * (S_STRETCH / b0) * np.sum((b - b0) ** 2))
+
     def e_excl(self):
         d = self.r[:, None, :] - self.r[None, :, :]
         dist = np.linalg.norm(d, axis=2)
@@ -110,7 +127,7 @@ class Circle:
         return float(K_EXCL * np.sum((over / D_EXCL) ** 2))
 
     def energy(self):
-        return self.e_bend() + self.e_twist() + self.e_excl()
+        return self.e_bend() + self.e_twist() + self.e_excl() + self.e_bond()
 
     def crankshaft(self, max_ang=0.5):
         """Rotate a contiguous stretch about the axis through its endpoints. Bond lengths are exactly
