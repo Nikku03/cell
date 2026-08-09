@@ -128,7 +128,7 @@ class System:
         # none. A rigid direction carrying more than a thousandth of the stiffest mode's energy is a real
         # restoring force, not numerical dirt, so the count is declined rather than guessed.
         self.calibrated = bool(self.noise < 1e-3)
-        k = k0
+        k, prev = k0, -1
         while True:
             vals, vecs = eigsh(self.K.tocsc(), k=min(k, self.n3 - 2), sigma=-1e-4, which="LM")
             o = np.argsort(np.abs(vals))
@@ -163,12 +163,23 @@ class System:
                 nn = j + 1
                 self.gap = float(ratios[j])
                 self.cut = float(vals[j]) * np.sqrt(max(self.gap, 1.0))
-            # ESCALATE ON THE ELIGIBLE COUNT, not on nn. nn can never reach len(vals) -- the search window
-            # is capped one short so there is always a mode above the gap to compare against -- so testing
-            # nn would make this branch unreachable and silently cap every null space at k0.
-            if eligible < len(vals) or k >= self.n3 - 2:
+            # STOP WHEN THE COUNT IS STABLE, not when the first non-null mode appears.
+            #
+            # The old rule -- stop as soon as some returned mode was above the floor -- is wrong whenever
+            # the null cluster is numerically degenerate, because ARPACK then returns an arbitrary SUBSET
+            # of it alongside real modes and "a real mode appeared" does not imply "all the null ones were
+            # found". On the diluted network the count below a FIXED cut went 16 at k=16, 20 at k=32, and
+            # 23 at k=40, settling there through k=80. The old rule accepted 20 -- it had twelve real modes
+            # in hand and every reason to believe it was done -- while an independent solve in the probe
+            # saw 23, and the two numbers were reported side by side without anything noticing.
+            #
+            # A margin heuristic does not rescue it: no "require N real modes" threshold separates the k=32
+            # answer from the k=40 one. Only re-solving does. This costs one extra eigensolve on a system
+            # that was already right, and it is what makes the count a property of the operator rather than
+            # of the Krylov subspace that happened to be built.
+            if k >= self.n3 - 2 or (nn == prev and eligible < len(vals)):
                 break
-            k *= 2                       # every returned mode was plausibly null -- there are more
+            prev, k = nn, k * 2
         self.null = np.ascontiguousarray(vecs[:, :nn])
         self.n_null = nn
         self._lu = splu((self.K + EPS * sp.identity(self.n3, format="csr")).tocsc())
