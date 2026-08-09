@@ -5,7 +5,7 @@
       "modules": 35,
       "with_recorded_output": 14,
       "GIT_gate_before_output": 0.7857142857142857,
-      "OUTPUT_has_negative": 0.14285714285714285,
+      "OUTPUT_has_negative": 0.0,
       "OUTPUT_has_graded": 0.07142857142857142,
       "TEXT_predeclared": 0.6285714285714286,
       "TEXT_control": 0.4857142857142857,
@@ -38,7 +38,7 @@
       "modules": 14,
       "with_recorded_output": 13,
       "GIT_gate_before_output": 0.9230769230769231,
-      "OUTPUT_has_negative": 0.15384615384615385,
+      "OUTPUT_has_negative": 0.0,
       "OUTPUT_has_graded": 0.0,
       "TEXT_predeclared": 0.9285714285714286,
       "TEXT_control": 0.5714285714285714,
@@ -232,7 +232,7 @@
           "negative": true
         },
         "output": "outputs/orphan/cell_orphan_fill.json",
-        "output_has_negative": true,
+        "output_has_negative": false,
         "output_has_graded": false,
         "gate_before_output": false
       },
@@ -260,7 +260,7 @@
           "negative": false
         },
         "output": "outputs/orphan/cell_orphan_howmany.json",
-        "output_has_negative": true,
+        "output_has_negative": false,
         "output_has_graded": false,
         "gate_before_output": true
       },
@@ -1120,7 +1120,7 @@
           "negative": false
         },
         "output": "outputs/chromatin_resolution.json",
-        "output_has_negative": true,
+        "output_has_negative": false,
         "output_has_graded": false,
         "gate_before_output": true
       },
@@ -1176,7 +1176,7 @@
           "negative": false
         },
         "output": "outputs/chromatin_supercoil.json",
-        "output_has_negative": true,
+        "output_has_negative": false,
         "output_has_graded": false,
         "gate_before_output": true
       },
@@ -2638,7 +2638,7 @@
         "output": "outputs/physics_design.json",
         "output_has_negative": true,
         "output_has_graded": true,
-        "gate_before_output": null
+        "gate_before_output": true
       },
       {
         "module": "colab/physics_doctrine.py",
@@ -2652,7 +2652,7 @@
         "output": "outputs/physics_doctrine.json",
         "output_has_negative": true,
         "output_has_graded": true,
-        "gate_before_output": null
+        "gate_before_output": true
       },
       {
         "module": "colab/physics_reduce.py",
@@ -3052,14 +3052,25 @@
     "  scanned cell software: 99 modules",
     "  scanned physics_* (should score HIGH): 5 modules",
     "  scanned prototype_p* (should score LOW): 24 modules",
-    "\n  subsystem                         mods  runs  GIT gate    neg  graded",
-    "  cell model                          35    14       79%    14%      7%",
-    "  network                             11     1        0%     0%      0%",
-    "  nexus                               22     5       60%    20%      0%",
-    "  4d chromatin                        14    13       92%    15%      0%",
-    "  cell software                       99     0      --     --      --  ",
-    "  physics_* (should score HIGH)        5     5      100%   100%    100%",
-    "  prototype_p* (should score LOW)     24     0      --     --      --  ",
+    "\n  STRONG -- the commit graph. 'runs' is how many modules record a result at all.",
+    "  subsystem                         mods  runs  cover  GIT gate",
+    "  cell model                          35    14    40%       79%",
+    "  network                             11     1     9%        0%",
+    "  nexus                               22     5    23%       60%",
+    "  4d chromatin                        14    13    93%       92%",
+    "  cell software                       99     0     0%      --  ",
+    "  physics_* (should score HIGH)        5     5   100%      100%",
+    "  prototype_p* (should score LOW)     24     0     0%      --  ",
+    "\n  CIRCULAR -- these search for physics_reduce's own verdict words, so it scores 100%",
+    "  by construction. Read as vocabulary ADOPTION, never as whether negatives get reported.",
+    "  subsystem                          FAILS  graded",
+    "  cell model                            0%      7%",
+    "  network                               0%      0%",
+    "  nexus                                20%      0%",
+    "  4d chromatin                          0%      0%",
+    "  cell software                       --      --  ",
+    "  physics_* (should score HIGH)       100%    100%",
+    "  prototype_p* (should score LOW)     --      --  ",
     "\n  TEXT checks -- weak evidence, kept separate on purpose",
     "  subsystem                         predecl  control  heldout  negative",
     "  cell model                            63%      49%      46%       11%",
@@ -3074,7 +3085,7 @@
     "    STRONG checks were not comparable. Using oldest vs newest third of everything that HAS a",
     "    recorded output instead -- 11 modules each, out of 33.",
     "    GIT_gate_before_output         91% newest vs    55% oldest   SEPARATES",
-    "    OUTPUT_has_negative            27% newest vs     0% oldest   SEPARATES",
+    "    OUTPUT_has_negative             0% newest vs     0% oldest   does not separate",
     "    OUTPUT_has_graded               0% newest vs     9% oldest   does not separate",
     "    TEXT_predeclared              100% physics vs     0% prototype   SEPARATES",
     "",
