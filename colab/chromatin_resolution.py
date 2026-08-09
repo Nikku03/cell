@@ -75,7 +75,7 @@ def main():
     rows = []
     for n in NS:
         t1 = time.time()
-        r = SC.run(dlk, SC.C_TWIST, sweeps=SWEEPS, burn=BURN, n=n)
+        r = SC.run(dlk, SC.C_TWIST, sweeps=SWEEPS, burn=BURN, n=n, bp_total=BP)
         ch = r["final"]
         eb = ch.e_bend() / KT
         frac = r["wr_mean"] / dlk

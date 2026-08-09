@@ -152,8 +152,8 @@ class Circle:
         return acc / n_try, e0
 
 
-def run(dlk, c_twist, sweeps=SWEEPS, burn=BURN, seed=SEED, n=N_BEAD):
-    ch = Circle(n, BP_TOTAL, dlk, c_twist, np.random.default_rng(seed))
+def run(dlk, c_twist, sweeps=SWEEPS, burn=BURN, seed=SEED, n=N_BEAD, bp_total=BP_TOTAL):
+    ch = Circle(n, bp_total, dlk, c_twist, np.random.default_rng(seed))
     wr, en, ar = [], [], []
     for k in range(sweeps):
         a, e = ch.sweep()
