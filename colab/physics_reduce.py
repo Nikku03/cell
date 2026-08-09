@@ -85,7 +85,8 @@ class System:
         self.t_setup = None
         self.null = None          # DISCOVERED at setup, not assumed
         self.n_null = None
-        self.scale = self.noise = self.cut = None
+        self.scale = self.noise = self.cut = self.gap = None
+        self.calibrated = None    # is a rigid direction actually free? if not, "zero" has no reference
 
     def apply(self, v):
         return project(self.Q, self.K.dot(project(self.Q, v)))
@@ -118,25 +119,58 @@ class System:
         rq = [float(abs(self.Q[:, j] @ (self.K @ self.Q[:, j])))
               / max(float(self.Q[:, j] @ self.Q[:, j]), 1e-300) for j in range(self.Q.shape[1])]
         self.noise = float(max(rq)) / max(self.scale, 1e-300)
-        self.cut = self.scale * max(1e-9, 10.0 * self.noise)
+        # THE CALIBRATION CAN ITSELF BE INVALID, and then no cut is meaningful. noise is only a NOISE floor
+        # if rigid motion is genuinely free. Ground the atoms to a fixed frame -- a substrate, a restraint,
+        # an implicit cage -- and rigid translation costs real energy: on such an operator noise came back
+        # 0.062, four orders above the rod's finite-difference floor of 1.4e-05. The eligible window then
+        # opened past the operator's own scale, every returned mode qualified, and the largest available
+        # ratio was 1.05. That is not a gap, and it was reported as six null directions on a system with
+        # none. A rigid direction carrying more than a thousandth of the stiffest mode's energy is a real
+        # restoring force, not numerical dirt, so the count is declined rather than guessed.
+        self.calibrated = bool(self.noise < 1e-3)
         k = k0
         while True:
             vals, vecs = eigsh(self.K.tocsc(), k=min(k, self.n3 - 2), sigma=-1e-4, which="LM")
             o = np.argsort(np.abs(vals))
             vals, vecs = np.abs(vals[o]), vecs[:, o]
-            # RELATIVE cut, and it must be relative to the WHOLE operator. An absolute 1e-9 worked on
-            # the elastic networks only because their gaps were 1e10-1e14; the rod's Hessian, rescaled by
-            # kT, has eigenvalues near 1e17 and the constant found ZERO null directions where symmetry
-            # guarantees six. The first attempt at a fix took max(|vals|) from the RETURNED eigenvalues --
-            # but those are the SMALLEST ones, since the solve is shift-inverted around zero, so the
-            # scale was itself near lambda_min and the cut stayed microscopic. It has to be the norm of
-            # the operator.
-            nn = int((vals <= self.cut).sum())
-            if nn < len(vals) or k >= self.n3 - 2:
+            # THE CUT IS THE GAP, not a fraction of the operator's scale.
+            #
+            # Anchoring to the scale failed twice in opposite directions. An absolute 1e-9 found ZERO null
+            # modes on a spectrum reaching 1e17 where symmetry guarantees six. Making it relative to
+            # ||K||inf then found FOURTEEN once a 1000 pN stretch modulus widened the spectrum 219x: the
+            # noise floor actually improved, 3.4e-05 to 1.4e-05, but the cut tracks the stiffest mode and
+            # rose 90x anyway, sweeping eight real modes under it.
+            #
+            # An absolute cut dies when the spectrum is rescaled; a cut relative to the largest eigenvalue
+            # dies when it is WIDENED. The ratio between ADJACENT eigenvalues is invariant to both, and it
+            # is the quantity that behaved sensibly on every system today. So: among the modes that could
+            # plausibly be zero -- those under the measured noise floor -- take the position of the largest
+            # relative jump, and report that jump so a caller can see how well separated it is.
+            floor = self.scale * max(self.noise, 1e-14) * 100.0
+            eligible = int(np.sum(vals <= floor)) if self.calibrated else 0
+            if eligible == 0:
+                # NO mode is even plausibly zero, so the answer is zero -- not one. Clamping the search
+                # window up to 1 instead would report a null direction on a pinned system that has none,
+                # which is the failure mode this whole cut exists to avoid.
+                nn = 0
+                self.cut = floor
+                self.gap = float(vals[0] / max(floor, 1e-300))
+            else:
+                hi = min(eligible, len(vals) - 1)
+                pos = vals[: hi + 1]
+                ratios = pos[1:] / np.maximum(pos[:-1], 1e-300)
+                j = int(np.argmax(ratios))
+                nn = j + 1
+                self.gap = float(ratios[j])
+                self.cut = float(vals[j]) * np.sqrt(max(self.gap, 1.0))
+            # ESCALATE ON THE ELIGIBLE COUNT, not on nn. nn can never reach len(vals) -- the search window
+            # is capped one short so there is always a mode above the gap to compare against -- so testing
+            # nn would make this branch unreachable and silently cap every null space at k0.
+            if eligible < len(vals) or k >= self.n3 - 2:
                 break
-            k *= 2                       # every returned mode was null -- there are more
-        self.null = np.ascontiguousarray(vecs[:, vals <= self.cut])
-        self.n_null = self.null.shape[1]
+            k *= 2                       # every returned mode was plausibly null -- there are more
+        self.null = np.ascontiguousarray(vecs[:, :nn])
+        self.n_null = nn
         self._lu = splu((self.K + EPS * sp.identity(self.n3, format="csr")).tocsc())
         self.t_setup = time.time() - t
         return self.t_setup
@@ -351,11 +385,24 @@ def probe_nullspace(vals, n_zero, S):
     symmetry guarantees 6. That is not a threshold to be tuned: it means the noise floor and the softest
     physical modes OVERLAP, so no cut can separate them and any count is an artefact of where the line
     was drawn. The honest output is the GAP at the proposed cut. Without a gap the count is reported as
-    unresolvable rather than asserted, which is the difference between a measurement and a preference."""
-    """A conserved quantity appears as a null space. Found by counting near-zero eigenvalues against the
-    gap, not by being told. The quantity is the COUNT, which is what discriminates."""
+    unresolvable rather than asserted, which is the difference between a measurement and a preference.
+
+    The gap is recomputed here from an INDEPENDENT eigensolve (probe_modal's, with a different k) rather
+    than read off S.gap, so a disagreement between the two is visible instead of hidden."""
     nz = vals[vals > S.cut]
     gap = float(nz[0] / max(vals[n_zero - 1], 1e-30)) if n_zero > 0 and len(nz) else float("inf")
+    if not S.calibrated:
+        # A count of zero here means "could not tell", NOT "there are none", and the two must not read the
+        # same. Rigid motion costs energy on this operator, so there is no direction known to be null to
+        # calibrate zero against, and any count would be a preference.
+        v = verdict("conserved directions (null space)", 0.0, 1.0, "above", 1.0,
+                    f"DECLINED -- a rigid direction carries {S.noise:.1e} of the operator's scale, so "
+                    f"rigid motion is NOT free on this system and there is no direction known to be zero "
+                    f"to calibrate against. Grounded, restrained, or too noisy to resolve a null space; "
+                    f"the count is unmeasured, not zero",
+                    {"n_null": 0, "noise": S.noise, "calibrated": False})
+        v["verdict"] = "NOT TESTABLE"
+        return v
     if n_zero > 0 and gap < 10.0:
         v = verdict("conserved directions (null space)", float(n_zero), 1.0, "above", 1.0,
                     f"{n_zero} directions below the cut, but the gap to the next mode is only "
