@@ -76,18 +76,46 @@ class System:
         self.n3 = 3 * self.n
         self._lu = None
         self.t_setup = None
+        self.null = None          # DISCOVERED at setup, not assumed
+        self.n_null = None
 
     def apply(self, v):
         return project(self.Q, self.K.dot(project(self.Q, v)))
 
-    def setup(self):
+    def setup(self, k0=16):
+        """DISCOVER the null space; do not assume it is the six rigid modes.
+
+        The first version assumed exactly that, and it was catastrophically wrong on any system with an
+        extra floppy direction. The solve regularises K + eps I with eps = 2e-8, so a TRUE null mode is
+        amplified by 1/eps = 5e7. On a random point cloud with one rattler, the response came back
+        100.000% inside the null space, max |u| = 1.5e7, and every downstream probe was measuring
+        amplified noise. The tool's own null-space probe had already reported 7 directions where 6 were
+        expected -- it detected the condition that invalidated its other probes and nothing joined them up.
+
+        k is grown until a non-null mode appears, because the count is not known in advance: a diluted
+        network near the isostatic point had 23.
+        """
         t = time.time()
+        k = k0
+        while True:
+            vals, vecs = eigsh(self.K.tocsc(), k=min(k, self.n3 - 2), sigma=-1e-4, which="LM")
+            o = np.argsort(np.abs(vals))
+            vals, vecs = np.abs(vals[o]), vecs[:, o]
+            nn = int((vals <= 1e-9).sum())
+            if nn < len(vals) or k >= self.n3 - 2:
+                break
+            k *= 2                       # every returned mode was null -- there are more
+        self.null = np.ascontiguousarray(vecs[:, vals <= 1e-9])
+        self.n_null = self.null.shape[1]
         self._lu = splu((self.K + EPS * sp.identity(self.n3, format="csr")).tocsc())
         self.t_setup = time.time() - t
         return self.t_setup
 
+    def _denull(self, v):
+        return v - self.null @ (self.null.T @ v) if self.n_null else v
+
     def solve(self, f):
-        return project(self.Q, self._lu.solve(project(self.Q, f)))
+        return self._denull(self._lu.solve(self._denull(project(self.Q, f))))
 
     def solve_iterative(self, f, tol=1e-10):
         op = LinearOperator((self.n3, self.n3), matvec=self.apply, dtype=float)
