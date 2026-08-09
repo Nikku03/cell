@@ -24,10 +24,13 @@ WHAT IS HERE
 
 THE CONTROLS, and they are the reason to trust anything above.
     a planar closed curve has Wr = 0 exactly              geometry check, independent of any parameter
-    a figure-eight has Wr = +/- 1                         the first nontrivial value, catches sign errors
+    two INDEPENDENT writhe algorithms agree               solid angle against averaged signed crossings.
+                                                          NOT "a figure-eight has Wr = 1" -- that is false,
+                                                          writhe is geometric rather than topological, and
+                                                          asserting it failed a correct implementation.
     Lk is unchanged by refine and by coarsen              THE flagged risk, tested directly
-    Lk is unchanged under motion with no topoisomerase    the dynamics does not leak
-    twist fluctuation matches equipartition kT ds / C     the elastic constants are actually being applied
+    Tw moves as Wr moves at fixed Lk                      the supercoiling mechanism itself
+    torque slope equals the analytic 2 pi C / L           the moduli are actually applied
 
 PREDECLARED, before any number:
     all five hold to numerical tolerance
@@ -35,7 +38,7 @@ PREDECLARED, before any number:
     Wr checks pass but refinement leaks Lk
         -> the geometry is right and the multi-resolution scheme is not. Sequential refinement would have
            to be abandoned or the Lk transfer redesigned, and the cost model's 1.2 min/Mb goes with it.
-    the planar or figure-eight check fails
+    the planar check or the two-algorithm cross-check fails
         -> the writhe implementation is wrong and nothing downstream means anything.
 
 -> outputs/chromatin_rod.json
@@ -73,34 +76,82 @@ def writhe(r, closed=True):
     segments, which is precisely where a supercoiled curve puts its writhe. Doing it exactly costs the same
     O(N^2) and removes a class of error that would be invisible -- a slightly wrong Wr just looks like
     slightly different supercoiling.
+
+    Vectorised over segment pairs. The cost is O(N^2) either way -- that is inherent to the Gauss integral,
+    and it is the complexity error in the proposed architecture -- but a Python double loop over pairs adds
+    another 100x on top of it and made even these controls untestable.
     """
     n = len(r)
-    seg = np.arange(n) if closed else np.arange(n - 1)
+    ns = n if closed else n - 1
+    a, b = np.triu_indices(ns, k=2)
+    if closed:                                 # segments 0 and ns-1 are adjacent through the closure
+        keep = ~((a == 0) & (b == ns - 1))
+        a, b = a[keep], b[keep]
+    if len(a) == 0:
+        return 0.0
+    r1, r2 = r[a], r[(a + 1) % n]
+    r3, r4 = r[b], r[(b + 1) % n]
+    r13, r14, r23, r24 = r3 - r1, r4 - r1, r3 - r2, r4 - r2
+    n1 = np.cross(r13, r14)
+    n2 = np.cross(r14, r24)
+    n3 = np.cross(r24, r23)
+    n4 = np.cross(r23, r13)
+    good = np.min(np.stack([np.linalg.norm(x, axis=1) for x in (n1, n2, n3, n4)]), axis=0) > 1e-30
+    n1, n2, n3, n4 = _unit(n1), _unit(n2), _unit(n3), _unit(n4)
+    dot = lambda p, q: np.clip(np.sum(p * q, axis=1), -1, 1)
+    om = (np.arcsin(dot(n1, n2)) + np.arcsin(dot(n2, n3))
+          + np.arcsin(dot(n3, n4)) + np.arcsin(dot(n4, n1)))
+    sgn = np.sign(np.sum(np.cross(r4 - r3, r2 - r1) * r13, axis=1))
+    return float(np.sum(np.where(good, om * sgn, 0.0)) / (2 * np.pi))
+
+
+def writhe_by_crossings(r, n_dir=400, seed=1):
+    """A SECOND, INDEPENDENT writhe, sharing no code with the solid-angle version above.
+
+    Why a second one rather than a known-value test: the obvious check -- "a figure-eight has Wr = 1" --
+    is FALSE. Writhe is a geometric quantity, not a topological one, and a loosely crossed lemniscate has
+    whatever writhe its shape gives it. The first version of this file asserted Wr ~ 1 on such a curve,
+    measured 0.388, and recorded a FAIL against a correct implementation.
+
+    So the check is agreement between two different algorithms. Writhe is the average, over all projection
+    directions, of the signed crossing number of the projected curve -- which is the definition, computed
+    by counting crossings rather than by integrating solid angles. If the two agree, both are right; a
+    shared normalisation error is the only thing this cannot catch, and that is what CONTROL 1 covers.
+    """
+    rng = np.random.default_rng(seed)
+    n = len(r)
+    e = np.roll(r, -1, axis=0) - r
+    a, b = np.triu_indices(n, k=2)
+    keep = ~((a == 0) & (b == n - 1))
+    a, b = a[keep], b[keep]
     tot = 0.0
-    for a in range(len(seg)):
-        i = seg[a]
-        r1, r2 = r[i], r[(i + 1) % n]
-        for b in range(a + 2, len(seg)):
-            j = seg[b]
-            if closed and a == 0 and b == len(seg) - 1:
-                continue                      # adjacent through the closure
-            r3, r4 = r[j], r[(j + 1) % n]
-            r13, r14, r23, r24 = r3 - r1, r4 - r1, r3 - r2, r4 - r2
-            n1 = np.cross(r13, r14)
-            n2 = np.cross(r14, r24)
-            n3 = np.cross(r24, r23)
-            n4 = np.cross(r23, r13)
-            for v in (n1, n2, n3, n4):
-                nv = np.linalg.norm(v)
-                if nv < 1e-30:
-                    break
-            else:
-                n1, n2, n3, n4 = _unit(n1), _unit(n2), _unit(n3), _unit(n4)
-                om = (np.arcsin(np.clip(n1 @ n2, -1, 1)) + np.arcsin(np.clip(n2 @ n3, -1, 1))
-                      + np.arcsin(np.clip(n3 @ n4, -1, 1)) + np.arcsin(np.clip(n4 @ n1, -1, 1)))
-                sgn = np.sign(np.cross(r4 - r3, r2 - r1) @ r13)
-                tot += om * sgn
-    return tot / (2 * np.pi)
+    d = rng.normal(size=(n_dir, 3))
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    for k in range(n_dir):
+        w = d[k]
+        u = np.array([1.0, 0.0, 0.0])
+        if abs(u @ w) > 0.9:
+            u = np.array([0.0, 1.0, 0.0])
+        u = _unit(u - (u @ w) * w)
+        v = np.cross(w, u)
+        p = np.stack([r @ u, r @ v], axis=1)         # 2D projection
+        h = r @ w                                    # height along the view direction
+        p1, p2, p3, p4 = p[a], p[(a + 1) % n], p[b], p[(b + 1) % n]
+        d1, d2 = p2 - p1, p4 - p3
+        den = d1[:, 0] * d2[:, 1] - d1[:, 1] * d2[:, 0]
+        ok = np.abs(den) > 1e-30
+        dp = p3 - p1
+        s = np.where(ok, (dp[:, 0] * d2[:, 1] - dp[:, 1] * d2[:, 0]) / np.where(ok, den, 1), -1.0)
+        t = np.where(ok, (dp[:, 0] * d1[:, 1] - dp[:, 1] * d1[:, 0]) / np.where(ok, den, 1), -1.0)
+        cross = ok & (s > 0) & (s < 1) & (t > 0) & (t < 1)
+        if not cross.any():
+            continue
+        # signed crossing: sign of the 2D cross product, oriented by which strand is nearer the viewer
+        sgn = np.sign(den[cross])
+        za = h[a[cross]] + s[cross] * (h[(a[cross] + 1) % n] - h[a[cross]])
+        zb = h[b[cross]] + t[cross] * (h[(b[cross] + 1) % n] - h[b[cross]])
+        tot += float(np.sum(sgn * np.sign(za - zb)))
+    return tot / n_dir
 
 
 def bishop_frame(r, closed=True):
@@ -129,12 +180,19 @@ def bishop_frame(r, closed=True):
 
 
 class Rod:
-    """A twistable rod at one resolution. theta_i is the material-frame angle on edge i, measured from the
-    Bishop frame, so the elastic twist of edge i is theta_i - theta_{i-1}."""
+    """A twistable rod at one resolution.
 
-    def __init__(self, r, theta, bp_per_bead, closed=True):
+    THE TWIST IS STORED PER EDGE, NOT AS AN ABSOLUTE FRAME ANGLE, and that choice is a bug fix rather
+    than a preference. Storing theta_i and differencing it means the closing edge of a loop carries
+    theta_0 - theta_{n-1}, which must be wrapped into (-pi, pi] to be an angle -- and that wrap silently
+    rounds the total twist to a WHOLE NUMBER OF TURNS. The first version did exactly this and reported
+    Tw = 3.000000 where it had been set to 2.613373. It failed three of the five controls at once and
+    every symptom looked like a different problem. Per-edge increments have no closure and no wrap.
+    """
+
+    def __init__(self, r, m, bp_per_bead, closed=True):
         self.r = np.asarray(r, float)
-        self.theta = np.asarray(theta, float)
+        self.m = np.asarray(m, float)          # excess twist per edge, radians
         self.bp = float(bp_per_bead)
         self.closed = closed
 
@@ -143,13 +201,9 @@ class Rod:
         return len(self.r)
 
     def twist(self):
-        """Total twist in turns. The excess twist is what stores torsional energy; the intrinsic helical
-        twist omega0 is the reference and does not count toward Lk excess."""
-        d = np.diff(self.theta)
-        if self.closed:
-            d = np.append(d, self.theta[0] - self.theta[-1])
-        d = (d + np.pi) % (2 * np.pi) - np.pi        # each step is a small excess, unwrap it
-        return float(d.sum() / (2 * np.pi))
+        """Total excess twist in turns. A plain sum -- no wrapping, so no quantisation. The intrinsic
+        helical twist omega0 is the reference and does not count toward the Lk excess."""
+        return float(self.m.sum() / (2 * np.pi))
 
     def writhe(self):
         return writhe(self.r, self.closed)
@@ -193,15 +247,18 @@ class Rod:
         new_r = np.empty((len(self.r) + len(mid), 3))
         new_r[0::2] = self.r
         new_r[1::2] = mid
-        new_th = np.repeat(self.theta, 2)[:len(new_r)]
-        child = Rod(new_r, new_th, self.bp / 2.0, self.closed)
+        new_m = np.repeat(self.m, 2)[:len(new_r)] / 2.0    # each edge splits, its twist halves
+        child = Rod(new_r, new_m, self.bp / 2.0, self.closed)
         child._retwist_to(lk0)
         return child
 
     def coarsen(self):
         """Drop every other vertex, holding Lk exactly. Same argument in reverse."""
         lk0 = self.lk()
-        child = Rod(self.r[::2].copy(), self.theta[::2].copy(), self.bp * 2.0, self.closed)
+        mm = self.m.copy()
+        if len(mm) % 2:
+            mm = np.append(mm, 0.0)
+        child = Rod(self.r[::2].copy(), mm.reshape(-1, 2).sum(axis=1), self.bp * 2.0, self.closed)
         child._retwist_to(lk0)
         return child
 
@@ -210,8 +267,7 @@ class Rod:
         which is torsional equilibrium for a homogeneous rod -- inhomogeneous C (a melted bubble) would
         need it weighted by compliance instead, and that is where the melting tier will hook in."""
         need = lk_target - self.writhe()
-        step = 2 * np.pi * need / self.n
-        self.theta = np.arange(self.n) * step
+        self.m = np.full(self.n, 2 * np.pi * need / self.n)
 
     def rg(self):
         c = self.r - self.r.mean(axis=0)
@@ -263,14 +319,20 @@ def main():
     res["planar_writhe"] = {str(k): v for k, v in w0.items()}
 
     # ---- CONTROL 2: a figure-eight has |Wr| ~ 1 ----------------------------------------------------
-    report("\n  CONTROL 2 -- figure-eight, |Wr| must be near 1 (catches sign and factor errors)")
+    report("\n  CONTROL 2 -- two INDEPENDENT writhe algorithms must agree")
+    report("    The obvious test -- 'a figure-eight has Wr = 1' -- is FALSE: writhe is geometric, not")
+    report("    topological, so a loosely crossed lemniscate has whatever its shape gives it. The first")
+    report("    version of this file asserted it, measured 0.388, and recorded a FAIL against correct code.")
+    report("    So: solid angle against averaged signed crossings, sharing no code.")
     w8 = {}
+    report(f"    {'n':<6}{'solid angle':>14}{'crossings':>13}{'difference':>13}")
     for n in (48, 96, 192):
         f = figure_eight(n, 50e-9, 200)
-        w8[n] = f.writhe()
-        report(f"    n={n:<5} Wr = {w8[n]:+.4f}")
-    ok2 = 0.7 < abs(w8[192]) < 1.3
-    res["figure8_writhe"] = {str(k): v for k, v in w8.items()}
+        wa, wb = f.writhe(), writhe_by_crossings(f.r)
+        w8[n] = {"solid_angle": wa, "crossings": wb, "diff": wa - wb}
+        report(f"    {n:<6}{wa:>14.4f}{wb:>13.4f}{wa-wb:>13.4f}")
+    ok2 = all(abs(v["diff"]) < 0.05 for v in w8.values())
+    res["writhe_crosscheck"] = {str(k): v for k, v in w8.items()}
 
     # ---- CONTROL 3: THE FLAGGED RISK. refine and coarsen must hold Lk ------------------------------
     report("\n  CONTROL 3 -- THE ONE THAT MATTERS. Lk must survive refine and coarsen exactly.")
@@ -309,7 +371,7 @@ def main():
     for amp in (0.0, 0.25, 0.5, 1.0):
         r2 = rod.r.copy()
         r2[:, 2] *= (1 + amp)                 # deform out of plane -> writhe changes
-        d = Rod(r2, rod.theta.copy(), rod.bp)
+        d = Rod(r2, rod.m.copy(), rod.bp)
         d._retwist_to(4.0)
         rows.append((amp, d.twist(), d.writhe(), d.lk(), d.torque()))
         report(f"    z-stretch {amp:<5.2f}  Tw {d.twist():+8.4f}  Wr {d.writhe():+8.4f}  "
@@ -342,7 +404,7 @@ def main():
         report(f"    {'PASS' if ok else 'FAIL'}  {lab}")
     if all(ok for _, ok in gates):
         report("  The topology layer holds. Refinement moves Wr by a real amount -- the polygon genuinely")
-        report("  changes -- and the twist absorbs it, so Lk is invariant to 1e-9 across eight successive")
+        report(f"  changes -- and the twist absorbs it, so Lk is invariant to {drift:.0e} across eight successive")
         report("  resolution changes. That was the flagged risk in the architecture and it is now a test")
         report("  rather than a hope. The KMC and melting tiers can be built on this.")
     else:
