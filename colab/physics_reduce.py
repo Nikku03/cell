@@ -85,6 +85,7 @@ class System:
         self.t_setup = None
         self.null = None          # DISCOVERED at setup, not assumed
         self.n_null = None
+        self.scale = self.noise = self.cut = None
 
     def apply(self, v):
         return project(self.Q, self.K.dot(project(self.Q, v)))
@@ -103,21 +104,38 @@ class System:
         network near the isostatic point had 23.
         """
         t = time.time()
+        self.scale = float(sp.linalg.norm(self.K, np.inf))     # the operator's own scale
+        # CALIBRATE "ZERO" AGAINST A DIRECTION THAT MUST BE ZERO BY SYMMETRY. A rigid translation cannot
+        # change the energy of any mechanical system, so its Rayleigh quotient is exactly the numerical
+        # noise floor of THIS operator. An analytic Hessian gives ~1e-16 relative; the rod's
+        # finite-difference Hessian gives 5.3e-08, eight orders worse, and a fixed cut either finds
+        # nothing (too tight) or is tuned to the noise (arbitrary). This measures it instead, and reports
+        # it, so a caller can see that the operator is too noisy to have a resolvable null space.
+        # ALL SIX rigid directions, not one. Calibrating on a translation alone found 3 of 6: rotations
+        # displace the periphery much further, so their finite-difference noise is larger, and a cut set
+        # by the quietest direction cannot see the loudest. The worst of the six is the operator's real
+        # noise floor.
+        rq = [float(abs(self.Q[:, j] @ (self.K @ self.Q[:, j])))
+              / max(float(self.Q[:, j] @ self.Q[:, j]), 1e-300) for j in range(self.Q.shape[1])]
+        self.noise = float(max(rq)) / max(self.scale, 1e-300)
+        self.cut = self.scale * max(1e-9, 10.0 * self.noise)
         k = k0
         while True:
             vals, vecs = eigsh(self.K.tocsc(), k=min(k, self.n3 - 2), sigma=-1e-4, which="LM")
             o = np.argsort(np.abs(vals))
             vals, vecs = np.abs(vals[o]), vecs[:, o]
-            # RELATIVE cut. An absolute 1e-9 worked on the elastic networks only because their gap was
-            # 1e10-1e14. The rod's Hessian, rescaled by kT, has eigenvalues near 1e17, so the same
-            # constant found ZERO null directions where symmetry guarantees six.
-            cut = max(1e-12, float(np.max(np.abs(vals))) * 1e-9)
-            nn = int((vals <= cut).sum())
+            # RELATIVE cut, and it must be relative to the WHOLE operator. An absolute 1e-9 worked on
+            # the elastic networks only because their gaps were 1e10-1e14; the rod's Hessian, rescaled by
+            # kT, has eigenvalues near 1e17 and the constant found ZERO null directions where symmetry
+            # guarantees six. The first attempt at a fix took max(|vals|) from the RETURNED eigenvalues --
+            # but those are the SMALLEST ones, since the solve is shift-inverted around zero, so the
+            # scale was itself near lambda_min and the cut stayed microscopic. It has to be the norm of
+            # the operator.
+            nn = int((vals <= self.cut).sum())
             if nn < len(vals) or k >= self.n3 - 2:
                 break
             k *= 2                       # every returned mode was null -- there are more
-        cut = max(1e-12, float(np.max(np.abs(vals))) * 1e-9)
-        self.null = np.ascontiguousarray(vecs[:, vals <= cut])
+        self.null = np.ascontiguousarray(vecs[:, vals <= self.cut])
         self.n_null = self.null.shape[1]
         self._lu = splu((self.K + EPS * sp.identity(self.n3, format="csr")).tocsc())
         self.t_setup = time.time() - t
@@ -235,12 +253,20 @@ def probe_finite_linearity(S, rng, log):
     rel = amp1 / max(scale, 1e-300)
     note = ("deviation from exact scaling at 2x/4x/8x force: " + ", ".join(f"{d:.2e}" for d in devs)
             + f"   |  max displacement {rel:.2e} of a bond length")
-    if rel < 1e-3:
+    # TWO-SIDED. The guard originally checked only for a perturbation that was too SMALL, and I then
+    # over-corrected the step size until the relaxation diverged to 6,600 bond lengths and the probe
+    # reported FAILS -- the right verdict for the wrong reason, which is still a wrong result. A test of
+    # nonlinearity has to perturb enough to leave the harmonic well and little enough to stay on the
+    # energy surface, and it must refuse to grade outside that window rather than pick a side.
+    if rel < 1e-3 or rel > 0.5:
         v = verdict("finite-amplitude linearity", worst, 1e-3, "below", 1.0, note,
                     {"devs": devs, "rel_amp": rel})
         v["verdict"] = "NOT TESTABLE"
-        v["note"] = (note + "  -- the perturbation moved almost nothing, so this cannot distinguish a "
-                     "linear system from any other")
+        why = ("the perturbation moved almost nothing, so this cannot distinguish a linear system from "
+               "any other" if rel < 1e-3 else
+               "the relaxation left the energy surface entirely, so the deviation measures divergence "
+               "rather than nonlinearity")
+        v["note"] = note + "  -- " + why
         return v
     return verdict("finite-amplitude linearity", worst, 1e-3, "below", 1.0, note,
                    {"devs": devs, "rel_amp": rel})
@@ -289,7 +315,7 @@ def probe_modal(S, rng, log, k=N_MODES):
     vals, vecs = eigsh(S.K.tocsc(), k=k, sigma=-1e-4, which="LM")
     o = np.argsort(np.abs(vals))
     vals, vecs = np.abs(vals[o]), vecs[:, o]
-    live = vals > max(1e-12, float(np.max(np.abs(vals))) * 1e-9)
+    live = vals > S.cut
     B = vecs[:, live]
     u = S.solve(S.couple(int(rng.integers(S.n)), rng))
     cap = float(np.linalg.norm(B @ (B.T @ u)) / max(np.linalg.norm(u), 1e-300))
@@ -300,20 +326,37 @@ def probe_modal(S, rng, log, k=N_MODES):
 
 
 def probe_nullspace(vals, n_zero, S):
+    """A conserved quantity appears as a null space -- IF the operator can resolve one.
+
+    Loosening the cut on the rod's finite-difference Hessian gave 0, then 3, then 9 null directions where
+    symmetry guarantees 6. That is not a threshold to be tuned: it means the noise floor and the softest
+    physical modes OVERLAP, so no cut can separate them and any count is an artefact of where the line
+    was drawn. The honest output is the GAP at the proposed cut. Without a gap the count is reported as
+    unresolvable rather than asserted, which is the difference between a measurement and a preference."""
     """A conserved quantity appears as a null space. Found by counting near-zero eigenvalues against the
     gap, not by being told. The quantity is the COUNT, which is what discriminates."""
-    nz = vals[vals > max(1e-12, float(np.max(np.abs(vals))) * 1e-9)]
+    nz = vals[vals > S.cut]
     gap = float(nz[0] / max(vals[n_zero - 1], 1e-30)) if n_zero > 0 and len(nz) else float("inf")
+    if n_zero > 0 and gap < 10.0:
+        v = verdict("conserved directions (null space)", float(n_zero), 1.0, "above", 1.0,
+                    f"{n_zero} directions below the cut, but the gap to the next mode is only "
+                    f"{gap:.1f}x -- the noise floor ({S.noise:.1e} relative) and the softest real modes "
+                    f"OVERLAP, so no cut separates them and this count is an artefact of where the line "
+                    f"was drawn", {"n_null": int(n_zero), "gap": gap, "noise": S.noise})
+        v["verdict"] = "UNRESOLVABLE"
+        return v
     return verdict("conserved directions (null space)", float(n_zero), 1.0, "above",
                    float(S.n3) / max(S.n3 - n_zero, 1),
-                   f"{n_zero} directions at numerical zero, gap {gap:.1e} to the first real mode",
+                   f"{n_zero} directions at numerical zero, gap {gap:.1e} to the first real mode; "
+                   f"zero calibrated against rigid translation at {S.noise:.1e} relative"
+                   + ("  -- NOISY OPERATOR, an analytic Hessian gives ~1e-16" if S.noise > 1e-12 else ""),
                    {"n_null": int(n_zero), "gap": gap})
 
 
 def probe_timescale(vals, S):
     """A wide spectrum means fast modes are slaved to slow ones, which licenses stepping events rather
     than time."""
-    nz = vals[vals > max(1e-12, float(np.max(np.abs(vals))) * 1e-9)]
+    nz = vals[vals > S.cut]
     lam_min = float(nz[0])
     lam_max = float(sp.linalg.norm(S.K, np.inf))
     sep = lam_max / lam_min
