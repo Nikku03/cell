@@ -115,23 +115,18 @@ def evaluate(name, co, K, npair, rng, report):
            f"({K.nnz/(3*len(co))**2:.2e} dense fraction)")
     S.setup()
     out = {"name": name, "npair": int(npair), "nnz": int(K.nnz), "t_setup": S.t_setup}
-    rows = []
-    for fn in (PR.probe_linearity, PR.probe_precompute, PR.probe_locality):
-        r = fn(S, rng, [])
-        rows.append(r)
+    rows = [fn(S, rng, []) for fn in (PR.probe_linearity, PR.probe_precompute, PR.probe_locality)]
     try:
         rm, vals, n_zero = PR.probe_modal(S, rng, [], k=N_MODES)
-        rows.append(rm)
-        rows.append(PR.probe_nullspace(vals, n_zero, S))
-        rows.append(PR.probe_timescale(vals, S))
+        rows += [rm, PR.probe_nullspace(vals, n_zero, S), PR.probe_timescale(vals, S)]
     except Exception as ex:
         report(f"    eigensolve failed: {type(ex).__name__} -- reported, not hidden")
-        vals, n_zero = np.array([1.0]), 0
+    report(f"    null space DISCOVERED: {S.n_null} directions")
     for r in rows:
-        report(f"    {r[0]:<38}{'HOLDS' if r[1] else 'FAILS':<7}err {r[2]:.2e}  x{r[3]:.3g}")
-        report(f"      {r[4]}")
-    out["reductions"] = [{"name": a, "holds": bool(b), "error": float(c), "speedup": float(d),
-                          "note": e} for a, b, c, d, e in rows]
+        report(f"    {r['name']:<38}{r['verdict']:<10}q {r['quantity']:.4g}  x{r['speedup']:.3g}")
+        report(f"      {r['note']}")
+    out["reductions"] = rows
+    out["n_null"] = S.n_null
     out["fill_in"] = float(S._lu.nnz / K.nnz)
     report(f"    factorisation {S.t_setup:.1f} s, fill-in {out['fill_in']:.1f}x")
     return out
@@ -174,13 +169,16 @@ def main():
             res.append({"name": name, "error": f"{type(ex).__name__}: {ex}"})
 
     # ---- the question this file exists for --------------------------------------------------------
-    report("\n  DID THE VERDICTS MOVE?")
+    report("\n  DOES THE MEASUREMENT MOVE?  -- spread of the QUANTITY, not whether a binary flipped.")
+    report("  The first version asked only whether verdicts changed, which collapsed six orders of")
+    report("  magnitude in timescale separation into 'did not move' and then blamed the systems.")
     names = [r["name"] for r in res if "reductions" in r]
     keys = sorted({d["name"] for r in res if "reductions" in r for d in r["reductions"]})
-    report(f"    {'reduction':<38}" + "".join(f"{n[:10]:>12}" for n in names))
+    report(f"    {'reduction':<38}" + "".join(f"{n[:10]:>13}" for n in names) + f"{'spread':>10}")
     moved = 0
+    spreads = {}
     for k in keys:
-        cells, verdicts = [], []
+        cells, qs = [], []
         for r in res:
             if "reductions" not in r:
                 continue
@@ -188,50 +186,56 @@ def main():
             if d is None:
                 cells.append("-")
                 continue
-            verdicts.append(d["holds"])
-            cells.append(("Y" if d["holds"] else "N") + f" {d['speedup']:.2g}")
-        if len(set(verdicts)) > 1:
+            qs.append(d["quantity"])
+            cells.append(f"{d['verdict'][0]} {d['quantity']:.3g}")
+        sp_ = (max(qs) / max(min(qs), 1e-30)) if qs and min(qs) > 0 else float("inf") if qs else 1.0
+        spreads[k] = sp_
+        if sp_ > 2.0:
             moved += 1
-        report(f"    {k:<38}" + "".join(f"{c:>12}" for c in cells))
-    report(f"\n    {moved} of {len(keys)} reductions changed verdict across the four systems")
+        report(f"    {k:<38}" + "".join(f"{c:>13}" for c in cells) + f"{sp_:>10.3g}x")
+    report(f"\n    {moved} of {len(keys)} measurements vary by more than 2x across the four systems")
 
     report("\n  AGAINST THE PREDICTIONS I WROTE FIRST")
-    def get(nm, key, field="holds"):
+    def get(nm, key, field="quantity"):
         r = next((x for x in res if x["name"] == nm and "reductions" in x), None)
         if not r:
             return None
         d = next((x for x in r["reductions"] if key in x["name"]), None)
         return d[field] if d else None
-    checks = []
-    gm = get("generic", "modal", "error")
-    dm = get("disordered", "modal", "error")
-    if gm is not None and dm is not None:
-        checks.append(("disorder worsens modal truncation", dm > gm, f"{gm:.3f} -> {dm:.3f}"))
-    gl = get("generic", "locality", "error")
-    dl = get("disordered", "locality", "error")
-    if gl is not None and dl is not None:
-        checks.append(("disorder improves locality", dl < gl, f"{gl:.3f} -> {dl:.3f}"))
-    gz = next((x["note"] for x in (next((y for y in res if y["name"] == "generic"), {}) or {})
-               .get("reductions", []) if "null" in x["name"]), "")
-    dz = next((x["note"] for x in (next((y for y in res if y["name"] == "diluted"), {}) or {})
-               .get("reductions", []) if "null" in x["name"]), "")
-    if gz and dz:
-        g0 = int(gz.split()[0]); d0 = int(dz.split()[0])
-        checks.append(("dilution grows the null space", d0 > g0, f"{g0} -> {d0} zero directions"))
-    lf = next((r.get("fill_in") for r in res if r["name"] == "long-range"), None)
-    gf = next((r.get("fill_in") for r in res if r["name"] == "generic"), None)
-    if lf and gf:
-        checks.append(("long-range explodes fill-in", lf > gf, f"{gf:.1f}x -> {lf:.1f}x"))
+
+    def cmp(label, a, b, want_bigger, fmt="{:.4g}"):
+        """A prediction check that REFUSES to score a degenerate comparison. The first version printed
+        'as predicted 1.000 -> 1.000' twice, comparing two complete failures and calling it confirmation."""
+        if a is None or b is None:
+            return (label, None, "not measured")
+        note = f"{fmt.format(a)} -> {fmt.format(b)}"
+        if abs(a - b) <= 1e-6 * max(abs(a), abs(b), 1e-30):
+            return (label, None, note + "   NOT TESTABLE, the two are identical")
+        return (label, (b > a) if want_bigger else (b < a), note)
+    checks = [
+        cmp("disorder worsens modal truncation", get("generic", "modal"),
+            get("disordered", "modal"), want_bigger=False),      # captured fraction should FALL
+        cmp("disorder improves locality", get("generic", "locality"),
+            get("disordered", "locality"), want_bigger=False),   # fraction of atoms needed should FALL
+        cmp("dilution grows the null space", get("generic", "null"),
+            get("diluted", "null"), want_bigger=True),
+        cmp("long-range explodes absolute factor cost",
+            next((r["nnz"] * r.get("fill_in", 1) for r in res if r["name"] == "generic"), None),
+            next((r["nnz"] * r.get("fill_in", 1) for r in res if r["name"] == "long-range"), None),
+            want_bigger=True),
+    ]
     for lab, ok, note in checks:
-        report(f"    {'as predicted' if ok else 'NOT as predicted':<17} {lab:<36} {note}")
-    hit = sum(ok for _, ok, _ in checks)
+        tag = "not testable" if ok is None else ("as predicted" if ok else "NOT as predicted")
+        report(f"    {tag:<17} {lab:<40} {note}")
+    hit = sum(1 for _, ok, _ in checks if ok)
+    testable = sum(1 for _, ok, _ in checks if ok is not None)
 
     report("\n  READING")
     if moved >= 2:
-        report(f"  THE VERDICTS MOVE. {moved} of {len(keys)} reductions change with the coupling structure")
+        report(f"  THE MEASUREMENTS MOVE. {moved} of {len(keys)} vary by more than 2x with the coupling")
         report("  while the geometry is held fixed, so the tool is reading the system rather than its own")
         report("  probes. That is the property a checklist does not have.")
-        report(f"  Of my written predictions, {hit} of {len(checks)} came out as stated -- and the ones that")
+        report(f"  Of my written predictions, {hit} of {testable} testable came out as stated -- and those that")
         report("  did NOT are the informative rows, because they are the tool disagreeing with me.")
     else:
         report(f"  ONLY {moved} verdicts moved. The tool is largely reporting its own probes, and should be")
@@ -239,7 +243,7 @@ def main():
 
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"test": "physics_reduce_unknown", "n_points": len(co), "systems": res,
-               "n_moved": moved, "n_reductions": len(keys),
+               "n_moved": moved, "n_reductions": len(keys), "spreads": spreads,
                "predictions": [{"claim": a, "held": bool(b), "note": c} for a, b, c in checks],
                "log": log}, open(OUT / "physics_reduce_unknown.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'physics_reduce_unknown.json'}")

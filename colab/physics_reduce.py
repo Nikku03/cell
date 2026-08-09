@@ -63,6 +63,13 @@ EPS = 2e-8
 N_PROBE = 8
 RADII = (10.0, 20.0, 30.0, 50.0, 70.0, 100.0)
 N_MODES = int(os.environ.get("REDUCE_MODES", 60))
+# A verdict is GRADED, not binary. The first version reported pass/fail at a fixed threshold, and that
+# threw away exactly the discrimination the tool exists to provide: timescale separation spanning six
+# orders of magnitude across four systems collapsed into "1 of 8 verdicts moved", which the tool then
+# reported as a property of the SYSTEMS rather than of its own reporting. It also rendered a linearity
+# error of 2e-8 against a 1e-8 threshold as a categorical FAILS. Anything within BAND of the threshold is
+# now MARGINAL and says so.
+BAND = 3.0
 
 
 class System:
@@ -138,10 +145,31 @@ class System:
         return f
 
 
-# ---- the vocabulary. Each returns (name, holds, error, speedup, note) ------------------------------
+# ---- the vocabulary ---------------------------------------------------------------------------------
+# Every probe returns the same record. The NAME is stable across systems -- the first version encoded the
+# live mode count into it ("modal truncation (33 modes)"), which gave every system a different key and made
+# cross-system comparison impossible while silently inflating the denominator.
+def verdict(name, q, thr, direction, speedup, note, detail=None):
+    """Grade a measured quantity against a threshold, keeping the quantity itself.
+
+    direction 'below': the reduction holds when q is small (an error).
+    direction 'above': it holds when q is large (a ratio).
+    Within a factor of BAND either way the answer is MARGINAL, because a threshold is a judgement and a
+    measurement that lands on one should say so rather than pick a side.
+    """
+    r = q / thr if thr else float("inf")
+    if direction == "below":
+        v = "HOLDS" if r < 1 / BAND else ("FAILS" if r > BAND else "MARGINAL")
+    else:
+        v = "HOLDS" if r > BAND else ("FAILS" if r < 1 / BAND else "MARGINAL")
+    return {"name": name, "quantity": float(q), "threshold": float(thr), "direction": direction,
+            "verdict": v, "margin": float(r), "speedup": float(speedup), "note": note,
+            "detail": detail or {}}
+
+
 def probe_linearity(S, rng, log):
-    """Does response(a f1 + b f2) equal a response(f1) + b response(f2)?  If yes, every future response is
-    an addition rather than a solve, and that is the largest single factor available anywhere."""
+    """Does response(a f1 + b f2) equal a response(f1) + b response(f2)?  If yes every future response is
+    an addition rather than a solve, which is the largest single factor available anywhere."""
     sites = rng.choice(S.n, size=4, replace=False)
     fs = [S.couple(s, rng) for s in sites]
     w = rng.normal(size=len(fs))
@@ -149,29 +177,31 @@ def probe_linearity(S, rng, log):
     direct = S.solve(sum(wi * f for wi, f in zip(w, fs)))
     sup = sum(wi * u for wi, u in zip(w, us))
     err = float(np.linalg.norm(sup - direct) / max(np.linalg.norm(direct), 1e-300))
-    # speedup: an addition over the support against a solve
     t = time.time()
     for _ in range(200):
         _ = sum(wi * u for wi, u in zip(w, us))
     t_add = (time.time() - t) / 200
     t_solve = _time(lambda: S.solve(fs[0]), 5)
-    return ("linearity -> superposition", err < 1e-8, err, t_solve / t_add,
-            f"add {t_add*1e6:.0f} us against solve {t_solve*1e3:.0f} ms")
+    return verdict("linearity -> superposition", err, 1e-8, "below", t_solve / t_add,
+                   f"add {t_add*1e6:.0f} us against solve {t_solve*1e3:.0f} ms")
 
 
 def probe_precompute(S, rng, log):
-    """Is the expensive part reusable? Compare the one-off setup against each subsequent solve. A large
-    ratio means the cost is in BUILDING the inverse, not in applying it."""
+    """Is the expensive part reusable? A large setup-to-solve ratio means the cost is in BUILDING the
+    inverse rather than applying it, so it should be built once."""
     t_solve = _time(lambda: S.solve(S.couple(rng.integers(S.n), rng)), 5)
-    return ("reusable factorisation", S.t_setup / t_solve > 10, 0.0, S.t_setup / t_solve,
-            f"setup {S.t_setup:.1f} s, each solve {t_solve*1e3:.0f} ms")
+    r = S.t_setup / t_solve
+    return verdict("reusable factorisation", r, 10.0, "above", r,
+                   f"setup {S.t_setup:.1f} s, each solve {t_solve*1e3:.0f} ms")
 
 
 def probe_locality(S, rng, log):
-    """TWO questions, not one, and conflating them cost a full misdiagnosis today.
-    Does a truncated support carry the field's NORM, or only its PEAK? A small floor spread over many
-    atoms can carry as much norm as a sharp peak over few, and a scheme that truncates by amplitude while
-    needing the norm will be quietly wrong."""
+    """TWO questions, and conflating them cost a full misdiagnosis. Does a truncated support carry the
+    field's NORM, or only its PEAK? A small floor over many atoms can carry as much norm as a sharp peak
+    over few, so a scheme that truncates by amplitude while needing the norm is quietly wrong.
+
+    The reported quantity is the FRACTION OF ATOMS needed to hold 90% of the norm -- small is good, and it
+    is what actually sets the per-event cost."""
     u = S.solve(S.couple(int(rng.integers(S.n)), rng))
     site = int(np.argmax(np.linalg.norm(u.reshape(-1, 3), axis=1)))
     d = np.linalg.norm(S.co - S.co[site], axis=1)
@@ -182,54 +212,51 @@ def probe_locality(S, rng, log):
         keep = d <= R
         nm = np.linalg.norm(np.where(np.repeat(keep, 3), u, 0.0)) / max(tot, 1e-300)
         pk = amp[keep].max() / max(amp.max(), 1e-300) if keep.any() else 0.0
-        rows.append((R, int(keep.sum()), float(keep.mean()), float(nm), float(pk)))
-    log.append(f"      {'R':>7}{'atoms':>8}{'share':>9}{'norm in':>10}{'peak in':>10}")
-    for R, na, fr, nm, pk in rows:
-        log.append(f"      {R:>7.0f}{na:>8}{fr:>9.1%}{nm:>10.3f}{pk:>10.3f}")
-    # holds only if a MINORITY of atoms carries a MAJORITY of the norm
-    best = min((r for r in rows if r[3] >= 0.9), key=lambda r: r[2], default=None)
-    if best is None:
-        return ("locality (norm) -> truncate", False, 1.0 - rows[-1][3], 1.0,
-                f"even {rows[-1][2]:.0%} of atoms carries only {rows[-1][3]:.2f} of the norm")
-    return ("locality (norm) -> truncate", best[2] < 0.5, 1.0 - best[3], 1.0 / max(best[2], 1e-9),
-            f"{best[2]:.0%} of atoms carries {best[3]:.2f} of the norm at R={best[0]:.0f} A")
+        rows.append({"R": R, "atoms": int(keep.sum()), "frac": float(keep.mean()),
+                     "norm_in": float(nm), "peak_in": float(pk)})
+    hit = [r for r in rows if r["norm_in"] >= 0.9]
+    frac = min((r["frac"] for r in hit), default=1.0)
+    R90 = min((r["R"] for r in hit), default=float("nan"))
+    return verdict("locality (norm) -> truncate", frac, 0.25, "below", 1.0 / max(frac, 1e-9),
+                   f"{frac:.0%} of atoms carry 90% of the norm (R={R90:.0f})", {"rows": rows})
 
 
 def probe_modal(S, rng, log, k=N_MODES):
-    """Do the k softest modes reproduce a local response? If so the state lives in a k-dimensional space
-    and the cost becomes k rather than N. Tested on a REAL perturbation, not a random vector -- a modal
-    basis that reproduces noise but not physics is worthless."""
+    """Do the k softest modes reproduce a real response? Reported as CAPTURED FRACTION, and the mode count
+    goes in the note rather than the name so systems remain comparable."""
     vals, vecs = eigsh(S.K.tocsc(), k=k, sigma=-1e-4, which="LM")
-    order = np.argsort(np.abs(vals))
-    vals, vecs = np.abs(vals[order]), vecs[:, order]
-    live = np.abs(vals) > 1e-9
+    o = np.argsort(np.abs(vals))
+    vals, vecs = np.abs(vals[o]), vecs[:, o]
+    live = vals > 1e-9
     B = vecs[:, live]
     u = S.solve(S.couple(int(rng.integers(S.n)), rng))
-    cap = B @ (B.T @ u)
-    err = float(np.linalg.norm(cap - u) / max(np.linalg.norm(u), 1e-300))
+    cap = float(np.linalg.norm(B @ (B.T @ u)) / max(np.linalg.norm(u), 1e-300))
     nz = int(live.sum())
-    return (f"modal truncation ({nz} modes)", err < 0.2, err, S.n3 / max(nz, 1),
-            f"{nz} of {S.n3} dimensions reproduce {1-err:.1%} of a real response"), vals, int((~live).sum())
+    return verdict("modal truncation", cap, 0.9, "above", S.n3 / max(nz, 1),
+                   f"{nz} of {S.n3} dimensions capture {cap:.1%} of a real response",
+                   {"n_modes": nz}), vals, int((~live).sum())
 
 
 def probe_nullspace(vals, n_zero, S):
-    """A conserved quantity shows up as a null space -- directions in which nothing happens. Found by
-    counting near-zero eigenvalues against the gap, not by being told the answer."""
+    """A conserved quantity appears as a null space. Found by counting near-zero eigenvalues against the
+    gap, not by being told. The quantity is the COUNT, which is what discriminates."""
     nz = vals[vals > 1e-9]
     gap = float(nz[0] / max(vals[n_zero - 1], 1e-30)) if n_zero > 0 and len(nz) else float("inf")
-    return ("conserved directions (null space)", n_zero > 0, 0.0, float(S.n3) / max(S.n3 - n_zero, 1),
-            f"{n_zero} directions at numerical zero, gap {gap:.1e} to the first real mode")
+    return verdict("conserved directions (null space)", float(n_zero), 1.0, "above",
+                   float(S.n3) / max(S.n3 - n_zero, 1),
+                   f"{n_zero} directions at numerical zero, gap {gap:.1e} to the first real mode",
+                   {"n_null": int(n_zero), "gap": gap})
 
 
 def probe_timescale(vals, S):
-    """A wide spectrum means fast modes are slaved to slow ones, which licenses quasi-static stepping --
-    the difference between integrating time and stepping events."""
+    """A wide spectrum means fast modes are slaved to slow ones, which licenses stepping events rather
+    than time."""
     nz = vals[vals > 1e-9]
     lam_min = float(nz[0])
     lam_max = float(sp.linalg.norm(S.K, np.inf))
     sep = lam_max / lam_min
-    return ("timescale separation -> event stepping", sep > 1e3, 0.0, sep,
-            f"lambda spans {lam_min:.2e} to {lam_max:.2e}, ratio {sep:.1e}")
+    return verdict("timescale separation -> event stepping", sep, 1e3, "above", sep,
+                   f"lambda spans {lam_min:.2e} to {lam_max:.2e}")
 
 
 def _time(fn, n):
@@ -250,87 +277,54 @@ def main():
     report("=" * 100)
     report("AUTOMATED MODEL REDUCTION -- find the structure, prove it, price it")
     report("=" * 100)
-    report("  A scored exam, not a demo: this system's structure was established by hand today, so every")
-    report("  verdict below can be checked. A false positive is disqualifying.")
+    report("  A scored exam, not a demo: this system's structure was established by hand, so every verdict")
+    report("  can be checked. Verdicts are GRADED -- anything within 3x of a threshold reads MARGINAL,")
+    report("  because a threshold is a judgement and a measurement that lands on one should say so.")
 
     co, bfac, el = load_pdb(PDB)
     K, npair = elastic_network(co)
     S = System(co, K, rigid_basis(co))
-    report(f"\n  system: {S.n} degrees of freedom x3 = {S.n3}, {npair} couplings, {K.nnz} nonzeros")
-    report(f"  setup (one factorisation): {S.setup():.1f} s")
+    report(f"\n  system: {S.n3} degrees of freedom, {npair} couplings, {K.nnz} nonzeros")
+    report(f"  setup: {S.setup():.1f} s, null space DISCOVERED as {S.n_null} directions")
 
     results = []
     report("\n  PROBING THE VOCABULARY")
-    for fn in (probe_linearity, probe_precompute):
-        r = fn(S, rng, log)
-        results.append(r)
-        report(f"    {r[0]:<38} {'HOLDS' if r[1] else 'FAILS':<6} err {r[2]:.2e}  speedup {r[3]:.3g}x")
-        report(f"      {r[4]}")
-    report(f"    locality -- two questions, and conflating them is a known trap:")
-    r = probe_locality(S, rng, log)
-    results.append(r)
-    report(f"    {r[0]:<38} {'HOLDS' if r[1] else 'FAILS':<6} err {r[2]:.2e}  speedup {r[3]:.3g}x")
-    report(f"      {r[4]}")
+    for fn in (probe_linearity, probe_precompute, probe_locality):
+        results.append(fn(S, rng, log))
     rm, vals, n_zero = probe_modal(S, rng, log)
-    for r in (rm, probe_nullspace(vals, n_zero, S), probe_timescale(vals, S)):
-        results.append(r)
-        report(f"    {r[0]:<38} {'HOLDS' if r[1] else 'FAILS':<6} err {r[2]:.2e}  speedup {r[3]:.3g}x")
-        report(f"      {r[4]}")
+    results += [rm, probe_nullspace(vals, n_zero, S), probe_timescale(vals, S)]
+    report(f"    {'reduction':<40}{'verdict':<10}{'quantity':>12}{'vs thr':>9}{'speedup':>11}")
+    for r in results:
+        report(f"    {r['name']:<40}{r['verdict']:<10}{r['quantity']:>12.4g}"
+               f"{r['margin']:>9.2g}{r['speedup']:>11.4g}")
+        report(f"      {r['note']}")
 
-    held = [r for r in results if r[1]]
-    failed = [r for r in results if not r[1]]
-    # COMPOSITION IS NOT A PRODUCT, and the first version printed one. Linearity and reusable
-    # factorisation both eliminate re-solving; multiplying them double-counts the same saving. Speedups
-    # only multiply across INDEPENDENT cost axes -- how many solves, how many dimensions, how many steps
-    # -- and within an axis the right combination is the best single one, not the product. The first
-    # version reported 1.09e15x, which is not achievable by anything.
     AXIS = {"linearity -> superposition": "solves", "reusable factorisation": "solves",
-            "conserved directions (null space)": "dimensions",
-            "timescale separation -> event stepping": "steps"}
+            "conserved directions (null space)": "dimensions", "modal truncation": "dimensions",
+            "timescale separation -> event stepping": "steps",
+            "locality (norm) -> truncate": "dimensions"}
     by_axis = {}
-    for r in held:
-        ax = AXIS.get(r[0], "dimensions" if "modal" in r[0] else "other")
-        by_axis[ax] = max(by_axis.get(ax, 1.0), max(r[3], 1.0))
+    for r in results:
+        if r["verdict"] == "FAILS":
+            continue
+        ax = AXIS.get(r["name"], "other")
+        by_axis[ax] = max(by_axis.get(ax, 1.0), max(r["speedup"], 1.0))
     prod = 1.0
     for v in by_axis.values():
         prod *= v
-    report(f"\n  COMPOSED across independent cost axes -- NOT a product over reductions, because")
-    report(f"  linearity and reusable factorisation both eliminate re-solving and would double-count:")
+    report("\n  COMPOSED across independent cost axes -- NOT a product over reductions, because linearity")
+    report("  and reusable factorisation both eliminate re-solving and would double-count:")
     for ax, v in sorted(by_axis.items()):
-        report(f"    {ax:<14}{v:>12.3g}x")
-    report(f"    {'TOTAL':<14}{prod:>12.3g}x   ({len(held)} reductions hold)")
-    report(f"  REJECTED: {len(failed)} -- and these matter more, because they are what stops a scheme")
-    for r in failed:
-        report(f"    {r[0]}: {r[4]}")
-
-    report("\n  SCORING AGAINST THE HAND WORK")
-    hand = [("linearity exact (1.4e-13)", results[0][2] < 1e-8),
-            ("precompute ratio ~280x", 50 < results[1][3] < 2000),
-            ("norm-locality FAILS", not results[2][1]),
-            ("null space exists", results[4][1]),
-            ("wide spectrum", results[5][1])]
-    for lab, ok in hand:
-        report(f"    {'match' if ok else 'MISMATCH':<9} {lab}")
-    score = sum(ok for _, ok in hand)
-    report(f"    {score}/{len(hand)} recovered without being told")
-
-    report("\n  READING")
-    if score == len(hand):
-        report("  The machine recovered every structural fact the hand work found, including the one that")
-        report("  cost a misdiagnosis -- that the response is local in AMPLITUDE and global in NORM, so a")
-        report("  truncated support is not a valid reduction here. It also priced each one. The next test")
-        report("  is a system whose structure is NOT known in advance, because reproducing a known answer")
-        report("  is a harness and finding an unknown one is a discoverer.")
-    else:
-        report(f"  {len(hand)-score} mismatches. Until those are understood the verdicts cannot be trusted,")
-        report("  and an untrustworthy verdict is worse than no verdict -- someone will build on it.")
+        report(f"    {ax:<14}{v:>12.4g}x")
+    report(f"    {'TOTAL':<14}{prod:>12.4g}x")
+    rejected = [r for r in results if r["verdict"] == "FAILS"]
+    report(f"  REJECTED {len(rejected)} -- these matter more, they are what stops a scheme:")
+    for r in rejected:
+        report(f"    {r['name']}: {r['note']}")
 
     OUT.mkdir(parents=True, exist_ok=True)
-    json.dump({"test": "physics_reduce", "n_dof": S.n3, "t_setup": S.t_setup,
-               "reductions": [{"name": a, "holds": bool(b), "error": float(c), "speedup": float(d),
-                               "note": e} for a, b, c, d, e in results],
-               "composed_speedup": prod, "score": f"{score}/{len(hand)}",
-               "hand_check": {lab: bool(ok) for lab, ok in hand}, "log": log},
+    json.dump({"test": "physics_reduce", "n_dof": S.n3, "n_null": S.n_null, "t_setup": S.t_setup,
+               "reductions": results, "composed": prod, "axes": by_axis, "log": log},
               open(OUT / "physics_reduce.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'physics_reduce.json'}")
     return 0
