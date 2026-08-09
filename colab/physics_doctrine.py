@@ -55,6 +55,18 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 SEED = 91117
 N_PT = int(os.environ.get("DOCTRINE_N", 700))
 
+# PROBES THAT ARE CONTROLS, NOT DISCRIMINATORS -- declared here so rule 2 can exempt them in the open.
+# A control checks that the MACHINERY is sound; it is not measuring a property of the system and is not
+# expected ever to fail on a well-posed one. The distinction matters because a control must never be
+# counted as a reduction: physics_design gates superposition on the finite-amplitude probe for exactly
+# this reason.
+CONTROLS = {
+    "linearity -> superposition":
+        "cannot fail on a linear solver -- every Hessian is linear, so this verifies the operator and "
+        "the solve rather than a property of the system. A FAILS here means the Hessian is wrong and "
+        "nothing else in the run means anything. It is the reason probe_finite_linearity exists.",
+}
+
 
 # ---- the corpus the rules are checked against -------------------------------------------------------
 def corpus(rng):
@@ -96,11 +108,16 @@ def rule_2_can_fail(co, Ks, rng):
                 seen.setdefault(r["name"], set()).add(r["verdict"])
     if not seen:
         return None, "no recorded runs found to audit -- rule unchecked, not passed"
-    stuck = {k: sorted(v)[0] for k, v in seen.items() if len(v) == 1 and sorted(v)[0] == "HOLDS"}
-    ok = not stuck
-    detail = "; ".join(f"{k}: {'/'.join(sorted(v))}" for k, v in sorted(seen.items()))
-    return ok, (f"{len(seen)} probes over the recorded corpus, each seen with: {detail}" if ok else
-                f"ALWAYS HOLDS and therefore unfalsified here: {sorted(stuck)}")
+    stuck = {k for k, v in seen.items() if v == {"HOLDS"}}
+    # A CONTROL IS ALLOWED TO BE UNFALSIFIABLE, BUT IT HAS TO BE DECLARED AS ONE, HERE, IN PUBLIC.
+    # This exemption is the obvious way to launder a rule, so the list is short, each entry carries its
+    # reason, and a declared control is never counted toward a speedup by the design layer.
+    undeclared = sorted(stuck - set(CONTROLS))
+    ok = not undeclared
+    note = (f"{len(seen)} probes audited; controls (declared, unfalsifiable by construction): "
+            f"{sorted(stuck & set(CONTROLS))}; discriminators all seen failing somewhere"
+            if ok else f"UNFALSIFIED and not declared as controls: {undeclared}")
+    return ok, note
 
 
 def rule_3_invariant(co, Ks, rng):
@@ -171,16 +188,29 @@ def rule_7_perturbed(co, Ks, rng):
     is linear, so it reported HOLDS on a system that is not -- a test that could only pass. Corrected too
     far, the descent ran to 6,600 bond lengths and it reported FAILS for the wrong reason. Both are
     non-measurements; the window has to be two-sided and the probe must decline outside it."""
-    class Tiny(PR.System):
-        """A harmonic system whose relax() deliberately moves almost nothing."""
+    # THE FIRST VERSION OF THIS CHECK WAS WRONG, and the doctrine reported the tool as VIOLATED on the
+    # strength of it. It built a system whose relax() returns a TINY response -- but the probe bisects the
+    # force against the measured displacement, so it simply scaled the force up by 1e12, landed in the
+    # window, found a perfectly linear system, and correctly said HOLDS. A response that is merely small
+    # is not a failure mode; the bisection exists precisely to handle it.
+    #
+    # The rod's actual failure was SATURATION: the displacement did not respond to the force at all, so no
+    # amount of bisection could change it, and the deviation was (a-1)/a by algebra. That is what this
+    # must reproduce.
+    class Saturating(PR.System):
+        """Responds once and then ignores the force -- the rod's failure mode exactly."""
         def __init__(self, co, K):
             super().__init__(co, K, PR.rigid_basis(co))
             self.energy = lambda z: 0.0
+            bond = float(np.median(np.linalg.norm(np.diff(co, axis=0), axis=1)))
+            u = self.solve(self.couple(0, np.random.default_rng(0)))
+            peak = float(np.linalg.norm(u.reshape(-1, 3), axis=1).max())
+            self._fixed = u * (0.05 * bond / max(peak, 1e-300))     # 0.05 bond lengths, always
 
         def relax(self, f, steps=1, lr=None):
-            return 1e-12 * self.solve(f)
+            return self._fixed.copy()
 
-    S = Tiny(co, Ks["plain"])
+    S = Saturating(co, Ks["plain"])
     S.setup()
     v = PR.probe_finite_linearity(S, rng, [])
     ok = v is not None and v["verdict"] == "NOT TESTABLE"
@@ -329,6 +359,11 @@ def main():
 
     co, Ks = corpus(rng)
     report(f"\n  corpus: {N_PT} points, three operators (plain, rescaled 1e12, grounded)")
+    report("\n  DECLARED CONTROLS -- exempt from rule 2, and never counted as a reduction")
+    for k, why in CONTROLS.items():
+        report(f"    {k}")
+        for line in _wrap(why, 92):
+            report(f"      {line}")
 
     results = []
     report(f"\n  {'#':<3}{'rule':<52}{'verdict':<14}")

@@ -246,7 +246,25 @@ def main():
            f"Wr {ch.writhe():+.3f}")
     report(f"  building a {3*N_BEAD}x{3*N_BEAD} numerical Hessian by finite differences...")
     t1 = time.time()
+    g_before = None
+    try:
+        probe = RodSystem.__new__(RodSystem)
+        probe.ch = ch
+        g_before = float(np.linalg.norm(probe._grad(ch.r.ravel().copy())) / KT * 1e-9)
+    except Exception:
+        pass
     S = RodSystem(ch)
+    g_after = float(np.linalg.norm(S._grad(S.co.ravel().copy())) / KT * 1e-9)
+    report(f"  |grad E| {g_before:.4f} -> {g_after:.4f} kT/nm after relaxation")
+    if g_after > 1e-2:
+        report("  STILL NOT A STATIONARY POINT. The imposed circle is not one because the constructor")
+        report("  sets the radius from the ARC length while the bond term wants each CHORD at rest")
+        report("  length -- confirmed, since E minimises at exactly the predicted scale pi/(n sin(pi/n))")
+        report("  = 1.002101. A residual gradient survives that fix and is UNEXPLAINED: symmetry says a")
+        report("  regular planar polygon's gradient must be purely radial, which uniform scaling removes.")
+        report("  So the null-space count below is the count at a NON-stationary point, where rotations")
+        report("  are not null modes, and the prediction that a true minimum gives 6 remains UNTESTED")
+        report("  rather than falsified.")
     report(f"  Hessian built in {time.time()-t1:.0f} s")
     S.setup(k0=12)
     report(f"  null space DISCOVERED: {S.n_null} directions, gap {S.gap:.2e} to the first real mode")
