@@ -3,17 +3,55 @@
   "n_bead": 28,
   "bp": 1400.0,
   "sigma": -0.05,
-  "n_null": 14,
+  "n_null": 3,
+  "gap": 382.5215049375174,
+  "noise": 1.4216630266102582e-05,
+  "rigid_theorem": [
+    {
+      "axis": "rot x",
+      "measured": 924899744211700.4,
+      "predicted": 1150203535443565.8,
+      "rel_scale": 1.4216630266098698e-05
+    },
+    {
+      "axis": "rot y",
+      "measured": 924899744211952.5,
+      "predicted": 1150203535443630.2,
+      "rel_scale": 1.4216630266102574e-05
+    },
+    {
+      "axis": "rot z",
+      "measured": -852031319592263.0,
+      "predicted": 1150203535443598.0,
+      "rel_scale": -1.309657000295032e-05
+    }
+  ],
+  "step_control": [
+    {
+      "h": 1e-09,
+      "trans": 3.6713280265957143e-09,
+      "rot": 1.4216630266102582e-05,
+      "n_null": 3,
+      "gap": 382.52150486789253
+    },
+    {
+      "h": 1e-10,
+      "trans": 3.9438428383817996e-13,
+      "rot": 2.2119212545065982e-05,
+      "n_null": 3,
+      "gap": 50280511.53543855
+    }
+  ],
   "reductions": [
     {
       "name": "linearity -> superposition",
-      "quantity": 1.0061444556191683e-14,
+      "quantity": 1.0572827457767064e-13,
       "threshold": 1e-08,
       "direction": "below",
       "verdict": "HOLDS",
-      "margin": 1.0061444556191682e-06,
-      "speedup": 3.3322611772274042,
-      "note": "add 7 us against solve 0 ms",
+      "margin": 1.0572827457767064e-05,
+      "speedup": 3.4260614934114204,
+      "note": "add 5 us against solve 0 ms",
       "detail": {}
     },
     {
@@ -36,12 +74,12 @@
     },
     {
       "name": "reusable factorisation",
-      "quantity": 77.81828073993472,
+      "quantity": 76.01446654611212,
       "threshold": 10.0,
       "direction": "above",
       "verdict": "HOLDS",
-      "margin": 7.781828073993472,
-      "speedup": 77.81828073993472,
+      "margin": 7.601446654611212,
+      "speedup": 76.01446654611212,
       "note": "setup 0.0 s, each solve 0 ms",
       "detail": {}
     },
@@ -100,6 +138,44 @@
           }
         ]
       }
+    },
+    {
+      "name": "modal truncation",
+      "quantity": 0.9998301799253373,
+      "threshold": 0.9,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 0.001698200746627077,
+      "speedup": 9.333333333333334,
+      "note": "9 of 84 dimensions capture 100.0% of a real response",
+      "detail": {
+        "n_modes": 9
+      }
+    },
+    {
+      "name": "conserved directions (null space)",
+      "quantity": 3.0,
+      "threshold": 1.0,
+      "direction": "above",
+      "verdict": "MARGINAL",
+      "margin": 3.0,
+      "speedup": 1.037037037037037,
+      "note": "3 directions at numerical zero, gap 3.8e+02 to the first real mode; zero calibrated against rigid translation at 1.4e-05 relative  -- NOISY OPERATOR, an analytic Hessian gives ~1e-16",
+      "detail": {
+        "n_null": 3,
+        "gap": 382.52150498743714
+      }
+    },
+    {
+      "name": "timescale separation -> event stepping",
+      "quantity": 712071.5632270676,
+      "threshold": 1000.0,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 712.0715632270676,
+      "speedup": 712071.5632270676,
+      "note": "lambda spans 9.14e+13 to 6.51e+19",
+      "detail": {}
     }
   ],
   "log": [
@@ -113,19 +189,37 @@
     "\n  rod: 28 beads, 1400 bp, sigma -0.05, dLk -6.67, Wr +0.000",
     "  building a 84x84 numerical Hessian by finite differences...",
     "  Hessian built in 16 s",
-    "  null space DISCOVERED: 14 directions (+8 beyond the six rigid ones)",
-    "    eigensolve failed: IndexError: index 0 is out of bounds for axis 0 with size 0",
+    "  null space DISCOVERED: 3 directions, gap 3.83e+02 to the first real mode",
+    "\n  WHY 3 AND NOT 6 -- |grad E| = 0.581 kT/nm, so this configuration is NOT a minimum",
+    "    axis         measured RQ   H(Gx) = n x grad E    ratio   rel ||K||",
+    "    rot x         9.2490e+14           1.1502e+15     0.80    1.42e-05",
+    "    rot y         9.2490e+14           1.1502e+15     0.80    1.42e-05",
+    "    rot z        -8.5203e+14           1.1502e+15     0.74   -1.31e-05",
+    "    a parameter-free prediction; agreement means the rotational stiffness is the theorem",
+    "\n  CONTROL -- rebuild at a 10x smaller finite-difference step",
+    "    step            trans RQ      rot RQ   n_null         gap",
+    "    1e-09          3.671e-09   1.422e-05        3   3.825e+02",
+    "    1e-10          3.944e-13   2.212e-05        3   5.028e+07",
+    "    translation quotient collapsed: True   rotation quotient held: True   count stable: True",
+    "    -> the translations' residual was noise and the rotations' stiffness is real, so the",
+    "       null space is 3. Six would have been an assumption the measurement contradicts.",
     "\n    reduction                             verdict        quantity    speedup",
-    "    linearity -> superposition            HOLDS         1.006e-14      3.332",
-    "      add 7 us against solve 0 ms",
+    "    linearity -> superposition            HOLDS         1.057e-13      3.426",
+    "      add 5 us against solve 0 ms",
     "    finite-amplitude linearity            FAILS            0.8752          1",
     "      deviation from exact scaling at 2x/4x/8x force: 5.01e-01, 7.51e-01, 8.75e-01   |  max displacement 3.15e-02 of a bond length",
-    "    reusable factorisation                HOLDS             77.82      77.82",
+    "    reusable factorisation                HOLDS             76.01      76.01",
     "      setup 0.0 s, each solve 0 ms",
     "    locality (norm) -> truncate           FAILS                 1          1",
     "      100% of atoms carry 90% of the norm (R=10)",
+    "    modal truncation                      HOLDS            0.9998      9.333",
+    "      9 of 84 dimensions capture 100.0% of a real response",
+    "    conserved directions (null space)     MARGINAL              3      1.037",
+    "      3 directions at numerical zero, gap 3.8e+02 to the first real mode; zero calibrated against rigid translation at 1.4e-05 relative  -- NOISY OPERATOR, an analytic Hessian gives ~1e-16",
+    "    timescale separation -> event steppingHOLDS         7.121e+05  7.121e+05",
+    "      lambda spans 9.14e+13 to 6.51e+19",
     "\n  THE QUESTION THIS FILE EXISTS FOR",
-    "    operator-level linearity   HOLDS      1.006e-14",
+    "    operator-level linearity   HOLDS      1.057e-13",
     "    finite-amplitude linearity FAILS      8.752e-01",
     "    THE TOOL DISTINGUISHES THEM. The operator is linear -- it is a Hessian, it could not",
     "    be otherwise -- while the SYSTEM is not, and superposition on this rod would be",
