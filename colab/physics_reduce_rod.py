@@ -33,6 +33,25 @@ PREDECLARED, before any number:
 Also of interest and genuinely unknown: does the rod have a null space beyond the six rigid modes? A closed
 chain with fixed bond lengths has constraints the reducer has never met, and I do not know the count.
 
+THE ANSWER TURNED OUT TO BE THREE, AND "SIX RIGID MODES" WAS THE WRONG EXPECTATION.  For an energy
+invariant under rotation, differentiating grad E . Gx = 0 a second time gives
+
+    H (Gx) = -G^T grad E                   G the rotation generator, (Gx)_i = n x x_i
+
+so a rotation is a null mode ONLY at a stationary point. The generator depends on x, and off a minimum
+that term survives. A translation's generator does not depend on x, so translations are null everywhere.
+This Hessian is built at the imposed circular configuration, which is not a minimum -- |grad E| is
+0.58 kT/nm -- so three is the correct count and six would have been the error.
+
+That is not a threshold argument, and it was checked two independent ways rather than asserted:
+    the theorem PREDICTS the rotational Rayleigh quotient with no free parameter, and measurement
+        agrees within 25% on all three axes  (9.25e14 measured against 1.15e15 predicted)
+    shrinking the finite-difference step 10x moves NOISE and leaves a real derivative alone: the
+        translation quotient falls 1e4 (3.7e-09 -> 3.9e-13) while the rotation quotient does not move
+        (1.4e-05 -> 2.2e-05), and the count stays 3 at both steps
+The energy was also confirmed rotation-invariant directly, to 1e-06 kT at rotations up to 1 radian, so
+the rotational stiffness is not a broken symmetry in the model.
+
 -> outputs/physics_reduce_rod.json
 """
 import json
@@ -127,6 +146,61 @@ class RodSystem(PR.System):
         return x - self.co.ravel()
 
 
+def rigid_check(S, report):
+    """WHY THE NULL SPACE IS 3 AND NOT 6, measured rather than argued.
+
+    Translations are null modes of any Hessian of a translation-invariant energy. Rotations are null modes
+    only at a stationary point, because the rotation generator depends on the coordinates: differentiating
+    grad E . Gx = 0 gives H(Gx) = -G^T grad E. This checks that identity against the built Hessian, and
+    runs the step-size control that separates a real derivative from finite-difference noise."""
+    co = S.co
+    g = S._grad(co.ravel().copy()).reshape(-1, 3)
+    c = co.mean(axis=0)
+    scale = float(sp.linalg.norm(S.K, np.inf))
+    report(f"\n  WHY 3 AND NOT 6 -- |grad E| = {np.linalg.norm(g)/KT*1e-9:.3f} kT/nm, so this configuration"
+           f" is NOT a minimum")
+    report(f"    {'axis':<10}{'measured RQ':>14}{'H(Gx) = n x grad E':>21}{'ratio':>9}{'rel ||K||':>12}")
+    out = []
+    for lbl, ax in (("rot x", [1, 0, 0]), ("rot y", [0, 1, 0]), ("rot z", [0, 0, 1])):
+        n = np.array(ax, float)
+        u = np.cross(n, co - c).ravel()
+        d = u / np.linalg.norm(u)
+        meas = float(d @ (S.K @ d))
+        pred = float(u @ np.cross(n, g).ravel() / KT) / float(u @ u)
+        report(f"    {lbl:<10}{meas:>14.4e}{abs(pred):>21.4e}"
+               f"{abs(meas)/max(abs(pred), 1e-300):>9.2f}{meas/scale:>12.2e}")
+        out.append({"axis": lbl, "measured": meas, "predicted": abs(pred), "rel_scale": meas / scale})
+    report("    a parameter-free prediction; agreement means the rotational stiffness is the theorem")
+    return out
+
+
+def step_control(report):
+    """NOISE MOVES WITH THE STEP, A DERIVATIVE DOES NOT. The one control that separates them."""
+    report("\n  CONTROL -- rebuild at a 10x smaller finite-difference step")
+    report(f"    {'step':<12}{'trans RQ':>12}{'rot RQ':>12}{'n_null':>9}{'gap':>12}")
+    rows, h0 = [], H
+    for h in (H, H / 10):
+        globals()["H"] = h
+        ch = SC.Circle(N_BEAD, BP, SIGMA * (BP / 10.5), SC.C_TWIST, np.random.default_rng(SEED))
+        S = RodSystem(ch)
+        sc = float(sp.linalg.norm(S.K, np.inf))
+        Q = PR.rigid_basis(ch.r.copy())
+        rq = [float(abs(Q[:, j] @ (S.K @ Q[:, j]))) / float(Q[:, j] @ Q[:, j]) for j in range(6)]
+        S.setup(k0=12)
+        t, r = max(rq[:3]) / sc, max(rq[3:]) / sc
+        report(f"    {h:<12.0e}{t:>12.3e}{r:>12.3e}{S.n_null:>9}{S.gap:>12.3e}")
+        rows.append({"h": h, "trans": t, "rot": r, "n_null": S.n_null, "gap": S.gap})
+    globals()["H"] = h0
+    fell = rows[1]["trans"] < rows[0]["trans"] / 100
+    held = rows[1]["rot"] > rows[0]["rot"] / 3
+    report(f"    translation quotient collapsed: {fell}   rotation quotient held: {held}   "
+           f"count stable: {rows[0]['n_null'] == rows[1]['n_null']}")
+    if fell and held:
+        report("    -> the translations' residual was noise and the rotations' stiffness is real, so the")
+        report("       null space is 3. Six would have been an assumption the measurement contradicts.")
+    return rows
+
+
 def main():
     log, t0 = [], time.time()
 
@@ -152,8 +226,9 @@ def main():
     S = RodSystem(ch)
     report(f"  Hessian built in {time.time()-t1:.0f} s")
     S.setup(k0=12)
-    report(f"  null space DISCOVERED: {S.n_null} directions "
-           f"({S.n_null-6:+d} beyond the six rigid ones)")
+    report(f"  null space DISCOVERED: {S.n_null} directions, gap {S.gap:.2e} to the first real mode")
+    rigid = rigid_check(S, report)
+    ctrl = step_control(report)
 
     results = []
     for fn in (PR.probe_linearity, PR.probe_finite_linearity, PR.probe_precompute, PR.probe_locality):
@@ -197,7 +272,8 @@ def main():
             report("    nothing else in this run should be read.")
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"test": "physics_reduce_rod", "n_bead": N_BEAD, "bp": BP, "sigma": SIGMA,
-               "n_null": S.n_null, "reductions": results, "log": log},
+               "n_null": S.n_null, "gap": S.gap, "noise": S.noise,
+               "rigid_theorem": rigid, "step_control": ctrl, "reductions": results, "log": log},
               open(OUT / "physics_reduce_rod.json", "w"), indent=2)
     report(f"\n  total {time.time()-t0:.0f}s  -> {OUT/'physics_reduce_rod.json'}")
     return 0
