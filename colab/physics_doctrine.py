@@ -202,7 +202,8 @@ def rule_7_perturbed(co, Ks, rng):
         def __init__(self, co, K):
             super().__init__(co, K, PR.rigid_basis(co))
             self.energy = lambda z: 0.0
-            bond = float(np.median(np.linalg.norm(np.diff(co, axis=0), axis=1)))
+            self.setup()                       # solve() needs the factorisation; the first version
+            bond = float(np.median(np.linalg.norm(np.diff(co, axis=0), axis=1)))   # called it before
             u = self.solve(self.couple(0, np.random.default_rng(0)))
             peak = float(np.linalg.norm(u.reshape(-1, 3), axis=1).max())
             self._fixed = u * (0.05 * bond / max(peak, 1e-300))     # 0.05 bond lengths, always
