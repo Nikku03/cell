@@ -153,7 +153,19 @@ def audit_module(path):
     if op:
         try:
             blob = op.read_text(errors="ignore")
-            rec["output_has_negative"] = bool(re.search(r"FAILS|\bfalse\b|not supported|refuted", blob))
+            # THESE TWO ARE CIRCULAR AND ARE REPORTED AS SUCH.
+            #
+            # They search recorded outputs for the words FAILS / MARGINAL / NOT TESTABLE. That is the
+            # verdict VOCABULARY of physics_reduce, so physics_* scores 100% on both by construction --
+            # it invented the words -- while a subsystem that reports negatives perfectly well in its own
+            # language scores zero. Checked rather than assumed: of the matches outside physics, cell
+            # model contributed 2 and chromatin 2, and every one of them was a JSON boolean `false`
+            # rather than a reported negative result. Nexus contributed one real FAILS.
+            #
+            # So these columns measure whether a module adopted one particular vocabulary. That is worth
+            # knowing -- the graded verdict has not propagated past the line that invented it -- but it
+            # is NOT a measure of whether negatives get reported, and it must not be read as one.
+            rec["output_has_negative"] = bool(re.search(r"FAILS|not supported|refuted", blob))
             rec["output_has_graded"] = bool(re.search(r"MARGINAL|NOT TESTABLE|UNRESOLVABLE|abstain",
                                                       blob))
         except Exception:
@@ -218,12 +230,20 @@ def main():
         scores[name] = score(recs)
         report(f"  scanned {name}: {len(recs)} modules")
 
-    report(f"\n  {'subsystem':<32}{'mods':>6}{'runs':>6}{'GIT gate':>10}{'neg':>7}{'graded':>8}")
+    report(f"\n  STRONG -- the commit graph. 'runs' is how many modules record a result at all.")
+    report(f"  {'subsystem':<32}{'mods':>6}{'runs':>6}{'cover':>7}{'GIT gate':>10}")
     for name in list(SUBSYSTEMS) + list(CALIBRATION):
         s = scores[name]
-        report(f"  {name:<32}{s['modules']:>6}{s['with_recorded_output']:>6}"
-               f"{_fmt(s['GIT_gate_before_output']):>10}{_fmt(s['OUTPUT_has_negative']):>7}"
-               f"{_fmt(s['OUTPUT_has_graded']):>8}")
+        cov = s['with_recorded_output'] / max(s['modules'], 1)
+        report(f"  {name:<32}{s['modules']:>6}{s['with_recorded_output']:>6}{cov:>7.0%}"
+               f"{_fmt(s['GIT_gate_before_output']):>10}")
+
+    report("\n  CIRCULAR -- these search for physics_reduce's own verdict words, so it scores 100%")
+    report("  by construction. Read as vocabulary ADOPTION, never as whether negatives get reported.")
+    report(f"  {'subsystem':<32}{'FAILS':>8}{'graded':>8}")
+    for nm2 in list(SUBSYSTEMS) + list(CALIBRATION):
+        s2 = scores[nm2]
+        report(f"  {nm2:<32}{_fmt(s2['OUTPUT_has_negative']):>8}{_fmt(s2['OUTPUT_has_graded']):>8}")
 
     report(f"\n  TEXT checks -- weak evidence, kept separate on purpose")
     report(f"  {'subsystem':<32}{'predecl':>9}{'control':>9}{'heldout':>9}{'negative':>10}")
