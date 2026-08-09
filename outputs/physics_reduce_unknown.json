@@ -6,35 +6,35 @@
       "name": "generic",
       "npair": 43938,
       "nnz": 813384,
-      "t_setup": 1.5703670978546143,
+      "t_setup": 3.7557830810546875,
       "reductions": [
         {
           "name": "linearity -> superposition",
           "holds": true,
-          "error": 1.9070605282910389e-10,
-          "speedup": 308.44576334057547,
-          "note": "add 22 us against solve 7 ms"
+          "error": 1.0475310579252152e-15,
+          "speedup": 294.07332722273145,
+          "note": "add 26 us against solve 8 ms"
         },
         {
           "name": "reusable factorisation",
           "holds": true,
           "error": 0.0,
-          "speedup": 175.27614267770846,
-          "note": "setup 1.6 s, each solve 9 ms"
+          "speedup": 403.9825614197056,
+          "note": "setup 3.8 s, each solve 9 ms"
         },
         {
           "name": "locality (norm) -> truncate",
           "holds": false,
-          "error": 0.0002962766617448098,
-          "speedup": 1.8102824040550325,
-          "note": "55% of atoms carries 1.00 of the norm at R=10 A"
+          "error": 0.016297608178425627,
+          "speedup": 1.2575452716297786,
+          "note": "80% of atoms carries 0.98 of the norm at R=10 A"
         },
         {
           "name": "modal truncation (33 modes)",
           "holds": false,
-          "error": 0.9999999999481507,
+          "error": 0.7809704184575101,
           "speedup": 227.27272727272728,
-          "note": "33 of 7500 dimensions reproduce 0.0% of a real response"
+          "note": "33 of 7500 dimensions reproduce 21.9% of a real response"
         },
         {
           "name": "conserved directions (null space)",
@@ -47,7 +47,7 @@
           "name": "timescale separation -> event stepping",
           "holds": false,
           "error": 0.0,
-          "speedup": 877.4105993853551,
+          "speedup": 877.4105993857429,
           "note": "lambda spans 9.62e-02 to 8.44e+01, ratio 8.8e+02"
         }
       ],
@@ -57,48 +57,48 @@
       "name": "disordered",
       "npair": 43938,
       "nnz": 813384,
-      "t_setup": 1.7788500785827637,
+      "t_setup": 3.867236852645874,
       "reductions": [
         {
           "name": "linearity -> superposition",
-          "holds": false,
-          "error": 8.399558837138686e-08,
-          "speedup": 321.34795292224123,
-          "note": "add 24 us against solve 8 ms"
+          "holds": true,
+          "error": 6.700450767183621e-14,
+          "speedup": 292.77271915729335,
+          "note": "add 27 us against solve 8 ms"
         },
         {
           "name": "reusable factorisation",
           "holds": true,
           "error": 0.0,
-          "speedup": 175.43412730137084,
-          "note": "setup 1.8 s, each solve 10 ms"
+          "speedup": 384.4618130448592,
+          "note": "setup 3.9 s, each solve 10 ms"
         },
         {
           "name": "locality (norm) -> truncate",
           "holds": false,
-          "error": 0.00029490097860229714,
-          "speedup": 1.8102824040550325,
-          "note": "55% of atoms carries 1.00 of the norm at R=10 A"
+          "error": 0.006601312834474959,
+          "speedup": 1.0561892691170258,
+          "note": "95% of atoms carries 0.99 of the norm at R=10 A"
         },
         {
           "name": "modal truncation (33 modes)",
           "holds": false,
-          "error": 0.9999999999817455,
+          "error": 0.792266002228436,
           "speedup": 227.27272727272728,
-          "note": "33 of 7500 dimensions reproduce 0.0% of a real response"
+          "note": "33 of 7500 dimensions reproduce 20.8% of a real response"
         },
         {
           "name": "conserved directions (null space)",
           "holds": true,
           "error": 0.0,
           "speedup": 1.000934205258241,
-          "note": "7 directions at numerical zero, gap 5.0e+12 to the first real mode"
+          "note": "7 directions at numerical zero, gap 4.7e+12 to the first real mode"
         },
         {
           "name": "timescale separation -> event stepping",
           "holds": true,
           "error": 0.0,
-          "speedup": 508027.52037379966,
+          "speedup": 508027.5201901381,
           "note": "lambda spans 6.42e-02 to 3.26e+04, ratio 5.1e+05"
         }
       ],
@@ -108,35 +108,35 @@
       "name": "diluted",
       "npair": 18503,
       "nnz": 355536,
-      "t_setup": 1.0711705684661865,
+      "t_setup": 4.558945894241333,
       "reductions": [
         {
           "name": "linearity -> superposition",
           "holds": true,
-          "error": 1.017217892211195e-09,
-          "speedup": 245.98816568047337,
-          "note": "add 24 us against solve 6 ms"
+          "error": 2.5283295260469146e-13,
+          "speedup": 218.51880640842944,
+          "note": "add 28 us against solve 6 ms"
         },
         {
           "name": "reusable factorisation",
           "holds": true,
           "error": 0.0,
-          "speedup": 143.30325531548428,
-          "note": "setup 1.1 s, each solve 7 ms"
+          "speedup": 604.7695932696565,
+          "note": "setup 4.6 s, each solve 8 ms"
         },
         {
           "name": "locality (norm) -> truncate",
           "holds": false,
-          "error": 0.0,
-          "speedup": 1.0,
-          "note": "100% of atoms carries 1.00 of the norm at R=20 A"
+          "error": 0.00044032381164993417,
+          "speedup": 1.6666666666666667,
+          "note": "60% of atoms carries 1.00 of the norm at R=10 A"
         },
         {
           "name": "modal truncation (17 modes)",
           "holds": false,
-          "error": 0.999951808094717,
+          "error": 0.9928512697185267,
           "speedup": 441.1764705882353,
-          "note": "17 of 7500 dimensions reproduce 0.0% of a real response"
+          "note": "17 of 7500 dimensions reproduce 0.7% of a real response"
         },
         {
           "name": "conserved directions (null space)",
@@ -149,7 +149,7 @@
           "name": "timescale separation -> event stepping",
           "holds": true,
           "error": 0.0,
-          "speedup": 169496142.87866455,
+          "speedup": 169496142.87730137,
           "note": "lambda spans 2.51e-07 to 4.26e+01, ratio 1.7e+08"
         }
       ],
@@ -159,21 +159,21 @@
       "name": "long-range",
       "npair": 244650,
       "nnz": 4410000,
-      "t_setup": 0.754901647567749,
+      "t_setup": 1.6931891441345215,
       "reductions": [
         {
           "name": "linearity -> superposition",
           "holds": true,
-          "error": 2.3252001911483357e-15,
-          "speedup": 199.30679156908664,
-          "note": "add 13 us against solve 3 ms"
+          "error": 2.0338574815250254e-15,
+          "speedup": 238.1128296428174,
+          "note": "add 11 us against solve 3 ms"
         },
         {
           "name": "reusable factorisation",
           "holds": true,
           "error": 0.0,
-          "speedup": 238.98670068232596,
-          "note": "setup 0.8 s, each solve 3 ms"
+          "speedup": 531.1308054745344,
+          "note": "setup 1.7 s, each solve 3 ms"
         },
         {
           "name": "locality (norm) -> truncate",
@@ -185,7 +185,7 @@
         {
           "name": "modal truncation (34 modes)",
           "holds": false,
-          "error": 0.9598448800939439,
+          "error": 0.9598448800939242,
           "speedup": 61.76470588235294,
           "note": "34 of 2100 dimensions reproduce 4.0% of a real response"
         },
@@ -200,25 +200,25 @@
           "name": "timescale separation -> event stepping",
           "holds": false,
           "error": 0.0,
-          "speedup": 286.9718892927264,
+          "speedup": 286.97188929286943,
           "note": "lambda spans 1.26e+00 to 3.62e+02, ratio 2.9e+02"
         }
       ],
       "fill_in": 1.0004761904761905
     }
   ],
-  "n_moved": 2,
+  "n_moved": 1,
   "n_reductions": 8,
   "predictions": [
     {
       "claim": "disorder worsens modal truncation",
       "held": true,
-      "note": "1.000 -> 1.000"
+      "note": "0.781 -> 0.792"
     },
     {
       "claim": "disorder improves locality",
       "held": true,
-      "note": "0.000 -> 0.000"
+      "note": "0.016 -> 0.007"
     },
     {
       "claim": "dilution grows the null space",
@@ -239,52 +239,52 @@
     "  system. Identical geometry throughout, so ONLY the coupling structure differs.",
     "  geometry: 2500 points in a 10.0^3 box, cutoff 1.6",
     "\n  GENERIC  --  43938 couplings, 813384 nonzeros (1.45e-02 dense fraction)",
-    "    linearity -> superposition            HOLDS  err 1.91e-10  x308",
-    "      add 22 us against solve 7 ms",
-    "    reusable factorisation                HOLDS  err 0.00e+00  x175",
-    "      setup 1.6 s, each solve 9 ms",
-    "    locality (norm) -> truncate           FAILS  err 2.96e-04  x1.81",
-    "      55% of atoms carries 1.00 of the norm at R=10 A",
-    "    modal truncation (33 modes)           FAILS  err 1.00e+00  x227",
-    "      33 of 7500 dimensions reproduce 0.0% of a real response",
+    "    linearity -> superposition            HOLDS  err 1.05e-15  x294",
+    "      add 26 us against solve 8 ms",
+    "    reusable factorisation                HOLDS  err 0.00e+00  x404",
+    "      setup 3.8 s, each solve 9 ms",
+    "    locality (norm) -> truncate           FAILS  err 1.63e-02  x1.26",
+    "      80% of atoms carries 0.98 of the norm at R=10 A",
+    "    modal truncation (33 modes)           FAILS  err 7.81e-01  x227",
+    "      33 of 7500 dimensions reproduce 21.9% of a real response",
     "    conserved directions (null space)     HOLDS  err 0.00e+00  x1",
     "      7 directions at numerical zero, gap 2.3e+14 to the first real mode",
     "    timescale separation -> event steppingFAILS  err 0.00e+00  x877",
     "      lambda spans 9.62e-02 to 8.44e+01, ratio 8.8e+02",
-    "    factorisation 1.6 s, fill-in 13.5x",
+    "    factorisation 3.8 s, fill-in 13.5x",
     "\n  DISORDERED  --  43938 couplings, 813384 nonzeros (1.45e-02 dense fraction)",
-    "    linearity -> superposition            FAILS  err 8.40e-08  x321",
-    "      add 24 us against solve 8 ms",
-    "    reusable factorisation                HOLDS  err 0.00e+00  x175",
-    "      setup 1.8 s, each solve 10 ms",
-    "    locality (norm) -> truncate           FAILS  err 2.95e-04  x1.81",
-    "      55% of atoms carries 1.00 of the norm at R=10 A",
-    "    modal truncation (33 modes)           FAILS  err 1.00e+00  x227",
-    "      33 of 7500 dimensions reproduce 0.0% of a real response",
+    "    linearity -> superposition            HOLDS  err 6.70e-14  x293",
+    "      add 27 us against solve 8 ms",
+    "    reusable factorisation                HOLDS  err 0.00e+00  x384",
+    "      setup 3.9 s, each solve 10 ms",
+    "    locality (norm) -> truncate           FAILS  err 6.60e-03  x1.06",
+    "      95% of atoms carries 0.99 of the norm at R=10 A",
+    "    modal truncation (33 modes)           FAILS  err 7.92e-01  x227",
+    "      33 of 7500 dimensions reproduce 20.8% of a real response",
     "    conserved directions (null space)     HOLDS  err 0.00e+00  x1",
-    "      7 directions at numerical zero, gap 5.0e+12 to the first real mode",
+    "      7 directions at numerical zero, gap 4.7e+12 to the first real mode",
     "    timescale separation -> event steppingHOLDS  err 0.00e+00  x5.08e+05",
     "      lambda spans 6.42e-02 to 3.26e+04, ratio 5.1e+05",
-    "    factorisation 1.8 s, fill-in 14.2x",
+    "    factorisation 3.9 s, fill-in 14.2x",
     "\n  DILUTED  --  18503 couplings, 355536 nonzeros (6.32e-03 dense fraction)",
-    "    linearity -> superposition            HOLDS  err 1.02e-09  x246",
-    "      add 24 us against solve 6 ms",
-    "    reusable factorisation                HOLDS  err 0.00e+00  x143",
-    "      setup 1.1 s, each solve 7 ms",
-    "    locality (norm) -> truncate           FAILS  err 0.00e+00  x1",
-    "      100% of atoms carries 1.00 of the norm at R=20 A",
-    "    modal truncation (17 modes)           FAILS  err 1.00e+00  x441",
-    "      17 of 7500 dimensions reproduce 0.0% of a real response",
+    "    linearity -> superposition            HOLDS  err 2.53e-13  x219",
+    "      add 28 us against solve 6 ms",
+    "    reusable factorisation                HOLDS  err 0.00e+00  x605",
+    "      setup 4.6 s, each solve 8 ms",
+    "    locality (norm) -> truncate           FAILS  err 4.40e-04  x1.67",
+    "      60% of atoms carries 1.00 of the norm at R=10 A",
+    "    modal truncation (17 modes)           FAILS  err 9.93e-01  x441",
+    "      17 of 7500 dimensions reproduce 0.7% of a real response",
     "    conserved directions (null space)     HOLDS  err 0.00e+00  x1",
     "      23 directions at numerical zero, gap 1.2e+09 to the first real mode",
     "    timescale separation -> event steppingHOLDS  err 0.00e+00  x1.69e+08",
     "      lambda spans 2.51e-07 to 4.26e+01, ratio 1.7e+08",
-    "    factorisation 1.1 s, fill-in 24.7x",
+    "    factorisation 4.6 s, fill-in 24.7x",
     "\n  LONG-RANGE  --  244650 couplings, 4410000 nonzeros (1.00e+00 dense fraction)",
-    "    linearity -> superposition            HOLDS  err 2.33e-15  x199",
-    "      add 13 us against solve 3 ms",
-    "    reusable factorisation                HOLDS  err 0.00e+00  x239",
-    "      setup 0.8 s, each solve 3 ms",
+    "    linearity -> superposition            HOLDS  err 2.03e-15  x238",
+    "      add 11 us against solve 3 ms",
+    "    reusable factorisation                HOLDS  err 0.00e+00  x531",
+    "      setup 1.7 s, each solve 3 ms",
     "    locality (norm) -> truncate           FAILS  err 1.54e-03  x1.26",
     "      80% of atoms carries 1.00 of the norm at R=10 A",
     "    modal truncation (34 modes)           FAILS  err 9.60e-01  x61.8",
@@ -293,28 +293,25 @@
     "      6 directions at numerical zero, gap 1.1e+15 to the first real mode",
     "    timescale separation -> event steppingFAILS  err 0.00e+00  x287",
     "      lambda spans 1.26e+00 to 3.62e+02, ratio 2.9e+02",
-    "    factorisation 0.8 s, fill-in 1.0x",
+    "    factorisation 1.7 s, fill-in 1.0x",
     "\n  DID THE VERDICTS MOVE?",
     "    reduction                                  generic  disordered     diluted  long-range",
     "    conserved directions (null space)              Y 1         Y 1         Y 1         Y 1",
-    "    linearity -> superposition               Y 3.1e+02   N 3.2e+02   Y 2.5e+02     Y 2e+02",
-    "    locality (norm) -> truncate                  N 1.8       N 1.8         N 1       N 1.3",
+    "    linearity -> superposition               Y 2.9e+02   Y 2.9e+02   Y 2.2e+02   Y 2.4e+02",
+    "    locality (norm) -> truncate                  N 1.3       N 1.1       N 1.7       N 1.3",
     "    modal truncation (17 modes)                      -           -   N 4.4e+02           -",
     "    modal truncation (33 modes)              N 2.3e+02   N 2.3e+02           -           -",
     "    modal truncation (34 modes)                      -           -           -        N 62",
-    "    reusable factorisation                   Y 1.8e+02   Y 1.8e+02   Y 1.4e+02   Y 2.4e+02",
+    "    reusable factorisation                     Y 4e+02   Y 3.8e+02     Y 6e+02   Y 5.3e+02",
     "    timescale separation -> event stepping   N 8.8e+02   Y 5.1e+05   Y 1.7e+08   N 2.9e+02",
-    "\n    2 of 8 reductions changed verdict across the four systems",
+    "\n    1 of 8 reductions changed verdict across the four systems",
     "\n  AGAINST THE PREDICTIONS I WROTE FIRST",
-    "    as predicted      disorder worsens modal truncation    1.000 -> 1.000",
-    "    as predicted      disorder improves locality           0.000 -> 0.000",
+    "    as predicted      disorder worsens modal truncation    0.781 -> 0.792",
+    "    as predicted      disorder improves locality           0.016 -> 0.007",
     "    as predicted      dilution grows the null space        7 -> 23 zero directions",
     "    NOT as predicted  long-range explodes fill-in          13.5x -> 1.0x",
     "\n  READING",
-    "  THE VERDICTS MOVE. 2 of 8 reductions change with the coupling structure",
-    "  while the geometry is held fixed, so the tool is reading the system rather than its own",
-    "  probes. That is the property a checklist does not have.",
-    "  Of my written predictions, 3 of 4 came out as stated -- and the ones that",
-    "  did NOT are the informative rows, because they are the tool disagreeing with me."
+    "  ONLY 1 verdicts moved. The tool is largely reporting its own probes, and should be",
+    "  described as a checklist rather than a discoverer until that is fixed."
   ]
 }
