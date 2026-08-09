@@ -103,13 +103,27 @@ class RodSystem(PR.System):
         # STEP SIZE FROM THE SYSTEM, NOT A CONSTANT. The first version used lr = 1e-22 and the
         # displacement came out at 1e-8 of a bond length -- far too small to distinguish a linear system
         # from any other, which is exactly what the probe then reported.
+        # ADAPTIVE, because a fixed step diverged. The first version used lr = 1e-22 and moved 1e-8 of a
+        # bond length -- too small to distinguish a linear system from any other. Scaling the step to the
+        # system then overshot the other way and the descent ran to 6,600 bond lengths, so the probe
+        # reported FAILS for the wrong reason. Neither is a measurement. This backtracks whenever the
+        # objective rises, which is the minimum needed for the number to mean anything.
         x = self.co.ravel().copy()
-        g0 = self._grad(x) - f * KT
         bond = float(np.median(np.linalg.norm(np.diff(self.co, axis=0), axis=1)))
-        lr = lr or (0.02 * bond / max(np.abs(g0).max(), 1e-300))
+        obj = lambda z: self._E(z) - float(f @ z) * KT
+        e = obj(x)
+        lr = lr or (1e-3 * bond / max(np.abs(self._grad(x) - f * KT).max(), 1e-300))
         for _ in range(steps):
             g = self._grad(x) - f * KT
-            x = x - lr * g
+            xn = x - lr * g
+            en = obj(xn)
+            if en < e:
+                x, e = xn, en
+                lr *= 1.1                      # it worked, try a little harder
+            else:
+                lr *= 0.5                      # it did not, back off
+                if lr < 1e-30:
+                    break
         return x - self.co.ravel()
 
 
