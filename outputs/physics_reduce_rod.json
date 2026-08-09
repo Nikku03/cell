@@ -7,42 +7,42 @@
   "reductions": [
     {
       "name": "linearity -> superposition",
-      "quantity": 1.840116008949517e-15,
+      "quantity": 1.4927896201152475e-15,
       "threshold": 1e-08,
       "direction": "below",
       "verdict": "HOLDS",
-      "margin": 1.840116008949517e-07,
-      "speedup": 3.3771569433032047,
-      "note": "add 6 us against solve 0 ms",
+      "margin": 1.4927896201152475e-07,
+      "speedup": 4.323827046918123,
+      "note": "add 5 us against solve 0 ms",
       "detail": {}
     },
     {
       "name": "finite-amplitude linearity",
-      "quantity": 0.9997714812219765,
+      "quantity": 5558.820177032859,
       "threshold": 0.001,
       "direction": "below",
       "verdict": "NOT TESTABLE",
-      "margin": 999.7714812219764,
+      "margin": 5558820.177032859,
       "speedup": 1.0,
-      "note": "deviation from exact scaling at 2x/4x/8x force: 1.00e+00, 9.69e-01, 9.96e-01   |  max displacement 1.33e-04 of a bond length  -- the perturbation moved almost nothing, so this cannot distinguish a linear system from any other",
+      "note": "deviation from exact scaling at 2x/4x/8x force: 5.56e+03, 2.72e+03, 1.42e+03   |  max displacement 1.68e-04 of a bond length  -- the perturbation moved almost nothing, so this cannot distinguish a linear system from any other",
       "detail": {
         "devs": [
-          0.9997714812219765,
-          0.9692232987891648,
-          0.9963437072880366
+          5558.820177032859,
+          2722.798034104581,
+          1419.0817756290855
         ],
-        "rel_amp": 0.00013348110863044163
+        "rel_amp": 0.0001682401354106583
       }
     },
     {
       "name": "reusable factorisation",
-      "quantity": 3.7055463661738863,
+      "quantity": 5.39265651242254,
       "threshold": 10.0,
       "direction": "above",
       "verdict": "MARGINAL",
-      "margin": 0.37055463661738863,
-      "speedup": 3.7055463661738863,
-      "note": "setup 0.0 s, each solve 2 ms",
+      "margin": 0.539265651242254,
+      "speedup": 5.39265651242254,
+      "note": "setup 0.0 s, each solve 1 ms",
       "detail": {}
     },
     {
@@ -103,13 +103,13 @@
     },
     {
       "name": "modal truncation",
-      "quantity": 0.9303998227706772,
+      "quantity": 0.8931792729753885,
       "threshold": 0.9,
       "direction": "above",
       "verdict": "MARGINAL",
-      "margin": 0.6960017722932278,
+      "margin": 1.0682072702461156,
       "speedup": 28.0,
-      "note": "3 of 84 dimensions capture 93.0% of a real response",
+      "note": "3 of 84 dimensions capture 89.3% of a real response",
       "detail": {
         "n_modes": 3
       }
@@ -125,18 +125,18 @@
       "note": "9 directions below the cut, but the gap to the next mode is only 2.0x -- the noise floor (3.4e-05 relative) and the softest real modes OVERLAP, so no cut separates them and this count is an artefact of where the line was drawn",
       "detail": {
         "n_null": 9,
-        "gap": 1.966083425965272,
+        "gap": 1.966083425965226,
         "noise": 3.444031852995792e-05
       }
     },
     {
       "name": "timescale separation -> event stepping",
-      "quantity": 2484.529514821554,
+      "quantity": 2484.5295148216205,
       "threshold": 1000.0,
       "direction": "above",
       "verdict": "MARGINAL",
-      "margin": 2.484529514821554,
-      "speedup": 2484.529514821554,
+      "margin": 2.4845295148216207,
+      "speedup": 2484.5295148216205,
       "note": "lambda spans 1.19e+14 to 2.96e+17",
       "detail": {}
     }
@@ -154,24 +154,25 @@
     "  Hessian built in 15 s",
     "  null space DISCOVERED: 9 directions (+3 beyond the six rigid ones)",
     "\n    reduction                             verdict        quantity    speedup",
-    "    linearity -> superposition            HOLDS          1.84e-15      3.377",
-    "      add 6 us against solve 0 ms",
-    "    finite-amplitude linearity            NOT TESTABLE       0.9998          1",
-    "      deviation from exact scaling at 2x/4x/8x force: 1.00e+00, 9.69e-01, 9.96e-01   |  max displacement 1.33e-04 of a bond length  -- the perturbation moved almost nothing, so this cannot distinguish a linear system from any other",
-    "    reusable factorisation                MARGINAL          3.706      3.706",
-    "      setup 0.0 s, each solve 2 ms",
+    "    linearity -> superposition            HOLDS         1.493e-15      4.324",
+    "      add 5 us against solve 0 ms",
+    "    finite-amplitude linearity            NOT TESTABLE         5559          1",
+    "      deviation from exact scaling at 2x/4x/8x force: 5.56e+03, 2.72e+03, 1.42e+03   |  max displacement 1.68e-04 of a bond length  -- the perturbation moved almost nothing, so this cannot distinguish a linear system from any other",
+    "    reusable factorisation                MARGINAL          5.393      5.393",
+    "      setup 0.0 s, each solve 1 ms",
     "    locality (norm) -> truncate           FAILS                 1          1",
     "      100% of atoms carry 90% of the norm (R=10)",
-    "    modal truncation                      MARGINAL         0.9304         28",
-    "      3 of 84 dimensions capture 93.0% of a real response",
+    "    modal truncation                      MARGINAL         0.8932         28",
+    "      3 of 84 dimensions capture 89.3% of a real response",
     "    conserved directions (null space)     UNRESOLVABLE            9          1",
     "      9 directions below the cut, but the gap to the next mode is only 2.0x -- the noise floor (3.4e-05 relative) and the softest real modes OVERLAP, so no cut separates them and this count is an artefact of where the line was drawn",
     "    timescale separation -> event steppingMARGINAL           2485       2485",
     "      lambda spans 1.19e+14 to 2.96e+17",
     "\n  THE QUESTION THIS FILE EXISTS FOR",
-    "    operator-level linearity   HOLDS      1.840e-15",
-    "    finite-amplitude linearity NOT TESTABLE 9.998e-01",
-    "    The operator-level probe did not hold, so the numerical Hessian is suspect and",
-    "    nothing else in this run should be read."
+    "    operator-level linearity   HOLDS      1.493e-15",
+    "    finite-amplitude linearity NOT TESTABLE 5.559e+03",
+    "    The finite-amplitude probe DECLINED. It could not place the perturbation inside the",
+    "    window where the question is meaningful, so it reports that rather than a verdict.",
+    "    The operator-level result stands on its own; the system-level one is unmeasured."
   ]
 }
