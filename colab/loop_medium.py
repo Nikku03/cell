@@ -182,11 +182,55 @@ def main():
     say(f"\n  asking minimal_medium for the uptakes required to reach {MU_REQUIRE}/h ...")
     t1 = time.time()
     mm = minimal_medium(M, MU_REQUIRE, minimize_components=False)
-    if mm is None:
-        say("  minimal_medium found no solution. Nothing below can be computed; recorded as such.")
-        return 1
-    mm = mm[mm > 1e-9].sort_values(ascending=False)
-    say(f"    {len(mm)} exchange reactions required ({time.time()-t1:.0f}s)")
+    if mm is not None:
+        mm = mm[mm > 1e-9].sort_values(ascending=False)
+        say(f"    {len(mm)} exchange reactions required ({time.time()-t1:.0f}s)")
+        supplement = []
+    else:
+        # THE INTERESTING CASE, and the one that actually happened.
+        # With uptake restricted to plausible small molecules the model cannot grow AT ALL -- not
+        # slowly, exactly zero. "It does not grow" is a wall, not a finding, so it gets converted into
+        # one: greedily re-open the single barred exchange that buys the most growth, and repeat. The
+        # answer is then a NAMED, MINIMAL list of the large molecules Human-GEM cannot synthesise for
+        # itself, which is a concrete statement about the model rather than a complaint about it.
+        say(f"    INFEASIBLE ({time.time()-t1:.0f}s) -- on plausible small molecules alone this model")
+        say(f"    does not grow at all. Converting that into a list: greedily re-opening the barred")
+        say(f"    uptake that buys the most growth, until {MU_REQUIRE}/h is reachable.")
+        cand = [M.reactions.get_by_id(r) for r in
+                [x.id for x in M.exchanges if x.lower_bound == 0.0 and x.id not in
+                 {y.id for y in M.exchanges if (list(y.metabolites)[0].name or '').strip().lower()
+                  in PHYS_SET}]]
+        supplement, mu_cur = [], M.slim_optimize() or 0.0
+        for step in range(12):
+            best, best_mu = None, mu_cur
+            for r in cand:
+                r.lower_bound = -1000.0
+                v = M.slim_optimize()
+                r.lower_bound = 0.0
+                if v is not None and np.isfinite(v) and v > best_mu + 1e-9:
+                    best, best_mu = r, float(v)
+            if best is None:
+                say(f"      step {step+1}: NOTHING further increases growth. Stuck at {mu_cur:.4g}/h.")
+                break
+            best.lower_bound = -1000.0
+            cand.remove(best)
+            supplement.append(best.id)
+            mu_cur = best_mu
+            nm = list(best.metabolites)[0].name
+            say(f"      step {step+1}: + {nm:<44} -> {mu_cur:.4g}/h")
+            if mu_cur >= MU_REQUIRE:
+                break
+        say(f"    minimal supplement: {len(supplement)} large molecules the model cannot make for itself")
+        mm = minimal_medium(M, min(MU_REQUIRE, max(mu_cur * 0.9, 1e-6)), minimize_components=False)
+        if mm is None:
+            say("    still infeasible; nothing below can be computed and it is recorded as such.")
+            json.dump({"test": "loop_medium", "M1": False, "infeasible": True,
+                       "mu_open": float(mu_open), "mu_barred": float(mu_barred),
+                       "supplement": supplement, "log": log},
+                      open(OUT / "loop_medium.json", "w"), indent=2)
+            return 1
+        mm = mm[mm > 1e-9].sort_values(ascending=False)
+        say(f"    {len(mm)} exchange reactions required once supplemented")
 
     def met_name(rid):
         r = M.reactions.get_by_id(rid)
@@ -336,6 +380,7 @@ def main():
                "n_barred": len(barred), "barred": sorted(set(barred)),
                "mu_medium": float(mu_med),
                "n_open_uptakes": len(keep), "n_required": len(mm),
+               "supplement": supplement,
                "required_physiological": phys_hit, "required_exotic": exotic,
                "auc_defined_medium": float(a_med), "auc_open_medium": OPEN_MEDIUM_BEST,
                "stratified_auc": float(sa), "cv_lookup": float(a_look), "cv_combined": float(a_both),
