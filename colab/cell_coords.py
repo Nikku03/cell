@@ -246,7 +246,19 @@ def main():
         "fields_added": ["strand", "gene_start", "gene_end", "ens_tss"],
         "coverage": {"with_strand": added, "without": miss, "total": len(genes)},
     }
-    json.dump(D, open(CELL, "w"))
+    # BACK UP BEFORE WRITING, and write atomically. cell_complete.json is 38 MB and is EXPLICITLY
+    # gitignored (.gitignore:65), so an in-place edit has no version-controlled original to fall back on.
+    # I patched it once before noticing that, and was only able to verify the edit was additive because an
+    # unrelated cell_complete.json.gz happened to be lying next to it. That is luck, not a safety net.
+    bak = CELL.with_suffix(".json.prepatch")
+    if not bak.exists():
+        import shutil
+        shutil.copy2(CELL, bak)
+        report(f"  backed up the original to {bak.name} (it is not in git)")
+    tmp = CELL.with_suffix(".json.tmp")
+    with open(tmp, "w") as fh:
+        json.dump(D, fh)
+    os.replace(tmp, CELL)             # atomic; a crash mid-write cannot leave a truncated 38 MB file
     report(f"\n  PATCHED  strand + gene_start + gene_end + ens_tss on {added} of {len(genes)} records "
            f"({added/len(genes):.1%}); {miss} left null rather than guessed")
     report(f"  PATCHED  top-level `genome` block with the evidence above")
