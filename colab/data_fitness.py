@@ -70,16 +70,21 @@ def locate(name):
 
 
 def vocab(path):
-    """The field names a file actually offers. Top-level keys plus the keys of sampled records, because
-    this repo's tables are overwhelmingly dict-of-dict keyed by gene or reaction id."""
+    """The field names a file actually offers, and WHETHER THE FILE COULD BE READ AT ALL.
+
+    Returning an empty set for a file that failed to open is the defect that produced this check's first
+    finding list. pyarrow was not installed, every .parquet came back with no fields, and 72 modules were
+    reported as having 'dead data dependencies' -- almost all of them parquet readers doing nothing wrong.
+    An unreadable file and a file with no fields are not the same fact and must not return the same value.
+    """
     key = str(path)
     if key in _VOCAB:
         return _VOCAB[key]
-    ks = set()
+    ks, ok = set(), True
     try:
         if path.stat().st_size > MAXBYTES:
-            _VOCAB[key] = ks
-            return ks
+            _VOCAB[key] = (ks, False)
+            return _VOCAB[key]
         sfx = path.suffix.lower()
         if sfx == ".json":
             obj = json.load(open(path))
@@ -112,12 +117,24 @@ def vocab(path):
             sep = "\t" if (sfx == ".tsv" or head.count("\t") > head.count(",")) else ","
             ks |= {c.strip().strip('"') for c in head.split(sep) if c.strip()}
         elif sfx == ".parquet":
-            import pandas as pd
-            ks |= set(map(str, pd.read_parquet(path).columns))
+            import pyarrow.parquet as pq
+            ks |= set(map(str, pq.read_schema(path).names))
+        else:
+            ok = False                      # .pkl, .gz and friends are not introspected here
     except Exception:
-        pass
-    _VOCAB[key] = ks
-    return ks
+        ok = False
+    _VOCAB[key] = (ks, ok)
+    return _VOCAB[key]
+
+
+def _is_environ(node):
+    """os.environ["CELL_OUT"] is a lookup in the process environment, not a field in a dataset. Counting
+    it inflated the denominator and put ten modules at a spurious 0% field match, every one of them
+    'unmatched' on CELL_OUT and CELL_SCRATCH."""
+    v = node.value
+    if isinstance(v, ast.Attribute) and v.attr == "environ":
+        return True
+    return isinstance(v, ast.Name) and v.id == "environ"
 
 
 def accessed(tree):
@@ -126,11 +143,15 @@ def accessed(tree):
     for n in ast.walk(tree):
         if isinstance(n, ast.Subscript) and isinstance(n.slice, ast.Constant) \
                 and isinstance(n.slice.value, str):
-            ks.add(n.slice.value)
+            if not _is_environ(n):
+                ks.add(n.slice.value)
         elif isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "get" \
                 and n.args and isinstance(n.args[0], ast.Constant) and isinstance(n.args[0].value, str):
-            ks.add(n.args[0].value)
-    return {k for k in ks if k and len(k) > 1 and not k.startswith(("/", "."))}
+            if not (isinstance(n.func.value, ast.Attribute) and n.func.value.attr == "environ"):
+                ks.add(n.args[0].value)
+    # environment-variable names by convention, reached for through a wrapper this check cannot see
+    return {k for k in ks if k and len(k) > 1 and not k.startswith(("/", "."))
+            and not (k.isupper() and k.startswith("CELL_"))}
 
 
 def main():
@@ -168,15 +189,19 @@ def main():
                 all_ds.setdefault(str(p), p)
         if not ins:
             continue
-        voc = set()
-        per = {}
+        voc, per, unread = set(), {}, []
         for p in ins:
-            v = vocab(p)
+            v, ok = vocab(p)
+            if not ok:
+                unread.append(p.name)      # cannot be judged; NOT the same as having no fields
+                continue
             per[p.name] = len(acc & v)
             voc |= v
+        if not per:
+            continue                        # every input unreadable: this module cannot be scored
         rows.append({"module": r["module"], "n_keys": len(acc), "hit": len(acc & voc),
                      "frac": len(acc & voc) / len(acc), "inputs": [p.name for p in ins],
-                     "per_input": per, "unmatched": sorted(acc - voc)[:12],
+                     "per_input": per, "unreadable": unread, "unmatched": sorted(acc - voc)[:12],
                      "dead_inputs": [n for n, c in per.items() if c == 0]})
     report(f"\n  {len(rows)} modules have both named fields and a locatable input")
     report(f"  {len(all_ds)} distinct datasets introspected")
@@ -193,7 +218,7 @@ def main():
         pick = rng.choice(len(pool), size=min(len(r["inputs"]), len(pool)), replace=False)
         voc = set()
         for i in pick:
-            voc |= vocab(pool[int(i)])
+            voc |= vocab(pool[int(i)])[0]
         perm.append(len(acc & voc) / max(len(acc), 1))
     true_m = float(np.mean([r["frac"] for r in rows]))
     perm_m = float(np.mean(perm)) if perm else 0.0
@@ -218,6 +243,9 @@ def main():
     report(f"    {len(dead)} of {len(rows)} modules ({len(dead)/max(len(rows),1):.0%})")
     report("    Consuming a file whole -- an array, a matrix -- looks identical to this check, so these")
     report("    are candidates. A module that loads a keyed table and reads no key from it is a defect.")
+    nun = sum(len(r.get("unreadable", [])) for r in rows)
+    report(f"    {nun} input slots were UNREADABLE and are excluded rather than counted as dead -- the")
+    report("    first run counted them, and reported 72 dead dependencies that were mostly parquet.")
     for r in sorted(dead, key=lambda x: -len(x["dead_inputs"]))[:10]:
         report(f"      {Path(r['module']).name:<36}{', '.join(r['dead_inputs'])[:52]}")
 
