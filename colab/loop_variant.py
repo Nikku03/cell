@@ -47,6 +47,35 @@ PREDECLARED, before any number:
 CONTROLS: 200 label shuffles; the knockout score as V3's comparator; LOEUF and mRNA abundance as
 independent lookups; benign-only genes as the negative class rather than "everything else".
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    V1 ENCODE   PASS.  1,659 model genes carry both a clinical missense assertion and a dose-response:
+                784 with >= 3 pathogenic missense variants, 875 with benign missense and none
+                pathogenic. The slot exists now; it did not this morning.
+    V2 SIGNAL   PASS, but barely and it should be read that way.  Best dose-response feature (curve
+                area) 0.5513 against a shuffled null of 0.4999 +/- 0.0094, 95th percentile 0.5146.
+                Real, and small.
+    V3 PARTIAL LOSS IS REAL   FAIL, and this was the whole point.  0.5513 against the pure knockout's
+                0.5529 -- a difference of -0.0016 where the gate was +0.02. Knowing what growth does at
+                50% of an enzyme's capacity adds NOTHING over knowing what it does at 0%.
+    V4 BEATS THE CATALOGUE   FAIL.  LOEUF 0.6393 and mRNA abundance 0.6554 both beat every mechanistic
+                feature here. Under cross-validation the dose-response adds +0.0139 on top of LOEUF,
+                which is a real but modest increment.
+
+THE NEGATIVE, stated plainly because it was predeclared and it is the finding.  The reasoning behind
+this module was that a missense variant causes PARTIAL loss and a deletion causes total loss, so a model
+carrying enzyme capacity should see a distinction a knockout screen cannot. It does not. The five-point
+dose-response is, for this question, decoration: a deletion screen was always sufficient, and the extra
+four linear programs per gene bought -0.0016 AUC.
+
+WHY, most likely, and it is testable rather than asserted.  Flux balance is a linear programme, so
+growth as a function of one enzyme's capacity tends to be piecewise linear with a single breakpoint --
+either the bound binds or it does not. Real enzyme kinetics are saturating and cooperative, and the
+sharp shoulder a missense variant would fall off is a property of the kinetics, not of the
+stoichiometry. Building the dose-response on an LP may have been the wrong instrument for the claim
+from the start. That is a specific, checkable follow-up: repeat with saturating kinetics rather than
+hard bounds and see whether the shoulder appears.
+
 -> outputs/loop_variant.json
 """
 import collections
