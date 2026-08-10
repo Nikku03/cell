@@ -51,10 +51,11 @@ import sys, json, os, importlib.util
 sys.path.insert(0, "colab")
 import run_trace
 path = sys.argv[1]
+sink = sys.argv[2] if len(sys.argv) > 2 else None
 spec = importlib.util.spec_from_file_location("m_under_trace", path)
 m = importlib.util.module_from_spec(spec)
 status = "ok"
-with run_trace.trace() as t:
+with run_trace.trace(sink=sink) as t:
     try:
         spec.loader.exec_module(m)
         if hasattr(m, "main"):
@@ -63,6 +64,7 @@ with run_trace.trace() as t:
         pass
     except BaseException as e:
         status = f"{type(e).__name__}: {str(e)[:140]}"
+t._spill(force=True)
 s = t.summary()
 sys.stdout.write("@@TRACE@@" + json.dumps({
     "status": status,
@@ -75,16 +77,27 @@ sys.stdout.write("@@TRACE@@" + json.dumps({
 
 def run_one(mod):
     drv = SCRATCH / "driver.py"
+    sink = SCRATCH / (mod.replace("/", "_") + ".partial.json")
+    if sink.exists():
+        sink.unlink()
     t0 = time.time()
     try:
-        r = subprocess.run([sys.executable, str(drv), mod], cwd=ROOT, timeout=TIMEOUT,
+        r = subprocess.run([sys.executable, str(drv), mod, str(sink)], cwd=ROOT, timeout=TIMEOUT,
                            capture_output=True, text=True,
                            env={**os.environ, "MPLBACKEND": "Agg", "TRACE_CHILD": "1"})
         out = r.stdout
-    except subprocess.TimeoutExpired as e:
-        out = (e.stdout or "") if isinstance(e.stdout, str) else ""
-        return {"module": mod, "status": f"TIMEOUT after {TIMEOUT}s", "inputs": [], "writes": [],
-                "keys": {}, "seconds": round(time.time() - t0, 1)}
+    except subprocess.TimeoutExpired:
+        # THE PARTIAL TRACE IS THE POINT. A module killed mid-compute has usually finished loading, so
+        # its input list is complete even though its result is not. Discarding it, as the first version
+        # did, threw away exactly the 32 modules that were most expensive to learn anything about.
+        part = {"inputs": [], "writes": [], "keys": {}}
+        try:
+            part = json.load(open(sink))
+        except Exception:
+            pass
+        return {"module": mod, "status": f"TIMEOUT after {TIMEOUT}s", "inputs": part.get("inputs", []),
+                "writes": part.get("writes", []), "keys": part.get("keys", {}),
+                "seconds": round(time.time() - t0, 1)}
     except Exception as ex:
         return {"module": mod, "status": f"launch failed: {type(ex).__name__}", "inputs": [],
                 "writes": [], "keys": {}, "seconds": round(time.time() - t0, 1)}

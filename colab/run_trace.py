@@ -77,10 +77,20 @@ class TracedDict(dict):
 
 
 class Trace:
-    def __init__(self, keys=True):
+    """SPILL THE TRACE AS IT IS BUILT, not at the end.
+
+    The first version printed the trace when the child finished, so a module killed on timeout reported
+    ZERO inputs -- 32 of them, every one of which had already opened files before it was killed. The
+    information existed and was thrown away at the moment it became interesting. Writing to `sink` after
+    each read means a SIGKILL costs at most the last half second."""
+
+    def __init__(self, keys=True, sink=None):
         self.reads, self.writes, self.keys_by_file = {}, {}, {}
         self.track_keys = keys
         self.t0 = time.time()
+        self.sink = sink
+        self._raw_open = builtins.open        # captured BEFORE patching, so spilling is not self-traced
+        self._last = 0.0
 
     def _rec(self, d, path, how):
         try:
@@ -91,6 +101,22 @@ class Trace:
 
     def read(self, path, how):
         self._rec(self.reads, path, how)
+        self._spill()
+
+    def _spill(self, force=False):
+        if not self.sink:
+            return
+        now = time.time()
+        if not force and now - self._last < 0.5:
+            return
+        self._last = now
+        try:
+            with self._raw_open(self.sink, "w") as fh:
+                json.dump({"status": "partial", "inputs": self.input_paths(),
+                           "writes": sorted(self.writes),
+                           "keys": {k: sorted(v) for k, v in self.keys_by_file.items()}}, fh)
+        except Exception:
+            pass
 
     def write(self, path, how):
         self._rec(self.writes, path, how)
@@ -114,8 +140,8 @@ class Trace:
 class trace:
     """Context manager. Everything is restored on exit, including after an exception."""
 
-    def __init__(self, keys=True):
-        self.tr = Trace(keys)
+    def __init__(self, keys=True, sink=None):
+        self.tr = Trace(keys, sink)
         self._saved = {}
 
     def __enter__(self):
