@@ -23,8 +23,8 @@
       }
     ],
     "coverage": {
-      "available": 7,
-      "used": 7,
+      "available": 8,
+      "used": 8,
       "selection": "all",
       "fraction": 1.0
     },
@@ -85,7 +85,8 @@
         "colab/build_blocks.py"
       ],
       "produces": [
-        "cell_loop.json"
+        "cell_loop.json",
+        "loop_fold_link.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
@@ -94,7 +95,8 @@
         "colab/evidence_completion.py"
       ],
       "controlled": [
-        "cell_loop.json"
+        "cell_loop.json",
+        "loop_fold_link.json"
       ],
       "note": "gene-keyed"
     },
@@ -102,27 +104,63 @@
       "question": "any chromosome fold",
       "what": "a change in 3D genome organisation",
       "blocks": {
-        "loops3d": 767,
-        "model4": 7700
+        "loops3d": 767
       },
-      "n_items": 8467,
+      "n_items": 767,
       "encode": true,
-      "pipeline": false,
-      "check": false,
-      "answers": false,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
       "emits": true,
       "namers": [
         "colab/adrn_ko_channels3.py",
         "colab/complete_cell.py",
+        "colab/data_ledger.py",
         "colab/ko_dossier.py",
         "colab/layers.py",
+        "colab/loop_real_chromatin.py",
+        "colab/supercoil_gate.py",
+        "colab/supercoil_track.py"
+      ],
+      "produces": [
+        "data_ledger.json",
+        "loop_real_chromatin.json"
+      ],
+      "phenotype_hits": [],
+      "controlled": [
+        "loop_real_chromatin.json"
+      ],
+      "note": "767 loop anchors, plus measured bTMP torsion from GSE277502; model4 was removed from this row because it is a functional neighbourhood, not a conformation"
+    },
+    {
+      "question": "functional neighbourhood",
+      "what": "NOT one of the six -- reported so model4's items are not lost",
+      "blocks": {
+        "model4": 7700
+      },
+      "n_items": 7700,
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/complete_cell.py",
+        "colab/loop_chromatin.py",
+        "colab/loop_fold_link.py",
         "colab/phase2_audit.py",
         "colab/phase2_loop.py"
       ],
-      "produces": [],
+      "produces": [
+        "loop_chromatin.json",
+        "loop_fold_link.json"
+      ],
       "phenotype_hits": [],
-      "controlled": [],
-      "note": "loop anchors and a 4D model"
+      "controlled": [
+        "loop_chromatin.json",
+        "loop_fold_link.json"
+      ],
+      "note": "NOT a fold -- 8.8% cis, half its pairs sharing a functional label. Kept as its own row so the 7,700 items are still counted, under a heading that describes them"
     },
     {
       "question": "drug effect",
@@ -242,7 +280,7 @@
     }
   ],
   "n_emits": 6,
-  "n_answers": 1,
+  "n_answers": 2,
   "n_questions": 6,
   "controlled_results": {
     "capability_audit.json": 2,
@@ -250,26 +288,32 @@
     "cell_loop.json": 5,
     "cell_model_audit.json": 2,
     "data_doctrine.json": 2,
-    "data_fitness.json": 1
+    "data_fitness.json": 1,
+    "loop_chromatin.json": 4,
+    "loop_deficit.json": 5,
+    "loop_fold_link.json": 5,
+    "loop_medium.json": 5,
+    "loop_real_chromatin.json": 5,
+    "loop_variant.json": 5
   },
-  "n_modules": 929,
+  "n_modules": 935,
   "n_phenotype_modules": 32,
   "log": [
     "====================================================================================================",
     "THE PHILOSOPHER TURNED ON THE GOAL -- \"answer anything in the cell\"",
     "====================================================================================================",
     "  The goal as stated cannot fail, so it cannot be worked towards. Three independent axes make",
-    "  it fail somewhere: ENCODE (is the perturbation addressable), PROPAGATE (does it reach a cell",
-    "  outcome through edges that actually exist), CHECK (is there a held-out score with a control).",
-    "\n  graph: 929 modules, 873 directed edges from real reads and writes; 11 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
-    "  284 modules read cell_complete.json; block-level use resolved from source of 719 modules",
+    "",
+    "\n  graph: 935 modules, 875 directed edges from real reads and writes; 17 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
+    "  286 modules read cell_complete.json; block-level use resolved from source of 725 modules",
     "  32 modules write something that is a cell-level outcome",
-    "  6 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json",
+    "  12 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_chromatin.json, loop_deficit.json, loop_fold_link.json, loop_medium.json, loop_real_chromatin.json, loop_variant.json",
     "  6 modules are INSTRUMENTS (they read this repo's own audit records) and are excluded from every axis, because an audit crediting itself is how the last three checks here went wrong",
     "\n  question                 ENCODE  PIPELINE   CHECK      items  answers?",
     "  any point mutation          yes        NO      NO         13  no",
     "  any protein change          yes       yes     yes     42,765  YES",
-    "  any chromosome fold         yes        NO      NO      8,467  no",
+    "  any chromosome fold         yes       yes     yes        767  YES",
+    "  functional neighbourhood      yes       yes     yes      7,700  YES",
     "  drug effect                 yes        NO      NO      4,275  no",
     "  side effect                 yes        NO      NO         48  no",
     "  cancer                      yes        NO      NO        839  no",
@@ -280,10 +324,13 @@
     "                           recorded results: NONE   controlled: NONE",
     "    any protein change     slots {'ppm': 16015, 'abund': 16286, 'ptm': 8425, 'complexes': 2039}",
     "                           modules that address it: abstain, adrn_ko_channels2, adrn_ko_channels3, annotation_prior, best_combined, biochem_limit, bioplex, build_blocks",
-    "                           recorded results: cell_loop.json   controlled: cell_loop.json",
-    "    any chromosome fold    slots {'loops3d': 767, 'model4': 7700}",
-    "                           modules that address it: adrn_ko_channels3, complete_cell, ko_dossier, layers, phase2_audit, phase2_loop",
-    "                           recorded results: NONE   controlled: NONE",
+    "                           recorded results: cell_loop.json, loop_fold_link.json   controlled: cell_loop.json, loop_fold_link.json",
+    "    any chromosome fold    slots {'loops3d': 767}",
+    "                           modules that address it: adrn_ko_channels3, complete_cell, data_ledger, ko_dossier, layers, loop_real_chromatin, supercoil_gate, supercoil_track",
+    "                           recorded results: data_ledger.json, loop_real_chromatin.json   controlled: loop_real_chromatin.json",
+    "    functional neighbourhood slots {'model4': 7700}",
+    "                           modules that address it: complete_cell, loop_chromatin, loop_fold_link, phase2_audit, phase2_loop",
+    "                           recorded results: loop_chromatin.json, loop_fold_link.json   controlled: loop_chromatin.json, loop_fold_link.json",
     "    drug effect            slots {'drugs': 4275}",
     "                           modules that address it: adrn_drug_liveness, adrn_drug_response, adrn_ko_channels3, blind_target, cell_qa, cell_stats, cellgraph, cellos",
     "                           recorded results: NONE   controlled: NONE",
@@ -297,14 +344,16 @@
     "                           modules that address it: best_combined, build_kinetics_bundle, cascade, cell_loop, cell_orphan_chem_coverage, cell_orphan_truthset, cell_sim, cell_state",
     "                           recorded results: cell_loop.json, data_ledger.json   controlled: cell_loop.json",
     "\n  CALIBRATION -- two known answers, checked before any of the above is believed",
-    "    chromosome fold must NOT reach a cell outcome (subsystem_links measured zero links)",
+    "    side effect must NOT reach a cell outcome (no compound-to-adverse-event table exists)",
     "      -> pipeline = False, check = False   OK",
+    "    chromosome fold must NOW reach one (loop_real_chromatin built it on measured torsion)",
+    "      -> pipeline = True, check = True   OK",
     "    metabolic growth must reach one, with a control (cell_loop closed it today)",
     "      -> pipeline = True, check = True   OK",
     "\n====================================================================================================",
-    "  OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 can be ASKED, 1 can be ANSWERED.",
+    "  OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 can be ASKED, 2 can be ANSWERED.",
     "  The gap between those two numbers is the distance left, and it is the honest headline.",
     "====================================================================================================",
-    "    manifest: 3 inputs, coverage 7/7 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 3 inputs, coverage 8/8 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }

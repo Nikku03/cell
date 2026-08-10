@@ -25,12 +25,23 @@ far the goal is. It is reported as two numbers, not one.
 THE CALIBRATION, predeclared, and the audit is void if either fails.  An instrument that says yes to
 everything is not an instrument. Two known answers are checked first:
 
-    chromosome fold -> cell outcome  MUST come back NO PATH.
-        subsystem_links measured exactly zero links between the 4D chromatin line and the cell model.
-        If this audit finds a path, the audit is wrong, not the repo.
+    side effect -> cell outcome  MUST come back NO PATH.
+        There is no compound-to-adverse-event table anywhere in this repository. 48 genes carry disease
+        associations and nothing carries a side effect. If this audit finds a path, the audit is wrong.
+
+        (This slot used to hold `chromosome fold`, and the swap is a record of progress rather than a
+        convenience. That calibration asserted a measured fact -- subsystem_links found exactly zero
+        chromatin-to-cell links -- and on 2026-08-10 loop_real_chromatin made it false by building one:
+        bTMP torsion against transcription, four gates, controlled against a naked-DNA track. The audit
+        then voided ITSELF, which is the correct behaviour: it was told a fact that had stopped being
+        true. A must-fail calibration has to be a case that is still genuinely negative, so it moved to
+        one, and chromosome fold moved to the must-pass side below.)
     metabolic growth -> cell outcome MUST come back a PATH with a control.
-        cell_loop closed that cycle today against four declared controls. If this audit cannot see it,
-        the audit is blind and its negatives mean nothing.
+        cell_loop closed that cycle against five declared controls. If this audit cannot see it, the
+        audit is blind and its negatives mean nothing.
+    chromosome fold -> cell outcome  MUST NOW come back a PATH with a control.
+        loop_real_chromatin established one on measured bTMP torsion. Same reasoning as above: an
+        instrument that cannot see a link that was built and controlled is not measuring anything.
 
 A yes on the first or a no on the second voids the run. That is the mutation test: reintroduce a known
 truth and check the check notices.
@@ -66,6 +77,14 @@ WHAT HAPPENED, written after the run, unedited.
     cancer                ENCODE yes       PIPELINE no    CHECK no
 
     OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 CAN BE ASKED, 1 CAN BE ANSWERED.
+
+RE-RUN 2026-08-10, after eight loops of work: 6 CAN BE ASKED, 2 CAN BE ANSWERED.
+    `any chromosome fold` moved from NO/NO to yes/yes -- loop_real_chromatin built the pipeline on
+    measured bTMP torsion against transcription rate, four gates, controlled against a naked-DNA track.
+    Its item count also FELL, from 8,467 to 767, because model4 was removed from that row: loop 7 showed
+    it is a functional neighbourhood and not a conformation, so 7,700 of those items were never
+    chromatin. A smaller, honest number replacing a larger, wrong one is the direction this should move.
+    The other four -- point mutation, drug effect, side effect, cancer -- are unchanged.
 
 And the one that passes does so at the weakest admissible strength, which should be said plainly rather
 than banked: `any protein change` is credited because cell_loop reads the abundance blocks and a gene
@@ -106,6 +125,7 @@ QUESTIONS = [
     ("any point mutation", "a single base change anywhere in the genome"),
     ("any protein change", "abundance, modification or activity of any protein"),
     ("any chromosome fold", "a change in 3D genome organisation"),
+    ("functional neighbourhood", "NOT one of the six -- reported so model4's items are not lost"),
     ("drug effect", "what a compound does to the cell"),
     ("side effect", "what it does that was not intended, elsewhere"),
     ("cancer", "driver alteration to transformed phenotype"),
@@ -119,7 +139,21 @@ ENTRY = {
                            "pathogenic/common counts. `biomarkers` holds mutation-conditioned "
                            "associations for 599 genes but is keyed on GENE, not on variant"},
     "any protein change": {"blocks": ["ppm", "abund", "ptm", "complexes"], "note": "gene-keyed"},
-    "any chromosome fold": {"blocks": ["loops3d", "model4"], "note": "loop anchors and a 4D model"},
+    # CORRECTED after loop 7. `model4` was credited here and it is NOT a fold: 8.8% of its neighbour
+    # pairs are same-chromosome where a Hi-C map runs 70-90%, and 51.7% share its own functional label
+    # ("transport/uptake", Reactome pathway names). Crediting it inflated this row's item count from 767
+    # to 8,467 and would have let a functional-annotation result answer a chromatin question. The real
+    # chromatin here is loops3d plus the ledgered bTMP-seq tracks.
+    "any chromosome fold": {"blocks": ["loops3d"],
+                            "files": ["GSM8523629_supercoil_rep1_hg38.bw",
+                                      "GSM8523630_supercoil_rep2_hg38.bw"],
+                            "note": "767 loop anchors, plus measured bTMP torsion from GSE277502; "
+                                    "model4 was removed from this row because it is a functional "
+                                    "neighbourhood, not a conformation"},
+    "functional neighbourhood": {"blocks": ["model4"], "files": [],
+                                 "note": "NOT a fold -- 8.8% cis, half its pairs sharing a functional "
+                                         "label. Kept as its own row so the 7,700 items are still "
+                                         "counted, under a heading that describes them"},
     "drug effect": {"blocks": ["drugs"], "note": "gene-keyed drug/target/action"},
     "side effect": {"blocks": ["otdis"], "note": "48 genes with disease associations; "
                     "no compound-to-adverse-event table exists here at all"},
@@ -352,16 +386,21 @@ def main():
     # ---- the calibration, which can void the run ------------------------------------------------------
     fold = next(r for r in rows if r["question"] == "any chromosome fold")
     grow = next(r for r in rows if r["question"] == "metabolic growth")
+    side = next(r for r in rows if r["question"] == "side effect")
     say("\n  CALIBRATION -- two known answers, checked before any of the above is believed")
-    say(f"    chromosome fold must NOT reach a cell outcome (subsystem_links measured zero links)")
+    say(f"    side effect must NOT reach a cell outcome (no compound-to-adverse-event table exists)")
+    say(f"      -> pipeline = {side['pipeline']}, check = {side['check']}   "
+        f"{'OK' if not side['check'] else 'AUDIT VOID'}")
+    say(f"    chromosome fold must NOW reach one (loop_real_chromatin built it on measured torsion)")
     say(f"      -> pipeline = {fold['pipeline']}, check = {fold['check']}   "
-        f"{'OK' if not fold['check'] else 'AUDIT VOID'}")
+        f"{'OK' if (fold['pipeline'] and fold['check']) else 'AUDIT VOID'}")
     say(f"    metabolic growth must reach one, with a control (cell_loop closed it today)")
     say(f"      -> pipeline = {grow['pipeline']}, check = {grow['check']}   "
         f"{'OK' if (grow['pipeline'] and grow['check']) else 'AUDIT VOID'}")
-    void = bool(fold["check"] or not (grow["pipeline"] and grow["check"]))
+    void = bool(side["check"] or not (grow["pipeline"] and grow["check"])
+                or not (fold["pipeline"] and fold["check"]))
 
-    real = [r for r in rows if not r["question"].startswith("metabolic")]
+    real = [r for r in rows if r["question"] not in ("metabolic growth", "functional neighbourhood")]
     emits = sum(r["emits"] for r in real)
     answers = sum(r["answers"] for r in real)
     say("\n" + "=" * 100)
