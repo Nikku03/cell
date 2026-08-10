@@ -165,6 +165,20 @@ LEDGER = [
      "from": ["lambert.csv"], "transform": "build_lambert",
      "source": "filtered from Lambert v1.01 by build_lambert() in this file",
      "why": "nexus_txn L4, 1,639 TFs"},
+    # ---- the metabolic model the closed loop runs on. Both were re-downloaded from the URLs below and
+    # hashed against the copies already in the container: bit-identical, so the provenance is verified
+    # rather than remembered.
+    {"name": "HumanGEM.xml", "path": SP / "HumanGEM.xml", "kind": "raw",
+     "sha256": "cc5a4383c6116b0c", "bytes": 43115559,
+     "url": "https://raw.githubusercontent.com/SysBioChalmers/Human-GEM/main/model/Human-GEM.xml",
+     "source": "Human-GEM (SysBioChalmers), SBML, 12,931 reactions / 8,461 metabolites / 2,848 genes",
+     "why": "the stoichiometry cell_loop closes the growth feedback through; cell_complete's own "
+            "metabolism is 3,355 reaction STRINGS with no stoichiometric matrix behind them"},
+    {"name": "HumanGEM_genes.tsv", "path": SP / "HumanGEM_genes.tsv", "kind": "raw",
+     "sha256": "2a6058a157b3b9f3", "bytes": 1132077,
+     "url": "https://raw.githubusercontent.com/SysBioChalmers/Human-GEM/main/model/genes.tsv",
+     "source": "Human-GEM gene annotation table, ENSG -> symbol / Entrez / UniProt",
+     "why": "the join between Human-GEM's ENSG ids and everything else here, which is keyed on symbol"},
 ]
 TRANSFORMS = {"build_abcfeat": build_abcfeat, "build_lambert": build_lambert}
 
