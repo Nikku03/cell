@@ -92,12 +92,25 @@ NOT_IMPORTABLE = [
 ]
 NOT_IMPORTABLE_SET = {w.lower() for w in NOT_IMPORTABLE}
 
+# AND A MECHANICAL RULE, because the name list was whack-a-mole.
+# With ATP and the lipoproteins barred, minimal_medium simply switched to prothrombin, fibrinogen,
+# haptoglobin, starch and glycogenin: the objective minimises total import FLUX, so it will always reach
+# for whatever molecule carries the most mass per unit flux, and no blacklist can enumerate that. The
+# fix has to come from the model's own data rather than from my memory. Human-GEM carries a formula for
+# 1,657 of its 1,660 exchange metabolites and the carbon counts run to 9,642,032 (Psyllium). Nothing a
+# cell takes up from a culture medium has more than about forty carbons -- cholesterol is 27, palmitate
+# 16 -- so uptake above that is barred, along with the three metabolites carrying no formula at all
+# ("steroids", "xenobiotics", "arachidonate derivatives", which are abstractions rather than molecules).
+# Anything on the physiological list is exempt, so the rule can never remove a real nutrient.
+MAX_UPTAKE_CARBONS = 40
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 SEED = 1904
 N_SHUFFLE = 200
 MU_REQUIRE = 0.030          # /h -- the growth the minimal medium must support
 GATE_FEASIBLE = 0.01
+GATE_LIMITING = 1.0         # a medium that permits 70/h is not a medium
 GATE_RETEST = 0.03
 GATE_SLACK = 0.90
 OPEN_MEDIUM_BEST = 0.6491   # plainFBA, open medium, from cell_loop
@@ -129,18 +142,41 @@ def main():
     mu_open = M.slim_optimize()
     say(f"  growth with everything open: {mu_open:.2f}/h  -- a cell that can eat anything")
 
-    barred = []
+    import re as _re
+
+    def carbons(met):
+        f = met.formula
+        if not f:
+            return None
+        g = _re.match(r"C(\d*)", f)
+        return (int(g.group(1) or 1)) if g else 0
+
+    barred, why = [], {"currency": 0, "too big": 0, "no formula": 0}
     for r in M.exchanges:
-        nm = (list(r.metabolites)[0].name or "").strip().lower()
+        met = list(r.metabolites)[0]
+        nm = (met.name or "").strip().lower()
+        if nm in PHYS_SET:
+            continue
+        c = carbons(met)
+        tag = None
         if nm in NOT_IMPORTABLE_SET:
+            tag = "currency"
+        elif c is None:
+            tag = "no formula"
+        elif c > MAX_UPTAKE_CARBONS:
+            tag = "too big"
+        if tag:
             r.lower_bound = 0.0
             barred.append(nm)
+            why[tag] += 1
     mu_barred = M.slim_optimize()
     say(f"\n  BARRING WHAT A CELL CANNOT IMPORT -- {len(barred)} exchanges closed to uptake")
-    say(f"    {', '.join(sorted(set(barred))[:14])}{' ...' if len(set(barred)) > 14 else ''}")
-    say(f"    growth drops {mu_open:.2f}/h -> {mu_barred:.2f}/h. Human-GEM ships uptake reactions for")
-    say(f"    energy currency and intact plasma proteins; a model that can import ATP has no essential")
-    say(f"    genes worth measuring, and that applies to loop 1's numbers too.")
+    say(f"    {why['currency']} energy currency and plasma proteins by name, {why['too big']} with more "
+        f"than {MAX_UPTAKE_CARBONS} carbons, {why['no formula']} with no formula at all")
+    say(f"    growth {mu_open:.2f}/h -> {mu_barred:.2f}/h")
+    say(f"    Human-GEM ships uptake reactions for ATP and for intact plasma proteins, and metabolites")
+    say(f"    with up to 9,642,032 carbons. A cell that can import its own energy currency has no")
+    say(f"    essential genes worth measuring; loop 1 was run without this bar in place.")
 
     # ---- what does the network actually need? ---------------------------------------------------------
     say(f"\n  asking minimal_medium for the uptakes required to reach {MU_REQUIRE}/h ...")
@@ -193,10 +229,16 @@ def main():
         f"({len(keep)/len(M.exchanges):.1%})")
     say(f"    growth: {mu_med:.4f}/h   (open medium {mu_open:.2f}/h -- a {mu_open/max(mu_med,1e-9):.0f}x "
         f"reduction, achieved by nutrients rather than by squeezing enzymes)")
-    m1 = bool(np.isfinite(mu_med) and mu_med >= GATE_FEASIBLE)
-    say(f"    M1 FEASIBLE (>= {GATE_FEASIBLE}/h)   {'PASS' if m1 else 'FAIL'}")
+    # A medium has to be feasible AND limiting. Two earlier attempts produced media that supported
+    # 86.26/h and 69.60/h -- nominally closed, functionally open -- and a retest on either would have
+    # looked like a result while measuring nothing. The upper bound is what makes M1 able to catch that.
+    m1 = bool(np.isfinite(mu_med) and GATE_FEASIBLE <= mu_med <= GATE_LIMITING)
+    say(f"    M1 FEASIBLE AND LIMITING ({GATE_FEASIBLE} <= mu <= {GATE_LIMITING}/h)   "
+        f"{'PASS' if m1 else 'FAIL'}")
     if not m1:
-        say("    Still NOT TESTABLE. Reported as such rather than dressed up.")
+        why_fail = "supports no growth" if mu_med < GATE_FEASIBLE else "does not constrain growth"
+        say(f"    The medium {why_fail}, so the retest is NOT TESTABLE. Reported as such rather than")
+        say("    dressed up as a negative -- a medium that is not limiting measures nothing.")
         json.dump({"test": "loop_medium", "M1": False, "mu": float(mu_med), "log": log},
                   open(OUT / "loop_medium.json", "w"), indent=2)
         return 1
