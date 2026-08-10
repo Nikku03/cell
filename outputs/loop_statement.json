@@ -1,0 +1,392 @@
+{
+  "test": "loop_statement",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/cell_loop.json",
+        "bytes": 557032,
+        "hash": "e07593bf3c8da83f",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_deficit.json",
+        "bytes": 10012,
+        "hash": "976b2a8564ee8fb2",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_variant.json",
+        "bytes": 515019,
+        "hash": "d7d7725d22aad643",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_chromatin.json",
+        "bytes": 3948,
+        "hash": "c7dafe4dc22cbe3d",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_fold_link.json",
+        "bytes": 5001,
+        "hash": "db1ad85d6a76f74b",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_real_chromatin.json",
+        "bytes": 4469,
+        "hash": "64c8e286ba378a9f",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/capability_audit.json",
+        "bytes": 13791,
+        "hash": "bb0b82ceb17ebf73",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 8,
+      "used": 8,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "every claim read from a gated result file",
+      "missing files reported rather than quoted from memory"
+    ],
+    "note": "assembled from recorded runs; no number typed from recollection",
+    "warnings": []
+  },
+  "n_gates_passed": 20,
+  "n_gates_failed": 5,
+  "capability": [
+    {
+      "question": "any point mutation",
+      "what": "a single base change anywhere in the genome",
+      "blocks": {
+        "struct": 13
+      },
+      "n_items": 13,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/cell_stats.py",
+        "colab/complete_cell.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "residue-level: 13 genes carry per-residue pathogenic/common counts. `biomarkers` holds mutation-conditioned associations for 599 genes but is keyed on GENE, not on variant"
+    },
+    {
+      "question": "any protein change",
+      "what": "abundance, modification or activity of any protein",
+      "blocks": {
+        "ppm": 16015,
+        "abund": 16286,
+        "ptm": 8425,
+        "complexes": 2039
+      },
+      "n_items": 42765,
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/abstain.py",
+        "colab/adrn_ko_channels2.py",
+        "colab/adrn_ko_channels3.py",
+        "colab/annotation_prior.py",
+        "colab/best_combined.py",
+        "colab/biochem_limit.py",
+        "colab/bioplex.py",
+        "colab/build_blocks.py"
+      ],
+      "produces": [
+        "cell_loop.json",
+        "loop_fold_link.json"
+      ],
+      "phenotype_hits": [
+        "colab/cell_loop.py",
+        "colab/chain_benchmark.py",
+        "colab/eval_harness.py",
+        "colab/evidence_completion.py"
+      ],
+      "controlled": [
+        "cell_loop.json",
+        "loop_fold_link.json"
+      ],
+      "note": "gene-keyed"
+    },
+    {
+      "question": "any chromosome fold",
+      "what": "a change in 3D genome organisation",
+      "blocks": {
+        "loops3d": 767
+      },
+      "n_items": 767,
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/complete_cell.py",
+        "colab/data_ledger.py",
+        "colab/ko_dossier.py",
+        "colab/layers.py",
+        "colab/loop_real_chromatin.py",
+        "colab/supercoil_gate.py",
+        "colab/supercoil_track.py"
+      ],
+      "produces": [
+        "data_ledger.json",
+        "loop_real_chromatin.json"
+      ],
+      "phenotype_hits": [],
+      "controlled": [
+        "loop_real_chromatin.json"
+      ],
+      "note": "767 loop anchors, plus measured bTMP torsion from GSE277502; model4 was removed from this row because it is a functional neighbourhood, not a conformation"
+    },
+    {
+      "question": "functional neighbourhood",
+      "what": "NOT one of the six -- reported so model4's items are not lost",
+      "blocks": {
+        "model4": 7700
+      },
+      "n_items": 7700,
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/complete_cell.py",
+        "colab/loop_chromatin.py",
+        "colab/loop_fold_link.py",
+        "colab/phase2_audit.py",
+        "colab/phase2_loop.py"
+      ],
+      "produces": [
+        "loop_chromatin.json",
+        "loop_fold_link.json"
+      ],
+      "phenotype_hits": [],
+      "controlled": [
+        "loop_chromatin.json",
+        "loop_fold_link.json"
+      ],
+      "note": "NOT a fold -- 8.8% cis, half its pairs sharing a functional label. Kept as its own row so the 7,700 items are still counted, under a heading that describes them"
+    },
+    {
+      "question": "drug effect",
+      "what": "what a compound does to the cell",
+      "blocks": {
+        "drugs": 4275
+      },
+      "n_items": 4275,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/adrn_drug_liveness.py",
+        "colab/adrn_drug_response.py",
+        "colab/adrn_ko_channels3.py",
+        "colab/blind_target.py",
+        "colab/cell_qa.py",
+        "colab/cell_stats.py",
+        "colab/cellgraph.py",
+        "colab/cellos.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "gene-keyed drug/target/action"
+    },
+    {
+      "question": "side effect",
+      "what": "what it does that was not intended, elsewhere",
+      "blocks": {
+        "otdis": 48
+      },
+      "n_items": 48,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/complete_cell.py",
+        "colab/pertseq_apps.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "48 genes with disease associations; no compound-to-adverse-event table exists here at all"
+    },
+    {
+      "question": "cancer",
+      "what": "driver alteration to transformed phenotype",
+      "blocks": {
+        "biomarkers": 599,
+        "celltypes": 40,
+        "ctnames": 200
+      },
+      "n_items": 839,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/cell_stats.py",
+        "colab/celltype_coherence.py",
+        "colab/celltype_conditioning.py",
+        "colab/celltype_id.py",
+        "colab/celltype_id_combined.py",
+        "colab/cofactor.py",
+        "colab/complete_cell.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [
+        "colab/cofactor.py"
+      ],
+      "controlled": [],
+      "note": "biomarker associations and cell-type identities; no tumour genotype-to-phenotype block"
+    },
+    {
+      "question": "metabolic growth",
+      "what": "CALIBRATION -- must pass; closed by cell_loop today",
+      "blocks": {
+        "generxn": 2549,
+        "reactions": 31
+      },
+      "n_items": 2580,
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/best_combined.py",
+        "colab/build_kinetics_bundle.py",
+        "colab/cascade.py",
+        "colab/cell_loop.py",
+        "colab/cell_orphan_chem_coverage.py",
+        "colab/cell_orphan_truthset.py",
+        "colab/cell_sim.py",
+        "colab/cell_state.py"
+      ],
+      "produces": [
+        "cell_loop.json",
+        "data_ledger.json"
+      ],
+      "phenotype_hits": [
+        "colab/cell_loop.py",
+        "colab/necessity_test.py"
+      ],
+      "controlled": [
+        "cell_loop.json"
+      ],
+      "note": "the solved metabolism is Human-GEM (2,848 genes, 12,931 reactions), ledgered and external; cell_complete's generxn is strings"
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "WHAT THIS CELL MODEL CAN AND CANNOT DO",
+    "====================================================================================================",
+    "  Every number below is read out of a results file whose gates were declared before it ran.",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  THE GOAL, MEASURED",
+    "----------------------------------------------------------------------------------------------------",
+    "  question                 addressable  pipeline  checked     items   answered?",
+    "  any point mutation               yes        NO       NO        13   no",
+    "  any protein change               yes       yes      yes    42,765   YES",
+    "  any chromosome fold              yes       yes      yes       767   YES",
+    "  drug effect                      yes        NO       NO     4,275   no",
+    "  side effect                      yes        NO       NO        48   no",
+    "  cancer                           yes        NO       NO       839   no",
+    "\n  6 of 6 can be ASKED. 2 can be ANSWERED.",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  EVERY GATE FROM EVERY LOOP -- passes and failures together",
+    "----------------------------------------------------------------------------------------------------",
+    "\n  loop 1  close the growth feedback",
+    "      PASS   G1 closure",
+    "      PASS   G2 signal",
+    "      FAIL   G3 feedback earns its place",
+    "      FAIL   G4 beats the catalogue",
+    "\n  loop 4  a medium the model can grow on",
+    "      PASS   M1 feasible",
+    "      PASS   M2 retest",
+    "      FAIL   M3 slack",
+    "\n  loop 5  the variant-addressable slot",
+    "      PASS   V1 encode",
+    "      PASS   V2 signal",
+    "      FAIL   V3 partial loss is real",
+    "      FAIL   V4 beats the catalogue",
+    "\n  loop 6  is the dead link deserved",
+    "      PASS   C1 sanity",
+    "      PASS   C2 beats 1D proximity",
+    "      PASS   C3 reaches a cell outcome",
+    "      PASS   C4 trans replication",
+    "\n  loop 7  turn it into a pipeline",
+    "      PASS   L1 signal",
+    "      PASS   L2 beats 1D",
+    "      PASS   L3 adds to the lookup",
+    "      PASS   L4 holds under chromosome-blocked folds",
+    "\n  loop 8  the real chromatin test",
+    "      PASS   R1 replicates agree",
+    "      PASS   R2 beats the naked-DNA control",
+    "      PASS   R3 signal above shuffles",
+    "      PASS   R4 beats composition",
+    "\n  loop 3  why the lookup won",
+    "      PASS   H1 mechanism knows something the lookup does not",
+    "      PASS   H2 the lookup is a general expression confound",
+    "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
+    "\n  20 gates passed, 5 failed. Both numbers are the point: a project where",
+    "  every gate passes was not gating anything.",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
+    "----------------------------------------------------------------------------------------------------",
+    "  the growth feedback CLOSES        mu = F(mu) to 1.7e-08 relative from mu0 = 0 and 2*mu_WT          [cell_loop]",
+    "  the feedback does NOT help        loop 0.6210 vs frozen-mu 0.6284, a change of -0.0074   [cell_loop]",
+    "  the lookup is not about metabolism  0.7766 on metabolic genes vs 0.7794 on genes with no reaction  [loop_deficit]",
+    "  mechanism is NOT redundant          lookup 0.7761 -> with mechanism 0.8314          [loop_deficit]",
+    "  the shipped model could eat anything  221 uptakes barred incl. ATP; a real medium moved FBA 0.6491 -> 0.6850  [loop_medium]",
+    "  partial loss buys nothing           dose-response 0.5513 vs knockout 0.5529                 [loop_variant]",
+    "  measured torsion predicts transcription  rho +0.1766 vs naked-DNA control -0.1423, partial +0.1436   [loop_real_chromatin]",
+    "  model4 is not a fold                8.8% of its pairs are same-chromosome; a Hi-C map runs 70-90%              [loop_fold_link]",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  THE DISTANCE LEFT",
+    "----------------------------------------------------------------------------------------------------",
+    "  any point mutation          13 items -- no module consumes it and records a result; no controlled score",
+    "  drug effect              4,275 items -- no module consumes it and records a result; no controlled score",
+    "  side effect                 48 items -- no module consumes it and records a result; no controlled score",
+    "  cancer                     839 items -- no module consumes it and records a result; no controlled score",
+    "\n  AND THE LIMIT THAT APPLIES TO EVERY ROW ABOVE.  `answered` here means the question is",
+    "  ASKABLE, CONNECTED and FALSIFIABLE. It does not mean answered WELL. The two rows that pass",
+    "  do so with modest effects -- a rho of 0.18 for torsion, an AUC of 0.62 for the growth loop --",
+    "  and one of them, `any protein change`, passes on the weakest admissible reading: a knockout",
+    "  is a protein change to zero, which is one perturbation shape out of many.",
+    "    manifest: 8 inputs, coverage 8/8 (100.0%) by 'all', seed 1904, controls 2"
+  ]
+}
