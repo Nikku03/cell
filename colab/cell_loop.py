@@ -72,6 +72,37 @@ PREDECLARED GATES.  Written before the run.
 CONTROLS: 200 label shuffles; plain FBA deletion; frozen-mu; three abundance lookups. Four comparators,
 declared here, all run.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    G1 closure                    PASS   mu = F(mu) reached 0.03000022/h from mu0 = 0 and from
+                                         2*mu_WT, agreeing to 1.7e-08 relative. The cycle is real.
+    G2 signal                     PASS   loop AUC 0.6210 against a shuffled null of 0.5001 +/- 0.0118
+                                         (95th pct 0.5200) over 1,784 scored genes, 241 essential.
+    G3 feedback earns its place   FAIL   loop 0.6210 - frozen-mu 0.6284 = -0.0074. The feedback made
+                                         it very slightly WORSE, and the gate was +0.02.
+    G4 beats the catalogue        FAIL   plain FBA deletion 0.6491. mRNA abundance ALONE 0.7766.
+
+AND THE FAILURE IS SHARPER THAN "NO EFFECT", which is worth stating precisely because it is the
+opposite of the convenient reading.  1,705 of 1,784 knockout scores CHANGED when the feedback was
+switched on, and the rank correlation between the two score vectors is only 0.3732. So the feedback is
+not a negligible term that washes out -- it is large, it reorders most of the predictions, and it
+reorders them in a direction that is not better. Dilution genuinely redistributes capacity, exactly as
+the mechanism section predicted; that redistribution simply does not track essentiality.
+
+THE HARDEST NUMBER HERE IS 0.7766.  A single column of cell_complete -- how much mRNA a gene has --
+predicts essentiality better than the entire mechanistic stack: stoichiometry, GPRs, flux balance,
+enzyme capacity and a solved growth fixed point, together, score 0.6210. That is a 0.16 AUC deficit
+against a lookup, and it is the most important result on this page. Building more mechanism on top of
+this loop, without first understanding why the lookup wins, would be building on a known deficit.
+
+Two candidate explanations, neither tested here, both cheap to test and neither to be asserted until
+they are: (a) expression-essentiality is partly a confound rather than a rival model -- highly expressed
+genes are more likely essential for reasons outside metabolism -- so the comparison may be unfair to
+FBA in a way that does not help the loop either; (b) the medium is wide open (unconstrained mu = 125/h,
+calibrated down to 0.030/h purely by enzyme capacity), which leaves the model with no metabolic slack --
+all 2,848 knockouts move mu, which no real cell does. (b) is the more likely defect and is a specific,
+falsifiable follow-up: constrain uptake to a physiological medium and re-run these same four gates.
+
 -> outputs/cell_loop.json
 """
 import json
