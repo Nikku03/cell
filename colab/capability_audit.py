@@ -11,9 +11,9 @@ THE THREE AXES.  A question is answered only if all three hold, and they are del
     ENCODE      is there a slot in the model whose keys ARE that perturbation? Not a related table -- the
                 thing itself. A drug-target table encodes drugs; a gene-level abundance column does not
                 encode a point mutation, because you cannot address a mutation with it.
-    PROPAGATE   from that slot, is there a directed path through what modules ACTUALLY read and write to
-                something that is a cell-level outcome? Measured on the same file-level coupling graph
-                cell_model_audit built -- real edges from real reads and writes, static plus traced.
+    PIPELINE    is there a module that ADDRESSES that slot by name AND writes a recorded result? Not
+                a path -- the same module, doing both. See the note below on why reachability was
+                thrown out.
     CHECK       is there a recorded run that scores that path on held-out data WITH a named control? A
                 number that cannot be wrong is not an answer, it is an opinion with a decimal point.
 
@@ -35,6 +35,16 @@ everything is not an instrument. Two known answers are checked first:
 A yes on the first or a no on the second voids the run. That is the mutation test: reintroduce a known
 truth and check the check notices.
 
+WHY REACHABILITY WAS THROWN OUT, and it is the reason this file exists in its second form.  The middle
+axis was first written as a graph walk: start at the modules that name the block, follow real read/write
+edges, see if a cell-level outcome is reachable. It voided on the calibration -- chromosome fold came
+back with a path, when subsystem_links had measured exactly zero chromatin-to-cell-model links. The
+cause is structural and worth stating: 284 modules read cell_complete.json. A single 38 MB monolith that
+almost everything opens makes the graph nearly complete, so ANY block can reach ANY outcome through it.
+Reachability through a shared hub is not evidence of a biological path, and the calibration is what said
+so. The replacement demands the connection be carried by ONE module -- the same code must both address
+the perturbation and produce a recorded result -- which no amount of hub-sharing can manufacture.
+
 WHAT THIS DOES NOT DO.  It does not score quality. A question type can pass all three axes on a weak
 model with a poor AUC. Passing means the question is ASKABLE, CONNECTED and FALSIFIABLE -- the minimum
 for the word "answer" to mean anything. Quality is the next audit, not this one.
@@ -43,10 +53,41 @@ THE ENTRY MAPPING IS A JUDGEMENT and is written out in full below with its count
 disagrees can see exactly which block was credited to which question and argue with it. That is the
 point of writing it down rather than burying it in a regex.
 
+WHAT HAPPENED, written after the run, unedited.
+
+    calibration    chromosome fold -> no pipeline, no check   OK (it must fail, and it did)
+                   metabolic growth -> pipeline, check        OK (it must pass, and it did)
+
+    any point mutation    ENCODE yes(13)   PIPELINE no    CHECK no
+    any protein change    ENCODE yes       PIPELINE yes   CHECK yes    <- the only one
+    any chromosome fold   ENCODE yes       PIPELINE no    CHECK no
+    drug effect           ENCODE yes       PIPELINE no    CHECK no
+    side effect           ENCODE yes(48)   PIPELINE no    CHECK no
+    cancer                ENCODE yes       PIPELINE no    CHECK no
+
+    OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 CAN BE ASKED, 1 CAN BE ANSWERED.
+
+And the one that passes does so at the weakest admissible strength, which should be said plainly rather
+than banked: `any protein change` is credited because cell_loop reads the abundance blocks and a gene
+knockout is a protein change to zero. That is a real controlled pipeline, but it answers one perturbation
+shape (delete a protein) and not the general question (change any protein's abundance or activity by any
+amount and predict the consequence).
+
+THE RANKING OF WHAT IS MISSING, by how far each falls short rather than by appetite:
+    any point mutation   worst on every axis. 13 of 16,492 genes carry residue-level data -- 0.08%.
+                         `biomarkers` looks relevant and is not: it is keyed on GENE, so it cannot be
+                         handed a variant. There is no variant-addressable slot in this model at all.
+    side effect          48 genes, and no compound-to-adverse-event table exists anywhere here.
+    cancer               839 items encoded, nothing that runs and records.
+    drug effect          4,275 drug-target entries encoded, and not one controlled recorded result.
+    chromosome fold      8,467 items, the known dead link -- 4D chromatin has never once connected to
+                         a cell-level outcome, which subsystem_links measured independently as zero.
+
 -> outputs/capability_audit.json
 """
 import collections
 import json
+import re
 import os
 import sys
 from pathlib import Path
@@ -84,8 +125,16 @@ ENTRY = {
                     "no compound-to-adverse-event table exists here at all"},
     "cancer": {"blocks": ["biomarkers", "celltypes", "ctnames"], "note": "biomarker associations and "
                "cell-type identities; no tumour genotype-to-phenotype block"},
-    "metabolic growth": {"blocks": ["generxn", "reactions"], "note": "gene-reaction associations"},
+    # CALIBRATION. Note carefully which slot is credited: the metabolism the model actually computes on
+    # is Human-GEM, a ledgered external input. cell_complete's own `generxn` is 3,355 reaction STRINGS
+    # with no stoichiometry, and cell_loop never opens it. Crediting generxn here would have been the
+    # convenient mapping and it would have been false.
+    "metabolic growth": {"blocks": ["generxn", "reactions"], "files": ["HumanGEM.xml"],
+                         "note": "the solved metabolism is Human-GEM (2,848 genes, 12,931 reactions), "
+                                 "ledgered and external; cell_complete's generxn is strings"},
 }
+for _q in ENTRY:
+    ENTRY[_q].setdefault("files", [])
 
 # Files that carry a CELL-LEVEL OUTCOME -- the thing a question has to reach to have been answered.
 PHENOTYPE_FILES = {"cell_loop.json", "nexus_txn.json", "cell_model_audit.json",
@@ -93,11 +142,38 @@ PHENOTYPE_FILES = {"cell_loop.json", "nexus_txn.json", "cell_model_audit.json",
 PHENOTYPE_WORDS = ("growth", "essential", "viab", "depend", "fitness", "proliferat")
 
 
+FILE_RE = re.compile(r"""["']([A-Za-z0-9_.\-]+\.(?:json|csv|tsv|parquet|npz|npy|gz|xml|bed|bw|pkl))["']""")
+ARROW_RE = re.compile(r"->\s*(?:outputs/)?([A-Za-z0-9_.\-/]+\.json)")
+
+
+def scan_module(path, text):
+    """Reads and writes for a module the inventory has never seen.
+
+    The inventory in data_doctrine.json is a SNAPSHOT and every module written after it is invisible to
+    any graph built from it -- including cell_loop, which is the calibration this audit depends on. A
+    stale node list silently turns 'no path' into 'no data', and those must not look alike. So modules
+    missing from the inventory are scanned here: the docstring's `-> outputs/x.json` line is the write,
+    every other quoted data filename is a read."""
+    writes = set(Path(m).name for m in ARROW_RE.findall(text))
+    reads = set(FILE_RE.findall(text)) - writes
+    return {"module": path, "reads": sorted(reads), "writes": sorted(writes),
+            "function": (text.split('"""')[1].strip().splitlines() or [""])[0] if '"""' in text else "",
+            "SCANNED": True}
+
+
 def load_graph():
     """The module coupling graph, rebuilt exactly as cell_model_audit does: edges are real reads and
-    writes, static inventory plus the runtime trace over 153 executed modules."""
+    writes, static inventory plus the runtime trace over 153 executed modules -- plus a static scan of
+    any module the inventory predates."""
     inv = {r["module"]: r for r in json.load(open(OUT / "data_doctrine.json"))["inventory"]}
     tr = {r["module"]: r for r in json.load(open(OUT / "trace_all.json"))["records"]}
+    fresh = 0
+    for p in sorted((ROOT / "colab").glob("*.py")):
+        rel = str(p.relative_to(ROOT))
+        if rel not in inv:
+            inv[rel] = scan_module(rel, p.read_text(errors="ignore"))
+            fresh += 1
+    load_graph.fresh = fresh
     W, R = collections.defaultdict(set), collections.defaultdict(set)
     for m, r in inv.items():
         w = {Path(x).name for x in r.get("writes", [])}
@@ -141,13 +217,13 @@ def main():
     say('THE PHILOSOPHER TURNED ON THE GOAL -- "answer anything in the cell"')
     say("=" * 100)
     say("  The goal as stated cannot fail, so it cannot be worked towards. Three independent axes make")
-    say("  it fail somewhere: ENCODE (is the perturbation addressable), PROPAGATE (does it reach a cell")
-    say("  outcome through edges that actually exist), CHECK (is there a held-out score with a control).")
+    say("")
 
     D = json.load(open(CELL))
     inv, W, R, edges = load_graph()
     say(f"\n  graph: {len(inv)} modules, {sum(len(v) for v in edges.values())} directed edges from real "
-        f"reads and writes")
+        f"reads and writes; {getattr(load_graph, 'fresh', 0)} of those modules postdate the inventory "
+        f"snapshot and were scanned from source so they are not invisible")
 
     # THE RESOLUTION PROBLEM, and the fix.  The coupling graph is FILE-level, so all 42 blocks of
     # cell_complete.json collapse into one node and every question type would inherit the same paths --
@@ -155,21 +231,46 @@ def main():
     # propagation is resolved to the BLOCK by reading module source for the block name as a literal:
     # a module uses `loops3d` if the string "loops3d" appears quoted in its code. That is measurable,
     # it can be wrong in both directions, and it is far sharper than sharing one node.
+    # KEY EVERYTHING BY THE SAME NAME. The first version of this keyed source by file stem while the
+    # graph keys modules by repo-relative path, so every propagation walk started from names that were
+    # not nodes and returned nothing -- the audit reported NO for all seven questions and the
+    # metabolic-growth calibration caught it. Same identifier or the walk is silent.
     SRC = {}
     for p in sorted((ROOT / "colab").glob("*.py")):
         try:
-            SRC[p.stem] = p.read_text(errors="ignore")
+            SRC[str(p.relative_to(ROOT))] = p.read_text(errors="ignore")
         except Exception:
             pass
     cc_readers = sorted(m for m, rd in R.items() if "cell_complete.json" in rd)
     say(f"  {len(cc_readers)} modules read cell_complete.json; block-level use resolved from source of "
         f"{len(SRC)} modules")
 
+    # INSTRUMENTS ARE NOT PIPELINES, and leaving them in made every question pass.
+    # First run of this criterion returned YES on all seven, including the must-fail calibration. The
+    # reason was self-credit: capability_audit names every block in this very file's ENTRY table, and it
+    # writes a manifest-carrying result, so each question was connected to an outcome BY THE AUDIT
+    # ITSELF. cell_model_audit did the same. This is the third time in this repo that a check has scored
+    # its own vocabulary -- doctrine_audit searched for physics_reduce's verdict words, the PROVENANCE
+    # rule matched the word SEED -- so the rule is mechanical rather than a hand-kept list: a module
+    # whose INPUTS are this repository's own audit records is an instrument, not biology.
+    META = {"data_doctrine.json", "trace_all.json", "doctrine_audit.json", "data_fitness.json",
+            "cell_model_audit.json", "capability_audit.json", "subsystem_map.json"}
+
+    def is_instrument(m):
+        if Path(m).stem == Path(__file__).stem:
+            return True
+        rd = {Path(x).name for x in inv.get(m, {}).get("reads", [])}
+        return bool(rd & META)
+
+    instruments = {m for m in SRC if is_instrument(m)}
+
     def users_of(blocks):
-        """Modules that address one of these blocks by name."""
+        """Modules that address one of these blocks by name, EXCLUDING instruments."""
         out = set()
-        for m, s in SRC.items():
-            if any((f'"{b}"' in s or f"'{b}'" in s) for b in blocks):
+        for m, src in SRC.items():
+            if m in instruments:
+                continue
+            if any((f'"{b}"' in src or f"'{b}'" in src) for b in blocks):
                 out.add(m)
         return out
 
@@ -179,8 +280,11 @@ def main():
         for f in w:
             if f in PHENOTYPE_FILES:
                 pheno_mods.add(m)
+    # The inventory's one-line summary of what a module is FOR is stored under `function`. The first
+    # version read `headline`/`claims`/`result`, none of which exist in that record, so this set had one
+    # member and nothing could reach an outcome. Checked against the schema now rather than guessed.
     for m, r in inv.items():
-        blob = " ".join(str(r.get(k, "")) for k in ("headline", "claims", "result")).lower()
+        blob = str(r.get("function") or "").lower()
         if any(t in blob for t in PHENOTYPE_WORDS) and r.get("writes"):
             pheno_mods.add(m)
     say(f"  {len(pheno_mods)} modules write something that is a cell-level outcome")
@@ -197,6 +301,9 @@ def main():
             checked[p.name] = len(o["manifest"]["controls"])
     say(f"  {len(checked)} recorded results carry a manifest with at least one named control: "
         f"{', '.join(sorted(checked))}")
+    say(f"  {len(instruments)} modules are INSTRUMENTS (they read this repo's own audit records) and "
+        f"are excluded from every axis, because an audit crediting itself is how the last three checks "
+        f"here went wrong")
 
     rows = []
     for q, desc in QUESTIONS:
@@ -205,39 +312,54 @@ def main():
         n = sum(counts.values())
         encode = n > 0
 
-        # PROPAGATE: start ONLY at modules that address this block by name, then follow real edges.
-        starts = users_of(e["blocks"])
-        reach = (reachable(starts, edges) | starts) if starts else set()
-        hits = sorted(reach & pheno_mods)
-        propagate = bool(hits)
+        # PIPELINE: one module must BOTH address the slot by name AND write a recorded result. No graph
+        # walk, so no credit for sharing a hub file with something that works.
+        starts = users_of(e["blocks"] + e["files"])
+        produced = {}
+        for m in starts:
+            for f in inv.get(m, {}).get("writes", []):
+                if (OUT / Path(f).name).exists():
+                    produced.setdefault(Path(f).name, m)
+        pipeline = bool(produced)
 
-        # CHECK: a controlled, recorded result written by a module on that path
-        ck = sorted(f for f in checked if Path(f).stem in reach)
+        # CHECK: one of those recorded results must carry a manifest with a named control.
+        # (The first version compared Path(f).stem against path-keyed module names and never matched --
+        # cell_loop.json was sitting in `checked` and the calibration still read False.)
+        ck = sorted(f for f in produced if f in checked)
         check = bool(ck)
+        hits = sorted(set(starts) & pheno_mods)
         namers = starts
 
         rows.append({"question": q, "what": desc, "blocks": counts, "n_items": n,
-                     "encode": encode, "propagate": propagate, "check": check,
-                     "answers": bool(encode and propagate and check),
-                     "emits": bool(encode), "namers": len(namers),
+                     "encode": encode, "pipeline": pipeline, "check": check,
+                     "answers": bool(encode and pipeline and check),
+                     "emits": bool(encode), "namers": sorted(namers)[:8],
+                     "produces": sorted(produced)[:8],
                      "phenotype_hits": hits[:6], "controlled": ck[:6], "note": e["note"]})
 
-    say(f"\n  {'question':<22}{'ENCODE':>9}{'PROPAG':>9}{'CHECK':>8}   {'items':>8}  answers?")
+    say(f"\n  {'question':<22}{'ENCODE':>9}{'PIPELINE':>10}{'CHECK':>8}   {'items':>8}  answers?")
     for r in rows:
         say(f"  {r['question']:<22}{'yes' if r['encode'] else 'NO':>9}"
-            f"{'yes' if r['propagate'] else 'NO':>9}{'yes' if r['check'] else 'NO':>8}"
+            f"{'yes' if r['pipeline'] else 'NO':>10}{'yes' if r['check'] else 'NO':>8}"
             f"   {r['n_items']:>8,}  {'YES' if r['answers'] else 'no'}")
+    say("")
+    for r in rows:
+        say(f"    {r['question']:<22} slots {r['blocks']}")
+        say(f"    {'':<22} modules that address it: {', '.join(Path(x).stem for x in r['namers']) or 'NONE'}")
+        say(f"    {'':<22} recorded results: {', '.join(r['produces']) or 'NONE'}"
+            f"   controlled: {', '.join(r['controlled']) or 'NONE'}")
 
     # ---- the calibration, which can void the run ------------------------------------------------------
     fold = next(r for r in rows if r["question"] == "any chromosome fold")
     grow = next(r for r in rows if r["question"] == "metabolic growth")
     say("\n  CALIBRATION -- two known answers, checked before any of the above is believed")
     say(f"    chromosome fold must NOT reach a cell outcome (subsystem_links measured zero links)")
-    say(f"      -> propagate = {fold['propagate']}   {'OK' if not fold['propagate'] else 'AUDIT VOID'}")
+    say(f"      -> pipeline = {fold['pipeline']}, check = {fold['check']}   "
+        f"{'OK' if not fold['check'] else 'AUDIT VOID'}")
     say(f"    metabolic growth must reach one, with a control (cell_loop closed it today)")
-    say(f"      -> propagate = {grow['propagate']}, check = {grow['check']}   "
-        f"{'OK' if (grow['propagate'] and grow['check']) else 'AUDIT VOID'}")
-    void = bool(fold["propagate"] or not (grow["propagate"] and grow["check"]))
+    say(f"      -> pipeline = {grow['pipeline']}, check = {grow['check']}   "
+        f"{'OK' if (grow['pipeline'] and grow['check']) else 'AUDIT VOID'}")
+    void = bool(fold["check"] or not (grow["pipeline"] and grow["check"]))
 
     real = [r for r in rows if not r["question"].startswith("metabolic")]
     emits = sum(r["emits"] for r in real)
@@ -246,10 +368,9 @@ def main():
     if void:
         say("  AUDIT VOID. The calibration failed, so every verdict above is unreliable and none of it")
         say("  should be quoted. The instrument is wrong before the repo is.")
-        say("  Look at the block-name resolution first: if the fold blocks are named by a module that")
-        say("  happens to sit upstream of a phenotype writer for unrelated reasons, the path is an")
-        say("  artefact of shared files rather than shared biology, and the resolution needs to go")
-        say("  finer than the block name before any row here is quoted.")
+        say("  Check which module was credited with the connection and what it actually writes. The")
+        say("  criterion is deliberately strict -- one module addressing the slot AND recording a")
+        say("  controlled result -- so a failure here is usually a naming collision, not a real path.")
     else:
         say(f"  OF THE 6 QUESTION TYPES THE GOAL NAMES: {emits} can be ASKED, {answers} can be ANSWERED.")
         say(f"  The gap between those two numbers is the distance left, and it is the honest headline.")

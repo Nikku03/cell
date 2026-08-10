@@ -1,0 +1,310 @@
+{
+  "test": "capability_audit",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/data_doctrine.json",
+        "bytes": 665274,
+        "hash": "9528ec2ee4b79aec",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/trace_all.json",
+        "bytes": 3189743,
+        "hash": "2263a5571a1cf31a",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 7,
+      "used": 7,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "chromosome-fold must-fail calibration",
+      "metabolic-growth must-pass calibration"
+    ],
+    "note": "entry mapping is a declared judgement, written out per question with counts",
+    "warnings": []
+  },
+  "void": false,
+  "rows": [
+    {
+      "question": "any point mutation",
+      "what": "a single base change anywhere in the genome",
+      "blocks": {
+        "struct": 13
+      },
+      "n_items": 13,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/cell_stats.py",
+        "colab/complete_cell.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "residue-level: 13 genes carry per-residue pathogenic/common counts. `biomarkers` holds mutation-conditioned associations for 599 genes but is keyed on GENE, not on variant"
+    },
+    {
+      "question": "any protein change",
+      "what": "abundance, modification or activity of any protein",
+      "blocks": {
+        "ppm": 16015,
+        "abund": 16286,
+        "ptm": 8425,
+        "complexes": 2039
+      },
+      "n_items": 42765,
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/abstain.py",
+        "colab/adrn_ko_channels2.py",
+        "colab/adrn_ko_channels3.py",
+        "colab/annotation_prior.py",
+        "colab/best_combined.py",
+        "colab/biochem_limit.py",
+        "colab/bioplex.py",
+        "colab/build_blocks.py"
+      ],
+      "produces": [
+        "cell_loop.json"
+      ],
+      "phenotype_hits": [
+        "colab/cell_loop.py",
+        "colab/chain_benchmark.py",
+        "colab/eval_harness.py",
+        "colab/evidence_completion.py"
+      ],
+      "controlled": [
+        "cell_loop.json"
+      ],
+      "note": "gene-keyed"
+    },
+    {
+      "question": "any chromosome fold",
+      "what": "a change in 3D genome organisation",
+      "blocks": {
+        "loops3d": 767,
+        "model4": 7700
+      },
+      "n_items": 8467,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/complete_cell.py",
+        "colab/ko_dossier.py",
+        "colab/layers.py",
+        "colab/phase2_audit.py",
+        "colab/phase2_loop.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "loop anchors and a 4D model"
+    },
+    {
+      "question": "drug effect",
+      "what": "what a compound does to the cell",
+      "blocks": {
+        "drugs": 4275
+      },
+      "n_items": 4275,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/adrn_drug_liveness.py",
+        "colab/adrn_drug_response.py",
+        "colab/adrn_ko_channels3.py",
+        "colab/blind_target.py",
+        "colab/cell_qa.py",
+        "colab/cell_stats.py",
+        "colab/cellgraph.py",
+        "colab/cellos.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "gene-keyed drug/target/action"
+    },
+    {
+      "question": "side effect",
+      "what": "what it does that was not intended, elsewhere",
+      "blocks": {
+        "otdis": 48
+      },
+      "n_items": 48,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/complete_cell.py",
+        "colab/pertseq_apps.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "48 genes with disease associations; no compound-to-adverse-event table exists here at all"
+    },
+    {
+      "question": "cancer",
+      "what": "driver alteration to transformed phenotype",
+      "blocks": {
+        "biomarkers": 599,
+        "celltypes": 40,
+        "ctnames": 200
+      },
+      "n_items": 839,
+      "encode": true,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/cell_stats.py",
+        "colab/celltype_coherence.py",
+        "colab/celltype_conditioning.py",
+        "colab/celltype_id.py",
+        "colab/celltype_id_combined.py",
+        "colab/cofactor.py",
+        "colab/complete_cell.py"
+      ],
+      "produces": [],
+      "phenotype_hits": [
+        "colab/cofactor.py"
+      ],
+      "controlled": [],
+      "note": "biomarker associations and cell-type identities; no tumour genotype-to-phenotype block"
+    },
+    {
+      "question": "metabolic growth",
+      "what": "CALIBRATION -- must pass; closed by cell_loop today",
+      "blocks": {
+        "generxn": 2549,
+        "reactions": 31
+      },
+      "n_items": 2580,
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/best_combined.py",
+        "colab/build_kinetics_bundle.py",
+        "colab/cascade.py",
+        "colab/cell_loop.py",
+        "colab/cell_orphan_chem_coverage.py",
+        "colab/cell_orphan_truthset.py",
+        "colab/cell_sim.py",
+        "colab/cell_state.py"
+      ],
+      "produces": [
+        "cell_loop.json",
+        "data_ledger.json"
+      ],
+      "phenotype_hits": [
+        "colab/cell_loop.py",
+        "colab/necessity_test.py"
+      ],
+      "controlled": [
+        "cell_loop.json"
+      ],
+      "note": "the solved metabolism is Human-GEM (2,848 genes, 12,931 reactions), ledgered and external; cell_complete's generxn is strings"
+    }
+  ],
+  "n_emits": 6,
+  "n_answers": 1,
+  "n_questions": 6,
+  "controlled_results": {
+    "capability_audit.json": 2,
+    "cell_complete_build.json": 2,
+    "cell_loop.json": 5,
+    "cell_model_audit.json": 2,
+    "data_doctrine.json": 2,
+    "data_fitness.json": 1
+  },
+  "n_modules": 929,
+  "n_phenotype_modules": 32,
+  "log": [
+    "====================================================================================================",
+    "THE PHILOSOPHER TURNED ON THE GOAL -- \"answer anything in the cell\"",
+    "====================================================================================================",
+    "  The goal as stated cannot fail, so it cannot be worked towards. Three independent axes make",
+    "  it fail somewhere: ENCODE (is the perturbation addressable), PROPAGATE (does it reach a cell",
+    "  outcome through edges that actually exist), CHECK (is there a held-out score with a control).",
+    "\n  graph: 929 modules, 873 directed edges from real reads and writes; 11 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
+    "  284 modules read cell_complete.json; block-level use resolved from source of 719 modules",
+    "  32 modules write something that is a cell-level outcome",
+    "  6 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json",
+    "  6 modules are INSTRUMENTS (they read this repo's own audit records) and are excluded from every axis, because an audit crediting itself is how the last three checks here went wrong",
+    "\n  question                 ENCODE  PIPELINE   CHECK      items  answers?",
+    "  any point mutation          yes        NO      NO         13  no",
+    "  any protein change          yes       yes     yes     42,765  YES",
+    "  any chromosome fold         yes        NO      NO      8,467  no",
+    "  drug effect                 yes        NO      NO      4,275  no",
+    "  side effect                 yes        NO      NO         48  no",
+    "  cancer                      yes        NO      NO        839  no",
+    "  metabolic growth            yes       yes     yes      2,580  YES",
+    "",
+    "    any point mutation     slots {'struct': 13}",
+    "                           modules that address it: cell_stats, complete_cell",
+    "                           recorded results: NONE   controlled: NONE",
+    "    any protein change     slots {'ppm': 16015, 'abund': 16286, 'ptm': 8425, 'complexes': 2039}",
+    "                           modules that address it: abstain, adrn_ko_channels2, adrn_ko_channels3, annotation_prior, best_combined, biochem_limit, bioplex, build_blocks",
+    "                           recorded results: cell_loop.json   controlled: cell_loop.json",
+    "    any chromosome fold    slots {'loops3d': 767, 'model4': 7700}",
+    "                           modules that address it: adrn_ko_channels3, complete_cell, ko_dossier, layers, phase2_audit, phase2_loop",
+    "                           recorded results: NONE   controlled: NONE",
+    "    drug effect            slots {'drugs': 4275}",
+    "                           modules that address it: adrn_drug_liveness, adrn_drug_response, adrn_ko_channels3, blind_target, cell_qa, cell_stats, cellgraph, cellos",
+    "                           recorded results: NONE   controlled: NONE",
+    "    side effect            slots {'otdis': 48}",
+    "                           modules that address it: adrn_ko_channels3, complete_cell, pertseq_apps",
+    "                           recorded results: NONE   controlled: NONE",
+    "    cancer                 slots {'biomarkers': 599, 'celltypes': 40, 'ctnames': 200}",
+    "                           modules that address it: adrn_ko_channels3, cell_stats, celltype_coherence, celltype_conditioning, celltype_id, celltype_id_combined, cofactor, complete_cell",
+    "                           recorded results: NONE   controlled: NONE",
+    "    metabolic growth       slots {'generxn': 2549, 'reactions': 31}",
+    "                           modules that address it: best_combined, build_kinetics_bundle, cascade, cell_loop, cell_orphan_chem_coverage, cell_orphan_truthset, cell_sim, cell_state",
+    "                           recorded results: cell_loop.json, data_ledger.json   controlled: cell_loop.json",
+    "\n  CALIBRATION -- two known answers, checked before any of the above is believed",
+    "    chromosome fold must NOT reach a cell outcome (subsystem_links measured zero links)",
+    "      -> pipeline = False, check = False   OK",
+    "    metabolic growth must reach one, with a control (cell_loop closed it today)",
+    "      -> pipeline = True, check = True   OK",
+    "\n====================================================================================================",
+    "  OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 can be ASKED, 1 can be ANSWERED.",
+    "  The gap between those two numbers is the distance left, and it is the honest headline.",
+    "====================================================================================================",
+    "    manifest: 3 inputs, coverage 7/7 (100.0%) by 'all', seed 1904, controls 2"
+  ]
+}
