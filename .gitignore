@@ -91,3 +91,6 @@ data_fetch/
 
 # ChIP-Atlas K562 peak sets (~190 MB) - regenerate with colab/fetch_chipatlas.py
 outputs/orphan/invivo/chipatlas/
+
+# GSE277502 bTMP-seq bigWigs (4.0 MB, re-fetchable from GEO; see colab/supercoil_track.py)
+outputs/orphan/supercoil/*.bw
