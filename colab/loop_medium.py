@@ -73,6 +73,25 @@ PHYSIOLOGICAL = [
 ]
 PHYS_SET = {w.lower() for w in PHYSIOLOGICAL}
 
+# THINGS A CELL CANNOT IMPORT, and the single most important line in this file.
+# minimal_medium minimises TOTAL IMPORT FLUX, which rewards importing the largest molecule available:
+# one unit of LDL carries enormous mass. Asked what it needed, the model answered with 26 uptakes that
+# did not include glucose and did include ATP, NAD+, FAD, LDL, apoE and plasminogen. Human-GEM ships
+# exchange reactions for energy currency and for intact plasma proteins, so a "closed" 79-component
+# medium still supported 86.26/h -- because it contained ATP.
+#
+# A cell that can import ATP has no essential genes worth measuring. Every conclusion about essentiality
+# drawn on this model without closing these is worthless, and that includes loop 1's. These are barred
+# from uptake by name; secretion is left free, because exporting them is real.
+NOT_IMPORTABLE = [
+    "atp", "adp", "amp", "gtp", "gdp", "gmp", "ctp", "utp", "udp", "datp", "dgtp", "dctp", "dttp",
+    "nad+", "nadh", "nadp+", "nadph", "fad", "fadh2", "fmn", "coa", "acetyl-coa", "malonyl-coa",
+    "hexanoyl-coa", "succinyl-coa", "sam", "sah", "ppi", "pppi",
+    "ldl", "ldl remnant", "hdl", "idl", "vldl", "chylomicron", "chylomicron remnant",
+    "apoa1", "apob100", "apoc1", "apoc2", "apoc3", "apoe", "plasminogen", "albumin", "transferrin",
+]
+NOT_IMPORTABLE_SET = {w.lower() for w in NOT_IMPORTABLE}
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 SEED = 1904
@@ -109,6 +128,19 @@ def main():
         f"{len(M.exchanges)} exchanges, all open at {list(M.exchanges)[0].lower_bound}")
     mu_open = M.slim_optimize()
     say(f"  growth with everything open: {mu_open:.2f}/h  -- a cell that can eat anything")
+
+    barred = []
+    for r in M.exchanges:
+        nm = (list(r.metabolites)[0].name or "").strip().lower()
+        if nm in NOT_IMPORTABLE_SET:
+            r.lower_bound = 0.0
+            barred.append(nm)
+    mu_barred = M.slim_optimize()
+    say(f"\n  BARRING WHAT A CELL CANNOT IMPORT -- {len(barred)} exchanges closed to uptake")
+    say(f"    {', '.join(sorted(set(barred))[:14])}{' ...' if len(set(barred)) > 14 else ''}")
+    say(f"    growth drops {mu_open:.2f}/h -> {mu_barred:.2f}/h. Human-GEM ships uptake reactions for")
+    say(f"    energy currency and intact plasma proteins; a model that can import ATP has no essential")
+    say(f"    genes worth measuring, and that applies to loop 1's numbers too.")
 
     # ---- what does the network actually need? ---------------------------------------------------------
     say(f"\n  asking minimal_medium for the uptakes required to reach {MU_REQUIRE}/h ...")
@@ -258,7 +290,9 @@ def main():
     RM.report(man, emit=say)
     json.dump({"test": "loop_medium", "manifest": man,
                "gates": {"M1 feasible": m1, "M2 retest": m2, "M3 slack": m3},
-               "mu_open": float(mu_open), "mu_medium": float(mu_med),
+               "mu_open": float(mu_open), "mu_barred": float(mu_barred),
+               "n_barred": len(barred), "barred": sorted(set(barred)),
+               "mu_medium": float(mu_med),
                "n_open_uptakes": len(keep), "n_required": len(mm),
                "required_physiological": phys_hit, "required_exotic": exotic,
                "auc_defined_medium": float(a_med), "auc_open_medium": OPEN_MEDIUM_BEST,
