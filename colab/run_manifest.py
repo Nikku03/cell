@@ -120,6 +120,41 @@ def report(m, emit=print):
     return m
 
 
+def save(obj, path, available=None, used=None, selection="all", seed=None, controls=(), note="",
+         inputs=None, indent=2):
+    """Write a result WITH its manifest attached, taking the inputs from the live trace.
+
+    THE ADOPTION PROBLEM THIS SOLVES. Manifest adoption sat at 0 of 153 modules, and asking 442 modules to
+    add a bookkeeping call was never going to change that -- voluntary adoption of anything across a repo
+    this size does not happen. But almost every module here ends the same way:
+
+        json.dump(result, open(OUT / "x.json", "w"), indent=2)      ->      save(result, OUT / "x.json")
+
+    That substitution is mechanical, scriptable, and carries no argument. Under `with trace():` the inputs
+    are filled in from what the process actually opened, so the module declares nothing and gets a
+    complete, hash-pinned input list -- including the paths its own source could never express.
+
+    Coverage still has to be passed by hand. That is deliberate: only the author knows how many rows were
+    available and by what rule they were chosen, and inferring it would produce exactly the confident
+    wrong number the manifest exists to prevent."""
+    if inputs is None:
+        try:
+            import run_trace
+            t = run_trace.active()
+            inputs = t.input_paths() if t is not None else []
+        except Exception:
+            inputs = []
+    m = manifest(inputs=inputs, available=available, used=used, selection=selection, seed=seed,
+                 controls=controls, note=note)
+    body = dict(obj) if isinstance(obj, dict) else {"result": obj}
+    body["manifest"] = m
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with open(p, "w") as fh:
+        json.dump(body, fh, indent=indent)
+    return m
+
+
 if __name__ == "__main__":
     # A demonstration that the warning fires on the exact shape of the bug it exists for.
     print("the orphan fill's worklist, as it actually was:")
