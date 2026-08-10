@@ -220,9 +220,19 @@ def main():
     # ---- the dose-response ---------------------------------------------------------------------------
     gids = [g.id for g in M.genes]
     say(f"\n  DOSE-RESPONSE: growth at {FRACTIONS} of each gene's capacity, {len(gids)} genes")
-    dose = {}
+    # CACHE. The dose-response costs 12 minutes and the first run of this module threw it away on a
+    # name collision in the scoring code below -- cobra registers a pandas accessor called `knockout`,
+    # so T.knockout resolved to cobra's accessor instead of the column. Expensive state that a cheap
+    # downstream bug can destroy should not be recomputed on principle.
+    CACHE = SCRATCH / f"_dose_{KAPPA:.6g}_{len(keep)}.json"
+    if CACHE.exists():
+        dose = {k: v for k, v in json.load(open(CACHE)).items()}
+        say(f"    reusing cached dose-response from {CACHE.name}")
+        gids = [g for g in gids if g in dose]
+    else:
+        dose = {}
     t1 = time.time()
-    for n, gid in enumerate(gids):
+    for n, gid in enumerate(list(gids) if not dose else []):
         g = M.genes.get_by_id(gid)
         touched = [r for r in g.reactions if r.id in gpr]
         row = []
@@ -243,7 +253,9 @@ def main():
         dose[gid] = row
         if n % 500 == 0:
             say(f"      {n}/{len(gids)}  ({time.time()-t1:.0f}s)")
-    say(f"    done in {time.time()-t1:.0f}s")
+    if not CACHE.exists():
+        json.dump(dose, open(CACHE, "w"))
+    say(f"    done in {time.time()-t1:.0f}s ({len(dose)} genes)")
 
     # ---- assemble ------------------------------------------------------------------------------------
     D = json.load(open(CELL))
@@ -288,13 +300,13 @@ def main():
                   open(OUT / "loop_variant.json", "w"), indent=2)
         return 1
 
-    A = {"dose-response at 50%": auc(T.drop_at_50, y),
-         "dose-response at 25%": auc(T.drop_at_25, y),
-         "dose-response at 10%": auc(T.drop_at_10, y),
-         "curve area": auc(-T.auc_curve, y),
-         "knockout only": auc(T.knockout, y),
-         "LOEUF (lookup)": auc(-T.loeuf.fillna(T.loeuf.median()), y),
-         "mRNA abundance (lookup)": auc(T.rpkm.fillna(0), y)}
+    A = {"dose-response at 50%": auc(T["drop_at_50"], y),
+         "dose-response at 25%": auc(T["drop_at_25"], y),
+         "dose-response at 10%": auc(T["drop_at_10"], y),
+         "curve area": auc(-T["auc_curve"], y),
+         "knockout only": auc(T["knockout"], y),
+         "LOEUF (lookup)": auc(-T["loeuf"].fillna(T["loeuf"].median()), y),
+         "mRNA abundance (lookup)": auc(T["rpkm"].fillna(0), y)}
     say(f"\n  {'predictor':<28}{'AUC':>8}")
     for kk, vv in sorted(A.items(), key=lambda x: -(x[1] if np.isfinite(x[1]) else 0)):
         say(f"  {kk:<28}{vv:>8.4f}")
@@ -323,9 +335,9 @@ def main():
     v4 = bool(A[best_dose] > A["LOEUF (lookup)"])
     say(f"\n  V4 BEATS THE CATALOGUE -- vs LOEUF {A['LOEUF (lookup)']:.4f}   "
         f"{'PASS' if v4 else 'FAIL'}")
-    a_look, _ = cv_auc(np.c_[-T.loeuf.fillna(T.loeuf.median())], y)
-    a_both, _ = cv_auc(np.c_[-T.loeuf.fillna(T.loeuf.median()), T.drop_at_50, T.drop_at_25,
-                             T.knockout], y)
+    a_look, _ = cv_auc(np.c_[-T["loeuf"].fillna(T["loeuf"].median())], y)
+    a_both, _ = cv_auc(np.c_[-T["loeuf"].fillna(T["loeuf"].median()), T["drop_at_50"], T["drop_at_25"],
+                             T["knockout"]], y)
     say(f"    5-fold CV: LOEUF {a_look:.4f} -> LOEUF + dose-response {a_both:.4f} ({a_both-a_look:+.4f})")
 
     say("\n" + "=" * 100)
