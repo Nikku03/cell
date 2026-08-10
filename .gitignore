@@ -97,3 +97,7 @@ outputs/orphan/supercoil/*.bw
 
 # RNADecayCafe v1.1 AvgKdegs (22 MB, re-fetchable: 10.5281/zenodo.16884513; see colab/supercoil_txn.py)
 outputs/orphan/rnadecay/*.csv
+
+# cell_complete.json stays ignored (38.5 MB, no producer), but its PARTS are versioned --
+# colab/cell_complete_build.py --assemble reconstructs it bit-identically from outputs/orphan/cell_parts/
+!outputs/orphan/cell_parts/
