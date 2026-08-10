@@ -265,11 +265,36 @@ def main():
         r.lower_bound = 0.0
     for rid in keep:
         M.reactions.get_by_id(rid).lower_bound = -1000.0
-    mu_med = M.slim_optimize()
+    mu_unlimited = M.slim_optimize()
     say(f"\n  CONSTRUCTED MEDIUM: {len(keep)} open uptakes of {len(M.exchanges)} "
         f"({len(keep)/len(M.exchanges):.1%})")
-    say(f"    growth: {mu_med:.4f}/h   (open medium {mu_open:.2f}/h -- a {mu_open/max(mu_med,1e-9):.0f}x "
-        f"reduction, achieved by nutrients rather than by squeezing enzymes)")
+
+    # A MENU IS NOT A MEDIUM. Restricting WHICH metabolites may be taken up left growth at 46.35/h,
+    # because each of the 57 permitted ones could still be imported at 1000 mmol/gDW/h. A dish limits
+    # the RATE as well as the list. One constant scales every uptake bound, bisected so growth lands on
+    # a 23 h doubling -- fitted to a growth rate and never to the labels, the same discipline kappa was
+    # fitted under in loop 1. It is uniform across nutrients, which is crude and is said so here.
+    lo, hi = 1e-6, 1000.0
+    for _ in range(60):
+        mid = np.sqrt(lo * hi)
+        for rid in keep:
+            M.reactions.get_by_id(rid).lower_bound = -mid
+        v = M.slim_optimize()
+        if v is None or not np.isfinite(v) or v < MU_REQUIRE:
+            lo = mid
+        else:
+            hi = mid
+        if hi / lo < 1.0001:
+            break
+    UPTAKE = float(np.sqrt(lo * hi))
+    for rid in keep:
+        M.reactions.get_by_id(rid).lower_bound = -UPTAKE
+    mu_med = M.slim_optimize()
+    say(f"    composition alone (each at 1000 mmol/gDW/h): {mu_unlimited:.2f}/h -- a menu, not a medium")
+    say(f"    uptake rate capped at {UPTAKE:.4g} mmol/gDW/h per component, bisected to a 23 h doubling")
+    say(f"    growth: {mu_med:.4f}/h   (open medium {mu_open:.2f}/h -- a "
+        f"{mu_open/max(mu_med,1e-9):.0f}x reduction, achieved by nutrients rather than by squeezing "
+        f"enzymes)")
     # A medium has to be feasible AND limiting. Two earlier attempts produced media that supported
     # 86.26/h and 69.60/h -- nominally closed, functionally open -- and a retest on either would have
     # looked like a result while measuring nothing. The upper bound is what makes M1 able to catch that.
@@ -377,6 +402,7 @@ def main():
                "n_barred": len(barred), "barred": sorted(set(barred)),
                "mu_medium": float(mu_med),
                "n_open_uptakes": len(keep), "n_required": len(mm),
+               "uptake_cap": UPTAKE, "mu_composition_only": float(mu_unlimited),
                "supplement": supplement,
                "required_physiological": phys_hit, "required_exotic": exotic,
                "auc_defined_medium": float(a_med), "auc_open_medium": OPEN_MEDIUM_BEST,
