@@ -36,6 +36,43 @@ CONTROLS: 200 label shuffles; the open-medium run on identical code with only ex
 the physiological list as an independent yardstick that the constructed medium is scored against, not
 fitted to.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    M1 FEASIBLE AND LIMITING   PASS.  57 open uptakes of 1,660, uptake capped at 0.2445 mmol/gDW/h
+                               per component, growth 0.0300/h -- a 4,162x reduction from the shipped
+                               model, achieved by nutrients rather than by squeezing enzymes.
+    M2 THE RETEST              PASS.  Defined-medium FBA 0.6850 against open-medium 0.6491, a change
+                               of +0.0359 against a +0.03 gate. THE OPEN MEDIUM WAS HOLDING FLUX
+                               BALANCE BACK, and loop 1's G4 was partly an artefact of a model
+                               shipped without one.
+    M3 SLACK                   FAIL.  2,619 of 2,848 knockouts still move growth (92.0%), against a
+                               gate of 90%. Better than the open medium's 100%, and 153 genes are now
+                               outright lethal where essentially none were before, but a cell in
+                               which 92% of single deletions change growth is still not a cell.
+
+    and against the expression confound, on the same genes: 0.6507 within abundance-matched deciles,
+    and 5-fold CV lookup 0.7761 -> lookup + defined-medium FBA 0.8266 (+0.0504) with a SINGLE
+    mechanistic score, where loop 3 needed three to reach +0.0552.
+
+WHAT IT COST TO GET HERE, because the path is the finding as much as the number is.  Six attempts, and
+every one failed for a different real reason:
+    1  substring matching -- "Pi" matched alpha-pinene, "choline" matched 35 phosphatidylcholines
+    2  minimal_medium answered ATP, because it minimises import FLUX and ATP is cheap per unit mass
+    3  with ATP barred it answered prothrombin, fibrinogen, haptoglobin -- a blacklist cannot enumerate
+       "large molecule", so the rule became mechanical: bar uptake above 40 carbons, from the model's
+       own formulas
+    4  that barred vitamin B12 too, at 63 carbons, and B12 turned out to be the ONE metabolite this
+       network cannot synthesise -- the list said "cobalamin", Human-GEM says "aquacob(III)alamin"
+    5  greedy supplementation could not find it from a zero-growth base, because several components
+       were missing at once and no single addition helps
+    6  and a menu is not a medium: 57 permitted nutrients at 1000 mmol/gDW/h each still gave 46.35/h
+
+THE TWO FINDINGS ABOUT HUMAN-GEM WORTH KEEPING.  It ships uptake reactions for ATP, NAD+, FAD, LDL,
+apoE and plasminogen, and for metabolites of up to 9,642,032 carbons; a model that can import its own
+energy currency has no essential genes worth measuring. And with a culture dish made free, the network
+needs exactly TWO things it cannot make for itself: gamma-tocopherol and lipoic acid. Everything else
+in a dish, it can build.
+
 -> outputs/loop_medium.json
 """
 import json
