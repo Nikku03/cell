@@ -140,7 +140,9 @@ def main():
     say(f"\n  Human-GEM loaded ({time.time()-t0:.0f}s): {len(M.reactions)} reactions, "
         f"{len(M.exchanges)} exchanges, all open at {list(M.exchanges)[0].lower_bound}")
     mu_open = M.slim_optimize()
-    say(f"  growth with everything open: {mu_open:.2f}/h  -- a cell that can eat anything")
+    bio = str(M.objective.expression).split("*")[1].split(" ")[0]
+    say(f"  growth with everything open: {mu_open:.2f}/h  -- a cell that can eat anything "
+        f"(objective {bio})")
 
     import re as _re
 
@@ -181,56 +183,43 @@ def main():
     # ---- what does the network actually need? ---------------------------------------------------------
     say(f"\n  asking minimal_medium for the uptakes required to reach {MU_REQUIRE}/h ...")
     t1 = time.time()
-    mm = minimal_medium(M, MU_REQUIRE, minimize_components=False)
-    if mm is not None:
-        mm = mm[mm > 1e-9].sort_values(ascending=False)
-        say(f"    {len(mm)} exchange reactions required ({time.time()-t1:.0f}s)")
-        supplement = []
-    else:
-        # THE INTERESTING CASE, and the one that actually happened.
-        # With uptake restricted to plausible small molecules the model cannot grow AT ALL -- not
-        # slowly, exactly zero. "It does not grow" is a wall, not a finding, so it gets converted into
-        # one: greedily re-open the single barred exchange that buys the most growth, and repeat. The
-        # answer is then a NAMED, MINIMAL list of the large molecules Human-GEM cannot synthesise for
-        # itself, which is a concrete statement about the model rather than a complaint about it.
-        say(f"    INFEASIBLE ({time.time()-t1:.0f}s) -- on plausible small molecules alone this model")
-        say(f"    does not grow at all. Converting that into a list: greedily re-opening the barred")
-        say(f"    uptake that buys the most growth, until {MU_REQUIRE}/h is reachable.")
-        cand = [M.reactions.get_by_id(r) for r in
-                [x.id for x in M.exchanges if x.lower_bound == 0.0 and x.id not in
-                 {y.id for y in M.exchanges if (list(y.metabolites)[0].name or '').strip().lower()
-                  in PHYS_SET}]]
-        supplement, mu_cur = [], M.slim_optimize() or 0.0
-        for step in range(12):
-            best, best_mu = None, mu_cur
-            for r in cand:
-                r.lower_bound = -1000.0
-                v = M.slim_optimize()
-                r.lower_bound = 0.0
-                if v is not None and np.isfinite(v) and v > best_mu + 1e-9:
-                    best, best_mu = r, float(v)
-            if best is None:
-                say(f"      step {step+1}: NOTHING further increases growth. Stuck at {mu_cur:.4g}/h.")
-                break
-            best.lower_bound = -1000.0
-            cand.remove(best)
-            supplement.append(best.id)
-            mu_cur = best_mu
-            nm = list(best.metabolites)[0].name
-            say(f"      step {step+1}: + {nm:<44} -> {mu_cur:.4g}/h")
-            if mu_cur >= MU_REQUIRE:
-                break
-        say(f"    minimal supplement: {len(supplement)} large molecules the model cannot make for itself")
-        mm = minimal_medium(M, min(MU_REQUIRE, max(mu_cur * 0.9, 1e-6)), minimize_components=False)
-        if mm is None:
-            say("    still infeasible; nothing below can be computed and it is recorded as such.")
-            json.dump({"test": "loop_medium", "M1": False, "infeasible": True,
-                       "mu_open": float(mu_open), "mu_barred": float(mu_barred),
-                       "supplement": supplement, "log": log},
-                      open(OUT / "loop_medium.json", "w"), indent=2)
-            return 1
-        mm = mm[mm > 1e-9].sort_values(ascending=False)
-        say(f"    {len(mm)} exchange reactions required once supplemented")
+    # MAKE THE PHYSIOLOGICAL NUTRIENTS FREE, which is what fixes the gaming.
+    # minimal_medium penalises every import equally, so it reaches for whatever carries the most mass
+    # per unit flux: it answered ATP, then prothrombin, then maltohexaose and tripeptides, and never
+    # glucose. Greedy supplementation cannot rescue that either -- from a base that does not grow, no
+    # SINGLE addition raises growth above zero, because several things are missing at once, so greedy
+    # stalls on the first step. The formulation that works is an LP in which uptake of a nutrient a dish
+    # supplies costs NOTHING and every other uptake is penalised. Then the solver takes glucose and the
+    # amino acids for free and imports something exotic only where the network genuinely cannot do
+    # without it -- which is exactly the question being asked.
+    from optlang.symbolics import Zero
+    bio_rxn = M.reactions.get_by_id(bio)
+    old_obj, old_lb = M.objective, bio_rxn.lower_bound
+    bio_rxn.lower_bound = MU_REQUIRE                      # growth becomes a constraint, not a goal
+    cost = Zero
+    for r in M.exchanges:
+        if (list(r.metabolites)[0].name or "").strip().lower() not in PHYS_SET:
+            cost += r.reverse_variable                    # reverse_variable is the uptake magnitude
+    M.objective = M.problem.Objective(cost, direction="min")
+    sol = M.optimize()
+    exotic_need = {}
+    if sol.status == "optimal":
+        for r in M.exchanges:
+            nm = (list(r.metabolites)[0].name or "").strip().lower()
+            if nm not in PHYS_SET and r.reverse_variable.primal > 1e-9:
+                exotic_need[r.id] = float(r.reverse_variable.primal)
+    M.objective, bio_rxn.lower_bound = old_obj, old_lb
+    say(f"    LP status {sol.status}: with a culture dish free, the network still needs "
+        f"{len(exotic_need)} non-physiological uptakes to reach {MU_REQUIRE}/h "
+        f"({time.time()-t1:.0f}s)")
+    if sol.status != "optimal":
+        say("    No solution: this model cannot reach that growth rate on a dish plus anything.")
+        json.dump({"test": "loop_medium", "M1": False, "infeasible": True,
+                   "mu_open": float(mu_open), "mu_barred": float(mu_barred), "log": log},
+                  open(OUT / "loop_medium.json", "w"), indent=2)
+        return 1
+    mm = pd.Series(exotic_need).sort_values(ascending=False) if exotic_need else pd.Series(dtype=float)
+    supplement = list(mm.index)
 
     def met_name(rid):
         r = M.reactions.get_by_id(rid)
