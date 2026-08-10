@@ -70,6 +70,14 @@ PHYSIOLOGICAL = [
     "folate", "riboflavin", "thiamin", "pantothenate", "pyridoxine", "nicotinamide", "nicotinate",
     "biotin", "choline", "inositol", "cobalamin", "retinol", "alpha-tocopherol", "ascorbate",
     "linoleate", "linolenate", "urea", "pyruvate", "L-lactate",
+    # Vitamin B12, and the NAME is the whole point. This list said "cobalamin"; Human-GEM calls it
+    # "aquacob(III)alamin", so it never matched, and that one mismatch is why loop 3's hand-written
+    # medium supported exactly zero growth and H3 came back NOT TESTABLE. A greedy probe found it:
+    # re-opening this single uptake took the model from 0 to 124.8/h, making it the one metabolite here
+    # the network cannot synthesise for itself. It is also 63 carbons, so the >40-carbon bar would have
+    # thrown it out too -- the exemption for this list is what stops a rule aimed at Psyllium from
+    # discarding a real vitamin.
+    "aquacob(III)alamin",
 ]
 PHYS_SET = {w.lower() for w in PHYSIOLOGICAL}
 
