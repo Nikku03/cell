@@ -1,0 +1,179 @@
+{
+  "test": "data_ledger",
+  "entries": [
+    {
+      "name": "AvgKdegs.csv",
+      "kind": "raw",
+      "source": "RNADecayCafe v1.1, DOI 10.5281/zenodo.16884513",
+      "why": "target for nexus_txn: k_syn = avg_RPKM_total * avg_kdeg, 8,867 usable K562 genes",
+      "state": "OK",
+      "have": "b8869c749b2b4a24",
+      "want": "b8869c749b2b4a24",
+      "bytes": 21962834
+    },
+    {
+      "name": "k562_atac.bed.gz",
+      "kind": "raw",
+      "source": "ENCODE ENCFF926KTI, K562 ATAC-seq IDR thresholded peaks, GRCh38, 55,575 peaks",
+      "why": "nexus_txn L2 promoter accessibility. NOT the original file, which is lost",
+      "state": "OK",
+      "have": "2f50c1a82609dccb",
+      "want": "2f50c1a82609dccb",
+      "bytes": 1268446
+    },
+    {
+      "name": "re2g_k562.bed.gz",
+      "kind": "raw",
+      "source": "ENCODE-rE2G ENCSR627ANP / ENCFF976OKL, K562 thresholded element-gene links, 87,490",
+      "why": "raw source for _abcfeat.json",
+      "state": "OK",
+      "have": "a853c2745e1b4cc5",
+      "want": "a853c2745e1b4cc5",
+      "bytes": 3744436
+    },
+    {
+      "name": "lambert.csv",
+      "kind": "raw",
+      "source": "Lambert et al. 2018, Human TFs database v1.01",
+      "why": "raw source for lambert_tf_symbols.json",
+      "state": "OK",
+      "have": "5438940ddef71b6f",
+      "want": "5438940ddef71b6f",
+      "bytes": 2107299
+    },
+    {
+      "name": "ctcf_gw.bed.gz",
+      "kind": "raw",
+      "source": "ENCODE ENCFF362OPG, K562 CTCF IDR thresholded, ENCSR000AKO, GRCh38, 44,104 peaks",
+      "why": "the 0.663 CRISPR bar. NOT the original file; rebuilt bar reads 0.6737 against 0.6632",
+      "state": "OK",
+      "have": "39d4e2566f1d008c",
+      "want": "39d4e2566f1d008c",
+      "bytes": 776906
+    },
+    {
+      "name": "GSM8523629_supercoil_rep1_hg38.bw",
+      "kind": "raw",
+      "source": "GEO GSE277502, bTMP-seq hTERT-RPE1, hg38, 20 kb bins",
+      "why": "torsion attempt 1",
+      "state": "OK",
+      "have": "5a22b743af5798b4",
+      "want": "5a22b743af5798b4",
+      "bytes": 1437675
+    },
+    {
+      "name": "GSM8523630_supercoil_rep2_hg38.bw",
+      "kind": "raw",
+      "source": "GEO GSE277502 replicate 2",
+      "why": "replicate-concordance control, r = 0.796",
+      "state": "OK",
+      "have": "b74136ed78bfb469",
+      "want": "b74136ed78bfb469",
+      "bytes": 1437304
+    },
+    {
+      "name": "GSM8523628_RPE1_bTMP_genomic_control_hg38.bw",
+      "kind": "raw",
+      "source": "GEO GSE277502 naked genomic DNA control",
+      "why": "the matched control GSE285699 does not ship",
+      "state": "OK",
+      "have": "c4cfe8f1ec137a6e",
+      "want": "c4cfe8f1ec137a6e",
+      "bytes": 1143230
+    },
+    {
+      "name": "GSM8706920_1_RPKM.bw",
+      "kind": "raw",
+      "source": "GEO GSE285699, TMP-seq SH-SY5Y WT rep1, hg38, 70-90 bp run-length encoded",
+      "why": "torsion attempt 2; carries the twin-domain z = +23.21",
+      "state": "OK",
+      "have": "4e7bf678aa47b232",
+      "want": "4e7bf678aa47b232",
+      "bytes": 107688596
+    },
+    {
+      "name": "GSM8706924_5_RPKM.bw",
+      "kind": "raw",
+      "source": "GEO GSE285699 WT rep2",
+      "why": "replicate for attempt 2",
+      "state": "OK",
+      "have": "da0c81bb13975374",
+      "want": "da0c81bb13975374",
+      "bytes": 110110646
+    },
+    {
+      "name": "_abcfeat.json",
+      "kind": "derived",
+      "source": "aggregated from ENCODE-rE2G by build_abcfeat() in this file",
+      "why": "nexus_txn L3. The ORIGINAL came from ABC and has no producer anywhere in this repo",
+      "state": "OK",
+      "have": "20f7aa4ae6040e16",
+      "want": "20f7aa4ae6040e16",
+      "bytes": 1195158
+    },
+    {
+      "name": "lambert_tf_symbols.json",
+      "kind": "derived",
+      "source": "filtered from Lambert v1.01 by build_lambert() in this file",
+      "why": "nexus_txn L4, 1,639 TFs",
+      "state": "OK",
+      "have": "3e58c688dec13289",
+      "want": "3e58c688dec13289",
+      "bytes": 15116
+    }
+  ],
+  "rebuilds": [
+    {
+      "name": "_abcfeat.json",
+      "result": "MATCHES",
+      "rebuilt_hash": "20f7aa4ae6040e16",
+      "expected": "20f7aa4ae6040e16",
+      "n": 14465
+    },
+    {
+      "name": "lambert_tf_symbols.json",
+      "result": "MATCHES",
+      "rebuilt_hash": "3e58c688dec13289",
+      "expected": "3e58c688dec13289",
+      "n": 1639
+    }
+  ],
+  "all_present": true,
+  "transforms_deterministic": true,
+  "log": [
+    "====================================================================================================",
+    "THE DATA LEDGER -- every external input, where it came from, and how to get it back",
+    "====================================================================================================",
+    "  Four inputs nexus_txn needs were absent from this container, so a recorded result could be",
+    "  read but not checked. Recovering them took a Zenodo search, three ENCODE queries, a GEO",
+    "  crawl and a rebuild from a different predictor. That knowledge lived only in commit",
+    "  messages. This file makes it executable.",
+    "\n  input                                       kind     state                        hash",
+    "  AvgKdegs.csv                                raw      OK               b8869c749b2b4a24",
+    "  k562_atac.bed.gz                            raw      OK               2f50c1a82609dccb",
+    "  re2g_k562.bed.gz                            raw      OK               a853c2745e1b4cc5",
+    "  lambert.csv                                 raw      OK               5438940ddef71b6f",
+    "  ctcf_gw.bed.gz                              raw      OK               39d4e2566f1d008c",
+    "  GSM8523629_supercoil_rep1_hg38.bw           raw      OK               5a22b743af5798b4",
+    "  GSM8523630_supercoil_rep2_hg38.bw           raw      OK               b74136ed78bfb469",
+    "  GSM8523628_RPE1_bTMP_genomic_control_hg38.bwraw      OK               c4cfe8f1ec137a6e",
+    "  GSM8706920_1_RPKM.bw                        raw      OK               4e7bf678aa47b232",
+    "  GSM8706924_5_RPKM.bw                        raw      OK               da0c81bb13975374",
+    "  _abcfeat.json                               derived  OK               20f7aa4ae6040e16",
+    "  lambert_tf_symbols.json                     derived  OK               3e58c688dec13289",
+    "\n  12 of 12 present and hash-matching",
+    "\n  REBUILD CHECK -- a derived file must reproduce its hash from its raw inputs, or the",
+    "  recorded transform is not the one that made it",
+    "    _abcfeat.json                     build_abcfeat(re2g_k562.bed.gz) -> 14,465 entries, hash 20f7aa4ae6040e16   MATCHES",
+    "    lambert_tf_symbols.json           build_lambert(lambert.csv) -> 1,639 entries, hash 3e58c688dec13289   MATCHES",
+    "",
+    "    Every derived file rebuilds bit-identically. The transforms in this file ARE the ones",
+    "    that produced them, so the provenance claim is checkable rather than asserted.",
+    "\n  TO RESTORE ANYTHING MISSING:  python3 colab/data_ledger.py --fetch <name|all>",
+    "\n  NOT IN THIS LEDGER, and it is the biggest remaining hole: cell_complete.json is 38 MB,",
+    "  read by 227 modules, gitignored, and has no external source to fetch from. It is a",
+    "  DERIVED artefact whose producer is not in this repo -- the same condition as _abcfeat.json",
+    "  before today, but with nothing to rebuild it from. A ledger cannot fix that; only",
+    "  recovering or rewriting its builder can."
+  ]
+}
