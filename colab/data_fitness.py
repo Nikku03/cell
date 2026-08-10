@@ -52,10 +52,32 @@ import run_manifest as RM  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 SEED = 5150
-SAMPLE = 60           # records sampled from a table to learn its field names
+SAMPLE = 40           # records sampled at each level to learn field names
+DEPTH = 4             # how deep to read a schema; must match how deep keys are extracted
 MAXBYTES = 200 << 20
 
 _VOCAB = {}
+
+
+def _descend(obj, depth=DEPTH, width=SAMPLE):
+    """Field names at EVERY level, not just the first two.
+
+    THE TWO SIDES OF THE COMPARISON MUST DESCEND EQUALLY. accessed_data() unwraps j["end_state"]["GO_
+    function"] to arbitrary depth, while this only ever looked at top-level keys and the keys of their
+    values. Anything nested deeper was reported missing from a file that contains it, which put
+    ko_cell_map top of the stale-schema list at 7% for reading cell_complete.json exactly as intended.
+    Sampled in width and bounded in depth so the cost stays flat on a 200 MB tree."""
+    ks = set()
+    if depth <= 0:
+        return ks
+    if isinstance(obj, dict):
+        ks |= set(map(str, obj.keys()))
+        for v in list(obj.values())[:width]:
+            ks |= _descend(v, depth - 1, width)
+    elif isinstance(obj, list):
+        for v in obj[:width]:
+            ks |= _descend(v, depth - 1, width)
+    return ks
 
 
 def locate(name):
@@ -92,16 +114,7 @@ def vocab(path):
             opener, name = (lambda q: gzip.open(q, "rt")), path.stem
             sfx = Path(name).suffix.lower()
         if sfx == ".json":
-            obj = json.load(opener(path))
-            if isinstance(obj, dict):
-                ks |= set(map(str, obj.keys()))
-                for v in list(obj.values())[:SAMPLE]:
-                    if isinstance(v, dict):
-                        ks |= set(map(str, v.keys()))
-            elif isinstance(obj, list):
-                for v in obj[:SAMPLE]:
-                    if isinstance(v, dict):
-                        ks |= set(map(str, v.keys()))
+            ks |= _descend(json.load(opener(path)))
         elif sfx in (".npz", ".npy"):
             z = np.load(path, allow_pickle=True)
             names = list(z.files) if hasattr(z, "files") else []
