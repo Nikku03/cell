@@ -237,8 +237,14 @@ def unresolved_loads(tree):
         nm = f.attr if isinstance(f, ast.Attribute) else getattr(f, "id", "")
         if nm not in LOADERS:
             continue
-        lit = any(isinstance(c, ast.Constant) and isinstance(c.value, str)
-                  and ("." in c.value) for c in ast.walk(n))
+        # AN F-STRING IS NOT A LITERAL PATH. ko_cell_map loads f"ko_dossier_{ko}.json"; the ".json"
+        # fragment inside the JoinedStr satisfied a naive "is there a Constant with a dot" test, so the
+        # module was ranked rather than excluded, and the fields it reads from that unresolved dossier
+        # were reported missing from the ONE input that did resolve. Any interpolation anywhere in the
+        # path means this tool does not know which file was opened.
+        interp = any(isinstance(c, ast.JoinedStr) for c in ast.walk(n))
+        lit = (not interp) and any(isinstance(c, ast.Constant) and isinstance(c.value, str)
+                                   and ("." in c.value) for c in ast.walk(n))
         if not lit:
             n_un += 1
     return n_un
