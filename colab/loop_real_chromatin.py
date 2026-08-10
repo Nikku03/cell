@@ -38,6 +38,39 @@ CONTROLS: the naked-DNA track as an artefact control; replicate 2 as an independ
 gene-label shuffles; CpG and gene length as compositional confounds; loop anchors as a separate,
 independent chromatin feature.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    R1 REPRODUCIBLE   PASS.  Spearman 0.6078 between replicates per gene, over +/-20 kb of the TSS.
+                      supercoil_track refused to write this track because 20 kb BINS wash out locus
+                      identity -- and it was right about bins. A 40 kb window anchored ON THE TSS is a
+                      different question, and at that resolution the replicates do agree. The refusal
+                      was correct and its scope was narrower than it looked.
+    R2 NOT COVERAGE   PASS, and by sign as well as magnitude. Torsion correlates +0.1766 with log k_syn
+                      while the naked genomic DNA control correlates -0.1423. Opposite directions:
+                      whatever this is, it is not mappability.
+    R3 SIGNAL         PASS.  |null| 95th percentile 0.0240 over 200 shuffles against an observed 0.1766.
+    R4 BEATS COMPOSITION  PASS.  With CpG content and gene length regressed out, torsion holds at
+                      +0.1436 while the naked control collapses to -0.0145. It is not a proxy for
+                      promoter composition.
+
+THE DIRECTION IS THE RIGHT ONE, which is worth more than the coefficient.  bTMP intercalates UNWOUND
+DNA, so high signal means locally underwound, means negative supercoiling. Negative supercoiling at
+promoters is what facilitates duplex opening, and the correlation with transcription rate is POSITIVE.
+The sign was not fitted; it came out of the physics.
+
+TWO LIMITS, both real.
+    The effect is modest -- rho 0.18, partial 0.14. This is a genuine link, not a strong predictor, and
+    calling it more would repeat exactly the mistake loop 6 made.
+    The torsion is measured in hTERT-RPE1 and the transcription rates come from eleven other cell lines
+    in RNADecayCafe. This is a CROSS-CELL-TYPE comparison, which biases toward the null for anything
+    cell-type-specific and means the within-cell-type coupling is probably stronger than 0.18. It also
+    means no claim here is about any particular cell.
+
+WHAT IT EARNS.  This is the first controlled link in this repository from real chromatin measurements to
+a cell-model quantity. It also justifies writing `torsion_btmp` onto the gene records at TSS resolution,
+which supercoil_track declined to do at bin resolution -- with the reason, the window and the replicate
+correlation recorded alongside it.
+
 -> outputs/loop_real_chromatin.json
 """
 import json
