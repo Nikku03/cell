@@ -295,12 +295,20 @@ def main():
         scoped = accessed_data(tree)          # keys reached for ON LOADED DATA only
         if not acc:
             continue
-        ins = []
+        ins, unlocated = [], []
         for d in r["reads"]:
             p = locate(Path(d).name)
             if p:
                 ins.append(p)
                 all_ds.setdefault(str(p), p)
+            else:
+                # NOT FOUND IS NOT ABSENT. adrn_blocks_new reads z["kos"] from nlz_K562_gwps.npz and
+                # nb["universe"] from blocks_new.npz -- both real keys in real files that live in a
+                # scratch directory locate() does not search. Dropping them silently left the module's
+                # keys to be checked against only its OTHER inputs, and it topped the list for reading
+                # its own data correctly. A module is rankable only if EVERY input it declares was
+                # located, opened and read; this was the third path into that rule and the one missed.
+                unlocated.append(Path(d).name)
         if not ins:
             continue
         voc, per, unread = set(), {}, []
@@ -318,7 +326,7 @@ def main():
                      "n_scoped": len(scoped), "scoped_hit": len(scoped & voc),
                      "scoped_frac": (len(scoped & voc) / len(scoped)) if scoped else None,
                      "scoped_missing": sorted(scoped - voc)[:10], "inputs": [p.name for p in ins],
-                     "unresolved_loads": unresolved_loads(tree),
+                     "unresolved_loads": unresolved_loads(tree), "unlocated": unlocated,
                      "per_input": per, "unreadable": unread, "unmatched": sorted(acc - voc)[:12],
                      "dead_inputs": [n for n, c in per.items() if c == 0]})
     report(f"\n  {len(rows)} modules have both named fields and a locatable input")
@@ -377,13 +385,16 @@ def main():
     report("    fold_mcc_mean that appear in no input because they are outputs. Scoping is what turns")
     report("    this from everyone's output vocabulary into a stale-schema question.")
 
-    rankable = [r for r in sc if r["n_scoped"] >= 4 and not r["unresolved_loads"] and not r["unreadable"]]
+    rankable = [r for r in sc if r["n_scoped"] >= 4 and not r["unresolved_loads"]
+                and not r["unreadable"] and not r["unlocated"]]
     worst = sorted(rankable, key=lambda x: x["scoped_frac"])[:10]
     report(f"\n  STALE-SCHEMA CANDIDATES -- loaded-data fields its inputs do not offer")
     report(f"    Only the {len(rankable)} modules whose inputs are ALL resolved and readable can be")
     report(f"    ranked. {sum(1 for r in sc if r['unresolved_loads'])} have a load with a variable path")
-    report(f"    and {sum(1 for r in sc if r['unreadable'])} have an unopenable input; both were top of")
-    report("    the first list, and both were measuring this tool's blindness rather than their own.")
+    report(f"    {sum(1 for r in sc if r['unreadable'])} have an unopenable input, and "
+           f"{sum(1 for r in sc if r['unlocated'])} declare a file that is not on disk where this tool")
+    report("    looks. Each of those three was top of a previous list, and each was measuring this")
+    report("    tool's blindness rather than the module's mistake.")
     report(f"    {'module':<36}{'match':>7}{'keys':>6}  missing from every input")
     for r in worst:
         report(f"    {Path(r['module']).name:<36}{r['scoped_frac']:>7.0%}{r['n_scoped']:>6}  "
