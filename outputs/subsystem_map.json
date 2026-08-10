@@ -364,11 +364,19 @@
             "rankv2_meta.json",
             "rx_ChEBI2Reactome_PE_All_Levels.txt"
           ],
-          "after": [],
+          "after": [
+            "cell_complete.json",
+            "holdout_meta.json",
+            "rankv2_answers.json",
+            "rankv2_meta.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
           "n_before": 5,
-          "n_after": 0,
+          "n_after": 7,
           "status": "TIMEOUT after 240s",
-          "keys": 0
+          "keys": 614
         },
         {
           "module": "colab/cell_orphan_shortlist.py",
@@ -586,23 +594,27 @@
         "trrust_regulon.json"
       ],
       "after_datasets": [
-        "ddg_model.pkl"
+        "cell_complete.json",
+        "ddg_model.pkl",
+        "holdout_meta.json",
+        "holdout_top50_partial.json",
+        "reaction_network.json",
+        "reactome_pathways.json",
+        "trrust_regulon.json"
       ],
       "gained": [
-        "ddg_model.pkl"
+        "ddg_model.pkl",
+        "reaction_network.json",
+        "reactome_pathways.json"
       ],
       "lost": [
         "AvgKdegs.csv",
         "_abcfeat.json",
         "cand_struct.json",
-        "cell_complete.json",
-        "holdout_meta.json",
-        "holdout_top50_partial.json",
         "k562_atac.bed.gz",
         "lambert_tf_symbols.json",
         "nlz_K562.pkl",
-        "skempi_v2.csv",
-        "trrust_regulon.json"
+        "skempi_v2.csv"
       ],
       "rows": [
         {
@@ -686,11 +698,18 @@
             "holdout_meta.json",
             "holdout_top50_partial.json"
           ],
-          "after": [],
+          "after": [
+            "cell_complete.json",
+            "holdout_meta.json",
+            "holdout_top50_partial.json",
+            "reaction_network.json",
+            "reactome_pathways.json",
+            "trrust_regulon.json"
+          ],
           "n_before": 3,
-          "n_after": 0,
+          "n_after": 6,
           "status": "TIMEOUT after 240s",
-          "keys": 0
+          "keys": 311
         },
         {
           "module": "colab/nexus_doesitbind.py",
@@ -771,11 +790,14 @@
             "holdout_meta.json",
             "holdout_top50_partial.json"
           ],
-          "after": [],
+          "after": [
+            "holdout_meta.json",
+            "holdout_top50_partial.json"
+          ],
           "n_before": 3,
-          "n_after": 0,
+          "n_after": 2,
           "status": "TIMEOUT after 240s",
-          "keys": 0
+          "keys": 344
         },
         {
           "module": "colab/nexus_regulate.py",
@@ -999,7 +1021,7 @@
     "    cell_orphan_howmany.py                       8      0       0  ok",
     "    cell_orphan_incontext.py                     1      0       0  not traced",
     "    cell_orphan_rank_v2.py                       2      0       0  ok",
-    "    cell_orphan_selective.py                     5      0       0  TIMEOUT after 240s",
+    "    cell_orphan_selective.py                     5      7     614  TIMEOUT after 240s",
     "    cell_orphan_spatial.py                       4      7     579  ok",
     "    cell_orphan_ties.py                          1      0       0  not traced",
     "    cell_orphan_ties_nn.py                       1      0       0  not traced",
@@ -1024,21 +1046,21 @@
     "    nexus.py                                     0      1       0  FileNotFoundError",
     "    nexus_dna_scale.py                           0      0       0  ok",
     "    nexus_dna_spheres.py                         0      0       0  ok",
-    "    nexus_dock_screen.py                         3      0       0  TIMEOUT after 240s",
+    "    nexus_dock_screen.py                         3      6     311  TIMEOUT after 240s",
     "    nexus_ko.py                                  2      0       0  not traced",
     "    nexus_ko_fetch.py                            1      0       0  not traced",
     "    nexus_ko_struct.py                           1      0       0  not traced",
     "    nexus_massaction.py                          1      0       0  not traced",
-    "    nexus_pocket_modes.py                        3      0       0  TIMEOUT after 240s",
+    "    nexus_pocket_modes.py                        3      2     344  TIMEOUT after 240s",
     "    nexus_regulate.py                            1      0       0  not traced",
     "    nexus_txn.py                                 5      0       0  not traced",
     "    nexus_wall.py                                3      0       0  not traced",
     "    ------------------------------------------------------------------------------------------",
-    "    DISTINCT DATASETS                           11      1",
-    "    files the source never named ....... 1",
-    "      ddg_model.pkl",
-    "    named but not opened in this run ... 11",
-    "      AvgKdegs.csv, _abcfeat.json, cand_struct.json, cell_complete.json, holdout_meta.json, ",
+    "    DISTINCT DATASETS                           11      7",
+    "    files the source never named ....... 3",
+    "      ddg_model.pkl, reaction_network.json, reactome_pathways.json",
+    "    named but not opened in this run ... 7",
+    "      AvgKdegs.csv, _abcfeat.json, cand_struct.json, k562_atac.bed.gz, lambert_tf_symbols.js",
     "\n  ==============================================================================================",
     "  4D CHROMATIN   14 modules, 13 traced, 3 ran clean",
     "  ==============================================================================================",
@@ -1065,7 +1087,7 @@
     "  ==============================================================================================",
     "    subsystem           mods  traced  clean   before   after   new",
     "    cell model            35      14     13       29      27    14",
-    "    nexus                 22       5      2       11       1     1",
+    "    nexus                 22       5      2       11       7     3",
     "    4d chromatin          14      13      3        0       0     0"
   ]
 }
