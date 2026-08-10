@@ -4,83 +4,84 @@
   "bp": 1400.0,
   "sigma": -0.05,
   "n_null": 3,
-  "gap": 382.521504869012,
-  "noise": 1.4216630266102582e-05,
+  "gap": 7228.372431714716,
+  "noise": 3.6167826393242846e-05,
   "rigid_theorem": [
     {
       "axis": "rot x",
-      "measured": 924899744211700.4,
-      "predicted": 1150203535443565.8,
-      "rel_scale": 1.4216630266098698e-05
+      "measured": 2355020739323877.0,
+      "predicted": 284978294091151.3,
+      "rel_scale": 3.61676424126277e-05
     },
     {
       "axis": "rot y",
-      "measured": 924899744211952.5,
-      "predicted": 1150203535443630.2,
-      "rel_scale": 1.4216630266102574e-05
+      "measured": 2355032719045609.0,
+      "predicted": 284990389487438.7,
+      "rel_scale": 3.616782639329699e-05
     },
     {
       "axis": "rot z",
-      "measured": -852031319592263.0,
-      "predicted": 1150203535443598.0,
-      "rel_scale": -1.309657000295032e-05
+      "measured": 634873071914600.8,
+      "predicted": 284987501292069.06,
+      "rel_scale": 9.750174110571131e-06
     }
   ],
   "step_control": [
     {
       "h": 1e-09,
-      "trans": 3.6713280265957143e-09,
-      "rot": 1.4216630266102582e-05,
+      "trans": 3.622183583861738e-09,
+      "rot": 3.6167826393242846e-05,
       "n_null": 3,
-      "gap": 382.5215049414522
+      "gap": 7228.372409579573
     },
     {
       "h": 1e-10,
-      "trans": 3.9438428383817996e-13,
-      "rot": 2.2119212545065982e-05,
-      "n_null": 3,
-      "gap": 50280936.04540088
+      "trans": 1.670443477909323e-07,
+      "rot": 4.596427376186502e-07,
+      "n_null": 6,
+      "gap": 46.75862531693571
     }
   ],
   "reductions": [
     {
       "name": "linearity -> superposition",
-      "quantity": 5.458766739099531e-14,
+      "quantity": 1.8540349385360063e-13,
       "threshold": 1e-08,
       "direction": "below",
       "verdict": "HOLDS",
-      "margin": 5.458766739099531e-06,
-      "speedup": 3.8694957791467033,
+      "margin": 1.8540349385360062e-05,
+      "speedup": 3.9046199701937407,
       "note": "add 5 us against solve 0 ms",
       "detail": {}
     },
     {
       "name": "finite-amplitude linearity",
-      "quantity": 0.8751783603809824,
+      "quantity": 0.8555143567608874,
       "threshold": 0.001,
       "direction": "below",
-      "verdict": "FAILS",
-      "margin": 875.1783603809823,
+      "verdict": "NOT TESTABLE",
+      "margin": 855.5143567608874,
       "speedup": 1.0,
-      "note": "deviation from exact scaling at 2x/4x/8x force: 5.01e-01, 7.51e-01, 8.75e-01   |  max displacement 3.15e-02 of a bond length",
+      "note": "deviation from exact scaling at 2x/4x/8x force: 4.96e-01, 7.38e-01, 8.56e-01   |  max displacement 4.80e-02 of a bond length   |  8x force gives 1.604x the displacement  -- the response does not track the force -- 8x the force moved it 1.604x, so the deviation is (a-1)/a by algebra and measures the relaxation stalling, not nonlinearity. Usually means the reference configuration is not a minimum",
       "detail": {
         "devs": [
-          0.5014625619480979,
-          0.750606927959298,
-          0.8751783603809824
+          0.4956105679231855,
+          0.7377238265499452,
+          0.8555143567608874
         ],
-        "rel_amp": 0.03145369794299652
+        "rel_amp": 0.048049501871896626,
+        "growth_8x": 1.6041021900097596
       }
     },
     {
       "name": "reusable factorisation",
-      "quantity": 19.040657834627684,
+      "quantity": 89.67280163599182,
       "threshold": 10.0,
       "direction": "above",
-      "verdict": "MARGINAL",
-      "margin": 1.9040657834627683,
-      "speedup": 19.040657834627684,
-      "note": "setup 0.0 s, each solve 1 ms",
+      "verdict": "HOLDS",
+      "margin": 8.967280163599181,
+      "speedup": 89.67280163599182,
+      "note": "setup 0.0 s, each solve 0 ms",
       "detail": {}
     },
     {
@@ -141,13 +142,13 @@
     },
     {
       "name": "modal truncation",
-      "quantity": 0.9998301799254216,
+      "quantity": 0.9329085960487152,
       "threshold": 0.9,
       "direction": "above",
-      "verdict": "HOLDS",
-      "margin": 0.0016982007457844177,
+      "verdict": "MARGINAL",
+      "margin": 0.6709140395128478,
       "speedup": 9.333333333333334,
-      "note": "9 of 84 dimensions capture 100.0% of a real response",
+      "note": "9 of 84 dimensions capture 93.3% of a real response",
       "detail": {
         "n_modes": 9
       }
@@ -160,21 +161,21 @@
       "verdict": "MARGINAL",
       "margin": 3.0,
       "speedup": 1.037037037037037,
-      "note": "3 directions at numerical zero, gap 3.8e+02 to the first real mode; zero calibrated against rigid translation at 1.4e-05 relative  -- NOISY OPERATOR, an analytic Hessian gives ~1e-16",
+      "note": "3 directions at numerical zero, gap 7.2e+03 to the first real mode; zero calibrated against rigid translation at 3.6e-05 relative  -- NOISY OPERATOR, an analytic Hessian gives ~1e-16",
       "detail": {
         "n_null": 3,
-        "gap": 382.5215048721237
+        "gap": 7228.372423258807
       }
     },
     {
       "name": "timescale separation -> event stepping",
-      "quantity": 712071.5633046578,
+      "quantity": 38193.48495194302,
       "threshold": 1000.0,
       "direction": "above",
       "verdict": "HOLDS",
-      "margin": 712.0715633046578,
-      "speedup": 712071.5633046578,
-      "note": "lambda spans 9.14e+13 to 6.51e+19",
+      "margin": 38.19348495194302,
+      "speedup": 38193.48495194302,
+      "note": "lambda spans 1.70e+15 to 6.51e+19",
       "detail": {}
     }
   ],
@@ -188,42 +189,48 @@
     "  carrying its largest speedup, and it should be thrown away.",
     "\n  rod: 28 beads, 1400 bp, sigma -0.05, dLk -6.67, Wr +0.000",
     "  building a 84x84 numerical Hessian by finite differences...",
-    "  Hessian built in 16 s",
-    "  null space DISCOVERED: 3 directions, gap 3.83e+02 to the first real mode",
-    "\n  WHY 3 AND NOT 6 -- |grad E| = 0.581 kT/nm, so this configuration is NOT a minimum",
+    "  |grad E| 0.5808 -> 0.3139 kT/nm after relaxation",
+    "  STILL NOT A STATIONARY POINT. The imposed circle is not one because the constructor",
+    "  sets the radius from the ARC length while the bond term wants each CHORD at rest",
+    "  length -- confirmed, since E minimises at exactly the predicted scale pi/(n sin(pi/n))",
+    "  = 1.002101. A residual gradient survives that fix and is UNEXPLAINED: symmetry says a",
+    "  regular planar polygon's gradient must be purely radial, which uniform scaling removes.",
+    "  So the null-space count below is the count at a NON-stationary point, where rotations",
+    "  are not null modes, and the prediction that a true minimum gives 6 remains UNTESTED",
+    "  rather than falsified.",
+    "  Hessian built in 59 s",
+    "  null space DISCOVERED: 3 directions, gap 7.23e+03 to the first real mode",
+    "\n  WHY 3 AND NOT 6 -- |grad E| = 0.314 kT/nm, so this configuration is NOT a minimum",
     "    axis         measured RQ   H(Gx) = n x grad E    ratio   rel ||K||",
-    "    rot x         9.2490e+14           1.1502e+15     0.80    1.42e-05",
-    "    rot y         9.2490e+14           1.1502e+15     0.80    1.42e-05",
-    "    rot z        -8.5203e+14           1.1502e+15     0.74   -1.31e-05",
+    "    rot x         2.3550e+15           2.8498e+14     8.26    3.62e-05",
+    "    rot y         2.3550e+15           2.8499e+14     8.26    3.62e-05",
+    "    rot z         6.3487e+14           2.8499e+14     2.23    9.75e-06",
     "    a parameter-free prediction; agreement means the rotational stiffness is the theorem",
     "\n  CONTROL -- rebuild at a 10x smaller finite-difference step",
     "    step            trans RQ      rot RQ   n_null         gap",
-    "    1e-09          3.671e-09   1.422e-05        3   3.825e+02",
-    "    1e-10          3.944e-13   2.212e-05        3   5.028e+07",
-    "    translation quotient collapsed: True   rotation quotient held: True   count stable: True",
-    "    -> the translations' residual was noise and the rotations' stiffness is real, so the",
-    "       null space is 3. Six would have been an assumption the measurement contradicts.",
+    "    1e-09          3.622e-09   3.617e-05        3   7.228e+03",
+    "    1e-10          1.670e-07   4.596e-07        6   4.676e+01",
+    "    translation quotient collapsed: False   rotation quotient held: False   count stable: False",
     "\n    reduction                             verdict        quantity    speedup",
-    "    linearity -> superposition            HOLDS         5.459e-14      3.869",
+    "    linearity -> superposition            HOLDS         1.854e-13      3.905",
     "      add 5 us against solve 0 ms",
-    "    finite-amplitude linearity            FAILS            0.8752          1",
-    "      deviation from exact scaling at 2x/4x/8x force: 5.01e-01, 7.51e-01, 8.75e-01   |  max displacement 3.15e-02 of a bond length",
-    "    reusable factorisation                MARGINAL          19.04      19.04",
-    "      setup 0.0 s, each solve 1 ms",
+    "    finite-amplitude linearity            NOT TESTABLE       0.8555          1",
+    "      deviation from exact scaling at 2x/4x/8x force: 4.96e-01, 7.38e-01, 8.56e-01   |  max displacement 4.80e-02 of a bond length   |  8x force gives 1.604x the displacement  -- the response does not track the force -- 8x the force moved it 1.604x, so the deviation is (a-1)/a by algebra and measures the relaxation stalling, not nonlinearity. Usually means the reference configuration is not a minimum",
+    "    reusable factorisation                HOLDS             89.67      89.67",
+    "      setup 0.0 s, each solve 0 ms",
     "    locality (norm) -> truncate           FAILS                 1          1",
     "      100% of atoms carry 90% of the norm (R=10)",
-    "    modal truncation                      HOLDS            0.9998      9.333",
-    "      9 of 84 dimensions capture 100.0% of a real response",
+    "    modal truncation                      MARGINAL         0.9329      9.333",
+    "      9 of 84 dimensions capture 93.3% of a real response",
     "    conserved directions (null space)     MARGINAL              3      1.037",
-    "      3 directions at numerical zero, gap 3.8e+02 to the first real mode; zero calibrated against rigid translation at 1.4e-05 relative  -- NOISY OPERATOR, an analytic Hessian gives ~1e-16",
-    "    timescale separation -> event steppingHOLDS         7.121e+05  7.121e+05",
-    "      lambda spans 9.14e+13 to 6.51e+19",
+    "      3 directions at numerical zero, gap 7.2e+03 to the first real mode; zero calibrated against rigid translation at 3.6e-05 relative  -- NOISY OPERATOR, an analytic Hessian gives ~1e-16",
+    "    timescale separation -> event steppingHOLDS         3.819e+04  3.819e+04",
+    "      lambda spans 1.70e+15 to 6.51e+19",
     "\n  THE QUESTION THIS FILE EXISTS FOR",
-    "    operator-level linearity   HOLDS      5.459e-14",
-    "    finite-amplitude linearity FAILS      8.752e-01",
-    "    THE TOOL DISTINGUISHES THEM. The operator is linear -- it is a Hessian, it could not",
-    "    be otherwise -- while the SYSTEM is not, and superposition on this rod would be",
-    "    wrong at finite amplitude. Without the second probe the tool would have reported",
-    "    the largest speedup in its vocabulary as available on a system where it is not."
+    "    operator-level linearity   HOLDS      1.854e-13",
+    "    finite-amplitude linearity NOT TESTABLE 8.555e-01",
+    "    The finite-amplitude probe DECLINED. It could not place the perturbation inside the",
+    "    window where the question is meaningful, so it reports that rather than a verdict.",
+    "    The operator-level result stands on its own; the system-level one is unmeasured."
   ]
 }
