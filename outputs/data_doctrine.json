@@ -4,8 +4,8 @@
     "manifest_version": 1,
     "inputs": [],
     "coverage": {
-      "available": 914,
-      "used": 914,
+      "available": 918,
+      "used": 918,
       "selection": "filtered",
       "fraction": 1.0
     },
@@ -189,16 +189,16 @@
       "function": "transformer_ko6 -- v6 = v5 + the mRNA/REGULATORY layer (the user's insight: Perturb-seq reads mRNA, so same-layer regulatory data "
     }
   ],
-  "n_modules": 914,
-  "n_with_data": 442,
+  "n_modules": 918,
+  "n_with_data": 445,
   "rules": {
     "1 NAMED SOURCE": 1.0,
-    "2 DEDICATED SET": 0.5529411764705883,
-    "3 HELD OUT": 0.753393665158371,
-    "4 FIT FOR THE QUESTION": 0.9276018099547512,
-    "5 CONTROL POPULATION": 0.746606334841629,
-    "6 COVERAGE DECLARED": 0.5429864253393665,
-    "7 PROVENANCE PINNED": 0.6266968325791855
+    "2 DEDICATED SET": 0.5523255813953488,
+    "3 HELD OUT": 0.755056179775281,
+    "4 FIT FOR THE QUESTION": 0.9258426966292135,
+    "5 CONTROL POPULATION": 0.7438202247191011,
+    "6 COVERAGE DECLARED": 0.5393258426966292,
+    "7 PROVENANCE PINNED": 0.6269662921348315
   },
   "text_valid": true,
   "dataset_users": {
@@ -1213,6 +1213,11 @@
       "colab/make_complete_cell.py",
       "colab/validate_ghost_patch.py"
     ],
+    "data_doctrine.json": [
+      "colab/data_fitness.py",
+      "colab/subsystem_map.py",
+      "colab/trace_all.py"
+    ],
     "cell_levels.json": [
       "colab/data_impact.py",
       "colab/investigate.py",
@@ -1419,6 +1424,9 @@
     "pretrain_seqs.txt.gz": [
       "colab/seq_model.py"
     ],
+    "trace_all.json": [
+      "colab/subsystem_map.py"
+    ],
     "tf_motifs.json": [
       "colab/tfbs_score.py"
     ],
@@ -1570,6 +1578,7 @@
     "nlz_RPE1.pkl": 1,
     "sym2rxn.json": 2,
     "ghost_patch.json": 3,
+    "data_doctrine.json": 3,
     "cell_levels.json": 3,
     "localization.json": 8,
     "disease_reason.json": 1,
@@ -1627,6 +1636,7 @@
     "pretrain_labels.npz": 1,
     "pretrain_meta.json": 1,
     "pretrain_seqs.txt.gz": 1,
+    "trace_all.json": 1,
     "tf_motifs.json": 1,
     "tflink.tsv.gz": 1,
     "iface_gate.json": 2,
@@ -10700,6 +10710,31 @@
       "fits_and_scores": true
     },
     {
+      "module": "colab/data_fitness.py",
+      "function": "RULE 4 MADE REAL -- is the field the module reads actually IN the file it opens?",
+      "reads": [
+        "data_doctrine.json"
+      ],
+      "writes": [
+        "data_fitness.json"
+      ],
+      "loc": 421,
+      "text": {
+        "heldout": true,
+        "control": true,
+        "coverage": false,
+        "provenance": true,
+        "target": true
+      },
+      "names_source": true,
+      "has_docstring": true,
+      "declared_output": "outputs/data_fitness.json",
+      "manifest_present": true,
+      "manifest_complete": true,
+      "fits_and_scores": false,
+      "reads_derived": true
+    },
+    {
       "module": "colab/data_impact.py",
       "function": "data_impact \u2014 evaluate a new data layer across ALL engines/metrics, not just one. Built after over-indexing on",
       "reads": [
@@ -19498,7 +19533,7 @@
       "function": "THE RUN MANIFEST -- move the data rules from prose to artefact.",
       "reads": [],
       "writes": [],
-      "loc": 130,
+      "loc": 165,
       "text": {
         "heldout": false,
         "control": true,
@@ -19511,6 +19546,29 @@
       "declared_output": null,
       "manifest_present": null,
       "manifest_complete": null,
+      "fits_and_scores": false
+    },
+    {
+      "module": "colab/run_trace.py",
+      "function": "OBSERVE THE RUN INSTEAD OF PARSING THE SOURCE.",
+      "reads": [],
+      "writes": [
+        "run_trace_selftest.json",
+        "zipped.json.gz"
+      ],
+      "loc": 298,
+      "text": {
+        "heldout": false,
+        "control": true,
+        "coverage": false,
+        "provenance": false,
+        "target": false
+      },
+      "names_source": false,
+      "has_docstring": true,
+      "declared_output": "outputs/run_trace_selftest.json",
+      "manifest_present": false,
+      "manifest_complete": false,
       "fits_and_scores": false
     },
     {
@@ -20264,6 +20322,32 @@
       "fits_and_scores": false
     },
     {
+      "module": "colab/subsystem_map.py",
+      "function": "THE DATA MAP OF THREE SUBSYSTEMS, BEFORE AND AFTER TRACING.",
+      "reads": [
+        "data_doctrine.json",
+        "trace_all.json"
+      ],
+      "writes": [
+        "subsystem_map.json"
+      ],
+      "loc": 117,
+      "text": {
+        "heldout": true,
+        "control": false,
+        "coverage": false,
+        "provenance": true,
+        "target": true
+      },
+      "names_source": true,
+      "has_docstring": true,
+      "declared_output": "outputs/subsystem_map.json",
+      "manifest_present": null,
+      "manifest_complete": null,
+      "fits_and_scores": false,
+      "reads_derived": true
+    },
+    {
       "module": "colab/surface_apbs.py",
       "function": "surface_apbs \u2014 add the two things the coarse surface model (surface_fingerprint.py, AUC 0.66) was missing, the two",
       "reads": [],
@@ -20456,6 +20540,31 @@
       "manifest_complete": null,
       "fits_and_scores": false,
       "reads_derived": false
+    },
+    {
+      "module": "colab/trace_all.py",
+      "function": "RUN THE TRACER OVER EVERY MODULE THAT RECORDS A RESULT.",
+      "reads": [
+        "data_doctrine.json"
+      ],
+      "writes": [
+        "trace_all.json"
+      ],
+      "loc": 181,
+      "text": {
+        "heldout": true,
+        "control": false,
+        "coverage": false,
+        "provenance": false,
+        "target": false
+      },
+      "names_source": true,
+      "has_docstring": true,
+      "declared_output": "outputs/trace_all.json",
+      "manifest_present": false,
+      "manifest_complete": false,
+      "fits_and_scores": false,
+      "reads_derived": true
     },
     {
       "module": "colab/trace_farfield.py",
@@ -23216,11 +23325,11 @@
     "  A reduction that holds on the wrong dataset buys nothing, and a model measured on the set",
     "  it was fitted to is not measured. Rule 2 is computed from the code graph -- who reads what",
     "  is a fact about the source. Rules 3, 5, 6, 7 are TEXT and are weak in the usual way.",
-    "\n  914 modules parsed out of 914 python files",
-    "  442 read at least one named dataset; 472 read none",
+    "\n  918 modules parsed out of 918 python files",
+    "  445 read at least one named dataset; 473 read none",
     "\n  RULE 2 -- DEDICATION, from the code graph",
-    "    170 distinct datasets read across the repo",
-    "    94 are read by exactly ONE module (55%) -- dedicated by construction",
+    "    172 distinct datasets read across the repo",
+    "    95 are read by exactly ONE module (55%) -- dedicated by construction",
     "\n    the shared surfaces, where a fit-then-score mistake can hide:",
     "    dataset                                       modules",
     "    cell_complete.json                                227",
@@ -23237,47 +23346,47 @@
     "    compartments.json                                  11",
     "    A shared dataset is not an error -- a reference table SHOULD be shared. It is the list",
     "    to check by hand, because it is where the same rows can be fitted and scored.",
-    "\n  THE SEVEN RULES over the 442 modules that read data",
+    "\n  THE SEVEN RULES over the 445 modules that read data",
     "    rule                         share    evidence",
     "    1 NAMED SOURCE                100%  structural",
     "    2 DEDICATED SET                55%  structural",
-    "    3 HELD OUT                     75%        TEXT",
+    "    3 HELD OUT                     76%        TEXT",
     "    4 FIT FOR THE QUESTION         93%        TEXT",
-    "    5 CONTROL POPULATION           75%        TEXT",
+    "    5 CONTROL POPULATION           74%        TEXT",
     "    6 COVERAGE DECLARED            54%        TEXT",
     "    7 PROVENANCE PINNED            63%        TEXT",
     "\n  RULES 6 AND 7 REBUILT AS OUTPUT-CLASS -- does the recorded run carry a manifest?",
-    "    153 modules declare a recorded output that exists on disk",
-    "    1 carry a manifest (1%); 1 declare coverage in it (1%)",
+    "    156 modules declare a recorded output that exists on disk",
+    "    2 carry a manifest (1%); 2 declare coverage in it (1%)",
     "    This replaces the TEXT provenance rule, which was withdrawn for scoring HIGHER on",
     "    modules that read no data (69% against 63%) -- it was matching the word SEED.",
     "    Adoption starts near zero by construction. The number to watch is whether it rises.",
     "\n  LEAKAGE FUNNEL -- narrowing to a list short enough to check by hand",
-    "    676 distinct files are written by some module, so reading one is a chain",
+    "    681 distinct files are written by some module, so reading one is a chain",
     "    filter                                              left   share",
-    "    modules that read data                               442    100%",
-    "    fits AND scores                                      144     33%",
-    "    + scores on DERIVED data (structural)                 42     10%",
+    "    modules that read data                               445    100%",
+    "    fits AND scores                                      144     32%",
+    "    + scores on DERIVED data (structural)                 42      9%",
     "    + no held-out language in the file (TEXT, weak)        3      1%",
     "    + declares a recorded result                           0      0%",
     "    NOTHING SURVIVES. The funnel finds no candidate leak in this repo -- an honest",
     "    negative, and the outcome the check was built to be able to produce.",
     "    The 42 at the structural step are the triage list worth keeping; the two TEXT",
     "    filters below it are weak and are shown to narrow, not to conclude.",
-    "\n  CONTROL A -- modules that read NO dataset (472). If these score like the data",
+    "\n  CONTROL A -- modules that read NO dataset (473). If these score like the data",
     "  modules, the text checks are matching prose rather than practice.",
     "    rule                        with data   no data    ",
-    "    3 HELD OUT                        75%       51%   separates",
-    "    5 CONTROL POPULATION              75%       52%   separates",
+    "    3 HELD OUT                        76%       51%   separates",
+    "    5 CONTROL POPULATION              74%       52%   separates",
     "    6 COVERAGE DECLARED               54%       41%   separates",
     "    7 PROVENANCE PINNED               63%       69%   DOES NOT",
     "\n  CONTROL B -- newest against oldest third of the data-reading modules",
-    "    442 dated; 147 in each third",
+    "    445 dated; 148 in each third",
     "    rule                         newest   oldest",
-    "    3 HELD OUT                      86%      63%   separates",
-    "    5 CONTROL POPULATION            84%      60%   separates",
-    "    6 COVERAGE DECLARED             44%      65%   flat",
-    "    7 PROVENANCE PINNED             78%      48%   separates",
+    "    3 HELD OUT                      87%      63%   separates",
+    "    5 CONTROL POPULATION            83%      60%   separates",
+    "    6 COVERAGE DECLARED             43%      65%   flat",
+    "    7 PROVENANCE PINNED             77%      48%   separates",
     "",
     "    The no-data control separates, so the text rules are tracking something real about",
     "    the modules rather than matching prose everywhere. They remain weak evidence.",
@@ -23298,10 +23407,10 @@
     "    abstain.py                                 5    1  BUILD 2 of 5 -- MAGNITUDE FIRST, WITH THE RIGHT TO SAY NOTHI",
     "    adrn_ko_channels2.py                       5    1  RICHER NAMED CHANNELS: the lever that already worked, pushed",
     "    cascade_layers.py                          5    1  RECURSIVE MULTI-LAYER CASCADE: a knockout disables neighbour",
-    "\n    4 of 442 data-reading modules have NO docstring, so rule 4",
+    "\n    4 of 445 data-reading modules have NO docstring, so rule 4",
     "    cannot be checked on them at all -- they do not say what they are for.",
     "\n  THIS TOOL'S OWN MANIFEST",
-    "    manifest: 0 inputs, coverage 914/914 (100.0%) by 'filtered', seed None, controls 2",
+    "    manifest: 0 inputs, coverage 918/918 (100.0%) by 'filtered', seed None, controls 2",
     "      WARN no seed recorded -- a rerun is not guaranteed to be the same experiment"
   ]
 }
