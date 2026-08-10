@@ -50,7 +50,28 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import run_manifest as RM  # noqa: E402
 from cell_loop import auc, gpr_capacity, GEM, GEMGENES, KDEG, CELL  # noqa: E402
-from loop_deficit import MEDIUM as PHYSIOLOGICAL, strat_auc, cv_auc  # noqa: E402
+from loop_deficit import strat_auc, cv_auc  # noqa: E402
+
+# EXACT metabolite names, not substrings, and the reason is a bug this file made on its first run.
+# loop_deficit matched the medium by substring and so did the first version here: "Pi" then matched 44
+# metabolites including alpha-pinene and adipic acid, "choline" matched 35 phosphatidylcholines, and
+# "histidine" matched 15 peptides. 403 exchanges were waved through, the constructed medium left 425
+# uptakes open and growth at 86.77/h against an open-medium 124.87 -- a medium that constrained almost
+# nothing, which would have made the retest meaningless in a way that looked like a result.
+# Human-GEM's exchange metabolite names are clean, so exact matching is both possible and correct.
+# 54 of the 61 named components exist by exact name; the 7 that do not are reported, not silently
+# dropped: Cl-, Zn2+, Mn2+ and cobalamin have no exchange at all in this model.
+PHYSIOLOGICAL = [
+    "glucose", "O2", "H2O", "H+", "Pi", "sulfate", "HCO3-", "Na+", "K+", "Ca2+", "Cl-", "Fe2+", "Fe3+",
+    "Mg2+", "Zn2+", "Cu2+", "Mn2+", "selenate", "iodide",
+    "histidine", "isoleucine", "leucine", "lysine", "methionine", "phenylalanine", "threonine",
+    "tryptophan", "valine", "cysteine", "tyrosine", "glutamine", "arginine",
+    "alanine", "aspartate", "glutamate", "glycine", "proline", "serine", "asparagine",
+    "folate", "riboflavin", "thiamin", "pantothenate", "pyridoxine", "nicotinamide", "nicotinate",
+    "biotin", "choline", "inositol", "cobalamin", "retinol", "alpha-tocopherol", "ascorbate",
+    "linoleate", "linolenate", "urea", "pyruvate", "L-lactate",
+]
+PHYS_SET = {w.lower() for w in PHYSIOLOGICAL}
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(os.environ.get("CELL_OUT", "outputs"))
@@ -107,8 +128,7 @@ def main():
     req = {rid: met_name(rid) for rid in mm.index}
 
     def is_physio(nm):
-        low = (nm or "").lower()
-        return any(w.lower() in low for w in PHYSIOLOGICAL)
+        return (nm or "").strip().lower() in PHYS_SET
 
     phys_hit = {k: v for k, v in req.items() if is_physio(v)}
     exotic = {k: v for k, v in req.items() if not is_physio(v)}
@@ -121,10 +141,17 @@ def main():
 
     # ---- build the medium: what a dish gives, PLUS what the model cannot grow without -----------------
     keep = set(mm.index)
+    found = set()
     for r in M.exchanges:
         m = list(r.metabolites)[0]
         if is_physio(m.name or ""):
             keep.add(r.id)
+            found.add((m.name or "").strip().lower())
+    absent = [w for w in PHYSIOLOGICAL if w.lower() not in found]
+    say(f"\n  physiological list: {len(PHYSIOLOGICAL)} components, {len(found)} present in the model "
+        f"by EXACT name")
+    if absent:
+        say(f"    no exchange exists for: {', '.join(absent)}")
     for r in M.exchanges:
         r.lower_bound = 0.0
     for rid in keep:
