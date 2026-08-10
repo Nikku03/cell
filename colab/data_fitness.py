@@ -86,8 +86,13 @@ def vocab(path):
             _VOCAB[key] = (ks, False)
             return _VOCAB[key]
         sfx = path.suffix.lower()
+        opener, name = open, path.name
+        if sfx == ".gz":                    # cell_complete.json.gz was invisible to the first version
+            import gzip
+            opener, name = (lambda q: gzip.open(q, "rt")), path.stem
+            sfx = Path(name).suffix.lower()
         if sfx == ".json":
-            obj = json.load(open(path))
+            obj = json.load(opener(path))
             if isinstance(obj, dict):
                 ks |= set(map(str, obj.keys()))
                 for v in list(obj.values())[:SAMPLE]:
@@ -113,7 +118,7 @@ def vocab(path):
                 except Exception:
                     pass
         elif sfx in (".csv", ".tsv", ".txt"):
-            head = open(path, errors="ignore").readline().strip()
+            head = opener(path).readline().strip()
             sep = "\t" if (sfx == ".tsv" or head.count("\t") > head.count(",")) else ","
             ks |= {c.strip().strip('"') for c in head.split(sep) if c.strip()}
         elif sfx == ".parquet":
@@ -204,6 +209,28 @@ def accessed_data(tree):
     return ks
 
 
+def unresolved_loads(tree):
+    """Loads whose PATH IS A VARIABLE, so this tool never sees the file.
+
+    string_ppi does pd.read_parquet(UP). The STRING table never entered the analysed set, its columns
+    ensg_a / ensg_b / combined_score were looked for in the one input that WAS resolved, and the module
+    was ranked a top stale-schema candidate for reading its own data correctly. A module with any
+    unresolved load cannot be ranked, because its low match measures this tool's blindness."""
+    n_un = 0
+    for n in ast.walk(tree):
+        if not isinstance(n, ast.Call):
+            continue
+        f = n.func
+        nm = f.attr if isinstance(f, ast.Attribute) else getattr(f, "id", "")
+        if nm not in LOADERS:
+            continue
+        lit = any(isinstance(c, ast.Constant) and isinstance(c.value, str)
+                  and ("." in c.value) for c in ast.walk(n))
+        if not lit:
+            n_un += 1
+    return n_un
+
+
 def accessed(tree):
     """Every field name the module reaches for: d["x"] and d.get("x")."""
     ks = set()
@@ -272,6 +299,7 @@ def main():
                      "n_scoped": len(scoped), "scoped_hit": len(scoped & voc),
                      "scoped_frac": (len(scoped & voc) / len(scoped)) if scoped else None,
                      "scoped_missing": sorted(scoped - voc)[:10], "inputs": [p.name for p in ins],
+                     "unresolved_loads": unresolved_loads(tree),
                      "per_input": per, "unreadable": unread, "unmatched": sorted(acc - voc)[:12],
                      "dead_inputs": [n for n, c in per.items() if c == 0]})
     report(f"\n  {len(rows)} modules have both named fields and a locatable input")
@@ -330,8 +358,13 @@ def main():
     report("    fold_mcc_mean that appear in no input because they are outputs. Scoping is what turns")
     report("    this from everyone's output vocabulary into a stale-schema question.")
 
-    worst = sorted([r for r in sc if r["n_scoped"] >= 4], key=lambda x: x["scoped_frac"])[:10]
+    rankable = [r for r in sc if r["n_scoped"] >= 4 and not r["unresolved_loads"] and not r["unreadable"]]
+    worst = sorted(rankable, key=lambda x: x["scoped_frac"])[:10]
     report(f"\n  STALE-SCHEMA CANDIDATES -- loaded-data fields its inputs do not offer")
+    report(f"    Only the {len(rankable)} modules whose inputs are ALL resolved and readable can be")
+    report(f"    ranked. {sum(1 for r in sc if r['unresolved_loads'])} have a load with a variable path")
+    report(f"    and {sum(1 for r in sc if r['unreadable'])} have an unopenable input; both were top of")
+    report("    the first list, and both were measuring this tool's blindness rather than their own.")
     report(f"    {'module':<36}{'match':>7}{'keys':>6}  missing from every input")
     for r in worst:
         report(f"    {Path(r['module']).name:<36}{r['scoped_frac']:>7.0%}{r['n_scoped']:>6}  "
