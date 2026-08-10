@@ -67,9 +67,13 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 # THE FIT-AND-SCORE PAIR. A module that both fits something and scores something, on a dataset many other
 # modules also read, is where a leakage mistake can hide. These are CANDIDATES for hand-checking, not
 # findings -- fitting and scoring in one file is completely correct when the split is honest.
-FITS = re.compile(r"\.fit\(|train|regress|LogisticRegression|RandomForest|GradientBoost|coef_|lstsq"
-                  r"|curve_fit|minimize\(", re.I)
-SCORES = re.compile(r"accuracy|roc_auc|\bAUC\b|precision|recall|\br2\b|spearman|pearson|score\(", re.I)
+# WORD BOUNDARIES, and they matter. Without them `train` matches inside "cons-TRAIN-t", which is how the
+# first version's entire funnel came to select one module -- kcat_verify, whose only sin was using the
+# word constraint, and which grounds itself against an independent literature value on purpose.
+FITS = re.compile(r"\.fit\(|\btrain\w*\b|\bregress\w*\b|LogisticRegression|RandomForest|GradientBoost"
+                  r"|\bcoef_\b|\blstsq\b|curve_fit|\bminimize\(", re.I)
+SCORES = re.compile(r"\baccuracy\b|roc_auc|\bAUC\b|\bprecision\b|\brecall\b|\br2\b|\bspearman\b"
+                    r"|\bpearson\b|\.score\(", re.I)
 
 READERS = {"load", "read_csv", "read_parquet", "read_text", "read_json", "loadtxt", "read_pickle",
            "read_table", "read_excel", "load_npz", "read_bytes"}
@@ -243,18 +247,42 @@ def main():
     report("    Adoption starts near zero by construction. The number to watch is whether it rises.")
 
     # ---- the shared-surface leakage candidates -------------------------------------------------------
-    report(f"\n  LEAKAGE CANDIDATES on the most-shared datasets -- modules that BOTH fit and score")
-    report("  while reading a surface many other modules also read. Candidates for hand-check, NOT")
-    report("  findings: fitting and scoring in one file is correct whenever the split is honest.")
-    cands = []
-    for d, n in share.most_common(6):
-        if n < 5:
-            break
-        rs = [r for r in with_data if d in [Path(x).name for x in r["reads"]] and r["fits_and_scores"]]
-        report(f"    {d:<40}{len(rs):>4} of {n:>4} readers fit AND score")
-        cands += [{"dataset": d, "module": r["module"]} for r in rs]
-    report(f"    {len(cands)} module-dataset pairs to check by hand, out of "
-           f"{sum(n for _, n in share.most_common(6))} reader slots on those surfaces")
+    # ---- the leakage FUNNEL --------------------------------------------------------------------------
+    # The first version stopped at "fits AND scores" and flagged 43% of everything that reads data. A
+    # filter that selects half the population is not a triage, it is the same failure as the columns
+    # withdrawn earlier. The narrowing step that does the real work is STRUCTURAL: leakage needs a chain,
+    # so the module must be scoring on DERIVED data -- a file some other module wrote -- rather than on
+    # raw input. Reading a raw table and scoring on it cannot leak another module's fit.
+    written = {Path(w).name for r in inv for w in r["writes"]}
+    for r in with_data:
+        r["reads_derived"] = bool({Path(x).name for x in r["reads"]} & written)
+    report(f"\n  LEAKAGE FUNNEL -- narrowing to a list short enough to check by hand")
+    report(f"    {len(written)} distinct files are written by some module, so reading one is a chain")
+    steps = [
+        ("modules that read data", with_data),
+        ("fits AND scores", [r for r in with_data if r["fits_and_scores"]]),
+        ("+ scores on DERIVED data (structural)", None),
+        ("+ no held-out language in the file (TEXT, weak)", None),
+        ("+ declares a recorded result", None),
+    ]
+    s2 = [r for r in with_data if r["fits_and_scores"] and r["reads_derived"]]
+    s3 = [r for r in s2 if not r["text"]["heldout"]]
+    s4 = [r for r in s3 if r["declared_output"]]
+    steps[2] = (steps[2][0], s2)
+    steps[3] = (steps[3][0], s3)
+    steps[4] = (steps[4][0], s4)
+    report(f"    {'filter':<50}{'left':>6}{'share':>8}")
+    for nm, rows in steps:
+        report(f"    {nm:<50}{len(rows):>6}{len(rows)/max(len(with_data),1):>8.0%}")
+    cands = [{"module": r["module"], "function": r["function"]} for r in s2]
+    if not s4:
+        report("    NOTHING SURVIVES. The funnel finds no candidate leak in this repo -- an honest")
+        report("    negative, and the outcome the check was built to be able to produce.")
+    else:
+        for r in s4:
+            report(f"      {Path(r['module']).name:<38}{r['function'][:58]}")
+    report(f"    The {len(s2)} at the structural step are the triage list worth keeping; the two TEXT")
+    report("    filters below it are weak and are shown to narrow, not to conclude.")
 
     # ---- CONTROL 1: modules with no data must score near zero on the text rules ----------------------
     report(f"\n  CONTROL A -- modules that read NO dataset ({len(no_data)}). If these score like the data")
