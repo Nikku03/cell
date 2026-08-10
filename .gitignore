@@ -94,3 +94,6 @@ outputs/orphan/invivo/chipatlas/
 
 # GSE277502 bTMP-seq bigWigs (4.0 MB, re-fetchable from GEO; see colab/supercoil_track.py)
 outputs/orphan/supercoil/*.bw
+
+# RNADecayCafe v1.1 AvgKdegs (22 MB, re-fetchable: 10.5281/zenodo.16884513; see colab/supercoil_txn.py)
+outputs/orphan/rnadecay/*.csv
