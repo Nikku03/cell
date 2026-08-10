@@ -71,9 +71,22 @@ against DEPENDENCY, a different measurement entirely. But the honest statement i
 association whose interpretation is limited by an unrecorded provenance, and closing that gap means
 finding model4's producer, which is already item 1 on the recovery backlog.
 
-WHAT IT CHANGES.  Two instruments had measured zero links between the chromatin line and the cell model.
-A third now says the zero was a fact about the WIRING, not about the biology: the information is there
-and nothing was consuming it.
+WHAT IT CHANGES -- AND A RETRACTION, added after loop 7.
+This module originally concluded that the zero links were "a fact about the WIRING, not about the
+biology". That was an overstatement, and loop_fold_link found why. `model4` is 8.8% same-chromosome:
+5,377 cis pairs against 55,836 trans. Physical 3D proximity in a nucleus is dominated by cis contacts --
+Hi-C maps run 70-90% same-chromosome -- so a neighbour list that is 9% cis is not a contact map. And
+51.7% of its neighbour pairs share model4's own functional label, whose values are categories like
+"transport/uptake", "trafficking/secretion" and Reactome pathway names.
+
+So `model4.neighbors` is a FUNCTIONAL neighbourhood, not a fold. Every number in this file stands as
+measured -- the pairs really are six-fold enriched over distance-matched 1D pairs and five-fold more
+alike in dependency -- but they are facts about functional relatedness, not about chromosome
+conformation. `any chromosome fold` is NOT answered by this, and the 8,467 items capability_audit
+counted under that heading include a block that does not encode a fold.
+
+The genuine chromatin data in this repository is elsewhere: loops3d (767 genes of loop anchors) and the
+bTMP supercoiling tracks. Testing those is the real version of this question and it has not been done.
 
 -> outputs/loop_chromatin.json
 """

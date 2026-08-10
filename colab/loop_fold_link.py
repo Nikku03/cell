@@ -85,8 +85,15 @@ def main():
         c, s = g.get("chrom"), g.get("gene_start")
         if c is not None and isinstance(s, (int, float)):
             chrom[i], pos[i] = str(c), float(s)
-    dep = {i: float(g["dep_frac"]) for i, g in enumerate(genes)
-           if isinstance(g.get("dep_frac"), (int, float))}
+    # THE LABEL. The first run used dep_frac >= 0.5 and got 18 positives out of 7,204 -- an AUC of
+    # 0.9452 on eighteen events, with a shuffled null whose standard deviation was 0.0626. That is not
+    # a result, it is noise with a decimal point, and the 1D comparator scoring 0.3652 (below chance)
+    # was the tell. The label is now `ess`, the same one loop 1 scored against, which has 1,537
+    # positives across the repository.
+    dep = {i: float(g["ess"]) for i, g in enumerate(genes)
+           if isinstance(g.get("ess"), (int, float))}
+    depfrac = {i: float(g["dep_frac"]) for i, g in enumerate(genes)
+               if isinstance(g.get("dep_frac"), (int, float))}
     ppm = {int(k): float(v) for k, v in D["ppm"].items()}
 
     nbr = {}
@@ -99,7 +106,49 @@ def main():
     UNIVERSE = sorted(set(nbr) | {j for js in nbr.values() for j in js})
     UNIVERSE = [i for i in UNIVERSE if i in pos and i in dep]
     say(f"\n  {len(nbr):,} genes with 3D neighbours; {len(UNIVERSE):,} of them positioned and "
-        f"dependency-labelled")
+        f"labelled")
+
+    # ANTI-CIRCULARITY, checked rather than assumed. model4 has no known producer (it is one of the 40
+    # unsourced blocks), so if its neighbour lists had been built FROM co-dependency or co-expression,
+    # predicting dependency from neighbours' dependency would be circular. Measured directly:
+    CD = {int(k): {int(a) for a, _ in v} for k, v in D["codep"].items()}
+    CE = {int(k): {int(a) for a, _ in v} for k, v in D["coexpr"].items()}
+    tot = ocd = oce = 0
+    for i, js in nbr.items():
+        tot += len(js)
+        ocd += len(set(js) & CD.get(i, set()))
+        oce += len(set(js) & CE.get(i, set()))
+    say(f"  circularity check: of {tot:,} neighbour pairs, {ocd:,} ({ocd/tot:.1%}) are also co-dependency"
+        f" partners and {oce:,} ({oce/tot:.1%}) co-expression partners -- the lists were not built from"
+        f" either")
+
+    # L0 -- WHAT IS model4 ACTUALLY? This decides what any result below may be CALLED, so it runs first.
+    # Two diagnostics, both cheap, both decisive:
+    ncis = sum(1 for i, js in nbr.items() for j in js
+               if i in chrom and j in chrom and chrom[i] == chrom[j])
+    ntr = sum(1 for i, js in nbr.items() for j in js
+              if i in chrom and j in chrom and chrom[i] != chrom[j])
+    same = tt = 0
+    for k, v in model4.items():
+        pr = v.get("pred")
+        for nm in (v.get("neighbors") or []):
+            j = name2i.get(nm)
+            q = model4.get(str(j), {}).get("pred") if j is not None else None
+            if q is not None:
+                tt += 1
+                same += (pr == q)
+    frac_cis = ncis / max(ncis + ntr, 1)
+    frac_fn = same / max(tt, 1)
+    say(f"\n  L0 WHAT IS THIS BLOCK? -- decides what the result may be called, so it runs first")
+    say(f"    same-chromosome pairs : {frac_cis:.1%}  ({ncis:,} cis, {ntr:,} trans)")
+    say(f"    pairs sharing model4's own functional label : {frac_fn:.1%}  ({same:,}/{tt:,})")
+    physical = bool(frac_cis > 0.5)
+    if not physical:
+        say(f"    Physical 3D proximity in a nucleus is dominated by CIS contacts -- Hi-C maps run 70-90%")
+        say(f"    same-chromosome. This block is {frac_cis:.0%} cis and half its neighbour pairs share a")
+        say(f"    functional category ('transport/uptake', 'trafficking/secretion', Reactome pathway")
+        say(f"    names). model4's `neighbors` is a FUNCTIONAL neighbourhood, not a fold. Whatever the")
+        say(f"    gates below say, this is NOT a chromatin result and must not be reported as one.")
 
     by_chrom = defaultdict(list)
     for i in UNIVERSE:
@@ -131,11 +180,11 @@ def main():
     say(f"  scored on {len(common):,} genes present in both predictors")
 
     # the label: is this gene a dependency in a meaningful fraction of lines
-    y = np.array([1 if dep[i] >= 0.5 else 0 for i in common])
+    y = np.array([1 if dep[i] >= 0.5 else 0 for i in common])   # ess is 0/1
     s3 = np.array([P3[i] for i in common])
     s1 = np.array([P1[i] for i in common])
     ex = np.array([np.log10(ppm.get(i, 0.0) + 1e-3) for i in common])
-    say(f"  label: dependency fraction >= 0.5 -- {int(y.sum()):,} positive, {len(y)-int(y.sum()):,} not")
+    say(f"  label: essential -- {int(y.sum()):,} positive, {len(y)-int(y.sum()):,} not")
 
     a3, a1, ae = auc(s3, y), auc(s1, y), auc(ex, y)
     say(f"\n  {'predictor':<34}{'AUC':>8}")
@@ -191,10 +240,15 @@ def main():
              "L4 holds under chromosome-blocked folds": l4}
     for k, v in gates.items():
         say(f"  {k:<44}{'PASS' if v else 'FAIL'}")
-    if l1 and l2 and l4:
-        say("  THE FOLD NOW REACHES A CELL OUTCOME through a controlled, held-out predictor. That is")
-        say("  the axis capability_audit failed it on, and it is the first time in this repository the")
-        say("  chromatin line has changed a statement about a cell.")
+    if l1 and l2 and l4 and physical:
+        say("  THE FOLD NOW REACHES A CELL OUTCOME through a controlled, held-out predictor.")
+    elif l1 and l2 and l4:
+        say("  A REAL PREDICTOR, AND NOT A CHROMATIN ONE. The gates pass and survive chromosome-blocked")
+        say("  folds, so functional neighbourhood genuinely predicts essentiality better than genomic")
+        say("  position or protein abundance. But L0 showed model4 is 9% cis and half its pairs share a")
+        say("  functional label, so what was measured is guilt-by-association among functionally related")
+        say("  genes. `any chromosome fold` remains UNANSWERED, and loop 6's conclusion that the dead")
+        say("  link was 'a wiring fact' was an overstatement about a block that is not a fold.")
     elif l1:
         say("  The predictor works but does not beat the genome coordinate. The link is not yet earned")
         say("  as STRUCTURE -- 1D position would do as well, and that should be said plainly.")
@@ -205,7 +259,8 @@ def main():
     man = RM.manifest(inputs=[str(CELL)], available=len(UNIVERSE), used=len(common),
                       selection="filtered", seed=SEED,
                       controls=[f"{N_SHUFFLE} label shuffles", "distance-matched 1D neighbours",
-                                "protein abundance lookup", "chromosome-blocked folds"],
+                                "protein abundance lookup", "chromosome-blocked folds",
+                                "codep/coexpr overlap as a circularity check"],
                       note="1D comparator uses the same neighbour COUNT per gene so both predictors "
                            "average the same number of values")
     RM.report(man, emit=say)
@@ -215,7 +270,11 @@ def main():
                "cv": {"lookup": a_look, "lookup_plus_3d": a_both,
                       "chrom_blocked_3d": g3, "chrom_blocked_1d": g1},
                "null": {"mean": float(null.mean()), "sd": float(null.std()), "p95": p95},
-               "n_scored": len(common), "n_positive": int(y.sum()), "log": log},
+               "n_scored": len(common), "n_positive": int(y.sum()),
+               "circularity": {"pairs": tot, "codep_overlap": ocd, "coexpr_overlap": oce},
+               "L0_what_is_it": {"frac_cis": frac_cis, "n_cis": ncis, "n_trans": ntr,
+                                 "frac_same_function": frac_fn, "is_physical_fold": physical},
+               "log": log},
               open(OUT / "loop_fold_link.json", "w"), indent=2)
     say(f"\n  -> {OUT/'loop_fold_link.json'}")
     return 0

@@ -1,0 +1,107 @@
+{
+  "test": "loop_fold_link",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 13786,
+      "used": 7670,
+      "selection": "filtered",
+      "fraction": 0.5563615261859858
+    },
+    "seed": 1904,
+    "controls": [
+      "200 label shuffles",
+      "distance-matched 1D neighbours",
+      "protein abundance lookup",
+      "chromosome-blocked folds",
+      "codep/coexpr overlap as a circularity check"
+    ],
+    "note": "1D comparator uses the same neighbour COUNT per gene so both predictors average the same number of values",
+    "warnings": []
+  },
+  "gates": {
+    "L1 signal": true,
+    "L2 beats 1D": true,
+    "L3 adds to the lookup": true,
+    "L4 holds under chromosome-blocked folds": true
+  },
+  "auc": {
+    "3d": 0.8918159381114023,
+    "1d_matched": 0.6129934714627103,
+    "lookup": 0.5811112570602917
+  },
+  "cv": {
+    "lookup": 0.5763490889314445,
+    "lookup_plus_3d": 0.8668632371681865,
+    "chrom_blocked_3d": 0.8959950776718494,
+    "chrom_blocked_1d": 0.5738130298819425
+  },
+  "null": {
+    "mean": 0.5017172726246195,
+    "sd": 0.021400592996673483,
+    "p95": 0.5333376541972294
+  },
+  "n_scored": 7670,
+  "n_positive": 57,
+  "circularity": {
+    "pairs": 61600,
+    "codep_overlap": 173,
+    "coexpr_overlap": 613
+  },
+  "L0_what_is_it": {
+    "frac_cis": 0.08784081812686848,
+    "n_cis": 5377,
+    "n_trans": 55836,
+    "frac_same_function": 0.5165855924124276,
+    "is_physical_fold": false
+  },
+  "log": [
+    "====================================================================================================",
+    "BUILDING THE LINK -- 3D neighbourhood to a cell outcome",
+    "====================================================================================================",
+    "  loop 6 measured that the information is there. capability_audit failed the fold on PIPELINE",
+    "  and CHECK: nothing consumed it and produced a controlled result. This is the pipeline, and",
+    "  the comparator is the same predictor built on distance-matched 1D neighbours.",
+    "\n  7,700 genes with 3D neighbours; 13,786 of them positioned and labelled",
+    "  circularity check: of 61,600 neighbour pairs, 173 (0.3%) are also co-dependency partners and 613 (1.0%) co-expression partners -- the lists were not built from either",
+    "\n  L0 WHAT IS THIS BLOCK? -- decides what the result may be called, so it runs first",
+    "    same-chromosome pairs : 8.8%  (5,377 cis, 55,836 trans)",
+    "    pairs sharing model4's own functional label : 51.7%  (21,133/40,909)",
+    "    Physical 3D proximity in a nucleus is dominated by CIS contacts -- Hi-C maps run 70-90%",
+    "    same-chromosome. This block is 9% cis and half its neighbour pairs share a",
+    "    functional category ('transport/uptake', 'trafficking/secretion', Reactome pathway",
+    "    names). model4's `neighbors` is a FUNCTIONAL neighbourhood, not a fold. Whatever the",
+    "    gates below say, this is NOT a chromatin result and must not be reported as one.",
+    "  scored on 7,670 genes present in both predictors",
+    "  label: essential -- 57 positive, 7,613 not",
+    "\n  predictor                              AUC",
+    "  3D-neighbour dependency             0.8918",
+    "  1D-neighbour dependency (matched)   0.6130",
+    "  protein abundance (lookup)          0.5811",
+    "\n  L1 SIGNAL -- 200 shuffles: null 0.5017 +/- 0.0214, 95th 0.5333   L1 PASS",
+    "\n  L2 BEATS 1D -- 0.8918 - 0.6130 = +0.2788  (gate +0.02)   L2 PASS",
+    "\n  L3 ADDS -- 5-fold CV: lookup 0.5763 -> lookup + 3D 0.8669 (+0.2905)  (gate +0.01)   L3 PASS",
+    "\n  L4 HELD OUT BY CHROMOSOME -- 3D 0.8960 vs 1D 0.5738 (+0.3222)   L4 PASS",
+    "\n====================================================================================================",
+    "  L1 signal                                   PASS",
+    "  L2 beats 1D                                 PASS",
+    "  L3 adds to the lookup                       PASS",
+    "  L4 holds under chromosome-blocked folds     PASS",
+    "  A REAL PREDICTOR, AND NOT A CHROMATIN ONE. The gates pass and survive chromosome-blocked",
+    "  folds, so functional neighbourhood genuinely predicts essentiality better than genomic",
+    "  position or protein abundance. But L0 showed model4 is 9% cis and half its pairs share a",
+    "  functional label, so what was measured is guilt-by-association among functionally related",
+    "  genes. `any chromosome fold` remains UNANSWERED, and loop 6's conclusion that the dead",
+    "  link was 'a wiring fact' was an overstatement about a block that is not a fold.",
+    "====================================================================================================",
+    "    manifest: 1 inputs, coverage 7670/13786 (55.6%) by 'filtered', seed 1904, controls 5"
+  ]
+}
