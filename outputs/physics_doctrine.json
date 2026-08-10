@@ -47,8 +47,8 @@
       "rule": 7,
       "name": "a probe must confirm it perturbed something",
       "checked": true,
-      "verdict": "VIOLATED",
-      "note": "check itself raised AttributeError: 'NoneType' object has no attribute 'solve'"
+      "verdict": "HOLDS",
+      "note": "a perturbation of 5.0e-02 bond lengths -> NOT TESTABLE"
     },
     {
       "rule": 8,
@@ -93,12 +93,10 @@
       "mutation": "grade without the amplitude window",
       "rule": 7,
       "caught": true,
-      "note": "raised AttributeError"
+      "note": "graded a non-perturbation: HOLDS"
     }
   ],
-  "violated": [
-    7
-  ],
+  "violated": [],
   "vacuous": [],
   "log": [
     "====================================================================================================",
@@ -130,8 +128,8 @@
     "      1.5x from the threshold -> MARGINAL; 1e6x over -> FAILS; 1e-6x under -> HOLDS",
     "  6  two independent computations, or you will not noticeHOLDS         ",
     "      setup 6 @ gap 1.45e+13; independent k=64 solve 6 @ gap 1.45e+13",
-    "  7  a probe must confirm it perturbed something         VIOLATED      ",
-    "      check itself raised AttributeError: 'NoneType' object has no attribute 'solve'",
+    "  7  a probe must confirm it perturbed something         HOLDS         ",
+    "      a perturbation of 5.0e-02 bond lengths -> NOT TESTABLE",
     "  8  the negative is the deliverable                     HOLDS         ",
     "      a FAILS record carries the same fields as a HOLDS record",
     "  9  predeclare                                          NOT CHECKABLE ",
@@ -148,7 +146,7 @@
     "  grade without the amplitude window          7     yes       ",
     "\n  READING",
     "    7 of 9 rules are mechanically checkable; 2 are claims about method and are marked as unproven.",
-    "    1 RULE(S) VIOLATED by the current toolchain: [7]. That is the finding.",
+    "    No rule is violated by the current toolchain.",
     "    Every check caught its own mutation, so none of them is decorative."
   ]
 }

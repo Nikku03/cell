@@ -14,10 +14,10 @@
    "fold_error": 49.509903110289116
   },
   "+ Km + abundance (all parts)": {
-   "spearman": 0.3473958140424612,
-   "rmse_log10": 1.5999390735758576,
-   "fold_error": 39.80513247022279
+   "spearman": 0.3299928392214814,
+   "rmse_log10": 1.6053919350994668,
+   "fold_error": 40.308063596188255
   }
  },
- "verdict": "PARTIAL: the parts decode kcat weakly (Spearman 0.35, within 39.8-fold vs 65x baseline) \u2014 enzyme FAMILY (domains) sets the ballpark, but the precise turnover needs the active-site chemistry we don't encode (protein-LM/substrate features). Real signal, honest ceiling."
+ "verdict": "PARTIAL: the parts decode kcat weakly (Spearman 0.33, within 40.3-fold vs 65x baseline) \u2014 enzyme FAMILY (domains) sets the ballpark, but the precise turnover needs the active-site chemistry we don't encode (protein-LM/substrate features). Real signal, honest ceiling."
 }
