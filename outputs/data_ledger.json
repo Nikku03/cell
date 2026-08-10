@@ -120,6 +120,26 @@
       "have": "3e58c688dec13289",
       "want": "3e58c688dec13289",
       "bytes": 15116
+    },
+    {
+      "name": "HumanGEM.xml",
+      "kind": "raw",
+      "source": "Human-GEM (SysBioChalmers), SBML, 12,931 reactions / 8,461 metabolites / 2,848 genes",
+      "why": "the stoichiometry cell_loop closes the growth feedback through; cell_complete's own metabolism is 3,355 reaction STRINGS with no stoichiometric matrix behind them",
+      "state": "OK",
+      "have": "cc5a4383c6116b0c",
+      "want": "cc5a4383c6116b0c",
+      "bytes": 43115559
+    },
+    {
+      "name": "HumanGEM_genes.tsv",
+      "kind": "raw",
+      "source": "Human-GEM gene annotation table, ENSG -> symbol / Entrez / UniProt",
+      "why": "the join between Human-GEM's ENSG ids and everything else here, which is keyed on symbol",
+      "state": "OK",
+      "have": "2a6058a157b3b9f3",
+      "want": "2a6058a157b3b9f3",
+      "bytes": 1132077
     }
   ],
   "rebuilds": [
@@ -161,7 +181,9 @@
     "  GSM8706924_5_RPKM.bw                        raw      OK               da0c81bb13975374",
     "  _abcfeat.json                               derived  OK               20f7aa4ae6040e16",
     "  lambert_tf_symbols.json                     derived  OK               3e58c688dec13289",
-    "\n  12 of 12 present and hash-matching",
+    "  HumanGEM.xml                                raw      OK               cc5a4383c6116b0c",
+    "  HumanGEM_genes.tsv                          raw      OK               2a6058a157b3b9f3",
+    "\n  14 of 14 present and hash-matching",
     "\n  REBUILD CHECK -- a derived file must reproduce its hash from its raw inputs, or the",
     "  recorded transform is not the one that made it",
     "    _abcfeat.json                     build_abcfeat(re2g_k562.bed.gz) -> 14,465 entries, hash 20f7aa4ae6040e16   MATCHES",
