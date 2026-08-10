@@ -194,11 +194,38 @@ def main():
         except (TypeError, ValueError):
             return d
 
+    abc = json.load(open(SP / "_abcfeat.json"))
+    tf_syms = set(json.load(open(SP / "lambert_tf_symbols.json")))
+    names = [g["name"] for g in D["genes"]]
+    reg_in = collections.defaultdict(set)
+    for e in (D.get("reg") or []):
+        try:
+            reg_in[names[e[1]]].add(names[e[0]])
+        except (TypeError, IndexError):
+            continue
+    report(f"  ABC/rE2G links: {len(abc):,} genes   Lambert TFs: {len(tf_syms):,}")
     A = {g: atac_at(info[g].get("chrom"), int(float(info[g].get("tss")))) for g in genes}
     F1 = np.array([[num(g, "cpg"), np.log1p(num(g, "enh")), num(g, "loeuf", 1.0), num(g, "ess"),
                     num(g, "dep_frac"), np.log1p(num(g, "pubs")), num(g, "dark")] for g in genes])
     F2 = np.array([[np.log1p(A[g][0]), np.log1p(A[g][1]), float(A[g][2]), 1.0 if A[g][2] else 0.0]
                    for g in genes])
+    def L3(g):
+        a = abc.get(g)
+        if not a:
+            return [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        return [np.log1p(a.get("n", 0)), a.get("ssum", 0.0), a.get("smax", 0.0),
+                np.log1p(a.get("dmed", 0) or 0), np.log1p(a.get("ndistal", 0)), 1.0]
+
+    def L4(g):
+        regs = reg_in.get(g, set())
+        tfr = regs & tf_syms if tf_syms else regs
+        return [np.log1p(len(regs)), np.log1p(len(tfr)),
+                float(len(tfr)) / max(len(regs), 1), 1.0 if regs else 0.0]
+
+    F3 = np.array([L3(g) for g in genes])
+    F4 = np.array([L4(g) for g in genes])
+    occ = (F3[:, 1] + F3[:, 2]) * (F4[:, 1] / (1.0 + F4[:, 1]))
+    F5 = np.column_stack([np.log1p(F2[:, 0] * (1.0 + occ)), np.log1p(F2[:, 1] * (1.0 + occ)), occ])
     nat = sum(1 for g in genes if A[g][2] > 0)
     report(f"  {nat:,} ({nat/len(genes):.1%}) have an ATAC peak at the promoter")
     report(f"  twin-domain asymmetry over these genes: mean {T[:,3].mean():+.5f}, "
@@ -210,8 +237,11 @@ def main():
 
     ARMS = [("L1 basal promoter", [F1]),
             ("L2 + M_ATAC", [F1, F2]),
-            ("+ TORSION", [F1, F2, T]),
-            ("+ TORSION [displaced 2 Mb]", [F1, F2, Ts])]
+            ("L3 + distal enhancers", [F1, F2, F3]),
+            ("L4 + TF occupancy", [F1, F2, F3, F4]),
+            ("L5 + multiplicative form", [F1, F2, F3, F4, F5]),
+            ("+ TORSION", [F1, F2, F3, F4, F5, T]),
+            ("+ TORSION [displaced 2 Mb]", [F1, F2, F3, F4, F5, Ts])]
     rng = np.random.RandomState(0)
     res = collections.defaultdict(list)
     for si in range(NSPLIT):
@@ -235,13 +265,18 @@ def main():
         R[lab] = r * r
         report(f"    {lab:<32}{r:>8.4f}{r*r:>8.4f}")
 
-    l1, l2 = R["L1 basal promoter"], R["L2 + M_ATAC"]
+    l1, l2 = R["L1 basal promoter"], R["L5 + multiplicative form"]
     tor, tsh = R["+ TORSION"], R["+ TORSION [displaced 2 Mb]"]
-    report(f"\n  reconstruction check: L1 {l1:.4f} vs recorded 0.1582   L2 {l2:.4f} vs recorded 0.1667")
+    report(f"\n  reconstruction check against the recorded ladder "
+           f"0.1582 / 0.1667 / 0.1878 / 0.1995 / 0.1970:")
+    for lab, rec in zip(["L1 basal promoter", "L2 + M_ATAC", "L3 + distal enhancers",
+                         "L4 + TF occupancy", "L5 + multiplicative form"],
+                        [0.1582, 0.1667, 0.1878, 0.1995, 0.1970]):
+        report(f"    {lab:<28}{R[lab]:>8.4f}  vs recorded {rec:.4f}   ({R[lab]-rec:+.4f})")
     faithful = abs(l1 - 0.1582) < 0.03
     report(f"  {'FAITHFUL' if faithful else 'NOT FAITHFUL -- do not read the torsion arm'}")
     report("\n  " + "-" * 96)
-    report(f"  TORSION MINUS L1+L2               : {tor - l2:+.4f}")
+    report(f"  TORSION MINUS the FULL ladder (L5) : {tor - l2:+.4f}")
     report(f"  TORSION MINUS its displaced twin  : {tor - tsh:+.4f}")
 
     if not faithful:
@@ -272,11 +307,11 @@ def main():
                       controls=["displaced 2 Mb torsion", "L1/L2 reconstruction against recorded"],
                       note="K562 rates; L3/L4/L5 not reproducible (_abcfeat.json has no producer)")
     RM.report(man, emit=report)
-    json.dump({"test": "supercoil_txn", "manifest": man, "arms": R, "verdict": verdict, "note": note,
+    json.dump({"test": "supercoil_txn_full", "manifest": man, "arms": R, "verdict": verdict, "note": note,
                "faithful": bool(faithful), "n_genes": len(genes), "n_scored": int(len(idx)),
                "target": "RNADecayCafe v1.1 (10.5281/zenodo.16884513)",
                "torsion_track": "GSE285699 SH-SY5Y WT", "log": log},
-              open(OUT / "supercoil_txn.json", "w"), indent=2)
+              open(OUT / "supercoil_txn_full.json", "w"), indent=2)
     report(f"\n  -> {OUT/'supercoil_txn.json'}")
     return 0
 
