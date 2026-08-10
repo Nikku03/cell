@@ -34,8 +34,9 @@ possibly beat the same model without it.  A UNIFORM change in capacity cannot ch
 knockouts at all -- rescale every bound by the same factor and every knockout's relative growth drop is
 essentially unchanged. If dilution were a global knob the loop would be enzyme-constrained FBA with extra
 steps and it would deserve to be called that. It is not global, and the reason is measured, not assumed:
-mRNA half-lives in this dataset span 0.16 h to 280 h, so at mu ~ 0.03/h the dilution term mu/(k_deg + mu)
-removes 92% of the most stable transcript and 0.6% of the least stable one. Dilution therefore
+the pooled mRNA half-lives used here span 0.22 h to 58 h, so at mu ~ 0.03/h the dilution term
+mu/(k_deg + mu) removes 71% of the most stable transcript and 0.9% of the least stable one -- an 80-fold
+spread in how much of its own product growth takes from a gene. Dilution therefore
 REDISTRIBUTES capacity toward short-lived transcripts as growth rises. Genes differ in how much of their
 own product growth takes away from them. That is a real, gene-specific, testable consequence of closing
 the loop, and gate 3 exists to check whether it survives contact with data.
@@ -129,7 +130,10 @@ def gpr_capacity(node, E, default):
     That is the standard reading and it is the only place gene-level protein numbers enter the LP."""
     import ast
     if isinstance(node, ast.Module):
-        return gpr_capacity(node.body[0], E, default) if node.body else None
+        b = node.body
+        if isinstance(b, list):                       # a real ast.Module
+            return gpr_capacity(b[0], E, default) if b else None
+        return gpr_capacity(b, E, default)            # cobra's GPR subclass: body IS the expression
     if isinstance(node, ast.Expr):
         return gpr_capacity(node.value, E, default)
     if isinstance(node, ast.Name):
