@@ -111,6 +111,12 @@ def main():
     report("=" * 100)
     report("  GSE277502 bTMP-seq, hTERT-RPE1, hg38, 20 kb bins. The CRISPR assay is K562, so this is a")
     report("  CROSS-CELL-LINE transfer and a null has two possible causes this test cannot separate.")
+    report("")
+    report("  THE BAR IS RECOMPUTED, NOT ASSUMED. The CTCF peak file the recorded 0.6632 was produced")
+    report("  from lived in the ephemeral scratch directory and is gone, so the arm is rebuilt from")
+    report("  ENCODE ENCFF362OPG (K562 CTCF IDR thresholded, ENCSR000AKO, GRCh38, 44,104 peaks). That is")
+    report("  a DIFFERENT peak set, so the bar measured here is the one torsion is judged against, and")
+    report("  its distance from the recorded 0.6632 is reported as a check on the reconstruction.")
 
     df = pd.read_csv(OUT / "crispr_features_compendium.csv")
     comp = json.load(open(INV / "compendium_tf.json"))
@@ -174,7 +180,10 @@ def main():
         res[nm] = a
         report(f"    {nm:40s} AUPRC {a:.4f}")
 
+    RECORDED = 0.6632
     bar = res["+ CTCF-count contact  [the 0.663 bar]"]
+    report(f"\n  reconstructed bar {bar:.4f} against the recorded {RECORDED:.4f}  "
+           f"(delta {bar - RECORDED:+.4f}) -- a different CTCF peak set, so exact agreement is not expected")
     both = res["+ TORSION + CTCF-count"]
     only = res["+ TORSION only"]
     sh = res["+ TORSION [displaced 2 Mb]"]
