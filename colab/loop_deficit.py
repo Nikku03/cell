@@ -49,6 +49,32 @@ Everything else is closed to uptake and left free to secrete.
 CONTROLS: label shuffles on every AUC reported; the non-metabolic gene set as H2's own comparator; and
 open-medium versus defined-medium run on identical code with only the exchange bounds changed.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    H1 INDEPENDENCE   PASS.  Within abundance-matched deciles -- where the lookup is held fixed and
+                      cannot help -- plain FBA still scores 0.6461. Under 5-fold CV, lookup alone
+                      0.7761, lookup + mechanism 0.8314, a gain of +0.0552 against a gate of +0.02.
+                      THE MECHANISM IS WORSE THAN THE BASELINE AND NOT REDUNDANT WITH IT. Those are
+                      different things and loop 1 could not tell them apart.
+
+    H2 CONFOUND       CONFIRMED, and cleanly.  mRNA abundance scores 0.7766 on the 1,784 metabolic
+                      genes and 0.7794 on 8,511 genes with NO metabolic reaction at all. Difference
+                      -0.0028 against a gate of 0.05. The column that beat the mechanistic stack knows
+                      nothing about metabolism; it is a general property of gene expression. Loop 1's
+                      G4 comparison was never mechanism against mechanism, and the 0.16 deficit should
+                      not be read as "FBA is bad at metabolism".
+
+    H3 MEDIUM         NOT TESTABLE.  The declared medium matched 403 exchanges from 40 of 44 named
+                      components and supports a growth rate of exactly zero. A medium too poor to grow
+                      on cannot say whether an adequate one would have helped, so this is recorded as
+                      untestable rather than as a negative. The defect is mine, not the model's, and
+                      the fix is not a longer hand-written list -- it is to stop hand-writing it.
+
+WHAT THIS CHANGES.  Loop 1 read as "the mechanism lost to a lookup". After these three it reads: the
+mechanism lost to a confound that is not about metabolism, while carrying independent signal worth
++0.055 AUC on top of that confound. That is a materially better position than it looked, and it was only
+visible because the negative was interrogated instead of banked.
+
 -> outputs/loop_deficit.json
 """
 import json
