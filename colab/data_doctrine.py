@@ -58,8 +58,18 @@ import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import run_manifest as RM  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(os.environ.get("CELL_OUT", "outputs"))
+
+# THE FIT-AND-SCORE PAIR. A module that both fits something and scores something, on a dataset many other
+# modules also read, is where a leakage mistake can hide. These are CANDIDATES for hand-checking, not
+# findings -- fitting and scoring in one file is completely correct when the split is honest.
+FITS = re.compile(r"\.fit\(|train|regress|LogisticRegression|RandomForest|GradientBoost|coef_|lstsq"
+                  r"|curve_fit|minimize\(", re.I)
+SCORES = re.compile(r"accuracy|roc_auc|\bAUC\b|precision|recall|\br2\b|spearman|pearson|score\(", re.I)
 
 READERS = {"load", "read_csv", "read_parquet", "read_text", "read_json", "loadtxt", "read_pickle",
            "read_table", "read_excel", "load_npz", "read_bytes"}
@@ -132,6 +142,16 @@ def inventory(path):
         writes.add(Path(m.group(1)).name)
     reads -= writes
     head = src[:8000]
+    # OUTPUT-CLASS: does the recorded run carry a manifest? This is the whole point of the rewrite --
+    # prose lost its credibility twice, so the question becomes what the artefact contains.
+    man_present = man_complete = None
+    if m:
+        p = ROOT / m.group(1)
+        if p.exists():
+            try:
+                man_present, man_complete, _ = RM.check(json.load(open(p)))
+            except Exception:
+                man_present = man_complete = False
     return {
         "module": rel,
         "function": (doc.splitlines() or [""])[0][:130],
@@ -141,6 +161,10 @@ def inventory(path):
         "text": {k: bool(v.search(head)) for k, v in TEXT_RULES.items()},
         "names_source": bool(reads),
         "has_docstring": bool(doc),
+        "declared_output": m.group(1) if m else None,
+        "manifest_present": man_present,
+        "manifest_complete": man_complete,
+        "fits_and_scores": bool(FITS.search(src) and SCORES.search(src)),
     }
 
 
@@ -206,6 +230,32 @@ def main():
     for nm, v, cls in rows7:
         report(f"    {nm:<26}{v:>8.0%}{cls:>12}")
 
+    # ---- OUTPUT-class: rules 6 and 7 rebuilt on the artefact ----------------------------------------
+    withrun = [r for r in inv if r["manifest_present"] is not None]
+    mp = sum(bool(r["manifest_present"]) for r in withrun)
+    mc = sum(bool(r["manifest_complete"]) for r in withrun)
+    report(f"\n  RULES 6 AND 7 REBUILT AS OUTPUT-CLASS -- does the recorded run carry a manifest?")
+    report(f"    {len(withrun)} modules declare a recorded output that exists on disk")
+    report(f"    {mp} carry a manifest ({mp/max(len(withrun),1):.0%}); "
+           f"{mc} declare coverage in it ({mc/max(len(withrun),1):.0%})")
+    report("    This replaces the TEXT provenance rule, which was withdrawn for scoring HIGHER on")
+    report("    modules that read no data (69% against 63%) -- it was matching the word SEED.")
+    report("    Adoption starts near zero by construction. The number to watch is whether it rises.")
+
+    # ---- the shared-surface leakage candidates -------------------------------------------------------
+    report(f"\n  LEAKAGE CANDIDATES on the most-shared datasets -- modules that BOTH fit and score")
+    report("  while reading a surface many other modules also read. Candidates for hand-check, NOT")
+    report("  findings: fitting and scoring in one file is correct whenever the split is honest.")
+    cands = []
+    for d, n in share.most_common(6):
+        if n < 5:
+            break
+        rs = [r for r in with_data if d in [Path(x).name for x in r["reads"]] and r["fits_and_scores"]]
+        report(f"    {d:<40}{len(rs):>4} of {n:>4} readers fit AND score")
+        cands += [{"dataset": d, "module": r["module"]} for r in rs]
+    report(f"    {len(cands)} module-dataset pairs to check by hand, out of "
+           f"{sum(n for _, n in share.most_common(6))} reader slots on those surfaces")
+
     # ---- CONTROL 1: modules with no data must score near zero on the text rules ----------------------
     report(f"\n  CONTROL A -- modules that read NO dataset ({len(no_data)}). If these score like the data")
     report("  modules, the text checks are matching prose rather than practice.")
@@ -259,8 +309,18 @@ def main():
     report(f"\n    {len(nodoc)} of {len(with_data)} data-reading modules have NO docstring, so rule 4")
     report("    cannot be checked on them at all -- they do not say what they are for.")
 
+    # THE TOOL DECLARES ITS OWN COVERAGE. It reads 900-odd files and grades everyone else on whether they
+    # say how much of their data they used; it would be absurd for it not to say how much of the repo it
+    # scanned, and under what rule.
+    man = RM.manifest(inputs=[], available=len(files), used=len(inv), selection="filtered", seed=None,
+                      controls=["no-data modules", "age split"],
+                      note="every *.py outside __pycache__/.venv/target; 'used' is those that parsed")
+    report("\n  THIS TOOL'S OWN MANIFEST")
+    RM.report(man, emit=report)
+
     OUT.mkdir(parents=True, exist_ok=True)
-    json.dump({"test": "data_doctrine", "n_modules": len(inv), "n_with_data": len(with_data),
+    json.dump({"test": "data_doctrine", "manifest": man, "leak_candidates": cands,
+               "n_modules": len(inv), "n_with_data": len(with_data),
                "rules": {nm: v for nm, v, _ in rows7}, "text_valid": bool(valid),
                "dataset_users": {d: sorted(m) for d, m in users.items()},
                "share": dict(share), "inventory": inv, "log": log},
