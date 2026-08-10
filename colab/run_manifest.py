@@ -50,6 +50,22 @@ def digest(path):
     p = Path(path)
     if not p.exists():
         return {"path": str(path), "missing": True}
+    if p.is_dir():
+        # A DIRECTORY IS A LEGITIMATE INPUT and the first version crashed on one. cell_model_audit
+        # consumes outputs/orphan/cell_parts/ as a unit -- 42 files that are only meaningful together --
+        # and IsADirectoryError is not a useful answer to "what did this run read". The digest is over
+        # the sorted (relative name, size, hash) of every file inside, so adding, removing or altering
+        # any part changes it.
+        files = sorted(q for q in p.rglob("*") if q.is_file())
+        h = hashlib.sha256()
+        tot = 0
+        for q in files:
+            h.update(q.relative_to(p).as_posix().encode())
+            d = digest(q)
+            h.update(str(d.get("hash", "")).encode())
+            tot += d.get("bytes", 0)
+        return {"path": str(path), "kind": "directory", "files": len(files), "bytes": int(tot),
+                "hash": h.hexdigest()[:16], "method": "sha256:tree"}
     size = p.stat().st_size
     h = hashlib.sha256()
     if size <= BIG:
