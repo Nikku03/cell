@@ -39,6 +39,42 @@ PREDECLARED, before any number:
 CONTROLS: random gene pairs; distance-matched same-chromosome pairs, resampled 200 times; the trans
 subset as an independent replication; shuffled neighbour assignment.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    C1 SANITY     PASS.  3D pairs land in each other's top co-expression list at 0.0146 against 0.0017
+                  for random pairs drawn from the SAME gene universe -- 8.6x.
+    C2 BEATS 1D   PASS, and this was the real gate.  0.1142 for 3D cis pairs against a distance-matched
+                  1D null of 0.0190 +/- 0.0023 (95th percentile 0.0234) over 200 resamples. Six-fold,
+                  far outside the null. Holding genomic separation fixed does NOT explain it.
+    C3 REACHES A CELL OUTCOME  PASS.  Mean |difference in dependency fraction| 0.0214 for 3D pairs
+                  against 0.1047 +/- 0.0043 for distance-matched pairs: five times more alike in how
+                  cells depend on them.
+    C4 TRANS      PASS.  0.0050 against 0.0013 +/- 0.0002 on 55,836 different-chromosome pairs, where
+                  no genomic distance and no shared-domain explanation exists at all.
+
+TWO DEFECTS IN THE FIRST VERSION, both of which would have produced a passing result for bad reasons:
+    1  `coexpr` stores only each gene's TOP ~12 partners, so averaging correlation over "pairs that have
+       a value" conditions on the outcome -- it compared the mean among 895 surviving 3D pairs against
+       the mean among 22 surviving random pairs. Replaced by the hit rate, which is the comparable
+       quantity.
+    2  the controls were drawn from all 16,460 positioned genes while the 3D pairs come from model4's
+       7,700, so any difference between those populations -- study bias, expression, essentiality --
+       would have surfaced as a chromatin result. Every control is now drawn from the same universe.
+    Fixing both made the result stronger, which is the only reason it is quotable.
+
+THE LIMIT, and it is not small.  `model4` is one of the 40 blocks in cell_complete with NO KNOWN
+PRODUCER (cell_complete_build). Nothing in this repository records how its neighbour lists were built,
+so it cannot be ruled out that expression data went into constructing them -- in which case C1, C2 and
+C4 are partly circular. Two things bound that worry without dispelling it: the hit rate is 0.0146, not
+near 1.0, so the neighbours are plainly not simply each gene's top co-expressed partners; and C3 scores
+against DEPENDENCY, a different measurement entirely. But the honest statement is that this is a strong
+association whose interpretation is limited by an unrecorded provenance, and closing that gap means
+finding model4's producer, which is already item 1 on the recovery backlog.
+
+WHAT IT CHANGES.  Two instruments had measured zero links between the chromatin line and the cell model.
+A third now says the zero was a fact about the WIRING, not about the biology: the information is there
+and nothing was consuming it.
+
 -> outputs/loop_chromatin.json
 """
 import json
@@ -114,21 +150,35 @@ def main():
     say(f"  3D neighbour pairs: {len(pairs_cis):,} same-chromosome, {len(pairs_trans):,} "
         f"different-chromosome")
 
+    # SAME UNIVERSE. The 3D pairs are drawn from model4's 7,700 genes; the first version drew controls
+    # from all 16,460, so any difference between those two populations -- study bias, expression level,
+    # essentiality -- would show up as a chromatin result. Every control below is now restricted to the
+    # genes that HAVE 3D neighbours, so the only thing varying is whether a pair is a 3D neighbour.
+    UNIVERSE = sorted({i for k in model4 for i in [int(k)] if i in pos} |
+                      {j for k, v in model4.items() for nm in (v.get("neighbors") or [])
+                       for j in [name2i.get(nm)] if j is not None and j in pos})
+
     by_chrom = defaultdict(list)
-    for i, c in chrom.items():
-        by_chrom[c].append(i)
+    for i in UNIVERSE:                       # same universe as the 3D pairs, see note above
+        by_chrom[chrom[i]].append(i)
     for c in by_chrom:
         by_chrom[c].sort(key=lambda x: pos[x])
 
-    def mean_co(prs):
-        vals = [co(i, j) for i, j in prs]
-        vals = [v for v in vals if v is not None]
-        return (float(np.mean(vals)) if vals else float("nan")), len(vals)
+    # HIT RATE, NOT MEAN, and the first version of this file got it wrong in a way worth recording.
+    # `coexpr` stores only each gene's TOP ~12 partners. So co(i,j) returns a value only for pairs that
+    # already made that cut, and averaging over "pairs with a value" conditions on the outcome: it
+    # measured the mean correlation among survivors, on n=895 of 61,213 3D pairs against n=22 of 20,000
+    # random pairs. Those two means are not comparable to each other. The quantity that IS comparable is
+    # the FRACTION of pairs that appear in each other's top list at all.
+    def hit_rate(prs):
+        if not prs:
+            return float("nan"), 0
+        hits = sum(1 for i, j in prs if co(i, j) is not None)
+        return hits / len(prs), len(prs)
 
     def random_pairs(n):
-        idx = list(pos)
-        a = rng.choice(idx, size=n)
-        b = rng.choice(idx, size=n)
+        a = rng.choice(UNIVERSE, size=n)
+        b = rng.choice(UNIVERSE, size=n)
         return [(int(x), int(y)) for x, y in zip(a, b) if x != y]
 
     def matched_1d(prs):
@@ -151,19 +201,19 @@ def main():
         return out
 
     # ---- C1 sanity ------------------------------------------------------------------------------------
-    m3d, n3d = mean_co(pairs_cis + pairs_trans)
-    mrnd, nrnd = mean_co(random_pairs(20000))
+    m3d, n3d = hit_rate(pairs_cis + pairs_trans)
+    mrnd, nrnd = hit_rate(random_pairs(20000))
     c1 = bool(np.isfinite(m3d) and np.isfinite(mrnd) and m3d > mrnd)
-    say(f"\n  C1 SANITY -- 3D neighbours vs random gene pairs")
-    say(f"    3D pairs      mean co-expression {m3d:.4f}  (n={n3d:,} with a value)")
-    say(f"    random pairs  mean co-expression {mrnd:.4f}  (n={nrnd:,})")
+    say(f"\n  C1 SANITY -- 3D neighbours vs random pairs FROM THE SAME GENE UNIVERSE")
+    say(f"    3D pairs      top-partner hit rate {m3d:.4f}  (n={n3d:,} pairs)")
+    say(f"    random pairs  top-partner hit rate {mrnd:.4f}  (n={nrnd:,} pairs)")
     say(f"    C1 {'PASS' if c1 else 'FAIL'}")
 
     # ---- C2 the real gate -----------------------------------------------------------------------------
-    mcis, ncis = mean_co(pairs_cis)
+    mcis, ncis = hit_rate(pairs_cis)
     draws = []
     for _ in range(N_RESAMPLE):
-        mm, _ = mean_co(matched_1d(pairs_cis[:4000]))
+        mm, _ = hit_rate(matched_1d(pairs_cis[:4000]))
         if np.isfinite(mm):
             draws.append(mm)
     draws = np.array(draws)
@@ -202,8 +252,8 @@ def main():
     say(f"    C3 {'PASS' if c3 else 'FAIL'}")
 
     # ---- C4 trans, the cleanest version ---------------------------------------------------------------
-    mtr, ntr = mean_co(pairs_trans)
-    trd = np.array([mean_co(random_pairs(max(len(pairs_trans), 100)))[0] for _ in range(50)])
+    mtr, ntr = hit_rate(pairs_trans)
+    trd = np.array([hit_rate(random_pairs(max(len(pairs_trans), 100)))[0] for _ in range(50)])
     p95t = float(np.percentile(trd, 95)) if len(trd) else float("nan")
     c4 = bool(np.isfinite(mtr) and np.isfinite(p95t) and mtr > p95t)
     say(f"\n  C4 TRANS -- different chromosomes, where no 1D distance and no shared domain can explain it")
@@ -230,7 +280,7 @@ def main():
         say("  the chromatin line in THIS repository's data, not about 3D genome biology.")
     say("=" * 100)
 
-    man = RM.manifest(inputs=[str(CELL)], available=len(model4),
+    man = RM.manifest(inputs=[str(CELL)], available=len(pairs_cis) + len(pairs_trans),
                       used=len(pairs_cis) + len(pairs_trans), selection="all", seed=SEED,
                       controls=["random gene pairs", f"{N_RESAMPLE} distance-matched 1D resamples",
                                 "trans subset as independent replication",
