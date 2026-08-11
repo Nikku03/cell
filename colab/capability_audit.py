@@ -291,7 +291,7 @@ ACCEPTS = {
                             "compartment", "affinity", "surrogate", "loading",
                             "langevin"),
     "drug effect": ("drug",),
-    "side effect": ("sideeffect",),
+    "side effect": ("sideeffect", "shared_effect"),
     "cancer": ("cancer", "survivable"),
     "metabolic growth": ("cell_loop", "medium", "slack", "retest", "tail", "integrate",
                          "recall", "buffering"),

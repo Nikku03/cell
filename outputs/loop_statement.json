@@ -226,15 +226,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_shared_effect.json",
+        "bytes": 8299,
+        "hash": "796ca9c4f047433b",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 25099,
-        "hash": "9c5d13e92089194a",
+        "bytes": 25751,
+        "hash": "d435c1daca2823dd",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 38,
-      "used": 38,
+      "available": 39,
+      "used": 39,
       "selection": "all",
       "fraction": 1.0
     },
@@ -246,8 +252,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 106,
-  "n_gates_failed": 41,
+  "n_gates_passed": 109,
+  "n_gates_failed": 43,
   "capability": [
     {
       "question": "any point mutation",
@@ -574,12 +580,16 @@
         "drugs": 4275
       },
       "n_items": 4275,
-      "gates_passed": 7,
-      "gates_failed": 1,
+      "gates_passed": 10,
+      "gates_failed": 3,
       "gate_detail": {
         "loop_drug.json": {
           "passed": 4,
           "failed": 0
+        },
+        "loop_shared_effect.json": {
+          "passed": 3,
+          "failed": 2
         },
         "loop_sideeffect.json": {
           "passed": 3,
@@ -589,6 +599,7 @@
       "answered_well": true,
       "best_pipeline": "loop_drug.json",
       "adjacent_credits": [
+        "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
       "retracted": {},
@@ -609,11 +620,13 @@
       ],
       "produces": [
         "loop_drug.json",
+        "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
       "phenotype_hits": [],
       "controlled": [
         "loop_drug.json",
+        "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
       "note": "gene-keyed drug/target/action"
@@ -625,9 +638,13 @@
         "otdis": 48
       },
       "n_items": 48,
-      "gates_passed": 3,
-      "gates_failed": 1,
+      "gates_passed": 6,
+      "gates_failed": 3,
       "gate_detail": {
+        "loop_shared_effect.json": {
+          "passed": 3,
+          "failed": 2
+        },
         "loop_sideeffect.json": {
           "passed": 3,
           "failed": 1
@@ -646,15 +663,18 @@
         "colab/adrn_ko_channels3.py",
         "colab/complete_cell.py",
         "colab/data_ledger.py",
+        "colab/loop_shared_effect.py",
         "colab/loop_sideeffect.py",
         "colab/pertseq_apps.py"
       ],
       "produces": [
         "data_ledger.json",
+        "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
       "phenotype_hits": [],
       "controlled": [
+        "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
       "note": "48 genes with disease associations, PLUS SIDER 4.1 -- 1,430 compounds with MedDRA side effects, added by loop 12. Before that there was no compound-to-adverse-event data here at all"
@@ -782,8 +802,8 @@
     "  any point mutation          yes    yes    yes        13    8/14     no   ",
     "  any protein change          yes    yes    yes    42,765   38/47    YES   loop_quantity.json",
     "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
-    "  drug effect                 yes    yes    yes     4,275     7/8    YES   loop_drug.json",
-    "  side effect                 yes    yes    yes        48     3/4     no   ",
+    "  drug effect                 yes    yes    yes     4,275   10/13    YES   loop_drug.json",
+    "  side effect                 yes    yes    yes        48     6/9     no   ",
     "  cancer                      yes    yes    yes       839     7/8     no   ",
     "\n  6 of 6 can be ASKED.",
     "  6 can be GOT WRONG -- a slot, a pipeline and a controlled score.",
@@ -972,11 +992,17 @@
     "      PASS   D3 ess rule survives non-circularly",
     "      PASS   D4 shuffled rebuilds fail",
     "      FAIL   D5 coverage passes half",
+    "\n  loop 50  do drugs hitting the same neighbourhood share side effects",
+    "      PASS   E1 join exists and can be split",
+    "      PASS   E2 shared targets predict shared effects",
+    "      PASS   E3 network adds where the lookup cannot",
+    "      FAIL   E4 survives the frequency baseline",
+    "      FAIL   E5 holds on held-out drugs",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  106 gates passed, 41 failed. Both numbers are the point: a project where",
+    "\n  109 gates passed, 43 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -1003,6 +1029,8 @@
     "  and it covers 17% of the reads       15% more has a URL and no download, 6% is invented labels with no rule  [build_cell_complete]",
     "  the URL for ppi WAS WRONG            BioGRID degree correlates 0.3701 with the file's most-read numeric field  [loop_rebuild]",
     "  and DepMap was in the repo already  dep_frac corr 0.9735, ess 0.9915 from a non-circular rebuild; coverage 28%  [loop_rebuild]",
+    "  shared NEIGHBOURHOOD does not work  190,502 zero-overlap drug pairs: proximity +0.0720 raw, -0.0539 once side-effect count is removed  [loop_shared_effect]",
+    "  and the confound came in sideways  the count baseline alone explains R2 0.5685 of the OUTCOME, not the predictor   [loop_shared_effect]",
     "  model4 is not a fold                8.8% of its pairs are same-chromosome; a Hi-C map runs 70-90%              [loop_fold_link]",
     "\n----------------------------------------------------------------------------------------------------",
     "  THE DISTANCE LEFT",
@@ -1012,7 +1040,7 @@
     "   pipeline and a controlled score. The distance moved to the fourth column.)",
     "",
     "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_pervariant.json, loop_variant.json",
-    "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_sideeffect.json",
+    "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_shared_effect.json, loop_sideeffect.json",
     "  NOT ANSWERED WELL  cancer                 every module answering it has a failed gate: loop_survivable.json; SUPERSEDED: loop_cancer.json",
     "\n  SIX LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
     "    1  Effects are modest. rho 0.18 for torsion against transcription; AUC 0.72 for cytotoxic",
@@ -1044,6 +1072,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 38 inputs, coverage 38/38 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 39 inputs, coverage 39/39 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }

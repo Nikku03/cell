@@ -69,6 +69,8 @@ LOOPS = [
     ("46  is buffering predictable", "loop_buffering.json", "gates"),
     ("48  a producer for cell_complete.json", "build_cell_complete.json", "gates"),
     ("49  close the declared gap", "loop_rebuild.json", "gates"),
+    ("50  do drugs hitting the same neighbourhood share side effects",
+     "loop_shared_effect.json", "gates"),
     ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 
@@ -249,6 +251,13 @@ def main():
             f"{lrb['checks']['dep_frac']['corr']:.4f}, ess {lrb['checks']['ess']['exact']:.4f} from "
             f"a non-circular rebuild; coverage {lrb['reads_verified']/lrb['total_reads']:.0%}  "
             f"[loop_rebuild]")
+    lse = R.get("loop_shared_effect.json")
+    if lse:
+        say(f"  shared NEIGHBOURHOOD does not work  {lse['n_zero_target']:,} zero-overlap drug pairs: "
+            f"proximity {lse['r_sep']:+.4f} raw, {lse['r_resid']:+.4f} once side-effect count is "
+            f"removed  [loop_shared_effect]")
+        say(f"  and the confound came in sideways  the count baseline alone explains R2 "
+            f"{lse['baseline_r2']:.4f} of the OUTCOME, not the predictor   [loop_shared_effect]")
     lf = R.get("loop_fold_link.json")
     if lf:
         l0 = lf.get("L0_what_is_it", {})
