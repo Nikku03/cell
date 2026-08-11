@@ -46,10 +46,48 @@ PREDECLARED, before any number:
                 measured limit it is rather than a disappointment -- and so that a PASS is required to
                 survive the naked-DNA control below before it is believed.
     C5 NEXUS SEES SOMETHING   where its sensors fire, nexus activity separates pathogenic from benign
-                within gene, above 200 within-gene shuffles.
+                within gene, above 200 within-gene shuffles, AND IN THE RIGHT DIRECTION -- activity
+                below 0.5, because a destabilising substitution is supposed to be more pathogenic and
+                not less. Scoring |AUC - 0.5| alone would let the sensor pass while pointing backwards,
+                which is the exact fault loop 29's N4 shipped with and had to be fixed for.
     C6 IT BEATS THE SUBSTITUTION MATRIX   nexus activity beats BLOSUM62 scored on the same variants.
                 A 20x20 table from 1992 needs no structure, no fold and no cell model. If it does as
                 well, the three links in front of it bought nothing and the honest report is that.
+
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    C1 PASS.  56,258 variants carry all four links. 1,479,543 ClinVar SNVs with a definite
+        pathogenic/benign call -> 966,225 inside the chosen transcript's CDS -> 212,177 missense ->
+        56,258 with a structure the ddG sensor could score.
+    C2 PASS, 99.99%.  The reference base matched the CDS at 100.00% of 966,223 variants, and the
+        computed consequence agreed with ClinVar's held-back MC field on 99.99%. The middle link is
+        built and verified, which was the part of this that could have been quietly wrong.
+        (First run read 92.59% and FAIL. That was this module's own comparator: ClinVar spells a
+        stop-gain `nonsense`, not `nonsense_variant`, and the test was a substring. Fixed to exact
+        membership. The 100.00% reference-base match is what identified it as a vocabulary fault
+        rather than a translation fault.)
+    C3 PASS.  Resolution per link: DNA coordinate 99.9%, chromosome fold 55.7%, residue position
+        99.8%, nexus 100.0%. The chain does not collapse to one-number-per-gene.
+    C4 FAIL, as predeclared.  Torsion at the variant's own coordinate scores 0.5054 against a
+        within-gene null of 0.5063 -- inside the band. The naked-DNA control sits at 0.4979. The fold
+        link attaches at the right base and carries nothing that distinguishes two mutations in one
+        gene, which is what the question needed it to do.
+    C5 FAIL, and the direction is the finding.  Activity 0.5194 against a band of 0.5122 -- outside
+        it, on the WRONG SIDE. Within a gene, the more destabilising this sensor scores a substitution,
+        the LESS likely it is to be pathogenic. Also recorded: with no binding partner available for an
+        arbitrary gene, nexus runs on one of its two sensors, so `activity` and `folding ddG` are one
+        measurement mirrored (0.5194 + 0.4806 = 1.0000) and not two pieces of evidence.
+    C6 FAIL, heavily.  BLOSUM62 scores 0.6623 against its own within-gene band of 0.5794. A 20x20
+        substitution table published in 1992 beats the structural sensor by 0.1623 to 0.0194 on the
+        same variants, in the same genes, under the same null.
+
+    THE CHAIN IS REAL AND THE TWO LINKS THAT WERE SUPPOSED TO CARRY CELL-MODEL VALUE DO NOT.
+    The plumbing works and the middle link is verified against a source it never saw. What fails is
+    the claim the chain was built to support: at variant resolution the chromosome fold contributes
+    nothing, the structural sensor contributes nothing and points backwards, and the only thing that
+    separates pathogenic from benign inside a gene is a sequence lookup table older than the genome
+    project. That is a negative result about this model, established with the controls that make it
+    hard to argue with, rather than a chain that ran and was declared a success because it ran.
 
 CONTROLS: ClinVar's molecular-consequence field held back as an independent check on the translation;
 the reference base checked against the CDS at every variant; 200 WITHIN-GENE label shuffles; the
@@ -482,13 +520,37 @@ def main():
     a_a, p_a, n_a, g_a = within_gene("activity", scored)
     a_d, p_d, _, _ = within_gene("ddg", scored)
     a_b, p_b, _, _ = within_gene("blosum", scored)
-    c5 = bool(np.isfinite(a_a) and abs(a_a - 0.5) > p_a - 0.5)
+    # DIRECTION IS PART OF THE GATE. A destabilising mutation is supposed to be MORE pathogenic, so
+    # nexus activity must run BELOW 0.5 (low activity -> pathogenic). Scoring |AUC - 0.5| alone would
+    # let the sensor pass while pointing the wrong way, which is exactly the fault loop 29's N4 had.
+    c5 = bool(np.isfinite(a_a) and (0.5 - a_a) > p_a - 0.5)
+    inverted = bool(np.isfinite(a_a) and a_a > 0.5 and (a_a - 0.5) > p_a - 0.5)
     say(f"\n  C5 NEXUS SEES SOMETHING -- {n_a:,} variants in {g_a:,} genes, on the same variants "
         f"throughout")
     say(f"     nexus activity                      {a_a:>8.4f}   within-gene null 95th {p_a:.4f}")
     say(f"     folding ddG alone                   {a_d:>8.4f}   within-gene null 95th {p_d:.4f}")
     say(f"     BLOSUM62 (sequence lookup)          {a_b:>8.4f}   within-gene null 95th {p_b:.4f}")
-    say(f"     C5 {'PASS' if c5 else 'FAIL'}")
+    # NOT TWO RESULTS. nexus is a DUAL sensor -- folding and binding -- and there is no interface
+    # partner for an arbitrary ClinVar gene, so it is called with ddg_bind = 0 and its activity is a
+    # monotone function of the folding ddG alone. The two rows above are therefore one measurement
+    # mirrored: 0.5194 and 0.4806 sum to 1. Printing them as separate evidence would be double
+    # counting, so the identity is asserted rather than left for the reader to notice.
+    mirrored = bool(np.isfinite(a_a) and np.isfinite(a_d) and abs((a_a + a_d) - 1.0) < 1e-6)
+    say(f"     the first two rows are ONE measurement mirrored ({a_a:.4f} + {a_d:.4f} = "
+        f"{a_a+a_d:.4f}): with no binding partner for an arbitrary gene, nexus runs on one of its two")
+    say(f"     sensors and its activity is a monotone transform of the folding ddG. "
+        f"{'confirmed' if mirrored else 'NOT CONFIRMED -- check'}")
+    say(f"     C5 {'PASS' if c5 else 'FAIL'}  (gate: activity BELOW 0.5 -- destabilising should mean "
+        f"more pathogenic)")
+    if inverted:
+        say(f"     THE SENSOR POINTS THE WRONG WAY. Activity is {a_a:.4f}, outside the shuffle band on")
+        say(f"     the wrong side: within a gene, the MORE destabilising a substitution is scored, the")
+        say(f"     LESS likely it is to be pathogenic. That is backwards from the mechanism nexus")
+        say(f"     claims, and the margin ({abs(a_a-0.5):.4f} against a band of {p_a-0.5:.4f}) is thin")
+        say(f"     enough that on {n_a:,} variants statistical significance says almost nothing about")
+        say(f"     usefulness. The most likely cause is domain shift: ddg_model was fitted on SKEMPI")
+        say(f"     interface mutations in crystal structures and is being asked about whole AlphaFold")
+        say(f"     monomers, where benign variants concentrate in low-confidence disordered regions.")
     c6 = bool(np.isfinite(a_a) and np.isfinite(a_b) and abs(a_a - 0.5) > abs(a_b - 0.5))
     say(f"  C6 IT BEATS THE SUBSTITUTION MATRIX -- {abs(a_a-0.5):.4f} vs BLOSUM62's "
         f"{abs(a_b-0.5):.4f}   C6 {'PASS' if c6 else 'FAIL'}")
@@ -535,7 +597,9 @@ def main():
                "within_gene": {"torsion": a_t, "torsion_null95": p_t, "naked": a_n,
                                "activity": a_a, "activity_null95": p_a, "ddg": a_d,
                                "blosum": a_b, "n": n_a, "n_genes": g_a},
-               "n_ddg": n_ddg, "n_genes_struct": len(STR), "log": log},
+               "n_ddg": n_ddg, "n_genes_struct": len(STR),
+               "activity_is_mirrored_ddg": mirrored, "sensor_inverted": inverted,
+               "log": log},
               open(OUT / "loop_chain.json", "w"), indent=2)
     say(f"\n  -> {OUT/'loop_chain.json'}")
     return 0
