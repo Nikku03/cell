@@ -40,6 +40,35 @@ PREDECLARED, before any number:
 CONTROLS: 200 WITHIN-GENE label shuffles; leave-one-out centroids; gene-grouped cross-validation so no
 gene appears in both train and test; and the gene-level score as the direct comparator.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    X1 VARIANT RESOLUTION   PASS.  100% of genes now have their variants scored differently. Loop 5's
+        stated limit -- one number per gene -- is gone.
+    X2 SIGNAL   PASS.  Leave-one-out positional clustering scores AUC 0.6297 against a WITHIN-GENE
+        shuffled null of 0.5390 +/- 0.0010. Note the null sits at 0.539 rather than 0.5: the
+        leave-one-out construction carries a small structural bias, and the shuffle measures it
+        correctly, which is the reason for shuffling rather than assuming 0.5.
+    X3 BEATS THE GENE SCORE   PASS.  On the 37,011 variants carrying both, position scores 0.6052 and
+        loop 5's gene-level dose-response scores 0.5044 -- chance.
+    X4 THEY COMBINE   FAIL.  Under cross-validation grouped by gene: position alone 0.5866, gene score
+        alone 0.4208, both together 0.5856. Combining is -0.0009. The cell model contributes nothing.
+
+WHY THE GENE SCORE SITS BELOW CHANCE AT 0.4208, because it looks alarming and is not.  With folds
+grouped by gene, a gene-CONSTANT feature cannot discriminate variants within a gene at all -- it can only
+help by correlating with a gene's pathogenic FRACTION across unseen genes, and it does not. A gene-level
+number is structurally the wrong shape for a variant-level question, and this is the measurement that
+shows it rather than an argument that asserts it.
+
+THE HONEST CONCLUSION.  `any point mutation` is now variant-resolved, and the resolution comes entirely
+from SEQUENCE POSITION. The cell model adds nothing at this resolution. That row should be read as a
+sequence-level result, and the capability table's entry for it is qualified accordingly: the question is
+askable, connected, falsifiable and answered by information that has nothing to do with the cell model.
+
+WHAT WOULD CHANGE IT.  A per-variant feature the cell model could actually supply -- for instance the
+predicted effect of a specific substitution on a specific enzyme's activity, which needs structure or
+per-residue kinetics. loop_kinetics already established that no per-enzyme constants exist in this
+container, so this is the same data-acquisition boundary reached from a different direction.
+
 -> outputs/loop_pervariant.json
 """
 import collections
