@@ -40,6 +40,29 @@ controls, and it is a reason to treat a positive here as weaker than its coeffic
 CONTROLS: 200 label shuffles; target count partialled out; mean LOEUF and mean expression of the same
 targets; and the raw target count reported as a predictor in its own right so its strength is visible.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    S1 JOIN                 PASS.  640 drugs with both a SIDER side-effect list and targets here.
+    S2 SIGNAL               PASS.  Mean essentiality of a drug's targets correlates +0.1691 with its
+                            side-effect count, against a |null| 95th percentile of 0.0758.
+    S3 BEATS TARGET COUNT   FAIL, and it is the gate that mattered.  Holding the number of targets
+                            fixed, that +0.1691 collapses to +0.0515 -- INSIDE the shuffled null for the
+                            partial, whose 95th percentile is 0.0756. Meanwhile target count ALONE
+                            correlates +0.2898. The entire signal was arithmetic: more proteins hit,
+                            more things broken.
+    S4 BEATS LOOKUPS        PASS, and it is worth almost nothing here -- beating LOEUF's 0.0183 with
+                            0.0515 is a comparison between two numbers that are both inside the null.
+
+THE HONEST READING.  `side effect` now has data, a pipeline and a controlled score, which it did not
+have this morning, and the controlled score says NO. The cell model's estimate of what a gene costs adds
+nothing to knowing how many proteins a drug binds. A count of targets -- which requires no model, no
+stoichiometry and no growth simulation -- does all the work.
+
+WHY THIS IS THE EXPECTED SHAPE, in hindsight and not as an excuse.  Side effects are overwhelmingly
+about WHERE a drug goes and WHICH TISSUE reacts, and this model has no tissue and no pharmacokinetics.
+It knows what a gene costs a proliferating cell in culture. That is the wrong quantity for an adverse
+event in a patient, and the measurement says so rather than the intuition.
+
 -> outputs/loop_sideeffect.json
 """
 import collections
