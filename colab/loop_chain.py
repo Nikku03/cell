@@ -253,13 +253,21 @@ def main():
 
     # ---- C2 the independent check on the translation ---------------------------------------------
     def implied(wt, mu):
+        """ClinVar's OWN Sequence Ontology spellings, which are not the obvious ones.
+
+        A stop-gain is `nonsense` in the MC field, not `nonsense_variant`. The first run of this gate
+        emitted `nonsense_variant` and tested it as a substring, so 55k correct translations scored as
+        disagreements and C2 read 92.59% instead of passing. The reference base matched the CDS at
+        100.00% of those same variants, which is what said the codon walk was right and the comparator
+        was wrong. Membership is exact now rather than substring, so a vocabulary drift fails loudly
+        instead of quietly counting matches."""
         if mu == "*":
-            return "nonsense_variant"
+            return "nonsense"
         if wt == "*":
             return "stop_lost"
         return "synonymous_variant" if wt == mu else "missense_variant"
 
-    agree = [implied(r[8], r[9]) in r[6] for r in T]
+    agree = [implied(r[8], r[9]) in set(r[6].split(",")) for r in T]
     c2_rate = float(np.mean(agree))
     c2 = bool(c2_rate >= GATE_TRANSLATION)
     say(f"\n  C2 THE TRANSLATION IS RIGHT -- agrees with ClinVar's own consequence field on "
