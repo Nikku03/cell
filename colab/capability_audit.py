@@ -98,6 +98,17 @@ WHAT HAPPENED, written after the run, unedited.
 
     OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 CAN BE ASKED, 1 CAN BE ANSWERED.
 
+RE-RUN, loop 26: 6 ASKABLE, 6 CAN BE GOT WRONG, 4 ANSWERED WELL.
+    `any protein change` joins the list, via loop_quantity -- and this is the first row credited to a
+    pipeline that predicts a NUMBER rather than separating classes. Given a gene's mRNA abundance and
+    decay rate, it predicts protein abundance at held-out R-squared 0.4332, and the loop's own
+    turnover-and-dilution term is what takes it there from 0.3783.
+    The other three are unchanged: chromosome fold (loop_real_chromatin), drug effect (loop_drug),
+    cancer (loop_cancer).
+    Two still fail and each for a recorded reason. `side effect`: the correlation was target counting.
+    `metabolic growth`: loop 1's feedback did not earn its place -- being retested in loop 21 on a model
+    that cannot import ATP, since the original failure was measured on one that could.
+
 RE-RUN, loop 19: 6 ASKABLE, 6 CAN BE GOT WRONG, 3 ANSWERED WELL.
     All six question types now have a slot, a pipeline and a controlled score. Three have a pipeline
     whose every gate came back positive:
@@ -261,13 +272,13 @@ ENTRY = {
 # out here to be argued with exactly like ENTRY is, and anything else that touches the slot is reported
 # as ADJACENT rather than counted.
 ACCEPTS = {
-    "any point mutation": ("variant",),
-    "any protein change": ("cell_loop", "deficit", "medium"),
+    "any point mutation": ("variant", "pervariant"),
+    "any protein change": ("cell_loop", "deficit", "medium", "quantity", "retest"),
     "any chromosome fold": ("real_chromatin", "supercoil"),
     "drug effect": ("drug",),
     "side effect": ("sideeffect",),
     "cancer": ("cancer",),
-    "metabolic growth": ("cell_loop", "medium", "slack"),
+    "metabolic growth": ("cell_loop", "medium", "slack", "retest", "tail", "integrate"),
     "functional neighbourhood": ("fold_link", "chromatin"),
     "NEGATIVE CONTROL": (),
 }
