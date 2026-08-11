@@ -79,7 +79,23 @@ V_KB_S = 0.75            # extrusion speed, single-molecule
 RESIDENCE_S = 900.0      # cohesin residence, FRAP
 DENSITY_KB = 150.0       # one cohesin per this much DNA
 MAX_BLOCK = 0.95         # strongest CTCF stall probability per step
-CONFINE = 3e-3           # loop 34's nucleus
+
+# ---- CONFINEMENT, CALIBRATED RATHER THAN INHERITED --------------------------------------------------
+# The first run of this loop used loop 34's CONFINE = 3e-3 and every P(s) came out near -0.25,
+# including the bare polymer that loop 34 had just measured at -1.500. The cause was not the physics:
+# 3e-3 was chosen in loop 34 only to DEMONSTRATE that a plateau exists, and carrying a demonstration
+# value into a physical run made <R^2> saturate by 450 kb, so most of the fitting decade sat inside the
+# plateau and no mechanism could have moved it.
+#
+# Calibrated here from chromosome territory volume, which is independent of the map being scored:
+#   chr21 is 48 Mb of a 6.4 Gb genome; a human nucleus is ~500 um^3, so the territory is ~3.75 um^3,
+#   a radius of ~0.96 um.
+#   Coarse-graining: ~1 Mb of chromatin spans ~0.5 um, so a 25 kb bead has b ~ 0.5/sqrt(40) ~ 0.079 um.
+#   So R_c ~ 12.2 b, and for this network the plateau obeys <R^2> = b^2 / sqrt(c) (checked numerically
+#   below, and it reproduced 18.4 at c = 3e-3 against a predicted 18.3).
+#   Setting the plateau to 2 R_c^2 ~ 298 b^2 gives c ~ 1.1e-5.
+CONFINE = 1.1e-5
+CONFINE_DEMO = 3e-3      # loop 34's value, kept only to verify the plateau formula
 N_CONFIG = 50            # configurations averaged per condition
 BURN_STEPS = 200
 GATE_INSUL = 0.40
@@ -183,6 +199,16 @@ def main():
     say("  loop 34's bare polymer: P(s) = -1.500.  chr21 measured in loop 33: -0.964.")
     say("  Parameters here are LITERATURE (0.75 kb/s, 15 min residence, 1 per 150 kb) and were not")
     say("  fitted to the map they are scored against.")
+
+    # verify the plateau formula the calibration rests on, before using it
+    Lchk = laplacian(400, confine=CONFINE_DEMO)
+    Rchk = r2_matrix(Lchk, confined=True)
+    got = float(np.mean([Rchk[i, i + d] for d in range(150, 200) for i in range(0, 400 - d, 7)]))
+    pred = 1.0 / np.sqrt(CONFINE_DEMO)
+    say(f"\n  confinement calibration check: plateau formula b^2/sqrt(c) predicts {pred:.1f}, "
+        f"network gives {got:.1f}")
+    say(f"  calibrated from chr21's territory volume (independent of this map): c = {CONFINE:.2e}, "
+        f"plateau {1.0/np.sqrt(CONFINE):.0f} b^2")
 
     tgt = json.load(open(OUT / "loop_hic_target.json"))
     H = np.load(HIC).astype(np.float64)
