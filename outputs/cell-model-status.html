@@ -1,4 +1,4 @@
-<title>Cell model — measured status after thirty loops</title>
+<title>Cell model — measured status after thirty-two loops</title>
 <style>
   :root{
     --bg:#F5F7F6; --surface:#FFFFFF; --ink:#14181A; --muted:#5B6669; --hair:#DCE2E0;
@@ -101,7 +101,7 @@
 <div class="wrap">
 
   <header style="display:flex;flex-direction:column;gap:.75rem">
-    <p class="eyebrow">Whole-cell model · measured status · thirty loops</p>
+    <p class="eyebrow">Whole-cell model · measured status · thirty-two loops</p>
     <h1>What this cell model can answer, what it cannot, and how each was found out</h1>
     <p class="lede">The goal was a model that answers anything in the cell — any mutation, any protein
     change, any chromosome fold, drug effect, side effect, cancer. As stated that cannot fail, so it was
@@ -113,7 +113,7 @@
     <div class="fig"><span class="v">6</span><span class="k">question types that can be <em>asked</em></span></div>
     <div class="fig"><span class="v">6</span><span class="k">that can now be <em>got wrong</em></span></div>
     <div class="fig hero"><span class="v">3</span><span class="k">that are <em>answered well</em></span></div>
-    <div class="fig"><span class="v">62 / 15</span><span class="k">gates passed / failed</span></div>
+    <div class="fig"><span class="v">65 / 21</span><span class="k">gates passed / failed</span></div>
   </div>
 
   <hr class="rule">
@@ -133,7 +133,7 @@
           <tr><td class="name">any protein change</td><td class="n">42,765</td><td class="n">33/39</td><td><span class="chip p">yes</span></td><td class="src">loop_quantity</td></tr>
           <tr><td class="name">drug effect</td><td class="n">4,275</td><td class="n">7/8</td><td><span class="chip p">yes</span></td><td class="src">loop_drug</td></tr>
           <tr><td class="name">cancer</td><td class="n">839</td><td class="n">7/8</td><td><span class="chip f">withdrawn</span></td><td class="src">loop_cancer superseded</td></tr>
-          <tr><td class="name">any point mutation</td><td class="n">13</td><td class="n">5/8</td><td><span class="chip f">no</span></td><td class="src">—</td></tr>
+          <tr><td class="name">any point mutation</td><td class="n">13</td><td class="n">8/14</td><td><span class="chip f">no</span></td><td class="src">—</td></tr>
           <tr><td class="name">side effect</td><td class="n">48</td><td class="n">3/4</td><td><span class="chip f">no</span></td><td class="src">—</td></tr>
         </tbody>
       </table>
@@ -162,7 +162,7 @@
   <hr class="rule">
 
   <section>
-    <h2>The thirty loops</h2>
+    <h2>The thirty-two loops</h2>
     <p style="font-size:.95rem;color:var(--muted)">Numbered because the order is real: each loop's target
     was chosen by the previous loop's measurement, not planned in advance.</p>
     <div class="loops">
@@ -378,6 +378,48 @@
         to 3.</strong> A capability count that can only rise was not measuring capability.</p>
       </div></div>
 
+      <div class="loop"><div class="idx">31</div><div class="body">
+        <p class="q">Chain a point mutation in DNA through the fold, to a residue, into nexus.</p>
+        <p class="a">Four links joined end to end on real variants. The middle one is <em>computed</em>,
+        not looked up: genomic coordinate → walk the transcript's coding exons → CDS offset → codon →
+        substitute the base (complemented on a minus-strand gene) → translate. Nothing about the
+        protein consequence is read from an annotation, because a chain whose middle link is a lookup
+        is a join and not a model.</p>
+        <p class="a"><strong>It is verified against a source it never saw.</strong> Reference base
+        matches the CDS at <span class="chip n">100.00%</span> of 966,223 variants; the computed
+        consequence agrees with ClinVar's held-back field at <span class="chip n">99.99%</span>.
+        TP53&nbsp;R175H, KRAS&nbsp;G12D and BRAF&nbsp;V600E all land on the right residue from raw
+        coordinates. 56,258 mutations carry all four links.</p>
+        <p class="a">Then the part that fails. Scored <em>within gene</em> — so the chain cannot pass by
+        rediscovering which genes are pathogenic — torsion at the variant's own base gives
+        <strong>0.5054</strong> against a null of 0.5063, and BLOSUM62, a substitution table from 1992,
+        beats every structural layer at 0.6623.</p>
+        <div class="gates"><span class="chip p">chain runs</span><span class="chip p">translation right</span><span class="chip p">keeps resolution</span><span class="chip f">fold earns place</span><span class="chip f">nexus sees something</span><span class="chip f">beats BLOSUM62</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">32</div><div class="body">
+        <p class="q">That test of nexus was unfair. Do it properly.</p>
+        <p class="a">Loop 31 called <code>nexus_activity(ddg, 0.0)</code> — binding pinned at zero,
+        because an arbitrary ClinVar gene has no interface partner — then reported near-chance as a
+        verdict on nexus. But nexus had already published that exact configuration at 0.562, already
+        measured it blind to 94% of binding-breakers, and already stated that the hop to whole-cell
+        phenotype "does not compose". <strong>Its task is not pathogenicity at all</strong>; it is
+        whether a mutation breaks a protein–protein interface.</p>
+        <p class="a"><strong>Rebuilt on its own task, its claim holds:</strong> intrinsic 0.625, dual
+        0.770, fusion gain <span class="chip n">+0.145</span> against a recorded +0.193. The absolute
+        numbers miss the gate (621 mutations here vs 808 there) so F1 stays failed — but the
+        <em>difference</em>, which is what nexus actually asserts, reproduces.</p>
+        <p class="a">And my excuse for loop 31's inverted sensor was falsified by my own test.
+        Restricting to confident structure moves it 0.4806 → 0.4902 — toward chance, not toward
+        correct — and burial makes it <em>worse</em> (0.4803 buried vs 0.5104 exposed). Struck. The
+        real limit is reach: only <strong>30.4%</strong> of these variants sit in a gene with any
+        multi-chain experimental structure, so for seven in ten, nexus's second sensor cannot fire
+        at all.</p>
+        <div class="gates"><span class="chip f">reproduces absolutes</span><span class="chip p">reproduces the claim</span><span class="chip f">confident structure rescues</span><span class="chip f">burial sharpens</span></div>
+      </div></div>
+
+
+
 
 
     </div>
@@ -410,6 +452,12 @@
           <tr><td class="name">Partial loss buys nothing</td><td class="n">−0.0016</td><td class="src">loop_variant</td></tr>
           <tr><td class="name">The 92% no-slack result was my bug</td><td class="n">11.7%</td><td class="src">loop_slack</td></tr>
           <tr><td class="name"><code>model4</code> is a weak ranker's output</td><td class="n">0.99%</td><td class="src">loop_provenance</td></tr>
+          <tr><td class="name">Genomic coordinate → codon → residue, computed</td><td class="n">99.99%</td><td class="src">loop_chain</td></tr>
+          <tr><td class="name">…reference base agrees with the CDS</td><td class="n">100.00%</td><td class="src">loop_chain</td></tr>
+          <tr><td class="name">Torsion at a variant's own base, within gene</td><td class="n">0.5054 / null 0.5063</td><td class="src">loop_chain</td></tr>
+          <tr><td class="name">BLOSUM62 beats every structural layer</td><td class="n">0.6623</td><td class="src">loop_chain</td></tr>
+          <tr><td class="name">nexus's fusion gain, independently rebuilt</td><td class="n">+0.145 / +0.193</td><td class="src">loop_nexus_fair</td></tr>
+          <tr><td class="name">…its reach across arbitrary point mutations</td><td class="n">≤ 30.4%</td><td class="src">loop_nexus_fair</td></tr>
           <tr class="gone"><td class="name">The model says what is <em>not</em> a driver</td><td class="n">0.7010</td><td class="src">loop_cancer</td></tr>
           <tr class="gone"><td class="name">…and is at chance on LoF drivers</td><td class="n">0.5073</td><td class="src">loop_cancer</td></tr>
         </tbody>
@@ -418,34 +466,42 @@
   </section>
 
   <section>
-    <h2>Four limits on the rows that pass</h2>
+    <h2>Five limits on the rows that pass</h2>
     <ul>
       <li><strong>Effects are modest.</strong> ρ ≈ 0.18 for torsion; AUC ≈ 0.72 for cytotoxic class;
       R² ≈ 0.43 for protein abundance. Real, controlled, and not large.</li>
-      <li><strong>Two of this page's own earlier claims have been withdrawn.</strong> It used to say the
-      model predicts non-drivers at 0.7010 — loop 29 measured 0.4949, inside the null. It used to say
-      nothing here predicts a quantity — loop 22 then did. Both are struck through above rather than
-      quietly deleted.</li>
+      <li><strong>Three of this page's own earlier claims have been withdrawn.</strong> It used to say
+      the model predicts non-drivers at 0.7010 (loop 29: 0.4949, inside the null); that nothing here
+      predicts a quantity (loop 22: R² 0.4332); and that nexus's sensor "contributes nothing" (loop 32:
+      that was one of its two sensors, run against a target it disclaims). Struck through above rather
+      than quietly deleted.</li>
       <li><strong>The feedback that started this still does not earn its place.</strong> On a model that
       cannot eat ATP, with the reference growth rate fixed, its deficit went −0.0074 → −0.0013. The sign
       never flipped.</li>
       <li><strong>Recall is the binding limit and its obvious fix is a measured dead end.</strong> The
       model finds a third of real dependencies; the layer that separates the misses makes the predictor
       worse when you add it.</li>
+      <li><strong>Nothing here is 3D, let alone 4D.</strong> No contact map, no time dimension. The one
+      thing that looked like a chromosome fold was 8.8% same-chromosome where Hi-C runs 70–90%, and
+      turned out to be a retrieval model's top-8 list with 0.99% recall. What replaced it is a real 1D
+      torsion measurement that works at gene scale, carries nothing at variant scale, and contributes
+      −0.0012 to the integrated model.</li>
     </ul>
   </section>
 
   <hr class="rule">
 
   <footer>
-    <p>62 gates passed, 15 failed, across thirty loops. Both numbers are reported because a project
-    where every gate passes was not gating anything. Six results have been retracted or corrected after
-    being measured more carefully — most of them faults in the instrument rather than the data: an audit
-    that credited itself, a search through its own vocabulary, reachability through a shared 38 MB hub,
-    a control that was an algebraic identity, a control that stratified by its own target, and a
-    partialled confound strong enough to manufacture the anti-correlation it was meant to remove. Each
-    correction is recorded in the module that made the original claim, and the capability count has gone
-    down twice as a result.</p>
+    <p>65 gates passed, 21 failed, across thirty-two loops. Both numbers are reported because a project
+    where every gate passes was not gating anything. Eight results have been retracted or corrected
+    after being measured more carefully — most of them faults in the instrument rather than the data:
+    an audit that credited itself, a search through its own vocabulary, reachability through a shared
+    38&nbsp;MB hub, a control that was an algebraic identity, a control that stratified by its own
+    target, a partialled confound strong enough to manufacture the anti-correlation it was meant to
+    remove, a verdict on a dual-sensor model that only ran one of its sensors, and a data ledger whose
+    paths pointed at a directory the files had never been in, so it reported seven present files as
+    missing. Each correction is recorded in the module that made the original claim, and the capability
+    count has gone down twice as a result.</p>
   </footer>
 
 </div>
