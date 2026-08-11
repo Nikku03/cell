@@ -182,6 +182,48 @@ LEDGER = [
      "why": "the variant-addressable slot loop_variant built: 4,443 genes with pathogenic missense "
             "and 14,987 with benign missense. NOTE this file is REGENERATED WEEKLY by NCBI, so the "
             "hash will drift and a mismatch here means a newer release, not corruption"},
+    {"name": "ctcf_gm12878_hg19.bed.gz", "path": SC / "ctcf_gm12878_hg19.bed.gz", "kind": "raw",
+     "sha256": "8795b92127be542e", "bytes": 655789,
+     "url": "https://www.encodeproject.org/files/ENCFF833FTF/@@download/ENCFF833FTF.bed.gz",
+     "source": "ENCODE ENCSR000AKB / ENCFF833FTF, GM12878 CTCF optimal IDR peaks, hg19, 40,790 peaks",
+     "why": "the barrier landscape the whole extrusion model runs on. CELL-TYPE MATCHED to the Hi-C "
+            "rather than borrowed from K562, and hg19 to match the map -- the project's other CTCF "
+            "file is K562/GRCh38 and would have been a silent double mismatch"},
+    {"name": "hg19_chr21.fa.gz", "path": SC / "hg19_chr21.fa.gz", "kind": "raw",
+     "sha256": "1953ac4ea94b6588", "bytes": 11549785,
+     "url": "https://hgdownload.soe.ucsc.edu/goldenPath/hg19/chromosomes/chr21.fa.gz",
+     "source": "UCSC hg19 chr21",
+     "why": "CTCF motif ORIENTATION, scanned with JASPAR MA0139.1. Orientation is the entire mechanism "
+            "-- a forward site blocks a leftward leg and a reverse site a rightward one -- and it is "
+            "not in the peak file, so it has to come from sequence. Also supplies GC and CpG"},
+    {"name": "hg19_chr22.fa.gz", "path": SC / "hg19_chr22.fa.gz", "kind": "raw",
+     "sha256": "4a5a0049b23232b1", "bytes": 11327826,
+     "url": "https://hgdownload.soe.ucsc.edu/goldenPath/hg19/chromosomes/chr22.fa.gz",
+     "source": "UCSC hg19 chr22",
+     "why": "the HELD-OUT chromosome. loop_surrogate's whole result -- physics 0.2852 against a "
+            "trained CNN's 0.0893 -- depends on chr22 never having been fitted"},
+    {"name": "ctcf_pfm.json", "path": SC / "ctcf_pfm.json", "kind": "raw",
+     "sha256": "987a2fd393dc17e8", "bytes": 509,
+     "url": "https://jaspar.elixir.no/api/v1/matrix/MA0139.1/?format=json",
+     "source": "JASPAR MA0139.1, CTCF, 19 bp position frequency matrix",
+     "why": "the motif whose direction decides which way a barrier faces"},
+    {"name": "HumanGEM_genes.tsv", "path": SC / "HumanGEM_genes.tsv", "kind": "raw",
+     "sha256": "2a6058a157b3b9f3", "bytes": 1132077,
+     "url": "https://raw.githubusercontent.com/SysBioChalmers/Human-GEM/main/model/genes.tsv",
+     "source": "Human-GEM gene table, 2,848 Ensembl IDs with gene symbols",
+     "why": "REQUIRED, and its absence is silent. The SBML ships EMPTY gene names, so any module that "
+            "reads cobra's g.name gets an Ensembl ID and every symbol join returns nothing. That cost "
+            "loop_buffering two full runs reporting its isozyme features at exactly 0.5000 -- the "
+            "signature of a column that was never computed, not of a feature that does not work"},
+    {"name": "GSE63525_GM12878_insitu_primary_30.hic", "path": SC / "__remote_only__", "kind": "raw",
+     "sha256": "REMOTE", "bytes": 0,
+     "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/"
+            "GSE63525_GM12878_insitu_primary_30.hic",
+     "source": "Rao 2014 GM12878 in situ primary, the deepest published human Hi-C, hg19",
+     "why": "the target the whole 4D arc is scored against. NEVER DOWNLOADED -- hicstraw range-requests "
+            "one chromosome, so a ~20 GB file costs ~20 s and ~700k records. There is no local hash "
+            "because there is no local copy, and that is recorded rather than hidden. The replicate "
+            "file (…_insitu_replicate_30.hic) is read the same way and gives the 0.9285 ceiling"},
     {"name": "ens_gtf.gz", "path": SC / "ens_gtf.gz", "kind": "raw",
      "sha256": "8c87436bab973c87", "bytes": 55529204,
      "url": "https://ftp.ensembl.org/pub/release-112/gtf/homo_sapiens/"
@@ -253,6 +295,9 @@ def fetch(entry):
     return True
 
 
+REMOTE_ONLY = "REMOTE"
+
+
 def resolve(e):
     """Find the file by name across the places raw data actually lands.
 
@@ -273,6 +318,13 @@ def resolve(e):
 def status():
     rows = []
     for e in LEDGER:
+        if e["sha256"] == REMOTE_ONLY:
+            # A source that is never fully downloaded cannot be hashed, and pretending otherwise would
+            # be worse than saying so. hicstraw range-requests one chromosome out of ~20 GB.
+            rows.append({**{k: e[k] for k in ("name", "kind", "source", "why")},
+                         "state": "REMOTE (range-read, never downloaded)", "have": None,
+                         "want": REMOTE_ONLY})
+            continue
         p = resolve(e)
         if not p.exists():
             rows.append({**{k: e[k] for k in ("name", "kind", "source", "why")},

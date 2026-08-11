@@ -79,6 +79,8 @@
     "\n  285 dependencies the model MISSES; 1,284 correct negatives",
     "  both groups score ~0 in the metabolic model, so anything separating them is information",
     "  the model does not have",
+    "",
+    "  feature sanity: 5/5 columns vary and are populated",
     "\n  candidate layer                 AUC   |null| 95th",
     "  PPI degree                   0.6793        0.5364   SIGNIFICANT",
     "  in a complex                 0.6353        0.5212   SIGNIFICANT",

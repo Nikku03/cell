@@ -286,11 +286,15 @@ ENTRY = {
 ACCEPTS = {
     "any point mutation": ("variant", "pervariant", "chain", "nexus_fair"),
     "any protein change": ("cell_loop", "deficit", "medium", "quantity", "retest", "amplify"),
-    "any chromosome fold": ("real_chromatin", "supercoil"),
+    "any chromosome fold": ("real_chromatin", "supercoil", "hic_target", "polymer",
+                            "extrusion", "stiffness", "fourth", "insulation",
+                            "compartment", "affinity", "surrogate", "loading",
+                            "langevin"),
     "drug effect": ("drug",),
     "side effect": ("sideeffect",),
     "cancer": ("cancer", "survivable"),
-    "metabolic growth": ("cell_loop", "medium", "slack", "retest", "tail", "integrate", "recall"),
+    "metabolic growth": ("cell_loop", "medium", "slack", "retest", "tail", "integrate",
+                         "recall", "buffering"),
     "functional neighbourhood": ("fold_link", "chromatin"),
     "NEGATIVE CONTROL": (),
 }

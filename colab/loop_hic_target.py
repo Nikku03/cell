@@ -129,7 +129,14 @@ def expected(M, mask):
         j = i + d
         ok = mask[i] & mask[j]
         if ok.sum() >= 10:
-            exp[d] = np.nanmean(M[i[ok], j[ok]])
+            # ok says the BINS are mappable; it does not say the entries are finite. A separation
+            # where every mappable pair happens to be empty gives nanmean an all-NaN slice and a
+            # RuntimeWarning on every chromatin run. The value is genuinely undefined there, so it
+            # stays NaN -- but silently rather than noisily, and by intent rather than by accident.
+            vals = M[i[ok], j[ok]]
+            vals = vals[np.isfinite(vals)]
+            if len(vals):
+                exp[d] = vals.mean()
     return exp
 
 

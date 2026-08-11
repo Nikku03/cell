@@ -156,6 +156,70 @@
       "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     },
     {
+      "name": "ctcf_gm12878_hg19.bed.gz",
+      "kind": "raw",
+      "source": "ENCODE ENCSR000AKB / ENCFF833FTF, GM12878 CTCF optimal IDR peaks, hg19, 40,790 peaks",
+      "why": "the barrier landscape the whole extrusion model runs on. CELL-TYPE MATCHED to the Hi-C rather than borrowed from K562, and hg19 to match the map -- the project's other CTCF file is K562/GRCh38 and would have been a silent double mismatch",
+      "state": "OK",
+      "have": "8795b92127be542e",
+      "want": "8795b92127be542e",
+      "bytes": 655789,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "hg19_chr21.fa.gz",
+      "kind": "raw",
+      "source": "UCSC hg19 chr21",
+      "why": "CTCF motif ORIENTATION, scanned with JASPAR MA0139.1. Orientation is the entire mechanism -- a forward site blocks a leftward leg and a reverse site a rightward one -- and it is not in the peak file, so it has to come from sequence. Also supplies GC and CpG",
+      "state": "OK",
+      "have": "1953ac4ea94b6588",
+      "want": "1953ac4ea94b6588",
+      "bytes": 11549785,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "hg19_chr22.fa.gz",
+      "kind": "raw",
+      "source": "UCSC hg19 chr22",
+      "why": "the HELD-OUT chromosome. loop_surrogate's whole result -- physics 0.2852 against a trained CNN's 0.0893 -- depends on chr22 never having been fitted",
+      "state": "OK",
+      "have": "4a5a0049b23232b1",
+      "want": "4a5a0049b23232b1",
+      "bytes": 11327826,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "ctcf_pfm.json",
+      "kind": "raw",
+      "source": "JASPAR MA0139.1, CTCF, 19 bp position frequency matrix",
+      "why": "the motif whose direction decides which way a barrier faces",
+      "state": "OK",
+      "have": "987a2fd393dc17e8",
+      "want": "987a2fd393dc17e8",
+      "bytes": 509,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "HumanGEM_genes.tsv",
+      "kind": "raw",
+      "source": "Human-GEM gene table, 2,848 Ensembl IDs with gene symbols",
+      "why": "REQUIRED, and its absence is silent. The SBML ships EMPTY gene names, so any module that reads cobra's g.name gets an Ensembl ID and every symbol join returns nothing. That cost loop_buffering two full runs reporting its isozyme features at exactly 0.5000 -- the signature of a column that was never computed, not of a feature that does not work",
+      "state": "OK",
+      "have": "2a6058a157b3b9f3",
+      "want": "2a6058a157b3b9f3",
+      "bytes": 1132077,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "GSE63525_GM12878_insitu_primary_30.hic",
+      "kind": "raw",
+      "source": "Rao 2014 GM12878 in situ primary, the deepest published human Hi-C, hg19",
+      "why": "the target the whole 4D arc is scored against. NEVER DOWNLOADED -- hicstraw range-requests one chromosome, so a ~20 GB file costs ~20 s and ~700k records. There is no local hash because there is no local copy, and that is recorded rather than hidden. The replicate file (\u2026_insitu_replicate_30.hic) is read the same way and gives the 0.9285 ceiling",
+      "state": "REMOTE (range-read, never downloaded)",
+      "have": null,
+      "want": "REMOTE"
+    },
+    {
       "name": "ens_gtf.gz",
       "kind": "raw",
       "source": "Ensembl 112 GRCh38 annotation; only the CDS lines are read",
@@ -249,7 +313,7 @@
       "n": 1639
     }
   ],
-  "all_present": true,
+  "all_present": false,
   "transforms_deterministic": true,
   "log": [
     "====================================================================================================",
@@ -274,6 +338,12 @@
     "  lambert_tf_symbols.json                     derived  OK               3e58c688dec13289",
     "  HumanGEM.xml                                raw      OK               cc5a4383c6116b0c",
     "  clinvar.vcf.gz                              raw      OK               a99917628ff65443",
+    "  ctcf_gm12878_hg19.bed.gz                    raw      OK               8795b92127be542e",
+    "  hg19_chr21.fa.gz                            raw      OK               1953ac4ea94b6588",
+    "  hg19_chr22.fa.gz                            raw      OK               4a5a0049b23232b1",
+    "  ctcf_pfm.json                               raw      OK               987a2fd393dc17e8",
+    "  HumanGEM_genes.tsv                          raw      OK               2a6058a157b3b9f3",
+    "  GSE63525_GM12878_insitu_primary_30.hic      raw      REMOTE (range-read, never downloaded)                 -",
     "  ens_gtf.gz                                  raw      OK               8c87436bab973c87",
     "  ens_cds.fa.gz                               raw      OK               1b7b6fa74c427b40",
     "  skempi_v2.csv                               raw      OK               76f8e60d09eaa4f0",
@@ -281,7 +351,7 @@
     "  sider_names.tsv                             raw      OK               6427a3e3202c71a8",
     "  intogen.zip                                 raw      OK               854def4465bcd7f9",
     "  HumanGEM_genes.tsv                          raw      OK               2a6058a157b3b9f3",
-    "\n  21 of 21 present and hash-matching",
+    "\n  26 of 27 present and hash-matching",
     "\n  REBUILD CHECK -- a derived file must reproduce its hash from its raw inputs, or the",
     "  recorded transform is not the one that made it",
     "    _abcfeat.json                     build_abcfeat(re2g_k562.bed.gz) -> 14,465 entries, hash 20f7aa4ae6040e16   MATCHES",
@@ -290,6 +360,7 @@
     "    Every derived file rebuilds bit-identically. The transforms in this file ARE the ones",
     "    that produced them, so the provenance claim is checkable rather than asserted.",
     "\n  TO RESTORE ANYTHING MISSING:  python3 colab/data_ledger.py --fetch <name|all>",
+    "  currently restorable: GSE63525_GM12878_insitu_primary_30.hic",
     "\n  NOT IN THIS LEDGER, and it is the biggest remaining hole: cell_complete.json is 38 MB,",
     "  read by 227 modules, gitignored, and has no external source to fetch from. It is a",
     "  DERIVED artefact whose producer is not in this repo -- the same condition as _abcfeat.json",

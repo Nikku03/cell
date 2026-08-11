@@ -218,6 +218,8 @@ def main():
     say(f"     matched set. below 0.5 means the measure predicts NON-drivers.")
     say(f"    {'measure':<24}{'matched AUC':>13}{'|null| 95th':>14}{'direction':>14}")
     res = {}
+    RM.check_features(T, ["essentiality", "dependency fraction", "abundance", "LOEUF",
+                          "log_len", "log_pubs"], emit=say)
     for c in ("essentiality", "dependency fraction", "abundance", "LOEUF"):
         v, yy = scored(T, pairs, c)
         a = auc(v, yy)

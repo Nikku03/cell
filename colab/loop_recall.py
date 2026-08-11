@@ -126,6 +126,9 @@ def main():
     say(f"  both groups score ~0 in the metabolic model, so anything separating them is information")
     say(f"  the model does not have")
 
+    say("")
+    RM.check_features(sub, feats, emit=say)
+
     res = {}
     say(f"\n  {'candidate layer':<26}{'AUC':>9}{'|null| 95th':>14}")
     for f in feats:

@@ -178,3 +178,46 @@ if __name__ == "__main__":
     print("\nthe same worklist, built correctly:")
     report(manifest(available=10249, used=1400, selection="random", seed=17, controls=["shuffled-label"]))
     sys.exit(0)
+
+
+def check_features(frame, cols, emit=print, min_unique=2, min_frac_nonzero=0.005):
+    """Fail loudly on degenerate feature columns, BEFORE anything is scored on them.
+
+    THE BUG THIS EXISTS FOR, and it landed twice.  A constant column scores AUC exactly 0.5000 against
+    a shuffled band of exactly 0.5000. Read quickly that says "this feature carries no signal". It
+    actually says "this feature was never computed". In loop_buffering the isozyme counts -- the single
+    most on-target feature in the whole test -- were all zero, because Human-GEM ships EMPTY gene names
+    and a symbol lookup silently matched none of 1,784 genes. Two full runs reported it as a clean
+    negative before the exact 0.5000/0.5000 pair gave it away.
+
+    A feature that is constant, all-zero, or nearly all-zero cannot be evidence either way, and a
+    result computed on one is not a negative result -- it is an absent one. This says so out loud.
+
+    Returns the list of problems and emits each; the caller decides whether to abort.
+    """
+    import numpy as np
+    problems = []
+    for c in cols:
+        try:
+            v = np.asarray(frame[c], dtype=float)
+        except Exception:
+            problems.append((c, "not numeric"))
+            continue
+        finite = v[np.isfinite(v)]
+        if len(finite) == 0:
+            problems.append((c, "no finite values"))
+        elif len(np.unique(finite)) < min_unique:
+            problems.append((c, f"CONSTANT at {finite[0]:.6g} -- was it ever computed?"))
+        elif float(np.mean(finite != 0)) < min_frac_nonzero:
+            problems.append((c, f"{np.mean(finite != 0):.2%} non-zero -- effectively absent"))
+        elif float(np.std(finite)) == 0.0:
+            problems.append((c, "zero variance"))
+    if problems:
+        emit(f"  DEGENERATE FEATURES ({len(problems)} of {len(cols)}) -- these cannot be evidence:")
+        for c, why in problems:
+            emit(f"     {c:<40}{why}")
+        emit("     A constant column scores exactly 0.5000 against an exactly 0.5000 band. That is not")
+        emit("     a negative result, it is an absent one, and it is how a broken join looks.")
+    else:
+        emit(f"  feature sanity: {len(cols)}/{len(cols)} columns vary and are populated")
+    return problems

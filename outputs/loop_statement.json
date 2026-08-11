@@ -107,8 +107,8 @@
       },
       {
         "path": "outputs/loop_integrate.json",
-        "bytes": 5593,
-        "hash": "fdc9288dcf19ac91",
+        "bytes": 5653,
+        "hash": "ee972791464bfe75",
         "method": "sha256:full"
       },
       {
@@ -119,14 +119,14 @@
       },
       {
         "path": "outputs/loop_recall.json",
-        "bytes": 4377,
-        "hash": "29dc455d4990bf57",
+        "bytes": 4445,
+        "hash": "407e10bae7fb0fca",
         "method": "sha256:full"
       },
       {
         "path": "outputs/loop_survivable.json",
-        "bytes": 7482,
-        "hash": "a7000aed4963d6ba",
+        "bytes": 7542,
+        "hash": "521c997a505a76b0",
         "method": "sha256:full"
       },
       {
@@ -142,15 +142,87 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_hic_target.json",
+        "bytes": 7468,
+        "hash": "10fe0badc6f5f221",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_polymer.json",
+        "bytes": 4608,
+        "hash": "9bad872e20f8bb3d",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_extrusion.json",
+        "bytes": 5435,
+        "hash": "74e152109765bcf9",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_stiffness.json",
+        "bytes": 4440,
+        "hash": "deed148e4ac12f30",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_fourth.json",
+        "bytes": 6049,
+        "hash": "9841e14d07413405",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_compartment.json",
+        "bytes": 4476,
+        "hash": "03bc8ff7b1f6f360",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_affinity.json",
+        "bytes": 4091,
+        "hash": "151457d95969f5bc",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_surrogate.json",
+        "bytes": 4208,
+        "hash": "5c5ad89d4de69504",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_insulation.json",
+        "bytes": 4582,
+        "hash": "1a4e21ea85aa07cf",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_loading.json",
+        "bytes": 5265,
+        "hash": "9087e62b474124ac",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_langevin.json",
+        "bytes": 5061,
+        "hash": "777722ab990d6ecb",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_buffering.json",
+        "bytes": 9567,
+        "hash": "65ec83af52cd5738",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 24012,
-        "hash": "3ffcdd213b1a6c5d",
+        "bytes": 25038,
+        "hash": "956caf6176f3a85a",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 24,
-      "used": 24,
+      "available": 36,
+      "used": 36,
       "selection": "all",
       "fraction": 1.0
     },
@@ -162,8 +234,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 65,
-  "n_gates_failed": 21,
+  "n_gates_passed": 100,
+  "n_gates_failed": 38,
   "capability": [
     {
       "question": "any point mutation",
@@ -229,7 +301,7 @@
         "complexes": 2039
       },
       "n_items": 42765,
-      "gates_passed": 33,
+      "gates_passed": 38,
       "gates_failed": 9,
       "gate_detail": {
         "cell_loop.json": {
@@ -239,6 +311,10 @@
         "loop_amplify.json": {
           "passed": 3,
           "failed": 1
+        },
+        "loop_buffering.json": {
+          "passed": 5,
+          "failed": 0
         },
         "loop_cancer.json": {
           "passed": 4,
@@ -280,6 +356,7 @@
       "answered_well": true,
       "best_pipeline": "loop_quantity.json",
       "adjacent_credits": [
+        "loop_buffering.json",
         "loop_cancer.json",
         "loop_drug.json",
         "loop_fold_link.json",
@@ -308,12 +385,12 @@
       "produces": [
         "cell_loop.json",
         "loop_amplify.json",
+        "loop_buffering.json",
         "loop_cancer.json",
         "loop_drug.json",
         "loop_fold_link.json",
         "loop_integrate.json",
-        "loop_nexus_fair.json",
-        "loop_quantity.json"
+        "loop_nexus_fair.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
@@ -324,10 +401,10 @@
       "controlled": [
         "cell_loop.json",
         "loop_amplify.json",
+        "loop_buffering.json",
         "loop_cancer.json",
         "loop_drug.json",
-        "loop_fold_link.json",
-        "loop_integrate.json"
+        "loop_fold_link.json"
       ],
       "note": "gene-keyed"
     },
@@ -634,16 +711,20 @@
         "reactions": 31
       },
       "n_items": 2580,
-      "gates_passed": 2,
+      "gates_passed": 7,
       "gates_failed": 2,
       "gate_detail": {
         "cell_loop.json": {
           "passed": 2,
           "failed": 2
+        },
+        "loop_buffering.json": {
+          "passed": 5,
+          "failed": 0
         }
       },
-      "answered_well": false,
-      "best_pipeline": null,
+      "answered_well": true,
+      "best_pipeline": "loop_buffering.json",
       "adjacent_credits": [],
       "retracted": {},
       "encode": true,
@@ -663,14 +744,16 @@
       ],
       "produces": [
         "cell_loop.json",
-        "data_ledger.json"
+        "data_ledger.json",
+        "loop_buffering.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
         "colab/necessity_test.py"
       ],
       "controlled": [
-        "cell_loop.json"
+        "cell_loop.json",
+        "loop_buffering.json"
       ],
       "note": "the solved metabolism is Human-GEM (2,848 genes, 12,931 reactions), ledgered and external; cell_complete's generxn is strings"
     }
@@ -685,7 +768,7 @@
     "----------------------------------------------------------------------------------------------------",
     "  question                   slot   pipe  check     items   gates  well?   answered well by",
     "  any point mutation          yes    yes    yes        13    8/14     no   ",
-    "  any protein change          yes    yes    yes    42,765   33/42    YES   loop_quantity.json",
+    "  any protein change          yes    yes    yes    42,765   38/47    YES   loop_quantity.json",
     "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
     "  drug effect                 yes    yes    yes     4,275     7/8    YES   loop_drug.json",
     "  side effect                 yes    yes    yes        48     3/4     no   ",
@@ -802,11 +885,75 @@
     "      FAIL   F1 harness reproduces nexus",
     "      FAIL   F2 needs confident structure",
     "      FAIL   F3 burial sharpens it",
+    "\n  loop 33  what the nucleus target IS",
+    "      PASS   D1 the map is real",
+    "      PASS   D2 TADs exist and CTCF marks them",
+    "      PASS   D3 compartments exist",
+    "      PASS   D4 orientation matters",
+    "\n  loop 34  the polymer engine",
+    "      PASS   P1 ideal chain is exact",
+    "      PASS   P2 textbook exponent, wrong for chromatin",
+    "      PASS   P3 dynamics are Rouse",
+    "      PASS   P4 confinement saturates both",
+    "\n  loop 35  extrusion on real CTCF",
+    "      PASS   X1 extrusion bends P(s)",
+    "      FAIL   X2 insulation matches",
+    "      PASS   X3 orientation effect reproduced",
+    "      PASS   X4 affordable",
+    "\n  loop 36  the two silent constants",
+    "      PASS   B1 stiffness calibration self-consistent",
+    "      FAIL   B2 insulation clears the gate",
+    "      PASS   B3 orientation effect right order",
+    "      PASS   B4 still affordable",
+    "\n  loop 37  the fourth dimension",
+    "      PASS   T1 sub-diffusive motion",
+    "      PASS   T2 dynamics and statics agree",
+    "      PASS   T3 loops turn over correctly",
+    "      PASS   T4 TADs are a population average",
+    "\n  loop 39  compartments, attempt 1",
+    "      PASS   A1 extrusion alone makes none",
+    "      FAIL   A2 affinity makes them",
+    "      FAIL   A3 beats its own input track",
+    "      FAIL   A4 does not break TADs",
+    "\n  loop 40  compartments, attempt 2",
+    "      PASS   M1 perturbation is weak",
+    "      FAIL   M2 P(s) survives",
+    "      FAIL   M3 TADs survive",
+    "      FAIL   M4 compartments beat their input",
+    "\n  loop 41  a CNN against the physics",
+    "      PASS   S1 surrogate transfers",
+    "      FAIL   S2 beats trivial baseline",
+    "      FAIL   S3 beats the physics",
+    "      FAIL   S4 learned the asymmetry",
+    "\n  loop 43  the barrier that was not one",
+    "      PASS   I1 ceiling real, gate fair",
+    "      PASS   I2 barrier persists",
+    "      PASS   I3 insulation improves",
+    "      FAIL   I4 clears the original gate",
+    "      PASS   I5 nothing else breaks",
+    "\n  loop 44  where cohesin lands",
+    "      PASS   L1 loading is biased",
+    "      FAIL   L2 insulation improves",
+    "      FAIL   L3 clears the original gate",
+    "      PASS   L4 the track, not non-uniformity",
+    "      FAIL   L5 nothing else breaks",
+    "\n  loop 45  Langevin with excluded volume",
+    "      PASS   V1 sampler is exact",
+    "      PASS   V2 counting changes nothing",
+    "      PASS   V3 excluded volume bites",
+    "      FAIL   V4 insulation improves",
+    "      FAIL   V5 clears the original gate",
+    "\n  loop 46  is buffering predictable",
+    "      PASS   B1 groups matched on cost",
+    "      PASS   B2 redundancy separates them",
+    "      PASS   B3 not expression",
+    "      PASS   B4 holds out of sample",
+    "      PASS   B5 fixes the predictor",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  65 gates passed, 21 failed. Both numbers are the point: a project where",
+    "\n  100 gates passed, 38 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -840,7 +987,7 @@
     "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_pervariant.json, loop_variant.json",
     "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_sideeffect.json",
     "  NOT ANSWERED WELL  cancer                 every module answering it has a failed gate: loop_survivable.json; SUPERSEDED: loop_cancer.json",
-    "\n  FOUR LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
+    "\n  SIX LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
     "    1  Effects are modest. rho 0.18 for torsion against transcription; AUC 0.72 for cytotoxic",
     "       class after confound removal; R2 0.43 for the protein-to-mRNA ratio. Real, controlled,",
     "       and not large.",
@@ -856,6 +1003,20 @@
     "       finds a third of real dependencies; PPI degree separates the ones it misses at 0.68 and",
     "       adding it makes the predictor WORSE at matched precision, because hub-ness promotes",
     "       true negatives just as fast. Naming the missing layer is not being able to use it.",
-    "    manifest: 24 inputs, coverage 24/24 (100.0%) by 'all', seed 1904, controls 2"
+    "    5  BUT ONCE IT WAS. loop 46 is the single exception to limit 4: re-ranking the model's",
+    "       own tail by predicted buffering lifted precision 0.7658 -> 0.8228 against a",
+    "       shuffled 95th of 0.7785. And the mechanism is NOT the one that was",
+    "       hypothesised: all four REDUNDANCY features point the wrong way, and what separates",
+    "       the over-called genes is CENTRALITY -- they are peripheral, not backed up. The",
+    "       model is over-calling the edges of its own network, which is scope, not biology.",
+    "    6  The 4D chromatin model reproduces P(s), the CTCF orientation signature, sub-diffusive",
+    "       motion and correct loop turnover, and beats a trained CNN on an unseen chromosome",
+    "       (+0.1986 is the Langevin run; the closed form transfers 0.2974 -> 0.2852).",
+    "       Its boundaries are still too soft: insulation +0.3617 against a 0.40 gate",
+    "       and a 0.9285 replicate ceiling. FOUR principled corrections were tried --",
+    "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
+    "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
+    "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
+    "    manifest: 36 inputs, coverage 36/36 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }

@@ -102,7 +102,7 @@
         "complexes": 2039
       },
       "n_items": 42765,
-      "gates_passed": 33,
+      "gates_passed": 38,
       "gates_failed": 9,
       "gate_detail": {
         "cell_loop.json": {
@@ -112,6 +112,10 @@
         "loop_amplify.json": {
           "passed": 3,
           "failed": 1
+        },
+        "loop_buffering.json": {
+          "passed": 5,
+          "failed": 0
         },
         "loop_cancer.json": {
           "passed": 4,
@@ -153,6 +157,7 @@
       "answered_well": true,
       "best_pipeline": "loop_quantity.json",
       "adjacent_credits": [
+        "loop_buffering.json",
         "loop_cancer.json",
         "loop_drug.json",
         "loop_fold_link.json",
@@ -181,12 +186,12 @@
       "produces": [
         "cell_loop.json",
         "loop_amplify.json",
+        "loop_buffering.json",
         "loop_cancer.json",
         "loop_drug.json",
         "loop_fold_link.json",
         "loop_integrate.json",
-        "loop_nexus_fair.json",
-        "loop_quantity.json"
+        "loop_nexus_fair.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
@@ -197,10 +202,10 @@
       "controlled": [
         "cell_loop.json",
         "loop_amplify.json",
+        "loop_buffering.json",
         "loop_cancer.json",
         "loop_drug.json",
-        "loop_fold_link.json",
-        "loop_integrate.json"
+        "loop_fold_link.json"
       ],
       "note": "gene-keyed"
     },
@@ -507,16 +512,20 @@
         "reactions": 31
       },
       "n_items": 2580,
-      "gates_passed": 2,
+      "gates_passed": 7,
       "gates_failed": 2,
       "gate_detail": {
         "cell_loop.json": {
           "passed": 2,
           "failed": 2
+        },
+        "loop_buffering.json": {
+          "passed": 5,
+          "failed": 0
         }
       },
-      "answered_well": false,
-      "best_pipeline": null,
+      "answered_well": true,
+      "best_pipeline": "loop_buffering.json",
       "adjacent_credits": [],
       "retracted": {},
       "encode": true,
@@ -536,14 +545,16 @@
       ],
       "produces": [
         "cell_loop.json",
-        "data_ledger.json"
+        "data_ledger.json",
+        "loop_buffering.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
         "colab/necessity_test.py"
       ],
       "controlled": [
-        "cell_loop.json"
+        "cell_loop.json",
+        "loop_buffering.json"
       ],
       "note": "the solved metabolism is Human-GEM (2,848 genes, 12,931 reactions), ledgered and external; cell_complete's generxn is strings"
     }
@@ -559,18 +570,28 @@
     "cell_model_audit.json": 2,
     "data_doctrine.json": 2,
     "data_fitness.json": 1,
+    "loop_affinity.json": 5,
     "loop_amplify.json": 4,
+    "loop_buffering.json": 6,
     "loop_cancer.json": 5,
     "loop_chain.json": 6,
     "loop_chromatin.json": 4,
+    "loop_compartment.json": 5,
     "loop_deficit.json": 5,
     "loop_drug.json": 5,
+    "loop_extrusion.json": 5,
     "loop_fold_link.json": 5,
+    "loop_fourth.json": 4,
+    "loop_hic_target.json": 5,
+    "loop_insulation.json": 5,
     "loop_integrate.json": 5,
     "loop_kinetics.json": 3,
+    "loop_langevin.json": 5,
+    "loop_loading.json": 5,
     "loop_medium.json": 5,
     "loop_nexus_fair.json": 6,
     "loop_pervariant.json": 4,
+    "loop_polymer.json": 4,
     "loop_provenance.json": 3,
     "loop_quantity.json": 4,
     "loop_real_chromatin.json": 5,
@@ -579,11 +600,13 @@
     "loop_sideeffect.json": 5,
     "loop_slack.json": 3,
     "loop_statement.json": 2,
+    "loop_stiffness.json": 4,
+    "loop_surrogate.json": 5,
     "loop_survivable.json": 5,
     "loop_tail.json": 3,
     "loop_variant.json": 5
   },
-  "n_modules": 952,
+  "n_modules": 964,
   "n_phenotype_modules": 32,
   "log": [
     "====================================================================================================",
@@ -591,21 +614,21 @@
     "====================================================================================================",
     "  The goal as stated cannot fail, so it cannot be worked towards. Three independent axes make",
     "",
-    "\n  graph: 952 modules, 913 directed edges from real reads and writes; 34 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
-    "  295 modules read cell_complete.json; block-level use resolved from source of 742 modules",
+    "\n  graph: 964 modules, 935 directed edges from real reads and writes; 46 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
+    "  296 modules read cell_complete.json; block-level use resolved from source of 754 modules",
     "  32 modules write something that is a cell-level outcome",
-    "  29 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_amplify.json, loop_cancer.json, loop_chain.json, loop_chromatin.json, loop_deficit.json, loop_drug.json, loop_fold_link.json, loop_integrate.json, loop_kinetics.json, loop_medium.json, loop_nexus_fair.json, loop_pervariant.json, loop_provenance.json, loop_quantity.json, loop_real_chromatin.json, loop_recall.json, loop_retest.json, loop_sideeffect.json, loop_slack.json, loop_statement.json, loop_survivable.json, loop_tail.json, loop_variant.json",
+    "  41 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_affinity.json, loop_amplify.json, loop_buffering.json, loop_cancer.json, loop_chain.json, loop_chromatin.json, loop_compartment.json, loop_deficit.json, loop_drug.json, loop_extrusion.json, loop_fold_link.json, loop_fourth.json, loop_hic_target.json, loop_insulation.json, loop_integrate.json, loop_kinetics.json, loop_langevin.json, loop_loading.json, loop_medium.json, loop_nexus_fair.json, loop_pervariant.json, loop_polymer.json, loop_provenance.json, loop_quantity.json, loop_real_chromatin.json, loop_recall.json, loop_retest.json, loop_sideeffect.json, loop_slack.json, loop_statement.json, loop_stiffness.json, loop_surrogate.json, loop_survivable.json, loop_tail.json, loop_variant.json",
     "  7 modules are INSTRUMENTS (they read this repo's own audit records) and are excluded from every axis, because an audit crediting itself is how the last three checks here went wrong",
     "\n  question                 ENCODE   PIPE  CHECK    items   askable    gates  well?",
     "  any point mutation          yes    yes    yes       13       YES     8/14     no",
-    "  any protein change          yes    yes    yes   42,765       YES    33/42    YES",
+    "  any protein change          yes    yes    yes   42,765       YES    38/47    YES",
     "  any chromosome fold         yes    yes    yes      767       YES    11/14    YES",
     "  functional neighbourhood      yes    yes    yes    7,700       YES    15/16    YES",
     "  NEGATIVE CONTROL             NO     NO     NO        0        no        -     no",
     "  drug effect                 yes    yes    yes    4,275       YES      7/8    YES",
     "  side effect                 yes    yes    yes       48       YES      3/4     no",
     "  cancer                      yes    yes    yes      839       YES      7/8     no",
-    "  metabolic growth            yes    yes    yes    2,580       YES      2/4     no",
+    "  metabolic growth            yes    yes    yes    2,580       YES      7/9    YES",
     "",
     "    any point mutation     slots {'struct': 13}",
     "                           modules that address it: cell_stats, complete_cell, data_ledger, loop_chain, loop_pervariant, loop_variant",
@@ -613,8 +636,8 @@
     "    any protein change     slots {'ppm': 16015, 'abund': 16286, 'ptm': 8425, 'complexes': 2039}",
     "                           modules that address it: abstain, adrn_ko_channels2, adrn_ko_channels3, annotation_prior, best_combined, biochem_limit, bioplex, build_blocks",
     "                           answered well by: loop_quantity.json",
-    "                           ADJACENT (touch the slot, do not answer it): loop_cancer.json, loop_drug.json, loop_fold_link.json, loop_integrate.json, loop_nexus_fair.json, loop_recall.json, loop_sideeffect.json, loop_survivable.json",
-    "                           recorded results: cell_loop.json, loop_amplify.json, loop_cancer.json, loop_drug.json, loop_fold_link.json, loop_integrate.json, loop_nexus_fair.json, loop_quantity.json   controlled: cell_loop.json, loop_amplify.json, loop_cancer.json, loop_drug.json, loop_fold_link.json, loop_integrate.json",
+    "                           ADJACENT (touch the slot, do not answer it): loop_buffering.json, loop_cancer.json, loop_drug.json, loop_fold_link.json, loop_integrate.json, loop_nexus_fair.json, loop_recall.json, loop_sideeffect.json, loop_survivable.json",
+    "                           recorded results: cell_loop.json, loop_amplify.json, loop_buffering.json, loop_cancer.json, loop_drug.json, loop_fold_link.json, loop_integrate.json, loop_nexus_fair.json   controlled: cell_loop.json, loop_amplify.json, loop_buffering.json, loop_cancer.json, loop_drug.json, loop_fold_link.json",
     "    any chromosome fold    slots {'loops3d': 767}",
     "                           modules that address it: adrn_ko_channels3, complete_cell, data_ledger, ko_dossier, layers, loop_chain, loop_integrate, loop_real_chromatin",
     "                           answered well by: loop_real_chromatin.json",
@@ -643,7 +666,8 @@
     "                           recorded results: data_ledger.json, loop_cancer.json, loop_survivable.json   controlled: loop_cancer.json, loop_survivable.json",
     "    metabolic growth       slots {'generxn': 2549, 'reactions': 31}",
     "                           modules that address it: best_combined, build_kinetics_bundle, cascade, cell_loop, cell_orphan_chem_coverage, cell_orphan_truthset, cell_sim, cell_state",
-    "                           recorded results: cell_loop.json, data_ledger.json   controlled: cell_loop.json",
+    "                           answered well by: loop_buffering.json",
+    "                           recorded results: cell_loop.json, data_ledger.json, loop_buffering.json   controlled: cell_loop.json, loop_buffering.json",
     "\n  CALIBRATION -- two known answers, checked before any of the above is believed",
     "    the synthetic NEGATIVE CONTROL must fail on every axis -- nothing can ever satisfy it",
     "      -> encode = False, pipeline = False, check = False   OK",

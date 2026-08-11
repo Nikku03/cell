@@ -113,6 +113,7 @@
     "\n  N2 THE ANTI-CORRELATION SURVIVES -- measures of how much a gene matters, inside the",
     "     matched set. below 0.5 means the measure predicts NON-drivers.",
     "    measure                   matched AUC   |null| 95th     direction",
+    "  feature sanity: 6/6 columns vary and are populated",
     "    essentiality                   0.4949        0.5190  ANTI (non-drivers)   (inside band)",
     "    dependency fraction            0.5700        0.5342    predicts drivers   ",
     "    abundance                      0.4091        0.5331  ANTI (non-drivers)   ",

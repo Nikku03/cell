@@ -112,7 +112,7 @@
   "precision_with_buffering": 0.8227848101265823,
   "precision_null95": 0.7784810126582279,
   "precision_null_mean": 0.7608544303797469,
-  "seconds": 33.79719924926758,
+  "seconds": 35.725363969802856,
   "log": [
     "====================================================================================================",
     "IS BUFFERING PREDICTABLE FROM REDUNDANCY STRUCTURE -- engineering or theory",
@@ -129,6 +129,8 @@
     "\n  the model's own tail: 206 genes it calls costly",
     "    NOT BUFFERED  158   high cost, and the cell does depend on them",
     "    BUFFERED      48   high cost, and the cell shrugs",
+    "",
+    "  feature sanity: 9/9 columns vary and are populated",
     "\n  B1 THE GROUPS ARE MATCHED ON COST -- cost itself separates them at 0.5330 against a shuffled band of 0.5779",
     "     medians 1 buffered vs 1 not",
     "     B1 PASS  (if cost separated them, this would be measuring",

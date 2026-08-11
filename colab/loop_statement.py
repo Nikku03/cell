@@ -55,7 +55,19 @@ LOOPS = [
     ("29  is the cancer inversion real", "loop_survivable.json", "gates"),
     ("31  DNA -> fold -> residue -> nexus", "loop_chain.json", "gates"),
     ("32  nexus tested the way it asked", "loop_nexus_fair.json", "gates"),
-    ("2/9/11/13/19/26/33 capability audit", "capability_audit.json", None),
+    ("33  what the nucleus target IS", "loop_hic_target.json", "gates"),
+    ("34  the polymer engine", "loop_polymer.json", "gates"),
+    ("35  extrusion on real CTCF", "loop_extrusion.json", "gates"),
+    ("36  the two silent constants", "loop_stiffness.json", "gates"),
+    ("37  the fourth dimension", "loop_fourth.json", "gates"),
+    ("39  compartments, attempt 1", "loop_compartment.json", "gates"),
+    ("40  compartments, attempt 2", "loop_affinity.json", "gates"),
+    ("41  a CNN against the physics", "loop_surrogate.json", "gates"),
+    ("43  the barrier that was not one", "loop_insulation.json", "gates"),
+    ("44  where cohesin lands", "loop_loading.json", "gates"),
+    ("45  Langevin with excluded volume", "loop_langevin.json", "gates"),
+    ("46  is buffering predictable", "loop_buffering.json", "gates"),
+    ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 
 
@@ -258,7 +270,7 @@ def main():
             if ret:
                 note += f"; SUPERSEDED: {', '.join(ret)}"
             say(f"  NOT ANSWERED WELL  {r['question']:<22} {note}")
-    say("\n  FOUR LIMITS THAT APPLY TO THE ROWS THAT DO PASS.")
+    say("\n  SIX LIMITS THAT APPLY TO THE ROWS THAT DO PASS.")
     say("    1  Effects are modest. rho 0.18 for torsion against transcription; AUC 0.72 for cytotoxic")
     say("       class after confound removal; R2 0.43 for the protein-to-mRNA ratio. Real, controlled,")
     say("       and not large.")
@@ -274,6 +286,26 @@ def main():
     say("       finds a third of real dependencies; PPI degree separates the ones it misses at 0.68 and")
     say("       adding it makes the predictor WORSE at matched precision, because hub-ness promotes")
     say("       true negatives just as fast. Naming the missing layer is not being able to use it.")
+    lb = R.get("loop_buffering.json")
+    if lb:
+        say("    5  BUT ONCE IT WAS. loop 46 is the single exception to limit 4: re-ranking the model's")
+        say(f"       own tail by predicted buffering lifted precision "
+            f"{lb['precision_base']:.4f} -> {lb['precision_with_buffering']:.4f} against a")
+        say(f"       shuffled 95th of {lb.get('precision_null95', float('nan')):.4f}. And the mechanism is NOT the one that was")
+        say("       hypothesised: all four REDUNDANCY features point the wrong way, and what separates")
+        say("       the over-called genes is CENTRALITY -- they are peripheral, not backed up. The")
+        say("       model is over-calling the edges of its own network, which is scope, not biology.")
+    li = R.get("loop_insulation.json")
+    ll = R.get("loop_langevin.json")
+    if li and ll:
+        say("    6  The 4D chromatin model reproduces P(s), the CTCF orientation signature, sub-diffusive")
+        say("       motion and correct loop turnover, and beats a trained CNN on an unseen chromosome")
+        say(f"       ({ll.get('langevin',{}).get('insul_r', float('nan')):+.4f} is the Langevin run; the closed form transfers 0.2974 -> 0.2852).")
+        say(f"       Its boundaries are still too soft: insulation {li['results']['occupancy, real orientation']['insul_r']:+.4f} against a 0.40 gate")
+        say(f"       and a {li['ceiling_replicate']:.4f} replicate ceiling. FOUR principled corrections were tried --")
+        say("       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only")
+        say("       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk")
+        say("       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.")
 
     man = RM.manifest(inputs=[str(OUT / fn) for _, fn, _ in LOOPS if (OUT / fn).exists()],
                       available=len(LOOPS), used=sum(1 for _, fn, _ in LOOPS if R.get(fn)),

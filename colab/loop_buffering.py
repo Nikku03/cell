@@ -210,6 +210,9 @@ def main():
     say(f"    NOT BUFFERED  {nn}   high cost, and the cell does depend on them")
     say(f"    BUFFERED      {nb}   high cost, and the cell shrugs")
 
+    say("")
+    RM.check_features(tail, INDEPENDENT + DEPMAP_DERIVED, emit=say)
+
     # ---- B1 the design check ---------------------------------------------------------------------
     cb, cn = tail.cost[tail.buffered == 1], tail.cost[tail.buffered == 0]
     a_cost = auc(tail.cost, tail.buffered.to_numpy())

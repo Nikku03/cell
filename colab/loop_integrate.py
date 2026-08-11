@@ -187,6 +187,7 @@ def main():
         })
     T = pd.DataFrame(rows)
     layers = MECH + LOOKUP
+    RM.check_features(T, layers, emit=say)
     for c in layers:
         T[c] = T[c].fillna(T[c].median())
     y = T.y.to_numpy()

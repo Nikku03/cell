@@ -80,6 +80,7 @@
     "====================================================================================================",
     "  Twenty-four loops built layers one at a time and never put them together. Whether they are",
     "  complementary or redundant is the question 'is there a working cell model' actually means.",
+    "  feature sanity: 7/7 columns vary and are populated",
     "\n  1,783 genes carrying ALL 7 layers; 241 essential",
     "  layers: metabolic cost, DNA torsion, functional neighbours, mRNA abundance, mRNA stability, protein abundance, LOEUF",
     "\n  layer                         alone",
