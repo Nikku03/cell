@@ -44,6 +44,33 @@ CONTROLS: 200 gene-label shuffles; the mean as the zero-R-squared baseline; raw 
 for Y3; and the residual checked against protein abundance itself, because a model that is right only
 for abundant proteins is right about detection, not biology.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    Y1 BEATS THE MEAN   PASS.  Held-out R-squared 0.3783 for log protein from log mRNA over 10,136
+        genes. The first held-out R-squared in this project; twenty loops of AUCs came before it.
+    Y2 THE SLOPE IS NEAR 1   PASS, AND BY 0.0023.  The fitted log-log slope is 1.2977 against a declared
+        ceiling of 1.3. That is not a vindication of proportionality -- it means a tenfold change in
+        transcript goes with a TWENTYFOLD change in protein. Protein AMPLIFIES mRNA differences here,
+        which is a real and well-documented effect, and my band was simply wide enough to admit it.
+        The honest reading is that the balance equation's form is approximately right and measurably
+        not exactly right.
+    Y3 THE CORRECTION EARNS ITS PLACE   PASS.  0.3783 -> 0.4332, a gain of +0.0549 against a +0.02 gate.
+        THIS IS THE FIRST TIME THE LOOP'S DISTINCTIVE CONTENT HAS ADDED ANYTHING TO ANYTHING. In loop 1
+        the feedback bought -0.0074 AUC on essentiality; here the same turnover-and-dilution term buys
+        +0.055 R-squared on protein abundance. Same mechanism, different question, opposite outcome.
+    Y4 BEATS A SHUFFLE   PASS.  Null R-squared -0.0003 +/- 0.0003, 95th percentile 0.0000, against
+        0.3783. R-squared is a bar a shuffle cannot clear by luck the way an AUC sometimes can.
+
+    residual check: |error| against protein abundance, Spearman -0.0460 -- essentially flat, so the fit
+    is not carried by abundant, easy-to-detect proteins.
+
+WHY THIS MATTERS MORE THAN THE NUMBER.  Twenty loops produced class separations, and loop_statement
+recorded that as a structural limit. It was testable and it is now tested: the model does predict a
+quantity, at R-squared 0.43, and the part of it that is genuinely the LOOP -- dividing by (k_deg + mu)
+and (k_dp + mu) -- is what took it from 0.38 to 0.43. The mechanism that failed to earn its place
+against essentiality earns it against abundance. That is a statement about which QUESTION suits the
+model, which is the same lesson loops 12 and 18 taught with side effects and cytotoxicity.
+
 -> outputs/loop_quantity.json
 """
 import json
@@ -178,8 +205,16 @@ def main():
         say("  balance is the wrong shape, and that is a concrete, fixable defect rather than a vague")
         say("  shortfall.")
     elif y1 and y2 and y4:
-        say("  THE PROTEIN BALANCE HOLDS QUANTITATIVELY. First held-out R-squared in the project, with")
-        say("  the proportionality the equation claims.")
+        margin = min(slope - GATE_SLOPE[0], GATE_SLOPE[1] - slope)
+        say("  A QUANTITY IS PREDICTED. First held-out R-squared in this project, and the first time the")
+        say("  loop's distinctive content -- turnover and dilution -- has added anything to anything.")
+        if margin < 0.05:
+            say(f"  BUT READ Y2 CAREFULLY: the slope is {slope:.4f} against a ceiling of "
+                f"{GATE_SLOPE[1]}, which is {margin:.4f} from failing. A slope of {slope:.2f} means a")
+            say(f"  tenfold change in transcript goes with a {10**slope:.0f}-fold change in protein.")
+            say("  That is AMPLIFICATION, not proportionality. The gate passed because the band was")
+            say("  wide, not because the equation's form was vindicated, and calling this")
+            say("  'proportional' would be the overstatement this project exists to avoid.")
     elif not y1:
         say("  NO QUANTITY IS PREDICTED. mRNA does not predict protein above the mean here, so the")
         say("  protein balance has no quantitative content in this data. Recorded.")
