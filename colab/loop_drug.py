@@ -44,9 +44,13 @@ WHAT HAPPENED, written after the run against the gates above, unedited.
               cytotoxic.
     D2 SIGNAL PASS.  Mean essentiality of a drug's targets separates cytotoxics at AUC 0.7722 against a
               shuffled null of [0.4435, 0.5520].
-    D3 BEATS TARGET COUNT   PASS, and this is the gate that killed side effects.  Partial 0.7233 against
-              a null of [0.4363, 0.5853]. Target count alone scores 0.7560, so it is not doing
-              the work here.
+    D3 BEATS TARGET COUNT   PASS, and this is the gate that killed side effects.  Partial 0.7233
+              against a null of [0.4363, 0.5853].
+              STATE THE CONFOUND CORRECTLY: target count alone scores 0.7560, which is STRONG -- more
+              targets really does mean more likely cytotoxic. The claim is NOT that the confound is
+              weak. It is that after regressing it out, 0.7233 of signal REMAINS, far outside the
+              null. Both the confound and the model carry information, and the model's part survives
+              removal of the confound's.
     D4 BEATS LOOKUPS  PASS.  LOEUF 0.5719 and abundance 0.5359 after the same confound removal.
 
 THE CONTRAST IS THE FINDING, and it was predicted before the run rather than explained after it.
@@ -64,7 +68,8 @@ encouraging shape a pair of results can have -- far better than both passing.
 
 WHAT IT DOES NOT SHOW.  This separates drug CLASSES, not drug POTENCY. It does not predict what dose
 does what, which cell line responds, or what a compound does that its target annotation does not already
-imply. And 84 cytotoxics is a small positive set; the interval is wide even if the centre is clear.
+imply. And the positive set is 57 cytotoxics out of 577 joined drugs -- SIDER lists 84 L01 compounds but
+only 57 of them have targets in this model -- so the interval is wide even where the centre is clear.
 
 -> outputs/loop_drug.json
 """
