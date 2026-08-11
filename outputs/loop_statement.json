@@ -214,15 +214,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/build_cell_complete.json",
+        "bytes": 14653,
+        "hash": "335c1186ded5131d",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 25038,
-        "hash": "956caf6176f3a85a",
+        "bytes": 25099,
+        "hash": "9c5d13e92089194a",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 36,
-      "used": 36,
+      "available": 37,
+      "used": 37,
       "selection": "all",
       "fraction": 1.0
     },
@@ -234,8 +240,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 100,
-  "n_gates_failed": 38,
+  "n_gates_passed": 103,
+  "n_gates_failed": 39,
   "capability": [
     {
       "question": "any point mutation",
@@ -949,11 +955,16 @@
     "      PASS   B3 not expression",
     "      PASS   B4 holds out of sample",
     "      PASS   B5 fixes the predictor",
+    "\n  loop 48  a producer for cell_complete.json",
+    "      PASS   Q1 inventory usage-weighted",
+    "      PASS   Q2 every field classified",
+    "      FAIL   Q3 rebuilt fields match",
+    "      PASS   Q4 coverage reported",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  100 gates passed, 38 failed. Both numbers are the point: a project where",
+    "\n  103 gates passed, 39 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -976,6 +987,8 @@
     "  the missing layer is hub-ness       PPI degree separates the misses at 0.6793 and does NOT improve recall (35.7% -> 30.9%)  [loop_recall]",
     "  the 92% no-slack result was my bug   11.7% of knockouts cost >1% of growth, not 92%                 [loop_slack]",
     "  model4 is a weak ranker's output    recall@10 0.99%, lift 8.7x, producer still absent            [loop_provenance]",
+    "  the 38 MB file NOW HAS A PRODUCER   7/8 rebuilt fields match the surviving copy; loeuf exactly, at 1.0000    [build_cell_complete]",
+    "  and it covers 17% of the reads       30% more has a URL and no download, 6% is invented labels with no rule  [build_cell_complete]",
     "  model4 is not a fold                8.8% of its pairs are same-chromosome; a Hi-C map runs 70-90%              [loop_fold_link]",
     "\n----------------------------------------------------------------------------------------------------",
     "  THE DISTANCE LEFT",
@@ -1017,6 +1030,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 36 inputs, coverage 36/36 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 37 inputs, coverage 37/37 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }

@@ -295,6 +295,39 @@
       "want": "2a6058a157b3b9f3",
       "bytes": 1132077,
       "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "gnomad_loeuf.txt.bgz",
+      "kind": "raw",
+      "source": "gnomAD v2.1.1 per-gene loss-of-function constraint",
+      "why": "the source of cell_complete's loeuf column, and the one field that reproduces EXACTLY -- 1.0000 exact over 15,038 genes. That exactness is what pins the version: v2.1.1 and not v4, which would have shown the same drift the coordinates do",
+      "state": "OK",
+      "have": "153031d34b6794e8",
+      "want": "153031d34b6794e8",
+      "bytes": 4609488,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "cpgIslandExt.txt.gz",
+      "kind": "raw",
+      "source": "UCSC hg38 CpG islands, Gardiner-Garden and Frommer calls",
+      "why": "the source of the cpg column. It is the right track -- agreement rises from 0.72 to 0.92 when the query point moves to the file's own tss -- but no declared rule reaches the 0.90 gate, so the field is recorded as unverified rather than claimed",
+      "state": "OK",
+      "have": "2339f8bad0ec9993",
+      "want": "2339f8bad0ec9993",
+      "bytes": 717984,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "goa_human.gaf.gz",
+      "kind": "raw",
+      "source": "GO annotations for human, current release",
+      "why": "fetched for cell_complete's proc and comp columns and NOT used for them. Those are each one of exactly 12 buckets and the GO-term-to-bucket map is recorded nowhere, so the ontology is retrievable and the coarsening is not. Kept because that gap is the finding",
+      "state": "OK",
+      "have": "db472faff1785878",
+      "want": "db472faff1785878",
+      "bytes": 15041996,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     }
   ],
   "rebuilds": [
@@ -351,7 +384,10 @@
     "  sider_names.tsv                             raw      OK               6427a3e3202c71a8",
     "  intogen.zip                                 raw      OK               854def4465bcd7f9",
     "  HumanGEM_genes.tsv                          raw      OK               2a6058a157b3b9f3",
-    "\n  26 of 27 present and hash-matching",
+    "  gnomad_loeuf.txt.bgz                        raw      OK               153031d34b6794e8",
+    "  cpgIslandExt.txt.gz                         raw      OK               2339f8bad0ec9993",
+    "  goa_human.gaf.gz                            raw      OK               db472faff1785878",
+    "\n  29 of 30 present and hash-matching",
     "\n  REBUILD CHECK -- a derived file must reproduce its hash from its raw inputs, or the",
     "  recorded transform is not the one that made it",
     "    _abcfeat.json                     build_abcfeat(re2g_k562.bed.gz) -> 14,465 entries, hash 20f7aa4ae6040e16   MATCHES",
@@ -361,10 +397,15 @@
     "    that produced them, so the provenance claim is checkable rather than asserted.",
     "\n  TO RESTORE ANYTHING MISSING:  python3 colab/data_ledger.py --fetch <name|all>",
     "  currently restorable: GSE63525_GM12878_insitu_primary_30.hic",
-    "\n  NOT IN THIS LEDGER, and it is the biggest remaining hole: cell_complete.json is 38 MB,",
-    "  read by 227 modules, gitignored, and has no external source to fetch from. It is a",
-    "  DERIVED artefact whose producer is not in this repo -- the same condition as _abcfeat.json",
-    "  before today, but with nothing to rebuild it from. A ledger cannot fix that; only",
-    "  recovering or rewriting its builder can."
+    "\n  STILL NOT IN THIS LEDGER, and still the biggest hole, but smaller than it was:",
+    "  cell_complete.json is 38 MB, read by 227 modules, gitignored, and has no external source",
+    "  to fetch from. It is a DERIVED artefact whose original producer is lost. It now has a",
+    "  PARTIAL one -- colab/build_cell_complete.py rebuilds 8 of its 27 per-gene fields from the",
+    "  three sources added above plus the Ensembl GTF and Lambert, and CHECKS each against the",
+    "  surviving copy: 7 agree, cpg does not, and 17% of all module-reads are now backed by a",
+    "  named source rather than by the file's continued existence. The other 83% is classified,",
+    "  which is not the same as recovered: 30% has a URL and no download, 20% has real data with",
+    "  the rule or the source unrecorded, 6% is labels this project invented and cannot rebuild.",
+    "  A ledger cannot close that; only the missing downloads and the lost rules can."
   ]
 }

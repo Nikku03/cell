@@ -1,0 +1,343 @@
+{
+  "test": "build_cell_complete",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ens_gtf.gz",
+        "bytes": 55529204,
+        "hash": "8c87436bab973c87",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/gnomad_loeuf.txt.bgz",
+        "bytes": 4609488,
+        "hash": "153031d34b6794e8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/goa_human.gaf.gz",
+        "bytes": 15041996,
+        "hash": "db472faff1785878",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/lambert.csv",
+        "bytes": 2107299,
+        "hash": "5438940ddef71b6f",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/cpgIslandExt.txt.gz",
+        "bytes": 717984,
+        "hash": "2339f8bad0ec9993",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1397,
+      "used": 236,
+      "selection": "filtered",
+      "fraction": 0.16893342877594847
+    },
+    "seed": 0,
+    "controls": [
+      "every rebuilt field checked against the surviving copy",
+      "exact-match and correlation reported separately so version drift is distinguishable from a wrong source",
+      "fields weighted by how many modules read them",
+      "project-invented fields named rather than regenerated"
+    ],
+    "note": "does not claim to recover the original program, which is lost; claims a producer for the load-bearing fields whose provenance can be checked",
+    "warnings": []
+  },
+  "gates": {
+    "Q1 inventory usage-weighted": true,
+    "Q2 every field classified": true,
+    "Q3 rebuilt fields match": false,
+    "Q4 coverage reported": true
+  },
+  "n_fields": 27,
+  "total_reads": 1397,
+  "usage": {
+    "chrom": 81,
+    "comp": 56,
+    "conf": 27,
+    "cpg": 20,
+    "dark": 40,
+    "dep_frac": 89,
+    "enh": 21,
+    "ens_tss": 4,
+    "ess": 69,
+    "ess_prob": 3,
+    "ess_src": 8,
+    "flag": 6,
+    "gene_end": 6,
+    "gene_start": 8,
+    "loeuf": 45,
+    "master": 5,
+    "name": 358,
+    "ndis": 25,
+    "npath": 32,
+    "path": 59,
+    "ppi": 210,
+    "proc": 47,
+    "pubs": 43,
+    "strand": 8,
+    "tf": 84,
+    "ti": 1,
+    "tss": 42
+  },
+  "sources": {
+    "coordinates": {
+      "fields": [
+        "chrom",
+        "gene_start",
+        "gene_end",
+        "strand",
+        "tss",
+        "ens_tss"
+      ],
+      "url": "https://ftp.ensembl.org/pub/release-112/gtf/homo_sapiens/Homo_sapiens.GRCh38.112.gtf.gz",
+      "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ens_gtf.gz",
+      "kind": "recoverable"
+    },
+    "loeuf": {
+      "fields": [
+        "loeuf"
+      ],
+      "url": "https://storage.googleapis.com/gcp-public-data--gnomad/release/2.1.1/constraint/gnomad.v2.1.1.lof_metrics.by_gene.txt.bgz",
+      "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/gnomad_loeuf.txt.bgz",
+      "kind": "recoverable"
+    },
+    "gene ontology": {
+      "fields": [],
+      "url": "https://current.geneontology.org/annotations/goa_human.gaf.gz",
+      "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/goa_human.gaf.gz",
+      "kind": "fetched, but see rule-lost below"
+    },
+    "transcription factors": {
+      "fields": [
+        "tf"
+      ],
+      "url": "http://humantfs.ccbr.utoronto.ca/download/v_1.01/DatabaseExtract_v_1.01.csv",
+      "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/lambert.csv",
+      "kind": "recoverable"
+    },
+    "CpG islands": {
+      "fields": [
+        "cpg"
+      ],
+      "url": "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cpgIslandExt.txt.gz",
+      "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/cpgIslandExt.txt.gz",
+      "kind": "recoverable"
+    },
+    "protein interactions": {
+      "fields": [
+        "ppi"
+      ],
+      "url": "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/BIOGRID-ORGANISM-LATEST.tab3.zip",
+      "path": "None",
+      "kind": "declared, not fetched here"
+    },
+    "dependency": {
+      "fields": [
+        "dep_frac",
+        "ess",
+        "ess_src"
+      ],
+      "url": "https://depmap.org/portal/download/  (CRISPRGeneEffect.csv, release-pinned)",
+      "path": "None",
+      "kind": "declared, not fetched here"
+    },
+    "publications": {
+      "fields": [
+        "pubs"
+      ],
+      "url": "https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz + gene_info.gz",
+      "path": "None",
+      "kind": "declared, not fetched here"
+    }
+  },
+  "project_invented": {
+    "dark": "a project label for under-studied genes; the threshold rule is lost",
+    "conf": "a confidence tier this project assigned; rule lost",
+    "master": "'master regulator' call; rule lost",
+    "flag": "free-text annotations like 'germline-constrained yet cancer-dispensable'; rule lost",
+    "ti": "a therapeutic-index tag; rule lost",
+    "ess_prob": "a predicted essentiality probability from a model that is not in this repo"
+  },
+  "source_known_rule_lost": {
+    "proc": "one of exactly 12 process buckets (the `procs` key). GOA is fetchable; the GO-term -> 12-bucket aggregation this project defined is not recorded anywhere",
+    "comp": "one of exactly 12 compartment buckets (the `comps` key). Same shape as proc: the source ontology survives, the coarsening rule does not"
+  },
+  "source_not_identified": {
+    "tss": "stored as a STRING; the same promoter as ens_tss picked per-TRANSCRIPT rather than at the gene boundary (6.65% exact, median offset 75 bp, corr 0.9998). The transcript set that defines the pick -- MANE, canonical, refGene, CAGE -- is not recorded",
+    "npath": "a pathway count. Not GO process count (corr 0.02) and not membership in the `pathways` key (exact 0.37), so the pathway database used is not recorded",
+    "path": "a single Reactome-style pathway name with a trailing space; the release is not recorded",
+    "enh": "an enhancer count; the catalogue is not recorded",
+    "ndis": "a disease count; the database is not recorded"
+  },
+  "checks": {
+    "chrom": {
+      "n": 16446,
+      "exact": 0.9938586890429284,
+      "corr": NaN,
+      "pass": true
+    },
+    "gene_start": {
+      "n": 16445,
+      "exact": 0.48756460930373974,
+      "corr": 0.9998111798481147,
+      "pass": true
+    },
+    "gene_end": {
+      "n": 16445,
+      "exact": 0.48324718759501367,
+      "corr": 0.9998112228295917,
+      "pass": true
+    },
+    "strand": {
+      "n": 16445,
+      "exact": 1.0,
+      "corr": NaN,
+      "pass": true
+    },
+    "ens_tss": {
+      "n": 16445,
+      "exact": 0.42006688963210703,
+      "corr": 0.9998111966307293,
+      "pass": true
+    },
+    "loeuf": {
+      "n": 15038,
+      "exact": 1.0,
+      "corr": 0.9999999999999998,
+      "pass": true
+    },
+    "tf": {
+      "n": 16492,
+      "exact": 0.9383337375697308,
+      "corr": NaN,
+      "pass": true
+    },
+    "cpg": {
+      "n": 16492,
+      "exact": 0.8531409168081494,
+      "corr": NaN,
+      "pass": false
+    }
+  },
+  "cpg_diagnostic": {
+    "window_declared": 2000,
+    "query_declared": "ens_tss",
+    "rule_only": 1796,
+    "file_only": 626,
+    "sweep": {
+      "ens_tss@0": 0.7224108658743633,
+      "ens_tss@500": 0.8353140916808149,
+      "ens_tss@1000": 0.8558088770312879,
+      "ens_tss@2000": 0.8531409168081494,
+      "ens_tss@5000": 0.8387703128789716,
+      "tss@0": 0.8555663351928208,
+      "tss@500": 0.9118360417171962,
+      "tss@1000": 0.9157773465922872,
+      "tss@2000": 0.898981324278438,
+      "tss@5000": 0.8724836284259034
+    },
+    "best_variant": "tss@1000",
+    "best_exact": 0.9157773465922872,
+    "adopted": false
+  },
+  "reads_verified": 236,
+  "reads_declared": 419,
+  "reads_invented": 82,
+  "reads_rule_lost": 103,
+  "reads_source_unknown": 179,
+  "seconds": 14.644577741622925,
+  "log": [
+    "====================================================================================================",
+    "THE PRODUCER cell_complete.json NEVER HAD",
+    "====================================================================================================",
+    "  38 MB, read by 227 modules, gitignored, no producer anywhere. This does not claim to have",
+    "  recovered the original program -- that is lost. It rebuilds the LOAD-BEARING fields from",
+    "  named sources and CHECKS each one against the surviving copy, so every provenance claim",
+    "  can fail.",
+    "\n  surviving copy: 42 top-level keys, 16,492 genes",
+    "\n  Q1 THE INVENTORY IS USAGE-WEIGHTED -- 27 per-gene fields, 1,397 module-reads in total",
+    "     the head: name 358 \u00b7 ppi 210 \u00b7 dep_frac 89 \u00b7 tf 84 \u00b7 chrom 81 \u00b7 ess 69 \u00b7 path 59 \u00b7 comp 56",
+    "     Q1 PASS",
+    "\n  Q2 EVERY FIELD IS CLASSIFIED",
+    "     coordinates             recoverable               chrom, gene_start, gene_end, strand, tss, ens_tss",
+    "     loeuf                   recoverable               loeuf",
+    "     gene ontology           fetched, but see rule-lost below",
+    "     transcription factors   recoverable               tf",
+    "     CpG islands             recoverable               cpg",
+    "     protein interactions    declared, not fetched hereppi",
+    "     dependency              declared, not fetched heredep_frac, ess, ess_src",
+    "     publications            declared, not fetched herepubs",
+    "     SOURCE KNOWN, RULE LOST partly recoverable        comp, proc",
+    "     SOURCE NOT IDENTIFIED   real data, unknown origin enh, ndis, npath, path, tss",
+    "     PROJECT-INVENTED        NOT RECOVERABLE           conf, dark, ess_prob, flag, master, ti",
+    "     Q2 PASS",
+    "\n  rebuilding the fetchable fields",
+    "     coordinates 41,040 \u00b7 loeuf 19,155 \u00b7 GO process 37,563 \u00b7 TFs 1,639 \u00b7 CpG islands 32,038",
+    "\n  Q3 REBUILT FIELDS MATCH THE SURVIVING COPY",
+    "     field                n    exact     corr   verdict",
+    "     chrom           16,446   0.9939        -   MATCH",
+    "     gene_start      16,445   0.4876   0.9998   SOURCE RIGHT, VERSION DRIFT",
+    "     gene_end        16,445   0.4832   0.9998   SOURCE RIGHT, VERSION DRIFT",
+    "     strand          16,445   1.0000        -   MATCH",
+    "     ens_tss         16,445   0.4201   0.9998   SOURCE RIGHT, VERSION DRIFT",
+    "     loeuf           15,038   1.0000   1.0000   MATCH",
+    "     tf              16,492   0.9383        -   MATCH",
+    "     cpg             16,492   0.8531        -   MISMATCH -- provenance claim fails",
+    "     cpg diagnosis   file says CpG for 62.2% of genes, this rule for 69.3%",
+    "                     disagreements split 1,796 rule-only / 626 file-only (rule over-calls)",
+    "                     at ens_tss  0bp:0.7224 \u00b7 500bp:0.8353 \u00b7 1000bp:0.8558 \u00b7 2000bp:0.8531 \u00b7 5000bp:0.8388",
+    "                     at tss      0bp:0.8556 \u00b7 500bp:0.9118 \u00b7 1000bp:0.9158 \u00b7 2000bp:0.8990 \u00b7 5000bp:0.8725",
+    "                     the QUERY POINT dominates the window: every window is better at tss than at ens_tss",
+    "                     (+0.1332 at 0 bp, +0.0458 at the declared 2000 bp), so the original cpg",
+    "                     was computed at the file's own tss. Even there it reaches only 0.8990 at the",
+    "                     declared window and 0.9158 at best (tss@1000) -- both under 0.9, NEITHER ADOPTED.",
+    "                     SOURCE identified, QUERY POINT identified, EXACT RULE not. cpg stays unverified.",
+    "     Q3 FAIL  (each field: exact >= 0.9 OR corr >= 0.9)",
+    "\n  Q4 THE SHARE OF MODULE-READS COVERED",
+    "     verified here (source fetched and checked)    236   16.9%",
+    "     the gene list itself (name)                   358   25.6%",
+    "     declared with a URL, not fetched here         419   30.0%",
+    "     source known, coarsening rule lost            103    7.4%",
+    "     real data, source not identified              179   12.8%",
+    "     PROJECT-INVENTED, not recoverable              82    5.9%",
+    "     Q4 PASS -- reported rather than gated; the number is the answer, not a target",
+    "\n====================================================================================================",
+    "  Q1 inventory usage-weighted           PASS",
+    "  Q2 every field classified             PASS",
+    "  Q3 rebuilt fields match               FAIL",
+    "  Q4 coverage reported                  PASS",
+    "  cell_complete.json NOW HAS A PRODUCER for 7 of the 8 fields it",
+    "  attempts, each checked against the surviving copy rather than asserted. 17% of all",
+    "  per-gene module-reads are now backed by a named source that was fetched and verified;",
+    "  another 30% have a URL recorded and need one more download.",
+    "  Q3 FAILS ON cpg, and the gate stands. The diagnosis is sharper than",
+    "  the verdict: the CpG track is right and the query point is the file's own tss rather",
+    "  than the Ensembl gene boundary, but no declared rule reaches 0.90 and none",
+    "  of the swept ones was adopted. A near-miss is exactly where loosening a threshold",
+    "  turns an unverified column into a verified-looking one, so it is left failing.",
+    "  AND 6% CANNOT BE REBUILT AT ALL. Those are labels this project",
+    "  invented -- conf, dark, ess_prob, flag, master, ti -- whose rules are lost. A producer",
+    "  that regenerated them from a guessed rule would be worse than one that says so,",
+    "  because the guess would look identical in the file and differ in every value.",
+    "  A further 13% is real data whose source this file never named",
+    "  (enh, ndis, npath, path, tss) and 7% keeps its ontology but lost the",
+    "  coarsening rule (comp, proc). Neither is invented and neither is",
+    "  reproducible; they are the middle of the distribution and were the easiest to overstate.",
+    "====================================================================================================",
+    "    manifest: 6 inputs, coverage 236/1397 (16.9%) by 'filtered', seed 0, controls 4"
+  ]
+}
