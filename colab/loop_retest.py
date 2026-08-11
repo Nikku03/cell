@@ -13,8 +13,15 @@ exactly the kind of banked result this project exists to avoid.
 
 WHAT CHANGES, and nothing else does.  Same code path, same gates, same scored genes, same seed. Only the
 model underneath:
-    medium      loop 4's 57 uptakes, capped at 0.2445 mmol/gDW/h, instead of everything open
-    capacity    loop 1's enzyme layer on top, kappa recalibrated so both constraints bind
+    medium      loop 4's 57 uptakes, instead of everything open. The CAP is re-derived here rather
+                than reused: loop 4 set it so nutrients ALONE give exactly MU_TARGET, and requiring the
+                combined medium+enzyme model to also give MU_TARGET would then force the enzyme layer
+                to be inert. The first run of this file did exactly that -- kappa ran to its ceiling at
+                999,960, the capacity bounds went effectively infinite, and G3 would have read ~0 for a
+                reason with no biology in it. So the constraint is SPLIT by a declared choice: nutrients
+                alone support 2x MU_TARGET, and enzymes account for the other factor of two. Both bind
+                by construction, and a run where kappa still hits its ceiling is recorded NOT TESTABLE.
+    capacity    loop 1's enzyme layer on top, kappa bisected against that headroom
     mu_WT       RE-SOLVED at the final bounds rather than taken from the bisection's last iterate.
                 That is the one-line fix loop_slack identified: using the iterate made 1,525 unaffected
                 knockouts look like they IMPROVED growth by 7.2e-07, which is what produced loop 4's
@@ -61,7 +68,7 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 SEED = 1904
 N_SHUFFLE = 200
 MU_TARGET = 0.030
-UPTAKE_CAP = 0.2445          # loop 4's calibrated per-component cap
+MEDIUM_HEADROOM = 2.0        # nutrients alone support this multiple of MU_TARGET; enzymes do the rest
 EXTRA = {"gamma-tocopherol", "lipoic acid"}
 DAMP = 0.5
 TOL = 1e-6
@@ -100,9 +107,34 @@ def main():
             keep.add(r.id)
     for r in M.exchanges:
         r.lower_bound = 0.0
+    # BOTH CONSTRAINTS MUST BIND, and the first version of this file got that wrong in a way that
+    # would have produced a meaningless G3. loop 4 calibrated its uptake cap so that NUTRIENTS ALONE
+    # give exactly MU_TARGET. Requiring the combined medium+enzyme model to also give MU_TARGET then
+    # forces the enzyme layer to be non-binding: the bisection ran kappa to its ceiling (999,960),
+    # the capacity bounds became effectively infinite, and the feedback would have had nothing to act
+    # on. G3 would have read ~0 for a reason with no biology in it.
+    # The fix is a declared split of the constraint between the two layers: open the medium enough that
+    # NUTRIENTS ALONE would support MEDIUM_HEADROOM x MU_TARGET, then bisect kappa to bring the combined
+    # model down to MU_TARGET. Nutrients allow twice the observed growth; enzymes account for the other
+    # factor of two. Both bind by construction, and the split is a stated choice rather than an accident.
+    lo_u, hi_u = 1e-6, 1e4
+    for _ in range(60):
+        mid = np.sqrt(lo_u * hi_u)
+        for rid in keep:
+            M.reactions.get_by_id(rid).lower_bound = -mid
+        v = M.slim_optimize()
+        if v is None or not np.isfinite(v) or v < MEDIUM_HEADROOM * MU_TARGET:
+            lo_u = mid
+        else:
+            hi_u = mid
+        if hi_u / lo_u < 1.0001:
+            break
+    CAP = float(np.sqrt(lo_u * hi_u))
     for rid in keep:
-        M.reactions.get_by_id(rid).lower_bound = -UPTAKE_CAP
-    say(f"  medium: {len(keep)} uptakes capped at {UPTAKE_CAP} mmol/gDW/h (loop 4's construction)")
+        M.reactions.get_by_id(rid).lower_bound = -CAP
+    mu_medium_only = float(M.slim_optimize())
+    say(f"  medium: {len(keep)} uptakes capped at {CAP:.4g} mmol/gDW/h -> nutrients alone support "
+        f"{mu_medium_only:.5f}/h = {MEDIUM_HEADROOM}x target, leaving room for enzymes to bind too")
 
     gm = pd.read_csv(GEMGENES, sep="\t")
     ens2sym = {a: b for a, b in zip(gm["genes"], gm["geneSymbols"]) if isinstance(b, str)}
@@ -154,7 +186,7 @@ def main():
             mu = new
         return mu, MAXIT
 
-    lo_k, hi_k = 1e-12, 1e6
+    lo_k, hi_k = 1e-12, 1e12
     for _ in range(80):
         mid = np.sqrt(lo_k * hi_k)
         if fixed_point(mid)[0] < MU_TARGET:
@@ -165,8 +197,16 @@ def main():
             break
     KAPPA = float(np.sqrt(lo_k * hi_k))
     MU_WT, its = fixed_point(KAPPA)
-    say(f"  capacity: kappa {KAPPA:.6g}, wild-type mu {MU_WT:.8f}/h in {its} damped steps "
-        f"(medium AND enzymes binding)")
+    binding = bool(KAPPA < 1e12 * 0.99)
+    say(f"  capacity: kappa {KAPPA:.6g}, wild-type mu {MU_WT:.8f}/h in {its} damped steps")
+    say(f"    enzyme layer actually binds: {binding}  (nutrients alone {mu_medium_only:.5f}/h, "
+        f"combined {MU_WT:.5f}/h)")
+    if not binding:
+        say("    kappa ran to its ceiling, so the capacity layer is inert and the feedback has nothing")
+        say("    to act on. Recorded as NOT TESTABLE rather than run.")
+        json.dump({"test": "loop_retest", "not_testable": True, "kappa": KAPPA, "log": log},
+                  open(OUT / "loop_retest.json", "w"), indent=2)
+        return 1
 
     # G1
     a, ia = fixed_point(KAPPA, mu0=0.0)
