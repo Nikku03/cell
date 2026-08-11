@@ -32,14 +32,20 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 SEED = 1904
 
 LOOPS = [
-    ("1  close the growth feedback", "cell_loop.json", "gates"),
-    ("3  why the lookup won", "loop_deficit.json", None),
-    ("4  a medium the model can grow on", "loop_medium.json", "gates"),
-    ("5  the variant-addressable slot", "loop_variant.json", "gates"),
-    ("6  is the dead link deserved", "loop_chromatin.json", "gates"),
-    ("7  turn it into a pipeline", "loop_fold_link.json", "gates"),
-    ("8  the real chromatin test", "loop_real_chromatin.json", "gates"),
-    ("2/9 capability audit", "capability_audit.json", None),
+    ("1   close the growth feedback", "cell_loop.json", "gates"),
+    ("3   why the lookup won", "loop_deficit.json", None),
+    ("4   a medium the model can grow on", "loop_medium.json", "gates"),
+    ("5   the variant-addressable slot", "loop_variant.json", "gates"),
+    ("6   is the dead link deserved", "loop_chromatin.json", "gates"),
+    ("7   turn it into a pipeline", "loop_fold_link.json", "gates"),
+    ("8   the real chromatin test", "loop_real_chromatin.json", "gates"),
+    ("12  side effects", "loop_sideeffect.json", "gates"),
+    ("14  cancer drivers", "loop_cancer.json", "gates"),
+    ("15  does the cell have slack", "loop_slack.json", "gates"),
+    ("16  retiring saturating kinetics", "loop_kinetics.json", "gates"),
+    ("17  what made model4", "loop_provenance.json", "gates"),
+    ("18  which drugs are cytotoxic", "loop_drug.json", "gates"),
+    ("2/9/11/13/19 capability audit", "capability_audit.json", None),
 ]
 
 
@@ -68,15 +74,21 @@ def main():
     say("  THE GOAL, MEASURED")
     say("-" * 100)
     if cap and not cap.get("void"):
-        say(f"  {'question':<24}{'addressable':>12}{'pipeline':>10}{'checked':>9}{'items':>10}   answered?")
+        say(f"  {'question':<24}{'slot':>7}{'pipe':>7}{'check':>7}{'items':>10}{'gates':>8}"
+            f"{'well?':>7}   answered well by")
         for r in cap["rows"]:
-            if r["question"] in ("metabolic growth", "functional neighbourhood"):
+            if r["question"] in ("metabolic growth", "functional neighbourhood", "NEGATIVE CONTROL"):
                 continue
-            say(f"  {r['question']:<24}{'yes' if r['encode'] else 'NO':>12}"
-                f"{'yes' if r['pipeline'] else 'NO':>10}{'yes' if r['check'] else 'NO':>9}"
-                f"{r['n_items']:>10,}   {'YES' if r['answers'] else 'no'}")
-        say(f"\n  {cap['n_emits']} of {cap['n_questions']} can be ASKED. "
-            f"{cap['n_answers']} can be ANSWERED.")
+            g = f"{r.get('gates_passed',0)}/{r.get('gates_passed',0)+r.get('gates_failed',0)}" \
+                if r["check"] else "-"
+            say(f"  {r['question']:<24}{'yes' if r['encode'] else 'NO':>7}"
+                f"{'yes' if r['pipeline'] else 'NO':>7}{'yes' if r['check'] else 'NO':>7}"
+                f"{r['n_items']:>10,}{g:>8}{'YES' if r.get('answered_well') else 'no':>7}   "
+                f"{r.get('best_pipeline') or ''}")
+        say(f"\n  {cap['n_emits']} of {cap['n_questions']} can be ASKED.")
+        say(f"  {cap['n_answers']} can be GOT WRONG -- a slot, a pipeline and a controlled score.")
+        say(f"  {cap.get('n_answered_well', 0)} are ANSWERED WELL -- every gate in that pipeline "
+            f"came back positive.")
     else:
         say("  capability_audit is missing or voided; no capability claim is made.")
 
@@ -143,6 +155,29 @@ def main():
     if lr:
         say(f"  measured torsion predicts transcription  rho {lr['r_torsion']:+.4f} vs naked-DNA "
             f"control {lr['r_naked']:+.4f}, partial {lr['r_torsion_partial']:+.4f}   [loop_real_chromatin]")
+    ld = R.get("loop_drug.json")
+    if ld:
+        pe = ld["predictors"].get("mean essentiality of targets (model)", {})
+        say(f"  cytotoxic drugs are separable      partial AUC {pe.get('partial', float('nan')):.4f} "
+            f"after target count removed, on {ld['n_cytotoxic']} cytotoxics    [loop_drug]")
+    ls = R.get("loop_sideeffect.json")
+    if ls:
+        se = ls["predictors"].get("mean essentiality of targets", {})
+        say(f"  side effects are NOT               same predictor, same confound: partial "
+            f"{se.get('partial', float('nan')):+.4f}, inside the null       [loop_sideeffect]")
+    lk = R.get("loop_cancer.json")
+    if lk:
+        say(f"  the model says what is NOT a driver  partial {lk.get('partial_best', float('nan')):.4f} "
+            f"(i.e. {1-lk.get('partial_best', 0.5):.4f} for non-drivers); LoF subset "
+            f"{lk['auc_lof_only']:.4f}  [loop_cancer]")
+    lsl = R.get("loop_slack.json")
+    if lsl:
+        say(f"  the 92% no-slack result was my bug   {lsl['frac_at_1pct']:.1%} of knockouts cost >1% of "
+            f"growth, not 92%                 [loop_slack]")
+    lp = R.get("loop_provenance.json")
+    if lp:
+        say(f"  model4 is a weak ranker's output    recall@10 {lp['recall_at10']:.2%}, lift "
+            f"{lp['lift']:.1f}x, producer still absent            [loop_provenance]")
     lf = R.get("loop_fold_link.json")
     if lf:
         l0 = lf.get("L0_what_is_it", {})
@@ -165,11 +200,15 @@ def main():
             if not r["check"]:
                 why.append("no controlled score")
             say(f"  {r['question']:<22} {r['n_items']:>7,} items -- {'; '.join(why)}")
-    say("\n  AND THE LIMIT THAT APPLIES TO EVERY ROW ABOVE.  `answered` here means the question is")
-    say("  ASKABLE, CONNECTED and FALSIFIABLE. It does not mean answered WELL. The two rows that pass")
-    say("  do so with modest effects -- a rho of 0.18 for torsion, an AUC of 0.62 for the growth loop --")
-    say("  and one of them, `any protein change`, passes on the weakest admissible reading: a knockout")
-    say("  is a protein change to zero, which is one perturbation shape out of many.")
+    say("\n  THREE LIMITS THAT APPLY TO THE ROWS THAT DO PASS.")
+    say("    1  Effects are modest. rho 0.18 for torsion against transcription; AUC 0.72 for cytotoxic")
+    say("       class after confound removal. Real, controlled, and not large.")
+    say("    2  The cancer row is 4/4 and its finding is INVERTED: after removing gene length and")
+    say("       citation count the model predicts NON-drivers at 0.7010, and the loss-of-function")
+    say("       subset it could mechanistically explain sits at 0.5073, which is chance. A gate")
+    say("       boolean cannot carry that; a reader who stops at the column gets it backwards.")
+    say("    3  Nothing here predicts a QUANTITY. Every passing row separates classes -- driver from")
+    say("       not, cytotoxic from not, high torsion from low. None of them says how much.")
 
     man = RM.manifest(inputs=[str(OUT / fn) for _, fn, _ in LOOPS if (OUT / fn).exists()],
                       available=len(LOOPS), used=sum(1 for _, fn, _ in LOOPS if R.get(fn)),

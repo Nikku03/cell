@@ -46,15 +46,51 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_sideeffect.json",
+        "bytes": 155354,
+        "hash": "f451483a597547db",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_cancer.json",
+        "bytes": 5840,
+        "hash": "14ee017fed130968",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_slack.json",
+        "bytes": 4796,
+        "hash": "83dc5c6e138a86b3",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_kinetics.json",
+        "bytes": 4343,
+        "hash": "c3f721776bf0d6ac",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_provenance.json",
+        "bytes": 4629,
+        "hash": "c211bb44e9186ab7",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_drug.json",
+        "bytes": 104479,
+        "hash": "bbd77480f42923c2",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 13791,
-        "hash": "bb0b82ceb17ebf73",
+        "bytes": 20426,
+        "hash": "3043060ceb69926d",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 8,
-      "used": 8,
+      "available": 14,
+      "used": 14,
       "selection": "all",
       "fraction": 1.0
     },
@@ -66,8 +102,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 20,
-  "n_gates_failed": 5,
+  "n_gates_passed": 37,
+  "n_gates_failed": 9,
   "capability": [
     {
       "question": "any point mutation",
@@ -76,19 +112,37 @@
         "struct": 13
       },
       "n_items": 13,
+      "gates_passed": 2,
+      "gates_failed": 2,
+      "gate_detail": {
+        "loop_variant.json": {
+          "passed": 2,
+          "failed": 2
+        }
+      },
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [],
       "encode": true,
-      "pipeline": false,
-      "check": false,
-      "answers": false,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
       "emits": true,
       "namers": [
         "colab/cell_stats.py",
-        "colab/complete_cell.py"
+        "colab/complete_cell.py",
+        "colab/data_ledger.py",
+        "colab/loop_variant.py"
       ],
-      "produces": [],
+      "produces": [
+        "data_ledger.json",
+        "loop_variant.json"
+      ],
       "phenotype_hits": [],
-      "controlled": [],
-      "note": "residue-level: 13 genes carry per-residue pathogenic/common counts. `biomarkers` holds mutation-conditioned associations for 599 genes but is keyed on GENE, not on variant"
+      "controlled": [
+        "loop_variant.json"
+      ],
+      "note": "13 genes of residue-level counts, PLUS the ClinVar VCF that loop_variant consumes. `biomarkers` looks relevant and is not -- it is keyed on GENE, so a variant cannot be handed to it"
     },
     {
       "question": "any protein change",
@@ -100,6 +154,38 @@
         "complexes": 2039
       },
       "n_items": 42765,
+      "gates_passed": 17,
+      "gates_failed": 3,
+      "gate_detail": {
+        "cell_loop.json": {
+          "passed": 2,
+          "failed": 2
+        },
+        "loop_cancer.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_drug.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_fold_link.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [
+        "loop_cancer.json",
+        "loop_drug.json",
+        "loop_fold_link.json",
+        "loop_sideeffect.json"
+      ],
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -117,7 +203,10 @@
       ],
       "produces": [
         "cell_loop.json",
-        "loop_fold_link.json"
+        "loop_cancer.json",
+        "loop_drug.json",
+        "loop_fold_link.json",
+        "loop_sideeffect.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
@@ -127,7 +216,10 @@
       ],
       "controlled": [
         "cell_loop.json",
-        "loop_fold_link.json"
+        "loop_cancer.json",
+        "loop_drug.json",
+        "loop_fold_link.json",
+        "loop_sideeffect.json"
       ],
       "note": "gene-keyed"
     },
@@ -138,6 +230,17 @@
         "loops3d": 767
       },
       "n_items": 767,
+      "gates_passed": 4,
+      "gates_failed": 0,
+      "gate_detail": {
+        "loop_real_chromatin.json": {
+          "passed": 4,
+          "failed": 0
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_real_chromatin.json",
+      "adjacent_credits": [],
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -170,6 +273,27 @@
         "model4": 7700
       },
       "n_items": 7700,
+      "gates_passed": 11,
+      "gates_failed": 1,
+      "gate_detail": {
+        "loop_chromatin.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_fold_link.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_provenance.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_chromatin.json",
+      "adjacent_credits": [
+        "loop_provenance.json"
+      ],
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -179,19 +303,46 @@
         "colab/complete_cell.py",
         "colab/loop_chromatin.py",
         "colab/loop_fold_link.py",
+        "colab/loop_provenance.py",
         "colab/phase2_audit.py",
         "colab/phase2_loop.py"
       ],
       "produces": [
         "loop_chromatin.json",
-        "loop_fold_link.json"
+        "loop_fold_link.json",
+        "loop_provenance.json"
       ],
       "phenotype_hits": [],
       "controlled": [
         "loop_chromatin.json",
-        "loop_fold_link.json"
+        "loop_fold_link.json",
+        "loop_provenance.json"
       ],
       "note": "NOT a fold -- 8.8% cis, half its pairs sharing a functional label. Kept as its own row so the 7,700 items are still counted, under a heading that describes them"
+    },
+    {
+      "question": "NEGATIVE CONTROL",
+      "what": "CALIBRATION -- a perturbation this model has no slot for, and never will",
+      "blocks": {
+        "__no_such_block__": 0
+      },
+      "n_items": 0,
+      "gates_passed": 0,
+      "gates_failed": 0,
+      "gate_detail": {},
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [],
+      "encode": false,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": false,
+      "namers": [],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "deliberately unsatisfiable; if this ever passes, the audit is broken"
     },
     {
       "question": "drug effect",
@@ -200,10 +351,27 @@
         "drugs": 4275
       },
       "n_items": 4275,
+      "gates_passed": 7,
+      "gates_failed": 1,
+      "gate_detail": {
+        "loop_drug.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_drug.json",
+      "adjacent_credits": [
+        "loop_sideeffect.json"
+      ],
       "encode": true,
-      "pipeline": false,
-      "check": false,
-      "answers": false,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
       "emits": true,
       "namers": [
         "colab/adrn_drug_liveness.py",
@@ -215,9 +383,15 @@
         "colab/cellgraph.py",
         "colab/cellos.py"
       ],
-      "produces": [],
+      "produces": [
+        "loop_drug.json",
+        "loop_sideeffect.json"
+      ],
       "phenotype_hits": [],
-      "controlled": [],
+      "controlled": [
+        "loop_drug.json",
+        "loop_sideeffect.json"
+      ],
       "note": "gene-keyed drug/target/action"
     },
     {
@@ -227,20 +401,38 @@
         "otdis": 48
       },
       "n_items": 48,
+      "gates_passed": 3,
+      "gates_failed": 1,
+      "gate_detail": {
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [],
       "encode": true,
-      "pipeline": false,
-      "check": false,
-      "answers": false,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
       "emits": true,
       "namers": [
         "colab/adrn_ko_channels3.py",
         "colab/complete_cell.py",
+        "colab/data_ledger.py",
+        "colab/loop_sideeffect.py",
         "colab/pertseq_apps.py"
       ],
-      "produces": [],
+      "produces": [
+        "data_ledger.json",
+        "loop_sideeffect.json"
+      ],
       "phenotype_hits": [],
-      "controlled": [],
-      "note": "48 genes with disease associations; no compound-to-adverse-event table exists here at all"
+      "controlled": [
+        "loop_sideeffect.json"
+      ],
+      "note": "48 genes with disease associations, PLUS SIDER 4.1 -- 1,430 compounds with MedDRA side effects, added by loop 12. Before that there was no compound-to-adverse-event data here at all"
     },
     {
       "question": "cancer",
@@ -251,10 +443,21 @@
         "ctnames": 200
       },
       "n_items": 839,
+      "gates_passed": 4,
+      "gates_failed": 0,
+      "gate_detail": {
+        "loop_cancer.json": {
+          "passed": 4,
+          "failed": 0
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_cancer.json",
+      "adjacent_credits": [],
       "encode": true,
-      "pipeline": false,
-      "check": false,
-      "answers": false,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
       "emits": true,
       "namers": [
         "colab/adrn_ko_channels3.py",
@@ -266,12 +469,17 @@
         "colab/cofactor.py",
         "colab/complete_cell.py"
       ],
-      "produces": [],
+      "produces": [
+        "data_ledger.json",
+        "loop_cancer.json"
+      ],
       "phenotype_hits": [
         "colab/cofactor.py"
       ],
-      "controlled": [],
-      "note": "biomarker associations and cell-type identities; no tumour genotype-to-phenotype block"
+      "controlled": [
+        "loop_cancer.json"
+      ],
+      "note": "biomarker associations and cell-type identities, PLUS IntOGen's 2024-06 driver compendium (633 genes) added by loop 14 as the held-out label"
     },
     {
       "question": "metabolic growth",
@@ -281,6 +489,17 @@
         "reactions": 31
       },
       "n_items": 2580,
+      "gates_passed": 2,
+      "gates_failed": 2,
+      "gate_detail": {
+        "cell_loop.json": {
+          "passed": 2,
+          "failed": 2
+        }
+      },
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [],
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -318,51 +537,80 @@
     "\n----------------------------------------------------------------------------------------------------",
     "  THE GOAL, MEASURED",
     "----------------------------------------------------------------------------------------------------",
-    "  question                 addressable  pipeline  checked     items   answered?",
-    "  any point mutation               yes        NO       NO        13   no",
-    "  any protein change               yes       yes      yes    42,765   YES",
-    "  any chromosome fold              yes       yes      yes       767   YES",
-    "  drug effect                      yes        NO       NO     4,275   no",
-    "  side effect                      yes        NO       NO        48   no",
-    "  cancer                           yes        NO       NO       839   no",
-    "\n  6 of 6 can be ASKED. 2 can be ANSWERED.",
+    "  question                   slot   pipe  check     items   gates  well?   answered well by",
+    "  any point mutation          yes    yes    yes        13     2/4     no   ",
+    "  any protein change          yes    yes    yes    42,765   17/20     no   ",
+    "  any chromosome fold         yes    yes    yes       767     4/4    YES   loop_real_chromatin.json",
+    "  drug effect                 yes    yes    yes     4,275     7/8    YES   loop_drug.json",
+    "  side effect                 yes    yes    yes        48     3/4     no   ",
+    "  cancer                      yes    yes    yes       839     4/4    YES   loop_cancer.json",
+    "\n  6 of 6 can be ASKED.",
+    "  6 can be GOT WRONG -- a slot, a pipeline and a controlled score.",
+    "  3 are ANSWERED WELL -- every gate in that pipeline came back positive.",
     "\n----------------------------------------------------------------------------------------------------",
     "  EVERY GATE FROM EVERY LOOP -- passes and failures together",
     "----------------------------------------------------------------------------------------------------",
-    "\n  loop 1  close the growth feedback",
+    "\n  loop 1   close the growth feedback",
     "      PASS   G1 closure",
     "      PASS   G2 signal",
     "      FAIL   G3 feedback earns its place",
     "      FAIL   G4 beats the catalogue",
-    "\n  loop 4  a medium the model can grow on",
+    "\n  loop 4   a medium the model can grow on",
     "      PASS   M1 feasible",
     "      PASS   M2 retest",
     "      FAIL   M3 slack",
-    "\n  loop 5  the variant-addressable slot",
+    "\n  loop 5   the variant-addressable slot",
     "      PASS   V1 encode",
     "      PASS   V2 signal",
     "      FAIL   V3 partial loss is real",
     "      FAIL   V4 beats the catalogue",
-    "\n  loop 6  is the dead link deserved",
+    "\n  loop 6   is the dead link deserved",
     "      PASS   C1 sanity",
     "      PASS   C2 beats 1D proximity",
     "      PASS   C3 reaches a cell outcome",
     "      PASS   C4 trans replication",
-    "\n  loop 7  turn it into a pipeline",
+    "\n  loop 7   turn it into a pipeline",
     "      PASS   L1 signal",
     "      PASS   L2 beats 1D",
     "      PASS   L3 adds to the lookup",
     "      PASS   L4 holds under chromosome-blocked folds",
-    "\n  loop 8  the real chromatin test",
+    "\n  loop 8   the real chromatin test",
     "      PASS   R1 replicates agree",
     "      PASS   R2 beats the naked-DNA control",
     "      PASS   R3 signal above shuffles",
     "      PASS   R4 beats composition",
+    "\n  loop 12  side effects",
+    "      PASS   S1 join",
+    "      PASS   S2 signal",
+    "      FAIL   S3 beats target count",
+    "      PASS   S4 beats lookups",
+    "\n  loop 14  cancer drivers",
+    "      PASS   K1 join",
+    "      PASS   K2 signal",
+    "      PASS   K3 beats length and citations",
+    "      PASS   K4 beats lookups",
+    "\n  loop 15  does the cell have slack",
+    "      PASS   P1 the gate was the problem",
+    "      PASS   P2 the right amount of slack",
+    "      FAIL   P3 the slack is in the right places",
+    "\n  loop 16  retiring saturating kinetics",
+    "      PASS   Q1 the invariance holds",
+    "      FAIL   Q2 gene-specific kinetics available",
+    "\n  loop 17  what made model4",
+    "      PASS   W1 arithmetic reconstructs",
+    "      PASS   W2 stored as top-k",
+    "      PASS   W3 producer absent",
+    "      FAIL   W4 lists are reliable",
+    "\n  loop 18  which drugs are cytotoxic",
+    "      PASS   D1 join",
+    "      PASS   D2 signal",
+    "      PASS   D3 beats target count",
+    "      PASS   D4 beats lookups",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  20 gates passed, 5 failed. Both numbers are the point: a project where",
+    "\n  37 gates passed, 9 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -374,19 +622,25 @@
     "  the shipped model could eat anything  221 uptakes barred incl. ATP; a real medium moved FBA 0.6491 -> 0.6850  [loop_medium]",
     "  partial loss buys nothing           dose-response 0.5513 vs knockout 0.5529                 [loop_variant]",
     "  measured torsion predicts transcription  rho +0.1766 vs naked-DNA control -0.1423, partial +0.1436   [loop_real_chromatin]",
+    "  cytotoxic drugs are separable      partial AUC 0.7233 after target count removed, on 57 cytotoxics    [loop_drug]",
+    "  side effects are NOT               same predictor, same confound: partial +0.0515, inside the null       [loop_sideeffect]",
+    "  the model says what is NOT a driver  partial 0.2990 (i.e. 0.7010 for non-drivers); LoF subset 0.5073  [loop_cancer]",
+    "  the 92% no-slack result was my bug   11.7% of knockouts cost >1% of growth, not 92%                 [loop_slack]",
+    "  model4 is a weak ranker's output    recall@10 0.99%, lift 8.7x, producer still absent            [loop_provenance]",
     "  model4 is not a fold                8.8% of its pairs are same-chromosome; a Hi-C map runs 70-90%              [loop_fold_link]",
     "\n----------------------------------------------------------------------------------------------------",
     "  THE DISTANCE LEFT",
     "----------------------------------------------------------------------------------------------------",
-    "  any point mutation          13 items -- no module consumes it and records a result; no controlled score",
-    "  drug effect              4,275 items -- no module consumes it and records a result; no controlled score",
-    "  side effect                 48 items -- no module consumes it and records a result; no controlled score",
-    "  cancer                     839 items -- no module consumes it and records a result; no controlled score",
-    "\n  AND THE LIMIT THAT APPLIES TO EVERY ROW ABOVE.  `answered` here means the question is",
-    "  ASKABLE, CONNECTED and FALSIFIABLE. It does not mean answered WELL. The two rows that pass",
-    "  do so with modest effects -- a rho of 0.18 for torsion, an AUC of 0.62 for the growth loop --",
-    "  and one of them, `any protein change`, passes on the weakest admissible reading: a knockout",
-    "  is a protein change to zero, which is one perturbation shape out of many.",
-    "    manifest: 8 inputs, coverage 8/8 (100.0%) by 'all', seed 1904, controls 2"
+    "  NEGATIVE CONTROL             0 items -- nothing addressable; no module consumes it and records a result; no controlled score",
+    "\n  THREE LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
+    "    1  Effects are modest. rho 0.18 for torsion against transcription; AUC 0.72 for cytotoxic",
+    "       class after confound removal. Real, controlled, and not large.",
+    "    2  The cancer row is 4/4 and its finding is INVERTED: after removing gene length and",
+    "       citation count the model predicts NON-drivers at 0.7010, and the loss-of-function",
+    "       subset it could mechanistically explain sits at 0.5073, which is chance. A gate",
+    "       boolean cannot carry that; a reader who stops at the column gets it backwards.",
+    "    3  Nothing here predicts a QUANTITY. Every passing row separates classes -- driver from",
+    "       not, cytotoxic from not, high torsion from low. None of them says how much.",
+    "    manifest: 14 inputs, coverage 14/14 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }
