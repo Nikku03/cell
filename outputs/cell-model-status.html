@@ -1,4 +1,4 @@
-<title>Cell model — measured status after forty-one loops</title>
+<title>Cell model — measured status after forty-seven loops</title>
 <style>
   :root{
     --bg:#F5F7F6; --surface:#FFFFFF; --ink:#14181A; --muted:#5B6669; --hair:#DCE2E0;
@@ -101,7 +101,7 @@
 <div class="wrap">
 
   <header style="display:flex;flex-direction:column;gap:.75rem">
-    <p class="eyebrow">Whole-cell model · measured status · forty-one loops</p>
+    <p class="eyebrow">Whole-cell model · measured status · forty-seven loops</p>
     <h1>What this cell model can answer, what it cannot, and how each was found out</h1>
     <p class="lede">The goal was a model that answers anything in the cell — any mutation, any protein
     change, any chromosome fold, drug effect, side effect, cancer. As stated that cannot fail, so it was
@@ -113,7 +113,7 @@
     <div class="fig"><span class="v">6</span><span class="k">question types that can be <em>asked</em></span></div>
     <div class="fig"><span class="v">6</span><span class="k">that can now be <em>got wrong</em></span></div>
     <div class="fig hero"><span class="v">3</span><span class="k">that are <em>answered well</em></span></div>
-    <div class="fig"><span class="v">84 / 32</span><span class="k">gates passed / failed</span></div>
+    <div class="fig"><span class="v">100 / 38</span><span class="k">gates passed / failed</span></div>
   </div>
 
   <hr class="rule">
@@ -162,7 +162,7 @@
   <hr class="rule">
 
   <section>
-    <h2>The forty-one loops</h2>
+    <h2>The forty-seven loops</h2>
     <p style="font-size:.95rem;color:var(--muted)">Numbered because the order is real: each loop's target
     was chosen by the previous loop's measurement, not planned in advance.</p>
     <div class="loops">
@@ -450,6 +450,44 @@
         <div class="gates"><span class="chip p">target measured 4/4</span><span class="chip p">engine 4/4</span><span class="chip f">extrusion 2/4</span><span class="chip f">stiffness 3/4</span><span class="chip p">4D 4/4</span><span class="chip f">compartments 1/4</span><span class="chip f">affinity 1/4</span><span class="chip f">surrogate 1/4</span></div>
       </div></div>
 
+      <div class="loop"><div class="idx">43<br>–47</div><div class="body">
+        <p class="q">Close the insulation gap, then fix everything fixable.</p>
+        <p class="a"><strong>First, was the gate even achievable?</strong> I'd asserted 0.40 and never
+        justified it. A second experiment — GM12878 in situ <em>replicate</em> against primary —
+        gives insulation <span class="chip n">r = 0.9285</span>. So the bar was soft and the model was
+        genuinely short. It was not moved.</p>
+        <p class="a"><strong>The fix that worked:</strong> the CTCF barrier re-rolled its blocking
+        probability <em>every timestep</em>, so a median site held a leg 1.9 steps out of a 27-step
+        cohesin lifetime. A barrier that gets a fresh chance to fail every step is not a barrier.
+        Occupancy as a persistent state of the site: insulation <strong>0.2974 → 0.3617</strong>.</p>
+        <p class="a"><strong>Three that didn't.</strong> Loading bias is real (4× over its shuffled
+        control) and makes insulation worse — rejected, not kept. Excluded volume via Langevin
+        overshot to <strong>P(s) = −2.11</strong>, the textbook dilute self-avoiding-walk exponent,
+        where chromatin is a screened melt at −0.96. And a claim of mine was retracted: discrete
+        contact counting cannot beat the closed form, because the Gaussian contact formula is
+        <em>exact</em> per configuration.</p>
+        <p class="a"><strong>A premise I built on for eleven loops was false.</strong> The whole
+        closed-form architecture rests on "Langevin is unaffordable." Measured: <span class="chip n">0.20 s</span>
+        per configuration against the closed form's 0.42 s. Twice cheaper — though a closed-form
+        configuration is an exact ensemble average and a Langevin one is a single noisy snapshot,
+        so the trade only favours sampling when samples are what you want.</p>
+        <p class="a"><strong>Then the buffering test — and the first time naming a missing layer let
+        us use it.</strong> Re-ranking the model's own tail lifted precision <strong>0.7658 →
+        0.8228</strong> against a shuffled 95th of 0.7785. But the hypothesis was wrong: all four
+        <em>redundancy</em> features point the wrong way (more isozymes predicts <em>not</em>
+        buffered), and what separates the over-called genes is <em>centrality</em> — they're
+        peripheral, not backed up. The model over-calls the edges of its own network. That's scope,
+        not biology.</p>
+        <p class="a"><strong>And a guard for the bug that caused two false negatives.</strong>
+        Human-GEM ships empty gene names, so a symbol join silently matched zero of 1,784 genes and
+        the isozyme features read exactly 0.5000 against an exactly 0.5000 band — the signature of a
+        column never computed. <code>check_features</code> now fails loudly on constant columns; an
+        audit across four loops came back clean.</p>
+        <div class="gates"><span class="chip p">ceiling measured</span><span class="chip p">barrier fixed</span><span class="chip f">loading bias</span><span class="chip f">excluded volume</span><span class="chip p">buffering usable</span><span class="chip f">buffering ≠ redundancy</span></div>
+      </div></div>
+
+
+
 
 
 
@@ -498,6 +536,12 @@
           <tr><td class="name">Loop lifetime out vs residence in</td><td class="n">14.8 / 15.0 min</td><td class="src">loop_fourth</td></tr>
           <tr><td class="name">Physics transfers to an unseen chromosome</td><td class="n">+0.2852</td><td class="src">loop_surrogate</td></tr>
           <tr><td class="name">…a trained CNN on the same task</td><td class="n">+0.0893</td><td class="src">loop_surrogate</td></tr>
+          <tr><td class="name">Insulation ceiling, replicate Hi-C</td><td class="n">0.9285</td><td class="src">loop_insulation</td></tr>
+          <tr><td class="name">Persistent CTCF barrier</td><td class="n">0.2974 → 0.3617</td><td class="src">loop_insulation</td></tr>
+          <tr><td class="name">Excluded volume overshoots to a SAW</td><td class="n">P(s) −2.11</td><td class="src">loop_langevin</td></tr>
+          <tr><td class="name">Langevin cheaper than the closed form</td><td class="n">0.20 s / 0.42 s</td><td class="src">loop_langevin</td></tr>
+          <tr><td class="name">Buffering predicted <em>and</em> usable</td><td class="n">0.7658 → 0.8228</td><td class="src">loop_buffering</td></tr>
+          <tr><td class="name">…and it is centrality, not redundancy</td><td class="n">0 / 4 support</td><td class="src">loop_buffering</td></tr>
           <tr class="gone"><td class="name">The model says what is <em>not</em> a driver</td><td class="n">0.7010</td><td class="src">loop_cancer</td></tr>
           <tr class="gone"><td class="name">…and is at chance on LoF drivers</td><td class="n">0.5073</td><td class="src">loop_cancer</td></tr>
         </tbody>
@@ -536,7 +580,7 @@
   <hr class="rule">
 
   <footer>
-    <p>84 gates passed, 32 failed, across forty-one loops. Both numbers are reported because a project
+    <p>100 gates passed, 38 failed, across forty-seven loops. Both numbers are reported because a project
     where every gate passes was not gating anything. Ten results have been retracted or corrected after
     being measured more carefully — most of them faults in the instrument rather than the data: an audit
     that credited itself, a search through its own vocabulary, reachability through a shared 38&nbsp;MB
