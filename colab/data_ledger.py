@@ -268,6 +268,30 @@ LEDGER = [
      "url": "https://raw.githubusercontent.com/SysBioChalmers/Human-GEM/main/model/genes.tsv",
      "source": "Human-GEM gene annotation table, ENSG -> symbol / Entrez / UniProt",
      "why": "the join between Human-GEM's ENSG ids and everything else here, which is keyed on symbol"},
+    # The three below are the sources that gave cell_complete.json a producer. Every other entry in
+    # this ledger backs a RESULT; these back the FILE 227 modules read, which had no provenance at all.
+    {"name": "gnomad_loeuf.txt.bgz", "path": SP / "gnomad_loeuf.txt.bgz", "kind": "raw",
+     "sha256": "153031d34b6794e8", "bytes": 4609488,
+     "url": "https://storage.googleapis.com/gcp-public-data--gnomad/release/2.1.1/constraint/"
+            "gnomad.v2.1.1.lof_metrics.by_gene.txt.bgz",
+     "source": "gnomAD v2.1.1 per-gene loss-of-function constraint",
+     "why": "the source of cell_complete's loeuf column, and the one field that reproduces EXACTLY -- "
+            "1.0000 exact over 15,038 genes. That exactness is what pins the version: v2.1.1 and not "
+            "v4, which would have shown the same drift the coordinates do"},
+    {"name": "cpgIslandExt.txt.gz", "path": SP / "cpgIslandExt.txt.gz", "kind": "raw",
+     "sha256": "2339f8bad0ec9993", "bytes": 717984,
+     "url": "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cpgIslandExt.txt.gz",
+     "source": "UCSC hg38 CpG islands, Gardiner-Garden and Frommer calls",
+     "why": "the source of the cpg column. It is the right track -- agreement rises from 0.72 to 0.92 "
+            "when the query point moves to the file's own tss -- but no declared rule reaches the 0.90 "
+            "gate, so the field is recorded as unverified rather than claimed"},
+    {"name": "goa_human.gaf.gz", "path": SP / "goa_human.gaf.gz", "kind": "raw",
+     "sha256": "db472faff1785878", "bytes": 15041996,
+     "url": "https://current.geneontology.org/annotations/goa_human.gaf.gz",
+     "source": "GO annotations for human, current release",
+     "why": "fetched for cell_complete's proc and comp columns and NOT used for them. Those are each "
+            "one of exactly 12 buckets and the GO-term-to-bucket map is recorded nowhere, so the "
+            "ontology is retrievable and the coarsening is not. Kept because that gap is the finding"},
 ]
 TRANSFORMS = {"build_abcfeat": build_abcfeat, "build_lambert": build_lambert}
 
@@ -396,11 +420,16 @@ def main():
     if miss:
         report(f"  currently restorable: {', '.join(r['name'] for r in miss)}")
 
-    report("\n  NOT IN THIS LEDGER, and it is the biggest remaining hole: cell_complete.json is 38 MB,")
-    report("  read by 227 modules, gitignored, and has no external source to fetch from. It is a")
-    report("  DERIVED artefact whose producer is not in this repo -- the same condition as _abcfeat.json")
-    report("  before today, but with nothing to rebuild it from. A ledger cannot fix that; only")
-    report("  recovering or rewriting its builder can.")
+    report("\n  STILL NOT IN THIS LEDGER, and still the biggest hole, but smaller than it was:")
+    report("  cell_complete.json is 38 MB, read by 227 modules, gitignored, and has no external source")
+    report("  to fetch from. It is a DERIVED artefact whose original producer is lost. It now has a")
+    report("  PARTIAL one -- colab/build_cell_complete.py rebuilds 8 of its 27 per-gene fields from the")
+    report("  three sources added above plus the Ensembl GTF and Lambert, and CHECKS each against the")
+    report("  surviving copy: 7 agree, cpg does not, and 17% of all module-reads are now backed by a")
+    report("  named source rather than by the file's continued existence. The other 83% is classified,")
+    report("  which is not the same as recovered: 30% has a URL and no download, 20% has real data with")
+    report("  the rule or the source unrecorded, 6% is labels this project invented and cannot rebuild.")
+    report("  A ledger cannot close that; only the missing downloads and the lost rules can.")
 
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"test": "data_ledger", "entries": rows, "rebuilds": rebuilds,

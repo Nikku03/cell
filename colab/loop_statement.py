@@ -67,6 +67,7 @@ LOOPS = [
     ("44  where cohesin lands", "loop_loading.json", "gates"),
     ("45  Langevin with excluded volume", "loop_langevin.json", "gates"),
     ("46  is buffering predictable", "loop_buffering.json", "gates"),
+    ("48  a producer for cell_complete.json", "build_cell_complete.json", "gates"),
     ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 
@@ -229,6 +230,15 @@ def main():
     if lp:
         say(f"  model4 is a weak ranker's output    recall@10 {lp['recall_at10']:.2%}, lift "
             f"{lp['lift']:.1f}x, producer still absent            [loop_provenance]")
+    bcc = R.get("build_cell_complete.json")
+    if bcc:
+        nv = sum(1 for v in bcc["checks"].values() if v["pass"])
+        say(f"  the 38 MB file NOW HAS A PRODUCER   {nv}/{len(bcc['checks'])} rebuilt fields match the "
+            f"surviving copy; loeuf exactly, at 1.0000    [build_cell_complete]")
+        say(f"  and it covers {bcc['reads_verified']/bcc['total_reads']:.0%} of the reads       "
+            f"{bcc['reads_declared']/bcc['total_reads']:.0%} more has a URL and no download, "
+            f"{bcc['reads_invented']/bcc['total_reads']:.0%} is invented labels with no rule  "
+            f"[build_cell_complete]")
     lf = R.get("loop_fold_link.json")
     if lf:
         l0 = lf.get("L0_what_is_it", {})
