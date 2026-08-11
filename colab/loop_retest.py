@@ -225,10 +225,27 @@ def main():
     say(f"  reference mu RE-SOLVED at the final bounds: {MU_REF:.8f}/h "
         f"(loop_slack's one-line fix; loop 4 used the bisection iterate and got a bogus 92%)")
 
+    # CACHE EACH PASS. The loop pass runs a full fixed point per knockout and overran the 10-minute
+    # ceiling on the first attempt, losing the frozen pass with it. Each pass is now keyed by kappa and
+    # written as soon as it completes, so a rerun resumes instead of repeating.
+    SC = Path(os.environ.get("CELL_SCRATCH",
+              "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
+    tag = f"{KAPPA:.6g}_{len(keep)}"
+
+    def cached(name, fn):
+        f = SC / f"_retest_{name}_{tag}.json"
+        if f.exists():
+            say(f"    reusing cached {name} pass from {f.name}")
+            return json.load(open(f))
+        out = fn()
+        json.dump(out, open(f, "w"))
+        return out
+
     gids = [g.id for g in M.genes]
-    frozen, plain = {}, {}
     t1 = time.time()
-    for n, gid in enumerate(gids):
+    def _frozen():
+      frozen = {}
+      for n, gid in enumerate(gids):
         g = M.genes.get_by_id(gid)
         touched = [r for r in g.reactions if r.id in gpr]
         E2 = dict(E0)
@@ -246,17 +263,24 @@ def main():
             r.bounds = CAPPED[r.id]
         if n % 1000 == 0:
             say(f"      frozen {n}/{len(gids)} ({time.time()-t1:.0f}s)")
+      return frozen
+    frozen = cached("frozen", _frozen)
     say(f"    frozen pass {time.time()-t1:.0f}s")
 
     movers = [g for g in gids if abs(frozen[g] - MU_REF) > 1e-6 * MU_REF]
     say(f"    {len(movers)} of {len(gids)} knockouts move growth by more than 1e-6 relative "
         f"(open medium: 2,848 of 2,848 by a threshold that turned out to be numerical dust)")
-    loop = dict(frozen)
     t2 = time.time()
-    for n, gid in enumerate(movers):
-        loop[gid] = fixed_point(KAPPA, ko=gid, mu0=MU_WT)[0]
-        if n % 100 == 0:
-            say(f"      loop {n}/{len(movers)} ({time.time()-t2:.0f}s)")
+
+    def _loop():
+        out = {}
+        for n, gid in enumerate(movers):
+            out[gid] = fixed_point(KAPPA, ko=gid, mu0=MU_WT)[0]
+            if n % 25 == 0:
+                say(f"      loop {n}/{len(movers)} ({time.time()-t2:.0f}s)")
+        return out
+    loop = dict(frozen)
+    loop.update(cached("loop", _loop))
     say(f"    loop pass {time.time()-t2:.0f}s")
 
     # plain FBA on the same medium, no protein layer
@@ -264,7 +288,10 @@ def main():
         r.bounds = ORIG[r.id]
     mu_plain_wt = float(M.slim_optimize())
     t3 = time.time()
-    for n, gid in enumerate(gids):
+
+    def _plain():
+      plain = {}
+      for n, gid in enumerate(gids):
         g = M.genes.get_by_id(gid)
         touched = []
         for r in g.reactions:
@@ -279,6 +306,8 @@ def main():
         plain[gid] = 0.0 if (v is None or not np.isfinite(v)) else float(max(v, 0.0))
         for r in touched:
             r.bounds = ORIG[r.id]
+      return plain
+    plain = cached("plain", _plain)
     say(f"    plainFBA pass {time.time()-t3:.0f}s (no-protein-layer mu {mu_plain_wt:.5f}/h)")
 
     # ---- score on loop 1's own gene set ---------------------------------------------------------------
