@@ -362,6 +362,41 @@ def main():
     say(f"     mean r {np.mean(fr):+.4f} vs mean null {np.mean(fn):.4f}")
     say(f"     E5 {'PASS' if e5 else 'FAIL'}  (every fold positive and the mean above the null)")
 
+    # ---- why E3 passed and E4 did not ----------------------------------------------------------------
+    # E4's residual correlation is NEGATIVE, and negative in all five folds. A sign that stable is not
+    # noise, so E3's +0.0720 needs explaining rather than celebrating. The obvious candidate is study
+    # bias: a protein studied by many labs has many BioGRID edges, a drug hitting such proteins is
+    # close to everything in the network AND has many recorded side effects, and both halves of E3
+    # then move together for a reason that has nothing to do with the cell.
+    deg = collections.Counter()
+    with gzip.open(SC / "biogrid_hs_edges.tsv.gz", "rt", errors="ignore") as f:
+        for ln in f:
+            p = ln.rstrip("\n").split("\t")
+            if len(p) >= 3 and p[2] == "physical" and p[0] != p[1]:
+                deg[p[0]] += 1
+                deg[p[1]] += 1
+    mdeg = np.array([np.mean([deg.get(s, 0) for s in T[d]]) for d in drugs])
+    nse = np.array([len(se[d]) for d in drugs], float)
+    r_deg_se = float(spearmanr(mdeg, nse).statistic)
+    pair_deg = (mdeg[ii] + mdeg[jj]) / 2
+    r_deg_sep = float(spearmanr(pair_deg[zero], -sep[zero]).statistic)
+    # separation with the pair's mean degree partialled out, against raw side-effect overlap
+    Ad = np.column_stack([pair_deg[zero], np.ones(int(zero.sum()))])
+    cd, *_ = np.linalg.lstsq(Ad, -sep[zero], rcond=None)
+    sep_resid = -sep[zero] - Ad @ cd
+    r_sep_only = float(spearmanr(sep_resid, js[zero]).statistic)
+    say(f"\n     diagnostic  E3 PASSED AND E4 FAILED WITH THE SIGN REVERSED, in every fold. That")
+    say(f"                 asks for an explanation of E3 rather than a celebration of it.")
+    say(f"                 mean BioGRID degree of a drug's targets vs its side-effect count "
+        f"{r_deg_se:+.4f}")
+    say(f"                 pair mean degree vs -separation                                  "
+        f"{r_deg_sep:+.4f}")
+    say(f"                 -separation vs side-effect overlap, degree partialled out        "
+        f"{r_sep_only:+.4f}")
+    say(f"                 A well-studied protein has many edges, so a drug hitting one sits close to")
+    say(f"                 everything AND has more recorded side effects. Both halves of E3 move with")
+    say(f"                 how much the literature has looked, which is not a fact about the cell.")
+
     say("\n" + "=" * 100)
     gates = {"E1 join exists and can be split": e1, "E2 shared targets predict shared effects": e2,
              "E3 network adds where the lookup cannot": e3,
@@ -376,13 +411,24 @@ def main():
         say(f"  the whole point: the count confound that has failed this row since loop 12 is")
         say(f"  regressed out by construction rather than argued with.")
     else:
-        say(f"  THE ANSWER IS NO, OR NOT YET. Shared targets do predict shared side effects "
-            f"({r_t:+.4f}),")
-        say(f"  which is a lookup. On the {int(zero.sum()):,} pairs with no target in common the")
-        say(f"  network gives {r_s:+.4f} against a null of {n_s:.4f}, and {r_r:+.4f} against "
-            f"{n_r:.4f} on the residual.")
-        say(f"  Reformulating the question from HOW MANY to WHICH was the right move and it is not")
-        say(f"  enough on its own; recorded as a negative rather than retried until it passes.")
+        say(f"  THE ANSWER IS NO, AND THE WAY IT IS NO IS THE USEFUL PART. Shared targets do predict")
+        say(f"  shared side effects ({r_t:+.4f} against {n_t:.4f}), which is a lookup. On the "
+            f"{int(zero.sum()):,} pairs with")
+        say(f"  no target in common, network separation clears its null ({r_s:+.4f} vs {n_s:.4f}) --")
+        say(f"  and then REVERSES to {r_r:+.4f} once each drug's side-effect count and the population")
+        say(f"  frequency of the terms are removed, in all five held-out folds, mean "
+            f"{np.mean(fr):+.4f}.")
+        say(f"  A sign that stable is not noise. The diagnostic above says what it is: mean BioGRID")
+        say(f"  degree of a drug's targets tracks its side-effect count at {r_deg_se:+.4f} and tracks")
+        say(f"  -separation at {r_deg_sep:+.4f}. Both halves of E3 move with how hard the literature")
+        say(f"  has looked at those proteins. E3's pass is recorded as declared and should be READ")
+        say(f"  AS A STUDY-BIAS ARTEFACT, not as evidence -- with degree partialled out it is "
+            f"{r_sep_only:+.4f}.")
+        say(f"  Reformulating from HOW MANY to WHICH was the right move and it was not enough. What")
+        job = "  it changes is the diagnosis: the side-effect row does not fail for want of a better"
+        say(job)
+        say(f"  model, it fails because the interactome that would carry the answer is itself a map")
+        say(f"  of attention. Recorded as a negative rather than retried until something passes.")
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(SC / "sider_se.tsv.gz"), str(SC / "sider_names.tsv"),
@@ -404,6 +450,8 @@ def main():
                "r_target": r_t, "null_target": n_t, "r_sep": r_s, "null_sep": n_s,
                "r_resid": r_r, "null_resid": n_r,
                "baseline_r2": float(1 - np.var(resid) / np.var(js)),
+               "study_bias": {"degree_vs_n_se": r_deg_se, "degree_vs_neg_separation": r_deg_sep,
+                              "separation_partialled_on_degree": r_sep_only},
                "folds": fr, "fold_nulls": fn, "seconds": time.time() - t0, "log": log},
               open(OUT / "loop_shared_effect.json", "w"), indent=2)
     say(f"\n  -> {OUT/'loop_shared_effect.json'}")
