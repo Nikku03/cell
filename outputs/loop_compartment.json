@@ -1,0 +1,102 @@
+{
+  "test": "loop_compartment",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb.npy",
+        "bytes": 14838032,
+        "hash": "3768cedcefe29085",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hg19_chr21.fa.gz",
+        "bytes": 11549785,
+        "hash": "1953ac4ea94b6588",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1926,
+      "used": 1377,
+      "selection": "filtered",
+      "fraction": 0.7149532710280374
+    },
+    "seed": 1904,
+    "controls": [
+      "extrusion-only model as a must-fail negative",
+      "GC shuffled along the chromosome",
+      "GC's own correlation as the direct comparator",
+      "200 eigenvector shuffles",
+      "loops 35-36 P(s) and orientation carried forward"
+    ],
+    "note": "the model is driven by GC, so the only honest gate is whether it beats GC",
+    "warnings": []
+  },
+  "gates": {
+    "A1 extrusion alone makes none": true,
+    "A2 affinity makes them": false,
+    "A3 beats its own input track": false,
+    "A4 does not break TADs": false
+  },
+  "r_gc_vs_measured": 0.48488010480224664,
+  "band": 0.05594353228843063,
+  "results": {
+    "extrusion only": {
+      "r": 0.01086718773332537,
+      "ps": -1.0140848315564592,
+      "orient": 0.24263869688286674,
+      "n_edges": 0
+    },
+    "affinity from GC": {
+      "r": 0.018708835343069115,
+      "ps": -0.016258409205740395,
+      "orient": 0.036142724791171116,
+      "n_edges": 8461
+    },
+    "affinity from SHUFFLED GC": {
+      "r": 0.03654138010783581,
+      "ps": -0.017371899859228518,
+      "orient": 0.04381087162567204,
+      "n_edges": 6217
+    }
+  },
+  "seconds": 42.87265682220459,
+  "log": [
+    "====================================================================================================",
+    "COMPARTMENTS -- the half of chromosome structure extrusion cannot make",
+    "====================================================================================================",
+    "  Extrusion is local and sequential, so it has no way to bring two distant like-labelled",
+    "  regions together. Compartments need homotypic affinity. This starts from a negative that",
+    "  MUST hold, then adds the missing term and asks whether it beats the track that drove it.",
+    "\n  measured eigenvector vs GC: +0.4849  (loop 33 got +0.4848; GC is the input track and",
+    "  therefore the bar the physics has to clear)",
+    "",
+    "    extrusion only (must fail A1)    eigenvector r +0.0109   P(s) -1.0141   orientation +0.2426   (0 affinity edges)",
+    "    + homotypic affinity from GC     eigenvector r +0.0187   P(s) -0.0163   orientation +0.0361   (8461 affinity edges)",
+    "    + affinity from SHUFFLED GC      eigenvector r +0.0365   P(s) -0.0174   orientation +0.0438   (6217 affinity edges)",
+    "\n  A1 EXTRUSION ALONE MAKES NO COMPARTMENTS -- r +0.0109 against a",
+    "     shuffled band of 0.0559. This is a negative that MUST hold; if extrusion already",
+    "     produced a checkerboard, the pipeline would be leaking and nothing below could be read.",
+    "     A1 PASS",
+    "\n  A2 HOMOTYPIC AFFINITY MAKES THEM -- r +0.0187 vs band 0.0559",
+    "     shuffled-GC control: +0.0365",
+    "     A2 FAIL",
+    "\n  A3 IT BEATS ITS OWN INPUT TRACK -- model +0.0187 vs GC alone +0.4849",
+    "     THE REAL GATE. The model was handed GC, so anything at or below GC's own correlation",
+    "     means the polymer re-emitted what it was fed.",
+    "     A3 FAIL",
+    "\n  A4 IT DOES NOT BREAK WHAT ALREADY WORKED",
+    "     P(s) -0.0163  (window [-1.16, -0.76]; loop 36 had -1.0095)",
+    "     orientation +0.0361  (loop 36 had +0.2278)",
+    "     A4 FAIL",
+    "\n====================================================================================================",
+    "  A1 extrusion alone makes none           PASS",
+    "  A2 affinity makes them                  FAIL",
+    "  A3 beats its own input track            FAIL",
+    "  A4 does not break TADs                  FAIL",
+    "  THE AFFINITY TERM DOES NOT DELIVER. Recorded as measured.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1377/1926 (71.5%) by 'filtered', seed 1904, controls 5"
+  ]
+}
