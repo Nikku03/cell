@@ -386,16 +386,24 @@ def main():
     sep_resid = -sep[zero] - Ad @ cd
     r_sep_only = float(spearmanr(sep_resid, js[zero]).statistic)
     say(f"\n     diagnostic  E3 PASSED AND E4 FAILED WITH THE SIGN REVERSED, in every fold. That")
-    say(f"                 asks for an explanation of E3 rather than a celebration of it.")
+    say(f"                 asks for an explanation of E3 rather than a celebration of it. The")
+    say(f"                 hypothesis was study bias, and THE DIAGNOSTIC DOES NOT SUPPORT IT:")
     say(f"                 mean BioGRID degree of a drug's targets vs its side-effect count "
         f"{r_deg_se:+.4f}")
     say(f"                 pair mean degree vs -separation                                  "
         f"{r_deg_sep:+.4f}")
     say(f"                 -separation vs side-effect overlap, degree partialled out        "
         f"{r_sep_only:+.4f}")
-    say(f"                 A well-studied protein has many edges, so a drug hitting one sits close to")
-    say(f"                 everything AND has more recorded side effects. Both halves of E3 move with")
-    say(f"                 how much the literature has looked, which is not a fact about the cell.")
+    say(f"                 Degree is genuinely tied to both halves, so the confound is real -- but")
+    say(f"                 removing it leaves E3 essentially untouched, {r_s:+.4f} -> {r_sep_only:+.4f}. "
+        f"Study bias is")
+    say(f"                 NOT what E3 was measuring, and the tidy story has to be dropped.")
+    say(f"                 What does move it is the count-and-frequency baseline, which alone")
+    say(f"                 accounts for R2 {1 - np.var(resid)/np.var(js):.4f} of side-effect overlap. "
+        f"Take that out and")
+    say(f"                 proximity flips sign. So the raw positive rides on how MANY side effects")
+    say(f"                 each drug has -- the same confound that has failed this row since loop 12,")
+    say(f"                 reappearing in a design built specifically to be immune to it.")
 
     say("\n" + "=" * 100)
     gates = {"E1 join exists and can be split": e1, "E2 shared targets predict shared effects": e2,
@@ -418,17 +426,20 @@ def main():
         say(f"  and then REVERSES to {r_r:+.4f} once each drug's side-effect count and the population")
         say(f"  frequency of the terms are removed, in all five held-out folds, mean "
             f"{np.mean(fr):+.4f}.")
-        say(f"  A sign that stable is not noise. The diagnostic above says what it is: mean BioGRID")
-        say(f"  degree of a drug's targets tracks its side-effect count at {r_deg_se:+.4f} and tracks")
-        say(f"  -separation at {r_deg_sep:+.4f}. Both halves of E3 move with how hard the literature")
-        say(f"  has looked at those proteins. E3's pass is recorded as declared and should be READ")
-        say(f"  AS A STUDY-BIAS ARTEFACT, not as evidence -- with degree partialled out it is "
-            f"{r_sep_only:+.4f}.")
-        say(f"  Reformulating from HOW MANY to WHICH was the right move and it was not enough. What")
-        job = "  it changes is the diagnosis: the side-effect row does not fail for want of a better"
-        say(job)
-        say(f"  model, it fails because the interactome that would carry the answer is itself a map")
-        say(f"  of attention. Recorded as a negative rather than retried until something passes.")
+        say(f"  A sign that stable is not noise. The obvious explanation was study bias -- well-studied")
+        say(f"  proteins have more edges and more recorded effects -- and IT IS THE WRONG ONE. Degree")
+        say(f"  does track both halves ({r_deg_se:+.4f} to side-effect count, {r_deg_sep:+.4f} to "
+            f"-separation), but")
+        say(f"  partialling it out moves E3 from {r_s:+.4f} to {r_sep_only:+.4f}, which is nothing. "
+            f"The tidy story is dropped.")
+        say(f"  What actually carries the raw positive is how MANY side effects each drug has: the")
+        say(f"  count-and-frequency baseline alone accounts for R2 "
+            f"{1 - np.var(resid)/np.var(js):.4f} of side-effect overlap,")
+        say(f"  and once it is removed proximity reverses. THAT IS THE SAME CONFOUND THAT HAS FAILED")
+        say(f"  THIS ROW SINCE LOOP 12, reappearing inside a design built specifically to be immune")
+        say(f"  to it -- it entered through the outcome instead of the predictor. Reformulating from")
+        say(f"  HOW MANY to WHICH was right and was not sufficient; the row stays 3-of-4 and this is")
+        say(f"  recorded as a negative rather than retried until something passes.")
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(SC / "sider_se.tsv.gz"), str(SC / "sider_names.tsv"),
