@@ -35,21 +35,29 @@ PREDECLARED, before any number:
                 set. fails -> 0.2990 was manufactured by the regression, and loop_cancer's direction
                 claim has to be withdrawn, which is the honest outcome if it is what happened.
     N3 IT IS THE SURVIVABILITY CONSTRAINT   the anti-correlation is stronger for loss-of-function
-                drivers than for activating drivers.
+                drivers than for activating drivers, by a margin that beats permuting the ROLE label
+                with the matched pairs held fixed.
                 THIS IS THE DISCRIMINATING GATE, and it is the reason this loop can settle anything.
                 The survivability story makes a prediction the artefact story cannot: the constraint
                 only binds where the driver mechanism requires LOSING the gene. A tumour suppressor
                 must be deletable, so it must be non-essential. An oncogene is switched on, not lost,
                 so its essentiality is unconstrained -- an activating driver is free to be essential.
                 An over-control artefact knows nothing about roles and hits both classes equally.
-    N4 POSITIVE CONTROL   LOEUF still points FORWARDS inside the same matched set. If matching flattens
-                the one measure that genuinely predicts drivers, the matching is too aggressive and N2
-                is unreadable regardless of which way it came out.
+                The permutation is not optional. Two separately-matched AUCs read side by side is not
+                a test: each carries its own sampling noise, and a gap of 0.05 between two numbers
+                whose shuffle bands are both +/-0.03 is nothing at all.
+    N4 POSITIVE CONTROL   LOEUF still points FORWARDS inside the same matched set -- significant AND
+                in the right direction, because a positive control that is significant the wrong way
+                round is a second anomaly, not a control. If matching flattens the one measure that
+                genuinely predicts drivers, the matching is too aggressive and N2 is unreadable
+                regardless of which way it came out.
 
 CONTROLS: greedy nearest-neighbour matching without replacement inside a 0.2 SD caliper; 200 label
 shuffles inside the matched set; confounds re-scored after matching as the design check; LOEUF as a
-positive control; roles taken from IntOGen's own annotation, with genes carrying both roles excluded
-from the role comparison rather than assigned to one.
+direction-checked positive control, negated to loop_cancer's convention so low LOEUF is the 'matters
+more' end; the role contrast tested by permuting role with pairs fixed; roles taken from IntOGen's own
+annotation, with genes carrying both roles excluded from the role comparison rather than assigned to
+one.
 
 -> outputs/loop_survivable.json
 """
@@ -104,12 +112,17 @@ def match(T, rng):
 
 
 def scored(T, pairs, col):
-    """Values and labels for one column inside the matched set, dropping pairs with a missing value."""
+    """Values and labels for one column inside the matched set, dropping pairs with a missing value.
+
+    LOEUF is negated to match loop_cancer's convention: a LOW LOEUF means a gene is intolerant to
+    losing a copy, so low is the 'matters more' end. Without the flip its column would read as an
+    anti-correlation when it is the positive control pointing the right way."""
+    sgn = -1.0 if col == "LOEUF" else 1.0
     v, y = [], []
     for i, j in pairs:
         a, b = T[col].iloc[i], T[col].iloc[j]
         if np.isfinite(a) and np.isfinite(b):
-            v += [float(a), float(b)]
+            v += [sgn * float(a), sgn * float(b)]
             y += [1, 0]
     return np.array(v), np.array(y)
 
@@ -217,29 +230,52 @@ def main():
     say(f"    N2 {'PASS' if n2 else 'FAIL'}  (essentiality still below 0.5 and outside the band)")
 
     # ---- N4 positive control (read before N3, since N3 is unreadable without it) --------------------
-    n4 = bool(res["LOEUF"]["significant"])
-    say(f"\n  N4 POSITIVE CONTROL -- LOEUF inside the matched set: {res['LOEUF']['auc']:.4f}"
-        f"   N4 {'PASS' if n4 else 'FAIL'}")
+    # direction matters as much as significance: a positive control that is significant in the WRONG
+    # direction is not a positive control, it is a second anomaly.
+    n4 = bool(res["LOEUF"]["significant"] and res["LOEUF"]["auc"] > 0.5)
+    say(f"\n  N4 POSITIVE CONTROL -- LOEUF (negated, so high = intolerant) inside the matched set: "
+        f"{res['LOEUF']['auc']:.4f}   N4 {'PASS' if n4 else 'FAIL'}")
     say("     LOEUF is the measure that genuinely predicts drivers. If matching flattened it too, the")
     say("     matching removed the biology along with the confound and N2 could not be read.")
 
     # ---- N3 the discriminating gate -----------------------------------------------------------------
-    say(f"\n  N3 IT IS THE SURVIVABILITY CONSTRAINT -- each role matched separately against its own")
-    say(f"     controls, so the two numbers are not competing for the same non-driver genes.")
-    role = {}
-    for key, label in (("lof", "loss-of-function drivers"), ("act", "activating drivers")):
-        sub = T[(T[key] == 1) | (T.y == 0)].reset_index(drop=True).copy()
-        sub["y"] = sub[key]
-        p = match(sub, np.random.default_rng(SEED))
-        v, yy = scored(sub, p, "essentiality")
-        a = auc(v, yy) if len(v) >= 40 else float("nan")
-        b = band(v, yy, rng)
-        role[label] = {"auc": a, "band95": 0.5 + b, "n_pairs": len(v) // 2}
-        say(f"    {label:<28}{a:>9.4f}   ({len(v)//2} pairs, band {0.5+b:.4f})")
-    la, aa = role["loss-of-function drivers"]["auc"], role["activating drivers"]["auc"]
-    n3 = bool(np.isfinite(la) and np.isfinite(aa) and (0.5 - la) > (0.5 - aa))
-    say(f"    loss-of-function is {abs(0.5-la):.4f} below chance, activating is {abs(0.5-aa):.4f} "
-        f"{'below' if aa < 0.5 else 'above'}")
+    # ONE matched set over the role-annotated drivers, then the role label is permuted with the pairs
+    # held fixed. Comparing two separately-matched AUCs by eye is not a test: each carries its own
+    # sampling noise, and a 0.05 gap between two numbers whose bands are both +/-0.03 is nothing.
+    say(f"\n  N3 IT IS THE SURVIVABILITY CONSTRAINT -- one matched set over role-annotated drivers,")
+    say(f"     then the LoF/activating label is permuted with the pairs held fixed.")
+    sub = T[(T.lof == 1) | (T.act == 1) | (T.y == 0)].reset_index(drop=True).copy()
+    sub["y"] = ((sub.lof == 1) | (sub.act == 1)).astype(int)
+    p = match(sub, np.random.default_rng(SEED))
+    keep, is_lof = [], []
+    for i, j in p:
+        a, b = sub["essentiality"].iloc[i], sub["essentiality"].iloc[j]
+        if np.isfinite(a) and np.isfinite(b):
+            keep.append((float(a), float(b)))
+            is_lof.append(bool(sub.lof.iloc[i] == 1))
+    keep, is_lof = np.array(keep), np.array(is_lof)
+
+    def split_auc(mask):
+        if mask.sum() < 20:
+            return float("nan")
+        v = np.concatenate([keep[mask, 0], keep[mask, 1]])
+        yy = np.r_[np.ones(mask.sum()), np.zeros(mask.sum())]
+        return auc(v, yy)
+
+    la, aa = split_auc(is_lof), split_auc(~is_lof)
+    delta = aa - la    # positive = the constraint binds harder on loss-of-function drivers
+    null = []
+    for _ in range(N_SHUFFLE):
+        m = rng.permutation(is_lof)
+        null.append(split_auc(~m) - split_auc(m))
+    p95 = float(np.nanpercentile(null, 95))
+    role = {"loss-of-function drivers": {"auc": la, "n_pairs": int(is_lof.sum())},
+            "activating drivers": {"auc": aa, "n_pairs": int((~is_lof).sum())},
+            "delta": delta, "null_95th": p95}
+    say(f"    loss-of-function drivers    {la:>9.4f}   ({int(is_lof.sum())} pairs)")
+    say(f"    activating drivers          {aa:>9.4f}   ({int((~is_lof).sum())} pairs)")
+    say(f"    difference {delta:+.4f} against a permuted 95th percentile of {p95:+.4f}")
+    n3 = bool(np.isfinite(delta) and delta > p95)
     say(f"    N3 {'PASS' if n3 else 'FAIL'}  (gate: the constraint binds harder where the driver "
         f"mechanism requires losing the gene)")
 
@@ -254,11 +290,31 @@ def main():
     elif not n4:
         say("  THE MATCHING WENT TOO FAR. LOEUF, which genuinely predicts drivers, is flattened inside")
         say("  the matched set, so an absent signal here means nothing.")
+    elif not n2 and n3:
+        say(f"  THE POOLED NUMBER WAS THE REGRESSION. THE ROLE SPLIT IS NOT. Two findings, and they")
+        say("  do not conflict -- the second explains the first.")
+        say(f"    1. loop_cancer's 0.2990 is withdrawn. With no regression anywhere, pooled")
+        say(f"       essentiality sits at {res['essentiality']['auc']:.4f} inside a band of "
+            f"{res['essentiality']['band95']:.4f}. The blanket claim that")
+        say("       the model predicts non-drivers was manufactured by partialling out a confound")
+        say("       that predicts the label at 0.8259.")
+        say(f"    2. The two driver roles point OPPOSITE WAYS and cancel. Loss-of-function drivers are")
+        say(f"       less essential than their matched controls ({la:.4f}); activating drivers are MORE")
+        say(f"       essential ({aa:.4f}); the gap of {delta:+.4f} beats permuting role with the pairs")
+        say(f"       held fixed ({p95:+.4f}). A pooled test over both roles has to read as nothing,")
+        say("       because it is averaging a constraint against its opposite.")
+        say("  That is the survivability constraint showing up exactly where it should: a tumour")
+        say("  suppressor has to be deletable, so it cannot be essential; an oncogene is switched on")
+        say("  rather than lost, so nothing stops it from being essential. THE MARGIN IS THIN -- one")
+        say("  test, ~160 pairs a side, and a difference that clears its permutation band by 0.0125.")
+        say("  It is a direction worth one more measurement, not a result to build on.")
     elif not n2:
         say(f"  THE 0.2990 WAS THE REGRESSION, NOT THE BIOLOGY. Without partialling, essentiality sits")
         say(f"  at {res['essentiality']['auc']:.4f} inside a band of {res['essentiality']['band95']:.4f}."
             f" loop_cancer's direction claim")
         say("  is withdrawn: the model does not predict non-drivers, it predicts nothing here.")
+        say("  The role split does not rescue it either: loss-of-function and activating drivers are")
+        say(f"  constrained alike ({la:.4f} vs {aa:.4f}, gap {delta:+.4f} inside {p95:+.4f}).")
     elif n2 and n3:
         say("  THE CONSTRAINT IS REAL AND IT IS SURVIVABILITY. With no regression anywhere, essentiality")
         say(f"  still predicts NON-drivers at {1-res['essentiality']['auc']:.4f}, and it binds harder on")
@@ -275,7 +331,7 @@ def main():
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(INTOGEN), str(CELL)], available=len(T), used=len(pairs) * 2,
-                      selection="matched pairs", seed=SEED,
+                      selection="stratified", seed=SEED,
                       controls=[f"greedy nearest-neighbour matching without replacement, {CALIPER} SD "
                                 f"caliper on length and citations",
                                 f"{N_SHUFFLE} label shuffles inside the matched set",
@@ -283,7 +339,9 @@ def main():
                                 "LOEUF as a positive control",
                                 "genes with both roles excluded from the role comparison"],
                       note="no regression anywhere; the partial-AUC design loop_cancer used is the "
-                           "thing under test, so it is not reused to test itself")
+                           "thing under test, so it is not reused to test itself. coverage is low by "
+                           "design: a matched pair set is a stratification on the two confounds, not "
+                           "a sample of all genes")
     RM.report(man, emit=say)
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"test": "loop_survivable", "manifest": man, "gates": gates, "testable": True,

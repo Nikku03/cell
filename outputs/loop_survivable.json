@@ -1,0 +1,154 @@
+{
+  "test": "loop_survivable",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/intogen.zip",
+        "bytes": 964758,
+        "hash": "854def4465bcd7f9",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 16460,
+      "used": 1166,
+      "selection": "stratified",
+      "fraction": 0.07083839611178615
+    },
+    "seed": 1904,
+    "controls": [
+      "greedy nearest-neighbour matching without replacement, 0.2 SD caliper on length and citations",
+      "200 label shuffles inside the matched set",
+      "confounds re-scored after matching as the design check",
+      "LOEUF as a positive control",
+      "genes with both roles excluded from the role comparison"
+    ],
+    "note": "no regression anywhere; the partial-AUC design loop_cancer used is the thing under test, so it is not reused to test itself. coverage is low by design: a matched pair set is a stratification on the two confounds, not a sample of all genes",
+    "warnings": []
+  },
+  "gates": {
+    "N1 the matching works": true,
+    "N2 the anti-correlation survives": false,
+    "N3 it is the survivability constraint": true,
+    "N4 positive control holds": true
+  },
+  "testable": true,
+  "n_pairs": 583,
+  "confounds": {
+    "gene length": {
+      "all": 0.6753567917942425,
+      "matched": 0.4998984962737835,
+      "band": 0.030328724966091843,
+      "balanced": true
+    },
+    "publication count": {
+      "all": 0.825946498778388,
+      "matched": 0.5002059495894248,
+      "band": 0.03926178840739184,
+      "balanced": true
+    }
+  },
+  "measures": {
+    "essentiality": {
+      "auc": 0.49485420240137223,
+      "band95": 0.5189536878216123,
+      "significant": false,
+      "n_pairs": 583
+    },
+    "dependency fraction": {
+      "auc": 0.5700138109598766,
+      "band95": 0.5342121787012925,
+      "significant": true,
+      "n_pairs": 579
+    },
+    "abundance": {
+      "auc": 0.4090806116114378,
+      "band95": 0.5331441294069534,
+      "significant": true,
+      "n_pairs": 583
+    },
+    "LOEUF": {
+      "auc": 0.6175177778627728,
+      "band95": 0.5338796636548991,
+      "significant": true,
+      "n_pairs": 583
+    }
+  },
+  "by_role": {
+    "loss-of-function drivers": {
+      "auc": 0.4716981132075472,
+      "n_pairs": 159
+    },
+    "activating drivers": {
+      "auc": 0.5248447204968945,
+      "n_pairs": 161
+    },
+    "delta": 0.05314660728934728,
+    "null_95th": 0.04064611898902304
+  },
+  "log": [
+    "====================================================================================================",
+    "THE ANTI-CORRELATION -- survivability constraint, or a control that broke",
+    "====================================================================================================",
+    "  loop_cancer found essentiality ANTI-predicting driver status at 0.2990 after partialling",
+    "  out length and citations. Citations alone predict drivers at 0.8259; regressing out a",
+    "  confound that strong is how reversed residuals get manufactured. No regression here --",
+    "  every driver is paired with a matched non-driver instead.",
+    "\n  IntOGen 2024-06: 633 driver genes; 163 annotated loss-of-function ONLY, 179 activating ONLY",
+    "  genes carrying both roles are excluded from the role comparison rather than assigned to one",
+    "  16,460 genes with coordinates; 601 of them drivers",
+    "\n  matched 583 drivers to distinct non-drivers within 0.2 SD on both confounds (97% of drivers paired)",
+    "\n  N1 THE MATCHING WORKS -- the confounds, before and inside the matched set",
+    "    confound                   all genes   matched   |null| 95th",
+    "    gene length                   0.6754    0.4999        0.5303   balanced",
+    "    publication count             0.8259    0.5002        0.5393   balanced",
+    "    N1 PASS",
+    "\n  N2 THE ANTI-CORRELATION SURVIVES -- measures of how much a gene matters, inside the",
+    "     matched set. below 0.5 means the measure predicts NON-drivers.",
+    "    measure                   matched AUC   |null| 95th     direction",
+    "    essentiality                   0.4949        0.5190  ANTI (non-drivers)   (inside band)",
+    "    dependency fraction            0.5700        0.5342    predicts drivers   ",
+    "    abundance                      0.4091        0.5331  ANTI (non-drivers)   ",
+    "    LOEUF                          0.6175        0.5339    predicts drivers   ",
+    "    N2 FAIL  (essentiality still below 0.5 and outside the band)",
+    "\n  N4 POSITIVE CONTROL -- LOEUF (negated, so high = intolerant) inside the matched set: 0.6175   N4 PASS",
+    "     LOEUF is the measure that genuinely predicts drivers. If matching flattened it too, the",
+    "     matching removed the biology along with the confound and N2 could not be read.",
+    "\n  N3 IT IS THE SURVIVABILITY CONSTRAINT -- one matched set over role-annotated drivers,",
+    "     then the LoF/activating label is permuted with the pairs held fixed.",
+    "    loss-of-function drivers       0.4717   (159 pairs)",
+    "    activating drivers             0.5248   (161 pairs)",
+    "    difference +0.0531 against a permuted 95th percentile of +0.0406",
+    "    N3 PASS  (gate: the constraint binds harder where the driver mechanism requires losing the gene)",
+    "\n====================================================================================================",
+    "  N1 the matching works                     PASS",
+    "  N2 the anti-correlation survives          FAIL",
+    "  N3 it is the survivability constraint     PASS",
+    "  N4 positive control holds                 PASS",
+    "  THE POOLED NUMBER WAS THE REGRESSION. THE ROLE SPLIT IS NOT. Two findings, and they",
+    "  do not conflict -- the second explains the first.",
+    "    1. loop_cancer's 0.2990 is withdrawn. With no regression anywhere, pooled",
+    "       essentiality sits at 0.4949 inside a band of 0.5190. The blanket claim that",
+    "       the model predicts non-drivers was manufactured by partialling out a confound",
+    "       that predicts the label at 0.8259.",
+    "    2. The two driver roles point OPPOSITE WAYS and cancel. Loss-of-function drivers are",
+    "       less essential than their matched controls (0.4717); activating drivers are MORE",
+    "       essential (0.5248); the gap of +0.0531 beats permuting role with the pairs",
+    "       held fixed (+0.0406). A pooled test over both roles has to read as nothing,",
+    "       because it is averaging a constraint against its opposite.",
+    "  That is the survivability constraint showing up exactly where it should: a tumour",
+    "  suppressor has to be deletable, so it cannot be essential; an oncogene is switched on",
+    "  rather than lost, so nothing stops it from being essential. THE MARGIN IS THIN -- one",
+    "  test, ~160 pairs a side, and a difference that clears its permutation band by 0.0125.",
+    "  It is a direction worth one more measurement, not a result to build on.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1166/16460 (7.1%) by 'stratified', seed 1904, controls 5"
+  ]
+}
