@@ -98,6 +98,23 @@ WHAT HAPPENED, written after the run, unedited.
 
     OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 CAN BE ASKED, 1 CAN BE ANSWERED.
 
+RE-RUN, loop 19: 6 ASKABLE, 6 CAN BE GOT WRONG, 3 ANSWERED WELL.
+    All six question types now have a slot, a pipeline and a controlled score. Three have a pipeline
+    whose every gate came back positive:
+        any chromosome fold  <- loop_real_chromatin  (measured bTMP torsion vs transcription, 4/4)
+        drug effect          <- loop_drug            (cytotoxic class from target essentiality, 4/4)
+        cancer               <- loop_cancer          (IntOGen drivers, 4/4)
+    Three do not, and each for a recorded reason: `any point mutation` (the dose-response bought
+    -0.0016 AUC), `side effect` (the correlation was target counting), `metabolic growth` (the feedback
+    did not earn its place and lost to a lookup).
+
+    AND ONE CAVEAT THE VERDICT COLUMN CANNOT SEE.  It reads gate BOOLEANS, not their meaning.
+    loop_cancer is 4/4 -- and its finding is an ANTI-correlation: after removing gene length and
+    citation count, essentiality predicts NON-drivers at 0.7010, and the loss-of-function subset the
+    model could mechanistically explain sits at 0.5073, which is chance. Four passing gates encode "the
+    model can say what is not a driver". A boolean cannot carry that, and a reader who stops at the
+    column will get it backwards.
+
 RE-RUN, loop 13, with the VERDICT column: 6 ASKABLE, 5 CAN BE GOT WRONG, 1 ANSWERED WELL.
     Three things moved at once and only one of them is good news.
     `side effect` gained a slot for the first time -- SIDER 4.1, added by loop 12 -- so it clears the
@@ -210,8 +227,11 @@ ENTRY = {
                     "note": "48 genes with disease associations, PLUS SIDER 4.1 -- 1,430 compounds "
                             "with MedDRA side effects, added by loop 12. Before that there was no "
                             "compound-to-adverse-event data here at all"},
-    "cancer": {"blocks": ["biomarkers", "celltypes", "ctnames"], "note": "biomarker associations and "
-               "cell-type identities; no tumour genotype-to-phenotype block"},
+    # CORRECTED after loop 14, same reason as the point-mutation row: this listed only cell_complete
+    # blocks, and the held-out label loop_cancer actually scores against is IntOGen's driver compendium.
+    "cancer": {"blocks": ["biomarkers", "celltypes", "ctnames"], "files": ["intogen.zip"],
+               "note": "biomarker associations and cell-type identities, PLUS IntOGen's 2024-06 driver "
+                       "compendium (633 genes) added by loop 14 as the held-out label"},
     # THE PERMANENT NEGATIVE CONTROL, and the reason it had to become synthetic.
     # The must-fail calibration has now been invalidated TWICE by ordinary progress: it was `chromosome
     # fold` until loop 8 built that link, then `side effect` until loop 12 built that one. Each time the
@@ -230,6 +250,26 @@ ENTRY = {
     "metabolic growth": {"blocks": ["generxn", "reactions"], "files": ["HumanGEM.xml"],
                          "note": "the solved metabolism is Human-GEM (2,848 genes, 12,931 reactions), "
                                  "ledgered and external; cell_complete's generxn is strings"},
+}
+# WHICH MODULE COUNTS AS A QUESTION'S OWN PIPELINE, and why this list has to exist.
+# Block-name matching credits any module that mentions a block anywhere, including as a CONTROL. That
+# over-credited three times: `drug effect` via loop_sideeffect, and -- the one that made this
+# unavoidable -- `any protein change` marked ANSWERED WELL via loop_cancer.json, a cancer-driver module
+# credited because it uses protein abundance as a lookup. A cancer module is not an answer to "any
+# protein change".
+# So each question declares which module names count as ITS pipeline. This is a judgement, it is written
+# out here to be argued with exactly like ENTRY is, and anything else that touches the slot is reported
+# as ADJACENT rather than counted.
+ACCEPTS = {
+    "any point mutation": ("variant",),
+    "any protein change": ("cell_loop", "deficit", "medium"),
+    "any chromosome fold": ("real_chromatin", "supercoil"),
+    "drug effect": ("drug",),
+    "side effect": ("sideeffect",),
+    "cancer": ("cancer",),
+    "metabolic growth": ("cell_loop", "medium", "slack"),
+    "functional neighbourhood": ("fold_link", "chromatin"),
+    "NEGATIVE CONTROL": (),
 }
 for _q in ENTRY:
     ENTRY[_q].setdefault("files", [])
@@ -443,11 +483,22 @@ def main():
                 gp += pas
                 gf += fal
                 detail[f] = {"passed": pas, "failed": fal}
-        answered_well = bool(ck and gf == 0 and gp > 0)
+        # ANSWERED WELL means SOME pipeline answers it well, not that every module touching the slot
+        # does. Aggregating across all of them marked `drug effect` poorly because loop_sideeffect
+        # failed a gate, even though loop_drug is 4/4 -- penalising a question for an adjacent module's
+        # honest negative. The right criterion is existential: is there a controlled pipeline all of
+        # whose gates came back positive?
+        acc = ACCEPTS.get(q, ())
+        own = {f: v for f, v in detail.items() if any(a in f for a in acc)}
+        adjacent = sorted(set(detail) - set(own))
+        answered_well = any(v["failed"] == 0 and v["passed"] > 0 for v in own.values())
+        best_pipeline = next((f for f, v in own.items()
+                              if v["failed"] == 0 and v["passed"] > 0), None)
 
         rows.append({"question": q, "what": desc, "blocks": counts, "n_items": n,
                      "gates_passed": gp, "gates_failed": gf, "gate_detail": detail,
-                     "answered_well": answered_well,
+                     "answered_well": answered_well, "best_pipeline": best_pipeline,
+                     "adjacent_credits": adjacent,
                      "encode": encode, "pipeline": pipeline, "check": check,
                      "answers": bool(encode and pipeline and check),
                      "emits": bool(encode), "namers": sorted(namers)[:8],
@@ -466,6 +517,11 @@ def main():
     for r in rows:
         say(f"    {r['question']:<22} slots {r['blocks']}")
         say(f"    {'':<22} modules that address it: {', '.join(Path(x).stem for x in r['namers']) or 'NONE'}")
+        if r.get("best_pipeline"):
+            say(f"    {'':<22} answered well by: {r['best_pipeline']}")
+        if r.get("adjacent_credits"):
+            say(f"    {'':<22} ADJACENT (touch the slot, do not answer it): "
+                f"{', '.join(r['adjacent_credits'])}")
         say(f"    {'':<22} recorded results: {', '.join(r['produces']) or 'NONE'}"
             f"   controlled: {', '.join(r['controlled']) or 'NONE'}")
 
