@@ -1,0 +1,106 @@
+{
+  "test": "loop_recall",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1775,
+      "used": 1569,
+      "selection": "filtered",
+      "fraction": 0.8839436619718309
+    },
+    "seed": 1904,
+    "controls": [
+      "200 label shuffles per candidate",
+      "expression included so it cannot hide behind another feature",
+      "precision held fixed when comparing recall"
+    ],
+    "note": "compares dependencies the model misses against genes it correctly ignores; both score ~0 metabolically, so any separation is information it lacks",
+    "warnings": []
+  },
+  "gates": {
+    "R1 the missed are distinguishable": true,
+    "R2 not just expression": true,
+    "R3 it would actually help": false
+  },
+  "candidates": {
+    "PPI degree": {
+      "auc": 0.6792711919986884,
+      "p95": 0.5364312455593813,
+      "beats": true
+    },
+    "in a complex": {
+      "auc": 0.6353459583538285,
+      "p95": 0.5211510083620265,
+      "beats": true
+    },
+    "coexpression partners": {
+      "auc": 0.5031152647975078,
+      "p95": 0.5033338798710172,
+      "beats": false
+    },
+    "paralogue family size": {
+      "auc": 0.4409752964966934,
+      "p95": 0.5384394982784063,
+      "beats": true
+    },
+    "expression": {
+      "auc": 0.6440878286057824,
+      "p95": 0.5379830026780347,
+      "beats": true
+    }
+  },
+  "best_non_expression": "PPI degree",
+  "baseline_precision": 0.7669902912621359,
+  "baseline_recall": 0.35665914221218964,
+  "recall_base": 0.35665914221218964,
+  "recall_plus": 0.309255079006772,
+  "n_missed": 285,
+  "n_true_negative": 1284,
+  "log": [
+    "====================================================================================================",
+    "THE 285 IT MISSES -- what layer would be needed to see them",
+    "====================================================================================================",
+    "  loop_tail measured precision 76.7% and recall 35.7% and said the misses are 'outside",
+    "  metabolism'. That is a shrug unless it names which layer would cover them.",
+    "\n  285 dependencies the model MISSES; 1,284 correct negatives",
+    "  both groups score ~0 in the metabolic model, so anything separating them is information",
+    "  the model does not have",
+    "\n  candidate layer                 AUC   |null| 95th",
+    "  PPI degree                   0.6793        0.5364   SIGNIFICANT",
+    "  in a complex                 0.6353        0.5212   SIGNIFICANT",
+    "  coexpression partners        0.5031        0.5033   no",
+    "  paralogue family size        0.4410        0.5384   SIGNIFICANT",
+    "  expression                   0.6441        0.5380   SIGNIFICANT",
+    "\n  R1 THE MISSED ARE DISTINGUISHABLE -- PASS",
+    "  R2 IT IS NOT JUST EXPRESSION -- best non-expression layer is PPI degree at 0.6793   R2 PASS",
+    "\n  R3 WOULD IT HELP -- baseline metabolic tail: precision 76.7%, recall 35.7%",
+    "    at a matched precision of 76.7%:",
+    "      metabolic cost alone        recall 35.7%  (206 genes called)",
+    "      cost + PPI degree           recall 30.9%  (178 genes called)",
+    "    R3 FAIL  (gate: +5 points of recall)",
+    "\n====================================================================================================",
+    "  R1 the missed are distinguishable       PASS",
+    "  R2 not just expression                  PASS",
+    "  R3 it would actually help               FAIL",
+    "  THE MISSING LAYER IS NAMED AND IT DOES NOT HELP: PPI degree separates the missed genes",
+    "  from the true negatives, and adding it to the predictor does not buy recall at matched",
+    "  precision -- because it promotes true negatives at the same rate. Naming the information",
+    "  is not the same as being able to use it, and that distinction is the result.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1569/1775 (88.4%) by 'filtered', seed 1904, controls 3"
+  ]
+}

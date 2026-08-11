@@ -165,14 +165,24 @@ def main():
             o[te] = m.predict_proba(X[te])[:, 1]
         return o
 
-    def recall_at(o, prec_target):
+    def recall_at(o, prec_target, min_n=20):
+        """Maximum recall reachable at precision >= target.
+
+        NOT the first point where precision dips below target -- precision along a ranking is
+        noisy and an early dip would cut a good ranker off at its first unlucky gene. Cost alone
+        ranks genes exactly as thresholding cost does, so this form is guaranteed to reproduce
+        loop_tail's measured 35.7% for the baseline; the early-stop form scored it 2.7%, which
+        would have handed the comparison to the challenger for free.
+        """
         order = np.argsort(-o)
-        tp = 0
-        for n, idx in enumerate(order, 1):
-            tp += y_full[idx]
-            if tp / n < prec_target and n > 20:
-                return (tp - 1) / max(y_full.sum(), 1), n - 1
-        return tp / max(y_full.sum(), 1), len(order)
+        ys = y_full[order]
+        tp = np.cumsum(ys)
+        n = np.arange(1, len(ys) + 1)
+        ok = (tp / n >= prec_target) & (n >= min_n)
+        if not ok.any():
+            return 0.0, 0
+        k = int(np.max(np.where(ok)[0]))
+        return float(tp[k] / max(y_full.sum(), 1)), int(n[k])
 
     o_base = oof(["cost"])
     o_plus = oof(["cost", best_ne])
