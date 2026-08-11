@@ -19,26 +19,36 @@ that distribution:
     name 357 · ppi 209 · dep_frac 88 · tf 83 · chrom 80 · ess 68 · path 58 · comp 55 · proc 46
     loeuf 44 · pubs 42 · tss 41 · dark 39 · npath 31 · conf 26 · ndis 24 · enh 20 · cpg 19
 
-THREE KINDS OF FIELD, and they have completely different prospects:
+FIVE KINDS OF FIELD, and they have completely different prospects. The first run of this module
+used three -- recoverable, derived, project-invented -- and the middle one was wishful: `npath`
+turned out not to be derivable from GO at all (corr 0.02), and `ndis`/`enh` are real counts from
+catalogues nobody wrote down. Collapsing those into "derived" would have claimed a rule this file
+does not have. The taxonomy below is what survived contact with the data:
 
-    RECOVERABLE     a named public source exists and can be fetched again.
-                    coordinates (Ensembl GTF), loeuf (gnomAD), GO terms (GOA), tf (Lambert),
-                    cpg (UCSC CpG islands), ppi (BioGRID), dep_frac/ess (DepMap), pubs (NCBI).
-    DERIVED         computable from the recoverable ones by a rule this file records as code.
-                    npath, ndis.
-    PROJECT-INVENTED  labels this project made up and whose rule is lost: dark, conf, master, flag, ti,
-                    ess_prob. These are NOT recoverable, and saying so is the point -- a producer that
-                    quietly regenerated them from a guessed rule would be worse than one that admits
-                    the gap, because the guess would be indistinguishable from the original in the file
-                    and different in every value.
+    RECOVERABLE     a named public source exists, was fetched here, and the rebuilt column is
+                    checked against the surviving copy: coordinates (Ensembl GTF), loeuf (gnomAD),
+                    tf (Lambert), cpg (UCSC CpG islands).
+    DECLARED        a named public source exists and the URL is recorded, but it was not fetched in
+                    this run: ppi (BioGRID), dep_frac/ess (DepMap), pubs (NCBI).
+    SOURCE KNOWN, RULE LOST   the ontology survives but the coarsening this project applied to it
+                    does not: proc and comp are each one of exactly 12 buckets, and the GO-term ->
+                    bucket map is recorded nowhere.
+    SOURCE NOT IDENTIFIED   real data whose origin this file does not name: tss (a second TSS track,
+                    stored as a string and differing from the Ensembl TSS in every gene), npath,
+                    path, enh, ndis.
+    PROJECT-INVENTED  labels this project made up and whose rule is lost: dark, conf, master, flag,
+                    ti, ess_prob. These are NOT recoverable, and saying so is the point -- a producer
+                    that quietly regenerated them from a guessed rule would be worse than one that
+                    admits the gap, because the guess would be indistinguishable from the original in
+                    the file and different in every value.
 
 PREDECLARED, before any number:
 
     Q1 THE INVENTORY IS COMPLETE AND USAGE-WEIGHTED   every top-level key and per-gene field enumerated
                 with the number of modules that read it. Without the weighting this rebuilds whatever
                 was easiest rather than whatever matters.
-    Q2 EVERY FIELD IS CLASSIFIED   recoverable, derived, or project-invented, with a URL for the first
-                two and an explicit admission for the third. No field is left unaccounted.
+    Q2 EVERY FIELD IS CLASSIFIED   into one of the five kinds above, with a URL wherever a source is
+                named and an explicit admission wherever one is not. No field is left unaccounted.
     Q3 REBUILT FIELDS MATCH THE SURVIVING COPY   each rebuilt field agrees with the original above its
                 declared threshold.
                 THIS IS THE REAL GATE. A producer that does not reproduce the file is not the producer,
@@ -84,9 +94,9 @@ SOURCES = {
                "gnomad.v2.1.1.lof_metrics.by_gene.txt.bgz",
         "path": SC / "gnomad_loeuf.txt.bgz", "kind": "recoverable"},
     "gene ontology": {
-        "fields": ["proc", "comp", "path", "npath"],
+        "fields": [],   # see SOURCE_KNOWN_RULE_LOST -- GOA is fetchable, the 12-bucket rule is not
         "url": "https://current.geneontology.org/annotations/goa_human.gaf.gz",
-        "path": SC / "goa_human.gaf.gz", "kind": "recoverable"},
+        "path": SC / "goa_human.gaf.gz", "kind": "fetched, but see rule-lost below"},
     "transcription factors": {
         "fields": ["tf"],
         "url": "http://humantfs.ccbr.utoronto.ca/download/v_1.01/DatabaseExtract_v_1.01.csv",
@@ -109,6 +119,22 @@ SOURCES = {
         "url": "https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz + gene_info.gz",
         "path": None, "kind": "declared, not fetched here"},
 }
+# A THIRD AND FOURTH CATEGORY, because "recoverable" and "invented" were not enough to be honest.
+SOURCE_KNOWN_RULE_LOST = {
+    "proc": "one of exactly 12 process buckets (the `procs` key). GOA is fetchable; the GO-term -> "
+            "12-bucket aggregation this project defined is not recorded anywhere",
+    "comp": "one of exactly 12 compartment buckets (the `comps` key). Same shape as proc: the source "
+            "ontology survives, the coarsening rule does not",
+}
+SOURCE_NOT_IDENTIFIED = {
+    "tss": "stored as a STRING and differs from ens_tss in every gene, so it is a second TSS "
+           "annotation from another track (refGene or CAGE), not derivable from the Ensembl GTF",
+    "npath": "a pathway count. Not GO process count (corr 0.02) and not membership in the `pathways` "
+             "key (exact 0.37), so the pathway database used is not recorded",
+    "path": "a single Reactome-style pathway name with a trailing space; the release is not recorded",
+    "enh": "an enhancer count; the catalogue is not recorded",
+    "ndis": "a disease count; the database is not recorded",
+}
 PROJECT_INVENTED = {
     "dark": "a project label for under-studied genes; the threshold rule is lost",
     "conf": "a confidence tier this project assigned; rule lost",
@@ -116,8 +142,6 @@ PROJECT_INVENTED = {
     "flag": "free-text annotations like 'germline-constrained yet cancer-dispensable'; rule lost",
     "ti": "a therapeutic-index tag; rule lost",
     "ess_prob": "a predicted essentiality probability from a model that is not in this repo",
-    "ndis": "disease count; source database not recorded",
-    "enh": "enhancer count per gene; the enhancer catalogue used is not recorded",
 }
 # agreement thresholds, declared per kind of field
 GATE_EXACT = 0.90        # categorical / integer fields
@@ -239,11 +263,16 @@ def main():
     # ---- Q2 every field classified ---------------------------------------------------------------
     covered = {f for s in SOURCES.values() for f in s["fields"]}
     unaccounted = [f for f in fields if f not in covered and f not in PROJECT_INVENTED
+                   and f not in SOURCE_KNOWN_RULE_LOST and f not in SOURCE_NOT_IDENTIFIED
                    and f != "name"]
     q2 = bool(not unaccounted)
     say(f"\n  Q2 EVERY FIELD IS CLASSIFIED")
     for name, s in SOURCES.items():
         say(f"     {name:<24}{s['kind']:<26}{', '.join(s['fields'])}")
+    say(f"     {'SOURCE KNOWN, RULE LOST':<24}{'partly recoverable':<26}"
+        f"{', '.join(sorted(SOURCE_KNOWN_RULE_LOST))}")
+    say(f"     {'SOURCE NOT IDENTIFIED':<24}{'real data, unknown origin':<26}"
+        f"{', '.join(sorted(SOURCE_NOT_IDENTIFIED))}")
     say(f"     {'PROJECT-INVENTED':<24}{'NOT RECOVERABLE':<26}{', '.join(sorted(PROJECT_INVENTED))}")
     if unaccounted:
         say(f"     UNACCOUNTED: {unaccounted}")
@@ -259,11 +288,13 @@ def main():
     say(f"     coordinates {len(coords):,} · loeuf {len(loeuf):,} · GO process {len(proc_go):,} · "
         f"TFs {len(tfs):,} · CpG islands {sum(len(v) for v in cpg_iv.values()):,}")
 
-    def cpg_at(chrom, tss):
+    CPG_WINDOW = 2000        # predeclared, before any agreement number was computed
+
+    def cpg_at(chrom, tss, w=CPG_WINDOW):
         for a, b in cpg_iv.get(chrom, ()):
-            if a - 2000 <= tss <= b + 2000:
+            if a - w <= tss <= b + w:
                 return 1
-            if a > tss + 2000:
+            if a > tss + w:
                 break
         return 0
 
@@ -299,16 +330,50 @@ def main():
             f"{(f'{corr:.4f}' if np.isfinite(corr) else '-'):>9}   {v}")
 
     nm = [g["name"] for g in genes]
-    for fld in ("chrom", "gene_start", "gene_end", "strand", "tss"):
+    for fld in ("chrom", "gene_start", "gene_end", "strand"):
         record(fld, [g.get(fld) for g in genes],
-               [coords.get(s, {}).get(fld) for s in nm], "num" if "start" in fld or "end" in fld
-               or fld == "tss" else "cat")
+               [coords.get(s, {}).get(fld) for s in nm],
+               "num" if ("start" in fld or "end" in fld) else "cat")
+    # ens_tss, NOT tss. The GTF rule (gene_start on +, gene_end on -) reproduces ens_tss exactly and
+    # cannot reproduce tss, which is a string and differs in every gene -- a second annotation from a
+    # track this file does not name. Testing my rule against the wrong column produced exact 0.0000
+    # and would have been read as a broken producer rather than a mislabelled target.
+    record("ens_tss", [g.get("ens_tss") for g in genes],
+           [coords.get(s, {}).get("tss") for s in nm], "num")
     record("loeuf", [g.get("loeuf") for g in genes], [loeuf.get(s) for s in nm], "num")
     record("tf", [g.get("tf") for g in genes], [1 if s in tfs else 0 for s in nm], "cat")
-    record("npath", [g.get("npath") for g in genes],
-           [len(proc_go.get(s, ())) for s in nm], "num")
+    def _int(x):
+        try:
+            return int(x)
+        except (TypeError, ValueError):
+            return -1
     record("cpg", [g.get("cpg") for g in genes],
-           [cpg_at(g.get("chrom") or "", g.get("tss") or -1) for g in genes], "cat")
+           [cpg_at(g.get("chrom") or "", _int(g.get("ens_tss"))) for g in genes], "cat")
+
+    # cpg is the one field that misses. DIAGNOSIS, NOT REPAIR: the window below is swept to find out
+    # WHY it misses, and the swept value is deliberately NOT adopted -- the gate keeps the predeclared
+    # CPG_WINDOW. If no window reaches the gate, the window is not the cause and the CpG track or the
+    # genome build is; if some window sails past it, that is evidence about the original rule and it
+    # belongs in a later loop where it can be declared first and tested second.
+    o_cpg = [g.get("cpg") for g in genes]
+    n_cpg = [cpg_at(g.get("chrom") or "", _int(g.get("ens_tss"))) for g in genes]
+    fp = sum(1 for a, b in zip(o_cpg, n_cpg) if a == 0 and b == 1)
+    fn = sum(1 for a, b in zip(o_cpg, n_cpg) if a == 1 and b == 0)
+    sweep = {}
+    for w in (0, 200, 500, 1000, 2000, 5000, 10000):
+        pred = [cpg_at(g.get("chrom") or "", _int(g.get("ens_tss")), w) for g in genes]
+        sweep[w] = float(np.mean([a == b for a, b in zip(o_cpg, pred) if a is not None]))
+    best_w = max(sweep, key=sweep.get)
+    say(f"     cpg diagnosis   file says CpG for {np.mean([x == 1 for x in o_cpg]):.1%} of genes, this "
+        f"rule for {np.mean([x == 1 for x in n_cpg]):.1%}")
+    say(f"                     disagreements split {fp:,} rule-only / {fn:,} file-only "
+        f"({'rule over-calls' if fp > fn else 'rule under-calls'})")
+    say(f"                     window sweep  " + " · ".join(f"{w}:{a:.3f}" for w, a in sweep.items()))
+    say(f"                     best window {best_w} bp reaches {sweep[best_w]:.4f} "
+        f"{'-- still under the gate, so the window is not the cause' if sweep[best_w] < GATE_EXACT else '-- NOT adopted; declare it first, then test it'}")
+    cpg_diag = {"window_declared": CPG_WINDOW, "rule_only": fp, "file_only": fn,
+                "sweep": sweep, "best_window": best_w, "best_exact": sweep[best_w]}
+
     q3 = bool(all(v["pass"] for v in checks.values()))
     say(f"     Q3 {'PASS' if q3 else 'FAIL'}  (each field: exact >= {GATE_EXACT} OR corr >= "
         f"{GATE_CORR})")
@@ -317,6 +382,10 @@ def main():
     verified = {f for f, v in checks.items() if v["pass"]}
     declared = {f for s in SOURCES.values() if s["path"] is None for f in s["fields"]}
     invented = set(PROJECT_INVENTED)
+    rule_lost = set(SOURCE_KNOWN_RULE_LOST)
+    unknown_src = set(SOURCE_NOT_IDENTIFIED)
+    r_rule = sum(usage.get(f, 0) for f in rule_lost)
+    r_unk = sum(usage.get(f, 0) for f in unknown_src)
     r_verified = sum(usage.get(f, 0) for f in verified)
     r_declared = sum(usage.get(f, 0) for f in declared)
     r_invented = sum(usage.get(f, 0) for f in invented)
@@ -327,6 +396,8 @@ def main():
     say(f"     the gene list itself (name)                {r_name:>6,}  {r_name/total_reads:>6.1%}")
     say(f"     declared with a URL, not fetched here      {r_declared:>6,}  "
         f"{r_declared/total_reads:>6.1%}")
+    say(f"     source known, coarsening rule lost         {r_rule:>6,}  {r_rule/total_reads:>6.1%}")
+    say(f"     real data, source not identified           {r_unk:>6,}  {r_unk/total_reads:>6.1%}")
     say(f"     PROJECT-INVENTED, not recoverable          {r_invented:>6,}  "
         f"{r_invented/total_reads:>6.1%}")
     q4 = True
@@ -337,15 +408,25 @@ def main():
              "Q3 rebuilt fields match": q3, "Q4 coverage reported": q4}
     for k, v in gates.items():
         say(f"  {k:<38}{'PASS' if v else 'FAIL'}")
-    say(f"  cell_complete.json NOW HAS A PRODUCER for {len(verified)} of its load-bearing fields,")
-    say(f"  each checked against the surviving copy rather than asserted. "
+    failed = sorted(f for f, v in checks.items() if not v["pass"])
+    say(f"  cell_complete.json NOW HAS A PRODUCER for {len(verified)} of the {len(checks)} fields it")
+    say(f"  attempts, each checked against the surviving copy rather than asserted. "
         f"{r_verified/total_reads:.0%} of all")
     say(f"  per-gene module-reads are now backed by a named source that was fetched and verified;")
     say(f"  another {r_declared/total_reads:.0%} have a URL recorded and need one more download.")
+    if failed:
+        say(f"  Q3 FAILS ON {', '.join(failed)}. The gate stands and the field is not claimed: a")
+        say(f"  near-miss on exact agreement is exactly the case where loosening the threshold would")
+        say(f"  convert an unverified column into a verified-looking one, so it is left failing.")
     say(f"  AND {r_invented/total_reads:.0%} CANNOT BE REBUILT AT ALL. Those are labels this project")
-    say(f"  invented -- dark, conf, master, flag, ti, ess_prob, ndis, enh -- whose rules are lost. A")
-    say(f"  producer that regenerated them from a guessed rule would be worse than one that says so,")
+    say(f"  invented -- {', '.join(sorted(invented))} -- whose rules are lost. A producer")
+    say(f"  that regenerated them from a guessed rule would be worse than one that says so,")
     say(f"  because the guess would look identical in the file and differ in every value.")
+    say(f"  A further {r_unk/total_reads:.0%} is real data whose source this file never named")
+    say(f"  ({', '.join(sorted(unknown_src))}) and {r_rule/total_reads:.0%} keeps its ontology but "
+        f"lost the")
+    say(f"  coarsening rule ({', '.join(sorted(rule_lost))}). Neither is invented and neither is")
+    say(f"  reproducible; they are the middle of the distribution and were the easiest to overstate.")
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(s["path"]) for s in SOURCES.values() if s["path"]] + [str(CELL)],
@@ -363,9 +444,13 @@ def main():
                "n_fields": len(fields), "total_reads": total_reads, "usage": usage,
                "sources": {k: {kk: (str(vv) if kk == "path" else vv) for kk, vv in v.items()}
                            for k, v in SOURCES.items()},
-               "project_invented": PROJECT_INVENTED, "checks": checks,
+               "project_invented": PROJECT_INVENTED,
+               "source_known_rule_lost": SOURCE_KNOWN_RULE_LOST,
+               "source_not_identified": SOURCE_NOT_IDENTIFIED, "checks": checks,
+               "cpg_diagnostic": cpg_diag,
                "reads_verified": r_verified, "reads_declared": r_declared,
-               "reads_invented": r_invented, "seconds": time.time() - t0, "log": log},
+               "reads_invented": r_invented, "reads_rule_lost": r_rule,
+               "reads_source_unknown": r_unk, "seconds": time.time() - t0, "log": log},
               open(OUT / "build_cell_complete.json", "w"), indent=2)
     say(f"\n  -> {OUT/'build_cell_complete.json'}")
     return 0
