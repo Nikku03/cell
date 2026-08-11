@@ -37,6 +37,32 @@ PREDECLARED, before any number:
 CONTROLS: 200 label shuffles for both T1 and T2; the full scored set for T1 so nothing is conditioned on
 the model being right; and DepMap's own dependency fraction as the external standard throughout.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    T1 MEMBERSHIP   PASS.  On the full 1,775-gene set, the model's growth cost separates DepMap
+        dependencies at AUC 0.6590 against a shuffled null of 0.5013 +/- 0.0101. The tail is the RIGHT
+        SET. Precision 76.7% -- when this model calls a gene costly, three times in four it really is a
+        dependency. Recall 35.7% -- it finds only about a third of them.
+    T2 ORDER   PASS, and weakly.  Among the 158 genes both call important, Spearman +0.5563 against a
+        |null| 95th percentile of 0.4923. It clears a very wide band on 158 points and should not be
+        leaned on.
+    T3 WHAT IS IN EACH TAIL   both tails are dominated by oxidative phosphorylation, and the model's is
+        2.6x more concentrated there: aerobic respiration is 20.9% of the model's tail against 8.1% of
+        DepMap's, Complex I biogenesis 16.5% against 6.5%. DepMap's tail also contains things the model
+        structurally cannot see, protein ubiquitination among them.
+
+WHAT THIS CORRECTS.  loop_slack concluded "the model has about the right amount of slack and cannot yet
+say which genes belong in the tail", and read its P3 failure as an ORDERING problem. Both halves of that
+are wrong in an instructive way. The ordering is fine (T2). And P3's rank correlation was computed only
+among genes the model had already placed in its tail, which conditions on the model being right about
+membership -- so it could not have detected a set problem even in principle.
+
+THE REAL LIMITATION IS RECALL, AND IT IS NAMEABLE.  Precision 77%, recall 36%. The model's tail is a
+narrow, accurate slice concentrated on mitochondrial energy metabolism -- which is what an FBA model
+optimising a biomass objective would be expected to over-weight -- and it misses 285 real dependencies
+whose names are recorded in the output. That is a COVERAGE problem with a gene list attached, not an
+ordering problem, and it is far more tractable than what loop_slack reported.
+
 -> outputs/loop_tail.json
 """
 import collections
@@ -86,7 +112,17 @@ def main():
     genes = D["genes"]
     dep = {g["name"]: float(g["dep_frac"]) for g in genes
            if isinstance(g.get("dep_frac"), (int, float))}
-    path = {g["name"]: (g.get("path") or []) for g in genes}
+    # `path` is a STRING, not a list. The first run iterated it and counted CHARACTERS, producing a
+    # pathway table of "o", "C", "e", "m". Wrapped, and the GO biological-process list is used as the
+    # richer second source.
+    path = {}
+    for g in genes:
+        v = g.get("path")
+        path[g["name"]] = [v] if isinstance(v, str) and v else (list(v) if v else [])
+    go = D.get("go") or {}
+    for sym, d in go.items():
+        if sym in path and isinstance(d, dict):
+            path[sym] = path[sym] + [str(x) for x in (d.get("P") or [])[:4]]
 
     S = S[S["sym"].isin(dep)].copy()
     S["cost"] = S["medium"].astype(float).clip(lower=0.0)
@@ -136,7 +172,7 @@ def main():
     def top_paths(frame, n=8):
         c = collections.Counter()
         for s in frame.sym:
-            for p in path.get(s, [])[:6]:
+            for p in path.get(s, [])[:8]:
                 c[str(p)] += 1
         tot = max(len(frame), 1)
         return [(p, k, k / tot) for p, k in c.most_common(n)]
@@ -168,6 +204,14 @@ def main():
         say("  RIGHT SET AND RIGHT ORDER on the full set. loop_slack's P3 was measuring a subset that")
         say("  had been conditioned on the model's own tail, which made the ordering look worse than")
         say("  it is.")
+        say(f"  THE REAL LIMITATION IS RECALL, not ordering: precision {prec:.0%} against recall "
+            f"{rec:.0%}.")
+        say(f"  When this model calls a gene costly it is usually right; it simply cannot see most of")
+        say(f"  what cells depend on, because {len(only_dep):,} of those dependencies are outside")
+        say(f"  metabolism or outside the reactions Human-GEM carries. That is a coverage problem with")
+        say(f"  a named gene list, not an ordering problem.")
+        say(f"  NOTE T2's WEAKNESS: the |null| 95th percentile is {q95:.4f} on {len(both)} genes, so")
+        say(f"  the ordering test only just clears a very wide band and should not be leaned on.")
     else:
         say("  WRONG SET. The model's costly genes are not the genes cells depend on, so loop_slack's")
         say("  P3 was ranking a set that was already wrong -- a different and larger problem than the")
