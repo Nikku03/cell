@@ -25,9 +25,16 @@ far the goal is. It is reported as two numbers, not one.
 THE CALIBRATION, predeclared, and the audit is void if either fails.  An instrument that says yes to
 everything is not an instrument. Two known answers are checked first:
 
-    side effect -> cell outcome  MUST come back NO PATH.
-        There is no compound-to-adverse-event table anywhere in this repository. 48 genes carry disease
-        associations and nothing carries a side effect. If this audit finds a path, the audit is wrong.
+    a SYNTHETIC negative control  MUST fail on every axis.
+        Its slot names a block and a file that do not exist and never will. Nothing can close it, no
+        amount of progress can invalidate it, and it still tests the only thing a negative control has
+        to: that this instrument is capable of saying no.
+
+        THIS HAD TO BECOME SYNTHETIC, and the reason is worth recording. The must-fail slot held
+        `chromosome fold` until loop 8 built that link, then `side effect` until loop 12 built that one.
+        Both times the audit correctly voided itself; both times the fix was to move the calibration.
+        The instrument's negative control was being eaten by the work it was meant to police, which is
+        backwards. A calibration that has to move whenever the project succeeds is not a calibration.
 
         (This slot used to hold `chromosome fold`, and the swap is a record of progress rather than a
         convenience. That calibration asserted a measured fact -- subsystem_links found exactly zero
@@ -56,7 +63,20 @@ Reachability through a shared hub is not evidence of a biological path, and the 
 so. The replacement demands the connection be carried by ONE module -- the same code must both address
 the perturbation and produce a recorded result -- which no amount of hub-sharing can manufacture.
 
-WHAT THIS DOES NOT DO.  It does not score quality. A question type can pass all three axes on a weak
+THE FOURTH COLUMN, added at loop 13 because the third had started to mislead.  ENCODE/PIPELINE/CHECK
+ask whether a question can be GOT WRONG. After twelve loops five of six rows cleared them -- and three
+of those five did so on a pipeline whose own decisive gate FAILED. `side effect` passes while its
+partial correlation sits inside the null; `any point mutation` passes while its dose-response bought
+-0.0016 AUC; `drug effect` passes only because loop_sideeffect happens to name the drugs block. A count
+that rises when a controlled negative is recorded is measuring falsifiability, which is real and is not
+the same as knowing the answer, and quoting it alone would be exactly the overstatement this file exists
+to prevent.
+
+So VERDICT reads the credited result's own gate table and reports how many of its gates passed. A row is
+ANSWERED WELL only if every gate in the pipeline that answers it came back positive. Two numbers are
+reported from here on and the second is the honest one.
+
+WHAT THIS DOES NOT DO.  It does not score quality beyond that gate tally. A question type can pass all three axes on a weak
 model with a poor AUC. Passing means the question is ASKABLE, CONNECTED and FALSIFIABLE -- the minimum
 for the word "answer" to mean anything. Quality is the next audit, not this one.
 
@@ -77,6 +97,19 @@ WHAT HAPPENED, written after the run, unedited.
     cancer                ENCODE yes       PIPELINE no    CHECK no
 
     OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 CAN BE ASKED, 1 CAN BE ANSWERED.
+
+RE-RUN, loop 13, with the VERDICT column: 6 ASKABLE, 5 CAN BE GOT WRONG, 1 ANSWERED WELL.
+    Three things moved at once and only one of them is good news.
+    `side effect` gained a slot for the first time -- SIDER 4.1, added by loop 12 -- so it clears the
+        first three axes. Its own decisive gate failed: the correlation was target counting.
+    `drug effect` also flipped, and it should be read sceptically: no drug pipeline was built. It clears
+        the axes only because loop_sideeffect happens to name the drugs block while producing a
+        controlled result about something adjacent.
+    The VERDICT column then says what the first three cannot. Of the five rows that clear them, exactly
+        ONE has a pipeline whose every gate came back positive: `any chromosome fold` at 4/4, on
+        measured bTMP torsion. `any point mutation` sits at 2/4, `metabolic growth` at 2/4, `any protein
+        change` at 9/12.
+    The negative control also became synthetic here, after being invalidated twice by ordinary progress.
 
 RE-RUN, loop 11: 6 CAN BE ASKED, 3 CAN BE ANSWERED.
     `any point mutation` moved to yes/yes/yes once this file's ENTRY row was corrected to name the slot
@@ -137,6 +170,7 @@ QUESTIONS = [
     ("any protein change", "abundance, modification or activity of any protein"),
     ("any chromosome fold", "a change in 3D genome organisation"),
     ("functional neighbourhood", "NOT one of the six -- reported so model4's items are not lost"),
+    ("NEGATIVE CONTROL", "CALIBRATION -- a perturbation this model has no slot for, and never will"),
     ("drug effect", "what a compound does to the cell"),
     ("side effect", "what it does that was not intended, elsewhere"),
     ("cancer", "driver alteration to transformed phenotype"),
@@ -172,10 +206,23 @@ ENTRY = {
                                          "label. Kept as its own row so the 7,700 items are still "
                                          "counted, under a heading that describes them"},
     "drug effect": {"blocks": ["drugs"], "note": "gene-keyed drug/target/action"},
-    "side effect": {"blocks": ["otdis"], "note": "48 genes with disease associations; "
-                    "no compound-to-adverse-event table exists here at all"},
+    "side effect": {"blocks": ["otdis"], "files": ["sider_se.tsv.gz"],
+                    "note": "48 genes with disease associations, PLUS SIDER 4.1 -- 1,430 compounds "
+                            "with MedDRA side effects, added by loop 12. Before that there was no "
+                            "compound-to-adverse-event data here at all"},
     "cancer": {"blocks": ["biomarkers", "celltypes", "ctnames"], "note": "biomarker associations and "
                "cell-type identities; no tumour genotype-to-phenotype block"},
+    # THE PERMANENT NEGATIVE CONTROL, and the reason it had to become synthetic.
+    # The must-fail calibration has now been invalidated TWICE by ordinary progress: it was `chromosome
+    # fold` until loop 8 built that link, then `side effect` until loop 12 built that one. Each time the
+    # audit correctly voided itself, and each time the fix was to move the calibration -- which means the
+    # instrument's negative control was being consumed by the work it was meant to police. That is
+    # backwards. A calibration must be permanent or it is not a calibration.
+    # So the negative control is now SYNTHETIC: a question whose slot names a block that does not exist
+    # and never will. Nothing can close it, no amount of progress can invalidate it, and it still tests
+    # exactly what a negative control must -- that this instrument is capable of saying no.
+    "NEGATIVE CONTROL": {"blocks": ["__no_such_block__"], "files": ["__no_such_file__"],
+                         "note": "deliberately unsatisfiable; if this ever passes, the audit is broken"},
     # CALIBRATION. Note carefully which slot is credited: the metabolism the model actually computes on
     # is Human-GEM, a ledgered external input. cell_complete's own `generxn` is 3,355 reaction STRINGS
     # with no stoichiometry, and cell_loop never opens it. Crediting generxn here would have been the
@@ -381,18 +428,40 @@ def main():
         hits = sorted(set(starts) & pheno_mods)
         namers = starts
 
+        # VERDICT: read the gate table of whatever controlled result was credited to this row.
+        gp = gf = 0
+        detail = {}
+        for f in ck:
+            try:
+                o = json.load(open(OUT / f))
+            except Exception:
+                continue
+            g = o.get("gates")
+            if isinstance(g, dict) and g:
+                pas = sum(1 for v in g.values() if v is True)
+                fal = sum(1 for v in g.values() if v is False)
+                gp += pas
+                gf += fal
+                detail[f] = {"passed": pas, "failed": fal}
+        answered_well = bool(ck and gf == 0 and gp > 0)
+
         rows.append({"question": q, "what": desc, "blocks": counts, "n_items": n,
+                     "gates_passed": gp, "gates_failed": gf, "gate_detail": detail,
+                     "answered_well": answered_well,
                      "encode": encode, "pipeline": pipeline, "check": check,
                      "answers": bool(encode and pipeline and check),
                      "emits": bool(encode), "namers": sorted(namers)[:8],
                      "produces": sorted(produced)[:8],
                      "phenotype_hits": hits[:6], "controlled": ck[:6], "note": e["note"]})
 
-    say(f"\n  {'question':<22}{'ENCODE':>9}{'PIPELINE':>10}{'CHECK':>8}   {'items':>8}  answers?")
+    say(f"\n  {'question':<22}{'ENCODE':>9}{'PIPE':>7}{'CHECK':>7}{'items':>9}"
+        f"{'askable':>10}{'gates':>9}{'well?':>7}")
     for r in rows:
+        g = f"{r['gates_passed']}/{r['gates_passed']+r['gates_failed']}" if r["check"] else "-"
         say(f"  {r['question']:<22}{'yes' if r['encode'] else 'NO':>9}"
-            f"{'yes' if r['pipeline'] else 'NO':>10}{'yes' if r['check'] else 'NO':>8}"
-            f"   {r['n_items']:>8,}  {'YES' if r['answers'] else 'no'}")
+            f"{'yes' if r['pipeline'] else 'NO':>7}{'yes' if r['check'] else 'NO':>7}"
+            f"{r['n_items']:>9,}{'YES' if r['answers'] else 'no':>10}{g:>9}"
+            f"{'YES' if r['answered_well'] else 'no':>7}")
     say("")
     for r in rows:
         say(f"    {r['question']:<22} slots {r['blocks']}")
@@ -403,23 +472,26 @@ def main():
     # ---- the calibration, which can void the run ------------------------------------------------------
     fold = next(r for r in rows if r["question"] == "any chromosome fold")
     grow = next(r for r in rows if r["question"] == "metabolic growth")
-    side = next(r for r in rows if r["question"] == "side effect")
+    neg = next(r for r in rows if r["question"] == "NEGATIVE CONTROL")
     say("\n  CALIBRATION -- two known answers, checked before any of the above is believed")
-    say(f"    side effect must NOT reach a cell outcome (no compound-to-adverse-event table exists)")
-    say(f"      -> pipeline = {side['pipeline']}, check = {side['check']}   "
-        f"{'OK' if not side['check'] else 'AUDIT VOID'}")
+    say(f"    the synthetic NEGATIVE CONTROL must fail on every axis -- nothing can ever satisfy it")
+    say(f"      -> encode = {neg['encode']}, pipeline = {neg['pipeline']}, check = {neg['check']}   "
+        f"{'OK' if not (neg['encode'] or neg['pipeline'] or neg['check']) else 'AUDIT VOID'}")
     say(f"    chromosome fold must NOW reach one (loop_real_chromatin built it on measured torsion)")
     say(f"      -> pipeline = {fold['pipeline']}, check = {fold['check']}   "
         f"{'OK' if (fold['pipeline'] and fold['check']) else 'AUDIT VOID'}")
     say(f"    metabolic growth must reach one, with a control (cell_loop closed it today)")
     say(f"      -> pipeline = {grow['pipeline']}, check = {grow['check']}   "
         f"{'OK' if (grow['pipeline'] and grow['check']) else 'AUDIT VOID'}")
-    void = bool(side["check"] or not (grow["pipeline"] and grow["check"])
+    void = bool(neg["encode"] or neg["pipeline"] or neg["check"]
+                or not (grow["pipeline"] and grow["check"])
                 or not (fold["pipeline"] and fold["check"]))
 
-    real = [r for r in rows if r["question"] not in ("metabolic growth", "functional neighbourhood")]
+    real = [r for r in rows if r["question"] not in ("metabolic growth", "functional neighbourhood",
+                                                     "NEGATIVE CONTROL")]
     emits = sum(r["emits"] for r in real)
     answers = sum(r["answers"] for r in real)
+    well = sum(r["answered_well"] for r in real)
     say("\n" + "=" * 100)
     if void:
         say("  AUDIT VOID. The calibration failed, so every verdict above is unreliable and none of it")
@@ -428,8 +500,11 @@ def main():
         say("  criterion is deliberately strict -- one module addressing the slot AND recording a")
         say("  controlled result -- so a failure here is usually a naming collision, not a real path.")
     else:
-        say(f"  OF THE 6 QUESTION TYPES THE GOAL NAMES: {emits} can be ASKED, {answers} can be ANSWERED.")
-        say(f"  The gap between those two numbers is the distance left, and it is the honest headline.")
+        say(f"  OF THE {len(real)} QUESTION TYPES THE GOAL NAMES: {emits} can be ASKED, "
+            f"{answers} can be got WRONG, and {well} {'is' if well == 1 else 'are'} ANSWERED WELL -- "
+            f"every gate in the pipeline that answers it came back positive.")
+        say(f"  The THIRD number is the honest one. The second counts questions that can now be got")
+        say(f"  wrong, which is real progress and is not the same as knowing the answer.")
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(CELL), str(OUT / "data_doctrine.json"), str(OUT / "trace_all.json")],
@@ -440,7 +515,8 @@ def main():
     RM.report(man, emit=say)
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"test": "capability_audit", "manifest": man, "void": void, "rows": rows,
-               "n_emits": emits, "n_answers": answers, "n_questions": len(real),
+               "n_emits": emits, "n_answers": answers, "n_answered_well": well,
+               "n_questions": len(real),
                "controlled_results": checked, "n_modules": len(inv),
                "n_phenotype_modules": len(pheno_mods), "log": log},
               open(OUT / "capability_audit.json", "w"), indent=2)

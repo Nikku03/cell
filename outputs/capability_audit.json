@@ -23,8 +23,8 @@
       }
     ],
     "coverage": {
-      "available": 8,
-      "used": 8,
+      "available": 9,
+      "used": 9,
       "selection": "all",
       "fraction": 1.0
     },
@@ -45,6 +45,15 @@
         "struct": 13
       },
       "n_items": 13,
+      "gates_passed": 2,
+      "gates_failed": 2,
+      "gate_detail": {
+        "loop_variant.json": {
+          "passed": 2,
+          "failed": 2
+        }
+      },
+      "answered_well": false,
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -76,6 +85,23 @@
         "complexes": 2039
       },
       "n_items": 42765,
+      "gates_passed": 9,
+      "gates_failed": 3,
+      "gate_detail": {
+        "cell_loop.json": {
+          "passed": 2,
+          "failed": 2
+        },
+        "loop_fold_link.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": false,
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -93,7 +119,8 @@
       ],
       "produces": [
         "cell_loop.json",
-        "loop_fold_link.json"
+        "loop_fold_link.json",
+        "loop_sideeffect.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
@@ -103,7 +130,8 @@
       ],
       "controlled": [
         "cell_loop.json",
-        "loop_fold_link.json"
+        "loop_fold_link.json",
+        "loop_sideeffect.json"
       ],
       "note": "gene-keyed"
     },
@@ -114,6 +142,15 @@
         "loops3d": 767
       },
       "n_items": 767,
+      "gates_passed": 4,
+      "gates_failed": 0,
+      "gate_detail": {
+        "loop_real_chromatin.json": {
+          "passed": 4,
+          "failed": 0
+        }
+      },
+      "answered_well": true,
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -146,6 +183,19 @@
         "model4": 7700
       },
       "n_items": 7700,
+      "gates_passed": 8,
+      "gates_failed": 0,
+      "gate_detail": {
+        "loop_chromatin.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_fold_link.json": {
+          "passed": 4,
+          "failed": 0
+        }
+      },
+      "answered_well": true,
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -170,16 +220,47 @@
       "note": "NOT a fold -- 8.8% cis, half its pairs sharing a functional label. Kept as its own row so the 7,700 items are still counted, under a heading that describes them"
     },
     {
+      "question": "NEGATIVE CONTROL",
+      "what": "CALIBRATION -- a perturbation this model has no slot for, and never will",
+      "blocks": {
+        "__no_such_block__": 0
+      },
+      "n_items": 0,
+      "gates_passed": 0,
+      "gates_failed": 0,
+      "gate_detail": {},
+      "answered_well": false,
+      "encode": false,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": false,
+      "namers": [],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "deliberately unsatisfiable; if this ever passes, the audit is broken"
+    },
+    {
       "question": "drug effect",
       "what": "what a compound does to the cell",
       "blocks": {
         "drugs": 4275
       },
       "n_items": 4275,
+      "gates_passed": 3,
+      "gates_failed": 1,
+      "gate_detail": {
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": false,
       "encode": true,
-      "pipeline": false,
-      "check": false,
-      "answers": false,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
       "emits": true,
       "namers": [
         "colab/adrn_drug_liveness.py",
@@ -191,9 +272,13 @@
         "colab/cellgraph.py",
         "colab/cellos.py"
       ],
-      "produces": [],
+      "produces": [
+        "loop_sideeffect.json"
+      ],
       "phenotype_hits": [],
-      "controlled": [],
+      "controlled": [
+        "loop_sideeffect.json"
+      ],
       "note": "gene-keyed drug/target/action"
     },
     {
@@ -203,20 +288,36 @@
         "otdis": 48
       },
       "n_items": 48,
+      "gates_passed": 3,
+      "gates_failed": 1,
+      "gate_detail": {
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": false,
       "encode": true,
-      "pipeline": false,
-      "check": false,
-      "answers": false,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
       "emits": true,
       "namers": [
         "colab/adrn_ko_channels3.py",
         "colab/complete_cell.py",
+        "colab/data_ledger.py",
+        "colab/loop_sideeffect.py",
         "colab/pertseq_apps.py"
       ],
-      "produces": [],
+      "produces": [
+        "data_ledger.json",
+        "loop_sideeffect.json"
+      ],
       "phenotype_hits": [],
-      "controlled": [],
-      "note": "48 genes with disease associations; no compound-to-adverse-event table exists here at all"
+      "controlled": [
+        "loop_sideeffect.json"
+      ],
+      "note": "48 genes with disease associations, PLUS SIDER 4.1 -- 1,430 compounds with MedDRA side effects, added by loop 12. Before that there was no compound-to-adverse-event data here at all"
     },
     {
       "question": "cancer",
@@ -227,6 +328,10 @@
         "ctnames": 200
       },
       "n_items": 839,
+      "gates_passed": 0,
+      "gates_failed": 0,
+      "gate_detail": {},
+      "answered_well": false,
       "encode": true,
       "pipeline": false,
       "check": false,
@@ -257,6 +362,15 @@
         "reactions": 31
       },
       "n_items": 2580,
+      "gates_passed": 2,
+      "gates_failed": 2,
+      "gate_detail": {
+        "cell_loop.json": {
+          "passed": 2,
+          "failed": 2
+        }
+      },
+      "answered_well": false,
       "encode": true,
       "pipeline": true,
       "check": true,
@@ -287,7 +401,8 @@
     }
   ],
   "n_emits": 6,
-  "n_answers": 3,
+  "n_answers": 5,
+  "n_answered_well": 1,
   "n_questions": 6,
   "controlled_results": {
     "capability_audit.json": 2,
@@ -301,10 +416,11 @@
     "loop_fold_link.json": 5,
     "loop_medium.json": 5,
     "loop_real_chromatin.json": 5,
+    "loop_sideeffect.json": 5,
     "loop_statement.json": 2,
     "loop_variant.json": 5
   },
-  "n_modules": 936,
+  "n_modules": 937,
   "n_phenotype_modules": 32,
   "log": [
     "====================================================================================================",
@@ -312,39 +428,43 @@
     "====================================================================================================",
     "  The goal as stated cannot fail, so it cannot be worked towards. Three independent axes make",
     "",
-    "\n  graph: 936 modules, 883 directed edges from real reads and writes; 18 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
-    "  286 modules read cell_complete.json; block-level use resolved from source of 726 modules",
+    "\n  graph: 937 modules, 884 directed edges from real reads and writes; 19 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
+    "  287 modules read cell_complete.json; block-level use resolved from source of 727 modules",
     "  32 modules write something that is a cell-level outcome",
-    "  13 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_chromatin.json, loop_deficit.json, loop_fold_link.json, loop_medium.json, loop_real_chromatin.json, loop_statement.json, loop_variant.json",
+    "  14 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_chromatin.json, loop_deficit.json, loop_fold_link.json, loop_medium.json, loop_real_chromatin.json, loop_sideeffect.json, loop_statement.json, loop_variant.json",
     "  7 modules are INSTRUMENTS (they read this repo's own audit records) and are excluded from every axis, because an audit crediting itself is how the last three checks here went wrong",
-    "\n  question                 ENCODE  PIPELINE   CHECK      items  answers?",
-    "  any point mutation          yes       yes     yes         13  YES",
-    "  any protein change          yes       yes     yes     42,765  YES",
-    "  any chromosome fold         yes       yes     yes        767  YES",
-    "  functional neighbourhood      yes       yes     yes      7,700  YES",
-    "  drug effect                 yes        NO      NO      4,275  no",
-    "  side effect                 yes        NO      NO         48  no",
-    "  cancer                      yes        NO      NO        839  no",
-    "  metabolic growth            yes       yes     yes      2,580  YES",
+    "\n  question                 ENCODE   PIPE  CHECK    items   askable    gates  well?",
+    "  any point mutation          yes    yes    yes       13       YES      2/4     no",
+    "  any protein change          yes    yes    yes   42,765       YES     9/12     no",
+    "  any chromosome fold         yes    yes    yes      767       YES      4/4    YES",
+    "  functional neighbourhood      yes    yes    yes    7,700       YES      8/8    YES",
+    "  NEGATIVE CONTROL             NO     NO     NO        0        no        -     no",
+    "  drug effect                 yes    yes    yes    4,275       YES      3/4     no",
+    "  side effect                 yes    yes    yes       48       YES      3/4     no",
+    "  cancer                      yes     NO     NO      839        no        -     no",
+    "  metabolic growth            yes    yes    yes    2,580       YES      2/4     no",
     "",
     "    any point mutation     slots {'struct': 13}",
     "                           modules that address it: cell_stats, complete_cell, data_ledger, loop_variant",
     "                           recorded results: data_ledger.json, loop_variant.json   controlled: loop_variant.json",
     "    any protein change     slots {'ppm': 16015, 'abund': 16286, 'ptm': 8425, 'complexes': 2039}",
     "                           modules that address it: abstain, adrn_ko_channels2, adrn_ko_channels3, annotation_prior, best_combined, biochem_limit, bioplex, build_blocks",
-    "                           recorded results: cell_loop.json, loop_fold_link.json   controlled: cell_loop.json, loop_fold_link.json",
+    "                           recorded results: cell_loop.json, loop_fold_link.json, loop_sideeffect.json   controlled: cell_loop.json, loop_fold_link.json, loop_sideeffect.json",
     "    any chromosome fold    slots {'loops3d': 767}",
     "                           modules that address it: adrn_ko_channels3, complete_cell, data_ledger, ko_dossier, layers, loop_real_chromatin, supercoil_gate, supercoil_track",
     "                           recorded results: data_ledger.json, loop_real_chromatin.json   controlled: loop_real_chromatin.json",
     "    functional neighbourhood slots {'model4': 7700}",
     "                           modules that address it: complete_cell, loop_chromatin, loop_fold_link, phase2_audit, phase2_loop",
     "                           recorded results: loop_chromatin.json, loop_fold_link.json   controlled: loop_chromatin.json, loop_fold_link.json",
+    "    NEGATIVE CONTROL       slots {'__no_such_block__': 0}",
+    "                           modules that address it: NONE",
+    "                           recorded results: NONE   controlled: NONE",
     "    drug effect            slots {'drugs': 4275}",
     "                           modules that address it: adrn_drug_liveness, adrn_drug_response, adrn_ko_channels3, blind_target, cell_qa, cell_stats, cellgraph, cellos",
-    "                           recorded results: NONE   controlled: NONE",
+    "                           recorded results: loop_sideeffect.json   controlled: loop_sideeffect.json",
     "    side effect            slots {'otdis': 48}",
-    "                           modules that address it: adrn_ko_channels3, complete_cell, pertseq_apps",
-    "                           recorded results: NONE   controlled: NONE",
+    "                           modules that address it: adrn_ko_channels3, complete_cell, data_ledger, loop_sideeffect, pertseq_apps",
+    "                           recorded results: data_ledger.json, loop_sideeffect.json   controlled: loop_sideeffect.json",
     "    cancer                 slots {'biomarkers': 599, 'celltypes': 40, 'ctnames': 200}",
     "                           modules that address it: adrn_ko_channels3, cell_stats, celltype_coherence, celltype_conditioning, celltype_id, celltype_id_combined, cofactor, complete_cell",
     "                           recorded results: NONE   controlled: NONE",
@@ -352,16 +472,17 @@
     "                           modules that address it: best_combined, build_kinetics_bundle, cascade, cell_loop, cell_orphan_chem_coverage, cell_orphan_truthset, cell_sim, cell_state",
     "                           recorded results: cell_loop.json, data_ledger.json   controlled: cell_loop.json",
     "\n  CALIBRATION -- two known answers, checked before any of the above is believed",
-    "    side effect must NOT reach a cell outcome (no compound-to-adverse-event table exists)",
-    "      -> pipeline = False, check = False   OK",
+    "    the synthetic NEGATIVE CONTROL must fail on every axis -- nothing can ever satisfy it",
+    "      -> encode = False, pipeline = False, check = False   OK",
     "    chromosome fold must NOW reach one (loop_real_chromatin built it on measured torsion)",
     "      -> pipeline = True, check = True   OK",
     "    metabolic growth must reach one, with a control (cell_loop closed it today)",
     "      -> pipeline = True, check = True   OK",
     "\n====================================================================================================",
-    "  OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 can be ASKED, 3 can be ANSWERED.",
-    "  The gap between those two numbers is the distance left, and it is the honest headline.",
+    "  OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 can be ASKED, 5 can be got WRONG, and 1 is ANSWERED WELL -- every gate in the pipeline that answers it came back positive.",
+    "  The THIRD number is the honest one. The second counts questions that can now be got",
+    "  wrong, which is real progress and is not the same as knowing the answer.",
     "====================================================================================================",
-    "    manifest: 3 inputs, coverage 8/8 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 3 inputs, coverage 9/9 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }
