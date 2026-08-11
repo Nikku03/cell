@@ -130,15 +130,27 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_chain.json",
+        "bytes": 9011,
+        "hash": "27977431ef0a53ef",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_nexus_fair.json",
+        "bytes": 7904,
+        "hash": "224998480d7520a6",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 23338,
-        "hash": "381725e2353f1371",
+        "bytes": 24012,
+        "hash": "3ffcdd213b1a6c5d",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 22,
-      "used": 22,
+      "available": 24,
+      "used": 24,
       "selection": "all",
       "fraction": 1.0
     },
@@ -150,8 +162,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 62,
-  "n_gates_failed": 15,
+  "n_gates_passed": 65,
+  "n_gates_failed": 21,
   "capability": [
     {
       "question": "any point mutation",
@@ -160,9 +172,13 @@
         "struct": 13
       },
       "n_items": 13,
-      "gates_passed": 5,
-      "gates_failed": 3,
+      "gates_passed": 8,
+      "gates_failed": 6,
       "gate_detail": {
+        "loop_chain.json": {
+          "passed": 3,
+          "failed": 3
+        },
         "loop_pervariant.json": {
           "passed": 3,
           "failed": 1
@@ -185,16 +201,19 @@
         "colab/cell_stats.py",
         "colab/complete_cell.py",
         "colab/data_ledger.py",
+        "colab/loop_chain.py",
         "colab/loop_pervariant.py",
         "colab/loop_variant.py"
       ],
       "produces": [
         "data_ledger.json",
+        "loop_chain.json",
         "loop_pervariant.json",
         "loop_variant.json"
       ],
       "phenotype_hits": [],
       "controlled": [
+        "loop_chain.json",
         "loop_pervariant.json",
         "loop_variant.json"
       ],
@@ -211,7 +230,7 @@
       },
       "n_items": 42765,
       "gates_passed": 33,
-      "gates_failed": 6,
+      "gates_failed": 9,
       "gate_detail": {
         "cell_loop.json": {
           "passed": 2,
@@ -237,6 +256,10 @@
           "passed": 4,
           "failed": 0
         },
+        "loop_nexus_fair.json": {
+          "passed": 0,
+          "failed": 3
+        },
         "loop_quantity.json": {
           "passed": 4,
           "failed": 0
@@ -261,6 +284,7 @@
         "loop_drug.json",
         "loop_fold_link.json",
         "loop_integrate.json",
+        "loop_nexus_fair.json",
         "loop_recall.json",
         "loop_sideeffect.json",
         "loop_survivable.json"
@@ -288,8 +312,8 @@
         "loop_drug.json",
         "loop_fold_link.json",
         "loop_integrate.json",
-        "loop_quantity.json",
-        "loop_recall.json"
+        "loop_nexus_fair.json",
+        "loop_quantity.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
@@ -314,9 +338,13 @@
         "loops3d": 767
       },
       "n_items": 767,
-      "gates_passed": 8,
-      "gates_failed": 0,
+      "gates_passed": 11,
+      "gates_failed": 3,
       "gate_detail": {
+        "loop_chain.json": {
+          "passed": 3,
+          "failed": 3
+        },
         "loop_integrate.json": {
           "passed": 4,
           "failed": 0
@@ -329,6 +357,7 @@
       "answered_well": true,
       "best_pipeline": "loop_real_chromatin.json",
       "adjacent_credits": [
+        "loop_chain.json",
         "loop_integrate.json"
       ],
       "retracted": {},
@@ -343,17 +372,19 @@
         "colab/data_ledger.py",
         "colab/ko_dossier.py",
         "colab/layers.py",
+        "colab/loop_chain.py",
         "colab/loop_integrate.py",
-        "colab/loop_real_chromatin.py",
-        "colab/supercoil_gate.py"
+        "colab/loop_real_chromatin.py"
       ],
       "produces": [
         "data_ledger.json",
+        "loop_chain.json",
         "loop_integrate.json",
         "loop_real_chromatin.json"
       ],
       "phenotype_hits": [],
       "controlled": [
+        "loop_chain.json",
         "loop_integrate.json",
         "loop_real_chromatin.json"
       ],
@@ -653,9 +684,9 @@
     "  THE GOAL, MEASURED",
     "----------------------------------------------------------------------------------------------------",
     "  question                   slot   pipe  check     items   gates  well?   answered well by",
-    "  any point mutation          yes    yes    yes        13     5/8     no   ",
-    "  any protein change          yes    yes    yes    42,765   33/39    YES   loop_quantity.json",
-    "  any chromosome fold         yes    yes    yes       767     8/8    YES   loop_real_chromatin.json",
+    "  any point mutation          yes    yes    yes        13    8/14     no   ",
+    "  any protein change          yes    yes    yes    42,765   33/42    YES   loop_quantity.json",
+    "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
     "  drug effect                 yes    yes    yes     4,275     7/8    YES   loop_drug.json",
     "  side effect                 yes    yes    yes        48     3/4     no   ",
     "  cancer                      yes    yes    yes       839     7/8     no   ",
@@ -760,11 +791,22 @@
     "      FAIL   N2 the anti-correlation survives",
     "      PASS   N3 it is the survivability constraint",
     "      PASS   N4 positive control holds",
+    "\n  loop 31  DNA -> fold -> residue -> nexus",
+    "      PASS   C1 the chain runs",
+    "      PASS   C2 the translation is right",
+    "      PASS   C3 keeps variant resolution",
+    "      FAIL   C4 the fold link earns its place",
+    "      FAIL   C5 nexus sees something",
+    "      FAIL   C6 beats the substitution matrix",
+    "\n  loop 32  nexus tested the way it asked",
+    "      FAIL   F1 harness reproduces nexus",
+    "      FAIL   F2 needs confident structure",
+    "      FAIL   F3 burial sharpens it",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  62 gates passed, 15 failed. Both numbers are the point: a project where",
+    "\n  65 gates passed, 21 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -795,7 +837,7 @@
     "  (the list above holds only the synthetic control: all six real rows now have a slot, a",
     "   pipeline and a controlled score. The distance moved to the fourth column.)",
     "",
-    "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_pervariant.json, loop_variant.json",
+    "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_pervariant.json, loop_variant.json",
     "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_sideeffect.json",
     "  NOT ANSWERED WELL  cancer                 every module answering it has a failed gate: loop_survivable.json; SUPERSEDED: loop_cancer.json",
     "\n  FOUR LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
@@ -814,6 +856,6 @@
     "       finds a third of real dependencies; PPI degree separates the ones it misses at 0.68 and",
     "       adding it makes the predictor WORSE at matched precision, because hub-ness promotes",
     "       true negatives just as fast. Naming the missing layer is not being able to use it.",
-    "    manifest: 22 inputs, coverage 22/22 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 24 inputs, coverage 24/24 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }

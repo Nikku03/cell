@@ -58,6 +58,7 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 SP = Path(os.environ.get("CELL_SCRATCH",
                          "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 SC = ROOT / "outputs" / "orphan" / "supercoil"
+SCRATCH = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
 
 
 # ---- transforms, recorded as code because prose cannot be re-executed --------------------------------
@@ -181,6 +182,29 @@ LEDGER = [
      "why": "the variant-addressable slot loop_variant built: 4,443 genes with pathogenic missense "
             "and 14,987 with benign missense. NOTE this file is REGENERATED WEEKLY by NCBI, so the "
             "hash will drift and a mismatch here means a newer release, not corruption"},
+    {"name": "ens_gtf.gz", "path": SC / "ens_gtf.gz", "kind": "raw",
+     "sha256": "8c87436bab973c87", "bytes": 55529204,
+     "url": "https://ftp.ensembl.org/pub/release-112/gtf/homo_sapiens/"
+            "Homo_sapiens.GRCh38.112.gtf.gz",
+     "source": "Ensembl 112 GRCh38 annotation; only the CDS lines are read",
+     "why": "the exon structure that makes loop_chain's genomic-coordinate-to-codon walk possible. "
+            "Without it a point mutation cannot be carried to an amino acid at all, and the middle "
+            "link of the chain would have to be a lookup instead of a computation"},
+    {"name": "ens_cds.fa.gz", "path": SC / "ens_cds.fa.gz", "kind": "raw",
+     "sha256": "1b7b6fa74c427b40", "bytes": 23111086,
+     "url": "https://ftp.ensembl.org/pub/release-112/fasta/homo_sapiens/cds/"
+            "Homo_sapiens.GRCh38.cds.all.fa.gz",
+     "source": "Ensembl 112 coding sequences, one per transcript",
+     "why": "the codon itself. Paired with the GTF this gives the reference base at every variant, "
+            "which is what let loop_chain check its own translation: 100.00% reference-base agreement "
+            "over 966,223 variants, before ClinVar's consequence field was ever consulted"},
+    {"name": "skempi_v2.csv", "path": SC / "skempi_v2.csv", "kind": "raw",
+     "sha256": "76f8e60d09eaa4f0", "bytes": 1602208,
+     "url": "https://life.bsc.es/pid/skempi2/database/download/skempi_v2.csv",
+     "source": "SKEMPI 2.0, measured binding free-energy changes for mutations in protein complexes",
+     "why": "the only MEASURED interface data here, and the task nexus was actually validated on. "
+            "loop_nexus_fair needs it as a positive control: without it there is no way to tell a "
+            "sensor that does not work from a harness that does not work"},
     {"name": "sider_se.tsv.gz", "path": SC / "sider_se.tsv.gz", "kind": "raw",
      "sha256": "119b2f5319a9398d", "bytes": 2381171,
      "url": "http://sideeffects.embl.de/media/download/meddra_all_se.tsv.gz",
@@ -229,10 +253,27 @@ def fetch(entry):
     return True
 
 
+def resolve(e):
+    """Find the file by name across the places raw data actually lands.
+
+    THE DEFECT THIS FIXES.  `SC` points at outputs/orphan/supercoil, which holds the bigWigs and
+    nothing else. Seven entries -- clinvar, both SIDER files, intogen, and the three added for
+    loop_chain -- were recorded against that path while living in the session scratchpad, so this
+    ledger reported them MISSING while they sat on disk being read by other modules. A ledger that
+    cannot tell 'absent' from 'recorded at the wrong path' is not auditing anything, and its headline
+    count was wrong in the direction that flatters nobody but hides a real hole. Where a file is found
+    is now reported alongside whether it is found."""
+    for base in (Path(e["path"]).parent, SCRATCH):
+        p = base / Path(e["path"]).name
+        if p.exists():
+            return p
+    return Path(e["path"])
+
+
 def status():
     rows = []
     for e in LEDGER:
-        p = Path(e["path"])
+        p = resolve(e)
         if not p.exists():
             rows.append({**{k: e[k] for k in ("name", "kind", "source", "why")},
                          "state": "MISSING", "have": None, "want": e["sha256"]})
@@ -240,7 +281,8 @@ def status():
         h = sha16(p)
         rows.append({**{k: e[k] for k in ("name", "kind", "source", "why")},
                      "state": "OK" if h == e["sha256"] else "HASH MISMATCH",
-                     "have": h, "want": e["sha256"], "bytes": p.stat().st_size})
+                     "have": h, "want": e["sha256"], "bytes": p.stat().st_size,
+                     "found_at": str(p.parent)})
     return rows
 
 
@@ -274,7 +316,7 @@ def main():
         if e["kind"] != "derived":
             continue
         src = next(x for x in LEDGER if x["name"] == e["from"][0])
-        if not Path(src["path"]).exists():
+        if not resolve(src).exists():
             report(f"    {e['name']:<34}source {src['name']} missing -- cannot check")
             rebuilds.append({"name": e["name"], "result": "SOURCE MISSING"})
             continue

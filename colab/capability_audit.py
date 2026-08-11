@@ -284,7 +284,7 @@ ENTRY = {
 # out here to be argued with exactly like ENTRY is, and anything else that touches the slot is reported
 # as ADJACENT rather than counted.
 ACCEPTS = {
-    "any point mutation": ("variant", "pervariant"),
+    "any point mutation": ("variant", "pervariant", "chain", "nexus_fair"),
     "any protein change": ("cell_loop", "deficit", "medium", "quantity", "retest", "amplify"),
     "any chromosome fold": ("real_chromatin", "supercoil"),
     "drug effect": ("drug",),

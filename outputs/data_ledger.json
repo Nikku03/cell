@@ -9,7 +9,8 @@
       "state": "OK",
       "have": "b8869c749b2b4a24",
       "want": "b8869c749b2b4a24",
-      "bytes": 21962834
+      "bytes": 21962834,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/rnadecay"
     },
     {
       "name": "k562_atac.bed.gz",
@@ -19,7 +20,8 @@
       "state": "OK",
       "have": "2f50c1a82609dccb",
       "want": "2f50c1a82609dccb",
-      "bytes": 1268446
+      "bytes": 1268446,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     },
     {
       "name": "re2g_k562.bed.gz",
@@ -29,7 +31,8 @@
       "state": "OK",
       "have": "a853c2745e1b4cc5",
       "want": "a853c2745e1b4cc5",
-      "bytes": 3744436
+      "bytes": 3744436,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     },
     {
       "name": "lambert.csv",
@@ -39,7 +42,8 @@
       "state": "OK",
       "have": "5438940ddef71b6f",
       "want": "5438940ddef71b6f",
-      "bytes": 2107299
+      "bytes": 2107299,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     },
     {
       "name": "ctcf_gw.bed.gz",
@@ -49,7 +53,8 @@
       "state": "OK",
       "have": "39d4e2566f1d008c",
       "want": "39d4e2566f1d008c",
-      "bytes": 776906
+      "bytes": 776906,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     },
     {
       "name": "GSM8523629_supercoil_rep1_hg38.bw",
@@ -59,7 +64,8 @@
       "state": "OK",
       "have": "5a22b743af5798b4",
       "want": "5a22b743af5798b4",
-      "bytes": 1437675
+      "bytes": 1437675,
+      "found_at": "/home/user/cell/outputs/orphan/supercoil"
     },
     {
       "name": "GSM8523630_supercoil_rep2_hg38.bw",
@@ -69,7 +75,8 @@
       "state": "OK",
       "have": "b74136ed78bfb469",
       "want": "b74136ed78bfb469",
-      "bytes": 1437304
+      "bytes": 1437304,
+      "found_at": "/home/user/cell/outputs/orphan/supercoil"
     },
     {
       "name": "GSM8523628_RPE1_bTMP_genomic_control_hg38.bw",
@@ -79,7 +86,8 @@
       "state": "OK",
       "have": "c4cfe8f1ec137a6e",
       "want": "c4cfe8f1ec137a6e",
-      "bytes": 1143230
+      "bytes": 1143230,
+      "found_at": "/home/user/cell/outputs/orphan/supercoil"
     },
     {
       "name": "GSM8706920_1_RPKM.bw",
@@ -89,7 +97,8 @@
       "state": "OK",
       "have": "4e7bf678aa47b232",
       "want": "4e7bf678aa47b232",
-      "bytes": 107688596
+      "bytes": 107688596,
+      "found_at": "/home/user/cell/outputs/orphan/supercoil"
     },
     {
       "name": "GSM8706924_5_RPKM.bw",
@@ -99,7 +108,8 @@
       "state": "OK",
       "have": "da0c81bb13975374",
       "want": "da0c81bb13975374",
-      "bytes": 110110646
+      "bytes": 110110646,
+      "found_at": "/home/user/cell/outputs/orphan/supercoil"
     },
     {
       "name": "_abcfeat.json",
@@ -109,7 +119,8 @@
       "state": "OK",
       "have": "20f7aa4ae6040e16",
       "want": "20f7aa4ae6040e16",
-      "bytes": 1195158
+      "bytes": 1195158,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     },
     {
       "name": "lambert_tf_symbols.json",
@@ -119,7 +130,8 @@
       "state": "OK",
       "have": "3e58c688dec13289",
       "want": "3e58c688dec13289",
-      "bytes": 15116
+      "bytes": 15116,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     },
     {
       "name": "HumanGEM.xml",
@@ -129,7 +141,85 @@
       "state": "OK",
       "have": "cc5a4383c6116b0c",
       "want": "cc5a4383c6116b0c",
-      "bytes": 43115559
+      "bytes": 43115559,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "clinvar.vcf.gz",
+      "kind": "raw",
+      "source": "NCBI ClinVar, GRCh38 VCF, 4,461,717 records",
+      "why": "the variant-addressable slot loop_variant built: 4,443 genes with pathogenic missense and 14,987 with benign missense. NOTE this file is REGENERATED WEEKLY by NCBI, so the hash will drift and a mismatch here means a newer release, not corruption",
+      "state": "OK",
+      "have": "a99917628ff65443",
+      "want": "a99917628ff65443",
+      "bytes": 193118277,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "ens_gtf.gz",
+      "kind": "raw",
+      "source": "Ensembl 112 GRCh38 annotation; only the CDS lines are read",
+      "why": "the exon structure that makes loop_chain's genomic-coordinate-to-codon walk possible. Without it a point mutation cannot be carried to an amino acid at all, and the middle link of the chain would have to be a lookup instead of a computation",
+      "state": "OK",
+      "have": "8c87436bab973c87",
+      "want": "8c87436bab973c87",
+      "bytes": 55529204,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "ens_cds.fa.gz",
+      "kind": "raw",
+      "source": "Ensembl 112 coding sequences, one per transcript",
+      "why": "the codon itself. Paired with the GTF this gives the reference base at every variant, which is what let loop_chain check its own translation: 100.00% reference-base agreement over 966,223 variants, before ClinVar's consequence field was ever consulted",
+      "state": "OK",
+      "have": "1b7b6fa74c427b40",
+      "want": "1b7b6fa74c427b40",
+      "bytes": 23111086,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "skempi_v2.csv",
+      "kind": "raw",
+      "source": "SKEMPI 2.0, measured binding free-energy changes for mutations in protein complexes",
+      "why": "the only MEASURED interface data here, and the task nexus was actually validated on. loop_nexus_fair needs it as a positive control: without it there is no way to tell a sensor that does not work from a harness that does not work",
+      "state": "OK",
+      "have": "76f8e60d09eaa4f0",
+      "want": "76f8e60d09eaa4f0",
+      "bytes": 1602208,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "sider_se.tsv.gz",
+      "kind": "raw",
+      "source": "SIDER 4.1, drug side effects from package inserts, STITCH compound ids x MedDRA terms",
+      "why": "the ONLY compound-to-adverse-event data anywhere in this project; `side effect` had 48 gene-disease rows and nothing else",
+      "state": "OK",
+      "have": "119b2f5319a9398d",
+      "want": "119b2f5319a9398d",
+      "bytes": 2381171,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "sider_names.tsv",
+      "kind": "raw",
+      "source": "SIDER 4.1 compound id to drug name",
+      "why": "the join from SIDER's STITCH ids to cell_complete's drug NAMES",
+      "state": "OK",
+      "have": "6427a3e3202c71a8",
+      "want": "6427a3e3202c71a8",
+      "bytes": 34759,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "intogen.zip",
+      "kind": "raw",
+      "source": "IntOGen 2024-06-18 driver compendium, Compendium_Cancer_Genes.tsv",
+      "why": "cancer driver labels; the `cancer` row had 839 items and no held-out target",
+      "state": "OK",
+      "have": "854def4465bcd7f9",
+      "want": "854def4465bcd7f9",
+      "bytes": 964758,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     },
     {
       "name": "HumanGEM_genes.tsv",
@@ -139,7 +229,8 @@
       "state": "OK",
       "have": "2a6058a157b3b9f3",
       "want": "2a6058a157b3b9f3",
-      "bytes": 1132077
+      "bytes": 1132077,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
     }
   ],
   "rebuilds": [
@@ -182,8 +273,15 @@
     "  _abcfeat.json                               derived  OK               20f7aa4ae6040e16",
     "  lambert_tf_symbols.json                     derived  OK               3e58c688dec13289",
     "  HumanGEM.xml                                raw      OK               cc5a4383c6116b0c",
+    "  clinvar.vcf.gz                              raw      OK               a99917628ff65443",
+    "  ens_gtf.gz                                  raw      OK               8c87436bab973c87",
+    "  ens_cds.fa.gz                               raw      OK               1b7b6fa74c427b40",
+    "  skempi_v2.csv                               raw      OK               76f8e60d09eaa4f0",
+    "  sider_se.tsv.gz                             raw      OK               119b2f5319a9398d",
+    "  sider_names.tsv                             raw      OK               6427a3e3202c71a8",
+    "  intogen.zip                                 raw      OK               854def4465bcd7f9",
     "  HumanGEM_genes.tsv                          raw      OK               2a6058a157b3b9f3",
-    "\n  14 of 14 present and hash-matching",
+    "\n  21 of 21 present and hash-matching",
     "\n  REBUILD CHECK -- a derived file must reproduce its hash from its raw inputs, or the",
     "  recorded transform is not the one that made it",
     "    _abcfeat.json                     build_abcfeat(re2g_k562.bed.gz) -> 14,465 entries, hash 20f7aa4ae6040e16   MATCHES",

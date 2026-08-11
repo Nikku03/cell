@@ -53,7 +53,9 @@ LOOPS = [
     ("27  where the amplification is", "loop_amplify.json", "gates"),
     ("28  what would recover the misses", "loop_recall.json", "gates"),
     ("29  is the cancer inversion real", "loop_survivable.json", "gates"),
-    ("2/9/11/13/19/26 capability audit", "capability_audit.json", None),
+    ("31  DNA -> fold -> residue -> nexus", "loop_chain.json", "gates"),
+    ("32  nexus tested the way it asked", "loop_nexus_fair.json", "gates"),
+    ("2/9/11/13/19/26/33 capability audit", "capability_audit.json", None),
 ]
 
 
