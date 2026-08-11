@@ -81,13 +81,34 @@ WHAT HAPPENED, written after the run against the gates above, unedited.
         substitution table published in 1992 beats the structural sensor by 0.1623 to 0.0194 on the
         same variants, in the same genes, under the same null.
 
-    THE CHAIN IS REAL AND THE TWO LINKS THAT WERE SUPPOSED TO CARRY CELL-MODEL VALUE DO NOT.
-    The plumbing works and the middle link is verified against a source it never saw. What fails is
-    the claim the chain was built to support: at variant resolution the chromosome fold contributes
-    nothing, the structural sensor contributes nothing and points backwards, and the only thing that
-    separates pathogenic from benign inside a gene is a sequence lookup table older than the genome
-    project. That is a negative result about this model, established with the controls that make it
-    hard to argue with, rather than a chain that ran and was declared a success because it ran.
+    THE CHAIN IS REAL AND THE CHROMOSOME-FOLD LINK DOES NOT CARRY VARIANT-LEVEL INFORMATION.
+    The plumbing works and the middle link is verified against a source it never saw. At variant
+    resolution the chromosome fold contributes nothing, and the only thing separating pathogenic from
+    benign inside a gene is a substitution table older than the genome project.
+
+CORRECTION TO C5 AND C6, WRITTEN AFTER THE FACT AND KEPT HERE RATHER THAN EDITED AWAY.
+    The first version of this section read "the structural sensor contributes nothing and points
+    backwards" as though that were a verdict on nexus. It is not, and the over-claim is mine in three
+    specific ways, all of which nexus had already written down:
+
+      1  THIS RAN ONE OF TWO SENSORS. `nexus_activity(v, 0.0)` pins the binding ddG at zero, because an
+         arbitrary ClinVar gene has no interface partner to compute one from. nexus's entire thesis is
+         that you need BOTH: its own recorded numbers are intrinsic-only AUC 0.562, dual-sensor 0.755,
+         fusion gain +0.193, and it measured the intrinsic sensor to be blind to 94% of strong
+         binding-breakers. So C5 tested the configuration nexus itself had already published as
+         near-chance, and then reported near-chance as a discovery.
+      2  IT WAS SCORED AGAINST A TARGET NEXUS DISCLAIMED. Its stated HONEST BOUNDARY is that the
+         sensors live in near-field structure and that the last hop -- activity to whole-cell
+         phenotype -- "does NOT compose". ClinVar pathogenic/benign is precisely that far-field label.
+      3  NO DOMAIN RESTRICTION. The intrinsic sensor was asked about every residue of an AlphaFold
+         monomer, including disordered low-confidence regions where a folding ddG is not meaningful.
+
+    What C5 and C6 DO establish, and it is worth keeping: for arbitrary ClinVar point mutations, the
+    second sensor cannot fire at all, so nexus is structurally reduced to its weak half, and in that
+    configuration BLOSUM62 beats it. That is a statement about COVERAGE -- what this chain can offer a
+    variant it knows nothing else about -- and not about whether nexus works. loop_nexus_fair tests
+    the version of the question that can actually answer that, with nexus's own SKEMPI task as the
+    positive control.
 
 CONTROLS: ClinVar's molecular-consequence field held back as an independent check on the translation;
 the reference base checked against the CDS at every variant; 200 WITHIN-GENE label shuffles; the
@@ -542,6 +563,12 @@ def main():
         f"{'confirmed' if mirrored else 'NOT CONFIRMED -- check'}")
     say(f"     C5 {'PASS' if c5 else 'FAIL'}  (gate: activity BELOW 0.5 -- destabilising should mean "
         f"more pathogenic)")
+    say(f"     WHAT THIS IS AND IS NOT A TEST OF. nexus is a DUAL sensor and its own record puts the")
+    say(f"     intrinsic half at 0.562 alone against 0.755 for both, blind to 94% of binding-breakers.")
+    say(f"     An arbitrary ClinVar gene has no interface partner, so only the weak half can fire here")
+    say(f"     and this measures COVERAGE -- what the chain can offer a variant it knows nothing else")
+    say(f"     about -- not whether nexus works. nexus also disclaims the hop to whole-cell phenotype,")
+    say(f"     which is what a pathogenic/benign label is. loop_nexus_fair does the fair version.")
     if inverted:
         say(f"     THE SENSOR POINTS THE WRONG WAY. Activity is {a_a:.4f}, outside the shuffle band on")
         say(f"     the wrong side: within a gene, the MORE destabilising a substitution is scored, the")
