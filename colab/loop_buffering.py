@@ -38,7 +38,7 @@ co-dependency partners, so codep-count predicts dependency by construction rathe
 
 Features are therefore split, and only one half counts:
 
-    INDEPENDENT   isozyme count and sole-catalyst reactions (Human-GEM GPR -- model structure)
+    INDEPENDENT   isozyme counts and sole-catalyst reactions (Human-GEM GPR -- model structure)
                   paralogue family size (sequence)
                   PPI degree, complex membership (interaction and complex annotation)
                   expression (proteomics) -- included so it cannot hide behind another feature
@@ -92,8 +92,9 @@ N_SHUFFLE = 200
 DEP_THRESHOLD = 0.10
 COST_THRESHOLD = 1e-2
 
-INDEPENDENT = ["isozymes (fewest alternatives)", "sole-catalyst reactions",
-               "paralogue family size", "PPI degree", "in a complex", "expression"]
+INDEPENDENT = ["isozymes (most alternatives)", "fraction of reactions with an isozyme",
+               "sole-catalyst reactions", "paralogue family size", "PPI degree", "in a complex",
+               "expression"]
 DEPMAP_DERIVED = ["co-dependency partners", "synthetic-lethal partners"]
 
 
@@ -147,13 +148,20 @@ def main():
     cobra_cfg = cobra.Configuration()
     cobra_cfg.solver = "glpk"
     M = cobra.io.read_sbml_model(str(SC / "HumanGEM.xml"))
-    ens2sym = {}
-    for g in M.genes:
-        nm = g.name or g.id
-        ens2sym[g.id] = nm
+    # HUMAN-GEM SHIPS EMPTY GENE NAMES. Every g.name is '', so `g.name or g.id` falls back to the
+    # Ensembl ID and the symbol lookup below matched ZERO of 1,784 genes -- which is why the first two
+    # runs reported the isozyme features at exactly 0.5000 with an exactly 0.5000 band. That is the
+    # signature of a constant column, not of a feature that does not work, and it meant the single
+    # most on-target feature here -- actual metabolic redundancy, written down in the model's own GPR
+    # rules -- was silently never tested. The symbol table is a separate file, as loop_retest already
+    # knew.
+    gm = pd.read_csv(SC / "HumanGEM_genes.tsv", sep="\t")
+    ens2sym = {a: b for a, b in zip(gm["genes"], gm["geneSymbols"]) if isinstance(b, str)}
+    say(f"  ENSG -> symbol map: {len(ens2sym):,} entries from HumanGEM_genes.tsv "
+        f"(the SBML itself carries empty gene names)")
     alts, sole = collections.defaultdict(list), collections.Counter()
     for r in M.reactions:
-        gs = [ens2sym.get(x.id, x.id) for x in r.genes]
+        gs = [ens2sym[x.id] for x in r.genes if x.id in ens2sym]
         if not gs:
             continue
         for s in gs:
@@ -176,7 +184,15 @@ def main():
         i = name2i.get(s)
         rows.append({
             "sym": s, "cost": max(c, 0.0), "dep": dep[s],
-            "isozymes (fewest alternatives)": float(min(alts[s])) if alts.get(s) else 0.0,
+            # AGGREGATION MATTERS AND THE FIRST VERSION KILLED THE FEATURE. Taking the MINIMUM number
+            # of alternatives over a gene's reactions gave exactly 0 for essentially every gene --
+            # almost all metabolic genes have at least one reaction they alone catalyse -- so the AUC
+            # came out at exactly 0.5000 with a 0.5000 band, i.e. constant. Isozyme redundancy is the
+            # single most on-target feature here and it was silently not tested. Max and fraction are
+            # the aggregations that carry the redundancy rather than the vulnerability.
+            "isozymes (most alternatives)": float(max(alts[s])) if alts.get(s) else 0.0,
+            "fraction of reactions with an isozyme":
+                float(np.mean([a > 0 for a in alts[s]])) if alts.get(s) else 0.0,
             "sole-catalyst reactions": float(sole.get(s, 0)),
             "paralogue family size": float(fam.get(family(s), 1)),
             "PPI degree": float(genes[i].get("ppi") or 0) if i is not None else 0.0,
@@ -225,6 +241,39 @@ def main():
     b2 = bool(any(v["significant"] for v in ind.values()))
     say(f"     B2 {'PASS' if b2 else 'FAIL'}  (independent features only)")
 
+    # ---- WHICH HYPOTHESIS, not just whether something separates -------------------------------------
+    # The gate names say "redundancy". The features have DIRECTIONS, and directions distinguish two
+    # different stories that a bare AUC hides:
+    #   REDUNDANCY  a gene is buffered because something else covers its job -> more isozymes, more
+    #               paralogues, FEWER reactions it alone catalyses.
+    #   CENTRALITY  a gene is buffered because it was peripheral all along -> fewer interactions, not
+    #               in a complex, low expression.
+    # Both would pass B2. They are not the same claim and only one of them is the story this project
+    # has been telling itself.
+    HYP = {
+        "isozymes (most alternatives)": ("redundancy", +1),
+        "fraction of reactions with an isozyme": ("redundancy", +1),
+        "sole-catalyst reactions": ("redundancy", -1),
+        "paralogue family size": ("redundancy", +1),
+        "PPI degree": ("centrality", -1),
+        "in a complex": ("centrality", -1),
+        "expression": ("centrality", -1),
+    }
+    say(f"\n  WHICH STORY -- each feature's predicted direction under each hypothesis")
+    say(f"     {'feature':<38}{'hypothesis':<12}{'predicted':<11}{'observed':<10}verdict")
+    tally = collections.Counter()
+    for f, (hyp, sgn) in HYP.items():
+        a = res[f]["auc"]
+        obs = +1 if a > 0.5 else -1
+        ok = (obs == sgn) and res[f]["significant"]
+        tally[(hyp, ok)] += 1
+        say(f"     {f:<38}{hyp:<12}{'more' if sgn > 0 else 'less':<11}"
+            f"{'more' if obs > 0 else 'less':<10}{'supports' if ok else 'CONTRADICTS'}")
+    r_ok, r_no = tally[("redundancy", True)], tally[("redundancy", False)]
+    c_ok, c_no = tally[("centrality", True)], tally[("centrality", False)]
+    say(f"     redundancy hypothesis: {r_ok} support, {r_no} contradict")
+    say(f"     centrality hypothesis: {c_ok} support, {c_no} contradict")
+
     ne = {f: v for f, v in ind.items() if f != "expression"}
     best_ne = max(ne, key=lambda f: abs(ne[f]["auc"] - 0.5))
     b3 = bool(ne[best_ne]["significant"])
@@ -258,13 +307,25 @@ def main():
         - (oof - oof.mean()) / (oof.std() + 1e-9)
     new_order = np.argsort(-comb)
     prec_new = float(tail.real.to_numpy()[new_order[:k]].mean())
-    b5 = bool(prec_new > prec_base)
+    # A NULL, BECAUSE +0.04 ON 158 CALLS IS SEVEN GENES. The first version gated B5 on a bare
+    # comparison, which cannot tell a real re-ranking from a lucky shuffle at this sample size.
+    # The null shuffles the held-out buffering predictions and re-ranks with everything else fixed.
+    z = (tail.cost.to_numpy() - tail.cost.to_numpy().mean()) / (tail.cost.to_numpy().std() + 1e-9)
+    nullp = []
+    for _ in range(N_SHUFFLE):
+        sh = rng.permutation(oof)
+        o = np.argsort(-(z - (sh - sh.mean()) / (sh.std() + 1e-9)))
+        nullp.append(float(tail.real.to_numpy()[o[:k]].mean()))
+    nullp = np.array(nullp)
+    p95p = float(np.percentile(nullp, 95))
+    b5 = bool(prec_new > prec_base and prec_new > p95p)
     say(f"     calling the top {k} of {len(tail)}:")
     say(f"       cost alone                      precision {prec_base:.4f}")
     say(f"       cost minus predicted buffering  precision {prec_new:.4f}   "
-        f"({prec_new-prec_base:+.4f})")
+        f"({prec_new-prec_base:+.4f}, {int(round((prec_new-prec_base)*k))} genes)")
+    say(f"       shuffled-prediction null        95th {p95p:.4f}, mean {nullp.mean():.4f}")
     say(f"     loop_tail's headline precision on this tail was 0.7670")
-    say(f"     B5 {'PASS' if b5 else 'FAIL'}")
+    say(f"     B5 {'PASS' if b5 else 'FAIL'}  (must beat both the baseline AND the shuffled null)")
 
     say("\n" + "=" * 100)
     gates = {"B1 groups matched on cost": b1, "B2 redundancy separates them": b2,
@@ -276,10 +337,23 @@ def main():
         say("  THE DESIGN CHECK FAILED. Cost separates the two groups, so this is measuring importance")
         say("  again rather than buffering, and nothing below it can be read.")
     elif b2 and b4 and b5:
-        say("  BUFFERING IS PREDICTABLE AND USABLE, AND THE COMPOSITION GAP IS ENGINEERING.")
-        say(f"  Redundancy structure separates buffered from not-buffered out of sample at {a_oof:.4f},")
-        say(f"  and using it raises the model's own precision from {prec_base:.4f} to {prec_new:.4f}.")
-        say("  That is the first time in this project that naming a missing layer also let us use it.")
+        say("  BUFFERING IS PREDICTABLE AND USABLE. Structure separates buffered from not-buffered out")
+        say(f"  of sample at {a_oof:.4f}, and using it raises the model's own precision from")
+        say(f"  {prec_base:.4f} to {prec_new:.4f} against a shuffled 95th of {p95p:.4f}. That is the first")
+        say("  time in this project that naming a missing layer also let us USE it -- loop_recall named")
+        say("  one and made the predictor worse.")
+        if r_ok < r_no:
+            say("")
+            say("  BUT IT IS NOT REDUNDANCY, AND THAT WAS THE HYPOTHESIS. All four redundancy features")
+            say(f"  point the WRONG WAY: more isozymes predicts NOT buffered ({res['isozymes (most alternatives)']['auc']:.4f}),")
+            say(f"  and more sole-catalyst reactions predicts buffered ({res['sole-catalyst reactions']['auc']:.4f}) -- both")
+            say("  the reverse of 'something else covers the job'. What actually separates them is")
+            say(f"  CENTRALITY: buffered genes have fewer interactions ({res['PPI degree']['auc']:.4f}), sit outside")
+            say(f"  complexes ({res['in a complex']['auc']:.4f}) and are lowly expressed ({res['expression']['auc']:.4f}).")
+            say("  So the model is not being defeated by biological back-up. It is over-calling")
+            say("  PERIPHERAL genes -- ones carrying unique chemistry in parts of the network the cell")
+            say("  does not lean on. That is a model-scope problem, which is engineering, and it is a")
+            say("  different problem from the one the buffering story predicted.")
     elif b2 and b4:
         say("  PREDICTABLE, NOT USABLE -- AND THAT IS THE SAME WALL AS loop_recall.")
         say(f"  Redundancy separates the groups out of sample at {a_oof:.4f}, and re-ranking by it does")
@@ -314,6 +388,7 @@ def main():
                "n_tail": len(tail), "n_buffered": nb, "n_not_buffered": nn,
                "cost_auc": a_cost, "features": res, "oof_auc": a_oof,
                "precision_base": prec_base, "precision_with_buffering": prec_new,
+               "precision_null95": p95p, "precision_null_mean": float(nullp.mean()),
                "seconds": time.time() - t0, "log": log},
               open(OUT / "loop_buffering.json", "w"), indent=2)
     say(f"\n  -> {OUT/'loop_buffering.json'}")
