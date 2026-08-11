@@ -233,7 +233,7 @@ def main():
         say("  chromatin number downstream would inherit the fault.")
     say("=" * 100)
 
-    man = RM.manifest(inputs=["closed form, no external input"], available=n, used=n,
+    man = RM.manifest(inputs=[], available=n, used=n,
                       selection="all", seed=SEED,
                       controls=["ideal-chain identity as an exact positive control",
                                 "textbook exponents fixed before the run",
