@@ -45,10 +45,20 @@ WHAT HAPPENED, written after the run against the gates above, unedited.
                                of +0.0359 against a +0.03 gate. THE OPEN MEDIUM WAS HOLDING FLUX
                                BALANCE BACK, and loop 1's G4 was partly an artefact of a model
                                shipped without one.
-    M3 SLACK                   FAIL.  2,619 of 2,848 knockouts still move growth (92.0%), against a
-                               gate of 90%. Better than the open medium's 100%, and 153 genes are now
-                               outright lethal where essentially none were before, but a cell in
-                               which 92% of single deletions change growth is still not a cell.
+    M3 SLACK                   FAIL -- AND THE FAILURE WAS MINE, NOT THE MODEL'S. Corrected by
+                               loop_slack, which audited this gate instead of believing it.
+                               The 92% is an artefact of how mu_WT was obtained here: it is the
+                               BISECTION'S LAST ITERATE (0.029999790) rather than a re-solve at the
+                               final bounds, so every unaffected knockout solves to a marginally higher
+                               mu and shows a cost of about -7.2e-07 -- negative, which is impossible.
+                               M3's `abs(diff) > 1e-9` counted all 1,525 of those as "moving growth".
+                               THE REAL NUMBERS: 14.4% of knockouts have any positive cost and 11.7%
+                               cost more than 1% of growth, against 24.3% of the same genes being
+                               DepMap dependencies at a matched mark. The model has roughly the right
+                               amount of slack. What it does NOT have is the right ordering within the
+                               tail (loop_slack P3, Spearman +0.29 inside a null of 0.43).
+                               The one-line fix for any future run: re-solve mu_WT at the final bounds,
+                               or compare on a relative rather than an absolute threshold.
 
     and against the expression confound, on the same genes: 0.6507 within abundance-matched deciles,
     and 5-fold CV lookup 0.7761 -> lookup + defined-medium FBA 0.8266 (+0.0504) with a SINGLE

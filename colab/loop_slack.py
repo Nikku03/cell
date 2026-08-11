@@ -32,6 +32,35 @@ PREDECLARED, before any number:
 CONTROLS: the threshold swept across five orders of magnitude so the reader can see where the answer
 changes; DepMap's own dependency distribution as the external comparator; 200 label shuffles for P3.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    P1 THE GATE WAS THE PROBLEM   PASS, and the mechanism was found rather than inferred.
+        loop_medium reported 92.0% of knockouts moving growth. The stored scores say 14.4% have any
+        positive cost at all and 11.7% cost more than 1% of growth. The discrepancy is fully explained:
+        1,525 of 1,784 knockouts carry a cost of about -7.2e-07 -- NEGATIVE, which is impossible, since
+        deleting a gene cannot make this model grow faster. loop_medium calibrated the uptake cap by
+        bisection and then used the bisection's last iterate as mu_WT (0.029999790) rather than
+        re-solving at the final bounds. Every unaffected knockout then solved to a marginally higher mu,
+        and M3's `abs(diff) > 1e-9` counted all of them.
+        THE 92% WAS AN OFF-BY-A-BISECTION-TOLERANCE ERROR IN MY OWN GATE.
+
+    P2 THE RIGHT AMOUNT OF SLACK   PASS.  Against DepMap's own dependency fractions on 1,775 shared
+        genes: 11.6% of model knockouts cost more than 1% of growth against 24.3% of genes being
+        dependencies in more than 10% of lines; 11.3% vs 18.2%; 11.0% vs 13.2%. Largest gap 12.7 points,
+        inside the 15-point gate. The model is somewhat MORE tolerant than real cells, and converges
+        with them as the threshold rises.
+
+    P3 THE SLACK IS IN THE RIGHT PLACES   FAIL.  Among the 206 genes costing more than 1%, the model's
+        cost ranking agrees with DepMap at Spearman +0.2889 against a |null| 95th percentile of 0.4284 --
+        inside the null. The model has about the right AMOUNT of slack and cannot yet say WHICH genes
+        should be in the tail.
+
+WHAT THIS CHANGES.  loop_medium's stated conclusion -- "a cell in which 92% of single deletions change
+growth is still not a cell" -- is WRONG and is corrected in that file. The correct statement is that
+11.7% of deletions cost more than 1% of growth, which is close to the real distribution, and that the
+remaining defect is the ordering of the tail rather than its size. That is a materially different and
+more tractable problem, and it was only visible because the gate was audited instead of believed.
+
 -> outputs/loop_slack.json
 """
 import json
@@ -79,6 +108,20 @@ def main():
     cost = S["medium"].astype(float)
     cost = cost[np.isfinite(cost)]
     say(f"\n  {len(cost):,} scored knockouts from loop 4's defined-medium model")
+
+    # THE MECHANISM OF M3's FAILURE, diagnosed rather than guessed.
+    neg = int((cost < 0).sum())
+    if neg:
+        say(f"\n  DIAGNOSIS: {neg:,} of {len(cost):,} knockouts have a NEGATIVE cost, clustered at "
+            f"{float(cost[cost < 0].median()):.3g}.")
+        say(f"    A knockout cannot improve growth in this model, so that is arithmetic, not biology.")
+        say(f"    loop_medium calibrated the uptake cap by BISECTION and then used the bisection's last")
+        say(f"    iterate as mu_WT ({M['mu_medium']:.9f}) instead of re-solving at the final bounds.")
+        say(f"    Every unaffected knockout then solved to a very slightly HIGHER mu, so 1 - mu_KO/mu_WT")
+        say(f"    came out at about -7e-07 -- and M3's `abs(diff) > 1e-9` test counted all {neg:,} of")
+        say(f"    them as 'moving growth'. That is where 92% came from.")
+        say(f"    The fix for any future run is one line: re-solve mu_WT at the final bounds, or test")
+        say(f"    against a relative threshold rather than an absolute one.")
 
     # ---- P1: sweep the threshold ---------------------------------------------------------------------
     say(f"\n  P1 THE THRESHOLD SWEEP -- where does the answer change?")
