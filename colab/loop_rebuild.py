@@ -320,13 +320,58 @@ def main():
     d5 = bool(frac >= 0.45)
     say(f"     D5 {'PASS' if d5 else 'FAIL'}  (>= 45%)")
 
-    # diagnostic, not a gate: the evidence-type variant of ppi
-    _, pe, pc = agree([g.get("ppi") for g in genes], [ppi_all.get(s) for s in nm], "num")
-    say(f"\n     diagnostic  ppi over ALL evidence types (physical + genetic): exact {pe:.4f}, "
-        f"corr {pc:.4f}")
-    say(f"                 the declared claim is physical-only at exact "
-        f"{checks['ppi']['exact']:.4f}, corr {checks['ppi']['corr']:.4f}; the variant is reported "
-        f"and NOT adopted")
+    # ---- diagnostics, none of them gates ---------------------------------------------------------
+    # ppi is the most-read numeric field in the file (210 module-reads) and it misses by a mile.
+    # Two hypotheses, both testable and both wrong, which is worth as much as a fix:
+    #   (a) the evidence filter -- maybe genetic interactions were included too
+    #   (b) the source was never external -- cell_complete.json carries its OWN 191,447-edge `ppi`
+    #       table keyed on gene INDEX, and the per-gene count could just be its degree
+    o_ppi = [g.get("ppi") for g in genes]
+    _, pe, pc = agree(o_ppi, [ppi_all.get(s) for s in nm], "num")
+    say(f"\n     diagnostic  ppi is the file's most-read numeric field and it does not reproduce")
+    say(f"                 BioGRID physical only     exact {checks['ppi']['exact']:.4f}  "
+        f"corr {checks['ppi']['corr']:.4f}   <- the declared claim")
+    say(f"                 BioGRID all evidence      exact {pe:.4f}  corr {pc:.4f}   "
+        f"<- not the filter, then")
+    raw = json.load(open(CELL))
+    outd, ind, und = collections.Counter(), collections.Counter(), collections.defaultdict(set)
+    for a, b in raw["ppi"]:
+        outd[a] += 1
+        ind[b] += 1
+        if a != b:
+            und[a].add(b)
+            und[b].add(a)
+    internal = {}
+    for lab, vals in (("out-degree", [outd.get(i, 0) for i in range(len(genes))]),
+                      ("in-degree", [ind.get(i, 0) for i in range(len(genes))]),
+                      ("undirected", [len(und.get(i, ())) for i in range(len(genes))])):
+        _, e, c = agree(o_ppi, vals, "num")
+        internal[lab] = {"exact": e, "corr": c, "mean": float(np.mean(vals))}
+        say(f"                 own table, {lab:<11}exact {e:.4f}  corr {c:.4f}   mean {np.mean(vals):.1f}")
+    say(f"                 the file's own ppi column has mean {np.mean(o_ppi):.2f}, median "
+        f"{np.median(o_ppi):.0f}, {np.mean(np.array(o_ppi) == 0):.0%} zeros -- a SPARSER network")
+    say(f"                 than BioGRID and than the file's own edge table. It is a third thing, and")
+    say(f"                 nothing in this repo says what. ppi moves out of 'declared with a URL'")
+    say(f"                 and into SOURCE NOT IDENTIFIED, which is a downgrade earned by testing.")
+
+    # pubs misses by 0.0027. Publication counts are heavy-tailed -- a few hub genes carry thousands
+    # of papers -- so Pearson on raw counts is a poor statistic for them and a rank statistic is the
+    # right one. Reported, NOT adopted: the declared gate was Pearson and choosing Spearman after
+    # seeing 0.8973 would be picking the test that passes.
+    o_pub = np.array([g.get("pubs") for g in genes], float)
+    n_pub = np.array([pubs.get(s, np.nan) for s in nm], float)
+    m = np.isfinite(o_pub) & np.isfinite(n_pub)
+    from scipy.stats import spearmanr
+    sp = float(spearmanr(o_pub[m], n_pub[m]).statistic)
+    say(f"\n     diagnostic  pubs misses by {GATE_CORR - checks['pubs']['corr']:.4f}. Counts are "
+        f"heavy-tailed (file max {int(np.nanmax(o_pub)):,}),")
+    say(f"                 mine are {np.mean(n_pub[m] > o_pub[m]):.0%} higher gene-by-gene, which is "
+        f"what a LATER snapshot of a")
+    say(f"                 monotonically growing count looks like. Spearman is {sp:.4f} against a "
+        f"Pearson gate of {GATE_CORR}.")
+    say(f"                 REPORTED, NOT ADOPTED -- the gate was declared as Pearson and swapping to "
+        f"the rank")
+    say(f"                 statistic after seeing the number is choosing the test that passes.")
 
     say("\n" + "=" * 100)
     gates = {"D1 sources arrive and cover": d1, "D2 rebuilt columns match": d2,
@@ -334,12 +379,23 @@ def main():
              "D5 coverage passes half": d5}
     for k, v in gates.items():
         say(f"  {k:<40}{'PASS' if v else 'FAIL'}")
-    say(f"  THE 30% THAT HAD A URL NOW HAS A CHECK. Verified coverage of cell_complete.json's")
-    say(f"  {total_reads:,} module-reads moves {prev['reads_verified']/total_reads:.0%} -> {frac:.0%}.")
-    say(f"  Two of the four needed no download at all: DepMap has been in outputs/orphan the whole")
-    say(f"  time as z-scores with mu and sd kept, so the gene-effect matrix reconstructs exactly.")
+    say(f"  THE 30% THAT HAD A URL NOW HAS A CHECK, AND HALF OF IT FAILED. Verified coverage moves")
+    say(f"  {prev['reads_verified']/total_reads:.0%} -> {frac:.0%} of {total_reads:,} module-reads, "
+        f"short of the 45% this loop declared. dep_frac and ess")
+    say(f"  reproduce and needed no download at all -- DepMap has been sitting in outputs/orphan the")
+    say(f"  whole time as z-scores with mu and sd kept, so the gene-effect matrix reconstructs.")
+    say(f"  ppi DOES NOT REPRODUCE and that is the loop's real result. It is the most-read numeric")
+    say(f"  field in the file, its declared source was BioGRID, and BioGRID degree correlates "
+        f"{checks['ppi']['corr']:.2f}")
+    say(f"  with it. Neither evidence filter helps and neither does the file's own 191,447-edge")
+    say(f"  table. A URL that was never checked is how a false provenance claim survives 48 loops.")
+    say(f"  pubs misses by {GATE_CORR - checks['pubs']['corr']:.4f} and stays unclaimed.")
     say(f"  And loop 48's fields have now been asked the question they were never asked -- whether")
-    say(f"  a wrong rebuild would have scored as well. {'Every field cleared its own shuffle.' if d4 else 'Not all of them did, and the ones that did not are withdrawn.'}")
+    say(f"  a wrong rebuild would have scored as well. {'Every claimed field cleared its own shuffle, so loop 48 stands.' if d4 else 'Not all did; those are withdrawn.'}")
+    say(f"  The thin margins are the categorical ones: tf clears by only "
+        f"{shuffles['48:tf']['real'] - shuffles['48:tf']['null95']:+.4f} and ess by "
+        f"{shuffles['ess']['real'] - shuffles['ess']['null95']:+.4f},")
+    say(f"  because a column that is mostly one value is mostly reproducible by accident.")
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(SC / "biogrid_hs_edges.tsv.gz"), str(SC / "gene2pubmed_9606.tsv.gz"),
@@ -357,7 +413,8 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"test": "loop_rebuild", "manifest": man, "gates": gates, "checks": checks,
                "coverage": cover, "shuffles": shuffles, "ess_circular_exact": circ_exact,
-               "ppi_all_evidence": {"exact": pe, "corr": pc},
+               "ppi_all_evidence": {"exact": pe, "corr": pc}, "ppi_internal": internal,
+               "pubs_spearman": sp,
                "reads_verified": r_new + r_old, "total_reads": total_reads,
                "verified_fields": sorted(keep_new | keep_old), "withdrawn": sorted(withdrawn),
                "seconds": time.time() - t0, "log": log},
