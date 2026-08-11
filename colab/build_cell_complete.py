@@ -127,8 +127,14 @@ SOURCE_KNOWN_RULE_LOST = {
             "ontology survives, the coarsening rule does not",
 }
 SOURCE_NOT_IDENTIFIED = {
-    "tss": "stored as a STRING and differs from ens_tss in every gene, so it is a second TSS "
-           "annotation from another track (refGene or CAGE), not derivable from the Ensembl GTF",
+    # CORRECTION. The first pass said tss "differs from ens_tss in every gene". That was wrong and
+    # measurable: 6.65% agree EXACTLY, the median offset is 75 bp, 54% are within 100 bp, and the two
+    # correlate at 0.9998. tss is not a different locus -- it is the same promoter picked at
+    # TRANSCRIPT level (a canonical/MANE start) where ens_tss is the gene BOUNDARY. What is
+    # unidentified is the transcript set, not the coordinate system.
+    "tss": "stored as a STRING; the same promoter as ens_tss picked per-TRANSCRIPT rather than at the "
+           "gene boundary (6.65% exact, median offset 75 bp, corr 0.9998). The transcript set that "
+           "defines the pick -- MANE, canonical, refGene, CAGE -- is not recorded",
     "npath": "a pathway count. Not GO process count (corr 0.02) and not membership in the `pathways` "
              "key (exact 0.37), so the pathway database used is not recorded",
     "path": "a single Reactome-style pathway name with a trailing space; the release is not recorded",
@@ -350,29 +356,43 @@ def main():
     record("cpg", [g.get("cpg") for g in genes],
            [cpg_at(g.get("chrom") or "", _int(g.get("ens_tss"))) for g in genes], "cat")
 
-    # cpg is the one field that misses. DIAGNOSIS, NOT REPAIR: the window below is swept to find out
-    # WHY it misses, and the swept value is deliberately NOT adopted -- the gate keeps the predeclared
-    # CPG_WINDOW. If no window reaches the gate, the window is not the cause and the CpG track or the
-    # genome build is; if some window sails past it, that is evidence about the original rule and it
-    # belongs in a later loop where it can be declared first and tested second.
+    # cpg is the one field that misses. DIAGNOSIS, NOT REPAIR. Two things could be wrong -- the
+    # WINDOW around the query point, or the QUERY POINT itself -- and they are swept separately so
+    # the answer is attributable. Nothing found here is adopted: the gate above keeps the predeclared
+    # CPG_WINDOW and the predeclared query point. Sweeping until something passes and then calling it
+    # the producer would manufacture a provenance claim out of a search, which is the exact failure
+    # this module exists to avoid.
     o_cpg = [g.get("cpg") for g in genes]
     n_cpg = [cpg_at(g.get("chrom") or "", _int(g.get("ens_tss"))) for g in genes]
     fp = sum(1 for a, b in zip(o_cpg, n_cpg) if a == 0 and b == 1)
     fn = sum(1 for a, b in zip(o_cpg, n_cpg) if a == 1 and b == 0)
     sweep = {}
-    for w in (0, 200, 500, 1000, 2000, 5000, 10000):
-        pred = [cpg_at(g.get("chrom") or "", _int(g.get("ens_tss")), w) for g in genes]
-        sweep[w] = float(np.mean([a == b for a, b in zip(o_cpg, pred) if a is not None]))
-    best_w = max(sweep, key=sweep.get)
+    for key in ("ens_tss", "tss"):
+        for w in (0, 500, 1000, 2000, 5000):
+            pred = [cpg_at(g.get("chrom") or "", _int(g.get(key)), w) for g in genes]
+            sweep[f"{key}@{w}"] = float(np.mean([a == b for a, b in zip(o_cpg, pred)]))
+    best = max(sweep, key=sweep.get)
     say(f"     cpg diagnosis   file says CpG for {np.mean([x == 1 for x in o_cpg]):.1%} of genes, this "
         f"rule for {np.mean([x == 1 for x in n_cpg]):.1%}")
     say(f"                     disagreements split {fp:,} rule-only / {fn:,} file-only "
         f"({'rule over-calls' if fp > fn else 'rule under-calls'})")
-    say(f"                     window sweep  " + " · ".join(f"{w}:{a:.3f}" for w, a in sweep.items()))
-    say(f"                     best window {best_w} bp reaches {sweep[best_w]:.4f} "
-        f"{'-- still under the gate, so the window is not the cause' if sweep[best_w] < GATE_EXACT else '-- NOT adopted; declare it first, then test it'}")
-    cpg_diag = {"window_declared": CPG_WINDOW, "rule_only": fp, "file_only": fn,
-                "sweep": sweep, "best_window": best_w, "best_exact": sweep[best_w]}
+    for key in ("ens_tss", "tss"):
+        say(f"                     at {key:<8} " +
+            " · ".join(f"{w}bp:{sweep[f'{key}@{w}']:.4f}" for w in (0, 500, 1000, 2000, 5000)))
+    say(f"                     the QUERY POINT dominates the window: every window is better at tss "
+        f"than at ens_tss")
+    say(f"                     (+{sweep['tss@0'] - sweep['ens_tss@0']:.4f} at 0 bp, "
+        f"+{sweep['tss@2000'] - sweep['ens_tss@2000']:.4f} at the declared 2000 bp), so the original "
+        f"cpg")
+    say(f"                     was computed at the file's own tss. Even there it reaches only "
+        f"{sweep['tss@2000']:.4f} at the")
+    say(f"                     declared window and {sweep[best]:.4f} at best ({best}) -- both under "
+        f"{GATE_EXACT}, NEITHER ADOPTED.")
+    say(f"                     SOURCE identified, QUERY POINT identified, EXACT RULE not. cpg stays "
+        f"unverified.")
+    cpg_diag = {"window_declared": CPG_WINDOW, "query_declared": "ens_tss",
+                "rule_only": fp, "file_only": fn, "sweep": sweep,
+                "best_variant": best, "best_exact": sweep[best], "adopted": False}
 
     q3 = bool(all(v["pass"] for v in checks.values()))
     say(f"     Q3 {'PASS' if q3 else 'FAIL'}  (each field: exact >= {GATE_EXACT} OR corr >= "
@@ -415,9 +435,11 @@ def main():
     say(f"  per-gene module-reads are now backed by a named source that was fetched and verified;")
     say(f"  another {r_declared/total_reads:.0%} have a URL recorded and need one more download.")
     if failed:
-        say(f"  Q3 FAILS ON {', '.join(failed)}. The gate stands and the field is not claimed: a")
-        say(f"  near-miss on exact agreement is exactly the case where loosening the threshold would")
-        say(f"  convert an unverified column into a verified-looking one, so it is left failing.")
+        say(f"  Q3 FAILS ON {', '.join(failed)}, and the gate stands. The diagnosis is sharper than")
+        say(f"  the verdict: the CpG track is right and the query point is the file's own tss rather")
+        say(f"  than the Ensembl gene boundary, but no declared rule reaches {GATE_EXACT:.2f} and none")
+        say(f"  of the swept ones was adopted. A near-miss is exactly where loosening a threshold")
+        say(f"  turns an unverified column into a verified-looking one, so it is left failing.")
     say(f"  AND {r_invented/total_reads:.0%} CANNOT BE REBUILT AT ALL. Those are labels this project")
     say(f"  invented -- {', '.join(sorted(invented))} -- whose rules are lost. A producer")
     say(f"  that regenerated them from a guessed rule would be worse than one that says so,")
