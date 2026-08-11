@@ -227,27 +227,28 @@ def main():
         f"{np.isfinite(Dm).mean():.3f})")
 
     # ---- pair table -------------------------------------------------------------------------------
-    ii, jj, jt, js, sep = [], [], [], [], []
-    for a in range(len(drugs)):
-        da = drugs[a]
-        sa, ta = se[da], set(T[da])
-        for b in range(a + 1, len(drugs)):
-            db = drugs[b]
-            ii.append(a)
-            jj.append(b)
-            jt.append(jac(ta, set(T[db])))
-            js.append(jac(sa, se[db]))
-            sep.append(separation(TI[da], TI[db], Dm))
-    ii = np.array(ii)
-    jj = np.array(jj)
-    jt = np.array(jt)
-    js = np.array(js)
-    sep = np.array(sep, float)
+    # The side-effect Jaccard is computed as a DRUG x DRUG matrix rather than pair by pair, because
+    # the permutation null needs it 200 times over. As a matrix, permuting the drug labels is
+    # JS[perm][:, perm] -- pure indexing -- where the pairwise loop would be 38 million set
+    # operations per gate. Same numbers, three orders of magnitude cheaper.
+    terms = sorted({t for d in drugs for t in se[d]})
+    tpos = {t: i for i, t in enumerate(terms)}
+    M = np.zeros((len(drugs), len(terms)), np.float32)
+    for a, d in enumerate(drugs):
+        for t in se[d]:
+            M[a, tpos[t]] = 1
+    inter = M @ M.T
+    cnt = M.sum(1)
+    JS = inter / np.maximum(cnt[:, None] + cnt[None, :] - inter, 1e-9)
+    ii, jj = np.triu_indices(len(drugs), k=1)
+    js = JS[ii, jj]
+    jt = np.array([jac(set(T[drugs[a]]), set(T[drugs[b]])) for a, b in zip(ii, jj)])
+    sep = np.array([separation(TI[drugs[a]], TI[drugs[b]], Dm) for a, b in zip(ii, jj)], float)
     ok = np.isfinite(sep)
     say(f"     pair table built: {len(jt):,} pairs, {ok.sum():,} with a defined separation")
 
     # ---- E2 -------------------------------------------------------------------------------------
-    def null95(x, y, groups=None):
+    def null95(x, groups=None):
         """Permute the OUTCOME across drugs, not across pairs.
 
         Pairs are not independent -- every drug appears in hundreds of them -- so shuffling pairs
@@ -257,10 +258,10 @@ def main():
         out = []
         for _ in range(N_NULL):
             perm = rng.permutation(len(drugs))
-            sh = np.array([jac(se[drugs[perm[a]]], se[drugs[perm[b]]]) for a, b in zip(ii, jj)])
+            sh = JS[perm][:, perm][ii, jj]
             m = np.isfinite(x) & np.isfinite(sh)
             if groups is not None:
-                m &= groups
+                m = m & groups
             r = spearmanr(x[m], sh[m]).statistic
             out.append(abs(r) if np.isfinite(r) else 0.0)
         return float(np.percentile(out, 95))
@@ -316,7 +317,7 @@ def main():
         out = []
         for _ in range(N_NULL):
             perm = rng.permutation(len(drugs))
-            sh = np.array([jac(se[drugs[perm[a]]], se[drugs[perm[b]]]) for a, b in zip(ii, jj)])
+            sh = JS[perm][:, perm][ii, jj]
             c, *_ = np.linalg.lstsq(A, sh, rcond=None)
             rr = sh - A @ c
             r = spearmanr(-sep[zero], rr[zero]).statistic
