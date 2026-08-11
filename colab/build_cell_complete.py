@@ -105,19 +105,24 @@ SOURCES = {
         "fields": ["cpg"],
         "url": "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cpgIslandExt.txt.gz",
         "path": SC / "cpgIslandExt.txt.gz", "kind": "recoverable"},
-    "protein interactions": {
-        "fields": ["ppi"],
-        "url": "https://downloads.thebiogrid.org/Download/BioGRID/Latest-Release/"
-               "BIOGRID-ORGANISM-LATEST.tab3.zip",
-        "path": None, "kind": "declared, not fetched here"},
+    # WHAT LOOP 49 DID TO THESE THREE. All three were "declared with a URL, not fetched here" --
+    # 30% of every module-read in the file, documented and unchecked. loop_rebuild.py fetched them:
+    #   ppi       BioGRID degree correlates 0.3701 with the column. The declared source IS WRONG.
+    #             Not the evidence filter (all-evidence 0.3721) and not the file's own 191,447-edge
+    #             ppi table (undirected degree 0.6908). Downgraded to SOURCE NOT IDENTIFIED below.
+    #   dep_frac  DepMap effect < -0.5 gives corr 0.9735. VERIFIED in loop 49.
+    #   ess       dep_frac > 0.5, rebuilt from RECOMPUTED dep_frac, exact 0.9915. VERIFIED.
+    #   pubs      gene2pubmed count gives corr 0.8973, missing the 0.90 gate by 0.0027.
+    # A URL is not a source, and this is what checking one costs and what it buys.
     "dependency": {
         "fields": ["dep_frac", "ess", "ess_src"],
-        "url": "https://depmap.org/portal/download/  (CRISPRGeneEffect.csv, release-pinned)",
-        "path": None, "kind": "declared, not fetched here"},
+        "url": "https://depmap.org/portal/download/  (CRISPRGeneEffect.csv, release-pinned); the "
+               "matrix was already here as outputs/orphan/depmap_vecs.npz",
+        "path": None, "kind": "VERIFIED in loop 49 (loop_rebuild.json)"},
     "publications": {
         "fields": ["pubs"],
         "url": "https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz + gene_info.gz",
-        "path": None, "kind": "declared, not fetched here"},
+        "path": None, "kind": "fetched in loop 49, corr 0.8973, MISSES the gate"},
 }
 # A THIRD AND FOURTH CATEGORY, because "recoverable" and "invented" were not enough to be honest.
 SOURCE_KNOWN_RULE_LOST = {
@@ -127,6 +132,13 @@ SOURCE_KNOWN_RULE_LOST = {
             "ontology survives, the coarsening rule does not",
 }
 SOURCE_NOT_IDENTIFIED = {
+    # ppi was NOT in this category when loop 48 ran. It was "declared with a URL" -- BioGRID -- and
+    # loop 49 tested that URL and it failed at corr 0.3701. This is a downgrade earned by measuring,
+    # and it is the single largest one available: ppi is read by more modules than any other numeric
+    # field in the file.
+    "ppi": "an interaction-partner count that is NOT BioGRID degree (corr 0.3701, and 0.3721 with "
+           "genetic interactions included) and NOT the degree of the file's own 191,447-edge ppi "
+           "table (0.6908). Mean 9.36, median 1, 41% zeros -- sparser than either. Source unknown",
     # CORRECTION. The first pass said tss "differs from ens_tss in every gene". That was wrong and
     # measurable: 6.65% agree EXACTLY, the median offset is 75 bp, 54% are within 100 bp, and the two
     # correlate at 0.9998. tss is not a different locus -- it is the same promoter picked at
@@ -251,7 +263,14 @@ def main():
     say(f"\n  surviving copy: {len(D)} top-level keys, {len(genes):,} genes")
 
     # ---- Q1 the usage-weighted inventory ----------------------------------------------------------
-    src = {f: open(f, errors="ignore").read() for f in glob.glob(str(ROOT / "colab" / "*.py"))}
+    # THE PROVENANCE MODULES EXCLUDE THEMSELVES. They name every field by construction, so counting
+    # them makes the coverage number rise whenever another one is written. It did: adding loop 49
+    # moved verified coverage from 394 reads to 400 without a single new field being checked. A
+    # metric that improves because I wrote a module that mentions the field is measuring me, not the
+    # file, so the scan skips this module and the loops that exist only to audit it.
+    SELF = {"build_cell_complete.py", "loop_rebuild.py", "data_ledger.py", "cell_parts_provenance.py"}
+    src = {f: open(f, errors="ignore").read() for f in glob.glob(str(ROOT / "colab" / "*.py"))
+           if Path(f).name not in SELF}
     fields = sorted({k for g in genes[:400] for k in g})
 
     def reads(key):

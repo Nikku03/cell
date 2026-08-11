@@ -1,0 +1,281 @@
+{
+  "test": "loop_rebuild",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/biogrid_hs_edges.tsv.gz",
+        "bytes": 5796005,
+        "hash": "033823bf6cf1408f",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/gene2pubmed_9606.tsv.gz",
+        "bytes": 14700986,
+        "hash": "14f00e5c085e834b",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hs_gene_info.gz",
+        "bytes": 5175468,
+        "hash": "6882e00f46856dfe",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/depmap_vecs.npz",
+        "bytes": 76413286,
+        "hash": "c6a720a3b1bd7e5b",
+        "method": "sha256:ends8M"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1368,
+      "used": 385,
+      "selection": "filtered",
+      "fraction": 0.2814327485380117
+    },
+    "seed": 1904,
+    "controls": [
+      "200 gene-label permutations per field, real must beat the 95th percentile",
+      "loop 48's fields re-tested against the same control retroactively",
+      "ess rebuilt from recomputed dep_frac, never from the file's own column, with the circular score reported for contrast",
+      "the ppi evidence-type variant reported and not adopted"
+    ],
+    "note": "the same agreement thresholds as loop 48, unchanged, so the two loops are comparable",
+    "warnings": []
+  },
+  "gates": {
+    "D1 sources arrive and cover": true,
+    "D2 rebuilt columns match": false,
+    "D3 ess rule survives non-circularly": true,
+    "D4 shuffled rebuilds fail": true,
+    "D5 coverage passes half": false
+  },
+  "checks": {
+    "ppi": {
+      "n": 14944,
+      "exact": 0.008096895074946467,
+      "corr": 0.37010358115597725,
+      "pass": false,
+      "kind": "num"
+    },
+    "pubs": {
+      "n": 16433,
+      "exact": 0.27980283575731757,
+      "corr": 0.8972615882343602,
+      "pass": false,
+      "kind": "num"
+    },
+    "dep_frac": {
+      "n": 15913,
+      "exact": 0.34782881920442404,
+      "corr": 0.9735353635858843,
+      "pass": true,
+      "kind": "num"
+    },
+    "ess": {
+      "n": 15913,
+      "exact": 0.9915163702633067,
+      "corr": NaN,
+      "pass": true,
+      "kind": "cat"
+    }
+  },
+  "coverage": {
+    "ppi": 0.9061363085132186,
+    "pubs": 0.9964225078826098,
+    "dep_frac": 0.9648920688818822,
+    "ess": 0.9648920688818822
+  },
+  "shuffles": {
+    "ppi": {
+      "real": 0.37010358115597725,
+      "null95": 0.015749727024964934,
+      "beats": true
+    },
+    "pubs": {
+      "real": 0.8972615882343602,
+      "null95": 0.014479441705739076,
+      "beats": true
+    },
+    "dep_frac": {
+      "real": 0.9735353635858843,
+      "null95": 0.013198265186470711,
+      "beats": true
+    },
+    "ess": {
+      "real": 0.9915163702633067,
+      "null95": 0.8310186639854207,
+      "beats": true
+    },
+    "48:chrom": {
+      "real": 0.9938586890429284,
+      "null95": 0.055966529226291535,
+      "beats": true
+    },
+    "48:gene_start": {
+      "real": 0.9998111798481147,
+      "null95": 0.013986608569761546,
+      "beats": true
+    },
+    "48:gene_end": {
+      "real": 0.9998112228295917,
+      "null95": 0.01752235988962836,
+      "beats": true
+    },
+    "48:strand": {
+      "real": 1.0,
+      "null95": 0.5057168894289186,
+      "beats": true
+    },
+    "48:ens_tss": {
+      "real": 0.9998111966307293,
+      "null95": 0.014018101565923447,
+      "beats": true
+    },
+    "48:loeuf": {
+      "real": 1.0,
+      "null95": 0.009340892553965557,
+      "beats": true
+    },
+    "48:tf": {
+      "real": 0.9383337375697308,
+      "null95": 0.8582342954159593,
+      "beats": true
+    },
+    "48:cpg": {
+      "real": 0.8531409168081494,
+      "null95": 0.5357749211739025,
+      "beats": true
+    }
+  },
+  "ess_circular_exact": 0.9996857914912336,
+  "ppi_all_evidence": {
+    "exact": 0.00786090200519619,
+    "corr": 0.3721321538575206
+  },
+  "ppi_internal": {
+    "out-degree": {
+      "exact": 0.27273829735629396,
+      "corr": 0.4970531584210716,
+      "mean": 11.608476837254427
+    },
+    "in-degree": {
+      "exact": 0.25375939849624063,
+      "corr": 0.6641586548492541,
+      "mean": 11.608476837254427
+    },
+    "undirected": {
+      "exact": 0.21622604899345138,
+      "corr": 0.6908015076069367,
+      "mean": 23.216953674508854
+    }
+  },
+  "pubs_spearman": 0.9785017339667752,
+  "reads_verified": 385,
+  "total_reads": 1368,
+  "verified_fields": [
+    "chrom",
+    "dep_frac",
+    "ens_tss",
+    "ess",
+    "gene_end",
+    "gene_start",
+    "loeuf",
+    "strand",
+    "tf"
+  ],
+  "withdrawn": [],
+  "seconds": 31.056354761123657,
+  "log": [
+    "====================================================================================================",
+    "  LOOP 49 -- the 30% that had a URL and no download",
+    "====================================================================================================",
+    "\n  cell_complete.json: 16,492 genes",
+    "\n  D1 THE DECLARED SOURCES ARRIVE AND COVER THE GENES",
+    "     ppi          90.6% of genes covered   OK",
+    "     pubs         99.6% of genes covered   OK",
+    "     dep_frac     96.5% of genes covered   OK",
+    "     ess          96.5% of genes covered   OK",
+    "     BioGRID 873,856 physical edges over 20,086 symbols \u00b7 gene2pubmed 163,188 symbols \u00b7 DepMap 18,443 x 1,150 lines",
+    "     D1 PASS  (each source covers >= 80% of the genes)",
+    "\n  D2 EACH REBUILT COLUMN MATCHES THE SURVIVING COPY",
+    "     field              n    exact     corr   verdict",
+    "     ppi           14,944   0.0081   0.3701   MISMATCH",
+    "     pubs          16,433   0.2798   0.8973   MISMATCH",
+    "     dep_frac      15,913   0.3478   0.9735   SOURCE RIGHT, VERSION DRIFT",
+    "     ess           15,913   0.9915        -   MATCH",
+    "     D2 FAIL  (each field: exact >= 0.9 OR corr >= 0.9)",
+    "\n  D3 THE ess RULE SURVIVES WITHOUT CIRCULARITY",
+    "     from the file's own dep_frac column   0.9997   <- proves nothing; the file is predicting itself",
+    "     from dep_frac RECOMPUTED from DepMap  0.9915   <- this is the one that can fail, and it is the gate",
+    "     the gap between them, +0.0082, is the size of the trap avoided",
+    "     D3 PASS",
+    "\n  D4 SHUFFLED REBUILDS FAIL",
+    "     the same rebuild with gene labels permuted, 200 times. What it still scores is",
+    "     what the shape of the distribution was worth, with the gene-to-value map destroyed.",
+    "     field            real  shuffled   margin   verdict",
+    "     ppi            0.3701    0.0157  +0.3544   clears its shuffle",
+    "     pubs           0.8973    0.0145  +0.8828   clears its shuffle",
+    "     dep_frac       0.9735    0.0132  +0.9603   clears its shuffle",
+    "     ess            0.9915    0.8310  +0.1605   clears its shuffle",
+    "\n     RETROACTIVE -- loop 48's fields, same question, because they were never asked it",
+    "     chrom          0.9939    0.0560  +0.9379   clears its shuffle",
+    "     gene_start     0.9998    0.0140  +0.9858   clears its shuffle",
+    "     gene_end       0.9998    0.0175  +0.9823   clears its shuffle",
+    "     strand         1.0000    0.5057  +0.4943   clears its shuffle",
+    "     ens_tss        0.9998    0.0140  +0.9858   clears its shuffle",
+    "     loeuf          1.0000    0.0093  +0.9907   clears its shuffle",
+    "     tf             0.9383    0.8582  +0.0801   clears its shuffle",
+    "     cpg            0.8531    0.5358  +0.3174   clears its shuffle",
+    "     D4 PASS  (every CLAIMED field, new and old, beats its own shuffle; 9 claimed of 12 tested)",
+    "\n  D5 VERIFIED COVERAGE PASSES HALF",
+    "     loop 48 verified             229   16.7%",
+    "     surviving from loop 48       229   16.7%   (chrom, ens_tss, gene_end, gene_start, loeuf, strand, tf)",
+    "     added here                   156   11.4%   (dep_frac, ess)",
+    "     TOTAL VERIFIED               385   28.1%",
+    "     D5 FAIL  (>= 45%)",
+    "\n     diagnostic  ppi is the file's most-read numeric field and it does not reproduce",
+    "                 BioGRID physical only     exact 0.0081  corr 0.3701   <- the declared claim",
+    "                 BioGRID all evidence      exact 0.0079  corr 0.3721   <- not the filter, then",
+    "                 own table, out-degree exact 0.2727  corr 0.4971   mean 11.6",
+    "                 own table, in-degree  exact 0.2538  corr 0.6642   mean 11.6",
+    "                 own table, undirected exact 0.2162  corr 0.6908   mean 23.2",
+    "                 the file's own ppi column has mean 9.36, median 1, 41% zeros -- a SPARSER network",
+    "                 than BioGRID and than the file's own edge table. It is a third thing, and",
+    "                 nothing in this repo says what. ppi moves out of 'declared with a URL'",
+    "                 and into SOURCE NOT IDENTIFIED, which is a downgrade earned by testing.",
+    "\n     diagnostic  pubs misses by 0.0027. Counts are heavy-tailed (file max 11,630),",
+    "                 mine are 72% higher gene-by-gene, which is what a LATER snapshot of a",
+    "                 monotonically growing count looks like. Spearman is 0.9785 against a Pearson gate of 0.9.",
+    "                 REPORTED, NOT ADOPTED -- the gate was declared as Pearson and swapping to the rank",
+    "                 statistic after seeing the number is choosing the test that passes.",
+    "\n====================================================================================================",
+    "  D1 sources arrive and cover             PASS",
+    "  D2 rebuilt columns match                FAIL",
+    "  D3 ess rule survives non-circularly     PASS",
+    "  D4 shuffled rebuilds fail               PASS",
+    "  D5 coverage passes half                 FAIL",
+    "  THE 30% THAT HAD A URL NOW HAS A CHECK, AND HALF OF IT FAILED. Verified coverage moves",
+    "  17% -> 28% of 1,368 module-reads, short of the 45% this loop declared. dep_frac and ess",
+    "  reproduce and needed no download at all -- DepMap has been sitting in outputs/orphan the",
+    "  whole time as z-scores with mu and sd kept, so the gene-effect matrix reconstructs.",
+    "  ppi DOES NOT REPRODUCE and that is the loop's real result. It is the most-read numeric",
+    "  field in the file, its declared source was BioGRID, and BioGRID degree correlates 0.37",
+    "  with it. Neither evidence filter helps and neither does the file's own 191,447-edge",
+    "  table. A URL that was never checked is how a false provenance claim survives 48 loops.",
+    "  pubs misses by 0.0027 and stays unclaimed.",
+    "  And loop 48's fields have now been asked the question they were never asked -- whether",
+    "  a wrong rebuild would have scored as well. Every claimed field cleared its own shuffle, so loop 48 stands.",
+    "  The thin margins are the categorical ones: tf clears by only +0.0801 and ess by +0.1605,",
+    "  because a column that is mostly one value is mostly reproducible by accident.",
+    "====================================================================================================",
+    "    manifest: 5 inputs, coverage 385/1368 (28.1%) by 'filtered', seed 1904, controls 4"
+  ]
+}

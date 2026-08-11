@@ -215,8 +215,14 @@
       },
       {
         "path": "outputs/build_cell_complete.json",
-        "bytes": 14653,
-        "hash": "335c1186ded5131d",
+        "bytes": 14744,
+        "hash": "022d3b74449a8fb2",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_rebuild.json",
+        "bytes": 11591,
+        "hash": "6878de02d7cb4d20",
         "method": "sha256:full"
       },
       {
@@ -227,8 +233,8 @@
       }
     ],
     "coverage": {
-      "available": 37,
-      "used": 37,
+      "available": 38,
+      "used": 38,
       "selection": "all",
       "fraction": 1.0
     },
@@ -240,8 +246,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 103,
-  "n_gates_failed": 39,
+  "n_gates_passed": 106,
+  "n_gates_failed": 41,
   "capability": [
     {
       "question": "any point mutation",
@@ -960,11 +966,17 @@
     "      PASS   Q2 every field classified",
     "      FAIL   Q3 rebuilt fields match",
     "      PASS   Q4 coverage reported",
+    "\n  loop 49  close the declared gap",
+    "      PASS   D1 sources arrive and cover",
+    "      FAIL   D2 rebuilt columns match",
+    "      PASS   D3 ess rule survives non-circularly",
+    "      PASS   D4 shuffled rebuilds fail",
+    "      FAIL   D5 coverage passes half",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  103 gates passed, 39 failed. Both numbers are the point: a project where",
+    "\n  106 gates passed, 41 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -988,7 +1000,9 @@
     "  the 92% no-slack result was my bug   11.7% of knockouts cost >1% of growth, not 92%                 [loop_slack]",
     "  model4 is a weak ranker's output    recall@10 0.99%, lift 8.7x, producer still absent            [loop_provenance]",
     "  the 38 MB file NOW HAS A PRODUCER   7/8 rebuilt fields match the surviving copy; loeuf exactly, at 1.0000    [build_cell_complete]",
-    "  and it covers 17% of the reads       30% more has a URL and no download, 6% is invented labels with no rule  [build_cell_complete]",
+    "  and it covers 17% of the reads       15% more has a URL and no download, 6% is invented labels with no rule  [build_cell_complete]",
+    "  the URL for ppi WAS WRONG            BioGRID degree correlates 0.3701 with the file's most-read numeric field  [loop_rebuild]",
+    "  and DepMap was in the repo already  dep_frac corr 0.9735, ess 0.9915 from a non-circular rebuild; coverage 28%  [loop_rebuild]",
     "  model4 is not a fold                8.8% of its pairs are same-chromosome; a Hi-C map runs 70-90%              [loop_fold_link]",
     "\n----------------------------------------------------------------------------------------------------",
     "  THE DISTANCE LEFT",
@@ -1030,6 +1044,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 37 inputs, coverage 37/37 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 38 inputs, coverage 38/38 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }

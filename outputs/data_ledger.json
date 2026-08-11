@@ -328,6 +328,72 @@
       "want": "db472faff1785878",
       "bytes": 15041996,
       "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "biogrid_org.zip",
+      "kind": "raw",
+      "source": "BioGRID 4.4.246, all 98 organisms, tab3",
+      "why": "the declared source of cell_complete's ppi column, fetched in order to falsify it. Degree over its 873,856 human physical edges correlates 0.3701 with the column. Kept BECAUSE it fails: without the file there is no way to show the claim was wrong",
+      "state": "OK",
+      "have": "458d3f988d5f1be4",
+      "want": "458d3f988d5f1be4",
+      "bytes": 177229666,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "biogrid_hs_edges.tsv.gz",
+      "kind": "derived",
+      "source": "human-human rows of the BioGRID tab3 human member, four columns",
+      "why": "what loop_rebuild actually reads. 688 MB -> 5.8 MB",
+      "state": "OK",
+      "have": "033823bf6cf1408f",
+      "want": "033823bf6cf1408f",
+      "bytes": 5796005,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "gene2pubmed.gz",
+      "kind": "raw",
+      "source": "NCBI gene-to-publication links, all species",
+      "why": "the source of cell_complete's pubs column. Distinct-PubMed-id counts correlate 0.8973 with it -- 0.0027 under the gate -- and run 72% higher gene-by-gene, which is what a later snapshot of a monotonically growing count looks like",
+      "state": "OK",
+      "have": "877004dcf7695fc9",
+      "want": "877004dcf7695fc9",
+      "bytes": 282423175,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "gene2pubmed_9606.tsv.gz",
+      "kind": "derived",
+      "source": "the 3,326,576 human rows",
+      "why": "what loop_rebuild reads; the all-species file is 282 MB and 95% irrelevant",
+      "state": "OK",
+      "have": "14f00e5c085e834b",
+      "want": "14f00e5c085e834b",
+      "bytes": 14700986,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "hs_gene_info.gz",
+      "kind": "raw",
+      "source": "NCBI human gene_info, Entrez id -> official symbol",
+      "why": "gene2pubmed is keyed on Entrez id and everything else here is keyed on symbol. Without this join the pubs check cannot be run at all",
+      "state": "OK",
+      "have": "6882e00f46856dfe",
+      "want": "6882e00f46856dfe",
+      "bytes": 5175468,
+      "found_at": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
+    },
+    {
+      "name": "depmap_vecs.npz",
+      "kind": "raw",
+      "source": "a DepMap gene-effect matrix, 18,443 genes x 1,150 cell lines, stored z-scored with the per-gene mu and sd kept so the raw matrix reconstructs as Z*sd+mu",
+      "why": "IN THE REPO ALL ALONG. loop 48 filed dep_frac and ess as 'declared, not fetched' and listed a portal URL; the data needed for both was already sitting in outputs/orphan. Effect < -0.5 gives dep_frac at corr 0.9735 and dep_frac > 0.5 gives ess at 0.9915. The DepMap release is not recorded anywhere, which is why this is the ONE entry whose url cannot be used to re-fetch the exact file",
+      "state": "OK",
+      "have": "53d4d99aee6a5e1c",
+      "want": "53d4d99aee6a5e1c",
+      "bytes": 76413286,
+      "found_at": "/home/user/cell/outputs/orphan"
     }
   ],
   "rebuilds": [
@@ -344,6 +410,20 @@
       "rebuilt_hash": "3e58c688dec13289",
       "expected": "3e58c688dec13289",
       "n": 1639
+    },
+    {
+      "name": "biogrid_hs_edges.tsv.gz",
+      "result": "MATCHES",
+      "rebuilt_hash": "033823bf6cf1408f",
+      "expected": "033823bf6cf1408f",
+      "n": 1189402
+    },
+    {
+      "name": "gene2pubmed_9606.tsv.gz",
+      "result": "MATCHES",
+      "rebuilt_hash": "14f00e5c085e834b",
+      "expected": "14f00e5c085e834b",
+      "n": 3326576
     }
   ],
   "all_present": false,
@@ -387,11 +467,19 @@
     "  gnomad_loeuf.txt.bgz                        raw      OK               153031d34b6794e8",
     "  cpgIslandExt.txt.gz                         raw      OK               2339f8bad0ec9993",
     "  goa_human.gaf.gz                            raw      OK               db472faff1785878",
-    "\n  29 of 30 present and hash-matching",
+    "  biogrid_org.zip                             raw      OK               458d3f988d5f1be4",
+    "  biogrid_hs_edges.tsv.gz                     derived  OK               033823bf6cf1408f",
+    "  gene2pubmed.gz                              raw      OK               877004dcf7695fc9",
+    "  gene2pubmed_9606.tsv.gz                     derived  OK               14f00e5c085e834b",
+    "  hs_gene_info.gz                             raw      OK               6882e00f46856dfe",
+    "  depmap_vecs.npz                             raw      OK               53d4d99aee6a5e1c",
+    "\n  35 of 36 present and hash-matching",
     "\n  REBUILD CHECK -- a derived file must reproduce its hash from its raw inputs, or the",
     "  recorded transform is not the one that made it",
     "    _abcfeat.json                     build_abcfeat(re2g_k562.bed.gz) -> 14,465 entries, hash 20f7aa4ae6040e16   MATCHES",
     "    lambert_tf_symbols.json           build_lambert(lambert.csv) -> 1,639 entries, hash 3e58c688dec13289   MATCHES",
+    "    biogrid_hs_edges.tsv.gz           build_biogrid_edges(biogrid_org.zip) -> 1,189,402 entries, hash 033823bf6cf1408f   MATCHES",
+    "    gene2pubmed_9606.tsv.gz           build_gene2pubmed_human(gene2pubmed.gz) -> 3,326,576 entries, hash 14f00e5c085e834b   MATCHES",
     "",
     "    Every derived file rebuilds bit-identically. The transforms in this file ARE the ones",
     "    that produced them, so the provenance claim is checkable rather than asserted.",
@@ -400,12 +488,13 @@
     "\n  STILL NOT IN THIS LEDGER, and still the biggest hole, but smaller than it was:",
     "  cell_complete.json is 38 MB, read by 227 modules, gitignored, and has no external source",
     "  to fetch from. It is a DERIVED artefact whose original producer is lost. It now has a",
-    "  PARTIAL one -- colab/build_cell_complete.py rebuilds 8 of its 27 per-gene fields from the",
-    "  three sources added above plus the Ensembl GTF and Lambert, and CHECKS each against the",
-    "  surviving copy: 7 agree, cpg does not, and 17% of all module-reads are now backed by a",
-    "  named source rather than by the file's continued existence. The other 83% is classified,",
-    "  which is not the same as recovered: 30% has a URL and no download, 20% has real data with",
-    "  the rule or the source unrecorded, 6% is labels this project invented and cannot rebuild.",
-    "  A ledger cannot close that; only the missing downloads and the lost rules can."
+    "  PARTIAL one -- build_cell_complete.py and loop_rebuild.py together rebuild 12 of its 27",
+    "  per-gene fields from the sources above and CHECK each against the surviving copy. Nine",
+    "  agree, covering 28% of all module-reads, up from 17%. THREE DO NOT, and the largest is",
+    "  the point: ppi is the most-read numeric field in the file, its declared source was",
+    "  BioGRID, and BioGRID degree correlates 0.3701 with it. It had carried a URL and no",
+    "  download for 48 loops; one download falsified it. pubs misses by 0.0027 and cpg by",
+    "  0.0469. The rest is classified, which is not recovered: real data whose rule or source",
+    "  was never written down, and 6% labels this project invented and cannot rebuild at all."
   ]
 }

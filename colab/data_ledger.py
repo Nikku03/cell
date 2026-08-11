@@ -103,6 +103,56 @@ def build_lambert(src, dest):
     return len(tfs)
 
 
+def _det_gzip(dest):
+    """A gzip writer whose bytes depend only on its input.
+
+    THE LEDGER CAUGHT THIS AND IT WAS MINE. The first versions of the two transforms below used
+    gzip.open(dest, "wt"), re-derived files with byte-identical CONTENT and 1,189,402 / 3,326,576
+    identical rows, and produced different hashes on every run -- because gzip stamps the current
+    time into its header. A transform that is not byte-deterministic cannot be checked at all, so
+    the rebuild gate would have failed forever on a file that was perfectly correct. mtime=0 and a
+    pinned compression level fix it. The gate was right and the code was wrong, which is the order
+    this is supposed to happen in.
+    """
+    return gzip.GzipFile(filename="", mode="wb", compresslevel=9, mtime=0,
+                         fileobj=open(dest, "wb"))
+
+
+def build_biogrid_edges(src, dest):
+    """BioGRID's 98-organism tab3 zip -> the four columns loop 49 needs, human-human only.
+
+    The human member alone is 688 MB uncompressed. Streaming it out of the zip and keeping symbol A,
+    symbol B, evidence type and throughput turns it into 5.8 MB, which is the difference between a
+    source that can live in this ledger and one that cannot.
+    """
+    import io
+    import zipfile
+    z = zipfile.ZipFile(src)
+    member = next(n for n in z.namelist() if "Homo_sapiens" in n)
+    f = io.TextIOWrapper(z.open(member), errors="ignore")
+    f.readline()
+    n = 0
+    with _det_gzip(dest) as o:
+        for ln in f:
+            p = ln.rstrip("\n").split("\t")
+            if len(p) < 18 or p[15] != "9606" or p[16] != "9606":
+                continue
+            o.write(f"{p[7]}\t{p[8]}\t{p[12]}\t{p[17]}\n".encode())
+            n += 1
+    return n
+
+
+def build_gene2pubmed_human(src, dest):
+    """NCBI's all-species gene2pubmed -> the human rows. 282 MB -> 14.7 MB."""
+    n = 0
+    with gzip.open(src, "rb") as f, _det_gzip(dest) as o:
+        for ln in f:
+            if ln.startswith(b"9606\t"):
+                o.write(ln)
+                n += 1
+    return n
+
+
 LEDGER = [
     {"name": "AvgKdegs.csv", "path": SP / "rnadecay" / "AvgKdegs.csv", "kind": "raw",
      "sha256": "b8869c749b2b4a24", "bytes": 21962834,
@@ -292,8 +342,52 @@ LEDGER = [
      "why": "fetched for cell_complete's proc and comp columns and NOT used for them. Those are each "
             "one of exactly 12 buckets and the GO-term-to-bucket map is recorded nowhere, so the "
             "ontology is retrievable and the coarsening is not. Kept because that gap is the finding"},
+    # loop 49: the three sources behind the 30% of cell_complete.json that had a URL and no download.
+    {"name": "biogrid_org.zip", "path": SP / "biogrid_org.zip", "kind": "raw",
+     "sha256": "458d3f988d5f1be4", "bytes": 177229666,
+     "url": "https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-4.4.246/"
+            "BIOGRID-ORGANISM-4.4.246.tab3.zip",
+     "source": "BioGRID 4.4.246, all 98 organisms, tab3",
+     "why": "the declared source of cell_complete's ppi column, fetched in order to falsify it. "
+            "Degree over its 873,856 human physical edges correlates 0.3701 with the column. Kept "
+            "BECAUSE it fails: without the file there is no way to show the claim was wrong"},
+    {"name": "biogrid_hs_edges.tsv.gz", "path": SP / "biogrid_hs_edges.tsv.gz", "kind": "derived",
+     "sha256": "033823bf6cf1408f", "bytes": 5796005,
+     "from": ["biogrid_org.zip"], "transform": "build_biogrid_edges",
+     "source": "human-human rows of the BioGRID tab3 human member, four columns",
+     "why": "what loop_rebuild actually reads. 688 MB -> 5.8 MB"},
+    {"name": "gene2pubmed.gz", "path": SP / "gene2pubmed.gz", "kind": "raw",
+     "sha256": "877004dcf7695fc9", "bytes": 282423175,
+     "url": "https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz",
+     "source": "NCBI gene-to-publication links, all species",
+     "why": "the source of cell_complete's pubs column. Distinct-PubMed-id counts correlate 0.8973 "
+            "with it -- 0.0027 under the gate -- and run 72% higher gene-by-gene, which is what a "
+            "later snapshot of a monotonically growing count looks like"},
+    {"name": "gene2pubmed_9606.tsv.gz", "path": SP / "gene2pubmed_9606.tsv.gz", "kind": "derived",
+     "sha256": "14f00e5c085e834b", "bytes": 14700986,
+     "from": ["gene2pubmed.gz"], "transform": "build_gene2pubmed_human",
+     "source": "the 3,326,576 human rows",
+     "why": "what loop_rebuild reads; the all-species file is 282 MB and 95% irrelevant"},
+    {"name": "hs_gene_info.gz", "path": SP / "hs_gene_info.gz", "kind": "raw",
+     "sha256": "6882e00f46856dfe", "bytes": 5175468,
+     "url": "https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz",
+     "source": "NCBI human gene_info, Entrez id -> official symbol",
+     "why": "gene2pubmed is keyed on Entrez id and everything else here is keyed on symbol. Without "
+            "this join the pubs check cannot be run at all"},
+    {"name": "depmap_vecs.npz", "path": ROOT / "outputs" / "orphan" / "depmap_vecs.npz",
+     "kind": "raw", "sha256": "53d4d99aee6a5e1c", "bytes": 76413286,
+     "url": "https://depmap.org/portal/download/  (CRISPRGeneEffect.csv, release not recorded)",
+     "source": "a DepMap gene-effect matrix, 18,443 genes x 1,150 cell lines, stored z-scored with "
+               "the per-gene mu and sd kept so the raw matrix reconstructs as Z*sd+mu",
+     "why": "IN THE REPO ALL ALONG. loop 48 filed dep_frac and ess as 'declared, not fetched' and "
+            "listed a portal URL; the data needed for both was already sitting in outputs/orphan. "
+            "Effect < -0.5 gives dep_frac at corr 0.9735 and dep_frac > 0.5 gives ess at 0.9915. "
+            "The DepMap release is not recorded anywhere, which is why this is the ONE entry whose "
+            "url cannot be used to re-fetch the exact file"},
 ]
-TRANSFORMS = {"build_abcfeat": build_abcfeat, "build_lambert": build_lambert}
+TRANSFORMS = {"build_abcfeat": build_abcfeat, "build_lambert": build_lambert,
+              "build_biogrid_edges": build_biogrid_edges,
+              "build_gene2pubmed_human": build_gene2pubmed_human}
 
 
 def sha16(p):
@@ -423,13 +517,14 @@ def main():
     report("\n  STILL NOT IN THIS LEDGER, and still the biggest hole, but smaller than it was:")
     report("  cell_complete.json is 38 MB, read by 227 modules, gitignored, and has no external source")
     report("  to fetch from. It is a DERIVED artefact whose original producer is lost. It now has a")
-    report("  PARTIAL one -- colab/build_cell_complete.py rebuilds 8 of its 27 per-gene fields from the")
-    report("  three sources added above plus the Ensembl GTF and Lambert, and CHECKS each against the")
-    report("  surviving copy: 7 agree, cpg does not, and 17% of all module-reads are now backed by a")
-    report("  named source rather than by the file's continued existence. The other 83% is classified,")
-    report("  which is not the same as recovered: 30% has a URL and no download, 20% has real data with")
-    report("  the rule or the source unrecorded, 6% is labels this project invented and cannot rebuild.")
-    report("  A ledger cannot close that; only the missing downloads and the lost rules can.")
+    report("  PARTIAL one -- build_cell_complete.py and loop_rebuild.py together rebuild 12 of its 27")
+    report("  per-gene fields from the sources above and CHECK each against the surviving copy. Nine")
+    report("  agree, covering 28% of all module-reads, up from 17%. THREE DO NOT, and the largest is")
+    report("  the point: ppi is the most-read numeric field in the file, its declared source was")
+    report("  BioGRID, and BioGRID degree correlates 0.3701 with it. It had carried a URL and no")
+    report("  download for 48 loops; one download falsified it. pubs misses by 0.0027 and cpg by")
+    report("  0.0469. The rest is classified, which is not recovered: real data whose rule or source")
+    report("  was never written down, and 6% labels this project invented and cannot rebuild at all.")
 
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"test": "data_ledger", "entries": rows, "rebuilds": rebuilds,

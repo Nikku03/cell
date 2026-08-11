@@ -68,6 +68,7 @@ LOOPS = [
     ("45  Langevin with excluded volume", "loop_langevin.json", "gates"),
     ("46  is buffering predictable", "loop_buffering.json", "gates"),
     ("48  a producer for cell_complete.json", "build_cell_complete.json", "gates"),
+    ("49  close the declared gap", "loop_rebuild.json", "gates"),
     ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 
@@ -239,6 +240,15 @@ def main():
             f"{bcc['reads_declared']/bcc['total_reads']:.0%} more has a URL and no download, "
             f"{bcc['reads_invented']/bcc['total_reads']:.0%} is invented labels with no rule  "
             f"[build_cell_complete]")
+    lrb = R.get("loop_rebuild.json")
+    if lrb:
+        say(f"  the URL for ppi WAS WRONG            BioGRID degree correlates "
+            f"{lrb['checks']['ppi']['corr']:.4f} with the file's most-read numeric field  "
+            f"[loop_rebuild]")
+        say(f"  and DepMap was in the repo already  dep_frac corr "
+            f"{lrb['checks']['dep_frac']['corr']:.4f}, ess {lrb['checks']['ess']['exact']:.4f} from "
+            f"a non-circular rebuild; coverage {lrb['reads_verified']/lrb['total_reads']:.0%}  "
+            f"[loop_rebuild]")
     lf = R.get("loop_fold_link.json")
     if lf:
         l0 = lf.get("L0_what_is_it", {})
