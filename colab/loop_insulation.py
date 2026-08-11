@@ -122,12 +122,19 @@ def simulate_occupancy(n, occ_f, occ_r, rng, n_config=N_CONFIG, burn=BURN, track
         occ = np.zeros(n, bool)
         occ[left] = True
         occ[right] = True
+        # INDEX AT THE LEG'S CURRENT BIN, exactly as loop 35 did. The first version of this loop
+        # tested the DESTINATION bin instead, which shifts every anchor by one 25 kb bin. The
+        # orientation test counts pairs by exact CTCF bin membership, so shifted anchors fall out of
+        # the convergent set and into the non-convergent one -- and the measured effect inverted, to
+        # -0.0562 with the shuffled twin scoring higher. Changing the barrier's persistence AND its
+        # indexing at once made a physics change and a bookkeeping change indistinguishable; only the
+        # persistence is under test here.
         nl = np.maximum(left - 1, 0)
-        canl = (nl != left) & ~occ[nl] & ~st_f[nl]
+        canl = (nl != left) & ~occ[nl] & ~st_f[left]
         nr = np.minimum(right + 1, n - 1)
-        canr = (nr != right) & ~occ[nr] & ~st_r[nr]
+        canr = (nr != right) & ~occ[nr] & ~st_r[right]
         if track_stall:
-            blocked = ~canl & st_f[nl]
+            blocked = ~canl & st_f[left]
             stall_l = np.where(blocked, stall_l + 1, stall_l)
             done = (~blocked) & (stall_l > 0)
             stalls.extend(stall_l[done].tolist())
