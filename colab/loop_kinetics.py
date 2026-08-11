@@ -44,6 +44,30 @@ PREDECLARED, before any number:
 CONTROLS: the three dose points are independent measurements from the same recorded run; the knockout
 score (f = 0) is included as the extreme of the same axis.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    Q1 THE INVARIANCE HOLDS   PASS.  AUC at 50% capacity 0.5087, at 25% 0.5075, at 10% 0.5053 -- a
+        spread of 0.0033 against a gate of 0.02. Sliding along the dose axis changes the ranking by
+        almost nothing, and sliding along the dose axis is precisely and only what a uniform saturating
+        kinetic does. It cannot rescue V3.
+    Q2 GENE-SPECIFIC KINETICS   FAIL.  None of cell_complete's 42 blocks and none of its 27 per-gene
+        fields carries a kcat, Km or Vmax. There are modules here ABOUT kcat -- biochem_limit tries to
+        predict it, apply_kcat_fixes corrects flagged values -- but no per-enzyme constant reaches the
+        model.
+
+THE FOLLOW-UP IS RETIRED, WITH A REASON, and that is the point of the loop.  I proposed saturating
+kinetics as the explanation for loop 5's failure. It provably is not: a uniform saturation is a
+relabelling of the dose axis and the data show that relabelling costs 0.0033 AUC. The only version that
+could work needs a different saturation constant per enzyme, and that quantity does not exist in this
+container. Nobody should attempt this again on this data, which is worth more than leaving a plausible
+idea open.
+
+WHAT THIS DOES NOT RULE OUT.  A model with gene-specific kinetics might well succeed -- the argument
+here is about UNIFORM saturation only. If per-enzyme kcat and Km were obtained (BRENDA and SABIO-RK are
+the obvious sources, neither present here), V3 becomes worth asking again. That is a data acquisition
+task, not a modelling one, and naming it correctly is the difference between a retired idea and a
+forgotten one.
+
 -> outputs/loop_kinetics.json
 """
 import json
