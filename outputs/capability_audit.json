@@ -46,18 +46,25 @@
       },
       "n_items": 13,
       "encode": true,
-      "pipeline": false,
-      "check": false,
-      "answers": false,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
       "emits": true,
       "namers": [
         "colab/cell_stats.py",
-        "colab/complete_cell.py"
+        "colab/complete_cell.py",
+        "colab/data_ledger.py",
+        "colab/loop_variant.py"
       ],
-      "produces": [],
+      "produces": [
+        "data_ledger.json",
+        "loop_variant.json"
+      ],
       "phenotype_hits": [],
-      "controlled": [],
-      "note": "residue-level: 13 genes carry per-residue pathogenic/common counts. `biomarkers` holds mutation-conditioned associations for 599 genes but is keyed on GENE, not on variant"
+      "controlled": [
+        "loop_variant.json"
+      ],
+      "note": "13 genes of residue-level counts, PLUS the ClinVar VCF that loop_variant consumes. `biomarkers` looks relevant and is not -- it is keyed on GENE, so a variant cannot be handed to it"
     },
     {
       "question": "any protein change",
@@ -280,7 +287,7 @@
     }
   ],
   "n_emits": 6,
-  "n_answers": 2,
+  "n_answers": 3,
   "n_questions": 6,
   "controlled_results": {
     "capability_audit.json": 2,
@@ -294,9 +301,10 @@
     "loop_fold_link.json": 5,
     "loop_medium.json": 5,
     "loop_real_chromatin.json": 5,
+    "loop_statement.json": 2,
     "loop_variant.json": 5
   },
-  "n_modules": 935,
+  "n_modules": 936,
   "n_phenotype_modules": 32,
   "log": [
     "====================================================================================================",
@@ -304,13 +312,13 @@
     "====================================================================================================",
     "  The goal as stated cannot fail, so it cannot be worked towards. Three independent axes make",
     "",
-    "\n  graph: 935 modules, 875 directed edges from real reads and writes; 17 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
-    "  286 modules read cell_complete.json; block-level use resolved from source of 725 modules",
+    "\n  graph: 936 modules, 883 directed edges from real reads and writes; 18 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
+    "  286 modules read cell_complete.json; block-level use resolved from source of 726 modules",
     "  32 modules write something that is a cell-level outcome",
-    "  12 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_chromatin.json, loop_deficit.json, loop_fold_link.json, loop_medium.json, loop_real_chromatin.json, loop_variant.json",
-    "  6 modules are INSTRUMENTS (they read this repo's own audit records) and are excluded from every axis, because an audit crediting itself is how the last three checks here went wrong",
+    "  13 recorded results carry a manifest with at least one named control: capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_chromatin.json, loop_deficit.json, loop_fold_link.json, loop_medium.json, loop_real_chromatin.json, loop_statement.json, loop_variant.json",
+    "  7 modules are INSTRUMENTS (they read this repo's own audit records) and are excluded from every axis, because an audit crediting itself is how the last three checks here went wrong",
     "\n  question                 ENCODE  PIPELINE   CHECK      items  answers?",
-    "  any point mutation          yes        NO      NO         13  no",
+    "  any point mutation          yes       yes     yes         13  YES",
     "  any protein change          yes       yes     yes     42,765  YES",
     "  any chromosome fold         yes       yes     yes        767  YES",
     "  functional neighbourhood      yes       yes     yes      7,700  YES",
@@ -320,8 +328,8 @@
     "  metabolic growth            yes       yes     yes      2,580  YES",
     "",
     "    any point mutation     slots {'struct': 13}",
-    "                           modules that address it: cell_stats, complete_cell",
-    "                           recorded results: NONE   controlled: NONE",
+    "                           modules that address it: cell_stats, complete_cell, data_ledger, loop_variant",
+    "                           recorded results: data_ledger.json, loop_variant.json   controlled: loop_variant.json",
     "    any protein change     slots {'ppm': 16015, 'abund': 16286, 'ptm': 8425, 'complexes': 2039}",
     "                           modules that address it: abstain, adrn_ko_channels2, adrn_ko_channels3, annotation_prior, best_combined, biochem_limit, bioplex, build_blocks",
     "                           recorded results: cell_loop.json, loop_fold_link.json   controlled: cell_loop.json, loop_fold_link.json",
@@ -351,7 +359,7 @@
     "    metabolic growth must reach one, with a control (cell_loop closed it today)",
     "      -> pipeline = True, check = True   OK",
     "\n====================================================================================================",
-    "  OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 can be ASKED, 2 can be ANSWERED.",
+    "  OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 can be ASKED, 3 can be ANSWERED.",
     "  The gap between those two numbers is the distance left, and it is the honest headline.",
     "====================================================================================================",
     "    manifest: 3 inputs, coverage 8/8 (100.0%) by 'all', seed 1904, controls 2"

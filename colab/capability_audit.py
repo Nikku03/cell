@@ -78,6 +78,17 @@ WHAT HAPPENED, written after the run, unedited.
 
     OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 CAN BE ASKED, 1 CAN BE ANSWERED.
 
+RE-RUN, loop 11: 6 CAN BE ASKED, 3 CAN BE ANSWERED.
+    `any point mutation` moved to yes/yes/yes once this file's ENTRY row was corrected to name the slot
+    loop 5 actually built -- the ClinVar VCF -- instead of only `struct`, whose 13 genes no module opens.
+    SAY THE REST OF IT PLAINLY: loop_variant's own gates V3 and V4 FAILED. The dose-response bought
+    -0.0016 AUC over a plain knockout and lost to LOEUF. So this row passes because the question is now
+    ASKABLE, CONNECTED and FALSIFIABLE, which is exactly what these three axes measure and exactly what
+    they do not measure is whether the answer is any good. Two of the three passing rows are in that
+    position. A count that rises because a controlled NEGATIVE was recorded is still progress -- the
+    question can now be got wrong, which it could not be this morning -- but it is not the same thing as
+    knowing the answer.
+
 RE-RUN 2026-08-10, after eight loops of work: 6 CAN BE ASKED, 2 CAN BE ANSWERED.
     `any chromosome fold` moved from NO/NO to yes/yes -- loop_real_chromatin built the pipeline on
     measured bTMP torsion against transcription rate, four gates, controlled against a naked-DNA track.
@@ -135,9 +146,15 @@ QUESTIONS = [
 # Which slots in the model are ADDRESSABLE BY that perturbation. A block earns a credit only if you can
 # hand it the perturbation as a key and get something back.
 ENTRY = {
-    "any point mutation": {"blocks": ["struct"], "note": "residue-level: 13 genes carry per-residue "
-                           "pathogenic/common counts. `biomarkers` holds mutation-conditioned "
-                           "associations for 599 genes but is keyed on GENE, not on variant"},
+    # CORRECTED after loop 5. This row used to credit only `struct` -- 13 genes of per-residue counts --
+    # and it still reads NO on pipeline and check because loop_variant does not open that block. The
+    # slot loop 5 actually built is ClinVar: 4.46M records, missense variants with clinical assertions,
+    # joined to genes that have stoichiometry behind them. Leaving the row pointing at `struct` would
+    # have kept the audit blind to work that was done.
+    "any point mutation": {"blocks": ["struct"], "files": ["clinvar.vcf.gz"],
+                           "note": "13 genes of residue-level counts, PLUS the ClinVar VCF that "
+                                   "loop_variant consumes. `biomarkers` looks relevant and is not -- "
+                                   "it is keyed on GENE, so a variant cannot be handed to it"},
     "any protein change": {"blocks": ["ppm", "abund", "ptm", "complexes"], "note": "gene-keyed"},
     # CORRECTED after loop 7. `model4` was credited here and it is NOT a fold: 8.8% of its neighbour
     # pairs are same-chromosome where a Hi-C map runs 70-90%, and 51.7% share its own functional label
