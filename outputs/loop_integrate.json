@@ -1,0 +1,126 @@
+{
+  "test": "loop_integrate",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/rnadecay/AvgKdegs.csv",
+        "bytes": 21962834,
+        "hash": "b8869c749b2b4a24",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 16492,
+      "used": 1783,
+      "selection": "filtered",
+      "fraction": 0.10811302449672569
+    },
+    "seed": 1904,
+    "controls": [
+      "chromosome-blocked folds",
+      "200 label shuffles",
+      "each layer scored alone",
+      "leave-one-layer-out",
+      "lookups-only model as the comparator for mechanism"
+    ],
+    "note": "folds blocked by chromosome because neighbouring genes share expression, chromatin and function, and random folds would reward memorising a locus",
+    "warnings": []
+  },
+  "gates": {
+    "I1 the whole beats the parts": true,
+    "I2 mechanism adds to lookups": true,
+    "I3 no single layer carries it": true,
+    "I4 beats a shuffle": true
+  },
+  "single": {
+    "metabolic cost": 0.6603874366964281,
+    "DNA torsion": 0.5578450683759304,
+    "functional neighbours": 0.4556700087723547,
+    "mRNA abundance": 0.7728659767182783,
+    "mRNA stability": 0.5382270156234022,
+    "protein abundance": 0.7040420104299531,
+    "LOEUF": 0.6338833545914935
+  },
+  "all_layers": 0.8308630813030445,
+  "lookups_only": 0.7908681402069845,
+  "mechanistic_only": 0.70622029912115,
+  "best_single": 0.7728659767182783,
+  "leave_one_out_cost": {
+    "metabolic cost": 0.04113857629526785,
+    "DNA torsion": -0.0011678533563674875,
+    "functional neighbours": -0.0007749810291102222,
+    "mRNA abundance": 0.03929799635113107,
+    "mRNA stability": 0.0012028351389314906,
+    "protein abundance": 0.0013723622390493517,
+    "LOEUF": 0.004496504512650046
+  },
+  "n": 1783,
+  "n_essential": 241,
+  "null": {
+    "mean": 0.5000095258084828,
+    "sd": 0.019168909626082246,
+    "p95": 0.530241078299993
+  },
+  "log": [
+    "====================================================================================================",
+    "DOES THE WHOLE BEAT THE PARTS",
+    "====================================================================================================",
+    "  Twenty-four loops built layers one at a time and never put them together. Whether they are",
+    "  complementary or redundant is the question 'is there a working cell model' actually means.",
+    "\n  1,783 genes carrying ALL 7 layers; 241 essential",
+    "  layers: metabolic cost, DNA torsion, functional neighbours, mRNA abundance, mRNA stability, protein abundance, LOEUF",
+    "\n  layer                         alone",
+    "  mRNA abundance               0.7729  (lookup)",
+    "  protein abundance            0.7040  (lookup)",
+    "  metabolic cost               0.6604  (mechanistic)",
+    "  LOEUF                        0.6339  (lookup)",
+    "  DNA torsion                  0.5578  (mechanistic)",
+    "  mRNA stability               0.5382  (lookup)",
+    "  functional neighbours        0.4557  (mechanistic)",
+    "\n  all seven layers             0.8309",
+    "  the four lookups only        0.7909",
+    "  the three mechanistic only   0.7062",
+    "  best single layer            0.7729",
+    "\n  I1 THE WHOLE BEATS THE PARTS -- 0.8309 - 0.7729 = +0.0580   I1 PASS",
+    "  I2 MECHANISM ADDS TO LOOKUPS -- 0.8309 - 0.7909 = +0.0400   I2 PASS",
+    "\n  I3 NO SINGLE LAYER CARRIES IT -- cost of removing each layer:",
+    "    metabolic cost              +0.0411",
+    "    mRNA abundance              +0.0393",
+    "    LOEUF                       +0.0045",
+    "    protein abundance           +0.0014",
+    "    mRNA stability              +0.0012",
+    "    functional neighbours       -0.0008",
+    "    DNA torsion                 -0.0012",
+    "    largest single-layer cost +0.0411 (gate < 0.05)   I3 PASS",
+    "\n  I4 BEATS A SHUFFLE -- null 0.5000 +/- 0.0192, 95th 0.5302   I4 PASS",
+    "\n====================================================================================================",
+    "  I1 the whole beats the parts        PASS",
+    "  I2 mechanism adds to lookups        PASS",
+    "  I3 no single layer carries it       PASS",
+    "  I4 beats a shuffle                  PASS",
+    "  THE ASSEMBLY BEATS ITS BEST PART AND BEATS THE CATALOGUE COLUMNS, under folds blocked by",
+    "  chromosome. That is the minimum 'a working cell model' has to mean, and it is measured.",
+    "  BUT READ I3 BEFORE CALLING THE LAYERS COMPLEMENTARY. Only 2 of 7",
+    "  layers carry anything: metabolic cost, mRNA abundance.",
+    "  5 contribute 0.005 or less and two of them are NEGATIVE -- removing them",
+    "  improves the model: DNA torsion, functional neighbours, mRNA stability, protein abundance, LOEUF.",
+    "  So the honest sentence is not 'the layers are complementary'. It is that ONE mechanistic",
+    "  layer -- the metabolic growth cost -- adds to ONE lookup, and the other five are",
+    "  passengers. That is a real result and a much smaller one than seven layers implies.",
+    "====================================================================================================",
+    "    manifest: 3 inputs, coverage 1783/16492 (10.8%) by 'filtered', seed 1904, controls 5"
+  ]
+}

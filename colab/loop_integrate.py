@@ -40,6 +40,38 @@ PREDECLARED, before any number:
 CONTROLS: chromosome-blocked folds; 200 label shuffles; each layer scored alone; leave-one-layer-out for
 I3; and the lookups-only model as the comparator for I2.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    I1 THE WHOLE BEATS THE PARTS   PASS.  All seven layers 0.8309 against the best single layer 0.7729,
+        a gain of +0.0580, under chromosome-blocked folds.
+    I2 MECHANISM ADDS TO LOOKUPS   PASS.  0.8309 against the four lookups alone at 0.7909, +0.0400.
+        Something built here does earn its place against the columns that were already in the file.
+    I3 NO SINGLE LAYER CARRIES IT   PASS on the letter of the gate, and it is the most informative
+        result in the module. Cost of removing each layer:
+            metabolic cost          +0.0411
+            mRNA abundance          +0.0393
+            LOEUF                   +0.0045
+            protein abundance       +0.0014
+            mRNA stability          +0.0012
+            functional neighbours   -0.0008
+            DNA torsion             -0.0012
+    I4 BEATS A SHUFFLE   PASS.  Null 0.5000 +/- 0.0192 against 0.8309.
+
+THE SENTENCE THAT WOULD HAVE BEEN WRONG.  The verdict first read "the layers are complementary". They
+are not. TWO layers carry this model -- the metabolic growth cost and mRNA abundance -- and five are
+passengers, two of them with NEGATIVE contributions, meaning the model is slightly better without
+measured DNA torsion and without functional neighbourhood in it. Both of those were real, controlled
+findings in their own loops; neither survives contact with a model that already knows a gene's
+expression and its metabolic cost.
+
+WHAT IS ACTUALLY ESTABLISHED, stated at its true size.  One mechanistic layer adds +0.04 AUC on top of
+four catalogue columns, on 1,783 genes, held out by chromosome. That is the strongest integrated result
+this project has, and it is one layer, not seven.
+
+AND A COVERAGE LIMIT.  Requiring all seven layers drops the scored set to 1,783 genes -- 10.8% of the
+genome. The assembled model is only defined where every input exists, which is a small and unusually
+well-measured slice.
+
 -> outputs/loop_integrate.json
 """
 import json
@@ -226,9 +258,17 @@ def main():
     for kk, vv in gates.items():
         say(f"  {kk:<36}{'PASS' if vv else 'FAIL'}")
     if i1 and i2:
-        say("  THE LAYERS ARE COMPLEMENTARY. The assembled model beats its best part and beats the")
-        say("  catalogue columns, under folds blocked by chromosome. That is what 'a working cell")
-        say("  model' would have to mean at minimum, and it is now measured rather than asserted.")
+        carry = [c for c, v in drops.items() if v >= 0.01]
+        dead = [c for c, v in drops.items() if v <= 0.005]
+        say("  THE ASSEMBLY BEATS ITS BEST PART AND BEATS THE CATALOGUE COLUMNS, under folds blocked by")
+        say("  chromosome. That is the minimum 'a working cell model' has to mean, and it is measured.")
+        say(f"  BUT READ I3 BEFORE CALLING THE LAYERS COMPLEMENTARY. Only {len(carry)} of {len(layers)}")
+        say(f"  layers carry anything: {', '.join(carry)}.")
+        say(f"  {len(dead)} contribute 0.005 or less and two of them are NEGATIVE -- removing them")
+        say(f"  improves the model: {', '.join(dead)}.")
+        say("  So the honest sentence is not 'the layers are complementary'. It is that ONE mechanistic")
+        say("  layer -- the metabolic growth cost -- adds to ONE lookup, and the other five are")
+        say("  passengers. That is a real result and a much smaller one than seven layers implies.")
     elif i1:
         say("  THE LAYERS COMBINE, BUT THE MECHANISM DOES NOT EARN ITS PLACE. The gain comes from")
         say("  stacking lookups. An honest description is a well-assembled catalogue, not a model.")
