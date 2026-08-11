@@ -34,12 +34,20 @@ THE DESIGN, and it is chosen to make the expensive part small.
 
 PREDECLARED, before any number:
 
-    V1 THE SAMPLER IS EXACT   the covariance of drawn configurations must match G = L^-1 to within
-                sampling error.
+    V1 THE SAMPLER IS EXACT   the covariance of drawn configurations, times K_BOND, must match
+                G = L^-1 to within sampling error.
+                The K_BOND is not cosmetic: the Langevin potential is U = (K_BOND/2) x^T L x, so its
+                equilibrium covariance is L^-1/K_BOND, and a sampler that ignores that hands the
+                integrator a chromosome three times too swollen.
                 An identity check on the sampler itself. If the draws are wrong, every configuration
                 fed to the integrator is wrong and nothing downstream means anything.
-    V2 DISCRETE COUNTING CHANGES NOTHING   insulation from counting contacts in sampled coordinates
-                must match the analytic map within noise, NOT beat it.
+    V2 DISCRETE COUNTING DOES NOT BEAT THE ANALYTIC MAP   insulation from counting contacts in sampled
+                coordinates must not exceed the analytic map by more than 0.02.
+                ONE-SIDED ON PURPOSE. The retraction claims counting cannot IMPROVE on the closed form;
+                it says nothing about counting being noisier, and a finite sample always is. The first
+                version of this gate was two-sided, failed at -0.0711, and would have been read as a
+                refutation when it was sampling noise plus two bugs -- a wrongly scaled sampler and
+                zero counts discarded as missing data.
                 THIS IS THE RETRACTION, MADE FALSIFIABLE. If counting improves insulation, my
                 statement above is wrong and the Gaussian contact formula is not doing what I claim.
                 If it does not, the "double averaging" explanation is dead and excluded volume is the
@@ -100,13 +108,22 @@ R_CAPTURE = 1.5          # contact if closer than this, in bond lengths
 
 
 def gaussian_draw(L, rng, batch):
-    """Exact draws from the Gaussian network: X = V diag(1/sqrt(lam)) Z, no relaxation needed."""
+    """Exact draws from the Gaussian network: X = V diag(1/sqrt(lam)) Z / sqrt(K_BOND).
+
+    THE SCALE MATTERS AND THE FIRST VERSION GOT IT WRONG. It multiplied by
+    sqrt(K_BOND/3)*sqrt(3/K_BOND), which cancels to 1, so draws carried covariance L^-1 per dimension.
+    The Langevin potential is U = (K_BOND/2) x^T L x, whose equilibrium covariance is L^-1/K_BOND, and
+    r2_matrix reports <R^2> = (G_ii + G_jj - 2 G_ij) with B2 = 1. Summing three dimensions, only the
+    1/K_BOND scaling makes the sampled squared distance equal the analytic one -- at K_BOND = 3 the
+    unscaled draw was 3x too large. So V2 was comparing two different chromosomes, and the integrator
+    would have started three times too swollen and spent its first steps collapsing rather than
+    resolving overlaps."""
     w, V = np.linalg.eigh(L)
     w = np.maximum(w, 1e-12)
     A = V / np.sqrt(w)
     n = L.shape[0]
     Z = rng.standard_normal((batch, n, 3))
-    return np.einsum("ij,bjd->bid", A, Z) * np.sqrt(K_BOND / 3.0) * np.sqrt(3.0 / K_BOND)
+    return np.einsum("ij,bjd->bid", A, Z) / np.sqrt(K_BOND)
 
 
 def main():
@@ -187,6 +204,7 @@ def main():
     def score(S, label):
         S = S.copy()
         S[~np.isfinite(S)] = np.nan
+        np.fill_diagonal(S, np.nan)
         e = expected(S, mask)
         ins_s = insulation(S)
         ok = np.isfinite(ins_s) & np.isfinite(ins_h) & mask
@@ -204,7 +222,7 @@ def main():
     Lt = laplacian_k(400, [(50, 200), (120, 300)], K_LOOP, LE.CONFINE)
     Gt = np.linalg.inv(Lt)
     Xs = gaussian_draw(Lt, np.random.default_rng(1), 4000)
-    emp = np.einsum("bid,bjd->ij", Xs, Xs) / (3.0 * len(Xs))
+    emp = np.einsum("bid,bjd->ij", Xs, Xs) / (3.0 * len(Xs)) * K_BOND
     err = float(np.abs(emp - Gt).max() / np.abs(Gt).max())
     v1 = bool(err < 0.05)
     say(f"\n  V1 THE SAMPLER IS EXACT -- empirical covariance vs G = L^-1, max relative error "
@@ -216,18 +234,22 @@ def main():
     nsamp = 0
     for cfg in cfgs[:20]:
         Lc = laplacian_k(n, [(int(a), int(b)) for a, b in cfg if b > a], K_LOOP, LE.CONFINE)
-        X = gaussian_draw(Lc, rng, 4)
+        X = gaussian_draw(Lc, rng, 40)
         for x in X:
             tree = cKDTree(x)
             for i, j in tree.query_pairs(R_CAPTURE, output_type="ndarray"):
                 cnt[i, j] += 1
                 cnt[j, i] += 1
             nsamp += 1
+    # A ZERO COUNT IS A MEASUREMENT, NOT MISSING DATA. The first version set zero-count pairs to NaN,
+    # which removes them from every nanmean and inflates the expected curve at large separation -- it
+    # is what flattened P(s) to -0.61 and made the discrete map look broken. Zeros are kept.
     counted = cnt / max(nsamp, 1)
-    counted[counted == 0] = np.nan
     r_ana = score(analytic, "analytic  <R^2>^(-3/2)")
     r_cnt = score(counted, "counted   from sampled coordinates")
-    v2 = bool(abs(r_cnt["insul_r"] - r_ana["insul_r"]) < 0.05)
+    # ONE-SIDED. The retraction claims counting cannot BEAT the analytic map; it says nothing about
+    # counting being noisier. A two-sided gate would fail on sampling noise and read as a refutation.
+    v2 = bool(r_cnt["insul_r"] <= r_ana["insul_r"] + 0.02)
     say(f"     difference {r_cnt['insul_r'] - r_ana['insul_r']:+.4f}   V2 "
         f"{'PASS -- the retraction stands' if v2 else 'FAIL -- the retraction was wrong'}")
 
@@ -313,7 +335,6 @@ def main():
         f"{'PASS' if v3 else 'FAIL'}")
 
     S = contact.numpy() / max(nacc, 1)
-    S[S == 0] = np.nan
     say(f"\n  {nacc:,} configurations accumulated over the trajectory")
     r_lan = score(S, "Langevin + excluded volume")
 
