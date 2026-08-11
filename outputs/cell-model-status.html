@@ -1,4 +1,4 @@
-<title>Cell model — measured status after thirty-two loops</title>
+<title>Cell model — measured status after forty-one loops</title>
 <style>
   :root{
     --bg:#F5F7F6; --surface:#FFFFFF; --ink:#14181A; --muted:#5B6669; --hair:#DCE2E0;
@@ -101,7 +101,7 @@
 <div class="wrap">
 
   <header style="display:flex;flex-direction:column;gap:.75rem">
-    <p class="eyebrow">Whole-cell model · measured status · thirty-two loops</p>
+    <p class="eyebrow">Whole-cell model · measured status · forty-one loops</p>
     <h1>What this cell model can answer, what it cannot, and how each was found out</h1>
     <p class="lede">The goal was a model that answers anything in the cell — any mutation, any protein
     change, any chromosome fold, drug effect, side effect, cancer. As stated that cannot fail, so it was
@@ -113,7 +113,7 @@
     <div class="fig"><span class="v">6</span><span class="k">question types that can be <em>asked</em></span></div>
     <div class="fig"><span class="v">6</span><span class="k">that can now be <em>got wrong</em></span></div>
     <div class="fig hero"><span class="v">3</span><span class="k">that are <em>answered well</em></span></div>
-    <div class="fig"><span class="v">65 / 21</span><span class="k">gates passed / failed</span></div>
+    <div class="fig"><span class="v">84 / 32</span><span class="k">gates passed / failed</span></div>
   </div>
 
   <hr class="rule">
@@ -162,7 +162,7 @@
   <hr class="rule">
 
   <section>
-    <h2>The thirty-two loops</h2>
+    <h2>The forty-one loops</h2>
     <p style="font-size:.95rem;color:var(--muted)">Numbered because the order is real: each loop's target
     was chosen by the previous loop's measurement, not planned in advance.</p>
     <div class="loops">
@@ -418,6 +418,40 @@
         <div class="gates"><span class="chip f">reproduces absolutes</span><span class="chip p">reproduces the claim</span><span class="chip f">confident structure rescues</span><span class="chip f">burial sharpens</span></div>
       </div></div>
 
+      <div class="loop"><div class="idx">33<br>–41</div><div class="body">
+        <p class="q">Build a 4D chromatin model that behaves like DNA in a nucleus, on four CPUs.</p>
+        <p class="a"><strong>The engine is diagonalised, not integrated.</strong> A chromosome held by
+        harmonic bonds — backbone plus cohesin loops — is a Gaussian network, so one eigendecomposition
+        of its Laplacian yields the contact map <em>and</em> the whole time axis in closed form. No
+        timesteps anywhere. <span class="chip n">0.42 s</span> per configuration at 1,926 bins.</p>
+        <p class="a">Validated first against physics fixed before the code existed: the ideal-chain
+        identity to <span class="chip n">5e-11</span>, the Gaussian exponent at exactly −1.5000, the
+        Rouse exponent 0.4939. And exactly wrong for chromatin — real chr21 measures −0.964, so the
+        bare polymer is the null, not the answer.</p>
+        <p class="a"><strong>Then the mechanism.</strong> Loop extrusion on GM12878's own CTCF, with
+        motif direction scanned from the sequence, using literature parameters only. P(s) went
+        −1.262 → <strong>−1.010</strong> against a measured −0.964. The orientation signature came out
+        +0.2278 against a measured +0.3788 and <em>inverted</em> to −0.042 when orientations were
+        shuffled — that inversion is what makes it extrusion and not coincidence.</p>
+        <p class="a"><strong>The fourth dimension.</strong> Two clocks: relaxation inside a fixed loop
+        set, and rewiring of the set itself. MSD exponent 0.354; loop lifetime 14.8 min out for 15.0 min
+        in; and single configurations reach r = 0.17 where their average reaches 0.22 — TADs are a
+        population object here, exactly as single-cell Hi-C reports.</p>
+        <p class="a"><strong>Held out by chromosome, mechanism beat fitting.</strong> On chr22, unseen:
+        physics <strong>+0.2852</strong> with zero fitted parameters, a trained CNN +0.0893, smoothed
+        CTCF density +0.1110. The network's orientation-shuffled twin scored <em>higher</em> (+0.1290)
+        than the real one — it learned where CTCF binds, never which way it points.</p>
+        <p class="a"><strong>And the ceiling is the same fact as the speed.</strong> Insulation stalled
+        at 0.297 against a 0.40 gate, and two attempts at compartments both collapsed P(s) — the second
+        exposed by its own control, where shuffled GC scored higher than real GC. A long-range harmonic
+        bond is a permanent shortcut; an attraction is not. The linearity that makes one
+        eigendecomposition deliver everything is the same property that forbids distance-dependent
+        attraction. Stopping rules were declared before each run and honoured.</p>
+        <div class="gates"><span class="chip p">target measured 4/4</span><span class="chip p">engine 4/4</span><span class="chip f">extrusion 2/4</span><span class="chip f">stiffness 3/4</span><span class="chip p">4D 4/4</span><span class="chip f">compartments 1/4</span><span class="chip f">affinity 1/4</span><span class="chip f">surrogate 1/4</span></div>
+      </div></div>
+
+
+
 
 
 
@@ -458,6 +492,12 @@
           <tr><td class="name">BLOSUM62 beats every structural layer</td><td class="n">0.6623</td><td class="src">loop_chain</td></tr>
           <tr><td class="name">nexus's fusion gain, independently rebuilt</td><td class="n">+0.145 / +0.193</td><td class="src">loop_nexus_fair</td></tr>
           <tr><td class="name">…its reach across arbitrary point mutations</td><td class="n">≤ 30.4%</td><td class="src">loop_nexus_fair</td></tr>
+          <tr><td class="name">4D engine: one solve gives map + time axis</td><td class="n">0.42 s</td><td class="src">loop_polymer</td></tr>
+          <tr><td class="name">Extrusion bends P(s) toward the chromosome</td><td class="n">−1.010 / −0.964</td><td class="src">loop_stiffness</td></tr>
+          <tr><td class="name">Orientation signature inverts when shuffled</td><td class="n">+0.228 → −0.042</td><td class="src">loop_stiffness</td></tr>
+          <tr><td class="name">Loop lifetime out vs residence in</td><td class="n">14.8 / 15.0 min</td><td class="src">loop_fourth</td></tr>
+          <tr><td class="name">Physics transfers to an unseen chromosome</td><td class="n">+0.2852</td><td class="src">loop_surrogate</td></tr>
+          <tr><td class="name">…a trained CNN on the same task</td><td class="n">+0.0893</td><td class="src">loop_surrogate</td></tr>
           <tr class="gone"><td class="name">The model says what is <em>not</em> a driver</td><td class="n">0.7010</td><td class="src">loop_cancer</td></tr>
           <tr class="gone"><td class="name">…and is at chance on LoF drivers</td><td class="n">0.5073</td><td class="src">loop_cancer</td></tr>
         </tbody>
@@ -481,27 +521,32 @@
       <li><strong>Recall is the binding limit and its obvious fix is a measured dead end.</strong> The
       model finds a third of real dependencies; the layer that separates the misses makes the predictor
       worse when you add it.</li>
-      <li><strong>Nothing here is 3D, let alone 4D.</strong> No contact map, no time dimension. The one
-      thing that looked like a chromosome fold was 8.8% same-chromosome where Hi-C runs 70–90%, and
-      turned out to be a retrieval model's top-8 list with 0.99% recall. What replaced it is a real 1D
-      torsion measurement that works at gene scale, carries nothing at variant scale, and contributes
-      −0.0012 to the integrated model.</li>
+      <li><strong>There is now a real 4D model, and its ceiling is the same fact as its speed.</strong>
+      Loops 33–41 built a Gaussian-network chromosome with loop extrusion that reproduces P(s), the
+      CTCF orientation signature, sub-diffusive motion and correct loop turnover, at 0.42 s per
+      configuration — and beats a trained CNN on an unseen chromosome. But insulation stalls at 0.30
+      against a 0.40 gate and compartments fail twice, because a long-range harmonic bond is a
+      permanent shortcut and an attraction is not. The linearity that makes it cheap is what caps it.
+      Separately, the earlier <em>1D</em> chromatin line stands as it was: what once looked like a fold
+      was a retrieval model's top-8 list at 0.99% recall, and the torsion track that replaced it works
+      at gene scale, carries nothing at variant scale, and contributes −0.0012 to the integrated model.</li>
     </ul>
   </section>
 
   <hr class="rule">
 
   <footer>
-    <p>65 gates passed, 21 failed, across thirty-two loops. Both numbers are reported because a project
-    where every gate passes was not gating anything. Eight results have been retracted or corrected
-    after being measured more carefully — most of them faults in the instrument rather than the data:
-    an audit that credited itself, a search through its own vocabulary, reachability through a shared
-    38&nbsp;MB hub, a control that was an algebraic identity, a control that stratified by its own
-    target, a partialled confound strong enough to manufacture the anti-correlation it was meant to
-    remove, a verdict on a dual-sensor model that only ran one of its sensors, and a data ledger whose
-    paths pointed at a directory the files had never been in, so it reported seven present files as
-    missing. Each correction is recorded in the module that made the original claim, and the capability
-    count has gone down twice as a result.</p>
+    <p>84 gates passed, 32 failed, across forty-one loops. Both numbers are reported because a project
+    where every gate passes was not gating anything. Ten results have been retracted or corrected after
+    being measured more carefully — most of them faults in the instrument rather than the data: an audit
+    that credited itself, a search through its own vocabulary, reachability through a shared 38&nbsp;MB
+    hub, a control that was an algebraic identity, a control that stratified by its own target, a
+    partialled confound strong enough to manufacture the anti-correlation it was meant to remove, a
+    verdict on a dual-sensor model that only ran one of its sensors, a data ledger whose paths pointed
+    at a directory the files had never been in, a demonstration constant carried into a physical run,
+    and a consistency check that was wrong twice before becoming an identity. Each correction is
+    recorded in the module that made the original claim, and the capability count has gone down twice
+    as a result.</p>
   </footer>
 
 </div>
