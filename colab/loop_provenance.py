@@ -48,6 +48,38 @@ CONTROLS: the arithmetic is exact rather than approximate; the repository-wide g
 mechanism cell_complete_build used to find producers; random_at10 is itself the built-in random baseline
 of whoever trained the thing.
 
+WHAT HAPPENED, written after the run against the gates above, unedited.
+
+    W1 THE ARITHMETIC RECONSTRUCTS  PASS.  10/random_at10 = 8791 and 10/8791 reproduces the stored
+        0.0011375270162666364 to the last bit; recall/random reproduces the stored lift
+        8.719008189262967 exactly; 8791 = n_train - 1. The reconstruction is not an inference.
+    W2 STORED AS TOP-K  PASS.  All 7,700 genes carry exactly 8 neighbours. A contact map or an
+        interaction assay emits a VARIABLE count per locus; a fixed count is what a ranking emits.
+        Worth recording: evaluated at k=10, stored at k=8.
+    W3 THE PRODUCER IS ABSENT  PASS, on the second run. The first reported FAIL with exactly one hit --
+        THIS FILE, which names those fields in its own source in order to grep for them. That is the
+        same self-credit bug capability_audit hit twice, making it the single most repeatable mistake in
+        this project: a checker that matches its own vocabulary. Self is now excluded.
+    W4 THE LISTS ARE RELIABLE  FAIL, as predeclared.  recall@10 = 0.99%. The model that produced these
+        neighbour lists finds under one in a hundred of its own targets in its top ten. It beats random
+        by 8.7x, which is real; it is still 0.99%. And pc_r2 = -0.0503 is NEGATIVE, meaning that
+        component predicted worse than a constant would have.
+
+WHAT THIS CHANGES.  model4's backlog entry is no longer blank: it is a learned retrieval model's top-8
+output over 8,791 candidates, with its own recorded recall@10 of 0.99% and a negative pc_r2. The producer
+is still not in this repository, so the backlog is not one shorter -- but "unknown" has become "known to
+be a weak ranker, and here is its scorecard".
+
+AND IT INDEPENDENTLY CONFIRMS LOOP 7 BY A DIFFERENT ROUTE.  Loop 7 concluded model4 is not a fold from
+GEOMETRY -- 8.8% cis where Hi-C runs 70-90%. This concludes the same thing from METADATA -- the block is
+a ranking, and rankings are predictions. Two independent arguments, same answer, and neither needed the
+producer.
+
+HOW LOOPS 6 AND 7 SHOULD NOW BE READ.  Both measured real, controlled effects, and those measurements
+stand. What this adds is the ceiling: the lists they measured come from a model that is right about 1%
+of the time by its own metric. An effect measured on a weak predictor's output is an effect on a weak
+predictor's output.
+
 -> outputs/loop_provenance.json
 """
 import collections
@@ -132,7 +164,11 @@ def main():
             hits += [x for x in r.stdout.split() if x]
         except Exception:
             pass
-    hits = sorted(set(hits))
+    # EXCLUDE SELF. The first run reported W3 FAIL with exactly one hit: this file, which names those
+    # fields in its own source in order to search for them. That is the same self-credit bug
+    # capability_audit hit twice, and it is apparently the single most repeatable mistake in this
+    # project -- a checker that matches its own vocabulary.
+    hits = sorted(set(hits) - {str(Path(__file__).resolve())})
     w3 = not hits
     say(f"\n  W3 THE PRODUCER IS ABSENT -- python files emitting {fields}: {hits or 'NONE'}")
     say(f"    W3 {'PASS' if w3 else 'FAIL'}")
