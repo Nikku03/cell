@@ -98,6 +98,18 @@ WHAT HAPPENED, written after the run, unedited.
 
     OF THE 6 QUESTION TYPES THE GOAL NAMES: 6 CAN BE ASKED, 1 CAN BE ANSWERED.
 
+RE-RUN, loop 30: 6 ASKABLE, 6 CAN BE GOT WRONG, 3 ANSWERED WELL -- and the count went DOWN.
+    A SUPERSEDED map was added and `cancer` is its first entry, so the row keeps its gates and loses
+    its vote. loop_cancer is still 4/4 on the gates it declared; loop_survivable then re-asked its
+    central claim with matched pairs instead of partialling and found essentiality at 0.4949, inside
+    the null. The 0.2990 anti-correlation was over-control, so nothing certifies that row any more.
+    This is the failure mode the fourth column could not catch on its own: gate booleans are written
+    before a retraction exists and can never see one, so without this map a question keeps reading
+    ANSWERED WELL on the strength of a number nothing stands behind. Un-believing a result now costs
+    an explicit entry naming the loop that did the withdrawing, which is the right price for it.
+    Also new here: loop 21 finished, and `metabolic growth` still does not clear its gates -- the
+    feedback's deficit shrank from -0.0074 to -0.0013 on the fixed model without changing sign.
+
 RE-RUN, loop 26: 6 ASKABLE, 6 CAN BE GOT WRONG, 4 ANSWERED WELL.
     `any protein change` joins the list, via loop_quantity -- and this is the first row credited to a
     pipeline that predicts a NUMBER rather than separating classes. Given a gene's mRNA abundance and
@@ -273,14 +285,22 @@ ENTRY = {
 # as ADJACENT rather than counted.
 ACCEPTS = {
     "any point mutation": ("variant", "pervariant"),
-    "any protein change": ("cell_loop", "deficit", "medium", "quantity", "retest"),
+    "any protein change": ("cell_loop", "deficit", "medium", "quantity", "retest", "amplify"),
     "any chromosome fold": ("real_chromatin", "supercoil"),
     "drug effect": ("drug",),
     "side effect": ("sideeffect",),
-    "cancer": ("cancer",),
-    "metabolic growth": ("cell_loop", "medium", "slack", "retest", "tail", "integrate"),
+    "cancer": ("cancer", "survivable"),
+    "metabolic growth": ("cell_loop", "medium", "slack", "retest", "tail", "integrate", "recall"),
     "functional neighbourhood": ("fold_link", "chromatin"),
     "NEGATIVE CONTROL": (),
+}
+
+# A module here passed its own gates and had its central claim withdrawn by a later, better-controlled
+# loop. It keeps its row and loses its vote. Adding to this map is the only way a result in this
+# repository gets un-believed, and it requires naming the loop that did the withdrawing.
+SUPERSEDED = {
+    "loop_cancer.json": "loop_survivable.json -- matched pairs instead of partialling put essentiality "
+                        "at 0.4949 inside the null; the 0.2990 anti-correlation was over-control",
 }
 for _q in ENTRY:
     ENTRY[_q].setdefault("files", [])
@@ -502,14 +522,22 @@ def main():
         acc = ACCEPTS.get(q, ())
         own = {f: v for f, v in detail.items() if any(a in f for a in acc)}
         adjacent = sorted(set(detail) - set(own))
-        answered_well = any(v["failed"] == 0 and v["passed"] > 0 for v in own.values())
-        best_pipeline = next((f for f, v in own.items()
+        # A MODULE CANNOT CERTIFY A CLAIM A LATER LOOP TOOK BACK. loop_cancer is 4/4 on its own gates
+        # and loop_survivable then showed its central finding -- essentiality predicting NON-drivers at
+        # 0.2990 -- was manufactured by over-control. Gate booleans are written before the retraction
+        # exists and can never see it, so a question would keep reading ANSWERED WELL on the strength
+        # of a number nothing still stands behind. Superseded modules stay in the table and stay out
+        # of the verdict.
+        retracted = {f: SUPERSEDED[f] for f in own if f in SUPERSEDED}
+        live = {f: v for f, v in own.items() if f not in SUPERSEDED}
+        answered_well = any(v["failed"] == 0 and v["passed"] > 0 for v in live.values())
+        best_pipeline = next((f for f, v in live.items()
                               if v["failed"] == 0 and v["passed"] > 0), None)
 
         rows.append({"question": q, "what": desc, "blocks": counts, "n_items": n,
                      "gates_passed": gp, "gates_failed": gf, "gate_detail": detail,
                      "answered_well": answered_well, "best_pipeline": best_pipeline,
-                     "adjacent_credits": adjacent,
+                     "adjacent_credits": adjacent, "retracted": retracted,
                      "encode": encode, "pipeline": pipeline, "check": check,
                      "answers": bool(encode and pipeline and check),
                      "emits": bool(encode), "namers": sorted(namers)[:8],
@@ -533,6 +561,9 @@ def main():
         if r.get("adjacent_credits"):
             say(f"    {'':<22} ADJACENT (touch the slot, do not answer it): "
                 f"{', '.join(r['adjacent_credits'])}")
+        for f, why in (r.get("retracted") or {}).items():
+            say(f"    {'':<22} SUPERSEDED, gates kept and vote removed: {f}")
+            say(f"    {'':<22}   {why}")
         say(f"    {'':<22} recorded results: {', '.join(r['produces']) or 'NONE'}"
             f"   controlled: {', '.join(r['controlled']) or 'NONE'}")
 

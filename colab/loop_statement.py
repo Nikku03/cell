@@ -45,7 +45,15 @@ LOOPS = [
     ("16  retiring saturating kinetics", "loop_kinetics.json", "gates"),
     ("17  what made model4", "loop_provenance.json", "gates"),
     ("18  which drugs are cytotoxic", "loop_drug.json", "gates"),
-    ("2/9/11/13/19 capability audit", "capability_audit.json", None),
+    ("21  re-run loop 1 on the fixed model", "loop_retest.json", "gates"),
+    ("22  predict a quantity, not a class", "loop_quantity.json", "gates"),
+    ("23  score a variant, not a gene", "loop_pervariant.json", "gates"),
+    ("24  the tail the model gets wrong", "loop_tail.json", "gates"),
+    ("25  do the layers add up", "loop_integrate.json", "gates"),
+    ("27  where the amplification is", "loop_amplify.json", "gates"),
+    ("28  what would recover the misses", "loop_recall.json", "gates"),
+    ("29  is the cancer inversion real", "loop_survivable.json", "gates"),
+    ("2/9/11/13/19/26 capability audit", "capability_audit.json", None),
 ]
 
 
@@ -131,8 +139,11 @@ def main():
     if cl:
         say(f"  the growth feedback CLOSES        mu = F(mu) to {cl['closure']['spread']:.1e} relative "
             f"from mu0 = 0 and 2*mu_WT          [cell_loop]")
+        rt = R.get("loop_retest.json")
+        also = f", and {rt['delta_g3']:+.4f} on the fixed model" if rt else ""
         say(f"  the feedback does NOT help        loop {cl['auc']['loop']:.4f} vs frozen-mu "
-            f"{cl['auc']['frozen']:.4f}, a change of {cl['feedback']['delta_auc']:+.4f}   [cell_loop]")
+            f"{cl['auc']['frozen']:.4f}, a change of {cl['feedback']['delta_auc']:+.4f}{also}"
+            f"   [cell_loop, loop_retest]")
     dd = R.get("loop_deficit.json")
     if dd:
         say(f"  the lookup is not about metabolism  {dd['H2_confound']['auc_metabolic']:.4f} on metabolic "
@@ -165,11 +176,37 @@ def main():
         se = ls["predictors"].get("mean essentiality of targets", {})
         say(f"  side effects are NOT               same predictor, same confound: partial "
             f"{se.get('partial', float('nan')):+.4f}, inside the null       [loop_sideeffect]")
-    lk = R.get("loop_cancer.json")
-    if lk:
-        say(f"  the model says what is NOT a driver  partial {lk.get('partial_best', float('nan')):.4f} "
-            f"(i.e. {1-lk.get('partial_best', 0.5):.4f} for non-drivers); LoF subset "
-            f"{lk['auc_lof_only']:.4f}  [loop_cancer]")
+    lsv = R.get("loop_survivable.json")
+    if lsv and lsv.get("testable"):
+        e = lsv["measures"]["essentiality"]
+        lo = lsv["by_role"]["loss-of-function drivers"]["auc"]
+        ac = lsv["by_role"]["activating drivers"]["auc"]
+        say(f"  the cancer inversion was OVER-CONTROL  matched instead of partialled, essentiality is "
+            f"{e['auc']:.4f} inside {e['band95']:.4f}   [loop_survivable]")
+        say(f"  the two driver roles CANCEL         loss-of-function {lo:.4f}, activating {ac:.4f}, "
+            f"gap {lsv['by_role']['delta']:+.4f} vs {lsv['by_role']['null_95th']:+.4f}  "
+            f"[loop_survivable]")
+    lq = R.get("loop_quantity.json")
+    if lq:
+        say(f"  a QUANTITY, held out                protein/mRNA ratio R2 {lq['r2_with_turnover']:.4f} vs "
+            f"{lq['r2_mrna']:.4f} without the loop's turnover term  [loop_quantity]")
+    lt = R.get("loop_retest.json")
+    if lt:
+        a = lt["auc"]
+        say(f"  the medium was suppressing FBA      loop {a['loop']:.4f} on a defined medium vs "
+            f"0.6210 on the shipped one, lookup unmoved         [loop_retest]")
+        say(f"  the model ADDS to the lookup        held out, {lt['cv']['lookup']:.4f} -> "
+            f"{lt['cv']['lookup_plus_loop']:.4f}; losing head-to-head is not being redundant "
+            f"[loop_retest]")
+    ltl = R.get("loop_tail.json")
+    if ltl:
+        say(f"  and it still misses two thirds      precision {ltl['precision']:.1%}, recall "
+            f"{ltl['recall']:.1%} on real dependencies                   [loop_tail]")
+    lrc = R.get("loop_recall.json")
+    if lrc:
+        say(f"  the missing layer is hub-ness       PPI degree separates the misses at "
+            f"{lrc['candidates']['PPI degree']['auc']:.4f} and does NOT improve recall "
+            f"({lrc['recall_base']:.1%} -> {lrc['recall_plus']:.1%})  [loop_recall]")
     lsl = R.get("loop_slack.json")
     if lsl:
         say(f"  the 92% no-slack result was my bug   {lsl['frac_at_1pct']:.1%} of knockouts cost >1% of "
@@ -200,15 +237,41 @@ def main():
             if not r["check"]:
                 why.append("no controlled score")
             say(f"  {r['question']:<22} {r['n_items']:>7,} items -- {'; '.join(why)}")
-    say("\n  THREE LIMITS THAT APPLY TO THE ROWS THAT DO PASS.")
+        # Every real row now clears all three axes, so the list above holds only the synthetic
+        # control. Printing that alone would read as "nothing left", which is the opposite of true --
+        # the distance moved into the fourth column and has to be reported from there.
+        say("  (the list above holds only the synthetic control: all six real rows now have a slot, a")
+        say("   pipeline and a controlled score. The distance moved to the fourth column.)")
+        say("")
+        for r in cap["rows"]:
+            if r["question"] in ("metabolic growth", "functional neighbourhood", "NEGATIVE CONTROL"):
+                continue
+            if r.get("answered_well"):
+                continue
+            bad = [g for f, v in (r.get("gate_detail") or {}).items() if v["failed"]
+                   for g in [f]]
+            ret = list((r.get("retracted") or {}).keys())
+            note = ("every module answering it has a failed gate: " + ", ".join(sorted(set(bad)))
+                    if bad else "no module answering it passes all its gates")
+            if ret:
+                note += f"; SUPERSEDED: {', '.join(ret)}"
+            say(f"  NOT ANSWERED WELL  {r['question']:<22} {note}")
+    say("\n  FOUR LIMITS THAT APPLY TO THE ROWS THAT DO PASS.")
     say("    1  Effects are modest. rho 0.18 for torsion against transcription; AUC 0.72 for cytotoxic")
-    say("       class after confound removal. Real, controlled, and not large.")
-    say("    2  The cancer row is 4/4 and its finding is INVERTED: after removing gene length and")
-    say("       citation count the model predicts NON-drivers at 0.7010, and the loss-of-function")
-    say("       subset it could mechanistically explain sits at 0.5073, which is chance. A gate")
-    say("       boolean cannot carry that; a reader who stops at the column gets it backwards.")
-    say("    3  Nothing here predicts a QUANTITY. Every passing row separates classes -- driver from")
-    say("       not, cytotoxic from not, high torsion from low. None of them says how much.")
+    say("       class after confound removal; R2 0.43 for the protein-to-mRNA ratio. Real, controlled,")
+    say("       and not large.")
+    say("    2  TWO OF THIS SECTION'S OWN EARLIER CLAIMS HAVE BEEN WITHDRAWN BY LATER LOOPS, and that")
+    say("       is the strongest evidence here that the gates are doing something. This list used to")
+    say("       say the cancer row predicted NON-drivers at 0.7010 -- loop 29 matched instead of")
+    say("       partialling and found 0.4949, inside the null; the inversion was over-control. It also")
+    say("       used to say nothing here predicts a quantity -- loop 22 then did, at R2 0.4332.")
+    say("    3  The feedback that started this project still does not earn its place. Re-run on a")
+    say("       model that cannot eat ATP, with the reference growth rate fixed, loop minus frozen")
+    say("       went from -0.0074 to -0.0013: 82% of the deficit gone, the sign never flipped.")
+    say("    4  Recall is the binding limit and it has a named, measured dead end. The metabolic model")
+    say("       finds a third of real dependencies; PPI degree separates the ones it misses at 0.68 and")
+    say("       adding it makes the predictor WORSE at matched precision, because hub-ness promotes")
+    say("       true negatives just as fast. Naming the missing layer is not being able to use it.")
 
     man = RM.manifest(inputs=[str(OUT / fn) for _, fn, _ in LOOPS if (OUT / fn).exists()],
                       available=len(LOOPS), used=sum(1 for _, fn, _ in LOOPS if R.get(fn)),
