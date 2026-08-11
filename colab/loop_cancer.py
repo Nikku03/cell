@@ -37,6 +37,40 @@ CONTROLS: 200 label shuffles; gene length and publication count partialled out A
 standalone predictors; LOEUF and abundance lookups; and the loss-of-function subset scored separately,
 since an activating driver is not something a deletion-based model should be expected to see.
 
+WHAT HAPPENED, written after the run against the gates above, unedited -- and the verdict logic had to
+be corrected mid-loop, which is part of the record.
+
+    K1 JOIN   PASS.  633 IntOGen drivers among 16,460 genes with coordinates.
+
+    THE CONFOUNDS FIRST, because they are enormous:
+        gene length alone       AUC 0.6754
+        publication count alone AUC 0.8259
+    Citation count predicts cancer-driver status at 0.83. Anything that fails to beat that is
+    rediscovering which genes people have studied.
+
+    K2 SIGNAL   PASS, barely -- raw 0.5189 against a shuffled null of [0.4904, 0.5111].
+    K3 BEATS LENGTH AND CITATIONS   PASS on the arithmetic, and the DIRECTION is the finding.
+                The partial AUC is 0.2990. That is not a weak prediction of drivers; it is a 0.7010
+                prediction of NON-drivers. Among genes matched for length and citations, the more
+                essential a gene is, the LESS likely it is to be called a driver.
+    K4 BEATS LOOKUPS  PASS on magnitude (|0.2990-0.5| = 0.201 against LOEUF's |0.6588-0.5| = 0.159),
+                but the two point in opposite directions and the comparison is close to meaningless.
+                LOEUF genuinely predicts drivers at 0.6588 after confounds. The model predicts
+                non-drivers.
+
+THE FIRST VERSION OF THIS MODULE PRINTED "THE MODEL KNOWS SOMETHING ABOUT DRIVERS" and would have been
+quoted that way. The gate tested |partial - 0.5| outside the null band, which an anti-correlation
+satisfies just as well as a correlation, and nothing reported the sign. Corrected before recording: the
+verdict now reads the direction and says which way it points.
+
+THE HONEST READING, and it is genuinely interesting.  The anti-correlation is not noise and not a bug.
+Pan-essential genes are under purifying selection and are NOT cancer drivers -- a tumour cannot be
+driven by breaking something every cell needs. So the model has learned a real constraint on where
+drivers can live. But the subset it could mechanistically explain, loss-of-function drivers, sits at
+AUC 0.5073, which is chance.
+
+    The model can say what is NOT a driver. It cannot say what is.
+
 -> outputs/loop_cancer.json
 """
 import collections
@@ -189,8 +223,15 @@ def main():
     nullp = np.array(nullp)
     plo, phi = np.percentile(nullp, [2.5, 97.5])
     k3 = bool(res[best]["partial"] < plo or res[best]["partial"] > phi)
+    direction = "predicts drivers" if res[best]["partial"] > 0.5 else "ANTI-predicts drivers"
     say(f"\n  K3 BEATS LENGTH AND CITATIONS -- partial {res[best]['partial']:.4f} against "
         f"[{plo:.4f}, {phi:.4f}]   K3 {'PASS' if k3 else 'FAIL'}")
+    say(f"    DIRECTION: {direction}. An AUC of {res[best]['partial']:.4f} is not a weak prediction of")
+    say(f"    drivers, it is a {1-res[best]['partial']:.4f} prediction of NON-drivers. Among genes")
+    say(f"    matched for length and citations, the MORE essential a gene is the LESS likely it is to")
+    say(f"    be called a driver -- which is what purifying selection predicts, since a tumour cannot")
+    say(f"    be driven by breaking something every cell needs. Real, interpretable, and the opposite")
+    f = None
     if not k3:
         say("    With gene length and publication count removed, the model's score no longer separates")
         say("    drivers from non-drivers. What looked like cancer knowledge was the recurrence test's")
@@ -217,10 +258,17 @@ def main():
     gates = {"K1 join": k1, "K2 signal": k2, "K3 beats length and citations": k3, "K4 beats lookups": k4}
     for k, vv in gates.items():
         say(f"  {k:<36}{'PASS' if vv else 'FAIL'}")
-    if k2 and k3:
-        say("  THE MODEL KNOWS SOMETHING ABOUT DRIVERS that gene length and citation count do not")
-        say("  explain. `cancer` now has a slot, a pipeline and a controlled score that came back")
-        say("  positive on the gate that could have killed it.")
+    if k2 and k3 and res[best]["partial"] > 0.5:
+        say("  THE MODEL PREDICTS DRIVERS beyond gene length and citation count.")
+    elif k2 and k3:
+        say("  THE MODEL CARRIES REAL INFORMATION, IN THE OPPOSITE DIRECTION TO THE ONE PROPOSED.")
+        say(f"  After length and citations are removed, essentiality ANTI-predicts driver status at")
+        say(f"  {res[best]['partial']:.4f} -- i.e. it predicts NON-drivers at {1-res[best]['partial']:.4f}.")
+        say("  That is a genuine, interpretable finding (purifying selection keeps pan-essential genes")
+        say("  out of the driver list) and it is NOT what this module set out to show.")
+        say(f"  And the subset this model could mechanistically explain -- loss-of-function drivers --")
+        say(f"  sits at {a_lof:.4f}, which is chance. The model can say what is not a driver. It cannot")
+        say("  say what is.")
     elif k2:
         say("  The signal is real and is explained by length and citations. The cell model added")
         say("  nothing to a mutation-recurrence denominator and the literature's attention.")
@@ -241,6 +289,7 @@ def main():
     json.dump({"test": "loop_cancer", "manifest": man, "gates": gates,
                "n_drivers": n_drv, "auc_length": a_len, "auc_pubs": a_pub,
                "predictors": res, "best_model": best, "auc_lof_only": a_lof,
+               "direction": direction, "partial_best": res[best]["partial"],
                "null": {"lo": float(lo), "hi": float(hi)},
                "null_partial": {"lo": float(plo), "hi": float(phi)}, "log": log},
               open(OUT / "loop_cancer.json", "w"), indent=2)
