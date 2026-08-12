@@ -268,15 +268,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_mechanism.json",
+        "bytes": 7189,
+        "hash": "e1bb41c36f21293b",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 26561,
-        "hash": "ba9b8720a61b5663",
+        "bytes": 26751,
+        "hash": "6d9842590fb7bb67",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 45,
-      "used": 45,
+      "available": 46,
+      "used": 46,
       "selection": "all",
       "fraction": 1.0
     },
@@ -288,7 +294,7 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 129,
+  "n_gates_passed": 134,
   "n_gates_failed": 57,
   "capability": [
     {
@@ -369,7 +375,7 @@
         "complexes": 2039
       },
       "n_items": 42765,
-      "gates_passed": 38,
+      "gates_passed": 43,
       "gates_failed": 9,
       "gate_detail": {
         "cell_loop.json": {
@@ -398,6 +404,10 @@
         },
         "loop_integrate.json": {
           "passed": 4,
+          "failed": 0
+        },
+        "loop_mechanism.json": {
+          "passed": 5,
           "failed": 0
         },
         "loop_nexus_fair.json": {
@@ -429,6 +439,7 @@
         "loop_drug.json",
         "loop_fold_link.json",
         "loop_integrate.json",
+        "loop_mechanism.json",
         "loop_nexus_fair.json",
         "loop_recall.json",
         "loop_sideeffect.json",
@@ -458,7 +469,7 @@
         "loop_drug.json",
         "loop_fold_link.json",
         "loop_integrate.json",
-        "loop_nexus_fair.json"
+        "loop_mechanism.json"
       ],
       "phenotype_hits": [
         "colab/cell_loop.py",
@@ -850,7 +861,7 @@
     "----------------------------------------------------------------------------------------------------",
     "  question                   slot   pipe  check     items   gates  well?   answered well by",
     "  any point mutation          yes    yes    yes        13   16/26     no   ",
-    "  any protein change          yes    yes    yes    42,765   38/47    YES   loop_quantity.json",
+    "  any protein change          yes    yes    yes    42,765   43/52    YES   loop_quantity.json",
     "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
     "  drug effect                 yes    yes    yes     4,275   10/13    YES   loop_drug.json",
     "  side effect                 yes    yes    yes        48     6/9     no   ",
@@ -1088,11 +1099,17 @@
     "      FAIL   C2 the combination adds",
     "      FAIL   C3 the interaction adds",
     "      PASS   C4 the nulls collapse it",
+    "\n  loop 57  among the harmful ones, why is each one harmful",
+    "      PASS   M1 UniProt numbering matches",
+    "      PASS   M2 categories separate (reported)",
+    "      PASS   M3 structure predicts mechanism",
+    "      PASS   M4 not memorising the gene",
+    "      PASS   M5 mechanism visible to the model",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  129 gates passed, 57 failed. Both numbers are the point: a project where",
+    "\n  134 gates passed, 57 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -1162,6 +1179,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 45 inputs, coverage 45/45 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 46 inputs, coverage 46/46 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }

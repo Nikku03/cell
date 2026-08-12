@@ -79,6 +79,7 @@ LOOPS = [
     ("55  the connected sphere chain, with the mutation in the network",
      "loop_sphere_chain.json", "gates"),
     ("56  the sphere chain and the distogram together", "loop_combined.json", "gates"),
+    ("57  among the harmful ones, why is each one harmful", "loop_mechanism.json", "gates"),
     ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 
