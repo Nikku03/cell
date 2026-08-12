@@ -1,0 +1,10 @@
+{
+  "id": "uniprot_swissprot",
+  "citation": "The UniProt Consortium. UniProt: the Universal Protein Knowledgebase in 2025. Nucleic Acids Research 53, D609-D617 (2025). Reviewed (Swiss-Prot) human entries retrieved via the REST stream endpoint.",
+  "doi": "10.1093/nar/gkae1010",
+  "type": "public_database",
+  "organism": "Homo sapiens",
+  "authority": "primary",
+  "notes": "20,431 manually reviewed human entries, pulled with fields accession, gene_primary, protein_name, cc_function, go_id, annotation_score, protein_existence, xref_geneid, cc_caution. The cc_function free text is the curated statement of what the protein does and is used here as the human-side ground truth for whether a gene is characterized at all; ECO evidence braces are stripped during parsing. This project already used UniProt ortholog records in Session 22 to corroborate the JCVISYN3A_0876 x 0878 synthetic-lethal pair, so the same authority applies at human scale here.",
+  "url": "https://rest.uniprot.org/uniprotkb/stream"
+}

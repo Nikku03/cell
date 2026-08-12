@@ -1,0 +1,93 @@
+{
+  "id": "human_gene_ortholog_function_map",
+  "claim": "Orthologs were resolved for all 20,622 human protein-coding gene records (20,596 distinct genes; the 26 extra rows are NCBI's triplicate GeneIDs for the 13 mtDNA genes) against 899 species, giving 11,329,528 human-to-other ortholog pairs. 19,266 genes (93.4%) have at least one ortholog; 1,356 (6.6%) have none, and that set is dominated by one-to-one-filtered multi-copy families plus the 28 mitochondrial-genome records the NCBI ortholog dump does not cover. Conservation runs deep: 4,577 genes (22.2%) still have a budding-yeast ortholog, 10,750 reach fly and 9,671 reach worm, so 61% of the protein-coding genome predates vertebrates, against only 260 genes (1.3%) that are primate-restricted. Median ortholog species per gene is 619 of 899. On function: 12,082 genes (58.6%) are characterized in human (UniProt FUNCTION text AND >=3 experimentally-evidenced GO terms), 6,145 (29.8%) are sparse, 2,395 (11.6%) have no FUNCTION text and no experimental GO term at all. Of the 8,540 not-fully-characterized genes, 4,010 (47.0%) carry at least one experimental GO term on an ortholog that the human gene does not hold experimentally itself — 3,456 independent hypotheses once human paralog families sharing one ortholog source are collapsed, 1,128 supported by >=2 species and 236 by >=3. The highest-value subset is 235 genes with zero human functional annotation whose fly, worm or yeast ortholog has been characterized experimentally. Spot checks reproduce textbook orthology (MTOR->yeast TOR1/TOR2, worm let-363, fly mTor; ACTB->yeast ACT1; SOD1->yeast SOD1; BRCA1->worm brc-1, no yeast ortholog) and the transferred functions check out against the literature (PPP4R3C->yeast PSY2, RNF113B->yeast CWC24, XKR6->worm ced-8, TSNARE1->yeast PEP12).",
+  "confidence": "measured",
+  "source": "ncbi_gene_database",
+  "source_detail": "Reproducible via scripts/fetch_ortholog_data.sh then scripts/human_gene_orthologs.py then scripts/human_ortholog_report.py. Outputs under outputs/human_orthologs/. Ortholog calls from two complementary sources because neither is sufficient alone: NCBI gene_orthologs.gz is vertebrate-only (895 species vs human; fly, worm and yeast return exactly zero human pairs) and the Alliance/DIOPT stringent set (release 9.0.0, 2026-04-05) supplies fly, worm, yeast and X. laevis. Function evidence from UniProt/Swiss-Prot reviewed human entries (20,431, cc_function) and NCBI gene2go restricted to experimental evidence codes EXP/IDA/IPI/IMP/IGI/IEP/HTP/HDA/HMP/HGI/HEP; IEA/ISS/ISO/IBA are excluded on purpose so ortholog transfer is not scored against evidence that was itself transferred from an ortholog. Clade and conservation depth from the NCBI taxonomy dump, nearest-matching-ancestor walk. Input SHA256: gene_orthologs.gz dc4f903566d5f362cb2108a99bb072d842a715d371c39a8abf1d0d8bb6c8d4ea, alliance_orthology.tsv.gz 977ad252878d25a6cf486a9054448feff0e308e83e2fe5d6e8b6ec31c45491d4, Homo_sapiens.gene_info.gz a50509513a796bdddfedbc0f487eab6d9a0c4f52d4997dee77b15a9dbca294d6, All_Data.gene_info.gz 4f76ccf54579b63990de1633fc5f6522a6e195492bf88d8b8aacd31b21fed2a7, gene2go.gz 5ab6d973bf256f3cc3fdcf3cb28012a4ade2ab73ca8d7527bea1af4130de883f, uniprot_human.tsv 22caf012fed541e7634e51fe50133842e1902273b7fbe0ca6d49f5bdd61b418a. Snapshot downloaded 2026-08-12. Single-threaded, ~6 min wall, peak RSS ~1 GB in the Claude Code sandbox (x86_64 Linux, Python 3.11).",
+  "last_verified": "2026-08-12",
+  "context": {
+    "entity": "human_gene_ortholog_function_table",
+    "version": "v1.0.0"
+  },
+  "dependencies": [],
+  "used_by": [
+    "scripts/fetch_ortholog_data.sh",
+    "scripts/human_gene_orthologs.py",
+    "scripts/human_ortholog_report.py",
+    "docs/HUMAN_ORTHOLOG_FUNCTION.md"
+  ],
+  "value": {
+    "human_protein_coding_rows": 20622,
+    "distinct_genes": 20596,
+    "redundant_mitochondrial_rows": 26,
+    "species_searched": 899,
+    "ncbi_vertebrate_species": 895,
+    "alliance_species": 4,
+    "total_ortholog_pairs": 11329528,
+    "genes_with_any_ortholog": 19266,
+    "genes_with_no_ortholog": 1356,
+    "mitochondrial_genes_without_ortholog_records": 28,
+    "median_ortholog_species_per_gene": 619,
+    "conserved_to_yeast": 4577,
+    "conserved_to_fly": 10750,
+    "conserved_to_worm": 9671,
+    "conservation_depth_counts": {
+      "eukaryote": 4577,
+      "eumetazoan": 1,
+      "bilaterian": 8036,
+      "vertebrate": 1849,
+      "jawed_vertebrate": 1476,
+      "bony_vertebrate": 104,
+      "lobe_finned_fish": 381,
+      "tetrapod": 822,
+      "amniote": 574,
+      "mammal": 1186,
+      "primate_only": 260,
+      "human_only": 1356
+    },
+    "annotation_status_counts": {
+      "characterized": 12082,
+      "sparse": 6145,
+      "uncharacterized": 2395
+    },
+    "genes_needing_function": 8540,
+    "genes_rescued_by_orthologs": 4010,
+    "rescue_rate": 0.4696,
+    "independent_hypotheses_after_paralog_collapse": 3456,
+    "rescued_support_ge_2_species": 1128,
+    "rescued_support_ge_3_species": 236,
+    "ancient_dark_genes_with_invertebrate_or_fungal_evidence": 235,
+    "panel_species_coverage": {
+      "chimpanzee": 17869,
+      "rhesus_macaque": 17580,
+      "rat": 16891,
+      "mouse": 16853,
+      "pig": 16704,
+      "cow": 16639,
+      "dog": 16577,
+      "opossum": 15374,
+      "platypus": 14778,
+      "anole_lizard": 14263,
+      "xenopus_tropicalis": 13954,
+      "xenopus_laevis": 13610,
+      "chicken": 13405,
+      "zebrafish": 10876,
+      "fly": 10750,
+      "worm": 9671,
+      "fugu": 9193,
+      "elephant_shark": 7778,
+      "sea_lamprey": 5939,
+      "yeast": 4577
+    },
+    "status": "MEASURED"
+  },
+  "caveats": [
+    "Transferred function is a hypothesis, not evidence. An ortholog's experimental GO term is the strongest available prior for an unannotated human gene, but orthologs subfunctionalize and neofunctionalize. Every transferred term in the output carries its source species and a count of independent supporting species; a 1-species transfer is a lead, a 3+-species transfer (236 genes) is a reasonably safe bet.",
+    "'No ortholog' does not mean human-specific. NCBI's ortholog pipeline keeps only one-to-one relationships, so olfactory receptors, keratin-associated proteins and recent expansions such as BAGE/ANKRD36 drop out even though relatives exist in other species. 28 of the 1,356 zero-ortholog records are mtDNA genes, which the ortholog dump does not cover at all despite being among the most conserved genes in the genome. The 1,356 figure is therefore an upper bound on lineage specificity, not a measurement of it.",
+    "The three annotation tiers are thresholds on curation depth, not on biological knowledge. 'sparse' catches well-studied genes with thin GO records (VANGL2, UNC13A, DIAPH2 all land there), which is why the rescue rate of 47% should not be read as '47% of poorly-understood genes explained'. Only the 2,395 'uncharacterized' genes are genuinely dark, and 312 of those are rescued.",
+    "Recent human paralogs inflate the rescue count: 831 of the 4,010 rescued genes share their ortholog evidence with at least one human paralog (all 9 TAF11L* genes point at yeast TAF11, the USP17L* cluster points at fly scny). The number of independent functional hypotheses is 3,456.",
+    "The two ortholog sources use different methods and are not interchangeable: NCBI is protein similarity plus local synteny with a strict 1:1 filter, Alliance/DIOPT is consensus across up to 9 algorithms with a stringent filter that can call a family-level relationship rather than a strict 1:1 one for large ancient families (human HBB matches fly glob1 that way). Deep-conservation claims for members of large families are weaker than for single-copy genes.",
+    "Conservation depth is bounded by what the sources sample. Beyond the 895 NCBI vertebrates the only non-vertebrate species available are fly, worm, yeast, one sea urchin and one sea anemone, so 'bilaterian' vs 'eukaryote' is a coarse two-step rather than a resolved phylogenetic placement, and no bacterial or archaeal homology was assessed at all. A gene marked 'bilaterian' may well have a prokaryotic homolog that this table cannot see.",
+    "This is a standalone data product. No Syn3A metric, detector or MCC measurement depends on it, and the Breuer 2019 benchmark is unaffected. It is recorded here because the knowledge-based detectors that carry the v15 result are ortholog-derived annotations of the same kind, one organism down."
+  ]
+}

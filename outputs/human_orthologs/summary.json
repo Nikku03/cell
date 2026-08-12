@@ -1,0 +1,34 @@
+{
+  "human_protein_coding_genes": 20622,
+  "genes_with_any_ortholog": 19266,
+  "species_covered": 899,
+  "total_ortholog_pairs": 11329528,
+  "annotation_status": {
+    "sparse": 6145,
+    "characterized": 12082,
+    "uncharacterized": 2395
+  },
+  "conservation_depth": {
+    "amniote": 574,
+    "vertebrate": 1849,
+    "bilaterian": 8036,
+    "jawed_vertebrate": 1476,
+    "eukaryote": 4577,
+    "tetrapod": 822,
+    "mammal": 1186,
+    "bony_vertebrate": 104,
+    "lobe_finned_fish": 381,
+    "primate_only": 260,
+    "human_only": 1356,
+    "eumetazoan": 1
+  },
+  "genes_needing_function": 8540,
+  "genes_rescued_by_orthologs": 4010,
+  "rescue_rate": 0.4696,
+  "rescued_multi_species_support": 1128,
+  "median_ortholog_species_per_gene": 619,
+  "conserved_to_yeast": 4577,
+  "conserved_to_fly": 10750,
+  "conserved_to_worm": 9671,
+  "no_ortholog_anywhere": 1356
+}

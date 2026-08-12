@@ -1,0 +1,10 @@
+{
+  "id": "ncbi_gene_database",
+  "citation": "NCBI Gene. Brown, G.R., Hem, V., Katz, K.S., et al. Gene: a gene-centered information resource at NCBI. Nucleic Acids Research 43, D36-D42 (2015). Bulk FTP dumps gene_orthologs, gene_info and gene2go, plus the NCBI Taxonomy nodes/names dump.",
+  "doi": "10.1093/nar/gku1055",
+  "type": "public_database",
+  "organism": "multi_species",
+  "authority": "primary",
+  "notes": "Four dumps under https://ftp.ncbi.nlm.nih.gov/gene/DATA/ and /pub/taxonomy/. (1) gene_orthologs.gz: NCBI's own ortholog calls, computed from protein similarity plus local synteny and restricted to one-to-one relationships. Vertebrate-only in practice - 895 species carry a human ortholog, and fly/worm/yeast are absent, which is why the Alliance file is used alongside it. (2) GENE_INFO/All_Data.gene_info.gz and Homo_sapiens.gene_info.gz: symbols, descriptions and cross-references (HGNC, Ensembl, FlyBase, WormBase, SGD, Xenbase). (3) gene2go.gz: GO annotations with evidence codes, the field this project uses to separate experimental evidence from computational guesses. (4) taxdump: lineage, used to bucket each ortholog species into a clade and to date the divergence.",
+  "url": "https://ftp.ncbi.nlm.nih.gov/gene/DATA/"
+}

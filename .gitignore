@@ -60,3 +60,6 @@ cell_sim/features/cache/*
 !cell_sim/features/cache/.gitkeep
 figures/output/
 outputs/synthlet/.wt_*.pkl
+
+# Bulk ortholog/annotation dumps (~3 GB) staged by scripts/fetch_ortholog_data.sh
+data_cache/

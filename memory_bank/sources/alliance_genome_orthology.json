@@ -1,0 +1,10 @@
+{
+  "id": "alliance_genome_orthology",
+  "citation": "Alliance of Genome Resources Consortium. Harmonizing model organism data in the Alliance of Genome Resources. Genetics 220, iyac022 (2022). Orthology file ORTHOLOGY-ALLIANCE_COMBINED.tsv.gz, stringent filter, Alliance release 9.0.0 (2026-04-05).",
+  "doi": "10.1093/genetics/iyac022",
+  "type": "public_database",
+  "organism": "multi_species",
+  "authority": "primary",
+  "notes": "DIOPT-backed ortholog calls between human, rat, mouse, zebrafish, the two Xenopus species, Drosophila melanogaster, Caenorhabditis elegans and Saccharomyces cerevisiae. Each pair carries the number of prediction algorithms that agreed (out of 9: InParanoid, SonicParanoid, PhylomeDB, OMA, OrthoFinder, PANTHER, Hieranoid, EggNOG, Roundup) plus best-score/best-reverse-score flags. The stringent filter keeps pairs that either match >=3 algorithms or are the mutual best score. Used here specifically for the invertebrate and fungal orthologs that NCBI's vertebrate-only ortholog set does not contain - the deepest and most functionally informative layer, because fly, worm and yeast genes carry decades of experimental genetics.",
+  "url": "https://www.alliancegenome.org/downloads"
+}
