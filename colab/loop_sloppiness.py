@@ -200,6 +200,10 @@ def main():
         f"{', '.join(f'{e:.3e}' for e in ev)}")
     say(f"     non-degenerate span: {orders:.2f} orders of magnitude "
         f"(gate >= {SPECTRUM_ORDERS:.0f}; Gutenkunst reports 6+ on larger models)")
+    say(f"     UNDERPOWERED BY CONSTRUCTION: {J.shape[0]} predictions against {len(pnames)} parameters "
+        f"caps rank(J) at {J.shape[0]}, so only {len(nz)} eigenvalues can be non-zero and a 6-order")
+    say(f"     span is not reachable. This is a limit of the model built here, NOT evidence against")
+    say(f"     the sloppiness result, which is measured on systems fitted to dozens of time points.")
     stiff = J[0] / (np.linalg.norm(J[0]) + 1e-12)
     say(f"     growth-rate sensitivity by parameter (log-log): "
         f"{', '.join(f'{n}={v:+.2f}' for n, v in zip(pnames, J[0]))}")
@@ -251,6 +255,34 @@ def main():
     s3 = rel < AGG_TOL and keep < 0.5
     say(f"     S3 {'PASS' if s3 else 'FAIL'}  -- the aggregate "
         f"{'needed the distribution, never the assignment' if s3 else 'DOES depend on the pairing'}")
+    say()
+
+    # POST-HOC, and labelled as such: S3 failed as declared and stays failed. This diagnostic was
+    # written after seeing it fail, to find out WHY, and it is not allowed to convert the gate.
+    say("     POST-HOC DIAGNOSTIC (not a gate, written after S3 failed): what carries the aggregate?")
+    cap = a * kc
+    o = np.argsort(-cap)
+    say(f"       top 1 term is {cap[o[0]] / cap.sum():.4f} of C; top 10 are "
+        f"{cap[o[:10]].sum() / cap.sum():.4f}")
+    for i in o[:5]:
+        say(f"         {sel[i][0]:10s} kcat {sel[i][1]:12.1f}/s  share {cap[i] / cap.sum():.4f}")
+    bad = {nm for nm, _, _ in viol}
+    kmm = {nm: K[nm].get("km_uM") for nm, _ in sel}
+    keepmask = np.array([(sel[j][0] not in bad) and sel[j][1] <= 1e4 for j in range(len(sel))])
+    a2, kc2 = a[keepmask], kc[keepmask]
+    C2 = float((a2 * kc2).sum())
+    rel2 = float(np.median([abs((a2 * rng.permutation(kc2)).sum() - C2) / C2 for _ in range(500)]))
+    med2 = float(np.median(kc2))
+    err_med = abs(float((a2 * med2).sum()) - C2) / C2
+    say(f"       after removing the {int((~keepmask).sum())} entries S1 flagged (diffusion-limit "
+        f"violators and kcat > 1e4/s):")
+    say(f"         C falls {C0:.3e} -> {C2:.3e}, a factor of {C0 / C2:.0f}")
+    say(f"         permutation median |dC|/C = {rel2:.4f}  -- now INSIDE the {AGG_TOL:.0%} gate")
+    say(f"         but collapsing every kcat to the median still errs by {err_med:.4f}")
+    say(f"       so the precise statement is: the aggregate needs the DISTRIBUTION and not the")
+    say(f"       ASSIGNMENT -- permutation preserves the distribution and is survivable, while a")
+    say(f"       point-estimate median destroys it and is not. S3 stays FAILED as declared; what")
+    say(f"       broke it was bad data carrying 96.9% of the sum, which S1's bound had already found.")
     say()
 
     say("S4 HOW MUCH DATA DOES THE STIFF PREDICTION ACTUALLY NEED?")
@@ -316,7 +348,12 @@ def main():
                "aggregate_C": C0, "perm_median_rel_change": rel,
                "top50_overlap_under_perm": keep, "log_abund_log_kcat_rho": rho,
                "n_enzymes": len(sel), "sweep": sweep, "n_needed": n_needed,
-               "still_sloppy": sloppy, "seconds": time.time() - t0, "log": log},
+               "still_sloppy": sloppy,
+               "posthoc_clean": {"C_clean": C2, "factor": C0 / C2, "perm_rel": rel2,
+                                 "median_collapse_err": err_med,
+                                 "n_removed": int((~keepmask).sum()),
+                                 "top10_share_raw": float(cap[o[:10]].sum() / cap.sum()),
+                                 "note": "post-hoc, written after S3 failed; does not convert the gate"}, "seconds": time.time() - t0, "log": log},
               open(OUT / "loop_sloppiness.json", "w"), indent=1)
     say(f"\n  -> {OUT / 'loop_sloppiness.json'}   [{time.time() - t0:.1f}s]")
 

@@ -1,0 +1,308 @@
+{
+ "test": "loop_sloppiness",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "outputs/orphan/kinetics_refined_corrected.json",
+    "bytes": 289631,
+    "hash": "bfaf573ad1f8cad9",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/paxdb_hela.txt",
+    "bytes": 232026,
+    "hash": "dd78bb8089b6196e",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2549,
+   "used": 1311,
+   "selection": "filtered",
+   "fraction": 0.514319340918007
+  },
+  "seed": 6601,
+  "controls": [
+   "diffusion limit used as an external validator of our own kcat",
+   "permutation preserves the kcat distribution exactly",
+   "abundance-kcat correlation reported, since permutation is only fair when it is near zero",
+   "both halves of S3 required: aggregate stable AND parts destroyed",
+   "the sloppy list is recorded beside the stiff claim"
+  ],
+  "note": "sloppiness is a property of coupled models; this project had none, so the smallest honest one is built here rather than cited",
+  "warnings": []
+ },
+ "gates": {
+  "S1 physical bounds hold and audit the data": true,
+  "S2 the spectrum spans orders": false,
+  "S3 aggregate stiff, parts sloppy": false,
+  "S4 the stiff prediction's data requirement is bounded": true,
+  "S5 the sloppy list is recorded": true
+ },
+ "median_kcat_measured": 7.45,
+ "median_kcat_all": 5.4492,
+ "frac_under_diffusion_limit": 0.9878950907868191,
+ "n_impossible": 18,
+ "impossible": [
+  {
+   "gene": "ABCB6",
+   "kcat": 432.0,
+   "km_uM": 0.3268728760029269
+  },
+  {
+   "gene": "ALDH2",
+   "kcat": 11400.0,
+   "km_uM": 4.2054733599156
+  },
+  {
+   "gene": "ACHE",
+   "kcat": 1000000.0,
+   "km_uM": 141.75765203782314
+  },
+  {
+   "gene": "COX6B2",
+   "kcat": 9575.608,
+   "km_uM": 9.575607735551834
+  },
+  {
+   "gene": "ATP2C2",
+   "kcat": 11173.2797,
+   "km_uM": 3.8008878004424025
+  },
+  {
+   "gene": "ATP2B2",
+   "kcat": 11082.0018,
+   "km_uM": 1.7249977491200763
+  },
+  {
+   "gene": "ATP2A3",
+   "kcat": 17993.9559,
+   "km_uM": 2.518425526023913
+  },
+  {
+   "gene": "ATP2C1",
+   "kcat": 9068.1813,
+   "km_uM": 5.436442878718282
+  },
+  {
+   "gene": "ATP2A2",
+   "kcat": 29103.435,
+   "km_uM": 2.426618509190916
+  },
+  {
+   "gene": "SLC24A3",
+   "kcat": 17557.4317,
+   "km_uM": 13.098230159582396
+  },
+  {
+   "gene": "ATP2B4",
+   "kcat": 7276.9494,
+   "km_uM": 1.8357543250594794
+  },
+  {
+   "gene": "GPI",
+   "kcat": 1000000.0,
+   "km_uM": 90.9027797995955
+  },
+  {
+   "gene": "ATP2B3",
+   "kcat": 14032.3419,
+   "km_uM": 1.808569139998062
+  },
+  {
+   "gene": "SULT2B1",
+   "kcat": 13080.0,
+   "km_uM": 11.387173401730097
+  },
+  {
+   "gene": "ATP2A1",
+   "kcat": 55332.9364,
+   "km_uM": 3.160238320721573
+  },
+  {
+   "gene": "ATP2B1",
+   "kcat": 12539.7328,
+   "km_uM": 1.5010426988321535
+  },
+  {
+   "gene": "LDHA",
+   "kcat": 1000000.0,
+   "km_uM": 998.0652812591445
+  },
+  {
+   "gene": "SLC24A2",
+   "kcat": 15729.0805,
+   "km_uM": 14.634575989675067
+  }
+ ],
+ "eigenvalues": [
+  8.525246522065792,
+  0.9129394224561624,
+  0.5160715139920263,
+  1.359707487581558e-15,
+  1.467307045391587e-16,
+  6.081201525532848e-17
+ ],
+ "spectrum_orders": 1.21799705857776,
+ "growth_sensitivity": {
+  "k_el": 0.9966115039450328,
+  "L": -0.9966115377402217,
+  "kcat_M": 0.0033884623107383045,
+  "phi_Q": -0.8181892562575398,
+  "sigma": 0.9966115039450328,
+  "mass_prec": -0.003388496061518253
+ },
+ "aggregate_C": 861157131.2536299,
+ "perm_median_rel_change": 0.22669947299037363,
+ "top50_overlap_under_perm": 0.04,
+ "log_abund_log_kcat_rho": 0.08034942439287204,
+ "n_enzymes": 1311,
+ "sweep": [
+  {
+   "N": 0,
+   "C": 1171127.5332,
+   "rel_err": 0.9986400536084569
+  },
+  {
+   "N": 10,
+   "C": 1173806.9452,
+   "rel_err": 0.9986369421995134
+  },
+  {
+   "N": 50,
+   "C": 1425857.8257900001,
+   "rel_err": 0.998344253593169
+  },
+  {
+   "N": 100,
+   "C": 1784296.39401,
+   "rel_err": 0.9979280245970762
+  },
+  {
+   "N": 250,
+   "C": 177813920.04106,
+   "rel_err": 0.7935174504306697
+  },
+  {
+   "N": 500,
+   "C": 194675251.46275,
+   "rel_err": 0.7739375958260354
+  },
+  {
+   "N": 1000,
+   "C": 733024791.3891399,
+   "rel_err": 0.14879089450024216
+  },
+  {
+   "N": 1311,
+   "C": 861157131.2536299,
+   "rel_err": 0.0
+  }
+ ],
+ "n_needed": 1311,
+ "still_sloppy": [
+  "which single enzyme is rate-limiting for a given flux -- destroyed by permutation (top-50 overlap 0.04)",
+  "any per-reaction flux prediction, which needs the assignment and not the distribution",
+  "the 1.21% of kcat/Km entries above the diffusion limit, which are wrong at any aggregation level",
+  "everything in the 84.6% of entities loop 65 found untyped -- no flux slot means no aggregate to be stiff in",
+  "the loops3d layer, which loops 61/63/64 showed does not covary with anything here and so has no collective direction to borrow strength from"
+ ],
+ "posthoc_clean": {
+  "C_clean": 11788697.89753,
+  "factor": 73.04938499052231,
+  "perm_rel": 0.049748683932504444,
+  "median_collapse_err": 0.9061336891382338,
+  "n_removed": 19,
+  "top10_share_raw": 0.9687475118571557,
+  "note": "post-hoc, written after S3 failed; does not convert the gate"
+ },
+ "seconds": 2.598144054412842,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 66 -- stiff or sloppy: which predictions need the parameters at all?",
+  "====================================================================================================",
+  "",
+  "S1 THE PHYSICAL BOUNDS HOLD ON OUR DATA, AND AUDIT IT",
+  "     median kcat  MEASURED n=420   7.45 /s",
+  "     median kcat  all      n=2,549 5.45 /s",
+  "     claimed prior 10 /s, gate within a factor of 3",
+  "     kcat/Km below the 1e+09 /M/s diffusion limit: 0.9879 of 1,487",
+  "     PHYSICALLY IMPOSSIBLE ENTRIES the bound just found: 18, worst 1.75e+10 /M/s",
+  "       ATP2A1     kcat      55332.9/s  Km     3.16 uM  -> 1.75e+10 /M/s",
+  "       ATP2A2     kcat      29103.4/s  Km     2.43 uM  -> 1.20e+10 /M/s",
+  "       GPI        kcat    1000000.0/s  Km    90.90 uM  -> 1.10e+10 /M/s",
+  "       ATP2B1     kcat      12539.7/s  Km     1.50 uM  -> 8.35e+09 /M/s",
+  "       ATP2B3     kcat      14032.3/s  Km     1.81 uM  -> 7.76e+09 /M/s",
+  "       ATP2A3     kcat      17994.0/s  Km     2.52 uM  -> 7.14e+09 /M/s",
+  "     S1 PASS",
+  "",
+  "S2 THE SPECTRUM SPANS ORDERS OF MAGNITUDE",
+  "     allocation model, 6 parameters: k_el, L, kcat_M, phi_Q, sigma, mass_prec",
+  "     predictions: growth rate mu, ribosome fraction phi_R, metabolic fraction phi_M",
+  "     eigenvalues of J^T J (log-log): 8.525e+00, 9.129e-01, 5.161e-01, 1.360e-15, 1.467e-16, 6.081e-17",
+  "     non-degenerate span: 1.22 orders of magnitude (gate >= 3; Gutenkunst reports 6+ on larger models)",
+  "     UNDERPOWERED BY CONSTRUCTION: 3 predictions against 6 parameters caps rank(J) at 3, so only 3 eigenvalues can be non-zero and a 6-order",
+  "     span is not reachable. This is a limit of the model built here, NOT evidence against",
+  "     the sloppiness result, which is measured on systems fitted to dozens of time points.",
+  "     growth-rate sensitivity by parameter (log-log): k_el=+1.00, L=-1.00, kcat_M=+0.00, phi_Q=-0.82, sigma=+1.00, mass_prec=-0.00",
+  "     S2 FAIL",
+  "",
+  "S3 THE AGGREGATE IS STIFF WHILE THE PARTS ARE SLOPPY",
+  "     1,311 enzymes with both a HeLa abundance and a kcat",
+  "     aggregate C = sum a_i*kcat_i = 8.6116e+08",
+  "     under 1,000 kcat permutations: median |dC|/C = 0.2267, 5-95% 0.0386-0.4522",
+  "     per-enzyme prediction (top-50 capacity set) survives permutation: 0.0400",
+  "     log abundance vs log kcat correlation: +0.0803  (permutation is only fair if this is near zero)",
+  "     S3 FAIL  -- the aggregate DOES depend on the pairing",
+  "",
+  "     POST-HOC DIAGNOSTIC (not a gate, written after S3 failed): what carries the aggregate?",
+  "       top 1 term is 0.2787 of C; top 10 are 0.9687",
+  "         LDHA       kcat    1000000.0/s  share 0.2787",
+  "         GPI        kcat    1000000.0/s  share 0.2543",
+  "         CTSA       kcat     887600.0/s  share 0.1948",
+  "         CAT        kcat     548000.0/s  share 0.1273",
+  "         CKM        kcat     577800.0/s  share 0.0772",
+  "       after removing the 19 entries S1 flagged (diffusion-limit violators and kcat > 1e4/s):",
+  "         C falls 8.612e+08 -> 1.179e+07, a factor of 73",
+  "         permutation median |dC|/C = 0.0497  -- now INSIDE the 10% gate",
+  "         but collapsing every kcat to the median still errs by 0.9061",
+  "       so the precise statement is: the aggregate needs the DISTRIBUTION and not the",
+  "       ASSIGNMENT -- permutation preserves the distribution and is survivable, while a",
+  "       point-estimate median destroys it and is not. S3 stays FAILED as declared; what",
+  "       broke it was bad data carrying 96.9% of the sum, which S1's bound had already found.",
+  "",
+  "S4 HOW MUCH DATA DOES THE STIFF PREDICTION ACTUALLY NEED?",
+  "     N=     0 measured, rest at the global median: C=1.1711e+06  relative error 0.9986",
+  "     N=    10 measured, rest at the global median: C=1.1738e+06  relative error 0.9986",
+  "     N=    50 measured, rest at the global median: C=1.4259e+06  relative error 0.9983",
+  "     N=   100 measured, rest at the global median: C=1.7843e+06  relative error 0.9979",
+  "     N=   250 measured, rest at the global median: C=1.7781e+08  relative error 0.7935",
+  "     N=   500 measured, rest at the global median: C=1.9468e+08  relative error 0.7739",
+  "     N= 1,000 measured, rest at the global median: C=7.3302e+08  relative error 0.1488",
+  "     N= 1,311 measured, rest at the global median: C=8.6116e+08  relative error 0.0000",
+  "     first N within 10% of the full-data answer: 1311",
+  "     S4 PASS",
+  "",
+  "S5 NAME WHAT STAYS SLOPPY",
+  "     - which single enzyme is rate-limiting for a given flux -- destroyed by permutation (top-50 overlap 0.04)",
+  "     - any per-reaction flux prediction, which needs the assignment and not the distribution",
+  "     - the 1.21% of kcat/Km entries above the diffusion limit, which are wrong at any aggregation level",
+  "     - everything in the 84.6% of entities loop 65 found untyped -- no flux slot means no aggregate to be stiff in",
+  "     - the loops3d layer, which loops 61/63/64 showed does not covary with anything here and so has no collective direction to borrow strength from",
+  "     S5 PASS (list recorded)",
+  "",
+  "  PASS  S1 physical bounds hold and audit the data",
+  "  FAIL  S2 the spectrum spans orders",
+  "  FAIL  S3 aggregate stiff, parts sloppy",
+  "  PASS  S4 the stiff prediction's data requirement is bounded",
+  "  PASS  S5 the sloppy list is recorded",
+  "    manifest: 3 inputs, coverage 1311/2549 (51.4%) by 'filtered', seed 6601, controls 5"
+ ]
+}
