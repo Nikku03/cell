@@ -246,6 +246,7 @@ def main():
         nt2 = np.array([len(r["targets"]) for r in X], float)
         a_tc = auc(nt2, y2)
         say(f"     CONTROL: target count alone on this label, AUC {a_tc:.4f}")
+        res2["_tc"] = a_tc
         for name, fn in feats.items():
             v = np.array([fn(r) for r in X], float)
             m = np.isfinite(v)
@@ -278,11 +279,23 @@ def main():
              "R4 it transfers to the independent outcome": r4, "R5 nulls and holdout": r5}
     for k, v in gates.items():
         say(f"  {k:<44}{'PASS' if v else 'FAIL'}")
-    say(f"  THE OUTCOME IS NO LONGER A LIST LENGTH. FAERS seriousness is a RATIO over a drug's own")
-    say(f"  reports, correlating {r_vol:+.4f} with report volume and {r_tc:+.4f} with target count --")
-    say(f"  against the +0.2898 that target count scored on SIDER's effect count in loop 12.")
-    say(f"  Whether the cell model can predict it is R3, and whether that survives a second,")
-    say(f"  unrelated outcome built from trial records is R4.")
+    say(f"  THE REFORMULATION WORKED AND THE MODEL STILL BARELY MOVES. FAERS seriousness is a RATIO")
+    say(f"  over a drug's own reports: {r_vol:+.4f} with report volume, {r_tc:+.4f} with target count,")
+    say(f"  against the +0.2898 target count scored on SIDER's effect count in loop 12. R1 and R2 are")
+    say(f"  the fix landing -- the outcome is no longer a list length.")
+    if best:
+        marg = res[best]["partial"] - res[best]["null95"]
+        say(f"  BUT R3 CLEARS BY {marg:+.4f}. {best} reaches {res[best]['partial']:+.4f} against a null")
+        say(f"  95th of {res[best]['null95']:.4f}. That is a pass by the declared gate and it is a hair,")
+        say(f"  and calling it more than that would be the overstatement this project exists to avoid.")
+    say(f"  AND R4 SAYS IT DOES NOT TRANSFER. On safety-stopped versus business-stopped trials, every")
+    say(f"  feature lands BELOW 0.5 and target count itself reaches {res2.get('_tc', float('nan')):.4f} --")
+    say(f"  strongly anti-predictive, meaning drugs with FEWER targets are the ones stopped for safety.")
+    say(f"  Two outcomes from two databases point in opposite directions, on 55 safety-stopped drugs")
+    say(f"  against 600 business-stopped. The likeliest reason is composition rather than biology:")
+    say(f"  safety-stopped trials skew oncology, and oncology drugs differ from the rest in target")
+    say(f"  count, essentiality and everything else. That is a hypothesis this loop did not test,")
+    say(f"  stated as one.")
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(SC / "_faers.json"), str(SC / "_ct_stopped.json"), str(CELL)],

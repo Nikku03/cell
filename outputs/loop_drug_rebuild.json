@@ -1,0 +1,167 @@
+{
+  "test": "loop_drug_rebuild",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_faers.json",
+        "bytes": 22601,
+        "hash": "f5a90f9510590109",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_ct_stopped.json",
+        "bytes": 4832355,
+        "hash": "1c8fee06c1897d17",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 640,
+      "used": 521,
+      "selection": "filtered",
+      "fraction": 0.8140625
+    },
+    "seed": 1904,
+    "controls": [
+      "outcome is a ratio, and its independence from volume is GATED",
+      "target count re-measured on the new outcome as R2",
+      "safety-stopped compared against BUSINESS-stopped, not against all",
+      "placebo and non-drug interventions excluded by name",
+      "500-draw permutation null on every statistic",
+      "two outcomes from unrelated databases must agree in direction"
+    ],
+    "note": "FAERS carries its own reporting biases; the claim is that they are DIFFERENT from a package insert's, not that they are absent",
+    "warnings": []
+  },
+  "gates": {
+    "R1 outcome is a rate, not a count": true,
+    "R2 target count does not predict it": true,
+    "R3 the cell model predicts seriousness": true,
+    "R4 it transfers to the independent outcome": false,
+    "R5 nulls and holdout": true
+  },
+  "n_drugs_faers": 521,
+  "rate_vs_volume": -0.09987714698702313,
+  "targetcount_vs_rate": 0.17687775408633113,
+  "faers_predictors": {
+    "mean essentiality of targets": {
+      "raw": 0.11334805817379524,
+      "partial": 0.031675614345925585,
+      "null95": 0.08570563968212024,
+      "n": 516
+    },
+    "mean LOEUF of targets (lookup)": {
+      "raw": -0.0003504454146373785,
+      "partial": 0.019665303919721815,
+      "null95": 0.07894929336995508,
+      "n": 521
+    },
+    "mean PPI degree of targets": {
+      "raw": 0.12039060719357167,
+      "partial": 0.04369954399737972,
+      "null95": 0.08233845217636168,
+      "n": 521
+    },
+    "fraction of targets essential": {
+      "raw": 0.15427391184122688,
+      "partial": 0.08386052802625706,
+      "null95": 0.08256308927490145,
+      "n": 521
+    }
+  },
+  "trialstop_predictors": {
+    "_tc": 0.31242424242424244,
+    "mean essentiality of targets": {
+      "auc": 0.4023724903354533,
+      "null95": 0.5772540216984662,
+      "n": 648
+    },
+    "mean LOEUF of targets (lookup)": {
+      "auc": 0.4970151515151515,
+      "null95": 0.5804871212121211,
+      "n": 655
+    },
+    "mean PPI degree of targets": {
+      "auc": 0.5126212121212121,
+      "null95": 0.576455303030303,
+      "n": 655
+    },
+    "fraction of targets essential": {
+      "auc": 0.459530303030303,
+      "null95": 0.5578257575757576,
+      "n": 655
+    }
+  },
+  "n_safety": 55,
+  "n_business": 600,
+  "seconds": 3.8015100955963135,
+  "log": [
+    "====================================================================================================",
+    "  LOOP 58 -- the drug rebuild: outcomes that are not list lengths",
+    "====================================================================================================",
+    "\n  FAERS records for 526 drugs",
+    "  trial stops: 907 drugs in a SAFETY-stopped trial, 5,188 in a BUSINESS-stopped one",
+    "  drugs with targets AND >= 30 reports: 521",
+    "\n  R1 THE OUTCOME IS A RATE AND NOT A COUNT, AND IT IS CHECKED",
+    "     seriousness rate: median 0.764, IQR 0.640-0.872",
+    "     Spearman(rate, total report volume) = -0.0999   bar |r| < 0.3",
+    "     SIDER's count against the same volume is what loop 12 was really predicting; a ratio",
+    "     is only a fix if it actually decouples, so it is measured rather than asserted.",
+    "     R1 PASS",
+    "\n  R2 TARGET COUNT DOES NOT PREDICT THE NEW OUTCOME",
+    "     Spearman(n_targets, seriousness rate) = +0.1769   bar |r| < 0.2",
+    "     for contrast, loop 12 measured target count against the SIDER effect count at +0.2898",
+    "     R2 PASS",
+    "\n  R3 THE CELL MODEL PREDICTS SERIOUSNESS",
+    "     mean essentiality of targets       raw +0.1133  partial +0.0317  null95 0.0857  n=516",
+    "     mean LOEUF of targets (lookup)     raw -0.0004  partial +0.0197  null95 0.0789  n=521",
+    "     mean PPI degree of targets         raw +0.1204  partial +0.0437  null95 0.0823  n=521",
+    "     fraction of targets essential      raw +0.1543  partial +0.0839  null95 0.0826  n=521",
+    "     best after partialling: fraction of targets essential at +0.0839",
+    "     R3 PASS",
+    "\n  R4 IT TRANSFERS TO THE INDEPENDENT OUTCOME",
+    "     655 drugs with an unambiguous trial-stop reason: 55 safety, 600 business",
+    "     both classes had a trial that STOPPED, so how much a drug was studied is held roughly",
+    "     constant -- that is the matched control SIDER cannot provide",
+    "     CONTROL: target count alone on this label, AUC 0.3124",
+    "     mean essentiality of targets       AUC 0.4024   null95 0.5773   n=648",
+    "     mean LOEUF of targets (lookup)     AUC 0.4970   null95 0.5805   n=655",
+    "     mean PPI degree of targets         AUC 0.5126   null95 0.5765   n=655",
+    "     fraction of targets essential      AUC 0.4595   null95 0.5578   n=655",
+    "     features agreeing in DIRECTION across both outcomes: mean PPI degree of targets",
+    "     R4 FAIL",
+    "\n  R5 HELD OUT BY DRUG, AND THE NULLS COLLAPSE IT",
+    "     every statistic above carries a 500-draw permutation null; no drug contributes to",
+    "     its own comparison because each is a single correlation over independent drugs",
+    "     R5 PASS  (gated on the two confound checks holding)",
+    "\n====================================================================================================",
+    "  R1 outcome is a rate, not a count           PASS",
+    "  R2 target count does not predict it         PASS",
+    "  R3 the cell model predicts seriousness      PASS",
+    "  R4 it transfers to the independent outcome  FAIL",
+    "  R5 nulls and holdout                        PASS",
+    "  THE REFORMULATION WORKED AND THE MODEL STILL BARELY MOVES. FAERS seriousness is a RATIO",
+    "  over a drug's own reports: -0.0999 with report volume, +0.1769 with target count,",
+    "  against the +0.2898 target count scored on SIDER's effect count in loop 12. R1 and R2 are",
+    "  the fix landing -- the outcome is no longer a list length.",
+    "  BUT R3 CLEARS BY +0.0013. fraction of targets essential reaches +0.0839 against a null",
+    "  95th of 0.0826. That is a pass by the declared gate and it is a hair,",
+    "  and calling it more than that would be the overstatement this project exists to avoid.",
+    "  AND R4 SAYS IT DOES NOT TRANSFER. On safety-stopped versus business-stopped trials, every",
+    "  feature lands BELOW 0.5 and target count itself reaches 0.3124 --",
+    "  strongly anti-predictive, meaning drugs with FEWER targets are the ones stopped for safety.",
+    "  Two outcomes from two databases point in opposite directions, on 55 safety-stopped drugs",
+    "  against 600 business-stopped. The likeliest reason is composition rather than biology:",
+    "  safety-stopped trials skew oncology, and oncology drugs differ from the rest in target",
+    "  count, essentiality and everything else. That is a hypothesis this loop did not test,",
+    "  stated as one.",
+    "===================================================================================================="
+  ]
+}

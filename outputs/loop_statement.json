@@ -274,15 +274,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_drug_rebuild.json",
+        "bytes": 7810,
+        "hash": "d727388a2a09ddb6",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 26751,
-        "hash": "6d9842590fb7bb67",
+        "bytes": 27016,
+        "hash": "ca3904b2b4ef997c",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 46,
-      "used": 46,
+      "available": 47,
+      "used": 47,
       "selection": "all",
       "fraction": 1.0
     },
@@ -294,8 +300,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 134,
-  "n_gates_failed": 57,
+  "n_gates_passed": 138,
+  "n_gates_failed": 58,
   "capability": [
     {
       "question": "any point mutation",
@@ -641,12 +647,16 @@
         "drugs": 4275
       },
       "n_items": 4275,
-      "gates_passed": 10,
-      "gates_failed": 3,
+      "gates_passed": 14,
+      "gates_failed": 4,
       "gate_detail": {
         "loop_drug.json": {
           "passed": 4,
           "failed": 0
+        },
+        "loop_drug_rebuild.json": {
+          "passed": 4,
+          "failed": 1
         },
         "loop_shared_effect.json": {
           "passed": 3,
@@ -681,12 +691,14 @@
       ],
       "produces": [
         "loop_drug.json",
+        "loop_drug_rebuild.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
       "phenotype_hits": [],
       "controlled": [
         "loop_drug.json",
+        "loop_drug_rebuild.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -863,7 +875,7 @@
     "  any point mutation          yes    yes    yes        13   16/26     no   ",
     "  any protein change          yes    yes    yes    42,765   43/52    YES   loop_quantity.json",
     "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
-    "  drug effect                 yes    yes    yes     4,275   10/13    YES   loop_drug.json",
+    "  drug effect                 yes    yes    yes     4,275   14/18    YES   loop_drug.json",
     "  side effect                 yes    yes    yes        48     6/9     no   ",
     "  cancer                      yes    yes    yes       839     7/8     no   ",
     "\n  6 of 6 can be ASKED.",
@@ -1105,11 +1117,17 @@
     "      PASS   M3 structure predicts mechanism",
     "      PASS   M4 not memorising the gene",
     "      PASS   M5 mechanism visible to the model",
+    "\n  loop 58  the drug rebuild -- outcomes that are not list lengths",
+    "      PASS   R1 outcome is a rate, not a count",
+    "      PASS   R2 target count does not predict it",
+    "      PASS   R3 the cell model predicts seriousness",
+    "      FAIL   R4 it transfers to the independent outcome",
+    "      PASS   R5 nulls and holdout",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  134 gates passed, 57 failed. Both numbers are the point: a project where",
+    "\n  138 gates passed, 58 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -1179,6 +1197,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 46 inputs, coverage 46/46 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 47 inputs, coverage 47/47 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }
