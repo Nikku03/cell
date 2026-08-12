@@ -75,6 +75,7 @@ LOOPS = [
     ("52  a force field for the attachment part", "loop_physics_bind.json", "gates"),
     ("53  fit the physics -- does energy know what geometry does not",
      "loop_fitted_bind.json", "gates"),
+    ("54  pairwise structure through a neural network", "loop_distogram_nn.json", "gates"),
     ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 

@@ -45,12 +45,16 @@
         "struct": 13
       },
       "n_items": 13,
-      "gates_passed": 12,
-      "gates_failed": 9,
+      "gates_passed": 16,
+      "gates_failed": 10,
       "gate_detail": {
         "loop_chain.json": {
           "passed": 3,
           "failed": 3
+        },
+        "loop_distogram_nn.json": {
+          "passed": 4,
+          "failed": 1
         },
         "loop_pervariant.json": {
           "passed": 3,
@@ -79,6 +83,7 @@
         "colab/complete_cell.py",
         "colab/data_ledger.py",
         "colab/loop_chain.py",
+        "colab/loop_distogram_nn.py",
         "colab/loop_pervariant.py",
         "colab/loop_rescue.py",
         "colab/loop_variant.py"
@@ -86,6 +91,7 @@
       "produces": [
         "data_ledger.json",
         "loop_chain.json",
+        "loop_distogram_nn.json",
         "loop_pervariant.json",
         "loop_rescue.json",
         "loop_variant.json"
@@ -93,6 +99,7 @@
       "phenotype_hits": [],
       "controlled": [
         "loop_chain.json",
+        "loop_distogram_nn.json",
         "loop_pervariant.json",
         "loop_rescue.json",
         "loop_variant.json"
@@ -600,6 +607,7 @@
     "loop_chromatin.json": 4,
     "loop_compartment.json": 5,
     "loop_deficit.json": 5,
+    "loop_distogram_nn.json": 5,
     "loop_drug.json": 5,
     "loop_extrusion.json": 5,
     "loop_fitted_bind.json": 5,
@@ -633,7 +641,7 @@
     "loop_tail.json": 3,
     "loop_variant.json": 5
   },
-  "n_modules": 971,
+  "n_modules": 972,
   "n_phenotype_modules": 32,
   "log": [
     "====================================================================================================",
@@ -641,13 +649,13 @@
     "====================================================================================================",
     "  The goal as stated cannot fail, so it cannot be worked towards. Three independent axes make",
     "",
-    "\n  graph: 971 modules, 942 directed edges from real reads and writes; 53 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
-    "  299 modules read cell_complete.json; block-level use resolved from source of 761 modules",
+    "\n  graph: 972 modules, 943 directed edges from real reads and writes; 54 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
+    "  299 modules read cell_complete.json; block-level use resolved from source of 762 modules",
     "  32 modules write something that is a cell-level outcome",
-    "  47 recorded results carry a manifest with at least one named control: build_cell_complete.json, capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_affinity.json, loop_amplify.json, loop_buffering.json, loop_cancer.json, loop_chain.json, loop_chromatin.json, loop_compartment.json, loop_deficit.json, loop_drug.json, loop_extrusion.json, loop_fitted_bind.json, loop_fold_link.json, loop_fourth.json, loop_hic_target.json, loop_insulation.json, loop_integrate.json, loop_kinetics.json, loop_langevin.json, loop_loading.json, loop_medium.json, loop_nexus_fair.json, loop_pervariant.json, loop_physics_bind.json, loop_polymer.json, loop_provenance.json, loop_quantity.json, loop_real_chromatin.json, loop_rebuild.json, loop_recall.json, loop_rescue.json, loop_retest.json, loop_shared_effect.json, loop_sideeffect.json, loop_slack.json, loop_statement.json, loop_stiffness.json, loop_surrogate.json, loop_survivable.json, loop_tail.json, loop_variant.json",
+    "  48 recorded results carry a manifest with at least one named control: build_cell_complete.json, capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_affinity.json, loop_amplify.json, loop_buffering.json, loop_cancer.json, loop_chain.json, loop_chromatin.json, loop_compartment.json, loop_deficit.json, loop_distogram_nn.json, loop_drug.json, loop_extrusion.json, loop_fitted_bind.json, loop_fold_link.json, loop_fourth.json, loop_hic_target.json, loop_insulation.json, loop_integrate.json, loop_kinetics.json, loop_langevin.json, loop_loading.json, loop_medium.json, loop_nexus_fair.json, loop_pervariant.json, loop_physics_bind.json, loop_polymer.json, loop_provenance.json, loop_quantity.json, loop_real_chromatin.json, loop_rebuild.json, loop_recall.json, loop_rescue.json, loop_retest.json, loop_shared_effect.json, loop_sideeffect.json, loop_slack.json, loop_statement.json, loop_stiffness.json, loop_surrogate.json, loop_survivable.json, loop_tail.json, loop_variant.json",
     "  7 modules are INSTRUMENTS (they read this repo's own audit records) and are excluded from every axis, because an audit crediting itself is how the last three checks here went wrong",
     "\n  question                 ENCODE   PIPE  CHECK    items   askable    gates  well?",
-    "  any point mutation          yes    yes    yes       13       YES    12/21     no",
+    "  any point mutation          yes    yes    yes       13       YES    16/26     no",
     "  any protein change          yes    yes    yes   42,765       YES    38/47    YES",
     "  any chromosome fold         yes    yes    yes      767       YES    11/14    YES",
     "  functional neighbourhood      yes    yes    yes    7,700       YES    15/16    YES",
@@ -658,8 +666,8 @@
     "  metabolic growth            yes    yes    yes    2,580       YES      7/9    YES",
     "",
     "    any point mutation     slots {'struct': 13}",
-    "                           modules that address it: cell_stats, complete_cell, data_ledger, loop_chain, loop_pervariant, loop_rescue, loop_variant",
-    "                           recorded results: data_ledger.json, loop_chain.json, loop_pervariant.json, loop_rescue.json, loop_variant.json   controlled: loop_chain.json, loop_pervariant.json, loop_rescue.json, loop_variant.json",
+    "                           modules that address it: cell_stats, complete_cell, data_ledger, loop_chain, loop_distogram_nn, loop_pervariant, loop_rescue, loop_variant",
+    "                           recorded results: data_ledger.json, loop_chain.json, loop_distogram_nn.json, loop_pervariant.json, loop_rescue.json, loop_variant.json   controlled: loop_chain.json, loop_distogram_nn.json, loop_pervariant.json, loop_rescue.json, loop_variant.json",
     "    any protein change     slots {'ppm': 16015, 'abund': 16286, 'ptm': 8425, 'complexes': 2039}",
     "                           modules that address it: abstain, adrn_ko_channels2, adrn_ko_channels3, annotation_prior, best_combined, biochem_limit, bioplex, build_blocks",
     "                           answered well by: loop_quantity.json",

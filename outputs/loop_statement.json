@@ -250,15 +250,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_distogram_nn.json",
+        "bytes": 6684,
+        "hash": "2005adfcabfeff48",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 26132,
-        "hash": "b45fc94cc15a3422",
+        "bytes": 26455,
+        "hash": "beebd07132e6e6e0",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 42,
-      "used": 42,
+      "available": 43,
+      "used": 43,
       "selection": "all",
       "fraction": 1.0
     },
@@ -270,8 +276,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 121,
-  "n_gates_failed": 51,
+  "n_gates_passed": 125,
+  "n_gates_failed": 52,
   "capability": [
     {
       "question": "any point mutation",
@@ -280,12 +286,16 @@
         "struct": 13
       },
       "n_items": 13,
-      "gates_passed": 12,
-      "gates_failed": 9,
+      "gates_passed": 16,
+      "gates_failed": 10,
       "gate_detail": {
         "loop_chain.json": {
           "passed": 3,
           "failed": 3
+        },
+        "loop_distogram_nn.json": {
+          "passed": 4,
+          "failed": 1
         },
         "loop_pervariant.json": {
           "passed": 3,
@@ -314,6 +324,7 @@
         "colab/complete_cell.py",
         "colab/data_ledger.py",
         "colab/loop_chain.py",
+        "colab/loop_distogram_nn.py",
         "colab/loop_pervariant.py",
         "colab/loop_rescue.py",
         "colab/loop_variant.py"
@@ -321,6 +332,7 @@
       "produces": [
         "data_ledger.json",
         "loop_chain.json",
+        "loop_distogram_nn.json",
         "loop_pervariant.json",
         "loop_rescue.json",
         "loop_variant.json"
@@ -328,6 +340,7 @@
       "phenotype_hits": [],
       "controlled": [
         "loop_chain.json",
+        "loop_distogram_nn.json",
         "loop_pervariant.json",
         "loop_rescue.json",
         "loop_variant.json"
@@ -824,7 +837,7 @@
     "  THE GOAL, MEASURED",
     "----------------------------------------------------------------------------------------------------",
     "  question                   slot   pipe  check     items   gates  well?   answered well by",
-    "  any point mutation          yes    yes    yes        13   12/21     no   ",
+    "  any point mutation          yes    yes    yes        13   16/26     no   ",
     "  any protein change          yes    yes    yes    42,765   38/47    YES   loop_quantity.json",
     "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
     "  drug effect                 yes    yes    yes     4,275   10/13    YES   loop_drug.json",
@@ -1046,11 +1059,17 @@
     "      PASS   F5 physics adds on top of geometry",
     "      PASS   F6 every term earns its place",
     "      PASS   F7 beats nexus's own number",
+    "\n  loop 54  pairwise structure through a neural network",
+    "      PASS   N1 matrices index correctly",
+    "      PASS   N2 the null is measured",
+    "      FAIL   N3 pairwise features add",
+    "      PASS   N4 the network beats linear",
+    "      PASS   N5 beats the best recorded",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  121 gates passed, 51 failed. Both numbers are the point: a project where",
+    "\n  125 gates passed, 52 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -1087,7 +1106,7 @@
     "  (the list above holds only the synthetic control: all six real rows now have a slot, a",
     "   pipeline and a controlled score. The distance moved to the fourth column.)",
     "",
-    "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_pervariant.json, loop_rescue.json, loop_variant.json",
+    "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_distogram_nn.json, loop_pervariant.json, loop_rescue.json, loop_variant.json",
     "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_shared_effect.json, loop_sideeffect.json",
     "  NOT ANSWERED WELL  cancer                 every module answering it has a failed gate: loop_survivable.json; SUPERSEDED: loop_cancer.json",
     "\n  SIX LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
@@ -1120,6 +1139,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 42 inputs, coverage 42/42 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 43 inputs, coverage 43/43 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }

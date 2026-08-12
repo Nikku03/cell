@@ -285,7 +285,7 @@ ENTRY = {
 # as ADJACENT rather than counted.
 ACCEPTS = {
     "any point mutation": ("variant", "pervariant", "chain", "nexus_fair", "rescue", "physics_bind",
-                           "fitted_bind"),
+                           "fitted_bind", "distogram_nn"),
     "any protein change": ("cell_loop", "deficit", "medium", "quantity", "retest", "amplify"),
     "any chromosome fold": ("real_chromatin", "supercoil", "hic_target", "polymer",
                             "extrusion", "stiffness", "fourth", "insulation",
