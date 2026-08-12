@@ -287,8 +287,8 @@
       },
       {
         "path": "outputs/capability_audit.json",
-        "bytes": 27636,
-        "hash": "9bfff876ab4518ec",
+        "bytes": 27681,
+        "hash": "92eb44584d7d60d4",
         "method": "sha256:full"
       }
     ],
