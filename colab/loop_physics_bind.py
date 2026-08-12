@@ -419,11 +419,27 @@ def main():
              "P5 every term earns its place": p5, "P6 nothing in the physics arm is fitted": p6}
     for k, v in gates.items():
         say(f"  {k:<40}{'PASS' if v else 'FAIL'}")
-    say(f"  A FORCE FIELD WITH NO FITTED PARAMETERS REACHES {a_phys:.4f} ON nexus's OWN TASK,")
-    say(f"  against {NEXUS_REBUILT:.3f} for the sensor it was built to replace and "
-        f"{S['STACK (fitted)']:.4f} for a stack")
-    say(f"  that was allowed to see the labels. Spearman against the measured binding free energy")
-    say(f"  is {rho:+.4f} over {len(recs):,} mutations in {len(set(grp)):,} complexes.")
+    lj_alone = ladder["d_lj"]["auc"]
+    say(f"  THE PREDECLARED SUM REACHES {a_phys:.4f} AND THE ABLATION LADDER SAYS WHY IT SHOULD NOT.")
+    say(f"  Lennard-Jones ALONE is {lj_alone:.4f}. Adding electrostatics at weight 1.0 costs "
+        f"{ladder['d_elec']['delta']:+.4f},")
+    say(f"  and induction and desolvation only claw back to {a_phys:.4f}. Summing four terms that "
+        f"carry")
+    say(f"  different units with the same coefficient is a modelling error of mine, not a property "
+        f"of")
+    say(f"  the physics -- but the weights that would fix it have to come from somewhere, and taking")
+    say(f"  them from these labels would end the parameter-free claim. So the declared score stands")
+    say(f"  and P4 and P5 fail on it.")
+    say(f"  AND THE THING THAT BEATS EVERYTHING IS NOT AN ENERGY AT ALL. Counting atom pairs within")
+    say(f"  4.5 A of the partner chain -- pure geometry, no force field -- reaches "
+        f"{S['contacts']:.4f}, above")
+    say(f"  nexus's recorded {NEXUS_RECORDED:.3f}, above loop 32's rebuilt {NEXUS_REBUILT:.3f}, "
+        f"above the fitted stack's {S['STACK (fitted)']:.4f},")
+    say(f"  and above the force field. That is the second time in two loops that a count has beaten")
+    say(f"  the instrument built to replace it: burial beat ESM-2 650M on the monomer, and contact")
+    say(f"  count beats the force field on the interface. Spearman of the declared physics against")
+    say(f"  measured binding free energy is {rho:+.4f} over {len(recs):,} mutations in "
+        f"{len(set(grp)):,} complexes.")
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(SC / "skempi_v2.csv"), str(SC / "pdb_cache")],
