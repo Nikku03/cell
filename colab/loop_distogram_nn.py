@@ -262,6 +262,10 @@ def build():
                  if j != ri and np.linalg.norm(np.array(c) - np.array(xyz[ri])) < 10.0) \
             if ri in xyz else np.nan
         rec = {"gene": g, "y": r[5], "stars": stars,
+               # KEYED, not positional. loop 53 lost a whole gate to a cache keyed by row position in
+               # a frame that later changed size; any module joining onto this one now has a variant
+               # identity to join on instead of an index to trust.
+               "_key": key, "_ri": ri, "_wt": wt, "_mut": mt,
                "esm": -float(lp[LR.AA.index(mt)] - lp[LR.AA.index(wt)]),
                "esm_altblind": float(lp[LR.AA.index(wt)]),
                "entropy": -float(-(pr * np.log(pr + 1e-12)).sum()),
