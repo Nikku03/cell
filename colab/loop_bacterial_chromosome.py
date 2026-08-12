@@ -48,6 +48,25 @@ PREDECLARED, before any number:
        forgetting that would manufacture a false decay at long range. Log-log slope must land in
        -1.5 to -0.5, which brackets this project's human value of -0.9636. If bacterial P(s) is
        nothing like it, the polymer core does not transfer and that is the loop's finding.
+
+       CORRECTION MADE AFTER THE RESULT WAS FIRST WRITTEN UP. The slope came out -0.9533 against the
+       human -0.9636 and that was reported as agreement "to 0.010", which is FALSE PRECISION. The
+       slope is not a single number: it depends on the fitting window and on the replicate.
+
+           window (bins)      5-100     3-50    10-150   20-200
+           BglII rep1        -0.9533  -0.9598  -0.8621  -0.6274
+           BglII rep2        -1.0034  -1.0000  -0.8641  -0.6394
+           NcoI              -1.0654  -0.9294  -0.9654  -0.7303
+
+       Across windows on ONE dataset the slope moves by 0.33, and across replicates and enzymes at a
+       fixed window by 0.11. Both are larger than the 0.010 human-bacteria difference that was
+       quoted. The defensible claim is that bacterial and human P(s) sit in the SAME RANGE, roughly
+       -0.6 to -1.1, which is a far weaker statement than agreeing to one percent. The gate as
+       written (-1.5 to -0.5) is what actually passed, and it is wide for exactly this reason.
+
+       One thing IS stable across every window: novobiocin flattens P(s) to -0.58 to -0.69 while
+       every other condition stays near -0.9. Relaxing supercoiling changes the polymer scaling
+       itself, and that survives the window choice that the headline number did not.
   K3 CIDs EXIST AND ARE COUNTED
        insulation profile with a 10-bin (100 kb) window, boundaries as local minima. Le et al.
        reported 23 CIDs; the gate is 10-40, wide enough that it tests presence rather than method.
