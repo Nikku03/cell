@@ -27,7 +27,7 @@ The Lennard-Jones sum EPS*(x^12 - 2x^6) is two physically different things shari
     d_induc     charge-induced-dipole polarisation
     d_desolv    Eisenberg-McLachlan atomic solvation
     contacts    partner atoms within 4.5 A of the WILD-TYPE side chain   <- the 0.7765 baseline
-    d_contacts  the same count for the MUTANT side chain, minus the wild type's
+    frac_lost   the FRACTION of those contacts the mutation destroys
 
 Splitting the LJ is the one modelling change made on the strength of loop 52's ladder, and it is
 made for a stated physical reason rather than because it helps: a mutation that clashes and a
@@ -48,7 +48,7 @@ PREDECLARED, before any number:
   F3 FITTED PHYSICS BEATS THE UNWEIGHTED SUM
        0.6268 is the bar. If weighting does not beat not-weighting, the fit is broken.
   F4 FITTED PHYSICS BEATS GEOMETRY ALONE   THE REAL QUESTION.
-       energy terms ONLY -- no contacts, no d_contacts -- against the 0.7765 contact count. This is
+       energy terms ONLY -- no geometry feature at all -- against the 0.7765 contact count. This is
        the gate that asks whether a force field knows anything a tape measure does not.
   F5 PHYSICS ADDS ON TOP OF GEOMETRY
        contacts + energy against contacts alone, complex-grouped, paired per complex. F4 can fail
@@ -72,6 +72,7 @@ from pathlib import Path
 
 import numpy as np
 from scipy.stats import spearmanr
+from sklearn.linear_model import LogisticRegression
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import flex_physics as F
@@ -93,7 +94,13 @@ FOLDS = 5
 SEED = 1904
 
 ENERGY = ["d_lj_rep", "d_lj_att", "d_elec", "d_induc", "d_desolv"]
-GEOM = ["contacts", "d_contacts"]
+# GEOMETRY. The first version paired `contacts` with `d_contacts` (mutant minus wild-type count) and
+# the two turned out to correlate at -0.998 -- they are one feature and its negation. Two collinear
+# columns give a logistic fit an unidentifiable direction, the coefficients swing between folds, and
+# the held-out score came out at 0.5388 for a pair whose better half alone scores 0.7722. Replaced
+# with the BOUNDED ratio: what FRACTION of the wild-type's partner contacts the mutation destroys.
+# Same information, one direction, and it cannot be collinear with the count it is divided by.
+GEOM = ["contacts", "frac_lost"]
 
 log = []
 
@@ -106,9 +113,17 @@ def say(s=""):
 def lj_split(ca, ra, cb, rb, cutoff=6.0, cap=10.0):
     """Lennard-Jones separated into its repulsive and attractive halves.
 
-    Same functional form and same constants as flex_physics._lj_sum -- this does not change the
-    physics, it stops two different physical statements from cancelling inside one number. The soft
-    cap is kept on the repulsive half only, which is where it was doing its work.
+    THE FIRST VERSION OF THIS FUNCTION BLEW UP AND THE FEATURE TABLE SHOWED IT. flex_physics._lj_sum
+    caps the COMBINED pair energy at `cap`; splitting the sum and capping only the repulsive half let
+    the attractive half run free, and since a rebuilt rotamer can sit almost on top of a partner atom,
+    x = rmin/d goes large and -2*EPS*x^6 goes with it. d_lj_att came out spanning -1.1e6 to +3.9e7
+    with a standard deviation of 8.2e5. That is not a packing energy, it is a divide-by-almost-zero,
+    and a fitted model handed a feature like that will chase it.
+
+    The fix is the soft core done properly: clip x at the value where the REPULSION alone reaches the
+    cap, x_max = (cap/EPS)^(1/12). Below that separation the pair is simply "clashing" and both halves
+    saturate together, which is what a soft-core potential means and what the unsplit function was
+    already doing implicitly.
     """
     if len(ca) == 0 or len(cb) == 0:
         return 0.0, 0.0
@@ -117,10 +132,8 @@ def lj_split(ca, ra, cb, rb, cutoff=6.0, cap=10.0):
     m = (d < cutoff) & (d > 0.1)
     if not m.any():
         return 0.0, 0.0
-    x = rmin[m] / d[m]
-    rep = np.minimum(F.EPS * x ** 12, cap)
-    att = F.EPS * (-2 * x ** 6)
-    return float(rep.sum()), float(att.sum())
+    x = np.minimum(rmin[m] / d[m], (cap / F.EPS) ** (1.0 / 12.0))
+    return float((F.EPS * x ** 12).sum()), float((F.EPS * (-2 * x ** 6)).sum())
 
 
 def terms(t, ch, pos, coords=None, names=None, wt=None):
@@ -185,7 +198,8 @@ def build_features():
             "d_lj_rep": m["lj_rep"] - w["lj_rep"], "d_lj_att": m["lj_att"] - w["lj_att"],
             "d_elec": m["elec"] - w["elec"], "d_induc": m["induc"] - w["induc"],
             "d_desolv": m["desolv"] - w["desolv"],
-            "contacts": w["nc"], "d_contacts": m["nc"] - w["nc"],
+            "contacts": w["nc"],
+            "frac_lost": (w["nc"] - m["nc"]) / max(w["nc"], 1.0),
         })
     pickle.dump(recs, open(CACHE, "wb"))
     return recs
@@ -205,15 +219,14 @@ def fit_predict(X, y, grp, rng, folds=FOLDS, ret_train=False):
         if tr.sum() < 40 or te.sum() == 0 or len(np.unique(y[tr])) < 2:
             continue
         mu, sd = X[tr].mean(0), X[tr].std(0) + 1e-9
-        A = np.column_stack([(X[tr] - mu) / sd, np.ones(tr.sum())])
-        B = np.column_stack([(X[te] - mu) / sd, np.ones(te.sum())])
-        w = np.zeros(A.shape[1])
-        for _ in range(800):
-            p = 1 / (1 + np.exp(-A @ w))
-            w -= 1.0 * (A.T @ (p - y[tr])) / max(tr.sum(), 1)
-        oof[te] = B @ w
+        # sklearn rather than the hand-rolled gradient descent this file first used. The two agreed
+        # to within 0.01 on every arm, so convergence was never the problem -- but a properly solved
+        # fit removes one whole class of doubt from a loop whose entire subject is what fitting buys.
+        m = LogisticRegression(max_iter=5000, C=1.0).fit((X[tr] - mu) / sd, y[tr])
+        oof[te] = m.decision_function((X[te] - mu) / sd)
         if ret_train:
-            trn[tr] = np.where(np.isnan(trn[tr]), A @ w, trn[tr])
+            v = m.decision_function((X[tr] - mu) / sd)
+            trn[tr] = np.where(np.isnan(trn[tr]), v, trn[tr])
     return (oof, trn) if ret_train else oof
 
 
