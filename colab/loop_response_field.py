@@ -152,8 +152,17 @@ def signed_operator(D, n, shuffle=None):
 
 
 def propagate(M, P):
-    """Solve (I - alpha A) r = p for every drug at once."""
-    return spsolve(M, csr_matrix(P.T)).T if P.shape[0] > 1 else spsolve(M, P.ravel())[None, :]
+    """Solve (I - alpha A) r = p for every drug at once, returned DENSE.
+
+    spsolve hands back a sparse matrix when given a sparse right-hand side, and every downstream
+    step here -- correlation, SVD, standardisation -- expects an array. Converting at the boundary
+    rather than at each use keeps the type from leaking.
+    """
+    from scipy.sparse import csc_matrix, issparse
+    R = spsolve(M, csc_matrix(P.T))
+    if issparse(R):
+        R = R.toarray()
+    return np.asarray(R).T
 
 
 def load_side_effects():
