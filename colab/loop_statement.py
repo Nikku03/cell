@@ -71,6 +71,7 @@ LOOPS = [
     ("49  close the declared gap", "loop_rebuild.json", "gates"),
     ("50  do drugs hitting the same neighbourhood share side effects",
      "loop_shared_effect.json", "gates"),
+    ("51  is there any sensor that answers the point-mutation row", "loop_rescue.json", "gates"),
     ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 

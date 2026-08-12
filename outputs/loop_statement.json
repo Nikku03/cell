@@ -232,15 +232,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_rescue.json",
+        "bytes": 10475,
+        "hash": "9b85938b76301d31",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 25751,
-        "hash": "d435c1daca2823dd",
+        "bytes": 26020,
+        "hash": "71626b8c039ee4c2",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 39,
-      "used": 39,
+      "available": 40,
+      "used": 40,
       "selection": "all",
       "fraction": 1.0
     },
@@ -252,8 +258,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 109,
-  "n_gates_failed": 43,
+  "n_gates_passed": 113,
+  "n_gates_failed": 46,
   "capability": [
     {
       "question": "any point mutation",
@@ -262,8 +268,8 @@
         "struct": 13
       },
       "n_items": 13,
-      "gates_passed": 8,
-      "gates_failed": 6,
+      "gates_passed": 12,
+      "gates_failed": 9,
       "gate_detail": {
         "loop_chain.json": {
           "passed": 3,
@@ -272,6 +278,10 @@
         "loop_pervariant.json": {
           "passed": 3,
           "failed": 1
+        },
+        "loop_rescue.json": {
+          "passed": 4,
+          "failed": 3
         },
         "loop_variant.json": {
           "passed": 2,
@@ -293,18 +303,21 @@
         "colab/data_ledger.py",
         "colab/loop_chain.py",
         "colab/loop_pervariant.py",
+        "colab/loop_rescue.py",
         "colab/loop_variant.py"
       ],
       "produces": [
         "data_ledger.json",
         "loop_chain.json",
         "loop_pervariant.json",
+        "loop_rescue.json",
         "loop_variant.json"
       ],
       "phenotype_hits": [],
       "controlled": [
         "loop_chain.json",
         "loop_pervariant.json",
+        "loop_rescue.json",
         "loop_variant.json"
       ],
       "note": "13 genes of residue-level counts, PLUS the ClinVar VCF that loop_variant consumes. `biomarkers` looks relevant and is not -- it is keyed on GENE, so a variant cannot be handed to it"
@@ -799,7 +812,7 @@
     "  THE GOAL, MEASURED",
     "----------------------------------------------------------------------------------------------------",
     "  question                   slot   pipe  check     items   gates  well?   answered well by",
-    "  any point mutation          yes    yes    yes        13    8/14     no   ",
+    "  any point mutation          yes    yes    yes        13   12/21     no   ",
     "  any protein change          yes    yes    yes    42,765   38/47    YES   loop_quantity.json",
     "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
     "  drug effect                 yes    yes    yes     4,275   10/13    YES   loop_drug.json",
@@ -998,11 +1011,19 @@
     "      PASS   E3 network adds where the lookup cannot",
     "      FAIL   E4 survives the frequency baseline",
     "      FAIL   E5 holds on held-out drugs",
+    "\n  loop 51  is there any sensor that answers the point-mutation row",
+    "      FAIL   G1 index checked independently",
+    "      PASS   G2 statistic is within-gene",
+    "      FAIL   G3 ESM beats the baseline panel",
+    "      PASS   G4 the substitution matters",
+    "      PASS   G5 survives curation",
+    "      PASS   G6a structure adds",
+    "      FAIL   G6b the ddG sensor adds",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  109 gates passed, 43 failed. Both numbers are the point: a project where",
+    "\n  113 gates passed, 46 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -1039,7 +1060,7 @@
     "  (the list above holds only the synthetic control: all six real rows now have a slot, a",
     "   pipeline and a controlled score. The distance moved to the fourth column.)",
     "",
-    "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_pervariant.json, loop_variant.json",
+    "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_pervariant.json, loop_rescue.json, loop_variant.json",
     "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_shared_effect.json, loop_sideeffect.json",
     "  NOT ANSWERED WELL  cancer                 every module answering it has a failed gate: loop_survivable.json; SUPERSEDED: loop_cancer.json",
     "\n  SIX LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
@@ -1072,6 +1093,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 39 inputs, coverage 39/39 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 40 inputs, coverage 40/40 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }
