@@ -1,0 +1,343 @@
+{
+ "test": "loop_chrom_connect",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_state_vector.json",
+    "bytes": 14758,
+    "hash": "f2d17c69ff0e4e92",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 28,
+   "used": 20,
+   "selection": "filtered",
+   "fraction": 0.7142857142857143
+  },
+  "seed": 6401,
+  "controls": [
+   "fold positive counts recomputed rather than assumed",
+   "positives subsampled to loops3d's exact size",
+   "dropped positives removed, never relabelled absent",
+   "three independent draws per layer, median reported",
+   "nulls permuted inside each subsample",
+   "loop 61 folds, baselines and margin threshold reused"
+  ],
+  "note": "no genome-wide 3D layer exists here to test the other direction; this project holds Hi-C for chr21 and chr22 only",
+  "warnings": []
+ },
+ "gates": {
+  "C1 no fold is starved": true,
+  "C2 767 positives is enough in general": true,
+  "C3 loops3d is an outlier at matched size": true,
+  "C4 nulls measured at matched size": true,
+  "C5 verdict written from C2 and C3": true
+ },
+ "n_chromosomes": 23,
+ "loops3d": {
+  "layer": "loops3d",
+  "n_present": 767,
+  "model": 0.5071186440677966,
+  "pubs": 0.505713545434383,
+  "best_single": 0.5332029275997372,
+  "best_single_name": "enh",
+  "null95": 0.5210510961916744,
+  "margin": -0.02608428353194059,
+  "earned": false,
+  "flag": null
+ },
+ "cut_detail": [
+  {
+   "layer": "abund",
+   "full_margin": 0.055572040859183214,
+   "cut_margins": [
+    0.0654664541040908,
+    0.06807135634179606,
+    0.06211471038349037
+   ],
+   "cut_median": 0.0654664541040908,
+   "cut_earned": true
+  },
+  {
+   "layer": "codep",
+   "full_margin": 0.02578463817090404,
+   "cut_margins": [
+    0.016855902835091197,
+    -0.002947762585816416,
+    0.01094858747058347
+   ],
+   "cut_median": 0.01094858747058347,
+   "cut_earned": false
+  },
+  {
+   "layer": "cpg",
+   "full_margin": 0.054970333792815684,
+   "cut_margins": [
+    0.06353323595926175,
+    0.05339051010560947,
+    0.05841482400002507
+   ],
+   "cut_median": 0.05841482400002507,
+   "cut_earned": true
+  },
+  {
+   "layer": "dark",
+   "full_margin": 0.05071037339208251,
+   "cut_margins": [
+    0.0003634036878635838,
+    0.0024086348757208498,
+    -0.0002673738518701452
+   ],
+   "cut_median": 0.0003634036878635838,
+   "cut_earned": false
+  },
+  {
+   "layer": "darkfn",
+   "full_margin": 0.050779892614944866,
+   "cut_margins": [
+    -0.0035060585167373537,
+    0.00020335082706024465,
+    -0.0005107864376392435
+   ],
+   "cut_median": -0.0005107864376392435,
+   "cut_earned": false
+  },
+  {
+   "layer": "dep_frac",
+   "full_margin": 0.0870778659532302,
+   "cut_margins": [
+    0.09140746678033673,
+    0.09125819949619596,
+    0.07919995247560752
+   ],
+   "cut_median": 0.09125819949619596,
+   "cut_earned": true
+  },
+  {
+   "layer": "drugs",
+   "full_margin": 0.0468836206091886,
+   "cut_margins": [
+    0.03526617056041892,
+    0.03967001972906481,
+    0.039921768873368624
+   ],
+   "cut_median": 0.03967001972906481,
+   "cut_earned": true
+  },
+  {
+   "layer": "emask",
+   "full_margin": 0.05559098689895603,
+   "cut_margins": [
+    -0.0312905257617031,
+    -0.01853670441969557,
+    -0.04125888487016971
+   ],
+   "cut_median": -0.0312905257617031,
+   "cut_earned": false
+  },
+  {
+   "layer": "gene2cplx",
+   "full_margin": 0.04923655759197698,
+   "cut_margins": [
+    0.04910978899632523,
+    0.056671669337110764,
+    0.04527124505417812
+   ],
+   "cut_median": 0.04910978899632523,
+   "cut_earned": true
+  },
+  {
+   "layer": "generxn",
+   "full_margin": 0.07662443237271555,
+   "cut_margins": [
+    0.07250730554022289,
+    0.06305702085067721,
+    0.0759091705183359
+   ],
+   "cut_median": 0.07250730554022289,
+   "cut_earned": true
+  },
+  {
+   "layer": "loeuf",
+   "full_margin": 0.03898797964917122,
+   "cut_margins": [
+    0.030331289487795066,
+    0.036470447930359806,
+    0.02776497509903908
+   ],
+   "cut_median": 0.030331289487795066,
+   "cut_earned": true
+  },
+  {
+   "layer": "model4",
+   "full_margin": 0.11704259627997105,
+   "cut_margins": [
+    0.11477150319183149,
+    0.0886675601738216,
+    0.10803490609573962
+   ],
+   "cut_median": 0.10803490609573962,
+   "cut_earned": true
+  },
+  {
+   "layer": "ndis",
+   "full_margin": 0.07816805054500797,
+   "cut_margins": [
+    0.0766856464419885,
+    0.08441928170117063,
+    0.09693683097194339
+   ],
+   "cut_median": 0.08441928170117063,
+   "cut_earned": true
+  },
+  {
+   "layer": "npath",
+   "full_margin": 0.0418870576552266,
+   "cut_margins": [
+    0.05132183004981561,
+    0.056885407420934286,
+    0.04805823696537548
+   ],
+   "cut_median": 0.05132183004981561,
+   "cut_earned": true
+  },
+  {
+   "layer": "ppi_edges",
+   "full_margin": 0.022735074837844427,
+   "cut_margins": [
+    0.0259975192425852,
+    0.02417412795958873,
+    0.025834978910103668
+   ],
+   "cut_median": 0.025834978910103668,
+   "cut_earned": true
+  },
+  {
+   "layer": "ppm",
+   "full_margin": 0.07430835078248577,
+   "cut_margins": [
+    0.07467574741717675,
+    0.07740222944808917,
+    0.06751797255983771
+   ],
+   "cut_median": 0.07467574741717675,
+   "cut_earned": true
+  },
+  {
+   "layer": "ptm",
+   "full_margin": 0.05375939415407849,
+   "cut_margins": [
+    0.060976043368212274,
+    0.05440695582579347,
+    0.04961139504886469
+   ],
+   "cut_median": 0.05440695582579347,
+   "cut_earned": true
+  },
+  {
+   "layer": "reg_in",
+   "full_margin": 0.0411750158710531,
+   "cut_margins": [
+    0.04038186018560652,
+    0.048148402296484316,
+    0.038365886269543736
+   ],
+   "cut_median": 0.04038186018560652,
+   "cut_earned": true
+  },
+  {
+   "layer": "sig_in",
+   "full_margin": 0.029382280718767362,
+   "cut_margins": [
+    0.024043034542053587,
+    0.02374791975830637,
+    0.018453331480611013
+   ],
+   "cut_median": 0.02374791975830637,
+   "cut_earned": true
+  },
+  {
+   "layer": "sig_out",
+   "full_margin": 0.05365821885342159,
+   "cut_margins": [
+    0.04519724963914662,
+    0.04662980535832861,
+    0.04194936564480323
+   ],
+   "cut_median": 0.04519724963914662,
+   "cut_earned": true
+  }
+ ],
+ "cut_median": 0.047153519317735926,
+ "cut_p5": -0.0020497734038424347,
+ "n_still_earning": 16,
+ "n_cut": 20,
+ "verdict": "DISCONNECTED -- 767 positives is enough for other layers, and loops3d is worse than the weakest of them at matched size. The 3D genome does not covary with the rest of this model",
+ "seconds": 244.05584740638733,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 64 -- is the chromosome disconnected, or just small?",
+  "====================================================================================================",
+  "",
+  "C1 NO FOLD IS STARVED",
+  "     loops3d present on 23 chromosomes, 767 genes",
+  "       fold 0: train pos  602   held-out pos  165   held-out n  3,931",
+  "       fold 1: train pos  572   held-out pos  195   held-out n  3,670",
+  "       fold 2: train pos  564   held-out pos  203   held-out n  4,430",
+  "       fold 3: train pos  653   held-out pos  114   held-out n  2,448",
+  "       fold 4: train pos  677   held-out pos   90   held-out n  2,013",
+  "     C1 PASS",
+  "",
+  "C2 LAYERS CUT TO 767 POSITIVES ARE STILL PREDICTABLE",
+  "     20 EARNED layers have >= 2,000 positives and can be cut",
+  "     layer           full n  full mg   cut mg (median of 3)  verdict",
+  "     abund           14,041  +0.0556                +0.0655  EARNED",
+  "     codep           13,451  +0.0258                +0.0109  defer",
+  "     cpg             10,257  +0.0550                +0.0584  EARNED",
+  "     dark             5,006  +0.0507                +0.0004  defer",
+  "     darkfn           4,993  +0.0508                -0.0005  defer",
+  "     dep_frac         6,111  +0.0871                +0.0913  EARNED",
+  "     drugs            4,275  +0.0469                +0.0397  EARNED",
+  "     emask            7,496  +0.0556                -0.0313  defer",
+  "     gene2cplx        3,257  +0.0492                +0.0491  EARNED",
+  "     generxn          2,549  +0.0766                +0.0725  EARNED",
+  "     loeuf           15,038  +0.0390                +0.0303  EARNED",
+  "     model4           7,700  +0.1170                +0.1080  EARNED",
+  "     ndis             4,933  +0.0782                +0.0844  EARNED",
+  "     npath           10,352  +0.0419                +0.0513  EARNED",
+  "     ppi_edges       14,230  +0.0227                +0.0258  EARNED",
+  "     ppm             15,741  +0.0743                +0.0747  EARNED",
+  "     ptm              8,425  +0.0538                +0.0544  EARNED",
+  "     reg_in          15,865  +0.0412                +0.0404  EARNED",
+  "     sig_in           4,482  +0.0294                +0.0237  EARNED",
+  "     sig_out          3,644  +0.0537                +0.0452  EARNED",
+  "     16 of 20 still earn at n=767; median cut margin +0.0472",
+  "     C2 PASS  -- 767 positives IS enough in general",
+  "",
+  "C3 loops3d IS AN OUTLIER AT MATCHED SIZE",
+  "     loops3d margin        -0.0261   (model 0.5071, null95 0.5211)",
+  "     subsampled peers      5th pct -0.0020, median +0.0472, min -0.0313",
+  "     C3 PASS",
+  "",
+  "C4 nulls permuted inside each subsample, 100 per draw, 60 fits",
+  "     C4 PASS",
+  "",
+  "C5 THE VERDICT",
+  "     DISCONNECTED -- 767 positives is enough for other layers, and loops3d is worse than the weakest of them at matched size. The 3D genome does not covary with the rest of this model",
+  "",
+  "  PASS  C1 no fold is starved",
+  "  PASS  C2 767 positives is enough in general",
+  "  PASS  C3 loops3d is an outlier at matched size",
+  "  PASS  C4 nulls measured at matched size",
+  "  PASS  C5 verdict written from C2 and C3",
+  "    manifest: 2 inputs, coverage 20/28 (71.4%) by 'filtered', seed 6401, controls 6"
+ ]
+}
