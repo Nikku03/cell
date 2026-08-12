@@ -429,8 +429,7 @@ def main():
 
     man = RM.manifest(
         inputs=[str(SC / "_chain_structs.pkl"), str(SC / "uniprot_ft"), str(SC / "uniprot_seq")],
-        coverage={"available": len(rows), "used": len(keep), "selection": "filtered",
-                  "fraction": len(keep) / max(len(rows), 1)},
+        available=len(rows), used=len(keep), selection="filtered",
         seed=SEED,
         controls=["within-protein label permutation preserving positive count",
                   "pLDDT alone as the order control",
@@ -441,6 +440,7 @@ def main():
         note="within-protein ranking, so a protein's literature volume is constant inside the "
              "unit of evaluation and cannot separate its own residues")
 
+    RM.report(man, emit=say)          # before the dump, so the manifest's own complaints are saved
     res = {"test": "loop_pocket", "manifest": man, "gates": gates,
            "a1_agreement": B["agreement"], "a1_dropped": B["dropped"],
            "n_proteins": len(keep), "n_residues": nres, "n_functional": npos,
