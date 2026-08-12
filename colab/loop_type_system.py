@@ -33,7 +33,7 @@ WHAT THE MODEL CAN ACTUALLY BE TYPED WITH, measured before this was written:
     lifetime   RNADecayCafe mRNA decay     partial
     producers  nothing                     0%
 
-So the type system rejects 84.5% of this cell as untyped, and that is the first honest output: the
+So the type system rejects 84.6% of this cell as untyped, and that is the first honest output: the
 current model has those fields silently absent, where a type system makes the hole countable.
 
 THE BUDGET CHOSEN, and why it is the ribosome one. Carbon and nitrogen have no ceiling here because
@@ -46,7 +46,7 @@ abundance vector is wrong.
     supply    = N_RIBOSOMES * DOUBLING_S * ELONGATION_AA_S         amino acids polymerisable
 
 Every constant on the supply side and TOTAL_COPIES on the demand side are LITERATURE, not measured
-here, and are declared with ranges rather than points -- which is what T5 is for. Lengths are
+here, and are declared with ranges rather than points -- which is what T6 is for. Lengths are
 computed from the actual UniProt sequence of every protein, not assumed.
 
 AND THE SELF-PRODUCTION TERM, which is constraint closure in its most literal computable form: the
@@ -63,16 +63,33 @@ PREDECLARED, before any number:
        calibrations that can fail: mean protein length must land in 450-650 aa (literature ~550), and
        >= 80% of the abundance mass must map to a sequence. A ppm vector that cannot be matched to
        lengths cannot be costed.
-  T3 THE RIBOSOME BUDGET CLOSES                       THE GATE.
-       demand/supply must be <= 1 at the central literature values. If it exceeds 1 the model's own
-       abundance vector describes a cell that cannot build itself in a doubling, and the defect is in
-       the abundance layer, not in the theory.
-  T4 IS THE TYPED FRACTION JUST THE FAMOUS FRACTION?
+  T3 THE ABUNDANCE VECTOR DESCRIBES A CELL            ADDED AFTER THE FIRST RUN. THE MODEL FAILS IT.
+       The first run of this module passed its budget gate at demand/supply 0.1744 and the number was
+       meaningless, because the vector it costed is not a cell. The model's top ten proteins by `ppm`
+       are TMSB4X, APOA2, RBP4, ORM1, APOA1, ALB, TTR, APOC2, APOC1, HPX -- albumin, apolipoproteins,
+       transthyretin, hemopexin, orosomucoid. That is BLOOD PLASMA. The other abundance layer,
+       `abund`, is no better: LALBA, INS, IGKC, CSN2, SFTPC -- milk, insulin, immunoglobulin, casein,
+       surfactant, i.e. secreted tissue extremes.
+       Against a real cellular proteome (PaxDb, HeLa iBAQ, Geiger 2012) the divergence is not subtle:
+       the 22 canonical plasma proteins named in PLASMA below carry 0.2918 of the model's abundance
+       mass and 0.0004 of HeLa's -- a 676-fold enrichment -- while rank correlation where both are
+       present is 0.6835. (The scoping pass that found this used a shorter list of 18 and got
+       0.2544 / 0.0003; the list was widened before the gate ran, and both are recorded.)
+       So the gate: canonical plasma proteins must hold < 1% of abundance mass. This is what a type
+       system is FOR -- the cost slot was silently populated with the wrong compartment for the whole
+       project, and no gate in 64 previous loops could have noticed, because none of them ever had to
+       spend the budget.
+  T4 THE RIBOSOME BUDGET CLOSES                       THE GATE.
+       demand/supply must be <= 1 at the central literature values, computed on the CELLULAR vector.
+       Both vectors are reported side by side so the size of the error is visible. If it exceeds 1
+       the abundance vector describes a cell that cannot build itself in a doubling, and the defect
+       is in the data, not in the theory.
+  T5 IS THE TYPED FRACTION JUST THE FAMOUS FRACTION?
        publication count of entities WITH a flux slot vs those without, as an AUC. The type system
        was adopted to escape the attention confound; if flux coverage is itself predicted by fame at
        high AUC then it re-encodes the confound rather than escaping it, and this must be said. The
        gate is AUC < 0.75, the value at which loop 61's median layer sat.
-  T5 THE VERDICT SURVIVES THE PARAMETER RANGE
+  T6 THE VERDICT SURVIVES THE PARAMETER RANGE
        demand/supply recomputed across the full literature range of all four constants. A budget
        check that closes only at one convenient parameter choice is not a check, so the WORST corner
        is reported and the gate is that the conclusion is stated for the whole range rather than the
@@ -116,6 +133,13 @@ LEN_LO, LEN_HI = 450, 650
 MASS_FLOOR = 0.80
 FAME_CEILING = 0.75
 RIBO_PREFIX = ("RPL", "RPS")     # cytoplasmic ribosomal proteins, a declarable rule
+
+HELA = SC / "paxdb_hela.txt"     # PaxDb 9606 iBAQ HeLa, Geiger MCP 2012 -- a real cellular proteome
+PLASMA_CEILING = 0.01
+# canonical abundant plasma proteins. Named explicitly rather than inferred, so the test is a
+# declaration that can be argued with rather than a threshold on something vague.
+PLASMA = {"ALB", "APOA1", "APOA2", "APOB", "APOC1", "APOC2", "APOC3", "TTR", "RBP4", "ORM1",
+          "ORM2", "HPX", "SERPINA1", "TF", "HP", "FGA", "FGB", "FGG", "A2M", "C3", "AHSG", "APOE"}
 
 log = []
 
@@ -202,8 +226,49 @@ def main():
     say(f"     T2 {'PASS' if t2 else 'FAIL'}")
     say()
 
-    say("T3 THE RIBOSOME BUDGET CLOSES")
-    w = ppm / max(ppm.sum(), 1e-9)
+    say("T3 THE ABUNDANCE VECTOR DESCRIBES A CELL")
+    hela = np.zeros(n)
+    ix = {nm: i for i, nm in enumerate(names)}
+    for ln in open(HELA):
+        if ln.startswith("#"):
+            continue
+        f = ln.rstrip().split("\t")
+        if len(f) < 3:
+            continue
+        i = ix.get(f[0])
+        if i is not None:
+            try:
+                hela[i] = float(f[2])
+            except ValueError:
+                pass
+    wp = ppm / max(ppm.sum(), 1e-9)
+    wh = hela / max(hela.sum(), 1e-9)
+    pl = np.array([nm in PLASMA for nm in names])
+    p_model, p_hela = float(wp[pl].sum()), float(wh[pl].sum())
+    both = (ppm > 0) & (hela > 0)
+    from scipy.stats import spearmanr
+    rho_ab = float(spearmanr(ppm[both], hela[both]).statistic)
+    say(f"     cellular reference: PaxDb HeLa iBAQ (Geiger 2012), mapped to "
+        f"{int((hela > 0).sum()):,} of {n:,} genes")
+    say(f"     {len(PLASMA)} canonical plasma proteins hold "
+        f"{p_model:.4f} of the model's abundance mass")
+    say(f"     the same proteins hold {p_hela:.4f} of HeLa's        "
+        f"({p_model / max(p_hela, 1e-12):.0f}x enrichment)")
+    say(f"     rank correlation where both present: {rho_ab:.4f}  (n={int(both.sum()):,})")
+    say(f"     model top 5:  {', '.join(names[i] for i in np.argsort(-ppm)[:5])}")
+    say(f"     HeLa  top 5:  {', '.join(names[i] for i in np.argsort(-hela)[:5])}")
+    t3 = p_model < PLASMA_CEILING
+    say(f"     T3 {'PASS' if t3 else 'FAIL'}  (ceiling {PLASMA_CEILING:.0%}) -- the model's `ppm` "
+        f"layer is {'cellular' if t3 else 'A PLASMA PROTEOME, not a cell'}")
+    if not t3:
+        say("     the cost slot has been populated with the wrong compartment for the whole project.")
+        say("     No gate in 64 previous loops could have caught this, because none of them ever had")
+        say("     to spend the budget. The remaining arithmetic runs on the CELLULAR vector.")
+    say()
+
+    say("T4 THE RIBOSOME BUDGET CLOSES")
+    w = wh if not t3 else wp
+    say(f"     costed on the {'HeLa cellular' if not t3 else 'model ppm'} vector")
     aa_per_cell_unit = float((w * L).sum())           # weighted mean length over the abundance vector
     def ratio(tc, nr, dt, el):
         demand = tc * aa_per_cell_unit
@@ -216,9 +281,13 @@ def main():
     say(f"     demand  {tc:.2e} copies x {aa_per_cell_unit:.0f} aa   = {dem:.3e} aa per new cell")
     say(f"     supply  {nr:.2e} ribosomes x {dt:.0f} s x {el} aa/s = {sup:.3e} aa")
     say(f"     demand / supply = {r:.4f}")
-    t3 = r <= 1.0
-    say(f"     T3 {'PASS' if t3 else 'FAIL'}  -- the model's abundance vector "
-        f"{'CAN' if t3 else 'CANNOT'} be built in one doubling")
+    t4 = r <= 1.0
+    say(f"     T4 {'PASS' if t4 else 'FAIL'}  -- this abundance vector "
+        f"{'CAN' if t4 else 'CANNOT'} be built in one doubling")
+    dm_p, sp_p, r_p = ratio(tc, nr, dt, el) if t3 else (
+        tc * float((wp * L).sum()), sup, tc * float((wp * L).sum()) / sup)
+    say(f"     for comparison, the model's own plasma-weighted vector gives "
+        f"demand/supply {r_p:.4f} at the same constants")
     say()
 
     ribo = np.array([nm.startswith(RIBO_PREFIX) for nm in names])
@@ -229,22 +298,24 @@ def main():
     say(f"     this is the self-production term the previous 64 loops had no way to ask for")
     say()
 
-    say("T4 IS THE TYPED FRACTION JUST THE FAMOUS FRACTION?")
+    say("T5 IS THE TYPED FRACTION JUST THE FAMOUS FRACTION?")
     a_flux = roc_auc_score(has_flux.astype(int), pubs)
     a_cap = roc_auc_score(has_cap.astype(int), pubs)
     prev = json.load(open(OUT / "loop_state_vector.json"))
     say(f"     publication count predicts HAS-FLUX      AUC {a_flux:.4f}")
     say(f"     publication count predicts HAS-CAPACITY  AUC {a_cap:.4f}")
     say(f"     loop 61 median layer for comparison      AUC {prev['fame_median']:.4f}")
-    t4 = max(a_flux, a_cap) < FAME_CEILING
-    say(f"     T4 {'PASS' if t4 else 'FAIL'}  (ceiling {FAME_CEILING})")
-    if not t4:
+    t5 = max(a_flux, a_cap) < FAME_CEILING
+    say(f"     NOTE the two AUCs are identical because kcat coverage IS generxn coverage -- the same "
+        f"2,549 genes, not two independent confirmations")
+    say(f"     T5 {'PASS' if t5 else 'FAIL'}  (ceiling {FAME_CEILING})")
+    if not t5:
         say("     THE COVERAGE IS A FAME ARTEFACT. The budget arithmetic is still fame-free -- carbon "
             "does not care -- but WHICH entities can be typed at all is inherited from curation, so "
             "the type system escapes the confound in its test and not in its scope.")
     say()
 
-    say("T5 THE VERDICT SURVIVES THE PARAMETER RANGE")
+    say("T6 THE VERDICT SURVIVES THE PARAMETER RANGE")
     corners = []
     for a in LIT["TOTAL_COPIES"]:
         for b in LIT["N_RIBOSOMES"]:
@@ -255,7 +326,7 @@ def main():
     say(f"     demand/supply over all {len(corners)} literature corners: "
         f"{lo:.4f} to {hi:.4f}, median {np.median(corners):.4f}")
     say(f"     closes at {sum(1 for x in corners if x <= 1.0)} of {len(corners)} corners")
-    t5 = True
+    t6 = True
     if hi <= 1.0:
         say("     the budget closes EVERYWHERE in the literature range -- the conclusion does not "
             "depend on the constants chosen")
@@ -265,25 +336,28 @@ def main():
     else:
         say("     the budget closes in SOME corners and not others, so the honest statement is that "
             "this test does not resolve at the precision the literature constants allow")
-    say(f"     T5 PASS (range reported, conclusion stated for the range)")
+    say(f"     T6 PASS (range reported, conclusion stated for the range)")
     say()
 
     gates = {"T1 slot census recorded": True,
              "T2 costs computed from sequence": bool(t2),
-             "T3 the ribosome budget closes": bool(t3),
-             "T4 typed fraction is not just fame": bool(t4),
-             "T5 verdict stated over the parameter range": bool(t5)}
+             "T3 the abundance vector describes a cell": bool(t3),
+             "T4 the ribosome budget closes": bool(t4),
+             "T5 typed fraction is not just fame": bool(t5),
+             "T6 verdict stated over the parameter range": bool(t6)}
     for k, v in gates.items():
         say(f"  {'PASS' if v else 'FAIL'}  {k}")
 
-    man = RM.manifest(inputs=[str(CELL), str(FASTA),
+    man = RM.manifest(inputs=[str(CELL), str(FASTA), str(HELA),
                               "outputs/orphan/kinetics_refined_corrected.json"],
                       available=n, used=int(hit.sum()), selection="filtered", seed=0,
                       controls=["protein lengths from real UniProt sequence, not assumed",
                                 "mean-length calibration against the literature value",
                                 "abundance mass coverage floor before costing",
                                 "publication count tested against slot coverage",
-                                "all four literature constants swept over their full range"],
+                                "all four literature constants swept over their full range",
+                                "abundance vector checked against a real cellular proteome before "
+                                "any budget was computed on it"],
                       note="TOTAL_COPIES, N_RIBOSOMES, DOUBLING_S and ELONGATION_AA_S are LITERATURE "
                            "and are not measured here; they are swept rather than fixed")
     RM.report(man, emit=say)
@@ -292,6 +366,9 @@ def main():
                "mean_length": float(mean_len), "abundance_mass_covered": float(mass),
                "weighted_mean_length": aa_per_cell_unit,
                "demand_aa": dem, "supply_aa": sup, "ratio": r,
+               "plasma_mass_model": p_model, "plasma_mass_hela": p_hela,
+               "abundance_rank_rho": rho_ab, "ratio_model_vector": r_p,
+               "costed_on": "hela_cellular" if not t3 else "model_ppm",
                "ribosome_self_fraction": self_frac, "n_ribosomal_proteins": int(ribo.sum()),
                "fame_auc_flux": float(a_flux), "fame_auc_capacity": float(a_cap),
                "corner_ratios": {"min": lo, "max": hi, "median": float(np.median(corners)),
