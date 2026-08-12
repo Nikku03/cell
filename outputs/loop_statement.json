@@ -238,15 +238,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_physics_bind.json",
+        "bytes": 7482,
+        "hash": "00d9e207a51fb61e",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 26020,
-        "hash": "71626b8c039ee4c2",
+        "bytes": 26077,
+        "hash": "1ee0d04ecaf964fa",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 40,
-      "used": 40,
+      "available": 41,
+      "used": 41,
       "selection": "all",
       "fraction": 1.0
     },
@@ -258,8 +264,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 113,
-  "n_gates_failed": 46,
+  "n_gates_passed": 117,
+  "n_gates_failed": 48,
   "capability": [
     {
       "question": "any point mutation",
@@ -1019,11 +1025,18 @@
     "      PASS   G5 survives curation",
     "      PASS   G6a structure adds",
     "      FAIL   G6b the ddG sensor adds",
+    "\n  loop 52  a force field for the attachment part",
+    "      PASS   P1 structures and target are real",
+    "      PASS   P2 physics tracks the measurement",
+    "      PASS   P3 beats the non-physics baselines",
+    "      FAIL   P4 beats nexus's own number",
+    "      FAIL   P5 every term earns its place",
+    "      PASS   P6 nothing in the physics arm is fitted",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  113 gates passed, 46 failed. Both numbers are the point: a project where",
+    "\n  117 gates passed, 48 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -1093,6 +1106,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 40 inputs, coverage 40/40 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 41 inputs, coverage 41/41 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }
