@@ -382,8 +382,8 @@
         "drugs": 4275
       },
       "n_items": 4275,
-      "gates_passed": 14,
-      "gates_failed": 4,
+      "gates_passed": 16,
+      "gates_failed": 7,
       "gate_detail": {
         "loop_drug.json": {
           "passed": 4,
@@ -392,6 +392,10 @@
         "loop_drug_rebuild.json": {
           "passed": 4,
           "failed": 1
+        },
+        "loop_response_field.json": {
+          "passed": 2,
+          "failed": 3
         },
         "loop_shared_effect.json": {
           "passed": 3,
@@ -405,6 +409,7 @@
       "answered_well": true,
       "best_pipeline": "loop_drug.json",
       "adjacent_credits": [
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -427,6 +432,7 @@
       "produces": [
         "loop_drug.json",
         "loop_drug_rebuild.json",
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -434,6 +440,7 @@
       "controlled": [
         "loop_drug.json",
         "loop_drug_rebuild.json",
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -446,9 +453,13 @@
         "otdis": 48
       },
       "n_items": 48,
-      "gates_passed": 6,
-      "gates_failed": 3,
+      "gates_passed": 8,
+      "gates_failed": 6,
       "gate_detail": {
+        "loop_response_field.json": {
+          "passed": 2,
+          "failed": 3
+        },
         "loop_shared_effect.json": {
           "passed": 3,
           "failed": 2
@@ -471,17 +482,20 @@
         "colab/adrn_ko_channels3.py",
         "colab/complete_cell.py",
         "colab/data_ledger.py",
+        "colab/loop_response_field.py",
         "colab/loop_shared_effect.py",
         "colab/loop_sideeffect.py",
         "colab/pertseq_apps.py"
       ],
       "produces": [
         "data_ledger.json",
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
       "phenotype_hits": [],
       "controlled": [
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -644,6 +658,7 @@
     "loop_rebuild.json": 4,
     "loop_recall.json": 3,
     "loop_rescue.json": 6,
+    "loop_response_field.json": 6,
     "loop_retest.json": 5,
     "loop_shared_effect.json": 4,
     "loop_sideeffect.json": 5,
@@ -656,7 +671,7 @@
     "loop_tail.json": 3,
     "loop_variant.json": 5
   },
-  "n_modules": 976,
+  "n_modules": 977,
   "n_phenotype_modules": 32,
   "log": [
     "====================================================================================================",
@@ -664,10 +679,10 @@
     "====================================================================================================",
     "  The goal as stated cannot fail, so it cannot be worked towards. Three independent axes make",
     "",
-    "\n  graph: 976 modules, 947 directed edges from real reads and writes; 58 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
-    "  301 modules read cell_complete.json; block-level use resolved from source of 766 modules",
+    "\n  graph: 977 modules, 948 directed edges from real reads and writes; 59 of those modules postdate the inventory snapshot and were scanned from source so they are not invisible",
+    "  302 modules read cell_complete.json; block-level use resolved from source of 767 modules",
     "  32 modules write something that is a cell-level outcome",
-    "  52 recorded results carry a manifest with at least one named control: build_cell_complete.json, capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_affinity.json, loop_amplify.json, loop_buffering.json, loop_cancer.json, loop_chain.json, loop_chromatin.json, loop_combined.json, loop_compartment.json, loop_deficit.json, loop_distogram_nn.json, loop_drug.json, loop_drug_rebuild.json, loop_extrusion.json, loop_fitted_bind.json, loop_fold_link.json, loop_fourth.json, loop_hic_target.json, loop_insulation.json, loop_integrate.json, loop_kinetics.json, loop_langevin.json, loop_loading.json, loop_mechanism.json, loop_medium.json, loop_nexus_fair.json, loop_pervariant.json, loop_physics_bind.json, loop_polymer.json, loop_provenance.json, loop_quantity.json, loop_real_chromatin.json, loop_rebuild.json, loop_recall.json, loop_rescue.json, loop_retest.json, loop_shared_effect.json, loop_sideeffect.json, loop_slack.json, loop_sphere_chain.json, loop_statement.json, loop_stiffness.json, loop_surrogate.json, loop_survivable.json, loop_tail.json, loop_variant.json",
+    "  53 recorded results carry a manifest with at least one named control: build_cell_complete.json, capability_audit.json, cell_complete_build.json, cell_loop.json, cell_model_audit.json, data_doctrine.json, data_fitness.json, loop_affinity.json, loop_amplify.json, loop_buffering.json, loop_cancer.json, loop_chain.json, loop_chromatin.json, loop_combined.json, loop_compartment.json, loop_deficit.json, loop_distogram_nn.json, loop_drug.json, loop_drug_rebuild.json, loop_extrusion.json, loop_fitted_bind.json, loop_fold_link.json, loop_fourth.json, loop_hic_target.json, loop_insulation.json, loop_integrate.json, loop_kinetics.json, loop_langevin.json, loop_loading.json, loop_mechanism.json, loop_medium.json, loop_nexus_fair.json, loop_pervariant.json, loop_physics_bind.json, loop_polymer.json, loop_provenance.json, loop_quantity.json, loop_real_chromatin.json, loop_rebuild.json, loop_recall.json, loop_rescue.json, loop_response_field.json, loop_retest.json, loop_shared_effect.json, loop_sideeffect.json, loop_slack.json, loop_sphere_chain.json, loop_statement.json, loop_stiffness.json, loop_surrogate.json, loop_survivable.json, loop_tail.json, loop_variant.json",
     "  7 modules are INSTRUMENTS (they read this repo's own audit records) and are excluded from every axis, because an audit crediting itself is how the last three checks here went wrong",
     "\n  question                 ENCODE   PIPE  CHECK    items   askable    gates  well?",
     "  any point mutation          yes    yes    yes       13       YES    16/26     no",
@@ -675,8 +690,8 @@
     "  any chromosome fold         yes    yes    yes      767       YES    11/14    YES",
     "  functional neighbourhood      yes    yes    yes    7,700       YES    15/16    YES",
     "  NEGATIVE CONTROL             NO     NO     NO        0        no        -     no",
-    "  drug effect                 yes    yes    yes    4,275       YES    14/18    YES",
-    "  side effect                 yes    yes    yes       48       YES      6/9     no",
+    "  drug effect                 yes    yes    yes    4,275       YES    16/23    YES",
+    "  side effect                 yes    yes    yes       48       YES     8/14     no",
     "  cancer                      yes    yes    yes      839       YES      7/8     no",
     "  metabolic growth            yes    yes    yes    2,580       YES      7/9    YES",
     "",
@@ -704,11 +719,11 @@
     "    drug effect            slots {'drugs': 4275}",
     "                           modules that address it: adrn_drug_liveness, adrn_drug_response, adrn_ko_channels3, blind_target, cell_qa, cell_stats, cellgraph, cellos",
     "                           answered well by: loop_drug.json",
-    "                           ADJACENT (touch the slot, do not answer it): loop_shared_effect.json, loop_sideeffect.json",
-    "                           recorded results: loop_drug.json, loop_drug_rebuild.json, loop_shared_effect.json, loop_sideeffect.json   controlled: loop_drug.json, loop_drug_rebuild.json, loop_shared_effect.json, loop_sideeffect.json",
+    "                           ADJACENT (touch the slot, do not answer it): loop_response_field.json, loop_shared_effect.json, loop_sideeffect.json",
+    "                           recorded results: loop_drug.json, loop_drug_rebuild.json, loop_response_field.json, loop_shared_effect.json, loop_sideeffect.json   controlled: loop_drug.json, loop_drug_rebuild.json, loop_response_field.json, loop_shared_effect.json, loop_sideeffect.json",
     "    side effect            slots {'otdis': 48}",
-    "                           modules that address it: adrn_ko_channels3, complete_cell, data_ledger, loop_shared_effect, loop_sideeffect, pertseq_apps",
-    "                           recorded results: data_ledger.json, loop_shared_effect.json, loop_sideeffect.json   controlled: loop_shared_effect.json, loop_sideeffect.json",
+    "                           modules that address it: adrn_ko_channels3, complete_cell, data_ledger, loop_response_field, loop_shared_effect, loop_sideeffect, pertseq_apps",
+    "                           recorded results: data_ledger.json, loop_response_field.json, loop_shared_effect.json, loop_sideeffect.json   controlled: loop_response_field.json, loop_shared_effect.json, loop_sideeffect.json",
     "    cancer                 slots {'biomarkers': 599, 'celltypes': 40, 'ctnames': 200}",
     "                           modules that address it: adrn_ko_channels3, cell_stats, celltype_coherence, celltype_conditioning, celltype_id, celltype_id_combined, cofactor, complete_cell",
     "                           SUPERSEDED, gates kept and vote removed: loop_cancer.json",

@@ -82,6 +82,7 @@ LOOPS = [
     ("57  among the harmful ones, why is each one harmful", "loop_mechanism.json", "gates"),
     ("58  the drug rebuild -- outcomes that are not list lengths",
      "loop_drug_rebuild.json", "gates"),
+    ("59  the drug response field, and the axis flip", "loop_response_field.json", "gates"),
     ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 

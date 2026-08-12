@@ -280,15 +280,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_response_field.json",
+        "bytes": 6288,
+        "hash": "bd3661a8a947b0b8",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 27016,
-        "hash": "ca3904b2b4ef997c",
+        "bytes": 27636,
+        "hash": "9bfff876ab4518ec",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 47,
-      "used": 47,
+      "available": 48,
+      "used": 48,
       "selection": "all",
       "fraction": 1.0
     },
@@ -300,8 +306,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 138,
-  "n_gates_failed": 58,
+  "n_gates_passed": 140,
+  "n_gates_failed": 61,
   "capability": [
     {
       "question": "any point mutation",
@@ -647,8 +653,8 @@
         "drugs": 4275
       },
       "n_items": 4275,
-      "gates_passed": 14,
-      "gates_failed": 4,
+      "gates_passed": 16,
+      "gates_failed": 7,
       "gate_detail": {
         "loop_drug.json": {
           "passed": 4,
@@ -657,6 +663,10 @@
         "loop_drug_rebuild.json": {
           "passed": 4,
           "failed": 1
+        },
+        "loop_response_field.json": {
+          "passed": 2,
+          "failed": 3
         },
         "loop_shared_effect.json": {
           "passed": 3,
@@ -670,6 +680,7 @@
       "answered_well": true,
       "best_pipeline": "loop_drug.json",
       "adjacent_credits": [
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -692,6 +703,7 @@
       "produces": [
         "loop_drug.json",
         "loop_drug_rebuild.json",
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -699,6 +711,7 @@
       "controlled": [
         "loop_drug.json",
         "loop_drug_rebuild.json",
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -711,9 +724,13 @@
         "otdis": 48
       },
       "n_items": 48,
-      "gates_passed": 6,
-      "gates_failed": 3,
+      "gates_passed": 8,
+      "gates_failed": 6,
       "gate_detail": {
+        "loop_response_field.json": {
+          "passed": 2,
+          "failed": 3
+        },
         "loop_shared_effect.json": {
           "passed": 3,
           "failed": 2
@@ -736,17 +753,20 @@
         "colab/adrn_ko_channels3.py",
         "colab/complete_cell.py",
         "colab/data_ledger.py",
+        "colab/loop_response_field.py",
         "colab/loop_shared_effect.py",
         "colab/loop_sideeffect.py",
         "colab/pertseq_apps.py"
       ],
       "produces": [
         "data_ledger.json",
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
       "phenotype_hits": [],
       "controlled": [
+        "loop_response_field.json",
         "loop_shared_effect.json",
         "loop_sideeffect.json"
       ],
@@ -875,8 +895,8 @@
     "  any point mutation          yes    yes    yes        13   16/26     no   ",
     "  any protein change          yes    yes    yes    42,765   43/52    YES   loop_quantity.json",
     "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
-    "  drug effect                 yes    yes    yes     4,275   14/18    YES   loop_drug.json",
-    "  side effect                 yes    yes    yes        48     6/9     no   ",
+    "  drug effect                 yes    yes    yes     4,275   16/23    YES   loop_drug.json",
+    "  side effect                 yes    yes    yes        48    8/14     no   ",
     "  cancer                      yes    yes    yes       839     7/8     no   ",
     "\n  6 of 6 can be ASKED.",
     "  6 can be GOT WRONG -- a slot, a pipeline and a controlled score.",
@@ -1123,11 +1143,17 @@
     "      PASS   R3 the cell model predicts seriousness",
     "      FAIL   R4 it transfers to the independent outcome",
     "      PASS   R5 nulls and holdout",
+    "\n  loop 59  the drug response field, and the axis flip",
+    "      PASS   P1 the field is not the target set",
+    "      FAIL   P2 the signs matter",
+    "      FAIL   P3 the network matters",
+    "      FAIL   P4 beats the fame baseline",
+    "      PASS   P5 nulls collapse it",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  138 gates passed, 58 failed. Both numbers are the point: a project where",
+    "\n  140 gates passed, 61 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -1165,7 +1191,7 @@
     "   pipeline and a controlled score. The distance moved to the fourth column.)",
     "",
     "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_distogram_nn.json, loop_pervariant.json, loop_rescue.json, loop_variant.json",
-    "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_shared_effect.json, loop_sideeffect.json",
+    "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_response_field.json, loop_shared_effect.json, loop_sideeffect.json",
     "  NOT ANSWERED WELL  cancer                 every module answering it has a failed gate: loop_survivable.json; SUPERSEDED: loop_cancer.json",
     "\n  SIX LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
     "    1  Effects are modest. rho 0.18 for torsion against transcription; AUC 0.72 for cytotoxic",
@@ -1197,6 +1223,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 47 inputs, coverage 47/47 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 48 inputs, coverage 48/48 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }
