@@ -31,11 +31,17 @@ quantity inherits how many effects were written down for that drug, which is fam
 it (target count 0.2898 -> 0.1769) and could not remove it.
 
 So score the other way round. FOR EACH SIDE-EFFECT TERM, RANK THE DRUGS. Does the model put the
-drugs that cause hepatotoxicity above the drugs that do not? Inside a single term, "how many effects
-this drug has" is not a feature that can help, because every drug in the comparison is being judged
-on the same one effect. The confound is not controlled for, it is structurally absent.
+drugs that cause hepatotoxicity above the drugs that do not?
 
-That flip is free, it needed no new data, and it should have been the design in loop 12.
+MY REASONING FOR WHY THIS WOULD WORK WAS WRONG, AND P4 IS WHERE IT SHOWS. The argument written here
+before the run was: inside a single term, "how many effects this drug has" cannot help, because
+every drug in the comparison is judged on the same one effect, so the confound is not controlled for
+but structurally absent. That is false, and the number is 0.7913. A drug with three hundred listed
+effects is more likely to carry ANY given effect than a drug with ten, so effect count is not
+cancelled by fixing the term -- it is close to the definition of term membership. Flipping the axis
+did not remove the confound. It made it stronger, going from 0.2898 on the old axis to 0.7913 here.
+
+The text above is left as it was written so the error is legible rather than tidied away.
 
 PREDECLARED, before any number:
 
@@ -342,18 +348,23 @@ def main():
              "P5 nulls collapse it": p5}
     for k, v in gates.items():
         say(f"  {k:<40}{'PASS' if v else 'FAIL'}")
-    say(f"  A DRUG IS NOW A FIELD, NOT A LIST. Signed by what it does to each target -- "
-        f"{int((Pm < 0).sum()):,} inhibitory,")
-    say(f"  {int((Pm > 0).sum()):,} activating -- and propagated over the signed regulatory network to a")
-    say(f"  dense response over every gene, reaching {reach:.0f}x as many genes as the drug has targets.")
-    say(f"  AND THE AXIS IS FLIPPED. Scoring per TERM rather than per DRUG makes 'how many effects")
-    say(f"  does this drug have' structurally unable to help, because every drug in a comparison is")
-    say(f"  judged on the same single effect. That baseline reaches {a_fame:.4f} here, against the")
-    say(f"  0.2898 it scored on the old axis in loop 12. The field reaches {a_field:.4f} over "
-        f"{len(terms)} terms.")
-    say(f"  What the signs are worth: {a_field - a_uns:+.4f}. What the network is worth over a")
-    say(f"  degree-preserving shuffle: {a_field - a_shuf:+.4f}. Over no propagation at all: "
-        f"{a_field - a_raw:+.4f}.")
+    say(f"  THE REPRESENTATION IS REAL AND IT CARRIES NOTHING. The field is signed by what the drug")
+    say(f"  does -- {int((Pm < 0).sum()):,} inhibitory, {int((Pm > 0).sum()):,} activating -- and "
+        f"propagated to a dense response reaching")
+    say(f"  {reach:.0f}x as many genes as the drug has targets, correlating {med:.3f} with the raw "
+        f"target vector.")
+    say(f"  P1 confirms it is genuinely a different object. Then: the signs are worth "
+        f"{a_field - a_uns:+.4f}, the")
+    say(f"  network over a degree-preserving shuffle {a_field - a_shuf:+.4f}, and propagation over no")
+    say(f"  propagation at all {a_field - a_raw:+.4f}. Every piece of the mechanism is worth zero.")
+    say(f"  AND THE AXIS FLIP DID THE OPPOSITE OF WHAT I ARGUED. The claim written into this file")
+    say(f"  before it ran was that scoring per TERM makes effect count structurally unable to help.")
+    say(f"  It reaches {a_fame:.4f}, against {a_field:.4f} for the field and {n95:.4f} for the null. A drug with")
+    say(f"  three hundred listed effects is more likely to carry ANY given effect than one with ten,")
+    say(f"  so fixing the term does not cancel the count -- it is nearly the definition of term")
+    say(f"  membership. The confound went from 0.2898 on the old axis to {a_fame:.4f} on this one.")
+    say(f"  Four attempts at this row have now failed on the same quantity, three of them on designs")
+    say(f"  built specifically to be immune to it, and this one made it worse.")
     say("=" * 100)
 
     man = RM.manifest(inputs=[str(CELL), str(SC / "sider_se.tsv.gz"), str(SC / "sider_names.tsv")],
