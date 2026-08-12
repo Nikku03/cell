@@ -187,13 +187,21 @@ def main():
     say(f"     running {ng:,} single-gene deletions ...")
     from cobra.flux_analysis import single_gene_deletion
     dl = single_gene_deletion(M, gene_list=M.genes, processes=1)
+    # cobrapy 0.31 returns a RangeIndex with the gene ids in an `ids` COLUMN, not in the index.
+    # The first run of this module read the index, so every gene fell through to the default
+    # "no effect" and B3 came back at AUC exactly 0.5000 with zero predictions above threshold --
+    # a number that looked like a biological result and was a parsing bug. An AUC of exactly 0.5000
+    # with 0 true and 0 false positives is not a finding; it is an assertion that should have fired.
     ratio = {}
-    for idx, row in dl.iterrows():
-        ids = list(idx) if isinstance(idx, (frozenset, set)) else [idx]
-        g = ids[0] if ids else None
+    for _, row in dl.iterrows():
+        ids = list(row["ids"]) if not isinstance(row["ids"], str) else [row["ids"]]
         v = row["growth"]
-        if g is not None:
+        for g in ids:
             ratio[g] = 0.0 if (v is None or not np.isfinite(v)) else float(v) / max(mu, 1e-12)
+    assert len(ratio) >= 0.9 * ng, f"deletion parse recovered only {len(ratio)} of {ng} genes"
+    nlethal = sum(1 for v in ratio.values() if v < DEAD)
+    say(f"     parsed {len(ratio):,} deletion results; {nlethal} are lethal in silico")
+    assert nlethal > 0, "no deletion is lethal -- the parse or the medium is wrong"
     lab, score, keptg = [], [], []
     for g in genes:
         if g in ess:
