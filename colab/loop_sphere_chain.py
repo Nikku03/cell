@@ -545,9 +545,17 @@ def main():
     say(f"  THE MUTATION IS NOW IN THE NETWORK. Each node sits at its side-chain centroid, each edge")
     say(f"  is weighted by the volumes it joins, and a substitution changes every edge touching its")
     say(f"  site -- so dG = -G dK G is a response to the mutation and not a description of the fold.")
-    say(f"  S1 measures that directly: the features vary across substitutions at "
-        f"{min(varies.values()):.0%}+ of")
-    say(f"  multiply-substituted residues, where the reviewed draft would have scored zero.")
+    surv_var = min([varies[f] for f in survive], default=0.0)
+    say(f"  S1 measures that directly. dg_self, dg_total and dg_far vary across substitutions at")
+    say(f"  {min(varies['dg_self'], varies['dg_total'], varies['dg_far']):.1%} of multiply-substituted "
+        f"residues, where the reviewed draft would have scored ZERO --")
+    say(f"  the perturbation is real. S1 FAILED on dg_reach alone, which varies at only "
+        f"{varies['dg_reach']:.1%}:")
+    say(f"  a threshold COUNT is too coarse to move when one side-chain volume changes, so it is a")
+    say(f"  wild-type descriptor after all. The gate caught one of four, which is what it is for.")
+    say(f"  Surviving features vary at {surv_var:.1%}+ and carry R2 of only "
+        f"{min(r2s[f] for f in survive):.2f}-{max(r2s[f] for f in survive):.2f} against loop 54's")
+    say(f"  fifteen distinct columns -- so they are GENUINELY NEW INFORMATION, and they do not help.")
     say(f"  Sphere features surviving the redundancy gate: "
         f"{', '.join(survive) if survive else 'NONE'}.")
     say(f"  Over loop 54 refitted here without allele frequency, they add {c3['delta']:+.4f} "
