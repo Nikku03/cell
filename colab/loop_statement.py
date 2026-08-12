@@ -78,6 +78,7 @@ LOOPS = [
     ("54  pairwise structure through a neural network", "loop_distogram_nn.json", "gates"),
     ("55  the connected sphere chain, with the mutation in the network",
      "loop_sphere_chain.json", "gates"),
+    ("56  the sphere chain and the distogram together", "loop_combined.json", "gates"),
     ("2/9/11/13/19/26/33/47 capability audit", "capability_audit.json", None),
 ]
 

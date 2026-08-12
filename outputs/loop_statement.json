@@ -262,15 +262,21 @@
         "method": "sha256:full"
       },
       {
+        "path": "outputs/loop_combined.json",
+        "bytes": 5935,
+        "hash": "c6e07b9a8cc4ae45",
+        "method": "sha256:full"
+      },
+      {
         "path": "outputs/capability_audit.json",
-        "bytes": 26512,
-        "hash": "655a1f537fba92e2",
+        "bytes": 26561,
+        "hash": "ba9b8720a61b5663",
         "method": "sha256:full"
       }
     ],
     "coverage": {
-      "available": 44,
-      "used": 44,
+      "available": 45,
+      "used": 45,
       "selection": "all",
       "fraction": 1.0
     },
@@ -282,8 +288,8 @@
     "note": "assembled from recorded runs; no number typed from recollection",
     "warnings": []
   },
-  "n_gates_passed": 127,
-  "n_gates_failed": 55,
+  "n_gates_passed": 129,
+  "n_gates_failed": 57,
   "capability": [
     {
       "question": "any point mutation",
@@ -1077,11 +1083,16 @@
     "      PASS   S2 not a re-parameterisation",
     "      FAIL   S3 adds over loop 54 refitted",
     "      PASS   S4 the nulls collapse it",
+    "\n  loop 56  the sphere chain and the distogram together",
+    "      PASS   C1 blocks join by key",
+    "      FAIL   C2 the combination adds",
+    "      FAIL   C3 the interaction adds",
+    "      PASS   C4 the nulls collapse it",
     "\n  loop 3  why the lookup won",
     "      PASS   H1 mechanism knows something the lookup does not",
     "      PASS   H2 the lookup is a general expression confound",
     "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
-    "\n  127 gates passed, 55 failed. Both numbers are the point: a project where",
+    "\n  129 gates passed, 57 failed. Both numbers are the point: a project where",
     "  every gate passes was not gating anything.",
     "\n----------------------------------------------------------------------------------------------------",
     "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
@@ -1151,6 +1162,6 @@
     "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
     "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
     "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
-    "    manifest: 44 inputs, coverage 44/44 (100.0%) by 'all', seed 1904, controls 2"
+    "    manifest: 45 inputs, coverage 45/45 (100.0%) by 'all', seed 1904, controls 2"
   ]
 }
