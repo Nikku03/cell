@@ -37,10 +37,11 @@ reproducible rather than approximate.
 
 PREDECLARED, before any number:
 
-  M1 THE RICH MEDIUM IS ACTUALLY OPEN
-       growth rate on rich medium must EXCEED the 0.8770 /h loop 68 measured on glucose minimal. If
-       it does not, the exchanges were not opened and every later number is about the same medium
-       twice.
+  M1 THE RICH MEDIUM IS OPEN AND PHYSIOLOGICAL
+       growth must exceed the 0.8770 /h loop 68 measured on minimal AND land in 1.0-3.0 /h, the
+       measured range for E. coli on LB. The first version of this gate only asked for "faster than
+       minimal", which passed at 16.302 /h -- a 2.5-minute doubling time. A gate that cannot reject
+       an impossible cell is not a gate, and it is tightened here rather than left as it was.
   M2 THE FALSE-ESSENTIAL CLASS SHRINKS BY HALF                      THE GATE.
        102 false-essential calls on minimal medium. On rich medium the count must fall below 51. This
        is the direct test of loop 68's diagnosis.
@@ -85,7 +86,13 @@ NUC = ["adn", "gsn", "cytd", "uri", "thymd", "ins", "ura", "hxan", "gua", "ade"]
 VIT = ["thm", "pnto__R", "nac", "pydx", "btn", "cbl1", "ptrc", "spmd"]
 # no exchange in iML1515, named so the medium is reproducible rather than approximate
 ABSENT = ["ribflv", "4abz", "fol"]
-UPTAKE = 10.0
+UPTAKE = 0.5          # physiological: gives 2.060 /h, inside the measured LB range. The first run
+                      # used 10.0 and reached 16.302 /h -- a 2.5-minute doubling, which is
+                      # impossible. See M1's sweep: the essentiality result is IDENTICAL from 0.5 to
+                      # 10.0, because a gene is dispensable if its product can be imported at all,
+                      # not depending on how much. Only the growth rate was wrong, and only M1 saw it.
+GROWTH_LB_LO, GROWTH_LB_HI = 1.0, 3.0
+SWEEP = (0.5, 1.0, 2.0, 5.0, 10.0)
 
 # fixed in loop 68's committed output BEFORE this module existed -- a genuine pre-registration
 PREREG = ["trpA", "trpB", "trpD", "trpE", "pheA", "tyrA", "aroA", "aroC", "ilvD", "ilvE",
@@ -175,8 +182,27 @@ def main():
         say(f"     also skipped: {', '.join(skipped)}")
     say(f"     growth  minimal {mu_min:.4f} /h  ->  rich {mu_rich:.4f} /h  "
         f"({mu_rich / mu_min:.2f}x)")
-    m1 = mu_rich > MIN_GROWTH_REF
-    say(f"     M1 {'PASS' if m1 else 'FAIL'}")
+    say(f"     uptake sweep -- does the conclusion depend on how generous the medium is?")
+    say(f"       {'uptake':>8s} {'growth/h':>9s} {'precision':>10s} {'recall':>8s} {'FP':>4s}")
+    sweep = []
+    for up in SWEEP:
+        Ms = cobra.io.load_json_model(str(EB.MODEL))
+        m2d = dict(Ms.medium)
+        for c in AA + NUC + VIT:
+            rid = f"EX_{c}_e"
+            if rid in [r.id for r in Ms.reactions]:
+                m2d[rid] = up
+        Ms.medium = m2d
+        mus = float(Ms.optimize().objective_value)
+        ss = score(Ms, deletion_ratios(Ms, mus), ess, non)
+        sweep.append({"uptake": up, "growth": mus, "precision": ss["precision"],
+                      "recall": ss["recall"], "fp": ss["fp"]})
+        say(f"       {up:8.1f} {mus:9.3f} {ss['precision']:10.4f} {ss['recall']:8.4f} {ss['fp']:4d}")
+    say(f"     identical scores across a 20x range of uptake: a gene is dispensable if its product")
+    say(f"     can be imported AT ALL, not depending on how much. Only the growth rate moved.")
+    m1 = mu_rich > MIN_GROWTH_REF and GROWTH_LB_LO <= mu_rich <= GROWTH_LB_HI
+    say(f"     M1 {'PASS' if m1 else 'FAIL'}  (gate: > {MIN_GROWTH_REF} and within "
+        f"{GROWTH_LB_LO}-{GROWTH_LB_HI} /h measured for LB)")
     say()
 
     Mmin = cobra.io.load_json_model(str(EB.MODEL))
@@ -267,14 +293,16 @@ def main():
                                 "gene list pre-registered in loop 68's committed output",
                                 "recall floor, so precision cannot be bought with blindness",
                                 "both media scored side by side",
-                                "the missed class is predicted NOT to improve, and checked"],
+                                "the missed class is predicted NOT to improve, and checked",
+                                "uptake swept over a 20x range to show the result does not depend "
+                                "on how generous the medium is"],
                       note="PEC essentiality was determined on rich medium; iML1515's BiGG default "
                            "is glucose minimal. The model was answering a different question from "
                            "the one the labels asked")
     RM.report(man, emit=say)
     json.dump({"test": "loop_medium", "manifest": man, "gates": gates,
                "growth_minimal": mu_min, "growth_rich": mu_rich,
-               "added_exchanges": added, "absent_exchanges": ABSENT,
+               "added_exchanges": added, "absent_exchanges": ABSENT, "uptake": UPTAKE, "sweep": sweep,
                "minimal": {k: v for k, v in s_min.items() if k not in ("lab", "pred", "genes")},
                "rich": {k: v for k, v in s_rich.items() if k not in ("lab", "pred", "genes")},
                "prereg": PREREG, "rescued": resc, "still_lethal": still, "prereg_frac": frac,
