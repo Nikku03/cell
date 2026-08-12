@@ -196,9 +196,10 @@ def main():
     if not c1:
         verdict = "VOID -- a fold was starved and loop 61's loops3d row cannot be interpreted"
     elif c2 and c3:
-        verdict = ("DISCONNECTED -- 767 positives is enough for other layers, and loops3d is worse "
-                   "than the weakest of them at matched size. The 3D genome does not covary with "
-                   "the rest of this model")
+        verdict = ("DISCONNECTED -- 767 positives is enough for most layers, and loops3d falls below "
+                   "the 5th percentile of the matched-size distribution. NOT below its minimum: at "
+                   "least one subsampled layer does worse, so this is an outlier claim and not a "
+                   "worst-in-class one. The 3D genome does not covary with the rest of this model")
     elif c2 and not c3:
         verdict = ("UNDECIDED -- 767 is survivable in general, but loops3d sits inside the range of "
                    "matched-size peers rather than below it. It is at the weak end of normal, which "

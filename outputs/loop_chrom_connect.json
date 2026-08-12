@@ -280,7 +280,7 @@
  "cut_p5": -0.0020497734038424347,
  "n_still_earning": 16,
  "n_cut": 20,
- "verdict": "DISCONNECTED -- 767 positives is enough for other layers, and loops3d is worse than the weakest of them at matched size. The 3D genome does not covary with the rest of this model",
+ "verdict": "DISCONNECTED -- 767 positives is enough for most layers, and loops3d falls below the 5th percentile of the matched-size distribution. NOT below its minimum: at least one subsampled layer does worse, so this is an outlier claim and not a worst-in-class one. The 3D genome does not covary with the rest of this model",
  "seconds": 244.05584740638733,
  "log": [
   "====================================================================================================",
@@ -339,5 +339,6 @@
   "  PASS  C4 nulls measured at matched size",
   "  PASS  C5 verdict written from C2 and C3",
   "    manifest: 2 inputs, coverage 20/28 (71.4%) by 'filtered', seed 6401, controls 6"
- ]
+ ],
+ "correction": "the first committed verdict string said loops3d was worse than the weakest subsampled layer. It is not: loops3d margin -0.0261, subsampled minimum -0.0313. Corrected."
 }
