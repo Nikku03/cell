@@ -218,14 +218,27 @@ def fit_predict(X, y, grp, rng, folds=FOLDS, ret_train=False):
         tr, te = fid != k, fid == k
         if tr.sum() < 40 or te.sum() == 0 or len(np.unique(y[tr])) < 2:
             continue
-        mu, sd = X[tr].mean(0), X[tr].std(0) + 1e-9
-        # sklearn rather than the hand-rolled gradient descent this file first used. The two agreed
-        # to within 0.01 on every arm, so convergence was never the problem -- but a properly solved
-        # fit removes one whole class of doubt from a loop whose entire subject is what fitting buys.
-        m = LogisticRegression(max_iter=5000, C=1.0).fit((X[tr] - mu) / sd, y[tr])
-        oof[te] = m.decision_function((X[te] - mu) / sd)
+        # RANK-TRANSFORM, fitted on train only, and the reason is the third bug this loop found in
+        # itself. `contacts` runs 0 to 10,278 with a standard deviation of 378: after standardising,
+        # almost every value sits in a sliver near zero and a handful are enormous. L2 logistic
+        # regression shrinks that coefficient toward nothing to avoid the outliers -- measured at
+        # +0.046, -0.058, -0.035, -0.063, -0.052 across the five folds, on a feature whose own AUC is
+        # 0.74 to 0.80 in those same folds. The fitted arm scored 0.4196 against 0.7722 unfitted.
+        # AUC IS RANK-BASED AND LOGISTIC REGRESSION IS VALUE-BASED, so a monotone but wildly
+        # nonlinear feature can rank almost perfectly and still be useless to a linear fit. Comparing
+        # a raw feature's AUC against a fitted linear model's AUC is not the same comparison unless
+        # the fit is given the ranks. Empirical CDF from the TRAINING rows only, applied to test by
+        # interpolation -- monotone, so it changes no feature's own AUC, and leak-free.
+        A = np.empty_like(X[tr])
+        B = np.empty_like(X[te])
+        for j in range(X.shape[1]):
+            srt = np.sort(X[tr, j])
+            A[:, j] = np.searchsorted(srt, X[tr, j], side="right") / max(len(srt), 1)
+            B[:, j] = np.searchsorted(srt, X[te, j], side="right") / max(len(srt), 1)
+        m = LogisticRegression(max_iter=5000, C=1.0).fit(A, y[tr])
+        oof[te] = m.decision_function(B)
         if ret_train:
-            v = m.decision_function((X[tr] - mu) / sd)
+            v = m.decision_function(A)
             trn[tr] = np.where(np.isnan(trn[tr]), v, trn[tr])
     return (oof, trn) if ret_train else oof
 
