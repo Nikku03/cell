@@ -371,9 +371,21 @@ def main():
              "F7 beats nexus's own number": f7}
     for k, v in gates.items():
         say(f"  {k:<40}{'PASS' if v else 'FAIL'}")
-    say(f"  WEIGHTING THE TERMS TAKES THE FORCE FIELD FROM {UNWEIGHTED:.4f} TO {a_e:.4f} ON ENERGY")
-    say(f"  ALONE, and the whole model to {a_test:.4f} held out by complex against a within-complex")
-    say(f"  null of {n95:.4f}. Counting atoms, unfitted, is {GEOMETRY:.4f}.")
+    say(f"  F2 IS THE RESULT, AND IT FAILED. Permuting labels WITHIN complex leaves the refitted")
+    say(f"  model at {nulls.mean():.4f}, not 0.5. That null was built to catch exactly one thing and it")
+    say(f"  caught it: a within-complex permutation preserves each complex's BREAKER COUNT, so any")
+    say(f"  feature that is large in complexes with many breakers keeps its association. Contact")
+    say(f"  count is such a feature -- big interfaces have both -- so roughly {nulls.mean():.2f} of every")
+    say(f"  POOLED number on this task is complex identity rather than variant discrimination.")
+    say(f"  THAT FLOOR APPLIES TO EVERY POOLED NUMBER HERE, NOT ONLY TO THIS ONE: the {GEOMETRY:.4f}")
+    say(f"  contact count of loop 52, nexus's recorded 0.755 and rebuilt {NEXUS_REBUILT:.3f}, and this")
+    say(f"  model's {a_test:.4f} all sit on top of it. The comparison that does not is F5's, which is")
+    say(f"  paired WITHIN complex -- and there the fitted physics adds "
+        f"{np.mean(d) if len(d) else float('nan'):+.4f} over geometry,")
+    say(f"  winning {np.mean(d > 0) if len(d) else float('nan'):.1%} of complexes at p {pw:.3f}. Real, "
+        f"and small.")
+    say(f"  Weighting the terms took energy alone from {UNWEIGHTED:.4f} to {a_e:.4f} and the full model")
+    say(f"  to {a_test:.4f} held out by complex, with a train-test gap of {a_train - a_test:+.4f}.")
     if f4:
         say(f"  SO THE ENERGY DOES KNOW SOMETHING THE TAPE MEASURE DOES NOT -- fitted physics beats")
         say(f"  the count outright, and loop 52's failure was the unweighted sum, not the force field.")
