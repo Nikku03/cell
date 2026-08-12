@@ -63,6 +63,22 @@ PREDECLARED, before any number:
   FOLDS ARE GROUPED BY CHROMOSOME. Neighbouring genes share regulatory context and paralogue
   clusters sit together, so random folds would let a gene be filled by its own neighbourhood.
 
+TWO DEFECTS IN THIS MODULE'S OWN FIRST RUN, found by reading its output rather than by any gate,
+and corrected here. Both made the result look cleaner than it was:
+
+  THE PROVENANCE FLAG NEVER FIRED. FLAGGED was keyed "ppi" while the layer is built as "ppi_edges",
+  so the loop 49 defect this file promised to surface was absent from all 28 rows. A declared control
+  that silently does not run is worse than one never declared, because the output looks clean.
+
+  V1 MISSED A DEFINITIONAL PAIR. `tf` is classified by `reg_out` at AUC 0.9801 and `reg_out` by `tf`
+  at 0.8826: a gene has outgoing regulatory edges BECAUSE it is a transcription factor. Rank
+  correlation put them under 0.95 and let them through, so `reg_out` was scored as EARNED (+0.0259)
+  against a baseline that is its own definition. V1 now also tests whether either layer CLASSIFIES
+  the other at AUC > 0.95.
+
+The first run's headline was 23 of 28 layers earned. That number is superseded by whatever this run
+produces, and the two corrections both push in the direction of fewer earned layers, not more.
+
 -> outputs/loop_state_vector.json
 """
 import collections
@@ -91,7 +107,11 @@ FOLDS = 5
 N_NULL = 100
 SEED = 6101
 
-FLAGGED = {"ppi": "loop 49 gate D2 FAILED -- declared BioGRID source reproduces at corr 0.3701"}
+ALIAS_AUC = 0.95
+# keyed on the LAYER NAME as built, not on the cell-file field name. The first run of this module
+# keyed it "ppi" while the layer is "ppi_edges", so the flag silently never fired -- a declared
+# control that does not run is worse than one that was never declared, because the output looks clean.
+FLAGGED = {"ppi_edges": "loop 49 gate D2 FAILED -- declared BioGRID source reproduces at corr 0.3701"}
 
 log = []
 
@@ -255,10 +275,32 @@ def main():
             if abs(C[i, j]) > ALIAS_RHO:
                 alias[names[i]].add(names[j])
                 alias[names[j]].add(names[i])
-                pairs.append((names[i], names[j], float(C[i, j])))
+                pairs.append((names[i], names[j], float(C[i, j]), "rho"))
                 say(f"     ALIAS  {names[i]:12s} ~ {names[j]:12s}  rho {C[i, j]:+.4f}")
+
+    # RANK CORRELATION IS NOT ENOUGH, and the first run of this module proved it. `tf` is predicted
+    # by `reg_out` at AUC 0.9801 and `reg_out` by `tf` at 0.8826 -- a gene has outgoing regulatory
+    # edges BECAUSE it is a transcription factor, which is definitional, not learned. That pair sits
+    # below |rho| 0.95 because a binary flag and a count can classify each other almost perfectly
+    # without rank-correlating that highly. So a second criterion: if either layer CLASSIFIES the
+    # other's presence at AUC > 0.95, they are aliases regardless of correlation.
+    for i in range(len(names)):
+        yi = (L[names[i]] > 0).astype(int)
+        if yi.sum() < MIN_PRESENT or (len(yi) - yi.sum()) < MIN_ABSENT:
+            continue
+        for j in range(len(names)):
+            if i == j or names[j] in alias[names[i]]:
+                continue
+            a = roc_auc_score(yi, L[names[j]])
+            a = max(a, 1 - a)
+            if a > ALIAS_AUC:
+                alias[names[i]].add(names[j])
+                alias[names[j]].add(names[i])
+                pairs.append((names[j], names[i], float(a), "auc"))
+                say(f"     ALIAS  {names[j]:12s} classifies {names[i]:12s} at AUC {a:.4f}"
+                    f"  -- definitional, not learned")
     if not pairs:
-        say("     no pair above |rho| 0.95")
+        say("     no pair above |rho| 0.95 or AUC 0.95")
     say(f"     V1 PASS  ({len(pairs)} alias pairs found and excluded per target)")
     say()
 
