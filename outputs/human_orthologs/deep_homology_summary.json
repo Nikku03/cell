@@ -1,0 +1,33 @@
+{
+  "dark_genes_searched": 234,
+  "panel_species": 26,
+  "panel_proteins": 283294,
+  "genes_with_any_hit": 231,
+  "genes_with_no_hit": 3,
+  "genes_reaching_prokaryotes": 94,
+  "genes_reaching_prokaryotes_rbh": 7,
+  "genes_reaching_bacteria": 75,
+  "genes_reaching_archaea": 56,
+  "deepest_domain_counts": {
+    "bacteria": 75,
+    "archaea": 19,
+    "excavata": 42,
+    "amoebozoa": 31,
+    "apicomplexa": 7,
+    "choanoflagellate": 8,
+    "fungi_other": 7,
+    "porifera": 15,
+    "placozoa": 1,
+    "plant": 12,
+    "echinoderm": 4,
+    "cnidaria": 3,
+    "alga": 5,
+    "cephalochordate": 2,
+    "none": 3
+  },
+  "total_hit_rows": 68182,
+  "hits_by_method": {
+    "phmmer": 66824,
+    "profile": 1358
+  }
+}

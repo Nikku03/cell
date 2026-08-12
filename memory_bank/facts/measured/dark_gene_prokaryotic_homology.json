@@ -1,0 +1,74 @@
+{
+  "id": "dark_gene_prokaryotic_homology",
+  "claim": "The 235 human genes with no curated function but a characterized fly/worm/yeast ortholog were searched by sequence against 283,294 proteins from 26 species present in neither ortholog source used upstream (8 bacteria, 4 archaea, plus plants, algae, Dictyostelium, Plasmodium, Trypanosoma, Giardia, fission yeast, choanoflagellate, sponge, placozoan, cnidarian, sea urchin, amphioxus, Ciona). 234 were searchable (MYH16 is a human pseudogene with no protein product). 231 of 234 have at least one homolog in the panel and only 3 have none (DMRTC1, DMRTC1B, TEX13D — all testis-expressed and fast-evolving). 94 genes reach bacteria or archaea: 75 bacteria, 56 archaea. Only 7 carry a reciprocal best hit (ACYP1 -> Thermococcus kodakarensis acylphosphatase E=1.6e-19; PPM1N -> Bacillus subtilis PrpC E=8.6e-11; AMMECR1L -> Methanocaldococcus jannaschii MJ0810 E=2.8e-22; MCTS2 -> M. jannaschii MJ1432 E=3.0e-31; SDR42E1 -> Mycobacterium tuberculosis 3-beta-hydroxysteroid dehydrogenase E=2.4e-74; METTL25B -> M. tuberculosis trans-aconitate 2-methyltransferase E=1.4e-05; DIP2C -> M. tuberculosis 4-hydroxyphenylalkanoate adenylyltransferase E=9.9e-57), and only 3 of those are the gene's single best prokaryotic hit. For the other 87 the prokaryotic homology is real and frequently overwhelming (to E=1e-206) but the reverse search returns a different, better-studied human paralog (ABCF2-H2BK1 -> ABCF1, ATAD3C -> VCP, ATP13A5 -> ATP2C1, MGAM2 -> MGAM), which places the ancient lineage on the parent gene rather than on the dark duplicate. The profile stage is what makes the depth reachable at all: of 1,397 distinct gene-protein prokaryotic pairs, 448 were found only by the profile search and 39 only by direct search, and 38 of the 94 prokaryote-reaching genes would have been missed entirely by single-sequence search. 19 dark genes have a homolog in Mycoplasma mycoides SC PG1 and 18 in Mycoplasmoides genitalium, the organism family JCVI-Syn3A derives from.",
+  "confidence": "measured",
+  "source": "hmmer_profile_search",
+  "source_detail": "Reproducible via scripts/deep_homology_dark_genes.py (--resolve-panel, --resolve-queries, then the search) and scripts/deep_homology_report.py. Outputs under outputs/human_orthologs/: dark_gene_deep_homology.tsv (per gene), dark_gene_deep_homology_hits.tsv.gz (68,182 hit rows), deep_homology_summary.json, DEEP_HOMOLOGY.md. Query sequences: 227 of 235 from UniProt reviewed entries joined on GeneID, 7 more from the RefSeq protein NCBI links to the GeneID, 1 (MYH16) has no protein. Targets: UniProt reference proteomes, one per panel species, resolved with the proteomes API 'reference:true' filter. Reciprocal target is the reviewed human proteome only (20,416 canonical entries) rather than the full UP000005640 download (147,506 records with isoforms and TrEMBL), which is 7x faster and the right unit for a reciprocal best hit. Reporting threshold E<=1e-3 throughout; profiles seeded with up to 60 eukaryotic homologs at query coverage >=0.3, median 17 seeds. Wall time ~55 min single-node on 4 CPUs (25 min phmmer over 283k targets, 7 min profile build and search over 30k prokaryotic targets, 20 min reciprocal over 2,827 distinct hit sequences), peak RSS ~1.6 GB. Measured alternative: jackhmmer over the pooled 283k panel at 3 iterations projects to 255 min for the same 234 queries, which is why the profile search is restricted to the prokaryotic subset instead.",
+  "last_verified": "2026-08-12",
+  "context": {
+    "entity": "dark_gene_deep_homology",
+    "version": "v1.0.0"
+  },
+  "dependencies": [
+    "human_gene_ortholog_function_map"
+  ],
+  "used_by": [
+    "scripts/fetch_deep_homology_data.sh",
+    "scripts/deep_homology_dark_genes.py",
+    "scripts/deep_homology_report.py",
+    "docs/HUMAN_ORTHOLOG_FUNCTION.md"
+  ],
+  "value": {
+    "dark_genes_searched": 234,
+    "dark_genes_total": 235,
+    "genes_without_protein_product": 1,
+    "panel_species": 26,
+    "panel_proteins": 283294,
+    "prokaryotic_proteins": 30168,
+    "genes_with_any_hit": 231,
+    "genes_with_no_hit": 3,
+    "genes_reaching_prokaryotes": 94,
+    "genes_reaching_bacteria": 75,
+    "genes_reaching_archaea": 56,
+    "genes_with_prokaryote_rbh": 7,
+    "genes_whose_best_prok_hit_is_rbh": 3,
+    "genes_whose_best_prok_hit_maps_to_other_human_gene": 87,
+    "genes_whose_best_prok_hit_has_no_reverse_human_hit": 4,
+    "genes_found_only_by_profile_search": 38,
+    "distinct_prokaryotic_gene_protein_pairs": 1397,
+    "pairs_profile_only": 448,
+    "pairs_phmmer_only": 39,
+    "pairs_both_methods": 910,
+    "total_hit_rows": 68182,
+    "deepest_domain_counts": {
+      "bacteria": 75,
+      "archaea": 19,
+      "excavata": 42,
+      "amoebozoa": 31,
+      "porifera": 15,
+      "plant": 12,
+      "choanoflagellate": 8,
+      "apicomplexa": 7,
+      "fungi_other": 7,
+      "alga": 5,
+      "echinoderm": 4,
+      "cnidaria": 3,
+      "cephalochordate": 2,
+      "placozoa": 1,
+      "none": 3
+    },
+    "mycoplasma_mycoides_homologs": 19,
+    "mycoplasmoides_genitalium_homologs": 18,
+    "jackhmmer_projected_minutes": 255,
+    "profile_search_actual_minutes": 7,
+    "status": "MEASURED"
+  },
+  "caveats": [
+    "Homology is not orthology. Most of the 94 prokaryotic hits are the human protein landing in an ancient widely-shared family (P-loop NTPases, ABC transporter ATPase domains, Rossmann-fold dehydrogenases), not a one-to-one counterpart. The reciprocal-best-hit column is the filter that separates the two.",
+    "The reciprocal test is conservative in exactly the wrong direction for this gene set. These are dark genes, many of them recent duplicates or readthrough transcripts of well-studied parents, so a bacterial protein's best human match is frequently the parent. A failed RBH on a young paralog says the query is not the family's representative member; it does not say the family lacks prokaryotic ancestry. The 7 RBH genes are the safest calls, not the complete set of true ones.",
+    "A profile search buys reach with specificity. Profiles built from a gene's eukaryotic homologs find remote homology that single-sequence search cannot, and they also drift toward generic domain models when the seed set is large and divergent (seed counts range to the 60 cap; median 17). The 4 genes whose best prokaryotic hit produced no human hit at all on the reverse search are profile-level matches only and are the weakest rows in the table.",
+    "Multidomain proteins can pass the reciprocal test on one domain. DIP2C is over 1,500 residues and its hit is to an adenylyltransferase domain; the verdict reflects that domain rather than the whole protein. Query coverage is recorded per hit and should be checked before reading a whole-protein claim into a domain-level match.",
+    "The panel samples two domains of life with 12 genomes. Absence of a hit is weak evidence at this depth, and three of the eukaryotic panel members (Giardia, Plasmodium, Trypanosoma) are reduced parasitic genomes that have lost ancestral genes, so a missing hit there reflects their biology as much as the human gene's age.",
+    "This extends the dark-gene analysis with sequence evidence; it does not revise any conservation depth recorded in human_gene_ortholog_function_map, which remains a database-derived quantity. No Syn3A metric or the Breuer 2019 benchmark is affected."
+  ]
+}

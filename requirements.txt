@@ -2,3 +2,4 @@ numpy>=1.24
 python-libsbml>=5.19
 scipy>=1.10      # P9 uses scipy.integrate.solve_ivp with LSODA
 torch>=2.0       # P7, P7b, P8, P10 train and run neural networks
+pyhmmer>=0.12  # scripts/deep_homology_dark_genes.py — bundled HMMER3, no external install

@@ -1,0 +1,10 @@
+{
+  "id": "hmmer_profile_search",
+  "citation": "Eddy, S.R. Accelerated profile HMM searches. PLoS Computational Biology 7, e1002195 (2011). Run through pyhmmer 0.12.1 (Larralde, M. & Zeller, G., JOSS 8, 4296, 2023), which embeds HMMER3 and exposes phmmer, hmmalign, hmmbuild and hmmsearch in-process.",
+  "doi": "10.1371/journal.pcbi.1002195",
+  "type": "software_tool",
+  "organism": "not_applicable",
+  "authority": "primary",
+  "notes": "Used to answer the question the ortholog databases cannot: whether a human gene has a homolog in bacteria or archaea. Two passes. phmmer searches the single human query sequence against each proteome and is the conservative baseline. The profile pass aligns the gene's eukaryotic phmmer hits back to the query with hmmalign, rebuilds a profile HMM from that alignment, and searches only the prokaryotic proteomes with it -- the same mechanism jackhmmer uses to reach remote homology, but with the expensive search restricted to 30k prokaryotic sequences rather than the full 283k panel (measured: 4.25 hours of jackhmmer collapses to about 7 minutes). Every hit is then searched back against the reviewed human proteome; a hit is called a reciprocal best hit only if the original query gene comes back on top, which is what separates an ortholog candidate from the protein merely containing an ancient shared domain.",
+  "url": "http://hmmer.org/"
+}

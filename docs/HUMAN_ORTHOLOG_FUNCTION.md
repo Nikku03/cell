@@ -118,13 +118,70 @@ yeast `PEP12` (endosomal SNARE), `IGBP1C` → yeast `TAP42` (PP2A regulator).
 conserved as anything in the genome — and several still sit in the `sparse`
 tier.
 
+## Going deeper than the databases: bacteria and archaea
+
+Both ortholog sources stop at fly, worm and yeast, so neither can say whether a
+gene reaches *prokaryotes*. For the 235 dark genes that question is answered by
+direct sequence search instead — see `outputs/human_orthologs/DEEP_HOMOLOGY.md`.
+
+234 of the 235 (MYH16 has no protein product in human — it is a pseudogene)
+were searched against 283,294 proteins from 26 species that appear in neither
+ortholog source: 8 bacteria, 4 archaea, plus plants, algae, *Dictyostelium*,
+*Plasmodium*, *Trypanosoma*, *Giardia*, fission yeast, choanoflagellate,
+sponge, placozoan, cnidarian, sea urchin, amphioxus and *Ciona*.
+
+| result | value |
+|:---|---:|
+| genes with ≥1 homolog in the panel | 231 of 234 |
+| genes with no hit anywhere | 3 (DMRTC1, DMRTC1B, TEX13D) |
+| **genes reaching bacteria or archaea** | **94** |
+| ↳ with at least one reciprocal best hit | 7 |
+| genes that only the profile search found | 38 of 94 |
+
+Two passes, because single-sequence search is nearly blind at this distance:
+`phmmer` for the conservative baseline, then a profile HMM built from each
+gene's *eukaryotic* homologs and searched against the prokaryotic proteomes
+only. That is jackhmmer's mechanism with the expensive search restricted to 30k
+sequences instead of 283k — measured at 4.25 hours for jackhmmer versus about 7
+minutes this way. 38 of the 94 prokaryote-reaching genes are invisible to the
+direct search and only appear once the profile exists.
+
+The seven reciprocal-best-hit genes are the safest calls: `ACYP1` →
+*Thermococcus* acylphosphatase (E=2e-19), `PPM1N` → *B. subtilis* PrpC
+(E=9e-11), `AMMECR1L` → *M. jannaschii* MJ0810 (E=3e-22), `MCTS2` →
+*M. jannaschii* MJ1432 (E=3e-31), `SDR42E1` → mycobacterial 3β-HSD (E=2e-74),
+`METTL25B`, `DIP2C`.
+
+The more interesting pattern is in the other 87. Their bacterial homology is
+often overwhelming (down to E=1e-206) but the reverse search lands on a
+*different* human gene — ABCF2-H2BK1 → ABCF1, ATAD3C → VCP, ATP13A5 → ATP2C1,
+MGAM2 → MGAM. These dark genes are young duplicates and readthrough products of
+ancient families: the lineage is prokaryotic, but the human representative of
+it is the parent gene, not the dark one. A failed reciprocal test here is
+evidence about which paralog represents the family, not evidence against deep
+ancestry.
+
+Worth noting for this repo specifically: 19 of the dark genes have a homolog in
+*Mycoplasma mycoides* SC PG1 and 18 in *M. genitalium* — the organism family
+JCVI-Syn3A was built from.
+
 ## Reproducing
 
 ```bash
 scripts/fetch_ortholog_data.sh        # ~3 GB into data_cache/human_orthologs/, ~4 min
 python3 scripts/human_gene_orthologs.py   # ~6 min, single-threaded, peak RSS ~1 GB
 python3 scripts/human_ortholog_report.py  # instant, writes REPORT.md
+
+python3 scripts/deep_homology_dark_genes.py --resolve-panel   # proteome IDs
+python3 scripts/deep_homology_dark_genes.py --resolve-queries # dark-gene sequences
+scripts/fetch_deep_homology_data.sh       # ~180 MB of proteomes
+python3 scripts/deep_homology_dark_genes.py --cpus 4   # ~55 min (25 min phmmer,
+                                          # 7 min profiles, 20 min reciprocal)
+python3 scripts/deep_homology_report.py   # writes DEEP_HOMOLOGY.md
 ```
+
+The forward search caches to `data_cache/deep_homology/forward_hits.json.gz`;
+`--reuse-forward` re-runs only the reciprocal stage from it.
 
 The cache directory is gitignored. Runtime is dominated by the two big NCBI
 dumps (60 M and 120 M rows), which are streamed and filtered rather than loaded.
