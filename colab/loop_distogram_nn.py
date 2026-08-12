@@ -62,8 +62,10 @@ PREDECLARED, before any number:
        this fails, the honest result is that the features matter and the architecture does not, which
        is what three consecutive loops here have found.
   N5 IT BEATS THE BEST NUMBER THIS REPOSITORY HAS RECORDED FOR THE ROW
-       loop 51's stack at 0.9046 within gene, on the same statistic, computed here on this loop's
-       gene subset so the comparison is like for like.
+       loop 51's stack at 0.9046 within gene -- but that ran on 260 genes with raw features, and
+       this runs on 141 with the loop-53 rank transform, so BOTH differences flatter this loop.
+       Its five features are therefore refitted here as their own arm, and N5 is judged against
+       THAT, not against the reported number.
 
 -> outputs/loop_distogram_nn.json
 """
@@ -309,10 +311,19 @@ def main():
 
     Xp = mat(PER_RESIDUE)
     Xa = mat(PER_RESIDUE + PAIRWISE)
+    # loop 51's stack, EXACTLY its five features, refitted here. Without this the N5 comparison is
+    # not like for like and the docstring's claim that it is would be false: this loop runs on 141
+    # structure-bearing genes where loop 51 ran on 260, and loop 51's stack was fitted on RAW
+    # heavy-tailed features before loop 53 found what that costs. Both differences push the same way,
+    # so quoting 0.9046 against a number computed here would credit this loop for a change of subset
+    # and a bug fix. This arm separates them.
+    L51 = ["blosum", "burial", "plddt", "titv", "negaf"]
+    Xl = mat(L51)
 
     say(f"\n  fitting four arms, gene-grouped {FOLDS}-fold, rank-transformed on training rows only")
     arms = {}
-    for name, model, X in (("linear per-residue", linear, Xp),
+    for name, model, X in (("loop51 stack, refitted", linear, Xl),
+                           ("linear per-residue", linear, Xp),
                            ("linear + pairwise", linear, Xa),
                            ("net per-residue", net, Xp),
                            ("net + pairwise", net, Xa)):
@@ -370,10 +381,16 @@ def main():
     # ---- N5 -----------------------------------------------------------------------------------------
     best = max(arms[k]["mean"] for k in
                ("linear per-residue", "linear + pairwise", "net per-residue", "net + pairwise"))
+    l51 = arms["loop51 stack, refitted"]["mean"]
     say(f"\n  N5 IT BEATS THE BEST NUMBER RECORDED FOR THIS ROW")
-    say(f"     best arm here {best:.4f}   ·   loop 51's stack {LOOP51_STACK:.4f}   ·   "
+    say(f"     loop 51 REPORTED {LOOP51_STACK:.4f} on 260 genes with raw features.")
+    say(f"     the same five features, refitted HERE on these 141 genes with the rank transform: "
+        f"{l51:.4f}")
+    say(f"     so {l51 - LOOP51_STACK:+.4f} of any gain is the subset and the loop-53 fix, not this "
+        f"loop's work.")
+    say(f"     best arm here {best:.4f}   ·   over the honest bar {best - l51:+.4f}   ·   "
         f"loop 51's ESM-2 650M 0.8823")
-    n5 = bool(best > LOOP51_STACK)
+    n5 = bool(best > l51)
     say(f"     N5 {'PASS' if n5 else 'FAIL'}")
 
     say("\n" + "=" * 100)
@@ -412,7 +429,7 @@ def main():
                "n_variants": len(recs), "n_genes": int(len(set(gn))), "pae_coverage": n_pae / max(len(recs), 1),
                "arms": {k: {"mean": v["mean"], "pooled": v["pooled"]}
                         for k, v in arms.items() if isinstance(v, dict) and "mean" in v},
-               "N3_linear": c3, "N3_net": arms["N3 net"], "N4": c4,
+               "loop51_stack_refitted": arms["loop51 stack, refitted"]["mean"], "N3_linear": c3, "N3_net": arms["N3 net"], "N4": c4,
                "null_mean": float(nulls.mean()), "null_95": n95,
                "loop51_stack": LOOP51_STACK, "seconds": time.time() - t0, "log": log},
               open(OUT / "loop_distogram_nn.json", "w"), indent=2, default=float)
