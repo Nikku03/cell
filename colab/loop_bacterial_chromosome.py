@@ -236,6 +236,10 @@ def main():
     say(f"     boundaries found: {len(bnd)}   (Le et al. report 23 CIDs; gate {CID_LO}-{CID_HI})")
     say(f"     positions (Mb): {', '.join(f'{b * BIN_BP / 1e6:.2f}' for b in bnd[:14])}"
         f"{' ...' if len(bnd) > 14 else ''}")
+    bnd2 = boundaries(insulation(r2))
+    near = sum(1 for b in bnd for c in bnd2 if abs(((b - c + n // 2) % n) - n // 2) <= 2)
+    say(f"     REPRODUCIBILITY: rep2 finds {len(bnd2)}; {near} of {len(bnd)} agree within +/-2 bins."
+        f" Boundary calling is not a property of one replicate.")
     k3 = CID_LO <= len(bnd) <= CID_HI
     say(f"     K3 {'PASS' if k3 else 'FAIL'}")
     say()
@@ -255,13 +259,17 @@ def main():
         s = strength(insulation(Mx), bnd)
         d = secondary(Mx)
         res[nm] = {"boundary_strength": s, "secondary": d}
-    s_wt = res["WT rep1"]["boundary_strength"]
-    d_wt = res["WT rep1"]["secondary"]
+    # reference is the MEAN of both WT replicates, not rep1 alone. The two replicates differ by
+    # ~20% on this statistic, so picking one as "the" reference would make every ratio depend on
+    # which one was picked -- and smc knockout happens to sit closer to rep1 than rep2 does.
+    s_wt = 0.5 * (res["WT rep1"]["boundary_strength"] + res["WT rep2"]["boundary_strength"])
+    d_wt = 0.5 * (res["WT rep1"]["secondary"] + res["WT rep2"]["secondary"])
     for nm, v in res.items():
         say(f"     {nm:16s} {v['boundary_strength']:13.4f} "
             f"{v['boundary_strength'] / s_wt:9.3f} {v['secondary']:13.4f} "
             f"{v['secondary'] / d_wt:9.3f}")
-    rep_noise = abs(res["WT rep2"]["boundary_strength"] / s_wt - 1.0)
+    rep_noise = abs(res["WT rep1"]["boundary_strength"] -
+                    res["WT rep2"]["boundary_strength"]) / s_wt
     say(f"     replicate noise on boundary strength: {rep_noise:.4f} -- effects must exceed this")
     rif = 1.0 - res["rifampicin"]["boundary_strength"] / s_wt
     nov = 1.0 - res["novobiocin 50"]["boundary_strength"] / s_wt
@@ -291,6 +299,12 @@ def main():
     k5 = True
     say(f"     K5 PASS (named and computed)")
     say()
+    say("     OBSERVED BUT NOT PREDECLARED, reported as such: the hup1/hup2 knockout weakens")
+    say(f"     boundaries to {res['hup1hup2 KO']['boundary_strength'] / s_wt:.3f} of WT -- about half")
+    say("     the effect of stopping transcription. Nucleoid-associated proteins were not part of")
+    save = res["hup1hup2 KO"]["boundary_strength"] / s_wt
+    say("     any prediction here, so this is a lead rather than a result.")
+    say()
 
     gates = {"K1 map is real, ceiling measured": bool(k1),
              "K2 P(s) transfers": bool(k2),
@@ -313,7 +327,8 @@ def main():
                "n_bins": n, "bin_bp": BIN_BP, "replicate_spearman": rep, "cross_enzyme_spearman": xenz,
                "ps_slope": float(slope), "human_ps_slope": HUMAN_PS,
                "n_boundaries": len(bnd), "boundaries_bp": [int(b * BIN_BP) for b in bnd],
-               "conditions": res, "replicate_noise": rep_noise,
+               "conditions": res, "replicate_noise": rep_noise, "boundaries_rep2": len(bnd2), "boundary_agreement": near,
+               "hup_effect": save,
                "rifampicin_effect": rif, "novobiocin_effect": nov,
                "smc_secondary_effect": smc_d, "smc_boundary_effect": smc_b,
                "rouse_spread_bacterial": sp_b, "rouse_spread_human": sp_h,
