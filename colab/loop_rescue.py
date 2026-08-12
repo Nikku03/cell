@@ -404,8 +404,18 @@ def main():
         rec.append({
             "gene": g, "y": r[5], "key": key,
             "esm": -llr,                                    # higher = more pathogenic
-            "esm_altblind": -float(lp[AA.index(wt)]),        # alt NEVER read
-            "entropy": ent,
+            # DIRECTIONS, DECLARED BY MECHANISM. The first run of this module had three of them
+            # backwards and the numbers said so loudly: alt-blind scored 0.1581, entropy 0.1463 and
+            # pLDDT 0.2616, all far BELOW chance, which is what a correct signal read upside down
+            # looks like. It also made G4 pass by +0.7242 -- an ablation "beating" its parent by
+            # three quarters of the scale is not a result, it is a sign error. Corrected here:
+            #   logP(ref) HIGH  -> the model expects the wild-type residue -> constrained position
+            #                      -> mutations there are more often pathogenic.
+            #   entropy LOW     -> the column tolerates few residues -> conserved -> pathogenic.
+            #   pLDDT HIGH      -> ordered, structured region -> pathogenic (disordered regions are
+            #                      where curators rarely call missense pathogenic).
+            "esm_altblind": float(lp[AA.index(wt)]),         # alt NEVER read
+            "entropy": -ent,
             "blosum": -BL.get((wt, mt), 0),
             "burial": BUR[g].get(ri, np.nan) if st else np.nan,
             "plddt": st[1].get(ri, np.nan) if st else np.nan,
@@ -442,16 +452,28 @@ def main():
     PG, S = {}, {}
     for f in feats:
         v = col(f)
-        if f == "plddt":
-            v = -v                                   # low confidence -> disordered -> declared direction
         PG[f] = per_gene_auc(v, y, gn)
         S[f] = summarize(PG[f], v, y, gn)
+    # THE STACK, and why it is not defined on every gene. Allele frequency is absent for 69% of rows,
+    # so requiring it finite collapsed the first run's stack to EIGHT genes and the paired test to
+    # nan -- a FAIL that measured nothing. It is now imputed with an availability INDICATOR, which is
+    # the honest handling of a missing measurement. Burial and pLDDT are treated differently on
+    # purpose: their missingness is GENE-level (no AlphaFold model), and this project fetched
+    # structures for disease genes, so a has-structure indicator would let the stack learn the
+    # selection rather than the biology -- the same 0.57-AUC leak G6 reports as a control. So the
+    # stack is fitted and compared only where the structural features genuinely exist.
     stack_cols = ["blosum", "burial", "plddt", "titv", "negaf"]
     X = np.column_stack([col(c) for c in stack_cols])
-    keep = np.isfinite(X).all(1)
+    af_present = np.isfinite(col("negaf")).astype(float)
+    Xi = X.copy()
+    j = stack_cols.index("negaf")
+    med = np.nanmedian(Xi[:, j])
+    Xi[~np.isfinite(Xi[:, j]), j] = med
+    Xi = np.column_stack([Xi, af_present])
+    keep = np.isfinite(Xi).all(1)
     st_pred = np.full(len(y), np.nan)
     if keep.sum() > 200:
-        st_pred[keep] = logistic_stack(X[keep], y[keep], gn[keep], rng)
+        st_pred[keep] = logistic_stack(Xi[keep], y[keep], gn[keep], rng)
     PG["STACK"] = per_gene_auc(st_pred, y, gn)
     S["STACK"] = summarize(PG["STACK"], st_pred, y, gn)
     say(f"     {'feature':<14}{'genes':>7}{'within':>9}{'weighted':>10}{'pooled':>9}")
@@ -520,7 +542,7 @@ def main():
     if pin.sum() > 500:
         def arm(cols):
             v = np.full(len(y), np.nan)
-            Xa = np.column_stack([col(c) if c != "plddt" else -col(c) for c in cols])
+            Xa = np.column_stack([col(c) for c in cols])   # signs are learned; directions are declared above
             v[pin] = logistic_stack(Xa[pin], y[pin], gn[pin], rng)
             return per_gene_auc(v, y, gn), v
         pg_e, _ = arm(["esm"])
