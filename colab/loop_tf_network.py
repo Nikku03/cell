@@ -76,6 +76,12 @@ PREDECLARED, before any number:
        regulon size. Per-TF agreement minus a COMPOSITION-MATCHED null (that TF's own observed
        P(down), weighted by its activating/repressing mix), then a one-sided paired test across TFs.
        Gate: mean per-TF delta > 0 over >= 150 TFs at p < 0.01.
+       Alongside it, an EMPIRICAL null that redraws the same number of targets at random from the
+       same dataset with the sign vector held fixed. [The first version shuffled SIGNS instead. In
+       a single-sign arm that is a no-op -- every sign is already +1 -- and the first run proved it,
+       returning a "null" identical to the observed value to four decimals in all three arms. An
+       inert control printed beside a result reads as corroboration, which is worse than printing
+       no control at all.]
   G4 REPRESSING SIGNS DO THE SAME                                           GATE B. EXPECT FAILURE.
        identical test on repressing edges alone. Stated in advance from an 18-TF pilot: CollecTRI
        +0.019 (z +0.98, null) and TRRUST -0.091 (z -2.98, ANTI-predictive). If this passes it is a
@@ -128,7 +134,7 @@ COVER = 0.90        # G1, block covered by its claimed source
 SIGN_SHARE = 0.90   # G2, share of signed edges in the curated tier
 MIN_TFS = 150       # G3/G4
 ALPHA = 0.01        # G3/G4
-NPERM = 1000        # label-permutation null
+NPERM = 1000        # target-shuffle empirical null draws (see run(): a SIGN shuffle is inert here)
 SEED = 7601
 
 log = []
@@ -290,11 +296,23 @@ def main():
             deltas.append(obs - exp)
             ntf += 1
             nedge += len(ed)
+            # EMPIRICAL NULL = TARGET SHUFFLE, not sign shuffle.
+            # The first version permuted the SIGNS within the arm. That is a no-op by
+            # construction: G3 filters to activating edges, so every sign in `sg` is already +1
+            # and permuting a constant vector returns the same vector. The first run proved it --
+            # observed and "null" delta agreed to four decimals in all three arms (+0.0373 vs
+            # +0.03726, -0.0020 vs -0.00198, +0.0290 vs +0.02898). An inert control reported
+            # beside a result reads as corroboration and is worse than no control at all.
+            # The meaningful question for a single-sign arm is not "is this sign right" but "are
+            # THESE targets special", so the null redraws the same number of targets at random
+            # from the same dataset and keeps the sign vector fixed.
             pd = []
+            allg = list(lfc.keys())
+            yall = np.array([lfc[g] for g in allg], float)
             for _ in range(NPERM // 10):
-                sp = rng.permutation(sg)
-                pd.append(float(np.mean(np.where(sp == 1, y < 0, y > 0)))
-                          - float(np.mean(np.where(sp == 1, q, 1 - q))))
+                samp = rng.choice(len(allg), size=len(ed), replace=False)
+                yy = yall[samp]
+                pd.append(float(np.mean(np.where(sg == 1, yy < 0, yy > 0))) - exp)
             perm_deltas.append(float(np.mean(pd)))
         deltas = np.array(deltas)
         if len(deltas) < 3:
@@ -317,7 +335,7 @@ def main():
         say(f"       {r['n_tf']} TFs, {r['n_edges']:,} edges;  mean per-TF delta "
             f"{r['mean_delta']:+.4f}  sd {r.get('sd', float('nan')):.4f}  "
             f"{r.get('frac_positive', float('nan')):.2f} of TFs positive")
-        say(f"       one-sided paired p {r['p']:.2e}   label-permutation null delta "
+        say(f"       one-sided paired p {r['p']:.2e}   target-shuffle null delta "
             f"{r['perm_mean']:+.5f}   PMID-leaked edges excluded {r['leaked']}")
     g3 = A["n_tf"] >= MIN_TFS and A["mean_delta"] > 0 and A["p"] < ALPHA
     g4 = B["n_tf"] >= 20 and B["mean_delta"] > 0 and B["p"] < ALPHA
@@ -387,7 +405,7 @@ def main():
                                 "KnockTF filtered on on-target log2FC BEFORE scoring",
                                 "unit of analysis is the TF, not the edge",
                                 "composition-matched null per TF",
-                                "label-permutation null within TF",
+                                "target-shuffle empirical null within TF (a SIGN permutation is inert in a single-sign arm)",
                                 "constant-ACTIVATING sham predictor run as a mandatory guard",
                                 "PMID leakage between curated edge and scoring dataset excluded"],
                       note="the curated network was already inside `reg`; what was missing was the "
