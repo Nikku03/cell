@@ -70,6 +70,11 @@ PREDECLARED, before any number is looked at:
        the pessimistic 10th-percentile imputation, and the eight-corner range over the literature
        constant ranges. This is the second budget in this project that fame cannot argue with, and
        it is the first time the lifetime slot has ever been spent.
+       [ADDED AFTER THE FIRST RUN. The gate uses loop 65's LITERATURE 24 h doubling. Loop 71
+       measured this model's own growth at 0.02036 /h = a 34.04 h doubling. At the model's own
+       rate the budget is EASIER (0.3296 vs 0.4166 -- a slower cell has more ribosome-seconds)
+       but the replacement fraction is LARGER (36.9% vs 29.2%). The gate as written is the
+       conservative choice; the replacement headline was the understatement. Both are printed.]
 
   L5 DOES THE SLOT PREDICT ESSENTIALITY -- I EXPECT NOT, AND SAY SO NOW
        Stated in advance, from a scratch calculation done before this module was written: protein
@@ -137,6 +142,7 @@ MASS_FLOOR = 0.50       # L3 fraction of abundance mass carrying a lifetime
 BUDGET_CEIL = 1.0       # L4 demand / supply
 ADD_DELTA = 0.010       # L5 AUC the lifetime slot must add over pubs+abundance
 SEED = 7401
+L71_MU = 0.02036          # loop 71: this model's own measured growth rate, /h
 
 # literature constants, copied verbatim from loop 65 so the two budgets are comparable
 LIT = {"TOTAL_COPIES": (1.0e9, 2.3e9, 4.0e9),
@@ -475,6 +481,40 @@ def main():
         f"real -- but this is the")
     say(f"       conditional statement, not a bare PASS, and it is the number that falsifies the "
         f"gate if it is ever measured.")
+    # SELF-CONSISTENCY. Td above is loop 65's LITERATURE constant. Loop 71 measured this model's
+    # own growth at 0.02036 /h -- a 34.04 h doubling, not 24 h. Both numbers are used somewhere in
+    # this project, so both are reported and the difference is not left for a reader to discover.
+    Td_model = float(np.log(2) / L71_MU)
+
+    def budget_at(td):
+        m = 1.0 + td / np.maximum(m_med, 1e-6)
+        dem = tc * float((w[usable] * L[usable] * m[usable]).sum())
+        b = tc * float((w[usable] * L[usable]).sum())
+        return dem / (nr * td * 3600.0 * el), 1.0 - b / dem
+
+    r_lit, rep_lit = budget_at(Td_h)
+    r_mod, rep_mod = budget_at(Td_model)
+    lo2, hi2 = 0.02, float(med_hl)
+    for _ in range(60):
+        mid = (lo2 + hi2) / 2
+        m2 = 1.0 + Td_model / np.maximum(np.where(have, hl, mid), 1e-6)
+        rr2 = tc * float((w[usable] * L[usable] * m2[usable]).sum()) / (nr * Td_model * 3600.0 * el)
+        if rr2 > BUDGET_CEIL:
+            lo2 = mid
+        else:
+            hi2 = mid
+    say(f"     SELF-CONSISTENCY, and it moves the headline. Everything above uses loop 65's")
+    say(f"     LITERATURE doubling time of {Td_h:.0f} h. Loop 71 measured THIS model's own growth at")
+    say(f"     {L71_MU:.5f} /h -- a {Td_model:.2f} h doubling. At the model's own rate:")
+    say(f"       demand/supply          {r_lit:.4f} at {Td_h:.0f} h  ->  {r_mod:.4f} at "
+        f"{Td_model:.1f} h   (a slower cell has MORE ribosome-seconds to spend)")
+    say(f"       replacement fraction   {rep_lit:.1%} at {Td_h:.0f} h  ->  {rep_mod:.1%} at "
+        f"{Td_model:.1f} h   (and it spends more of them on upkeep)")
+    say(f"       break-even half-life   {breakeven:.2f} h    ->  {hi2:.2f} h")
+    say(f"     So the gate as written is the CONSERVATIVE choice on the budget, but the "
+        f"'{rep_lit:.0%} of the ribosome")
+    say(f"     budget is replacement' headline is an UNDERSTATEMENT: self-consistently with loop 71 "
+        f"it is {rep_mod:.0%}.")
     l4 = r_med <= BUDGET_CEIL
     say(f"     L4 {'PASS' if l4 else 'FAIL'}  -- the proteome "
         f"{'CAN' if l4 else 'CANNOT'} be both grown and maintained at the measured turnover")
@@ -643,6 +683,9 @@ def main():
                "corners_min": float(corners.min()), "corners_max": float(corners.max()),
                "corners_closing": int((corners <= 1.0).sum()),
                "corners_failing_at_low_ribosomes": nlowrib,
+               "doubling_h_literature": Td_h, "doubling_h_model": Td_model,
+               "budget_at_model_doubling": r_mod, "replacement_fraction_model": rep_mod,
+               "breakeven_halflife_model_h": hi2,
                "unmeasured_mass": unmeas_mass, "breakeven_halflife_h": breakeven,
                "control_perm_p": pval, "n_short_measured": len(s_hit),
                "n_short_missing": len(missing), "n_long_measured": len(l_hit),
