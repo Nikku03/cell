@@ -61,8 +61,8 @@ PREDECLARED, before any number:
        model scored over the IDENTICAL genes. If the expression layer only makes the genes I typed
        in lethal, it has taught the model nothing and this gate says so.
        [CORRECTED AFTER THE FIRST RUN. This gate originally compared against the hardcoded constant
-       LOOP71_AUC = 0.6902   # loop 71 RERUN after the GLPK fix; the superseded buggy run gave 0.6403, and the sentence here claimed that was "the same restricted set". It was
-       not: loop 71 measured 0.6403 on its own 208 labelled genes, INCLUDING genes this module later
+       LOOP71_AUC, and the sentence here claimed that was "the same restricted set". It was
+       not: loop 71 measured it on its own 208 labelled genes, INCLUDING genes this module later
        wires. Two AUCs over two different gene sets are not a comparison. The base model is now
        deleted inside this module before anything is added, and both are scored on the same genes.
        The first run reported 0.6858 vs 0.6403, delta +0.0455; that delta was not paired and should
@@ -226,7 +226,7 @@ def main():
     mu0 = float(M.optimize().objective_value or 0.0)
 
     # THE PAIRED BASELINE. The first version of E3 compared this module's AUC on non-wired genes
-    # against the hardcoded constant LOOP71_AUC = 0.6902   # loop 71 RERUN after the GLPK fix; the superseded buggy run gave 0.6403 -- a number loop 71 computed on ITS OWN
+    # against the hardcoded constant LOOP71_AUC -- a number loop 71 computed on ITS OWN
     # labelled set, which included genes this module later wires. Two AUCs on two different gene
     # sets are not a comparison, and the docstring's claim of "the same restricted set" was false.
     # So the base model is deleted here, BEFORE a single reaction is added, and E3 scores base and
