@@ -64,6 +64,20 @@ PREDECLARED, before any number:
        >= 80% of the abundance mass must map to a sequence. A ppm vector that cannot be matched to
        lengths cannot be costed.
   T3 THE ABUNDANCE VECTOR DESCRIBES A CELL            ADDED AFTER THE FIRST RUN. THE MODEL FAILS IT.
+
+       PROVENANCE CORRECTED LATER, AND MY WORDING WAS WRONG. This gate and its commit said the cost
+       slot holds "BLOOD PLASMA". It does not. Matched against PaxDb's own human datasets, our `ppm`
+       is 9606-WHOLE_ORGANISM-integrated: Spearman 1.0000 over 15,740 shared genes, 97.4% coverage.
+       The actual plasma dataset (9606-PLASMA-integrated) is a DIFFERENT file -- it correlates with
+       ours at only 0.4586, carries 0.6119 plasma-protein mass against our 0.2918, and is topped by
+       ALB/IGLL5/APOA1/FGB/TF rather than our TMSB4X/APOA2/RBP4.
+       So the defect is real and the gate still FAILS, but it is a WHOLE-ORGANISM proteome, not a
+       plasma one. It is body-wide, and a body contains blood, which is why abundant serum proteins
+       carry 29% of its mass. The honest statement is "this describes an organism, not a cell" --
+       narrower and more defensible than what was committed.
+       No clean replacement exists: PaxDb has no integrated CELL_LINE set. HeLa iBAQ is genuinely
+       cellular but covers 39.4% of our genes against whole-organism's 97.4%, so a straight swap
+       would zero out 9,254 genes. That trade is named here rather than made silently.
        The first run of this module passed its budget gate at demand/supply 0.1744 and the number was
        meaningless, because the vector it costed is not a cell. The model's top ten proteins by `ppm`
        are TMSB4X, APOA2, RBP4, ORM1, APOA1, ALB, TTR, APOC2, APOC1, HPX -- albumin, apolipoproteins,
