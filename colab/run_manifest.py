@@ -47,6 +47,16 @@ BIG = 64 << 20          # hash the whole file below this; sample it above, and s
 def digest(path):
     """Content hash of an input. Large files are sampled at both ends rather than skipped, and the
     method is recorded so a hash is never silently comparing unlike things."""
+    s = str(path)
+    if s.startswith(("http://", "https://", "ftp://")):
+        # A REMOTE INPUT IS A LEGITIMATE INPUT and there is no local copy to hash. Loops 86, 87 and
+        # 87b range-request Hi-C from GEO one chromosome at a time precisely so that a ~20 GB file
+        # never lands on disk, and data_ledger already records that file with sha256 "REMOTE" for the
+        # same reason. Treating the URL as a missing path emitted "declared input does not exist" on
+        # runs whose inputs were all present and verified, which trains the reader to ignore the
+        # warning list -- the opposite of what the manifest is for. Recorded as remote, unhashed, and
+        # visibly so, rather than either warned about or silently dropped.
+        return {"path": s, "kind": "remote", "hash": None, "method": "none:remote"}
     p = Path(path)
     if not p.exists():
         return {"path": str(path), "missing": True}
