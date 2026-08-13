@@ -1,0 +1,142 @@
+{
+ "test": "loop_second",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb.npy",
+    "bytes": 14838032,
+    "hash": "3768cedcefe29085",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb_rep.npy",
+    "bytes": 14838032,
+    "hash": "40818f388ba58741",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ctcf_gm12878_hg19.bed.gz",
+    "bytes": 655789,
+    "hash": "8795b92127be542e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hg19_chr21.fa.gz",
+    "bytes": 11549785,
+    "hash": "1953ac4ea94b6588",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ctcf_pfm.json",
+    "bytes": 509,
+    "hash": "987a2fd393dc17e8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 1926,
+   "used": 1926,
+   "selection": "filtered",
+   "fraction": 1.0
+  },
+  "seed": 7701,
+  "controls": [
+   "Woodbury map compared against a fresh inverse on identical configs",
+   "1 s clock compared against loop 35's 33 s clock",
+   "P(s) window fixed by loop 33/35 before this module existed",
+   "CTCF orientations shuffled as the decisive control",
+   "replicate-vs-replicate reported as the achievable ceiling",
+   "distance-only null reported as the floor",
+   "literature extrusion parameters, none fitted to the scored map"
+  ],
+  "note": "loop 35 inverted a Laplacian per configuration; the chain never changes, so each configuration is a rank-k update of one base inverse",
+  "warnings": []
+ },
+ "gates": {
+  "V1 fast map is the same map": true,
+  "V2 1 s clock agrees with 33 s clock": false,
+  "V3 P(s) in the predeclared window": false,
+  "V4 orientation signature appears and collapses": false,
+  "V5 beats a distance-only null": true,
+  "V6 cost reported": true
+ },
+ "n_bins": 1926,
+ "n_mappable": 1926,
+ "n_cohesins": 321,
+ "dt_fine": 1.0,
+ "dt_coarse": 33.333333333333336,
+ "frac_steps_moving_1s": 0.9444705268648931,
+ "frac_steps_moving_33s": 1.0,
+ "v1_max_rel_err": 1.7658435628088018e-12,
+ "t_fast_ms": 177.280855178833,
+ "t_exact_ms": 257.8989505767822,
+ "speedup": 1.4547478932038391,
+ "rho_1s_vs_33s": 0.9106790791702922,
+ "ps_1s": -1.2349010865683505,
+ "ps_33s": -1.0731522976245664,
+ "ps_window": [
+  -1.16,
+  -0.76
+ ],
+ "orientation_real": 0.08957214798564143,
+ "orientation_shuffled": 0.058704680857902806,
+ "rho_model_vs_measured": 0.8365787146357243,
+ "rho_distance_null": 0.8280451510455886,
+ "rho_replicate_ceiling": 0.9440998616507026,
+ "seconds": 33.115437269210815,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 77 -- chromatin at one-second resolution, with an exact and cheap contact map",
+  "====================================================================================================",
+  "",
+  "  chr21 at 25 kb: 1,926 bins, 1,926 mappable",
+  "  rebuilding the oriented CTCF landscape from motif scores",
+  "     404 peaks, 404 carried an orientation",
+  "",
+  "  precomputing the base inverse ONCE (this is the whole trick)",
+  "     one 1926x1926 inverse: 0.4s",
+  "",
+  "V1 THE FAST MAP IS THE SAME MAP",
+  "     1 s clock: 321 cohesins, 50 configurations, 94.4% of steps carried a move",
+  "     Woodbury 177 ms/config   fresh inverse 258 ms/config   -> 1x",
+  "     max relative difference over 3,707,550 entries: 1.766e-12   (gate 1e-06)",
+  "     V1 PASS -- the speedup is an identity, not an approximation",
+  "",
+  "V2 THE ONE-SECOND CLOCK AGREES WITH THE THIRTY-THREE-SECOND CLOCK",
+  "     33.3 s clock: 100.0% of steps carried a move;  1 s clock: 94.4%",
+  "     contact maps agree over the 2 Mb band: Spearman 0.9107 (n=150,840, gate 0.99)",
+  "     P(s) slope   1 s -1.2349    33 s -1.0732",
+  "     V2 FAIL",
+  "",
+  "V3 P(s) LANDS IN THE PREDECLARED WINDOW",
+  "     measured chr21 (loop 33)  n/a",
+  "     simulated, 1 s clock      -1.2349    window (-1.16, -0.76)",
+  "     V3 FAIL",
+  "",
+  "V4 THE ORIENTATION SIGNATURE APPEARS AND COLLAPSES WHEN SHUFFLED",
+  "     real motif orientation      +0.0896   (2214 matched pairs)",
+  "     SHUFFLED orientation        +0.0587   <- must collapse",
+  "     V4 FAIL",
+  "",
+  "V5 IT TRACKS THE MEASURED MAP, AGAINST THE REPLICATE CEILING",
+  "     simulated vs measured        Spearman +0.8366  (n=103,435)",
+  "     distance-only null vs meas.  Spearman +0.8280  <- what P(s) alone buys",
+  "     replicate vs replicate       Spearman +0.9441  <- the ceiling",
+  "     V5 PASS -- the model adds structure beyond separation",
+  "",
+  "V6 COST",
+  "     one configuration: Woodbury 177 ms   fresh inverse 258 ms",
+  "     loop 35 ran 3 conditions x 50 fresh inverses = 39 s of inversion",
+  "     here: 1 base inverse + 150 rank-k updates = 27 s",
+  "     V6 PASS (reported)",
+  "",
+  "  PASS  V1 fast map is the same map",
+  "  FAIL  V2 1 s clock agrees with 33 s clock",
+  "  FAIL  V3 P(s) in the predeclared window",
+  "  FAIL  V4 orientation signature appears and collapses",
+  "  PASS  V5 beats a distance-only null",
+  "  PASS  V6 cost reported",
+  "    manifest: 5 inputs, coverage 1926/1926 (100.0%) by 'filtered', seed 7701, controls 7"
+ ]
+}
