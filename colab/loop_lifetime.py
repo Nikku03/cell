@@ -74,8 +74,14 @@ PREDECLARED, before any number is looked at:
   L5 DOES THE SLOT PREDICT ESSENTIALITY -- I EXPECT NOT, AND SAY SO NOW
        Stated in advance, from a scratch calculation done before this module was written: protein
        half-life alone separates Hart essential genes at AUC 0.5990 while publication count does it
-       at 0.7260, and half-life itself correlates rho +0.3202 with publication count. So the honest
-       gate is not "does it predict" but "does it ADD": unfitted rank-sum of pubs+abundance versus
+       at 0.7260, and half-life itself correlates rho +0.3202 with publication count.
+       [THAT LAST FIGURE IS WRONG AND THE RUN CAUGHT IT. The scratch pool was CEG intersected with
+       measured half-lives -- 602 genes, 96% of them essential -- so +0.3202 is fame variation
+       INSIDE the essential set. Across the honest 4,595-protein pool the correlation is +0.0590.
+       Half-life is not a fame proxy; it simply carries little essentiality signal. Kept here rather
+       than edited away, because the predeclaration is the record.]
+       So the honest gate is not "does it predict" but "does it ADD": unfitted rank-sum of
+       pubs+abundance versus
        pubs+abundance+lifetime, delta >= +0.010. I EXPECT THIS GATE TO FAIL. It is here because a
        slot that is useful for dynamics does not have to be useful for classification, and the
        record should contain the number either way rather than the slot being quietly exempted.
@@ -309,6 +315,21 @@ def main():
         f"SHORT {np.median(sp) if len(sp) else 0:.0f}   LONG {np.median(lp) if len(lp) else 0:.0f}")
     say(f"       the short list is the famous half. If a reader wants to call this gate a fame axis")
     say(f"       the number to do it with is printed here.")
+    # a 5-vs-27 AUC needs its own error bar and its own censoring diagnosis
+    rng = np.random.default_rng(SEED)
+    perm = np.array([auc(sc, rng.permutation(yy)) for _ in range(20000)])
+    pval = float((perm >= a_ctrl).mean())
+    missing = [g for g in SHORT if g not in cons]
+    say(f"     THE GATE PASSES ON {len(s_hit)} SHORT vs {len(l_hit)} LONG. permutation p = {pval:.1e}")
+    say(f"       measured short-lived: "
+        f"{', '.join(f'{g} {cons[g][0]:.0f}h' for g in s_hit)}")
+    say(f"       AND {len(missing)} of {len(SHORT)} predeclared short-lived proteins were NOT")
+    say(f"       MEASURED AT ALL: {', '.join(missing[:12])} ...")
+    say(f"       Every canonical one -- MYC, TP53, FOS, ODC1, HIF1A, the cyclins -- is absent.")
+    say(f"       That is not a coincidence: a protein with a 20-minute half-life is scarce, and")
+    say(f"       scarce proteins fall below the mass-spec quantification floor. THE DATASET IS")
+    say(f"       CENSORED AT THE SHORT END, which makes L4's turnover cost an UNDERESTIMATE.")
+    say(f"       L4 is written to quantify that rather than to hope it is small.")
     l2 = a_ctrl >= CTRL_AUC
     say(f"     L2 {'PASS' if l2 else 'FAIL'}")
     say()
@@ -408,18 +429,52 @@ def main():
     say(f"                       + degradation, p10      {r_p10:.4f}   (reported, not gated)")
     repl = 1.0 - base_aa / max(aa_med, 1e-9)
     say(f"     fraction of the ribosome budget spent REPLACING rather than GROWING: {repl:.1%}")
-    corners = []
+    corners, nlowrib = [], 0
     for a in LIT["TOTAL_COPIES"]:
         for b in LIT["N_RIBOSOMES"]:
             for c in LIT["DOUBLING_S"]:
                 for d in LIT["ELONGATION_AA_S"]:
                     mm2 = 1.0 + (c / 3600.0) / np.maximum(m_med, 1e-6)
                     dem = a * float((w[usable] * L[usable] * mm2[usable]).sum())
-                    corners.append(dem / (b * c * d))
+                    rc = dem / (b * c * d)
+                    corners.append(rc)
+                    if rc > 1.0 and b == min(LIT["N_RIBOSOMES"]):
+                        nlowrib += 1
     corners = np.array(corners)
     say(f"     over the full literature constant ranges ({len(corners)} corners): "
         f"min {corners.min():.4f}  median {np.median(corners):.4f}  max {corners.max():.4f}")
-    say(f"     {int((corners <= 1.0).sum())} of {len(corners)} corners close")
+    nclose = int((corners <= 1.0).sum())
+    say(f"     {nclose} of {len(corners)} corners close; of the {len(corners) - nclose} that do not, "
+        f"{nlowrib} carry the LOW ribosome count (3e6).")
+    say(f"       the budget's fragility is a ribosome-census question, not a half-life question.")
+    # the censoring found in L2 attacks this gate directly: the unmeasured mass is the risk
+    unmeas_mass = float(w[usable & ~have].sum() / max(w[usable].sum(), 1e-12))
+
+    def ratio_if(imp):
+        return tc * float((w[usable] * L[usable] * mult(np.where(have, hl, imp))[usable]).sum()) / supply
+
+    lo, hi = 0.05, float(med_hl)
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        if ratio_if(mid) > BUDGET_CEIL:
+            lo = mid
+        else:
+            hi = mid
+    breakeven = hi
+    say(f"     ADVERSARIAL, against L2's censoring finding. {unmeas_mass:.1%} of the abundance mass "
+        f"has NO measured half-life,")
+    say(f"     and L2 showed the missing proteins are the short-lived ones. Imputing that mass at:")
+    for lab, v in (("the measured median", med_hl), ("the measured 10th pct", p10_hl),
+                   ("6 h", 6.0), ("2 h", 2.0), ("1 h", 1.0)):
+        rr = ratio_if(v)
+        say(f"       {lab:22s} {v:6.1f} h  ->  demand/supply {rr:.4f}  "
+            f"{'closes' if rr <= 1 else 'BREAKS'}")
+    say(f"     BREAK-EVEN: the budget closes iff the unmeasured {unmeas_mass:.0%} of proteome mass "
+        f"has a mean half-life above {breakeven:.2f} h.")
+    say(f"       That is 10x below the measured 10th percentile ({p10_hl:.0f} h), so the margin is "
+        f"real -- but this is the")
+    say(f"       conditional statement, not a bare PASS, and it is the number that falsifies the "
+        f"gate if it is ever measured.")
     l4 = r_med <= BUDGET_CEIL
     say(f"     L4 {'PASS' if l4 else 'FAIL'}  -- the proteome "
         f"{'CAN' if l4 else 'CANNOT'} be both grown and maintained at the measured turnover")
@@ -464,8 +519,15 @@ def main():
     say(f"       rank(pubs)+rank(abundance)            AUC {a_b:.4f}   <- baseline")
     say(f"       + rank(half-life)                     AUC {a_w:.4f}   delta {a_w - a_b:+.4f}  "
         f"(gate >= {ADD_DELTA:+.3f})")
-    say(f"       half-life vs publication count        rho {rho_fame:+.4f}  -- the slot is itself "
-        f"partly a fame axis")
+    say(f"       half-life vs publication count        rho {rho_fame:+.4f}")
+    say(f"       CORRECTION TO THIS MODULE'S OWN DOCSTRING. The scratch calculation quoted there")
+    say(f"       gave rho +0.3202 between half-life and fame. That was computed on a pool of 602")
+    say(f"       genes that was 96% essential -- CEG intersected with measured half-lives -- so it")
+    say(f"       measured fame WITHIN the essential set, not across the proteome. On the honest")
+    say(f"       {int(pool.sum()):,}-protein pool the correlation is {rho_fame:+.4f}: near zero.")
+    say(f"       Half-life is NOT a fame proxy. It simply carries almost no essentiality signal,")
+    say(f"       and adding it to a good baseline dilutes that baseline. Those are different")
+    say(f"       diagnoses and the record should carry the right one.")
     l5 = (a_w - a_b) >= ADD_DELTA
     say(f"     L5 {'PASS' if l5 else 'FAIL'}"
         f"{'  -- as predeclared, this was expected to fail' if not l5 else '  -- a surprise'}")
@@ -556,7 +618,7 @@ def main():
 
     man = RM.manifest(
         inputs=[str(MATH), str(SCHWAN), str(KDEG), str(HELA), str(FASTA), str(HART), str(CELL)],
-        available=int(len(cons)), used=int(have.sum()), selection="all measured", seed=SEED,
+        available=int(len(cons)), used=int(have.sum()), selection="filtered", seed=SEED,
         controls=["within-study replicate agreement required in every cell type",
                   "cross-species (human vs mouse) and cross-division-state ortholog agreement",
                   "textbook short-lived and long-lived gene lists written before opening the data",
@@ -580,6 +642,10 @@ def main():
                "budget_p10": r_p10, "replacement_fraction": repl,
                "corners_min": float(corners.min()), "corners_max": float(corners.max()),
                "corners_closing": int((corners <= 1.0).sum()),
+               "corners_failing_at_low_ribosomes": nlowrib,
+               "unmeasured_mass": unmeas_mass, "breakeven_halflife_h": breakeven,
+               "control_perm_p": pval, "n_short_measured": len(s_hit),
+               "n_short_missing": len(missing), "n_long_measured": len(l_hit),
                "auc_halflife": a_hl, "auc_pubs": a_pub, "auc_abundance": a_ab,
                "auc_maintenance_cost": a_mnt, "auc_base": a_b, "auc_with_halflife": a_w,
                "auc_delta": a_w - a_b, "rho_halflife_fame": rho_fame,
