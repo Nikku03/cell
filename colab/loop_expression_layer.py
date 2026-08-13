@@ -119,6 +119,8 @@ LOOP71_AUC = 0.6403
 LOOP71_FAME = 0.8443
 DEAD = 0.01
 SEED = 7301
+LP_TIMEOUT = 20            # seconds per deletion LP; median is 0.069 s. GLPK's default is INT_MAX.
+LP_RETRY = 120             # seconds for the lone retry of any LP that hit the limit
 
 log = []
 
@@ -255,14 +257,44 @@ def main():
     say()
 
     from cobra.flux_analysis import single_gene_deletion
-    say(f"     running {len(M.genes):,} single-gene deletions on the extended model ...")
+    from cobra.manipulation import knock_out_model_genes
+    # GLPK's default tm_lim is INT_MAX -- no limit -- and this module hung for 1 h 50 min inside a
+    # single degenerate deletion LP whose median cost is 0.069 s (py-spy caught it in glp_simplex).
+    # A limit is set here; a timed-out LP is retried alone and, if still unsettled, EXCLUDED rather
+    # than read as zero growth. Reading it as zero would have invented essential genes from solver
+    # fatigue -- on the extended model, whose extra 166 reactions are exactly what E3/E4 are testing.
+    M.solver.configuration.timeout = LP_TIMEOUT
+    say(f"     running {len(M.genes):,} single-gene deletions on the extended model "
+        f"(LP limit {LP_TIMEOUT}s) ...")
     dl = single_gene_deletion(M, gene_list=M.genes, processes=1)
-    ratio = {}
+    ratio, suspect = {}, []
     for _, row in dl.iterrows():
         ids = list(row["ids"]) if not isinstance(row["ids"], str) else [row["ids"]]
         v = row["growth"]
         for g in ids:
-            ratio[g] = 0.0 if (v is None or not np.isfinite(v)) else float(v) / max(mu, 1e-12)
+            if v is None or not np.isfinite(v):
+                suspect.append(g)
+            else:
+                ratio[g] = float(v) / max(mu, 1e-12)
+    unresolved = []
+    if suspect:
+        M.solver.configuration.timeout = LP_RETRY
+        for g in suspect:
+            with M:
+                knock_out_model_genes(M, [g])
+                v = M.slim_optimize()
+                stat = M.solver.status
+            if v is not None and np.isfinite(v):
+                ratio[g] = float(v) / max(mu, 1e-12)
+            elif stat == "infeasible":
+                ratio[g] = 0.0
+            else:
+                unresolved.append(g)
+        M.solver.configuration.timeout = LP_TIMEOUT
+    if unresolved:
+        say(f"     WARNING: {len(unresolved)} deletion LPs did not settle in {LP_RETRY}s and are "
+            f"EXCLUDED, not scored as lethal")
+        say(f"              {', '.join(sorted(unresolved)[:10])}")
     sym_ratio = {}
     for gid, v in ratio.items():
         s = e2s.get(gid, gid)

@@ -116,6 +116,8 @@ HUMAN65_TYPED, HUMAN65_PROD = 0.154, 0.0
 ECOLI_TYPED, ECOLI_PROD = 0.644, 1.0
 ECOLI_AUC, ECOLI_FAME = 0.8713, 0.6894
 SEED = 7101
+LP_TIMEOUT = 20            # seconds per deletion LP; median is 0.069 s. GLPK's default is INT_MAX.
+LP_RETRY = 120             # seconds for the lone retry of any LP that hit the limit
 
 log = []
 
@@ -161,16 +163,54 @@ def labels():
 
 
 def deletion_ratios(M, mu):
+    """Growth ratio after knocking out each gene, plus the genes the solver could not settle.
+
+    TWO BUGS LIVED HERE. The first was the `ids`-column parse, fixed in loop 68. The second was
+    found by py-spy after this module ran for 2 h 50 min without finishing: GLPK's default
+    tm_lim is INT_MAX -- NO TIME LIMIT -- so a single degenerate deletion LP cycled inside
+    glp_simplex forever at 100% CPU. The median LP here costs 69 ms. There was no timeout to
+    hit and nothing in the output to show it, because the stall is inside a C call that Python
+    signals cannot interrupt.
+
+    The fix is a time limit. But a time limit introduces a WORSE failure if handled carelessly:
+    a timed-out LP returns nan, and the old code mapped every nan to growth 0.0 -- i.e. LETHAL.
+    That would have manufactured false essential genes out of solver fatigue and inflated the
+    very AUC this loop is testing. So a nan is now retried alone with a longer limit, and only
+    a solver status of `infeasible` is allowed to mean lethal. Anything still unsettled is
+    returned as UNRESOLVED, excluded from scoring, and counted in the output.
+    """
     from cobra.flux_analysis import single_gene_deletion
+    from cobra.manipulation import knock_out_model_genes
+    M.solver.configuration.timeout = LP_TIMEOUT
     dl = single_gene_deletion(M, gene_list=M.genes, processes=1)
-    ratio = {}
+    ratio, suspect = {}, []
     for _, row in dl.iterrows():
         ids = list(row["ids"]) if not isinstance(row["ids"], str) else [row["ids"]]
         v = row["growth"]
         for g in ids:
-            ratio[g] = 0.0 if (v is None or not np.isfinite(v)) else float(v) / max(mu, 1e-12)
-    assert len(ratio) >= 0.9 * len(M.genes), "deletion parse lost genes"
-    return ratio
+            if v is None or not np.isfinite(v):
+                suspect.append(g)
+            else:
+                ratio[g] = float(v) / max(mu, 1e-12)
+    unresolved = []
+    if suspect:
+        M.solver.configuration.timeout = LP_RETRY
+        for g in suspect:
+            with M:
+                knock_out_model_genes(M, [g])
+                v = M.slim_optimize()
+                stat = M.solver.status
+            if v is not None and np.isfinite(v):
+                ratio[g] = float(v) / max(mu, 1e-12)
+            elif stat == "infeasible":
+                ratio[g] = 0.0
+            else:
+                unresolved.append(g)
+        M.solver.configuration.timeout = LP_TIMEOUT
+    assert len(ratio) + len(unresolved) >= 0.9 * len(M.genes), "deletion parse lost genes"
+    nlethal = sum(1 for v in ratio.values() if v < DEAD)
+    assert nlethal > 0, "no deletion is lethal -- the parse or the medium is wrong"
+    return ratio, unresolved
 
 
 def score(ratio, e2s, ess, non):
@@ -259,7 +299,10 @@ def main():
     say("H3 CLOSURE PREDICTS A MEASURED PHENOTYPE")
     say(f"     CEGv2 {len(ess)} essential / NEGv1 {len(non)} non-essential (systematic knockout)")
     say(f"     running {ng:,} single-gene deletions ...")
-    ratio = deletion_ratios(M, mu)
+    ratio, unres = deletion_ratios(M, mu)
+    if unres:
+        say(f"     WARNING: {len(unres)} deletion LPs did not settle in {LP_RETRY}s and are EXCLUDED,")
+        say(f"              not scored as lethal: {', '.join(sorted(unres)[:10])}")
     nleth = sum(1 for v in ratio.values() if v < DEAD)
     say(f"     parsed {len(ratio):,}; {nleth} lethal in silico")
     assert nleth > 0, "no deletion is lethal -- parse or medium is wrong"
@@ -303,7 +346,10 @@ def main():
         m2 = float(Ms.optimize().objective_value or 0.0)
         if m2 < 1e-9:
             continue
-        s2 = score(deletion_ratios(Ms, m2), e2s, ess, non)
+        r2, u2 = deletion_ratios(Ms, m2)
+        s2 = score(r2, e2s, ess, non)
+        if u2:
+            say(f"       (scale {sc_}: {len(u2)} LPs unresolved, excluded)")
         sw.append({"scale": sc_, "mu": m2, "auc": s2["auc"], "precision": s2["precision"],
                    "recall": s2["recall"]})
         say(f"       scale {sc_:6.3f}  mu {m2:.5f}  AUC {s2['auc']:.4f}  "
