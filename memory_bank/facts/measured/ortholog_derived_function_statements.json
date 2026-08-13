@@ -1,0 +1,68 @@
+{
+  "id": "ortholog_derived_function_statements",
+  "claim": "Curated UniProt FUNCTION prose was pulled for the orthologs themselves (reviewed entries for mouse, rat, zebrafish, X. tropicalis, fly, worm and yeast, 42,289 gene-mapped records of which 37,364 carry FUNCTION text) and joined onto the human ortholog table, converting GO-term evidence into statements with named provenance. Of 20,622 human protein-coding records, 16,779 (81.4%) already carry curated human function text, and 3,843 do not. Orthologs supply a statement for 1,004 of those 3,843: 455 as curated prose from a model-organism ortholog and 549 as experimental GO terms only; 2,839 genes still have no usable statement from any source. The species distribution of the 455 prose transfers is the informative result: only 38 come from mouse or rat while 408 come from fly, worm or yeast. Mouse curation largely mirrors human curation, so a gene uncharacterized in human is usually uncharacterized in mouse too, and the genes that get rescued are rescued by classical invertebrate and fungal genetics. 168 of the 455 transfers are shared with at least one human paralog (ACTL7B/ACTL8/ACTRT2/ACTRT3 all inherit the same statement from Drosophila Act53D), so the number of independent statements is 361 distinct ortholog sources. For the 235 dark genes specifically, all 235 now carry a statement, 151 of them as curated ortholog prose and 94 with an additional bacterial/archaeal/protist homolog whose UniProt record carries function text.",
+  "confidence": "measured",
+  "source": "uniprot_swissprot",
+  "source_detail": "Reproducible via scripts/fetch_ortholog_function_data.sh then scripts/ortholog_function_statements.py --fetch-deep-annotations then scripts/ortholog_function_statements.py. Outputs under outputs/human_orthologs/: human_gene_function_statements.tsv.gz (all 20,622 genes), dark_gene_function_statements.tsv (235), function_statement_summary.json, FUNCTION_STATEMENTS.md. Model-organism annotations are UniProt reviewed entries only, queried per organism_id with fields accession, xref_geneid, protein_name, cc_function, go_id, ec, cc_catalytic_activity, cc_subunit, joined to the human table on NCBI GeneID via human_ortholog_pairs_panel.tsv.gz. Deep-homolog annotations are 2,827 UniProt records fetched by accession for every prokaryotic hit plus the best eukaryotic hit per gene/species from the deep-homology search (851 reviewed, 716 with FUNCTION text, 686 with an EC number). FUNCTION text is stripped of ECO evidence braces and PubMed citations and truncated at a sentence boundary. Species preference for transfer is nearest-first: mouse, rat, zebrafish, X. tropicalis, fly, worm, yeast. Snapshot 2026-08-12.",
+  "last_verified": "2026-08-12",
+  "context": {
+    "entity": "human_gene_function_statements",
+    "version": "v1.0.0"
+  },
+  "dependencies": [
+    "human_gene_ortholog_function_map",
+    "dark_gene_prokaryotic_homology"
+  ],
+  "used_by": [
+    "scripts/fetch_ortholog_function_data.sh",
+    "scripts/ortholog_function_statements.py",
+    "docs/HUMAN_ORTHOLOG_FUNCTION.md"
+  ],
+  "value": {
+    "human_genes": 20622,
+    "evidence_tier_counts": {
+      "human_curated": 16779,
+      "ortholog_curated": 455,
+      "ortholog_experimental": 489,
+      "none": 2899
+    },
+    "genes_without_own_curated_function": 3843,
+    "genes_given_a_transferred_statement": 1004,
+    "transferred_from_curated_ortholog": 455,
+    "transferred_from_experimental_go": 489,
+    "genes_with_no_statement_at_all": 2839,
+    "transfer_confidence_counts": {
+      "high_mammal": 38,
+      "medium_vertebrate": 9,
+      "low_invertebrate": 240,
+      "low_fungal": 168
+    },
+    "transfers_sharing_source_with_a_paralog": 168,
+    "distinct_ortholog_sources_used": 361,
+    "model_organism_records_with_function_text": {
+      "mouse": 14717,
+      "rat": 6852,
+      "zebrafish": 2599,
+      "xenopus_tropicalis": 1435,
+      "fly": 3510,
+      "worm": 3376,
+      "yeast": 4885
+    },
+    "deep_hit_annotations_fetched": 2827,
+    "deep_hit_annotations_reviewed": 851,
+    "deep_hit_annotations_with_function_text": 716,
+    "deep_hit_annotations_with_ec_number": 686,
+    "dark_genes": 235,
+    "dark_genes_with_statement": 235,
+    "dark_genes_with_curated_ortholog_text": 151,
+    "dark_genes_with_deep_homolog_function": 94,
+    "status": "MEASURED"
+  },
+  "caveats": [
+    "A transferred statement describes the source species. ADAMTS16's sentence comes from C. elegans and is about cuticle collagen organisation and body size; the metalloprotease and ECM-remodelling core is what transfers, the cuticle is not. The transfer_confidence column (high_mammal through low_fungal) exists so this is visible per row, and 408 of the 455 prose transfers sit in the two low tiers.",
+    "168 of the 455 prose transfers are shared with a human paralog because the ortholog relationship is many-to-one. Four actin-related genes inherit one Drosophila statement and several ADAMTS genes inherit one worm statement. Counting those as independent annotations inflates the result by roughly 20%; 361 distinct sources is the honest denominator.",
+    "Only reviewed UniProt entries carry cc_function, so an ortholog annotated solely in TrEMBL is invisible to this join. That is why some genes fall through to a worm or yeast source when a mouse ortholog exists — the mouse entry is unreviewed, not missing. Mouse reviewed coverage is 16,401 gene-mapped records against roughly 22,000 protein-coding genes.",
+    "The deep-homolog function columns are context, not a function claim, and are deliberately excluded from recommended_function. At prokaryotic distance the shared feature is usually the domain rather than the pathway: ACYP1's best annotated hit is M. jannaschii HypF, which matures [NiFe] hydrogenases that humans do not have, and DIP2C's is FadD32 from mycolic acid biosynthesis, which humans do not perform. DMXL1 to S. pombe Rav1 (RAVE complex, V-ATPase assembly) is a case where the complex-level role does transfer, and telling the two apart needs the reciprocal-best-hit flag, the query coverage and a human reading the pathway.",
+    "These statements are priors generated to be checked, not results. Only the human_curated tier reflects an experiment done on the human gene."
+  ]
+}

@@ -118,6 +118,45 @@ yeast `PEP12` (endosomal SNARE), `IGBP1C` → yeast `TAP42` (PP2A regulator).
 conserved as anything in the genome — and several still sit in the `sparse`
 tier.
 
+## From evidence to a statement you can actually use
+
+The table above proves a gene has orthologs and lists the GO terms attached to
+them. A GO term list is evidence, not an answer — "process:
+deadenylation-dependent decapping" is not a sentence you can put in a report. A
+third layer fetches the curated UniProt FUNCTION *prose* of the orthologs
+themselves and assigns every human gene the best statement available, tagged
+with where it came from: `outputs/human_orthologs/FUNCTION_STATEMENTS.md`.
+
+| evidence tier | genes | meaning |
+|:---|---:|:---|
+| `human_curated` | 16,779 | the human gene already has curated function text |
+| `ortholog_curated` | 455 | statement taken from a model-organism ortholog's record |
+| `ortholog_experimental` | 489 | no ortholog prose, but ortholog GO with experimental evidence |
+| `none` | 2,899 | no usable evidence anywhere |
+
+**3,843 human genes have no curated function text of their own; orthologs
+supply a statement for 1,004 of them.** 2,839 still have nothing.
+
+The revealing number is *which* species does the rescuing. Of the 455 prose
+transfers, only **38** come from mouse or rat — **408 come from fly, worm or
+yeast**. That is not a coverage artifact: mouse curation largely mirrors human
+curation, so a gene nobody has characterized in human is usually
+uncharacterized in mouse too. The genes that get rescued are rescued by
+classical invertebrate and yeast genetics, which is exactly the literature a
+human-only search never surfaces.
+
+Two things are recorded per row because they decide how far to trust the
+sentence:
+
+- `transfer_confidence` — `high_mammal` (use nearly verbatim) down to
+  `low_fungal` (molecular/complex-level only). ADAMTS16's statement comes from
+  worm and talks about cuticle collagen and body size; the metalloprotease/ECM
+  core transfers, the cuticle does not.
+- `source_shared_with_n_human_genes` — 168 of the 455 transfers are shared with
+  at least one human paralog (ACTL7B, ACTL8, ACTRT2 and ACTRT3 all inherit the
+  same fly Act53D sentence). Identical statements on paralogs are one piece of
+  evidence, not four; the real denominator is 361 distinct ortholog sources.
+
 ## Going deeper than the databases: bacteria and archaea
 
 Both ortholog sources stop at fly, worm and yeast, so neither can say whether a
@@ -178,6 +217,10 @@ scripts/fetch_deep_homology_data.sh       # ~180 MB of proteomes
 python3 scripts/deep_homology_dark_genes.py --cpus 4   # ~55 min (25 min phmmer,
                                           # 7 min profiles, 20 min reciprocal)
 python3 scripts/deep_homology_report.py   # writes DEEP_HOMOLOGY.md
+
+scripts/fetch_ortholog_function_data.sh   # ~25 MB, curated function text
+python3 scripts/ortholog_function_statements.py --fetch-deep-annotations
+python3 scripts/ortholog_function_statements.py   # writes FUNCTION_STATEMENTS.md
 ```
 
 The forward search caches to `data_cache/deep_homology/forward_hits.json.gz`;

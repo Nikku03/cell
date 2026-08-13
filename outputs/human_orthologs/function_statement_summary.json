@@ -1,0 +1,36 @@
+{
+  "genes": 20622,
+  "evidence_tier_counts": {
+    "ortholog_experimental": 489,
+    "human_curated": 16779,
+    "none": 2899,
+    "ortholog_curated": 455
+  },
+  "genes_without_own_curated_function": 3843,
+  "genes_given_a_transferred_statement": 1004,
+  "transferred_from_curated_ortholog": 455,
+  "transferred_from_experimental_go": 489,
+  "transferred_from_deep_homolog": 0,
+  "genes_with_no_statement_at_all": 2839,
+  "dark_genes": 235,
+  "dark_genes_with_statement": 235,
+  "dark_genes_with_curated_ortholog_text": 151,
+  "dark_genes_with_deep_homolog_function": 94,
+  "transfers_sharing_source_with_a_paralog": 168,
+  "distinct_ortholog_sources_used": 361,
+  "transfer_confidence_counts": {
+    "high_mammal": 38,
+    "medium_vertebrate": 9,
+    "low_invertebrate": 240,
+    "low_fungal": 168
+  },
+  "source_species_counts": {
+    "mouse": 13762,
+    "fly": 488,
+    "yeast": 299,
+    "rat": 285,
+    "worm": 238,
+    "zebrafish": 55,
+    "xenopus_tropicalis": 19
+  }
+}
