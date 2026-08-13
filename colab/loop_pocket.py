@@ -84,6 +84,36 @@ PREDECLARED, before any number:
   sites carry an empty description), so pockets cannot currently be read out of the annotation --
   they would have to be found.
 
+CORRECTION, ADDED AFTER AN ADVERSARIAL REVIEW OF A LATER PROPOSAL. Everything below stands as run,
+but the headline should not be quoted the way it was.
+
+  THE FITTED 14-FEATURE BLOCK IS BEATEN BY ONE OF ITS OWN COLUMNS, UNFITTED. Scoring each feature
+  alone as a within-protein percentile -- no model, no folds, no fitting -- gives:
+
+      deg16 0.7931   gnm_fast 0.7847   deg12 0.7669   gnm_msf 0.7656   dist_cen 0.7559
+      farness 0.7442   deg8 0.7416   lr8 0.7351   contact_order 0.7246   protrusion 0.7132
+
+  deg16 is simply the number of neighbours within 16 A. At 0.7931 it beats this module's fitted
+  0.7670 by +0.0261. The GNM eigendecomposition, the shortest-path solve, the protrusion cleft
+  detector, the contact-order term and the cross-validated logistic regression are, together, WORSE
+  than counting neighbours. A2 and A5 still pass -- the geometry does rank functional residues far
+  above its null -- but the claim that a network model was doing the work is withdrawn.
+
+  A3 WAS TOO WEAK A CONTROL. It compared against pLDDT as a single logistic feature (0.6372). The
+  matched control is to restrict the evaluation set: at pLDDT >= 90 the geometry macro falls 0.7670
+  -> 0.6853 and adds nothing on top of a language-model score. Much of what A3 licensed as "not just
+  order" was order after all.
+
+  AND THE LABELS ARE NOT MOSTLY ACTIVE SITES. Of the 966 primary labels, 27 are typed "Active site";
+  804 are "Binding site", of which 40.4% are nucleotide or cofactor and 33.1% are ATP alone. The
+  honest description of what this module ranks is LIGAND-CONTACT residues, mostly cofactor pockets --
+  which is still the thing that matters for the ATP/kinase-inhibitor argument, but "active site" was
+  the wrong word for it throughout.
+
+  THE HONEST BAR IS NOW 0.8216, not 0.7670: rank(ESM-2 per-position entropy) + rank(deg16), summed,
+  with no fitting at all. A language model and one neighbour count beat every structural feature
+  built here.
+
 -> outputs/loop_pocket.json
 """
 import collections
