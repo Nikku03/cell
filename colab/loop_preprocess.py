@@ -15,7 +15,10 @@ scored against:
                   centromere, gaps, low-coverage arms -- were carried into every expected(), every
                   P(s), every band slope and every orientation pair.
     peak position loop 33 reads the narrowPeak summit offset in column 9; build_chrom used the
-                  interval midpoint.
+                  interval midpoint. RETRACTED BY P2 BELOW: this one changes nothing at all --
+                  not a bin, not an orientation, not a digit of the signature. It is left in the
+                  code because matching the reference is still right, and left in this docstring
+                  because P2 was written to catch me over-claiming and it did.
     PWM           loop 33 row-normalises the count matrix before taking log-odds
                   (loop_hic_target.py:209); build_chrom fed raw counts to the log, so the score
                   tracked column read depth rather than base preference.

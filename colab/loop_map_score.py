@@ -56,13 +56,16 @@ PREDECLARED, before any number:
 
 CORRECTION, ADDED AT LOOP 85. build_chrom below has been fixed. As shipped it differed from
 loop_hic_target.py -- loop 33, which defined every measured target this arc is scored against -- in
-four places: it never NaN-filled the zero entries before masking, so all 1,926 chr21 bins passed
-where loop 33 kept 1,377; it used peak midpoints instead of narrowPeak summits; it fed an
-unnormalised count matrix to the log-odds; and it scanned the motif on a 5 bp grid over +/-100 bp
-instead of every position over +/-150 bp. outputs/loop_map_score.json, and the same fields in loops
-80-84, were produced with the defective version and their measured-map comparisons are superseded.
-The details, the reproduction of loop 33 from the corrected code, and the corrected numbers are in
-loop_preprocess.py / outputs/loop_preprocess.json.
+four places, three of which mattered: it never NaN-filled the zero entries before masking, so all
+1,926 chr21 bins passed where loop 33 kept 1,377; it fed an unnormalised count matrix to the
+log-odds, so all 404 peaks cleared the motif threshold instead of 359; and it scanned the motif on a
+5 bp grid over +/-100 bp instead of every position over +/-150 bp, finding only 101 in register. The
+fourth -- midpoints instead of narrowPeak summits -- was measured in loop 85's P2 and changes
+nothing; it is fixed for agreement, not because it was a cause. Together the three real defects turn
+loop 33's measured convergent-CTCF signature of +0.3788 into -0.0358 and its P(s) of -0.9636 into
+-1.0388. outputs/loop_map_score.json, and the same fields in loops 80-84, were produced with the
+defective version and their measured-map comparisons are superseded. The corrected code reproduces
+all ten of loop 33's recorded quantities exactly; see loop_preprocess.py.
 
 -> outputs/loop_map_score.json
 """
@@ -117,7 +120,9 @@ def build_chrom(chrom, fasta):
                           This function skipped the nan fill, so nothing was ever non-finite and
                           the >0.5n test passed all 1,926 chr21 bins where loop 33 kept 1,377.
         peak position     loop 33 reads the narrowPeak summit offset (column 9); this function
-                          used the interval midpoint, displacing peaks by up to a few hundred bp.
+                          used the interval midpoint. Loop 85's P2 measured this one and it does
+                          NOTHING -- identical bins, identical orientations, identical signature.
+                          Changed anyway so the two implementations agree, but it was not a cause.
         PWM               loop 33 row-normalises the count matrix before the log-odds; this
                           function fed raw counts in, so the score was column-depth, not affinity.
         motif scan        loop 33 scans EVERY position in +/-150 bp; this function stepped 5 bp
