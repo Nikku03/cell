@@ -258,45 +258,68 @@ def main():
     lens = [abs(g.get("gene_end", 0) - g.get("gene_start", 0)) / 1e3
             for g in C["genes"] if g.get("gene_end") and g.get("gene_start")]
     mean_kb = float(np.median([x for x in lens if 0 < x < 3000])) if lens else MEAN_GENE_KB
-    ppm = {int(k): v for k, v in C["ppm"]} if isinstance(C["ppm"], list) else {}
-    pol_ppm = ppm.get(idx.get("POLR2A", -1), None)
-    TOTAL_PROTEINS = 2.0e9              # ~2e9 protein molecules in a mammalian cell (Milo, BNID 108692)
-    pol_copies = pol_ppm / 1e6 * TOTAL_PROTEINS if pol_ppm else float("nan")
+    raw = C["ppm"]
+    ppm = ({int(k): float(v) for k, v in raw.items()} if isinstance(raw, dict)
+           else {int(a): float(b) for a, b in raw})
+    pol_ppm = ppm.get(idx.get("POLR2A", -1))
     demand_kb_h = sum(ksm[g] * mean_kb for g in genes)
     scale = 16492 / max(len(genes), 1)
     demand_all = demand_kb_h * scale
-    capacity = pol_copies * POLII_KB_PER_H if np.isfinite(pol_copies) else float("nan")
     say(f"     median gene body {mean_kb:.1f} kb; Pol II elongation {POLII_KB_PER_H:.0f} kb/h")
-    say(f"     POLR2A {pol_ppm:.1f} ppm -> {pol_copies:,.0f} molecules/cell "
-        f"(of {TOTAL_PROTEINS:.0e} total protein)")
+    say(f"     POLR2A {pol_ppm:.2f} ppm of a proteome summing to {sum(ppm.values()):,.0f} ppm")
     say(f"     transcription demand over {len(genes):,} measured genes {demand_kb_h:,.0f} kb/h")
     say(f"     scaled to all {16492:,} genes                      {demand_all:,.0f} kb/h")
-    say(f"     Pol II capacity                                    {capacity:,.0f} kb/h")
-    util = demand_all / capacity if np.isfinite(capacity) and capacity > 0 else float("nan")
-    say(f"     utilisation {util:.1%}   (gate: demand <= capacity)")
+    # THE TOTAL PROTEIN COUNT IS THE WEAK LINK AND IS SWEPT RATHER THAN ASSERTED. Published
+    # estimates for a mammalian cell span roughly 2e9 to 1e10 molecules, and the answer to R5
+    # depends on which end is taken, so both ends are reported and the gate is applied at the
+    # CONSERVATIVE end -- the smallest proteome, hence the least polymerase and the hardest test.
+    sweep = {}
+    for tot in (2.0e9, 5.0e9, 1.0e10):
+        cop = pol_ppm / 1e6 * tot if pol_ppm else float("nan")
+        cap = cop * POLII_KB_PER_H
+        sweep[tot] = {"pol_copies": cop, "capacity_kb_h": cap,
+                      "utilisation": demand_all / cap if cap > 0 else float("nan")}
+        say(f"     total proteome {tot:.0e} -> POLR2A {cop:>10,.0f} copies, capacity "
+            f"{cap:>15,.0f} kb/h, utilisation {sweep[tot]['utilisation']:>7.1%}")
+    pol_copies = sweep[2.0e9]["pol_copies"]
+    capacity = sweep[2.0e9]["capacity_kb_h"]
+    util = sweep[2.0e9]["utilisation"]
+    say(f"     gate applied at the CONSERVATIVE end (2e9 proteome, least polymerase): "
+        f"utilisation {util:.1%}")
     r5 = bool(np.isfinite(util) and util <= 1.0)
     say(f"     R5 {'PASS' if r5 else 'FAIL'} -- the derived rates "
         f"{'fit inside the measured polymerase count' if r5 else 'need MORE polymerase than the cell has'}")
     say()
 
     say("R6 EXTENSION BEYOND THE 4,190")
-    life = {}
-    for i, g in enumerate(C["genes"]):
-        v = g.get("lifetime")
-        if v:
-            life[g["name"]] = float(v)
-    have_ppm = {C["genes"][k]["name"]: v for k, v in ([(int(a), b) for a, b in C["ppm"]]
-                                                      if isinstance(C["ppm"], list) else [])
-                if k < len(C["genes"])}
+    # LOOP 74's HALF-LIVES ARE NOT IN THE GENE RECORDS. Its L6 gate reports "write additive" and
+    # passes, but the write went to a SIDECAR -- outputs/orphan/cell_lifetimes.json -- and
+    # cell_complete.json's gene objects have no lifetime field at all. This module's first run
+    # looked for g["lifetime"] and found 0 of 16,492, which is how the gap surfaced. Any downstream
+    # loop reading the gene record sees an immortal proteome, which is exactly the state loop 74's
+    # own note says loop 65 was in. Recorded here rather than silently worked around.
+    LIFE = Path(LR.CELL).parent / "cell_lifetimes.json"
+    life, mlife = {}, {}
+    if LIFE.exists():
+        raw_life = json.load(open(LIFE)).get("lifetimes", {})
+        for g, v in raw_life.items():
+            if v.get("prot_hl_h"):
+                life[g] = float(v["prot_hl_h"])
+            if v.get("mrna_hl_h"):
+                mlife[g] = float(v["mrna_hl_h"])
+    say(f"     loop 74's half-lives live in {LIFE.name}, NOT in the gene records --")
+    say(f"     cell_complete.json gene objects have no lifetime field, so a loop reading the model")
+    say(f"     directly sees an immortal proteome. Recorded as an integration gap for loop 105.")
+    have_ppm = {C["genes"][k]["name"]: v for k, v in ppm.items() if k < len(C["genes"]) and v > 0}
     ext = {g: (have_ppm[g], life[g]) for g in have_ppm if g in life and life[g] > 0}
     mass_all = sum(have_ppm.values())
     mass_cov = sum(have_ppm[g] for g in ext)
-    say(f"     genes with a written half-life: {len(life):,}")
-    say(f"     genes with a ppm abundance:     {len(have_ppm):,}")
+    say(f"     protein half-lives in the sidecar: {len(life):,}   mRNA half-lives: {len(mlife):,}")
+    say(f"     genes with a ppm abundance:        {len(have_ppm):,}")
     say(f"     both, so a protein rate is derivable: {len(ext):,}")
     say(f"     abundance mass covered: {mass_cov/mass_all:.1%} of the measured proteome")
-    say(f"     mRNA rates remain limited to the {len(genes):,} genes with a measured mRNA half-life")
-    say(f"     and copy number -- this is the constraint loops 94-108 inherit and must respect")
+    say(f"     mRNA rates need a COPY NUMBER, not a ppm, so they stay limited to the {len(genes):,}")
+    say(f"     Schwanhausser genes -- the binding constraint loops 94-108 inherit")
     say()
 
     gates = {"R1 growth dilution closes the translation gap": bool(r1),
@@ -332,8 +355,9 @@ def main():
                       "pubs_vs_abundance": rho_p_ab},
                "r5": {"polr2a_ppm": pol_ppm, "polii_copies": pol_copies,
                       "demand_kb_h": demand_all, "capacity_kb_h": capacity, "utilisation": util,
-                      "median_gene_kb": mean_kb},
-               "coverage": {"halflife": len(life), "ppm": len(have_ppm), "both": len(ext),
+                      "median_gene_kb": mean_kb,
+                      "proteome_sweep": {f"{k:.0e}": v for k, v in sweep.items()}},
+               "coverage": {"halflife_protein": len(life), "halflife_mrna": len(mlife), "ppm": len(have_ppm), "both": len(ext),
                             "abundance_mass": mass_cov / mass_all if mass_all else None},
                "k_sm": {g: ksm[g] for g in genes}, "k_sp": {g: ksp[g] for g in genes},
                "seconds": time.time() - t0, "log": log},
