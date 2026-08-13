@@ -57,9 +57,17 @@ PREDECLARED, before any number:
        >= 90% of the wired subunit genes must become lethal in silico. This is the stoichiometry
        read back and is reported as such. It is barred from the headline and from E3/E4's scoring.
   E3 IT IMPROVES PREDICTION ON GENES THAT WERE NOT WIRED           THE GATE.
-       essentiality AUC over labelled genes EXCLUDING every wired subunit, against loop 71's 0.6403
-       on the same restricted set. Must improve. If the expression layer only makes the genes I typed
+       essentiality AUC over labelled genes EXCLUDING every wired subunit. Must improve on the BASE
+       model scored over the IDENTICAL genes. If the expression layer only makes the genes I typed
        in lethal, it has taught the model nothing and this gate says so.
+       [CORRECTED AFTER THE FIRST RUN. This gate originally compared against the hardcoded constant
+       LOOP71_AUC = 0.6403, and the sentence here claimed that was "the same restricted set". It was
+       not: loop 71 measured 0.6403 on its own 208 labelled genes, INCLUDING genes this module later
+       wires. Two AUCs over two different gene sets are not a comparison. The base model is now
+       deleted inside this module before anything is added, and both are scored on the same genes.
+       The first run reported 0.6858 vs 0.6403, delta +0.0455; that delta was not paired and should
+       not be quoted. The count of non-wired genes whose deletion phenotype actually CHANGED is now
+       printed too, because if that count is zero any AUC difference is arithmetic, not biology.]
   E4 IT BEATS FAME ON THAT SAME SET                      THE POINT.
        publication count on the non-wired labelled genes. Loop 71 lost this 0.6403 to 0.8443.
   E5 WHAT IT STILL CANNOT SEE
@@ -151,6 +159,50 @@ def composition():
     return out
 
 
+def deletion_ratios(M, mu, note=""):
+    """Growth ratio after knocking out each gene, plus the genes the solver could not settle.
+
+    GLPK's default tm_lim is INT_MAX -- no limit -- and this module once hung for 1 h 50 min inside
+    a single degenerate deletion LP whose median cost is 0.069 s (py-spy caught it in glp_simplex).
+    A limit is set here; a timed-out LP is retried alone and, if still unsettled, EXCLUDED rather
+    than read as zero growth. Reading it as zero would have invented essential genes from solver
+    fatigue -- on the extended model, whose extra reactions are exactly what E3/E4 are testing.
+    """
+    from cobra.flux_analysis import single_gene_deletion
+    from cobra.manipulation import knock_out_model_genes
+    M.solver.configuration.timeout = LP_TIMEOUT
+    say(f"     running {len(M.genes):,} single-gene deletions{note} (LP limit {LP_TIMEOUT}s) ...")
+    dl = single_gene_deletion(M, gene_list=M.genes, processes=1)
+    ratio, suspect = {}, []
+    for _, row in dl.iterrows():
+        ids = list(row["ids"]) if not isinstance(row["ids"], str) else [row["ids"]]
+        v = row["growth"]
+        for g in ids:
+            if v is None or not np.isfinite(v):
+                suspect.append(g)
+            else:
+                ratio[g] = float(v) / max(mu, 1e-12)
+    unresolved = []
+    if suspect:
+        M.solver.configuration.timeout = LP_RETRY
+        for g in suspect:
+            with M:
+                knock_out_model_genes(M, [g])
+                v = M.slim_optimize()
+                stat = M.solver.status
+            if v is not None and np.isfinite(v):
+                ratio[g] = float(v) / max(mu, 1e-12)
+            elif stat == "infeasible":
+                ratio[g] = 0.0
+            else:
+                unresolved.append(g)
+        M.solver.configuration.timeout = LP_TIMEOUT
+    if unresolved:
+        say(f"     WARNING: {len(unresolved)} deletion LPs did not settle in {LP_RETRY}s and are "
+            f"EXCLUDED, not scored as lethal: {', '.join(sorted(unresolved)[:10])}")
+    return ratio, unresolved
+
+
 def main():
     t0 = time.time()
     say("=" * 100)
@@ -172,6 +224,16 @@ def main():
     for w, rid in cfg["medium"].items():
         M.reactions.get_by_id(rid).lower_bound = -1000.0 if w in FREE else -0.010
     mu0 = float(M.optimize().objective_value or 0.0)
+
+    # THE PAIRED BASELINE. The first version of E3 compared this module's AUC on non-wired genes
+    # against the hardcoded constant LOOP71_AUC = 0.6403 -- a number loop 71 computed on ITS OWN
+    # labelled set, which included genes this module later wires. Two AUCs on two different gene
+    # sets are not a comparison, and the docstring's claim of "the same restricted set" was false.
+    # So the base model is deleted here, BEFORE a single reaction is added, and E3 scores base and
+    # extended on exactly the same genes. It costs one extra pass (~6 min) and it is the difference
+    # between a paired test and a suggestive pair of numbers.
+    say("  paired baseline: deleting genes on the BASE model before anything is added")
+    base_ratio, base_unres = deletion_ratios(M, mu0, note=" on the BASE model")
 
     e2s = {}
     with open(GENES) as f:
@@ -256,45 +318,7 @@ def main():
     say(f"     E1 {'PASS' if e1 else 'FAIL'}")
     say()
 
-    from cobra.flux_analysis import single_gene_deletion
-    from cobra.manipulation import knock_out_model_genes
-    # GLPK's default tm_lim is INT_MAX -- no limit -- and this module hung for 1 h 50 min inside a
-    # single degenerate deletion LP whose median cost is 0.069 s (py-spy caught it in glp_simplex).
-    # A limit is set here; a timed-out LP is retried alone and, if still unsettled, EXCLUDED rather
-    # than read as zero growth. Reading it as zero would have invented essential genes from solver
-    # fatigue -- on the extended model, whose extra 166 reactions are exactly what E3/E4 are testing.
-    M.solver.configuration.timeout = LP_TIMEOUT
-    say(f"     running {len(M.genes):,} single-gene deletions on the extended model "
-        f"(LP limit {LP_TIMEOUT}s) ...")
-    dl = single_gene_deletion(M, gene_list=M.genes, processes=1)
-    ratio, suspect = {}, []
-    for _, row in dl.iterrows():
-        ids = list(row["ids"]) if not isinstance(row["ids"], str) else [row["ids"]]
-        v = row["growth"]
-        for g in ids:
-            if v is None or not np.isfinite(v):
-                suspect.append(g)
-            else:
-                ratio[g] = float(v) / max(mu, 1e-12)
-    unresolved = []
-    if suspect:
-        M.solver.configuration.timeout = LP_RETRY
-        for g in suspect:
-            with M:
-                knock_out_model_genes(M, [g])
-                v = M.slim_optimize()
-                stat = M.solver.status
-            if v is not None and np.isfinite(v):
-                ratio[g] = float(v) / max(mu, 1e-12)
-            elif stat == "infeasible":
-                ratio[g] = 0.0
-            else:
-                unresolved.append(g)
-        M.solver.configuration.timeout = LP_TIMEOUT
-    if unresolved:
-        say(f"     WARNING: {len(unresolved)} deletion LPs did not settle in {LP_RETRY}s and are "
-            f"EXCLUDED, not scored as lethal")
-        say(f"              {', '.join(sorted(unresolved)[:10])}")
+    ratio, unresolved = deletion_ratios(M, mu, note=" on the EXTENDED model")
     sym_ratio = {}
     for gid, v in ratio.items():
         s = e2s.get(gid, gid)
@@ -312,9 +336,12 @@ def main():
     say()
 
     say("E3 IT IMPROVES PREDICTION ON GENES THAT WERE NOT WIRED")
-    lab, sc, gs = [], [], []
+    base_sym = {}
+    for gid, v in base_ratio.items():
+        base_sym[e2s.get(gid, gid)] = v
+    lab, sc, bs, gs = [], [], [], []
     for g, v in sym_ratio.items():
-        if g in allwired:
+        if g in allwired or g not in base_sym:
             continue
         if g in ess:
             y = 1
@@ -324,12 +351,23 @@ def main():
             continue
         lab.append(y)
         sc.append(1.0 - min(max(v, 0.0), 1.0))
+        bs.append(1.0 - min(max(base_sym[g], 0.0), 1.0))
         gs.append(g)
-    lab, sc = np.array(lab), np.array(sc)
-    auc = float(roc_auc_score(lab, sc)) if len(set(lab)) > 1 else float("nan")
-    say(f"     {len(lab)} labelled non-wired genes ({int(lab.sum())} essential)")
-    say(f"     extended model AUC {auc:.4f}   loop 71 (metabolism only) {LOOP71_AUC:.4f}")
-    e3 = auc > LOOP71_AUC
+    lab, sc, bs = np.array(lab), np.array(sc), np.array(bs)
+    two = len(set(lab)) > 1
+    auc = float(roc_auc_score(lab, sc)) if two else float("nan")
+    auc_base = float(roc_auc_score(lab, bs)) if two else float("nan")
+    say(f"     {len(lab)} labelled non-wired genes ({int(lab.sum())} essential), scored on the "
+        f"IDENTICAL set by both models")
+    say(f"     BASE model     (metabolism only)  AUC {auc_base:.4f}")
+    say(f"     EXTENDED model (+ machines)       AUC {auc:.4f}   delta {auc - auc_base:+.4f}")
+    say(f"     for reference, loop 71 reported {LOOP71_AUC:.4f} on ITS OWN larger labelled set --")
+    say(f"     that number is NOT the baseline here, because it was measured on different genes.")
+    nch = int((np.abs(sc - bs) > 1e-9).sum())
+    say(f"     {nch} of {len(lab)} non-wired genes changed their deletion phenotype at all")
+    if nch == 0:
+        say(f"     ZERO changed. Any AUC difference would be arithmetic noise, not biology.")
+    e3 = two and auc > auc_base
     say(f"     E3 {'PASS' if e3 else 'FAIL'}")
     say()
 
@@ -372,7 +410,9 @@ def main():
                                 "unrepresented essential genes named"],
                       note="E2 is the stoichiometry read back and is barred from the headline")
     RM.report(man, emit=say)
-    json.dump({"test": "loop_expression_layer", "manifest": man, "gates": gates,
+    json.dump({"test": "loop_expression_layer", "manifest": man, "gates": gates, "e3_auc_base": auc_base, "e3_auc_extended": auc,
+               "e3_delta": auc - auc_base, "e3_n_phenotype_changed": nch,
+               "base_unresolved": len(base_unres), "ext_unresolved": len(unresolved),
                "growth_before": mu0, "growth_after": mu,
                "wired": {k: v for k, v in wired.items()}, "n_wired": len(allwired),
                "machine_coefficients": coefs, "total_protein_aa_demand": total_aa,
