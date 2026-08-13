@@ -61,6 +61,13 @@ PREDECLARED, before any number:
        the short band (100-500 kb) and long band (1-10 Mb) again. Bending moved the short band 4.6x
        more than the long. A compartment term must do the OPPOSITE: move the long band more than the
        short. If it does not, it is not doing the job it was added for, whatever it does to the fit.
+       [HARDENED AFTER THE SECOND RUN. That version PASSED this gate with short -0.0345 and long
+       -0.1175 -- "the long band moved more" is true and completely meaningless when BOTH bands have
+       collapsed to near zero, which is a chain that has dissolved into a blob where everything
+       contacts everything. Strength is now declared as ALPHA = eps * sum(p), the compartment
+       attraction on one bin in units of a backbone bond, so the parameter is interpretable and
+       bounded; and the gate additionally requires both bands to stay inside a physical range. A
+       differential test between two destroyed quantities is not a test.]
   C4 DOES IT RESOLVE THE THREE-WAY INCOMPATIBILITY                     THE GATE.
        P(s) inside (-1.16, -0.76), map correlation above the distance-only null, and a convergent-CTCF
        orientation signature that collapses below half under motif shuffling -- all three at one point.
@@ -98,7 +105,14 @@ PS_WINDOW = L77.PS_WINDOW
 MEASURED_PS = -0.9636
 K_LOOP = L80.K_DERIVED                 # 3.90, geometrically derived in loop 36 / verified in loop 80
 
-EPS_SWEEP = [0.0, 0.002, 0.005, 0.010, 0.020]
+# STRENGTH IS DECLARED RELATIVE TO THE BACKBONE, NOT AS A RAW COEFFICIENT.
+# The first sweep used raw eps in [0, 0.02] and destroyed the polymer: each bin carries attraction
+# eps * sum(p) ~ 0.005 * 400 = 2, i.e. bonded to its entire compartment twice as strongly as to its
+# own backbone neighbours (which have weight 1). Measured consequence: P(s) collapsed from -1.31 to
+# -0.12, essentially flat -- everything contacting everything. The sweep is now parameterised by
+# ALPHA = eps * sum(p), the total compartment attraction on one bin in units of a backbone bond, and
+# eps is derived from it at build time. Alpha must be well under 1 for the chain to survive.
+ALPHA_SWEEP = [0.0, 0.005, 0.02, 0.05, 0.15]
 SEPARATION_KB = [100.0, 200.0, 400.0]
 RESIDENCE_S = [600.0, 1500.0]
 SPEED_KB_S = [0.5, 1.0]
@@ -271,6 +285,12 @@ def main():
     say()
 
     say("C2 THE EXTENDED FAST MAP IS STILL AN IDENTITY")
+    # alpha -> eps, using this chromosome's own compartment mass
+    p_ = np.maximum(c, 0.0); m_ = np.maximum(-c, 0.0)
+    cmass = max(float(p_.sum()), float(m_.sum()))
+    EPS_SWEEP = [a / cmass for a in ALPHA_SWEEP]
+    say(f"     compartment mass sum(p) = {p_.sum():.1f}, sum(m) = {m_.sum():.1f}; "
+        f"alpha {ALPHA_SWEEP} -> eps {[f'{e:.2e}' for e in EPS_SWEEP]}")
     G0s = {}
     for eps in EPS_SWEEP:
         Lb = base_with_compartment(n, c, eps)
@@ -281,7 +301,7 @@ def main():
         f"(min eigenvalue > 0) before any map was built")
     cfg4, _, _ = L77.simulate(n, bf, br, np.random.default_rng(SEED), DT_FINAL, n_config=3)
     worst = 0.0
-    for eps in (0.0, 0.005, 0.020):
+    for eps in (EPS_SWEEP[0], EPS_SWEEP[2], EPS_SWEEP[-1]):
         A = contact_map_full(n, cfg4, G0s[eps], K_LOOP)
         B = contact_map_exact_full(n, cfg4, c, eps, K_LOOP)
         f = np.isfinite(A) & np.isfinite(B) & (B > 0)
@@ -298,14 +318,23 @@ def main():
     l0 = L80.ps_band(ref["M"], mask, *LONG_BAND)
     say(f"     eps = 0:      short {s0:+.4f}   long {l0:+.4f}")
     dS = dL = 0.0
-    for eps in (0.005, 0.020):
+    mid_s = mid_l = float('nan')
+    for eps in (EPS_SWEEP[2], EPS_SWEEP[-1]):
         R = run_point(C21, bf, br, 200.0, 900.0, 0.75, G0s[eps], K_LOOP, DT_FINAL, NCFG_FINAL, SEED)
         s_, l_ = L80.ps_band(R["M"], mask, *SHORT_BAND), L80.ps_band(R["M"], mask, *LONG_BAND)
         say(f"     eps = {eps:.3f}:  short {s_:+.4f} (d {s_-s0:+.4f})   "
             f"long {l_:+.4f} (d {l_-l0:+.4f})")
-        if abs(eps - 0.005) < 1e-9:
+        if abs(eps - EPS_SWEEP[2]) < 1e-12:
             dS, dL = abs(s_ - s0), abs(l_ - l0)
-    c3 = dL > dS
+            mid_s, mid_l = s_, l_
+    # A term that flattens BOTH bands has not reshaped the curve, it has dissolved the polymer.
+    # The first run passed this gate with short -0.0345 and long -0.1175 -- "long moved more" is
+    # true and meaningless when both have collapsed. The gate now also requires the bands to stay
+    # in a physical range.
+    alive = (-2.0 <= mid_s <= -0.3) and (-2.0 <= mid_l <= -0.3)
+    c3 = (dL > dS) and alive
+    say(f"     bands still physical at the mid strength: {alive}  "
+        f"(short {mid_s:+.4f}, long {mid_l:+.4f}; a slope near 0 means the chain has dissolved)")
     say(f"     at eps = 0.005 the long band moves {dL:.4f} and the short band {dS:.4f}")
     say(f"     C3 {'PASS' if c3 else 'FAIL'} -- it {'IS' if c3 else 'is NOT'} a long-range mechanism "
         f"(bending was 4.6x the other way)")
