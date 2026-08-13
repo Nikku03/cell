@@ -19,7 +19,19 @@ WHAT IS ADDED, and the principle is one sentence: A GROWING CELL MUST DOUBLE ITS
     per subunit gene   SYN_<gene>:  charged amino acids (that protein's REAL composition from its
                                     UniProt sequence) + GTP  ->  PROT_<gene>      GPR = that gene
     per machine        ASM_<machine>: sum of its PROT_<gene>  ->  <machine>
-    biomass            now also consumes each machine, at its measured mass fraction
+    biomass            now also consumes each machine, at a coefficient DERIVED from its mass
+                       fraction rather than typed in
+
+THE COEFFICIENT IS DERIVED, AND THE FIRST RUN PROVES WHY IT HAD TO BE. Declaring "the ribosome is 5%
+of protein mass" is biology; writing 0.05 into the biomass reaction is a units error. One assembled
+ribosome here costs 23,499 amino acids, while the entire protein pool demands 5.3380 mmol of amino
+acids per unit biomass -- so the correct coefficient for 5% of protein mass is 1.136e-05, and 0.05 is
+4,400x too large. The first run used 0.05 and growth collapsed 0.02036 -> 0.00015 /h, failing E1.
+The fix is not to tune the number until it grows; it is to compute it:
+
+    coefficient = target_mass_fraction * total_protein_aa_demand / machine_aa_cost
+
+so the only thing declared is the mass fraction, which is a measurable property of a cell.
 
 Dilution by growth is the physically correct coupling -- a cell that doubles must make a second
 ribosome -- and it is what turns a subunit into a requirement rather than a decoration.
@@ -90,6 +102,8 @@ AA1 = dict(zip("ARNDCQEGHILKMFPSTWYV",
                 "methionine", "phenylalanine", "proline", "serine", "threonine", "tryptophan",
                 "tyrosine", "valine"]))
 
+# value is the machine's TARGET MASS FRACTION of total cell protein -- a measurable biological
+# quantity. The stoichiometric coefficient is derived from it at build time, never typed in.
 MACHINES = {
     "cyto_ribosome":  (r"^RP[LS]", 0.050),
     "mito_ribosome":  (r"^MRP[LS]", 0.005),
@@ -174,7 +188,13 @@ def main():
         nm = (m.name or "").strip()
         if nm in AA20 and m.compartment == "c":
             aa_met.setdefault(nm, m)
+    # total amino-acid demand of the existing protein pool, used to derive every machine coefficient
+    pp = M.metabolites.get_by_id("MAM10013c")
+    r62 = M.reactions.get_by_id("MAR10062")
+    aa_per_pool = sum(-c for m, c in r62.metabolites.items() if c < 0 and m.id != "MAM02040c")
+    total_aa = abs(M.reactions.get_by_id("MAR13082").metabolites[pp]) * aa_per_pool
     say(f"  base model growth {mu0:.5f} /h; {len(aa_met)}/20 cytosolic amino acids located")
+    say(f"  total protein amino-acid demand per unit biomass: {total_aa:.4f} mmol")
 
     say()
     say("  BUILDING THE EXPRESSION LAYER")
@@ -184,6 +204,7 @@ def main():
     h2o = M.metabolites.get_by_id("MAM02040c")
     bm = M.reactions.get_by_id("MAR13082")
     wired = {}
+    coefs = {}
     newrx = []
     for mach, (pat, frac) in MACHINES.items():
         subs = sorted({g for g in ess | non if re.match(pat, g)} |
@@ -214,9 +235,13 @@ def main():
         asm = cobra.Reaction(f"ASM_{mach}", name=f"{mach} assembly", lower_bound=0, upper_bound=1000)
         asm.add_metabolites({pm: -1.0 for pm in prot_mets} | {machine_met: 1.0})
         newrx.append(asm)
-        bm.add_metabolites({machine_met: -frac})
+        machine_aa = sum(sum(comp[g].values()) for g in subs)
+        coef = frac * total_aa / max(machine_aa, 1)
+        bm.add_metabolites({machine_met: -coef})
         wired[mach] = subs
-        say(f"     {mach:16s} {len(subs):3d} subunits, biomass coefficient {frac}")
+        coefs[mach] = coef
+        say(f"     {mach:16s} {len(subs):3d} subunits, {machine_aa:7,d} aa/machine, "
+            f"mass fraction {frac:.1%} -> coefficient {coef:.3e}")
     M.add_reactions(newrx)
     allwired = {g for v in wired.values() for g in v}
     say(f"     added {len(newrx):,} reactions, {len(allwired)} wired subunit genes")
@@ -318,6 +343,7 @@ def main():
     json.dump({"test": "loop_expression_layer", "manifest": man, "gates": gates,
                "growth_before": mu0, "growth_after": mu,
                "wired": {k: v for k, v in wired.items()}, "n_wired": len(allwired),
+               "machine_coefficients": coefs, "total_protein_aa_demand": total_aa,
                "wired_lethal_frac": frac_w,
                "n_labelled_nonwired": int(len(lab)), "n_essential_nonwired": int(lab.sum()),
                "auc_nonwired": auc, "loop71_auc": LOOP71_AUC,
