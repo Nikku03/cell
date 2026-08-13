@@ -147,9 +147,27 @@ SOURCE_NOT_IDENTIFIED = {
     "tss": "stored as a STRING; the same promoter as ens_tss picked per-TRANSCRIPT rather than at the "
            "gene boundary (6.65% exact, median offset 75 bp, corr 0.9998). The transcript set that "
            "defines the pick -- MANE, canonical, refGene, CAGE -- is not recorded",
-    "npath": "a pathway count. Not GO process count (corr 0.02) and not membership in the `pathways` "
-             "key (exact 0.37), so the pathway database used is not recorded",
-    "path": "a single Reactome-style pathway name with a trailing space; the release is not recorded",
+    # IDENTIFIED BY LOOP 75 -- this entry's claim that the database "is not recorded" is FALSIFIED
+    # and is kept only to show what the negative evidence looked like before the answer was found.
+    # Both refutations above were CORRECT; neither candidate was the source. What was never tested
+    # was Reactome at the LOWEST level, and the level is the whole answer. The "exact 0.37" recorded
+    # here is the ALL-LEVELS variant (loop 75 reproduces it at 0.3658), which is also what
+    # outputs/orphan/reactome_pathways.json holds -- so this entry refuted the repo's own copy of
+    # Reactome and concluded Reactome was not the source.
+    "npath": "IDENTIFIED (loop 75): the number of Homo sapiens ROWS per gene in Reactome's "
+             "NCBI2Reactome.txt (LOWEST level), Entrez joined to symbol via NCBI gene_info -- exact "
+             "0.9808, rho 0.9823, max 241 matching the stored max, against a shuffled null of "
+             "0.2231. Counting UNIQUE pathway ids instead of rows drops it to 0.8691, and "
+             "NCBI2Reactome_All_Levels.txt to 0.3658, which is the 0.37 this entry once reported as "
+             "a dead end. The Reactome RELEASE is still not recorded: 316 genes disagree with "
+             "current, median |diff| 1, consistent with ordinary curation drift.",
+    "path": "IDENTIFIED (loop 75): a Reactome human LOWEST-LEVEL pathway name truncated to 44 "
+            "characters. The trailing space in 'Platelet degranulation ' is a defect in Reactome's "
+            "own name, present verbatim in NCBI2Reactome.txt, copied through untouched. The RULE "
+            "that picks WHICH of a gene's pathways becomes `path` is NOT recovered: for the 3,991 "
+            "genes with exactly one pathway it matches 99.90%, but for multi-pathway genes no "
+            "tie-break tested beats 0.3844, so `path` cannot be regenerated exactly -- and neither "
+            "can the `pathways` key, which loop 75 measured to be groupby(path) at agreement 1.0000",
     "enh": "an enhancer count; the catalogue is not recorded",
     "ndis": "a disease count; the database is not recorded",
 }
