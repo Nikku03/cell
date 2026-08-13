@@ -54,6 +54,16 @@ PREDECLARED, before any number:
        that cannot be reconciled with the data it was meant to reproduce, and that needs saying
        plainly rather than being split.
 
+CORRECTION, ADDED AT LOOP 85. build_chrom below has been fixed. As shipped it differed from
+loop_hic_target.py -- loop 33, which defined every measured target this arc is scored against -- in
+four places: it never NaN-filled the zero entries before masking, so all 1,926 chr21 bins passed
+where loop 33 kept 1,377; it used peak midpoints instead of narrowPeak summits; it fed an
+unnormalised count matrix to the log-odds; and it scanned the motif on a 5 bp grid over +/-100 bp
+instead of every position over +/-150 bp. outputs/loop_map_score.json, and the same fields in loops
+80-84, were produced with the defective version and their measured-map comparisons are superseded.
+The details, the reproduction of loop 33 from the corrected code, and the corrected numbers are in
+loop_preprocess.py / outputs/loop_preprocess.json.
+
 -> outputs/loop_map_score.json
 """
 import gzip
@@ -97,38 +107,65 @@ def say(s=""):
 
 
 def build_chrom(chrom, fasta):
-    """Hi-C map, mask, oriented CTCF landscape and forward/reverse site sets for one chromosome."""
-    H = np.load(SC / f"hic_{chrom}_25kb.npy")
+    """Hi-C map, mask, oriented CTCF landscape and forward/reverse site sets for one chromosome.
+
+    CORRECTED AT LOOP 85. The version this function shipped with, and which loops 79-84 all ran,
+    differed from loop_hic_target.py (loop 33, which defined every target this arc is scored
+    against) in four places, and every one of them degraded the comparison:
+
+        unmappable bins   loop 33 sets M[M == 0] = nan then keeps rows with >50 finite entries.
+                          This function skipped the nan fill, so nothing was ever non-finite and
+                          the >0.5n test passed all 1,926 chr21 bins where loop 33 kept 1,377.
+        peak position     loop 33 reads the narrowPeak summit offset (column 9); this function
+                          used the interval midpoint, displacing peaks by up to a few hundred bp.
+        PWM               loop 33 row-normalises the count matrix before the log-odds; this
+                          function fed raw counts in, so the score was column-depth, not affinity.
+        motif scan        loop 33 scans EVERY position in +/-150 bp; this function stepped 5 bp
+                          over +/-100 bp, which usually misses the true register of a 19 bp motif.
+
+    With all four corrected the function reproduces loop 33's recorded numbers exactly: 1,377
+    mappable chr21 bins, P(s) -0.9636, 359/404 peaks oriented, 1,923 convergent against 3,970
+    non-convergent pairs, 1.353 vs 0.974, difference +0.3788. See loop_preprocess.py.
+    """
+    H = np.load(SC / f"hic_{chrom}_25kb.npy").astype(np.float64)
     n = len(H)
-    mask = np.isfinite(H).sum(1) > 0.5 * n
+    H[H == 0] = np.nan                              # loop_hic_target.py:162
+    mask = np.isfinite(H).sum(1) > 50               # loop_hic_target.py:163
     seq = "".join(l.strip() for l in gzip.open(SC / fasta, "rt") if not l.startswith(">")).upper()
     pk = []
     for ln in gzip.open(L77.CTCF, "rt"):
         f = ln.split("\t")
-        if f[0] == chrom:
-            pk.append({"summit": (int(f[1]) + int(f[2])) // 2})
+        if f[0] != chrom:
+            continue
+        st, en = int(f[1]), int(f[2])               # narrowPeak summit is column 9, off start
+        off = (int(f[9]) if len(f) > 9 and f[9].strip().lstrip("-").isdigit() and int(f[9]) >= 0
+               else (en - st) // 2)
+        pk.append({"start": st, "end": en, "summit": st + off})
     pfm = json.load(open(L77.PFM))
     Lw = len(pfm["A"])
     W = np.array([pfm[b] for b in "ACGT"], float).T
+    W = W / W.sum(1, keepdims=True)                 # loop_hic_target.py:209 -- was missing
+    W = np.log2((W + 1e-3) / 0.25)
     idx = {c: i for i, c in enumerate("ACGT")}
 
     def sc(s):
         if len(s) != Lw or any(c not in idx for c in s):
             return -1e9
-        return float(sum(np.log2(W[i, idx[c]] / 0.25 + 1e-9) for i, c in enumerate(s)))
+        return float(sum(W[i, idx[c]] for i, c in enumerate(s)))
 
     def rc(s):
         return s.translate(str.maketrans("ACGT", "TGCA"))[::-1]
 
     for p in pk:
+        a, b = max(0, p["summit"] - 150), min(len(seq), p["summit"] + 150)
+        win = seq[a:b]
         best, bo = -1e9, 0
-        c = p["summit"]
-        for off in range(-100, 101, 5):
-            s = seq[c + off: c + off + Lw]
+        for i in range(len(win) - Lw + 1):          # every position, not a 5 bp grid
+            s = win[i:i + Lw]
             f_, r_ = sc(s), sc(rc(s))
             if max(f_, r_) > best:
                 best, bo = max(f_, r_), (1 if f_ >= r_ else -1)
-        p["orient"] = bo if best > 6.0 else 0
+        p["motif"], p["orient"] = best, (bo if best > 6.0 else 0)
     ors = [p["orient"] for p in pk]
     return {"H": H, "n": n, "mask": mask, "peaks": pk, "orients": ors,
             "G0": L77.base_inverse(n)[0]}
