@@ -69,9 +69,18 @@ PREDECLARED, before any number:
        bounded; and the gate additionally requires both bands to stay inside a physical range. A
        differential test between two destroyed quantities is not a test.]
   C4 DOES IT RESOLVE THE THREE-WAY INCOMPATIBILITY                     THE GATE.
-       P(s) inside (-1.16, -0.76), map correlation above the distance-only null, and a convergent-CTCF
-       orientation signature that collapses below half under motif shuffling -- all three at one point.
-       Loop 79 found 0 of 45 without bending; loop 80 found 0 of 180 with it. Gate: at least one.
+       BOTH BANDS within 0.12 of their measured values, map correlation above the distance-only null,
+       and a convergent-CTCF orientation signature collapsing below half under motif shuffling -- all
+       at one point. Loop 79 found 0 of 45, loop 80 found 0 of 180.
+       [RETARGETED. Earlier versions used the single-slope window (-1.16, -0.76) inherited from loop
+       35. Loop 80 established that a single slope averaged over two decades CANNOT distinguish a
+       shape error from a tilt, and this module then measured the shape directly: the real chr21 has
+       short -0.8666 and long -0.9721, a gap of 0.11 -- nearly scale-free -- while the model has
+       -0.7325 and -1.2979, a gap of 0.57. Both model bands are wrong in OPPOSITE directions. A gate
+       on the averaged slope cannot see that, so the gate is now on both bands separately.
+       Separately: my ps_slope returns -1.0388 on the measured map where loop 33 reported -0.9636.
+       The inherited window rests on their number and mine is not the same statistic, which is a
+       second reason to target bands measured in this module rather than a constant from another.]
   C5 THE CHECKERBOARD APPEARS AND IS NOT JUST A SLOPE CHANGE
        same-compartment minus cross-compartment contact at MATCHED separation, in the simulated map and
        in the measured map, computed identically. A compartment term that shifts P(s) without producing
@@ -112,7 +121,13 @@ K_LOOP = L80.K_DERIVED                 # 3.90, geometrically derived in loop 36 
 # -0.12, essentially flat -- everything contacting everything. The sweep is now parameterised by
 # ALPHA = eps * sum(p), the total compartment attraction on one bin in units of a backbone bond, and
 # eps is derived from it at build time. Alpha must be well under 1 for the chain to survive.
-ALPHA_SWEEP = [0.0, 0.005, 0.02, 0.05, 0.15]
+# CALIBRATED EMPIRICALLY, after mis-scaling this twice. The relevant reference for LONG-RANGE
+# structure is not the backbone bond (weight 1) but the CONFINEMENT (1.1e-5), which sets the
+# long-distance plateau -- any compartment attraction stronger than that dominates the softest modes
+# and dissolves the chain. Measured usable range: alpha up to ~3e-3 keeps both bands physical,
+# 1e-2 does not. Log-spaced inside that.
+ALPHA_SWEEP = [0.0, 1e-5, 3e-5, 1e-4, 3e-4, 1e-3]
+BAND_TOL = 0.12          # how close a band must sit to the measured value to count
 SEPARATION_KB = [100.0, 200.0, 400.0]
 RESIDENCE_S = [600.0, 1500.0]
 SPEED_KB_S = [0.5, 1.0]
@@ -254,8 +269,20 @@ def main():
     fs, rs = L79.sites(C21, C21["orients"])
     rho_dist = L77.band_rho(L79.distance_null(C21), H, mask, n, w)[0]
     say(f"  chr21 {n:,} bins;  distance null {rho_dist:+.4f};  replicate ceiling +0.9441")
-    say(f"  loop 80 bands: short {-0.7325:+.4f}  long {-1.2979:+.4f}  measured {MEASURED_PS:+.4f} "
-        f"(between them)")
+    # THE TARGET, measured here rather than inherited. Loop 80 compared the model's bands to a
+    # SINGLE measured slope, which cannot say whether the shape is right. These are the real bands.
+    meas_s = L80.ps_band(H, mask, *SHORT_BAND)
+    meas_l = L80.ps_band(H, mask, *LONG_BAND)
+    meas_full, _ = L77.ps_slope(H, mask)
+    say(f"  MEASURED chr21 bands: short {meas_s:+.4f}   long {meas_l:+.4f}   "
+        f"gap {abs(meas_l-meas_s):.4f}")
+    say(f"  model at eps=0 (loop 80): short {-0.7325:+.4f}  long {-1.2979:+.4f}  gap 0.5654")
+    say(f"  the real chromosome is nearly SCALE-FREE; the model diverges 5x more between scales")
+    say(f"  single-slope fit of the measured map here: {meas_full:+.4f}")
+    say(f"  [loop 33 reported {MEASURED_PS:+.4f} for the same quantity on the same data. My")
+    say(f"   ps_slope is not loop 33's -- this is the second such offset after PC1 (0.7883 vs")
+    say(f"   0.4848). The (-1.16,-0.76) window inherited from loop 35 is built on THEIR number, so")
+    say(f"   band targets measured HERE are used below instead of that window.]")
     say()
 
     say("C1 THE COMPARTMENT TRACK IS SEQUENCE-DERIVED, NOT MAP-DERIVED")
@@ -288,6 +315,7 @@ def main():
     # alpha -> eps, using this chromosome's own compartment mass
     p_ = np.maximum(c, 0.0); m_ = np.maximum(-c, 0.0)
     cmass = max(float(p_.sum()), float(m_.sum()))
+    globals()["cmass"] = cmass
     EPS_SWEEP = [a / cmass for a in ALPHA_SWEEP]
     say(f"     compartment mass sum(p) = {p_.sum():.1f}, sum(m) = {m_.sum():.1f}; "
         f"alpha {ALPHA_SWEEP} -> eps {[f'{e:.2e}' for e in EPS_SWEEP]}")
@@ -351,10 +379,15 @@ def main():
     for i, (sep, res, spd, eps) in enumerate(grid, 1):
         R = run_point(C21, bf, br, sep, res, spd, G0s[eps], K_LOOP, DT_SWEEP, NCFG_SWEEP, SEED)
         rho = L77.band_rho(R["M"], H, mask, n, w)[0]
-        inw = PS_WINDOW[0] <= R["ps"] <= PS_WINDOW[1]
+        bs = L80.ps_band(R["M"], mask, *SHORT_BAND)
+        bl = L80.ps_band(R["M"], mask, *LONG_BAND)
+        # BOTH bands must match, not a single averaged slope -- loop 80 showed one slope cannot
+        # distinguish a shape error from a tilt.
+        inw = (abs(bs - meas_s) <= BAND_TOL) and (abs(bl - meas_l) <= BAND_TOL)
         beats = rho > rho_dist
-        row = {"sep_kb": sep, "res_s": res, "v_kb_s": spd, "eps": eps, "ps": R["ps"],
-               "rho_map": rho, "ps_in_window": inw, "beats_dist": beats, "all_three": False,
+        row = {"sep_kb": sep, "res_s": res, "v_kb_s": spd, "eps": eps, "alpha": eps * cmass,
+               "ps": R["ps"], "band_short": bs, "band_long": bl,
+               "rho_map": rho, "bands_match": inw, "beats_dist": beats, "all_three": False,
                "orient": None, "orient_shuf": None}
         if inw and beats:
             o, _ = L77.orientation_effect(R["M"], R["exp"], fs, rs, mask, n)
@@ -364,14 +397,14 @@ def main():
             row["all_three"] = bool(np.isfinite(o) and o > 0
                                     and (not np.isfinite(os_) or os_ < 0.5 * o))
             say(f"       sep {sep:5.0f} res {res:6.0f} v {spd:4.2f} eps {eps:.3f}  "
-                f"P(s) {R['ps']:+.4f} rho {rho:+.4f} orient {o:+.4f}->{os_:+.4f}"
+                f"bands {bs:+.3f}/{bl:+.3f} rho {rho:+.4f} orient {o:+.4f}->{os_:+.4f}"
                 f"{'   ALL THREE' if row['all_three'] else ''}")
         rows.append(row)
         if i % 15 == 0:
             say(f"       ... {i}/{len(grid)}")
-    n_two = sum(1 for x in rows if x["ps_in_window"] and x["beats_dist"])
+    n_two = sum(1 for x in rows if x["bands_match"] and x["beats_dist"])
     n_all = sum(1 for x in rows if x["all_three"])
-    say(f"     {n_two} of {len(rows)} satisfy P(s)-in-window AND beat the distance null")
+    say(f"     {n_two} of {len(rows)} match BOTH bands (within {BAND_TOL}) AND beat the distance null")
     say(f"     {n_all} of {len(rows)} satisfy ALL THREE   (loop 79: 0/45, loop 80: 0/180)")
     c4 = n_all > 0
     say(f"     C4 {'PASS' if c4 else 'FAIL'}")
@@ -381,7 +414,8 @@ def main():
     cb_meas, n_meas = checkerboard(H, c, mask, n, w)
     say(f"     measured chr21 map: same minus cross at matched separation {cb_meas:+.4f} "
         f"({n_meas:,} pairs)")
-    cands = [x for x in rows if x["all_three"]] or [x for x in rows if x["beats_dist"]] or rows
+    cands = [x for x in rows if x["all_three"]] or [x for x in rows if x["bands_match"]] \
+        or [x for x in rows if x["beats_dist"]] or rows
     best = max(cands, key=lambda x: x["rho_map"])
     B0 = run_point(C21, bf, br, best["sep_kb"], best["res_s"], best["v_kb_s"], G0s[0.0], K_LOOP,
                    DT_FINAL, NCFG_FINAL, SEED)
@@ -447,6 +481,9 @@ def main():
     json.dump({"test": "loop_compartment_attract", "manifest": man, "gates": gates,
                "gc_pc1_corr": r_pc1, "c2_max_rel_err": worst,
                "short_shift": dS, "long_shift": dL,
+               "measured_band_short": meas_s, "measured_band_long": meas_l,
+               "measured_single_slope_here": meas_full, "loop33_single_slope": MEASURED_PS,
+               "alpha_sweep": ALPHA_SWEEP, "band_tol": BAND_TOL,
                "grid": rows, "n_two_of_three": n_two, "n_all_three": n_all,
                "best": best, "rho_best": rho_best,
                "checkerboard_measured": cb_meas, "checkerboard_eps0": cb0,
