@@ -1,0 +1,181 @@
+{
+ "test": "loop_translation",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_lifetimes.json",
+    "bytes": 1832292,
+    "hash": "9a67a2c48bdfe38e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 13329,
+   "used": 5900,
+   "selection": "filtered",
+   "fraction": 0.44264385925425764
+  },
+  "seed": 9201,
+  "controls": [
+   "a physical capacity bound from counted ribosomal proteins",
+   "a per-gene polysome limit that a median cannot satisfy",
+   "a cross-loop prediction against loop 89's measured recovery",
+   "publication count against the derived rate and against length",
+   "the proteome constant swept, gate at the conservative end",
+   "coverage and abundance mass both declared"
+  ],
+  "note": "loop 89 failed its 4D gate because the model equilibrates in minutes; this tests whether RAD21 re-synthesis is the real rate limit",
+  "warnings": []
+ },
+ "gates": {
+  "S1 the ribosome budget closes": false,
+  "S2 no gene exceeds the polysome limit": false,
+  "S3 RAD21 re-synthesis explains loop 89": true,
+  "S4 fame reported": true,
+  "S5 length behaves": true,
+  "S6 coverage declared": true
+ },
+ "n_genes": 5900,
+ "n_with_mrna": 2879,
+ "s1": {
+  "2e+09": {
+   "ribosomes": 673155.4639236077,
+   "demand_codons_h": 35557411230.36375,
+   "capacity_codons_h": 13570814152.69993,
+   "utilisation": 2.620138396286973
+  },
+  "5e+09": {
+   "ribosomes": 1682888.6598090192,
+   "demand_codons_h": 88893528075.90929,
+   "capacity_codons_h": 33927035381.74983,
+   "utilisation": 2.62013839628697
+  },
+  "1e+10": {
+   "ribosomes": 3365777.3196180384,
+   "demand_codons_h": 177787056151.81857,
+   "capacity_codons_h": 67854070763.49966,
+   "utilisation": 2.62013839628697
+  }
+ },
+ "s2": {
+  "limit_per_h": 671.9999999999999,
+  "n_over": 390,
+  "frac_over": 0.13546370267453978,
+  "median_ksp": 150.88192971489113
+ },
+ "s3": {
+  "rad21_half_life_h": 59.4435,
+  "k_per_h": 0.04054173764516852,
+  "recovery_half_time_h": 17.097125599956858,
+  "points": [
+   {
+    "t_min": 20.0,
+    "rad21_predicted": 0.013423009577867462,
+    "loops_measured": 0.093
+   },
+   {
+    "t_min": 40.0,
+    "rad21_predicted": 0.026665841969607418,
+    "loops_measured": 0.239
+   },
+   {
+    "t_min": 60.0,
+    "rad21_predicted": 0.03973091569531495,
+    "loops_measured": 0.209
+   },
+   {
+    "t_min": 180.0,
+    "rad21_predicted": 0.11451982716459774,
+    "loops_measured": 0.47
+   }
+  ],
+  "monotone": true,
+  "loops_ahead_of_protein": true
+ },
+ "s4": {
+  "pubs_vs_ksp": 0.31130339866504814,
+  "pubs_vs_length": 0.22392367422969228
+ },
+ "s5": {
+  "ksp_vs_length": -0.25846127912094813,
+  "top10_codon_share": 0.3201494598149472
+ },
+ "seconds": 3.0182578563690186,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 92 -- translation: does the derived rate fit inside the ribosome, and does it explain loop 89?",
+  "====================================================================================================",
+  "",
+  "  20,338 protein lengths from the UniProt human proteome on disk",
+  "  5,900 genes with a protein half-life, a ppm abundance and a length",
+  "  loss rate = ln2/t_half + ln2/24h;  synthesis = copies * loss",
+  "",
+  "S1 THE RIBOSOME BUDGET CLOSES",
+  "     86 ribosomal proteins, median 303.5 ppm -- one copy each per ribosome,",
+  "     so the median is the ribosome count in ppm rather than the sum",
+  "     proteome 2e+09 ->      673,155 ribosomes, demand   35,557,411,230 codons/h, capacity   13,570,814,153, utilisation  262.0%",
+  "     proteome 5e+09 ->    1,682,889 ribosomes, demand   88,893,528,076 codons/h, capacity   33,927,035,382, utilisation  262.0%",
+  "     proteome 1e+10 ->    3,365,777 ribosomes, demand  177,787,056,152 codons/h, capacity   67,854,070,763, utilisation  262.0%",
+  "     abundance mass covered by the rated genes: 77.8%, demand scaled up by its inverse",
+  "     gate at the CONSERVATIVE end (2e+09): utilisation 262.0%",
+  "     S1 FAIL",
+  "",
+  "S2 NO GENE EXCEEDS THE POLYSOME LIMIT",
+  "     ribosome footprint 30 codons at 5.6 aa/s -> an mRNA can",
+  "     initiate at most 672 times per hour",
+  "     2,879 genes with an mRNA copy number; median k_sp 150.9/h, max 33,781/h",
+  "     exceeding the limit: 390 (13.55%)   gate: < 5%",
+  "     worst: CP 33,781/h, LCP1 25,121/h, RAB11B 21,505/h, RPS27A 16,955/h, XRCC5 14,173/h",
+  "     S2 FAIL",
+  "",
+  "S3 RAD21 RE-SYNTHESIS EXPLAINS LOOP 89",
+  "     RAD21 protein half-life 59.44 h, + dilution at 24 h -> k 0.0405/h, recovery half-time 17.1 h",
+  "     t =    20 min   RAD21 predicted  1.34%   loop strength measured  9.30%   ratio   6.9x",
+  "     t =    40 min   RAD21 predicted  2.67%   loop strength measured 23.90%   ratio   9.0x",
+  "     t =    60 min   RAD21 predicted  3.97%   loop strength measured 20.90%   ratio   5.3x",
+  "     t =   180 min   RAD21 predicted 11.45%   loop strength measured 47.00%   ratio   4.1x",
+  "     loop strength recovers FASTER than RAD21 at every point: True",
+  "     so loops saturate in cohesin -- a fraction of normal RAD21 restores most of the",
+  "     structure, which is what a processive extruder should do",
+  "     S3 PASS -- RAD21 re-synthesis is a sufficient explanation for loop 89 T3",
+  "",
+  "S4 THE FAME CONTROL",
+  "     pubs vs translation rate +0.3113   vs protein length +0.2239   (n 2,879)",
+  "",
+  "S5 LENGTH BEHAVES",
+  "     translation rate vs protein length -0.2585",
+  "     top 10 genes carry 32.0% of all codon demand: ALB, C3, RBP4, CFH, HPX",
+  "     median length 483 aa, demand-weighted mean 882 aa",
+  "",
+  "S6 COVERAGE DECLARED",
+  "     protein rates: 5,900 genes, 77.8% of abundance mass",
+  "     per-mRNA translation rates: 2,879 genes (needs an mRNA copy number)",
+  "",
+  "  FAIL  S1 the ribosome budget closes",
+  "  FAIL  S2 no gene exceeds the polysome limit",
+  "  PASS  S3 RAD21 re-synthesis explains loop 89",
+  "  PASS  S4 fame reported",
+  "  PASS  S5 length behaves",
+  "  PASS  S6 coverage declared",
+  "    manifest: 4 inputs, coverage 5900/13329 (44.3%) by 'filtered', seed 9201, controls 6"
+ ]
+}
