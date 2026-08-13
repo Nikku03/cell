@@ -61,7 +61,14 @@ PREDECLARED, before any number:
        is the coarsest approximation, and a pairwise agreement gate can be passed by two equally
        wrong answers. With the parallel-update bug fixed, the right question is whether the result
        CONVERGES: sweep dt over 33.3, 10, 3, 1 s and require the last refinement to stop moving it
-       (|dP(s)| <= 0.05 from 3 s to 1 s, and map Spearman >= 0.99 against the 1 s map).]
+       (|dP(s)| <= 0.05 from 3 s to 1 s, and the 3 s map matching the 1 s map at least as well as
+       a SAME-dt replicate does). [Second correction, after the rerun: the first version of this
+       gate compared sweep[-1] -- the 1 s map -- against the 1 s map, i.e. against itself, and got
+       1.0000 by construction. That is the same inert-control failure caught in loop 76, and it
+       passed a criterion that could not fail. The honest comparison is 3 s vs 1 s, and it is only
+       interpretable against the disagreement between two SAME-dt runs with different seeds, since
+       each map is an ensemble of 50 stochastic configurations. That replicate floor is now
+       measured and printed.]
   V3 P(s) LANDS IN THE PREDECLARED WINDOW
        loop 33 measured the real chr21 map at slope -0.9636 and loop 35 fixed the acceptance window
        at (-1.16, -0.76) BEFORE any model ran. Same window here, not renegotiated.
@@ -431,7 +438,20 @@ def main():
     tail = abs(sweep[-1]["ps"] - sweep[-2]["ps"])
     say(f"     P(s) spread across the whole sweep {spread:.4f};  last refinement (3 s -> 1 s) "
         f"moves it {tail:.4f}")
-    v2 = tail <= 0.05 and sweep[-1]["rho_vs_1s"] >= V2_RHO
+    # THE NOISE FLOOR, without which the map correlations above cannot be read. Each map is an
+    # ensemble of 50 stochastic configurations, so two runs at the SAME dt already disagree. Any
+    # cross-dt correlation must be judged against that, not against 1.0.
+    cfg_rep, _, _ = simulate(n, bf, br, np.random.default_rng(SEED + 991), DT_FINE)
+    M1rep = contact_map_fast(n, cfg_rep, G0)
+    rho_floor = band_rho(M1rep, M1, mask, n, w)[0]
+    ps_rep, _ = ps_slope(M1rep, mask)
+    rho_tail = sweep[-2]["rho_vs_1s"]          # 3 s vs 1 s -- the finest genuine comparison
+    say(f"     SAME-dt REPLICATE (1 s, different seed): rho {rho_floor:.4f}, P(s) {ps_rep:+.4f}")
+    say(f"       [the row above reads 'rho vs the 1 s map = 1.0000' for dt = 1 s because it IS the")
+    say(f"        1 s map. The first version of this gate tested that self-comparison and passed")
+    say(f"        trivially. The honest comparison is 3 s vs 1 s = {rho_tail:.4f}, judged against")
+    say(f"        the same-dt replicate floor of {rho_floor:.4f}.]")
+    v2 = tail <= 0.05 and rho_tail >= min(V2_RHO, rho_floor - 0.005)
     say(f"     V2 {'PASS' if v2 else 'FAIL'} -- refining the clock "
         f"{'no longer moves the answer' if v2 else 'STILL moves the answer'}")
     say()
@@ -492,7 +512,7 @@ def main():
     say()
 
     gates = {"V1 fast map is the same map": bool(v1),
-             "V2 1 s clock agrees with 33 s clock": bool(v2),
+             "V2 answer converges as the clock is refined": bool(v2),
              "V3 P(s) in the predeclared window": bool(v3),
              "V4 orientation signature appears and collapses": bool(v4),
              "V5 beats a distance-only null": bool(v5),
@@ -515,10 +535,13 @@ def main():
     json.dump({"test": "loop_second", "manifest": man, "gates": gates,
                "n_bins": n, "n_mappable": int(mask.sum()), "n_cohesins": ncoh,
                "dt_fine": DT_FINE, "dt_coarse": DT_COARSE,
-               "frac_steps_moving_1s": frac_move, "frac_steps_moving_33s": fm33,
+               "frac_steps_moving_1s": frac_move, "dt_sweep": sweep,
+               "ps_spread": spread, "ps_tail_refinement": tail,
+               "rho_3s_vs_1s": rho_tail, "rho_same_dt_replicate": rho_floor,
+               "ps_same_dt_replicate": ps_rep,
                "v1_max_rel_err": err, "t_fast_ms": t_fast * 1000, "t_exact_ms": t_exact * 1000,
                "speedup": t_exact / max(t_fast, 1e-9),
-               "rho_1s_vs_33s": rho12, "ps_1s": s1, "ps_33s": s33, "ps_window": list(PS_WINDOW),
+               "ps_1s": s1, "ps_window": list(PS_WINDOW),
                "orientation_real": o_real, "orientation_shuffled": o_shuf,
                "rho_model_vs_measured": rho_model, "rho_distance_null": rho_dist,
                "rho_replicate_ceiling": rho_ceiling,
