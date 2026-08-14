@@ -211,23 +211,45 @@ def main():
     say()
 
     say("N4 THE DEGREE-MATCHED NULL FIRES")
+    # THE FIRST VERSION OF THIS CONTROL WAS INCAPABLE OF FAILING, AND IT IS RECORDED RATHER THAN
+    # QUIETLY REPLACED. It permuted the target column of the edge list, which preserves the MULTISET
+    # of targets and therefore every gene's in-degree exactly -- so an in-degree feature is invariant
+    # under it by construction and the null returned +0.1438 +/- 0.0000, "100% survival", against a
+    # real value of +0.1438. That is the eleventh gate this session to fire while measuring nothing,
+    # and the first whose null was mathematically unable to move the statistic.
+    #
+    # In-degree cannot be tested against a degree-preserving null, because in-degree IS the degree.
+    # The identity of who regulates whom only enters through the REGULATOR-RATE SUM, so the control
+    # is applied there, where rewiring genuinely changes the value.
     rng = np.random.default_rng(SEED)
-    real, _ = spear(feats["CollecTRI curated"]["deg"], y)
+    wreal, _ = spear(feats["CollecTRI curated"]["wsum"], y)
+    dreal, _ = spear(feats["CollecTRI curated"]["deg"], y)
+    say(f"     in-degree cannot be tested this way -- rewiring preserves it exactly, so the null")
+    say(f"     returns the real value by construction. Reported: real {dreal:+.4f}, null identical.")
+    say(f"     the control is therefore applied to the REGULATOR-RATE SUM, which depends on identity")
     nulls = []
     for _ in range(NREWIRE):
         E2 = rewire(cur, rng)
-        ind = collections.Counter()
+        byt2 = collections.defaultdict(list)
         for a, b in E2:
-            ind[b] += 1
-        nulls.append(spear([ind.get(idx[g], 0) for g in gs], y)[0])
+            byt2[b].append(a)
+        w2 = []
+        for g in gs:
+            tot = 0.0
+            for t in byt2.get(idx[g], []):
+                nm = names[t] if t < len(names) else None
+                if nm in ksm:
+                    tot += ksm[nm]
+            w2.append(tot)
+        nulls.append(spear(w2, y)[0])
     nulls = np.array([x for x in nulls if np.isfinite(x)])
+    real = wreal
     frac = float(nulls.mean() / real) if abs(real) > 1e-12 and len(nulls) else float("nan")
-    say(f"     real {real:+.4f}   degree-preserving rewiring {nulls.mean():+.4f} "
+    say(f"     regulator-rate sum: real {real:+.4f}   rewired {nulls.mean():+.4f} "
         f"+/- {nulls.std():.4f}   survives {frac:.0%}")
-    say(f"     a rewiring keeps every in- and out-degree, so anything surviving is topology")
     n4 = bool(np.isfinite(frac) and frac < N4_COLLAPSE)
     say(f"     N4 {'PASS' if n4 else 'FAIL'} -- "
-        f"{'the effect is about who regulates whom' if n4 else 'the effect is DEGREE, not regulation'}")
+        f"{'the effect is about who regulates whom' if n4 else 'the effect is TOPOLOGY, not regulatory identity'}")
     say()
 
     say("N5 THE ABUNDANCE TRAP")
@@ -276,7 +298,7 @@ def main():
     json.dump({"test": "loop_tf_rate", "manifest": man, "gates": gates,
                "n_genes": len(gs), "blocks": res, "pubs_rho": r_pub, "abundance_rho": r_mc,
                "n3": {"signed": r_s, "unsigned": r_u, "n_signed_edges": n_signed},
-               "n4": {"real": real, "null_mean": float(nulls.mean()) if len(nulls) else None,
+               "n4": {"feature": "regulator-rate sum (in-degree is invariant under this null)", "real": real, "null_mean": float(nulls.mean()) if len(nulls) else None,
                       "null_sd": float(nulls.std()) if len(nulls) else None, "survive": frac},
                "seconds": time.time() - t0, "log": log},
               open(OUT / "loop_tf_rate.json", "w"), indent=1)
