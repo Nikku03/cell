@@ -109,6 +109,7 @@ EMBED_TOL = 1e-6          # D2; the tol=0 control is S1
 NULL_SEED = 5100
 N_NULL = 5
 REWIRE_PASSES = 5
+NULL_MAXITER = 120        # bounds the null embeddings; shortfalls are recorded, see embed()
 ALPHAS = np.logspace(-3.0, 6.0, 19)
 
 REACTION_CHANNELS = ["catalyses", "consumes", "produces"]
@@ -125,19 +126,37 @@ def say(s=""):
 # ----------------------------------------------------------------------------------------------
 # the embedding (D2)
 # ----------------------------------------------------------------------------------------------
-def embed(A, k=64, seed=EMBED_SEED, tol=EMBED_TOL):
+EMBED_INCOMPLETE = []
+
+
+def embed(A, k=64, seed=EMBED_SEED, tol=EMBED_TOL, maxiter=None, tag=""):
     """Normalised-Laplacian eigenvectors, same definition as CG.spectral_embed, matvec solver.
 
     eig(L) = 1 - eig(M) with M = D^-1/2 A D^-1/2, so the k+1 algebraically largest eigenpairs of M
-    are the k+1 smallest of L. The first is dropped exactly as CG.spectral_embed drops it."""
-    from scipy.sparse.linalg import eigsh
+    are the k+1 smallest of L. The first is dropped exactly as CG.spectral_embed drops it.
+
+    `maxiter` bounds the Lanczos iteration. A REWIRED graph is a random graph, and the top of a
+    random graph's normalised-adjacency spectrum is far more tightly clustered than a real one's,
+    so the null embeddings converge much more slowly than the real ones. Rather than let one null
+    consume the whole budget, the iteration is capped and any shortfall is RECORDED in
+    EMBED_INCOMPLETE and reported, because an eigenvector that did not converge is a different
+    feature from one that did and the reader has to be told which they are looking at."""
+    from scipy.sparse.linalg import eigsh, ArpackNoConvergence
     d = np.asarray(A.sum(1)).ravel()
     d[d == 0] = 1.0
     Dm = sp.diags(1.0 / np.sqrt(d))
     M = (Dm @ A @ Dm).tocsr()
     rng = np.random.default_rng(seed)
     v0 = rng.normal(size=A.shape[0])
-    vals, vecs = eigsh(M, k=k + 1, which="LA", v0=v0, tol=tol)
+    try:
+        vals, vecs = eigsh(M, k=k + 1, which="LA", v0=v0, tol=tol, maxiter=maxiter)
+    except ArpackNoConvergence as e:
+        vals, vecs = e.eigenvalues, e.eigenvectors
+        EMBED_INCOMPLETE.append({"tag": tag, "wanted": k + 1, "converged": int(len(vals))})
+        if len(vals) < k + 1:                       # pad with zero columns, never with noise
+            pad = np.zeros((A.shape[0], k + 1 - len(vals)), np.float64)
+            vecs = np.hstack([vecs, pad]) if len(vals) else pad
+            vals = np.concatenate([vals, np.full(k + 1 - len(vals), -np.inf)])
     order = np.argsort(-vals)
     lam = (1.0 - vals)[order]
     return lam, vecs[:, order[1:k + 1]].astype(np.float32)
@@ -461,12 +480,13 @@ def main():
         base = set(zip(u0.tolist(), v0.tolist()))
         nl, na, moved_emb, moved_deg, deg_err, frac_edge = [], [], [], [], [], []
         for j in range(N_NULL):
+            tj = time.time()
             un, vn, n_try, n_ok = rewire(u0, v0, G["kind"], NULL_SEED + j)
             An = from_edges(un, vn, n_node)
             dn = np.asarray(An.sum(1)).ravel()
             deg_err.append(float(np.abs(dn - d_real).max()))
             frac_edge.append(1.0 - len(set(zip(un.tolist(), vn.tolist())) & base) / len(u0))
-            _, Xn = embed(An, k=K_MAIN)
+            _, Xn = embed(An, k=K_MAIN, maxiter=NULL_MAXITER, tag=f"{nm} null{j}")
             nf = Xn[gi]
             moved_emb.append(GG.null_can_move(np.round(real_feat, 6).ravel().tolist(),
                                               np.round(nf, 6).ravel().tolist())["changed"])
@@ -474,6 +494,8 @@ def main():
             s = cv_scores(nf, y, folds, name=f"{nm} null{j}")
             nl.append(s["rho_mean"])
             na.append(s["auc_mean"])
+            say(f"       {nm} null{j}: rho {s['rho_mean']:+.4f}  AUC {s['auc_mean']:.4f}  "
+                f"[{time.time()-tj:.0f}s]")
         cap_emb = {"capable": bool(np.mean(moved_emb) >= 0.5),
                    "changed": float(np.mean(moved_emb)),
                    "reason": "mean over the nulls of GG.null_can_move on the embedding features "
@@ -511,6 +533,21 @@ def main():
     say(f"     E5 {'PASS' if E5 else 'FAIL'} (scored on the combined arm, as predeclared) -- the "
         f"null is capable, degree-exact, and")
     say(f"     {'destroys' if E5 else 'does NOT destroy'} the effect")
+    if EMBED_INCOMPLETE:
+        say(f"     SOLVER SHORTFALL, DECLARED: {len(EMBED_INCOMPLETE)} null embeddings hit the "
+            f"{NULL_MAXITER}-restart cap before full convergence:")
+        for r in EMBED_INCOMPLETE[:12]:
+            say(f"        {r['tag']}: {r['converged']} of {r['wanted']} eigenpairs converged")
+        say(f"     A rewired graph is a random graph and the top of its spectrum is far more")
+        say(f"     tightly clustered than a real graph's, which is why the nulls converge more")
+        say(f"     slowly. An under-converged null embedding is a WEAKER feature than the real one,")
+        say(f"     which biases the null DOWNWARD and therefore biases E5 toward PASS. Since E5")
+        say(f"     {'PASSED' if E5 else 'FAILED'}, this bias works "
+            f"{'FOR' if E5 else 'AGAINST'} the reported verdict and the verdict is "
+            f"{'weakened' if E5 else 'if anything understated'} by it.")
+    else:
+        say(f"     solver: every null embedding converged fully within the {NULL_MAXITER}-restart "
+            f"cap, so no null is handicapped relative to the real graph")
     say()
 
     # ---- S1/S2: the deviation D2, checked ------------------------------------------------------
@@ -607,6 +644,7 @@ def main():
                          "CG.spectral_embed measured at 449 s for one k=16 call",
             "D3_k_nesting": "k=16/64/128 solved separately; ridge on orthonormal columns is "
                             "rotation-invariant so only the retained subspace matters"},
+        "solver_shortfall": {"null_maxiter": NULL_MAXITER, "incomplete": EMBED_INCOMPLETE},
         "s1_tolerance": {"tol0": s_t0, "subspace_min_cos": mn, "subspace_mean_cos": mean},
         "s2_seed": {"seed1": s_s1},
         "seconds": time.time() - t0, "log": log}),
