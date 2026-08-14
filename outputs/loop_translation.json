@@ -59,10 +59,10 @@
  "n_sidecar": 4550,
  "s1": {
   "self_consistent": {
-   "ribosomes": 6624151.55,
+   "ribosomes": 6832844.09,
    "demand_codons_h": 30762337520.101093,
-   "capacity_codons_h": 133542895248.0,
-   "utilisation": 0.23035547838747195,
+   "capacity_codons_h": 137750136854.4,
+   "utilisation": 0.2233198327244964,
    "n_genes": 4179,
    "protein_total": 2337014740.050006
   }
@@ -113,7 +113,7 @@
   "ksp_vs_length": -0.4276937147865746,
   "top10_codon_share": 0.16986266252274182
  },
- "seconds": 7.334858655929565,
+ "seconds": 9.089451551437378,
  "log": [
   "====================================================================================================",
   "  LOOP 92 -- translation: does the derived rate fit inside the ribosome, and does it explain loop 89?",
@@ -125,11 +125,11 @@
   "",
   "S1 THE RIBOSOME BUDGET CLOSES",
   "     4,179 genes with self-consistent protein copies, half-life and length",
-  "     their protein total 2,337,014,740 molecules; 81 ribosomal proteins,",
-  "     median 6,624,152 copies -- one per ribosome, so the median IS the ribosome count",
+  "     their protein total 2,337,014,740 molecules; 73 ribosomal proteins,",
+  "     median 6,832,844 copies -- one per ribosome, so the median IS the ribosome count",
   "     codon demand over these genes 30,762,337,520 codons/h",
-  "     ribosome capacity              133,542,895,248 codons/h",
-  "     utilisation on the measured set 23.0%",
+  "     ribosome capacity              137,750,136,854 codons/h",
+  "     utilisation on the measured set 22.3%",
   "     (these 4,179 genes are 2,337,014,740 of a cell's roughly 2e9-1e10 proteins,",
   "      so both sides are partial in the SAME way and the ratio is the meaningful number)",
   "     S1 PASS",

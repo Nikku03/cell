@@ -74,7 +74,9 @@ PREDECLARED, before any number is computed:
 
   D1 THE ARITHMETIC REPRODUCES LOOP 92                              THE INSTRUMENT CHECK.
        recomputing the covered set from scratch must return loop 92's published demand
-       30,762,337,520 codons/h, capacity 133,542,895,248 codons/h, 2,337,014,740 protein molecules
+       30,762,337,520 codons/h, capacity 137,750,136,854 codons/h, 2,337,014,740 protein molecules
+       (capacity CORRECTED after review: loop 92's ribosome count used a bare RPL/RPS prefix match
+        that caught 8 non-ribosomal genes including three S6 kinases; 73 true RPs give 6,832,844)
        and 4,179 genes. Gate: all four within 1%. If this fails, every number below is being
        computed on a different set than the one the task describes and nothing else matters.
   D2 THE REPLACEMENT FRACTION, RECOMPUTED                           THE TERM THE TASK ASKS FOR.
@@ -166,11 +168,11 @@ AVOGADRO = 6.02214076e23
 
 # ---- loop 92, published. D1 gates on reproducing every one of these.
 LOOP92_DEMAND = 30_762_337_520.101093
-LOOP92_CAPACITY = 133_542_895_248.0
-LOOP92_UTIL = 0.23035547838747195
+LOOP92_CAPACITY = 137_750_136_854.0   # corrected: 73 true RPs, not 81 prefix matches
+LOOP92_UTIL = 0.22331
 LOOP92_NGENES = 4179
 LOOP92_PROT_TOTAL = 2_337_014_740.050006
-LOOP92_RIBOSOMES = 6_624_151.55
+LOOP92_RIBOSOMES = 6_832_844.0        # corrected: RPS6KA1/2/3/4, RPS6KB1, RPL7L1, RPL22L1, RPS19BP1 removed
 LOOP74_REPLACEMENT = 0.292          # loop 74, 24 h, different abundance source
 
 # ---- literature constants, all declared before anything is computed
@@ -293,7 +295,15 @@ def main():
     B_cov = float((N * L * K).sum())
     kbar = B_cov / A_cov
     prot_total = float(N.sum())
-    is_rp = np.array([g.startswith("RPL") or g.startswith("RPS") for g in sg])
+    # CORRECTED AFTER ADVERSARIAL REVIEW. The first version used a bare prefix match,
+    # g.startswith("RPL") or g.startswith("RPS"), which caught 81 genes of which EIGHT are not
+    # ribosomal proteins: RPS6KA1/2/3/4 and RPS6KB1 are S6 KINASES, and RPL7L1, RPL22L1 and
+    # RPS19BP1 are paralogues or binding partners. All eight sit far below the true RP median, so
+    # the contaminated median UNDERSTATED the ribosome count. A real cytosolic RP is RPL/RPS
+    # followed by digits and an optional single letter, plus the acidic stalk RPLP0-2 and RPSA.
+    import re as _re
+    _rp_pat = _re.compile(r"^(RPL|RPS)\d+[A-Z]?$|^RPLP\d$|^RPSA$")
+    is_rp = np.array([bool(_rp_pat.match(g)) for g in sg])
     R = float(np.median(N[is_rp]))
     cap = R * ELONG_AA_S * 3600.0
     demand24 = A_cov * LN2 / T_MEASURED_H + B_cov
@@ -472,12 +482,18 @@ def main():
     say()
     # bootstrap over genes: under route P the data enters only through kbar
     rng = np.random.default_rng(SEED)
+    # CORRECTED AFTER ADVERSARIAL REVIEW. The first version resampled genes for kbar but passed a
+    # FIXED cap, so the ribosome count R -- a median over ~73 genes from the same table, and the
+    # most influential data-derived input -- was held constant by construction. That made the
+    # bootstrap report the uncertainty of kbar alone and licensed the claim that "the uncertainty
+    # is the CONSTANTS, not the genes", which was false. R is now resampled inside the loop.
     boot = []
     n = len(sg)
     for _ in range(NPERM):
         b = rng.integers(0, n, n)
         kb = float((N[b] * L[b] * K[b]).sum() / (N[b] * L[b]).sum())
-        boot.append(predict_T(A_P, kb, U_CENTRAL, cap))
+        Rb = float(np.median(N[is_rp][rng.integers(0, int(is_rp.sum()), int(is_rp.sum()))]))
+        boot.append(predict_T(A_P, kb, U_CENTRAL, Rb * ELONG_AA_S * 3600.0))
     boot = np.array(boot, float)
     say(f"     bootstrap over the {n:,} genes ({NPERM} resamples), route P at U={U_CENTRAL:.2f}: "
         f"T = {np.median(boot):.2f} h  [{np.percentile(boot, 2.5):.2f}, "

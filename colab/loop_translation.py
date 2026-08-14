@@ -174,7 +174,15 @@ def main():
     k = {g: LN2 / S[g]["prot_hl_h"] + LN2 / T_DOUBLE_H for g in sg}
     demand = sum(S[g]["prot_copies"] * k[g] * plen[g] for g in sg)
     prot_total = sum(S[g]["prot_copies"] for g in sg)
-    rp = [g for g in sg if g.startswith("RPL") or g.startswith("RPS")]
+    # CORRECTED AFTER ADVERSARIAL REVIEW (found via loop 101). A bare prefix match catches 81
+    # genes of which EIGHT are not ribosomal proteins: RPS6KA1/2/3/4 and RPS6KB1 are S6 KINASES,
+    # and RPL7L1, RPL22L1, RPS19BP1 are paralogues or binding partners. All eight sit far below
+    # the true RP median, so the contaminated median UNDERSTATED the ribosome count at 6,624,152
+    # against the correct 6,832,844 over 73 genes -- and that understated count propagated into
+    # loop 101's capacity and doubling time.
+    import re as _re
+    _rp_pat = _re.compile(r"^(RPL|RPS)\d+[A-Z]?$|^RPLP\d$|^RPSA$")
+    rp = [g for g in sg if _rp_pat.match(g)]
     ribs = float(np.median([S[g]["prot_copies"] for g in rp])) if rp else float("nan")
     say(f"     {len(sg):,} genes with self-consistent protein copies, half-life and length")
     say(f"     their protein total {prot_total:,.0f} molecules; {len(rp)} ribosomal proteins,")
