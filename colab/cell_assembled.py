@@ -156,6 +156,33 @@ def integrate_tf(kbar, a, ix, dev_at, T, ncyc=12, nstep=400, gain=1.0):
     return rel, mean
 
 
+def integrate_deg(ksp, Mbar, bbar, T, beta=1.0, ncyc=12, nstep=400):
+    """dP/dt = k_sp*Mbar - b(t)*P with b(t) = bbar*(1 + beta*sin(wt)) and the mRNA held FLAT.
+
+    THE OTHER TERM. loop 119 showed that with b constant, protein oscillation is forced to be
+    smaller than mRNA oscillation and therefore rarer -- while the measurement has 362 proteins
+    oscillating whose mRNA does not. This integrator is the alternative: leave M at its steady
+    value and put the cycle in the loss rate instead. beta = 1 is a loss rate swinging between 0
+    and 2*bbar over the cycle, which is the size of swing an APC/C or SCF substrate experiences.
+
+    beta = 0 must reproduce k_sp*Mbar/bbar exactly, and loop 121's S6 gates on that.
+    """
+    dt = T / nstep
+    w = 2.0 * np.pi / T
+    P = ksp * Mbar / bbar
+    total = ncyc * nstep
+    tr = np.zeros((nstep, len(P)))
+    for s in range(total):
+        b_t = np.maximum(bbar * (1.0 + beta * np.sin(w * (s * dt))), 1e-12)
+        eb = np.exp(-b_t * dt)
+        P = P * eb + (ksp * Mbar / b_t) * (1 - eb)
+        if s >= total - nstep:
+            tr[s - (total - nstep)] = P
+    mean = tr.mean(0)
+    rel = (tr.max(0) - tr.min(0)) / (2.0 * np.maximum(mean, 1e-300))
+    return rel, mean
+
+
 def mass_fraction(D, genes):
     """What share of measured protein MASS a gene subset carries -- copies x residues."""
     S = D["schwan"]
