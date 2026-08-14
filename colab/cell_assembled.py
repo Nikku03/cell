@@ -683,6 +683,24 @@ LAYERS = [
      "proteins, so a PERFECT per-protein predictor would score 0.5625 -- this model is 2.4x worse "
      "than a method-free bound on ignoring the substrate entirely. The substrate channel is real "
      "but small: shuffling substrates within a protein costs only +0.0191 of the +0.1323 gain"),
+    ("what the kcat model actually learned", "FAILED", "loop_ml_probe/133 B3-B4",
+     "the ESM embedding is a FAMILY DETECTOR, not a catalysis model. Same 320 numbers, same folds: "
+     "EC top-level class accuracy 0.779 against a 0.394 majority, log10 sequence length R2 +0.7631, "
+     "log10 kcat R2 +0.1381. And B4 settles it -- refit on the EC-median residual, the model scores "
+     "RMSE 1.5386 against a residual sd of 1.4849, R2 -0.0737. WORSE THAN A CONSTANT",
+     "EVERYTHING THE MODEL KNOWS IS ALREADY IN THE EC NUMBER. 'Predicting kcat from sequence' is "
+     "EC-class lookup routed through a language model. The +0.1323 gain loop 132 confirmed as real "
+     "is real -- and it is the EC number's, not the sequence's"),
+    ("what a kcat model would need instead", "STATIC", "loop_ml_probe/133 B1, B5, B6",
+     "B1: 18,595 point-mutant pairs (equal length, 1-5 residues) differ by a median 0.649 log10 -- "
+     "4.5x turnover from five residues -- and a mean-pooled embedding cannot see them, worth 0.947 "
+     "log10 of irreducible RMSE. B5: within (protein, substrate) pairs measured twice the residual "
+     "sd is 0.5137 log10 = 3.26x, against loop 129's 1.15x for identical conditions, so unrecorded "
+     "temperature, pH and mutation status cost the difference. B6: the enzymes the cell model "
+     "leans on are EASIER than average -- reaction-weighted RMSE 1.1895 against 1.3072 unweighted",
+     "all three point the same way: family-level information is exhausted, and the only route left "
+     "is resolution WITHIN a family -- active-site residues, mutation status, and the assay "
+     "conditions that are absent from the file"),
     ("Michaelis constants K_M", "RUNS", "kinetics_bundle + loop_kcat_audit/124 K4",
      "the one kinetic parameter in this model that carries real information: predicted KM scores "
      "3.54x median fold-error against 5.77x for a constant 43.6 uM, on 628 genes with a measured "
