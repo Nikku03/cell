@@ -65,8 +65,22 @@ def survival(real, nulls, z_min=2.0):
                     "reason": f"|z| {abs(z):.2f} < {z_min}: the real value is not distinguishable "
                               f"from the null, so a survival fraction has no denominator"})
         return out
-    out.update({"defined": True, "fraction": float(out["null_mean"] / real),
-                "reason": "effect is distinguishable from the null"})
+    frac = float(out["null_mean"] / real)
+    # THE THIRD FAILURE MODE, FOUND BY THIS MODULE'S OWN V2 GATE. Loop 94's N4 has z = -2.5, so the
+    # real value IS distinguishable from the null -- but in the WRONG DIRECTION: the null (+0.1148)
+    # is larger than the real value (+0.0983), and "117% survival" is not survival, it is the null
+    # outperforming the thing it was meant to destroy. A fraction at or above 1 means there is no
+    # effect in the claimed direction, and reporting it as a percentage invites exactly the reading
+    # loop 94 gave it. Kept separate from UNDEFINED because the two say different things: one is
+    # "no signal", the other is "signal, pointing the other way".
+    if frac >= 1.0:
+        out.update({"defined": False, "fraction": UNDEFINED, "raw_fraction": frac,
+                    "reason": f"the null ({out['null_mean']:+.4f}) equals or exceeds the real value "
+                              f"({real:+.4f}): there is no effect in the claimed direction, so "
+                              f"'survival' has no meaning"})
+        return out
+    out.update({"defined": True, "fraction": frac,
+                "reason": "effect is distinguishable from the null and exceeds it"})
     return out
 
 
