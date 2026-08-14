@@ -153,10 +153,18 @@ def main():
             p[te] = m.predict(X[te])
         return p
 
-    def cv_clf(X, t):
+    def cv_clf(X, t, f=None):
+        """f defaults to the global fold vector; pass a SUBSET's folds when X is a subset.
+
+        The first version indexed a subsetted X with the full-length fold mask and crashed with
+        'size of axis is 5847 but size of corresponding boolean axis is 17004'. Caught by the run.
+        """
+        f = fold if f is None else f
         p = np.zeros(len(t), dtype=int)
         for k in range(N_FOLDS):
-            te, tr = fold == k, fold != k
+            te, tr = f == k, f != k
+            if tr.sum() == 0 or te.sum() == 0:
+                continue
             m = mk("clf")
             m.fit(X[tr], t[tr])
             p[te] = m.predict(X[te])
@@ -261,17 +269,18 @@ def main():
     ec1 = np.array([e.split(".")[0] if e and e[0].isdigit() else "" for e in ec])
     m = ec1 != ""
     lab = {v: i for i, v in enumerate(sorted(set(ec1[m].tolist())))}
-    pe = np.full(len(y), -1)
-    pe[m] = cv_clf(Xe[m], np.array([lab[v] for v in ec1[m]]))
-    acc_ec = float(np.mean(pe[m] == np.array([lab[v] for v in ec1[m]])))
+    tgt_ec = np.array([lab[v] for v in ec1[m]])
+    pe = cv_clf(Xe[m], tgt_ec, fold[m])
+    acc_ec = float(np.mean(pe == tgt_ec))
     maj = collections.Counter(ec1[m].tolist()).most_common(1)[0][1] / m.sum()
     say(f"     EC top-level class ({len(lab)} classes)   accuracy {acc_ec:.3f}   "
         f"majority baseline {maj:.3f}")
     tops = [o for o, _ in collections.Counter(org).most_common(6)]
     mo = np.isin(org, tops)
     lo = {v: i for i, v in enumerate(tops)}
-    po = cv_clf(Xe[mo], np.array([lo[v] for v in org[mo]]))
-    acc_o = float(np.mean(po == np.array([lo[v] for v in org[mo]])))
+    tgt_o = np.array([lo[v] for v in org[mo]])
+    po = cv_clf(Xe[mo], tgt_o, fold[mo])
+    acc_o = float(np.mean(po == tgt_o))
     majo = collections.Counter(org[mo].tolist()).most_common(1)[0][1] / mo.sum()
     say(f"     organism, top 6 ({int(mo.sum()):,} records)   accuracy {acc_o:.3f}   "
         f"majority {majo:.3f}")
