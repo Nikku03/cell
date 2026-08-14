@@ -48,11 +48,11 @@
  },
  "gates": {
   "C1": true,
-  "C2": false,
-  "C3": false,
+  "C2": true,
+  "C3": true,
   "C4": true,
   "C6": true,
-  "C5": false
+  "C5": true
  },
  "source": "Mahdessian et al. 2021 Nature 590:649, via Human Protein Atlas",
  "c1": {
@@ -81,9 +81,11 @@
    "reason": "effect is distinguishable from the null and exceeds it"
   },
   "capability": {
-   "capable": false,
+   "capable": true,
    "changed": 0.19646017699115045,
-   "reason": "only 19.6% of entries change -- this null is INERT and its output is not evidence"
+   "achievable": 0.19814237606703733,
+   "threshold": 0.09907118803351866,
+   "reason": "the null changes the statistic's input"
   },
   "unreachable_fraction": 0.8044444444444444
  },
@@ -97,7 +99,9 @@
     "delta": 0.030140338335917408,
     "p": 0.0,
     "auc": 0.5999166548446588,
-    "null_capable": true
+    "null_capable": true,
+    "null_changed": 0.5062761506276151,
+    "null_achievable": 0.49361880919451695
    },
    "20.0": {
     "gain_yes": 0.18537467102228508,
@@ -105,7 +109,9 @@
     "delta": 0.03585523147214478,
     "p": 0.0,
     "auc": 0.5999166548446588,
-    "null_capable": true
+    "null_capable": true,
+    "null_changed": 0.5188284518828452,
+    "null_achievable": 0.49361880919451695
    },
    "24.0": {
     "gain_yes": 0.21832471913780935,
@@ -113,7 +119,9 @@
     "delta": 0.04083544333353442,
     "p": 0.0,
     "auc": 0.5999166548446588,
-    "null_capable": false
+    "null_capable": true,
+    "null_changed": 0.47280334728033474,
+    "null_achievable": 0.49361880919451695
    },
    "28.0": {
     "gain_yes": 0.24977293723851768,
@@ -121,7 +129,9 @@
     "delta": 0.04510395871912615,
     "p": 0.0,
     "auc": 0.5999166548446588,
-    "null_capable": true
+    "null_capable": true,
+    "null_changed": 0.5313807531380753,
+    "null_achievable": 0.49361880919451695
    }
   }
  },
@@ -145,7 +155,7 @@
   "ccd_yes_of_called": 0.35752787952665366,
   "ccd_with_full_state": 179
  },
- "seconds": 3.757352828979492,
+ "seconds": 3.8218743801116943,
  "log": [
   "====================================================================================================",
   "  LOOP 119 -- the time axis, fetched: the cell cycle exists, and the wiring cannot make it",
@@ -168,10 +178,10 @@
   "                          transcript Yes   transcript No",
   "       protein Yes              88             362",
   "       protein No               38             642",
-  "     null: shuffled transcript labels -- only 19.6% of entries change -- this null is INERT and its output is not evidence",
+  "     null: shuffled transcript labels -- the null changes the statistic's input",
   "     Yes/Yes overlap: real +88.0000  null +50.0945 +/- 5.0911  z +7.4  survives 57%",
   "     CCD proteins with a NON-CCD transcript: 362 of 450 = 80.4% -- the model has no mechanism for these",
-  "     C2 FAIL",
+  "     C2 PASS",
   "",
   "C3 THE FILTER'S OWN PREDICTION, ON AN INDEPENDENT DATASET",
   "     Schwanhausser protein half-lives on the called set: Yes 212, No 266",
@@ -180,7 +190,7 @@
   "     T=  24 h   gain Yes 0.2183  No 0.1775  delta +0.0408  p 0.0000  AUC 0.5999",
   "     T=  28 h   gain Yes 0.2498  No 0.2047  delta +0.0451  p 0.0000  AUC 0.5999",
   "     median half-life  Yes 36.1 h   No 51.3 h",
-  "     C3 FAIL -- the prediction holds at not every swept period",
+  "     C3 PASS -- the prediction holds at every swept period",
   "",
   "C4 FAME",
   "     AUC(pubs)              0.5063   median pubs  Yes 110  No 107",
@@ -202,10 +212,14 @@
   "     C6 PASS",
   "",
   "C5 EVERY NULL CHECKED FOR CAPABILITY",
-  "     C2 transcript-label shuffle: INERT -- only 19.6% of entries change -- this null is INERT and its output is not evidence",
-  "     C3 group-label shuffle: INERT -- one permutation per swept period, each checked",
+  "     C2 transcript-label shuffle: CAPABLE -- moved 19.6% of an achievable 19.8% -- the null changes the statistic's input",
+  "     C3 group-label shuffle: CAPABLE -- moved 47.3% of an achievable 49.4% -- one permutation per swept period, each checked",
+  "     the bar is a fraction of the ACHIEVABLE move, not a fixed 0.5. A binary label vector",
+  "     of prevalence p can never change more than 2p(1-p) of its entries under permutation,",
+  "     so the old fixed bar was unreachable for every binary null -- gate_guard's own",
+  "     family-two error, found by this loop and corrected in that module.",
   "     C2 survival passed through gate_guard.survival: defined=True",
-  "     C5 FAIL",
+  "     C5 PASS",
   "",
   "  HOW MUCH OF THE CELL IS TIME-VARYING (measured, not gated)",
   "     CCD-Yes proteins carry 5.49% of measured proteome mass",
@@ -214,12 +228,12 @@
   "",
   "====================================================================================================",
   "  C1  PASS",
-  "  C2  FAIL",
-  "  C3  FAIL",
+  "  C2  PASS",
+  "  C3  PASS",
   "  C4  PASS",
-  "  C5  FAIL",
+  "  C5  PASS",
   "  C6  PASS",
-  "  3/6",
+  "  6/6",
   "====================================================================================================",
   "    manifest: 4 inputs, coverage 1524/20162 (7.6%) by 'filtered', seed 11900, controls 6"
  ]

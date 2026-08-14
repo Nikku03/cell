@@ -126,6 +126,14 @@ LAYERS = [
     ("transcription->mRNA->protein", "RUNS", "loop_integrator",
      "mRNA predicted from independent burst kinetics rho +0.4649; protein +0.5593",
      "the ODE itself adds nothing: raw input scores +0.4960, integrated +0.4649"),
+    # ADDED by loop 119, and it is a falsification of the layer directly above rather than a new one.
+    ("protein dynamics from transcription alone", "FAILED", "loop_cellcycle_axis/119",
+     "dP/dt = k_sp*M - b*P is a first-order filter, so protein swing is FORCED below mRNA swing -- "
+     "measured at 100.0000% of 4,190 genes, median attenuation 0.16, 81.9% damped below a tenth of "
+     "the drive. Protein oscillation can only ever be RARER than transcript oscillation here",
+     "THE MEASUREMENT POINTS THE OTHER WAY: 362 proteins oscillate whose transcript does not, "
+     "against 38 the other way (exact binomial p = 2e-67). 80.4% of cell-cycle protein dynamics "
+     "has no transcriptional source, and no parameter choice in this equation can supply one"),
     ("protein->flux->growth", "RUNS", "loop_growth_loop",
      "iterated fixed point, stable to start, growth within 3x of measured",
      "does not converge"),
@@ -144,9 +152,19 @@ LAYERS = [
     ("reaction+graph fusion", "FAILED", "loop_fusion_linear",
      "combined 0.166 BELOW graph-only; 90% of what remains survives degree-preserving rewiring",
      "the metabolic bridge is absent for 84% of genes"),
-    ("cell cycle", "FAILED", "loop_cellcycle",
+    # CORRECTED by loop 119. The stated cause -- "no phase-resolved layer exists" -- was true of
+    # this repository and not of the literature. Mahdessian 2021 was fetched and the layer is now
+    # here: 748 cell-cycle-dependent proteins against 776 imaged non-dependent controls, plus 530
+    # CCD transcripts. What changed is the diagnosis, not the verdict.
+    ("cell cycle (measured layer)", "STATIC", "loop_cellcycle_axis/119",
+     "748 CCD proteins, 776 matched non-CCD controls, 530 CCD transcripts (Mahdessian 2021 via "
+     "HPA); abundance does not explain the call (AUC 0.4648) and neither does fame (AUC 0.5063); "
+     "CCD proteins carry 5.49% of measured proteome mass",
+     "the calls are BINARY. There is still no per-gene phase and no per-cell pseudotime, so "
+     "loop 99's ordering test cannot be redone and nothing advances a clock"),
+    ("cell cycle as a process", "FAILED", "loop_cellcycle/99",
      "canonical phase order recovered but 176/500 shuffles do it too",
-     "no phase-resolved layer exists"),
+     "no cycle advances; the failure is now known to be the wiring, not the data -- see below"),
     ("replication as process", "FAILED", "loop_replication_time",
      "a Gaussian blur of the origin map (R2 0.320) beats the fork simulation (0.153)",
      "fork speed is unconstrained by the data it was fitted to"),
