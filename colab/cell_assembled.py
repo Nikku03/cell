@@ -46,6 +46,14 @@ def load():
             "pubs": {g["name"]: float(g.get("pubs") or 0) for g in C["genes"]}}
 
 
+# LOOP 128 measured what a human rebuild costs, and the answer is that the two builds are NOT
+# interchangeable. Itzhak HeLa copies with Mathieson human half-lives cover 5,595 genes against
+# this function's 4,190 and 90.53% of proteome mass against 79.89% -- but the DERIVED protein
+# production rate comes out 5.06x the self-consistent mouse one (Spearman +0.7518, so the ranking
+# survives and only the scale moves). Each build closes its own ribosome budget (32.8% against
+# 18.3%) because the ribosome count scales with the protein content, so the discrepancy is largely
+# cell size and turnover rate, not error. What it forbids is SWAPPING: anything calibrated on one
+# cannot take numbers from the other. This function stays on Schwanhausser for that reason.
 def state_vector(D):
     """The cell's dynamical state: mRNA and protein copy number per gene, where both are knowable.
 
