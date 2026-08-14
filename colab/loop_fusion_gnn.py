@@ -72,6 +72,14 @@ TWO DEVIATIONS, DECLARED HERE RATHER THAN BURIED:
        asserted but CHECKED against CG.spectral_embed itself on a connected subgraph where the
        shift-invert does finish. The check and its result are in the output.
 
+THE PEEK, DISCLOSED. Getting this to run at all took a reduced-settings debug pass (20 epochs,
+2 nulls, k=8) whose numbers I saw, plus two real bugs it exposed: a float64/float32 mismatch, and
+an epoch-selection routine that returned the FINAL model while scoring the BEST-epoch predictions,
+so the weight norms would have described a different model from the one reported. Nothing in the
+gates, thresholds or hyperparameters was changed after seeing those numbers -- the epoch budget
+stayed at the 140 written above even though the debug pass showed the inner-val optimum sitting
+near epoch 20, precisely because lowering it afterwards would be tuning on a peek.
+
 -> outputs/loop_fusion_gnn.json
 """
 import copy

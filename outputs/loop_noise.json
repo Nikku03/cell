@@ -57,10 +57,10 @@
   "N6 the null is capable and fame is reported": true
  },
  "n1": {
-  "median_ks": 1.8784475636635223,
+  "median_ks": 1.800849918507184,
   "median_ks_no_dilution": 1.3424694937293487,
   "loop91_ksm": 1.8,
-  "factor": 1.0435819798130679,
+  "factor": 1.0004721769484355,
   "n": 4190,
   "median_copies": 17.415,
   "median_hl_h": 9.9
@@ -147,7 +147,7 @@
    "reason": "effect is distinguishable from the null and exceeds it"
   }
  },
- "seconds": 5.603959321975708,
+ "seconds": 6.755619049072266,
  "log": [
   "====================================================================================================",
   "  LOOP 98 -- stochasticity: predicted expression noise from copy number and half-life",
@@ -160,8 +160,8 @@
   "",
   "N1 THE PREDICTION IS ONE DATASET'S ARITHMETIC, AND IT REPRODUCES LOOP 91",
   "     numerator and denominator are the same cells: copies and half-life both Schwanhausser",
-  "     k_s = N x (ln2/t_half + ln2/24h)",
-  "     median k_s 1.8784 mRNA/cell/h   loop 91 established 1.80   factor 1.044",
+  "     k_s = N x (ln2/t_half + ln2/28h)",
+  "     median k_s 1.8008 mRNA/cell/h   loop 91 established 1.80   factor 1.000",
   "     (degradation only, no dilution: 1.3425 -- the number disclosed above)",
   "     median mRNA copies/cell 17.41, median half-life 9.90 h",
   "     N1 PASS -- the prediction rests on loop 91 arithmetic, unchanged",

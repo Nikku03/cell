@@ -116,6 +116,8 @@
    "fraction": 0.7249547612828998,
    "reason": "effect is distinguishable from the null and exceeds it"
   },
+  "z_expression_only": 9.478666541172599,
+  "z3_gated_on": "expression_only",
   "capability": {
    "capable": true,
    "changed": 0.993421052631579,
@@ -281,7 +283,7 @@
   "auc_samephase_graph": 0.6009600111959476,
   "auc_samephase_pubs": 0.6172278394421754
  },
- "seconds": 7.533392906188965,
+ "seconds": 8.635300874710083,
  "log": [
   "====================================================================================================",
   "  LOOP 99 -- cell cycle: can the phase-labelled genes recover the phase ORDER",
@@ -325,6 +327,7 @@
   "     co-complex proximity, expression-only graph (PPI removed): real +0.6884  null +0.4990 +/- 0.0200  z +9.5  survives 72%",
   "     the full-graph number is CONTAMINATED: complex members physically interact, so PPI",
   "     carries complex structure. The expression-only number is the honest one.",
+  "     GATED ON THE EXPRESSION-ONLY NUMBER: AUC 0.6884, z +9.48 (the contaminated full-graph pair was 0.9499, z +24.65)",
   "     Z3 PASS -- gate was AUC >= 0.55 and |z| >= 2.0; the embedding recovers structure it was never given, so a phase answer is readable",
   "",
   "Z4 THE PHASE ORDER",

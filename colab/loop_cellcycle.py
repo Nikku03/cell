@@ -395,8 +395,16 @@ def main():
     GG.report("co-complex proximity, expression-only graph (PPI removed)", s_e, emit=say)
     say(f"     the full-graph number is CONTAMINATED: complex members physically interact, so PPI")
     say(f"     carries complex structure. The expression-only number is the honest one.")
-    z3 = bool(np.isfinite(a_full) and a_full >= POS_AUC_MIN and abs(z_c) >= Z_MIN
+    # CORRECTED AFTER ADVERSARIAL REVIEW. Z3 was evaluated on a_full -- the number this module
+    # itself prints as CONTAMINATED two lines above, because complex members physically interact so
+    # the PPI channel carries complex structure directly. A loop that names one number honest and
+    # gates the other is not doing what it says, even when the verdict happens to agree. The gate
+    # now runs on a_expr, the expression-only AUC, which is the number the module calls honest.
+    z_e = ((a_expr - np.mean(nn)) / np.std(nn)) if len(nn) > 1 and np.std(nn) > 0 else float("nan")
+    z3 = bool(np.isfinite(a_expr) and a_expr >= POS_AUC_MIN and abs(z_e) >= Z_MIN
               and cap_c["capable"])
+    say(f"     GATED ON THE EXPRESSION-ONLY NUMBER: AUC {a_expr:.4f}, z {z_e:+.2f} "
+        f"(the contaminated full-graph pair was {a_full:.4f}, z {z_c:+.2f})")
     say(f"     Z3 {'PASS' if z3 else 'FAIL'} -- gate was AUC >= {POS_AUC_MIN} and |z| >= {Z_MIN}; "
         + ("the embedding recovers structure it was never given, so a phase answer is readable"
            if z3 else
@@ -655,6 +663,7 @@ def main():
         "z3": {"n_complexes": ncplx, "n_cocomplex_pairs": int(is_cplx.sum()),
                "n_pairs": len(pair_key), "auc_full_graph": float(a_full), "z_full": float(z_c),
                "survival_full": s_c, "auc_expression_only": float(a_expr), "survival_expr": s_e,
+               "z_expression_only": float(z_e), "z3_gated_on": "expression_only",
                "capability": cap_c},
         "z4": {"phases_used": phases_used, "rho_concordance": float(rho),
                "order_proposed": seq, "order_canonical": phases_used,

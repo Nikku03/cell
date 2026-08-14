@@ -469,9 +469,17 @@ def main():
     say(f"     each arm's own adjacency is rewired separately, {REWIRE_PASSES} passes, "
         f"{N_NULL} nulls, swaps restricted to one node-type signature so the tripartite")
     say(f"     structure survives and only the WIRING is destroyed. E5 as predeclared is scored on")
-    say(f"     the COMBINED arm; A1 and A2 are run through the same null and reported alongside.")
+    say(f"     the COMBINED arm; A2, the arm that actually wins, is run through the same null and")
+    say(f"     reported alongside it, because a null applied only to a losing arm proves nothing.")
+    say(f"     A1 is NOT put through this null, and the reason is gate_guard's family one rather")
+    say(f"     than convenience: A1's real held-out rho is "
+        f"{RES[TARGETS[0][0]]['scores'][f'A1 reaction-only k={K_MAIN}']['rho_mean']:+.4f}, which is")
+    say(f"     already indistinguishable from nothing, so a survival FRACTION computed against it")
+    say(f"     would have no denominator -- exactly the 54% and 6718% of loops 87 C6 and 87b B6.")
+    E5_ARMS = ["A3 combined", "A2 graph-only"]
     E5BLOCK = {}
-    for nm, A in arms.items():
+    for nm in E5_ARMS:
+        A = arms[nm]
         real_feat = EMB[(nm, K_MAIN)][gi]
         real_rho = RES[TARGETS[0][0]]["scores"][f"{nm} k={K_MAIN}"]["rho_mean"]
         real_auc = RES[TARGETS[0][0]]["scores"][f"{nm} k={K_MAIN}"]["auc_mean"]

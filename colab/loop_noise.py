@@ -139,7 +139,15 @@ SCHWAN = SC / "_schwan2011.json"
 LARSSON = SC / "larsson_S5.xlsx"
 HPA = SC / "hpa_rna_single_cell_type.zip"
 
-T_DOUBLE_H = 24.0                  # loop 91's assumption, kept identical so N1 is a reproduction
+# CORRECTED AFTER ADVERSARIAL REVIEW. This constant was 24.0 with the comment "loop 91's
+# assumption, kept identical so N1 is a reproduction". THAT COMMENT WAS FALSE: loop 91 uses 27.5 h
+# (loop_rates.py:96, "NIH 3T3 in Schwanhausser 2011 double in about 27.5 h"). The gene set is
+# identical -- the naive degradation-only median 1.3424694937293487 is byte-identical in both
+# outputs -- so the entire "factor 1.044" discrepancy N1 reported was an undisclosed change of the
+# doubling-time assumption, in a gate whose stated purpose was to catch arithmetic that had
+# quietly stopped agreeing with the loop it came from. The gate absorbed the very thing it existed
+# to detect. Set to 27.5 to match loop 91; N1 now reproduces it to a factor of 1.0005.
+T_DOUBLE_H = 27.5                  # loop 91, loop_rates.py:96 -- verified, not assumed
 LOOP91_KSM = 1.80                  # established: transcription rate median, mRNA/cell/h
 N1_FACTOR = 1.25
 N2_MIN_RHO, N2_MIN_N = 0.30, 300

@@ -50,12 +50,16 @@ the model's favour to fix and one was wrong against it:
   (b) THE NULLS WERE ESTIMATED AT A DIFFERENT REALISATION COUNT (8) THAN THE REAL MODEL (40), which
       is not a control, it is two different estimators. Nulls now use the identical count.
   (c) THE BLUR COMPARATOR GOT A SIGMA SWEEP AND THE FORK GOT ONE FIXED PARAMETER SET, so T4 was a
-      tuned comparator against an untuned model. The fork now gets a 3 x 3 grid over origin-map
-      sigma and origin spacing PLUS the 7-point speed sweep, and T4 uses its best. The fork side now
-      has three free parameters against the blur's one. The first grid put the fork's optimum ON THE
-      BOUNDARY at sigma 800 / spacing 240, which would have meant the fork never got its best shot,
-      so the grid was widened to 4 x 4 until the optimum came inside it -- sigma 800 kb, spacing
-      480 kb. The run now reports whether the optimum is interior, and T4's FAIL is only readable if
+      tuned comparator against an untuned model. The fork now gets a 4 x 5 = 20-cell grid over
+      origin-map sigma (200/400/800/1600 kb) and origin spacing (120/240/480/960/1920 kb), and T4
+      uses its best. The 7-point SPEED sweep is NOT part of that grid -- it runs afterwards as a
+      post-T4 diagnostic, and this paragraph previously said otherwise. The fork side therefore has
+      two free parameters in the gate against the blur's one. The first grid put the fork's optimum
+      ON THE BOUNDARY, which would have meant the fork never got its best shot, so the grid was
+      widened until the optimum came inside it. THE ACTUAL OPTIMUM IS sigma 400 kb / spacing 960 kb
+      at rho +0.47866, interior to the grid; an earlier draft of this paragraph named sigma 800 /
+      spacing 480, which is not the optimum and was never the optimum in the committed run. Both
+      errors were found by adversarial review and are corrected here rather than quietly edited. The run now reports whether the optimum is interior, and T4's FAIL is only readable if
       it is. Sigma was probed out to 6400 kb and spacing to 3840 kb by hand; both turn over. The
       grid also ran at fewer realisations than the base model at first, which by (a) biases the fork
       DOWN; every model number in the loop now comes from the identical 400-realisation estimator.
