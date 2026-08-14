@@ -147,7 +147,7 @@
    "reason": "effect is distinguishable from the null and exceeds it"
   }
  },
- "seconds": 5.51093602180481,
+ "seconds": 5.603959321975708,
  "log": [
   "====================================================================================================",
   "  LOOP 98 -- stochasticity: predicted expression noise from copy number and half-life",
