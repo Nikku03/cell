@@ -434,6 +434,114 @@ def main():
         say(f"  {k}  {'PASS' if gates[k] else 'FAIL'}")
     say(f"  {sum(gates.values())}/6")
     say("=" * 100)
+    say()
+
+    # ------------------------------------------------------------- AFTER THE FACT
+    # ADDED AFTER THE FIRST RUN, GATED ON NOTHING. Three things need saying that the gates as
+    # written do not say, and a fourth mechanism needs measuring because S3 came out BACKWARDS.
+    say("AFTER THE FACT -- reading the three passes honestly, and the mechanism S3 points at")
+    say()
+    say("  (i) S5 passed, but fame lost by being USELESS, not by the biology being strong.")
+    say(f"      best sequence feature AUC {0.5 + best_seq[1]:.4f}; publication count "
+        f"{s5['ANN  publication count']:.4f}, which is 0.5 to within {fame:.4f}.")
+    say("      Fame has no signal on this layer at all, so clearing it is a low bar. The absolute")
+    say("      number is what matters and it is barely above chance.")
+    say()
+    say("  (ii) S6 is S4 restated through the integrator, not independent confirmation of it.")
+    say("      Both are the same quantity -- gain(bbar, T) -- read once as a threshold and once as")
+    say("      an amplitude. Counting them as two passes would be counting one measurement twice.")
+    say()
+    say("  (iii) S3 did not merely fail. IT CAME OUT BACKWARDS, and that is the finding.")
+    for k in DEGRONS:
+        vals = {gn: float(np.mean([dens[g][k] for g in gs])) for gn, gs in grp.items()}
+        order = sorted(vals, key=lambda z: -vals[z])
+        say(f"      {k:<22} ranking: " + " > ".join(f"{o} {vals[o]:.4f}" for o in order))
+    say("      The degron signal sits in BOTH-oscillate, the group that already has a")
+    say("      transcriptional source -- classic APC/C substrates, transcribed periodically AND")
+    say("      destroyed periodically. The 359 protein-only oscillators, the ones that NEED a")
+    say("      post-transcriptional mechanism, carry the LEAST of it. Timed destruction is not")
+    say("      their answer.")
+    say()
+
+    # THE FOURTH MECHANISM, which is not a term in the equation at all. HPA's CCD Protein call is
+    # immunofluorescence INTENSITY per cell. A protein that MOVES between compartments over the
+    # cycle changes measured intensity without changing copy number, and loop 117 already found
+    # that compartments move. Nucleus<->cytoplasm shuttling is the textbook cell-cycle behaviour.
+    # This is testable from the same file that gave the CCD calls.
+    say("  (iv) THE MECHANISM THAT IS NOT A TERM IN THE EQUATION: relocalisation.")
+    say("      The CCD call is immunofluorescence intensity per cell. A protein that MOVES between")
+    say("      compartments changes measured intensity without changing copy number, and loop 117")
+    say("      found compartments do move. Tested from the same file as the calls:")
+    with open(HPA, newline="") as f:
+        rr = csv.reader(f, delimiter="\t")
+        hh = next(rr)
+        jG, jM, jA = (hh.index("Gene"), hh.index("Subcellular main location"),
+                      hh.index("Subcellular additional location"))
+        loc = {x[jG]: (x[jM], x[jA]) for x in rr}
+    multi, nuccyt = {}, {}
+    for g in called:
+        m, a = loc.get(g, ("", ""))
+        parts = [p for p in (m + "," + a).split(",") if p.strip()]
+        multi[g] = 1.0 if len([p for p in parts if p.strip()]) > 1 else 0.0
+        low = (m + " " + a).lower()
+        nuccyt[g] = 1.0 if (("nucleo" in low or "nuclear" in low) and
+                            ("cytosol" in low or "cytoplasm" in low)) else 0.0
+    have = [g for g in called if g in loc and (loc[g][0] or loc[g][1])]
+    hl_ = np.array([cp[g] == "Yes" for g in have])
+    mv = np.array([multi[g] for g in have])
+    nv = np.array([nuccyt[g] for g in have])
+    om, pm, _ = perm_p(mv[hl_], mv[~hl_], rng)
+    on, pn2, _ = perm_p(nv[hl_], nv[~hl_], rng)
+    say(f"      {len(have):,} called proteins have a location annotation")
+    say(f"      MORE THAN ONE COMPARTMENT:  CCD {mv[hl_].mean():.1%}  non-CCD {mv[~hl_].mean():.1%}"
+        f"   difference {om:+.1%}, permutation p = {pm:.4f}")
+    say(f"      NUCLEUS *AND* CYTOSOL:      CCD {nv[hl_].mean():.1%}  non-CCD {nv[~hl_].mean():.1%}"
+        f"   difference {on:+.1%}, permutation p = {pn2:.4f}")
+    grpm = {gn: float(np.mean([nuccyt[g] for g in gs if g in loc])) for gn, gs in grp.items()}
+    for gn in ("both", "protein only", "transcript only", "neither"):
+        say(f"        nucleus+cytosol, {gn:>16}: {grpm[gn]:.1%}")
+    a_multi = auc(mv[hl_], mv[~hl_])
+    a_nc = auc(nv[hl_], nv[~hl_])
+    say(f"      AUC(dual localisation) {a_multi:.4f}   AUC(nucleus+cytosol) {a_nc:.4f}   "
+        f"against the best sequence feature {0.5 + best_seq[1]:.4f}")
+    say()
+    # AND NOW TRY TO BREAK IT, because it is the largest number in this loop and it is post-hoc.
+    # THE OBVIOUS CONFOUND: the CCD call and the location annotation come from THE SAME
+    # IMMUNOFLUORESCENCE IMAGES, scored by the same pipeline. A better antibody yields both more
+    # confident temporal scoring and more confident additional-location calls, which would produce
+    # exactly this association with no biology in it. Two checks, and neither is reassuring.
+    say("      TRYING TO BREAK IT -- the CCD call and the location call come from the SAME images.")
+    with open(HPA, newline="") as f:
+        rr = csv.reader(f, delimiter="\t")
+        hh = next(rr)
+        kG, kR = hh.index("Gene"), hh.index("Reliability (IF)")
+        rely = {x[kG]: x[kR] for x in rr}
+    say(f"      the specific relocalisation signature -- nucleus AND cytosol -- points the WRONG "
+        f"WAY ({on:+.1%}). What separates the groups is the COUNT of compartments, not any")
+    say("      particular pair, which is what an imaging-confidence confound looks like.")
+    strat_m, tot_w = 0.0, 0.0
+    for lev in sorted({rely.get(g, "") for g in have}):
+        m = np.array([rely.get(g, "") == lev for g in have])
+        if hl_[m].sum() and (~hl_[m]).sum() and m.sum() >= 30:
+            a = auc(mv[m][hl_[m]], mv[m][~hl_[m]])
+            say(f"        within IF reliability '{lev or 'none'}' (n={int(m.sum())}): "
+                f"CCD {mv[m][hl_[m]].mean():.1%} vs {mv[m][~hl_[m]].mean():.1%}, AUC {a:.4f}")
+            strat_m += m.sum() * a
+            tot_w += m.sum()
+    strat_m = strat_m / tot_w if tot_w else float("nan")
+    say(f"      stratified by antibody reliability: AUC {strat_m:.4f} (unstratified {a_multi:.4f})")
+    say("      It survives stratification, so it is not simply antibody quality -- but reliability")
+    say("      is a coarse proxy for image confidence and this remains a same-instrument")
+    say("      association. It is a hypothesis with a number on it, not a demonstrated mechanism.")
+    say()
+    posthoc = {"multi_ccd": float(mv[hl_].mean()), "multi_nonccd": float(mv[~hl_].mean()),
+               "multi_diff": om, "multi_p": pm, "multi_auc": a_multi,
+               "nuccyt_ccd": float(nv[hl_].mean()), "nuccyt_nonccd": float(nv[~hl_].mean()),
+               "nuccyt_diff": on, "nuccyt_p": pn2, "nuccyt_auc": a_nc,
+               "nuccyt_by_group": grpm, "n_with_location": len(have),
+               "multi_auc_stratified_by_reliability": strat_m,
+               "note": "added after the run, gated on nothing; S3 came out backwards and this is "
+                       "the mechanism the reversal points at"}
 
     man = RM.manifest(inputs=[FASTA, HPA, LR.CELL, LR.SC / "_schwan2011.json"],
                       available=len(cp), used=len(called), selection="filtered", seed=SEED,
@@ -459,6 +567,7 @@ def main():
                "s4": {"threshold_h": thr, "ccd_below": py_, "nonccd_below": pn_,
                       "difference": obs4, "p": p4, "amp_min": AMP_MIN},
                "s5": s5, "s5_best_sequence": best_seq[0], "s5_best_annotation": best_ann[0],
+               "posthoc": posthoc,
                "s6": {"max_rel_deviation": dv, "residual": float(rel0.max()),
                       "frac_reaching": float(np.mean(rel1 >= AMP_MIN)),
                       "median_amplitude": float(np.median(rel1)),

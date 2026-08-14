@@ -286,6 +286,34 @@ LAYERS = [
     ("cell cycle as a process", "FAILED", "loop_cellcycle/99",
      "canonical phase order recovered but 176/500 shuffles do it too",
      "no cycle advances; the failure is now known to be the wiring, not the data -- see below"),
+    # ADDED by loop 121, which asked where the oscillation comes from once transcription and the
+    # regulatory network are both eliminated, and got a NEGATIVE that is more useful than its
+    # passes: the group that needs a post-transcriptional mechanism has the LEAST degron signal.
+    ("regulated degradation b(t)", "RUNS", "cell_assembled.integrate_deg/121",
+     "dP/dt = k_sp*Mbar - b(t)*P with the mRNA held flat; beta=0 reduces exactly (2.8e-15). With "
+     "b swinging 0 to 2*bbar, 30.1% of 4,190 genes reach a 20% swing -- the existing equation "
+     "gives exactly zero at every parameter, so this is the term that was missing. Threshold: a "
+     "half-life under 24.5 h at a 24 h cycle",
+     "62.6% of measured CCD proteins have half-lives ABOVE that threshold, so timed destruction "
+     "cannot be the whole answer even where it applies"),
+    ("degron motifs as the mechanism", "FAILED", "loop_degron/121",
+     "D-box R..L and D-box+ do not clear z=2 against either a label shuffle or a composition-"
+     "preserving sequence shuffle. KEN-box clears both at z +2.6 -- and is one of the two motif "
+     "densities that FAILED the fame check (rho +0.2429 with publication count)",
+     "AND THE DISCRIMINATING TEST CAME OUT BACKWARDS. Degron density ranks both-oscillate > "
+     "transcript-only > protein-only for every motif. The 359 proteins that oscillate WITHOUT "
+     "their mRNA -- the ones that need a post-transcriptional mechanism by construction -- carry "
+     "the LEAST degron signal. Timed destruction is the mechanism for the classic APC/C "
+     "substrates that were already transcriptionally periodic, not for the unexplained majority"),
+    ("relocalisation as the mechanism", "STATIC", "loop_degron/121 post-hoc",
+     "88.9% of CCD proteins are annotated to more than one compartment against 69.0% of the "
+     "imaged controls (+19.8 points, p < 1e-4, AUC 0.5992) -- larger than every sequence feature, "
+     "every annotation feature and publication count, and it survives stratifying by antibody "
+     "reliability (0.5953)",
+     "NOT A DEMONSTRATED MECHANISM. Post-hoc, gated on nothing, and the CCD call and the location "
+     "call come from the SAME immunofluorescence images. The specific relocalisation signature -- "
+     "nucleus AND cytosol -- points the WRONG WAY (-4.7%). What separates the groups is the COUNT "
+     "of compartments, which is also what an imaging-confidence confound looks like"),
     ("replication as process", "FAILED", "loop_replication_time",
      "a Gaussian blur of the origin map (R2 0.320) beats the fork simulation (0.153)",
      "fork speed is unconstrained by the data it was fitted to"),
