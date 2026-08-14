@@ -501,9 +501,29 @@ LAYERS = [
      "distances -- a compartment is a well-stirred box with a size. And loop 116's V1 FAILED: an "
      "explicit label-to-compartment mapping could not beat the naive 40.3% agreement between a "
      "gene's annotated address and the compartment of its own reaction"),
-    ("diffusion", "ABSENT", "-",
-     "transport reactions move material between compartment POOLS with no distance or gradient",
-     "-"),
+    # CORRECTED by loop 126, and the correction is the result. The layer is still not implemented --
+    # there are no coordinates and no Fickian solver -- but the approximation it would replace turns
+    # out to be JUSTIFIED, measured rather than assumed. An approximation is only a defect when it
+    # is violated, and this one is not, by four orders of magnitude.
+    ("diffusion / well-stirred pools", "CLOSES", "loop_diffusion/126",
+     "Damkohler number Da = (L^2/6D)(kcat*[E]/K_M) on 751 genes with a kcat, a K_M and a MEASURED "
+     "copy number: median 3.45e-04 to 7.25e-04 across 3 cell volumes x 3 crowding factors, with "
+     "2.7-3.2% of enzymes above 1. Diffusion constants from Stokes-Einstein at 37 C validated "
+     "against GFP to 0.3% (117 um^2/s computed, 116.5 from the literature 87 at 25 C scaled by "
+     "T/eta). Crossover at a compartment radius of 320 um, 36x the radius of the whole cell",
+     "no coordinates, no membranes, no gradients -- the finding is that the model does not NEED "
+     "them at this scale, not that it has them. And 2.7-3.2% of enzymes DO exceed Da = 1; those "
+     "reactions are diffusion-limited and the well-stirred treatment is wrong for them"),
+    ("the diffusion limit as a physics audit", "CLOSES", "loop_diffusion/126 F3-F5",
+     "k_cat/K_M IS a bimolecular rate constant and cannot exceed Smoluchowski. Measured values: "
+     "1 of 235 above the limit (0.43%, ANGEL2 at 1.1x). Predicted values: 2 of 751 (0.27%). Both "
+     "respect a bound that owes nothing to any dataset",
+     "BUT F5 FAILED AND IT IS THE SHARPEST RESULT HERE. The canonical catalytically perfect "
+     "enzymes should sit at the top of the k_cat/K_M distribution -- that is why they are famous. "
+     "The bundle ranks SOD1 at the 28th percentile and SOD2 at the 30th, predicting 1.43e4 for an "
+     "enzyme whose real value is about 2e9, low by five orders of magnitude. Loop 124 measured "
+     "this as a 12.95x fold-error against held-out data; F5 sees the same failure with no "
+     "held-out data at all -- the predictions do not know which enzymes are fast"),
     # CORRECTED by loop 125. Recorded ABSENT, but division has been inside every rate in this
     # repository since loop 92 as mu = ln2/t_double -- a continuous leak standing in for a discrete
     # event nobody had tested. Present as an untested assumption is a worse place for it than absent.

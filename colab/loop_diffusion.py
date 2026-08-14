@@ -96,15 +96,18 @@ SEED = 12600
 KB = 1.380649e-23          # J/K
 TEMP = 310.15              # K, 37 C
 ETA = 0.6913e-3            # Pa s, water at 37 C
-VBAR = 0.73e-6             # m^3/kg, protein partial specific volume (0.73 cm^3/g)
+# The gate range is the literature GFP value CORRECTED TO 37 C, not the published 25 C number.
+# The first run gated a 37 C calculation against a 25 C measurement and would have failed a correct
+# physics: D scales as T/eta, so 87 um^2/s at 25 C is 87*(310.15/298.15)*(0.890/0.6913) = 116.5 at
+# 37 C. Stating the scaling rather than widening the window until something fits.
 NA = 6.02214076e23
 CROWDING = (3.0, 4.0, 5.0)          # cytoplasm is this many times more viscous than water
 CELL_VOL_UM3 = (2000.0, 3000.0, 4000.0)   # loop 116
 CYTO_FRACTION = 0.52                       # loop 116/118
 METABOLITE_DA = 200.0                      # a typical small metabolite
 
-F1_WATER = (70.0, 110.0)
-F1_CYTO = (15.0, 40.0)
+F1_WATER = (100.0, 135.0)      # GFP 87 at 25 C -> 116.5 at 37 C
+F1_CYTO = (20.0, 45.0)         # the same value divided by the swept crowding factor
 F3_VIOLATE = 0.05
 F4_RATIO = 2.0
 F5_ENZYMES = ("CA1", "CA2", "CA3", "SOD1", "SOD2", "CAT", "TPI1", "ACHE")
@@ -119,9 +122,20 @@ def say(s=""):
 
 
 def radius_m(mass_da):
-    """Hydrodynamic radius from mass, via protein specific volume. R = (3 M vbar / 4 pi N_A)^(1/3)."""
-    m_kg = np.asarray(mass_da, float) / NA / 1000.0
-    return (3.0 * m_kg * VBAR / (4.0 * np.pi)) ** (1.0 / 3.0)
+    """Hydrodynamic radius from mass, Tyn & Gusek 1990: R_h [nm] = 0.0515 * M^0.392 for globular
+    proteins.
+
+    THE FIRST VERSION USED THE BARE SPECIFIC-VOLUME RADIUS AND GOT IT WRONG TWICE. The unit
+    conversion was off by a thousand -- 0.73 cm^3/g is 0.73e-3 m^3/kg, not 0.73e-6 -- which made
+    every radius ten times too small and every diffusion constant ten times too large, and F1
+    caught it at 1656 um^2/s for a protein whose measured value is 87. Fixing the units alone gives
+    1.98 nm and 166 um^2/s, still 40% high, because a sphere of the protein's own volume ignores
+    the hydration shell and every departure from spherical. The empirical relation includes both:
+    2.81 nm for 27 kDa, against GFP's measured 2.8 nm, and 117 um^2/s against a literature 87 at
+    25 C which Stokes-Einstein scales to 116.5 at 37 C. Agreement to 0.3%, and it is a positive
+    control rather than a fit -- the relation was published for a different purpose entirely.
+    """
+    return 0.0515e-9 * np.asarray(mass_da, float) ** 0.392
 
 
 def stokes_einstein(mass_da, crowd=1.0):
@@ -183,17 +197,17 @@ def main():
     dw = stokes_einstein(27000.0) * 1e12
     say(f"     27 kDa protein: hydrodynamic radius {r27 * 1e9:.2f} nm")
     say(f"     D in water {dw:.1f} um^2/s   gate {F1_WATER[0]}-{F1_WATER[1]} "
-        f"(GFP measured ~87)")
+        f"(GFP 87 at 25 C = {87 * (310.15 / 298.15) * (0.890 / 0.6913):.1f} at 37 C)")
     ok_c = True
     for c in CROWDING:
         dc = stokes_einstein(27000.0, c) * 1e12
         inr = F1_CYTO[0] <= dc <= F1_CYTO[1]
         say(f"     D in cytoplasm at crowding {c:.0f}x: {dc:.1f} um^2/s   "
-            f"{'in' if inr else 'OUT OF'} gate {F1_CYTO[0]}-{F1_CYTO[1]} (GFP measured ~25-30)")
+            f"{'in' if inr else 'OUT OF'} gate {F1_CYTO[0]}-{F1_CYTO[1]} (GFP in cytoplasm ~25-30 at 25 C)")
         ok_c = ok_c and inr
     dmet = stokes_einstein(METABOLITE_DA) * 1e12
     say(f"     a {METABOLITE_DA:.0f} Da metabolite: D in water {dmet:.0f} um^2/s "
-        f"(glucose measured ~670)")
+        f"(glucose ~670 at 25 C = {670 * 1.339:.0f} at 37 C)")
     gates["F1"] = bool(F1_WATER[0] <= dw <= F1_WATER[1] and ok_c)
     say(f"     F1 {'PASS' if gates['F1'] else 'FAIL'}")
     say()
@@ -286,22 +300,49 @@ def main():
 
     # ---------------------------------------------------------------- F5
     say("F5 THE TEXTBOOK NEAR-LIMIT ENZYMES")
-    present, ranks = [], []
-    order = np.argsort(ke_p)
-    rank_of = {pred[order[i]]: i / max(len(order) - 1, 1) for i in range(len(order))}
+    # RUN ON BOTH AXES. The first version scored only the predicted values, which conflates two
+    # different questions: does k_cat/K_M rank catalytic efficiency (it must, by definition), and
+    # do THESE numbers rank it. Scoring the measurements alongside separates them, and the
+    # separation is the finding.
+    def ranks_in(names_, vals):
+        o = np.argsort(vals)
+        return {names_[o[i]]: i / max(len(o) - 1, 1) for i in range(len(o))}
+    rank_p = ranks_in(pred, ke_p)
+    rank_m = ranks_in(meas, ke_m)
+    say(f"     {'enzyme':<8}{'PREDICTED k_cat/K_M':>22}{'pct':>8}   "
+        f"{'MEASURED k_cat/K_M':>22}{'pct':>8}")
+    pr, mr, present = [], [], []
     for g in F5_ENZYMES:
-        if g in rank_of:
-            present.append(g)
-            ranks.append(rank_of[g])
-            say(f"     {g:6} k_cat/K_M {gk[g] / (gkm[g] * 1e-6):.2e}   "
-                f"percentile {rank_of[g]:.1%}")
-    if not present:
-        say("     none of the canonical perfect enzymes are in the predicted set")
-    gates["F5"] = bool(present and float(np.mean(ranks)) >= F5_DECILE)
-    say(f"     mean percentile of the canonical perfect enzymes: "
-        f"{np.mean(ranks) if ranks else float('nan'):.1%}   gate >= {F5_DECILE:.0%}")
-    say(f"     F5 {'PASS' if gates['F5'] else 'FAIL'} -- the axis "
-        f"{'ranks the perfect enzymes at the top' if gates['F5'] else 'does NOT rank the perfect enzymes at the top, so it is not measuring catalytic efficiency'}")
+        if g not in rank_p and g not in rank_m:
+            continue
+        present.append(g)
+        pv = f"{gk[g] / (gkm[g] * 1e-6):.2e}" if g in rank_p else "-"
+        pp = f"{rank_p[g]:.1%}" if g in rank_p else "-"
+        mvv = f"{mkc[g] / (mkm[g] * 1e-6):.2e}" if g in rank_m else "-"
+        mp = f"{rank_m[g]:.1%}" if g in rank_m else "-"
+        say(f"     {g:<8}{pv:>22}{pp:>8}   {mvv:>22}{mp:>8}")
+        if g in rank_p:
+            pr.append(rank_p[g])
+        if g in rank_m:
+            mr.append(rank_m[g])
+    mean_p = float(np.mean(pr)) if pr else float("nan")
+    mean_m = float(np.mean(mr)) if mr else float("nan")
+    say(f"     mean percentile: PREDICTED {mean_p:.1%} (n={len(pr)})   "
+        f"MEASURED {mean_m:.1%} (n={len(mr)})   gate >= {F5_DECILE:.0%}")
+    gates["F5"] = bool(pr and mean_p >= F5_DECILE)
+    say(f"     F5 {'PASS' if gates['F5'] else 'FAIL'} -- the PREDICTED axis "
+        f"{'ranks the perfect enzymes at the top' if gates['F5'] else 'does NOT rank the perfect enzymes at the top'}")
+    if pr and mean_p < F5_DECILE:
+        say(f"     SOD1's real k_cat/K_M is about 2e9 M^-1 s^-1, within a factor of a few of the")
+        say(f"     diffusion limit -- it is the textbook example of a catalytically perfect enzyme.")
+        if "SOD1" in rank_p:
+            say(f"     The bundle predicts {gk['SOD1'] / (gkm['SOD1'] * 1e-6):.2e}, low by a factor of "
+                f"{2e9 / (gk['SOD1'] / (gkm['SOD1'] * 1e-6)):.0e}, and ranks it at the "
+                f"{rank_p['SOD1']:.0%} percentile.")
+        say(f"     This is the same failure loop 124 measured as a 12.95x fold-error, seen from a")
+        f_ = "     direction that needs no held-out data at all: the predictions do not know which"
+        say(f_)
+        say(f"     enzymes are fast.")
     say()
 
     # ---------------------------------------------------------------- F6
@@ -367,8 +408,10 @@ def main():
                "f4": {"n": len(pred), "median_kcatkm": float(np.median(ke_p)),
                       "max": float(ke_p.max()), "violation_rate": viol_p,
                       "ratio": viol_p / max(viol_m, 1e-9)},
-               "f5": {"present": present, "percentiles": [float(r) for r in ranks],
-                      "mean_percentile": float(np.mean(ranks)) if ranks else None},
+               "f5": {"present": present, "mean_percentile_predicted": mean_p,
+                      "mean_percentile_measured": mean_m,
+                      "predicted": {g: float(rank_p[g]) for g in present if g in rank_p},
+                      "measured": {g: float(rank_m[g]) for g in present if g in rank_m}},
                "f6": {"k_obs_median": k_med, "crossover_radius_um": float(L_star),
                       "reactions": rx, "gene_rule_reactions": len(rg)},
                "seconds": time.time() - t0, "log": log},
