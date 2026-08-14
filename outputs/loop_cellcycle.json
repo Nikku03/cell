@@ -1,0 +1,418 @@
+{
+ "test": "loop_cellcycle",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 153,
+   "used": 152,
+   "selection": "filtered",
+   "fraction": 0.9934640522875817
+  },
+  "seed": 9901,
+  "controls": [
+   "positive control: co-complex proximity, with complexes HELD OUT of every graph",
+   "second positive control on an expression-only graph with PPI also removed, so nothing physical could leak complex structure in",
+   "phase-label shuffle (label counts preserved) for both ordering statistics",
+   "gate_guard.null_can_move on the label vector and on the node permutation, run BEFORE any null verdict was read",
+   "gate_guard.survival used instead of a bare ratio, so an undefined survival fraction cannot be printed as a percentage",
+   "fame head-to-head: the same same-phase-pair AUC computed from log publication count alone, and the analytic chance baseline for a cyclic order at K phases"
+  ],
+  "note": "the embedding never sees a phase label; the graph is the union of coexpr, codep, ppi and reg restricted to the 153 labelled genes, and complexes are held out entirely so that co-complex membership can act as a control the pipeline could fail",
+  "warnings": []
+ },
+ "gates": {
+  "Z1 the labels span the cycle": false,
+  "Z2 the graph exists": true,
+  "Z3 the embedding carries real structure (positive control)": true,
+  "Z4 the phase order is recovered": false,
+  "Z5 the null is capable and fired": true,
+  "Z6 the graph beats fame": false,
+  "Z7 the limit is stated": true
+ },
+ "z1": {
+  "phase_counts": {
+   "Mitotic": 87,
+   "G1": 18,
+   "G2/M": 42,
+   "G2": 6
+  },
+  "phases_kept": [
+   "G1",
+   "G2",
+   "G2/M",
+   "Mitotic"
+  ],
+  "segments_named": [
+   "G1",
+   "G2",
+   "M"
+  ],
+  "segments_missing": [
+   "S"
+  ],
+  "n_cyclic_orders": 3,
+  "chance_baseline": 0.3333333333333333,
+  "a_enough_phases": true,
+  "b_spans_cycle": false
+ },
+ "z2": {
+  "layer_edges": {
+   "coexpr": 212,
+   "codep": 121,
+   "ppi": 742,
+   "reg": 301
+  },
+  "n_labelled": 153,
+  "lcc_full": 152,
+  "lcc_expr_only": 144,
+  "degree_median": 16.0,
+  "degree_mean": 18.105263157894736,
+  "eigenvalues": [
+   0.9999999999999992,
+   0.8211340804360693,
+   0.7785195141085497,
+   0.7376130399273011,
+   0.7085240345701467
+  ],
+  "ring_signature": {
+   "gap_1_2": 0.04261456632751959,
+   "gap_2_3": 0.0409064741812486,
+   "ratio": 1.041756034477642,
+   "note": "a ring graph has gap(1,2) near zero"
+  }
+ },
+ "z3": {
+  "n_complexes": 59,
+  "n_cocomplex_pairs": 225,
+  "n_pairs": 11476,
+  "auc_full_graph": 0.9499280063994312,
+  "z_full": 24.65041870331921,
+  "survival_full": {
+   "real": 0.9499280063994312,
+   "n_null": 250,
+   "null_mean": 0.4983335107002834,
+   "null_sd": 0.01831995233567128,
+   "z": 24.65041870331921,
+   "defined": true,
+   "fraction": 0.5246013459368849,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "auc_expression_only": 0.688371527771456,
+  "survival_expr": {
+   "real": 0.688371527771456,
+   "n_null": 250,
+   "null_mean": 0.499038216589501,
+   "null_sd": 0.019974677910605428,
+   "z": 9.478666541172599,
+   "defined": true,
+   "fraction": 0.7249547612828998,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "capability": {
+   "capable": true,
+   "changed": 0.993421052631579,
+   "reason": "the null changes the statistic's input"
+  }
+ },
+ "z4": {
+  "phases_used": [
+   "G1",
+   "G2",
+   "G2/M",
+   "Mitotic"
+  ],
+  "rho_concordance": 0.18855919765716847,
+  "order_proposed": [
+   "G2/M",
+   "Mitotic",
+   "G1",
+   "G2"
+  ],
+  "order_canonical": [
+   "G1",
+   "G2",
+   "G2/M",
+   "Mitotic"
+  ],
+  "order_match": true,
+  "phase_circular_means_deg": {
+   "G1": {
+    "mean_deg": 67.62121654267301,
+    "resultant": 0.6271221377014864,
+    "n": 18
+   },
+   "G2": {
+    "mean_deg": 132.2525451349161,
+    "resultant": 0.634253864433161,
+    "n": 6
+   },
+   "G2/M": {
+    "mean_deg": -152.42432207097036,
+    "resultant": 0.5263967403574805,
+    "n": 42
+   },
+   "Mitotic": {
+    "mean_deg": -13.073644299917287,
+    "resultant": 0.32110860939284774,
+    "n": 87
+   }
+  },
+  "projection_sweep": {
+   "v1-v2": {
+    "rho": 0.18855919765716847,
+    "order": [
+     "G2/M",
+     "Mitotic",
+     "G1",
+     "G2"
+    ],
+    "match": true
+   },
+   "v1-v3": {
+    "rho": 0.1435109140097051,
+    "order": [
+     "Mitotic",
+     "G1",
+     "G2",
+     "G2/M"
+    ],
+    "match": true
+   },
+   "v2-v3": {
+    "rho": 0.05667214872681248,
+    "order": [
+     "G2/M",
+     "Mitotic",
+     "G1",
+     "G2"
+    ],
+    "match": true
+   }
+  },
+  "rho_best_projection": 0.18855919765716847,
+  "any_projection_matches": true,
+  "a_concordance": false,
+  "b_order": false,
+  "posthoc_decomposition": {
+   "rho_clustering_component": 0.17227209608391422,
+   "rho_order_component": 0.10863501179614216,
+   "n_different_phase_pairs": 6723,
+   "declared": "added after the first run, gated on nothing, and it can only weaken the claim: it separates same-phase clustering from cyclic order, which the concordance alone cannot"
+  }
+ },
+ "z5": {
+  "capability": {
+   "capable": true,
+   "changed": 0.631578947368421,
+   "reason": "the null changes the statistic's input"
+  },
+  "mean_labels_moved": 0.5816973684210526,
+  "survival_rho": {
+   "real": 0.18855919765716847,
+   "n_null": 500,
+   "null_mean": -0.00022678357367852606,
+   "null_sd": 0.010365218169895553,
+   "z": 18.213411250633552,
+   "defined": true,
+   "fraction": -0.0012027181728406363,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "survival_rho_bestproj": {
+   "real": 0.18855919765716847,
+   "n_null": 500,
+   "null_mean": 0.008405501160373467,
+   "null_sd": 0.011523346636909829,
+   "z": 15.633799986520765,
+   "defined": true,
+   "fraction": 0.044577518703998974,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "survival_order_component": {
+   "real": 0.10863501179614216,
+   "n_null": 500,
+   "null_mean": -0.0004357544917204105,
+   "null_sd": 0.012005754403187843,
+   "z": 9.0848740216526,
+   "defined": true,
+   "fraction": -0.004011179126469105,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "p_order": 0.3532934131736527,
+  "p_order_bestproj": 0.7145708582834331,
+  "n_order_matches_under_shuffle": 176,
+  "n_perm": 500
+ },
+ "z6": {
+  "pubs_by_phase": {
+   "G1": {
+    "median": 175.0,
+    "mean": 427.05882352941177,
+    "n": 18
+   },
+   "G2": {
+    "median": 413.5,
+    "mean": 639.6666666666666,
+    "n": 6
+   },
+   "G2/M": {
+    "median": 246.5,
+    "mean": 617.2380952380952,
+    "n": 42
+   },
+   "Mitotic": {
+    "median": 106.0,
+    "mean": 145.41379310344828,
+    "n": 87
+   }
+  },
+  "kruskal_H": 27.655053965007067,
+  "kruskal_p": 4.2907956358613825e-06,
+  "rho_pubs_angle": 0.14218356884204547,
+  "rho_pubs_radius": -0.2797196107385005,
+  "rho_pubs_degree": 0.22686520420381662,
+  "auc_samephase_graph": 0.6009600111959476,
+  "auc_samephase_pubs": 0.6172278394421754
+ },
+ "seconds": 7.533392906188965,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 99 -- cell cycle: can the phase-labelled genes recover the phase ORDER",
+  "               without being told it?",
+  "====================================================================================================",
+  "",
+  "  16,492 genes in the model; 153 carry a cell-cycle phase label",
+  "",
+  "Z1 THE LABELS ARE A CYCLE AT ALL",
+  "     Mitotic      87 genes",
+  "     G2/M         42 genes",
+  "     G1           18 genes",
+  "     G2            6 genes",
+  "     phases with >= 5 genes: 4 (G1, G2, G2/M, Mitotic)  -> (a) PASS",
+  "     canonical segments named: ['G1', 'G2', 'M']   MISSING: ['S']  -> (b) FAIL",
+  "     with 4 phases there are 3 distinct cyclic orders up to rotation and reflection, so the chance baseline for",
+  "     'the correct order' is 33.3%. This is a WEAK test and the weakness is the data's, not the method's.",
+  "     Z1 FAIL -- the label set does NOT span the cycle: no S phase is named, so the ORDER of a segment that is absent cannot be recovered at all",
+  "",
+  "Z2 THE GRAPH EXISTS",
+  "     coexpr   contributes   212 undirected within-set edges",
+  "     codep    contributes   121 undirected within-set edges",
+  "     ppi      contributes   742 undirected within-set edges",
+  "     reg      contributes   301 undirected within-set edges",
+  "     complexes are HELD OUT of every graph and used only as the positive control",
+  "     union graph (4 layers): largest component 152/153 (99.3%); 1 gene(s) dropped",
+  "     expression-only graph (no PPI): largest component 144/153 (94.1%)",
+  "     Z2 PASS -- gate was >= 50% in one component",
+  "",
+  "     embedding 152 genes; degree median 16, mean 18.1, min 1",
+  "     spectral eigenvalues (of the normalised adjacency): +1.0000, +0.8211, +0.7785, +0.7376, +0.7085",
+  "     RING SIGNATURE: a cyclic graph's first two non-trivial eigenvectors are a degenerate",
+  "     sin/cos pair. Here lambda1 +0.8211, lambda2 +0.7785, lambda3 +0.7376: gap(1,2) 0.0426 vs gap(2,3) 0.0409, ratio 1.04",
+  "     a ring would show gap(1,2) near zero. This is a diagnostic, not a gate.",
+  "",
+  "Z3 THE EMBEDDING CARRIES REAL STRUCTURE  (positive control, complexes held out)",
+  "     59 complexes contain >= 2 of the embedded genes; 225 co-complex pairs of 11,476 total",
+  "     CAPABILITY CHECK: the node permutation moves 99.4% of nodes -- capable: True",
+  "     co-complex proximity, full graph: real +0.9499  null +0.4983 +/- 0.0183  z +24.7  survives 52%",
+  "     co-complex AUC (full graph, 4 layers) 0.9499   z +24.65",
+  "     co-complex proximity, expression-only graph (PPI removed): real +0.6884  null +0.4990 +/- 0.0200  z +9.5  survives 72%",
+  "     the full-graph number is CONTAMINATED: complex members physically interact, so PPI",
+  "     carries complex structure. The expression-only number is the honest one.",
+  "     Z3 PASS -- gate was AUC >= 0.55 and |z| >= 2.0; the embedding recovers structure it was never given, so a phase answer is readable",
+  "",
+  "Z4 THE PHASE ORDER",
+  "     phases carried into the ordering test: ['G1', 'G2', 'G2/M', 'Mitotic']  (152 of 152 embedded genes)",
+  "     CYCLIC CONCORDANCE rho(angular separation, cyclic phase separation) = +0.1886",
+  "     phase circular means on the embedding plane:",
+  "       G1         mean angle    +67.6 deg   resultant length R 0.627   n  18",
+  "       G2         mean angle   +132.3 deg   resultant length R 0.634   n   6",
+  "       G2/M       mean angle   -152.4 deg   resultant length R 0.526   n  42",
+  "       Mitotic    mean angle    -13.1 deg   resultant length R 0.321   n  87",
+  "     order proposed by the embedding: G2/M -> Mitotic -> G1 -> G2",
+  "     canonical order (fixed before measurement): G1 -> G2 -> G2/M -> Mitotic",
+  "     match up to rotation and reflection: True",
+  "     projection v1/v2: rho +0.1886   order G2/M -> Mitotic -> G1 -> G2   match True",
+  "     projection v1/v3: rho +0.1435   order Mitotic -> G1 -> G2 -> G2/M   match True",
+  "     projection v2/v3: rho +0.0567   order G2/M -> Mitotic -> G1 -> G2   match True",
+  "     best over the three projections: rho +0.1886, any order match True",
+  "",
+  "     POST-HOC DECOMPOSITION -- is the concordance ORDER, or is it clustering?",
+  "       clustering component  rho(angle, same-phase vs not)      +0.1723  (11,476 pairs)",
+  "       ORDER component       rho(angle, adjacent vs opposite)   +0.1086  (6,723 different-phase pairs only)",
+  "       the second number is the one that carries cyclic order. It is gated on nothing --",
+  "       it was added after the first run and is reported to prevent the first number from",
+  "       being read as order when it may be nothing but same-phase genes sitting together.",
+  "",
+  "Z5 THE NULL FIRES, AND IS CHECKED FOR THE ABILITY TO",
+  "     CAPABILITY CHECK: shuffling the phase labels changes 63.2% of entries -- capable: True",
+  "     (the null changes the statistic's input)",
+  "     the shuffle moves 58.2% of labels on average over 500 draws",
+  "     cyclic concordance under a phase-label shuffle: real +0.1886  null -0.0002 +/- 0.0104  z +18.2  survives -0%",
+  "     ('survives -0%' above is not a typo and not an UNDEFINED: the null mean is -0.0002, so essentially NONE of",
+  "      the concordance survives the shuffle. The effect is real -- it is simply small.)",
+  "     best-of-3-projections concordance, same max taken in the null: real +0.1886  null +0.0084 +/- 0.0115  z +15.6  survives 4%",
+  "     POST-HOC: ORDER component only (different-phase pairs): real +0.1086  null -0.0004 +/- 0.0120  z +9.1  survives -0%",
+  "     order match under shuffle: 176/500 shuffles also produce the canonical order -> empirical p = 0.353",
+  "     (best-of-3 version: 357/500, p = 0.715)",
+  "     with 4 phases the analytic chance is 33.3%, and the shuffle agrees, which",
+  "     is the point: an order match here is close to a coin toss whatever the graph says.",
+  "     Z5 PASS -- the null is capable and its verdict is usable",
+  "",
+  "     Z4(a) concordance +0.1886 vs threshold +0.20, z +18.21 vs 2.0 -> FAIL",
+  "     Z4(b) order match True with p 0.353 vs 0.05 -> FAIL",
+  "     NOTE ON (a), because this is exactly where a threshold gets moved: the concordance MISSES the",
+  "     predeclared bar by 0.0114, while being enormously distinguishable from the shuffle (z +18.2;",
+  "     0 of 500 shuffles came near it). Those two facts are not in conflict -- the signal is REAL and it is",
+  "     WEAK. The bar was set at 0.20 before the number existed and it stays there. A z-score alone would",
+  "     have passed anything, since with 11,476 pairs a rho of 0.03 clears z = 2.",
+  "     NOTE ON (b): the order match is TRUE and WORTHLESS. 176 of 500 random relabelings also",
+  "     produce the canonical order, because with 4 phases there are only 3 of them. Reporting 'the embedding",
+  "     recovered G1 -> G2 -> G2/M -> M' without this line would be the headline of a paper and a lie.",
+  "     Z4 FAIL -- the layers do NOT recover the cyclic order of the phases",
+  "",
+  "Z6 THE FAME CONTROL, RUN HEAD TO HEAD",
+  "     G1         n  17   median pubs      175   mean     427.1   max    1797",
+  "     G2         n   6   median pubs      414   mean     639.7   max    1408",
+  "     G2/M       n  42   median pubs      246   mean     617.2   max   11630",
+  "     Mitotic    n  87   median pubs      106   mean     145.4   max    1365",
+  "     Kruskal-Wallis pubs across phases: H 27.66  p 4.29e-06",
+  "     pubs vs embedding angle  rho +0.1422    vs radius rho -0.2797    vs degree rho +0.2269",
+  "     HEAD TO HEAD on one statistic -- same-phase pair AUC:",
+  "       from the graph  (angular proximity)      AUC 0.6010",
+  "       from FAME alone (log-pubs proximity)     AUC 0.6172",
+  "       4,753 same-phase pairs vs 6,723 different-phase pairs; the label set is 57% 'Mitotic', so same-phase pairs are dominated by that one class",
+  "     Z6 FAIL -- FAME BEATS THE GRAPH: publication count clusters the phase labels better than four measured layers do, so what the labels track is study effort",
+  "",
+  "Z7 WHAT THIS DOES NOT GIVE",
+  "     An ordering is not a clock. Even a passing Z4 would give a static ranking of genes",
+  "     around a circle, with no period, no rate, no checkpoint and no way to advance the",
+  "     cell from one phase to the next. Nothing here supplies a cell-cycle simulation.",
+  "     Three further limits, all structural rather than fixable by more permutations:",
+  "       1. 153 labelled genes is a thin cycle. Published phase-resolved sets run to",
+  "          well over a thousand, and the missing S phase is not a sampling accident.",
+  "       2. coexpr and codep are correlations across CELL LINES and TISSUES, not across",
+  "          time. Bulk co-expression of cell-cycle genes measures how proliferative a",
+  "          sample is, which moves every phase together and is exactly the signal that",
+  "          would erase an order. No layer in this model is phase-resolved.",
+  "       3. ppi and reg are curated, so they inherit the fame confound Z6 measures.",
+  "",
+  "  ------------------------------------------------------------------------------------------",
+  "  FAIL  Z1 the labels span the cycle",
+  "  PASS  Z2 the graph exists",
+  "  PASS  Z3 the embedding carries real structure (positive control)",
+  "  FAIL  Z4 the phase order is recovered",
+  "  PASS  Z5 the null is capable and fired",
+  "  FAIL  Z6 the graph beats fame",
+  "  PASS  Z7 the limit is stated",
+  "  ------------------------------------------------------------------------------------------",
+  "",
+  "    manifest: 1 inputs, coverage 152/153 (99.3%) by 'filtered', seed 9901, controls 6"
+ ]
+}
