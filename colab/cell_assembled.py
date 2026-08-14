@@ -212,6 +212,46 @@ def integrate_tl(ksp, Mbar, bbar, T, beta=1.0, ncyc=12, nstep=400):
     return rel, mean
 
 
+def integrate_division(k, b_deg, T, ncyc=200, nstep=2000):
+    """dP/dt = k - b_deg*P with the contents HALVED at every t = T. The cell finally divides.
+
+    THE TERM THAT WAS ALREADY THERE. Every loss rate in this repository is ln2/t_half + mu, and mu
+    is ln2/t_double -- the growth-dilution term. So the model has been ASSUMING division in every
+    rate it computes while never performing one, and treating a continuous leak as a stand-in for a
+    discrete event nobody had checked.
+
+    b_deg here is DEGRADATION ONLY, with no mu, because dilution is now explicit.
+
+    The periodic steady state has a closed form, which loop 125's D1 gates the integrator against:
+        x = exp(-b*T),  P(0+) = (k/b)(1-x)/(2-x),  P(T-) = 2*P(0+)
+    so max/min is exactly 2 for a perfectly stable protein, and the cycle mean is
+        k/b + (P(0+) - k/b)(1-x)/(b*T)
+    """
+    dt = T / nstep
+    e = np.exp(-b_deg * dt)
+    P = k / np.maximum(b_deg, 1e-300)
+    tr = np.zeros((nstep, len(np.atleast_1d(k))))
+    for c in range(ncyc):
+        for s in range(nstep):
+            P = P * e + (k / np.maximum(b_deg, 1e-300)) * (1 - e)
+            if c == ncyc - 1:
+                tr[s] = P
+        P = P / 2.0
+    return tr
+
+
+def window_means(tr, nwin):
+    """Average a trajectory into nwin equal windows -- what a fractionation experiment measures.
+
+    Elutriation does not sample an instant, it pools a slice of the cycle. Comparing an
+    instantaneous max/min against a fraction-averaged one overstates every amplitude, so any
+    comparison with Ly's six fractions has to average the same way they did.
+    """
+    n = tr.shape[0]
+    edges = np.linspace(0, n, nwin + 1).astype(int)
+    return np.stack([tr[edges[i]:edges[i + 1]].mean(0) for i in range(nwin)])
+
+
 def mass_fraction(D, genes):
     """What share of measured protein MASS a gene subset carries -- copies x residues."""
     S = D["schwan"]
