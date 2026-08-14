@@ -136,17 +136,17 @@ def main():
     say()
 
     say("Q1 THE FETCHED DATA IS A REAL PROTEOME, NOT A COMPRESSED ONE")
-    v = cn.dropna().values
-    s = np.sort(v)[::-1]
-    med, mean = float(np.median(v)), float(v.mean())
-    mm = v.max() / med
-    t1 = s[:len(s) // 100].sum() / s.sum()
-    t10 = s[:len(s) // 10].sum() / s.sum()
+    cnv = cn.dropna().values
+    srt = np.sort(cnv)[::-1]
+    med, mean = float(np.median(cnv)), float(cnv.mean())
+    mm = cnv.max() / med
+    t1 = srt[:len(srt) // 100].sum() / srt.sum()
+    t10 = srt[:len(srt) // 10].sum() / srt.sum()
     say(f"     median {med:,.0f}   mean {mean:,.0f}   mean > median: {mean > med}")
     say(f"     max/median {mm:,.0f}   (gate > {Q1_MAXMED:.0f}; the PaxDb file gave 3.6)")
     say(f"     top 1% hold {t1:.1%}, top 10% hold {t10:.1%}   "
         f"(gate top10 > {Q1_TOP10:.0%}; the PaxDb file gave 17.4%)")
-    say(f"     total protein {v.sum():.3g} molecules/cell -- loops 91, 92 and 116 all SWEPT "
+    say(f"     total protein {cnv.sum():.3g} molecules/cell -- loops 91, 92 and 116 all SWEPT "
         f"2e9-1e10 for want of this")
     q1 = bool(mean > med and mm > Q1_MAXMED and t10 > Q1_TOP10)
     say(f"     Q1 {'PASS' if q1 else 'FAIL'}")
@@ -300,8 +300,8 @@ def main():
     RM.report(man, emit=say)
     json.dump({"test": "loop_spatial_proteome", "manifest": man, "gates": gates,
                "source": "Itzhak et al. 2016 eLife 16950, Dynamic Organellar Maps, HeLa",
-               "q1": {"n": int(len(v)), "median": med, "mean": mean, "max_over_median": float(mm),
-                      "top1": float(t1), "top10": float(t10), "total_molecules": float(v.sum())},
+               "q1": {"n": int(len(cnv)), "median": med, "mean": mean, "max_over_median": float(mm),
+                      "top1": float(t1), "top10": float(t10), "total_molecules": float(cnv.sum())},
                "q2": {"n_shared": len(shared), "spearman": rho, "median_ratio": ratio},
                "q3": {"annotation": ann_ok / ann_n, "measurement": mes_ok / mes_n,
                       "n_ann": ann_n, "n_meas": mes_n},
