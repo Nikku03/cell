@@ -24,6 +24,39 @@ proteins that broke the budget while making the coverage look better. A caller t
 coverage has to either accept 7,222 genes or declare that it is mixing sources; it cannot do so by
 accident.
 
+*** CORRECTION, ADDED AFTER ADVERSARIAL REVIEW. THIS FILE IS NOT A USABLE ABUNDANCE DISTRIBUTION. ***
+
+The header calls column 3 "abundance" and the values do sum to 999,993, so they are ppm-normalised.
+But the SHAPE is impossible for a molar abundance, and every number below was measured from the
+file itself:
+
+    median 150.0 EXCEEDS mean 136.7          no molar abundance distribution is left-skewed
+    max/median 3.6                           Schwanhausser prot_copies gives 2,822
+    top 1% of proteins hold 2.7% of mass     Schwanhausser gives 40.2%
+    top 10% hold 17.4%                       Schwanhausser gives 83.8%
+    only 918 DISTINCT values for 7,329 proteins, with 73 tied at exactly 190.0
+    a hard floor at 4.77 with a large pile-up on it
+
+A real proteome spans five to six orders of magnitude. This spans 112x, and it is rounded to about
+three significant figures with both tails truncated.
+
+WHAT THAT MEANS FOR CALLERS. RANK statements survive -- the ordering is still informative, and the
+profile correlates with Schwanhausser's at rho +0.9161 across compartments. ABSOLUTE statements
+about SPREAD do not, and they fail in the direction that flatters: a compressed distribution makes
+everything look more tightly matched than it is. Measured directly on the same 2,039 complexes:
+
+    within-complex log10 spread   this file 0.0766   Schwanhausser 0.5008
+    19S proteasome                this file 0.0069   Schwanhausser 0.1305   19x larger
+    tighter than random           this file 3.4x     Schwanhausser 2.2x
+
+So loop 97's conclusion that obligate complexes are more matched than chance SURVIVES on real data
+at 2.2x, and its headline that proteasome subunits agree "to within 2%" DOES NOT -- on a real
+abundance distribution it is +/-35%. That claim was an artifact of this file and is retracted where
+it was made.
+
+USE Schwanhausser prot_copies for anything about spread, ratios or limiting subunits. Use this file
+only for rank-order questions, and only with the above stated.
+
 THE COVERAGE IS THE POINT AND IS RETURNED, NOT HIDDEN. PaxDb's HeLa file covers about 37% of the
 proteome by its own header, and some abundant and important proteins are absent from it -- ACTB and
 POLR2A among them, which is a real limitation for any budget that needs them and is reported by
