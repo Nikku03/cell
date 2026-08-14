@@ -135,6 +135,22 @@ BOUNDS = {
 }
 
 
+# THE HISTORY. Each turn of the loop appends here, so a prediction that was wrong stays visible.
+# A self-improvement loop that overwrites its own last answer cannot be scored, and one that cannot
+# be scored will drift toward whatever sounds best. Rows are added by hand when a turn completes,
+# with the MEASURED outcome, not the promised one.
+HISTORY = [
+    {"turn": 1, "date": "2026-08-14",
+     "accepted": 5, "rejected": 0, "blocked": 0,
+     "stopping_rule": "loop 133 B4",
+     "what_it_got_wrong": "accepted every item; named a broken metric as the stopping rule; "
+                          "costed two items in minutes for data that is not on disk",
+     "caught_by": "its own closing line, then loop 134",
+     "fix": "T7 (gain must be derived), T8 (inputs must exist), BLOCKED for unmeasured "
+            "dependencies, track reads the audit of its own metric"},
+]
+
+
 def log(s=""):
     print(s, flush=True)
 
@@ -629,8 +645,15 @@ def main():
         f"rejects nothing is evidence the check is too weak, not that the plan is good.")
     if n_rej == 0:
         log(f"  *** THIS RUN REJECTED NOTHING. Treat the check as unproven, not the plan as sound.")
+    log("\n  HISTORY OF THIS LOOP   (kept so a wrong prediction stays visible)")
+    for h in HISTORY:
+        log(f"     turn {h['turn']}  accepted {h['accepted']}, rejected {h['rejected']}, "
+            f"blocked {h['blocked']}   stopping rule: {h['stopping_rule']}")
+        log(f"        wrong: {h['what_it_got_wrong']}")
+        log(f"        caught by: {h['caught_by']}")
+        log(f"        fix: {h['fix']}")
     json.dump({"track": track, "answers": a, "plan": items, "bundle": bundle, "refuted": refuted,
-               "whole_picture": pic, "upgrades": ups, "execute_order": order,
+               "whole_picture": pic, "upgrades": ups, "execute_order": order, "history": HISTORY,
                "noise": noise, "noise_source": noise_src, "n_rejected": n_rej,
                "seconds": time.time() - t0},
               open(OUT / f"improver_{track}.json", "w"), indent=1, default=str)
