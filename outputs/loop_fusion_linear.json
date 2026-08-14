@@ -110,7 +110,7 @@
   "genes_total": 16492
  },
  "results": {
-  "PRIMARY dep_frac>0 (n=6,111 as declared)": {
+  "PRIMARY n=6111": {
    "n": 6111,
    "n_pos": 1483,
    "scores": {
@@ -457,7 +457,7 @@
     }
    }
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule)": {
+  "LITERAL n=15913": {
    "n": 15913,
    "n_pos": 1483,
    "scores": {
@@ -805,8 +805,46 @@
    }
   }
  },
+ "spectral_mass": {
+  "A1 reaction-only k=16": {
+   "gene_mass": 0.1568424455819178,
+   "lambda_k": 0.028564155101776123
+  },
+  "A1 reaction-only k=64": {
+   "gene_mass": 0.04805985772419929,
+   "lambda_k": 0.030691683292388916
+  },
+  "A1 reaction-only k=128": {
+   "gene_mass": 0.026886476878712103,
+   "lambda_k": 0.03268098831176758
+  },
+  "A2 graph-only k=16": {
+   "gene_mass": 0.9999999999999998,
+   "lambda_k": 0.2390270233154297
+  },
+  "A2 graph-only k=64": {
+   "gene_mass": 1.0000000000000004,
+   "lambda_k": 0.3855065107345581
+  },
+  "A2 graph-only k=128": {
+   "gene_mass": 1.0000000000000002,
+   "lambda_k": 0.46040380001068115
+  },
+  "A3 combined k=16": {
+   "gene_mass": 0.08321311968715904,
+   "lambda_k": 0.029866516590118408
+  },
+  "A3 combined k=64": {
+   "gene_mass": 0.08637034680190085,
+   "lambda_k": 0.03103947639465332
+  },
+  "A3 combined k=128": {
+   "gene_mass": 0.044056322969856745,
+   "lambda_k": 0.03409391641616821
+  }
+ },
  "e2": {
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=16": {
+  "PRIMARY n=6111 k=16": {
    "combined": 0.39354990497334513,
    "A1": 0.031096027002037487,
    "A2": 0.4898403798341193,
@@ -815,7 +853,7 @@
    "gain_over_A2": -0.09629047486077419,
    "pass": false
   },
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=64": {
+  "PRIMARY n=6111 k=64": {
    "combined": 0.391330104461398,
    "A1": 0.03468529351359162,
    "A2": 0.5574830027078899,
@@ -824,7 +862,7 @@
    "gain_over_A2": -0.16615289824649188,
    "pass": false
   },
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=128": {
+  "PRIMARY n=6111 k=128": {
    "combined": 0.4067776921143326,
    "A1": 0.06826916208660996,
    "A2": 0.5743278171953137,
@@ -833,7 +871,7 @@
    "gain_over_A2": -0.16755012508098105,
    "pass": false
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=16": {
+  "LITERAL n=15913 k=16": {
    "combined": 0.34391372544986565,
    "A1": 0.0532941922948054,
    "A2": 0.3516502405342964,
@@ -842,7 +880,7 @@
    "gain_over_A2": -0.0077365150844307395,
    "pass": false
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=64": {
+  "LITERAL n=15913 k=64": {
    "combined": 0.34284259125355415,
    "A1": 0.0652121254722956,
    "A2": 0.3618894894671349,
@@ -851,7 +889,7 @@
    "gain_over_A2": -0.019046898213580743,
    "pass": false
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=128": {
+  "LITERAL n=15913 k=128": {
    "combined": 0.34942157068304003,
    "A1": 0.08814138420084387,
    "A2": 0.3879001950167937,
@@ -862,7 +900,7 @@
   }
  },
  "e3": {
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=16": {
+  "PRIMARY n=6111 k=16": {
    "combined": 0.39354990497334513,
    "B1": 0.31753259524021926,
    "gain": 0.07601730973312587,
@@ -871,7 +909,7 @@
    "auc_combined": 0.7387583437557936,
    "auc_B1": 0.6821671464287539
   },
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=64": {
+  "PRIMARY n=6111 k=64": {
    "combined": 0.391330104461398,
    "B1": 0.31753259524021926,
    "gain": 0.07379750922117873,
@@ -880,7 +918,7 @@
    "auc_combined": 0.7384036042442931,
    "auc_B1": 0.6821671464287539
   },
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=128": {
+  "PRIMARY n=6111 k=128": {
    "combined": 0.4067776921143326,
    "B1": 0.31753259524021926,
    "gain": 0.08924509687411336,
@@ -889,7 +927,7 @@
    "auc_combined": 0.7484549025600697,
    "auc_B1": 0.6821671464287539
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=16": {
+  "LITERAL n=15913 k=16": {
    "combined": 0.34391372544986565,
    "B1": 0.3141855765862329,
    "gain": 0.02972814886363273,
@@ -898,7 +936,7 @@
    "auc_combined": 0.8027984400115675,
    "auc_B1": 0.7567368220539356
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=64": {
+  "LITERAL n=15913 k=64": {
    "combined": 0.34284259125355415,
    "B1": 0.3141855765862329,
    "gain": 0.028657014667321234,
@@ -907,7 +945,7 @@
    "auc_combined": 0.8024488700488506,
    "auc_B1": 0.7567368220539356
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=128": {
+  "LITERAL n=15913 k=128": {
    "combined": 0.34942157068304003,
    "B1": 0.3141855765862329,
    "gain": 0.03523599409680711,
@@ -918,7 +956,7 @@
   }
  },
  "e4": {
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=16": {
+  "PRIMARY n=6111 k=16": {
    "combined": 0.39354990497334513,
    "B2": 0.3444970311984985,
    "gain": 0.04905287377484663,
@@ -927,7 +965,7 @@
    "auc_combined": 0.7387583437557936,
    "auc_B2": 0.7041969411001245
   },
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=64": {
+  "PRIMARY n=6111 k=64": {
    "combined": 0.391330104461398,
    "B2": 0.3444970311984985,
    "gain": 0.04683307326289948,
@@ -936,7 +974,7 @@
    "auc_combined": 0.7384036042442931,
    "auc_B2": 0.7041969411001245
   },
-  "PRIMARY dep_frac>0 (n=6,111 as declared) k=128": {
+  "PRIMARY n=6111 k=128": {
    "combined": 0.4067776921143326,
    "B2": 0.3444970311984985,
    "gain": 0.06228066091583412,
@@ -945,7 +983,7 @@
    "auc_combined": 0.7484549025600697,
    "auc_B2": 0.7041969411001245
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=16": {
+  "LITERAL n=15913 k=16": {
    "combined": 0.34391372544986565,
    "B2": 0.31748093630185226,
    "gain": 0.02643278914801339,
@@ -954,7 +992,7 @@
    "auc_combined": 0.8027984400115675,
    "auc_B2": 0.7743989022009237
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=64": {
+  "LITERAL n=15913 k=64": {
    "combined": 0.34284259125355415,
    "B2": 0.31748093630185226,
    "gain": 0.025361654951701895,
@@ -963,7 +1001,7 @@
    "auc_combined": 0.8024488700488506,
    "auc_B2": 0.7743989022009237
   },
-  "LITERAL dep_frac finite (n=15,913 by the rule) k=128": {
+  "LITERAL n=15913 k=128": {
    "combined": 0.34942157068304003,
    "B2": 0.31748093630185226,
    "gain": 0.03194063438118777,
@@ -974,42 +1012,101 @@
   }
  },
  "e5": {
-  "survival": {
-   "real": 0.391330104461398,
-   "n_null": 5,
-   "null_mean": 0.35274505375888887,
-   "null_sd": 0.0005124573734835811,
-   "z": 75.294166303464,
-   "defined": true,
-   "fraction": 0.9014002493991227,
-   "reason": "effect is distinguishable from the null and exceeds it"
+  "scored_on": "A3 combined",
+  "per_arm": {
+   "A3 combined": {
+    "real_rho": 0.391330104461398,
+    "real_auc": 0.7384036042442931,
+    "null_rho": [
+     0.35356971837645534,
+     0.35253396123945535,
+     0.35271670201204336,
+     0.35199616200152617,
+     0.352908725164964
+    ],
+    "null_auc": [
+     0.7120324878967745,
+     0.7117968072471614,
+     0.7118216533190054,
+     0.7111751617003435,
+     0.7114502959212806
+    ],
+    "survival": {
+     "real": 0.391330104461398,
+     "n_null": 5,
+     "null_mean": 0.35274505375888887,
+     "null_sd": 0.0005124573734835811,
+     "z": 75.294166303464,
+     "defined": true,
+     "fraction": 0.9014002493991227,
+     "reason": "effect is distinguishable from the null and exceeds it"
+    },
+    "capability_embedding": {
+     "capable": true,
+     "changed": 0.952155948289969,
+     "reason": "mean over the nulls of GG.null_can_move on the embedding features the ridge actually sees"
+    },
+    "capability_degree": {
+     "capable": false,
+     "changed": 0.0,
+     "reason": "mean over the nulls of GG.null_can_move on the degree feature"
+    },
+    "max_degree_error": 0.0,
+    "frac_edges_changed": [
+     0.9731173593030693,
+     0.9732885289321718,
+     0.9730723146638318,
+     0.9730993414473743,
+     0.9731203622790185
+    ]
+   },
+   "A2 graph-only": {
+    "real_rho": 0.5574830027078899,
+    "real_auc": 0.8400112064477628,
+    "null_rho": [
+     0.015847531435354563,
+     0.10750806465030963,
+     0.20824059925954236,
+     0.33320395472386594,
+     0.3378552398971562
+    ],
+    "null_auc": [
+     0.5074464093278477,
+     0.5677148651616627,
+     0.6245641016158588,
+     0.6972533222477604,
+     0.6990685570894037
+    ],
+    "survival": {
+     "real": 0.5574830027078899,
+     "n_null": 5,
+     "null_mean": 0.20053107799324574,
+     "null_sd": 0.12592120374372703,
+     "z": 2.834724526943908,
+     "defined": true,
+     "fraction": 0.35970796781102954,
+     "reason": "effect is distinguishable from the null and exceeds it"
+    },
+    "capability_embedding": {
+     "capable": true,
+     "changed": 0.9507271723122239,
+     "reason": "mean over the nulls of GG.null_can_move on the embedding features the ridge actually sees"
+    },
+    "capability_degree": {
+     "capable": false,
+     "changed": 0.0,
+     "reason": "mean over the nulls of GG.null_can_move on the degree feature"
+    },
+    "max_degree_error": 0.0,
+    "frac_edges_changed": [
+     0.9751119490926231,
+     0.9747702097572473,
+     0.9746916489904941,
+     0.9750451724408831,
+     0.9746955770288318
+    ]
+   }
   },
-  "nulls": [
-   0.35356971837645534,
-   0.35253396123945535,
-   0.35271670201204336,
-   0.35199616200152617,
-   0.352908725164964
-  ],
-  "real": 0.391330104461398,
-  "capability_embedding": {
-   "capable": true,
-   "changed": 0.952155948289969,
-   "reason": "mean over the five nulls of the GG.null_can_move fraction on the embedding features the ridge actually sees"
-  },
-  "capability_degree": {
-   "capable": false,
-   "changed": 0.0,
-   "reason": "mean over the five nulls of the fraction of gene degrees changed"
-  },
-  "max_degree_error": 0.0,
-  "frac_edges_changed": [
-   0.9731173593030693,
-   0.9732885289321718,
-   0.9730723146638318,
-   0.9730993414473743,
-   0.9731203622790185
-  ],
   "note": "the rewiring preserves degree exactly, so the B2 degree baseline is invariant under it BY CONSTRUCTION and this null is inert with respect to B2; it is evidence only about the embedding arms"
  },
  "e6": {
@@ -1022,6 +1119,10 @@
   "D1_target_set": "protocol's rule (n=15,913) and declared count (n=6,111) disagree; both run end to end",
   "D2_solver": "matvec Lanczos on D^-1/2 A D^-1/2 instead of CG.spectral_embed's shift-invert; same definition, checked by S1 (tol) and S2 (seed); CG.spectral_embed measured at 449 s for one k=16 call",
   "D3_k_nesting": "k=16/64/128 solved separately; ridge on orthonormal columns is rotation-invariant so only the retained subspace matters"
+ },
+ "solver_shortfall": {
+  "null_maxiter": 120,
+  "incomplete": []
  },
  "s1_tolerance": {
   "tol0": {
@@ -1091,7 +1192,7 @@
    "n_feat": 64
   }
  },
- "seconds": 119.57490038871765,
+ "seconds": 826.0919814109802,
  "log": [
   "========================================================================================================",
   "  LOOP FUSION -- LINEAR ARM: ridge on the spectral embedding (and therefore the floor)",
@@ -1110,23 +1211,37 @@
   "     the protocol says 'present and finite ... that is ~6,111 genes'. Those two clauses",
   "     select different sets here. BOTH are run, end to end, all arms, all gates.",
   "     PRIMARY = the declared count (6,111); LITERAL = the stated rule (15,913)",
+  "     PRIMARY = dep_frac finite and > 0 (the declared count); LITERAL = dep_frac finite (the stated rule)",
   "",
   "THE EMBEDDINGS (D2: matvec Lanczos for the same eigenvectors; see S1/S2 for the check)",
   "     A1 reaction-only     k=16      0.5s   lambda_1 -0.00000 lambda_k 0.02856   gene support 15.6%",
-  "     A1 reaction-only     k=64      6.8s   lambda_1 -0.00000 lambda_k 0.03069   gene support 15.6%",
-  "     A1 reaction-only     k=128    11.8s   lambda_1 -0.00001 lambda_k 0.03268   gene support 15.6%",
-  "     A2 graph-only        k=16      0.3s   lambda_1 0.00000 lambda_k 0.23903   gene support 90.1%",
-  "     A2 graph-only        k=64      1.4s   lambda_1 -0.00000 lambda_k 0.38551   gene support 90.1%",
-  "     A2 graph-only        k=128     3.6s   lambda_1 -0.00000 lambda_k 0.46040   gene support 90.1%",
-  "     A3 combined          k=16      1.0s   lambda_1 -0.00000 lambda_k 0.02987   gene support 90.6%",
-  "     A3 combined          k=64      7.8s   lambda_1 -0.00000 lambda_k 0.03104   gene support 90.6%",
-  "     A3 combined          k=128    12.2s   lambda_1 -0.00000 lambda_k 0.03409   gene support 90.6%",
+  "     A1 reaction-only     k=64     58.5s   lambda_1 -0.00000 lambda_k 0.03069   gene support 15.6%",
+  "     A1 reaction-only     k=128   105.8s   lambda_1 -0.00001 lambda_k 0.03268   gene support 15.6%",
+  "     A2 graph-only        k=16      0.5s   lambda_1 0.00000 lambda_k 0.23903   gene support 90.1%",
+  "     A2 graph-only        k=64     16.2s   lambda_1 -0.00000 lambda_k 0.38551   gene support 90.1%",
+  "     A2 graph-only        k=128    33.3s   lambda_1 -0.00000 lambda_k 0.46040   gene support 90.1%",
+  "     A3 combined          k=16     24.8s   lambda_1 -0.00000 lambda_k 0.02987   gene support 90.6%",
+  "     A3 combined          k=64    126.2s   lambda_1 -0.00000 lambda_k 0.03104   gene support 90.6%",
+  "     A3 combined          k=128   145.9s   lambda_1 -0.00000 lambda_k 0.03409   gene support 90.6%",
   "     'gene support' is the fraction of (gene, dimension) entries that are non-zero. The",
   "     reaction arm sits at ~15.6% BY CONSTRUCTION -- it is the E1 bridge, seen from the",
   "     feature side. A1 is not degenerate; it is simply absent for 84% of genes.",
   "",
+  "WHERE THE EIGENVECTOR MASS ACTUALLY SITS -- the diagnostic that explains E2 in advance",
+  "     A1 reaction-only     k=64     4.8% of squared eigenvector mass on GENE nodes (16,492 of 37,884 nodes = 43.5%)   lambda_k 0.0307",
+  "     A2 graph-only        k=64   100.0% of squared eigenvector mass on GENE nodes (16,492 of 37,884 nodes = 43.5%)   lambda_k 0.3855",
+  "     A3 combined          k=64     8.6% of squared eigenvector mass on GENE nodes (16,492 of 37,884 nodes = 43.5%)   lambda_k 0.0310",
+  "     The combined graph's lowest Laplacian modes are set by the SPARSEST part of it. The",
+  "     metabolic subnetwork is long-path and low-degree, so its eigenvalues are an order of",
+  "     magnitude smaller than the interaction network's; at a fixed k the combined",
+  "     embedding therefore spends its budget describing chemistry rather than genes.",
+  "     DISCLOSURE OF A PEEK: this diagnostic was added AFTER a first complete run in which",
+  "     E2 had already failed, to explain WHY it failed. It is a post-hoc explanation and is",
+  "     labelled as one. No gate, threshold or arm was changed after that run; the gates",
+  "     below are the ones predeclared in the docstring, unaltered.",
+  "",
   "========================================================================================================",
-  "  TARGET SET: PRIMARY dep_frac>0 (n=6,111 as declared)",
+  "  TARGET SET: PRIMARY n=6111",
   "     n 6,111   positives at dep_frac>=0.5: 1,483 (24.3%)   folds [1218, 1197, 1247, 1253, 1196]",
   "========================================================================================================",
   "  feature sanity: 2/2 columns vary and are populated",
@@ -1149,7 +1264,7 @@
   "     B2 DEGREE combined           rho +0.3445 +/- 0.0152   AUC 0.7042 +/- 0.0141   [1 feat, alpha 316]",
   "",
   "========================================================================================================",
-  "  TARGET SET: LITERAL dep_frac finite (n=15,913 by the rule)",
+  "  TARGET SET: LITERAL n=15913",
   "     n 15,913   positives at dep_frac>=0.5: 1,483 (9.3%)   folds [3166, 3185, 3197, 3213, 3152]",
   "========================================================================================================",
   "  feature sanity: 2/2 columns vary and are populated",
@@ -1173,46 +1288,69 @@
   "",
   "========================================================================================================",
   "E2 GATE -- THE COMBINED ARM MUST BEAT BOTH A1 AND A2 BY MORE THAN THE ACROSS-FOLD SD",
-  "     PRIMARY dep_frac>0 (n= k=16   combined +0.3935  vs A1 +0.0311 (+0.3625)  vs A2 +0.4898 (-0.0963)  need >0.0251  FAIL",
-  "     PRIMARY dep_frac>0 (n= k=64   combined +0.3913  vs A1 +0.0347 (+0.3566)  vs A2 +0.5575 (-0.1662)  need >0.0256  FAIL",
-  "     PRIMARY dep_frac>0 (n= k=128  combined +0.4068  vs A1 +0.0683 (+0.3385)  vs A2 +0.5743 (-0.1676)  need >0.0256  FAIL",
-  "     LITERAL dep_frac finit k=16   combined +0.3439  vs A1 +0.0533 (+0.2906)  vs A2 +0.3517 (-0.0077)  need >0.0221  FAIL",
-  "     LITERAL dep_frac finit k=64   combined +0.3428  vs A1 +0.0652 (+0.2776)  vs A2 +0.3619 (-0.0190)  need >0.0179  FAIL",
-  "     LITERAL dep_frac finit k=128  combined +0.3494  vs A1 +0.0881 (+0.2613)  vs A2 +0.3879 (-0.0385)  need >0.0168  FAIL",
+  "     PRIMARY n=6111         k=16   combined +0.3935  vs A1 +0.0311 (+0.3625)  vs A2 +0.4898 (-0.0963)  need >0.0251  FAIL",
+  "     PRIMARY n=6111         k=64   combined +0.3913  vs A1 +0.0347 (+0.3566)  vs A2 +0.5575 (-0.1662)  need >0.0256  FAIL",
+  "     PRIMARY n=6111         k=128  combined +0.4068  vs A1 +0.0683 (+0.3385)  vs A2 +0.5743 (-0.1676)  need >0.0256  FAIL",
+  "     LITERAL n=15913        k=16   combined +0.3439  vs A1 +0.0533 (+0.2906)  vs A2 +0.3517 (-0.0077)  need >0.0221  FAIL",
+  "     LITERAL n=15913        k=64   combined +0.3428  vs A1 +0.0652 (+0.2776)  vs A2 +0.3619 (-0.0190)  need >0.0179  FAIL",
+  "     LITERAL n=15913        k=128  combined +0.3494  vs A1 +0.0881 (+0.2613)  vs A2 +0.3879 (-0.0385)  need >0.0168  FAIL",
   "     E2 is scored on the PRIMARY target set at k=64: FAIL",
   "",
   "E3 GATE -- THE COMBINED ARM MUST BEAT THE FAME BASELINE B1 (log1p pubs)",
-  "     PRIMARY dep_frac>0 (n= k=16   combined +0.3935  FAME +0.3175  (+0.0760, need >0.0204)  AUC 0.7388 vs 0.6822  PASS",
-  "     PRIMARY dep_frac>0 (n= k=64   combined +0.3913  FAME +0.3175  (+0.0738, need >0.0225)  AUC 0.7384 vs 0.6822  PASS",
-  "     PRIMARY dep_frac>0 (n= k=128  combined +0.4068  FAME +0.3175  (+0.0892, need >0.0204)  AUC 0.7485 vs 0.6822  PASS",
-  "     LITERAL dep_frac finit k=16   combined +0.3439  FAME +0.3142  (+0.0297, need >0.0151)  AUC 0.8028 vs 0.7567  PASS",
-  "     LITERAL dep_frac finit k=64   combined +0.3428  FAME +0.3142  (+0.0287, need >0.0151)  AUC 0.8024 vs 0.7567  PASS",
-  "     LITERAL dep_frac finit k=128  combined +0.3494  FAME +0.3142  (+0.0352, need >0.0151)  AUC 0.8097 vs 0.7567  PASS",
+  "     PRIMARY n=6111         k=16   combined +0.3935  FAME +0.3175  (+0.0760, need >0.0204)  AUC 0.7388 vs 0.6822  PASS",
+  "     PRIMARY n=6111         k=64   combined +0.3913  FAME +0.3175  (+0.0738, need >0.0225)  AUC 0.7384 vs 0.6822  PASS",
+  "     PRIMARY n=6111         k=128  combined +0.4068  FAME +0.3175  (+0.0892, need >0.0204)  AUC 0.7485 vs 0.6822  PASS",
+  "     LITERAL n=15913        k=16   combined +0.3439  FAME +0.3142  (+0.0297, need >0.0151)  AUC 0.8028 vs 0.7567  PASS",
+  "     LITERAL n=15913        k=64   combined +0.3428  FAME +0.3142  (+0.0287, need >0.0151)  AUC 0.8024 vs 0.7567  PASS",
+  "     LITERAL n=15913        k=128  combined +0.3494  FAME +0.3142  (+0.0352, need >0.0151)  AUC 0.8097 vs 0.7567  PASS",
   "",
   "E4 GATE -- THE COMBINED ARM MUST BEAT THE DEGREE BASELINE B2",
-  "     PRIMARY dep_frac>0 (n= k=16   combined +0.3935  DEGREE +0.3445  (+0.0491, need >0.0178)  AUC 0.7388 vs 0.7042  PASS",
-  "     PRIMARY dep_frac>0 (n= k=64   combined +0.3913  DEGREE +0.3445  (+0.0468, need >0.0225)  AUC 0.7384 vs 0.7042  PASS",
-  "     PRIMARY dep_frac>0 (n= k=128  combined +0.4068  DEGREE +0.3445  (+0.0623, need >0.0170)  AUC 0.7485 vs 0.7042  PASS",
-  "     LITERAL dep_frac finit k=16   combined +0.3439  DEGREE +0.3175  (+0.0264, need >0.0119)  AUC 0.8028 vs 0.7744  PASS",
-  "     LITERAL dep_frac finit k=64   combined +0.3428  DEGREE +0.3175  (+0.0254, need >0.0119)  AUC 0.8024 vs 0.7744  PASS",
-  "     LITERAL dep_frac finit k=128  combined +0.3494  DEGREE +0.3175  (+0.0319, need >0.0119)  AUC 0.8097 vs 0.7744  PASS",
+  "     PRIMARY n=6111         k=16   combined +0.3935  DEGREE +0.3445  (+0.0491, need >0.0178)  AUC 0.7388 vs 0.7042  PASS",
+  "     PRIMARY n=6111         k=64   combined +0.3913  DEGREE +0.3445  (+0.0468, need >0.0225)  AUC 0.7384 vs 0.7042  PASS",
+  "     PRIMARY n=6111         k=128  combined +0.4068  DEGREE +0.3445  (+0.0623, need >0.0170)  AUC 0.7485 vs 0.7042  PASS",
+  "     LITERAL n=15913        k=16   combined +0.3439  DEGREE +0.3175  (+0.0264, need >0.0119)  AUC 0.8028 vs 0.7744  PASS",
+  "     LITERAL n=15913        k=64   combined +0.3428  DEGREE +0.3175  (+0.0254, need >0.0119)  AUC 0.8024 vs 0.7744  PASS",
+  "     LITERAL n=15913        k=128  combined +0.3494  DEGREE +0.3175  (+0.0319, need >0.0119)  AUC 0.8097 vs 0.7744  PASS",
   "",
   "E5 GATE -- A DEGREE-PRESERVING REWIRING MUST DESTROY THE EFFECT, AND MUST BE ABLE TO",
-  "     rewiring 333,003 unique undirected edges, 5 passes, 5 nulls, within node-type signature",
-  "     null 0: 1,546,665/1,665,015 swaps accepted, 97.3% of edges changed, max degree error 0, held-out rho +0.3536  [7s]",
-  "     null 1: 1,546,550/1,665,015 swaps accepted, 97.3% of edges changed, max degree error 0, held-out rho +0.3525  [7s]",
-  "     null 2: 1,546,291/1,665,015 swaps accepted, 97.3% of edges changed, max degree error 0, held-out rho +0.3527  [7s]",
-  "     null 3: 1,546,656/1,665,015 swaps accepted, 97.3% of edges changed, max degree error 0, held-out rho +0.3520  [6s]",
-  "     null 4: 1,547,268/1,665,015 swaps accepted, 97.3% of edges changed, max degree error 0, held-out rho +0.3529  [8s]",
-  "     CAPABILITY, embedding features: 95.2% of entries change -- capable: True",
-  "     CAPABILITY, degree feature:     0.0% of entries change -- capable: False",
-  "     max degree error across nulls: 0 (0 = degree preserved EXACTLY)",
+  "     each arm's own adjacency is rewired separately, 5 passes, 5 nulls, swaps restricted to one node-type signature so the tripartite",
+  "     structure survives and only the WIRING is destroyed. E5 as predeclared is scored on",
+  "     the COMBINED arm; A2, the arm that actually wins, is run through the same null and",
+  "     reported alongside it, because a null applied only to a losing arm proves nothing.",
+  "     A1 is NOT put through this null, and the reason is gate_guard's family one rather",
+  "     than convenience: A1's real held-out rho is +0.0347, which is",
+  "     already indistinguishable from nothing, so a survival FRACTION computed against it",
+  "     would have no denominator -- exactly the 54% and 6718% of loops 87 C6 and 87b B6.",
+  "       A3 combined null0: rho +0.3536  AUC 0.7120  [35s]",
+  "       A3 combined null1: rho +0.3525  AUC 0.7118  [35s]",
+  "       A3 combined null2: rho +0.3527  AUC 0.7118  [29s]",
+  "       A3 combined null3: rho +0.3520  AUC 0.7112  [6s]",
+  "       A3 combined null4: rho +0.3529  AUC 0.7115  [7s]",
+  "",
+  "   A3 combined: 333,003 edges, 1,547,268/1,665,015 swaps accepted, 97.3% of edges changed, max degree error 0",
+  "     CAPABILITY embedding 95.2% changed -> capable True   |   CAPABILITY degree 0.0% changed -> capable False",
+  "     A3 combined held-out rho under degree-preserving rewiring: real +0.3913  null +0.3527 +/- 0.0005  z +75.3  survives 90%",
+  "     held-out AUC: real 0.7384   null 0.7117 +/- 0.0003",
+  "       A2 graph-only null0: rho +0.0158  AUC 0.5074  [11s]",
+  "       A2 graph-only null1: rho +0.1075  AUC 0.5677  [30s]",
+  "       A2 graph-only null2: rho +0.2082  AUC 0.6246  [21s]",
+  "       A2 graph-only null3: rho +0.3332  AUC 0.6973  [11s]",
+  "       A2 graph-only null4: rho +0.3379  AUC 0.6991  [5s]",
+  "",
+  "   A2 graph-only: 254,580 edges, 1,180,481/1,272,900 swaps accepted, 97.5% of edges changed, max degree error 0",
+  "     CAPABILITY embedding 95.1% changed -> capable True   |   CAPABILITY degree 0.0% changed -> capable False",
+  "     A2 graph-only held-out rho under degree-preserving rewiring: real +0.5575  null +0.2005 +/- 0.1259  z +2.8  survives 36%",
+  "     held-out AUC: real 0.8400   null 0.6192 +/- 0.0744",
+  "",
   "     THIS IS LOOP 94's TRAP, STATED OUT LOUD: because the rewiring preserves every degree",
-  "     exactly, the B2 DEGREE baseline is INVARIANT under it BY CONSTRUCTION. This null is",
-  "     therefore INERT with respect to B2 and its verdict says nothing about B2. It is",
-  "     evidence only about the embedding arms, whose input it does move.",
-  "     combined-arm held-out rho under degree-preserving rewiring: real +0.3913  null +0.3527 +/- 0.0005  z +75.3  survives 90%",
-  "     E5 FAIL -- the null is capable, degree-exact, and does NOT destroy the effect",
+  "     EXACTLY (max error 0 in every arm), the B2 DEGREE baseline is INVARIANT under it BY",
+  "     CONSTRUCTION -- 0.0% of degree entries change. This null is INERT with respect to B2",
+  "     and its verdict says nothing whatever about B2. It is evidence only about the",
+  "     embedding arms, whose input it does move (>90% of entries). Both facts are printed",
+  "     above rather than inferred, which is the whole point of the capability check.",
+  "     E5 FAIL (scored on the combined arm, as predeclared) -- the null is capable, degree-exact, and",
+  "     does NOT destroy the effect",
+  "     solver: every null embedding converged fully within the 120-restart cap, so no null is handicapped relative to the real graph",
   "",
   "S1/S2 THE SOLVER SUBSTITUTION (D2), CHECKED RATHER THAN ASSUMED",
   "     S1 tolerance: tol=1e-6 rho +0.3913   tol=0 (machine precision, as CG.spectral_embed) rho +0.3952   [9s]",

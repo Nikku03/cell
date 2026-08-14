@@ -1,0 +1,530 @@
+{
+ "test": "loop_fusion_gnn",
+ "model_class": "GNN",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/colab/cell_graph.py",
+    "bytes": 6891,
+    "hash": "9c38c445b97c16fd",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/HumanGEM.xml",
+    "bytes": 43115559,
+    "hash": "cc5a4383c6116b0c",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 15913,
+   "used": 6111,
+   "selection": "filtered",
+   "fraction": 0.38402563941431533
+  },
+  "seed": 11100,
+  "controls": [
+   "A1 reaction-only and A2 graph-only arms on the identical folds",
+   "B1 publication-count baseline",
+   "B2 combined-degree baseline",
+   "per-channel ablation of the trained combined model",
+   "degree-preserving double-edge-swap rewiring, checked for capability first",
+   "CG.spectral_embed + ridge as the untrained floor",
+   "held-out correlation between prediction and degree, reported"
+  ],
+  "note": "relational GNN with one weight matrix per edge type over cell_graph.build(); folds fixed by the shared protocol so three model classes see identical splits",
+  "warnings": []
+ },
+ "gates": {
+  "E1 intermediate used as built, bridge reported": true,
+  "E2 combined beats A1 and A2 by more than the fold sd": false,
+  "E3 combined beats the FAME baseline": true,
+  "E4 combined beats the DEGREE baseline": true,
+  "E5 degree-preserving rewiring destroys the effect": true,
+  "E6 learned model beats the untrained spectral floor": true
+ },
+ "protocol": {
+  "fold_seed": 11100,
+  "n_fold": 5,
+  "n_genes": 6111,
+  "n_dep_frac_finite": 15913,
+  "n_dep_frac_zero": 9802,
+  "positives_at_0.5": 1483
+ },
+ "graph": {
+  "nodes": 37884,
+  "genes": 16492,
+  "reactions": 12931,
+  "metabolites": 8461,
+  "undirected_edges": 333003,
+  "by_channel": {
+   "catalyses": 23225,
+   "consumes": 27582,
+   "produces": 27616,
+   "ppi": 191447,
+   "signal": 17432,
+   "regulate": 55716,
+   "complex": 34918
+  },
+  "isolated_nodes": 1548,
+  "median_degree_gene": 17.0,
+  "genes_bridging_to_gem": 23225
+ },
+ "bridge": {
+  "catalyses_edges": 23225,
+  "genes_with_reaction": 2568,
+  "scored_genes_with_reaction": 1008
+ },
+ "hyper": {
+  "hidden": 32,
+  "layers": 2,
+  "rproj": 24,
+  "epochs": 140,
+  "lr": 0.02,
+  "weight_decay": 0.0001,
+  "inner_val": 0.15,
+  "n_null": 3,
+  "swaps_per_edge": 10,
+  "spectral_k": 64,
+  "reductions": "hidden 32 not 64; 2 layers not 3; 140 epochs; 3 rewiring nulls not 20 -- CPU-only budget, identical for every arm"
+ },
+ "arms": {
+  "A1 reaction-only": {
+   "channels": [
+    "catalyses",
+    "consumes",
+    "produces"
+   ],
+   "rho": [
+    0.09731928609443885,
+    0.05889223754187867,
+    0.06326667831274899,
+    0.07705872310794074,
+    0.05960869882789277
+   ],
+   "rho_mean": 0.07122912477698,
+   "rho_sd": 0.01459667341456222,
+   "auc": [
+    0.5702433628318584,
+    0.5121885052125722,
+    0.5471459313564577,
+    0.5489167109362662,
+    0.5300221796880371
+   ],
+   "auc_mean": 0.5417033380050383,
+   "auc_sd": 0.01951287986404606
+  },
+  "A2 graph-only": {
+   "channels": [
+    "ppi",
+    "signal",
+    "regulate",
+    "complex"
+   ],
+   "rho": [
+    0.4968438777921228,
+    0.46688202081044294,
+    0.5365119166094613,
+    0.5037847452285041,
+    0.5466756578509048
+   ],
+   "rho_mean": 0.5101396436582872,
+   "rho_sd": 0.028701084203079995,
+   "auc": [
+    0.8032734907840595,
+    0.8018447467348758,
+    0.8318160265528687,
+    0.8053202486755014,
+    0.8336668126015363
+   ],
+   "auc_mean": 0.8151842650697685,
+   "auc_sd": 0.014389775302020557
+  },
+  "A3 combined": {
+   "channels": [
+    "catalyses",
+    "consumes",
+    "produces",
+    "ppi",
+    "signal",
+    "regulate",
+    "complex"
+   ],
+   "rho": [
+    0.49160665839012485,
+    0.4716793153578529,
+    0.5156089051981236,
+    0.47689538995980824,
+    0.5577941572518386
+   ],
+   "rho_mean": 0.5027168852315496,
+   "rho_sd": 0.03147452167775241,
+   "auc": [
+    0.796847697424046,
+    0.8043018253691431,
+    0.8275048327679907,
+    0.8065298855690678,
+    0.845179988349332
+   ],
+   "auc_mean": 0.8160728458959159,
+   "auc_sd": 0.017760334543322594
+  },
+  "B1 FAME log1p(pubs)": {
+   "channels": [],
+   "rho": [
+    0.3480257429633223,
+    0.33404172368100127,
+    0.2927264343208449,
+    0.3037881839907,
+    0.30908089124522775
+   ],
+   "rho_mean": 0.31753259524021926,
+   "rho_sd": 0.020386609038827344,
+   "auc": [
+    0.6756383518403698,
+    0.6892628764097198,
+    0.6812251522777839,
+    0.6799702795445735,
+    0.6847390720713223
+   ],
+   "auc_mean": 0.6821671464287538,
+   "auc_sd": 0.00458918121974419
+  },
+  "B2 DEGREE combined": {
+   "channels": [],
+   "rho": [
+    0.35795990861458626,
+    0.3269133131140288,
+    0.3492731125522926,
+    0.3262253166124534,
+    0.3621135050991315
+   ],
+   "rho_mean": 0.3444970311984985,
+   "rho_sd": 0.015214748566429532,
+   "auc": [
+    0.6938095372301448,
+    0.6947661124675425,
+    0.7183280446438342,
+    0.6899883702565722,
+    0.7240926409025288
+   ],
+   "auc_mean": 0.7041969411001245,
+   "auc_sd": 0.014101412207732065
+  }
+ },
+ "channel_table": {
+  "catalyses": {
+   "w_norm_layer": [
+    4.93502950668335,
+    3.1299160003662108
+   ],
+   "message_share": 0.08717834125358578,
+   "rho_zeroed": 0.4948398063652788,
+   "drop_zeroed": 0.00787707886627076,
+   "rho_retrained_without": 0.5078246165410476,
+   "sd_retrained_without": 0.024882439757646584,
+   "drop_retrained": -0.0051077313094980425
+  },
+  "consumes": {
+   "w_norm_layer": [
+    3.4154961585998533,
+    0.21374505758285522
+   ],
+   "message_share": 0.0,
+   "rho_zeroed": 0.503195763543164,
+   "drop_zeroed": -0.00047887831161441685,
+   "rho_retrained_without": 0.5079707360461942,
+   "sd_retrained_without": 0.028628410016994347,
+   "drop_retrained": -0.005253850814644689
+  },
+  "produces": {
+   "w_norm_layer": [
+    3.6952730655670165,
+    0.21463873982429504
+   ],
+   "message_share": 0.0,
+   "rho_zeroed": 0.4997891724947463,
+   "drop_zeroed": 0.0029277127368032563,
+   "rho_retrained_without": 0.5061797766701029,
+   "sd_retrained_without": 0.02858524515549341,
+   "drop_retrained": -0.0034628914385533838
+  },
+  "ppi": {
+   "w_norm_layer": [
+    5.783608245849609,
+    3.7312096118927003
+   ],
+   "message_share": 0.36149712168939185,
+   "rho_zeroed": 0.3494841602436797,
+   "drop_zeroed": 0.15323272498786988,
+   "rho_retrained_without": 0.41645371057439845,
+   "sd_retrained_without": 0.0310072421435868,
+   "drop_retrained": 0.08626317465715111
+  },
+  "signal": {
+   "w_norm_layer": [
+    5.675018787384033,
+    2.496728038787842
+   ],
+   "message_share": 0.16134083213311604,
+   "rho_zeroed": 0.4920828775711795,
+   "drop_zeroed": 0.010634007660370037,
+   "rho_retrained_without": 0.49648905853901626,
+   "sd_retrained_without": 0.03396575689317376,
+   "drop_retrained": 0.0062278266925333
+  },
+  "regulate": {
+   "w_norm_layer": [
+    4.506302070617676,
+    2.319443464279175
+   ],
+   "message_share": 0.16413288647655508,
+   "rho_zeroed": 0.46296348799197873,
+   "drop_zeroed": 0.03975339723957083,
+   "rho_retrained_without": 0.47509347603994356,
+   "sd_retrained_without": 0.035358690881021934,
+   "drop_retrained": 0.027623409191605997
+  },
+  "complex": {
+   "w_norm_layer": [
+    5.067332935333252,
+    3.8636115074157713
+   ],
+   "message_share": 0.22585081844735128,
+   "rho_zeroed": 0.3434900929808959,
+   "drop_zeroed": 0.15922679225065367,
+   "rho_retrained_without": 0.44118896905658467,
+   "sd_retrained_without": 0.03908693002888408,
+   "drop_retrained": 0.06152791617496489
+  }
+ },
+ "channel_summary": {
+  "hardest_channel": "ppi",
+  "reaction_drop_sum": -0.013824473562696116,
+  "graph_drop_sum": 0.1816423267162553
+ },
+ "degree_confound": {
+  "rho_pred_vs_degree_mean": 0.433254446780869,
+  "rho_pred_vs_degree_sd": 0.04485195103230507
+ },
+ "e5": {
+  "capability": [
+   {
+    "neighbourhoods_changed": 0.9590592334494773,
+    "capable": true,
+    "degree_entries_changed": 0.1609122584732341,
+    "per_type_degree_identical": true,
+    "per_type_degree_sequence_identical": true
+   },
+   {
+    "neighbourhoods_changed": 0.9590856298173371,
+    "capable": true,
+    "degree_entries_changed": 0.16130820399113083,
+    "per_type_degree_identical": true,
+    "per_type_degree_sequence_identical": true
+   },
+   {
+    "neighbourhoods_changed": 0.9590592334494773,
+    "capable": true,
+    "degree_entries_changed": 0.16048991658747758,
+    "per_type_degree_identical": true,
+    "per_type_degree_sequence_identical": true
+   }
+  ],
+  "null_rho": [
+   0.336073037403707,
+   0.34201867840131345,
+   0.32856807650118747
+  ],
+  "survival": {
+   "real": 0.5027168852315496,
+   "n_null": 3,
+   "null_mean": 0.33555326410206926,
+   "null_sd": 0.0055034713943558486,
+   "z": 30.37421459134265,
+   "defined": true,
+   "fraction": 0.6674795972836971,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  }
+ },
+ "e6_floor": {
+  "A1 reaction-only": {
+   "rho": [
+    0.06589362584579193,
+    0.019297655546800605,
+    0.012809363350401209,
+    0.08193775292640094,
+    0.10283549528412844
+   ],
+   "rho_mean": 0.056554778590704624,
+   "auc_mean": 0.5361833015151707
+  },
+  "A2 graph-only": {
+   "rho": [
+    0.5580108914963117,
+    0.5156509540616926,
+    0.5565456522899117,
+    0.56290052901193,
+    0.593745567069034
+   ],
+   "rho_mean": 0.557370718785776,
+   "auc_mean": 0.8405424397562837
+  },
+  "A3 combined": {
+   "rho": [
+    0.4275078506526835,
+    0.37730968223216815,
+    0.4085706688738691,
+    0.3905099846231544,
+    0.428083317877415
+   ],
+   "rho_mean": 0.40639630085185796,
+   "auc_mean": 0.7471181812212132
+  }
+ },
+ "e6_equivalence_check": {
+  "n_sub": 832,
+  "k": 12,
+  "max_abs_eigenvalue_diff": 1.2597389232871237e-06,
+  "degenerate": false,
+  "cos_min": 0.9999997019767761,
+  "cos_mean": 1.0000001192092896,
+  "identical": true
+ },
+ "seconds": 261.5247449874878,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 107-GNN -- fuse chemistry with interaction, and ask a relational GNN if it helped",
+  "====================================================================================================",
+  "",
+  "E1 THE INTERMEDIATE IS USED AS BUILT, AND ITS BRIDGE IS REPORTED",
+  "     37,884 nodes = 16,492 genes + 12,931 reactions + 8,461 metabolites",
+  "     333,003 undirected edges over 7 channels: catalyses 23,225, consumes 27,582, produces 27,616, ppi 191,447, signal 17,432, regulate 55,716, complex 34,918",
+  "     THE BRIDGE: 23,225 catalyses edges, carried by 2,568 of 16,492 genes (15.6%)",
+  "     matches the declared bridge (23,225 / 2,568): True",
+  "     1,548 nodes are isolated in the combined graph",
+  "",
+  "THE TARGET AND THE SPLIT",
+  "     dep_frac present and finite: 15,913 genes, of which 9,802 are exactly 0.0",
+  "     used: 6,111 genes (present, finite and non-zero) -- this is the protocol's '~6,111', see the docstring deviation (i)",
+  "     dep_frac  median 0.040  mean 0.269   positives at >= 0.5: 1,483 (24.3%)",
+  "     folds from default_rng(11100).integers(0,5,size=6111): sizes 1218, 1197, 1247, 1253, 1196",
+  "     of the 6,111 scored genes, 1,008 (16.5%) carry a GEM reaction -- the reaction-only arm is blind to the other 5,103",
+  "",
+  "THE MODEL",
+  "     inputs: one-hot node kind (3) + a fixed random projection of node identity (24), seed 0",
+  "     2 layers of mean-aggregation message passing, hidden 32, one weight matrix per edge TYPE plus a self matrix",
+  "     Adam lr 0.02, weight decay 0.0001, 140 epochs, epoch chosen on an inner 15% split of the TRAINING folds",
+  "     NOTE, because it bears on E4: mean-aggregated random features have norm ~ 1/sqrt(degree), so a GNN CAN read degree off them. That is exactly why E4 exists, and",
+  "     the correlation between this model's predictions and degree is reported below.",
+  "",
+  "A1 / A2 / A3 -- THE THREE GRAPHS, SAME MODEL, SAME FOLDS",
+  "       A1 reaction-only fold 0: rho +0.0973  auc 0.5702  (inner-val rho +0.0486 @ epoch 20, 3s)",
+  "       A1 reaction-only fold 1: rho +0.0589  auc 0.5122  (inner-val rho +0.1099 @ epoch 120, 2s)",
+  "       A1 reaction-only fold 2: rho +0.0633  auc 0.5471  (inner-val rho +0.1125 @ epoch 10, 2s)",
+  "       A1 reaction-only fold 3: rho +0.0771  auc 0.5489  (inner-val rho +0.1531 @ epoch 70, 2s)",
+  "       A1 reaction-only fold 4: rho +0.0596  auc 0.5300  (inner-val rho +0.0599 @ epoch 50, 2s)",
+  "     A1 reaction-only   rho +0.0712 +/- 0.0146    auc 0.5417 +/- 0.0195",
+  "       A2 graph-only fold 0: rho +0.4968  auc 0.8033  (inner-val rho +0.5385 @ epoch 20, 2s)",
+  "       A2 graph-only fold 1: rho +0.4669  auc 0.8018  (inner-val rho +0.5371 @ epoch 20, 2s)",
+  "       A2 graph-only fold 2: rho +0.5365  auc 0.8318  (inner-val rho +0.4874 @ epoch 20, 2s)",
+  "       A2 graph-only fold 3: rho +0.5038  auc 0.8053  (inner-val rho +0.5312 @ epoch 20, 3s)",
+  "       A2 graph-only fold 4: rho +0.5467  auc 0.8337  (inner-val rho +0.4419 @ epoch 20, 2s)",
+  "     A2 graph-only      rho +0.5101 +/- 0.0287    auc 0.8152 +/- 0.0144",
+  "       A3 combined fold 0: rho +0.4916  auc 0.7968  (inner-val rho +0.5351 @ epoch 20, 4s)",
+  "       A3 combined fold 1: rho +0.4717  auc 0.8043  (inner-val rho +0.5447 @ epoch 20, 4s)",
+  "       A3 combined fold 2: rho +0.5156  auc 0.8275  (inner-val rho +0.4774 @ epoch 20, 4s)",
+  "       A3 combined fold 3: rho +0.4769  auc 0.8065  (inner-val rho +0.5351 @ epoch 20, 4s)",
+  "       A3 combined fold 4: rho +0.5578  auc 0.8452  (inner-val rho +0.4529 @ epoch 20, 4s)",
+  "     A3 combined        rho +0.5027 +/- 0.0315    auc 0.8161 +/- 0.0178",
+  "",
+  "B1 / B2 -- THE TWO BASELINES, SAME FOLDS",
+  "  feature sanity: 2/2 columns vary and are populated",
+  "     B1 FAME log1p(pubs)    rho +0.3175 +/- 0.0204    auc 0.6822 +/- 0.0046",
+  "     B2 DEGREE combined     rho +0.3445 +/- 0.0152    auc 0.7042 +/- 0.0141",
+  "     raw (untrained) Spearman of the features themselves: log1p(pubs) +0.3174, degree +0.3455",
+  "",
+  "WHICH CHANNEL DID THE MODEL ACTUALLY USE -- the most informative output here",
+  "     channel       |W_t| L1  |W_t| L2  msg share   zeroed    drop  RETRAINED without it    drop",
+  "     catalyses        4.935     3.130      8.7%   0.4948 +0.0079          0.5078 +/- 0.025 -0.0051",
+  "     consumes         3.415     0.214      0.0%   0.5032 -0.0005          0.5080 +/- 0.029 -0.0053",
+  "     produces         3.695     0.215      0.0%   0.4998 +0.0029          0.5062 +/- 0.029 -0.0035",
+  "     ppi              5.784     3.731     36.1%   0.3495 +0.1532          0.4165 +/- 0.031 +0.0863",
+  "     signal           5.675     2.497     16.1%   0.4921 +0.0106          0.4965 +/- 0.034 +0.0062",
+  "     regulate         4.506     2.319     16.4%   0.4630 +0.0398          0.4751 +/- 0.035 +0.0276",
+  "     complex          5.067     3.864     22.6%   0.3435 +0.1592          0.4412 +/- 0.039 +0.0615",
+  "     'zeroed' sets W_t to zero in the ALREADY-TRAINED model: it perturbs a jointly",
+  "     trained representation, so every channel shows a drop and the column ranks rather",
+  "     than measures. 'RETRAINED without it' refits the whole model on the other six",
+  "     channels and is the column to read.",
+  "     the single channel the model leans on hardest (retrained): ppi",
+  "     summed retrained drop -- reaction channels -0.0138, graph channels +0.1816",
+  "",
+  "     DEGREE CONFOUND: held-out Spearman(GNN prediction, degree) +0.4333 +/- 0.0449",
+  "",
+  "E2 GATE -- COMBINED MUST BEAT BOTH A1 AND A2 BY MORE THAN THE ACROSS-FOLD SD",
+  "     A3 +0.5027 +/- 0.0315   A1 +0.0712 +/- 0.0146   A2 +0.5101 +/- 0.0287",
+  "     A3 - A1 = +0.4315 vs threshold 0.0315  -> PASS",
+  "     A3 - A2 = -0.0074 vs threshold 0.0315  -> FAIL",
+  "     paired per-fold (support only, not the verdict): A3-A1 +0.4315 +/- 0.0390, A3-A2 -0.0074 +/- 0.0146",
+  "     E2 FAIL",
+  "",
+  "E3 GATE -- COMBINED MUST BEAT THE FAME BASELINE",
+  "     A3 +0.5027 +/- 0.0315   B1 fame +0.3175 +/- 0.0204   margin +0.1852 (sd-sized margin would be 0.0315)",
+  "     AUC: A3 0.8161   B1 0.6822",
+  "     E3 PASS",
+  "",
+  "E4 GATE -- COMBINED MUST BEAT THE DEGREE BASELINE",
+  "     A3 +0.5027 +/- 0.0315   B2 degree +0.3445 +/- 0.0152   margin +0.1582 (sd-sized margin would be 0.0315)",
+  "     AUC: A3 0.8161   B2 0.7042",
+  "     E4 PASS",
+  "",
+  "E5 GATE -- A DEGREE-PRESERVING REWIRING MUST DESTROY THE EFFECT",
+  "     null 0: CAPABILITY CHECK on the neighbourhoods the GNN reads -- 95.9% of nodes changed, capable=True",
+  "             per-channel degree preserved EXACTLY: True; combined-degree entries that changed at all: 16.09%",
+  "             rewired combined arm: rho +0.3361 +/- 0.0193  [24s]",
+  "     null 1: CAPABILITY CHECK on the neighbourhoods the GNN reads -- 95.9% of nodes changed, capable=True",
+  "             per-channel degree preserved EXACTLY: True; combined-degree entries that changed at all: 16.13%",
+  "             rewired combined arm: rho +0.3420 +/- 0.0281  [24s]",
+  "     null 2: CAPABILITY CHECK on the neighbourhoods the GNN reads -- 95.9% of nodes changed, capable=True",
+  "             per-channel degree preserved EXACTLY: True; combined-degree entries that changed at all: 16.05%",
+  "             rewired combined arm: rho +0.3286 +/- 0.0306  [24s]",
+  "     NOTE, and this is the loop-94 lesson: this rewiring preserves every per-channel",
+  "     degree exactly, so the DEGREE baseline B2 is arithmetically INVARIANT under it and",
+  "     the null could never move B2. It is checked against the neighbourhoods instead,",
+  "     which is the input the message passing actually consumes.",
+  "     combined-arm held-out rho under degree-preserving rewiring: real +0.5027  null +0.3356 +/- 0.0055  z +30.4  survives 67%",
+  "     E5 PASS -- null capable: True, survival defined: True",
+  "",
+  "E6 THE UNTRAINED FLOOR -- CG.spectral_embed + ridge",
+  "     EQUIVALENCE CHECK: induced subgraph on the 900 highest-degree nodes, largest component n=832, k=12",
+  "       eigenvalues vs a DENSE reference eigvalsh: max abs diff 1.26e-06; spectrum degenerate at the bottom: False",
+  "       principal angles between CG.spectral_embed's subspace and this one: cos min 1.000000, mean 1.000000",
+  "       -> the two routines compute the same object: True",
+  "       A1 reaction-only: Laplacian eigenvalues -0.00000 .. 0.03069",
+  "     floor A1 reaction-only   rho +0.0566 +/- 0.0351   auc 0.5362 +/- 0.0137   [7s, k=64]",
+  "       A2 graph-only: Laplacian eigenvalues -0.00000 .. 0.38551",
+  "     floor A2 graph-only      rho +0.5574 +/- 0.0249   auc 0.8405 +/- 0.0116   [2s, k=64]",
+  "       A3 combined: Laplacian eigenvalues -0.00000 .. 0.03104",
+  "     floor A3 combined        rho +0.4064 +/- 0.0201   auc 0.7471 +/- 0.0155   [8s, k=64]",
+  "     learned GNN +0.5027 vs untrained spectral floor +0.4064 on the SAME combined graph, margin +0.0963",
+  "     the learning adds something over the floor.",
+  "",
+  "GATES",
+  "  PASS  E1 intermediate used as built, bridge reported",
+  "  FAIL  E2 combined beats A1 and A2 by more than the fold sd",
+  "  PASS  E3 combined beats the FAME baseline",
+  "  PASS  E4 combined beats the DEGREE baseline",
+  "  PASS  E5 degree-preserving rewiring destroys the effect",
+  "  PASS  E6 learned model beats the untrained spectral floor",
+  "",
+  "    manifest: 3 inputs, coverage 6111/15913 (38.4%) by 'filtered', seed 11100, controls 7"
+ ]
+}
