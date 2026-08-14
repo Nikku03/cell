@@ -317,7 +317,8 @@ def main():
         p = float((np.abs(nd) >= abs(d)).mean())
         a = auc(by, bn)
         sweep[T] = {"gain_yes": float(by.mean()), "gain_no": float(bn.mean()), "delta": d,
-                    "p": p, "auc": a, "null_capable": mcap["capable"]}
+                    "p": p, "auc": a, "null_capable": mcap["capable"],
+                    "null_changed": mcap["changed"], "null_achievable": mcap["achievable"]}
         say(f"     T={T:>4.0f} h   gain Yes {by.mean():.4f}  No {bn.mean():.4f}  "
             f"delta {d:+.4f}  p {p:.4f}  AUC {a:.4f}")
         if not (d > 0 and p < C3_P and mcap["capable"]):
@@ -379,9 +380,16 @@ def main():
     say("C5 EVERY NULL CHECKED FOR CAPABILITY")
     caps = {"C2 transcript-label shuffle": cap,
             "C3 group-label shuffle": {"capable": all(v["null_capable"] for v in sweep.values()),
+                                       "achievable": sweep[T_MAIN]["null_achievable"],
+                                       "changed": sweep[T_MAIN]["null_changed"],
                                        "reason": "one permutation per swept period, each checked"}}
     for k, v in caps.items():
-        say(f"     {k}: {'CAPABLE' if v['capable'] else 'INERT'} -- {v['reason']}")
+        say(f"     {k}: {'CAPABLE' if v['capable'] else 'INERT'} -- moved {v.get('changed', 0):.1%} "
+            f"of an achievable {v.get('achievable', float('nan')):.1%} -- {v['reason']}")
+    say("     the bar is a fraction of the ACHIEVABLE move, not a fixed 0.5. A binary label vector")
+    say("     of prevalence p can never change more than 2p(1-p) of its entries under permutation,")
+    say("     so the old fixed bar was unreachable for every binary null -- gate_guard's own")
+    say("     family-two error, found by this loop and corrected in that module.")
     say(f"     C2 survival passed through gate_guard.survival: defined={sur.get('defined')}")
     gates["C5"] = bool(all(v["capable"] for v in caps.values()))
     say(f"     C5 {'PASS' if gates['C5'] else 'FAIL'}")

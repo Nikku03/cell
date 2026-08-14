@@ -36,6 +36,15 @@ The guard is to compute the statistic's input under the null and confirm it actu
 the real input before the null's output is allowed to count.
 
 Neither guard needs judgement. Both are cheap. Neither existed.
+
+AND THEN THIS MODULE COMMITTED FAMILY TWO ITSELF, which is recorded here rather than quietly fixed.
+`null_can_move` compared the fraction of changed entries against a fixed 0.5. Under a permutation
+that fraction is bounded by 1 - sum(p_k^2), which for any BINARY label vector is 2p(1-p) <= 0.5 --
+so the check declared every binary permutation null INERT regardless of how much spread that null
+actually had. Loop 119 caught it: an 11%-prevalence label vector can change at most 19.6% of its
+entries, the guard said INERT, and the condemned null was giving real 88 against 50.1 +/- 5.1,
+z = +7.4. A gate that cannot pass is the same fault as a null that cannot move, and this module
+had one in it for fourteen loops. The bar is now a fraction of what the input can actually reach.
 """
 import numpy as np
 
@@ -84,23 +93,72 @@ def survival(real, nulls, z_min=2.0):
     return out
 
 
-def null_can_move(real_input, null_input, min_changed=0.5):
+def achievable_change(x):
+    """The largest fraction of entries a PERMUTATION of x can be expected to change.
+
+    A permutation cannot change an entry that lands on an equal value, so with class frequencies
+    p_k the expected change fraction is exactly 1 - sum(p_k^2). For an all-distinct vector this is
+    1 - 1/n, effectively 1. For a BINARY vector it is 2p(1-p), which is at most 0.5 and reaches it
+    only at a perfect 50/50 split.
+    """
+    v, c = np.unique(np.asarray(x, dtype=object).ravel(), return_counts=True)
+    p = c / c.sum()
+    return float(1.0 - (p ** 2).sum())
+
+
+def null_can_move(real_input, null_input, min_changed=None, min_frac=0.5):
     """Did the null actually change the statistic's INPUT? Loop 94's rewiring did not.
 
     Called with the feature vector (or label list) as the statistic sees it, before and after the
-    null is applied. Returns the fraction of entries that changed and whether that clears
-    min_changed. A null below the threshold is inert and its output is not evidence about anything.
+    null is applied. Returns the fraction of entries that changed and whether that clears the bar.
+
+    THE BAR IS RELATIVE, AND IT WAS NOT, AND THAT WAS THIS MODULE COMMITTING ITS OWN FAMILY-TWO
+    ERROR. The first version compared `changed` against a fixed 0.5. But `changed` under a
+    permutation is bounded above by 1 - sum(p_k^2), which for ANY binary label vector is 2p(1-p)
+    <= 0.5, with equality only at an exact 50/50 split. So the check declared EVERY binary
+    permutation null INERT, for every dataset, no matter how much spread the null actually had --
+    a gate arithmetically incapable of passing, which is precisely the fault this module exists to
+    catch, in mirror image. Loop 119 hit it: an 11%-prevalence label vector maxes out at 19.6%
+    changed, the check said INERT, and the null it condemned was producing 88 real against
+    50.1 +/- 5.1, z = +7.4. The null was fine. The guard was broken.
+
+    So the comparison is now against what a permutation of THIS input can reach. `min_frac` of the
+    achievable change is required, and the achievable change must itself be non-trivial -- a vector
+    that is 99.9% one value cannot be meaningfully permuted at all, and that is worth saying rather
+    than passing. For continuous or all-distinct inputs achievable is ~1 and the bar is ~0.5, i.e.
+    unchanged from the original behaviour on every caller that was not binary.
+
+    Loop 94's case is unaffected and still caught: its rewiring left the in-degree vector EXACTLY
+    invariant, changed = 0.0, which is 0% of anything achievable.
+
+    Pass `min_changed` to pin an absolute threshold and restore the old semantics explicitly.
     """
     a = np.asarray(real_input, dtype=object)
     b = np.asarray(null_input, dtype=object)
     if a.shape != b.shape:
-        return {"capable": True, "changed": 1.0, "reason": "shapes differ, so the null rebuilt the input"}
+        return {"capable": True, "changed": 1.0, "achievable": 1.0,
+                "reason": "shapes differ, so the null rebuilt the input"}
     changed = float(np.mean(a != b))
-    return {"capable": bool(changed >= min_changed), "changed": changed,
+    if min_changed is not None:
+        return {"capable": bool(changed >= min_changed), "changed": changed,
+                "achievable": achievable_change(a), "threshold": float(min_changed),
+                "reason": ("the null changes the statistic's input"
+                           if changed >= min_changed else
+                           f"only {changed:.1%} of entries change against an absolute bar of "
+                           f"{min_changed:.1%} -- this null is INERT and its output is not evidence")}
+    ach = achievable_change(a)
+    bar = min_frac * ach
+    if ach < 0.02:
+        return {"capable": False, "changed": changed, "achievable": ach, "threshold": bar,
+                "reason": f"the input is almost constant (a permutation could change at most "
+                          f"{ach:.1%} of it), so no permutation null is informative about it"}
+    return {"capable": bool(changed >= bar), "changed": changed, "achievable": ach,
+            "threshold": bar,
             "reason": ("the null changes the statistic's input"
-                       if changed >= min_changed else
-                       f"only {changed:.1%} of entries change -- this null is INERT and its "
-                       f"output is not evidence")}
+                       if changed >= bar else
+                       f"only {changed:.1%} of entries change against {ach:.1%} achievable "
+                       f"({changed / ach:.0%} of the reachable move) -- this null is INERT and "
+                       f"its output is not evidence")}
 
 
 def report(name, s, emit=print):
