@@ -438,9 +438,20 @@ LAYERS = [
      "13 genes in `struct` with residue counts and variant tallies; 1 gene in `fold` (SOD1 A4V)",
      "the nexus/dock arm repeatedly failed its own baselines; there is no structure for the "
      "other 16,479 genes and nothing computes from the 13 that have one"),
-    ("spatial organisation", "ABSENT", "-",
-     "no volumes, no membranes, no coordinates -- compartments are set membership, not geometry",
-     "-"),
+    # CORRECTED. This said "no volumes" and that stopped being true at loop 116, which gave every
+    # compartment a literature volume fraction and swept the cell volume, and at loop 118, which
+    # measured the cytosolic protein concentration at 163.3 mg/mL -- inside the real 100-400
+    # range, from measured copy numbers and measured pool fractions rather than a label. A stale
+    # ABSENT is worse than a FAILED: it tells the reader not to look.
+    ("spatial organisation", "STATIC", "loop_geometry/116 + loop_spatial_proteome/118",
+     "7 compartments with literature volume fractions (cytosol 0.45-0.60, nucleus 0.06-0.12, "
+     "mitochondrion 0.08-0.22, ER 0.08-0.15, Golgi 0.02-0.04, lysosome 0.005-0.015, peroxisome "
+     "0.002-0.008), cell volume swept at 2000/3000/4000 um3, and measured concentrations: cytosol "
+     "163.3 mg/mL, whole cell 178.0 mg/mL, both inside the physically possible range",
+     "VOLUMES AND CONCENTRATIONS, NOT GEOMETRY. Still no coordinates, no membrane surfaces, no "
+     "distances -- a compartment is a well-stirred box with a size. And loop 116's V1 FAILED: an "
+     "explicit label-to-compartment mapping could not beat the naive 40.3% agreement between a "
+     "gene's annotated address and the compartment of its own reaction"),
     ("diffusion", "ABSENT", "-",
      "transport reactions move material between compartment POOLS with no distance or gradient",
      "-"),
