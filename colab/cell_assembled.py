@@ -63,6 +63,11 @@ def state_vector(D):
     a = np.array([LN2 / S[g]["mrna_hl_h"] + MU for g in ok])
     b = np.array([LN2 / S[g]["prot_hl_h"] + MU for g in ok])
     return {"genes": ok, "M": M, "P": P, "k_loss_mrna": a, "k_loss_prot": b,
+            # DEGRADATION WITHOUT THE DILUTION TERM, for integrate_cell. Loop 125 made division
+            # explicit, so a model that halves its contents must NOT also leak at mu -- that would
+            # count the same event twice. Both forms are returned because the older integrators
+            # still use the combined one and their recorded results depend on it.
+            "k_loss_mrna_deg": a - MU, "k_loss_prot_deg": b - MU,
             "k_sm": M * a, "k_sp": P * b / M}
 
 
@@ -259,6 +264,55 @@ def window_means(tr, nwin):
     n = tr.shape[0]
     edges = np.linspace(0, n, nwin + 1).astype(int)
     return np.stack([tr[edges[i]:edges[i + 1]].mean(0) for i in range(nwin)])
+
+
+def integrate_cell(st, T, ix=None, dev_at=None, beta_deg=0.0, beta_tl=0.0,
+                   divide=True, ncyc=40, nstep=400, gain=1.0):
+    """EVERY WIRING AT ONCE, which is the only way to find out whether they compose.
+
+        dM/dt = k_sm * (1 + gain*TF_drive(t))      - a_deg * M
+        dP/dt = k_sp * (1 + beta_tl*sin(wt)) * M   - b_deg * (1 + beta_deg*sin(wt)) * P
+        and both are HALVED at every t = T when divide is True.
+
+    a_deg and b_deg are DEGRADATION ONLY -- the mu that stood in for division is dropped, because
+    division is now performed rather than approximated. With every drive at zero and divide=True
+    this must reproduce loop 125's closed form exactly, and cell_run gates on that: a set of
+    wirings that do not reduce to the unwired model are not wirings, they are a different model.
+
+    Returns (M trajectory, P trajectory, M at T-, P at T-), the trajectories sampled at the start
+    of each substep so index 0 is the post-division state.
+    """
+    n = len(st["genes"])
+    a = st["k_loss_mrna_deg"]
+    b = st["k_loss_prot_deg"]
+    ks, kp = st["k_sm"], st["k_sp"]
+    dt = T / nstep
+    w = 2.0 * np.pi / T
+    ea = np.exp(-a * dt)
+    M = ks / a
+    P = kp * M / b
+    trM = np.zeros((nstep, n))
+    trP = np.zeros((nstep, n))
+    for c in range(ncyc):
+        last = (c == ncyc - 1)
+        for s in range(nstep):
+            if last:
+                trM[s] = M
+                trP[s] = P
+            t = s * dt
+            k_t = ks if ix is None else ks * np.maximum(0.0, 1.0 + gain * tf_drive(ix, dev_at(t)))
+            b_t = b * (1.0 + beta_deg * np.sin(w * t))
+            b_t = np.maximum(b_t, 1e-12)
+            eb = np.exp(-b_t * dt)
+            kp_t = kp * (1.0 + beta_tl * np.sin(w * t))
+            Mn = M * ea + (k_t / a) * (1 - ea)
+            P = P * eb + (kp_t * M / b_t) * (1 - eb)
+            M = Mn
+        if last:
+            return trM, trP, M, P
+        if divide:
+            M, P = M / 2.0, P / 2.0
+    return trM, trP, M, P
 
 
 def mass_fraction(D, genes):
