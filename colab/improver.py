@@ -44,6 +44,31 @@ THE THEORY CHECK, which is the whole point. A plan item is REJECTED unless all s
     T6 RESPECTS A MEASURED BOUND    the promised result must not exceed a ceiling this repository
                                     has already measured. A plan that promises to beat the
                                     experimental floor is refuted before it runs
+    T7 THE GAIN IS DERIVED          the predicted size must come from arithmetic on a recorded
+                                    number and must not exceed the largest gain that number
+                                    permits. Added after the first run of this file, in which
+                                    every predicted_gain was an assertion of mine and the check
+                                    accepted all five items -- see below
+
+WHAT THE FIRST RUN OF THIS FILE FOUND, which is why T7 and BLOCKED exist. It accepted 5 of 5 and
+printed its own indictment: a check that rejects nothing is evidence the check is too weak. Two
+holes were visible in its output:
+
+  EVERY PREDICTED GAIN WAS MINE. T1 asked whether an item CITES a measured deficit. It never asked
+  whether the SIZE of the promise followed from that deficit. "active-site pooling gains 0.15"
+  cited a real number, 0.947, and then named a figure unrelated to it. T7 makes the arithmetic
+  mandatory and caps a promise at the largest gain its own cited number permits.
+
+  P5 WAS ACCEPTED ON A PROMISE. Its only distinguisher from the already-refuted "650M with mean
+  pooling" is that P1 will have fixed the readout. T4 checked that P1 was ACCEPTED, which is a
+  statement about the plan, when what it needed was that P1 had WORKED, which is a statement about
+  a result that does not exist yet. Depending on an unmeasured outcome is not a rejection and it is
+  not an acceptance; it is BLOCKED, and a blocked item is not schedulable.
+
+And the first run's stopping rule turned out to be broken too, which no tightening of this file
+would have caught: it named loop 133's B4, and loop 134 then measured B4's premise at 3.2% of the
+variance. The lesson is recorded in load(): a track must read the loop that AUDITED its metric, not
+only the loops that produced it.
 
 THE BUNDLE RULE, which is what stops T2 from being merely destructive. A change predicted to move
 the metric by less than the paired noise is unmeasurable ON ITS OWN and T2 rejects it -- correctly.
@@ -84,7 +109,8 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 TRACKS = {
     "ml_kcat": {
         "question": "predict log10 kcat from enzyme sequence and substrate",
-        "runs": ["loop_ml_kcat.json", "loop_ml_audit.json", "loop_ml_probe.json"],
+        "runs": ["loop_ml_kcat.json", "loop_ml_audit.json", "loop_ml_probe.json",
+                 "loop_b4_fix.json"],
         "metric": "rmse", "lower_is_better": True,
     },
 }
@@ -136,6 +162,10 @@ def ask(track):
     prev = next((d for f, d in runs if f == "loop_ml_kcat.json"), {})
     new = next((d for f, d in runs if f == "loop_ml_audit.json"), {})
     probe = next((d for f, d in runs if f == "loop_ml_probe.json"), {})
+    # The loop that AUDITED the metric, not one that produced it. The first run of this file made
+    # loop 133's B4 its stopping rule without ever reading a check on B4, because no such check
+    # existed. It does now, and a track that ignored it would repeat the mistake.
+    a["audit"] = fix = next((d for f, d in runs if f == "loop_b4_fix.json"), {})
 
     a["Q1_previous"] = {"best_model": prev.get("best_model"),
                         "rmse": (prev.get("models") or {}).get(prev.get("best_model"), {}).get("rmse"),
@@ -165,13 +195,27 @@ def ask(track):
                 f"{(probe.get('b2') or {}).get('merged', [None]*4)[3]}",
          "verdict": "loop 132's ceiling was OVERSTATED and is corrected"},
     ]
+    c1, c3 = fix.get("c1") or {}, fix.get("c3") or {}
+    if c3:
+        seq_row = {
+            "what": "the sequence beyond the EC number",
+            "evidence": f"loop 134 C3, no residual involved: permuting the embedding WITHIN EC "
+                        f"class costs {c3.get('cost'):+.4f} against a paired interval of "
+                        f"{c3.get('paired_ci')}. C1 measures the EC number at "
+                        f"{100 * (c1.get('variance_share') or 0):.1f}% of the variance",
+            "verdict": ("NOT FLAT -- the sequence carries information the EC number does not, and "
+                        "loop 133's B4 headline is STRUCK"
+                        if (c3.get("cost") or 0) > (c3.get("paired_ci") or 1)
+                        else "FLAT -- confirmed without a residual")}
+    else:
+        seq_row = {
+            "what": "the sequence beyond the EC number",
+            "evidence": f"B4 refit on the EC-median residual: RMSE "
+                        f"{(probe.get('b4') or {}).get('model_rmse')} against a residual sd of "
+                        f"{(probe.get('b4') or {}).get('resid_sd')}",
+            "verdict": "UNAUDITED -- loop 134 has not run and B4's premise is unchecked"}
     a["Q4_flat"] = [
-        {"what": "the sequence beyond the EC number",
-         "evidence": f"B4 refit on the EC-median residual: RMSE "
-                     f"{(probe.get('b4') or {}).get('model_rmse')} against a residual sd of "
-                     f"{(probe.get('b4') or {}).get('resid_sd')}, R2 "
-                     f"{(probe.get('b4') or {}).get('r2')}",
-         "verdict": "FLAT AND NEGATIVE -- everything the model knows is in the EC number"},
+        seq_row,
         {"what": "the substrate channel",
          "evidence": f"shuffling substrates within a protein costs "
                      f"{(new.get('a5') or {}).get('delta', [None])[0]} of a "
@@ -223,6 +267,47 @@ def plan(a):
     measured on a paired model-vs-model difference. It is much tighter, and using the wrong one
     would reject real effects."""
     cur = a["Q2_new"]["rmse"]
+    fix = a.get("audit") or {}
+
+    def cap(component):
+        """largest gain available if a change removed that entire variance component. This is the
+        number a promise may not exceed, and it is arithmetic, not judgement."""
+        return cur - max(cur ** 2 - component ** 2, 0.0) ** 0.5
+
+    # Derivations. Each names the recorded number it comes from, so T7 can check the promise
+    # against it. The FRACTION claimed of each maximum is the only judgement left, and it is
+    # visible rather than buried inside a round figure.
+    mut = BOUNDS["mutant_irreducible_rmse"][0]
+    d_pool = {"from": "loop 133 B1 irreducible_rmse", "component": mut, "max_gain": cap(mut),
+              "fraction_claimed": 0.40,
+              "argument": "the ceiling assumes active-site pooling resolves EVERY point-mutant "
+                          "pair perfectly. It will not: pooling over annotated sites still averages "
+                          "several residues, and 3,597 merged proteins carry mutations outside any "
+                          "annotated site. 40% of the ceiling is a guess, but it is now a visible "
+                          "guess against a measured maximum"}
+    d_flag = {"from": "loop 133 B1, same component as P1", "component": mut, "max_gain": cap(mut),
+              "fraction_claimed": 0.12,
+              "argument": "a flag says THAT a record is a variant, never WHICH, so it can only "
+                          "recover the mean offset between wild types and mutants -- a small "
+                          "fraction of a component whose spread is within-pair"}
+    mc = BOUNDS["missing_conditions_rmse"][0]
+    d_q10 = {"from": "loop 133 B5 within-pair sd", "component": mc, "max_gain": cap(mc),
+             "fraction_claimed": 0.10,
+             "argument": "temperature is one of several missing conditions (pH, buffer, mutation), "
+                         "and Q10 can only act on the subset where a temperature is recoverable"}
+    ec_meas = (fix.get("c5") or {}).get("sequence + substrate + EC")
+    d_ec = ({"from": "loop 134 C5, MEASURED not bounded", "component": None,
+             "max_gain": max(cur - ec_meas, 0.0), "fraction_claimed": 1.0,
+             "argument": "C5 ran this feature set, so the gain is the measurement itself"}
+            if ec_meas else
+            {"from": "not yet measured", "component": None, "max_gain": None,
+             "fraction_claimed": None,
+             "argument": "loop 134 C5 has not run, so no maximum exists and T7 must fail this"})
+    d_650 = {"from": "loop 133 B3 -- the encoder is a family detector", "component": None,
+             "max_gain": None, "fraction_claimed": None,
+             "argument": "there is NO recorded number bounding what a larger encoder adds. Saying "
+                         "so is the point: T7 fails an item whose size nobody has measured"}
+
     paired = a["Q2_new"].get("paired_ci")
     if paired and all(x is not None for x in paired):
         noise, noise_src = paired[1] - paired[0], "paired model-vs-model CI, loop 132 A3"
@@ -236,7 +321,8 @@ def plan(a):
          "mechanism": "kcat is set by a few catalytic residues; averaging 320 dims over ~400 "
                       "residues moves the vector ~1% when 5 residues change, so 18,595 point "
                       "mutants differing a median 4.5x in kcat are indistinguishable",
-         "cites": "mutant_irreducible_rmse", "predicted_gain": 0.15,
+         "cites": "mutant_irreducible_rmse", "derivation": d_pool,
+         "predicted_gain": round(d_pool["max_gain"] * d_pool["fraction_claimed"], 4),
          "nearest_refuted": "650M with mean pooling",
          "distinguisher": "this changes the READOUT, which is the thing that refutation named as "
                           "the cause. It is the fix, not a repeat",
@@ -246,7 +332,8 @@ def plan(a):
          "kind": "implicit", "depends_on": [],
          "mechanism": "the model cannot resolve a variant, but it can at least "
                       "be told it is looking at one",
-         "cites": "mutant_irreducible_rmse", "predicted_gain": 0.05,
+         "cites": "mutant_irreducible_rmse", "derivation": d_flag,
+         "predicted_gain": round(d_flag["max_gain"] * d_flag["fraction_claimed"], 4),
          "nearest_refuted": "more kcat records",
          "distinguisher": "adds a COLUMN, not rows; the refutation was about n",
          "falsifier": "no change beyond the paired interval", "cost_min": 5,
@@ -256,7 +343,8 @@ def plan(a):
          "mechanism": "kcat(T2) = kcat(T1)*Q10^((T2-T1)/10) removes a known "
                       "variance component using physics instead of asking the "
                       "network to learn Arrhenius",
-         "cites": "missing_conditions_rmse", "predicted_gain": 0.04,
+         "cites": "missing_conditions_rmse", "derivation": d_q10,
+         "predicted_gain": round(d_q10["max_gain"] * d_q10["fraction_claimed"], 4),
          "nearest_refuted": "predict kcat/KM instead",
          "distinguisher": "that changed the target to a NOISIER one; this changes the target to "
                           "the same quantity at a common temperature, which cannot add variance",
@@ -266,7 +354,8 @@ def plan(a):
          "kind": "implicit", "depends_on": [],
          "mechanism": "B4 shows the EC number carries everything the model "
                       "has; give it directly rather than via a proxy",
-         "cites": "b4_flat", "predicted_gain": 0.02,
+         "cites": "c3_sequence_beyond_ec", "derivation": d_ec,
+         "predicted_gain": round(d_ec["max_gain"], 4) if d_ec["max_gain"] is not None else 0.02,
          "nearest_refuted": "bigger substrate fingerprint",
          "distinguisher": "different channel: that priced the SUBSTRATE side, this the enzyme's "
                           "declared chemistry",
@@ -274,9 +363,11 @@ def plan(a):
          "promised_rmse": cur - 0.02},
         {"id": "P5", "change": "ESM2-650M with the fixed readout",
          "kind": "explicit", "depends_on": ["P1"],
+         "depends_on_result": [{"what": "P1 has actually moved the sequence-beyond-EC test",
+                                "measured": bool((fix.get("c3") or {}).get("p1_applied"))}],
          "mechanism": "a larger encoder, once the readout no longer discards "
                       "the signal it would add",
-         "cites": "b3_family_detector", "predicted_gain": 0.08,
+         "cites": "b3_family_detector", "derivation": d_650, "predicted_gain": 0.08,
          "nearest_refuted": "650M with mean pooling",
          "distinguisher": "ONLY the fixed readout distinguishes it, so it is refuted unless P1 is "
                           "accepted AND has actually moved B4",
@@ -305,20 +396,35 @@ def theory_check(items, a, noise):
     for it in items:
         v = {}
         v["T1_cites_measured_deficit"] = it["cites"] in BOUNDS or it["cites"] in (
-            "b4_flat", "b3_family_detector")
+            "b4_flat", "b3_family_detector", "c3_sequence_beyond_ec")
         v["T2_gain_exceeds_noise"] = it["predicted_gain"] > noise
         v["T3_has_falsifier"] = bool(it.get("falsifier"))
         # T4 is a real check: the item must NAME the refuted claim nearest to it and say what
-        # distinguishes it, and any dependency it leans on must itself have been accepted.
+        # distinguishes it. A dependency on another ITEM is a plan-level fact and settled here; a
+        # dependency on a RESULT is not, and is handled below as BLOCKED rather than as a pass.
         named = it.get("nearest_refuted")
         v["T4_not_already_refuted"] = bool(
             named in refuted and it.get("distinguisher")
-            and all(verdicts.get(d) == "ACCEPT" for d in it.get("depends_on", [])))
+            and all(verdicts.get(d, "").startswith("ACCEPT") for d in it.get("depends_on", [])))
         v["T5_not_circular"] = not (set(it.get("derives_from", [])) & EVAL_CONSUMES)
         v["T6_respects_bounds"] = it["promised_rmse"] > floor
+        # T7: the SIZE of the promise must follow from a recorded number. An item may cite a real
+        # deficit and still name a figure that has nothing to do with it -- which is what every
+        # item in this file's first run did.
+        d = it.get("derivation")
+        v["T7_gain_is_derived"] = bool(
+            d and d.get("max_gain") is not None and it["predicted_gain"] <= d["max_gain"] + 1e-9)
         it["checks"] = v
-        it["verdict"] = "ACCEPT" if all(v.values()) else "REJECT"
         it["rejected_on"] = [k for k, val in v.items() if not val]
+        # A dependency on an unmeasured RESULT is neither pass nor fail. Recording it as either
+        # would be a claim about a number nobody has.
+        unmet = [r for r in it.get("depends_on_result", []) if not r.get("measured")]
+        if unmet and not it["rejected_on"]:
+            it["verdict"] = "BLOCKED"
+            it["blocked_on"] = [r["what"] for r in unmet]
+        else:
+            it["verdict"] = "ACCEPT" if not it["rejected_on"] else "REJECT"
+            it["blocked_on"] = [r["what"] for r in unmet]
         verdicts[it["id"]] = it["verdict"]
         out.append(it)
 
@@ -327,14 +433,24 @@ def theory_check(items, a, noise):
     small = [i for i in out if i["rejected_on"] == ["T2_gain_exceeds_noise"]]
     bundle = None
     if len(small) > 1:
-        g = [i["predicted_gain"] for i in small]
+        # OVERLAP. combine() assumes the deficits are independent. Two items attacking the SAME
+        # deficit are not, and adding their removed variances would double-count it -- loop 134's
+        # C6 makes this concrete for the mutant flag and active-site pooling, which both cite
+        # mutant_irreducible_rmse. Within a deficit, take the largest, never the sum.
+        by_deficit = {}
+        for i in small:
+            by_deficit[i["cites"]] = max(by_deficit.get(i["cites"], 0.0), i["predicted_gain"])
+        g = list(by_deficit.values())
+        overlapped = len(g) < len(small)
         rb = combine(cur, g)
         bundle = {
             "id": "B", "members": [i["id"] for i in small],
             "change": "the sub-noise items, run and tested as ONE change",
             "why": "each is smaller than the paired interval alone, so alone each is unmeasurable. "
                    "Removed variance adds where RMSE gains do not",
-            "naive_sum_gain": sum(g), "combined_gain": cur - rb, "promised_rmse": rb,
+            "naive_sum_gain": sum(i["predicted_gain"] for i in small),
+            "combined_gain": cur - rb, "promised_rmse": rb,
+            "distinct_deficits": len(g), "overlap_collapsed": overlapped,
             "cost_min": sum(i["cost_min"] for i in small),
             "falsifier": "the bundle's paired difference interval contains zero",
             "checks": {"T2_gain_exceeds_noise": (cur - rb) > noise,
@@ -365,10 +481,18 @@ def whole_picture(a):
                     "point_mutant_pairs": 18595,
                     "singletons_contributing_zero_within_variance": 4257},
         "bounds_that_cap_any_plan": {k: v for k, v in BOUNDS.items()},
-        "the_uncomfortable_reading": "B4 says the sequence adds nothing beyond the EC number. If "
-                                     "P1 does not change that, kcat is not predictable from "
-                                     "sequence at this data scale, and loop 127's measured-or-"
-                                     "flagged-constant is already the right design.",
+        "the_uncomfortable_reading": (
+            a["Q4_flat"][0]["verdict"] + ". "
+            + ("The wall is therefore NOT that the sequence is uninformative -- it is the "
+               "0.947 mutant component and the 0.5137 missing-conditions floor, which are "
+               "properties of the FILE and not of the representation."
+               if "NOT FLAT" in a["Q4_flat"][0]["verdict"] else
+               "If P1 does not change that, kcat is not predictable from sequence at this data "
+               "scale, and loop 127's measured-or-flagged-constant is already the right design.")),
+        "what_the_first_run_of_this_file_got_wrong": (
+            "it accepted 5 of 5 items and named a broken number as its stopping rule. The check "
+            "now carries T7, a BLOCKED verdict for unmeasured dependencies, and a track that "
+            "reads the audit of its own metric."),
     }
 
 
@@ -445,8 +569,16 @@ def main():
         log(f"     {it['id']} {it['verdict']:<17} {it['change']}")
         if it["rejected_on"]:
             log(f"          rejected on: {', '.join(it['rejected_on'])}")
-        log(f"          predicted {it['predicted_gain']:+.2f} -> {it['promised_rmse']:.4f}; "
-            f"cost {it['cost_min']} min; falsifier: {it['falsifier'][:80]}")
+        if it.get("blocked_on"):
+            log(f"          blocked on:  {'; '.join(it['blocked_on'])}")
+        d = it.get("derivation") or {}
+        mg = d.get("max_gain")
+        log(f"          predicted {it['predicted_gain']:+.4f} -> {it['promised_rmse']:.4f}; "
+            f"cost {it['cost_min']} min")
+        log(f"          derived:  {'max ' + format(mg, '.4f') if mg is not None else 'NO MAXIMUM EXISTS'}"
+            f"{' x ' + format(d['fraction_claimed'], '.2f') if d.get('fraction_claimed') is not None else ''}"
+            f"   ({d.get('from', 'undeclared')})")
+        log(f"          falsifier: {it['falsifier'][:80]}")
     if bundle:
         log(f"\n     BUNDLE {bundle['verdict']}   {'+'.join(bundle['members'])}")
         log(f"          adding gains would claim {bundle['naive_sum_gain']:+.4f}; removed variance "
@@ -475,8 +607,11 @@ def main():
     log(f"  STOPPING RULE: B4. If the EC-median residual stays unlearnable after these, the "
         f"expensive ones are not run and the negative result is the answer.")
     n_rej = sum(1 for i in items if i["verdict"] == "REJECT")
-    log(f"  THE CHECK REJECTED {n_rej} of {len(items)} items outright. A run that rejects nothing "
-        f"is evidence the check is too weak, not that the plan is good.")
+    n_blk = sum(1 for i in items if i["verdict"] == "BLOCKED")
+    log(f"  THE CHECK REJECTED {n_rej} of {len(items)} items and BLOCKED {n_blk}. A run that "
+        f"rejects nothing is evidence the check is too weak, not that the plan is good.")
+    if n_rej == 0:
+        log(f"  *** THIS RUN REJECTED NOTHING. Treat the check as unproven, not the plan as sound.")
     json.dump({"track": track, "answers": a, "plan": items, "bundle": bundle, "refuted": refuted,
                "whole_picture": pic, "upgrades": ups, "execute_order": order,
                "noise": noise, "noise_source": noise_src, "n_rejected": n_rej,
