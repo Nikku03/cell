@@ -336,6 +336,73 @@ def main():
         say(f"  {k}  {'PASS' if gates[k] else 'FAIL'}")
     say(f"  {sum(gates.values())}/6")
     say("=" * 100)
+    say()
+
+    # ------------------------------------------------------------- AFTER THE FACT
+    # ADDED AFTER THE FIRST RUN, GATED ON NOTHING, and it changes how two of the gates read.
+    # W5 passed by 0.0023 of AUC and W6 by 6.0 points of enrichment. Neither gate carried a
+    # significance test, because I wrote them as direction comparisons. But this session has spent
+    # twelve gates learning that a number without its own noise attached is not a result, and the
+    # sign shuffle right above W5 puts the AUC noise floor at 0.0079 -- three times W5's margin. So
+    # the margins are measured here rather than left to be read as wins.
+    say("AFTER THE FACT -- the noise on the two gates that passed by a margin")
+    rng2 = np.random.default_rng(SEED + 1)
+    n = len(tgt)
+    diffs, w6d = [], []
+    for _ in range(NPERM):
+        b = rng2.integers(0, n, n)
+        yb = y[b]
+        if yb.all() or not yb.any():
+            continue
+        diffs.append(auc(relM[b][yb], relM[b][~yb]) - auc(topo[b][yb], topo[b][~yb]))
+    diffs = np.array(diffs)
+    say(f"     W5  integrated - topology AUC = {a_real - a_topo:+.4f}; "
+        f"bootstrap {diffs.mean():+.4f} +/- {diffs.std():.4f}, "
+        f"{np.mean(diffs > 0):.1%} of resamples positive")
+    say(f"         the sign-shuffle noise floor on this AUC is {sh_aucs.std():.4f}, "
+        f"{sh_aucs.std() / max(abs(a_real - a_topo), 1e-12):.1f}x the margin")
+    w5_real = bool(np.mean(diffs > 0) >= 0.975)
+    say(f"         W5 as recorded: PASS. W5 with its noise attached: "
+        f"{'PASS' if w5_real else 'NOT A DIFFERENCE'}")
+
+    gb = np.array([any(rg in ccdP for rg, _ in wiring[g]) for g in grp_both + grp_tx])
+    gp = np.array([any(rg in ccdP for rg, _ in wiring[g]) for g in grp_prot])
+    pool = np.concatenate([gb, gp])
+    obs = gb.mean() - gp.mean()
+    for _ in range(NPERM):
+        sh = rng2.permutation(pool)
+        w6d.append(sh[:len(gb)].mean() - sh[len(gb):].mean())
+    w6d = np.array(w6d)
+    p6 = float(np.mean(np.abs(w6d) >= abs(obs)))
+    say(f"     W6  {obs:+.1%} against a label permutation of the same two groups: "
+        f"null {w6d.mean():+.1%} +/- {w6d.std():.1%}, p = {p6:.3f}")
+    w6_real = bool(p6 < 0.05)
+    say(f"         W6 as recorded: PASS. W6 with its noise attached: "
+        f"{'PASS' if w6_real else 'NOT A DIFFERENCE'}")
+
+    # THE CONFOUND THE GATES DID NOT ASK ABOUT, and it is larger than every network score above.
+    # A gene's REGULATOR COUNT scores AUC 0.5806 against the CCD-transcript call -- better than the
+    # integrated ODE, the signed topology, the raw count and both fame measures. So the honest
+    # question is whether any network score survives holding regulator count fixed.
+    say("     THE CONFOUND: regulator count alone scores higher than every network score above.")
+    dec = decile_strata(nreg, k=5)
+    strat = {}
+    for nm, v in (("integrated", relM), ("topology", topo), ("raw count", cnt),
+                  ("own pubs", own)):
+        num, den = 0.0, 0.0
+        for s in np.unique(dec):
+            m = dec == s
+            if y[m].sum() and (~y[m]).sum():
+                w = float(m.sum())
+                num += w * auc(v[m][y[m]], v[m][~y[m]])
+                den += w
+        strat[nm] = num / den if den else float("nan")
+        say(f"       {nm:>12}: AUC {strat[nm]:.4f} stratified by regulator-count quintile "
+            f"(unstratified {auc(v[y], v[~y]):.4f})")
+    say("     Every network score collapses toward 0.5 once regulator count is held fixed. What the")
+    say("     network was scoring is HOW MANY REGULATORS A GENE HAS BEEN GIVEN, which is a fact")
+    say("     about annotation effort, not about the cell cycle.")
+    say()
 
     man = RM.manifest(inputs=[LR.CELL, HPA, LR.SC / "_schwan2011.json"],
                       available=len(ct), used=len(tgt), selection="filtered", seed=SEED,
@@ -367,6 +434,15 @@ def main():
                "w6": {"both": [e_both, n_both], "transcript_only": [e_tx, n_tx],
                       "protein_only": [e_prot, n_prot], "neither": [e_none, n_none],
                       "any_transcript_ccd": tx_all},
+               "posthoc": {"w5_bootstrap_mean": float(diffs.mean()),
+                           "w5_bootstrap_sd": float(diffs.std()),
+                           "w5_frac_positive": float(np.mean(diffs > 0)),
+                           "w5_survives_noise": w5_real,
+                           "w6_observed": float(obs), "w6_p": p6, "w6_survives_noise": w6_real,
+                           "stratified_auc": strat,
+                           "note": "added after the run, gated on nothing; W5 and W6 both fired "
+                                   "inside their own noise and every network score collapses "
+                                   "toward 0.5 once regulator count is held fixed"},
                "seconds": time.time() - t0, "log": log},
               open(OUT / "loop_tf_cellcycle.json", "w"), indent=1)
     say(f"\n  -> {OUT / 'loop_tf_cellcycle.json'}   [{time.time() - t0:.1f}s]")

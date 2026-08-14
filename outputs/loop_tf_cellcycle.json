@@ -1,0 +1,223 @@
+{
+ "test": "loop_tf_cellcycle",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/proteinatlas.tsv",
+    "bytes": 43055808,
+    "hash": "5c546331ec5dda4b",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 1634,
+   "used": 273,
+   "selection": "filtered",
+   "fraction": 0.16707466340269278
+  },
+  "seed": 12000,
+  "controls": [
+   "edge signs shuffled, capability-checked, integrator re-run",
+   "cell-cycle status shuffled among regulators within out-degree deciles so hub status is preserved",
+   "regulator publication count and the gene's own count",
+   "the wiring switched off, gated on exact reduction",
+   "one-step topology scored against the integrated ODE",
+   "protein-only oscillators as the negative class the network must NOT explain"
+  ],
+  "note": "only the 54,128 signed edges (8.8%) can enter a rate law; the other 558,005 have no direction of effect and are unusable here",
+  "warnings": []
+ },
+ "gates": {
+  "W4": true,
+  "W2": false,
+  "W1": false,
+  "W5": true,
+  "W3": false,
+  "W6": true
+ },
+ "wiring": {
+  "signed_edges": 54128,
+  "total_edges": 612133,
+  "regulators": 1451,
+  "targets": 7485,
+  "ccd_regulators": 80
+ },
+ "testset": {
+  "n": 273,
+  "n_yes": 124,
+  "n_no": 149
+ },
+ "w1": {
+  "auc_real": 0.5464927473479108,
+  "auc_shuffled_mean": 0.549439137259147,
+  "auc_shuffled_sd": 0.00792655176216876,
+  "capability": {
+   "capable": true,
+   "changed": 0.2440506329113924,
+   "achievable": 0.24407062970677784,
+   "threshold": 0.12203531485338892,
+   "reason": "the null changes the statistic's input"
+  }
+ },
+ "w2": {
+  "frac_yes": 0.46774193548387094,
+  "frac_no": 0.3691275167785235,
+  "difference": 0.09861441870534743,
+  "survival": {
+   "real": 0.09861441870534743,
+   "n_null": 2000,
+   "null_mean": 0.04862207728945659,
+   "null_sd": 0.07922648825818612,
+   "z": 0.631005393713451,
+   "defined": false,
+   "fraction": "UNDEFINED",
+   "reason": "|z| 0.63 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator"
+  },
+  "capability": {
+   "capable": true,
+   "changed": 0.10337698139214335,
+   "achievable": 0.10418917821355644,
+   "threshold": 0.05209458910677822,
+   "reason": "the null changes the statistic's input"
+  }
+ },
+ "w3": {
+  "auc_regulator_pubs": 0.5261149599480407,
+  "auc_own_pubs": 0.5535830266291405,
+  "best_network": "integrated",
+  "best_network_margin": 0.04649274734791076
+ },
+ "w4": {
+  "max_rel_deviation": 2.7650939492062756e-15,
+  "max_residual_oscillation": 0.0
+ },
+ "w5": {
+  "auc_topology": 0.5441924659017103,
+  "auc_count": 0.5478999783502922,
+  "auc_integrated": 0.5464927473479108,
+  "auc_regulator_count": 0.580563974886339
+ },
+ "w6": {
+  "both": [
+   0.453125,
+   64
+  ],
+  "transcript_only": [
+   0.5,
+   24
+  ],
+  "protein_only": [
+   0.40601503759398494,
+   133
+  ],
+  "neither": [
+   0.3754646840148699,
+   269
+  ],
+  "any_transcript_ccd": 0.4659090909090909
+ },
+ "posthoc": {
+  "w5_bootstrap_mean": 0.002271655937533783,
+  "w5_bootstrap_sd": 0.0033361922523630137,
+  "w5_frac_positive": 0.7595,
+  "w5_survives_noise": false,
+  "w6_observed": 0.059894053315105944,
+  "w6_p": 0.4235,
+  "w6_survives_noise": false,
+  "stratified_auc": {
+   "integrated": 0.5347710503764451,
+   "topology": 0.5319567264099336,
+   "raw count": 0.4984937791521557,
+   "own pubs": 0.5267823385589621
+  },
+  "note": "added after the run, gated on nothing; W5 and W6 both fired inside their own noise and every network score collapses toward 0.5 once regulator count is held fixed"
+ },
+ "seconds": 10.609458684921265,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 120 -- the TF network enters a rate law, and meets the cell cycle",
+  "====================================================================================================",
+  "",
+  "  wiring: 54,128 signed edges of 612,133 (8.8%); 1,451 regulators, 7,485 targets",
+  "  test set: 273 genes with a CCD-transcript call AND a signed regulator AND an mRNA state -- 124 Yes / 149 No",
+  "  drivers:  80 of 748 CCD proteins are regulators",
+  "",
+  "W4 THE WIRED INTEGRATOR REDUCES TO THE UNWIRED ONE",
+  "     drive off: max relative deviation from kbar/a over 273 genes = 2.765e-15",
+  "     residual oscillation with the drive off: max 0.000e+00",
+  "     W4 PASS -- the wiring is an addition to the model",
+  "",
+  "W2 CCD TRANSCRIPTS HAVE CCD-PROTEIN REGULATORS ABOVE CHANCE",
+  "     CCD transcripts with >=1 CCD-protein regulator: 46.8% (58/124)",
+  "     non-CCD transcripts                           : 36.9% (55/149)",
+  "     null: cell-cycle status shuffled among regulators WITHIN out-degree deciles (hub status preserved) -- the null changes the statistic's input",
+  "     enrichment difference: real +0.0986  null +0.0486 +/- 0.0792  survival UNDEFINED -- |z| 0.63 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator",
+  "     W2 FAIL",
+  "",
+  "W1 THE SIGNS DO WORK",
+  "     real signs:      AUC 0.5465  (integrated mRNA amplitude vs measured CCD call)",
+  "     shuffled signs:  AUC 0.5494 +/- 0.0079 over 64 shuffles -- the null changes the statistic's input",
+  "     W1 FAIL -- signs DO NOT matter: this is an adjacency list wearing a rate law",
+  "",
+  "W5 DOES THE DYNAMICS ADD ANYTHING OVER THE TOPOLOGY?",
+  "     one-step signed regulator score (no ODE):  AUC 0.5442",
+  "     raw count of CCD regulators (no signs):    AUC 0.5479",
+  "     integrated mRNA amplitude (the ODE):       AUC 0.5465",
+  "     regulator count itself, as a confound:     AUC 0.5806",
+  "     W5 PASS -- the ODE adds to the topology",
+  "",
+  "W3 FAME",
+  "     mean publication count of a gene's regulators:  AUC 0.5261",
+  "     the gene's OWN publication count:               AUC 0.5536",
+  "     best network score: integrated at |AUC-0.5| = 0.0465",
+  "     W3 FAIL -- FAME WINS, as it did in loop_tf_rate",
+  "",
+  "W6 THE ASYMMETRY TEST",
+  "     protein Yes / transcript Yes  45.3%  (n=64)   both oscillate",
+  "     protein No  / transcript Yes  50.0%  (n=24)   transcript only",
+  "     protein Yes / transcript No   40.6%  (n=133)   PROTEIN ONLY -- no transcriptional source exists for these",
+  "     protein No  / transcript No   37.5%  (n=269)   neither",
+  "     any CCD transcript (88) 46.6%  vs  protein-only (133) 40.6%   difference +6.0%",
+  "     W6 PASS -- the network separates transcriptional from post-transcriptional oscillation",
+  "",
+  "====================================================================================================",
+  "  W1  FAIL",
+  "  W2  FAIL",
+  "  W3  FAIL",
+  "  W4  PASS",
+  "  W5  PASS",
+  "  W6  PASS",
+  "  3/6",
+  "====================================================================================================",
+  "",
+  "AFTER THE FACT -- the noise on the two gates that passed by a margin",
+  "     W5  integrated - topology AUC = +0.0023; bootstrap +0.0023 +/- 0.0033, 75.9% of resamples positive",
+  "         the sign-shuffle noise floor on this AUC is 0.0079, 3.4x the margin",
+  "         W5 as recorded: PASS. W5 with its noise attached: NOT A DIFFERENCE",
+  "     W6  +6.0% against a label permutation of the same two groups: null -0.0% +/- 6.9%, p = 0.423",
+  "         W6 as recorded: PASS. W6 with its noise attached: NOT A DIFFERENCE",
+  "     THE CONFOUND: regulator count alone scores higher than every network score above.",
+  "         integrated: AUC 0.5348 stratified by regulator-count quintile (unstratified 0.5465)",
+  "           topology: AUC 0.5320 stratified by regulator-count quintile (unstratified 0.5442)",
+  "          raw count: AUC 0.4985 stratified by regulator-count quintile (unstratified 0.5479)",
+  "           own pubs: AUC 0.5268 stratified by regulator-count quintile (unstratified 0.5536)",
+  "     Every network score collapses toward 0.5 once regulator count is held fixed. What the",
+  "     network was scoring is HOW MANY REGULATORS A GENE HAS BEEN GIVEN, which is a fact",
+  "     about annotation effort, not about the cell cycle.",
+  "",
+  "    manifest: 3 inputs, coverage 273/1634 (16.7%) by 'filtered', seed 12000, controls 6"
+ ]
+}

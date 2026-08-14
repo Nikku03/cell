@@ -225,6 +225,24 @@ LAYERS = [
     ("regulation->transcription", "FAILED", "loop_tf_rate/loop_perturb",
      "network loses to fame 2:1; perturbation no better than shuffled edge signs",
      "612,133 edges that encode which genes were studied together"),
+    # ADDED by loop 120. The wiring MACHINERY works and is now part of this module -- tf_wiring,
+    # tf_index, tf_drive, integrate_tf put the network into k_sm for the first time, and switching
+    # the drive off reproduces the unwired steady state to 2.8e-15. The NETWORK inside it does not.
+    ("TF network inside the rate law", "RUNS", "cell_assembled.integrate_tf/120",
+     "k_sm_i(t) = kbar_i * max(0, 1 + G*sum_j s_ij*dev_j/n_i); with the drive off it reduces to "
+     "the constant-k_sm integrator to 2.8e-15 relative, so the wiring is an addition and not a "
+     "replacement. 54,128 signed edges, 1,451 regulators, 7,485 targets",
+     "ONLY 8.8% OF THE NETWORK CAN ENTER A RATE LAW. The other 558,005 edges have sign 0 -- a "
+     "binding event with no direction of effect, unusable in any equation"),
+    ("TF network as a predictor of transcript dynamics", "FAILED", "loop_tf_cellcycle/120",
+     "on 273 genes with a measured CCD-transcript call, a signed regulator and an mRNA state: "
+     "real edge signs AUC 0.5465 against SHUFFLED signs 0.5494 +/- 0.0079 -- signs carry nothing; "
+     "CCD-regulator enrichment +9.9 points against an out-degree-preserving null at +4.9 +/- 7.9, "
+     "z = 0.63; the gene's own publication count (0.5536) beats every network score",
+     "AND THE CONFOUND IS BIGGER THAN THE SIGNAL: regulator count alone scores AUC 0.5806, higher "
+     "than the ODE, the signed topology, the raw count and both fame measures. Holding it fixed by "
+     "quintile collapses integrated to 0.5348, topology to 0.5320 and raw count to 0.4985. The "
+     "network was scoring how many regulators a gene has been ASSIGNED, which is annotation effort"),
     ("reaction+graph fusion", "FAILED", "loop_fusion_linear",
      "combined 0.166 BELOW graph-only; 90% of what remains survives degree-preserving rewiring",
      "the metabolic bridge is absent for 84% of genes"),
