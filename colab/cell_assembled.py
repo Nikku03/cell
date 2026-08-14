@@ -153,9 +153,33 @@ LAYERS = [
     ("expression noise", "FAILED", "loop_noise",
      "predicted CV tracks measured at +0.4837 but is cross-dataset abundance agreement to 0.8%",
      "against the non-abundance component it points the wrong way"),
+    # CORRECTED. I recorded transport as ABSENT and it is not. Human-GEM is compartment-resolved
+    # and 36.7% of its reactions move a metabolite across a membrane. Measured, not assumed.
+    ("compartments (metabolic)", "RUNS", "cell_sim",
+     "9 compartments: cytosol 3,339 metabolites, extracellular 1,660, ER 971, mitochondrion 939, "
+     "peroxisome 507, lysosome 452, Golgi 361, nucleus 212, inner-mito 20",
+     "compartments of METABOLITES; proteins are not compartment-resolved in the same object"),
+    ("transport (metabolic)", "RUNS", "cell_sim",
+     "4,742 reactions span >1 compartment (36.7% of the model), 2,427 with gene rules; "
+     "714 carry flux at the optimum = 31.0% of all active reactions; "
+     "c<->e 436, c<->r 101, c<->m 87, c<->x 21, c<->l 18, c<->n 16",
+     "stoichiometric transport with no rate law, no membrane, no concentration gradient"),
+    ("compartments (gene labels)", "STATIC", "loop_compartment_mass",
+     "12 buckets: nucleus 4,007, cytoplasm 3,581, plasma membrane 2,782, membrane 1,462, "
+     "extracellular 1,455, mitochondrion 952, ER 787, cytoskeleton 619, Golgi 435, "
+     "endosome 193, lysosome 157, peroxisome 62",
+     "AGREES WITH THE GEM COMPARTMENT OF ITS OWN REACTION ONLY 40.3% OF THE TIME "
+     "(9,356 of 23,225 gene-reaction pairs) -- two compartment systems that do not line up"),
+    ("protein structure", "STATIC", "struct/fold + the nexus arm",
+     "13 genes in `struct` with residue counts and variant tallies; 1 gene in `fold` (SOD1 A4V)",
+     "the nexus/dock arm repeatedly failed its own baselines; there is no structure for the "
+     "other 16,479 genes and nothing computes from the 13 that have one"),
     ("spatial organisation", "ABSENT", "-",
-     "12 compartment labels, no volumes, no membranes, no coordinates", "-"),
-    ("transport / diffusion", "ABSENT", "-", "nothing moves between compartments", "-"),
+     "no volumes, no membranes, no coordinates -- compartments are set membership, not geometry",
+     "-"),
+    ("diffusion", "ABSENT", "-",
+     "transport reactions move material between compartment POOLS with no distance or gradient",
+     "-"),
     ("cell division", "ABSENT", "-", "no cycle advances; the cell accumulates forever", "-"),
     ("enzyme kinetics", "ABSENT", "-",
      "no measured k_cat anywhere; loop 93 inverted it from flux and got median 0.1/s", "-"),
