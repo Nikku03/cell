@@ -49,6 +49,12 @@ THE THEORY CHECK, which is the whole point. A plan item is REJECTED unless all s
                                     permits. Added after the first run of this file, in which
                                     every predicted_gain was an assertion of mine and the check
                                     accepted all five items -- see below
+    T8 THE INPUTS EXIST             an item must name the files it consumes, and they must be on
+                                    disk. Q6 of the first run offered "temperature and pH parsed
+                                    from UniProt kinetics free text -- free, already on disk". No
+                                    such file is on disk. A plan costed in minutes for data that
+                                    was never fetched is a plan that cannot run, and the cheapest
+                                    possible check catches it: os.path.exists
 
 WHAT THE FIRST RUN OF THIS FILE FOUND, which is why T7 and BLOCKED exist. It accepted 5 of 5 and
 printed its own indictment: a check that rejects nothing is evidence the check is too weak. Two
@@ -315,9 +321,11 @@ def plan(a):
         ci = a["Q2_new"]["ci"]
         noise, noise_src = ((ci[1] - ci[0]) if all(x is not None for x in ci) else 0.10,
                             "fallback: gain-vs-constant CI")
+    ML = Path("colab/data/ml")
     items = [
         {"id": "P1", "change": "active-site pooling replaces mean pooling",
          "kind": "implicit+explicit", "depends_on": [],
+         "needs_files": [ML / "sequences.json", Path("colab/data/uniprot_sites.tsv.gz")],
          "mechanism": "kcat is set by a few catalytic residues; averaging 320 dims over ~400 "
                       "residues moves the vector ~1% when 5 residues change, so 18,595 point "
                       "mutants differing a median 4.5x in kcat are indistinguishable",
@@ -330,6 +338,7 @@ def plan(a):
          "cost_min": 60, "promised_rmse": cur - 0.15},
         {"id": "P2", "change": "mutant flag and substitution count as features",
          "kind": "implicit", "depends_on": [],
+         "needs_files": [ML / "sequences.json", ML / "kcat_records.tsv"],
          "mechanism": "the model cannot resolve a variant, but it can at least "
                       "be told it is looking at one",
          "cites": "mutant_irreducible_rmse", "derivation": d_flag,
@@ -340,6 +349,7 @@ def plan(a):
          "promised_rmse": cur - 0.05},
         {"id": "P3", "change": "Q10-normalise the target to 37 C",
          "kind": "implicit", "depends_on": [],
+         "needs_files": [Path("colab/data/kcat_conditions.tsv.gz")],
          "mechanism": "kcat(T2) = kcat(T1)*Q10^((T2-T1)/10) removes a known "
                       "variance component using physics instead of asking the "
                       "network to learn Arrhenius",
@@ -352,6 +362,7 @@ def plan(a):
          "cost_min": 5, "promised_rmse": cur - 0.04},
         {"id": "P4", "change": "EC number as an explicit categorical feature",
          "kind": "implicit", "depends_on": [],
+         "needs_files": [ML / "kcat_records.tsv"],
          "mechanism": "B4 shows the EC number carries everything the model "
                       "has; give it directly rather than via a proxy",
          "cites": "c3_sequence_beyond_ec", "derivation": d_ec,
@@ -363,6 +374,7 @@ def plan(a):
          "promised_rmse": cur - 0.02},
         {"id": "P5", "change": "ESM2-650M with the fixed readout",
          "kind": "explicit", "depends_on": ["P1"],
+         "needs_files": [ML / "esm2_650M_mean.npy"],
          "depends_on_result": [{"what": "P1 has actually moved the sequence-beyond-EC test",
                                 "measured": bool((fix.get("c3") or {}).get("p1_applied"))}],
          "mechanism": "a larger encoder, once the readout no longer discards "
@@ -414,6 +426,9 @@ def theory_check(items, a, noise):
         d = it.get("derivation")
         v["T7_gain_is_derived"] = bool(
             d and d.get("max_gain") is not None and it["predicted_gain"] <= d["max_gain"] + 1e-9)
+        missing = [f for f in it.get("needs_files", []) if not Path(f).exists()]
+        v["T8_inputs_exist"] = not missing
+        it["missing_inputs"] = missing
         it["checks"] = v
         it["rejected_on"] = [k for k, val in v.items() if not val]
         # A dependency on an unmeasured RESULT is neither pass nor fail. Recording it as either
@@ -571,6 +586,8 @@ def main():
             log(f"          rejected on: {', '.join(it['rejected_on'])}")
         if it.get("blocked_on"):
             log(f"          blocked on:  {'; '.join(it['blocked_on'])}")
+        if it.get("missing_inputs"):
+            log(f"          MISSING INPUT: {', '.join(str(m) for m in it['missing_inputs'])}")
         d = it.get("derivation") or {}
         mg = d.get("max_gain")
         log(f"          predicted {it['predicted_gain']:+.4f} -> {it['promised_rmse']:.4f}; "
