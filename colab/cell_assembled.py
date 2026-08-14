@@ -183,6 +183,35 @@ def integrate_deg(ksp, Mbar, bbar, T, beta=1.0, ncyc=12, nstep=400):
     return rel, mean
 
 
+def integrate_tl(ksp, Mbar, bbar, T, beta=1.0, ncyc=12, nstep=400):
+    """dP/dt = k_sp(t)*Mbar - bbar*P with k_sp(t) = ksp*(1 + beta*sin(wt)) and the mRNA held FLAT.
+
+    THE THIRD AND LAST TERM. loop 119 eliminated M(t), loop 120 eliminated the wiring above it,
+    loop 121 tested b(t) and found the degron signal sitting on the wrong genes. This is regulated
+    translation, the remaining half of the space -- cap-dependent initiation drops in mitosis, and
+    which mRNAs keep going is decided in the 5' UTR.
+
+    loop 122's U6 gates on the fact that this and integrate_deg reach the SAME relative amplitude:
+    both are the same first-order filter with the same corner frequency bbar, driven from opposite
+    sides. If that holds, no mechanism inside this equation can exceed gain(bbar, T), whichever
+    term it acts on -- which is a much stronger statement than either loop alone could make.
+    """
+    dt = T / nstep
+    w = 2.0 * np.pi / T
+    eb = np.exp(-bbar * dt)
+    P = ksp * Mbar / bbar
+    total = ncyc * nstep
+    tr = np.zeros((nstep, len(P)))
+    for s in range(total):
+        k_t = np.maximum(ksp * (1.0 + beta * np.sin(w * (s * dt))), 0.0)
+        P = P * eb + (k_t * Mbar / bbar) * (1 - eb)
+        if s >= total - nstep:
+            tr[s - (total - nstep)] = P
+    mean = tr.mean(0)
+    rel = (tr.max(0) - tr.min(0)) / (2.0 * np.maximum(mean, 1e-300))
+    return rel, mean
+
+
 def mass_fraction(D, genes):
     """What share of measured protein MASS a gene subset carries -- copies x residues."""
     S = D["schwan"]
