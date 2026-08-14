@@ -74,6 +74,8 @@ TWO DEVIATIONS, DECLARED HERE RATHER THAN BURIED:
 
 -> outputs/loop_fusion_gnn.json
 """
+import copy
+import gc
 import json
 import os
 import sys
@@ -202,10 +204,11 @@ def split_edges(G):
     return ed
 
 
-def rewire_channel(r, c, rng, swaps_per_edge=SWAPS_PER_EDGE):
+def rewire_channel(r, c, rng, swaps_per_edge=None):
     """Double-edge swap. (a,b),(x,y) -> (a,y),(x,b): every node keeps exactly its endpoint count,
     so the degree sequence is preserved EXACTLY, and the orientation is never flipped so the
     bipartite channels (gene->reaction, reaction->metabolite) stay bipartite."""
+    swaps_per_edge = SWAPS_PER_EDGE if swaps_per_edge is None else swaps_per_edge
     m = len(r)
     rl, cl = r.tolist(), c.tolist()
     S = set()
@@ -275,41 +278,47 @@ def spectral_floor(A, k=SPECTRAL_K, seed=0):
     return vecs[:, order[1:k + 1]].astype(np.float32), lam[order[:k + 1]]
 
 
-def spectral_equivalence_check(G, emit=print, n_sub=1200, k=12):
-    """Run BOTH routines on a CONNECTED subgraph small enough for the shift-invert to finish, and
-    compare. A connected subgraph is required: on a disconnected one the bottom of the spectrum is
-    a degenerate null space and any two bases of it differ, which would make the comparison say
-    nothing rather than say the routines disagree."""
+def spectral_equivalence_check(G, emit=print, n_sub=900, k=12):
+    """Run BOTH routines on a subgraph small enough for the shift-invert to finish, and compare.
+
+    Two traps, both hit on the way here and both worth stating. The subgraph must be CONNECTED,
+    or the bottom of the spectrum is a degenerate null space whose basis is arbitrary. And it must
+    not be a STAR: the first attempt took a BFS ball around the highest-degree node, which in this
+    graph is 1,199 leaves on one hub, whose entire non-trivial spectrum is the eigenvalue 1 with
+    multiplicity 1,198 -- both routines returned identical eigenvalues and completely different
+    (equally correct) bases. So the induced subgraph on the highest-degree nodes is used instead,
+    and the eigenVALUES, which are basis-independent, are compared as well as the subspace.
+    """
     A = G["A"].tocsr()
     deg = np.asarray(A.sum(1)).ravel()
-    seed_node = int(np.argmax(deg))
-    seen, frontier = {seed_node}, [seed_node]
-    while len(seen) < n_sub and frontier:
-        nxt = []
-        for u in frontier:
-            for v in A.indices[A.indptr[u]:A.indptr[u + 1]]:
-                if int(v) not in seen:
-                    seen.add(int(v))
-                    nxt.append(int(v))
-                    if len(seen) >= n_sub:
-                        break
-            if len(seen) >= n_sub:
-                break
-        frontier = nxt
-    idx = np.sort(np.array(sorted(seen)))
+    idx = np.sort(np.argsort(-deg)[:n_sub])
     Asub = A[idx][:, idx].tocsr()
-    ncomp = sp.csgraph.connected_components(Asub, directed=False)[0]
+    lab = sp.csgraph.connected_components(Asub, directed=False)
+    big = np.argmax(np.bincount(lab[1]))
+    keep = np.where(lab[1] == big)[0]
+    Asub = Asub[keep][:, keep].tocsr()
     E_ref = CG.spectral_embed(Asub, k=k, seed=0)
     E_new, lam = spectral_floor(Asub, k=k, seed=0)
+    lam_ref = np.sort(np.linalg.eigvalsh(
+        (sp.eye(Asub.shape[0]) - sp.diags(1 / np.sqrt(np.maximum(
+            np.asarray(Asub.sum(1)).ravel(), 1))) @ Asub @ sp.diags(
+            1 / np.sqrt(np.maximum(np.asarray(Asub.sum(1)).ravel(), 1)))).toarray()))[:k + 1]
+    dlam = float(np.max(np.abs(np.sort(lam) - lam_ref)))
     q1, _ = np.linalg.qr(E_ref)
     q2, _ = np.linalg.qr(E_new)
     sv = np.linalg.svd(q1.T @ q2, compute_uv=False)
-    ok = bool(ncomp == 1 and sv.min() > 0.99)
-    emit(f"     EQUIVALENCE CHECK: connected BFS subgraph n={len(idx)}, components={ncomp}, k={k}")
+    degenerate = bool(np.min(np.diff(np.sort(lam))) < 1e-6)
+    ok = bool(dlam < 1e-4 and (sv.min() > 0.99 or degenerate))
+    emit(f"     EQUIVALENCE CHECK: induced subgraph on the {n_sub} highest-degree nodes, largest "
+         f"component n={Asub.shape[0]}, k={k}")
+    emit(f"       eigenvalues vs a DENSE reference eigvalsh: max abs diff {dlam:.2e}; "
+         f"spectrum degenerate at the bottom: {degenerate}")
     emit(f"       principal angles between CG.spectral_embed's subspace and this one: "
-         f"cos min {sv.min():.6f}, mean {sv.mean():.6f}  -> identical: {ok}")
-    return {"n_sub": int(len(idx)), "components": int(ncomp), "k": k,
-            "cos_min": float(sv.min()), "cos_mean": float(sv.mean()), "identical": ok}
+         f"cos min {sv.min():.6f}, mean {sv.mean():.6f}")
+    emit(f"       -> the two routines compute the same object: {ok}")
+    return {"n_sub": int(Asub.shape[0]), "k": k, "max_abs_eigenvalue_diff": dlam,
+            "degenerate": degenerate, "cos_min": float(sv.min()), "cos_mean": float(sv.mean()),
+            "identical": ok}
 
 
 # --------------------------------------------------------------------------------------------
@@ -355,9 +364,12 @@ class RGNN(nn.Module):
         return out
 
 
-def train_gnn(X, mats, gene_pos, y, train_mask, seed, epochs=EPOCHS):
+def train_gnn(X, mats, gene_pos, y, train_mask, seed, epochs=None):
     """Adam on the training folds only. Epoch selection uses an inner 15% split of the TRAINING
-    genes -- the held-out fold is never read during training or model selection."""
+    genes -- the held-out fold is never read during training or model selection. The returned
+    model is RESTORED to the selected epoch, so the weight norms and the channel ablation below
+    describe the same model whose predictions were scored."""
+    epochs = EPOCHS if epochs is None else epochs
     rng = np.random.default_rng(1000 + seed)
     tr_idx = np.where(train_mask)[0]
     rng.shuffle(tr_idx)
@@ -371,7 +383,7 @@ def train_gnn(X, mats, gene_pos, y, train_mask, seed, epochs=EPOCHS):
 
     model = RGNN(X.shape[1], HID, len(mats), LAYERS, seed=MODEL_SEED)
     opt = torch.optim.Adam(model.parameters(), lr=LR_ADAM, weight_decay=WD)
-    best = (-2.0, None, -1)
+    best = (-2.0, None, -1, None)
     for ep in range(1, epochs + 1):
         model.train()
         opt.zero_grad()
@@ -386,11 +398,14 @@ def train_gnn(X, mats, gene_pos, y, train_mask, seed, epochs=EPOCHS):
                 p = model(X, mats)[gp].numpy()
             rv = spearman(p[val_idx], y[val_idx])
             if np.isfinite(rv) and rv > best[0]:
-                best = (rv, p.copy(), ep)
+                best = (rv, p.copy(), ep, copy.deepcopy(model.state_dict()))
     if best[1] is None:
         model.eval()
         with torch.no_grad():
-            best = (float("nan"), model(X, mats)[gp].numpy(), epochs)
+            best = (float("nan"), model(X, mats)[gp].numpy(), epochs, None)
+    if best[3] is not None:
+        model.load_state_dict(best[3])
+    model.eval()
     return model, best[1], best[0], best[2]
 
 
@@ -417,7 +432,7 @@ def cv_feature(F, y, ybin, fold):
     return rs, au
 
 
-def cv_gnn(X, mats, gene_pos, y, ybin, fold, tag):
+def cv_gnn(X, mats, gene_pos, y, ybin, fold, tag, quiet=False):
     rs, au, models, preds = [], [], [], []
     for f in range(N_FOLD):
         t0 = time.time()
@@ -427,8 +442,9 @@ def cv_gnn(X, mats, gene_pos, y, ybin, fold, tag):
         au.append(auc(ybin[te], p[te]))
         models.append(model)
         preds.append(p)
-        say(f"       {tag} fold {f}: rho {rs[-1]:+.4f}  auc {au[-1]:.4f}  "
-            f"(inner-val rho {vr:+.4f} @ epoch {bep}, {time.time() - t0:.0f}s)")
+        if not quiet:
+            say(f"       {tag} fold {f}: rho {rs[-1]:+.4f}  auc {au[-1]:.4f}  "
+                f"(inner-val rho {vr:+.4f} @ epoch {bep}, {time.time() - t0:.0f}s)")
     return rs, au, models, preds
 
 
@@ -453,6 +469,9 @@ def main():
     n_bridge = int(len(set(G["edge_rows"][cat].tolist())))
     say(f"     THE BRIDGE: {n_cat:,} catalyses edges, carried by {n_bridge:,} of {S['genes']:,} "
         f"genes ({n_bridge / S['genes']:.1%})")
+    gc.collect()
+    gc.freeze()          # the cobra model leaves millions of live objects behind; without this
+    #                      every gen-2 sweep walks all of them and a 0.05 s epoch becomes 1 s
     e1 = (n_cat == 23225 and n_bridge == 2568)
     say(f"     matches the declared bridge (23,225 / 2,568): {e1}")
     say(f"     {S['isolated_nodes']:,} nodes are isolated in the combined graph")
@@ -553,7 +572,8 @@ def main():
                 contrib[t] += float(Ct[torch.tensor(gene_pos)].norm(dim=1).mean())
             H = torch.relu(torch.cat(Ms, 1) @ W.t() + m0.slf[li](H))
     contrib = contrib / contrib.sum()
-    abl = {}
+    abl, loo = {}, {}
+    base_rho = ms(arms["A3 combined"]["rho"])[0]
     for t, c in enumerate(ALL_CH):
         drs = []
         for f in range(N_FOLD):
@@ -562,21 +582,32 @@ def main():
                 p = comb_models[f](X, comb_mats, drop_type=t)[torch.tensor(gene_pos)].numpy()
             drs.append(spearman(p[te], y[te]))
         abl[c] = ms(drs)[0]
-    base_rho = ms(arms["A3 combined"]["rho"])[0]
-    say(f"     {'channel':<12}{'|W_t| L1':>10}{'|W_t| L2':>10}{'message share':>15}"
-        f"{'rho if ablated':>16}{'drop':>9}")
+        rest = [x for x in ALL_CH if x != c]
+        rs_l, _, _, _ = cv_gnn(X, channel_mats(edges, n, rest), gene_pos, y, ybin, fold,
+                               f"-{c}", quiet=True)
+        loo[c] = ms(rs_l)
+    say(f"     {'channel':<12}{'|W_t| L1':>10}{'|W_t| L2':>10}{'msg share':>11}"
+        f"{'zeroed':>9}{'drop':>8}{'RETRAINED without it':>22}{'drop':>8}")
     chan_table = {}
     for t, c in enumerate(ALL_CH):
-        say(f"     {c:<12}{tn[0][t]:>10.3f}{tn[1][t]:>10.3f}{contrib[t]:>14.1%}"
-            f"{abl[c]:>16.4f}{base_rho - abl[c]:>+9.4f}")
+        say(f"     {c:<12}{tn[0][t]:>10.3f}{tn[1][t]:>10.3f}{contrib[t]:>10.1%}"
+            f"{abl[c]:>9.4f}{base_rho - abl[c]:>+8.4f}"
+            f"{loo[c][0]:>16.4f} +/- {loo[c][1]:.3f}{base_rho - loo[c][0]:>+8.4f}")
         chan_table[c] = {"w_norm_layer": [float(tn[li][t]) for li in range(LAYERS)],
-                         "message_share": float(contrib[t]), "rho_ablated": float(abl[c]),
-                         "drop": float(base_rho - abl[c])}
-    top = max(chan_table, key=lambda k: chan_table[k]["drop"])
-    rxn_drop = sum(chan_table[c]["drop"] for c in RXN_CH)
-    gph_drop = sum(chan_table[c]["drop"] for c in GRAPH_CH)
-    say(f"     the single channel the model leans on hardest: {top}")
-    say(f"     summed ablation drop -- reaction channels {rxn_drop:+.4f}, "
+                         "message_share": float(contrib[t]), "rho_zeroed": float(abl[c]),
+                         "drop_zeroed": float(base_rho - abl[c]),
+                         "rho_retrained_without": float(loo[c][0]),
+                         "sd_retrained_without": float(loo[c][1]),
+                         "drop_retrained": float(base_rho - loo[c][0])}
+    say(f"     'zeroed' sets W_t to zero in the ALREADY-TRAINED model: it perturbs a jointly")
+    say(f"     trained representation, so every channel shows a drop and the column ranks rather")
+    say(f"     than measures. 'RETRAINED without it' refits the whole model on the other six")
+    say(f"     channels and is the column to read.")
+    top = max(chan_table, key=lambda k: chan_table[k]["drop_retrained"])
+    rxn_drop = sum(chan_table[c]["drop_retrained"] for c in RXN_CH)
+    gph_drop = sum(chan_table[c]["drop_retrained"] for c in GRAPH_CH)
+    say(f"     the single channel the model leans on hardest (retrained): {top}")
+    say(f"     summed retrained drop -- reaction channels {rxn_drop:+.4f}, "
         f"graph channels {gph_drop:+.4f}")
     say()
 
