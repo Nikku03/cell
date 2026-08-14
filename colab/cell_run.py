@@ -153,11 +153,21 @@ def main():
         L[nm] = max(L.get(nm, 0), c)
     gs = st["genes"]
     res = np.array([L.get(g, 0) for g in gs], float)
-    # codon demand per hour, under DISCRETE division: production over one cycle / T
+    # CODON DEMAND, AND THE FIRST VERSION OF THIS WAS WRONG. I counted only the NET increase over a
+    # cycle -- the P0 a cell must add to reach 2*P0 before halving -- and got a 3.18 h doubling
+    # time against a measured 27.5. But a cell does not only add protein, it also replaces
+    # everything that degraded while it was adding, and for a proteome whose median half-life is
+    # 47.7 h against a 27.5 h cycle that replacement term is most of the work. The honest quantity
+    # is total SYNTHESIS over the cycle, integral of k_sp*M dt, which the trajectory already has.
+    # Under the continuous approximation this reduces to sum(P*b*res), which is loop 101's formula,
+    # so the two are comparable rather than a new number.
+    synth_rate = st["k_sp"] * trM.mean(0)            # molecules per hour, cycle-averaged
+    demand = float((synth_rate * res).sum())
     xb = np.exp(-b * T_DOUBLE_H)
     P0 = (st["k_sp"] * st["M"] / b) * (1 - xb) / (2 - xb)
-    made = P0                                        # each cycle the cell makes one cell's worth
-    demand = float((made * res).sum() / T_DOUBLE_H)
+    net = float((P0 * res).sum() / T_DOUBLE_H)
+    say(f"     net accumulation alone would be {net / 1e9:.2f} Gcodons/h -- the replacement of "
+        f"what degrades is {demand / max(net, 1e-9):.1f}x larger and is the real cost")
     ribo = float(np.median([S[g]["prot_copies"] for g in S
                             if rp.match(g) and S[g].get("prot_copies")]))
     cap = ribo * 6.0 * 3600.0
@@ -165,11 +175,15 @@ def main():
     say(f"     codon demand {demand / 1e9:.2f} Gcodons/h over {len(gs):,} genes")
     say(f"     capacity at 6 aa/s {cap / 1e9:.2f} Gcodons/h -> utilisation "
         f"{100 * demand / cap:.1f}%")
-    T_pred = float((made * res).sum() / cap)
-    say(f"     doubling time implied by the protein budget alone: {T_pred:.2f} h "
-        f"(measured {T_DOUBLE_H})")
-    say(f"     loop 125 bounded the continuous-dilution error at 3.97%, so these move by at most "
-        f"that much against the recorded figures")
+    T_pred = float((demand * T_DOUBLE_H) / cap)
+    say(f"     doubling time for THIS SUBSET at 100% ribosome occupancy: {T_pred:.2f} h")
+    say(f"     NOT COMPARABLE TO LOOP 101's 13.28 h, and the difference is stated rather than")
+    say(f"     reconciled away. That figure is the whole cell's codon content (1.64e12, coverage-")
+    say(f"     corrected past the 61.9% of codon mass these genes cover) at 75% ribosome occupancy.")
+    say(f"     This one is {len(gs):,} measured genes at 100%. Two different quantities; the number")
+    say(f"     that carries over is the UTILISATION, {100 * demand / cap:.1f}% here against loop 92's 22.3%.")
+    say(f"     loop 125 bounded the continuous-dilution error at 3.97%, so making division explicit "
+        f"moves these by at most that much")
     checks["C3"] = bool(demand < cap)
     say(f"     C3 {'PASS' if checks['C3'] else 'FAIL'} -- the ribosome budget "
         f"{'closes' if checks['C3'] else 'DOES NOT close'}")
@@ -248,6 +262,7 @@ def main():
                       "protein_swing": float(np.median((trP2.max(0) - trP2.min(0))
                                                        / (2 * trP2.mean(0))))},
                "c3": {"ribosomes": ribo, "demand_gcodons_h": demand / 1e9,
+                      "net_only_gcodons_h": net / 1e9,
                       "capacity_gcodons_h": cap / 1e9, "utilisation": demand / cap,
                       "doubling_h": T_pred},
                "c4": {lbl: len(s_) for lbl, s_ in steps} | {"core_mass_fraction": mf,
