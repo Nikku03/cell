@@ -96,6 +96,7 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 UP = LR.SC / "uniprot_kinetics_human.tsv"
 BUNDLE = Path("colab/data/kinetics_bundle.json.gz")
 ECMED = Path("colab/data/ec_kcat_medians.json.gz")
+HGENES = LR.SC / "HumanGEM_genes.tsv"
 SEED = 12400
 NPERM = 2000
 
@@ -316,15 +317,21 @@ def main():
 
     # ---------------------------------------------------------------- K6
     say("K6 WHAT IT WOULD CHANGE")
+    # reaction_genes holds ENSEMBL ids, not symbols. Mapping them is not optional -- without it
+    # every intersection is empty and the loop reports zero coverage as if it were a finding.
     ens2sym = {}
-    for r_, gs in rg.items():
-        pass
+    with open(HGENES) as f:
+        rr = csv.reader(f, delimiter="\t")
+        hh = [c.strip('"') for c in next(rr)]
+        iE2, iS2 = hh.index("genes"), hh.index("geneSymbols")
+        for x in rr:
+            e, s = x[iE2].strip('"'), x[iS2].strip('"')
+            if e and s:
+                ens2sym[e] = s.split(";")[0]
+    say(f"     Ensembl -> symbol map from HumanGEM_genes.tsv: {len(ens2sym):,} genes")
     hit_rx, moved2, moved10 = set(), set(), set()
-    sym_of = {}
-    for g in kc:
-        sym_of[g] = g
     for r_, gs in rg.items():
-        syms = [s for s in gs if s in kc]
+        syms = [ens2sym[s] for s in gs if ens2sym.get(s) in kc]
         if not syms:
             continue
         hit_rx.add(r_)
@@ -357,7 +364,7 @@ def main():
     say(f"  {sum(gates.values())}/6")
     say("=" * 100)
 
-    man = RM.manifest(inputs=[UP, BUNDLE, ECMED, LR.CELL], available=stats["entries"],
+    man = RM.manifest(inputs=[UP, BUNDLE, ECMED, HGENES, LR.CELL], available=stats["entries"],
                       used=len(kc), selection="filtered", seed=SEED,
                       controls=["a constant global median as the null for both kcat and KM",
                                 "genes already tier 'measured' EXCLUDED from the audit",
@@ -392,7 +399,7 @@ def main():
                "k5": {"n_shared": len(shared), "n_excluded": len(already), "n_held": len(held),
                       "pubs_with": float(np.median(a)), "pubs_without": float(np.median(b_)),
                       "pubs_difference": obs, "pubs_p": p_sel},
-               "k6": {"reactions_touched": len(hit_rx), "moved_2x": len(moved2),
+               "k6": {"ens2sym": len(ens2sym), "reactions_touched": len(hit_rx), "moved_2x": len(moved2),
                       "moved_10x": len(moved10), "gene_rule_reactions": len(rg)},
                "seconds": time.time() - t0, "log": log},
               open(OUT / "loop_kcat_audit.json", "w"), indent=1)

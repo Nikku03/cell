@@ -456,6 +456,26 @@ LAYERS = [
      "transport reactions move material between compartment POOLS with no distance or gradient",
      "-"),
     ("cell division", "ABSENT", "-", "no cycle advances; the cell accumulates forever", "-"),
-    ("enzyme kinetics", "ABSENT", "-",
-     "no measured k_cat anywhere; loop 93 inverted it from flux and got median 0.1/s", "-"),
+    # CORRECTED. This said "no measured k_cat anywhere" and that was wrong -- I repeated it to the
+    # user before checking. colab/data/kinetics_bundle.json.gz is committed and carries a kcat for
+    # 8,184 reactions and 2,549 genes, from a measured base of 2,437 human records. The real problem
+    # is not absence, it is that three quarters of it is machine-learning prediction that loop 124
+    # then showed does not beat a constant. Second stale ABSENT found this session.
+    ("enzyme kinetics", "STATIC", "kinetics_bundle + loop_kcat_audit/124",
+     "8,184 reaction kcats and 2,549 gene kcats, committed. Tiers: 22.1% human-EC median over 362 "
+     "distinct EC numbers, 72.6% CatPred prediction, 3.7% a constant 1.85/s, 1.6% any-organism EC. "
+     "1,309 human proteins fetched from UniProt with literature-curated kinetics -- 242 kcat, "
+     "1,275 KM, PubMed-cited, parser validated on PNP/FH/TK1",
+     "THE PREDICTIONS DO NOT BEAT A CONSTANT. On 66 held-out genes the bundle's kcat scores 12.95x "
+     "median fold-error against 9.42x for a flat 1.85/s (p 0.55). The claimed tier ordering breaks: "
+     "human-EC 3.83x < GLOBAL MEDIAN 9.42x < CatPred 13.29x, so tier 2 is worse than the null it "
+     "outranks. And the audit set is selected -- measured genes have 82 median publications against "
+     "64 (p 0.0105) -- so this describes the enzymes people study"),
+    ("Michaelis constants K_M", "RUNS", "kinetics_bundle + loop_kcat_audit/124 K4",
+     "the one kinetic parameter in this model that carries real information: predicted KM scores "
+     "3.54x median fold-error against 5.77x for a constant 43.6 uM, on 628 genes with a measured "
+     "counterpart, p = 0.0000. 30.1% land within 2x",
+     "every KM in the bundle is tagged catpred+ECprior -- there is no measured-KM tier, so these "
+     "are predictions that happen to be good, not measurements. The 1,275 UniProt values are "
+     "fetched but not yet substituted in"),
 ]
