@@ -582,12 +582,26 @@ def main():
     say("  THE HONEST LIMIT")
     say(f"     This predicts the doubling time a protein budget PERMITS, not the one a cell chooses.")
     say(f"     A cell can always grow more slowly than its ribosomes allow, so the calculation is a")
-    say(f"     LOWER bound on T that happens to be tight -- and it would be equally consistent with")
-    say(f"     the data if the real constraint were nucleotides, membrane, or a checkpoint. Nothing")
-    say(f"     here shows translation is the binding constraint; it shows that if it is, the number")
-    say(f"     comes out right. The four routes to A disagree by a factor of "
-        f"{max(v for v in routes.values() if np.isfinite(v)) / min(routes.values()):.1f}, and that")
-    say(f"     spread, not the gene-level noise, is the whole uncertainty of this loop.")
+    say(f"     LOWER bound on T -- and the run says it is a lower bound that is NOT tight: "
+        f"{T_pred:.1f} h")
+    say(f"     permitted against {T_MEASURED_H:.0f} h achieved. That is the result. It would be "
+        f"equally consistent")
+    say(f"     with the data if the real constraint were nucleotides, membrane, or a checkpoint, "
+        f"and")
+    say(f"     nothing here shows translation binds. What it shows is that translation does NOT "
+        f"bind,")
+    say(f"     to within the factor of "
+        f"{max(v for v in routes.values() if np.isfinite(v)) / min(routes.values()):.1f} by which "
+        f"the four routes to A disagree. That spread,")
+    say(f"     not the gene-level noise (bootstrap +/- "
+        f"{(np.percentile(boot, 97.5) - np.percentile(boot, 2.5)) / 2:.2f} h), is the whole "
+        f"uncertainty of this loop.")
+    say(f"     Two assumptions carry it and neither is tested here: that the {1 - A_cov / A_P:.0%} "
+        f"of proteome mass with no")
+    say(f"     measured half-life turns over at the same mass-weighted rate as the {A_cov / A_P:.0%} "
+        f"that does,")
+    say(f"     and that Schwanhausser's NIH3T3 turnover transfers to a 24 h reference cell that is "
+        f"not NIH3T3.")
     say()
 
     gates = {"D1 arithmetic reproduces loop 92": bool(d1),
@@ -632,7 +646,8 @@ def main():
                       "A_H_hela_coverage": A_H, "A_M_measured_only": A_M,
                       "hela_codon_mass_coverage": cov_hela, "ratio_P_over_R": ratioPR,
                       "ribosomes": R, "rp_codons_full_complement": rp_codons,
-                      "rp_codons_detected": rp_codons_seen, "capacity_codons_h": cap},
+                      "rp_codons_detected": rp_codons_seen, "A_R_from_detected_rp": A_R_seen,
+                      "capacity_codons_h": cap},
                "d4": {"T_pred_h": T_pred, "T_measured_h": T_MEASURED_H,
                       "ratio": T_pred / T_MEASURED_H, "U_central": U_CENTRAL,
                       "grid": grid, "required_U": ureq, "constant_sweep": sw,

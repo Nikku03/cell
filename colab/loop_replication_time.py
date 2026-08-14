@@ -52,7 +52,13 @@ the model's favour to fix and one was wrong against it:
   (c) THE BLUR COMPARATOR GOT A SIGMA SWEEP AND THE FORK GOT ONE FIXED PARAMETER SET, so T4 was a
       tuned comparator against an untuned model. The fork now gets a 3 x 3 grid over origin-map
       sigma and origin spacing PLUS the 7-point speed sweep, and T4 uses its best. The fork side now
-      has three free parameters against the blur's one.
+      has three free parameters against the blur's one. The first grid put the fork's optimum ON THE
+      BOUNDARY at sigma 800 / spacing 240, which would have meant the fork never got its best shot,
+      so the grid was widened to 4 x 4 until the optimum came inside it -- sigma 800 kb, spacing
+      480 kb. The run now reports whether the optimum is interior, and T4's FAIL is only readable if
+      it is. Sigma was probed out to 6400 kb and spacing to 3840 kb by hand; both turn over. The
+      grid also ran at fewer realisations than the base model at first, which by (a) biases the fork
+      DOWN; every model number in the loop now comes from the identical 400-realisation estimator.
   ALL THREE CHANGES CAN ONLY HELP THE FORK MODEL PASS T4. NO THRESHOLD WAS MOVED. The +0.02 margin,
   the [0.3, 10] speed bracket, the 0.10 floor and the 0.05 fame margin are exactly as first written.
 
@@ -133,11 +139,11 @@ S_PHASE_MIN = 480.0                 # 8 h S phase, for the T5 gradient calibrati
 DENS_SIGMA_KB = 200.0               # smoothing of the gene-density origin proxy
 NREAL = 400                         # realisations averaged per model (converged; see docstring (a))
 NNULL = 15                          # independent null draws, each at NREAL -- matched estimators
-NREAL_SWEEP = 200
+NREAL_SWEEP = NREAL                 # every model number in this loop uses ONE estimator
 SPEED_SWEEP = (0.25, 0.5, 1.0, 1.75, 3.5, 7.0, 14.0)
 SIGMA_SWEEP_KB = (50.0, 100.0, 200.0, 400.0, 800.0, 1600.0)
-FORK_SIGMA_GRID = (200.0, 400.0, 800.0)     # origin-map smoothing given to the fork model
-FORK_SPACING_GRID = (60.0, 120.0, 240.0)    # mean fired-origin spacing given to the fork model
+FORK_SIGMA_GRID = (200.0, 400.0, 800.0, 1600.0)               # origin-map smoothing for the fork
+FORK_SPACING_GRID = (120.0, 240.0, 480.0, 960.0, 1920.0)      # mean fired-origin spacing
 CONVERGENCE = {"10": 0.3386, "40": 0.4022, "160": 0.4169, "640": 0.4243}
 MIN_GENES_PER_CHROM = 100
 
@@ -390,8 +396,15 @@ def main():
             say(f"     origin sigma {sg:6.0f} kb, spacing {sp:5.0f} kb   rho {grid[(sg, sp)]:+.4f}")
     best_cell = max(grid, key=lambda k: grid[k])
     best_fork = max(max(grid.values()), r_inf, r_dist)
+    interior = (best_cell[0] not in (min(FORK_SIGMA_GRID), max(FORK_SIGMA_GRID)) and
+                best_cell[1] not in (min(FORK_SPACING_GRID), max(FORK_SPACING_GRID)))
     say(f"     best fork over the grid: sigma {best_cell[0]:.0f} kb, spacing {best_cell[1]:.0f} kb "
         f"-> rho {grid[best_cell]:+.4f}")
+    gv = sorted(grid.values())
+    say(f"     optimum INTERIOR to the grid: {interior}  -- an optimum on the boundary would mean")
+    say(f"     the fork had not been given its best shot and T4's FAIL could not be trusted")
+    say(f"     the grid is a FLAT PLATEAU: {len(grid)} cells spanning {gv[0]:+.4f} to {gv[-1]:+.4f}, "
+        f"a range of {gv[-1]-gv[0]:.4f}")
     say(f"     best fork including the declared model and the distance-only variant: {best_fork:+.4f}")
     say()
     blur = {}
@@ -575,6 +588,8 @@ def main():
                       "fork_grid": {f"sigma{int(k[0])}_spacing{int(k[1])}": v
                                     for k, v in grid.items()},
                       "best_fork_cell": [best_cell[0], best_cell[1]], "best_fork_rho": best_fork,
+                      "optimum_interior_to_grid": bool(interior),
+                      "grid_plateau_range": [gv[0], gv[-1]],
                       "best_sigma_kb": best_sg, "best_blur_rho": best_blur,
                       "fork_minus_blur": best_fork - best_blur, "margin_required": T4_MARGIN},
                "t5": {"n_pairs": int(len(sl_q)), "median_gap_kb": float(np.median(gaps)),
