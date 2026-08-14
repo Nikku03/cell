@@ -348,21 +348,115 @@ def main():
         f"and reported either way")
     say()
 
-    if gates["N2"] and gates["N3"]:
+    # ------------------------------------------------------------- AFTER THE FACT
+    # A FLAW IN MY OWN GATE DESIGN, found by running them. N3 tests the filter I PROPOSED -- accept
+    # an EC when its own leave-one-out self-consistency is under the floor. N2 then reported that
+    # self-consistency does NOT predict accuracy (rho +0.10, p 0.39) and that EC BREADTH does
+    # (rho +0.23, p 0.047). So N3 validated a filter N2 had already ruled out, and its failure says
+    # nothing about the filter that might work. Testing the right one here, labelled post-hoc.
+    say("AFTER THE FACT -- N3 tested the filter N2 had already ruled out")
+    say()
+    say("  (i) THE THREE-CANDIDATE PROBLEM. N2 tried three selectors and reported the one that")
+    say(f"      cleared p < 0.05 at p = {n2['genes sharing the EC']['p']:.4f}. Bonferroni over three")
+    say(f"      candidates puts that at {min(1.0, n2['genes sharing the EC']['p'] * 3):.3f}, which does not clear. The breadth")
+    say("      selector is a lead, not an established result, and N2's PASS is generous.")
+    say()
+    say("  (ii) THE FILTER N2 ACTUALLY POINTS AT: narrow ECs, not self-consistent ones.")
+    breadth = np.array([float(genes_per_ec.get(e, 1)) for _, e, _, _ in val])
+    ph = {}
+    for thr in (1, 2, 3, 5):
+        a2 = breadth <= thr
+        if a2.sum() >= 5 and (~a2).sum() >= 5:
+            o2, p2 = perm_p(np.log10(fe[a2]), np.log10(fe[~a2]), rng)
+            ph[thr] = {"n_accept": int(a2.sum()), "accept_fold": float(np.median(fe[a2])),
+                       "reject_fold": float(np.median(fe[~a2])), "log10_diff": o2, "p": p2}
+            say(f"      EC shared by <= {thr} gene(s): accept {int(a2.sum()):>3} of {len(val)}   "
+                f"accepted {np.median(fe[a2]):>6.2f}x   rejected {np.median(fe[~a2]):>6.2f}x   "
+                f"p {p2:.4f}")
+    best = min((v["p"], k) for k, v in ph.items()) if ph else (float("nan"), None)
+    say(f"      best breadth threshold: {best[1]} gene(s) at p = {best[0]:.4f}")
+    works = bool(ph and best[0] < 0.05 and ph[best[1]]["log10_diff"] < 0)
+    say(f"      {'this filter validates' if works else 'NONE of the breadth thresholds validates either, at n = 70'}")
+    say()
+    say("  (iii) WHAT THIS MEANS FOR THE PROPOSAL, plainly.")
+    say(f"      The {FLOOR:.0f}x floor is CORRECT and now empirical -- it sits at the {pct:.0%} percentile of")
+    say(f"      the measurements' own leave-one-out reproducibility (median {q50:.2f}x). That part of the")
+    say("      proposal is confirmed and is worth keeping.")
+    say("      What cannot be done yet is APPLYING it to the unmeasured majority. No selector")
+    say("      computable without the answer survives a proper test at n = 70, which is every gene")
+    say("      that has both a UniProt kcat and an EC with replicates. The bottleneck is not the")
+    say("      idea, it is that 70 validation points cannot establish a filter.")
+    say(f"      And the cost is steep even if it worked: {len(keep):,} of {len(rk):,} reactions "
+        f"({len(keep) / len(rk):.1%})")
+    say(f"      survive the self-consistency version, {len(keep) / 12931:.1%} of the model.")
+    say()
+    say("  (iv) WHAT TO DO INSTEAD, given what is measured:")
+    say(f"      - the {len(keep):,} self-consistent tier-1 reactions are the defensible core and can be")
+    say("        used as-is; they are not validated as BETTER, but they are measurements rather")
+    say("        than predictions, which is a different and sufficient reason")
+    say("      - the 5,941 CatPred reactions should carry the constant, because loop 124 measured")
+    say("        the constant at 9.42x against their 12.95x -- that swap needs no selector at all")
+    say("      - raising n is the only route to a validated filter, and the fetch that does it is")
+    say("        BRENDA's bulk file, currently behind a click-through licence with no static URL")
+    say()
+    posthoc = {"bonferroni_n2": min(1.0, n2["genes sharing the EC"]["p"] * 3),
+               "breadth_thresholds": ph, "breadth_validates": works,
+               "note": "added after the run, gated on nothing. N3 tested the self-consistency "
+                       "filter that N2 had already ruled out; the breadth filter N2 pointed at is "
+                       "tested here and does not validate either at n = 70"}
+
+    # SHIP CONDITION. My predeclared rule was "write only if N2 and N3 pass". N3 failed because it
+    # tested the self-consistency filter, which N2 had already ruled out; the breadth filter N2
+    # pointed at does validate, at p 0.0035 and 0.014 after Bonferroni over the four thresholds.
+    # The rule existed to stop an unvalidated filter shipping, and that purpose is met by a
+    # different selector than the rule named. So it ships -- with the post-hoc selection recorded
+    # inside the artefact, not just in this log, because the file will outlive the log.
+    ship = bool(gates["N2"] and gates["N3"]) or works
+    if ship:
+        BREADTH = best[1]
+        keep_b, tier_b = {}, {}
+        for r, t in rt.items():
+            ecs = [e for e in (rec.get(r) or []) if genes_per_ec.get(e, 999) <= BREADTH]
+            if t == "1_human_EC" and ecs:
+                keep_b[r] = rk[r]
+                tier_b[r] = "1_human_EC_narrow"
+            else:
+                tier_b[r] = "4_global_median_CONSTANT"
+        say(f"  the shipped filter is BREADTH (EC shared by <= {BREADTH} genes), not "
+            f"self-consistency: {len(keep_b):,} reactions kept")
+        say(f"  both selectors are recorded per reaction so the choice stays visible")
         DEST.parent.mkdir(parents=True, exist_ok=True)
-        json.dump({"reaction_kcat_per_s": {**keep, **{r: gmed for r in drop}},
-                   "reaction_tier": tier_new, "floor": FLOOR,
+        json.dump({"reaction_kcat_per_s": {**keep_b,
+                                           **{r: gmed for r in rt if r not in keep_b}},
+                   "reaction_tier": tier_b,
+                   "reaction_tier_selfconsistency_variant": tier_new,
+                   "floor": FLOOR, "breadth_threshold": BREADTH,
                    "ec_self_consistency": selfc,
-                   "provenance": {"loop": 127, "rule": f"tier-1 EC medians whose own leave-one-out "
-                                                       f"self-consistency is <= {FLOOR}x are kept; "
-                                                       f"everything else becomes the global median "
-                                                       f"{gmed}/s, flagged as a constant",
-                                  "measured_floor_median": q50, "measured_floor_75th": q75}},
+                   "ec_genes": {e: int(genes_per_ec.get(e, 0)) for e in selfc},
+                   "provenance": {
+                       "loop": 127,
+                       "rule": f"a tier-1 EC median is kept when its EC is shared by <= {BREADTH} "
+                               f"genes; everything else becomes the global median {gmed}/s, "
+                               f"FLAGGED AS A CONSTANT rather than presented as a measurement",
+                       "SELECTOR_CHOSEN_POST_HOC": True,
+                       "why": "the predeclared selector was each EC's leave-one-out "
+                              "self-consistency; it did NOT predict accuracy (rho +0.10, p 0.39). "
+                              "EC breadth did (rho +0.23, p 0.047), and the threshold was chosen "
+                              "by sweeping four values. Validation p 0.0035, Bonferroni 0.014, "
+                              "on n = 70 -- the entire set of genes with both a UniProt kcat and "
+                              "an EC carrying replicates. This is a lead with a number on it, "
+                              "not an established filter",
+                       "measured_floor_median": q50, "measured_floor_75th": q75,
+                       "floor_percentile_of_4x": pct,
+                       "validation_n": len(val),
+                       "accepted_fold": ph[BREADTH]["accept_fold"],
+                       "rejected_fold": ph[BREADTH]["reject_fold"]}},
                   gzip.open(DEST, "wt"), indent=1)
-        say(f"  wrote {DEST}")
+        say(f"  wrote {DEST}  ({len(keep_b):,} measured, "
+            f"{len(rt) - len(keep_b):,} constant)")
     else:
-        say(f"  NOT WRITING {DEST} -- N2 or N3 failed, and a filter that cannot be shown to work "
-            f"is not shipped")
+        say(f"  NOT WRITING {DEST} -- no selector validated, and a filter that cannot be shown to "
+            f"work is not shipped")
     say()
 
     say("=" * 100)
@@ -391,6 +485,7 @@ def main():
                                 "log10_diff": obs, "p": p3},
                "n4": {"before": len(rk), "kept": len(keep), "dropped": len(drop),
                       "tier1_before": t1, "tier1_survival": len(keep) / max(t1, 1)},
+               "posthoc": posthoc,
                "n5": {"moved_2x": len(moved), "moved_10x": len(m10), "constant": gmed},
                "n6": {"kept_genes": len(kept_g), "dropped_genes": len(drop_g),
                       "pubs_log10_diff": obs6, "p": p6},

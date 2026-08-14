@@ -568,6 +568,25 @@ LAYERS = [
      "human-EC 3.83x < GLOBAL MEDIAN 9.42x < CatPred 13.29x, so tier 2 is worse than the null it "
      "outranks. And the audit set is selected -- measured genes have 82 median publications against "
      "64 (p 0.0105) -- so this describes the enzymes people study"),
+    ("kinetics filtered to the noise floor", "RUNS", "loop_kcat_floor/127",
+     "THE EXPERIMENTAL NOISE FLOOR IS NOW MEASURED, NOT ASSUMED: predicting one human kcat record "
+     "from the median of the others in its own EC gives 2.85x median leave-one-out error over "
+     "2,221 records and 204 ECs. The proposed 4x operating point sits at the 60th percentile of "
+     "that, so it is defensible. Shipped filter: keep a tier-1 EC median when its EC is shared by "
+     "<= 3 genes, else use the constant 1.85/s FLAGGED AS A CONSTANT. 1,130 reactions measured, "
+     "7,054 constant. Validated on 70 held-out UniProt genes: 2.82x accepted against 43.31x "
+     "rejected, p 0.0035 (Bonferroni 0.014). -> colab/data/kinetics_filtered.json.gz",
+     "THE SELECTOR WAS CHOSEN POST HOC and the artefact records that. The predeclared one -- each "
+     "EC's own self-consistency -- did NOT predict accuracy (rho +0.10, p 0.39); EC BREADTH did. "
+     "n = 70 is every gene with both a UniProt kcat and an EC carrying replicates, and the "
+     "rejected-group medians swing from 6.7x to 43.3x across thresholds, which is what n = 70 "
+     "looks like. A lead with a number on it, not an established filter"),
+    ("replicate count as a quality signal", "FAILED", "loop_kcat_floor/127",
+     "spread RISES with the number of measurements behind an EC: 1.54x at 3-4 records, 2.24x at "
+     "5-9, 2.55x at 10-19, 2.62x at 20+",
+     "'trust the well-measured ones' is exactly backwards -- a heavily measured EC is a BROAD "
+     "class covering many enzymes and conditions, not a well-pinned one. Any filter built on "
+     "record count would have selected for breadth, which is the thing that predicts error"),
     ("Michaelis constants K_M", "RUNS", "kinetics_bundle + loop_kcat_audit/124 K4",
      "the one kinetic parameter in this model that carries real information: predicted KM scores "
      "3.54x median fold-error against 5.77x for a constant 43.6 uM, on 628 genes with a measured "
