@@ -410,6 +410,16 @@ LAYERS = [
      "than the ODE, the signed topology, the raw count and both fame measures. Holding it fixed by "
      "quintile collapses integrated to 0.5348, topology to 0.5320 and raw count to 0.4985. The "
      "network was scoring how many regulators a gene has been ASSIGNED, which is annotation effort"),
+    ("CollecTRI as a replacement network", "FAILED", "loop_collectri/130",
+     "loop 120's protocol run unchanged on literature-curated CollecTRI. Marginally better on "
+     "identical genes -- AUC 0.5717 against the existing network's 0.5610 -- and it is the first "
+     "network in this arc to beat fame (0.5717 against the gene's own publication count 0.5586). "
+     "That is the whole of the good news",
+     "IT FAILS THE SAME THREE GATES. Real signs AUC 0.5717 against SHUFFLED signs 0.5732 +/- "
+     "0.0064 -- the shuffle scores HIGHER, exactly as it did for the existing network. "
+     "CCD-regulator enrichment z 1.28, up from 0.63 and still short of 2. And regulator count "
+     "alone scores 0.5856, above CollecTRI, with stratification collapsing it to 0.5491. Curated "
+     "signs from the literature do not help, so the problem is not the network SOURCE"),
     ("reaction+graph fusion", "FAILED", "loop_fusion_linear",
      "combined 0.166 BELOW graph-only; 90% of what remains survives degree-preserving rewiring",
      "the metabolic bridge is absent for 84% of genes"),
