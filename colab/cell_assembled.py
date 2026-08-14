@@ -642,7 +642,18 @@ LAYERS = [
      "EC's own self-consistency -- did NOT predict accuracy (rho +0.10, p 0.39); EC BREADTH did. "
      "n = 70 is every gene with both a UniProt kcat and an EC carrying replicates, and the "
      "rejected-group medians swing from 6.7x to 43.3x across thresholds, which is what n = 70 "
-     "looks like. A lead with a number on it, not an established filter"),
+     "looks like. A lead with a number on it, not an established filter. LOOP 129 TRIED TO "
+     "RETEST IT ON DLKcat AND COULD NOT: 160 of 169 candidate genes are already tier 'measured' "
+     "in the bundle because ec_kcat_medians was BUILT FROM DLKcat, leaving 9 genuinely held out. "
+     "The filter is untested, not disproven, and loop 127's own UniProt validation remains the "
+     "only evidence for it"),
+    ("the true experimental noise floor", "CLOSES", "fetch_gaps + loop_kcat_floor2/129",
+     "same protein AND same substrate, independently measured: median 1.15x over 101 values from "
+     "49 pairs. This is reproducibility, and it needs no model -- it is a property of the "
+     "measurements alone. Loop 127's 2.85x was leave-one-out WITHIN AN EC, which is "
+     "enzyme-to-enzyme and substrate-to-substrate variation, roughly three times too large",
+     "the 4x operating point survives but is about three times LOOSER than what can be measured, "
+     "not close to the limit as loop 127 claimed"),
     ("replicate count as a quality signal", "FAILED", "loop_kcat_floor/127",
      "spread RISES with the number of measurements behind an EC: 1.54x at 3-4 records, 2.24x at "
      "5-9, 2.55x at 10-19, 2.62x at 20+",

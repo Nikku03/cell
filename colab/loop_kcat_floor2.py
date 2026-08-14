@@ -225,11 +225,26 @@ def main():
     say(f"     P1 {'PASS' if gates['P1'] else 'FAIL'}")
     say()
 
-    # the validation set: DLKcat truth, bundle prediction
-    val = [g for g in dkc if g in gk and g in uec and any(e in ec_med for e in uec[g])]
-    say(f"  validation set: {len(val)} genes with a DLKcat kcat, a bundle value and an EC "
-        f"(loop 127 had 70)")
+    # THE VALIDATION SET, AND THE TRAP I WALKED INTO. My first version took every gene with a
+    # DLKcat kcat and a bundle value and called it a 4x expansion. It is not. The bundle's
+    # ec_kcat_medians was BUILT FROM DLKcat -- the provenance says so -- so scoring the bundle
+    # against DLKcat is scoring a lookup against itself. 159 of the 169 carry bundle tier
+    # 'measured', which is loop 124's K5 exclusion exactly, and I failed to apply it.
+    gt = B["gene_tier"]
+    MEASURED_TIERS = ("measured", "EC-measured")
+    val_all = [g for g in dkc if g in gk and g in uec and any(e in ec_med for e in uec[g])]
+    val = [g for g in val_all if gt.get(g) not in MEASURED_TIERS]
+    say(f"  candidate genes: {len(val_all)}")
+    say(f"  EXCLUDED as already tier 'measured' in the bundle: "
+        f"{len(val_all) - len(val)} -- ec_kcat_medians was built FROM DLKcat, so these are a lookup")
+    say(f"  genuinely held out: {len(val)}   (loop 124 had 66 on the same rule)")
+    say(f"  tiers of the held-out set: "
+        + ", ".join(f"{k} {n}" for k, n in collections.Counter(gt.get(g) for g in val).most_common()))
     fe = np.array([max(gk[g] / dkc[g], dkc[g] / gk[g]) for g in val])
+    fe_all = np.array([max(gk[g] / dkc[g], dkc[g] / gk[g]) for g in val_all])
+    say(f"  fold-error on the held-out {len(val)}: median {np.median(fe):.2f}x")
+    say(f"  fold-error on the contaminated {len(val_all)}: median {np.median(fe_all):.2f}x "
+        f"-- the difference IS the circularity")
     say()
 
     # ---------------------------------------------------------------- P2
@@ -358,7 +373,11 @@ def main():
     say(f"     THREE DENOMINATORS at breadth <= {SHIPPED_BREADTH}: "
         f"{len(json.load(gzip.open(FILT, 'rt'))['reaction_tier']) if FILT.exists() else 0:,} reactions tiered, "
         f"1,130 measured = 8.7% of 12,931; tier 1 is {n1:,}")
-    say(f"     validation n: 70 -> {len(val)}, a {len(val) / 70:.1f}x expansion")
+    say(f"     validation n: 66 -> {len(val)} genuinely held out "
+        f"({len(val_all)} before the tier exclusion)")
+    say(f"     THE CLAIMED 4x EXPANSION WAS ILLUSORY. DLKcat cannot serve as held-out truth for a")
+    say(f"     bundle built from DLKcat, and after the exclusion the usable set is "
+        f"{'SMALLER' if len(val) < 66 else 'no larger'} than loop 124's.")
     gates["P6"] = bool(np.isfinite(p6))
     say(f"     P6 {'PASS' if gates['P6'] else 'FAIL'}")
     say()
@@ -381,7 +400,9 @@ def main():
                            "UniProt id but does carry the protein sequence")
     RM.report(man, emit=say)
     json.dump({"test": "loop_kcat_floor2", "manifest": man, "gates": gates,
-               "true_floor": TRUE_FLOOR, "n_val": len(val), "n_val_loop127": 70,
+               "true_floor": TRUE_FLOOR, "n_val_heldout": len(val), "n_val_contaminated": len(val_all),
+               "median_fold_heldout": float(np.median(fe)), "median_fold_contaminated": float(np.median(fe_all)),
+               "n_val_loop124": 66,
                "p1": {"n": len(sh), "spearman": rho1, "median_fold": float(np.median(f1))},
                "p2": p2,
                "p3": {"n_accept": int(acc.sum()), "log10_diff": o3, "p": p3,
