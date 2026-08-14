@@ -670,6 +670,19 @@ LAYERS = [
      "'trust the well-measured ones' is exactly backwards -- a heavily measured EC is a BROAD "
      "class covering many enzymes and conditions, not a well-pinned one. Any filter built on "
      "record count would have selected for breadth, which is the thing that predicts error"),
+    ("kcat from sequence, learned", "RUNS", "loop_ml_kcat/131 + loop_ml_audit/132",
+     "17,004 measurements, 7,856 sequences, split by MinHash 5-mer cluster with the leakage "
+     "audited at 0.371 max test-train Jaccard. Gradient boosting on ESM2-8M + Morgan fingerprints "
+     "+ composition scores RMSE 1.3768 log10 against a constant's 1.5091 and the best lookup "
+     "baseline (EC median) at 1.5015. CLUSTER bootstrap on the gain: +0.1323, 95% [+0.1003, "
+     "+0.1668], all five folds positive. A properly tuned MLP ties it at 1.3867, 95% CI on the "
+     "difference [-0.0143, +0.0345]. Every homology baseline scores WORSE than a constant, which "
+     "is the split working. 0.000% of predictions violate the Smoluchowski limit",
+     "IT CLOSES 9.5% OF THE DISTANCE to the 0.061 experimental floor, cutting typical fold error "
+     "from 32x to 23x. And the ceiling is much closer than that: 86.0% of the variance is BETWEEN "
+     "proteins, so a PERFECT per-protein predictor would score 0.5625 -- this model is 2.4x worse "
+     "than a method-free bound on ignoring the substrate entirely. The substrate channel is real "
+     "but small: shuffling substrates within a protein costs only +0.0191 of the +0.1323 gain"),
     ("Michaelis constants K_M", "RUNS", "kinetics_bundle + loop_kcat_audit/124 K4",
      "the one kinetic parameter in this model that carries real information: predicted KM scores "
      "3.54x median fold-error against 5.77x for a constant 43.6 uM, on 628 genes with a measured "

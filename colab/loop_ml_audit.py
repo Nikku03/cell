@@ -269,18 +269,19 @@ def main():
 
     # ---------------------------------------------------------------- A4
     say("A4 DOES THE SPLIT'S DRIFT CHANGE THE ANSWER?")
-    csum = collections.defaultdict(list)
-    for i, c in enumerate(clu):
-        csum[c].append(y[i])
-    order = sorted(csum, key=lambda c: -np.sum(csum[c]))
-    tot = np.zeros(N_FOLDS)
-    cnt = np.zeros(N_FOLDS)
+    # THE FIRST VERSION OF THIS WAS BROKEN AND THE GATE CAUGHT IT. Greedy longest-processing-time
+    # on cluster target SUMS balances sums, not means: a fold that collects many small clusters and
+    # one that collects few large ones can match on total while their means diverge wildly. It
+    # produced fold means of -0.778 and +0.642, four times WORSE than the 0.207 it was meant to fix,
+    # and the model then scored 1.6040 because fold 0 held all the slow enzymes. Fixed to stratified
+    # group k-fold: order clusters by their own mean target and deal them out in a snake pattern, so
+    # each fold receives a matched slice of the target distribution.
+    cmean = {c: float(np.mean(y[clu == c])) for c in set(clu.tolist())}
+    order = sorted(cmean, key=lambda c: cmean[c])
     assign = {}
-    for c in order:                       # greedy longest-processing-time on target sums
-        k = int(np.argmin(tot))
-        assign[c] = k
-        tot[k] += np.sum(csum[c])
-        cnt[k] += len(csum[c])
+    for i, c in enumerate(order):
+        blk, pos = divmod(i, N_FOLDS)
+        assign[c] = pos if blk % 2 == 0 else N_FOLDS - 1 - pos      # snake, not round-robin
     f2 = np.array([assign[c] for c in clu])
     dr2 = [float(y[f2 == k].mean() - y.mean()) for k in range(N_FOLDS)]
     say(f"     rebalanced fold means: " + "  ".join(f"{v:+.3f}" for v in dr2))
