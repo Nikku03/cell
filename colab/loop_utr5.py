@@ -453,6 +453,79 @@ def main():
         say(f"  {k}  {'PASS' if gates[k] else 'FAIL'}")
     say(f"  {sum(gates.values())}/6")
     say("=" * 100)
+    say()
+
+    # ------------------------------------------------------------- AFTER THE FACT
+    # ADDED AFTER THE RUN, GATED ON NOTHING. Four loops have now eliminated every mechanism this
+    # equation contains, and U6 says why the elimination had to happen: they are all the same
+    # filter. But "the measurement is not measuring copy number" cannot be the whole story either,
+    # and there is a specific reason, so the population gets split rather than dismissed.
+    say("AFTER THE FACT -- splitting the population instead of dismissing it")
+    say()
+    say("  (i) THE GEOMETRY HYPOTHESIS CANNOT BE THE WHOLE ANSWER, and loop 119 is why.")
+    say("      Protein HALF-LIFE predicts the CCD call at AUC 0.5999 -- measured by SILAC mass")
+    say("      spectrometry in mouse fibroblasts, an instrument with no camera in it and no")
+    say("      connection to the imaging that made the call. A pure localisation artefact has no")
+    say("      reason to track turnover in a different species by a different method. So genuine")
+    say("      abundance change is part of this population.")
+    say()
+    say("  (ii) SO SPLIT IT AT THE BOUND. Above the half-life threshold no mechanism in the")
+    say(f"      equation can reach {AMP_MIN:.0%}; below it, they all can.")
+    fast = [g for g in called if cp[g] == "Yes" and g in hl and hl[g] < thr]
+    slow = [g for g in called if cp[g] == "Yes" and g in hl and hl[g] >= thr]
+    ctrl = [g for g in called if cp[g] == "No" and g in hl]
+    say(f"      CCD, half-life < {thr:.1f} h  (explainable): {len(fast)}")
+    say(f"      CCD, half-life >= {thr:.1f} h (NOT explainable): {len(slow)}")
+    say(f"      imaged controls with a half-life: {len(ctrl)}")
+
+    def frac(gs, f):
+        v = [f(g) for g in gs if f(g) is not None]
+        return float(np.mean(v)) if v else float("nan"), len(v)
+
+    def dbox(g):
+        return 100.0 * len(dbx.findall(prot[g])) / max(len(prot[g]), 1) if g in prot else None
+
+    def dual(g):
+        if g not in locn:
+            return None
+        return 1.0 if len([p for p in (locn[g][0] + "," + locn[g][1]).split(",")
+                           if p.strip()]) > 1 else 0.0
+    split = {}
+    for nm2, gs in (("CCD fast (explainable)", fast), ("CCD slow (NOT explainable)", slow),
+                    ("imaged controls", ctrl)):
+        d, nd = frac(gs, dbox)
+        m, nm3 = frac(gs, dual)
+        split[nm2] = {"dbox": d, "n_dbox": nd, "dual": m, "n_dual": nm3, "n": len(gs)}
+        say(f"        {nm2:<28} D-box+ {d:.4f} (n={nd})   dual-localised {m:.1%} (n={nm3})")
+    df, pf = perm_p([dbox(g) for g in fast if dbox(g) is not None],
+                    [dbox(g) for g in ctrl if dbox(g) is not None], rng)
+    ds, ps = perm_p([dbox(g) for g in slow if dbox(g) is not None],
+                    [dbox(g) for g in ctrl if dbox(g) is not None], rng)
+    mf, pmf = perm_p([dual(g) for g in fast if dual(g) is not None],
+                     [dual(g) for g in ctrl if dual(g) is not None], rng)
+    ms, pms = perm_p([dual(g) for g in slow if dual(g) is not None],
+                     [dual(g) for g in ctrl if dual(g) is not None], rng)
+    say(f"      vs the controls:")
+    say(f"        D-box+          fast {df:+.4f} p {pf:.4f}    slow {ds:+.4f} p {ps:.4f}")
+    say(f"        dual-localised  fast {mf:+.1%} p {pmf:.4f}    slow {ms:+.1%} p {pms:.4f}")
+    say()
+    say("  (iii) WHAT THE WHOLE ARC ADDS UP TO, in one sentence per candidate:")
+    say("        M(t) transcription       ELIMINATED  loop 119, p = 2e-67 in the wrong direction")
+    say("        the regulatory wiring    ELIMINATED  loop 120, shuffled signs score higher")
+    say("        b(t) timed destruction   PARTIAL     loop 121, signal on the already-explained")
+    say("                                             genes; and bounded by the same filter")
+    say("        k_sp(t) translation      NO SIGNAL   this loop, U3/U4/U5 all fail")
+    say("        the equation itself      IMPLICATED  U6: all of the above share one bound, and")
+    say(f"                                             {above:.0%} of CCD proteins sit above it")
+    say("        measurement geometry     LEADING     AUC 0.5991, the largest number in four")
+    say("                                             loops -- and same-instrument, so unproven")
+    say()
+    posthoc = {"threshold_h": thr, "split": split,
+               "dbox_fast_vs_ctrl": [df, pf], "dbox_slow_vs_ctrl": [ds, ps],
+               "dual_fast_vs_ctrl": [mf, pmf], "dual_slow_vs_ctrl": [ms, pms],
+               "note": "added after the run, gated on nothing; the half-life association from an "
+                       "independent instrument (loop 119, AUC 0.5999) rules out a pure imaging "
+                       "artefact, so the population is split at the bound rather than dismissed"}
 
     man = RM.manifest(inputs=[CDNA, CDS, MANE, HPA, LR.CELL],
                       available=len(cp), used=len(called), selection="filtered", seed=SEED,
@@ -478,6 +551,7 @@ def main():
                "u3": u3, "u4": u4,
                "u5": {"best_utr_feature": best_u, "auc_utr": a_u, "auc_degron": a_d,
                       "auc_geometry": a_m, "n": len(inter)},
+               "posthoc": posthoc,
                "u6": {"max_rel_deviation": dev, "median_disagreement": agree,
                       "median_amp_translation": float(np.median(rt)),
                       "median_amp_degradation": float(np.median(rd)),

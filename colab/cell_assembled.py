@@ -334,6 +334,25 @@ LAYERS = [
      "their mRNA -- the ones that need a post-transcriptional mechanism by construction -- carry "
      "the LEAST degron signal. Timed destruction is the mechanism for the classic APC/C "
      "substrates that were already transcriptionally periodic, not for the unexplained majority"),
+    # ADDED by loop 122, which fetched the 5' UTR and closed the last term. The two production/loss
+    # integrators are the SAME first-order filter driven from opposite sides -- measured, not
+    # argued: median amplitude 0.1647 vs 0.1644 against an analytic gain(bbar,T) of 0.1647, median
+    # per-gene disagreement 0.22%. So there is ONE bound over every mechanism the equation contains.
+    ("regulated translation k_sp(t)", "FAILED", "loop_utr5/122",
+     "5' UTR built by subtracting the CDS from the MANE Select cDNA -- exact, 19,293 genes, median "
+     "133 nt, validated by 71.6% 5'TOP in ribosomal proteins (16.3x) and 86.1% Kozak -3 purine. "
+     "U3: no feature survives Bonferroni. U4: the predicted direction fails on all five surviving "
+     "features (best p = 0.12). U5: best 5' UTR AUC 0.5311, below the degron feature's 0.5345",
+     "AND THE 5'TOP MOTIF IS A FAME PROXY (rho +0.3296 with publication count) -- a positional "
+     "sequence motif, excluded by the same check that caught KEN-box in loop 121. TOP mRNAs are "
+     "ribosomal proteins and translation factors, which are among the most-studied genes"),
+    ("the amplitude bound on every mechanism", "CLOSES", "loop_utr5/122 U6",
+     "driving k_sp or driving b gives the SAME relative amplitude beta*gain(bbar,T): 0.1647 vs "
+     "0.1644, analytic 0.1647, median disagreement 0.22%. Nothing inside dP/dt = k_sp*M - b*P can "
+     "exceed that bound, whichever term it acts on. At 20% amplitude it needs a half-life under "
+     "24.5 h at a 24 h cycle",
+     "62.6% of measured CCD proteins are ABOVE the threshold. For those the question is not which "
+     "term carries the cycle -- none of them can, and the equation itself is what has to change"),
     ("relocalisation as the mechanism", "STATIC", "loop_degron/121 post-hoc",
      "88.9% of CCD proteins are annotated to more than one compartment against 69.0% of the "
      "imaged controls (+19.8 points, p < 1e-4, AUC 0.5992) -- larger than every sequence feature, "
@@ -343,6 +362,20 @@ LAYERS = [
      "call come from the SAME immunofluorescence images. The specific relocalisation signature -- "
      "nucleus AND cytosol -- points the WRONG WAY (-4.7%). What separates the groups is the COUNT "
      "of compartments, which is also what an imaging-confidence confound looks like"),
+    # THE SYNTHESIS, from loop 122's post-hoc split. Splitting the CCD proteins at the amplitude
+    # bound separates TWO signals that behave completely differently, which is the closest thing to
+    # an answer four loops of elimination have produced.
+    ("the cell-cycle signal, decomposed", "STATIC", "loop_utr5/122 post-hoc",
+     "split at the 24.5 h bound: 79 CCD proteins the equation CAN explain, 132 it cannot, 265 "
+     "imaged controls. D-box+ degron density is FLAT across all three (fast +0.0035 p 0.89, slow "
+     "-0.0138 p 0.52). Dual localisation is +21.3% (p 0.0005) in the fast half and +21.9% "
+     "(p 0.0000) in the slow half -- IDENTICAL, so it is independent of turnover entirely. And "
+     "loop 119's half-life association (AUC 0.5999) comes from SILAC mass spectrometry in mouse "
+     "fibroblasts, an instrument with no camera in it, so real abundance change is also present",
+     "TWO SIGNALS ARE MIXED IN ONE CALL. One tracks turnover and the equation can produce it for "
+     "the 79 fast proteins. One tracks compartment count, is equally strong on both sides of the "
+     "bound, and the equation has NO TERM FOR IT AT ALL. Separating them needs a cell-cycle "
+     "abundance measurement that is not made with the same microscope"),
     ("replication as process", "FAILED", "loop_replication_time",
      "a Gaussian blur of the origin map (R2 0.320) beats the fork simulation (0.153)",
      "fork speed is unconstrained by the data it was fitted to"),
