@@ -226,18 +226,27 @@ def integrate_division(k, b_deg, T, ncyc=200, nstep=2000):
         x = exp(-b*T),  P(0+) = (k/b)(1-x)/(2-x),  P(T-) = 2*P(0+)
     so max/min is exactly 2 for a perfectly stable protein, and the cycle mean is
         k/b + (P(0+) - k/b)(1-x)/(b*T)
+
+    Returns (trajectory sampled at t = 0, dt, ..., T-dt ; the value at T- just before halving).
+    The trajectory is recorded at the START of each substep, so tr[0] is P(0+) exactly. Recording
+    at the END instead cost loop 125 its D1 gate on the first run: for a 0.1 h half-life a single
+    step moves the protein 4.7%, so tr[0] was P(dt) and the comparison against the closed form
+    missed by that much -- an off-by-one-step, not a model error, and the gate was right to catch it.
     """
     dt = T / nstep
     e = np.exp(-b_deg * dt)
-    P = k / np.maximum(b_deg, 1e-300)
+    ss = k / np.maximum(b_deg, 1e-300)
+    P = ss.copy() if hasattr(ss, "copy") else np.atleast_1d(ss).astype(float)
     tr = np.zeros((nstep, len(np.atleast_1d(k))))
     for c in range(ncyc):
         for s in range(nstep):
-            P = P * e + (k / np.maximum(b_deg, 1e-300)) * (1 - e)
             if c == ncyc - 1:
                 tr[s] = P
+            P = P * e + ss * (1 - e)
+        if c == ncyc - 1:
+            return tr, P
         P = P / 2.0
-    return tr
+    return tr, P
 
 
 def window_means(tr, nwin):
@@ -495,7 +504,35 @@ LAYERS = [
     ("diffusion", "ABSENT", "-",
      "transport reactions move material between compartment POOLS with no distance or gradient",
      "-"),
-    ("cell division", "ABSENT", "-", "no cycle advances; the cell accumulates forever", "-"),
+    # CORRECTED by loop 125. Recorded ABSENT, but division has been inside every rate in this
+    # repository since loop 92 as mu = ln2/t_double -- a continuous leak standing in for a discrete
+    # event nobody had tested. Present as an untested assumption is a worse place for it than absent.
+    ("cell division", "CLOSES", "cell_assembled.integrate_division/125",
+     "dP/dt = k - b*P with the contents HALVED at every T, matching its closed form P(0+) = "
+     "(k/b)(1-x)/(2-x) to 1.3e-11 over half-lives from 0.1 h to 1000 h. AND IT BOUNDS THE "
+     "ASSUMPTION THE WHOLE MODEL RESTS ON: the continuous-dilution stand-in understates the cycle "
+     "mean by at most 3.97%, worst case at the most stable proteins, recovering the analytic "
+     "1.5/1.4427 limit to 6.5e-07. Every rate here is now accurate to a proved four percent "
+     "rather than a hoped-for one",
+     "the cycle has no PHASES -- one period, one halving, no G1/S/G2/M and no checkpoint. It "
+     "divides on a timer, not on a state"),
+    ("division as a cell-cycle confound", "RUNS", "loop_division/125",
+     "bare division produces a real sawtooth: six-window amplitude 1.088 to 1.770 across 4,821 "
+     "measured half-lives, tracking half-life rather than uniform. But the ceiling is ANALYTIC -- "
+     "P(T-) = 2*P(0+) for every b, which averages to 1.7698 over six windows and cannot be "
+     "exceeded by any parameter. Loop 123's threshold is 2.0, a guaranteed 1.130x margin, and 0 of "
+     "4,821 genes reach it. LFQ has already divided out ~86% of the sawtooth (10.82% residual "
+     "against the 77.0% a per-cell quantification would show)",
+     "I DRAFTED THE OPPOSITE CONCLUSION -- that division is common-mode and therefore normalises "
+     "away -- and struck it. The amplitude spans 63% and is half-life dependent. Loop 123 survives "
+     "on the analytic ceiling, not on uniformity"),
+    ("partitioning noise", "CLOSES", "loop_division/125 D6",
+     "each molecule goes to one daughter with p = 1/2, so a daughter gets Binomial(N, 1/2) and no "
+     "gene can be quieter than CV = 1/sqrt(N). Parameter-free, from measured copy numbers: protein "
+     "median 0.485% (42,566 copies), mRNA median 24.0% (17 copies) -- a 49-fold difference arising "
+     "entirely from copy number",
+     "no measured single-cell CV was joined, so the floor is a physical statement rather than a "
+     "validated prediction; the Larsson join is still to do"),
     # CORRECTED. This said "no measured k_cat anywhere" and that was wrong -- I repeated it to the
     # user before checking. colab/data/kinetics_bundle.json.gz is committed and carries a kcat for
     # 8,184 reactions and 2,549 genes, from a measured base of 2,437 human records. The real problem

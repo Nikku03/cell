@@ -153,8 +153,8 @@ def main():
     say("D1 THE INTEGRATOR MATCHES THE CLOSED FORM")
     hl_t = np.array([0.1, 1.0, 5.0, 27.5, 100.0, 1000.0])
     b_t = LN2 / hl_t
-    tr = CA.integrate_division(np.ones(len(b_t)), b_t, T_DOUBLE_H, ncyc=300, nstep=4000)
-    P0n, PTn = tr[0], tr[-1]
+    tr, Pend = CA.integrate_division(np.ones(len(b_t)), b_t, T_DOUBLE_H, ncyc=300, nstep=4000)
+    P0n, PTn = tr[0], Pend
     P0a, PTa, mna = closed_form(1.0, b_t, T_DOUBLE_H)
     e0 = np.max(np.abs(P0n - P0a) / P0a)
     eT = np.max(np.abs(PTn - PTa) / PTa)
@@ -187,13 +187,13 @@ def main():
 
     # ---------------------------------------------------------------- D3
     say("D3 THE BARE-DIVISION SAWTOOTH, SIZED")
-    trg = CA.integrate_division(kk, b_deg, T_DOUBLE_H, ncyc=60, nstep=600)
-    inst = trg.max(0) / trg.min(0)
+    trg, tend = CA.integrate_division(kk, b_deg, T_DOUBLE_H, ncyc=60, nstep=600)
+    inst = np.maximum(trg.max(0), tend) / trg.min(0)
     win = CA.window_means(trg, NWIN)
     wfold = win.max(0) / win.min(0)
-    stable = CA.integrate_division(np.ones(1), np.array([LN2 / 1e7]), T_DOUBLE_H,
-                                   ncyc=60, nstep=600)
-    s_inst = float(stable.max() / stable.min())
+    stable, s_end = CA.integrate_division(np.ones(1), np.array([LN2 / 1e7]), T_DOUBLE_H,
+                                          ncyc=60, nstep=600)
+    s_inst = float(max(stable.max(), s_end[0]) / stable.min())
     s_win = CA.window_means(stable, NWIN)
     s_wfold = float(s_win.max() / s_win.min())
     say(f"     stable-protein limit: instantaneous max/min {s_inst:.4f} (analytic 2.000), "
@@ -304,6 +304,64 @@ def main():
         say(f"  {k}  {'PASS' if gates[k] else 'FAIL'}")
     say(f"  {sum(gates.values())}/6")
     say("=" * 100)
+    say()
+
+    # ------------------------------------------------------------- AFTER THE FACT
+    # ADDED AFTER THE RUN, GATED ON NOTHING. D5 failed by 0.8 of a percentage point and D4 passed,
+    # and neither number is the actual answer to "can division fake a cell-cycle oscillation".
+    # The answer is in D3's spread, which the gates did not look at.
+    say("AFTER THE FACT -- why division cannot fake a cell-cycle call, in one number")
+    say()
+    spread_div = float(wfold.max() / wfold.min() - 1.0)
+    # I DRAFTED THIS SECTION CLAIMING DIVISION IS COMMON-MODE -- that its amplitude is the same for
+    # every protein, so normalisation removes it entirely. The numbers say otherwise and the claim
+    # is struck rather than shipped. wfold runs from 1.088 to 1.770, a 63% spread, and it is
+    # half-life dependent: a protein with a 30-minute half-life re-equilibrates almost immediately
+    # after halving and barely registers, while a stable one carries the full sawtooth. Division
+    # DOES produce differential amplitude. The reason loop 123 survives is a different and stronger
+    # one, below.
+    say(f"  (i) DIVISION IS NOT COMMON-MODE -- I assumed it was and the data says no.")
+    say(f"      Over {len(genes):,} genes with half-lives from {hl.min():.2f} h to {hl.max():.0f} h,")
+    say(f"      the division-only six-window amplitude runs {wfold.min():.4f} to {wfold.max():.4f}, a")
+    say(f"      {spread_div:.1%} spread, and it tracks half-life: a 30-minute protein re-equilibrates")
+    say(f"      right after halving and barely registers; a stable one carries the whole sawtooth.")
+    say(f"      So division does create differential amplitude between genes.")
+    say()
+    say(f"  (ii) LOOP 123 SURVIVES FOR A STRONGER REASON: THE CEILING IS ANALYTIC.")
+    say(f"      P(T-) = 2*P(0+) exactly, for every b, confirmed to 1.3e-11 in D1. Averaged into six")
+    say(f"      windows that becomes {s_wfold:.4f}, and that is a HARD upper bound -- no half-life,")
+    say(f"      no synthesis rate, no parameter can push bare division past it. Loop 123's threshold")
+    say(f"      is 2.0. The margin is {D4_FOLD / s_wfold:.3f}x, thin but guaranteed rather than")
+    say(f"      empirical, and D4 confirmed 0 of {len(genes):,} genes reach it.")
+    say(f"      Its 866 two-fold proteins are not division artefacts. The correction I came here")
+    say(f"      expecting to make is not needed -- for a reason I had to be shown.")
+    say()
+    say(f"  (iii) AND THE MEASUREMENT IS ALREADY MOSTLY DIVISION-CORRECTED.")
+    say(f"      D5: LFQ leaves a {spread:.2%} trend in the median gene against the {s_wfold - 1:.1%} a")
+    say(f"      per-cell quantification would show -- about "
+        f"{100 * (1 - spread / (s_wfold - 1)):.0f}% divided out. Consistent with D4's")
+    say(f"      finding that division-only amplitude ({np.median(dv):.3f}) EXCEEDS what Ly measured")
+    say(f"      ({np.median(mv):.3f}) for {expl:.0%} of genes: the sawtooth is largely gone from the data")
+    say(f"      before anyone analysed it. D5 failed a gate I set at {D5_FLAT:.0%}, missing by")
+    say(f"      {spread - D5_FLAT:.2%}. A real residual, reported as one.")
+    say()
+    say(f"  (iv) WHAT DIVISION DOES CHANGE, measured rather than asserted:")
+    say(f"      - every rate in this model is understated by at most {err.max():.2%}, now proved")
+    say(f"        rather than assumed (D2), with the worst case at the most stable proteins")
+    say(f"      - mRNA carries a {np.median(fm):.1%} partitioning noise floor from division alone,")
+    say(f"        protein only {np.median(floor_p):.2%} -- a 49-fold difference that comes entirely")
+    say(f"        from copy number, and it means single-cell mRNA noise has an irreducible")
+    say(f"        component this model can now compute without fitting anything")
+    say()
+    posthoc = {"division_amplitude_spread": spread_div,
+               "analytic_ceiling": s_wfold, "margin_vs_threshold": D4_FOLD / s_wfold,
+               "division_min": float(wfold.min()), "division_max": float(wfold.max()),
+               "lfq_residual": spread, "percell_expected": float(s_wfold - 1),
+               "fraction_normalised_out": float(1 - spread / (s_wfold - 1)),
+               "note": "added after the run, gated on nothing. A drafted claim that division "
+                       "is common-mode was STRUCK: wfold spans 1.088-1.770 and tracks half-life. "
+                       "Loop 123 survives because the six-window ceiling 1.7698 is ANALYTIC and "
+                       "below its 2.0 threshold, not because division is uniform"}
 
     man = RM.manifest(inputs=[LR.SC / "_schwan2011.json", LY, LARSSON, LR.CELL],
                       available=len(S), used=len(genes), selection="filtered", seed=SEED,
@@ -329,6 +387,7 @@ def main():
                "d4": {"below_threshold": below, "n_above": int((wfold >= D4_FOLD).sum()),
                       "n_joined": len(both), "median_measured": float(np.median(mv)),
                       "median_division": float(np.median(dv)), "division_explains": expl},
+               "posthoc": posthoc,
                "d5": {"median_trajectory": rel.tolist(), "spread": spread},
                "d6": {"protein_floor_median": float(np.median(floor_p)),
                       "mrna_floor_median": float(np.median(fm)),
