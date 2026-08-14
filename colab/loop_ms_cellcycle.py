@@ -402,6 +402,124 @@ def main():
         say(f"  {k}  {'PASS' if gates[k] else 'FAIL'}")
     say(f"  {sum(gates.values())}/6")
     say("=" * 100)
+    say()
+
+    # ------------------------------------------------------------- AFTER THE FACT
+    say("AFTER THE FACT -- what V2 actually says, and turning the bound into an impossibility")
+    say()
+    say("  (i) V2 FAILED ON ONE THRESHOLD OF THREE, and the pattern is the result.")
+    for th in FOLD_SWEEP:
+        z = v2[th]
+        say(f"      >= {th}x   protein-only {z['n10']:>4} : mRNA-only {z['n01']:>4}  "
+            f"= {z['n10'] / max(z['n01'], 1):.1f}:1   p {z['p']:.2e}   "
+            f"({z['n10'] + z['n01']} discordant genes)")
+    say("      Overwhelming at 1.5x and 2x, gone at 3x where only 74 genes remain discordant.")
+    say("      The asymmetry is REAL and it is FIVE TIMES WEAKER than the camera reported:")
+    say(f"      1.8:1 by mass spectrometry against 9.5:1 by imaging.")
+    say()
+    say("  (ii) THE CAMERA OVER-CALLS BY SEVENFOLD, and geometry is not why.")
+    say(f"      MS confirms {int((conf & li).sum())} of {int(li.sum())} imaging-CCD genes "
+        f"({(conf & li).sum() / max(li.sum(), 1):.1%}) against "
+        f"{(conf & ~li).sum() / max((~li).sum(), 1):.1%} of the imaging-non-CCD controls -- a real "
+        f"{((conf & li).sum() / max(li.sum(), 1)) / max((conf & ~li).sum() / max((~li).sum(), 1), 1e-9):.1f}x")
+    say("      enrichment, so the camera is not making it up. But it calls seven proteins")
+    say("      cell-cycle-dependent for every one the spectrometer confirms.")
+    say(f"      Dual localisation is {dd.mean():.1%} in the disconfirmed set and {dc.mean():.1%} in")
+    say(f"      the confirmed set -- a {obs4:+.1%} difference at p = {p4:.4f}. It separates")
+    say(f"      imaging-CCD from imaging-control ({o4b:+.1%}, p {p4b:.4f}) but NOT true calls from")
+    say("      false ones, so it is a property of what the imaging pipeline scores, not a")
+    say("      mechanism that turns movement into apparent abundance. The hypothesis is retired.")
+    say()
+
+    # THE BOUND, MADE HARD. loop 122 proved every mechanism in this equation reaches at most
+    # beta*gain(bbar,T). So for each gene with a MEASURED oscillation and a MEASURED half-life,
+    # the drive amplitude required is beta = observed / gain. beta > 1 means the loss rate (or the
+    # synthesis rate) must go NEGATIVE somewhere in the cycle. That is not a hard threshold, it is
+    # an impossibility, and it is countable.
+    say("  (iii) THE AMPLITUDE BOUND, MADE WAVEFORM-FREE -- and it finally separates the two terms.")
+    say("      loops 121-122 measured the bound as beta*gain(bbar,T) for a SINUSOIDAL drive. That")
+    say("      is the wrong shape for the biology: a real destruction switch is a PULSE, and a")
+    say("      pulse reaches a larger amplitude than a sine of the same mean without any rate ever")
+    say("      going negative. So the sinusoidal number understates what production can do, and")
+    say("      the bound is redone here for an ARBITRARY non-negative drive.")
+    say()
+    say("      PRODUCTION SIDE, exactly. For dP/dt = k(t) - b*P with k(t) >= 0 of any shape, the")
+    say("      extreme is bang-bang: 2*kbar for half the cycle, 0 for the other half. Solving the")
+    say("      periodic steady state gives max relative amplitude = tanh(b*T/4), full stop. It")
+    say("      depends ONLY on the measured half-life and the cycle length -- no drive parameter,")
+    say("      no waveform, nothing to fit. Transcription and translation are both production, so")
+    say("      this one bound covers everything loops 119, 120 and 122 tested.")
+    say()
+    say("      DEGRADATION SIDE. b(t) has no upper limit -- destruction can be arbitrarily fast --")
+    say("      so it is NOT bounded by tanh(b*T/4) and can in principle reach 1.0. That asymmetry")
+    say("      is the whole point: an oscillation above tanh(b*T/4) cannot come from the")
+    say("      production side at all, and REQUIRES regulated degradation.")
+    keep = [g for g in idx if g in hl and pf3[idx[g]] >= FOLD]
+    rel_obs, beta_req, bnd = [], [], []
+    for g in keep:
+        i = idx[g]
+        v = np.array([d["P_G1"].values[i], d["P_S"].values[i], d["P_G2"].values[i]])
+        rel = (v.max() - v.min()) / (2.0 * v.mean())
+        b = LN2 / hl[g] + MU
+        rel_obs.append(rel)
+        beta_req.append(rel / (1.0 / np.sqrt(1.0 + (w / b) ** 2)))
+        bnd.append(np.tanh(b * T_CYCLE / 4.0))
+    rel_obs, beta_req, bnd = np.array(rel_obs), np.array(beta_req), np.array(bnd)
+    over = rel_obs > bnd
+    imp = float(np.mean(over))
+    say()
+    say(f"      {len(keep)} genes oscillate >= {FOLD:.0f}-fold by MS and have a measured half-life")
+    say(f"      observed relative amplitude: median {np.median(rel_obs):.3f}")
+    say(f"      production ceiling tanh(b*T/4): median {np.median(bnd):.3f}, "
+        f"range {bnd.min():.3f}-{bnd.max():.3f}")
+    say(f"      EXCEED THE PRODUCTION CEILING: {int(over.sum())} of {len(keep)} = {imp:.1%}")
+    say(f"      For those, no transcriptional or translational mechanism of ANY waveform can")
+    say(f"      produce the oscillation that was measured. Regulated degradation is not one")
+    say(f"      hypothesis among several for them -- it is the only term left in the equation.")
+    say(f"      (the sinusoid-specific statistic, reported for continuity with loops 121-122:")
+    say(f"       median beta {np.median(beta_req):.2f}, beta > 1 for "
+        f"{np.mean(beta_req > 1):.1%} -- larger, because a sine is the weakest usable waveform)")
+    say(f"      The half-lives are NIH3T3 mouse and the proteins are human NB4, which is what makes")
+    say(f"      the two measurements independent and is also the main caveat on this number.")
+    say()
+    say("  (iv) AND THAT PREDICTS SOMETHING TESTABLE RIGHT HERE.")
+    say("      If the over-ceiling genes require regulated degradation, they should carry more")
+    say("      degron than the under-ceiling ones. Same D-box+ motif, same file, no new data:")
+    dv_o = np.array([dbx(g) for g, o in zip(keep, over) if o and dbx(g) is not None])
+    dv_u = np.array([dbx(g) for g, o in zip(keep, over) if not o and dbx(g) is not None])
+    if len(dv_o) >= 5 and len(dv_u) >= 5:
+        o7, p7 = perm_p(dv_o, dv_u, rng)
+        say(f"      over ceiling {dv_o.mean():.4f} (n={len(dv_o)})   under ceiling "
+            f"{dv_u.mean():.4f} (n={len(dv_u)})   difference {o7:+.4f}, p = {p7:.4f}")
+    else:
+        o7, p7 = float("nan"), float("nan")
+        say(f"      not enough genes on one side ({len(dv_o)} over, {len(dv_u)} under) to test")
+    say()
+    say("  (v) WHERE THE ARC ENDS UP:")
+    say("        transcription        ELIMINATED, and now confirmed camera-free (V2)")
+    say("        the TF wiring        ELIMINATED (loop 120)")
+    say("        timed destruction    REAL but on the both-oscillate genes -- the reversal")
+    say("                             REPRODUCES without a camera (V6)")
+    say("        translation control  NO SIGNAL (loop 122)")
+    say("        measurement geometry RETIRED (V4)")
+    say("        the camera itself    OVER-CALLS 7x, which is now measured rather than suspected")
+    say(f"        the equation         {imp:.0%} of genuine oscillations exceed what ANY")
+    say(f"                             production mechanism can make -- degradation is forced")
+    say()
+    posthoc = {"asymmetry_ratio_ms": v2[FOLD]["n10"] / max(v2[FOLD]["n01"], 1),
+               "asymmetry_ratio_imaging": 362 / 38,
+               "camera_overcall": float(li.sum() / max((conf & li).sum(), 1)),
+               "n_with_beta": len(keep), "median_rel_amp": float(np.median(rel_obs)),
+               "median_beta": float(np.median(beta_req)),
+               "over_production_ceiling_fraction": imp,
+               "n_over_ceiling": int(over.sum()), "n_tested": len(keep),
+               "median_rel_obs": float(np.median(rel_obs)),
+               "median_ceiling": float(np.median(bnd)),
+               "median_beta_sinusoidal": float(np.median(beta_req)),
+               "degron_over_vs_under": [o7, p7],
+               "note": "added after the run, gated on nothing; the production ceiling "
+                       "tanh(b*T/4) is exact for any non-negative drive of any waveform, and "
+                       "supersedes the sinusoid-specific beta used in loops 121-122"}
 
     man = RM.manifest(inputs=[LY, HPA, LR.CELL, PROT], available=len(genes), used=int(m.sum()),
                       selection="filtered", seed=SEED,
@@ -436,6 +554,7 @@ def main():
                       "median_hl_osc": float(np.median(hy)), "median_hl_flat": float(np.median(hn)),
                       "log2_diff": obs5, "p": p5, "auc_halflife": a_hl, "auc_pubs": a_pub,
                       "threshold_h": thr, "above_threshold": above},
+               "posthoc": posthoc,
                "v6": {"means": vals, "n": ns, "ranking": order,
                       "protein_minus_mrna": obs6, "p": p6, "reversal_reproduces": rev},
                "seconds": time.time() - t0, "log": log},

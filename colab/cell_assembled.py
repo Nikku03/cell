@@ -353,6 +353,30 @@ LAYERS = [
      "24.5 h at a 24 h cycle",
      "62.6% of measured CCD proteins are ABOVE the threshold. For those the question is not which "
      "term carries the cycle -- none of them can, and the equation itself is what has to change"),
+    # ADDED by loop 123, which fetched the measurement loop 122 said would settle it: Ly et al.
+    # 2014 (eLife 3:e01630), NB4 cells by centrifugal elutriation -- no drug, no synchronisation --
+    # with label-free MS and RNA-Seq on the SAME cells in the SAME table. Two instruments, one
+    # experiment, neither of them a camera.
+    ("cell cycle, measured without a camera", "STATIC", "loop_ms_cellcycle/123",
+     "6,470 genes quantified by MS across six elutriation fractions, 5,553 with matched RNA-Seq. "
+     "Not a cell-size artefact: peaks spread over all six fractions (largest 21.9%), 57.6% rising "
+     "and 42.4% falling. The protein-without-mRNA asymmetry REPRODUCES -- 575:135 at 1.5x "
+     "(p 1.8e-65), 139:78 at 2x (p 4.2e-05). Half-life predicts MS oscillation at AUC 0.6373 "
+     "(median 29.5 h vs 50.3 h, p 0.0000), beating publication count at 0.5785",
+     "IT IS FIVE TIMES WEAKER THAN THE CAMERA SAID: 1.8:1 by mass spectrometry against 9.5:1 by "
+     "imaging, and it vanishes at 3x where only 74 genes remain discordant. The imaging call is "
+     "real (9.6x enriched over controls) but OVER-CALLS SEVENFOLD -- MS confirms 42 of 315"),
+    ("the production ceiling tanh(b*T/4)", "CLOSES", "loop_ms_cellcycle/123",
+     "for dP/dt = k(t) - b*P with k(t) >= 0 of ANY waveform, max relative amplitude is exactly "
+     "tanh(b*T/4). No drive parameter, no fitting, depends only on the measured half-life and the "
+     "cycle length. Degradation is NOT bounded by it, because b(t) has no upper limit -- so an "
+     "oscillation above the ceiling cannot be produced by transcription or translation at all. "
+     "55 of 80 MS-oscillating genes with a measured half-life (68.8%) exceed it",
+     "SUPERSEDES the sinusoid-specific beta*gain(bbar,T) used in loops 121-122, which understated "
+     "what production can do because a real destruction switch is a pulse and not a sine. And the "
+     "prediction it makes FAILS ITS OWN FOLLOW-UP: the over-ceiling genes carry LESS D-box+ than "
+     "the under-ceiling ones (0.1517 vs 0.2018, p 0.273), so either that motif is a poor proxy for "
+     "regulated degradation or the cross-species half-lives are wrong for these genes"),
     ("relocalisation as the mechanism", "STATIC", "loop_degron/121 post-hoc",
      "88.9% of CCD proteins are annotated to more than one compartment against 69.0% of the "
      "imaged controls (+19.8 points, p < 1e-4, AUC 0.5992) -- larger than every sequence feature, "
@@ -365,6 +389,17 @@ LAYERS = [
     # THE SYNTHESIS, from loop 122's post-hoc split. Splitting the CCD proteins at the amplitude
     # bound separates TWO signals that behave completely differently, which is the closest thing to
     # an answer four loops of elimination have produced.
+    # RETIRED by loop 123's V4, which is what a decisive test is for. The geometry hypothesis
+    # predicted dual localisation would be higher among imaging calls the mass spectrometer
+    # DISCONFIRMS. It is 88.6% against 88.1%, p = 1.0000 -- dead flat. Dual localisation separates
+    # imaging-CCD from imaging-control (+19.5%, p < 1e-4) but not true calls from false ones, so it
+    # is a property of what the imaging pipeline scores, not a mechanism converting movement into
+    # apparent abundance. Kept in the record because a retired hypothesis that vanishes is a
+    # hypothesis nobody can check.
+    ("relocalisation, RETIRED", "FAILED", "loop_ms_cellcycle/123 V4",
+     "predicted: dual localisation higher in the MS-disconfirmed imaging calls. Measured: "
+     "disconfirmed 88.6% (n=273) vs confirmed 88.1% (n=42), difference +0.5%, permutation p 1.0000",
+     "the +19.8-point association loop 121 found is real and is NOT a relocalisation mechanism"),
     ("the cell-cycle signal, decomposed", "STATIC", "loop_utr5/122 post-hoc",
      "split at the 24.5 h bound: 79 CCD proteins the equation CAN explain, 132 it cannot, 265 "
      "imaged controls. D-box+ degron density is FLAT across all three (fast +0.0035 p 0.89, slow "
