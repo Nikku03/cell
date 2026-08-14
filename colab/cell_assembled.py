@@ -80,6 +80,82 @@ def integrate(st, hours=2000.0, dt=0.25):
     return M, P
 
 
+def tf_wiring(D, signed_only=True):
+    """The regulatory network as a RATE LAW needs it: signed edges, grouped by the gene they act on.
+
+    THE 91% THAT CANNOT DRIVE ANYTHING. C["reg"] carries 612,133 edges and 558,005 of them have
+    sign 0 -- a binding event with no recorded direction of effect. An unsigned edge cannot enter a
+    rate law, because "TF j regulates gene i" does not say whether more j means more i or less.
+    Every previous use of this network scored it as a graph, where an unsigned edge still counts as
+    adjacency; the moment it has to drive k_sm, 91.2% of it becomes unusable. That number is stated
+    here rather than hidden behind a gene count, because it is the honest size of the wiring.
+
+    Returns {target gene name: [(regulator gene name, sign), ...]} over the 54,128 signed edges,
+    1,451 distinct regulators and 7,485 distinct targets.
+    """
+    names = D["names"]
+    by = {}
+    for s, t, g in D["model"]["reg"]:
+        if signed_only and int(g) == 0:
+            continue
+        by.setdefault(names[t], []).append((names[s], int(g)))
+    return by
+
+
+def tf_index(wiring, targets, regulators):
+    """Flatten the wiring onto integer indices so the drive is one segment-sum, not a Python loop."""
+    ti = {g: i for i, g in enumerate(targets)}
+    ri = {g: i for i, g in enumerate(regulators)}
+    rows, cols, sgn = [], [], []
+    for g in targets:
+        for r, s in wiring.get(g, ()):
+            if r in ri:
+                rows.append(ti[g])
+                cols.append(ri[r])
+                sgn.append(float(s))
+    n = np.zeros(len(targets))
+    for i in rows:
+        n[i] += 1.0
+    return (np.array(rows, int), np.array(cols, int), np.array(sgn),
+            np.maximum(n, 1.0), n.astype(int))
+
+
+def tf_drive(ix, dev):
+    """Net signed drive per target: sum_j s_ij * dev_j / n_i. Bounded in [-1, 1] whenever dev is.
+
+    Dividing by the regulator count is not cosmetic -- it is what makes the drive a fraction of
+    k_sm rather than an unbounded sum, so a gene with 774 regulators cannot be driven 774x harder
+    than a gene with one. Signs CANCEL inside the sum, which is the only place in this wiring where
+    the network does work a bare edge count could not.
+    """
+    rows, cols, sgn, nsafe, _ = ix
+    out = np.zeros(len(nsafe))
+    np.add.at(out, rows, sgn * dev[cols])
+    return out / nsafe
+
+
+def integrate_tf(kbar, a, ix, dev_at, T, ncyc=12, nstep=400, gain=1.0):
+    """dM/dt = k_sm(t) - a*M with k_sm(t) = kbar * max(0, 1 + gain*drive(t)).
+
+    With dev == 0 the drive is zero and k_sm is exactly kbar, so the wired integrator reduces to
+    the unwired one identically -- the wiring is an addition to the equation, not a replacement of
+    it, and loop 120's W4 gates on that reduction holding to machine precision.
+    """
+    dt = T / nstep
+    ea = np.exp(-a * dt)
+    M = kbar / a
+    total = ncyc * nstep
+    tr = np.zeros((nstep, len(M)))
+    for s in range(total):
+        k_t = kbar * np.maximum(0.0, 1.0 + gain * tf_drive(ix, dev_at(s * dt)))
+        M = M * ea + (k_t / a) * (1 - ea)
+        if s >= total - nstep:
+            tr[s - (total - nstep)] = M
+    mean = tr.mean(0)
+    rel = (tr.max(0) - tr.min(0)) / (2.0 * np.maximum(mean, 1e-300))
+    return rel, mean
+
+
 def mass_fraction(D, genes):
     """What share of measured protein MASS a gene subset carries -- copies x residues."""
     S = D["schwan"]
