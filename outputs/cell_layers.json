@@ -130,8 +130,8 @@
   {
    "layer": "phosphodegrons as the timer",
    "status": "FAILED",
-   "source": "loop_phosphodegron/145",
-   "evidence_sha": "70f6e14b39d6"
+   "source": "loop_phosphodegron/145 + loop_elm_degron/146",
+   "evidence_sha": "1a0f38a8368a"
   },
   {
    "layer": "regulated translation k_sp(t)",

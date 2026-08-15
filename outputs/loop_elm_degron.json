@@ -1,0 +1,456 @@
+{
+ "test": "loop 146 -- ELM phosphodegrons",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/elm_classes.tsv",
+    "bytes": 88298,
+    "hash": "068498b20a2dbb83",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/elm_instances.tsv",
+    "bytes": 546163,
+    "hash": "fb23582b1d475b42",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/uniprot_human_ptm.tsv.gz",
+    "bytes": 2003000,
+    "hash": "204cae8a9166c3f3",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 20213,
+   "used": 8020,
+   "selection": "all",
+   "fraction": 0.3967743531390689
+  },
+  "seed": 14600,
+  "controls": [
+   "a PHOSPHO-CAPABLE arm that contains S/T but does not require phosphorylation -- the control loop 145 lacked",
+   "regex sensitivity against curated instance coordinates",
+   "positive controls from the database rather than from memory",
+   "publication count against occupancy given the motif, per arm",
+   "the effect size stated beside the build verdict"
+  ],
+  "note": "loop 145's regexes were hand-written and missed five of eleven textbook substrates; its control arm was chemically incapable of occupancy.",
+  "warnings": []
+ },
+ "gates": {
+  "Q1": true,
+  "Q2": true,
+  "Q3": false,
+  "Q4": false,
+  "Q5": false,
+  "Q6": true
+ },
+ "q1": {
+  "recovered": 112,
+  "missed": 4,
+  "no_sequence": 0,
+  "rate": 0.9655172413793104,
+  "per_class": {
+   "DEG_APCC_DBOX_1": [
+    6,
+    6
+   ],
+   "DEG_APCC_KENBOX_2": [
+    11,
+    11
+   ],
+   "DEG_APCC_TPR_1": [
+    5,
+    5
+   ],
+   "DEG_Cend_DCAF12_1": [
+    6,
+    6
+   ],
+   "DEG_Cend_FEM1B_2": [
+    1,
+    2
+   ],
+   "DEG_Cend_KLHDC2_1": [
+    0,
+    1
+   ],
+   "DEG_Cend_TRIM7_1": [
+    2,
+    2
+   ],
+   "DEG_COP1_1": [
+    9,
+    9
+   ],
+   "DEG_CRL4_CDT2_1": [
+    4,
+    4
+   ],
+   "DEG_Kelch_Keap1_1": [
+    9,
+    9
+   ],
+   "DEG_Kelch_KLHL12_1": [
+    7,
+    7
+   ],
+   "DEG_Kelch_KLHL3_1": [
+    4,
+    4
+   ],
+   "DEG_MDM2_SWIB_1": [
+    5,
+    5
+   ],
+   "DEG_ODPH_VHL_1": [
+    6,
+    6
+   ],
+   "DEG_SCF_FBW7_1": [
+    4,
+    6
+   ],
+   "DEG_SCF_FBW7_2": [
+    1,
+    1
+   ],
+   "DEG_SCF_FBXO31_1": [
+    3,
+    3
+   ],
+   "DEG_SCF_SKP2-CKS1_1": [
+    2,
+    2
+   ],
+   "DEG_SCF_TRCP1_1": [
+    16,
+    16
+   ],
+   "DEG_SIAH_1": [
+    8,
+    8
+   ],
+   "DEG_SPOP_SBC_1": [
+    3,
+    3
+   ]
+  }
+ },
+ "q2": {
+  "PHOSPHO-REQUIRED": [
+   "DEG_SCF_FBW7_1",
+   "DEG_SCF_FBW7_2",
+   "DEG_SCF_SKP2-CKS1_1",
+   "DEG_SCF_TRCP1_1"
+  ],
+  "PHOSPHO-CAPABLE": [
+   "DEG_COP1_1",
+   "DEG_CRL4_CDT2_1",
+   "DEG_CRL4_CDT2_2",
+   "DEG_Kelch_Keap1_1",
+   "DEG_Nend_Nbox_1",
+   "DEG_SCF_COI1_1",
+   "DEG_SPOP_SBC_1"
+  ],
+  "PHOSPHO-INCAPABLE": [
+   "DEG_APCC_DBOX_1",
+   "DEG_APCC_KENBOX_2",
+   "DEG_APCC_TPR_1",
+   "DEG_CRBN_cyclicCter_1",
+   "DEG_Cend_DCAF12_1",
+   "DEG_Cend_FEM1AC_1",
+   "DEG_Cend_FEM1B_2",
+   "DEG_Cend_KLHDC2_1",
+   "DEG_Cend_TRIM7_1",
+   "DEG_Kelch_KLHL12_1",
+   "DEG_Kelch_KLHL3_1",
+   "DEG_Kelch_Keap1_2",
+   "DEG_Kelch_actinfilin_1",
+   "DEG_MDM2_SWIB_1",
+   "DEG_Nend_UBRbox_1",
+   "DEG_Nend_UBRbox_2",
+   "DEG_Nend_UBRbox_3",
+   "DEG_Nend_UBRbox_4",
+   "DEG_ODPH_VHL_1",
+   "DEG_SCF_FBXO31_1",
+   "DEG_SCF_TIR1_1",
+   "DEG_SIAH_1"
+  ]
+ },
+ "q3": {
+  "PHOSPHO-REQUIRED": {
+   "n_classes": 2,
+   "mean_gain": -0.08412993854303735,
+   "rows": [
+    {
+     "class": "DEG_SCF_FBW7_1",
+     "n_pos": 5,
+     "auc_present": 0.9104928259513413,
+     "auc_occupied": 0.875857766687461,
+     "gain": -0.03463505926388033,
+     "occ_rate": 0.04875311720698254
+    },
+    {
+     "class": "DEG_SCF_TRCP1_1",
+     "n_pos": 15,
+     "auc_present": 0.9618988132417239,
+     "auc_occupied": 0.8282739954195295,
+     "gain": -0.13362481782219437,
+     "occ_rate": 0.011346633416458854
+    }
+   ]
+  },
+  "PHOSPHO-CAPABLE": {
+   "n_classes": 3,
+   "mean_gain": -0.3335598074489445,
+   "rows": [
+    {
+     "class": "DEG_COP1_1",
+     "n_pos": 7,
+     "auc_present": 0.9587545238986647,
+     "auc_occupied": 0.7087946372858391,
+     "gain": -0.24995988661282553,
+     "occ_rate": 0.011346633416458854
+    },
+    {
+     "class": "DEG_CRL4_CDT2_1",
+     "n_pos": 4,
+     "auc_present": 0.999937624750499,
+     "auc_occupied": 0.625,
+     "gain": -0.37493762475049897,
+     "occ_rate": 0.00012468827930174563
+    },
+    {
+     "class": "DEG_Kelch_Keap1_1",
+     "n_pos": 9,
+     "auc_present": 0.9849581824990638,
+     "auc_occupied": 0.609176271515555,
+     "gain": -0.37578191098350877,
+     "occ_rate": 0.004114713216957606
+    }
+   ]
+  },
+  "PHOSPHO-INCAPABLE": {
+   "n_classes": 9,
+   "mean_gain": -0.40823824267216097,
+   "rows": [
+    {
+     "class": "DEG_APCC_DBOX_1",
+     "n_pos": 6,
+     "auc_present": 0.7888278845353964,
+     "auc_occupied": 0.5693577905332335,
+     "gain": -0.21947009400216289,
+     "occ_rate": 0.02805486284289277
+    },
+    {
+     "class": "DEG_APCC_KENBOX_2",
+     "n_pos": 9,
+     "auc_present": 0.9252347466677763,
+     "auc_occupied": 0.49862688802896016,
+     "gain": -0.4266078586388161,
+     "occ_rate": 0.002743142144638404
+    },
+    {
+     "class": "DEG_APCC_TPR_1",
+     "n_pos": 4,
+     "auc_present": 0.9965069860279441,
+     "auc_occupied": 0.499937624750499,
+     "gain": -0.49656936127744505,
+     "occ_rate": 0.00012468827930174563
+    },
+    {
+     "class": "DEG_Cend_DCAF12_1",
+     "n_pos": 3,
+     "auc_present": 0.9973805662966196,
+     "auc_occupied": 0.6664795642592823,
+     "gain": -0.3309010020373373,
+     "occ_rate": 0.0004987531172069825
+    },
+    {
+     "class": "DEG_Kelch_KLHL12_1",
+     "n_pos": 6,
+     "auc_present": 0.9969428500124782,
+     "auc_occupied": 0.5,
+     "gain": -0.4969428500124782,
+     "occ_rate": 0.0
+    },
+    {
+     "class": "DEG_Kelch_KLHL3_1",
+     "n_pos": 4,
+     "auc_present": 1.0,
+     "auc_occupied": 0.625,
+     "gain": -0.375,
+     "occ_rate": 0.00012468827930174563
+    },
+    {
+     "class": "DEG_MDM2_SWIB_1",
+     "n_pos": 4,
+     "auc_present": 0.9621382235528942,
+     "auc_occupied": 0.624688123752495,
+     "gain": -0.3374500998003992,
+     "occ_rate": 0.0007481296758104738
+    },
+    {
+     "class": "DEG_SCF_FBXO31_1",
+     "n_pos": 3,
+     "auc_present": 0.9999376325308719,
+     "auc_occupied": 0.5,
+     "gain": -0.49993763253087187,
+     "occ_rate": 0.0
+    },
+    {
+     "class": "DEG_SIAH_1",
+     "n_pos": 6,
+     "auc_present": 0.9902670326927876,
+     "auc_occupied": 0.49900174694285,
+     "gain": -0.4912652857499376,
+     "occ_rate": 0.00199501246882793
+    }
+   ]
+  }
+ },
+ "q4": {
+  "PHOSPHO-REQUIRED": {
+   "n": 4,
+   "mean_rho": 0.20901543006882184,
+   "max_abs_rho": 0.3613501615384624
+  },
+  "PHOSPHO-CAPABLE": {
+   "n": 4,
+   "mean_rho": 0.10803042343599542,
+   "max_abs_rho": 0.2372145906458952
+  },
+  "PHOSPHO-INCAPABLE": {
+   "n": 9,
+   "mean_rho": 0.04370048986698273,
+   "max_abs_rho": 0.11012277872457964
+  }
+ },
+ "q5": {
+  "groups": {
+   "both": {
+    "n": 83,
+    "rate": 0.24096385542168675
+   },
+   "protein only": {
+    "n": 225,
+    "rate": 0.10666666666666667
+   },
+   "transcript only": {
+    "n": 29,
+    "rate": 0.10344827586206896
+   },
+   "neither": {
+    "n": 356,
+    "rate": 0.10393258426966293
+   }
+  },
+  "fisher": 1.0
+ },
+ "q6": {
+  "justified": false,
+  "req_gain": -0.08412993854303735,
+  "cap_gain": -0.3335598074489445,
+  "bar": 0.02
+ },
+ "seconds": 6.160254955291748,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 146 -- phosphodegrons on ELM's curated motifs, with a control that can move",
+  "====================================================================================================",
+  "",
+  "  ELM: 353 classes, 33 degron classes",
+  "  human instances 2,404; degron instances 123 (116 true positive)",
+  "",
+  "  proteome: 20,431 accessions, 20,213 gene symbols",
+  "  phospho-annotated genes: 8,041",
+  "",
+  "Q1 DOES THE CURATED REGEX FIND THE CURATED SITE?",
+  "     validated true-positive instances with a sequence: 116 (0 accessions absent from the proteome file)",
+  "     regex recovers the annotated site: 112/116 (96.6%)",
+  "       DEG_SCF_TRCP1_1            16/16",
+  "       DEG_APCC_KENBOX_2          11/11",
+  "       DEG_COP1_1                  9/9 ",
+  "       DEG_Kelch_Keap1_1           9/9 ",
+  "       DEG_SIAH_1                  8/8 ",
+  "       DEG_Kelch_KLHL12_1          7/7 ",
+  "       DEG_APCC_DBOX_1             6/6 ",
+  "       DEG_Cend_DCAF12_1           6/6 ",
+  "     loop 145's hand-written regexes returned ZERO hits on five of eleven textbook",
+  "     substrates. This is the test that would have caught that, and it needed the",
+  "     curated coordinates to be possible at all.",
+  "     Q1 PASS -- the curated patterns recover the sites they were written from",
+  "",
+  "Q2 ARE THE THREE ARMS WHAT I CLAIM?",
+  "     PHOSPHO-REQUIRED      4 classes: DEG_SCF_FBW7_1, DEG_SCF_FBW7_2, DEG_SCF_SKP2-CKS1_1, DEG_SCF_TRCP1_1",
+  "     PHOSPHO-CAPABLE       7 classes: DEG_COP1_1, DEG_CRL4_CDT2_1, DEG_CRL4_CDT2_2, DEG_Kelch_Keap1_1, DEG_Nend_Nbox_1 ...",
+  "     PHOSPHO-INCAPABLE    22 classes: DEG_APCC_DBOX_1, DEG_APCC_KENBOX_2, DEG_APCC_TPR_1, DEG_CRBN_cyclicCter_1, DEG_Cend_DCAF12_1 ...",
+  "     Q2 PASS -- all three arms exist, and the middle one is the control loop 145 lacked",
+  "",
+  "  scoring on 8,020 genes with a sequence and annotated phosphosites",
+  "",
+  "Q3 THE TEST, WITH THE ARM THAT CAN MOVE",
+  "     PHOSPHO-REQUIRED     2 testable classes   mean occupancy gain -0.0841",
+  "       DEG_SCF_FBW7_1             n= 5  present 0.910  occupied 0.876  -0.0346  (occ rate 4.9%)",
+  "       DEG_SCF_TRCP1_1            n=15  present 0.962  occupied 0.828  -0.1336  (occ rate 1.1%)",
+  "     PHOSPHO-CAPABLE      3 testable classes   mean occupancy gain -0.3336",
+  "       DEG_COP1_1                 n= 7  present 0.959  occupied 0.709  -0.2500  (occ rate 1.1%)",
+  "       DEG_CRL4_CDT2_1            n= 4  present 1.000  occupied 0.625  -0.3749  (occ rate 0.0%)",
+  "       DEG_Kelch_Keap1_1          n= 9  present 0.985  occupied 0.609  -0.3758  (occ rate 0.4%)",
+  "     PHOSPHO-INCAPABLE    9 testable classes   mean occupancy gain -0.4082",
+  "       DEG_APCC_DBOX_1            n= 6  present 0.789  occupied 0.569  -0.2195  (occ rate 2.8%)",
+  "       DEG_Cend_DCAF12_1          n= 3  present 0.997  occupied 0.666  -0.3309  (occ rate 0.0%)",
+  "       DEG_MDM2_SWIB_1            n= 4  present 0.962  occupied 0.625  -0.3375  (occ rate 0.1%)",
+  "       DEG_Kelch_KLHL3_1          n= 4  present 1.000  occupied 0.625  -0.3750  (occ rate 0.0%)",
+  "     REQUIRED -0.0841 against a bar of +0.0200; CAPABLE -0.3336",
+  "     the hypothesis needs the FIRST to clear the bar and the SECOND not to. Helping both",
+  "     would mean the statistic tracks phospho-annotation density rather than dependence.",
+  "     Q3 FAIL -- phospho-occupancy does NOT show the specificity the hypothesis requires",
+  "",
+  "Q4 IS IT FAME?",
+  "     PHOSPHO-REQUIRED      4 classes   mean rho +0.2090   max |rho| 0.3614",
+  "     PHOSPHO-CAPABLE       4 classes   mean rho +0.1080   max |rho| 0.2372",
+  "     PHOSPHO-INCAPABLE     9 classes   mean rho +0.0437   max |rho| 0.1101",
+  "     the KEN-box was struck at +0.2429, the 5'TOP motif at +0.3296, loop 145 measured +0.1804.",
+  "     Q4 FAIL -- occupancy IS a fame proxy",
+  "",
+  "Q5 DOES IT REACH THE 362?",
+  "     both             n   83   phospho-occupied required-degron 24.1%",
+  "     protein only     n  225   phospho-occupied required-degron 10.7%",
+  "     transcript only  n   29   phospho-occupied required-degron 10.3%",
+  "     neither          n  356   phospho-occupied required-degron 10.4%",
+  "     protein-only against neither: Fisher p = 1.0000",
+  "     Q5 FAIL -- the 362 are NOT enriched",
+  "",
+  "Q6 THE VERDICT ON THE STRUCTURAL BUILD",
+  "     effect size stated beside the verdict, which loop 145's P6 failed to do:",
+  "       phospho-REQUIRED occupancy gain -0.0841   bar +0.0200",
+  "       phospho-CAPABLE  occupancy gain -0.3336   (must stay below the bar)",
+  "     THE SPLIT IS NOT JUSTIFIED. Nine mechanisms are now eliminated and the timing is",
+  "     not in any CONSTANT property this project can measure -- not sequence, not",
+  "     annotation, not network membership, and not phospho-site presence. What has",
+  "     never been available is the quantity the physics actually points at: a",
+  "     degradation RATE measured through the cycle. Every remaining candidate is a",
+  "     proxy for that, and proxies have now failed nine times.",
+  "",
+  "====================================================================================================",
+  "  Q1  PASS",
+  "  Q2  PASS",
+  "  Q3  FAIL",
+  "  Q4  FAIL",
+  "  Q5  FAIL",
+  "  Q6  PASS",
+  "  3/6",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 8020/20213 (39.7%) by 'all', seed 14600, controls 5"
+ ]
+}

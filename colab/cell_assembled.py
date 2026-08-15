@@ -518,25 +518,26 @@ LAYERS = [
      "the LEAST degron signal. Timed destruction is the mechanism for the classic APC/C "
      "substrates that were already transcriptionally periodic, not for the unexplained majority"),
     # ADDED by loop 145: loop 121 tested the wrong degrons, and the right ones still fail.
-    ("phosphodegrons as the timer", "FAILED", "loop_phosphodegron/145",
-     "loop 121 searched D-box, D-box+ and KEN-box -- APC/C degrons, which APC/C binds WITHOUT "
-     "phosphorylation -- so it never tested a motif whose binding depends on a phosphate. The SCF "
-     "phosphodegrons were never searched: beta-TrCP DSGxxS and the Fbw7 CPD [LIVMP]x[ST]Pxx[ST]. On "
-     "twelve textbook SCF substrates, 4 of 11 carry a phospho-occupied degron of their OWN ligase "
-     "against a 5.2% background (P2), and requiring a phosphosite helps the phospho-dependent "
-     "degrons +0.0094 AUC while it costs the APC/C ones -0.0636 (P3). Co-location is not fame: rho "
-     "+0.1804 at worst, against the KEN-box's +0.2429 and the 5'TOP motif's +0.3296 that were struck "
-     "(P4)",
-     "AND IT IS NOT ENOUGH, ON TWO COUNTS THE GATES CAUGHT. P1 FAILED for a reason that is "
-     "chemistry: K, E and N cannot carry a phosphate, so KEN-box occupancy is 0.0000 across 1,239 "
-     "genes and its -0.0619 'gain' is only the AUC collapsing to 0.5 for a constant predictor. Half "
-     "the falsification arm CANNOT take the treatment, so P3's specificity is weaker than it reads. "
-     "And the motif search is under-sensitive: CDC25A, CDC25B, WEE1, JUN and MCL1 have ZERO regex "
-     "hits despite carrying well-documented degrons, so a naive regex is not the instrument this "
-     "needs. P5 FAILED outright -- the 362 are not enriched, Fisher p = 0.2065. P6 first printed "
-     "JUSTIFIED by ANDing three booleans on a +0.0094 AUC gain with no interval, which is the loop "
-     "120 failure inside the gate meant to decide whether to spend a build; it now requires the gain "
-     "to clear 0.02 and it does not. The phospho-state split is NOT justified by this"),
+    ("phosphodegrons as the timer", "FAILED", "loop_phosphodegron/145 + loop_elm_degron/146",
+     "redone on ELM's 33 curated degron classes and 116 experimentally validated human instances "
+     "with exact coordinates. Q1: the curated regexes recover 112/116 of their own annotated sites "
+     "(96.6%), including 16/16 for beta-TrCP -- the sensitivity test loop 145 could not run and the "
+     "one that explains its zero hits. Q2: three arms exist -- 4 phospho-REQUIRED classes, 7 "
+     "phospho-CAPABLE (contain S/T, binding does not need it) and 22 phospho-INCAPABLE -- so the "
+     "control loop 145 lacked is now present",
+     "AND IT OVERTURNS LOOP 145's APPARENT POSITIVE. Q3: requiring a phosphosite makes prediction "
+     "WORSE in every arm -- phospho-REQUIRED -0.0841, phospho-CAPABLE -0.3336 -- against a bar of "
+     "+0.0200. Motif PRESENCE alone finds validated substrates at AUC 0.910 to 0.962; adding the "
+     "phospho requirement drops it to 0.828-0.876. THE REASON IS COVERAGE, NOT BIOLOGY: annotated "
+     "phosphosites land inside a beta-TrCP degron in 1.1% of genes carrying one, and inside a "
+     "CRL4-CDT2 degron in 0.0%. UniProt simply does not record phosphosites at these positions, so "
+     "the test is not refuting phospho-timing -- it CANNOT SEE IT. Q4 kills what little signal "
+     "remains: occupancy correlates with publication count at max |rho| 0.3614 in the "
+     "phospho-REQUIRED arm, WORSE than the 5'TOP motif's 0.3296 and the KEN-box's 0.2429 that were "
+     "struck for it, and the gradient runs 0.209 / 0.108 / 0.044 across required / capable / "
+     "incapable -- exactly what annotation depth looks like. Q5: the 362 are not enriched, Fisher p "
+     "= 1.0000. Loop 145's +0.0094 was a small-n artefact of hand-written regexes; with correct ones "
+     "the gain is negative"),
     # ADDED by loop 122, which fetched the 5' UTR and closed the last term. The two production/loss
     # integrators are the SAME first-order filter driven from opposite sides -- measured, not
     # argued: median amplitude 0.1647 vs 0.1644 against an analytic gain(bbar,T) of 0.1647, median
