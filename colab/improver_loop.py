@@ -159,26 +159,47 @@ def run_executor(e):
             "tail": (r.stdout or r.stderr or "")[-1500:]}
 
 
+# WHERE EACH ITEM'S OUTCOME IS ACTUALLY MEASURED. Without this table the loop scores every item
+# against whatever number happens to sit in the executor's output, which for the first draft meant
+# scoring the PROBE M1 -- an item that predicts nothing by definition -- against the bundle's
+# measured gain, and then reporting it as a prediction M1 had got wrong. A probe has no prediction
+# to score, and an item scored against the wrong quantity is worse than an item not scored at all.
+MEASURED_AT = {
+    "ml_kcat": {
+        "P2": ("loop_plan_exec.json", ("e2", "gain"), "mutant flag alone, E2"),
+        "P4": ("loop_plan_exec.json", ("e3", "gain"), "explicit EC alone, E3"),
+        "B": ("loop_plan_exec.json", ("e4", "gain"), "the bundle tested as one change, E4"),
+        "P6": ("loop_plan_exec.json", ("e7", "best_gain"), "best EC encoding, E7"),
+    },
+    "cell": {},
+}
+
+
 def measured_predictions(track, history):
     """R2. Every prediction an earlier turn made, matched against whatever has since been measured.
     Until this list is non-empty the loop is producing opinions, and it should say so."""
     got = []
-    ex = EXECUTORS.get(track, {})
+    where = MEASURED_AT.get(track, {})
     for h in history:
         if h.get("track") != track:
             continue
         for it in h.get("plan", []):
-            e = ex.get(it["id"])
-            if not e:
+            if it.get("kind") == "probe":
+                continue                      # a probe promises nothing; there is nothing to score
+            loc = where.get(it["id"])
+            if not loc:
                 continue
-            p = OUT / e["produces"]
+            fn, path, what = loc
+            p = OUT / fn
             if not p.exists():
                 continue
             d = json.load(open(p))
-            meas = (d.get("e6") or {}).get("measured")
-            if meas is None:
+            for k in path:
+                d = (d or {}).get(k) if isinstance(d, dict) else None
+            if d is None:
                 continue
-            got.append({"turn": h["turn"], "id": it["id"],
+            meas = float(d)
+            got.append({"turn": h["turn"], "id": it["id"], "measured_as": what,
                         "predicted": it["predicted_gain"], "measured": meas,
                         "signed_error": meas - it["predicted_gain"],
                         "verdict": "OVER-promised" if meas < it["predicted_gain"]
@@ -333,7 +354,7 @@ def one_turn(turn, track, history):
     say(f"       R2 predictions: {R['R2_note']}")
     for g in R["R2_predictions_measured"]:
         say(f"          turn {g['turn']} {g['id']}: predicted {g['predicted']:+.4f}, measured "
-            f"{g['measured']:+.4f}, error {g['signed_error']:+.4f} ({g['verdict']})")
+            f"{g['measured']:+.4f} ({g['measured_as']}), error {g['signed_error']:+.4f} ({g['verdict']})")
     say(f"       R3 plan:        {R['R3_plan_changed']['detail']}")
     say(f"       R4 drift:       {R['R4_drift']['verdict']} "
         f"(rejected {R['R4_drift']['n_rejected']}, blocked {R['R4_drift']['n_blocked']})")
