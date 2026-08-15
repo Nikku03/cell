@@ -552,16 +552,32 @@ LAYERS = [
      "model's own analytic limit -- 400 kb against a 840 kb fork traverse over S phase, a ratio of "
      "0.476. The simulation lost to its own closed form, which is a statement about the "
      "implementation and not about replication"),
+    # ADDED by loop 139: not a rescue of the layer above, a different and smaller claim.
+    ("replication timing from measured constants", "CLOSES", "loop_measured_constants/139 W1-W3",
+     "sigma = v*T_S/2 with v the literature fork speed and T_S the recorded S phase. At v = 1.75 "
+     "kb/min this gives sigma 420 kb and rho 0.5647 against measured Repli-chip RT, versus 0.5641 "
+     "for the width FITTED on the same data -- 100.1% of the fitted optimum with NOTHING tuned. "
+     "Robust across the whole literature range: v = 1.5 gives 0.5622 and v = 2.0 gives 0.5659, both "
+     "within 0.4% of the fit",
+     "THIS IS A SMALLER CLAIM THAN 'REPLICATION WORKS' AND THE DISTINCTION MATTERS. The fork "
+     "SIMULATION remains FAILED: loop 138 V2 showed its speed parameter is invisible to the data, "
+     "moving rho by 0.0222 across a 56x sweep while a nuisance smoothing width moves it by 0.1190. "
+     "What closes here is the smoothed-origin model, which is that simulation's analytic limit, "
+     "evaluated at a constant nobody fitted. It predicts WHERE replication is early or late; it does "
+     "not simulate a fork"),
     ("expression noise", "FAILED", "loop_noise",
      "predicted CV tracks measured at +0.4837, against a cross-dataset abundance agreement ceiling "
      "of +0.8860. loop 138 V4 locates the failure precisely: partitioning and Poisson noise both "
      "give CV ~ N^(-1/2), so the slope of log10 CV on log10 N must be -0.5. Using OUR copy numbers "
      "it is -0.2055; using LARSSON'S OWN mean on the same genes it is -0.4063",
-     "MISLABELLED. The noise physics is closer to right than the record said -- within one dataset "
-     "the exponent is -0.4063 against a predicted -0.5, 3.1x nearer than the cross-dataset figure. "
-     "What fails is the ABUNDANCE JOIN: CV from Larsson, N from Schwanhausser, two datasets and two "
-     "cell populations. Loop 92 forbids forming a RATE by dividing two abundance datasets and this "
-     "is the same error one level down, forming a SCALING LAW across two of them"),
+     "MISLABELLED, AND loop 139 W5 NAMES THE UNIT ERROR. The noise physics is closer to right than "
+     "the record said -- within one dataset the exponent is -0.4063 against a predicted -0.5, and "
+     "loop 139 W4 shows imposing the physical -0.5 costs 0.0937 of exponent while buying back a free "
+     "parameter. Two separate faults remain and they are different sizes. The SMALL one is diploidy: "
+     "my burst size is 0.5199 of the reported value against an expected 0.5000, because Larsson's "
+     "parameters are per ALLELE and copy numbers are per CELL. That is a unit error, fixed by "
+     "halving copies. The LARGE one is the cross-dataset join, which inflates b by 6.24x and which "
+     "no choice of exponent or unit repairs"),
     # CORRECTED. I recorded transport as ABSENT and it is not. Human-GEM is compartment-resolved
     # and 36.7% of its reactions move a metabolite across a membrane. Measured, not assumed.
     ("compartments (metabolic)", "RUNS", "cell_sim",
