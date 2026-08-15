@@ -152,7 +152,7 @@ TRACKS = {
     "ml_kcat": {
         "question": "predict log10 kcat from enzyme sequence and substrate",
         "runs": ["loop_ml_kcat.json", "loop_ml_audit.json", "loop_ml_probe.json",
-                 "loop_b4_fix.json", "loop_plan_exec.json"],
+                 "loop_b4_fix.json", "loop_plan_exec.json", "loop_active_site.json"],
         "metric": "rmse", "lower_is_better": True,
         "checks": ("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"),
     },
@@ -197,6 +197,15 @@ BOUNDS = {
                                          "merging near-duplicates and debiasing singletons"),
     "mutant_irreducible_rmse": (0.947, "loop 133 B1: 18,595 point-mutant pairs a mean-pooled "
                                        "embedding cannot distinguish"),
+    "protein_identity_site_pooled_rmse": (-0.0008, "loop 136 H4: the SAME within-EC permutation "
+                                                    "under an ACTIVE-SITE-POOLED readout. Negative: "
+                                                    "the permuted model was fractionally better. A "
+                                                    "readout built specifically to expose protein "
+                                                    "identity extracts nothing from it"),
+    "residue_subsampling_regularisation_rmse": (0.0100, "loop 136 H5: pooling over the same NUMBER "
+                                                        "of residues at RANDOM positions gains this "
+                                                        "much over mean pooling. It is the noise, "
+                                                        "not the residues"),
     "protein_identity_value_rmse": (0.0046, "loop 134 C3: permuting the embedding among records "
                                             "SHARING an EC number -- destroying protein identity, "
                                             "preserving class exactly -- costs this much, against "
@@ -619,6 +628,12 @@ OUTCOMES = {
         "P4": ("loop_plan_exec.json", ("e3", "gain"), ("e3", "boot"), "explicit EC alone, E3"),
         "B": ("loop_plan_exec.json", ("e4", "gain"), ("e4", "boot"), "the bundle as one change, E4"),
         "P6": ("loop_plan_exec.json", ("e7", "best_gain"), None, "best EC encoding, E7"),
+        "P1": ("loop_active_site.json", ("h3", "gain"), ("h3", "boot"),
+               "site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count "
+               "score the same, so the gain is subsampling noise, not catalytic residues"),
+        "M2": ("loop_active_site.json", ("h4", "cost"), None,
+               "within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein "
+               "identity is worth nothing even to a readout built to expose it"),
     },
     "cell": {
         "C1": ("cell_record_fix.json", ("g2",), None, "status unchanged by the correction, G2"),
@@ -895,6 +910,13 @@ def theory_check(items, a, noise):
         "more kcat records": "loop 133 B5: the binding constraint is missing conditions, not n",
         "bigger substrate fingerprint": "loop 132 A5: substrate is ~15% of the gain",
         "650M with mean pooling": "loop 133 B1: the readout, not the encoder, is what discards it",
+        "active-site pooling": "loop 136 H5: it beats mean pooling by +0.0149 [+0.0017, +0.0295], "
+                               "and pooling over the same NUMBER of residues at RANDOM positions "
+                               "does just as well (site minus random +0.0044 [-0.0131, +0.0206]). "
+                               "The gain is residue subsampling acting as regularisation",
+        "650M with ANY readout": "loop 136 H4: under site pooling, destroying protein identity "
+                                 "costs -0.0008. A larger encoder feeds a readout with nothing to "
+                                 "extract, so P5 is refuted by inheritance and not merely blocked",
     }
     # Data an item may NOT derive from, because the evaluation consumes it. This is loop 129's
     # lesson written down: there, a validation bundle was built from the very predictor it scored.
@@ -1004,7 +1026,11 @@ def theory_check(items, a, noise):
 
     # THE BUNDLE. Items rejected ONLY on T2 are not bad ideas -- they are ideas too small to
     # measure alone. Combine them by removed variance and re-test as one change.
-    small = [i for i in out if i["rejected_on"] == ["T2_gain_exceeds_noise"]]
+    # A MEASURED item is not a candidate for anything. Before this guard, an item whose checks
+    # still nominally failed T2 was swept into the bundle and its measured verdict overwritten --
+    # the loop proposing to bundle three questions it had already answered.
+    small = [i for i in out if i["verdict"] != "MEASURED"
+             and i["rejected_on"] == ["T2_gain_exceeds_noise"]]
     bundle = None
     if len(small) > 1:
         # OVERLAP. combine() assumes the deficits are independent. Two items attacking the SAME
