@@ -101,3 +101,7 @@ outputs/orphan/rnadecay/*.csv
 # cell_complete.json stays ignored (38.5 MB, no producer), but its PARTS are versioned --
 # colab/cell_complete_build.py --assemble reconstructs it bit-identically from outputs/orphan/cell_parts/
 !outputs/orphan/cell_parts/
+
+# UniProt raw stream: 90 MB, reproducible with `python colab/fetch_web.py` (G1).
+# The derived per-gene table IS committed; the raw dump is not.
+colab/data/uniprot_sites.tsv.gz
