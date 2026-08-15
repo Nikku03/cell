@@ -11,7 +11,7 @@
   "cell_layers.json": "f33e057e84e53d48",
   "colab/cell_assembled.py": "1a10a15ac041d424"
  },
- "check_source_hash": "734824e43cfa5718",
+ "check_source_hash": "aa6bb3d2acb28162",
  "stalled": true,
  "plan": [
   {
@@ -37,6 +37,7 @@
    "layer_exists": true,
    "deficit_evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
    "missing_inputs": [],
+   "blockers": [],
    "checks": {
     "T1_cites_measured_deficit": true,
     "T2_gain_exceeds_noise": null,
@@ -89,6 +90,7 @@
    "layer_exists": true,
    "deficit_evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
    "missing_inputs": [],
+   "blockers": [],
    "checks": {
     "T1_cites_measured_deficit": true,
     "T2_gain_exceeds_noise": null,
@@ -137,9 +139,8 @@
    "promised_rmse": null,
    "layer_exists": true,
    "deficit_evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']",
-   "missing_inputs": [
-    "colab/data/protein_dynamics_source.tsv.gz"
-   ],
+   "missing_inputs": [],
+   "blockers": [],
    "checks": {
     "T1_cites_measured_deficit": true,
     "T2_gain_exceeds_noise": null,
@@ -148,7 +149,7 @@
     "T5_not_circular": true,
     "T6_respects_bounds": null,
     "T7_gain_is_derived": null,
-    "T8_inputs_exist": false,
+    "T8_inputs_exist": true,
     "T10_names_layer_and_gate": true
    },
    "checks_not_applicable": [
@@ -157,14 +158,12 @@
     "T7_gain_is_derived"
    ],
    "observed": null,
-   "rejected_on": [
-    "T8_inputs_exist"
-   ],
-   "verdict": "REJECT",
+   "rejected_on": [],
+   "verdict": "ACCEPT",
    "blocked_on": []
   }
  ],
- "n_rejected": 1,
+ "n_rejected": 0,
  "n_blocked": 0,
  "n_executable": 0,
  "stall_reason": "input fingerprint unchanged since the previous turn and nothing was executed in between, so any plan emitted here would be a copy of the last one",
@@ -182,14 +181,12 @@
   },
   "R4_drift": {
    "events": [],
-   "n_rejected": 1,
+   "n_rejected": 0,
    "n_blocked": 0,
-   "check_source_hash": "734824e43cfa5718",
+   "check_source_hash": "aa6bb3d2acb28162",
    "verdict": "no drift detected"
   },
-  "R5_waiting_on": [
-   "C3: file absent -- colab/data/protein_dynamics_source.tsv.gz"
-  ],
+  "R5_waiting_on": [],
   "R6_finished": {
    "stalled": true,
    "executable_remaining": 0,

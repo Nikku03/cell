@@ -10,20 +10,21 @@
   {
    "turn": 1,
    "track": "ml_kcat",
-   "fingerprint": "325a01ea42ac7167",
+   "fingerprint": "357b5910032ee1ef",
    "fingerprint_files": {
     "loop_ml_kcat.json": "fb4206222bf6da0f",
     "loop_ml_audit.json": "5d67374d84a7a04d",
     "loop_ml_probe.json": "3e1149a5bf54ca44",
     "loop_b4_fix.json": "b20eaea39cf215da",
-    "loop_plan_exec.json": "e31dcce956eb025c"
+    "loop_plan_exec.json": "e31dcce956eb025c",
+    "loop_active_site.json": "33d141deb30d6a40"
    },
-   "check_source_hash": "734824e43cfa5718",
+   "check_source_hash": "aa6bb3d2acb28162",
    "stalled": false,
-   "n_measured": 3,
+   "n_measured": 5,
    "answers": {
     "question": "predict log10 kcat from enzyme sequence and substrate",
-    "n_runs": 5,
+    "n_runs": 6,
     "all_scores": {
      "loop_ml_kcat.json:XGB composition": 1.4686410863797956,
      "loop_ml_kcat.json:XGB substrate": 1.4197315006996734,
@@ -258,7 +259,8 @@
       "loop_ml_audit.json": 486.51827573776245,
       "loop_ml_probe.json": 521.478563785553,
       "loop_b4_fix.json": 584.3241896629333,
-      "loop_plan_exec.json": 539.8837127685547
+      "loop_plan_exec.json": 539.8837127685547,
+      "loop_active_site.json": 1012.6740791797638
      },
      "note": "650M was stopped after loop 133 B1 showed a mean-pooled readout cannot see the mutants, so a larger encoder would have inherited the same blindness"
     },
@@ -327,9 +329,8 @@
      "promised_rmse": 1.2268263740087428,
      "noise_used": 0.0488,
      "noise_source_used": "same as a model swap -- a different encoder is a different inductive bias, not an extra column",
-     "missing_inputs": [
-      "colab/data/uniprot_sites.tsv.gz"
-     ],
+     "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -338,19 +339,28 @@
       "T5_not_circular": true,
       "T6_respects_bounds": true,
       "T7_gain_is_derived": true,
-      "T8_inputs_exist": false,
+      "T8_inputs_exist": true,
       "T10_names_layer_and_gate": null
      },
      "checks_not_applicable": [
       "T10_names_layer_and_gate"
      ],
-     "observed": null,
+     "observed": {
+      "value": 0.014507809252258141,
+      "ci": [
+       0.014869136930433407,
+       0.001661142976020292,
+       0.029479521785270437
+      ],
+      "what": "site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues",
+      "from": "loop_active_site.json"
+     },
      "rejected_on": [
-      "T2_gain_exceeds_noise",
-      "T8_inputs_exist"
+      "T2_gain_exceeds_noise"
      ],
-     "verdict": "REJECT",
-     "blocked_on": []
+     "verdict": "MEASURED",
+     "blocked_on": [],
+     "measured_note": "+0.0145 (site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues) CI [+0.0017, +0.0295] -> EXCLUDES zero; the plan predicted +0.0302, error -0.0157"
     },
     {
      "id": "P2",
@@ -380,6 +390,7 @@
      "noise_used": 0.0306,
      "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -440,6 +451,13 @@
      "missing_inputs": [
       "colab/data/kcat_conditions.tsv.gz"
      ],
+     "blockers": [
+      {
+       "file": "colab/data/kcat_conditions.tsv.gz",
+       "kind": "SOURCE_RETIRED",
+       "detail": "SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the standard source, so loop 133 B5's 0.5137 floor is a WALL and not a gap"
+      }
+     ],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -489,6 +507,7 @@
      "noise_used": 0.0306,
      "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -557,6 +576,13 @@
      "missing_inputs": [
       "colab/data/ml/esm2_650M_mean.npy"
      ],
+     "blockers": [
+      {
+       "file": "colab/data/ml/esm2_650M_mean.npy",
+       "kind": "COMPUTE_NOT_DOWNLOAD",
+       "detail": "an embedding is produced, not fetched; no web source can supply it"
+      }
+     ],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": true,
@@ -609,6 +635,7 @@
      "noise_used": 0.0306,
      "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -659,6 +686,7 @@
      "cost_min": 10,
      "promised_rmse": 1.3768263740087427,
      "missing_inputs": [],
+     "blockers": [],
      "unblock_status": "P6 currently does not fail T7_gain_is_derived",
      "checks": {
       "T1_cites_measured_deficit": true,
@@ -704,9 +732,8 @@
      "falsifier": "within-class permutation costs no more under the new readout than the 0.0046 it costs under mean pooling, which would retire P1 and P5 together",
      "cost_min": 60,
      "promised_rmse": 1.3768263740087427,
-     "missing_inputs": [
-      "colab/data/uniprot_sites.tsv.gz"
-     ],
+     "missing_inputs": [],
+     "blockers": [],
      "unblock_status": "P1 currently FAILS T2_gain_exceeds_noise",
      "checks": {
       "T1_cites_measured_deficit": true,
@@ -716,47 +743,26 @@
       "T5_not_circular": true,
       "T6_respects_bounds": true,
       "T7_gain_is_derived": true,
-      "T8_inputs_exist": false,
+      "T8_inputs_exist": true,
       "T9_probe_unblocks_something": true,
       "T10_names_layer_and_gate": null
      },
      "checks_not_applicable": [
       "T10_names_layer_and_gate"
      ],
-     "observed": null,
-     "rejected_on": [
-      "T8_inputs_exist"
-     ],
-     "verdict": "REJECT",
-     "blocked_on": []
+     "observed": {
+      "value": -0.000832024331635095,
+      "ci": null,
+      "what": "within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it",
+      "from": "loop_active_site.json"
+     },
+     "rejected_on": [],
+     "verdict": "MEASURED",
+     "blocked_on": [],
+     "measured_note": "-0.0008 (within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it)"
     }
    ],
-   "bundle": {
-    "id": "B",
-    "members": [
-     "P2",
-     "P4",
-     "P6"
-    ],
-    "change": "the sub-noise items, run and tested as ONE change",
-    "why": "each is smaller than the paired interval alone, so alone each is unmeasurable. Removed variance adds where RMSE gains do not",
-    "naive_sum_gain": 0.0354,
-    "combined_gain": 0.03146797449093586,
-    "promised_rmse": 1.345358399517807,
-    "distinct_deficits": 2,
-    "overlap_collapsed": true,
-    "cost_min": 17,
-    "falsifier": "the bundle's paired difference interval contains zero",
-    "checks": {
-     "T2_gain_exceeds_noise": false,
-     "T6_respects_bounds": true,
-     "T4_members_all_pass_T4": true
-    },
-    "verdict": "REJECT",
-    "rejected_on": [
-     "T2_gain_exceeds_noise"
-    ]
-   },
+   "bundle": null,
    "whole_picture": {
     "result": {
      "current_rmse": 1.3768263740087427,
@@ -791,6 +797,14 @@
       0.947,
       "loop 133 B1: 18,595 point-mutant pairs a mean-pooled embedding cannot distinguish"
      ],
+     "protein_identity_site_pooled_rmse": [
+      -0.0008,
+      "loop 136 H4: the SAME within-EC permutation under an ACTIVE-SITE-POOLED readout. Negative: the permuted model was fractionally better. A readout built specifically to expose protein identity extracts nothing from it"
+     ],
+     "residue_subsampling_regularisation_rmse": [
+      0.01,
+      "loop 136 H5: pooling over the same NUMBER of residues at RANDOM positions gains this much over mean pooling. It is the noise, not the residues"
+     ],
      "protein_identity_value_rmse": [
       0.0046,
       "loop 134 C3: permuting the embedding among records SHARING an EC number -- destroying protein identity, preserving class exactly -- costs this much, against a paired interval of 0.0488. What the model extracts from knowing WHICH protein it is, is unmeasurable"
@@ -811,9 +825,9 @@
     },
     {
      "change": "price the whole plan by removed variance, not by adding gains",
-     "why": "the accepted units promise 0.04 if gains are added, which would land at 1.3414. Combined by removed variance the plan promises 1.3454. The floor is 0.5137: the additive reading is the one that would have to be walked back",
-     "naive_rmse": 1.3414263740087427,
-     "honest_rmse": 1.345358399517807
+     "why": "the accepted units promise 0.00 if gains are added, which would land at 1.3768. Combined by removed variance the plan promises 1.3768. The floor is 0.5137: the additive reading is the one that would have to be walked back",
+     "naive_rmse": 1.3768263740087427,
+     "honest_rmse": 1.3768263740087427
     },
     {
      "change": "P5 is not schedulable yet",
@@ -822,7 +836,7 @@
    ],
    "noise": 0.048839354721254793,
    "noise_source": "paired model-vs-model CI, loop 132 A3",
-   "n_rejected": 5,
+   "n_rejected": 3,
    "n_blocked": 0,
    "n_executable": 0,
    "execute_order": [],
@@ -869,17 +883,15 @@
     },
     "R4_drift": {
      "events": [],
-     "n_rejected": 5,
+     "n_rejected": 3,
      "n_blocked": 0,
-     "check_source_hash": "734824e43cfa5718",
+     "check_source_hash": "aa6bb3d2acb28162",
      "verdict": "no drift detected"
     },
     "R5_waiting_on": [
-     "P1: file absent -- colab/data/uniprot_sites.tsv.gz",
-     "P3: file absent -- colab/data/kcat_conditions.tsv.gz",
-     "P5: file absent -- colab/data/ml/esm2_650M_mean.npy",
-     "M1: rejected on T9_probe_unblocks_something",
-     "M2: file absent -- colab/data/uniprot_sites.tsv.gz"
+     "P3: SOURCE_RETIRED -- colab/data/kcat_conditions.tsv.gz  (SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the st)",
+     "P5: COMPUTE_NOT_DOWNLOAD -- colab/data/ml/esm2_650M_mean.npy  (an embedding is produced, not fetched; no web source can supply it)",
+     "M1: rejected on T9_probe_unblocks_something"
     ],
     "R6_finished": {
      "stalled": false,
@@ -901,7 +913,7 @@
     "cell_layers.json": "f33e057e84e53d48",
     "colab/cell_assembled.py": "1a10a15ac041d424"
    },
-   "check_source_hash": "734824e43cfa5718",
+   "check_source_hash": "aa6bb3d2acb28162",
    "stalled": false,
    "n_measured": 2,
    "answers": {
@@ -1156,6 +1168,7 @@
      "layer_exists": true,
      "deficit_evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": null,
@@ -1208,6 +1221,7 @@
      "layer_exists": true,
      "deficit_evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": null,
@@ -1256,9 +1270,8 @@
      "promised_rmse": null,
      "layer_exists": true,
      "deficit_evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']",
-     "missing_inputs": [
-      "colab/data/protein_dynamics_source.tsv.gz"
-     ],
+     "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": null,
@@ -1267,7 +1280,7 @@
       "T5_not_circular": true,
       "T6_respects_bounds": null,
       "T7_gain_is_derived": null,
-      "T8_inputs_exist": false,
+      "T8_inputs_exist": true,
       "T10_names_layer_and_gate": true
      },
      "checks_not_applicable": [
@@ -1276,10 +1289,8 @@
       "T7_gain_is_derived"
      ],
      "observed": null,
-     "rejected_on": [
-      "T8_inputs_exist"
-     ],
-     "verdict": "REJECT",
+     "rejected_on": [],
+     "verdict": "ACCEPT",
      "blocked_on": []
     }
    ],
@@ -1323,9 +1334,11 @@
    },
    "upgrades": [
     {
-     "change": "NOTHING IS SCHEDULABLE",
-     "why": "0 schedulable, 2 already measured. No scalar metric on this track, so no gain arithmetic is emitted",
-     "new_order": []
+     "change": "order probes first, then by cost",
+     "why": "1 schedulable, 2 already measured. No scalar metric on this track, so no gain arithmetic is emitted",
+     "new_order": [
+      "C3"
+     ]
     },
     {
      "change": "the stopping rule here is a GATE, not a metric",
@@ -1334,10 +1347,12 @@
    ],
    "noise": null,
    "noise_source": "no scalar metric on this track; T2 does not apply",
-   "n_rejected": 1,
+   "n_rejected": 0,
    "n_blocked": 0,
    "n_executable": 0,
-   "execute_order": [],
+   "execute_order": [
+    "C3"
+   ],
    "executed": [],
    "reflection": {
     "R1_fingerprint": {
@@ -1353,14 +1368,12 @@
     },
     "R4_drift": {
      "events": [],
-     "n_rejected": 1,
+     "n_rejected": 0,
      "n_blocked": 0,
-     "check_source_hash": "734824e43cfa5718",
+     "check_source_hash": "aa6bb3d2acb28162",
      "verdict": "no drift detected"
     },
-    "R5_waiting_on": [
-     "C3: file absent -- colab/data/protein_dynamics_source.tsv.gz"
-    ],
+    "R5_waiting_on": [],
     "R6_finished": {
      "stalled": false,
      "executable_remaining": 0,
@@ -1371,15 +1384,16 @@
   {
    "turn": 2,
    "track": "ml_kcat",
-   "fingerprint": "325a01ea42ac7167",
+   "fingerprint": "357b5910032ee1ef",
    "fingerprint_files": {
     "loop_ml_kcat.json": "fb4206222bf6da0f",
     "loop_ml_audit.json": "5d67374d84a7a04d",
     "loop_ml_probe.json": "3e1149a5bf54ca44",
     "loop_b4_fix.json": "b20eaea39cf215da",
-    "loop_plan_exec.json": "e31dcce956eb025c"
+    "loop_plan_exec.json": "e31dcce956eb025c",
+    "loop_active_site.json": "33d141deb30d6a40"
    },
-   "check_source_hash": "734824e43cfa5718",
+   "check_source_hash": "aa6bb3d2acb28162",
    "stalled": true,
    "plan": [
     {
@@ -1409,9 +1423,8 @@
      "promised_rmse": 1.2268263740087428,
      "noise_used": 0.0488,
      "noise_source_used": "same as a model swap -- a different encoder is a different inductive bias, not an extra column",
-     "missing_inputs": [
-      "colab/data/uniprot_sites.tsv.gz"
-     ],
+     "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -1420,19 +1433,28 @@
       "T5_not_circular": true,
       "T6_respects_bounds": true,
       "T7_gain_is_derived": true,
-      "T8_inputs_exist": false,
+      "T8_inputs_exist": true,
       "T10_names_layer_and_gate": null
      },
      "checks_not_applicable": [
       "T10_names_layer_and_gate"
      ],
-     "observed": null,
+     "observed": {
+      "value": 0.014507809252258141,
+      "ci": [
+       0.014869136930433407,
+       0.001661142976020292,
+       0.029479521785270437
+      ],
+      "what": "site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues",
+      "from": "loop_active_site.json"
+     },
      "rejected_on": [
-      "T2_gain_exceeds_noise",
-      "T8_inputs_exist"
+      "T2_gain_exceeds_noise"
      ],
-     "verdict": "REJECT",
-     "blocked_on": []
+     "verdict": "MEASURED",
+     "blocked_on": [],
+     "measured_note": "+0.0145 (site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues) CI [+0.0017, +0.0295] -> EXCLUDES zero; the plan predicted +0.0302, error -0.0157"
     },
     {
      "id": "P2",
@@ -1462,6 +1484,7 @@
      "noise_used": 0.0306,
      "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -1522,6 +1545,13 @@
      "missing_inputs": [
       "colab/data/kcat_conditions.tsv.gz"
      ],
+     "blockers": [
+      {
+       "file": "colab/data/kcat_conditions.tsv.gz",
+       "kind": "SOURCE_RETIRED",
+       "detail": "SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the standard source, so loop 133 B5's 0.5137 floor is a WALL and not a gap"
+      }
+     ],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -1571,6 +1601,7 @@
      "noise_used": 0.0306,
      "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -1639,6 +1670,13 @@
      "missing_inputs": [
       "colab/data/ml/esm2_650M_mean.npy"
      ],
+     "blockers": [
+      {
+       "file": "colab/data/ml/esm2_650M_mean.npy",
+       "kind": "COMPUTE_NOT_DOWNLOAD",
+       "detail": "an embedding is produced, not fetched; no web source can supply it"
+      }
+     ],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": true,
@@ -1691,6 +1729,7 @@
      "noise_used": 0.0306,
      "noise_source_used": "loop 135 E2: the measured width of a cluster-bootstrap interval on a PAIRED feature-addition difference, same model, same folds",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": false,
@@ -1741,6 +1780,7 @@
      "cost_min": 10,
      "promised_rmse": 1.3768263740087427,
      "missing_inputs": [],
+     "blockers": [],
      "unblock_status": "P6 currently does not fail T7_gain_is_derived",
      "checks": {
       "T1_cites_measured_deficit": true,
@@ -1786,9 +1826,8 @@
      "falsifier": "within-class permutation costs no more under the new readout than the 0.0046 it costs under mean pooling, which would retire P1 and P5 together",
      "cost_min": 60,
      "promised_rmse": 1.3768263740087427,
-     "missing_inputs": [
-      "colab/data/uniprot_sites.tsv.gz"
-     ],
+     "missing_inputs": [],
+     "blockers": [],
      "unblock_status": "P1 currently FAILS T2_gain_exceeds_noise",
      "checks": {
       "T1_cites_measured_deficit": true,
@@ -1798,22 +1837,26 @@
       "T5_not_circular": true,
       "T6_respects_bounds": true,
       "T7_gain_is_derived": true,
-      "T8_inputs_exist": false,
+      "T8_inputs_exist": true,
       "T9_probe_unblocks_something": true,
       "T10_names_layer_and_gate": null
      },
      "checks_not_applicable": [
       "T10_names_layer_and_gate"
      ],
-     "observed": null,
-     "rejected_on": [
-      "T8_inputs_exist"
-     ],
-     "verdict": "REJECT",
-     "blocked_on": []
+     "observed": {
+      "value": -0.000832024331635095,
+      "ci": null,
+      "what": "within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it",
+      "from": "loop_active_site.json"
+     },
+     "rejected_on": [],
+     "verdict": "MEASURED",
+     "blocked_on": [],
+     "measured_note": "-0.0008 (within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it)"
     }
    ],
-   "n_rejected": 5,
+   "n_rejected": 3,
    "n_blocked": 0,
    "n_executable": 0,
    "stall_reason": "input fingerprint unchanged since the previous turn and nothing was executed in between, so any plan emitted here would be a copy of the last one",
@@ -1886,17 +1929,15 @@
     },
     "R4_drift": {
      "events": [],
-     "n_rejected": 5,
+     "n_rejected": 3,
      "n_blocked": 0,
-     "check_source_hash": "734824e43cfa5718",
+     "check_source_hash": "aa6bb3d2acb28162",
      "verdict": "no drift detected"
     },
     "R5_waiting_on": [
-     "P1: file absent -- colab/data/uniprot_sites.tsv.gz",
-     "P3: file absent -- colab/data/kcat_conditions.tsv.gz",
-     "P5: file absent -- colab/data/ml/esm2_650M_mean.npy",
-     "M1: rejected on T9_probe_unblocks_something",
-     "M2: file absent -- colab/data/uniprot_sites.tsv.gz"
+     "P3: SOURCE_RETIRED -- colab/data/kcat_conditions.tsv.gz  (SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the st)",
+     "P5: COMPUTE_NOT_DOWNLOAD -- colab/data/ml/esm2_650M_mean.npy  (an embedding is produced, not fetched; no web source can supply it)",
+     "M1: rejected on T9_probe_unblocks_something"
     ],
     "R6_finished": {
      "stalled": true,
@@ -1918,7 +1959,7 @@
     "cell_layers.json": "f33e057e84e53d48",
     "colab/cell_assembled.py": "1a10a15ac041d424"
    },
-   "check_source_hash": "734824e43cfa5718",
+   "check_source_hash": "aa6bb3d2acb28162",
    "stalled": true,
    "plan": [
     {
@@ -1944,6 +1985,7 @@
      "layer_exists": true,
      "deficit_evidence": "layer cites the B4 residual (True); loop_b4_fix.json present (True)",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": null,
@@ -1996,6 +2038,7 @@
      "layer_exists": true,
      "deficit_evidence": "cell_run.json['layers'] = {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}; per-layer status present: False",
      "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": null,
@@ -2044,9 +2087,8 @@
      "promised_rmse": null,
      "layer_exists": true,
      "deficit_evidence": "5 FAILED layers on that axis: ['protein dynamics from transcription alone', 'chromatin->transcription', 'regulation->transcription', 'TF network as a predictor of transcript dynamics', 'CollecTRI as a replacement network']",
-     "missing_inputs": [
-      "colab/data/protein_dynamics_source.tsv.gz"
-     ],
+     "missing_inputs": [],
+     "blockers": [],
      "checks": {
       "T1_cites_measured_deficit": true,
       "T2_gain_exceeds_noise": null,
@@ -2055,7 +2097,7 @@
       "T5_not_circular": true,
       "T6_respects_bounds": null,
       "T7_gain_is_derived": null,
-      "T8_inputs_exist": false,
+      "T8_inputs_exist": true,
       "T10_names_layer_and_gate": true
      },
      "checks_not_applicable": [
@@ -2064,14 +2106,12 @@
       "T7_gain_is_derived"
      ],
      "observed": null,
-     "rejected_on": [
-      "T8_inputs_exist"
-     ],
-     "verdict": "REJECT",
+     "rejected_on": [],
+     "verdict": "ACCEPT",
      "blocked_on": []
     }
    ],
-   "n_rejected": 1,
+   "n_rejected": 0,
    "n_blocked": 0,
    "n_executable": 0,
    "stall_reason": "input fingerprint unchanged since the previous turn and nothing was executed in between, so any plan emitted here would be a copy of the last one",
@@ -2089,14 +2129,12 @@
     },
     "R4_drift": {
      "events": [],
-     "n_rejected": 1,
+     "n_rejected": 0,
      "n_blocked": 0,
-     "check_source_hash": "734824e43cfa5718",
+     "check_source_hash": "aa6bb3d2acb28162",
      "verdict": "no drift detected"
     },
-    "R5_waiting_on": [
-     "C3: file absent -- colab/data/protein_dynamics_source.tsv.gz"
-    ],
+    "R5_waiting_on": [],
     "R6_finished": {
      "stalled": true,
      "executable_remaining": 0,
@@ -2105,27 +2143,28 @@
    }
   }
  ],
- "seconds": 0.050962209701538086,
+ "seconds": 0.746854305267334,
  "log": [
   "====================================================================================================",
   "  THE IMPROVER AS A LOOP -- 10 turns over 2 track(s): ml_kcat, cell",
   "====================================================================================================",
   "  a turn may only exist if an artefact changed or something was executed.",
   "  the loop is EXPECTED to stall before turn 10; where it stalls is the finding.",
-  "\n  TURN 1 [ml_kcat]  fingerprint 325a01ea42ac7167",
-  "     plan 8 items: 0 accepted, 5 rejected, 0 blocked, 3 MEASURED   (null 0.0488)",
-  "       P1 REJECT            +0.0302  active-site pooling replaces mean pooling  MISSING colab/data/uniprot_sites.tsv.gz",
+  "\n  TURN 1 [ml_kcat]  fingerprint 357b5910032ee1ef",
+  "     plan 8 items: 0 accepted, 3 rejected, 0 blocked, 5 MEASURED   (null 0.0488)",
+  "       P1 MEASURED          active-site pooling replaces mean pooling",
+  "           -> +0.0145 (site vs mean pooling, H3 -- but REFUTED by H5: random positions of the same count score the same, so the gain is subsampling noise, not catalytic residues) CI [+0.0017, +0.0295] -> EXCLUDES zero; the plan predicted +0.0302, error -0.0157",
   "       P2 MEASURED          mutant flag and substitution count as features",
   "           -> +0.0168 (mutant flag alone, E2) CI [+0.0016, +0.0322] -> EXCLUDES zero; the plan predicted +0.0113, error +0.0055",
-  "       P3 REJECT            +0.0099  Q10-normalise the target to 37 C  MISSING colab/data/kcat_conditions.tsv.gz",
+  "       P3 REJECT            +0.0099  Q10-normalise the target to 37 C  SOURCE_RETIRED",
   "       P4 MEASURED          EC number as an explicit categorical feature",
   "           -> +0.0070 (explicit EC alone, E3) CI [-0.0045, +0.0188] -> includes zero; the plan predicted +0.0041, error +0.0029",
-  "       P5 REJECT            +0.0800  ESM2-650M with the fixed readout  MISSING colab/data/ml/esm2_650M_mean.npy",
+  "       P5 REJECT            +0.0800  ESM2-650M with the fixed readout  COMPUTE_NOT_DOWNLOAD",
   "       P6 MEASURED          encode EC properly -- out-of-fold target encod",
   "           -> +0.0205 (best EC encoding, E7); the plan predicted +0.0200, error +0.0005",
   "       M1 REJECT            +0.0000  measure the EC channel through three encodings  on T9",
-  "       M2 REJECT            +0.0000  measure what protein identity is worth to a NO  MISSING colab/data/uniprot_sites.tsv.gz",
-  "       B  REJECT            +0.0315  bundle of P2+P4+P6",
+  "       M2 MEASURED          measure what protein identity is worth to a NO",
+  "           -> -0.0008 (within-EC permutation under the site-pooled readout, H4 -- NEGATIVE, so protein identity is worth nothing even to a readout built to expose it)",
   "     executable now: NOTHING",
   "     REFLECT",
   "       R1 fingerprint: first turn",
@@ -2134,55 +2173,46 @@
   "          turn 1 P4: predicted +0.0041, measured +0.0070 (explicit EC alone, E3), error +0.0029 (UNDER-promised)",
   "          turn 1 P6: predicted +0.0200, measured +0.0205 (best EC encoding, E7), error +0.0005 (UNDER-promised)",
   "       R3 plan:        first turn",
-  "       R4 drift:       no drift detected (rejected 5, blocked 0)",
-  "       R5 waiting on:  5 item(s)",
-  "          P1: file absent -- colab/data/uniprot_sites.tsv.gz",
-  "          P3: file absent -- colab/data/kcat_conditions.tsv.gz",
-  "          P5: file absent -- colab/data/ml/esm2_650M_mean.npy",
+  "       R4 drift:       no drift detected (rejected 3, blocked 0)",
+  "       R5 waiting on:  3 item(s)",
+  "          P3: SOURCE_RETIRED -- colab/data/kcat_conditions.tsv.gz  (SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the st)",
+  "          P5: COMPUTE_NOT_DOWNLOAD -- colab/data/ml/esm2_650M_mean.npy  (an embedding is produced, not fetched; no web source can supply it)",
   "          M1: rejected on T9_probe_unblocks_something",
-  "          M2: file absent -- colab/data/uniprot_sites.tsv.gz",
   "       R6 0 executable item(s) remain",
   "\n  TURN 1 [cell]  fingerprint 575904808907e69b",
-  "     plan 3 items: 0 accepted, 1 rejected, 0 blocked, 2 MEASURED   (null n/a on this track)",
+  "     plan 3 items: 1 accepted, 0 rejected, 0 blocked, 2 MEASURED   (null n/a on this track)",
   "       C1 MEASURED          correct the kcat layer to cite loop 134 C3, no",
   "           -> {'before': 'FAILED', 'after': 'FAILED'} (status unchanged by the correction, G2)",
   "       C2 MEASURED          record per-layer status in cell_run.json, not ",
   "           -> 47 (per-layer artefact written, G4)",
-  "       C3 REJECT            +0.0000  find the non-transcriptional source of protein  MISSING colab/data/protein_dynamics_source.tsv.gz",
+  "       C3 ACCEPT            +0.0000  find the non-transcriptional source of protein",
   "     executable now: NOTHING",
   "     REFLECT",
   "       R1 fingerprint: first turn",
   "       R2 predictions: no prediction has been measured yet; every predicted_gain in this track is still an unfalsified opinion",
   "       R3 plan:        first turn",
-  "       R4 drift:       no drift detected (rejected 1, blocked 0)",
-  "       R5 waiting on:  1 item(s)",
-  "          C3: file absent -- colab/data/protein_dynamics_source.tsv.gz",
+  "       R4 drift:       no drift detected (rejected 0, blocked 0)",
+  "       R5 waiting on:  0 item(s)",
   "       R6 0 executable item(s) remain",
   "\n  TURN 2 [ml_kcat]  STALLED",
-  "     fingerprint 325a01ea42ac7167 unchanged; no artefact moved and nothing ran",
+  "     fingerprint 357b5910032ee1ef unchanged; no artefact moved and nothing ran",
   "     the loop is waiting on data, not on thinking",
-  "       waiting: P1: file absent -- colab/data/uniprot_sites.tsv.gz",
-  "       waiting: P3: file absent -- colab/data/kcat_conditions.tsv.gz",
-  "       waiting: P5: file absent -- colab/data/ml/esm2_650M_mean.npy",
+  "       waiting: P3: SOURCE_RETIRED -- colab/data/kcat_conditions.tsv.gz  (SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the st)",
+  "       waiting: P5: COMPUTE_NOT_DOWNLOAD -- colab/data/ml/esm2_650M_mean.npy  (an embedding is produced, not fetched; no web source can supply it)",
   "       waiting: M1: rejected on T9_probe_unblocks_something",
-  "       waiting: M2: file absent -- colab/data/uniprot_sites.tsv.gz",
   "\n  TURN 2 [cell]  STALLED",
   "     fingerprint 575904808907e69b unchanged; no artefact moved and nothing ran",
   "     the loop is waiting on data, not on thinking",
-  "       waiting: C3: file absent -- colab/data/protein_dynamics_source.tsv.gz",
   "\n  EVERY TRACK STALLED AT TURN 2. Continuing would re-emit this turn 8 more times, which is the failure mode this loop exists to prevent. Stopping and reporting what it is waiting on.",
   "\n====================================================================================================",
   "  ACROSS THE WHOLE RUN",
   "====================================================================================================",
   "  ml_kcat: 2 turns, 1 substantive, 1 stalled, 0 execution(s), 6 prediction(s) measured",
   "     mean |prediction error| +0.0030",
-  "     waiting: P1: file absent -- colab/data/uniprot_sites.tsv.gz",
-  "     waiting: P3: file absent -- colab/data/kcat_conditions.tsv.gz",
-  "     waiting: P5: file absent -- colab/data/ml/esm2_650M_mean.npy",
+  "     waiting: P3: SOURCE_RETIRED -- colab/data/kcat_conditions.tsv.gz  (SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature and pH are not obtainable from the st)",
+  "     waiting: P5: COMPUTE_NOT_DOWNLOAD -- colab/data/ml/esm2_650M_mean.npy  (an embedding is produced, not fetched; no web source can supply it)",
   "     waiting: M1: rejected on T9_probe_unblocks_something",
-  "     waiting: M2: file absent -- colab/data/uniprot_sites.tsv.gz",
   "  cell: 2 turns, 1 substantive, 1 stalled, 0 execution(s), 0 prediction(s) measured",
-  "     waiting: C3: file absent -- colab/data/protein_dynamics_source.tsv.gz",
   "\n  the loop stopped because it ran out of NEW MEASUREMENTS, not out of turns."
  ]
 }
