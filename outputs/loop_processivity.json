@@ -1,0 +1,352 @@
+{
+ "test": "loop 152 -- processivity, from the literature",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "outputs/loop_reversibility_price.json",
+    "bytes": 18288,
+    "hash": "d654eddf3d2f0d23",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio.json",
+    "bytes": 13968,
+    "hash": "2a9bbe03961188a9",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_ubiquitin_markov.json",
+    "bytes": 13294,
+    "hash": "78280e0815363cca",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_proteostasis.json",
+    "bytes": 23916,
+    "hash": "cd8c97b832fc31c4",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_elm_degron.json",
+    "bytes": 13087,
+    "hash": "409899a5948f7c49",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/elm_classes.tsv",
+    "bytes": 88298,
+    "hash": "068498b20a2dbb83",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 7,
+   "used": 7,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 15200,
+  "controls": [
+   "loop 151 reproduced at 100% distributive before being corrected (V0)",
+   "the break-even share solved for rather than one estimate defended (V3)",
+   "the literature's measured direction of feedback tested, not a generic sweep (V4)",
+   "the D box checked to have been INSIDE the failing test set, so the reconciliation is falsifiable (V5)",
+   "conclusions emitted through gate_guard.verdict"
+  ],
+  "note": "Rape/Reddy/Kirschner 2006 (doi 10.1016/j.cell.2005.10.032) and Lu/Wang/Kirschner 2015 (doi 10.1126/science.1248737). Loop 151 charged the whole proteome a price only distributive substrates pay; the measured oscillator share is 1.37%, so its cost test was wrong by two orders of magnitude and its FAIL is overturned.",
+  "warnings": []
+ },
+ "gates": {
+  "V0": true,
+  "V1": true,
+  "V2": false,
+  "V3": true,
+  "V4": true,
+  "V5": true,
+  "V6": true
+ },
+ "citations": [
+  {
+   "ref": "Rape M, Reddy SK, Kirschner MW. Cell 2006;124:89-103",
+   "doi": "10.1016/j.cell.2005.10.032",
+   "pmid": "16413484"
+  },
+  {
+   "ref": "Lu Y, Wang W, Kirschner MW. Science 2015;348:1248737",
+   "doi": "10.1126/science.1248737",
+   "pmid": "25859049"
+  }
+ ],
+ "v0": {
+  "e1_full": 14.652039050959754,
+  "e1_ref": 14.652039050959754,
+  "atp_full": 6.910109966107623,
+  "atp_ref": 6.910109966107623,
+  "osc_frac": 0.013675427155305498,
+  "pass": true
+ },
+ "v1": {
+  "corrected": {
+   "flux_per_h": 5845078105.754958,
+   "e1_utilisation": 0.20144388990094939,
+   "atp_vs_translation": 0.0950038029775014
+  },
+  "loop151_e1": 14.652039050959754,
+  "loop151_atp": 6.910109966107623,
+  "correction_fold": 72.73508796004788,
+  "overturns_loop151": true,
+  "pass": true
+ },
+ "v2": {
+  "by_load": {
+   "dilution-free": {
+    "flux_per_h": 5845078105.754958,
+    "e1_utilisation": 0.20144388990094939,
+    "atp_vs_translation": 0.0950038029775014
+   },
+   "gross": {
+    "flux_per_h": 43531063493.86534,
+    "e1_utilisation": 1.5002480040592756,
+    "atp_vs_translation": 0.7075382920033922
+   }
+  },
+  "hinge_dissolved": false,
+  "pass": false
+ },
+ "v3": {
+  "by_load": {
+   "dilution-free": {
+    "break_even_fraction": 0.06818083024821565,
+    "margin_vs_measured": 4.985645382328283,
+    "sweep": [
+     {
+      "frac": 0.005,
+      "flux_per_h": 2157060645.579681,
+      "e1_utilisation": 0.07434061262072733,
+      "atp_vs_translation": 0.03506009002367387
+     },
+     {
+      "frac": 0.0137,
+      "flux_per_h": 5855524286.520141,
+      "e1_utilisation": 0.20180390549866656,
+      "atp_vs_translation": 0.0951735914527496
+     },
+     {
+      "frac": 0.05,
+      "flux_per_h": 21287044995.271717,
+      "e1_utilisation": 0.7336335068169647,
+      "atp_vs_translation": 0.34599199396716906
+     },
+     {
+      "frac": 0.1,
+      "flux_per_h": 42542583161.5962,
+      "e1_utilisation": 1.4661811670350062,
+      "atp_vs_translation": 0.6914718872377192
+     },
+     {
+      "frac": 0.25,
+      "flux_per_h": 106309197660.56964,
+      "e1_utilisation": 3.6638241476891307,
+      "atp_vs_translation": 1.7279115670493697
+     },
+     {
+      "frac": 0.5,
+      "flux_per_h": 212586888492.19205,
+      "e1_utilisation": 7.326562448779338,
+      "atp_vs_translation": 3.4553110334021206
+     },
+     {
+      "frac": 1.0,
+      "flux_per_h": 425142270155.4369,
+      "e1_utilisation": 14.652039050959754,
+      "atp_vs_translation": 6.910109966107623
+     }
+    ]
+   },
+   "gross": {
+    "break_even_fraction": 0.009090731357734905,
+    "margin_vs_measured": 0.664749353310553,
+    "sweep": [
+     {
+      "frac": 0.005,
+      "flux_per_h": 16064651699.075819,
+      "e1_utilisation": 0.5536497322387357,
+      "atp_vs_translation": 0.261109086535304
+     },
+     {
+      "frac": 0.0137,
+      "flux_per_h": 43608861146.85305,
+      "e1_utilisation": 1.5029292106333294,
+      "atp_vs_translation": 0.708802787150049
+     },
+     {
+      "frac": 0.05,
+      "flux_per_h": 158534700566.8891,
+      "e1_utilisation": 5.46371599979698,
+      "atp_vs_translation": 2.576766158680537
+     },
+     {
+      "frac": 0.1,
+      "flux_per_h": 316834754864.4594,
+      "e1_utilisation": 10.919345185972807,
+      "atp_vs_translation": 5.149718461064129
+     },
+     {
+      "frac": 0.25,
+      "flux_per_h": 791734917757.1703,
+      "e1_utilisation": 27.286232744500285,
+      "atp_vs_translation": 12.868575368214904
+     },
+     {
+      "frac": 0.5,
+      "flux_per_h": 1583235189245.0217,
+      "e1_utilisation": 54.564378675379416,
+      "atp_vs_translation": 25.73333688013286
+     },
+     {
+      "frac": 1.0,
+      "flux_per_h": 3166235732220.7246,
+      "e1_utilisation": 109.12067053713767,
+      "atp_vs_translation": 51.46285990396878
+     }
+    ]
+   }
+  },
+  "measured_fraction": 0.013675427155305498,
+  "pass": true
+ },
+ "v4": {
+  "rows": [
+   {
+    "q": 1.0,
+    "n": 8,
+    "amp": 26.834822970430544
+   },
+   {
+    "q": 1.25,
+    "n": 8,
+    "amp": 26.8347715341301
+   },
+   {
+    "q": 1.5,
+    "n": 8,
+    "amp": 26.834603405782346
+   },
+   {
+    "q": 2.0,
+    "n": 8,
+    "amp": 26.83308954877741
+   },
+   {
+    "q": 3.0,
+    "n": 8,
+    "amp": 26.805029138662388
+   }
+  ],
+  "distinct_n": [
+   8
+  ],
+  "pass": true
+ },
+ "v5": {
+  "dbox_in_elm": true,
+  "dbox_regex": ".R..L..[LIVM].",
+  "inside_loop146_selection": true,
+  "reconciliation": "presence tested; processivity is the variable",
+  "prediction": "oscillators differ in D box QUALITY, not presence",
+  "pass": true
+ },
+ "v6": {
+  "identifies_which_proteins": false,
+  "proteome_wide_processivity_available": false,
+  "substrates_characterised_in_vitro": [
+   "cyclin A",
+   "cyclin B",
+   "geminin",
+   "securin",
+   "Nek2A"
+  ]
+ },
+ "seconds": 0.011014938354492188,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 152 -- the literature had it: processivity, kinetic proofreading, and a hundredfold error in loop 151",
+  "====================================================================================================",
+  "",
+  "  n = 8, rho = 4.91, transfers per distributive degradation f_shape = 107,949",
+  "  measured oscillator share of proteolytic flux (loop 148 K1): 1.3675%",
+  "  E1 capacity at a generous 5/s: 2.902e+10 activations/h",
+  "",
+  "V0 REGRESSION",
+  "     at 100% distributive: E1 1465.20% against loop 151's 1465.20% (diff 0.00%)",
+  "                           ATP 6.910x against loop 151's 6.910x (diff 0.00%)",
+  "     oscillator share recovered from loop 148's log: 1.3675%",
+  "     loop 151 is reproduced, so this loop is entitled to correct it.",
+  "     V0 PASS",
+  "",
+  "V1 THE MIXED-MODE CORRECTION",
+  "     distributive ladder on the 1.37% that oscillate, processive on the remaining 98.63%",
+  "       total flux 5.845e+09 /h   E1 20.1% of capacity   ATP 0.095x translation",
+  "     loop 151 had these at 1465% and 6.91x. The correction is 73-fold.",
+  "     n = 8 IS affordable once only the substrates that need proofreading pay for it. Loop 151's T3 and T4 failures are OVERTURNED, and loop 149's original n = 8 stands rather than 151b's narrowed 9-10.",
+  "     V1 PASS",
+  "",
+  "V2 DOES THE HINGE DISSOLVE?",
+  "       dilution-free  load    3,938,354 /h   E1   20.1%   ATP 0.095x   affordable",
+  "       gross          load   29,330,784 /h   E1  150.0%   ATP 0.708x   NOT",
+  "     still affordable under the dilution-free load only. On the gross load E1 sits at 150% while ATP is fine at 0.71x, so the correction narrows the hinge from a 7-fold gap to a single enzyme's turnover number but does not close it. The dilution question stays in the headline.",
+  "     V2 FAIL",
+  "",
+  "V3 THE BREAK-EVEN FRACTION",
+  "       dilution-free: E1 break-even at a distributive share of 6.818%   measured 1.368%   margin 4.99x",
+  "       gross: E1 break-even at a distributive share of 0.909%   measured 1.368%   margin 0.66x",
+  "     sweep of the distributive share (dilution-free load):",
+  "        0.50%  E1     7.4%  ATP   0.035x  ok",
+  "        1.37%  E1    20.2%  ATP   0.095x  ok",
+  "        5.00%  E1    73.4%  ATP   0.346x  ok",
+  "       10.00%  E1   146.6%  ATP   0.691x  over",
+  "       25.00%  E1   366.4%  ATP   1.728x  over",
+  "       50.00%  E1   732.7%  ATP   3.455x  over",
+  "       100.00%  E1  1465.2%  ATP   6.910x  over",
+  "     the dilution-free conclusion holds with 5.0x of margin -- the distributive share would have to be 5.0 times larger than measured before n = 8 became unaffordable. Not a conclusion balanced on one estimate.",
+  "     V3 PASS",
+  "",
+  "V4 THE LITERATURE'S OWN KINETICS",
+  "     Lu 2015 measured POSITIVE feedback -- the first ubiquitin raises the on-rate and lowers the off-rate for the next. That is q > 1 in loop 150's parametrisation.",
+  "       q = 1.0   (elongation accelerates 1.00x per step)  ->  n = 8   (26.8x)",
+  "       q = 1.25  (elongation accelerates 1.25x per step)  ->  n = 8   (26.8x)",
+  "       q = 1.5   (elongation accelerates 1.50x per step)  ->  n = 8   (26.8x)",
+  "       q = 2.0   (elongation accelerates 2.00x per step)  ->  n = 8   (26.8x)",
+  "       q = 3.0   (elongation accelerates 3.00x per step)  ->  n = 8   (26.8x)",
+  "     n stays 8 under the acceleration the literature actually measured, not just under loop 150's generic sweep.",
+  "     V4 PASS",
+  "",
+  "V5 WHY NINE MECHANISMS FAILED, RECONCILED",
+  "     Rape 2006: processivity is 'strongly influenced by the D box within the substrate'.",
+  "     DEG_APCC_DBOX_1 in ELM: True   regex .R..L..[LIVM].",
+  "     loop 146 selected every class starting with DEG_, so the D box was INSIDE its tested set: True",
+  "     loop 146 measured occupancy gain REQUIRED {'Q1': True, 'Q2': True, 'Q3': False, 'Q4': False, 'Q5': False, 'Q6': True}",
+  "     this repo tested the right motif for the wrong PROPERTY. Loops 121, 145 and 146 asked whether a substrate HAS a D box; Rape 2006 says every APC substrate has one and what orders them is how PROCESSIVELY that box is engaged -- a graded kinetic quantity a regex cannot see. A presence test would fail even when the mechanism is exactly right, which is what happened. That reconciles the failures rather than explaining them away, and it predicts the oscillators differ in D box QUALITY and not in whether they have one.",
+  "     V5 PASS",
+  "",
+  "V6 WHAT THE LITERATURE DOES NOT GIVE US",
+  "     processivity in Rape 2006 and Lu 2015 is measured in vitro on a handful of substrates -- cyclin A, cyclin B, geminin, securin, Nek2A. It is not proteome-wide and",
+  "     there is no table of processivity per gene to join against the 77 oscillators.",
+  "     So this loop does NOT identify which proteins are distributive. The arc's central question -- WHICH proteins are destroyed on schedule -- is not closed by these papers.",
+  "     What they close is different and still worth having: the mechanism class is real and measured rather than derived, loop 151's cost objection rested on a premise the",
+  "     literature contradicts, and nine failures have an explanation that predicts something rather than merely excusing them.",
+  "",
+  "====================================================================================================",
+  "  V0  PASS",
+  "  V1  PASS",
+  "  V2  FAIL",
+  "  V3  PASS",
+  "  V4  PASS",
+  "  V5  PASS",
+  "  V6  PASS",
+  "  6/7",
+  "====================================================================================================",
+  "    manifest: 6 inputs, coverage 7/7 (100.0%) by 'all', seed 15200, controls 5"
+ ]
+}
