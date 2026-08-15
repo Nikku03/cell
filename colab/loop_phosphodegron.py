@@ -71,6 +71,10 @@ PREDECLARED:
        P2 and P3 decide whether the instrument works at all.
 
   P6 THE STRUCTURAL CONSEQUENCE, STATED WHETHER OR NOT IT IS EARNED.
+       AND IT MUST WEIGH EFFECT SIZES, NOT BOOLEANS. The first version of this gate ANDed three
+       pass/fail flags and printed "JUSTIFIED" on a phospho-gain of +0.0094 AUC with no interval
+       attached -- the loop 120 failure, in the gate meant to decide whether to spend a build.
+       It now requires the phospho gain to exceed 0.02 as well.
        the signalling layer is STATIC because "phospho-forms share a node so the chain is
        chemically inert". Splitting each phosphoprotein into two states is what would make it
        propagate. Gate: say plainly whether P2-P5 justify that build or not.
@@ -108,6 +112,14 @@ PHOSPHO_MOTIFS = {
     "Fbw7 CPD": re.compile(r"[LIVMP].[ST]P..[ST]"),
 }
 # loop 121's APC/C degrons, kept as the comparison arm. These are NOT phospho-dependent.
+#
+# AND THE KEN-BOX ARM IS INVALID BY CHEMISTRY, which P1 caught: K, E and N cannot carry a
+# phosphate, so "a phosphosite inside the motif" is impossible for KEN and its occupancy is
+# 0.0000 across 1,239 genes. Its apparent -0.0619 "gain" is just the AUC collapsing to 0.5 for a
+# constant predictor, not evidence that phospho-occupancy is specific to phospho-degrons. D-box
+# R..L is only marginally better -- R and L cannot be phosphorylated either, leaving two wildcard
+# positions. A falsification arm that CANNOT take the treatment is not a control, and this one
+# was half-built before P1 said so.
 APC_MOTIFS = {
     "D-box R..L": re.compile(r"R..L"),
     "KEN-box": re.compile(r"KEN"),
@@ -371,7 +383,13 @@ def main():
 
     # ---------------------------------------------------------------- P6
     say("P6 THE STRUCTURAL CONSEQUENCE")
-    core = gates["P2"] and gates["P3"] and gates["P4"]
+    # EFFECT SIZE, not just the boolean. See the docstring: the first version said JUSTIFIED on
+    # a +0.0094 AUC gain.
+    MIN_GAIN = 0.02
+    core = (gates["P2"] and gates["P3"] and gates["P4"]
+            and res["p3"]["phospho_gain"] > MIN_GAIN)
+    say(f"     the phospho gain is {res['p3']['phospho_gain']:+.4f} against a required "
+        f"{MIN_GAIN:+.4f}")
     say(f"     the signalling layer is STATIC because 'phospho-forms share a node so the chain is")
     say(f"     chemically inert'. Splitting each phosphoprotein into an unmodified and a modified")
     say(f"     state is what would let information propagate through 17,432 signal edges.")

@@ -1,9 +1,9 @@
 {
- "n_layers": 51,
+ "n_layers": 52,
  "counts": {
   "RUNS": 13,
   "CLOSES": 12,
-  "FAILED": 15,
+  "FAILED": 16,
   "STATIC": 11
  },
  "layers": [
@@ -126,6 +126,12 @@
    "status": "FAILED",
    "source": "loop_degron/121",
    "evidence_sha": "608602c857b4"
+  },
+  {
+   "layer": "phosphodegrons as the timer",
+   "status": "FAILED",
+   "source": "loop_phosphodegron/145",
+   "evidence_sha": "70f6e14b39d6"
   },
   {
    "layer": "regulated translation k_sp(t)",

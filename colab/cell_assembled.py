@@ -517,6 +517,26 @@ LAYERS = [
      "their mRNA -- the ones that need a post-transcriptional mechanism by construction -- carry "
      "the LEAST degron signal. Timed destruction is the mechanism for the classic APC/C "
      "substrates that were already transcriptionally periodic, not for the unexplained majority"),
+    # ADDED by loop 145: loop 121 tested the wrong degrons, and the right ones still fail.
+    ("phosphodegrons as the timer", "FAILED", "loop_phosphodegron/145",
+     "loop 121 searched D-box, D-box+ and KEN-box -- APC/C degrons, which APC/C binds WITHOUT "
+     "phosphorylation -- so it never tested a motif whose binding depends on a phosphate. The SCF "
+     "phosphodegrons were never searched: beta-TrCP DSGxxS and the Fbw7 CPD [LIVMP]x[ST]Pxx[ST]. On "
+     "twelve textbook SCF substrates, 4 of 11 carry a phospho-occupied degron of their OWN ligase "
+     "against a 5.2% background (P2), and requiring a phosphosite helps the phospho-dependent "
+     "degrons +0.0094 AUC while it costs the APC/C ones -0.0636 (P3). Co-location is not fame: rho "
+     "+0.1804 at worst, against the KEN-box's +0.2429 and the 5'TOP motif's +0.3296 that were struck "
+     "(P4)",
+     "AND IT IS NOT ENOUGH, ON TWO COUNTS THE GATES CAUGHT. P1 FAILED for a reason that is "
+     "chemistry: K, E and N cannot carry a phosphate, so KEN-box occupancy is 0.0000 across 1,239 "
+     "genes and its -0.0619 'gain' is only the AUC collapsing to 0.5 for a constant predictor. Half "
+     "the falsification arm CANNOT take the treatment, so P3's specificity is weaker than it reads. "
+     "And the motif search is under-sensitive: CDC25A, CDC25B, WEE1, JUN and MCL1 have ZERO regex "
+     "hits despite carrying well-documented degrons, so a naive regex is not the instrument this "
+     "needs. P5 FAILED outright -- the 362 are not enriched, Fisher p = 0.2065. P6 first printed "
+     "JUSTIFIED by ANDing three booleans on a +0.0094 AUC gain with no interval, which is the loop "
+     "120 failure inside the gate meant to decide whether to spend a build; it now requires the gain "
+     "to clear 0.02 and it does not. The phospho-state split is NOT justified by this"),
     # ADDED by loop 122, which fetched the 5' UTR and closed the last term. The two production/loss
     # integrators are the SAME first-order filter driven from opposite sides -- measured, not
     # argued: median amplitude 0.1647 vs 0.1644 against an analytic gain(bbar,T) of 0.1647, median
