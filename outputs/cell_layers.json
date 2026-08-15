@@ -1,0 +1,293 @@
+{
+ "n_layers": 47,
+ "counts": {
+  "RUNS": 12,
+  "CLOSES": 10,
+  "FAILED": 14,
+  "STATIC": 11
+ },
+ "layers": [
+  {
+   "layer": "chromatin folding",
+   "status": "RUNS",
+   "source": "loop_second/85/86",
+   "evidence_sha": "8899fc4b2f1c"
+  },
+  {
+   "layer": "metabolic network",
+   "status": "RUNS",
+   "source": "cell_sim/93",
+   "evidence_sha": "8cc44cf0d591"
+  },
+  {
+   "layer": "ribosome budget",
+   "status": "CLOSES",
+   "source": "loop_translation",
+   "evidence_sha": "4afad0811d3c"
+  },
+  {
+   "layer": "proteasome budget",
+   "status": "CLOSES",
+   "source": "loop_proteostasis",
+   "evidence_sha": "4b94dca8ea04"
+  },
+  {
+   "layer": "doubling-time budget",
+   "status": "CLOSES",
+   "source": "loop_doubling",
+   "evidence_sha": "1c110436dd4b"
+  },
+  {
+   "layer": "transcription->mRNA->protein",
+   "status": "RUNS",
+   "source": "loop_integrator",
+   "evidence_sha": "330e3e611360"
+  },
+  {
+   "layer": "protein dynamics from transcription alone",
+   "status": "FAILED",
+   "source": "loop_cellcycle_axis/119",
+   "evidence_sha": "27f698c14263"
+  },
+  {
+   "layer": "protein->flux->growth",
+   "status": "RUNS",
+   "source": "loop_growth_loop",
+   "evidence_sha": "6ddc2f704254"
+  },
+  {
+   "layer": "signalling stoichiometry",
+   "status": "STATIC",
+   "source": "loop_signalling_cost",
+   "evidence_sha": "791e5a15ea54"
+  },
+  {
+   "layer": "complex stoichiometry",
+   "status": "STATIC",
+   "source": "loop_complex_stoich",
+   "evidence_sha": "f6859e9c7b7e"
+  },
+  {
+   "layer": "chromatin->transcription",
+   "status": "FAILED",
+   "source": "loop_chromatin_to_rate",
+   "evidence_sha": "237b727eac4a"
+  },
+  {
+   "layer": "regulation->transcription",
+   "status": "FAILED",
+   "source": "loop_tf_rate/loop_perturb",
+   "evidence_sha": "aabd138ca49e"
+  },
+  {
+   "layer": "TF network inside the rate law",
+   "status": "RUNS",
+   "source": "cell_assembled.integrate_tf/120",
+   "evidence_sha": "efbf1d9d27d7"
+  },
+  {
+   "layer": "TF network as a predictor of transcript dynamics",
+   "status": "FAILED",
+   "source": "loop_tf_cellcycle/120",
+   "evidence_sha": "90c5dcb65fed"
+  },
+  {
+   "layer": "CollecTRI as a replacement network",
+   "status": "FAILED",
+   "source": "loop_collectri/130",
+   "evidence_sha": "b75e843651df"
+  },
+  {
+   "layer": "reaction+graph fusion",
+   "status": "FAILED",
+   "source": "loop_fusion_linear",
+   "evidence_sha": "cd6c9ad3a25a"
+  },
+  {
+   "layer": "cell cycle (measured layer)",
+   "status": "STATIC",
+   "source": "loop_cellcycle_axis/119",
+   "evidence_sha": "96dab9e0657f"
+  },
+  {
+   "layer": "cell cycle as a process",
+   "status": "FAILED",
+   "source": "loop_cellcycle/99",
+   "evidence_sha": "93497c34bd32"
+  },
+  {
+   "layer": "regulated degradation b(t)",
+   "status": "RUNS",
+   "source": "cell_assembled.integrate_deg/121",
+   "evidence_sha": "2c85efcec502"
+  },
+  {
+   "layer": "degron motifs as the mechanism",
+   "status": "FAILED",
+   "source": "loop_degron/121",
+   "evidence_sha": "608602c857b4"
+  },
+  {
+   "layer": "regulated translation k_sp(t)",
+   "status": "FAILED",
+   "source": "loop_utr5/122",
+   "evidence_sha": "35e52b3bdedb"
+  },
+  {
+   "layer": "the amplitude bound on every mechanism",
+   "status": "CLOSES",
+   "source": "loop_utr5/122 U6",
+   "evidence_sha": "4079aa936c15"
+  },
+  {
+   "layer": "cell cycle, measured without a camera",
+   "status": "STATIC",
+   "source": "loop_ms_cellcycle/123",
+   "evidence_sha": "534e7420c7b6"
+  },
+  {
+   "layer": "the production ceiling tanh(b*T/4)",
+   "status": "CLOSES",
+   "source": "loop_ms_cellcycle/123",
+   "evidence_sha": "1c33a911c2c3"
+  },
+  {
+   "layer": "relocalisation as the mechanism",
+   "status": "STATIC",
+   "source": "loop_degron/121 post-hoc",
+   "evidence_sha": "a2ee29dd95fb"
+  },
+  {
+   "layer": "relocalisation, RETIRED",
+   "status": "FAILED",
+   "source": "loop_ms_cellcycle/123 V4",
+   "evidence_sha": "49119a27cf9a"
+  },
+  {
+   "layer": "the cell-cycle signal, decomposed",
+   "status": "STATIC",
+   "source": "loop_utr5/122 post-hoc",
+   "evidence_sha": "30e2109b07e6"
+  },
+  {
+   "layer": "replication as process",
+   "status": "FAILED",
+   "source": "loop_replication_time",
+   "evidence_sha": "3a1c83717341"
+  },
+  {
+   "layer": "expression noise",
+   "status": "FAILED",
+   "source": "loop_noise",
+   "evidence_sha": "f6dde5f60f17"
+  },
+  {
+   "layer": "compartments (metabolic)",
+   "status": "RUNS",
+   "source": "cell_sim",
+   "evidence_sha": "7b01aa1f2b6c"
+  },
+  {
+   "layer": "transport (metabolic)",
+   "status": "RUNS",
+   "source": "cell_sim",
+   "evidence_sha": "eb9cfb513531"
+  },
+  {
+   "layer": "compartments (gene labels)",
+   "status": "STATIC",
+   "source": "loop_compartment_mass",
+   "evidence_sha": "88a8d0d9a020"
+  },
+  {
+   "layer": "protein structure",
+   "status": "STATIC",
+   "source": "struct/fold + the nexus arm",
+   "evidence_sha": "a371a7a4ae8d"
+  },
+  {
+   "layer": "spatial organisation",
+   "status": "STATIC",
+   "source": "loop_geometry/116 + loop_spatial_proteome/118",
+   "evidence_sha": "826c669e6659"
+  },
+  {
+   "layer": "diffusion / well-stirred pools",
+   "status": "CLOSES",
+   "source": "loop_diffusion/126",
+   "evidence_sha": "161f95183c82"
+  },
+  {
+   "layer": "the diffusion limit as a physics audit",
+   "status": "CLOSES",
+   "source": "loop_diffusion/126 F3-F5",
+   "evidence_sha": "7b55c912b5ca"
+  },
+  {
+   "layer": "cell division",
+   "status": "CLOSES",
+   "source": "cell_assembled.integrate_division/125",
+   "evidence_sha": "0449bb43605c"
+  },
+  {
+   "layer": "division as a cell-cycle confound",
+   "status": "RUNS",
+   "source": "loop_division/125",
+   "evidence_sha": "0e50661ba8c3"
+  },
+  {
+   "layer": "partitioning noise",
+   "status": "CLOSES",
+   "source": "loop_division/125 D6",
+   "evidence_sha": "f2dd185cb8bf"
+  },
+  {
+   "layer": "enzyme kinetics",
+   "status": "STATIC",
+   "source": "kinetics_bundle + loop_kcat_audit/124",
+   "evidence_sha": "fc11ebd37fdb"
+  },
+  {
+   "layer": "kinetics filtered to the noise floor",
+   "status": "RUNS",
+   "source": "loop_kcat_floor/127",
+   "evidence_sha": "8b3ac738c648"
+  },
+  {
+   "layer": "the true experimental noise floor",
+   "status": "CLOSES",
+   "source": "fetch_gaps + loop_kcat_floor2/129",
+   "evidence_sha": "e04e0599025c"
+  },
+  {
+   "layer": "replicate count as a quality signal",
+   "status": "FAILED",
+   "source": "loop_kcat_floor/127",
+   "evidence_sha": "63587e17f08d"
+  },
+  {
+   "layer": "kcat from sequence, learned",
+   "status": "RUNS",
+   "source": "loop_ml_kcat/131 + loop_ml_audit/132",
+   "evidence_sha": "3c0382cc06a7"
+  },
+  {
+   "layer": "what the kcat model actually learned",
+   "status": "FAILED",
+   "source": "loop_ml_probe/133 B3-B4",
+   "evidence_sha": "27699e7a1583"
+  },
+  {
+   "layer": "what a kcat model would need instead",
+   "status": "STATIC",
+   "source": "loop_ml_probe/133 B1, B5, B6",
+   "evidence_sha": "33c2645467f1"
+  },
+  {
+   "layer": "Michaelis constants K_M",
+   "status": "RUNS",
+   "source": "kinetics_bundle + loop_kcat_audit/124 K4",
+   "evidence_sha": "f662787b5e56"
+  }
+ ]
+}

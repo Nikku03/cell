@@ -1,0 +1,109 @@
+{
+ "test": "cell record fix (C1, C2)",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/cell_assembled.py",
+    "bytes": 48166,
+    "hash": "1a10a15ac041d424",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_b4_fix.json",
+    "bytes": 5959,
+    "hash": "b20eaea39cf215da",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/cell_run.json",
+    "bytes": 8024,
+    "hash": "093ccfb37eae5baf",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 47,
+   "used": 47,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 0,
+  "controls": [
+   "the status is required to be UNCHANGED by the correction",
+   "the stored counts are recomputed from the table, not copied"
+  ],
+  "note": "record corrections only; no model behaviour is changed by this script",
+  "warnings": []
+ },
+ "gates": {
+  "G1": true,
+  "G2": true,
+  "G3": true,
+  "G4": true
+ },
+ "g1": {
+  "layer_found": true,
+  "status_before": "FAILED",
+  "already_correct": true,
+  "rewrote": null,
+  "verified": true
+ },
+ "g2": {
+  "before": "FAILED",
+  "after": "FAILED"
+ },
+ "g3": {
+  "stored": {
+   "RUNS": 11,
+   "CLOSES": 9,
+   "FAILED": 12,
+   "STATIC": 10
+  },
+  "actual": {
+   "RUNS": 12,
+   "CLOSES": 10,
+   "FAILED": 14,
+   "STATIC": 11
+  },
+  "stale": true
+ },
+ "g4": {
+  "n_layers": 47
+ },
+ "seconds": 0.00866842269897461,
+ "log": [
+  "====================================================================================================",
+  "  CELL TRACK EXECUTOR -- record corrections C1 and C2",
+  "====================================================================================================",
+  "",
+  "G1 IS THE CORRECTION NECESSARY?",
+  "     layer found: True   status before: FAILED",
+  "     already cites loop 134 C3 and no longer asserts the overstatement: True",
+  "     G1 PASS -- nothing to correct; this script has already run",
+  "",
+  "G2 IS THE STATUS UNCHANGED?",
+  "     before FAILED   after FAILED",
+  "     G2 PASS -- the conclusion stands; only its evidence changed",
+  "",
+  "G3 ARE THE RECORDED COUNTS STALE?",
+  "     cell_run.json stored: {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}",
+  "     the table actually reads: {'RUNS': 12, 'CLOSES': 10, 'FAILED': 14, 'STATIC': 11}",
+  "     STALE: True",
+  "     the artefact was not merely coarse -- it disagrees with the table it describes",
+  "",
+  "G4 CAN THE NEW ARTEFACT NAME THE LAYER THAT MOVED?",
+  "     wrote outputs/cell_layers.json with per-layer status for 47 layers",
+  "     each carries a hash of its evidence text, so a reworded layer is visible too",
+  "     G4 PASS",
+  "",
+  "====================================================================================================",
+  "  G1  PASS",
+  "  G2  PASS",
+  "  G3  PASS",
+  "  G4  PASS",
+  "  4/4",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 47/47 (100.0%) by 'all', seed 0, controls 2"
+ ]
+}

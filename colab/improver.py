@@ -235,6 +235,39 @@ HISTORY = [
      "caught_by": "its own closing line, then loop 134",
      "fix": "T7 (gain must be derived), T8 (inputs must exist), BLOCKED for unmeasured "
             "dependencies, track reads the audit of its own metric"},
+    {"turn": 2, "date": "2026-08-15",
+     "accepted": 1, "rejected": 7, "blocked": 0,
+     "stopping_rule": "loop 134 C3 -- within-EC-class permutation, no residual",
+     "what_it_got_wrong": "with T7's grounded maxima in place it rejected EVERYTHING, including "
+                          "P6 for having no measured maximum when the measurement costs ten "
+                          "minutes and had never been run. The check was right and the outcome "
+                          "was absurd: its only category of action was 'a change that improves "
+                          "the metric', so a missing number could stall it indefinitely",
+     "caught_by": "reading its own output -- the rejection reason named the remedy",
+     "fix": "PROBES. An item is now a CHANGE (promises a gain, faces T7) or a PROBE (promises "
+            "nothing, faces T9: it must name the item and check it unblocks, and that check must "
+            "currently be failing)"},
+    {"turn": 3, "date": "2026-08-15",
+     "accepted": 1, "rejected": 7, "blocked": 0,
+     "stopping_rule": "same",
+     "what_it_got_wrong": "TWO THINGS, both found by running rather than reading. T2 rejected P2 "
+                          "(+0.0113 predicted) against a 0.0488 threshold, and P2 then measured "
+                          "+0.0168 with a CI of [+0.0016, +0.0322] that EXCLUDES ZERO -- a Type II "
+                          "error caused by judging a feature addition with a model-swap's null. "
+                          "And there was no state for a settled question, so the next turn "
+                          "re-planned three already-measured items as predictions",
+     "caught_by": "loop 135 E2's bootstrap interval; then the turn-2 replan",
+     "fix": "NOISE_BY_KIND gives each comparison its own null (marked POST HOC), and MEASURED now "
+            "outranks every check and carries the number, the interval and the signed error"},
+    {"turn": 4, "date": "2026-08-15",
+     "accepted": 0, "rejected": 5, "blocked": 0,
+     "stopping_rule": "same",
+     "what_it_got_wrong": "nothing new in the improver itself -- but its cell-track EXECUTOR "
+                          "contained a gate that fired while measuring nothing (G1 was "
+                          "gates['G1'] = True with no condition, and its string search could "
+                          "never match because LAYERS entries are line-continued literals)",
+     "caught_by": "the executor reporting PASS with an empty git diff",
+     "fix": "AST-offset rewriting, and G1 verifies by re-parsing the file rather than asserting"},
 ]
 
 
@@ -914,7 +947,8 @@ def theory_check(items, a, noise):
             it["blocked_on"] = []
             num = isinstance(o["value"], (int, float)) and not isinstance(o["value"], bool)
             it["measured_note"] = (
-                (f"{o['value']:+.4f} ({o['what']})" if num
+                (f"{o['value']:+.4f} ({o['what']})"
+                 if num and it.get("kind") not in ("record",)
                  else f"{o['value']} ({o['what']})")
                 + (f" CI [{o['ci'][1]:+.4f}, {o['ci'][2]:+.4f}]"
                    f" -> {'EXCLUDES zero' if o['ci'][1] > 0 else 'includes zero'}"

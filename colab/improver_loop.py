@@ -71,6 +71,10 @@ import improver as IMP  # noqa: E402
 OUT = Path(os.environ.get("CELL_OUT", "outputs"))
 LOOPDIR = OUT / "improver_loop"
 MAX_TURNS = int(os.environ.get("IMPROVER_TURNS", "10"))
+# ALLOW_VACUOUS disables the stall rule. It exists to DEMONSTRATE the rule rather than to be used:
+# running with it on produces turns whose recorded plans are byte-identical, which is the evidence
+# that the stall rule is not merely a convenience. Never set it for a real run.
+ALLOW_VACUOUS = os.environ.get("IMPROVER_ALLOW_VACUOUS") == "1"
 
 # EXECUTORS. A plan item id -> the script that runs it and the artefact it must produce. This is
 # the ONLY way a fingerprint can change, which is deliberate: it means the loop cannot talk itself
@@ -288,7 +292,7 @@ def one_turn(turn, track, history):
            "check_source_hash": check_source_hash(), "stalled": False}
 
     # THE ANTI-VACUITY RULE, applied before anything is computed.
-    if prev and fp == prev["fingerprint"] and not executed_since:
+    if prev and fp == prev["fingerprint"] and not executed_since and not ALLOW_VACUOUS:
         rec.update({"stalled": True, "plan": prev.get("plan", []),
                     "n_rejected": prev.get("n_rejected", 0),
                     "n_blocked": prev.get("n_blocked", 0), "n_executable": 0,
@@ -401,7 +405,7 @@ def main():
                 stalled_streak[track] = 0
                 alive += 1
         json.dump(history, open(LOOPDIR / "history.json", "w"), indent=1, default=str)
-        if all(stalled_streak[t] >= 1 for t in tracks):
+        if all(stalled_streak[t] >= 1 for t in tracks) and not ALLOW_VACUOUS:
             say(f"\n  EVERY TRACK STALLED AT TURN {turn}. Continuing would re-emit this turn "
                 f"{MAX_TURNS - turn} more times, which is the failure mode this loop exists to "
                 f"prevent. Stopping and reporting what it is waiting on.")
