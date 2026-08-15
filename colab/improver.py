@@ -633,6 +633,39 @@ def _dig(d, path):
     return d
 
 
+def fetch_status():
+    """WHY a file is missing, which T8 alone cannot say.
+
+    T8 asks os.path.exists and gets a yes or a no. That was enough while the answer was always
+    "nobody has fetched it", but fetch_web.py has now probed the sources and the answers differ in
+    kind. A file nobody has tried to get is a task. A file whose SOURCE HAS BEEN RETIRED is a
+    permanent constraint, and P3 -- Q10 normalisation to 37 C -- is blocked by exactly that:
+    SABIO-RK's REST endpoints now redirect to a UI 404. Reporting those two as the same 'file
+    absent' would leave the loop waiting forever on something that is never going to arrive, and
+    would leave the 0.5137 missing-conditions floor looking like a gap rather than a wall."""
+    p = OUT / "fetch_web.json"
+    if not p.exists():
+        return {}
+    d = json.load(open(p))
+    st = {}
+    if (d.get("g3") or {}).get("api_retired"):
+        st["colab/data/kcat_conditions.tsv.gz"] = {
+            "kind": "SOURCE_RETIRED",
+            "detail": "SABIO-RK REST probed by fetch_web G3: redirects to a UI 404. Temperature "
+                      "and pH are not obtainable from the standard source, so loop 133 B5's "
+                      "0.5137 floor is a WALL and not a gap"}
+    g2 = d.get("g2") or {}
+    if g2 and g2.get("fraction", 1) < g2.get("bar", 0):
+        st["colab/data/uniprot_sites.tsv.gz"] = {
+            "kind": "FETCHED_BUT_INSUFFICIENT",
+            "detail": f"downloaded, but only {g2['fraction']:.1%} of our sequences match against a "
+                      f"bar of {g2['bar']:.0%} declared before the fetch"}
+    st["colab/data/ml/esm2_650M_mean.npy"] = {
+        "kind": "COMPUTE_NOT_DOWNLOAD",
+        "detail": "an embedding is produced, not fetched; no web source can supply it"}
+    return st
+
+
 def measured_outcomes(track):
     """Read what has actually been observed for this track. Nothing here is remembered."""
     out = {}
@@ -913,6 +946,10 @@ def theory_check(items, a, noise):
         missing = [f for f in it.get("needs_files", []) if not Path(f).exists()]
         v["T8_inputs_exist"] = not missing
         it["missing_inputs"] = missing
+        fs = fetch_status()
+        it["blockers"] = [{"file": str(f), **fs.get(str(f), {"kind": "NEVER_FETCHED",
+                                                             "detail": "no fetch has been attempted"})}
+                          for f in missing]
         if probe:
             u = it.get("unblocks") or {}
             tgt = by_id.get(u.get("item"))

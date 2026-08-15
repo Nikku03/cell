@@ -265,8 +265,8 @@ def reflect(turn, track, rec, history):
     waiting = []
     for it in rec.get("plan", []):
         if it.get("missing_inputs"):
-            waiting.append(f"{it['id']}: file absent -- "
-                           f"{', '.join(str(m) for m in it['missing_inputs'])}")
+            for b in it.get("blockers", []):
+                waiting.append(f"{it['id']}: {b['kind']} -- {b['file']}  ({b['detail'][:110]})")
         elif it.get("blocked_on"):
             waiting.append(f"{it['id']}: unmeasured -- {'; '.join(it['blocked_on'])}")
         elif it["verdict"] == "REJECT":
@@ -331,7 +331,8 @@ def one_turn(turn, track, history):
         tag = it["verdict"]
         extra = ""
         if it.get("missing_inputs"):
-            extra = f"  MISSING {', '.join(str(m) for m in it['missing_inputs'])}"
+            ks = sorted({b["kind"] for b in it.get("blockers", [])}) or ["MISSING"]
+            extra = f"  {'/'.join(ks)}"
         elif it.get("blocked_on"):
             extra = f"  BLOCKED ON {'; '.join(it['blocked_on'])}"
         elif it["rejected_on"]:
