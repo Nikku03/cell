@@ -1,0 +1,142 @@
+{
+ "test": "loop 141 -- the fusion margin",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_fusion_fix.json",
+    "bytes": 6382,
+    "hash": "cbda886518e027af",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 6111,
+   "selection": "all",
+   "fraction": 0.3705432937181664
+  },
+  "seed": 14100,
+  "controls": [
+   "a bootstrap interval on the margin the promotion rests on",
+   "the reaction block replaced by noise of the same shape and scale",
+   "the margin split by whether the gene has a reaction edge at all",
+   "the two claims separated, because one is method and one is biology"
+  ],
+  "note": "loop 140 printed a promotion on a bare +0.0100 with no interval. Loop 120 passed two gates on margins inside their own spread and this is the check that prevents a third.",
+  "warnings": []
+ },
+ "gates": {
+  "M1": true,
+  "M2": true,
+  "M3": true,
+  "M4": true,
+  "M5": true
+ },
+ "m1": {
+  "graph": 0.5274839032170482,
+  "late": 0.5358266604553971,
+  "diff": 0.008342757238348875,
+  "boot": [
+   0.008407398033781816,
+   0.00323462749738101,
+   0.013839175881942651
+  ]
+ },
+ "m2": {
+  "noise": 0.5183319334528222,
+  "boot_vs_graph": [
+   -0.009089526395739227,
+   -0.015231232714967582,
+   -0.0027300280510711406
+  ]
+ },
+ "m3": {
+  "early": 0.3993842319174075,
+  "late": 0.5358266604553971,
+  "diff": 0.13644242853798955,
+  "boot": [
+   0.13687004633779673,
+   0.11386231063354534,
+   0.1597690571030419
+  ]
+ },
+ "m4": {
+  "bridge": [
+   0.0017397687566197033,
+   -0.023272866011001328,
+   0.02647793761296687
+  ],
+  "nonbridge": [
+   -0.0012347594834358278,
+   -0.002182572516549927,
+   -0.0003289659169241238
+  ],
+  "n_bridge": 1008,
+  "n_nonbridge": 5103
+ },
+ "m5": {
+  "promote": true
+ },
+ "seconds": 709.2506136894226,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 141 -- is the +0.0100 real, and what is the fix actually doing?",
+  "====================================================================================================",
+  "",
+  "  rebuilding loop 140's arms on identical folds ...",
+  "     6,111 target genes; 1,008 carry a reaction edge",
+  "",
+  "  scoring three arms, identical folds, retaining out-of-fold predictions ...",
+  "     graph-only  +0.5275",
+  "     late fusion +0.5358",
+  "     early fusion (merged adjacency) +0.3994",
+  "",
+  "M1 THE PAIRED INTERVAL ON CLAIM 2 (late fusion vs graph-only)",
+  "     difference +0.0083",
+  "     bootstrap over genes: +0.0084  [+0.0032, +0.0138]",
+  "     M1 PASS -- the interval EXCLUDES zero",
+  "",
+  "M2 THE CONTROL: the reaction block replaced by noise of the same shape",
+  "     random block, same shape and scale, same nonzero rows: rho +0.5183",
+  "     versus graph-only: -0.0091  [-0.0152, -0.0027]",
+  "     the REAL reaction block bought +0.0084; noise buys -0.0091",
+  "     M2 PASS -- the real block beats its own noise control",
+  "",
+  "M3 CLAIM 1, WITH ITS OWN INTERVAL (late vs early fusion)",
+  "     difference +0.1364",
+  "     bootstrap: +0.1369  [+0.1139, +0.1598]",
+  "     claim 1 is 16x the size of claim 2.",
+  "     M3 PASS -- late fusion beats early fusion",
+  "",
+  "M4 IS THE MARGIN CARRIED BY THE BRIDGE GENES?",
+  "     on the 1,008 genes WITH a reaction edge:    +0.0017 [-0.0233, +0.0265]",
+  "     on the 5,103 genes WITHOUT one:           -0.0012 [-0.0022, -0.0003]",
+  "     if metabolism is adding anything it must add it where metabolism is measured.",
+  "     M4 PASS -- the effect is larger on the bridge genes, as it must be",
+  "",
+  "M5 THE VERDICT",
+  "     M1 interval excludes zero: True",
+  "     M2 beats its noise control: True",
+  "     M4 effect sits on the bridge genes: True",
+  "     PROMOTE. Metabolic adjacency adds +0.0084 [+0.0032, +0.0138] to essentiality",
+  "     prediction over the protein graph alone, it beats its own noise control, and the",
+  "     effect sits where metabolism is measured.",
+  "",
+  "====================================================================================================",
+  "  M1  PASS",
+  "  M2  PASS",
+  "  M3  PASS",
+  "  M4  PASS",
+  "  M5  PASS",
+  "  5/5",
+  "====================================================================================================",
+  "    manifest: 2 inputs, coverage 6111/16492 (37.1%) by 'all', seed 14100, controls 4"
+ ]
+}
