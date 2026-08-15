@@ -116,12 +116,27 @@ def fisher(a, b, c, d):
 
 
 def auc(score, label):
+    """Mann-Whitney AUC with MIDRANKS for ties.
+
+    The first version used argsort and assigned distinct ranks inside a tie. For a CONTINUOUS
+    score that is harmless. For a BINARY one -- and `annotation` is binary -- almost every value
+    is tied, so the ranks inside each tie group were arbitrary and the statistic was noise
+    dressed as a number. It reported AUC 0.7183 for a predictor whose two groups differ by
+    29.0% against 24.1%, which is arithmetically impossible: a binary score can only reach
+    0.5 + (p1 - p0)/2, here about 0.52. Caught by that impossibility, not by the code."""
     s, l = np.asarray(score, float), np.asarray(label, bool)
     if l.all() or not l.any():
         return float("nan")
-    o = np.argsort(s)
+    o = np.argsort(s, kind="mergesort")
+    sr = s[o]
     r = np.empty(len(s), float)
-    r[o] = np.arange(1, len(s) + 1)
+    i = 0
+    while i < len(sr):                       # midrank within each tie group
+        j = i
+        while j + 1 < len(sr) and sr[j + 1] == sr[i]:
+            j += 1
+        r[o[i:j + 1]] = (i + j) / 2.0 + 1.0
+        i = j + 1
     n1, n0 = l.sum(), (~l).sum()
     return float((r[l].sum() - n1 * (n1 + 1) / 2) / (n1 * n0))
 
@@ -142,17 +157,24 @@ def main():
         rd = csv.reader(f, delimiter="\t")
         h = next(rd)
         iG, iCP, iCT = h.index("Gene"), h.index("CCD Protein"), h.index("CCD Transcript")
-        iPub = h.index("Pubmed") if "Pubmed" in h else None
         for row in rd:
             if len(row) <= max(iG, iCP, iCT):
                 continue
             g = row[iG]
-            if row[iCP]:
+            # loop 119 keeps only genes CALLED Yes or No. The column's third value is the
+            # string "NA" on 18,638 rows, which is truthy, so `if row[iCP]:` admits all of them
+            # -- and U1 caught exactly that: 20,151 genes instead of 1,130, a different
+            # population wearing the same name.
+            if row[iCP] in ("Yes", "No"):
                 cp[g] = row[iCP]
-            if row[iCT]:
+            if row[iCT] in ("Yes", "No"):
                 ct[g] = row[iCT]
-            if iPub is not None and row[iPub]:
-                pubs[g] = len([x for x in row[iPub].split(",") if x.strip()])
+    # Publication counts come from the model bundle, as in loops 121 and 122 where the same
+    # confound was measured. proteinatlas.tsv carries no publication column at all, and U4
+    # reported "0 genes carry a publication count" rather than quietly skipping the control.
+    import cell_assembled as CA
+    pubs = CA.load().get("pubs", {})
+    say(f"     publication counts for {len(pubs):,} genes (model bundle, as in loops 121/122)")
     both = sorted(set(cp) & set(ct))
     pv = np.array([cp[g] == "Yes" for g in both])
     tv = np.array([ct[g] == "Yes" for g in both])
