@@ -16,7 +16,22 @@ way -- production pulsed, degradation constant -- has the mirror shape: fast ris
 decay. A symmetric oscillation has neither. So the mechanism is readable from the shape, per
 protein, with no sequence feature and nothing to be confounded by fame.
 
-THE STATISTIC. For seven log2 intensities x0..x6 take the six differences d_i. Let
+THE FRACTIONS, AND A MISTAKE Y3 CAUGHT ON THE FIRST RUN. The file has seven LFQ columns, F0..F6,
+and I used all seven. F0 IS NOT A CYCLE FRACTION -- loop 123 uses F1..F6 as the six fractions and
+pools them G1 = mean(F1,F2), S = mean(F3,F4), G2 = mean(F5,F6). Including F0 put every canonical
+substrate's "crash" in the F0->F1 interval, which is not a destruction event but the difference
+between a reference sample and G1-enriched cells. Y2 passed anyway -- the shape statistic worked --
+and Y3 failed, which is exactly the split the gate order was built for: the METHOD was sound and
+the TIME AXIS was wrong, and reporting Y2 alone would have shipped a working method on a broken
+axis.
+
+AND THE FRACTIONS STOP AT G2. There is no M fraction: elutriation of NB4 tops out at G2, so a
+mitotic destruction happens BETWEEN the last fraction and the first, and the population returns to
+G1 at F1. The trajectory is therefore treated as CIRCULAR -- six points, six differences, with the
+F6->F1 wrap included -- which is what a closed cycle demands and which is where the APC/C
+substrates must crash if the method reads timing at all.
+
+THE STATISTIC. For six log2 intensities take the six CIRCULAR differences d_i. Let
 
     C_fall = max|d_i over the falling steps| / sum|d_i over the falling steps|
     C_rise = max( d_i over the rising steps) / sum( d_i over the rising steps)
@@ -130,8 +145,12 @@ def say(s=""):
 
 
 def asym(x):
-    """A = C_fall - C_rise for one log2 trajectory. Returns (A, C_fall, C_rise, crash_index)."""
-    d = np.diff(x)
+    """A = C_fall - C_rise for one CIRCULAR log2 trajectory.
+
+    The differences wrap: d_5 is x[0] - x[5], the step from the last fraction back into the next
+    cycle's first. Elutriation tops out at G2, so a mitotic destruction lives in that wrap and
+    nowhere else. Returns (A, C_fall, C_rise, crash_index) with crash_index 5 meaning the wrap."""
+    d = np.diff(np.concatenate([x, x[:1]]))
     f, r = d[d < 0], d[d > 0]
     if len(f) == 0 or len(r) == 0:
         return np.nan, np.nan, np.nan, -1
@@ -161,14 +180,20 @@ def main():
 
     import pandas as pd
     d = pd.read_csv(LY, sep="\t", low_memory=False)
-    lf = [c for c in d.columns if c.startswith("LFQ_intensity_F")]
+    # F1..F6 ONLY. F0 is not a cycle fraction -- see the docstring; the first run used it and Y3
+    # correctly refused the result.
+    lf = [f"LFQ_intensity_F{k}" for k in range(1, 7)]
     X = d[lf].values.astype(float)
     ok = (X > 0).all(1)
     genes = d["gene_names"].fillna("").str.split(";").str[0].values
     L = np.full(X.shape, np.nan)
     L[ok] = np.log2(X[ok])
-    say(f"  Ly et al. 2014, {len(d):,} rows, {len(lf)} elutriation fractions "
-        f"(F0 smallest/G1 -> F6 largest/M)")
+    say(f"  Ly et al. 2014, {len(d):,} rows, {len(lf)} cycle fractions F1..F6 "
+        f"(G1 = F1,F2; S = F3,F4; G2 = F5,F6 -- loop 123's pooling)")
+    say(f"  F0 is EXCLUDED: it is not a cycle fraction, and including it put every canonical")
+    say(f"  substrate's crash in the F0->F1 step on the first run. Y3 refused that result.")
+    say(f"  the trajectory is CIRCULAR -- the F6->F1 wrap is where mitotic destruction must sit,")
+    say(f"  because elutriation stops at G2 and the population re-enters G1 at F1.")
     say(f"  complete trajectories: {int(ok.sum()):,}")
     tot = X[ok].sum(0)
     say(f"  per-fraction LFQ totals relative to F0: {np.round(tot / tot[0], 4).tolist()}")
@@ -234,13 +259,16 @@ def main():
     say(f"     Y2 {'PASS' if gates['Y2'] else 'FAIL'} -- known destruction substrates "
         f"{'DO read as pulsed' if gates['Y2'] else 'DO NOT read as pulsed, and the method is broken'}")
     for g, i in sorted(gi.items(), key=lambda kv: -A[kv[1]]):
+        lab = "F6->F1 wrap" if CRASH[i] == 5 else f"F{CRASH[i]+1}->F{CRASH[i]+2}"
         say(f"       {g:<8} A {A[i]:+.4f}   C_fall {CF[i]:.3f}  C_rise {CR[i]:.3f}   "
-            f"crash F{CRASH[i]}->F{CRASH[i]+1}   [{CANON[g][0]}, {CANON[g][1]}]")
+            f"crash {lab:<12} [{CANON[g][0]}, {CANON[g][1]}]")
     say()
 
     # ---------------------------------------------------------------- Y3
     say("Y3 DOES THE CRASH LAND WHERE THE TEXTBOOK SAYS?")
-    say(f"     fractions run G1 -> S -> G2 -> M, so a mitotic destruction should crash LATE")
+    say(f"     fractions run G1(F1,F2) -> S(F3,F4) -> G2(F5,F6) and then WRAP to the next G1.")
+    say(f"     A mitotic or M/G1 destruction must therefore sit in the F5->F6 step or the F6->F1")
+    say(f"     wrap, which are crash indices 4 and 5.")
     late = [g for g, i in gi.items() if CRASH[i] >= 4]
     mito = [g for g in gi if CANON[g][1] in ("M", "M/G1")]
     hit = [g for g in late if g in mito]
@@ -249,7 +277,7 @@ def main():
     say(f"     crash interval by substrate:")
     from collections import Counter
     cc = Counter(int(CRASH[i]) for i in gi.values())
-    say(f"       histogram over intervals F0->F1 .. F5->F6: "
+    say(f"       histogram over F1->F2 .. F5->F6, F6->F1(wrap): "
         f"{[cc.get(k, 0) for k in range(6)]}")
     gates["Y3"] = bool(len(hit) / max(1, len(mito)) > 0.5)
     res["y3"] = {"n_mitotic": len(mito), "n_late": len(hit),
