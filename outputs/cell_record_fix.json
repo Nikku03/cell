@@ -5,8 +5,8 @@
   "inputs": [
    {
     "path": "colab/cell_assembled.py",
-    "bytes": 54025,
-    "hash": "21e5cf4aecffada9",
+    "bytes": 58064,
+    "hash": "a7de75c81dbae312",
     "method": "sha256:full"
    },
    {
@@ -23,8 +23,8 @@
    }
   ],
   "coverage": {
-   "available": 49,
-   "used": 49,
+   "available": 50,
+   "used": 50,
    "selection": "all",
    "fraction": 1.0
   },
@@ -62,16 +62,16 @@
   },
   "actual": {
    "RUNS": 13,
-   "CLOSES": 11,
+   "CLOSES": 12,
    "FAILED": 14,
    "STATIC": 11
   },
   "stale": true
  },
  "g4": {
-  "n_layers": 49
+  "n_layers": 50
  },
- "seconds": 0.009889841079711914,
+ "seconds": 0.009956121444702148,
  "log": [
   "====================================================================================================",
   "  CELL TRACK EXECUTOR -- record corrections C1 and C2",
@@ -88,12 +88,12 @@
   "",
   "G3 ARE THE RECORDED COUNTS STALE?",
   "     cell_run.json stored: {'RUNS': 13, 'CLOSES': 11, 'FAILED': 13, 'STATIC': 11}",
-  "     the table actually reads: {'RUNS': 13, 'CLOSES': 11, 'FAILED': 14, 'STATIC': 11}",
+  "     the table actually reads: {'RUNS': 13, 'CLOSES': 12, 'FAILED': 14, 'STATIC': 11}",
   "     STALE: True",
   "     the artefact was not merely coarse -- it disagrees with the table it describes",
   "",
   "G4 CAN THE NEW ARTEFACT NAME THE LAYER THAT MOVED?",
-  "     wrote outputs/cell_layers.json with per-layer status for 49 layers",
+  "     wrote outputs/cell_layers.json with per-layer status for 50 layers",
   "     each carries a hash of its evidence text, so a reworded layer is visible too",
   "     G4 PASS",
   "",
@@ -104,6 +104,6 @@
   "  G4  PASS",
   "  4/4",
   "====================================================================================================",
-  "    manifest: 3 inputs, coverage 49/49 (100.0%) by 'all', seed 0, controls 2"
+  "    manifest: 3 inputs, coverage 50/50 (100.0%) by 'all', seed 0, controls 2"
  ]
 }

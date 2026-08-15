@@ -169,6 +169,52 @@ def integrate_tf(kbar, a, ix, dev_at, T, ncyc=12, nstep=400, gain=1.0):
     return rel, mean
 
 
+def integrate_deg_pulse(ksp, Mbar, bbar, T, b_hi_fold=20.3, duty=0.10, ncyc=12, nstep=400):
+    """dP/dt = k_sp*Mbar - b(t)*P with b(t) a two-level PULSE: bbar normally, b_hi_fold*bbar for a
+    duty fraction of the cycle. The mRNA is held FLAT, as in integrate_deg.
+
+    WHY THIS EXISTS. integrate_deg drives b as bbar*(1 + beta*sin(wt)), and beta <= 1 is a hard
+    physical limit -- above it the loss rate goes negative and protein is created by its own
+    degradation term. Loop 123 measured the beta each observed oscillation would require and the
+    MEDIAN IS 2.351. More than half the oscillating proteins demanded a sinusoid that cannot exist.
+    That is a waveform failure, not a fitting failure, and loop 122's U6 said so: "the equation
+    itself is what has to change".
+
+    THE EXACT PERIODIC AMPLITUDE, verified against this integrator by loop 142 X2 to 0.47%:
+
+        x = exp(-b_lo*(1-d)*T),  y = exp(-b_hi*d*T),  A = k/b_lo,  B = k/b_hi
+        (max-min)/(max+min) = (1-x)(1-y)(A-B) / [A(1-x)(1+y) + B(1-y)(1+x)]
+
+    which tends to tanh(b_hi*d*T/2) as B/A -> 0. That tanh is the reachable BOUND; the expression
+    above is what is actually reached, and using the bound to size a pulse understates it by about
+    a sixth.
+
+    The default b_hi_fold of 20.3 is not tuned. It is what loop 142 X3 obtained by inverting the
+    exact expression for the MEDIAN measured oscillator -- relative amplitude 0.4453, half-life
+    29.53 h -- at a 10% duty cycle. Loop 142 X4 checked the resulting burst against the measured
+    proteasome: it adds 9.9e6 molecules/h to a 2.9e7 steady load against 1.7e9-5.0e9 of capacity,
+    a peak utilisation of 2.37% at worst.
+
+    b_hi_fold = 1 must reproduce ksp*Mbar/bbar exactly, which is the same invariant loop 121's S6
+    gates integrate_deg on.
+    """
+    dt = T / nstep
+    win = duty * T
+    P = ksp * Mbar / bbar
+    b_hi = bbar * float(b_hi_fold)
+    total = ncyc * nstep
+    tr = np.zeros((nstep, len(P)))
+    for s in range(total):
+        i = s % nstep
+        t = i * dt
+        if s >= (ncyc - 1) * nstep:
+            tr[i] = P
+        b_t = b_hi if t < win else bbar
+        eb = np.exp(-b_t * dt)
+        P = P * eb + (ksp * Mbar / b_t) * (1.0 - eb)
+    return tr
+
+
 def integrate_deg(ksp, Mbar, bbar, T, beta=1.0, ncyc=12, nstep=400):
     """dP/dt = k_sp*Mbar - b(t)*P with b(t) = bbar*(1 + beta*sin(wt)) and the mRNA held FLAT.
 
@@ -514,6 +560,25 @@ LAYERS = [
      "prediction it makes FAILS ITS OWN FOLLOW-UP: the over-ceiling genes carry LESS D-box+ than "
      "the under-ceiling ones (0.1517 vs 0.2018, p 0.273), so either that motif is a poor proxy for "
      "regulated degradation or the cross-species half-lives are wrong for these genes"),
+    # ADDED by loop 142: the ceiling above bounds PRODUCTION; this is what lifts it.
+    ("the destruction pulse lifts the ceiling", "CLOSES", "loop_pulse_equation/142",
+     "b(t) as a two-level PULSE rather than bbar*(1 + beta*sin(wt)). The sinusoid has a hard limit "
+     "at beta = 1 -- beyond it the loss rate goes negative -- and loop 123 measured the median "
+     "REQUIRED beta at 2.351, so most oscillating proteins demanded a sinusoid that cannot exist. "
+     "The exact periodic amplitude for the pulse is (1-x)(1-y)(A-B)/[A(1-x)(1+y)+B(1-y)(1+x)] with x "
+     "= exp(-b_lo*(1-d)T), y = exp(-b_hi*dT), A = k/b_lo, B = k/b_hi; it matches the integrator to "
+     "0.47% worst case over a 12-point grid and tends to tanh(b_hi*d*T/2), which has no ceiling "
+     "below 1. The same integrator reproduces the OLD tanh(b*T/4) bound to 0.000% at four half-lives",
+     "AND IT IS PHYSICALLY AFFORDABLE, checked against the closed proteostasis layer rather than "
+     "assumed. The median measured oscillator -- relative amplitude 0.4453, half-life 29.53 h -- "
+     "needs a 20.3x acceleration over a 2.4 h window, or 12.1x over 4.8 h. That burst adds 9.9e6 "
+     "molecules/h to a 2.9e7 steady load against 1.7e9-5.0e9 of capacity: peak utilisation 2.37% at "
+     "worst, so it fits 42x over. WHAT IT DOES NOT BUY: the waveform makes the observed amplitudes "
+     "REACHABLE and says nothing about WHICH proteins are pulsed or WHEN. Seven mechanisms remain "
+     "eliminated on that question, and loop 142 X5 adds an eighth -- a shared saturable protease "
+     "would have explained loop 121's backwards result with the 362 as passengers needing no "
+     "degrons, but the proteasome runs at 0.6-1.8% of capacity, so that coupling sits in its linear "
+     "limit and couples nothing"),
     ("relocalisation as the mechanism", "STATIC", "loop_degron/121 post-hoc",
      "88.9% of CCD proteins are annotated to more than one compartment against 69.0% of the "
      "imaged controls (+19.8 points, p < 1e-4, AUC 0.5992) -- larger than every sequence feature, "

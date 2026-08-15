@@ -1,8 +1,8 @@
 {
- "n_layers": 49,
+ "n_layers": 50,
  "counts": {
   "RUNS": 13,
-  "CLOSES": 11,
+  "CLOSES": 12,
   "FAILED": 14,
   "STATIC": 11
  },
@@ -150,6 +150,12 @@
    "status": "CLOSES",
    "source": "loop_ms_cellcycle/123",
    "evidence_sha": "1c33a911c2c3"
+  },
+  {
+   "layer": "the destruction pulse lifts the ceiling",
+   "status": "CLOSES",
+   "source": "loop_pulse_equation/142",
+   "evidence_sha": "2e8c49c6822b"
   },
   {
    "layer": "relocalisation as the mechanism",
