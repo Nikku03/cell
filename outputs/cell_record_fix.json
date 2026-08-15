@@ -5,8 +5,8 @@
   "inputs": [
    {
     "path": "colab/cell_assembled.py",
-    "bytes": 52637,
-    "hash": "a7d1a48cdf6f1274",
+    "bytes": 54025,
+    "hash": "21e5cf4aecffada9",
     "method": "sha256:full"
    },
    {
@@ -17,14 +17,14 @@
    },
    {
     "path": "outputs/cell_run.json",
-    "bytes": 8545,
-    "hash": "f6cc8614f0d0758f",
+    "bytes": 8571,
+    "hash": "db0e8de0d8445dd8",
     "method": "sha256:full"
    }
   ],
   "coverage": {
-   "available": 48,
-   "used": 48,
+   "available": 49,
+   "used": 49,
    "selection": "all",
    "fraction": 1.0
   },
@@ -55,23 +55,23 @@
  },
  "g3": {
   "stored": {
-   "RUNS": 12,
-   "CLOSES": 11,
-   "FAILED": 14,
-   "STATIC": 11
-  },
-  "actual": {
    "RUNS": 13,
    "CLOSES": 11,
    "FAILED": 13,
    "STATIC": 11
   },
+  "actual": {
+   "RUNS": 13,
+   "CLOSES": 11,
+   "FAILED": 14,
+   "STATIC": 11
+  },
   "stale": true
  },
  "g4": {
-  "n_layers": 48
+  "n_layers": 49
  },
- "seconds": 0.009239673614501953,
+ "seconds": 0.009889841079711914,
  "log": [
   "====================================================================================================",
   "  CELL TRACK EXECUTOR -- record corrections C1 and C2",
@@ -87,13 +87,13 @@
   "     G2 PASS -- the conclusion stands; only its evidence changed",
   "",
   "G3 ARE THE RECORDED COUNTS STALE?",
-  "     cell_run.json stored: {'RUNS': 12, 'CLOSES': 11, 'FAILED': 14, 'STATIC': 11}",
-  "     the table actually reads: {'RUNS': 13, 'CLOSES': 11, 'FAILED': 13, 'STATIC': 11}",
+  "     cell_run.json stored: {'RUNS': 13, 'CLOSES': 11, 'FAILED': 13, 'STATIC': 11}",
+  "     the table actually reads: {'RUNS': 13, 'CLOSES': 11, 'FAILED': 14, 'STATIC': 11}",
   "     STALE: True",
   "     the artefact was not merely coarse -- it disagrees with the table it describes",
   "",
   "G4 CAN THE NEW ARTEFACT NAME THE LAYER THAT MOVED?",
-  "     wrote outputs/cell_layers.json with per-layer status for 48 layers",
+  "     wrote outputs/cell_layers.json with per-layer status for 49 layers",
   "     each carries a hash of its evidence text, so a reworded layer is visible too",
   "     G4 PASS",
   "",
@@ -104,6 +104,6 @@
   "  G4  PASS",
   "  4/4",
   "====================================================================================================",
-  "    manifest: 3 inputs, coverage 48/48 (100.0%) by 'all', seed 0, controls 2"
+  "    manifest: 3 inputs, coverage 49/49 (100.0%) by 'all', seed 0, controls 2"
  ]
 }

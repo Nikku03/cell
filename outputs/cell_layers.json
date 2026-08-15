@@ -1,9 +1,9 @@
 {
- "n_layers": 48,
+ "n_layers": 49,
  "counts": {
   "RUNS": 13,
   "CLOSES": 11,
-  "FAILED": 13,
+  "FAILED": 14,
   "STATIC": 11
  },
  "layers": [
@@ -162,6 +162,12 @@
    "status": "FAILED",
    "source": "loop_ms_cellcycle/123 V4",
    "evidence_sha": "49119a27cf9a"
+  },
+  {
+   "layer": "annotated ubiquitin targeting as the mechanism",
+   "status": "FAILED",
+   "source": "loop_ubiq_dynamics/137",
+   "evidence_sha": "1372f267a16d"
   },
   {
    "layer": "the cell-cycle signal, decomposed",

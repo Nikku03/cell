@@ -537,6 +537,21 @@ LAYERS = [
      "predicted: dual localisation higher in the MS-disconfirmed imaging calls. Measured: "
      "disconfirmed 88.6% (n=273) vs confirmed 88.1% (n=42), difference +0.5%, permutation p 1.0000",
      "the +19.8-point association loop 121 found is real and is NOT a relocalisation mechanism"),
+    # ADDED by loop 137: the fourth elimination, and the first evidence the 362 are real.
+    ("annotated ubiquitin targeting as the mechanism", "FAILED", "loop_ubiq_dynamics/137",
+     "curator-annotated ubiquitin cross-links and the Ubl-conjugation keyword from UniProt, on the "
+     "exact 88/362/38/642 split loop 119 recorded. NOT enriched among the 362: odds ratio 1.28 "
+     "against the 642 that oscillate in neither, Fisher p = 0.098, and 0.87 against the 38 with p = "
+     "0.71. This is the fourth candidate mechanism eliminated and the first tested on curator "
+     "annotation rather than on a sequence motif",
+     "THE FAME CONTROL RETURNED SOMETHING WORTH MORE THAN THE TEST IT POLICED. Publication count "
+     "predicts the ubiquitin annotation at AUC 0.7169 and membership of the 362 at 0.4760. Fame "
+     "drives the ANNOTATION hard and the PHENOTYPE not at all, so after loops 121 and 122 were both "
+     "found to be partly measuring publication count, this is the first direct evidence that loop "
+     "119's 362 are a real phenomenon and not an artefact of which proteins have been studied. Two "
+     "gates caught my own errors first: U1 refused a run that tested 20,151 genes instead of 1,130 "
+     "because the string 'NA' is truthy, and U4's AUC reported 0.7183 for a binary predictor that "
+     "cannot exceed 0.52 until ties were given midranks"),
     ("the cell-cycle signal, decomposed", "STATIC", "loop_utr5/122 post-hoc",
      "split at the 24.5 h bound: 79 CCD proteins the equation CAN explain, 132 it cannot, 265 "
      "imaged controls. D-box+ degron density is FLAT across all three (fast +0.0035 p 0.89, slow "
