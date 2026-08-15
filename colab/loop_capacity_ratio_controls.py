@@ -43,6 +43,16 @@ finding even though their application is not.
        CDC20 was named in loop 148's APC_ACTIVATORS constant in the source commit that preceded the
        run, so it is not a gene picked out of the output afterwards. That is checkable in git.
 
+       CORRECTION, ADDED AFTER THE RUN. L2 above is written as a THREE-channel check and it is not
+       one. iBAQ is raw Intensity divided by a per-protein peptide count, so for a RATIO across
+       fractions the constant cancels exactly: the per-protein CV of Intensity/iBAQ across the six
+       fractions has a median of 1.0e-10, and both channels return 39.72x and the same 95.60th
+       percentile because they are the same numbers. Loop 144 already recorded "iBAQ is not
+       independent" and I wrote the gate as three channels anyway. L2 is a TWO-channel check --
+       LFQ against raw Intensity -- which is exactly what loop 144's rule demands, so the gate's
+       substance holds and one third of its arithmetic was vacuous. The PASS stands on the two
+       independent channels; the word "three" in the output line is wrong.
+
   L3 THE REGRESSION DISCREPANCY.                                     STANDING RULE: reproduce first.
        K0(e) passed on median amplitude (0.4451 against a recorded 0.4453) and on the required fold
        (20.28x against 20.29x), but it found 77 oscillators where loop 123 recorded 80. A 1%
