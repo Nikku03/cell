@@ -420,17 +420,25 @@ LAYERS = [
      "CCD-regulator enrichment z 1.28, up from 0.63 and still short of 2. And regulator count "
      "alone scores 0.5856, above CollecTRI, with stratification collapsing it to 0.5491. Curated "
      "signs from the literature do not help, so the problem is not the network SOURCE"),
-    ("reaction+graph fusion", "FAILED", "loop_fusion_linear",
-     "combined rho 0.3935 BELOW graph-only 0.4898, with reaction-only at 0.0311; 90% of what remains "
-     "survives degree-preserving rewiring. loop 138 V1 grants the reaction channel its best case -- "
-     "if it were perfectly informative on the 16% of genes carrying a GEM reaction and useless "
-     "elsewhere, its whole-population rho bounds its subset rho at 0.0778 -- and that is still far "
-     "below the graph channel",
-     "REAL, and the caveat is an explanation rather than an excuse. The metabolic bridge being "
-     "absent for 84% of genes does not rescue the layer: even at its best case on the covered subset "
-     "the reaction channel stays below the graph channel. And most of what the graph channel knows "
-     "is TOPOLOGY -- 90% of it survives degree-preserving rewiring, so the fusion's working half is "
-     "largely hub identity"),
+    ("reaction+graph fusion", "RUNS", "loop_fusion_fix/140 + loop_fusion_margin/141",
+     "THE RECORDED FAILURE WAS AN ARTEFACT OF EARLY FUSION. loop 96 embedded the MERGED adjacency "
+     "and scored 0.3935, below graph-only's 0.4898. Embedding the channels separately and "
+     "concatenating scores 0.5358 against graph-only's 0.5275 on identical folds: +0.0084 [+0.0032, "
+     "+0.0138], an interval that excludes zero. It also beats its own noise control decisively -- a "
+     "random block of the same shape, scale and sparsity pattern scores -0.0091 [-0.0152, -0.0027], "
+     "so noise does not merely fail to help, it hurts. Late over early fusion is +0.1364 [+0.1139, "
+     "+0.1598], 16x larger",
+     "THE MECHANISM AND TWO LIMITS. Merging adjacencies puts metabolite-mediated edges into one "
+     "Laplacian with protein interactions; a single common metabolite links hundreds of genes, so "
+     "hub structure dominates the leading eigenvectors. Early fusion survives degree-preserving "
+     "rewiring at 90.1% -- it became a DEGREE detector -- while late fusion survives 34.2% against "
+     "graph-only's 36.0%, keeping the specific-edge signal. LIMIT ONE: the biological gain is +1.59% "
+     "of a 0.5275 baseline. LIMIT TWO, and it is a gate I got wrong: loop 141 M4 was written as a "
+     "comparison of two point estimates and passed, but the bridge-gene effect's own interval is "
+     "[-0.0233, +0.0265] and includes zero, 5.9x wider than the effect it tests. With 1,008 genes it "
+     "is underpowered roughly six-fold, so it is NOT established that the gain comes from "
+     "metabolism-specific structure rather than from a group-level split between genes that have "
+     "reaction edges and genes that do not"),
     # CORRECTED by loop 119. The stated cause -- "no phase-resolved layer exists" -- was true of
     # this repository and not of the literature. Mahdessian 2021 was fetched and the layer is now
     # here: 748 cell-cycle-dependent proteins against 776 imaged non-dependent controls, plus 530

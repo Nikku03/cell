@@ -5,8 +5,8 @@
   "inputs": [
    {
     "path": "colab/cell_assembled.py",
-    "bytes": 51814,
-    "hash": "7e345e3f185f0592",
+    "bytes": 52637,
+    "hash": "a7d1a48cdf6f1274",
     "method": "sha256:full"
    },
    {
@@ -17,8 +17,8 @@
    },
    {
     "path": "outputs/cell_run.json",
-    "bytes": 8455,
-    "hash": "e1247ef0e71918a3",
+    "bytes": 8545,
+    "hash": "f6cc8614f0d0758f",
     "method": "sha256:full"
    }
   ],
@@ -56,14 +56,14 @@
  "g3": {
   "stored": {
    "RUNS": 12,
-   "CLOSES": 10,
+   "CLOSES": 11,
    "FAILED": 14,
    "STATIC": 11
   },
   "actual": {
-   "RUNS": 12,
+   "RUNS": 13,
    "CLOSES": 11,
-   "FAILED": 14,
+   "FAILED": 13,
    "STATIC": 11
   },
   "stale": true
@@ -71,7 +71,7 @@
  "g4": {
   "n_layers": 48
  },
- "seconds": 0.00793766975402832,
+ "seconds": 0.009239673614501953,
  "log": [
   "====================================================================================================",
   "  CELL TRACK EXECUTOR -- record corrections C1 and C2",
@@ -87,8 +87,8 @@
   "     G2 PASS -- the conclusion stands; only its evidence changed",
   "",
   "G3 ARE THE RECORDED COUNTS STALE?",
-  "     cell_run.json stored: {'RUNS': 12, 'CLOSES': 10, 'FAILED': 14, 'STATIC': 11}",
-  "     the table actually reads: {'RUNS': 12, 'CLOSES': 11, 'FAILED': 14, 'STATIC': 11}",
+  "     cell_run.json stored: {'RUNS': 12, 'CLOSES': 11, 'FAILED': 14, 'STATIC': 11}",
+  "     the table actually reads: {'RUNS': 13, 'CLOSES': 11, 'FAILED': 13, 'STATIC': 11}",
   "     STALE: True",
   "     the artefact was not merely coarse -- it disagrees with the table it describes",
   "",

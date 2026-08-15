@@ -1,9 +1,9 @@
 {
  "n_layers": 48,
  "counts": {
-  "RUNS": 12,
+  "RUNS": 13,
   "CLOSES": 11,
-  "FAILED": 14,
+  "FAILED": 13,
   "STATIC": 11
  },
  "layers": [
@@ -99,9 +99,9 @@
   },
   {
    "layer": "reaction+graph fusion",
-   "status": "FAILED",
-   "source": "loop_fusion_linear",
-   "evidence_sha": "1f3ddbb9db77"
+   "status": "RUNS",
+   "source": "loop_fusion_fix/140 + loop_fusion_margin/141",
+   "evidence_sha": "76679c3cf341"
   },
   {
    "layer": "cell cycle (measured layer)",
