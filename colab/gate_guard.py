@@ -170,3 +170,22 @@ def report(name, s, emit=print):
         emit(f"     {name}: real {s['real']:+.4f}  null {s['null_mean']:+.4f} "
              f"+/- {s['null_sd']:.4f}  survival UNDEFINED -- {s['reason']}")
     return s
+
+
+def verdict(gate, if_true, if_false, emit=print, indent="     "):
+    """Emit a conclusion that CANNOT contradict its own gate.
+
+    Added after the same defect appeared three times in the loop 148-150 arc: a say()
+    line asserting a conclusion was written as a literal and printed unconditionally,
+    so it stayed on screen after the gate beneath it failed. Loop 149's M5 printed
+    "processivity is a real requirement of this mechanism" while its own sweep showed
+    the amplification flat; loop 150's R3 printed "it does not depend on q" while its
+    own gate was FAILING on 12 of 21 settings. Both were caught by re-reading output
+    rather than by anything structural, which is luck.
+
+    Narration that states a result must take the gate as an argument. Passing a single
+    string for both branches is allowed and is the honest way to say something that
+    holds either way.
+    """
+    emit(f"{indent}{if_true if gate else if_false}")
+    return bool(gate)
