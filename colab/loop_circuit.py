@@ -105,7 +105,7 @@ SITES = Path("colab/data/uniprot_sites.tsv.gz")
 SEED = 14700
 T_CYCLE = 24.0
 TARGET_RATIO = 20.3          # loop 142 X3, the b_hi/b_lo the measurement demands
-N_NULL = 20
+N_NULL = 12
 MAXLEN = 4
 
 log = []
@@ -210,29 +210,46 @@ def main():
     nodes = sorted({a for a, _, _ in edges} | {b for _, b, _ in edges})
     say(f"     nodes: {len(nodes):,}")
 
+    def core_reduce(edge_list):
+        """Iteratively drop nodes with no in-edge or no out-edge. A cycle cannot pass through
+        either, so this is exact -- and it is the difference between a search that finishes and
+        one that does not. 54,128 edges over 1,451 regulators and 7,485 targets reduce to about
+        1,100 nodes and 11,800 edges, because most targets are leaves that regulate nothing."""
+        E = list(edge_list)
+        while True:
+            src = {a for a, _, _ in E}
+            tgt = {b for _, b, _ in E}
+            keep = src & tgt
+            F = [(a, b, s) for a, b, s in E if a in keep and b in keep]
+            if len(F) == len(E):
+                return F
+            E = F
+
     def find_cycles(edge_list, maxlen=MAXLEN, cap=200000):
+        edge_list = core_reduce(edge_list)
         out_adj = defaultdict(list)
         for a, b, s in edge_list:
             out_adj[a].append((b, s))
         cycles = []
-        # only start from nodes that have both in- and out-edges, which is where cycles live
         indeg = defaultdict(int)
         for a, b, s in edge_list:
             indeg[b] += 1
-        starts = [n for n in out_adj if indeg[n] > 0]
+        # canonical start: only begin a cycle at its SMALLEST member, so each cycle is found once
+        starts = sorted(n for n in out_adj if indeg[n] > 0)
+        rank = {n: i for i, n in enumerate(starts)}
         for st in starts:
-            stack = [(st, [st], 1)]
+            r0 = rank[st]
+            stack = [(st, (st,), 1)]
             while stack:
                 node, path, sign = stack.pop()
-                if len(path) > maxlen:
-                    continue
                 for nb, s in out_adj.get(node, ()):
                     if nb == st and len(path) >= 2:
-                        cycles.append((tuple(path), sign * s))
+                        cycles.append((path, sign * s))
                         if len(cycles) >= cap:
                             return cycles
-                    elif nb not in path and len(path) < maxlen:
-                        stack.append((nb, path + [nb], sign * s))
+                    elif (rank.get(nb, -1) > r0 and nb not in path
+                          and len(path) < maxlen):
+                        stack.append((nb, path + (nb,), sign * s))
         return cycles
 
     cyc = find_cycles(edges)
