@@ -1,9 +1,9 @@
 {
- "n_layers": 50,
+ "n_layers": 51,
  "counts": {
   "RUNS": 13,
   "CLOSES": 12,
-  "FAILED": 14,
+  "FAILED": 15,
   "STATIC": 11
  },
  "layers": [
@@ -144,6 +144,12 @@
    "status": "STATIC",
    "source": "loop_ms_cellcycle/123",
    "evidence_sha": "534e7420c7b6"
+  },
+  {
+   "layer": "timed destruction read from the waveform",
+   "status": "FAILED",
+   "source": "loop_pulse_identify/143 + loop_pulse_controls/144",
+   "evidence_sha": "025abff3597f"
   },
   {
    "layer": "the production ceiling tanh(b*T/4)",

@@ -1,0 +1,230 @@
+{
+ "test": "loop 144 -- controls on the pulse identification",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ly2014_supp1-v1.txt",
+    "bytes": 5458223,
+    "hash": "73d036e6c3232913",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_pulse_identify.json",
+    "bytes": 9030,
+    "hash": "868e763e8bd4b3ca",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 10929,
+   "used": 6553,
+   "selection": "all",
+   "fraction": 0.5995974014090951
+  },
+  "seed": 14400,
+  "controls": [
+   "flat non-oscillating proteins as the null histogram",
+   "the same test rerun on raw Intensity, an unnormalised channel",
+   "the open trajectory, without the seam I introduced",
+   "amplitude-matched 16-gene draws instead of all proteins",
+   "per-protein permutation q-values instead of a p95 cut",
+   "the all-protein interval frequencies instead of uniform"
+  ],
+  "note": "written to be able to withdraw loop 143's 526-protein list. Loop 143 is already committed and pushed, so this corrects a record rather than fixing a draft.",
+  "warnings": []
+ },
+ "gates": {
+  "Z1": true,
+  "Z4": true,
+  "Z2": false,
+  "Z3": true,
+  "Z5": true,
+  "Z6": true,
+  "Z7": true
+ },
+ "z1": {
+  "n_flat": 3561,
+  "n_pulsed": 377,
+  "threshold": 0.41649174454718396,
+  "hist_flat": [
+   432.0,
+   288.0,
+   431.0,
+   561.0,
+   640.0,
+   1209.0
+  ],
+  "hist_pulsed": [
+   20.0,
+   20.0,
+   24.0,
+   32.0,
+   60.0,
+   221.0
+  ],
+  "chi2_vs_flat": 109.44396435335736
+ },
+ "z4": {
+  "canonical_median": 0.56830388106679,
+  "matched_mean": 0.06359235980606917,
+  "matched_p99": 0.26751330327368655,
+  "empirical_p": 0.0
+ },
+ "z2": {
+  "LFQ": {
+   "canonical_median": 0.56830388106679,
+   "null_mean": 0.06020974021449818,
+   "null_p95": 0.19507882714812055,
+   "empirical_p": 0.0
+  },
+  "Intensity": {
+   "canonical_median": 0.08491370576705554,
+   "null_mean": 0.033112566178739776,
+   "null_p95": 0.18607981180099256,
+   "empirical_p": 0.3005
+  }
+ },
+ "z3": {
+  "canonical_hist_circular": [
+   0,
+   1,
+   0,
+   0,
+   0,
+   15
+  ],
+  "canonical_hist_open": [
+   2,
+   1,
+   0,
+   2,
+   8
+  ],
+  "last_interval_open": 8,
+  "n_canon": 16
+ },
+ "z5": {
+  "n_candidates": 377,
+  "n_q05": 294,
+  "n_q10": 376,
+  "expected_by_p95_cut": 327.65000000000003
+ },
+ "z6": {
+  "all_freq": [
+   0.12330230428811231,
+   0.09156111704562796,
+   0.12925377689607814,
+   0.15077063940180072,
+   0.1817488173355715,
+   0.3233633450328094
+  ],
+  "pulsed_hist": [
+   20.0,
+   20.0,
+   24.0,
+   32.0,
+   60.0,
+   220.0
+  ],
+  "chi2_uniform": 492.0851063829788,
+  "chi2_correct_baseline": 124.91817603328505,
+  "wrap_share_pulsed": 0.5851063829787234,
+  "wrap_share_all": 0.3233633450328094
+ },
+ "z7": {
+  "passed": [
+   "Z1",
+   "Z3",
+   "Z4",
+   "Z5",
+   "Z6"
+  ]
+ },
+ "seconds": 21.080020666122437,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 144 -- the controls loop 143 did not run",
+  "====================================================================================================",
+  "",
+  "  rows 10,929; complete in BOTH channels: 6,553",
+  "  LFQ        per-fraction column sums, relative to F1: [1.0, 1.0628, 1.124, 1.1249, 1.0837, 1.0953]  spread 12.5%",
+  "  Intensity  per-fraction column sums, relative to F1: [1.0, 1.1866, 0.9916, 1.1516, 1.0946, 1.0661]  spread 19.5%",
+  "  a channel whose column sums are FLAT is a share, not an amount. That is the",
+  "  compositional problem, and it is visible in the totals before any statistic runs.",
+  "",
+  "  canonical substrates found in both channels: 16",
+  "",
+  "Z1 THE FLAT-PROTEIN NULL",
+  "     flat proteins (log2 range < 0.5): 3,561",
+  "     varying proteins (>= 1.0, i.e. 2-fold):  875",
+  "     median A   flat +0.0185   varying +0.0249   canonical +0.5683",
+  "     95th percentile of A among FLAT proteins: +0.4165",
+  "     crash histogram, FLAT   : [0.121, 0.081, 0.121, 0.158, 0.18, 0.34]",
+  "     crash histogram, PULSED : [0.053, 0.053, 0.064, 0.085, 0.159, 0.586]",
+  "     chi-square of PULSED against the FLAT shape: 109.4 on 5 df (critical 20.5 at p=0.001)",
+  "     Z1 PASS -- the pulsed histogram DIFFERS from the flat one, so it is not purely a measurement property",
+  "",
+  "Z4 IS Y2 AN AMPLITUDE ARTEFACT?",
+  "     canonical log2 range: median 2.210, and they sit at the 98.6th percentile of all proteins",
+  "     amplitude-matched null: mean +0.0636  95th +0.1984  99th +0.2675   (4,000 draws)",
+  "     canonical median A +0.5683   empirical p = 0.0000",
+  "     Z4 PASS -- Y2 survives amplitude matching",
+  "",
+  "Z2 DOES THE SIGNATURE SURVIVE THE QUANTIFICATION CHANNEL?",
+  "     LFQ        canonical median A +0.5683   matched null mean +0.0602  95th +0.1951   p = 0.0000",
+  "     Intensity  canonical median A +0.0849   matched null mean +0.0331  95th +0.1861   p = 0.3005",
+  "     Z2 FAIL -- the signature LIVES IN ONE CHANNEL ONLY",
+  "     A result present in MaxLFQ and absent in raw Intensity belongs to the",
+  "     normalisation algorithm until shown otherwise. MaxLFQ makes abundance a SHARE;",
+  "     raw Intensity does not.",
+  "",
+  "Z3 IS THE WRAP DOING THE WORK?",
+  "     CIRCULAR (wrap included)   canonical crash index: [0, 1, 0, 0, 0, 15]",
+  "       median canonical A +0.5683   all proteins +0.0208",
+  "     OPEN (no seam)             canonical crash index: [2, 1, 0, 2, 8]",
+  "       median canonical A +0.5293   all proteins +0.0644",
+  "     on the OPEN trajectory 8/16 canonical substrates crash in the LAST",
+  "     measured interval F5->F6, which is still late and still consistent with mitosis --",
+  "     but it is 8/16, not the 14/14 that the seam produced.",
+  "     Z3 PASS -- without the seam the timing still concentrates late",
+  "",
+  "Z5 HOW MANY OF THE 526 ARE REAL?",
+  "     computing per-protein permutation p-values for 377 candidates (2000 draws each) ...",
+  "     a p95 cut on 6,553 proteins yields 328 by construction",
+  "     candidates above the flat-protein 95th percentile: 377",
+  "     surviving Benjamini-Hochberg q < 0.10: 376",
+  "     surviving Benjamini-Hochberg q < 0.05: 294",
+  "     Z5 PASS -- the list survives multiple-testing correction",
+  "",
+  "Z6 Y5 AGAINST THE RIGHT BASELINE",
+  "     ALL-protein crash frequencies: [0.123, 0.092, 0.129, 0.151, 0.182, 0.323]",
+  "     they are NOT uniform, so Y5's 612.5 was measured against the wrong expectation",
+  "     pulsed-set histogram (n=376): [20, 20, 24, 32, 60, 220]",
+  "     chi-square vs UNIFORM baseline         : 492.1",
+  "     chi-square vs ALL-PROTEIN baseline     : 124.9  on 5 df (critical 20.5 at p=0.001)",
+  "     wrap share, pulsed 58.5%   all proteins 32.3%",
+  "     Z6 PASS -- the clustering survives the correct baseline",
+  "",
+  "Z7 THE VERDICT",
+  "     controls passed: Z1, Z3, Z4, Z5, Z6",
+  "     THE 526 LIST IS WITHDRAWN AS A BIOLOGICAL RESULT. The signature does not survive",
+  "     the quantification channel, and a result that lives in MaxLFQ and not in raw",
+  "     intensity is a property of the normalisation until proven otherwise.",
+  "     WHAT DOES NOT CHANGE EITHER WAY: loop 142's equation upgrade is arithmetic checked",
+  "     against simulation and against the measured proteasome, and does not depend on any",
+  "     of this. What is at stake here is only WHICH proteins and WHEN.",
+  "",
+  "====================================================================================================",
+  "  Z1  PASS",
+  "  Z2  FAIL",
+  "  Z3  PASS",
+  "  Z4  PASS",
+  "  Z5  PASS",
+  "  Z6  PASS",
+  "  Z7  PASS",
+  "  6/7",
+  "====================================================================================================",
+  "    manifest: 2 inputs, coverage 6553/10929 (60.0%) by 'all', seed 14400, controls 6"
+ ]
+}

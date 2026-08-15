@@ -5,8 +5,8 @@
   "inputs": [
    {
     "path": "colab/cell_assembled.py",
-    "bytes": 58064,
-    "hash": "a7de75c81dbae312",
+    "bytes": 60315,
+    "hash": "ea73fcb6f326f762",
     "method": "sha256:full"
    },
    {
@@ -17,14 +17,14 @@
    },
    {
     "path": "outputs/cell_run.json",
-    "bytes": 8571,
-    "hash": "db0e8de0d8445dd8",
+    "bytes": 8733,
+    "hash": "c668bd656108f3bc",
     "method": "sha256:full"
    }
   ],
   "coverage": {
-   "available": 50,
-   "used": 50,
+   "available": 51,
+   "used": 51,
    "selection": "all",
    "fraction": 1.0
   },
@@ -56,22 +56,22 @@
  "g3": {
   "stored": {
    "RUNS": 13,
-   "CLOSES": 11,
-   "FAILED": 13,
+   "CLOSES": 12,
+   "FAILED": 14,
    "STATIC": 11
   },
   "actual": {
    "RUNS": 13,
    "CLOSES": 12,
-   "FAILED": 14,
+   "FAILED": 15,
    "STATIC": 11
   },
   "stale": true
  },
  "g4": {
-  "n_layers": 50
+  "n_layers": 51
  },
- "seconds": 0.009956121444702148,
+ "seconds": 0.008982181549072266,
  "log": [
   "====================================================================================================",
   "  CELL TRACK EXECUTOR -- record corrections C1 and C2",
@@ -87,13 +87,13 @@
   "     G2 PASS -- the conclusion stands; only its evidence changed",
   "",
   "G3 ARE THE RECORDED COUNTS STALE?",
-  "     cell_run.json stored: {'RUNS': 13, 'CLOSES': 11, 'FAILED': 13, 'STATIC': 11}",
-  "     the table actually reads: {'RUNS': 13, 'CLOSES': 12, 'FAILED': 14, 'STATIC': 11}",
+  "     cell_run.json stored: {'RUNS': 13, 'CLOSES': 12, 'FAILED': 14, 'STATIC': 11}",
+  "     the table actually reads: {'RUNS': 13, 'CLOSES': 12, 'FAILED': 15, 'STATIC': 11}",
   "     STALE: True",
   "     the artefact was not merely coarse -- it disagrees with the table it describes",
   "",
   "G4 CAN THE NEW ARTEFACT NAME THE LAYER THAT MOVED?",
-  "     wrote outputs/cell_layers.json with per-layer status for 50 layers",
+  "     wrote outputs/cell_layers.json with per-layer status for 51 layers",
   "     each carries a hash of its evidence text, so a reworded layer is visible too",
   "     G4 PASS",
   "",
@@ -104,6 +104,6 @@
   "  G4  PASS",
   "  4/4",
   "====================================================================================================",
-  "    manifest: 3 inputs, coverage 50/50 (100.0%) by 'all', seed 0, controls 2"
+  "    manifest: 3 inputs, coverage 51/51 (100.0%) by 'all', seed 0, controls 2"
  ]
 }

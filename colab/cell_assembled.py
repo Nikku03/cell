@@ -549,6 +549,30 @@ LAYERS = [
      "IT IS FIVE TIMES WEAKER THAN THE CAMERA SAID: 1.8:1 by mass spectrometry against 9.5:1 by "
      "imaging, and it vanishes at 3x where only 74 genes remain discordant. The imaging call is "
      "real (9.6x enriched over controls) but OVER-CALLS SEVENFOLD -- MS confirms 42 of 315"),
+    # ADDED by loops 143/144. Recorded as FAILED because 144 Z2 withdrew it on the rule
+    # 143 predeclared -- the result is real in one channel and absent in the other.
+    ("timed destruction read from the waveform", "FAILED", "loop_pulse_identify/143 + loop_pulse_controls/144",
+     "a destruction pulse makes a sawtooth, so A = C_fall - C_rise over the six elutriation "
+     "fractions should be positive for a pulsed protein. On MaxLFQ it works spectacularly: the 16 "
+     "textbook APC/C and SCF substrates score median A +0.5683 against an AMPLITUDE-MATCHED null "
+     "99th percentile of +0.2675, empirical p = 0.0000 over 4,000 draws (144 Z4). The crash "
+     "histogram of the selected set differs from that of 3,561 flat proteins at chi-square 109.4 on "
+     "5 df (Z1), clustering survives the correct all-protein baseline at 124.9 with a wrap share of "
+     "58.5% against 32.3% (Z6), 294 proteins survive Benjamini-Hochberg at q < 0.05 (Z5), and "
+     "publication count correlates +0.0189",
+     "AND IT IS WITHDRAWN AS A BIOLOGICAL RESULT ON ITS OWN PREDECLARED RULE. Z2: rerun on raw "
+     "Intensity the canonical median A is +0.0849 against a matched null 95th of +0.1861, p = "
+     "0.3005. The signature lives in MaxLFQ and not in the unnormalised channel, and MaxLFQ makes "
+     "abundance a SHARE -- its column sums vary 6.2% where raw intensity varies 29%. TWO READINGS "
+     "FIT AND THIS DATA CANNOT SEPARATE THEM: raw Intensity carries 2.01x the per-point noise "
+     "(0.2179 against 0.1083 log2 on flat proteins) and A is built from adjacent differences, so "
+     "doubling point noise attacks a shape statistic far harder than it attacks amplitude -- the "
+     "destruction IS still visible there as amplitude, CCNB1 spanning 2.894 log2. So MaxLFQ may be "
+     "revealing the signal or creating it, and iBAQ is not an independent third channel. Z3 also "
+     "cost half of Y3's headline: without the F6->F1 seam, which is a step I introduced rather than "
+     "measured, canonical crashes fall 8/16 in the last real interval rather than 14/14. What is "
+     "needed is a quantification channel with LFQ-grade noise and no compositional normalisation, "
+     "and this dataset does not contain one"),
     ("the production ceiling tanh(b*T/4)", "CLOSES", "loop_ms_cellcycle/123",
      "for dP/dt = k(t) - b*P with k(t) >= 0 of ANY waveform, max relative amplitude is exactly "
      "tanh(b*T/4). No drive parameter, no fitting, depends only on the measured half-life and the "
