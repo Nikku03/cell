@@ -57,6 +57,19 @@ PREDECLARED:
        the number that feeds the next turn of the loop, and it is the only way the predictions in
        improver.py ever acquire a track record.
 
+  E7 THE EC ENCODING LOOP 134 GOT WRONG.                             ADDED AFTER READING ITS OUTPUT.
+       loop 134 encoded EC as eci.get(e, -1) -- an arbitrary integer index over 2,000-odd classes,
+       sorted alphabetically. A tree splitting on that index groups EC 1.1.1.1 with whatever
+       happens to sort beside it, which is nothing. So C1's 0.7%, C5's "EC only 1.4707" and the
+       +0.0041 that P4 inherits were all measured through a broken instrument, and P4 is currently
+       carrying a maximum it does not deserve. Three encodings, same folds: the integer index as
+       loop 134 used it, an OUT-OF-FOLD target encoding (the EC median, which is what C1's
+       standalone predictor already is), and hierarchical one-hot on EC levels 1-3. Gate: report
+       all three against the same baseline. If the target encoding beats the index materially, the
+       EC channel has been mismeasured everywhere it appears in loops 132-134 and the record says
+       so. This is what unblocks P6 in improver.py, which T7 currently rejects for having no
+       measured maximum.
+
 -> outputs/loop_plan_exec.json
 """
 import collections
@@ -284,6 +297,78 @@ def main():
     res["e6"] = {"predicted": pred, "measured": meas,
                  "error": (meas - pred) if pred is not None else None}
     say(f"     E6 PASS -- recorded, so the predictions in improver.py now have a track record")
+    say()
+
+    # ------------------------------------------------------------------ E7
+    say("E7 THE EC ENCODING LOOP 134 GOT WRONG")
+    # 1. the integer index, exactly as loop 134 used it
+    enc = {"integer index (loop 134)": ECX}
+    # 3. hierarchical: EC levels 1-3 as separate categorical columns, which is the structure the
+    #    integer index destroys
+    def lev(e, n):
+        p = (e or "").split(".")
+        return ".".join(p[:n]) if len(p) >= n else ""
+    HI = np.zeros((len(y), 3), dtype=np.float32)
+    for j, n in enumerate((1, 2, 3)):
+        vals = sorted({lev(e, n) for e in ec})
+        vi = {v: i for i, v in enumerate(vals)}
+        HI[:, j] = [vi.get(lev(e, n), -1) for e in ec]
+    enc["hierarchical levels 1-3"] = HI
+
+    def ec_median_feature(idx_fit, idx_get):
+        """EC median over idx_fit, evaluated for idx_get. One place, so the leak-free rule is
+        stated once and cannot drift between the training and test branches."""
+        med = collections.defaultdict(list)
+        for i in idx_fit:
+            if ec[i]:
+                med[ec[i]].append(y[i])
+        gm = float(np.median(y[idx_fit]))
+        return np.array([[np.median(med[ec[i]]) if ec[i] in med else gm] for i in idx_get],
+                        dtype=np.float32)
+
+    def cv_target_encoded():
+        """A target encoding cannot be built once and reused, because the feature is a function of
+        the labels. Loop 134's C2 found exactly this defect in loop 133's B4: a training row's
+        target had been built from a complement CONTAINING the test fold. So the training rows get
+        their feature from an INNER leave-one-fold-out inside the training set, and the test rows
+        from the training set as a whole. Nothing a model sees at fit time ever saw its test fold."""
+        p = np.zeros(len(y))
+        for k in range(N_FOLDS):
+            te, tr = fold == k, fold != k
+            tri, tei = np.flatnonzero(tr), np.flatnonzero(te)
+            f_tr = np.zeros((len(tri), 1), dtype=np.float32)
+            inner = fold[tri]
+            for j in np.unique(inner):
+                a, b = inner == j, inner != j
+                f_tr[a] = ec_median_feature(tri[b], tri[a])
+            f_te = ec_median_feature(tri, tei)
+            m = xgb.XGBRegressor(n_estimators=400, max_depth=6, learning_rate=0.06,
+                                 subsample=0.8, colsample_bytree=0.5, reg_lambda=2.0,
+                                 n_jobs=4, random_state=SEED, verbosity=0)
+            m.fit(np.hstack([BASE[tri], f_tr]), y[tri])
+            p[tei] = m.predict(np.hstack([BASE[tei], f_te]))
+        return p
+
+    e7 = {}
+    for name, blk in enc.items():
+        r = rmse(y, cv(np.hstack([BASE, blk])))
+        e7[name] = {"rmse": r, "gain": r_base - r}
+        say(f"     {name:<32} RMSE {r:.4f}   gain {r_base - r:+.4f}")
+    p_te = cv_target_encoded()
+    r_te = rmse(y, p_te)
+    e7["out-of-fold target encoding"] = {"rmse": r_te, "gain": r_base - r_te}
+    say(f"     {'out-of-fold target encoding':<32} RMSE {r_te:.4f}   gain {r_base - r_te:+.4f}")
+    say(f"       (built with the nested construction loop 134 C2 showed B4 had got wrong)")
+    best = max(e7.items(), key=lambda kv: kv[1]["gain"])
+    idx_gain = e7["integer index (loop 134)"]["gain"]
+    say(f"     best encoding: {best[0]} at {best[1]['gain']:+.4f}")
+    say(f"     the integer index loop 134 used scored {idx_gain:+.4f}")
+    gates["E7"] = True
+    res["e7"] = {"encodings": e7, "best": best[0], "best_gain": best[1]["gain"],
+                 "index_gain": idx_gain, "index_understated_by": best[1]["gain"] - idx_gain,
+                 "_ec_encoded_max_gain": best[1]["gain"]}
+    say(f"     E7 PASS -- the EC channel now has a maximum measured through a working instrument,")
+    say(f"     which is what T7 needs before P6 can be accepted")
     say()
 
     say("=" * 100)

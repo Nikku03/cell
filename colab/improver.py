@@ -55,6 +55,40 @@ THE THEORY CHECK, which is the whole point. A plan item is REJECTED unless all s
                                     such file is on disk. A plan costed in minutes for data that
                                     was never fetched is a plan that cannot run, and the cheapest
                                     possible check catches it: os.path.exists
+    T9 A PROBE UNBLOCKS SOMETHING   probes only. It must name an item and a check, that item must
+                                    exist, and it must currently be FAILING that check. A probe
+                                    that unblocks nothing is a measurement taken for its own sake
+   T10 NAMES A LAYER AND A GATE     cell track only, where it REPLACES T2/T6/T7. Those three are
+                                    arithmetic on a scalar with a sampling distribution, and the
+                                    cell track's metric is a count of judged layers -- a bootstrap
+                                    over it would have no referent, and the count is gameable by
+                                    splitting one FAILED layer into two RUNS layers. So an item
+                                    must instead name an EXISTING layer and the GATE that would
+                                    have to pass. A status is a judgement; a gate is falsifiable.
+                                    Which checks a track runs is declared in TRACKS, and a check
+                                    that is switched off is recorded as None rather than dropped,
+                                    so that turning one off stays visible
+
+PROBES, and why the third run of this file had to invent them. After loop 134 supplied the grounded
+maxima T7 demands, every item in the plan was rejected -- and one of them, P6, was rejected for
+having NO measured maximum, when the measurement that would supply it costs ten minutes and had
+simply never been run. The check was correct and the outcome was absurd: the loop had talked itself
+into doing nothing, because the thing standing between it and a decision was a number, and its only
+category of action was "a change that improves the metric".
+
+So there are now two kinds of item.
+
+    A CHANGE promises to move the metric. It faces T1-T8, and T7 requires it to derive its promise
+    from a recorded number.
+
+    A PROBE promises NOTHING about the metric. Its output is a number that some check needs. T2 and
+    T7 do not apply -- a probe that predicted its own result would not be a probe -- and T9 applies
+    instead: it must name the item and the check it unblocks, and that check must currently be
+    failing. Probes are how the loop earns the right to a next turn when every change is blocked.
+
+This is the single most useful thing this file has produced, and it came from reading its own
+output rather than from planning. A loop that can only propose improvements will stall the moment
+its improvements need evidence; a loop that can propose measurements will not.
 
 WHAT THE FIRST RUN OF THIS FILE FOUND, which is why T7 and BLOCKED exist. It accepted 5 of 5 and
 printed its own indictment: a check that rejects nothing is evidence the check is too weak. Two
@@ -72,9 +106,11 @@ holes were visible in its output:
   not an acceptance; it is BLOCKED, and a blocked item is not schedulable.
 
 And the first run's stopping rule turned out to be broken too, which no tightening of this file
-would have caught: it named loop 133's B4, and loop 134 then measured B4's premise at 3.2% of the
-variance. The lesson is recorded in load(): a track must read the loop that AUDITED its metric, not
-only the loops that produced it.
+would have caught: it named loop 133's B4 as the rule deciding a four-hour run. Loop 134 then
+measured B4's premise -- the EC number -- at 0.7% of the variance, and retested B4's conclusion
+without a residual at all. The conclusion SURVIVED (within-EC-class permutation costs +0.0046
+against a 0.0488 interval) while the evidence for it did not. The lesson is recorded in load(): a
+track must read the loop that AUDITED its metric, not only the loops that produced it.
 
 THE BUNDLE RULE, which is what stops T2 from being merely destructive. A change predicted to move
 the metric by less than the paired noise is unmeasurable ON ITS OWN and T2 rejects it -- correctly.
@@ -116,8 +152,37 @@ TRACKS = {
     "ml_kcat": {
         "question": "predict log10 kcat from enzyme sequence and substrate",
         "runs": ["loop_ml_kcat.json", "loop_ml_audit.json", "loop_ml_probe.json",
-                 "loop_b4_fix.json"],
+                 "loop_b4_fix.json", "loop_plan_exec.json"],
         "metric": "rmse", "lower_is_better": True,
+        "checks": ("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"),
+    },
+    "cell": {
+        "question": "does the whole-cell model run, and which of its layers survive their gates",
+        "runs": ["cell_run.json", "cell_model_audit.json", "capability_audit.json",
+                 "loop_b4_fix.json", "cell_record_fix.json", "cell_layers.json"],
+        # The layer table lives in SOURCE, not in an artefact, and C1 edits it. A fingerprint that
+        # hashed only outputs/ would miss the very change the cell track's first item makes, and
+        # the loop would then stall while claiming nothing had happened.
+        "also_hash": ["colab/cell_assembled.py"],
+        "metric": "n_failed_layers", "lower_is_better": True,
+        # THE CELL TRACK CANNOT USE T2, T6 OR T7, and pretending otherwise would be the worst kind
+        # of error here -- a check that appears to fire while measuring nothing.
+        #
+        # T2 compares a predicted gain against a bootstrap interval. T7 caps a promise at a
+        # measured maximum. T6 compares a promised result against a measured floor. All three are
+        # arithmetic on a SCALAR metric with a sampling distribution. The cell track's metric is a
+        # COUNT OF LAYERS whose status is a judgement recorded by a human-written gate, not a
+        # sample from anything. There is no bootstrap over 47 layers that means what a bootstrap
+        # over 3,006 sequence clusters means, and a confidence interval on "14 FAILED" would be
+        # a number with no referent.
+        #
+        # Worse, the count is trivially gameable: splitting one FAILED layer into two RUNS layers
+        # improves it without touching the model. So the cell track drops T2/T6/T7 and adds T10,
+        # which demands that an item name an EXISTING layer and the GATE that would have to pass.
+        # A gate is falsifiable where a status is not.
+        "checks": ("T1", "T3", "T4", "T5", "T8", "T9", "T10"),
+        "why_not_t2": "the metric is a count of judged layers, not a sample; a bootstrap over it "
+                      "would have no referent, and the count is gameable by relabelling",
     },
 }
 
@@ -132,7 +197,29 @@ BOUNDS = {
                                          "merging near-duplicates and debiasing singletons"),
     "mutant_irreducible_rmse": (0.947, "loop 133 B1: 18,595 point-mutant pairs a mean-pooled "
                                        "embedding cannot distinguish"),
+    "protein_identity_value_rmse": (0.0046, "loop 134 C3: permuting the embedding among records "
+                                            "SHARING an EC number -- destroying protein identity, "
+                                            "preserving class exactly -- costs this much, against "
+                                            "a paired interval of 0.0488. What the model extracts "
+                                            "from knowing WHICH protein it is, is unmeasurable"),
 }
+
+# THE TENSION LOOP 134 CREATED, recorded rather than resolved by preference.
+#
+# C3 says protein identity is worth 0.0046 to the CURRENT representation. B1 says point mutants
+# carry a 0.947 irreducible component. Both are measured and they do not contradict: C3 bounds what
+# mean-pooled ESM EXTRACTS, B1 bounds what a perfect representation could at most REMOVE. P1 lives
+# in the gap, and the gap is real -- a change of readout is exactly the thing C3 does not test.
+#
+# But C3 is still evidence against P1, and stronger than it looks. If swapping a protein for a
+# DIFFERENT protein in the same EC class is nearly free, the targets are barely a function of
+# protein identity on this data. Resolving a single residue is a finer distinction than swapping
+# the whole chain. So P1's fraction_claimed is cut below, and the reason is written here rather
+# than smuggled into a round number.
+PROTEIN_IDENTITY_CAVEAT = (
+    "loop 134 C3 measured protein identity at 0.0046 to the current readout. That bounds "
+    "EXTRACTION, not the deficit, so it does not refute a change of readout -- but it is evidence "
+    "against one, and the claimed fraction is cut accordingly.")
 
 
 # THE HISTORY. Each turn of the loop appends here, so a prediction that was wrong stays visible.
@@ -155,6 +242,185 @@ def log(s=""):
     print(s, flush=True)
 
 
+def cell_layers():
+    """The 47-layer audit table, read by PARSING cell_assembled.py rather than importing it.
+
+    Importing costs 27 seconds because the module builds the model on import, and a loop that pays
+    27 seconds per turn to read a constant is a loop that will be tempted to cache it and then to
+    trust the cache. ast.literal_eval on the LAYERS assignment is exact and takes milliseconds."""
+    import ast
+    src = Path("colab/cell_assembled.py").read_text()
+    for node in ast.parse(src).body:
+        if isinstance(node, ast.Assign) and getattr(node.targets[0], "id", "") == "LAYERS":
+            return [tuple(t) for t in ast.literal_eval(node.value)]
+    return []
+
+
+def cell_deficits():
+    """The cell track's equivalent of BOUNDS, and it is built by CHECKING rather than by asserting.
+
+    On the ml track T1 passes when an item cites a key in BOUNDS, and BOUNDS holds numbers a loop
+    measured. The cell track has no such numbers, so the temptation is to let T1 pass on any
+    plausible-sounding deficit name -- which would make T1 vacuous on exactly the track where the
+    other quantitative checks have already been switched off. Instead each deficit here carries a
+    PREDICATE that is evaluated against the files, and a deficit whose predicate is false does not
+    exist as far as T1 is concerned."""
+    L = cell_layers()
+    d = {}
+
+    # 1. Is the record behind the measurement? True only if the kcat layer still cites the test
+    #    loop 134 showed was broken, AND loop 134 actually ran.
+    kl = next((l for l in L if l[0] == "what the kcat model actually learned"), None)
+    fixed = (OUT / "loop_b4_fix.json").exists()
+    cites_broken = bool(kl and ("1.5386" in kl[3] or "EC-median residual" in kl[3]))
+    d["record_behind_measurement"] = {
+        "holds": bool(kl and fixed and cites_broken),
+        "evidence": (f"layer cites the B4 residual ({cites_broken}); loop_b4_fix.json present "
+                     f"({fixed})")}
+
+    # 2. Can the artefact show WHICH layer changed? Only if cell_run.json stores per-layer status.
+    run = json.load(open(OUT / "cell_run.json")) if (OUT / "cell_run.json").exists() else {}
+    lay = run.get("layers")
+    per_layer = isinstance(lay, dict) and any(v in ("RUNS", "FAILED", "STATIC", "CLOSES")
+                                              for v in lay.values())
+    d["artefact_cannot_show_change"] = {
+        "holds": bool(run and not per_layer),
+        "evidence": f"cell_run.json['layers'] = {lay}; per-layer status present: {per_layer}"}
+
+    # 3. Do three or more FAILED layers converge on the transcription -> protein axis?
+    key = ("transcription", "TF network", "CollecTRI", "regulation->transcription")
+    conv = [l[0] for l in L if l[1] == "FAILED" and any(k.lower() in (l[0] + l[3]).lower()
+                                                        for k in key)]
+    d["three_failed_layers"] = {
+        "holds": len(conv) >= 3,
+        "evidence": f"{len(conv)} FAILED layers on that axis: {conv[:5]}"}
+    return d
+
+
+def ask_cell():
+    """Q1-Q6 for the whole-cell model. The unit here is a LAYER and its gate, not an RMSE."""
+    L = cell_layers()
+    import collections as _c
+    counts = _c.Counter(l[1] for l in L)
+    run = json.load(open(OUT / "cell_run.json")) if (OUT / "cell_run.json").exists() else {}
+    aud = (json.load(open(OUT / "cell_model_audit.json"))
+           if (OUT / "cell_model_audit.json").exists() else {})
+    failed = [{"layer": l[0], "source": l[2], "evidence": l[3][:300]} for l in L if l[1] == "FAILED"]
+    static = [{"layer": l[0], "source": l[2]} for l in L if l[1] == "STATIC"]
+
+    a = {"question": TRACKS["cell"]["question"], "n_runs": 1,
+         "layer_counts": dict(counts), "n_layers": len(L)}
+    a["Q1_previous"] = {"recorded_at_last_cell_run": run.get("layers"),
+                        "note": "cell_run.json records only the four counts, not per-layer status, "
+                                "so a layer that changed status between runs is invisible here. "
+                                "That is a gap in the ARTEFACT and it is named rather than filled "
+                                "by reading the table twice"}
+    a["Q2_new"] = {"counts": dict(counts), "n_failed": counts.get("FAILED", 0),
+                   "rmse": None,
+                   "note": "there is no scalar metric with a sampling distribution on this track; "
+                           "see TRACKS['cell']['why_not_t2']"}
+    a["Q3_changed_and_why"] = [
+        {"what": "the kcat layer's verdict is now backed by a decisive control",
+         "why": "layer 'what the kcat model actually learned' cited loop 133 B4, whose residual "
+                "leaked and whose baseline was in-sample. Loop 134 C3 reaches the same conclusion "
+                "by within-class permutation: +0.0046 against a 0.0488 interval",
+         "verdict": "SAME STATUS, MUCH BETTER EVIDENCE -- and the layer's prose still cites the "
+                    "broken test, so the record is now behind the measurement"},
+        {"what": "nothing else moved",
+         "why": "no loop since cell_run.json has changed a layer's status",
+         "verdict": "the counts are unchanged at 14 FAILED, 12 RUNS, 11 STATIC, 10 CLOSES"},
+    ]
+    a["Q4_flat"] = [
+        {"what": "the transcription -> protein axis",
+         "evidence": "three separate FAILED layers say the same thing: 'protein dynamics from "
+                     "transcription alone' (p=2e-67 the wrong way), 'TF network as a predictor of "
+                     "transcript dynamics', and 'CollecTRI as a replacement network'. Two "
+                     "independent networks were tried and both failed",
+         "verdict": "FLAT ACROSS THREE ATTEMPTS -- the wall is not the network, it is that "
+                    "protein dynamics has a non-transcriptional source"},
+        {"what": "the count of FAILED layers",
+         "evidence": f"{counts.get('FAILED', 0)} of {len(L)}, unchanged since cell_run.json",
+         "verdict": "FLAT -- and it should be, because a FAILED layer is a recorded negative and "
+                    "not a defect to be cleared"},
+    ]
+    a["Q5_cost"] = {"cell_run_seconds": run.get("seconds"),
+                    "note": "the model runs; the cost is not the binding constraint on this track"}
+    a["Q6_same_data"] = {
+        "IMPLICIT -- same inputs, used differently": [
+            {"change": "correct the kcat layer's prose to cite loop 134 C3 rather than the leaking "
+                       "B4 residual", "deficit": "record_behind_measurement", "cost": "free"},
+            {"change": "record per-layer status in cell_run.json, not only the four counts",
+             "deficit": "artefact_cannot_show_change", "cost": "free"},
+        ],
+        "EXPLICIT -- new information": [
+            {"change": "a measurement of the non-transcriptional source of protein dynamics",
+             "deficit": "three FAILED layers point at it", "cost": "unknown; no dataset identified"},
+        ],
+    }
+    a["failed_layers"] = failed
+    a["static_layers"] = static
+    a["audit"] = {}
+    a["all_scores"] = {"n_failed": counts.get("FAILED", 0), "n_static": counts.get("STATIC", 0)}
+    a["parts"] = aud.get("parts")
+    a["cell_deficits"] = cell_deficits()
+    return a
+
+
+def plan_cell(a):
+    """Items for the cell track. No predicted_gain is meaningful here, so none is invented: each
+    item names a LAYER and the GATE that would have to pass, which T10 checks."""
+    L = {l[0]: l for l in cell_layers()}
+    items = [
+        {"id": "C1", "change": "correct the kcat layer to cite loop 134 C3, not the leaking B4",
+         "kind": "record", "depends_on": [], "needs_files": [Path("colab/cell_assembled.py"),
+                                                             OUT / "loop_b4_fix.json"],
+         "targets_layer": "what the kcat model actually learned",
+         "gate": "the layer's evidence field must cite a test whose control was shown capable of "
+                 "moving before its result was read -- loop 134 C4 then C3",
+         "mechanism": "the layer currently asserts 'EVERYTHING THE MODEL KNOWS IS ALREADY IN THE "
+                      "EC NUMBER' on the strength of a residual that leaked and a baseline that "
+                      "was in-sample. The conclusion survived; the evidence for it did not",
+         "cites": "record_behind_measurement", "derivation": None, "predicted_gain": 0.0,
+         "nearest_refuted": "650M with mean pooling",
+         "distinguisher": "this corrects a record rather than proposing a model change",
+         "falsifier": "loop 134 C3 does not in fact support the layer's claim, in which case the "
+                      "layer's STATUS is wrong too and not merely its citation",
+         "cost_min": 5, "promised_rmse": None},
+        {"id": "C2", "change": "record per-layer status in cell_run.json, not only four counts",
+         "kind": "record", "depends_on": [], "needs_files": [Path("colab/cell_assembled.py")],
+         "targets_layer": None,
+         "gate": "a rerun must be able to show WHICH layer changed status, not only that a count "
+                 "moved",
+         "mechanism": "cell_run.json stores {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}. "
+                      "Two layers swapping status is invisible to that artefact, so the improver's "
+                      "Q3 on this track cannot answer 'what changed' from the record",
+         "cites": "artefact_cannot_show_change", "derivation": None, "predicted_gain": 0.0,
+         "nearest_refuted": "more kcat records",
+         "distinguisher": "changes what is RECORDED, not what is measured",
+         "falsifier": "the counts already differ from the current table, which would mean the "
+                      "artefact is not merely coarse but stale",
+         "cost_min": 5, "promised_rmse": None},
+        {"id": "C3", "change": "find the non-transcriptional source of protein dynamics",
+         "kind": "explicit", "depends_on": [],
+         "needs_files": [Path("colab/data/protein_dynamics_source.tsv.gz")],
+         "targets_layer": "protein dynamics from transcription alone",
+         "gate": "a candidate mechanism must predict, on held-out genes, which of the 362 proteins "
+                 "that oscillate without their transcript will do so",
+         "mechanism": "three FAILED layers converge on this and none of them names a replacement. "
+                      "Loops 121, 122 and 123 eliminated degrons, translation control and "
+                      "relocalisation in turn",
+         "cites": "three_failed_layers", "derivation": None, "predicted_gain": 0.0,
+         "nearest_refuted": "predict kcat/KM instead",
+         "distinguisher": "different subsystem entirely",
+         "falsifier": "no dataset distinguishes the 362 from the 38, in which case this is not a "
+                      "plan but a wish",
+         "cost_min": 240, "promised_rmse": None},
+    ]
+    for it in items:
+        it["layer_exists"] = bool(it["targets_layer"] is None or it["targets_layer"] in L)
+    return items, None, "no scalar metric on this track; T2 does not apply"
+
+
 def load(track):
     t = TRACKS[track]
     runs = []
@@ -168,6 +434,10 @@ def load(track):
 # ---------------------------------------------------------------------------------------------
 def ask(track):
     """Q1-Q6, answered from the artefacts. Every number below is read, never remembered."""
+    if track == "cell":
+        a = ask_cell()
+        a["track"] = track
+        return a
     t, runs = load(track)
     a = {"question": t["question"], "n_runs": len(runs)}
     scores = {}
@@ -288,6 +558,8 @@ def plan(a):
     is a PAIRED change evaluated on the same folds, so the right spread is the interval loop 132 A3
     measured on a paired model-vs-model difference. It is much tighter, and using the wrong one
     would reject real effects."""
+    if a.get("track") == "cell":
+        return plan_cell(a)
     cur = a["Q2_new"]["rmse"]
     fix = a.get("audit") or {}
 
@@ -300,28 +572,33 @@ def plan(a):
     # against it. The FRACTION claimed of each maximum is the only judgement left, and it is
     # visible rather than buried inside a round figure.
     mut = BOUNDS["mutant_irreducible_rmse"][0]
-    d_pool = {"from": "loop 133 B1 irreducible_rmse", "component": mut, "max_gain": cap(mut),
-              "fraction_claimed": 0.40,
+    d_pool = {"from": "loop 133 B1 irreducible_rmse, CUT by loop 134 C3", "component": mut,
+              "max_gain": cap(mut), "fraction_claimed": 0.08,
               "argument": "the ceiling assumes active-site pooling resolves EVERY point-mutant "
                           "pair perfectly. It will not: pooling over annotated sites still averages "
                           "several residues, and 3,597 merged proteins carry mutations outside any "
-                          "annotated site. 40% of the ceiling is a guess, but it is now a visible "
-                          "guess against a measured maximum"}
-    d_flag = {"from": "loop 133 B1, same component as P1", "component": mut, "max_gain": cap(mut),
-              "fraction_claimed": 0.12,
+                          "annotated site. And " + PROTEIN_IDENTITY_CAVEAT + " The fraction was "
+                          "0.40 before loop 134 ran; 0.08 is what survives C3"}
+    d_flag = {"from": "loop 133 B1, same component as P1, CUT by loop 134 C3", "component": mut,
+              "max_gain": cap(mut), "fraction_claimed": 0.03,
               "argument": "a flag says THAT a record is a variant, never WHICH, so it can only "
                           "recover the mean offset between wild types and mutants -- a small "
-                          "fraction of a component whose spread is within-pair"}
+                          "fraction of a component whose spread is within-pair. " +
+                          PROTEIN_IDENTITY_CAVEAT}
     mc = BOUNDS["missing_conditions_rmse"][0]
     d_q10 = {"from": "loop 133 B5 within-pair sd", "component": mc, "max_gain": cap(mc),
              "fraction_claimed": 0.10,
              "argument": "temperature is one of several missing conditions (pH, buffer, mutation), "
                          "and Q10 can only act on the subset where a temperature is recoverable"}
-    ec_meas = (fix.get("c5") or {}).get("sequence + substrate + EC")
-    d_ec = ({"from": "loop 134 C5, MEASURED not bounded", "component": None,
-             "max_gain": max(cur - ec_meas, 0.0), "fraction_claimed": 1.0,
-             "argument": "C5 ran this feature set, so the gain is the measurement itself"}
-            if ec_meas else
+    c5 = fix.get("c5") or {}
+    ec_meas, ec_base = c5.get("sequence + substrate + EC"), c5.get("sequence + substrate")
+    d_ec = ({"from": "loop 134 C5, MEASURED against C5's OWN baseline", "component": None,
+             "max_gain": max(ec_base - ec_meas, 0.0), "fraction_claimed": 1.0,
+             "argument": "C5 ran this feature set, so the gain is the measurement itself. Compared "
+                         "against C5's own baseline and not loop 132's, because mixing baselines "
+                         "across runs is what produced the 3.2% figure loop 134 C1 had to correct "
+                         "to 0.7%"}
+            if (ec_meas and ec_base) else
             {"from": "not yet measured", "component": None, "max_gain": None,
              "fraction_claimed": None,
              "argument": "loop 134 C5 has not run, so no maximum exists and T7 must fail this"})
@@ -329,6 +606,18 @@ def plan(a):
              "max_gain": None, "fraction_claimed": None,
              "argument": "there is NO recorded number bounding what a larger encoder adds. Saying "
                          "so is the point: T7 fails an item whose size nobody has measured"}
+    # P6 exists because loop 134 has a flaw of its own, found while reading its own output.
+    d_ecenc = {"from": "loop 134 C5's EC encoding is BROKEN", "component": None,
+               "max_gain": (fix.get("c6") or {}).get("_ec_encoded_max_gain"),
+               "fraction_claimed": None,
+               "argument": "C5 encoded EC as eci.get(e, -1), an ARBITRARY INTEGER INDEX over "
+                           "thousands of classes. A tree splitting on that index groups EC 1.1.1.1 "
+                           "with whatever happened to sort beside it, so 'EC only 1.4707' and the "
+                           "+0.0041 that P4 inherits are both measured through a broken feature. "
+                           "The remedy is an out-of-fold target encoding plus hierarchical levels, "
+                           "and until that runs NO maximum exists, so T7 must fail this item. "
+                           "That is the correct outcome: the fix is cheap and the measurement is "
+                           "the thing that unblocks it"}
 
     paired = a["Q2_new"].get("paired_ci")
     if paired and all(x is not None for x in paired):
@@ -401,6 +690,50 @@ def plan(a):
                           "accepted AND has actually moved B4",
          "falsifier": "gain smaller than the paired interval, as at 8M",
          "cost_min": 240, "promised_rmse": cur - 0.08},
+        {"id": "P6", "change": "encode EC properly -- out-of-fold target encoding and hierarchy",
+         "kind": "implicit", "depends_on": [],
+         "needs_files": [ML / "kcat_records.tsv"],
+         "mechanism": "loop 134 measured the EC channel through an arbitrary integer index, which "
+                      "a tree cannot split on meaningfully. Every EC number in this project's "
+                      "recent record -- C1's 0.7%, C5's 1.4707, P4's +0.0041 -- is downstream of "
+                      "that encoding",
+         "cites": "c3_sequence_beyond_ec", "derivation": d_ecenc,
+         "predicted_gain": 0.02,
+         "nearest_refuted": "bigger substrate fingerprint",
+         "distinguisher": "different channel entirely: that priced the substrate side, this "
+                          "repairs an instrument the enzyme side was measured with",
+         "falsifier": "a correct encoding scores no better than the integer index, which would "
+                      "mean the index was never the problem",
+         "cost_min": 10, "promised_rmse": cur - 0.02},
+        # --- PROBES. These promise nothing about the metric; they produce a number a check needs.
+        {"id": "M1", "change": "measure the EC channel through three encodings on identical folds",
+         "kind": "probe", "depends_on": [],
+         "unblocks": {"item": "P6", "check": "T7_gain_is_derived"},
+         "needs_files": [ML / "kcat_records.tsv", ML / "esm2_8M_mean.npy"],
+         "mechanism": "the integer index as loop 134 used it, an out-of-fold target encoding built "
+                      "with the nested construction C2 showed B4 had got wrong, and hierarchical "
+                      "one-hot on EC levels 1-3. Whichever wins becomes the maximum P6 is allowed "
+                      "to promise",
+         "cites": "instrument_unverified", "derivation": None, "predicted_gain": 0.0,
+         "nearest_refuted": "bigger substrate fingerprint",
+         "distinguisher": "this measures an instrument rather than proposing a change",
+         "falsifier": "all three encodings score within the paired interval of each other, which "
+                      "would mean the integer index was never the problem and P6 should be dropped",
+         "cost_min": 10, "promised_rmse": cur},
+        {"id": "M2", "change": "measure what protein identity is worth to a NON-mean-pooled readout",
+         "kind": "probe", "depends_on": [],
+         "unblocks": {"item": "P1", "check": "T2_gain_exceeds_noise"},
+         "needs_files": [ML / "sequences.json", Path("colab/data/uniprot_sites.tsv.gz")],
+         "mechanism": "loop 134 C3 measured protein identity at 0.0046 to the MEAN-POOLED readout. "
+                      "P1 claims a different readout would extract more. Nobody has measured that, "
+                      "and C3's design -- permute within EC class -- reruns unchanged against any "
+                      "new readout",
+         "cites": "protein_identity_value_rmse", "derivation": None, "predicted_gain": 0.0,
+         "nearest_refuted": "650M with mean pooling",
+         "distinguisher": "measures the readout's ceiling instead of assuming it",
+         "falsifier": "within-class permutation costs no more under the new readout than the "
+                      "0.0046 it costs under mean pooling, which would retire P1 and P5 together",
+         "cost_min": 60, "promised_rmse": cur},
     ]
     return items, noise, noise_src
 
@@ -418,14 +751,28 @@ def theory_check(items, a, noise):
     # Data an item may NOT derive from, because the evaluation consumes it. This is loop 129's
     # lesson written down: there, a validation bundle was built from the very predictor it scored.
     EVAL_CONSUMES = {"log10_kcat", "dlkcat_predictions", "the fold assignment", "the EC median"}
-    cur = a["Q2_new"]["rmse"]
+    track = a.get("track", "ml_kcat")
+    ACTIVE = set(TRACKS.get(track, {}).get("checks") or
+                 ("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"))
+    cur = a["Q2_new"].get("rmse")
     floor = max(BOUNDS["experimental_floor_rmse"][0], BOUNDS["missing_conditions_rmse"][0])
     out, verdicts = [], {}
+    by_id = {i["id"]: i for i in items}
     for it in items:
         v = {}
-        v["T1_cites_measured_deficit"] = it["cites"] in BOUNDS or it["cites"] in (
-            "b4_flat", "b3_family_detector", "c3_sequence_beyond_ec")
-        v["T2_gain_exceeds_noise"] = it["predicted_gain"] > noise
+        probe = it.get("kind") == "probe"
+        if track == "cell":
+            cd = a.get("cell_deficits") or {}
+            v["T1_cites_measured_deficit"] = bool((cd.get(it["cites"]) or {}).get("holds"))
+            it["deficit_evidence"] = (cd.get(it["cites"]) or {}).get("evidence")
+        else:
+            v["T1_cites_measured_deficit"] = it["cites"] in BOUNDS or it["cites"] in (
+                "b4_flat", "b3_family_detector", "c3_sequence_beyond_ec", "instrument_unverified")
+        # T2 and T7 are arithmetic on a promised gain. A probe promises no gain, so applying them
+        # would reject every probe by construction -- which is precisely the trap that made this
+        # category necessary.
+        v["T2_gain_exceeds_noise"] = True if (probe or noise is None) else (
+            it["predicted_gain"] > noise)
         v["T3_has_falsifier"] = bool(it.get("falsifier"))
         # T4 is a real check: the item must NAME the refuted claim nearest to it and say what
         # distinguishes it. A dependency on another ITEM is a plan-level fact and settled here; a
@@ -435,18 +782,39 @@ def theory_check(items, a, noise):
             named in refuted and it.get("distinguisher")
             and all(verdicts.get(d, "").startswith("ACCEPT") for d in it.get("depends_on", [])))
         v["T5_not_circular"] = not (set(it.get("derives_from", [])) & EVAL_CONSUMES)
-        v["T6_respects_bounds"] = it["promised_rmse"] > floor
+        v["T6_respects_bounds"] = (True if it.get("promised_rmse") is None
+                                   else it["promised_rmse"] > floor)
         # T7: the SIZE of the promise must follow from a recorded number. An item may cite a real
         # deficit and still name a figure that has nothing to do with it -- which is what every
         # item in this file's first run did.
         d = it.get("derivation")
-        v["T7_gain_is_derived"] = bool(
+        v["T7_gain_is_derived"] = True if probe else bool(
             d and d.get("max_gain") is not None and it["predicted_gain"] <= d["max_gain"] + 1e-9)
         missing = [f for f in it.get("needs_files", []) if not Path(f).exists()]
         v["T8_inputs_exist"] = not missing
         it["missing_inputs"] = missing
+        if probe:
+            u = it.get("unblocks") or {}
+            tgt = by_id.get(u.get("item"))
+            # the check it claims to unblock must be one the target is ACTUALLY failing right now
+            v["T9_probe_unblocks_something"] = bool(
+                tgt and u.get("check") and tgt.get("checks", {}).get(u["check"]) is False)
+            it["unblock_status"] = (
+                f"{u.get('item')} currently "
+                f"{'FAILS' if v['T9_probe_unblocks_something'] else 'does not fail'} "
+                f"{u.get('check')}")
+        # T10, the cell track's replacement for T2/T6/T7. A status is a judgement and cannot be
+        # falsified; a GATE can. An item must therefore name an existing layer and the gate that
+        # would have to pass, or -- for an item that changes what is recorded rather than what is
+        # modelled -- name the gate alone.
+        v["T10_names_layer_and_gate"] = bool(it.get("gate") and it.get("layer_exists", True))
+        # Only the checks this track declares are allowed to decide anything. Dropping a check is
+        # a decision that must be visible, so the inactive ones are recorded as None rather than
+        # silently omitted.
+        v = {k: (val if k.split("_")[0] in ACTIVE else None) for k, val in v.items()}
         it["checks"] = v
-        it["rejected_on"] = [k for k, val in v.items() if not val]
+        it["checks_not_applicable"] = [k for k, val in v.items() if val is None]
+        it["rejected_on"] = [k for k, val in v.items() if val is False]
         # A dependency on an unmeasured RESULT is neither pass nor fail. Recording it as either
         # would be a claim about a number nobody has.
         unmet = [r for r in it.get("depends_on_result", []) if not r.get("measured")]
@@ -534,12 +902,22 @@ def upgrade(items, bundle, picture, noise):
     cur = picture["result"]["current_rmse"]
     solo = [i for i in items if i["verdict"] == "ACCEPT"]
     units = list(solo) + ([bundle] if bundle and bundle["verdict"] == "ACCEPT" else [])
-    cheap = sorted(units, key=lambda i: i["cost_min"])
-    ups.append({"change": "order by cost, not by predicted gain",
-                "why": f"the cheapest accepted unit costs {cheap[0]['cost_min']} min and the "
-                       f"dearest {cheap[-1]['cost_min']}. Spending the cheap ones first means the "
-                       f"dear ones are only paid for if the cheap ones move B4",
-                "new_order": [i["id"] for i in cheap]})
+    cheap = sorted(units, key=lambda i: (i.get("kind") != "probe", i["cost_min"]))
+    if not cheap:
+        ups.append({"change": "NOTHING IS SCHEDULABLE",
+                    "why": "every item failed a check and no probe survived either. This is a "
+                           "real state and not an error: it means the next move is to fetch data "
+                           "or to relax a promise, and the loop must say so rather than emit an "
+                           "order it cannot execute",
+                    "new_order": []})
+    else:
+        ups.append({"change": "order probes first, then by cost",
+                    "why": f"the cheapest schedulable unit costs {cheap[0]['cost_min']} min and "
+                           f"the dearest {cheap[-1]['cost_min']}. Probes come first regardless of "
+                           f"cost, because a probe's output is what the checks need before any "
+                           f"change can be judged -- running a change ahead of the probe that "
+                           f"would bound it is spending compute to avoid learning something",
+                    "new_order": [i["id"] for i in cheap]})
     ups.append({"change": "make B4 the stopping rule, not the RMSE",
                 "why": "RMSE can improve while the model still knows nothing the EC number did "
                        "not. B4 -- learnability of the EC-median residual -- is the only gate "
