@@ -44,9 +44,12 @@ PREDECLARED. Conclusions go through gate_guard.verdict. No gate below may exceed
            below must sit under it, and this is asserted in code rather than promised in prose;
        (c) censoring: no more than 5% of half-lives within 1% of the maximum, or the upper tail is
            an assay boundary and the model is being scored on a ceiling;
-       (d) the target must not be trivially recoverable from the ABUNDANCE column that ships in the
-           same table (|rho| < 0.8), or this is loop 155's degenerate-target problem again.
-       Gate: all four.
+       (d) the target must not be trivially recoverable from a REAL abundance measure
+           (|rho| < 0.8), or this is loop 155's degenerate-target problem again;
+       (e) any column that is a transform of the target must be identified and EXCLUDED, not used
+           as a baseline. relative_abundance_8h_mean is the survival fraction the half-life was
+           fitted from and is excluded here.
+       Gate: (a)-(d).
 
   E1 THE HOMOLOGY-AWARE SPLIT.                                       THE LEAK NOBODY CONTROLS.
        cluster proteins by 5-mer Jaccard at 0.30 (single linkage) and assign whole clusters to
@@ -231,7 +234,14 @@ def main():
     X = X_all[ordr]
     lens = lens_all[ordr].astype(float)
     y = np.log(d["halflife_mean"].values.astype(float))
-    ab = d["relative_abundance_8h_mean"].values.astype(float)
+    # ABUNDANCE, and the leak that is NOT abundance. `relative_abundance_8h_mean` is the fraction
+    # surviving the 8 h chase -- the raw measurement the half-life was FITTED FROM, and it tracks
+    # exp(-ln2*8/t_half) at Pearson 0.8811. Using it as a baseline or a covariate asks the model to
+    # beat its own answer key. It is excluded and the real abundance is the mean of Rega's per-phase
+    # log2 columns, which are protein amounts and not a decay readout.
+    surv = d["relative_abundance_8h_mean"].values.astype(float)
+    abcols = [c for c in d.columns if str(c).endswith("_log2_mean")]
+    ab = d[abcols].apply(pd.to_numeric, errors="coerce").mean(axis=1).values.astype(float)
     ccd = d["Cell Cycle Dependency"].astype(str).values
     gname = d["Gene Name"].astype(str).values
     accl = d["Accession"].astype(str).values
@@ -274,6 +284,9 @@ def main():
     hl = d["halflife_mean"].values
     censor = float(np.mean(hl >= hl.max() * 0.99))
     r_ab = spear(ab, y)
+    r_surv = spear(surv, y)
+    surv_analytic = float(np.corrcoef(
+        surv[np.isfinite(surv)], np.exp(-math.log(2) * 8.0 / hl)[np.isfinite(surv)])[0, 1])
     a_ok = len(y) >= E0_MIN_N
     c_ok = censor <= E0_MAX_CENSOR
     dd_ok = abs(r_ab) < E0_MAX_ABUND_RHO
@@ -285,12 +298,23 @@ def main():
         f"baseline+{E3_MARGIN}, checked in code")
     say(f"     (c) censoring: {censor:.2%} within 1% of the max ({hl.max():.2f} h)   "
         f"gate <= {E0_MAX_CENSOR:.0%}   {'ok' if c_ok else 'FAIL'}")
-    say(f"     (d) target vs the abundance column shipped alongside it: rho {r_ab:+.4f}   "
-        f"gate |rho| < {E0_MAX_ABUND_RHO}   {'ok' if dd_ok else 'FAIL'}")
+    say(f"     (d) target vs REAL abundance (mean of {len(abcols)} per-phase log2 columns): "
+        f"rho {r_ab:+.4f}   gate |rho| < {E0_MAX_ABUND_RHO}   {'ok' if dd_ok else 'FAIL'}")
+    say(f"     (e) LEAK IDENTIFIED AND EXCLUDED, recorded rather than silently dropped:")
+    say(f"         relative_abundance_8h_mean correlates with the target at rho {r_surv:+.4f} and "
+        f"with the analytic exp(-ln2*8/t_half) at Pearson {surv_analytic:.4f}.")
+    say(f"         It is the SURVIVAL FRACTION the half-life was fitted from, not an independent "
+        f"predictor. It is excluded from every baseline and covariate below. A first run of this")
+    say(f"         loop used it as a baseline and scored ESM against it -- that comparison asked "
+        f"the model to beat its own answer key and its FAIL was meaningless.")
     gates["E0"] = bool(a_ok and c_ok and dd_ok and ceiling > 0.5)
     res["e0"] = {"n": int(len(y)), "reliability": reliab, "max_achievable_r": ceiling,
                  "within_var": within, "between_var": between, "mean_replicates": kbar,
-                 "censor_fraction": censor, "rho_target_abundance": r_ab, "pass": gates["E0"]}
+                 "censor_fraction": censor, "rho_target_abundance": r_ab,
+                 "leak_survival_fraction": {"rho_with_target": r_surv,
+                                            "pearson_with_analytic_transform": surv_analytic,
+                                            "excluded": True},
+                 "n_abundance_columns": len(abcols), "pass": gates["E0"]}
     say(f"     E0 {'PASS' if gates['E0'] else 'FAIL'}")
     say()
 
@@ -354,7 +378,7 @@ def main():
     base = {}
     base["sequence length"] = spear(ridge_cv(np.log(lens)[:, None], y, folds_h), y)
     base["aa composition (20)"] = spear(ridge_cv(comp, y, folds_h), y)
-    base["abundance column"] = spear(np.nan_to_num(ab, nan=np.nanmedian(ab)), y)
+    base["abundance (log2, real)"] = spear(np.nan_to_num(ab, nan=np.nanmedian(ab)), y)
     base["publication count"] = spear(np.nan_to_num(pubs, nan=np.nanmedian(pubs)), y)
     for k, v in base.items():
         say(f"       {k:<24} Spearman {v:+.4f}")
