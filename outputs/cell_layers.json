@@ -101,7 +101,7 @@
    "layer": "reaction+graph fusion",
    "status": "FAILED",
    "source": "loop_fusion_linear",
-   "evidence_sha": "cd6c9ad3a25a"
+   "evidence_sha": "1f3ddbb9db77"
   },
   {
    "layer": "cell cycle (measured layer)",
@@ -173,13 +173,13 @@
    "layer": "replication as process",
    "status": "FAILED",
    "source": "loop_replication_time",
-   "evidence_sha": "3a1c83717341"
+   "evidence_sha": "54f0c8be775c"
   },
   {
    "layer": "expression noise",
    "status": "FAILED",
    "source": "loop_noise",
-   "evidence_sha": "f6dde5f60f17"
+   "evidence_sha": "4d0edfcd9266"
   },
   {
    "layer": "compartments (metabolic)",

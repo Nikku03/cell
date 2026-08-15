@@ -421,8 +421,16 @@ LAYERS = [
      "alone scores 0.5856, above CollecTRI, with stratification collapsing it to 0.5491. Curated "
      "signs from the literature do not help, so the problem is not the network SOURCE"),
     ("reaction+graph fusion", "FAILED", "loop_fusion_linear",
-     "combined 0.166 BELOW graph-only; 90% of what remains survives degree-preserving rewiring",
-     "the metabolic bridge is absent for 84% of genes"),
+     "combined rho 0.3935 BELOW graph-only 0.4898, with reaction-only at 0.0311; 90% of what remains "
+     "survives degree-preserving rewiring. loop 138 V1 grants the reaction channel its best case -- "
+     "if it were perfectly informative on the 16% of genes carrying a GEM reaction and useless "
+     "elsewhere, its whole-population rho bounds its subset rho at 0.0778 -- and that is still far "
+     "below the graph channel",
+     "REAL, and the caveat is an explanation rather than an excuse. The metabolic bridge being "
+     "absent for 84% of genes does not rescue the layer: even at its best case on the covered subset "
+     "the reaction channel stays below the graph channel. And most of what the graph channel knows "
+     "is TOPOLOGY -- 90% of it survives degree-preserving rewiring, so the fusion's working half is "
+     "largely hub identity"),
     # CORRECTED by loop 119. The stated cause -- "no phase-resolved layer exists" -- was true of
     # this repository and not of the literature. Mahdessian 2021 was fetched and the layer is now
     # here: 748 cell-cycle-dependent proteins against 776 imaged non-dependent controls, plus 530
@@ -533,11 +541,27 @@ LAYERS = [
      "bound, and the equation has NO TERM FOR IT AT ALL. Separating them needs a cell-cycle "
      "abundance measurement that is not made with the same microscope"),
     ("replication as process", "FAILED", "loop_replication_time",
-     "a Gaussian blur of the origin map (R2 0.320) beats the fork simulation (0.153)",
-     "fork speed is unconstrained by the data it was fitted to"),
+     "a Gaussian blur of the origin map (rho 0.5657 at sigma 400 kb) beats the fork simulation "
+     "(0.4434). loop 138 V2 shows why the comparison was never a test of a fork model: sweeping fork "
+     "speed over 0.25-14.0 kb/min, a factor of 56, moves rho by 0.0222, while sweeping a nuisance "
+     "smoothing width over 50-1600 kb moves it by 0.1190 -- 5.4x more. The 'best' speed is 14.0 "
+     "kb/min against a physiological 1-2",
+     "MISLABELLED, AND loop 138 V3 SAYS WHAT IT ACTUALLY IS. The fork speed is UNIDENTIFIABLE: the "
+     "data cannot see the model's central parameter, so no fork model was ever tested. What was "
+     "tested is a distance-to-origin model with a free knob. And the blur that beat it is that "
+     "model's own analytic limit -- 400 kb against a 840 kb fork traverse over S phase, a ratio of "
+     "0.476. The simulation lost to its own closed form, which is a statement about the "
+     "implementation and not about replication"),
     ("expression noise", "FAILED", "loop_noise",
-     "predicted CV tracks measured at +0.4837 but is cross-dataset abundance agreement to 0.8%",
-     "against the non-abundance component it points the wrong way"),
+     "predicted CV tracks measured at +0.4837, against a cross-dataset abundance agreement ceiling "
+     "of +0.8860. loop 138 V4 locates the failure precisely: partitioning and Poisson noise both "
+     "give CV ~ N^(-1/2), so the slope of log10 CV on log10 N must be -0.5. Using OUR copy numbers "
+     "it is -0.2055; using LARSSON'S OWN mean on the same genes it is -0.4063",
+     "MISLABELLED. The noise physics is closer to right than the record said -- within one dataset "
+     "the exponent is -0.4063 against a predicted -0.5, 3.1x nearer than the cross-dataset figure. "
+     "What fails is the ABUNDANCE JOIN: CV from Larsson, N from Schwanhausser, two datasets and two "
+     "cell populations. Loop 92 forbids forming a RATE by dividing two abundance datasets and this "
+     "is the same error one level down, forming a SCALING LAW across two of them"),
     # CORRECTED. I recorded transport as ABSENT and it is not. Human-GEM is compartment-resolved
     # and 36.7% of its reactions move a metabolite across a membrane. Measured, not assumed.
     ("compartments (metabolic)", "RUNS", "cell_sim",

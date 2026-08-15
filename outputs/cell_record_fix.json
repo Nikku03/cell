@@ -5,8 +5,8 @@
   "inputs": [
    {
     "path": "colab/cell_assembled.py",
-    "bytes": 48166,
-    "hash": "1a10a15ac041d424",
+    "bytes": 50409,
+    "hash": "a5ed7cbbe9216255",
     "method": "sha256:full"
    },
    {
@@ -17,8 +17,8 @@
    },
    {
     "path": "outputs/cell_run.json",
-    "bytes": 8024,
-    "hash": "093ccfb37eae5baf",
+    "bytes": 8455,
+    "hash": "e1247ef0e71918a3",
     "method": "sha256:full"
    }
   ],
@@ -55,10 +55,10 @@
  },
  "g3": {
   "stored": {
-   "RUNS": 11,
-   "CLOSES": 9,
-   "FAILED": 12,
-   "STATIC": 10
+   "RUNS": 12,
+   "CLOSES": 10,
+   "FAILED": 14,
+   "STATIC": 11
   },
   "actual": {
    "RUNS": 12,
@@ -66,12 +66,12 @@
    "FAILED": 14,
    "STATIC": 11
   },
-  "stale": true
+  "stale": false
  },
  "g4": {
   "n_layers": 47
  },
- "seconds": 0.00866842269897461,
+ "seconds": 0.007882833480834961,
  "log": [
   "====================================================================================================",
   "  CELL TRACK EXECUTOR -- record corrections C1 and C2",
@@ -87,10 +87,9 @@
   "     G2 PASS -- the conclusion stands; only its evidence changed",
   "",
   "G3 ARE THE RECORDED COUNTS STALE?",
-  "     cell_run.json stored: {'RUNS': 11, 'CLOSES': 9, 'FAILED': 12, 'STATIC': 10}",
+  "     cell_run.json stored: {'RUNS': 12, 'CLOSES': 10, 'FAILED': 14, 'STATIC': 11}",
   "     the table actually reads: {'RUNS': 12, 'CLOSES': 10, 'FAILED': 14, 'STATIC': 11}",
-  "     STALE: True",
-  "     the artefact was not merely coarse -- it disagrees with the table it describes",
+  "     STALE: False",
   "",
   "G4 CAN THE NEW ARTEFACT NAME THE LAYER THAT MOVED?",
   "     wrote outputs/cell_layers.json with per-layer status for 47 layers",
