@@ -686,11 +686,20 @@ LAYERS = [
     ("what the kcat model actually learned", "FAILED", "loop_ml_probe/133 B3-B4",
      "the ESM embedding is a FAMILY DETECTOR, not a catalysis model. Same 320 numbers, same folds: "
      "EC top-level class accuracy 0.779 against a 0.394 majority, log10 sequence length R2 +0.7631, "
-     "log10 kcat R2 +0.1381. And B4 settles it -- refit on the EC-median residual, the model scores "
-     "RMSE 1.5386 against a residual sd of 1.4849, R2 -0.0737. WORSE THAN A CONSTANT",
-     "EVERYTHING THE MODEL KNOWS IS ALREADY IN THE EC NUMBER. 'Predicting kcat from sequence' is "
-     "EC-class lookup routed through a language model. The +0.1323 gain loop 132 confirmed as real "
-     "is real -- and it is the EC number's, not the sequence's"),
+     "log10 kcat R2 +0.1381. loop 133's B4 reached this by refitting on the EC-median residual (RMSE "
+     "1.5386 vs a residual sd of 1.4849), and loop 134 C2 showed that test was broken three ways: "
+     "its training residual was built from a complement CONTAINING the test fold (+0.0312), its "
+     "baseline was an in-sample sd (-0.0024), and a residual is the wrong instrument for the "
+     "question. loop 134 C3 settles it properly and without a residual -- permuting the embedding "
+     "among records SHARING an EC number costs +0.0046 against a paired interval of 0.0488, with C4 "
+     "confirming first that 73.4% of records did receive a different sequence",
+     "PROTEIN IDENTITY IS WORTH +0.0046, WHICH IS NOTHING. But 'everything is in the EC number' is "
+     "wrong as stated and loop 134 C1 is why: the EC number explains 0.7% of the variance, while "
+     "sequence-only scores 1.3890 against a constant's 1.5069. What the model uses is FAMILY "
+     "STRUCTURE at a resolution the ESM embedding captures and the EC string does not -- swapping a "
+     "protein for a class-mate is free, but the class itself is identified far better by the "
+     "embedding than by the label. The +0.1323 gain loop 132 confirmed as real is real, and it is "
+     "family-level, not per-protein"),
     ("what a kcat model would need instead", "STATIC", "loop_ml_probe/133 B1, B5, B6",
      "B1: 18,595 point-mutant pairs (equal length, 1-5 residues) differ by a median 0.649 log10 -- "
      "4.5x turnover from five residues -- and a mean-pooled embedding cannot see them, worth 0.947 "

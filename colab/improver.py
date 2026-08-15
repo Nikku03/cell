@@ -912,14 +912,16 @@ def theory_check(items, a, noise):
             o = it["observed"]
             it["verdict"] = "MEASURED"
             it["blocked_on"] = []
+            num = isinstance(o["value"], (int, float)) and not isinstance(o["value"], bool)
             it["measured_note"] = (
-                f"{o['value']:+.4f} ({o['what']})"
+                (f"{o['value']:+.4f} ({o['what']})" if num
+                 else f"{o['value']} ({o['what']})")
                 + (f" CI [{o['ci'][1]:+.4f}, {o['ci'][2]:+.4f}]"
                    f" -> {'EXCLUDES zero' if o['ci'][1] > 0 else 'includes zero'}"
                    if isinstance(o.get("ci"), (list, tuple)) and len(o["ci"]) == 3 else "")
                 + (f"; the plan predicted {it['predicted_gain']:+.4f}, error "
                    f"{o['value'] - it['predicted_gain']:+.4f}"
-                   if isinstance(o["value"], (int, float)) and it.get("kind") != "probe" else ""))
+                   if num and it.get("kind") not in ("probe", "record") else ""))
         elif unmet and not it["rejected_on"]:
             it["verdict"] = "BLOCKED"
             it["blocked_on"] = [r["what"] for r in unmet]

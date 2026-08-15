@@ -88,6 +88,62 @@ def layers():
     return []
 
 
+def layer_nodes(src, name):
+    """The AST nodes for one LAYERS entry, so the rewrite can target exact source offsets.
+
+    THE FIRST VERSION OF THIS SCRIPT DID NOT DO THIS AND IT FAILED SILENTLY. It searched for the
+    evidence text with `OLD_EV in src`, but every entry in LAYERS is written as adjacent string
+    literals across several lines -- "first part " "second part" -- so the concatenated VALUE never
+    appears in the source at all. The substitution matched nothing, made no change, and G1 reported
+    PASS because it had been written as `gates["G1"] = True` with no condition attached.
+
+    That is a gate that fires while measuring nothing, in the executor whose entire purpose is
+    correcting an overstatement. Operating on AST node offsets removes the string-matching problem,
+    and G1 below now verifies the edit landed instead of asserting that it did."""
+    for node in ast.parse(src).body:
+        if isinstance(node, ast.Assign) and getattr(node.targets[0], "id", "") == "LAYERS":
+            for t in node.value.elts:
+                if (isinstance(t, ast.Tuple) and t.elts
+                        and isinstance(t.elts[0], ast.Constant) and t.elts[0].value == name):
+                    return t
+    return None
+
+
+def offset(src, lineno, col):
+    lines = src.splitlines(keepends=True)
+    return sum(len(x) for x in lines[:lineno - 1]) + col
+
+
+def wrap(value, indent=5):
+    """Re-emit a long string as adjacent literals, matching how LAYERS is written by hand."""
+    pad = " " * indent
+    words, lines, cur = value.split(" "), [], ""
+    for w in words:
+        if len(cur) + len(w) + 1 > 94:
+            lines.append(cur)
+            cur = w
+        else:
+            cur = (cur + " " + w) if cur else w
+    if cur:
+        lines.append(cur)
+    body = ('\n' + pad).join(json.dumps(l + (" " if i < len(lines) - 1 else ""))
+                             for i, l in enumerate(lines))
+    return body
+
+
+def replace_elements(src, name, new_ev, new_cv):
+    """Rewrite elements 3 and 4 of one LAYERS tuple, back to front so offsets stay valid."""
+    t = layer_nodes(src, name)
+    if t is None or len(t.elts) < 5:
+        return src, False
+    for idx, new in ((4, new_cv), (3, new_ev)):
+        n = t.elts[idx]
+        a = offset(src, n.lineno, n.col_offset)
+        b = offset(src, n.end_lineno, n.end_col_offset)
+        src = src[:a] + wrap(new) + src[b:]
+    return src, True
+
+
 OLD_EV = ("the ESM embedding is a FAMILY DETECTOR, not a catalysis model. Same 320 numbers, same "
           "folds: EC top-level class accuracy 0.779 against a 0.394 majority, log10 sequence "
           "length R2 +0.7631, log10 kcat R2 +0.1381. And B4 settles it -- refit on the EC-median "
@@ -129,17 +185,36 @@ def main():
     L = layers()
     lay = next((l for l in L if l[0] == TARGET), None)
     before_status = lay[1] if lay else None
-    needs = bool(lay and OLD_EV in src and OLD_CV in src)
+    # "still cites the broken test" is checked against the PARSED value, not against the source
+    # text, because the source writes it as adjacent literals across several lines.
+    def corrected(l):
+        """The END STATE this script is responsible for, tested on the PARSED value.
+
+        The first attempt at this predicate required '1.5386' to be absent -- and the corrected
+        text cites 1.5386 deliberately, as the number loop 133 reported before loop 134 showed how
+        it was produced. So the check failed on a file that was already right. A verification
+        predicate that forbids mentioning the superseded number would force the record to hide
+        exactly the history it exists to preserve."""
+        return bool(l and "loop 134 C3" in l[3] and "EVERYTHING THE MODEL KNOWS" not in l[4])
+
+    already = corrected(lay)
     say(f"     layer found: {bool(lay)}   status before: {before_status}")
-    say(f"     still cites the broken B4 residual: {needs}")
-    gates["G1"] = True
-    res["g1"] = {"layer_found": bool(lay), "status_before": before_status, "needed": needs}
-    if not needs:
+    say(f"     already cites loop 134 C3 and no longer asserts the overstatement: {already}")
+    if already:
+        gates["G1"] = True
         say(f"     G1 PASS -- nothing to correct; this script has already run")
+        ok = None
     else:
-        src = src.replace(OLD_EV, NEW_EV).replace(OLD_CV, NEW_CV)
-        SRC.write_text(src)
-        say(f"     G1 PASS -- evidence and caveat rewritten to cite loop 134 C2/C3/C4")
+        src2, ok = replace_elements(src, TARGET, NEW_EV, NEW_CV)
+        if ok:
+            SRC.write_text(src2)
+        lay3 = next((l for l in layers() if l[0] == TARGET), None)
+        gates["G1"] = corrected(lay3)          # verified by RE-PARSING, never asserted
+        say(f"     rewrite applied at AST offsets: {ok}")
+        say(f"     G1 {'PASS' if gates['G1'] else 'FAIL'} -- the correction "
+            f"{'is in the file and parses' if gates['G1'] else 'DID NOT LAND'}")
+    res["g1"] = {"layer_found": bool(lay), "status_before": before_status,
+                 "already_correct": already, "rewrote": ok, "verified": gates["G1"]}
     say()
 
     # ---------------------------------------------------------------- G2
