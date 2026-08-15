@@ -312,14 +312,17 @@ def one_turn(turn, track, history):
     n_blk = sum(1 for i in items if i["verdict"] == "BLOCKED")
     ex = executable(track, items, bundle)
 
-    rec.update({"answers": a, "plan": items, "bundle": bundle, "whole_picture": pic,
+    rec.update({"n_measured": sum(1 for i in items if i["verdict"] == "MEASURED"),
+                "answers": a, "plan": items, "bundle": bundle, "whole_picture": pic,
                 "upgrades": ups, "noise": noise, "noise_source": noise_src,
                 "n_rejected": n_rej, "n_blocked": n_blk, "n_executable": len(ex),
                 "execute_order": ups[0]["new_order"] if ups else []})
 
     say(f"\n  TURN {turn} [{track}]  fingerprint {fp}")
+    n_meas = sum(1 for i in items if i["verdict"] == "MEASURED")
+    ni = f"{noise:.4f}" if noise is not None else "n/a on this track"
     say(f"     plan {len(items)} items: {sum(1 for i in items if i['verdict'].startswith('ACCEPT'))}"
-        f" accepted, {n_rej} rejected, {n_blk} blocked   (paired interval {noise:.4f})")
+        f" accepted, {n_rej} rejected, {n_blk} blocked, {n_meas} MEASURED   (null {ni})")
     for it in items:
         tag = it["verdict"]
         extra = ""
@@ -329,7 +332,12 @@ def one_turn(turn, track, history):
             extra = f"  BLOCKED ON {'; '.join(it['blocked_on'])}"
         elif it["rejected_on"]:
             extra = f"  on {', '.join(x.split('_')[0] for x in it['rejected_on'])}"
-        say(f"       {it['id']} {tag:<17} {it['predicted_gain']:+.4f}  {it['change'][:46]}{extra}")
+        if it["verdict"] == "MEASURED":
+            say(f"       {it['id']} {tag:<17} {it['change'][:46]}")
+            say(f"           -> {it.get('measured_note', '')}")
+        else:
+            say(f"       {it['id']} {tag:<17} {it['predicted_gain']:+.4f}  "
+                f"{it['change'][:46]}{extra}")
     if bundle:
         say(f"       B  {bundle['verdict']:<17} {bundle['combined_gain']:+.4f}  "
             f"bundle of {'+'.join(bundle['members'])}")

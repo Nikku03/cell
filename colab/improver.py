@@ -542,6 +542,88 @@ def ask(track):
 
 
 # ---------------------------------------------------------------------------------------------
+# T2's NULL DEPENDS ON THE KIND OF CHANGE, and getting this wrong cost a real result.
+#
+# Turn 1 rejected P2 (mutant flag, predicted +0.0113) on T2, against a threshold of 0.0488. The
+# probe then ran anyway -- because the same executor measured it -- and E2 returned a gain of
+# +0.0168 with a cluster-bootstrap CI of [+0.0016, +0.0322]. THAT INTERVAL EXCLUDES ZERO. T2 had
+# rejected a change that is measurably real.
+#
+# The error was using one number for every comparison. 0.0488 is loop 132 A3's interval on
+# XGBoost-versus-MLP: two different model CLASSES, refit independently, whose disagreement includes
+# all the variance of a different inductive bias. Adding a feature block to the SAME model on the
+# SAME folds is a far tighter comparison -- E2's own measured interval is 0.0306 wide and E4's
+# 0.0296 -- and judging a feature addition by a model-swap's null is a Type II error by
+# construction. This repository has spent most of its effort guarding against Type I errors, and
+# this is the mirror of that, arrived at by the same route: a threshold used without asking what
+# it was the threshold OF.
+#
+# POST HOC. This change was prompted by seeing E2's interval, exactly as loop 127's selector was
+# chosen after seeing which filter worked. The principle -- a null must match its comparison -- is
+# not post hoc, but the decision to act on it here was, and saying so is cheaper than defending it.
+# The drift ledger in improver_loop.py will flag this edit as a check-source change, which is what
+# that ledger is for.
+NOISE_POST_HOC = True
+NOISE_BY_KIND = {
+    "feature_addition": (0.0306, "loop 135 E2: the measured width of a cluster-bootstrap interval "
+                                 "on a PAIRED feature-addition difference, same model, same folds"),
+    "model_swap": (0.0488, "loop 132 A3: XGBoost versus MLP, two model classes refit independently"),
+    "encoder_swap": (0.0488, "same as a model swap -- a different encoder is a different inductive "
+                             "bias, not an extra column"),
+}
+
+
+# WHERE EACH ITEM'S OUTCOME IS MEASURED, and the state the first loop run was missing.
+#
+# Turn 1 executed the probe, and the same script measured P2, P4 and P6 as a side effect. Turn 2
+# then re-planned all three as PREDICTIONS and re-rejected them on T2 -- arguing about a forecast
+# for something already observed. An item whose outcome exists is neither accepted nor rejected;
+# it is MEASURED, and its number replaces its promise. Without this state the loop cannot converge,
+# because every turn re-litigates the same settled questions.
+OUTCOMES = {
+    "ml_kcat": {
+        "P2": ("loop_plan_exec.json", ("e2", "gain"), ("e2", "boot"), "mutant flag alone, E2"),
+        "P4": ("loop_plan_exec.json", ("e3", "gain"), ("e3", "boot"), "explicit EC alone, E3"),
+        "B": ("loop_plan_exec.json", ("e4", "gain"), ("e4", "boot"), "the bundle as one change, E4"),
+        "P6": ("loop_plan_exec.json", ("e7", "best_gain"), None, "best EC encoding, E7"),
+    },
+    "cell": {
+        "C1": ("cell_record_fix.json", ("g2",), None, "status unchanged by the correction, G2"),
+        "C2": ("cell_record_fix.json", ("g4", "n_layers"), None, "per-layer artefact written, G4"),
+    },
+}
+
+
+def _dig(d, path):
+    for k in path:
+        d = d.get(k) if isinstance(d, dict) else None
+    return d
+
+
+def measured_outcomes(track):
+    """Read what has actually been observed for this track. Nothing here is remembered."""
+    out = {}
+    for iid, (fn, vpath, cipath, what) in OUTCOMES.get(track, {}).items():
+        p = OUT / fn
+        if not p.exists():
+            continue
+        d = json.load(open(p))
+        v = _dig(d, vpath)
+        if v is None:
+            continue
+        ci = _dig(d, cipath) if cipath else None
+        out[iid] = {"value": v, "ci": ci, "what": what, "from": fn}
+    return out
+
+
+def item_noise(it, default_noise):
+    """The interval an item must clear, chosen by what KIND of comparison it is."""
+    k = it.get("noise_kind")
+    if k in NOISE_BY_KIND:
+        return NOISE_BY_KIND[k][0], NOISE_BY_KIND[k][1]
+    return default_noise, "track default"
+
+
 def combine(cur, gains):
     """Gains in RMSE do not add. Removed VARIANCE adds, if the deficits are independent, so the
     honest combination of several changes is sqrt(rmse^2 - sum of removed variances). This is
@@ -608,7 +690,7 @@ def plan(a):
                          "so is the point: T7 fails an item whose size nobody has measured"}
     # P6 exists because loop 134 has a flaw of its own, found while reading its own output.
     d_ecenc = {"from": "loop 134 C5's EC encoding is BROKEN", "component": None,
-               "max_gain": (fix.get("c6") or {}).get("_ec_encoded_max_gain"),
+               "max_gain": (measured_outcomes("ml_kcat").get("P6") or {}).get("value"),
                "fraction_claimed": None,
                "argument": "C5 encoded EC as eci.get(e, -1), an ARBITRARY INTEGER INDEX over "
                            "thousands of classes. A tree splitting on that index groups EC 1.1.1.1 "
@@ -628,7 +710,7 @@ def plan(a):
                             "fallback: gain-vs-constant CI")
     ML = Path("colab/data/ml")
     items = [
-        {"id": "P1", "change": "active-site pooling replaces mean pooling",
+        {"id": "P1", "noise_kind": "encoder_swap", "change": "active-site pooling replaces mean pooling",
          "kind": "implicit+explicit", "depends_on": [],
          "needs_files": [ML / "sequences.json", Path("colab/data/uniprot_sites.tsv.gz")],
          "mechanism": "kcat is set by a few catalytic residues; averaging 320 dims over ~400 "
@@ -641,7 +723,7 @@ def plan(a):
                           "the cause. It is the fix, not a repeat",
          "falsifier": "B4 still fails: the EC-median residual is still unlearnable",
          "cost_min": 60, "promised_rmse": cur - 0.15},
-        {"id": "P2", "change": "mutant flag and substitution count as features",
+        {"id": "P2", "noise_kind": "feature_addition", "change": "mutant flag and substitution count as features",
          "kind": "implicit", "depends_on": [],
          "needs_files": [ML / "sequences.json", ML / "kcat_records.tsv"],
          "mechanism": "the model cannot resolve a variant, but it can at least "
@@ -652,7 +734,7 @@ def plan(a):
          "distinguisher": "adds a COLUMN, not rows; the refutation was about n",
          "falsifier": "no change beyond the paired interval", "cost_min": 5,
          "promised_rmse": cur - 0.05},
-        {"id": "P3", "change": "Q10-normalise the target to 37 C",
+        {"id": "P3", "noise_kind": "feature_addition", "change": "Q10-normalise the target to 37 C",
          "kind": "implicit", "depends_on": [],
          "needs_files": [Path("colab/data/kcat_conditions.tsv.gz")],
          "mechanism": "kcat(T2) = kcat(T1)*Q10^((T2-T1)/10) removes a known "
@@ -665,7 +747,7 @@ def plan(a):
                           "the same quantity at a common temperature, which cannot add variance",
          "falsifier": "target variance does not fall on the subset with a known temperature",
          "cost_min": 5, "promised_rmse": cur - 0.04},
-        {"id": "P4", "change": "EC number as an explicit categorical feature",
+        {"id": "P4", "noise_kind": "feature_addition", "change": "EC number as an explicit categorical feature",
          "kind": "implicit", "depends_on": [],
          "needs_files": [ML / "kcat_records.tsv"],
          "mechanism": "B4 shows the EC number carries everything the model "
@@ -677,7 +759,7 @@ def plan(a):
                           "declared chemistry",
          "falsifier": "no gain, which would mean ESM already encodes EC fully", "cost_min": 2,
          "promised_rmse": cur - 0.02},
-        {"id": "P5", "change": "ESM2-650M with the fixed readout",
+        {"id": "P5", "noise_kind": "encoder_swap", "change": "ESM2-650M with the fixed readout",
          "kind": "explicit", "depends_on": ["P1"],
          "needs_files": [ML / "esm2_650M_mean.npy"],
          "depends_on_result": [{"what": "P1 has actually moved the sequence-beyond-EC test",
@@ -690,7 +772,7 @@ def plan(a):
                           "accepted AND has actually moved B4",
          "falsifier": "gain smaller than the paired interval, as at 8M",
          "cost_min": 240, "promised_rmse": cur - 0.08},
-        {"id": "P6", "change": "encode EC properly -- out-of-fold target encoding and hierarchy",
+        {"id": "P6", "noise_kind": "feature_addition", "change": "encode EC properly -- out-of-fold target encoding and hierarchy",
          "kind": "implicit", "depends_on": [],
          "needs_files": [ML / "kcat_records.tsv"],
          "mechanism": "loop 134 measured the EC channel through an arbitrary integer index, which "
@@ -757,6 +839,7 @@ def theory_check(items, a, noise):
     cur = a["Q2_new"].get("rmse")
     floor = max(BOUNDS["experimental_floor_rmse"][0], BOUNDS["missing_conditions_rmse"][0])
     out, verdicts = [], {}
+    obs = measured_outcomes(track)
     by_id = {i["id"]: i for i in items}
     for it in items:
         v = {}
@@ -771,8 +854,12 @@ def theory_check(items, a, noise):
         # T2 and T7 are arithmetic on a promised gain. A probe promises no gain, so applying them
         # would reject every probe by construction -- which is precisely the trap that made this
         # category necessary.
-        v["T2_gain_exceeds_noise"] = True if (probe or noise is None) else (
-            it["predicted_gain"] > noise)
+        if probe or noise is None:
+            v["T2_gain_exceeds_noise"] = True
+        else:
+            n_i, n_src = item_noise(it, noise)
+            it["noise_used"], it["noise_source_used"] = n_i, n_src
+            v["T2_gain_exceeds_noise"] = it["predicted_gain"] > n_i
         v["T3_has_falsifier"] = bool(it.get("falsifier"))
         # T4 is a real check: the item must NAME the refuted claim nearest to it and say what
         # distinguishes it. A dependency on another ITEM is a plan-level fact and settled here; a
@@ -814,11 +901,26 @@ def theory_check(items, a, noise):
         v = {k: (val if k.split("_")[0] in ACTIVE else None) for k, val in v.items()}
         it["checks"] = v
         it["checks_not_applicable"] = [k for k, val in v.items() if val is None]
+        it["observed"] = obs.get(it["id"])
         it["rejected_on"] = [k for k, val in v.items() if val is False]
         # A dependency on an unmeasured RESULT is neither pass nor fail. Recording it as either
         # would be a claim about a number nobody has.
         unmet = [r for r in it.get("depends_on_result", []) if not r.get("measured")]
-        if unmet and not it["rejected_on"]:
+        # A settled question is neither accepted nor rejected. MEASURED outranks every check,
+        # because a check is a forecast about a number that now exists.
+        if it.get("observed") is not None:
+            o = it["observed"]
+            it["verdict"] = "MEASURED"
+            it["blocked_on"] = []
+            it["measured_note"] = (
+                f"{o['value']:+.4f} ({o['what']})"
+                + (f" CI [{o['ci'][1]:+.4f}, {o['ci'][2]:+.4f}]"
+                   f" -> {'EXCLUDES zero' if o['ci'][1] > 0 else 'includes zero'}"
+                   if isinstance(o.get("ci"), (list, tuple)) and len(o["ci"]) == 3 else "")
+                + (f"; the plan predicted {it['predicted_gain']:+.4f}, error "
+                   f"{o['value'] - it['predicted_gain']:+.4f}"
+                   if isinstance(o["value"], (int, float)) and it.get("kind") != "probe" else ""))
+        elif unmet and not it["rejected_on"]:
             it["verdict"] = "BLOCKED"
             it["blocked_on"] = [r["what"] for r in unmet]
         else:
@@ -866,7 +968,38 @@ def theory_check(items, a, noise):
 
 
 # ---------------------------------------------------------------------------------------------
+def whole_picture_cell(a):
+    """The cell track's picture. No RMSE, no constant, no bootstrap -- and writing None into those
+    fields would be worse than not having them, because a null in a numeric slot reads as a
+    measurement that failed rather than as a quantity that does not exist here."""
+    cd = a.get("cell_deficits") or {}
+    return {
+        "result": {"counts": a["Q2_new"]["counts"], "n_failed": a["Q2_new"]["n_failed"],
+                   "metric_note": a["Q2_new"]["note"]},
+        "what_the_model_needs_it_for": "the layer table IS the model's honesty ledger: a FAILED "
+                                       "layer is a recorded negative, and the count is not a "
+                                       "defect budget to be driven to zero",
+        "dataset": {"layers": a["n_layers"], "parts": a.get("parts")},
+        "verified_deficits": {k: v["evidence"] for k, v in cd.items() if v["holds"]},
+        "bounds_that_cap_any_plan": {
+            "no_scalar_metric": TRACKS["cell"]["why_not_t2"],
+            "relabelling": "splitting one FAILED layer into two RUNS layers improves the count "
+                           "without touching the model, which is why T10 asks for a gate"},
+        "the_uncomfortable_reading":
+            "three FAILED layers converge on the same wall -- protein dynamics has a source that "
+            "is not transcription, and loops 121, 122 and 123 eliminated degrons, translation "
+            "control and relocalisation in turn without naming a replacement. The cell track's "
+            "real deficit is not a number, it is that NO DATASET on disk distinguishes the 362 "
+            "proteins that oscillate without their transcript from the 38 that do the reverse.",
+        "what_the_first_run_of_this_file_got_wrong":
+            "it had no cell track at all, and when one was added the first thing it found was that "
+            "cell_run.json's stored counts are STALE, not merely coarse",
+    }
+
+
 def whole_picture(a):
+    if a.get("track") == "cell":
+        return whole_picture_cell(a)
     """The result AND the model AND the dataset, because a plan that improves the metric and not
     the model is a plan to win a benchmark."""
     return {
@@ -899,8 +1032,22 @@ def upgrade(items, bundle, picture, noise):
     """Look at the plan again WITH the whole picture, and change it. A cycle that never edits its
     own plan is a cycle that is not thinking."""
     ups = []
-    cur = picture["result"]["current_rmse"]
+    cur = picture["result"].get("current_rmse")
     solo = [i for i in items if i["verdict"] == "ACCEPT"]
+    if cur is None:
+        # The cell track has no scalar, so the variance arithmetic below has nothing to operate on.
+        # Emitting it anyway would print a number with no referent, which is the exact failure this
+        # file was written to prevent.
+        cheap = sorted(solo, key=lambda i: (i.get("kind") != "probe", i["cost_min"]))
+        done = [i for i in items if i["verdict"] == "MEASURED"]
+        return [{"change": ("order probes first, then by cost" if cheap
+                            else "NOTHING IS SCHEDULABLE"),
+                 "why": (f"{len(cheap)} schedulable, {len(done)} already measured. No scalar "
+                         f"metric on this track, so no gain arithmetic is emitted"),
+                 "new_order": [i["id"] for i in cheap]},
+                {"change": "the stopping rule here is a GATE, not a metric",
+                 "why": "each item names the gate that would have to pass; a count of layers can "
+                        "be improved by relabelling and so cannot be the rule"}]
     units = list(solo) + ([bundle] if bundle and bundle["verdict"] == "ACCEPT" else [])
     cheap = sorted(units, key=lambda i: (i.get("kind") != "probe", i["cost_min"]))
     if not cheap:
