@@ -19,20 +19,26 @@ The extremal drive is a square wave, and the bound falls straight out: with x = 
 P_max = (2*kbar/b)/(1+x), P_min = P_max*x, and (1-x)/(1+x) = tanh(b*T/4).
 
 Run the same argument with the cycle in the LOSS term instead. Let b(t) sit at b_lo for most of the
-period and jump to b_hi for a fraction d of it, with production constant. Across the pulse the
-protein decays by exp(-b_hi*d*T), so
+period and jump to b_hi for a fraction d of it, with production constant. Neglecting production
+DURING the pulse, the protein decays by exp(-b_hi*d*T) and
 
-    relative amplitude  =  tanh( b_hi * d * T / 2 )
+    relative amplitude  <=  tanh( b_hi * d * T / 2 )                    [an UPPER BOUND]
 
-Same functional form, and that is the point: the old bound has bbar and T/4, the new one has the
-PULSE rate and d*T/2. Because b_hi has no upper limit -- a cell can raise a protein's degradation
-a hundredfold for twenty minutes -- this expression has no ceiling below 1. The sinusoid was
-bounded not because degradation is weak but because a sinusoid spends most of the cycle near its
-mean. A switch does not.
+Same functional form as the old ceiling, and that is the point: bbar and T/4 become the PULSE rate
+and d*T/2. Because b_hi has no upper limit -- a cell can raise a protein's degradation a
+hundredfold for twenty minutes -- this has no ceiling below 1. The sinusoid was bounded not because
+degradation is weak but because a sinusoid spends most of the cycle near its mean. A switch does
+not.
 
-SO THE REQUIREMENT IS ONE INEQUALITY, and it is the only thing this upgrade asserts:
+X2 CAUGHT ME STATING THAT AS AN EQUALITY. Simulation sits 4-25% below it and the gap grows with
+duty cycle, which is exactly what neglected production looks like. The exact periodic solution,
+with x = exp(-b_lo*(1-d)T), y = exp(-b_hi*dT), A = k/b_lo and B = k/b_hi, is
 
-    b_hi * d * T  >=  2 * artanh(A)        for a protein of measured amplitude A
+    relative amplitude  =  (1-x)(1-y)(A-B) / [ A(1-x)(1+y) + B(1-y)(1+x) ]
+
+which tends to the tanh bound as B/A -> 0. Sizing a required pulse from the BOUND would understate
+it -- 17.0x against the exact 20.3x here -- so X3 inverts the exact expression instead. The bound
+is still the right thing to quote for what is REACHABLE; it is the wrong thing for what is NEEDED.
 
 THE MECHANISM I EXPECTED AND WHICH THE NUMBERS KILL, recorded because I checked it first. A shared
 saturable protease would couple every protein to every other: loss_i = Vmax*(P_i/K_i)/(1 + sum_j
@@ -113,6 +119,42 @@ def say(s=""):
     log.append(s)
 
 
+def pulse_amp_exact(k, b_lo, b_hi, d, T):
+    """EXACT relative amplitude for the two-phase pulse, from the periodic steady state.
+
+    The docstring above derives tanh(b_hi*d*T/2) by neglecting production DURING the pulse. X2
+    caught that: the simulation sits 4-25% BELOW it, and the gap grows with duty cycle, which is
+    exactly what neglected production looks like. So that expression is an UPPER BOUND and this is
+    the equality.
+
+    With x = exp(-b_lo*(1-d)T), y = exp(-b_hi*dT), A = k/b_lo, B = k/b_hi, the periodic solution is
+        P_min = [A*y*(1-x) + B*(1-y)] / (1 - x*y)
+        P_max = [A*(1-x) + B*x*(1-y)] / (1 - x*y)
+    and the relative amplitude reduces to
+        (1-x)(1-y)(A-B) / [A(1-x)(1+y) + B(1-y)(1+x)]
+    which tends to tanh(b_hi*d*T/2) as B/A -> 0, recovering the bound."""
+    x = math.exp(-b_lo * (1.0 - d) * T)
+    y = math.exp(-b_hi * d * T)
+    A, B = k / b_lo, k / b_hi
+    num = (1 - x) * (1 - y) * (A - B)
+    den = A * (1 - x) * (1 + y) + B * (1 - y) * (1 + x)
+    return num / den if den > 0 else 0.0
+
+
+def required_b_hi(Aobs, b_lo, d, T, k=1.0):
+    """Invert pulse_amp_exact for b_hi by bisection. Returns None if unreachable."""
+    lo, hi = b_lo * 1.0000001, b_lo * 1e6
+    if pulse_amp_exact(k, b_lo, hi, d, T) < Aobs:
+        return None
+    for _ in range(200):
+        mid = math.sqrt(lo * hi)
+        if pulse_amp_exact(k, b_lo, mid, d, T) < Aobs:
+            lo = mid
+        else:
+            hi = mid
+    return math.sqrt(lo * hi)
+
+
 def rel_amp(x):
     """(max - min) / (max + min), the convention tanh(b*T/4) is stated in."""
     hi, lo = float(np.max(x)), float(np.min(x))
@@ -181,18 +223,23 @@ def main():
                            lambda t, bh=bh, win=win: bh if (t % T_CYCLE) < win else b_lo,
                            T_CYCLE, 1.0 / b_lo)
             sim = rel_amp(tr)
-            thy = math.tanh(bh * d * T_CYCLE / 2.0)
-            err = abs(sim - thy) / thy
-            rows2.append({"duty": d, "b_hi": bh, "sim": sim, "tanh": thy, "rel_err": err})
-            say(f"     d {d:.2f}  b_hi {bh:>4.1f}/h   simulated {sim:.4f}   "
-                f"tanh(b_hi*d*T/2) {thy:.4f}   error {err:.2%}")
+            exact = pulse_amp_exact(1.0, b_lo, bh, d, T_CYCLE)
+            bound = math.tanh(bh * d * T_CYCLE / 2.0)
+            err = abs(sim - exact) / exact
+            rows2.append({"duty": d, "b_hi": bh, "sim": sim, "exact": exact,
+                          "tanh_bound": bound, "rel_err": err})
+            say(f"     d {d:.2f}  b_hi {bh:>4.1f}/h   sim {sim:.4f}   EXACT {exact:.4f}   "
+                f"err {err:.2%}   (tanh bound {bound:.4f})")
     worst = max(r["rel_err"] for r in rows2)
-    gates["X2"] = bool(worst < 0.05)
+    gates["X2"] = bool(worst < 0.01)
     res["x2"] = rows2
     say(f"     worst relative error across the grid: {worst:.2%}")
-    say(f"     X2 {'PASS' if gates['X2'] else 'FAIL'} -- the pulse bound is arithmetic and it holds")
-    say(f"     (the residual is the production the derivation neglects DURING the pulse; it makes")
-    say(f"      the simulation slightly less extreme than the bound, which is the safe direction)")
+    say(f"     X2 {'PASS' if gates['X2'] else 'FAIL'} -- the EXACT expression matches simulation")
+    say(f"     the tanh(b_hi*d*T/2) form in the docstring is an UPPER BOUND, not an equality: it")
+    say(f"     neglects production during the pulse and overstates amplitude by up to "
+        f"{max(abs(r['tanh_bound'] - r['exact']) / r['exact'] for r in rows2):.0%} here.")
+    say(f"     Using the bound to size a required pulse would UNDER-state it, so X3 inverts the")
+    say(f"     exact expression instead.")
     say()
 
     # ---------------------------------------------------------------- X3
@@ -210,20 +257,27 @@ def main():
     say(f"     would need has median beta {ph['median_beta_sinusoidal']:.3f} -- ABOVE the physical")
     say(f"     limit of 1, i.e. a negative loss rate. That is what has to change.")
     need = 2.0 * math.atanh(min(A, 0.999))
-    b_hi_req = need / (DUTY * T_CYCLE)
+    b_approx = need / (DUTY * T_CYCLE)
+    b_hi_req = required_b_hi(A, b_rest, DUTY, T_CYCLE)
     fold = b_hi_req / b_rest
-    say(f"     the pulse requirement is b_hi*d*T >= 2*artanh(A) = {need:.4f}")
-    say(f"     at a duty cycle of {DUTY:.0%} ({DUTY * T_CYCLE:.1f} h window):")
-    say(f"       b_hi >= {b_hi_req:.4f}/h, i.e. a half-life of {math.log(2) / b_hi_req:.2f} h "
+    say(f"     the BOUND would give b_hi*d*T >= 2*artanh(A) = {need:.4f}, i.e. "
+        f"{b_approx / b_rest:.1f}x -- an UNDER-estimate, because the bound overstates amplitude")
+    say(f"     inverting the EXACT expression at a duty cycle of {DUTY:.0%} "
+        f"({DUTY * T_CYCLE:.1f} h window):")
+    say(f"       b_hi = {b_hi_req:.4f}/h, i.e. a half-life of {math.log(2) / b_hi_req:.2f} h "
         f"DURING the pulse")
     say(f"       that is {fold:.1f}x the protein's own resting rate")
+    by_duty = {}
     for d in (0.05, 0.10, 0.20, 0.33):
-        say(f"       duty {d:>5.0%} -> {need / (d * T_CYCLE) / b_rest:>6.1f}x acceleration")
+        bb = required_b_hi(A, b_rest, d, T_CYCLE)
+        by_duty[str(d)] = bb / b_rest if bb else None
+        say(f"       duty {d:>5.0%} -> {bb / b_rest:>6.1f}x acceleration"
+            if bb else f"       duty {d:>5.0%} -> UNREACHABLE")
     gates["X3"] = bool(fold < 1e3)
     res["x3"] = {"median_A": A, "median_hl_h": hl_osc, "b_rest": b_rest,
                  "old_ceiling": ceil_old, "required_bhi_dT": need,
                  "duty": DUTY, "b_hi_required": b_hi_req, "fold_acceleration": fold,
-                 "by_duty": {str(d): need / (d * T_CYCLE) / b_rest for d in (0.05, .1, .2, .33)}}
+                 "fold_from_bound_underestimate": b_approx / b_rest, "by_duty": by_duty}
     say(f"     X3 {'PASS' if gates['X3'] else 'FAIL'} -- the demand is "
         f"{'a modest, physiological acceleration -- APC/C and SCF substrates do far more' if gates['X3'] else 'ABSURD and the upgrade is refuted'}")
     say()

@@ -1,0 +1,305 @@
+{
+ "test": "loop 142 -- the pulse equation",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "outputs/loop_ms_cellcycle.json",
+    "bytes": 13841,
+    "hash": "7035b9b26689f74a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_proteostasis.json",
+    "bytes": 23916,
+    "hash": "cd8c97b832fc31c4",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 80,
+   "used": 80,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 14200,
+  "controls": [
+   "the integrator must first reproduce the bound the repo already closed on (X1)",
+   "the new bound is checked against simulation across a grid (X2)",
+   "the burst is checked against MEASURED proteasome capacity (X4)",
+   "the competing mechanism I expected to win is killed on measurement and recorded (X5)"
+  ],
+  "note": "a change of WAVEFORM, not a new term or a new fitted parameter. The requirement is one inequality: b_hi*d*T >= 2*artanh(A).",
+  "warnings": []
+ },
+ "gates": {
+  "X1": true,
+  "X2": true,
+  "X3": true,
+  "X4": true,
+  "X5": true,
+  "X6": true
+ },
+ "x1": [
+  {
+   "half_life_h": 6.0,
+   "sim": 0.6000000000000105,
+   "tanh": 0.6,
+   "rel_err": 1.7578531223231646e-14
+  },
+  {
+   "half_life_h": 12.0,
+   "sim": 0.33333333333336124,
+   "tanh": 0.3333333333333333,
+   "rel_err": 8.376632720796806e-14
+  },
+  {
+   "half_life_h": 24.0,
+   "sim": 0.1715728752537599,
+   "tanh": 0.1715728752538099,
+   "rel_err": 2.9151197230549805e-13
+  },
+  {
+   "half_life_h": 48.0,
+   "sim": 0.08642721518010377,
+   "tanh": 0.08642723372588978,
+   "rel_err": 2.145826635714002e-07
+  }
+ ],
+ "x2": [
+  {
+   "duty": 0.05,
+   "b_hi": 0.2,
+   "sim": 0.1057354754519134,
+   "exact": 0.10524198425423248,
+   "tanh_bound": 0.11942729853438593,
+   "rel_err": 0.004689109590415949
+  },
+  {
+   "duty": 0.05,
+   "b_hi": 0.5,
+   "sim": 0.27022723041899194,
+   "exact": 0.26902595654583406,
+   "tanh_bound": 0.2913126124515909,
+   "rel_err": 0.004465271264459645
+  },
+  {
+   "duty": 0.05,
+   "b_hi": 1.0,
+   "sim": 0.507184150402299,
+   "exact": 0.5052762584345247,
+   "tanh_bound": 0.5370495669980354,
+   "rel_err": 0.0037759382831194918
+  },
+  {
+   "duty": 0.05,
+   "b_hi": 2.0,
+   "sim": 0.799861430968681,
+   "exact": 0.7981874534645335,
+   "tanh_bound": 0.8336546070121553,
+   "rel_err": 0.0020972235242256053
+  },
+  {
+   "duty": 0.1,
+   "b_hi": 0.2,
+   "sim": 0.19727747121179537,
+   "exact": 0.19685615941261256,
+   "tanh_bound": 0.23549574953849803,
+   "rel_err": 0.0021402012537476
+  },
+  {
+   "duty": 0.1,
+   "b_hi": 0.5,
+   "sim": 0.474858419830149,
+   "exact": 0.474014874173383,
+   "tanh_bound": 0.5370495669980354,
+   "rel_err": 0.0017795763439638979
+  },
+  {
+   "duty": 0.1,
+   "b_hi": 1.0,
+   "sim": 0.7630571534577956,
+   "exact": 0.7622979052066577,
+   "tanh_bound": 0.8336546070121553,
+   "rel_err": 0.000995999393350021
+  },
+  {
+   "duty": 0.1,
+   "b_hi": 2.0,
+   "sim": 0.9338708690422012,
+   "exact": 0.9337067793460616,
+   "tanh_bound": 0.9836748576936802,
+   "rel_err": 0.00017574007147564248
+  },
+  {
+   "duty": 0.2,
+   "b_hi": 0.2,
+   "sim": 0.33581212488982376,
+   "exact": 0.33553910699675565,
+   "tanh_bound": 0.44624361024877973,
+   "rel_err": 0.0008136693678175218
+  },
+  {
+   "duty": 0.2,
+   "b_hi": 0.5,
+   "sim": 0.6894157773762721,
+   "exact": 0.6891259400116673,
+   "tanh_bound": 0.8336546070121553,
+   "rel_err": 0.0004205869316136238
+  },
+  {
+   "duty": 0.2,
+   "b_hi": 1.0,
+   "sim": 0.8788954183170605,
+   "exact": 0.8788423265157711,
+   "tanh_bound": 0.9836748576936802,
+   "rel_err": 6.041106542958029e-05
+  },
+  {
+   "duty": 0.2,
+   "b_hi": 2.0,
+   "sim": 0.9431989703906141,
+   "exact": 0.9432120188435917,
+   "tanh_bound": 0.9998645517007605,
+   "rel_err": 1.3834061395516036e-05
+  }
+ ],
+ "x3": {
+  "median_A": 0.4452698110682305,
+  "median_hl_h": 29.53,
+  "b_rest": 0.023472644109717077,
+  "old_ceiling": 0.13991204582705447,
+  "required_bhi_dT": 0.9575694541086416,
+  "duty": 0.1,
+  "b_hi_required": 0.47617021470875437,
+  "fold_acceleration": 20.28617706991229,
+  "fold_from_bound_underestimate": 16.997968813411042,
+  "by_duty": {
+   "0.05": 37.15395762325275,
+   "0.1": 20.28617706991229,
+   "0.2": 12.1015660929439,
+   "0.33": 9.320129999220097
+  }
+ },
+ "x4": {
+  "steady_load": 29330783.66484849,
+  "particles": 1382245.5950000002,
+  "osc_share": 0.021203286509408958,
+  "burst_extra": 11994247.280351104,
+  "peak_utilisation": {
+   "1.0": 0.008304729133577337,
+   "2.0": 0.016609458267154674,
+   "3.0": 0.02491418740073201
+  }
+ },
+ "x5": {
+  "saturation": {
+   "1.0": 0.0058943504225111,
+   "2.0": 0.0117887008450222,
+   "3.0": 0.017683051267533303
+  },
+  "max": 0.017683051267533303,
+  "verdict": "RETIRED -- the proteasome runs at under 2% of capacity"
+ },
+ "x6": {
+  "reachable": true,
+  "identifies_which_genes": false
+ },
+ "seconds": 1.1493196487426758,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 142 -- upgrade the equation: a destruction pulse, not a modulated rate",
+  "====================================================================================================",
+  "",
+  "X1 DOES THE OLD BOUND FALL OUT OF THE INTEGRATOR?",
+  "     dP/dt = k(t) - b*P, k a SQUARE WAVE (the extremal non-negative drive), b constant",
+  "     t1/2   6.0 h   simulated 0.6000   tanh(bT/4) 0.6000   error 0.00%",
+  "     t1/2  12.0 h   simulated 0.3333   tanh(bT/4) 0.3333   error 0.00%",
+  "     t1/2  24.0 h   simulated 0.1716   tanh(bT/4) 0.1716   error 0.00%",
+  "     t1/2  48.0 h   simulated 0.0864   tanh(bT/4) 0.0864   error 0.00%",
+  "     X1 PASS -- the integrator reproduces the closed bound",
+  "",
+  "X2 DOES THE PULSE FORM REPRODUCE ITS OWN DERIVATION?",
+  "     dP/dt = k - b(t)*P, k CONSTANT, b(t) = b_hi on a duty fraction d and b_lo otherwise",
+  "     derivation: relative amplitude = tanh(b_hi*d*T/2)",
+  "     d 0.05  b_hi  0.2/h   sim 0.1057   EXACT 0.1052   err 0.47%   (tanh bound 0.1194)",
+  "     d 0.05  b_hi  0.5/h   sim 0.2702   EXACT 0.2690   err 0.45%   (tanh bound 0.2913)",
+  "     d 0.05  b_hi  1.0/h   sim 0.5072   EXACT 0.5053   err 0.38%   (tanh bound 0.5370)",
+  "     d 0.05  b_hi  2.0/h   sim 0.7999   EXACT 0.7982   err 0.21%   (tanh bound 0.8337)",
+  "     d 0.10  b_hi  0.2/h   sim 0.1973   EXACT 0.1969   err 0.21%   (tanh bound 0.2355)",
+  "     d 0.10  b_hi  0.5/h   sim 0.4749   EXACT 0.4740   err 0.18%   (tanh bound 0.5370)",
+  "     d 0.10  b_hi  1.0/h   sim 0.7631   EXACT 0.7623   err 0.10%   (tanh bound 0.8337)",
+  "     d 0.10  b_hi  2.0/h   sim 0.9339   EXACT 0.9337   err 0.02%   (tanh bound 0.9837)",
+  "     d 0.20  b_hi  0.2/h   sim 0.3358   EXACT 0.3355   err 0.08%   (tanh bound 0.4462)",
+  "     d 0.20  b_hi  0.5/h   sim 0.6894   EXACT 0.6891   err 0.04%   (tanh bound 0.8337)",
+  "     d 0.20  b_hi  1.0/h   sim 0.8789   EXACT 0.8788   err 0.01%   (tanh bound 0.9837)",
+  "     d 0.20  b_hi  2.0/h   sim 0.9432   EXACT 0.9432   err 0.00%   (tanh bound 0.9999)",
+  "     worst relative error across the grid: 0.47%",
+  "     X2 PASS -- the EXACT expression matches simulation",
+  "     the tanh(b_hi*d*T/2) form in the docstring is an UPPER BOUND, not an equality: it",
+  "     neglects production during the pulse and overstates amplitude by up to 33% here.",
+  "     Using the bound to size a required pulse would UNDER-state it, so X3 inverts the",
+  "     exact expression instead.",
+  "",
+  "X3 HOW BIG A PULSE DOES THE MEASUREMENT ACTUALLY DEMAND?",
+  "     80 MS-oscillating genes with a measured amplitude and half-life",
+  "     median relative amplitude 0.4453; median half-life 29.53 h -> resting b 0.0235/h",
+  "     the OLD production ceiling for that protein is tanh(bT/4) = 0.1399",
+  "     68.8% of them (55/80) exceed it, and the sinusoid the old equation",
+  "     would need has median beta 2.351 -- ABOVE the physical",
+  "     limit of 1, i.e. a negative loss rate. That is what has to change.",
+  "     the BOUND would give b_hi*d*T >= 2*artanh(A) = 0.9576, i.e. 17.0x -- an UNDER-estimate, because the bound overstates amplitude",
+  "     inverting the EXACT expression at a duty cycle of 10% (2.4 h window):",
+  "       b_hi = 0.4762/h, i.e. a half-life of 1.46 h DURING the pulse",
+  "       that is 20.3x the protein's own resting rate",
+  "       duty    5% ->   37.2x acceleration",
+  "       duty   10% ->   20.3x acceleration",
+  "       duty   20% ->   12.1x acceleration",
+  "       duty   33% ->    9.3x acceleration",
+  "     X3 PASS -- the demand is a modest, physiological acceleration -- APC/C and SCF substrates do far more",
+  "",
+  "X4 IS THE REQUIRED BURST DELIVERABLE?",
+  "     steady proteolytic load 2.933e+07 molecules/h (loop_proteostasis, 4,821 genes)",
+  "     proteasome particles 1.382e+06",
+  "     the oscillating set is 80/3773 = 2.12% of the measured genes",
+  "     accelerating just that set by 20.3x during the window adds 1.199e+07 molecules/h",
+  "     at 1 s/substrate: capacity 4.976e+09/h   peak load 4.133e+07/h   utilisation 0.83%",
+  "     at 2 s/substrate: capacity 2.488e+09/h   peak load 4.133e+07/h   utilisation 1.66%",
+  "     at 3 s/substrate: capacity 1.659e+09/h   peak load 4.133e+07/h   utilisation 2.49%",
+  "     X4 PASS -- the burst fits inside measured capacity with room to spare",
+  "",
+  "X5 THE COMPETITION MECHANISM, KILLED BY MEASUREMENT",
+  "     sum_j P_j*b_j / Vmax at 1 s/substrate = 0.0059",
+  "     sum_j P_j*b_j / Vmax at 2 s/substrate = 0.0118",
+  "     sum_j P_j*b_j / Vmax at 3 s/substrate = 0.0177",
+  "     the saturable-protease coupling needs this near 1. It is at most 0.0177.",
+  "     loss_i = Vmax*(P_i/K_i)/(1 + sum_j P_j/K_j) therefore sits in its LINEAR limit,",
+  "     where it reduces exactly to b_i*P_i and couples nothing to anything.",
+  "     I expected this mechanism to be the answer -- it would have explained loop 121's",
+  "     backwards result, with the 362 as passengers crowded out of a busy protease and",
+  "     therefore needing no degrons of their own. It is retired on measurement, not taste.",
+  "     X5 PASS -- recorded as a measured negative",
+  "",
+  "X6 WHAT THE UPGRADE DOES NOT BUY",
+  "     it makes the observed amplitudes REACHABLE. tanh(b_hi*d*T/2) has no ceiling below 1,",
+  "     so 'no mechanism inside this equation can produce a 0.45 swing' is no longer true,",
+  "     and it stops being true at a 20.3x acceleration that the proteasome can serve",
+  "     40x over.",
+  "     IT SAYS NOTHING ABOUT WHICH PROTEINS ARE PULSED OR WHEN. Six mechanisms have been",
+  "     eliminated on that question -- transcription, two TF networks, degron motifs,",
+  "     translation control, relocalisation and annotated ubiquitin targeting -- and a",
+  "     waveform change does not touch it. What this buys is that the equation is no longer",
+  "     the thing standing in the way.",
+  "",
+  "====================================================================================================",
+  "  X1  PASS",
+  "  X2  PASS",
+  "  X3  PASS",
+  "  X4  PASS",
+  "  X5  PASS",
+  "  X6  PASS",
+  "  6/6",
+  "====================================================================================================",
+  "    manifest: 2 inputs, coverage 80/80 (100.0%) by 'all', seed 14200, controls 4"
+ ]
+}
