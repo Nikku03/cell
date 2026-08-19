@@ -36,7 +36,7 @@
   "+ a metabolic reaction": 721,
   "+ a signed TF regulator": 440,
   "+ a MEASURED kcat surviving loop 127": 87,
-  "core_mass_fraction": 0.024901353526541714,
+  "core_mass_fraction": 0.024901353526541718,
   "reactions_measured": 1130
  },
  "layers": {
@@ -46,7 +46,7 @@
   "STATIC": 11
  },
  "n_layers": 52,
- "seconds": 10.498921632766724,
+ "seconds": 14.555850982666016,
  "log": [
   "====================================================================================================",
   "  RUN THE CELL -- every wiring at once",
@@ -145,7 +145,7 @@
   "     CollecTRI as a replacement network             loop_collectri/130",
   "     cell cycle as a process                        loop_cellcycle/99",
   "     degron motifs as the mechanism                 loop_degron/121",
-  "     phosphodegrons as the timer                    loop_phosphodegron/145",
+  "     phosphodegrons as the timer                    loop_phosphodegron/145 + loop_elm_degron/146",
   "     regulated translation k_sp(t)                  loop_utr5/122",
   "     timed destruction read from the waveform       loop_pulse_identify/143 + loop_pulse_controls/144",
   "     relocalisation, RETIRED                        loop_ms_cellcycle/123 V4",
