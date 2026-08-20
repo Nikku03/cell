@@ -58,13 +58,10 @@ def _time_docking(say, dock):
     DF.GRID, DF.SPACING = P.GRID, P.SPACING
     g2u, _glen = P._acc_map()
     bench = json.load(open(P.BENCH))
-    b0 = None
-    for e in bench["bench"]:
-        if str(e["rx"]) in dock:
-            b0 = e
-            break
-    if b0 is None:
+    picks = [e for e in bench["bench"] if str(e["rx"]) in dock][:3]
+    if not picks:
         return None
+    b0 = picks[0]
     sub = P.load_struct(g2u[b0["substrate"]])
     cand = P.load_struct(g2u[b0["catalyst"]])
     if sub is None or cand is None:
@@ -74,8 +71,13 @@ def _time_docking(say, dock):
     for _ in range(3):
         P.load_struct(g2u[b0["catalyst"]])
     t_load = (time.time() - t) / 3
-    say(f"     AlphaFold parse + pLDDT>=70 trim, cached file: {t_load:.3f} s/structure "
+    afdir = P.AF
+    nfiles = len(list(afdir.glob("*.pdb")))
+    nbytes = sum(f.stat().st_size for f in afdir.glob("*.pdb"))
+    say(f"     AlphaFold parse + pLDDT>=70 trim, CACHED file: {t_load:.3f} s/structure "
         f"({cand['n']:,} atoms kept)")
+    say(f"       the cache itself: {nfiles:,} AlphaFold monomers, {nbytes / 1e9:.2f} GB, one HTTPS "
+        f"round trip each -- network-bound, not counted in the CPU figures below")
 
     rots = [np.asarray(r, float) for r in DF.rotations(N_DOCK_ROT_SAMPLE)]
     centre = sub["co"].mean(0)
@@ -111,16 +113,27 @@ def _time_docking(say, dock):
         return time.time() - t
 
     loop(True)                       # warm the FFT plans
-    t_full = loop(True) / N_DOCK_ROT_SAMPLE * N_DOCK_ROT
-    t_noclash = loop(False) / N_DOCK_ROT_SAMPLE * N_DOCK_ROT
+    fulls, nocls = [], []
+    for e in picks:
+        c = P.load_struct(g2u[e["catalyst"]])
+        if c is None:
+            continue
+        Lc = c["co"] - c["co"].mean(0)
+        offs_L = DF.offsets_for(c["rad"])
+        fulls.append(loop(True) / N_DOCK_ROT_SAMPLE * N_DOCK_ROT)
+        nocls.append(loop(False) / N_DOCK_ROT_SAMPLE * N_DOCK_ROT)
+    t_full = float(np.mean(fulls))
+    t_noclash = float(np.mean(nocls))
     say(f"     dock_pair at GRID {P.GRID}, SPACING {P.SPACING}, {N_DOCK_ROT} rotations "
-        f"(timed on {N_DOCK_ROT_SAMPLE} and scaled):")
+        f"({len(fulls)} candidates timed on {N_DOCK_ROT_SAMPLE} rotations each and scaled):")
     say(f"       receptor setup (rasterise + skin/core morph + 2 rFFTs) {t_setup:.2f} s/substrate")
     say(f"       rotation loop WITH the core-erosion (clash) transform : {t_full:.1f} s/candidate")
     say(f"       rotation loop WITHOUT it                              : {t_noclash:.1f} s/candidate")
     say(f"       -> the clash block alone costs {t_full - t_noclash:.1f} s/candidate "
         f"({100 * (t_full - t_noclash) / t_full:.0f}% of the dock)")
     return {"s_load_struct": t_load, "atoms": int(cand["n"]),
+            "af_cached_files": nfiles, "af_cached_bytes": nbytes,
+            "s_per_candidate_samples": fulls,
             "s_receptor_setup": t_setup, "s_per_candidate_full": t_full,
             "s_per_candidate_noclash": t_noclash,
             "s_per_candidate_clash_only": t_full - t_noclash,

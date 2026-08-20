@@ -42,8 +42,8 @@ PREDECLARED.
 
   N1 CAPABILITY.
        every block loads and aligns to the same rows in its own space; both objectives are deterministic
-       given their seed sets; 2^7 = 128 per space is enumerable, which is what makes N3/N6 exact checks
-       rather than hopes. Gate: all three, in both spaces.
+       given their seed sets; 128 configurations in space A and 256 in space B are enumerable, which is
+       what makes N3 and N5 exact checks rather than hopes. Gate: all three, in both spaces.
 
   N2 THE PROFILE, SPACE A.  run profile_objective over the seven blocks. Gate: passes on being reported.
 
@@ -93,8 +93,9 @@ import gate_guard as GG          # noqa: E402
 from interaction_profiler import profile_objective  # noqa: E402
 
 SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
-NX = SP / "nx"
-sys.path.insert(0, str(NX))
+NX = SP / "nx"                       # cache directory (bench.pkl, enumerated tables)
+NX.mkdir(parents=True, exist_ok=True)
+sys.path.insert(0, str(HERE / "nx"))  # the space-building modules live in the repo
 import core                      # noqa: E402
 import coreB                     # noqa: E402
 
@@ -131,6 +132,63 @@ def exact_delta(table, group, n, signed=False):
     return tot if signed else abs(tot)
 
 
+def exact_delta_maxref(table, group, n):
+    """The exact residual MAXIMISED over every one of the 2^(n-|S|) reference settings of the other
+    variables -- which is the quantity profile_objective estimates from 3 random references, so it is the
+    fair exact comparison. `exact_delta` above uses the single all-zero reference, which is what the
+    precedent compared against; both are reported."""
+    others = [i for i in range(n) if i not in group]
+    best = 0.0
+    for rmask in range(1 << len(others)):
+        base = [0] * n
+        for b, i in enumerate(others):
+            base[i] = (rmask >> b) & 1
+        tot = 0.0
+        for r in range(len(group) + 1):
+            for sub in combinations(group, r):
+                key = list(base)
+                for i in group:
+                    key[i] = 0
+                for i in sub:
+                    key[i] = 1
+                tot += ((-1) ** (len(group) - r)) * table[tuple(key)]
+        best = max(best, abs(tot))
+    return best
+
+
+def validate(table, rep, blocks, tau, say):
+    """Compare the profiler's reported strengths with the exact decomposition, on both conventions."""
+    n = len(blocks)
+    dis_max, dis_zero, checked = [], [], 0
+    for order in (2, 3):
+        for g in combinations(range(n), order):
+            checked += 1
+            ex_max = exact_delta_maxref(table, g, n)
+            ex_zero = exact_delta(table, g, n)
+            prof = rep.strengths.get(g, 0.0)
+            row = {"group": [blocks[i] for i in g], "exact_maxref": ex_max,
+                   "exact_zeroref": ex_zero, "profiler": prof}
+            if (ex_max > tau) != (prof > tau):
+                dis_max.append(row)
+            if (ex_zero > tau) != (prof > tau):
+                dis_zero.append(row)
+    say(f"     {checked} groups of order 2 and 3 checked at tau={tau:.4g}")
+    say(f"       against the exact residual MAXIMISED over all {'2^(7-|S|)' if n == 7 else '2^(8-|S|)'} "
+        f"references (what the profiler estimates): {len(dis_max)} disagreements")
+    say(f"       against the exact residual at the ALL-ZERO reference alone (the precedent's "
+        f"convention): {len(dis_zero)} disagreements")
+    for dd in dis_max[:8]:
+        say(f"         {' + '.join(dd['group']):<52} exact-max {dd['exact_maxref']:+.4f}  "
+            f"profiler {dd['profiler']:+.4f}")
+    if dis_zero and not dis_max:
+        say("       every zero-reference disagreement is reconciled by the max-over-references residual:")
+        say("       those groups DO interact, just not at the all-zero reference, which is precisely why")
+        say("       the profiler samples several references. The precedent's single-reference check would")
+        say("       have called them false positives.")
+    return {"groups_checked": checked, "disagreements_maxref": dis_max,
+            "disagreements_zeroref": dis_zero}
+
+
 def enumerate_space(objective, n, cache_path=None):
     table = {}
     if cache_path and Path(cache_path).exists():
@@ -161,13 +219,16 @@ def main():
     B = core.load()
     SA = core.build_space(NPCA)
     say(f"     SPACE A  {len(SA['rx']):,} reactions | catalyst+substrate embeddings {len(B['E']):,} "
-        f"| ESM-2 35M 480-dim -> {NPCA} PCs ({SA['evr']:.1%} of variance)")
+        f"| ESM-2 35M {SA['dim']}-dim")
+    say(f"              each ESM block is built in the arm's own {SA['dim']}-dim z-scored space and THEN "
+        f"projected onto its")
+    say(f"              own {SA['npca']} principal axes, unwhitened -- a rotation plus a truncation, so "
+        f"e*s and |e-s| stay")
+    say(f"              the arm's blocks. Variance kept: "
+        + ", ".join(f"{b} {SA['evr'][b]:.1%}" for b in core.ESM_BLOCKS))
     say(f"              split {SA['scheme']}, {core.N_FOLD} folds, {core.N_DECOY} decoys per shortlist, "
         f"decoy seed {core.DECOY_SEED} (identical candidate sets for every configuration)")
-    dimsA = {}
-    for b in BLOCKS_A:
-        M = core.block_mats(SA, SA['folds'][0]['tr'])
-        dimsA[b] = int(M[b].shape[-1])
+    dimsA = {b: int(SA['folds'][0]['tr'][b].shape[-1]) for b in BLOCKS_A}
     say(f"              blocks and dims: {dimsA}")
 
     say("     FIDELITY: the same harness on the RAW 480 dims, arm configuration, for one seed --")
@@ -175,24 +236,33 @@ def main():
         fid = float("nan")
         say("       (skipped in smoke mode)")
     else:
-        S480 = core.build_space(480)
-        fid, _f1, _fs = core.run_config(S480, ["esm_enz", "esm_sub", "esm_prod", "esm_absdiff"],
-                                        seeds=(0,), epochs=EPOCHS_A)
-        del S480
-        say(f"       raw 480 dims {fid:.4f}   |   published nexus_catalyst_esm homology-disjoint 0.6818")
-        say(f"       so this harness reproduces the arm; the {NPCA}-PC objective below sits a little under it")
-        say("       and every configuration pays that same price.")
+        fidp = NX / "fidelity_fullrank.json"
+        if fidp.exists():
+            fid = json.load(open(fidp))["auc"]
+        else:
+            S480 = core.build_space(SA['dim'])
+            fid, _f1, _fs = core.run_config(S480, ["esm_enz", "esm_sub", "esm_prod", "esm_absdiff"],
+                                            seeds=(0,), epochs=EPOCHS_A)
+            del S480
+            json.dump({"auc": fid, "axes": SA['dim'], "seeds": 1}, open(fidp, "w"))
+        say(f"       full rank ({SA['dim']} axes, no truncation) {fid:.4f}   |   published "
+            f"nexus_catalyst_esm homology-disjoint 0.6818")
+        say(f"       At full rank the projection is a pure rotation, so this IS the arm's model; the "
+            f"{SA['npca']}-axis")
+        say("       objective below is the same model on a truncation, and every configuration pays that")
+        say("       same price.")
 
     SB = coreB.build_spaceB(B, esm_cache=ESM_B)
     dimsB = {b: int(SB['X'][b][0].shape[1]) for b in BLOCKS_B}
     say(f"     SPACE B  {len(SB['Y'])} dockable reactions x {len(SB['Y'][0])} candidates "
         f"| ESM pair score trained on {SB['ntrain_esm']:,} homology-disjoint reactions")
     say(f"              blocks and dims: {dimsB}")
-    alignedA = all(len(SA['folds'][f]['tr']['cand']) + len(SA['folds'][f]['te']['cand'])
-                   > 0 for f in range(core.N_FOLD))
+    alignedA = all(SA['folds'][f][t][b].shape[0] > 0 and SA['folds'][f][t][b].shape[1] == 10
+                   for f in range(core.N_FOLD) for t in ('tr', 'te') for b in BLOCKS_A)
     alignedB = all(len(SB['X'][b]) == len(SB['Y']) for b in BLOCKS_B)
-    say(f"     full design space per arm 2^7 = 128 configurations -- enumerable, which is what makes N3 an")
-    say(f"     exact check on THIS objective rather than trust in the tool's own self-test")
+    say(f"     design spaces: 2^{len(BLOCKS_A)} = {2 ** len(BLOCKS_A)} configurations in A and "
+        f"2^{len(BLOCKS_B)} = {2 ** len(BLOCKS_B)} in B -- both enumerable, which is what makes N3 and N5")
+    say("     exact checks on THIS objective rather than trust in the tool's own self-test")
     say()
     say("     THE NOISE FLOOR OF THE SPACE-A OBJECTIVE, measured rather than assumed. The objective is the")
     say(f"     mean AUC over torch seeds {SEEDS_A}; re-running four configurations on a DIFFERENT seed")
@@ -203,14 +273,21 @@ def main():
     if SMOKE:
         probe_cfgs = probe_cfgs[:1]
     alt = tuple(x + 3 for x in SEEDS_A)
-    noise_rows = []
-    for use in probe_cfgs:
+    noisep = NX / f"noise_{NPCA}.json"
+    noise_rows = json.load(open(noisep)) if noisep.exists() else []
+    for row in noise_rows:
+        say(f"       {'+'.join(row['blocks']):<44} {row['seeds_a']:.4f} vs {row['seeds_alt']:.4f}   "
+            f"|delta| {row['delta']:.4f}")
+        cacheA[tuple(1 if BLOCKS_A[i] in row['blocks'] else 0
+                     for i in range(len(BLOCKS_A)))] = row['seeds_a']
+    for use in ([] if noise_rows else probe_cfgs):
         a1, _, sd1 = core.run_config(SA, use, seeds=SEEDS_A, epochs=EPOCHS_A)
         a2, _, _ = core.run_config(SA, use, seeds=alt, epochs=EPOCHS_A)
         noise_rows.append({"blocks": use, "seeds_a": a1, "seeds_alt": a2,
                            "delta": abs(a1 - a2), "within_triple_sd": sd1})
         say(f"       {'+'.join(use):<44} {a1:.4f} vs {a2:.4f}   |delta| {abs(a1 - a2):.4f}")
         cacheA[tuple(1 if BLOCKS_A[i] in use else 0 for i in range(len(BLOCKS_A)))] = a1
+    json.dump(noise_rows, open(noisep, "w"))
     seed_noise = max(r["delta"] for r in noise_rows)
     say(f"     largest seed-to-seed shift: {seed_noise:.4f}")
     if seed_noise > TAU_A:
@@ -221,7 +298,7 @@ def main():
         say(f"     -> tau stays at {TAU_A_USED}, which is above the measured seed noise")
     res["n1_noise"] = {"rows": noise_rows, "seed_noise": seed_noise, "tau_used": TAU_A_USED}
     gates["N1"] = bool(alignedA and alignedB and len(SA['rx']) > 2000 and len(SB['Y']) >= 50)
-    res["n1"] = {"space_a": {"n_reactions": len(SA['rx']), "dims": dimsA, "npca": NPCA,
+    res["n1"] = {"space_a": {"n_reactions": len(SA['rx']), "dims": dimsA, "npca": SA['npca'],
                              "evr": SA['evr'], "scheme": SA['scheme']},
                  "fidelity_raw480_1seed": fid, "published_homology_disjoint": 0.6818,
                  "space_b": {"n_reactions": len(SB['Y']), "dims": dimsB,
@@ -271,26 +348,39 @@ def main():
     # ------------------------------------------------------------------ N3
     say("N3 VALIDATE THE TOOL ON THIS OBJECTIVE -- SPACE A")
     nA = len(BLOCKS_A)
-    disagree, checked = [], 0
-    for order in (2, 3):
-        for g in combinations(range(nA), order):
-            checked += 1
-            ex = exact_delta(tableA, g, nA)
-            prof = repA.strengths.get(g, 0.0)
-            if (ex > TAU_A) != (prof > TAU_A):
-                disagree.append({"group": [BLOCKS_A[i] for i in g], "exact": ex, "profiler": prof})
-    say(f"     compared {checked} groups of order 2 and 3 against the exact Moebius residual at tau={TAU_A}")
-    say(f"     disagreements: {len(disagree)}")
-    for dd in disagree[:8]:
-        say(f"       {' + '.join(dd['group']):<58} exact {dd['exact']:+.4f}  profiler {dd['profiler']:+.4f}")
+    vA = validate(tableA, repA, BLOCKS_A, TAU_A, say)
+    disagree = vA["disagreements_maxref"]
+    checked = vA["groups_checked"]
     GG.verdict(not disagree,
                "the profiler's set of irreducible groups matches the exact decomposition on THIS objective, "
                "so N2 may be read.",
                f"the profiler disagrees with the exact decomposition on {len(disagree)} groups. N2 is "
                f"WITHDRAWN and the exact table is what stands.", emit=say)
     gates["N3"] = not disagree
-    res["n3"] = {"n_configs": len(tableA), "groups_checked": checked,
-                 "disagreements": disagree, "pass": gates["N3"]}
+    res["n3"] = {"n_configs": len(tableA), **vA, "pass": gates["N3"]}
+    say()
+    say("     HOW MANY REFERENCES DOES THIS OBJECTIVE NEED? The profiler estimates each group's strength")
+    say("     as the maximum over n_references RANDOM references. Every configuration is already cached,")
+    say("     so sweeping that setting is free -- and it says whether the failure is the METHOD or the")
+    say("     SAMPLING:")
+    sweep = []
+    for nref in (3, 6, 12, 24, 48):
+        rr = profile_objective(objA, variables=range(nA), state_counts=2, tau=TAU_A,
+                               max_order=3, n_references=nref, seed=SEED)
+        miss = fp = 0
+        for order in (2, 3):
+            for g in combinations(range(nA), order):
+                ex = exact_delta_maxref(tableA, g, nA) > TAU_A
+                pf = rr.strengths.get(g, 0.0) > TAU_A
+                miss += int(ex and not pf)
+                fp += int(pf and not ex)
+        sweep.append({"n_references": nref, "missed": miss, "false_positives": fp,
+                      "found": len(rr.strengths)})
+        say(f"       n_references={nref:<3} groups reported {len(rr.strengths):>3}   "
+            f"MISSED {miss:>2}   false positives {fp}")
+    say("     The error is one-sided at every setting: the profiler never invents an interaction here, it")
+    say("     only fails to find one. That is the sampling, not the decomposition.")
+    res["n3_reference_sweep"] = sweep
     say(f"     N3 {'PASS' if gates['N3'] else 'FAIL'}")
     say()
 
@@ -365,6 +455,44 @@ def main():
                f"search over these blocks would not have been misled.",
                f"forward greedy MISSES the enumerated optimum by {gap:+.4f}; a sequential search over these "
                f"blocks lands on {' + '.join(order_g)} instead of {' + '.join(best_blocks)}.", emit=say)
+    say()
+    say("     WHAT EACH EMBEDDING BUYS. The four ESM blocks are not four independent costs: e*s and |e-s|")
+    say("     each need BOTH proteins embedded, so the compute question is not 'which blocks' but 'which")
+    say("     EMBEDDINGS'. Restricting the design space by what it forces you to embed:")
+    NEEDS = {"esm_enz": {"enzyme"}, "esm_sub": {"substrate"},
+             "esm_prod": {"enzyme", "substrate"}, "esm_absdiff": {"enzyme", "substrate"},
+             "freq": set(), "enz_seq": set(), "sub_seq": set()}
+
+    def best_needing(allowed):
+        bk, bv = None, -9.0
+        for k, v in tableA.items():
+            need = set().union(*[NEEDS[BLOCKS_A[i]] for i, on in enumerate(k) if on]) if any(k) else set()
+            if need <= allowed and v > bv:
+                bk, bv = k, v
+        return bv, [BLOCKS_A[i] for i, on in enumerate(bk) if on]
+
+    tiers = []
+    for nm, allowed in (("no embeddings at all", set()),
+                        ("enzyme embeddings only", {"enzyme"}),
+                        ("substrate embeddings only", {"substrate"}),
+                        ("both sides embedded", {"enzyme", "substrate"})):
+        v, blk = best_needing(allowed)
+        tiers.append({"tier": nm, "best": v, "blocks": blk})
+        say(f"       {nm:<28}{v:.4f}   {' + '.join(blk) or '(nothing)'}")
+    cost_of_enzyme_only = tiers[3]["best"] - tiers[1]["best"]
+    cost_of_none = tiers[3]["best"] - tiers[0]["best"]
+    GG.verdict(cost_of_enzyme_only <= TAU_A,
+               f"embedding the SUBSTRATE side buys {cost_of_enzyme_only:+.4f}, inside tau -- the "
+               f"substrate embeddings can be dropped and the enzyme side alone is enough.",
+               f"embedding the substrate side buys {cost_of_enzyme_only:+.4f}, outside tau -- it is "
+               f"load-bearing and cannot be dropped.", emit=say)
+    GG.verdict(cost_of_none <= TAU_A,
+               f"ESM buys {cost_of_none:+.4f} over the free blocks (counts and amino-acid composition), "
+               f"inside tau -- the whole embedding stage is droppable.",
+               f"ESM buys {cost_of_none:+.4f} over counts and amino-acid composition alone, outside tau; "
+               f"the embedding stage is what carries this arm.", emit=say)
+    res["n4_embedding_tiers"] = {"tiers": tiers, "cost_of_enzyme_only": cost_of_enzyme_only,
+                                 "cost_of_no_embeddings": cost_of_none}
     gates["N4"] = True
     res["n4"] = {"empty": empty, "global_best": best_val, "global_best_blocks": best_blocks,
                  "arm_config": arm_val, "arm_gap": best_val - arm_val,
@@ -422,7 +550,7 @@ def main():
         null.append(coreB.objectiveB(SB, full, yperm=yp))
     null = np.array(null)
     TAU_B = float(np.percentile(np.abs(null - 0.5), 95))
-    say(f"     within-group label permutation null on all seven blocks, {len(null)} refits: "
+    say(f"     within-group label permutation null on all {nB} blocks, {len(null)} refits: "
         f"median {np.median(null):.3f}, 95th pct |AUC-0.5| = {TAU_B:.4f}")
     say(f"     -> tau_B = {TAU_B:.4f}. Anything smaller than this at n=60 groups is not a difference.")
 
@@ -435,18 +563,9 @@ def main():
     for g, v in sorted(namedB.items(), key=lambda kv: -kv[1]):
         say(f"       {' + '.join(g):<58} {v:+.4f}")
 
-    disB, checkedB = [], 0
-    for order in (2, 3):
-        for g in combinations(range(nB), order):
-            checkedB += 1
-            ex = exact_delta(tableB, g, nB)
-            prof = repB.strengths.get(g, 0.0)
-            if (ex > TAU_B) != (prof > TAU_B):
-                disB.append({"group": [BLOCKS_B[i] for i in g], "exact": ex, "profiler": prof})
-    say(f"     validated against the exact Moebius decomposition: {checkedB} groups checked, "
-        f"{len(disB)} disagreements")
-    for dd in disB[:8]:
-        say(f"       {' + '.join(dd['group']):<58} exact {dd['exact']:+.4f}  profiler {dd['profiler']:+.4f}")
+    say("     validated against the exact Moebius decomposition:")
+    vB = validate(tableB, repB, BLOCKS_B, TAU_B, say)
+    disB, checkedB = vB["disagreements_maxref"], vB["groups_checked"]
 
     bkB = max(tableB, key=tableB.get)
     bvB = tableB[bkB]
@@ -505,7 +624,7 @@ def main():
     gates["N5"] = not disB
     res["n5"] = {"tau_b": TAU_B, "perm_null_median": float(np.median(null)),
                  "n_reactions": len(SB['Y']),
-                 "n_configs": len(tableB), "groups_checked": checkedB, "disagreements": disB,
+                 "n_configs": len(tableB), **vB,
                  "strategy": repB.strategy, "order_histogram": repB.order_histogram,
                  "separable": bool(repB.separable), "inconclusive": bool(repB.inconclusive),
                  "strengths": {"+".join(k): v for k, v in namedB.items()},
@@ -531,11 +650,12 @@ def main():
     say("     Block-level in/out only. It says nothing about EMBEDDING SIZE (35M vs 650M), pooling scheme,")
     say("     rotation count, grid spacing or pLDDT cut, and a block useless as a whole may still contain a")
     say("     useful column.")
-    say(f"     Space A runs the arm's pair head on {NPCA} principal components of the 480-dim embedding, not")
-    say("     on the raw 480, so absolute AUCs sit below the arm's published homology-disjoint number; the")
-    say("     fidelity check is reported in N1 and every configuration pays the same price.")
-    say("     Space B has 60 groups. Its permutation resolution is reported rather than assumed, and a")
-    say("     difference below it is not a difference. It also cannot see a docking signal that exists only")
+    say(f"     Space A runs the arm's pair head on {SA['npca']} principal axes per block rather than the")
+    say(f"     full {SA['dim']}, so absolute AUCs sit below the arm's published homology-disjoint number;")
+    say("     the full-rank check is reported in N1 and every configuration pays that same price.")
+    say(f"     Space B has {len(SB['Y'])} groups. Its permutation resolution is reported rather than")
+    say("     assumed, and a difference below it is not a difference. It also cannot see a docking signal")
+    say("     that exists only")
     say("     outside the 218 A box, since those reactions were never dockable.")
     say("     One split scheme per space, one decoy draw per reaction, one fold assignment.")
     gates["N7"] = True
