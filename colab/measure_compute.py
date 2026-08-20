@@ -204,9 +204,11 @@ def measure(say, B, SB):
         f"{len(seqs):,} aa-composition vectors never built -- the cheapest block in the arm")
 
     say()
+    named = {c for i in cats for c in cats[i]}
+    voc = len(named & set(seqs))
     say("     AND THE SCALE THAT MATTERS: the orphan task is 9,186 unannotated reactions against a")
-    say(f"     {len(set(c for i in cats for c in cats[i])):,}-gene catalyst vocabulary.")
-    voc = len({c for i in cats for c in cats[i]} & set(seqs))
+    say(f"     catalyst vocabulary of {len(named):,} named genes, {voc:,} of which have a sequence "
+        f"here. Every number below uses {voc:,}, the ones that can actually be embedded or docked.")
     say(f"       embedding that vocabulary once           {voc * sp / 60:,.1f} min")
     if dk:
         say(f"       docking one 10-candidate shortlist       "
