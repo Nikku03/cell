@@ -361,6 +361,26 @@ def main():
     say(f"     Q5 {'PASS' if q5 else 'FAIL'}")
     say()
 
+    say("     NOT A GATE -- the mechanistic reading, added after seeing that every non-division")
+    say("     drive lands on the same AUC. beta_deg, beta_tl and the pulse are all GLOBAL: the same")
+    say("     waveform is applied to every gene. The only gene-specific quantity left shaping the")
+    say("     swing is the protein's own loss rate, so if that is the whole story then half-life")
+    say("     alone should reproduce the ceiling exactly.")
+    b_all = st["k_loss_prot_deg"]
+    a_all = st["k_loss_mrna_deg"]
+    sc_hl = np.concatenate([b_all[iy], b_all[inn]])
+    sc_mr = np.concatenate([a_all[iy], a_all[inn]])
+    pos_hl = np.zeros(len(sc_hl), bool)
+    pos_hl[:len(iy)] = True
+    auc_hl = auc(sc_hl, pos_hl)
+    auc_mr = auc(sc_mr, pos_hl)
+    say(f"       protein loss rate b_deg alone, no model at all : AUC {auc_hl:.4f}")
+    say(f"       mRNA loss rate a_deg alone                     : AUC {auc_mr:.4f}")
+    say(f"       best of all 32 wired configurations            : AUC {best:.4f}")
+    say(f"       the five mechanisms are worth {best - max(auc_hl, 1 - auc_hl):+.4f} over the "
+        f"single number they are all reading")
+    say()
+
     # ------------------------------------------------------------------ Q6
     say("Q6 THE PROFILER'S ONE-SIDEDNESS, RETESTED ON AN OBJECTIVE FROM A DIFFERENT ARM")
     truth = {}
@@ -419,6 +439,8 @@ def main():
            "moebius": {"+".join(SWITCH[i] for i in g) or "(empty)": v for g, v in mob.items()},
            "pairs": pairs, "regret": reg, "profiler": rows,
            "best": best, "best_config": [s for s, b in zip(SWITCH, best_c) if b],
+           "halflife_control": {"auc_protein_loss_rate": auc_hl,
+                               "auc_mrna_loss_rate": auc_mr},
            "q1": {"closed_form_error": eM, "mrna_ratio": ratio, "pulse_off_identity": ident},
            "manifest": man, "seconds": time.time() - t0, "log": log}
     OUT.parent.mkdir(parents=True, exist_ok=True)
