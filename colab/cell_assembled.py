@@ -321,12 +321,25 @@ def window_means(tr, nwin):
 
 
 def integrate_cell(st, T, ix=None, dev_at=None, beta_deg=0.0, beta_tl=0.0,
-                   divide=True, ncyc=40, nstep=400, gain=1.0):
+                   divide=True, ncyc=40, nstep=400, gain=1.0,
+                   pulse_fold=1.0, pulse_duty=0.10):
     """EVERY WIRING AT ONCE, which is the only way to find out whether they compose.
 
         dM/dt = k_sm * (1 + gain*TF_drive(t))      - a_deg * M
-        dP/dt = k_sp * (1 + beta_tl*sin(wt)) * M   - b_deg * (1 + beta_deg*sin(wt)) * P
+        dP/dt = k_sp * (1 + beta_tl*sin(wt)) * M   - b(t) * P
+        b(t)  = b_deg * (1 + beta_deg*sin(wt)) * (pulse_fold if t < pulse_duty*T else 1)
         and both are HALVED at every t = T when divide is True.
+
+    THE PULSE TERM, added by loop 159. beta_deg drives degradation as a SINUSOID and loop 123
+    measured that the median observed oscillator needs beta = 2.351, which cannot exist: above
+    beta = 1 the loss rate goes negative and protein is created by its own degradation term. The
+    two-level pulse is the waveform that can reach those amplitudes, and integrate_deg_pulse
+    already implements it on a flat mRNA. This carries the same convention -- b_hi = fold * b_lo
+    for the first pulse_duty of the cycle -- into the full model so the two degradation waveforms
+    can be switched independently and asked whether they compose or substitute.
+
+    pulse_fold = 1.0 is the OFF state and leaves b(t) untouched, so C1's reduction to loop 125's
+    closed form is unaffected.
 
     a_deg and b_deg are DEGRADATION ONLY -- the mu that stood in for division is dropped, because
     division is now performed rather than approximated. With every drive at zero and divide=True
@@ -356,6 +369,8 @@ def integrate_cell(st, T, ix=None, dev_at=None, beta_deg=0.0, beta_tl=0.0,
             t = s * dt
             k_t = ks if ix is None else ks * np.maximum(0.0, 1.0 + gain * tf_drive(ix, dev_at(t)))
             b_t = b * (1.0 + beta_deg * np.sin(w * t))
+            if pulse_fold != 1.0 and t < pulse_duty * T:
+                b_t = b_t * pulse_fold
             b_t = np.maximum(b_t, 1e-12)
             eb = np.exp(-b_t * dt)
             kp_t = kp * (1.0 + beta_tl * np.sin(w * t))
