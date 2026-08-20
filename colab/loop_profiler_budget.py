@@ -128,6 +128,12 @@ def exact_delta_maxref(table, group, n):
     return best
 
 
+def truth_set(table, n, tau):
+    """Which order-2/3 groups genuinely interact, by the exact max-over-references residual."""
+    return {g for order in (2, 3) for g in combinations(range(n), order)
+            if exact_delta_maxref(table, g, n) > tau}
+
+
 def sweep(table, n, tau, label, say):
     """Profile at each n_references; count the schedule and score it against the exact table."""
     truth = {}
@@ -198,6 +204,7 @@ def main():
     say(f"     B blocks: {', '.join(blocks_b)}")
     say()
 
+    truth_a = truth_set(ta, 7, tau_a)
     say("P1/P2/P6  SPACE A -- the 7 ESM/sequence blocks, 2,231 reactions")
     A = sweep(ta, 7, tau_a, "space A", say)
     say()
@@ -206,11 +213,11 @@ def main():
     say()
 
     p1 = all(r["misses_outside_table"] == 0 for r in A["rows"] + B["rows"])
-    say(GG.verdict(p1,
-                   "     every configuration the profiler asked for was in the enumerated table: "
-                   "the counter counts the real schedule.",
-                   "     the profiler asked for configurations outside the enumerated table -- the "
-                   "count below is not the real schedule and P2/P3 are void."))
+    GG.verdict(p1, emit=say, if_true=(
+        "every configuration the profiler asked for was in the enumerated table: "
+        "the counter counts the real schedule."), if_false=(
+        "the profiler asked for configurations outside the enumerated table -- the "
+        "count below is not the real schedule and P2/P3 are void."))
     say(f"     P1 {'PASS' if p1 else 'FAIL'}")
     say()
 
@@ -220,13 +227,34 @@ def main():
     da = a_star["distinct"] if a_star else None
     say(f"     space A reaches zero missed groups first at n_references={ra}, consuming "
         f"{da:,} distinct configurations of {N_A}")
-    say(GG.verdict(p2,
-                   f"     that is a real saving: {N_A - da} configurations never evaluated.",
-                   f"     that is the ENTIRE state space. On this objective the profiler at the "
-                   f"setting that makes it correct evaluates everything enumeration would have "
-                   f"evaluated, so it saves nothing -- it is an analysis of a table you already "
-                   f"had, not a way to avoid building one."))
+    GG.verdict(p2, emit=say, if_true=(
+        f"that is a real saving: {N_A - da} configurations never evaluated."), if_false=(
+        f"that is the ENTIRE state space. On this objective the profiler at the setting that "
+        f"makes it correct evaluates everything enumeration would have evaluated, so it saves "
+        f"nothing -- it is an analysis of a table you already had, not a way to avoid building "
+        f"one."))
     say(f"     P2 {'PASS' if p2 else 'FAIL'}")
+    say()
+    say("     NOT A GATE -- a diagnostic added after this run's R* disagreed with the nexus run's.")
+    say("     The nexus sweep (seed 15900) reported zero misses from n_references=12; this run")
+    say("     (seed 15901) still misses 6 at 12. The references are drawn at random, so R* is")
+    say("     itself a random variable. Re-drawing it 8 ways to see how wide:")
+    seed_rstar = []
+    for sd in range(8):
+        row = []
+        for R in REFS:
+            c = Counter(ta, 7)
+            rep = profile_objective(c, list(range(7)), 2, tau=tau_a, max_order=3,
+                                    n_references=R, adaptive=True, seed=1000 + sd)
+            miss = sum(1 for g in truth_a if not rep.strengths.get(g, 0.0) > tau_a)
+            row.append((R, miss, len(c.seen)))
+        first = next((r for r, m, _ in row if m == 0), None)
+        seed_rstar.append({"seed": 1000 + sd, "rstar": first,
+                           "misses": {r: m for r, m, _ in row}})
+        say(f"       seed {1000 + sd}: misses by R " +
+            " ".join(f"{r}:{m}" for r, m, _ in row) + f"   -> R* = {first}")
+    got = [d["rstar"] for d in seed_rstar]
+    say(f"     R* across 8 seeds: {got}  -- the cheap setting cannot tell you which one you are on.")
     say()
 
     b_star = B["rstar"]
@@ -235,9 +263,9 @@ def main():
     db = b_star["distinct"] if b_star else None
     say(f"     space B reaches zero missed groups first at n_references={rb}, consuming "
         f"{db:,} distinct configurations of {N_B}")
-    say(GG.verdict(p3,
-                   f"     a saving of {N_B - db} configurations.",
-                   "     no saving: the whole space is consumed."))
+    GG.verdict(p3, emit=say, if_true=(
+        f"a saving of {N_B - db} configurations."), if_false=(
+        "no saving: the whole space is consumed."))
     say(f"     P3 {'PASS' if p3 else 'FAIL'}")
     say()
 
@@ -267,11 +295,11 @@ def main():
             shown = "  ".join(f"n={r['n']}:{r['distinct']:,}/{r['space']:,}" for r in row)
             say(f"     {key:<22s} crossover at n={first}   {shown}")
     p4 = all(v["crossover_n"] is not None and v["crossover_n"] <= 20 for v in cross.values())
-    say(GG.verdict(p4,
-                   "     the schedule does pay for itself once the space is bigger than the nexus "
-                   "arm's -- the tool is not useless, it is being used on a space too small for it.",
-                   "     no crossover at n<=20: the schedule does not beat enumeration in any space "
-                   "a person would plausibly build here."))
+    GG.verdict(p4, emit=say, if_true=(
+        "the schedule does pay for itself once the space is bigger than the nexus arm's -- "
+        "the tool is not useless, it is being used on a space too small for it."), if_false=(
+        "no crossover at n<=20: the schedule does not beat enumeration in any space a person "
+        "would plausibly build here."))
     say(f"     P4 {'PASS' if p4 else 'FAIL'}")
     say()
 
@@ -292,13 +320,13 @@ def main():
     say()
 
     p6 = all(r["false_positives"] == 0 for r in A["rows"] + B["rows"])
-    say(GG.verdict(p6,
-                   "P6        one-sided at every setting in both spaces: a REPORTED interaction can be\n"
-                   "     believed at n_references=3, and only a reported ABSENCE needs the expensive\n"
-                   "     setting. That is the cheap way to use this tool -- profile at 3, and pay for\n"
-                   "     12 only where you intend to act on a null.",
-                   "P6        false positives appear, so the error is two-sided and neither direction\n"
-                   "     can be trusted at the cheap setting."))
+    GG.verdict(p6, emit=say, if_true=(
+        "one-sided at every setting in both spaces: a REPORTED interaction can be believed\n"
+        "     at n_references=3, and only a reported ABSENCE needs the expensive setting. That is\n"
+        "     the cheap way to use this tool -- profile at 3, and pay for the expensive setting\n"
+        "     only where you intend to act on a null."), if_false=(
+        "false positives appear, so the error is two-sided and neither direction can be\n"
+        "     trusted at the cheap setting."))
     say(f"     P6 {'PASS' if p6 else 'FAIL'}")
     say()
 
@@ -307,6 +335,7 @@ def main():
            "gates": gates, "space_a": A, "space_b": B, "crossover": cross,
            "seconds_per_config_a": per_cfg, "seconds_saved_design": saved_design,
            "seconds_saved_by_recommendation": SEC_DOCK, "pipeline_seconds": SEC_PIPE,
+           "rstar_by_seed": seed_rstar,
            "seconds": time.time() - t0, "log": log}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     json.dump(res, open(OUT, "w"), indent=1)
