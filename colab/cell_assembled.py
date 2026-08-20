@@ -453,6 +453,24 @@ LAYERS = [
     ("regulation->transcription", "FAILED", "loop_tf_rate/loop_perturb",
      "network loses to fame 2:1; perturbation no better than shuffled edge signs",
      "612,133 edges that encode which genes were studied together"),
+    # ADDED by loop 159, and it is a statement about all five entries around it at once rather
+    # than one new layer. The mechanisms were built one loop at a time and each was gated against
+    # its own null; nobody had asked whether they ADD.
+    ("the five mechanisms together", "FAILED", "loop_cell_mechanism_interactions/159",
+     "all 32 on/off configurations of tf, deg, pulse, tl and div enumerated and decomposed EXACTLY "
+     "over every reference -- no sampling. deg+pulse residual -0.1769: the sinusoid and the 20.3x "
+     "pulse SUBSTITUTE, they do each other's job for which genes oscillate. Every switch is "
+     "droppable: largest regret +0.0004 against an exact Mann-Whitney resolution of 0.0472. Drop "
+     "any one and the other four reach the same 0.5976; drop all five and it falls to 0.5000",
+     "AND THE WHOLE THING IS ONE COLUMN OF A TABLE. beta_deg, beta_tl and the pulse are GLOBAL "
+     "waveforms applied identically to every gene, so the only gene-specific quantity shaping the "
+     "relative swing is the protein's own loss rate. That loss rate ALONE, with no model run, "
+     "scores AUC 0.5973 against imaged CCD-Yes vs imaged CCD-No; the best of all 32 wired "
+     "configurations scores 0.5976. The five mechanisms are worth +0.0004. Division is worse than "
+     "useless -- solo -0.0840, and the five worst configurations all contain it, because dilution "
+     "swing is larger for long-lived proteins and the CCD set is short-lived, so halving ranks the "
+     "genes backwards. Nothing here says the mechanisms are wrong; it says a global waveform "
+     "cannot carry gene-specific information, and every drive in this model is global"),
     # ADDED by loop 120. The wiring MACHINERY works and is now part of this module -- tf_wiring,
     # tf_index, tf_drive, integrate_tf put the network into k_sm for the first time, and switching
     # the drive off reproduces the unwired steady state to 2.8e-15. The NETWORK inside it does not.
