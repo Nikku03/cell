@@ -298,6 +298,7 @@ def main():
     say(f"     {len(eligible):,} eligible, {len(hold)} held out")
 
     A_uni, A_wt, A_bal, A_deg, A_fuse, A_bal_hard = [], [], [], [], [], []
+    n_eligible_case, n_in_shortlist, rank_corr = 0, 0, []
     for t, j in enumerate(hold):
         j = int(j)
         seeds = sorted(react_of[j] - currency)
@@ -322,8 +323,10 @@ def main():
         for i in nb:
             inb[ncmap[int(i)]] = True
         m = inb & ~excl
+        n_eligible_case += 1
         if pos[m].sum() == 0 or (~pos[m]).sum() == 0:
             continue
+        n_in_shortlist += 1
         # the elemental residual the non-currency products must supply
         res_free = np.zeros(len(elements))
         for i, c in coef_r[j].items():
@@ -345,8 +348,11 @@ def main():
         A_deg.append(auc_of(degv[m], pos[m]))
         A_bal.append(auc_of(b_free[m], pos[m]))
         A_bal_hard.append(auc_of(b_hard[m], pos[m]))
-        fu = stats.rankdata(p_uni[m]) + stats.rankdata(b_free[m])
+        rk_w, rk_b = stats.rankdata(p_uni[m]), stats.rankdata(b_free[m])
+        fu = rk_w + rk_b
         A_fuse.append(auc_of(fu, pos[m]))
+        if len(rk_w) > 2:
+            rank_corr.append(float(stats.spearmanr(rk_w, rk_b).statistic))
         if t and t % 150 == 0:
             say(f"       {t}/{len(hold)}  [{time.time() - t0:.0f}s]")
 
@@ -369,8 +375,23 @@ def main():
     say(f"       balance, no currency granted {hard:.4f}")
     say(f"       walk + balance fused{fus:.4f}")
 
-    # ------------------------------------------------------------------ S4
     say()
+    say("     NOT A GATE -- two diagnostics added after the run, because two of the numbers above")
+    say("     cannot be read without them.")
+    rec = n_in_shortlist / max(n_eligible_case, 1)
+    say(f"     (a) SHORTLIST RECALL. The 2-step shortlist contains at least one true non-currency")
+    say(f"         product in {n_in_shortlist} of {n_eligible_case} held-out reactions = {rec:.1%}.")
+    say(f"         Every AUC above is CONDITIONAL on that. Loop 160 reported 0.8158 as the")
+    say(f"         shortlist's headline without this number beside it; the honest statement is that")
+    say(f"         the shortlist ranks well when it contains the answer and cannot find it at all")
+    say(f"         the other {1 - rec:.1%} of the time. That is a correction to loop 160's report.")
+    rc = float(np.nanmean(np.array(rank_corr, float))) if rank_corr else float("nan")
+    say(f"     (b) WHY THE FUSION DOES NOT HELP. Mean Spearman between the walk's ranking and the")
+    say(f"         balance ranking, over the same candidates: {rc:+.4f}. Two scores that rank the")
+    say(f"         same candidates the same way cannot add information by being averaged.")
+    say()
+
+    # ------------------------------------------------------------------ S4
     s4 = bool(wt - uni > 3 * su)
     GG.verdict(s4, emit=say, if_true=(
         f"S4 the coefficients help: {wt - uni:+.4f} over the uniform walk, outside 3 sem."),
@@ -440,6 +461,9 @@ def main():
            "protons": {"consume": int((hnet < 0).sum()), "emit": int((hnet > 0).sum()),
                        "moved": {f"{a}->{b}": v for (a, b), v in hmove.items()}},
            "redox_reactions": int(redox.sum()),
+           "shortlist_recall": {"cases": n_eligible_case, "contained": n_in_shortlist,
+                                "recall": rec},
+           "walk_balance_rank_corr": rc,
            "auc": {"walk_uniform": uni, "walk_weighted": wt, "degree": dgm,
                    "balance": bal_, "balance_no_currency": hard, "fused": fus,
                    "sem_walk": su, "sem_balance": sb, "n_scored": n_ok},
