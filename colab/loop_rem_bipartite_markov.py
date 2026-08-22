@@ -311,6 +311,7 @@ def main():
         creach[b].add(a)
 
     A_mk, A_dg, A_nb, A_cp = [], [], [], []
+    A_nb_dg, A_cp_dg = [], []
     n_nb_cand, n_cp_cand = [], []
     for t, j in enumerate(hold):
         j = int(j)
@@ -342,7 +343,9 @@ def main():
             inb[ncmap[int(i)]] = True
         mm = m & inb
         n_nb_cand.append(int(mm.sum()))
-        A_nb.append(auc_of(p[mm], pos[mm]) if pos[mm].sum() and (~pos[mm]).sum() else np.nan)
+        ok_nb = bool(pos[mm].sum() and (~pos[mm]).sum())
+        A_nb.append(auc_of(p[mm], pos[mm]) if ok_nb else np.nan)
+        A_nb_dg.append(auc_of(degv[mm], pos[mm]) if ok_nb else np.nan)
         # R6b: compartments the seed can reach through a transport reaction
         ok = set()
         for i in seeds:
@@ -351,7 +354,9 @@ def main():
         icp = np.array([sp_comp[int(i)] in ok for i in noncur])
         mc = m & icp
         n_cp_cand.append(int(mc.sum()))
-        A_cp.append(auc_of(p[mc], pos[mc]) if pos[mc].sum() and (~pos[mc]).sum() else np.nan)
+        ok_cp = bool(pos[mc].sum() and (~pos[mc]).sum())
+        A_cp.append(auc_of(p[mc], pos[mc]) if ok_cp else np.nan)
+        A_cp_dg.append(auc_of(degv[mc], pos[mc]) if ok_cp else np.nan)
         if t and t % 100 == 0:
             say(f"       {t}/{len(hold)}  [{time.time() - t0:.0f}s]")
 
@@ -359,6 +364,8 @@ def main():
     A_dg = np.array(A_dg, float)
     A_nb = np.array(A_nb, float)
     A_cp = np.array(A_cp, float)
+    A_nb_dg = np.array(A_nb_dg, float)
+    A_cp_dg = np.array(A_cp_dg, float)
     n_ok = int(np.isfinite(A_mk).sum())
     mk, dg = float(np.nanmean(A_mk)), float(np.nanmean(A_dg))
     sd = float(np.nanstd(A_mk) / np.sqrt(n_ok))
@@ -397,6 +404,25 @@ def main():
         f"{np.mean(n_nb_cand):,.0f} candidates median  -> {cls(nb)}")
     say(f"     transport-reachable compartments AUC {cp:.4f}   "
         f"{np.mean(n_cp_cand):,.0f} candidates median  -> {cls(cp)}")
+    say()
+    say("     NOT A GATE -- R5's question asked again INSIDE the shortlist, added because a shortlist")
+    say("     that improves the ranking has not shown that the WALK improves it. Same candidate sets,")
+    say("     scored by degree alone:")
+    nb_dg, cp_dg = float(np.nanmean(A_nb_dg)), float(np.nanmean(A_cp_dg))
+    sd_nb = float(np.nanstd(A_nb) / np.sqrt(np.isfinite(A_nb).sum()))
+    say(f"       2-step neighbourhood   walk {nb:.4f}   degree {nb_dg:.4f}   "
+        f"margin {nb - nb_dg:+.4f}  (sem {sd_nb:.4f})")
+    say(f"       transport compartments walk {cp:.4f}   degree {cp_dg:.4f}   "
+        f"margin {cp - cp_dg:+.4f}")
+    walk_earns = bool(nb - nb_dg > R5_MARGIN)
+    GG.verdict(walk_earns, emit=say, if_true=(
+        "inside the shortlist the walk DOES beat counting. The shortlist and the walk are doing "
+        "different jobs: the shortlist removes the hubs the degree column was riding on, and once "
+        "they are gone the structure is what is left."), if_false=(
+        "inside the shortlist the walk still does not beat counting. The 2-step neighbourhood is "
+        "carrying the whole improvement and the Markov operator is carrying none of it -- the "
+        "useful object built here is the REM shortlist, not the walk on it."))
+    say()
     r6 = True
     GG.verdict(cls(nb) == "helps" or cls(cp) == "helps", emit=say, if_true=(
         "the REM shortlist earns its place: narrowing the candidate set by connectivity or "
@@ -444,6 +470,8 @@ def main():
            "auc": {"markov": mk, "degree": dg, "margin": mk - dg, "sem": sd,
                    "neighbourhood": nb, "compartment": cp,
                    "n_scored": n_ok,
+                   "neighbourhood_degree": nb_dg, "compartment_degree": cp_dg,
+                   "walk_beats_degree_in_shortlist": walk_earns,
                    "cand_whole": len(noncur), "cand_nb": float(np.mean(n_nb_cand)),
                    "cand_cp": float(np.mean(n_cp_cand))},
            "manifest": man, "seconds": time.time() - t0, "log": log}
