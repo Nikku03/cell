@@ -299,6 +299,7 @@ def main():
 
     A_uni, A_wt, A_bal, A_deg, A_fuse, A_bal_hard = [], [], [], [], [], []
     n_eligible_case, n_in_shortlist, rank_corr = 0, 0, []
+    keep_cases = []
     for t, j in enumerate(hold):
         j = int(j)
         seeds = sorted(react_of[j] - currency)
@@ -353,6 +354,7 @@ def main():
         A_fuse.append(auc_of(fu, pos[m]))
         if len(rk_w) > 2:
             rank_corr.append(float(stats.spearmanr(rk_w, rk_b).statistic))
+        keep_cases.append((rk_w, rk_b, pos[m].copy()))
         if t and t % 150 == 0:
             say(f"       {t}/{len(hold)}  [{time.time() - t0:.0f}s]")
 
@@ -422,11 +424,38 @@ def main():
         f"S6 chemistry and connectivity COMPOSE: fused {fus:.4f} against the better single "
         f"predictor at {best_single:.4f}. They are reading different things and both are needed."),
         if_false=(
-        f"S6 chemistry and connectivity SUBSTITUTE: fused {fus:.4f} against the better single "
-        f"predictor at {best_single:.4f}, inside 3 sem. The same shape as loop 159's five "
-        f"mechanisms -- two representations that look independent and turn out to rank the same "
-        f"species for the same reason."))
+        f"S6 the equal-weight fusion does not beat the walk: {fus:.4f} against {best_single:.4f}. "
+        f"NOT because the two agree -- the Spearman between their rankings is {rc:+.4f}, which is "
+        f"almost independent. An unweighted rank sum of a 0.8158 predictor and a 0.7029 predictor "
+        f"gives the weak one half the vote, and that is a property of the FUSION RULE, not "
+        f"evidence about whether the signals are separable. The split-half test below decides "
+        f"that question, because this gate could not."))
     say(f"     S6 {'PASS' if s6 else 'FAIL'}")
+    say()
+    say("     NOT A GATE -- does a FITTED weight change the answer? The weight is fitted on one")
+    say("     half of the cases and scored on the other, both ways round, so no case contributes")
+    say("     to both choosing the weight and testing it.")
+    ws = np.linspace(0.0, 1.0, 21)
+    half = len(keep_cases) // 2
+    folds = [(keep_cases[:half], keep_cases[half:]), (keep_cases[half:], keep_cases[:half])]
+    fold_out = []
+    for fi, (fit, test) in enumerate(folds):
+        curve = [float(np.nanmean([auc_of((1 - w) * a + w * b, m) for a, b, m in fit])) for w in ws]
+        wbest = float(ws[int(np.argmax(curve))])
+        held = float(np.nanmean([auc_of((1 - wbest) * a + wbest * b, m) for a, b, m in test]))
+        walk_only = float(np.nanmean([auc_of(a, m) for a, b, m in test]))
+        fold_out.append({"w": wbest, "fused_heldout": held, "walk_heldout": walk_only,
+                         "delta": held - walk_only, "n_test": len(test)})
+        say(f"       fold {fi + 1}: best weight on balance {wbest:.2f} -> held-out fused "
+            f"{held:.4f} vs walk alone {held - (held - walk_only):.4f}... "
+            f"walk {walk_only:.4f}, delta {held - walk_only:+.4f} on {len(test)} cases")
+    dmean = float(np.mean([f["delta"] for f in fold_out]))
+    GG.verdict(dmean > 0, emit=say, if_true=(
+        f"a fitted weight DOES help, by {dmean:+.4f} averaged over the two held-out halves. The "
+        f"two signals are separable and S6's equal-weight rule was the thing at fault."), if_false=(
+        f"even with the weight fitted honestly on held-out halves, balance adds {dmean:+.4f}. The "
+        f"chemistry is nearly independent of the connectivity and still does not add to it, which "
+        f"is a stronger negative than S6 alone could give."))
 
     # ------------------------------------------------------------------ S7
     say()
@@ -463,7 +492,7 @@ def main():
            "redox_reactions": int(redox.sum()),
            "shortlist_recall": {"cases": n_eligible_case, "contained": n_in_shortlist,
                                 "recall": rec},
-           "walk_balance_rank_corr": rc,
+           "walk_balance_rank_corr": rc, "fitted_fusion": fold_out,
            "auc": {"walk_uniform": uni, "walk_weighted": wt, "degree": dgm,
                    "balance": bal_, "balance_no_currency": hard, "fused": fus,
                    "sem_walk": su, "sem_balance": sb, "n_scored": n_ok},
