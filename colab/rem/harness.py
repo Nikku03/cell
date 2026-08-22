@@ -68,11 +68,18 @@ class REM:
             d[int(i)] += 1
         for i in self.ps:
             d[int(i)] += 1
-        self.deg = d
+        self.deg = d          # FULL-GRAPH degree. Leaky as a baseline -- see degv below.
         self.currency = {i for i in range(self.NS) if d[i] > CURRENCY_MIN}
         self.noncur = np.array(sorted(set(range(self.NS)) - self.currency))
         self.ncmap = {int(v): k for k, v in enumerate(self.noncur)}
-        self.degv = np.array([d[int(i)] for i in self.noncur], float)
+        # LEAKY. Kept only so the pre-correction numbers in loops 160-161 can be reproduced.
+        # It is counted over ALL reactions INCLUDING the held-out one. Because a case excludes its
+        # own seeds from the candidate set, the +1 that the held-out reaction contributes lands on
+        # exactly the true targets and nothing else -- the "baseline" carries a one-sided stamp of
+        # the answer. Three independent verifiers found this in the same run. Measured effect:
+        # AUC 0.7302 leaky vs 0.6008 honest, paired +0.1293 at 21 sem. Use case["degv"] instead.
+        self.degv_leaky = np.array([d[int(i)] for i in self.noncur], float)
+        self.degv = self.degv_leaky
         self.Enc = self.E[self.noncur]
         self.Enc2 = (self.Enc ** 2).sum(1)
         self.Enc2[self.Enc2 == 0] = np.inf
@@ -154,8 +161,40 @@ class REM:
                 res -= c * self.E[i]
         qres = sum(c * self.charge[i] for i, c in self.coef_r[j].items())
         return {"j": j, "seeds": seeds, "targets": targets, "pos": pos, "excl": excl,
+                "degv": self.deg_minus(j),
                 "residual": res, "residual_hard": res_hard, "charge_residual": qres,
                 "comp": {self.sp_comp[i] for i in seeds}}
+
+    def deg_minus(self, j):
+        """Degree over the non-currency candidates with reaction j's own edges removed.
+
+        This is the honest counting baseline. Note that a candidate whose ONLY reaction was j now
+        has degree 0, and since seeds are excluded from candidacy such a candidate can only be a
+        true target -- so `degree == 0` is itself a one-sided label indicator (1,018 of the 8,428
+        non-currency species have full degree 1, and it fires in about 5% of cases). A degree
+        baseline is unharmed by that, because 0 ranks last; a LEARNED model must clip it."""
+        d = self.deg.copy()
+        for i in self.react_of[j] | self.prod_of[j]:
+            d[int(i)] -= 1
+        return np.array([d[int(i)] for i in self.noncur], float)
+
+    def duplicate_survives(self, j, strict=True):
+        """Is there another reaction that still maps this case's seeds onto its targets?
+
+        In 10.8% of cases an exact duplicate of the held-out reaction survives its deletion (21.5%
+        if direction is ignored), and on those the walk scores AUC 0.9997 -- memorisation, not
+        prediction. Reported so any claim can be restricted to the duplicate-free part."""
+        seeds = self.react_of[j] - self.currency
+        targs = self.prod_of[j] - self.currency
+        for k in range(self.NR):
+            if k == j:
+                continue
+            a, b = self.react_of[k] - self.currency, self.prod_of[k] - self.currency
+            if seeds <= a and targs <= b:
+                return True
+            if not strict and seeds <= (a | b) and targs <= (a | b):
+                return True
+        return False
 
     def shortlist(self, cs, k=2):
         """The k-step bipartite neighbourhood of the seeds, with the held-out reaction removed."""
