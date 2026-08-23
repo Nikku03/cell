@@ -223,7 +223,11 @@ def scan_set(cat, starts, ids, mots, tracks, report=print, want_shape=True, labe
     SH = np.full((len(TRACKS), nm, nseg), np.nan, dtype=np.float32) if want_shape else None
     wmean_cache = {}
     t0 = time.time()
-    for mi, mid in enumerate(ids):
+    # width-sorted, so the rolling-window means for a given motif width are computed once and
+    # reused across every motif of that width instead of being rebuilt 736 times
+    order = sorted(range(nm), key=lambda i: mots[ids[i]].shape[0])
+    for done, mi in enumerate(order):
+        mid = ids[mi]
         lo = mots[mid]
         L = lo.shape[0]
         n = len(cat) - L + 1
@@ -253,9 +257,9 @@ def scan_set(cat, starts, ids, mots, tracks, report=print, want_shape=True, labe
             for si, name in enumerate(TRACKS):
                 key = (name, L)
                 if key not in wmean_cache:
+                    if len(wmean_cache) >= len(TRACKS):
+                        wmean_cache.clear()          # widths arrive in order, so the old width is done
                     wmean_cache[key] = _win_mean(tracks[name], L)
-                    if len(wmean_cache) > 4 * len(TRACKS):
-                        wmean_cache.pop(next(iter(wmean_cache)))
                 v = wmean_cache[key][:n]
                 vv = np.nan_to_num(v, nan=0.0).astype(np.float64)
                 ok = (~np.isnan(v)).astype(np.float64)
@@ -263,9 +267,10 @@ def scan_set(cat, starts, ids, mots, tracks, report=print, want_shape=True, labe
                 den = np.add.reduceat(w * ok, starts)
                 with np.errstate(invalid="ignore", divide="ignore"):
                     SH[si, mi] = np.where(den > 0, num / den, np.nan)
-        if (mi + 1) % 100 == 0:
+        if (done + 1) % 100 == 0:
             el = time.time() - t0
-            report(f"      {label} motif {mi+1}/{nm}  [{el:.0f}s, eta {el/(mi+1)*(nm-mi-1):.0f}s]")
+            report(f"      {label} motif {done+1}/{nm} (width {L})  "
+                   f"[{el:.0f}s, eta {el/(done+1)*(nm-done-1):.0f}s]")
     return MX, LZ, NS, SH
 
 
