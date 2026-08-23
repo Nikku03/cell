@@ -108,7 +108,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier   # noqa: E402
 from sklearn.metrics import roc_auc_score                     # noqa: E402
 
 OUT = Path(os.environ.get("CELL_OUT", "outputs")) / "loop_enhancer_vs_genome.json"
-CACHE = SC.CACHE / "enh_vs_genome.npz"
+CACHE = SC.CACHE / "enh_vs_genome_v2.npz"
 SEEDS = [0, 1, 2, 3, 4]
 NFOLD = 5
 K_DECOY = 10
@@ -175,17 +175,21 @@ def draw_windows(report=print):
             w = b - a
             d = abs(((a + b) // 2) - t)
             P.append(dict(chrom=chrom, start=a, end=b, tss=t, gene=gkey[2], dist=d, y=1,
-                          kind="positive"))
+                          kind="positive", pair=len(P), pos_dist=d, pos_width=w))
             # random genomic decoys, distance and width matched
+            pid = len(P) - 1
             got = 0
             for _ in range(400):
                 if got >= K_DECOY:
                     break
                 dd = int(d * rng.uniform(1 - DIST_TOL, 1 + DIST_TOL))
-                if dd < MIN_TSS_DIST or dd > WINDOW_BP // 2:
+                if dd > WINDOW_BP // 2:
                     continue
                 s = t + (dd if rng.random() < 0.5 else -dd) - w // 2
                 if s < 1:
+                    continue
+                # never the promoter itself; the benchmark's own pairs are all distal
+                if abs((s + w // 2) - t) < 2000:
                     continue
                 if arr is not None and len(arr):
                     j = int(np.searchsorted(arr[:, 0], s + w))
@@ -198,7 +202,7 @@ def draw_windows(report=print):
                         n_overlap_reject += 1
                         continue
                 Dg.append(dict(chrom=chrom, start=s, end=s + w, tss=t, gene=gkey[2],
-                               dist=dd, y=0, kind="genomic"))
+                               dist=dd, y=0, kind="genomic", pair=pid, pos_dist=d, pos_width=w))
                 got += 1
             # tested-negative decoys for the same gene, closest in distance first
             cand = sorted(neg, key=lambda x: abs(
@@ -207,7 +211,8 @@ def draw_windows(report=print):
             for x in cand[:K_DECOY]:
                 aa, bb = el19[(x["chrom"], int(x["chromStart"]), int(x["chromEnd"]))]
                 Dt.append(dict(chrom=chrom, start=aa, end=bb, tss=t, gene=gkey[2],
-                               dist=abs(((aa + bb) // 2) - t), y=0, kind="tested"))
+                               dist=abs(((aa + bb) // 2) - t), y=0, kind="tested",
+                               pair=pid, pos_dist=d, pos_width=w))
     report(f"    {len(P):,} positives, {len(Dg):,} genomic decoys "
            f"({n_overlap_reject:,} draws rejected for overlapping a tested element), "
            f"{len(Dt):,} tested-negative decoys")
@@ -273,6 +278,9 @@ def build_scan(report=print):
     out["y"] = np.array([r["y"] for r in recs], np.int8)
     out["kind"] = np.array([r["kind"] for r in recs], dtype=object)
     out["dist"] = np.array([max(r["dist"], 1) for r in recs], np.float64)
+    out["pair"] = np.array([r["pair"] for r in recs], np.int64)
+    out["pos_dist"] = np.array([max(r["pos_dist"], 1) for r in recs], np.float64)
+    out["pos_width"] = np.array([r["pos_width"] for r in recs], np.float64)
     out["chrom"] = np.array([r["chrom"] for r in recs], dtype=object)
     out["gene"] = np.array([r["gene"] for r in recs], dtype=object)
     out["motif_ids"] = base["motif_ids"]
@@ -441,23 +449,28 @@ def main():
     say("F1 IS THE MATCHING REAL?")
     pos = kind == "positive"
     gen = kind == "genomic"
-    # each positive's decoys follow it in draw order, so match by gene+width+distance ratio
-    dpos = D["dist"][pos]
-    wpos = D["w_width"][pos]
-    dgen = D["dist"][gen]
-    wgen = D["w_width"][gen]
-    say(f"     positive width median {np.median(wpos):.0f}, genomic decoy width median "
-        f"{np.median(wgen):.0f}")
-    say(f"     positive distance median {np.median(dpos):,.0f} bp, decoy median "
-        f"{np.median(dgen):,.0f} bp")
-    ratio = np.log2(np.median(dgen) / np.median(dpos))
-    same_w = abs(np.median(wgen) - np.median(wpos)) < 1
-    f1 = bool(abs(ratio) < 0.15 and same_w)
+    # PAIRED, not pooled. The first run of this loop compared pooled medians and F1 failed at
+    # log2 ratio +0.68 -- not because the draw was unmatched but because positives closer than
+    # ~11 kb had their decoys rejected by a minimum-distance rule, so the surviving decoys came
+    # from the far half of the positives. The rule is gone and the check is now per pair.
+    lr = np.log2(np.maximum(D["dist"][gen], 1) / np.maximum(D["pos_dist"][gen], 1))
+    dw = D["w_width"][gen] - D["pos_width"][gen]
+    npair = np.array([int((D["pair"][gen] == p).sum()) for p in D["pair"][pos]])
+    say(f"     positive width median {np.median(D['w_width'][pos]):.0f}, "
+        f"decoy width equals its positive's on {float((np.abs(dw) < 1).mean()):.4f} of draws")
+    say(f"     per-pair |log2 distance ratio|: median {np.median(np.abs(lr)):.4f}, "
+        f"p90 {np.percentile(np.abs(lr), 90):.4f}")
+    say(f"     positives with the full {K_DECOY} decoys: "
+        f"{int((npair >= K_DECOY).sum()):,}/{len(npair):,} ({(npair >= K_DECOY).mean():.4f})")
+    ratio = float(np.median(np.abs(lr)))
+    same_w = bool((np.abs(dw) < 1).all())
+    f1 = bool(ratio < 0.15 and same_w and (npair >= K_DECOY).mean() >= 0.90)
     GG.verdict(f1, emit=say,
-               if_true=f"F1 PASS -- decoys carry the positives' widths and sit at the same "
-                       f"distances (median log2 ratio {ratio:+.4f}), and none overlaps a tested element",
-               if_false=f"F1 FAIL -- matching is off: log2 distance ratio {ratio:+.4f}, "
-                        f"widths equal {same_w}")
+               if_true=f"F1 PASS -- every decoy carries its own positive's width and sits "
+                       f"within {ratio:.1%} of its distance, and none overlaps a tested element",
+               if_false=f"F1 FAIL -- matching is off: median |log2 distance ratio| {ratio:.4f}, "
+                        f"widths all equal {same_w}, "
+                        f"full-decoy fraction {(npair >= K_DECOY).mean():.4f}")
 
     # ---- the two contrasts ---------------------------------------------------------------------
     F = features(D, "el")
