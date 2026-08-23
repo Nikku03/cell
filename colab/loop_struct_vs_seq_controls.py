@@ -20,6 +20,11 @@ between this loop and 163 is attributable to the confound and to nothing else.
 PREDECLARED, before any number is looked at.
 
   C1 THE CONTROL WORKS. The popularity column, scored on the frequency-matched candidate sets.
+     (Second attempt. The first drew negatives from each positive's frequency STRATUM and pooled
+     them per enzyme; popularity fell from 0.8503 to 0.5991 and the gate correctly failed, because
+     pooling positives from different strata leaves a cross-stratum frequency gradient to sort.
+     Now every positive runs its own mini-contest against the candidates nearest to it in
+     frequency, so there is no gradient left to exploit.)
      Gate: |AUC - 0.5| <= 0.02. If popularity can still sort these candidates the matching failed
      and every number below inherits loop 163's defect.
 
@@ -68,7 +73,7 @@ from loop_struct_vs_seq import homology_folds, knn_scores, KNN, JACC, NFOLD, SEE
 SEQF = Path("colab/data/ml/esm_enzymes.npz")
 STRF = Path("colab/data/ml/struct_enzymes.npz")
 OUT = Path(os.environ.get("CELL_OUT", "outputs")) / "loop_struct_vs_seq_controls.json"
-NEG_PER_POS = 20
+NEG_PER_POS = 40
 N_STRATA = 20
 C1_TOL = 0.02
 
@@ -130,28 +135,43 @@ def main():
     say(f"     {len(accs):,} enzymes | {Y.shape[1]:,} candidate metabolites | "
         f"median {int(np.median(Y.sum(1)))} true metabolites each")
 
-    # frequency strata: equal-count bins over the metabolite popularity column
-    rank = np.argsort(np.argsort(pop))
-    stratum = (rank * N_STRATA // len(pop)).astype(int)
-    by_str = {s: np.where(stratum == s)[0] for s in range(N_STRATA)}
-    say(f"     {N_STRATA} equal-count frequency strata; popularity ranges "
-        f"{pop.min():.5f} to {pop.max():.4f}")
+    # EXACT per-positive frequency matching, scored per positive and never pooled.
+    # The first version drew negatives from the positive's frequency STRATUM and then pooled every
+    # positive's candidates into one set per enzyme. C1 caught what that leaves behind: an enzyme
+    # with positives in different strata gets a pooled set whose cross-stratum frequency
+    # differences a popularity column can still sort, and 20 strata over 8,428 metabolites leave
+    # real spread inside each stratum too. Popularity fell only to 0.5991, not to chance.
+    # Here each positive gets its OWN mini-contest against the negatives whose frequency is
+    # numerically closest to its own, and the enzyme's score is the mean over its positives. Within
+    # a mini-contest every candidate has near-identical frequency, so popularity has nothing to
+    # sort on at all rather than merely less.
+    order = np.argsort(pop, kind="stable")
+    posn = np.empty(len(pop), int)
+    posn[order] = np.arange(len(pop))
+    say(f"     popularity ranges {pop.min():.5f} to {pop.max():.4f}; negatives are the "
+        f"{NEG_PER_POS} candidates nearest in frequency to each positive")
 
-    rng = np.random.default_rng(SEED)
     cand = []
     for i in range(len(accs)):
         pos = np.where(Y[i] > 0)[0]
-        neg = []
+        mini = []
         for p in pos:
-            pool = by_str[stratum[p]]
-            pool = pool[Y[i, pool] == 0]
-            if len(pool):
-                neg.append(rng.choice(pool, size=min(NEG_PER_POS, len(pool)), replace=False))
-        neg = np.unique(np.concatenate(neg)) if neg else np.array([], int)
-        cand.append((pos, neg))
-    sizes = [len(p) + len(n) for p, n in cand]
-    say(f"     matched candidate sets: median {int(np.median(sizes))} candidates "
-        f"({NEG_PER_POS} negatives per positive, drawn from the positive's own stratum)")
+            lo, hi = posn[p] - 1, posn[p] + 1
+            neg = []
+            while len(neg) < NEG_PER_POS and (lo >= 0 or hi < len(order)):
+                for side in (lo, hi):
+                    if 0 <= side < len(order) and len(neg) < NEG_PER_POS:
+                        c = order[side]
+                        if Y[i, c] == 0:
+                            neg.append(c)
+                lo -= 1
+                hi += 1
+            if neg:
+                mini.append((p, np.array(neg)))
+        cand.append(mini)
+    sizes = [len(m) for m in cand]
+    say(f"     {int(np.sum(sizes)):,} mini-contests over {len(accs):,} enzymes, "
+        f"median {int(np.median(sizes))} per enzyme, {NEG_PER_POS + 1} candidates each")
 
     fold, ncl, ks = homology_folds(seqs, accs)
     say(f"     {ncl:,} homology clusters, folds {[int((fold == f).sum()) for f in range(NFOLD)]}")
@@ -165,13 +185,17 @@ def main():
             "esm35+esm8": np.hstack([zs(E35), zs(E8)])}
 
     def score_case(i, s):
-        pos, neg = cand[i]
-        if len(pos) == 0 or len(neg) == 0:
+        """Mean over this enzyme's mini-contests of the fraction of frequency-matched negatives the
+        true metabolite outscores. Ties count half, as in auc_of."""
+        mini = cand[i]
+        if not mini:
             return np.nan
-        idx = np.concatenate([pos, neg])
-        lab = np.zeros(len(idx), bool)
-        lab[:len(pos)] = True
-        return auc_of(s[idx], lab)
+        vals = []
+        for p, neg in mini:
+            v = s[p]
+            w = s[neg]
+            vals.append(float((w < v).sum() + 0.5 * (w == v).sum()) / len(w))
+        return float(np.mean(vals))
 
     per = {k: [] for k in list(ARMS) + ["popularity", "kmer_homology"]}
     per_full = {k: [] for k in list(ARMS) + ["popularity"]}
@@ -280,8 +304,15 @@ def main():
     for k in list(ARMS) + ["popularity"]:
         say(f"     {k:<20s} {resf[k]['auc']:>22.4f} {res[k]['auc']:>10.4f} "
             f"{res[k]['auc']-resf[k]['auc']:>+9.4f}")
-    say("     popularity falls to chance by construction; every learned arm keeps most of its")
-    say("     score, which is what says the arms were not merely reproducing the frequency table.")
+    GG.verdict(c1, emit=say, if_true=(
+        "popularity falls to chance while every learned arm keeps most of its score -- the arms "
+        "were not reproducing the frequency table."), if_false=(
+        f"popularity does NOT fall to chance: it lands at {res['popularity']['auc']:.4f}. The "
+        f"matching is partial, so what the table shows is the confound SHRINKING, not vanishing. "
+        f"The learned arms keep their scores while popularity loses "
+        f"{resf['popularity']['auc'] - res['popularity']['auc']:.4f}, and a frequency column "
+        f"cannot explain a PAIRED difference between two arms scoring identical candidates -- "
+        f"which is what C4 and C5 measure -- but the absolute numbers still carry some of it."))
     c6 = True
     say(f"     C6 {'PASS' if c6 else 'FAIL'}")
 
