@@ -519,3 +519,89 @@ if __name__ == "__main__":
     print("SEQUENCE LAYER: motifs, partition functions, groove shape and charge, duplex opening")
     print("=" * 100)
     build()
+
+
+# ---------------------------------------------------------------------------------------------
+# motif CLUSTERING, which the per-motif summaries above cannot express
+# ---------------------------------------------------------------------------------------------
+"""MX, LZ and NS say how strong a motif's best site is, how much total weight it carries, and how
+many sites clear threshold. None of them says where those sites are relative to each other, and
+that is the one thing about an enhancer that has been reproducible for twenty years: functional
+regulatory elements carry CLUSTERS -- several copies of one motif close together (homotypic), and
+several different motifs close together (heterotypic). A count of 40 sites spread over 500 bp and a
+count of 40 sites piled into 60 bp are the same number in NS and completely different objects.
+
+Two families of statistic are collected in one extra pass over the same score arrays:
+
+  HOMOTYPIC   for each motif, the largest number of its own above-threshold sites inside any window
+              of CLUSTER_BP. Reduced immediately to per-sequence summaries -- the best such count
+              over all motifs, and how many motifs manage two or more -- because keeping the full
+              (motif x sequence) matrix would be a third copy of an array this loop already holds
+              twice.
+  HETEROTYPIC a per-position count of how many DISTINCT motifs have a site starting there,
+              accumulated across all motifs, then summarised per sequence as the densest window at
+              three scales and the mean. This is the quantity a "regulatory module" is usually
+              defined by, and it cannot be recovered from any per-motif column.
+
+Thresholds are the same REL_THRESH used everywhere else, so "a site" means one thing in this file.
+"""
+CLUSTER_BP = (50, 100, 200)
+HOMO_BP = 100
+MIN_HOMO = 2
+
+
+def _roll_max(x, w, starts, n):
+    """Per-segment maximum of the rolling sum of `x` over windows of width w."""
+    c = np.concatenate([[0], np.cumsum(x.astype(np.int32))])
+    s = (c[w:] - c[:-w]).astype(np.int32)
+    st = np.minimum(starts, len(s) - 1)
+    return np.maximum.reduceat(s, st)
+
+
+def scan_clusters(cat, starts, ids, mots, report=print, label=""):
+    """Homotypic and heterotypic clustering statistics, per sequence."""
+    nseg = len(starts)
+    dens = np.zeros(len(cat), dtype=np.int16)
+    homo_best = np.zeros(nseg, dtype=np.int32)
+    homo_n = np.zeros(nseg, dtype=np.int32)
+    t0 = time.time()
+    order = sorted(range(len(ids)), key=lambda i: mots[ids[i]].shape[0])
+    for done, mi in enumerate(order):
+        lo = mots[ids[mi]]
+        L = lo.shape[0]
+        n = len(cat) - L + 1
+        if n <= 0:
+            continue
+        thr = REL_THRESH * float(lo.max(1).sum())
+        sf = np.zeros(n, dtype=np.float32)
+        sr = np.zeros(n, dtype=np.float32)
+        bad = np.zeros(n, dtype=bool)
+        lor = lo[::-1, ::-1]
+        for p in range(L):
+            c = cat[p:p + n]
+            bad |= c > 3
+            idx = np.minimum(c, 3)
+            sf += lo[p][idx]
+            sr += lor[p][idx]
+        hit = ((sf >= thr) | (sr >= thr)) & ~bad
+        dens[:n] += hit.astype(np.int16)
+        m = _roll_max(hit, HOMO_BP, starts, n)
+        homo_best = np.maximum(homo_best, m)
+        homo_n += (m >= MIN_HOMO).astype(np.int32)
+        if (done + 1) % 200 == 0:
+            el = time.time() - t0
+            report(f"      {label} cluster motif {done+1}/{len(ids)}  "
+                   f"[{el:.0f}s, eta {el/(done+1)*(len(ids)-done-1):.0f}s]")
+    out = dict(homo_best=homo_best.astype(np.float32), homo_n=homo_n.astype(np.float32))
+    ends = np.r_[starts[1:], len(cat)]
+    for w in CLUSTER_BP:
+        c = np.concatenate([[0], np.cumsum(dens.astype(np.int64))])
+        s = (c[w:] - c[:-w]).astype(np.int32)
+        st = np.minimum(starts, len(s) - 1)
+        out[f"het_max_{w}"] = np.maximum.reduceat(s, st).astype(np.float32)
+    tot = np.add.reduceat(dens.astype(np.int64), starts).astype(np.float64)
+    out["het_mean"] = (tot / np.maximum(ends - starts, 1)).astype(np.float32)
+    report(f"    clusters: homotypic best median {np.median(out['homo_best']):.0f} sites in "
+           f"{HOMO_BP} bp, {np.median(out['homo_n']):.0f} motifs with >= {MIN_HOMO}; "
+           f"heterotypic density median {np.median(out['het_mean']):.2f} motifs/bp")
+    return out
