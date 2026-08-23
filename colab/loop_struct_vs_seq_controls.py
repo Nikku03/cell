@@ -20,7 +20,12 @@ between this loop and 163 is attributable to the confound and to nothing else.
 PREDECLARED, before any number is looked at.
 
   C1 THE CONTROL WORKS. The popularity column, scored on the frequency-matched candidate sets.
-     (Second attempt. The first drew negatives from each positive's frequency STRATUM and pooled
+     (Third attempt. The second gave each positive its own mini-contest against the candidates
+     nearest in frequency, which took popularity from 0.8503 to 0.5350 -- still not chance, because
+     a positive near an end of the frequency order filled its negatives entirely from one side and
+     positives skew high, so those contests scored 1.0. Negatives are now drawn symmetrically,
+     equal counts above and below, and an unmatchable positive is dropped rather than fudged.
+     Second attempt. The first drew negatives from each positive's frequency STRATUM and pooled
      them per enzyme; popularity fell from 0.8503 to 0.5991 and the gate correctly failed, because
      pooling positives from different strata leaves a cross-stratum frequency gradient to sort.
      Now every positive runs its own mini-contest against the candidates nearest to it in
@@ -151,27 +156,40 @@ def main():
     say(f"     popularity ranges {pop.min():.5f} to {pop.max():.4f}; negatives are the "
         f"{NEG_PER_POS} candidates nearest in frequency to each positive")
 
-    cand = []
+    # SYMMETRIC matching. The previous attempt walked outward from the positive and took whichever
+    # side had a candidate, so a positive near either end of the frequency order filled entirely
+    # from one side -- and positives skew to high frequency, so the fill was systematically from
+    # BELOW and a popularity column scored those mini-contests at 1.0. That is the residual 0.5350
+    # C1 rejected. Here each positive takes an EQUAL number of negatives from above and below its
+    # own frequency rank, and a positive that cannot be matched on both sides is dropped rather
+    # than matched one-sidedly. Popularity is then symmetric around every positive by construction.
+    half = NEG_PER_POS // 2
+    cand, n_drop = [], 0
     for i in range(len(accs)):
         pos = np.where(Y[i] > 0)[0]
         mini = []
         for p in pos:
-            lo, hi = posn[p] - 1, posn[p] + 1
-            neg = []
-            while len(neg) < NEG_PER_POS and (lo >= 0 or hi < len(order)):
-                for side in (lo, hi):
-                    if 0 <= side < len(order) and len(neg) < NEG_PER_POS:
-                        c = order[side]
-                        if Y[i, c] == 0:
-                            neg.append(c)
-                lo -= 1
-                hi += 1
-            if neg:
-                mini.append((p, np.array(neg)))
+            below, above = [], []
+            k = posn[p] - 1
+            while k >= 0 and len(below) < half:
+                if Y[i, order[k]] == 0:
+                    below.append(order[k])
+                k -= 1
+            k = posn[p] + 1
+            while k < len(order) and len(above) < half:
+                if Y[i, order[k]] == 0:
+                    above.append(order[k])
+                k += 1
+            if len(below) == half and len(above) == half:
+                mini.append((p, np.array(below + above)))
+            else:
+                n_drop += 1
         cand.append(mini)
+    say(f"     {n_drop:,} positives dropped for want of a symmetric match")
     sizes = [len(m) for m in cand]
     say(f"     {int(np.sum(sizes)):,} mini-contests over {len(accs):,} enzymes, "
-        f"median {int(np.median(sizes))} per enzyme, {NEG_PER_POS + 1} candidates each")
+        f"median {int(np.median(sizes))} per enzyme, {NEG_PER_POS + 1} candidates each "
+        f"({half} negatives below the positive's frequency and {half} above)")
 
     fold, ncl, ks = homology_folds(seqs, accs)
     say(f"     {ncl:,} homology clusters, folds {[int((fold == f).sum()) for f in range(NFOLD)]}")
