@@ -88,28 +88,30 @@ def say(s=""):
 def biregular_mask(n_in, n_out, d_out, rng, tries=40):
     """Random biregular bipartite mask, verified against the Feng-Li Ramanujan bound.
 
-    Each output unit takes exactly d_out inputs; inputs are used as evenly as the sizes allow. The
-    bound for a (d_l, d_r)-biregular bipartite graph is sqrt(d_l - 1) + sqrt(d_r - 1) on the second
-    singular value of the biadjacency matrix."""
+    Each output unit takes exactly d_out DISTINCT inputs, and inputs are consumed in least-used-first
+    order so the left degrees stay within one of each other -- that is what makes the graph biregular
+    rather than merely sparse. The first version shuffled a tiled index array and cut it into
+    consecutive chunks, which almost never yields d_out distinct entries per row; every retry failed
+    and the function returned None. Building the row from a usage count cannot produce a duplicate.
+
+    The bound for a (d_l, d_r)-biregular bipartite graph is sqrt(d_l - 1) + sqrt(d_r - 1) on the
+    second singular value of the biadjacency matrix.
+    """
+    d_out = int(min(d_out, n_in))
     best = None
     for t in range(1, tries + 1):
         M = np.zeros((n_out, n_in), np.float32)
-        slots = np.tile(np.arange(n_in), int(np.ceil(d_out * n_out / n_in)))[:d_out * n_out]
-        rng.shuffle(slots)
-        ok = True
+        use = np.zeros(n_in)
         for r in range(n_out):
-            take = slots[r * d_out:(r + 1) * d_out]
-            if len(set(take.tolist())) < d_out:
-                ok = False
-                break
+            jitter = rng.random(n_in) * 0.5
+            take = np.argsort(use + jitter)[:d_out]
             M[r, take] = 1.0
-        if not ok:
-            continue
-        d_l = M.sum(0)
-        d_r = M.sum(1)
-        s = np.linalg.svd(M, compute_uv=False)
-        lam2 = float(s[1]) if len(s) > 1 else 0.0
-        bound = float(np.sqrt(max(d_l.mean() - 1, 0)) + np.sqrt(max(d_r.mean() - 1, 0)))
+            use[take] += 1.0
+        d_l = float(M.sum(0).mean())
+        d_r = float(M.sum(1).mean())
+        sv = np.linalg.svd(M, compute_uv=False)
+        lam2 = float(sv[1]) if len(sv) > 1 else 0.0
+        bound = float(np.sqrt(max(d_l - 1, 0)) + np.sqrt(max(d_r - 1, 0)))
         if best is None or lam2 < best[1]:
             best = (M, lam2, bound, t)
         if lam2 <= bound:
