@@ -360,8 +360,12 @@ def main():
         f"confidence orders difficulty: the confident half is {d2:+.4f} above the overall rate "
         f"({d2/s2:+.1f} sem)."), if_false="confidence does not order difficulty.")
     say(f"     X2 {'PASS' if x2 else 'FAIL'}")
-    cov90 = next((c["coverage"] for c in curve if c["precision"] >= 0.90), None)
-    cov95 = next((c["coverage"] for c in curve if c["precision"] >= 0.95), None)
+    # MAXIMUM coverage still meeting the precision target, not the minimum. The first version used
+    # next(...) over a curve whose precision DECREASES with coverage, so it returned the smallest
+    # coverage -- always 0.10 -- and the gate then rejected it for being <= 0.10. The gate asked
+    # its question backwards and failed a result that was in fact strong at every level.
+    cov90 = max([c["coverage"] for c in curve if c["precision"] >= 0.90], default=None)
+    cov95 = max([c["coverage"] for c in curve if c["precision"] >= 0.95], default=None)
     say(f"     90% precision reached at coverage {cov90 if cov90 else 'never'}; "
         f"95% at {cov95 if cov95 else 'never'}")
     x3 = bool(cov90 is not None and cov90 > 0.10)
