@@ -338,7 +338,7 @@ def main():
     v6 = True
     say(f"     V6 {'PASS' if v6 else 'FAIL'}")
 
-    gates = {"U1": v1, "U2": v2, "U3": v3, "U4": v4, "U5": v5, "U6": v6}
+    gates = {"V1": v1, "V2": v2, "V3": v3, "V4": v4, "V5": v5, "V6": v6}
     man = RM.manifest(inputs=[Path("colab/data/rem_bipartite.npz"),
                               Path("colab/data/rem_chem.npz")],
                       available=len(R.dev), used=n_ok, selection="random", seed=SAMPLE_SEED,
