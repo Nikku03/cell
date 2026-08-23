@@ -129,3 +129,74 @@ if __name__ == "__main__":
     print("SELF-REGULATING TRANSCRIPTION FACTORS, from TRRUST curation")
     print("=" * 100)
     build()
+
+
+# ---------------------------------------------------------------------------------------------
+# the second definition: does a factor's own promoter actually carry its own motif?
+# ---------------------------------------------------------------------------------------------
+"""TRRUST gives 4.9% self-regulating among curated matrices, not the 50% the plan assumed, and the
+factors it calls self-regulating have a median out-degree of 39 against 5 for the rest -- so the
+curated label is largely a statement about how much a factor has been studied. That makes curation
+a poor instrument for a 50/50 split.
+
+The measurable alternative uses the machinery already built: scan every transcription factor's OWN
+promoter with its OWN motif, and z-score that against the same motif's scores across all the other
+factor promoters. The z-score, not the raw score, is the quantity -- a motif that scores highly on
+every promoter is not autoregulating anything, it is just an easy motif. This gives a uniform call
+for all 736 matrices with no curation bias, and it can be split at its own median, which is exactly
+the 50/50 the plan asked for.
+
+It is a PREDICTION, not an observation, and whether it means anything is checked against curation:
+the matrices TRRUST calls self-regulating should score higher on it than the curated ones it does
+not. That check is a gate in the loop, not an assertion here."""
+SELF_CACHE = DATA / "tf_self_binding.npz"
+
+
+def self_binding(report=print, force=False):
+    import numpy as np
+    from enh import genome as GEN
+    from enh import scan as SC
+    from enh import shape_table as ST
+    if SELF_CACHE.exists() and not force:
+        z = np.load(SELF_CACHE, allow_pickle=True)
+        return {k: z[k] for k in z.files}
+    raw = json.load(open(Path(os.environ.get("CELL_OUT", "outputs/orphan")) / "tf_motifs.json"))["motifs"]
+    tss = {}
+    for line in open(SP / "_tss_hg19.bed"):
+        f = line.split()
+        if len(f) >= 4:
+            tss[f[3]] = (f[0], int(f[1]))
+    gkeys = sorted(k for k in raw if f"G{k}" in tss)
+    report(f"    {len(gkeys)}/{len(raw)} motif genes have an hg19 TSS")
+    regions = [(tss[f"G{k}"][0], tss[f"G{k}"][1] - SC.PROMOTER_PAD,
+                tss[f"G{k}"][1] + SC.PROMOTER_PAD) for k in gkeys]
+    seqs = GEN.Genome().extract_cached(regions, "tfprom", report)
+    ids, mots = SC.load_motifs(report)
+    maxw = max(m.shape[0] for m in mots.values())
+    cat, starts = SC.concat(seqs, maxw)
+    report(f"    scanning {len(seqs)} factor promoters, {len(cat):,} bp")
+    MX, LZ, NS, _ = SC.scan_set(cat, starts, ids, mots, None, report, False, "tfprom")
+    own = {}
+    for k in gkeys:
+        own.setdefault(raw[k]["id"], []).append(gkeys.index(k))
+    mi = {m: i for i, m in enumerate(ids)}
+    zs = np.full(len(ids), np.nan)
+    rawmax = np.full(len(ids), np.nan)
+    for m, rows in own.items():
+        i = mi[m]
+        v = MX[i].astype(np.float64)
+        good = np.isfinite(v)
+        if good.sum() < 10:
+            continue
+        mu, sd = v[good].mean(), v[good].std()
+        s = np.nanmax(v[rows])
+        rawmax[i] = s
+        zs[i] = (s - mu) / (sd if sd > 0 else 1.0)
+    ok = np.isfinite(zs)
+    report(f"    self-binding z computed for {int(ok.sum())}/{len(ids)} matrices; "
+           f"median {np.nanmedian(zs):.3f}, IQR "
+           f"[{np.nanpercentile(zs, 25):.3f}, {np.nanpercentile(zs, 75):.3f}]")
+    out = dict(motif_ids=np.array(ids, dtype=object), self_z=zs, self_max=rawmax)
+    np.savez_compressed(SELF_CACHE, **out)
+    report(f"  -> {SELF_CACHE}")
+    return out
