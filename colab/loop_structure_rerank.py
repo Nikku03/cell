@@ -193,7 +193,10 @@ def main():
             sref = np.nanmean(CD[sidx], 0) if sidx else np.full(len(dnames), np.nan)
             rows.append(np.hstack([sd, sd - sref]))
             # bucket labels
-            names = {R.sp_name[int(R.noncur[k])] for k in np.where(solo & ~cs["excl"])[0]}
+            # solo is a float indicator array; cs["excl"] is boolean, and numpy will not
+            # bitwise-and the two. Cast rather than rely on coercion.
+            names = {R.sp_name[int(R.noncur[k])]
+                     for k in np.where(solo.astype(bool) & ~cs["excl"])[0]}
             is_amb = (not ({R.sp_name[i] for i in cs["seeds"]}
                            & {R.sp_name[i] for i in cs["targets"]})
                       and len(cs["targets"]) == 1 and len(names) >= 2)
