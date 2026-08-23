@@ -457,7 +457,7 @@ def main():
     say(f"     {len(F)} columns; domain properties resolved for {int(have.sum())}/{len(have)} matrices")
     Fsh, _, _ = build_features(P, "sh", report=say)
     Fraw, _, _ = build_features(P, "el", competition=False, report=say)
-    for name, frame in (("real", F), ("shuffled", Fsh)):
+    for name, frame in (("real", F), ("shuffled", Fsh), ("raw-score", Fraw)):
         bad = [c for c, v in frame.items() if not np.isfinite(v).all()]
         if bad:
             say(f"     WARNING {name}: non-finite columns {bad}")
