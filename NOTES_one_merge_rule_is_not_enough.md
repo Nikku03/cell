@@ -72,3 +72,36 @@ structure score and structure rank terms were `[0.761, 0.426]` in one fold and `
 the other — same magnitude of gain, opposite signs on the structure score. It is finding the gain
 through different terms in different folds, which is what a small signal in a correlated pair looks
 like, and is a reason to prefer the fixed-weight score-space rule over the learned one here.
+
+---
+
+# Addendum: independence beats solo strength
+
+Loop 163d added electrostatics and sterics as two more blocks. The result is a clean demonstration
+that how good a block is ALONE says almost nothing about whether it is worth adding.
+
+| block | alone | Spearman vs sequence | vs geometry | regret in the merge |
+|---|---|---|---|---|
+| sequence | **0.7941** | — | +0.5858 | **+0.0730** load-bearing |
+| geometry | 0.6993 | +0.5858 | — | +0.0038 load-bearing |
+| sterics | 0.6645 | +0.4730 | **+0.5879** | +0.0025 **DROPPABLE** |
+| electrostatics | **0.5849** | **+0.1662** | **+0.2108** | +0.0039 load-bearing |
+
+**Electrostatics is the worst block alone and one of the load-bearing ones in the merge.** It scores
+0.5849 against a 0.4802 floor — barely better than nothing on its own — but it is the most
+independent block in the set, correlating with sequence at +0.166 and with geometry at +0.211.
+
+**Sterics is the better block alone and the droppable one.** It scores 0.6645, comfortably above
+electrostatics, and correlates with geometry at +0.5879 — higher than the +0.5858 that sequence and
+geometry already share. It is largely geometry measured a second way, so it has nothing left to
+contribute once geometry is present.
+
+Loop 159 found the mirror image of this in the cell model: five mechanisms that were each
+individually droppable and collectively load-bearing, because every drive was global and they were
+all reading the same gene-specific quantity. The principle is the same in both directions. What a
+block contributes to an ensemble is a function of what the ensemble does NOT already know, and solo
+performance measures the wrong thing.
+
+The practical consequence: rank candidate blocks by their correlation with what you already have,
+not by their standalone score. N2 and N3 -- correlation and oracle ceiling, both measured before any
+merge rule is searched -- cost seconds and predicted this result exactly.
