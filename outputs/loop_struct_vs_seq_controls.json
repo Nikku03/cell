@@ -1,0 +1,204 @@
+{
+ "test": "structure vs sequence with the popularity confound removed",
+ "gates": {
+  "C1": false,
+  "C2": true,
+  "C3": true,
+  "C4": false,
+  "C5": false,
+  "C6": true
+ },
+ "matched": {
+  "esm35": {
+   "auc": 0.8159106795933665,
+   "sem": 0.0045313935651843966,
+   "n": 2171
+  },
+  "esm8": {
+   "auc": 0.7986163816551781,
+   "sem": 0.004644112083638559,
+   "n": 2171
+  },
+  "structure": {
+   "auc": 0.7256370451354712,
+   "sem": 0.004884398023990244,
+   "n": 2171
+  },
+  "esm35+structure": {
+   "auc": 0.8145119194915691,
+   "sem": 0.004539652778670831,
+   "n": 2171
+  },
+  "esm35+esm8": {
+   "auc": 0.8163187415079214,
+   "sem": 0.004524177993790249,
+   "n": 2171
+  },
+  "popularity": {
+   "auc": 0.5990991202854842,
+   "sem": 0.003460634316771205,
+   "n": 2171
+  },
+  "kmer_homology": {
+   "auc": 0.7492628778354421,
+   "sem": 0.0050626261849031975,
+   "n": 2171
+  }
+ },
+ "full": {
+  "esm35": {
+   "auc": 0.8210378319194347,
+   "sem": 0.004492511139639051,
+   "n": 2171
+  },
+  "esm8": {
+   "auc": 0.8044406880134968,
+   "sem": 0.004604156652084316,
+   "n": 2171
+  },
+  "structure": {
+   "auc": 0.7366360095172855,
+   "sem": 0.004798996769017388,
+   "n": 2171
+  },
+  "esm35+structure": {
+   "auc": 0.8198212891845187,
+   "sem": 0.004500145854654771,
+   "n": 2171
+  },
+  "esm35+esm8": {
+   "auc": 0.8212454246793935,
+   "sem": 0.004489190747497247,
+   "n": 2171
+  },
+  "popularity": {
+   "auc": 0.8503440462877732,
+   "sem": 0.0026820528086265605,
+   "n": 2171
+  }
+ },
+ "paired": {
+  "best_vs_kmer": [
+   0.06705586367247932,
+   0.0037535485905381624
+  ],
+  "structure_vs_seq": [
+   -0.09027363445789521,
+   0.003978112964858231
+  ],
+  "combined_vs_seq": [
+   -0.0013987601017972826,
+   0.0009264332765267154
+  ]
+ },
+ "n_enzymes": 2171,
+ "neg_per_pos": 20,
+ "n_strata": 20,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/esm_enzymes.npz",
+    "bytes": 6475346,
+    "hash": "f23e386cab80d238",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/struct_enzymes.npz",
+    "bytes": 410607,
+    "hash": "6cd642194f3083c0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/rem_enzyme.npz",
+    "bytes": 140408,
+    "hash": "6cc33410bbe926e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2171,
+   "used": 2171,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 16300,
+  "controls": [
+   "candidates frequency-matched so a popularity column scores 0.5 by construction",
+   "C1 gates that the matching worked instead of assuming it",
+   "identical proteins, folds, arms, k and seed as loop 163 -- only the candidate set moves",
+   "a raw 5-mer homology lookup as the BLAST control",
+   "both candidate sets reported side by side so the confound is a number"
+  ],
+  "note": "loop 163 re-asked on frequency-matched candidates, after its own Y2 voided it",
+  "warnings": []
+ },
+ "seconds": 106.31617474555969,
+ "log": [
+  "========================================================================================================",
+  "  STRUCTURE VS SEQUENCE, ON A TASK POPULARITY CANNOT WIN",
+  "========================================================================================================",
+  "",
+  "     2,171 enzymes | 8,428 candidate metabolites | median 6 true metabolites each",
+  "     20 equal-count frequency strata; popularity ranges 0.00000 to 0.0580",
+  "     matched candidate sets: median 113 candidates (20 negatives per positive, drawn from the positive's own stratum)",
+  "     2,062 homology clusters, folds [435, 434, 434, 434, 434]",
+  "",
+  "     fold 0: 435 test proteins [25s]",
+  "     fold 1: 434 test proteins [45s]",
+  "     fold 2: 434 test proteins [66s]",
+  "     fold 3: 434 test proteins [86s]",
+  "     fold 4: 434 test proteins [106s]",
+  "",
+  "     ON THE FREQUENCY-MATCHED CANDIDATE SETS:",
+  "       esm35+esm8           AUC 0.8163 +/- 0.0045",
+  "       esm35                AUC 0.8159 +/- 0.0045",
+  "       esm35+structure      AUC 0.8145 +/- 0.0045",
+  "       esm8                 AUC 0.7986 +/- 0.0046",
+  "       kmer_homology        AUC 0.7493 +/- 0.0051",
+  "       structure            AUC 0.7256 +/- 0.0049",
+  "       popularity           AUC 0.5991 +/- 0.0035",
+  "",
+  "C1 popularity on the matched sets: AUC 0.5991 (gate |AUC-0.5| <= 0.02)",
+  "     popularity still sorts these candidates, so the matching failed and every number below inherits loop 163's confound.",
+  "     C1 FAIL",
+  "",
+  "C2 best arm (esm35+esm8) against chance: 0.8163 +/- 0.0045",
+  "     there is real function signal once frequency is removed.",
+  "     C2 PASS",
+  "",
+  "C3 esm35+esm8 minus raw 5-mer homology: +0.0671 sem 0.0038 = +17.9 sem",
+  "     the learned representation beats string similarity.",
+  "     C3 PASS",
+  "",
+  "C4 STRUCTURE minus esm35: -0.0903 sem 0.0040 = -22.7 sem",
+  "     structure still does not beat sequence. Loop 163's ordering was not an artefact of the popularity confound -- it holds on a task where popularity scores nothing.",
+  "     C4 FAIL",
+  "",
+  "C5 esm35+structure minus esm35: -0.0014 sem 0.0009 = -1.5 sem",
+  "     structure adds nothing to sequence on this task either.",
+  "     C5 FAIL",
+  "",
+  "C6 THE SIZE OF THE CONFOUND, as a number",
+  "     arm                    loop 163 (all 8,428)    matched     shift",
+  "     esm35                                0.8210     0.8159   -0.0051",
+  "     esm8                                 0.8044     0.7986   -0.0058",
+  "     structure                            0.7366     0.7256   -0.0110",
+  "     esm35+structure                      0.8198     0.8145   -0.0053",
+  "     esm35+esm8                           0.8212     0.8163   -0.0049",
+  "     popularity                           0.8503     0.5991   -0.2512",
+  "     popularity falls to chance by construction; every learned arm keeps most of its",
+  "     score, which is what says the arms were not merely reproducing the frequency table.",
+  "     C6 PASS",
+  "",
+  "========================================================================================================",
+  "  C1  FAIL",
+  "  C2  PASS",
+  "  C3  PASS",
+  "  C4  FAIL",
+  "  C5  FAIL",
+  "  C6  PASS",
+  "  3/6   [106s]",
+  "========================================================================================================"
+ ]
+}
