@@ -1,0 +1,673 @@
+{
+ "test": "enhancer grammar",
+ "gates": {
+  "E1": true,
+  "E2": true,
+  "E3": false,
+  "E4": false,
+  "E5": false,
+  "E6": false,
+  "E7": false,
+  "E7b": false,
+  "E8": false,
+  "E9": false,
+  "E10": true
+ },
+ "n_pairs": 11933,
+ "n_positives": 482,
+ "base_rate": 0.04039218972597,
+ "n_elements": 4482,
+ "n_genes": 2205,
+ "n_evaluable_genes": 199,
+ "liftover": {
+  "n": 16362,
+  "lifted": 16288,
+  "exact": 16288,
+  "lift_rate": 0.9954773255103289,
+  "exact_rate": 1.0,
+  "median_err": 0.0,
+  "stats": {
+   "queried": 16358,
+   "unmapped": 0,
+   "cross_chrom": 0,
+   "reversed_chain": 70,
+   "mapped": 16288
+  }
+ },
+ "lift_rate": 0.9993325917686318,
+ "median_n_frac": 0.0,
+ "arms": {
+  "distance": {
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "mrr": [
+    0.7071378448077316,
+    0.7195726988440554,
+    0.721787040662669,
+    0.7227528100889471,
+    0.7165514073557581
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ]
+  },
+  "dist+comp": {
+   "r1": [
+    0.628140703517588,
+    0.6432160804020101,
+    0.6432160804020101,
+    0.6080402010050251,
+    0.6231155778894473
+   ],
+   "mrr": [
+    0.730863787573808,
+    0.7464449023193332,
+    0.7434879281391249,
+    0.726479651590955,
+    0.7330329108753935
+   ],
+   "ap": [
+    0.29723971614241346,
+    0.2985743862122158,
+    0.31277373484502363,
+    0.31825182158772763,
+    0.3091449324467137
+   ]
+  },
+  "dist+comp+sites": {
+   "r1": [
+    0.628140703517588,
+    0.592964824120603,
+    0.592964824120603,
+    0.5829145728643216,
+    0.5879396984924623
+   ],
+   "mrr": [
+    0.7329592039143085,
+    0.7108917877133957,
+    0.7130737450215952,
+    0.7117153371359184,
+    0.7154164462987994
+   ],
+   "ap": [
+    0.28861112726391686,
+    0.2816892146396548,
+    0.27478035759589464,
+    0.2905542017870532,
+    0.2945606710547718
+   ]
+  },
+  "+pairing": {
+   "r1": [
+    0.5829145728643216,
+    0.6130653266331658,
+    0.6180904522613065,
+    0.6130653266331658,
+    0.5829145728643216
+   ],
+   "mrr": [
+    0.7107130965655132,
+    0.7216004327296723,
+    0.7303639489189477,
+    0.7221521208986106,
+    0.7061258066595105
+   ],
+   "ap": [
+    0.29365594409150486,
+    0.2795020959414925,
+    0.2912313865894114,
+    0.2885986123082021,
+    0.3005428535847095
+   ]
+  },
+  "+shape": {
+   "r1": [
+    0.6180904522613065,
+    0.628140703517588,
+    0.6030150753768844,
+    0.6130653266331658,
+    0.6130653266331658
+   ],
+   "mrr": [
+    0.7296625558718249,
+    0.7278320872920011,
+    0.7200974803123317,
+    0.7294242281556115,
+    0.7271843217667538
+   ],
+   "ap": [
+    0.30322798500696824,
+    0.29411798054292926,
+    0.2936818358614612,
+    0.31306296470331546,
+    0.31190403910057635
+   ]
+  },
+  "+compl_major": {
+   "r1": [
+    0.6130653266331658,
+    0.5979899497487438,
+    0.6180904522613065,
+    0.6030150753768844,
+    0.6080402010050251
+   ],
+   "mrr": [
+    0.7239750944709812,
+    0.7108647239640243,
+    0.7343619284858498,
+    0.7239586728747307,
+    0.7268978831859021
+   ],
+   "ap": [
+    0.29816161400380975,
+    0.2974445700168518,
+    0.2873737478492438,
+    0.3092697520194032,
+    0.31024417753087613
+   ]
+  },
+  "+compl_minor": {
+   "r1": [
+    0.6180904522613065,
+    0.5829145728643216,
+    0.6030150753768844,
+    0.5979899497487438,
+    0.6130653266331658
+   ],
+   "mrr": [
+    0.7285695019164463,
+    0.7093650813482439,
+    0.7209848725395207,
+    0.7185177249828719,
+    0.723475194382482
+   ],
+   "ap": [
+    0.2988472665277437,
+    0.29913826540764293,
+    0.2958777449869135,
+    0.30935698324826616,
+    0.3132285061278308
+   ]
+  },
+  "FULL": {
+   "r1": [
+    0.5979899497487438,
+    0.6180904522613065,
+    0.5979899497487438,
+    0.6080402010050251,
+    0.6030150753768844
+   ],
+   "mrr": [
+    0.7161560435136143,
+    0.7268283277966446,
+    0.716392710634992,
+    0.7190470801245263,
+    0.7153258254391344
+   ],
+   "ap": [
+    0.30063384044060354,
+    0.29319084623905695,
+    0.2838649878514959,
+    0.30920983427895177,
+    0.2984446872817107
+   ]
+  },
+  "FULL_shuffled": {
+   "r1": [
+    0.6331658291457286,
+    0.5979899497487438,
+    0.6130653266331658,
+    0.6130653266331658,
+    0.5879396984924623
+   ],
+   "mrr": [
+    0.7357269759356415,
+    0.7175338951765319,
+    0.7311115553328882,
+    0.7351153223375644,
+    0.7166982083400036
+   ],
+   "ap": [
+    0.32205451306336824,
+    0.3140196242560305,
+    0.30016490438497,
+    0.3155232864583533,
+    0.30412534232795535
+   ]
+  },
+  "FULL_permTF": {
+   "r1": [
+    0.6331658291457286,
+    0.6130653266331658,
+    0.6030150753768844,
+    0.592964824120603,
+    0.5728643216080402
+   ],
+   "mrr": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "ap": [
+    0.30519226827650586,
+    0.3024801569650895,
+    0.29346431331669365,
+    0.31450977597178337,
+    0.2888461012456201
+   ]
+  },
+  "sites_raw": {
+   "r1": [
+    0.628140703517588,
+    0.6130653266331658,
+    0.6231155778894473,
+    0.6080402010050251,
+    0.592964824120603
+   ],
+   "mrr": [
+    0.732972765742202,
+    0.7239264966718021,
+    0.7403744435724592,
+    0.7263591031543697,
+    0.7211106962551685
+   ],
+   "ap": [
+    0.29569378308455135,
+    0.27842681620701676,
+    0.2959679740865409,
+    0.2998826740553511,
+    0.2939520502282196
+   ]
+  }
+ },
+ "random_pick_r1": 0.3597989949748744,
+ "ladder": [
+  {
+   "arm": "distance",
+   "r1": 0.592964824120603,
+   "mrr": 0.7175603603518322,
+   "ap": 0.28444394940881107
+  },
+  {
+   "arm": "dist+comp",
+   "r1": 0.629145728643216,
+   "mrr": 0.7360618360997229,
+   "ap": 0.3071969182468189,
+   "d_r1": 0.036180904522613064,
+   "d_ap": 0.022752968838007804,
+   "clears": true
+  },
+  {
+   "arm": "dist+comp+sites",
+   "r1": 0.5969849246231156,
+   "mrr": 0.7168113040168035,
+   "ap": 0.2860391144682583,
+   "d_r1": -0.032160804020100506,
+   "d_ap": -0.02115780377856059,
+   "clears": false
+  },
+  {
+   "arm": "+pairing",
+   "r1": 0.6020100502512563,
+   "mrr": 0.718191081154451,
+   "ap": 0.29070617850306407,
+   "d_r1": 0.005025125628140681,
+   "d_ap": 0.004667064034805812,
+   "clears": false
+  },
+  {
+   "arm": "+shape",
+   "r1": 0.615075376884422,
+   "mrr": 0.7268401346797047,
+   "ap": 0.30319896104305005,
+   "d_r1": 0.013065326633165841,
+   "d_ap": 0.012492782539986026,
+   "clears": false
+  },
+  {
+   "arm": "+compl_major",
+   "r1": 0.6080402010050251,
+   "mrr": 0.7240116605962976,
+   "ap": 0.300498772284037,
+   "d_r1": -0.007035175879396993,
+   "d_ap": -0.0027001887590131558,
+   "clears": false
+  },
+  {
+   "arm": "+compl_minor",
+   "r1": 0.6030150753768844,
+   "mrr": 0.720182475033913,
+   "ap": 0.3032897532596794,
+   "d_r1": -0.005025125628140703,
+   "d_ap": 0.0027909809756424763,
+   "clears": false
+  },
+  {
+   "arm": "FULL",
+   "r1": 0.6050251256281407,
+   "mrr": 0.7187499975017824,
+   "ap": 0.29706883921836374,
+   "d_r1": 0.0020100502512562903,
+   "d_ap": -0.006220914041315651,
+   "clears": false
+  }
+ ],
+ "increments": {
+  "E3_full_vs_distance": {
+   "d_r1": [
+    0.015075376884422176,
+    0.03015075376884424,
+    0.0,
+    0.01005025125628134,
+    0.005025125628140614
+   ],
+   "d_ap": [
+    0.017728795020167054,
+    0.011486356510650109,
+    -0.005307239730329372,
+    0.019383441755794928,
+    0.01983309549148088
+   ],
+   "mean_r1": 0.012060301507537674,
+   "sem_r1": 0.005173683487933179,
+   "mean_ap": 0.01262488980955272,
+   "n_pos_r1": 4,
+   "n_ap_pass": 4
+  },
+  "E4_vs_shuffled": {
+   "d_r1": [
+    -0.035175879396984855,
+    0.02010050251256279,
+    -0.015075376884422065,
+    -0.005025125628140725,
+    0.015075376884422065
+   ],
+   "d_ap": [
+    -0.021420672622764703,
+    -0.02082877801697358,
+    -0.016299916533474124,
+    -0.006313452179401546,
+    -0.005680655046244654
+   ],
+   "mean_r1": -0.004020100502512558,
+   "sem_r1": 0.01010037750866419,
+   "mean_ap": -0.014108694879771722,
+   "n_pos_r1": 2,
+   "n_ap_pass": 0
+  },
+  "E5_vs_permTF": {
+   "d_r1": [
+    -0.035175879396984855,
+    0.005025125628140725,
+    -0.005025125628140614,
+    0.015075376884422065,
+    0.03015075376884413
+   ],
+   "d_ap": [
+    -0.004558427835902323,
+    -0.009289310726032562,
+    -0.009599325465197761,
+    -0.0052999416928316,
+    0.009598586036090595
+   ],
+   "mean_r1": 0.0020100502512562903,
+   "sem_r1": 0.01096352976345295,
+   "mean_ap": -0.0038296839367747302,
+   "n_pos_r1": 3,
+   "n_ap_pass": 0
+  },
+  "E6_shape": {
+   "d_r1": [
+    0.035175879396984966,
+    0.015075376884422176,
+    -0.015075376884422176,
+    0.0,
+    0.03015075376884424
+   ],
+   "d_ap": [
+    0.009572040915463376,
+    0.014615884601436757,
+    0.002450449272049793,
+    0.024464352395113353,
+    0.011361185515866845
+   ],
+   "mean_r1": 0.013065326633165841,
+   "sem_r1": 0.009347273988813218,
+   "mean_ap": 0.012492782539986026,
+   "n_pos_r1": 3,
+   "n_ap_pass": 3
+  },
+  "E7_compl_major": {
+   "d_r1": [
+    -0.005025125628140725,
+    -0.03015075376884424,
+    0.015075376884422176,
+    -0.01005025125628145,
+    -0.005025125628140725
+   ],
+   "d_ap": [
+    -0.005066371003158487,
+    0.0033265894739225588,
+    -0.006308088012217383,
+    -0.0037932126839122504,
+    -0.0016598615697002161
+   ],
+   "mean_r1": -0.007035175879396993,
+   "sem_r1": 0.007212412107742387,
+   "mean_ap": -0.0027001887590131558,
+   "n_pos_r1": 1,
+   "n_ap_pass": 0
+  },
+  "E7b_compl_minor": {
+   "d_r1": [
+    0.005025125628140725,
+    -0.015075376884422176,
+    -0.015075376884422176,
+    -0.005025125628140614,
+    0.005025125628140725
+   ],
+   "d_ap": [
+    0.0006856525239339328,
+    0.0016936953907911168,
+    0.008503997137669694,
+    8.723122886294954e-05,
+    0.0029843285969546884
+   ],
+   "mean_r1": -0.005025125628140703,
+   "sem_r1": 0.004494608999999597,
+   "mean_ap": 0.0027909809756424763,
+   "n_pos_r1": 2,
+   "n_ap_pass": 0
+  },
+  "E8_competition": {
+   "d_r1": [
+    0.0,
+    -0.02010050251256279,
+    -0.03015075376884424,
+    -0.025125628140703515,
+    -0.005025125628140725
+   ],
+   "d_ap": [
+    -0.007082655820634498,
+    0.003262398432638036,
+    -0.021187616490646266,
+    -0.00932847226829786,
+    0.0006086208265522197
+   ],
+   "mean_r1": -0.016080402010050253,
+   "sem_r1": 0.005817003468738805,
+   "mean_ap": -0.006745545064077674,
+   "n_pos_r1": 0,
+   "n_ap_pass": 0
+  }
+ },
+ "futility": {
+  "matches": 520817,
+  "in_positive_elements": 54271,
+  "fraction_outside": 0.8957964121754858,
+  "per_mb": 171072.81952505192
+ },
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/dna_shape.npz",
+    "bytes": 22686,
+    "hash": "bfd83511037c6d26",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 11933,
+   "selection": "powered valid K562 pairs",
+   "fraction": 1.0
+  },
+  "seed": 91173,
+  "controls": [
+   "dinucleotide-shuffled elements (E4)",
+   "promoter matrix-axis permutation, counts held exactly (E5)",
+   "raw best score against occupancy under competition (E8)",
+   "random-pick within-gene baseline (E2)",
+   "liftover checked against 16,380 TSSs held in both assemblies (E1)"
+  ],
+  "note": "sequence-level enhancer-gene ranking against the distance floor",
+  "warnings": [
+   "selection 'powered valid K562 pairs' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 120.1766562461853,
+ "log": [
+  "========================================================================================================",
+  "LOOP 173  ENHANCER GRAMMAR: sites, groove shape, groove charge and duplex opening,",
+  "          against the distance between the element and the promoter",
+  "========================================================================================================",
+  "  PREDECLARED: increment bar dAUPRC >= 0.01 in >= 4/5 seeds and dR@1",
+  "  positive in >= 4/5 past 3 sem; liftover >= 95% with width preserved;",
+  "  median element N fraction < 0.01; futility fraction >= 0.99.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    11,933 pairs, 482 positives (base rate 0.0404), 4,482 elements, 2,205 genes, 23 chromosomes",
+  "",
+  "E1 IS THE SEQUENCE THE RIGHT SEQUENCE?",
+  "     chain: 185,795 blocks over 420 hg38 sequences",
+  "     QC set: 16,362 gene TSSs present in both assemblies",
+  "     lifted 16,288/16,362 (0.9955); exact base 16,288/16,288 (1.0000)",
+  "     |error| median 0 bp, p90 0 bp, max 0 bp",
+  "     lift stats: {'queried': 16358, 'unmapped': 0, 'cross_chrom': 0, 'reversed_chain': 70, 'mapped': 16288}",
+  "     GATE (declared before the number: lift >= 0.95, exact >= 0.99): PASS",
+  "       EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz: 10,356 K562 pairs",
+  "       EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz: 1,918 K562 pairs",
+  "       12,274 -> 12,274 valid -> 12,040 powered at PowerAtEffectSize25 >= 0.8",
+  "     benchmark elements lifting with width preserved: 4,492/4,495 (0.9993)",
+  "     element N fraction: median 0.00000, 0 elements above 5%",
+  "     E1 PASS -- the TSS control lifts 16,288/16,288 onto the exact base and 99.9% of elements survive with their width",
+  "",
+  "   building features",
+  "     36 columns; domain properties resolved for 736/736 matrices",
+  "",
+  "E2 IS THE EVALUATION SET UP CORRECTLY? distance alone against picking at random",
+  "    distance               R@1 0.5930 +/- 0.0032   MRR 0.7176   AUPRC 0.2844",
+  "    dist+comp              R@1 0.6291 +/- 0.0066   MRR 0.7361   AUPRC 0.3072",
+  "    dist+comp+sites        R@1 0.5970 +/- 0.0080   MRR 0.7168   AUPRC 0.2860",
+  "    +pairing               R@1 0.6020 +/- 0.0078   MRR 0.7182   AUPRC 0.2907",
+  "    +shape                 R@1 0.6151 +/- 0.0041   MRR 0.7268   AUPRC 0.3032",
+  "    +compl_major           R@1 0.6080 +/- 0.0036   MRR 0.7240   AUPRC 0.3005",
+  "    +compl_minor           R@1 0.6030 +/- 0.0062   MRR 0.7202   AUPRC 0.3033",
+  "    FULL                   R@1 0.6050 +/- 0.0038   MRR 0.7187   AUPRC 0.2971",
+  "    random-pick            R@1 0.3598   MRR 0.5343   (n evaluable genes 199)",
+  "     distance beats random by +0.2332 +/- 0.0111",
+  "     E2 PASS -- the bar for everything below is distance-only R@1 0.5930, AUPRC 0.2844",
+  "",
+  "E3 DOES SEQUENCE ADD OVER DISTANCE?",
+  "     FULL vs distance   dR@1 +0.0121 +/- 0.0052 (4/5 up)   dAUPRC +0.0126 (4/5 >= 0.01)",
+  "     E3 FAIL -- everything the sequence stack knows, the distance already knew",
+  "",
+  "E4 MOTIFS, OR BASE COMPOSITION? dinucleotide-shuffled elements",
+  "    FULL_shuffled          R@1 0.6090 +/- 0.0077   MRR 0.7272   AUPRC 0.3112",
+  "     FULL vs FULL_shuffled   dR@1 -0.0040 +/- 0.0101 (2/5 up)   dAUPRC -0.0141 (0/5 >= 0.01)",
+  "     E4 FAIL -- a composition-matched shuffle scores the same, so the sequence block is reading base composition and the motif account is decoration",
+  "",
+  "E5 WHICH FACTORS, OR HOW MANY? permuting the matrix axis of the promoter side",
+  "    FULL_permTF            R@1 0.6030   AUPRC 0.3009",
+  "     FULL vs FULL_permTF   dR@1 +0.0020 +/- 0.0110 (3/5 up)   dAUPRC -0.0038 (0/5 >= 0.01)",
+  "     E5 FAIL -- the pairing signal is site COUNT, not factor identity; the promoter-element correspondence can be permuted away at no cost",
+  "",
+  "E6 DOES SHAPE ADD OVER SITES?",
+  "     +shape vs +pairing   dR@1 +0.0131 +/- 0.0093 (3/5 up)   dAUPRC +0.0125 (3/5 >= 0.01)",
+  "     E6 FAIL -- groove geometry adds nothing the site scores did not already have",
+  "",
+  "E7 DOES MAJOR-GROOVE COMPLEMENTARITY ADD OVER SHAPE? (the plan's first stage)",
+  "     +compl_major vs +shape   dR@1 -0.0070 +/- 0.0072 (1/5 up)   dAUPRC -0.0027 (0/5 >= 0.01)",
+  "     E7 FAIL -- the major-groove domain terms add nothing over the shape",
+  "",
+  "E7b AND THEN THE MINOR GROOVE, ON TOP (the plan's second stage)",
+  "     +compl_minor vs +compl_major   dR@1 -0.0050 +/- 0.0045 (2/5 up)   dAUPRC +0.0028 (0/5 >= 0.01)",
+  "     the minor-groove terms are non-zero for 208/736 matrices, zero for the rest by construction",
+  "     E7b FAIL -- the minor-groove terms add nothing once the major groove is in",
+  "",
+  "E8 DOES OCCUPANCY UNDER COMPETITION BEAT THE RAW BEST SCORE?",
+  "    dist+comp+sites_RAW    R@1 0.6131 +/- 0.0062   MRR 0.7289   AUPRC 0.2928",
+  "     competition vs raw best score   dR@1 -0.0161 +/- 0.0058 (0/5 up)   dAUPRC -0.0067 (0/5 >= 0.01)",
+  "     E8 FAIL -- the competition denominator buys nothing over the raw best score on this task",
+  "",
+  "E9 THE FUTILITY COUNT, predicted before it was measured: >99% of matches are not in enhancers",
+  "     520,817 above-threshold matches over 3.04 Mb of element sequence = 171,073 per Mb across 736 motifs",
+  "     54,271 of them lie in one of the 426 validated-positive elements; 0.89580 do not",
+  "     for the 83 width-6 motifs, 927 matches per Mb per motif, so 3,709 in a 4 Mb window -- the plan's arithmetic predicted 1,953",
+  "     E9 FAIL -- only 89.580% of matches are outside validated enhancers, so the futility premise does not hold on this data as measured",
+  "",
+  "E10 WHAT THIS CANNOT SHOW",
+  "     K562 only. The candidate set is what the CRISPR screens chose to test, not the",
+  "     genome, so within-gene R@1 here is not the 2 Mb search the plan described -- it is",
+  "     the same ranking question on a pre-filtered pool, and the pool was filtered by",
+  "     people who already believed those elements might be enhancers.",
+  "     Sequence is hg19 read at lifted coordinates. The TSS control says the lift is exact,",
+  "     but hg19 and GRCh38 differ in content at a small number of loci and no control here",
+  "     can see that.",
+  "     JASPAR matrices are in-vitro preferences. A factor that is not expressed in K562",
+  "     still contributes sites here, and nothing in this loop knows that.",
+  "     E10 PASS",
+  "",
+  "  THE LADDER, rung by rung, against the bar each rung is held to",
+  "    distance               -> dist+comp              dR@1 +0.0362  dAUPRC +0.0228  clears",
+  "    dist+comp              -> dist+comp+sites        dR@1 -0.0322  dAUPRC -0.0212  sub-threshold",
+  "    dist+comp+sites        -> +pairing               dR@1 +0.0050  dAUPRC +0.0047  sub-threshold",
+  "    +pairing               -> +shape                 dR@1 +0.0131  dAUPRC +0.0125  sub-threshold",
+  "    +shape                 -> +compl_major           dR@1 -0.0070  dAUPRC -0.0027  sub-threshold",
+  "    +compl_major           -> +compl_minor           dR@1 -0.0050  dAUPRC +0.0028  sub-threshold",
+  "    +compl_minor           -> FULL                   dR@1 +0.0020  dAUPRC -0.0062  sub-threshold",
+  "",
+  "========================================================================================================",
+  "  E1  PASS",
+  "  E2  PASS",
+  "  E3  FAIL",
+  "  E4  FAIL",
+  "  E5  FAIL",
+  "  E6  FAIL",
+  "  E7  FAIL",
+  "  E7b  FAIL",
+  "  E8  FAIL",
+  "  E9  FAIL",
+  "  E10  PASS",
+  "  3/11   [120s]",
+  "========================================================================================================"
+ ]
+}
