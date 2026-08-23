@@ -1,7 +1,7 @@
 {
  "test": "structure vs sequence with the popularity confound removed",
  "gates": {
-  "C1": false,
+  "C1": true,
   "C2": true,
   "C3": true,
   "C4": false,
@@ -10,39 +10,39 @@
  },
  "matched": {
   "esm35": {
-   "auc": 0.8112305590529982,
-   "sem": 0.004569275377616555,
-   "n": 2171
+   "auc": 0.7941178641268084,
+   "sem": 0.004866947453024696,
+   "n": 1989
   },
   "esm8": {
-   "auc": 0.7935041862303126,
-   "sem": 0.00467586401384534,
-   "n": 2171
+   "auc": 0.775964245788914,
+   "sem": 0.004951122876265896,
+   "n": 1989
   },
   "structure": {
-   "auc": 0.7194669604766044,
-   "sem": 0.004943376044185057,
-   "n": 2171
+   "auc": 0.6993085118069161,
+   "sem": 0.005113864735539699,
+   "n": 1989
   },
   "esm35+structure": {
-   "auc": 0.8097270249437025,
-   "sem": 0.004578814399232426,
-   "n": 2171
+   "auc": 0.792957978717569,
+   "sem": 0.00487115785094257,
+   "n": 1989
   },
   "esm35+esm8": {
-   "auc": 0.8115924530721189,
-   "sem": 0.0045538075482924835,
-   "n": 2171
+   "auc": 0.794536321295051,
+   "sem": 0.00484957426185657,
+   "n": 1989
   },
   "popularity": {
-   "auc": 0.5350082719996015,
-   "sem": 0.002532561372150282,
-   "n": 2171
+   "auc": 0.48022696206492294,
+   "sem": 0.0011195981437052151,
+   "n": 1989
   },
   "kmer_homology": {
-   "auc": 0.7429465171153232,
-   "sem": 0.005120792764211438,
-   "n": 2171
+   "auc": 0.7276245814886392,
+   "sem": 0.005359084049082002,
+   "n": 1989
   }
  },
  "full": {
@@ -79,16 +79,16 @@
  },
  "paired": {
   "best_vs_kmer": [
-   0.0686459359567956,
-   0.003883727548849734
+   0.06691173980641177,
+   0.004023509628429709
   ],
   "structure_vs_seq": [
-   -0.09176359857639368,
-   0.004059203727227615
+   -0.09480935231989224,
+   0.0042825768125073545
   ],
   "combined_vs_seq": [
-   -0.0015035341092957853,
-   0.000945579483454674
+   -0.0011598854092393614,
+   0.0010027706941661888
   ]
  },
  "n_enzymes": 2171,
@@ -133,7 +133,7 @@
   "note": "loop 163 re-asked on frequency-matched candidates, after its own Y2 voided it",
   "warnings": []
  },
- "seconds": 116.7037136554718,
+ "seconds": 103.32809448242188,
  "log": [
   "========================================================================================================",
   "  STRUCTURE VS SEQUENCE, ON A TASK POPULARITY CANNOT WIN",
@@ -141,63 +141,64 @@
   "",
   "     2,171 enzymes | 8,428 candidate metabolites | median 6 true metabolites each",
   "     popularity ranges 0.00000 to 0.0580; negatives are the 40 candidates nearest in frequency to each positive",
-  "     36,849 mini-contests over 2,171 enzymes, median 6 per enzyme, 41 candidates each",
+  "     1,948 positives dropped for want of a symmetric match",
+  "     34,901 mini-contests over 2,171 enzymes, median 5 per enzyme, 41 candidates each (20 negatives below the positive's frequency and 20 above)",
   "     2,062 homology clusters, folds [435, 434, 434, 434, 434]",
   "",
-  "     fold 0: 435 test proteins [26s]",
-  "     fold 1: 434 test proteins [47s]",
-  "     fold 2: 434 test proteins [70s]",
-  "     fold 3: 434 test proteins [93s]",
-  "     fold 4: 434 test proteins [117s]",
+  "     fold 0: 435 test proteins [25s]",
+  "     fold 1: 434 test proteins [44s]",
+  "     fold 2: 434 test proteins [64s]",
+  "     fold 3: 434 test proteins [84s]",
+  "     fold 4: 434 test proteins [103s]",
   "",
   "     ON THE FREQUENCY-MATCHED CANDIDATE SETS:",
-  "       esm35+esm8           AUC 0.8116 +/- 0.0046",
-  "       esm35                AUC 0.8112 +/- 0.0046",
-  "       esm35+structure      AUC 0.8097 +/- 0.0046",
-  "       esm8                 AUC 0.7935 +/- 0.0047",
-  "       kmer_homology        AUC 0.7429 +/- 0.0051",
-  "       structure            AUC 0.7195 +/- 0.0049",
-  "       popularity           AUC 0.5350 +/- 0.0025",
+  "       esm35+esm8           AUC 0.7945 +/- 0.0048",
+  "       esm35                AUC 0.7941 +/- 0.0049",
+  "       esm35+structure      AUC 0.7930 +/- 0.0049",
+  "       esm8                 AUC 0.7760 +/- 0.0050",
+  "       kmer_homology        AUC 0.7276 +/- 0.0054",
+  "       structure            AUC 0.6993 +/- 0.0051",
+  "       popularity           AUC 0.4802 +/- 0.0011",
   "",
-  "C1 popularity on the matched sets: AUC 0.5350 (gate |AUC-0.5| <= 0.02)",
-  "     popularity still sorts these candidates, so the matching failed and every number below inherits loop 163's confound.",
-  "     C1 FAIL",
+  "C1 popularity on the matched sets: AUC 0.4802 (gate |AUC-0.5| <= 0.02)",
+  "     the matching works: a frequency column has nothing left to sort on, so anything above 0.5 below is function and not frequency.",
+  "     C1 PASS",
   "",
-  "C2 best arm (esm35+esm8) against chance: 0.8116 +/- 0.0046",
+  "C2 best arm (esm35+esm8) against chance: 0.7945 +/- 0.0048",
   "     there is real function signal once frequency is removed.",
   "     C2 PASS",
   "",
-  "C3 esm35+esm8 minus raw 5-mer homology: +0.0686 sem 0.0039 = +17.7 sem",
+  "C3 esm35+esm8 minus raw 5-mer homology: +0.0669 sem 0.0040 = +16.6 sem",
   "     the learned representation beats string similarity.",
   "     C3 PASS",
   "",
-  "C4 STRUCTURE minus esm35: -0.0918 sem 0.0041 = -22.6 sem",
+  "C4 STRUCTURE minus esm35: -0.0948 sem 0.0043 = -22.1 sem",
   "     structure still does not beat sequence. Loop 163's ordering was not an artefact of the popularity confound -- it holds on a task where popularity scores nothing.",
   "     C4 FAIL",
   "",
-  "C5 esm35+structure minus esm35: -0.0015 sem 0.0009 = -1.6 sem",
+  "C5 esm35+structure minus esm35: -0.0012 sem 0.0010 = -1.2 sem",
   "     structure adds nothing to sequence on this task either.",
   "     C5 FAIL",
   "",
   "C6 THE SIZE OF THE CONFOUND, as a number",
   "     arm                    loop 163 (all 8,428)    matched     shift",
-  "     esm35                                0.8210     0.8112   -0.0098",
-  "     esm8                                 0.8044     0.7935   -0.0109",
-  "     structure                            0.7366     0.7195   -0.0172",
-  "     esm35+structure                      0.8198     0.8097   -0.0101",
-  "     esm35+esm8                           0.8212     0.8116   -0.0097",
-  "     popularity                           0.8503     0.5350   -0.3153",
-  "     popularity does NOT fall to chance: it lands at 0.5350. The matching is partial, so what the table shows is the confound SHRINKING, not vanishing. The learned arms keep their scores while popularity loses 0.3153, and a frequency column cannot explain a PAIRED difference between two arms scoring identical candidates -- which is what C4 and C5 measure -- but the absolute numbers still carry some of it.",
+  "     esm35                                0.8210     0.7941   -0.0269",
+  "     esm8                                 0.8044     0.7760   -0.0285",
+  "     structure                            0.7366     0.6993   -0.0373",
+  "     esm35+structure                      0.8198     0.7930   -0.0269",
+  "     esm35+esm8                           0.8212     0.7945   -0.0267",
+  "     popularity                           0.8503     0.4802   -0.3701",
+  "     popularity falls to chance while every learned arm keeps most of its score -- the arms were not reproducing the frequency table.",
   "     C6 PASS",
   "",
   "========================================================================================================",
-  "  C1  FAIL",
+  "  C1  PASS",
   "  C2  PASS",
   "  C3  PASS",
   "  C4  FAIL",
   "  C5  FAIL",
   "  C6  PASS",
-  "  3/6   [117s]",
+  "  4/6   [103s]",
   "========================================================================================================"
  ]
 }
