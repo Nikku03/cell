@@ -61,6 +61,11 @@ def main():
     nl = model.num_layers
     print(f"model loaded [{time.time()-t0:.0f}s]", flush=True)
 
+    # measure the forward pass from here, not from process start: the checkpoint load is a
+    # separate cost (234 s cold, 38 s with a warm page cache) and folding it into a per-protein
+    # rate makes the rate wrong in both directions. The first version subtracted a hardcoded 234
+    # and clamped a negative to 1, which printed a nonsense 106 prot/s on a warm start.
+    t_fwd = time.time()
     order = sorted(sub, key=lambda a: len(seqs[a]))
     accs, embs, batch, blen, done = [], [], [], 0, 0
 
@@ -81,9 +86,9 @@ def main():
             flush(batch)
             done += len(batch)
             if done % 50 < len(batch):
-                el = time.time() - t0
-                rate = done / max(el - 234, 1)
-                print(f"  {done}/{len(order)} [{el:.0f}s, {rate:.2f} prot/s, "
+                el = time.time() - t_fwd
+                rate = done / max(el, 1e-6)
+                print(f"  {done}/{len(order)} [{el:.0f}s forward, {rate:.2f} prot/s, "
                       f"eta {(len(order)-done)/max(rate,1e-6)/60:.1f} min]", flush=True)
             batch, blen = [], 0
         batch.append(a)
