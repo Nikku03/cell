@@ -93,12 +93,24 @@ PREDECLARED, BEFORE ANY NUMBER IS LOOKED AT.
      minor-groove electrostatic potential at the occupied positions.
      Gate: PASS iff paired AUPRC change >= +0.01 in >= 4/5 seeds AND R@1 change positive in >= 4/5.
 
-  E7 DOES CHARGE AND STERIC COMPLEMENTARITY ADD OVER SHAPE? The same, adding the products of site
-     electrostatic potential with domain charge density and arginine fraction (for the folds that
-     read the minor groove), and of groove width with domain residue volume (the steric term), and
-     the ratio of domain length to motif width (whether the fold reaches past the core into the
-     flanks -- the plan's "if the TF protein extends that far").
+  E7 DOES MAJOR-GROOVE COMPLEMENTARITY ADD OVER SHAPE? The plan asked for the major groove first
+     and the minor groove only afterwards, so the two are separated and run in that order. E7 adds
+     only the terms a major-groove reader can feel: major groove width against the domain's mean
+     residue volume (the steric term -- a domain of large residues cannot enter a groove that is
+     not wide enough), propeller twist against charge density, and the ratio of domain length to
+     motif width, which is the plan's "if the TF protein extends that far" made numerical.
      Gate: same bar as E6.
+
+  E7b AND THEN THE MINOR GROOVE, ON TOP. Adds the terms only a minor-groove-reading fold can feel:
+     the site's minor-groove electrostatic potential against the domain's charge density and,
+     separately, against its arginine fraction -- arginine being the residue that actually inserts
+     into a narrow electronegative minor groove -- and minor groove width against residue volume.
+     These are switched off for folds whose JASPAR class does not read the minor groove, so the
+     block is zero for most factors by construction and non-zero for the 208 that read the minor
+     groove or both.
+     Gate: same bar as E6, applied to the increment over E7's major-groove-only arm. Running the
+     two in this order is what makes it possible to say whether the minor groove added anything,
+     rather than reporting one combined number that could be all major.
 
   E8 DOES COMPETITION BEAT THE RAW SCORE? The site block computed as occupancy under competition
      against the identical block computed from the raw best score, everything else held fixed.
@@ -299,8 +311,10 @@ BLOCKS = {
     "pairing": ["log_shared_occ", "shared_n", "prom_n", "shared_frac", "jaccard"],
     "shape": ["site_mgw", "site_mgrw", "site_prot", "site_roll", "site_helt", "site_ep",
               "elem_mgw", "elem_prot", "elem_ep"],
-    "complementarity": ["comp_charge", "comp_arg", "comp_steric", "comp_major",
-                        "comp_twist", "comp_span"],
+    # split by which groove the fold can actually feel, so the plan's "major first, then minor"
+    # can be run in that order and each stage judged on its own increment
+    "compl_major": ["comp_major", "comp_twist", "comp_span"],
+    "compl_minor": ["comp_charge", "comp_arg", "comp_steric"],
     "opening": ["site_dg", "elem_dg", "bind_kcal_pb", "open_kcal_pb", "net_kcal_pb"],
 }
 ARMS = {
@@ -309,10 +323,12 @@ ARMS = {
     "dist+comp+sites":     ["distance", "composition", "sites"],
     "+pairing":            ["distance", "composition", "sites", "pairing"],
     "+shape":              ["distance", "composition", "sites", "pairing", "shape"],
-    "+complementarity":    ["distance", "composition", "sites", "pairing", "shape",
-                            "complementarity"],
+    "+compl_major":        ["distance", "composition", "sites", "pairing", "shape",
+                            "compl_major"],
+    "+compl_minor":        ["distance", "composition", "sites", "pairing", "shape",
+                            "compl_major", "compl_minor"],
     "FULL":                ["distance", "composition", "sites", "pairing", "shape",
-                            "complementarity", "opening"],
+                            "compl_major", "compl_minor", "opening"],
 }
 
 
@@ -550,14 +566,28 @@ def main():
                if_false="E6 FAIL -- groove geometry adds nothing the site scores did not already have")
 
     say()
-    say("E7 DOES CHARGE AND STERIC COMPLEMENTARITY ADD OVER SHAPE?")
-    d7 = paired(res["+complementarity"], res["+shape"])
-    say(f"     +complementarity vs +shape   {fmt(d7)}")
+    say("E7 DOES MAJOR-GROOVE COMPLEMENTARITY ADD OVER SHAPE? (the plan's first stage)")
+    d7 = paired(res["+compl_major"], res["+shape"])
+    say(f"     +compl_major vs +shape   {fmt(d7)}")
     e7 = gate_pair(d7)
     GG.verdict(e7, emit=say,
-               if_true="E7 PASS -- pairing the site's electrostatics and width against the domain's "
-                       "charge and bulk adds over the shape alone",
-               if_false="E7 FAIL -- the domain-side properties add nothing over the DNA-side shape")
+               if_true="E7 PASS -- major groove width against domain bulk, and the domain's reach "
+                       "past the motif core, add over the DNA-side shape alone",
+               if_false="E7 FAIL -- the major-groove domain terms add nothing over the shape")
+
+    say()
+    say("E7b AND THEN THE MINOR GROOVE, ON TOP (the plan's second stage)")
+    d7b = paired(res["+compl_minor"], res["+compl_major"])
+    say(f"     +compl_minor vs +compl_major   {fmt(d7b)}")
+    nmin = int(sum(1 for m in P["motif_ids"]
+                   if TD.load().get(str(m), {}).get("groove") in ("minor", "both")))
+    say(f"     the minor-groove terms are non-zero for {nmin}/{len(P['motif_ids'])} matrices, "
+        f"zero for the rest by construction")
+    e7b = gate_pair(d7b)
+    GG.verdict(e7b, emit=say,
+               if_true="E7b PASS -- adding the minor groove, for the folds that read it, adds over "
+                       "the major groove alone",
+               if_false="E7b FAIL -- the minor-groove terms add nothing once the major groove is in")
 
     # ---- E8 ------------------------------------------------------------------------------------
     say()
@@ -616,7 +646,7 @@ def main():
     say(f"     E10 {'PASS' if e10 else 'FAIL'}")
 
     gates = {"E1": e1, "E2": e2, "E3": e3, "E4": e4, "E5": e5,
-             "E6": e6, "E7": e7, "E8": e8, "E9": e9, "E10": e10}
+             "E6": e6, "E7": e7, "E7b": e7b, "E8": e8, "E9": e9, "E10": e10}
 
     say()
     say("  THE LADDER, rung by rung, against the bar each rung is held to")
@@ -660,8 +690,10 @@ def main():
                                             for k, v in d5.items()},
                            "E6_shape": {k: (v.tolist() if hasattr(v, "tolist") else v)
                                         for k, v in d6.items()},
-                           "E7_complementarity": {k: (v.tolist() if hasattr(v, "tolist") else v)
-                                                  for k, v in d7.items()},
+                           "E7_compl_major": {k: (v.tolist() if hasattr(v, "tolist") else v)
+                                              for k, v in d7.items()},
+                           "E7b_compl_minor": {k: (v.tolist() if hasattr(v, "tolist") else v)
+                                               for k, v in d7b.items()},
                            "E8_competition": {k: (v.tolist() if hasattr(v, "tolist") else v)
                                               for k, v in d8.items()}},
                futility=dict(matches=int(tot), in_positive_elements=int(in_pos),
