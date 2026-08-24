@@ -37,3 +37,38 @@ reported in its place.
 column carries no information. It is harmless -- a constant feature cannot change a tree's splits
 -- but run_manifest.check_features exists precisely to catch it and was not called on these
 frames. Noted rather than quietly deleted, because the arms were already run and reported with it.
+
+---
+
+# A second gate-design defect in the same arc: loop 180's R5 was too easy
+
+E9's threshold could not be reached. R5's could hardly be missed. They are the same class of
+mistake from opposite ends, and both are mine.
+
+R5 asked whether the sequence stack's increment over distance falls as promoters become more
+CpG-island-like -- the label-free version of "housekeeping genes do not need distal enhancers".
+The gate was written as `Spearman(quartile, increment) < 0`. Over FOUR quartile points, a negative
+Spearman is close to a coin flip: a null with no structure at all clears it about half the time.
+
+The measurement it passed on:
+
+    Q1 (CpG-poor)  n=50   increment +0.0320
+    Q2             n=50   increment -0.0240
+    Q3             n=49   increment +0.0041
+    Q4 (CpG-rich)  n=50   increment +0.0240
+    Spearman = -0.200
+
+That curve is not monotone and its endpoints differ by 0.008. The commit reports it as weak
+evidence, which is right, but the GATE said PASS, and a gate that says PASS on this is not
+measuring what it was written to measure.
+
+What it should have been: a permutation null -- shuffle the gene-to-quartile assignment a few
+hundred times, recompute the Spearman, and require the observed value to sit outside the null's
+central mass. That costs nothing and would have returned a p-value instead of a sign.
+
+## The rule this arc keeps re-learning
+
+Before a gate is written down, ask what the statistic does UNDER THE NULL. E9 never asked whether
+0.99 was reachable given a pool that is 9.5% positive. R5 never asked how often four points give a
+negative Spearman by chance. Neither question needs the data, and both would have been answered in
+a minute.
