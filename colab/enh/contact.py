@@ -199,3 +199,45 @@ def overlaps(idx, chrom, a, b):
         return np.zeros(0, np.int64)
     m = sl[:, 1] > a
     return np.arange(lo, j)[m]
+
+
+def tss_hg19(report=print):
+    """The benchmark promoters in hg19, in the same order as the scan cache's gn_key, so every
+    contact profile lines up with the gene index every other loop already uses."""
+    from enh import genome as GEN
+    from enh import scan as SC
+    S = SC.load(lambda *_: None)
+    lo = GEN.LiftOver()
+    out, miss = [], 0
+    for k in S["gn_key"]:
+        c, p, _ = str(k).split(":")
+        q = lo.lift(c, int(p))
+        if q is None:
+            miss += 1
+            out.append((c, 0))
+        else:
+            out.append((c, q))
+    report(f"    {len(out):,} promoters, {miss} failed the hg38->hg19 lift")
+    return out
+
+
+if __name__ == "__main__":
+    print("=" * 100)
+    print("K562 3D CONTACT: Rao 2014 Hi-C strips, HiCCUPS loops, Arrowhead contact domains")
+    print("=" * 100)
+    t = tss_hg19()
+    pr = strips(t)
+    exp = expected_by_distance(t, pr)
+    lp = load_bedpe(LOOPS)
+    dm = load_bedpe(DOMAINS)
+    nz = sum(1 for b, c in pr if len(b))
+    tot = sum(len(b) for b, c in pr)
+    print(f"  coverage: {nz}/{len(pr)} promoters with a profile, {tot:,} contact cells total, "
+          f"{tot/max(nz,1):.0f} per promoter")
+    print(f"  loops {len(lp):,}; contact domains {len(dm):,}")
+    json.dump({"promoters": len(pr), "with_profile": nz, "cells": tot,
+               "loops": len(lp), "domains": len(dm), "resolution": RES,
+               "half_window": HALF_WINDOW, "norm": NORM,
+               "source": "Rao et al. Cell 2014, GSE63525, K562 combined, hg19"},
+              open(HIC / "contact_manifest.json", "w"), indent=1)
+    print(f"  -> {HIC / 'contact_manifest.json'}")
