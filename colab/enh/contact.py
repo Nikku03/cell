@@ -66,6 +66,7 @@ RES = 5000
 HALF_WINDOW = 2_000_000          # the plan's +/- 2 Mb, and the widest distance the benchmark holds
 NORM = "KR"
 STRIPS = HIC / f"k562_strips_{RES}.npz"
+PARTIAL = HIC / f"k562_strips_{RES}_partial.npz"
 
 
 def fetch(name, report=print):
@@ -97,6 +98,16 @@ def load_bedpe(name, report=print):
     return rows
 
 
+def _checkpoint(out, got):
+    idx = sorted(got)
+    HIC.mkdir(parents=True, exist_ok=True)
+    tmp = PARTIAL.with_suffix(".tmp.npz")
+    np.savez_compressed(tmp, idx=np.array(idx, np.int64),
+                        **{f"b{i}": out[i][0] for i in idx},
+                        **{f"c{i}": out[i][1] for i in idx})
+    tmp.replace(PARTIAL)
+
+
 def strips(tss, report=print, force=False):
     """tss: list of (chrom, position). Returns a list of (bins, counts) arrays, one per entry --
     the KR-normalised contact profile of that promoter's own bin against everything within
@@ -117,7 +128,19 @@ def strips(tss, report=print, force=False):
     for i, (c, p) in enumerate(tss):
         by_chrom[c].append(i)
     out = [(np.zeros(0, np.int64), np.zeros(0, np.float32))] * len(tss)
-    done = 0
+    # RESUME. The first attempt at this fetch died 1,250 strips in with
+    # "curl_easy_perform() failed: Failure when receiving data from the peer" -- a remote read over
+    # a long-lived HTTP range session, which will drop again. Completed strips are checkpointed and
+    # skipped on restart, and a strip that errors is retried with a fresh file handle rather than
+    # taking the whole run down.
+    got = set()
+    if PARTIAL.exists():
+        z = np.load(PARTIAL, allow_pickle=True)
+        for i in z["idx"].tolist():
+            out[int(i)] = (z[f"b{i}"], z[f"c{i}"])
+            got.add(int(i))
+        report(f"    resuming: {len(got):,} strips already on disk")
+    done = len(got)
     for c in sorted(by_chrom):
         name = c.replace("chr", "")
         try:
@@ -126,18 +149,29 @@ def strips(tss, report=print, force=False):
             report(f"    {c}: no matrix ({type(e).__name__}) -- {len(by_chrom[c])} strips empty")
             continue
         for i in by_chrom[c]:
+            if i in got:
+                continue
             p = tss[i][1]
             b = (p // RES) * RES
             lo, hi = max(0, p - HALF_WINDOW), p + HALF_WINDOW
-            try:
-                recs = mz.getRecords(b, b + RES, lo, hi)
-            except Exception:
-                recs = []
-            if not recs:
+            recs = []
+            for attempt in range(4):
                 try:
-                    recs = mz.getRecords(lo, hi, b, b + RES)
-                except Exception:
-                    recs = []
+                    recs = mz.getRecords(b, b + RES, lo, hi)
+                    if not recs:
+                        recs = mz.getRecords(lo, hi, b, b + RES)
+                    break
+                except Exception as e:
+                    if attempt == 3:
+                        report(f"      {c}:{p} gave up after 4 tries ({type(e).__name__})")
+                        recs = []
+                        break
+                    time.sleep(2 ** attempt)
+                    try:                       # a dropped stream needs a fresh handle
+                        h = hicstraw.HiCFile(HIC_URL)
+                        mz = h.getMatrixZoomData(name, name, "observed", NORM, "BP", RES)
+                    except Exception:
+                        pass
             bs, cs = [], []
             for r in recs:
                 other = r.binY if abs(r.binX - b) < RES else r.binX
@@ -146,11 +180,13 @@ def strips(tss, report=print, force=False):
                     bs.append(other)
                     cs.append(v)
             out[i] = (np.asarray(bs, np.int64), np.asarray(cs, np.float32))
+            got.add(i)
             done += 1
-            if done % 250 == 0:
+            if done % 100 == 0:
                 el = time.time() - t0
-                report(f"      strip {done}/{len(tss)}  [{el:.0f}s, "
-                       f"eta {el/done*(len(tss)-done):.0f}s]")
+                report(f"      strip {done}/{len(tss)}  [{el:.0f}s]")
+            if done % 250 == 0:
+                _checkpoint(out, got)
     HIC.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(STRIPS, n=len(tss),
                         **{f"b{i}": out[i][0] for i in range(len(tss))},
