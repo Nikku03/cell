@@ -55,7 +55,12 @@ DATA = Path(__file__).resolve().parent.parent / "data"
 OUT = DATA / "tf_structures.json"
 TMP = SP / "af_tmp"
 LOCAL = [SP / "af", SP / "af_cache"]
-AF = "https://alphafold.ebi.ac.uk/files/AF-{acc}-F1-model_v4.pdb"
+# AlphaFold DB moved to v6; the v4 path this module first used now 404s for every
+# accession, which the first run discovered by failing 725 times in silence. The direct v6 URL is
+# tried first and the prediction API is the fallback, so the next version bump costs one extra
+# request per accession instead of the whole build.
+AF = "https://alphafold.ebi.ac.uk/files/AF-{acc}-F1-model_v6.pdb"
+AF_API = "https://alphafold.ebi.ac.uk/api/prediction/{acc}"
 SASA_CUT = 0.25
 
 POS = {"ARG": 1.0, "LYS": 1.0, "HIS": 0.1}
@@ -81,15 +86,24 @@ def fetch(acc, report=print):
         return p, False
     TMP.mkdir(parents=True, exist_ok=True)
     q = TMP / f"{acc}.pdb"
-    for i in range(3):
+    urls = [AF.format(acc=acc)]
+    for i, u in enumerate(urls):
         try:
-            with urllib.request.urlopen(AF.format(acc=acc), timeout=120) as r:
+            with urllib.request.urlopen(u, timeout=120) as r:
                 q.write_bytes(r.read())
             return q, True
         except Exception:
-            if i == 2:
-                return None, False
-            time.sleep(2 ** i)
+            pass
+    try:
+        with urllib.request.urlopen(AF_API.format(acc=acc), timeout=60) as r:
+            d = json.load(r)
+        u = d[0].get("pdbUrl")
+        if u:
+            with urllib.request.urlopen(u, timeout=120) as r:
+                q.write_bytes(r.read())
+            return q, True
+    except Exception:
+        pass
     return None, False
 
 
