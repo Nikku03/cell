@@ -72,6 +72,13 @@ PREDECLARED, BEFORE ANY NUMBER.
 
   B7 WHAT THIS CANNOT SHOW.
 
+  A NOTE ON THE NULLS, recorded because the two tiers do not get the same one. The curated tier is
+  scored against 100 randomisations with every motif counted. The binding tier -- 222,689 edges at
+  a median out-degree of 300 -- gets 25, without three-cycles, because the three-cycle count there
+  is about 10^8 Python operations per call and a hundred of them is a three-hour job. Every GATE is
+  scored on the curated tier; the binding tier appears only in B3's comparison, where 25 draws
+  place a z-score to within a few units.
+
 -> outputs/loop_network_motifs.json
 """
 import gzip
@@ -95,6 +102,7 @@ OUT = Path(os.environ.get("CELL_OUT", "outputs")) / "loop_network_motifs.json"
 BUNDLE = Path("colab/data/net_bundle.json.gz")
 TIERS = {"curated": (0, 55716), "binding": (55716, 278405), "unidentified": (278405, None)}
 N_RAND = 100
+N_RAND_BINDING = 25      # see stats(): the dense tier's three-cycle count makes 100 a three-hour job
 SWAP_FACTOR = 10
 MIN_SIGNED = 0.50
 Z_BAR = 3.0
@@ -113,8 +121,13 @@ def load_tier(reg, lo, hi):
     return [(int(r[0]), int(r[1]), int(r[2]) if len(r) > 2 else 0) for r in e]
 
 
-def stats(edges):
-    """FFL triads, 2-cycles, 3-cycles and self-loops, all from one adjacency build."""
+def stats(edges, cycles3=True):
+    """FFL triads, 2-cycles, 3-cycles and self-loops, all from one adjacency build.
+
+    `cycles3` is switchable because the three-cycle count is O(sum_a sum_{b in out(a)} |out(b)|),
+    which on the binding tier -- 472 regulators at a median out-degree of 300 -- is about 10^8
+    Python operations per call and would make a hundred randomisations a three-hour job. The
+    curated tier, which is the one every gate is scored on, keeps it."""
     out = defaultdict(set)
     for a, b, s in edges:
         out[a].add(b)
@@ -133,7 +146,7 @@ def stats(edges):
             if b != a and b in out and a in out[b] and a < b:
                 two += 1
     three = 0
-    for a in reg:
+    for a in (reg if cycles3 else ()):
         for b in out[a]:
             if b == a or b not in out:
                 continue
@@ -173,12 +186,12 @@ def randomise(edges, rng, factor=SWAP_FACTOR):
     return [(a, b, 0) for a, b in e]
 
 
-def null_ensemble(edges, n=N_RAND, seed=SEED, report=print, label=""):
+def null_ensemble(edges, n=N_RAND, seed=SEED, report=print, label="", cycles3=True):
     rng = np.random.default_rng(seed)
     acc = defaultdict(list)
     t0 = time.time()
     for k in range(n):
-        s = stats(randomise(edges, rng))
+        s = stats(randomise(edges, rng), cycles3=cycles3)
         for key in ("ffl", "two_cycle", "three_cycle", "self_loop"):
             acc[key].append(s[key])
         if (k + 1) % 25 == 0:
@@ -273,13 +286,20 @@ def main():
     obs, nulls, zs = {}, {}, {}
     for t in ("curated", "binding"):
         e = tier[t]
-        o = stats(e)
+        c3 = (t == "curated")
+        o = stats(e, cycles3=c3)
         obs[t] = o
         say(f"     {t}: FFL {o['ffl']:,}  2-cycles {o['two_cycle']:,}  "
-            f"3-cycles {o['three_cycle']:,}  self-loops {o['self_loop']}")
-        nulls[t] = null_ensemble(e, report=say, label=t)
+            + (f"3-cycles {o['three_cycle']:,}  " if c3 else "3-cycles not counted  ")
+            + f"self-loops {o['self_loop']}")
+        nr = N_RAND if c3 else N_RAND_BINDING
+        if not c3:
+            say(f"       binding tier: {nr} randomisations without three-cycles -- a WEAKER null "
+                f"than the curated tier's {N_RAND}, used only for B3's comparison")
+        nulls[t] = null_ensemble(e, n=nr, report=say, label=t, cycles3=c3)
         zs[t] = {}
-        for key in ("ffl", "two_cycle", "three_cycle", "self_loop"):
+        for key in (("ffl", "two_cycle", "three_cycle", "self_loop") if c3
+                    else ("ffl", "two_cycle", "self_loop")):
             z, mu, sd = z_of(o[key], nulls[t][key])
             zs[t][key] = dict(obs=o[key], null_mean=mu, null_sd=sd, z=z)
             say(f"       {key:12} observed {o[key]:9,}  null {mu:11,.1f} +/- {sd:8,.1f}  "
