@@ -131,48 +131,96 @@ def peak_overlap(url, keys, report=print):
     return np.clip(cov / np.maximum(width, 1), 0, 1), sig
 
 
-def methylation(url, keys, report=print):
-    """Mean methylation percentage and CpG count per interval, streamed from a 589 MB bed without
-    ever holding it: the file arrives line by line, every CpG outside the intervals is dropped
-    immediately, and nothing is written to disk."""
-    iv = intervals(keys)
-    tot = np.zeros(len(keys))
-    cnt = np.zeros(len(keys))
+def _download_resumable(url, dest, report=print, tries=8):
+    """Fetch to disk with HTTP Range resume.
+
+    The first version of this streamed the 589 MB bed straight through gzip and died with
+    `EOFError: Compressed file ended before the end-of-stream marker was reached` -- ENCODE drops
+    long-lived connections, exactly as it did for the Hi-C range sessions in loop 186. A truncated
+    gzip stream is not a recoverable read, so the file is now pulled to disk in resumable pieces,
+    parsed locally, and deleted. It costs 589 MB of the 2.7 GB free for a few minutes.
+    """
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    for attempt in range(tries):
+        have = dest.stat().st_size if dest.exists() else 0
+        req = urllib.request.Request(url, headers={"User-Agent": "cellos"})
+        if have:
+            req.add_header("Range", f"bytes={have}-")
+        try:
+            with urllib.request.urlopen(req, timeout=900) as r:
+                total = have + int(r.headers.get("Content-Length") or 0)
+                mode = "ab" if have else "wb"
+                t0 = time.time()
+                with open(dest, mode) as f:
+                    while True:
+                        chunk = r.read(1 << 22)
+                        if not chunk:
+                            break
+                        f.write(chunk)
+                        if dest.stat().st_size % (1 << 27) < (1 << 22):
+                            report(f"      {dest.stat().st_size/1e6:.0f} MB "
+                                   f"of {total/1e6:.0f} [{time.time()-t0:.0f}s]")
+            if r.status in (200, 206):
+                report(f"      downloaded {dest.stat().st_size/1e6:.0f} MB")
+                return dest
+        except Exception as e:
+            report(f"      attempt {attempt+1}/{tries} dropped at "
+                   f"{(dest.stat().st_size if dest.exists() else 0)/1e6:.0f} MB "
+                   f"({type(e).__name__}); resuming")
+            time.sleep(min(2 ** attempt, 30))
+    raise SystemExit(f"could not fetch {url} after {tries} attempts")
+
+
+def methylation(url, keys_sets, report=print):
+    """Mean methylation percentage and CpG count per interval, for SEVERAL interval sets in one
+    pass. The file is 589 MB and is read once: doing elements and promoters as separate passes
+    would double a five-minute parse and double the download risk for no gain."""
+    tmp = EPI / url.rsplit("/", 1)[-1]
+    _download_resumable(url, tmp, report)
+    ivs = [intervals(k) for k in keys_sets]
+    tot = [np.zeros(len(k)) for k in keys_sets]
+    cnt = [np.zeros(len(k)) for k in keys_sets]
     t0 = time.time()
     n = 0
-    req = urllib.request.Request(url, headers={"User-Agent": "cellos"})
-    with urllib.request.urlopen(req, timeout=1800) as raw:
-        stream = gzip.GzipFile(fileobj=raw) if url.endswith(".gz") else raw
-        for bline in stream:
-            line = bline.decode("ascii", "replace")
-            f = line.rstrip("\n").split("\t")
-            if len(f) < 11:
-                continue
-            c = f[0]
+    op = gzip.open(tmp, "rt") if tmp.read_bytes()[:2] == b"\x1f\x8b" else open(tmp, "rt")
+    for line in op:
+        f = line.rstrip("\n").split("\t")
+        if len(f) < 11:
+            continue
+        c = f[0]
+        try:
+            s = int(f[1])
+            pct = float(f[10])
+        except ValueError:
+            continue
+        for w, iv in enumerate(ivs):
             e = iv.get(c)
             if e is None:
-                continue
-            try:
-                s = int(f[1])
-                pct = float(f[10])
-            except ValueError:
                 continue
             st, en, idx = e
             j = int(np.searchsorted(st, s + 1))
             for k in range(max(0, j - 64), j):
                 if en[k] > s:
                     i = int(idx[k])
-                    tot[i] += pct
-                    cnt[i] += 1
-            n += 1
-            if n % 5_000_000 == 0:
-                report(f"      {n:,} CpGs streamed, {int(cnt.sum()):,} kept "
-                       f"[{time.time()-t0:.0f}s]")
-    with np.errstate(invalid="ignore"):
-        mean = np.where(cnt > 0, tot / np.maximum(cnt, 1), np.nan)
-    report(f"      {n:,} CpGs streamed; {int(cnt.sum()):,} inside the intervals; "
-           f"{(cnt > 0).mean():.1%} of intervals have at least one")
-    return mean, cnt
+                    tot[w][i] += pct
+                    cnt[w][i] += 1
+        n += 1
+        if n % 5_000_000 == 0:
+            report(f"      {n:,} CpGs parsed [{time.time()-t0:.0f}s]")
+    op.close()
+    try:
+        tmp.unlink()
+        report("      source bed deleted; only the per-interval table is kept")
+    except Exception:
+        pass
+    out = []
+    for w in range(len(keys_sets)):
+        with np.errstate(invalid="ignore"):
+            mean = np.where(cnt[w] > 0, tot[w] / np.maximum(cnt[w], 1), np.nan)
+        report(f"      set {w}: {int(cnt[w].sum()):,} CpGs inside; "
+               f"{(cnt[w] > 0).mean():.1%} of intervals have at least one")
+        out.append((mean, cnt[w]))
+    return out
 
 
 def build(el_key, gn_key, report=print, force=False):
@@ -192,11 +240,12 @@ def build(el_key, gn_key, report=print, force=False):
     if x:
         out["el_h3k4me3_cov"], out["el_h3k4me3_sig"] = peak_overlap(API + x["href"], keys_e, report)
         out["pr_h3k4me3_cov"], out["pr_h3k4me3_sig"] = peak_overlap(API + x["href"], keys_p, report)
-    report("    CpG methylation (streamed, nothing written to disk)")
+    report("    CpG methylation (resumable download, parsed once, then deleted)")
     x = pick("methylation state at CpG", "bed", None, report)
     if x:
-        out["el_5mc"], out["el_ncpg"] = methylation(API + x["href"], keys_e, report)
-        out["pr_5mc"], out["pr_ncpg"] = methylation(API + x["href"], keys_p, report)
+        (me, ce), (mp, cp) = methylation(API + x["href"], [keys_e, keys_p], report)
+        out["el_5mc"], out["el_ncpg"] = me, ce
+        out["pr_5mc"], out["pr_ncpg"] = mp, cp
     out["elkey"] = np.array(keys_e, dtype=object)
     out["prkey"] = np.array(keys_p, dtype=object)
     EPI.mkdir(parents=True, exist_ok=True)
