@@ -53,6 +53,8 @@ ASSEMBLY = "GRCh38"
 OUTPUT_TYPE = "conservative IDR thresholded peaks"
 ELEMENT_PAD = 250
 CACHE = SP / "enh_chip_k562.npz"
+PROM_CACHE = SP / "enh_chip_k562_promoters.npz"
+PROMOTER_PAD = 1000
 TMP = SP / "enh_chip_tmp"
 
 
@@ -116,12 +118,17 @@ def summits(path):
     return {c: np.array(sorted(v), dtype=np.int64) for c, v in d.items()}
 
 
-def build(el_key, tf_names, report=print, force=False):
+def build(el_key, tf_names, report=print, force=False, cache=None, pad=None):
     """el_key: GRCh38 'chr:start-end' strings in the scan cache's order.
-    tf_names: the factor symbols to try, normally the JASPAR names in this project's matrix set."""
+    tf_names: the factor symbols to try, normally the JASPAR names in this project's matrix set.
+    cache/pad: override for a second region set -- the promoters, which need their own cache file
+    and their own window, and which must be scored against the SAME factor roster so an element
+    set and a promoter set can be compared column for column."""
+    cache = CACHE if cache is None else cache
+    pad = ELEMENT_PAD if pad is None else pad
     keys = [str(k) for k in el_key]
-    if CACHE.exists() and not force:
-        z = np.load(CACHE, allow_pickle=True)
+    if cache.exists() and not force:
+        z = np.load(cache, allow_pickle=True)
         if list(z["elkey"]) == keys:
             report(f"    ChIP matrix from cache: {z['B'].shape[0]} factors x "
                    f"{z['B'].shape[1]:,} elements")
@@ -164,8 +171,8 @@ def build(el_key, tf_names, report=print, force=False):
             if pos is None:
                 continue
             m = np.where(ech == c)[0]
-            lo = np.searchsorted(pos, est[m] - ELEMENT_PAD)
-            hi = np.searchsorted(pos, een[m] + ELEMENT_PAD)
+            lo = np.searchsorted(pos, est[m] - pad)
+            hi = np.searchsorted(pos, een[m] + pad)
             col[m] = hi > lo
         done[0] += 1
         if done[0] % 50 == 0:
@@ -177,7 +184,7 @@ def build(el_key, tf_names, report=print, force=False):
     with ThreadPoolExecutor(max_workers=8) as ex:
         for k, col in ex.map(one, range(len(tfs))):
             B[k] = col
-    np.savez_compressed(CACHE, B=B, tfs=np.array(tfs, dtype=object),
+    np.savez_compressed(cache, B=B, tfs=np.array(tfs, dtype=object),
                         elkey=np.array(keys, dtype=object))
     per_el = B.sum(0)
     per_tf = B.sum(1)
@@ -188,7 +195,7 @@ def build(el_key, tf_names, report=print, force=False):
            f"{(per_el == 0).mean():.1%} of elements bound by none")
     report(f"      elements per factor: median {np.median(per_tf):.0f} "
            f"(IQR {np.percentile(per_tf,25):.0f}-{np.percentile(per_tf,75):.0f})")
-    report(f"    -> {CACHE} ({CACHE.stat().st_size/1e6:.1f} MB)")
+    report(f"    -> {cache} ({cache.stat().st_size/1e6:.1f} MB)")
     return B, tfs
 
 
