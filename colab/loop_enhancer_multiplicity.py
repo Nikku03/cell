@@ -12,10 +12,18 @@ answer for another.
 THE CONCERN THIS LOOP MEASURES. A sequence feature is a property of a piece of DNA. Groove width,
 electrostatic potential, motif content, duplex stability -- none of them knows which gene is being
 asked about. So for an element tested against several genes, every sequence column returns the SAME
-number for all of them, while the labels differ. In the arms of loops 173 and 175, only two of the
-eight feature blocks can vary across genes at a fixed element: the distance, and the pairing block
-that compares the element's factor set against that gene's promoter. Everything else is constant
-down the column. If elements commonly serve one gene and not another, then a mostly gene-blind
+number for all of them, while the labels differ. In the arms of loops 173 and 175, six columns
+carry essentially all of the across-gene variation at a fixed element: the distance, and the five
+pairing columns that compare the element's factor set against that gene's promoter.
+
+The word "essentially" is doing work and the first version of this docstring left it out, claiming
+the other twenty-eight columns were constant down the column. They are not exactly constant, and
+the reason is worth stating because it is a design choice made two loops earlier: the occupancy
+denominator is built PER GENE, from that gene's own candidate pool, so every occupancy-weighted
+column inherits a little gene-dependence from the competition normalisation. M3 measures the
+magnitude rather than asserting the sign -- 11 of 34 columns are exactly element-intrinsic, and of
+the 23 that are not, 19 sit below 0.001 of their variance while the six named above run from 0.147
+to 0.586. If elements commonly serve one gene and not another, then a mostly gene-blind
 model has a ceiling that has nothing to do with how good its chemistry is, and reporting its
 failure as a failure of the chemistry would be wrong.
 
