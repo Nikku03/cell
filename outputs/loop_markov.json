@@ -1,0 +1,117 @@
+{
+ "test": "markov forward model",
+ "scores": {
+  "persistence": -0.05969226861693322,
+  "unconditioned": -3.2498911807737585,
+  "conditioned": -3.3615805190226657,
+  "relaxation": -0.072630202844155,
+  "lambda": 0.0004681420269964028,
+  "offdiag": 0.5354901431986803
+ },
+ "k_sweep": {
+  "3": {
+   "r2": -4.83619312896769,
+   "offdiag": 0.3521384589781994,
+   "beats": false
+  },
+  "5": {
+   "r2": -3.2498911807737585,
+   "offdiag": 0.5354901431986803,
+   "beats": false
+  },
+  "7": {
+   "r2": -2.5017766484695656,
+   "offdiag": 0.5831989777992325,
+   "beats": false
+  },
+  "9": {
+   "r2": -2.096371751017364,
+   "offdiag": 0.6573247025360407,
+   "beats": false
+  }
+ },
+ "conditioning_control": {
+  "real": -3.3615805190226657,
+  "shuffled": -3.3150191602316665,
+  "compare": {
+   "real": -3.3018882504057325,
+   "control": -3.2553268916147333,
+   "ratio": 0.9858985661355203,
+   "weakened": true
+  }
+ },
+ "gates": {
+  "G1": false,
+  "G2": false,
+  "G3": false,
+  "G4": false,
+  "G5": false,
+  "G6": false
+ },
+ "void": [
+  "G2",
+  "G3",
+  "G4",
+  "G5",
+  "G6"
+ ],
+ "seconds": 30.694044828414917,
+ "log": [
+  "========================================================================================================",
+  "LOOP 214 -- A MARKOV CHAIN INSTEAD OF A RELAXATION: IS THE FUNCTIONAL FORM THE PROBLEM?",
+  "========================================================================================================",
+  "     reloaded setpoint_stack_v1.pkl: 600 genes, three-block set point |r| 0.4587",
+  "     NOTE the persisted artefact is the THREE-block stack. Loop 213's ten-block set",
+  "     point (|r| 0.5474) was not persisted, so G3/G6 condition on the three-block one",
+  "     and G4's relaxation arm is recomputed from it for a like-for-like comparison.",
+  "     harness: train 3,000 rows, score 1,800, persistence -0.05969",
+  "G1 IS THE CHAIN A CHAIN?",
+  "     K = 5, state occupancy train [600, 600, 64, 1136, 600]  test [1063, 38, 0, 38, 661]",
+  "     row sums deviate by at most 2.22e-16",
+  "     mean off-diagonal mass 0.5355  (a near-identity chain is persistence)",
+  "     transition matrix diagonal [0.769, 0.371, 0.023, 0.331, 0.829]",
+  "     G1 FAIL -- occupancy [600, 600, 64, 1136, 600]/[1063, 38, 0, 38, 661], rowsum 2.2e-16, off-diagonal 0.5355. A chain that does not move is persistence in different notation",
+  "G2 DOES AN UNCONDITIONED CHAIN BEAT PERSISTENCE?",
+  "     unconditioned chain R2 -3.24989   persistence -0.05969   margin -3.19020",
+  "     G2 VOID -- G1 did not pass, so there is nothing here to test",
+  "G3 DOES CONDITIONING ON THE SET POINT HELP?",
+  "     genes split by predicted set point: [200, 200, 200] (fall / stay / rise)",
+  "     conditioned chain R2 -3.36158   unconditioned -3.24989   gain -0.11169",
+  "     G3 VOID -- G1 did not pass, so there is nothing here to test",
+  "G4 CHAIN AGAINST RELAXATION, SAME SET POINT, SAME ROWS",
+  "     relaxation (lambda +0.000468)  R2 -0.07263",
+  "     best chain                     R2 -3.24989",
+  "     persistence                    R2 -0.05969",
+  "     G4 VOID -- G1 did not pass, so there is nothing here to test",
+  "G5 DOES THE STATE COUNT DECIDE THE ANSWER?",
+  "       K=3  R2 -4.83619   off-diagonal 0.352   beats persistence False",
+  "       K=5  R2 -3.24989   off-diagonal 0.535   beats persistence False",
+  "       K=7  R2 -2.50178   off-diagonal 0.583   beats persistence False",
+  "       K=9  R2 -2.09637   off-diagonal 0.657   beats persistence False",
+  "     G5 VOID -- G1 did not pass, so there is nothing here to test",
+  "G6 IS THE CONDITIONING REAL?",
+  "     real conditioning     R2 -3.36158",
+  "     shuffled conditioning R2 -3.31502   delta -0.04656",
+  "     G6 VOID -- G3 did not pass, so there is nothing here to test",
+  "G7 WHAT THIS CANNOT SHOW",
+  "     The chain is fitted on LEVELS discretised into quantile states, which throws away",
+  "     magnitude within a state. That is the price of the discreteness that bounds it, and",
+  "     it means a chain cannot express a large move even when a large move is correct.",
+  "     The persisted artefact is the three-block set point, not loop 213's ten-block",
+  "     0.5474, so G3 and G6 condition on the weaker one. If conditioning fails here it",
+  "     could still succeed on the better set point, and that is not tested.",
+  "     A time-homogeneous chain assumes the transition matrix does not change with time",
+  "     since the drug. The A549 grid spans 30 to 720 minutes and the biology plainly does",
+  "     change over it; loop 191c already found a batch discontinuity at 25-30 minutes.",
+  "     Still one cell line, one perturbation, one channel, 600 genes.",
+  "========================================================================================================",
+  "  G1  FAIL",
+  "  G2  VOID",
+  "  G3  VOID",
+  "  G4  VOID",
+  "  G5  VOID",
+  "  G6  VOID",
+  "  0/1   [31s]   (5 VOID: G2, G3, G4, G5, G6)",
+  "========================================================================================================"
+ ]
+}
