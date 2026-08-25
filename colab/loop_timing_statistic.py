@@ -178,7 +178,7 @@ def st_mrt(V, grid):
     pl = _plateau(V)
     safe = np.where(np.abs(pl) > 1e-9, pl, np.nan)
     y = 1.0 - V / safe                              # 1 at baseline, 0 at plateau
-    out = np.trapz(y, x=grid, axis=0)
+    out = np.trapezoid(y, x=grid, axis=0)
     return np.where(np.isfinite(out), out, np.nan), pl
 
 
