@@ -212,9 +212,26 @@ def main():
 
     blocks = [(i, min(i + BLOCK, NCELL)) for i in range(0, NCELL, BLOCK)]
     say(f"     streaming {len(blocks):,} blocks of {BLOCK:,} cells with {WORKERS} workers")
+    say(f"     bounded sliding window of {2*WORKERS} in-flight blocks, a "
+        f"{2*WORKERS*BLOCK*NGENE*4/1e9:.1f} GB ceiling. The first attempt used an unbounded "
+        f"executor map, which submits all {len(blocks):,} blocks at once and holds every finished "
+        f"one until the consumer reaches it; at 67.6 MB per block that reached the container "
+        f"limit and the run was killed with no traceback.")
     done = [0]; tstart = time.time()
+    from collections import deque
     with ThreadPoolExecutor(WORKERS) as ex:
-        for (lo, hi), A in zip(blocks, ex.map(lambda b: fetch_cells(*b), blocks)):
+        pend, it = deque(), iter(blocks)
+        for _ in range(2 * WORKERS):
+            b0 = next(it, None)
+            if b0 is None:
+                break
+            pend.append((b0, ex.submit(fetch_cells, *b0)))
+        while pend:
+            (lo, hi), fut = pend.popleft()
+            A = fut.result()
+            nxt = next(it, None)
+            if nxt is not None:
+                pend.append((nxt, ex.submit(fetch_cells, *nxt)))
             m = keep[lo:hi]
             if not m.any():
                 continue
