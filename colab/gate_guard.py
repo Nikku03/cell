@@ -189,3 +189,167 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
     """
     emit(f"{indent}{if_true if gate else if_false}")
     return bool(gate)
+
+
+# =============================================================================================
+# THE GATE LEDGER, added after four defects in one arc that were each patched in one loop and
+# then written again in the next. Every one of them was in the MACHINERY around a gate rather
+# than in the science it was testing, and every one put a false sentence into a log.
+#
+#   A  NO VOID. Loop 187's B6 required a self-loop count above chance in a network with zero
+#      self-loops, so z was 0/0. PASS/FAIL cannot express "the test did not apply", and forcing
+#      the nan into FAIL printed "loop 175's framing stands" -- a claim the run had not earned.
+#      Every loop since has hand-rolled a `void` set, and loop 196's X4 hand-rolled it wrongly:
+#      it printed "X4 VOID" and then fell through to a verdict that printed "X4 FAIL", putting
+#      both in the same summary.
+#
+#   B  EAGER NARRATION. verdict() takes if_true and if_false as strings, and Python builds BOTH
+#      before the call. Loop 196's X4 crashed on d4[winner] with winner None; loop 197's Y4
+#      crashed on qual[0] with qual empty, ONE LOOP after the first was fixed. In both cases the
+#      gate had already decided FAIL correctly and died while saying so. Narration must never be
+#      able to kill a decided verdict.
+#
+#   C  DOWNSTREAM GATES THAT DO NOT KNOW. Loop 194's V4 and V6 confirm a positive V3 did not
+#      find. V4 failed with "the result depends on the hub threshold" when the negative was
+#      identical at every threshold; V6 failed with "the coherence goes" when there was no
+#      coherence to lose. Both false about their own numbers, because neither could see that its
+#      precondition had failed.
+#
+#   D  A GATE THAT ASSUMES ITS OWN SIGN. Loop 199's Q5 asked "does swapping destroy the
+#      association" and implemented it as real > swapped, which tests that only if the
+#      association is positive. Q4 came back negative, so a swap that removed 82% of the effect
+#      scored as a failure.
+#
+# A commit message is not a mechanism. This is.
+# =============================================================================================
+
+PASS, FAIL, VOID = "PASS", "FAIL", "VOID"
+
+
+def _render(msg, fallback):
+    """Render a gate message, and NEVER let rendering kill a decided verdict.
+
+    Messages may be callables, which is the fix for defect B: a lambda is not evaluated unless
+    its branch is chosen, so a success message may safely reference a success-only value. Plain
+    strings still work and are still built eagerly by Python at the call site -- the try/except
+    is what stops that from being fatal, since by the time we are here the gate has ALREADY been
+    decided and the only thing left to do is say so."""
+    try:
+        return msg() if callable(msg) else str(msg)
+    except Exception as exc:                                          # noqa: BLE001
+        return f"{fallback} [message could not be rendered: {type(exc).__name__}: {exc}]"
+
+
+def is_defined(x):
+    """True unless x is a non-finite number. Defect A's trigger, as a function."""
+    try:
+        return bool(np.isfinite(x))
+    except (TypeError, ValueError):
+        return x is not None
+
+
+class Gates:
+    """A ledger where VOID is a first-class outcome and preconditions are declared, not assumed.
+
+    Usage mirrors verdict() but the gate name and its dependencies are part of the call:
+
+        G = Gates(emit=say)
+        G.add("Q3", diff > 0, if_true=..., if_false=...)
+        G.add("Q4", ok, requires=("Q3",), if_true=lambda: f"...{best['x']}...", if_false=...)
+        G.summary()
+
+    A gate whose `requires` are not all PASS is VOID and says which precondition failed, so a
+    confirmatory gate can never report a finding about a result that does not exist. A gate whose
+    verdict value is a non-finite number is VOID rather than FAIL. VOID gates are excluded from
+    the score rather than counted against it, because a test that did not apply is not a test
+    that was failed."""
+
+    def __init__(self, emit=print, indent="     "):
+        self.emit, self.indent = emit, indent
+        self.status, self.why = {}, {}
+
+    def add(self, name, ok=None, *, stat=None, if_true="", if_false="", if_void=None,
+            requires=(), void_if=False, void_reason=""):
+        """`stat` is the STATISTIC the gate compared, and passing it is what catches defect A.
+
+        A comparison against nan silently yields False -- `float("nan") > 3.0` is False, not nan --
+        so by the time the verdict is a boolean the undefinedness is gone and the gate scores FAIL.
+        That is exactly how loop 187's B6 turned a 0/0 z-score into "loop 175's framing stands".
+        Checking `ok` alone cannot see it; the raw statistic can. Pass stat=z whenever the verdict
+        is a threshold comparison on a number that could be undefined."""
+        missing = [r for r in requires if self.status.get(r) != PASS]
+        if missing:
+            st, txt = VOID, (f"{name} VOID -- {', '.join(missing)} did not pass, so there is "
+                             f"nothing here to test")
+        elif (void_if() if callable(void_if) else bool(void_if)):
+            st, txt = VOID, f"{name} VOID -- {void_reason or 'the test did not apply'}"
+        elif stat is not None and not is_defined(stat):
+            st, txt = VOID, (f"{name} VOID -- the statistic is undefined ({stat!r}), so this gate "
+                             f"could not pass or fail; that is not the same as failing")
+        elif not is_defined(ok):
+            st, txt = VOID, (f"{name} VOID -- the verdict is undefined ({ok!r}), so this gate "
+                             f"could not pass or fail; that is not the same as failing")
+        else:
+            st = PASS if ok else FAIL
+            txt = _render(if_true if ok else if_false, f"{name} {st}")
+        if st == VOID and if_void is not None:
+            txt = _render(if_void, txt)
+        self.status[name], self.why[name] = st, txt
+        self.emit(f"{self.indent}{txt}")
+        return st == PASS
+
+    def voided(self, name):
+        return self.status.get(name) == VOID
+
+    def as_dict(self):
+        """gates/void in the shape every loop in this project already writes to JSON."""
+        return ({k: (v == PASS) for k, v in self.status.items()},
+                sorted(k for k, v in self.status.items() if v == VOID))
+
+    def summary(self, seconds=None):
+        self.emit("=" * 104)
+        for k, v in self.status.items():
+            self.emit(f"  {k}  {v}")
+        scored = [k for k, v in self.status.items() if v != VOID]
+        n_void = len(self.status) - len(scored)
+        line = (f"  {sum(1 for k in scored if self.status[k] == PASS)}/{len(scored)}"
+                + (f"   [{seconds:.0f}s]" if seconds is not None else ""))
+        if n_void:
+            line += (f"   ({n_void} VOID: "
+                     f"{', '.join(sorted(k for k, v in self.status.items() if v == VOID))})")
+        self.emit(line)
+        self.emit("=" * 104)
+        return self.status
+
+
+def weakened_by(real, control, min_ratio=1.0):
+    """Did a control weaken the association, WITHOUT assuming which way the association points?
+
+    Defect D, as a function. Loop 199's Q5 asked exactly this and wrote `real > control`, which
+    silently assumes a positive association; the answer came back negative and a control that
+    removed 82% of the effect was scored as a failure. Magnitude is what "weakened" means."""
+    a, b = abs(float(real)), abs(float(control))
+    return dict(real=float(real), control=float(control), ratio=(b / a) if a > 0 else float("nan"),
+                weakened=bool(a > b * min_ratio))
+
+
+def finite(*arrays, report=None, label="comparison"):
+    """Drop positions where ANY input is non-finite, and COUNT what went.
+
+    Defect A's quieter cousin, and the one that cost a real result. Loop 188's G2 tested three
+    signed predictions with np.median and scipy; 90 of 4,482 elements had no measured CpG, so
+    5mC's median was nan, its p-value was nan, and the loop printed REFUTED for a test that never
+    ran. Loop 188b re-tested it properly: medians 4.00 against 9.56, p 3.55e-16, HOLDS -- one of
+    the cleanest directional results in that arc, hidden by two percent missingness.
+
+    np.median, np.mean, np.std, np.corrcoef and the scipy tests all propagate a single nan and
+    none of them warns. A coverage gate does not protect them: 98% defined is fine for a model
+    that imputes and fatal for a median, which has no threshold at all."""
+    arrs = [np.asarray(a, dtype=float) for a in arrays]
+    keep = np.ones(len(arrs[0]), dtype=bool)
+    for a in arrs:
+        keep &= np.isfinite(a)
+    dropped = int((~keep).sum())
+    if report is not None and dropped:
+        report(f"     {label}: dropped {dropped} non-finite of {len(keep)}")
+    return tuple(a[keep] for a in arrs) + (dropped,)
