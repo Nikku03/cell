@@ -579,8 +579,22 @@ rankers (metabolite completion, four-block enzyme merge) — no `.pkl` exists fo
 re-fit at 199 s and 57 s per cold start. Report TEST-split numbers, not DEV. *Exit gate:*
 engineering only; nothing is blocked.
 
-**Blocked and not fetchable, listed so nobody re-plans them.** Regulatory edge gains (612,133, a
-curation and biology gap, not a download). Complex assembly rates and compartment transport rates
+**Blocked and not fetchable, listed so nobody re-plans them.** ~~Regulatory edge gains (612,133, a
+curation and biology gap, not a download).~~ **CORRECTED 25 August 2026 by loop 208 — this line was
+wrong.** Genome-scale Perturb-seq (Replogle et al. 2022, figshare 20029387) measures exactly this
+quantity: knock a gene down, read the transcriptome, and the change *is* the gain. Downloaded in
+this session as 470 MB of pseudobulk — K562 11,258 × 8,248 and RPE1 2,679 × 8,749, 81,363,282
+measured perturbation–response values. **360,540 of the 612,133 edges (58.9%) now carry a measured
+value** (`outputs/loop_perturbseq.json` A2). It was a download, not a curation gap.
+
+What loop 208 also measured, and it does not rescue the plan: those gains reach **r 0.2785** as a
+set-point predictor against the 0.9081 requirement, losing to the nine same-cell ChIP tracks at
+0.2932; and the sharpest available test failed — NR3C1 was perturbed in the dataset and
+dexamethasone acts through NR3C1, yet its measured knockdown signature scores |r| 0.0513 against a
+null of 1,000 *other real perturbations* whose 95th percentile is 0.1533. Gains do transfer between
+cell types (same gene K562↔RPE1 median r +0.1677 against a within-line different-gene null of
++0.0327), so the failure is not a cell-type artefact. **The block was never the availability of the
+gains. It is that having 360,540 of them does not move the set point.** Complex assembly rates and compartment transport rates
 (do not exist at proteome scale). Per-protein degradation in two cell-cycle states (a new
 experiment). Intracellular compartment-resolved metabolite concentrations (the fetchable proxy,
 HMDB biofluid, is known to be the wrong object). A second densely-sampled matched time course
