@@ -117,3 +117,46 @@ from the data it will touch.
 A related consequence worth stating separately: a gate whose statistic can be undefined needs a
 third outcome. PASS/FAIL cannot express "the test did not apply", and forcing nan into FAIL puts a
 false claim into the record -- here, a claim that loop 175 was right.
+
+## Loop 188's G2: the same nan defect, written one session after recording the rule against it
+
+B6's entry above ends with "a gate whose statistic can be undefined needs a third outcome, because
+forcing nan into FAIL puts a false claim into the record". Loop 188 was written after that note, it
+implements the third outcome -- G7 returned VOID correctly on its first use -- and it still shipped
+the identical defect in a different gate.
+
+G2 makes three signed predictions and tests each with a one-sided Mann-Whitney on the element-gene
+pairs. One of them is 5mC. Ninety of the 4,482 elements have zero CpGs measured by WGBS, so their
+5mC is nan. `np.median` propagates nan from a single element, and `mannwhitneyu` returns nan for p.
+The comparison was therefore:
+
+    el_5mc       predicted lower   median functional +nan vs +nan   one-sided p nan   REFUTED
+
+That is not a refutation. It is an undefined statistic printed as a verdict, and it counted against
+G2, which failed. G2 would have failed anyway on H3K27me3 -- that refutation is real -- so no
+conclusion changes. The defect is that the record now says 5mC ran against its prediction when the
+test never ran at all.
+
+Why the rule did not prevent it: the rule was learned about GATES and implemented at the gate's
+verdict, and this nan was upstream of the verdict, inside a statistic the gate consumed. G1 even
+measured the missingness -- it reports el_5mc as the worst-defined column at 98.0% -- and passed it,
+correctly, because 98% is above the 95% bar. Two percent missing is fine for a model that imputes.
+It is fatal for `np.median`, which has no threshold at all: one nan in four thousand is enough.
+
+## The rule, extended again
+
+  Every reduction over real data needs its non-finite handling chosen deliberately, not inherited.
+  `np.median`, `np.mean`, `np.std`, `np.corrcoef` and the scipy tests all propagate nan silently and
+  none of them warn. A coverage gate that passes at 98% does not protect the statistics downstream
+  of it, because coverage gates have thresholds and nan propagation does not.
+
+E9 got the denominator wrong, R5 got the null wrong, B6 got the file wrong, G2 got the missing
+values wrong. Four different depths, one shape: the gate was written from the idea, and the data it
+would actually touch was not looked at first.
+
+A related note on the arm design, recorded here because it is the same species of error one level
+up: G3 is labelled "the repressive and insulating arm" and contains the elementChromatinCategory
+one-hot, three of whose five levels encode H3K27ac. The base stack it is added to has no H3K27ac
+column, so the arm smuggles an activating mark into the arm named for repression. The docstring
+asserts the category is "the same columns entered beside it", which is true in G8 and false in G3.
+Whatever G3 measured, it is not cleanly what its name says.
