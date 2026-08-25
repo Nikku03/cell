@@ -298,9 +298,26 @@ def main():
     # ---- V4 ------------------------------------------------------------------------------------
     say()
     say("V4 IS IT ROBUST TO THE HUB THRESHOLD?")
+    # V4 and V6 CONFIRM V3's positive. With V3 negative there is no positive to be robust about or
+    # to strip a confound from, and scoring them as FAIL puts two false sentences in the log: that
+    # the answer depends on the hub threshold, and that a coherence was lost to abundance. Loop
+    # 196's X4 has this exact structure and was given the same treatment; it was not carried here.
+    # The thresholds are still SWEPT and reported, because "the negative holds at every threshold"
+    # is worth knowing -- it is just not what this gate was written to decide.
+    if not v3:
+        void |= {"V4", "V6"}
     d4 = {}
     if "V4" in void:
-        say("     V4 VOID -- see above")
+        say("     V4 VOID -- V3 found nothing to be robust ABOUT. The thresholds are swept below "
+            "anyway, since a negative holding at every threshold is worth recording.")
+        for h in HUB_LEVELS:
+            ee, _ = coupling_edges(h, gene_of_rx, lambda *_: None)
+            ie = [(a, b) for a, b in ee if a in gidx and b in gidx]
+            r = coherence(ie, tvec, gidx, np.random.default_rng(SEED + h), n_perm=300)
+            d4[h] = dict(edges=len(ie),
+                         density=2.0 * len(ie) / max(n * (n - 1), 1), **(r or {}))
+            say(f"       hub>{h:>3d}: {len(ie):>7,} edges  "
+                + (f"z {r['z']:+.1f}" if r else "too few edges"))
     else:
         for h in HUB_LEVELS:
             ee, _ = coupling_edges(h, gene_of_rx, lambda *_: None)
@@ -317,8 +334,8 @@ def main():
                            "is not about where the hub line was drawn",
                    if_false="V4 FAIL -- the result depends on the hub threshold, which makes it an "
                             "answer about the threshold rather than about the chemistry")
-    v4 = bool(d4) and all(v.get("z") is not None and np.isfinite(v["z"]) and v["z"] > Z_BAR
-                          for v in d4.values())
+    v4 = bool(d4) and "V4" not in void and all(
+        v.get("z") is not None and np.isfinite(v["z"]) and v["z"] > Z_BAR for v in d4.values())
 
     # ---- V5 ------------------------------------------------------------------------------------
     say()
@@ -362,7 +379,7 @@ def main():
     say("V6 IS IT JUST EXPRESSION LEVEL?")
     d6, v6 = None, False
     if "V6" in void:
-        say("     V6 VOID -- see above")
+        say("     V6 VOID -- V3 found no coherence for an abundance-matched null to remove.")
     else:
         q = np.quantile(bvec, np.linspace(0, 1, N_DECILES + 1))
         q[-1] += 1e-9
