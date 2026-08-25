@@ -372,10 +372,13 @@ def main():
         ok = {k: v["held"] for k, v in d4.items() if v["held"] >= MIN_SUBSETS}
         winner = max(ok, key=ok.get) if ok else None
     x4 = winner is not None
+    # both branches of GG.verdict are f-strings and BOTH are evaluated before the call, so a PASS
+    # message that indexes a success-only value crashes on failure. It did: d4[None]. Any gate
+    # whose success text references something that exists only on success needs this guard.
+    held_txt = f"{d4[winner]['held']}/{len(SUBSETS)}" if winner is not None else "n/a"
     GG.verdict(x4, emit=say,
-               if_true=f"X4 PASS -- '{winner}' holds on {d4[winner]['held']}/{len(SUBSETS)} "
-                       f"four-point subsets, so it is solving the resolution problem rather than "
-                       f"fitting one choice of points",
+               if_true=f"X4 PASS -- '{winner}' holds on {held_txt} four-point subsets, so it is "
+                       f"solving the resolution problem rather than fitting one choice of points",
                if_false=f"X4 FAIL -- no candidate holds on {MIN_SUBSETS} of {len(SUBSETS)} "
                         f"subsets; a statistic that works on one is fitting that one")
 
