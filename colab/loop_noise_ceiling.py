@@ -119,8 +119,14 @@ def main():
         f"timepoints, replicates {sorted(set(reps.tolist()))}")
     say(f"     GRID USED: {[int(x) for x in grid]} minutes -- the 9 points where replicates "
         f"{list(REPS)} all exist and t >= 30")
-    say("     TARGET m(t,g) = log2( TPM(t,g) + 1 ) - log2( TPM(30,g) + 1 ), averaged over the")
-    say("          three replicates. So m is log2 fold-change against the 30-minute baseline.")
+    say("     TARGET m(t,g) = mean over replicates r of")
+    say("               [ log2(1 + TPM(t,g,r)) - log2(1 + TPM(30,g,r)) ]")
+    say("          EACH REPLICATE IS BASELINE-SUBTRACTED AGAINST ITS OWN t=30 BEFORE AVERAGING.")
+    say("          That order matters and is deliberate: averaging TPM first and taking one log")
+    say("          lets a replicate entering or leaving the series shift the level, which is the")
+    say("          defect that put a batch step at t=30 in loop 191 and made every half-time")
+    say("          28 minutes (loop_response_timing_d.py:302-317). My first statement of this")
+    say("          dictionary had the order wrong and K1 caught it at 8.53e-01.")
     say("     SET POINT S(g) = mean of m over the last three grid points (480, 600, 720 min).")
     say("     FORWARD TARGET dm(t,g) = m(t,g) - m(t_prev,g). THIS is what persistence predicts")
     say("          as zero and what every R2 since loop 198 is computed on.")
@@ -129,12 +135,16 @@ def main():
     say("          gains    200 Perturb-seq CRISPRi signatures, K562 = 200 columns")
     say("          physics  879 JASPAR motifs x 3 chemical potentials = 2,637 columns")
     # independent recomputation of m from raw TPM
-    b = tpm[(mins == 30) & np.isin(reps, REPS)].mean(0)
-    chk = []
-    for t in grid:
-        a = tpm[(mins == int(t)) & np.isin(reps, REPS)].mean(0)
-        chk.append(np.log2(a + 1) - np.log2(b + 1))
-    chk = np.array(chk)
+    acc, nrep = None, 0
+    for r in REPS:
+        rows = [np.where((mins == int(t)) & (reps == r))[0] for t in grid]
+        if any(len(x) == 0 for x in rows):
+            continue
+        V = np.array([np.log2(1.0 + tpm[ix].astype(np.float64)).mean(0) for ix in rows])
+        V = V - V[0]
+        acc = V if acc is None else acc + V
+        nrep += 1
+    chk = acc / max(nrep, 1)
     err = float(np.max(np.abs(chk[:, idx] - M[:, idx])))
     say(f"     independent recomputation of m from raw TPM: max abs difference {err:.3e}")
     G.add("K1", bool(err < 1e-9), stat=err,
