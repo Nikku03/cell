@@ -168,7 +168,13 @@ def main():
     say(f"     Spearman {rho:+.4f}   (gate >= {Q2_RHO})")
     say(f"     median copy-number ratio Itzhak/Schwanhausser {ratio:.2f}x -- a cell-type and method")
     say(f"     difference, REPORTED not divided out (loop 92's rule)")
-    q2 = bool(rho >= Q2_RHO)
+    # GUARDED against the loop 187 B6 mechanism: spearmanr gives nan with no variance and
+    # `nan >= Q2_RHO` is False, which scores FAIL on a statistic that was never defined.
+    q2_defined = bool(np.isfinite(rho))
+    if not q2_defined:
+        say(f"     Q2 VOID -- the correlation is undefined ({rho!r}), so this gate could not "
+            f"pass or fail; that is not the same as failing")
+    q2 = bool(q2_defined and rho >= Q2_RHO)
     say(f"     Q2 {'PASS' if q2 else 'FAIL'}")
     say()
 

@@ -375,9 +375,10 @@ def main():
         # threshold to make anything pass, and the direction of Q4 is unaffected either way.
         q5 = bool(abs(d4["diff"]) > abs(d5["diff"]))
         GG.verdict(q5, emit=say,
-                   if_true=f"Q5 PASS -- swapping destroys the association ({d4['diff']:+.4f} -> "
-                           f"{d5['diff']:+.4f}), so it belongs to the gene's own promoter and not "
-                           f"to the two assays' global time profiles",
+                   if_true=lambda: (f"Q5 PASS -- swapping destroys the association "
+                                    f"({d4['diff']:+.4f} -> {d5['diff']:+.4f}), so it belongs to "
+                                    f"the gene's own promoter and not to the two assays' global "
+                                    f"time profiles"),
                    if_false="Q5 FAIL -- a stranger's accessibility gives as strong an association, "
                             "so the result is about the two assays' global time profiles")
 

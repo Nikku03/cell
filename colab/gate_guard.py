@@ -186,8 +186,22 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
     Narration that states a result must take the gate as an argument. Passing a single
     string for both branches is allowed and is the honest way to say something that
     holds either way.
+
+        RETROFIT, and it protects every existing caller without touching one of them. The messages
+    were interpolated directly into the emit() call, so BOTH f-strings were built by Python before
+    verdict() was even entered -- which is how loop 196's X4 died on d4[None] and loop 197's Y4 on
+    an empty qual[0], each after its gate had already decided FAIL correctly. Routing through
+    _render does two things: a message may now be a CALLABLE, which is not evaluated unless its
+    branch is chosen, and a message that raises while rendering is reported rather than fatal. By
+    the time we are here the verdict is decided and the only remaining job is to say it, so
+    narration must not be able to kill the run.
+
+    A caller whose success message references a success-only value should pass a lambda. One that
+    passes an eager f-string is still exposed to the interpolation happening at ITS call site --
+    Python builds it before the call and nothing here can intercept that -- which is why
+    lint_gates.py flags those separately.
     """
-    emit(f"{indent}{if_true if gate else if_false}")
+    emit(f"{indent}{_render(if_true if gate else if_false, 'PASS' if gate else 'FAIL')}")
     return bool(gate)
 
 

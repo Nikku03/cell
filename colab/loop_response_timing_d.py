@@ -611,7 +611,16 @@ def main():
                 else:
                     say(f"       tercile {qi+1}: under the power floor")
             d8b = dict(n=int(m.sum()), rho=float(r_), p=float(p_), strata_held=held)
-            u8b = bool(r_ < 0 and p_ < ALPHA and held >= 2)
+            # GUARDED. spearmanr returns nan when either input has no variance, and `nan < 0`
+            # is False, so the boolean would swallow the undefinedness and score FAIL on a
+            # statistic that never existed. That is loop 187's B6 mechanism.
+            if not (np.isfinite(r_) and np.isfinite(p_)):
+                void.add("U8b")
+                say(f"     U8b VOID -- the correlation is undefined (rho {r_!r}), so this gate "
+                    f"could not pass or fail; that is not the same as failing")
+                u8b = False
+            else:
+                u8b = bool(r_ < 0 and p_ < ALPHA and held >= 2)
             GG.verdict(u8b, emit=say,
                        if_true=f"U8b PASS -- more receptor at the promoter goes with a FASTER "
                                f"response (rho {r_:+.3f}), and it holds in {held}/3 magnitude "

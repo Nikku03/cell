@@ -91,7 +91,7 @@
   "note": "replication of the accessibility-leads-transcription clock",
   "warnings": []
  },
- "seconds": 54.1504487991333,
+ "seconds": 60.40333008766174,
  "log": [
   "========================================================================================================",
   "LOOP 192  DOES THE ACCESSIBILITY CLOCK REPLICATE OUTSIDE A549 AND DEXAMETHASONE?",
@@ -175,7 +175,7 @@
   "  W4  VOID",
   "  W5  VOID",
   "  W6  PASS",
-  "  4/5   [54s]   (2 VOID: W4, W5)",
+  "  4/5   [60s]   (2 VOID: W4, W5)",
   "========================================================================================================"
  ]
 }

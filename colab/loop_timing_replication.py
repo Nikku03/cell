@@ -326,10 +326,13 @@ def main():
     if m2 is not None:
         d3down = lead_test(ah2, eh2, m2, f"A549 downsampled to {len(down)} points", say)
     w3 = bool(d3down and d3down["p"] < ALPHA and d3down["lead"] > 0)
+    # LAZY, because d3down is None whenever the downsampled arm could not be built, and this
+    # f-string would then be interpolated at the call site and crash a gate that had already
+    # decided FAIL. That is loop 196's X4 and loop 197's Y4, still latent here.
     GG.verdict(w3, emit=say,
-               if_true=f"W3 PASS -- the lead survives downsampling ({d3down['lead']:+.0f} min, "
-                       f"p {d3down['p']:.3g}), so four points can see it and a W4 null would mean "
-                       f"the effect is absent",
+               if_true=lambda: (f"W3 PASS -- the lead survives downsampling "
+                                f"({d3down['lead']:+.0f} min, p {d3down['p']:.3g}), so four points "
+                                f"can see it and a W4 null would mean the effect is absent"),
                if_false="W3 FAIL -- the A549 lead does NOT survive downsampling to this grid, so "
                         "four points cannot resolve it and W4 is VOID: a null here would be a "
                         "statement about the sampling and not about dendritic cells")
