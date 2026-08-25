@@ -227,6 +227,21 @@ def tss_table():
     return out
 
 
+_PT_CACHE = {}
+
+
+def promoter_cached(assay, tsslist):
+    """promoter_track re-parses every peak file on each call and does not depend on the grid.
+
+    X4 alone evaluates several candidates across four subsets, so without this the same nine to
+    eleven bed files are parsed twenty times. The key is the assay plus the TSS list identity,
+    which is constant within a series."""
+    key = (assay, id(tsslist))
+    if key not in _PT_CACHE:
+        _PT_CACHE[key] = L191.promoter_track(assay, tsslist, PROM_PAD, lambda *_: None)
+    return _PT_CACHE[key]
+
+
 def arm(S, grid, e2s, tss, stat, group=None):
     """One (statistic, grid) evaluation: returns accessibility time, expression time, mask, plateau."""
     reps = S["reps"] if group is None else group
@@ -239,7 +254,7 @@ def arm(S, grid, e2s, tss, stat, group=None):
     base = S["tpm"][(S["mins"] == int(grid[0])) & np.isin(reps, keep)].mean(0)
     eh, pl = stat(M, grid)
     tl = [tss.get(s) for s in sym]
-    pt, PM = L191.promoter_track(S["assay"], tl, PROM_PAD, lambda *_: None)
+    pt, PM = promoter_cached(S["assay"], S.setdefault("_tl", tl))
     have = set(pt.tolist())
     if not set(grid.tolist()) <= have:
         return None
