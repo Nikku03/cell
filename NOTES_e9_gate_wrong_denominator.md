@@ -72,3 +72,48 @@ Before a gate is written down, ask what the statistic does UNDER THE NULL. E9 ne
 0.99 was reachable given a pool that is 9.5% positive. R5 never asked how often four points give a
 negative Spearman by chance. Neither question needs the data, and both would have been answered in
 a minute.
+
+## Loop 187's B6: a gate on a quantity that is identically zero in the data it reads
+
+B6 was written to correct a framing in loop 175. Loop 175 reported human autoregulation as "24
+self-loops among 795 curated regulators", 3.0% against E. coli's ~50%, and never asked what chance
+gives. B6's suspicion was reasonable: with 55,716 edges over ~1,200 regulators and ~7,500 targets,
+chance gives very few self-loops, so 3.0% might be a large ENRICHMENT reported as a small FRACTION.
+
+The rerun returned:
+
+    curated self-loops 0 over 1,177 regulators (0.0%)
+    degree-preserving null 0.00 +/- 0.00  ->  z +nan
+
+Zero. And not only in the curated tier -- all 612,133 edges of net_bundle.json.gz, across all three
+tiers, contain no a -> a edge at all.
+
+So B6 never measured autoregulation. Loop 175's 24 came from TRRUST v2, read via
+colab/data/tf_autoregulation.json; the network B6 reads is CollecTRI/DoRothEA-derived and does not
+encode autoregulation as a self-edge. The two numbers are about different files. B6 compared a
+count from one source against a null built from another and called the result a correction.
+
+The auto-generated FAIL text is wrong twice over, and is left in the log with this note against it:
+
+    B6 FAIL -- z +nan; the self-loops are what chance gives and loop 175's framing stands
+
+z is not below the bar, it is UNDEFINED -- 0 observed, 0 expected, sd 0, so the statistic is 0/0.
+And loop 175's framing is neither confirmed nor refuted by a network that cannot represent the
+thing loop 175 counted. The honest verdict is VOID, not FAIL, and the honest next step is to run
+this against tf_autoregulation.json, which is the file that actually holds the 24.
+
+## The rule, extended
+
+The earlier version of this rule was: before writing a gate down, ask what the statistic does under
+the null. B6 obeyed that and still failed, because it never asked the prior question --
+
+  does the quantity this gate reads EXIST in the file the gate reads it from, and is it non-zero?
+
+One `grep` for a self-edge would have answered it in a second and B6 would have been written
+against TRRUST instead. E9 got the denominator wrong, R5 got the null wrong, and B6 got the FILE
+wrong. All three are the same failure at different depths: a gate written from the idea rather than
+from the data it will touch.
+
+A related consequence worth stating separately: a gate whose statistic can be undefined needs a
+third outcome. PASS/FAIL cannot express "the test did not apply", and forcing nan into FAIL puts a
+false claim into the record -- here, a claim that loop 175 was right.
