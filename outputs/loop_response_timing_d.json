@@ -114,7 +114,7 @@
   "note": "response timing against feedback topology, loop 191 defects fixed",
   "warnings": []
  },
- "seconds": 101.83169412612915,
+ "seconds": 114.37228965759277,
  "log": [
   "========================================================================================================",
   "LOOP 191b  WHAT SETS THE TIMING OF A RESPONSE -- loop 191's three defects corrected",
@@ -236,7 +236,7 @@
   "  U8b  FAIL",
   "  U9  PASS",
   "  U10  PASS",
-  "  9/11   [102s]",
+  "  9/11   [114s]",
   "========================================================================================================"
  ]
 }
