@@ -316,7 +316,11 @@ def main():
     say("P4 CAN WE RECOVER EDGES THIS NETWORK HAS NEVER SEEN?")
     universe = [g for g in S["names"] if out.get(g) or inn.get(g)]
     uset = set(universe)
-    ho = [(a, b) for a, b in held_out if a in uset and b in uset]
+    # DETERMINISM. held_out is a set of string tuples and Python randomises str hashing per
+    # process, so iterating it unsorted gives a different negative draw every run. The first two
+    # runs of this loop scored P4 at 0.7008 and 0.6982 against a predeclared bar of 0.70 -- the
+    # verdict flipped on nothing but set ordering. Sorted, so a rerun reproduces.
+    ho = sorted((a, b) for a, b in held_out if a in uset and b in uset)
     say(f"     held-out SIGNOR edges usable (both endpoints in net_bundle)  {len(ho):,}")
     # degree-matched negatives: same source, a target with a similar in-degree
     by_indeg = defaultdict(list)
@@ -399,7 +403,8 @@ def main():
 
     # ------------------------------------------------------------ P7 sign
     say("P7 CAN THE SIGN BE PREDICTED?")
-    signed = [(k, v) for k, v in S["signs"].items() if k[0] in uset and k[1] in uset]
+    signed = sorted(((k, v) for k, v in S["signs"].items() if k[0] in uset and k[1] in uset),
+                    key=lambda kv: kv[0])
     cnt = Counter(v for _, v in signed)
     maj = max(cnt.values()) / len(signed)
     say(f"     signed edges {len(signed):,}   activating {cnt.get(1,0):,}  repressing "
