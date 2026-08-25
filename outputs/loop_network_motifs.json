@@ -159,7 +159,7 @@
    "selection 'curated and binding tiers, kept separate' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
   ]
  },
- "seconds": 1210.021228313446,
+ "seconds": 8.668694019317627,
  "log": [
   "========================================================================================================",
   "LOOP 187  FEEDFORWARD AND FEEDBACK LOOPS: are they there beyond the degree sequence?",
@@ -190,19 +190,13 @@
   "",
   "   counting motifs and building 100 degree-preserving nulls per tier, identically for both",
   "     curated: FFL 318,683  2-cycles 1,630  3-cycles 18,039  self-loops 0",
-  "      curated randomisation 25/100  [61s]",
-  "      curated randomisation 50/100  [121s]",
-  "      curated randomisation 75/100  [183s]",
-  "      curated randomisation 100/100  [243s]",
+  "      curated: resuming from checkpoint at 100/100",
   "       ffl          observed   318,683  null   313,959.4 +/-  3,626.4  z      +1.3",
   "       two_cycle    observed     1,630  null       713.8 +/-     20.9  z     +43.8",
   "       three_cycle  observed    18,039  null    16,710.3 +/-    346.7  z      +3.8",
   "       self_loop    observed         0  null         0.0 +/-      0.0  z      +nan",
   "     binding: FFL 1,217,327  2-cycles 324  3-cycles 3,592  self-loops 0",
-  "      binding randomisation 25/100  [241s]",
-  "      binding randomisation 50/100  [480s]",
-  "      binding randomisation 75/100  [719s]",
-  "      binding randomisation 100/100  [958s]",
+  "      binding: resuming from checkpoint at 100/100",
   "       ffl          observed 1,217,327  null 1,634,149.7 +/- 19,644.3  z     -21.2",
   "       two_cycle    observed       324  null       234.6 +/-     11.3  z      +7.9",
   "       three_cycle  observed     3,592  null     3,275.2 +/-    233.4  z      +1.4",
@@ -272,7 +266,7 @@
   "  B5  PASS",
   "  B6  PASS",
   "  B7  PASS",
-  "  5/7   [1210s]",
+  "  5/7   [9s]",
   "========================================================================================================"
  ]
 }
