@@ -307,6 +307,19 @@ def main():
     for label, C, tot in (("two-cycles", c_fb_t, len(c_fb)), ("feedforward", c_tri_t, len(c_tri))):
         say(f"     {label} by trust tier: " + "  ".join(
             f"E{k} {C.get(k,0):,}" for k in (3, 2, 1, 0)) + f"   sum {sum(C.values()):,} of {tot:,}")
+    # WHERE THE E0 MOTIFS COME FROM, and it is not unattributed biology. Loop 187 labelled
+    # net_bundle rows 0-55,716 "CollecTRI, literature-curated". 14,396 of that tier's 53,839
+    # unique edges (26.7%) are NOT in the CollecTRI release fetched this session, so they carry no
+    # PMID HERE. That is version drift between the assembly and the current release, or an
+    # approximate tier boundary -- it is not evidence that those edges are unsupported. Recorded
+    # rather than left to look like a finding about biology.
+    unmatched = len(cur - ct)
+    say(f"     NOTE the E0 rows are a PROVENANCE gap, not an evidence gap: {unmatched:,} of the "
+        f"tier's {len(cur):,} edges ({unmatched/len(cur):.3f}) are absent from the CollecTRI "
+        f"release fetched this session, so no PMID can be attached to them here")
+    res["tier_provenance"] = {"curated_tier_edges": len(cur), "collectri_fetched": len(ct),
+                              "intersection": len(cur & ct), "tier_not_in_collectri": unmatched,
+                              "collectri_not_in_tier": len(ct - cur)}
     ok6 = (sum(c_fb_t.values()) == len(c_fb) and sum(c_tri_t.values()) == len(c_tri))
     G.add("Q6", ok6, requires=("Q1",),
           if_true="Q6 PASS -- the tier breakdown accounts for every motif it claims to describe",
