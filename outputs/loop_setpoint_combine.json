@@ -1,0 +1,315 @@
+{
+ "test": "combine and shrink",
+ "solo": {
+  "chip": 0.3474256415469604,
+  "gains": 0.4582982751084519,
+  "physics": 0.20452636101204777
+ },
+ "pairwise": {
+  "chip~gains": 0.22022255564993864,
+  "chip~physics": 0.17888694571891245,
+  "gains~physics": 0.21191903431017334
+ },
+ "combined": {
+  "concat": 0.3025567564420001,
+  "stacked": 0.4761281952636136,
+  "best": 0.4761281952636136,
+  "n_cols": 2864
+ },
+ "sweep": [
+  [
+   1.0,
+   0.305814497546525,
+   0.305814497546525,
+   0.14952079026761356
+  ],
+  [
+   0.9949596753492816,
+   0.28390727815425076,
+   0.28121532789796,
+   0.13599066263054438
+  ],
+  [
+   0.9806964409018514,
+   0.22761959239916663,
+   0.2205296130968134,
+   0.08490337808131942
+  ],
+  [
+   0.9599379299942271,
+   0.15511352303143644,
+   0.1488453403962522,
+   0.04558243258000538
+  ],
+  [
+   0.9275834450708759,
+   0.06869888142335767,
+   0.07221988757685827,
+   0.01467654763043591
+  ],
+  [
+   0.8979053919464405,
+   0.0467160045746402,
+   0.05514229924384351,
+   -0.009285908623050787
+  ],
+  [
+   0.8651002706135844,
+   -0.023421159582185824,
+   0.004747252866476814,
+   -0.03435495546088929
+  ],
+  [
+   0.823003282854501,
+   -0.030660653124588766,
+   0.003917925185856208,
+   -0.029261960972562617
+  ],
+  [
+   0.7917698271065996,
+   -0.06758127621181176,
+   -0.01924984720804135,
+   -0.030614748809098646
+  ],
+  [
+   0.7585926914330686,
+   -0.08950999818052985,
+   -0.02848788469816399,
+   -0.05119916512299527
+  ],
+  [
+   0.7353389681223688,
+   -0.072479469017114,
+   -0.023046639086843124,
+   -0.03347185157018839
+  ],
+  [
+   0.6625718720768867,
+   -0.09849188095485362,
+   -0.0381735993809833,
+   -0.045760211354302305
+  ],
+  [
+   0.6596840961993146,
+   -0.09844030388894143,
+   -0.03920965683339794,
+   -0.05311751460410896
+  ],
+  [
+   0.6367860285914523,
+   -0.11662558534901013,
+   -0.046384417830002356,
+   -0.05863532197139132
+  ],
+  [
+   0.5541297630902055,
+   -0.09823508500950529,
+   -0.04905396364956016,
+   -0.05339285545841643
+  ],
+  [
+   0.5288721487913426,
+   -0.0955633937817495,
+   -0.04905683496998936,
+   -0.052056559908540745
+  ],
+  [
+   0.5168172827061841,
+   -0.08985230159327573,
+   -0.05065897656089202,
+   -0.055288335348500084
+  ],
+  [
+   0.5015879470611434,
+   -0.11750573839290968,
+   -0.05461349191661702,
+   -0.05744969046324333
+  ],
+  [
+   0.44163976345449807,
+   -0.08303767778863236,
+   -0.053812052276466904,
+   -0.05626398752126427
+  ],
+  [
+   0.44227722260231567,
+   -0.09566619810908938,
+   -0.05448727041105794,
+   -0.056490849700601364
+  ],
+  [
+   0.4316739837348213,
+   -0.0763753205461255,
+   -0.05253701257540455,
+   -0.05609683577673641
+  ],
+  [
+   0.43930966310405806,
+   -0.0799152551553386,
+   -0.05179781058328681,
+   -0.0537261659268804
+  ],
+  [
+   0.43792465266386954,
+   -0.09464714673544727,
+   -0.05415459605275341,
+   -0.05719417321811271
+  ],
+  [
+   0.3750647225387849,
+   -0.06836157272180188,
+   -0.05462885715579424,
+   -0.05652993577039345
+  ],
+  [
+   0.39210136209255003,
+   -0.07676209755641406,
+   -0.05564142502102576,
+   -0.0576351713261396
+  ],
+  [
+   0.4001127116020845,
+   -0.08320375541569947,
+   -0.055126371409053965,
+   -0.05761169921808551
+  ],
+  [
+   0.24809335209860242,
+   -0.0662580700738542,
+   -0.059042053458866706,
+   -0.05897839110515957
+  ],
+  [
+   0.3894281746109112,
+   -0.07133719781075953,
+   -0.053760268449027926,
+   -0.05613046347849071
+  ],
+  [
+   0.3716180660029317,
+   -0.07640393291283898,
+   -0.054829549614727746,
+   -0.05734307212208645
+  ],
+  [
+   0.34384402764711186,
+   -0.07097643146794352,
+   -0.05640486249200616,
+   -0.05861588689997954
+  ],
+  [
+   0.3425172709109901,
+   -0.07662621642496337,
+   -0.05685925641702916,
+   -0.058881801472730144
+  ]
+ ],
+ "crossover": {
+  "OLS lambda (loop 206's rule)": 0.823003282854501,
+  "r^2-shrunk": 0.24809335209860242,
+  "per-gene lambda + shrink": 0.24809335209860242
+ },
+ "persistence": -0.05969226861693322,
+ "meet": {
+  "combined": 0.4761281952636136,
+  "required": 0.24809335209860242,
+  "real_r2": -0.0592314817255124
+ },
+ "controls": {
+  "fame": 0.07415712480075906,
+  "shuffled_combo": 0.44518206871779165
+ },
+ "gates": {
+  "C1": false,
+  "C2": false,
+  "C3": false,
+  "C4": false,
+  "C5": false,
+  "C6": false,
+  "C7": false
+ },
+ "void": [
+  "C2",
+  "C3",
+  "C4",
+  "C5",
+  "C6",
+  "C7"
+ ],
+ "seconds": 1539.8936614990234,
+ "log": [
+  "========================================================================================================",
+  "LOOP 210 -- COMBINE EVERY ROUTE, AND STOP THE RELAXATION OVERSHOOTING",
+  "========================================================================================================",
+  "     common gene set (promoter sequence AND Perturb-seq readout AND tracks): 600 of 1,336",
+  "     building the three feature blocks ...",
+  "       ChIP (600, 27)   gains (600, 200) (200 screened perturbations)",
+  "       physics: scanning 600 x 879 (this takes ~11 min) ...",
+  "       physics: scanned and cached (600, 2637)",
+  "C1 ARE THESE THE SAME THREE MEASUREMENTS?",
+  "       chip      |r| 0.3474   (its own loop recorded 0.2932, delta +0.0542)",
+  "       gains     |r| 0.4583   (its own loop recorded 0.2785, delta +0.1798)",
+  "       physics   |r| 0.2045   (its own loop recorded 0.2133, delta -0.0088)",
+  "     C1 FAIL -- [('chip', 0.3474), ('gains', 0.4583), ('physics', 0.2045)]",
+  "C2 ARE THE ROUTES INDEPENDENT ENOUGH TO COMBINE?",
+  "       chip     vs gains    |r| 0.2202",
+  "       chip     vs physics  |r| 0.1789",
+  "       gains    vs physics  |r| 0.2119",
+  "     C2 VOID -- C1 did not pass, so there is nothing here to test",
+  "C3 DOES THE COMBINATION REACH 0.40?",
+  "       all three blocks, 2,864 columns   |r| 0.3026",
+  "       stacked (3 block predictions)                |r| 0.4761",
+  "       best combination                             |r| 0.4761",
+  "     C3 VOID -- C2 did not pass, so there is nothing here to test",
+  "     relaxation harness: train 3,000 rows, score 1,800, persistence -0.05969",
+  "     measured mRNA half-lives available for 598 of 600 genes (99.7%)",
+  "C4 DOES SHRINKAGE FLOOR THE MODEL AT PERSISTENCE?",
+  "        r        OLS lambda    shrunk      per-gene+shrunk",
+  "       +1.0000   +0.30581    +0.30581    +0.14952",
+  "       +0.9276   +0.06870    +0.07222    +0.01468",
+  "       +0.7918   -0.06758    -0.01925    -0.03061",
+  "       +0.6597   -0.09844    -0.03921    -0.05312",
+  "       +0.5168   -0.08985    -0.05066    -0.05529",
+  "       +0.4317   -0.07638    -0.05254    -0.05610",
+  "       +0.3921   -0.07676    -0.05564    -0.05764",
+  "       +0.3716   -0.07640    -0.05483    -0.05734",
+  "     points below persistence: OLS 23/31   shrunk 0/31",
+  "     C4 VOID -- C1 did not pass, so there is nothing here to test",
+  "C5 WHAT IS THE REQUIREMENT UNDER A CORRECTLY SHRUNK STEP?",
+  "       OLS lambda (loop 206's rule)   crossover r 0.823",
+  "       r^2-shrunk                     crossover r 0.2481",
+  "       per-gene lambda + shrink       crossover r 0.2481",
+  "     loop 206 measured 0.9081 under the OLS rule",
+  "     C5 VOID -- C4 did not pass, so there is nothing here to test",
+  "C6 DO THE TWO ENDS MEET?",
+  "       combination reaches      |r| 0.4761",
+  "       requirement drops to     |r| 0.2481",
+  "       and the REAL combined set point scores held-out-in-time R2 -0.05923 against persistence -0.05969",
+  "     C6 VOID -- C3, C5 did not pass, so there is nothing here to test",
+  "C7 IS ANY OF IT COMPOSITION OR FAME?",
+  "       publication count                 |r| 0.0742",
+  "       same combo with SHUFFLED physics  |r| 0.4452   (real 0.3026, delta -0.1426)",
+  "     C7 VOID -- C3 did not pass, so there is nothing here to test",
+  "C8 WHAT THIS CANNOT SHOW",
+  "     Shrinking the step is a variance argument, not new information. It stops the model",
+  "     losing; it cannot make it win. If C6 passes it passes on a SMALL positive R2, and",
+  "     the honest reading is that the model has learned to move a little in roughly the",
+  "     right direction -- not that it simulates anything.",
+  "     r^2 is estimated from the same held-out predictions it then scales, so the shrinkage",
+  "     is mildly optimistic. A nested split would cost coverage this gene set cannot spare.",
+  "     One cell line, one perturbation, one channel. Loop 197 established there is no",
+  "     second densely-sampled matched course in ENCODE, so this cannot be replicated.",
+  "     The Perturb-seq block is K562 and RPE1; the target is A549. Loop 208 measured that",
+  "     gains transfer at median r +0.1677 against a +0.0327 null -- real, and weak.",
+  "========================================================================================================",
+  "  C1  FAIL",
+  "  C2  VOID",
+  "  C3  VOID",
+  "  C4  VOID",
+  "  C5  VOID",
+  "  C6  VOID",
+  "  C7  VOID",
+  "  0/1   [1540s]   (6 VOID: C2, C3, C4, C5, C6, C7)",
+  "========================================================================================================"
+ ]
+}
