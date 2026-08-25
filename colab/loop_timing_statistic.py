@@ -349,12 +349,16 @@ def main():
                         "cannot answer the question with any statistic tried here, and the "
                         "replication needs a denser series rather than a better estimator")
 
+    void = set()
+
     # ---- X4 ------------------------------------------------------------------------------------
     say()
     say("X4 IS THE WINNER ROBUST TO WHICH FOUR POINTS?")
     d4, winner = {}, None
-    if not x3:
-        say("     X4 VOID -- nothing survived X3")
+    x4_void = not x3
+    if x4_void:
+        void.add("X4")
+        say("     X4 VOID -- nothing survived X3, so there is no candidate to test for robustness")
     else:
         for k in passed:
             held, rows = 0, []
@@ -376,13 +380,14 @@ def main():
     # message that indexes a success-only value crashes on failure. It did: d4[None]. Any gate
     # whose success text references something that exists only on success needs this guard.
     held_txt = f"{d4[winner]['held']}/{len(SUBSETS)}" if winner is not None else "n/a"
-    GG.verdict(x4, emit=say,
-               if_true=f"X4 PASS -- '{winner}' holds on {held_txt} four-point subsets, so it is "
-                       f"solving the resolution problem rather than fitting one choice of points",
-               if_false=f"X4 FAIL -- no candidate holds on {MIN_SUBSETS} of {len(SUBSETS)} "
-                        f"subsets; a statistic that works on one is fitting that one")
+    if not x4_void:
+        GG.verdict(x4, emit=say,
+                   if_true=f"X4 PASS -- '{winner}' holds on {held_txt} four-point subsets, "
+                           f"so it is solving the resolution problem rather than fitting one "
+                           f"choice of points",
+                   if_false=f"X4 FAIL -- no candidate holds on {MIN_SUBSETS} of {len(SUBSETS)} "
+                            f"subsets; a statistic that works on one is fitting that one")
 
-    void = set()
     if not (x2 and x3 and x4):
         void |= {"X5", "X6", "X7"}
         say()
