@@ -184,16 +184,17 @@ def main():
                           f"first")
         G.summary(seconds=time.time() - t0)
         return
+    # Restrict the gene set to what the motif cache covers, THEN build every block once against
+    # that final list. The first draft rebuilt Fchip twice with a no-op line between, which is the
+    # kind of dead code that looks like it is doing something; removed.
     Z = np.load(PHYS_CACHE, allow_pickle=True)
-    cached = [str(x) for x in Z["genes"]]
-    cpos = {s: i for i, s in enumerate(cached)}
+    cpos = {str(g): i for i, g in enumerate(Z["genes"])}
     names = [s for s in names if s in cpos]
     y = np.array([S_all[pos[s]] for s in names])
-    Fchip = np.array([Fchip[[n for n in range(len(Fchip))][i]] for i in range(len(Fchip))])
-    Fchip = np.column_stack([np.column_stack([
+    chip_full = np.column_stack([np.column_stack([
         TR[t][:N_TRAIN, gi].mean(0), TR[t][:N_TRAIN, gi].max(0),
         TR[t][N_TRAIN - 1, gi] - TR[t][0, gi]]) for t in TRACKS])
-    Fchip = np.array([Fchip[kidx[s]] for s in names])
+    Fchip = np.array([chip_full[kidx[s]] for s in names])
     cols = np.array([ridx[s] for s in names])
     Fgain = np.column_stack([Xk[p, :][cols] for p in picked])
     Fphys = np.array([Z["F"][cpos[s]] for s in names])
@@ -288,10 +289,18 @@ def main():
           if_true=lambda: f"D5 PASS -- still rising ({rise:+.4f}); more genes would help",
           if_false=lambda: f"D5 FAIL -- flat ({rise:+.4f}); more genes of this kind would not help")
 
-    say("D6 DOES ANYTHING REACH 0.40?")
-    G.add("D6", bool(best_r >= 0.40), stat=best_r, requires=("D2",),
-          if_true=lambda: f"D6 PASS -- {best_nm} reaches {best_r:.4f}",
-          if_false=lambda: f"D6 FAIL -- best is {best_nm} at {best_r:.4f}")
+    say("D6 DOES ANYTHING BEAT THE RIDGE BASELINE MEANINGFULLY?")
+    say(f"       loop 210 measured the ridge combination at |r| 0.4761 on this feature set.")
+    say(f"       this loop's own ridge on its own folds: {full['ridge']:.4f} -- that is the")
+    say(f"       baseline the ladder has to beat, and it is recomputed here rather than quoted,")
+    say(f"       because a different fold assignment moves it.")
+    bar = full["ridge"] + 0.05
+    G.add("D6", bool(best_r >= bar), stat=best_r, requires=("D2",),
+          if_true=lambda: f"D6 PASS -- {best_nm} reaches {best_r:.4f}, clearing the ridge "
+                          f"baseline {full['ridge']:.4f} by {best_r-full['ridge']:+.4f}",
+          if_false=lambda: f"D6 FAIL -- best is {best_nm} at {best_r:.4f} against a ridge "
+                           f"baseline of {full['ridge']:.4f} ({best_r-full['ridge']:+.4f}). "
+                           f"Capacity bought nothing on top of the linear combination")
 
     say("D7 IS ANY OF IT FAME?")
     tab = json.load(gzip.open("colab/data/cell_complete.json.gz"))["genes"]
