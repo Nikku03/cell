@@ -175,7 +175,7 @@ N_RAND = 100             # both tiers, identically -- see the note on the nulls 
 SWAP_FACTOR = 10
 # np.savez APPENDS .npz to any path not already ending in it, so the name must end in .npz
 # or the file lands somewhere ck.exists() never looks and resume silently never fires.
-CKPT = Path(os.environ.get("CELL_OUT", "outputs")) / "l187_null_{}.npz"
+CKPT = Path(os.environ.get("CELL_OUT", "outputs")) / "l187_null_{}.ckpt.npz"
 MIN_SIGNED = 0.50
 Z_BAR = 3.0
 SEED = 187187
