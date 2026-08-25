@@ -107,3 +107,4 @@ outputs/orphan/rnadecay/*.csv
 # UniProt raw stream: 90 MB, reproducible with `python colab/fetch_web.py` (G1).
 # The derived per-gene table IS committed; the raw dump is not.
 colab/data/uniprot_sites.tsv.gz
+outputs/*.ckpt.npz

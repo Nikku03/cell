@@ -63,12 +63,47 @@ PREDECLARED, BEFORE ANY NUMBER.
      are separated.
      Gate: PASS iff the curated tier's two-cycle z-score exceeds 3.
 
-  B6 AUTOREGULATION AGAINST CHANCE. Loop 175 found 24 self-loops among 795 curated regulators and
-     reported 3.0% as a small number against the plan's expected 50%. It never asked what chance
-     would give. With 55,716 edges spread over ~800 regulators and ~15,000 targets, chance gives
-     very few, so 3.0% may be a large enrichment reported as a small fraction.
-     Gate: PASS iff the self-loop count exceeds the degree-preserving null by more than 3 sd. This
-     gate exists to correct a framing in loop 175's record, whichever way it comes out.
+  B6 AUTOREGULATION AGAINST CHANCE, and this is its SECOND version -- the first one was broken and
+     what was wrong with it is recorded here rather than deleted. Loop 175 found 24 self-loops
+     among 795 curated regulators and reported that as a small number against the plan's expected
+     50%, which is an E. coli figure (Thieffry et al. 1998). It never asked what chance would give,
+     and chance gives very few self-loops, so a small FRACTION could still be a large ENRICHMENT.
+     That suspicion is worth testing and the first version of this gate did not test it.
+
+     WHAT THE FIRST VERSION GOT WRONG. It counted self-edges in this project's assembled network
+     and compared them against the degree-preserving swap ensemble built for B2 and B5. Two
+     independent faults, either of which is fatal:
+
+       THE FILE. Loop 175's 24 come from TRRUST v2. The assembled network is CollecTRI/DoRothEA-
+       derived and contains ZERO a -> a edges -- not in the curated tier, not in any tier, not in
+       any of its 612,133 edges. It does not encode autoregulation as a self-edge at all. So the
+       gate counted 0, compared it against a null built from a different source's degree sequence,
+       and reported the result as a correction to loop 175.
+
+       THE NULL. The double-edge swap's acceptance test rejects any swap that would place a node
+       on both ends of an edge. It can destroy a self-loop and can never create one, so its
+       self-loop null is 0 by construction. Even given a network that had self-loops, this null
+       would have driven them to zero and called the observation an enrichment over nothing.
+
+     Together those produced 0 observed against 0 +/- 0 expected, a z of 0/0, and a FAIL whose
+     printed text -- "the self-loops are what chance gives and loop 175's framing stands" -- was a
+     claim the run had not earned.
+
+     THE SECOND VERSION. TRRUST v2's own network, deduplicated to unique regulator-target pairs,
+     against a DIRECTED CONFIGURATION MODEL sampled by stub matching: permute the target list and
+     count self-matches. That preserves every regulator's out-degree and every gene's in-degree
+     exactly, which is the control this question needs -- a curated self-loop is found in
+     well-studied factors, and well-studied factors have more edges of every kind, so a null that
+     did not hold degree fixed would be measuring fame. Unlike the swap, it permits self-loops.
+     Gate: PASS iff the observed count exceeds the null by more than 3 sd.
+     Self-check: the simulated null mean must reproduce the analytic configuration-model
+     expectation sum_i dout(i) x din(i) / m.
+
+  AND A THIRD OUTCOME, added because of the above. A gate whose statistic can be undefined needs
+     somewhere to put that. PASS/FAIL cannot express "the test did not apply", and forcing a nan
+     into FAIL is not a conservative choice -- it writes a false claim into the log, which is
+     exactly what happened. B6 can now return VOID, and a VOID gate is excluded from the score
+     rather than counted against it.
 
   B7 WHAT THIS CANNOT SHOW.
 
@@ -130,9 +165,11 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import gate_guard as GG                      # noqa: E402
 import run_manifest as RM                    # noqa: E402
+from enh import autoregulation as AR         # noqa: E402
 
 OUT = Path(os.environ.get("CELL_OUT", "outputs")) / "loop_network_motifs.json"
 BUNDLE = Path("colab/data/net_bundle.json.gz")
+AUTO = Path("colab/data/tf_autoregulation.json")
 TIERS = {"curated": (0, 55716), "binding": (55716, 278405), "unidentified": (278405, None)}
 N_RAND = 100             # both tiers, identically -- see the note on the nulls in the docstring
 SWAP_FACTOR = 10
@@ -142,6 +179,7 @@ CKPT = Path(os.environ.get("CELL_OUT", "outputs")) / "l187_null_{}.npz"
 MIN_SIGNED = 0.50
 Z_BAR = 3.0
 SEED = 187187
+N_STUB = 10000           # B6's configuration-model draws; each is one numpy permutation
 
 log = []
 
@@ -304,6 +342,8 @@ def null_ensemble(edges, ix, n=N_RAND, seed=SEED, report=print, label="", cycles
                 report(f"      {label}: resuming from checkpoint at {done}/{n}")
         except Exception as exc:                                     # noqa: BLE001
             report(f"      {label}: checkpoint unreadable ({exc}); starting over")
+    if done >= n:
+        return {k: np.array(acc[k][:n], dtype=float) for k in KEYS}
     rng = np.random.default_rng(seed)
     t0 = time.time()
     for k in range(n):
@@ -349,6 +389,38 @@ def coherence(edges):
                 else:
                     inc += 1
     return coh, inc, unsigned
+
+
+def stub_self_loops(pairs, n=N_STUB, seed=SEED):
+    """Directed configuration model by stub matching: how many self-edges does chance give?
+
+    The double-edge swap used for B2 and B5 CANNOT be used here. Its acceptance test rejects any
+    swap that would put a node's own name on both ends of an edge, so it can destroy a self-loop
+    and never create one, and its self-loop null is 0 by construction rather than by measurement.
+    That is what produced the undefined z in the first version of B6.
+
+    Stub matching instead lists every edge's source and every edge's target, permutes the target
+    list, and counts how often a node lands on itself. Every regulator keeps its exact out-degree
+    and every gene its exact in-degree -- which is the control that matters, because a curated
+    self-loop is found in well-studied factors and well-studied factors have more edges of every
+    kind. It allows multi-edges, so the null graph is a multigraph where the observation is simple;
+    for a rare-event count that is the standard configuration model and B7 records it.
+
+    Returns the draws, and the analytic expectation sum_i dout(i) x din(i) / m, which the simulated
+    mean must reproduce -- a self-check on the sampler in the same spirit as stats_dense's."""
+    nodes = sorted({x for pr in pairs for x in pr})
+    ident = {g: i for i, g in enumerate(nodes)}
+    src = np.array([ident[a] for a, b in pairs], dtype=np.int32)
+    dst = np.array([ident[b] for a, b in pairs], dtype=np.int32)
+    m = len(pairs)
+    dout = np.bincount(src, minlength=len(nodes)).astype(np.float64)
+    din = np.bincount(dst, minlength=len(nodes)).astype(np.float64)
+    analytic = float((dout * din).sum() / m)
+    rng = np.random.default_rng(seed)
+    draws = np.empty(n, dtype=np.float64)
+    for k in range(n):
+        draws[k] = float((src == rng.permutation(dst)).sum())
+    return draws, analytic
 
 
 def ffl_triples(edges):
@@ -559,21 +631,42 @@ def main():
     # ---- B6 ------------------------------------------------------------------------------------
     say()
     say("B6 AUTOREGULATION AGAINST CHANCE")
-    z6 = zs["curated"]["self_loop"]["z"]
-    n_reg = obs["curated"]["n_reg"]
-    say(f"     curated self-loops {obs['curated']['self_loop']} over {n_reg:,} regulators "
-        f"({obs['curated']['self_loop']/max(n_reg,1):.1%})")
-    say(f"     degree-preserving null {zs['curated']['self_loop']['null_mean']:.2f} "
-        f"+/- {zs['curated']['self_loop']['null_sd']:.2f}  ->  z {z6:+.1f}")
-    say("     loop 175 reported this as '3.0%, against the plan's expected 50%' without asking "
-        "what chance gives")
+    say(f"     this project's own network carries {sum(1 for a, b, sg in tier['curated'] if a == b)} "
+        f"self-edges in the curated tier and "
+        f"{sum(1 for r in reg if int(r[0]) == int(r[1]))} across all {len(reg):,} edges, so it")
+    say("     cannot represent autoregulation at all and B6 reads TRRUST directly instead")
+    rows = AR.fetch(report=lambda *a, **k: None)
+    pairs = sorted({(a, b) for a, b, mode, pmid in rows})
+    obs6 = sum(1 for a, b in pairs if a == b)
+    n_reg6 = len({a for a, b in pairs})
+    auto = json.load(open(AUTO))
+    say(f"     TRRUST v2: {len(pairs):,} unique curated edges, {n_reg6:,} regulators, "
+        f"{obs6} with a curated self-loop ({obs6/max(n_reg6,1):.1%})")
+    say(f"     the modes of those self-loops: {auto.get('self_loop_modes', {})}")
+    draws6, analytic6 = stub_self_loops(pairs)
+    mu6, sd6 = float(draws6.mean()), float(draws6.std(ddof=1))
+    say(f"     configuration-model null over {N_STUB:,} stub matchings: {mu6:.2f} +/- {sd6:.2f}")
+    say(f"     analytic expectation sum_i dout(i) x din(i) / m = {analytic6:.2f}   "
+        + ("(agrees, so the sampler is doing what it claims)"
+           if abs(analytic6 - mu6) < max(0.1, 0.15 * sd6)
+           else "DISAGREES with the simulated mean -- the sampler is suspect"))
+    z6 = (obs6 - mu6) / sd6 if sd6 > 0 else float("nan")
+    say(f"     observed {obs6}  ->  z {z6:+.1f}")
+    say("     loop 175 reported this as a small fraction against the plan's expected 50% -- an "
+        "E. coli figure (Thieffry et al. 1998) -- without asking what chance gives")
+    b6_void = not np.isfinite(z6)
     b6 = bool(np.isfinite(z6) and z6 > Z_BAR)
-    GG.verdict(b6, emit=say,
-               if_true=f"B6 PASS -- self-regulation is {obs['curated']['self_loop'] / max(zs['curated']['self_loop']['null_mean'], 1e-9):.0f}x "
-                       f"the chance rate. Loop 175's 3.0% was a small FRACTION and a large "
-                       f"ENRICHMENT, and reporting only the fraction understated it",
-               if_false=f"B6 FAIL -- z {z6:+.1f}; the self-loops are what chance gives and loop "
-                        f"175's framing stands")
+    if b6_void:
+        say(f"     B6 VOID -- the statistic is undefined (observed {obs6}, null sd {sd6:.2f}), so "
+            f"this gate did not apply and is not scored either way")
+    else:
+        GG.verdict(b6, emit=say,
+                   if_true=f"B6 PASS -- self-regulation runs at {obs6/max(mu6,1e-9):.1f}x the "
+                           f"chance rate. The curated fraction is small and the ENRICHMENT is "
+                           f"large, and loop 175 reporting only the fraction understated it",
+                   if_false=f"B6 FAIL -- z {z6:+.1f}; {obs6} self-loops is what this degree "
+                            f"sequence gives on its own, and loop 175's small fraction is a small "
+                            f"number rather than an understated one")
 
     say()
     say("B7 WHAT THIS CANNOT SHOW")
@@ -587,6 +680,14 @@ def main():
     say("     structure, so an enrichment could still reflect modularity rather than circuitry.")
     say("     Signs are Activation/Repression/Unknown as curated; a context-dependent factor that")
     say("     activates in one setting and represses in another is recorded as one or the other.")
+    say("     B6's null is a configuration model sampled by stub matching, which permits multi-")
+    say("     edges, so it compares a simple observed graph against a multigraph ensemble. For a")
+    say("     rare-event count that is the standard null, but it is not the same object.")
+    say("     And a curated self-loop needs someone to have specifically tested whether a factor")
+    say("     binds its own promoter. Holding out-degree and in-degree fixed controls for how much")
+    say("     a factor has been studied in general; it cannot control for whether THAT experiment")
+    say("     was the one somebody ran. B6 measures curation against chance, not biology against")
+    say("     chance, and a positive result would be consistent with either.")
     say("     B3 compares two z-scores from two DIFFERENT graphs. Equalising the nulls removes one")
     say("     confound and not the others: the tiers differ in density, in how signs were assigned")
     say("     and in what an edge means, and a z-score is not a quantity those differences leave")
@@ -595,7 +696,8 @@ def main():
     say(f"     B7 {'PASS' if b7 else 'FAIL'}")
 
     gates = {"B1": b1, "B2": b2, "B3": b3, "B4": b4, "B5": b5, "B6": b6, "B7": b7}
-    man = RM.manifest(inputs=[BUNDLE],
+    void = {"B6"} if b6_void else set()
+    man = RM.manifest(inputs=[BUNDLE, AUTO],
                       available=len(reg), used=len(tier["curated"]) + len(tier["binding"]),
                       selection="curated and binding tiers, kept separate", seed=SEED,
                       controls=[f"{N_RAND} degree-preserving double-edge-swap randomisations, "
@@ -605,7 +707,13 @@ def main():
                                 "the curated tier required to out-enrich the occupancy tier",
                                 "a sign-shuffled null on the identical topology for coherence"],
                       note="feedforward and feedback motif enrichment in the K562 TF network")
-    out = dict(test="network motifs", gates=gates,
+    out = dict(test="network motifs", gates=gates, void=sorted(void),
+               autoregulation=dict(source="TRRUST v2 (Han et al., NAR 2018)",
+                                   edges=len(pairs), regulators=n_reg6, observed=obs6,
+                                   null_mean=mu6, null_sd=sd6, analytic=analytic6, z=float(z6),
+                                   draws=N_STUB,
+                                   net_bundle_self_edges=sum(1 for r in reg
+                                                             if int(r[0]) == int(r[1]))),
                tiers={t: dict(edges=len(tier[t]),
                               regulators=len({a for a, b, s in tier[t]}),
                               signed=sum(1 for a, b, s in tier[t] if s != 0)) for t in tier},
@@ -621,8 +729,10 @@ def main():
     say()
     say("=" * 104)
     for k, v in gates.items():
-        say(f"  {k}  {'PASS' if v else 'FAIL'}")
-    say(f"  {sum(gates.values())}/{len(gates)}   [{time.time()-t0:.0f}s]")
+        say(f"  {k}  {'VOID' if k in void else ('PASS' if v else 'FAIL')}")
+    scored = [k for k in gates if k not in void]
+    say(f"  {sum(gates[k] for k in scored)}/{len(scored)}   [{time.time()-t0:.0f}s]"
+        + (f"   ({len(void)} VOID: {', '.join(sorted(void))})" if void else ""))
     say("=" * 104)
     out["log"] = log
     json.dump(out, open(OUT, "w"), indent=1, default=str)
