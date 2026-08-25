@@ -136,7 +136,9 @@ BUNDLE = Path("colab/data/net_bundle.json.gz")
 TIERS = {"curated": (0, 55716), "binding": (55716, 278405), "unidentified": (278405, None)}
 N_RAND = 100             # both tiers, identically -- see the note on the nulls in the docstring
 SWAP_FACTOR = 10
-CKPT = Path(os.environ.get("CELL_OUT", "outputs")) / "l187_null_{}.npz.tmp"
+# np.savez APPENDS .npz to any path not already ending in it, so the name must end in .npz
+# or the file lands somewhere ck.exists() never looks and resume silently never fires.
+CKPT = Path(os.environ.get("CELL_OUT", "outputs")) / "l187_null_{}.npz"
 MIN_SIGNED = 0.50
 Z_BAR = 3.0
 SEED = 187187

@@ -18,6 +18,8 @@ outputs/*.csv
 outputs/*.png
 outputs/*.tmp
 outputs/.wt_*.pkl
+# resumable ensemble checkpoints - regenerable scratch, the result is the loop's json
+outputs/l187_null_*.npz
 *.log
 *.tmp
 
