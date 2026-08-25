@@ -362,11 +362,21 @@ def main():
         d5 = crosslag(Ag, Pg, perm=perm)
         say(f"    swapped forward {d5['forward']:+.4f}  reverse {d5['reverse']:+.4f}  "
             f"difference {d5['diff']:+.4f}")
-        q5 = bool(d4["diff"] > d5["diff"])
+        # SIGN-AGNOSTIC, and the first version was not. Q5's stated intent is "does giving a gene
+        # a stranger's accessibility destroy the association", and it was implemented as
+        # d4 > d5, which only tests that intent if the association is POSITIVE. Q4 came back
+        # negative -- transcription precedes accessibility -- so the signed comparison scored a
+        # swap that removed 82% of the effect as a failure. That is a specification bug of the
+        # same family as loop 194's V4 and loop 196's X4: a gate written assuming the direction of
+        # its own answer. Comparing magnitudes restores the stated intent; it does not move a
+        # threshold to make anything pass, and the direction of Q4 is unaffected either way.
+        q5 = bool(abs(d4["diff"]) > abs(d5["diff"]))
         GG.verdict(q5, emit=say,
-                   if_true="Q5 PASS -- the precedence belongs to the gene's own promoter",
-                   if_false="Q5 FAIL -- a stranger's accessibility precedes just as well, so the "
-                            "result is about the two assays' global time profiles")
+                   if_true=f"Q5 PASS -- swapping destroys the association ({d4['diff']:+.4f} -> "
+                           f"{d5['diff']:+.4f}), so it belongs to the gene's own promoter and not "
+                           f"to the two assays' global time profiles",
+                   if_false="Q5 FAIL -- a stranger's accessibility gives as strong an association, "
+                            "so the result is about the two assays' global time profiles")
 
     # ---- Q6 ------------------------------------------------------------------------------------
     say()
