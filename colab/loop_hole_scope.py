@@ -331,11 +331,18 @@ def main():
     say()
     say("Z6 THE RANKED LEDGER: what a fetch would buy, and what nothing would")
     ledger = [
+        # fetchable is 0 here and the first draft of this loop said 2,834, which contradicted its
+        # own note. Nothing about these orphans is retrievable from a database: the
+        # single-compartment ones need literature curation, which is work rather than a fetch, and
+        # the transport ones are not missing at all. A column that says "fetchable" must mean a
+        # record exists somewhere, not "we would like this filled".
         dict(hole="reactions with no gene", n=len(orphans),
-             fetchable=len(single), residue=len(transport) + len(nospecies),
-             resource="none -- the single-compartment orphans need literature curation; the "
-                      "transport and boundary reactions are not missing knowledge",
-             note="the largest number in the census is mostly a category error"),
+             fetchable=0, residue=len(orphans),
+             resource="none -- the single-compartment orphans need literature curation, which is "
+                      "work and not a fetch; the transport ones are not missing knowledge",
+             note=f"the largest number in the census is {len(transport):,} transport steps that "
+                  f"legitimately have no enzyme plus {len(single):,} that need curation. Neither "
+                  f"is fetchable and the total should stop being quoted as one deficit"),
         dict(hole="enzymes with an EC outside the model",
              n=len(outside),
              fetchable=split2.get("chemistry ALREADY modelled -- a GPR/annotation gap", 0),
