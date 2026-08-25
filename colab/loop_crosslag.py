@@ -67,7 +67,10 @@ PREDECLARED, BEFORE ANY NUMBER.
      excludes zero.
 
   Q5 THE STRANGER SWAP. Each gene given another gene's accessibility trajectory.
-     Gate: PASS iff the real forward-minus-reverse difference exceeds the swapped one.
+     Gate: PASS iff the real forward-minus-reverse difference is larger IN MAGNITUDE than the
+     swapped one. Magnitude and not sign, because the question is whether the association survives
+     the swap, and Q4's direction is not assumed here -- the first version of this gate compared
+     signed values and would have scored a swap that destroyed a NEGATIVE association as a failure.
 
   Q6 WHAT THIS CANNOT SHOW.
 
