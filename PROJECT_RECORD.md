@@ -189,18 +189,34 @@ A549 dexamethasone and dendritic-cell LPS time courses; GEO GSE148175 PRO-seq + 
 | question | answer | loop |
 |---|---|---|
 | which metabolite completes a reaction | hit@1 **0.8506** | 170 |
-| …at 50% coverage, when confident | precision **0.9986** | 168 |
-| which enzyme catalyses a reaction | **0.825** | 163d |
+| …when it abstains | precision **0.9982** at **10%** coverage | 168 |
+| which enzyme catalyses a reaction | **0.8065** held out; oracle ceiling 0.8217 | 163d |
 | is this DNA an enhancer | AUC **0.8506** | 177 |
 | which element does a gene use | R@1 **0.6734** (distance 0.5930) | 185 |
 | what makes a TF bind an enhancer | co-binding > accessibility > H3K27ac > motif | 184 |
 | does a protein's sequence predict its degradation rate | ρ **+0.324**, homology-aware | 156 |
-| doubling time from a protein budget | **13.8 h** vs measured 24 h, nothing fitted | 101 |
+| doubling time from a protein budget | **13.3 h** vs measured 24 h, nothing fitted | 101 |
 | do feedback two-cycles exist beyond chance | **z +43.8** | 187 |
 | is autoregulation above chance | **z +4.0**, 2.2× | 187 |
 | is the metabolism/regulation seam load-bearing | **yes**, z +10.1, substrate-specific | 193 |
 
 **Every one is single-system. None has been independently replicated.**
+
+**Corrections applied to this table on 25 August 2026**, on re-reading the stored JSON rather than
+the commit messages. All three were overstatements in the first draft of this file:
+
+- Loop 168 read **precision 0.9986 at 50% coverage**. The stored risk–coverage curve says
+  **0.9982 at 10% coverage**; at 50% coverage precision is **0.9534**. Gate X3 **failed** on its own
+  bar — "90% precision is not reachable above 10% coverage; the rule is too selective to be worth
+  having." The abstention machinery is calibrated and works; the operating point is not a useful one.
+- Loop 163d read **0.825**. The held-out four-block merge is **0.8065** (folds 0.8199 / 0.7932),
+  against loop 163c's two-block merge at 0.8001. **0.8217 is the four-arm oracle** — it uses the
+  answer and is a ceiling, not a score.
+- Loop 101 read **13.8 h**. The stored value is **13.28 h** (bootstrap median 13.21,
+  CI 11.24–15.57).
+
+Loops 170 and 177 both land on 0.8506 on unrelated tasks. That is a coincidence to four decimals,
+not a transcription error: 170 is hit@1 0.85059, 177 is mean gbm AUC 0.85056.
 
 ## 4. What was refuted — including my own predictions
 
