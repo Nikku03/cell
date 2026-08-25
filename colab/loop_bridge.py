@@ -55,10 +55,16 @@ PREDECLARED, BEFORE ANY NUMBER.
      Gate: PASS iff z > 3.0. R2 can pass on generic metabolic regulation; this asks whether the
      coupling is specific to the chemistry the gene performs, which is what "mechanism" would mean.
 
-  R4 THE STRANGER SWAP. Each bridge gene given another bridge gene's target set.
-     Gate: PASS iff the real enrichment exceeds the swapped one IN MAGNITUDE. Magnitude, because
-     loop 199's Q5 compared signed values, assumed the sign of its own answer, and scored a control
-     that worked as a failure.
+  R4 THE STRANGER SWAP, run against R3 and NOT against R2, for a reason worth stating in advance.
+     Permuting which bridge gene holds which target set cannot change the GROUP MEAN of per-gene
+     metabolic fractions -- the multiset of fractions is identical -- so a swap control on R2 is
+     arithmetically incapable of moving, which is gate_guard's own family two. R3's statistic
+     depends on the PAIRING between a writer's substrate class and its targets, and permuting
+     breaks that, so the swap bites. The swap is also checked with null_can_move before its output
+     is allowed to count.
+     Gate: PASS iff the real excess over the null exceeds the swapped excess IN MAGNITUDE, and the
+     swap actually changed the input. Magnitude, because loop 199's Q5 compared signed values,
+     assumed the sign of its own answer, and scored a control that worked as a failure.
 
   R5 WHAT THIS CANNOT SHOW.
 
@@ -260,20 +266,36 @@ def main():
     # ---- R4 ------------------------------------------------------------------------------------
     say()
     say("R4 THE STRANGER SWAP")
+    say("     AND THE FIRST VERSION OF THIS GATE COULD NOT MOVE, which is recorded rather than")
+    say("     quietly repaired. It swapped target sets among the 44 and compared the GROUP MEAN of")
+    say("     per-gene metabolic fractions -- a quantity that is invariant under a permutation of")
+    say("     which gene holds which set, because the multiset of fractions is unchanged. Real and")
+    say("     swapped both came back 0.2121, exactly. That is gate_guard's own family two: a null")
+    say("     arithmetically incapable of changing the statistic it is meant to destroy.")
+    say("     R3's statistic is different and a swap DOES bite it, because it depends on the")
+    say("     PAIRING between a writer's own substrate class and its targets, which permuting")
+    say("     breaks. So the swap is run against R3, which is also the gate that passed -- a")
+    say("     passing result with no working control is what this project does not ship.")
     perm = rng.permutation(len(bridge))
-    swapped = {g: targets[bridge[perm[i]]] for i, g in enumerate(bridge)}
-    obs4 = float(np.mean([np.mean([is_met(t) for t in swapped[g]]) if swapped[g] else 0.0
-                          for g in bridge]))
-    w = GG.weakened_by(real=d2["observed"] - d2["null_mean"], control=obs4 - d2["null_mean"])
-    say(f"     real metabolic fraction {d2['observed']:.4f}, swapped {obs4:.4f}, "
-        f"null {d2['null_mean']:.4f}")
+    swapped_t = {g: targets[bridge[perm[i]]] for i, g in enumerate(bridge)}
+    obs4 = float(np.mean([
+        np.mean([bool(gene_sub.get(name_of.get(int(t), ""), set()) & gene_sub.get(g, set()))
+                 for t in swapped_t[g]]) if (swapped_t[g] and gene_sub.get(g)) else 0.0
+        for g in bridge]))
+    inert = GG.null_can_move(
+        [tuple(targets[g]) for g in bridge], [tuple(swapped_t[g]) for g in bridge])
+    say(f"     the swap changes {inert['changed']:.0%} of the target sets "
+        f"({'capable' if inert['capable'] else 'INERT'})")
+    say(f"     R3 statistic: real {obs3:.4f}, swapped {obs4:.4f}, null {mu3:.4f}")
+    w = GG.weakened_by(real=obs3 - mu3, control=obs4 - mu3)
     say(f"     real excess {w['real']:+.4f} against swapped excess {w['control']:+.4f}")
-    G.add("R4", w["weakened"], requires=("R2",),
-          if_true=lambda: (f"R4 PASS -- giving a bridge gene another bridge gene's targets weakens "
-                           f"the enrichment, so it belongs to the specific pairing"),
-          if_false=lambda: (f"R4 FAIL -- a stranger's target set is as metabolic, so the "
-                            f"enrichment is a property of the group and not of which gene has "
-                            f"which targets"))
+    G.add("R4", w["weakened"] and inert["capable"], requires=("R3",),
+          if_true=lambda: (f"R4 PASS -- breaking the pairing between a writer and its targets "
+                           f"collapses the chemistry-specific enrichment ({obs3:.4f} -> "
+                           f"{obs4:.4f}), so it belongs to which writer has which targets"),
+          if_false=lambda: (f"R4 FAIL -- a stranger's targets share the writer's substrate just as "
+                            f"often ({obs4:.4f} against {obs3:.4f}), so R3's enrichment is a "
+                            f"property of the group and not of the specific pairing"))
 
     # ---- R5 ------------------------------------------------------------------------------------
     say()
@@ -302,7 +324,8 @@ def main():
                       note="is the 44-gene metabolism/regulation seam load-bearing?")
     out_d = dict(test="bridge seam", gates=gates, void=void, bridge=bridge,
                  n_pool=len(pool), r2=d2, r3=d3,
-                 r4=dict(real=obs4, **w), manifest=man, seconds=time.time() - t0, log=log)
+                 r4=dict(swapped=obs4, capable=inert['capable'],
+                         changed=inert['changed'], **w), manifest=man, seconds=time.time() - t0, log=log)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     json.dump(out_d, open(OUT, "w"), indent=1, default=str)
     say()
