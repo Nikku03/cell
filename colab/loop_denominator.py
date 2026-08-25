@@ -127,7 +127,13 @@ def parse_gem(path):
             species[el.get("id")] = el.get("compartment")
             el.clear()
         elif tag == FBC + "geneProduct":
-            genes.append({"id": el.get(FBC + "id"), "label": el.get(FBC + "label")})
+            raw = ET.tostring(el, encoding="unicode")
+            refs = defaultdict(set)
+            for ns, val in xref.findall(raw):
+                refs[ns].add(val)
+            genes.append({"id": el.get(FBC + "id"), "label": el.get(FBC + "label"),
+                          "uniprot": sorted(refs.get("uniprot", ())),
+                          "hgnc": sorted(refs.get("hgnc.symbol", ()))})
             el.clear()
         elif tag == SBML + "reaction":
             raw = ET.tostring(el, encoding="unicode")
@@ -332,15 +338,24 @@ def main():
 
     # ---------------------------------------------------------------- W6
     say("W6 HOW MANY CATALYTICALLY-ANNOTATED HUMAN ENZYMES ARE OUTSIDE THE MODEL?")
-    gem_up = {v for r in rxns for v in r["uniprot"]}
+    gem_up = {v for g in genes for v in g["uniprot"]}
     catalytic_human = {a for m, accs in master_acc.items() for a in accs if a in human_acc}
     inside = catalytic_human & gem_up
     outside_e = catalytic_human - gem_up
     say(f"     reviewed human accessions                       {len(human_acc):,}")
     say(f"     ...with at least one curated Rhea reaction      {len(catalytic_human):,}")
+    say(f"     Human-GEM gene products carrying a UniProt id   {len(gem_up):,} "
+        f"of {len(genes):,}")
     say(f"     ...present among Human-GEM's gene products      {len(inside):,}")
     say(f"     ...ABSENT from Human-GEM                        {len(outside_e):,}")
+    # VACUITY GUARD. The first run of this loop built gem_up from REACTION-level xrefs, where no
+    # UniProt id lives -- the set was empty and W6 "failed" 4,142 against 0, a comparison that
+    # could not have come out any other way. A membership test against an empty set is not a test.
     G.add("W6", bool(len(outside_e) < len(inside)), stat=float(len(outside_e)), requires=("W1",),
+          void_if=(len(gem_up) < 0.5 * len(genes)),
+          void_reason=(f"only {len(gem_up):,} of {len(genes):,} gene products carry a UniProt id, "
+                       f"so the accession join cannot see most of the model and a membership "
+                       f"count against it would be vacuous"),
           if_true=lambda: f"W6 PASS -- {len(inside):,} of {len(catalytic_human):,} catalytic human "
                           f"enzymes are in the model and only {len(outside_e):,} are outside it",
           if_false=lambda: f"W6 FAIL -- {len(outside_e):,} of {len(catalytic_human):,} human "
