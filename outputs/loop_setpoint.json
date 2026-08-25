@@ -1,0 +1,328 @@
+{
+ "test": "set point",
+ "harness": {
+  "n_train": 6680,
+  "n_test": 4008,
+  "n_genes": 1336,
+  "persistence": -0.02953459251266377,
+  "reference": -0.02953
+ },
+ "oracle": {
+  "lam": 0.003765934578688154,
+  "r2": 0.3629011844607235,
+  "replicate_r": [
+   0.9483327675006292,
+   0.9332358878775806,
+   0.9353573945995809
+  ],
+  "reliability": 0.9787957972985024
+ },
+ "crossover": {
+  "required_r": 0.9081372975471522,
+  "ceiling_r": 0.9787957972985024,
+  "sweep": [
+   [
+    1.0,
+    0.3629011844607235
+   ],
+   [
+    0.9987719115245624,
+    0.35619766156484245
+   ],
+   [
+    0.9948344106503461,
+    0.3261498143207707
+   ],
+   [
+    0.9882000393671488,
+    0.28599008294125805
+   ],
+   [
+    0.9809372344803873,
+    0.24798417266935768
+   ],
+   [
+    0.9708884835671521,
+    0.1878256829242262
+   ],
+   [
+    0.9557579543676921,
+    0.11751915443842742
+   ],
+   [
+    0.9411611482826814,
+    0.09281502761541782
+   ],
+   [
+    0.9315605170299969,
+    0.056928205701539225
+   ],
+   [
+    0.9081372975471522,
+    0.003095264868257286
+   ],
+   [
+    0.8874175466498319,
+    -0.03428445389211077
+   ],
+   [
+    0.8660395825069617,
+    -0.03910460226512136
+   ],
+   [
+    0.8660249215254818,
+    -0.07132848112887502
+   ],
+   [
+    0.846612869422512,
+    -0.05046410693184389
+   ],
+   [
+    0.8086609016205085,
+    -0.09660812088802628
+   ],
+   [
+    0.7920700580872694,
+    -0.096692242222846
+   ],
+   [
+    0.7688569649182032,
+    -0.09130504275981477
+   ],
+   [
+    0.7590220430028716,
+    -0.11887792847034584
+   ],
+   [
+    0.7537364658707214,
+    -0.11114117544432345
+   ],
+   [
+    0.7159958064776694,
+    -0.11662532446446972
+   ],
+   [
+    0.7222590543368197,
+    -0.10442994365559755
+   ],
+   [
+    0.7176177336157479,
+    -0.10419364702724909
+   ],
+   [
+    0.6634232203902622,
+    -0.11925244134965096
+   ],
+   [
+    0.6646967024485335,
+    -0.114379181727706
+   ],
+   [
+    0.6418057138658454,
+    -0.10475901662133258
+   ],
+   [
+    0.6324911327556818,
+    -0.10949590552600075
+   ],
+   [
+    0.6010812867822521,
+    -0.11925997275708311
+   ],
+   [
+    0.5644249547490207,
+    -0.07121514645098448
+   ],
+   [
+    0.5729953967451358,
+    -0.114355760140606
+   ],
+   [
+    0.5477290437047512,
+    -0.09889903246201537
+   ],
+   [
+    0.5889828898815892,
+    -0.10222734805220757
+   ],
+   [
+    0.5465134711900849,
+    -0.08191134558553403
+   ],
+   [
+    0.5253871171585366,
+    -0.08342022546322947
+   ],
+   [
+    0.5410200271329354,
+    -0.08439389964416888
+   ],
+   [
+    0.5039672081646029,
+    -0.06905589283741764
+   ],
+   [
+    0.5087241303995097,
+    -0.07575576851669474
+   ],
+   [
+    0.4669502029985313,
+    -0.09480096882976397
+   ],
+   [
+    0.49683016256897256,
+    -0.07983877764264347
+   ],
+   [
+    0.4849320922963497,
+    -0.07960356802298119
+   ],
+   [
+    0.45692814148335226,
+    -0.07280392256453183
+   ],
+   [
+    0.44133245907568563,
+    -0.06829570373033089
+   ],
+   [
+    0.44208647729915923,
+    -0.07155079628960914
+   ],
+   [
+    0.4025323956163492,
+    -0.05701443694860053
+   ],
+   [
+    0.4340458635715731,
+    -0.06693485429429402
+   ],
+   [
+    0.4033441276669177,
+    -0.0543682027401986
+   ],
+   [
+    0.36731020194677816,
+    -0.05915042222944211
+   ],
+   [
+    0.39929635972163735,
+    -0.05383610731349475
+   ],
+   [
+    0.40762294839633023,
+    -0.057452814838779176
+   ],
+   [
+    0.37536552254757816,
+    -0.04896001952102824
+   ],
+   [
+    0.4135440789327863,
+    -0.07026266325548347
+   ],
+   [
+    0.3321953239153153,
+    -0.057883114642874434
+   ]
+  ]
+ },
+ "physics": {
+  "mu": -4.0,
+  "coverage": 0.8982035928143712,
+  "r": -0.013251509512058793,
+  "r2": -0.10166898357906096,
+  "ratio": 0.04520316748108151
+ },
+ "arms": {
+  "measured": {
+   "r": 0.293154445816321,
+   "r2": -0.03759460541212678
+  },
+  "mean": {
+   "r": -0.06391448513278392,
+   "r2": -0.09998116507033838
+  },
+  "fame": {
+   "r": -0.0332169906217488,
+   "r2": -0.0991879067859871
+  }
+ },
+ "gates": {
+  "Y1": true,
+  "Y2": true,
+  "Y3": true,
+  "Y4": true,
+  "Y5": false,
+  "Y6": false
+ },
+ "void": [],
+ "seconds": 172.73318600654602,
+ "log": [
+  "========================================================================================================",
+  "LOOP 206 -- CAN THE MISSING REGULATORY GAIN BE COMPUTED INSTEAD OF MEASURED?",
+  "========================================================================================================",
+  "     grid [30, 60, 120, 180, 240, 420, 480, 600, 720]   train on the first 6, score on the rest",
+  "     1,336 genes are responders with a promoter DNase peak",
+  "Y1 IS THIS LOOP 198'S HARNESS?",
+  "     rows: train 6,680  score 4,008   genes 1,336",
+  "     persistence held-out-in-time R2 -0.02953459   loop 198 recorded -0.02953",
+  "     Y1 PASS -- persistence reproduces loop 198 to four decimals",
+  "Y2 IS THE FORM RIGHT?  relaxation to the ORACLE set point",
+  "     fitted global rate lam +0.003766 /min",
+  "     oracle set point held-out-in-time R2 +0.36290   vs persistence -0.02953",
+  "     plateau replicate pairwise r 0.9483 0.9332 0.9354   Spearman-Brown reliability 0.9788",
+  "     Y2 PASS -- the form is right: relaxation to the true plateau with ONE global rate scores +0.36290 against persistence -0.02953",
+  "Y3 HOW GOOD DOES A SET POINT HAVE TO BE?",
+  "     crossover: a set point must reach Pearson r >= 0.9081 before relaxation beats persistence",
+  "     the plateau's own reliability ceiling is r 0.9788",
+  "       r +1.0000  ->  R2 +0.36290",
+  "       r +0.8874  ->  R2 -0.03428",
+  "       r +0.7223  ->  R2 -0.10443",
+  "       r +0.5890  ->  R2 -0.10223",
+  "       r +0.4413  ->  R2 -0.06830",
+  "       r +0.3322  ->  R2 -0.05788",
+  "     Y3 PASS -- the requirement 0.908 sits below the reliability ceiling 0.979, so the benchmark is decidable rather than merely hard",
+  "Y4 THE MEASURED ARM",
+  "     27 columns from 9 tracks measured in these same cells",
+  "       measured (9 tracks)        r +0.2932   lam -0.000260   R2 -0.03759",
+  "       training-mean              r -0.0639   lam -0.000724   R2 -0.09998",
+  "       publication count (fame)   r -0.0332   lam -0.000724   R2 -0.09919",
+  "     Y4 PASS -- measured tracks give a set point at r +0.2932, beating the training mean and the fame floor r -0.0332",
+  "Y5 THE PHYSICS ARM -- computed occupancy, no ChIP anywhere in it",
+  "     computed occupancy available for 1,200 of 1,336 genes (89.8%)",
+  "     mu selected on training folds only: mu -4.0 kT (train |r| 0.0612)",
+  "       PHYSICS (computed)         r -0.0133   lam -0.000729   R2 -0.10167",
+  "     computed r -0.0133  /  measured r +0.2932  =  0.045",
+  "     Y5 FAIL -- computed reaches only 5% of measured (-0.0133 against +0.2932). Computing cannot fill a hole that measuring only half-fills",
+  "Y6 IS EITHER ARM JUST FAME?",
+  "     measured 0.2932   computed 0.0133   fame 0.0332",
+  "     Y6 FAIL -- fame at 0.0332 is not beaten by both arms",
+  "Y7 SCOPE",
+  "     Y5 does not ask whether physics rescues this benchmark. Y3's requirement and Y4's",
+  "     measured arm settle that on their own, and 80% of a number below the requirement is",
+  "     still below it. Y5 asks whether a COMPUTED gain is as good as a MEASURED one,",
+  "     because there is no ChIP for the overwhelming majority of the 612,133 edges.",
+  "Y8 WHAT THIS CANNOT SHOW",
+  "     One factor, one cell line, one perturbation. NR3C1 is the best case by construction",
+  "     -- it is the drug's own receptor -- so a failure here bounds the others and a",
+  "     success here does not generalise to factors whose ligand is not in the medium.",
+  "     The computed arm uses a promoter window only. Loop 185 measured that distal",
+  "     elements carry real signal, so a promoter-only occupancy is a floor for what",
+  "     sequence-based binding could contribute.",
+  "     Berg-von Hippel treats a PWM as an additive energy model. Real binding has",
+  "     interdependence between positions, and loop 184 measured co-binding at 0.8455",
+  "     against motif at 0.6228 -- most of what decides occupancy is not the site.",
+  "     A set point is not a gain. This measures whether sequence predicts where a gene",
+  "     ENDS UP, which is the product of all its gains, not any single edge weight.",
+  "========================================================================================================",
+  "  Y1  PASS",
+  "  Y2  PASS",
+  "  Y3  PASS",
+  "  Y4  PASS",
+  "  Y5  FAIL",
+  "  Y6  FAIL",
+  "  4/6   [173s]",
+  "========================================================================================================"
+ ]
+}
