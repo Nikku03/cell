@@ -311,11 +311,16 @@ def main():
     if "Y4" in void:
         say("     Y4 VOID -- Y1 failed")
     else:
+        # PRECOMPUTED because GG.verdict evaluates BOTH branch f-strings before the call. Loop
+        # 196's X4 crashed on d4[None] for this reason, was fixed, and the identical defect was
+        # written again here as qual[0] on an empty list. Any success message referencing a
+        # success-only value must be built defensively, not inside the call.
+        best = (f"{qual[0]['cell']} / {qual[0]['source']} at {qual[0]['n_shared']} matched points"
+                if qual else "n/a")
         GG.verdict(y4, emit=say,
-                   if_true=f"Y4 PASS -- {qual[0]['cell']} / {qual[0]['source']} at "
-                           f"{qual[0]['n_shared']} matched points is a candidate. It must still "
-                           f"pass loop 192's W3 downsampling calibration before any replication "
-                           f"result from it is read",
+                   if_true=f"Y4 PASS -- {best} is a candidate. It must still pass loop 192's W3 "
+                           f"downsampling calibration before any replication result from it is "
+                           f"read",
                    if_false="Y4 FAIL -- and this is the finding. No structured public series other "
                             "than A549 is dense enough. The GEO shortlist may contain one, but "
                             "that cannot be established from metadata and needs a per-series check")
