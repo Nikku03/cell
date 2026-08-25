@@ -461,6 +461,9 @@ def main():
     say()
     say("U6 DOES CHROMATIN MOVE FIRST?")
     u6, d6 = False, {}
+    _u6_mask = np.zeros(len(sym), dtype=bool)
+    _u6_acc = np.zeros(len(sym))
+    _u6_exp = np.zeros(len(sym))
     if "U6" in void:
         say("     U6 VOID -- see above")
     else:
@@ -486,6 +489,7 @@ def main():
                 say(f"     accessibility median {np.median(ah[m6]):.0f} min vs expression "
                     f"{np.median(eh[m6]):.0f} min; lead {lead:+.0f} min; one-sided p {p6:.3g}")
                 d6 = dict(n=int(m6.sum()), lead=lead, p=float(p6))
+                _u6_mask, _u6_acc, _u6_exp = m6, ah, eh
                 u6 = bool(p6 < ALPHA)
                 GG.verdict(u6, emit=say,
                            if_true=f"U6 PASS -- chromatin opens {lead:.0f} min before the mRNA "
@@ -569,6 +573,15 @@ def main():
                             f"p {pp:.3g}")
                     else:
                         say(f"       U7 tercile {qi+1}: under the power floor")
+                elif g == "U6":
+                    m = _u6_mask & st
+                    if m.sum() >= MIN_GROUP:
+                        _, pp = wilcoxon(_u6_acc[m], _u6_exp[m], alternative="less")
+                        held += int(pp < ALPHA)
+                        say(f"       U6 tercile {qi+1}: n {int(m.sum())}  lead "
+                            f"{float(np.median(_u6_exp[m] - _u6_acc[m])):+.0f} min  p {pp:.3g}")
+                    else:
+                        say(f"       U6 tercile {qi+1}: under the power floor")
             strata[g] = held
         u9 = all(v >= 2 for v in strata.values())
         GG.verdict(u9, emit=say,
