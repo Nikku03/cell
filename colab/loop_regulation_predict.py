@@ -261,10 +261,20 @@ def main():
     say(f"     base rate of reciprocity in net_bundle  {base_rate:.4f}")
     rng = np.random.default_rng(201)
     pos = [(a, b) for a, b in pairs if (b, a) in edges]
-    neg_all = [(a, b) for a, b in pairs if (b, a) not in edges]
+    # THE TAUTOLOGY GUARD, and the reason this loop was rerun. The first run sampled negatives from
+    # ALL non-reciprocal edges. B->A can only exist if B regulates ANYTHING, and 84.1% of those
+    # negatives had out-degree(B) = 0 while 0% of the positives did -- so the single rule
+    # "is B a regulator at all" scored AUC >= 0.9206 by itself and the reported 0.9837 was mostly
+    # that rule. Restricting the negative pool to targets that ARE regulators removes the trivial
+    # separator and leaves the question actually worth asking: given A->B and given B regulates
+    # something, does B regulate A specifically?
+    neg_all = [(a, b) for a, b in pairs if (b, a) not in edges and out.get(b)]
     neg = [neg_all[i] for i in rng.choice(len(neg_all), size=min(len(neg_all), 10 * len(pos)),
                                           replace=False)]
     say(f"     reciprocal pairs {len(pos):,}   sampled non-reciprocal {len(neg):,}")
+    say(f"     negatives are restricted to targets that ARE regulators "
+        f"({len(neg_all):,} available of {sum(1 for a,b in pairs if (b,a) not in edges):,} "
+        f"non-reciprocal edges) -- see the tautology guard in the source")
     # the answer and any feature that encodes it are removed
     Xr = mat([feats(a, b, out, inn, ppi, coexpr, edges, drop=("reciprocal",))
               for a, b in pos + neg])
@@ -354,20 +364,38 @@ def main():
             r2 = np.random.default_rng(sd); p = r2.permutation(len(yh))
             cut = int(0.7 * len(yh)); tr, te = p[:cut], p[cut:]
             v.append(auc(yh[te], fit_predict(Xa[tr], yh[tr], Xa[te], sd)))
-        return float(np.mean(v))
-    no_ffl = ablate(("ffl",))
-    no_rec = ablate(("reciprocal",))
-    cost_ffl, cost_rec = A_f - no_ffl, A_f - no_rec
-    say(f"     drop feedforward feature   AUC {no_ffl:.4f}   costs {cost_ffl:+.4f}")
-    say(f"     drop reciprocity feature   AUC {no_rec:.4f}   costs {cost_rec:+.4f}")
+        return np.array(v, float)
+    s_ffl, s_rec = ablate(("ffl",)), ablate(("reciprocal",))
+    d_ffl = np.array(b_full) - s_ffl      # per-seed PAIRED cost, same split each seed
+    d_rec = np.array(b_full) - s_rec
+    cost_ffl, cost_rec = float(d_ffl.mean()), float(d_rec.mean())
+    sem_ffl = float(d_ffl.std(ddof=1) / np.sqrt(len(d_ffl)))
+    sem_rec = float(d_rec.std(ddof=1) / np.sqrt(len(d_rec)))
+    say(f"     drop feedforward feature   AUC {s_ffl.mean():.4f}   "
+        f"costs {cost_ffl:+.4f} +/- {sem_ffl:.4f}")
+    say(f"     drop reciprocity feature   AUC {s_rec.mean():.4f}   "
+        f"costs {cost_rec:+.4f} +/- {sem_rec:.4f}")
+    # DEFINEDNESS, and the reason this gate was rewritten. The first run compared +0.0005 against
+    # -0.0000 and PASSED. Both were indistinguishable from zero, so the comparison was a property
+    # of the noise -- gate_guard's Family One, a ratio with no denominator. If neither ablation
+    # moves AUC by more than 2 sem, there is nothing to rank and the gate did not run.
+    moved = (abs(cost_rec) > 2 * sem_rec) or (abs(cost_ffl) > 2 * sem_ffl)
     cmp6 = weakened_by(cost_rec, cost_ffl)
     G.add("P6", bool(cmp6["weakened"]), stat=cost_rec, requires=("P4",),
+          void_if=(not moved),
+          void_reason=(f"neither ablation moves AUC beyond its own noise "
+                       f"(reciprocity {cost_rec:+.4f} +/- {sem_rec:.4f}, feedforward "
+                       f"{cost_ffl:+.4f} +/- {sem_ffl:.4f}), so there is no difference to rank "
+                       f"and this gate did not run"),
           if_true=lambda: f"P6 PASS -- the enriched motif carries more ({cost_rec:+.4f}) than the "
                           f"non-enriched one ({cost_ffl:+.4f}), which is what loop 187 predicts",
           if_false=lambda: f"P6 FAIL -- feedforward costs {cost_ffl:+.4f} against reciprocity's "
                            f"{cost_rec:+.4f}: enrichment did not decide which motif is useful")
-    res["motif_ablation"] = {"auc_full": A_f, "auc_no_ffl": no_ffl, "auc_no_reciprocal": no_rec,
-                             "cost_ffl": cost_ffl, "cost_reciprocal": cost_rec, "compare": cmp6}
+    res["motif_ablation"] = {"auc_full": A_f, "auc_no_ffl": float(s_ffl.mean()),
+                             "auc_no_reciprocal": float(s_rec.mean()),
+                             "cost_ffl": cost_ffl, "sem_ffl": sem_ffl,
+                             "cost_reciprocal": cost_rec, "sem_reciprocal": sem_rec,
+                             "moved_beyond_noise": bool(moved), "compare": cmp6}
 
     # ------------------------------------------------------------ P7 sign
     say("P7 CAN THE SIGN BE PREDICTED?")
