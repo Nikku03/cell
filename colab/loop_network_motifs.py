@@ -72,12 +72,45 @@ PREDECLARED, BEFORE ANY NUMBER.
 
   B7 WHAT THIS CANNOT SHOW.
 
-  A NOTE ON THE NULLS, recorded because the two tiers do not get the same one. The curated tier is
-  scored against 100 randomisations with every motif counted. The binding tier -- 222,689 edges at
-  a median out-degree of 300 -- gets 25, without three-cycles, because the three-cycle count there
-  is about 10^8 Python operations per call and a hundred of them is a three-hour job. Every GATE is
-  scored on the curated tier; the binding tier appears only in B3's comparison, where 25 draws
-  place a z-score to within a few units.
+  WHY THIS IS A RERUN. The first run reached B1 and the curated tier's ensemble -- 95.3% of curated
+  edges signed, FFL 315,423 against a null of 312,531.9 +/- 3,617.0 for z = +0.8, two-cycle
+  z = +43.8, three-cycle z = +3.8 -- and then the container was reclaimed during the binding tier's
+  randomisations, so B2 through B7 were never scored. Partial ensembles are now checkpointed per
+  tier so a second reclaim costs minutes rather than the whole run.
+
+  AND WHAT THE SELF-CHECK FOUND, which is the reason the first run's FFL numbers do NOT stand. The
+  matrix counter and the nested-loop counter disagreed on random graphs, always by exactly twice
+  the two-cycle count. The loop counter was the wrong one. It intended to exclude the degenerate
+  triads c == a and c == b, and for c == b it tested the right thing; for c == a it tested only
+  whether b -> a exists. But c == a needs c to be in out(a) as well, which means a -> a -- a
+  self-loop. With no self-loops anywhere in this network, that subtraction should never fire, and
+  instead it fired once for every ordered pair joined in both directions. So every feedforward
+  count in the first run, observed AND null, was low by 2 x (two-cycles), and the curated tier's
+  1,630 two-cycles put the observed count 3,260 low while the null's ~714 put the null ~1,428 low.
+  The corrected counts are what this run reports, and the first run's 315,423 is recorded here as
+  wrong rather than quietly replaced. The direction of B2 is not expected to change -- the error
+  was larger in the observation than in the null, so correcting it can only raise the z-score, and
+  the raw gap it has to close is +0.8 against a bar of 3.0 -- but the number itself changes and the
+  z-score is stated freshly rather than carried over.
+
+  A NOTE ON THE NULLS. Both tiers now get the SAME null: 100 degree-preserving randomisations with
+  every motif counted. The first attempt at this loop did not, and the reason it did not was
+  arithmetic rather than principle -- the three-cycle count written as nested Python loops is about
+  10^8 operations per call on the binding tier, so the binding tier was given 25 draws without
+  three-cycles and the log said so. That is a bad position to argue B3 from, because B3 compares
+  the two tiers' z-scores and an unequal null makes the comparison partly about the null. All four
+  counts are now linear algebra on the adjacency matrix -- feedforward triads are sum(A * A^2),
+  two-cycles are sum(A * A^T)/2, three-cycles are trace(A^3)/3 -- which BLAS does in under a second
+  where the loops took minutes, and the weaker null is no longer needed for anything.
+
+  THE SELF-CHECK THAT GUARDS THAT SUBSTITUTION. A fast reimplementation of a count is a chance to
+  silently change what is being counted. So the original nested-loop counter is KEPT in the file as
+  stats_ref, and before any gate is scored the two implementations are run against each other on
+  the observed curated graph, on a randomised curated graph, and on the observed binding graph;
+  the coherence enumeration is checked the same way. Any disagreement aborts the loop rather than
+  being reported. The same applies to the sign-shuffled null, which now enumerates the feedforward
+  triads once as edge indices and permutes signs into that fixed array, because the topology is
+  held constant across that null by construction.
 
 -> outputs/loop_network_motifs.json
 """
@@ -101,9 +134,9 @@ import run_manifest as RM                    # noqa: E402
 OUT = Path(os.environ.get("CELL_OUT", "outputs")) / "loop_network_motifs.json"
 BUNDLE = Path("colab/data/net_bundle.json.gz")
 TIERS = {"curated": (0, 55716), "binding": (55716, 278405), "unidentified": (278405, None)}
-N_RAND = 100
-N_RAND_BINDING = 25      # see stats(): the dense tier's three-cycle count makes 100 a three-hour job
+N_RAND = 100             # both tiers, identically -- see the note on the nulls in the docstring
 SWAP_FACTOR = 10
+CKPT = Path(os.environ.get("CELL_OUT", "outputs")) / "l187_null_{}.npz.tmp"
 MIN_SIGNED = 0.50
 Z_BAR = 3.0
 SEED = 187187
@@ -121,13 +154,14 @@ def load_tier(reg, lo, hi):
     return [(int(r[0]), int(r[1]), int(r[2]) if len(r) > 2 else 0) for r in e]
 
 
-def stats(edges, cycles3=True):
-    """FFL triads, 2-cycles, 3-cycles and self-loops, all from one adjacency build.
+def stats_ref(edges, cycles3=True):
+    """The nested-loop reference counter: FFL triads, 2-cycles, 3-cycles and self-loops.
 
-    `cycles3` is switchable because the three-cycle count is O(sum_a sum_{b in out(a)} |out(b)|),
-    which on the binding tier -- 472 regulators at a median out-degree of 300 -- is about 10^8
-    Python operations per call and would make a hundred randomisations a three-hour job. The
-    curated tier, which is the one every gate is scored on, keeps it."""
+    This is the ORIGINAL implementation and it is kept only to check the fast one against. It is
+    too slow to build an ensemble with -- the three-cycle count is O(sum_a sum_{b in out(a)}
+    |out(b)|), about 10^8 Python operations per call on the binding tier -- which is exactly why
+    stats_dense exists. `cycles3` switches the three-cycle count off so the reference can still be
+    run once on the dense tier for the self-check without costing an hour."""
     out = defaultdict(set)
     for a, b, s in edges:
         out[a].add(b)
@@ -139,7 +173,12 @@ def stats(edges, cycles3=True):
         for b in ta:
             if b == a or b not in out:
                 continue
-            ffl += len(ta & out[b]) - (1 if a in out[b] else 0) - (1 if b in ta and b in out[b] else 0)
+            # the two subtractions remove c == a and c == b. BOTH require c to actually be in
+            # the intersection, which is what the first of them originally failed to check: it
+            # fired on b -> a alone, and c == a additionally needs a -> a. See the docstring.
+            ffl += (len(ta & out[b])
+                    - (1 if (a in ta and a in out[b]) else 0)
+                    - (1 if (b in ta and b in out[b]) else 0))
     two = 0
     for a in reg:
         for b in out[a]:
@@ -157,6 +196,58 @@ def stats(edges, cycles3=True):
                     three += 1
     return dict(ffl=ffl, two_cycle=two, three_cycle=three, self_loop=selfl,
                 n_reg=len(reg), n_edge=len(edges))
+
+
+class DenseIndex:
+    """Fixed row and column maps for one tier, built once and reused for every randomisation.
+
+    This reuse is legitimate for exactly one reason: the double-edge swap preserves every node's
+    in-degree and out-degree EXACTLY, so the set of nodes with an out-edge and the set with an
+    in-edge are identical in the observed graph and in every randomisation of it. If the swap ever
+    stopped being degree-preserving this cache would silently lie, which is one more thing the
+    self-check against stats_ref would catch."""
+
+    def __init__(self, edges):
+        regs = sorted({a for a, b, s in edges})
+        nodes = sorted({x for a, b, s in edges for x in (a, b)})
+        hi = max(nodes) + 1
+        self.row_of = np.full(hi, -1, dtype=np.int64)
+        self.col_of = np.full(hi, -1, dtype=np.int64)
+        for i, a in enumerate(regs):
+            self.row_of[a] = i
+        for i, n in enumerate(nodes):
+            self.col_of[n] = i
+        self.rcols = self.col_of[np.array(regs, dtype=np.int64)]
+        self.nr, self.nn = len(regs), len(nodes)
+
+    def matrix(self, edges):
+        e = np.asarray(edges, dtype=np.int64)
+        a, b = e[:, 0], e[:, 1]
+        keep = a != b                                    # self-loops are counted separately
+        M = np.zeros((self.nr, self.nn), dtype=np.float32)
+        M[self.row_of[a[keep]], self.col_of[b[keep]]] = 1.0
+        return M
+
+
+def stats_dense(edges, ix, cycles3=True):
+    """The same four counts as stats_ref, as linear algebra.
+
+    With the diagonal zeroed, a feedforward triad is a pair (a,c) joined both directly and by one
+    intermediate, so the count is sum(A * A^2) elementwise; a two-cycle is sum(A * A^T)/2; a
+    three-cycle is trace(A^3)/3, written here as sum(A^2 * A^T) so the third matrix product is
+    never formed. Only rows with an out-edge can start a path, so A is stored as the regulator
+    rows only, and A^2 restricted to those rows is S @ M where S is the regulator-by-regulator
+    block. Every intermediate is a non-negative integer count below 2^24, so float32 products are
+    exact; the outer sums are accumulated in float64 because they are not."""
+    M = ix.matrix(edges)
+    S = M[:, ix.rcols]
+    ffl = float(np.sum(M * (S @ M), dtype=np.float64))
+    two = float(np.sum(S * S.T, dtype=np.float64)) / 2.0
+    three = float(np.sum((S @ S) * S.T, dtype=np.float64)) / 3.0 if cycles3 else 0.0
+    selfl = sum(1 for a, b, s in edges if a == b)
+    return dict(ffl=int(round(ffl)), two_cycle=int(round(two)),
+                three_cycle=int(round(three)), self_loop=selfl,
+                n_reg=ix.nr, n_edge=len(edges))
 
 
 def randomise(edges, rng, factor=SWAP_FACTOR):
@@ -186,14 +277,44 @@ def randomise(edges, rng, factor=SWAP_FACTOR):
     return [(a, b, 0) for a, b in e]
 
 
-def null_ensemble(edges, n=N_RAND, seed=SEED, report=print, label="", cycles3=True):
+KEYS = ("ffl", "two_cycle", "three_cycle", "self_loop")
+
+
+def null_ensemble(edges, ix, n=N_RAND, seed=SEED, report=print, label="", cycles3=True):
+    """Degree-preserving ensemble, checkpointed every 10 draws.
+
+    The first attempt at this loop lost a completed 274-second curated ensemble when the container
+    was reclaimed mid-way through the binding tier. The draws are deterministic given the seed, so
+    a checkpoint is simply a prefix of the same sequence and resuming from it is not an
+    approximation -- but the rng has to be advanced through the draws already banked, which is what
+    the replay loop below does, and the checkpoint records the edge count it was built from so a
+    stale file cannot be silently adopted."""
+    ck = Path(str(CKPT).format(label))
+    acc = {k: [] for k in KEYS}
+    done = 0
+    if ck.exists():
+        try:
+            z = np.load(ck)
+            if int(z["n_edge"]) == len(edges) and bool(z["cycles3"]) == cycles3:
+                for k in KEYS:
+                    acc[k] = list(z[k])
+                done = len(acc["ffl"])
+                report(f"      {label}: resuming from checkpoint at {done}/{n}")
+        except Exception as exc:                                     # noqa: BLE001
+            report(f"      {label}: checkpoint unreadable ({exc}); starting over")
     rng = np.random.default_rng(seed)
-    acc = defaultdict(list)
     t0 = time.time()
     for k in range(n):
-        s = stats(randomise(edges, rng), cycles3=cycles3)
-        for key in ("ffl", "two_cycle", "three_cycle", "self_loop"):
-            acc[key].append(s[key])
+        e = randomise(edges, rng)                # replayed even when banked, to keep the rng state
+        if k < done:
+            continue
+        st = stats_dense(e, ix, cycles3=cycles3)
+        for key in KEYS:
+            acc[key].append(st[key])
+        if (k + 1) % 10 == 0 or k + 1 == n:
+            ck.parent.mkdir(parents=True, exist_ok=True)
+            np.savez(ck, n_edge=len(edges), cycles3=cycles3,
+                     **{key: np.array(acc[key], dtype=float) for key in KEYS})
         if (k + 1) % 25 == 0:
             report(f"      {label} randomisation {k+1}/{n}  [{time.time()-t0:.0f}s]")
     return {k: np.array(v, dtype=float) for k, v in acc.items()}
@@ -228,14 +349,41 @@ def coherence(edges):
     return coh, inc, unsigned
 
 
-def sign_shuffle_null(edges, n, seed, report=print):
+def ffl_triples(edges):
+    """Every feedforward triad as three EDGE indices (a->b, b->c, a->c), enumerated once.
+
+    The sign-shuffled null holds the topology fixed and permutes signs across edges, so the triads
+    it scores are the same triads every time. Enumerating them once turns each of the 40 draws from
+    a re-traversal of the graph into three array lookups. Duplicate (a,b) rows collapse to the last
+    one, matching the reference, which stores edges in a dict keyed by (a,b)."""
+    out = defaultdict(dict)
+    for i, (a, b, s) in enumerate(edges):
+        if a != b:
+            out[a][b] = i
+    tri = []
+    for a, ta in out.items():
+        for b, iab in ta.items():
+            if b not in out:
+                continue
+            for c, ibc in out[b].items():
+                if c == a or c == b or c not in ta:
+                    continue
+                tri.append((iab, ibc, ta[c]))
+    return np.array(tri, dtype=np.int64).reshape(-1, 3)
+
+
+def coh_frac(tri, signs):
+    s1, s2, s3 = signs[tri[:, 0]], signs[tri[:, 1]], signs[tri[:, 2]]
+    signed = (s1 != 0) & (s2 != 0) & (s3 != 0)
+    coh = int(((s1 * s2 == s3) & signed).sum())
+    return coh, int(signed.sum()) - coh, int((~signed).sum())
+
+
+def sign_shuffle_null(tri, signs, n, seed, report=print):
     rng = np.random.default_rng(seed)
-    signs = np.array([s for a, b, s in edges])
     fr = []
     for k in range(n):
-        p = rng.permutation(len(signs))
-        e2 = [(a, b, int(signs[p[i]])) for i, (a, b, s) in enumerate(edges)]
-        c, i2, u = coherence(e2)
+        c, i2, u = coh_frac(tri, signs[rng.permutation(len(signs))])
         fr.append(c / max(c + i2, 1))
     return np.array(fr)
 
@@ -280,26 +428,50 @@ def main():
                if_false=f"B1 FAIL -- only {frac_signed:.1%} of curated edges carry a sign; B4 "
                         f"would be measuring the unsigned majority")
 
+    # ---- the self-check that guards the fast counter ---------------------------------------------
+    say()
+    say("   SELF-CHECK: the matrix counter against the nested-loop reference")
+    ix = {t: DenseIndex(tier[t]) for t in ("curated", "binding")}
+    checks = []
+    for lbl, e, t, c3 in (("curated observed", tier["curated"], "curated", True),
+                          ("curated randomised", randomise(tier["curated"],
+                                                           np.random.default_rng(1)),
+                           "curated", True),
+                          ("binding observed", tier["binding"], "binding", False)):
+        a = stats_ref(e, cycles3=c3)
+        b = stats_dense(e, ix[t], cycles3=c3)
+        keys = KEYS if c3 else ("ffl", "two_cycle", "self_loop")
+        same = all(a[k] == b[k] for k in keys)
+        checks.append(same)
+        say(f"     {lbl:20} " + "  ".join(f"{k} {a[k]:,}" for k in keys)
+            + ("   AGREE" if same else "   DISAGREE " + str({k: (a[k], b[k]) for k in keys})))
+    tri = ffl_triples(tier["curated"])
+    signs = np.array([s for a, b, s in tier["curated"]], dtype=np.int64)
+    cr = coherence(tier["curated"])
+    cd = coh_frac(tri, signs)
+    checks.append(cr == cd)
+    say(f"     coherence enumeration  reference {cr}  vectorised {cd}   "
+        + ("AGREE" if cr == cd else "DISAGREE"))
+    if not all(checks):
+        say("     ABORT -- the fast counter does not reproduce the reference, so no gate below "
+            "would be measuring what it says it measures")
+        raise SystemExit(2)
+    say(f"     all {len(checks)} checks agree")
+
     # ---- B2, B3, B5, B6 ------------------------------------------------------------------------
     say()
-    say(f"   counting motifs and building {N_RAND} degree-preserving nulls per tier")
+    say(f"   counting motifs and building {N_RAND} degree-preserving nulls per tier, "
+        f"identically for both")
     obs, nulls, zs = {}, {}, {}
     for t in ("curated", "binding"):
         e = tier[t]
-        c3 = (t == "curated")
-        o = stats(e, cycles3=c3)
+        o = stats_dense(e, ix[t])
         obs[t] = o
         say(f"     {t}: FFL {o['ffl']:,}  2-cycles {o['two_cycle']:,}  "
-            + (f"3-cycles {o['three_cycle']:,}  " if c3 else "3-cycles not counted  ")
-            + f"self-loops {o['self_loop']}")
-        nr = N_RAND if c3 else N_RAND_BINDING
-        if not c3:
-            say(f"       binding tier: {nr} randomisations without three-cycles -- a WEAKER null "
-                f"than the curated tier's {N_RAND}, used only for B3's comparison")
-        nulls[t] = null_ensemble(e, n=nr, report=say, label=t, cycles3=c3)
+            f"3-cycles {o['three_cycle']:,}  self-loops {o['self_loop']}")
+        nulls[t] = null_ensemble(e, ix[t], n=N_RAND, report=say, label=t)
         zs[t] = {}
-        for key in (("ffl", "two_cycle", "three_cycle", "self_loop") if c3
-                    else ("ffl", "two_cycle", "self_loop")):
+        for key in KEYS:
             z, mu, sd = z_of(o[key], nulls[t][key])
             zs[t][key] = dict(obs=o[key], null_mean=mu, null_sd=sd, z=z)
             say(f"       {key:12} observed {o[key]:9,}  null {mu:11,.1f} +/- {sd:8,.1f}  "
@@ -320,7 +492,8 @@ def main():
     say()
     say("B3 IS THE ENRICHMENT A CO-BINDING ARTEFACT?")
     zb = zs["binding"]["ffl"]["z"]
-    say(f"     curated z {zc:+.1f} against binding z {zb:+.1f}")
+    say(f"     curated z {zc:+.1f} against binding z {zb:+.1f}, both from {N_RAND} "
+        f"randomisations with every motif counted")
     b3 = bool(np.isfinite(zc) and np.isfinite(zb) and zc > zb)
     GG.verdict(b3, emit=say,
                if_true="B3 PASS -- the curated causal tier is more enriched than the occupancy "
@@ -332,14 +505,14 @@ def main():
     # ---- B4 ------------------------------------------------------------------------------------
     say()
     say("B4 ARE FEEDFORWARD LOOPS COHERENT?")
-    coh, inc, uns = coherence(tier["curated"])
+    coh, inc, uns = coh_frac(tri, signs)
     tot = coh + inc
     frac = coh / max(tot, 1)
     say(f"     curated FFLs with all three edges signed: {tot:,} "
         f"({uns:,} had an unsigned edge and are excluded)")
     say(f"     coherent {coh:,} ({frac:.1%}), incoherent {inc:,} ({1-frac:.1%}); "
         f"E. coli's published answer is about 85% coherent")
-    null_fr = sign_shuffle_null(tier["curated"], 40, SEED, say)
+    null_fr = sign_shuffle_null(tri, signs, 40, SEED, say)
     z4 = (frac - null_fr.mean()) / (null_fr.std(ddof=1) if null_fr.std(ddof=1) > 0 else np.nan)
     say(f"     sign-shuffled null on the identical topology: {null_fr.mean():.1%} "
         f"+/- {null_fr.std(ddof=1):.1%}  ->  z {z4:+.1f}")
@@ -412,6 +585,10 @@ def main():
     say("     structure, so an enrichment could still reflect modularity rather than circuitry.")
     say("     Signs are Activation/Repression/Unknown as curated; a context-dependent factor that")
     say("     activates in one setting and represses in another is recorded as one or the other.")
+    say("     B3 compares two z-scores from two DIFFERENT graphs. Equalising the nulls removes one")
+    say("     confound and not the others: the tiers differ in density, in how signs were assigned")
+    say("     and in what an edge means, and a z-score is not a quantity those differences leave")
+    say("     alone. B3 is a direction-of-difference test and is not read as a ratio.")
     b7 = True
     say(f"     B7 {'PASS' if b7 else 'FAIL'}")
 
@@ -419,7 +596,10 @@ def main():
     man = RM.manifest(inputs=[BUNDLE],
                       available=len(reg), used=len(tier["curated"]) + len(tier["binding"]),
                       selection="curated and binding tiers, kept separate", seed=SEED,
-                      controls=[f"{N_RAND} degree-preserving double-edge-swap randomisations",
+                      controls=[f"{N_RAND} degree-preserving double-edge-swap randomisations, "
+                                f"the same null for both tiers",
+                                "the matrix counter checked against the nested-loop reference "
+                                "on three graphs before any gate is scored",
                                 "the curated tier required to out-enrich the occupancy tier",
                                 "a sign-shuffled null on the identical topology for coherence"],
                       note="feedforward and feedback motif enrichment in the K562 TF network")
