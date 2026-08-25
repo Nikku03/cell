@@ -139,9 +139,11 @@ def main():
     for i, a in enumerate(CORE):
         for b in CORE[i + 1:]:
             pw[f"{a} & {b}"] = int((L[a] & L[b]).sum())
-    say(f"     TF_in_network & reaction {pw['TF_in_network & reaction']}   "
-        f"has_motif & reaction {pw['has_motif & reaction']}   "
-        f"has_regulator & reaction {pw['has_regulator & reaction']}")
+    def ov(a, b):
+        return pw.get(f"{a} & {b}", pw.get(f"{b} & {a}"))
+    say(f"     TF_in_network & reaction {ov('TF_in_network','reaction')}   "
+        f"has_motif & reaction {ov('has_motif','reaction')}   "
+        f"has_regulator & reaction {ov('has_regulator','reaction')}")
     ok1 = (counts == ref_counts and hist == ref_hist and n == 16492)
     G.add("T1", ok1,
           if_true="T1 PASS -- layers, histogram and overlaps reproduce loop 190 exactly",
