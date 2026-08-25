@@ -267,17 +267,39 @@ def main():
         say(f"       {label:<34} r {rr:+.4f}")
         return rr
     r_gain = cv(F, f"measured gains ({len(tf_rows)} perturbations)")
+    # NON-FINITE GUARD, and the reason this loop was rerun. The first run drew 200 perturbations
+    # at random and the arm returned nan: 17.8% of rows in this matrix carry non-finite values
+    # (measured -- 89 of 500 sampled rows, typically 1-3 cells of 8,248). A single nan propagates
+    # through the ridge and through the correlation, and max() over a nan is not defined behaviour,
+    # so the gate scored on the surviving arm by luck rather than by design. This is gate_guard's
+    # finite() case, committed by a loop written after that module. Rows are now screened over the
+    # columns actually used, and the count of what was dropped is reported.
     rng2 = np.random.default_rng(SEED + 1)
-    Fbig = np.column_stack([Xk[int(p), :][cols]
-                            for p in rng2.choice(Xk.shape[0], 200, replace=False)])
-    r_big = cv(Fbig, "200 random perturbations")
+    cand = rng2.permutation(Xk.shape[0])
+    picked, dropped = [], 0
+    for p in cand:
+        if len(picked) >= 200:
+            break
+        v = Xk[int(p), :][cols]
+        if np.isfinite(v).all():
+            picked.append(int(p))
+        else:
+            dropped += 1
+    say(f"       screened for non-finite rows: kept {len(picked)}, dropped {dropped} "
+        f"({dropped/(len(picked)+dropped):.1%} of those examined)")
+    Fbig = np.column_stack([Xk[p, :][cols] for p in picked])
+    r_big = cv(Fbig, f"{len(picked)} random perturbations")
     pv = np.log1p(np.array([pubs.get(t, 0.0) for t in tgt[have]])).reshape(-1, 1)
     r_fame = cv(pv, "publication count (fame)")
-    best = max(abs(r_gain), abs(r_big))
+    finite_arms = [x for x in (r_gain, r_big) if np.isfinite(x)]
+    best = max(abs(x) for x in finite_arms) if finite_arms else float("nan")
+    if len(finite_arms) < 2:
+        say(f"     WARNING: {2-len(finite_arms)} of 2 arms returned a non-finite r and are "
+            f"excluded from the maximum")
     say(f"     best gain-based set point |r| {best:.4f}")
     say(f"       requirement (loop 206 Y3)        {R_REQ:.4f}")
     say(f"       nine same-cell tracks (206 Y4)   {R_NINE:.4f}")
-    G.add("A4", bool(best >= R_REQ), stat=best, requires=("A1",),
+    G.add("A4", bool(best >= R_REQ) if np.isfinite(best) else None, stat=best, requires=("A1",),
           if_true=lambda: f"A4 PASS -- measured gains reach {best:.4f}, clearing the {R_REQ:.4f} "
                           f"crossover. 0.91 is reachable",
           if_false=lambda: f"A4 FAIL -- measured gains reach {best:.4f} against a requirement of "
