@@ -1,0 +1,234 @@
+{
+ "test": "timing statistic selection",
+ "gates": {
+  "X1": true,
+  "X2": true,
+  "X3": false,
+  "X4": false,
+  "X5": false,
+  "X6": false,
+  "X7": false,
+  "X8": true
+ },
+ "void": [
+  "X4",
+  "X5",
+  "X6",
+  "X7"
+ ],
+ "winner": null,
+ "agreement": {
+  "half_plateau": 1.0,
+  "centroid": 0.811022393598408,
+  "mrt": 0.8835838132788135,
+  "tau": 0.8881857805887111
+ },
+ "x2": {
+  "half_plateau": {
+   "n": 1026,
+   "lead": 101.59572692531025,
+   "p": 2.1651090539476377e-99
+  },
+  "centroid": {
+   "n": 981,
+   "lead": 144.1193726688465,
+   "p": 6.303489070550355e-07
+  },
+  "mrt": {
+   "n": 1026,
+   "lead": 361.798487376345,
+   "p": 2.879959182254151e-43
+  },
+  "tau": {
+   "n": 1026,
+   "lead": 123.84270913083402,
+   "p": 1.7410778107922615e-16
+  }
+ },
+ "x3": {
+  "half_plateau": {
+   "n": 215,
+   "lead": 6.70899716964999,
+   "p": 0.9833609994605054
+  },
+  "centroid": {
+   "n": 212,
+   "lead": -172.03477770179765,
+   "p": 0.999999999999503
+  },
+  "mrt": {
+   "n": 215,
+   "lead": -2.2681405218285207,
+   "p": 0.08216250915997869
+  },
+  "tau": {
+   "n": 215,
+   "lead": 0.0,
+   "p": 0.947847604561507
+  }
+ },
+ "x4": {},
+ "x5": {},
+ "x6": null,
+ "x7": null,
+ "strata": {},
+ "a549_grid": [
+  30,
+  60,
+  120,
+  180,
+  240,
+  300,
+  360,
+  420,
+  480,
+  600,
+  720
+ ],
+ "dc_grid": [
+  60,
+  120,
+  240,
+  360
+ ],
+ "subsets": [
+  [
+   60,
+   120,
+   240,
+   420
+  ],
+  [
+   60,
+   120,
+   180,
+   360
+  ],
+  [
+   30,
+   120,
+   240,
+   480
+  ],
+  [
+   60,
+   180,
+   300,
+   600
+  ]
+ ],
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/grtc/rna.npz",
+    "bytes": 3789429,
+    "hash": "5496b7c455b82c23",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/dclps/rna.npz",
+    "bytes": 1109222,
+    "hash": "1f3b9fcffb086193",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 58735,
+   "used": 58735,
+   "selection": "filtered",
+   "fraction": 1.0
+  },
+  "seed": 196196,
+  "controls": [
+   "the statistic selected on A549 only, before the DC lead exists",
+   "4 different four-point subsets",
+   "donor split-half reliability of the winner",
+   "magnitude terciles",
+   "a stranger swap"
+  ],
+  "note": "a response-time statistic that survives four timepoints",
+  "warnings": []
+ },
+ "seconds": 32.386242389678955,
+ "log": [
+  "========================================================================================================",
+  "LOOP 196  A RESPONSE-TIME STATISTIC THAT SURVIVES FOUR TIMEPOINTS",
+  "========================================================================================================",
+  "  PREDECLARED: the statistic is selected ENTIRELY on A549, where the answer was measured",
+  "  before any of these candidates existed; the dendritic-cell lead is computed ONCE, after",
+  "  the winner is fixed. A candidate must recover the lead on the full grid (X2) before its",
+  "  four-point behaviour means anything, must survive downsampling (X3), must hold on at",
+  "  least 3 of 4 different four-point subsets (X4) so it is not",
+  "  fitting one lucky choice, and must be reliable across donors (X5). Only then X6.",
+  "",
+  "     Ensembl GTF: 42,670 gene ids carry a symbol",
+  "    A549 grid  [30, 60, 120, 180, 240, 300, 360, 420, 480, 600, 720]",
+  "    dendritic  [60, 120, 240, 360]",
+  "",
+  "X1 DO THE CANDIDATES AGREE WHERE THE DATA IS RICH?",
+  "     half_plateau   vs half_plateau on expression times: Spearman +1.000 (n 1,026)",
+  "     centroid       vs half_plateau on expression times: Spearman +0.811 (n 981)",
+  "     mrt            vs half_plateau on expression times: Spearman +0.884 (n 1,026)",
+  "     tau            vs half_plateau on expression times: Spearman +0.888 (n 1,026)",
+  "     X1 (descriptive)",
+  "",
+  "X2 THE SANITY FLOOR: does each candidate see the lead where it is strongest?",
+  "     A549 full grid, half_plateau       n 1,026  lead   +101.6  p 2.17e-99",
+  "     A549 full grid, centroid           n   981  lead   +144.1  p 6.3e-07",
+  "     A549 full grid, mrt                n 1,026  lead   +361.8  p 2.88e-43",
+  "     A549 full grid, tau                n 1,026  lead   +123.8  p 1.74e-16",
+  "     X2 PASS -- 4 of 4 recover the lead on eleven points: ['half_plateau', 'centroid', 'mrt', 'tau']",
+  "",
+  "X3 THE SELECTION: the same candidates on A549 downsampled to the dendritic-cell shape",
+  "     downsampled grid [60, 120, 240, 420]",
+  "     A549 downsampled, half_plateau     n   215  lead     +6.7  p 0.983",
+  "     A549 downsampled, centroid         n   212  lead   -172.0  p 1",
+  "     A549 downsampled, mrt              n   215  lead     -2.3  p 0.0822",
+  "     A549 downsampled, tau              n   215  lead     +0.0  p 0.948",
+  "     X3 FAIL -- no candidate survives four points. The dendritic-cell series cannot answer the question with any statistic tried here, and the replication needs a denser series rather than a better estimator",
+  "",
+  "X4 IS THE WINNER ROBUST TO WHICH FOUR POINTS?",
+  "     X4 VOID -- nothing survived X3, so there is no candidate to test for robustness",
+  "",
+  "     selection failed, so X5-X7 are VOID: there is no fixed statistic to apply",
+  "",
+  "X5 IS THE WINNER RELIABLE ON THE TARGET SERIES?",
+  "     X5 VOID -- see above",
+  "",
+  "X6 THE REPLICATION, RUN ONCE",
+  "     X6 VOID -- see above",
+  "",
+  "X7 THE STRANGER SWAP",
+  "     X7 VOID -- see above",
+  "",
+  "X8 WHAT THIS CANNOT SHOW",
+  "     The winner was selected on A549 and A549 alone. That protects against choosing a",
+  "     statistic by its dendritic-cell answer; it does NOT protect against choosing one",
+  "     that suits A549's particular kinetics. A statistic tuned on one system and applied",
+  "     to another is a weaker instrument than one derived from first principles, and the",
+  "     four candidates here are conveniences rather than a theory of transcription timing.",
+  "     X4 varies which four points are used but every subset comes from the same A549",
+  "     series, so it tests robustness to sampling and not to biology.",
+  "     mrt and centroid are defined over the OBSERVED window, so both are bounded by it. A",
+  "     gene still moving at the last timepoint has its response time underestimated, and",
+  "     that bias is larger on the shorter dendritic-cell window than on A549's.",
+  "     Leading is still not causing. Nothing here perturbs accessibility.",
+  "     A pass replicates the CLOCK only. Loop 191d's other findings -- feedback sign not",
+  "     ordering response times, occupancy not carrying timing once size is controlled --",
+  "     remain single-system results and are untouched by this loop.",
+  "     X8 PASS",
+  "",
+  "========================================================================================================",
+  "  X1  PASS",
+  "  X2  PASS",
+  "  X3  FAIL",
+  "  X4  VOID",
+  "  X5  VOID",
+  "  X6  VOID",
+  "  X7  VOID",
+  "  X8  PASS",
+  "  3/4   [32s]   (4 VOID: X4, X5, X6, X7)",
+  "========================================================================================================"
+ ]
+}
