@@ -238,7 +238,7 @@ def read_gene_tsv(path):
 RNA_ANNOTATION = "V29"          # the RSEM re-processing; see fetch_rna
 
 
-def fetch_rna(rows):
+def fetch_rna(rows, assay="polyA plus RNA-seq"):
     """One expression vector per (timepoint, biological replicate). Replicates are kept separate because
     they are the only estimate of how reliable a CHANGE in expression is, which bounds any R2 below.
 
@@ -250,7 +250,13 @@ def fetch_rna(rows):
     exactly that, reading RSEM's `effective_length` of 93.00 as a genomic start coordinate. So the RSEM
     annotation is pinned explicitly and the choice is asserted uniform across the series rather than assumed.
     """
-    sel = sorted([r for r in rows if r["assay"] == "polyA plus RNA-seq"], key=lambda r: r["min"])
+    # the assay name is a PARAMETER because a second series may quantify RNA differently -- the
+    # dendritic-cell replication set is total RNA-seq, not polyA plus, and silently matching nothing
+    # is how loop 191's joins failed. The default preserves the A549 behaviour exactly.
+    sel = sorted([r for r in rows if r["assay"] == assay], key=lambda r: r["min"])
+    if not sel:
+        raise SystemExit(f"fetch_rna: no rows with assay '{assay}'; the series carries "
+                         f"{sorted({r['assay'] for r in rows})}")
     cols, gset, anns = [], None, set()
     for r in sel:
         cands = [f for f in exp_files(r["acc"])

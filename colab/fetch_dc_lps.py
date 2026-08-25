@@ -118,7 +118,7 @@ def main():
 
     print("\n  total RNA-seq gene quantifications (TPM kept, TSVs deleted)")
     rna_rows = [r for r in rows if r["assay"] == "total RNA-seq"]
-    cols, genes = G.fetch_rna(rna_rows)
+    cols, genes = G.fetch_rna(rna_rows, assay="total RNA-seq")
     if not cols:
         raise SystemExit("no RNA-seq gene quantifications retrieved")
     gidx = {g: i for i, g in enumerate(genes)}
