@@ -45,6 +45,15 @@ PREDECLARED, BEFORE ANY NUMBER.
      dynamic-range gate caught it. That check is now run FIRST rather than discovered.
      Gate: PASS iff no single interval carries more than 80% of the median gene's plateau.
 
+  W2b IS THE TIMING REPRODUCIBLE ACROSS DONORS? Every experiment in this series reports
+     biological_replicate 1, so that field separates nothing and the replicate unit is the
+     experiment accession -- an independent donor. The experiments at each timepoint are split into
+     two arbitrary halves and the response time is computed in each.
+     Gate: PASS iff Spearman across the split is >= 0.30. Loop 191's T1 established that a timing
+     test on an unreproducible timing measurement describes the measurement, and 191b's U4
+     established that reproducible is not the same as discriminative; W2 covers the second, this
+     covers the first.
+
   W3 COULD FOUR TIMEPOINTS SEE A 48-MINUTE LEAD? The A549 data from 191d, downsampled to the
      dendritic-cell grid shape, re-run through the identical test.
      Gate: PASS iff the A549 lead is still detected at one-sided p < 0.05 after downsampling. A
@@ -81,7 +90,7 @@ import gate_guard as GG                      # noqa: E402
 import run_manifest as RM                    # noqa: E402
 import loop_response_timing_d as L191        # noqa: E402
 
-from scipy.stats import wilcoxon                                  # noqa: E402
+from scipy.stats import spearmanr, wilcoxon                                  # noqa: E402
 
 SP = L191.SP
 DC = SP / "dclps"
@@ -95,6 +104,7 @@ MIN_TPM = 1.0
 MIN_GROUP = 15
 ALPHA = 0.05
 N_STRATA = 3
+MIN_SPLIT_RHO = 0.30          # W2b: donor split-half reliability of the response time
 PROM_PAD = L191.PROM_PAD
 A549_DOWNSAMPLE = [60.0, 120.0, 240.0, 420.0]   # the A549 points closest to the DC grid shape
 SEED = 192192
@@ -155,8 +165,26 @@ def build(dirp, assay, report=print):
     report(f"     {assay} {peak_t}")
     report(f"     shared grid: {shared}   "
            f"({assay}-only points not used: {sorted(set(peak_t) - set(rna_t))})")
-    return dict(tpm=tpm, ensg=ensg, mins=mins, reps=reps, man=man,
+    exps = np.array([str(x) for x in z["exps"]]) if "exps" in z.files else \
+        np.array([f"e{i}" for i in range(len(mins))])
+    return dict(tpm=tpm, ensg=ensg, mins=mins, reps=reps, exps=exps, man=man,
                 shared=np.array(shared, dtype=float), assay=assay, dirp=dirp)
+
+
+def donor_split(mins, exps):
+    """Two arbitrary halves of the experiments at each timepoint.
+
+    Every experiment in this series reports biological_replicate 1, so that field cannot separate
+    anything: the real replicate unit is the EXPERIMENT ACCESSION, which here is an independent
+    donor. The halves are not donor-MATCHED across timepoints -- ENCODE does not expose the pairing
+    -- and they do not need to be, because this is a split-half reliability estimate and what it
+    needs is two independent subsets, not a repeated measure on the same donor."""
+    grp = np.zeros(len(exps), dtype=int)
+    for t in sorted(set(mins.tolist())):
+        idx = np.where(mins == t)[0]
+        for k, i in enumerate(idx[np.argsort(exps[idx])]):
+            grp[i] = 1 + (k % 2)
+    return grp
 
 
 def series_arrays(S, grid, e2s, report=print):
@@ -232,6 +260,29 @@ def main():
                         f"That is the A549 pathology and any timing statistic across it measures "
                         f"the step")
 
+    # ---- W2b -----------------------------------------------------------------------------------
+    say()
+    say("W2b IS THE TIMING REPRODUCIBLE ACROSS DONORS?")
+    say("     every experiment here reports biological_replicate 1, so that field separates")
+    say("     nothing; the replicate unit is the experiment accession, an independent donor.")
+    grp = donor_split(S["mins"], S["exps"])
+    say(f"     donors per timepoint: "
+        f"{ {int(t): int((S['mins'] == t).sum()) for t in sorted(set(S['mins'].tolist()))} }")
+    Ma, na = L191.rep_trajectories(S["tpm"], S["mins"], grp, (1,), grid)
+    Mb, nb = L191.rep_trajectories(S["tpm"], S["mins"], grp, (2,), grid)
+    tha, _ = response_time(Ma, grid)
+    thb, _ = response_time(Mb, grid)
+    okr = responder & np.isfinite(tha) & np.isfinite(thb)
+    rho, prho = spearmanr(tha[okr], thb[okr]) if okr.sum() > 10 else (float("nan"), float("nan"))
+    say(f"     split-half over {int(okr.sum()):,} responders: Spearman {rho:+.3f} (p {prho:.3g})")
+    w2b = bool(np.isfinite(rho) and rho >= MIN_SPLIT_RHO)
+    GG.verdict(w2b, emit=say,
+               if_true=f"W2b PASS -- the response time reproduces across independent donors at "
+                       f"{rho:+.3f}, so W4 would be measuring biology rather than noise",
+               if_false=f"W2b FAIL -- {rho:+.3f} against a bar of {MIN_SPLIT_RHO}. On four "
+                        f"timepoints and this many donors the timing is not reproducible, so a W4 "
+                        f"result either way would describe the measurement")
+
     # ---- W3 ------------------------------------------------------------------------------------
     say()
     say("W3 COULD FOUR TIMEPOINTS SEE A 48-MINUTE LEAD?")
@@ -284,7 +335,7 @@ def main():
                         "statement about the sampling and not about dendritic cells")
 
     void = set()
-    if not (w1 and w2 and w3):
+    if not (w1 and w2 and w2b and w3):
         void |= {"W4", "W5"}
         say()
         say("     a precondition failed, so W4 and W5 are VOID rather than negative")
@@ -370,7 +421,7 @@ def main():
     say("     timing once response size is controlled -- which remain single-system results.")
     say("     W6 PASS")
 
-    gates = {"W1": w1, "W2": w2, "W3": w3, "W4": w4, "W5": w5, "W6": True}
+    gates = {"W1": w1, "W2": w2, "W2b": w2b, "W3": w3, "W4": w4, "W5": w5, "W6": True}
     man_out = RM.manifest(inputs=[DC / "rna.npz", A549 / "rna.npz"],
                           available=int(len(sym)), used=int(responder.sum()),
                           selection="filtered", seed=SEED,
