@@ -14,8 +14,24 @@ files where the defect is still LATENT, so the retrofit is aimed rather than swe
   D  a control gate comparing signed values, which assumes the sign of its own answer -- loop
      199's Q5.
 
+AND TWO THAT ARE NOT GATE DEFECTS BUT KILL A RUN THE SAME WAY, ADDED AFTER LOOP 241.
+
+  E  `requires="Z2"` -- a bare string where a tuple was meant. `requires` is consumed by
+     iteration, so a string iterates as its CHARACTERS, none of which is a registered gate, and
+     the gate is VOID whatever its precondition did. gate_guard now wraps a string rather than
+     iterating it, so this no longer breaks a run; it is still flagged because the tuple form
+     says what was meant.
+
+  F  an imported module name rebound inside a function. Loop 241 wrote `nn = tr10[...]` inside
+     main() for a nearest-neighbour index, which made `nn` a LOCAL of main and therefore unbound
+     for every nested function that closed over it -- so `class PairNet(nn.Module)` died on
+     UnboundLocalError before a single number was computed, forty lines above the assignment that
+     caused it. Not a gate defect. Caught here because it is mechanical, cheap, and the error it
+     produces points at the wrong line.
+
 Run: python3 colab/lint_gates.py
 """
+import ast
 import re
 import sys
 from pathlib import Path
@@ -61,7 +77,40 @@ def scan(p):
     c = [m.group(0)[:70] for m in SIGNED_CTRL.finditer(s)]
     if c:
         hits["D control compared by sign, not magnitude"] = c
+    e = [m.group(0) for m in re.finditer(r'requires\s*=\s*"[A-Za-z0-9_]+"', s)]
+    if e:
+        hits["E requires= given a bare string where a tuple was meant"] = sorted(set(e))
+    f = shadowed_imports(s)
+    if f:
+        hits["F an imported name is rebound inside a function"] = f
     return hits
+
+
+def shadowed_imports(src):
+    """Every module-level import name that some function also assigns to.
+
+    Python decides local-vs-global per function at COMPILE time, so a single assignment anywhere
+    in a function body makes that name local for the WHOLE body -- and for every nested function
+    closing over it. Loop 241's `nn` is the worked example."""
+    try:
+        tree = ast.parse(src)
+    except SyntaxError:
+        return []
+    imported = set()
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Import):
+            for a in n.names:
+                imported.add((a.asname or a.name).split(".")[0])
+        elif isinstance(n, ast.ImportFrom):
+            for a in n.names:
+                imported.add(a.asname or a.name)
+    out = []
+    for fn in [x for x in ast.walk(tree)
+               if isinstance(x, (ast.FunctionDef, ast.AsyncFunctionDef))]:
+        for t in ast.walk(fn):
+            if isinstance(t, ast.Name) and isinstance(t.ctx, ast.Store) and t.id in imported:
+                out.append(f"{t.id} rebound in {fn.name}() at line {t.lineno}")
+    return sorted(set(out))
 
 
 def main():

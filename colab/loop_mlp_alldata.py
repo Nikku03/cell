@@ -509,8 +509,8 @@ def main():
         for li in te10:
             d = np.linalg.norm(XP[tr10] - XP[li][None, :], axis=1)
             d = np.where(tr10 == li, np.inf, d)
-            nn = tr10[np.argsort(d)[:KNN]]
-            pr_ = Rr[nn].mean(0)[st]
+            nbr10 = tr10[np.argsort(d)[:KNN]]     # NOT `nn`: that is the torch.nn import, and
+            pr_ = Rr[nbr10].mean(0)[st]           # binding it here unbinds it for every closure
             tr_ = (Ef[li, st] - gm[st])
             m = np.isfinite(pr_) & np.isfinite(tr_)
             a_, b_ = pr_[m] - pr_[m].mean(), tr_[m] - tr_[m].mean()
