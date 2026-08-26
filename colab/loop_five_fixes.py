@@ -226,32 +226,48 @@ def main():
     # ---------------------------------------------------------------- H2
     say("H2 FIX 4 -- IS THE SWITCHING FRACTION MORE REPRODUCIBLE THAN THE MEAN?")
     two = okp & (nA >= 20) & ((n - nA) >= 20)
+    sel = np.isin(np.where(okp)[0], np.where(two)[0])
     nA2 = nA[two][:, None].astype(np.float64); nB2 = (n[two] - nA[two])[:, None].astype(np.float64)
-    SA2 = SA[two].astype(np.float64); SB2 = (S[two] - SA[two]).astype(np.float64)
-    mA, mB = SA2 / nA2, SB2 / nB2
-    QA = None
-    vA = np.maximum(var_hat[two[okp]] if two.sum() == okp.sum() else var_hat[:two.sum()], 0.0)
-    # split-half variance is not separately accumulated, so f is formed on each half using the
-    # SHARED variance estimate; that is conservative for f and is stated in the log.
-    exc = np.maximum(var_hat[np.isin(np.where(okp)[0], np.where(two)[0])] - within[None, :], 1e-12)
-    fA = mA ** 2 / (mA ** 2 + exc)
-    fB = mB ** 2 / (mB ** 2 + exc)
-    sh_mean = np.array([pear(mA[:, j], mB[:, j]) for j in range(mA.shape[1])])
-    sh_f = np.array([pear(fA[:, j], fB[:, j]) for j in range(fA.shape[1])])
-    med_m, med_f = float(np.nanmedian(sh_mean)), float(np.nanmedian(sh_f))
+    mA = SA[two].astype(np.float64) / nA2
+    mB = (S[two] - SA[two]).astype(np.float64) / nB2
+    e_sh = np.maximum(excess[sel], 1e-12)
+
+    def med_sh(A, B, k=1200):
+        step = max(1, A.shape[1] // k)
+        return float(np.nanmedian([pear(A[:, j], B[:, j]) for j in range(0, A.shape[1], step)]))
+
+    fA = mA ** 2 / (mA ** 2 + e_sh)
+    fB = mB ** 2 / (mB ** 2 + e_sh)
+    med_m = med_sh(mA, mB)
+    med_f = med_sh(fA, fB)
+    med_sq = med_sh(mA ** 2, mB ** 2)
+    pa, pb = rng.permutation(mA.shape[0]), rng.permutation(mA.shape[0])
+    shA = mA[pa] ** 2 / (mA[pa] ** 2 + e_sh)
+    shB = mB[pb] ** 2 / (mB[pb] ** 2 + e_sh)
+    med_art = med_sh(shA, shB)
     say(f"     {int(two.sum()):,} perturbations split into halves")
-    say(f"     split-half reliability across {mA.shape[1]:,} genes:")
-    say(f"       MEAN               median {med_m:+.4f}   (loop 224 measured {REF_224_MEAN_SH:+.4f})")
-    say(f"       SWITCHING FRACTION median {med_f:+.4f}   delta {med_f-med_m:+.4f}")
-    say(f"     note: per-half variance was not accumulated, so f uses the pooled excess variance")
-    say(f"     on both halves; that is conservative for f, not favourable to it")
-    G.add("H2", bool(med_f - med_m >= GAIN), stat=float(med_f - med_m), requires=("H1",),
-          if_true=lambda: f"H2 PASS -- the switching fraction reproduces at {med_f:+.4f} against "
-                          f"the mean's {med_m:+.4f}; the mean was the worse summary",
-          if_false=lambda: f"H2 FAIL -- {med_f:+.4f} against the mean's {med_m:+.4f}, delta "
-                           f"{med_f-med_m:+.4f} against a {GAIN:+.2f} bar")
-    res["splithalf"] = {"mean": med_m, "switching": med_f, "delta": med_f - med_m,
-                        "loop224_mean": REF_224_MEAN_SH}
+    say(f"       MEAN                          median {med_m:+.4f}   "
+        f"(loop 224 measured {REF_224_MEAN_SH:+.4f})")
+    say(f"       SWITCHING FRACTION f          median {med_f:+.4f}")
+    say(f"       MAGNITUDE m^2, no denominator median {med_sq:+.4f}")
+    say("     THE ARTEFACT CONTROL. Per-half sums of squares were never accumulated, so both")
+    say("     halves of f divide by the SAME pooled excess variance. A shared denominator can")
+    say("     correlate with itself. The control destroys the numerator and keeps the denominator:")
+    say(f"       f with NUMERATOR SHUFFLED     median {med_art:+.4f}")
+    G.add("H2a", bool(med_art < 0.30), stat=float(med_art), requires=("H1",),
+          if_true=lambda: f"H2a PASS -- shuffling the numerator collapses f to {med_art:+.4f}, so "
+                          f"the shared denominator is not doing the work",
+          if_false=lambda: f"H2a FAIL -- f survives at {med_art:+.4f} with its numerator "
+                           f"destroyed, so the {med_f:+.4f} is the shared denominator "
+                           f"correlating with itself, not reproducible biology. Testing f "
+                           f"honestly needs per-half sums of squares, which were not accumulated")
+    G.add("H2b", bool(med_sq - med_m >= GAIN), stat=float(med_sq - med_m), requires=("H1",),
+          if_true=lambda: f"H2b PASS -- a denominator-free MAGNITUDE summary reproduces at "
+                          f"{med_sq:+.4f} against the signed mean's {med_m:+.4f}; the mean is "
+                          f"the worse summary and this comparison has no shared term",
+          if_false=lambda: f"H2b FAIL -- magnitude {med_sq:+.4f} against the mean's {med_m:+.4f}")
+    res["splithalf"] = {"mean": med_m, "switching_f": med_f, "magnitude_m2": med_sq,
+                        "artefact_control": med_art, "loop224_mean": REF_224_MEAN_SH}
 
     # ================================================================ the A549 harness
     grid, M, A9, sym, keepg, tssb = gene_set()
@@ -369,12 +385,20 @@ def main():
     say(f"     Perturb-seq readout available for {len(pnames):,} of {N:,} genes")
     PS_mean = np.zeros((N, K_PS)); PS_sw = np.zeros((N, K_PS))
     if len(pcols) >= 50:
-        Mm = m_hat[:, pcols].T; Ff = f_all[:, pcols].T
-        Mm = np.nan_to_num(Mm); Ff = np.nan_to_num(Ff)
+        good = np.isfinite(m_hat[:, pcols]).all(1) & np.isfinite(f_all[:, pcols]).all(1)
+        say(f"     {int(good.sum()):,} of {len(good):,} perturbations are finite across those "
+            f"genes; loop 208 A4 measured ~17.8% of Perturb-seq rows carrying non-finite values, "
+            f"and an unscreened SVD does not converge on them")
+        Mm = m_hat[np.ix_(good, pcols)].T
+        Ff = f_all[np.ix_(good, pcols)].T
         for src, dest in ((Mm, PS_mean), (Ff, PS_sw)):
-            Xc = src - src.mean(0, keepdims=True)
+            Xc = np.nan_to_num(src - src.mean(0, keepdims=True), nan=0.0,
+                               posinf=0.0, neginf=0.0)
+            Xc = Xc[:, np.isfinite(Xc).all(0) & (Xc.std(0) > 0)]
             U, s_, _ = np.linalg.svd(Xc, full_matrices=False)
-            E = U[:, :K_PS] * s_[:K_PS]
+            kk = min(K_PS, U.shape[1])
+            E = np.zeros((U.shape[0], K_PS))
+            E[:, :kk] = U[:, :kk] * s_[:kk]
             idx = {g: i for i, g in enumerate(pnames)}
             for k, g in enumerate(names):
                 if g in idx:
