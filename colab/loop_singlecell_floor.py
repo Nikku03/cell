@@ -305,7 +305,18 @@ def main():
         # index entries look like "0_A1BG_P1_ENSG00000121410": {row}_{symbol}_{promoter}_{ensg}.
         # The first field is a row counter, not an identifier; the perturbation name is field 1.
         bkey = np.array([(s.split("_")[1] if s.count("_") >= 3 else s) for s in bidx])
-        pos = {k: i for i, k in enumerate(bkey)}
+        # 789 symbols (8.0%) carry SEPARATE P1 and P2 rows in the published file, 2,180 rows in
+        # total. Accumulation here is keyed on obs/gene, which is the symbol, so a symbol-level
+        # mean spans both promoters while a published row covers one. A dict built over all rows
+        # silently keeps the last, comparing an average of both against one -- which is what drove
+        # the previous run's r to +0.98233. Measured directly: single-promoter symbols reproduce at
+        # Pearson +1.00000 with median |difference| 0.00000, multi-promoter symbols at +0.62670.
+        # The read is exact; the comparison was not. Restricted to the unambiguous symbols.
+        uk, kc = np.unique(bkey, return_counts=True)
+        multi = set(uk[kc > 1])
+        pos = {k: i for i, k in enumerate(bkey) if k not in multi}
+        say(f"     {len(multi):,} symbols have multiple promoter rows and are excluded from the "
+            f"comparison; a symbol-level mean is not comparable to a single-promoter row")
         rows = [(i, pos[cats[i]]) for i in np.where(ok)[0] if cats[i] in pos]
         gmap = {g: i for i, g in enumerate(bg)}
         gsel = [(j, gmap[gid[j]]) for j in range(NGENE) if gid[j] in gmap]
@@ -317,7 +328,12 @@ def main():
             mine = np.array([M[i, gj] for i, _ in sub])
             theirs = np.array([np.asarray(bX[b, :])[gb] for _, b in sub])
             cmp_r = pear(mine, theirs)
-            cmp_d = float(np.median(np.abs(mine - theirs)))
+            # ~17.8% of Perturb-seq rows carry non-finite values (loop 208 A4). pear() screens
+            # them; the median did not, and returned nan while the correlation was fine.
+            dif = np.abs(mine - theirs)
+            dif = dif[np.isfinite(dif)]
+            cmp_d = float(np.median(dif)) if dif.size else float("nan")
+            say(f"     finite value pairs in the comparison: {dif.size / mine.size:.1%}")
             say(f"     recomputed pseudobulk vs published bulk, {len(sub)} perturbations x "
                 f"{len(gj):,} genes: Pearson {cmp_r:+.5f}, median |difference| {cmp_d:.5f}")
         bh.close()
