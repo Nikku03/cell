@@ -234,6 +234,19 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      association is positive. Q4 came back negative, so a swap that removed 82% of the effect
 #      scored as a failure.
 #
+#   E  A PRECONDITION THAT IS A STRING. `requires` defaults to a tuple and is consumed by
+#      iterating it, so requires="Z2" iterates the CHARACTERS 'Z' and '2'. Neither is a
+#      registered gate, so `missing` is always non-empty and EVERY gate declaring a single
+#      string precondition is VOID no matter what that precondition did. Loop 240 hit it in the
+#      loudest possible way: Z2 PASSED at +0.3910 (+67.7 se) and all six gates that depended on
+#      it printed "VOID -- Z, 2 did not pass". The comma in that message is the bug printing
+#      itself, and it had already printed the same comma in loop 239 without being read.
+#      Six measured comparisons were computed, logged, and then discarded by a type error.
+#      Two fixes, because the first alone would leave the second failure silent: a string
+#      requirement is now wrapped rather than iterated, AND a requirement naming a gate that was
+#      never registered is a DECLARATION ERROR with its own message, not an ordinary
+#      precondition failure -- otherwise a typo voids a gate while looking like a result.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 
@@ -291,8 +304,17 @@ class Gates:
         That is exactly how loop 187's B6 turned a 0/0 z-score into "loop 175's framing stands".
         Checking `ok` alone cannot see it; the raw statistic can. Pass stat=z whenever the verdict
         is a threshold comparison on a number that could be undefined."""
-        missing = [r for r in requires if self.status.get(r) != PASS]
-        if missing:
+        if isinstance(requires, str):
+            requires = (requires,)                       # defect E: a string iterates as chars
+        requires = tuple(requires)
+        unknown = [r for r in requires if r not in self.status]
+        missing = [r for r in requires if r in self.status and self.status[r] != PASS]
+        if unknown:
+            st, txt = VOID, (f"{name} VOID -- DECLARATION ERROR: precondition(s) "
+                             f"{', '.join(repr(u) for u in unknown)} were never registered as "
+                             f"gates. This is a bug in the loop, not a result about the data; "
+                             f"registered so far: {', '.join(self.status) or '(none)'}")
+        elif missing:
             st, txt = VOID, (f"{name} VOID -- {', '.join(missing)} did not pass, so there is "
                              f"nothing here to test")
         elif (void_if() if callable(void_if) else bool(void_if)):
