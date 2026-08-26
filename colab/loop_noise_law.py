@@ -190,26 +190,53 @@ def main():
         CELLS = {str(k): c[k] for k in c.files if k != "names"}
         say(f"     cell cache found; {len(CELLS)} perturbations, no streaming repeated")
     else:
-        CELLS = {}
-        for p in picks:
-            idxs = np.where(code == p)[0]
-            runs, st, prev = [], idxs[0], idxs[0]
-            for b in idxs[1:]:
-                if b - prev > GAP:
-                    runs.append((st, prev + 1)); st = b
-                prev = b
-            runs.append((st, prev + 1))
-            got = {}
-            for a, b in runs:
-                blk = fetch_cells(a, b)
-                for cc in idxs[(idxs >= a) & (idxs < b)]:
-                    got[int(cc)] = blk[int(cc) - a]
-            CELLS[cats[p]] = np.vstack([got[int(cc)] for cc in idxs]).astype(np.float32)
-            say(f"       {cats[p]:<10} {CELLS[cats[p]].shape[0]:>5} cells streamed "
-                f"({len(runs)} ranges)")
+        # ONE SEQUENTIAL PASS, not one request per cell. The first attempt coalesced each
+        # perturbation's cells with a 64-cell gap tolerance, but 1,963 cells scattered through
+        # 1,989,578 sit about 1,000 apart, so almost every cell became its own range request:
+        # ~1,900 requests at ~1 s each for RPL3 alone, and 15 minutes in it had not finished one
+        # perturbation. A contiguous scan of the whole matrix reads 66 GB at ~36 MB/s in about
+        # 30 minutes and collects all ten at once.
+        from concurrent.futures import ThreadPoolExecutor
+        from collections import deque
+        want = {int(p): cats[p] for p in picks}
+        wanted_mask = np.isin(code, list(want.keys()))
+        say(f"     {int(wanted_mask.sum()):,} cells wanted across {len(want)} perturbations; "
+            f"streaming the full matrix once rather than one request per cell")
+        BLOCK, WORKERS = 2048, 16
+        blocks = [(i, min(i + BLOCK, NCELL)) for i in range(0, NCELL, BLOCK)]
+        acc = {p: [] for p in want}
+        tstart, done = time.time(), 0
+        with ThreadPoolExecutor(WORKERS) as ex:
+            pend, it = deque(), iter(blocks)
+            for _ in range(2 * WORKERS):
+                b0 = next(it, None)
+                if b0 is None:
+                    break
+                pend.append((b0, ex.submit(fetch_cells, *b0)))
+            while pend:
+                (lo, hi), fut = pend.popleft()
+                A = fut.result()
+                nxt = next(it, None)
+                if nxt is not None:
+                    pend.append((nxt, ex.submit(fetch_cells, *nxt)))
+                m = wanted_mask[lo:hi]
+                if m.any():
+                    cc = code[lo:hi][m]
+                    AA = A[m]
+                    for p in np.unique(cc):
+                        acc[int(p)].append(AA[cc == p])
+                done += 1
+                if done % 120 == 0:
+                    el = time.time() - tstart
+                    got = sum(sum(len(x) for x in v) for v in acc.values())
+                    say(f"       {done:,}/{len(blocks):,} blocks   {el/60:.1f} min   "
+                        f"{done*BLOCK*NGENE*4/1e6/el:.0f} MB/s   {got:,} cells kept")
+        CELLS = {want[p]: np.vstack(v).astype(np.float32) for p, v in acc.items() if v}
+        for k, v in CELLS.items():
+            say(f"       {k:<10} {v.shape[0]:>5} cells")
         CACHE.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(CACHE, **CELLS)
-        say(f"     cached to {CACHE.name}")
+        say(f"     {(time.time()-tstart)/60:.1f} min; cached to {CACHE.name}")
 
     # ---------------------------------------------------------------- N1
     say("N1 DO THE STREAMED CELLS AGGREGATE TO THE PUBLISHED VALUE?")
