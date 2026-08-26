@@ -271,6 +271,17 @@ def main():
     res["integrity"] = {"r": r1, "med_absdiff": d1, "n_compared": len(rs)}
 
     # ---------------------------------------------------------------- curves
+    fin = None
+    for X in CELLS.values():
+        f = np.isfinite(X).all(0)
+        fin = f if fin is None else (fin & f)
+    nbad = int((~fin).sum())
+    say(f"     gene screen: {int(fin.sum()):,} of {NGENE:,} genes are finite in EVERY cell of")
+    say(f"     every perturbation; {nbad} dropped. Only 39 of 13,025 cells carry a non-finite")
+    say(f"     value, but averaging over all genes let those few poison every RMSE -- the first")
+    say(f"     run returned nan for the whole curve. Loop 208 A4 already measured ~17.8% of")
+    say(f"     Perturb-seq ROWS as carrying non-finite values and this loop did not screen.")
+    CELLS = {k: X[:, fin] for k, X in CELLS.items()}
     say("     building error curves: each perturbation's cells split in half, one half the TARGET,")
     say("     subsamples drawn only from the other half so no cell is in both")
     EST = {"mean": lambda x: x.mean(0), "median": lambda x: np.median(x, axis=0),
@@ -428,7 +439,12 @@ def main():
             e = np.sum((p - Es[oks]) ** 2)
             if e < best: best, bs, bcs = e, a, c
     say(f"     shuffled floor c = {bcs:.5f} against the real floor c = {bc:.5f}")
-    G.add("N6", bool(bcs >= 1.5 * bc), stat=float(bcs / max(bc, 1e-12)), requires=("N1",),
+    G.add("N6", bool(bc > 1e-6 and bcs >= 1.5 * bc),
+          stat=float(bcs / bc) if bc > 1e-6 else None, requires=("N1",),
+          void_if=(bc <= 1e-6),
+          void_reason=f"the real floor c = {bc:.6f} is indistinguishable from zero, so a ratio "
+                      f"against it has no denominator -- the first run passed this gate on "
+                      f"0.0000 >= 1.5 x 0.0000, which is Family One",
           if_true=lambda: f"N6 PASS -- shuffling raises the floor from {bc:.4f} to {bcs:.4f}, so "
                           f"the real floor is a property of the biology, not the estimator",
           if_false=lambda: f"N6 FAIL -- shuffled floor {bcs:.4f} against real {bc:.4f}; the floor "
