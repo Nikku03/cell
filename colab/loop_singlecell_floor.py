@@ -135,20 +135,44 @@ def pear(a, b):
     return float(np.sum(a * b) / d) if d > 0 else float("nan")
 
 
-def fetch_cells(lo, hi, tries=6):
-    """Raw byte range for cells [lo, hi) of the contiguous float32 matrix."""
+def fetch_cells(lo, hi, tries=10):
+    """Raw byte range for cells [lo, hi) of the contiguous float32 matrix.
+
+    The first run of this loop lost a completed 24-minute stream because a single two-cell
+    request failed six times and the exception propagated. Retries are now longer and capped
+    rather than linear, and callers coalesce small requests instead of issuing them one per run.
+    """
     b0 = XOFF + lo * NGENE * 4
     b1 = XOFF + hi * NGENE * 4 - 1
+    last = ""
     for t in range(tries):
         try:
             r = requests.get(URL, headers={"Range": f"bytes={b0}-{b1}"}, timeout=300,
                              allow_redirects=True)
             if r.status_code in (200, 206) and len(r.content) == (b1 - b0 + 1):
                 return np.frombuffer(r.content, dtype="<f4").reshape(hi - lo, NGENE)
-        except Exception:
-            pass
-        time.sleep(1.5 * (t + 1))
-    raise IOError(f"cells {lo}-{hi} failed after {tries} tries")
+            last = f"status {r.status_code}, {len(r.content)} of {b1-b0+1} bytes"
+        except Exception as e:
+            last = f"{type(e).__name__}: {e}"
+        time.sleep(min(2.0 * (t + 1), 15.0))
+    raise IOError(f"cells {lo}-{hi} failed after {tries} tries ({last})")
+
+
+def h5_index(grp):
+    """anndata names its index in an ATTRIBUTE, not a dataset called 'index'.
+
+    The published bulk file carries obs.attrs['_index'] = 'gene_transcript' and
+    var.attrs['_index'] = 'gene_id'. The first run of this loop looked for datasets named
+    '_index' or 'index', found neither, and voided the integrity gate on a KeyError after the
+    whole matrix had already been read.
+    """
+    key = grp.attrs.get("_index", "_index")
+    if isinstance(key, bytes):
+        key = key.decode()
+    arr = grp[key][:]
+    if arr.dtype.kind in "iu" and "__categories" in grp and key in grp["__categories"]:
+        arr = np.asarray(grp["__categories"][key][:])[arr]
+    return np.array([x.decode() if isinstance(x, bytes) else str(x) for x in arr])
 
 
 def main():
@@ -176,6 +200,8 @@ def main():
     gcats = np.array([x.decode() if isinstance(x, bytes) else str(x)
                       for x in hf["var/__categories/gene_name"][:]])
     gname = gcats[gcode]
+    gid = np.array([x.decode() if isinstance(x, bytes) else str(x)
+                    for x in hf["var/gene_id"][:]])
     NT = int(np.where(cats == "non-targeting")[0][0])
     npert = len(cats)
     say(f"     {NCELL:,} cells, {npert:,} perturbation labels, {NGENE:,} genes")
@@ -194,62 +220,75 @@ def main():
     code_sh = code.copy()
     code_sh[keep] = rng.permutation(code_sh[keep])
 
-    S = np.zeros((npert, NGENE), np.float32)
-    Q = np.zeros((npert, NGENE), np.float32)
-    SA = np.zeros((npert, NGENE), np.float32)
-    SX = np.zeros((npert, NGENE), np.float32)
-    n = np.zeros(npert, np.int64); nA = np.zeros(npert, np.int64)
-    nX = np.zeros(npert, np.int64)
+    CKPT = BULK.parent / "loop224_accum.npz"
+    if CKPT.exists():
+        say(f"     accumulator checkpoint found at {CKPT.name}; the 23.7-minute stream is not "
+            f"repeated")
+        _c = np.load(CKPT)
+        S, Q, SA, SX = _c["S"], _c["Q"], _c["SA"], _c["SX"]
+        n, nA, nX, code_sh = _c["n"], _c["nA"], _c["nX"], _c["code_sh"]
+        keep = code != NT
+        tstart = time.time()
+    else:
+        S = np.zeros((npert, NGENE), np.float32)
+        Q = np.zeros((npert, NGENE), np.float32)
+        SA = np.zeros((npert, NGENE), np.float32)
+        SX = np.zeros((npert, NGENE), np.float32)
+        n = np.zeros(npert, np.int64); nA = np.zeros(npert, np.int64)
+        nX = np.zeros(npert, np.int64)
 
-    def accum(A, cds, dest, cnt):
-        o = np.argsort(cds, kind="stable")
-        cs = cds[o]; Ao = A[o]
-        b = np.flatnonzero(np.r_[True, cs[1:] != cs[:-1]])
-        sums = np.add.reduceat(Ao, b, axis=0)
-        u = cs[b]
-        dest[u] += sums
-        cnt += np.bincount(cs, minlength=len(cnt))
+        def accum(A, cds, dest, cnt):
+            o = np.argsort(cds, kind="stable")
+            cs = cds[o]; Ao = A[o]
+            b = np.flatnonzero(np.r_[True, cs[1:] != cs[:-1]])
+            sums = np.add.reduceat(Ao, b, axis=0)
+            u = cs[b]
+            dest[u] += sums
+            cnt += np.bincount(cs, minlength=len(cnt))
 
-    blocks = [(i, min(i + BLOCK, NCELL)) for i in range(0, NCELL, BLOCK)]
-    say(f"     streaming {len(blocks):,} blocks of {BLOCK:,} cells with {WORKERS} workers")
-    say(f"     bounded sliding window of {2*WORKERS} in-flight blocks, a "
-        f"{2*WORKERS*BLOCK*NGENE*4/1e9:.1f} GB ceiling. The first attempt used an unbounded "
-        f"executor map, which submits all {len(blocks):,} blocks at once and holds every finished "
-        f"one until the consumer reaches it; at 67.6 MB per block that reached the container "
-        f"limit and the run was killed with no traceback.")
-    done = [0]; tstart = time.time()
-    from collections import deque
-    with ThreadPoolExecutor(WORKERS) as ex:
-        pend, it = deque(), iter(blocks)
-        for _ in range(2 * WORKERS):
-            b0 = next(it, None)
-            if b0 is None:
-                break
-            pend.append((b0, ex.submit(fetch_cells, *b0)))
-        while pend:
-            (lo, hi), fut = pend.popleft()
-            A = fut.result()
-            nxt = next(it, None)
-            if nxt is not None:
-                pend.append((nxt, ex.submit(fetch_cells, *nxt)))
-            m = keep[lo:hi]
-            if not m.any():
-                continue
-            A = A[m].astype(np.float32, copy=False)
-            c = code[lo:hi][m]
-            accum(A, c, S, n)
-            accum(A * A, c, Q, np.zeros(npert, np.int64))
-            half = (np.arange(lo, hi)[m] % 2) == 0
-            if half.any():
-                accum(A[half], c[half], SA, nA)
-            accum(A, code_sh[lo:hi][m], SX, nX)
-            done[0] += 1
-            if done[0] % 120 == 0:
-                el = time.time() - tstart
-                say(f"       {done[0]:,}/{len(blocks):,} blocks   {el/60:.1f} min   "
-                    f"{done[0]*BLOCK*NGENE*4/1e6/el:.0f} MB/s")
-    say(f"     stream complete in {(time.time()-tstart)/60:.1f} min, "
-        f"{int(n.sum()):,} cells accumulated")
+        blocks = [(i, min(i + BLOCK, NCELL)) for i in range(0, NCELL, BLOCK)]
+        say(f"     streaming {len(blocks):,} blocks of {BLOCK:,} cells with {WORKERS} workers")
+        say(f"     bounded sliding window of {2*WORKERS} in-flight blocks, a "
+            f"{2*WORKERS*BLOCK*NGENE*4/1e9:.1f} GB ceiling. The first attempt used an unbounded "
+            f"executor map, which submits all {len(blocks):,} blocks at once and holds every finished "
+            f"one until the consumer reaches it; at 67.6 MB per block that reached the container "
+            f"limit and the run was killed with no traceback.")
+        done = [0]; tstart = time.time()
+        from collections import deque
+        with ThreadPoolExecutor(WORKERS) as ex:
+            pend, it = deque(), iter(blocks)
+            for _ in range(2 * WORKERS):
+                b0 = next(it, None)
+                if b0 is None:
+                    break
+                pend.append((b0, ex.submit(fetch_cells, *b0)))
+            while pend:
+                (lo, hi), fut = pend.popleft()
+                A = fut.result()
+                nxt = next(it, None)
+                if nxt is not None:
+                    pend.append((nxt, ex.submit(fetch_cells, *nxt)))
+                m = keep[lo:hi]
+                if not m.any():
+                    continue
+                A = A[m].astype(np.float32, copy=False)
+                c = code[lo:hi][m]
+                accum(A, c, S, n)
+                accum(A * A, c, Q, np.zeros(npert, np.int64))
+                half = (np.arange(lo, hi)[m] % 2) == 0
+                if half.any():
+                    accum(A[half], c[half], SA, nA)
+                accum(A, code_sh[lo:hi][m], SX, nX)
+                done[0] += 1
+                if done[0] % 120 == 0:
+                    el = time.time() - tstart
+                    say(f"       {done[0]:,}/{len(blocks):,} blocks   {el/60:.1f} min   "
+                        f"{done[0]*BLOCK*NGENE*4/1e6/el:.0f} MB/s")
+        say(f"     stream complete in {(time.time()-tstart)/60:.1f} min, "
+            f"{int(n.sum()):,} cells accumulated")
+        np.savez(CKPT, S=S, Q=Q, SA=SA, SX=SX, n=n, nA=nA, nX=nX, code_sh=code_sh)
+        say(f"     accumulators checkpointed to {CKPT.name} so a later gate failure cannot cost "
+            f"the stream again")
 
     ok = (n >= MINCELL) & (np.arange(npert) != NT)
     M = np.zeros_like(S); M[ok] = S[ok] / n[ok, None]
@@ -260,18 +299,18 @@ def main():
     cmp_r, cmp_d = float("nan"), float("nan")
     try:
         bh = h5py.File(bulkf, "r")
-        bidx = np.array([x.decode() if isinstance(x, bytes) else str(x)
-                         for x in (bh["obs/_index"][:] if "obs/_index" in bh
-                                   else bh["obs/index"][:])])
-        bg = np.array([x.decode() if isinstance(x, bytes) else str(x)
-                       for x in (bh["var/_index"][:] if "var/_index" in bh
-                                 else bh["var/index"][:])])
+        bidx = h5_index(bh["obs"])
+        bg = h5_index(bh["var"])
         bX = bh["X"]
-        bkey = np.array([s.split("_")[0] if "_" in s else s for s in bidx])
+        # index entries look like "0_A1BG_P1_ENSG00000121410": {row}_{symbol}_{promoter}_{ensg}.
+        # The first field is a row counter, not an identifier; the perturbation name is field 1.
+        bkey = np.array([(s.split("_")[1] if s.count("_") >= 3 else s) for s in bidx])
         pos = {k: i for i, k in enumerate(bkey)}
         rows = [(i, pos[cats[i]]) for i in np.where(ok)[0] if cats[i] in pos]
         gmap = {g: i for i, g in enumerate(bg)}
-        gsel = [(j, gmap[gname[j]]) for j in range(NGENE) if gname[j] in gmap]
+        gsel = [(j, gmap[gid[j]]) for j in range(NGENE) if gid[j] in gmap]
+        say(f"     bulk index columns: obs '{bh['obs'].attrs.get('_index')}', "
+            f"var '{bh['var'].attrs.get('_index')}'; matched {len(gsel):,} genes by gene_id")
         if len(rows) >= 50 and len(gsel) >= 500:
             sub = rows[:: max(1, len(rows) // 300)][:300]
             gj = np.array([x[0] for x in gsel]); gb = np.array([x[1] for x in gsel])
@@ -367,23 +406,36 @@ def main():
     cells_of = {p: np.where(code == p)[0] for p in need}
     say(f"     re-streaming cells for {len(need)} perturbations carrying the {NSTRONG} strongest "
         f"effects")
-    vals = {}
+    vals, GAP, failed = {}, 64, 0
     for p, idxs in cells_of.items():
-        runs, st = [], idxs[0]
-        for a, b in zip(idxs[:-1], idxs[1:]):
-            if b != a + 1:
-                runs.append((st, a + 1)); st = b
-        runs.append((st, idxs[-1] + 1))
-        rows = np.vstack([fetch_cells(a, b) for a, b in runs])
+        runs, st, prev = [], idxs[0], idxs[0]
+        for b in idxs[1:]:
+            if b - prev > GAP:
+                runs.append((st, prev + 1)); st = b
+            prev = b
+        runs.append((st, prev + 1))
+        try:
+            got = {}
+            for a, b in runs:
+                blk = fetch_cells(a, b)
+                for c in idxs[(idxs >= a) & (idxs < b)]:
+                    got[int(c)] = blk[int(c) - a]
+            rows = np.vstack([got[int(c)] for c in idxs])
+        except Exception as e:
+            failed += 1
+            say(f"       perturbation {p}: {type(e).__name__}: {e} -- skipped")
+            continue
         for gg in need[p]:
             vals[(p, gg)] = rows[:, gg].astype(np.float64)
+    say(f"     {len(vals)} of {NSTRONG} effects recovered "
+        f"({failed} perturbations unreachable, coalescing runs with a {GAP}-cell gap tolerance)")
     BIM = 0.555
-    real = np.array([bimod(vals[(int(p), int(gg))]) for p, gg in zip(pidx, gi)])
-    ctrl = np.array([bimod(rng.normal(size=len(vals[(int(p), int(gg))])))
-                     for p, gg in zip(pidx, gi)])
+    have = [(int(p), int(gg)) for p, gg in zip(pidx, gi) if (int(p), int(gg)) in vals]
+    real = np.array([bimod(vals[k]) for k in have])
+    ctrl = np.array([bimod(rng.normal(size=len(vals[k]))) for k in have])
     fr_real = float(np.nanmean(real > BIM)); fr_ctrl = float(np.nanmean(ctrl > BIM))
     say(f"     bimodality coefficient above {BIM} (the uniform-distribution reference):")
-    say(f"       real per-cell distributions        {fr_real:.1%} of {NSTRONG}")
+    say(f"       real per-cell distributions        {fr_real:.1%} of {len(have)}")
     say(f"       matched Gaussian samples, same n   {fr_ctrl:.1%}  <- false-positive rate")
     say(f"     real median coefficient {np.nanmedian(real):.4f}, "
         f"Gaussian control median {np.nanmedian(ctrl):.4f}")
@@ -394,7 +446,7 @@ def main():
                            f"the time, so the test cannot distinguish and {fr_real:.1%} means "
                            f"nothing")
     res["modality"] = {"frac_real": fr_real, "frac_control": fr_ctrl,
-                       "real_med": float(np.nanmedian(real)),
+                       "real_med": float(np.nanmedian(real)), "n_recovered": len(have),
                        "ctrl_med": float(np.nanmedian(ctrl)), "n_tested": NSTRONG}
 
     # ---------------------------------------------------------------- X5
@@ -421,17 +473,13 @@ def main():
     uw, ww = float("nan"), float("nan")
     try:
         rh = h5py.File(BULK / "rpe1_normalized_bulk_01.h5ad", "r")
-        ridx = np.array([x.decode() if isinstance(x, bytes) else str(x)
-                         for x in (rh["obs/_index"][:] if "obs/_index" in rh
-                                   else rh["obs/index"][:])])
-        rg = np.array([x.decode() if isinstance(x, bytes) else str(x)
-                       for x in (rh["var/_index"][:] if "var/_index" in rh
-                                 else rh["var/index"][:])])
-        rkey = np.array([s.split("_")[0] if "_" in s else s for s in ridx])
+        ridx = h5_index(rh["obs"])
+        rg = h5_index(rh["var"])
+        rkey = np.array([(s.split("_")[1] if s.count("_") >= 3 else s) for s in ridx])
         rpos = {k: i for i, k in enumerate(rkey)}
         shared_p = [(i, rpos[cats[i]]) for i in np.where(ok)[0] if cats[i] in rpos]
         rgm = {g: i for i, g in enumerate(rg)}
-        shared_g = [(j, rgm[gname[j]]) for j in range(NGENE) if gname[j] in rgm]
+        shared_g = [(j, rgm[gid[j]]) for j in range(NGENE) if gid[j] in rgm]
         say(f"     shared perturbations {len(shared_p):,}, shared genes {len(shared_g):,}")
         if len(shared_p) >= 100 and len(shared_g) >= 500:
             sp = shared_p[:: max(1, len(shared_p) // 400)][:400]
