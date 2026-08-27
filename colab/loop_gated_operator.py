@@ -210,21 +210,26 @@ def main():
 
     def sc(P, Y): return np.array([H.pear(P[i], Y[i]) for i in range(len(Y))])
 
-    def run(seed, single=False, shuffle_line=False, linear=False):
-        S, A = [], []
+    def run(seed, single=False, shuffle_line=False, linear=False, const_ctx=False):
+        S, A, VI = [], [], []
         for hold in LINES:
             rows, tr = fold(hold)
             Xg, Xl, Y, Ad = rows(tr)
             src = (str(np.random.default_rng(seed + li[hold]).choice(
                 [l for l in LINES if l != hold])) if shuffle_line else None)
             Xgt, Xlt, Yt, Adt = rows(pc == hold, src=src)
+            if const_ctx:
+                # DEFECT H, matched ablation: identical parameter count and identical
+                # optimisation dynamics, with ONLY the context information removed. The
+                # hypernetwork still exists and still trains; its input simply cannot vary.
+                Xl = np.zeros_like(Xl); Xlt = np.zeros_like(Xlt)
             Rtr = Y - Ad                                       # the correction to be learned
             if linear:
                 Z = np.concatenate([Xg, Xl, np.ones((len(Xg), 1), np.float32)], 1)
                 M = Z.T @ Z + 1e-2 * len(Z) * np.eye(Z.shape[1], dtype=np.float32)
                 b = np.linalg.solve(M, Z.T @ Rtr)
                 Zt = np.concatenate([Xgt, Xlt, np.ones((len(Xgt), 1), np.float32)], 1)
-                S.append(sc(Adt + Zt @ b, Yt)); A.append(sc(Adt, Yt)); continue
+                S.append(sc(Adt + Zt @ b, Yt)); A.append(sc(Adt, Yt)); VI.append((0.0, 0.0)); continue
             torch.manual_seed(seed)
             r2 = np.random.default_rng(seed)
             ip = r2.permutation(len(Xg)); nv = max(200, int(0.12 * len(Xg)))
@@ -235,6 +240,8 @@ def main():
                            torch.from_numpy(Rtr[fi]))
             vg, vl, vr = (torch.from_numpy(Xg[va]), torch.from_numpy(Xl[va]),
                           torch.from_numpy(Rtr[va]))
+            with torch.no_grad():
+                v_init = float(((net(vg, vl, single) - vr) ** 2).mean())
             best, bad, bw = 9e9, 0, None
             for _ in range(EPOCHS):
                 idx = torch.randperm(len(fi))
@@ -248,27 +255,41 @@ def main():
                 else:
                     bad += 1
                     if bad >= PATIENCE: break
+            VI.append((v_init, best))
             if bw: net.load_state_dict(bw)
             net.eval()
             with torch.no_grad():
                 C = net(torch.from_numpy(Xgt), torch.from_numpy(Xlt), single).numpy()
             S.append(sc(Adt + C, Yt)); A.append(sc(Adt, Yt))
-        return np.concatenate(S), np.concatenate(A)
+        return np.concatenate(S), np.concatenate(A), VI
 
     say(f"     training: 9 leave-one-cell-line-out folds x {len(SEEDS)} seeds, K={KEXP} experts ...")
-    S, ADD = {}, None
+    S, ADD, VIS = {}, None, {}
     for sd in SEEDS:
-        s_, a_ = run(sd); S[sd] = s_; ADD = a_
+        s_, a_, vi_ = run(sd); S[sd] = s_; ADD = a_; VIS[sd] = vi_
         say(f"       seed {sd}: gated {np.nanmean(s_):.4f}   additive {np.nanmean(a_):.4f}   "
             f"[{time.time() - t0:.0f}s]")
     full = S[SEEDS[0]]
-    one_s, _ = run(SEEDS[0], single=True)
-    lin_s, _ = run(SEEDS[0], linear=True)
-    say(f"       K=1, context-blind operator   {np.nanmean(one_s):.4f}")
+    one_s, _, one_vi = run(SEEDS[0], single=True)
+    lin_s, _, _ = run(SEEDS[0], linear=True)
+    cst_s, _, cst_vi = run(SEEDS[0], const_ctx=True)
+    def learned(vi):
+        """Fraction of validation MSE an arm actually removed. Defect H: an arm that did not
+        move cannot carry a gate, and this is what makes that visible instead of silent."""
+        num = sum(max(0.0, a - b) for a, b in vi); den = sum(a for a, _ in vi)
+        return num / den if den > 0 else 0.0
+    l_full, l_one, l_cst = learned(VIS[SEEDS[0]]), learned(one_vi), learned(cst_vi)
+    say(f"       K=1, context-blind operator   {np.nanmean(one_s):.4f}   "
+        f"val MSE removed {l_one:.1%}")
+    say(f"       K=8, context held CONSTANT    {np.nanmean(cst_s):.4f}   "
+        f"val MSE removed {l_cst:.1%}")
     say(f"       linear twin, same inputs      {np.nanmean(lin_s):.4f}")
+    say(f"       the gated arm itself removed {l_full:.1%} of validation MSE, so it DID fit the")
+    say(f"       training lines; whatever it does on a held-out line is transfer, not underfitting")
     res["arms"] = {"gated": float(np.mean([np.nanmean(S[s]) for s in SEEDS])),
                    "additive": float(np.nanmean(ADD)),
-                   "single_operator": float(np.nanmean(one_s)),
+                   "const_context": float(np.nanmean(cst_s)),
+                   "single_operator_UNTRAINED": float(np.nanmean(one_s)),
                    "linear_twin": float(np.nanmean(lin_s))}
 
     say("I1 DOES THE HARNESS REPRODUCE THE BASELINE?")
@@ -289,14 +310,27 @@ def main():
     res["I2"] = {"delta": d2, "se": se2, "z": z2}
 
     say("I3 DOES CONTEXT-GATING MATTER, OR ONLY THE EXTRA CAPACITY?")
-    d3, se3, z3 = H.paired(full, one_s)
-    say(f"     K={KEXP} gated {np.nanmean(full):.4f} vs K=1 context-blind {np.nanmean(one_s):.4f}")
+    say(f"     The ablation is the SAME network with the hypernetwork's input held constant:")
+    say(f"     identical parameter count, identical optimisation, context information removed.")
+    say(f"     The K=1 arm is NOT used here. Run 1 of this loop used it and it never trained --")
+    say(f"     0.0218 correction norm against a 16.42 target -- which is defect H in the ledger.")
+    d3, se3, z3 = H.paired(full, cst_s)
+    say(f"     K={KEXP} gated {np.nanmean(full):.4f} vs K={KEXP} constant-context "
+        f"{np.nanmean(cst_s):.4f}")
     say(f"     paired {d3:+.4f} +/- {se3:.4f}  ({z3:+.1f} se)")
-    G.add("I3", bool(d3 >= I3_BAR), stat=float(d3), requires=("I1",),
-          if_true=lambda: f"I3 PASS -- context-gating adds {d3:+.4f} over a single blind operator",
-          if_false=lambda: f"I3 FAIL -- gating adds {d3:+.4f}; the correction is a better GENE "
-                           f"model, not a context model")
-    res["I3"] = {"delta": d3, "se": se3, "z": z3}
+    if l_cst < 0.02:
+        G.add("I3", False, stat=float(l_cst), requires=("I1",), void_if=True,
+              void_reason=f"the constant-context control removed only {l_cst:.1%} of validation "
+                          f"MSE, so it never trained and cannot carry this gate (defect H)")
+    else:
+        G.add("I3", bool(d3 >= I3_BAR), stat=float(d3), requires=("I1",),
+              if_true=lambda: f"I3 PASS -- context-gating is worth {d3:+.4f} over the same network "
+                              f"denied context, and both arms trained ({l_full:.1%} vs {l_cst:.1%})",
+              if_false=lambda: f"I3 FAIL -- context-gating is worth {d3:+.4f} over the same network "
+                               f"denied context, with both arms trained ({l_full:.1%} vs "
+                               f"{l_cst:.1%}); the gates are not carrying context")
+    res["I3"] = {"delta": d3, "se": se3, "z": z3,
+                 "val_mse_removed": {"gated": l_full, "const_ctx": l_cst, "k1": l_one}}
 
     say("I4 DID THE NETWORK HELP, OR THE FEATURES?")
     d4, se4, z4 = H.paired(full, lin_s)
@@ -324,7 +358,7 @@ def main():
         G.add("I6", False, stat=float(d3), requires=("I3",), void_if=True,
               void_reason=f"I3's margin is {d3:+.4f}; there is nothing to collapse")
     else:
-        sh, _ = run(SEEDS[0], shuffle_line=True)
+        sh, _, _ = run(SEEDS[0], shuffle_line=True)
         d6, _, _ = H.paired(sh, one_s)
         f6 = d6 / d3
         say(f"     hypernetwork fed another line's properties: {d6:+.4f} against a real {d3:+.4f} "

@@ -257,6 +257,24 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      a coin flip. Sign-neutral phrasing ("is worth {d:+.4f}") states the same fact without
 #      betting on it, and where direction matters the branch must read the sign, not assume it.
 #
+#   H  AN ABLATION ARM THAT IS NOT MATCHED ON TRAINABILITY. Loop 257's I3 was declared the
+#      load-bearing gate: K=8 context-gated against a K=1 "context-blind" operator. It printed
+#      "gating adds -0.0152; the correction is a better GENE model, not a context model". The
+#      K=1 arm had never trained. Its validation MSE sat at 0.254322 against 0.254313 at
+#      INITIALISATION, and its correction norm was 0.0218 against a target of 16.42 -- a factor
+#      of 750 short of the thing it was meant to predict -- while the K=8 arm cut validation MSE
+#      by 19% over 30 epochs. Deleting seven of eight experts also deletes ~8x of the effective
+#      output scale and early gradient signal, so with PATIENCE=7 the small arm stopped at epoch
+#      3 before it had started. The gate measured TRAINED against BARELY-TRAINED, not GATED
+#      against BLIND, and then named a cause ("a better GENE model") that its own numbers cannot
+#      support: an arm producing no correction at all is not a better model of anything.
+#      A matched ablation holds parameter count and optimisation dynamics fixed and removes ONLY
+#      the information under test -- here, feed the hypernetwork a CONSTANT instead of the line
+#      features, so the gates still exist, still train, and simply cannot vary with context.
+#      The general rule, now enforced by reporting: an ablation arm must show that it LEARNED
+#      before its score is allowed to mean anything. Every arm now prints its validation MSE at
+#      initialisation and at its best, and a gate whose control did not move is VOID, not FAIL.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 
