@@ -3,7 +3,8 @@
  "arms": {
   "gated": 0.4401375895492034,
   "additive": 0.45179227675988715,
-  "single_operator": 0.4517912069617593,
+  "const_context": 0.45177308416862877,
+  "single_operator_UNTRAINED": 0.4517912069617593,
   "linear_twin": 0.4504405776741781
  },
  "I2": {
@@ -12,9 +13,14 @@
   "z": -54.728858526727464
  },
  "I3": {
-  "delta": -0.015183781252330096,
-  "se": 0.00027734644769968086,
-  "z": -54.746622422117895
+  "delta": -0.015165658459199555,
+  "se": 0.00027737765734904004,
+  "z": -54.675126339089914,
+  "val_mse_removed": {
+   "gated": 0.19477660726152862,
+   "const_ctx": 0.0,
+   "k1": 0.0
+  }
  },
  "I4": {
   "delta": -0.01383315196474888,
@@ -38,10 +44,11 @@
   "I6": false
  },
  "void": [
+  "I3",
   "I5",
   "I6"
  ],
- "seconds": 1406.1426348686218,
+ "seconds": 1534.4910006523132,
  "log": [
   "========================================================================================================",
   "LOOP 257 -- CONTEXT PARAMETERISES THE OPERATOR, ON A SUBSTRATE THAT IS ACTUALLY DENSE",
@@ -57,11 +64,14 @@
   "     context vector: 101 MEASURED dims, principal components fitted on the",
   "     full DepMap panel (1,076 lines) which never sees a LINCS response",
   "     training: 9 leave-one-cell-line-out folds x 3 seeds, K=8 experts ...",
-  "       seed 0: gated 0.4366   additive 0.4518   [462s]",
-  "       seed 1: gated 0.4428   additive 0.4518   [883s]",
-  "       seed 2: gated 0.4410   additive 0.4518   [1307s]",
-  "       K=1, context-blind operator   0.4518",
+  "       seed 0: gated 0.4366   additive 0.4518   [460s]",
+  "       seed 1: gated 0.4428   additive 0.4518   [889s]",
+  "       seed 2: gated 0.4410   additive 0.4518   [1328s]",
+  "       K=1, context-blind operator   0.4518   val MSE removed 0.0%",
+  "       K=8, context held CONSTANT    0.4518   val MSE removed 0.0%",
   "       linear twin, same inputs      0.4504",
+  "       the gated arm itself removed 19.5% of validation MSE, so it DID fit the",
+  "       training lines; whatever it does on a held-out line is transfer, not underfitting",
   "I1 DOES THE HARNESS REPRODUCE THE BASELINE?",
   "     additive here 0.4518 against loop 252's 0.4477",
   "     I1 PASS -- reproduces to 0.0041",
@@ -70,9 +80,13 @@
   "     loop 256's concatenated two-tower reached 0.3001 on the same target",
   "     I2 FAIL -- the correction adds -0.0152 against a 0.02 bar",
   "I3 DOES CONTEXT-GATING MATTER, OR ONLY THE EXTRA CAPACITY?",
-  "     K=8 gated 0.4366 vs K=1 context-blind 0.4518",
+  "     The ablation is the SAME network with the hypernetwork's input held constant:",
+  "     identical parameter count, identical optimisation, context information removed.",
+  "     The K=1 arm is NOT used here. Run 1 of this loop used it and it never trained --",
+  "     0.0218 correction norm against a 16.42 target -- which is defect H in the ledger.",
+  "     K=8 gated 0.4366 vs K=8 constant-context 0.4518",
   "     paired -0.0152 +/- 0.0003  (-54.7 se)",
-  "     I3 FAIL -- gating adds -0.0152; the correction is a better GENE model, not a context model",
+  "     I3 VOID -- the constant-context control removed only 0.0% of validation MSE, so it never trained and cannot carry this gate (defect H)",
   "I4 DID THE NETWORK HELP, OR THE FEATURES?",
   "     gated 0.4366 vs linear twin 0.4504   paired -0.0138 +/- 0.0003 (-49.1 se)",
   "     I4 FAIL -- -0.0138 against a linear model on identical inputs",
@@ -94,11 +108,11 @@
   "========================================================================================================",
   "  I1  PASS",
   "  I2  FAIL",
-  "  I3  FAIL",
+  "  I3  VOID",
   "  I4  FAIL",
   "  I5  VOID",
   "  I6  VOID",
-  "  1/4   [1406s]   (2 VOID: I5, I6)",
+  "  1/3   [1534s]   (3 VOID: I3, I5, I6)",
   "========================================================================================================"
  ]
 }
