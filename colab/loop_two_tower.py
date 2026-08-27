@@ -314,8 +314,10 @@ def main():
     say(f"     paired {d4:+.4f} +/- {se4:.4f}  ({z4:+.1f} se)")
     G.add("H4", bool(d4 >= H4_BAR), stat=float(d4), requires=("H1",),
           if_true=lambda: f"H4 PASS -- knowing what the cell line IS adds {d4:+.4f}",
-          if_false=lambda: f"H4 FAIL -- zeroing the line embedding costs {d4:+.4f}; the gain is "
-                           f"the gene tower and the cell line is still decoration")
+          if_false=lambda: f"H4 FAIL -- the line embedding is worth {d4:+.4f}"
+                           + (f"; it is not decoration, it is ACTIVELY HARMFUL -- zeroing it "
+                              f"IMPROVES the model by {-d4:.4f}" if d4 < 0 else
+                              f"; below the {H4_BAR} bar, so the cell line is decoration"))
     res["H4"] = {"delta": d4, "se": se4, "z": z4}
 
     # ---------------------------------------------------------------- H5

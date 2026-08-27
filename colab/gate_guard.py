@@ -247,6 +247,16 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      never registered is a DECLARATION ERROR with its own message, not an ordinary
 #      precondition failure -- otherwise a typo voids a gate while looking like a result.
 #
+#   G  A MESSAGE THAT ASSUMES THE SIGN OF ITS OWN STATISTIC. Defect D in the narration rather
+#      than the logic. Loop 256's H4 asked whether the line tower does anything and printed
+#      "zeroing the line embedding costs -0.0543". The verb says the ablation hurt; the sign
+#      says it helped. Both in one sentence, and the sentence closed with "the cell line is
+#      still decoration" -- which UNDERSTATES the measurement, because the line tower was not
+#      inert at 0.3001 against an ablated 0.3544, it was actively harmful. A FAIL branch is
+#      exactly where the statistic is least constrained in sign, so a directional verb there is
+#      a coin flip. Sign-neutral phrasing ("is worth {d:+.4f}") states the same fact without
+#      betting on it, and where direction matters the branch must read the sign, not assume it.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 

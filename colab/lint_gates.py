@@ -44,6 +44,16 @@ SIGNED_CTRL = re.compile(r"\b(\w*real\w*|d\d)\[?[\"']?\w*[\"']?\]?\s*>\s*(\w*swa
                          re.I)
 
 
+# G: verbs a NEGATIVE value contradicts, inside an if_false whose value prints its own sign.
+# "adds" is deliberately NOT here: "adds -0.15" is coherent arithmetic, so flagging it would
+# fire on a third of the corpus and train me to ignore the linter. "costs -0.05" is the bug --
+# it means the thing GAINED. Same for beats/exceeds/improves, which assert superiority.
+DIRECTIONAL_FAIL = re.compile(
+    r"if_false\s*=.{0,400}?\b(costs?|loses?|lost|drops?|falls?|gains?|improves?|beats?|"
+    r"exceeds?|outperforms?|rises?)\b.{0,80}?\{[^{}]*:\+",
+    re.S)
+
+
 def scan(p):
     s = p.read_text()
     if "gate_guard" not in s or "def main" not in s:
@@ -83,6 +93,13 @@ def scan(p):
     f = shadowed_imports(s)
     if f:
         hits["F an imported name is rebound inside a function"] = f
+    # G: a directional verb inside an if_false message, applied to a value printed with an
+    # explicit sign. A FAIL branch is where the statistic is LEAST constrained in sign, so
+    # "costs {d:+.4f}" renders as "costs -0.0543" -- the verb and the sign disagree. Only
+    # if_false is flagged: an if_true branch has usually already established the direction.
+    g = [m.group(0)[:78].replace("\n", " ") for m in DIRECTIONAL_FAIL.finditer(s)]
+    if g:
+        hits["G if_false message uses a directional verb on a signed statistic"] = sorted(set(g))
     return hits
 
 
