@@ -77,12 +77,15 @@ GATES, ALL DECLARED BEFORE THE RUN:
      Gate: PASS iff at least one branch has |mean alpha| > 2 se. Reported per branch
      either way, including negative alphas.
 
-  K6 DOES CONTEXT CONTRIBUTE, OR ONLY GENE-LEVEL STRUCTURE?            -- requires K1
-     The context-reading branches (B2, B3, B5) against the context-free ones (B1, B4),
-     both alpha-fitted. Loop 255 proved line identity's out-of-sample ridge coefficient is
-     exactly zero and loops 253/255 found nine annotation nulls, so a FAIL here is the
-     expected outcome and is recorded as confirmation, not as a disappointment.
-     Gate: PASS iff adding the context branches to the context-free ones is worth 0.005.
+  K6 DOES EXTERNAL ANNOTATION BEAT THE LINE'S OWN AVERAGE BEHAVIOUR?  -- requires K1
+     NOT "does context matter" -- loop 260 showed that question is degenerate, because the
+     residual is double-centred and a context-free model is pinned at a 0.027% ceiling by
+     geometry rather than by training. The answerable question is where the context comes
+     FROM: B1 and B4 use only the line's own mean response, which needs no annotation at
+     all, while B2, B3 and B5 read the DepMap expression/dependency/mutation vector.
+     Gate: PASS iff the annotation branches add at least 0.005 over the profile-only ones.
+     Loops 253 and 255 found nine annotation nulls, so a FAIL is the expected outcome and is
+     recorded as confirming that arc, not as a disappointment.
 
   K7 CONTROL: THE WRONG CELL LINE                                      -- requires K3
      VOID if K3 found no margin. Gate: PASS iff at most 25% of K3's margin survives.
@@ -109,8 +112,12 @@ LOOP252_ADDITIVE = 0.4477
 K1_TOL, K2_FLOOR, K3_BAR, K4_BAR, K6_BAR, K7_MAX = 0.02, -0.002, 0.005, 0.005, 0.005, 0.25
 TRAIN_FLOOR = 0.02
 BNAMES = ["B1_diag_gain", "B2_ctx_gain", "B3_lowrank_op", "B4_triple", "B5_ctx_offset"]
-CTX_BRANCHES = [1, 2, 4]
-FREE_BRANCHES = [0, 3]
+# LOOP 260: [0, 3] is NOT "context-free". B4 reads the line's own mean profile, and a
+# genuinely context-free arm is pinned at zero by double-centring (gene-only ceiling
+# 0.027%), so that comparison would be degenerate. The real split is by SOURCE of the
+# context: the line's own average behaviour, versus external DepMap annotation.
+ANNOT_BRANCHES = [1, 2, 4]        # B2, B5 read z_c; B3 gates on z_c
+PROFILE_BRANCHES = [0, 3]         # B1, B4 use only the line's own mean response
 LOG = []
 
 
@@ -325,19 +332,19 @@ def main():
     full = S[SEEDS[0]]
     perm_s, _, _, _ = run(SEEDS[0], permute=True)
     b3_s, _, _, b3_vi = run(SEEDS[0], use=[2])
-    free_s, _, _, free_vi = run(SEEDS[0], use=FREE_BRANCHES)
+    free_s, _, _, free_vi = run(SEEDS[0], use=PROFILE_BRANCHES)
     say(f"       row-permuted null            {np.nanmean(perm_s):.4f}")
     say(f"       B3 alone (loop 257's bottleneck, trained separately) {np.nanmean(b3_s):.4f}"
         f"   val MSE removed {learned(b3_vi):.1%}")
-    say(f"       context-FREE branches only (B1, B4)                  {np.nanmean(free_s):.4f}"
+    say(f"       profile-only branches (B1, B4, no annotation)        {np.nanmean(free_s):.4f}"
         f"   val MSE removed {learned(free_vi):.1%}")
     res["arms"] = {"branching": float(np.mean([np.nanmean(S[s]) for s in SEEDS])),
                    "additive": float(np.nanmean(ADD)),
                    "permuted": float(np.nanmean(perm_s)),
                    "b3_alone": float(np.nanmean(b3_s)),
-                   "context_free_only": float(np.nanmean(free_s))}
+                   "profile_only": float(np.nanmean(free_s))}
     res["val_mse_removed"] = {"branching": learned(VI[SEEDS[0]]), "b3_alone": learned(b3_vi),
-                              "context_free_only": learned(free_vi)}
+                              "profile_only": learned(free_vi)}
 
     A0 = AL[SEEDS[0]]
     say("     alpha per branch, mean over the 9 folds (fitted on a line never trained on):")
@@ -410,24 +417,26 @@ def main():
                            f"line it was not trained on")
     res["K5"] = {"alive": alive}
 
-    say("K6 DOES CONTEXT CONTRIBUTE, OR ONLY GENE-LEVEL STRUCTURE?")
+    say("K6 DOES EXTERNAL ANNOTATION BEAT THE LINE'S OWN AVERAGE BEHAVIOUR?")
     lfr = learned(free_vi)
     d6, se6, z6 = H.paired(full, free_s)
-    say(f"     all 5 branches {np.nanmean(full):.4f} vs context-FREE only (B1, B4) "
-        f"{np.nanmean(free_s):.4f}   {d6:+.4f} +/- {se6:.4f} ({z6:+.1f} se)")
-    say(f"     loops 253 and 255 found nine annotation nulls and proved line identity's")
-    say(f"     out-of-sample coefficient is exactly zero, so a FAIL here CONFIRMS that arc.")
+    say(f"     all 5 branches {np.nanmean(full):.4f} vs profile-only (B1, B4, no external "
+        f"annotation) {np.nanmean(free_s):.4f}   {d6:+.4f} +/- {se6:.4f} ({z6:+.1f} se)")
+    say(f"     NOT a context-vs-no-context test: loop 260 showed a context-free arm is pinned")
+    say(f"     at a 0.027% ceiling by double-centring, so that comparison is degenerate. This")
+    say(f"     asks where the context COMES FROM -- the line's own average response, or DepMap.")
+    say(f"     Loops 253 and 255 found nine annotation nulls, so a FAIL here CONFIRMS that arc.")
     if lfr < TRAIN_FLOOR:
         G.add("K6", False, stat=float(lfr), requires=("K1",), void_if=True,
-              void_reason=f"the context-free arm removed only {lfr:.1%} of validation MSE, so it "
+              void_reason=f"the profile-only arm removed only {lfr:.1%} of validation MSE, so it "
                           f"never trained and cannot carry this gate (defect H)")
     else:
         G.add("K6", bool(d6 >= K6_BAR), stat=float(d6), requires=("K1",),
-              if_true=lambda: f"K6 PASS -- the context-reading branches are worth {d6:+.4f} "
-                              f"beyond gene-level structure alone",
-              if_false=lambda: f"K6 FAIL -- context branches are worth {d6:+.4f} beyond "
-                               f"gene-level structure; consistent with the nine nulls of loops "
-                               f"253 and 255, and recorded as confirming them")
+              if_true=lambda: f"K6 PASS -- external DepMap annotation is worth {d6:+.4f} beyond "
+                              f"the line's own average response",
+              if_false=lambda: f"K6 FAIL -- external annotation is worth {d6:+.4f} beyond the "
+                               f"line's own average response; consistent with the nine nulls of "
+                               f"loops 253 and 255, and recorded as confirming them")
     res["K6"] = {"delta": d6, "se": se6, "z": z6, "free_val_mse_removed": lfr}
 
     say("K7 CONTROL: THE WRONG CELL LINE")
@@ -446,15 +455,17 @@ def main():
 
     say("K8 TRAINABILITY, AND WHAT THIS CANNOT SHOW")
     say(f"     validation MSE removed -- branching {learned(VI[SEEDS[0]]):.1%}, B3 alone "
-        f"{lb3:.1%}, context-free {lfr:.1%}. Defect H: an arm that did not move cannot carry")
+        f"{lb3:.1%}, profile-only {lfr:.1%}. Defect H: an arm that did not move cannot carry")
     say(f"     a gate, and K4/K6 VOID rather than FAIL when their comparison arm did not train.")
     say("     K2 passing is not a result. Five fitted weights buy a gain from any branches,")
     say("     including the permuted ones, whose score is printed so the free lunch is visible.")
     say("     Capacity was never the binding constraint: loop 257 removed 19% of validation MSE")
     say("     and still lost 0.030 across lines. Branches cannot invent context information")
     say("     that eight training lines do not contain.")
-    say("     If only B1 and B4 survive, the honest reading is a gene-level correction with no")
-    say("     context contribution, which was DECLARED in advance as an acceptable outcome.")
+    say("     If only B1 and B4 survive, the honest reading is that the line's own average")
+    say("     response carries the correction and external annotation adds nothing -- DECLARED")
+    say("     in advance as an acceptable outcome. Note B1 alone is pinned near zero by loop")
+    say("     260's geometry, so in that arm B4, the three-way term, is doing the work.")
     say("     Nine lines, 978 landmarks, shRNA rather than a clean knockout, and a surviving")
     say("     branch names WHERE a correction helps, never WHAT the interaction is.")
 
