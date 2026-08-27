@@ -199,7 +199,9 @@ def main():
                 if g not in gm: continue
                 c = source if source else pc[j]
                 Xg.append(gm[g]); Xl.append(LF[li[c]]); Y.append(Pm[j])
-                A.append(gm[g] + lmean[c] - grand)
+                # DEFECT I: the substitute line feeds the MODEL's inputs only. The standing
+                # answer keeps the TRUE line, so the wrong-line control moves ONE thing.
+                A.append(gm[g] + lmean[pc[j]] - grand)
             return tuple(np.stack(v).astype(np.float32) for v in (Xg, Xl, Y, A))
         return rows, tr
 
@@ -326,8 +328,9 @@ def main():
     say(f"     THIS GATE IS NOT EVIDENCE. A fitted blend weight makes a small gain nearly")
     say(f"     automatic; it exists only to catch a broken alpha fit. J3 decides the science.")
     G.add("J2", bool(d2 >= J2_FLOOR), stat=float(d2), requires=("J1",),
-          if_true=lambda: f"J2 PASS (machinery) -- the aid does not lose, {d2:+.4f}. This says the "
-                          f"plumbing works and says NOTHING about whether the network helped.",
+          if_true=lambda: f"J2 PASS (machinery) -- the aid is worth {d2:+.4f}, inside the "
+                          f"{J2_FLOOR} machinery floor. This says the plumbing works and says "
+                          f"NOTHING about whether the network helped.",
           if_false=lambda: f"J2 FAIL (machinery) -- {d2:+.4f} below a floor a fitted alpha should "
                            f"make unreachable; the alpha fit is broken, not the science")
     res["J2"] = {"delta": d2, "se": se2, "z": z2, "machinery_only": True}

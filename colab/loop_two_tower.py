@@ -200,7 +200,9 @@ def main():
                 if g not in gm: continue
                 c = src if src else pc[j]
                 Xg.append(gm[g]); Xl.append(LF[li[c]]); Y.append(Pm[j])
-                add.append(gm[g] + Pm[pc == c].mean(0) - grand)
+                # DEFECT I: the substitute line feeds the MODEL's inputs only. The standing
+                # answer keeps the TRUE line, so the wrong-line control moves ONE thing.
+                add.append(gm[g] + Pm[pc == pc[j]].mean(0) - grand)
             return (np.stack(Xg).astype(np.float32), np.stack(Xl).astype(np.float32),
                     np.stack(Y).astype(np.float32), np.stack(add).astype(np.float32))
         return rows, tr

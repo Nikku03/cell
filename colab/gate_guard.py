@@ -275,6 +275,23 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      before its score is allowed to mean anything. Every arm now prints its validation MSE at
 #      initialisation and at its best, and a gate whose control did not move is VOID, not FAIL.
 #
+#   I  A CONTROL THAT MOVES MORE THAN ONE THING. The wrong-line control in loops 256-259 bound
+#      one variable `c` to the substitute line and then consumed it TWICE: once for the model's
+#      context input, which was intended, and once for the additive baseline's line-mean term,
+#      which was not. So the arm changed both what the model was told AND what the standing
+#      answer was, while printing "hypernetwork fed another line's properties" -- true of half
+#      of what it did. A degraded baseline leaves more correlation headroom for a fixed-alpha
+#      correction, so the measured margin ratio inflates systematically, by roughly 15-20% in a
+#      toy calibrated to this project's own numbers, and that ratio is then compared against a
+#      hard 25% bar. The bias happened to be conservative here -- it makes a positive look more
+#      like memorisation -- but a control biased in a knowable direction is not a control.
+#      colab/lincs_harness.py had it right all along: evaluate(shuffle_line=True) substitutes
+#      the line only inside features(), while residuals(D, hold) keeps the true held-out line.
+#      The four loop files departed from the harness's own convention without saying so.
+#      RULE: a control names exactly one thing it destroys, and everything else in that arm must
+#      be byte-identical to the arm it is compared against. When one variable feeds two consumers,
+#      split it and let only the consumer under test see the substitute.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 

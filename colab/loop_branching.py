@@ -231,9 +231,13 @@ def main():
                 g = pg[j]
                 if g not in gm: continue
                 c = source if source else pc[j]
-                dg, dl = gm[g] - grand, lmean[c] - grand
-                Xg.append(dg); Xl.append(LF[li[c]]); Xm.append(dl)
-                Y.append(Pm[j]); A.append(grand + dg + dl)
+                # DEFECT I: the substitute line feeds the MODEL's inputs only. The standing
+                # answer keeps the TRUE line, so the wrong-line control moves ONE thing.
+                dg = gm[g] - grand
+                dl_model = lmean[c] - grand          # what the MODEL is told
+                dl_true = lmean[pc[j]] - grand       # what the BASELINE stands on
+                Xg.append(dg); Xl.append(LF[li[c]]); Xm.append(dl_model)
+                Y.append(Pm[j]); A.append(grand + dg + dl_true)
             return tuple(np.stack(v).astype(np.float32) for v in (Xg, Xl, Xm, Y, A))
         return rows
 
@@ -359,8 +363,9 @@ def main():
     say(f"     catches a broken alpha fit and nothing else. K3 decides whether anything real")
     say(f"     happened, and K4 decides whether removing the bottleneck is what did it.")
     G.add("K2", bool(d2 >= K2_FLOOR), stat=float(d2), requires=("K1",),
-          if_true=lambda: f"K2 PASS (machinery) -- does not lose, {d2:+.4f}. Says the plumbing "
-                          f"works and NOTHING about whether branching helped.",
+          if_true=lambda: f"K2 PASS (machinery) -- worth {d2:+.4f}, inside the {K2_FLOOR} "
+                          f"machinery floor. Says the plumbing works and NOTHING about whether "
+                          f"branching helped.",
           if_false=lambda: f"K2 FAIL (machinery) -- {d2:+.4f}, below a floor a fitted alpha "
                            f"should make unreachable; the alpha fit is broken, not the science")
     res["K2"] = {"delta": d2, "se": se2, "z": z2, "machinery_only": True}

@@ -204,7 +204,9 @@ def main():
                 if g not in gm: continue
                 c = src if src else pc[j]
                 Xg.append(gm[g]); Xl.append(LF[li[c]]); Y.append(Pm[j])
-                A.append(gm[g] + lmean[c] - grand)
+                # DEFECT I: the substitute line feeds the MODEL's inputs only. The standing
+                # answer keeps the TRUE line, so the wrong-line control moves ONE thing.
+                A.append(gm[g] + lmean[pc[j]] - grand)
             return tuple(np.stack(v).astype(np.float32) for v in (Xg, Xl, Y, A))
         return rows, tr
 
