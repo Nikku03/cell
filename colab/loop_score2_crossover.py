@@ -255,11 +255,12 @@ def main():
            if_true=lambda: f"T4 PASS -- transfer rises {d4:+.4f} from {ns[0]} to {ns[-1]} "
                            f"training lines, so loop 265's slope survives at scale",
            if_false=lambda: f"T4 FAIL -- transfer changes by {d4:+.4f} from {ns[0]} to "
-                            f"{ns[-1]} lines, below the {T4_BAR} bar. The bar is ABSOLUTE and "
-                            f"was set before this assay's scale was known, so read the curve "
-                            f"and the ratio {hi/lo if lo > 1e-9 else float('nan'):.1f}x "
-                            f"alongside it -- a FAIL here does NOT license the claim that "
-                            f"transfer is flat, only that the rise missed a bar I guessed")
+                            f"{ns[-1]} lines, below the {T4_BAR} bar. That bar is ABSOLUTE "
+                            f"and was set before this assay's scale was known, so read the "
+                            f"printed curve and the {ns[0]}-to-{ns[-1]} ratio of "
+                            f"{hi/lo if lo > 1e-9 else float('nan'):.1f}x next to it -- a FAIL "
+                            f"here does NOT license the claim that transfer is flat, only that "
+                            f"the difference missed a threshold I guessed")
     res["T4"] = {"low": lo, "high": hi, "rise": d4}
 
     say("T5 WHERE DOES IT SATURATE?")
