@@ -31,15 +31,25 @@ fails, no such method can succeed and the direction is closed rather than merely
 GATES, ALL DECLARED BEFORE THE NUMBERS:
 
   N1 IS THERE OFF-DIAGONAL STRUCTURE AT ALL?
-     The full W_c oracle against loop 261's diagonal oracle, both fitted on the held-out
-     line's own answers, lambda picked by an inner split over that line's GENES.
-     Gate: PASS iff the full operator beats the diagonal by at least 0.005.
+     CORRECTED FROM RUN 1, which gated on an oracle fitted AND scored on the same rows and
+     so could not tell structure from overfitting. A 956,484-parameter operator scored on
+     its own fitting rows will look good whatever it learned. Run 1 reported +0.1138.
+     The gate is now the HONEST within-line comparison: fit on half of the held-out line's
+     GENES, score on the other half, with lambda chosen by a further inner split of the
+     FITTING half only, so nothing that touches the score chose anything.
+     Gate: PASS iff the honest full operator beats the honest diagonal by at least 0.005.
+     Both oracles are still reported beside it so the overfitting gap is visible.
      A FAIL means the interaction is diagonal and loop 261 already measured all of it.
 
   N2 IS W_c RELIABLE, OR IS IT NOISE?                              -- requires N1
      Fit W_c on disjoint halves of the line's genes and correlate the two operators
-     entrywise. s_c reached 0.9518 on this test; W_c has 956,484 free parameters against
-     ~3,700 rows, so it may not.
+     entrywise. s_c reached 0.9518 on this test.
+     CORRECTED FROM RUN 1: run 1's docstring called W_c "underdetermined by roughly 250 to
+     1". That divided 956,484 parameters by ~3,700 ROWS, treating each row as one scalar
+     observation when it is a 978-vector. The regression is R(n x 978) = XG(n x 978) W, so
+     each COLUMN of W has 978 parameters against n observations of that landmark: 3.8 to 1
+     OVERdetermined, not 250 to 1 under. Run 1's N8 therefore warned that W_c "is mostly
+     fitting noise", which was too pessimistic by two orders of magnitude.
      Gate: PASS iff the mean split-half correlation exceeds 0.30.
 
   N3 LOAD-BEARING -- IS THE HELD-OUT OPERATOR IN THE SPAN OF THE TRAINING ONES?
@@ -150,7 +160,8 @@ def main():
     def sc(P, Y): return float(np.nanmean([H.pear(P[i], Y[i]) for i in range(len(Y))]))
 
     rng = np.random.default_rng(SEED)
-    arms = {k: [] for k in ("base", "diag", "full", "span", "ridge", "const", "perm", "diagonly")}
+    arms = {k: [] for k in ("base", "diag", "full", "span", "ridge", "const", "perm",
+                            "diagonly", "hon_base", "hon_diag", "hon_full")}
     relia, diagfrac, chosen = [], [], []
 
     for hold in LINES:
@@ -186,6 +197,29 @@ def main():
         # N2 reliability: the two half-fitted operators against each other
         Wa, Wb = solve_ridge(G1, B1, best_lam), solve_ridge(G2, B2, best_lam)
         relia.append(H.pear(Wa.ravel(), Wb.ravel()))
+
+        # ---- the HONEST within-line arm: fit on one gene half, score on the other, with
+        # lambda chosen by a further inner split of the FITTING half, so nothing that
+        # touches the score chose anything. This is what N1 gates on.
+        hb, hd, hf = [], [], []
+        for fit_i, sco_i in ((i1, i2), (i2, i1)):
+            q = rng.permutation(len(fit_i))
+            q1, q2 = fit_i[q[:len(q) // 2]], fit_i[q[len(q) // 2:]]
+            Gq, Bq = gram(xh[q1], Rh[q1])
+            bl, be = LAM_W[0], np.inf
+            for lam in LAM_W:
+                Wq = solve_ridge(Gq, Bq, lam)
+                e = float(((xh[q2] @ Wq - Rh[q2]) ** 2).mean())
+                if e < be: be, bl = e, lam
+            Gf, Bf = gram(xh[fit_i], Rh[fit_i])
+            Wf = solve_ridge(Gf, Bf, bl)
+            sf = diag_fit(xh[fit_i], Rh[fit_i])
+            hb.append(sc(ah[sco_i], yh[sco_i]))
+            hd.append(sc(ah[sco_i] + sf * xh[sco_i], yh[sco_i]))
+            hf.append(sc(ah[sco_i] + xh[sco_i] @ Wf, yh[sco_i]))
+        arms["hon_base"].append(float(np.mean(hb)))
+        arms["hon_diag"].append(float(np.mean(hd)))
+        arms["hon_full"].append(float(np.mean(hf)))
         dfr = float((np.diag(Wh) ** 2).sum() / max((Wh ** 2).sum(), 1e-12))
         diagfrac.append(dfr)
 
@@ -244,23 +278,39 @@ def main():
     say(f"     {'+ constant combination (no annotation)':38s} {m['const']:.4f}   {m['const']-m['base']:+.4f}")
     say(f"     {'+ ridge from z_c':38s} {m['ridge']:.4f}   {m['ridge']-m['base']:+.4f}")
     say(f"     {'+ ridge, line labels shuffled':38s} {m['perm']:.4f}   {m['perm']-m['base']:+.4f}")
+    say("")
+    say("     HONEST WITHIN-LINE -- fit on half the line's GENES, score on the other half:")
+    say(f"     {'baseline':38s} {m['hon_base']:.4f}")
+    say(f"     {'+ diagonal s_c':38s} {m['hon_diag']:.4f}   "
+        f"{m['hon_diag']-m['hon_base']:+.4f}")
+    say(f"     {'+ full W_c':38s} {m['hon_full']:.4f}   "
+        f"{m['hon_full']-m['hon_base']:+.4f}")
     res["arms"] = m
     res["per_fold"] = {k: [float(x) for x in v] for k, v in arms.items()}
     res["lambda"] = chosen
 
     say("N1 IS THERE OFF-DIAGONAL STRUCTURE AT ALL?")
-    d1 = m["full"] - m["diag"]
-    say(f"     full W_c oracle {m['full']:.4f} vs diagonal s_c oracle {m['diag']:.4f}   {d1:+.4f}")
+    d1 = m["hon_full"] - m["hon_diag"]
+    d1_oracle = m["full"] - m["diag"]
+    hg_f, hg_d = m["hon_full"] - m["hon_base"], m["hon_diag"] - m["hon_base"]
+    say(f"     HONEST full W_c {hg_f:+.4f} vs HONEST diagonal {hg_d:+.4f}   difference {d1:+.4f}")
+    say(f"     the same-rows oracles were {m['full']-m['base']:+.4f} and "
+        f"{m['diag']-m['base']:+.4f}, a difference of {d1_oracle:+.4f}")
+    say(f"     the diagonal survives honest scoring almost intact; the full operator does not,")
+    say(f"     which is what a 956,484-parameter fit scored on its own rows looks like")
     say(f"     diagonal oracle reproduces loop 261's {DIAG_ORACLE_REF:+.4f} at "
         f"{m['diag']-m['base']:+.4f}")
     G_.add("N1", bool(d1 >= N1_BAR), stat=float(d1),
-           if_true=lambda: f"N1 PASS -- the off-diagonal is worth {d1:+.4f} beyond the diagonal, "
-                           f"so there is structure loop 261 could not see",
-           if_false=lambda: f"N1 FAIL -- a full 978x978 operator is worth {d1:+.4f} beyond a "
-                            f"diagonal one; the interaction is diagonal and loop 261 measured "
-                            f"all of it")
-    res["N1"] = {"full_minus_diag": d1, "full_gain": m["full"] - m["base"],
-                 "diag_gain": m["diag"] - m["base"]}
+           if_true=lambda: f"N1 PASS -- off-diagonal structure is worth {d1:+.4f} beyond the "
+                           f"diagonal on HELD-OUT GENES, so it survives honest scoring and is "
+                           f"real rather than an artefact of fitting {NL*NL:,} parameters",
+           if_false=lambda: f"N1 FAIL -- on held-out genes a full operator is worth {d1:+.4f} "
+                            f"beyond a diagonal one; the interaction is diagonal and loop 261 "
+                            f"measured all of it")
+    res["N1"] = {"honest_full_minus_diag": d1, "oracle_full_minus_diag": d1_oracle,
+                 "honest_full_gain": hg_f, "honest_diag_gain": hg_d,
+                 "oracle_full_gain": m["full"] - m["base"],
+                 "oracle_diag_gain": m["diag"] - m["base"]}
 
     say("N2 IS W_c RELIABLE, OR IS IT NOISE?")
     rl = float(np.mean(relia))
@@ -336,10 +386,10 @@ def main():
     res["N7"] = {"diag_frobenius_fraction": df, "per_fold": [float(x) for x in diagfrac]}
 
     say("N8 WHAT THIS CANNOT SHOW")
-    say(f"     W_c has {NL*NL:,} parameters and each line supplies about 3,700 rows, so the")
-    say("     operator is underdetermined by roughly 250 to 1 and the ridge lambda is carrying")
-    say("     the fit. N2 is the gate that decides whether the oracle above is signal or a")
-    say("     noise fit scored against itself; read every other number through it.")
+    say(f"     W_c has {NL*NL:,} parameters, and each COLUMN of it has {NL} parameters against")
+    say(f"     about 3,700 observations of that landmark -- 3.8 to 1 overdetermined. Run 1 of")
+    say(f"     this loop said 250 to 1 UNDERdetermined by dividing parameters by rows rather")
+    say(f"     than by observations; that error is corrected here and in the ledger.")
     say("     LINEAR operators only. A genuinely nonlinear interaction -- saturation, a")
     say("     threshold, a sign flip above some dose -- is invisible to every number here.")
     say("     The span test asks whether W_hold is reachable from EIGHT other operators. A")

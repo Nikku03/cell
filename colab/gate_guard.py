@@ -292,6 +292,23 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      be byte-identical to the arm it is compared against. When one variable feeds two consumers,
 #      split it and let only the consumer under test see the substitute.
 #
+#   J  AN ORACLE FITTED AND SCORED ON THE SAME ROWS. Loop 262 run 1 gated N1 on a 978x978
+#      operator fitted on the held-out line's rows and then scored on those same rows, and
+#      reported the off-diagonal as worth +0.1138 beyond the diagonal. Refitting on half of
+#      each line's GENES and scoring on the other half -- lambda chosen inside the fitting
+#      half -- put it at +0.0435. Half the headline was the fit reading back its own
+#      training data. The diagonal, with 978 parameters instead of 956,484, lost almost
+#      nothing on the same test (+0.0247 -> +0.0239), which is exactly why an oracle's
+#      trustworthiness scales with how few parameters it has and must never be assumed.
+#      A "cheating" arm is legitimate as a CEILING only when it is cheating in one specific
+#      way -- seeing the held-out answers -- and not also in the ordinary way of being
+#      scored on its own fitting rows. Those are different sins and only the first is
+#      informative. Every oracle now needs a held-out split inside it.
+#      The same run also mis-stated the fit's difficulty: it divided 956,484 parameters by
+#      ~3,700 ROWS to claim 250:1 underdetermined, when each COLUMN of W has 978 parameters
+#      against 3,700 observations of that landmark -- 3.8:1 OVERdetermined. Parameters are
+#      counted against OBSERVATIONS, and a row of a multi-output regression is 978 of them.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 
