@@ -48,10 +48,71 @@ SIGNED_CTRL = re.compile(r"\b(\w*real\w*|d\d)\[?[\"']?\w*[\"']?\]?\s*>\s*(\w*swa
 # "adds" is deliberately NOT here: "adds -0.15" is coherent arithmetic, so flagging it would
 # fire on a third of the corpus and train me to ignore the linter. "costs -0.05" is the bug --
 # it means the thing GAINED. Same for beats/exceeds/improves, which assert superiority.
-DIRECTIONAL_FAIL = re.compile(
-    r"if_false\s*=.{0,400}?\b(costs?|loses?|lost|drops?|falls?|gains?|improves?|beats?|"
-    r"exceeds?|outperforms?|rises?)\b.{0,80}?\{[^{}]*:\+",
-    re.S)
+# G: a directional verb in an if_false message, applied to a value printed with its own
+# sign. Two regex versions of this check were WRONG in the same way -- a text window after
+# `if_false=` ran past the end of the message and matched a verb from a neighbouring say()
+# against a value from a different gate. Regexing over raw source cannot see where an
+# argument ends, so this walks the AST and inspects ONLY the if_false expression.
+# "adds" is deliberately absent: "adds -0.15" is coherent arithmetic and flagging it fired
+# on a third of the corpus, which trains the reader to ignore the linter.
+DIRECTIONAL_VERBS = re.compile(
+    r"\b(costs?|loses?|lost|drops?|falls?|gains?|improves?|beats?|exceeds?|outperforms?|"
+    r"rises?)\b", re.I)
+
+
+def _signed_anywhere(node):
+    for n in ast.walk(node):
+        if isinstance(n, ast.FormattedValue) and n.format_spec is not None:
+            for c in ast.walk(n.format_spec):
+                if isinstance(c, ast.Constant) and isinstance(c.value, str) and "+" in c.value:
+                    return True
+    return False
+
+
+def _unguarded_text(node, out):
+    """Literal text NOT inside a conditional branch.
+
+    The prescribed fix for defect G is to READ the sign before using a directional verb:
+        f"... is worth {d:+.4f}" + (f"... zeroing it IMPROVES it by {-d:.4f}" if d < 0
+                                    else f"... below the bar")
+    A verb inside an IfExp branch is therefore guarded by construction, and flagging it
+    would train the author away from the very pattern the ledger prescribes. Only verbs in
+    the UNCONDITIONAL part of the message are a coin flip on the sign."""
+    if isinstance(node, ast.IfExp):
+        return
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        out.append(node.value)
+    for ch in ast.iter_child_nodes(node):
+        _unguarded_text(ch, out)
+
+
+def _fstring_parts(node):
+    """(unconditional literal text, whether any interpolation prints an explicit sign)."""
+    out = []
+    _unguarded_text(node, out)
+    return " ".join(out), _signed_anywhere(node)
+
+
+def sign_assuming_fail_messages(src):
+    """Defect G, by AST rather than by text window."""
+    out = []
+    try:
+        tree = ast.parse(src)
+    except SyntaxError:
+        return out
+    for node in ast.walk(tree):
+        if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and node.func.attr == "add"):
+            continue
+        for kw in node.keywords:
+            if kw.arg != "if_false":
+                continue
+            body = kw.value.body if isinstance(kw.value, ast.Lambda) else kw.value
+            text, signed = _fstring_parts(body)
+            m = DIRECTIONAL_VERBS.search(text)
+            if m and signed:
+                out.append(f"'{m.group(1)}' with a signed value: {text[:64]}")
+    return out
 
 
 def scan(p):
@@ -97,7 +158,7 @@ def scan(p):
     # explicit sign. A FAIL branch is where the statistic is LEAST constrained in sign, so
     # "costs {d:+.4f}" renders as "costs -0.0543" -- the verb and the sign disagree. Only
     # if_false is flagged: an if_true branch has usually already established the direction.
-    g = [m.group(0)[:78].replace("\n", " ") for m in DIRECTIONAL_FAIL.finditer(s)]
+    g = sign_assuming_fail_messages(s)
     if g:
         hits["G if_false message uses a directional verb on a signed statistic"] = sorted(set(g))
     return hits
