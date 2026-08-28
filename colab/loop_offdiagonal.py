@@ -366,16 +366,20 @@ def main():
         res["N5"] = {"fraction": f5}
 
     say("N6 HOW MUCH OF THE OFF-DIAGONAL HEADROOM IS RECOVERED?")
-    head = m["full"] - m["base"]
+    head = m["hon_full"] - m["hon_base"]          # DEFECT J: the HONEST headroom, not the
+    head_oracle = m["full"] - m["base"]           # same-rows oracle, which is 2.1x inflated
     best = max(m["const"], m["ridge"], m["span"]) - m["base"]
     frac = best / head if head > 1e-9 else 0.0
-    say(f"     best arm {best:+.4f} of the full-W oracle's {head:+.4f} = {frac:.1%}")
+    say(f"     best arm {best:+.4f} of the HONEST full-W headroom {head:+.4f} = {frac:.1%}")
+    say(f"     (against the same-rows oracle's {head_oracle:+.4f} it would read "
+        f"{best/max(head_oracle,1e-9):.1%}; defect J says use the honest denominator)")
     say(f"     (the best arm here INCLUDES the cheating span coefficients)")
     G_.add("N6", bool(frac >= N6_BAR), stat=float(frac), requires=("N1",),
            if_true=lambda: f"N6 PASS -- {frac:.1%} of the headroom is reachable",
            if_false=lambda: f"N6 FAIL -- {frac:.1%} of the {head:+.4f} headroom is reachable "
                             f"even allowing a cheating combination of training operators")
-    res["N6"] = {"fraction": frac, "headroom": head, "best": best}
+    res["N6"] = {"fraction": frac, "honest_headroom": head,
+                 "oracle_headroom": head_oracle, "best": best}
 
     say("N7 HOW DIAGONAL IS THE OPERATOR?")
     df = float(np.mean(diagfrac))
