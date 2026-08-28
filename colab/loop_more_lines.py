@@ -210,6 +210,7 @@ def main():
 
     say("R3 DO THE NEW LINES SUPPORT AN OPERATOR?")
     own, curve, blend_gain, base_all = {}, collections.defaultdict(list), [], {}
+    curve_null = collections.defaultdict(list)
     for hold in LINES:
         rows = fold(hold)
         XG, Y, A = rows(hold)
@@ -229,22 +230,36 @@ def main():
         # projections of the held-out line's inputs through each training operator
         P1 = np.stack([XG[h1] @ W for W in Wtr])
         P2 = np.stack([XG[h2] @ W for W in Wtr])
+        # NULL: operators fitted on ROW-PERMUTED residuals of the same training lines.
+        # Identical fitting procedure, identical scale, identical count -- the gene-to-
+        # response pairing destroyed. Adding basis vectors to a least-squares fit helps
+        # almost automatically, so the REAL curve must beat this one to mean anything.
+        Wnull = []
+        for c in LINES:
+            if c == hold: continue
+            Xc, Yc, Ac = rows(c)
+            Rc = Yc - Ac
+            Wnull.append(fit_dense(Xc, Rc[rng.permutation(len(Rc))], 1e3, NL))
+        Q1_ = np.stack([XG[h1] @ W for W in Wnull])
+        Q2_ = np.stack([XG[h2] @ W for W in Wnull])
+        del Wnull
         own1, own2 = XG[h1] @ Wown, XG[h2] @ Wown
 
         for n in range(2, len(Wtr) + 1):
-            gains = []
-            for _ in range(NSUB):
-                s = rng.choice(len(Wtr), size=n, replace=False)
-                F = P1[s].reshape(n, -1)
-                a = np.linalg.solve(F @ F.T + 1e-6 * np.eye(n), F @ R[h1].ravel())
-                gains.append(sc(A[h2] + np.tensordot(a, P2[s], axes=(0, 0)), Y[h2]) - b)
-            curve[n].append(float(np.mean(gains)))
+            for store, PA, PB in ((curve, P1, P2), (curve_null, Q1_, Q2_)):
+                gains = []
+                for _ in range(NSUB):
+                    s = rng.choice(len(PA), size=n, replace=False)
+                    F = PA[s].reshape(n, -1)
+                    a = np.linalg.solve(F @ F.T + 1e-6 * np.eye(n), F @ R[h1].ravel())
+                    gains.append(sc(A[h2] + np.tensordot(a, PB[s], axes=(0, 0)), Y[h2]) - b)
+                store[n].append(float(np.mean(gains)))
         # R5: own operator blended with ALL training operators, weights on the same half
         F = np.concatenate([own1.ravel()[None, :], P1.reshape(len(Wtr), -1)], 0)
         a = np.linalg.solve(F @ F.T + 1e-6 * np.eye(len(F)), F @ R[h1].ravel())
         pred = a[0] * own2 + np.tensordot(a[1:], P2, axes=(0, 0))
         blend_gain.append(sc(A[h2] + pred, Y[h2]) - b - own[hold])
-        del P1, P2, Wtr
+        del P1, P2, Q1_, Q2_, Wtr
 
     newg = [own[l] for l in new]; oldg = [own[l] for l in LINES if l not in new]
     say(f"     own dense operator, fit on half the line's genes, scored on the other half:")
@@ -264,21 +279,29 @@ def main():
     means = np.array([np.mean(curve[n]) for n in ns])
     say(f"     combination of n training operators, weights fitted on half the held-out")
     say(f"     line's genes and scored on the other half:")
-    for n, mv in zip(ns, means):
-        say(f"       n = {n:2d} training lines   {mv:+.4f}")
+    mnull = np.array([np.mean(curve_null[n]) for n in ns])
+    say(f"       {'n':>4s}  {'real':>9s}  {'PERMUTED null':>14s}  {'difference':>11s}")
+    for n, mv, nv in zip(ns, means, mnull):
+        say(f"       {n:4d}  {mv:+9.4f}  {nv:+14.4f}  {mv-nv:+11.4f}")
     xs = np.array(ns, float)
-    per = np.array([[curve[n][i] for n in ns] for i in range(len(LINES))])
+    per = np.array([[curve[n][i] - curve_null[n][i] for n in ns] for i in range(len(LINES))])
     slopes = np.array([np.polyfit(xs, per[i], 1)[0] for i in range(len(LINES))])
     sl, se = float(slopes.mean()), float(slopes.std(ddof=1) / np.sqrt(len(slopes)))
-    say(f"     slope per added line: {sl:+.5f} +/- {se:.5f}  ({sl/max(se,1e-12):+.1f} se)")
+    raw = np.array([[curve[n][i] for n in ns] for i in range(len(LINES))])
+    rs = float(np.mean([np.polyfit(xs, raw[i], 1)[0] for i in range(len(LINES))]))
+    say(f"     RAW slope per added line {rs:+.5f} -- but adding basis vectors to a least")
+    say(f"     squares fit helps almost automatically, which is why the null curve exists.")
+    say(f"     EXCESS slope over the permuted null: {sl:+.5f} +/- {se:.5f} "
+        f"({sl/max(se,1e-12):+.1f} se)")
     G_.add("R4", bool(sl > 2 * se), stat=sl, requires=("R3",),
-           if_true=lambda: f"R4 PASS -- transfer rises {sl:+.5f} per added line, "
-                           f"{sl/max(se,1e-12):.1f} se from zero",
-           if_false=lambda: f"R4 FAIL -- the slope is {sl:+.5f} +/- {se:.5f}; more cell lines "
-                            f"of this kind do not close the gap, and the failure is no longer "
-                            f"about sample size")
+           if_true=lambda: f"R4 PASS -- transfer rises {sl:+.5f} per added line IN EXCESS of "
+                           f"the permuted null, {sl/max(se,1e-12):.1f} se from zero",
+           if_false=lambda: f"R4 FAIL -- the excess slope over the permuted null is {sl:+.5f} "
+                            f"+/- {se:.5f}; the raw slope of {rs:+.5f} per line is what "
+                            f"adding basis vectors to a least-squares fit buys for free")
     res["R4"] = {"n": ns, "mean_gain": [float(x) for x in means],
-                 "slope": sl, "slope_se": se}
+                 "null_gain": [float(x) for x in mnull],
+                 "excess_slope": sl, "slope_se": se, "raw_slope": rs}
 
     say("R5 THE PRACTICAL QUESTION -- DOES IT ADD TO THE LINE'S OWN OPERATOR?")
     d5 = float(np.mean(blend_gain))
@@ -296,7 +319,7 @@ def main():
                void_reason=f"R4's slope is {sl:+.5f} +/- {se:.5f}; extrapolating a flat line "
                            f"would invent a number")
     else:
-        need = (np.mean(list(own.values())) - means[-1]) / sl + ns[-1]
+        need = (np.mean(list(own.values())) - (means[-1] - mnull[-1])) / sl + ns[-1]
         say(f"     at {sl:+.5f} per line, reaching the own-operator's "
             f"{np.mean(list(own.values())):+.4f} needs about {need:.0f} cell lines")
         G_.add("R6", bool(need <= 200), stat=float(need), requires=("R4",),
