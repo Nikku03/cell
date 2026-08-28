@@ -7,8 +7,11 @@
   "span": 0.4611497411895978,
   "ridge": 0.44832332616817516,
   "const": 0.45162626996055116,
-  "perm": 0.4446584020896461,
-  "diagonly": 0.458026130092396
+  "perm": 0.44400496769172965,
+  "diagonly": 0.458026130092396,
+  "hon_base": 0.45148599608949014,
+  "hon_diag": 0.47532903620731215,
+  "hon_full": 0.5188033368039776
  },
  "per_fold": {
   "base": [
@@ -78,15 +81,15 @@
    0.3836312872380953
   ],
   "perm": [
-   0.4491948516163062,
-   0.47448411904511717,
-   0.3698615644672023,
-   0.46381499450742325,
-   0.4733289113882127,
-   0.4966696842004318,
-   0.41926097228594117,
-   0.4693350566849805,
-   0.38597546461119975
+   0.42843209703073176,
+   0.4750636454637658,
+   0.36347899558835445,
+   0.47544177824609973,
+   0.4898975054911074,
+   0.4871588920561093,
+   0.42970916552698474,
+   0.47239183264961204,
+   0.37447079717280135
   ],
   "diagonly": [
    0.45337186700740434,
@@ -98,6 +101,39 @@
    0.44009314601150323,
    0.4810835881322511,
    0.39188771732363886
+  ],
+  "hon_base": [
+   0.4477926454025837,
+   0.47586918138132683,
+   0.37495697328192373,
+   0.47287153844898105,
+   0.48283200471426496,
+   0.5166662361008565,
+   0.4331556447803262,
+   0.47578377451940945,
+   0.3834459661757389
+  ],
+  "hon_diag": [
+   0.46816000651278844,
+   0.492690632043146,
+   0.42907339867876215,
+   0.48546393221470885,
+   0.49899462196592437,
+   0.5290714737580735,
+   0.46053463457841526,
+   0.4924704431896708,
+   0.42150218292431924
+  ],
+  "hon_full": [
+   0.5230249445658649,
+   0.5546395075814642,
+   0.4315936136832501,
+   0.5460771797465562,
+   0.5518232091407804,
+   0.586577499697889,
+   0.5026001196392029,
+   0.5423570761170844,
+   0.43053688106370624
   ]
  },
  "lambda": [
@@ -112,22 +148,25 @@
   1000.0
  ],
  "N1": {
-  "full_minus_diag": 0.1137630056883277,
-  "full_gain": 0.13845065110733296,
-  "diag_gain": 0.024687645419005255
+  "honest_full_minus_diag": 0.04347430059666546,
+  "oracle_full_minus_diag": 0.1137630056883277,
+  "honest_full_gain": 0.06731734071448747,
+  "honest_diag_gain": 0.023843040117822012,
+  "oracle_full_gain": 0.13845065110733296,
+  "oracle_diag_gain": 0.024687645419005255
  },
  "N2": {
-  "split_half": 0.4490318561318034,
+  "split_half": 0.44791561637087285,
   "per_fold": [
    0.4682447872994218,
-   0.4821979383400311,
-   0.43879981482195574,
-   0.48015469064160815,
-   0.4521517739288869,
-   0.4613446723058889,
-   0.4346624205352565,
-   0.4383643945412764,
-   0.38536621277190486
+   0.4791304205026069,
+   0.4283940091129854,
+   0.47514257478518024,
+   0.45055562061795934,
+   0.4637350520133058,
+   0.4344764161629146,
+   0.4467227632129302,
+   0.3848389036305513
   ]
  },
  "N3": {
@@ -138,8 +177,9 @@
   "const_gain": 0.00014046185075999862
  },
  "N6": {
-  "fraction": 0.06980056072336357,
-  "headroom": 0.13845065110733296,
+  "fraction": 0.14355785563179307,
+  "honest_headroom": 0.06731734071448747,
+  "oracle_headroom": 0.13845065110733296,
   "best": 0.00966393307980662
  },
  "N7": {
@@ -167,7 +207,7 @@
  "void": [
   "N5"
  ],
- "seconds": 95.09245300292969,
+ "seconds": 103.02674174308777,
  "log": [
   "========================================================================================================",
   "LOOP 262 -- IS THE INTERACTION OFF-DIAGONAL, AND CAN THAT BE PREDICTED?",
@@ -190,16 +230,24 @@
   "     + best combination of training W (cheat) 0.4611   +0.0097",
   "     + constant combination (no annotation) 0.4516   +0.0001",
   "     + ridge from z_c                       0.4483   -0.0032",
-  "     + ridge, line labels shuffled          0.4447   -0.0068",
+  "     + ridge, line labels shuffled          0.4440   -0.0075",
+  "",
+  "     HONEST WITHIN-LINE -- fit on half the line's GENES, score on the other half:",
+  "     baseline                               0.4515",
+  "     + diagonal s_c                         0.4753   +0.0238",
+  "     + full W_c                             0.5188   +0.0673",
   "N1 IS THERE OFF-DIAGONAL STRUCTURE AT ALL?",
-  "     full W_c oracle 0.5899 vs diagonal s_c oracle 0.4762   +0.1138",
+  "     HONEST full W_c +0.0673 vs HONEST diagonal +0.0238   difference +0.0435",
+  "     the same-rows oracles were +0.1385 and +0.0247, a difference of +0.1138",
+  "     the diagonal survives honest scoring almost intact; the full operator does not,",
+  "     which is what a 956,484-parameter fit scored on its own rows looks like",
   "     diagonal oracle reproduces loop 261's +0.0247 at +0.0247",
-  "     N1 PASS -- the off-diagonal is worth +0.1138 beyond the diagonal, so there is structure loop 261 could not see",
+  "     N1 PASS -- off-diagonal structure is worth +0.0435 beyond the diagonal on HELD-OUT GENES, so it survives honest scoring and is real rather than an artefact of fitting 956,484 parameters",
   "N2 IS W_c RELIABLE, OR IS IT NOISE?",
   "     split-half over GENES, entrywise correlation of the two operators:",
-  "     0.468, 0.482, 0.439, 0.480, 0.452, 0.461, 0.435, 0.438, 0.385",
-  "     mean 0.4490   (s_c reached 0.9518 on the same test)",
-  "     N2 PASS -- W_c reproduces at 0.449 from disjoint gene halves",
+  "     0.468, 0.479, 0.428, 0.475, 0.451, 0.464, 0.434, 0.447, 0.385",
+  "     mean 0.4479   (s_c reached 0.9518 on the same test)",
+  "     N2 PASS -- W_c reproduces at 0.448 from disjoint gene halves",
   "N3 LOAD-BEARING -- IS THE HELD-OUT OPERATOR IN THE SPAN OF THE TRAINING ONES?",
   "     best combination of the 8 training operators, coefficients fitted on the",
   "     held-out line's own residual: +0.0097",
@@ -214,18 +262,19 @@
   "N5 PERMUTED CONTROL",
   "     N5 VOID -- N4 did not pass, so there is nothing here to test",
   "N6 HOW MUCH OF THE OFF-DIAGONAL HEADROOM IS RECOVERED?",
-  "     best arm +0.0097 of the full-W oracle's +0.1385 = 7.0%",
+  "     best arm +0.0097 of the HONEST full-W headroom +0.0673 = 14.4%",
+  "     (against the same-rows oracle's +0.1385 it would read 7.0%; defect J says use the honest denominator)",
   "     (the best arm here INCLUDES the cheating span coefficients)",
-  "     N6 FAIL -- 7.0% of the +0.1385 headroom is reachable even allowing a cheating combination of training operators",
+  "     N6 FAIL -- 14.4% of the +0.0673 headroom is reachable even allowing a cheating combination of training operators",
   "N7 HOW DIAGONAL IS THE OPERATOR?",
   "     fraction of W_c's squared Frobenius norm on its own diagonal: 10.4370%",
   "     W_c with the off-diagonal zeroed scores +0.0065 against",
   "     the full operator's +0.1385 and the direct diagonal fit's +0.0247",
   "N8 WHAT THIS CANNOT SHOW",
-  "     W_c has 956,484 parameters and each line supplies about 3,700 rows, so the",
-  "     operator is underdetermined by roughly 250 to 1 and the ridge lambda is carrying",
-  "     the fit. N2 is the gate that decides whether the oracle above is signal or a",
-  "     noise fit scored against itself; read every other number through it.",
+  "     W_c has 956,484 parameters, and each COLUMN of it has 978 parameters against",
+  "     about 3,700 observations of that landmark -- 3.8 to 1 overdetermined. Run 1 of",
+  "     this loop said 250 to 1 UNDERdetermined by dividing parameters by rows rather",
+  "     than by observations; that error is corrected here and in the ledger.",
   "     LINEAR operators only. A genuinely nonlinear interaction -- saturation, a",
   "     threshold, a sign flip above some dose -- is invisible to every number here.",
   "     The span test asks whether W_hold is reachable from EIGHT other operators. A",
@@ -241,7 +290,7 @@
   "  N4  FAIL",
   "  N5  VOID",
   "  N6  FAIL",
-  "  3/5   [95s]   (1 VOID: N5)",
+  "  3/5   [103s]   (1 VOID: N5)",
   "========================================================================================================"
  ]
 }
