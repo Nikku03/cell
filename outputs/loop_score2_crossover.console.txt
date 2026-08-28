@@ -1,0 +1,84 @@
+========================================================================================================
+LOOP 267 -- THE TRANSFER CURVE AT 908 CELL LINES
+========================================================================================================
+     Loop 265 measured +0.00094 per added line over n = 2 to 11 and extrapolated ~61
+     lines to close the gap. Its own R7 said a curve flat from 2 to 11 could still
+     rise at 50, and nothing on hand could test it. Score2 has 908 -- an order of
+     magnitude past the extrapolation, so this can FALSIFY the slope, not just extend it.
+     STRUCTURAL DIFFERENCE, stated first: Score2 fitness is ONE SCALAR per (gene, line),
+     so there is no per-line operator and loop 266's 'own operator' arm does not exist.
+     By loop 260's geometry a model using only the held-out line is confined to its
+     line mean, which the baseline already holds. So this is borrow against BASELINE.
+     CRISPRcleanR: 908 cell lines x 15,565 genes (finite everywhere)
+T1 IS THE INTERACTION SUBSTANTIAL?
+     variance of fitness: gene main 72.6%, line main 0.0%, interaction 27.4%
+     LINCS was 27.6% gene / 3.8% line / 68.7% interaction
+     T1 PASS -- 27.4% of fitness variance is gene x line interaction, so there is something here to transfer
+T2 DOES LOOP 260'S GEOMETRY REPLICATE?
+     best gene-only model of the residual: 0.000000   line-only: 0.000000
+     loop 260 measured 0.000270 and 0.000017 on LINCS shRNA -- a different assay
+     T2 PASS -- 0.0000% and 0.0000%; double-centring pins one-way models at zero on CRISPR fitness exactly as it did on shRNA
+     running the (n lines) x (m genes) grid, 40 held-out lines x 2 reps ...
+       crisprcleanr: held-out line 1/40
+       crisprcleanr: held-out line 11/40
+       crisprcleanr: held-out line 21/40
+       crisprcleanr: held-out line 31/40
+
+     REAL minus permuted null, by training lines (rows) and measured genes (cols):
+       n lines        m=50       m=200      m=1000
+             2     -0.0016     +0.0019     +0.0027
+             4     -0.0037     +0.0009     +0.0026
+             8     -0.0001     +0.0002     +0.0026
+            16     -0.0044     +0.0006     +0.0034
+            32     -0.0066     +0.0025     +0.0058
+            64     -0.0016     +0.0002     +0.0076
+           128     +0.0002     +0.0044     +0.0117
+           300     +0.0062     +0.0087     +0.0168
+           600     +0.0061     +0.0116     +0.0197
+           907     +0.0067     +0.0133     +0.0215
+     raw (not null-subtracted) at m=1000: n=2:+0.0025, n=4:+0.0024, n=8:+0.0025, n=16:+0.0032, n=32:+0.0054, n=64:+0.0073, n=128:+0.0114, n=300:+0.0165, n=600:+0.0191, n=907:+0.0209
+     null itself at m=1000: -0.0002, -0.0002, -0.0001, -0.0001, -0.0003, -0.0003, -0.0003, -0.0003, -0.0005, -0.0005
+T3 DOES BORROWING BEAT THE BASELINE AT ALL?
+     at n=907 lines, m=1000 measured genes: raw +0.0209, excess over null +0.0215
+     T3 PASS -- borrowing from 907 lines is worth +0.0215 over the baseline, in excess of a gene-shuffled null
+T4 LOAD-BEARING -- DOES TRANSFER RISE WITH THE NUMBER OF LINES?
+     n=2: +0.0027   ->   n=907: +0.0215   rise +0.0188
+     T4 FAIL -- transfer changes by +0.0188 from 2 to 907 lines, below the 0.02 bar; loop 265's slope does not survive at scale
+T5 WHERE DOES IT SATURATE?
+     maximum excess +0.0215; 90% of it first reached at n = 600 training lines
+     loop 265 extrapolated 61 lines from a curve that stopped at 11
+     T5 VOID -- T4 did not pass, so there is nothing here to test
+T6 DOES IT REPLICATE ACROSS PROCESSING PIPELINES?
+     CERES: 908 lines x 15,565 genes -- the SAME screens, a
+     different copy-number-bias pipeline. Anything that appears in one and not the
+     other is the pipeline rather than the biology.
+       ceres: held-out line 1/40
+       ceres: held-out line 11/40
+       ceres: held-out line 21/40
+       ceres: held-out line 31/40
+     CERES rise +0.0173 against CRISPRcleanR's +0.0188   difference 0.0015
+     CERES saturates at n = 600 against CRISPRcleanR's 600
+     T6 PASS -- the two pipelines agree to 0.0015; this is the first replication in the arc that needed no new data
+T7 WHAT THIS CANNOT SHOW
+     Fitness is a SCALAR per (gene, line). There is no response profile and no
+     operator, so nothing here speaks to loop 262's off-diagonal finding, which was
+     about coupling BETWEEN readout genes and needs a multivariate readout.
+     The measured genes are a RANDOM subset, as in loop 266. A chosen panel would
+     almost certainly need fewer genes, and nothing here says which to choose.
+     908 lines is many, but they are all CANCER cell lines from 27 types. Saturation
+     here is saturation within that population, not across human cell states.
+     CRISPR knockout is not shRNA knockdown, and a fitness readout is not expression.
+     Agreement with LINCS would be a real cross-assay result; disagreement would not
+     by itself refute either.
+     Everything is on the double-centred residual, so by loop 260 and T2 any arm
+     constant across lines is pinned near zero however expressive it is.
+========================================================================================================
+  T1  PASS
+  T2  PASS
+  T3  PASS
+  T4  FAIL
+  T5  VOID
+  T6  PASS
+  4/5   [1785s]   (1 VOID: T5)
+========================================================================================================
+     written outputs/loop_score2_crossover.json
