@@ -73,7 +73,9 @@ from loop_more_lines import load_extended, fit_dense, sc
 
 OUT = "outputs/loop_crossover.json"
 SEED = 266266
-BUDGETS = [25, 50, 100, 200, 400, 800, 1600, None]
+BUDGETS = [10, 25, 50, 75, 100, 150, 200, 400, 800, 1600, None]
+FULL = 10**6   # DEFECT 2: one key for the full budget, so it averages over lines instead of
+               # landing in a separate bucket per line's pool size
 NREP = 4
 LAM = [1e2, 1e3, 1e4, 1e5]
 LOOP265_OWN, LOOP265_BORROW = 0.0587, 0.0122
@@ -175,28 +177,42 @@ def main():
                     return np.tensordot(a, F2, axes=(0, 0))
                 bor_ev = combo(Pm1, Pev)
                 nul_ev = combo(Qm1, Qev)
-                F1 = np.concatenate([(Xm @ Wown).ravel()[None, :], Pm1.reshape(len(Pm1), -1)], 0)
-                a = np.linalg.solve(F1 @ F1.T + 1e-6 * np.eye(len(F1)), F1 @ Rm.ravel())
-                bl_ev = a[0] * own_ev + np.tensordot(a[1:], Pev, axes=(0, 0))
+                # DEFECT 1: the own operator has 956,484 parameters, so its IN-SAMPLE
+                # prediction on the genes it was fitted on is near-perfect. Fitting the blend
+                # weights on those same genes hands it weight ~1 and the blend collapses out
+                # of sample. Components are fitted on half the measured genes and the blend
+                # weights on the other half -- the honest cost of blending.
+                if len(s1) >= 8:
+                    ha, hb = s1[:len(s1) // 2], s1[len(s1) // 2:]
+                    Wa = fit_dense(XG[ha], R[ha], pick_lam_dense(XG[ha], R[ha], NL, rng), NL)
+                    Fb = np.concatenate([(XG[hb] @ Wa).ravel()[None, :],
+                                         np.stack([XG[hb] @ W for W in Wtr]).reshape(len(Wtr), -1)], 0)
+                    ab = np.linalg.solve(Fb @ Fb.T + 1e-6 * np.eye(len(Fb)), Fb @ R[hb].ravel())
+                    bl_ev = ab[0] * (XG[ev] @ Wa) + np.tensordot(ab[1:], Pev, axes=(0, 0))
+                else:
+                    bl_ev = bor_ev
 
                 reps["own"].append(sc(A[ev] + own_ev, Y[ev]) - b0)
                 reps["borrow"].append(sc(A[ev] + bor_ev, Y[ev]) - b0)
                 reps["null"].append(sc(A[ev] + nul_ev, Y[ev]) - b0)
                 reps["blend"].append(sc(A[ev] + bl_ev, Y[ev]) - b0)
-            for k in curves: curves[k][m if bud is not None else len(pool)].append(
-                float(np.mean(reps[k])))
+            key = m if bud is not None else FULL
+            for k in curves: curves[k][key].append(float(np.mean(reps[k])))
         del Wtr, Wnull, Pev, Qev
         say(f"     {hold:9s} done   [{time.time()-t0:.0f}s]")
 
     ms = sorted(curves["own"])
+    full_n = int(np.mean([len(v) for v in [curves["own"][FULL]]])) if FULL in curves["own"] else 0
+    lbl = {m: (f"{m}" if m != FULL else "all") for m in ms}
     M = {k: np.array([np.mean(curves[k][m]) for m in ms]) for k in curves}
     say("")
     say(f"     {'genes measured':>15s} {'OWN operator':>13s} {'BORROW 11':>11s} "
         f"{'BLEND':>9s} {'perm null':>10s}")
     for i, m in enumerate(ms):
-        say(f"     {m:15d} {M['own'][i]:+13.4f} {M['borrow'][i]:+11.4f} "
+        say(f"     {lbl[m]:>15s} {M['own'][i]:+13.4f} {M['borrow'][i]:+11.4f} "
             f"{M['blend'][i]:+9.4f} {M['null'][i]:+10.4f}")
     res["budgets"] = [int(x) for x in ms]
+    res["full_budget_lines"] = len(curves["own"].get(FULL, []))
     res["curves"] = {k: [float(x) for x in v] for k, v in M.items()}
 
     say("S1 DOES THE FULL BUDGET REPRODUCE LOOP 265?")
@@ -212,18 +228,20 @@ def main():
 
     say("S2 IS THERE A CROSSOVER AT ALL?")
     d2 = float(M["borrow"][0] - M["own"][0])
-    say(f"     at the smallest budget ({ms[0]} genes): borrow {M['borrow'][0]:+.4f} vs own "
+    say(f"     at the smallest budget ({lbl[ms[0]]} genes): borrow {M['borrow'][0]:+.4f} vs own "
         f"{M['own'][0]:+.4f}   {d2:+.4f}")
     G_.add("S2", bool(d2 >= S2_BAR), stat=d2, requires=("S1",),
            if_true=lambda: f"S2 PASS -- borrowing is worth {d2:+.4f} over the line's own "
                            f"operator at {ms[0]} genes, so a crossover regime exists",
-           if_false=lambda: f"S2 FAIL -- borrowing is worth {d2:+.4f} over the own operator "
-                            f"even at {ms[0]} genes; there is no regime where borrowing wins")
+           if_false=lambda: f"S2 FAIL -- borrowing is worth {d2:+.4f} over the own operator at "
+                            f"{lbl[ms[0]]} genes, below the {S2_BAR} bar. NOTE this does not say "
+                            f"borrowing never wins -- it says the margin where it does is "
+                            f"smaller than the bar declared before the run")
     res["S2"] = {"delta_at_min": d2, "min_budget": int(ms[0])}
 
     say("S3 LOAD-BEARING -- IS THE BORROWED ARM REAL AT THE CROSSOVER?")
     d3 = float(M["borrow"][0] - M["null"][0])
-    say(f"     at {ms[0]} genes: borrow {M['borrow'][0]:+.4f} vs permuted null "
+    say(f"     at {lbl[ms[0]]} genes: borrow {M['borrow'][0]:+.4f} vs permuted null "
         f"{M['null'][0]:+.4f}   {d3:+.4f}")
     say(f"     the null uses operators fitted on ROW-PERMUTED residuals of the same lines --")
     say(f"     identical procedure, identical count, gene-to-response pairing destroyed")
@@ -241,7 +259,7 @@ def main():
         if M["own"][i] >= M["borrow"][i]:
             cross = m
             break
-    say(f"     own overtakes borrow at {cross if cross else 'no budget tested'} genes")
+    say(f"     own overtakes borrow at {lbl[cross] if cross else 'no budget tested'} genes")
     if cross is None:
         G_.add("S4", False, stat=float(ms[-1]), requires=("S2", "S3"), void_if=True,
                void_reason=f"the own operator never overtakes borrowing up to {ms[-1]} genes, "
@@ -260,7 +278,7 @@ def main():
     worst_gap = float((M["blend"] - best).min())
     say(f"     blend against the better of the two arms, worst budget: {worst_gap:+.4f}")
     for i, m in enumerate(ms):
-        say(f"       {m:5d} genes: blend {M['blend'][i]:+.4f} vs best-of-two "
+        say(f"       {lbl[m]:>5s} genes: blend {M['blend'][i]:+.4f} vs best-of-two "
             f"{best[i]:+.4f}   {M['blend'][i]-best[i]:+.4f}")
     G_.add("S5", bool(worst_gap >= -S5_TOL), stat=worst_gap, requires=("S2",),
            if_true=lambda: f"S5 PASS -- blending is within {S5_TOL} of the better arm at every "
