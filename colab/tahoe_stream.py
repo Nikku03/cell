@@ -20,7 +20,7 @@ RESUMABLE BY DESIGN. The container running this session rebooted once already an
 77-minute job with no traceback. Each shard writes its own .npz and is skipped if present,
 so an interrupted run resumes at the shard it died on rather than from the start.
 """
-import sys, json, time, collections
+import sys, json, time, collections, gc, urllib.request
 from pathlib import Path
 import numpy as np
 import pyarrow.parquet as pq
@@ -35,27 +35,46 @@ SHARDS_PER_LINE = int(sys.argv[1]) if len(sys.argv) > 1 else 10
 NSHARD = 1026
 
 
+ROWS_PER_SHARD = 3986181
+API = ("https://datasets-server.huggingface.co/rows?dataset=tahoebio%2FTahoe-100M"
+       "&config=pseudobulk_differential_expression&split=train")
+
+
 def manifest():
-    """Which cell line is in which shard. Reads row group 0's cell-line column only."""
+    """Which cell line is in which shard.
+
+    THE FIRST VERSION OPENED EVERY SHARD'S PARQUET FOOTER. These shards carry 3,987 row
+    groups each, so a footer is 5.8 MB of metadata -- 1,026 of them is ~6 GB pulled over the
+    wire, and the handles were never closed, so it was also ~6 GB of resident memory. The
+    run died before that mattered (the container rebooted at 14:33:06Z, 5 minutes after the
+    last log line) but it would have OOMed shortly after regardless.
+
+    A single row at a known offset answers the same question for about a kilobyte, because
+    each shard holds exactly one cell line and shard k starts at row k * ROWS_PER_SHARD.
+    Written incrementally so a reboot resumes rather than restarts."""
     mf = OUTD / "manifest.json"
-    if mf.exists():
-        return json.loads(mf.read_text())
-    fs = fsspec.filesystem("http")
-    m = {}
-    for sh in range(NSHARD):
+    m = json.loads(mf.read_text()) if mf.exists() else {}
+    todo = [sh for sh in range(NSHARD) if str(sh) not in m]
+    if not todo:
+        return m
+    print(f"  {len(m)} shards already known, probing {len(todo)}", flush=True)
+    for i, sh in enumerate(todo):
         for attempt in range(4):
             try:
-                f = pq.ParquetFile(fs.open(f"{BASE}/{sh}.parquet"))
-                t = f.read_row_groups([0], columns=["Cell_ID_DepMap"])
-                m[str(sh)] = t.column("Cell_ID_DepMap")[0].as_py()
+                u = f"{API}&offset={sh * ROWS_PER_SHARD}&length=1"
+                with urllib.request.urlopen(u, timeout=60) as r:
+                    d = json.loads(r.read().decode())
+                m[str(sh)] = d["rows"][0]["row"]["Cell_ID_DepMap"]
                 break
             except Exception as e:
                 if attempt == 3:
                     print(f"  shard {sh}: FAILED {type(e).__name__}", flush=True)
                     m[str(sh)] = None
                 time.sleep(2 ** attempt)
-        if sh % 100 == 0:
-            print(f"  manifest {sh}/{NSHARD}", flush=True)
+        if i % 100 == 0:
+            mf.write_text(json.dumps(m))
+            print(f"  manifest {i}/{len(todo)}  ({len(set(v for v in m.values() if v))} "
+                  f"lines so far)", flush=True)
     mf.write_text(json.dumps(m))
     return m
 
@@ -66,8 +85,10 @@ def extract(sh, lmset):
     if out.exists():
         return "skip"
     fs = fsspec.filesystem("http")
-    f = pq.ParquetFile(fs.open(f"{BASE}/{sh}.parquet"))
-    t = f.read(columns=COLS)
+    with fs.open(f"{BASE}/{sh}.parquet") as fh:      # closed: the footer is 5.8 MB per shard
+        f = pq.ParquetFile(fh)
+        t = f.read(columns=COLS)
+        del f
     gn = np.asarray(t.column("gene_name"))
     lfc = np.asarray(t.column("log2FoldChange"), dtype=np.float32)
     dr = np.asarray(t.column("drug")); co = np.asarray(t.column("concentration"))
@@ -87,6 +108,8 @@ def extract(sh, lmset):
     np.savez_compressed(out, M=M, drug=np.array([k[0] for k in keys]),
                         conc=np.array([k[1] for k in keys], np.float32),
                         plate=np.array([k[2] for k in keys]), genes=np.array(genes))
+    del t, gn, lfc, dr, co, pl, conds
+    gc.collect()
     return f"{len(keys)} conditions"
 
 
@@ -121,8 +144,10 @@ def main():
                 time.sleep(2 ** attempt)
         if i % 10 == 0 or r.startswith("ERR"):
             el = time.time() - t0
+            rss = int(open("/proc/self/status").read().split("VmRSS:")[1].split()[0]) // 1024
             print(f"  [{i+1}/{len(todo)}] shard {sh} {m[str(sh)]} -> {r}   "
-                  f"{el:.0f}s elapsed, {el/(i+1)*(len(todo)-i-1)/60:.0f} min left", flush=True)
+                  f"{el:.0f}s elapsed, {el/(i+1)*(len(todo)-i-1)/60:.0f} min left, "
+                  f"RSS {rss} MB", flush=True)
     print(f"done in {time.time()-t0:.0f}s", flush=True)
 
 
