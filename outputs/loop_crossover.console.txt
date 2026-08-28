@@ -1,0 +1,90 @@
+========================================================================================================
+LOOP 266 -- THE CROSSOVER: HOW MANY GENES MUST YOU MEASURE IN A NEW CELL LINE?
+========================================================================================================
+     Loop 265: other lines' operators carry +0.0115 above a permuted null at 11 lines.
+     Loop 265's R5: given HALF a line's genes, its own operator (+0.0587) beats them.
+     Those are consistent, because half a line's genes is the budget most favourable
+     to the own arm: 956,484 parameters to estimate against 11 for borrowing.
+     At 25 genes the own operator cannot be worth anything and 11 coefficients from
+     24,450 observations are well determined. WHERE they cross is the protocol.
+     The permuted-operator null runs at EVERY budget, not just at the end.
+     12 cell lines, 3,801 genes, 978 landmarks
+     VCAP      done   [80s]
+     PC3       done   [153s]
+     A375      done   [222s]
+     HA1E      done   [287s]
+     A549      done   [366s]
+     MCF7      done   [437s]
+     HT29      done   [506s]
+     HEPG2     done   [583s]
+     HCC515    done   [647s]
+     NPC       done   [688s]
+     ASC       done   [727s]
+     SKL       done   [760s]
+
+      genes measured  OWN operator   BORROW 11     BLEND  perm null
+                  10       +0.0003     +0.0003   -0.0092    -0.0061
+                  25       +0.0049     +0.0072   +0.0046    -0.0030
+                  50       +0.0093     +0.0097   +0.0113    -0.0012
+                  75       +0.0143     +0.0107   +0.0153    -0.0008
+                 100       +0.0172     +0.0110   +0.0179    -0.0004
+                 150       +0.0209     +0.0112   +0.0206    -0.0002
+                 200       +0.0241     +0.0114   +0.0234    +0.0000
+                 281       +0.0310     +0.0172   +0.0337    +0.0013
+                 400       +0.0355     +0.0114   +0.0311    +0.0001
+                 538       +0.0366     +0.0112   +0.0324    -0.0000
+                 800       +0.0487     +0.0116   +0.0433    +0.0003
+                1600       +0.0636     +0.0117   +0.0559    +0.0004
+                 all       +0.0586     +0.0121   +0.0520    +0.0004
+S1 DOES THE FULL BUDGET REPRODUCE LOOP 265?
+     at 1000000 genes: own +0.0586 against loop 265's +0.0587, borrow +0.0121 against +0.0122
+     S1 PASS -- both arms reproduce loop 265 at the full budget
+S2 IS THERE A CROSSOVER AT ALL?
+     at the smallest budget (10 genes): borrow +0.0003 vs own +0.0003   -0.0001
+     S2 FAIL -- borrowing is worth -0.0001 over the own operator at 10 genes, below the 0.005 bar. NOTE this does not say borrowing never wins -- it says the margin where it does is smaller than the bar declared before the run
+S3 LOAD-BEARING -- IS THE BORROWED ARM REAL AT THE CROSSOVER?
+     at 10 genes: borrow +0.0003 vs permuted null -0.0061   +0.0064
+     the null uses operators fitted on ROW-PERMUTED residuals of the same lines --
+     identical procedure, identical count, gene-to-response pairing destroyed
+     S3 VOID -- S2 did not pass, so there is nothing here to test
+S4 WHERE IS THE CROSSOVER, AND IS IT PRACTICAL?
+     own overtakes borrow at 10 genes
+     S4 VOID -- S2, S3 did not pass, so there is nothing here to test
+S5 DOES BLENDING BEAT BOTH?
+     blend against the better of the two arms, worst budget: -0.0095
+          10 genes: blend -0.0092 vs best-of-two +0.0003   -0.0095
+          25 genes: blend +0.0046 vs best-of-two +0.0072   -0.0025
+          50 genes: blend +0.0113 vs best-of-two +0.0097   +0.0016
+          75 genes: blend +0.0153 vs best-of-two +0.0143   +0.0010
+         100 genes: blend +0.0179 vs best-of-two +0.0172   +0.0007
+         150 genes: blend +0.0206 vs best-of-two +0.0209   -0.0004
+         200 genes: blend +0.0234 vs best-of-two +0.0241   -0.0007
+         281 genes: blend +0.0337 vs best-of-two +0.0310   +0.0027
+         400 genes: blend +0.0311 vs best-of-two +0.0355   -0.0044
+         538 genes: blend +0.0324 vs best-of-two +0.0366   -0.0042
+         800 genes: blend +0.0433 vs best-of-two +0.0487   -0.0054
+        1600 genes: blend +0.0559 vs best-of-two +0.0636   -0.0077
+         all genes: blend +0.0520 vs best-of-two +0.0586   -0.0066
+     S5 VOID -- S2 did not pass, so there is nothing here to test
+S6 WHAT THIS CANNOT SHOW
+     The measured genes are a RANDOM subset. A real experiment would choose which
+     genes to perturb, and a chosen subset could cross far earlier than a random one.
+     Nothing here says which genes to pick, and that is the obvious next question.
+     Eleven training lines. Loop 265 measured the borrowed arm rising +0.00094 per
+     added line, so every number in the borrow column is a floor that more lines
+     would raise, and the crossover would move RIGHT with more lines.
+     The evaluation half is fixed per line but the measured subset is drawn from the
+     other half only, so the largest budget is half a line's genes and no budget
+     above that is tested.
+     Everything is on the double-centred residual, so by loop 260 any arm constant
+     across lines is capped at 0.027%.
+     978 landmarks and shRNA, under loop 254's construct ceiling of 0.2487.
+========================================================================================================
+  S1  PASS
+  S2  FAIL
+  S3  VOID
+  S4  VOID
+  S5  VOID
+  1/2   [760s]   (3 VOID: S3, S4, S5)
+========================================================================================================
+     written outputs/loop_crossover.json
