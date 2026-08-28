@@ -312,9 +312,16 @@ def main():
         say(f"     {s:9s} operator {ws:.4f} -> combined {cs:.4f}   {cs-ws:+.4f}")
     say(f"     {'codep':9s} {d4:+.4f}")
     best_src = max(per_src, key=per_src.get)
+    spread = max(per_src.values()) - min(per_src.values())
+    say(f"     spread across the three sources: {spread:.4f}. Three unrelated graphs agreeing")
+    say(f"     to within {spread:.4f} is what 'the graph does not matter' looks like.")
+    # DEFECT C: this gate asked WHICH source wins. If P5 showed a shuffled graph does just as
+    # well, then no source "wins" in any sense the question meant, and a PASS here would be a
+    # true sentence about a meaningless comparison. It must see P5's verdict.
     G_.add("P6", bool(per_src[best_src] >= P4_BAR), stat=float(per_src[best_src]),
-           requires=("P1",),
-           if_true=lambda: f"P6 PASS -- {best_src} clears the bar at {per_src[best_src]:+.4f}",
+           requires=("P1", "P5"),
+           if_true=lambda: f"P6 PASS -- {best_src} clears the bar at {per_src[best_src]:+.4f} "
+                           f"and P5 confirmed a shuffled graph does NOT",
            if_false=lambda: f"P6 FAIL -- the best source is {best_src} at "
                             f"{per_src[best_src]:+.4f}; no relatedness graph on disk adds to a "
                             f"uniform operator")
