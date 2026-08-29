@@ -353,6 +353,28 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      derived from the quantity's own measured scale before it is written down, and the
 #      order of the approximation it is testing must be stated.
 #
+#   M  A CLAIMED LOWER BOUND THAT IS NOT A BOUND. REM's DB5 driver reports a
+#      "discretization floor": the best accuracy any pose built from the rotation set could
+#      reach, so that a search hitting it is called sampling-limited rather than failed.
+#      Version one subtracted a FULL-LIGAND RMSD floor from an INTERFACE RMSD -- two
+#      different quantities -- and produced negative errors. Version two computed the floor
+#      in the right metric but the wrong way: it placed each rotation at its RMSD-optimal
+#      translation, which is the centroid offset and minimizes FULL-LIGAND RMSD, and then
+#      measured I-RMSD, which a DIFFERENT translation minimizes. The pilot printed a floor
+#      of 7.65 A on a case where the search achieved 4.75 A. A bound that the data beats is
+#      not a bound, and the only reason it was caught is that the impossible direction is
+#      loud; had it erred the other way it would have silently flattered every search-error
+#      number in the benchmark by claiming the sampler was to blame.
+#      THE GENERAL FORM: a quantity evaluated at the argmin of objective A is not a bound on
+#      objective B. Optimizing a proxy and reporting the target is the same error that makes
+#      a "best case" argument wrong whenever the proxy and the target disagree.
+#      RULE: a reported bound must be checked AGAINST THE DATA IT BOUNDS, on every row, as
+#      an assertion -- floor <= achieved, or the run stops. If the true bound is too
+#      expensive to compute (here it needs a translation search per rotation, costing as
+#      much as the docking itself), report the cheap quantity under a name that says what it
+#      is, in this case a diagnostic, and define the error decomposition in the metric where
+#      the bound is genuinely valid.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 
