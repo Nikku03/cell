@@ -146,8 +146,38 @@ Single-restart greedy misses by up to **+16.35 kcal/mol**. So the problem is gen
 non-trivial and the solver is genuinely independent — 20 restarts simply buys the same
 answer exactness does, more cheaply, at these sizes.
 
-**Algorithm 3's 0.0000 kcal/mol repacking gain** was measured on a bound structure and
-rests on the same falsified explanation; `flexible.verify(bound=False)` re-runs it unbound.
+**For Algorithm 3, the same challenge *did* hold.** Its 0.0000 kcal/mol repacking gain was
+a bound-structure artifact, and the two arms invert completely:
+
+| arm | from repacking | from the pose move |
+|---|---|---|
+| bound | +0.0000 (0.0%) | +1.5122 (**100.0%**) |
+| unbound | +44.1416 (**86.3%**) | +7.0270 (13.7%) |
+
+Two-sided exact repacking earns its place on unbound components and does nothing on bound
+ones. So the review was right about Algorithm 3 and wrong about Algorithm 2 — different
+mechanisms, and pooling them would have hidden both.
+
+### Exactness is not accuracy: C4 fails on unbound
+
+The sharpest result in the repo, and a failure. Algorithm 3's positive control refines from
+a pose displaced 1.0 Å from native:
+
+| arm | before | after | |
+|---|---|---|---|
+| bound | 1.000 Å | **0.535 Å** | PASS |
+| unbound | 1.000 Å | **1.228 Å** | **FAIL** |
+
+The verdict stands and the bar is not moved. This is **not** a search failure — C1 shows
+the conditioned elimination returns the exact joint optimum over pose × rotamers to
+`0.000e+00`. It is a scoring failure. The refiner finds the true minimum of the energy it
+was given, and on unbound components that minimum is *not at the native pose*. Optimizing
+an imperfect function exactly moves you exactly to the wrong place. No better search fixes
+this; only a better energy does.
+
+That is the same search-versus-scoring split the DB5 benchmark is built to expose, showing
+up in miniature — and it is the honest limit of everything above: this project can tell you
+it found the true optimum of its model, and cannot tell you the model is right.
 
 **Two-sided interface graphs are sparser than one-sided ones**: density 0.29–0.40 and
 treewidth 2–4 at 12 residues, against 0.49–0.79 and up to 8 for one-sided repacking.

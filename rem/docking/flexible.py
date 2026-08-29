@@ -47,6 +47,14 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
       GATE: the refined pose's RMSD to native must be STRICTLY LESS than the displaced
       pose's. A refiner that cannot walk back a displacement it was handed cannot be
       trusted to improve one it was not.
+      C4 PASSES ON BOUND STRUCTURES (1.000 -> 0.535 A) AND FAILS ON UNBOUND
+      (1.000 -> 1.228 A). The verdict stands; the bar is not moved. This is not a search
+      failure -- C1 shows the conditioned elimination returns the exact joint optimum over
+      pose x rotamers, to 0.000e+00. It is a SCORING failure, and the sharpest statement of
+      exactness-is-not-accuracy in this repo: the refiner finds the true minimum of the
+      energy it was given, and on unbound components that minimum is NOT at the native
+      pose. Optimizing an imperfect function exactly moves you exactly to the wrong place.
+      A better search cannot fix this; only a better energy can.
   C5  NEGATIVE CONTROL. Start from a pose displaced 25 A from native -- outside the pose
       set's reach -- and refine. GATE (inverted): the refined RMSD must remain > 10 A. If
       refinement "recovers" native from 25 A with a pose set that only spans a couple of
@@ -61,7 +69,15 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
       optimum, so rotamer offset 0 is already the answer and there is nothing to find.
       Unbound side chains are in the wrong rotamers, which is what makes a case medium or
       difficult, so the unbound arm is the only one in which the repacking half of C6 can
-      be non-zero. verify(bound=False) runs it.
+      be non-zero. verify(bound=False) runs it, and the two arms invert completely:
+
+          bound     repacking   +0.0000  ( 0.0%)   pose move  +1.5122  (100.0%)
+          unbound   repacking  +44.1416  (86.3%)   pose move  +7.0270  ( 13.7%)
+
+      So for Algorithm 3 the bound number really was an artifact, and the unbound arm is
+      where the two-sided repacking earns its place. (For Algorithm 2's greedy tie the same
+      challenge did NOT hold -- see benchmarks/bench_repack.py, where greedy matches the
+      exact optimum on both arms, 167/167.)
 """
 from __future__ import annotations
 
