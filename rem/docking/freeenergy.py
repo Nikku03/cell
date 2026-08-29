@@ -36,6 +36,16 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
       GATE: min over instances of (E_min - F) >= -1e-9.
   Z3  low-temperature limit at T = 1 K.  GATE: |F - E_min| < 0.01 kcal/mol.
   Z4  high-temperature limit at T = 1e6 K.  GATE: |ln Z - ln(n_configs)| < 1e-3.
+      THIS GATE FAILED, at 3.87e-2, and the verdict stands -- see ledger defect L in
+      colab/gate_guard.py. The code was right and the BAR was wrong: the residual of that
+      limit is exactly -<E>/RT, and <E> here is 77.5 kcal/mol, so 0.039 at 1e6 K was the
+      smallest value physically available. The bar was written before <E> was known.
+  Z4b THE REPAIR, declared separately rather than by moving Z4's bar. A limit is a
+      statement about a RATE, so gate the rate: sweep T over four decades and fit the
+      log-log slope of |ln Z - ln N| against T. GATE: slope within 0.05 of -1, AND the
+      measured residual within 1% of the predicted -<E>/RT at every temperature. This is
+      strictly stronger than the point bar -- code converging to the WRONG constant passes
+      a loose point bar and fails the slope.
   Z5  per-residue rotamer marginals by elimination vs by enumeration.
       GATE: max |difference| < 1e-8, and every marginal sums to 1.
   Z6  POSITIVE CONTROL. A deliberate steric clash is introduced by translating the mobile
@@ -44,6 +54,13 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
   Z7  Z-rescoring vs single-pose scoring, REPORTED not gated: how far apart are the two
       rankings? If they agree everywhere, the ensemble bought nothing and this module
       says so rather than implying it helped.
+      THE FIRST VERSION OF Z7 WAS BROKEN and is recorded as ledger defect K. It ranked
+      five problems of 3, 4, 5, 6 and 7 residues; adding a residue adds a large negative
+      unary term, so both orderings were the residue count sorted descending and the test
+      could not have come out any other way. It reported "identical ordering" and had
+      measured nothing. The corrected Z7 ranks EXCHANGEABLE items: N decoy poses of the
+      SAME residue set, same variables, same rotamers, differing only in the rigid-body
+      pose being scored. Then a reordering is information.
 """
 from __future__ import annotations
 
@@ -148,6 +165,19 @@ def binding_free_energy(case: Dict[str, Structure], side: str = "r", bound: bool
 # verification
 # --------------------------------------------------------------------------------------
 
+def _mean_energy(g: FactorGraph) -> float:
+    """<E> over ALL configurations, by explicit enumeration. Small graphs only; this is a
+    reference quantity for Z4b, so it must not share a code path with the elimination."""
+    import itertools
+    names = list(g.cards)
+    tot, n = 0.0, 0
+    for combo in itertools.product(*[range(g.cards[v]) for v in names]):
+        a = dict(zip(names, combo))
+        tot += sum(f.table[tuple(a[v] for v in f.vars)] for f in g.factors)
+        n += 1
+    return tot / n
+
+
 def verify(case_id: str = "1A2K", verbose: bool = True) -> dict:
     """Run Z1-Z7. Bars are fixed in the module docstring, above, before any number."""
     from rem.docking.data import load_case
@@ -201,6 +231,27 @@ def verify(case_id: str = "1A2K", verbose: bool = True) -> dict:
     say(f"  Z4 T=1e6 K    ln Z {hot['logZ']:.8f}  ln(n_configs) {np.log(n_conf):.8f}  "
         f"|diff| {d4:.3e}   {'PASS' if out['Z4'] else 'FAIL'}")
 
+    # ---- Z4b: THE REPAIR. A limit is a rate, so gate the rate. ---------------------------
+    say("\n  Z4b high-T limit as a RATE (Z4's point bar failed; see ledger defect L)")
+    Ts = np.array([1e5, 1e6, 1e7, 1e8])
+    Ebar = _mean_energy(g_small)
+    resid, pred_rows = [], []
+    for T in Ts:
+        fe = free_energy(small, float(T), g_small)
+        r = fe["logZ"] - np.log(n_conf)
+        pred = -Ebar / rt(float(T))
+        resid.append(abs(r))
+        pred_rows.append((T, r, pred, abs(r - pred) / max(abs(pred), 1e-30)))
+        say(f"      T={T:8.0e}  lnZ-lnN {r:11.4e}   -<E>/RT {pred:11.4e}   "
+            f"rel dev {pred_rows[-1][3]:.3%}")
+    slope = float(np.polyfit(np.log10(Ts), np.log10(np.array(resid)), 1)[0])
+    worst_dev = max(r[3] for r in pred_rows)
+    out["Z4b_slope"], out["Z4b_worst_dev"] = slope, float(worst_dev)
+    out["Z4b"] = abs(slope + 1.0) < 0.05 and worst_dev < 0.01
+    say(f"      <E> over all {n_conf:,.0f} configurations: {Ebar:.4f} kcal/mol")
+    say(f"      log-log slope {slope:.4f} (theory -1, bar +/-0.05); worst deviation from "
+        f"-<E>/RT {worst_dev:.3%} (bar 1%)   {'PASS' if out['Z4b'] else 'FAIL'}")
+
     # ---- Z5: marginals ---------------------------------------------------------------------
     m_elim = gb.marginals()
     m_bf = gb.brute_force_marginals()
@@ -232,30 +283,51 @@ def verify(case_id: str = "1A2K", verbose: bool = True) -> dict:
     say(f"      F     {base['F']:9.4f} -> {fe_clash['F']:9.4f}  (rose: {rose_F})")
     say(f"      Z6 {'PASS' if out['Z6'] else 'FAIL'}")
 
-    # ---- Z7: does the ensemble change the ranking? REPORTED, not gated -----------------------
-    say("\n  Z7 does Z-rescoring rank differently from single-pose min energy? "
+    # ---- Z7: ranking over EXCHANGEABLE items (corrected; see ledger defect K) ------------
+    say("\n  Z7 does Z-rescoring reorder DECOY POSES of the same residue set? "
         "(reported, not gated)")
-    ranks = []
-    for nres in (3, 4, 5, 6, 7):
-        p = build_from_case(case, side="r", bound=True, max_residues=nres,
-                            n_chi1=3, n_chi2=2)
-        fe = free_energy(p, T_ROOM)
-        ranks.append((nres, fe["E_min"], fe["F"], fe["TS_conf"]))
-    order_e = [r[0] for r in sorted(ranks, key=lambda r: r[1])]
-    order_f = [r[0] for r in sorted(ranks, key=lambda r: r[2])]
-    same = order_e == order_f
-    ts = [r[3] for r in ranks]
+    say("      the first version of this gate ranked problems of different SIZES and could "
+        "not fail; see ledger defect K")
+    rng = np.random.default_rng(0)
+    rows = []
+    for k in range(8):
+        if k == 0:
+            mob = small.mobile
+            tag = "native"
+        else:
+            d = rng.normal(size=3)
+            d = 1.2 * d / np.linalg.norm(d)
+            mob = Structure(small.mobile.coords + d, small.mobile.atom_names,
+                            small.mobile.res_ids, small.mobile.res_names,
+                            small.mobile.elements)
+            tag = f"decoy{k}"
+        pk = RepackProblem(mob, small.fixed, small.res_keys, n_chi1=3, n_chi2=2,
+                           cutoff=small.cutoff)
+        fe = free_energy(pk, T_ROOM)
+        rows.append((tag, fe["E_min"], fe["F"], fe["TS_conf"]))
+    by_e = [r[0] for r in sorted(rows, key=lambda r: r[1])]
+    by_f = [r[0] for r in sorted(rows, key=lambda r: r[2])]
+    same = by_e == by_f
+    n_disagree = sum(1 for a, b in zip(by_e, by_f) if a != b)
+    ts = [r[3] for r in rows]
     out["Z7_same_order"] = bool(same)
+    out["Z7_n_positions_differing"] = int(n_disagree)
     out["Z7_TS_spread"] = float(max(ts) - min(ts))
-    say(f"      by E_min {order_e}")
-    say(f"      by F     {order_f}")
-    say(f"      identical ordering: {same};  T*S_conf spread across instances "
-        f"{max(ts) - min(ts):.4f} kcal/mol")
+    out["Z7_native_rank_E"] = by_e.index("native") + 1
+    out["Z7_native_rank_F"] = by_f.index("native") + 1
+    for tag, e, f, t in rows:
+        say(f"      {tag:8s}  E_min {e:9.4f}   F {f:9.4f}   T*S_conf {t:7.4f}")
+    say(f"      by E_min: {by_e}")
+    say(f"      by F    : {by_f}")
+    say(f"      identical ordering: {same}  ({n_disagree} of {len(rows)} positions differ)")
+    say(f"      native ranks {out['Z7_native_rank_E']} by E_min, "
+        f"{out['Z7_native_rank_F']} by F, of {len(rows)}")
+    say(f"      T*S_conf spread across poses {max(ts) - min(ts):.4f} kcal/mol")
     if same:
-        say("      -> on THESE instances the ensemble did not reorder anything. The "
-            "entropy term is real but nearly constant, so it cancels in a ranking.")
+        say("      -> the ensemble did not reorder these poses. The entropy term is real "
+            "but varies less between poses than the energy does, so it cancels in a rank.")
 
-    gates = ["Z1", "Z2", "Z3", "Z4", "Z5", "Z6"]
+    gates = ["Z1", "Z2", "Z3", "Z4", "Z4b", "Z5", "Z6"]
     out["all_pass"] = all(bool(out[k]) for k in gates)
     say(f"\n  {'ALL GATES PASS' if out['all_pass'] else 'GATE FAILURE'}: "
         + "  ".join(f"{k}={'pass' if out[k] else 'FAIL'}" for k in gates))

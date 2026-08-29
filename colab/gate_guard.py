@@ -309,6 +309,40 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      against 3,700 observations of that landmark -- 3.8:1 OVERdetermined. Parameters are
 #      counted against OBSERVATIONS, and a row of a multi-output regression is 978 of them.
 #
+#   K  A RANKING TEST WHOSE ITEMS DIFFER IN SIZE. REM's Z7 asked whether ensemble
+#      (-RT ln Z) rescoring reorders anything relative to single-pose (min E) scoring, and
+#      implemented it by ranking five repacking problems of 3, 4, 5, 6 and 7 residues.
+#      Adding a residue adds a large negative unary term, so BOTH orderings are just the
+#      residue count sorted descending. The test reported "identical ordering" and could
+#      not have reported anything else: the answer was fixed by the construction, not
+#      measured. It is defect H's shape moved from ablation to ranking -- the arms were not
+#      matched on the thing that dominates the statistic.
+#      A ranking test compares ALTERNATIVES TO ONE ANOTHER: same variables, same rotamers,
+#      same residue count, differing only in the pose being scored. Then a reordering is
+#      information. RULE: before reporting that two scores agree or disagree on a ranking,
+#      check that the items being ranked are exchangeable under the null. If one item is
+#      bigger than another in a way that swamps the effect, the comparison is decorative.
+#
+#   L  AN ABSOLUTE BAR ON AN ASYMPTOTIC LIMIT. REM's Z4 predeclared "as T -> infinity,
+#      ln Z -> ln(n_configs); GATE |ln Z - ln N| < 1e-3 at T = 1e6 K" and measured 3.87e-2,
+#      a factor of 39 over the bar. Nothing was wrong with the code. The residual of that
+#      limit is exactly -<E>/RT, and <E> for this instance is 77.5 kcal/mol, so at 1e6 K the
+#      residual CANNOT be smaller than 0.039 -- the bar was unreachable the moment it was
+#      written, and it was written before <E> was known. Measured across five decades the
+#      residual tracked -<E>/RT to four significant figures and the log-log slope came out
+#      -0.9897 against a theoretical -1.
+#      This is loop 267's T4 again in a different domain: an absolute bar fixed before the
+#      statistic's scale was known. The verdict STANDS -- Z4 was predeclared and it failed,
+#      and the failure is recorded rather than the bar moved. The repair is a SEPARATELY
+#      declared gate that tests what the limit actually asserts. "x -> L as T -> infinity"
+#      is a statement about a RATE, so the gate is on the rate: the residual must fall like
+#      1/T across decades. That is strictly stronger than the one-point bar it replaces --
+#      a code path that converged to the wrong constant would pass a loose point bar and
+#      fail the slope.
+#      RULE: a limit is a rate. Gate it across a sweep, not at one point; and any absolute
+#      tolerance on a physical quantity must be derived from that quantity's own scale,
+#      measured, before it is written down.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 
