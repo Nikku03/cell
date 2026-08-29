@@ -32,11 +32,17 @@ the recursion itself -- which `verify()` checks against explicit enumeration.
 LOG SPACE everywhere in the sum semiring. A 76 nt tRNA has Z ~ e^30 and long sequences
 overflow float64 quickly; nothing here ever exponentiates a raw Boltzmann weight.
 
-ENERGY MODELS (both documented in their class docstrings):
-  BasePairModel  -- E = sum over pairs of a per-pair-type energy. No stacking, no loops.
-  StackingModel  -- Turner-style loop model: nearest-neighbour stacking, hairpin/bulge/
-                    internal loop initiation tables, Ninio asymmetry, linear multiloop,
-                    terminal AU/GU penalty. Approximations are listed in the docstring.
+ENERGY MODELS, in tiers, so the contribution of each physical term is measurable:
+  BasePairModel                                E = sum over pairs of a per-pair energy.
+  StackingModel(terminal_mismatch=False)       + nearest-neighbour stacking, hairpin /
+                                                 bulge / internal-loop initiation tables,
+                                                 Ninio asymmetry, linear multiloop,
+                                                 terminal AU/GU penalty.
+  StackingModel(terminal_mismatch=True)        + a coarse hairpin terminal mismatch.
+  multiloop = "turner1999" | "turner2004"      two published multiloop parameter sets.
+Every approximation and omission is listed in StackingModel's docstring. `benchmark_trna`
+folds yeast tRNA-Phe with all of them and sweeps the parameters that matter, because on a
+real sequence the answer is decided by tenths of a kcal/mol, not by the search.
 
 The energy of a *given* structure is computed by `structure_energy()`, which decomposes a
 pair list into loops with its own stack walk and never touches the DP. That function is the
@@ -49,7 +55,8 @@ import math
 import random
 import time
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, NamedTuple, Optional, Sequence, Set, Tuple
+from typing import (Dict, Iterable, List, NamedTuple, Optional, Sequence,
+                    Set, Tuple)
 
 import numpy as np
 
@@ -457,8 +464,10 @@ def enumerate_structures(seq: str, model: EnergyModel,
     return [tuple(sorted(s)) for s in rec(0, n - 1)]
 
 
-def brute_force(seq: str, model: EnergyModel, min_hairpin: int = 3) -> dict:
+def brute_force(seq: str, model: EnergyModel, min_hairpin: int = 3,
+                temperature: float = T37) -> dict:
     """logZ, base-pair probabilities and MFE from explicit enumeration. Reference only."""
+    RT = R_KCAL * temperature
     seq = clean_seq(seq)
     n = len(seq)
     structs = enumerate_structures(seq, model, min_hairpin)
@@ -470,7 +479,7 @@ def brute_force(seq: str, model: EnergyModel, min_hairpin: int = 3) -> dict:
             energies.append(E)
     if not kept:
         raise ValueError("no representable structure (not even the open chain?)")
-    w = np.asarray([-E / RT37 for E in energies])
+    w = np.asarray([-E / RT for E in energies])
     m = float(w.max())
     logZ = m + float(np.log(np.exp(w - m).sum()))
     p = np.exp(w - logZ)
@@ -933,7 +942,6 @@ def benchmark_trna(seq: str = YEAST_TRNA_PHE, ref_db: str = YEAST_TRNA_PHE_DB,
 
     if sweep:
         # How much slack is there? Move ONE parameter at a time around the default.
-        best = StackingModel(terminal_mismatch=True, multiloop="turner1999")
         sw = {"MM_GC": [], "ML_A": [], "ML_B": []}
         for v in (-0.6, -1.0, -1.2, -1.4, -1.8, -2.2):
             m = StackingModel(); m.MM_GC = v; m.MM_AU = v + 0.5
@@ -956,7 +964,6 @@ def benchmark_trna(seq: str = YEAST_TRNA_PHE, ref_db: str = YEAST_TRNA_PHE_DB,
             sw["internal4"].append((v, compare_structures(mfe(seq, m).pairs,
                                                           ref)["sensitivity"]))
         out["sweep"] = sw
-        del best
 
     if n_shuffles:
         rng = random.Random(seed)
@@ -1015,6 +1022,43 @@ def benchmark_planted(verbose: bool = True) -> dict:
 
 
 # ================================================================== verification
+def verify_bpp_by_constraint(seq: str = None, model: "EnergyModel" = None,
+                             positions: Sequence[int] = (0, 7, 13, 33, 40, 55, 70, 75),
+                             verbose: bool = True) -> dict:
+    """Check the OUTSIDE pass at full tRNA scale, where enumeration is impossible.
+
+    Identity:   sum_j P(i,j)  =  1 - Z[i forced unpaired] / Z.
+
+    The right-hand side comes from a completely separate inside-only run on a mutated
+    sequence (position i replaced by N, which cannot pair), and never touches
+    `outside_sum`. It therefore tests the outside recursion at n = 76, not just at n <= 32.
+
+    Requires an energy model in which no term depends on the IDENTITY of an unpaired base,
+    which is why terminal_mismatch must be off: otherwise mutating i to N would change the
+    energies of hairpins where i is a terminal mismatch, and the identity would not hold."""
+    seq = clean_seq(seq if seq is not None else YEAST_TRNA_PHE)
+    model = model if model is not None else StackingModel(terminal_mismatch=False)
+    if getattr(model, "terminal_mismatch", False):
+        raise ValueError("this identity needs a model with terminal_mismatch=False")
+    logZ, P = mccaskill(seq, model)
+    worst, rows = 0.0, []
+    for i in positions:
+        if not 0 <= i < len(seq):
+            continue
+        mut = seq[:i] + "N" + seq[i + 1:]
+        g = build_graph(mut, model)
+        logZc = inside_sum(g)[g.root]
+        lhs = 1.0 - math.exp(logZc - logZ)
+        rhs = float(P[i].sum())
+        worst = max(worst, abs(lhs - rhs))
+        rows.append((i, lhs, rhs))
+    if verbose:
+        print(f"    outside pass at n = {len(seq)} (no enumeration): "
+              f"max |1 - Z[i unpaired]/Z  -  sum_j P(i,j)| = {worst:.3e} "
+              f"over {len(rows)} positions")
+    return {"n": len(seq), "max_err": worst, "rows": rows}
+
+
 def _random_seq(rng: random.Random, n: int, gc: float = 0.5) -> str:
     out = []
     for _ in range(n):
@@ -1102,7 +1146,9 @@ def verify(seed: int = 0, n_seqs: int = 8, verbose: bool = True) -> dict:
     # noisy: the SIZE of the hypergraph is exact combinatorics, the time is what it costs.
     scal = []
     model = StackingModel()
-    for n in (40, 60, 90, 130):
+    for n in (60, 90, 130, 180):        # below n ~ 2*max_loop the interior-loop
+        #                                  enumeration is not yet saturated and the local
+        #                                  slope sits above 3; 60..180 is the clean range
         s = _random_seq(rng, n, gc=0.5)
         t0 = time.perf_counter()
         gg = build_graph(s, model)
@@ -1113,9 +1159,12 @@ def verify(seed: int = 0, n_seqs: int = 8, verbose: bool = True) -> dict:
     slope_terms = float(np.polyfit(logn, np.log([c for _, _, c in scal]), 1)[0])
 
     gi = graph_info(build_graph(YEAST_TRNA_PHE, StackingModel()))
+    constr = verify_bpp_by_constraint(verbose=False)
     planted = benchmark_planted(verbose=False)
+    # the full loop model must recover every planted structure; the base-pair model is
+    # not required to (it fails the two-hairpin case, which is the point of that control)
     junction_ok = all(r["sensitivity"] == 1.0 and r["ppv"] == 1.0
-                      for r in planted["rows"])
+                      for r in planted["rows"] if r["model"].startswith("stacking"))
     trna = benchmark_trna(verbose=False)
 
     res = {"errors": err, "n_sequences": len(seqs),
@@ -1126,7 +1175,8 @@ def verify(seed: int = 0, n_seqs: int = 8, verbose: bool = True) -> dict:
            "planted_all_recovered": bool(junction_ok),
            "scaling": scal, "measured_cost_exponent": slope,
            "measured_size_exponent": slope_terms,
-           "graph": gi, "trna": trna, "planted": planted}
+           "graph": gi, "trna": trna, "planted": planted,
+           "bpp_by_constraint": constr}
 
     if verbose:
         print("  rem.rna.verify")
@@ -1155,6 +1205,7 @@ def verify(seed: int = 0, n_seqs: int = 8, verbose: bool = True) -> dict:
               f"time n^{slope:.2f}   (predicted 3)")
         print(f"        tRNA hypergraph: {gi['n_items']:,} items, "
               f"{gi['n_terms']:,} terms")
+        verify_bpp_by_constraint(verbose=True)
         print("    positive control (planted structures, must be recovered):")
         benchmark_planted(verbose=True)
         print("    (c) real benchmark")
