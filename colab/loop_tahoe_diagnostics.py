@@ -156,7 +156,10 @@ def main():
     for dose in (0.05, 0.5):
         Md, cb, cl, gn = build(dose=dose)
         ln = sorted(set(cl.tolist()))
-        npc_d = int(np.median([int((cl == l).sum()) for l in ln]))
+        # The floor must be the MINIMUM over all (line, dose) cells, not the median. Setting
+        # it from the median and then drawing that many from every line asks the lines below
+        # the median for more conditions than they have, which is what crashed run 1.
+        npc_d = min(int((cl == l).sum()) for l in ln)
         slices[dose] = (Md, cb, cl, gn, npc_d)
         nmin = npc_d if nmin is None else min(nmin, npc_d)
     kmin = max(50, int(nmin / 2.0))
