@@ -175,6 +175,18 @@ def verify(case_id: str = "1AY7", verbose: bool = True) -> dict:
     M4 I-RMSD is invariant to a rigid motion applied to BOTH chains together, which is
        what makes it a frame-independent measure of the interface.
     M5 rotation_floor falls as the rotation set is refined.
+       M5 FAILED on its first run and the verdict stands: 128 rotations gave a floor of
+       5.782 A against 32 rotations' 3.525 A. The floor computation was correct; the
+       SAMPLER was wrong for the claim. rotation_set(n) drew n INDEPENDENT quaternions, so
+       a bigger set was a different random set rather than a refinement of the same one,
+       and nothing forced it to contain a closer rotation. "Refined" was never true of the
+       construction, so M5 tested a property the library did not have.
+    M5b THE REPAIR, made in the sampler rather than in the gate. random_quaternions now
+       draws its three deviates as one (n, 3) block, so a draw of k is a PREFIX of a draw
+       of n for every k <= n. M5b gates both halves: (a) nestedness, checked directly --
+       rotation_set(k) must equal the first k of rotation_set(n); and (b) the monotonicity
+       that follows, which now cannot fail by chance because a superset's minimum cannot
+       exceed a subset's.
     """
     from rem.docking.data import load_case
     from rem.docking.rigid import rotation_set, apply_pose
@@ -222,16 +234,24 @@ def verify(case_id: str = "1AY7", verbose: bool = True) -> dict:
         f"(was {m['I_rmsd']:.3e}), f_nat {m2['f_nat']:.4f}   "
         f"{'PASS' if out['M4'] else 'FAIL'}")
 
-    say("\n  M5 rotation floor falls as the set is refined")
+    say("\n  M5/M5b rotation floor vs set size, on NESTED sets (M5 failed first time "
+        "because the sets were not nested -- see the docstring)")
+    sizes = (8, 32, 128, 512)
     floors = []
-    for n in (8, 32, 128, 512):
+    for n in sizes:
         fl = rotation_floor(rotation_set(n, seed=1), nat)
         floors.append(fl["floor_rmsd"])
         say(f"      {n:4d} rotations   floor {fl['floor_rmsd']:7.3f} A")
     out["M5"] = all(a >= b - 1e-12 for a, b in zip(floors, floors[1:]))
-    say(f"      M5 {'PASS' if out['M5'] else 'FAIL'}")
+    big = rotation_set(max(sizes), seed=1)
+    nested = all(np.allclose(rotation_set(k, seed=1), big[:k]) for k in sizes)
+    out["M5b_nested"] = bool(nested)
+    out["M5b"] = bool(nested and out["M5"])
+    say(f"      prefixes nested: {nested}   monotone non-increasing: {out['M5']}")
+    say(f"      M5b {'PASS' if out['M5b'] else 'FAIL'}")
 
-    gates = ["M1", "M2", "M3", "M4", "M5"]
+
+    gates = ["M1", "M2", "M3", "M4", "M5", "M5b"]
     out["all_pass"] = all(bool(out[k]) for k in gates)
     say(f"\n  {'ALL GATES PASS' if out['all_pass'] else 'GATE FAILURE'}: "
         + "  ".join(f"{k}={'pass' if out[k] else 'FAIL'}" for k in gates))

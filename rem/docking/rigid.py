@@ -93,9 +93,20 @@ def random_quaternions(n: int, seed: int = 0) -> np.ndarray:
 
     Uniform on SO(3), not merely on the components: Shoemake's map from three uniform
     deviates carries Lebesgue measure to Haar measure exactly.
+
+    NESTED IN n. The three deviates are drawn as ONE (n, 3) block rather than as three
+    length-n vectors, so the first k rows of a draw of n are exactly a draw of k and
+    random_quaternions(k, seed) is a PREFIX of random_quaternions(n, seed) for k <= n.
+    That matters: without it, "a finer rotation set" is a different random set rather than
+    a refinement of the same one, and a bigger set can be WORSE than a smaller one by
+    chance. capri.verify()'s M5 gate ("the rotation floor falls as the set is refined")
+    failed on exactly that -- 128 rotations scored a floor of 5.78 A against 32 rotations'
+    3.53 A -- and the failure was in the sampler, not in the floor. With prefixes nested,
+    a superset cannot have a worse minimum, so the monotonicity holds by construction.
     """
     rng = np.random.default_rng(seed)
-    u1, u2, u3 = rng.random(n), rng.random(n), rng.random(n)
+    u = rng.random((int(n), 3))
+    u1, u2, u3 = u[:, 0], u[:, 1], u[:, 2]
     q = np.stack([
         np.sqrt(1 - u1) * np.sin(2 * np.pi * u2),
         np.sqrt(1 - u1) * np.cos(2 * np.pi * u2),
