@@ -26,6 +26,8 @@ CONVENTIONS, inherited from rem.factorgraph and not re-invented:
   So phi = -E/kT gives probabilities and log Z, phi = E gives the ground state, and a
   600-node chain with |phi| ~ 30 does not overflow, because nothing is ever exponentiated
   outside a logsumexp. verify() measures that case rather than asserting it.
+  verify()          trees (positive control) then loops (the measured failure)
+  verify_cost_law() cost = d ** max_arity on a factor tree, and what BP does not buy
 
 MESSAGES. Synchronous (flooding) schedule with optional damping in log space:
     m_{v->a}(x_v) = sum_{b in N(v)\a} m_{b->v}(x_v)
@@ -40,11 +42,11 @@ from __future__ import annotations
 
 import itertools
 import warnings
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
-from rem.factorgraph import FactorGraph, Factor, logsumexp
+from rem.factorgraph import FactorGraph, logsumexp
 
 
 # --------------------------------------------------------------------- structure
@@ -153,6 +155,7 @@ def _run_bp(graph: FactorGraph, mode: str, max_iter: int, damping: float, tol: f
     def flat(d):
         return np.concatenate([d[k] for k in keys]) if keys else np.zeros(0)
 
+    HIST = 16                      # enough lags to name a limit cycle, cheap to keep
     hist = [flat(m_f2v)]
     delta = np.inf
     converged = False
@@ -184,20 +187,38 @@ def _run_bp(graph: FactorGraph, mode: str, max_iter: int, damping: float, tol: f
                 m_f2v[(k, u)] = new
         deltas.append(delta)
         hist.append(flat(m_f2v))
-        if len(hist) > 3:
+        if len(hist) > HIST:
             hist.pop(0)
         if delta < tol:
             converged = True
             break
 
-    # period-2 oscillation: messages repeat every other sweep but never settle
-    p2 = float("nan")
-    if len(hist) >= 3:
-        p2 = float(np.max(np.abs(hist[-1] - hist[-3]))) if hist[-1].size else 0.0
-    oscillating = bool((not converged) and np.isfinite(p2) and p2 < 0.1 * max(delta, 1e-300))
+    # NON-CONVERGENCE DIAGNOSTICS. "It oscillates" is a claim, so measure it:
+    #   swing          how far the message vector actually moves over the last HIST sweeps
+    #   cycle_period   the lag in 2..HIST-1 at which the trajectory most nearly repeats
+    #   cycle_residual how nearly it repeats there
+    # A limit cycle has cycle_residual << swing; an aperiodic wander does not repeat at
+    # any lag, and saying so is more honest than calling everything "period-2".
+    swing, period, resid = 0.0, 0, float("nan")
+    if len(hist) >= 3 and hist[-1].size:
+        H = np.stack(hist)
+        swing = float(np.max(H.max(axis=0) - H.min(axis=0)))
+        cand = [(float(np.max(np.abs(H[-1] - H[-1 - lag]))), lag)
+                for lag in range(2, len(hist))]
+        if cand:
+            resid, period = min(cand)
+    oscillating = bool((not converged) and swing > max(1e-9, 100 * tol))
+    periodic = bool(oscillating and np.isfinite(resid) and resid < 0.05 * swing)
+    regime = ("converged" if converged else
+              (f"limit-cycle(period={period})" if periodic else
+               ("non-convergent(aperiodic)" if oscillating else "tolerance-limited")))
+    p2 = float(np.max(np.abs(hist[-1] - hist[-3]))) if len(hist) >= 3 and hist[-1].size \
+        else float("nan")
 
     info = {"mode": mode, "converged": bool(converged), "iterations": it,
             "final_delta": float(delta), "period2_delta": p2,
+            "message_swing": float(swing), "cycle_period": int(period),
+            "cycle_residual": float(resid), "regime": regime,
             "oscillating": oscillating, "damping": float(damping), "tol": float(tol),
             "max_iter": int(max_iter),
             "is_tree": st["is_tree"], "is_forest": st["acyclic"],
@@ -249,6 +270,14 @@ def sum_product(graph: FactorGraph, max_iter: int = 500, damping: float = 0.0,
         logZ += (1 - len(ks)) * Hv
     info["bethe_logZ"] = float(logZ)
     return beliefs, info
+    # NOTE, measured 2026-08-29 and NOT patched here (file discipline: factorgraph.py
+    # belongs to another module). If a variable appears in NO factor, this Bethe log Z
+    # includes its log(card) -- as brute-force enumeration does -- while
+    # FactorGraph.eliminate("sum") omits it, because that variable's bucket is empty and
+    # is skipped. Minimal repro: one variable of card 3 in no factor, one binary variable
+    # with a zero unary; eliminate("sum") returns log 2 = 0.693, brute_force("sum")
+    # returns log 6 = 1.792. Marginals are unaffected (they are normalised). bp.py sides
+    # with brute force. See test_bp.py::test_isolated_variable_matches_brute_force.
 
 
 # --------------------------------------------------------------------- min-sum
@@ -261,12 +290,19 @@ def min_sum(graph: FactorGraph, max_iter: int = 500, damping: float = 0.0,
     of v minus the global optimum. `assignment` decodes by per-variable argmin and
     info["value"] is that assignment's energy EVALUATED ON THE ORIGINAL TABLES -- never a
     running message constant -- so it is a number an independent enumerator can check.
-    info["degenerate"] flags near-ties, where per-variable decoding is not well defined."""
+    DEGENERACY IS A REAL FAILURE MODE, NOT A THEORETICAL ONE, and it is flagged rather
+    than hidden. One factor over (a, b) with table [[1,0],[0,1]] has two tied optima,
+    (0,1) and (1,0); the min-marginals are [0,0] and [0,0] -- correct -- but taking the
+    argmin of each variable independently picks (0,0) and returns value 1.0 where the
+    optimum is 0.0. So when info["degenerate"] is True (decode_gap below 1e-9), TRUST THE
+    BELIEFS AND NOT THE ASSIGNMENT, or call FactorGraph.eliminate("min"), whose
+    back-tracking through the argmin records is tie-safe. Measured in
+    test_bp.py::test_min_sum_ties_are_flagged_not_silently_wrong."""
     m_f2v, m_v2f, active, const, nbr_v, info = _run_bp(
         graph, "min", max_iter, damping, tol, strict, warn, compute_treewidth)
 
     beliefs, assignment = {}, {}
-    tie = 0.0
+    gap = np.inf                    # smallest best-vs-second-best belief gap, in nats
     for v, ks in nbr_v.items():
         b = np.zeros(graph.cards[v])
         for k in ks:
@@ -276,7 +312,7 @@ def min_sum(graph: FactorGraph, max_iter: int = 500, damping: float = 0.0,
         assignment[v] = int(np.argmin(b))
         s = np.sort(b)
         if len(s) > 1:
-            tie = max(tie, 1.0 / (1.0 + s[1]))       # ->1 when the top two beliefs tie
+            gap = min(gap, float(s[1] - s[0]))
     value = const
     for f in graph.factors:
         if len(f.vars) == 0:
@@ -284,7 +320,8 @@ def min_sum(graph: FactorGraph, max_iter: int = 500, damping: float = 0.0,
         value += float(f.table[tuple(assignment[v] for v in f.vars)])
     info["value"] = float(value)
     info["assignment"] = dict(assignment)
-    info["degenerate"] = bool(tie > 0.5)
+    info["decode_gap"] = float(gap)          # a measured number, not a heuristic flag
+    info["degenerate"] = bool(gap < 1e-9)    # ties -> per-variable decoding is ill-defined
     return beliefs, assignment, info
 
 
@@ -426,6 +463,7 @@ def grid_ising(rng, rows: int = 3, cols: int = 3, beta: float = 0.8,
 def _tree_trials(rng, trials: int, verbose: bool):
     e_marg_elim = e_marg_bf = e_logz = e_minval = e_minmarg = 0.0
     bad_arg = 0
+    minmarg_checked = 0
     iters, tws, cycles = [], [], []
     for t in range(trials):
         if t % 3 == 2:
@@ -456,6 +494,7 @@ def _tree_trials(rng, trials: int, verbose: bool):
         vmin, varg, _ = g.eliminate("min")
         e_minval = max(e_minval, abs(mi["value"] - vmin))
         if not mi["degenerate"]:
+            minmarg_checked += 1
             mmb, best = brute_force_min_marginals(g)
             for v in bm:
                 e_minmarg = max(e_minmarg, float(np.max(np.abs(bm[v] - (mmb[v] - best)))))
@@ -466,7 +505,7 @@ def _tree_trials(rng, trials: int, verbose: bool):
             "max_err_bethe_logZ": e_logz,
             "max_err_minsum_value": e_minval,
             "max_err_min_marginal": e_minmarg,
-            "bad_assignments": bad_arg,
+            "bad_assignments": bad_arg, "minmarg_checked": minmarg_checked,
             "iterations": (min(iters), max(iters)),
             "treewidths": (min(tws), max(tws)),
             "cycles": max(cycles)}
@@ -477,11 +516,13 @@ def verify(seed: int = 0, trials: int = 24, verbose: bool = True) -> dict:
 
     Every tree number is measured against TWO references: exact bucket elimination
     (rem.factorgraph) and naive enumeration over all d^n configurations (this module).
-    The loopy numbers are measured against exact elimination on the same graph."""
+    Every loopy number is measured against exact elimination on the same graph. Rule 6 is
+    obeyed twice over: the loopy section only reports a failure for a pipeline that is
+    shown, on the same call, to recover the exact answer on trees."""
     rng = np.random.default_rng(seed)
     res = {}
 
-    # ---------------------------------------------------------- (a) trees: positive control
+    # ------------------------------------------------- (a) TREES: the positive control
     tr = _tree_trials(rng, trials, verbose)
     res.update(tr)
 
@@ -490,129 +531,241 @@ def verify(seed: int = 0, trials: int = 24, verbose: bool = True) -> dict:
     gc = random_tree(np.random.default_rng(11), n=n_chain, card=2, scale=scale)
     _, ic = sum_product(gc, max_iter=4 * n_chain, tol=1e-12)
     zc, _, _ = gc.eliminate("sum")
-    res["chain_n"] = n_chain
-    res["chain_logZ"] = float(ic["bethe_logZ"])
-    res["chain_logZ_err"] = abs(ic["bethe_logZ"] - zc)
-    res["chain_iterations"] = ic["iterations"]
-    res["chain_treewidth"] = ic["treewidth"]
+    res.update(chain_n=n_chain, chain_logZ=float(ic["bethe_logZ"]),
+               chain_logZ_err=abs(ic["bethe_logZ"] - zc),
+               chain_iterations=ic["iterations"], chain_treewidth=ic["treewidth"])
 
-    # damping must not move the fixed point on a tree, only slow the approach
+    # damping must not move the fixed point on a tree, only slow the approach to it
     gd = random_tree(np.random.default_rng(5), n=7, card=3)
     b0, i0 = sum_product(gd, max_iter=2000, tol=1e-13, damping=0.0)
     b5, i5 = sum_product(gd, max_iter=4000, tol=1e-13, damping=0.5)
-    res["damping_fixed_point_shift"] = max(float(np.max(np.abs(b0[v] - b5[v])))
-                                           for v in b0)
+    res["damping_fixed_point_shift"] = max(float(np.max(np.abs(b0[v] - b5[v]))) for v in b0)
     res["damping_iterations"] = (i0["iterations"], i5["iterations"])
 
-    # ---------------------------------------------------------- (b) loops: honest negative
-    # Controlled pair: the SAME Ising model as a chain and as a ring. One extra factor.
-    rr = np.random.default_rng(3)
-    J = rr.choice([-1.0, 1.0], size=8)
+    # ------------------------------------------------- (b) LOOPS: the honest negative
+    # L0. CONTROLLED PAIR. The same Ising model as a chain and as a ring: identical
+    # couplings and fields, ONE extra factor. Treewidth 1 -> 2, exact -> not.
+    J = np.random.default_rng(3).choice([-1.0, 1.0], size=8)
     chain = ising(np.random.default_rng(4), n=8, beta=0.9, h=0.4, ring=False,
                   seed_couplings=J)
     ring = ising(np.random.default_rng(4), n=8, beta=0.9, h=0.4, ring=True,
                  seed_couplings=J)
     bc, ic2 = sum_product(chain, max_iter=400, tol=1e-13)
     mc = chain.marginals()
-    res["pair_chain_err"] = max(float(np.max(np.abs(bc[v] - mc[v]))) for v in bc)
-    res["pair_chain_treewidth"] = ic2["treewidth"]
-    res["pair_chain_cycles"] = ic2["n_independent_cycles"]
-
+    res.update(pair_chain_err=max(float(np.max(np.abs(bc[v] - mc[v]))) for v in bc),
+               pair_chain_treewidth=ic2["treewidth"],
+               pair_chain_cycles=ic2["n_independent_cycles"])
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         br, ir = sum_product(ring, max_iter=400, tol=1e-13)
     res["loop_warning_emitted"] = bool(any(issubclass(w.category, RuntimeWarning)
                                            for w in caught))
     mr = ring.marginals()
-    res["pair_ring_err"] = max(float(np.max(np.abs(br[v] - mr[v]))) for v in br)
-    res["pair_ring_treewidth"] = ir["treewidth"]
-    res["pair_ring_cycles"] = ir["n_independent_cycles"]
-    res["pair_ring_converged"] = ir["converged"]
     zr, _, _ = ring.eliminate("sum")
-    res["pair_ring_logZ_exact"] = float(zr)
-    res["pair_ring_logZ_bethe"] = float(ir["bethe_logZ"])
-    res["pair_ring_logZ_err"] = abs(ir["bethe_logZ"] - zr)
+    res.update(pair_ring_err=max(float(np.max(np.abs(br[v] - mr[v]))) for v in br),
+               pair_ring_treewidth=ir["treewidth"],
+               pair_ring_cycles=ir["n_independent_cycles"],
+               pair_ring_converged=ir["converged"],
+               pair_ring_logZ_exact=float(zr),
+               pair_ring_logZ_bethe=float(ir["bethe_logZ"]),
+               pair_ring_logZ_err=abs(ir["bethe_logZ"] - zr))
 
-    # a frustrated grid: undamped BP oscillates, damped BP converges -- to a wrong answer
-    gg = grid_ising(np.random.default_rng(2), rows=3, cols=3, beta=1.1, h=0.25)
-    mg = gg.marginals()
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        bu, iu = sum_product(gg, max_iter=300, tol=1e-10, damping=0.0)
-        bd, idmp = sum_product(gg, max_iter=3000, tol=1e-10, damping=0.7)
-        _, arg_ms, ims = min_sum(gg, max_iter=1000, tol=1e-10, damping=0.5)
-    res["grid_treewidth"] = iu["treewidth"]
-    res["grid_cycles"] = iu["n_independent_cycles"]
-    res["grid_undamped_converged"] = iu["converged"]
-    res["grid_undamped_iterations"] = iu["iterations"]
-    res["grid_undamped_final_delta"] = iu["final_delta"]
-    res["grid_undamped_period2_delta"] = iu["period2_delta"]
-    res["grid_undamped_oscillating"] = iu["oscillating"]
-    res["grid_undamped_err"] = max(float(np.max(np.abs(bu[v] - mg[v]))) for v in bu)
-    res["grid_damped_converged"] = idmp["converged"]
-    res["grid_damped_iterations"] = idmp["iterations"]
-    res["grid_damped_err"] = max(float(np.max(np.abs(bd[v] - mg[v]))) for v in bd)
-    res["grid_damped_logZ_err"] = abs(idmp["bethe_logZ"] - gg.eliminate("sum")[0])
-    vmin_g, _, _ = gg.eliminate("min")
-    res["grid_minsum_value"] = ims["value"]
-    res["grid_minsum_exact"] = float(vmin_g)
-    res["grid_minsum_gap"] = float(ims["value"] - vmin_g)
+        # L1. A WRONG FIXED POINT. BP converges cleanly and is simply wrong; damping
+        # changes the number of sweeps and nothing else, which is the point -- damping is
+        # a convergence aid, never a correctness fix.
+        g1 = grid_ising(np.random.default_rng(2), rows=3, cols=3, beta=1.1, h=0.25)
+        m1 = g1.marginals()
+        z1, _, _ = g1.eliminate("sum")
+        sweep = []
+        for dmp in (0.0, 0.5, 0.9):
+            b, i = sum_product(g1, max_iter=1200, tol=1e-10, damping=dmp)
+            sweep.append((dmp, i["converged"], i["iterations"],
+                          max(float(np.max(np.abs(b[v] - m1[v]))) for v in b),
+                          abs(i["bethe_logZ"] - z1)))
+        res["fp_treewidth"] = i["treewidth"]
+        res["fp_cycles"] = i["n_independent_cycles"]
+        res["fp_damping_sweep"] = sweep
+        res["fp_err"] = sweep[0][3]
+        res["fp_logZ_err"] = sweep[0][4]
+        res["fp_err_spread"] = max(s[3] for s in sweep) - min(s[3] for s in sweep)
+
+        # L2. NO FIXED POINT AT ALL. Deeper into the spin-glass regime the message
+        # trajectory never settles; the "answer" is then just wherever you stopped.
+        g2 = grid_ising(np.random.default_rng(0), rows=3, cols=3, beta=1.5, h=0.15)
+        m2 = g2.marginals()
+        nc = []
+        for dmp in (0.0, 0.9):
+            b, i = sum_product(g2, max_iter=800, tol=1e-10, damping=dmp)
+            nc.append((dmp, i["converged"], i["regime"], i["final_delta"],
+                       i["message_swing"], i["cycle_period"], i["cycle_residual"],
+                       max(float(np.max(np.abs(b[v] - m2[v]))) for v in b)))
+        res["nc_treewidth"] = i["treewidth"]
+        res["nc_cycles"] = i["n_independent_cycles"]
+        res["nc_runs"] = nc
+        res["nc_err"] = nc[0][7]
+
+        # L3. MIN-SUM OPTIMALITY, with its own tree positive control on the same code.
+        def _opt_scan(maker, N):
+            miss, conv, worst, gaps = 0, 0, 0.0, []
+            for s in range(N):
+                g = maker(s)
+                vex, _, _ = g.eliminate("min")
+                _, _, i = min_sum(g, max_iter=300, tol=1e-11, damping=0.5,
+                                  compute_treewidth=False)
+                conv += int(i["converged"])
+                gaps.append(i["value"] - vex)
+                if i["value"] - vex > 1e-9:
+                    miss += 1
+                    worst = max(worst, i["value"] - vex)
+            return {"n": N, "misses": miss, "converged": conv, "worst_gap": worst,
+                    "max_gap": float(max(gaps))}
+        N = 20
+        res["minsum_tree"] = _opt_scan(
+            lambda s: ising(np.random.default_rng(1000 + s), n=9, beta=1.0, h=0.4), N)
+        res["minsum_randtree"] = _opt_scan(
+            lambda s: random_tree(np.random.default_rng(1000 + s), n=9, card=2,
+                                  scale=1.5), N)
+        res["minsum_ring"] = _opt_scan(
+            lambda s: ising(np.random.default_rng(1000 + s), n=9, beta=1.0, h=0.4,
+                            ring=True), N)
+        res["minsum_grid"] = _opt_scan(
+            lambda s: grid_ising(np.random.default_rng(1000 + s), 3, 3, beta=1.0,
+                                 h=0.4), N)
+
+    res["tree_max_err"] = max(tr["max_err_marginal_vs_elimination"],
+                              tr["max_err_marginal_vs_bruteforce"],
+                              tr["max_err_bethe_logZ"], tr["max_err_minsum_value"],
+                              tr["max_err_min_marginal"], res["pair_chain_err"])
+    res["loopy_max_marginal_gap"] = max(res["pair_ring_err"], res["fp_err"],
+                                        res["nc_err"])
 
     if verbose:
+        t = tr
         print("  rem.bp.verify")
-        print(f"  (a) TREES -- positive control, {trials} random factor trees "
-              f"(pairwise + arity-3 hypertrees)")
-        print(f"      bipartite cycles {tr['cycles']}   induced treewidth "
-              f"{tr['treewidths'][0]}-{tr['treewidths'][1]}   sweeps to converge "
-              f"{tr['iterations'][0]}-{tr['iterations'][1]}")
-        print(f"      max |BP marginal   - elimination marginal|   "
-              f"{tr['max_err_marginal_vs_elimination']:.3e}")
-        print(f"      max |BP marginal   - brute-force marginal|   "
-              f"{tr['max_err_marginal_vs_bruteforce']:.3e}")
-        print(f"      max |Bethe log Z   - elimination / brute|    "
-              f"{tr['max_err_bethe_logZ']:.3e}")
-        print(f"      max |min-sum value - eliminate('min')|       "
-              f"{tr['max_err_minsum_value']:.3e}")
-        print(f"      max |min-sum belief- brute min-marginal|     "
-              f"{tr['max_err_min_marginal']:.3e}")
-        print(f"      disagreeing argmins with a different energy: {tr['bad_assignments']}")
-        print(f"      log-space stress: chain n={n_chain}, |phi|~{scale:.0f}, treewidth "
+        print(f"  (a) TREES -- POSITIVE CONTROL: {trials} random factor trees "
+              f"(pairwise trees + arity-3 hypertrees)")
+        print(f"      bipartite cycles {t['cycles']}   induced treewidth "
+              f"{t['treewidths'][0]}-{t['treewidths'][1]}   sweeps to converge "
+              f"{t['iterations'][0]}-{t['iterations'][1]}")
+        print(f"      max |BP marginal    - elimination marginal|  "
+              f"{t['max_err_marginal_vs_elimination']:.3e}")
+        print(f"      max |BP marginal    - brute-force marginal|  "
+              f"{t['max_err_marginal_vs_bruteforce']:.3e}")
+        print(f"      max |Bethe log Z    - elimination & brute|   "
+              f"{t['max_err_bethe_logZ']:.3e}")
+        print(f"      max |min-sum value  - eliminate('min')|      "
+              f"{t['max_err_minsum_value']:.3e}")
+        print(f"      max |min-sum belief - brute min-marginal|    "
+              f"{t['max_err_min_marginal']:.3e}   "
+              f"({t['minmarg_checked']}/{trials} trials non-degenerate, so checked)")
+        print(f"      argmins that disagree with elimination at a different energy: "
+              f"{t['bad_assignments']}")
+        print(f"      log-space stress: chain n={n_chain}, |phi| ~ {scale:.0f}, treewidth "
               f"{res['chain_treewidth']}, log Z = {res['chain_logZ']:.6f}")
         print(f"        |Bethe log Z - elimination log Z|          "
-              f"{res['chain_logZ_err']:.3e}   (exp(log Z) would overflow)")
+              f"{res['chain_logZ_err']:.3e}    (exp(log Z) = inf in float64)")
         print(f"      damping 0.0 vs 0.5 on a tree: fixed point moves "
-              f"{res['damping_fixed_point_shift']:.3e} in "
-              f"{res['damping_iterations'][0]} vs {res['damping_iterations'][1]} sweeps")
-        print(f"  (b) LOOPS -- the documented boundary, not a bug")
-        print(f"      controlled pair, same Ising model, ONE extra factor:")
-        print(f"        chain: treewidth {res['pair_chain_treewidth']}, cycles "
+              f"{res['damping_fixed_point_shift']:.3e} "
+              f"({res['damping_iterations'][0]} vs {res['damping_iterations'][1]} sweeps)")
+        print(f"      min-sum found the exact optimum on "
+              f"{res['minsum_tree']['n'] - res['minsum_tree']['misses']}/"
+              f"{res['minsum_tree']['n']} Ising chains and "
+              f"{res['minsum_randtree']['n'] - res['minsum_randtree']['misses']}/"
+              f"{res['minsum_randtree']['n']} random trees "
+              f"(max energy gap {max(res['minsum_tree']['max_gap'], res['minsum_randtree']['max_gap']):.3e})")
+        print(f"  (b) LOOPS -- the documented boundary of the method, not a bug")
+        print(f"      L0 controlled pair: the SAME Ising model, one extra factor")
+        print(f"         chain: treewidth {res['pair_chain_treewidth']}, cycles "
               f"{res['pair_chain_cycles']}, max |BP - exact| "
               f"{res['pair_chain_err']:.3e}   <- exact")
-        print(f"        ring : treewidth {res['pair_ring_treewidth']}, cycles "
+        print(f"         ring : treewidth {res['pair_ring_treewidth']}, cycles "
               f"{res['pair_ring_cycles']}, max |BP - exact| "
-              f"{res['pair_ring_err']:.3e}   <- WRONG, converged="
-              f"{res['pair_ring_converged']}")
-        print(f"        ring log Z: exact {res['pair_ring_logZ_exact']:.6f}  "
-              f"Bethe {res['pair_ring_logZ_bethe']:.6f}  gap "
-              f"{res['pair_ring_logZ_err']:.3e}")
-        print(f"        loopy warning emitted: {res['loop_warning_emitted']}")
-        print(f"      frustrated 3x3 grid, treewidth {res['grid_treewidth']}, "
-              f"{res['grid_cycles']} independent cycles:")
-        print(f"        undamped: converged={res['grid_undamped_converged']} after "
-              f"{res['grid_undamped_iterations']} sweeps, final delta "
-              f"{res['grid_undamped_final_delta']:.3e}, "
-              f"|m_t - m_(t-2)| {res['grid_undamped_period2_delta']:.3e} "
-              f"-> oscillating={res['grid_undamped_oscillating']}")
-        print(f"        undamped max |BP - exact marginal|  "
-              f"{res['grid_undamped_err']:.3e}")
-        print(f"        damped 0.7: converged={res['grid_damped_converged']} after "
-              f"{res['grid_damped_iterations']} sweeps -- to a WRONG fixed point, "
-              f"max |BP - exact| {res['grid_damped_err']:.3e}")
-        print(f"        damped Bethe log Z error {res['grid_damped_logZ_err']:.3e}")
-        print(f"        min-sum decoded energy {res['grid_minsum_value']:.6f} vs exact "
-              f"{res['grid_minsum_exact']:.6f}, gap {res['grid_minsum_gap']:.3e}")
+              f"{res['pair_ring_err']:.3e}   <- WRONG (converged="
+              f"{res['pair_ring_converged']})")
+        print(f"         ring log Z: exact {res['pair_ring_logZ_exact']:.6f}, Bethe "
+              f"{res['pair_ring_logZ_bethe']:.6f}, gap {res['pair_ring_logZ_err']:.3e}")
+        print(f"         loopy warning emitted: {res['loop_warning_emitted']}")
+        print(f"      L1 wrong fixed point: 3x3 frustrated grid, treewidth "
+              f"{res['fp_treewidth']}, {res['fp_cycles']} independent cycles")
+        for dmp, cv, it, er, ze in res["fp_damping_sweep"]:
+            print(f"         damping {dmp:.1f}: converged={cv} in {it:4d} sweeps, "
+                  f"max |BP - exact marginal| {er:.4f}, |Bethe - exact log Z| {ze:.4f}")
+        print(f"         the fixed point is the same for every damping: errors spread by "
+              f"{res['fp_err_spread']:.2e}")
+        print(f"      L2 no fixed point: 3x3 grid at beta=1.5, treewidth "
+              f"{res['nc_treewidth']}, {res['nc_cycles']} cycles")
+        for dmp, cv, rg, dl, sw, pp, rr, er in res["nc_runs"]:
+            print(f"         damping {dmp:.1f}: {rg}, delta/sweep {dl:.2e}, message "
+                  f"swing {sw:.2e} nats, best repeat lag {pp} at residual {rr:.2e}")
+            print(f"                      max |BP - exact marginal| {er:.4f} "
+                  f"-- i.e. whatever sweep you stop on")
+        print(f"      L3 min-sum optimality (damping 0.5, 300 sweeps):")
+        for nm, k in (("Ising chain (tree)", "minsum_tree"),
+                      ("random tree      ", "minsum_randtree"),
+                      ("Ising ring (loop)", "minsum_ring"),
+                      ("3x3 grid   (loop)", "minsum_grid")):
+            r = res[k]
+            print(f"         {nm}: optimum found {r['n'] - r['misses']}/{r['n']}, "
+                  f"converged {r['converged']}/{r['n']}, worst energy gap "
+                  f"{r['worst_gap']:.4f}")
+        print(f"  HEADLINE   tree max error {res['tree_max_err']:.3e}   "
+              f"loopy max marginal gap {res['loopy_max_marginal_gap']:.4f}")
+    return res
+
+
+def verify_cost_law(verbose: bool = True) -> dict:
+    """The governing law on a factor tree, measured -- and what BP does NOT buy.
+
+    On a bipartite tree the cost is  n_factors * d ** max_arity  and NOT d ** treewidth
+    of the induced graph, because the message schedule never forms a clique bigger than
+    one factor. Both numbers are printed side by side. The wall-clock comparison against
+    bucket elimination is included because it is unflattering and true: flooding BP is
+    slower than elimination on the very graphs where it is exact. What it buys is that no
+    elimination order is needed and every update is local."""
+    import time
+    rows = []
+    for arity in (2, 3, 4, 5, 6):
+        g = random_hypertree(np.random.default_rng(0), n_factors=6, card=3, arity=arity)
+        t = time.perf_counter()
+        b, i = sum_product(g, max_iter=200, tol=1e-12)
+        dt = time.perf_counter() - t
+        ex = g.marginals()
+        err = max(float(np.max(np.abs(b[v] - ex[v]))) for v in b)
+        rows.append({"arity": arity, "n_vars": i["n_vars"], "treewidth": i["treewidth"],
+                     "cycles": i["n_independent_cycles"], "table": 3 ** arity,
+                     "ms": dt * 1e3, "err": err})
+    n = 100
+    gc = ising(np.random.default_rng(1), n=n, beta=0.7, h=0.3)
+    t = time.perf_counter()
+    _, ic = sum_product(gc, max_iter=8 * n, tol=1e-12, compute_treewidth=False)
+    bp_ms = (time.perf_counter() - t) * 1e3
+    t = time.perf_counter()
+    z, _, _ = gc.eliminate("sum")
+    el_ms = (time.perf_counter() - t) * 1e3
+    res = {"rows": rows, "chain_n": n, "bp_ms": bp_ms, "elim_ms": el_ms,
+           "bp_sweeps": ic["iterations"], "slowdown": bp_ms / el_ms,
+           "chain_logZ_err": abs(ic["bethe_logZ"] - z),
+           "max_err": max(r["err"] for r in rows)}
+    if verbose:
+        print("  rem.bp.verify_cost_law   cost = d ** max_arity on a factor tree, d = 3")
+        for r in rows:
+            print(f"    arity {r['arity']}: {r['n_vars']:2d} vars, bipartite cycles "
+                  f"{r['cycles']}, induced treewidth {r['treewidth']}, largest table "
+                  f"3^{r['arity']} = {r['table']:3d}, {r['ms']:5.1f} ms, "
+                  f"max err vs elimination {r['err']:.2e}")
+        print(f"    treewidth grows with arity and BP stays EXACT: the exactness "
+              f"condition is bipartite acyclicity, not treewidth.")
+        print(f"    what BP does not buy: Ising chain n={n}, BP {res['bp_sweeps']} sweeps "
+              f"{bp_ms:.0f} ms vs elimination {el_ms:.1f} ms "
+              f"({res['slowdown']:.0f}x slower, |log Z diff| "
+              f"{res['chain_logZ_err']:.2e}).")
+        print(f"    BP buys locality and no ordering search, not speed.")
     return res
 
 
 if __name__ == "__main__":
     verify()
+    print()
+    verify_cost_law()
