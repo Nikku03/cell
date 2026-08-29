@@ -34,9 +34,52 @@ def _ok(q: str) -> bool:
     return q in ("high", "medium", "acceptable")
 
 
+def from_logs(pattern: str) -> list:
+    """Reconstruct the headline rows from the driver's printed output.
+
+    INSURANCE, not a substitute. The driver checkpoints its JSON only every 10 complexes,
+    so a container death late in a shard loses everything since the last dump -- while the
+    per-arm rows were printed (and flushed) as they happened. This recovers those rows.
+
+    It recovers ONLY what the log line carries: floor_L, best_L, best_I, rank1_I and the
+    rank-1 quality. It cannot recover f_nat, the rescoring ablations or the refinement,
+    because those were never printed. Output is labelled partial so it can never be
+    mistaken for the full run.
+    """
+    import re
+    pat = re.compile(
+        r"^\s+(\S+)\s+(rigid|medium|difficult)\s+(bb|uu)\s+"
+        r"([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+(\S+)\s+([\d.]+)")
+    by_case = {}
+    for f in sorted(glob.glob(pattern)):
+        for line in open(f):
+            m = pat.match(line.rstrip("\n"))
+            if not m:
+                continue
+            cid, cl, arm, fL, bL, bI, r1I, q, secs = m.groups()
+            e = by_case.setdefault(cid, {"id": cid, "class": cl, "partial": True})
+            e[arm] = {"floor_L_rmsd": float(fL), "best_L_rmsd": float(bL),
+                      "rank1_L_rmsd": float("nan"),
+                      "best_in_list": {"I_rmsd": float(bI), "quality": "unknown",
+                                       "f_nat": float("nan"), "L_rmsd": float(bL)},
+                      "rank1": {"I_rmsd": float(r1I), "quality": q,
+                                "f_nat": float("nan"), "L_rmsd": float("nan")},
+                      "search_error_L": float(bL) - float(fL),
+                      "scoring_error_L": float("nan"), "seconds": float(secs)}
+    return list(by_case.values())
+
+
 def main() -> int:
-    rows, cfg = load(sys.argv[1] if len(sys.argv) > 1 else
-                     "benchmarks/shards/db5_dock_w*.json")
+    if "--from-logs" in sys.argv:
+        pat = next((a for a in sys.argv[1:] if not a.startswith("--")), "/tmp/db5w*.log")
+        rows, cfg = from_logs(pat), None
+        print("  *** PARTIAL, RECONSTRUCTED FROM LOGS ***")
+        print("  Only floor_L, best_L, best_I and rank-1 quality survive in the log lines.")
+        print("  best_in_list quality is 'unknown' (never printed), so the best-available")
+        print("  success columns below UNDERCOUNT and must not be quoted as results.")
+    else:
+        rows, cfg = load(sys.argv[1] if len(sys.argv) > 1 else
+                         "benchmarks/shards/db5_dock_w*.json")
     rows = [r for r in rows if "error" not in r]
     print(f"  DB5 docking run: {len(rows)} complexes")
     if cfg:
@@ -166,8 +209,9 @@ def main() -> int:
         tw = [r["rescore"]["treewidth_max"] for r in resc
               if r["rescore"].get("treewidth_max") is not None]
         print(f"\n  VE vs GREEDY on the repacking inside the rescoring:")
+        n_poses_rescored = sum(r["rescore"].get("n_rescored", 0) for r in resc)
         print(f"      poses where greedy MISSED the exact optimum: {sum(nz)} of "
-              f"{sum(len([1]) * (cfg.get('rescore_n') or 0) for _ in resc)}")
+              f"{n_poses_rescored}")
         print(f"      largest greedy gap seen: {max(gaps) if gaps else 0.0:.6f} kcal/mol")
         print(f"      cases where greedy changed which pose ranked first: "
               f"{sum(chg)} of {len(chg)}")
