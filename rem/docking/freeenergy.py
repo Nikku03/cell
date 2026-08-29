@@ -46,6 +46,21 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
       measured residual within 1% of the predicted -<E>/RT at every temperature. This is
       strictly stronger than the point bar -- code converging to the WRONG constant passes
       a loose point bar and fails the slope.
+      Z4b ALSO FAILED, at 7.42% against its 1% bar, and that verdict stands too. The slope
+      half passed (-0.9897, inside +/-0.05); the tolerance half failed, because -<E>/RT is
+      only the FIRST cumulant and at T = 1e5 K the second, beta^2 Var(E)/2, is 7.7% of it.
+      Var(E) here is 2380 kcal^2/mol^2. So defect L was committed a second time INSIDE its
+      own repair: a rate gate was written, and then an absolute tolerance was hung on a
+      first-order approximation at a temperature where second order is not negligible.
+  Z4c THE SCALE-FREE GATE, and the reason the previous two failed is that both carried an
+      absolute tolerance on a quantity in kcal/mol. This one carries none. The assertion is
+      the cumulant expansion
+          ln Z - ln N  =  -beta <E>  +  beta^2 Var(E) / 2  -  O(beta^3)
+      so subtracting each term in turn must raise the decay EXPONENT by exactly one. GATE,
+      on dimensionless exponents only: the log-log slope of the raw residual vs T is
+      -1 +/- 0.05, of the residual after removing the first cumulant is -2 +/- 0.05, and
+      after removing the second is -3 +/- 0.1. Nothing here can be made unreachable by the
+      scale of the energies, because nothing here has units.
   Z5  per-residue rotamer marginals by elimination vs by enumeration.
       GATE: max |difference| < 1e-8, and every marginal sums to 1.
   Z6  POSITIVE CONTROL. A deliberate steric clash is introduced by translating the mobile
@@ -165,15 +180,15 @@ def binding_free_energy(case: Dict[str, Structure], side: str = "r", bound: bool
 # verification
 # --------------------------------------------------------------------------------------
 
-def _mean_energy(g: FactorGraph) -> float:
-    """<E> over ALL configurations, by explicit enumeration. Small graphs only; this is a
-    reference quantity for Z4b, so it must not share a code path with the elimination."""
+def _mean_energy(g: FactorGraph, moment: int = 1) -> float:
+    """<E^moment> over ALL configurations, by explicit enumeration. Small graphs only; a
+    reference quantity for Z4b/Z4c, so it must not share a code path with the elimination."""
     import itertools
     names = list(g.cards)
     tot, n = 0.0, 0
     for combo in itertools.product(*[range(g.cards[v]) for v in names]):
         a = dict(zip(names, combo))
-        tot += sum(f.table[tuple(a[v] for v in f.vars)] for f in g.factors)
+        tot += sum(f.table[tuple(a[v] for v in f.vars)] for f in g.factors) ** moment
         n += 1
     return tot / n
 
@@ -252,6 +267,30 @@ def verify(case_id: str = "1A2K", verbose: bool = True) -> dict:
     say(f"      log-log slope {slope:.4f} (theory -1, bar +/-0.05); worst deviation from "
         f"-<E>/RT {worst_dev:.3%} (bar 1%)   {'PASS' if out['Z4b'] else 'FAIL'}")
 
+    # ---- Z4c: SCALE-FREE. Gate the cumulant EXPONENTS, which have no units. -------------
+    say("\n  Z4c high-T limit as a CUMULANT EXPANSION (Z4b's tolerance also failed; "
+        "defect L twice)")
+    Evar = _mean_energy(g_small, moment=2) - Ebar ** 2
+    raw, rem1, rem2 = [], [], []
+    for T in Ts:
+        beta = 1.0 / rt(float(T))
+        fe = free_energy(small, float(T), g_small)
+        d = fe["logZ"] - np.log(n_conf)
+        a = d + beta * Ebar
+        c = a - 0.5 * beta * beta * Evar
+        raw.append(abs(d)); rem1.append(abs(a)); rem2.append(abs(c))
+        say(f"      T={T:8.0e}  residual {d:11.4e}   after -b<E> {a:11.4e}   "
+            f"after +b^2V/2 {c:11.4e}")
+    def slope_of(y):
+        return float(np.polyfit(np.log10(Ts), np.log10(np.array(y)), 1)[0])
+    s0, s1, s2 = slope_of(raw), slope_of(rem1), slope_of(rem2)
+    out["Z4c_slopes"] = [s0, s1, s2]
+    out["Z4c"] = (abs(s0 + 1) < 0.05) and (abs(s1 + 2) < 0.05) and (abs(s2 + 3) < 0.10)
+    say(f"      Var(E) over all configurations: {Evar:,.1f} kcal^2/mol^2")
+    say(f"      decay exponents  raw {s0:+.4f} (want -1)   after 1st cumulant {s1:+.4f} "
+        f"(want -2)   after 2nd {s2:+.4f} (want -3)")
+    say(f"      Z4c {'PASS' if out['Z4c'] else 'FAIL'}   (no absolute tolerance anywhere)")
+
     # ---- Z5: marginals ---------------------------------------------------------------------
     m_elim = gb.marginals()
     m_bf = gb.brute_force_marginals()
@@ -327,7 +366,7 @@ def verify(case_id: str = "1A2K", verbose: bool = True) -> dict:
         say("      -> the ensemble did not reorder these poses. The entropy term is real "
             "but varies less between poses than the energy does, so it cancels in a rank.")
 
-    gates = ["Z1", "Z2", "Z3", "Z4", "Z4b", "Z5", "Z6"]
+    gates = ["Z1", "Z2", "Z3", "Z4", "Z4b", "Z4c", "Z5", "Z6"]
     out["all_pass"] = all(bool(out[k]) for k in gates)
     say(f"\n  {'ALL GATES PASS' if out['all_pass'] else 'GATE FAILURE'}: "
         + "  ".join(f"{k}={'pass' if out[k] else 'FAIL'}" for k in gates))

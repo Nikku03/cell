@@ -339,9 +339,19 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      1/T across decades. That is strictly stronger than the one-point bar it replaces --
 #      a code path that converged to the wrong constant would pass a loose point bar and
 #      fail the slope.
-#      RULE: a limit is a rate. Gate it across a sweep, not at one point; and any absolute
-#      tolerance on a physical quantity must be derived from that quantity's own scale,
-#      measured, before it is written down.
+#      AND THEN THE REPAIR COMMITTED THE SAME DEFECT. Z4b gated two things: the slope, and
+#      the residual against the predicted -<E>/RT to within 1%. The slope half passed at
+#      -0.9897. The tolerance half FAILED at 7.42%, because -<E>/RT is only the FIRST
+#      cumulant and at T = 1e5 K the second, beta^2 Var(E)/2, is 7.7% of it -- Var(E) being
+#      2380 kcal^2/mol^2, which again had not been measured when the 1% was written down.
+#      Twice in one module, the second time inside the fix for the first.
+#      RULE: a limit is a rate. Gate it across a sweep, not at one point. And prefer a gate
+#      with NO UNITS AT ALL: Z4c gates only the decay EXPONENTS of the cumulant expansion
+#      -- raw residual -1, after removing the first cumulant -2, after the second -3 --
+#      which cannot be made unreachable by the scale of the energies, because exponents are
+#      dimensionless. Where an absolute tolerance is genuinely unavoidable, it must be
+#      derived from the quantity's own measured scale before it is written down, and the
+#      order of the approximation it is testing must be stated.
 #
 # A commit message is not a mechanism. This is.
 # =============================================================================================
