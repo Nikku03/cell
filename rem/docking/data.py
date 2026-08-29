@@ -189,24 +189,47 @@ def _matched_backbone(s1: Structure, s2: Structure,
     return (b1.coords[[k1[k] for k in keys]], b2.coords[[k2[k] for k in keys]])
 
 
+def _matched_backbone_aligned(s_from: Structure, s_to: Structure, mapping: Dict[str, str],
+                              to_subset: Optional[set] = None) -> Tuple[np.ndarray, np.ndarray]:
+    """Backbone atoms paired through an explicit residue mapping (from sequence alignment)."""
+    bf, bt = s_from.backbone(), s_to.backbone()
+    kf = {(r, a): i for i, (r, a) in enumerate(zip(_canonical_ids(bf), bf.atom_names))}
+    kt = {(r, a): i for i, (r, a) in enumerate(zip(_canonical_ids(bt), bt.atom_names))}
+    P, Q = [], []
+    for (rf, a), i in sorted(kf.items()):
+        rt = mapping.get(rf)
+        if rt is None or (to_subset is not None and rt not in to_subset):
+            continue
+        j = kt.get((rt, a))
+        if j is not None:
+            P.append(bf.coords[i]); Q.append(bt.coords[j])
+    if not P:
+        return np.zeros((0, 3)), np.zeros((0, 3))
+    return np.asarray(P), np.asarray(Q)
+
+
 def interface_rmsd(case: Dict[str, Structure], cutoff: float = 10.0) -> Dict[str, float]:
     """I-RMSD between bound and unbound components, the quantity that defines difficulty.
 
     The interface is defined on the BOUND complex, then the same residues are compared
     between bound and unbound after superposition."""
     rb, lb = case["r_b"], case["l_b"]
-    out = {}
+    out, parts = {}, []
     for tag, bound, unbound, partner in (("receptor", rb, case["r_u"], lb),
                                          ("ligand", lb, case["l_u"], rb)):
-        res = interface_residues(bound, partner, cutoff)
-        P, Q = _matched_backbone(unbound, bound, res)
+        iface = set(interface_residues(bound, partner, cutoff))
+        mapping = align_residues(unbound, bound)
+        P, Q = _matched_backbone_aligned(unbound, bound, mapping, iface)
         out[tag] = superimposed_rmsd(P, Q) if len(P) >= 3 else float("nan")
         out[f"{tag}_n_atoms"] = float(len(P))
-    both_b = np.vstack([_matched_backbone(case["r_u"], rb, interface_residues(rb, lb, cutoff))[1],
-                        _matched_backbone(case["l_u"], lb, interface_residues(lb, rb, cutoff))[1]])
-    both_u = np.vstack([_matched_backbone(case["r_u"], rb, interface_residues(rb, lb, cutoff))[0],
-                        _matched_backbone(case["l_u"], lb, interface_residues(lb, rb, cutoff))[0]])
-    out["combined"] = superimposed_rmsd(both_u, both_b) if len(both_u) >= 3 else float("nan")
+        out[f"{tag}_n_mapped"] = float(len(mapping))
+        if len(P) >= 3:
+            parts.append((P, Q))
+    if parts:
+        U = np.vstack([p for p, _ in parts]); B = np.vstack([q for _, q in parts])
+        out["combined"] = superimposed_rmsd(U, B)
+    else:
+        out["combined"] = float("nan")
     return out
 
 
@@ -218,3 +241,86 @@ def classify(irmsd_combined: float) -> str:
     if irmsd_combined <= MEDIUM_MAX:
         return "medium"
     return "difficult"
+
+
+# --------------------------------------------------------------- sequence-based matching
+_THREE_TO_ONE = {
+    "ALA": "A", "ARG": "R", "ASN": "N", "ASP": "D", "CYS": "C", "GLN": "Q", "GLU": "E",
+    "GLY": "G", "HIS": "H", "ILE": "I", "LEU": "L", "LYS": "K", "MET": "M", "PHE": "F",
+    "PRO": "P", "SER": "S", "THR": "T", "TRP": "W", "TYR": "Y", "VAL": "V",
+    "MSE": "M", "SEC": "U", "PYL": "O", "HSD": "H", "HSE": "H", "HSP": "H",
+}
+
+
+def chain_sequences(s: Structure) -> List[Tuple[str, List[Tuple[str, str]]]]:
+    """Per chain, in file order: (chain_id, [(canonical_residue_key, one_letter), ...])."""
+    ids = _canonical_ids(s)
+    out, seen = [], {}
+    for key, name in zip(ids, s.res_names):
+        ch = key.split(":")[0]
+        if ch not in seen:
+            seen[ch] = []
+            out.append((ch, seen[ch]))
+        if not seen[ch] or seen[ch][-1][0] != key:
+            seen[ch].append((key, _THREE_TO_ONE.get(name, "X")))
+    return out
+
+
+def align_residues(s_from: Structure, s_to: Structure,
+                   min_identity: float = 0.7) -> Dict[str, str]:
+    """Map residue keys of s_from -> s_to by SEQUENCE ALIGNMENT, per chain in order.
+
+    WHY THIS EXISTS. Keying residues by number recovered only 200 of 271 DB5 cases. The
+    excluded 71 shared a signature: one component matched at 100% while the other matched
+    0% or 4%. Four percent is not a failure to match -- it is matching the WRONG residues,
+    which means the bound and unbound numbering are OFFSET, not merely on renamed chains.
+    A residue number is not a stable key across depositions; the sequence is. Aligning also
+    handles the insertions and deletions that an offset alone cannot.
+
+    Returns only mappings whose chain alignment reaches min_identity, so a bad alignment
+    produces no mapping rather than a plausible wrong one."""
+    from Bio.Align import PairwiseAligner
+    al = PairwiseAligner()
+    al.mode = "global"
+    al.match_score, al.mismatch_score = 2.0, -1.0
+    al.open_gap_score, al.extend_gap_score = -10.0, -0.5
+
+    out: Dict[str, str] = {}
+    ca, cb = chain_sequences(s_from), chain_sequences(s_to)
+    if len(ca) != len(cb):
+        # chain counts differ: pair each s_from chain with its best-identity partner
+        pairs = []
+        for i, (_, sa) in enumerate(ca):
+            best, bj = -1.0, None
+            for j, (_, sb) in enumerate(cb):
+                if not sa or not sb:
+                    continue
+                sc = al.score("".join(x[1] for x in sa), "".join(x[1] for x in sb))
+                sc /= max(len(sa), len(sb))
+                if sc > best:
+                    best, bj = sc, j
+            if bj is not None:
+                pairs.append((i, bj))
+    else:
+        pairs = [(i, i) for i in range(len(ca))]
+
+    for i, j in pairs:
+        sa, sb = ca[i][1], cb[j][1]
+        if not sa or not sb:
+            continue
+        A, B = "".join(x[1] for x in sa), "".join(x[1] for x in sb)
+        try:
+            aln = al.align(A, B)[0]
+        except Exception:
+            continue
+        ia, ib = aln.aligned
+        matched, ident = [], 0
+        for (a0, a1), (b0, b1) in zip(ia, ib):
+            for k in range(a1 - a0):
+                pa, pb = a0 + k, b0 + k
+                matched.append((sa[pa][0], sb[pb][0]))
+                if A[pa] == B[pb]:
+                    ident += 1
+        if matched and ident / len(matched) >= min_identity:
+            out.update(dict(matched))
+    return out

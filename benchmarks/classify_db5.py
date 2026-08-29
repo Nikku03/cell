@@ -14,14 +14,22 @@ for i, cid in enumerate(ids):
         r = interface_rmsd(c)
         ar, nr = residue_name_agreement(c["r_u"], c["r_b"])
         al, nl = residue_name_agreement(c["l_u"], c["l_b"])
-        # A mapping can be non-empty and wrong. Refuse to classify a case whose residue
-        # names disagree -- a number from a bad alignment is worse than no number.
-        ok = nr >= 10 and nl >= 10 and ar >= 0.95 and al >= 0.95 and np.isfinite(r["combined"])
+        # Residues are now paired by SEQUENCE ALIGNMENT, which only emits a mapping when the
+        # chain alignment reaches 70% identity -- so a bad alignment yields no mapping rather
+        # than a plausible wrong one. The usability test is therefore on the alignment's own
+        # output: enough residues mapped, and enough interface backbone atoms to superimpose.
+        ok = (r.get("receptor_n_mapped", 0) >= 10 and r.get("ligand_n_mapped", 0) >= 10
+              and r["receptor_n_atoms"] >= 12 and r["ligand_n_atoms"] >= 12
+              and np.isfinite(r["combined"]))
         rec = {"id": cid, "irmsd": float(r["combined"]),
                "irmsd_receptor": float(r["receptor"]), "irmsd_ligand": float(r["ligand"]),
                "class": classify(r["combined"]) if ok else "unusable",
                "rec_name_agree": ar, "lig_name_agree": al,
                "n_rec": int(nr), "n_lig": int(nl),
+               "n_mapped_r": int(r.get("receptor_n_mapped", 0)),
+               "n_mapped_l": int(r.get("ligand_n_mapped", 0)),
+               "n_iface_atoms_r": int(r["receptor_n_atoms"]),
+               "n_iface_atoms_l": int(r["ligand_n_atoms"]),
                "n_atoms_r": int(len(c["r_u"])), "n_atoms_l": int(len(c["l_u"]))}
         (rows if ok else bad).append(rec)
     except Exception as e:
