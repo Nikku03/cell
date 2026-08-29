@@ -269,11 +269,24 @@ class FactorGraph:
     # ---------------------------------------------------------------- marginals
     def marginals(self, max_table: float = 2e8) -> Dict[str, np.ndarray]:
         """Exact per-variable marginals by eliminating every other variable last-but-one."""
-        out = {}
         base, _ = self.best_order()
-        for v in self.cards:
-            order = [u for u in base if u != v] + [v]
-            pool: List[Factor] = [Factor(f.vars, f.table) for f in self.factors]
+        return {v: self.marginal(v, max_table=max_table, base=base) for v in self.cards}
+
+    def marginal(self, v: str, max_table: float = 2e8,
+                 base: Optional[Sequence[str]] = None) -> np.ndarray:
+        """The exact marginal of ONE variable, in a single elimination.
+
+        Separated out because clamping a variable to each of its values and re-eliminating
+        once per value costs cards[v] TIMES as much for the same answer. rem.tailrisk did
+        exactly that and its cost gate caught it.
+        """
+        if v not in self.cards:
+            raise ValueError(f"unknown variable {v!r}")
+        if base is None:
+            base, _ = self.best_order()
+        order = [u for u in base if u != v] + [v]
+        pool: List[Factor] = [Factor(f.vars, f.table) for f in self.factors]
+        if True:
             for w in order[:-1]:
                 involved = [f for f in pool if w in f.vars]
                 if not involved:
@@ -301,8 +314,7 @@ class FactorGraph:
                 else:
                     acc = acc + f.table.sum()
             acc = acc - logsumexp(acc, axis=0)
-            out[v] = np.exp(acc)
-        return out
+            return np.exp(acc)
 
     # ---------------------------------------------------------------- brute force
     def brute_force(self, mode: str = "min"):

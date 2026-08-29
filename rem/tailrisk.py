@@ -13,10 +13,24 @@ S_0 = 0, S_i = S_(i-1) + X_i as variables, with a DETERMINISTIC factor on (S_(i-
 Eliminating in the order X_1, S_1, X_2, S_2, ... contracts the whole thing, and the width is
 set by the dependency graph plus one for the running total. Cost
 
-    n_bins  x  d ** (treewidth of the dependency graph + 1)
+    n_bins ** 2  x  d ** (treewidth of the dependency graph + 1)
 
-Linear in how finely the loss axis is discretized, exponential in how tangled the
+QUADRATIC in how finely the loss axis is discretized, exponential in how tangled the
 dependencies are. Both halves of that are MEASURED below, not asserted.
+
+THAT EXPONENT IS A CORRECTION. This module first claimed the cost was LINEAR in n_bins,
+and T5 failed it: the measured log-log slope was 1.945, not the declared 0.6-1.6. The gate
+was right and the claim was wrong, twice over.
+  (a) The pmf was obtained by clamping the final total to each bin and re-eliminating once
+      per bin -- n_bins full eliminations for one answer. That is now ONE elimination
+      returning the marginal of the final total (FactorGraph.marginal, added for this).
+  (b) The remaining quadratic is structural and does not go away. The transfer factor on
+      (S_(i-1), X_i, S_i) is a DENSE n_bins x d x n_bins table -- measured largest table
+      equals n_bins^2 * d to a ratio of 1.00 -- even though S_i = S_(i-1) + X_i is a
+      convolution that only has n_bins * d non-zero entries. A dense factor table cannot
+      express its own sparsity. Getting to linear needs a convolution-aware contraction,
+      which is a different formalism, not a tuning of this one.
+So the corrected claim is weaker than the original, and it is stated where the original was.
 
 WHAT THIS IS NOT. The loss axis is DISCRETIZED. A continuous-loss model computed on a grid
 of bins is an approximation of the continuous problem no matter how exactly the discrete
@@ -39,6 +53,33 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
       path. GATE: max |difference| < 1e-12.
   T5  cost vs DISCRETIZATION at fixed dependency structure. GATE: fitted log-log slope of
       time vs n_bins in [0.6, 1.6] -- linear, as claimed.
+      T5 IS VOID, and void rather than failed for a specific reason. Its statistic is
+      wall-clock, which on this machine is not reproducible: the SAME code measured 1.945,
+      then 1.127, then 1.783, then 1.835 across runs, passing its own bar on some and
+      failing on others depending on what else was running. A gate whose verdict flips
+      between runs of unchanged code is not measuring the code. It is retained in the
+      output, marked VOID, and excluded from the pass/fail list.
+      Its underlying CLAIM -- that the cost is linear in n_bins -- is separately and
+      deterministically REFUTED by T5b, whose cost slope is 2.000000. So the claim is wrong;
+      it is just not the timing that established it.
+  T5b THE CORRECTED GATE, declared separately rather than by widening T5. Two parts, both
+      of which the diagnosis predicts: (a) the largest intermediate table must equal
+      n_bins^2 * d exactly, which is the structural statement, and (b) the fitted log-log
+      slope of the DETERMINISTIC cost -- log(largest table) vs log(n_bins) -- must be 2
+      to within 0.01. It gates on operation count, not on wall-clock.
+      Part (a) is the sharper test -- an implementation that had accidentally become cubic
+      would still pass a loose slope band but could not match the table size on the nose.
+      NOT wall-clock, and that is the third thing this gate taught. T5b first gated on a
+      timing slope. Over n_bins = 19..152 it measured 1.127; extending the sweep to 608 and
+      fitting from 152 gave 1.995 on one run and 2.857 on the next, with the SAME code --
+      because this machine was simultaneously running three docking benchmark workers, and
+      at n_bins = 608 the intermediate table is 1.5M entries, so memory bandwidth swamped
+      the signal. The same size timed 99 ms and 257 ms on two consecutive runs.
+      A wall-clock exponent measured under uncontrolled load is a measurement of the load.
+      The largest intermediate table, by contrast, is a deterministic property of the
+      contraction: it does not move between runs, it cannot be flattered by a quiet machine,
+      and it is the quantity the governing law actually predicts. Timings are still printed,
+      as an observation with the caveat attached, but nothing is gated on them.
   T6  THE WALL. Treewidth and cost as the dependency graph goes from a chain to complete.
       GATE: the treewidth must grow at least linearly in n for the complete graph (slope
       >= 0.8), so the module demonstrates its own limit rather than only its strength.
@@ -133,18 +174,10 @@ def loss_distribution(pf: dict, n_bins: Optional[int] = None) -> dict:
         g.add_factor([f"s{i-1}", f"x{i}", f"s{i}"], t)
 
     logZ, _a, info = g.eliminate("sum")
-    # clamp the final total to each bin: one extra unary per value
-    logp = np.empty(n_bins)
-    for k in range(n_bins):
-        gk = FactorGraph()
-        for v, c in g.cards.items():
-            gk.add_var(v, c)
-        for f in g.factors:
-            gk.add_factor(list(f.vars), f.table)
-        pin = np.full(n_bins, LOG0); pin[k] = 0.0
-        gk.add_factor([f"s{n-1}"], pin)
-        logp[k] = gk.eliminate("sum")[0]
-    p = np.exp(logp - logZ)
+    # ONE elimination, leaving the final total uneliminated. Clamping the total to each bin
+    # and re-eliminating per bin gives the identical answer for n_bins times the work; that
+    # is what the first version did and what T5 caught.
+    p = g.marginal(f"s{n-1}")
     return {"pmf": p, "logZ": float(logZ), "treewidth": int(info["treewidth"]),
             "n_bins": n_bins, "seconds": time.perf_counter() - t0,
             "largest_table": int(info["largest_table"])}
@@ -247,17 +280,36 @@ def verify(verbose: bool = True) -> dict:
 
     # ---- T5: linear in discretization ----------------------------------------------------
     say("\n  T5 cost vs DISCRETIZATION (n_bins) at fixed structure")
-    bins, secs = [], []
+    bins, secs, tabs = [], [], []
     base = make_portfolio(6, d=4, topology="chain", seed=1)
-    for nb in (19, 38, 76, 152):
+    for nb in (19, 38, 76, 152, 304, 608):
         rr = loss_distribution(base, n_bins=nb)
-        bins.append(nb); secs.append(rr["seconds"])
+        bins.append(nb); secs.append(rr["seconds"]); tabs.append(rr["largest_table"])
         say(f"      n_bins {nb:4d}   {rr['seconds']*1e3:8.1f} ms   "
             f"largest table {rr['largest_table']:,}")
     s5 = _slope(np.log10(bins), np.log10(secs))
-    out["T5_slope"], out["T5"] = s5, 0.6 <= s5 <= 1.6
-    say(f"      log-log slope {s5:.3f} (bar 0.6-1.6, i.e. linear)   "
-        f"{'PASS' if out['T5'] else 'FAIL'}")
+    out["T5_slope"] = s5
+    out["T5"] = "VOID"
+    out["T5_would_have_passed"] = bool(0.6 <= s5 <= 1.6)
+    say(f"      log-log slope over the WHOLE range {s5:.3f} "
+        f"(T5's bar was 0.6-1.6, LINEAR -- the original claim)")
+    say(f"      T5 VOID: wall-clock is not reproducible here -- unchanged code has measured "
+        f"1.945, 1.127,\n           1.783 and 1.835 across runs, landing on both sides of "
+        f"its own bar. Not a gate.\n           Its claim is refuted deterministically by "
+        f"T5b instead.")
+    say("      (timings above are an OBSERVATION, not a gate: this machine may be loaded, "
+        "and\n       the same size has timed 99 ms and 257 ms on consecutive runs)")
+    exact_tab = all(t == nb * nb * base["d"] for nb, t in zip(bins, tabs))
+    s5b = _slope(np.log10(bins), np.log10(tabs))
+    out["T5b_table_exact"] = bool(exact_tab)
+    out["T5b_cost_slope"] = s5b
+    out["T5b_time_slope"] = s5
+    out["T5b"] = bool(exact_tab and abs(s5b - 2.0) < 0.01)
+    say(f"      T5b largest table == n_bins^2 * d on every size: {exact_tab}")
+    say(f"      T5b log-log slope of the DETERMINISTIC cost: {s5b:.6f} "
+        f"(want 2.0 +/- 0.01)")
+    say(f"      T5b {'PASS' if out['T5b'] else 'FAIL'}  -- the transfer factor is a dense "
+        f"n_bins x d x n_bins table, so the cost is QUADRATIC in the discretization")
 
     # ---- T6: THE WALL ---------------------------------------------------------------------
     say("\n  T6 THE WALL: treewidth as the dependency graph goes chain -> complete")
@@ -274,7 +326,7 @@ def verify(verbose: bool = True) -> dict:
     say(f"      slope of complete-graph treewidth vs n: {s6:.3f} (bar >= 0.8)   "
         f"{'PASS' if out['T6'] else 'FAIL'}")
 
-    gates = ["T1", "T2", "T3", "T4", "T5", "T6"]
+    gates = ["T1", "T2", "T3", "T4", "T5b", "T6"]   # T5 is VOID, not failed
     out["all_pass"] = all(bool(out[k]) for k in gates)
     say(f"\n  {'ALL GATES PASS' if out['all_pass'] else 'GATE FAILURE'}: "
         + "  ".join(f"{k}={'pass' if out[k] else 'FAIL'}" for k in gates))
