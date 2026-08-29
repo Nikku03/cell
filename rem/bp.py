@@ -270,14 +270,21 @@ def sum_product(graph: FactorGraph, max_iter: int = 500, damping: float = 0.0,
         logZ += (1 - len(ks)) * Hv
     info["bethe_logZ"] = float(logZ)
     return beliefs, info
-    # NOTE, measured 2026-08-29 and NOT patched here (file discipline: factorgraph.py
-    # belongs to another module). If a variable appears in NO factor, this Bethe log Z
-    # includes its log(card) -- as brute-force enumeration does -- while
-    # FactorGraph.eliminate("sum") omits it, because that variable's bucket is empty and
-    # is skipped. Minimal repro: one variable of card 3 in no factor, one binary variable
-    # with a zero unary; eliminate("sum") returns log 2 = 0.693, brute_force("sum")
-    # returns log 6 = 1.792. Marginals are unaffected (they are normalised). bp.py sides
-    # with brute force. See test_bp.py::test_isolated_variable_matches_brute_force.
+    # NOTE, measured 2026-08-29, and RESOLVED the same day in favour of this module.
+    # If a variable appears in NO factor, this Bethe log Z includes its log(card) -- the
+    # (1 - d_i) * H_i term supplies it for a degree-0 variable -- as brute-force
+    # enumeration does. FactorGraph.eliminate("sum") did NOT: that variable's bucket is
+    # empty and the loop skipped it, so log Z came back short by exactly log(cards[v]) per
+    # free variable. Minimal repro: one variable of card 3 in no factor plus one binary
+    # variable with a zero unary; eliminate("sum") returned log 2 = 0.693 against
+    # brute_force("sum") = log 6 = 1.792. Marginals were unaffected (they are normalised).
+    # bp.py sided with brute force and was right; factorgraph.py has since been fixed and
+    # both now return log 6. The bug was invisible to factorgraph's own 40-instance sweep
+    # because random_graph gave every variable a unary, so no bucket was ever empty --
+    # random_graph now takes n_free and verify() covers the case by name and by sweep.
+    # This note is kept rather than deleted: the discrepancy was real, and the record of
+    # which module was right is worth more than a tidy file.
+    # See test_bp.py::test_isolated_variable_matches_brute_force.
 
 
 # --------------------------------------------------------------------- min-sum

@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import heapq
 import itertools
+import math
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
@@ -202,9 +203,20 @@ class FactorGraph:
             file(Factor(f.vars, f.table))
         records = []
         biggest = 1
+        free_vars: List[str] = []
         for i, v in enumerate(order):
             involved = buckets[i]
             if not involved:
+                # A variable that appears in NO factor. Its bucket is empty and stays
+                # empty: a factor is filed under the FIRST of its variables in the order,
+                # and every message a variable is part of is refiled under a LATER bucket,
+                # so an empty bucket at position i means v is genuinely factor-free.
+                # It still has cards[v] states and Z must count every one of them --
+                # skipping it under-counts log Z by exactly log(cards[v]) per free
+                # variable. In "min" mode it contributes 0 to the energy but must still
+                # appear in the assignment, so it is pinned to state 0 deliberately
+                # rather than silently omitted.
+                free_vars.append(v)
                 continue
             # THE PATHWIDTH TRAP: only factors mentioning v are ever combined.
             U: List[str] = []
@@ -236,6 +248,9 @@ class FactorGraph:
         for f in leftovers:
             total = total + (f.table if f.vars == () else f.table.sum())
         total = float(np.asarray(total).reshape(()))
+        if mode == "sum":
+            for v in free_vars:
+                total += math.log(self.cards[v])
 
         assignment = None
         if mode == "min":
@@ -243,9 +258,12 @@ class FactorGraph:
             for v, rest, arg in reversed(records):
                 idx = tuple(assignment[u] for u in rest)
                 assignment[v] = int(arg[idx]) if rest else int(arg)
+            for v in free_vars:
+                assignment[v] = 0
         info = {"order": list(order), "treewidth": int(width),
                 "largest_table": int(biggest),
-                "n_vars": len(self.cards), "n_factors": len(self.factors)}
+                "n_vars": len(self.cards), "n_factors": len(self.factors),
+                "n_free_vars": len(free_vars)}
         return total, assignment, info
 
     # ---------------------------------------------------------------- marginals
@@ -328,16 +346,25 @@ class FactorGraph:
 
 
 # ---------------------------------------------------------------------------- verify
-def random_graph(rng, n=6, card=3, n_factors=8, arity=2) -> FactorGraph:
+def random_graph(rng, n=6, card=3, n_factors=8, arity=2, n_free=0) -> FactorGraph:
+    """n_free > 0 leaves that many variables in NO factor at all.
+
+    The default of 0 is what the original 40-instance sweep used, and it is exactly why
+    that sweep could not see the free-variable bug in eliminate(): every variable had a
+    unary, so no bucket was ever empty. Cases (e) and (f) of verify() set it non-zero.
+    """
     g = FactorGraph()
     names = [f"x{i}" for i in range(n)]
     for v in names:
         g.add_var(v, card)
-    for v in names:                      # every variable gets a unary, so none is isolated
+    tied = names[n_free:]
+    for v in tied:                       # variables NOT deliberately left free get a unary
         g.add_factor([v], rng.normal(size=card))
     for _ in range(n_factors):
-        k = min(arity, n)
-        vs = list(rng.choice(names, size=k, replace=False))
+        if len(tied) < 1:
+            break
+        k = min(arity, len(tied))
+        vs = list(rng.choice(tied, size=k, replace=False))
         g.add_factor(vs, rng.normal(size=(card,) * k))
     return g
 
@@ -371,9 +398,47 @@ def verify(seed: int = 0, trials: int = 40, verbose: bool = True) -> dict:
         for v in m:
             e_marg = max(e_marg, float(np.max(np.abs(m[v] - bm[v]))))
 
+    # ---- FACTOR-FREE VARIABLES ---------------------------------------------------------
+    # The sweep above cannot see this case: random_graph gives every variable a unary by
+    # default, so no bucket is ever empty. A variable in NO factor still has cards[v]
+    # states, and Z must count all of them; eliminate() used to skip the empty bucket and
+    # under-count log Z by exactly log(cards[v]) per free variable. The minimal instance is
+    # checked by name, then a sweep, so a regression cannot hide in an average.
+    g0 = FactorGraph()
+    g0.add_var("iso", 3)
+    g0.add_factor(["a"], np.zeros(2))
+    repro_sum = abs(g0.eliminate("sum")[0] - g0.brute_force("sum")[0])
+    _v0, arg0, info0 = g0.eliminate("min")
+    repro_assign_complete = set(arg0) == set(g0.cards)
+
+    f_min = f_sum = f_marg = 0.0
+    f_assign_complete = True
+    free_trials = 0
+    for t in range(trials):
+        n = int(rng.integers(3, 7))
+        card = int(rng.integers(2, 4))
+        n_free = int(rng.integers(1, 3))
+        g = random_graph(rng, n=n, card=card, n_factors=int(rng.integers(2, 8)),
+                         arity=int(rng.integers(2, 4)), n_free=n_free)
+        vmin, arg, info = g.eliminate("min")
+        if info["n_free_vars"] == 0:
+            continue                       # the random draw happened to tie them all
+        free_trials += 1
+        f_min = max(f_min, abs(vmin - g.brute_force("min")[0]))
+        f_sum = max(f_sum, abs(g.eliminate("sum")[0] - g.brute_force("sum")[0]))
+        f_assign_complete &= set(arg) == set(g.cards)
+        m, bm = g.marginals(), g.brute_force_marginals()
+        for v in m:
+            f_marg = max(f_marg, float(np.max(np.abs(m[v] - bm[v]))))
+
     res = {"trials": trials, "max_err_min": e_min, "max_err_logZ": e_sum,
            "max_err_marginal": e_marg, "max_err_argmin_consistency": e_arg,
-           "treewidths": (min(widths), max(widths))}
+           "treewidths": (min(widths), max(widths)),
+           "free_trials": free_trials, "free_max_err_min": f_min,
+           "free_max_err_logZ": f_sum, "free_max_err_marginal": f_marg,
+           "free_assignment_complete": bool(f_assign_complete),
+           "repro_err_logZ": float(repro_sum),
+           "repro_assignment_complete": bool(repro_assign_complete)}
     if verbose:
         print(f"  rem.factorgraph.verify  {trials} random instances, "
               f"treewidth {min(widths)}-{max(widths)}")
@@ -381,6 +446,13 @@ def verify(seed: int = 0, trials: int = 40, verbose: bool = True) -> dict:
         print(f"    max |elimination_logZ - brute_force|   {e_sum:.3e}")
         print(f"    max |marginal         - brute_force|   {e_marg:.3e}")
         print(f"    max |E(argmin) - reported min|         {e_arg:.3e}")
+        print(f"  factor-free variables ({free_trials} instances with >=1 free var)")
+        print(f"    minimal repro |logZ - brute_force|     {repro_sum:.3e}"
+              f"   assignment complete: {repro_assign_complete}")
+        print(f"    max |elimination_min  - brute_force|   {f_min:.3e}")
+        print(f"    max |elimination_logZ - brute_force|   {f_sum:.3e}")
+        print(f"    max |marginal         - brute_force|   {f_marg:.3e}")
+        print(f"    every free variable present in argmin: {f_assign_complete}")
     return res
 
 
