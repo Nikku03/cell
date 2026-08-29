@@ -51,6 +51,16 @@ q = np.array([r["irmsd"] for r in rows])
 print(f"\n  I-RMSD  min {q.min():.2f}  median {np.median(q):.2f}  max {q.max():.2f} A")
 print(f"  hardest 6: " + ", ".join(f"{r['id']}({r['irmsd']:.2f})"
                                    for r in sorted(rows, key=lambda x: -x['irmsd'])[:6]))
+# PLAUSIBILITY GUARD. An interface RMSD above ~10 A between bound and unbound forms of the
+# SAME protein is not a hard case, it is a suspect number -- that signature is exactly what
+# exposed the multi-copy chain-assignment bug (2VIS read 24.4 A, 1K4C 17.7 A). Anything left
+# above the threshold is listed so it is reviewed rather than averaged into a class count.
+SUSPECT = 10.0
+susp = [r for r in rows if r["irmsd"] > SUSPECT]
+print(f"\n  PLAUSIBILITY: {len(susp)} case(s) above {SUSPECT} A I-RMSD -- suspect, not accepted:")
+for r in sorted(susp, key=lambda x: -x["irmsd"]):
+    print(f"    {r['id']}  {r['irmsd']:.2f} A  (rec {r['irmsd_receptor']:.2f}, "
+          f"lig {r['irmsd_ligand']:.2f}, mapped {r['n_mapped_r']}/{r['n_mapped_l']})")
 if bad:
     print(f"\n  excluded ({len(bad)}): " + ", ".join(b['id'] for b in bad[:14])
           + (" ..." if len(bad) > 14 else ""))

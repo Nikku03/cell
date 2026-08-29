@@ -285,34 +285,17 @@ def align_residues(s_from: Structure, s_to: Structure,
     al.match_score, al.mismatch_score = 2.0, -1.0
     al.open_gap_score, al.extend_gap_score = -10.0, -0.5
 
-    out: Dict[str, str] = {}
     ca, cb = chain_sequences(s_from), chain_sequences(s_to)
-    if len(ca) != len(cb):
-        # chain counts differ: pair each s_from chain with its best-identity partner
-        pairs = []
-        for i, (_, sa) in enumerate(ca):
-            best, bj = -1.0, None
-            for j, (_, sb) in enumerate(cb):
-                if not sa or not sb:
-                    continue
-                sc = al.score("".join(x[1] for x in sa), "".join(x[1] for x in sb))
-                sc /= max(len(sa), len(sb))
-                if sc > best:
-                    best, bj = sc, j
-            if bj is not None:
-                pairs.append((i, bj))
-    else:
-        pairs = [(i, i) for i in range(len(ca))]
 
-    for i, j in pairs:
-        sa, sb = ca[i][1], cb[j][1]
+    def pair_chain(sa, sb):
+        """Align two chains; return (residue pairs, sequence identity) or (None, 0)."""
         if not sa or not sb:
-            continue
+            return None, 0.0
         A, B = "".join(x[1] for x in sa), "".join(x[1] for x in sb)
         try:
             aln = al.align(A, B)[0]
         except Exception:
-            continue
+            return None, 0.0
         ia, ib = aln.aligned
         matched, ident = [], 0
         for (a0, a1), (b0, b1) in zip(ia, ib):
@@ -321,6 +304,62 @@ def align_residues(s_from: Structure, s_to: Structure,
                 matched.append((sa[pa][0], sb[pb][0]))
                 if A[pa] == B[pb]:
                     ident += 1
-        if matched and ident / len(matched) >= min_identity:
-            out.update(dict(matched))
+        if not matched:
+            return None, 0.0
+        return matched, ident / len(matched)
+
+    # THE MULTI-COPY TRAP. DB5 unbound files often contain the CRYSTALLOGRAPHIC OLIGOMER --
+    # 2VIS ships 3 copies of its ligand chain, 1K4C ships 4 (a tetramer) -- while the bound
+    # file has one. Pairing each unbound chain with its best-identity partner maps EVERY copy
+    # onto the same bound chain, and a dict update lets the LAST one processed win. That copy
+    # sits elsewhere in the lattice, so the interface RMSD came out at 25 A for structures of
+    # the same protein. The alignment was never wrong; the wrong COPY was chosen.
+    # Correct choice is an assignment, scored by the geometry rather than by sequence: among
+    # equally-identical copies, the corresponding one is the one that superimposes best.
+    bf, bt = s_from.backbone(), s_to.backbone()
+    kf = {(r, a): i for i, (r, a) in enumerate(zip(_canonical_ids(bf), bf.atom_names))}
+    kt = {(r, a): i for i, (r, a) in enumerate(zip(_canonical_ids(bt), bt.atom_names))}
+
+    cand = {}
+    cost = np.full((len(ca), len(cb)), 1e6)
+    for i, (_, sa) in enumerate(ca):
+        for j, (_, sb) in enumerate(cb):
+            matched, ident = pair_chain(sa, sb)
+            if matched is None or ident < min_identity:
+                continue
+            P, Q = [], []
+            for rf, rt in matched:
+                for a in BACKBONE:
+                    x, y = kf.get((rf, a)), kt.get((rt, a))
+                    if x is not None and y is not None:
+                        P.append(bf.coords[x]); Q.append(bt.coords[y])
+            if len(P) < 3:
+                continue
+            cand[(i, j)] = matched
+            # SCORE THE ASSIGNMENT BY DIRECT RMSD, NOT SUPERIMPOSED RMSD. Superimposed RMSD
+            # is rotation-invariant, so every copy of a homo-oligomer scores almost the same
+            # and the choice among them is arbitrary -- which left 1K4C (a tetramer) at 17 A
+            # and 1FC2 at 24 A even after the assignment was made one-to-one. DB5 ships every
+            # unbound structure ALREADY SUPERIMPOSED onto the bound complex, so the
+            # corresponding copy is simply the one sitting in the right place. Direct RMSD
+            # says which. This uses the pre-superposition ONLY to identify chains; the
+            # docking benchmark must still randomize poses before searching, or it inherits
+            # the leakage the README warns about.
+            cost[i, j] = rmsd(np.asarray(P), np.asarray(Q))
+
+    if not cand:
+        return {}
+    try:
+        from scipy.optimize import linear_sum_assignment
+        rows, cols = linear_sum_assignment(cost)
+        chosen = [(i, j) for i, j in zip(rows, cols) if (i, j) in cand]
+    except ImportError:                      # greedy fallback, still one-to-one
+        chosen, usedf, usedt = [], set(), set()
+        for (i, j) in sorted(cand, key=lambda k: cost[k]):
+            if i not in usedf and j not in usedt:
+                chosen.append((i, j)); usedf.add(i); usedt.add(j)
+
+    out: Dict[str, str] = {}
+    for i, j in chosen:
+        out.update(dict(cand[(i, j)]))
     return out
