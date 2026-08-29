@@ -13,7 +13,7 @@ limit of this code.
 
 ## Status
 
-`pytest tests/` — **395 passed**.
+`pytest tests/` — **562 passed, 1 skipped**.
 
 | module | verified against | max error |
 |---|---|---|
@@ -24,8 +24,9 @@ limit of this code.
 | `rem.bp` | exact elimination on trees, enumeration on loops | see tests |
 | `rem.rna` | explicit enumeration of nested structures | see tests |
 | `rem.phylo` | enumeration of ancestral assignments | see tests |
-| `rem.hp` | enumeration of every self-avoiding walk | H1–H5 |
+| `rem.hp` | enumeration of every self-avoiding walk; admissibility audit of the pruning bound | exact |
 | `rem.tailrisk` | enumeration of every joint outcome; separate convolution path | **1.9e-16** |
+| `rem.aggregate` | exact bigint **rational** arithmetic — no float64 anywhere in the reference | **3.1e-15** |
 | `rem.docking.score` | closed form (LJ at Rmin, LJ at σ, Coulomb) | **7.6e-17** |
 | `rem.docking.repack` (Alg 2) | exhaustive enumeration of all rotamer assignments | **0.0** |
 | `rem.docking.rigid` (Alg 1) | planted translation / planted rotation + negative control | exact |
@@ -74,20 +75,36 @@ Twelve machinery defects are in `colab/gate_guard.py` — lettered A–M, skippi
 recorded with the false sentence it caused a run to print. Z4, Z4b and every other failed gate stay in the table above and in the
 modules' own output, each with its reason; none was deleted or relabelled as passing.
 
-### The n² in `tailrisk` is a spec error, not an implementation one
+### The n² in `tailrisk` is a spec error, not an implementation one — and it is now closed
 
 Worth separating, because the two call for different fixes. The running total enters as a
 factor on `(S_{i-1}, X_i, S_i)`, which the generic dense-factor formalism stores as a full
 `n_bins × d × n_bins` table — measured largest table equals `n_bins²·d` to a ratio of 1.00.
-But the operation that factor *represents* is a convolution. Computed as one it is
-`O(n log n)` by FFT, and for this particular case, where the kernel is only `d` long,
-plain direct convolution is `O(n·d)` — linear. The dense table is quadratic purely because
-a generic factor cannot express its own sparsity: almost every entry it stores is zero.
+But the operation that factor *represents* is a convolution. Nothing in `rem.tailrisk` is
+coded wrong; the cost comes from specifying the sum as a generic factor rather than as a
+convolution primitive.
 
-So nothing in `rem.tailrisk` is coded wrong. The cost comes from having specified the sum
-as a generic factor rather than as a convolution primitive, and closing it means adding a
-convolution-aware contraction to the formalism — a change to what REM can express, not a
-bug fix. Recorded here so the `n²` is not read as an implementation defect.
+`rem.aggregate` is that primitive, and it closes the gap. Aggregation becomes bucket
+elimination on a chain in which the running partial sum is the *only* variable crossing any
+cut — **treewidth 1** — so cost is `O(N · d_max · m_max)`, linear in the number of units:
+
+- 40 heterogeneous units, support 197, bond dimension 197, **22,605 multiply-adds, 0.6 ms**.
+  A joint frontier over the same units would be ~10³⁰ outcomes.
+- Verified against **exact bigint rational** arithmetic (no float64 in the reference):
+  `P(S ≥ 156) = 1.550583465440e-30`, float64 log-space relative error **3.05e-15**.
+
+**But `n log n` is the wrong fix for this problem, and the module measures why.** FFT
+convolution is `O(N log N)` as advertised, and numerically unusable in the tail: its error
+floor is *absolute*, ~`eps·max(p)` ≈ 1.1e-17, so everything below that is noise. At
+`S = 156` the FFT relative error is **5.4e+13** against 3.05e-15 for direct convolution, and
+36 of 197 FFT entries come out **negative** — a probability cannot be negative, and that is
+the round-off floor made visible. Direct convolution is `O(N·m)` with no cancellation, so
+relative accuracy holds to the subnormal floor; log-space has no practical floor and is
+*required* past float64 underflow — a 600-unit portfolio reaches `P = 10^-400.1`, where
+linear convolution returns exactly 0.0.
+
+So the complexity argument and the numerical argument point opposite ways, and for
+rare-event work the numerical one wins.
 
 ## Measured
 
@@ -97,26 +114,50 @@ residues: solved exactly **84/84**, treewidth wall hit **0/84**, largest instanc
 — density 0.79 at 4 residues falling to 0.49 at 16 — and treewidth rises with interface
 size (median 2 → 6, max 8), so the low-treewidth assumption is not free.
 
-> ⚠️ **The greedy-tie and zero-gain results below were measured on BOUND structures and are
-> being re-measured.** Greedy matched the exact optimum on 84/84, and Algorithm 3's exact
-> two-sided repacking contributed **0.0000 kcal/mol** with 100% of the gain coming from the
-> pose move. Both are artifacts of bound side chains: in a bound structure the deposited
-> rotamers *are* the crystallographic optimum, so rotamer offset 0 is already the answer and
-> neither an exact nor a greedy packer has anything to find. A packing guarantee cannot pay
-> where nothing is mispacked. Unbound side chains sit in the wrong rotamers — that is what
-> makes a case medium or difficult — so the unbound interface is the only place the
-> guarantee can bite. `benchmarks/bench_repack.py` now runs both arms over the same cases,
-> sizes and rotamer library, and additionally measures per instance whether the deposited
-> conformation was already optimal. Paired result lands here.
+**The greedy tie is real, and it is NOT a bound-structure artifact.** This was challenged
+in review on the grounds that bound side chains are already optimally packed, so re-run as
+a paired sweep — same cases, same interface sizes, same rotamer library, with only the
+side-chain provenance moving:
+
+| arm | instances | greedy missed the optimum | deposited already optimal | exact beats deposited by |
+|---|---|---|---|---|
+| bound | 84 | **0** | **1/84** | mean 45.1, max 336.5 kcal/mol |
+| unbound | 83 | **0** | **0/83** | mean 153.5, max 721.9 kcal/mol |
+
+Half of the challenge held and half did not, and the half that failed was **my
+explanation**. I had written that in a bound structure the deposited rotamers *are* the
+crystallographic optimum so nothing could be found. Measured: the deposited conformation
+was optimal in **1 of 84** bound instances, and exact repacking improved it by 45 kcal/mol
+on average. Under this energy function — Lennard-Jones plus Coulomb, no solvation — the
+crystal conformation is simply not the minimum. What *did* hold is the direction: unbound
+side chains are more mispacked, never optimal (0/83), with the gap **3.4× larger**.
+
+So repacking does substantial work on both arms, and greedy still matches the exact
+optimum on **167 of 167** instances. The guarantee does not bite at interface sizes 4–16.
+
+**The baseline is not cheating**, which had to be checked before that negative could be
+believed. Crippling greedy makes it miss, as it must:
+
+| restarts | 1 | 2 | 5 | 20 |
+|---|---|---|---|---|
+| missed the optimum | **2/12** | 1/12 | 1/12 | **0/12** |
+
+Single-restart greedy misses by up to **+16.35 kcal/mol**. So the problem is genuinely
+non-trivial and the solver is genuinely independent — 20 restarts simply buys the same
+answer exactness does, more cheaply, at these sizes.
+
+**Algorithm 3's 0.0000 kcal/mol repacking gain** was measured on a bound structure and
+rests on the same falsified explanation; `flexible.verify(bound=False)` re-runs it unbound.
 
 **Two-sided interface graphs are sparser than one-sided ones**: density 0.29–0.40 and
 treewidth 2–4 at 12 residues, against 0.49–0.79 and up to 8 for one-sided repacking.
 
 **Where exactness genuinely wins: the tail.** Monte Carlo's relative error scales as
-1/√(Np); exact summation is indifferent to rarity. At p = 2.0×10⁻⁶, MC with 10⁴ and 10⁵
-samples returned **zero** (100% error) and with 10⁶ samples was 102% off. The exact answer
-costs the same as at p = 0.5 — while the dependency treewidth stays small. Complete-graph
-portfolios have treewidth n−1 and cost 4ⁿ; `T6` measures that wall.
+1/√(Np); exact summation is indifferent to rarity. On a 40-unit portfolio, `P(S ≥ 156) =
+1.55e-30` exactly — while Monte Carlo with **10⁶ samples returned exactly zero**, 0 hits,
+and could say only `p < 3e-6` at 95%, which is **24 orders of magnitude** above the true
+value. This holds only while the dependency treewidth stays small: complete-graph
+portfolios have treewidth n−1 and cost 4ⁿ, which `tailrisk`'s `T6` measures.
 
 **Where the law says no: HP lattice folding.** NP-hard, and the turn-variable encoding has
 treewidth linear in chain length — no structural saving exists. Confining the chain to a
