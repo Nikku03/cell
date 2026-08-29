@@ -54,6 +54,14 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
   C6  REPORTED, not gated: how much of the refinement gain comes from the pose move and
       how much from the two-sided repacking. Decomposed, because a combined number that
       does not say which half moved is not a result.
+      RUN ON BOTH BOUND AND UNBOUND STRUCTURES, because the first run used bound ones and
+      the answer was degenerate: exact two-sided repacking contributed 0.0000 kcal/mol and
+      100% of the gain was the pose move. That is not a fact about repacking, it is a fact
+      about bound structures -- their deposited side chains ARE the crystallographic
+      optimum, so rotamer offset 0 is already the answer and there is nothing to find.
+      Unbound side chains are in the wrong rotamers, which is what makes a case medium or
+      difficult, so the unbound arm is the only one in which the repacking half of C6 can
+      be non-zero. verify(bound=False) runs it.
 """
 from __future__ import annotations
 
@@ -194,14 +202,20 @@ class FlexibleRefiner:
 # verification
 # --------------------------------------------------------------------------------------
 
-def verify(case_id: str = "1A2K", verbose: bool = True) -> dict:
-    """Run C1-C6. Bars are fixed in the module docstring, above, before any number."""
+def verify(case_id: str = "1A2K", verbose: bool = True, bound: bool = True) -> dict:
+    """Run C1-C6. Bars are fixed in the module docstring, above, before any number.
+
+    bound=False runs the whole suite on the UNBOUND components, which is the only arm in
+    which the repacking half of C6 can be non-zero (see the C6 note in the docstring).
+    """
     from rem.docking.data import load_case
     say = (lambda *a: print(*a)) if verbose else (lambda *a: None)
-    out: Dict[str, object] = {"case": case_id}
+    tag = "b" if bound else "u"
+    out: Dict[str, object] = {"case": case_id, "bound": bool(bound)}
     case = load_case(case_id)
-    rec, lig = case["r_b"], case["l_b"]
+    rec, lig = case[f"r_{tag}"], case[f"l_{tag}"]
     native = lig.coords.copy()
+    say(f"  structures: {'BOUND' if bound else 'UNBOUND'} ({'r_'+tag}, {'l_'+tag})")
 
     ref = FlexibleRefiner(rec, lig, max_res_per_side=2, n_chi1=3, n_chi2=2)
     small_poses = pose_set(n_trans=2, trans_step=0.75, n_rot=1, rot_deg=4.0)
@@ -314,4 +328,11 @@ def verify(case_id: str = "1A2K", verbose: bool = True) -> dict:
 
 
 if __name__ == "__main__":
-    verify()
+    import sys
+    if "--both" in sys.argv:
+        for b in (True, False):
+            print(f"\n{'='*90}\n  Algorithm 3 verify -- "
+                  f"{'BOUND' if b else 'UNBOUND'} structures\n{'='*90}")
+            verify(bound=b)
+    else:
+        verify(bound="--unbound" not in sys.argv)
