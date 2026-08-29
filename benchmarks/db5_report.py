@@ -15,6 +15,11 @@ import numpy as np
 CLASSES = ("rigid", "medium", "difficult")
 QUAL = ("high", "medium", "acceptable", "incorrect")
 
+# CAPRI's L-RMSD thresholds. floor_L is a valid lower bound on the L-RMSD any pose built
+# from the rotation set can reach, so comparing it against these says which quality tiers
+# the SAMPLING can still reach at all, before search or scoring get a turn.
+L_HIGH, L_MEDIUM, L_ACCEPTABLE = 1.0, 5.0, 10.0
+
 
 def load(pattern: str = "benchmarks/shards/db5_dock_w*.json") -> tuple:
     rows, cfg = [], None
@@ -52,12 +57,57 @@ def main() -> int:
     for v in viol[:5]:
         print(f"      VIOLATION {v}")
 
+    # ---- 1b. the discretization floor, per case ------------------------------------------
+    # WHAT THIS DOES AND DOES NOT ESTABLISH. floor_L bounds L-RMSD only. CAPRI grants
+    # "acceptable" for f_nat >= 0.1 AND (L-RMSD <= 10 OR I-RMSD <= 4), so floor_L > 10
+    # closes the L-RMSD route and does NOT by itself close the I-RMSD route -- I-RMSD is
+    # superimposed over interface atoms and can be far better than L-RMSD for the same
+    # pose. A case is therefore marked floor-limited on the L-route, and the number of
+    # floor-limited cases that reached "acceptable" anyway is printed as the check on how
+    # conservative that marking is. Claiming more than this is how the first version of
+    # this floor got it wrong.
+    print(f"\n  DISCRETIZATION FLOOR at {cfg['rotations'] if cfg else '?'} rotations "
+          f"(floor_L: the best L-RMSD ANY pose from this rotation set can reach)")
+    floor_rows = []
+    for r in rows:
+        a = r.get("uu")
+        if not a or "error" in a:
+            continue
+        floor_rows.append((r["id"], r["class"], a["floor_L_rmsd"],
+                           a["best_L_rmsd"], a["best_in_list"]["I_rmsd"],
+                           a["best_in_list"]["quality"], a["rank1"]["quality"]))
+    if floor_rows:
+        fl = np.array([x[2] for x in floor_rows])
+        print(f"      n={len(fl)}   min {fl.min():.2f}   median {np.median(fl):.2f}   "
+              f"mean {fl.mean():.2f}   max {fl.max():.2f} A")
+        print(f"      tiers the SAMPLING can still reach (floor_L vs CAPRI L-RMSD bars):")
+        for name, bar in (("high", L_HIGH), ("medium", L_MEDIUM),
+                          ("acceptable", L_ACCEPTABLE)):
+            n_ok = int((fl <= bar).sum())
+            print(f"        floor_L <= {bar:5.1f} ({name:10s}): {n_ok:3d}/{len(fl)} cases")
+        limited = [x for x in floor_rows if x[2] > L_ACCEPTABLE]
+        print(f"\n      FLOOR-LIMITED on the L-route (floor_L > {L_ACCEPTABLE} A): "
+              f"{len(limited)}/{len(floor_rows)}")
+        for cid, cl, f, bL, bI, bq, r1q in limited:
+            print(f"        {cid:6s} {cl:10s} floor_L {f:6.2f}  best_L {bL:6.2f}  "
+                  f"best_I {bI:6.2f}  best quality {bq}")
+        got = [x for x in limited if _ok(x[5])]
+        if limited:
+            print(f"      of those, reached 'acceptable' anyway via the I-RMSD route: "
+                  f"{len(got)}/{len(limited)}"
+                  f"  <- if non-zero, the marking is conservative, as designed")
+        print(f"      worst floors: " + ", ".join(
+            f"{x[0]}({x[2]:.1f})" for x in sorted(floor_rows, key=lambda z: -z[2])[:6]))
+    excluded = {x[0] for x in floor_rows if x[2] > L_ACCEPTABLE}
+
     # ---- 2. CAPRI success by class and arm --------------------------------------------
     print(f"\n  CAPRI success (acceptable or better), rank-1 vs best-available")
+    print(f"  HEADLINE excludes the {len(excluded)} floor-limited case(s); they are "
+          f"reported separately above.")
     print(f"  {'class':10s} {'n':>4s} | {'BB rank1':>9s} {'BB best':>9s} | "
           f"{'UU rank1':>9s} {'UU best':>9s}")
     for c in CLASSES:
-        sub = [r for r in rows if r["class"] == c]
+        sub = [r for r in rows if r["class"] == c and r["id"] not in excluded]
         if not sub:
             continue
         cells = []

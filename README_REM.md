@@ -51,8 +51,13 @@ limit of this code.
 
 ## What failed, and was kept in the record
 
-This is the part that matters. Nine predeclared gates failed; none had its bar quietly
-moved.
+This is the part that matters. Eight failures are recorded below, and none had its bar
+quietly moved. They are not all the same kind of thing, so the breakdown matters:
+**four were predeclared gates that failed outright** (Z4, Z4b, M5, and T5 — the last
+voided rather than failed, for the reason in its row); **one** was a measurement declared
+reported-not-gated that turned out incapable of failing (Z7 v1); **two** were construction
+errors in the benchmark's own reference quantities; **one** was a library bug reported
+externally and confirmed before any change was made.
 
 | gate | what failed | why |
 |---|---|---|
@@ -62,29 +67,47 @@ moved.
 | `capri` **M5** | 128 rotations scored *worse* than 32 | `rotation_set(n)` drew *n independent* quaternions, so a bigger set was a different set, not a refinement. Fixed in the **sampler** (prefixes now nested), not the gate. |
 | DB5 driver | "search error" came out negative | it subtracted a full-ligand RMSD floor from an interface RMSD. |
 | DB5 driver | the replacement floor was **not a lower bound** — 7.65 Å "floor" where the search achieved 4.75 Å | it placed each rotation at the translation optimal for a *different* objective. A quantity at the argmin of A is not a bound on B. |
-| `tailrisk` **T5** | claimed cost linear in discretization; it is quadratic | the transfer factor is a dense `n_bins × d × n_bins` table even though the operation is a convolution. Marked **VOID**, not failed — its wall-clock statistic gave 1.945 / 1.127 / 1.783 / 1.835 on unchanged code under varying machine load. A gate whose verdict flips between identical runs is not measuring the code. **T5b** gates the deterministic largest table instead: exactly `n_bins²·d`, slope **2.000000**. |
+| `tailrisk` **T5** | claimed cost linear in discretization; it is quadratic | Marked **VOID**, not failed — its wall-clock statistic gave 1.945 / 1.127 / 1.783 / 1.835 on unchanged code under varying machine load. A gate whose verdict flips between identical runs is not measuring the code. **T5b gates the largest intermediate table, not runtime**: a deterministic property of the contraction that cannot be flattered by a quiet machine. It is exactly `n_bins²·d` on every size, log-log slope **2.000000**. |
 | `factorgraph` | `eliminate("sum")` under-counted ln Z by `log(card)` per factor-free variable | reported externally with a minimal repro. The 40-instance sweep could not see it because `random_graph` gave every variable a unary. Fixed; `random_graph` now takes `n_free` and `verify()` covers the case by name and by sweep. |
 
-Nine more machinery defects (A–M) are in `colab/gate_guard.py`, with the failing sentence
-each one printed.
+Twelve machinery defects are in `colab/gate_guard.py` — lettered A–M, skipping F — each
+recorded with the false sentence it caused a run to print. Z4, Z4b and every other failed gate stay in the table above and in the
+modules' own output, each with its reason; none was deleted or relabelled as passing.
+
+### The n² in `tailrisk` is a spec error, not an implementation one
+
+Worth separating, because the two call for different fixes. The running total enters as a
+factor on `(S_{i-1}, X_i, S_i)`, which the generic dense-factor formalism stores as a full
+`n_bins × d × n_bins` table — measured largest table equals `n_bins²·d` to a ratio of 1.00.
+But the operation that factor *represents* is a convolution. Computed as one it is
+`O(n log n)` by FFT, and for this particular case, where the kernel is only `d` long,
+plain direct convolution is `O(n·d)` — linear. The dense table is quadratic purely because
+a generic factor cannot express its own sparsity: almost every entry it stores is zero.
+
+So nothing in `rem.tailrisk` is coded wrong. The cost comes from having specified the sum
+as a generic factor rather than as a convolution primitive, and closing it means adding a
+convolution-aware contraction to the formalism — a change to what REM can express, not a
+bug fix. Recorded here so the `n²` is not read as an implementation defect.
 
 ## Measured
 
-**Algorithm 2's guarantee is real, and at these sizes it buys nothing.** 84 DB5 interface
-instances, sizes 4–16 residues:
+**Algorithm 2's exactness is real and cheap.** 84 DB5 interface instances, sizes 4–16
+residues: solved exactly **84/84**, treewidth wall hit **0/84**, largest instance
+2.8×10¹² configurations contracted in 1.8 s at treewidth 8. The contact graphs are *dense*
+— density 0.79 at 4 residues falling to 0.49 at 16 — and treewidth rises with interface
+size (median 2 → 6, max 8), so the low-treewidth assumption is not free.
 
-- solved exactly **84/84**, treewidth wall hit **0/84**
-- largest instance: 2.8×10¹² configurations contracted in 1.8 s at treewidth 8
-- **greedy (best-of-20 restarts, iterated to convergence) also found the optimum on 84/84**
-
-That is a negative result for the advantage claim and is reported as one. The contact
-graphs are *dense* — density 0.79 at 4 residues falling to 0.49 at 16 — and treewidth rises
-with interface size (median 2 → 6, max 8), so the low-treewidth assumption is not free.
-
-**Algorithm 3, where the gain comes from.** On a bound structure, exact two-sided repacking
-contributed **0.0000 kcal/mol** and 100% of the refinement gain was the pose move — the
-deposited rotamers already are the crystallographic optimum. Repacking can only pay on
-*unbound* structures.
+> ⚠️ **The greedy-tie and zero-gain results below were measured on BOUND structures and are
+> being re-measured.** Greedy matched the exact optimum on 84/84, and Algorithm 3's exact
+> two-sided repacking contributed **0.0000 kcal/mol** with 100% of the gain coming from the
+> pose move. Both are artifacts of bound side chains: in a bound structure the deposited
+> rotamers *are* the crystallographic optimum, so rotamer offset 0 is already the answer and
+> neither an exact nor a greedy packer has anything to find. A packing guarantee cannot pay
+> where nothing is mispacked. Unbound side chains sit in the wrong rotamers — that is what
+> makes a case medium or difficult — so the unbound interface is the only place the
+> guarantee can bite. `benchmarks/bench_repack.py` now runs both arms over the same cases,
+> sizes and rotamer library, and additionally measures per instance whether the deposited
+> conformation was already optimal. Paired result lands here.
 
 **Two-sided interface graphs are sparser than one-sided ones**: density 0.29–0.40 and
 treewidth 2–4 at 12 residues, against 0.49–0.79 and up to 8 for one-sided repacking.
