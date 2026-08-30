@@ -219,8 +219,15 @@ legal packing and undercounts Z), and the initial empty state must start at gap 
 gap 1. Having three solvers rather than two is what localised it to the construction rather
 than the physics.*
 
-**And the biology failed.** M4 required the prediction to beat its own codon-shuffled null.
-It lost, systematically:
+**And the biology test is VOID — not failed.** M4 required the prediction to beat its own
+codon-shuffled null, and it lost systematically. But that verdict was obtained with the
+density unset: `codon_logweights` normalises to geometric mean 1, so the model ran at 0.068
+ribosomes/codon — **68% of close packing** — against data at 5–10%. The one parameter that
+decides whether exclusion matters at all was uncontrolled, so ledger rule A applies: this is
+VOID, not FAIL. **The claim "tRNA-abundance dwell is anti-predictive" is withdrawn** pending
+the calibrated re-run below. It may well return; it was not established here.
+
+The numbers as run, kept for the record:
 
 | predictor | median Spearman vs measured P-site density |
 |---|---|
