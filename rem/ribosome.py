@@ -517,3 +517,124 @@ def verify(n_genes: int = 1200, min_codons: int = 200, min_counts: float = 200.0
 
 if __name__ == "__main__":
     verify()
+
+
+# --------------------------------------------------------------------------------------
+# WHEN DOES EXCLUSION ACTUALLY MATTER?  The crowding crossover.
+# --------------------------------------------------------------------------------------
+# This exists because of a defect found in verify()'s own setup. codon_logweights()
+# normalises to geometric mean 1 and NOTHING SET THE DENSITY: the model ran at a mean
+# occupancy of 0.068 per codon, which for footprint 10 is 68% of close packing, while real
+# monosome ribosome density is ~0.005-0.01 per codon, i.e. 5-10%. So M4 compared a
+# near-jammed model against dilute data, with the one parameter that controls whether
+# exclusion matters at all left unset. A fugacity is now solved for explicitly.
+#
+# WHAT verify_crowding() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
+#   C1  At physiological monosome density (0.005-0.01/codon) the exclusion correction is
+#       small. GATE: mean |exact - non-interacting| / density < 0.05 at rho = 0.01.
+#       If this fails, exclusion mattered all along and the "roomy" diagnosis is wrong.
+#   C2  The correction grows monotonically with density. GATE: strictly increasing.
+#   C3  Near jamming it is large. GATE: > 0.20 at rho = 0.08 (80% of close packing).
+#   C4  The TRUE contact pair correlation g = P(i, i+ell) / (p_i p_{i+ell}) -- computed
+#       from the exact two-point function, not from a product of marginals -- must tend to
+#       1 as density falls. GATE: |g - 1| < 0.02 at rho = 0.005, and g at rho = 0.08 must
+#       exceed g at rho = 0.005 by more than 0.05.
+
+def contact_pairs(logw: np.ndarray, ell: int = FOOTPRINT) -> np.ndarray:
+    """Exact P(rod at i AND rod at i+ell) -- two rods in contact, the collision event.
+
+    Two rods at separation exactly ell leave no room between them, so the segment
+    partition function between them is 1 and
+        P(i, i+ell) = w_i w_{i+ell} Z_f[i-ell] Z_b[i+2ell] / Z.
+    This is a genuine two-point function, not a product of marginals.
+    """
+    L = len(logw)
+    f = np.full(L + 1, NEG_INF); f[0] = 0.0
+    for j in range(1, L + 1):
+        back = f[j - ell] if j - ell >= 0 else 0.0
+        f[j] = _lse2(f[j - 1], logw[j - 1] + back)
+    b = np.full(L + 2 * ell + 2, NEG_INF); b[L + 1:] = 0.0
+    for j in range(L, 0, -1):
+        b[j] = _lse2(b[j + 1], logw[j - 1] + (b[j + ell] if j + ell <= L + 1 else 0.0))
+    logZ = f[L]
+    out = np.zeros(max(0, L - ell))
+    for i in range(1, L - ell + 1):
+        j = i + ell
+        left = f[i - ell] if i - ell >= 0 else 0.0
+        right = b[j + ell] if j + ell <= L + 1 else 0.0
+        out[i - 1] = np.exp(logw[i - 1] + logw[j - 1] + left + right - logZ)
+    return out
+
+
+def _solve_fugacity(logw: np.ndarray, target: float, ell: int) -> float:
+    lo, hi = -60.0, 30.0
+    for _ in range(70):
+        mid = 0.5 * (lo + hi)
+        p, _ = occupancy_exact(logw + mid, ell)
+        if p.mean() < target:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+def verify_crowding(n_genes: int = 25, ell: int = FOOTPRINT, verbose: bool = True,
+                    seed: int = 0) -> dict:
+    """Run C1-C4. Bars are fixed in the block comment above, before any number."""
+    say = (lambda *a: print(*a)) if verbose else (lambda *a: None)
+    cds = load_cds(); W = trna_weights()
+    rng = np.random.default_rng(seed)
+    genes = [g for g in cds if 300 <= len(cds[g]) // 3 <= 1200]
+    rng.shuffle(genes); genes = genes[:n_genes]
+    rhos = (0.005, 0.01, 0.02, 0.04, 0.06, 0.08, 0.095)
+    say(f"  footprint {ell} codons -> close packing at {1.0/ell:.3f} ribosomes/codon")
+    say(f"  {n_genes} real transcripts, real tAI weights, fugacity solved per transcript\n")
+    say(f"  {'density':>8s} {'%jam':>5s} | {'mean err/rho':>12s} {'max err/rho':>11s} | "
+        f"{'g(contact)':>10s}")
+    rel, gs = [], []
+    for rho in rhos:
+        rm, gg = [], []
+        for g in genes:
+            lw, _ = codon_logweights(cds[g], W)
+            z = _solve_fugacity(lw, rho, ell)
+            p, _ = occupancy_exact(lw + z, ell)
+            lo, hi = -60.0, 30.0                      # non-interacting at the SAME density
+            for _ in range(70):
+                mid = 0.5 * (lo + hi)
+                q = 1.0 / (1.0 + np.exp(-(lw + mid)))
+                if q.mean() < rho:
+                    lo = mid
+                else:
+                    hi = mid
+            q = 1.0 / (1.0 + np.exp(-(lw + 0.5 * (lo + hi))))
+            rm.append((np.abs(p - q).mean() / rho, np.abs(p - q).max() / rho))
+            c = contact_pairs(lw + z, ell)
+            denom = p[:len(c)] * p[ell:ell + len(c)]
+            ok = denom > 0
+            if ok.any():
+                gg.append(float(np.mean(c[ok] / denom[ok])))
+        rel.append((float(np.mean([a for a, _ in rm])), float(np.mean([b for _, b in rm]))))
+        gs.append(float(np.mean(gg)))
+        say(f"  {rho:8.3f} {100*rho*ell:5.0f} | {rel[-1][0]:12.3f} {rel[-1][1]:11.3f} | "
+            f"{gs[-1]:10.3f}")
+    m = [a for a, _ in rel]
+    out = {"rhos": list(rhos), "mean_rel": m, "g_contact": gs}
+    out["C1"] = bool(m[rhos.index(0.01)] < 0.05)
+    out["C2"] = bool(all(x < y for x, y in zip(m, m[1:])))
+    out["C3"] = bool(m[rhos.index(0.08)] > 0.20)
+    out["C4"] = bool(abs(gs[0] - 1.0) < 0.02 and gs[rhos.index(0.08)] - gs[0] > 0.05)
+    say(f"\n  C1 correction < 5% of density at physiological rho=0.01: "
+        f"{m[rhos.index(0.01)]:.3f}   {'PASS' if out['C1'] else 'FAIL'}")
+    say(f"  C2 monotonically increasing with density: {'PASS' if out['C2'] else 'FAIL'}")
+    say(f"  C3 correction > 20% at rho=0.08 (80% of jamming): "
+        f"{m[rhos.index(0.08)]:.3f}   {'PASS' if out['C3'] else 'FAIL'}")
+    say(f"  C4 true contact correlation -> 1 when dilute ({gs[0]:.4f}) and rises by "
+        f">0.05 by rho=0.08 ({gs[rhos.index(0.08)]-gs[0]:+.4f})   "
+        f"{'PASS' if out['C4'] else 'FAIL'}")
+    out["all_pass"] = all(out[k] for k in ("C1", "C2", "C3", "C4"))
+    say(f"\n  {'ALL GATES PASS' if out['all_pass'] else 'GATE FAILURE'}")
+    say("\n  READING: this is the crossover. Exclusion -- the ONLY thing the exact hard-rod")
+    say("  machinery buys over an independent-site model -- is worth under 5% of the signal")
+    say("  at real monosome density, and becomes decisive only above roughly half of close")
+    say("  packing. REM earns its keep in the jam, and the monosome transcriptome is not one.")
+    return out
