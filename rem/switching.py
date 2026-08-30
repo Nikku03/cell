@@ -156,7 +156,8 @@ def toggle_switching(M: int, g: float, gamma: float, K: float, h: float,
 
 
 def gillespie_toggle(M: int, g: float, gamma: float, K: float, h: float,
-                     t_max: float, seed: int = 0, n_runs: int = 1) -> dict:
+                     t_max: float, seed: int = 0, n_runs: int = 1,
+                     max_seconds: float = 1e9) -> dict:
     """Direct stochastic simulation. Counts crossings of the symmetry line from A-high."""
     rng = np.random.default_rng(seed)
     t0 = time.perf_counter()
@@ -164,7 +165,11 @@ def gillespie_toggle(M: int, g: float, gamma: float, K: float, h: float,
     for _ in range(n_runs):
         a, b = int(round(min(g / gamma, M))), 0
         t = 0.0
+        _chk = 0
         while t < t_max:
+            _chk += 1
+            if (_chk & 8191) == 0 and time.perf_counter() - t0 > max_seconds:
+                break
             ra = g / (1.0 + (b / K) ** h)
             rb = g / (1.0 + (a / K) ** h)
             da, db = gamma * a, gamma * b
@@ -259,7 +264,8 @@ def verify(verbose: bool = True) -> dict:
     Nsh = 5
     Msh = max(4 * Nsh, 24)
     ex_sh = toggle_switching(Msh, generation_time=1.0, **_params(Nsh))
-    gi_sh = gillespie_toggle(Msh, t_max=20000.0, seed=1, **_params(Nsh))
+    gi_sh = gillespie_toggle(Msh, t_max=20000.0, seed=1, max_seconds=120.0,
+                             **_params(Nsh))
     dev = abs(ex_sh["mfpt"] - gi_sh["mfpt"])
     se_mfpt = (gi_sh["rate_se"] / max(gi_sh["rate"], 1e-30)) * gi_sh["mfpt"] \
         if gi_sh["rate"] > 0 else np.inf
@@ -278,7 +284,8 @@ def verify(verbose: bool = True) -> dict:
     Mdp = 4 * Ndp
     ex_dp = toggle_switching(Mdp, generation_time=1.0, **_params(Ndp))
     budget = max(30.0, 10 * ex_dp["seconds"])
-    gi_dp = gillespie_toggle(Mdp, t_max=1e9, seed=2, **_params(Ndp))
+    gi_dp = gillespie_toggle(Mdp, t_max=1e12, seed=2, max_seconds=budget,
+                             **_params(Ndp))
     exp_hits = gi_dp["sim_time"] / ex_dp["mfpt"]
     out["T4b"] = {"exact_mfpt": ex_dp["mfpt"], "p": ex_dp["p_per_generation"],
                   "exact_seconds": ex_dp["seconds"], "gill_switches": gi_dp["switches"],
