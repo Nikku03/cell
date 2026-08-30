@@ -46,7 +46,8 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-from rem.ribosome import (load_cds, load_ribo, gene_profile, trna_weights,
+from rem.ribosome import (RIBO_DIR as RIBO_CACHE_DIR,
+                          load_cds, load_ribo, gene_profile, trna_weights,
                           codon_logweights, occupancy_exact, _spearman, _binom_p,
                           _solve_fugacity, FOOTPRINT)
 
@@ -104,21 +105,46 @@ def verify(n_genes: int = 250, min_codons: int = 200, min_counts: float = 200.0,
     genes = [g for g in h.keys() if g in cds and len(cds[g]) // 3 >= min_codons]
     genes.sort(); rng.shuffle(genes)
 
-    say(f"\n  folding {window}-nt windows along each transcript ...")
+    import os, pickle
+    cache_path = os.path.join(os.path.dirname(RIBO_CACHE_DIR), f"dg_w{window}.pkl")
+    cache = {}
+    if os.path.exists(cache_path):
+        try:
+            cache = pickle.load(open(cache_path, "rb"))
+        except Exception:
+            cache = {}
+    say(f"\n  folding {window}-nt windows along each transcript "
+        f"({len(cache)} cached) ...")
     items, t0 = [], time.perf_counter()
     for g in genes:
         if len(items) >= n_genes:
             break
-        n = len(cds[g]) // 3
+        # codon_logweights DROPS stop and non-ACGT codons, so its length can be shorter
+        # than len(cds)//3. window_energies and gene_profile are built to the full codon
+        # count. Truncate all three to a common n rather than assuming they match -- S5
+        # crashed on 535 vs 536 the first time this ran.
+        lw_tai, _cods = codon_logweights(cds[g], W)
+        n = min(len(cds[g]) // 3, len(lw_tai))
         prof = gene_profile(h, g, n)
         if prof is None or prof.sum() < min_counts:
             continue
-        dg = window_energies(cds[g], window)
-        lw_tai, _ = codon_logweights(cds[g], W)
+        if g in cache:
+            dg = cache[g][:n]
+        else:
+            dg = window_energies(cds[g], window)
+            cache[g] = dg
+            dg = dg[:n]
+        lw_tai = lw_tai[:n]
+        if not (len(prof) == len(dg) == len(lw_tai) == n):
+            continue
         items.append((g, n, prof, dg, lw_tai))
         if len(items) % 50 == 0:
             say(f"      {len(items)} genes, {time.perf_counter()-t0:.0f}s")
     h.close()
+    try:
+        pickle.dump(cache, open(cache_path, "wb"))
+    except Exception:
+        pass
     say(f"      {len(items)} genes folded in {time.perf_counter()-t0:.0f}s")
 
     # ---- S2: does it vary along the axis? -------------------------------------------
