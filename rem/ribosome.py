@@ -677,3 +677,124 @@ def verify_crowding(n_genes: int = 25, ell: int = FOOTPRINT, verbose: bool = Tru
     say("  at real monosome density, and becomes decisive only above roughly half of close")
     say("  packing. REM earns its keep in the jam, and the monosome transcriptome is not one.")
     return out
+
+
+# --------------------------------------------------------------------------------------
+# M4 RE-RUN AT CALIBRATED DENSITY.  M4 as first run is VOID, not failed.
+# --------------------------------------------------------------------------------------
+# M4 scored the model at whatever density codon_logweights happened to produce -- a mean
+# occupancy of 0.068 per codon, 68% of close packing -- against data at 5-10%. The single
+# parameter deciding whether exclusion matters was unset, so the verdict was obtained under
+# an uncontrolled condition and cannot stand. Ledger rule A: that is VOID, not FAIL. It is
+# re-run here with the density set explicitly, and swept, so the answer's dependence on the
+# thing that was missing is visible rather than argued.
+#
+# HOW THE DENSITY IS SET, and why it is not circular. Each transcript's ribosome load is
+# taken from its OWN measured total P-site counts divided by its length, rescaled so the
+# median transcript sits at the target density. Total counts is ONE number per gene; what
+# is scored is the RANK ORDER of occupancy along the gene, which Spearman makes invariant
+# to overall scale. So the quantity used for calibration is orthogonal to the quantity being
+# predicted -- the same 1-parameter-against-L-observations argument that makes fitting a
+# single initiation rate legitimate.
+#
+# WHAT verify_m4_calibrated() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
+#   D1  THE CALIBRATION WORKS. Realised model mean occupancy must match the target to
+#       within 2% relative, at every target density. Without this the re-run repeats M4's
+#       defect at a different value.
+#   D2  THE ORIGINAL BAR, unchanged from M4: at the physiological target (rho = 0.01) the
+#       prediction must beat its own codon-shuffled null on significantly more than half of
+#       genes, binomial p < 1e-6.
+#   D3  IS THE VERDICT DENSITY-DEPENDENT? Sweep rho over 0.005, 0.01, 0.02, 0.04 and the
+#       uncalibrated regime. Report the median Spearman and the win fraction at each.
+#       GATE: the sign of the median paired difference must be the SAME at every density.
+#       If it flips, then density genuinely decided M4's outcome, the void was load-bearing,
+#       and no single-density claim about tRNA adaptation can be made from this data.
+
+def verify_m4_calibrated(n_genes: int = 800, min_codons: int = 200,
+                         min_counts: float = 200.0, ell: int = FOOTPRINT,
+                         verbose: bool = True, seed: int = 0) -> dict:
+    """Run D1-D3. Bars are fixed in the block comment above, before any number."""
+    say = (lambda *a: print(*a)) if verbose else (lambda *a: None)
+    rng = np.random.default_rng(seed)
+    cds = load_cds(); W = trna_weights(); h = load_ribo()
+
+    genes = [g for g in h.keys() if g in cds and len(cds[g]) // 3 >= min_codons]
+    genes.sort(); rng.shuffle(genes)
+    items = []
+    for g in genes:
+        if len(items) >= n_genes:
+            break
+        lw, cods = codon_logweights(cds[g], W)
+        n = len(lw)
+        prof = gene_profile(h, g, n)
+        if prof is None or prof.sum() < min_counts:
+            continue
+        items.append((g, lw, prof, prof.sum() / n))       # counts per codon, relative load
+    h.close()
+    loads = np.array([it[3] for it in items])
+    say(f"  {len(items)} genes;  relative load per codon: median {np.median(loads):.3f}, "
+        f"IQR {np.percentile(loads,25):.3f}-{np.percentile(loads,75):.3f}")
+
+    out: Dict[str, object] = {}
+    rows = []
+    say(f"\n  {'target rho':>10s} {'%jam':>5s} {'realised':>9s} {'dev':>7s} | "
+        f"{'median real':>11s} {'median shuf':>11s} {'paired':>8s} {'win frac':>9s} "
+        f"{'binom p':>9s}")
+    for rho in (0.005, 0.01, 0.02, 0.04):
+        rr, rs, real_rho = [], [], []
+        for g, lw, prof, load in items:
+            r_g = float(np.clip(rho * load / np.median(loads), 1e-4, 0.095))
+            z = _solve_fugacity(lw, r_g, ell)
+            p, _ = occupancy_exact(lw + z, ell)
+            real_rho.append(p.mean() / r_g)
+            idx = rng.permutation(len(lw))
+            zs = _solve_fugacity(lw[idx], r_g, ell)
+            ps, _ = occupancy_exact(lw[idx] + zs, ell)
+            a, b = _spearman(p, prof), _spearman(ps, prof)
+            if np.isfinite(a) and np.isfinite(b):
+                rr.append(a); rs.append(b)
+        rr, rs = np.array(rr), np.array(rs)
+        d = rr - rs
+        k, n_tot = int((d > 0).sum()), len(d)
+        pv = _binom_p(k, n_tot)
+        dev = abs(float(np.median(real_rho)) - 1.0)
+        rows.append({"rho": rho, "dev": dev, "median_real": float(np.median(rr)),
+                     "median_shuf": float(np.median(rs)), "paired": float(np.median(d)),
+                     "win": k / n_tot, "p": pv, "n": n_tot})
+        say(f"  {rho:10.3f} {100*rho*ell:5.0f} {np.median(real_rho):9.4f} {dev:7.4f} | "
+            f"{np.median(rr):+11.4f} {np.median(rs):+11.4f} {np.median(d):+8.4f} "
+            f"{100*k/n_tot:8.1f}% {pv:9.2e}")
+
+    # the uncalibrated regime M4 actually ran in, for direct comparison
+    rr, rs = [], []
+    for g, lw, prof, load in items:
+        p, _ = occupancy_exact(lw, ell)
+        idx = rng.permutation(len(lw))
+        ps, _ = occupancy_exact(lw[idx], ell)
+        a, b = _spearman(p, prof), _spearman(ps, prof)
+        if np.isfinite(a) and np.isfinite(b):
+            rr.append(a); rs.append(b)
+    rr, rs = np.array(rr), np.array(rs)
+    d0 = rr - rs
+    k0 = int((d0 > 0).sum())
+    say(f"  {'UNCALIB':>10s} {'~68':>5s} {'--':>9s} {'--':>7s} | {np.median(rr):+11.4f} "
+        f"{np.median(rs):+11.4f} {np.median(d0):+8.4f} {100*k0/len(d0):8.1f}% "
+        f"{_binom_p(k0, len(d0)):9.2e}")
+
+    out["rows"] = rows
+    out["uncalibrated"] = {"median_real": float(np.median(rr)),
+                           "paired": float(np.median(d0)), "win": k0 / len(d0)}
+    out["D1"] = bool(all(r["dev"] < 0.02 for r in rows))
+    r01 = next(r for r in rows if r["rho"] == 0.01)
+    out["D2"] = bool(r01["p"] < 1e-6 and r01["win"] > 0.5)
+    signs = {np.sign(r["paired"]) for r in rows} | {np.sign(np.median(d0))}
+    out["D3"] = bool(len(signs) == 1)
+    say(f"\n  D1 calibration lands on target at every density (max dev "
+        f"{max(r['dev'] for r in rows):.4f}, bar 0.02)   {'PASS' if out['D1'] else 'FAIL'}")
+    say(f"  D2 beats its own shuffle at physiological rho=0.01: win "
+        f"{100*r01['win']:.1f}%, p {r01['p']:.2e}   {'PASS' if out['D2'] else 'FAIL'}")
+    say(f"  D3 sign of the paired difference is the same at every density: "
+        f"{'PASS' if out['D3'] else 'FAIL'}")
+    out["all_pass"] = bool(out["D1"] and out["D2"] and out["D3"])
+    say(f"\n  {'ALL GATES PASS' if out['all_pass'] else 'GATE FAILURE'}")
+    return out
