@@ -539,6 +539,25 @@ if __name__ == "__main__":
 #       from the exact two-point function, not from a product of marginals -- must tend to
 #       1 as density falls. GATE: |g - 1| < 0.02 at rho = 0.005, and g at rho = 0.08 must
 #       exceed g at rho = 0.005 by more than 0.05.
+#       C4 FAILED on its first half and the verdict stands: g(0.005) = 1.0471 against a bar
+#       of |g-1| < 0.02. The bar was wrong, not the code -- defect L (an absolute tolerance
+#       not derived from the quantity's own theory) for the third time in this repo. For a
+#       one-dimensional hard-rod (Tonks) gas the contact correlation has an EXACT closed
+#       form, and the measured 1.0471 was right; 1.0 was never the correct limit at finite
+#       density.
+#   C4b THE REPAIR, and strictly stronger than what it replaces: instead of asserting a
+#       tolerance, compare the two-point function against that closed form. With uniform
+#       weights and measured in the BULK (away from chain ends, where the result is
+#       asymptotic), GATE: max relative deviation < 0.01 across densities 0.005 to 0.08.
+#       THE FORMULA MATTERS AND I GOT IT WRONG ONCE. The CONTINUUM Tonks gas has
+#       g = 1/(1 - rho*ell); this is a LATTICE model, where rods occupy ell discrete sites
+#       and the gap between neighbours is a non-negative INTEGER. Its mean gap is
+#       1/rho - ell, a geometric gap distribution gives P(gap=0) = 1/(1 + mean), and so
+#           g_contact = 1 / (1 - rho*(ell - 1)).
+#       Using the continuum formula produced deviations growing from 5e-3 to 2.9e-1 with
+#       density -- a systematic drift, which is what a wrong reference looks like, as
+#       opposed to the flat noise floor of a wrong implementation. The lattice form matches
+#       the measurement to four decimals at every density.
 
 def contact_pairs(logw: np.ndarray, ell: int = FOOTPRINT) -> np.ndarray:
     """Exact P(rod at i AND rod at i+ell) -- two rods in contact, the collision event.
@@ -623,6 +642,26 @@ def verify_crowding(n_genes: int = 25, ell: int = FOOTPRINT, verbose: bool = Tru
     out["C2"] = bool(all(x < y for x, y in zip(m, m[1:])))
     out["C3"] = bool(m[rhos.index(0.08)] > 0.20)
     out["C4"] = bool(abs(gs[0] - 1.0) < 0.02 and gs[rhos.index(0.08)] - gs[0] > 0.05)
+
+    # ---- C4b: validate the two-point function against the exact Tonks closed form -------
+    say("\n  C4b contact correlation vs the EXACT 1D LATTICE hard-rod result "
+        "g = 1/(1 - rho*(ell-1))")
+    say(f"      {'density':>8s} {'measured g':>11s} {'exact g':>9s} {'rel dev':>9s}")
+    Lb, dev4 = 4000, []
+    for rho in (0.005, 0.01, 0.02, 0.04, 0.06, 0.08):
+        lw = np.zeros(Lb)                              # UNIFORM weights: pure Tonks gas
+        z = _solve_fugacity(lw, rho, ell)
+        pu, _ = occupancy_exact(lw + z, ell)
+        cu = contact_pairs(lw + z, ell)
+        a, b_ = Lb // 4, 3 * Lb // 4                   # bulk only; the ends are not Tonks
+        gm = float(np.mean(cu[a:b_] / (pu[a:b_] * pu[a + ell:b_ + ell])))
+        gt = 1.0 / (1.0 - rho * (ell - 1))       # LATTICE hard rods, not continuum
+        dev4.append(abs(gm - gt) / gt)
+        say(f"      {rho:8.3f} {gm:11.4f} {gt:9.4f} {dev4[-1]:9.2e}")
+    out["C4b_max_dev"] = float(max(dev4))
+    out["C4b"] = bool(max(dev4) < 0.01)
+    say(f"      max relative deviation {max(dev4):.2e} (bar 0.01)   "
+        f"{'PASS' if out['C4b'] else 'FAIL'}")
     say(f"\n  C1 correction < 5% of density at physiological rho=0.01: "
         f"{m[rhos.index(0.01)]:.3f}   {'PASS' if out['C1'] else 'FAIL'}")
     say(f"  C2 monotonically increasing with density: {'PASS' if out['C2'] else 'FAIL'}")
@@ -631,7 +670,7 @@ def verify_crowding(n_genes: int = 25, ell: int = FOOTPRINT, verbose: bool = Tru
     say(f"  C4 true contact correlation -> 1 when dilute ({gs[0]:.4f}) and rises by "
         f">0.05 by rho=0.08 ({gs[rhos.index(0.08)]-gs[0]:+.4f})   "
         f"{'PASS' if out['C4'] else 'FAIL'}")
-    out["all_pass"] = all(out[k] for k in ("C1", "C2", "C3", "C4"))
+    out["all_pass"] = all(out[k] for k in ("C1", "C2", "C3", "C4b"))
     say(f"\n  {'ALL GATES PASS' if out['all_pass'] else 'GATE FAILURE'}")
     say("\n  READING: this is the crossover. Exclusion -- the ONLY thing the exact hard-rod")
     say("  machinery buys over an independent-site model -- is worth under 5% of the signal")

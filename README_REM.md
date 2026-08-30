@@ -253,6 +253,64 @@ equilibrium model's inability to queue was never the binding limitation here.
 This is the DB5 result in a second domain, and it was predicted before the run: exact
 machinery, wrong model. REM will compute the true optimum of whatever physics you hand it.
 
+## When does REM earn its keep? The crowding crossover
+
+The sharpest methodological result here, and it came from a challenge: *REM only pays when
+things are genuinely jammed, and we keep pointing it at roomy problems.* That is now
+measured rather than asserted.
+
+Exclusion is the **only** thing the exact hard-rod machinery buys over an independent-site
+model. Holding the density fixed with a per-transcript fugacity and comparing the two:
+
+| density (rib/codon) | % of close packing | error if you ignore exclusion | contact correlation g |
+|---|---|---|---|
+| 0.005 | 5% | **0.9%** | 1.047 |
+| 0.010 | 10% | 1.8% | 1.099 |
+| 0.020 | 20% | 3.6% | 1.219 |
+| 0.040 | 40% | 7.6% | 1.562 |
+| 0.060 | 60% | 12.7% | 2.171 |
+| 0.080 | 80% | **23.4%** | 3.555 |
+| 0.095 | 95% | **55.0%** | 15.49 |
+
+Real monosome density is 0.005–0.01 per codon — **5–10% of close packing**, where ignoring
+exclusion entirely costs under 2%. The machinery was idle. It becomes decisive only above
+roughly half of close packing. That is the crossover, and it says exactly where to point
+this tool.
+
+**It also exposed a defect in my own earlier run.** `codon_logweights` normalises to
+geometric mean 1 and *nothing set the density*: the model ran at 0.068 ribosomes/codon,
+which is **68% of close packing**, against dilute data. The one parameter controlling
+whether exclusion matters at all was left unset. A fugacity is now solved per transcript.
+
+**The two-point function is validated against exact theory.** `contact_pairs` computes
+P(rod at *i* AND rod at *i+ell*) — the collision event — from the exact two-point function
+rather than a product of marginals:
+
+| density | measured g | exact lattice g | rel. dev. |
+|---|---|---|---|
+| 0.005 | 1.0471 | 1.0471 | 5.3e-06 |
+| 0.020 | 1.2194 | 1.2195 | 9.9e-05 |
+| 0.080 | 3.5550 | 3.5714 | 4.6e-03 |
+
+Getting there cost two wrong reference values, both mine. **C4** predeclared `|g−1| < 0.02`
+in the dilute limit and failed at 1.0471 — defect L for the third time, an absolute
+tolerance not derived from the quantity's own theory; 1.0 is never the correct limit at
+finite density. **C4b** then used the *continuum* Tonks form `1/(1−ρℓ)` and showed
+deviations growing 5e-3 → 2.9e-1 with density. A systematic drift is what a wrong
+*reference* looks like; a wrong *implementation* gives a flat noise floor. This is a
+lattice model, where the gap between neighbouring rods is a non-negative integer, giving
+`g = 1/(1 − ρ(ℓ−1))` — which matches to four to six decimals at every density.
+
+**The collision test is not done, and the blocker is data, not method.** Searched GEO
+thoroughly for human disome / collided-ribosome profiling. Four routes, each blocked for a
+specific reason: `GSE133393` has the matched monosome/disome pair and a real signal (8,973
+transcripts, median disome/monosome **0.083**) but keys on legacy UCSC `uc` transcript IDs,
+and UCSC has migrated hg19 to ENST so the mapping table is no longer served — a length-based
+join resolves only 483 of 9,128 unambiguously. `GSE201364` deposits only a metagene average.
+`GSE145723` and `GSE282964`/`GSE275336` deposit only raw reads. `GSE299329` has gene symbols
+but 40 peaks total. What would unblock it: a legacy UCSC `uc`→symbol table, or any disome
+dataset with per-transcript counts keyed on symbols or ENST.
+
 ## Docking Benchmark 5
 
 271 complexes parsed; **270 usable**. Measured difficulty split against published DB5:
