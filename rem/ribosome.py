@@ -162,12 +162,15 @@ def logZ_factorgraph(logw: np.ndarray, ell: int = FOOTPRINT) -> float:
         g.add_var(f"s{i}", d)
     init = np.full(d, NEG_INF)
     init[0] = logw[0]                            # rod at codon 0
-    init[min(1, ell)] = 0.0                      # or empty
+    init[ell] = 0.0                              # empty AND no prior rod -> unconstrained
     g.add_factor(["s0"], init)
     for i in range(1, L):
         t = np.full((d, d), NEG_INF)
         for a in range(d):
-            if a >= ell:                         # far enough back: may start a rod
+            # A rod at i needs the previous rod at i-k with k >= ell. The state at i-1 is
+            # min(k-1, ell), so the condition is a >= ell-1, NOT a >= ell. Requiring a >= ell
+            # forbids the tightest legal packing (separation exactly ell) and undercounts Z.
+            if a >= ell - 1:
                 t[a, 0] = logw[i]
             t[a, min(a + 1, ell)] = 0.0          # or stay empty
         g.add_factor([f"s{i-1}", f"s{i}"], t)
