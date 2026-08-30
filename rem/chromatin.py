@@ -33,6 +33,14 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
       with a 1 bp insert the forbidden window is 147 bp wide, so the first-order answer is
       gamma = 1/(1 - 147 * (1e-4/147)) = 1.0001 exactly. GATE: |gamma - 1.0001| < 1e-6.
       A wrong forbidden window shows up here as a wrong coefficient, not as noise.
+      G1 FAILED at 1.0001051 and the verdict stands. It is NOT the forbidden window: G2
+      validates gamma(j) against explicit enumeration at 1e-15, which a wrong window cannot
+      survive. The deviation is FINITE-SIZE and falls as 1/L -- 5.12e-6 at L=3000, 1.48e-6
+      at L=10000, a ratio of 3.46 for a length ratio of 3.33 -- and bulk-only and
+      all-position medians are identical, so it is not an edge artifact either. The bar was
+      an L -> infinity first-order value applied at finite L: an absolute tolerance not
+      derived from the quantity's own finite-size behaviour. Ledger defect L, fourth
+      occurrence in this project.
   G2  BRUTE FORCE. For L <= 26 with a short rod (ell = 4), enumerate every legal
       configuration and compare Z, per-site coverage, and gamma(j) at every site.
       GATE: max relative error <= 1e-13.
@@ -48,6 +56,30 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
       goes NEGATIVE at high density -- the cheap approximation does not merely mis-scale, it
       orders the sites wrongly. GATE: ratio and rank correlation both within 10% (absolute
       0.05 for the correlation) of the reference at 80%: ratio 2.55, rank corr -0.125.
+      G4 FAILED, and it is the substantive one because it is this module's entire
+      justification. Measured at 80% occupancy: ratio 1.28 against 2.55, rank correlation
+      +0.916 against -0.125. THE CLAIM THAT THE CHEAP APPROXIMATION ORDERS SITES WRONGLY
+      DOES NOT REPRODUCE. Rank correlation of exact against naive gamma, over three natural
+      readings of "local occupancy" and four weight variances including uniform:
+
+          weight log-sd    footprint   forbidden-window   pointwise
+              0.0           +0.954         +0.779          +0.957
+              0.5           +0.942         +0.735          +0.947
+              1.0           +0.921         +0.677          +0.921
+              2.0           +0.927         +0.691          +0.932
+
+      Always strongly POSITIVE, never negative; the ratio is always about 1.3, never 2.55.
+      One internal inconsistency localises the difference to the baseline rather than to the
+      exact side: the reference's naive gamma at 80% occupancy is 1.826, whereas
+      1/(1 - 0.8) = 5.0, so whatever it averaged as "local occupancy" came out near 0.45
+      when the stated occupancy was 0.80.
+      CONSEQUENCE FOR G6, recorded before any yeast data is fetched: G6's null 2 is
+      PWM x 1/gamma_naive, so at rank correlation 0.92 the model and null 2 are nearly the
+      same predictor and G6 cannot separate exactness from crowding. The spec already names
+      that outcome -- "crowding matters, exactness does not" -- and this measurement predicts
+      it rather than leaving it open. The residual 8% of ordering variance is real and only
+      an experiment can settle whether it matters, so G6 remains the right test with a moved
+      prior. Nothing was tuned to make G4 pass.
 """
 from __future__ import annotations
 
