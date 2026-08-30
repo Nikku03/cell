@@ -224,10 +224,34 @@ codon-shuffled null, and it lost systematically. But that verdict was obtained w
 density unset: `codon_logweights` normalises to geometric mean 1, so the model ran at 0.068
 ribosomes/codon — **68% of close packing** — against data at 5–10%. The one parameter that
 decides whether exclusion matters at all was uncontrolled, so ledger rule A applies: this is
-VOID, not FAIL. **The claim "tRNA-abundance dwell is anti-predictive" is withdrawn** pending
-the calibrated re-run below. It may well return; it was not established here.
+VOID, not FAIL.
 
-The numbers as run, kept for the record:
+**Re-run with the density set, and the conclusion returns — now established rather than
+asserted.** Each transcript's load is taken from its own measured total P-site counts over
+its length, rescaled so the median gene sits at the target; total counts is one number per
+gene while what is scored is rank order *along* the gene, which Spearman makes
+scale-invariant, so the calibration quantity is orthogonal to the predicted one.
+
+| target ρ | % of close packing | realised/target | median real | median shuffled | paired | win frac |
+|---|---|---|---|---|---|---|
+| 0.005 | 5% | 1.0000 | −0.0211 | +0.0003 | −0.0226 | 35.5% |
+| 0.010 | 10% | 1.0000 | −0.0211 | +0.0011 | −0.0228 | 34.5% |
+| 0.020 | 20% | 1.0000 | −0.0193 | +0.0027 | −0.0231 | 34.1% |
+| 0.040 | 40% | 1.0000 | −0.0154 | +0.0026 | −0.0206 | 37.0% |
+| uncalibrated | ~68% | — | −0.0208 | +0.0014 | −0.0225 | 32.2% |
+
+**D1 PASS** — the calibration lands exactly (max deviation 0.0000). **D2 FAIL** — at
+physiological ρ = 0.01 the model beats its own codon-shuffled null on 34.5% of genes,
+p = 1.00. **D3 PASS** — the sign of the paired difference is identical at every density
+including the uncalibrated one.
+
+So voiding M4 was procedurally right and **not load-bearing**: the density was uncontrolled,
+which is enough to void a verdict, but controlling it did not change the answer. tRNA-
+abundance dwell is weakly anti-predictive of P-site density across the whole range from 5%
+to 68% of close packing. Crowding mitigates it slightly (−0.0211 → −0.0154 by 40% packing)
+and never flips it.
+
+The original uncalibrated numbers, kept for the record:
 
 | predictor | median Spearman vs measured P-site density |
 |---|---|
