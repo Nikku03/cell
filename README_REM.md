@@ -212,5 +212,38 @@ to one chain (`dict.update` let the last win, giving I-RMSD 24 Å); and the copy
 cost must be *direct* RMSD, not superimposed, because superposition scores all copies of an
 oligomer alike.
 
-*Docking run in progress — CAPRI accuracy by class, with search, scoring and discretization
-error separated, lands here.*
+### The docking run: the search works, the score does not
+
+60 complexes, 20 per class, 2000 rotations (nn spacing 10.75°), 1.5 Å/voxel. The
+discretization floor holds as a valid bound on all 120 arms.
+
+| class | n | BB rank-1 | BB best | UU rank-1 | UU best |
+|---|---|---|---|---|---|
+| rigid | 20 | 0/20 | 13/20 | 0/20 | 16/20 |
+| medium | 20 | 0/20 | 17/20 | 0/20 | 8/20 |
+| difficult | 20 | **1/20** | 12/20 | 0/20 | 6/20 |
+
+**One rank-1 success in 120 arms.** But an acceptable pose is *present in the search output*
+in 42/60 bound and 30/60 unbound arms. The search generates the answer; the score never
+picks it. In L-RMSD medians the split is stark — search error 4.3–9.2 Å against scoring
+error 38.7–56.7 Å, five to ten times larger.
+
+**Sampling is not the constraint.** Floors: median 2.18 Å, max 6.68 Å; 60/60 cases could
+reach *acceptable*, 56/60 *medium*, and only 5/60 *high*. Nothing was floor-limited.
+
+**Rescoring cannot rescue it, and the ceiling says why.** Reranking the same 20 poses five
+ways — grid, pair energy, exact VE repacking, greedy repacking, −RT ln Z — gives 0/58 every
+time. The *ceiling*, the best pose present in that shortlist at all, is 12.26 Å median and
+also scores 0/58. The near-native pose is usually not in the top 20 to begin with, so this
+is an argument for keeping more candidates, not for a better rescorer.
+
+**Greedy again ties exactness**: 0 of 1160 rescored poses where greedy missed the VE
+optimum, and it never changed which pose ranked first.
+
+**Flexible refinement makes it slightly worse**: I-RMSD 17.70 → 17.78 median, improving on
+10 of 28 medium/difficult cases. That is the C4 result at benchmark scale — exact
+optimization of an imperfect energy moves confidently in the wrong direction.
+
+The one-line summary of the whole benchmark: **this pipeline's failure is scoring, not
+search, and REM addresses search.** Every exactness guarantee in this repo is real and none
+of them touches the thing that is actually broken.
