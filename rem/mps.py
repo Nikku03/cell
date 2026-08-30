@@ -281,9 +281,17 @@ def trotter_step(mps: List[np.ndarray], rates: np.ndarray, alpha: float, beta: f
     ev = list(range(0, L - 1, 2))
     od = list(range(1, L - 1, 2))
 
+    disc = 0.0
+
     def bulk(bonds, frac):
+        # A 2-site gate can at most DOUBLE a bond (theta is (cl*d, d*cr)), so 2*chi is the
+        # natural cap; 4*chi was pure waste, making every SVD twice as wide as it can need
+        # to be. Compressing after each LAYER rather than once per step keeps bonds at
+        # 2*chi instead of letting three layers stack them to 8*chi.
+        nonlocal disc
         for i in bonds:
-            apply_bond(mps, i, cache.get("bulk", float(rates[i]), frac), chi_cap=4 * chi)
+            apply_bond(mps, i, cache.get("bulk", float(rates[i]), frac), chi_cap=2 * chi)
+        disc = max(disc, compress(mps, chi))
 
     def bnd(frac):
         apply_1site(mps, 0, cache.get("left", alpha, frac))
@@ -293,7 +301,6 @@ def trotter_step(mps: List[np.ndarray], rates: np.ndarray, alpha: float, beta: f
         bnd(0.5); bulk(ev, 0.5); bulk(od, 1.0); bulk(ev, 0.5); bnd(0.5)
     else:
         bnd(1.0); bulk(ev, 1.0); bulk(od, 1.0)
-    disc = compress(mps, chi)
     normalise(mps)
     return disc
 
