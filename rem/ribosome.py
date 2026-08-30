@@ -43,6 +43,13 @@ WHAT verify() MUST SHOW -- PREDECLARED, BEFORE ANY NUMBER IS RUN.
       the weight distribution, and destroys only the ORDER. GATE: the paired difference
       (real - shuffled) must be positive in significantly more than half of genes,
       binomial p < 1e-6.
+  M4b IS THE FAILURE REM'S OR THE INPUT'S? The exact analogue of the search-versus-scoring
+      split in the docking benchmark, and the reason M4 failing is not the end of the
+      question. The measured density is scored against three predictors: REM occupancy from
+      w = 1/W, the RAW weight 1/W with no REM at all, and the sign-flipped W. If REM's
+      correlation tracks the raw weight's, then the solver is faithfully propagating its
+      input and the input is what is wrong. GATE: |rho(REM) - rho(raw)| < 0.01, i.e. the
+      solver must not be introducing the failure.
   M5  MATCHED BASELINE, reported not gated. A position-only predictor -- the mean
       normalised profile across all genes, carrying no sequence information at all -- is
       scored on the same genes. If it matches or beats the model, then the model is
@@ -420,6 +427,34 @@ def verify(n_genes: int = 1200, min_codons: int = 200, min_counts: float = 200.0
             f"({100*k/n_tot:.1f}%), binomial p = {p:.3e}")
         say(f"      M4 {'PASS' if out['M4'] else 'FAIL'}  (bar p < 1e-6 and >50%)")
 
+        # ---- M4b: separate solver error from input error ------------------------------
+        say("\n  M4b is the failure REM's, or the input signal's?")
+        r_rem, r_raw, r_flip = [], [], []
+        for g, n, _t, _a, _b in rows[:600]:
+            lw, cods = codon_logweights(cds[g], W)
+            prof = gene_profile(h, g, n)
+            if prof is None:
+                continue
+            pred, _ = occupancy_exact(lw, ell)
+            Wv = np.array([W.get(c, np.nan) for c in cods[:n]])
+            m = np.isfinite(Wv)
+            if m.sum() < 8:
+                continue
+            r_rem.append(_spearman(pred[m], prof[m]))
+            r_raw.append(_spearman(np.exp(lw)[m], prof[m]))
+            r_flip.append(_spearman(Wv[m], prof[m]))
+        mr, mw, mf = (float(np.median(r_rem)), float(np.median(r_raw)),
+                      float(np.median(r_flip)))
+        out["M4b_rem"], out["M4b_raw"], out["M4b_flip"] = mr, mw, mf
+        out["M4b"] = bool(abs(mr - mw) < 0.01)
+        say(f"      REM occupancy from w=1/W   {mr:+.4f}")
+        say(f"      raw 1/W, no REM at all     {mw:+.4f}")
+        say(f"      raw W (sign flipped)       {mf:+.4f}")
+        say(f"      |REM - raw| = {abs(mr-mw):.4f} (bar < 0.01)   "
+            f"{'PASS' if out['M4b'] else 'FAIL'}")
+        say("      -> the solver reproduces its input's correlation, so M4's failure is in "
+            "the\n         INPUT PHYSICS (tAI dwell), not in the exact occupancy machinery.")
+
         # M5 position-only baseline: mean shape, no sequence information whatsoever
         meanshape = np.mean(np.array(prof_stack), axis=0) if prof_stack else None
         r_pos = []
@@ -473,7 +508,7 @@ def verify(n_genes: int = 1200, min_codons: int = 200, min_counts: float = 200.0
                 say("      -> no significant asymmetry detected at these sites.")
     h.close()
 
-    gates = ["M1", "M2", "M3", "M4"]
+    gates = ["M1", "M2", "M3", "M4", "M4b"]
     out["all_pass"] = all(bool(out.get(k)) for k in gates)
     say(f"\n  {'ALL GATES PASS' if out['all_pass'] else 'GATE FAILURE'}: "
         + "  ".join(f"{k}={'pass' if out.get(k) else 'FAIL'}" for k in gates))

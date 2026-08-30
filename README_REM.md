@@ -194,6 +194,65 @@ treewidth linear in chain length — no structural saving exists. Confining the 
 strip of width W moves the exponential from the *length* to the *width*: cost linear in L,
 exponential in W. Same law, different geometry.
 
+## REM on a real human cell axis: exact ribosome maps
+
+The one place in this project where REM meets a real cell. Hard rods of footprint 10 codons
+on real human CDS, weights from **measured** tRNA abundance, scored against **measured**
+ribosome profiling — everything HEK293-T so the tRNA pool and the footprints come from one
+cell type.
+
+| | source |
+|---|---|
+| CDS | Ensembl GRCh38 r112, 19,553 usable gene symbols |
+| tRNA abundance | GEO GSE152621, mim-tRNAseq, `Hsap_HEK293T` rep1+rep2 |
+| ribosome profiling | GEO GSE290865, total translatome, P-site counts per CDS nucleotide |
+
+**The machinery is exact and linear.** Three independent solvers — forward-backward
+hard-rod recursion, explicit enumeration of every valid configuration, and a
+`rem.factorgraph` chain contracted with `eliminate("sum")` — agree to **1.8e-15** on both
+occupancy and log Z. Cost is linear in transcript length, fitted slope **0.958**: a
+2,997-codon transcript solves exactly in **6 ms**.
+
+*The third solver initially disagreed by 1.3–2.5 in log Z. Two errors, both mine: a rod at
+codon i needs the state at i−1 to be ≥ ell−1, not ≥ ell (requiring ell forbids the tightest
+legal packing and undercounts Z), and the initial empty state must start at gap ell, not
+gap 1. Having three solvers rather than two is what localised it to the construction rather
+than the physics.*
+
+**And the biology failed.** M4 required the prediction to beat its own codon-shuffled null.
+It lost, systematically:
+
+| predictor | median Spearman vs measured P-site density |
+|---|---|
+| REM occupancy from w = 1/W | **−0.0224** |
+| codon-shuffled null | −0.0000 |
+| position-only baseline (no sequence at all) | **+0.0548** |
+
+Real beat its own shuffle on **375/1200 genes (31.2%)** — worse than chance. A predictor
+that knows only *where you are in the transcript*, carrying no sequence information
+whatsoever, beats the codon model outright.
+
+**M4b localises the failure**, and it is the search-versus-scoring split again:
+
+| | median Spearman |
+|---|---|
+| REM occupancy from w = 1/W | −0.0225 |
+| raw 1/W with no REM at all | −0.0223 |
+| raw W, sign flipped | +0.0221 |
+
+`|REM − raw| = 0.0002`. The solver reproduces its input's correlation to four decimal
+places, so it is propagating the signal faithfully and **the input physics is what is
+wrong** — tRNA-abundance dwell is weakly anti-predictive of P-site density in this data.
+The tAI weights are not the problem either: they rank GAC, ATG, AAA, AAG highest and ATA,
+TCA, TTG, TCG, CTA, TTA lowest, which are the textbook rare codons.
+
+**M6 found no asymmetry to explain.** Around the slowest 10% of codons the measured
+upstream/downstream densities differ by −0.0235 at z = −1.7 — not significant. So the
+equilibrium model's inability to queue was never the binding limitation here.
+
+This is the DB5 result in a second domain, and it was predicted before the run: exact
+machinery, wrong model. REM will compute the true optimum of whatever physics you hand it.
+
 ## Docking Benchmark 5
 
 271 complexes parsed; **270 usable**. Measured difficulty split against published DB5:
