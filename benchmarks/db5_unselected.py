@@ -70,8 +70,13 @@ STEP 0  THE REACHABLE-SET CEILING, computed analytically and WITHOUT EVER CONSUL
 STEP 1  THE SAMPLE, drawn from poses the score ADMITS but does not RANK. A pose needs an
         interface for T*S_conf to be defined at all, so the universe cannot be all of space;
         but "has an interface" must not become "scores well". The admissibility criterion is
-        S(t) > 0 -- the Katchalski-Katzir correlation is net favourable, i.e. the pose touches
-        without gross clash. Within that set translations are drawn UNIFORMLY AT RANDOM, never
+        S(t) >= 1 -- the Katchalski-Katzir correlation is integer-valued, so this says what is
+        meant: at least one real surface-surface overlap -- AND a real-space check that the
+        pose has a receptor-ligand atom pair within 5 A. The second half is not redundant: the
+        FFT search is CIRCULAR, so a high score can be a wrap artifact, the ligand scored
+        against a periodic image of the receptor while sitting far away in real space. Such
+        draws are rejected FROM THE POOL, not merely from the statistics, and the rejected
+        count and the box_ok flag are recorded per complex. Within that set translations are drawn UNIFORMLY AT RANDOM, never
         by rank: R_SAMPLE rotations uniformly from the same 2000, T_PER_ROT translations
         uniformly from each rotation's admissible set. The pool is then stratified into N_BINS
         equal-width I_rmsd bins so the near-native end is represented if it exists at all.
@@ -389,15 +394,28 @@ def run_complex(cid, cls, rots, n_sample):
 
     # ---------------- STEP 1: poses the score ADMITS but does not RANK ----------------
     ridx = rng.choice(len(rots), size=min(R_SAMPLE, len(rots)), replace=False)
-    pool = []
+    pool, n_wrap, n_drawn = [], 0, 0
     for ri in ridx:
         S = srch.score_rotation(rots[int(ri)])
-        adm = np.argwhere(S > 0.0)
+        # S >= 1: the Katchalski-Katzir correlation is integer-valued, so ">= 1" and "> 0"
+        # differ only by floating-point dust, and >= 1 says what is meant -- at least one
+        # real surface-surface overlap.
+        adm = np.argwhere(S >= 1.0)
         if len(adm) == 0:
             continue
         pick = adm[rng.choice(len(adm), size=min(T_PER_ROT, len(adm)), replace=False)]
         for raw in pick:
+            n_drawn += 1
             sh = fftcorr._fold(np.asarray(raw, int), S.shape, None)
+            t = fftcorr.shift_to_world(np.asarray(sh), SPACING)
+            c = apply_pose(moved, rots[int(ri)], t, centre=centre)
+            # THE FFT SEARCH IS CIRCULAR, so a high score can be a WRAP ARTIFACT: the ligand
+            # scored against a periodic image of the receptor while sitting far away in real
+            # space. Admissibility is therefore also checked in real space, and failures are
+            # kept OUT OF THE POOL rather than merely out of the statistics.
+            if contact_count(rec.coords, c) < 1:
+                n_wrap += 1
+                continue
             pool.append((int(ri), tuple(int(x) for x in sh),
                          float(S[tuple(int(x) for x in raw)])))
     if not pool:
@@ -458,7 +476,9 @@ def run_complex(cid, cls, rots, n_sample):
         "screen": {"n_probe": int(len(sp)), "n_within_I_bar": int(len(near)),
                    "max_direct_given_I_ok": (float(near[:, 1].max()) if len(near) else None),
                    "limit": I_DIRECT_SCREEN},
-        "pool": {"n": len(pool), "I_lo": lo, "I_hi99": hi, "I_max": float(pool_I.max())},
+        "pool": {"n": len(pool), "n_drawn": int(n_drawn), "n_wrap_rejected": int(n_wrap),
+                 "box_ok": bool(srch.box_ok), "I_lo": lo, "I_hi99": hi,
+                 "I_max": float(pool_I.max())},
         "poses": recs,
     }
 

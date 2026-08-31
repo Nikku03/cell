@@ -98,9 +98,22 @@ def load(pattern="benchmarks/unsel_w*.json"):
 
 
 def rank_norm(x, descending=False):
-    r = _rank(np.asarray(x, float))
+    """Rank-normalise to [0,1], 0 = best. NON-FINITE VALUES ARE FORCED TO THE WORST SLOT.
+
+    np.argsort puts nan last ascending, so the descending arm mapped r -> n-1-r and handed
+    every undefined pose the BEST rank -- a pose whose entropy was never defined would have
+    won top-20 slots in the entropy and blend arms and inflated them against a null that does
+    not model it. Undefined is not favourable; it is not rankable.
+    """
+    v = np.asarray(x, float)
+    bad = ~np.isfinite(v)
+    r = _rank(v)
     if descending:
         r = len(r) - 1 - r
+    r = r.astype(float)
+    if bad.any():                     # push them past every finite pose, order among them fixed
+        r[bad] = len(r) + np.arange(int(bad.sum()))
+        r = _rank(r)
     return r / max(1.0, len(r) - 1)
 
 
