@@ -215,11 +215,21 @@ def shifts_in_ball(tstar, radius, spacing, shape):
     return G[(d * d).sum(1) <= r * r]
 
 
-def contact_count(rec_coords, lig_coords, cut=CONTACT_CUT):
-    """Geometric interface size. NOT the grid score -- that is the scorer under test."""
+def receptor_tree(rec_coords):
     from scipy.spatial import cKDTree
-    return int(cKDTree(rec_coords).query_ball_point(lig_coords, r=cut,
-                                                    return_length=True).sum())
+    return cKDTree(rec_coords)
+
+
+def contact_count(rec, lig_coords, cut=CONTACT_CUT):
+    """Geometric interface size. NOT the grid score -- that is the scorer under test.
+
+    `rec` may be coordinates or a prebuilt cKDTree. Building the tree costs ~15 ms and the
+    receptor never moves, so it is built once per complex and reused across the thousands of
+    poses the pool draw and the sample both need.
+    """
+    from scipy.spatial import cKDTree
+    tree = rec if isinstance(rec, cKDTree) else cKDTree(rec)
+    return int(tree.query_ball_point(lig_coords, r=cut, return_length=True).sum())
 
 
 class FastCapri:
@@ -276,7 +286,7 @@ class FastCapri:
                 "quality": capri.capri_quality(fn, lrms, irms)}
 
 
-def score_pose_ext(rec, lig_at_pose, grid_score):
+def score_pose_ext(rec, lig_at_pose, grid_score, rtree=None):
     """As db5_basin.score_pose, plus what the size control actually needs: n_repack (the number
     of residues that became variables, which is what makes T*S_conf extensive) and a geometric
     contact count."""
@@ -285,7 +295,8 @@ def score_pose_ext(rec, lig_at_pose, grid_score):
                              lig_at_pose.elements,
                              score.charges(lig_at_pose.res_names,
                                            lig_at_pose.atom_names))["total"]
-    nc = contact_count(rec.coords, lig_at_pose.coords)
+    nc = contact_count(rtree if rtree is not None else rec.coords,
+                       lig_at_pose.coords)
     prob = build_from_case({"r_b": rec, "l_b": lig_at_pose}, side="r", bound=True,
                            max_residues=REPACK_RES, n_chi1=N_CHI1, n_chi2=N_CHI2)
     base = {"grid": -grid_score, "pair": pair, "contacts": nc}
@@ -335,6 +346,7 @@ def run_complex(cid, cls, rots, n_sample):
     Q = np.vstack([rec_if, nat_if])
 
     fast = FastCapri(rec, lig, native, masks)
+    rtree = receptor_tree(rec.coords)
 
     def metrics_at(R, shift):
         t = fftcorr.shift_to_world(shift, SPACING)
@@ -413,7 +425,7 @@ def run_complex(cid, cls, rots, n_sample):
             # scored against a periodic image of the receptor while sitting far away in real
             # space. Admissibility is therefore also checked in real space, and failures are
             # kept OUT OF THE POOL rather than merely out of the statistics.
-            if contact_count(rec.coords, c) < 1:
+            if contact_count(rtree, c) < 1:
                 n_wrap += 1
                 continue
             pool.append((int(ri), tuple(int(x) for x in sh),
@@ -443,7 +455,7 @@ def run_complex(cid, cls, rots, n_sample):
         ri, sh, sc = pool[j]
         c, m = metrics_at(rots[ri], np.array(sh))
         try:
-            s = score_pose_ext(rec, _as_struct(lig, c), sc)
+            s = score_pose_ext(rec, _as_struct(lig, c), sc, rtree)
         except Exception:                                          # noqa: BLE001
             continue
         recs.append({**s, "I_rmsd": m["I_rmsd"], "L_rmsd": m["L_rmsd"], "f_nat": m["f_nat"],
@@ -454,7 +466,7 @@ def run_complex(cid, cls, rots, n_sample):
         c = apply_pose(moved, rots[a["rot"]],
                        fftcorr.shift_to_world(np.array(a["shift"]), SPACING), centre=centre)
         try:
-            s = score_pose_ext(rec, _as_struct(lig, c), float(S[raw]))
+            s = score_pose_ext(rec, _as_struct(lig, c), float(S[raw]), rtree)
         except Exception:                                          # noqa: BLE001
             continue
         recs.append({**s, "I_rmsd": a["I_rmsd"], "L_rmsd": a["L_rmsd"], "f_nat": a["f_nat"],
