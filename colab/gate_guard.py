@@ -488,6 +488,34 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      GENERAL FORM: a test of "no effect" built from a p-value cannot distinguish "no
 #      effect" from "no data", and cannot reward precision. Bound the effect size instead.
 #
+#   Q  A PROVENANCE TAG THAT COLLAPSES TWO INDEPENDENT AXES. rem/lysogen.py's first version
+#      tagged every model parameter with ONE label drawn from {MEASURED, FITTED, DERIVED,
+#      UNRETRIEVED}. But "what kind of number is this" and "could this session read its value"
+#      are orthogonal, and the two parameters that matter most -- the transcription rate the
+#      whole calibration is anchored on, and the temperature-dependent repressor activity --
+#      are BOTH fitted AND unread. Forced onto one axis they took the UNRETRIEVED label, and
+#      the summary line then read "FITTED: 0" for a parameter set with two fitted parameters.
+#      The gate exists precisely to answer "which numbers were fitted"; its own summary
+#      answered "none", which is the opposite of the truth and would have cleared the trap the
+#      gate was built to detect. GENERAL FORM: when a status field must express both WHAT a
+#      value is and WHETHER it is available, one enum cannot do it -- the unavailable state
+#      absorbs every other category and the counts silently zero out. Split the axes. The
+#      giveaway is a count of zero in a category the evidence says is populated.
+#
+#   R  A RETRIEVAL CHANNEL THAT DELETES EXPONENTS WITHOUT SAYING SO. Fetching a paper's full
+#      text through the literature tool strips superscripts and subscripts from the body, so
+#      "less than once per 10^5 cell generations" arrives as "less than once per 10 cell
+#      generations" -- a well-formed sentence containing a number wrong by five orders of
+#      magnitude, with nothing marking the loss. Units degrade the same way: a rate given as
+#      "0.02 s^-1" arrives as "0.02 s". This is defect O arriving through a TOOL rather than
+#      through a sentinel: a missing quantity that does not announce itself as missing, and
+#      that reads as a plausible value. RULE: a number whose exponent could have been stripped
+#      is UNRETRIEVED, not reconstructed-from-context, even when only one reading is
+#      dimensionally sensible -- reconstruction is exactly the substitution of a plausible
+#      value that provenance gates exist to forbid. Where the same quantity survives in a
+#      structured metadata field, which preserves "10(-8)", take it from there and name that
+#      field as the source.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 

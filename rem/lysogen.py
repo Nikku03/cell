@@ -19,10 +19,14 @@ docstring is the evidence for that verdict, written before the code below was ex
 THE GATES. L0 RUNS HERE. L1-L5 ARE HELD AND THE REASON IS RECORDED, NOT DEFERRED SILENTLY.
 =================================================================================================
 
-L0  PARAMETER PROVENANCE. Every number entering the model is tagged MEASURED, FITTED, DERIVED or
-    UNRETRIEVED, each with a retrievable source. A parameter set in which the fitted numbers
-    cannot be separated from the measured ones fails L0 outright, because the trap below is then
-    undetectable rather than absent.
+L0  PARAMETER PROVENANCE. Every number entering the model is tagged on TWO AXES -- what it is
+    (MEASURED, FITTED, DERIVED) and whether this session could read its value (retrieved or not)
+    -- each with a retrievable source. The axes are independent and collapsing them inverts the
+    answer: the first version of this file had one axis and reported "FITTED: 0" for a parameter
+    set whose two most important numbers are both fitted-but-unread. A parameter set in which the
+    fitted numbers cannot be SEPARATED from the measured ones fails L0 outright, because the trap
+    below is then undetectable rather than absent; a set where the split is known but the values
+    are missing is PARTIAL, which is a different and more recoverable failure.
 
 L1  WILD-TYPE CONSISTENCY. Reproduce the lysogen's CI abundance and switching rate. THIS IS NOT A
     TEST and this module says so in the code, not only in prose: L1 is allowed to return
@@ -171,19 +175,36 @@ SHEA85 = ("Shea & Ackers 1985 J Mol Biol 181:211", "10.1016/0022-2836(85)90086-5
 
 
 class Param:
-    """One number, its status, and where it came from. `value` is None iff status is UNRETRIEVED.
+    """One number on TWO INDEPENDENT AXES, because collapsing them states the opposite of the truth.
 
-    The invariant is enforced in __init__ rather than trusted, because the single most expensive
-    error in this project's history was a missing value that carried a number anyway.
+    ORIGIN is what the number is: MEASURED, FITTED or DERIVED. RETRIEVED is whether this session
+    could actually read its value. They are orthogonal, and the first version of this class had
+    only one axis: it tagged k_max and mu(T) UNRETRIEVED, which made the summary line read
+    "FITTED: 0" on a parameter set whose two most important numbers are BOTH fitted. A count that
+    says nothing was fitted, on evidence that says two things were, is exactly the overstatement
+    this gate exists to catch, so the axis was split rather than the count reworded.
+
+    The value/retrieved invariant is enforced here rather than trusted, because the single most
+    expensive error in this project's history was a missing value that carried a number anyway.
     """
 
-    def __init__(self, name, value, unit, status, source, note=""):
-        if status == UNRETRIEVED and value is not None:
-            raise ValueError(f"{name}: UNRETRIEVED parameters must carry value=None")
-        if status != UNRETRIEVED and value is None:
-            raise ValueError(f"{name}: only UNRETRIEVED parameters may carry value=None")
+    def __init__(self, name, value, unit, origin, source, note="", retrieved=None):
+        if origin not in (MEASURED, FITTED, DERIVED):
+            raise ValueError(f"{name}: origin must be MEASURED, FITTED or DERIVED")
+        if retrieved is None:
+            retrieved = value is not None
+        if retrieved and value is None:
+            raise ValueError(f"{name}: retrieved parameters must carry a value")
+        if not retrieved and value is not None:
+            raise ValueError(f"{name}: unretrieved parameters must carry value=None")
         self.name, self.value, self.unit = name, value, unit
-        self.status, self.source, self.note = status, source, note
+        self.origin, self.retrieved = origin, bool(retrieved)
+        self.source, self.note = source, note
+
+    @property
+    def status(self):
+        """Display tag. UNRETRIEVED wins for display because it governs what may be computed."""
+        return self.origin if self.retrieved else f"{self.origin[:4]}/UNRETR"
 
 
 PARAMETERS = [
@@ -202,19 +223,21 @@ PARAMETERS = [
     Param("intrinsic switching rate, wild type, RecA-", 1e-8, "per generation", MEASURED,
           LITTLE10, "UPPER BOUND: 'probably less than 10(-8)/generation'; from the structured "
                     "metadata, where the exponent survived"),
-    Param("k_max, transcription initiation when bound", None, "s^-1", UNRETRIEVED, ZONG,
-          "FITTED by construction -- tuned until <k_on>_sim matches the measured k_on. Value "
-          "not given in the retrieved text. This is the anchor of the calibration."),
-    Param("mu(T), active repressor fraction, cI857", None, "-", UNRETRIEVED, ZONG,
-          "FITTED against measured mRNA levels. Table not in the retrieved text."),
-    Param("cell doubling time tau", None, "min", UNRETRIEVED, ZONG,
-          "'Cell growth rate was measured directly'; value not in the retrieved text."),
-    Param("O_R free energies dG(CI), dG(Cro), cooperativity", None, "kcal/mol", UNRETRIEVED,
-          SHEA85, "No PMC record; not retrievable in this environment."),
-    Param("translation rate, cI mRNA", None, "s^-1", UNRETRIEVED, ZONG,
+    Param("k_max, transcription initiation when bound", None, "s^-1", FITTED, ZONG,
+          "Tuned until <k_on>_sim matches the measured k_on. This is the anchor of the whole "
+          "calibration, and its value is not given in the retrieved text.", retrieved=False),
+    Param("mu(T), active repressor fraction, cI857", None, "-", FITTED, ZONG,
+          "Fitted against measured mRNA levels. Table not in the retrieved text.",
+          retrieved=False),
+    Param("cell doubling time tau", None, "min", MEASURED, ZONG,
+          "'Cell growth rate was measured directly'; value not in the retrieved text.",
+          retrieved=False),
+    Param("O_R free energies dG(CI), dG(Cro), cooperativity", None, "kcal/mol", MEASURED,
+          SHEA85, "No PMC record; not retrievable in this environment.", retrieved=False),
+    Param("translation rate, cI mRNA", None, "s^-1", MEASURED, ZONG,
           "Text reads 'or 0.02 s' -- the unit exponent was STRIPPED by retrieval. 0.02 s^-1 is "
           "the only dimensionally sensible reading, but reconstructing it is a substitution, so "
-          "it is recorded as unretrieved and not used."),
+          "it is recorded as unretrieved and not used.", retrieved=False),
 ]
 
 DETECTION_FLOOR = 1e-8       # per generation, Little & Michalowski 2010 (upper bound)
@@ -222,11 +245,22 @@ CI_LIFETIME_GENERATIONS = 1.0 / math.log(2.0)   # tau/ln2, ~1.44 generations
 
 
 def provenance():
-    """Counts by status. L0 reads this."""
-    out = {MEASURED: 0, FITTED: 0, DERIVED: 0, UNRETRIEVED: 0}
+    """Counts on BOTH axes. L0 reads this.
+
+    `origin` answers "how many of the model's numbers were fitted" -- which is the question the
+    design's trap is about, and which stays answerable even when the fitted values themselves
+    could not be read. `retrieved` answers "how many can this session actually use".
+    """
+    origin = {MEASURED: 0, FITTED: 0, DERIVED: 0}
+    retrieved = {True: 0, False: 0}
+    fitted_unretrieved = 0
     for p in PARAMETERS:
-        out[p.status] += 1
-    return out
+        origin[p.origin] += 1
+        retrieved[p.retrieved] += 1
+        if p.origin == FITTED and not p.retrieved:
+            fitted_unretrieved += 1
+    return {"origin": origin, "retrieved": retrieved[True], "unretrieved": retrieved[False],
+            "fitted_but_unretrieved": fitted_unretrieved}
 
 
 def burst_survival(k_on_per_min, tau_cell_min, mu=1.0):
@@ -289,7 +323,7 @@ def l3_power(n_at_floor, n_too_unstable, n_discriminating, alpha=0.05):
 def l0_verdict():
     """PASS only if nothing the model needs is UNRETRIEVED and the fitted set is identifiable."""
     counts = provenance()
-    missing = [p for p in PARAMETERS if p.status == UNRETRIEVED]
+    missing = [p for p in PARAMETERS if not p.retrieved]
     # The fitted/measured SPLIT is identifiable -- the paper states which numbers were tuned --
     # even though the tuned VALUES were not retrieved. Those are different failures and the gate
     # must not conflate them.
@@ -312,7 +346,10 @@ def verify():
         if p.note:
             print(f"               {p.note}")
     verdict, counts, missing = l0_verdict()
-    print(f"\n  counts: {counts}")
+    o = counts["origin"]
+    print(f"\n  by ORIGIN     measured {o[MEASURED]}   fitted {o[FITTED]}   derived {o[DERIVED]}")
+    print(f"  by RETRIEVAL  retrieved {counts['retrieved']}   unretrieved {counts['unretrieved']}"
+          f"   (of which fitted: {counts['fitted_but_unretrieved']})")
     print(f"  L0 VERDICT: {verdict}   ({len(missing)} unretrieved)")
 
     print("\n" + "=" * 95)
