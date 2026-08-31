@@ -51,6 +51,43 @@ import numpy as np
 UNDEFINED = "UNDEFINED"
 
 
+def negligible(estimate, stderr, bound, k=2.0):
+    """Certify that a quantity is SMALL. Never use a significance test for this.
+
+    THE MECHANISM FOR LEDGER DEFECT P, which is a rule that generalises well past the module
+    it was found in. "No effect" encoded as "I failed to reject zero" fails hardest exactly
+    when the evidence is best: an exactly flat series has estimate = 0 and stderr = 0, so
+    `estimate < 2*stderr` reads 0 < 0 and the gate cannot fire on its own best case. Worse,
+    the test rewards imprecision -- a noisier measurement has a larger stderr and passes more
+    easily -- which is the opposite of what a negligibility claim needs.
+
+    So bound the quantity instead of testing it. NEGLIGIBLE means the whole confidence
+    interval sits inside the bound; CONSEQUENTIAL means the whole interval sits outside it;
+    and anything straddling the bound is UNDETERMINED, which is a real answer and is not to be
+    rounded into whichever verdict is convenient.
+
+    `bound` must be the size at which the quantity would START TO MATTER for the decision at
+    hand, and it therefore has to be chosen from the problem rather than from the data -- a
+    bound read off the measurement is defect J wearing a different hat.
+
+    >>> negligible(0.0, 0.0, 1.0)[0]          # perfectly flat: the case the old test failed
+    'NEGLIGIBLE'
+    >>> negligible(0.18, 0.06, 1.0)[0]        # small and well determined
+    'NEGLIGIBLE'
+    >>> negligible(0.5, 0.4, 1.0)[0]          # interval straddles the bound
+    'UNDETERMINED'
+    >>> negligible(5.0, 0.1, 1.0)[0]          # clearly matters
+    'CONSEQUENTIAL'
+    """
+    lo = abs(estimate) - k * abs(stderr)
+    hi = abs(estimate) + k * abs(stderr)
+    if hi <= bound:
+        return "NEGLIGIBLE", (lo, hi)
+    if lo > bound:
+        return "CONSEQUENTIAL", (lo, hi)
+    return "UNDETERMINED", (lo, hi)
+
+
 def survival(real, nulls, z_min=2.0):
     """What fraction of `real` survives under `nulls` -- or UNDEFINED if there is no effect.
 
