@@ -516,6 +516,25 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      structured metadata field, which preserves "10(-8)", take it from there and name that
 #      field as the source.
 #
+#   S  A PROVENANCE TABLE THAT RECORDS WHAT A NUMBER IS BUT NOT WHERE IT APPLIES. Defect Q split
+#      provenance into origin (measured/fitted/derived) and retrieval. Two axes are still not
+#      enough. A parameter can be MEASURED, RETRIEVED, carry a tight error bar, and still be the
+#      wrong number for the calculation it is being used in, because it was measured under
+#      conditions the calculation does not share. The lambda burst frequency is measured to
+#      +/- 14% at 37 C in one strain and was then used to predict a rate measured at 30 C in
+#      another; the table had no field in which that mismatch could be written, so the parameter
+#      entered the calculation carrying a 0.058 dex width it had not earned for that use.
+#      The consequence is not cosmetic. rem/attribution.py, run blind, correctly identifies the
+#      parameter and then rejects it at 5.84 prior widths -- the right answer given the table,
+#      and the wrong answer about the world, because the width is the one quantity the table
+#      never recorded. RULE: a provenance entry needs an APPLICABILITY axis -- the conditions the
+#      value was measured under, and the conditions it is being used under. Where they differ the
+#      usable width is the transfer uncertainty, not the measurement error, and if no source
+#      states the transfer uncertainty then the parameter is UNRETRIEVED FOR THIS USE however
+#      precisely it was measured for its own. GENERAL FORM: a tight error bar is a claim about
+#      repeating the SAME experiment. It is not a claim about a different one, and a table that
+#      cannot express the difference will hand a borrowed number full confidence.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 

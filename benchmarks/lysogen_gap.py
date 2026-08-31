@@ -28,8 +28,30 @@ The whole 9.5 orders is a factor of 2.2 to 6.5 in the PRODUCT k_on * tau. And th
 CONDITIONS MISMATCH, not a missing mechanism: the burst frequency 1.4/min was measured at 37 C in
 MG1655(lambda), while every switching rate was measured at 30 C in the RecA-deficient strain
 JL5902. Solving the relation for the burst frequency the assay's own conditions imply gives
-0.32-0.43/min -- an entirely ordinary value for a culture 7 C colder. Nothing is missing. Two
-numbers from different experiments were multiplied together and then exponentiated.
+0.32-0.43/min -- an entirely ordinary value for a culture 7 C colder.
+
+CORRECTION, ADDED AFTER rem/attribution.py RAN THE SAME QUESTION BLIND. The paragraph above
+originally closed with "Nothing is missing. Two numbers from different experiments were
+multiplied together and then exponentiated." THAT WAS AN OVERSTATEMENT and it is left standing
+here with its refutation rather than edited away.
+
+The conditions-mismatch story was told after seeing the answer. Run mechanically -- give the
+method the model, the measurement, and the provenance table, and no hint about which parameter
+is suspect -- it lands on k_on, which is right, and then REJECTS it: reconciling requires
+k_on = 0.64/min, a move of -0.339 dex against a quoted error bar of 0.058 dex, i.e. 5.84 prior
+widths. For that move to count as plausible k_on's prior width would have to be at least
+0.169 dex, a factor of 1.48 -- roughly three times wider than its measurement error. NO SOURCE
+STATES SUCH A WIDTH.
+
+So the conditions-mismatch account has exactly the status this file assigns to the H2 routes it
+refused to count: a mechanism that certainly exists, whose required magnitude no source
+quantifies. It is a NOT STATED entry, and by this file's own rule it may not be spent. The
+budget's verdict line is therefore unchanged -- confirmed factors total 10^0.15 and the residual
+is 10^9.35 -- but the residual must be labelled UNEXPLAINED rather than attributed.
+
+What survives intact: the premise correction (the 4e-7 anchor is not in any source; 9.0e-9 and
+<1e-8 are), every REFUTED assay factor, and the amplification structure, which attribution.py
+recovers independently as a derivative: d log S / d log k_on = -40.40 = -N exactly.
 
 THIS IS THE CROWDING ERROR-BAR FORMULA FIRING IN ANGER. rem/crowding_errorbar.py derived
     rare_error ~= exp[(N - <X>) * Delta / S]
