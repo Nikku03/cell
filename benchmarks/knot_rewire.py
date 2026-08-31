@@ -72,6 +72,43 @@ R5  KNOT SIZE FOR EVERY REWIRING, TREEWIDTH FOR A SUBSET. Kernelization is fast;
 R6  A NULL IS THE ANSWER, NOT A FAILURE. If the knot sits inside the rewired spread, that closes
     the question: the structure is the degree sequence, the 888 was never a statement about
     regulatory organisation, and this dataset cannot be made to yield one.
+
+RESULT. 20 rewirings each, treewidth on the first 5, R1 clean (0 invalid of 20 on both graphs).
+
+    graph            REAL knot   rewired knots        REAL tw   rewired tw
+    FULL (>=1 PMID)        888   987 / 1022 / 1048        200   226,227,229,232,232
+    >= 2 PMIDs              71    80 /   97 /  129         19   21,21,22,22,23
+                                (min/median/max)
+
+THE KNOT IS SMALLER THAN EVERY ONE OF 20 DEGREE-PRESERVING REWIRINGS, on both graphs, and its
+treewidth is smaller than all five measured. So the structure is NOT reproduced by the degree
+sequence: "some genes are famous" does not account for it, and there is real wiring
+organisation in this network.
+
+BUT THE DIRECTION IS THE THIRD BRANCH, NOT THE FIRST. The real network is LESS tangled than its
+own degree sequence implies -- more modular than a fame-matched random graph, not more knotted.
+That is a positive finding about organisation, and it is the opposite of what a "the core is
+worse than it looks" reading would have predicted.
+
+THE BIAS RUNS THE RIGHT WAY, WHICH IS WHAT MAKES IT WORTH SOMETHING. The rewirings necessarily
+retain the forced hub-hub core (R2b), so they share the real graph's most tangled part and
+should look MORE like it. The difference survives anyway, so it is understated.
+
+WHAT IT BUYS, AND WHY THAT STILL DOES NOT RESCUE THE LAYER. The effect is real but small:
+888 against a median 1022 is 13% off the knot, and treewidth 200 against 229 is 13% off the
+width. Modularity is measurable and it is not the order of magnitude that would make an exact
+tensor treatment of 500 genes feasible. The layer stays closed -- but now for a reason measured
+against a proper null rather than for an artefact.
+
+WHAT THIS DOES NOT SHOW, and the limit is sharp. A degree-preserving null controls for fame
+expressed AS DEGREE. It cannot control for fame expressed as EDGE EXISTENCE, because the real
+and rewired graphs are built from the same literature-derived edge set. So the finding is
+"given these degrees, the wiring is non-random", not "these edges reflect biology". The
+curated-source question that RegulonDB would have answered is untouched by this test.
+
+ONE BORDERLINE NUMBER, recorded rather than rounded: the >= 2-PMID graph's mixing ratio is
+1.24 against R2b's 1.25 threshold. It passes, but only just, and a stricter threshold would
+have voided that half of the table. The FULL network's 1.08 is comfortable.
 """
 from __future__ import annotations
 
