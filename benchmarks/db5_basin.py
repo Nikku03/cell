@@ -31,6 +31,51 @@ Selection code is NOT to be touched until Q1 is answered.
       a bias, which a better ensemble treatment of the SAME energy function cannot remove;
       < 0.3 means the errors are largely independent roughness, which averaging or an
       ensemble can help with. Between 0.3 and 0.5 is reported as inconclusive.
+
+RESULT, 58 complexes x 20 poses = 1160 exact partition functions, run after the bars above
+were committed. Reproduce with `PYTHONPATH=. python benchmarks/basin_analysis.py`.
+
+  Q1  PASS, and it survives the control the bar did not ask for.
+        pooled Spearman(T*S_conf, I_rmsd)  -0.4498   n=1160, p=6.4e-53   (bar: <= -0.10)
+        per-complex median                 -0.3962   negative on 52/58   (bar: < 0)
+      The sign is the predicted one: broader basins sit closer to native. The obvious
+      confound is size -- a bigger interface has more side chains, so more entropy -- and
+      it is NOT what this is. T*S_conf is essentially uncorrelated with the contact count
+      (Spearman -0.047), and controlling for it leaves the effect untouched at -0.4674
+      (per-complex median -0.4084, negative on 51/58). Controlling instead for interface
+      treewidth, which is itself a nativeness signal (-0.4349), weakens it to -0.3059 --
+      still past the bar. Basin breadth carries real information about nativeness.
+
+  Q2  VOID, NOT NULL. See ledger defect N. F scored 0/58, which reads as the predeclared
+      null, but the CEILING was also 0/58: no shortlist contained a CAPRI-acceptable pose,
+      so no ranking could have scored above zero and the >= 3 bar was unreachable. The
+      best pose present anywhere had I_rmsd 3.70 A (median across complexes 11.80 A) and
+      median best f_nat 0.010, below the 0.1 acceptable needs. The gate measured nothing.
+
+      THE LINE STILL CLOSES, on a measurement that does not route through the ceiling:
+        within-complex Spearman(E_min ranking, F ranking)  +0.9966
+        complexes where F picks the SAME rank-1 pose        57/58
+        within-complex E_min spread, median              107.952 kcal/mol
+        within-complex T*S_conf spread, median             1.297 kcal/mol   (1.0% of it)
+      Free energy is minimised energy plus a 1% perturbation, so reranking by it cannot
+      change a selection outcome on these shortlists whatever the ceiling had been. The
+      route the question proposed is dead for the stated reason, not for the gate's reason.
+
+      WHAT Q1 AND Q2 TOGETHER SAY, and this was measured after seeing the data, so it is an
+      observation and not a gate: the entropy term carries MORE nativeness signal than the
+      energy it is added to. Mean within-complex Spearman against I_rmsd is +0.0924 for
+      E_min and +0.0984 for F -- both near useless -- while T*S_conf ALONE reaches -0.3763.
+      Burying a -0.38 signal inside a +0.09 one at a weight of 1% is why Q2 could never have
+      moved. Whether ranking on breadth alone helps is UNTESTED and untestable here: with a
+      ceiling of 0/58 it cannot be scored, and it needs a search that puts near-native poses
+      in the shortlist first. No selection code has been changed.
+
+  Q3  SHARED BIAS. Mean off-diagonal |rho| of the rank-error vectors is 0.676 over all five
+      scorers, but that number is inflated -- ve, greedy and F are the same energy function
+      (pairwise |rho| ~ 0.997), so five columns hold three distinct scorers. Deflated to
+      grid/pair/ve the pairwise values are 0.538, 0.489, 0.587, mean 0.538. Still above the
+      0.5 line, so the verdict stands on the honest count: the scorers fail together. A
+      better ensemble treatment of the same energy cannot fix a bias all of them share.
 """
 from __future__ import annotations
 

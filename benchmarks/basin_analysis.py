@@ -31,6 +31,17 @@ def spearman_p(rho, n):
     return float(erfc(z / sqrt(2.0)))
 
 
+def partial(a, b, c):
+    """Spearman(a,b) with c held constant -- catches "is this just interface size?"."""
+    ra, rb, rc = _rank(a), _rank(b), _rank(c)
+    ra, rb, rc = ra - ra.mean(), rb - rb.mean(), rc - rc.mean()
+    def cr(x, y):
+        d = np.sqrt((x * x).sum() * (y * y).sum())
+        return (x * y).sum() / d if d > 0 else float("nan")
+    rab, rac, rbc = cr(ra, rb), cr(ra, rc), cr(rb, rc)
+    return float((rab - rac * rbc) / np.sqrt((1 - rac ** 2) * (1 - rbc ** 2)))
+
+
 def load(pattern="benchmarks/basin_w*.json"):
     out = []
     for f in sorted(glob.glob(pattern)):
@@ -60,6 +71,12 @@ def main():
     print(f"      per-complex median     {np.median(per):+.4f}   "
           f"(negative on {int((per < 0).sum())}/{len(per)} complexes)")
     print(f"      T*S_conf range         {TS.min():.4f} to {TS.max():.4f} kcal/mol")
+    G = np.array([abs(p["grid"]) for c in data for p in c["poses"]])   # contact-count proxy
+    TW = np.array([float(p["treewidth"]) for c in data for p in c["poses"]])
+    print(f"      vs contact count       {spearman(TS, G):+.4f}   "
+          f"(if TS were just interface size this would be large)")
+    print(f"      partial | contacts     {partial(TS, IR, G):+.4f}")
+    print(f"      partial | treewidth    {partial(TS, IR, TW):+.4f}")
     q1 = bool(rho <= -0.10 and pv < 1e-3 and np.median(per) < 0)
     print(f"      Q1 {'PASS -- breadth tracks nativeness' if q1 else 'FAIL -- LINE CLOSED'}"
           f"   (bar: pooled <= -0.10, p < 1e-3, median < 0)")
@@ -82,9 +99,44 @@ def main():
           f"(best pose present in the shortlist at all)")
     fwin, bwin = res["F"][0], res["ve"][0]
     print(f"      F vs E_min baseline: {fwin} vs {bwin}")
-    q2 = bool(fwin >= 3 and fwin > bwin)
-    print(f"      Q2 {'PASS' if q2 else 'NULL -- LINE CLOSED'}   "
-          f"(bar: F >= 3 successes and above the E_min baseline)")
+    # Ledger defect N: a bar above the achievable ceiling measures nothing. If an oracle
+    # reading the answer key could not clear the bar on these inputs, the gate is VOID --
+    # it would return this same verdict whether or not the hypothesis were true.
+    if ceil < 3:
+        print(f"      Q2 VOID -- the bar was UNREACHABLE: an oracle scores {ceil}/{len(data)} "
+              f"on these shortlists, below the >= 3 bar. This gate has no power (defect N).")
+    else:
+        q2 = bool(fwin >= 3 and fwin > bwin)
+        print(f"      Q2 {'PASS' if q2 else 'NULL -- LINE CLOSED'}   "
+              f"(bar: F >= 3 successes and above the E_min baseline)")
+
+    # A second read that does NOT route through the ceiling, so it survives a void Q2.
+    agree = float(np.mean([spearman([p["ve"] for p in c["poses"]],
+                                    [p["F"] for p in c["poses"]]) for c in data]))
+    same = sum(int(np.argmin([p["ve"] for p in c["poses"]])
+                   == np.argmin([p["F"] for p in c["poses"]])) for c in data)
+    es = float(np.median([max(p["ve"] for p in c["poses"]) - min(p["ve"] for p in c["poses"])
+                          for c in data]))
+    ts = float(np.median([max(p["TS"] for p in c["poses"]) - min(p["TS"] for p in c["poses"])
+                          for c in data]))
+    print(f"      does F rank differently from E_min at all?")
+    print(f"        within-complex Spearman(E_min, F)  {agree:+.4f}")
+    print(f"        same rank-1 pose                   {same}/{len(data)}")
+    print(f"        E_min spread {es:.3f} vs T*S spread {ts:.3f} kcal/mol "
+          f"({100 * ts / es:.1f}% of it)")
+    print(f"      -> free energy is min-energy plus a {100 * ts / es:.0f}% perturbation; it "
+          f"cannot move a selection outcome. LINE CLOSED on this, not on the void gate.")
+    # Which term actually carries the signal? Measured after seeing the data: an
+    # observation, NOT a predeclared gate, and reported as such.
+    print(f"      which term carries nativeness signal? (post-hoc, not a gate)")
+    for s_ in ("ve", "F"):
+        r = float(np.mean([spearman([p[s_] for p in c["poses"]],
+                                    [p["I_rmsd"] for p in c["poses"]]) for c in data]))
+        print(f"        {s_:>8s} alone   mean within-complex Spearman vs I_rmsd {r:+.4f}")
+    r = float(np.mean([spearman([p["TS"] for p in c["poses"]],
+                                [p["I_rmsd"] for p in c["poses"]]) for c in data]))
+    print(f"        {'T*S_conf':>8s} alone   mean within-complex Spearman vs I_rmsd {r:+.4f}"
+          f"   <- the weaker-weighted term is the stronger signal")
 
     # ---------------- Q3 ----------------
     print("\n  Q3  are the five scorers' errors correlated? (rank error vs true I-RMSD)")
@@ -110,6 +162,13 @@ def main():
                "INDEPENDENT ROUGHNESS -- averaging or an ensemble can help" if mo < 0.3
                else "INCONCLUSIVE (0.3-0.5)")
     print(f"      mean off-diagonal |rho| = {mo:.3f}  ->  {verdict}")
+    # ve, greedy and F are the SAME energy function scored three ways, so including all
+    # three inflates the mean with near-duplicate columns. Report the distinct-scorer mean.
+    D = ["grid", "pair", "ve"]
+    do = [abs(spearman(errs[a], errs[b])) for i, a in enumerate(D) for b in D[i + 1:]]
+    print(f"      deflated to the {len(D)} DISTINCT scorers {D}: "
+          f"{', '.join('%.3f' % x for x in do)}  mean = {np.mean(do):.3f}")
+    print(f"      (ve/greedy/F agree at |rho| ~ 0.997 -- they are one scorer, not three)")
     return 0
 
 

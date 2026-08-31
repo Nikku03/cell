@@ -375,6 +375,27 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      is, in this case a diagnostic, and define the error decomposition in the metric where
 #      the bound is genuinely valid.
 #
+#   N  A BAR SET ABOVE THE ACHIEVABLE CEILING. The DB5 basin study predeclared, correctly and
+#      before any number, that free-energy reranking must reach ">= 3 successes; 0-2 is a null
+#      and closes the line". It returned 0/58 and the gate said NULL. But the CEILING was also
+#      0/58: not one of the 58 twenty-pose shortlists contained a single CAPRI-acceptable pose,
+#      so NO ranking of them -- not F, not E_min, not an oracle reading the answer key -- could
+#      have scored above zero. The bar was unreachable by construction, and the ceiling was
+#      computable from the shortlists BEFORE the free energies were run.
+#      WHY IT MATTERS: the gate returned the verdict the hypothesis deserved, by luck, while
+#      measuring nothing. Had free energy been a genuinely better ranking, this gate would have
+#      reported the identical 0/58 and closed the line anyway. A test that returns the same
+#      answer whatever the truth is has no power, and "null" from such a test is not evidence
+#      of absence -- it is absence of evidence, and reporting it as a null is a false claim
+#      about what the run learned.
+#      RULE: every success-rate gate must compute and report its own ceiling -- the score an
+#      oracle would get on the same inputs -- and declare itself VOID, not NULL, when the
+#      ceiling sits below the bar. A predeclared bar is only honest if it was reachable.
+#      WHAT SAVED THE CONCLUSION was a second measurement that does not route through the
+#      ceiling: F and E_min rank the poses identically (within-complex Spearman +0.9966; same
+#      rank-1 pose on 57/58), because T*S_conf spans 1.30 kcal/mol against an energy spread of
+#      108 -- a 1% perturbation. That closes the line on evidence rather than on a void gate.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 
