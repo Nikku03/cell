@@ -52,7 +52,13 @@ STEP 0  THE REACHABLE-SET CEILING, computed analytically and WITHOUT EVER CONSUL
             evaluated exactly in this run records both quantities, and the run reports the
             largest direct interface rmsd ever seen on a pose whose exact I_rmsd was <= 4. If
             that approaches 12 the screen is not safe and the run says so instead of a ceiling.
-        Exact capri_metrics is then computed on every enumerated translation.
+        Exact metrics are then computed on every enumerated translation THAT ALREADY MEETS AN
+        RMSD BAR, which drops nothing: f_nat costs ~1 ms and is the only expensive term, while
+        L_rmsd is the closed form itself (free) and the superimposed I_rmsd is a Kabsch at
+        ~0.08 ms. So the L-ball, which satisfies L_rmsd <= 10 by construction, goes straight to
+        f_nat, and the I-ball is filtered on the exact superimposed I_rmsd first. A pose
+        failing both RMSD bars cannot be acceptable whatever its f_nat, so skipping it is
+        arithmetic, not sampling.
         CEILING := complexes with >= 1 CAPRI-acceptable pose anywhere in the reachable set.
         THE ENUMERATION IS CAPPED at MAX_ENUM per complex and the cap is REPORTED, because a
         silent cap reads as "we looked everywhere" when it is not.
@@ -159,7 +165,7 @@ ROTATIONS = 2000
 SPACING = 1.5
 L_BAR, I_BAR = 10.0, 4.0                 # the CAPRI acceptable rmsd bars themselves
 I_DIRECT_SCREEN = 12.0                   # loose screen for the non-affine I_rmsd branch
-MAX_ENUM = 40000                         # cap on enumerated translations; reported if it binds
+MAX_ENUM = 4000000                       # cap on enumerated translations; reported if it binds
 R_SAMPLE, T_PER_ROT = 80, 40             # sampling budget: rotations, translations per rotation
 N_BINS, PER_BIN, N_SAMPLE = 25, 20, 500
 REPACK_RES, N_CHI1, N_CHI2 = 6, 3, 2
@@ -339,7 +345,14 @@ def run_complex(cid, cls, rots, n_sample):
 
     # ---------------- STEP 0: reachable-set ceiling, no score consulted ----------------
     t0 = time.perf_counter()
-    enum, capped, lmins, imins = [], False, [], []
+    n_enum, n_exact, capped, lmins, imins = 0, 0, False, [], []
+    accept, probe = [], []
+    # THE EXPENSIVE PART IS f_nat, SO IT RUNS ONLY ON POSES THAT ALREADY MEET AN RMSD BAR.
+    # L_rmsd is free -- it is the closed form itself. The superimposed I_rmsd needs a Kabsch
+    # (~0.08 ms) but that is still an order of magnitude below f_nat (~1 ms). So each branch
+    # is filtered by its own bar before anything expensive is computed, and NOTHING that
+    # could be acceptable is dropped: the L-ball already satisfies L_rmsd <= 10 by
+    # construction, and the I-ball is screened on the exact I_rmsd itself.
     for ri, R in enumerate(rots):
         bb0 = (sub_bb - centre) @ R.T + centre
         if0 = (sub_if - centre) @ R.T + centre
@@ -348,26 +361,27 @@ def run_complex(cid, cls, rots, n_sample):
         lmins.append(Lmin); imins.append(Imin)
         if not (np.isfinite(radL) or np.isfinite(radI)):
             continue
-        s1 = shifts_in_ball(tL, radL, SPACING, shape)
-        s2 = shifts_in_ball(tI, radI, SPACING, shape)
-        if len(s1) and len(s2):
-            allsh = np.unique(np.vstack([s1, s2]), axis=0)
-        else:
-            allsh = s1 if len(s1) else s2
-        for sh in allsh:
-            if len(enum) >= MAX_ENUM:
-                capped = True
-                break
-            enum.append((ri, tuple(int(x) for x in sh)))
-        if capped:
+        sL = shifts_in_ball(tL, radL, SPACING, shape)
+        sI = shifts_in_ball(tI, radI, SPACING, shape)
+        n_enum += len(sL) + len(sI)
+        if n_enum > MAX_ENUM:
+            capped = True
             break
-    accept, probe = [], []
-    for ri, sh in enum:
-        shv = np.array(sh)
-        _c, m = metrics_at(rots[ri], shv)
-        probe.append((m["I_rmsd"], direct_if(rots[ri], shv)))
-        if m["quality"] in OK:
-            accept.append({"rot": int(ri), "shift": list(sh), **m})
+        cand = {tuple(int(x) for x in sh) for sh in sL}       # L_rmsd <= 10 guaranteed
+        for sh in sI:
+            key = tuple(int(x) for x in sh)
+            if key in cand:
+                continue
+            t = fftcorr.shift_to_world(np.asarray(sh), SPACING)
+            if float(superimposed_rmsd(np.vstack([rec_if, if0 + t]), Q)) <= I_BAR:
+                cand.add(key)
+        for key in cand:
+            shv = np.asarray(key)
+            n_exact += 1
+            _c, m = metrics_at(rots[ri], shv)
+            probe.append((m["I_rmsd"], direct_if(rots[ri], shv)))
+            if m["quality"] in OK:
+                accept.append({"rot": int(ri), "shift": list(key), **m})
     t_ceil = time.perf_counter() - t0
 
     # ---------------- STEP 1: poses the score ADMITS but does not RANK ----------------
@@ -429,7 +443,8 @@ def run_complex(cid, cls, rots, n_sample):
     near = sp[sp[:, 0] <= I_BAR] if len(sp) else sp
     return {
         "id": cid, "class": cls,
-        "ceiling": {"n_enumerated": len(enum), "capped": bool(capped),
+        "ceiling": {"n_enumerated": int(n_enum), "n_exact": int(n_exact),
+                    "capped": bool(capped),
                     "n_acceptable": len(accept),
                     "min_L_rmsd_over_rotations": float(np.min(lmins)),
                     "min_direct_I_over_rotations": float(np.min(imins)),
