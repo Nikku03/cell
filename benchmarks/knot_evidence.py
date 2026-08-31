@@ -77,26 +77,53 @@ THE 888-NODE KNOT DOES NOT SURVIVE A >= 2-PMID FILTER. It collapses to 71 nodes 
 19. It never fragments -- every level stays a single component -- so the right description is
 that it SHRINKS by an order of magnitude, not that it breaks apart.
 
-BUT THE COLLAPSE IS NOT EVIDENCE THAT WELL-SUPPORTED BIOLOGY HOLDS THE CORE TOGETHER, AND THE
-CONTROL SHOWS THE OPPOSITE. A random cull of the identical size leaves a LARGER knot: 99 to 113
-across five draws, against the evidence filter's 71, which is below every one of them. So
-requiring two independent reports removes MORE core structure than deleting the same number of
-edges at random. Doubly-reported edges are, if anything, anti-concentrated in the periphery --
-consistent with replication effort following well-studied individual interactions rather than
-the densely interconnected core.
+BUT THE COLLAPSE IS NOT EVIDENCE THAT WELL-SUPPORTED BIOLOGY HOLDS THE CORE TOGETHER. A random
+cull of the identical size leaves a LARGER knot: 99 to 113 across five draws, against the
+evidence filter's 71, which is below every one of them. So requiring two independent reports
+removes MORE core structure than deleting the same number of edges at random.
+
+*** THE FIRST READING OF THAT WAS WRONG AND IS RETRACTED. *** This file originally concluded
+that doubly-reported edges must be "anti-concentrated in the periphery", i.e. that replication
+follows individually well-studied interactions sitting off the core. benchmarks/knot_hubness.py
+tested that directly and found the opposite on every statistic that resolves:
+
+    >= 2 PMIDs, filtered vs 50 density-matched controls
+      share of edges touching the graph's own top-10 hubs   0.501  vs  0.257-0.328   ABOVE ALL
+      share touching the FULL network's top-10 hubs         0.479  vs  0.258-0.322   ABOVE ALL
+      Gini of the degree distribution                       0.538  vs  0.449-0.470   ABOVE ALL
+      nodes carrying the same edge count                      609  vs  919-982       BELOW ALL
+
+Half of all doubly-reported edges touch just ten genes -- SP1, NFKB1, RELA, TP53, JUN, MYC and
+four others -- against 29% for a random cull. The filtered graph is MORE hub-concentrated, not
+less, and it packs the same edges onto a third fewer nodes.
+
+SO THE 71 IS A STAR-COLLAPSE ARTEFACT, AND THE FILTER INTERACTS WITH THE INSTRUMENT. A star is
+precisely what these reductions dissolve for free: every leaf is simplicial, and a hub whose
+neighbours have all been removed goes next. Requiring replication concentrates the surviving
+graph onto a few famous regulators, which makes it star-shaped, which makes kernelization eat
+it. The small knot is therefore what the filter's own bias does to the measurement, not a
+statement about which edges hold the core together.
 
 The >= 3 level resolves nothing: five controls spanning 0 to 32 around a filtered 14 is a
 measurement with no power, and it is reported as such rather than as the "2.33x concentrated"
 its median would have suggested.
 
-WHAT THIS DOES AND DOES NOT SETTLE. The 888 figure should not be quoted as a measurement of
-biological regulatory structure: it rests on a graph that is 88.5% single-report edges, and the
-subgraph that survives replication is an order of magnitude smaller. It does NOT follow that
-the true knot is 71 -- that number is itself the product of discarding seven eighths of the
-data, and the control says the discarding is doing most of the work. The honest statement is
-that TRRUST cannot support a claim about the knot's size in either direction, and an
-independently assayed network is needed to settle it. RegulonDB was unreachable this session
-(HTTP 503), so that question stays open.
+WHAT THIS DOES AND DOES NOT SETTLE. Neither number survives as a measurement of biological
+regulatory structure. The 888 rests on a graph that is 88.5% single-report edges. The 71 is
+what kernelization does to a star, and the hub test shows the >= 2 filter manufactures exactly
+that star. So the two figures fail for DIFFERENT reasons and neither can be quoted, and the
+gap between them is not a bracket on the truth.
+
+The sharper conclusion is about the method rather than the number: on a literature-curated
+network, an evidence filter and a width-preserving kernelization are not independent
+instruments. Filtering on replication selects for well-studied hubs, and hub-and-spoke
+structure is the one thing these reductions remove for free, so the two compose into an
+artefact that looks like a finding. Any future use of this pipeline on curated data has to
+break that coupling -- by an assay-based network rather than a citation-based one, or by a
+hub-preserving null -- before a knot size means anything.
+
+RegulonDB was unreachable this session (HTTP 503), so the independently assayed network that
+would settle it stays out of reach.
 """
 from __future__ import annotations
 
