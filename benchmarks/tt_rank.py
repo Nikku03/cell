@@ -93,6 +93,40 @@ SLOPE_BAR, SE_MULT = 1.0, 2.0  # G5b decision thresholds
 DEAD_RANK = 200                # rank above which the 500-gene layer is called dead
 
 
+DIRECT_FIRST = 5000             # below this the exact solve is faster than the ILU
+DIRECT_MAX = 30000              # above this the direct solve is not affordable
+
+
+def stationary_robust(net, topology=None):
+    """Iterative solve, escalating the preconditioner, then falling back to the exact solver.
+
+    Strong coupling makes the generator stiff and a loose ILU stops converging -- the first
+    run hit exactly that at ratio 64, where GMRES burned 3000 iterations and, before the
+    convergence check existed, silently returned a vector whose singular values would have
+    been reported as a rank. Escalate the preconditioner first; if the system is small enough,
+    finish with the trusted direct factorisation, which is exact; only then give up, and
+    record the point as failed rather than aborting the sweep or quietly substituting a
+    number.
+    """
+    if net.n_states <= DIRECT_FIRST:
+        # Small enough that the trusted direct factorisation is both exact and faster than
+        # building a preconditioner. Use it and skip the approximation entirely.
+        p, info = stationary(net)
+        info = dict(info); info["fallback"] = "direct"
+        return p, info
+    last = None
+    for drop, fill in ((1e-5, 12), (1e-7, 30), (1e-9, 60)):
+        try:
+            return stationary_iterative(net, drop=drop, fill=fill)
+        except Exception as e:                                     # noqa: BLE001
+            last = e
+    if net.n_states <= DIRECT_MAX:
+        p, info = stationary(net)
+        info = dict(info); info["fallback"] = "direct"
+        return p, info
+    raise RuntimeError(f"no solver converged at {net.n_states} states: {last}")
+
+
 def stationary_iterative(net, tol=1e-12, drop=1e-5, fill=12):
     """Sparse stationary solve that keeps the sparsity.
 
@@ -110,7 +144,9 @@ def stationary_iterative(net, tol=1e-12, drop=1e-5, fill=12):
     t0 = time.perf_counter()
     ilu = spla.spilu(A, drop_tol=drop, fill_factor=fill)
     M = spla.LinearOperator(A.shape, ilu.solve)
-    x, info = spla.gmres(A, b, M=M, rtol=tol, restart=60, maxiter=3000)
+    # maxiter counts RESTARTS, each of `restart` inner steps, so 3000 was 180,000
+    # matvecs before a failure could even be detected. 200 is ample and fails fast.
+    x, info = spla.gmres(A, b, M=M, rtol=tol, restart=60, maxiter=200)
     if info != 0:
         # A non-converged solve returns a vector that is not the stationary distribution, and
         # its singular values would be a rank measurement of nothing. Fail loudly.
@@ -224,7 +260,7 @@ def build(topology, n, M, K, g):
 
 def measure(topology, n, M, K, g, use_iter=True):
     net = build(topology, n, M, K, g)
-    p, info = stationary_iterative(net) if use_iter else stationary(net)
+    p, info = stationary_robust(net, topology) if use_iter else stationary(net)
     rk = ranks_at(net, p)
     # G5f applies only where there IS a truncation. A promoter state is genuinely binary, so
     # "x = d-1" is the ON state, not a cap, and reporting cap mass there would be meaningless.
@@ -290,7 +326,13 @@ def main(argv=None):
           f"{'r@1e-3':>7s} {'r@1e-6':>7s} {'capP':>9s} {'sec':>7s}")
     for n in range(4, a.sweep_nmax + 1):
         for K in Ks:
-            r = measure(a.topology, n, a.M, K, a.g)
+            try:
+                r = measure(a.topology, n, a.M, K, a.g)
+            except Exception as e:                                 # noqa: BLE001
+                out.setdefault("failed", []).append({"n": n, "K": K, "err": str(e)[:120]})
+                print(f"       {n:3d} {K:5.2f}  SOLVER FAILED -- point dropped, not "
+                      f"substituted", flush=True)
+                continue
             out["sweep"].append(r)
             print(f"       {n:3d} {K:5.2f} {r['states']:8,d} {r['bound']:6d} "
                   f"{r['r'][1e-3]:7d} {r['r'][1e-6]:7d} {r['cap_mass']:9.2e} "
@@ -311,7 +353,13 @@ def main(argv=None):
     print(f"       {'n':>3s} {'states':>9s} {'cut':>6s} {'bound':>7s} {'r@1e-3':>7s} "
           f"{'r@1e-6':>7s} {'r@1e-10':>8s} {'r/bound':>8s} {'capP':>9s} {'adm':>4s} {'sec':>8s}")
     for n in range(2, a.nmax + 1):
-        r = measure(a.topology, n, a.M, Kstar, a.g)
+        try:
+            r = measure(a.topology, n, a.M, Kstar, a.g)
+        except Exception as e:                                     # noqa: BLE001
+            out.setdefault("failed", []).append({"n": n, "K": Kstar, "err": str(e)[:120]})
+            print(f"       {n:3d}  SOLVER FAILED -- point dropped, not substituted",
+                  flush=True)
+            continue
         adm = r["r"][1e-6] <= r["bound"] / HEADROOM
         r["admissible"] = bool(adm)
         out["scaling"].append(r)
