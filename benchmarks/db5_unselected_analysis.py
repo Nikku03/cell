@@ -175,6 +175,22 @@ def main():
     if np.isfinite(rho) and rho < 0 and PRIOR_RHO < 0:
         print(f"      effect retained vs the score-selected estimate: "
               f"{100.0 * rho / PRIOR_RHO:.0f}%")
+    # Does the sign depend on the zero-entropy poses? Reported, not hidden: a pose with an
+    # interface but no rotameric freedom genuinely has T*S_conf = 0, but those poses also sit
+    # at bad geometry, so the correlation is recomputed on progressively stricter domains.
+    print(f"      DOMAIN SENSITIVITY -- the same correlation on stricter subsets:")
+    for lo_nr, lab in ((0, "all defined     "), (1, "n_repack >= 1   "),
+                       (2, "n_repack >= 2   ")):
+        sub = [[p for p in c["poses"] if p["n_repack"] >= lo_nr and np.isfinite(p["TS"])]
+               for c in data]
+        t_ = np.array([p["TS"] for q in sub for p in q], float)
+        i_ = np.array([p["I_rmsd"] for q in sub for p in q], float)
+        pc = np.array([spearman([p["TS"] for p in q], [p["I_rmsd"] for p in q])
+                       for q in sub if len(q) >= 10])
+        kk, nn, pp = sign_test(pc)
+        print(f"        {lab} n={len(t_):6d}  pooled {spearman(t_, i_):+.4f}  "
+              f"per-complex median {np.median(pc[np.isfinite(pc)]):+.4f}  "
+              f"sign {kk}/{nn} p={pp:.2e}")
     fin = np.isfinite(IR)
     print(f"      domain of the claim: I_rmsd spans {IR[fin].min():.2f} to "
           f"{IR[fin].max():.2f} A")

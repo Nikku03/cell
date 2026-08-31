@@ -86,8 +86,14 @@ STEP 2  Q1 RETEST -- DOES THE CORRELATION SURVIVE OFF THE COLLIDER? The bars are
               written as the extreme value of the entropy axis, in the exact direction the
               hypothesis predicts, on exactly the poses (tiny interfaces) that also sit at high
               I_rmsd. Coding a missing value as the most confirmatory possible number
-              manufactures the correlation being tested. TS is nan here, and Q1 is computed on
-              non-degenerate poses only, with the count reported.
+              manufactures the correlation being tested. The cutoff also merged two genuinely
+              different cases, split here: a pose with an interface but no rotameric freedom
+              HAS zero conformational entropy (a real measurement), while a pose with no
+              interface at all has none defined (nan, excluded). And the old cutoff at "fewer
+              than two" discarded single-residue poses, whose partition function is an
+              ordinary sum over one residue's rotamers; those are computed now. Q1 is reported
+              over the full defined set and again restricted to n_repack >= 1 and >= 2, so a
+              sign that depends on the zero-entropy poses is visible rather than hidden.
           (b) THE SIZE CONTROL USES A GEOMETRIC CONTACT COUNT, NOT THE GRID SCORE. The prior run
               controlled for "interface size" with abs(grid score) -- the scorer under test --
               which conditions on the very collider the redesign exists to escape. Here size is
@@ -269,15 +275,26 @@ def score_pose_ext(rec, lig_at_pose, grid_score):
     prob = build_from_case({"r_b": rec, "l_b": lig_at_pose}, side="r", bound=True,
                            max_residues=REPACK_RES, n_chi1=N_CHI1, n_chi2=N_CHI2)
     base = {"grid": -grid_score, "pair": pair, "contacts": nc}
-    if len(prob.res_keys) < 2:
-        # NOT-APPLICABLE. TS is nan, never 0.0: zero is the extreme of the entropy axis in the
-        # direction the hypothesis predicts, so coding a missing value as zero manufactures the
-        # correlation. Downstream code excludes these from Q1.
-        return {**base, "ve": pair, "greedy": pair, "F": pair, "TS": float("nan"),
-                "treewidth": 0, "n_repack": int(len(prob.res_keys)), "degenerate": True}
+    nres = int(len(prob.res_keys))
+    if nres == 0:
+        # No interface residue carries rotameric freedom. TWO DIFFERENT CASES LIVE HERE, and
+        # merging them is what made TS = 0.0 a lie:
+        #   contacts > 0 -- there IS an interface and it has no conformational freedom, so
+        #                   zero conformational entropy is a genuine measurement;
+        #   contacts = 0 -- there is no interface at all, so the quantity is UNDEFINED, and
+        #                   writing 0 would place a not-applicable at the extreme of the
+        #                   entropy axis in the exact direction the hypothesis predicts.
+        return {**base, "ve": pair, "greedy": pair, "F": pair,
+                "TS": (0.0 if nc > 0 else float("nan")),
+                "treewidth": 0, "n_repack": 0, "degenerate": True}
+    # n_repack >= 1 is well defined, INCLUDING a single residue: the partition function over
+    # one residue's rotamers is an ordinary sum. The prior cutoff at "< 2" discarded those.
     g, _e = prob.to_factorgraph()
     ex = prob.solve_exact(g)
-    gr = prob.solve_greedy(g, restarts=20)
+    try:
+        gr = prob.solve_greedy(g, restarts=20)
+    except Exception:                                              # noqa: BLE001
+        gr = {"energy": ex["energy"]}
     fe = free_energy(prob, energy_graph=g)
     return {**base, "ve": ex["energy"], "greedy": gr["energy"], "F": fe["F"],
             "TS": fe["TS_conf"], "treewidth": int(ex["treewidth"]),
