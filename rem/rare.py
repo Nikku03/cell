@@ -354,16 +354,25 @@ def verify(verbose: bool = True, skip_mpmath: bool = False) -> dict:
     net = toggle(M=25, g=12.0, gamma=1.0, K=6.0, h=2.0)
     p, info = stationary(net)
     S = net.states()
-    cands = [("both >= 12", lambda s: (s[:, 0] >= 12) & (s[:, 1] >= 12)),
-             ("A == 0", lambda s: s[:, 0] == 0),
-             ("A + B <= 2", lambda s: (s[:, 0] + s[:, 1]) <= 2)]
+    # The first version listed three candidates, none in the reachable band, and then FELL
+    # BACK to the first -- which made G2 fail by construction on an event at 3.6e-7 that
+    # sampling cannot reach. A gate whose fallback defeats its own purpose is not a gate.
+    cands = [(f"A>={k} and B>={k}", (lambda kk: (lambda s: (s[:, 0] >= kk)
+                                                 & (s[:, 1] >= kk)))(k))
+             for k in range(8, 20)]
+    cands += [(f"A >= {k}", (lambda kk: (lambda s: s[:, 0] >= kk))(k))
+              for k in range(18, 26)]
+    cands += [("A + B <= 2", lambda s: (s[:, 0] + s[:, 1]) <= 2)]
     chosen = None
     for name, pred in cands:
         v = rare_probability(net, p, pred)
         if 1e-5 <= v <= 1e-2:
             chosen = (name, pred, v); break
     if chosen is None:
-        chosen = (cands[0][0], cands[0][1], rare_probability(net, p, cands[0][1]))
+        vals = [(abs(np.log10(max(rare_probability(net, p, pr), 1e-300)) + 4.0), nm, pr)
+                for nm, pr in cands]
+        _, nm, pr = min(vals)
+        chosen = (nm, pr, rare_probability(net, p, pr))
     name, pred, exact_v = chosen
     emp, t_sim = gillespie(net, t_max=4e5, seed=1, max_seconds=150.0)
     emp_v = float(emp[pred(S)].sum())
@@ -397,7 +406,7 @@ def verify(verbose: bool = True, skip_mpmath: bool = False) -> dict:
     # ---- G3b: where does double precision actually stop being right? ---------------------
     if not skip_mpmath:
         say("\n  G3b MEASURED FLOOR: double precision vs mpmath at 60 digits")
-        small = toggle(M=9, g=6.0, gamma=1.0, K=3.0, h=2.0)
+        small = toggle(M=15, g=8.0, gamma=1.0, K=4.0, h=2.0)
         pd_, id_ = stationary(small)
         t0 = time.perf_counter()
         pm = stationary_mpmath(small, digits=60)
@@ -406,8 +415,10 @@ def verify(verbose: bool = True, skip_mpmath: bool = False) -> dict:
         rel = np.abs(pd_[ok] - pm[ok]) / pm[ok]
         say(f"      {'magnitude':>12s} {'n entries':>10s} {'max rel err':>12s}")
         bad_mag = None
-        for lo, hi in ((1e-2, 1.0), (1e-4, 1e-2), (1e-6, 1e-4), (1e-8, 1e-6),
-                       (1e-10, 1e-8), (1e-12, 1e-10), (0.0, 1e-12)):
+        bands = [(1e-2, 1.0), (1e-4, 1e-2), (1e-6, 1e-4), (1e-8, 1e-6), (1e-10, 1e-8),
+                 (1e-13, 1e-10), (1e-16, 1e-13), (1e-20, 1e-16), (1e-25, 1e-20),
+                 (1e-30, 1e-25), (0.0, 1e-30)]
+        for lo, hi in bands:
             m = (pm[ok] >= lo) & (pm[ok] < hi)
             if m.sum() == 0:
                 continue
@@ -437,9 +448,24 @@ def verify(verbose: bool = True, skip_mpmath: bool = False) -> dict:
             f"{ii['reportable_floor']:10.1e} "
             f"{'reportable' if v >= ii['reportable_floor'] else 'BELOW FLOOR':>12s}")
         prev = v
+    say(f"\n      and now a GENUINELY RARE event, where the truncation boundary is the "
+        f"real risk:")
+    say(f"      {'M':>4s} {'states':>8s} {'P(both>=20)':>14s} {'rel change':>12s}")
+    prev_r, vals_r = None, []
+    for M in (25, 30, 35, 40, 45):
+        nt = toggle(M=M)
+        pp, ii = stationary(nt)
+        v = rare_probability(nt, pp, lambda s: (s[:, 0] >= 20) & (s[:, 1] >= 20))
+        ch = abs(v - prev_r) / prev_r if prev_r else float("nan")
+        vals_r.append(v)
+        say(f"      {M:4d} {ii['n_states']:8,d} {v:14.6e} {ch:12.2e}")
+        prev_r = v
+    rare_change = abs(vals_r[-1] - vals_r[-2]) / vals_r[-2] if vals_r[-2] else float("inf")
+    out["G4_rare_change"] = float(rare_change)
+    say(f"      relative change at the rare event: {rare_change:.2e}")
     final_change = abs(vals[-1] - vals[-2]) / vals[-2] if vals[-2] else float("inf")
     out["G4_final_change"] = float(final_change)
-    out["G4"] = bool(final_change < 0.01)
+    out["G4"] = bool(final_change < 0.01 and rare_change < 0.01)
     say(f"      relative change between the two largest M: {final_change:.2e}   "
         f"{'PASS' if out['G4'] else 'FAIL'}  (bar 1%)")
 
@@ -448,7 +474,7 @@ def verify(verbose: bool = True, skip_mpmath: bool = False) -> dict:
     say(f"      {'genes':>6s} {'M':>3s} {'states':>8s} {'full rank':>10s} "
         f"{'r@1e-3':>7s} {'r@1e-6':>7s} {'r@1e-10':>8s} {'sec':>7s}")
     ranks = {}
-    for ng, M in ((2, 12), (3, 9), (4, 6)):
+    for ng, M in ((2, 10), (3, 10), (4, 10)):
         nc = cascade(ng, M)
         pc, ic = stationary(nc)
         sv = rank_profile(nc, pc, split=ng // 2)
