@@ -164,10 +164,31 @@ def rare_probability(net: Network, p: np.ndarray,
     return float(p[predicate(net.states())].sum())
 
 
-def report(value: float, info: dict) -> str:
-    """Every rare number is printed with its own verdict against the reportable floor."""
-    return ("REPORTABLE" if value >= info["reportable_floor"]
-            else f"BELOW FLOOR ({info['reportable_floor']:.1e}) -- WITHDRAWN")
+# The residual-based floor turned out to be the WRONG criterion, and G3b is what showed it.
+# The reasoning behind 1e6 x ||Q^T p|| is that a normalised vector carries ABSOLUTE error
+# near machine epsilon. That is true of a general linear solve and false here: a CME
+# generator is an M-matrix, sparse LU on it is essentially the GTH recursion, and there is no
+# subtractive cancellation, so small entries come out to RELATIVE accuracy. Measured against
+# mpmath at 60 digits on a 256-state toggle, the maximum relative error is 1.8e-15 at O(1)
+# and 3.6e-16 in the 1e-20 to 1e-16 band -- it does not degrade with magnitude at all. The
+# residual floor of 6.9e-11 would have withdrawn P = 7.1e-19 and P = 3.0e-13, both of which
+# are correct to about sixteen significant figures.
+VERIFIED_RELATIVE_FLOOR = 1e-25      # deepest magnitude checked against arbitrary precision
+
+
+def report(value: float, info: dict, trunc_stable: Optional[bool] = None) -> str:
+    """Verdict for one rare number, on the two criteria that actually bind.
+
+    (1) arithmetic: is it above the magnitude at which relative accuracy has been VERIFIED
+        against arbitrary precision, and (2) modelling: is it stable under the truncation
+        sweep. The residual is still reported by stationary(), but it is not the criterion --
+        it measures the wrong kind of error for this matrix class.
+    """
+    if value < VERIFIED_RELATIVE_FLOOR:
+        return f"BELOW VERIFIED PRECISION ({VERIFIED_RELATIVE_FLOOR:.0e}) -- WITHDRAWN"
+    if trunc_stable is False:
+        return "TRUNCATION-DEPENDENT -- WITHDRAWN"
+    return "REPORTABLE" + ("" if trunc_stable is None else " (truncation-stable)")
 
 
 # --------------------------------------------------------------------------------------
@@ -493,15 +514,20 @@ def verify(verbose: bool = True, skip_mpmath: bool = False) -> dict:
         f"{'reachable in 1e8 draws?':>24s}")
     net6 = toggle(M=40)
     p6, i6 = stationary(net6)
+    net6b = toggle(M=48)
+    p6b, _ = stationary(net6b)
     for nm, pr in (("P(A>=25 and B>=25)", lambda s: (s[:, 0] >= 25) & (s[:, 1] >= 25)),
+                   ("P(A>=20 and B>=20)", lambda s: (s[:, 0] >= 20) & (s[:, 1] >= 20)),
                    ("P(A>=15 and B>=15)", lambda s: (s[:, 0] >= 15) & (s[:, 1] >= 15)),
                    ("P(extinction 0,0)", lambda s: (s[:, 0] == 0) & (s[:, 1] == 0)),
                    ("P(A >= 30)", lambda s: s[:, 0] >= 30)):
         v = rare_probability(net6, p6, pr)
+        v2 = rare_probability(net6b, p6b, pr)
+        stable = abs(v2 - v) / v < 0.01 if v > 0 else False
         need = 1.0 / v if v > 0 else np.inf
         say(f"      {nm:>22s} {v:12.3e} {need:16.2e} "
             f"{('YES -- sampling suffices' if need < 1e8 else 'no'):>24s}   "
-            f"[{report(v, i6)}]")
+            f"[{report(v, i6, stable)}]")
 
     gates = ["G1", "G2", "G3", "G4"] + (["G3b"] if not skip_mpmath else [])
     out["all_pass"] = all(bool(out.get(k)) for k in gates)
