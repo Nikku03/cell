@@ -111,6 +111,10 @@ def stationary_iterative(net, tol=1e-12, drop=1e-5, fill=12):
     ilu = spla.spilu(A, drop_tol=drop, fill_factor=fill)
     M = spla.LinearOperator(A.shape, ilu.solve)
     x, info = spla.gmres(A, b, M=M, rtol=tol, restart=60, maxiter=3000)
+    if info != 0:
+        # A non-converged solve returns a vector that is not the stationary distribution, and
+        # its singular values would be a rank measurement of nothing. Fail loudly.
+        raise RuntimeError(f"GMRES did not converge (info={info}) at {n} states")
     p = np.concatenate([[1.0], x])
     p = np.clip(p, 0.0, None)
     p = p / p.sum()
@@ -147,6 +151,48 @@ def cap_mass(net, p):
     return worst
 
 
+def binary_cascade(n_genes, on0=0.3, ratio=8.0, off=1.0):
+    """Each gene is a two-state promoter, X_{i-1} raising X_i's ON rate.
+
+    THIS MODEL HAS NO TRUNCATION, which is why the scaling run uses it. A molecule-count
+    model needs a cap M, and G5f showed the conflict that creates: reaching large n needs
+    small d, but small d puts double-digit percentages of probability on the cap, at which
+    point the rank is reporting the cap rather than the coupling. A promoter state is
+    genuinely two-valued, so d = 2 is exact rather than truncated, and n can run to 18 where
+    the free bound 2^(n/2) is finally far above any plausible rank.
+
+    `ratio` is the coupling: ON rate is on0 when the upstream gene is off and on0*ratio when
+    it is on. ratio = 1 is independent genes, large ratio is a locked chain, and the argument
+    under test says the rank peaks somewhere between.
+    """
+    names = [f"X{i+1}" for i in range(n_genes)]
+    rx = [Reaction("X1+", lambda S: np.full(len(S), on0 * np.sqrt(ratio)) * (1 - S[:, 0]),
+                   tuple([1] + [0] * (n_genes - 1))),
+          Reaction("X1-", lambda S: off * S[:, 0], tuple([-1] + [0] * (n_genes - 1)))]
+    for i in range(1, n_genes):
+        up = np.zeros(n_genes, dtype=int); up[i] = 1
+        dn = np.zeros(n_genes, dtype=int); dn[i] = -1
+        rx.append(Reaction(f"X{i+1}+", (lambda k: (lambda S: on0 * (
+            1.0 + (ratio - 1.0) * S[:, k - 1]) * (1 - S[:, k])))(i), tuple(up)))
+        rx.append(Reaction(f"X{i+1}-", (lambda k: (lambda S: off * S[:, k]))(i), tuple(dn)))
+    return Network(names, [1] * n_genes, rx)          # dims are MAX COUNT: 1 -> {0,1}
+
+
+def binary_hub(n_genes, on0=0.3, ratio=8.0, off=1.0):
+    """One driver gating every other gene -- the topology a chain is friendliest against."""
+    names = [f"X{i+1}" for i in range(n_genes)]
+    rx = [Reaction("X1+", lambda S: np.full(len(S), on0 * np.sqrt(ratio)) * (1 - S[:, 0]),
+                   tuple([1] + [0] * (n_genes - 1))),
+          Reaction("X1-", lambda S: off * S[:, 0], tuple([-1] + [0] * (n_genes - 1)))]
+    for i in range(1, n_genes):
+        up = np.zeros(n_genes, dtype=int); up[i] = 1
+        dn = np.zeros(n_genes, dtype=int); dn[i] = -1
+        rx.append(Reaction(f"X{i+1}+", (lambda k: (lambda S: on0 * (
+            1.0 + (ratio - 1.0) * S[:, 0]) * (1 - S[:, k])))(i), tuple(up)))
+        rx.append(Reaction(f"X{i+1}-", (lambda k: (lambda S: off * S[:, k]))(i), tuple(dn)))
+    return Network(names, [1] * n_genes, rx)          # dims are MAX COUNT: 1 -> {0,1}
+
+
 def hub(n_genes, M=3, g=2.5, gamma=1.0, K=1.5, h=2.0):
     """One driver activating every other gene: the topology a chain is friendliest against."""
     hill = lambda v: (v / K) ** h / (1.0 + (v / K) ** h)
@@ -161,18 +207,32 @@ def hub(n_genes, M=3, g=2.5, gamma=1.0, K=1.5, h=2.0):
     return Network(names, [M] * n_genes, rx)
 
 
+TRUNCATED = {"cascade": True, "hub": True, "binary": False, "binary_hub": False}
+
+
 def build(topology, n, M, K, g):
-    return (cascade(n, M, g=g, K=K) if topology == "cascade"
-            else hub(n, M=M, g=g, K=K))
+    """K is the coupling knob in every topology: the Hill K for count models, the ON-rate
+    ratio for the promoter models."""
+    if topology == "binary":
+        return binary_cascade(n, ratio=K)
+    if topology == "binary_hub":
+        return binary_hub(n, ratio=K)
+    if topology == "hub":
+        return hub(n, M=M, g=g, K=K)
+    return cascade(n, M, g=g, K=K)
 
 
 def measure(topology, n, M, K, g, use_iter=True):
     net = build(topology, n, M, K, g)
     p, info = stationary_iterative(net) if use_iter else stationary(net)
     rk = ranks_at(net, p)
+    # G5f applies only where there IS a truncation. A promoter state is genuinely binary, so
+    # "x = d-1" is the ON state, not a cap, and reporting cap mass there would be meaningless.
+    cm = cap_mass(net, p) if TRUNCATED.get(topology, True) else float("nan")
     return {"n": n, "M": M, "K": K, "g": g, "d": int(net.dims[0]),
+            "truncated": bool(TRUNCATED.get(topology, True)),
             "states": int(info["n_states"]), "seconds": float(info["seconds"]),
-            "cap_mass": cap_mass(net, p), **rk}
+            "cap_mass": cm, **rk}
 
 
 def fit_slope(ns, rs):
@@ -224,7 +284,8 @@ def main(argv=None):
 
     # ---- G5c: find the crossover by sweeping coupling ----
     print("\n  G5c  coupling sweep -- rank is taken as the MAXIMUM over K, not one point")
-    Ks = [0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0]
+    Ks = ([1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0] if a.topology.startswith("binary")
+          else [0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0])
     print(f"       {'n':>3s} {'K':>5s} {'states':>8s} {'bound':>6s} "
           f"{'r@1e-3':>7s} {'r@1e-6':>7s} {'capP':>9s} {'sec':>7s}")
     for n in range(4, a.sweep_nmax + 1):
@@ -236,7 +297,7 @@ def main(argv=None):
                   f"{r['seconds']:7.2f}", flush=True)
     best = {}
     for r in out["sweep"]:
-        if r["cap_mass"] > CAP_BAR:
+        if r["truncated"] and r["cap_mass"] > CAP_BAR:
             continue
         k = r["n"]
         if k not in best or r["r"][1e-6] > best[k]["r"][1e-6]:
