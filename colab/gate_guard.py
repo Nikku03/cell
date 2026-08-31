@@ -432,6 +432,25 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      predictor contains a repeated exact constant, and if it does, ask whether that constant
 #      was measured or substituted. Report every gate on the domain where its inputs exist.
 #
+#   P  A GATE THAT CANNOT RETURN ITS OWN PASS CONDITION ON PERFECT EVIDENCE. G5b asked whether
+#      tensor-train rank grows with gene count, and declared SATURATION when the fitted slope
+#      was small AND statistically indistinguishable from zero: abs(b) < 1.0 and b < 2*se.
+#      The chain measurement returned rank exactly 8 at every one of seven gene counts. That
+#      is the strongest saturation evidence the experiment could possibly produce -- and it
+#      scored INCONCLUSIVE, because a perfectly flat series has b = 0 and se = 0, so the
+#      second clause reads 0 < 0 and is false. The better the evidence, the smaller se gets,
+#      and past a point the gate stops being able to fire. A significance test used as a
+#      test of NEGLIGIBILITY inverts exactly here: "indistinguishable from zero" was encoded
+#      as "the noise is larger than the effect", which fails when there is no noise.
+#      RULE: to gate on a quantity being SMALL, bound the quantity, do not test it for
+#      significance. The repair (G5b2) is declared as a separate gate, leaves the original
+#      verdict standing as INCONCLUSIVE-by-construction, and asks the decision-relevant
+#      question instead: project the rank to the target size at the 2-s.e. UPPER bound of the
+#      slope and compare that projection to the cost ceiling. A zero slope with zero error
+#      then projects to a flat rank and passes, which is the answer the data actually gave.
+#      GENERAL FORM: a test of "no effect" built from a p-value cannot distinguish "no
+#      effect" from "no data", and cannot reward precision. Bound the effect size instead.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 

@@ -229,6 +229,36 @@ def binary_hub(n_genes, on0=0.3, ratio=8.0, off=1.0):
     return Network(names, [1] * n_genes, rx)          # dims are MAX COUNT: 1 -> {0,1}
 
 
+def binary_random(n_genes, on0=0.3, ratio=8.0, off=1.0, seed=0):
+    """Each gene regulated by ONE gene chosen uniformly at random from all the others.
+
+    THIS IS THE ADVERSARIAL TOPOLOGY, and the hub is not. A hub looks hard and is easy:
+    conditioning on the single driver makes every other gene independent, so the rank across
+    any cut is small for a reason that has nothing to do with the cut. A chain is easy for the
+    opposite reason -- the coupling graph and the tensor-train ordering agree exactly, so a
+    cut severs one edge. A random regulator assignment has neither property: under ANY
+    ordering of the genes, a constant fraction of the regulatory edges cross the middle cut,
+    which is the situation a real regulatory network is closer to and the one that decides
+    whether saturation is a property of gene networks or of chains.
+    """
+    rng = np.random.default_rng(seed)
+    names = [f"X{i+1}" for i in range(n_genes)]
+    reg = [(int(rng.choice([j for j in range(n_genes) if j != i])) if i else None)
+           for i in range(n_genes)]
+    rx = [Reaction("X1+", lambda S: np.full(len(S), on0 * np.sqrt(ratio)) * (1 - S[:, 0]),
+                   tuple([1] + [0] * (n_genes - 1))),
+          Reaction("X1-", lambda S: off * S[:, 0], tuple([-1] + [0] * (n_genes - 1)))]
+    for i in range(1, n_genes):
+        up = np.zeros(n_genes, dtype=int); up[i] = 1
+        dn = np.zeros(n_genes, dtype=int); dn[i] = -1
+        rx.append(Reaction(f"X{i+1}+", (lambda k, j: (lambda S: on0 * (
+            1.0 + (ratio - 1.0) * S[:, j]) * (1 - S[:, k])))(i, reg[i]), tuple(up)))
+        rx.append(Reaction(f"X{i+1}-", (lambda k: (lambda S: off * S[:, k]))(i), tuple(dn)))
+    net = Network(names, [1] * n_genes, rx)
+    net.regulators = reg
+    return net
+
+
 def hub(n_genes, M=3, g=2.5, gamma=1.0, K=1.5, h=2.0):
     """One driver activating every other gene: the topology a chain is friendliest against."""
     hill = lambda v: (v / K) ** h / (1.0 + (v / K) ** h)
@@ -243,7 +273,8 @@ def hub(n_genes, M=3, g=2.5, gamma=1.0, K=1.5, h=2.0):
     return Network(names, [M] * n_genes, rx)
 
 
-TRUNCATED = {"cascade": True, "hub": True, "binary": False, "binary_hub": False}
+TRUNCATED = {"cascade": True, "hub": True, "binary": False, "binary_hub": False,
+             "binary_random": False}
 
 
 def build(topology, n, M, K, g):
@@ -253,6 +284,8 @@ def build(topology, n, M, K, g):
         return binary_cascade(n, ratio=K)
     if topology == "binary_hub":
         return binary_hub(n, ratio=K)
+    if topology == "binary_random":
+        return binary_random(n, ratio=K)
     if topology == "hub":
         return hub(n, M=M, g=g, K=K)
     return cascade(n, M, g=g, K=K)
@@ -389,6 +422,23 @@ def main(argv=None):
             grow = (b >= SLOPE_BAR and b >= SE_MULT * se)
             flat = (abs(b) < SLOPE_BAR and b < SE_MULT * se)
             v = "GROWTH" if grow else ("SATURATION" if flat else "INCONCLUSIVE")
+            # G5b2, THE REPAIR -- declared as a separate gate, leaving G5b's verdict standing.
+            # G5b encoded "slope indistinguishable from zero" as "the noise exceeds the
+            # effect", which is false when there is no noise: an exactly flat series has
+            # b = 0 and se = 0, so `b < 2*se` reads 0 < 0 and the gate cannot fire on its own
+            # best case (ledger defect P). The decision was never about significance anyway,
+            # it is about the rank at the target size, so bound that instead.
+            nmax_adm = max(r["n"] for r in adm)
+            intercept = (np.mean([r["r"][t] for r in adm])
+                         - b * np.mean([r["n"] for r in adm]))
+            hi = intercept + (b + SE_MULT * se) * 500.0
+            lo = intercept + (b - SE_MULT * se) * 500.0
+            v2 = ("VIABLE" if hi < DEAD_RANK else
+                  "DEAD" if lo > DEAD_RANK else "INCONCLUSIVE")
+            print(f"       G5b2 tol {t:.0e}: r(500) projected in [{lo:.0f}, {hi:.0f}] "
+                  f"at 2 s.e. against a ceiling of {DEAD_RANK}  -> {v2}"
+                  f"   (PROJECTION from n <= {nmax_adm}, a factor of "
+                  f"{500 / nmax_adm:.0f})")
             verdicts[t] = v
             proj = b * 500 + (np.mean([r["r"][t] for r in adm]) - b * np.mean(
                 [r["n"] for r in adm]))
