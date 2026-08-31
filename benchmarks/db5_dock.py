@@ -198,7 +198,12 @@ def run_arm(rec: Structure, lig: Structure, rotations: np.ndarray, seed: int,
                                    - best["metrics"]["I_rmsd"]),
             "search_error_L": float(lrms_all[best_l_idx] - floor),
             "scoring_error_L": float(lrms_all[rank1_idx] - lrms_all[best_l_idx]),
-            "_poses": poses, "_native": native, "_masks": masks}
+            "_poses": poses, "_native": native, "_masks": masks,
+            # The UNSELECTED candidate set. `poses` above is order[:keep], i.e. chosen BY the
+            # grid score, so any ceiling computed on it is a fact about scoring, not search.
+            # These expose all n_candidates so a caller can ask what the SEARCH generated.
+            "_all": {"grid": scores, "I_rmsd": irms_all, "L_rmsd": lrms_all},
+            "_full": full}
 
 
 def rescore(rec: Structure, lig: Structure, arm: dict, n: int = RESCORE_N) -> dict:
