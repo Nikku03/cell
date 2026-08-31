@@ -396,6 +396,42 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      rank-1 pose on 57/58), because T*S_conf spans 1.30 kcal/mol against an energy spread of
 #      108 -- a 1% perturbation. That closes the line on evidence rather than on a void gate.
 #
+#   O  A MISSING VALUE CODED AS AN EXTREME OF THE SCALE. The DB5 basin study reported that
+#      interface conformational entropy tracks nativeness at Spearman -0.45, called it the
+#      most transferable result of the arc, and checked it against the obvious confound
+#      (interface size), which it survived at -0.4674. It was an artifact of a sentinel.
+#      db5_basin.score_pose returns "TS": 0.0 when fewer than two interface residues are
+#      repackable. No partition function is evaluated on that branch: 0.0 is written IN PLACE
+#      OF a measurement. Three properties made it lethal in combination --
+#        it is EXTREME:   the smallest genuinely measured T*S_conf is 2.24e-05, so all 235
+#                         sentinels sit strictly below the entire real distribution, as one
+#                         tied block at the floor of the axis;
+#        it is COMMON:    235/1160 poses, 20.3%;
+#        it is CORRELATED with the outcome: the degenerate fraction by I_rmsd quintile runs
+#                         0.000, 0.004, 0.043, 0.276, 0.690, because a pose with almost no
+#                         interface is both un-repackable AND far from native.
+#      So the sentinel wrote the hypothesis's own predicted value onto exactly the poses that
+#      sit at the predicted end of the other axis. Removing it:
+#        pooled Spearman     -0.4498 -> -0.0741        (bar was <= -0.10: now FAILS)
+#        per-complex median  -0.3962 -> -0.0490, negative on 30/53, sign test p = 0.41
+#        partial | size      -0.4628 -> -0.0462
+#      and the post-hoc claim that the entropy term carries more nativeness signal than the
+#      energy it is added to (-0.3763 vs +0.0924) collapses to -0.0482 vs -0.0451, which is
+#      no difference at all. Both are WITHDRAWN.
+#      WHY THE EXISTING CONTROLS DID NOT CATCH IT. The size control partialled out a contact
+#      proxy, and the sentinel survives it because the sentinel is not a size effect: it is a
+#      DEFINEDNESS effect. Controlling for a confound cannot rescue a variable whose values
+#      are partly fabricated. Nor did the degenerate flag help -- it was recorded, counted,
+#      and reported at 20.3%, and still pooled into every statistic.
+#      AND THE CUTOFF WAS WRONG ON ITS OWN TERMS: "< 2 repackable residues" merged three
+#      different cases. With one residue the partition function is an ordinary sum and was
+#      simply being discarded; with zero residues but a real interface, zero conformational
+#      entropy is a genuine measurement; with no interface at all the quantity is undefined.
+#      RULE: a not-applicable is never a number. It is nan, it is excluded, and the gate is
+#      reported on the defined subset. Before any correlation is believed, check whether the
+#      predictor contains a repeated exact constant, and if it does, ask whether that constant
+#      was measured or substituted. Report every gate on the domain where its inputs exist.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 

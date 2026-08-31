@@ -59,11 +59,25 @@ def main():
     print(f"  {len(data)} complexes, {npose} poses\n")
 
     # ---------------- Q1 ----------------
-    TS = np.array([p["TS"] for c in data for p in c["poses"]])
-    IR = np.array([p["I_rmsd"] for c in data for p in c["poses"]])
+    # LEDGER DEFECT O. score_pose writes TS = 0.0 in place of a measurement when fewer than
+    # two interface residues are repackable. That constant is below every real value, is 20%
+    # of the rows, and lands preferentially on far-from-native poses, so pooling it
+    # manufactures the correlation. The gate is reported on the DEFINED subset; the pooled
+    # number is kept only to show the size of the artifact.
+    ALL = [p for c in data for p in c["poses"]]
+    DEF = [p for p in ALL if not p.get("degenerate")]
+    TS_all = np.array([p["TS"] for p in ALL], float)
+    IR_all = np.array([p["I_rmsd"] for p in ALL], float)
+    print(f"      sentinel rows (TS written as 0.0, not measured): "
+          f"{len(ALL) - len(DEF)}/{len(ALL)} = {100.0 * (1 - len(DEF) / len(ALL)):.1f}%")
+    print(f"      WITH the sentinel   pooled Spearman {spearman(TS_all, IR_all):+.4f}  "
+          f"<- ARTIFACT, not the gate")
+    TS = np.array([p["TS"] for p in DEF], float)
+    IR = np.array([p["I_rmsd"] for p in DEF], float)
     rho = spearman(TS, IR)
     pv = spearman_p(rho, len(TS))
-    per = [spearman([p["TS"] for p in c["poses"]], [p["I_rmsd"] for p in c["poses"]])
+    per = [spearman([p["TS"] for p in c["poses"] if not p.get("degenerate")],
+                    [p["I_rmsd"] for p in c["poses"] if not p.get("degenerate")])
            for c in data]
     per = np.array([x for x in per if np.isfinite(x)])
     print("  Q1  basin breadth T*S_conf vs interface RMSD")
@@ -71,8 +85,8 @@ def main():
     print(f"      per-complex median     {np.median(per):+.4f}   "
           f"(negative on {int((per < 0).sum())}/{len(per)} complexes)")
     print(f"      T*S_conf range         {TS.min():.4f} to {TS.max():.4f} kcal/mol")
-    G = np.array([abs(p["grid"]) for c in data for p in c["poses"]])   # contact-count proxy
-    TW = np.array([float(p["treewidth"]) for c in data for p in c["poses"]])
+    G = np.array([abs(p["grid"]) for p in DEF], float)   # contact-count proxy
+    TW = np.array([float(p["treewidth"]) for p in DEF])
     print(f"      vs contact count       {spearman(TS, G):+.4f}   "
           f"(if TS were just interface size this would be large)")
     print(f"      partial | contacts     {partial(TS, IR, G):+.4f}")

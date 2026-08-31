@@ -248,8 +248,7 @@ def main():
                          + 0.5 * rank_norm([p["TS"] for p in q], descending=True),
         "size(ctrl)": lambda q: rank_norm([p["contacts"] for p in q], descending=True),
     }
-    hits = {}
-    print(f"      {'ranking':>12s} {'hits':>6s} {'exact p':>10s}  verdict")
+    hits, pvals = {}, {}
     for name, fn in rankings.items():
         h, per_c = 0, []
         for c in usable:
@@ -258,9 +257,23 @@ def main():
             got = any(q[int(j)]["quality"] in OK for j in order)
             per_c.append(bool(got)); h += got
         hits[name] = (h, per_c)
-        pv = poisson_binomial_tail(ps_chance, h)
-        print(f"      {name:>12s} {h:6d} {pv:10.3g}  "
-              f"{'SIGNAL' if pv < ALPHA else 'not above chance'}")
+        pvals[name] = poisson_binomial_tail(ps_chance, h)
+    # HOLM ACROSS THE FAMILY. Four rankings are gated on one null, so an uncorrected alpha
+    # gives the family several independent chances to fire -- and in the small-mean regime
+    # this run is headed for, a single lucky complex can carry a verdict.
+    order_p = sorted(pvals, key=lambda k: pvals[k])
+    m = len(order_p)
+    holm, running = {}, 0.0
+    for i, name in enumerate(order_p):
+        thr = ALPHA / (m - i)
+        running = max(running, pvals[name])
+        holm[name] = (thr, running <= thr)
+    print(f"      {'ranking':>12s} {'hits':>6s} {'exact p':>10s} {'Holm thr':>10s}  verdict")
+    for name in rankings:
+        h = hits[name][0]
+        thr, ok = holm[name]
+        print(f"      {name:>12s} {h:6d} {pvals[name]:10.3g} {thr:10.4f}  "
+              f"{'SIGNAL' if ok else 'not above chance'}")
     # The actual hypothesis: does entropy ADD to energy? Paired, same complexes.
     a = np.array(hits["energy"][1]); c50 = np.array(hits["50/50"][1])
     gain = int((c50 & ~a).sum()); loss = int((a & ~c50).sum())

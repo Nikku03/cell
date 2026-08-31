@@ -130,7 +130,10 @@ STEP 3  THE RETRIEVAL TEST, with its power checked BEFORE its verdict. Rank each
         acceptable of N sampled, a random top-20 hits with p = 1 - C(N-k,20)/C(N,20). The null
         over complexes is the POISSON-BINOMIAL of those p, and its tail is computed EXACTLY by
         dynamic programming, not by a normal approximation, which misstates the tail of a
-        small-mean skewed discrete distribution. Signal is declared at one-sided exact p < 0.05.
+        small-mean skewed discrete distribution. Signal is declared at one-sided exact
+        p < 0.05, HOLM-CORRECTED ACROSS THE FOUR RANKINGS, because gating four arms on one
+        null otherwise gives the family several independent chances to fire, and in the
+        small-mean regime this run is headed for a single lucky complex can carry a verdict.
         THE POWER CHECK IS PART OF THE GATE, NOT AN AFTERTHOUGHT (ledger defect N, recorded one
         commit ago, which this design nearly recommitted). Force-including acceptable poses
         raises k, which raises chance, which can push the bar above the maximum achievable

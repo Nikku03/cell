@@ -35,7 +35,36 @@ Selection code is NOT to be touched until Q1 is answered.
 RESULT, 58 complexes x 20 poses = 1160 exact partition functions, run after the bars above
 were committed. Reproduce with `PYTHONPATH=. python benchmarks/basin_analysis.py`.
 
-  Q1  PASS, and it survives the control the bar did not ask for.
+  Q1  *** WITHDRAWN. THE RESULT BELOW IS AN ARTIFACT OF A SENTINEL VALUE. ***
+      Recorded in full rather than deleted, because the repo's rule is that a wrong result is
+      corrected in place and left visible. See ledger defect O in colab/gate_guard.py.
+      WHAT WAS WRONG. score_pose (this file) returns "TS": 0.0 whenever fewer than two
+      interface residues are repackable. No partition function is evaluated on that branch --
+      0.0 is written IN PLACE OF a measurement. 235 of 1160 poses (20.3%) are such poses; the
+      smallest genuinely measured T*S_conf is 2.24e-05, so every sentinel sits strictly below
+      the entire real distribution as one tied block at the floor of the axis; and the
+      degenerate fraction rises monotonically with I_rmsd across quintiles -- 0.000, 0.004,
+      0.043, 0.276, 0.690 -- because a pose with almost no interface is both un-repackable and
+      far from native. The sentinel therefore wrote the hypothesis's own predicted value onto
+      exactly the poses sitting at the predicted end of the other axis.
+      THE CORRECTED NUMBERS, on the same data with the sentinels dropped (n 1160 -> 925):
+        pooled Spearman     -0.4498  ->  -0.0741     the bar was <= -0.10, so this now FAILS
+        per-complex median  -0.3962  ->  -0.0490     negative on 30/53, sign test p = 0.41
+        partial | size      -0.4628  ->  -0.0462
+      The size control did not catch it because the sentinel is not a size effect but a
+      DEFINEDNESS effect, and no control for a confound can rescue a variable whose values are
+      partly fabricated. The degenerate flag did not catch it either: it was recorded, counted
+      and reported at 20.3%, and still pooled into every statistic.
+      ALSO WITHDRAWN: the post-hoc observation below that the entropy term carries more
+      nativeness signal than the energy it is added to. With the sentinels dropped it is
+      -0.0482 for T*S_conf against -0.0451 for E_min -- no difference at all.
+      WHAT SURVIVES: Q2 and Q3 do not depend on the sentinel. Q2 is if anything strengthened
+      (E spread 108.64 vs T*S spread 1.23, 1.1%; Spearman(E_min, F) +0.9982; same rank-1 pose
+      on 52/53). Q3 weakens to a mean |rho| of 0.498 over the three distinct scorers, which
+      sits on its own 0.5 threshold rather than above it, so that verdict is NOT robust.
+
+      THE ORIGINAL, SUPERSEDED TEXT FOLLOWS.
+      Q1  PASS, and it survives the control the bar did not ask for.
         pooled Spearman(T*S_conf, I_rmsd)  -0.4498   n=1160, p=6.4e-53   (bar: <= -0.10)
         per-complex median                 -0.3962   negative on 52/58   (bar: < 0)
       The sign is the predicted one: broader basins sit closer to native. The obvious
