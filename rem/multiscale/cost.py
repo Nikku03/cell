@@ -157,8 +157,23 @@ def build_graph(reactions: Dict[str, Dict[str, float]], currency: Iterable[str] 
 # width bounds -- reimplemented rather than imported, and cross-checked in G1d
 # -------------------------------------------------------------------------------------
 
-def _greedy_width(adj: Dict[str, Set[str]], key: str) -> Tuple[List[str], int]:
+def _greedy_width(adj: Dict[str, Set[str]], key: str,
+                  rng=None) -> Tuple[List[str], int]:
+    """Greedy elimination width. Two things here were wrong in the first version and both
+    made the bound WEAKER, which is the direction that silently overstates cost:
+
+      * only the eliminated node's direct neighbours had their scores refreshed. Adding the
+        clique among them changes the fill score of their neighbours too, so 2-hop scores
+        went stale and the heap handed back nodes that were no longer cheapest.
+      * ties were broken by insertion order, which on a metabolic graph means alphabetically
+        by metabolite id -- a systematic, not a neutral, choice.
+
+    `rng` breaks ties randomly, which makes restarts meaningful. An ordering IS a certificate:
+    any ordering of width w proves tw <= w, so searching harder for a smaller w is a strictly
+    better true statement about the same graph, not a fit to a target.
+    """
     a = {v: set(n) for v, n in adj.items()}
+    jitter = {v: (rng.random() if rng is not None else 0.0) for v in a}
 
     def fill(v):
         nb = a[v]
@@ -170,16 +185,16 @@ def _greedy_width(adj: Dict[str, Set[str]], key: str) -> Tuple[List[str], int]:
                 miss += 1
         return miss
 
-    heap = [(fill(v), len(a[v]), v) for v in a]
+    heap = [(fill(v), jitter[v], v) for v in a]
     heapq.heapify(heap)
     order, width, gone = [], 0, set()
     while heap:
-        _s, _d, v = heapq.heappop(heap)
+        _s, _j, v = heapq.heappop(heap)
         if v in gone or v not in a:
             continue
         cur = fill(v)
         if cur != _s:                       # stale key; reinsert with the fresh score
-            heapq.heappush(heap, (cur, len(a[v]), v))
+            heapq.heappush(heap, (cur, jitter[v], v))
             continue
         nb = sorted(a[v])
         width = max(width, len(nb))
@@ -191,10 +206,48 @@ def _greedy_width(adj: Dict[str, Set[str]], key: str) -> Tuple[List[str], int]:
         del a[v]
         gone.add(v)
         order.append(v)
-        for u in nb:
+        touched = set(nb)
+        for u in nb:                        # 2-hop refresh, not 1-hop
+            touched |= a[u]
+        for u in touched:
             if u in a:
-                heapq.heappush(heap, (fill(u), len(a[u]), u))
+                heapq.heappush(heap, (fill(u), jitter[u], u))
     return order, width
+
+
+def best_width(adj: Dict[str, Set[str]], restarts: int = 24, seed: int = 0,
+               key: str = "min-fill") -> Tuple[int, List[str]]:
+    """Best (smallest) width found over randomized tie-breaking restarts, with its ordering.
+
+    The returned ordering is a CERTIFICATE: eliminating in that order never creates a bag
+    larger than the reported width, so tw <= width is proved, not estimated.
+    """
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    best, best_order = None, None
+    for _ in range(max(1, restarts)):
+        o, w = _greedy_width(adj, key, rng=rng)
+        if best is None or w < best:
+            best, best_order = w, o
+    return int(best), best_order
+
+
+def verify_certificate(adj: Dict[str, Set[str]], order: Sequence[str]) -> int:
+    """Independently replay an elimination order and return the width it actually achieves."""
+    a = {v: set(n) for v, n in adj.items()}
+    width = 0
+    for v in order:
+        if v not in a:
+            continue
+        nb = sorted(a[v])
+        width = max(width, len(nb))
+        for x, y in itertools.combinations(nb, 2):
+            a[x].add(y)
+            a[y].add(x)
+        for u in nb:
+            a[u].discard(v)
+        del a[v]
+    return width
 
 
 def degeneracy(adj: Dict[str, Set[str]]) -> int:
@@ -266,6 +319,15 @@ def verify(verbose: bool = True) -> dict:
     w = width_bounds(adj)
     print(f"  graph: {w['n_nodes']} metabolites, {w['n_edges']} edges "
           f"({len(CURRENCY)} currency species buffered out)")
+    import time as _t
+    t0 = _t.perf_counter()
+    bw, border = best_width(adj, restarts=24, seed=0, key="min-fill")
+    chk = verify_certificate(adj, border)
+    print(f"  min-fill over 24 randomized restarts: best {bw} "
+          f"(certificate replayed independently: {chk})  [{_t.perf_counter()-t0:.0f}s]")
+    if chk != bw:
+        print("  CERTIFICATE MISMATCH -- the reported width is not what the ordering achieves")
+    w["min_fill"] = min(w["min_fill"], bw)
     ok = [_gate("min-fill upper bound", w["min_fill"], EXPECT["min_fill"]),
           _gate("min-degree upper bound", w["min_degree"], EXPECT["min_degree"]),
           _gate("degeneracy (rigorous lower)", w["degeneracy"], EXPECT["degeneracy"])]
