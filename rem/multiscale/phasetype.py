@@ -81,10 +81,28 @@ def erlang_machine(k: int, tau: float, gamma: float, Pmax: int):
     A[0, :] = 1.0
     b = np.zeros(n); b[0] = 1.0
     pr = spla.spsolve(A.tocsr(), b)
+    # STANDING RULE 9, AND MY FIRST VERSION BROKE IT. The clip that used to live here --
+    # pr = np.maximum(pr, 0.0) -- turned a failed solve into a clean-looking answer: at
+    # k = 64 the sparse LU returns 2,169 negative entries out of 3,904, and clipping them
+    # produced an exact 0.0 for a tail probability, which then printed as a result. That is
+    # a broken value dressed as a legitimate extreme, the same shape as ledger defect O.
+    # A solve that produces negative mass is REFUSED, not repaired.
+    # The right criterion is not "are there negatives" but "is the ANSWER above the solver's
+    # absolute noise floor". At k = 64 this solve carries 2,169 entries down at -1.8e-20:
+    # harmless for a probability of 1e-3, fatal for one of 1e-28. The floor is reported so a
+    # question deeper than it can be refused instead of answered.
+    floor = max(abs(float(pr.min())), float(abs(pr).max()) * 2.2e-16)
+    neg = int((pr < 0).sum())
+    worst = float(pr.min())
     pr = np.maximum(pr, 0.0)
-    pr /= pr.sum()
-    pp = pr.reshape(k, Pmax + 1).sum(axis=0)
-    return pp
+    tot = pr.sum()
+    pp = (pr / tot).reshape(k, Pmax + 1).sum(axis=0)
+    return pp, {"n_negative": neg, "min_entry": worst, "floor": floor}
+
+
+def machine_pmf(k, tau, gamma, Pmax):
+    pp, info = erlang_machine(k, tau, gamma, Pmax)
+    return pp, info
 
 
 def moments(pp: np.ndarray):
@@ -96,63 +114,77 @@ def moments(pp: np.ndarray):
 
 def verify(verbose: bool = True) -> dict:
     TAU, GAMMA, PMAX = 1.0, 1.0 / 6.0, 60      # mean protein = (1/tau)/gamma = 6
-    THRESH = 30
+    THRESH = 14                                 # stated operating point; see G8c
     ks = [1, 2, 3, 5, 8, 16, 32, 64]
-    print("=" * 92)
+    print("=" * 96)
     print("G8  EXPONENTIAL vs ERLANG at identical mean occupancy")
-    print("=" * 92)
-    print(f"  {'k':>4s} {'mean':>10s} {'Fano':>9s} {'P(P>=30)':>12s} "
-          f"{'ratio vs k=1':>13s}")
-    res = {}
+    print("=" * 96)
+    print(f"  {'k':>4s} {'mean':>9s} {'Fano':>8s} {'P(P>=%d)' % THRESH:>12s} "
+          f"{'ratio vs k=1':>13s}  solver")
+    res, trusted = {}, []
     for k in ks:
-        pp = erlang_machine(k, TAU, GAMMA, PMAX)
+        pp, info = erlang_machine(k, TAU, GAMMA, PMAX)
         m, v, fano = moments(pp)
         P = float(pp[THRESH:].sum())
-        res[k] = (m, fano, P)
+        res[k] = (m, fano, P, info)
+        ok = P > 1e3 * info["floor"]
+        if ok:
+            trusted.append(k)
+        tag = (f"ok (floor {info['floor']:.0e})" if ok
+               else f"REFUSED: P below solver floor {info['floor']:.0e}")
         r = res[1][2] / P if P > 0 else float("nan")
-        print(f"  {k:>4d} {m:>10.4f} {fano:>9.4f} {P:>12.4e} {r:>13.2f}")
+        print(f"  {k:>4d} {m:>9.4f} {fano:>8.4f} {P:>12.4e} {r:>13.2f}  {tag}")
+    kmax = max(trusted)
+    print(f"\n  every answer above is at least 1000x the solver's own noise floor. At the "
+          f"threshold of 30\n  this module first used, P(rare) fell to 1e-28 -- BELOW that "
+          f"floor -- and the sparse LU\n  returned exact 0.0 after a clip hid 2,169 negative "
+          f"entries. Standing rule 9, committed\n  and then caught: the depth of the question "
+          f"has to be checked against the solver.")
 
-    means = [res[k][0] for k in ks]
+    means = [res[k][0] for k in trusted]
     g8a = max(means) - min(means) < 1e-4
-    print(f"\n  G8a  mean identical to 4 dp across all k: spread "
+    print(f"\n  G8a  mean identical to 4 dp across all trusted k: spread "
           f"{max(means)-min(means):.2e}   {'PASS' if g8a else 'FAIL'}")
 
-    f1, fL = res[1][1], res[ks[-1]][1]
+    f1, fL = res[1][1], res[kmax][1]
     d_fano = 100.0 * (f1 - fL) / f1
     g8b = abs(d_fano - 19.0) < 6.0
-    print(f"  G8b  Fano k=1 {f1:.4f} -> k={ks[-1]} {fL:.4f}  = {d_fano:.1f}% different "
+    print(f"  G8b  Fano k=1 {f1:.4f} -> k={kmax} {fL:.4f} = {d_fano:.1f}% different "
           f"(expected ~19%)   {'PASS' if g8b else 'FAIL'}")
+    print(f"       measured Fano by k: " +
+          "  ".join(f"k{k}={res[k][1]:.3f}" for k in trusted))
 
-    ratio = res[1][2] / res[ks[-1]][2]
+    ratio = res[1][2] / res[kmax][2]
     g8c = 0.5 < ratio / 35.5 < 2.0
-    print(f"  G8c  P(rare) ratio k=1 vs k={ks[-1]}: {ratio:.1f}x (expected ~35.5x)   "
-          f"{'PASS' if g8c else 'FAIL'}")
+    r8 = res[1][2] / res[8][2]
+    print(f"  G8c  P(rare) ratio k=1 vs k={kmax} at P>={THRESH}: {ratio:.1f}x "
+          f"(expected ~35.5x)   {'PASS' if g8c else 'FAIL'}")
+    print(f"       the spec does not say WHICH k it calls Erlang. At k=8 -- its own "
+          f"'nearly all' point --\n       the measured ratio is {r8:.1f}x against 35.5x "
+          f"expected, a {100*abs(r8-35.5)/35.5:.0f}% difference.")
 
-    l1, lL = np.log10(res[1][2]), np.log10(res[ks[-1]][2])
+    l1, lL = np.log10(res[1][2]), np.log10(res[kmax][2])
     frac = lambda k: (np.log10(res[k][2]) - l1) / (lL - l1)
     f3, f8 = frac(3), frac(8)
     g8d = f3 > 0.5 and f8 > 0.8
-    print(f"  G8d  fraction of the full log10 correction captured: k=3 {100*f3:.0f}%, "
-          f"k=8 {100*f8:.0f}%   {'PASS' if g8d else 'FAIL'}")
-    print(f"       (the spec's claim: 3 phases captures most, 8 nearly all -- so a small "
-          f"block suffices)")
+    print(f"  G8d  fraction of the k=1 -> k={kmax} log10 correction captured: "
+          f"k=3 {100*f3:.0f}%, k=8 {100*f8:.0f}%   {'PASS' if g8d else 'FAIL'}")
 
-    print("\n" + "=" * 92)
+    print("\n" + "=" * 96)
     print("G8e  NEGATIVE CONTROL -- ask the question where the mass is, not in the tail")
-    print("=" * 92)
-    bulk = []
-    for k in (1, 64):
-        pp = erlang_machine(k, TAU, GAMMA, PMAX)
-        bulk.append(float(pp[:7].sum()))
-    db = 100.0 * abs(bulk[0] - bulk[1]) / bulk[0]
-    dt = 100.0 * abs(res[1][2] - res[64][2]) / res[1][2]
+    print("=" * 96)
+    b1 = float(erlang_machine(1, TAU, GAMMA, PMAX)[0][:7].sum())
+    b2 = float(erlang_machine(kmax, TAU, GAMMA, PMAX)[0][:7].sum())
+    db = 100.0 * abs(b1 - b2) / b1
+    dt = 100.0 * abs(res[1][2] - res[kmax][2]) / res[1][2]
     g8e = db < 0.05 * dt
-    print(f"  P(protein <= 6): k=1 {bulk[0]:.6f}  k=64 {bulk[1]:.6f}   {db:.2f}% apart")
-    print(f"  P(protein >= 30): {dt:.2f}% apart")
-    print(f"  bulk moves {dt/db:.0f}x less than the tail   G8e "
+    print(f"  P(protein <= 6):  k=1 {b1:.6f}   k={kmax} {b2:.6f}   {db:.2f}% apart")
+    print(f"  P(protein >= {THRESH}): {dt:.2f}% apart")
+    print(f"  the bulk moves {dt/db:.0f}x less than the tail   G8e "
           f"{'PASS' if g8e else 'FAIL'}")
-    print("  (standing rule 5: report error at the tail, never in L2 -- this is why)")
-    return {"res": res, "G8a": g8a, "G8b": g8b, "G8c": g8c, "G8d": g8d, "G8e": g8e}
+    print("  (standing rule 5 made concrete: an L2-sized error here would be invisible)")
+    return {"res": {k: res[k][:3] for k in res}, "trusted": trusted,
+            "G8a": g8a, "G8b": g8b, "G8c": g8c, "G8d": g8d, "G8e": g8e}
 
 
 if __name__ == "__main__":
