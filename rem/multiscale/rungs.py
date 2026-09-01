@@ -101,7 +101,11 @@ def k_gate_solve(K: int, N: float, M: int, demote: Sequence[bool],
     live = [i for i in range(K) if not demote[i]]
     dims = [M + 1] * len(live) + [Ymax + 1]
     n = int(np.prod(dims))
-    if n > 4_000_000:
+    # The cap is set by what a DIRECT sparse solve finishes inside the budget, not by memory.
+    # K = 3 at this truncation is 1.6M states and does not finish -- which is exactly what the
+    # source measurement reports for K >= 3. Refusing it up front and printing UNVERIFIED is
+    # the honest outcome; letting it run and then quoting whatever came back would not be.
+    if n > 500_000:
         return None
     grids = np.meshgrid(*[np.arange(d) for d in dims], indexing="ij")
     flat = [g.ravel() for g in grids]
@@ -197,8 +201,15 @@ def verify(verbose: bool = True) -> dict:
     print(f"  gap per species = {o['delete_saves'] - o['coarsen_saves']:.2f} orders; "
           f"over the spec's 57 metabolism variables that is "
           f"{57*(o['delete_saves']-o['coarsen_saves']):.0f} orders")
+    gap = o["delete_saves"] - o["coarsen_saves"]
     print(f"  spec quotes 10^82 (coarsen) vs 10^22.9 (delete) = 59.1 orders   "
-          f"{'PASS' if abs(57*(o['delete_saves']-o['coarsen_saves']) - 59.1) < 15 else 'FAIL'}")
+          f"{'PASS' if abs(57*gap - 59.1) < 15 else 'FAIL'}")
+    print(f"\n  THE ARITHMETIC IS FORCED once the cost model is the product of domains, so")
+    print(f"  this failure is diagnosable rather than mysterious. The gap per species is")
+    print(f"  exactly log10(d_coarse), independent of the exact domain -- {gap:.3f} at d=20.")
+    print(f"  Reproducing 59.1 orders needs either d_coarse = {10**(59.1/57):.1f} (not 20)")
+    print(f"  or {59.1/gap:.0f} demoted variables (not 57). The spec's three numbers -- 82,")
+    print(f"  22.9, and 'coarsening to d = 20' over 57 variables -- cannot all hold at once.")
     out["G2o"] = o
 
     print("\n" + "=" * 96)
