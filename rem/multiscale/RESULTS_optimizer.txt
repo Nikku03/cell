@@ -1,0 +1,69 @@
+================================================================================================
+SYNTHETIC MODEL
+================================================================================================
+  300 species, abundances median 84 copies, range 2-116422
+  domains median 150, max 118812
+  exact cost of the largest bucket: 10^245.5 bytes
+
+================================================================================================
+O2  DELETION DOMINANCE -- the score ratio is a curve in abundance, not a number
+================================================================================================
+          N   domain  delete score   best coarsen        ratio
+         10       34           0.1 COARSE_20   0.11            1
+         30       70           0.3 COARSE_40   0.54            1
+        100      171           1.3 COARSE_40   1.40            1
+        300      423           4.5 COARSE_40   2.28            2
+       1000     1223          17.6 COARSE_40   3.30            5
+      10000    10701         230.3 COARSE_40   5.39           43
+     100000   102215        2862.6 COARSE_40   7.57          378
+    1000000  1007001       34303.0 COARSE_40   9.78         3507
+   10000000 10022137      400054.9 COARSE_40  12.00        33345
+  100000000 100070001     4571602.2 COARSE_40  14.22       321529
+  ratio monotone increasing over the ABUNDANT regime (N >= 300): True
+  below it the ratio is 0.79, 0.59, 0.91 -- non-monotone because the rung ladder
+  is discrete: COARSE_40 cannot shrink a 34-state domain but can shrink a 70-state
+  one, so the best coarsening improves discontinuously as the domain crosses 40.
+  coarsening correctly WINS below N ~ 300 copies, where the deletion
+  price 7/(4N) exceeds what coarsening costs. An optimizer that deleted a rare
+  species there would be the one with the bug.
+  the spec's ~7,000x is reached at N >= 1e+07 copies.
+  O2 PASS  (restated as the spec words it: the claim is about ABUNDANT species)
+
+================================================================================================
+O1  FREE RUNG CHOICE vs ONE RUNG AT A TIME, identical model and budget
+================================================================================================
+  free rungs     cost 10^7.9 B   error 65.41%   steps 166   met budget True
+                 EXACT=174, COARSE_40=1, DELETED=125
+  one rung/step  cost 10^102.1 B   error 128.04%   steps 292   met budget False
+                 EXACT=200, COARSE_40=3, COARSE_20=3, COARSE_8=93, DELETED=1
+  spec (syn3A): 10^18.0 B at 15.37% restricted, 10^8.0 B at 4.68% free
+  O1 PASS -- free choice must strictly dominate
+
+================================================================================================
+O3  OPTIMIZER vs HAND-TUNED UNIFORM COPY-NUMBER THRESHOLD, matched memory
+================================================================================================
+  three baselines, because one of them turned out to be a straw man (see O4):
+      budget  optimizer  uniform-thr  by-degree     random
+  10^12.0        34.73%      350.66%    199.75%    318.34%
+  10^10.0        38.75%      350.77%    350.77%    324.96%
+  10^8.0         65.41%      350.77%    350.77%    349.57%
+  10^6.0         65.41%      350.77%    350.77%    350.77%
+  10^5.0         70.37%      350.77%    350.77%    350.77%
+  O3 PASS -- optimizer error must not exceed the hand-tuned baseline at matched memory
+
+================================================================================================
+O5  MONOTONICITY of the trade curve
+================================================================================================
+  budgets 10^12 -> 10^5 give errors 34.73% -> 38.75% -> 65.41% -> 65.41% -> 70.37%
+  non-increasing with budget: True   O5 PASS
+
+================================================================================================
+O4  NEGATIVE CONTROL -- homogeneous model, nothing for the optimizer to exploit
+================================================================================================
+  every species 100 copies, every degree equal; exact bucket 10^14.3 B
+        budget  optimizer err  best baseline  advantage
+  10^10.0               2.65%          3.50%      1.32x   (best of uniform / by-degree / arbitrary)
+  10^8.0                3.10%          3.50%      1.13x   (best of uniform / by-degree / arbitrary)
+  10^6.0                5.70%          7.00%      1.23x   (best of uniform / by-degree / arbitrary)
+  heterogeneous advantage up to 8.39x; homogeneous up to 1.32x
+  O4 PASS -- an advantage that survives with no heterogeneity would be measuring the baseline, not the idea

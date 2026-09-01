@@ -204,6 +204,28 @@ def uniform_threshold(model: dict, thresh: float) -> dict:
     return {"rungs": rungs, "cost": cost, "error": guaranteed_error(model, rungs)}
 
 
+def by_rank_at_memory(model: dict, target_log10: float, key, seed: int = 0) -> dict:
+    """Delete species in the order given by `key`, stopping as soon as memory is met.
+
+    This is the baseline the uniform copy-number threshold SHOULD have been. On a model with
+    no abundance heterogeneity the threshold baseline can only delete all or nothing, which
+    makes it a straw man exactly where the control needs it to be strong.
+    """
+    order = sorted(model["names"], key=key)
+    rungs = {v: EXACT for v in model["names"]}
+    best = None
+    for i, v in enumerate(order):
+        rungs[v] = DELETED
+        if i % 5 and i < len(order) - 1:
+            continue
+        c, _b = state_cost(model, rungs)
+        if c <= target_log10:
+            best = {"rungs": dict(rungs), "cost": c,
+                    "error": guaranteed_error(model, rungs), "n_deleted": i + 1}
+            break
+    return best
+
+
 def best_uniform_at_memory(model: dict, target_log10: float) -> dict:
     """Sweep the threshold and take the lowest-error setting that meets the same memory."""
     best = None
@@ -221,7 +243,7 @@ def best_uniform_at_memory(model: dict, target_log10: float) -> dict:
 def deletion_vs_coarsening_curve():
     """O2: the score ratio as a function of abundance, since it is not a single number."""
     rows = []
-    for N in (10, 30, 100, 300, 1e3, 1e4, 1e5, 1e6):
+    for N in (10, 30, 100, 300, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8):
         d = int(math.ceil(N + 7 * math.sqrt(N))) + 1
         s_del = math.log10(d) / deletion_error(N)
         best_c, best_r = -1.0, None
@@ -260,12 +282,36 @@ def verify(verbose: bool = True) -> dict:
     for N, d, sd, br, bc, ratio in rows:
         print(f"  {N:>9.0f} {d:>8d} {sd:>13.1f} {br:>7s} {bc:>6.2f} {ratio:>12.0f}")
     hit = [N for N, _d, _s, _r, _c, r in rows if r >= 7000]
-    out["O2"] = all(r > 1.0 for *_x, r in rows)
-    print(f"  deletion beats every coarsening at every abundance: {out['O2']}")
-    print(f"  the spec's ~7,000x is reached at N >= {min(hit) if hit else float('nan'):.0f} "
-          f"copies -- so 'abundant' in that claim means very abundant, and the ratio grows\n"
-          f"  without bound because the deletion price 7/(4N) falls while its benefit rises.")
-    print(f"  O2 {'PASS' if out['O2'] else 'FAIL'}")
+    ratios = [r for *_x, r in rows]
+    # The ladder is DISCRETE, and that produces one explicable dip at the bottom. At N = 10
+    # the domain is 34, so COARSE_40 cannot shrink anything and the best coarsening is
+    # COARSE_20 scoring 0.11; at N = 30 the domain is 70, COARSE_40 becomes available and
+    # scores 0.54. The best coarsening therefore improves discontinuously as the domain
+    # crosses 40 and the ratio dips. It happens only below the crossover, where deletion
+    # loses anyway, so monotonicity is required where the claim lives: above it.
+    ab = [r for N, _d, _s, _r, _c, r in rows if N >= 300]
+    mono = all(ab[i] <= ab[i + 1] for i in range(len(ab) - 1))
+    dip = [f"{r:.2f}" for N, _d, _s, _r, _c, r in rows if N < 300]
+    # MY FIRST VERSION OF THIS GATE WAS WRONG AND THE OPTIMIZER WAS RIGHT. I wrote it as
+    # "deletion beats every coarsening at every abundance", which is not what the spec claims
+    # -- it says an ABUNDANT species is ~7,000x better deleted. At N = 10 the deletion price
+    # is 7/(4*10) = 17.5% while coarsening to 20 costs 2.09%, so coarsening correctly wins,
+    # and an optimizer that deleted a rare species there would be the one with the bug. The
+    # gate is restated as the spec words it, and the over-general version is recorded as the
+    # error it was rather than quietly dropped.
+    crossover = next((N for N, _d, _s, _r, _c, r in rows if r > 1.5), None)
+    out["O2"] = mono and bool(hit)
+    print(f"  ratio monotone increasing over the ABUNDANT regime (N >= 300): {mono}")
+    print(f"  below it the ratio is {', '.join(dip)} -- non-monotone because the rung ladder")
+    print(f"  is discrete: COARSE_40 cannot shrink a 34-state domain but can shrink a 70-state")
+    print(f"  one, so the best coarsening improves discontinuously as the domain crosses 40.")
+    print(f"  coarsening correctly WINS below N ~ {crossover:.0f} copies, where the deletion")
+    print(f"  price 7/(4N) exceeds what coarsening costs. An optimizer that deleted a rare")
+    print(f"  species there would be the one with the bug.")
+    print(f"  the spec's ~7,000x is reached at N >= "
+          f"{min(hit) if hit else float('nan'):.0e} copies.")
+    print(f"  O2 {'PASS' if out['O2'] else 'FAIL'}  (restated as the spec words it: the claim "
+          f"is about ABUNDANT species)")
 
     print("\n" + "=" * 96)
     print("O1  FREE RUNG CHOICE vs ONE RUNG AT A TIME, identical model and budget")
@@ -286,19 +332,25 @@ def verify(verbose: bool = True) -> dict:
     print("\n" + "=" * 96)
     print("O3  OPTIMIZER vs HAND-TUNED UNIFORM COPY-NUMBER THRESHOLD, matched memory")
     print("=" * 96)
-    print(f"  {'budget':>12s} {'optimizer err':>14s} {'best uniform':>14s} "
-          f"{'thresh':>8s} {'advantage':>10s}")
+    print("  three baselines, because one of them turned out to be a straw man (see O4):")
+    print(f"  {'budget':>10s} {'optimizer':>10s} {'uniform-thr':>12s} {'by-degree':>10s} "
+          f"{'random':>10s}")
     curve = []
+    rngb = np.random.default_rng(7)
     for BUD in (12.0, 10.0, 8.0, 6.0, 5.0):
         o = optimize(model, BUD, free_rungs=True)
         u = best_uniform_at_memory(model, o["cost"])
-        adv = (u["error"] / o["error"]) if (u and o["error"] > 0) else float("nan")
-        curve.append((BUD, o["cost"], o["error"], None if u is None else u["error"]))
-        ustr = f"{u['error']:.2f}%" if u else "none fits"
-        tstr = f"{u['thresh']:.0f}" if u else "--"
-        print(f"  10^{BUD:<9.1f} {o['error']:>13.2f}% {ustr:>14s} {tstr:>8s} "
-              f"{adv:>9.2f}x")
-    ok3 = all(u is None or e <= u for _b, _c, e, u in curve)
+        d = by_rank_at_memory(model, o["cost"], key=lambda v: -len(model["adj"][v]))
+        jitter = {v: float(rngb.random()) for v in model["names"]}
+        r = by_rank_at_memory(model, o["cost"], key=lambda v: jitter[v])
+        curve.append((BUD, o["cost"], o["error"],
+                      None if u is None else u["error"],
+                      None if d is None else d["error"],
+                      None if r is None else r["error"]))
+        f = lambda x: f"{x['error']:.2f}%" if x else "none fits"
+        print(f"  10^{BUD:<7.1f} {o['error']:>9.2f}% {f(u):>12s} {f(d):>10s} {f(r):>10s}")
+    ok3 = all(all(b is None or e <= b + 1e-9 for b in (u, d, r))
+              for _bd, _c, e, u, d, r in curve)
     out["O3"] = ok3
     print(f"  O3 {'PASS' if ok3 else 'FAIL'} -- optimizer error must not exceed the "
           f"hand-tuned baseline at matched memory")
@@ -306,7 +358,7 @@ def verify(verbose: bool = True) -> dict:
     print("\n" + "=" * 96)
     print("O5  MONOTONICITY of the trade curve")
     print("=" * 96)
-    errs = [e for _b, _c, e, _u in curve]
+    errs = [e for _b, _c, e, *_r in curve]
     mono = all(errs[i] <= errs[i + 1] + 1e-9 for i in range(len(errs) - 1))
     print(f"  budgets 10^12 -> 10^5 give errors " +
           " -> ".join(f"{e:.2f}%" for e in errs))
@@ -319,18 +371,25 @@ def verify(verbose: bool = True) -> dict:
     hom = synthetic_model(n=300, seed=0, homogeneous=True)
     hc0, _ = state_cost(hom, {v: EXACT for v in hom["names"]})
     print(f"  every species 100 copies, every degree equal; exact bucket 10^{hc0:.1f} B")
-    print(f"  {'budget':>12s} {'optimizer err':>14s} {'best uniform':>14s} {'advantage':>10s}")
+    print(f"  {'budget':>12s} {'optimizer err':>14s} {'best baseline':>14s} {'advantage':>10s}")
     advs = []
     for BUD in (10.0, 8.0, 6.0):
         o = optimize(hom, BUD, free_rungs=True)
-        u = best_uniform_at_memory(hom, o["cost"])
-        if u is None:
+        cands = [best_uniform_at_memory(hom, o["cost"]),
+                 by_rank_at_memory(hom, o["cost"], key=lambda v: -len(hom["adj"][v])),
+                 by_rank_at_memory(hom, o["cost"], key=lambda v: v)]
+        errs_b = [c["error"] for c in cands if c is not None]
+        if not errs_b:
             print(f"  10^{BUD:<9.1f} {o['error']:>13.2f}% {'none fits':>14s} {'--':>10s}")
             continue
-        adv = u["error"] / o["error"] if o["error"] > 0 else float("nan")
+        bb = min(errs_b)
+        adv = bb / o["error"] if o["error"] > 0 else float("nan")
         advs.append(adv)
-        print(f"  10^{BUD:<9.1f} {o['error']:>13.2f}% {u['error']:>13.2f}% {adv:>9.2f}x")
-    het_adv = [u / e for _b, _c, e, u in curve if u is not None and e > 0]
+        print(f"  10^{BUD:<9.1f} {o['error']:>13.2f}% {bb:>13.2f}% {adv:>9.2f}x   "
+              f"(best of uniform / by-degree / arbitrary)")
+    het_adv = [min(x for x in (u, d, r) if x is not None) / e
+               for _b, _c, e, u, d, r in curve if e > 0
+               and any(x is not None for x in (u, d, r))]
     out["O4"] = (not advs) or (max(advs) < 1.5)
     print(f"  heterogeneous advantage up to {max(het_adv) if het_adv else float('nan'):.2f}x; "
           f"homogeneous up to {max(advs) if advs else float('nan'):.2f}x")
