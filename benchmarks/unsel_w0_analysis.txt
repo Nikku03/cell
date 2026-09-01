@@ -37,6 +37,29 @@
            entropy      1      0.867     0.0250  not above chance
              50/50      0          1     0.0500  not above chance
         size(ctrl)      5    0.00404     0.0125  SIGNAL
+
+      WHAT WAS RETRIEVED -- the best qualifying pose in each top 20, and its margin to the bar
+        ranking     cid    quality      f_nat  I_rmsd  L_rmsd  margin to the CAPRI bar
+        energy      1A2K   acceptable   0.103    4.18    9.70  L +0.30 A
+        energy      1ACB   acceptable   0.129    5.82    9.76  L +0.24 A
+        energy      1B6C   -- none -- 
+        energy      1BKD   acceptable   0.446    4.68    9.88  L +0.12 A
+        energy      1BUH   acceptable   0.171    4.15    9.88  L +0.12 A
+        entropy     1A2K   -- none -- 
+        entropy     1ACB   -- none -- 
+        entropy     1B6C   medium       0.800    1.56    6.65  L +3.35 A, I +2.44 A
+        entropy     1BKD   -- none -- 
+        entropy     1BUH   -- none -- 
+        50/50       1A2K   -- none -- 
+        50/50       1ACB   -- none -- 
+        50/50       1B6C   -- none -- 
+        50/50       1BKD   -- none -- 
+        50/50       1BUH   -- none -- 
+        size(ctrl)  1A2K   medium       0.897    1.78    7.11  L +2.89 A, I +2.22 A
+        size(ctrl)  1ACB   medium       0.714    1.16    3.08  L +6.92 A, I +2.84 A
+        size(ctrl)  1B6C   medium       0.800    1.56    6.65  L +3.35 A, I +2.44 A
+        size(ctrl)  1BKD   medium       0.745    1.12    2.70  L +7.30 A, I +2.88 A
+        size(ctrl)  1BUH   medium       0.927    2.04    4.84  L +5.16 A, I +1.96 A
       PAIRED, the hypothesis itself: 50/50 vs energy alone -- 0 complexes gained, 4 lost, exact one-sided p = 1
       and against the size control: entropy 1 vs size 5 hits -- beating chance is not the bar, beating size is.
       lambda sweep of rank(E) + lambda*rank(-T*S) -- DIAGNOSTIC, NOT A GATE:

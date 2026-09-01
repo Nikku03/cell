@@ -328,6 +328,30 @@ def main():
         print(f"      {name:>12s} {h:6d} {pvals[name]:10.3g} {thr:10.4f}  "
               f"{'SIGNAL' if ok else 'not above chance'}")
     # The actual hypothesis: does entropy ADD to energy? Paired, same complexes.
+    # WHAT WAS ACTUALLY RETRIEVED, not just whether something was. A hit count hides the
+    # margin: this run's energy arm scores 4/5, and all four qualify ONLY through the
+    # L_rmsd <= 10 branch at 9.70-9.88 A, i.e. every one of them within 0.30 A of failing,
+    # with f_nat barely over the 0.1 floor. The size control's 5/5 are medium-quality poses
+    # at 1.1-2.0 A interface rmsd. Reporting "4 versus 5" for that is nearly a lie by
+    # omission, so the qualifying pose itself is printed.
+    print("\n      WHAT WAS RETRIEVED -- the best qualifying pose in each top 20, and its "
+          "margin to the bar")
+    print(f"        {'ranking':<11s} {'cid':6s} {'quality':<11s} {'f_nat':>6s} "
+          f"{'I_rmsd':>7s} {'L_rmsd':>7s}  margin to the CAPRI bar")
+    for name, fn in rankings.items():
+        for c in usable:
+            q = c["poses"]
+            order = np.argsort(fn(q))[:TOPK]
+            good = [q[int(j)] for j in order if q[int(j)]["quality"] in OK]
+            if not good:
+                print(f"        {name:<11s} {c['id']:6s} {'-- none --':<11s}")
+                continue
+            b = min(good, key=lambda z: z["I_rmsd"])
+            mL, mI = 10.0 - b["L_rmsd"], 4.0 - b["I_rmsd"]
+            marg = f"L {mL:+.2f} A" + (f", I {mI:+.2f} A" if mI >= 0 else "")
+            print(f"        {name:<11s} {c['id']:6s} {b['quality']:<11s} {b['f_nat']:6.3f} "
+                  f"{b['I_rmsd']:7.2f} {b['L_rmsd']:7.2f}  {marg}")
+
     a = np.array(hits["energy"][1]); c50 = np.array(hits["50/50"][1])
     gain = int((c50 & ~a).sum()); loss = int((a & ~c50).sum())
     from math import comb
