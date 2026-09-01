@@ -108,3 +108,6 @@ outputs/orphan/rnadecay/*.csv
 # The derived per-gene table IS committed; the raw dump is not.
 colab/data/uniprot_sites.tsv.gz
 outputs/*.ckpt.npz
+
+# in-progress benchmark output: renamed to its final name only when the run completes
+benchmarks/*.part

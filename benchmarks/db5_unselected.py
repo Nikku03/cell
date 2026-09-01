@@ -156,7 +156,7 @@ THIS reachable set contains any, and whether entropy can retrieve them from what
 """
 from __future__ import annotations
 
-import argparse, collections, json, sys, time, zlib
+import argparse, collections, json, os, sys, time, zlib
 sys.path.insert(0, ".")
 import numpy as np
 
@@ -650,6 +650,7 @@ def main(argv=None):
               "STEP 3 will be VOID by construction.", flush=True)
 
     out, t0 = [], time.perf_counter()
+    part = a.out + ".part"
     for n, (cid, cls) in enumerate(ids, 1):
         try:
             r = run_complex(cid, cls, rots, a.sample, forced_cap=fcap)
@@ -665,8 +666,17 @@ def main(argv=None):
               f"n={len(r['poses']):4d} deg={nd:3d} "
               f"bestI={min(p['I_rmsd'] for p in r['poses']):6.2f} "
               f"{time.perf_counter()-t0:6.0f}s", flush=True)
-        json.dump(out, open(a.out, "w"), indent=1, default=float)
-    json.dump(out, open(a.out, "w"), indent=1, default=float)
+        # A FILE NAMED FOR A FINISHED RUN MUST NOT EXIST UNTIL THE RUN IS FINISHED.
+        # The per-complex checkpoint used to be written straight to a.out, so a run killed or
+        # crashed halfway left a file under the run's own name holding a fraction of it -- and
+        # the analysis module reads that file as the whole run, with no field in it saying how
+        # many complexes were meant to be there. Same failure family as ledger defect O: a
+        # partial result that does not announce itself as partial. The checkpoint now goes to
+        # a .part sibling and is renamed only after the last complex, so the presence of the
+        # final name is itself the completion signal.
+        json.dump(out, open(part, "w"), indent=1, default=float)
+    json.dump(out, open(part, "w"), indent=1, default=float)
+    os.replace(part, a.out)
     print(f"\n  wrote {a.out}: {len(out)} complexes, "
           f"{sum(len(c['poses']) for c in out)} poses, {time.perf_counter()-t0:.0f}s")
     return 0
