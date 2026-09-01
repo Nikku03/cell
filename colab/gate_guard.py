@@ -535,6 +535,28 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      repeating the SAME experiment. It is not a claim about a different one, and a table that
 #      cannot express the difference will hand a borrowed number full confidence.
 #
+#   T  A POWER CALCULATION PERFORMED AGAINST A STATISTIC THE TEST DOES NOT USE. The DB5
+#      unselected run forces CAPRI-acceptable poses into the analysis set so the retrieval gate
+#      has targets, and the number forced sets the gate's chance baseline. The cap was fixed at
+#      100 and justified in a comment by computing how often a random ranker would fill the
+#      WHOLE top 20 with acceptable poses -- at a 17% acceptable fraction that is 0.167^20, about
+#      1e-15, which reads like enormous power. The gate does not score that. It scores a
+#      per-complex INDICATOR, "did at least one acceptable pose reach the top 20", and combines
+#      indicators across complexes by exact Poisson-binomial. An indicator SATURATES where a
+#      count does not: at 100 forced in 600 a random top-20 contains an acceptable pose with
+#      probability 0.976, so a PERFECT ORACLE over five complexes reaches only p = 0.88. The cap
+#      chosen to guarantee power guaranteed its absence, by a factor of 1e13 in the wrong
+#      direction. Caught by running the analysis on a one-complex partial output rather than
+#      waiting for the full run, which is the cheap habit that made the difference.
+#      RULE: a power calculation must be run against the ESTIMATOR the verdict is computed from,
+#      not against a related quantity that shares its inputs. Where the two live in different
+#      modules, the design constant must be DERIVED by calling the gate's own chance function,
+#      not hand-computed alongside it -- so the repair here replaces the constant with
+#      forced_cap_for_power(), which searches for the largest cap at which the gate's own
+#      oracle still clears alpha, and prints it at run time. GENERAL FORM: "count in the top k"
+#      and "any in the top k" have opposite power behaviour as the base rate rises. Any argument
+#      about power must name which one it is talking about.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 

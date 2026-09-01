@@ -176,17 +176,65 @@ I_DIRECT_SCREEN = 12.0                   # loose screen for the non-affine I_rms
 MAX_ENUM = 4000000                       # cap on enumerated translations; reported if it binds
 R_SAMPLE, T_PER_ROT = 80, 40             # sampling budget: rotations, translations per rotation
 N_BINS, PER_BIN, N_SAMPLE = 25, 20, 500
-# THE FORCED-INCLUDE CAP, AND WHY IT IS A POWER DECISION RATHER THAN A SPEED ONE. Step 2 forces
-# every CAPRI-acceptable pose found by the ceiling into the analysis set, so that the retrieval
-# test has targets. On 1A2K the reachable set contains 24,184 acceptable poses. Forcing all of
-# them would make the analysis set 98% acceptable -- and the retrieval test's own null is the
-# exact Poisson-binomial at the observed acceptable fraction, so at 0.98 a RANDOM ranker scores
-# 20/20 in the top 20 with p ~ 0.67. The test would still be valid and would have no power left.
-# The cap is chosen so the chance rate stays near 0.17 (100 forced against a 500-pose stratified
-# sample), which puts a perfect 20/20 at p ~ 1e-15. It is a stratified draw over I_rmsd with the
-# complex's own seed, and n_acceptable, n_forced and the resulting weight are all written to the
-# output so nothing is capped silently.
-FORCED_CAP = 100
+# THE FORCED-INCLUDE CAP, DERIVED FROM THE GATE'S OWN POWER RATHER THAN CHOSEN.
+#
+# Step 2 forces CAPRI-acceptable poses from the ceiling into the analysis set so the retrieval
+# test has targets. On 1A2K the reachable set holds 24,184 of them; forcing all would make the
+# set 98% acceptable and leave the gate with no power.
+#
+# A FIRST ATTEMPT AT THIS CAP WAS WRONG AND IS RECORDED RATHER THAN OVERWRITTEN. It fixed
+# FORCED_CAP = 100 and justified it by computing the chance of a random ranker filling the whole
+# top 20 with acceptable poses. THAT IS NOT THE STATISTIC THE GATE USES. db5_unselected_analysis
+# scores a per-complex INDICATOR -- does at least one acceptable pose reach the top 20 -- and
+# combines the indicators across complexes by exact Poisson-binomial. An indicator saturates
+# where a count does not: at 100 forced in 600, a random top-20 contains an acceptable pose with
+# probability 0.976, so a PERFECT ORACLE over five complexes reaches only p = 0.88. The run was
+# stopped after one complex when the analysis printed exactly that. Ledger defect T: a power
+# calculation performed against a statistic the test does not use.
+#
+# The cap is therefore no longer a constant. forced_cap_for_power() returns the largest number of
+# forced poses for which an oracle still clears alpha with a safety margin, given the number of
+# complexes and the sample size, and main() prints it. For 5 complexes and a 500-pose sample that
+# is 10 forced poses (oracle p = 0.004), against the 100 that gave p = 0.88.
+FORCED_CAP_FALLBACK = 10
+TOPK = 20                                # must match db5_unselected_analysis.TOPK
+ALPHA = 0.05                             # must match db5_unselected_analysis.ALPHA
+POWER_MARGIN = 10.0                      # oracle must clear ALPHA/POWER_MARGIN, not just ALPHA
+
+
+def chance_hit(n_pose, k_acc, top=TOPK):
+    """P(a random top-`top` of n_pose contains >= 1 of the k_acc acceptable). Exact, no approx.
+
+    Mirrors db5_unselected_analysis.chance_hit exactly; the two must not drift, because the cap
+    is chosen against this function and the verdict is computed against that one.
+    """
+    if k_acc <= 0 or n_pose <= 0:
+        return 0.0
+    q = 1.0
+    for j in range(min(top, n_pose)):
+        num = n_pose - k_acc - j
+        if num <= 0:
+            return 1.0
+        q *= num / (n_pose - j)
+    return float(1.0 - q)
+
+
+def forced_cap_for_power(n_complexes, n_sample, top=TOPK, alpha=ALPHA, margin=POWER_MARGIN):
+    """Largest forced-include count for which a PERFECT ORACLE still clears alpha/margin.
+
+    The oracle scores a hit on every complex, so its exact p-value is the product of the
+    per-complex chance rates. Returns 0 when no positive count works, which is itself a real
+    answer -- it means the gate cannot be given targets without destroying itself.
+    """
+    target = alpha / float(margin)
+    best = 0
+    for k in range(1, max(2, n_sample)):
+        c = chance_hit(n_sample + k, k, top)
+        if c ** max(1, int(n_complexes)) <= target:
+            best = k
+        else:
+            break
+    return best
 REPACK_RES, N_CHI1, N_CHI2 = 6, 3, 2
 CONTACT_CUT = 5.0
 OK = ("high", "medium", "acceptable")
@@ -367,7 +415,7 @@ def score_pose_ext(rec, lig_at_pose, grid_score, rtree=None):
             "n_repack": int(len(prob.res_keys)), "degenerate": False}
 
 
-def run_complex(cid, cls, rots, n_sample):
+def run_complex(cid, cls, rots, n_sample, forced_cap=FORCED_CAP_FALLBACK):
     case = load_case(cid)
     rec, lig = case["r_u"], case["l_u"]
     seed = zlib.crc32(cid.encode()) & 0x7FFFFFFF
@@ -518,8 +566,8 @@ def run_complex(cid, cls, rots, n_sample):
     # destroyed the retrieval test's power (see FORCED_CAP). So the set is sampled, and the
     # sampling is recorded rather than absorbed.
     n_acc_total = len(accept)
-    if n_acc_total > FORCED_CAP:
-        pick = _stratified_pick([a["I_rmsd"] for a in accept], FORCED_CAP, rng)
+    if n_acc_total > forced_cap:
+        pick = _stratified_pick([a["I_rmsd"] for a in accept], forced_cap, rng)
         forced_set, forced_capped = [accept[i] for i in pick], True
     else:
         forced_set, forced_capped = list(accept), False
@@ -561,7 +609,9 @@ def run_complex(cid, cls, rots, n_sample):
         # whenever there are more than FORCED_CAP of them, and the weight below is how many
         # acceptable poses each forced record stands for.
         "forced": {"n_acceptable": int(n_acc_total), "n_forced": int(len(forced_set)),
-                   "capped": bool(forced_capped), "cap": FORCED_CAP,
+                   "capped": bool(forced_capped), "cap": int(forced_cap),
+                   "oracle_p_at_this_cap": chance_hit(
+                       len(chosen) + len(forced_set), len(forced_set)),
                    "weight": (n_acc_total / len(forced_set)) if forced_set else None},
         "pool": {"n": len(pool), "n_drawn": int(n_drawn), "n_wrap_rejected": int(n_wrap),
                  "box_ok": bool(srch.box_ok), "I_lo": lo, "I_hi99": hi,
@@ -585,12 +635,24 @@ def main(argv=None):
     if a.nworkers > 1:
         ids = [x for i, x in enumerate(ids) if i % a.nworkers == a.worker]
     rots = rotation_set(ROTATIONS, seed=1)
+    # THE FORCED-INCLUDE CAP IS DERIVED HERE, FROM THIS RUN'S OWN SHAPE, AND PRINTED.
+    # It depends on the number of complexes because the retrieval gate's unit of replication is
+    # the complex: an oracle's p-value is the product of the per-complex chance rates, so a
+    # shorter run needs a tighter cap to stay powered. A cap of 0 means the gate cannot be given
+    # targets without destroying itself, and that is reported rather than worked around.
+    fcap = forced_cap_for_power(len(ids), a.sample)
+    orc = chance_hit(a.sample + fcap, fcap) ** max(1, len(ids)) if fcap else 1.0
     print(f"  {len(ids)} complexes, {ROTATIONS} rotations, sample {a.sample}", flush=True)
+    print(f"  forced-include cap {fcap} (derived): a perfect oracle over {len(ids)} complexes "
+          f"reaches p = {orc:.2e} vs alpha {ALPHA}", flush=True)
+    if fcap == 0:
+        print("  WARNING: no positive cap keeps the retrieval gate powered at this sample size; "
+              "STEP 3 will be VOID by construction.", flush=True)
 
     out, t0 = [], time.perf_counter()
     for n, (cid, cls) in enumerate(ids, 1):
         try:
-            r = run_complex(cid, cls, rots, a.sample)
+            r = run_complex(cid, cls, rots, a.sample, forced_cap=fcap)
         except Exception as e:                                     # noqa: BLE001
             print(f"  {cid:6s} ERROR {type(e).__name__}: {str(e)[:70]}", flush=True)
             continue
