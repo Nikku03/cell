@@ -156,7 +156,7 @@ THIS reachable set contains any, and whether entropy can retrieve them from what
 """
 from __future__ import annotations
 
-import argparse, json, sys, time, zlib
+import argparse, collections, json, sys, time, zlib
 sys.path.insert(0, ".")
 import numpy as np
 
@@ -176,9 +176,50 @@ I_DIRECT_SCREEN = 12.0                   # loose screen for the non-affine I_rms
 MAX_ENUM = 4000000                       # cap on enumerated translations; reported if it binds
 R_SAMPLE, T_PER_ROT = 80, 40             # sampling budget: rotations, translations per rotation
 N_BINS, PER_BIN, N_SAMPLE = 25, 20, 500
+# THE FORCED-INCLUDE CAP, AND WHY IT IS A POWER DECISION RATHER THAN A SPEED ONE. Step 2 forces
+# every CAPRI-acceptable pose found by the ceiling into the analysis set, so that the retrieval
+# test has targets. On 1A2K the reachable set contains 24,184 acceptable poses. Forcing all of
+# them would make the analysis set 98% acceptable -- and the retrieval test's own null is the
+# exact Poisson-binomial at the observed acceptable fraction, so at 0.98 a RANDOM ranker scores
+# 20/20 in the top 20 with p ~ 0.67. The test would still be valid and would have no power left.
+# The cap is chosen so the chance rate stays near 0.17 (100 forced against a 500-pose stratified
+# sample), which puts a perfect 20/20 at p ~ 1e-15. It is a stratified draw over I_rmsd with the
+# complex's own seed, and n_acceptable, n_forced and the resulting weight are all written to the
+# output so nothing is capped silently.
+FORCED_CAP = 100
 REPACK_RES, N_CHI1, N_CHI2 = 6, 3, 2
 CONTACT_CUT = 5.0
 OK = ("high", "medium", "acceptable")
+
+
+def _stratified_pick(values, k, rng, nbins=N_BINS):
+    """k indices spread over the range of `values`, filling bins evenly then topping up.
+
+    Non-finite values are eligible only in the top-up, so a nan can never displace a real
+    stratum -- the same rule the analysis module applies when ranking (ledger defect O).
+    """
+    v = np.asarray(values, float)
+    n = len(v)
+    if k >= n:
+        return list(range(n))
+    fin = np.where(np.isfinite(v))[0]
+    chosen = []
+    if len(fin):
+        lo, hi = float(v[fin].min()), float(v[fin].max())
+        edges = np.linspace(lo, max(hi, lo + 1e-9), nbins + 1)
+        which = np.clip(np.digitize(v[fin], edges) - 1, 0, nbins - 1)
+        per = max(1, k // nbins)
+        for b in range(nbins):
+            m = fin[which == b]
+            if len(m):
+                chosen += [int(x) for x in rng.choice(m, size=min(per, len(m)), replace=False)]
+    chosen = sorted(set(chosen))[:k]
+    if len(chosen) < k:
+        rest = np.setdiff1d(np.arange(n), np.array(chosen, int))
+        if len(rest):
+            chosen = sorted(set(chosen) | {int(x) for x in rng.choice(
+                rest, size=min(k - len(chosen), len(rest)), replace=False)})
+    return chosen
 
 
 def quad_ball(disp0, bar):
@@ -403,6 +444,8 @@ def run_complex(cid, cls, rots, n_sample):
             if m["quality"] in OK:
                 accept.append({"rot": int(ri), "shift": list(key), **m})
     t_ceil = time.perf_counter() - t0
+    print(f"    {cid} ceiling {t_ceil:6.1f}s  enum={n_enum:,} exact={n_exact:,} "
+          f"acceptable={len(accept):,}", flush=True)
 
     # ---------------- STEP 1: poses the score ADMITS but does not RANK ----------------
     ridx = rng.choice(len(rots), size=min(R_SAMPLE, len(rots)), replace=False)
@@ -432,6 +475,8 @@ def run_complex(cid, cls, rots, n_sample):
                          float(S[tuple(int(x) for x in raw)])))
     if not pool:
         raise RuntimeError("no admissible poses")
+    print(f"    {cid} pool    {time.perf_counter()-t0-t_ceil:6.1f}s  n={len(pool):,} "
+          f"drawn={n_drawn:,} wrap_rejected={n_wrap:,}", flush=True)
     pool_I = np.array([cheap_irmsd(rots[ri], np.array(sh)) for ri, sh, _s in pool])
 
     lo, hi = float(pool_I.min()), float(np.percentile(pool_I, 99))
@@ -451,7 +496,12 @@ def run_complex(cid, cls, rots, n_sample):
 
     # ---------------- STEP 2: exact metrics + partition function on the sample ----------
     recs = []
-    for j in chosen:
+    t_s2 = time.perf_counter()
+    print(f"    {cid} scoring {len(chosen)} sampled poses", flush=True)
+    for kk, j in enumerate(chosen):
+        if kk and kk % 100 == 0:
+            print(f"      {cid} sampled {kk}/{len(chosen)}  "
+                  f"{time.perf_counter()-t_s2:.0f}s", flush=True)
         ri, sh, sc = pool[j]
         c, m = metrics_at(rots[ri], np.array(sh))
         try:
@@ -460,17 +510,36 @@ def run_complex(cid, cls, rots, n_sample):
             continue
         recs.append({**s, "I_rmsd": m["I_rmsd"], "L_rmsd": m["L_rmsd"], "f_nat": m["f_nat"],
                      "quality": m["quality"], "rot": int(ri), "forced": False})
-    for a in accept:                       # force-include every acceptable pose from step 0
-        S = srch.score_rotation(rots[a["rot"]])
-        raw = tuple(int(x) % int(n) for x, n in zip(a["shift"], S.shape))
-        c = apply_pose(moved, rots[a["rot"]],
-                       fftcorr.shift_to_world(np.array(a["shift"]), SPACING), centre=centre)
-        try:
-            s = score_pose_ext(rec, _as_struct(lig, c), float(S[raw]), rtree)
-        except Exception:                                          # noqa: BLE001
-            continue
-        recs.append({**s, "I_rmsd": a["I_rmsd"], "L_rmsd": a["L_rmsd"], "f_nat": a["f_nat"],
-                     "quality": a["quality"], "rot": int(a["rot"]), "forced": True})
+    # FORCED-INCLUDE, SAMPLED AND GROUPED. Two defects were fixed here together, and they were
+    # the same defect wearing two hats. The loop used to call srch.score_rotation once PER POSE;
+    # on 1A2K that is 24,184 full FFT correlations for 60 distinct rotations, a 403x redundancy
+    # that alone put the run at 7-20 hours for one complex. Grouping by rotation makes it one
+    # FFT per rotation. But the redundancy was the symptom: forcing all 24,184 would also have
+    # destroyed the retrieval test's power (see FORCED_CAP). So the set is sampled, and the
+    # sampling is recorded rather than absorbed.
+    n_acc_total = len(accept)
+    if n_acc_total > FORCED_CAP:
+        pick = _stratified_pick([a["I_rmsd"] for a in accept], FORCED_CAP, rng)
+        forced_set, forced_capped = [accept[i] for i in pick], True
+    else:
+        forced_set, forced_capped = list(accept), False
+    print(f"    {cid} forced  {len(forced_set)} of {n_acc_total:,} acceptable"
+          f"{' (CAPPED)' if forced_capped else ''}", flush=True)
+    by_rot = collections.defaultdict(list)
+    for a in forced_set:
+        by_rot[int(a["rot"])].append(a)
+    for ri, group in by_rot.items():
+        S = srch.score_rotation(rots[ri])          # ONE FFT per rotation, not one per pose
+        for a in group:
+            raw = tuple(int(x) % int(n) for x, n in zip(a["shift"], S.shape))
+            c = apply_pose(moved, rots[ri],
+                           fftcorr.shift_to_world(np.array(a["shift"]), SPACING), centre=centre)
+            try:
+                s = score_pose_ext(rec, _as_struct(lig, c), float(S[raw]), rtree)
+            except Exception:                                      # noqa: BLE001
+                continue
+            recs.append({**s, "I_rmsd": a["I_rmsd"], "L_rmsd": a["L_rmsd"], "f_nat": a["f_nat"],
+                         "quality": a["quality"], "rot": int(ri), "forced": True})
 
     sp = np.array(probe) if probe else np.zeros((0, 2))
     near = sp[sp[:, 0] <= I_BAR] if len(sp) else sp
@@ -488,6 +557,12 @@ def run_complex(cid, cls, rots, n_sample):
         "screen": {"n_probe": int(len(sp)), "n_within_I_bar": int(len(near)),
                    "max_direct_given_I_ok": (float(near[:, 1].max()) if len(near) else None),
                    "limit": I_DIRECT_SCREEN},
+        # NO SILENT CAPS: the forced-include set is a stratified sample of the acceptable poses
+        # whenever there are more than FORCED_CAP of them, and the weight below is how many
+        # acceptable poses each forced record stands for.
+        "forced": {"n_acceptable": int(n_acc_total), "n_forced": int(len(forced_set)),
+                   "capped": bool(forced_capped), "cap": FORCED_CAP,
+                   "weight": (n_acc_total / len(forced_set)) if forced_set else None},
         "pool": {"n": len(pool), "n_drawn": int(n_drawn), "n_wrap_rejected": int(n_wrap),
                  "box_ok": bool(srch.box_ok), "I_lo": lo, "I_hi99": hi,
                  "I_max": float(pool_I.max())},
