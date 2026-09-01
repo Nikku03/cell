@@ -10,6 +10,7 @@ import numpy as np
 
 OK = ("high", "medium", "acceptable")
 TOPK = 20
+SPACING = 1.5                  # must match db5_unselected.SPACING; the screen-headroom bar
 ALPHA = 0.05                   # one-sided exact p for the retrieval gate
 Q1_RHO = -0.10                 # the ORIGINAL Q1 effect-size bar, unchanged
 PRIOR_RHO = -0.4498            # what the score-selected shortlist reported, for comparison
@@ -149,10 +150,29 @@ def main():
           if c["screen"]["max_direct_given_I_ok"] is not None]
     nw = sum(c["screen"]["n_within_I_bar"] for c in data)
     if md:
+        # THE SCREEN VERDICT IS NOT A STRICT INEQUALITY. It used to be `max(md) < limit`, which
+        # returns SAFE on a quantity that has saturated: this run's maximum is 11.9985 A against
+        # a 12 A screen, a headroom of 0.0015 A, and it printed SAFE. The screen exists because
+        # the superimposed I_rmsd is not affine in the translation and so cannot be enumerated
+        # in closed form; poses are kept only if their DIRECT interface rmsd is within 12 A. If
+        # qualifying poses sit right at that boundary then poses just outside it plausibly
+        # qualify too and were never enumerated. The honest bar is headroom of at least one grid
+        # spacing -- if no pose came within one translation step of the boundary, the next shell
+        # out cannot be hiding qualifying poses; if one did, the screen is BINDING and the
+        # acceptable counts are a LOWER BOUND rather than a census.
+        lim = float(data[0]["screen"]["limit"])
+        head = lim - max(md)
+        safe = head > SPACING
+        verdict = "SAFE" if safe else "SATURATED -- the screen is binding"
         print(f"      screen validation: {nw} poses had exact I_rmsd <= 4; the largest DIRECT "
-              f"interface rmsd among them was {max(md):.2f} A vs a screen at "
-              f"{data[0]['screen']['limit']:.0f} A -> "
-              f"{'SAFE' if max(md) < data[0]['screen']['limit'] else 'NOT SAFE'}")
+              f"interface rmsd among them was {max(md):.4f} A vs a screen at {lim:.0f} A "
+              f"(headroom {head:.4f} A, one grid step is {SPACING} A) -> {verdict}")
+        if not safe:
+            near = sum(1 for x in md if lim - x <= SPACING)
+            print(f"      {near}/{len(md)} complexes came within one grid step of the screen. "
+                  f"n_acceptable is therefore a LOWER BOUND, not a count. This does NOT weaken "
+                  f"the CEILING verdict, which asserts >= 1 acceptable pose and can only be "
+                  f"helped by finding more, but any statement about HOW MANY is undercounted.")
     else:
         print(f"      screen validation: no pose anywhere reached exact I_rmsd <= 4, so the "
               f"I-branch screen was never exercised (the L-branch is exact by construction)")
@@ -180,8 +200,28 @@ def main():
     print(f"      partial | n_repack (extensivity)      {partial(TS, IR, NR):+.4f}")
     print(f"      partial | BOTH                        {partial(TS, IR, CN, NR):+.4f}")
     par = partial(TS, IR, CN, NR)
-    q1 = bool(rho <= Q1_RHO and np.median(per[np.isfinite(per)]) < 0
-              and psign < ALPHA and np.isfinite(par) and par <= Q1_RHO)
+    # LEDGER DEFECT P, MECHANISED. The sign clause requires psign < ALPHA, and the SMALLEST
+    # two-sided p a sign test can return on n complexes is 2 * 0.5**n. At n = 5 that is 0.0625,
+    # so with ALPHA = 0.05 the clause CANNOT PASS even when every complex agrees -- the gate
+    # would print FAILS on perfect evidence and the reader would credit the science. So the
+    # clause's reachability is computed first, and an unreachable clause is DROPPED FROM THE
+    # CONJUNCTION and reported, rather than silently deciding the verdict.
+    best_psign = 2.0 * 0.5 ** n if n else 1.0
+    sign_reachable = best_psign < ALPHA
+    clauses = {"pooled rho <= bar": bool(rho <= Q1_RHO),
+               "per-complex median negative": bool(np.median(per[np.isfinite(per)]) < 0),
+               "survives the size control": bool(np.isfinite(par) and par <= Q1_RHO)}
+    if sign_reachable:
+        clauses["sign test significant"] = bool(psign < ALPHA)
+    else:
+        print(f"      SIGN CLAUSE UNREACHABLE at n = {n}: the smallest two-sided p a sign test "
+              f"can return is {best_psign:.4f} >= ALPHA {ALPHA}, so it cannot pass on ANY "
+              f"evidence (ledger defect P). Dropped from the conjunction rather than allowed "
+              f"to decide it; {k}/{n} negative is reported as a direction, not a test.")
+    q1 = all(clauses.values())
+    failed = [name for name, ok in clauses.items() if not ok]
+    if failed:
+        print(f"      failing clause(s): {', '.join(failed)}")
     print(f"      Q1 {'REPLICATES off the collider' if q1 else 'FAILS'}   "
           f"(bar: rho <= {Q1_RHO}, majority negative by sign test, and survives the size "
           f"control)")

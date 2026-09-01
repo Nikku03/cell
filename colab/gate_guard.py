@@ -557,6 +557,36 @@ def verdict(gate, if_true, if_false, emit=print, indent="     "):
 #      and "any in the top k" have opposite power behaviour as the base rate rises. Any argument
 #      about power must name which one it is talking about.
 #
+#   U  A VALIDATION THAT PASSES BY A HAIR ON A SATURATED QUANTITY. The DB5 unselected run
+#      enumerates translations in closed form for the L_rmsd branch, but the superimposed
+#      I_rmsd is not affine in the translation, so that branch is SCREENED: a pose is kept only
+#      if its DIRECT interface rmsd is within 12 A. The module was explicit that this is a
+#      screen and not a proof, and it validates rather than assumes -- it records the largest
+#      direct rmsd seen on any pose whose exact I_rmsd was inside the CAPRI bar, and declares
+#      the screen safe if that maximum is below 12. The check was `max < limit`, a STRICT
+#      INEQUALITY. This run returned 11.9985 against 12, headroom 0.0015 A, and printed SAFE.
+#      Five complexes out of five came within one grid step of the boundary. A screen whose
+#      qualifying poses are pressed flat against it is BINDING, not validated: poses just
+#      outside plausibly qualify and were never enumerated. RULE: a validation of the form
+#      "the observed extreme stayed inside the limit" needs a HEADROOM bar, not a strict
+#      inequality, and the headroom must be set by the resolution of the thing being enumerated
+#      -- here one grid spacing, since the next translation shell out is where the missed poses
+#      would live. The repair reports SATURATED and relabels the acceptable counts a LOWER
+#      BOUND. Note what it does not do: the CEILING verdict asserts ">= 1 acceptable pose" and
+#      can only be helped by finding more, so it survives untouched. A saturated screen damages
+#      claims about HOW MANY, not claims about WHETHER, and the repair says which is which
+#      rather than voiding both.
+#
+#   P (third instance, now mechanised). The same run's Q1 gate required a sign test over
+#      complexes at p < 0.05. The smallest two-sided p a sign test can return on n complexes is
+#      2 * 0.5**n, which at n = 5 is 0.0625. The clause could not pass on ANY evidence: five
+#      complexes out of five agreeing in sign -- the strongest result the design can produce --
+#      still failed it, and the gate would have printed "Q1 FAILS" with a reader crediting the
+#      science rather than the arithmetic. The repair computes the clause's BEST ACHIEVABLE
+#      value first, drops an unreachable clause from the conjunction, says so, and reports the
+#      direction as a direction rather than a test. Q1 then failed on the size control alone --
+#      a clause that could have passed, which is the only kind of failure worth reporting.
+#
 # A commit message is not a mechanism. This is.
 # =============================================================================================
 
