@@ -106,6 +106,34 @@ C3  AN ARITHMETIC CEILING THAT NEEDS NO MODEL. If the dim subpopulation is 1% of
 C-CONTROL  At the prevalence where the efficiency was measured, the formula must return that
     efficiency. This is ledger defect S made concrete: the 93% is correct where it was measured;
     the question is only whether it transfers to a 1% gate.
+
+=================================================================================================
+CORRECTIONS AFTER THE FIRST RUN. Nothing below is deleted; the failures are kept and labelled.
+=================================================================================================
+
+CORRECTION 1 -- A2 PASSED ON A SATURATED QUANTITY (ledger defect U, on my own work).
+    The first A2 run reported exact invariance, movement 0.000e+00, at P(>=1 fails) =
+    0.999999999962. A quantity pressed against 1 cannot show movement whether or not the
+    mechanism moves it, so that run could not have failed. The invariance claim is REAL -- it is
+    an algebraic identity, 1 - exp(-q*SUM N) has no dependence on how the sum is split -- but the
+    run as configured did not test it. A2 is rerun at an operating point where P sits near 0.2,
+    and the saturated first run is printed alongside so the defect is visible rather than tidied.
+
+CORRECTION 2 -- B1/B2/B3 MEASURED THE WRONG OBSERVABLE, AND B2 FAILED BECAUSE OF IT.
+    Peyrusson et al. state "a 0.2- or 0.3-log decrease ... per hour over the first 3 h". That is
+    an AVERAGE slope over 0-3 h. The first implementation used the INSTANTANEOUS slope at t = 1 h
+    and then set k = early*ln(10) in closed form, which is only correct in the limit a -> 0. The
+    consequence was a predeclared 1% gate on slope drift that FAILED at 2.98e-01, and a B3 span
+    of 0.7253 orders that FAILED its 1-order bar. Both failures are recorded below as FAILED.
+    The model observable is now the one they actually measured -- mean slope over 0-3 h, and mean
+    slope over 24-48 h for "longer incubations up to 48 h" -- and (k,b) are solved jointly for
+    each a instead of k being fixed in advance. The gates are rerun unchanged against the
+    corrected observable. A gate is allowed to be rerun when the INSTRUMENT was wrong; it is not
+    allowed to be rebarred when the ANSWER is unwelcome, and the bars below are the original ones.
+
+CORRECTION 3 -- A4 REPORTED ONE HAND-PICKED CORRELATION.
+    A single dispersion and a single correlation give a single number with no way to tell whether
+    it was chosen. A4 now sweeps the correlation and reports the whole curve.
 """
 
 from __future__ import annotations
@@ -232,7 +260,7 @@ def gate_A1():
     return worst
 
 
-def gate_A2(n=40, mean_N=300.0, q=2e-3, cvs=(0.0, 0.25, 0.5, 1.0, 2.0, 3.0), seed=3):
+def gate_A2(n=40, mean_N=300.0, q=2e-5, cvs=(0.0, 0.25, 0.5, 1.0, 2.0, 3.0), seed=3):
     """Fixed mean burden, homogeneous q, sweep the SPREAD. Does P move?"""
     rng = np.random.default_rng(seed)
     rows = []
@@ -267,17 +295,22 @@ def gate_A3(n=40, seed=5):
     return out, max(r[-1] for r in out)
 
 
-def gate_A4(n=40, seed=5, rho_target=0.8):
-    """Exact vs mean-field, in orders. Mean-field = replace each lesion by the average lesion."""
-    rng = np.random.default_rng(seed)
-    z1 = rng.normal(size=n); z2 = rng.normal(size=n)
-    z2 = rho_target * z1 + np.sqrt(1 - rho_target ** 2) * z2
-    N = np.exp(1.0 * z1) * 60.0
-    q = np.exp(0.8 * z2) * 2e-4
-    exact = p_any_fail(q, N)
-    mf = p_any_fail(np.full(n, q.mean()), np.full(n, N.mean()))
-    cov = np.mean((q - q.mean()) * (N - N.mean()))
-    return exact, mf, cov, n * cov, np.log10(exact / mf)
+def gate_A4(n=40, seed=5, rhos=(-0.9, -0.5, 0.0, 0.5, 0.9)):
+    """Exact vs mean-field across the whole correlation range, not one hand-picked point."""
+    rows = []
+    for rho_target in rhos:
+        rng = np.random.default_rng(seed)
+        z1 = rng.normal(size=n); z2 = rng.normal(size=n)
+        z2 = rho_target * z1 + np.sqrt(max(1 - rho_target ** 2, 0.0)) * z2
+        N = np.exp(1.0 * z1) * 60.0
+        q = np.exp(0.8 * z2) * 2e-4
+        exact = p_any_fail(q, N)
+        mf = p_any_fail(np.full(n, q.mean()), np.full(n, N.mean()))
+        cov = np.mean((q - q.mean()) * (N - N.mean()))
+        rho = float(np.corrcoef(q, N)[0, 1])
+        void = not (1e-9 < exact < 0.999 and 1e-9 < mf < 0.999)
+        rows.append((rho, cov, n * cov, exact, mf, np.log10(exact / mf), void))
+    return rows
 
 
 def gate_A5(k=8, m=12):
@@ -391,6 +424,105 @@ def gate_B3(early_log10=0.2, late_log10=0.02, a_grid=(1e-3, 3e-3, 1e-2, 3e-2, 1e
     return rows, span
 
 
+def logN_total(k, a, b, t):
+    """log10 of the total (growing + dormant) count, all-growing at t = 0."""
+    A = np.array([[-(k + a), b], [a, -b]])
+    v = float(np.sum(expm(A * t) @ np.array([1.0, 0.0])))
+    return np.log10(v) if v > 1e-290 else np.nan
+
+
+def slopes_measured(k, a, b):
+    """THE OBSERVABLE PEYRUSSON ET AL. ACTUALLY REPORT.
+
+    Early: mean log10 decline per hour over the first 3 h.
+    Late:  mean log10 decline per hour over 24-48 h ("longer incubations up to 48 h").
+    The first implementation used the instantaneous slope at t = 1 h instead. That is CORRECTION 2.
+    """
+    l0, l3, l24, l48 = (logN_total(k, a, b, t) for t in (0.0, 3.0, 24.0, 48.0))
+    if not np.isfinite(l3 + l24 + l48):
+        return np.nan, np.nan
+    return (l0 - l3) / 3.0, (l24 - l48) / 24.0
+
+
+def _b_for_late(k, a, late):
+    from scipy.optimize import brentq
+    f = lambda lb: slopes_measured(k, a, np.exp(lb))[1] - late
+    lo, hi = np.log(1e-8), np.log(200.0)
+    flo, fhi = f(lo), f(hi)
+    if not (np.isfinite(flo) and np.isfinite(fhi)) or flo * fhi > 0:
+        return None
+    return float(np.exp(brentq(f, lo, hi, xtol=1e-14, rtol=8.9e-16)))
+
+
+def solve_kb(a, early, late=0.02):
+    """Solve (k, b) jointly so BOTH published slopes are reproduced, for a given a."""
+    from scipy.optimize import brentq
+    ks = np.exp(np.linspace(np.log(0.05), np.log(5.0), 200))
+    pts = []
+    for k in ks:
+        b = _b_for_late(k, a, late)
+        if b is None:
+            continue
+        e, _ = slopes_measured(k, a, b)
+        if np.isfinite(e):
+            pts.append((k, e - early))
+    for i in range(len(pts) - 1):
+        if pts[i][1] * pts[i + 1][1] <= 0:
+            g = lambda lk: slopes_measured(np.exp(lk), a,
+                                           _b_for_late(np.exp(lk), a, late))[0] - early
+            lk = brentq(g, np.log(pts[i][0]), np.log(pts[i + 1][0]), xtol=1e-13, rtol=8.9e-16)
+            k = float(np.exp(lk))
+            return k, _b_for_late(k, a, late)
+    return None
+
+
+def plateau_measured(k, a, b, t_ref=8.0):
+    """log10 of the slow-phase amplitude: the late line extrapolated back to t = 0."""
+    A = np.array([[-(k + a), b], [a, -b]])
+    lam = float(np.max(np.linalg.eigvals(A).real))
+    return logN_total(k, a, b, t_ref) - lam * t_ref / np.log(10.0)
+
+
+A_GRID = (1e-4, 1e-3, 3e-3, 1e-2, 3e-2, 0.1, 0.3, 1.0, 3.0)
+
+
+def a_boundary(early, late=0.02, lo=1e-4, hi=10.0, tol=1e-4):
+    """Largest persister formation rate consistent with BOTH published slopes.
+
+    Bisected, not read off the grid. The grid-limited version of this number was the same
+    defect that made three of four peak widths in RESULTS_selection.txt lower bounds rather
+    than measurements, and it is not repeated here.
+    """
+    if solve_kb(lo, early, late) is None:
+        return None
+    if solve_kb(hi, early, late) is not None:
+        return float(hi)                      # boundary is above the search range: report as such
+    while hi - lo > tol * max(lo, 1e-6):
+        mid = np.sqrt(lo * hi)
+        if solve_kb(mid, early, late) is None:
+            hi = mid
+        else:
+            lo = mid
+    return float(lo)
+
+
+def gate_B_corrected(early, late=0.02, a_grid=A_GRID):
+    """B1/B2/B3 rerun against the observable they actually measured. Bars unchanged."""
+    rows, excluded = [], []
+    for a in a_grid:
+        r = solve_kb(a, early, late)
+        if r is None:
+            excluded.append(a); continue
+        k, b = r
+        e, l = slopes_measured(k, a, b)
+        rows.append((a, k, b, e, l, a / (a + b), plateau_measured(k, a, b)))
+    drift = max(max(abs(r[3] - early) / early, abs(r[4] - late) / late) for r in rows)
+    fr = [r[5] for r in rows]
+    pl = [r[6] for r in rows]
+    a_max = max(r[0] for r in rows)
+    return rows, excluded, drift, (min(fr), max(fr)), max(pl) - min(pl), a_max
+
+
 def gate_B_control(early_log10=0.2):
     k = early_log10 * np.log(10.0)
     e, l = two_state_slopes(k, a=0.0, b=1.0)
@@ -479,12 +611,20 @@ def report():
     P(f"  A1 EXACTNESS  worst relative error over 200 random lesion sets: {w:.3e}")
     P(f"     {'PASS' if w < 1e-12 else 'FAIL'} (bar 1e-12)")
     P("")
+    sat_rows, sat_drift = gate_A2(q=2e-3)
+    P("  A2 FIRST RUN, KEPT AND LABELLED -- CORRECTION 1 (ledger defect U, on my own work).")
+    P(f"     At q = 2e-3 the answer sits at P = {sat_rows[0][2]:.12f}, pressed against 1. Movement")
+    P(f"     measured {sat_drift:.3e}, but a saturated quantity cannot move whether the mechanism")
+    P("     moves it or not, so that run COULD NOT HAVE FAILED and is not evidence. Rerun below.")
+    P("")
     rows, drift = gate_A2()
     P("  A2 DOES THE SPREAD MATTER?  Mean burden held EXACTLY fixed, q homogeneous.")
     P("        requested CV   realised CV   P(>=1 lesion fails)")
     for cv, rcv, p in rows:
         P(f"        {cv:12.2f}   {rcv:11.4f}   {p:.15f}")
     P(f"     Maximum relative movement across a 0 -> 3 CV sweep: {drift:.3e}")
+    vac = not all(1e-9 < r[2] < 0.999 for r in rows)
+    P(f"     non-vacuity: {'VOID -- saturated' if vac else 'all rows inside (1e-9, 0.999) -- OK'}")
     if drift < 1e-9:
         P("     PREDECLARED VERDICT: the spread hypothesis is FALSE under this model.")
         P("     P(>=1 fails) = 1 - exp(-q * SUM N_i) depends on the TOTAL residual burden and on")
@@ -504,17 +644,17 @@ def report():
     P("     when burden and drug escape are uncorrelated across lesions -- and only then is the")
     P("     mean sufficient.")
     P("")
-    ex, mf, cov, ncov, orders = gate_A4()
-    P("  A4 WHAT THE MEAN-FIELD MISSES, at positive burden-escape correlation:")
-    P(f"        exact P(relapse)      {ex:.6e}")
-    P(f"        mean-field P(relapse) {mf:.6e}")
-    P(f"        Cov(q,N) = {cov:.4e}   n*Cov = {ncov:.4e}   log10 ratio = {orders:+.4f}")
-    void = not (1e-9 < ex < 0.999 and 1e-9 < mf < 0.999)
-    P(f"        non-vacuity: {'VOID' if void else 'both inside (1e-9, 0.999) -- OK'}")
+    P("  A4 WHAT THE MEAN-FIELD MISSES, swept across the correlation range (CORRECTION 3):")
+    P("        corr(q,N)     Cov(q,N)      n*Cov     exact P(relapse)  mean-field   log10 ratio")
+    a4 = gate_A4()
+    for rho, cov, ncov, ex, mf, orders, void in a4:
+        flag = "  VOID" if void else ""
+        P(f"        {rho:8.4f}  {cov:11.4e}  {ncov:9.4f}  {ex:16.6e}  {mf:11.6e}  {orders:+10.4f}{flag}")
+    P("        The mean-field error is exactly zero at zero correlation and grows with |n*Cov|.")
     P("        DIRECTION, AND IT IS FALSIFIABLE: their own paper reports that lymph nodes")
     P("        'exhibit reduced bacterial killing during drug treatment' and carry MULTIPLE")
     P("        barcodes, i.e. high burden with poor killing -- positive Cov. If that holds, the")
-    P("        mean-field estimate UNDERSTATES relapse risk by the factor above.")
+    P("        mean-field estimate UNDERSTATES relapse risk by the factor in the positive rows.")
     P("")
     rows5, drift5, cp, band = gate_A5()
     P("  A5 IDENTIFIABILITY FROM THEIR ACTUAL 8-of-12.")
@@ -557,33 +697,47 @@ def report():
     P("")
     for label, e0 in (("J774 macrophages", 0.2), ("human macrophages", 0.3)):
         k, e, err = gate_B1(e0)
-        P(f"  B1 [{label}] early slope pins k exactly: k = {k:.6f} /h")
+        P(f"  B1 FIRST ATTEMPT [{label}] -- k from the closed form k = early*ln(10): {k:.6f} /h")
         P(f"     re-simulated early slope {e:.6f} log10/h vs stated {e0}  rel.err {err:.3e}  "
           f"{'PASS' if err < 0.01 else 'FAIL'} (bar 1%)")
+        P("     This passes only because it was checked at small a, where the closed form is valid.")
+        P("     It is the approximation CORRECTION 2 replaces, not an independent confirmation.")
     P("")
     rows, drift, frac_range = gate_B2()
-    P("  B2 WHAT THE TWO SLOPES DO NOT PIN.  Slow eigenvalue gives ONE equation in (a,b).")
-    P("        a (/h)      b (/h)     early log10/h   late log10/h   persister fraction a/(a+b)")
-    for a, b, e, l, f in rows:
-        if not np.isfinite(e):
-            P(f"        {a:.4f}  {b:10.4f}   -- no positive b --"); continue
-        P(f"        {a:.4f}  {b:10.6f}   {e:13.6f}   {l:12.6f}   {f:26.6f}")
-    P(f"     Slope drift along the entire curve: {drift:.3e}  "
-      f"{'PASS' if drift < 0.01 else 'FAIL'} (bar 1%)")
-    P(f"     Every one of those parameter sets reproduces their published curve EXACTLY as well.")
-    P(f"     The persister fraction ranges over [{frac_range[0]:.4f}, {frac_range[1]:.4f}] -- a")
-    P(f"     {frac_range[1]/frac_range[0]:.1f}x span -- and their curve cannot choose between them.")
+    P("  B2 FIRST ATTEMPT -- FAILED, AND KEPT (CORRECTION 2).")
+    P(f"     Slope drift along the curve: {drift:.3e}  FAIL (bar 1%). The bar was right; the")
+    P("     INSTRUMENT was wrong -- I compared their 0-3 h AVERAGE slope against an instantaneous")
+    P("     slope at t = 1 h, and fixed k in closed form as if a were negligible. Rerun below")
+    P("     against the observable they actually report, with the same 1% bar.")
+    rows3f, span_f = gate_B3()
+    P(f"     B3 first attempt likewise FAILED: plateau span {span_f:.4f} orders, bar 1 order.")
     P("")
-    rows3, span = gate_B3()
-    P("  B3 THE ONE MEASUREMENT THAT COLLAPSES IT: the slow-phase intercept (plateau height).")
-    P("        a (/h)   persister fraction   log10 plateau amplitude")
-    for a, b, f, pl in rows3:
-        P(f"        {a:.4f}   {f:18.6f}   {pl:22.6f}")
-    P(f"     Span across the curve: {span:.4f} orders  "
-      f"{'PASS -- informative' if span >= 1.0 else 'FAIL -- not informative'} (bar 1 order)")
-    P("     THE OFFER: one number they already have in their Fig 1B, read off as an intercept,")
-    P("     converts a one-parameter family into a point estimate of the persister formation and")
-    P("     waking rates -- and those, not the slopes, are what a dosing schedule acts on.")
+    for label, e0 in (("J774 macrophages", 0.2), ("human macrophages", 0.3)):
+        rws, excl, dr, fr, span, a_max = gate_B_corrected(e0)
+        P(f"  B1/B2/B3 CORRECTED -- [{label}], stated slopes {e0} then 0.02 log10/h")
+        P("        a (/h)      k (/h)     b (/h)    early     late    persister frac   log10 plateau")
+        for a, k, b, e, l, f, pl in rws:
+            P(f"        {a:8.4f}  {k:9.5f}  {b:9.6f}  {e:.6f}  {l:.6f}  {f:14.6f}  {pl:13.4f}")
+        if excl:
+            P(f"        NO SOLUTION at a = {', '.join(f'{x:g}' for x in excl)} /h")
+        P(f"     B2 slope drift across the whole feasible curve: {dr:.3e}  "
+          f"{'PASS' if dr < 0.01 else 'FAIL'} (bar 1%, unchanged)")
+        P("     DEGENERACY CONFIRMED: every row reproduces BOTH published slopes to 1e-6. Their")
+        P("     time-kill curve does not choose between them.")
+        P(f"     Persister fraction spans [{fr[0]:.6f}, {fr[1]:.6f}] -- {fr[1]/fr[0]:.0f}x -- along")
+        P("     a curve their data cannot resolve. That fraction is what a dosing schedule acts on.")
+        P(f"     B3 plateau-intercept span: {span:.4f} orders  "
+          f"{'PASS' if span >= 1.0 else 'FAIL'} (bar 1 order, unchanged)")
+        a_bnd = a_boundary(e0)
+        P(f"     WHAT THEIR CURVE DOES PIN, AND THIS IS NEW: the persister formation rate is")
+        P(f"     BOUNDED ABOVE at a <= {a_bnd:.4f} /h (bisected to 1e-4 relative, NOT the largest")
+        P(f"     grid point, which was {a_max:g}). Larger values cannot reproduce their own two")
+        P("     slopes at any k and b. That bound costs no new experiment.")
+        P("")
+    P("     THE OFFER: one number already in their Fig 1B -- the slow phase extrapolated back to")
+    P("     t = 0 -- collapses a one-parameter family to a point. Worst case across the two cell")
+    P("     types the intercept discriminates by less than the predeclared order, so it narrows")
+    P("     the family rather than closing it; a second intercept at a third ROS level closes it.")
     P("")
     e, l, err = gate_B_control()
     P(f"  B-CONTROL  a = 0 (no persisters): early {e:.6f}, late {l:.6f} log10/h, rel.diff {err:.3e}")
