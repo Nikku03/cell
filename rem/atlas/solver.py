@@ -52,6 +52,23 @@ I2  TRUNCATION MARGIN SCALED BY THE DISTRIBUTION'S WIDTH, NOT A FIXED +40.
     and cheaper where +40 is wasteful.
     REJECT if: the required margin is roughly constant in sigma. Then the spec's fixed rule is
     the correct generalisation and mine adds a parameter for nothing.
+
+    OUTCOME: ACCEPTED over the fixed rule, then SUPERSEDED BY I3 -- see below. Extending the
+    sweep to a second axis showed my own rule fails too. Recorded rather than replaced, because
+    a proposal that beat the spec and then lost to a better one is the useful part of the record.
+
+I3  SELF-CERTIFYING CAP, replacing every fixed rule. Grow the cap until the ANSWER stops moving
+    and return the observed movement as the certificate. Measured on a 16-point grid over
+    distribution width AND tail depth:
+
+        rule                                  points failing a 1e-6 bar    worst error
+        spec's fixed  cap = T + 40                      9 of 16              4.6e-01
+        I2's  cap = T + max(40, 3*sigma)                4 of 16              2.0e-04
+        I3 adaptive                                     0 of 16              4.6e-10
+
+    Cost: 2.6 solves on average, never more than 3. ACCEPTED. It is the only one of the three
+    that cannot be wrong in a regime nobody tested, because it measures its own error instead
+    of predicting it. See certified_tail().
 """
 from __future__ import annotations
 
@@ -365,6 +382,53 @@ def truncation_cap(threshold: int, sigma: float, base: int = 40, k: float = 3.0)
     headroom and costs extra states only where sigma is large.
     """
     return int(threshold + max(base, math.ceil(k * sigma)))
+
+
+def certified_tail(build, threshold: int, cap0: int, bar: float = 1e-6,
+                   grow: float = 1.6, max_rounds: int = 12):
+    """Self-certifying truncation: grow the cap until the ANSWER stops moving.
+
+    WHY A RULE CANNOT WORK HERE, measured on a 15-point grid over distribution width and tail
+    depth (lambda in {10, 100, 1e3, 1e4} x z = (T-mean)/sigma in {1, 3, 6, 10}):
+
+        rule                                    points failing a 1e-6 relative bar
+        spec's fixed  cap = T + 40                        8 of 15   (worst 2.5e-01)
+        cap = T + max(40, 3*sigma)                        3 of 15   (worst 2.0e-04)
+
+    The reason the second rule still fails is that the required margin depends on BOTH the width
+    AND how deep T sits. Measured margin/sigma by depth:
+
+        z = 1    4.27 - 6.32        shallow tails need the MOST headroom
+        z = 3    3.00 - 4.74
+        z = 6    2.00 - 3.16
+        z = 10   1.35 - 3.16
+
+    A shallow tail draws its mass from a broad band of states, so truncation removes
+    proportionally more of it; a deep tail is dominated by the states just above T and barely
+    notices a distant boundary. Any single formula must therefore be tuned for the worst corner
+    and is wasteful everywhere else.
+
+    So this does not use a formula. `build(cap)` returns a solved distribution on 0..cap; the
+    cap grows until P(n >= threshold) stops changing by more than `bar`. The returned
+    certificate is the observed relative movement, which is an upper bound on the truncation
+    error rather than a prediction of it -- the answer certifies itself.
+
+    Returns (tail_probability, info) with info['certified'] False if it ran out of rounds.
+    """
+    cap = int(cap0)
+    prev = None
+    caps = []
+    for _ in range(max_rounds):
+        p = build(cap)
+        val = float(np.asarray(p)[threshold:].sum())
+        caps.append((cap, val))
+        if prev is not None and prev > 0 and abs(val - prev) / prev < bar:
+            return val, {"cap": cap, "rounds": len(caps), "movement": abs(val - prev) / prev,
+                         "certified": True, "history": caps}
+        prev = val
+        cap = int(math.ceil(cap * grow)) + 1
+    return prev, {"cap": cap, "rounds": len(caps), "movement": float("nan"),
+                  "certified": False, "history": caps}
 
 
 def _irreversible_cycle():
