@@ -240,9 +240,18 @@ def verify(verbose: bool = True) -> dict:
     e_lu = worst_rel_err(lu, ref2)[0]
     e_ex = worst_rel_err(pe, ref2)[0]
     e_ev = worst_rel_err(pv, ref2)[0]
-    out["G1.4"] = e_lu < 1e-10 and e_ex < 1e-6 and e_ev > 1e-3
-    print(f"  G1.4 {'PASS' if out['G1.4'] else 'FAIL'} -- LU and expm agree; the forbidden "
-          f"route is {e_ev/max(e_lu,1e-300):.1e}x worse, as the spec measured")
+    agree = e_lu < 1e-10 and e_ex < 1e-6
+    worse = e_ev / max(e_lu, 1e-300)
+    out["G1.4"] = agree and worse > 1e3
+    print(f"  routes agree (LU and expm both inside bar): {agree}")
+    print(f"  forbidden route is {worse:.1e}x worse than LU")
+    print(f"  G1.4 {'PASS' if out['G1.4'] else 'FAIL'}")
+    print("  NOTE, and this was a defect in MY gate rather than in the spec or the code: the")
+    print("  first bar demanded the eigenvector route exceed 1e-3 absolute error, which is the")
+    print("  MAGNITUDE the spec measured (3.0e+01) rather than the RULE it stands for. On this")
+    print(f"  {Ns}-state case the route lands at {e_ev:.2e} -- still {worse:.0e}x worse than LU")
+    print("  and correctly forbidden, but not catastrophic. The failure is problem-size")
+    print("  dependent, so a gate should encode 'orders worse than LU', not a fixed number.")
 
     print("\n" + "=" * 96)
     print("T04  TRUNCATION SWEEP at the spec's own condition")
@@ -334,6 +343,28 @@ def verify(verbose: bool = True) -> dict:
     out["I2_accept"] = bool(unsafe) and spread > 2.0 and rat_spread < spread
     print(f"  I2 {'ACCEPT' if out['I2_accept'] else 'REJECT'} against its predeclared criteria")
     return out
+
+
+def truncation_cap(threshold: int, sigma: float, base: int = 40, k: float = 3.0) -> int:
+    """Replacement for the spec's fixed `cap >= T + 40`, from the I2 measurement.
+
+    MEASURED (see verify(), section I2): the margin needed for < 1e-6 relative error in
+    P(n >= T) grows with the distribution's width. At Poisson(1000) the fixed +40 leaves
+    2.9e-03 relative error -- 3,600x over the bar -- because 40 states is only 1.3 sigma
+    there, against 12.6 sigma at Poisson(10) where the rule was measured.
+
+        lambda     sigma    margin needed    fixed +40 error
+             1      1.00               10           9.5e-16
+            10      3.16               15           2.6e-15
+           100     10.00               30           2.5e-09
+          1000     31.62               85           2.9e-03   <- FAILS
+
+    margin/sigma is not constant either (10.0 down to 2.7), so a pure multiple of sigma is
+    not the law -- it is the additive floor that carries small distributions and the sigma
+    term that carries wide ones. max(40, 3*sigma) covers every point in the sweep with
+    headroom and costs extra states only where sigma is large.
+    """
+    return int(threshold + max(base, math.ceil(k * sigma)))
 
 
 def _irreversible_cycle():
