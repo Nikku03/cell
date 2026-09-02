@@ -56,6 +56,53 @@ P-VACUITY The tail threshold must be non-vacuous: P(n >= T) in the exact system 
           inside (0, 1) and above the solver's floor, so that a 39x ratio is a real movement
           rather than a comparison of two numbers that are both effectively zero.
 
+=================================================================================================
+WHAT THE RUN FOUND ABOUT SECTION 4.1's TABLE. Three things, all reproducible arithmetic.
+=================================================================================================
+
+(1) THE TAIL RATIO HAS AN UNSTATED THRESHOLD AND IS A VIOLENT FUNCTION OF IT. At CV = 33% the
+    frozen-vs-exact tail ratio measured here runs
+
+        n >=  9   1.00x        n >= 23      29.2x        n >= 35    14,572x
+        n >= 15   2.31x        n >= 27     173.7x        n >= 43  3,275,611x
+
+    The spec's 16.0x is crossed at n >= 22-23, where P_exact = 3.3e-04 -- a SHALLOW tail. The
+    same quantity at a genuinely deep threshold is six orders larger. T09 as written ("CV 33%
+    gives tail ratio 16.0x +/- 10%") therefore cannot be implemented as a regression test until
+    the threshold is stated, which is the same defect the section 1.2 truncation table has.
+
+(2) THE FANO AND EXTRINSIC-SHARE COLUMNS ARE NOT INDEPENDENT. For linear coupling with a
+    Poisson-intrinsic gene, the law of total variance gives Var_exact = Var_int + Var(E[g|pool])
+    and Var_frozen = Var_int, so
+
+        extrinsic share  =  1 - 1 / FanoRatio        exactly, at any timescale.
+
+    Checking the spec's own four rows against its own identity:
+
+        CV     spec Fano   implied share   spec share   ratio
+        10%         1.11            9.9%         8.9%   0.898
+        20%         1.44           30.6%        27.6%   0.903
+        33%         2.21           54.8%        49.8%   0.910
+        50%         3.73           73.2%        66.5%   0.909
+
+    The ratio is CONSTANT at 0.905 +/- 0.005 across all four rows. A constant offset is not
+    noise; one of the two columns carries a systematic ~10% discrepancy against the other,
+    most likely a different denominator in the share. Either column alone is usable. Quoting
+    both as independent measurements is not, and a build that gates on both will fail one of
+    them no matter how correct it is.
+
+(3) THE TABLE IS THE QUASI-STATIC REGIME. The identity above holds only while the gene can
+    track the pool. Measured at CV = 33%:
+
+        tau_pool / tau_gene     Fano ratio   share measured   1 - 1/FanoRatio   agree?
+                       20.0          1.838            43.4%             45.6%    yes
+                        1.0          1.440            15.4%             30.6%    NO
+
+    A pool as fast as the gene breaks the decomposition, because Var(g|pool) stops being
+    Poisson once the gene averages over the driver instead of following it. So section 4.1
+    implicitly assumes a slow shared resource. That is defensible for ribosome or ATP pools,
+    but it is an assumption the table does not state and it changes the answer by 2x.
+
 HOW THE DRIVER'S CV IS VARIED AT FIXED MEAN. A constant-birth/linear-death pool is Poisson, so
 its CV is pinned to 1/sqrt(mean) and cannot be swept independently. Instead production arrives
 in BURSTS of size b at rate k/b, which holds the mean flux at k while Fano ~ (1+b)/2, so
@@ -313,7 +360,7 @@ def verify(verbose: bool = True) -> dict:
                               if pj[p].sum() > 0 else 0.0 for p in range(pj.shape[0])])
         ex_var = float((ppool * (cond_mean - me) ** 2).sum())
         share = 100.0 * ex_var / ve if ve > 0 else float("nan")
-        fr = ff / fe if fe > 0 else float("nan")
+        fr = fe / ff if ff > 0 else float("nan")   # exact/frozen, matching the spec's column
         tr = te / tf if tf > 0 else float("inf")
         s = SPEC_P1[cvpct]
         merr = 100.0 * abs(mf - me) / me
@@ -368,8 +415,8 @@ def verify(verbose: bool = True) -> dict:
         cond_mean = np.array([float((np.arange(GCAP + 1) * (pj[p] / pj[p].sum())).sum())
                               if pj[p].sum() > 0 else 0.0 for p in range(pj.shape[0])])
         share = 100.0 * float((ppool * (cond_mean - me) ** 2).sum()) / ve if ve > 0 else 0.0
-        ctrl.append((cv, ff / fe, te / tf, share))
-        print(f"  {cv:>8.4f} {1:>6d} {ff/fe:>12.4f} {te/tf:>12.4f} {share:>12.3f}")
+        ctrl.append((cv, fe / ff, te / tf, share))
+        print(f"  {cv:>8.4f} {1:>6d} {fe/ff:>12.4f} {te/tf:>12.4f} {share:>12.3f}")
     trend = all(abs(ctrl[i][2] - 1) > abs(ctrl[i + 1][2] - 1) for i in range(len(ctrl) - 1))
     out["P_control"] = trend and abs(ctrl[-1][2] - 1.0) < 0.15
     print(f"  cost shrinks monotonically toward 1.000 as CV falls: {trend}")
