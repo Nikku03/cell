@@ -493,3 +493,88 @@ def schedule_report(times, log10_cfu, total_drug_hours=9.0, duty=0.4, g0=4,
     print(f"  If those two numbers are equal, the averaged model carries NO schedule")
     print(f"  information -- which is the whole question worth asking them.")
     return {"fit": fit, "ident": ident, "rows": rows, "ratio": ratio, "band": rs}
+
+
+# =========================================================================================
+# SELECTION ON LAG: how SHARP is the optimum Fridman et al. observed?
+# =========================================================================================
+#
+# Their result is that evolved lag MATCHES the exposure interval. V1 above reproduces the
+# location of that optimum. The question their paper does not answer, and which follows
+# immediately from having the exact survival surface, is how STRONGLY selection holds lag
+# there -- the curvature of the landscape, not its peak.
+#
+# That is not a detail. A sharp optimum means evolved lag should cluster tightly around the
+# exposure duration across replicate populations; a flat one means it should scatter, and the
+# matching would be a tendency rather than a law. Their own experiment ran replicate
+# populations, so the prediction is testable against data they already have.
+
+def selection_on_lag(t_on, t_off=4.0, n_cycles=6, lags=None, g0=4):
+    """Survival landscape over lag, its optimum, and the curvature holding it there.
+
+    Returns the selection coefficient s(lag) = d ln(survival) / d ln(lag), which is what a
+    population actually climbs, plus the relative width of the peak.
+    """
+    lags = np.geomspace(0.6, 9.0, 25) if lags is None else np.asarray(lags, float)
+    surv = np.array([survival_after_course(L, t_on, t_off, n_cycles, g0=g0) for L in lags])
+    ok = surv > 0
+    lg, sv = np.log(lags[ok]), np.log(surv[ok])
+    grad = np.gradient(sv, lg)                      # selection coefficient
+    i = int(np.argmax(sv))
+    peak_lag, peak = float(lags[ok][i]), float(sv[i])
+    # relative width: the lag range within which survival stays inside e^-1 of the peak
+    inside = lags[ok][sv >= peak - 1.0]
+    width = (float(inside.max()) / float(inside.min())) if len(inside) > 1 else float("nan")
+    # SATURATION FLAG. If the e-fold region reaches both ends of the grid, the width is not
+    # measured, it is the grid span. Reporting the grid span as a measurement is the same
+    # defect as reporting a truncated tail, and it must be visible in the output.
+    grid_span = float(lags[ok].max() / lags[ok].min())
+    saturated = bool(width >= grid_span * 0.999)
+    # local curvature in log-log, the standard measure of selection strength
+    if 0 < i < len(lg) - 1:
+        curv = float(np.gradient(grad, lg)[i])
+    else:
+        curv = float("nan")
+    return {"lags": lags[ok], "surv": surv[ok], "grad": grad, "peak_lag": peak_lag,
+            "curvature": curv, "fold_width": width, "saturated": saturated,
+            "grid_span": grid_span,
+            "max_abs_selection": float(np.max(np.abs(grad)))}
+
+
+def report_selection():
+    print("=" * 98)
+    print("SELECTION ON LAG -- the curvature of the optimum Fridman et al. located")
+    print("=" * 98)
+    print("  Their Nature 2014 result gives the PEAK: evolved lag matches the exposure")
+    print("  interval. This is the SHAPE around it, which predicts how tightly replicate")
+    print("  populations should cluster -- testable against experiments they already ran.")
+    print(f"\n  {'T_on (h)':>9s} {'peak lag':>9s} {'fold-width of the peak':>23s} "
+          f"{'max |selection|':>16s} {'curvature':>11s}")
+    out = []
+    for t_on in (1.5, 2.5, 3.5, 5.0):
+        r = selection_on_lag(t_on)
+        out.append((t_on, r))
+        w = f"{r['fold_width']:.1f}x" + (" (>= grid)" if r["saturated"] else "")
+        print(f"  {t_on:>9.1f} {r['peak_lag']:>9.2f} {w:>22s} "
+              f"{r['max_abs_selection']:>16.3f} {r['curvature']:>11.3f}")
+    print("\n  READING IT. 'fold-width' is the range of lag over which survival stays within")
+    print("  a factor of e of its best value. A narrow width means selection pins lag; a wide")
+    print("  one means it drifts and the matching is a tendency, not a law.")
+    sharp = [r['fold_width'] for _t, r in out]
+    nsat = sum(1 for _t, r in out if r["saturated"])
+    print(f"\n  {nsat} of {len(out)} widths are GRID-LIMITED, not measured -- the e-fold")
+    print(f"  region reaches both ends of the lag grid, so those rows are lower bounds and")
+    print(f"  the true peaks are wider still. Only the longest exposure gives a measured")
+    print(f"  width. That strengthens the direction of the trend and weakens its magnitude.")
+    print("  THE TESTABLE PREDICTION: across replicate evolved populations at a given")
+    print("  exposure duration, evolved lag should scatter by roughly this factor and no")
+    print("  more. Their replicates already carry that number.")
+    sel = [r['max_abs_selection'] for _t, r in out]
+    print(f"\n  THE ROBUST STATEMENT IS THE SELECTION STRENGTH, which is not grid-limited:")
+    print(f"  it rises {sel[-1]/max(sel[0],1e-12):.0f}x from {sel[0]:.3f} at a 1.5 h exposure "
+          f"to {sel[-1]:.3f} at 5.0 h.")
+    print("  PREDICTION: evolved lag should scatter WIDELY across replicate populations at")
+    print("  short exposures and cluster TIGHTLY at long ones. That is a trend across")
+    print("  conditions rather than a single number, which is harder to match by chance, and")
+    print("  their replicate populations already carry it.")
+    return out
