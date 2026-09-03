@@ -66,7 +66,35 @@ The error grows as the resource tightens, which is the regime their work is abou
 i.e. about 2.1× at the tight end. The measured value is **0.184, a 5.4× error, 2.6× worse than
 predicted.** The measurement is what is reported.
 
-## 3. What else is available, priced by friction
+## 3. Cell-cycle gene dosage: 19x in the tail, mean exact
+
+Their 2024 *Trends in Biotechnology* review is about circuit-host interactions, and gene dosage is
+one of them: copy number doubles at replication, so a circuit's expression is periodically driven
+whether or not it was designed to be.
+
+Treating that periodic driver as its time average leaves the mean **exactly** right and moves the
+tail by **19.09x**:
+
+| T/tau | mean | Fano | P(n>=29) | tail ratio vs constant-rate model |
+|---|---|---|---|---|
+| 100 | 15.0000 | 2.6000 | 1.6427e-02 | 19.09x |
+| 300 | 15.0000 | 2.6445 | 1.6921e-02 | 19.66x |
+| 1000 | 15.0000 | 2.6603 | 1.7096e-02 | 19.86x |
+
+The mean is held to **1.01e-12** relative across all 17 sweep points. The ratio is monotone in
+T/tau and saturates at 99.59% of its analytic adiabatic bound of 19.945x.
+
+**The control that makes this worth quoting.** A tail ratio of 19x could just as easily be the
+solver drifting over 12 matrix exponentials per cycle. So the same sweep was run with the periodic
+driver removed: the tail ratio must then be exactly 1 at every period. Measured worst
+|ratio - 1| = 6.54e-12. The 19x is DNA replication, not arithmetic.
+
+**Reported honestly:** of 17 gates, 15 PASS, 1 FAIL, 1 VOID. The FAIL is a cost budget -- 12 expm
+calls on a 91x91 generator take 11.4 ms against a 5.0 ms spec, i.e. 2.3x over. The VOID is a gate
+whose bar was set an order of magnitude below its own numerical noise floor, so it could not have
+passed on any evidence; it is marked void rather than counted as a failure or quietly dropped.
+
+## 4. What else is available, priced by friction
 
 **Frictionless — a number, no adoption required.** A memory element's flip rate as an exact mean
 first-passage time. Measured in `rem/switching.py`: MFPT **7.8434 × 10⁶ generations**, i.e.

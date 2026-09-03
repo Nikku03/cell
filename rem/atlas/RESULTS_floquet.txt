@@ -1,0 +1,218 @@
+====================================================================================================
+SETUP.  mu = 1 (tau = 1), k = 10 -> rates 10 / 20 per half cycle, 91 states, P(n>=29)
+====================================================================================================
+  truncation: solver.truncation_cap(T=29, sigma=sqrt(20)) = 69 states needed; using 91
+  CONSTANT model  = stationary(birth 15, death n)   mean 15.000000  Fano 1.000000  P(n>=29) 8.607227e-04
+  ADIABATIC avg   = 0.5*stat(10) + 0.5*stat(20)     mean 15.000000  Fano 2.666667  P(n>=29) 1.716714e-02
+  NOT the same object: the adiabatic average has Fano 2.6667 against 1.0000 for the stationary law of the MEAN rate; its tail is 19.95x larger.
+  adiabatic tail ratio (the T/tau -> inf bound) = 19.9450x
+
+====================================================================================================
+SPEC 3.2 TABLE, MEASURED BESIDE THE SPEC (n_sub = 1000 per phase)
+====================================================================================================
+      T/tau      mean      spec      Fano      spec     P(n>=29)         spec    ratio     spec
+       0.10   15.0000   15.0000    1.0003    1.0003   8.6265e-04   8.6265e-04    1.00x    1.00x
+       1.00   15.0000   15.0000    1.0339    1.0339   1.0546e-03   1.0547e-03    1.23x    1.23x
+       3.00   15.0000   15.0000    1.2552    1.2553   2.5732e-03   2.5740e-03    2.99x    2.99x
+      10.00   15.0000   15.0000    2.0089    2.0094   9.8790e-03   9.8847e-03   11.48x   11.48x
+     100.00   15.0000   15.0000    2.6000    2.6042   1.6427e-02   1.6477e-02   19.08x   19.14x
+  relative difference against the spec's own numbers:
+    T/tau    0.10   mean -3.95e-13   Fano +4.71e-05   tail +3.07e-06
+    T/tau    1.00   mean +2.07e-14   Fano -2.35e-05   tail -7.03e-05
+    T/tau    3.00   mean -8.99e-15   Fano -5.97e-05   tail -2.95e-04
+    T/tau   10.00   mean -3.22e-15   Fano -2.36e-04   tail -5.73e-04
+    T/tau  100.00   mean -2.43e-14   Fano -1.60e-03   tail -3.06e-03
+
+  THE SAME TABLE AT n_sub = 80 SUB-STEPS PER PHASE (160 phase samples per cycle):
+      T/tau      Fano      spec     P(n>=29)         spec       relF       relT
+       0.10    1.0003    1.0003   8.6265e-04   8.6265e-04   +4.7e-05   +3.8e-06
+       1.00    1.0339    1.0339   1.0547e-03   1.0547e-03   -1.3e-05   -9.1e-06
+       3.00    1.2553    1.2553   2.5740e-03   2.5740e-03   +5.8e-06   -4.9e-06
+      10.00    2.0094    2.0094   9.8847e-03   9.8847e-03   -2.4e-05   +4.4e-06
+     100.00    2.6042    2.6042   1.6477e-02   1.6477e-02   -1.9e-05   +2.6e-05
+  worst relative deviation from the spec table at n_sub=80: 4.7e-05  -- every column, every row, 5 significant digits.
+  The spec's section 3.2 table is therefore a 160-sample-per-cycle QUADRATURE of the
+  phase average, not the converged cycle average. See the n_sub convergence study and
+  the analytic route below for the converged numbers.
+
+====================================================================================================
+FULL SWEEP, 17 values of T/tau in [0.01, 1000]  (G2.3, G2.4, F-monotone)
+====================================================================================================
+      T/tau       mean       Fano      P(n>=29)     ratio  period res     closure
+       0.01    15.0000     1.0000    8.6074e-04    1.000x    1.11e-13    6.00e-15
+       0.02    15.0000     1.0000    8.6080e-04    1.000x    1.59e-13    4.15e-14
+       0.05    15.0000     1.0001    8.6121e-04    1.001x    1.87e-13    7.99e-15
+       0.10    15.0000     1.0003    8.6265e-04    1.002x    4.28e-13    2.71e-14
+       0.20    15.0000     1.0014    8.6844e-04    1.009x    1.03e-13    3.33e-15
+       0.50    15.0000     1.0086    9.0904e-04    1.056x    7.10e-14    1.62e-14
+       1.00    15.0000     1.0339    1.0546e-03    1.225x    1.61e-13    7.99e-15
+       2.00    15.0000     1.1263    1.6381e-03    1.903x    1.33e-13    6.66e-15
+       3.00    15.0000     1.2552    2.5732e-03    2.990x    2.31e-13    6.66e-15
+       5.00    15.0000     1.5356    5.0002e-03    5.809x    1.86e-13    1.90e-14
+      10.00    15.0000     2.0089    9.8790e-03   11.478x    3.08e-13    1.20e-14
+      20.00    15.0000     2.3334    1.3463e-02   15.642x    4.50e-13    9.99e-15
+      30.00    15.0000     2.4445    1.4698e-02   17.076x    8.98e-13    4.51e-14
+      50.00    15.0000     2.5333    1.5685e-02   18.224x    1.39e-12    9.88e-14
+     100.00    15.0000     2.6000    1.6427e-02   19.085x    2.86e-12    2.80e-13
+     300.00    15.0000     2.6445    1.6921e-02   19.659x    4.00e-12    5.71e-13
+    1000.00    15.0000     2.6603    1.7096e-02   19.863x    4.00e-11    3.55e-12
+
+  G2.1/T06  fast-cycle limit against the CONSTANT model, in the tail
+    T/tau=0.01 : rel err 2.242e-05   T/tau=0.1 : rel err 2.242e-03
+    DISCRIMINATION at T/tau=10 : rel err 1.048e+01  (1048x the bar)
+
+  G2.2/T07  slow-cycle limit against the ADIABATIC AVERAGE, in the tail
+    T/tau=100  : measured 1.642660e-02  adiabatic 1.716714e-02  rel err 4.314e-02
+    for contrast, the stationary law of the MEAN rate would give rel err 1.808e+01
+    DISCRIMINATION at T/tau=0.1 : rel err 9.497e-01 against the adiabatic average
+
+  F-monotone  ratio sweep, increments and saturation
+    increments (ratio[i+1]-ratio[i]): +6.73e-05 +4.71e-04 +1.68e-03 +6.73e-03 +4.72e-02 +1.69e-01 +6.78e-01 +1.09e+00 +2.82e+00 +5.67e+00 +4.16e+00 +1.43e+00 +1.15e+00 +8.61e-01 +5.75e-01 +2.04e-01
+    argmax at index 16 of 16 (largest T = 1000)
+    ratio(T/tau=1000) = 19.8630x   adiabatic bound = 19.9450x   fraction 0.99588
+
+====================================================================================================
+F-control  NEGATIVE CONTROL: both phase rates EQUAL (15 / 15), no switching
+====================================================================================================
+      T/tau      P(n>=29)      ratio    |ratio-1|    worst rel
+       0.01  8.607227e-04   1.00000x     4.23e-12     3.45e-07
+       0.02  8.607227e-04   1.00000x     6.54e-12     4.66e-07
+       0.05  8.607227e-04   1.00000x     3.60e-13     1.21e-08
+       0.10  8.607227e-04   1.00000x     2.82e-14     1.24e-08
+       0.20  8.607227e-04   1.00000x     1.63e-14     9.68e-09
+       0.50  8.607227e-04   1.00000x     8.02e-14     1.33e-08
+       1.00  8.607227e-04   1.00000x     1.01e-13     6.29e-09
+       2.00  8.607227e-04   1.00000x     9.29e-14     2.60e-09
+       3.00  8.607227e-04   1.00000x     1.73e-14     3.77e-10
+       5.00  8.607227e-04   1.00000x     4.22e-14     4.90e-09
+      10.00  8.607227e-04   1.00000x     1.55e-15     8.92e-10
+      20.00  8.607227e-04   1.00000x     1.09e-14     7.16e-11
+      30.00  8.607227e-04   1.00000x     2.35e-14     6.69e-11
+      50.00  8.607227e-04   1.00000x     9.21e-15     1.16e-09
+     100.00  8.607227e-04   1.00000x     1.40e-14     1.37e-09
+     300.00  8.607227e-04   1.00000x     2.53e-14     6.30e-10
+    1000.00  8.607227e-04   1.00000x     2.11e-15     4.94e-11
+
+====================================================================================================
+F-swap  SECOND CONTROL: phase order [2k, k] must give the same cycle average
+====================================================================================================
+  T/tau    0.10   worst rel over p>1e-10 2.311e-08   max ABS diff 7.09e-15   P(n>=29) rel diff 1.11e-14
+  T/tau    1.00   worst rel over p>1e-10 2.364e-09   max ABS diff 9.59e-16   P(n>=29) rel diff 7.22e-15
+  T/tau   10.00   worst rel over p>1e-10 1.596e-11   max ABS diff 6.25e-16   P(n>=29) rel diff 8.77e-15
+  T/tau  100.00   worst rel over p>1e-10 7.087e-12   max ABS diff 8.87e-15   P(n>=29) rel diff 1.34e-13
+  IS THAT AN ASYMMETRY OR THE PRECISION FLOOR? worst relative difference at T/tau=0.1
+  as the comparison floor is lowered (if it were an asymmetry it would stay put; if it
+  is one fixed absolute wobble divided by a smaller p, it grows and then stops):
+    floor   1e-02  worst rel 2.555e-14  deepest state n=23 at p=1.33e-02
+    floor   1e-04  worst rel 6.111e-13  deepest state n=31 at p=1.07e-04
+    floor   1e-06  worst rel 1.182e-10  deepest state n=36 at p=1.80e-06
+    floor   1e-08  worst rel 2.311e-08  deepest state n=41 at p=1.53e-08
+    floor   1e-10  worst rel 2.311e-08  deepest state n=45 at p=2.17e-10
+    floor   1e-12  worst rel 2.311e-08  deepest state n=49 at p=2.17e-12
+
+====================================================================================================
+F-exact  INDEPENDENT ANALYTIC ROUTE: p(t) is exactly Poisson(m(t)), no matrices
+====================================================================================================
+      T/tau   Fano solve   Fano exact        rel   tail solve   tail exact        rel
+       0.10     1.000347     1.000347   6.97e-10 8.626527e-04 8.626526e-04   4.48e-09
+       1.00     1.033876     1.033876   6.58e-08 1.054626e-03 1.054625e-03   3.94e-07
+       3.00     1.255225     1.255225   4.22e-07 2.573240e-03 2.573235e-03   1.87e-06
+      10.00     2.008927     2.008924   1.36e-06 9.879039e-03 9.879002e-03   3.72e-06
+     100.00     2.600028     2.600000   1.07e-05 1.642660e-02 1.642623e-02   2.30e-05
+
+  phase-resolved distributions against Poisson(m(t)), T/tau = 10, 12 phases:
+    phase  0  t =   0.000  m(t) = 19.93307  worst rel err 1.832e-06
+    phase  1  t =   0.833  m(t) = 14.31690  worst rel err 2.335e-11
+    phase  2  t =   1.667  m(t) = 11.87611  worst rel err 1.700e-13
+    phase  3  t =   2.500  m(t) = 10.81536  worst rel err 1.754e-14
+    phase  4  t =   3.333  m(t) = 10.35435  worst rel err 2.569e-14
+    phase  5  t =   4.167  m(t) = 10.15400  worst rel err 1.864e-14
+    phase  6  t =   5.000  m(t) = 10.06693  worst rel err 2.220e-14
+    phase  7  t =   5.833  m(t) = 15.68310  worst rel err 1.750e-14
+    phase  8  t =   6.667  m(t) = 18.12389  worst rel err 5.168e-14
+    phase  9  t =   7.500  m(t) = 19.18464  worst rel err 3.947e-14
+    phase 10  t =   8.333  m(t) = 19.64565  worst rel err 3.105e-14
+    phase 11  t =   9.167  m(t) = 19.84600  worst rel err 3.702e-14
+
+  n_sub convergence of the recorded phase average at T/tau = 100
+    (spec quotes Fano 2.6042; the analytic cycle average is the reference)
+    n_sub     6 per phase  Fano 2.666400  (analytic 2.600000, rel +2.55e-02) tail 1.716351e-02
+    n_sub    12 per phase  Fano 2.658051  (analytic 2.600000, rel +2.23e-02) tail 1.705167e-02
+    n_sub    40 per phase  Fano 2.614646  (analytic 2.600000, rel +5.63e-03) tail 1.657839e-02
+    n_sub    80 per phase  Fano 2.604150  (analytic 2.600000, rel +1.60e-03) tail 1.647743e-02
+    n_sub   160 per phase  Fano 2.601073  (analytic 2.600000, rel +4.13e-04) tail 1.644047e-02
+    n_sub   320 per phase  Fano 2.600270  (analytic 2.600000, rel +1.04e-04) tail 1.642988e-02
+    n_sub  1000 per phase  Fano 2.600028  (analytic 2.600000, rel +1.07e-05) tail 1.642660e-02
+    n_sub  4000 per phase  Fano 2.600002  (analytic 2.600000, rel +6.68e-07) tail 1.642625e-02
+
+====================================================================================================
+F-eigen  THE FORBIDDEN ROUTE, run once per T so the prohibition is checkable
+====================================================================================================
+      T/tau       eigval   2nd |w-1|   clip sum      NaN tail rel err
+       0.01   1.00000000    9.95e-03   3.70e+00    False    4.017e-12
+       0.02   1.00000000    1.98e-02   0.00e+00     True          nan
+       0.05   1.00000000    4.88e-02   3.70e+00    False    1.275e-12
+       0.10   1.00000000    9.52e-02   0.00e+00     True          nan
+       0.20   1.00000000    1.81e-01   3.71e+00    False    1.756e-13
+       0.50   1.00000000    3.93e-01   0.00e+00     True          nan
+       1.00   1.00000000    6.32e-01   0.00e+00     True          nan
+       2.00   1.00000000    8.65e-01   3.83e+00    False    2.576e-14
+       3.00   1.00000000    9.50e-01   0.00e+00     True          nan
+       5.00   1.00000000    9.93e-01   0.00e+00     True          nan
+      10.00   1.00000000    1.00e+00   0.00e+00     True          nan
+      20.00   1.00000000    1.00e+00   3.98e+00    False    4.041e-14
+      30.00   1.00000000    1.00e+00   0.00e+00     True          nan
+      50.00   1.00000000    1.00e+00   3.98e+00    False    1.237e-13
+     100.00   1.00000000    1.00e+00   3.98e+00    False    2.540e-13
+     300.00   1.00000000    1.00e+00   3.98e+00    False    3.550e-13
+    1000.00   1.00000000    1.00e+00   3.98e+00    False    3.549e-12
+  8 of 17 sweep points returned ALL-NaN: the eigenvector came back with the sign
+  flipped, so max(v,0) is the all-zero vector and v/v.sum() is 0/0. The eigenvalue is
+  1.00000000 every time and the second eigenvalue sits 1.0e-02 away at T/tau=0.01, so
+  the failure is NOT bad eigenvalue selection -- it is the arbitrary sign, exactly as
+  the spec says. Where the sign happens to come out positive the vector is correct to
+  4.0e-12 in the tail, which is what makes the route so dangerous: it is right about
+  half the time and silently unusable the other half.
+
+====================================================================================================
+COST  one gene, 12 phases, 91 states   (spec: 5.0 ms)
+====================================================================================================
+  REQUIRED PATTERN (12 separate expm calls), best of 10 warmed runs:
+    default BLAS threads (4 cores)  :    11.40 ms
+    1 BLAS thread                   :    12.35 ms   <- FASTER: 91x91 is too small to
+                                                    thread, the pool oversubscribes
+  breakdown at 1 BLAS thread (the stable setting; the threaded timings scatter by 2x
+  run to run, so a breakdown taken there does not add up):
+    12 expm(91x91) calls            :    11.40 ms   (92% of the pipeline)
+    one expm(91x91)                 :    0.886 ms
+    one 91x91 dense solve           :    0.100 ms
+    cycle product + stepping (rest) :     0.95 ms
+    cached expm (2 distinct only)   :     2.50 ms   <- NOT the required pattern, but
+                                                    the only way under the 5 ms claim
+  spec claim                        :     5.00 ms
+  measured / spec (fastest of the two thread settings): 2.3x
+
+====================================================================================================
+GATE SUMMARY   EXPECTED (from the spec) | MEASURED | VERDICT
+====================================================================================================
+  G2.3/T08       mean within 0.01% of 15.0 at every T                               worst 1.01e-12 rel (15.0000 vs 15.0000)                PASS
+  G2.4           0 non-finite over 17 T values                                      0 non-finite entries in 3094000 recorded values        PASS
+  F-period       cycle closes, resid < 1e-10                                        worst 4.00e-11                                         PASS
+  G2.1/T06       tail within 1% of constant model as T/tau->0                       2.242e-05 rel at T/tau=0.01 (2.242e-03 at 0.1)         PASS
+  G2.1-disc      same test at T/tau=10 must MISS 1% by >2 orders                    1.048e+01 rel = 1048x the bar                          PASS
+  G2.2/T07       tail within 5% of adiabatic average at T/tau=100                   4.314e-02 rel (1.6427e-02 vs 1.7167e-02)               PASS
+  G2.2-disc      same test at T/tau=0.1 must MISS the 5% bar                        9.497e-01 rel                                          PASS
+  F-monotone     strictly climbing, no interior max, saturates <= adiabatic         monotone=True argmax_at_end=True ratio(1000)/adiabatic PASS
+  F-control      tail ratio = 1.000 at every T, |ratio-1| < 1e-6                    worst |ratio-1| = 6.54e-12                             PASS
+  F-control-p    worst rel err vs stationary() over p>1e-10 < 1e-5                  worst 4.66e-07                                         PASS
+  F-swap         phase-order swap identical, worst rel < 1e-8 over p>1e-10          worst 2.31e-08 (FAILS as declared)                     VOID
+                 ^ bar sits an order below its own a priori noise floor (~1e-7 at p=1e-10): max ABS difference is 8.9e-15, so the ratio is noise/p, not an asymmetry
+  F-swap-tail    POST-HOC repair, achievable form: phase order must not move P(n>=2 worst 1.34e-13                                         PASS
+  F-exact-F      Fano matches analytic route to < 1e-3 rel                          worst 1.07e-05                                         PASS
+  F-exact-T      tail matches analytic route to < 1e-3 rel                          worst 2.30e-05                                         PASS
+  F-exact-phase  every phase equals Poisson(m(t)), worst rel < 1e-5 over p>1e-10    worst 1.83e-06                                         PASS
+  F-eigen        forbidden route must be demonstrably unsafe somewhere              8/17 sweep points ALL-NaN; worst tail rel err 4.0e-12  PASS
+  COST           5.0 ms for 1 gene, 12 phases, 91 states                            12.4 ms (best of 10, 1 BLAS thread; 11.4 ms at default FAIL
+                 ^ 12 expm calls alone are 11.4 ms, already 2.3x the whole spec budget
+
+  15 PASS, 1 FAIL, 1 VOID, of 17 gates
