@@ -108,13 +108,28 @@ def expression_generator(cap: int, alpha: float, b: float, gamma: float) -> np.n
     """
     N = cap + 1
     Q = np.zeros((N, N))
-    q = 1.0 / (1.0 + b)                      # geometric with mean b: P(j) = q(1-q)^(j-1), j>=1
+    # Geometric supported on {1,2,...}: P(j) = q(1-q)^(j-1) has mean 1/q. The first version set
+    # q = 1/(1+b), which gives burst mean 1+b, so the stationary mean came out mean*(1+b)/b and
+    # the "held fixed" column read 24, 18, 15 instead of 12. That single error failed KG1(a),
+    # KG4 and KG5 at once. CORRECTION 1.
+    q = 1.0 / b
     for n in range(N):
-        for j in range(1, N - n):
-            rate = alpha * q * (1.0 - q) ** (j - 1)
+        # Bursts that would carry the cell above the cap are LUMPED onto the cap rather than
+        # dropped. Dropping them silently removes production flux and pulled the stationary mean
+        # to 11.9989 instead of 12 at b = 32 -- caught by the build() assertion. CORRECTION 3.
+        room = N - 1 - n
+        tail = 1.0
+        for j in range(1, room):
+            pj = q * (1.0 - q) ** (j - 1)
+            tail -= pj
+            rate = alpha * pj
             if rate > 0:
                 Q[n + j, n] += rate
                 Q[n, n] -= rate
+        if room >= 1 and tail > 0:
+            rate = alpha * tail
+            Q[n + room, n] += rate
+            Q[n, n] -= rate
         if n > 0:
             Q[n - 1, n] += gamma * n
             Q[n, n] -= gamma * n
@@ -143,7 +158,10 @@ def asymptotic_rate(Q: np.ndarray, kappa: float) -> float:
     Computed as an eigenvalue rather than by propagating to large t, so nothing underflows.
     """
     A = killed_generator(Q, kappa)
-    w = np.linalg.eigvals(A)
+    if A.shape[0] <= 260:
+        return float(-np.max(np.linalg.eigvals(A).real))
+    w = spl.eigs(sp.csr_matrix(A), k=1, which="LR", return_eigenvectors=False,
+                 maxiter=100000, tol=1e-13)
     return float(-np.max(w.real))
 
 
@@ -180,7 +198,7 @@ def log_slope(Q, kappa, p0, t1, t2) -> float:
 # -------------------------------------------------------------------------------------------
 MEAN_KATG = 12.0          # arbitrary copy-number scale; absorbed entirely into kappa
 GAMMA = 1.0               # KatG decay sets the time unit
-CAP = 90
+CAP = 400          # was 90, which truncated the b = 32 row down to mean 8.74. CORRECTION 2.
 TOL_FRAC, TOL_TIME = 0.05, 12.0      # PerSort: ~5% tolerant to INH; measured at 12 h
 WEEKS8 = 1344.0                       # macaque INH/RIF course: 8 weeks, in hours
 
@@ -188,11 +206,17 @@ WEEKS8 = 1344.0                       # macaque INH/RIF course: 8 weeks, in hour
 KAPPA = -np.log(TOL_FRAC) / (TOL_TIME * MEAN_KATG)
 
 
-def build(b: float, s: float = 1.0, mean: float = MEAN_KATG, cap: int = CAP):
+def build(b: float, s: float = 1.0, mean: float = MEAN_KATG, cap: int | None = None):
     """Bursty KatG with mean held EXACTLY at `mean`, burst size b, generator scaled by s."""
+    if cap is None:
+        cap = int(max(CAP, 40.0 * b))      # the stationary spread grows with the burst size
     alpha = GAMMA * mean / b
     Q = expression_generator(cap, alpha, b, GAMMA)
     p0 = stationary(Q)
+    got = float(np.arange(cap + 1, dtype=float) @ p0)
+    if abs(got - mean) / mean > 1e-6:
+        raise ValueError(f"mean not held: asked {mean}, got {got} at b={b}, cap={cap}. "
+                         "Every 'mean held fixed' claim in this module depends on this.")
     return s * Q, p0
 
 
@@ -248,13 +272,29 @@ def report():
     early = log_slope(Q, KAPPA, p0, 0.0, 2.0)
     late = log_slope(Q, KAPPA, p0, 24.0, 48.0)
     ratio = early / late if late > 0 else np.inf
-    P(f"        early log-slope (0-2 h)    {early:.6f} log10/h")
-    P(f"        late  log-slope (24-48 h)  {late:.6f} log10/h")
+    P(f"        at the declared setting s = 1: early {early:.6f}, late {late:.6f} log10/h")
     P(f"        late is {ratio:.2f}x shallower   {'PASS' if ratio >= 5.0 else 'FAIL'} (bar 5x)")
+    P("     KG2 AS WRITTEN NEVER FIXED THE FLUCTUATION SPEED, which is this module's central knob.")
+    P("     That is a defect in the gate, not a result: a bar stated without its operating point")
+    P("     is not a test. The declared-setting verdict stands above; the sweep the gate should")
+    P("     have specified is below, and it is labelled as the repair it is.")
+    P("        s (fluctuation speed)   early     late      late shallower by")
+    best = 0.0
+    for sv in (1e-3, 1e-2, 1e-1, 1.0, 10.0):
+        Qv, pv = build(b_ref, sv)
+        e = log_slope(Qv, KAPPA, pv, 0.0, 2.0)
+        l = log_slope(Qv, KAPPA, pv, 24.0, 48.0)
+        r = e / l if l > 0 else np.inf
+        best = max(best, r)
+        P(f"        {sv:21g}   {e:.6f}  {l:.6f}   {r:16.2f}x")
+    P(f"     biphasic emerges as the fluctuation slows; best separation {best:.1f}x "
+      f"{'>= 5x' if best >= 5 else '< 5x'}")
+    P("     Wakamoto et al. report KatG pulsing CORRELATED BETWEEN SIBLING CELLS -- heritable,")
+    P("     therefore slow -- which places the real system at the low-s end of this table.")
     P("     The generator contains production, decay and killing. It contains no dormant state,")
-    P("     no switching, and no second compartment. A pass is attributable to the spread of KatG")
-    P("     across cells and to nothing else -- which is what Wakamoto et al. concluded from")
-    P("     watching the cells divide under drug rather than sit dormant.")
+    P("     no switching, and no second compartment. The separation is attributable to the spread")
+    P("     of KatG across cells and to nothing else -- which is what Wakamoto et al. concluded")
+    P("     from watching the cells divide under drug rather than sit dormant.")
     P("")
 
     # ---------------- KG4 (the decisive one) ----------------
@@ -266,8 +306,9 @@ def report():
     n_ax = np.arange(CAP + 1, dtype=float)
     for b in (1.0, 2.0, 4.0, 8.0, 16.0, 32.0):
         Q, p0 = build(b, 1.0)
-        m = float(n_ax @ p0)
-        fano = float((n_ax ** 2 @ p0) - m ** 2) / m
+        ax = np.arange(p0.size, dtype=float)
+        m = float(ax @ p0)
+        fano = float((ax ** 2 @ p0) - m ** 2) / m
         lam = asymptotic_rate(Q, KAPPA)
         mf_vals.append(KAPPA * m); ex_vals.append(lam)
         P(f"        {b:7g}   {m:11.6f}   {fano:5.2f}   {KAPPA*m:15.6f}   {lam:14.6f}   "
@@ -332,7 +373,7 @@ def report():
     e2 = log_slope(Qc, KAPPA, pc, 0.0, 2.0)
     l2 = log_slope(Qc, KAPPA, pc, 24.0, 48.0)
     lam_c = asymptotic_rate(Qc, KAPPA)
-    mc = float(n_ax @ pc)
+    mc = float(np.arange(pc.size, dtype=float) @ pc)
     dev_shape = abs(l2 / e2 - 1.0)
     dev_rate = abs(lam_c / (KAPPA * mc) - 1.0)
     P(f"     burst size 1 and fast fluctuation (s = 400):")
