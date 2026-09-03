@@ -331,7 +331,7 @@ def verify(verbose: bool = True) -> dict:
   a step exists is a property of the CIRCUIT's topology, not of the step. So the actionable form
   of the rule is not "model the gating step's shape and use exponentials elsewhere" -- it is
   "find out whether your circuit has any off-path steps at all, because in a linear cascade it
-  has none, and then every shape assumption is load-bearing."
+  has none, and then every shape assumption is load-bearing.""")
 
     print("\n" + "=" * 100)
     print("GD-CONTROL  fit the model to data from the model itself -- spread must be ~0")
