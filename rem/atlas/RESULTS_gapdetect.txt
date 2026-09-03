@@ -1,10 +1,99 @@
-Traceback (most recent call last):
-  File "<frozen runpy>", line 189, in _run_module_as_main
-  File "<frozen runpy>", line 159, in _get_module_details
-  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
-  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
-  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/home/user/cell/rem/atlas/gapdetect.py", line 368
-    every condition -- one iteration of bisection returns the bracket's geometric midpoint whatever
-                                                                     ^
-SyntaxError: unterminated string literal (detected at line 368)
+====================================================================================================
+GD1 / T15  STRUCTURAL DELETION -- unbounded, and invisible in the mean
+====================================================================================================
+  bursty:       mean 5.4791  Fano 5.8600   (spec's mean 4.5455)
+  constitutive: mean 5.4791  Fano 1.0000   same mean production flux
+  MEAN DIFFERENCE: 0.000000%   (spec: +0.000%)
+
+      T     bursty P   constitutive P    orders
+     20    3.031e-02        1.373e-06      4.34
+     40    7.745e-04        2.086e-21     17.57
+     60    1.924e-05        1.158e-40     35.22
+     80    4.717e-07        7.814e-63     55.78
+    100    1.149e-08        3.512e-87     78.51
+    123    1.592e-10       2.611e-117    106.79
+    150    1.044e-12       4.853e-155    142.33
+    200    9.353e-17       3.002e-230    213.49
+
+  mean invariant to 0.000000% (bar 0.001%): True
+  largest tail discrepancy over the sweep: 78.51 orders (bar > 3)
+  the spec's 6.34 orders is NOT reached at its stated T = 123; at that
+  threshold this construction gives a far larger gap, so the spec's pair
+  (mean 4.5455, T 123, 6.34 orders) does not describe geometric bursts against
+  a Poisson constitutive model. The STRUCTURAL claim -- mean invariant, tail
+  unbounded -- reproduces; the specific number needs its construction stated.
+  GD1 PASS
+
+====================================================================================================
+GD2 / T14  WAITING-TIME SHAPE: gating step vs non-gating step
+====================================================================================================
+  threshold n >= 31, reference P = 7.655e-07
+  variant                               P(n>=T)  orders vs exponential     spec
+  Erlang-4 on NON-gating step         2.846e-08                   1.43     0.11
+  Erlang-4 on GATING step             1.894e-08                   1.61     2.04
+  Erlang-8 on GATING step             7.585e-09                   2.00     2.80
+
+  IDENTIFIED gating step: protein production (1.61 orders vs 1.43 for the other)
+  separation 1.1x (bar > 5x)
+  GD2 FAIL -- gate on the SEPARATION; which step gates is measured, not assumed
+
+  DIAGNOSIS, and it is a structural statement rather than a parameter complaint. Both variants
+  move the tail by a comparable amount (1.43 and 1.61 orders) no matter how the rates are set,
+  and making mRNA turnover 12x faster than protein decay did not separate them -- it raised both.
+  The reason: in a LINEAR two-stage circuit mRNA -> protein, EVERY step lies on the causal path
+  to the observable, so every waiting-time shape reaches the tail. There is no non-gating step to
+  find. Section 7.2's 0.11-order figure requires a step genuinely OFF that path, and whether such
+  a step exists is a property of the CIRCUIT's topology, not of the step. So the actionable form
+  of the rule is not "model the gating step's shape and use exponentials elsewhere" -- it is
+  "find out whether your circuit has any off-path steps at all, because in a linear cascade it
+  has none, and then every shape assumption is load-bearing.
+
+====================================================================================================
+GD-CONTROL  fit the model to data from the model itself -- spread must be ~0
+====================================================================================================
+  no missing route: fitted gamma spread = 0.000000%   (fits [1. 1. 1. 1. 1. 1.])
+  control silent: True
+  each thing this control claims to catch, tested by breaking it:
+    (b) condition-dependent noise in the data      spread     14.863%   FIRES
+    (c) gamma made genuinely condition-dependent   spread    150.000%   FIRES
+    (a-withdrawn) uniformly non-converging fitter  spread      0.000%   SILENT, AS NOW EXPECTED (see below)
+
+  CLAIM (a) IS WITHDRAWN, and the reason is a SECOND BLIND SPOT worth more than the claim was.
+  A spread statistic measures DRIFT, not ACCURACY. A fitter that is wrong by the same factor at
+  every condition -- one iteration of bisection returns the bracket's geometric midpoint whatever
+  the data -- produces fitted values that are uniformly wrong and therefore perfectly consistent,
+  so the spread is exactly 0. The detector cannot see it, and no threshold on spread ever will.
+  So section 7.3's detector has two blind spots, not one: a missing route below the detection
+  limit, AND any error that is condition-INDEPENDENT. The second is not mentioned in the spec and
+  is arguably the more dangerous, because a systematically miscalibrated fitter looks exactly
+  like a structurally perfect model.
+  GD-CONTROL PASS
+
+====================================================================================================
+GD3 / GD4  DETECTION, AND THE LIMIT THAT MUST BE PRINTED WITH EVERY VERDICT
+====================================================================================================
+   missing route   gamma spread   detected  tail cost (orders)
+           0e+00        0.0000%      False               0.000
+           1e-06        0.0005%      False               0.846
+           1e-05        0.0050%      False               1.788
+           1e-04        0.0500%      False               2.795
+           1e-03        0.4995%      False               3.912
+           1e-02        4.9505%       True               5.445
+           1e-01       45.4545%       True               7.412
+
+  sweep contains a detected case: True;  an undetected case: True
+  GD4 PASS -- the limit is bracketed, so a limit may be quoted
+  DETECTION LIMIT on this system: 1e-02  (spec quotes ~1e-5)
+  WORST TAIL COST HIDDEN BELOW IT: 3.912 orders
+  GD3 PASS -- a missing route above the limit does drift the fit
+
+  MANDATORY WITH EVERY VERDICT: 'no gap detected' means only that no route ABOVE
+  this limit is missing. The detector shrinks the blind spot; it does not close it.
+
+====================================================================================================
+SUMMARY: 4 of 5 gates PASS
+  GD1            PASS
+  GD2            FAIL
+  GD3            PASS
+  GD4            PASS
+  GD_control     PASS
