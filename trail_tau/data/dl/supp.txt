@@ -1,0 +1,98 @@
+Supplementary Materials
+Drug-tolerant persisters to TRAIL emerge from a dose-dependent surface in a
+cell-state continuum of sensitivity.
+Giada Fiandaca, Marielle P´er´e, Kelian Bonhomme, Madalena Chaves, J´er´emie Roux5
+Supplementary figures
+Figure S1: Parameter distributions for the core model developed in [1] for three different TRAIL
+doses, 25, 50, and 100 ng/ml (left to right). (A) Degradation rate constant Kdeg and (B) Caspase
+8 activation rate constant α0. Distributions differ markedly between sensitive (red) and tolerant
+(blue) cells, indicating that the core model cannot yet represent a common pathway for caspase
+activation in both phenotypes.
+1
+Figure S2: Relationship between parameterKdeg and final value of caspase 8 concentration, for the
+core model [1]. This relationship, almost constant for sensitive cells and a clear dependence on
+caspase 8 for tolerant cells, led us to consider a saturated degradation rate KdegC8/(C8 +αC8),
+which considerably improved the model.
+Figure S3: Violin plots showing the parameter distributions for α0, α1, Kdeg (left to right, respec-
+tively), for the new model (2). Each colored dot represents the parameter for one fitted cell and
+each column represents a phenotype (S for sensitive or T for tolerant) and a drug dose (25, 50, or
+100 ng/ml), as indicated in the horizontal axis. The dependence of the parameters on the sensitive
+or tolerant phenotype is now reduced relative to the core model (1), but these three parameters
+characterize the key terms for caspase 8 regulation and are still likely to contain some information
+on the distinguishing features between phenotypes and drug doses. This is apparent as the distribu-
+tions are more concentrated in a small interval for tolerant phenotype.
+2
+Figure S4: Relationship between CASP8 and CFLAR mRNA expression in cervical cancer models
+and tumors. (A) Scatter plot showing CASP8 and CFLAR expression levels (transcripts per million,
+TPM) across cervical cancer cell lines from the DepMap dataset (Cervix lineage). Each point rep-
+resents one cell line. The red dashed line indicates the linear regression fit, and the shaded area
+represents the 95% confidence interval. (B) Scatter plot showing CASP8 and CFLAR expression
+levels (transcripts per millions, TPM) in primary cervical squamous cell carcinoma (CESC) tumor
+samples from OncoDB (TCGA). Each point represents one patient sample. The red dashed line indi-
+cates the linear regression fit, and the shaded area represents the 95% confidence interval. Together,
+these analyses show that CASP8 and CFLAR expression levels are significantly correlated in both cell
+line and tumor datasets, providing a population-level observation consistent with, but not sufficient
+to validate, the coupling suggested by the model in our single-cell TRAIL response system. Expres-
+sion values are presented on alog2(TPM + 1) scale, Pearson and Spearman correlation coefficients
+are shown in each panel.
+3
+Figure S5: State-space sampled cell states represented in the (pC8(0),FLIP (0),K deg) (panel A),
+(pC8(0),FLIP (0),α 0) (panel B), (pC8(0),FLIP (0),α 1) (panel C) and (α0,α 1,K deg) (panel D)
+state space and colored according to their predicted fate (red: sensitive, blue: tolerant) using the
+fixed thresholdθref . Comparing the panels, we concluded that the triplet (pC8(0),FLIP (0),K deg)
+provides the most informative set of predictors for determining cell fate after drug administration.
+In particular, the pivotal role ofKdeg emerges clearly from panels A and D. Conversely ,α0 andα1 ap-
+pear broadly distributed across both phenotypes, indicating that the two subpopulations are largely
+indistinguishable with respect to the caspase-8 activation parameters.
+4
+Figure S6: Dose-dependent cell-fate hyperplane defines a drug sensitivity threshold in a parame-
+ter landscape of cell death regulators. Projection of the dose-dependent hyperplane into the two-
+dimensional space (pC8(0),FLIP (0)), for drug doses 25, 50, and 100 ng/ml, respectively . Red and
+blue points correspond to state-space sampled cell states classified as sensitive or tolerant usingθref .
+The red line in each panel represents the projection of the fitted hyperplane, which separates the
+two classes. As dose increases, the line shifts and rotates, reflecting the increasing FLIP levels that
+can still be tolerated before crossing into sensitivity . Note that these red lines appropriately compare
+to the analytical estimates, as illustrated in Fig. 6 of the paper, thus further validating our model.
+5
+Figure S7: Long-time behavior of the extended model variables. Simulations of model (2) showing
+the time evolution of all variables T , R, Z0, Z1,Z2,Z3, pC8, FLIP , C8, and FRET . The curves
+correspond to all solutions of the fitted cells for the TRAIL dose of 50 ng/ml.
+6
+Steady state analysis of the extended apoptosis model
+Equilibria of the extended model The equilibria (or steady states) of system (2) can be computed
+as the solution ¯X = ( ¯X1, ¯X2,..., ¯X10) of the equations ˙Xi = fi( ¯X) = 0 for all variables Xi. After
+some algebraic computations, the equilibria of the system can be characterized by:
+¯Z1 = 0, ¯Z2 = 0, ¯C8 = 0,
+and: ¯Z1 = 0, implies ¯Z0 = 0 or ¯pC8 = 0
+SincepC8(0) is present in very large amounts (much larger thanT (0),R(0), orFLIP (0)), we expect
+the equilibria of the system will satisfy ¯Z0 = 0, which in turn leads to:
+¯Z0 = 0, implies ¯Z3 = 0 and ( ¯T = 0 or ¯R = 0).
+SinceR(0) is much larger thanT (0), we expect ¯T = 0. The remaining quantities cannot be uniquely5
+determined from the equations fi( ¯X) = 0 . But they will be positive and depend on the initial
+conditions:
+¯R> 0, ¯pC8> 0, ¯FLIP > 0, ¯FRET > 0. (1)
+Interpretation of asymptotic behavior This analysis is illustrated in Figure S7, which shows the
+behavior of the model at long simulation times, as each variable approaches its equilibrium value.
+As expected, all variables but the four listed in equation (1) approach 0. This behavior can be10
+interpreted as a follow up of TRAIL depletion: as its molecules are used up or sequestered, formation
+of all complexesZi naturally stops and any remaining amounts are degraded or used up to activate
+C8. When no more complexes are available, caspase-8 can only degrade or activate FRET . As C8
+tends to zero, eventuallyFRET also stops increasing and reaches a constant level.
+The solutions shown in Figure S7 represent all cells fitted for the TRAIL dose of 50 ng/ml. It is15
+clear that the four variables in (1) reach different values depending on the initial conditionspC8(0)
+andFLIP (0) (we recall thatT (0) andR(0) are equal for all cells, which explains why ¯R is likewise
+equal for all cells).
+Equilibria vs. phenotypes As a final remark, note that our extended apoptosis model admits a20
+single type of equilibria, with depleted TRAIL, complexes, and caspase-8, a state that represents
+a ”cell” long after TRAIL treatment is exhausted. If the cell survived, it has therefore reverted to
+a similar state as before the treatment , with some large amounts of R, pC8 and FLIP and other
+elements at zero. In other words, after several hours, the cell is ready to respond to new signaling,
+another realistic feature of our model.25
+We also note that, in any case, these equilibria are not to be viewed as sensitive or tolerant pheno-
+types. In this model, by construction, these two phenotypes are defined by the transient behavior of
+the model, as characterized by the successive steps in Box 1.
+References
+[1] Marielle P ´er´e, Madalena Chaves, and J´er´emie Roux. “Core models of receptor reactions evalu-30
+ate basic pathway designs enabling heterogeneous commitments to apoptosis”. In: 18th Conf.
+Computational Methods in Systems Biology (CMSB 2020) . Konstanz, Germany , Sept. 2020.
+7
