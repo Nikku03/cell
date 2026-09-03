@@ -41,7 +41,7 @@ is right at its own operating point.
 | 0.005 | 0.4442 | 0.6678 | 0.9128 | 0.9950 |
 | 0.010 | 0.2845 | 0.5000 | 0.8390 | 0.9900 |
 | 0.030 | 0.1149 | 0.2462 | 0.6299 | 0.9700 |
-| **0.070** | 0.0507 | **0.1183** | 0.4115 | 0.9300 |
+| 0.070 | 0.0507 | 0.1183 | 0.4115 | 0.9300 |
 
 Closed form verified against a 10⁷-cell Monte-Carlo: 0.118321 vs 0.118293 ± 0.000364, agreement
 0.08σ.
@@ -97,7 +97,7 @@ Both are testable with sorts they already run.
 | What | Why |
 |---|---|
 | The mixing ratio of the MSM-mEos2 / MSM-mCherry control culture | It is the prevalence at which the 7% applies. Everything in §1 turns on it. |
-| The false-positive rate of the **dim gate** specifically (lit cells landing in the dim gate), rather than symmetric two-strain sort efficiency | This is the ε that actually governs purity |
+| The false-positive rate of the dim gate specifically (lit cells landing in the dim gate), rather than symmetric two-strain sort efficiency | This is the ε that actually governs purity |
 | Per-cell survival of PerSorted dim vs lit at 5× MIC as an absolute ratio | Tests §3 directly |
 
 ## The question, as a question

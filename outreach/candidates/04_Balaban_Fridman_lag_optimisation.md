@@ -27,7 +27,7 @@ becomes single-exponential. The testbed measures the mechanism, not the driver.
 Their result gives the location of the optimum. REM gives its **shape**, which predicts how tightly
 replicate evolved populations should cluster:
 
-| T_on (h) | peak lag | fold-width of the peak | max \|selection\| | curvature |
+| T_on (h) | peak lag | fold-width of the peak | max abs(selection) | curvature |
 |---|---|---|---|---|
 | 1.5 | 1.48 | 15.0× (≥ grid) | 0.067 | −0.050 |
 | 2.5 | 2.32 | 15.0× (≥ grid) | 0.200 | −0.174 |

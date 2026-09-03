@@ -24,13 +24,13 @@ exactly*.
 
 **J774 macrophages** (0.2 then 0.02 log₁₀/h):
 
-| a (/h) | k (/h) | b (/h) | early | late | **persister fraction** | log₁₀ plateau |
+| a (/h) | k (/h) | b (/h) | early | late | persister fraction | log₁₀ plateau |
 |---|---|---|---|---|---|---|
-| 0.0001 | 0.46063 | 0.039950 | 0.200000 | 0.020000 | **0.002497** | −1.4588 |
+| 0.0001 | 0.46063 | 0.039950 | 0.200000 | 0.020000 | 0.002497 | −1.4588 |
 | 0.0030 | 0.46381 | 0.046169 | 0.200000 | 0.020000 | 0.061014 | −1.3767 |
 | 0.0300 | 0.49442 | 0.049127 | 0.200000 | 0.020000 | 0.379136 | −1.0531 |
 | 0.3000 | 0.91220 | 0.062002 | 0.200000 | 0.020000 | 0.828724 | −0.5729 |
-| 1.0000 | 2.55886 | 0.064379 | 0.200000 | 0.020000 | **0.939515** | −0.5400 |
+| 1.0000 | 2.55886 | 0.064379 | 0.200000 | 0.020000 | 0.939515 | −0.5400 |
 
 Slope drift across the entire feasible curve: **9.0 × 10⁻¹⁵**. Every row is an exact fit.
 
@@ -91,7 +91,7 @@ The failed run is kept in the output rather than deleted.
 | What | Why |
 |---|---|
 | The slow-phase intercept (persister plateau height) from Fig 1B, per cell type | Collapses a 376× family; §3 |
-| Single-cell resuscitation lag distribution (Fig 1G, measured, plotted) | *b* is 1/mean lag — this over-determines the fit and turns the degeneracy into a consistency check |
+| Single-cell resuscitation lag distribution (Fig 1G, measured, plotted) | b is 1/mean lag — this over-determines the fit and turns the degeneracy into a consistency check |
 
 The second is the interesting one. They **measured single-cell lag times** for exactly these
 persisters. That distribution independently determines *b*, which fixes *a* and *k*, which closes

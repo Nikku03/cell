@@ -78,7 +78,7 @@ currently in use — **understates** the risk:
 | −0.63 | −0.308 | 0.3758 | 0.5414 | −0.159 |
 | −0.14 | −0.088 | 0.4410 | 0.4883 | −0.044 |
 | +0.17 | +0.075 | 0.4730 | 0.4321 | +0.039 |
-| +0.83 | +0.281 | 0.5396 | 0.3904 | **+0.141** |
+| +0.83 | +0.281 | 0.5396 | 0.3904 | +0.141 |
 
 The error is exactly zero at zero correlation and grows with |n·Cov|. The magnitude above is set by
 the dispersion assumed; the *structure* — sign, and proportionality to n·Cov — is exact.
@@ -129,8 +129,8 @@ per animal. That number is not in the paper and is computable from data they alr
 | What | Why it matters |
 |---|---|
 | Per-lesion CFU distribution (plotted, not tabulated in the retrievable text) | Sets Σ Nᵢ, which is the whole of §1 |
-| Number of scan-matched granulomas harvested per animal | The *n* that §3 shows is otherwise unidentifiable |
-| Joint per-lesion **(burden, drug exposure or killing)** | Sets Cov(q,N) — the single number §2 shows the answer turns on |
+| Number of scan-matched granulomas harvested per animal | The n that §3 shows is otherwise unidentifiable |
+| Joint per-lesion (burden, drug exposure or killing) | Sets Cov(q,N) — the single number §2 shows the answer turns on |
 
 The third has, as far as we can find, never been measured jointly by anyone. It is the number.
 

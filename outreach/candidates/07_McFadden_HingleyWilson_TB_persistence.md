@@ -28,7 +28,7 @@ their data.
 | What | Why |
 |---|---|
 | A single-cell or per-site residual-burden distribution | §1: converts the identity into a number |
-| Any paired measurement of burden **and** local drug exposure/killing | Sets Cov(q,N) — the one quantity the answer turns on, and as far as we can find, unmeasured by anyone |
+| Any paired measurement of burden and local drug exposure/killing | Sets Cov(q,N) — the one quantity the answer turns on, and as far as we can find, unmeasured by anyone |
 | A biphasic time-kill curve with both slopes stated | The Van Bambeke analysis (document 02) applies directly and gives a free upper bound on the persister formation rate |
 
 ## The question, as a question
