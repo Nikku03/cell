@@ -74,10 +74,25 @@ from scipy.linalg import expm
 
 RULE = "=" * 97
 
-NA, NB = 14, 24
+NA, NB = 20, 26
 KA, MUA = 3.0, 1.0
-KB, MUB = 0.6, 1.0
-THRESH, T_END, NT = 12, 6.0, 401
+KB, MUB = 3.0, 1.0
+TA_THRESH, TB_THRESH = 6, 7
+T_END, NT = 6.0, 401
+
+# CORRECTION 1. A was started EMPTY while the split used A's STATIONARY mean, so <A(t)> did not
+# equal <A> during the transient and the split did not preserve B's mean (E1 failed at 9.0e-03).
+# A now starts IN its stationary law, which makes the mean-field substitution exact at every t.
+#
+# CORRECTION 2. Y was P(B >= 12) with Y ~ 1e-12, so at small lambda both Y and the difference sat
+# at double-precision floor; the "true error" changed SIGN (-1.0e-15, -1.6e-15, -6.0e-16), which
+# is noise, and those rows drove the exponent fit. Rates are retuned so Y ~ 1e-3.
+#
+# CORRECTION 3, and it is the one that matters. P(B >= t) is a SINGLE-variable tail, and a
+# mean-preserving split perturbs it only at O(lambda^2) -- so predeclaring "true error ~ lambda^1"
+# was wrong for that observable. The case the bug actually lives in, and the case a split of A
+# from B is really asking about, is the CONJUNCTIVE event P(A >= tA AND B >= tB), whose
+# factorisation error is first order in the coupling. That is now the observable.
 C_BULK = 20.23
 
 
@@ -108,20 +123,25 @@ def generator(lam, mean_field_A=None):
 
 
 def observable():
+    """CONJUNCTIVE rare event: A >= TA_THRESH AND B >= TB_THRESH."""
     f = np.zeros((NA + 1) * (NB + 1))
-    for a in range(NA + 1):
-        for b in range(THRESH, NB + 1):
+    for a in range(TA_THRESH, NA + 1):
+        for b in range(TB_THRESH, NB + 1):
             f[a * (NB + 1) + b] = 1.0
     return f
 
 
-def mean_A_exact():
-    """A is autonomous birth-death: exact stationary mean, independent of lambda."""
+def stationary_A():
+    """A is autonomous birth-death; exact truncated stationary law and its mean."""
     p = np.zeros(NA + 1); p[0] = 1.0
     for a in range(1, NA + 1):
         p[a] = p[a - 1] * KA / (MUA * a)
     p /= p.sum()
-    return float(np.arange(NA + 1) @ p)
+    return p, float(np.arange(NA + 1) @ p)
+
+
+def mean_A_exact():
+    return stationary_A()[1]
 
 
 def solve(L, p0, f, nt=NT, T=T_END):
@@ -184,13 +204,18 @@ def report():
     out = []; P = out.append
     mA = mean_A_exact()
     f = observable()
-    p0 = np.zeros((NA + 1) * (NB + 1)); p0[0] = 1.0
+    pA, _ = stationary_A()
+    p0 = np.zeros((NA + 1) * (NB + 1))
+    for a in range(NA + 1):
+        p0[a * (NB + 1) + 0] = pA[a]      # A starts in its stationary law, B empty
     P(RULE)
     P("A FORWARD-BACKWARD ERROR METER: does it scale like the error, or like the bug?")
     P(RULE)
     P(f"  A drives B. Split = mean-field decoupling, lambda*A -> lambda*<A> with <A> = {mA:.6f}")
     P(f"  exact, so B's mean is preserved and only the correlation is destroyed.")
-    P(f"  Y = P(B >= {THRESH}) at t = {T_END}, from an empty start. Estimator expanded about the")
+    P(f"  Y = P(A >= {TA_THRESH} AND B >= {TB_THRESH}) at t = {T_END}; A starts stationary, B")
+    P("  empty. Conjunctive because that is the case whose factorisation error is FIRST order in")
+    P("  the coupling -- a single-variable tail is perturbed only at second order. Expanded about")
     P("  SPLIT model, which is the one the engine actually holds.")
     P("")
 
@@ -208,7 +233,7 @@ def report():
       f"{'PASS' if wm < 1e-9 else 'FAIL'} (bar 1e-9)")
     ys = [r["Y_full"] for r in rows]
     P(f"  Y range {min(ys):.4e} to {max(ys):.4e}   "
-      f"{'PASS' if all(1e-10 < y < 0.2 for y in ys) else 'FAIL'} (bar inside 1e-10..0.2)")
+      f"{'PASS' if all(1e-8 < y < 0.2 for y in ys) else 'FAIL'} (bar inside 1e-8..0.2)")
     dts = [abs(r["d_true"]) for r in rows]
     P(f"  true error spans {min(dts):.3e} to {max(dts):.3e} = {max(dts)/min(dts):.0f}x   "
       f"{'PASS' if max(dts)/min(dts) > 100 else 'FAIL'} (bar 100x)")

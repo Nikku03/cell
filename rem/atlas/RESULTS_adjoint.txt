@@ -1,0 +1,75 @@
+=================================================================================================
+A FORWARD-BACKWARD ERROR METER: does it scale like the error, or like the bug?
+=================================================================================================
+  A drives B. Split = mean-field decoupling, lambda*A -> lambda*<A> with <A> = 3.000000
+  exact, so B's mean is preserved and only the correlation is destroyed.
+  Y = P(A >= 6 AND B >= 7) at t = 6.0; A starts stationary, B
+  empty. Conjunctive because that is the case whose factorisation error is FIRST order in
+  the coupling -- a single-variable tail is perturbed only at second order. Expanded about
+  SPLIT model, which is the one the engine actually holds.
+
+=================================================================================================
+E1 / E7  PRECONDITIONS
+=================================================================================================
+  generator columns sum to zero: max |sum| = 2.665e-15   PASS
+  B mean preserved by the split: worst relative gap 1.020e-12   PASS (bar 1e-9)
+  Y range 2.7867e-03 to 1.3648e-02   PASS (bar inside 1e-8..0.2)
+  true error spans 2.273e-06 to 5.292e-03 = 2328x   PASS (bar 100x)
+
+=================================================================================================
+THE SWEEP
+=================================================================================================
+    lambda      Y_full     true err      adjoint   |.| inside  elementwise          MI
+    0.3000  1.3648e-02  +5.2924e-03  +4.4650e-03   4.4650e-03   1.3346e-02  8.3646e-03
+    0.1000  5.3286e-03  +1.0970e-03  +9.9387e-04   9.9387e-04   2.6121e-03  1.1300e-03
+    0.0300  3.4314e-03  +2.5664e-04  +2.4779e-04   2.4779e-04   6.2109e-04  1.0928e-04
+    0.0100  2.9871e-03  +7.8916e-05  +7.7959e-05   7.7959e-05   1.9300e-04  1.2400e-05
+    0.0030  2.8415e-03  +2.2991e-05  +2.2907e-05   2.2907e-05   5.6500e-05  1.1242e-06
+    0.0010  2.8008e-03  +7.5989e-06  +7.5900e-06   7.5900e-06   1.8702e-05  1.2518e-07
+    0.0003  2.7867e-03  +2.2729e-06  +2.2722e-06   2.2722e-06   5.5970e-06  1.1274e-08
+
+=================================================================================================
+E2  THE SCALING -- the whole test
+=================================================================================================
+  true error      ~ lambda^1.1046   PASS (predeclared 1.0 +/- 0.15)
+  adjoint (signed)~ lambda^1.0818   PASS (predeclared 1.0 +/- 0.15)
+  adjoint (abs)   ~ lambda^1.0818
+  mutual info     ~ lambda^1.9651   PASS (predeclared 2.0 +/- 0.15)
+
+  THE ESTIMATOR IS FIRST ORDER WHERE THE BULK CRITERION IS SECOND ORDER. That is the
+  defect grouping.py measured, and this construction does not have it.
+
+=================================================================================================
+E3  THE BOUND -- measured, not assumed
+=================================================================================================
+    lambda       |true|       signed   bounds?   |.| inside   bounds?  elementwise   bounds?
+    0.3000   5.2924e-03   4.4650e-03        NO   4.4650e-03        NO   1.3346e-02       yes
+    0.1000   1.0970e-03   9.9387e-04        NO   9.9387e-04        NO   2.6121e-03       yes
+    0.0300   2.5664e-04   2.4779e-04        NO   2.4779e-04        NO   6.2109e-04       yes
+    0.0100   7.8916e-05   7.7959e-05        NO   7.7959e-05        NO   1.9300e-04       yes
+    0.0030   2.2991e-05   2.2907e-05        NO   2.2907e-05        NO   5.6500e-05       yes
+    0.0010   7.5989e-06   7.5900e-06        NO   7.5900e-06        NO   1.8702e-05       yes
+    0.0003   2.2729e-06   2.2722e-06        NO   2.2722e-06        NO   5.5970e-06       yes
+  bounds in: signed 0/7, |.| inside 0/7, elementwise 7/7
+  A first-order estimator was NOT predicted to bound globally. What is deliverable is
+  which form bounds and over what range, and that is the table above.
+
+=================================================================================================
+E4 / E6  ACCURACY, AND AGAINST THE BULK BASELINE
+=================================================================================================
+    lambda  adjoint rel err   bulk c*sqrt(MI) rel err
+    0.3000           0.1563                  348.5944
+    0.1000           0.0940                  618.9284
+    0.0300           0.0344                  823.0587
+    0.0100           0.0121                  901.6816
+    0.0030           0.0037                  931.9626
+    0.0010           0.0012                  940.9001
+    0.0003           0.0003                  944.0591
+  worst adjoint 0.1563   worst bulk 9.441e+02
+  E6 PASS -- adjoint beats bulk
+
+=================================================================================================
+E5  ZERO-COUPLING CONTROL
+=================================================================================================
+  at lambda = 0: true 0.000e+00, adjoint 0.000e+00, |.| 0.000e+00, MI -1.726e-16
+  worst 1.726e-16   PASS (bar 1e-12)
