@@ -184,10 +184,15 @@ def meter(P4, T):
                 jmin=min(jab, jac, jbc))
 
 
-POOL_MEAN, MU_R, BURST = 4.0, 1.0, 2.0
-C_RATE, MU_X = 0.8, 0.8
-PCAP, XCAP, T = 22, 15, 9
-SPEEDS = (0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0)
+# RESIZED SO IT ACTUALLY RUNS. The original (22, 15) gives 23*16^3 = 94,208 states built in a
+# Python quadruple loop, thirteen times, which never finished. These sizes give 17*12^3 = 29,376
+# and keep both truncations well clear: the pool cap sits ~5.3 sd above its mean and each
+# reporter cap ~4.5 sd above its own, so M1's mean-invariance and M2's non-vacuity can both be
+# met rather than traded against each other.
+POOL_MEAN, MU_R, BURST = 3.0, 1.0, 2.0
+C_RATE, MU_X = 0.5, 0.75
+PCAP, XCAP, T = 16, 11, 5
+SPEEDS = (0.5, 1.0, 2.0, 4.0, 8.0, 16.0)
 C_BULK = 20.23          # calibrated in rem/atlas/RESULTS_grouping_law.txt
 
 
@@ -291,7 +296,7 @@ def report():
     P(RULE)
     P(f"  {'speed':>7s} {'Lam_full':>11s} {'Lam_pair':>11s} {'MI':>11s}")
     worst = None
-    for s in (32.0, 128.0, 512.0):
+    for s in (16.0, 64.0, 256.0):
         r = run(s)
         worst = max(abs(r["lam_full"]), abs(r["lam_pair"]), abs(r["MI"]))
         P(f"  {s:7.0f} {r['lam_full']:11.3e} {r['lam_pair']:11.3e} {r['MI']:11.3e}")
