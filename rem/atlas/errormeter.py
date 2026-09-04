@@ -1,4 +1,25 @@
-"""An error meter: can the cost of factorising be estimated WITHOUT forming the joint?
+"""Pairwise-tail-lift error meter -- PREDECLARED BUT NEVER RUN. Superseded by adjoint.py.
+
+STATUS, recorded so this file is not mistaken for a result. The gates below were fixed and
+committed, and the module never completed a run. Its 4-D exact joint is 94,208 states built in a
+Python quadruple loop, thirteen times across the sweep, which did not finish in usable time. It
+was killed and its zero-length output deleted rather than committed, because an empty
+RESULTS_errormeter.txt in the tree reads as a result that exists.
+
+IT IS SUPERSEDED, NOT MERELY SLOW. rem/atlas/adjoint.py answers the same merge-direction question
+by a better route. This module asks whether pairwise marginals can price a three-way merge. The
+adjoint estimator prices any simplification expressible as a generator perturbation dL, and
+"bring C into the group" is exactly such a perturbation -- so it subsumes this construction, and
+is exact at first order rather than conjectured. Measured there: estimate ~ lambda^1.082 against
+a true error ~ lambda^1.105, with the elementwise-absolute form bounding in 7 of 7 rows at a
+near-constant 2.46x.
+
+The design is kept because M3 -- that a meter must OVERSTATE to be a safety device, not merely be
+close -- is the right gate, and adjoint.py's E3 inherited it and satisfied it.
+
+ORIGINAL HEADER FOLLOWS.
+
+An error meter: can the cost of factorising be estimated WITHOUT forming the joint?
 
 WHY THIS IS THE MISSING PIECE. The architecture consumes a per-group error budget eps_G in five
 places and produces it in none. rem/atlas/grouping.py measured why a bulk criterion cannot supply
