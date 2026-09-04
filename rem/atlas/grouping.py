@@ -222,9 +222,21 @@ POOL_MEAN = 6.0
 MU_R = 1.0
 CA, MUA = 0.9, 0.8
 CB, MUB = 0.9, 0.8
-PCAP, ACAP, BCAP = 34, 30, 30
+PCAP, ACAP, BCAP = 60, 30, 30
 TA, TB = 16, 16
-BURSTS = (1.0, 1.4, 2.0, 2.8, 4.0, 5.6, 8.0)
+BURST = 2.0
+# CORRECTION 1. The first sweep varied the pool's BURST SIZE. Two things went wrong.
+#   (a) G7 FAILED: at pcap=34 the burst truncation lost production flux and the pool mean drifted
+#       5.7594 -> 6.0000, a 4% span, so "only the correlation changed" was false.
+#   (b) G2 was VOID: every row sat in the strongly-coupled corner (the weakest gave a 6.9% joint
+#       mean error), so the sweep never entered the regime where a split would be ADMITTED and
+#       the criterion could be calibrated at all.
+# Sweeping the pool's SPEED instead fixes both. Scaling a generator leaves its null vector
+# untouched, so the pool's stationary mean AND variance are exactly invariant along the sweep and
+# only its correlation time moves -- from fast (A and B average over it and decouple) to slow
+# (they see a frozen common value and are strongly correlated). That spans independence to strong
+# coupling with an exactly controlled driver.
+SPEEDS = (0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0)
 
 
 def run_row(burst, pool_mean=POOL_MEAN, muR=MU_R, fast=1.0):
@@ -245,12 +257,14 @@ def report():
     P(RULE)
     P("DOES A MUTUAL-INFORMATION SPLIT CRITERION CONTROL TAIL ERROR?")
     P(RULE)
-    P("  Two reporters on one fluctuating resource pool. Pool MEAN held exactly fixed; only the")
-    P("  burst size (its spread) is swept, so every change below is attributable to correlation.")
+    P("  Two reporters on one fluctuating resource pool. The pool's SPEED is swept; scaling a")
+    P("  generator leaves its stationary law untouched, so the pool's mean and variance are")
+    P("  exactly invariant and only its correlation time moves. Fast pool -> A and B average over")
+    P("  it and decouple. Slow pool -> they see a frozen common value and are strongly coupled.")
     P(f"  Joint mean observable E[A*B]; joint tail observable P(A>={TA}, B>={TB}).")
     P("")
 
-    rows = [(b, run_row(b)) for b in BURSTS]
+    rows = [(sp_, run_row(BURST, fast=sp_)) for sp_ in SPEEDS]
 
     # ---- G1 / G7 ----
     P(RULE)
@@ -261,7 +275,7 @@ def report():
     span = (max(pms) - min(pms)) / np.mean(pms)
     P(f"  worst stationary residual max|Q^T pi| = {worst_res:.3e}   "
       f"{'PASS' if worst_res < 1e-10 else 'FAIL'} (bar 1e-10)")
-    P(f"  pool mean across the burst sweep: {min(pms):.10f} to {max(pms):.10f}, "
+    P(f"  pool mean across the sweep: {min(pms):.10f} to {max(pms):.10f}, "
       f"relative span {span:.3e}   {'PASS' if span < 1e-9 else 'FAIL'} (bar 1e-9)")
     P("")
 
@@ -269,7 +283,7 @@ def report():
     P(RULE)
     P("THE SWEEP")
     P(RULE)
-    P(f"  {'burst':>6s} {'MI':>10s} {'MI_tilt':>10s} {'theta':>8s} {'E[AB] err':>11s}"
+    P(f"  {'speed':>6s} {'MI':>10s} {'MI_tilt':>10s} {'theta':>8s} {'E[AB] err':>11s}"
       f" {'P_joint tail':>13s} {'tail err':>11s} {'Lambda':>9s}")
     for b, r in rows:
         P(f"  {b:6.2f} {r['MI']:10.6f} {r['MI_tilt']:10.6f} {r['theta']:8.4f}"
@@ -304,7 +318,7 @@ def report():
         P(f"  rows the criterion admits as splittable (MI <= tau): "
           f"{[b for b, _ in admitted]}")
         P("")
-        P(f"  {'burst':>6s} {'MI':>10s} {'mean err':>11s} {'tail err':>11s} {'tail x':>10s}")
+        P(f"  {'speed':>6s} {'MI':>10s} {'mean err':>11s} {'tail err':>11s} {'tail x':>10s}")
         for b, r in admitted:
             P(f"  {b:6.2f} {r['MI']:10.6f} {r['mean_err']:11.3e} {r['tail_err']:11.3e}"
               f" {1.0 + r['tail_err']:10.2f}x")
@@ -358,7 +372,7 @@ def report():
         P("  Neither predeclared branch is met; reported as measured.")
     P("")
     P("  MAGNITUDE, which ranking alone does not show:")
-    P(f"  {'burst':>6s} {'MI':>10s} {'MI_tilt':>10s} {'tilt/MI':>9s} {'|Lambda|':>9s}")
+    P(f"  {'speed':>6s} {'MI':>10s} {'MI_tilt':>10s} {'tilt/MI':>9s} {'|Lambda|':>9s}")
     for b, r in rows:
         ratio = r["MI_tilt"] / r["MI"] if r["MI"] > 0 else np.nan
         P(f"  {b:6.2f} {r['MI']:10.6f} {r['MI_tilt']:10.6f} {ratio:9.2f} {abs(r['lam']):9.4f}")
@@ -371,8 +385,8 @@ def report():
     P(f"  {'pool speed':>11s} {'MI':>12s} {'MI_tilt':>12s} {'mean err':>11s} {'tail err':>11s}"
       f" {'|Lambda|':>10s}")
     worst_ctrl = 0.0
-    for fast in (1.0, 8.0, 64.0, 512.0):
-        r = run_row(1.0, fast=fast)
+    for fast in (64.0, 256.0, 1024.0, 4096.0):
+        r = run_row(BURST, fast=fast)
         vals = [r["MI"], r["MI_tilt"], r["mean_err"], r["tail_err"], abs(r["lam"])]
         worst_ctrl = max(v for v in vals if np.isfinite(v))
         P(f"  {fast:11.0f} {r['MI']:12.3e} {r['MI_tilt']:12.3e} {r['mean_err']:11.3e}"
