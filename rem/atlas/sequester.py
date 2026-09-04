@@ -284,7 +284,9 @@ def report():
     for kR, muR, c, muX in [(20.0, 1.0, 0.8, 0.5), (20.0, 2.0, 0.8, 0.5),
                             (20.0, 0.5, 0.8, 0.5), (20.0, 1.0, 2.0, 0.5),
                             (20.0, 1.0, 0.8, 1.0), (40.0, 1.0, 0.8, 0.25)]:
-        Q, Pv, Xv = pool_reporter(70, 160, kR, muR, c, muX, consume=False)
+        # CORRECTION 1: caps of (70,160) truncated the muX=0.25 row, whose <X> is 128.
+        # L_A read 4.64e-02 there; at (120,300) it reads 7.7e-15 and is flat to (200,600).
+        Q, Pv, Xv = pool_reporter(120, 300, kR, muR, c, muX, consume=False)
         r = measure(Q, Pv, Xv); tp = 1.0 / muX
         e = law_errors(tp, r["tau_R"], r["phi"], r["tau_X"])
         m1.append((tp, r, e))
@@ -313,7 +315,7 @@ def report():
     P(f"  {'speed':>8s} {'tau_R':>10s} {'phi':>9s} {'tau_X':>10s} {'tau_p':>8s} {'rel dev':>10s}")
     muX = 0.5; tp = 1.0 / muX; dev = None
     for s in (1.0, 4.0, 16.0, 64.0, 256.0):
-        Q, Pv, Xv = pool_reporter(70, 160, 20.0 * s, 1.0 * s, 0.8, muX, consume=False)
+        Q, Pv, Xv = pool_reporter(120, 300, 20.0 * s, 1.0 * s, 0.8, muX, consume=False)
         r = measure(Q, Pv, Xv)
         dev = abs(r["tau_X"] - tp) / tp
         P(f"  {s:8.0f} {r['tau_R']:10.6f} {r['phi']:9.5f} {r['tau_X']:10.6f} {tp:8.4f}"
@@ -330,7 +332,7 @@ def report():
     phis2 = []
     for kR, muR, c, muX in [(20.0, 1.0, 0.8, 0.5), (20.0, 2.0, 0.8, 0.5),
                             (20.0, 1.0, 2.0, 0.5), (40.0, 1.0, 0.8, 0.25)]:
-        Q, Pv, Xv = pool_reporter(70, 160, kR, muR, c, muX, consume=True)
+        Q, Pv, Xv = pool_reporter(120, 300, kR, muR, c, muX, consume=True)
         r = measure(Q, Pv, Xv); tp = 1.0 / muX
         phis2.append(abs(r["phi"]))
         P(f"  {kR:6.1f} {muR:7.2f} {c:6.2f} {muX:7.2f} {r['phi']:12.3e} {r['tau_R']:9.5f}"
@@ -353,7 +355,7 @@ def report():
             (12, 10, 0.05, 1.0, 2.0, 0.5), (12, 10, 0.05, 1.0, 2.0, 0.25),
             (20, 6, 0.05, 1.0, 2.0, 0.5),  (12, 10, 0.02, 0.5, 1.0, 0.5),
             (8,  8, 0.10, 2.0, 4.0, 0.5),  (12, 10, 0.05, 1.0, 2.0, 1.0)]:
-        Q, Cv, Xv, cmax = sequester(Rtot, Mtot, 150, kon, koff, kcat, muX)
+        Q, Cv, Xv, cmax = sequester(Rtot, Mtot, 200, kon, koff, kcat, muX)
         r = measure(Q, Cv, Xv); tp = 1.0 / muX
         e = law_errors(tp, r["tau_R"], r["phi"], r["tau_X"])
         m3.append((tp, r, e))
@@ -363,24 +365,55 @@ def report():
     phis3 = [r["phi"] for _, r, _ in m3]
     P("")
     P(f"  S6 DECISION  min phi = {min(phis3):.5f}, max phi = {max(phis3):.5f}")
-    if min(phis3) > PHI_VACUITY:
-        P(f"     phi > 0 for a sequestered catalyst, clear of the {PHI_VACUITY} vacuity bar by"
-          f" {min(phis3)/PHI_VACUITY:.1f}x at worst.")
-        P("     The effect is REAL for real circuits: sequestration transmits pool fluctuation")
-        P("     where strictly linear consumption does not.")
+    # CORRECTION 2: S0 was written as phi > PHI_VACUITY. phi here is NEGATIVE, and a negative
+    # phi discriminates between the candidate laws exactly as well as a positive one -- what
+    # makes a row vacuous is |phi| being small, since that is when every law collapses onto
+    # tau_X = tau_p. Testing the signed value wrongly declared the discriminating case dead.
+    amin = min(abs(v) for v in phis3)
+    if amin > PHI_VACUITY:
+        P(f"     |phi| ranges {amin:.5f} to {max(abs(v) for v in phis3):.5f}, clearing the "
+          f"{PHI_VACUITY} vacuity bar by {amin/PHI_VACUITY:.1f}x at worst.")
+        P("     phi is NOT zero for a sequestered catalyst -- it is NEGATIVE. Sequestration")
+        P("     transmits pool fluctuation with the OPPOSITE SIGN to a non-consuming pool,")
+        P("     where strictly linear consumption transmits none at all.")
     else:
-        P(f"     phi does NOT clear the vacuity bar. The line is dead and this is the report.")
+        P(f"     |phi| does NOT clear the vacuity bar. The line is dead and this is the report.")
     P("")
     P("  worst relative error of every candidate over the M3 rows:")
     for k in LAWS:
         w = max(e[k] for _, _, e in m3)
         P(f"    {k:34s} {w:10.3e}   {'PASS' if w < 1e-6 else 'MISS'}")
-    if min(phis3) > PHI_VACUITY:
+    if min(abs(v) for v in phis3) > PHI_VACUITY:
         win3 = min(LAWS, key=lambda k: max(e[k] for _, _, e in m3))
         rival3 = max(max(e[k] for _, _, e in m3) for k in LAWS if k != win3)
         P(f"  S1 discrimination on M3: best rival misses by {rival3:.3e} "
           f"({'PASS' if rival3 > 0.05 else 'FAIL'})")
         P(f"  WINNER on M3: {win3}")
+    P("")
+    P(RULE)
+    P("DIRECTION -- does the reporter decorrelate FASTER or SLOWER than its own removal time?")
+    P(RULE)
+    P("  This is the experimentally visible prediction, and the two models disagree in SIGN.")
+    P(f"  {'model':<26s}{'tau_p':>8s}{'tau_X':>11s}{'Fano':>9s}{'tau_X/tau_p':>13s}{'verdict':>10s}")
+    for lab, (kR, muR, c, muX) in (("M1 non-consuming pool", (20.0, 1.0, 0.8, 0.5)),
+                                   ("M1 non-consuming pool", (20.0, 2.0, 0.8, 0.5))):
+        Q, Pv, Xv = pool_reporter(120, 300, kR, muR, c, muX, consume=False)
+        r = measure(Q, Pv, Xv); tp = 1.0 / muX; fano = r["vX"] / r["mX"]
+        P(f"  {lab:<26s}{tp:8.3f}{r['tau_X']:11.6f}{fano:9.5f}{r['tau_X']/tp:13.6f}"
+          f"{'SLOWER' if r['tau_X'] > tp else 'FASTER':>10s}")
+    for lab, (Rt, Mt, kon, koff, kcat, mu) in (
+            ("M3 sequestered catalyst", (12, 10, 0.05, 1.0, 2.0, 0.5)),
+            ("M3 sequestered catalyst", (20, 6, 0.05, 1.0, 2.0, 0.5)),
+            ("M3 sequestered catalyst", (8, 8, 0.10, 2.0, 4.0, 0.5))):
+        Q, Cv, Xv, _ = sequester(Rt, Mt, 200, kon, koff, kcat, mu)
+        r = measure(Q, Cv, Xv); tp = 1.0 / mu; fano = r["vX"] / r["mX"]
+        P(f"  {lab:<26s}{tp:8.3f}{r['tau_X']:11.6f}{fano:9.5f}{r['tau_X']/tp:13.6f}"
+          f"{'SLOWER' if r['tau_X'] > tp else 'FASTER':>10s}")
+    P("")
+    P("  A non-consuming shared driver makes the reporter super-Poissonian (Fano > 1) and SLOWER.")
+    P("  A sequestered catalyst makes it sub-Poissonian (Fano < 1) and FASTER. The sign of the")
+    P("  effect is set by whether producing the protein DEPLETES the driver, and translation --")
+    P("  which holds the ribosome and releases it -- is on the depleting side.")
     return "\n".join(out)
 
 
