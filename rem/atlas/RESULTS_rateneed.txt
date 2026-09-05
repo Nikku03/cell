@@ -1,0 +1,69 @@
+=================================================================================================
+HOW ACCURATELY MUST A RATE BE KNOWN FOR THE ANSWER TO BE WORTH HAVING?
+=================================================================================================
+  Two-state persister circuit; Y = P(eradication) after a 4-cycle course.
+  Conversion used throughout: 1 kcal/mol = 0.7330 orders in a rate
+  (transition-state theory, RT = 0.5925 kcal/mol at 298 K).
+  Chemistry's realistic capability: 1-2 kcal/mol, i.e. 0.73-1.47 orders, in vitro.
+
+=================================================================================================
+N3  NON-VACUITY
+=================================================================================================
+  base Y = P(eradication) = 4.377079e-03   PASS (bar inside 1e-9..0.99)
+
+=================================================================================================
+N1  IS THE DERIVATIVE A DERIVATIVE?  (halve the step; S must not move)
+=================================================================================================
+      rate   S at h=0.04   S at h=0.02   rel change
+        mu     -0.050723     -0.050745    4.340e-04
+    k_kill      4.088168      4.089134    2.363e-04
+         a     -3.370295     -3.370324    8.768e-06
+         b      0.317094      0.317206    3.550e-04
+  worst relative change 4.340e-04   PASS (bar 1%)
+
+=================================================================================================
+N2  THE STRUCTURAL CEILING  |S_k| <= T
+=================================================================================================
+  Eradication asks for ZERO cells from an initial 6, so the ceiling is T = 6.
+        mu  |S| = 0.050745
+    k_kill  |S| = 4.089134
+         a  |S| = 3.370324
+         b  |S| = 0.317206
+  worst |S| = 4.089134 against ceiling 6   PASS
+
+=================================================================================================
+N4  THE REQUIREMENT, IN THE UNITS CHEMISTRY IS MEASURED IN
+=================================================================================================
+  to hold Y within a factor of 2 on Y (delta = 0.3010 orders):
+        rate        |S|   orders allowed   kcal/mol allowed   reachable?
+          mu   0.050745           5.9322             8.0932          yes
+      k_kill   4.089134           0.0736             0.1004           NO
+           a   3.370324           0.0893             0.1219           NO
+           b   0.317206           0.9490             1.2947          yes
+
+  to hold Y within a factor of 10 on Y (delta = 1.0000 orders):
+        rate        |S|   orders allowed   kcal/mol allowed   reachable?
+          mu   0.050745          19.7063            26.8850          yes
+      k_kill   4.089134           0.2446             0.3336           NO
+           a   3.370324           0.2967             0.4048           NO
+           b   0.317206           3.1525             4.3009          yes
+
+=================================================================================================
+N5  THE COMPARISON THAT DECIDES THE ROUTE  (target: factor of 2 on Y)
+=================================================================================================
+  rates permitting >= 1.0 kcal/mol (reachable today) : 2 of 4
+  rates permitting 0.5-1.0 kcal/mol (marginal)       : 0 of 4
+  rates needing   <  0.5 kcal/mol (not reachable)    : 2 of 4
+  READING: mixed. Some rates are reachable and some are not, so the route is open only
+  if the unreachable ones can be supplied by measurement instead.
+
+=================================================================================================
+N6  DOES THE REQUIREMENT TIGHTEN AS THE QUESTION GETS RARER?
+=================================================================================================
+    g0             Y   worst |S|   tightest kcal/mol (factor 2)
+     4    2.6758e-02    2.726090                         0.1507
+     6    4.3771e-03    4.089134                         0.1004
+     9    2.8959e-04    6.133702                         0.0670
+  sensitivity grows with population size: True   PASS
+  A rarer question means a deeper tail, a larger |S|, and therefore a TIGHTER rate
+  requirement. Chemistry has to be most accurate exactly where it is hardest.

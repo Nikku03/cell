@@ -127,7 +127,15 @@ def sensitivity(rates, name, h, **kw):
     return (np.log10(yu) - np.log10(yd)) / (2.0 * h)
 
 
-BASE = dict(mu=0.35, k_kill=1.1, a=0.06, b=0.22)
+# CORRECTION 1, and it invalidated the entire first run. The original rates made eradication
+# essentially certain: Y = 0.9986, pressed against 1. N3 caught it. A saturated observable cannot
+# move, so every sensitivity came out at 1e-3 (noise, not signal), N1 failed at 2.1e-02 because the
+# differences were below numerical resolution, and the "requirement" read as 40-460 kcal/mol --
+# which then produced a cheerful N5 verdict that the route is OPEN. That verdict was worthless.
+# This is the same defect as reading a validation off a quantity pressed against its limit, and it
+# is now the fourth time in this session. Retuned so eradication is genuinely rare.
+BASE = dict(mu=1.0, k_kill=0.25, a=0.40, b=0.03)
+CYCLES, G0 = 3, 6
 NAMES = ("mu", "k_kill", "a", "b")
 
 
@@ -142,7 +150,7 @@ def report():
     P("  Chemistry's realistic capability: 1-2 kcal/mol, i.e. 0.73-1.47 orders, in vitro.")
     P("")
 
-    y0 = eradication(BASE)
+    y0 = eradication(BASE, cycles=CYCLES, g0=G0)
     P(RULE)
     P("N3  NON-VACUITY")
     P(RULE)
@@ -157,8 +165,8 @@ def report():
     S = {}
     worst_n1 = 0.0
     for nm in NAMES:
-        s1 = sensitivity(BASE, nm, 0.04)
-        s2 = sensitivity(BASE, nm, 0.02)
+        s1 = sensitivity(BASE, nm, 0.04, cycles=CYCLES, g0=G0)
+        s2 = sensitivity(BASE, nm, 0.02, cycles=CYCLES, g0=G0)
         rel = abs(s1 - s2) / abs(s2) if s2 else np.nan
         worst_n1 = max(worst_n1, rel)
         S[nm] = s2
@@ -170,12 +178,12 @@ def report():
     P(RULE)
     P("N2  THE STRUCTURAL CEILING  |S_k| <= T")
     P(RULE)
-    P("  Eradication asks for ZERO cells from an initial 6, so the ceiling is T = 6.")
+    P(f"  Eradication asks for ZERO cells from an initial {G0}, so the ceiling is T = {G0}.")
     mx = max(abs(v) for v in S.values())
     for nm in NAMES:
         P(f"  {nm:>8s}  |S| = {abs(S[nm]):.6f}")
-    P(f"  worst |S| = {mx:.6f} against ceiling 6   "
-      f"{'PASS' if mx <= 6.0 else 'FAIL -- sensitivity code is wrong'}")
+    P(f"  worst |S| = {mx:.6f} against ceiling {G0}   "
+      f"{'PASS' if mx <= G0 else 'FAIL -- sensitivity code is wrong'}")
     P("")
 
     P(RULE)
@@ -226,8 +234,8 @@ def report():
     prev = None
     mono = True
     for g0 in (4, 6, 9):
-        y = eradication(BASE, g0=g0)
-        ss = [abs(sensitivity(BASE, nm, 0.02, g0=g0)) for nm in NAMES]
+        y = eradication(BASE, g0=g0, cycles=CYCLES)
+        ss = [abs(sensitivity(BASE, nm, 0.02, g0=g0, cycles=CYCLES)) for nm in NAMES]
         w = max(ss)
         kc = (delta / w) / ORDERS_PER_KCAL
         P(f"  {g0:4d} {y:13.4e} {w:11.6f} {kc:30.4f}")
