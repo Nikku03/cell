@@ -80,14 +80,20 @@ from rem.atlas.hybrid_tune import RULE
 from rem.atlas.recon import MODEL, MEDIUM, fetch_if_missing
 
 # ---- declared assumptions, all swept in W7 ---------------------------------------------------
+# CORRECTED UNITS. The first run put kcat in 1/h against an enzyme budget normalised to 1.0, so
+# any flux could be bought with almost no protein, enzymes became free and the optimiser spent the
+# whole budget on ribosome. Flux, enzyme and ribosome are now carried in ONE consistent system:
+# flux in mmol/gDW/h, protein in g/gDW, capacity v <= kcat * E / MW.
 N_GENES_TOTAL = 19900          # human protein-coding genes
-AA_PER_PROTEIN = 430           # mean human protein length, residues
-ATP_PER_BOND = 4.3             # ATP equivalents per peptide bond formed
-KCAT_MEDIAN = 25.0             # 1/s, the value enzyme-constrained models commonly assume
+MW_PROT = 50.0                 # g/mmol, a 50 kDa average protein
+KCAT_MEDIAN = 25.0             # 1/s
 KCAT_SIGMA = 1.2               # lognormal spread in ln units
-PROT_BUDGET = 1.0              # metabolic proteome budget, arbitrary units; only ratios matter
-METAB_PROT_FRACTION = 0.55     # fraction of proteome that is metabolic enzyme
-MU_MAX_SEARCH = 5.0
+PROT_TOTAL = 0.5               # g protein per gDW
+OTHER_FRAC = 0.45              # non-metabolic, non-ribosomal share of the proteome
+# A 3.2 MDa ribosome elongating at ~5.5 aa/s at 110 g/mol per residue makes
+# 5.5*110*3600/3.2e6 = 0.68 g of protein per g of ribosome per hour.
+K_ELONG_MASS = 0.68
+MU_MAX_SEARCH = 2.0
 
 
 def parse_gpr(rule):
@@ -130,7 +136,7 @@ def build_lp(S, lb, ub, kcat, enz_idx, mu, obj_idx, k_dp, budget, k_elong,
 
     rows, cols, vals = [], [], []
     for k, j in enumerate(enz_idx):
-        rows += [k, k]; cols += [j, nR + k]; vals += [1.0, -kcat[j]]
+        rows += [k, k]; cols += [j, nR + k]; vals += [1.0, -kcat[j] / MW_PROT]
     Acap = coo_matrix((vals, (rows, cols)), shape=(nE, n))
 
     P_other = other_frac * budget
@@ -154,7 +160,7 @@ def build_lp(S, lb, ub, kcat, enz_idx, mu, obj_idx, k_dp, budget, k_elong,
 
 
 def max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, budget, k_elong,
-               other_frac, k_dp_other, k_dp_rib, tol=1e-4, hi0=MU_MAX_SEARCH):
+               other_frac, k_dp_other, k_dp_rib, tol=1e-6, hi0=MU_MAX_SEARCH):
     """Bisection on growth: the largest mu for which the coupled program is feasible."""
     lo, hi = 0.0, hi0
     r0, _, _ = build_lp(S, lb, ub, kcat, enz_idx, 0.0, obj_idx, k_dp, budget,
@@ -234,17 +240,18 @@ def main():
     rng = np.random.default_rng(20260905)
     kcat = np.zeros(nR)
     kcat[enz_idx] = np.exp(rng.normal(np.log(KCAT_MEDIAN), KCAT_SIGMA, len(enz_idx))) * 3600.0
+    # v [mmol/gDW/h] <= kcat [1/h] * E [g/gDW] / MW [g/mmol]
     k_dp = np.zeros(nR)
     k_dp[enz_idx] = np.exp(rng.normal(np.log(0.015), 0.7, len(enz_idx)))
-    K_ELONG = 2.0
-    OTHER_FRAC = 1.0 - METAB_PROT_FRACTION
+    K_ELONG = K_ELONG_MASS
     KDP_OTHER, KDP_RIB = 0.015, 0.010
 
     # ---- W3, W4 ---------------------------------------------------------------------------------
     P("\n" + RULE); P("W3  THE FIXED POINT EXISTS AND IS FOUND"); P(RULE)
     t0 = time.time()
     mu, best, steps = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp,
-                                 PROT_BUDGET, K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB)
+                                 PROT_TOTAL, K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB,
+                                 tol=1e-6)
     P(f"  bisection: {steps} linear programs in {time.time()-t0:.1f}s")
     if mu is None:
         P("  FAIL -- infeasible even at zero growth; the coupled model has no solution")
@@ -270,9 +277,11 @@ def main():
     mb = float(np.abs(S @ v).max())
     P(f"  worst |S v| = {mb:.2e}   {'PASS' if mb < 1e-6 else 'FAIL'}")
     used = float(E.sum() + Rrib)
-    P(f"  proteome used {used:.6f} of the metabolic budget"
-      f" {PROT_BUDGET*METAB_PROT_FRACTION:.6f}"
-      f"   binding: {abs(used - PROT_BUDGET*METAB_PROT_FRACTION) < 1e-6}")
+    avail = PROT_TOTAL * (1.0 - OTHER_FRAC)
+    P(f"  protein used {used:.6f} g/gDW of the {avail:.6f} available to metabolism + ribosome"
+      f"   binding: {abs(used - avail) < 1e-8}")
+    P(f"  ribosome {Rrib:.6f} g/gDW = {100*Rrib/PROT_TOTAL:.2f}% of total protein"
+      f"  (mammalian cells are a few per cent)")
 
     P("\n" + RULE); P("W5  WHICH LAYER LIMITS"); P(RULE)
     nE = len(enz_idx)
@@ -296,7 +305,7 @@ def main():
     rows_out = []
     for j in cand[:8]:
         k2 = kcat.copy(); k2[j] *= 1.01
-        m2, _, _ = max_growth(S, lb, ub, k2, enz_idx, obj_idx, k_dp, PROT_BUDGET,
+        m2, _, _ = max_growth(S, lb, ub, k2, enz_idx, obj_idx, k_dp, PROT_TOTAL,
                               K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB, tol=1e-5)
         d = (np.log(max(m2, 1e-300)) - np.log(mu)) / np.log(1.01) if m2 else 0.0
         rows_out.append((f"kcat[{R[j]['id']}]", d))
@@ -304,13 +313,13 @@ def main():
     for nm, mult in (("k_elong (ribosome speed)", "elong"), ("proteome budget", "budget"),
                      ("k_dp of the non-metabolic proteome", "kdpo")):
         if mult == "elong":
-            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_BUDGET,
+            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_TOTAL,
                                   K_ELONG * 1.01, OTHER_FRAC, KDP_OTHER, KDP_RIB, tol=1e-5)
         elif mult == "budget":
-            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_BUDGET * 1.01,
+            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_TOTAL * 1.01,
                                   K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB, tol=1e-5)
         else:
-            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_BUDGET,
+            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_TOTAL,
                                   K_ELONG, OTHER_FRAC, KDP_OTHER * 1.01, KDP_RIB, tol=1e-5)
         d = (np.log(max(m2, 1e-300)) - np.log(mu)) / np.log(1.01) if m2 else 0.0
         rows_out.append((nm, d))
@@ -326,11 +335,12 @@ def main():
                    ("kcat median /10", {"kc": 0.1}),
                    ("proteome budget x2", {"bud": 2.0}),
                    ("ribosome speed x2", {"el": 2.0}),
-                   ("metabolic protein fraction 0.3", {"of": 0.7}),
-                   ("metabolic protein fraction 0.8", {"of": 0.2})):
+                   ("non-metabolic fraction 0.7", {"of": 0.7}),
+                   ("non-metabolic fraction 0.2", {"of": 0.2}),
+                   ("ribosome speed /2", {"el": 0.5})):
         kc = kcat * kw.get("kc", 1.0)
         m2, b2, _ = max_growth(S, lb, ub, kc, enz_idx, obj_idx, k_dp,
-                               PROT_BUDGET * kw.get("bud", 1.0), K_ELONG * kw.get("el", 1.0),
+                               PROT_TOTAL * kw.get("bud", 1.0), K_ELONG * kw.get("el", 1.0),
                                kw.get("of", OTHER_FRAC), KDP_OTHER, KDP_RIB, tol=1e-4)
         if m2 is None or b2 is None:
             P(f"  {nm:>34}{'infeasible':>12}")

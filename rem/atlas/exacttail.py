@@ -103,6 +103,9 @@ def exact_tail(a, b, gam, T=THRESH, cap_p=4000, cap_m=90):
     return max(float(grid[:, : int(T)].sum()), FLOOR), edge, resid
 
 
+AB_SD_SKIP = 8.0   # if the mean sits this many sd above T the tail is at the floor; see E1
+
+
 def build(verbose=True):
     if os.path.exists(CACHE):
         z = np.load(CACHE)
@@ -111,7 +114,16 @@ def build(verbose=True):
     worst_edge = worst_res = 0.0
     for i, a in enumerate(GRID_A):
         for j, b in enumerate(GRID_B):
+            # E1 failed on the first build at 7.83e-01 boundary mass: at large a*b the protein
+            # state space was truncated. Those nodes are exactly the ones whose tail is at the
+            # floor, so they are assigned it analytically instead of being solved badly. The
+            # criterion is distance of the mean above the threshold in standard deviations, not
+            # a*b, because a low-a high-b gene can have a huge mean AND a live tail.
             for k, g in enumerate(GRID_G):
+                mean, sd = a * b, np.sqrt(a * b * (1.0 + b))
+                if (mean - THRESH) / max(sd, 1e-12) > AB_SD_SKIP:
+                    logp[i, j, k] = np.log10(FLOOR)
+                    continue
                 p, edge, res = exact_tail(a, b, g)
                 logp[i, j, k] = np.log10(max(p, FLOOR))
                 worst_edge = max(worst_edge, edge)
