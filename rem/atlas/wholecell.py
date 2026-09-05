@@ -90,9 +90,18 @@ KCAT_MEDIAN = 25.0             # 1/s
 KCAT_SIGMA = 1.2               # lognormal spread in ln units
 PROT_TOTAL = 0.5               # g protein per gDW
 OTHER_FRAC = 0.45              # non-metabolic, non-ribosomal share of the proteome
-# A 3.2 MDa ribosome elongating at ~5.5 aa/s at 110 g/mol per residue makes
-# 5.5*110*3600/3.2e6 = 0.68 g of protein per g of ribosome per hour.
-K_ELONG_MASS = 0.68
+# CORRECTED AGAIN. The second run charged the FULL ribosome mass against a PROTEIN budget and
+# came out 53.8% ribosome against a few per cent in real cells. A mammalian 80S ribosome is about
+# 4.3 MDa of which only ~1/3 is protein; the rest is rRNA, which is not made by ribosomes and does
+# not compete for the protein budget. So capacity is expressed per gram of ribosomal PROTEIN:
+#   5.6 aa/s * 110 g/mol * 3600 s/h / (4.3e6 * 0.33) = 1.56 g protein per g ribosomal protein per h
+# and a declared fraction of ribosomes are not elongating at any moment.
+RIB_MW = 4.3e6                 # g/mol, mammalian 80S
+RIB_PROT_FRAC = 0.33           # protein share of ribosome mass; the rest is rRNA
+ELONG_AA_PER_S = 5.6
+AA_MW = 110.0
+ACTIVE_RIB_FRAC = 0.80         # fraction of ribosomes elongating at any instant
+K_ELONG_MASS = (ELONG_AA_PER_S * AA_MW * 3600.0 / (RIB_MW * RIB_PROT_FRAC)) * ACTIVE_RIB_FRAC
 MU_MAX_SEARCH = 2.0
 
 
@@ -300,30 +309,38 @@ def main():
     P("\n" + RULE); P("W6  THE WHOLE-CELL SENSITIVITY"); P(RULE)
     P("  Screening by dual, then verifying by finite difference on the bisection -- the two-stage")
     P("  pattern recon.py's R3 forced, since LP duals fire falsely at degenerate optima.")
+    PROBE_TOL, PROBE_STEP = 1e-9, 1.05
+    floor = PROBE_TOL / max(mu, 1e-12) / np.log(PROBE_STEP)
+    P(f"  bisection tolerance {PROBE_TOL:.0e} on mu = {mu:.6f} with a {100*(PROBE_STEP-1):.0f}%")
+    P(f"  perturbation puts the RESOLUTION FLOOR at |d log mu / d log k| = {floor:.2e}.")
+    P(f"  Anything at or below that is noise, not a sensitivity, and is marked so.")
     cand = [int(enz_idx[k]) for k in np.argsort(-np.abs(cap_m))[:12] if abs(cap_m[k]) > 1e-12]
-    P(f"  {'rate':>26}{'d log mu / d log k':>21}")
+    P(f"  {'rate':>26}{'d log mu / d log k':>21}{'':>4}")
     rows_out = []
     for j in cand[:8]:
-        k2 = kcat.copy(); k2[j] *= 1.01
+        k2 = kcat.copy(); k2[j] *= PROBE_STEP
         m2, _, _ = max_growth(S, lb, ub, k2, enz_idx, obj_idx, k_dp, PROT_TOTAL,
-                              K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB, tol=1e-5)
-        d = (np.log(max(m2, 1e-300)) - np.log(mu)) / np.log(1.01) if m2 else 0.0
+                              K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB, tol=PROBE_TOL)
+        d = (np.log(max(m2, 1e-300)) - np.log(mu)) / np.log(PROBE_STEP) if m2 else 0.0
         rows_out.append((f"kcat[{R[j]['id']}]", d))
-        P(f"  {('kcat '+R[j]['id']):>26}{d:>21.6f}")
+        P(f"  {('kcat '+R[j]['id']):>26}{d:>21.6f}{('  NOISE' if abs(d) <= floor else ''):>4}")
     for nm, mult in (("k_elong (ribosome speed)", "elong"), ("proteome budget", "budget"),
                      ("k_dp of the non-metabolic proteome", "kdpo")):
         if mult == "elong":
             m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_TOTAL,
-                                  K_ELONG * 1.01, OTHER_FRAC, KDP_OTHER, KDP_RIB, tol=1e-5)
+                                  K_ELONG * PROBE_STEP, OTHER_FRAC, KDP_OTHER, KDP_RIB,
+                                  tol=PROBE_TOL)
         elif mult == "budget":
-            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_TOTAL * 1.01,
-                                  K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB, tol=1e-5)
+            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp,
+                                  PROT_TOTAL * PROBE_STEP, K_ELONG, OTHER_FRAC, KDP_OTHER,
+                                  KDP_RIB, tol=PROBE_TOL)
         else:
             m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_TOTAL,
-                                  K_ELONG, OTHER_FRAC, KDP_OTHER * 1.01, KDP_RIB, tol=1e-5)
-        d = (np.log(max(m2, 1e-300)) - np.log(mu)) / np.log(1.01) if m2 else 0.0
+                                  K_ELONG, OTHER_FRAC, KDP_OTHER * PROBE_STEP, KDP_RIB,
+                                  tol=PROBE_TOL)
+        d = (np.log(max(m2, 1e-300)) - np.log(mu)) / np.log(PROBE_STEP) if m2 else 0.0
         rows_out.append((nm, d))
-        P(f"  {nm:>26}{d:>21.6f}")
+        P(f"  {nm:>26}{d:>21.6f}{('  NOISE' if abs(d) <= floor else ''):>4}")
     P("  A global parameter that outranks every individual kcat means the whole-cell answer is")
     P("  set by allocation, not by any one enzyme.")
 
