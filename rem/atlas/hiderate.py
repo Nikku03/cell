@@ -64,7 +64,12 @@ from rem.atlas.rateneed import eradication, ORDERS_PER_KCAL, BASE, CYCLES, G0
 RULE = "=" * 97
 NAMES = ("mu", "k_kill", "a", "b")
 PREDICTED_ORDERS = 3.891          # from RESULTS_rateneed.txt, on the record before this ran
-N_TRIALS = 4000
+# COST CORRECTION. 4000 trials per level meant ~26,000 eradication() calls, each doing two expm
+# on 225x225, which I estimated at 40 ms and which actually runs nearer 90-130 ms wall even at
+# 395% CPU. That run was heading past its 50-minute ceiling and would have produced nothing.
+# 800 trials still pins a standard deviation to about 2.5% relative, which is far finer than any
+# gate here needs, and BLAS is pinned to one thread because 225x225 matrices oversubscribe.
+N_TRIALS = 800
 
 
 def draw(kcal, rng, names=NAMES, correlated=False):
