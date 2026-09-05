@@ -1,0 +1,97 @@
+=================================================================================================
+WHICH HUMAN METABOLIC RATES SHOULD BE MEASURED?  Recon3D, via the LP dual
+=================================================================================================
+  model: http://bigg.ucsd.edu/static/models/Recon3D.json
+  sha256 aba925f17547a42f9fdb4c1f685d89364cbf4979bbe7862e9f793af7169b26d5
+  matches the file this was written against: True
+  10600 reactions, 5835 metabolites, 5938 enzyme-catalysed
+
+=================================================================================================
+R1  THE MODEL IS LOADED CORRECTLY
+=================================================================================================
+  stoichiometric matrix (5835, 10600), 40425 nonzeros   PASS (published 5835 x 10600)
+  LP status 0, solved in 0.25s, worst |S v| = 2.73e-12   PASS
+
+=================================================================================================
+R2  THE MEDIUM IS DECLARED AND ACTUALLY BINDS
+=================================================================================================
+  all exchanges open, as distributed : growth = 755.0032
+  defined medium (43 components, glucose-limited) : growth = 370.382723
+  glucose uptake flux -1.0000 against its bound -1.0000   binding: True
+  PASS
+  medium: EX_ala__L_e, EX_arg__L_e, EX_asn__L_e, EX_asp__L_e, EX_btn_e, EX_chol_e, EX_co2_e, EX_cys__L_e, ... (43 total)
+
+  reactions with nonzero sensitivity in this single solve: 14 of 10600
+
+=================================================================================================
+R4  THE DEGENERACY CONTROL
+=================================================================================================
+  FBA duals are not unique. Re-solving 40 times with tiny random objective
+  perturbations, so ties break differently, and counting how often each is nonzero.
+  40 solves in 16.6s
+  of the top 20 by magnitude in the reference solve, 13 are nonzero in >= 90% of perturbed solves
+  PASS -- the ranking is not a solver artefact (bar: at least 10 of 20)
+  reactions stably nonzero across perturbations: 250
+
+=================================================================================================
+R3  THE SENSITIVITY IS A SENSITIVITY
+=================================================================================================
+                reaction        dual   finite difference   rel err
+                   NMNAT     0.12241             0.06150    0.9904
+                 ATPS4mi     0.12241             0.12296    0.0045
+             SK_val__L_c     0.12240             0.12296    0.0045
+                   AKGDm     0.12240             0.12296    0.0045
+                    GAPD     0.10201             0.06258    0.6301
+                 EX_pi_e     0.06121             0.06150    0.0048
+                    PGMT     0.06121             0.06150    0.0048
+                     ENO     0.06121             0.0000061205009567.4648
+                     GNK     0.06120             0.0000061204664200.2588
+                    DRPA     0.02040             0.0000020401716730.6254
+                    TALA     0.02040             0.02050    0.0051
+             EX_val__L_e     0.00012             0.00012    0.0051
+  worst relative disagreement 61205009567.4648   FAIL (bar 5%)
+
+=================================================================================================
+R5  SPARSITY  --  how many rates actually matter
+=================================================================================================
+  enzyme-catalysed reactions               : 5938
+  of those, stably sensitive               : 212
+  as a fraction                            : 0.03570
+  every other enzyme-catalysed reaction has EXACTLY zero sensitivity: its capacity
+  does not bind, so its kcat cannot change this answer at all.
+
+=================================================================================================
+R6  WHAT PHYSIOLOGY ALREADY PINS
+=================================================================================================
+  stable & boundary (exchange / transport, measurable by standard flux assays): 213
+  stable & internal enzyme-catalysed (NOT measurable that way)               : 14
+  -> the targeted-measurement requirement for THIS question is 14 rates
+
+=================================================================================================
+R7  THE LIST
+=================================================================================================
+  rank  reaction          dlogmu/dlogk  subsystem                              genes
+     1  NMNAT                  0.12241  NAD metabolism                         349565_AT1/23057_AT1/23057_AT2
+     2  ATPS4mi                0.12241  Oxidative phosphorylation              ((513_AT1+498_AT2+506_AT1+509_AT2+514_AT1)/(498_AT2+513_AT2+
+     3  AKGDm                  0.12240  Citric acid cycle                      (4967_AT2+1738_AT1+8050_AT1+1743_AT1)/(4967_AT1+1738_AT1+805
+     4  GAPD                   0.10201  Glycolysis/gluconeogenesis             2597_AT1/26330_AT1
+     5  PGMT                   0.06121  Glycolysis/gluconeogenesis             5236_AT1/55276_AT1
+     6  ENO                    0.06121  Glycolysis/gluconeogenesis             2023_AT1/2027_AT1/2027_AT2/2026_AT1
+     7  DRPA                   0.02040  Pentose phosphate pathway              51071_AT1
+     8  TALA                   0.02040  Pentose phosphate pathway              6888_AT1
+     9  ALATA_L                0.00000  Glutamate metabolism                   2875_AT1/84706_AT1
+    10  RE0830N                0.00000  Tetrahydrobiopterin metabolism         5092_AT1/84105_AT1
+    11  TETTET6CPT1            0.00000  Fatty acid oxidation                   1375_AT1/1375_AT3/1375_AT4/126129_AT1/1374_AT1/1375_AT2
+    12  TETPENT6CPT1           0.00000  Fatty acid oxidation                   1375_AT1/1375_AT3/1375_AT4/126129_AT1/1374_AT1/1375_AT2
+    13  G6PDH2r                0.00000  Pentose phosphate pathway              2539_AT1
+    14  PGL                   -0.00000  Pentose phosphate pathway              25796_AT1
+
+=================================================================================================
+R8  DOMAIN  --  does the list depend on the question?
+=================================================================================================
+  objective = BIOMASS_reaction: growth 368.066007, top-20 overlap with the base list 6/20
+  medium 10x richer: growth 370.994875, top-20 overlap with the base list 8/20
+  PREDECLARED: overlap below 10 of 20 means the list is a property of the question, not of
+  human metabolism, and must always be quoted with its objective and medium attached.
+
+=================================================================================================
