@@ -65,7 +65,19 @@ GRID_G = np.geomspace(0.002, 0.5, 9)
 CACHE = os.path.join(HERE, "exacttail_grid.npz")
 
 
-def exact_tail(a, b, gam, T=THRESH, cap_p=4000, cap_m=90):
+def exact_tail(a, b, gam, T=THRESH, cap_p=4000, cap_m=90, _tries=3):
+    """Adaptive box. The first rebuild still failed E1 at 3.50e-01 because the mRNA dimension was
+    capped at 90 while a*gamma reaches 75, so the mRNA marginal was cut off even where the protein
+    one was not. The box now grows until the boundary mass clears the gate."""
+    for _ in range(_tries):
+        p, edge, resid = _solve_tail(a, b, gam, T, cap_p, cap_m)
+        if edge < 1e-12:
+            return p, edge, resid
+        cap_p, cap_m = int(cap_p * 2), int(cap_m * 2)
+    return p, edge, resid
+
+
+def _solve_tail(a, b, gam, T=THRESH, cap_p=4000, cap_m=90):
     """Stationary P(protein < T) from the two-dimensional master equation, k_dp = 1."""
     k_dp, k_tx = 1.0, a
     k_dm = k_dp / gam
