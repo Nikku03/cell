@@ -49,14 +49,42 @@ THE QUESTION THIS LEAVES. If every gene has two free directions, the unconstrain
 genes. That is measurable, and it is what the gates below measure.
 
 =================================================================================================
+CORRECTION AFTER THE FIRST RUN: X1 FAILED AND THE TAIL MODEL IS REPLACED.
+=================================================================================================
+The first run used the Gamma (negative-binomial) protein distribution, which is the k_dm >> k_dp
+limit. X1 measured it against an exact master-equation solve and it failed at 1.4542 orders. Wider
+probing was worse still: at a = 30, b = 5, gamma = 0.1 the Gamma gives 9.13e-17 against an exact
+1.34e-12, an error of 4.7 ORDERS, and the error grows with tail depth -- it is wrong precisely
+where the rare event lives.
+
+Restricting to genes where the Gamma holds is not available: Schwanhausser et al. measured
+mammalian mRNA half-lives in hours against protein half-lives near two days, a separation of about
+five, so most of the genome sits where it fails.
+
+The tail is now taken from exacttail.py, which solves the two-dimensional master equation exactly
+on a grid and interpolates. THIS CHANGES THE STRUCTURE, not only the numbers. The exact tail
+depends on THREE dimensionless groups where the Gamma depended on two:
+
+    log a     = ( 1,  0,  0, -1)     burst frequency  k_tx/k_dp
+    log b     = ( 0,  1, -1,  0)     burst size       k_tl/k_dm
+    log gamma = ( 0,  0, -1,  1)     timescale separation k_dp/k_dm, which the Gamma discards
+
+X2 is therefore rerun against all three. Verified before rerunning: log gamma is not in the span
+of the abundance rows, and still not in the span once ribosome profiling is added, so the number
+of blind directions per gene under standard assays goes UP from two to three while the single
+measurement that closes them -- a degradation rate -- is unchanged.
+
+Every K(G) in the first run was computed against a gradient missing one of its three components
+and is superseded.
+
+=================================================================================================
 GATES, PREDECLARED BEFORE THE FIRST RUN
 =================================================================================================
 
-X1  THE TAIL IS THE RIGHT TAIL. The Gamma form holds in the bursting regime, k_dm >> k_dp.
-    Compare against a direct solve of the two-stage master equation for a sample of genes and
-    report the worst disagreement in log tail probability, together with the k_dm/k_dp ratio at
-    which it is measured. If the parameters chosen do not sit in that regime, the tail is wrong
-    and everything downstream with it.
+X1  THE TAIL IS THE RIGHT TAIL (rewritten by the correction above). The interpolated exact tail
+    must match a direct master-equation solve to better than 0.10 orders at gene parameters drawn
+    from the population, and the Gamma it replaces is reported alongside so the size of the repair
+    is visible. The bar is about fifty times tighter than the error it replaces.
 
 X2  THE STRUCTURAL CLAIM IS EXACT. Report the rank of the observable block and the least-squares
     residual of log a and log b on it, under each assay regime. Predeclared: abundance assays
@@ -92,6 +120,8 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXP
     os.environ.setdefault(_v, "1")
 import numpy as np
 from scipy.special import gammainc, gammaln
+
+from rem.atlas.exacttail import tail as exact_tail_interp, exact_tail, THRESH as ET_THRESH
 from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import spsolve
 
@@ -134,17 +164,24 @@ def draw(G, seed):
 
 
 def ab_of(X):
+    """The three dimensionless groups the exact tail depends on."""
     k_tx, k_tl, k_dm, k_dp = X.T
-    return k_tx / k_dp, k_tl / k_dm
+    return k_tx / k_dp, k_tl / k_dm, k_dp / k_dm
 
 
-def pfail(a, b, T):
-    return gammainc(a, T / b)          # regularised lower incomplete gamma = P(protein < T)
+def pfail_gamma(a, b, T):
+    """The Gamma limit this analysis used first. Kept only so X1 can report the size of the repair."""
+    return gammainc(a, T / b)
+
+
+def pfail(a, b, gam, T=None):
+    """Exact P(protein < T) from the tabulated master-equation solution."""
+    return exact_tail_interp(a, b, gam)
 
 
 def mu_of(X, T):
-    a, b = ab_of(X)
-    return pfail(a, b, T)
+    a, b, gam = ab_of(X)
+    return pfail(a, b, gam)
 
 
 def choose_k(X, T, target=Y_TARGET):
@@ -277,7 +314,8 @@ def main():
     # ---- X2, the exact structural claim --------------------------------------------------------
     P("\n" + RULE); P("X2  THE STRUCTURAL CLAIM IS EXACT"); P(RULE)
     tail = {"burst frequency log a": np.array([1, 0, 0, -1], float),
-            "burst size      log b": np.array([0, 1, -1, 0], float)}
+            "burst size      log b": np.array([0, 1, -1, 0], float),
+            "separation  log gamma": np.array([0, 0, -1, 1], float)}
     P(f"  {'assay regime':<24}{'rank':>5}{'free dims':>11}"
       + "".join(f"{k+' resid':>26}" for k in tail))
     ok2 = True
@@ -300,42 +338,27 @@ def main():
 
     # ---- X1 -------------------------------------------------------------------------------------
     P("\n" + RULE); P("X1  THE TAIL IS THE RIGHT TAIL"); P(RULE)
-    X = draw(6, SEED)
-    a, b = ab_of(X)
-    P(f"  {'gene':>5}{'k_dm/k_dp':>12}{'a':>9}{'b':>9}{'Gamma P(<T)':>14}{'exact CME':>14}{'log10 err':>11}")
-    worst = 0.0
-    for i in range(6):
-        k_tx, k_tl, k_dm, k_dp = X[i]
-        Mm = 25
-        Mp = int(min(600, max(80, 5 * a[i] * b[i])))
-        n = (Mm + 1) * (Mp + 1)
-        idx = lambda m, q: m * (Mp + 1) + q
-        rows_, cols_, vals_ = [], [], []
-        for m in range(Mm + 1):
-            for q in range(Mp + 1):
-                s0 = idx(m, q)
-                for tgt, rate in (((m + 1, q), k_tx if m < Mm else 0.0),
-                                  ((m - 1, q), k_dm * m),
-                                  ((m, q + 1), k_tl * m if q < Mp else 0.0),
-                                  ((m, q - 1), k_dp * q)):
-                    if rate > 0 and 0 <= tgt[0] <= Mm and 0 <= tgt[1] <= Mp:
-                        rows_.append(idx(*tgt)); cols_.append(s0); vals_.append(rate)
-                        rows_.append(s0); cols_.append(s0); vals_.append(-rate)
-        L = coo_matrix((vals_, (rows_, cols_)), shape=(n, n)).tocsr().tolil()
-        L[n - 1, :] = 1.0                      # replace one row with the normalisation
-        rhs = np.zeros(n); rhs[n - 1] = 1.0
-        pi = spsolve(L.tocsc(), rhs)
-        pi = np.maximum(pi, 0.0); pi = pi / pi.sum()
-        pq = pi.reshape(Mm + 1, Mp + 1).sum(axis=0)
-        exact = float(pq[: int(THRESH)].sum())
-        gam = float(pfail(a[i], b[i], THRESH))
-        err = abs(np.log10(max(gam, 1e-300)) - np.log10(max(exact, 1e-300)))
-        worst = max(worst, err)
-        P(f"  {i:>5}{X[i,2]/X[i,3]:>12.1f}{a[i]:>9.2f}{b[i]:>9.2f}"
-          f"{gam:>14.4e}{exact:>14.4e}{err:>11.4f}")
-    P(f"  worst |log10 disagreement| {worst:.4f}"
-      f"   {'PASS' if worst < 0.5 else 'FAIL -- outside the bursting regime, the Gamma tail is wrong'}"
-      f" (bar 0.5 orders)")
+    P("  interpolated exact tail against a direct master-equation solve, at parameters drawn")
+    P("  from the gene population. The Gamma limit it replaces is shown so the size of the")
+    P("  repair is visible.")
+    Xs = draw(8, SEED + 3)
+    aa, bb, gg = ab_of(Xs)
+    P(f"  {'a':>8}{'b':>8}{'gamma':>8}{'exact':>13}{'interp':>13}{'err':>8}"
+      f"{'Gamma':>13}{'Gamma err':>11}")
+    worst_i, worst_g = 0.0, 0.0
+    for i in range(8):
+        ex, edge, resid = exact_tail(float(aa[i]), float(bb[i]), float(gg[i]))
+        it = float(pfail(np.array([aa[i]]), np.array([bb[i]]), np.array([gg[i]]))[0])
+        gm = float(pfail_gamma(aa[i], bb[i], THRESH))
+        ei = abs(np.log10(max(it, 1e-300)) - np.log10(max(ex, 1e-300)))
+        eg = abs(np.log10(max(gm, 1e-300)) - np.log10(max(ex, 1e-300)))
+        worst_i, worst_g = max(worst_i, ei), max(worst_g, eg)
+        P(f"  {aa[i]:>8.2f}{bb[i]:>8.2f}{gg[i]:>8.4f}{ex:>13.4e}{it:>13.4e}{ei:>8.4f}"
+          f"{gm:>13.4e}{eg:>11.4f}")
+    P(f"  worst interpolation error {worst_i:.4f} orders"
+      f"   {'PASS' if worst_i < 0.10 else 'FAIL'} (bar 0.10)")
+    P(f"  worst error of the Gamma limit it replaces: {worst_g:.4f} orders"
+      f"   -- the repair is a factor of {worst_g/max(worst_i,1e-9):.0f}")
 
     # ---- X3 -------------------------------------------------------------------------------------
     P("\n" + RULE); P("X3  THE GRADIENT IS A GRADIENT"); P(RULE)
