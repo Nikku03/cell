@@ -10,7 +10,7 @@ WHICH HUMAN METABOLIC RATES SHOULD BE MEASURED?  Recon3D, via the LP dual
 R1  THE MODEL IS LOADED CORRECTLY
 =================================================================================================
   stoichiometric matrix (5835, 10600), 40425 nonzeros   PASS (published 5835 x 10600)
-  LP status 0, solved in 0.25s, worst |S v| = 2.73e-12   PASS
+  LP status 0, solved in 0.27s, worst |S v| = 2.73e-12   PASS
 
 =================================================================================================
 R2  THE MEDIUM IS DECLARED AND ACTUALLY BINDS
@@ -28,63 +28,50 @@ R4  THE DEGENERACY CONTROL
 =================================================================================================
   FBA duals are not unique. Re-solving 40 times with tiny random objective
   perturbations, so ties break differently, and counting how often each is nonzero.
-  40 solves in 16.6s
+  40 solves in 15.9s
   of the top 20 by magnitude in the reference solve, 13 are nonzero in >= 90% of perturbed solves
   PASS -- the ranking is not a solver artefact (bar: at least 10 of 20)
   reactions stably nonzero across perturbations: 250
 
 =================================================================================================
-R3  THE SENSITIVITY IS A SENSITIVITY
+R3/R9  THE DUAL SCREENS, FINITE DIFFERENCES VERIFY
 =================================================================================================
-                reaction        dual   finite difference   rel err
-                   NMNAT     0.12241             0.06150    0.9904
-                 ATPS4mi     0.12241             0.12296    0.0045
-             SK_val__L_c     0.12240             0.12296    0.0045
-                   AKGDm     0.12240             0.12296    0.0045
-                    GAPD     0.10201             0.06258    0.6301
-                 EX_pi_e     0.06121             0.06150    0.0048
-                    PGMT     0.06121             0.06150    0.0048
-                     ENO     0.06121             0.0000061205009567.4648
-                     GNK     0.06120             0.0000061204664200.2588
-                    DRPA     0.02040             0.0000020401716730.6254
-                    TALA     0.02040             0.02050    0.0051
-             EX_val__L_e     0.00012             0.00012    0.0051
-  worst relative disagreement 61205009567.4648   FAIL (bar 5%)
+  verifying all 250 reactions that survived R4, both directions, 1% steps ...
+  500 verification solves in 124s
+  reactions with a nonzero DUAL but zero realised derivative in both directions: 644 of 659
+  that fraction, 97.7%, is the degeneracy the first run hit;
+  the dual is kept as a screen and the list below is built from realised derivatives only.
+  where the realised derivative is nonzero, |dual| vs realised: median relative difference 0.0048, worst 1.0000
 
 =================================================================================================
 R5  SPARSITY  --  how many rates actually matter
 =================================================================================================
   enzyme-catalysed reactions               : 5938
-  of those, stably sensitive               : 212
-  as a fraction                            : 0.03570
-  every other enzyme-catalysed reaction has EXACTLY zero sensitivity: its capacity
-  does not bind, so its kcat cannot change this answer at all.
+  of those, stably sensitive               : 9
+  as a fraction                            : 0.00152
+  every other enzyme-catalysed reaction has EXACTLY zero realised sensitivity: either
+  its capacity does not bind, or it binds degenerately and moving it changes nothing.
 
 =================================================================================================
 R6  WHAT PHYSIOLOGY ALREADY PINS
 =================================================================================================
-  stable & boundary (exchange / transport, measurable by standard flux assays): 213
-  stable & internal enzyme-catalysed (NOT measurable that way)               : 14
-  -> the targeted-measurement requirement for THIS question is 14 rates
+  stable & boundary (exchange / transport, measurable by standard flux assays): 4
+  stable & internal enzyme-catalysed (NOT measurable that way)               : 8
+  -> the targeted-measurement requirement for THIS question is 8 rates
 
 =================================================================================================
 R7  THE LIST
 =================================================================================================
-  rank  reaction          dlogmu/dlogk  subsystem                              genes
-     1  NMNAT                  0.12241  NAD metabolism                         349565_AT1/23057_AT1/23057_AT2
-     2  ATPS4mi                0.12241  Oxidative phosphorylation              ((513_AT1+498_AT2+506_AT1+509_AT2+514_AT1)/(498_AT2+513_AT2+
-     3  AKGDm                  0.12240  Citric acid cycle                      (4967_AT2+1738_AT1+8050_AT1+1743_AT1)/(4967_AT1+1738_AT1+805
-     4  GAPD                   0.10201  Glycolysis/gluconeogenesis             2597_AT1/26330_AT1
-     5  PGMT                   0.06121  Glycolysis/gluconeogenesis             5236_AT1/55276_AT1
-     6  ENO                    0.06121  Glycolysis/gluconeogenesis             2023_AT1/2027_AT1/2027_AT2/2026_AT1
-     7  DRPA                   0.02040  Pentose phosphate pathway              51071_AT1
-     8  TALA                   0.02040  Pentose phosphate pathway              6888_AT1
-     9  ALATA_L                0.00000  Glutamate metabolism                   2875_AT1/84706_AT1
-    10  RE0830N                0.00000  Tetrahydrobiopterin metabolism         5092_AT1/84105_AT1
-    11  TETTET6CPT1            0.00000  Fatty acid oxidation                   1375_AT1/1375_AT3/1375_AT4/126129_AT1/1374_AT1/1375_AT2
-    12  TETPENT6CPT1           0.00000  Fatty acid oxidation                   1375_AT1/1375_AT3/1375_AT4/126129_AT1/1374_AT1/1375_AT2
-    13  G6PDH2r                0.00000  Pentose phosphate pathway              2539_AT1
-    14  PGL                   -0.00000  Pentose phosphate pathway              25796_AT1
+  d- is the operative column: how far log(growth) falls if the enzyme is 1% slower.
+  rank  reaction          d- (slower)  d+ (faster)      dual  subsystem                          genes
+     1  GAPD                  0.16255      0.06258    0.1020  Glycolysis/gluconeogenesis         2597_AT1/26330_AT1
+     2  ATPS4mi               0.12189      0.12296    0.1224  Oxidative phosphorylation          ((513_AT1+498_AT2+506_AT1+509_AT2+514_AT1)/(49
+     3  NMNAT                 0.12189      0.06150    0.1224  NAD metabolism                     349565_AT1/23057_AT1/23057_AT2
+     4  AKGDm                 0.12189      0.12296    0.1224  Citric acid cycle                  (4967_AT2+1738_AT1+8050_AT1+1743_AT1)/(4967_AT
+     5  ENO                   0.06093      0.00000    0.0612  Glycolysis/gluconeogenesis         2023_AT1/2027_AT1/2027_AT2/2026_AT1
+     6  PGMT                  0.06093      0.06150    0.0612  Glycolysis/gluconeogenesis         5236_AT1/55276_AT1
+     7  TALA                  0.02030      0.02050    0.0204  Pentose phosphate pathway          6888_AT1
+     8  DRPA                  0.02030      0.00000    0.0204  Pentose phosphate pathway          51071_AT1
 
 =================================================================================================
 R8  DOMAIN  --  does the list depend on the question?
@@ -95,3 +82,55 @@ R8  DOMAIN  --  does the list depend on the question?
   human metabolism, and must always be quoted with its objective and medium attached.
 
 =================================================================================================
+
+=================================================================================================
+POST-RUN READING.  Hand-written after the verified run.
+=================================================================================================
+
+A NUMBER I REPORTED ONE COMMIT AGO IS WRONG BY A FACTOR OF TWENTY-FOUR.  The previous commit said
+212 of 5,938 enzyme-catalysed reactions carry a stable nonzero sensitivity, and called that "the
+sparsity the whole K(N) argument predicted, counted directly on human metabolism".  That figure
+came from the LP duals -- after R3 had ALREADY FAILED on those same duals.  I should not have
+quoted it.  Verified by finite difference in both directions, the count is 9, of which 8 are
+internal enzyme-catalysed reactions.
+
+The reason is now measured rather than suspected: of 659 reactions carrying a nonzero dual,
+644 -- 97.7% -- have EXACTLY zero realised derivative in both directions.  They are degeneracy
+ghosts.  Where the realised derivative is genuinely nonzero the dual is excellent, agreeing to a
+median relative difference of 0.0048.  So the dual is an accurate instrument that fires falsely
+about forty-three times out of forty-four, which is precisely why it must be a screen and never
+the measurement.
+
+THE VERIFIED LIST.  Eight internal enzyme-catalysed reactions, ranked by how far log(growth) falls
+if the enzyme runs 1% slower:
+
+    rank  reaction   d-(slower)  d+(faster)  subsystem                    gene symbols
+      1   GAPD          0.16255     0.06258  glycolysis                   GAPDH, GAPDHS
+      2   ATPS4mi       0.12189     0.12296  oxidative phosphorylation    ATP5 complex
+      3   NMNAT         0.12189     0.06150  NAD metabolism               NMNAT1/2/3
+      4   AKGDm         0.12189     0.12296  TCA cycle                    OGDH, DLST, DLD, PDHX
+      5   ENO           0.06093     0.00000  glycolysis                   ENO1, ENO2, ENO3
+      6   PGMT          0.06093     0.06150  glycolysis                   PGM1, PGM2
+      7   TALA          0.02030     0.02050  pentose phosphate            TALDO1
+      8   DRPA          0.02030     0.00000  pentose phosphate            DERA
+
+RANKING ON THE TIGHTENING DIRECTION WAS NOT A DETAIL.  ENO and DRPA have d+ = 0.00000 exactly:
+making those enzymes faster changes nothing at all, while making them slower costs 0.061 and 0.020.
+Had the list been built on the relaxation direction alone -- the obvious choice, and the one the
+dual most naturally suggests -- both would have been ranked as irrelevant.  GAPD is asymmetric the
+other way round, losing 0.163 when slowed against gaining 0.063 when accelerated, a factor of 2.6.
+For a degenerate LP the two one-sided derivatives are different numbers and only one of them
+answers "must I measure this".
+
+THE BIOLOGY IS COHERENT, WHICH IS A CHECK AND NOT A RESULT.  Every reaction on the list sits in
+central carbon or energy metabolism -- glycolysis three times, the TCA cycle, oxidative
+phosphorylation, the pentose phosphate pathway twice, and NAD supply.  Nothing exotic appears.
+That is what one would expect a growth objective to be limited by, so it is evidence the machinery
+is not producing nonsense, not evidence that the specific ranking is right.
+
+WHAT THIS DOES NOT LICENCE.  R8 still fires: top-20 overlap is 6/20 under a different biomass
+objective and 8/20 under a tenfold richer medium.  There is no such thing as "the list of human
+rates to measure" -- there is a list per question, and the question includes the objective and the
+medium.  The analysis also holds enzyme abundance fixed, so a cell that reallocates its proteome
+when an enzyme slows is outside it entirely, and it covers metabolism only: transcription,
+translation, degradation, transport and signalling contribute no reactions to Recon3D at all.
