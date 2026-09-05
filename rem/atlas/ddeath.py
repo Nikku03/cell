@@ -216,7 +216,7 @@ M_EVAL = 1500           # posterior resamples at which the answer is actually ev
 TAU_SCALES = (0.05, 0.01, 1e-3, 1e-4)
 TAU_REF = 1e-3          # converged; 1e-4 reported alongside
 TAU_LOOSE = 0.05        # where importance weighting is still reliable, for D10
-N_CHAIN, N_STEP, N_BURN = 8, 6000, 2000
+N_CHAIN, N_STEP, N_BURN = 12, 20000, 8000
 ESS_BAR = 500.0
 SIGMA = EPS * ORDERS_PER_KCAL
 T_OUT = 12.0                                  # hours after drug removal at which outgrowth is read
@@ -354,18 +354,32 @@ def metropolis(obs_true, tau, sigma, free_mask, J, n_chain, n_step, burn, seed, 
         return np.where(np.isfinite(lp), lp, -np.inf)
 
     lp = logpost(X)
-    kept, acc = [], 0
+    kept, acc, post_acc, post_n = [], 0.0, 0.0, 0
+    # Robbins-Monro step-size adaptation during burn-in only, targeting 25% acceptance. Without
+    # it the acceptance rate collapses at tight tau -- the posterior is a thin CURVED sheet and a
+    # Gaussian-preconditioned step of any useful size leaves it by more than tau. That failure is
+    # recorded in RESULTS_ddeath.txt for the run before this was added, where acceptance fell to
+    # 0.002 and the chains froze at their starting points, driving the measured spread BELOW the
+    # analytic limit it should converge to.
+    log_scale, batch = 0.0, np.zeros(0)
     for t in range(n_step):
-        Y = X.copy()
-        Y[:, idx] = X[:, idx] + rng.standard_normal((n_chain, d)) @ L.T
-        lq = logpost(Y)
+        Yp = X.copy()
+        Yp[:, idx] = X[:, idx] + np.exp(log_scale) * (rng.standard_normal((n_chain, d)) @ L.T)
+        lq = logpost(Yp)
         take = np.log(rng.random(n_chain)) < (lq - lp)
-        X[take] = Y[take]
+        X[take] = Yp[take]
         lp[take] = lq[take]
         acc += take.mean()
-        if t >= burn and (t - burn) % 5 == 0:
-            kept.append(X.copy())
-    return np.array(kept), acc / n_step, idx
+        if t < burn:
+            batch = np.append(batch, take.mean())
+            if len(batch) >= 100:
+                log_scale += 0.7 * (batch.mean() - 0.25)
+                batch = np.zeros(0)
+        else:
+            post_acc += take.mean(); post_n += 1
+            if (t - burn) % 5 == 0:
+                kept.append(X.copy())
+    return (np.array(kept), (post_acc / max(post_n, 1)), idx, float(np.exp(log_scale)))
 
 
 def arm_stats(vals, counts=None):
@@ -474,7 +488,7 @@ def main():
             ("C physiology + kd_kill", "kd_kill", True),
             ("D d_death alone, no physiology", "d_death", False))
 
-    results, accs = {}, {}
+    results, accs, scales = {}, {}, {}
     for g0v in (G0, G0_DEEP):
         y_true = eradication(CANDIDATE, K=K, g0=g0v, cycles=CYCLES, t_on=T_ON, t_off=T_OFF)
         ly = np.log10(y_true)
@@ -486,8 +500,9 @@ def main():
                 free[ID[hold]] = False
             for ts in (taus if use_phys else (None,)):
                 tau = (ts if ts is not None else 1.0) * spread
-                kept, acc, _ = metropolis(obs_true, tau, SIGMA, free, J, N_CHAIN, N_STEP,
-                                          N_BURN, SEED + 101, use_phys=use_phys)
+                kept, acc, _, scl = metropolis(obs_true, tau, SIGMA, free, J, N_CHAIN, N_STEP,
+                                               N_BURN, SEED + 101, use_phys=use_phys)
+                scales[(g0v, arm, ts)] = scl
                 nk, nc, _ = kept.shape
                 flat = kept.reshape(nk * nc, N_RATES)
                 chain_id = np.tile(np.arange(nc), nk)
@@ -509,7 +524,7 @@ def main():
                                            predicted_sd(g, J, SIGMA, tau, free) if use_phys else None)
                 accs[(g0v, arm, ts)] = acc
                 P(f"    ran g0={g0v} {arm.split()[0]} tau={ts}: acceptance {acc:.3f},"
-                  f" {len(vals)} evaluated")
+                  f" adapted step scale {scl:.3e}, {len(vals)} evaluated")
 
     # ---- D10, the independent cross-check -----------------------------------------------------
     P("\n" + RULE); P("D10  TWO METHODS THAT SHARE NO MACHINERY MUST AGREE"); P(RULE)
@@ -535,7 +550,7 @@ def main():
     # ---- D11 -----------------------------------------------------------------------------------
     P("\n" + RULE); P("D11  THE SAMPLER IS MIXING"); P(RULE)
     P(f"  chains start dispersed from the prior, not at the truth, so this is a real test")
-    P(f"  {'arm / tau':>34}{'acceptance':>12}{'across-chain sd':>18}{'relative':>10}")
+    P(f"  {'arm / tau':>30}{'acceptance':>12}{'step scale':>13}{'across-chain sd':>18}{'relative':>10}")
     worst11 = 0.0
     for (g0v, arm, ts), (st, per, _) in results.items():
         if g0v != G0 or st is None or not per:
@@ -544,7 +559,7 @@ def main():
         rel = acs / max(st["sd"], 1e-12)
         if "B physiology" in arm:
             worst11 = max(worst11, rel)
-        P(f"  {arm.split()[0]+' tau='+str(ts):>34}{accs[(g0v,arm,ts)]:>12.3f}{acs:>18.4f}{rel:>10.4f}")
+        P(f"  {arm.split()[0]+' tau='+str(ts):>30}{accs[(g0v,arm,ts)]:>12.3f}{scales[(g0v,arm,ts)]:>13.3e}{acs:>18.4f}{rel:>10.4f}")
     P(f"  worst relative across-chain spread in arm B: {worst11:.4f}"
       f"   {'PASS' if worst11 <= 0.10 else 'FAIL -- chains have not converged'} (bar 0.10)")
 
@@ -630,8 +645,13 @@ def main():
             st = results[(G0, arm, ts)][0]
             cells.append(f"{st['sd']:.4f}" if st else "noise")
         P(f"  {arm:>26}" + "".join(f"{c:>12}" for c in cells))
-    P(f"  {'analytic prediction':>26}" + "".join(
+    P(f"  {'analytic, arm A':>26}" + "".join(
         f"{predicted_sd(g, J, SIGMA, t*spread, np.ones(N_RATES,bool)):>12.4f}" for t in TAU_SCALES))
+    fmB = np.ones(N_RATES, bool); fmB[ID["d_death"]] = False
+    P(f"  {'analytic, arm B':>26}" + "".join(
+        f"{predicted_sd(g, J, SIGMA, t*spread, fmB):>12.4f}" for t in TAU_SCALES))
+    P("  A measured spread BELOW its own analytic value is not physics; it is a chain that has")
+    P("  not moved. The previous run failed exactly that way and its numbers are recorded as void.")
     sB = [results[(G0, "B physiology + d_death", ts)][0] for ts in TAU_SCALES]
     dv8 = abs(sB[-1]["sd"] - sB[-2]["sd"]) / max(sB[-2]["sd"], 1e-12)
     P(f"  arm B change between the two tightest tolerances: {dv8:.4f}"
