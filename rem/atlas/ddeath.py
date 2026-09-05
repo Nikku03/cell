@@ -598,7 +598,8 @@ def main():
     P("  sample. Agreement is reassuring; disagreement would favour this estimate, not R4's.")
 
     P("\n" + RULE); P("D4  THE DELIVERABLE"); P(RULE)
-    P(f"  at tau_scale = {TAU_REF}, i.e. physiology known to a thousandth of its natural spread:")
+    P(f"  at tau_scale = {TAU_REF}, i.e. physiology known to a fraction {TAU_REF} of its natural"
+      f" spread -- the tightest tolerance at which D11 confirms the chains have converged:")
     P(f"  physiology alone     : sd {A['sd']:.4f}, within x2 {A['h2']:.4f},"
       f" within x10 {A['h10']:.4f}")
     P(f"  physiology + d_death : sd {B['sd']:.4f}, within x2 {B['h2']:.4f},"
