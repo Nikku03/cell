@@ -280,17 +280,21 @@ def main():
             Y, hits, pinned = results[eps]
             H = hits[lab]
             g = np.array([H[:, gm[m]].mean() for m in range(N_RATES + 1)])
-            bestv, bestm, randv, short, se = [], [], [], [], []
+            bestv, bestm, randv, short, se, tied = [], [], [], [], [], []
             for m in range(N_RATES + 1):
                 cols = np.where(sizes == m)[0]
                 fr = H[:, cols].mean(axis=0)
                 b = int(cols[int(np.argmax(fr))])
+                # Ties are the rule near the top of the curve, so record whether greedy is AMONG
+                # the maximisers, not whether argmax happened to land on it.
+                tied.append(bool(fr.max() - H[:, gm[m]].mean() <= 1e-12))
                 bestv.append(float(fr.max())); bestm.append(b)
                 randv.append(float(fr.mean()))
                 d = H[:, b].astype(float) - H[:, gm[m]].astype(float)
                 se.append(float(d.std(ddof=1) / np.sqrt(N_TRIALS)) if d.std() > 0 else 0.0)
                 short.append(float(fr.max() - g[m]))
-            band[(eps, lab)] = (g, np.array(bestv), np.array(randv), np.array(short), np.array(se), bestm)
+            band[(eps, lab)] = (g, np.array(bestv), np.array(randv), np.array(short),
+                                np.array(se), bestm, tied)
             P(f"\n  eps = {eps} kcal/mol")
             P(f"  {'m':>3}{'greedy':>9}{'best':>9}{'shortfall':>11}{'paired se':>11}"
               f"{'random':>9}{'greedy-rand':>13}{'best subset is greedy?':>24}")
@@ -298,7 +302,7 @@ def main():
                 cols = np.where(sizes == m)[0]
                 P(f"  {m:>3}{g[m]:>9.4f}{bestv[m]:>9.4f}{short[m]:>11.4f}{se[m]:>11.4f}"
                   f"{randv[m]:>9.4f}{g[m]-randv[m]:>13.4f}"
-                  f"{('yes' if bestm[m]==gm[m] else 'NO ('+str(len(cols))+' subsets)'):>24}")
+                  f"{('yes' if tied[m] else 'NO ('+str(len(cols))+' subsets)'):>24}")
 
     P("\n" + RULE); P("H4  NON-VACUITY"); P(RULE)
     h0 = band[(1.0, "x10")][0][0]; h8 = band[(1.0, "x10")][0][N_RATES]
@@ -308,7 +312,7 @@ def main():
 
     P("\n" + RULE); P("H5  MONOTONICITY  (measuring more cannot hurt)"); P(RULE)
     worst_drop = 0.0
-    for key, (g, _, _, _, se, _) in band.items():
+    for key, (g, _, _, _, se, _, _) in band.items():
         for m in range(N_RATES):
             worst_drop = max(worst_drop, float(g[m] - g[m + 1]))
     P(f"  worst decrease in the greedy curve over all levels and tolerances: {worst_drop:.4f}")
@@ -317,10 +321,10 @@ def main():
     P("\n" + RULE); P("H6  IS GREEDY OPTIMAL?  (the falsification test)"); P(RULE)
     worst_short, worst_key, strict = 0.0, None, 0
     total = 0
-    for key, (g, bv, rv, sh, se, bm) in band.items():
+    for key, (g, bv, rv, sh, se, bm, td) in band.items():
         for m in range(N_RATES + 1):
             total += 1
-            if bm[m] == gm[m]:
+            if td[m]:
                 strict += 1
             if sh[m] > worst_short:
                 worst_short, worst_key = float(sh[m]), (key, m)
@@ -328,13 +332,13 @@ def main():
       f" {worst_short:.4f}")
     P(f"  attained at eps = {worst_key[0][0]}, tolerance {worst_key[0][1]}, m = {worst_key[1]}")
     P(f"  {'PASS' if worst_short <= 0.03 else 'FAIL'} (bar 0.03)")
-    P(f"  greedy was the STRICT argmax in {strict} of {total} (m, tolerance, eps) cells")
+    P(f"  greedy was AMONG the best subsets in {strict} of {total} (m, tolerance, eps) cells")
     P("  READING: a shortfall inside the band means |S|-ranking picks a subset no worse than the")
     P("  best available one, so cheap derivatives are enough to choose which rates to measure.")
 
     P("\n" + RULE); P("H7  THE MATCHED CONTROL  (greedy versus m rates chosen at random)"); P(RULE)
     worst_neg, best_gain = 0.0, 0.0
-    for key, (g, bv, rv, sh, se, bm) in band.items():
+    for key, (g, bv, rv, sh, se, bm, td) in band.items():
         for m in range(1, N_RATES):
             worst_neg = min(worst_neg, float(g[m] - rv[m]))
             best_gain = max(best_gain, float(g[m] - rv[m]))
@@ -381,7 +385,7 @@ def main():
             ok = pr == me
             agree += ok
             P(f"  {eps:>6}{lab:>12}{pr:>15}{str(me):>14}{('yes' if ok else 'NO'):>9}")
-    P(f"  {agree} of 6 predictions exact.")
+    P(f"  {agree} of {len(EPS_LEVELS)*len(TOLS)} predictions exact.")
 
     # ---- H11 --------------------------------------------------------------------------------
     P("\n" + RULE); P("H11  DEPTH DEPENDENCE  --  m* is a property of the QUESTION"); P(RULE)
