@@ -16,30 +16,31 @@ W1  THE PARTS CONNECT
 =================================================================================================
 W3  THE FIXED POINT EXISTS AND IS FOUND
 =================================================================================================
-  bisection: 16 linear programs in 17.1s
-  coupled growth rate mu = 1.086960 /h   (doubling time 0.64 h)
+  bisection: 21 linear programs in 22.6s
+  coupled growth rate mu = 0.353785 /h   (doubling time 1.96 h)
   PASS (a fixed point was located)
 
 =================================================================================================
 W4  THE COUPLING CHANGES THE ANSWER
 =================================================================================================
   plain FBA, no enzyme or proteome constraint : mu = 370.382723 /h
-  coupled metabolism + expression             : mu = 1.086960 /h
-  ratio 0.0029   PASS -- expression genuinely constrains metabolism
+  coupled metabolism + expression             : mu = 0.353785 /h
+  ratio 0.0010   PASS -- expression genuinely constrains metabolism
 
 =================================================================================================
 W2  THE LINEAR PROGRAM IS WELL POSED
 =================================================================================================
-  worst |S v| = 1.36e-12   PASS
-  proteome used 0.549920 of the metabolic budget 0.550000   binding: False
+  worst |S v| = 7.59e-13   PASS
+  protein used 0.275000 g/gDW of the 0.275000 available to metabolism + ribosome   binding: False
+  ribosome 0.269165 g/gDW = 53.83% of total protein  (mammalian cells are a few per cent)
 
 =================================================================================================
 W5  WHICH LAYER LIMITS
 =================================================================================================
-  enzyme-capacity constraints binding : 222 of 5938
+  enzyme-capacity constraints binding : 226 of 5938
   proteome-budget shadow price        : -0.000000e+00
-  translation-capacity shadow price   : -1.107370e+00
-  ribosome mass fraction of the metabolic proteome: 0.9993
+  translation-capacity shadow price   : -3.162401e+00
+  ribosome mass fraction of the metabolic proteome: 0.9788
   the binding limitation is: translation capacity
 
 =================================================================================================
@@ -48,17 +49,17 @@ W6  THE WHOLE-CELL SENSITIVITY
   Screening by dual, then verifying by finite difference on the bisection -- the two-stage
   pattern recon.py's R3 forced, since LP duals fire falsely at degenerate optima.
                         rate   d log mu / d log k
-                 kcat DHORD9             0.006172
-                    kcat GK1             0.006172
-                  kcat PGPPT             0.006172
-                kcat RE1530M             0.006172
-              kcat GPAM_hs_1             0.006172
-                kcat CHLPCTD             0.006172
-                  kcat OMPDC             0.006172
-                  kcat NTD1m             0.006172
-    k_elong (ribosome speed)             1.016796
-             proteome budget             0.007054
-  k_dp of the non-metabolic proteome             0.000000
+                 kcat DHORD9            -0.000542
+                    kcat GK1            -0.000542
+                  kcat NTD2e            -0.000542
+                 kcat CYTK1m            -0.000542
+                  kcat PGPPT            -0.000542
+                kcat RE1530M            -0.000542
+              kcat GPAM_hs_1            -0.000542
+                kcat CHLPCTD            -0.000542
+    k_elong (ribosome speed)             1.010809
+             proteome budget             0.021129
+  k_dp of the non-metabolic proteome            -0.020049
   A global parameter that outranks every individual kcat means the whole-cell answer is
   set by allocation, not by any one enzyme.
 
@@ -66,13 +67,14 @@ W6  THE WHOLE-CELL SENSITIVITY
 W7  THE ASSUMPTIONS DO NOT CARRY THE CONCLUSION
 =================================================================================================
                              variant          mu  ratio to base                  limiting
-                                base    1.086960         1.0000      translation capacity
-                     kcat median x10    1.087646         1.0006      translation capacity
-                     kcat median /10    1.080551         0.9941      translation capacity
-                  proteome budget x2    1.087341         1.0004      translation capacity
-                   ribosome speed x2    2.184830         2.0100      translation capacity
-      metabolic protein fraction 0.3    0.586090         0.5392      translation capacity
-      metabolic protein fraction 0.8    1.587906         1.4609      translation capacity
+                                base    0.353760         0.9999      translation capacity
+                     kcat median x10    0.360901         1.0201      translation capacity
+                     kcat median /10    0.295227         0.8345      translation capacity
+                  proteome budget x2    0.357666         1.0110      translation capacity
+                   ribosome speed x2    0.704102         1.9902      translation capacity
+          non-metabolic fraction 0.7    0.186279         0.5265      translation capacity
+          non-metabolic fraction 0.2    0.521240         1.4733      translation capacity
+                   ribosome speed /2    0.172791         0.4884      translation capacity
 
 =================================================================================================
 W8  WHAT IS ABSENT
@@ -97,44 +99,55 @@ W8  WHAT IS ABSENT
 =================================================================================================
 
 =================================================================================================
-POST-RUN READING.  Hand-written after the run.
+POST-RUN READING, SECOND RUN (corrected units).  Hand-written.
 =================================================================================================
 
-THE MODEL RUNS AND THE COUPLING IS REAL, BUT IT SITS IN A DEGENERATE CORNER AND THE GROWTH RATE
-IS NOT BIOLOGICAL.  W4 passes decisively -- plain FBA gives 370.4/h, the coupled model 1.087/h, a
-factor of 340 -- so expression genuinely constrains metabolism and this is not FBA with extra
-steps.  W1, W2 and W3 pass.  But three numbers together condemn the parameterisation:
+MY PREDICTION WAS FALSIFIED, AND NOT FOR THE REASON I EXPECTED.  The previous reading predicted
+the rerun would land near 0.03/h.  It gives 0.3538/h, a factor of twelve out.  The units were not
+still wrong -- the prediction was.  I predicted what a human cell DOES, a 24-hour doubling, while
+the model computes MAXIMAL growth under its constraints.  A growth-maximising metabolic network
+with no regulation grows as fast as its constraints allow, and W8 already recorded that this model
+has no controller.  I then compared its answer to a regulated cell anyway.  The right reading of
+0.3538/h is "the fastest this constraint set permits", which is not a prediction about human cells
+and must never be quoted as one.
 
-    ribosome mass fraction of the metabolic proteome   0.9993
-    doubling time                                      0.64 h
-    every probed kcat sensitivity                      0.006172, identical to six decimals
+THE UNIT FIX ITSELF WORKED, and the sweep proves it where it previously proved the opposite.
+Dividing every catalytic rate in human metabolism by ten now moves growth by 17% (ratio 0.8345)
+where before it moved it by 0.6%.  Enzymes are no longer free.  Ribosome speed doubled gives
+exactly 1.9902 -- growth proportional to translation capacity, as the binding constraint requires.
 
-A cell that is 99.93% ribosome is not a cell, a human cell does not double in 38 minutes, and
-eight unrelated enzymes cannot share a sensitivity to six decimal places unless they are all on
-one degenerate face of the linear program.
+A SECOND MODELLING ERROR REMAINS, AND IT IS VISIBLE IN ONE NUMBER: the ribosome is 53.8% of total
+protein, against a few per cent in real cells.  The cause is that the full ribosome mass is charged
+against a PROTEIN budget.  A mammalian 80S ribosome is about 4.3 MDa of which only roughly a third
+is protein; the rest is rRNA, which is not made by ribosomes and does not compete for the protein
+budget.  Ribosomes are therefore about three times cheaper than this model makes them, which
+inflates their share and depresses growth.  Fixing it is the next rerun.
 
-THE CAUSE IS A UNIT ERROR, AND IT IS MINE.  kcat was set to 25/s = 90,000/h while the enzyme
-variable E lives in a budget normalised to 1.0.  So v_j <= 90,000 * E_j lets any flux be bought
-with almost no protein, enzymes become free, and the optimiser spends the entire budget on
-ribosome because translation is then the only binding constraint.  The model did not discover that
-growth is ribosome-limited; it was told so by a mis-scaled constant.
+W6's kcat ROWS ARE AT THE NOISE FLOOR AND MUST NOT BE READ AS SENSITIVITIES.  All eight report
+-0.000542, identical to six decimals and NEGATIVE -- a faster enzyme cannot reduce growth.  The
+bisection resolves mu to 1e-6 absolute, which on mu = 0.354 is 2.8e-6 relative, and a 1% kcat
+perturbation moves growth by about 5e-6 relative.  The signal is barely twice the tolerance, so
+these are bisection noise wearing a sensitivity's clothes.  The next run tightens the tolerance
+for the probes and reports the floor explicitly.
 
-W7 THEREFORE PASSES FOR THE WRONG REASON, and its pass must not be quoted.  The limiting layer is
-"translation capacity" in all seven variants -- kcat x10, kcat /10, budget x2, ribosome speed x2,
-and both protein fractions -- which looks like robustness and is actually a model that cannot
-leave one corner.  Note kcat x10 and kcat /10 change growth by 0.06% and 0.6%: enzymes are so far
-from binding that a hundredfold change in every catalytic rate in human metabolism does almost
-nothing.  That is the signature of the error, visible in the sweep that was supposed to catch it.
+WHAT IS ABOVE THE NOISE, AND IT IS THE POINT:
 
-WHAT THE CORRECT SCALING GIVES, worked through before rerunning.  In mass units: total protein
-about 0.5 g/gDW; average protein 50 kDa; a ribosome is 3.2 MDa and elongates at about 5.5 aa/s,
-which is 0.68 g of protein per g of ribosome per hour.  Sustaining a proteome at growth mu then
-needs a ribosome mass fraction of roughly (mu + k_dp) * 0.5 / 0.68.  At mu = 1/h that demands more
-ribosome than there is protein -- infeasible, which is the model correctly saying a human cell
-cannot double in an hour.  At a human doubling time near 24 h, mu = 0.029/h, the ribosome fraction
-comes out near 6%, which is the right order for a mammalian cell.
+    k_elong, ribosome speed                    +1.0108
+    proteome budget                            +0.0211
+    k_dp of the non-metabolic proteome         -0.0200
+    any individual metabolic kcat              below the resolution of the method
 
-So the fix is not a tuning knob: it is that flux, enzyme and ribosome must be carried in one
-consistent unit system, with capacity written v <= kcat * E / MW.  The rerun follows, and the
-growth rate it must reproduce -- roughly 0.03/h rather than 1.09/h -- is a prediction this reading
-makes before the numbers exist.
+Growth tracks ribosome speed with an exponent of one.  The next two parameters are fifty times
+smaller, and every one of 5,938 individual enzyme turnover numbers is smaller still.  The
+whole-cell answer is set by ALLOCATION, not by any single enzyme.
+
+The negative sign on the third is worth stating plainly: making non-metabolic proteins less stable
+REDUCES growth, because they must then be resynthesised continuously and that consumes the same
+ribosome capacity growth needs.  That is protein degradation entering a whole-cell answer through
+the translation constraint -- and expression.py proved degradation rates are exactly what RNA-seq,
+proteomics and ribosome profiling together cannot see.  The blind direction and the whole-cell
+bottleneck are the same quantity, reached from two independent directions.
+
+W7's uniform verdict is now worth more than it was.  The limiting layer stays "translation
+capacity" across all eight variants, but the model is demonstrably responsive this time rather
+than stuck in a corner, so this is evidence rather than an artefact.
