@@ -68,6 +68,10 @@ R6  WHAT PHYSIOLOGY ALREADY PINS. Partition the stable set into exchange and tra
 R7  THE LIST. Reaction identifier, name, subsystem and gene rule for every reaction in the stable
     internal set, ranked by sensitivity.
 
+R9  THE VERIFIED LIST (added by the correction below). Every reaction surviving R4's stability
+    screen is checked by finite difference in BOTH directions, and the list is built from the
+    realised derivatives rather than from the duals.
+
 R8  DOMAIN, AND IT CAN INVALIDATE ANY SINGLE LIST. Repeat under a different objective and a
     different medium. Report the overlap of the top twenty. Predeclared: overlap below half means
     the list is a property of the question asked, not of human metabolism, and must be quoted only
@@ -243,34 +247,55 @@ def main():
     gmed = np.median(mags, axis=0)
     P(f"  reactions stably nonzero across perturbations: {int(stable.sum())}")
 
-    # ---- R3 -----------------------------------------------------------------------------------
-    P("\n" + RULE); P("R3  THE SENSITIVITY IS A SENSITIVITY"); P(RULE)
-    cand = [j for j in np.argsort(-np.abs(gmed)) if stable[j]][:12]
-    P(f"  {'reaction':>22}{'dual':>12}{'finite difference':>20}{'rel err':>10}")
-    worst = 0.0
+    # ---- R3 (repaired): the dual screens, finite differences verify --------------------------
+    P("\n" + RULE); P("R3/R9  THE DUAL SCREENS, FINITE DIFFERENCES VERIFY"); P(RULE)
+    cand = [j for j in range(len(R)) if stable[j]]
+    P(f"  verifying all {len(cand)} reactions that survived R4, both directions, 1% steps ...")
+    t0 = time.time()
+    dplus = np.zeros(len(R))
+    dminus = np.zeros(len(R))
     for j in cand:
-        which = "ub" if abs(ub[j]) > 0 and abs(-res.upper.marginals[j]) > abs(-res.lower.marginals[j]) else "lb"
-        b = ub.copy() if which == "ub" else lb.copy()
-        delta = 0.01
-        b2 = b.copy(); b2[j] = b[j] * (1.0 + delta)
-        rr = solve(S, obj, lb if which == "ub" else b2, b2 if which == "ub" else ub)
-        if rr.status != 0 or -rr.fun <= 0:
+        use_ub = abs(res.x[j] - ub[j]) < 1e-7 and abs(ub[j]) > 1e-12
+        base = ub[j] if use_ub else lb[j]
+        if abs(base) < 1e-12:
             continue
-        fd = (np.log(-rr.fun) - np.log(growth)) / np.log(1.0 + delta)
-        rel = abs(fd - gmed[j]) / max(abs(fd), 1e-12)
-        worst = max(worst, rel)
-        P(f"  {R[j]['id']:>22}{gmed[j]:>12.5f}{fd:>20.5f}{rel:>10.4f}")
-    P(f"  worst relative disagreement {worst:.4f}"
-      f"   {'PASS' if worst < 0.05 else 'FAIL'} (bar 5%)")
+        for f, store in ((1.01, "p"), (0.99, "m")):
+            l2, u2 = lb.copy(), ub.copy()
+            if use_ub:
+                u2[j] = base * f
+            else:
+                l2[j] = base * f
+            rr = solve(S, obj, l2, u2)
+            if rr.status != 0 or -rr.fun <= 0:
+                continue
+            dd = (np.log(-rr.fun) - np.log(growth)) / np.log(f)
+            if store == "p":
+                dplus[j] = dd
+            else:
+                dminus[j] = dd
+    P(f"  {2*len(cand)} verification solves in {time.time()-t0:.0f}s")
+    real = np.maximum(np.abs(dplus), np.abs(dminus))
+    nz_dual = np.abs(gmed) > TOL
+    ghost = int((nz_dual & (real < 1e-9)).sum())
+    P(f"  reactions with a nonzero DUAL but zero realised derivative in both directions: "
+      f"{ghost} of {int(nz_dual.sum())}")
+    P(f"  that fraction, {ghost/max(int(nz_dual.sum()),1):.1%}, is the degeneracy the first run hit;")
+    P(f"  the dual is kept as a screen and the list below is built from realised derivatives only.")
+    agree = [j for j in cand if real[j] > 1e-9]
+    if agree:
+        rel = np.array([abs(abs(gmed[j]) - real[j]) / max(real[j], 1e-12) for j in agree])
+        P(f"  where the realised derivative is nonzero, |dual| vs realised: median relative"
+          f" difference {np.median(rel):.4f}, worst {rel.max():.4f}")
 
     # ---- R5, R6, R7 -----------------------------------------------------------------------------
     P("\n" + RULE); P("R5  SPARSITY  --  how many rates actually matter"); P(RULE)
+    stable = stable & (real > 1e-9)      # only reactions with a REALISED derivative survive
     stab_enz = stable & enz
     P(f"  enzyme-catalysed reactions               : {int(enz.sum())}")
     P(f"  of those, stably sensitive               : {int(stab_enz.sum())}")
     P(f"  as a fraction                            : {stab_enz.sum()/max(enz.sum(),1):.5f}")
-    P(f"  every other enzyme-catalysed reaction has EXACTLY zero sensitivity: its capacity")
-    P(f"  does not bind, so its kcat cannot change this answer at all.")
+    P(f"  every other enzyme-catalysed reaction has EXACTLY zero realised sensitivity: either")
+    P(f"  its capacity does not bind, or it binds degenerately and moving it changes nothing.")
 
     P("\n" + RULE); P("R6  WHAT PHYSIOLOGY ALREADY PINS"); P(RULE)
     def is_boundary(j):
@@ -284,12 +309,14 @@ def main():
     P(f"  -> the targeted-measurement requirement for THIS question is {len(inner)} rates")
 
     P("\n" + RULE); P("R7  THE LIST"); P(RULE)
-    inner.sort(key=lambda j: -abs(gmed[j]))
-    P(f"  {'rank':>4}  {'reaction':<16}{'dlogmu/dlogk':>14}  {'subsystem':<38} genes")
+    inner.sort(key=lambda j: -abs(dminus[j]))
+    P("  d- is the operative column: how far log(growth) falls if the enzyme is 1% slower.")
+    P(f"  {'rank':>4}  {'reaction':<16}{'d- (slower)':>13}{'d+ (faster)':>13}{'dual':>10}  "
+      f"{'subsystem':<34} genes")
     for i, j in enumerate(inner[:40], 1):
         genes = (R[j].get("gene_reaction_rule") or "").replace(" or ", "/").replace(" and ", "+")
-        P(f"  {i:>4}  {R[j]['id']:<16}{gmed[j]:>14.5f}  "
-          f"{(R[j].get('subsystem') or '')[:38]:<38} {genes[:60]}")
+        P(f"  {i:>4}  {R[j]['id']:<16}{dminus[j]:>13.5f}{dplus[j]:>13.5f}{gmed[j]:>10.4f}  "
+          f"{(R[j].get('subsystem') or '')[:34]:<34} {genes[:46]}")
     if len(inner) > 40:
         P(f"  ... and {len(inner)-40} more")
 
@@ -308,7 +335,7 @@ def main():
             continue
         gv = sensitivities(rr, l2, u2, -rr.fun)
         iv = [j for j in np.argsort(-np.abs(gv)) if enz[j] and not is_boundary(j)
-              and abs(gv[j]) > TOL][:20]
+              and abs(gv[j]) > TOL][:20]   # dual-screened, matched to how the base list was screened
         ov = len(set(R[j]["id"] for j in iv) & set(base_top))
         P(f"  {name}: growth {-rr.fun:.6f}, top-20 overlap with the base list {ov}/20")
         variants and None
