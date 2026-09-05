@@ -54,6 +54,43 @@ H5  THE GENEROSITY OF INDEPENDENCE. Repeat with a single shared bias applied to 
 
 H6  THE DELIVERABLE. The fraction of hidden-rate trials landing within a factor of 2, 10 and 100
     of the true answer, at 0.5, 1 and 2 kcal/mol. That is the number a biologist would ask for.
+
+=================================================================================================
+CORRECTION, WRITTEN AFTER THE FIRST RUN. H5's PREDECLARED EXPECTATION WAS WRONG.
+=================================================================================================
+The paragraph above states that independent draws are the GENEROUS case and that correlated error
+is expected to be WORSE. The measurement says the opposite, and not marginally: the ratio of
+correlated to independent spread came out 0.198 / 0.285 / 0.508 at 0.5 / 1 / 2 kcal/mol -- a
+shared bias is FIVE TIMES LESS damaging than independent draws at the smallest error level. That
+sentence is left in place above, refuted, rather than edited away.
+
+The reason is arithmetic I had in hand and failed to apply. For small errors the two spreads are
+
+    independent  sd = sqrt(sum_k S_k^2) * sigma          correlated  sd = |sum_k S_k| * sigma
+
+so the ratio is |sum S| / sqrt(sum S^2) -- a signed sum over an unsigned one. The measured signed
+sensitivities of this circuit are
+
+    mu -0.0507    k_kill +4.0891    a -3.3703    b +0.3172
+
+whose signed sum is +0.9853 against a quadrature norm of 5.3088, giving a predicted ratio of
+0.1856 against the 0.198 measured at 0.5 kcal/mol. The two dominant terms have OPPOSITE SIGN and
+nearly equal magnitude: killing faster helps eradication, forming persisters faster hurts it, and
+a systematic bias that shifts every barrier the same way moves both together, where they cancel.
+
+THE DOMAIN OF THIS RESULT, so it is not carried where it does not hold. The cancellation is a
+property of this circuit's sign pattern, not of correlated error in general. Flip a's sign so the
+two large sensitivities agree and the same formula gives 7.7259 / 5.3088 = 1.4553 -- correlated
+error then 1.5x WORSE, and the ceiling for four rates is sqrt(4) = 2. So the honest statement is
+that correlation can help or hurt by up to a factor of sqrt(n) either way, the direction is set by
+the sign pattern of the sensitivities, and it must be computed per circuit and never assumed. My
+predeclared expectation assumed it.
+
+WHAT THIS DOES NOT CHANGE. H6, the deliverable, is measured on the independent draws, which this
+correction shows are the PESSIMISTIC case for this circuit rather than the generous one. Repeating
+H6 under a shared bias would raise those hit fractions. The finding that hiding four rates behind
+1 kcal/mol of chemistry leaves only a fifth of trials within a factor of ten stands as the
+independent-error number, and is now labelled as such.
 """
 
 from __future__ import annotations
