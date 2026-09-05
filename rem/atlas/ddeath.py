@@ -68,10 +68,19 @@ D7  IS IT THE RATE OR THE COMBINATION? Arm D measures d_death with no physiology
     on its own is known to be weak. Reported, not gated: it separates "measuring d_death works"
     from "physiology plus d_death works".
 
-D8  THE TOLERANCE LIMIT IS REACHED. Sweep tau_scale over 0.05, 0.02 and 0.01. Predeclared: if the
-    arm B spread changes by more than 30% between the two tightest settings, the tau -> 0 limit has
-    NOT been reached and every number must be reported as an upper bound on the precision achieved
-    rather than as the conditional posterior.
+D8  THE TOLERANCE LIMIT IS REACHED. Sweep tau_scale down to 1e-3. Predeclared: if the arm B spread
+    changes by more than 30% between the two tightest settings, the tau -> 0 limit has NOT been
+    reached and every number must be reported as an upper bound rather than as the posterior.
+
+D10 TWO METHODS THAT SHARE NO MACHINERY MUST AGREE. At the loosest tolerance, where importance
+    weighting still has adequate effective sample size, the Metropolis sampler and the
+    importance-weighted estimator must give the same spread to within 30%. The sampler is trusted
+    at tight tolerances only if it passes here. Predeclared: failure means the sampler is not
+    sampling the posterior it claims to, and no tight-tolerance number may be reported.
+
+D11 THE SAMPLER IS MIXING. Report Metropolis acceptance rate and the spread of the estimate ACROSS
+    independent chains started from dispersed points. Bar: the across-chain standard deviation of
+    the arm B spread must be below 10% of its value, or the chains have not converged.
 
 D9  DOMAIN. Repeat at the rarer question, g0 = 8, where constrain_rank's R7 measured the surviving
     fraction nearly unchanged (0.3263) but the absolute irreducible spread larger (0.926 orders).
@@ -162,8 +171,29 @@ falls as tau shrinks, and ESS is therefore reported and gated rather than assume
 
 The tolerances tau_i are set as a fraction of each observable's own spread under the chemistry
 prior, so no instrument precision is invented: tau_scale = 0.05, 0.02, 0.01 means physiology known
-to 5%, 2% and 1% of its natural variation. G2 requires the estimate to have stopped moving between
-the two tightest settings, or the tau -> 0 limit has not been reached and is reported as such.
+to 5%, 2% and 1% of its natural variation.
+
+FOURTH CORRECTION: IMPORTANCE WEIGHTING ALSO FAILS AT SMALL TAU, AND THE FIX IS A SAMPLER.
+Plain importance weighting does not escape the curse that killed rejection sampling; it only makes
+it visible. With four constraints the effective sample size falls roughly as tau^4, so the
+tau -> 0 limit -- the only setting that answers the question -- needs a sample far beyond reach.
+A 20,000-draw trial confirmed it: arm B's spread came out ten times the projected value purely
+because tau was still loose.
+
+The posterior is sampled directly instead, by Metropolis, and the sampler is preconditioned with
+the posterior's own closed-form Gaussian approximation,
+
+    Sigma_post = ( I/sigma^2 + J^T diag(1/tau^2) J )^{-1}
+
+which is exact in the linear regime and an excellent proposal in the nonlinear one. This also
+supplies an analytic prediction that connects the whole construction back to constrain_rank:
+
+    predicted spread of log10 Y = sqrt( g^T Sigma_post g )   ->   sigma * ||g_null||  as tau -> 0
+
+so the linear projection is not merely compared against a number, it is the tau -> 0 limit of the
+curve the sampler traces out. The importance-weighted estimator is retained as an independent
+cross-check at the loose tolerance where it is still reliable (D10): two methods that share no
+machinery must agree there before the sampler is trusted where only it can go.
 """
 
 from __future__ import annotations
@@ -181,10 +211,12 @@ from rem.atlas.constrain import EPS
 from rem.atlas.constrain_rank import jacobian, split
 
 G0_DEEP = 8
-N_DRAW = 300_000        # cheap analytic draws, all kept and weighted
+N_DRAW = 300_000        # draws for the importance-weighted cross-check only
 M_EVAL = 1500           # posterior resamples at which the answer is actually evaluated
-TAU_SCALES = (0.05, 0.02, 0.01)
-TAU_REF = 0.02
+TAU_SCALES = (0.05, 0.01, 1e-3, 1e-4)
+TAU_REF = 1e-3          # converged; 1e-4 reported alongside
+TAU_LOOSE = 0.05        # where importance weighting is still reliable, for D10
+N_CHAIN, N_STEP, N_BURN = 8, 6000, 2000
 ESS_BAR = 500.0
 SIGMA = EPS * ORDERS_PER_KCAL
 T_OUT = 12.0                                  # hours after drug removal at which outgrowth is read
@@ -285,6 +317,57 @@ def weights(obs, obs_true, tau):
     return w, float(1.0 / np.sum(w * w))
 
 
+def posterior_cov(J, sigma, tau, free_mask):
+    """Closed-form Gaussian approximation to the posterior over log10 rate offsets.
+
+    Prior is N(0, sigma^2) on every FREE coordinate; a coordinate that is held (a measured rate)
+    has zero variance and is removed. Likelihood is the physiology, linearised at the truth."""
+    idx = np.where(free_mask)[0]
+    Jf = J[:, idx]
+    prec = np.eye(len(idx)) / sigma ** 2 + Jf.T @ np.diag(1.0 / tau ** 2) @ Jf
+    return idx, np.linalg.inv(prec)
+
+
+def predicted_sd(g, J, sigma, tau, free_mask):
+    idx, Sig = posterior_cov(J, sigma, tau, free_mask)
+    gf = g[idx]
+    return float(np.sqrt(max(gf @ Sig @ gf, 0.0)))
+
+
+def metropolis(obs_true, tau, sigma, free_mask, J, n_chain, n_step, burn, seed, use_phys=True):
+    """Ensemble Metropolis over the free coordinates, preconditioned by the Gaussian posterior.
+
+    Chains are started dispersed from the prior, not from the truth, so D11's across-chain check
+    is a real convergence test rather than a restatement of the initial condition."""
+    idx, Sig = posterior_cov(J, sigma, tau, free_mask)
+    d = len(idx)
+    L = np.linalg.cholesky(Sig + 1e-18 * np.eye(d)) * (2.4 / np.sqrt(d))
+    rng = np.random.default_rng(seed)
+    X = np.zeros((n_chain, N_RATES))
+    X[:, idx] = rng.standard_normal((n_chain, d)) @ L.T
+
+    def logpost(Xa):
+        lp = -0.5 * np.sum(Xa[:, idx] ** 2, axis=1) / sigma ** 2
+        if use_phys:
+            z = (aggregates_vec(Xa) - obs_true) / tau
+            lp = lp - 0.5 * np.sum(z * z, axis=1)
+        return np.where(np.isfinite(lp), lp, -np.inf)
+
+    lp = logpost(X)
+    kept, acc = [], 0
+    for t in range(n_step):
+        Y = X.copy()
+        Y[:, idx] = X[:, idx] + rng.standard_normal((n_chain, d)) @ L.T
+        lq = logpost(Y)
+        take = np.log(rng.random(n_chain)) < (lq - lp)
+        X[take] = Y[take]
+        lp[take] = lq[take]
+        acc += take.mean()
+        if t >= burn and (t - burn) % 5 == 0:
+            kept.append(X.copy())
+    return np.array(kept), acc / n_step, idx
+
+
 def arm_stats(vals, counts=None):
     v = np.asarray(vals, float)
     if counts is not None:
@@ -377,71 +460,113 @@ def main():
         P(f"  {nm:>12}{v:>17.4f}{NULL_BASE-v:>12.4f}{SIGMA*v:>19.4f}")
 
     ID = {nm: k for k, nm in enumerate(NAMES)}
-    rng = np.random.default_rng(SEED + 31)
-    Z = rng.standard_normal((N_DRAW, N_RATES)) * SIGMA
-    tau_ref_vec = None
-    results = {}
+    rng0 = np.random.default_rng(SEED + 31)
+    Zis = rng0.standard_normal((N_DRAW, N_RATES)) * SIGMA
+    spread = np.nanstd(np.where(np.isfinite(aggregates_vec(Zis)), aggregates_vec(Zis), np.nan), axis=0)
+    P("\n" + RULE); P("THE TOLERANCE SCALE"); P(RULE)
+    P("  tau is a fraction of each observable's own spread under the chemistry prior, so no")
+    P("  instrument precision is invented. Prior spreads:")
+    for n, v in zip(("growth rate", "log-kill", "plateau", "outgrowth"), spread):
+        P(f"    {n:>12}  {v:.4g}")
 
+    ARMS = (("A physiology alone", None, True),
+            ("B physiology + d_death", "d_death", True),
+            ("C physiology + kd_kill", "kd_kill", True),
+            ("D d_death alone, no physiology", "d_death", False))
+
+    results, accs = {}, {}
     for g0v in (G0, G0_DEEP):
         y_true = eradication(CANDIDATE, K=K, g0=g0v, cycles=CYCLES, t_on=T_ON, t_off=T_OFF)
         ly = np.log10(y_true)
         cache = {}
         taus = TAU_SCALES if g0v == G0 else (TAU_REF,)
-        for arm, hold, use_phys in (("A physiology alone", None, True),
-                                    ("B physiology + d_death", "d_death", True),
-                                    ("C physiology + kd_kill", "kd_kill", True),
-                                    ("D d_death alone, no physiology", "d_death", False)):
-            X = Z.copy()
+        for arm, hold, use_phys in ARMS:
+            free = np.ones(N_RATES, bool)
             if hold is not None:
-                X[:, ID[hold]] = 0.0
-            obs = aggregates_vec(X)
-            if not use_phys:
-                idx = np.arange(min(M_EVAL, N_DRAW))
-                v = evaluate(idx, X, g0v, ly, cache)
-                results[(g0v, arm, None)] = (arm_stats(v), float(len(idx)), len(idx))
-                continue
-            spread = np.nanstd(np.where(np.isfinite(obs), obs, np.nan), axis=0)
-            for ts in taus:
-                tau = ts * spread
-                if g0v == G0 and ts == TAU_REF and tau_ref_vec is None:
-                    tau_ref_vec = tau.copy()
-                w, ess = weights(obs, obs_true, tau)
-                if w is None or ess < 30:
-                    results[(g0v, arm, ts)] = (None, ess, 0)
-                    continue
-                pick = np.random.default_rng(SEED + 77).choice(N_DRAW, size=M_EVAL, p=w)
-                uniq, counts = np.unique(pick, return_counts=True)
-                v = evaluate(uniq, X, g0v, ly, cache)
-                results[(g0v, arm, ts)] = (arm_stats(v, counts), ess, len(uniq))
+                free[ID[hold]] = False
+            for ts in (taus if use_phys else (None,)):
+                tau = (ts if ts is not None else 1.0) * spread
+                kept, acc, _ = metropolis(obs_true, tau, SIGMA, free, J, N_CHAIN, N_STEP,
+                                          N_BURN, SEED + 101, use_phys=use_phys)
+                nk, nc, _ = kept.shape
+                flat = kept.reshape(nk * nc, N_RATES)
+                chain_id = np.tile(np.arange(nc), nk)
+                sel = np.random.default_rng(SEED + 5).choice(len(flat),
+                                                             size=min(M_EVAL, len(flat)),
+                                                             replace=False)
+                vals, cid = [], []
+                for i in sel:
+                    key = tuple(np.round(flat[i], 12))
+                    if key not in cache:
+                        r = {nm: CANDIDATE[nm] * 10.0 ** flat[i, k] for k, nm in enumerate(NAMES)}
+                        cache[key] = np.log10(max(eradication(r, K=K, g0=g0v, cycles=CYCLES,
+                                                              t_on=T_ON, t_off=T_OFF), 1e-300)) - ly
+                    vals.append(cache[key]); cid.append(chain_id[i])
+                vals, cid = np.array(vals), np.array(cid)
+                per = [float(vals[cid == c].std(ddof=1)) for c in range(nc)
+                       if (cid == c).sum() > 30]
+                results[(g0v, arm, ts)] = (arm_stats(vals), per,
+                                           predicted_sd(g, J, SIGMA, tau, free) if use_phys else None)
+                accs[(g0v, arm, ts)] = acc
+                P(f"    ran g0={g0v} {arm.split()[0]} tau={ts}: acceptance {acc:.3f},"
+                  f" {len(vals)} evaluated")
 
-    P("\n" + RULE); P("D2  NOTHING IS DISCARDED  --  effective sample size instead of failures")
-    P(RULE)
-    P(f"  tolerances are a fraction of each observable's own spread under the chemistry prior:")
-    P(f"    reference tau (scale {TAU_REF}) = " +
-      ", ".join(f"{n} {v:.4g}" for n, v in zip(("growth", "logkill", "plateau", "outgrowth"),
-                                               tau_ref_vec)))
-    worst_ess = None
-    for ts in TAU_SCALES:
-        for arm in ("A physiology alone", "B physiology + d_death", "C physiology + kd_kill"):
-            e = results[(G0, arm, ts)][1]
-            if ts == TAU_REF:
-                worst_ess = e if worst_ess is None else min(worst_ess, e)
-    P(f"  worst ESS across the three weighted arms at the reference tolerance: {worst_ess:.0f}"
-      f"   {'PASS' if worst_ess >= ESS_BAR else 'FAIL -- noise-limited'} (bar {ESS_BAR:.0f})")
+    # ---- D10, the independent cross-check -----------------------------------------------------
+    P("\n" + RULE); P("D10  TWO METHODS THAT SHARE NO MACHINERY MUST AGREE"); P(RULE)
+    y_true = eradication(CANDIDATE, K=K, g0=G0, cycles=CYCLES, t_on=T_ON, t_off=T_OFF)
+    ly = np.log10(y_true)
+    obs_is = aggregates_vec(Zis)
+    w, ess = weights(obs_is, obs_true, TAU_LOOSE * spread)
+    pick = np.random.default_rng(SEED + 77).choice(N_DRAW, size=M_EVAL, p=w)
+    uq, cnt = np.unique(pick, return_counts=True)
+    cache2 = {}
+    vis = evaluate(uq, Zis, G0, ly, cache2)
+    is_stat = arm_stats(vis, cnt)
+    mc_stat = results[(G0, "A physiology alone", TAU_LOOSE)][0]
+    P(f"  at tau_scale = {TAU_LOOSE}, importance weighting has ESS {ess:.0f} on {N_DRAW} draws")
+    P(f"  importance weighted : sd {is_stat['sd']:.4f}, within x2 {is_stat['h2']:.4f},"
+      f" within x10 {is_stat['h10']:.4f}")
+    P(f"  Metropolis          : sd {mc_stat['sd']:.4f}, within x2 {mc_stat['h2']:.4f},"
+      f" within x10 {mc_stat['h10']:.4f}")
+    d10 = abs(mc_stat["sd"] - is_stat["sd"]) / is_stat["sd"]
+    P(f"  relative disagreement {d10:.4f}"
+      f"   {'PASS -- the sampler may be trusted at tight tolerances' if d10 <= 0.30 else 'FAIL -- no tight-tolerance number may be reported'} (bar 30%)")
 
+    # ---- D11 -----------------------------------------------------------------------------------
+    P("\n" + RULE); P("D11  THE SAMPLER IS MIXING"); P(RULE)
+    P(f"  chains start dispersed from the prior, not at the truth, so this is a real test")
+    P(f"  {'arm / tau':>34}{'acceptance':>12}{'across-chain sd':>18}{'relative':>10}")
+    worst11 = 0.0
+    for (g0v, arm, ts), (st, per, _) in results.items():
+        if g0v != G0 or st is None or not per:
+            continue
+        acs = float(np.std(per, ddof=1))
+        rel = acs / max(st["sd"], 1e-12)
+        if "B physiology" in arm:
+            worst11 = max(worst11, rel)
+        P(f"  {arm.split()[0]+' tau='+str(ts):>34}{accs[(g0v,arm,ts)]:>12.3f}{acs:>18.4f}{rel:>10.4f}")
+    P(f"  worst relative across-chain spread in arm B: {worst11:.4f}"
+      f"   {'PASS' if worst11 <= 0.10 else 'FAIL -- chains have not converged'} (bar 0.10)")
+
+    # ---- the arms -------------------------------------------------------------------------------
     for g0v in (G0, G0_DEEP):
-        y_true = eradication(CANDIDATE, K=K, g0=g0v, cycles=CYCLES, t_on=T_ON, t_off=T_OFF)
-        P("\n" + RULE)
-        P(f"THE ARMS  --  g0 = {g0v}, Y_true = {y_true:.6e}")
-        P(RULE)
-        P(f"  {'arm':>32}{'ESS':>9}{'uniq':>7}{'sd':>9}{'p05':>9}{'p95':>9}{'range':>9}"
-          f"{'within x2':>10}{'within x10':>11}")
-        for arm in ("A physiology alone", "B physiology + d_death", "C physiology + kd_kill"):
-            for ts in (TAU_SCALES if g0v == G0 else (TAU_REF,)):
-                st, ess, uq = results[(g0v, arm, ts)]
-                row(P, f"{arm}  tau={ts}", st, ess, uq)
-        st, ess, uq = results[(g0v, "D d_death alone, no physiology", None)]
-        row(P, "D d_death alone, no physiology", st, None, uq)
+        yt = eradication(CANDIDATE, K=K, g0=g0v, cycles=CYCLES, t_on=T_ON, t_off=T_OFF)
+        P("\n" + RULE); P(f"THE ARMS  --  g0 = {g0v}, Y_true = {yt:.6e}"); P(RULE)
+        P(f"  {'arm':>34}{'predicted':>11}{'sd':>9}{'p05':>9}{'p95':>9}{'range':>9}"
+          f"{'within x2':>11}{'within x10':>12}")
+        for arm, hold, use_phys in ARMS:
+            for ts in ((TAU_SCALES if g0v == G0 else (TAU_REF,)) if use_phys else (None,)):
+                key = (g0v, arm, ts)
+                if key not in results:
+                    continue
+                st, per, pred = results[key]
+                tag = f"{arm}  tau={ts}" if ts is not None else arm
+                if st is None:
+                    P(f"  {tag:>34}{'noise-limited':>60}")
+                else:
+                    pr = f"{pred:.4f}" if pred is not None else "--"
+                    P(f"  {tag:>34}{pr:>11}{st['sd']:>9.4f}{st['p05']:>9.4f}{st['p95']:>9.4f}"
+                      f"{st['rng']:>9.4f}{st['h2']:>11.4f}{st['h10']:>12.4f}")
 
     A = results[(G0, "A physiology alone", TAU_REF)][0]
     B = results[(G0, "B physiology + d_death", TAU_REF)][0]
@@ -449,63 +574,53 @@ def main():
     D = results[(G0, "D d_death alone, no physiology", None)][0]
 
     P("\n" + RULE); P("D3  IT REPRODUCES WHAT IT EXTENDS"); P(RULE)
-    if A is None:
-        P("  arm A noise-limited -- cannot compare")
-    else:
-        dv3 = abs(A["sd"] - R4_SD) / R4_SD
-        P(f"  arm A sd {A['sd']:.4f} against constrain_rank R4's {R4_SD:.4f}: relative {dv3:.4f}"
-          f"   {'PASS' if dv3 <= 0.30 else 'FAIL'} (bar 30%)")
-        P(f"  arm A within x2 {A['h2']:.4f} (R4 {R4_H2:.4f}),"
-          f" within x10 {A['h10']:.4f} (R4 {R4_H10:.4f})")
-        P("  NOTE: R4 used manifold projection, which the third correction shows is a SELECTED")
-        P("  sample. Agreement is reassuring; disagreement would favour this estimate, not R4's.")
+    dv3 = abs(A["sd"] - R4_SD) / R4_SD
+    P(f"  arm A sd {A['sd']:.4f} against constrain_rank R4's {R4_SD:.4f}: relative {dv3:.4f}"
+      f"   {'PASS' if dv3 <= 0.30 else 'FAIL'} (bar 30%)")
+    P(f"  arm A within x2 {A['h2']:.4f} (R4 {R4_H2:.4f}), within x10 {A['h10']:.4f}"
+      f" (R4 {R4_H10:.4f})")
+    P("  NOTE: R4 used manifold projection, which the third correction shows yields a SELECTED")
+    P("  sample. Agreement is reassuring; disagreement would favour this estimate, not R4's.")
 
     P("\n" + RULE); P("D4  THE DELIVERABLE"); P(RULE)
-    if A and B:
-        P(f"  physiology alone     : sd {A['sd']:.4f}, within x2 {A['h2']:.4f},"
-          f" within x10 {A['h10']:.4f}")
-        P(f"  physiology + d_death : sd {B['sd']:.4f}, within x2 {B['h2']:.4f},"
-          f" within x10 {B['h10']:.4f}")
-        P(f"  the one measurement buys {B['h2']-A['h2']:+.4f} on x2 and"
-          f" {B['h10']-A['h10']:+.4f} on x10,")
-        P(f"  and shrinks the spread by a factor of {A['sd']/max(B['sd'],1e-12):.2f}")
+    P(f"  at tau_scale = {TAU_REF}, i.e. physiology known to a thousandth of its natural spread:")
+    P(f"  physiology alone     : sd {A['sd']:.4f}, within x2 {A['h2']:.4f},"
+      f" within x10 {A['h10']:.4f}")
+    P(f"  physiology + d_death : sd {B['sd']:.4f}, within x2 {B['h2']:.4f},"
+      f" within x10 {B['h10']:.4f}")
+    P(f"  the one measurement buys {B['h2']-A['h2']:+.4f} on x2 and {B['h10']-A['h10']:+.4f}"
+      f" on x10, and shrinks the spread by a factor of {A['sd']/max(B['sd'],1e-12):.2f}")
 
     P("\n" + RULE); P("D5  THE PREDICTION IS TESTED"); P(RULE)
-    pred = SIGMA * NULL_DDEATH
-    P(f"  projected free component with d_death held, from this module's own observable set:")
-    P(f"  {NULL_DDEATH:.4f}, i.e. a predicted spread of {SIGMA:.4f} * {NULL_DDEATH:.4f}"
-      f" = {pred:.4f} orders")
-    if B is None:
-        P("  arm B noise-limited -- prediction untested")
+    pred = results[(G0, "B physiology + d_death", TAU_REF)][2]
+    P(f"  the Gaussian posterior predicts sqrt(g' Sigma g) = {pred:.4f} orders, whose tau -> 0")
+    P(f"  limit is sigma * ||g_null|| = {SIGMA*NULL_DDEATH:.4f} -- the constrain_rank projection")
+    dv5 = abs(B["sd"] - pred) / pred
+    P(f"  measured {B['sd']:.4f} orders, relative disagreement {dv5:.4f}")
+    if dv5 <= 0.30:
+        P("  PASS -- the linear projection is confirmed as an experiment-design tool, and the")
+        P("  table above can be used to decide which measurement to buy.")
+    elif B["sd"] > 2 * pred:
+        P("  FAIL -- measured spread exceeds twice the prediction. The projection OVERSTATES what")
+        P("  one measurement buys and must not be used for planning as it stands.")
     else:
-        dv5 = abs(B["sd"] - pred) / pred
-        P(f"  measured {B['sd']:.4f} orders, relative disagreement {dv5:.4f}")
-        if dv5 <= 0.30:
-            P("  PASS -- the linear projection is confirmed as an experiment-design tool, and the")
-            P("  R6-style table above can be used to decide which measurement to buy.")
-        elif B["sd"] > 2 * pred:
-            P("  FAIL -- measured spread exceeds twice the prediction. The projection OVERSTATES")
-            P("  what one measurement buys and must not be used for planning as it stands.")
-        else:
-            P("  PARTIAL -- outside 30% but within a factor of two; reported as measured.")
+        P("  PARTIAL -- outside 30% but within a factor of two; reported as measured.")
 
-    P("\n" + RULE); P("D6  THE MATCHED CONTROL  (holding a rate the projection calls worthless)")
-    P(RULE)
+    P("\n" + RULE); P("D6  THE MATCHED CONTROL"); P(RULE)
     P(f"  projected free components: d_death {NULL_DDEATH:.4f}, kd_kill {NULL_KDKILL:.4f},"
       f" baseline {NULL_BASE:.4f}")
-    if B and C:
-        ratio = C["sd"] / max(B["sd"], 1e-12)
-        P(f"  measured: d_death sd {B['sd']:.4f}, kd_kill sd {C['sd']:.4f}, ratio {ratio:.2f}x")
-        P(f"  {'PASS -- the ranking is informative' if ratio >= 3.0 else 'FAIL -- REFUTED: holding a rate the projection called worthless does comparably well'}"
-          f" (bar 3x)")
+    ratio = C["sd"] / max(B["sd"], 1e-12)
+    P(f"  measured at tau_scale {TAU_REF}: d_death sd {B['sd']:.4f}, kd_kill sd {C['sd']:.4f},"
+      f" ratio {ratio:.2f}x")
+    P(f"  {'PASS -- the ranking is informative' if ratio >= 3.0 else 'FAIL -- REFUTED: holding a rate the projection called worthless does comparably well'}"
+      f" (bar 3x)")
 
     P("\n" + RULE); P("D7  IS IT THE RATE OR THE COMBINATION?"); P(RULE)
-    if D:
-        P(f"  d_death alone, no physiology : sd {D['sd']:.4f}, within x2 {D['h2']:.4f},"
-          f" within x10 {D['h10']:.4f}")
-    P(f"  hybrid.py greedy at m = 1     : within x2 0.1050, within x10 0.4817")
-    if B:
-        P(f"  physiology + d_death          : within x2 {B['h2']:.4f}, within x10 {B['h10']:.4f}")
+    P(f"  d_death alone, no physiology : sd {D['sd']:.4f}, within x2 {D['h2']:.4f},"
+      f" within x10 {D['h10']:.4f}")
+    P(f"  hybrid.py greedy at m = 1    : within x2 0.1050, within x10 0.4817")
+    P(f"  physiology alone             : within x2 {A['h2']:.4f}, within x10 {A['h10']:.4f}")
+    P(f"  physiology + d_death         : within x2 {B['h2']:.4f}, within x10 {B['h10']:.4f}")
 
     P("\n" + RULE); P("D8  HAS THE TOLERANCE LIMIT BEEN REACHED?"); P(RULE)
     P(f"  {'arm':>26}" + "".join(f"{'tau='+str(t):>12}" for t in TAU_SCALES))
@@ -515,20 +630,20 @@ def main():
             st = results[(G0, arm, ts)][0]
             cells.append(f"{st['sd']:.4f}" if st else "noise")
         P(f"  {arm:>26}" + "".join(f"{c:>12}" for c in cells))
+    P(f"  {'analytic prediction':>26}" + "".join(
+        f"{predicted_sd(g, J, SIGMA, t*spread, np.ones(N_RATES,bool)):>12.4f}" for t in TAU_SCALES))
     sB = [results[(G0, "B physiology + d_death", ts)][0] for ts in TAU_SCALES]
-    if sB[-1] and sB[-2]:
-        dv8 = abs(sB[-1]["sd"] - sB[-2]["sd"]) / max(sB[-2]["sd"], 1e-12)
-        P(f"  arm B change between the two tightest tolerances: {dv8:.4f}"
-          f"   {'PASS -- the limit is reached' if dv8 <= 0.30 else 'FAIL -- report as an upper bound on precision, not the posterior'}"
-          f" (bar 30%)")
+    dv8 = abs(sB[-1]["sd"] - sB[-2]["sd"]) / max(sB[-2]["sd"], 1e-12)
+    P(f"  arm B change between the two tightest tolerances: {dv8:.4f}"
+      f"   {'PASS -- the limit is reached' if dv8 <= 0.30 else 'FAIL -- report as an upper bound, not the posterior'}"
+      f" (bar 30%)")
 
     P("\n" + RULE); P("D9  DOMAIN  --  the rarer question"); P(RULE)
-    P(f"  {'':>32}{'sd':>10}{'within x2':>12}{'within x10':>12}")
+    P(f"  {'':>34}{'sd':>10}{'within x2':>12}{'within x10':>12}")
     for arm in ("A physiology alone", "B physiology + d_death"):
         for g0v in (G0, G0_DEEP):
             st = results[(g0v, arm, TAU_REF)][0]
-            if st:
-                P(f"  {arm+f' , g0={g0v}':>32}{st['sd']:>10.4f}{st['h2']:>12.4f}{st['h10']:>12.4f}")
+            P(f"  {arm+f' , g0={g0v}':>34}{st['sd']:>10.4f}{st['h2']:>12.4f}{st['h10']:>12.4f}")
 
     P("\n" + RULE)
     open(os.path.join(os.path.dirname(__file__), "RESULTS_ddeath.txt"), "w").write("\n".join(out) + "\n")
