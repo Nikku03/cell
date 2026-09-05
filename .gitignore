@@ -111,3 +111,4 @@ outputs/*.ckpt.npz
 
 # in-progress benchmark output: renamed to its final name only when the run completes
 benchmarks/*.part
+rem/atlas/recon3d.json
