@@ -1,0 +1,146 @@
+=================================================================================================
+DOES SUBLINEAR K(N) SURVIVE REAL METABOLIC CONNECTIVITY?
+=================================================================================================
+  Recon3D measured from BiGG: 10600 reactions, 5835 metabolites, 2248 genes
+  reaction-reaction coupling degree, currency metabolites removed: median 8, mean 54, 90th pct 180
+  kinetic parameters implied for metabolism alone: 46,474
+  sparse.py stopped at c = 5. This extends to c = 32.
+
+  c = 2 ...
+      N=   60 (m=  15)  K= 13.0  Kdense=  26.0  ||g_null||=8.435
+      N=  120 (m=  30)  K=  9.0  Kdense=  48.0  ||g_null||=3.463
+      N=  248 (m=  62)  K= 12.5  Kdense= 104.5  ||g_null||=5.696
+      N=  500 (m= 125)  K= 10.5  Kdense= 206.0  ||g_null||=5.729
+
+  c = 3 ...
+      N=   60 (m=  12)  K= 12.0  Kdense=  30.5  ||g_null||=3.737
+      N=  120 (m=  24)  K= 18.5  Kdense=  63.0  ||g_null||=6.111
+      N=  250 (m=  50)  K= 11.5  Kdense= 122.0  ||g_null||=2.935
+      N=  500 (m= 100)  K= 18.5  Kdense= 242.5  ||g_null||=3.934
+
+  c = 5 ...
+      N=   63 (m=   9)  K= 10.5  Kdense=  37.0  ||g_null||=2.717
+      N=  119 (m=  17)  K= 23.0  Kdense=  68.0  ||g_null||=2.644
+      N=  252 (m=  36)  K= 33.0  Kdense= 142.0  ||g_null||=3.038
+      N=  497 (m=  71)  K= 39.5  Kdense= 277.5  ||g_null||=3.252
+
+  c = 8 ...
+      N=   42 (m=   6)  K=  5.0  Kdense=  26.5  ||g_null||=1.771
+      N=  120 (m=  12)  K= 12.0  Kdense=  77.0  ||g_null||=2.398
+      N=  250 (m=  25)  K= 18.0  Kdense= 160.0  ||g_null||=2.172
+      N=  500 (m=  50)  K= 27.5  Kdense= 299.5  ||g_null||=2.074
+
+  c = 12 ...
+      N=   20 (m=   4)  K=  7.0  Kdense=  12.5  ||g_null||=4.321
+      N=   90 (m=   9)  K=  6.5  Kdense=  61.0  ||g_null||=1.876
+      N=  252 (m=  18)  K= 15.5  Kdense= 183.5  ||g_null||=2.416
+      N=  504 (m=  36)  K= 16.5  Kdense= 334.5  ||g_null||=1.458
+
+  c = 20 ...
+      N=   20 (m=   4)  K=  7.5  Kdense=  11.5  ||g_null||=4.106
+      N=   30 (m=   5)  K=  6.5  Kdense=  18.5  ||g_null||=2.129
+      N=  132 (m=  11)  K= 10.0  Kdense=  92.0  ||g_null||=2.539
+      N=  506 (m=  23)  K=  7.5  Kdense= 361.5  ||g_null||=1.498
+
+  c = 32 ...
+      N=   20 (m=   4)  K=  8.0  Kdense=  12.0  ||g_null||=5.763
+      N=   20 (m=   4)  K=  8.0  Kdense=  12.0  ||g_null||=5.763
+      N=   56 (m=   7)  K= 10.5  Kdense=  33.5  ||g_null||=3.558
+      N=  240 (m=  15)  K= 14.5  Kdense= 169.5  ||g_null||=2.087
+
+=================================================================================================
+C1  IT REPRODUCES sparse.py AT THE OVERLAPPING VALUES
+=================================================================================================
+     c   sparse.py alpha     here   difference
+     2             0.298   -0.043        0.341
+     3             0.355    0.113        0.242
+     5             0.507    0.620        0.113
+  worst difference 0.341   FAIL -- the two runs are not measuring the same thing (bar 0.08)
+  NOTE: different seeds and a different N grid, so exact agreement is not expected;
+  the bar is that the exponent is stable to those choices.
+
+=================================================================================================
+C5  IRREDUCIBILITY AND DEPTH
+=================================================================================================
+  every switch graph strongly connected: True   PASS
+  log10 Y across all circuits: -3.011 to -2.582 (band (-3.5, -2.0))   PASS
+
+=================================================================================================
+C2/C3/C4  THE DELIVERABLE  --  alpha against connectivity
+=================================================================================================
+     c     M/N    alpha      R2   log R2   dilution  alpha dense                     verdict
+     2   0.500   -0.043   0.053    0.074     -0.091        0.986                       clean
+     3   0.400    0.113   0.155    0.162     -0.085        0.970                       clean
+     5   0.286    0.620   0.898    0.977      0.099        0.976                       clean
+     8   0.200    0.683   0.990    0.970      0.057        0.983                       clean
+    12   0.143    0.306   0.735    0.760     -0.286        1.029          DILUTION-FLATTERED
+    20   0.091    0.044   0.127    0.115     -0.225        1.066          DILUTION-FLATTERED
+    32   0.059    0.240   0.998    0.999     -0.411        1.063          DILUTION-FLATTERED
+
+  connectivities with a clean reading: [2, 3, 5, 8]
+  alpha over those: -0.043 to 0.683
+  at c >= 8, the range Recon3D's median coupling of 8 sits in: alpha 0.683 to 0.683
+  READING: alpha stays well below 1 at real-network connectivity, so the
+  sublinear conclusion SURVIVES and specification remains tractable.
+
+=================================================================================================
+C6  IT IS NOT ONE NETWORK
+=================================================================================================
+  c=  2  K ranges by size: 10-17  1-11  10-15  5-21
+  c=  3  K ranges by size: 9-22  11-33  2-25  13-24
+  c=  5  K ranges by size: 7-16  13-24  16-38  25-60
+  c=  8  K ranges by size: 3-12  10-17  14-31  15-32
+  c= 12  K ranges by size: 4-10  6-19  8-35  12-28
+  c= 20  K ranges by size: 3-8  2-13  5-13  6-11
+  c= 32  K ranges by size: 5-10  5-10  10-15  7-20
+
+=================================================================================================
+
+=================================================================================================
+POST-RUN READING.  Hand-written after the run; NOT produced by connectivity.py.
+=================================================================================================
+
+C1 FAILED, AND ITS FAILURE OVERRIDES C4's AUTOMATED VERDICT.  At the three connectivities this run
+shares with sparse.py the exponents disagree badly:
+
+    c        sparse.py P9      here      difference
+    2            0.298        -0.043        0.341
+    3            0.355         0.113        0.242
+    5            0.507         0.620        0.113
+
+against a bar of 0.08.  Different seeds and a different N grid were expected to shift the number a
+little; they moved it by up to 0.34, and at c = 2 the sign flipped.  So the exponent is NOT stable
+to those choices, and sparse.py's headline alpha = 0.365 must be treated as poorly determined
+rather than as a measured scaling law.  The fit quality here says the same thing directly: at
+c = 2 and c = 3 the power-law R2 is 0.053 and 0.155, which is no fit at all.  Four sizes and four
+seeds cannot pin an exponent when C6 shows the instance spread running from 2 to 25 at a single
+point.
+
+C4's printed reading -- "alpha stays well below 1, the sublinear conclusion SURVIVES" -- therefore
+stands on ground C1 has removed, and it is withdrawn as printed.
+
+WHAT SURVIVES, STATED AT THE STRENGTH THE DATA SUPPORTS.  Two points have both a clean dilution
+check and a fit worth reading:
+
+    c = 5   alpha 0.620   R2 0.898   dilution +0.099
+    c = 8   alpha 0.683   R2 0.990   dilution +0.057
+
+Recon3D's median reaction-reaction coupling is 8.  At that connectivity the exponent is 0.683 with
+a good fit and no dilution -- sublinear, but far above the 0.365 reported from the c = 3 sparse
+run, and the trend of alpha rising with connectivity that sparse.py's P9 found is confirmed at
+higher c even though the individual numbers are not.
+
+C3 is what keeps any of this readable: the dense-gradient control returns alpha 0.97, 0.98, 0.98,
+1.03, 1.07, 1.06 across every connectivity tested, so the machinery reliably produces a linear
+K(N) for a genuinely dense target at every c.  The separation between roughly 0.6-0.7 and roughly
+1.0 is the robust finding; the third decimal place of either is not.
+
+c = 12, 20 and 32 are marked DILUTION-FLATTERED (dilution -0.286, -0.225, -0.411) and their
+exponents are not readable, exactly as the dense family's was not.  That is the gate working: the
+same artefact that nearly got reported as a flat K(N) is now caught automatically.
+
+THE HONEST SUMMARY.  The exponent is sublinear and clearly separated from the dense control at
+every connectivity where it can be read, but it is not pinned to better than roughly a factor of
+two, and it rises with connectivity.  At Recon3D's median coupling the best-supported estimate is
+alpha ~ 0.68.  Extrapolating that to 4.6e4 metabolic rate parameters is a further two orders
+beyond the measured range and is an illustration, not a prediction.
