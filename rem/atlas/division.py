@@ -40,7 +40,11 @@ V3  THE LIMIT CHECK, which is the strongest correctness test available. Remove d
     generator instead -- and the periodic state must converge to the STATIONARY state of the same
     generator. Worst relative disagreement in the tail below 1e-6.
 
-V4  THE CENTRAL TEST: THE MEAN-MATCHED CONTROL, on the CYCLE-AVERAGED distribution. (The first
+V4  THE CENTRAL TEST: THE MEAN-MATCHED CONTROL, on the CYCLE-AVERAGED distribution, with the
+    stationary comparator matched on the mean EXACTLY rather than by the dilution formula. The
+    second run matched by formula and left the means 13% apart (103.8 against 118.3), which for a
+    steep tail is enough to produce a gap on its own. The comparator's removal rate is now solved
+    numerically so its mean equals the cycling mean to 1e-9, isolating the SHAPE difference. (The first
     run compared the POST-DIVISION state against a cycle-averaged stationary model and was
     therefore confounded: the means came out 74.3 against 118.3, a ratio of 1.592 against a dose
     factor of 1.600, which identified the error rather than merely suggesting it. Both quantities
@@ -207,7 +211,7 @@ def main():
     P("  Division lowers the mean about threefold on its own, which would change any tail. The")
     P("  question is whether the cycle changes it BEYOND a stationary model matched on the mean.")
     P(f"  {'a':>7}{'b':>7}{'cyc mean':>11}{'stat mean':>11}{'cyc P(<T)':>13}{'stat P(<T)':>13}"
-      f"{'log10 gap':>11}")
+      f"{'log10 gap':>11}{'mean err':>10}")
     rng = np.random.default_rng(11)
     worst_gap, worst_edge, allconv = 0.0, 0.0, True
     window = []
@@ -221,17 +225,34 @@ def main():
         Xc, itc, Xa = periodic(k_tx, k_tl, k_dm, k_dp, T_CYCLE, F_S, Mm, Mp, divide=True)
         allconv &= itc < 399
         worst_edge = max(worst_edge, float(Xc[Mm, :].sum() + Xc[:, Mp].sum()))
-        # matched stationary: cycle-averaged transcription, total removal including dilution
+        # matched stationary. The formula-matched version left the means 13% apart; the removal
+        # rate is now solved so the stationary mean equals the CYCLING mean exactly, which is the
+        # only way to attribute a tail gap to shape rather than to location.
         dose = F_S * 1.0 + (1 - F_S) * 2.0
         dil = np.log(2.0) / T_CYCLE
-        Xm = stationary(k_tx * dose, k_tl, k_dm, k_dp + dil, Mm, Mp)
+        target_mean = stats(Xa)[0]
+        lo_r, hi_r = 0.2 * (k_dp + dil), 5.0 * (k_dp + dil)
+        Xm = None
+        for _ in range(40):
+            midr = 0.5 * (lo_r + hi_r)
+            Xt = stationary(k_tx * dose, k_tl, k_dm, midr, Mm, Mp)
+            mt = stats(Xt)[0]
+            if abs(mt - target_mean) / max(target_mean, 1e-12) < 1e-9:
+                Xm = Xt
+                break
+            if mt > target_mean:
+                lo_r = midr
+            else:
+                hi_r = midr
+            Xm = Xt
         ma, ta = stats(Xa)          # cycle-averaged: what a randomly sampled cell shows
         mc, tc = stats(Xc)          # post-division: the most exposed phase
         mm_, tm = stats(Xm)
         gap = abs(np.log10(max(ta, 1e-300)) - np.log10(max(tm, 1e-300)))
         worst_gap = max(worst_gap, gap)
         window.append((a, b, ta, tc))
-        P(f"  {a:>7.2f}{b:>7.2f}{ma:>11.3f}{mm_:>11.3f}{ta:>13.4e}{tm:>13.4e}{gap:>11.4f}")
+        P(f"  {a:>7.2f}{b:>7.2f}{ma:>11.3f}{mm_:>11.3f}{ta:>13.4e}{tm:>13.4e}{gap:>11.4f}"
+          f"{abs(ma-mm_)/max(ma,1e-12):>10.2e}")
     P(f"  {N_GENES} genes in {time.time()-t0:.0f}s")
     P(f"\n  V1: all converged {allconv}, worst boundary mass {worst_edge:.2e}"
       f"   {'PASS' if allconv and worst_edge < 1e-12 else 'FAIL'}")

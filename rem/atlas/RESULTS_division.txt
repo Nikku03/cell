@@ -1,0 +1,91 @@
+=================================================================================================
+THE CELL CYCLE AND DIVISION: WHAT THEY CHANGE
+=================================================================================================
+  cycle period T = 24.0 h, S phase at 40% of the cycle, threshold 20 copies
+  protein removal = k_dp + ln2/T = 0.0151 + 0.0289 = 0.0439 /h
+  degradation is 34.3% of protein turnover; dilution by division is the rest
+
+=================================================================================================
+V2  THE PARTITIONING OPERATOR IS EXACT
+=================================================================================================
+  worst |column sum - 1| : 4.42e-14
+  worst |mean after partitioning - i/2| : 1.33e-12
+  PASS
+
+=================================================================================================
+V3  THE LIMIT CHECK  (remove division, recover the stationary state)
+=================================================================================================
+  periodic with division switched off : mean 107.926110, P(<20) 1.46649236e-04
+  stationary state, same generator    : mean 107.926110, P(<20) 1.46649236e-04
+  relative disagreement in the tail 2.63e-10   PASS
+
+=================================================================================================
+V4  THE CENTRAL TEST: THE MEAN-MATCHED CONTROL
+=================================================================================================
+  Division lowers the mean about threefold on its own, which would change any tail. The
+  question is whether the cycle changes it BEYOND a stationary model matched on the mean.
+        a      b   cyc mean  stat mean    cyc P(<T)   stat P(<T)  log10 gap
+     9.19  23.68    103.789    118.300   4.7542e-03   1.7512e-03     0.4337
+    18.77   9.30     84.752     95.714   8.7115e-04   1.1565e-04     0.8769
+     7.53   9.22     33.708     38.062   2.3252e-01   1.5015e-01     0.1899
+    12.67  11.67     71.801     81.084   8.9910e-03   2.6379e-03     0.5325
+    14.09   4.76     32.612     36.824   1.7649e-01   8.6290e-02     0.3108
+    23.04  11.44    126.491    144.082   8.7826e-06   4.5904e-07     1.2818
+    13.54  11.21     73.703     83.232   6.5214e-03   1.7188e-03     0.5791
+     7.17  15.13     52.681     59.488   8.4448e-02   4.7484e-02     0.2500
+  8 genes in 75s
+
+  V1: all converged True, worst boundary mass 1.93e-16   PASS
+  V4: worst |log10 gap| between the cycling and the mean-matched stationary model: 1.2818 orders
+  FAIL -- steady-state expression models MISSTATE the tail by this much, and
+  expression.py's numbers inherit the error. Recorded, not explained away.
+
+=================================================================================================
+V7  THE RISK WINDOW  (post-division against cycle-averaged)
+=================================================================================================
+  Division halves every molecule at an instant. Immediately afterwards a cell is at its
+  most exposed, and no stationary model contains that window at all.
+        a      b   cycle-avg P(<T)  post-division P(<T)     ratio
+     9.19  23.68        4.7542e-03           1.0612e-02      2.23x
+    18.77   9.30        8.7115e-04           2.9198e-03      3.35x
+     7.53   9.22        2.3252e-01           3.9183e-01      1.69x
+    12.67  11.67        8.9910e-03           2.2993e-02      2.56x
+    14.09   4.76        1.7649e-01           3.6330e-01      2.06x
+    23.04  11.44        8.7826e-06           3.5844e-05      4.08x
+    13.54  11.21        6.5214e-03           1.7410e-02      2.67x
+     7.17  15.13        8.4448e-02           1.5438e-01      1.83x
+  worst elevation of risk just after division: 4.08x
+
+=================================================================================================
+V5  THE STRUCTURAL REFINEMENT: HOW MUCH DOES OBSERVING THE CYCLE CLOSE?
+=================================================================================================
+  In a dividing cell the protein-removal term is k_dp + ln2/T, so in log-rate coordinates
+  x = (log k_tx, log k_tl, log k_dm, log k_dp, log T) its derivative splits between the
+  two by their shares: d log(removal)/d log k_dp = 0.3429, d log(removal)/d log T = -0.6571.
+
+             direction    residual, no cycle   residual, cycle watched   closed
+       burst frequency                0.9953                    0.7779    21.8%
+            burst size                1.0000                    0.7779    22.2%
+  Watching cells divide is free, and it supplies the dilution share of protein turnover.
+  What it does NOT supply is the degradation share, and that is what remains blind.
+
+=================================================================================================
+V6  WHAT IS STILL ABSENT AFTER THIS
+=================================================================================================
+                   subsystem   rough parameter count  does this machinery apply?
+  transcriptional regulation~1,600 TFs x targets, 1e4-1e5
+                            PARTLY -- steady state exists, but regulation makes the cell a controller, not an optimiser, which invalidates the LP framing used for metabolism
+         signal transduction~2,000 proteins, ~1e4 rates
+                            NO -- signalling answers are TRANSIENT (amplitude, duration, adaptation). There is no stationary distribution to take a tail of
+   trafficking and secretion~1,500 proteins, ~1e4 rates
+                            PARTLY -- compartments are already labels in Recon3D; making them dynamic adds transport rates but keeps a steady state
+        spatial organisation  fields, not parameters
+                            NO -- a reaction-diffusion PDE has no finite state space, so every method here that enumerates states fails outright
+     cell cycle and division  ~100-200 (this module)
+                            YES -- but only via a periodic solve, not a stationary one; that is what this module had to build
+
+  The honest summary: of the six subsystems asked about, one is now built, two could be
+  built with the existing machinery, and two -- signalling and space -- need a different
+  mathematics, because they have no stationary distribution to compute a rare event from.
+
+=================================================================================================
