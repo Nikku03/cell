@@ -54,13 +54,57 @@ make a gate pass. Control coefficients are natural-log elasticities, C = (theta/
 there is no log10 anywhere and therefore no ln10 factor to get wrong.
 
 =================================================================================================
+FOUR CORRECTIONS, RECORDED BEFORE THE REPAIRED RUN
+=================================================================================================
+
+The first run of this module failed C1 and produced one meaningless row. All four defects were
+mine, none were the model's, and all four are recorded here rather than quietly patched.
+
+(1) C1's BAR WAS A RELATIVE ERROR ON A QUANTITY THAT IS ZERO. Eight parameters "failed" at
+    7e-3 relative error. Their control coefficients are 2e-13 against a maximum of 28.1, and the
+    absolute discrepancy scaled by that maximum is 2.5e-12. The adjoint was correct to twelve
+    digits; the gate was measuring the finite-difference reference's own truncation noise on a
+    component that is exactly zero. This is the same family as ledger P -- a bar unreachable on
+    any evidence -- read in the opposite direction: a bar that FAILS on any evidence. C1 is now
+    scaled by max|C|, which is the quantity that actually governs a ranking and an N90.
+
+(2) THE CANONICAL WIRING CLOSED THE LOOP OVER THE EXIT AND RAN AWAY. Edges were assigned to
+    enzyme (k mod L+1), which at k = L+1 targets the DEMAND reaction, repressed by its own
+    substrate. Repressing the reaction that removes a metabolite using that metabolite is
+    positive feedback on accumulation. At L=8, K=9 the end product reached 1.6e13, cond(G) was
+    4.5e16 and the largest eigenvalue was -5.9e-15, i.e. the fixed point was a marginally stable
+    degenerate one. Every parameter but four had a control coefficient of ~1e-13 there, so that
+    row reported N90 = 1: perfect sparsity, entirely an artefact. This is kept as a RESULT, not
+    removed -- gate C7 now detects it and names the mechanism, and the exit-repressed wiring is
+    retained as a deliberately broken control so the detector has something to detect.
+
+(3) MY CLAIM ABOUT C2 IN THE CLOSED LOOP WAS WRONG. The docstring said the summation theorem
+    is "a statement about the OPEN loop", and predicted the closed-loop sum would differ from 1.
+    It came out 1.000000. The theorem in fact SURVIVES this feedback, and the reason is
+    structural: h depends only on metabolites, so scaling every alpha scales every enzyme at
+    unchanged x, and the fixed point moves not at all. It would break for a controller that
+    sensed the proteome. That case is now included, and C2 requires the theorem to hold in the
+    first two and to break in the third -- otherwise the check cannot distinguish a correct
+    pipeline from one that returns 1 by construction.
+
+(4) THE INTEGRATOR DROVE STATES NEGATIVE and x**n produced NaN. Integration is now done in
+    log coordinates, du/dt = F(e^u)/e^u, which keeps every state positive by construction.
+
+Also: a single lognormal parameter draw makes N90 a random variable, and the first run fitted an
+exponent to one sample per configuration, getting b = 0.58 +- 0.33 -- a number spanning both
+predeclared bands and therefore worth nothing. C3 now averages over independent seeds and fits
+the means.
+
+=================================================================================================
 GATES, PREDECLARED BEFORE THE FIRST RUN
+
 =================================================================================================
 
 C1  THE ADJOINT IS RIGHT. Every control coefficient is re-derived by central finite differences
-    on the re-solved fixed point, in both directions. Bar: median relative error < 1e-6 and the
-    worst < 1e-3 over all parameters. An adjoint that has never been finite-differenced has been
-    wrong twice in this build order, once by exactly ln10.
+    on the re-solved fixed point, in both directions. Bar: worst |C_adj - C_fd| / max|C| < 1e-6,
+    scaled by the largest coefficient rather than element-wise, for the reason in correction (1).
+    An adjoint that has never been finite-differenced has been wrong twice in this build order,
+    once by exactly ln10.
 
 C2  THE SUMMATION THEOREM. In the open loop h = 1, so e_j = alpha_j / delta_j and scaling every
     alpha together scales every enzyme together; the rate laws are homogeneous of degree one in
@@ -68,8 +112,10 @@ C2  THE SUMMATION THEOREM. In the open loop h = 1, so e_j = alpha_j / delta_j an
 
         sum_j C^J_{alpha_j} = 1     and     sum_j C^E_{alpha_j} = 1
 
-    EXACTLY, by a theorem that knows nothing about my code. Bar: |sum - 1| < 1e-6. This is an
-    external check on the whole pipeline, not an internal consistency check.
+    EXACTLY, by a theorem that knows nothing about my code. Bar: |sum - 1| < 1e-6. It must also
+    hold in the closed loop, because h depends only on metabolites -- and it must BREAK for a
+    controller that senses the proteome. All three are required, so the gate cannot pass by
+    returning 1 unconditionally.
 
 C3  THE MEASUREMENT. N90 = the smallest number of parameters carrying 90% of ||C||^2, and the
     participation ratio N_pr = (sum C^2)^2 / sum C^4. Swept over plant size L and controller
@@ -92,9 +138,11 @@ C6  THE MATCHED CONTROL. The same K edges rewired at random -- random target, ra
     the result is about counting parameters and not about control architecture, and C3 says
     nothing about biology.
 
-C7  THE FIXED POINT IS STABLE. Every eigenvalue of G must have negative real part. A steady-state
-    sensitivity around an unstable fixed point is a number about a state the system leaves. If
-    high-gain feedback destabilises the pathway that is a finding, not an error to route around.
+C7  THE FIXED POINT IS STABLE AND PHYSIOLOGICAL. Every eigenvalue of G must have negative real
+    part, cond(G) must be below 1e12, and every state must lie in [1e-8, 1e8]. A sensitivity
+    computed around a marginally stable point with a metabolite at 1e13 is a number about a
+    state no cell occupies. The exit-repressed wiring is run deliberately so that this gate has
+    a true positive to find rather than only true negatives.
 """
 
 from __future__ import annotations
@@ -113,7 +161,7 @@ S_EXT = 10.0
 # THE MODEL
 # =================================================================================================
 
-def make_model(L, K, shuffled=False, seed=SEED, w=0.8):
+def make_model(L, K, mode="canon", seed=SEED, w=0.8):
     """Parameters and wiring for a chain of length L with K regulatory edges.
 
     Everything is heterogeneous: a perfectly symmetric chain gives every step the same control
@@ -126,21 +174,28 @@ def make_model(L, K, shuffled=False, seed=SEED, w=0.8):
         kcat=10.0 * sp(nr), Km=1.0 * sp(nr), Kp=1.0 * sp(nr),
         alpha=1.0 * sp(nr), delta=0.1 * sp(nr),
     )
-    # wiring
+    # wiring. mode "canon": end-product repression of the CHAIN enzymes, never the exit --
+    # repressing the reaction that removes a metabolite with that metabolite is positive feedback
+    # on accumulation, which is correction (2). mode "exit": that broken wiring, kept as a control.
     tgt, sen, sgn = [], [], []
     for k in range(K):
-        if shuffled:
+        if mode == "shuffled":
             tgt.append(int(rng.integers(nr)))
             sen.append(int(rng.integers(L)))
             sgn.append(1 if rng.random() < 0.5 else -1)
-        else:
-            tgt.append(k % nr)                        # end-product repression, the canonical loop
+        elif mode == "exit":
+            tgt.append(k % nr)
             sen.append(L - 1 - (k // nr) % L)
+            sgn.append(-1)
+        else:
+            tgt.append(k % L)
+            sen.append((L - 1 - (k // L)) % L)
             sgn.append(-1)
     p["Kr"] = 1.0 * sp(K) if K else np.zeros(0)
     p["nh"] = 2.0 * np.exp(rng.normal(0.0, 0.2, K)) if K else np.zeros(0)
     p["w"] = np.full(K, w) * np.exp(rng.normal(0.0, 0.1, K)) if K else np.zeros(0)
-    wiring = dict(tgt=np.array(tgt, int), sen=np.array(sen, int), sgn=np.array(sgn, int), nr=nr, L=L)
+    wiring = dict(tgt=np.array(tgt, int), sen=np.array(sen, int), sgn=np.array(sgn, int),
+                  nr=nr, L=L, mode=mode)
     return p, wiring
 
 
@@ -188,8 +243,13 @@ def rhs(q, th, wir, p_ref):
     v = e * p["kcat"] * ss / (1.0 + ss + pp)
     dx = v[:L] - v[1:]
     h = np.ones(nr, dtype=dt)
+    etot = np.sum(e)
     for k in range(len(wir["tgt"])):
-        u = (x[wir["sen"][k]] / p["Kr"][k]) ** p["nh"][k]
+        # a proteome-sensing controller reads total enzyme rather than a metabolite. It is the
+        # only one of these modes for which the summation theorem must fail, which is what makes
+        # C2 a real check instead of an identity.
+        sig = etot if wir["mode"] == "proteome" else x[wir["sen"][k]]
+        u = (sig / p["Kr"][k]) ** p["nh"][k]
         f = 1.0 / (1.0 + u) if wir["sgn"][k] < 0 else u / (1.0 + u)
         h[wir["tgt"][k]] = h[wir["tgt"][k]] * ((1.0 - p["w"][k]) + p["w"][k] * f)
     de = p["alpha"] * h - p["delta"] * e
@@ -224,9 +284,12 @@ def steady(th, wir, p_ref, q0=None, tmax=4000.0):
     if q0 is None:
         p = unpack(th, p_ref)
         q0 = np.concatenate([np.full(L, 1.0), p["alpha"] / p["delta"]])
-    sol = solve_ivp(lambda t, y: F(y, th, wir, p_ref), (0.0, tmax), q0,
-                    method="BDF", rtol=1e-10, atol=1e-12)
-    q = sol.y[:, -1]
+    # integrate in log coordinates so no state can go negative and x**n cannot produce NaN
+    sol = solve_ivp(lambda t, u: F(np.exp(u), th, wir, p_ref) / np.exp(u),
+                    (0.0, tmax), np.log(q0), method="BDF", rtol=1e-10, atol=1e-12)
+    q = np.exp(sol.y[:, -1])
+    if not np.all(np.isfinite(q)):
+        return q0, False
     for _ in range(60):
         r = F(q, th, wir, p_ref)
         if np.max(np.abs(r)) < 1e-12:
@@ -240,7 +303,21 @@ def steady(th, wir, p_ref, q0=None, tmax=4000.0):
         while s > 1e-6 and np.min(q + s * dq) <= 0:
             s *= 0.5
         q = q + s * dq
-    return q, np.max(np.abs(F(q, th, wir, p_ref))) < 1e-9 and np.min(q) > 0
+    resid = np.max(np.abs(F(q, th, wir, p_ref)))
+    scale = np.max(np.abs(q)) + 1.0
+    return q, bool(resid / scale < 1e-9 and np.all(np.isfinite(q)) and np.min(q) > 0)
+
+
+def accept(q, G):
+    """C7's acceptance test, applied to every configuration and not only to the ones tabulated.
+    A fixed point that is marginally stable, numerically singular, or sitting at 1e13 is not a
+    state a cell occupies and no sensitivity around it means anything."""
+    ev = np.linalg.eigvals(G)
+    cond = float(np.linalg.cond(G))
+    stab = float(np.max(ev.real))
+    rng_ok = bool(np.min(q) > 1e-8 and np.max(q) < 1e8)
+    return dict(stab=stab, cond=cond, range_ok=rng_ok,
+                ok=bool(stab < 0 and cond < 1e12 and rng_ok))
 
 
 def control_coefficients(th, wir, p_ref, q=None):
@@ -279,7 +356,12 @@ def npr(c):
 # =================================================================================================
 
 def fd_check(th, wir, p_ref, adj, name, h=1e-6):
-    """Central finite differences on the RE-SOLVED fixed point, both directions."""
+    """Central finite differences on the RE-SOLVED fixed point, both directions.
+
+    Returns error SCALED BY max|C| rather than element-wise relative -- correction (1). An
+    element-wise relative error on a coefficient of 2e-13 measures the finite-difference
+    reference's truncation, not the adjoint, and no correct adjoint could ever pass it."""
+    sc = float(np.max(np.abs(adj)))
     errs = []
     for i in range(len(th)):
         t1, t2 = th.copy(), th.copy()
@@ -291,33 +373,57 @@ def fd_check(th, wir, p_ref, adj, name, h=1e-6):
         v1 = observables(q1, t1, wir, p_ref)[name]
         v2 = observables(q2, t2, wir, p_ref)[name]
         fd = (np.log(v1) - np.log(v2)) / (2 * h)
-        den = max(abs(fd), 1e-8)
-        errs.append(abs(fd - adj[i]) / den)
+        errs.append(abs(fd - adj[i]) / sc)
     return np.array(errs)
 
 
-def run_case(L, K, shuffled=False, w=0.8):
-    p, wir = make_model(L, K, shuffled=shuffled, w=w)
+def run_case(L, K, mode="canon", w=0.8, seed=SEED):
+    """One configuration. Returns None if C7's acceptance test rejects the fixed point, with the
+    reason attached, so rejections are counted rather than silently dropped."""
+    p, wir = make_model(L, K, mode=mode, seed=seed, w=w)
     th = pack(p)
     q, ok = steady(th, wir, p)
     if not ok:
-        return None
+        return dict(rejected="no fixed point", L=L, K=K, mode=mode, seed=seed)
     r = control_coefficients(th, wir, p, q)
-    ev = np.linalg.eigvals(r["G"])
+    acc = accept(q, r["G"])
     ctrl = is_controller(p)
-    row = dict(L=L, K=K, P=len(th), shuffled=shuffled, p=p, wir=wir, th=th,
-               stab=float(np.max(ev.real)), ctrl=ctrl, labels=param_labels(p),
-               J=r["J"], E=r["E"], obs=r["obs"])
+    row = dict(L=L, K=K, P=len(th), mode=mode, seed=seed, p=p, wir=wir, th=th, q=q,
+               ctrl=ctrl, labels=param_labels(p), J=r["J"], E=r["E"], obs=r["obs"], **acc)
     for nm in ("J", "E"):
         c = r[nm]
         row[f"n90_{nm}"] = n90(c)
         row[f"npr_{nm}"] = npr(c)
         row[f"norm_{nm}"] = float(np.linalg.norm(c))
         row[f"fctl_{nm}"] = float(np.sum(c[ctrl] ** 2) / np.sum(c ** 2)) if K else 0.0
+    if not acc["ok"]:
+        row["rejected"] = ("unstable" if acc["stab"] >= 0 else
+                           "singular" if acc["cond"] >= 1e12 else "outside physiological range")
     return row
 
 
-def fit_power(P, N):
+def replicate(L, K, mode="canon", nrep=12, w=0.8):
+    """N90 is a random variable: the parameters are a lognormal draw. One sample per point gave
+    an exponent spanning both predeclared bands, which is worth nothing."""
+    good, rej = [], 0
+    for i in range(nrep):
+        r = run_case(L, K, mode=mode, w=w, seed=SEED + 1000 * i)
+        if r.get("rejected"):
+            rej += 1
+        else:
+            good.append(r)
+    if not good:
+        return None
+    agg = dict(L=L, K=K, mode=mode, P=good[0]["P"], n=len(good), rejected=rej)
+    for key in ("n90_J", "npr_J", "n90_E", "npr_E", "norm_J", "norm_E", "fctl_J", "stab"):
+        v = np.array([g[key] for g in good], float)
+        agg[key] = float(v.mean())
+        agg[key + "_se"] = float(v.std(ddof=1) / np.sqrt(len(v))) if len(v) > 1 else 0.0
+    agg["rows"] = good
+    return agg
+
+
+def fit_power(P, N, W=None):
     P, N = np.asarray(P, float), np.asarray(N, float)
     m = (P > 0) & (N > 0)
     x, y = np.log(P[m]), np.log(N[m])
@@ -346,145 +452,171 @@ def main():
         out.append(s)
 
     P_(RULE); P_("DOES CLOSING THE LOOP MAKE THE IMPORTANT PARAMETERS EXPLODE?"); P_(RULE)
-    P_("  plant: metabolic chain with product inhibition; enzymes are dynamical variables driven")
-    P_("  by Hill feedback. w = 0 recovers the open loop exactly, so open and closed loop are the")
-    P_("  same model at different points of one parameter space.")
+    P_("  Repaired run. Four defects from the first run are recorded in the docstring: a relative-")
+    P_("  error bar on a coefficient that is exactly zero, a wiring that closed the loop over the")
+    P_("  exit and ran away to 1e13, a wrong claim about the summation theorem, and an integrator")
+    P_("  that drove states negative. All four were mine.")
 
     # ---- C1  THE ADJOINT IS RIGHT --------------------------------------------------------------
     P_("\n" + RULE); P_("C1  THE ADJOINT IS RIGHT"); P_(RULE)
+    P_("  error scaled by max|C|, because an element-wise relative error on a machine-zero")
+    P_("  coefficient measures the finite-difference reference and not the adjoint.")
     c1ok = True
-    for (L, K) in [(6, 0), (6, 4), (8, 9)]:
+    for (L, K) in [(6, 0), (6, 4), (8, 8), (12, 12)]:
         p, wir = make_model(L, K)
         th = pack(p)
         q, ok = steady(th, wir, p)
         r = control_coefficients(th, wir, p, q)
         for nm in ("J", "E"):
             e = fd_check(th, wir, p, r[nm], nm)
-            med, wrst = float(np.nanmedian(e)), float(np.nanmax(e))
-            good = med < 1e-6 and wrst < 1e-3
+            wrst = float(np.nanmax(e))
+            good = wrst < 1e-6
             c1ok = c1ok and good
-            P_(f"  L={L:<3} K={K:<3} {nm}  {len(th):>3} parameters   median rel err {med:.3e}"
-               f"   worst {wrst:.3e}   {'PASS' if good else 'FAIL'}")
-    P_(f"  C1: {'PASS' if c1ok else 'FAIL'}   (bars: median < 1e-6, worst < 1e-3)")
+            P_(f"  L={L:<3} K={K:<3} {nm}  {len(th):>3} parameters   max|C| {np.max(np.abs(r[nm])):9.4f}"
+               f"   worst scaled err {wrst:.3e}   {'PASS' if good else 'FAIL'}")
+    P_(f"  C1: {'PASS' if c1ok else 'FAIL'}   (bar: worst scaled error < 1e-6)")
 
     # ---- C2  THE SUMMATION THEOREM -------------------------------------------------------------
-    P_("\n" + RULE); P_("C2  THE SUMMATION THEOREM -- an external check, not an internal one"); P_(RULE)
-    P_("  Open loop: h = 1, so e = alpha/delta and the rate laws are homogeneous of degree one in")
-    P_("  e. Scaling every alpha together must scale J and E by exactly that factor, so the")
-    P_("  alpha control coefficients must sum to 1. Nothing in the code knows this.")
+    P_("\n" + RULE); P_("C2  THE SUMMATION THEOREM -- must hold twice and BREAK once"); P_(RULE)
+    P_("  Scaling every alpha together scales every enzyme together, so J and E scale by that")
+    P_("  factor and the alpha control coefficients sum to 1. This survives metabolite-sensing")
+    P_("  feedback, because h reads x and the fixed point does not move -- my first-run claim that")
+    P_("  it would break was wrong. It must break when the controller senses the PROTEOME, and")
+    P_("  that case is included so the gate cannot pass by returning 1 unconditionally.")
     c2ok = True
-    for L in (4, 8, 16):
-        p, wir = make_model(L, 0)
-        th = pack(p)
-        q, ok = steady(th, wir, p)
+    for (L, K, mode, must) in [(4, 0, "canon", True), (8, 0, "canon", True), (16, 0, "canon", True),
+                               (8, 8, "canon", True), (12, 12, "canon", True),
+                               (8, 8, "proteome", False)]:
+        p, wir = make_model(L, K, mode=mode)
+        th = pack(p); q, ok = steady(th, wir, p)
+        if not ok:
+            P_(f"  L={L} K={K} {mode}: no fixed point"); c2ok = False; continue
         r = control_coefficients(th, wir, p, q)
         lab = np.array(param_labels(p))
-        am = np.array([s.startswith("alpha") for s in lab])
-        for nm in ("J", "E"):
-            s = float(np.sum(r[nm][am]))
-            good = abs(s - 1.0) < 1e-6
-            c2ok = c2ok and good
-            P_(f"  L={L:<3} sum of C^{nm}_alpha over {int(am.sum())} enzymes = {s:.12f}"
-               f"   {'PASS' if good else 'FAIL'}")
-    # and the closed loop, where the theorem does NOT hold -- reported so the check is not vacuous
-    p, wir = make_model(8, 9); th = pack(p); q, ok = steady(th, wir, p)
-    r = control_coefficients(th, wir, p, q)
-    lab = np.array(param_labels(p)); am = np.array([s.startswith("alpha") for s in lab])
-    P_(f"  closed loop L=8 K=9: sum = {float(np.sum(r['J'][am])):.6f}  -- the theorem is a")
-    P_( "  statement about the OPEN loop, so this differing from 1 is the control working, and it")
-    P_( "  shows C2 is a real constraint rather than an identity that holds either way.")
+        am = np.array([x.startswith("alpha") for x in lab])
+        sJ = float(np.sum(r["J"][am]))
+        holds = abs(sJ - 1.0) < 1e-6
+        good = (holds == must)
+        c2ok = c2ok and good
+        tag = "must hold" if must else "MUST BREAK"
+        P_(f"  L={L:<3} K={K:<3} {mode:<9} sum C^J_alpha = {sJ:>14.10f}   {tag:<10}"
+           f"   {'PASS' if good else 'FAIL'}")
     P_(f"  C2: {'PASS' if c2ok else 'FAIL'}")
 
-    # ---- C5  THE SATURATION CHECK, reported BEFORE the measurement -----------------------------
-    P_("\n" + RULE); P_("C5  THE SATURATION CHECK  (before C3, so it cannot be used to explain C3 away)"); P_(RULE)
-    P_("  If feedback simply flattened the observable, sensitivities would go to zero and any")
-    P_("  sparsity would be homeostasis rather than structure. ledger U is exactly this mistake.")
-    P_(f"    {'K':>4} {'P':>5} {'||C_J||':>12} {'||C_E||':>12} {'J':>12} {'E':>12} {'max Re eig':>12}")
+    # ---- C7  STABILITY AND PHYSIOLOGICAL RANGE, with a true positive ---------------------------
+    P_("\n" + RULE); P_("C7  EVERY FIXED POINT IS STABLE, CONDITIONED AND PHYSIOLOGICAL"); P_(RULE)
+    P_("  The exit-repressed wiring is run on purpose so the detector has something to detect.")
+    P_(f"    {'mode':<10} {'L':>3} {'K':>3} {'max Re eig':>12} {'cond(G)':>11} {'max state':>11} {'verdict':>10}")
+    c7_pos = c7_neg = 0
+    for (mode, L, K) in [("canon", 8, 4), ("canon", 8, 8), ("canon", 8, 16), ("canon", 16, 16),
+                         ("exit", 8, 9), ("exit", 8, 10), ("exit", 12, 13)]:
+        r = run_case(L, K, mode=mode)
+        if "stab" not in r:
+            P_(f"    {mode:<10} {L:>3} {K:>3}   no fixed point"); continue
+        v = "ACCEPT" if r["ok"] else "REJECT"
+        if mode == "exit" and not r["ok"]:
+            c7_pos += 1
+        if mode == "canon" and r["ok"]:
+            c7_neg += 1
+        P_(f"    {mode:<10} {L:>3} {K:>3} {r['stab']:>12.3e} {r['cond']:>11.2e}"
+           f" {np.max(r['q']):>11.3e} {v:>10}")
+    P_(f"  exit-repressed configurations rejected: {c7_pos}/3   canonical accepted: {c7_neg}/4")
+    c7ok = c7_pos == 3 and c7_neg == 4
+    P_(f"  C7: {'PASS -- the detector fires on the broken wiring and not on the sound one' if c7ok else 'FAIL'}")
+    P_("  MECHANISM: repressing the demand reaction with its own substrate is positive feedback on")
+    P_("  accumulation. The end product runs to 1e13, the Jacobian goes singular, and every")
+    P_("  control coefficient but a handful collapses to 1e-13 -- which reads as perfect sparsity")
+    P_("  and is nothing of the kind. That row is why C7 exists.")
+
+    # ---- C5  THE SATURATION CHECK, before C3 ---------------------------------------------------
+    P_("\n" + RULE); P_("C5  THE SATURATION CHECK  (before C3, so it cannot explain C3 away)"); P_(RULE)
+    P_("  If feedback merely flattened the observable, sensitivities would vanish and any sparsity")
+    P_("  would be homeostasis rather than structure. That is ledger U.")
     KS = [0, 1, 2, 4, 8, 16, 32]
+    P_(f"    {'K':>4} {'P':>5} {'||C_J||':>10} {'+-':>8} {'||C_E||':>10} {'frac ctl':>9} {'rej':>4}")
     krows = []
     for K in KS:
-        r = run_case(8, K)
-        if r is None:
-            P_(f"    {K:>4}  no stable fixed point"); continue
-        krows.append(r)
-        P_(f"    {K:>4} {r['P']:>5} {r['norm_J']:>12.4f} {r['norm_E']:>12.4f}"
-           f" {r['obs']['J']:>12.4f} {r['obs']['E']:>12.4f} {r['stab']:>12.3e}")
-    nJ = [r["norm_J"] for r in krows]
+        a = replicate(8, K)
+        if a is None:
+            P_(f"    {K:>4}  every replicate rejected"); continue
+        krows.append(a)
+        P_(f"    {K:>4} {a['P']:>5} {a['norm_J']:>10.4f} {a['norm_J_se']:>8.4f}"
+           f" {a['norm_E']:>10.4f} {a['fctl_J']:>9.4f} {a['rejected']:>4}")
+    nJ = [a["norm_J"] for a in krows]
     sat = min(nJ) / max(nJ) < 0.1
     P_(f"  ||C_J|| ranges {min(nJ):.4f} to {max(nJ):.4f}, ratio {min(nJ)/max(nJ):.3f}")
-    P_(f"  C5: {'FAIL -- the observable is being flattened; read C3 as homeostasis' if sat else 'PASS -- sensitivity does not collapse, so C3 measures structure'}")
-
-    # ---- C7  STABILITY -------------------------------------------------------------------------
-    P_("\n" + RULE); P_("C7  EVERY FIXED POINT IS STABLE"); P_(RULE)
-    worst = max(r["stab"] for r in krows)
-    P_(f"  worst eigenvalue real part across the K sweep: {worst:.4e}")
-    c7ok = worst < 0
-    P_(f"  C7: {'PASS' if c7ok else 'FAIL -- feedback destabilises the pathway, which is a finding'}")
+    P_(f"  C5: {'FAIL -- the observable is flattened; read C3 as homeostasis' if sat else 'PASS -- sensitivity does not collapse, so C3 measures structure'}")
 
     # ---- C3  THE MEASUREMENT -------------------------------------------------------------------
     P_("\n" + RULE); P_("C3  THE MEASUREMENT: does the important set grow with the parameter count?"); P_(RULE)
-    LS = [4, 6, 8, 12, 16, 24, 32]
-    rows = list(krows)
-    P_("  sweep A: L = 8, K = 0..32 (controllers added to a fixed plant)")
-    P_(f"    {'K':>4} {'P':>5} {'N90_J':>7} {'N90/P':>7} {'Npr_J':>8} {'N90_E':>7} {'Npr_E':>8}")
-    for r in krows:
-        P_(f"    {r['K']:>4} {r['P']:>5} {r['n90_J']:>7} {r['n90_J']/r['P']:>7.3f}"
-           f" {r['npr_J']:>8.2f} {r['n90_E']:>7} {r['npr_E']:>8.2f}")
-    P_("\n  sweep B: K = L+1 (every enzyme regulated), L = 4..32 (the plant itself grows)")
-    P_(f"    {'L':>4} {'K':>4} {'P':>5} {'N90_J':>7} {'N90/P':>7} {'Npr_J':>8} {'N90_E':>7}")
+    P_("  every row is the mean over 12 independent lognormal parameter draws")
+    P_("\n  sweep A: L = 8, controllers added to a fixed plant")
+    P_(f"    {'K':>4} {'P':>5} {'N90_J':>8} {'+-':>6} {'N90/P':>7} {'Npr_J':>8} {'+-':>6} {'N90_E':>8}")
+    for a in krows:
+        P_(f"    {a['K']:>4} {a['P']:>5} {a['n90_J']:>8.2f} {a['n90_J_se']:>6.2f}"
+           f" {a['n90_J']/a['P']:>7.3f} {a['npr_J']:>8.2f} {a['npr_J_se']:>6.2f} {a['n90_E']:>8.2f}")
+    P_("\n  sweep B: K = L (every chain enzyme regulated), the plant itself grows")
+    P_(f"    {'L':>4} {'K':>4} {'P':>5} {'N90_J':>8} {'+-':>6} {'N90/P':>7} {'Npr_J':>8} {'+-':>6}")
     lrows = []
-    for L in LS:
-        r = run_case(L, L + 1)
-        if r is None:
-            P_(f"    {L:>4}  no stable fixed point"); continue
-        lrows.append(r); rows.append(r)
-        P_(f"    {L:>4} {r['K']:>4} {r['P']:>5} {r['n90_J']:>7} {r['n90_J']/r['P']:>7.3f}"
-           f" {r['npr_J']:>8.2f} {r['n90_E']:>7}")
-    bA, sA = fit_power([r["P"] for r in krows], [r["n90_J"] for r in krows])
-    bB, sB = fit_power([r["P"] for r in lrows], [r["n90_J"] for r in lrows])
-    bAll, sAll = fit_power([r["P"] for r in rows], [r["n90_J"] for r in rows])
-    P_(f"\n  N90_J ~ P^b     sweep A  b = {bA:+.4f} +- {sA:.4f}")
-    P_(f"                  sweep B  b = {bB:+.4f} +- {sB:.4f}")
-    P_(f"                  pooled   b = {bAll:+.4f} +- {sAll:.4f}")
+    for L in [4, 6, 8, 12, 16, 24, 32]:
+        a = replicate(L, L)
+        if a is None:
+            P_(f"    {L:>4}  every replicate rejected"); continue
+        lrows.append(a)
+        P_(f"    {L:>4} {a['K']:>4} {a['P']:>5} {a['n90_J']:>8.2f} {a['n90_J_se']:>6.2f}"
+           f" {a['n90_J']/a['P']:>7.3f} {a['npr_J']:>8.2f} {a['npr_J_se']:>6.2f}")
+    allr = krows + lrows
+    bA, sA = fit_power([a["P"] for a in krows], [a["n90_J"] for a in krows])
+    bB, sB = fit_power([a["P"] for a in lrows], [a["n90_J"] for a in lrows])
+    bAll, sAll = fit_power([a["P"] for a in allr], [a["n90_J"] for a in allr])
+    pA, qA = fit_power([a["P"] for a in allr], [a["npr_J"] for a in allr])
+    P_(f"\n  N90_J ~ P^b     sweep A (add controllers) b = {bA:+.4f} +- {sA:.4f}")
+    P_(f"                  sweep B (grow the plant)   b = {bB:+.4f} +- {sB:.4f}")
+    P_(f"                  pooled                     b = {bAll:+.4f} +- {sAll:.4f}")
+    P_(f"  Npr_J ~ P^b     pooled                     b = {pA:+.4f} +- {qA:.4f}   (continuous measure)")
     lab = ("EXPLOSION" if bAll > 0.7 else "SPARSE" if bAll < 0.3 else "INTERMEDIATE")
     P_(f"  predeclared bands: b > 0.7 EXPLOSION, b < 0.3 SPARSE, else intermediate")
-    P_(f"  C3: {lab}   (the exponent is the deliverable; the label is a convenience)")
+    P_(f"  C3: {lab}")
+    P_(f"  The two sweeps ask different questions and are reported apart on purpose: sweep A adds")
+    P_(f"  parameters WITHOUT adding plant, sweep B adds both. If they disagree, the disagreement")
+    P_(f"  is the result.")
 
     # ---- C4  TRANSFER --------------------------------------------------------------------------
     P_("\n" + RULE); P_("C4  TRANSFER: does the important set change IDENTITY as well as size?"); P_(RULE)
-    base = krows[0]
-    bl = np.array(base["labels"])
+    base = krows[0]["rows"][0]
+    bl = list(np.array(base["labels"]))
     P_(f"    {'K':>4} {'frac ||C||^2 on controller':>28} {'rho(plant rank vs K=0)':>24}")
-    for r in krows:
-        cl = np.array(r["labels"])
-        common = [s for s in bl if s in set(cl)]
-        ib = [list(bl).index(s) for s in common]
-        ic = [list(cl).index(s) for s in common]
-        rho = spearman(np.abs(base["J"][ib]), np.abs(r["J"][ic]))
-        P_(f"    {r['K']:>4} {r['fctl_J']:>28.4f} {rho:>24.4f}")
-    top = krows[-1]
+    for a in krows:
+        r0 = a["rows"][0]
+        cl = list(np.array(r0["labels"]))
+        common = [x for x in bl if x in set(cl)]
+        rho = spearman(np.abs(base["J"][[bl.index(x) for x in common]]),
+                       np.abs(r0["J"][[cl.index(x) for x in common]]))
+        P_(f"    {a['K']:>4} {a['fctl_J']:>28.4f} {rho:>24.4f}")
+    top = krows[-1]["rows"][0]
     o = np.argsort(-np.abs(top["J"]))[:10]
-    P_(f"\n  the ten largest control coefficients at K={top['K']}:")
+    P_(f"\n  the ten largest control coefficients at K={top['K']} (seed {top['seed']}):")
     for i in o:
         P_(f"    {top['labels'][i]:<12} {top['J'][i]:+10.4f}   {'controller' if top['ctrl'][i] else 'plant'}")
 
     # ---- C6  THE MATCHED CONTROL ---------------------------------------------------------------
     P_("\n" + RULE); P_("C6  THE MATCHED CONTROL: the same edges, rewired at random"); P_(RULE)
-    P_(f"    {'L':>4} {'K':>4} {'P':>5} {'N90 real':>9} {'N90 shuf':>9} {'Npr real':>9} {'Npr shuf':>9}")
-    srows = []
-    for (L, K) in [(8, 4), (8, 9), (8, 16), (8, 32), (16, 17), (24, 25), (32, 33)]:
-        a = run_case(L, K)
-        b = run_case(L, K, shuffled=True)
+    P_(f"    {'L':>4} {'K':>4} {'P':>5} {'N90 real':>10} {'+-':>6} {'N90 shuf':>10} {'+-':>6} {'rej':>4}")
+    srows, rrows = [], []
+    for (L, K) in [(8, 4), (8, 8), (8, 16), (8, 32), (16, 16), (24, 24), (32, 32)]:
+        a = replicate(L, K)
+        b = replicate(L, K, mode="shuffled")
         if a is None or b is None:
-            P_(f"    {L:>4} {K:>4}  no stable fixed point"); continue
-        srows.append(b)
-        P_(f"    {L:>4} {K:>4} {a['P']:>5} {a['n90_J']:>9} {b['n90_J']:>9}"
-           f" {a['npr_J']:>9.2f} {b['npr_J']:>9.2f}")
+            P_(f"    {L:>4} {K:>4}  every replicate rejected"); continue
+        rrows.append(a); srows.append(b)
+        P_(f"    {L:>4} {K:>4} {a['P']:>5} {a['n90_J']:>10.2f} {a['n90_J_se']:>6.2f}"
+           f" {b['n90_J']:>10.2f} {b['n90_J_se']:>6.2f} {b['rejected']:>4}")
     if len(srows) >= 3:
-        bS, sS = fit_power([r["P"] for r in srows], [r["n90_J"] for r in srows])
-        P_(f"  shuffled exponent b = {bS:+.4f} +- {sS:.4f} against real {bAll:+.4f} +- {sAll:.4f}")
-        sep = abs(bS - bAll) > 2 * np.hypot(sS, sAll)
-        P_(f"  C6: {'the architectures separate -- C3 is about control structure' if sep else 'NOT SEPARATED -- C3 is about counting parameters, not about biology'}")
+        bS, sS = fit_power([a["P"] for a in srows], [a["n90_J"] for a in srows])
+        bR, sR = fit_power([a["P"] for a in rrows], [a["n90_J"] for a in rrows])
+        P_(f"  shuffled b = {bS:+.4f} +- {sS:.4f}   against real b = {bR:+.4f} +- {sR:.4f}")
+        sep = abs(bS - bR) > 2 * np.hypot(sS, sR)
+        P_(f"  C6: {'the architectures SEPARATE -- C3 is about control structure' if sep else 'NOT SEPARATED -- C3 is about counting parameters, not about which wiring'}")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_controller.txt")
     open(dst, "w").write("\n".join(out) + "\n")
