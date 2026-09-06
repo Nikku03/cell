@@ -500,3 +500,50 @@ Extrapolating the measured scaling with 20,000 genes, 122 detected controllers, 
 That is the answer to problem 2. Grouping cannot keep the joint state small -- statedim settled
 that -- but grouping was never the right decomposition. Controller history plus local balls is,
 and it is linear in the genome where every pure method is exponential.
+
+=================================================================================================
+RETRACTION: "THE ENGINE, AT GENOME SCALE ... HYBRID ~14 MB" IS WRONG BY ~48 ORDERS OF MAGNITUDE
+=================================================================================================
+The section above ends by extrapolating the hybrid engine to 20,000 genes at about 14 MB, 1% on
+both local and global questions. That number is withdrawn. Two defects in engine.hybrid_cost,
+both invisible on every test system this build order used and both fatal on real topology.
+
+(1) HISTORY BITS DO NOT ADD ACROSS CONTROLLERS -- THEY MULTIPLY. hybrid_cost charges (L+1) bits
+    to any gene a controller touches. A gene regulated by k_i controllers needs k_i*(L+1) bits,
+    because the conditioning strata are the JOINT controller histories. Every star test system
+    in this build order gave every gene exactly one controller, so k_i was identically 1 and the
+    error could not appear. On TRRUST at controller threshold 25:
+
+        |C|     k_i mean   median   max   frac k>=2   frac k=0
+          3         0.39        0     3       0.108      0.749
+         13         0.85        0    11       0.208      0.546
+         38         1.37        1    17       0.303      0.393
+        122         1.88        1    17       0.417      0.224
+        281         1.98        1    11       0.460      0.142
+
+    41.7% of genes have two or more controllers and the maximum is 17.
+
+(2) THE CONTROLLER BLOCK IS PRICED AT ZERO. P(a), the joint over the controllers' own histories,
+    never enters the cost at all. That makes the functional degenerate: designating every gene a
+    controller drives the reported cost towards zero. Priced honestly the block is
+    2^(|C|*(L+1)) -- at |C| = 122 and L = 8 that is 2^1098.
+
+    corrected, TRRUST, r = 2, w = 6, L = 8
+        |C|      engine.py reports     corrected per-gene      controller block
+          3              3.877e+07              1.604e+12                  2^27
+         13              6.005e+07              8.256e+31                 2^117
+         38              6.906e+07              1.839e+55                 2^342
+        122              5.386e+07              9.503e+55                >2^400
+
+WHAT SURVIVES. The star-topology results are correct FOR STAR TOPOLOGY, where k_i = 1 by
+construction: the scaling law (route 1 x32.5, route 2 x65.0, hybrid x3.9 from N=6 to N=12), the
+reduction identities, the matched controls, and the accuracy curves. What does not survive is the
+extrapolation of that cost to a real network, and with it the claim that the engine runs at
+genome scale. hybrid_cost is kept under its own name, with the retraction written into the file
+above it, so that which results are affected stays visible.
+
+HOW IT WAS FOUND. Not by a gate. Eight independent adversarial reviewers were asked, before the
+TRRUST module was written, to find ways the measurement could be invalid; two of them
+independently identified both defects, and a third pointed out that the cost functional was
+degenerate. Every gate in engine.py passed on the star system and would have passed again on
+TRRUST, because none of them priced a gene with two controllers.

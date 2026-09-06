@@ -147,6 +147,39 @@ def hybrid_dist(Q, pi, N, hubbit, C, adj, r, w, L, dt, weight=None):
     return tot / tot.sum(), pa, dropped, (0 if L < 0 else L + 1)
 
 
+# =================================================================================================
+# A RETRACTION, RECORDED AT THE TOP OF THE FUNCTION THAT WAS WRONG
+# =================================================================================================
+# hybrid_cost below charges (L+1) history bits to any gene that a controller touches. That is
+# correct only when a gene has exactly ONE controller, which is true of every star test system in
+# this build order and false on any real network. A gene regulated by k_i controllers needs
+# k_i*(L+1) bits, because the strata are the JOINT histories.
+#
+# On TRRUST at controller threshold 25 (|C| = 122): 41.7% of genes have k_i >= 2 and the maximum
+# is 17. The cost this function reports is 5.4e7; the corrected per-gene cost is 9.5e55. And the
+# controller block P(a) itself -- the joint over |C| controller histories -- is charged NOTHING
+# here, which makes the functional degenerate: designating every gene a controller drives the
+# reported cost to zero. Priced properly that block is 2^(|C|*(L+1)) = 2^1098.
+#
+# So the genome-scale figure of "~14 MB, 1% on both" that this module's results file carried is
+# WRONG BY ABOUT 48 ORDERS OF MAGNITUDE. The retraction is in RESULTS_TWOPROBLEMS.txt. The
+# corrected functional is hybrid_cost_real below; this one is kept, and kept named, because the
+# star-topology numbers computed with it are correct FOR STAR TOPOLOGY and deleting it would
+# hide which results are affected.
+
+
+def hybrid_cost_real(pa, L, kvec, C, N, cap=400):
+    """The honest cost: per-gene 2^(1+|pa_i|+k_i*(L+1)), PLUS the controller block.
+
+    kvec[i] is the number of controllers regulating gene i. The controller block is the joint
+    over |C| controller histories -- 2^(|C|*(L+1)) if represented exactly -- and it is returned
+    separately rather than folded in, because any engine that scales has to factorise it and
+    hiding it inside a total would conceal exactly that."""
+    per = float(sum(2.0 ** min(1 + len(pa.get(i, [])) + kvec[i] * (L + 1), cap) for i in range(N)))
+    block = 2.0 ** min(len(C) * (L + 1), cap)
+    return per, block
+
+
 def hybrid_cost(pa, nhist, carries, N):
     """Realised cost: 2^(1 + |pa_i| + history bits carried by i), summed over genes.
 
