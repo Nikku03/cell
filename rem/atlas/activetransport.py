@@ -87,7 +87,7 @@ from scipy.sparse import lil_matrix, csc_matrix
 from scipy.optimize import linprog
 
 from rem.atlas.hybrid_tune import RULE
-from rem.atlas.recon import MODEL, MEDIUM, fetch_if_missing
+from rem.atlas.recon import MODEL, MEDIUM, fetch_if_missing, boundary_reactions
 
 FLUX_TOL = 1e-6
 
@@ -119,9 +119,8 @@ def build():
 def sealed_bounds(R):
     lb = np.array([r["lower_bound"] for r in R], float)
     ub = np.array([r["upper_bound"] for r in R], float)
-    for j, r in enumerate(R):
-        if r["id"].startswith(("EX_", "DM_", "SK_", "sink_")):   # SK_ is Recon3D's sink prefix
-            lb[j] = ub[j] = 0.0
+    for j in boundary_reactions(R):     # structural, see recon.boundary_reactions
+        lb[j] = ub[j] = 0.0
     return lb, ub
 
 
@@ -129,11 +128,8 @@ def open_bounds(R):
     lb = np.array([r["lower_bound"] for r in R], float)
     ub = np.array([r["upper_bound"] for r in R], float)
     idx = {r["id"]: j for j, r in enumerate(R)}
-    for j, r in enumerate(R):
-        if r["id"].startswith(("EX_", "SK_", "DM_")):
-            lb[j] = 0.0
-        if r["id"].startswith(("SK_", "DM_")):
-            ub[j] = 0.0
+    for j in boundary_reactions(R):
+        lb[j] = 0.0          # supply closed, removal left open
     for k, v in MEDIUM.items():
         if k in idx:
             lb[idx[k]] = v
@@ -156,8 +152,8 @@ def imbalanced(R, M):
     mf = {m["id"]: m.get("formula", "") for m in M}
     bad, checked = [], 0
     for j, r in enumerate(R):
-        if r["id"].startswith(("EX_", "DM_", "SK_", "sink_", "BIOMASS")):
-            continue   # boundary reactions are unbalanced BY DESIGN; SK_ is the sink prefix
+        if len(r["metabolites"]) == 1 or r["id"].startswith("BIOMASS"):
+            continue   # boundary reactions are unbalanced BY DESIGN, identified structurally
         tot = collections.Counter()
         ok = True
         for met, co in r["metabolites"].items():

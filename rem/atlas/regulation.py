@@ -71,7 +71,7 @@ from scipy.sparse import lil_matrix, csc_matrix, hstack, vstack, coo_matrix
 from scipy.optimize import linprog
 
 from rem.atlas.hybrid_tune import RULE
-from rem.atlas.recon import MODEL, MEDIUM, fetch_if_missing
+from rem.atlas.recon import MODEL, MEDIUM, fetch_if_missing, boundary_reactions
 from rem.atlas.wholecell import parse_gpr, MW_PROT, KCAT_MEDIAN, KCAT_SIGMA, PROT_TOTAL
 
 PHIS = (0.0, 0.35, 0.85)
@@ -96,11 +96,12 @@ def bounds(R):
     lb = np.array([r["lower_bound"] for r in R], float)
     ub = np.array([r["upper_bound"] for r in R], float)
     idx = {r["id"]: j for j, r in enumerate(R)}
-    for j, r in enumerate(R):
-        if r["id"].startswith(("EX_", "SK_", "DM_")):     # SK_/DM_ were leaking; see recon.py
-            lb[j] = 0.0
-        if r["id"].startswith(("SK_", "DM_")):
-            ub[j] = 0.0
+    # Close the SUPPLY direction of every boundary reaction, then reopen only the declared
+    # medium. Identified structurally so no naming convention can leak past it. Removal is left
+    # open: a cell that cannot excrete waste cannot run metabolism at all, and closing both
+    # directions gives exactly zero growth.
+    for j in boundary_reactions(R):
+        lb[j] = 0.0
     for k, v in MEDIUM.items():
         if k in idx:
             lb[idx[k]] = v

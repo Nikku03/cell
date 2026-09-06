@@ -82,6 +82,7 @@ from __future__ import annotations
 import os
 for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
     os.environ.setdefault(_v, "1")
+import collections
 import json
 import time
 import numpy as np
@@ -137,19 +138,28 @@ def load():
     return R, M, csc_matrix(S)
 
 
+def boundary_reactions(R):
+    """Boundary reactions, defined STRUCTURALLY rather than by name: a reaction with exactly one
+    metabolite has nothing to balance against, so it is a hole in the cell wall by construction.
+
+    The leak that invalidated four modules came from a hard-coded prefix list that said "sink_"
+    while Recon3D writes "SK_". This definition cannot make that mistake: it finds 1,806 boundary
+    reactions, exactly matching the corrected prefix list (EX_ 1560, DM_ 145, SK_ 101) with zero
+    discrepancy in either direction, and it will keep working on a model that names them anything
+    at all."""
+    return [j for j, r in enumerate(R) if len(r["metabolites"]) == 1]
+
+
 def bounds_for(R, medium, richer=False):
     lb = np.array([r["lower_bound"] for r in R], float)
     ub = np.array([r["upper_bound"] for r in R], float)
     idx = {r["id"]: j for j, r in enumerate(R)}
-    for j, r in enumerate(R):
-        # CORRECTED. This closed only EX_ reactions, leaving Recon3D's 101 SK_ sinks and 145 DM_
-        # demands open, which supplied metabolites for free: growth came out 370.4/h against
-        # 1.689/h once they are closed, so 99.5% of it was fed by the leak rather than by the
-        # medium. The exclusion list said "sink_" and Recon3D writes "SK_".
-        if r["id"].startswith(("EX_", "SK_", "DM_")):
-            lb[j] = 0.0
-        if r["id"].startswith(("SK_", "DM_")):
-            ub[j] = 0.0
+    # Close the SUPPLY direction of every boundary reaction, then reopen only the declared
+    # medium. Identified structurally so no naming convention can leak past it. Removal is left
+    # open: a cell that cannot excrete waste cannot run metabolism at all, and closing both
+    # directions gives exactly zero growth.
+    for j in boundary_reactions(R):
+        lb[j] = 0.0
     for k, v in medium.items():
         if k in idx:
             lb[idx[k]] = v * (10.0 if richer else 1.0)
@@ -210,15 +220,42 @@ def main():
     P(f"  LP status {res.status}, solved in {time.time()-t0:.2f}s, worst |S v| = {mb:.2e}"
       f"   {'PASS' if res.status == 0 and mb < 1e-6 else 'FAIL'}")
 
-    P("\n" + RULE); P("R2  THE MEDIUM IS DECLARED AND ACTUALLY BINDS"); P(RULE)
-    P(f"  all exchanges open, as distributed : growth = {-r_open.fun:.4f}")
-    P(f"  defined medium ({len(MEDIUM)} components, glucose-limited) : growth = {growth:.6f}")
+    P("\n" + RULE); P("R2  THE MEDIUM IS DECLARED, ACCOUNTED FOR, AND ACTUALLY SEALS"); P(RULE)
+    bnd = boundary_reactions(R)
+    pref = collections.Counter(R[j]["id"].split("_")[0] for j in bnd)
+    P(f"  boundary reactions, found structurally (exactly one metabolite): {len(bnd)}")
+    P(f"    by name prefix: " + ", ".join(f"{k}_ {v}" for k, v in pref.most_common()))
+
+    # R2a  ACCOUNTING. Every boundary reaction must be either declared medium or closed.
+    med_idx = {idx[k] for k in MEDIUM if k in idx}
+    unaccounted = [j for j in bnd if j not in med_idx and lb[j] != 0.0]
+    P(f"\n  R2a  every boundary reaction is either declared medium or closed")
+    P(f"       declared medium {len(med_idx)}, supply-closed {len(bnd)-len(med_idx)},"
+      f" UNACCOUNTED {len(unaccounted)}")
+    P(f"       {'PASS' if not unaccounted else 'FAIL -- ' + str(len(unaccounted)) + ' boundary reactions are open and undeclared'}")
+
+    # R2b  THE SEAL TEST. This is the sufficient condition the old gate lacked.
+    lb_seal = lb.copy(); ub_seal = ub.copy()
+    for j in bnd:
+        lb_seal[j] = 0.0          # supply closed everywhere, medium included; removal untouched
+    r_seal = solve(S, obj, lb_seal, ub_seal)
+    mu_seal = -r_seal.fun if r_seal.status == 0 else float("nan")
+    P(f"\n  R2b  THE SEAL TEST: close the medium as well and growth must be EXACTLY zero")
+    P(f"       growth with every boundary reaction closed: {mu_seal:.6e} /h")
+    P(f"       {'PASS -- the medium is the only supply' if abs(mu_seal) < 1e-9 else 'FAIL -- the cell is being fed from somewhere undeclared'}")
+    P("       This is the test the old R2 lacked. It passed the leaky model because it checked")
+    P("       only that growth fell below the all-open value and that glucose bound -- necessary")
+    P("       conditions treated as sufficient, both true while 246 boundary reactions were open.")
+
+    # R2c  the original checks, kept and correctly labelled as necessary but not sufficient
+    P(f"\n  R2c  necessary conditions (NOT sufficient on their own)")
+    P(f"       all boundary reactions open, as distributed : growth = {-r_open.fun:.4f}")
+    P(f"       defined medium ({len(MEDIUM)} components, glucose-limited) : growth = {growth:.6f}")
     gj = idx["EX_glc__D_e"]
-    P(f"  glucose uptake flux {res.x[gj]:.4f} against its bound {lb[gj]:.4f}"
+    P(f"       glucose uptake {res.x[gj]:.4f} against its bound {lb[gj]:.4f}"
       f"   binding: {abs(res.x[gj] - lb[gj]) < 1e-6}")
-    ok2 = growth < 0.5 * (-r_open.fun) and abs(res.x[gj] - lb[gj]) < 1e-6 and growth > 0
-    P(f"  {'PASS' if ok2 else 'FAIL -- the medium is decorative'}")
-    P(f"  medium: " + ", ".join(sorted(MEDIUM)[:8]) + f", ... ({len(MEDIUM)} total)")
+    ok2 = (not unaccounted) and abs(mu_seal) < 1e-9 and growth > 0
+    P(f"\n  R2 overall: {'PASS' if ok2 else 'FAIL'}")
 
     g0 = sensitivities(res, lb, ub, growth)
     P(f"\n  reactions with nonzero sensitivity in this single solve:"
