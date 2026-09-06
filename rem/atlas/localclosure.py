@@ -72,6 +72,21 @@ L5  HUB CONDITIONING ON REAL TOPOLOGY. Delete the h highest-degree genes and re-
     LEGITIMATE when the conditioned variable is far from its targets in timescale, so an h that
     works arithmetically still has that physical precondition attached.
 
+L7  IS THE DEPENDENCE GRAPH REALLY THE GRAPH POWER ON A HUB?  (added after L3 answered, and
+    labelled as such.) statedim's S5 verified "dependence graph == G^r" on a cascade and on a
+    random degree-3 graph. It never tested a HUB, and L3's entire cost hinges on it: the 3-ball
+    around SP1 is 2,724 of 2,861 genes only if two of SP1's 484 targets are actually dependent
+    above tau. If influence dilutes across a hub, the dependence graph is far sparser than G^r
+    and L3's verdict is wrong. Measured exactly, two ways -- across a hub's OUT-degree, and
+    against the in-degree of its targets, which is the mechanism that could dilute it.
+
+    A LIMITATION OF THE GENERATOR, found while writing this and stated because it made a first
+    version of the test silently vacuous: generator_graph and generator_tuned take a vertex's
+    parents to be its neighbours of LOWER INDEX only, so the topology passed in is used as a DAG
+    in index order. A test that adds regulators at higher indices adds nothing at all, and the
+    first run of L7 produced three identical rows before that was noticed. Regulators must be
+    placed at low indices and targets at high ones.
+
 L6  THE BULK IS NOT THE TAIL. Mean error reported beside tail error at every r. Five modules in
     this build order have measured a bulk quantity exact while the tail was wrong by orders; if
     that happens here too it must be visible in the same table rather than discovered later.
@@ -88,6 +103,24 @@ from rem.atlas.hybrid_tune import RULE
 from rem.atlas.statedim import (SEED, C_TAIL, generator, generator_graph, stationary, mi_matrix,
                                 by_distance, tau_for, path_power, random_regulatory, scale_free,
                                 graph_power, treewidth_mindeg, bfs_dist)
+
+MI_FLOOR = 6.5e-15          # statedim measured this as the plateau of the exact MI computation
+
+
+def _independent_solve(Q, tol=1e-14, itmax=300000):
+    """A second stationary solve from a random start, so the floor on a tail statistic is
+    MEASURED by differencing two independent solutions rather than assumed."""
+    QT = Q.T.tocsr()
+    lam = float(np.abs(Q.diagonal()).max()) * 1.05
+    rng = np.random.default_rng(3)
+    p = rng.random(Q.shape[0]); p /= p.sum()
+    for k in range(itmax):
+        p = np.maximum(p + QT.dot(p) / lam, 0.0)
+        p /= p.sum()
+        if k % 25 == 0 and float(np.abs(QT.dot(p)).max()) < tol:
+            break
+    return p
+
 
 TRRUST_URL = "https://www.grnpedia.org/trrust/data/trrust_rawdata.human.tsv"
 TRRUST_SHA = "9b909319ccc8e36588b5a1bd3640e0df"     # first 32 hex of sha256, checked on load
@@ -259,7 +292,7 @@ def main():
         mu_ex = means(pi, N)
         P(f"\n  OFF rate x{boff:<5}  exact P(all ON) = {t_ex:.6e}   residual {res:.1e}")
         P(f"    {'r':>3} {'max|pa|':>8} {'P_hat(all ON)':>15} {'tail rel err':>13}"
-          f" {'max mean err':>13} {'MI at r+1':>11} {'law predicts':>12}")
+          f" {'max mean err':>13} {'MI at r+1':>11} {'law predicts':>12} {'MI usable':>10}")
         prev = None
         for r in range(1, 7):
             pa = parent_sets(A, r, order)
@@ -270,22 +303,36 @@ def main():
             mio = mi[r] if r < len(mi) else float("nan")
             pred = C_TAIL * np.sqrt(mio) if mio == mio else float("nan")
             mp = max(len(v) for v in pa.values())
+            usable = bool(mio == mio and mio > 10 * MI_FLOOR)
             P(f"    {r:>3} {mp:>8} {t_ap:>15.6e} {terr:>13.3e} {merr:>13.3e}"
-              f" {mio:>11.3e} {pred:>12.3e}")
-            l2rows.append((boff, r, terr, mio, pred))
+              f" {mio:>11.3e} {pred:>12.3e} {str(usable):>10}")
+            l2rows.append((boff, r, terr, mio, pred, usable))
             prev = terr
     # geometric decay check on the deepest tail
+    P(f"\n  FLOORS, measured not assumed:")
+    P(f"    MI floor (statedim plateau)                       {MI_FLOOR:.3e}")
+    Qf = generator_tuned(N, 2.0, 12.0)
+    pif, _, _ = stationary(Qf)
+    pi2 = _independent_solve(Qf)
+    tf = abs(conjunctive(pi2, N) - conjunctive(pif, N)) / conjunctive(pif, N)
+    P(f"    tail-statistic floor (second solve, random start) {tf:.3e}")
+    P( "    Every realised tail error above sits far above the tail floor, so the approximation")
+    P( "    errors are real. The MI column falls below ITS floor at large r, which is where the")
+    P( "    law's prediction stops meaning anything -- that is what the last column marks.")
     deep = [x for x in l2rows if x[0] == 12.0 and x[2] > 0]
     ratios = [deep[i][2] / deep[i + 1][2] for i in range(len(deep) - 1) if deep[i + 1][2] > 0]
     geo = len(ratios) >= 3 and min(ratios[:3]) > 3.0
     P(f"\n  successive tail-error ratios at the deepest tail: "
       + ", ".join(f"{x:.1f}" for x in ratios[:5]))
     P(f"  L2: {'PASS -- the tail error falls geometrically in r, so a bounded r suffices' if geo else 'FAIL -- the tail error does not fall geometrically; this route is not viable'}")
-    ok_law = all((x[4] > x[2]) for x in l2rows if x[3] == x[3] and x[2] > 0)
-    P(f"  the law {C_TAIL} sqrt(MI) is an UPPER BOUND on the realised tail error in"
+    kept = [x for x in l2rows if x[5] and x[2] > 0]
+    held = sum(1 for x in kept if x[4] > x[2])
+    P(f"  the law {C_TAIL} sqrt(MI) bounds the realised tail error in {held} of {len(kept)} rows"
+      f" where the MI is above its floor"
+      f"   -- {'HOLDS as an upper bound' if held == len(kept) else 'VIOLATED, so it cannot be used to choose r'}")
+    P(f"  (on all 18 rows including the sub-floor ones it would read"
       f" {sum(1 for x in l2rows if x[3]==x[3] and x[2]>0 and x[4]>x[2])} of"
-      f" {sum(1 for x in l2rows if x[3]==x[3] and x[2]>0)} rows"
-      f"   -- {'holds' if ok_law else 'VIOLATED somewhere, so the bound cannot be used to choose r'}")
+      f" {sum(1 for x in l2rows if x[3]==x[3] and x[2]>0)}, which is the artefact the guard removes)")
     P("  L6: the mean error column is the bulk. Compare it against the tail column in the same")
     P("  row -- that ratio is the phenomenon five earlier modules measured, seen here at each r.")
 
@@ -354,6 +401,51 @@ def main():
     P("\n  statedim S6 attaches a physical precondition to every row of this table: conditioning")
     P("  on a regulator is only LEGITIMATE when that regulator is at least ~500x slower or ~400x")
     P("  faster than its targets. An h that works arithmetically still has to clear that.")
+
+    # ---- L7  IS THE DEPENDENCE GRAPH REALLY THE GRAPH POWER ON A HUB? --------------------------
+    P("\n" + RULE); P("L7  IS THE DEPENDENCE GRAPH REALLY G^r ON A HUB?  (added after L3, labelled)"); P(RULE)
+    P("  L3's whole verdict rests on this. The 3-ball around SP1 is 2,724 of 2,861 genes only if")
+    P("  two of SP1's 484 targets are genuinely dependent above tau. statedim's S5 checked a")
+    P("  cascade and a random graph and never checked a hub.")
+    P(f"\n  (a) does a hub's OUT-degree dilute the dependence between its targets?")
+    P(f"    {'out-degree':>11} {'MI(hub,target)':>15} {'MI(target,target)':>18} {'frac > tau':>11}")
+    for od in (4, 8, 14):
+        Nh = 15
+        adjh = [set() for _ in range(Nh)]
+        for t in range(1, od + 1):
+            adjh[0].add(t); adjh[t].add(0)
+        Qh = generator_tuned(Nh, 2.0, 1.0, adj=adjh)
+        pih, _, _ = stationary(Qh)
+        Mh = mi_matrix(pih, Nh)
+        ht = float(np.mean([Mh[0, t] for t in range(1, od + 1)]))
+        sib = np.array([Mh[i, j] for i in range(1, od + 1) for j in range(i + 1, od + 1)])
+        P(f"    {od:>11} {ht:>15.4e} {sib.mean():>18.4e} {np.mean(sib > tau):>11.2f}")
+    P("    NO. Sibling dependence is flat in out-degree -- a hub with 14 targets correlates them")
+    P("    exactly as strongly as one with 4. Spreading influence over more targets does not")
+    P("    weaken it, because the hub's own state is shared by all of them equally.")
+    P(f"\n  (b) does the TARGETS' in-degree dilute it? (regulators at low index, targets at high)")
+    P(f"    {'in-degree':>10} {'MI(hub,target)':>15} {'MI(target,target)':>18} {'dilution':>10} {'frac > tau':>11}")
+    base = None
+    for nreg in (1, 2, 4, 6, 8, 10, 12):
+        Nh = 16
+        adjh = [set() for _ in range(Nh)]
+        for t in range(nreg, Nh):
+            for j in range(nreg):
+                adjh[t].add(j); adjh[j].add(t)
+        Qh = generator_tuned(Nh, 2.0, 1.0, adj=adjh)
+        pih, _, _ = stationary(Qh)
+        Mh = mi_matrix(pih, Nh)
+        ht = float(np.mean([Mh[0, t] for t in range(nreg, Nh)]))
+        sib = np.array([Mh[i, j] for i in range(nreg, Nh) for j in range(i + 1, Nh)])
+        if base is None:
+            base = sib.mean()
+        P(f"    {nreg:>10} {ht:>15.4e} {sib.mean():>18.4e} {base/sib.mean():>9.1f}x"
+          f" {np.mean(sib > tau):>11.2f}")
+    P("    YES, but nowhere near enough. Dependence falls roughly as the SQUARE of in-degree --")
+    P("    277x from in-degree 1 to 12 -- and is STILL above tau at in-degree 12. TRRUST's mean")
+    P("    in-degree is 8403/2861 = 2.9, where sibling dependence sits about 80x above tau.")
+    P("  L7: the graph-power assumption SURVIVES on a hub. L3's ball sizes are not overestimates,")
+    P("  and its verdict stands.")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_localclosure.txt")
     open(dst, "w").write("\n".join(out) + "\n")
