@@ -71,6 +71,13 @@ X4  RARE-TAIL TEST. The conjunctive event P(protein saturated AND receptor fully
     two things at once, in different layers, which is the class of question the whole architecture
     exists for. Reported beside the mean error in the same row, SIGNED.
 
+    X5 UNDER-RESOURCED THE HISTORY ROUTE ON ITS FIRST RUN, which is the fourth appearance of
+    this error class in this build order and the first caught before it was reported. It swept
+    L <= 6 and dt >= 0.06, a maximum window of 0.36 against a measured TF correlation time of
+    0.713, and printed "not reached" for k >= 4. Widened to L <= 12 and dt >= 0.03 the history
+    route reaches the bar at k = 4 for a cost of 4,096. It still loses to bounded width by 137x,
+    but losing and not-reaching are different results and only one of them was true.
+
 X5  SCALING TEST. The TF drives k promoters. Sweep k and report cost-at-fixed-accuracy for the
     r-ball route, the bounded-width route, and the hybrid, each swept over its whole family
     including dt, under a common cost ceiling. PREDECLARED: the deliverable is how each grows with
@@ -373,6 +380,17 @@ def main():
 
     # ---- X5  SCALING ---------------------------------------------------------------------------
     P_("\n" + RULE); P_("X5  SCALING: the TF drives k promoters"); P_(RULE)
+    # the timescale ratio governs whether controller history can help at all (statedim S6)
+    r_on = float((pi * (S[:, ix['Ta']] == 0) * p['k_tfa'] * S[:, ix['Ka']]).sum()
+                 / max(float((pi * (S[:, ix['Ta']] == 0)).sum()), 1e-30))
+    tau_tf = 1.0 / (r_on + p['k_tfd'])
+    tau_pro = 1.0 / (p['k_gon'] + p['k_goff'])
+    P_(f"  MEASURED timescales: tau_TF = {tau_tf:.3f}, tau_promoter = {tau_pro:.3f},"
+       f" ratio {tau_tf/tau_pro:.2f}")
+    P_( "  statedim S6 measured that conditioning on a controller helps only at a separation of")
+    P_(f"  roughly 500x either way. This circuit sits at {tau_tf/tau_pro:.2f}x -- deep in the")
+    P_( "  MATCHED regime, which is the expensive one, so the history route is being tested where")
+    P_( "  it is predicted to do worst. That is the honest place to test it.")
     P_("  Observable: Var(total promoters ON), global and fixed in meaning across k.")
     P_("  Bar 1%. dt SWEPT. An independent-promoter baseline must FAIL or the row is unreadable.")
     P_(f"    {'k':>3} {'states':>8} {'indep err':>11} {'usable':>8} {'width route':>16} {'HISTORY route':>20}")
@@ -389,8 +407,8 @@ def main():
             ph, c = engine_promoters(Qk, pik, stk, ixk, k, "width", w=w)
             if abs(var_on(ph, k) - vex) / vex <= 0.01 and (bw is None or c < bw[0]):
                 bw = (c, f"w={w}")
-        for L in (0, 2, 4, 6):
-            for dt in (0.06, 0.12, 0.25):
+        for L in (0, 2, 4, 6, 8, 10, 12):
+            for dt in (0.03, 0.06, 0.12, 0.25):
                 ph, c = engine_promoters(Qk, pik, stk, ixk, k, "hist", L=L, dt=dt)
                 if abs(var_on(ph, k) - vex) / vex <= 0.01 and (bh is None or c < bh[0]):
                     bh = (c, f"L={L},dt={dt}")
