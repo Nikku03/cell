@@ -64,10 +64,10 @@ A8  THE DECISIVE TEST, which set overlap cannot substitute for. Seal every excha
     BIOMASS. Growth above zero means the model builds a cell out of nothing, and every
     Recon3D-derived result in this build order is contaminated at the root.
 
-A9  THE REQUALIFICATION. Remove the mass-imbalanced reactions, retest A8, and re-measure growth
-    and the limiting layer. Predeclared: if sealed-box growth falls to zero and open growth is
-    materially unchanged, the earlier conclusions survive with the defect recorded; if open growth
-    changes, they must be requalified by that amount.
+A9  THE REQUALIFICATION. Remove the mass-imbalanced reactions, retest A8, and re-measure growth.
+    Predeclared: if sealed-box growth falls to zero and open growth is materially unchanged, the
+    earlier conclusions survive with the defect recorded; if open growth changes, every
+    Recon3D-derived result must be requalified by that amount.
 
 A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX? Recompute growth and the limiting constraint
     with the loops blocked. Predeclared: if translation still binds and kcats still rank three
@@ -150,8 +150,7 @@ def parse_formula(f):
 
 
 def imbalanced(R, M):
-    """Reactions whose elemental formulas do not balance. Exchanges, demands, sinks and biomass
-    are exempt by construction -- they are boundary reactions, not chemistry."""
+    """Reactions whose elemental formulas do not balance. Boundary reactions are exempt."""
     mf = {m["id"]: m.get("formula", "") for m in M}
     bad, checked = [], 0
     for j, r in enumerate(R):
@@ -285,20 +284,7 @@ def main():
       f"  (ratio {mu2/max(mu_open,1e-12):.4f})")
 
     # ---- A6 -------------------------------------------------------------------------------------
-    P("\n" + RULE); P("A7  THE MASS-BALANCE AUDIT. Count reactions whose elemental formulas do not balance. A
-    mass-imbalanced reaction lets the optimiser create atoms, which is a different and worse
-    defect than an energy loop.
-
-A8  THE DECISIVE TEST, which set overlap cannot substitute for. Seal every exchange and maximise
-    BIOMASS. Growth above zero means the model builds a cell out of nothing, and every
-    Recon3D-derived result in this build order is contaminated at the root.
-
-A9  THE REQUALIFICATION. Remove the mass-imbalanced reactions, retest A8, and re-measure growth
-    and the limiting layer. Predeclared: if sealed-box growth falls to zero and open growth is
-    materially unchanged, the earlier conclusions survive with the defect recorded; if open growth
-    changes, they must be requalified by that amount.
-
-A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?"); P(RULE)
+    P("\n" + RULE); P("A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?"); P(RULE)
     P("  wholecell.py found translation capacity binding, the proteome budget's shadow price")
     P("  exactly zero, and every individual kcat three orders below ribosome speed. If ATP were")
     P("  free, metabolism could not bind and that conclusion would follow from the defect.")
@@ -315,13 +301,12 @@ A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?"); P(RULE)
         P(f"  Growth changes by {100*abs(mu2-mu_open)/mu_open:.1f}% when the loops are closed, so")
         P("  the earlier energy-related results ARE affected and must be requalified.")
 
-    # ---- A7, A8, A9 ------------------------------------------------------------------------
     P("\n" + RULE); P("A7  THE MASS-BALANCE AUDIT"); P(RULE)
     bad, checked = imbalanced(R, M)
     P(f"  reactions with parseable formulas checked: {checked}")
     P(f"  elementally IMBALANCED: {len(bad)} ({100*len(bad)/max(checked,1):.1f}%)")
-    P("  A mass-imbalanced reaction lets the optimiser create atoms, which is worse than an")
-    P("  energy loop: it breaks conservation of matter, not just of free energy.")
+    P("  Such a reaction lets the optimiser create atoms: it breaks conservation of matter, not")
+    P("  merely of free energy.")
 
     P("\n" + RULE); P("A8  THE DECISIVE TEST -- CAN IT GROW ON NOTHING?"); P(RULE)
     res_bm = linprog(cg, A_eq=S, b_eq=np.zeros(S.shape[0]),
@@ -350,8 +335,8 @@ A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?"); P(RULE)
     P(f"    open-medium growth : {mu_open2:.6f} /h   (was {mu_open:.6f},"
       f" ratio {mu_open2/max(mu_open,1e-12):.4f})")
     if mu_seal2 > 1e-6:
-        P("  Sealed-box growth SURVIVES removing the imbalanced reactions, so mass creation is")
-        P("  not the only route and the reconstruction has a deeper problem than 152 reactions.")
+        P("  Sealed-box growth SURVIVES removing them, so mass creation is not the only route and")
+        P("  the reconstruction has a deeper problem than 152 reactions.")
     elif abs(mu_open2 - mu_open) / max(mu_open, 1e-12) < 0.05:
         P("  Sealed-box growth is removed and open growth is unchanged to within 5%. The earlier")
         P("  Recon3D results survive, with the defect recorded as a property of the model.")
