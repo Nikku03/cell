@@ -357,7 +357,7 @@ def main():
                 hubadj = {v for u, v, m in ed if u == N and v < N} | {u for u, v, m in ed if v == N and u < N}
                 reg = [set(full[i]) | ({N} if i in hubadj else set()) for i in range(N)] + [set(hubadj)]
                 # T6 baselines that MUST fail
-                ph_i, _, _ = build(pi, Q, N, [set() for _ in range(N)], N, -1, dt, N)
+                ph_i, _, _ = build(pi, Q, N, [set() for _ in range(N)], N, -1, 0.12, N)  # L=-1: dt unused
                 e_ind = er(ph_i)
                 cand = []
                 for r in range(1, N + 1):
