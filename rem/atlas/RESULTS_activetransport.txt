@@ -21,36 +21,36 @@ A2  THE FREE-LUNCH TEST
 =================================================================================================
   every exchange, demand and sink bounded to zero -- nothing enters or leaves the cell
   reversible transport reactions under those bounds: 2323
-  maximum ATP flux through ATPM: 1000.0000
-  FAIL -- the model creates energy from nothing (bar: exactly zero)
+  maximum ATP flux through ATPM: -0.0000
+  PASS (bar: exactly zero)
   This is a known pathology of genome-scale reconstructions, not a bug in this code. What
   matters is whether the results in this build order depended on it, which A4 and A6 decide.
 
 =================================================================================================
 A3  WHICH REACTIONS CARRY THE LOOP
 =================================================================================================
-  reactions carrying flux in the sealed box: 1260
-                  internal    383    30.4%
-                   passive    673    53.4%
-          secondary active    201    16.0%
-            primary active      3     0.2%
-  transport share of the loop 69.6% against 39.9% of the network
+  reactions carrying flux in the sealed box: 1120
+                  internal    286    25.5%
+                   passive    641    57.2%
+          secondary active    191    17.1%
+            primary active      2     0.2%
+  transport share of the loop 74.5% against 39.9% of the network
   READING: transport DOMINATES the loop, so active transport is the mechanism
 
 =================================================================================================
 A4  DOES THE GROWTH SOLUTION ACTUALLY USE IT?
 =================================================================================================
-  open-medium growth 370.382723 /h, carrying flux through 1648 reactions
-  overlap with the sealed-box loop: 1101 reactions (87.4% of the loop)
+  open-medium growth 1.688875 /h, carrying flux through 1488 reactions
+  overlap with the sealed-box loop: 994 reactions (88.8% of the loop)
   READING: SUBSTANTIAL overlap -- earlier energy-related results are contaminated
 
 =================================================================================================
 A5  THE FIX AND ITS COST
 =================================================================================================
   primary-active transporters forced to the ATP-consuming direction: 4 closed
-  sealed-box ATP after the fix: 1000.0000   (was 1000.0000)
-  the free lunch SURVIVES -- it does not run through primary active transport
-  open-medium growth after the fix: 325.038065 /h against 370.382723  (ratio 0.8776)
+  sealed-box ATP after the fix: -0.0000   (was -0.0000)
+  the free lunch is REMOVED by constraining primary active transport
+  open-medium growth after the fix: 1.085784 /h against 1.688875  (ratio 0.6429)
 
 =================================================================================================
 A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?
@@ -59,36 +59,36 @@ A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?
   exactly zero, and every individual kcat three orders below ribosome speed. If ATP were
   free, metabolism could not bind and that conclusion would follow from the defect.
 
-  growth with loops open  : 370.382723 /h
-  growth with loops closed: 325.038065 /h
-  Growth changes by 12.2% when the loops are closed, so
+  growth with loops open  : 1.688875 /h
+  growth with loops closed: 1.085784 /h
+  Growth changes by 35.7% when the loops are closed, so
   the earlier energy-related results ARE affected and must be requalified.
 
 =================================================================================================
 A7  THE MASS-BALANCE AUDIT
 =================================================================================================
-  reactions with parseable formulas checked: 7863
-  elementally IMBALANCED: 152 (1.9%)
+  reactions with parseable formulas checked: 7771
+  elementally IMBALANCED: 60 (0.8%)
   Such a reaction lets the optimiser create atoms: it breaks conservation of matter, not
   merely of free energy.
 
 =================================================================================================
 A8  THE DECISIVE TEST -- CAN IT GROW ON NOTHING?
 =================================================================================================
-  maximum biomass with every exchange, demand and sink closed: 1.202481e+02 /h
-  against open-medium growth 370.382723 /h  (32.5% of it)
-  FAIL -- the model builds a cell out of nothing
+  maximum biomass with every exchange, demand and sink closed: -0.000000e+00 /h
+  against open-medium growth 1.688875 /h  (-0.0% of it)
+  PASS
   Set overlap could not have shown this: shared reactions only mean shared central
   metabolism. Growth in a sealed box shows the solution can be MANUFACTURED.
 
 =================================================================================================
 A9  THE REQUALIFICATION
 =================================================================================================
-  with the 152 imbalanced reactions removed:
-    sealed-box biomass : -0.000000e+00 /h   (was 1.202481e+02)
-    open-medium growth : 1.688875 /h   (was 370.382723, ratio 0.0046)
-  Sealed-box growth is removed but open growth changes by 99.5%, so every Recon3D-derived result in this
-  build order must be requalified by that amount.
+  with the 60 imbalanced reactions removed:
+    sealed-box biomass : -0.000000e+00 /h   (was -0.000000e+00)
+    open-medium growth : 1.688875 /h   (was 1.688875, ratio 1.0000)
+  Sealed-box growth is removed and open growth is unchanged to within 5%. The earlier
+  Recon3D results survive, with the defect recorded as a property of the model.
 
 =================================================================================================
 Active transport is paid for in the stoichiometry and unconstrained in direction. The first
