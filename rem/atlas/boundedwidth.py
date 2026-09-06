@@ -71,6 +71,20 @@ B4  THE STRUCTURAL COST ON THE REAL NETWORK, with no model in it. On TRRUST v2 h
     no mutual information and no dynamics -- it is a property of the graph -- so it is the one
     number here that carries no modelling assumption.
 
+    A THIRD DEFECT, in B6, exposed once B5 stopped clamping. B5's reference curve was measured
+    at N = 14, where the smallest reachable drop fraction is 0.16; TRRUST at every affordable
+    width loses BETWEEN 0.02 AND 0.14, i.e. entirely below the measured range. So the first
+    corrected run returned "out of domain" for exactly the widths that might have worked, and B6
+    nonetheless printed EMPTY INTERSECTION on the strength of the single in-domain row. That
+    verdict was not supported. The reference curve is now measured at N = 16 out to width 13,
+    which reaches drop fraction 0.025 and covers TRRUST's whole affordable range.
+
+    AND THE BRIDGE ITSELF IS WEAKER THAN B5 ORIGINALLY ADMITTED. It assumed error depends on the
+    drop fraction and not on the topology. At drop fraction 0.16 the cascade gives 6.6e-6 and the
+    hub gives 2.9e-1 -- FOUR ORDERS APART. So a single modelled number is not defensible and B5
+    now reports a RANGE spanned by the two topologies, with the verdict driven by the hub end,
+    because TRRUST is hub-rich. The range is wide and that width is itself the finding.
+
 B5  THE EXTRAPOLATION, LABELLED AS A MODEL. Combine B2's measured error curve with B4's measured
     drop fraction to estimate the accuracy of a width-w engine on the real network. This is the
     only claim in the module that is not a direct measurement and it is marked as such wherever
@@ -338,29 +352,66 @@ def main():
     P("  fraction on the real network through B2's measured error-vs-drop-fraction curve. The")
     P("  bridge assumes the error depends on the drop fraction and not on which topology produced")
     P("  it, which is an assumption and is why this is labelled a model.")
-    ref = curves[("hub, 3 regulators", "deep")]
-    fr = np.array([c[1] for c in ref]); er = np.array([c[2] for c in ref])
-    o = np.argsort(fr)
-    P(f"\n    reference curve (hub topology, deep tail):")
-    P(f"    {'drop fraction':>14} {'tail rel err':>13}")
-    for i in o:
-        P(f"    {fr[i]:>14.2f} {er[i]:>13.3e}")
+    # Reference curves measured at N=16 out to width 13, so the domain reaches drop fraction
+    # 0.025 and covers TRRUST's affordable range. At N=14 it stopped at 0.16 and every useful
+    # row came back "out of domain".
+    NR = 16
+    refs = {}
+    for nm, adj in (("cascade", None), ("hub, 3 regulators", hub_graph(NR, 3))):
+        Qr = generator_tuned(NR, 2.0, 12.0, adj=adj)
+        pir, _, _ = stationary(Qr)
+        Mr = mi_matrix(pir, NR)
+        Wr = {i: {j: Mr[i, j] for j in range(NR)} for i in range(NR)}
+        tr = conjunctive(pir, NR)
+        ne = NR * (NR - 1) // 2
+        rows = []
+        for w in range(1, NR - 2):
+            ph, pa, dr = run_width(pir, NR, Mr, w, Wr)
+            rows.append((len(dr) / ne, abs(conjunctive(ph, NR) - tr) / tr))
+        refs[nm] = rows
+    P(f"\n    reference curves at N={NR}, deep tail (P = {tr:.2e}):")
+    P(f"    {'drop fraction':>14} {'cascade err':>13} {'hub err':>13} {'spread':>10}")
+    for k in range(len(refs["cascade"])):
+        fc, ec = refs["cascade"][k]
+        fh, eh = refs["hub, 3 regulators"][k]
+        P(f"    {fc:>14.3f} {ec:>13.3e} {eh:>13.3e} {eh/ec if ec>0 else float('inf'):>10.1e}")
+    P( "    The two differ by orders at the same drop fraction, which is why B5 reports a range.")
+    fr = np.array([r[0] for r in refs["hub, 3 regulators"]])
+    er = np.array([r[1] for r in refs["hub, 3 regulators"]])
+    frc = np.array([r[0] for r in refs["cascade"]])
+    erc = np.array([r[1] for r in refs["cascade"]])
+    o = np.argsort(fr); oc = np.argsort(frc)
     lo, hi = float(fr[o][0]), float(fr[o][-1])
     P(f"\n  the measured domain of that curve is drop fraction [{lo:.2f}, {hi:.2f}]. Outside it the")
     P( "  model REFUSES rather than clamping -- clamping is what made the first version of this")
     P( "  table return one constant and look like a result.")
-    P(f"\n    {'w':>4} {'TRRUST lost frac':>17} {'MODELLED tail err':>19} {'affordable':>11} {'accurate':>9}")
+    P(f"\n    {'w':>4} {'TRRUST lost frac':>17} {'err: cascade end':>17} {'hub end':>12}"
+      f" {'affordable':>11} {'accurate':>9}")
     ok_any = False
+    undet = 0
     for w, f in b4:
         inb = lo <= f <= hi
-        e = float(np.interp(f, fr[o], er[o])) if inb else float("nan")
         aff = (2.0 ** w) <= 1e9
-        acc = bool(e < 0.01) if inb else False
+        if not inb:
+            undet += 1
+            P(f"    {w:>4} {f:>17.3f} {'out of domain':>17} {'--':>12} {str(aff):>11} {'--':>9}")
+            continue
+        e_h = float(np.interp(f, fr[o], er[o]))
+        e_c = float(np.interp(f, frc[oc], erc[oc]))
+        acc = e_h < 0.01
         ok_any = ok_any or (aff and acc)
-        es = f"{e:.3e}" if inb else "out of domain"
-        P(f"    {w:>4} {f:>17.3f} {es:>19} {str(aff):>11} {str(acc) if inb else '--':>9}")
+        P(f"    {w:>4} {f:>17.3f} {e_c:>17.3e} {e_h:>12.3e} {str(aff):>11} {str(acc):>9}")
     P(f"\n  predeclared: affordable = 2^w <= 1e9 (w <= 30); accurate = tail error < 1%")
-    P(f"  B6: {'a width exists that is BOTH -- the first positive result on state complexity here' if ok_any else 'EMPTY INTERSECTION -- no affordable width is accurate on real topology'}")
+    P(f"  rows the model could not reach: {undet}")
+    if ok_any:
+        P( "  B6: a width exists that is BOTH affordable and accurate at the hub end of the range")
+        P( "      -- the first positive result on state complexity in this build order.")
+    elif undet:
+        P( "  B6: UNDETERMINED at the hub end for some affordable widths. Not a negative: the")
+        P( "      earlier run printed EMPTY INTERSECTION on one in-domain row and that verdict")
+        P( "      was not supported by its own table.")
+    else:
+        P( "  B6: EMPTY INTERSECTION -- no affordable width is accurate on real topology.")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_boundedwidth.txt")
     open(dst, "w").write("\n".join(out) + "\n")
