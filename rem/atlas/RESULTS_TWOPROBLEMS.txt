@@ -1,0 +1,135 @@
+=================================================================================================
+THE TWO OPEN PROBLEMS, MEASURED
+  1. does a real controller make the important parameters explode?
+  2. can grouping keep the joint state small at realistic scale?
+Sources: rem/atlas/RESULTS_controller.txt, rem/atlas/RESULTS_statedim.txt
+=================================================================================================
+
+THE ANSWER IN ONE LINE. They come apart. A controller is CHEAP IN PARAMETERS and EXPENSIVE IN
+STATE: closing the loop leaves the set of rates worth measuring at about five, no matter how big
+the system gets, but a single global regulator takes the joint state from 2^4 per variable to 2^N.
+Regulation does not increase what must be MEASURED. It increases what must be SIMULATED JOINTLY.
+
+=================================================================================================
+PROBLEM 1  --  NO EXPLOSION, AND THE IMPORTANT SET MOVES ONTO THE CONTROLLER
+=================================================================================================
+
+    sweep                             P range     N90 range          exponent b
+    A  add controllers, fixed plant    45 -> 141   4.90 -> 8.55       +0.4688 +- 0.0503
+    B  grow the whole regulated system 37 -> 133   6.75 -> 4.27       -0.2518 +- 0.1251
+    predeclared bands: b > 0.7 EXPLOSION, b < 0.3 SPARSE
+
+Sweep B is the one that answers the scaling question, and it is NEGATIVE: N90 does not grow with
+the system, it shrinks slightly. Seven-fold more parameters, the same five that matter. Sweep A is
+intermediate at +0.47, but even there N90/P falls from 0.109 to 0.061 -- adding regulators adds
+important parameters sublinearly, never in proportion.
+
+TRANSFER IS REAL AND IT IS ABRUPT.
+
+    K       controller share of ||C||^2     rank correlation with the open-loop plant ranking
+    0                            0.0000                                              1.0000
+    1                            0.0926                                              0.4478
+    8                            0.1466                                              0.4458
+   32                            0.6432                                              0.4536
+
+ONE controller edge is enough to halve the rank correlation. The plant ranking computed open-loop
+is not merely incomplete under feedback, it is reordered, and it reorders as soon as the loop
+closes at all. At K = 32, seven of the ten largest control coefficients are controller parameters.
+So the answer is not "sparse", it is TRANSFER: the same small number of things matter, and they
+are different things.
+
+WHAT THIS DOES NOT SAY, per gate C6 as predeclared. Shuffling the regulatory wiring at random --
+random target, random sensor, random sign -- gives the same scaling (b = -0.32 +- 0.32 against
+-0.19 +- 0.21). The sparsity is a property of closed-loop systems of this class, NOT of the
+canonical end-product architecture. C3 therefore says nothing about which biological wiring is
+special. It does say the sparsity is robust to getting the wiring wrong, which is the more useful
+half for a measurement programme.
+
+GATES:  C1 PASS (adjoint to 1e-9 scaled, both FD directions)   C2 PASS (summation theorem exactly
+1.0000000000 in five configurations and correctly BROKEN to 0.8726 for a proteome-sensing
+controller)   C5 PASS (||C|| does not collapse, so this is not homeostasis)   C6 NOT SEPARATED
+C7 FAIL -- the acceptance bars were six orders too loose and caught only 1 of 3 planted runaways.
+Contained: C3 runs canonical wiring only, so no rejected configuration enters the measurement.
+The bars were deliberately not retuned.
+
+=================================================================================================
+PROBLEM 2  --  THE STATE DOES NOT STAY SMALL, AND THE REASON IS TOPOLOGY, NOT DECAY
+=================================================================================================
+
+Dependence decays extremely fast: xi = 0.2486 +- 0.0005, R^2 = 0.999976, a factor of 55 per step.
+That is not enough, and the reason is worth stating precisely.
+
+STEP 1 -- THE THRESHOLD IS NOT FREE. From the measured law tail_err = 20.23 sqrt(MI), a 1% tail
+tolerance forces MI < 2.44e-07. A bulk threshold of 1e-3, which keeps means fine, would admit
+tail errors of 0.64.
+
+STEP 2 -- THE RULE AS WRITTEN RETURNS THE WHOLE NETWORK. MI at distance 1 is 6.3e-03, four orders
+above the tail-legal threshold, so every directly regulated pair is joined; and a regulatory
+network is connected. Thresholding therefore gives ONE component of N for any connected topology
+at any tail tolerance, and costs 2^N. This is not a decay problem. Decay is fast.
+
+STEP 3 -- THE RIGHT COST IS TREEWIDTH. A path is one component but has treewidth 1.
+
+    topology              N = 20,000    treewidth    state cost
+    cascade                                      3     3.20e+05      tractable
+    random degree 2                            >40     2.69e+14      not
+    random degree 3                       too dense to compute       not
+    scale-free m = 2                      too dense to compute       not
+
+Only a pure cascade survives. Anything with mean degree 2 or more is past treewidth 40 by N = 512.
+Robustness (S8b): at r = 1, the BARE regulatory graph and the most optimistic dependence graph
+there could be, the answer is unchanged -- random degree 2 and scale-free are already past 40 at
+N = 512. The obstruction is the topology of gene regulation, not the range of the dependence.
+
+STEP 4 -- A GLOBAL CONTROLLER MAKES IT WORSE, AND CONDITIONING ONLY SOMETIMES SAVES IT. One hub
+makes the dependence graph COMPLETE: treewidth N. Putting the controller into every bag drops it
+back to 4 -- but only when the controller's timescale is far from its targets':
+
+    tau_hub / tau_gene      r_cond       cost per gene
+              2000             3              2^5        affordable
+               500             4              2^6        affordable
+               333            12            2^14         marginal
+        200 down to 0.01      >=15           2^N         no grouping helps
+              0.0025           5              2^7        affordable
+              0.0014           3              2^5        affordable
+
+THE WINDOW: the controller must be at least ~500x SLOWER than what it controls, so that its state
+IS its history, or at least ~400x FASTER, where it correlates nothing to begin with. Within a
+few hundred either way, conditioning fails and the cost is 2^N. Kinase signalling at seconds
+against transcription at tens of minutes is a ratio of roughly 100 to 1000 -- ON that boundary,
+not comfortably inside it.
+
+THE MECHANISM, and it is the reason a prediction was lost. The original S4 predicted conditioning
+on a controller would restore decay. It does not: the correlation is carried by the controller's
+TRAJECTORY, not by its current value, so conditioning on the instantaneous state leaves it. A slow
+controller is quasi-static and its state is its history; a fast one is white noise and correlates
+nothing. In between, its history is genuinely extra state.
+
+GATES:  S1 PASS (residual < 1e-14; MI exactly 0 on independent variables)   S2 PASS   S5 PASS (the
+dependence graph IS path^3, which is what licenses extrapolating past N = 16)   S6 bracketed
+S8 PASS   S3 FAIL -- xi scattered 0.0045 against a 0.0043 bar. Non-monotone in N and surviving a
+common fit range, so wobble rather than drift; and the quantity used downstream is the INTEGER r,
+which a 1.7% wobble cannot move. The gate failed; the conclusion does not rest on it.
+
+=================================================================================================
+WHAT THIS CHANGES
+=================================================================================================
+
+FOR MEASUREMENT. Problem 1's answer is good news and it redirects the programme. The rates worth
+measuring under feedback are the REGULATORY ones -- gains, thresholds, cooperativities -- not the
+catalytic ones, and an open-loop ranking of catalytic rates is reordered by the first controller
+edge you add. This is consistent with what the corrected Recon3D run already said from the other
+direction: with a sealed medium, zero enzyme capacities have a realised sensitivity.
+
+FOR THE ENGINE. Problem 2's answer is bad news and it is structural. Section 14's split criterion,
+applied at a tail-legal threshold, returns the whole network on any connected topology. The repair
+is a tree decomposition rather than a threshold, and then the engine is tractable exactly on
+low-treewidth topologies -- which real gene regulation is not. Three routes remain and none is
+tested here: exploit that the tail-legal graph is a bounded graph POWER (structure a generic
+treewidth bound ignores), accept bounded error from a fixed-width decomposition and measure what
+it costs in tail accuracy, or carry controller history explicitly so conditioning works at matched
+timescales.
+
+FOR HONESTY. Two gates failed in this pair of modules and both are recorded rather than retuned:
+controller C7 (bars six orders too loose, contained) and statedim S3 (a real miss that does not
+propagate). One prediction of mine was made and lost before commit, and is kept as made.
