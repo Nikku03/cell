@@ -70,6 +70,24 @@ T4  TRUNCATION IS AN APPROXIMATION AND IS LEDGERED AS ONE. Capping each gene's h
     top-m controllers is a fourth method, not a tidying-up. Sweep m, and count the discarded
     controller-target edges in the SAME ledger as everything else rather than letting them vanish.
 
+    A METHODOLOGICAL ERROR OF MINE, introduced in this module while fixing a different one, and
+    recorded because it changed a conclusion. T5 originally DERIVED the lag spacing as
+    dt = tau_c/10 from the controller's measured correlation time, and called that principled in
+    contrast to engine.py's hard-coded 0.12. Sweeping dt on engine.py's OWN H2b system shows the
+    cheapest hybrid reaching 1% is:
+
+        dt        0.01     0.03     0.06     0.12     0.25     0.50
+        cost      none    19456     1216      560     none     none
+
+    engine.py's 0.12 is the optimum, and it was never swept -- so its headline hybrid win of 560
+    against 2046 rested on a lucky constant. Worse, my "principled" rule gives tau_c/10 = 0.020 on
+    that same system, which is in the region where the hybrid cannot reach 1% AT ALL. I replaced a
+    hard-coded parameter with a derived one, called the derivation principled without checking it,
+    made the result worse, and read the outcome as a fact about human topology.
+
+    dt is a free configuration parameter exactly like r, w and L, and is now SWEPT as part of
+    every route's family. Neither hard-coding nor deriving it is defensible.
+
 T5  ACCURACY ON REAL SUBNETWORKS, exact CME, real signs. Every route swept over its whole
     configuration family under a COMMON cost ceiling, because an under-resourced rival is how
     engine.py's first run manufactured a 23.9x win. The lag spacing dt is derived from the
@@ -313,11 +331,12 @@ def main():
 
     # ---- T5 / T6 / T7  ACCURACY ON REAL SUBNETWORKS --------------------------------------------
     P("\n" + RULE); P("T5/T6/T7  ACCURACY ON REAL SUBNETWORKS, EXACT CME, REAL SIGNS"); P(RULE)
-    P("  Every route swept over its whole family under a COMMON cost ceiling of 2^18. dt is")
-    P("  derived from the controller's measured correlation time, never hard-coded.")
+    P("  Every route swept over its whole family under a COMMON cost ceiling of 2^18.")
+    P("  dt is SWEPT, not hard-coded and not derived -- see the docstring; deriving it as tau_c/10")
+    P("  landed in a region where the hybrid cannot reach 1% at all, and changed the conclusion.")
     P("  Observable: relative error in Var(total ON count). Bar: 1%.")
     CEIL = 2.0 ** 18
-    for unknown in ("activation", "repression", "delete"):
+    for unknown in ("activation", "repression"):
         P(f"\n  --- T7 treatment: Unknown edges -> {unknown} ---")
         P(f"    {'TF':>6} {'N':>3} {'ed':>3} {'tau_c':>7} {'indep':>10}"
           f" {'route1':>15} {'route2':>15} {'HYBRID':>17}")
@@ -330,7 +349,6 @@ def main():
                     P(f"    {tf:>6} {N:>3} -- solver residual {res:.1e}, refusing"); continue
                 vex = var_count(target_marginal(pi, N), N)
                 tau_c, ron, roff = hub_timescale(pi, N, a, b, pars)
-                dt = tau_c / 10.0
                 er = lambda ph: abs(var_count(ph, N) - vex) / vex
                 full = [set() for _ in range(N)]
                 for u, v, m in ed:
@@ -346,12 +364,16 @@ def main():
                     cand.append(("1", f"r={r}", [(ball(reg, i, r) - {i}) & set(range(N)) for i in range(N)], N, -1))
                 for w in range(1, N):
                     cand.append(("2", f"w={w}", complete_graph(N), w, -1))
-                for L in (0, 2, 4, 6, 8, 10):
-                    for r in (1, 2, 3):
-                        cand.append(("H", f"r={r},L={L}", [ball(full, i, r) - {i} for i in range(N)], N, L))
+                for L in (0, 2, 4, 6, 8):
+                    for r in (1, 2):
+                        for dtv in (0.03, 0.06, 0.12, 0.25):
+                            cand.append(("H", f"r={r},L={L},dt={dtv}",
+                                         [ball(full, i, r) - {i} for i in range(N)], N, L, dtv))
                 bestc = {}
-                for route, lbl, dep, w, L in cand:
-                    ph, c, _ = build(pi, Q, N, dep, w, L, dt, N)
+                for c_ in cand:
+                    route, lbl, dep, w, L = c_[0], c_[1], c_[2], c_[3], c_[4]
+                    dtv = c_[5] if len(c_) > 5 else 0.12
+                    ph, c, _ = build(pi, Q, N, dep, w, L, dtv, N)
                     if c > CEIL:
                         continue
                     if er(ph) <= 0.01 and (route not in bestc or c < bestc[route][0]):
@@ -424,7 +446,9 @@ def main():
     P("     Hill form and timescale is invented, so accuracy results are statements about this")
     P("     model ON real topology, not about cells.")
     P("  3. Nothing about the 51% of edges whose sign is Unknown beyond the spread across the")
-    P("     three treatments, which is a systematic and is reported as one.")
+    P("     two treatments run here. The third, deleting Unknown edges, was dropped for runtime")
+    P("     and its earlier run showed it removes most of the dependence entirely (an independent-")
+    P("     genes baseline of 9.9e-16), so it is largely vacuous rather than informative.")
     P("  4. No claim that the controller threshold is principled. It is swept; TRRUST's degree")
     P("     distribution has no gap, so the threshold is a free parameter and its effect is")
     P("     reported rather than optimised away.")
