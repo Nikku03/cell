@@ -76,6 +76,7 @@ import time
 import numpy as np
 from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import spsolve
+from scipy.special import gammaincc
 
 from rem.atlas.hybrid_tune import RULE
 
@@ -138,8 +139,8 @@ def wellmixed_local(birth_total, death, V, N, thresh=THRESH_LOCAL):
     """Infinite-hopping limit: the total is Poisson(birth/death) and each molecule lands in a
     compartment independently, so one compartment is Poisson(birth/(V*death))."""
     lam = birth_total / (V * death)
-    k = np.arange(0, max(thresh, 1))
-    return float(np.exp(-lam) * np.sum(lam ** k / np.array([np.math.factorial(int(x)) for x in k])))
+    # Poisson CDF via the regularised incomplete gamma; np.math was removed in NumPy 2
+    return float(gammaincc(max(thresh, 1), lam)) if thresh >= 1 else 0.0
 
 
 def nuc_cyt(k_tx, k_exp, k_dmn, k_dmc, k_tl, k_dp, Mn, Mc, Mp):
