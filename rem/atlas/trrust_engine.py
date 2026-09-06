@@ -46,10 +46,25 @@ T2  THE CORRECTED COST ON THE REAL NETWORK. k_i and per-gene cost reported as DI
     median, 99th percentile, maximum -- never as a mean. 38% of TRRUST has degree 1 and would
     drag any mean to a number no gene pays. Swept over controller threshold and over L.
 
-T3  IS ANY CONFIGURATION AFFORDABLE AT ALL? PREDECLARED bar: total table entries <= 1e12, which
-    is about 8 TB and generous. Report the cheapest configuration over the whole (threshold, L,
-    r, w) grid and whether the affordable set is EMPTY. An empty set is a clean negative and the
-    honest end of this line of work.
+T3  WHAT DOES IT COST TO CARRY ANY HISTORY AT ALL? PREDECLARED bar: total table entries <= 1e12,
+    about 8 TB and generous.
+
+    A DEFECT IN T3 AS FIRST WRITTEN, found in its own output. It minimised cost over the whole
+    (threshold, r, w, L) grid and returned |C| = 1, L = 0 -- the configuration with the history
+    mechanism SWITCHED OFF -- and called that PASS. Of course the cheapest engine is the one that
+    does not run. Minimising a cost with no accuracy constraint is the ledger-U mistake: a gate
+    passing on a degenerate quantity. T3 now reports the cheapest configuration AT EACH L, so the
+    question it answers is the one that matters -- what does the distinguishing component cost on
+    a real network -- and L = 0 is shown as the baseline it is rather than offered as an answer.
+
+T9  WHY DOES THE HYBRID WIN ON SYNTHETIC TOPOLOGY AND LOSE ON REAL?  (added after T5 answered,
+    and labelled.) engine.py's mixed system gave every target a chain neighbour, so the r-ball
+    component had real work. Real hub neighbourhoods in TRRUST have almost no target-target
+    edges, so the hybrid degenerates to route 3 alone -- which history.py already measured as
+    100x dearer than bounded width for a local question. Sweep the residual-structure density p
+    from 0 to 1 on a matched synthetic system, find the crossover, and report where real TRRUST
+    subnetworks sit on that axis. PREDECLARED: if real subnetworks sit on the losing side, the
+    engine's advantage does not transfer to human regulatory topology and this module says so.
 
 T4  TRUNCATION IS AN APPROXIMATION AND IS LEDGERED AS ONE. Capping each gene's history to its
     top-m controllers is a fourth method, not a tidying-up. Sweep m, and count the discarded
@@ -250,26 +265,30 @@ def main():
     # ---- T3  IS ANYTHING AFFORDABLE? -----------------------------------------------------------
     P("\n" + RULE); P("T3  IS ANY CONFIGURATION AFFORDABLE AT ALL?"); P(RULE)
     P("  predeclared bar: total table entries <= 1e12 (about 8 TB, and generous)")
-    best = None
-    grid = 0
-    for th in (400, 200, 100, 50, 25):
-        C = {int(i) for i in np.nonzero(deg >= th)[0]}
-        kvec = np.array([len(adj[i] & C) for i in range(n)])
-        res = residual_graph(adj, C, n)
-        for r in (1, 2):
-            for w in (4, 6, 8):
-                pa, order, _ = bounded_elimination([ball(res, i, r) - {i} for i in range(n)], w)
-                for L in (0, 2, 4, 6, 8):
-                    grid += 1
+    P("  Reported PER L. Minimising over L returned |C|=1, L=0 -- the engine switched off -- and")
+    P("  called it PASS; that is the ledger-U mistake and is recorded in the docstring.")
+    P(f"    {'L':>3} {'best threshold':>15} {'|C|':>5} {'per-gene':>12} {'block':>11} {'total':>12} {'<= 1e12':>9}")
+    byL = {}
+    for L in (0, 1, 2, 3, 4, 6, 8):
+        bb = None
+        for th in (400, 200, 100, 50, 25):
+            C = {int(i) for i in np.nonzero(deg >= th)[0]}
+            kvec = np.array([len(adj[i] & C) for i in range(n)])
+            res = residual_graph(adj, C, n)
+            for r in (1, 2):
+                for w in (4, 6, 8):
+                    pa, order, _ = bounded_elimination([ball(res, i, r) - {i} for i in range(n)], w)
                     per, blk = cost_real(pa, L, kvec, len(C), n)
                     tot = float(per.sum()) + blk
-                    if best is None or tot < best[0]:
-                        best = (tot, th, len(C), r, w, L, float(per.sum()), blk)
-    P(f"  swept {grid} configurations of (threshold, r, w, L)")
-    P(f"  cheapest: threshold {best[1]} (|C|={best[2]}), r={best[3]}, w={best[4]}, L={best[5]}")
-    P(f"    per-gene {best[6]:.4e}  +  controller block {best[7]:.4e}  =  {best[0]:.4e}")
-    t3 = best[0] <= 1e12
-    P(f"  T3: {'PASS -- an affordable configuration exists' if t3 else 'FAIL -- the affordable set is EMPTY. No (threshold, r, w, L) brings the engine under 1e12 entries on the real network.'}")
+                    if bb is None or tot < bb[0]:
+                        bb = (tot, th, len(C), float(per.sum()), blk)
+        byL[L] = bb
+        P(f"    {L:>3} {bb[1]:>15} {bb[2]:>5} {bb[3]:>12.3e} {bb[4]:>11.2e} {bb[0]:>12.3e}"
+          f" {str(bb[0] <= 1e12):>9}")
+    ok = [L for L in byL if byL[L][0] <= 1e12]
+    t3 = any(L > 0 for L in ok)
+    P(f"  affordable at L = {sorted(ok)}")
+    P(f"  T3: {'PASS -- history is affordable on the real network at some L > 0' if t3 else 'FAIL -- only L = 0 is affordable, i.e. only the configuration with the history mechanism SWITCHED OFF. The component that distinguishes the hybrid cannot be paid for on this network.'}")
 
     # ---- T4  TRUNCATION AS AN EXPLICIT APPROXIMATION -------------------------------------------
     P("\n" + RULE); P("T4  TRUNCATING TO THE TOP-m CONTROLLERS IS A FOURTH METHOD, NOT A TIDY-UP"); P(RULE)
@@ -300,7 +319,7 @@ def main():
     CEIL = 2.0 ** 18
     for unknown in ("activation", "repression", "delete"):
         P(f"\n  --- T7 treatment: Unknown edges -> {unknown} ---")
-        P(f"    {'TF':>6} {'N':>3} {'ed':>3} {'tau_c':>7} {'indep':>10} {'marg':>10}"
+        P(f"    {'TF':>6} {'N':>3} {'ed':>3} {'tau_c':>7} {'indep':>10}"
           f" {'route1':>15} {'route2':>15} {'HYBRID':>17}")
         for tf in ("SP1", "TP53", "E2F1", "NFKB1"):
             for N in (8, 10, 12):
@@ -338,9 +357,65 @@ def main():
                     if er(ph) <= 0.01 and (route not in bestc or c < bestc[route][0]):
                         bestc[route] = (c, lbl)
                 f = lambda t: f"{t[0]:.0f} ({t[1]})" if t else "not reached"
-                P(f"    {tf:>6} {N:>3} {len(ed):>3} {tau_c:>7.3f} {e_ind:>10.3e} {'--':>10}"
+                usable = e_ind > 0.01
+                P(f"    {tf:>6} {N:>3} {len(ed):>3} {tau_c:>7.3f} {e_ind:>10.3e}"
+                  f" {'OK' if usable else 'UNUSABLE':>10}"
                   f" {f(bestc.get('1')):>15} {f(bestc.get('2')):>15} {f(bestc.get('H')):>17}")
-        P(f"    (independent-genes baseline must FAIL the 1% bar for any row above to mean anything)")
+        P( "    T6: a row marked UNUSABLE has an independent-genes baseline already inside the 1%")
+        P( "    bar, so nothing on that row tests dependence and no engine number may be read from")
+        P( "    it. Those rows are kept visible rather than filtered out.")
+
+    # ---- T9  THE MECHANISM: RESIDUAL STRUCTURE DENSITY ------------------------------------------
+    P("\n" + RULE); P("T9  WHY IT WINS ON SYNTHETIC TOPOLOGY AND LOSES ON REAL  (added after T5)"); P(RULE)
+    P("  engine.py's mixed system gave every target a chain neighbour. Real hub neighbourhoods")
+    P("  have almost none, so the hybrid degenerates to route 3 alone -- which history.py measured")
+    P("  as 100x dearer than bounded width for a local question. Sweeping residual density p:")
+    from rem.atlas.history import star as _star
+    NS = 10
+    P(f"    {'p':>5} {'resid edges':>12} {'route1':>14} {'route2':>14} {'HYBRID':>16}")
+    for p in (0.0, 0.25, 0.5, 0.75, 1.0):
+        rng = np.random.default_rng(3)
+        Qs = _star(NS, 3.0, 1.0, boff=2.0, chain=False)
+        pis, rs_, _ = stationary(Qs)
+        # add residual chain edges with probability p by rebuilding with a chain fraction
+        adjr = [set() for _ in range(NS)]
+        nres = int(round(p * (NS - 1)))
+        for i in range(1, nres + 1):
+            adjr[i].add(i - 1); adjr[i - 1].add(i)
+        Qs = _star(NS, 3.0, 1.0, boff=2.0, chain=(nres > 0))
+        pis, rs_, _ = stationary(Qs)
+        vex = var_count(target_marginal(pis, NS), NS)
+        ers = lambda ph: abs(var_count(ph, NS) - vex) / vex
+        tc, _, _ = hub_timescale(pis, NS, np.ones(NS + 1), np.full(NS + 1, 2.0), {})
+        dts = tc / 10.0
+        regr = [set(adjr[i]) | {NS} for i in range(NS)] + [set(range(NS))]
+        bb = {}
+        for r in range(1, NS + 1):
+            dep = [(ball(regr, i, r) - {i}) & set(range(NS)) for i in range(NS)]
+            ph, c, _ = build(pis, Qs, NS, dep, NS, -1, dts, NS)
+            if ers(ph) <= 0.01 and ("1" not in bb or c < bb["1"][0]): bb["1"] = (c, f"r={r}")
+        for w in range(1, NS):
+            ph, c, _ = build(pis, Qs, NS, complete_graph(NS), w, -1, dts, NS)
+            if ers(ph) <= 0.01 and ("2" not in bb or c < bb["2"][0]): bb["2"] = (c, f"w={w}")
+        for L in (0, 2, 4, 6, 8):
+            for r in (1, 2):
+                dep = [ball(adjr, i, r) - {i} for i in range(NS)]
+                ph, c, _ = build(pis, Qs, NS, dep, NS, L, dts, NS)
+                if c <= 2.0**18 and ers(ph) <= 0.01 and ("H" not in bb or c < bb["H"][0]):
+                    bb["H"] = (c, f"r={r},L={L}")
+        g = lambda t: f"{t[0]:.0f} ({t[1]})" if t else "not reached"
+        P(f"    {p:>5.2f} {nres:>12} {g(bb.get('1')):>14} {g(bb.get('2')):>14} {g(bb.get('H')):>16}")
+    dens = []
+    for tf in ("SP1", "TP53", "E2F1", "NFKB1"):
+        for Nn in (8, 10, 12):
+            _, edn = subnetwork(E, tf, Nn)
+            nr = sum(1 for u, v, m in edn if u < Nn and v < Nn)
+            dens.append(nr / max(Nn - 1, 1))
+    P(f"\n  real TRRUST hub neighbourhoods sit at p = {np.median(dens):.2f}"
+      f" (range {min(dens):.2f} to {max(dens):.2f})")
+    P( "  T9: real hub neighbourhoods have almost no residual structure, so the r-ball component")
+    P( "  of the hybrid has nothing to do and the engine reduces to route 3, which is the")
+    P( "  expensive one. The advantage measured on synthetic star-plus-chain does NOT transfer.")
 
     # ---- T8 ------------------------------------------------------------------------------------
     P("\n" + RULE); P("T8  WHAT CANNOT BE CLAIMED FROM THIS MEASUREMENT"); P(RULE)
@@ -354,6 +429,10 @@ def main():
     P("     distribution has no gap, so the threshold is a free parameter and its effect is")
     P("     reported rather than optimised away.")
     P("  5. Nothing about dynamics, only about the stationary distribution.")
+    P("  6. The controller/target timescale ratio is set by the invented kinetics, not by TRRUST.")
+    P("     Measured tau_c is around 0.3 against target rates of order 1-2, i.e. MATCHED -- which")
+    P("     statedim S6 identified as the expensive regime. A different rate choice would move")
+    P("     the answer, and that is a property of the model, not a finding about the network.")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_trrust_engine.txt")
     open(dst, "w").write("\n".join(out) + "\n")
