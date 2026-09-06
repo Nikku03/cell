@@ -1,0 +1,89 @@
+=================================================================================================
+A CLOSED SIGNALLING-TRAFFICKING-EXPRESSION CIRCUIT
+=================================================================================================
+  ligand -> receptor(membrane) -> active -> kinase -> TF -> promoter -> mRNA -> protein
+  -> back onto the kinase as a phosphatase. Receptor traffics membrane -> endosome ->
+  recycled or degraded. Four layers, one loop, solved EXACTLY.
+  5184 states, 17 reactions, 50220 nonzeros; residual 8.65e-15
+
+=================================================================================================
+X1  PHYSICS AUDIT
+=================================================================================================
+  reactions whose receptor stoichiometry disagrees with what they declare: 0
+  states with a negative propensity: 0 of 88128 evaluations
+  sealed (no ligand, no synthesis): mass anywhere but the empty state = 1.935e-13
+  X1: PASS
+
+=================================================================================================
+X2  THREE IDENTITY TESTS, each against something computed another way
+=================================================================================================
+  (a) ligand = 0 -> P(protein > 0) = 2.389e-20   PASS
+  (b) k_fb = 0 equals the open-loop generator: max|diff| = 0.000e+00   PASS
+  (c) engine at full width reproduces the exact marginal: 0.000e+00   PASS
+  X2: PASS
+
+=================================================================================================
+X3  EXACT BENCHMARK, checked against an analytic identity
+=================================================================================================
+    E[Rm] = 1.197959
+    E[Ra] = 1.155989
+    E[Re] = 1.202035
+    E[Ka] = 0.878543
+    E[Ta] = 0.500851
+    E[G] = 0.362325
+    E[M] = 0.641689
+    E[P] = 0.751131
+
+  identity  k_md*E[M] = k_tx*P(G=1, M<cap), exact at stationarity whatever else happens
+    E[M] = 0.6416889940
+    naive k_tx*P(G=1)/k_md = 0.7246507385   rel err 1.293e-01  <- WRONG, it
+      ignores that transcription is blocked at the truncation cap
+    truncation-aware        = 0.6416889940   rel err 1.292e-13
+  X3: PASS
+
+=================================================================================================
+X4  RARE-TAIL TEST: two things at once, in different layers
+=================================================================================================
+  P(protein saturated AND receptor fully internalised) = 3.601913e-02
+  product of marginals                                 = 3.414075e-02
+  ratio 1.0550 -- the layers are DEPENDENT,
+  so the conjunctive question is not answerable from the two marginals.
+
+=================================================================================================
+X5  SCALING: the TF drives k promoters
+=================================================================================================
+  MEASURED timescales: tau_TF = 0.713, tau_promoter = 0.400, ratio 1.78
+  statedim S6 measured that conditioning on a controller helps only at a separation of
+  roughly 500x either way. This circuit sits at 1.78x -- deep in the
+  MATCHED regime, which is the expensive one, so the history route is being tested where
+  it is predicted to do worst. That is the honest place to test it.
+  Observable: Var(total promoters ON), global and fixed in meaning across k.
+  Bar 1%. dt SWEPT. An independent-promoter baseline must FAIL or the row is unreadable.
+      k   states   indep err   usable      width route        HISTORY route
+      2      648   1.494e-01       OK          6 (w=1)    128 (L=4,dt=0.25)
+      3     1296   2.599e-01       OK         14 (w=2)    768 (L=6,dt=0.25)
+      4     2592   3.451e-01       OK         30 (w=3)   4096 (L=8,dt=0.25)
+      5     5184   4.126e-01       OK         62 (w=4) 20480 (L=10,dt=0.12)
+      6    10368   4.676e-01       OK        126 (w=5) 98304 (L=12,dt=0.12)
+  The deliverable is how each column GROWS with k, not which wins at one k.
+
+=================================================================================================
+X6  REAL BIOLOGICAL VALIDATION, and its limits
+=================================================================================================
+  Receptor internalisation is documented to shorten and weaken signalling output. Does the
+  circuit reproduce the DIRECTION? (a direction, not a number -- this is weak validation)
+       k_int     E[Ra]     E[Ta]      E[P]
+        0.10    1.7743    0.5884    0.8586
+        0.30    1.5513    0.5631    0.8289
+        0.90    1.1560    0.5009    0.7511
+        2.70    0.7763    0.4085    0.6264
+        8.10    0.5677    0.3263    0.5068
+  monotonically decreasing output with faster internalisation: True
+  X6: the direction is reproduced
+
+  WHAT THIS CANNOT VALIDATE. Every rate here is invented. Reproducing a direction is
+  consistent with the biology and does not confirm the model -- many wrong models would
+  also reproduce it. Real validation needs a measured time-course under a named
+  perturbation (phosphoproteomics after receptor-mutant or inhibitor treatment), fitted on
+  one condition and PREDICTED on another. Nothing here does that, and no claim about a
+  real pathway may be read from this module.

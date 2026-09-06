@@ -2,9 +2,14 @@
 THE HYBRID ENGINE ON THE REAL HUMAN NETWORK
 =================================================================================================
   TRRUST v2 human: 2861 genes, 8403 edges, sha256 9b909319ccc8e36588b5a1bd3640e0df
-  edge signs: Unknown 4312, Activation 3139, Repression 1918
-  46% of edges carry NO sign -- T7 treats that as a
-  factor, not a default.
+  provenance: 9369 non-self records -> 8403 DISTINCT directed pairs (966 duplicate records), 27 self-loop rows dropped
+  207 pairs carry BOTH Activation and Repression from different papers; resolved by a NAMED rule, not by append order
+  edge signs after resolution: Unknown 3558, Activation 2927, Repression 1918
+  unsigned: 3558 of 8403 distinct pairs (42.3%) carry only Unknown records. Defect C2: this was previously quoted as 51% and 46% in three places, using a record
+  count as the denominator. T7 treats the sign as a factor, not a default.
+  CONTROLLERS are detected by OUT-degree (defect C4: the prose said out-degree while the
+  code thresholded total degree; 21 of the top-122 by total degree have out-degree ZERO
+  and regulate nothing).
   engine.py's genome-scale figure is already retracted; see the top of this file.
 
 =================================================================================================
@@ -16,12 +21,12 @@ T1  IS THE COST FUNCTIONAL NON-DEGENERATE?
      threshold   |C|   engine.py total   corrected per-gene      block
            400     1         2.628e+07            2.628e+07   5.12e+02
            200     3         3.877e+07            1.604e+12   1.34e+08
-           100    13         6.005e+07            8.256e+31   1.66e+35
-            50    38         6.906e+07            5.521e+70  8.96e+102
-            25   122         5.386e+07           1.323e+121  2.58e+120
-            12   281         1.110e+07           3.647e+121  2.58e+120
-             6   583         3.341e+06           6.456e+121  2.58e+120
-             2  1783         2.888e+06           1.062e+122  2.58e+120
+           100     9         5.471e+07            9.291e+26   2.42e+24
+            50    30         6.576e+07            5.142e+61   1.90e+81
+            25    76         6.156e+07           7.880e+115  2.58e+120
+            12   159         4.245e+07           2.582e+120  2.58e+120
+             6   285         1.075e+07           7.747e+120  2.58e+120
+             2   580         2.387e+06           1.291e+121  2.58e+120
   engine.py's total falls monotonically as controllers are added: False
   T1: PASS -- the corrected functional is not minimised by promoting everything
 
@@ -29,12 +34,15 @@ T1  IS THE COST FUNCTIONAL NON-DEGENERATE?
 T2  THE CORRECTED COST, AS DISTRIBUTIONS
 =================================================================================================
   38% of TRRUST has degree 1, so a mean is a number no gene pays. Percentiles only.
+  k_i is counted over NON-controllers only (defect C3: the first run took the census over
+  all genes, so controller-controller adjacency was counted as history to carry, giving a
+  maximum of 53 where the target-side truth is 17).
       thr   |C|  k med  k 99%  k max  pa med  pa max   cost med    cost 99%    cost max
       200     3      0      3      3       6       6   1.28e+02    1.72e+10    1.72e+10
-      100    13      0      6     11       6       6   1.28e+02    2.31e+18    8.11e+31
-       50    38      1     11     26       6       6   1.02e+03    1.27e+30    5.52e+70
-       25   122      1     21     53       2       6   6.55e+04    1.57e+57   2.58e+120
-       12   281      2     29    105       0       6   5.24e+05    1.52e+81   2.58e+120
+      100     9      0      5      9       6       6   1.28e+02    4.50e+15    3.09e+26
+       50    30      1      8     22       6       6   1.02e+03    6.04e+23    5.14e+61
+       25    76      1     11     42       5       6   1.02e+03    8.11e+31   7.88e+115
+       12   159      1     16     61       0       6   2.05e+03    2.12e+43   2.58e+120
 
 =================================================================================================
 T3  IS ANY CONFIGURATION AFFORDABLE AT ALL?
@@ -58,15 +66,15 @@ T4  TRUNCATING TO THE TOP-m CONTROLLERS IS A FOURTH METHOD, NOT A TIDY-UP
 =================================================================================================
   Capping k_i at m makes the cost affordable by DISCARDING controller-target edges. Those
   edges go in the same ledger as everything else rather than vanishing.
-  at threshold 25: |C|=122, 7033 controller-target edge endpoints in total
+  at threshold 25: |C|=76, 4816 controller-target edge endpoints in total
       m   per-gene cost     + block  edges kept   edges DISCARDED
-      1       5.386e+07   2.58e+120        2247              4786
-      2       2.027e+10   2.58e+120        3510              3523
-      3       7.249e+12   2.58e+120        4276              2757
-      5       9.825e+17   2.58e+120        5176              1857
-     17       2.375e+48   2.58e+120        6594               439
+      1       6.156e+07   2.58e+120        1976              2840
+      2       2.067e+10   2.58e+120        2990              1826
+      3       7.095e+12   2.58e+120        3548              1268
+      5       9.554e+17   2.58e+120        4145               671
+     17       1.754e+49   2.58e+120        4740                76
   Even at m = 1 -- one controller per gene, which is the ONLY case engine.py ever priced --
-  4786 controller-target edges are discarded, and the
+  2840 controller-target edges are discarded, and the
   controller block is untouched by truncation because it does not depend on m at all.
 
 =================================================================================================
@@ -79,36 +87,36 @@ T5/T6/T7  ACCURACY ON REAL SUBNETWORKS, EXACT CME, REAL SIGNS
 
   --- T7 treatment: Unknown edges -> activation ---
         TF   N  ed   tau_c      indep          route1          route2            HYBRID
-       SP1   8   9   0.319  3.455e-01         OK       510 (r=2)       382 (w=6) 8192 (r=1,L=8,dt=0.06)
-       SP1  10  13   0.348  2.509e-01         OK      2046 (r=2)      1534 (w=8) 704 (r=1,L=4,dt=0.12)
-       SP1  12  19   0.358  4.765e-01         OK      8190 (r=2)     8190 (w=11) 14336 (r=1,L=8,dt=0.06)
-      TP53   8  10   0.319  2.733e-02         OK       510 (r=2)       254 (w=5) 32 (r=1,L=0,dt=0.03)
-      TP53  10  13   0.226  2.882e-02         OK      2046 (r=2)      1022 (w=7) 40 (r=1,L=0,dt=0.03)
-      TP53  12  15   0.069  9.964e-03   UNUSABLE        24 (r=1)        86 (w=2) 48 (r=1,L=0,dt=0.03)
-      E2F1   8   9   0.319  3.495e-01         OK       510 (r=2)       382 (w=6) 8192 (r=1,L=8,dt=0.06)
+       SP1   8   8   0.319  3.055e-01         OK       510 (r=2)       382 (w=6) 2048 (r=1,L=6,dt=0.12)
+       SP1  10  11   0.348  2.103e-01         OK      2046 (r=2)      1534 (w=8) 704 (r=1,L=4,dt=0.12)
+       SP1  12  14   0.358  3.582e-01         OK      8190 (r=2)     8190 (w=11) 3584 (r=1,L=6,dt=0.12)
+      TP53   8   8   0.319  1.581e-02         OK       510 (r=2)        30 (w=1) 32 (r=1,L=0,dt=0.03)
+      TP53  10  11   0.226  8.239e-03   UNUSABLE        20 (r=1)       638 (w=6) 40 (r=1,L=0,dt=0.03)
+      TP53  12  14   0.132  1.249e-02         OK      8190 (r=2)       286 (w=4) 48 (r=1,L=0,dt=0.03)
+      E2F1   8   8   0.319  3.055e-01         OK       510 (r=2)       382 (w=6) 2048 (r=1,L=6,dt=0.12)
       E2F1  10  10   0.348  2.652e-01         OK      2046 (r=2)       638 (w=6) 640 (r=1,L=4,dt=0.12)
-      E2F1  12  19   0.358  3.712e-01         OK      8190 (r=2)     6142 (w=10) 5888 (r=2,L=6,dt=0.06)
-     NFKB1   8  10   0.319  1.859e-01         OK       510 (r=2)        94 (w=3) 512 (r=1,L=4,dt=0.12)
-     NFKB1  10  11   0.348  3.030e-01         OK      2046 (r=2)      1534 (w=8) 2560 (r=1,L=6,dt=0.06)
-     NFKB1  12  20   0.250  3.288e-01         OK      8190 (r=2)     6142 (w=10) 3072 (r=1,L=6,dt=0.06)
+      E2F1  12  15   0.358  2.659e-01         OK      8190 (r=2)     6142 (w=10) 1472 (r=2,L=4,dt=0.12)
+     NFKB1   8   8   0.319  1.074e-01         OK       510 (r=2)        54 (w=2) 512 (r=1,L=4,dt=0.06)
+     NFKB1  10  10   0.348  2.642e-01         OK      2046 (r=2)      1022 (w=7) 640 (r=1,L=4,dt=0.12)
+     NFKB1  12  13   0.401  1.660e-01         OK      8190 (r=2)      1534 (w=7) 768 (r=1,L=4,dt=0.06)
     T6: a row marked UNUSABLE has an independent-genes baseline already inside the 1%
     bar, so nothing on that row tests dependence and no engine number may be read from
     it. Those rows are kept visible rather than filtered out.
 
   --- T7 treatment: Unknown edges -> repression ---
         TF   N  ed   tau_c      indep          route1          route2            HYBRID
-       SP1   8   9   0.319  1.261e-01         OK       510 (r=2)       382 (w=6) 512 (r=1,L=4,dt=0.12)
-       SP1  10  13   0.348  8.658e-02         OK      2046 (r=2)       638 (w=6) 704 (r=1,L=4,dt=0.12)
-       SP1  12  19   0.358  3.017e-02         OK      8190 (r=2)      4094 (w=9) 56 (r=1,L=0,dt=0.03)
-      TP53   8  10   0.319  7.597e-02         OK       510 (r=2)       158 (w=4) 512 (r=1,L=4,dt=0.12)
-      TP53  10  13   0.403  2.325e-01         OK      2046 (r=2)      1022 (w=7) 640 (r=1,L=4,dt=0.12)
-      TP53  12  15   0.401  8.003e-02         OK      8190 (r=2)      1534 (w=7) 192 (r=1,L=2,dt=0.25)
-      E2F1   8   9   0.319  3.099e-02         OK       510 (r=2)        54 (w=2) 128 (r=1,L=2,dt=0.25)
+       SP1   8   8   0.319  6.050e-02         OK       510 (r=2)       382 (w=6) 128 (r=1,L=2,dt=0.25)
+       SP1  10  11   0.348  1.525e-01         OK      2046 (r=2)       638 (w=6) 704 (r=1,L=4,dt=0.12)
+       SP1  12  14   0.358  2.019e-02         OK      8190 (r=2)     8190 (w=11) 224 (r=1,L=2,dt=0.03)
+      TP53   8   8   0.319  5.348e-02         OK       510 (r=2)        94 (w=3) 128 (r=1,L=2,dt=0.25)
+      TP53  10  11   0.403  1.437e-01         OK      2046 (r=2)       382 (w=5) 640 (r=1,L=4,dt=0.12)
+      TP53  12  14   0.293  7.770e-02         OK      8190 (r=2)      1534 (w=7) 12288 (r=1,L=8,dt=0.12)
+      E2F1   8   8   0.319  1.212e-02         OK       510 (r=2)        30 (w=1) 32 (r=1,L=0,dt=0.03)
       E2F1  10  10   0.348  2.558e-02         OK      2046 (r=2)       382 (w=5) 40 (r=1,L=0,dt=0.03)
-      E2F1  12  19   0.358  2.989e-02         OK      8190 (r=2)       286 (w=4) 60 (r=1,L=0,dt=0.03)
-     NFKB1   8  10   0.319  2.229e-02         OK       510 (r=2)        94 (w=3) 32 (r=1,L=0,dt=0.03)
-     NFKB1  10  11   0.348  2.898e-03   UNUSABLE        20 (r=1)        70 (w=2) 40 (r=1,L=0,dt=0.03)
-     NFKB1  12  20   0.401  2.301e-02         OK      8190 (r=2)      2558 (w=8) 48 (r=1,L=0,dt=0.03)
+      E2F1  12  15   0.358  2.582e-02         OK      8190 (r=2)        86 (w=2) 60 (r=1,L=0,dt=0.03)
+     NFKB1   8   8   0.319  3.004e-02         OK       510 (r=2)        30 (w=1) 128 (r=1,L=2,dt=0.03)
+     NFKB1  10  10   0.348  2.229e-02         OK      2046 (r=2)       126 (w=3) 160 (r=1,L=2,dt=0.03)
+     NFKB1  12  13   0.401  3.768e-02         OK      8190 (r=2)      2558 (w=8) 48 (r=1,L=0,dt=0.03)
     T6: a row marked UNUSABLE has an independent-genes baseline already inside the 1%
     bar, so nothing on that row tests dependence and no engine number may be read from
     it. Those rows are kept visible rather than filtered out.
@@ -126,7 +134,7 @@ T9  WHY IT WINS ON SYNTHETIC TOPOLOGY AND LOSES ON REAL  (added after T5)
      0.75            7     2046 (r=2)     2046 (w=9)      not reached
      1.00            9     2046 (r=2)     2046 (w=9)      not reached
 
-  real TRRUST hub neighbourhoods sit at p = 0.00 (range 0.00 to 0.36)
+  real TRRUST hub neighbourhoods sit at p = 0.00 (range 0.00 to 0.27)
   T9: real hub neighbourhoods have almost no residual structure, so the r-ball component
   of the hybrid has nothing to do and the engine reduces to route 3, which is the
   expensive one. The advantage measured on synthetic star-plus-chain does NOT transfer.
@@ -150,68 +158,3 @@ T8  WHAT CANNOT BE CLAIMED FROM THIS MEASUREMENT
      Measured tau_c is around 0.3 against target rates of order 1-2, i.e. MATCHED -- which
      statedim S6 identified as the expensive regime. A different rate choice would move
      the answer, and that is a property of the model, not a finding about the network.
-
-=================================================================================================
-CORRECTIONS FOUND AFTER THE RUN, BY ADVERSARIAL REVIEW RATHER THAN BY ANY GATE
-=================================================================================================
-Eight independent reviewers were asked, before this module was written, to find ways the
-measurement could be invalid. Their consolidated gate list was returned after the run and
-recomputed several quantities directly from trrust_human.tsv. Five defects are confirmed. All are
-mine. Two of them invalidate half this module.
-
-C1  DUPLICATE EDGE RECORDS -- THE ACCURACY HALF RAN ON A DISTORTED MODEL. CONFIRMED.
-    TRRUST lists a (TF, target) pair once per supporting publication: 9,369 non-self records
-    collapse to 8,403 distinct directed pairs, so 966 records are repeats. generator() appends one
-    regulatory factor PER RECORD, so a pair supported by three papers has its Hill factor applied
-    three times. Eleven of the twelve subnetworks solved in T5/T6/T7 contain duplicates -- NFKB1
-    at N=12 has 7 duplicate records among 20. The kinetics in those tables are therefore not the
-    kinetics the module describes, and every accuracy number in T5, T6, T7 and T9 must be
-    recomputed on deduplicated pairs before it means anything.
-
-C2  THE UNSIGNED-EDGE FRACTION IS QUOTED THREE WAYS, TWO OF THEM WRONG. CONFIRMED.
-    The docstring says 51%, the printed header says 46%, and T8 says 51%. The correct statement:
-    3,558 of 8,403 distinct directed pairs (42.3%) carry only Unknown records; 4,312 of 9,369
-    RECORDS (46.0%) are Unknown. The 46% figure divides a record count by a record count and is
-    right for records; the 51% figure is right for neither. And 207 pairs carry BOTH Activation
-    and Repression from different papers -- a conflict the module resolves by dict-append order,
-    which is to say by accident.
-
-C3  THE k_i CENSUS COUNTED CONTROLLERS. CONFIRMED.
-    k_i is meant to be the number of CONTROLLER parents of a NON-controller gene. T2 computed it
-    over all genes, so controller-controller adjacency was counted as history to carry. At
-    threshold 25 the printed max is 53 and T4's endpoint total is 7,033; restricted to the 2,739
-    non-controllers the true figures are max 17 and 5,143. The cost formula then charges
-    controllers twice -- once in the per-gene term and again in the block.
-
-C4  THE DETECTOR USES TOTAL DEGREE WHILE THE PROSE SAYS OUT-DEGREE. CONFIRMED.
-    The top 122 by total degree and by out-degree differ by 25 genes, and 21 genes in the
-    total-degree set have OUT-DEGREE ZERO -- they regulate nothing and cannot be controllers of
-    anything. The claim that removing controllers collapses the maximum residual 2-ball to 96 holds
-    under the total-degree detector; under a directed detector at the same |C| it is 285, against
-    1,813 with no removal.
-
-C5  TWO FIGURES IN THE RETRACTION TABLE DO NOT REPRODUCE. CONFIRMED.
-    RESULTS_TWOPROBLEMS.txt quotes corrected per-gene costs of 1.839e+55 and 9.503e+55 at |C| = 38
-    and 122. This module's own T1, computing the same formula, gives 5.521e+70 and 1.323e+121.
-    The retraction's DIRECTION is right and its conclusion is unchanged -- the engine.py cost was
-    wrong by scores of orders of magnitude either way -- but those two numbers were computed with
-    the all-gene k vector and should be read from T1 instead.
-
-WHAT SURVIVES THIS.
-    The retraction of engine.py's genome-scale figure stands: history bits multiply across
-    controllers rather than adding, and the controller block was priced at zero. Both are
-    structural and neither depends on the arithmetic above.
-    T1's finding that the corrected functional is non-degenerate stands.
-    T3's finding stands and is the sharpest result here: the cheapest configuration at EVERY L is
-    |C| = 1. The engine is affordable on the real network only when almost nothing is designated a
-    controller, because the controller block 2^(|C|(L+1)) is exponential in the number of
-    controllers. That is a fourth obstruction and it is new.
-    T5's methodological finding stands and is independent of C1: dt must be swept. Deriving it as
-    tau_c/10 put engine.py's own H2b system in a region where the hybrid cannot reach 1% at all,
-    while engine.py's hard-coded 0.12 happens to be the optimum -- so its headline win of 560
-    against 2046 rested on an unswept constant.
-
-WHAT DOES NOT SURVIVE.
-    Every accuracy row in T5/T6/T7 and the whole of T9, because of C1.
-    T2's k and cost distributions and T4's edge ledger, because of C3.
-    The "residual 2-ball collapses to 96" claim as stated, because of C4.

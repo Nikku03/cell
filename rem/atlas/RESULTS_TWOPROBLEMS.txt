@@ -547,3 +547,76 @@ TRRUST module was written, to find ways the measurement could be invalid; two of
 independently identified both defects, and a third pointed out that the cost functional was
 degenerate. Every gate in engine.py passed on the star system and would have passed again on
 TRRUST, because none of them priced a gene with two controllers.
+
+=================================================================================================
+THE CLOSED CIRCUIT, AND THE PIPELINE MADE EXECUTABLE
+Sources: rem/atlas/RESULTS_circuit.txt, rem/atlas/RESULTS_trrust_engine.txt
+=================================================================================================
+
+ONE CIRCUIT THROUGH FOUR LAYERS, SOLVED EXACTLY. ligand -> receptor(membrane) -> active ->
+kinase -> TF -> promoter -> mRNA -> protein, the protein acting back on the kinase as a
+phosphatase, the receptor trafficking membrane -> endosome -> recycled or degraded. 5,184 states,
+17 reactions. Each layer uses the representation its physics asks for: compartment occupancies for
+trafficking, activity states for signalling, a two-state controller for the TF, a promoter switch
+feeding birth-death mRNA and protein.
+
+The six-stage rule is the gate structure, in order, and each stage did work:
+
+X1 PHYSICS AUDIT -- FAILED FIRST, AND THE FAILURE WAS REAL. Sealed with no ligand and no
+   synthesis, the system retained 92.6% of its mass. Unbound membrane receptor had no exit at
+   all: binding needs ligand, nothing else removed it, so Rm was immortal. The fix is
+   CONSTITUTIVE INTERNALISATION, which is documented receptor biology. The audit found a missing
+   biological pathway, not a broken test. Sealed mass 9.26e-01 -> 1.9e-13.
+
+X2 IDENTITY -- three, each against something computed another way: ligand zero gives
+   P(protein>0) = 2.4e-20; feedback off reproduces an independently built open-loop generator to
+   0.0; the engine at full width reproduces the exact marginal to 0.0.
+
+X3 EXACT BENCHMARK against an analytic identity. k_md*E[M] = k_tx*P(G=1, M<cap) holds to 1.3e-13.
+   The NAIVE form without the truncation term is off by 12.9% -- an identity has to know about
+   the lattice it is checked on.
+
+X4 RARE TAIL. P(protein saturated AND receptor fully internalised) = 3.60e-2 against 3.41e-2 from
+   the product of marginals, a ratio of 1.055. The layers are dependent, so a conjunctive question
+   spanning trafficking and expression is not answerable from the two marginals separately -- but
+   at 5.5% this dependence is weak, and that is stated rather than inflated.
+
+X5 SCALING, with the timescale ratio measured rather than assumed:
+       tau_TF = 0.713, tau_promoter = 0.400, ratio 1.78
+
+   statedim S6 found controller history helps only at ~500x separation either way, so this
+   circuit sits deep in the MATCHED regime -- the expensive one. The route is being tested where
+   it is predicted to do worst, which is the honest place to test it.
+
+       k        2        3        4         5        6
+       width    6       14       30        62      126        = 2^(k+1) - 2
+       history  128     768     4096     20480      --
+
+   Bounded width wins by two orders of magnitude and both grow exponentially. Consistent with S6:
+   at matched timescales, carrying the controller's history buys nothing worth its price.
+
+X6 VALIDATION -- direction only. Faster receptor internalisation monotonically weakens output
+   (E[P] 0.859 -> 0.507 as k_int goes 0.1 -> 8.1), which is the documented direction. Stated
+   plainly in the module: this is weak, many wrong models would also pass it, and real validation
+   needs a measured time-course fitted on one condition and PREDICTED on another.
+
+A DEFECT CAUGHT BEFORE IT WAS REPORTED, for once. X5's first run swept L <= 6 and dt >= 0.06 -- a
+window of 0.36 against a TF correlation time of 0.713 -- and printed "not reached" for k >= 4.
+Widened, the history route reaches the bar at k=4 for 4,096. It still loses by 137x, but losing
+and not-reaching are different results. This is the fourth appearance of the under-resourced-rival
+error in this build order and the first that did not survive to a report.
+
+=================================================================================================
+THE TRRUST CORRECTIONS LANDED
+=================================================================================================
+All four confirmed defects are fixed and the module rerun. Provenance is now printed: 9,369
+non-self records -> 8,403 DISTINCT pairs (966 duplicates removed), 27 self-loop rows dropped, 207
+sign conflicts resolved by a named rule. Unsigned edges: 3,558 of 8,403 pairs (42.3%), stated once
+with its denominator instead of three times with two. Controllers detected by OUT-degree. k_i
+counted over non-controllers only.
+
+T3's finding is unchanged and remains the sharpest result there: the cheapest configuration at
+EVERY history depth is |C| = 1. The engine is affordable on the real network only when almost
+nothing is designated a controller, because the controller block 2^(|C|(L+1)) is exponential in
+the NUMBER of controllers. That is a fourth obstruction, distinct from the three statedim named,
+and no route yet addresses it.
