@@ -1,0 +1,258 @@
+{
+ "rows": [
+  {
+   "group": "R",
+   "dose": "25ng",
+   "cell": 0,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9972285498902179,
+   "nrmse": 0.028860621646321652,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "25ng",
+   "cell": 1,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9991170579701646,
+   "nrmse": 0.017308550929445648,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "25ng",
+   "cell": 2,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9954108872853182,
+   "nrmse": 0.03469864372314865,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "25ng",
+   "cell": 3,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9788815856392066,
+   "nrmse": 0.11017932697818504,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "50ng",
+   "cell": 0,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9926141966077071,
+   "nrmse": 0.05407293579460966,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "50ng",
+   "cell": 1,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.995415102257298,
+   "nrmse": 0.0385999850831109,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "50ng",
+   "cell": 2,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9954663650726727,
+   "nrmse": 0.03413778729082826,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "50ng",
+   "cell": 3,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9985126731210199,
+   "nrmse": 0.02550088605256285,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "100ng",
+   "cell": 0,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9881249019730152,
+   "nrmse": 0.10889593497647455,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "100ng",
+   "cell": 1,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9992497395462258,
+   "nrmse": 0.016728893241070342,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "100ng",
+   "cell": 2,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9900504664428632,
+   "nrmse": 0.05477056329144552,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "R",
+   "dose": "100ng",
+   "cell": 3,
+   "n": 120,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9985153727853541,
+   "nrmse": 0.02078207435315832,
+   "Tend_min": 600.0
+  },
+  {
+   "group": "S",
+   "dose": "25ng",
+   "cell": 0,
+   "n": 41,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9963367802438946,
+   "nrmse": 0.029343288235456663,
+   "Tend_min": 205.0
+  },
+  {
+   "group": "S",
+   "dose": "25ng",
+   "cell": 1,
+   "n": 17,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9966468820192035,
+   "nrmse": 0.05854360676032919,
+   "Tend_min": 85.0
+  },
+  {
+   "group": "S",
+   "dose": "25ng",
+   "cell": 2,
+   "n": 57,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9997717462270861,
+   "nrmse": 0.00728979305892068,
+   "Tend_min": 285.00000000000006
+  },
+  {
+   "group": "S",
+   "dose": "25ng",
+   "cell": 3,
+   "n": 71,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9959242082524076,
+   "nrmse": 0.030044524603549245,
+   "Tend_min": 355.0
+  },
+  {
+   "group": "S",
+   "dose": "50ng",
+   "cell": 0,
+   "n": 34,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9995095521608459,
+   "nrmse": 0.01533683416444078,
+   "Tend_min": 170.0
+  },
+  {
+   "group": "S",
+   "dose": "50ng",
+   "cell": 1,
+   "n": 53,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9927465849651087,
+   "nrmse": 0.0475680783935716,
+   "Tend_min": 265.0
+  },
+  {
+   "group": "S",
+   "dose": "50ng",
+   "cell": 2,
+   "n": 23,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9985194084788958,
+   "nrmse": 0.027193161545786434,
+   "Tend_min": 115.0
+  },
+  {
+   "group": "S",
+   "dose": "50ng",
+   "cell": 3,
+   "n": 40,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9962245185848074,
+   "nrmse": 0.02682667154364575,
+   "Tend_min": 200.0
+  },
+  {
+   "group": "S",
+   "dose": "100ng",
+   "cell": 0,
+   "n": 20,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9994950349843099,
+   "nrmse": 0.014958677992394665,
+   "Tend_min": 100.0
+  },
+  {
+   "group": "S",
+   "dose": "100ng",
+   "cell": 1,
+   "n": 27,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9982328221855892,
+   "nrmse": 0.021980500708725294,
+   "Tend_min": 135.0
+  },
+  {
+   "group": "S",
+   "dose": "100ng",
+   "cell": 2,
+   "n": 40,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9987827465375088,
+   "nrmse": 0.021305878519335696,
+   "Tend_min": 200.0
+  },
+  {
+   "group": "S",
+   "dose": "100ng",
+   "cell": 3,
+   "n": 40,
+   "n_nonfinite": 0,
+   "pearson_r": 0.9958141437353023,
+   "nrmse": 0.03516155440126066,
+   "Tend_min": 200.0
+  }
+ ],
+ "counts": {
+  "25ng": [
+   150,
+   177
+  ],
+  "50ng": [
+   114,
+   300
+  ],
+  "100ng": [
+   65,
+   518
+  ]
+ }
+}

@@ -1,0 +1,49 @@
+{
+ "cascades": {
+  "MAPK/ERK": {
+   "n": 8,
+   "topology_spearman": -0.39,
+   "literature_spearman": 0.86,
+   "literature_downstream_frac": {
+    "EGFR": 0.01,
+    "GRB2": 0.02,
+    "SOS1": 0.03,
+    "HRAS": 0.14,
+    "RAF1": 0.17,
+    "MAP2K1": 0.25,
+    "MAPK1": 0.12,
+    "ELK1": 0.65
+   }
+  },
+  "TLR-NFkB": {
+   "n": 7,
+   "topology_spearman": -0.5,
+   "literature_spearman": 0.86,
+   "literature_downstream_frac": {
+    "TLR4": 0.02,
+    "MYD88": 0.03,
+    "IRAK1": 0.03,
+    "TRAF6": 0.06,
+    "IKBKB": 0.22,
+    "NFKB1": 0.21,
+    "RELA": 0.21
+   }
+  },
+  "PI3K-AKT": {
+   "n": 7,
+   "topology_spearman": -0.29,
+   "literature_spearman": 0.82,
+   "literature_downstream_frac": {
+    "INSR": 0.01,
+    "IRS1": 0.03,
+    "PIK3CA": 0.45,
+    "PDPK1": 0.42,
+    "AKT1": 0.3,
+    "MTOR": 0.84,
+    "RPS6KB1": 0.81
+   }
+  }
+ },
+ "verdict": "PREDICTABLE \u2014 but not from the wiring. On 3 feedback-rich cascades the topology (trophic-level linear solve) is a coin-flip/negative (mean -0.39) because the feedback edges are real, but the INDEPENDENT literature gradient recovers the canonical forward order (mean +0.85). So the 'feedback module' level is NOT a hard limit \u2014 it reclassifies from HARD to DATA/METHOD: get the literature source (per-pathway markers) and it's predictable, exactly as literature rescued the cyclic TCA cycle. What stays genuinely hard: nothing here \u2014 only mechanism-SIMULATION of the outcome from topology.",
+ "note": "feedback-module pathway level: topology fails (real feedback edges), literature predicts the canonical forward order \u2014 reclassifies the needs.json HARD row to DATA/METHOD"
+}

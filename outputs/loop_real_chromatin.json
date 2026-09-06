@@ -1,0 +1,101 @@
+{
+  "test": "loop_real_chromatin",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/GSM8523629_supercoil_rep1_hg38.bw",
+        "bytes": 1437675,
+        "hash": "5a22b743af5798b4",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/GSM8523630_supercoil_rep2_hg38.bw",
+        "bytes": 1437304,
+        "hash": "b74136ed78bfb469",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/GSM8523628_RPE1_bTMP_genomic_control_hg38.bw",
+        "bytes": 1143230,
+        "hash": "c4cfe8f1ec137a6e",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/rnadecay/AvgKdegs.csv",
+        "bytes": 21962834,
+        "hash": "b8869c749b2b4a24",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 16492,
+      "used": 10266,
+      "selection": "filtered",
+      "fraction": 0.6224836284259034
+    },
+    "seed": 1904,
+    "controls": [
+      "naked genomic DNA track",
+      "replicate 2 as independent measurement",
+      "200 gene-label shuffles",
+      "CpG and gene length partialled out",
+      "loop anchors as a second feature"
+    ],
+    "note": "torsion averaged over +/-20000 bp of the TSS; target is k_syn = RPKM x k_deg, the same target nexus_txn used",
+    "warnings": []
+  },
+  "gates": {
+    "R1 replicates agree": true,
+    "R2 beats the naked-DNA control": true,
+    "R3 signal above shuffles": true,
+    "R4 beats composition": true
+  },
+  "replicate_spearman": 0.6077811632188949,
+  "r_torsion": 0.17663186660468513,
+  "r_naked": -0.14228729773335103,
+  "r_torsion_partial": 0.14363522836968085,
+  "r_naked_partial": -0.014451186089559717,
+  "null_p95": 0.023969370222890276,
+  "n_genes": 10266,
+  "n_anchors": 485,
+  "window_bp": 20000,
+  "log": [
+    "====================================================================================================",
+    "THE REAL CHROMATIN TEST -- measured DNA torsion, not a functional neighbour list",
+    "====================================================================================================",
+    "  model4 turned out not to be a fold (8.8% cis, half its pairs sharing a functional label), so",
+    "  loop 6's headline was retracted and the question left open. These are actual measurements:",
+    "  bTMP-seq torsion from GSE277502, and 767 loop anchors.",
+    "\n  bigWigs open: rep1, rep2, naked; 24 chromosomes in rep1",
+    "  16,348 genes with a TSS and torsion in all three tracks (+/-20 kb around the TSS); 764 are loop anchors",
+    "\n  R1 REPRODUCIBLE -- rep1 vs rep2, per gene: Spearman 0.6078  (gate 0.5)   R1 PASS",
+    "  joined to RNADecayCafe: 10,266 genes with k_syn = RPKM x k_deg",
+    "\n  correlation with log k_syn:",
+    "    torsion (bTMP mean of replicates) : +0.1766",
+    "    naked genomic DNA control         : -0.1423   <- mappability and copy number only",
+    "  R2 NOT JUST COVERAGE   PASS",
+    "\n  R3 SIGNAL -- 200 shuffles: |null| 95th pct 0.0240   R3 PASS",
+    "\n  R4 BEATS COMPOSITION -- CpG and gene length regressed out (10,266 genes)",
+    "    torsion partial : +0.1436",
+    "    naked partial   : -0.0145",
+    "    R4 PASS",
+    "\n  loop anchors (independent feature): 485 anchor genes, median log k_syn +0.249 vs +0.233 for the rest",
+    "\n====================================================================================================",
+    "  R1 replicates agree                   PASS",
+    "  R2 beats the naked-DNA control        PASS",
+    "  R3 signal above shuffles              PASS",
+    "  R4 beats composition                  PASS",
+    "  MEASURED DNA TORSION PREDICTS TRANSCRIPTION, beyond coverage and beyond promoter",
+    "  composition. This is a real chromatin-to-cell-model link, on real chromatin data, and it",
+    "  is the one model4 could not provide.",
+    "====================================================================================================",
+    "    manifest: 5 inputs, coverage 10266/16492 (62.2%) by 'filtered', seed 1904, controls 5"
+  ]
+}

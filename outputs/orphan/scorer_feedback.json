@@ -1,0 +1,126 @@
+{
+ "known_stress_targets": [
+  "ACAT2",
+  "DNAJB11",
+  "DNAJC3",
+  "ERG28",
+  "HMGCS1",
+  "HSPA1B",
+  "HYOU1",
+  "INSIG1",
+  "MLLT11",
+  "MVD"
+ ],
+ "known_stress_machines": [
+  "Ion channel transport",
+  "oligosaccharyltransferase complex A",
+  "proteasome complex"
+ ],
+ "machine_reliability_prior": {
+  "Nuclear RNA decay": 0.565,
+  "RNA N6-methyladenosine methyltransferase complex": 0.75,
+  "nuclear exosome (RNase complex)": 0.565,
+  "proteasome complex": 0.35,
+  "oligosaccharyltransferase complex A": 0.29,
+  "Ino80 complex": 0.75,
+  "exon-exon junction complex": 0.75,
+  "proton-transporting two-sector ATPase complex": 0.6,
+  "nonsense-mediated decay complex": 0.357,
+  "Ion channel transport": 0.238,
+  "INTAC complex": 0.365,
+  "cytoplasmic dynein complex": 0.45,
+  "Sec61 translocon complex": 0.45,
+  "lamellipodium": 0.45,
+  "COPI-dependent Golgi-to-ER retrograde traffi": 0.45,
+  "mRNA Splicing - Minor Pathway": 0.38,
+  "vacuolar proton-transporting V-type ATPase, V1 domain": 0.38,
+  "ESCRT III complex": 0.38,
+  "Processing of Capped Intron-Containing Pre-m": 0.18,
+  "nuclear pore": 0.1,
+  "Nonsense Mediated Decay (NMD) enhanced by th": 0.1,
+  "mRNA cleavage factor complex": 0.22
+ },
+ "confirmed_novel_pursue": [
+  {
+   "target": "MTHFD2L",
+   "machine": "Nuclear RNA decay",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "SCO2",
+   "machine": "RNA N6-methyladenosine methyltransferase complex",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "PPP1R10",
+   "machine": "nuclear exosome (RNase complex)",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "SNRNP40",
+   "machine": "Ino80 complex",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "LETMD1",
+   "machine": "exon-exon junction complex",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "VMP1",
+   "machine": "Nuclear RNA decay",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "DHCR7",
+   "machine": "proton-transporting two-sector ATPase complex",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "BAG1",
+   "machine": "nonsense-mediated decay complex",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "SAR1A",
+   "machine": "RNA N6-methyladenosine methyltransferase complex",
+   "llm_confidence": 0.75
+  },
+  {
+   "target": "EPM2AIP1",
+   "machine": "Nuclear RNA decay",
+   "llm_confidence": 0.38
+  },
+  {
+   "target": "BANP",
+   "machine": "Nuclear RNA decay",
+   "llm_confidence": 0.38
+  },
+  {
+   "target": "ACTL6A",
+   "machine": "mRNA Splicing - Minor Pathway",
+   "llm_confidence": 0.38
+  },
+  {
+   "target": "MPDU1",
+   "machine": "INTAC complex",
+   "llm_confidence": 0.38
+  },
+  {
+   "target": "HMGCR",
+   "machine": "vacuolar proton-transporting V-type ATPase, V1 domain",
+   "llm_confidence": 0.38
+  },
+  {
+   "target": "ANKRD54",
+   "machine": "nuclear exosome (RNase complex)",
+   "llm_confidence": 0.38
+  },
+  {
+   "target": "SOD2",
+   "machine": "ESCRT III complex",
+   "llm_confidence": 0.38
+  }
+ ],
+ "how_the_scorer_uses_this": "next connection_proposer run: (1) label/down-rank targets in known_stress_targets; (2) multiply a machine's candidates by machine_reliability_prior as a learned weight; (3) promote confirmed_novel_pursue. Distilled from LLM verdicts -- no further LLM spend."
+}

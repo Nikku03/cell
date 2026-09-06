@@ -1,0 +1,109 @@
+{
+ "n": 1482,
+ "spearman_remaining_vs_movers": -0.06323663078339996,
+ "all_bands": [
+  {
+   "band": "0%-5%",
+   "n": 39,
+   "median_movers": 1.0,
+   "mean_movers": 7.1,
+   "frac_strong": 0.103
+  },
+  {
+   "band": "5%-15%",
+   "n": 88,
+   "median_movers": 1.0,
+   "mean_movers": 8.9,
+   "frac_strong": 0.148
+  },
+  {
+   "band": "15%-25%",
+   "n": 128,
+   "median_movers": 1.0,
+   "mean_movers": 8.7,
+   "frac_strong": 0.117
+  },
+  {
+   "band": "25%-40%",
+   "n": 253,
+   "median_movers": 1.0,
+   "mean_movers": 14.4,
+   "frac_strong": 0.17
+  },
+  {
+   "band": "40%-60%",
+   "n": 470,
+   "median_movers": 1.0,
+   "mean_movers": 12.0,
+   "frac_strong": 0.134
+  },
+  {
+   "band": "60%-80%",
+   "n": 351,
+   "median_movers": 1.0,
+   "mean_movers": 13.8,
+   "frac_strong": 0.171
+  },
+  {
+   "band": "80%-120%",
+   "n": 117,
+   "median_movers": 1.0,
+   "mean_movers": 6.2,
+   "frac_strong": 0.111
+  }
+ ],
+ "essential_bands": [
+  {
+   "band": "0%-5%",
+   "n": 26,
+   "median_movers": 2.0,
+   "mean_movers": 9.1,
+   "frac_strong": 0.115
+  },
+  {
+   "band": "5%-15%",
+   "n": 57,
+   "median_movers": 2.0,
+   "mean_movers": 10.5,
+   "frac_strong": 0.193
+  },
+  {
+   "band": "15%-25%",
+   "n": 93,
+   "median_movers": 2.0,
+   "mean_movers": 10.8,
+   "frac_strong": 0.151
+  },
+  {
+   "band": "25%-40%",
+   "n": 167,
+   "median_movers": 2.0,
+   "mean_movers": 17.1,
+   "frac_strong": 0.192
+  },
+  {
+   "band": "40%-60%",
+   "n": 350,
+   "median_movers": 1.0,
+   "mean_movers": 12.9,
+   "frac_strong": 0.154
+  },
+  {
+   "band": "60%-80%",
+   "n": 226,
+   "median_movers": 3.0,
+   "mean_movers": 20.1,
+   "frac_strong": 0.243
+  },
+  {
+   "band": "80%-120%",
+   "n": 84,
+   "median_movers": 1.0,
+   "mean_movers": 5.1,
+   "frac_strong": 0.095
+  }
+ ],
+ "saturation_band": null,
+ "verdict": "KNOCKDOWN DOSE-RESPONSE (K562, 1482 knockouts): asks at what remaining expression a knockdown already behaves like a knockout, using the fact that every CRISPRi perturbation in this screen is itself a partial knockdown of measured depth with a measured phenotype -- a 336-point dose-response series that was already collected. Overall Spearman between fraction remaining and number of specific movers is -0.063. THE MEASUREMENT FAILS, and says so rather than reporting a threshold: shallow knockdowns retaining 60-80% of control expression are ALSO statistically indistinguishable from the deepest ones, median phenotype is 1-3 movers in EVERY depth band, and Spearman between depth and phenotype is -0.063. There is no monotone dose-response here, so any 'saturation point' would be noise compared against noise. The reason is visible in the numbers: phenotype size is dominated by WHICH gene is hit, not by HOW MUCH of it is removed, and restricting to essential genes does not remove that. Answering the threshold question needs a titration series -- the same gene knocked down to several graded levels -- which this screen does not contain, since each gene appears at whatever single depth its guide happened to achieve. THE CONFOUND is that genes differ hugely in how much phenotype they can produce at any depth, so raw phenotype against raw depth would mostly measure gene identity; the analysis is therefore restricted to essential genes, where a phenotype is expected at all. WHAT IT CANNOT SAY: this is the depth at which the TRANSCRIPTIONAL phenotype saturates, not the depth at which the protein stops working. Protein lags mRNA and many proteins function at a fraction of normal abundance, so this is an upper bound on the useful threshold, expressed in the only currency the screen carries. Deterministic.",
+ "note": "KNOCKDOWN DOSE-RESPONSE (K562, 1482 knockouts): asks at what remaining expression a knockdown already behaves like a knockout, using the fact that every CRISPRi perturbation in this screen is itself a partial knockdown of measured depth with a measured phenotype -- a 336-point dose-response series that was already collected. Overall Spearman between fraction remaining and number of specific movers is -0.063. THE MEASUREMENT FAILS, and says so rather than reporting a threshold: shallow knockdowns retaining 60-80% of control expression are ALSO statistically indistinguishable from the deepest ones, median phenotype is 1-3 movers in EVERY depth band, and Spearman between depth and phenotype is -0.063. There is no monotone dose-response here, so any 'saturation point' would be noise compared against noise. The reason is visible in the numbers: phenotype size is dominated by WHICH gene is hit, not by HOW MUCH of it is removed, and restricting to essential genes does not remove that. Answering the threshold question needs a titration series -- the same gene knocked down to several graded levels -- which this screen does not contain, since each gene appears at whatever single depth its guide happened to achieve. THE CONFOUND is that genes differ hugely in how much phenotype they can produce at any depth, so raw phenotype against raw depth would mostly measure gene identity; the analysis is therefore restricted to essential genes, where a phenotype is expected at all. WHAT IT CANNOT SAY: this is the depth at which the TRANSCRIPTIONAL phenotype saturates, not the depth at which the protein stops working. Protein lags mRNA and many proteins function at a fraction of normal abundance, so this is an upper bound on the useful threshold, expressed in the only currency the screen carries. Deterministic."
+}

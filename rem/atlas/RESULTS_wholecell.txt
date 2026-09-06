@@ -1,0 +1,102 @@
+=================================================================================================
+A COUPLED GENOME-SCALE MODEL OF METABOLISM AND EXPRESSION
+=================================================================================================
+
+=================================================================================================
+W1  THE PARTS CONNECT
+=================================================================================================
+  expression layer: 19900 protein-coding genes, 4 rates each = 79,600 rates
+  metabolism layer: 10600 reactions, 5835 metabolites
+  reactions carrying an enzyme (a GPR): 5938 of 10600
+  distinct gene identifiers in those rules: 2248 (1884 distinct base genes)
+  of the 19900 genes, 1884 are metabolic (9.5%); the other 18,016 pay the proteome and ribosome costs but catalyse nothing here
+  reactions needing a complex (an 'and'): 480; with isozymes (an 'or'): 2718
+  orphan reactions with no enzyme at all: 4662   PASS
+
+=================================================================================================
+W3  THE FIXED POINT EXISTS AND IS FOUND
+=================================================================================================
+  bisection: 21 linear programs in 36.5s
+  coupled growth rate mu = 0.616435 /h   (doubling time 1.12 h)
+  PASS (a fixed point was located)
+
+=================================================================================================
+W4  THE COUPLING CHANGES THE ANSWER
+=================================================================================================
+  plain FBA, no enzyme or proteome constraint : mu = 1.688875 /h
+  coupled metabolism + expression             : mu = 0.616435 /h
+  ratio 0.3650   PASS -- expression genuinely constrains metabolism
+
+=================================================================================================
+W2  THE LINEAR PROGRAM IS WELL POSED
+=================================================================================================
+  worst |S v| = 5.46e-12   PASS
+  protein used 0.275000 g/gDW of the 0.275000 available to metabolism + ribosome   binding: False
+  ribosome 0.251559 g/gDW = 50.31% of total protein  (mammalian cells are a few per cent)
+
+=================================================================================================
+W5  WHICH LAYER LIMITS
+=================================================================================================
+  enzyme-capacity constraints binding : 1013 of 5938
+  proteome-budget shadow price        : -0.000000e+00
+  translation-capacity shadow price   : -1.603084e+00
+  ribosome mass fraction of the metabolic proteome: 0.9148
+  the binding limitation is: translation capacity
+
+=================================================================================================
+W6  THE WHOLE-CELL SENSITIVITY
+=================================================================================================
+  Screening by dual, then verifying by finite difference on the bisection -- the two-stage
+  pattern recon.py's R3 forced, since LP duals fire falsely at degenerate optima.
+  bisection tolerance 1e-09 on mu = 0.616435 with a 5%
+  perturbation puts the RESOLUTION FLOOR at |d log mu / d log k| = 3.32e-08.
+  Anything at or below that is noise, not a sensitivity, and is marked so.
+                        rate   d log mu / d log k    
+               kcat HMR_0767             0.000016    
+          kcat FAOXC123C102m             0.000016    
+                  kcat r1477             0.000016    
+                  kcat r0743             0.000016    
+             kcat NACHEXA8ly             0.000016    
+               kcat HMR_2684             0.000016    
+               kcat HMR_3234             0.000016    
+                kcat GLDBRAN             0.000016    
+    k_elong (ribosome speed)             0.920829    
+             proteome budget             0.084673    
+  k_dp of the non-metabolic proteome            -0.010141    
+  A global parameter that outranks every individual kcat means the whole-cell answer is
+  set by allocation, not by any one enzyme.
+
+=================================================================================================
+W7  THE ASSUMPTIONS DO NOT CARRY THE CONCLUSION
+=================================================================================================
+                             variant          mu  ratio to base                  limiting
+                                base    0.616394         0.9999      translation capacity
+                     kcat median x10    0.668884         1.0851      translation capacity
+                     kcat median /10    0.357544         0.5800      translation capacity
+                  proteome budget x2    0.644409         1.0454      translation capacity
+                   ribosome speed x2    1.127869         1.8297      translation capacity
+          non-metabolic fraction 0.7    0.332336         0.5391      translation capacity
+          non-metabolic fraction 0.2    0.899475         1.4592      translation capacity
+                   ribosome speed /2    0.317627         0.5153      translation capacity
+
+=================================================================================================
+W8  WHAT IS ABSENT
+=================================================================================================
+  Modelled: metabolism (10,600 reactions), the metabolic proteome, ribosome allocation,
+  and the translation cost of the whole proteome including non-metabolic genes.
+  NOT modelled, at all:
+    - DNA replication and the cell cycle
+    - signal transduction and regulation -- the model has no controller
+    - splicing, RNA processing, export
+    - protein folding, chaperones, quality control
+    - secretion, trafficking, the endomembrane system
+    - the cytoskeleton and mechanics
+    - organelle biogenesis; mitochondria appear only as compartment labels
+    - membrane potential and electrochemical gradients beyond stoichiometry
+    - every spatial degree of freedom -- the cell is one well-mixed bag
+    - cell-to-cell variation; this is one deterministic allocation
+  1884 of 19900 genes (9.5%) have a
+  mechanism in this model. The other 90.5% appear only as
+  a mass and a ribosome burden. That is the honest measure of how much of a cell this is.
+
+=================================================================================================

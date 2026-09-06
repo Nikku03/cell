@@ -1,0 +1,65 @@
+{
+  "entities": 23367,
+  "entry_reactions": 4832,
+  "entry_with_preparation": 1129,
+  "genuine_preparation": 837,
+  "self_preparation": 292,
+  "hub_cap": 5,
+  "sweep": {
+    "5": {
+      "links": 9809,
+      "oriented": 2819,
+      "n": 220,
+      "acc": 0.5818181818181818,
+      "se": 0.03325560684947912
+    },
+    "10": {
+      "links": 13670,
+      "oriented": 3670,
+      "n": 267,
+      "acc": 0.5692883895131086,
+      "se": 0.030304269675976457
+    },
+    "25": {
+      "links": 19371,
+      "oriented": 3936,
+      "n": 287,
+      "acc": 0.5470383275261324,
+      "se": 0.029383170640291032
+    },
+    "50": {
+      "links": 25184,
+      "oriented": 4088,
+      "n": 291,
+      "acc": 0.5567010309278351,
+      "se": 0.02912144219478484
+    },
+    "200": {
+      "links": 59794,
+      "oriented": 4426,
+      "n": 297,
+      "acc": 0.5656565656565656,
+      "se": 0.028761717880573485
+    }
+  },
+  "preceding_only": {
+    "oriented": 3444,
+    "n": 333,
+    "acc": 0.6546546546546547,
+    "se": 0.02605618425861829
+  },
+  "flow_only": {
+    "oriented": 2819,
+    "n": 220,
+    "acc": 0.5818181818181818,
+    "se": 0.03325560684947912
+  },
+  "combined": {
+    "oriented": 3530,
+    "n": 319,
+    "acc": 0.6238244514106583,
+    "se": 0.027122588605112186
+  },
+  "new_from_flow": 86,
+  "verdict": "WHAT A PATHWAY NEEDS BEFORE IT STARTS. Reactome's precedingEvent is largely within-pathway, so it never connects a pathway's first reaction to whatever produced the protein that reaction consumes. Entity flow does: output(A) meeting input(B) means A prepares B, across pathway boundaries. Of 4,832 reactions with NO precedingEvent -- the pathway entry points -- 1,129 have inputs produced by another reaction, BUT 292 of those (26%) are the same protein being modified or complexed with ITSELF, which is not preparation by anything. Discounting those leaves 837 (17.3% of entry reactions) with a genuine upstream step contributed by a DIFFERENT gene -- and precedingEvent was blind to all of them. THE CURRENCY-MOLECULE TRAP IS THE WHOLE DIFFICULTY AND IT IS SWEPT RATHER THAN GUESSED: ATP and water are touched by thousands of reactions, and joining on them declares that everything precedes everything. Across hub caps 5 (2,819 edges, 0.582), 10 (3,670 edges, 0.569), 25 (3,936 edges, 0.547), 50 (4,088 edges, 0.557), 200 (4,426 edges, 0.566), the cap was set to 5. ON THE DIRECTED NETWORK: precedingEvent alone orients 3,444 PPI edges at 0.6547; entity flow alone orients 2,819 at 0.5818; together 3,530 at 0.6238 +/- 0.0271. SO ENTITY FLOW SHOULD NOT BE MERGED INTO THE ORIENTATION: it is barely above the 0.5664 the degree rule gets, it is well below precedingEvent's 0.6547, and combining them DILUTES the result to 0.6238 while adding only 86 edges. The two uses come apart -- entity flow answers 'what does this pathway need' well and 'which way does this edge point' badly -- and the directed network therefore keeps precedingEvent as its pathway-order tier. WHAT THIS CANNOT SAY. Entity flow is a claim about the CURATED pathway, not about K562 -- and it is a weaker claim than precedingEvent, because sharing an entity means one reaction can supply another, not that it does so in these cells at this time. Two reactions can also exchange an entity in a compartment where neither protein is present. The hub cap is a blunt instrument: it removes promiscuous entities by count, which will also drop genuinely informative hubs like ubiquitin. And an arrow between reactions is still not proof that the two PROTEINS touch in that order."
+}

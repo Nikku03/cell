@@ -1,0 +1,703 @@
+{
+ "model": "enzyme-capacity-v1",
+ "n_reactions": 12931,
+ "n_catalysed": 7782,
+ "join": {
+  "gem_genes": {
+   "joined": 2846,
+   "of": 2848,
+   "rate": 0.9992977528089888,
+   "via": "ensembl",
+   "label": "Human-GEM catalysts (ENSG)"
+  },
+  "sabio_accessions": {
+   "joined": 411,
+   "of": 415,
+   "rate": 0.9903614457831326,
+   "via": "uniprot",
+   "label": "SABIO-RK kcat accessions -> gene"
+  }
+ },
+ "kcat_accuracy": {
+  "EC_HUMAN": {
+   "n": 2330,
+   "median_fold_error": 2.8190970943937383,
+   "within_4x": 0.6008583690987125
+  },
+  "EC_ANY": {
+   "n": 2377,
+   "median_fold_error": 3.424242424242424,
+   "within_4x": 0.5448043752629365
+  },
+  "global-median null": {
+   "n": 2430,
+   "median_fold_error": 10.0,
+   "within_4x": 0.33415637860082303
+  },
+  "GENE": {
+   "n": 2949,
+   "median_fold_error": 2.0454545454545454,
+   "within_4x": 0.724991522550017
+  }
+ },
+ "kcat_tier_counts": {
+  "unknown": 4448,
+  "GENE": 1800,
+  "EC_ANY": 960,
+  "EC_HUMAN": 574
+ },
+ "depmap_line": {
+  "id": "ACH-000551",
+  "name": "K-562",
+  "rrid": "CVCL_0004",
+  "asserted_against": "depmap/Model.csv"
+ },
+ "abundance_source": "PaxDb 9606-iBAQ_K562_Geiger_2012 (Geiger et al., Mol Cell Proteomics 2012)",
+ "coverage": {
+  "K562 abundance": {
+   "n": 570,
+   "of": 996,
+   "frac": 0.572289156626506,
+   "mean_dep_covered": 0.2714385964912281,
+   "mean_dep_uncovered": 0.026924882629107978,
+   "mwu_p": 1.0805697976298475e-45
+  },
+  "generic ppm": {
+   "n": 987,
+   "of": 996,
+   "frac": 0.9909638554216867,
+   "mean_dep_covered": 0.16708206686930088,
+   "mean_dep_uncovered": 0.14222222222222222,
+   "mwu_p": 0.8826982152813684
+  },
+  "kcat on a required reaction": {
+   "n": 415,
+   "of": 996,
+   "frac": 0.4166666666666667,
+   "mean_dep_covered": 0.1686746987951807,
+   "mean_dep_uncovered": 0.16555938037865747,
+   "mwu_p": 0.46387268037280405
+  },
+  "vmax = kcat x [E] (K562)": {
+   "n": 226,
+   "of": 996,
+   "frac": 0.22690763052208834,
+   "mean_dep_covered": 0.16486725663716817,
+   "mean_dep_uncovered": 0.16744155844155845,
+   "mwu_p": 0.11795736917068059
+  },
+  "vmax (generic ppm)": {
+   "n": 368,
+   "of": 996,
+   "frac": 0.36947791164658633,
+   "mean_dep_covered": 0.10663043478260868,
+   "mean_dep_uncovered": 0.20214968152866242,
+   "mwu_p": 6.242134174834417e-06
+  },
+  "K562 gene effect": {
+   "n": 987,
+   "of": 996,
+   "frac": 0.9909638554216867,
+   "mean_dep_covered": 0.16815602836879429,
+   "mean_dep_uncovered": 0.024444444444444446,
+   "mwu_p": 0.09576500076127682
+  }
+ },
+ "test1_headtohead": {
+  "kcat x [E], K562": {
+   "binary required-catalyst flag": {
+    "spearman": 0.038802184738955456,
+    "spearman_p": 0.243827096418063,
+    "auc": 0.5181131211357911
+   },
+   "capacity burden (kcat x [E], K562)": {
+    "spearman": 0.04145499520317514,
+    "spearman_p": 0.21305045319430052,
+    "auc": 0.5201225097320815
+   },
+   "n": 904,
+   "n_required_with_capacity": 226,
+   "n_required_dropped_unknown_capacity": 344,
+   "n_essential": 110
+  },
+  "abundance-only [E], K562": {
+   "binary required-catalyst flag": {
+    "spearman": 0.06809294378224855,
+    "spearman_p": 0.022732138848296505,
+    "auc": 0.5415530102708269
+   },
+   "capacity burden (abundance-only [E], K562)": {
+    "spearman": 0.03129583155109017,
+    "spearman_p": 0.2955714984979624,
+    "auc": 0.5134856792941241
+   },
+   "n": 1119,
+   "n_required_with_capacity": 441,
+   "n_required_dropped_unknown_capacity": 129,
+   "n_essential": 148
+  },
+  "kcat x [E], generic ppm": {
+   "binary required-catalyst flag": {
+    "spearman": 0.06413248050149498,
+    "spearman_p": 0.005544462838404668,
+    "auc": 0.5420953242716918
+   },
+   "capacity burden (kcat x [E], generic ppm)": {
+    "spearman": 0.052466018957552596,
+    "spearman_p": 0.023313839041933418,
+    "auc": 0.5350605857938115
+   },
+   "n": 1869,
+   "n_required_with_capacity": 368,
+   "n_required_dropped_unknown_capacity": 619,
+   "n_essential": 116
+  }
+ },
+ "test2_matched": {
+  "A  abundance-only capacity [E], K562": {
+   "label": "A  abundance-only capacity [E], K562",
+   "covariates": [
+    "PPI degree",
+    "reactions",
+    "abundance"
+   ],
+   "bins": [
+    0.3333333333333333,
+    0.6666666666666666
+   ],
+   "n_draws": 25,
+   "n": 158,
+   "mean_low_capacity": 0.17701772151898734,
+   "mean_high_capacity": 0.16735189873417722,
+   "diff": 0.009665822784810131,
+   "diff_sd": 0.016903654714335886,
+   "p_median": 0.7568166844117618,
+   "frac_draws_p05": 0.0,
+   "residual": {
+    "PPI degree": 0.7892990947492643,
+    "reactions": 0.8792103298293749,
+    "abundance": 2.566346001854629e-07,
+    "publications": 0.6718230938571669,
+    "required-count": 0.7769210024404686
+   },
+   "n_pool": 441,
+   "n_low": 222,
+   "n_high": 219,
+   "spearman_capacity_vs_abundance": 0.8643042735205333,
+   "match_failed_on": [
+    "abundance"
+   ],
+   "ladder": {
+    "+ required-count": {
+     "n": 156,
+     "n_draws": 25,
+     "diff": -0.006958974358974342,
+     "mean_low_capacity": 0.17730769230769233,
+     "mean_high_capacity": 0.18426666666666666,
+     "p_median": 0.7566397182494313,
+     "frac_draws_p05": 0.0,
+     "residual": {
+      "PPI degree": 0.8016419368811156,
+      "reactions": 0.8138472768359404,
+      "abundance": 3.283001085140936e-07,
+      "publications": 0.6218737732842693,
+      "required-count": 0.7922556875029947
+     },
+     "match_failed_on": [
+      "abundance"
+     ]
+    },
+    "+ publications": {
+     "n": 134,
+     "n_draws": 25,
+     "diff": -0.024859701492537304,
+     "mean_low_capacity": 0.1757313432835821,
+     "mean_high_capacity": 0.2005910447761194,
+     "p_median": 0.6054201033832269,
+     "frac_draws_p05": 0.0,
+     "residual": {
+      "PPI degree": 0.7493350388096798,
+      "reactions": 0.660021209075623,
+      "abundance": 1.4654109992197818e-05,
+      "publications": 0.6590600639634596,
+      "required-count": 0.749114865995601
+     },
+     "match_failed_on": [
+      "abundance"
+     ]
+    }
+   },
+   "endpoint": "dep_frac",
+   "shuffled_diff_mean": -0.002786771090217342,
+   "shuffled_diff_sd": 0.028046189486853196,
+   "raw_low_capacity_mean": 0.12427927927927927,
+   "raw_high_capacity_mean": 0.23255707762557076,
+   "mde_80pct": 0.1418599075217929,
+   "powered_for_ref_effect": false
+  },
+  "B  kcat x [E], K562": {
+   "label": "B  kcat x [E], K562",
+   "covariates": [
+    "PPI degree",
+    "reactions",
+    "abundance"
+   ],
+   "bins": [
+    0.3333333333333333,
+    0.6666666666666666
+   ],
+   "n_draws": 25,
+   "n": 166,
+   "mean_low_capacity": 0.1887614457831325,
+   "mean_high_capacity": 0.15188433734939757,
+   "diff": 0.03687710843373495,
+   "diff_sd": 0.013956193829411143,
+   "p_median": 0.3576782173224907,
+   "frac_draws_p05": 0.0,
+   "residual": {
+    "PPI degree": 0.7109372485247802,
+    "reactions": 0.8035822470069784,
+    "abundance": 0.8542169158181285,
+    "publications": 0.7320990833371097,
+    "required-count": 0.8469962690986794
+   },
+   "n_pool": 226,
+   "n_low": 113,
+   "n_high": 113,
+   "spearman_capacity_vs_abundance": 0.15483055686258204,
+   "match_failed_on": [],
+   "ladder": {
+    "+ required-count": {
+     "n": 152,
+     "n_draws": 25,
+     "diff": 0.04877894736842106,
+     "mean_low_capacity": 0.20338947368421054,
+     "mean_high_capacity": 0.15461052631578948,
+     "p_median": 0.49085384283453526,
+     "frac_draws_p05": 0.0,
+     "residual": {
+      "PPI degree": 0.6514262008422728,
+      "reactions": 0.9103875406630961,
+      "abundance": 0.9086161144878011,
+      "publications": 0.6011716210436514,
+      "required-count": 0.8398115821937935
+     },
+     "match_failed_on": []
+    },
+    "+ publications": {
+     "n": 110,
+     "n_draws": 25,
+     "diff": 0.07577454545454543,
+     "mean_low_capacity": 0.2458690909090909,
+     "mean_high_capacity": 0.17009454545454544,
+     "p_median": 0.28432355935487175,
+     "frac_draws_p05": 0.0,
+     "residual": {
+      "PPI degree": 0.6422269367523598,
+      "reactions": 0.9425330692806163,
+      "abundance": 0.9206820102793155,
+      "publications": 0.6742984962887989,
+      "required-count": 0.893181236575141
+     },
+     "match_failed_on": []
+    }
+   },
+   "endpoint": "dep_frac",
+   "shuffled_diff_mean": 0.013311391012013582,
+   "shuffled_diff_sd": 0.04591436799009524,
+   "raw_low_capacity_mean": 0.17398230088495575,
+   "raw_high_capacity_mean": 0.15575221238938056,
+   "mde_80pct": 0.1333867572609687,
+   "powered_for_ref_effect": false
+  },
+  "C  kcat alone, K562": {
+   "label": "C  kcat alone, K562",
+   "covariates": [
+    "PPI degree",
+    "reactions",
+    "abundance"
+   ],
+   "bins": [
+    0.3333333333333333,
+    0.6666666666666666
+   ],
+   "n_draws": 25,
+   "n": 174,
+   "mean_low_capacity": 0.25712643678160924,
+   "mean_high_capacity": 0.16690574712643677,
+   "diff": 0.09022068965517244,
+   "diff_sd": 0.012760087727606896,
+   "p_median": 0.09944407149423046,
+   "frac_draws_p05": 0.32,
+   "residual": {
+    "PPI degree": 0.7252757631466444,
+    "reactions": 0.7204754964863551,
+    "abundance": 0.7315078404315706,
+    "publications": 0.5744344891899968,
+    "required-count": 0.749102412404756
+   },
+   "n_pool": 264,
+   "n_low": 132,
+   "n_high": 132,
+   "spearman_capacity_vs_abundance": 0.006018918198451137,
+   "match_failed_on": [],
+   "ladder": {
+    "+ required-count": {
+     "n": 158,
+     "n_draws": 25,
+     "diff": 0.05647594936708864,
+     "mean_low_capacity": 0.23331139240506332,
+     "mean_high_capacity": 0.1768354430379747,
+     "p_median": 0.15593419718114487,
+     "frac_draws_p05": 0.04,
+     "residual": {
+      "PPI degree": 0.8721790423765706,
+      "reactions": 0.8864026001719999,
+      "abundance": 0.8330780523976088,
+      "publications": 0.7160312210317125,
+      "required-count": 0.6725457303916673
+     },
+     "match_failed_on": []
+    },
+    "+ publications": {
+     "n": 118,
+     "n_draws": 25,
+     "diff": 0.06610169491525424,
+     "mean_low_capacity": 0.2338237288135593,
+     "mean_high_capacity": 0.1677220338983051,
+     "p_median": 0.1660652957281321,
+     "frac_draws_p05": 0.04,
+     "residual": {
+      "PPI degree": 0.7529129959249407,
+      "reactions": 0.8802057864889014,
+      "abundance": 0.8089014968162956,
+      "publications": 0.8686905625908143,
+      "required-count": 0.7577683240089519
+     },
+     "match_failed_on": []
+    }
+   },
+   "endpoint": "dep_frac",
+   "shuffled_diff_mean": -0.00881497723145758,
+   "shuffled_diff_sd": 0.03704958248937604,
+   "raw_low_capacity_mean": 0.3611363636363636,
+   "raw_high_capacity_mean": 0.1375,
+   "mde_80pct": 0.1572355071883873,
+   "powered_for_ref_effect": false
+  },
+  "D  route alternatives": {
+   "label": "D  route alternatives",
+   "covariates": [
+    "PPI degree",
+    "reactions",
+    "abundance"
+   ],
+   "bins": [
+    0.3333333333333333,
+    0.6666666666666666
+   ],
+   "n_draws": 25,
+   "n": 368,
+   "mean_low_capacity": 0.36977826086956517,
+   "mean_high_capacity": 0.2140217391304348,
+   "diff": 0.1557565217391304,
+   "diff_sd": 0.009487205591916376,
+   "p_median": 0.0013755822749347813,
+   "frac_draws_p05": 1.0,
+   "residual": {
+    "PPI degree": 0.9399723914025451,
+    "reactions": 0.0002460550729042371,
+    "abundance": 0.7692936229283325,
+    "publications": 0.043556339332887245,
+    "required-count": 4.1458868328983195e-05
+   },
+   "n_pool": 564,
+   "n_low": 380,
+   "n_high": 184,
+   "spearman_capacity_vs_abundance": 0.04837584710159954,
+   "match_failed_on": [
+    "reactions"
+   ],
+   "ladder": {
+    "+ required-count": {
+     "n": 324,
+     "n_draws": 25,
+     "diff": 0.12763703703703705,
+     "mean_low_capacity": 0.342846913580247,
+     "mean_high_capacity": 0.21520987654320986,
+     "p_median": 0.01642453749167477,
+     "frac_draws_p05": 0.92,
+     "residual": {
+      "PPI degree": 0.8064100336593089,
+      "reactions": 0.025532794840883718,
+      "abundance": 0.8547315027328282,
+      "publications": 0.06344595598898943,
+      "required-count": 0.8932245318508136
+     },
+     "match_failed_on": []
+    },
+    "+ publications": {
+     "n": 278,
+     "n_draws": 25,
+     "diff": 0.1106388489208633,
+     "mean_low_capacity": 0.3207309352517985,
+     "mean_high_capacity": 0.21009208633093526,
+     "p_median": 0.02051638890145157,
+     "frac_draws_p05": 0.76,
+     "residual": {
+      "PPI degree": 0.7525171985317636,
+      "reactions": 0.06877018700672355,
+      "abundance": 0.7055630079718378,
+      "publications": 0.8444183826795769,
+      "required-count": 0.840041272416054
+     },
+     "match_failed_on": []
+    }
+   },
+   "endpoint": "dep_frac",
+   "shuffled_diff_mean": -0.017096429489941535,
+   "shuffled_diff_sd": 0.028106263671572897,
+   "raw_low_capacity_mean": 0.2884473684210526,
+   "raw_high_capacity_mean": 0.2140217391304348,
+   "mde_80pct": 0.10620197377432622,
+   "powered_for_ref_effect": false,
+   "subsystem_low_vs_high": {
+    "Transport reactions": {
+     "low": 0.19448529411764706,
+     "high": 0.2872628726287263
+    },
+    "Fatty acid oxidation": {
+     "low": 0.16397058823529412,
+     "high": 0.018970189701897018
+    },
+    "Beta oxidation of even-chain fatty acids (peroxisomal)": {
+     "low": 0.034926470588235295,
+     "high": 0.0
+    },
+    "Leukotriene metabolism": {
+     "low": 0.030147058823529412,
+     "high": 0.0
+    },
+    "Beta oxidation of unsaturated fatty acids (n-9) (peroxisomal)": {
+     "low": 0.029411764705882353,
+     "high": 0.0
+    }
+   },
+   "leave_one_subsystem_out": {
+    "Transport reactions": {
+     "n": 206,
+     "diff": 0.11758058252427186,
+     "frac_draws_p05": 0.56,
+     "n_genes_left": 484
+    },
+    "Fatty acid oxidation": {
+     "n": 272,
+     "diff": 0.11870588235294117,
+     "frac_draws_p05": 1.0,
+     "n_genes_left": 536
+    },
+    "Beta oxidation of even-chain fatty acids (peroxisomal)": {
+     "n": 280,
+     "diff": 0.11947714285714285,
+     "frac_draws_p05": 0.96,
+     "n_genes_left": 558
+    },
+    "Leukotriene metabolism": {
+     "n": 280,
+     "diff": 0.11466,
+     "frac_draws_p05": 0.92,
+     "n_genes_left": 553
+    },
+    "Beta oxidation of unsaturated fatty acids (n-9) (peroxisomal)": {
+     "n": 280,
+     "diff": 0.11947714285714285,
+     "frac_draws_p05": 0.96,
+     "n_genes_left": 558
+    }
+   }
+  },
+  "B' kcat x [E], generic ppm": {
+   "label": "B' kcat x [E], generic ppm",
+   "covariates": [
+    "PPI degree",
+    "reactions",
+    "abundance"
+   ],
+   "bins": [
+    0.3333333333333333,
+    0.6666666666666666
+   ],
+   "n_draws": 25,
+   "n": 170,
+   "mean_low_capacity": 0.1307435294117647,
+   "mean_high_capacity": 0.10406117647058824,
+   "diff": 0.02668235294117647,
+   "diff_sd": 0.017547830828396057,
+   "p_median": 0.7271486848580089,
+   "frac_draws_p05": 0.0,
+   "residual": {
+    "PPI degree": 0.8322049721133271,
+    "reactions": 0.7921077788768456,
+    "abundance": 0.20297691928722864,
+    "publications": 0.7280482841647995,
+    "required-count": 0.8397272130376072
+   },
+   "n_pool": 368,
+   "n_low": 184,
+   "n_high": 184,
+   "spearman_capacity_vs_abundance": 0.6729003423168041,
+   "match_failed_on": [],
+   "ladder": {
+    "+ required-count": {
+     "n": 164,
+     "n_draws": 25,
+     "diff": 0.031975609756097555,
+     "mean_low_capacity": 0.13494634146341464,
+     "mean_high_capacity": 0.10297073170731709,
+     "p_median": 0.7653709752487643,
+     "frac_draws_p05": 0.0,
+     "residual": {
+      "PPI degree": 0.7945657448943525,
+      "reactions": 0.8146868618186681,
+      "abundance": 0.24054171998304263,
+      "publications": 0.6734023891536838,
+      "required-count": 0.6642730000230607
+     },
+     "match_failed_on": []
+    },
+    "+ publications": {
+     "n": 152,
+     "n_draws": 25,
+     "diff": 0.033731578947368425,
+     "mean_low_capacity": 0.13980526315789474,
+     "mean_high_capacity": 0.1060736842105263,
+     "p_median": 0.7720513094449099,
+     "frac_draws_p05": 0.0,
+     "residual": {
+      "PPI degree": 0.7807770118986818,
+      "reactions": 0.8934157220162214,
+      "abundance": 0.25498516205696375,
+      "publications": 0.841181055156734,
+      "required-count": 0.5986670906296258
+     },
+     "match_failed_on": []
+    }
+   },
+   "endpoint": "dep_frac",
+   "shuffled_diff_mean": 0.016145568014665802,
+   "shuffled_diff_sd": 0.030223844398918266,
+   "raw_low_capacity_mean": 0.07684782608695652,
+   "raw_high_capacity_mean": 0.1364130434782609,
+   "mde_80pct": 0.11062163647735289,
+   "powered_for_ref_effect": false
+  },
+  "B* kcat x [E], K562 -> K562 gene effect": {
+   "label": "B* kcat x [E], K562 -> K562 gene effect",
+   "covariates": [
+    "PPI degree",
+    "reactions",
+    "abundance"
+   ],
+   "bins": [
+    0.3333333333333333,
+    0.6666666666666666
+   ],
+   "n_draws": 25,
+   "n": 166,
+   "mean_low_capacity": -0.3130164014887495,
+   "mean_high_capacity": -0.2644087888462277,
+   "diff": -0.04860761264252175,
+   "diff_sd": 0.03207381509925986,
+   "p_median": 0.5288384929950399,
+   "frac_draws_p05": 0.0,
+   "residual": {
+    "PPI degree": 0.7109372485247802,
+    "reactions": 0.8035822470069784,
+    "abundance": 0.8542169158181285,
+    "publications": 0.7320990833371097,
+    "required-count": 0.8469962690986794
+   },
+   "n_pool": 226,
+   "n_low": 113,
+   "n_high": 113,
+   "spearman_capacity_vs_abundance": 0.15483055686258204,
+   "match_failed_on": [],
+   "ladder": {
+    "+ required-count": {
+     "n": 152,
+     "n_draws": 25,
+     "diff": -0.05438701118070258,
+     "mean_low_capacity": -0.3329999946808539,
+     "mean_high_capacity": -0.2786129835001513,
+     "p_median": 0.3956696450354704,
+     "frac_draws_p05": 0.0,
+     "residual": {
+      "PPI degree": 0.6514262008422728,
+      "reactions": 0.9103875406630961,
+      "abundance": 0.9086161144878011,
+      "publications": 0.6011716210436514,
+      "required-count": 0.8398115821937935
+     },
+     "match_failed_on": []
+    },
+    "+ publications": {
+     "n": 110,
+     "n_draws": 25,
+     "diff": -0.06469183709855952,
+     "mean_low_capacity": -0.35990365266837243,
+     "mean_high_capacity": -0.29521181556981285,
+     "p_median": 0.4842752455159314,
+     "frac_draws_p05": 0.0,
+     "residual": {
+      "PPI degree": 0.6422269367523598,
+      "reactions": 0.9425330692806163,
+      "abundance": 0.9206820102793155,
+      "publications": 0.6742984962887989,
+      "required-count": 0.893181236575141
+     },
+     "match_failed_on": []
+    }
+   },
+   "endpoint": "k562_ge",
+   "shuffled_diff_mean": -0.009313632944639116,
+   "shuffled_diff_sd": 0.08078712723814355,
+   "raw_low_capacity_mean": -0.3076094646687343,
+   "raw_high_capacity_mean": -0.273043807030604,
+   "mde_80pct": 0.2354031028626429,
+   "powered_for_ref_effect": false
+  }
+ },
+ "control_ladder": {
+  "core": [
+   "PPI degree",
+   "reactions",
+   "abundance"
+  ],
+  "+ required-count": [
+   "PPI degree",
+   "reactions",
+   "abundance",
+   "required-count"
+  ],
+  "+ publications": [
+   "PPI degree",
+   "reactions",
+   "abundance",
+   "required-count",
+   "publications"
+  ]
+ },
+ "limits": [
+  "kcat is UNKNOWN for 4,448/7,782 (57%) of catalysed reactions and is stored as None, never 1.0; capacity is therefore undefined -- not low -- for that majority, and every kcat arm below runs on the characterised minority",
+  "kcat coverage is not missing at random: it tracks how well-studied an enzyme is, and the coverage table reports the dep_frac of covered vs uncovered genes so the direction of that bias is visible rather than assumed",
+  "the GENE tier is a kcat for the enzyme, but still not for THIS cell: SABIO-RK values are in vitro, at assorted pH and temperature, on purified protein, and in vivo apparent kcat is typically well below them",
+  "capacity here is kcat x [E] -- an in-vitro CEILING. It contains no substrate concentration, no saturation, no allosteric or PTM regulation and no flux, so a reaction can sit orders of magnitude below this ceiling; the project's own kapp module found the median reaction ~30 orders below its ceiling under FBA",
+  "Human-GEM is a generic human model, so a reaction present here may be inactive in K562, while the abundance and the K562 gene effect are cell-specific -- the layer mixes one generic axis with two cell-specific ones and only the latter two are pinned to a cell",
+  "36% of the proteome is measured in the K562 iBAQ layer and coverage is steeply abundance-dependent, so [E] is a lower bound wherever an OR branch is unmeasured (flagged `E_*_complete`) and undefined wherever an AND subunit is",
+  "dep_frac is a pan-cancer summary and the K562 gene effect is one line; neither is a metabolic flux measurement, so this tests transfer between layers, not against a metabolic gold standard",
+  "route_alternatives counts reactions sharing a non-hub product (hub cutoff 50 producing reactions) -- a topological proxy for redundancy, not a proven bypass: a counted alternative may be in the wrong compartment, unexpressed in K562, or thermodynamically infeasible, and no flux calculation was run to check that any of them can actually carry the load. It is also the arm that survived, so it carries the most weight and the least mechanism",
+  "the surviving route-redundancy effect is measured on a HUB CUTOFF chosen a priori at 50 producing reactions and not swept; a different currency-metabolite definition would give a different alternatives count",
+  "the kcat arms are not merely null, they are underpowered: at 152-174 matched genes per draw the smallest detectable difference at 80% power is 0.11-0.16 dep_frac, above the +0.081 the binary flag itself achieved, so they bound what was tested rather than showing kcat is uninformative"
+ ],
+ "verdict": "KCAT BOUGHT NOTHING; THE HALF OF CAPACITY THAT WORKS NEEDS NO KCAT AT ALL. Head to head on 904 identical genes (226 required catalysts with a known kcat x [E] plus 678 required for nothing; 344 required genes DROPPED rather than scored as zero because their kcat is unknown), the binary flag scores Spearman +0.0388 / AUC 0.5181 and the continuous capacity burden +0.0415 / AUC 0.5201 -- raw held-out values, never a difference from a shuffle. Capacity does not separate them. Inside the required-catalyst class, where the flag is constant and can say nothing, low kcat x [E] genes carry dep_frac 0.1888 against 0.1519 for high-capacity genes matched on PPI degree, reaction count and K562 abundance (+0.0369, 0% of 25 draws p<0.05, 166 genes/draw, residual imbalance clean at p>=0.71): not detectable. But that arm's smallest detectable difference at 80% power is 0.133, against the +0.081 the binary flag itself achieved -- so this is a well-controlled arm that could not have found the reference effect, and it is a CEILING ON WHAT WAS TESTED rather than evidence that capacity is uninformative. The arms separate what is doing the work. Abundance-only [E] is NOT a usable arm: its capacity correlates with the matching variable at Spearman +0.86, so it splits on very nearly the quantity it is matched on, the abundance residual comes back at p 3e-07, and its +0.0097 is reported as a failed match rather than a null. kcat alone -- the number that was supposed to be the new information -- gives +0.0902 (32% of draws, not detectable). What DOES work inside the required-catalyst class is the OTHER half of capacity -- route redundancy, how many alternative reactions produce the same non-hub metabolite -- and it is computed from stoichiometry alone, with no kcat and no proteomics. Genes whose required reactions have the fewest alternative producers carry dep_frac 0.3207 against 0.2101 (+0.1106, 76% of 25 draws p<0.05, 278 genes/draw), matched on PPI degree x reactions x abundance x required-count x publications. Its raw core match FAILED on reaction count (p 0.0002) and required-count (p 4e-05), so the core +0.1558 is discarded and the number quoted is the strictest CLEANLY matched level. It is not the acyl-chain bookkeeping artefact that killed the binary flag at 3+ reactions: the low-redundancy class is 16% fatty acid oxidation against 2%, but dropping each top subsystem in turn leaves the effect at +0.1147 to +0.1195, including +0.1187 at 100% of draws with fatty acid oxidation removed entirely. kcat is unknown for 57% of catalysed reactions and is stored as None, never 1.0, so the kcat arms run on the characterised 43% and the binding constraint is coverage, not method: only 226 of 996 required catalysts have both a kcat and a K562 protein measurement, and the K562 proteome covers a set with mean dep_frac 0.271 against 0.027 for the genes it misses (p 1e-45), so absence is unknown and strongly non-random."
+}

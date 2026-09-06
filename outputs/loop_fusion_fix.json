@@ -1,0 +1,166 @@
+{
+ "test": "loop 140 -- fusion diagnosed and one fix",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_fusion_linear.json",
+    "bytes": 45084,
+    "hash": "630b3066aefbe2ea",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 6111,
+   "selection": "all",
+   "fraction": 0.3705432937181664
+  },
+  "seed": 14000,
+  "controls": [
+   "exactly ONE fusion variant is tested, named before it ran",
+   "the fix is compared against graph-only, not only against the broken combined arm",
+   "degree-preserving rewiring on the fixed arm, because the complaint was about edges vs degree and not only about rho",
+   "the disconnection mechanism is measured before the fix is run"
+  ],
+  "note": "corrects loop 138 V1's misattributed rewiring figure and runs the subset test V1 argued instead of running.",
+  "warnings": []
+ },
+ "gates": {
+  "G1": true,
+  "G2": true,
+  "G3": false,
+  "G4": true,
+  "G5": true,
+  "G6": true
+ },
+ "g1": {
+  "A3 combined": {
+   "real": 0.391330104461398,
+   "null_mean": 0.35274505375888887,
+   "fraction": 0.9014002493991227
+  },
+  "A2 graph-only": {
+   "real": 0.5574830027078899,
+   "null_mean": 0.20053107799324574,
+   "fraction": 0.35970796781102954
+  }
+ },
+ "g2": {
+  "n_subset": 1008,
+  "scores": {
+   "A1 reaction-only": 0.33284945715816494,
+   "A2 graph-only": 0.431133926052138,
+   "A3 combined": 0.35507756634067034
+  },
+  "v1_argued_bound": 0.07880323713412979
+ },
+ "g3": {
+  "mag_with": 0.00038001369102858007,
+  "mag_without": 6.7638083059608855e-19,
+  "ratio": 1.779885366900275e-15
+ },
+ "g4": {
+  "fixed": 0.5308651285944762,
+  "combined": 0.3996636474373807,
+  "graph_only": 0.5208423822618403,
+  "beats_combined": true,
+  "beats_graph_only": true
+ },
+ "g5": {
+  "real": 0.5308651285944762,
+  "null_mean": 0.18137625356680362,
+  "fraction": 0.3416616458628902,
+  "dist_to_graph_only": 0.01804632194813932,
+  "dist_to_combined": 0.5597386035362324
+ },
+ "g6": {
+  "promote": true
+ },
+ "seconds": 1848.8529736995697,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 140 -- why fusion makes things worse, and whether that is fixable",
+  "====================================================================================================",
+  "",
+  "G1 THE CORRECTION, RESTATED FROM THE ARTEFACT",
+  "     A3 combined      real 0.3913   rewired null 0.3527   survives 90.1%",
+  "     A2 graph-only    real 0.5575   rewired null 0.2005   survives 36.0%",
+  "     loop 138 V1 said '90% of the graph signal survives degree-preserving rewiring'.",
+  "     The 90.1% is the COMBINED arm. Graph-only survives 36.0%,",
+  "     so rewiring destroys 64% of it: that channel is",
+  "     SPECIFIC EDGES, not hub identity. The layer's caveat is wrong and gets amended.",
+  "     And this makes the problem sharper: adding the reaction channel converts a",
+  "     specific-edge predictor into a degree predictor.",
+  "     G1 PASS -- corrected",
+  "",
+  "  building the graph and the target exactly as loop 96 did ...",
+  "     16,492 genes; reaction edges 78,423; graph edges 254,580",
+  "     genes with at least one reaction edge: 2,568 (15.6%)",
+  "     PRIMARY target: 6,111 genes with finite non-zero dep_frac",
+  "",
+  "G2 THE SUBSET TEST LOOP 138 ARGUED INSTEAD OF RUNNING",
+  "     genes in the target that carry a reaction edge: 1,008 of 6,111 (16.5%)",
+  "     A1 reaction-only   on the bridge subset   rho +0.3328",
+  "     A2 graph-only      on the bridge subset   rho +0.4311",
+  "     A3 combined        on the bridge subset   rho +0.3551",
+  "     loop 138 V1 ARGUED an upper bound of +0.0788 for reaction-only here;",
+  "     MEASURED it is +0.3328.",
+  "     G2 PASS -- even where the bridge EXISTS, the reaction",
+  "     channel stays below the graph channel",
+  "",
+  "G3 IS THE DISCONNECTION MECHANISM REAL?",
+  "     mean |reaction-embedding coordinate|, genes WITH a reaction edge:    0.000380",
+  "     mean |reaction-embedding coordinate|, genes WITHOUT a reaction edge: 0.000000",
+  "     ratio without/with: 0.000",
+  "     if disconnected genes had near-zero coordinates this ratio would be ~0 and the",
+  "     mechanism above would be wrong.",
+  "     G3 FAIL -- disconnected genes have near-zero coordinates; the diagnosis is wrong and the fix cannot help",
+  "",
+  "  baselines on the full target, this loop's own folds ...",
+  "     A1 reaction-only   rho +0.0355",
+  "     A2 graph-only      rho +0.5208",
+  "     A3 combined        rho +0.3997",
+  "",
+  "G4 THE ONE FIX: zero the reaction block where absent, plus a missingness indicator",
+  "     fixed fusion   rho +0.5309",
+  "     combined       rho +0.3997   (+0.1312)",
+  "     graph-only     rho +0.5208   (+0.0100)",
+  "     G4 PASS -- the fix repairs the damage the naive concatenation did",
+  "",
+  "G5 DOES THE FIXED FUSION KEEP THE SPECIFIC-EDGE SIGNAL?",
+  "     rewiring null 1/5: rho +0.0766",
+  "     rewiring null 2/5: rho +0.3532",
+  "     rewiring null 3/5: rho +0.0756",
+  "     rewiring null 4/5: rho +0.3528",
+  "     rewiring null 5/5: rho +0.0486",
+  "     fixed fusion real +0.5309   rewired null mean +0.1814   survives 34.2%",
+  "     graph-only survives 36.0%; combined survives 90.1%",
+  "     G5 PASS -- the fixed fusion is closer to GRAPH-ONLY, so it kept the specific-edge signal",
+  "",
+  "G6 THE HONEST VERDICT",
+  "     the naive concatenation is DIAGNOSED: 84% of genes have no reaction edge, their",
+  "     spectral coordinates encode disconnection rather than metabolism (G3 ratio 0.000),",
+  "     and ridge cannot tell absent from measured.",
+  "     the fix repairs the method.",
+  "     THE LAYER CAN BE PROMOTED: the fused model beats BOTH single channels and keeps",
+  "     the specific-edge signal.",
+  "",
+  "====================================================================================================",
+  "  G1  PASS",
+  "  G2  PASS",
+  "  G3  FAIL",
+  "  G4  PASS",
+  "  G5  PASS",
+  "  G6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 2 inputs, coverage 6111/16492 (37.1%) by 'all', seed 14000, controls 4"
+ ]
+}

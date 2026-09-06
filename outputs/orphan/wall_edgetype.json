@@ -1,0 +1,28 @@
+{
+ "cell_type": "K562",
+ "n_scored": 378,
+ "K": 50,
+ "coverage_matched": {
+  "phys": {
+   "recall": 0.4389122607904894,
+   "tide_null": 0.2564547770683953,
+   "lift": 1.7114606551993903,
+   "n": 321
+  },
+  "reg": {
+   "recall": 0.18285616875859512,
+   "tide_null": 0.21506175846938672,
+   "lift": 0.8502495750987922,
+   "n": 20
+  },
+  "comb": {
+   "recall": 0.4347527646171762,
+   "tide_null": 0.25609800129737925,
+   "n": 326
+  }
+ },
+ "oracle_ceiling": 0.6167660938278526,
+ "tide_null_all": 0.26026626949112974,
+ "verdict": "I SET THIS UP EXPECTING THE PHYSICAL INTERACTOME TO BE AT CHANCE -- IT IS NOT, so I am correcting myself. Coverage-matched on K562 (378 held-out KOs): PHYS (PPI+complex+pathway) -- the graph a NEXUS cascade would run over -- recalls 0.439 of a knockout's SPECIFIC movers vs the tide null 0.256 on the same KOs (1.71x, coverage 321/378). So the physical network DOES carry a modest specific signal -- but note HOW: not by a magnitude cascade, but as a SIMILARITY prior (knockouts of physically/functionally related genes produce similar downstream programs). That is consistent with, not contradicted by, pathway_ko_verify's 0.0x: two complex members do not move each OTHER's mRNA (0.0x edge-level transmission), yet knocking out either yields a SIMILAR downstream program (positive transfer) -- different statements. THE REGULON here is only testable on 20/378 KOs (TRRUST is sparse over this KO set); on those it is 0.183 (0.85x) -- too little coverage to rank against PHYS, so the earlier 0.011 was a COVERAGE artifact, NOT evidence the regulon fails. THE ORACLE* ceiling (0.617) still sits far above PHYS, so a fixed physical graph captures only ~part of the available specific signal. HONEST CONSEQUENCE FOR THE PROPOSAL: (1) the physical interactome IS informative (my 'it'll be at chance' prediction was wrong) -- but it works as a similarity prior, and it already IS the ~1.4x wall_test model, so wiring a NEXUS magnitude-cascade on top would need to BEAT unweighted physical-similarity, which is an untested and separate claim (and needs per-edge ddG we mostly lack at genome scale). (2) NEXUS's clean win remains PROTEIN/FUNCTIONAL consequence (which complexes destabilise), a different readout from mRNA. (3) The head-room to the oracle says the biggest lever is a LEARNED similarity, into which structural/interaction magnitude could enter as one FEATURE -- the honest way to use NEXUS here.",
+ "note": "I SET THIS UP EXPECTING THE PHYSICAL INTERACTOME TO BE AT CHANCE -- IT IS NOT, so I am correcting myself. Coverage-matched on K562 (378 held-out KOs): PHYS (PPI+complex+pathway) -- the graph a NEXUS cascade would run over -- recalls 0.439 of a knockout's SPECIFIC movers vs the tide null 0.256 on the same KOs (1.71x, coverage 321/378). So the physical network DOES carry a modest specific signal -- but note HOW: not by a magnitude cascade, but as a SIMILARITY prior (knockouts of physically/functionally related genes produce similar downstream programs). That is consistent with, not contradicted by, pathway_ko_verify's 0.0x: two complex members do not move each OTHER's mRNA (0.0x edge-level transmission), yet knocking out either yields a SIMILAR downstream program (positive transfer) -- different statements. THE REGULON here is only testable on 20/378 KOs (TRRUST is sparse over this KO set); on those it is 0.183 (0.85x) -- too little coverage to rank against PHYS, so the earlier 0.011 was a COVERAGE artifact, NOT evidence the regulon fails. THE ORACLE* ceiling (0.617) still sits far above PHYS, so a fixed physical graph captures only ~part of the available specific signal. HONEST CONSEQUENCE FOR THE PROPOSAL: (1) the physical interactome IS informative (my 'it'll be at chance' prediction was wrong) -- but it works as a similarity prior, and it already IS the ~1.4x wall_test model, so wiring a NEXUS magnitude-cascade on top would need to BEAT unweighted physical-similarity, which is an untested and separate claim (and needs per-edge ddG we mostly lack at genome scale). (2) NEXUS's clean win remains PROTEIN/FUNCTIONAL consequence (which complexes destabilise), a different readout from mRNA. (3) The head-room to the oracle says the biggest lever is a LEARNED similarity, into which structural/interaction magnitude could enter as one FEATURE -- the honest way to use NEXUS here."
+}

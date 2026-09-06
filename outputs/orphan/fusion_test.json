@@ -1,0 +1,14 @@
+{
+ "model": "net_disjoint.pt",
+ "n_mutations": 243,
+ "n_complexes": 12,
+ "folds": 5,
+ "node_only_pearson": 0.346,
+ "node_plus_dmasif_pearson": 0.321,
+ "pearson_gain": -0.025,
+ "node_only_hotspot_auc": 0.744,
+ "node_plus_dmasif_hotspot_auc": 0.717,
+ "hotspot_auc_gain": -0.027,
+ "helped": false,
+ "verdict": "With the STRONG pretrained dMaSIF net (net_disjoint.pt) as a fixed surface-embedding feature, over 243 alanine mutations / 12 complexes (GroupKFold k=5, node-only baseline on the same folds): \u0394\u0394G-magnitude Pearson 0.35->0.32 (\u0394-0.02); hotspot AUC 0.74->0.72 (\u0394-0.03). So even the strong (0.9-AUC-grade) surface embedding does NOT meaningfully improve mutation-effect prediction over the physics node \u2014 confirming the structural prediction: dMaSIF embeds WILD-TYPE surface geometry, and a point mutation's effect is a mutant-minus-WT DELTA the WT embedding can't express, however good it is. The honest architecture stays a PIPELINE (dMaSIF finds/scores the interface & partner; the physics node scores the specific substitution), not a fusion.  LIMITS: alanine mutations only; hotspot threshold \u0394\u0394G>1; RandomForest probe; the number is what it is."
+}

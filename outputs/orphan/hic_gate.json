@@ -1,0 +1,48 @@
+{
+ "base_rate": 0.0550769528603233,
+ "n_pairs": 10331,
+ "identity": 0.6050020469159778,
+ "ctcf_bar": 0.6573372875993357,
+ "intact": {
+  "n_loops": 47592,
+  "n_domains": 4904,
+  "hic_only": 0.5997065312955192,
+  "hic_plus_ctcf": 0.655424563223653,
+  "delta_on_top": -0.001912724375682817,
+  "control": 0.001224573670397655,
+  "net": -0.003137298046080472,
+  "se": 0.0029724251157528282,
+  "z": -1.0554674798883492,
+  "coverage": {
+   "loop_connects": 0.20027102894201917,
+   "loop_obs": 0.20027102894201917,
+   "loop_enrich": 0.20027102894201917,
+   "anchors_at_elem": 0.9504404220307812,
+   "anchors_at_tss": 0.9423095537702062,
+   "same_domain": 0.07956635369276933,
+   "domain_bounds_between": 0.6580195528022457
+  },
+  "sign_consistent": false
+ },
+ "insitu": {
+  "n_loops": 8800,
+  "n_domains": 0,
+  "hic_only": 0.6087714385328663,
+  "hic_plus_ctcf": 0.658030842363577,
+  "delta_on_top": 0.0006935547642413553,
+  "control": 0.0018776739493002292,
+  "net": -0.001184119185058874,
+  "se": 0.002142497535380922,
+  "z": -0.5526817023144651,
+  "coverage": {
+   "loop_connects": 0.04162230181008615,
+   "loop_obs": 0.04162230181008615,
+   "loop_enrich": 0.04162230181008615,
+   "anchors_at_elem": 0.4368405769044623,
+   "anchors_at_tss": 0.44526183331720065,
+   "same_domain": 0.0,
+   "domain_bounds_between": 0.0
+  },
+  "sign_consistent": false
+ }
+}

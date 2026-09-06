@@ -1,0 +1,309 @@
+{
+ "test": "loop_replication",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_rt_matrix.npy",
+    "bytes": 2618048,
+    "hash": "ad5b99930f04d922",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_tss_hg19.bed",
+    "bytes": 493972,
+    "hash": "f9256113c7481f82",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 16355,
+   "selection": "filtered",
+   "fraction": 0.9916929420325006
+  },
+  "seed": 6301,
+  "controls": [
+   "enhancer-correlation sign as a read-direction check",
+   "publication count measured against the new layer",
+   "shuffled-target null for the redundancy regression",
+   "loop 61 folds, baselines and label-permutation null reused",
+   "every other layer re-scored to separate rescue from general lift"
+  ],
+  "note": "20 Repli-chip wavelet-smoothed tracks, hg19; gene TSSs lifted hg38->hg19 because lifting 16,380 points is exact where lifting signal bins is not",
+  "warnings": []
+ },
+ "gates": {
+  "R1 liftover and indexing correct": true,
+  "R2 replication timing is not fame": true,
+  "R3 not redundant with the existing cell": true,
+  "R4 the chromosome is rescued": false,
+  "R5 nulls measured": true
+ },
+ "n_tracks": 20,
+ "lift_frac": 0.9989010989010989,
+ "signal_frac": 0.9995721794401662,
+ "rho_enhancers": 0.5930320166958674,
+ "rho_pubs": 0.14421052132938136,
+ "fame_median_loop61": 0.717254449971612,
+ "redundancy_rho": 0.6269014393471996,
+ "redundancy_null95": 0.013696165178385691,
+ "loops3d_without_rt": {
+  "model": 0.5071186440677966,
+  "pubs": 0.505713545434383,
+  "best1": 0.5332029275997372,
+  "best1_name": "enh",
+  "null95": 0.5204668240600444,
+  "margin": -0.02608428353194059,
+  "earned": false
+ },
+ "loops3d_with_rt": {
+  "model": 0.503496413047759,
+  "pubs": 0.505713545434383,
+  "best1": 0.5332029275997372,
+  "best1_name": "enh",
+  "null95": 0.5155301289478756,
+  "margin": -0.029706514551978147,
+  "earned": false
+ },
+ "improved": [],
+ "others": [
+  {
+   "layer": "abund",
+   "old_margin": 0.06647747601439158,
+   "new_margin": 0.06645045251432002,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "biomarkers",
+   "old_margin": 0.01428932026331775,
+   "new_margin": 0.014095095676880054,
+   "old_earned": false,
+   "new_earned": false
+  },
+  {
+   "layer": "codep",
+   "old_margin": 0.02578463817090404,
+   "new_margin": 0.02603903566481236,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "cpg",
+   "old_margin": 0.054970333792815684,
+   "new_margin": 0.054190191000665355,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "dark",
+   "old_margin": 0.0013967567666840486,
+   "new_margin": 0.0013988437625502836,
+   "old_earned": false,
+   "new_earned": false
+  },
+  {
+   "layer": "darkfn",
+   "old_margin": 4.0582077975526154e-05,
+   "new_margin": 4.6765184276487126e-05,
+   "old_earned": false,
+   "new_earned": false
+  },
+  {
+   "layer": "dep_frac",
+   "old_margin": 0.0905948743165228,
+   "new_margin": 0.09636982496896074,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "drugs",
+   "old_margin": 0.0468836206091886,
+   "new_margin": 0.04746854038591597,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "emask",
+   "old_margin": 0.0018559401830673394,
+   "new_margin": 0.0018091240480175852,
+   "old_earned": false,
+   "new_earned": false
+  },
+  {
+   "layer": "ess",
+   "old_margin": -0.004669332221344025,
+   "new_margin": -0.006451734296361145,
+   "old_earned": false,
+   "new_earned": false
+  },
+  {
+   "layer": "gene2cplx",
+   "old_margin": 0.04923655759197698,
+   "new_margin": 0.04694710610803832,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "generxn",
+   "old_margin": 0.07662443237271555,
+   "new_margin": 0.07606894257899821,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "loeuf",
+   "old_margin": 0.03898797964917122,
+   "new_margin": 0.03604202686527469,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "lr",
+   "old_margin": 0.1347612509158974,
+   "new_margin": 0.1312715428332173,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "model4",
+   "old_margin": 0.11704259627997105,
+   "new_margin": 0.11900689676565468,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "ndis",
+   "old_margin": 0.07816805054500797,
+   "new_margin": 0.07870136707036501,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "nichenet",
+   "old_margin": 0.1271927686753468,
+   "new_margin": 0.12241665237502486,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "npath",
+   "old_margin": 0.04273142391090934,
+   "new_margin": 0.042540065272442584,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "ppi_edges",
+   "old_margin": 0.022735074837844427,
+   "new_margin": 0.023603217446360736,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "ppm",
+   "old_margin": 0.07430835078248577,
+   "new_margin": 0.06458681904000096,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "ptm",
+   "old_margin": 0.05375939415407849,
+   "new_margin": 0.053981274776271126,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "reg_in",
+   "old_margin": 0.0411750158710531,
+   "new_margin": 0.03599504591924185,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "reg_out",
+   "old_margin": 0.025875073400150495,
+   "new_margin": 0.02464572448570168,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "sig_in",
+   "old_margin": 0.029382280718767362,
+   "new_margin": 0.02903441873702617,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "sig_out",
+   "old_margin": 0.05365821885342159,
+   "new_margin": 0.05269938053033829,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "sl",
+   "old_margin": 0.058433015075562644,
+   "new_margin": 0.05705576452676475,
+   "old_earned": true,
+   "new_earned": true
+  },
+  {
+   "layer": "tf",
+   "old_margin": -0.05308851980157625,
+   "new_margin": -0.05240882053344775,
+   "old_earned": false,
+   "new_earned": false
+  }
+ ],
+ "seconds": 591.5798823833466,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 63 -- replication timing: the missing layer, and whether it rescues the chromosome",
+  "====================================================================================================",
+  "",
+  "R1 THE LIFTOVER AND INDEXING ARE CORRECT",
+  "     20 cell-type tracks, TSS +/- 50 kb",
+  "     TSSs lifted hg38->hg19   16,362 of 16,380  (0.9989)",
+  "     lifted TSSs with signal  16,355  (0.9996)",
+  "     DIRECTION CHECK  early replication vs enhancer count  rho +0.5930",
+  "     R1 PASS",
+  "",
+  "R2 REPLICATION TIMING IS NOT A FAME PROXY",
+  "     replication timing vs publication count  rho +0.1442",
+  "     for comparison, loop 61: fame predicts layer membership at median AUC 0.7173, up to 0.8906",
+  "     R2 PASS  (ceiling |rho| < 0.3)",
+  "",
+  "R3 IS IT REDUNDANT WITH THE CELL WE ALREADY HAVE?",
+  "     the cell predicts replication timing at held-out Spearman 0.6269  (null 95th 0.0137, n=16,355)",
+  "     R3 PASS  -- NOT redundant: the model does not already contain it",
+  "",
+  "R4 DOES IT RESCUE THE CHROMOSOME?",
+  "     loops3d        model    pubs   best1  null95  margin",
+  "     without RT    0.5071  0.5057  0.5332  0.5205 -0.0261   defer",
+  "     with RT       0.5035  0.5057  0.5332  0.5155 -0.0297   defer",
+  "     loops3d beats its own null with RT: False   (model 0.5035 vs null95 0.5155)",
+  "     R4 FAIL",
+  "",
+  "     every other layer re-scored, to tell a loops3d rescue from a general lift:",
+  "     0 of 27 other layers improve by >= 0.01",
+  "",
+  "R5 nulls measured: R3 shuffled-target 95th 0.0137, R4 label permutation 95th 0.5155",
+  "     R5 PASS",
+  "",
+  "  PASS  R1 liftover and indexing correct",
+  "  PASS  R2 replication timing is not fame",
+  "  PASS  R3 not redundant with the existing cell",
+  "  FAIL  R4 the chromosome is rescued",
+  "  PASS  R5 nulls measured",
+  "    manifest: 3 inputs, coverage 16355/16492 (99.2%) by 'filtered', seed 6301, controls 5"
+ ]
+}

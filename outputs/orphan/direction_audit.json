@@ -1,0 +1,41 @@
+{
+  "total": 191447,
+  "directed": 29372,
+  "frac_directed": 0.15342105125700586,
+  "expected_correct": 22747.90653063063,
+  "frac_correct": 0.11882090881878864,
+  "tiers": {
+    "signor": {
+      "n": 2831,
+      "frac": 0.014787382408708416,
+      "checkable": 0,
+      "checkable_frac": 0.0,
+      "acc": 1.0,
+      "se": 0.0,
+      "against": "curated"
+    },
+    "pathway_order": {
+      "n": 3444,
+      "frac": 0.017989312969124614,
+      "checkable": 333,
+      "checkable_frac": 0.09668989547038327,
+      "acc": 0.6546546546546547,
+      "se": 0.02605618425861829,
+      "against": "SIGNOR"
+    },
+    "tf_prior": {
+      "n": 23097,
+      "frac": 0.12064435587917283,
+      "checkable": 0,
+      "checkable_frac": 0.0,
+      "acc": NaN,
+      "se": NaN,
+      "against": "SIGNOR"
+    },
+    "undirected": {
+      "n": 162075,
+      "frac": 0.8465789487429941
+    }
+  },
+  "verdict": "HOW MUCH OF THE NETWORK IS DIRECTED, AND HOW SURE ARE WE? 29,372 of 191,447 PPI edges carry an arrow, 15.34%. That single number pools three very different things and should not be quoted alone. ONLY 2,831 EDGES (1.48% OF THE NETWORK) ARE CURATED DIRECTION. Those come from SIGNOR, are used as the answer key everywhere else in this repo, and their limitation is coverage rather than correctness. 3,444 more (1.80%) come from Reactome reaction sequence and are right 65.5% of the time against independently curated SIGNOR -- so roughly one in three of those arrows is BACKWARDS. THE REMAINING 23,097 (12.1%) ARE A HEURISTIC -- 'the transcription factor points at the non-TF' -- and this is where the honest answer gets uncomfortable. SIGNOR can check EXACTLY ZERO of its 23,097 edges, and not by accident: the heuristic is applied only where the curated tiers are silent, so the edges it is used on are precisely the edges nothing can check. Its 76.5% comes from a different set -- the 255 edges that happened to have both a curated direction and a TF/non-TF difference -- i.e. from well-studied TF pairs, and assuming that rate transfers to 23,097 unstudied ones is an assumption, not a result. Its 90.5% agreement with `reg` looks like corroboration and is not: `reg` edges are TF->target BY DEFINITION and this heuristic predicts TF->non-TF, so 90% of those reg edges have a TF as their source and the agreement is close to definitional. TAKING EACH TIER AT ITS OWN MEASURED RATE, about 22,748 arrows are right and 6,624 are wrong: 11.88% of the network is directed AND probably correct, against the 15.34% headline. THE DEFENSIBLE SUMMARY IS THEREFORE: about 1.5% of the interactome has a curated arrow, about another 1.8% has a pathway-derived arrow that is right about two thirds of the time, and roughly 12% has a guess that is probably right about three quarters of the time but cannot be checked where it matters. 85% has no direction at all. AND THERE IS A CEILING NOBODY CAN EXCEED, which is the most important thing this audit found: the two CURATED sources agree with each other only 78.3% of the time on the 2,876 edges both orient, and 98% of the disagreements involve a transcription factor. Those are not curation errors. SIGNOR says HSP90AA1 acts on AR; reg says AR transcriptionally regulates HSP90AA1. BOTH ARE TRUE. Protein-level direction and transcriptional direction are different relations on the same pair and routinely oppose, because that is what a feedback loop IS. So 'the direction of a PPI edge' is not a single well-defined property, and 78% is the realistic ceiling for any single arrow -- our pathway-order tier at 65.5% should be read against that, not against 100%. WHAT WOULD MAKE US SURE. Nothing in this pipeline: every tier is annotation or heuristic, and the agreement between tiers is bounded by the weakest curation underneath both. Direction is a causal claim and only a time-resolved or interventional measurement -- kinase-substrate assays, degron depletion with a time course -- can settle it per edge."
+}

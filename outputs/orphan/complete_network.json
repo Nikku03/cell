@@ -1,0 +1,986 @@
+{
+ "threshold": 4.200000000000003,
+ "n_sources": 337,
+ "curated_regulatory": 57696,
+ "curated_physical": 192784,
+ "measured_edges": 21228,
+ "measured_specific": 8726,
+ "layers": {
+  "REGULATORY": {
+   "hops_real": {
+    "99": 8005,
+    "3": 317,
+    "4": 239,
+    "2": 157,
+    "1": 8
+   },
+   "hops_null": {
+    "99": 7986,
+    "3": 339,
+    "2": 119,
+    "4": 244,
+    "1": 8
+   },
+   "n": 8726,
+   "closer": 1088,
+   "same": 41529,
+   "farther": 862,
+   "closer_frac": 0.5579,
+   "closer_p": 0.9564150289199237,
+   "p_naive_pseudoreplicated": 3.383848618609632e-07,
+   "n_source_clusters": 321,
+   "cluster_t": -0.054695697619295464,
+   "cluster_mean": -0.00012,
+   "cluster_boot_ci": [
+    -0.0,
+    0.0106
+   ],
+   "tie_frac": 0.9552,
+   "reachable": 721,
+   "reachable_frac": 0.0826,
+   "reachable_null": 740,
+   "reachable_null_frac": 0.0848,
+   "mean_degree_real": 3.8,
+   "mean_degree_decoy": 3.8,
+   "decided_by_reachability": 497,
+   "decided_by_distance": 1453
+  },
+  "COMBINED": {
+   "hops_real": {
+    "99": 2554,
+    "3": 4006,
+    "1": 172,
+    "2": 1439,
+    "4": 555
+   },
+   "hops_null": {
+    "99": 2545,
+    "2": 1400,
+    "3": 4069,
+    "4": 603,
+    "1": 94
+   },
+   "n": 8726,
+   "closer": 6716,
+   "same": 30971,
+   "farther": 5868,
+   "closer_frac": 0.5337,
+   "closer_p": 0.02990700322719741,
+   "p_naive_pseudoreplicated": 4.244432627392363e-14,
+   "n_source_clusters": 321,
+   "cluster_t": 2.1810558319925817,
+   "cluster_mean": 0.02273,
+   "cluster_boot_ci": [
+    0.0084,
+    0.0309
+   ],
+   "tie_frac": 0.7111,
+   "reachable": 6172,
+   "reachable_frac": 0.7073,
+   "reachable_null": 6181,
+   "reachable_null_frac": 0.7083,
+   "mean_degree_real": 33.2,
+   "mean_degree_decoy": 33.3,
+   "decided_by_reachability": 216,
+   "decided_by_distance": 12368
+  }
+ },
+ "routed_within_maxhop": 6172,
+ "unroutable": 2554,
+ "sign_testable": false,
+ "sign_n": 7,
+ "sign_agreement": null,
+ "sign_baseline": 0.5612,
+ "recall_curated": 0.0239,
+ "recall_completed": 0.0309,
+ "recall_random": 0.0059,
+ "recall_gain_p": 0.125,
+ "joints": {
+  "REGULATORY": {
+   "n_scoreable_genes": 56,
+   "min_routes": 5,
+   "n_z2": 5,
+   "expected_by_chance": 1.2,
+   "top": [
+    {
+     "gene": "MYCN",
+     "routes": 8,
+     "null_mean": 2.6,
+     "null_sd": 1.34,
+     "sd_used": 1.61,
+     "z": 3.35,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "RUNX1",
+     "routes": 5,
+     "null_mean": 1.2,
+     "null_sd": 1.3,
+     "sd_used": 1.3,
+     "z": 2.91,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ESR2",
+     "routes": 5,
+     "null_mean": 1.6,
+     "null_sd": 1.14,
+     "sd_used": 1.26,
+     "z": 2.69,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CASP3",
+     "routes": 8,
+     "null_mean": 2.6,
+     "null_sd": 2.3,
+     "sd_used": 2.3,
+     "z": 2.35,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "HHEX",
+     "routes": 6,
+     "null_mean": 2.4,
+     "null_sd": 0.89,
+     "sd_used": 1.55,
+     "z": 2.32,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "IRF8",
+     "routes": 18,
+     "null_mean": 12.0,
+     "null_sd": 0.71,
+     "sd_used": 3.46,
+     "z": 1.73,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "PPARG",
+     "routes": 28,
+     "null_mean": 21.0,
+     "null_sd": 2.12,
+     "sd_used": 4.58,
+     "z": 1.53,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CTNNB1",
+     "routes": 41,
+     "null_mean": 33.8,
+     "null_sd": 2.59,
+     "sd_used": 5.81,
+     "z": 1.24,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "PRKCD",
+     "routes": 8,
+     "null_mean": 4.8,
+     "null_sd": 2.59,
+     "sd_used": 2.59,
+     "z": 1.24,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "MYC",
+     "routes": 95,
+     "null_mean": 84.0,
+     "null_sd": 8.46,
+     "sd_used": 9.17,
+     "z": 1.2,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ATF3",
+     "routes": 5,
+     "null_mean": 3.0,
+     "null_sd": 1.73,
+     "sd_used": 1.73,
+     "z": 1.15,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "SRC",
+     "routes": 7,
+     "null_mean": 4.4,
+     "null_sd": 2.41,
+     "sd_used": 2.41,
+     "z": 1.08,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "PRKCA",
+     "routes": 5,
+     "null_mean": 3.2,
+     "null_sd": 1.64,
+     "sd_used": 1.79,
+     "z": 1.01,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "BRCA1",
+     "routes": 28,
+     "null_mean": 23.8,
+     "null_sd": 2.39,
+     "sd_used": 4.88,
+     "z": 0.86,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "JUN",
+     "routes": 26,
+     "null_mean": 22.2,
+     "null_sd": 3.03,
+     "sd_used": 4.71,
+     "z": 0.81,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CREBBP",
+     "routes": 5,
+     "null_mean": 3.6,
+     "null_sd": 1.95,
+     "sd_used": 1.95,
+     "z": 0.72,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "FOXP3",
+     "routes": 67,
+     "null_mean": 62.0,
+     "null_sd": 2.65,
+     "sd_used": 7.87,
+     "z": 0.64,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CREB1",
+     "routes": 28,
+     "null_mean": 23.6,
+     "null_sd": 6.91,
+     "sd_used": 6.91,
+     "z": 0.64,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ERBB2",
+     "routes": 6,
+     "null_mean": 4.8,
+     "null_sd": 1.92,
+     "sd_used": 2.19,
+     "z": 0.55,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "GATA3",
+     "routes": 12,
+     "null_mean": 9.4,
+     "null_sd": 5.03,
+     "sd_used": 5.03,
+     "z": 0.52,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "EGR1",
+     "routes": 5,
+     "null_mean": 4.0,
+     "null_sd": 1.58,
+     "sd_used": 2.0,
+     "z": 0.5,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CSNK2A1",
+     "routes": 6,
+     "null_mean": 5.0,
+     "null_sd": 0.71,
+     "sd_used": 2.24,
+     "z": 0.45,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "HIF1A",
+     "routes": 14,
+     "null_mean": 12.4,
+     "null_sd": 3.91,
+     "sd_used": 3.91,
+     "z": 0.41,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "AURKA",
+     "routes": 5,
+     "null_mean": 4.0,
+     "null_sd": 2.45,
+     "sd_used": 2.45,
+     "z": 0.41,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "SREBF1",
+     "routes": 8,
+     "null_mean": 7.0,
+     "null_sd": 1.0,
+     "sd_used": 2.65,
+     "z": 0.38,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ATM",
+     "routes": 40,
+     "null_mean": 37.8,
+     "null_sd": 5.81,
+     "sd_used": 6.15,
+     "z": 0.36,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CEBPB",
+     "routes": 21,
+     "null_mean": 18.4,
+     "null_sd": 7.89,
+     "sd_used": 7.89,
+     "z": 0.33,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ATF4",
+     "routes": 56,
+     "null_mean": 53.8,
+     "null_sd": 2.59,
+     "sd_used": 7.33,
+     "z": 0.3,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "SPI1",
+     "routes": 6,
+     "null_mean": 5.4,
+     "null_sd": 2.07,
+     "sd_used": 2.32,
+     "z": 0.26,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "SP1",
+     "routes": 29,
+     "null_mean": 27.8,
+     "null_sd": 6.3,
+     "sd_used": 6.3,
+     "z": 0.19,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "MYB",
+     "routes": 16,
+     "null_mean": 16.0,
+     "null_sd": 4.3,
+     "sd_used": 4.3,
+     "z": 0.0,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "AKT1",
+     "routes": 15,
+     "null_mean": 15.0,
+     "null_sd": 2.55,
+     "sd_used": 3.87,
+     "z": 0.0,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ARNT",
+     "routes": 19,
+     "null_mean": 19.2,
+     "null_sd": 0.45,
+     "sd_used": 4.38,
+     "z": -0.05,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "SMAD4",
+     "routes": 8,
+     "null_mean": 8.2,
+     "null_sd": 1.3,
+     "sd_used": 2.86,
+     "z": -0.07,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CDK2",
+     "routes": 11,
+     "null_mean": 11.4,
+     "null_sd": 2.97,
+     "sd_used": 3.38,
+     "z": -0.12,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ATF2",
+     "routes": 13,
+     "null_mean": 13.6,
+     "null_sd": 4.16,
+     "sd_used": 4.16,
+     "z": -0.14,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "MXD1",
+     "routes": 14,
+     "null_mean": 14.6,
+     "null_sd": 0.55,
+     "sd_used": 3.82,
+     "z": -0.16,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "NR1I2",
+     "routes": 5,
+     "null_mean": 5.4,
+     "null_sd": 1.14,
+     "sd_used": 2.32,
+     "z": -0.17,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CREM",
+     "routes": 5,
+     "null_mean": 5.6,
+     "null_sd": 1.52,
+     "sd_used": 2.37,
+     "z": -0.25,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ATF6",
+     "routes": 26,
+     "null_mean": 27.4,
+     "null_sd": 4.39,
+     "sd_used": 5.23,
+     "z": -0.27,
+     "is_TF": true,
+     "is_measured_source": false
+    }
+   ]
+  },
+  "COMBINED": {
+   "n_scoreable_genes": 545,
+   "min_routes": 5,
+   "n_z2": 82,
+   "expected_by_chance": 18.8,
+   "top": [
+    {
+     "gene": "GTF2H5",
+     "routes": 9,
+     "null_mean": 0.6,
+     "null_sd": 0.55,
+     "sd_used": 1.0,
+     "z": 8.4,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "PIK3C2A",
+     "routes": 9,
+     "null_mean": 1.2,
+     "null_sd": 1.3,
+     "sd_used": 1.3,
+     "z": 5.98,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "RRP1",
+     "routes": 6,
+     "null_mean": 0.2,
+     "null_sd": 0.45,
+     "sd_used": 1.0,
+     "z": 5.8,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "RAB1A",
+     "routes": 6,
+     "null_mean": 0.4,
+     "null_sd": 0.55,
+     "sd_used": 1.0,
+     "z": 5.6,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "POLR2E",
+     "routes": 24,
+     "null_mean": 8.8,
+     "null_sd": 2.77,
+     "sd_used": 2.97,
+     "z": 5.12,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "TPX2",
+     "routes": 8,
+     "null_mean": 1.6,
+     "null_sd": 0.89,
+     "sd_used": 1.26,
+     "z": 5.06,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CHMP4A",
+     "routes": 24,
+     "null_mean": 9.0,
+     "null_sd": 2.74,
+     "sd_used": 3.0,
+     "z": 5.0,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "DIS3L",
+     "routes": 6,
+     "null_mean": 1.0,
+     "null_sd": 0.71,
+     "sd_used": 1.0,
+     "z": 5.0,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "TBC1D15",
+     "routes": 6,
+     "null_mean": 1.0,
+     "null_sd": 1.0,
+     "sd_used": 1.0,
+     "z": 5.0,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "EXOSC2",
+     "routes": 5,
+     "null_mean": 0.0,
+     "null_sd": 0.0,
+     "sd_used": 1.0,
+     "z": 5.0,
+     "is_TF": false,
+     "is_measured_source": true
+    },
+    {
+     "gene": "CERS4",
+     "routes": 5,
+     "null_mean": 0.2,
+     "null_sd": 0.45,
+     "sd_used": 1.0,
+     "z": 4.8,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "AGO1",
+     "routes": 8,
+     "null_mean": 1.6,
+     "null_sd": 1.34,
+     "sd_used": 1.34,
+     "z": 4.77,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "MTREX",
+     "routes": 7,
+     "null_mean": 1.4,
+     "null_sd": 0.55,
+     "sd_used": 1.18,
+     "z": 4.73,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "POLR2K",
+     "routes": 5,
+     "null_mean": 0.4,
+     "null_sd": 0.55,
+     "sd_used": 1.0,
+     "z": 4.6,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ROCK1",
+     "routes": 5,
+     "null_mean": 0.6,
+     "null_sd": 0.55,
+     "sd_used": 1.0,
+     "z": 4.4,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "FBXO28",
+     "routes": 6,
+     "null_mean": 1.2,
+     "null_sd": 1.1,
+     "sd_used": 1.1,
+     "z": 4.38,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "EEF1A1",
+     "routes": 17,
+     "null_mean": 3.6,
+     "null_sd": 3.13,
+     "sd_used": 3.13,
+     "z": 4.28,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ASCC3",
+     "routes": 5,
+     "null_mean": 0.8,
+     "null_sd": 0.84,
+     "sd_used": 1.0,
+     "z": 4.2,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "EFEMP1",
+     "routes": 5,
+     "null_mean": 0.8,
+     "null_sd": 0.45,
+     "sd_used": 1.0,
+     "z": 4.2,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CYC1",
+     "routes": 5,
+     "null_mean": 1.0,
+     "null_sd": 0.71,
+     "sd_used": 1.0,
+     "z": 4.0,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CDCA5",
+     "routes": 9,
+     "null_mean": 2.6,
+     "null_sd": 1.52,
+     "sd_used": 1.61,
+     "z": 3.97,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "BRD7",
+     "routes": 6,
+     "null_mean": 1.4,
+     "null_sd": 1.14,
+     "sd_used": 1.18,
+     "z": 3.89,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "MED29",
+     "routes": 13,
+     "null_mean": 4.8,
+     "null_sd": 1.48,
+     "sd_used": 2.19,
+     "z": 3.74,
+     "is_TF": false,
+     "is_measured_source": true
+    },
+    {
+     "gene": "BRCA2",
+     "routes": 7,
+     "null_mean": 1.4,
+     "null_sd": 1.52,
+     "sd_used": 1.52,
+     "z": 3.69,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "COMT",
+     "routes": 7,
+     "null_mean": 1.4,
+     "null_sd": 1.52,
+     "sd_used": 1.52,
+     "z": 3.69,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "PIP",
+     "routes": 6,
+     "null_mean": 1.2,
+     "null_sd": 1.3,
+     "sd_used": 1.3,
+     "z": 3.68,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CRNKL1",
+     "routes": 8,
+     "null_mean": 2.4,
+     "null_sd": 0.89,
+     "sd_used": 1.55,
+     "z": 3.61,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "AKAP7",
+     "routes": 6,
+     "null_mean": 1.6,
+     "null_sd": 0.55,
+     "sd_used": 1.26,
+     "z": 3.48,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CD63",
+     "routes": 6,
+     "null_mean": 1.6,
+     "null_sd": 0.55,
+     "sd_used": 1.26,
+     "z": 3.48,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "TMEM131",
+     "routes": 6,
+     "null_mean": 1.6,
+     "null_sd": 0.55,
+     "sd_used": 1.26,
+     "z": 3.48,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "NR2F2",
+     "routes": 8,
+     "null_mean": 1.8,
+     "null_sd": 1.79,
+     "sd_used": 1.79,
+     "z": 3.47,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "PPP1CB",
+     "routes": 5,
+     "null_mean": 1.2,
+     "null_sd": 0.84,
+     "sd_used": 1.1,
+     "z": 3.47,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "TAF9",
+     "routes": 5,
+     "null_mean": 1.2,
+     "null_sd": 0.84,
+     "sd_used": 1.1,
+     "z": 3.47,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "CHMP1B",
+     "routes": 13,
+     "null_mean": 5.2,
+     "null_sd": 1.92,
+     "sd_used": 2.28,
+     "z": 3.42,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ZC3H13",
+     "routes": 11,
+     "null_mean": 4.2,
+     "null_sd": 1.48,
+     "sd_used": 2.05,
+     "z": 3.32,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "ST14",
+     "routes": 5,
+     "null_mean": 1.0,
+     "null_sd": 1.22,
+     "sd_used": 1.22,
+     "z": 3.27,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "WT1",
+     "routes": 5,
+     "null_mean": 1.0,
+     "null_sd": 1.22,
+     "sd_used": 1.22,
+     "z": 3.27,
+     "is_TF": true,
+     "is_measured_source": false
+    },
+    {
+     "gene": "DIDO1",
+     "routes": 8,
+     "null_mean": 2.2,
+     "null_sd": 1.79,
+     "sd_used": 1.79,
+     "z": 3.24,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "PRKAA2",
+     "routes": 7,
+     "null_mean": 2.2,
+     "null_sd": 0.84,
+     "sd_used": 1.48,
+     "z": 3.24,
+     "is_TF": false,
+     "is_measured_source": false
+    },
+    {
+     "gene": "BCL2",
+     "routes": 11,
+     "null_mean": 4.0,
+     "null_sd": 2.24,
+     "sd_used": 2.24,
+     "z": 3.13,
+     "is_TF": false,
+     "is_measured_source": false
+    }
+   ]
+  }
+ },
+ "n_decoy_replicates": 5,
+ "joint_tiebreak_jaccard": 0.418,
+ "tide_null_this_setup": 0.1425,
+ "reference_tide_harness": 0.26,
+ "reference_best_harness": 0.49,
+ "splits": [
+  {
+   "split": 0,
+   "n": 96,
+   "curated": 0.028468187095881368,
+   "completed": 0.03499175611945039,
+   "random": 0.004595543345543345,
+   "gain": 0.006523569023569025,
+   "p": 0.25,
+   "helps": 3,
+   "hurts": 0,
+   "absent_from_curated_graph": 11
+  },
+  {
+   "split": 1,
+   "n": 97,
+   "curated": 0.022032562256997925,
+   "completed": 0.02777217487805384,
+   "random": 0.0034624800664824922,
+   "gain": 0.005739612621055917,
+   "p": 0.0625,
+   "helps": 5,
+   "hurts": 0,
+   "absent_from_curated_graph": 10
+  },
+  {
+   "split": 2,
+   "n": 97,
+   "curated": 0.021269123663536702,
+   "completed": 0.027248505106835668,
+   "random": 0.00916333017342852,
+   "gain": 0.005979381443298966,
+   "p": 0.125,
+   "helps": 4,
+   "hurts": 0,
+   "absent_from_curated_graph": 6
+  },
+  {
+   "split": 3,
+   "n": 101,
+   "curated": 0.029961102514873824,
+   "completed": 0.0365397603806604,
+   "random": 0.006954516009092198,
+   "gain": 0.0065786578657865726,
+   "p": 0.25,
+   "helps": 3,
+   "hurts": 0,
+   "absent_from_curated_graph": 7
+  },
+  {
+   "split": 4,
+   "n": 94,
+   "curated": 0.017560621494217925,
+   "completed": 0.027870905182161187,
+   "random": 0.005365853658536586,
+   "gain": 0.010310283687943261,
+   "p": 0.0625,
+   "helps": 5,
+   "hurts": 0,
+   "absent_from_curated_graph": 8
+  }
+ ],
+ "n_splits": 5,
+ "verdict": "NETWORK COMPLETION (complete_network.py): the curated network and the measured knockout edges merged into one typed graph, with every measured edge accounted for. The merged object has 57,696 curated regulatory edges, 192,784 curated physical edges and 21,228 measured directed edges (8,726 specific) over 337 usable source knockouts. ROUTING: on the combined curated graph 6,172/8,726 specific measured edges (71%) can be reached within 4 hops and 2,554 cannot. THAT 71% IS NOT THE RESULT, AND READING IT AS ONE WOULD BE THE WHOLE MISTAKE. The curated graph is dense enough to reach almost anything, so every route was scored against a DEGREE-MATCHED DECOY looked up in the same BFS, over all 5 decoy replicates: REGULATORY layer reaches 8% of measured edges; clustered at the source level its per-source effect is -0.0001 (t=-0.05, p=0.956, bootstrap CI [-0.0000,+0.0106]) -- AT CHANCE once clustering is respected; COMBINED layer reaches 71% of measured edges; clustered at the source level its per-source effect is +0.0227 (t=+2.18, p=0.0299, bootstrap CI [+0.0084,+0.0309]) -- SURVIVES clustering, marginally. I MADE TWO STATISTICAL MISTAKES HERE, IN OPPOSITE DIRECTIONS, AND BOTH ARE REPORTED RATHER THAN QUIETLY FIXED. First the null was bucketed on mover-frequency and called degree-matched, which it is not (rho~0.01 with graph degree); under it the combined layer read 'at chance' and this module was about to conclude PPI routing explains nothing. Then, having fixed that, counting all 5 decoys per target as independent trials multiplied n fivefold and the p-value by four orders of magnitude WITHOUT moving the effect size -- the naive binomial still printed above (REGULATORY p=3.4e-07, COMBINED p=4.2e-14) is exactly that inflation, kept visible on purpose. Reduced to one statistic per target and tested across sources, the honest answer is that the layer I twice called meaningful is the one at chance. Note also how much of the comparison is TIES (REGULATORY 96%, COMBINED 71%), so the headline percentages are computed over a minority of the data. THE DEPTH PROFILE SAYS WHERE THE NETWORK STOPS EXPLAINING, and it is the single most useful number here: enrichment over matched decoys by route length (single-replicate view) is direct 1.83x, 1 intermediate 1.03x, 2 intermediates 0.98x, 3 intermediates 0.92x on the combined layer (and direct 1.00x, 1 intermediate 1.32x on the regulatory layer). Read it against the clustered tests above, not on its own: the only enrichment that is both sizeable and on the layer that survives clustering is the DIRECT edge on the combined layer; everything at two or more intermediates is indistinguishable from a random walk on both layers. So the network can be completed, but it can only be TRUSTED at the direct edge -- which is why the long explanatory chains this project kept constructing dissolved under test. SIGN: UNTESTABLE -- only 7 of 8,726 specific measured edges have a signed curated counterpart at all, so the activator/repressor logic cannot be scored here; the curated regulatory layer barely intersects the knockouts usable as sources. VALUE, the only non-circular test: sources split 70/30, completion built from TRAIN sources only, held-out specific-mover recall@50 is 0.024 for the curated network alone and 0.031 for the completed network (+0.007; random 0.006). That gain is NOT distinguishable from noise -- across all 5 splits it helps 20/485 held-out source-evaluations and hurts 0, significant in 0/5 splits (median paired Wilcoxon p=0.12); note p<0.05 is barely reachable at these tiny non-tied counts, so this is partly a power floor rather than a clean negative. AND THE SCALE SETTLES IT, AGAINST A REFERENCE COMPUTED IN THIS SETUP RATHER THAN AN IMPORTED ONE: quoting this project's familiar 0.26 tide-null and 0.49 best-model here would be a cross-metric comparison, since those come from the harness (pkl, TAU=1.0) and this module scores the uncensored parquet at |z|>=4.2 with a different tide definition. Recomputed on exactly these sources and this truth definition, simply ranking genes by how often they move under ANY knockout -- the tide-null, which uses no network at all -- scores 0.143, versus 0.031 for the completed network. So the completed graph is roughly 5x WORSE than ignoring the network entirely and predicting the generic response. Completing the network and walking it is not a route to prediction. JOINTS, and these ARE enriched: REGULATORY 5 of 56 genes carrying >=5 routes reach z>=2 against 5 null replicates (chance ~1); COMBINED 82 of 545 genes carrying >=5 routes reach z>=2 against 5 null replicates (chance ~19). The chance expectation there is EMPIRICAL, not a normal tail: a z built from 5 replicates with a Poisson floor is not normal, so the count of genes clearing z>=2 when one replicate is held out and scored against the other four IS the chance count for this estimator. Note what joints do and do not show: they ask which intermediates routes pass through, not whether targets are closer. A knockout's real targets are a coherent set, so their routes CONVERGE on shared intermediates more than independently-drawn decoys do even at identical distances. Convergence is real but it is a property of the target set, not evidence that the curated path is the mechanism. AND THE NAMES DO NOT SURVIVE SCRUTINY, WHICH IS THE HONEST HEADLINE OF THIS SECTION. BFS records one parent per node, so wherever several equally-short paths exist -- the common case at median degree 15 -- the credited intermediate is decided by the order neighbours are visited, which is alphabetical and arbitrary. Permuting that order retains only Jaccard 0.42 of the joint set. So the COUNT is a result (there is more convergence than chance) but WHICH GENES ARE NAMED is largely an implementation artifact, and the ranked table should be read as a weak shortlist, not as identified mechanism. Recovering real joints needs credit distributed over ALL shortest paths (Brandes-style), which this module does not do. For what it is worth under that caveat, AND AGAINST BASE RATES rather than quoted bare: 4/5 of the significant regulatory joints are annotated transcription factors (background among scoreable genes 78%), and 5/5 were never knocked out in this panel -- but so were 100% of ALL scoreable genes, so that second number is the panel's composition rather than a property of the joints, and I am not going to present it as a finding. They include haematopoietic regulators plausible for K562 (RUNX1, HHEX) alongside broadly-studied factors with large curated regulons (MYCN, ESR2, CASP3). Deterministic; degree-matched decoys throughout, joints z-scored against replicated nulls with a Poisson variance floor, and restricted to genes carrying >=5 routes so that a gene whose few null replicates happen to agree cannot be handed an infinite z.",
+ "note": "NETWORK COMPLETION (complete_network.py): the curated network and the measured knockout edges merged into one typed graph, with every measured edge accounted for. The merged object has 57,696 curated regulatory edges, 192,784 curated physical edges and 21,228 measured directed edges (8,726 specific) over 337 usable source knockouts. ROUTING: on the combined curated graph 6,172/8,726 specific measured edges (71%) can be reached within 4 hops and 2,554 cannot. THAT 71% IS NOT THE RESULT, AND READING IT AS ONE WOULD BE THE WHOLE MISTAKE. The curated graph is dense enough to reach almost anything, so every route was scored against a DEGREE-MATCHED DECOY looked up in the same BFS, over all 5 decoy replicates: REGULATORY layer reaches 8% of measured edges; clustered at the source level its per-source effect is -0.0001 (t=-0.05, p=0.956, bootstrap CI [-0.0000,+0.0106]) -- AT CHANCE once clustering is respected; COMBINED layer reaches 71% of measured edges; clustered at the source level its per-source effect is +0.0227 (t=+2.18, p=0.0299, bootstrap CI [+0.0084,+0.0309]) -- SURVIVES clustering, marginally. I MADE TWO STATISTICAL MISTAKES HERE, IN OPPOSITE DIRECTIONS, AND BOTH ARE REPORTED RATHER THAN QUIETLY FIXED. First the null was bucketed on mover-frequency and called degree-matched, which it is not (rho~0.01 with graph degree); under it the combined layer read 'at chance' and this module was about to conclude PPI routing explains nothing. Then, having fixed that, counting all 5 decoys per target as independent trials multiplied n fivefold and the p-value by four orders of magnitude WITHOUT moving the effect size -- the naive binomial still printed above (REGULATORY p=3.4e-07, COMBINED p=4.2e-14) is exactly that inflation, kept visible on purpose. Reduced to one statistic per target and tested across sources, the honest answer is that the layer I twice called meaningful is the one at chance. Note also how much of the comparison is TIES (REGULATORY 96%, COMBINED 71%), so the headline percentages are computed over a minority of the data. THE DEPTH PROFILE SAYS WHERE THE NETWORK STOPS EXPLAINING, and it is the single most useful number here: enrichment over matched decoys by route length (single-replicate view) is direct 1.83x, 1 intermediate 1.03x, 2 intermediates 0.98x, 3 intermediates 0.92x on the combined layer (and direct 1.00x, 1 intermediate 1.32x on the regulatory layer). Read it against the clustered tests above, not on its own: the only enrichment that is both sizeable and on the layer that survives clustering is the DIRECT edge on the combined layer; everything at two or more intermediates is indistinguishable from a random walk on both layers. So the network can be completed, but it can only be TRUSTED at the direct edge -- which is why the long explanatory chains this project kept constructing dissolved under test. SIGN: UNTESTABLE -- only 7 of 8,726 specific measured edges have a signed curated counterpart at all, so the activator/repressor logic cannot be scored here; the curated regulatory layer barely intersects the knockouts usable as sources. VALUE, the only non-circular test: sources split 70/30, completion built from TRAIN sources only, held-out specific-mover recall@50 is 0.024 for the curated network alone and 0.031 for the completed network (+0.007; random 0.006). That gain is NOT distinguishable from noise -- across all 5 splits it helps 20/485 held-out source-evaluations and hurts 0, significant in 0/5 splits (median paired Wilcoxon p=0.12); note p<0.05 is barely reachable at these tiny non-tied counts, so this is partly a power floor rather than a clean negative. AND THE SCALE SETTLES IT, AGAINST A REFERENCE COMPUTED IN THIS SETUP RATHER THAN AN IMPORTED ONE: quoting this project's familiar 0.26 tide-null and 0.49 best-model here would be a cross-metric comparison, since those come from the harness (pkl, TAU=1.0) and this module scores the uncensored parquet at |z|>=4.2 with a different tide definition. Recomputed on exactly these sources and this truth definition, simply ranking genes by how often they move under ANY knockout -- the tide-null, which uses no network at all -- scores 0.143, versus 0.031 for the completed network. So the completed graph is roughly 5x WORSE than ignoring the network entirely and predicting the generic response. Completing the network and walking it is not a route to prediction. JOINTS, and these ARE enriched: REGULATORY 5 of 56 genes carrying >=5 routes reach z>=2 against 5 null replicates (chance ~1); COMBINED 82 of 545 genes carrying >=5 routes reach z>=2 against 5 null replicates (chance ~19). The chance expectation there is EMPIRICAL, not a normal tail: a z built from 5 replicates with a Poisson floor is not normal, so the count of genes clearing z>=2 when one replicate is held out and scored against the other four IS the chance count for this estimator. Note what joints do and do not show: they ask which intermediates routes pass through, not whether targets are closer. A knockout's real targets are a coherent set, so their routes CONVERGE on shared intermediates more than independently-drawn decoys do even at identical distances. Convergence is real but it is a property of the target set, not evidence that the curated path is the mechanism. AND THE NAMES DO NOT SURVIVE SCRUTINY, WHICH IS THE HONEST HEADLINE OF THIS SECTION. BFS records one parent per node, so wherever several equally-short paths exist -- the common case at median degree 15 -- the credited intermediate is decided by the order neighbours are visited, which is alphabetical and arbitrary. Permuting that order retains only Jaccard 0.42 of the joint set. So the COUNT is a result (there is more convergence than chance) but WHICH GENES ARE NAMED is largely an implementation artifact, and the ranked table should be read as a weak shortlist, not as identified mechanism. Recovering real joints needs credit distributed over ALL shortest paths (Brandes-style), which this module does not do. For what it is worth under that caveat, AND AGAINST BASE RATES rather than quoted bare: 4/5 of the significant regulatory joints are annotated transcription factors (background among scoreable genes 78%), and 5/5 were never knocked out in this panel -- but so were 100% of ALL scoreable genes, so that second number is the panel's composition rather than a property of the joints, and I am not going to present it as a finding. They include haematopoietic regulators plausible for K562 (RUNX1, HHEX) alongside broadly-studied factors with large curated regulons (MYCN, ESR2, CASP3). Deterministic; degree-matched decoys throughout, joints z-scored against replicated nulls with a Poisson variance floor, and restricted to genes carrying >=5 routes so that a gene whose few null replicates happen to agree cannot be handed an infinite z."
+}

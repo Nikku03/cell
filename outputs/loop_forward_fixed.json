@@ -1,0 +1,259 @@
+{
+ "test": "forward prediction with the V7 defect removed",
+ "wellposed": {
+  "target_maxdiff": 0.0,
+  "pers_maxdiff": 0.0,
+  "pooled_persistence": -0.6653920012624099
+ },
+ "pooled": {
+  "RAW": {
+   "r2": -0.02259362776404461,
+   "r": -0.061451574686889804
+  },
+  "RUV": {
+   "r2": -0.03719163499985334,
+   "r": -0.09315816768522107
+  },
+  "RUV+W": {
+   "r2": -0.08485901444151489,
+   "r": -0.23317427164615923
+  }
+ },
+ "best_arm": "RAW",
+ "per_interval": {
+  "RAW": {
+   "1": {
+    "r2": -0.03421615469605355,
+    "r2_pers": -0.5266696529055697,
+    "r": -0.17412186365582052,
+    "rel": 0.2918761198781624
+   },
+   "2": {
+    "r2": 0.006795791430778686,
+    "r2_pers": -1.5835933757236047,
+    "r": 0.11773825890157243,
+    "rel": 0.035884604187278235
+   },
+   "3": {
+    "r2": 0.013276973991478536,
+    "r2_pers": -0.6014839512193855,
+    "r": 0.11787813770694389,
+    "rel": 0.014155430470544786
+   },
+   "4": {
+    "r2": -0.04680897965724595,
+    "r2_pers": -0.3201582197992412,
+    "r": -0.13235118785700759,
+    "rel": 0.3167428434916319
+   },
+   "5": {
+    "r2": -0.0886359024626,
+    "r2_pers": -0.8316887817378007,
+    "r": -0.22363787369518548,
+    "rel": 0.14493659162164438
+   },
+   "6": {
+    "r2": -0.009473965426741726,
+    "r2_pers": -0.47054786892682166,
+    "r": -0.16088060780353344,
+    "rel": 0.1269392311120022
+   },
+   "7": {
+    "r2": 0.02193929647311177,
+    "r2_pers": -0.8274029118621213,
+    "r": 0.1530441550739691,
+    "rel": -0.06365638257920213
+   }
+  },
+  "RUV": {
+   "1": {
+    "r2": -0.04085374471828329,
+    "r2_pers": -0.5266696529055697,
+    "r": -0.24603066568335935,
+    "rel": 0.2918761198781624
+   },
+   "2": {
+    "r2": -0.003560923324942511,
+    "r2_pers": -1.5835933757236047,
+    "r": 0.0404655526155754,
+    "rel": 0.035884604187278235
+   },
+   "3": {
+    "r2": 0.024727335459397537,
+    "r2_pers": -0.6014839512193855,
+    "r": 0.18783765136423966,
+    "rel": 0.014155430470544786
+   },
+   "4": {
+    "r2": -0.03619579133219464,
+    "r2_pers": -0.3201582197992412,
+    "r": -0.1338634646240421,
+    "rel": 0.3167428434916319
+   },
+   "5": {
+    "r2": -0.20357702516203635,
+    "r2_pers": -0.8316887817378007,
+    "r": -0.3093552345830661,
+    "rel": 0.14493659162164438
+   },
+   "6": {
+    "r2": -0.0099462092234468,
+    "r2_pers": -0.47054786892682166,
+    "r": -0.2518129041480548,
+    "rel": 0.1269392311120022
+   },
+   "7": {
+    "r2": 0.004718349737544925,
+    "r2_pers": -0.8274029118621213,
+    "r": 0.10843402331563876,
+    "rel": -0.06365638257920213
+   }
+  },
+  "RUV+W": {
+   "1": {
+    "r2": -0.11546971284836416,
+    "r2_pers": -0.5266696529055697,
+    "r": -0.2460306656833593,
+    "rel": 0.2918761198781624
+   },
+   "2": {
+    "r2": -0.0015567670127409894,
+    "r2_pers": -1.5835933757236047,
+    "r": 0.12654805512733364,
+    "rel": 0.035884604187278235
+   },
+   "3": {
+    "r2": 0.004842476019411124,
+    "r2_pers": -0.6014839512193855,
+    "r": 0.13289204200701146,
+    "rel": 0.014155430470544786
+   },
+   "4": {
+    "r2": -0.042404978182404296,
+    "r2_pers": -0.3201582197992412,
+    "r": -0.14058114396995222,
+    "rel": 0.3167428434916319
+   },
+   "5": {
+    "r2": -0.16155086634396665,
+    "r2_pers": -0.8316887817378007,
+    "r": -0.31612535716952433,
+    "rel": 0.14493659162164438
+   },
+   "6": {
+    "r2": -0.230844844430786,
+    "r2_pers": -0.47054786892682166,
+    "r": -0.4544274454423658,
+    "rel": 0.1269392311120022
+   },
+   "7": {
+    "r2": 0.01117487697501407,
+    "r2_pers": -0.8274029118621213,
+    "r": 0.18069750774575416,
+    "rel": -0.06365638257920213
+   }
+  }
+ },
+ "spearman": {
+  "rho": -0.6785714285714286,
+  "p": 0.957042957042957,
+  "n": 7
+ },
+ "good_intervals": {
+  "60->120": {
+   "r2": -0.03421615469605355,
+   "r2_pers": -0.5266696529055697,
+   "r": -0.17412186365582052,
+   "rel": 0.2918761198781624
+  },
+  "240->420": {
+   "r2": -0.04680897965724595,
+   "r2_pers": -0.3201582197992412,
+   "r": -0.13235118785700759,
+   "rel": 0.3167428434916319
+  }
+ },
+ "null": {
+  "mean": 0.0011428571428571432,
+  "sd": 0.4102123889909136,
+  "p95": 0.6428571428571429
+ },
+ "reliability": [
+  0.20150741691410476,
+  0.2918761198781624,
+  0.035884604187278235,
+  0.014155430470544786,
+  0.3167428434916319,
+  0.14493659162164438,
+  0.1269392311120022,
+  -0.06365638257920213
+ ],
+ "gates": {
+  "W1": true,
+  "W2": true,
+  "W3": false,
+  "W4": true,
+  "W5": false
+ },
+ "void": [],
+ "seconds": 0.292100191116333,
+ "log": [
+  "========================================================================================================",
+  "LOOP 223 -- THE FORWARD TEST, DEFECT REMOVED, RUN WHERE THE SIGNAL IS",
+  "========================================================================================================",
+  "     Loop 222's V7 compared each arm against its own persistence baseline, so patching",
+  "     could win by wrecking its own denominator -- and did: patched lift +1.0349 beat",
+  "     unpatched +0.5506 while the patched model's absolute R2 was WORSE, -0.0890 vs",
+  "     -0.0500. Here the target and the baseline are shared and the patch touches only",
+  "     the predictor.",
+  "     12,768 genes, 8 intervals, predictor = mean of replicates 1,2,3, target = replicate 4 RAW",
+  "     within-123 reliability per interval (re-measured here):",
+  "       30->60 +0.202  60->120 +0.292  120->180 +0.036  180->240 +0.014  240->420 +0.317  420->480 +0.145  480->600 +0.127  600->720 -0.064",
+  "     RUV: k=4 directions from the 2,553 lowest-|plateau| genes, estimated on replicates 1,2,3 only",
+  "W1 IS THE COMPARISON WELL-POSED?",
+  "     target vectors across arms, max absolute difference      0.0e+00",
+  "     persistence vectors across arms, max absolute difference 0.0e+00",
+  "     shared persistence baseline, pooled over 7 held-out intervals: R2 -0.66539",
+  "     W1 PASS -- every arm is scored against a bit-identical target and a bit-identical baseline; loop 222's V7 defect cannot recur here",
+  "W2 DOES ANY ARM BEAT PERSISTENCE ON THE SHARED TARGET?",
+  "       RAW    pooled R2 -0.02259   Pearson -0.06145",
+  "       RUV    pooled R2 -0.03719   Pearson -0.09316",
+  "       RUV+W  pooled R2 -0.08486   Pearson -0.23317",
+  "       PERSIST pooled R2 -0.66539",
+  "     W2 PASS -- RAW reaches -0.0226 against persistence -0.6654",
+  "W3 DOES PER-INTERVAL SKILL TRACK PER-INTERVAL RELIABILITY?",
+  "        60->120  reliability +0.292   held-out R2 -0.03422   persistence -0.52667   lift +0.49245",
+  "       120->180  reliability +0.036   held-out R2 +0.00680   persistence -1.58359   lift +1.59039",
+  "       180->240  reliability +0.014   held-out R2 +0.01328   persistence -0.60148   lift +0.61476",
+  "       240->420  reliability +0.317   held-out R2 -0.04681   persistence -0.32016   lift +0.27335",
+  "       420->480  reliability +0.145   held-out R2 -0.08864   persistence -0.83169   lift +0.74305",
+  "       480->600  reliability +0.127   held-out R2 -0.00947   persistence -0.47055   lift +0.46107",
+  "       600->720  reliability -0.064   held-out R2 +0.02194   persistence -0.82740   lift +0.84934",
+  "     Spearman(reliability, lift) over 7 intervals = -0.6786   permutation p = 0.9570",
+  "     W3 FAIL -- rho -0.679 against a +0.75 bar, p 0.957",
+  "W4 ON THE GOOD INTERVALS ONLY, IS ANYTHING PREDICTABLE?",
+  "        60->120  RAW R2 -0.03422   persistence -0.52667   beats persistence",
+  "       240->420  RAW R2 -0.04681   persistence -0.32016   beats persistence",
+  "     W4 PASS -- RAW beats persistence on both high-reliability intervals",
+  "W5 CONTROL: DOES W3 SURVIVE PERMUTING THE RELIABILITY LABELS?",
+  "     null over 1000 permutations: mean +0.0011, sd 0.4102, 95th percentile +0.6429",
+  "     real -0.6786",
+  "     W5 FAIL -- -0.679 is inside the permuted 95th percentile +0.643; with 7 points the coefficient alone was never going to be evidence",
+  "W6 WHAT THIS CANNOT SHOW",
+  "     Seven intervals is seven points. W3 and W5 test a monotone relationship on a sample",
+  "     that small, and one interval moving rank can shift the coefficient by 0.2 or more.",
+  "     Beating persistence on a per-interval change says nothing about whether the change",
+  "     predicted is biologically correct: replicate 4 is one measurement, not the truth.",
+  "     RUV's controls are the lowest-|plateau| fifth of the roster, so if the contaminating",
+  "     component lives in responders rather than quiet genes, RUV cannot see it and a FAIL",
+  "     here would not mean the component is absent.",
+  "========================================================================================================",
+  "  W1  PASS",
+  "  W2  PASS",
+  "  W3  FAIL",
+  "  W4  PASS",
+  "  W5  FAIL",
+  "  3/5",
+  "========================================================================================================"
+ ]
+}

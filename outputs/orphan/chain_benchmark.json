@@ -1,0 +1,161 @@
+{
+ "task": "K562-CRISPRi-single-gene -> dRNA of all measured genes",
+ "n_pairs": 2999797,
+ "n_perturbations": 8681,
+ "n_measured_genes": 6685,
+ "respond_threshold": 0.1,
+ "ladder": {
+  "0 global mean": {
+   "r2": -6.979392026318365e-06,
+   "auprc": 0.27197089418607984,
+   "sd": 0.0
+  },
+  "1 gene responsiveness": {
+   "r2": 5.627719583534141e-05,
+   "auprc": 0.28556243834923134,
+   "sd": 0.0
+  },
+  "2 + perturbation strength": {
+   "r2": 0.00661482180170192,
+   "auprc": 0.3386126368224706,
+   "sd": 0.0
+  },
+  "3 + abundance": {
+   "r2": 0.012721469577692934,
+   "auprc": 0.3360119911833066,
+   "sd": 0.0
+  },
+  "4 + genomic distance": {
+   "r2": 0.015080755978081228,
+   "auprc": 0.33692800262813205,
+   "sd": 0.0
+  },
+  "5 + detection power": {
+   "r2": 0.014939805811404416,
+   "auprc": 0.3364190107306532,
+   "sd": 0.0
+  },
+  "6 + co-expression": {
+   "r2": 0.015058159511848856,
+   "auprc": 0.3365322494859833,
+   "sd": 0.0
+  }
+ },
+ "ladder_top": {
+  "name": "6 + co-expression",
+  "r2": 0.015058159511848856,
+  "auprc": 0.3365322494859833
+ },
+ "layers": {
+  "regulatory": {
+   "n_edges": 610256,
+   "hit_rate": 0.006524108350276947,
+   "r2": 0.014882861354718613,
+   "delta": -0.00017529815713024366,
+   "control_delta_max": -0.00011214455697972081,
+   "control_deltas": [
+    -0.00012153639617429324,
+    -0.00011214455697972081,
+    -0.00018448787446900816,
+    -0.00014297310072142189,
+    -0.00017992139244304983
+   ],
+   "verdict": "REJECTED"
+  },
+  "signalling": {
+   "n_edges": 17432,
+   "hit_rate": 0.00012200825585750863,
+   "r2": 0.014948753901118939,
+   "delta": -0.00010940561072991795,
+   "control_delta_max": -5.92070241735021e-05,
+   "control_deltas": [
+    -5.92070241735021e-05,
+    -7.359902414116881e-05,
+    -0.00010365974340753592,
+    -9.776033844743903e-05,
+    -0.00011090837076921378
+   ],
+   "verdict": "REJECTED"
+  },
+  "PPI": {
+   "n_edges": 191447,
+   "hit_rate": 0.0016034417785704136,
+   "r2": 0.015056247302740022,
+   "delta": -1.912209108834162e-06,
+   "control_delta_max": -8.307913495642083e-05,
+   "control_deltas": [
+    -8.307913495642083e-05,
+    -0.00010630998005889403,
+    -0.00025023954274649984,
+    -0.00017342251973540002,
+    -0.00022009545727552648
+   ],
+   "verdict": "REJECTED"
+  },
+  "co-dependency": {
+   "n_edges": 76749,
+   "hit_rate": 0.0004416965530253947,
+   "r2": 0.014969252503379993,
+   "delta": -8.890700846886368e-05,
+   "control_delta_max": -6.720465004028675e-05,
+   "control_deltas": [
+    -0.00019259013504424605,
+    -6.720465004028675e-05,
+    -9.71920690223671e-05,
+    -0.00020484210829729843,
+    -6.743581199486481e-05
+   ],
+   "verdict": "REJECTED"
+  },
+  "complex co-member": {
+   "n_edges": 5771,
+   "hit_rate": 0.0003866928454954177,
+   "r2": 0.01564772392316549,
+   "delta": 0.0005895644113166343,
+   "control_delta_max": 0.00031411081424215226,
+   "control_deltas": [
+    0.00031411081424215226,
+    0.00021806486247466506,
+    0.0002495242405127218,
+    0.00017950904125751954,
+    0.00015255211584042083
+   ],
+   "verdict": "REJECTED"
+  }
+ },
+ "verdict": "On `K562-CRISPRi-single-gene -> dRNA of all measured genes`, 0 of 5 layers clear the nuisance ladder and their own degree-matched control. ADMITTED for quantitative propagation on this task: none. REJECTED (available for reasoning, not licensed to move a number): ['regulatory', 'signalling', 'PPI', 'co-dependency', 'complex co-member']. The ladder itself reaches R2 0.0151, and the single largest term is gene responsiveness -- which is an attribute of the READOUT, not of the network. This is arrow one of the chain only: perturbation -> dRNA. The dprotein arrow is not validated here and no K562 perturbation proteomics exists at this scale to validate it with.",
+ "direct": {
+  "regulatory": {
+   "n": 349075,
+   "mean_abs_lfc_edge": 0.0789644867181778,
+   "mean_abs_lfc_matched": 0.07734841108322144,
+   "ratio": 1.0208934545516968,
+   "p": 0.003253769129514694,
+   "testable": true
+  },
+  "signalling": {
+   "n": 6715,
+   "mean_abs_lfc_edge": 0.08212002366781235,
+   "mean_abs_lfc_matched": 0.0799010694026947,
+   "ratio": 1.027771234512329,
+   "p": 0.9866411089897156,
+   "testable": true
+  },
+  "PPI": {
+   "n": 94368,
+   "mean_abs_lfc_edge": 0.12120820581912994,
+   "mean_abs_lfc_matched": 0.10034602880477905,
+   "ratio": 1.2079023122787476,
+   "p": 0.0,
+   "testable": true
+  },
+  "co-dependency": {
+   "n": 25845,
+   "mean_abs_lfc_edge": 0.09251493960618973,
+   "mean_abs_lfc_matched": 0.08647607266902924,
+   "ratio": 1.0698328018188477,
+   "p": 1.7397862393409014e-05,
+   "testable": true
+  }
+ }
+}

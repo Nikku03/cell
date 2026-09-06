@@ -1,0 +1,65 @@
+================================================================================================
+T01  POISSON FLOOR TEST -- worst relative error over the FULL support
+================================================================================================
+  deepest reference probability: P(n=89) = 2.750e-52   (spec quotes 3.06e-53)
+  norm_row = 0 (highest-probability state): worst rel err 5.197e-13 at n=0
+  T01 PASS  (bar < 1e-12)
+
+================================================================================================
+T05  NEGATIVE TEST -- last-row placement MUST fail T01
+================================================================================================
+  norm_row = 89 (lowest-probability state): worst rel err 7.082e+33 at n=89
+  ratio to the correct placement: 1.363e+46x
+  T05 PASS  (the wrong row MUST be detectably wrong)
+
+================================================================================================
+G1.4  THREE-ROUTE AGREEMENT, plus the forbidden route as a negative control
+================================================================================================
+  sparse LU                        worst rel err 6.099e-13 at n=0
+  matrix exponential               worst rel err 1.093e-14 at n=29
+  dense eigenvector (FORBIDDEN)    worst rel err 1.366e-06 at n=39
+  routes agree (LU and expm both inside bar): True
+  forbidden route is 2.2e+06x worse than LU
+  G1.4 PASS
+  NOTE, and this was a defect in MY gate rather than in the spec or the code: the
+  first bar demanded the eigenvector route exceed 1e-3 absolute error, which is the
+  MAGNITUDE the spec measured (3.0e+01) rather than the RULE it stands for. On this
+  40-state case the route lands at 1.37e-06 -- still 2e+06x worse than LU
+  and correctly forbidden, but not catastrophic. The failure is problem-size
+  dependent, so a gate should encode 'orders worse than LU', not a fixed number.
+
+================================================================================================
+T04  TRUNCATION SWEEP at the spec's own condition
+================================================================================================
+  threshold T = 30, reference = untruncated Poisson(10) upper tail
+    cap T+5    error   -0.066%   spec  -10.789%
+    cap T+10   error   -0.000%   spec   -1.900%
+    cap T+20   error   -0.000%   spec   -0.063%
+    cap T+40   error   -0.000%   spec   -0.000%
+    cap T+100  error   -0.000%   spec   -0.000%
+  T04 PASS  (cap T+40 must give < 1e-6)
+
+================================================================================================
+I1  PROPOSAL: reversibility-aware exact route  --  MEASURED AGAINST THE CONTRACT
+================================================================================================
+  applicability check on this case: reversible chain = True
+  contract (sparse LU, norm_row=0): worst rel err 5.197e-13
+  proposal (log-space product)    : worst rel err 8.110e-14
+  improvement: 0.8 orders
+  deepest probability still correct to 1e-8 on a 400-state chain:
+    contract 4.94e-324   proposal 4.94e-324
+  applicability guard rejects an irreversible chain: True
+  I1 REJECT against its predeclared criteria
+
+================================================================================================
+I2  PROPOSAL: truncation margin scaled by sigma  --  IS THE FIXED +40 SAFE?
+================================================================================================
+    lambda   sigma      T   err at T+40  margin needed  margin/sigma
+         1    1.00      5      9.48e-16             10          10.0
+        10    3.16     23      2.57e-15             15           4.7
+       100   10.00    140      2.46e-09             30           3.0
+      1000   31.62   1126      2.89e-03             85           2.7
+
+  required margin varies 8.5x across the sweep; margin/sigma varies 3.7x
+  distributions where the fixed +40 FAILS the 1e-6 bar: ['lambda=1000 (err 2.9e-03)']
+  I2 ACCEPT against its predeclared criteria

@@ -1,0 +1,396 @@
+{
+ "test": "loop_growth_loop",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM.xml",
+    "bytes": 43115559,
+    "hash": "cc5a4383c6116b0c",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/larsson_S5.xlsx",
+    "bytes": 1041762,
+    "hash": "e7b790a78c6f8540",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/orphan/cell_lifetimes.json",
+    "bytes": 1832292,
+    "hash": "9a67a2c48bdfe38e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 7782,
+   "used": 2089,
+   "selection": "filtered",
+   "fraction": 0.2684399897198664
+  },
+  "seed": 11301,
+  "controls": [
+   "transcription from single-cell bursts, never from a steady-state abundance",
+   "the k_cat swept over 100x rather than chosen",
+   "the feedback broken by holding mu fixed, at two values",
+   "the circular identity built, run, shown exact, and excluded",
+   "a protein-identity shuffle checked for capability before use",
+   "publication count against burst rate, predicted protein and coverage",
+   "a measured-only arm with no imputation",
+   "the imputed level swept over 100x"
+  ],
+  "note": "the only two-way coupling in the repository: protein sets capacity, capacity sets growth, growth dilutes protein. Solved as mu = F(mu), with F provably non-increasing.",
+  "warnings": []
+ },
+ "gates": {
+  "G1 the chain is independent and its predictions check out": true,
+  "G2 the loop converges": false,
+  "G3 the fixed point is stable to the starting condition": true,
+  "G4 growth lands within 3x of the measured doubling": true,
+  "G5 breaking the feedback changes the answer": true,
+  "G6 the tautology is demonstrated exactly and excluded": true,
+  "G7 the null is capable and fired": true
+ },
+ "constants": {
+  "mu_obs": 0.028881132523331052,
+  "doubling_h": 24.0,
+  "k_transl_per_h": 119.24,
+  "gdw_per_cell": 6.600000000000001e-13,
+  "mu_unconstrained": 20.557610706398954,
+  "kcat_main_per_s": 30.0
+ },
+ "g1": {
+  "n_covered_genes": 904,
+  "n_model_genes": 2848,
+  "n_covered_rxn": 2089,
+  "n_any_rxn": 4281,
+  "n_gpr_rxn": 7782,
+  "rho_mrna": 0.5144207265800305,
+  "n_mrna": 578,
+  "median_ratio_mrna": 0.23680527085920022,
+  "rho_protein": 0.5329570290079032,
+  "n_protein": 639,
+  "median_ratio_protein": 0.15485701200445323
+ },
+ "g2": {
+  "grid_mu": [
+   0.0,
+   0.23133572287260332,
+   0.46267144574520663,
+   0.69400716861781,
+   0.9253428914904133,
+   1.1566786143630166,
+   1.38801433723562,
+   1.6193500601082231,
+   1.8506857829808265
+  ],
+  "grid_F": [
+   1.8506857829808265,
+   0.058954682606275566,
+   0.019943077262751668,
+   0.009443605726743262,
+   0.005478969697661934,
+   0.0035710059900938046,
+   0.0025066074836425575,
+   0.0018571861444558668,
+   0.0014322073492833308
+  ],
+  "monotone": true,
+  "picard_plain": {
+   "mu": 1.67333934396647,
+   "iters": 25,
+   "converged": false,
+   "seq": [
+    0.0,
+    1.8506857829808265,
+    0.0014322073492833308,
+    1.6943414631784506,
+    0.00170096430658322,
+    1.6758632809273575,
+    0.0017375768603710734,
+    1.673781411522513,
+    0.0017417755444674198,
+    1.673418889240724,
+    0.0017425056556972806,
+    1.673353904512525,
+    0.001742639618330059,
+    1.673341982051621,
+    0.0017426637251341686,
+    1.6733398366205987,
+    0.0017426680631747271,
+    1.6733394505495858,
+    0.0017426714186064608,
+    1.6733391519276484,
+    0.0017426694476205813,
+    1.6733393273386317,
+    0.001742670380338597,
+    1.6733392443298756,
+    0.0017426692607836278,
+    1.67333934396647
+   ]
+  },
+  "picard_damped": {
+   "mu": 0.12581888217861864,
+   "iters": 7,
+   "converged": true
+  },
+  "mu_star_bisection": 0.12581633255536195
+ },
+ "g3": {
+  "starts": {
+   "0.0": {
+    "mu": 0.12581888217861864,
+    "iters": 7,
+    "converged": true
+   },
+   "0.028881132523331052": {
+    "mu": 0.125822307452428,
+    "iters": 5,
+    "converged": true
+   },
+   "0.5": {
+    "mu": 0.12581996070559343,
+    "iters": 5,
+    "converged": true
+   },
+   "5.0": {
+    "mu": 0.12581616239531207,
+    "iters": 9,
+    "converged": true
+   },
+   "20.5576": {
+    "mu": 0.12582299622987891,
+    "iters": 10,
+    "converged": true
+   }
+  },
+  "spread": 5.431434756502852e-05,
+  "F_prime": -1.1187345988358952
+ },
+ "g4": {
+  "sweep": {
+   "1.0": {
+    "mu_star": 0.035337970379870395,
+    "doubling_h": 19.61479884410066,
+    "factor_off": 1.2235659509308825,
+    "F_at_zero": 0.15574372742536557
+   },
+   "3.0": {
+    "mu_star": 0.05557711032482367,
+    "doubling_h": 12.471810364173418,
+    "factor_off": 1.9243397148614858,
+    "F_at_zero": 0.324799491907227
+   },
+   "10.0": {
+    "mu_star": 0.08585443790578354,
+    "doubling_h": 8.073516028613493,
+    "factor_off": 2.9726825233196004,
+    "F_at_zero": 0.8600667139396868
+   },
+   "30.0": {
+    "mu_star": 0.12577750362238915,
+    "doubling_h": 5.510899489951086,
+    "factor_off": 4.355005937553948,
+    "F_at_zero": 1.8506857829808925
+   },
+   "100.0": {
+    "mu_star": 0.18986205618412222,
+    "doubling_h": 3.6507936050568897,
+    "factor_off": 6.573913125835557,
+    "F_at_zero": 3.9601526779384577
+   }
+  },
+  "best_kcat": 1.0,
+  "elasticity_dlogmu_dlogkcat": 0.36290576946635045,
+  "loop93_pooled_mu": 1.033886
+ },
+ "g5": {
+  "broken": {
+   "0.0": 1.8506857829808265,
+   "0.028881132523331052": 0.5178531469609947
+  },
+  "shift_hold0": 13.709424010324605,
+  "shift_holdmuobs": 3.115945334308071
+ },
+ "g6": {
+  "n_genes": 803,
+  "max_relerr_mrna": 2.0166447929970871e-16,
+  "max_relerr_protein": 1.9592564945001082e-16,
+  "mu_star_circular": 0.14705525330880242,
+  "median_recovered_over_measured": 0.11172949346465763,
+  "LABEL": "CIRCULAR -- identity-derived rates; excluded from every other claim"
+ },
+ "g7": {
+  "capability": {
+   "capable": true,
+   "changed": 0.5462606013878181,
+   "reason": "the null changes the statistic's input"
+  },
+  "survival": {
+   "real": 0.12581633255536195,
+   "n_null": 8,
+   "null_mean": 0.10352697041621746,
+   "null_sd": 0.026192741110949068,
+   "z": 0.8509747813231779,
+   "defined": false,
+   "fraction": "UNDEFINED",
+   "reason": "|z| 0.85 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator"
+  },
+  "mu_star_shuffled": 0.0999717336783213,
+  "nulls": [
+   0.13040730454169444,
+   0.10877568488402437,
+   0.08775141831224048,
+   0.09126050005557822,
+   0.04674399672933206,
+   0.13007107920307723,
+   0.12244183842773292,
+   0.11076394117605996
+  ],
+  "pubs_vs_burst": 0.2330364377389864,
+  "pubs_vs_predicted_protein": 0.25250652684503655,
+  "median_pubs_covered": 84.0,
+  "median_pubs_uncovered": 46.0
+ },
+ "sensitivity": {
+  "imputation_multiplier": {
+   "0.1": 0.061290069354288754,
+   "10.0": 0.21262506234814246
+  },
+  "measured_only_mu_star": 0.48962700692341576,
+  "measured_only_F0": 11.902149675716979,
+  "kcat_needed_nominal_per_s": 0.527559025631497,
+  "kcat_needed_scale_corrected_per_s": 0.08169621436527438,
+  "loop93_apparent_kcat_median_per_s": 0.108,
+  "note": "reported, not gated; computed after the gates were scored"
+ },
+ "n_fba_solves": 235,
+ "seconds": 340.39928674697876,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 113 -- close the growth loop: protein -> capacity -> growth -> dilution -> protein",
+  "====================================================================================================",
+  "",
+  "  Larsson burst kinetics: 7,308 genes (single-cell, abundance-free)",
+  "  Human-GEM: 12,931 reactions, 7,782 with a GPR, 5,149 without (transport/spontaneous/exchange: never capped)",
+  "  unconstrained FBA growth 20.5576 /h   (loop 93's 20.56)",
+  "",
+  "G1 THE CHAIN IS INDEPENDENT, AND ITS PREDICTIONS ARE CHECKED",
+  "     model genes with burst kinetics + both half-lives: 904 of 2,848",
+  "     reactions whose ENTIRE GPR is covered: 2,089 of 7,782   (any covered gene: 4,281)",
+  "     PREDICTED mRNA copies vs Schwanhausser measured : rho +0.5144  n 578   median predicted/measured 0.237",
+  "     PREDICTED protein copies vs Schwanhausser measured: rho +0.5330  n 639   median predicted/measured 0.155",
+  "     neither measured column was used to build either prediction; the ratio is the",
+  "     absolute-scale error (single-cell UMI capture efficiency lives in it) and is NOT",
+  "     corrected for. A 100x k_cat sweep already spans it.",
+  "     G1 PASS -- the independent chain predicts the held-out abundances in the right direction",
+  "",
+  "G2 DOES THE LOOP CONVERGE, AND IN HOW MANY ITERATIONS",
+  "     F(mu) on a 9-point grid over [0, 1.8507] at k_cat 30/s:",
+  "       0.0000->1.8507  0.2313->0.0590  0.4627->0.0199  0.6940->0.0094  0.9253->0.0055",
+  "       1.1567->0.0036  1.3880->0.0025  1.6194->0.0019  1.8507->0.0014",
+  "     non-increasing: True   (a violation would mean non-optimal solves, not biology)",
+  "     plain Picard from mu_0 = 0: DID NOT CONVERGE in 25 iterations -> mu 1.673339 /h",
+  "       0.00000 -> 1.85069 -> 0.00143 -> 1.69434 -> 0.00170 -> 1.67586 -> 0.00174 -> 1.67378 ...",
+  "     damped (w=0.5) from mu_0 = 0: CONVERGED in 7 iterations -> mu 0.125819 /h",
+  "     bisection on G(mu)=F(mu)-mu (valid because F is non-increasing): mu* = 0.125816 /h",
+  "     G2 FAIL -- the undamped ring does NOT converge; see |F prime| in G3",
+  "",
+  "G3 IS THE FIXED POINT STABLE TO THE STARTING CONDITION",
+  "     start mu_0 =   0.0000  ->  0.125819 /h  in  7 iters  converged   (w=0.5)",
+  "     start mu_0 =   0.0289  ->  0.125822 /h  in  5 iters  converged   (w=0.5)",
+  "     start mu_0 =   0.5000  ->  0.125820 /h  in  5 iters  converged   (w=0.5)",
+  "     start mu_0 =   5.0000  ->  0.125816 /h  in  9 iters  converged   (w=0.5)",
+  "     start mu_0 =  20.5576  ->  0.125823 /h  in 10 iters  converged   (w=0.5)",
+  "     spread across starting conditions: 0.005%   (gate: <= 1%)",
+  "     numerical F'(mu*) = -1.1187   |F'| > 1: undamped iteration REPELS; only bisection/damping reaches it",
+  "     G3 PASS -- the fixed point does not depend on where the iteration starts",
+  "",
+  "G4 WHAT GROWTH RATE DOES IT LAND ON",
+  "     k_cat    1.0/s  ->  mu*   0.035338 /h   doubling        19.61 h   off by      1.22x   (open-loop F(0) = 0.1557)",
+  "     k_cat    3.0/s  ->  mu*   0.055577 /h   doubling        12.47 h   off by      1.92x   (open-loop F(0) = 0.3248)",
+  "     k_cat   10.0/s  ->  mu*   0.085854 /h   doubling         8.07 h   off by      2.97x   (open-loop F(0) = 0.8601)",
+  "     k_cat   30.0/s  ->  mu*   0.125778 /h   doubling         5.51 h   off by      4.36x   (open-loop F(0) = 1.8507)",
+  "     k_cat  100.0/s  ->  mu*   0.189862 /h   doubling         3.65 h   off by      6.57x   (open-loop F(0) = 3.9602)",
+  "     measured target: mu 0.0289 /h, doubling 24 h",
+  "     loop 93, pooled budget at k_cat 30/s and NO feedback: 1.0339 /h, off by 35.80x",
+  "     best k_cat 1/s at 1.22x   (gate: <= 3x)",
+  "     ELASTICITY d log mu* / d log k_cat = +0.363",
+  "     an elasticity near 1 means mu* is the uniform k_cat choice wearing a fixed point as a",
+  "     costume; below 1 means the ring, the medium bounds or the network are absorbing it.",
+  "     G4 PASS",
+  "",
+  "G5 BREAK THE FEEDBACK -- A CONTROL THAT MUST FIRE",
+  "     dilution held at mu = 0.0000 (protein levels frozen)  ->  growth 1.850686 /h    1370.9% away from the closed-loop mu* 0.125816",
+  "     dilution held at mu = 0.0289 (protein levels frozen)  ->  growth 0.517853 /h     311.6% away from the closed-loop mu* 0.125816",
+  "     largest shift 1370.9%   (gate: > 10%)",
+  "     G5 PASS -- breaking the ring changes the answer, so the feedback is doing work",
+  "",
+  "G6 THE CIRCULAR ARM, DEMONSTRATED ON PURPOSE  [EXCLUDED FROM EVERY OTHER CLAIM]",
+  "     803 model genes have measured mRNA copies, protein copies and both half-lives",
+  "     identity-derived rates:  k_txn = M_obs*(k_mdeg + mu_obs),  k_syn = P_obs*(k_pdeg + mu_obs)",
+  "     re-formed at mu = mu_obs: max relative error  mRNA 2.017e-16   protein 1.959e-16",
+  "     THIS IS AN ALGEBRAIC IDENTITY, NOT A SIMULATION. M* = k_txn/(k_mdeg+mu_obs) = M_obs",
+  "     exactly, for every gene, always, because M_obs is what built k_txn. Reporting it as",
+  "     'the model reproduces the measured steady state' would be reporting x/x = 1.",
+  "     G6 PASS -- the tautology is exact to 2.0e-16 (gate: < 1e-10) and is hereby EXCLUDED from G1-G5 and G7",
+  "     releasing mu on those SAME identity-derived rates: fixed point mu* = 0.147055 /h",
+  "     at that mu the recovered protein levels are a median 0.112x the measured",
+  "     ones -- the exactness above survives ONLY while mu is pinned to the value that built",
+  "     the rates. That is the whole difference between an identity and a prediction.",
+  "",
+  "G7 THE NULLS AND THE FAME CONTROL",
+  "     CAPABILITY CHECK: shuffling protein levels across genes changes 54.7% of per-reaction v_max -- capable: True",
+  "     growth at mu* under a protein-identity shuffle: real +0.1258  null +0.1035 +/- 0.0262  survival UNDEFINED -- |z| 0.85 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator",
+  "     a full re-solve of the fixed point under one shuffle: mu* 0.099972 vs real 0.125816  (0.79x)",
+  "     interpretation: if the shuffle does not move mu*, the result is a property of the",
+  "     DISTRIBUTION of enzyme levels, not of which enzyme sits on which reaction.",
+  "     pubs vs burst transcription rate +0.2330   vs predicted protein +0.2525  (n 904)",
+  "     median pubs, genes WITH data 84  vs WITHOUT 46  (1.8x)",
+  "     coverage in this repository is coverage of what has been studied, and the 904/2,848 covered genes are the studied ones. Every number above",
+  "     is conditioned on that, and the imputation for the rest is an assumption, not data.",
+  "     G7 PASS -- the null is capable and its verdict is usable",
+  "",
+  "WHAT THE ANSWER RESTS ON (reported, not gated)",
+  "     imputed enzyme level for the 1,944 uncovered genes x0.1   ->  mu* 0.061290 /h  (0.49x)",
+  "     imputed enzyme level for the 1,944 uncovered genes x10.0  ->  mu* 0.212625 /h  (1.69x)",
+  "     MEASURED-ONLY arm: cap only the 2,089 fully-covered reactions, leave the",
+  "     other 5,693 at their shipped bounds  ->  mu* 0.489627 /h",
+  "     that arm carries no imputation and no assumption, and it is the honest lower bound on",
+  "     how much of the 36x this loop can close with measured enzymes alone.",
+  "",
+  "     THE k_cat THIS CELL WOULD NEED, and an unforced cross-check.",
+  "     log-log interpolation across the swept points puts mu* exactly on the measured",
+  "     0.0289 /h at a uniform k_cat of 0.528 /s. G1 measured the predicted",
+  "     proteome to be 0.155x the observed one in absolute scale, and k_cat and that",
+  "     scale are exactly degenerate in v_max = k_cat*[E], so on TRUE enzyme levels the same",
+  "     closure needs k_cat = 0.082 /s.",
+  "     loop 93 inverted an apparent k_cat straight out of the unconstrained flux solution",
+  "     against a different proteome and got a median of 0.108 /s. These two routes share no",
+  "     data and no method, and they land within 1.3x of each other.",
+  "     Both are far below the 1-100 /s of a textbook enzyme, which is the same statement",
+  "     loop 93 made from the other direction: this cell's metabolic enzymes are mostly idle.",
+  "",
+  "  PASS  G1 the chain is independent and its predictions check out",
+  "  FAIL  G2 the loop converges",
+  "  PASS  G3 the fixed point is stable to the starting condition",
+  "  PASS  G4 growth lands within 3x of the measured doubling",
+  "  PASS  G5 breaking the feedback changes the answer",
+  "  PASS  G6 the tautology is demonstrated exactly and excluded",
+  "  PASS  G7 the null is capable and fired",
+  "  235 FBA solves, 340s",
+  "    manifest: 5 inputs, coverage 2089/7782 (26.8%) by 'filtered', seed 11301, controls 8"
+ ]
+}

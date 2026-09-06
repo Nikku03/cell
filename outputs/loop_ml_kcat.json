@@ -1,0 +1,204 @@
+{
+ "test": "loop_ml_kcat",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/kcat_records.tsv",
+    "bytes": 1376344,
+    "hash": "130cb6f337cb17e6",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/esm2_8M_mean.npy",
+    "bytes": 5027968,
+    "hash": "077dfe7c9708fafc",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/substrate_ecfp.npy",
+    "bytes": 692608,
+    "hash": "83d31b1f0980aa4c",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/seq_features.npy",
+    "bytes": 785728,
+    "hash": "10b259ee48383f82",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 17004,
+   "used": 17004,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 13100,
+  "controls": [
+   "grouped CV by MinHash sequence cluster, leakage audited",
+   "constant, nearest-neighbour, composition and EC-median baselines",
+   "single-source ablations against the full feature set",
+   "the Smoluchowski limit as a free falsification test",
+   "publication count against the model's own error",
+   "the human subset scored separately"
+  ],
+  "note": "a random split leaks badly on enzyme data; every score here is grouped",
+  "warnings": []
+ },
+ "gates": {
+  "M1": false,
+  "M2": true,
+  "M3": true,
+  "M4": true,
+  "M5": true,
+  "M6": true
+ },
+ "constant_rmse": 1.504,
+ "floor_rmse": 0.06069784035361165,
+ "baselines": {
+  "constant (train median)": {
+   "rmse": 1.5090860292875687,
+   "r2": -0.006127126017323681
+  },
+  "1-NN on ESM embedding": {
+   "rmse": 1.8094420084166627,
+   "r2": -0.4464858798768414
+  },
+  "5-NN on ESM embedding": {
+   "rmse": 1.6012652781259444,
+   "r2": -0.13279528841593957
+  },
+  "1-NN on composition": {
+   "rmse": 2.01968808270727,
+   "r2": -0.8021605011723807
+  },
+  "EC median": {
+   "rmse": 1.5015377566146224,
+   "r2": 0.0039127634078335305
+  }
+ },
+ "models": {
+  "XGB composition": {
+   "rmse": 1.4686410863797956,
+   "r2": 0.047080512388801066
+  },
+  "XGB substrate": {
+   "rmse": 1.4197315006996734,
+   "r2": 0.1094930814216466
+  },
+  "XGB esm": {
+   "rmse": 1.3922708631847949,
+   "r2": 0.14360853563575715
+  },
+  "XGB esm+substrate": {
+   "rmse": 1.3755987103105032,
+   "r2": 0.16399595078201779
+  },
+  "XGB all": {
+   "rmse": 1.3662989492808546,
+   "r2": 0.17526138382794254
+  },
+  "MLP all": {
+   "rmse": 1.437413699844415,
+   "r2": 0.08717311944908279
+  }
+ },
+ "best_model": "XGB all",
+ "best_baseline": "EC median",
+ "fraction_of_gap_closed": 0.09540694566194123,
+ "m1_drift": {
+  "0": 0.20716460765774347,
+  "1": -0.028615288658247584,
+  "2": -0.08265525114574801,
+  "3": -0.09018011844339385,
+  "4": -0.018954664642332086
+ },
+ "m5": {
+  "out_of_range": 0.0,
+  "smoluchowski_violation": 0.0,
+  "n_km": 947
+ },
+ "m6": {
+  "human_rmse": 1.3764322189127634,
+  "human_r2": 0.10357820682226371,
+  "pubs_error_rho": -0.11132095971948819,
+  "n_human": 2437
+ },
+ "seconds": 427.72041869163513,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 131 -- can a network predict k_cat, and can it beat a lookup table?",
+  "====================================================================================================",
+  "",
+  "  17,004 records | ESM (7856, 320) | substrate FP (2705, 2048) | composition (7856, 25)",
+  "  constant baseline RMSE 1.504 log10, experimental floor 0.061",
+  "",
+  "M1 THE SPLIT DOES NOT STRATIFY THE TARGET",
+  "     fold 0: n= 3,580  mean log10 kcat +0.775  drift +0.207",
+  "     fold 1: n= 3,345  mean log10 kcat +0.539  drift -0.029",
+  "     fold 2: n= 3,137  mean log10 kcat +0.485  drift -0.083",
+  "     fold 3: n= 3,581  mean log10 kcat +0.477  drift -0.090",
+  "     fold 4: n= 3,361  mean log10 kcat +0.549  drift -0.019",
+  "     worst drift 0.207   gate < 0.2",
+  "     leakage audit from the build: 0.371 max k-mer Jaccard, 0.010 median",
+  "     M1 FAIL",
+  "",
+  "M3 THE NETWORK BEATS HOMOLOGY LOOKUP  (baselines computed first)",
+  "     constant (train median)    RMSE 1.5091   R2 -0.0061",
+  "     1-NN on ESM embedding      RMSE 1.8094   R2 -0.4465",
+  "     5-NN on ESM embedding      RMSE 1.6013   R2 -0.1328",
+  "     1-NN on composition        RMSE 2.0197   R2 -0.8022",
+  "     EC median                  RMSE 1.5015   R2 +0.0039",
+  "     best baseline: EC median at RMSE 1.5015",
+  "",
+  "M4 THE REPRESENTATION EARNS ITS PLACE  (gradient boosting on each feature block)",
+  "     XGB composition      dim    25   RMSE 1.4686   R2 +0.0471",
+  "     XGB substrate        dim  2048   RMSE 1.4197   R2 +0.1095",
+  "     XGB esm              dim   320   RMSE 1.3923   R2 +0.1436",
+  "     XGB esm+substrate    dim  2368   RMSE 1.3756   R2 +0.1640",
+  "     XGB all              dim  2393   RMSE 1.3663   R2 +0.1753",
+  "",
+  "  THE NEURAL NETWORK  (MLP on ESM + substrate fingerprint + composition)",
+  "     MLP all              dim  2393   RMSE 1.4374   R2 +0.0872",
+  "",
+  "  BEST MODEL: XGB all at RMSE 1.3663",
+  "  constant 1.504 | best baseline 1.5015 | model 1.3663 | floor 0.061",
+  "  the model closes 9.5% of the distance from a constant to the experimental floor",
+  "",
+  "M2 THE NETWORK BEATS A CONSTANT",
+  "     1.3663 against 1.504   M2 PASS",
+  "",
+  "M3 (verdict) model 1.3663 against best lookup 1.5015   M3 PASS -- the model beats homology lookup",
+  "",
+  "M4 (verdict) full model against every single-source ablation: PASS",
+  "",
+  "M5 PHYSICS, WHICH NEEDS NO HELD-OUT DATA",
+  "     predictions outside 1e-6..1e7 /s: 0.000%   gate < 1%",
+  "     947 predictions paired with a MEASURED K_M",
+  "     implied k_cat/K_M above loop 126's Smoluchowski limit (6.7e+09): 0.000%   gate < 1%",
+  "     M5 PASS",
+  "",
+  "M6 WHERE THE ERROR IS, AND WHETHER IT IS FAME",
+  "     Homo sapiens               n=2,437  RMSE 1.3764",
+  "     Escherichia coli           n=1,497  RMSE 1.4585",
+  "     Saccharomyces cerevisiae   n=  640  RMSE 1.4621",
+  "     Rattus norvegicus          n=  562  RMSE 1.3692",
+  "     Arabidopsis thaliana       n=  383  RMSE 1.2098",
+  "     HUMAN SUBSET, which is what the cell model needs: n=2,437  RMSE 1.3764  R2 +0.1036",
+  "     Spearman(publication count, absolute error) on 1256 human genes: -0.1113",
+  "     the model is more accurate on well-studied enzymes",
+  "     M6 PASS",
+  "",
+  "====================================================================================================",
+  "  M1  FAIL",
+  "  M2  PASS",
+  "  M3  PASS",
+  "  M4  PASS",
+  "  M5  PASS",
+  "  M6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 17004/17004 (100.0%) by 'all', seed 13100, controls 6"
+ ]
+}

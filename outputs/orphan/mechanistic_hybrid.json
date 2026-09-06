@@ -1,0 +1,42 @@
+{
+ "retr_all": [
+  0.3494,
+  0.0284
+ ],
+ "retr_tf": [
+  0.2258,
+  0.0442
+ ],
+ "retr_ntf": [
+  0.3868,
+  0.0313
+ ],
+ "prop_tf": [
+  0.0302,
+  0.0119
+ ],
+ "hybrid_all": [
+  0.3493,
+  0.0286
+ ],
+ "hybrid_tf": [
+  0.2254,
+  0.0429
+ ],
+ "beta": [
+  0.15,
+  0.0
+ ],
+ "n_tf": [
+  26.0,
+  0.0
+ ],
+ "n_test": [
+  112.0,
+  0.0
+ ],
+ "tide": 0.2603,
+ "hybrid_minus_retrieval": -0.0001,
+ "verdict": "MECHANISTIC HYBRID (mechanistic_hybrid.py): route by knocked-out gene type -- TF knockouts propagated through the regulatory (TF->target) network, everything else via retrieval, then blended. 3 splits, held-out K562. TF-knockout specific responses are NOT more predictable than non-TF (retrieval 0.226 vs 0.387). On TF knockouts, the regulatory PROPAGATION alone scores 0.030 vs retrieval 0.226 (tide 0.260) -- retrieval already dominates the mechanism even where the mechanism should apply, and the val-tuned blend picks beta=0.15. The routed hybrid scores 0.349 vs retrieval-alone 0.349 (-0.000) -- no gain. WHY: even for TFs -- where the regulatory graph is the RIGHT graph -- its targets are the CANONICAL (generic/tide) targets, which retrieval already captures and which the tide-removed metric discards; the TF-knockout-SPECIFIC residue is the non-canonical part the static regulatory network does not name. So combining + type-routing is sound in principle but adds nothing on THIS data: the regulatory network encodes generic regulation, and the specific response is context-specific biology missing from it. Deterministic.",
+ "note": "MECHANISTIC HYBRID (mechanistic_hybrid.py): route by knocked-out gene type -- TF knockouts propagated through the regulatory (TF->target) network, everything else via retrieval, then blended. 3 splits, held-out K562. TF-knockout specific responses are NOT more predictable than non-TF (retrieval 0.226 vs 0.387). On TF knockouts, the regulatory PROPAGATION alone scores 0.030 vs retrieval 0.226 (tide 0.260) -- retrieval already dominates the mechanism even where the mechanism should apply, and the val-tuned blend picks beta=0.15. The routed hybrid scores 0.349 vs retrieval-alone 0.349 (-0.000) -- no gain. WHY: even for TFs -- where the regulatory graph is the RIGHT graph -- its targets are the CANONICAL (generic/tide) targets, which retrieval already captures and which the tide-removed metric discards; the TF-knockout-SPECIFIC residue is the non-canonical part the static regulatory network does not name. So combining + type-routing is sound in principle but adds nothing on THIS data: the regulatory network encodes generic regulation, and the specific response is context-specific biology missing from it. Deterministic."
+}

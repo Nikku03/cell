@@ -1,0 +1,188 @@
+{
+ "coverage": {
+  "__ALL__": {
+   "sign": 0.6102412750964634,
+   "strength": 0.06630961247034388,
+   "confidence": 0.20024640713854958,
+   "evidence_type": 0.5508590554623417,
+   "cell_context": 0.2601971257108397,
+   "direction": 1.0,
+   "provenance": 1.0,
+   "n_rows": 1157434
+  },
+  "codependency": {
+   "sign": 1.0,
+   "strength": 1.0,
+   "confidence": 1.0,
+   "evidence_type": 1.0,
+   "cell_context": 0.0,
+   "direction": 1.0,
+   "provenance": 1.0,
+   "n_rows": 76749
+  },
+  "complex": {
+   "sign": 0.0,
+   "strength": 0.0,
+   "confidence": 0.736390520559044,
+   "evidence_type": 1.0,
+   "cell_context": 0.0,
+   "direction": 1.0,
+   "provenance": 1.0,
+   "n_rows": 123425
+  },
+  "ppi": {
+   "sign": 0.0,
+   "strength": 0.0,
+   "confidence": 0.1957124765406857,
+   "evidence_type": 0.4157768656830284,
+   "cell_context": 0.0,
+   "direction": 1.0,
+   "provenance": 1.0,
+   "n_rows": 327695
+  },
+  "regulatory": {
+   "sign": 1.0,
+   "strength": 0.0,
+   "confidence": 0.0,
+   "evidence_type": 0.4919862186812343,
+   "cell_context": 0.4919862186812343,
+   "direction": 1.0,
+   "provenance": 1.0,
+   "n_rows": 612133
+  },
+  "signalling": {
+   "sign": 1.0,
+   "strength": 0.0,
+   "confidence": 0.0,
+   "evidence_type": 0.0,
+   "cell_context": 0.0,
+   "direction": 1.0,
+   "provenance": 1.0,
+   "n_rows": 17432
+  }
+ },
+ "coverage_by_block": {
+  "cell_complete.json.gz:codep": {
+   "n_rows": 76749,
+   "sign": 1.0,
+   "strength": 1.0,
+   "confidence": 1.0,
+   "evidence_type": 1.0,
+   "cell_context": 0.0
+  },
+  "cell_complete.json.gz:ppi": {
+   "n_rows": 191447,
+   "sign": 0.0,
+   "strength": 0.0,
+   "confidence": 0.0,
+   "evidence_type": 0.0,
+   "cell_context": 0.0
+  },
+  "cell_complete.json.gz:reg": {
+   "n_rows": 612133,
+   "sign": 1.0,
+   "strength": 0.0,
+   "confidence": 0.0,
+   "evidence_type": 0.4919862186812343,
+   "cell_context": 0.4919862186812343
+  },
+  "cell_complete.json.gz:sig": {
+   "n_rows": 17432,
+   "sign": 1.0,
+   "strength": 0.0,
+   "confidence": 0.0,
+   "evidence_type": 0.0,
+   "cell_context": 0.0
+  },
+  "complexes.parquet / rxn/complexportal_9606.tsv": {
+   "n_rows": 32536,
+   "sign": 0.0,
+   "strength": 0.0,
+   "confidence": 0.0,
+   "evidence_type": 1.0,
+   "cell_context": 0.0
+  },
+  "humap2.txt": {
+   "n_rows": 90889,
+   "sign": 0.0,
+   "strength": 0.0,
+   "confidence": 1.0,
+   "evidence_type": 1.0,
+   "cell_context": 0.0
+  },
+  "intact_interactions.parquet": {
+   "n_rows": 64134,
+   "sign": 0.0,
+   "strength": 0.0,
+   "confidence": 1.0,
+   "evidence_type": 1.0,
+   "cell_context": 0.0
+  },
+  "rxn/reactome_interactions.tsv": {
+   "n_rows": 72114,
+   "sign": 0.0,
+   "strength": 0.0,
+   "confidence": 0.0,
+   "evidence_type": 1.0,
+   "cell_context": 0.0
+  }
+ },
+ "terciles": {
+  "codependency": {
+   "q33": 0.233,
+   "q67": 0.281,
+   "n_with_conf": 76749,
+   "frac_of_type_with_conf": 1.0
+  },
+  "complex": {
+   "q33": 0.0,
+   "q67": 0.25,
+   "n_with_conf": 90889,
+   "frac_of_type_with_conf": 0.736390520559044
+  },
+  "ppi": {
+   "q33": 0.56,
+   "q67": 0.56,
+   "n_with_conf": 64134,
+   "frac_of_type_with_conf": 0.1957124765406857
+  }
+ },
+ "humap2_polarity": {
+  "levels": {
+   "1": {
+    "pairs": 925,
+    "complexportal_corroborated": 0.7048648648648649,
+    "intact_corroborated": 0.03891891891891892
+   },
+   "2": {
+    "pairs": 6623,
+    "complexportal_corroborated": 0.4233730937641552,
+    "intact_corroborated": 0.04590064925260456
+   },
+   "3": {
+    "pairs": 6690,
+    "complexportal_corroborated": 0.3518684603886398,
+    "intact_corroborated": 0.03153961136023916
+   },
+   "4": {
+    "pairs": 26262,
+    "complexportal_corroborated": 0.20204097174624933,
+    "intact_corroborated": 0.032137689437209654
+   },
+   "5": {
+    "pairs": 50389,
+    "complexportal_corroborated": 0.0997241461430074,
+    "intact_corroborated": 0.02161185973129056
+   }
+  },
+  "high_confidence_end": 1,
+  "low_confidence_end": 5,
+  "corroboration_at_high_end": 0.7048648648648649,
+  "corroboration_at_low_end": 0.0997241461430074,
+  "observed_range": [
+   1,
+   5
+  ],
+  "resolved_by": "fraction of within-complex pairs corroborated by Complex Portal and IntAct -- independent of the response target"
+ }
+}

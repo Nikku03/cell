@@ -1,0 +1,180 @@
+{
+ "test": "loop 135 -- executable plan",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/kcat_records.tsv",
+    "bytes": 1376344,
+    "hash": "130cb6f337cb17e6",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/sequences.json",
+    "bytes": 3310515,
+    "hash": "47bffec241c1becf",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/esm2_8M_mean.npy",
+    "bytes": 5027968,
+    "hash": "077dfe7c9708fafc",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 17004,
+   "used": 17004,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 13500,
+  "controls": [
+   "mutant flag checked against gate_guard's achievable bound BEFORE its effect is measured",
+   "every gain carries a CLUSTER-level bootstrap interval",
+   "the added features permuted, as a capacity control",
+   "the improver's own prediction scored against the measurement"
+  ],
+  "note": "P1 and P3 were removed by T8 (inputs absent) and P5 is BLOCKED behind P1, so this is the whole executable plan and not a selection from it.",
+  "warnings": []
+ },
+ "gates": {
+  "E1": true,
+  "E2": true,
+  "E3": true,
+  "E4": true,
+  "E5": true,
+  "E6": true,
+  "E7": true
+ },
+ "baseline_rmse": 1.3771194434940215,
+ "e1": {
+  "flagged_fraction": 0.5634556412696838,
+  "achievable": 0.491946759064426,
+  "n_flagged_records": 9581
+ },
+ "e2": {
+  "rmse": 1.3603262431119407,
+  "gain": 0.016793200382080764,
+  "boot": [
+   0.016823332012460272,
+   0.0016188680749562095,
+   0.032198841176479226
+  ]
+ },
+ "e3": {
+  "rmse": 1.370157852811795,
+  "gain": 0.0069615906822264595,
+  "boot": [
+   0.007028015674420383,
+   -0.0045049512171136275,
+   0.018846311859800957
+  ]
+ },
+ "e4": {
+  "rmse": 1.3529855246428593,
+  "gain": 0.024133918851162228,
+  "boot": [
+   0.02314387850643916,
+   0.008586805370585648,
+   0.038194761163019814
+  ]
+ },
+ "e5": {
+  "permuted_rmse": 1.370073183276428,
+  "permuted_gain": 0.007046260217593581
+ },
+ "e6": {
+  "predicted": 0.060607661451816286,
+  "measured": 0.024133918851162228,
+  "error": -0.03647374260065406
+ },
+ "e7": {
+  "encodings": {
+   "integer index (loop 134)": {
+    "rmse": 1.370157852811795,
+    "gain": 0.0069615906822264595
+   },
+   "hierarchical levels 1-3": {
+    "rmse": 1.3741944645505297,
+    "gain": 0.0029249789434917517
+   },
+   "out-of-fold target encoding": {
+    "rmse": 1.3566125491877088,
+    "gain": 0.020506894306312695
+   }
+  },
+  "best": "out-of-fold target encoding",
+  "best_gain": 0.020506894306312695,
+  "index_gain": 0.0069615906822264595,
+  "index_understated_by": 0.013545303624086236,
+  "_ec_encoded_max_gain": 0.020506894306312695
+ },
+ "seconds": 539.8837127685547,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 135 -- execute the part of the plan that can actually run",
+  "====================================================================================================",
+  "",
+  "  17,004 records | 7,856 sequences | ESM (7856, 320)",
+  "",
+  "BUILDING THE MUTANT FEATURES (P2)",
+  "     sequences flagged as members of a point-mutant pair: 5,009",
+  "     records carrying the flag: 9,581 of 17,004",
+  "",
+  "E1 CAN THE MUTANT DETECTOR EVEN FIRE?",
+  "     fraction of records flagged: 0.5635",
+  "     gate_guard achievable-change bound for that binary vector: 0.4919",
+  "     distinct substitution counts present: [1.0, 2.0, 3.0]",
+  "     E1 PASS -- the flag is non-degenerate",
+  "",
+  "  BASELINE (loop 132's feature set, same folds): RMSE 1.3771",
+  "",
+  "E2 P2 ALONE -- the mutant flag and substitution count",
+  "     RMSE 1.3603   gain +0.0168",
+  "     cluster bootstrap on the paired difference: +0.0168 [+0.0016, +0.0322]",
+  "     E2 PASS -- measured with an interval; individually SIGNIFICANT",
+  "",
+  "E3 P4 ALONE -- the EC number as an explicit feature",
+  "     RMSE 1.3702   gain +0.0070",
+  "     cluster bootstrap on the paired difference: +0.0070 [-0.0045, +0.0188]",
+  "     E3 PASS -- measured with an interval; individually not distinguishable from zero, as predicted",
+  "",
+  "E4 THE BUNDLE, TESTED AS ONE CHANGE",
+  "     RMSE 1.3530   gain +0.0241",
+  "     cluster bootstrap on the paired difference: +0.0231 [+0.0086, +0.0382]",
+  "     E4 PASS -- the bundle is measurably better than the baseline",
+  "",
+  "E5 THE NEGATIVE CONTROL -- the same features, shuffled",
+  "     permuted-feature RMSE 1.3701   'gain' +0.0070",
+  "     real bundle gain +0.0241",
+  "     E5 PASS -- the real features beat their own shuffle",
+  "",
+  "E6 DID THE IMPROVER'S PREDICTION HOLD?",
+  "     improver predicted combined gain: +0.0606",
+  "     measured                        : +0.0241",
+  "     signed error                    : -0.0365   (OVER-promised)",
+  "     E6 PASS -- recorded, so the predictions in improver.py now have a track record",
+  "",
+  "E7 THE EC ENCODING LOOP 134 GOT WRONG",
+  "     integer index (loop 134)         RMSE 1.3702   gain +0.0070",
+  "     hierarchical levels 1-3          RMSE 1.3742   gain +0.0029",
+  "     out-of-fold target encoding      RMSE 1.3566   gain +0.0205",
+  "       (built with the nested construction loop 134 C2 showed B4 had got wrong)",
+  "     best encoding: out-of-fold target encoding at +0.0205",
+  "     the integer index loop 134 used scored +0.0070",
+  "     E7 PASS -- the EC channel now has a maximum measured through a working instrument,",
+  "     which is what T7 needs before P6 can be accepted",
+  "",
+  "====================================================================================================",
+  "  E1  PASS",
+  "  E2  PASS",
+  "  E3  PASS",
+  "  E4  PASS",
+  "  E5  PASS",
+  "  E6  PASS",
+  "  7/7",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 17004/17004 (100.0%) by 'all', seed 13500, controls 4"
+ ]
+}

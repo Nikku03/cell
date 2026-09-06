@@ -1,0 +1,109 @@
+{
+ "test": "non-Markov test in single cells via sci-fate new/total RNA",
+ "Z2": {
+  "n_up": 5,
+  "detail": [
+   "TSC22D3 0.045->0.990",
+   "FKBP5 0.311->2.103",
+   "PER1 0.058->0.454",
+   "KLF15 0.003->0.011",
+   "ZBTB16 0.002->0.051"
+  ]
+ },
+ "Z1": {
+  "state_r": 0.6472785890940344
+ },
+ "Z3": {
+  "state": 0.6472785890940344,
+  "state_time": 0.6472855498424457,
+  "delta": 6.96074841129868e-06,
+  "se": 3.1389434052616806e-06,
+  "z": 2.2175450502327205
+ },
+ "Z6": {
+  "time_only": 0.6183400178556487,
+  "state_added": 0.028945531986796832,
+  "time_added": 6.96074841129868e-06
+ },
+ "Z4": {
+  "real": 0.03803223244675396,
+  "null": 0.006398220469119536,
+  "delta": 0.031634011977634414,
+  "se": 0.007064963202209399,
+  "z": 4.47759048026487,
+  "n": 1498
+ },
+ "gates": {
+  "Z2": true,
+  "Z1": true,
+  "Z3": false,
+  "Z6": true,
+  "Z4": true,
+  "Z5": false
+ },
+ "void": [
+  "Z5"
+ ],
+ "seconds": 318.75916051864624,
+ "log": [
+  "========================================================================================================",
+  "LOOP 250 -- THE NON-MARKOV CLAIM, IN SINGLE CELLS",
+  "========================================================================================================",
+  "     The obvious test -- does OLD RNA predict NEW RNA beyond TOTAL -- is algebraically",
+  "     void: total = new + old exactly, so the two determine the third with no biology.",
+  "     That is loop 231's confound in its purest form. This loop uses TIME instead, which",
+  "     is not algebraically related to any count: if the process is Markov in S, two cells",
+  "     in the same state transcribe the same way however long they have been in dex.",
+  "     7,404 cells; keeping doublet score <= 0.15 and >= 1,000 UMI -> 7,179",
+  "     18,122 genes detected in 100+ cells",
+  "       t=   0 h   1138 cells",
+  "       t=   2 h   1126 cells",
+  "       t=   4 h    992 cells",
+  "       t=   6 h   1367 cells",
+  "       t=   8 h   1148 cells",
+  "       t=  10 h   1408 cells",
+  "Z2 IS THIS A REAL DEXAMETHASONE TIMECOURSE?",
+  "     new-RNA at 0 h vs 10 h: TSC22D3 0.045->0.990; FKBP5 0.311->2.103; PER1 0.058->0.454; KLF15 0.003->0.011; ZBTB16 0.002->0.051",
+  "     Z2 PASS -- 5 of 5 textbook glucocorticoid targets rise",
+  "     state reduced to 40 components (18.8% of variance), unsupervised",
+  "Z1 IS THE STATE MEASURED WELL ENOUGH FOR A CONDITIONAL TEST TO MEAN ANYTHING?",
+  "     total-RNA state predicts a held-out cell's new-RNA profile at r = 0.6473",
+  "     Z1 PASS -- the state predicts at 0.6473, so 'given the state' is not vacuous",
+  "Z3 DOES TIME ADD BEYOND STATE?",
+  "     state alone 0.6473   state + time 0.6473",
+  "     paired over 7,179 held-out cells: +0.00001 +/- 0.00000  (+2.2 se)",
+  "     Z3 FAIL -- time adds +0.0000 beyond the state, against a 0.02 bar; at this resolution the process is Markov in S",
+  "Z6 THE REVERSE DIRECTION",
+  "     time alone 0.6183; state added to time +0.0289, time added to state +0.0000",
+  "     Z6 PASS -- the state adds +0.0289 to time while time adds +0.0000 to the state; the state is the informative variable",
+  "Z4 THE STATE-MATCHED FORM",
+  "     each cell matched to its nearest neighbours in state space, time tested WITHIN those",
+  "     neighbourhoods, so a Z3 result cannot be explained by the state being truncated",
+  "     within 1,498 state-matched neighbourhoods of 30: corr(|time gap|, |new-RNA difference|) = +0.0380",
+  "     the same with time permuted inside each neighbourhood: +0.0064",
+  "     paired +0.03163 +/- 0.00706  (+4.5 se)",
+  "     Z4 PASS -- at matched state, cells further apart in time differ more in what they transcribe (+4.5 se)",
+  "Z5 CONTROL: TIME PERMUTED ACROSS ALL CELLS",
+  "     Z5 VOID -- Z3 did not pass, so there is nothing here to test",
+  "Z7 WHAT THIS CANNOT SHOW",
+  "     Destructive sampling stands: this asks whether history is visible ACROSS cells at",
+  "     different treatment durations, not whether one cell's trajectory is non-Markov.",
+  "     Time-since-treatment is a coarse summary of history -- a cell at 10 h that responded",
+  "     late scores identically to one that responded early.",
+  "     Cells are unsynchronised. Cell-cycle phase varies within every timepoint and is",
+  "     itself a hidden state with its own history, so a pass has a cell-cycle reading as",
+  "     well as a memory reading and Z4 does not separate them.",
+  "     The labelling window defines 'now'; anything faster is invisible.",
+  "     A FAIL bounds the memory term at this resolution rather than excluding it -- the",
+  "     same limit loop 247 recorded, and single cells do not remove it.",
+  "========================================================================================================",
+  "  Z2  PASS",
+  "  Z1  PASS",
+  "  Z3  FAIL",
+  "  Z6  PASS",
+  "  Z4  PASS",
+  "  Z5  VOID",
+  "  4/5   [319s]   (1 VOID: Z5)",
+  "========================================================================================================"
+ ]
+}

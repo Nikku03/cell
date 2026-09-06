@@ -1,0 +1,93 @@
+{
+  "test": "sc_transformer",
+  "d_model": 128,
+  "layers": 2,
+  "epochs": 6,
+  "n_train_cells": 63111,
+  "n_groups": 216,
+  "results": {
+    "gene": {
+      "params": 630352,
+      "r": 0.36770916249022434,
+      "p20": 0.21666666666666667
+    },
+    "gene_line": {
+      "params": 630352,
+      "r": 0.43476542913695126,
+      "p20": 0.26296296296296295
+    },
+    "gene_line_state": {
+      "params": 630352,
+      "r": 0.4410192311283546,
+      "p20": 0.25763888888888886
+    }
+  },
+  "contrast": {
+    "TFa line-gene (r)": {
+      "delta": 0.06705626664672694,
+      "lo": 0.05339276625339759,
+      "hi": 0.08135577792297603,
+      "verdict": "RESOLVED +"
+    },
+    "TFa line-gene (p)": {
+      "delta": 0.046296296296296294,
+      "lo": 0.030324074074074076,
+      "hi": 0.062268518518518515,
+      "verdict": "RESOLVED +"
+    },
+    "TFb state-line (r)": {
+      "delta": 0.006253801991403268,
+      "lo": -0.005731790668871324,
+      "hi": 0.017958935872114536,
+      "verdict": "unresolved"
+    },
+    "TFb state-line (p)": {
+      "delta": -0.005324074074074071,
+      "lo": -0.019444444444444445,
+      "hi": 0.009259259259259259,
+      "verdict": "unresolved"
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "STEP 5 -- SMALL TRANSFORMER, same task / holdout / metric as the conditioned ADRN",
+    "====================================================================================================",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 15.0",
+    "  extra channels: 536 kept of 691 built  (TIER A 527, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  200 perturbations; channel vocabulary 697; mean active channels 44.6",
+    "  held out 40 perturbations entirely",
+    "  78,608 perturbed cells with a matched control group",
+    "  training cells 63,111 | state features 9",
+    "  held-out evaluation groups: 216",
+    "\n  gene: 0.63M params, 63,111 cells, 6 epochs",
+    "    epoch 1/6  loss 0.26265  (125s)",
+    "    epoch 2/6  loss 0.25423  (106s)",
+    "    epoch 3/6  loss 0.25234  (105s)",
+    "    epoch 4/6  loss 0.25128  (102s)",
+    "    epoch 5/6  loss 0.25061  (104s)",
+    "    epoch 6/6  loss 0.25018  (103s)",
+    "    gene: r 0.3677  p@20 0.2167",
+    "\n  gene_line: 0.63M params, 63,111 cells, 6 epochs",
+    "    epoch 1/6  loss 0.26232  (103s)",
+    "    epoch 2/6  loss 0.25278  (104s)",
+    "    epoch 3/6  loss 0.24977  (104s)",
+    "    epoch 4/6  loss 0.24831  (104s)",
+    "    epoch 5/6  loss 0.24737  (103s)",
+    "    epoch 6/6  loss 0.24668  (106s)",
+    "    gene_line: r 0.4348  p@20 0.2630",
+    "\n  gene_line_state: 0.63M params, 63,111 cells, 6 epochs",
+    "    epoch 1/6  loss 0.25852  (118s)",
+    "    epoch 2/6  loss 0.24373  (105s)",
+    "    epoch 3/6  loss 0.24028  (104s)",
+    "    epoch 4/6  loss 0.23869  (103s)",
+    "    epoch 5/6  loss 0.23758  (104s)",
+    "    epoch 6/6  loss 0.23657  (102s)",
+    "    gene_line_state: r 0.4410  p@20 0.2576",
+    "  TFa line-gene (r)     : +0.0671 [+0.0534,+0.0814] RESOLVED +",
+    "  TFa line-gene (p)     : +0.0463 [+0.0303,+0.0623] RESOLVED +",
+    "  TFb state-line (r)    : +0.0063 [-0.0057,+0.0180] unresolved",
+    "  TFb state-line (p)    : -0.0053 [-0.0194,+0.0093] unresolved",
+    "\n  NOTE: 1M-parameter model on 4 CPU cores. A null here bounds what is reachable at THIS scale;",
+    "  it does not establish that a large model would also fail."
+  ]
+}

@@ -1,0 +1,79 @@
+{
+ "n_perturbations": 5120,
+ "n_genes": 8246,
+ "k": 20,
+ "rank_table": {
+  "1": 0.14211444556713104,
+  "2": 0.21632695198059082,
+  "5": 0.2949398458003998,
+  "10": 0.3351721465587616,
+  "20": 0.37369051575660706,
+  "40": 0.4008786380290985,
+  "60": 0.4113219976425171
+ },
+ "component1": {
+  "vs_n_movers": 0.519051528236374,
+  "vs_dep_frac": 0.3848473395346966,
+  "vs_move_frequency": 0.5456134959257121,
+  "top_genes": [
+   "FTH1",
+   "MALAT1",
+   "PRG2",
+   "CD63",
+   "IGFL2-AS1",
+   "RPS3",
+   "PTMA",
+   "ALAS2",
+   "BTG1",
+   "RPS9",
+   "GYPB",
+   "NPM1",
+   "MT-ATP6",
+   "ASAH1",
+   "RPSA"
+  ]
+ },
+ "coherence": {
+  "RAW matrix (core still in)": {
+   "n_pairs": 1031,
+   "mean_complex": 0.504930853843689,
+   "mean_matched": 0.14880917966365814,
+   "difference": 0.35612165927886963,
+   "perm_z": 77.8335997919586,
+   "n_perm": 200
+  },
+  "RESIDUAL (core removed)": {
+   "n_pairs": 1031,
+   "mean_complex": 0.07191133499145508,
+   "mean_matched": 0.0011125856544822454,
+   "difference": 0.07079874724149704,
+   "perm_z": 93.35919169273221,
+   "n_perm": 200
+  },
+  "RAW matrix, all": {
+   "n_pairs": 6385,
+   "mean_complex": 0.24847157299518585,
+   "mean_matched": 0.06363768130540848,
+   "difference": 0.18483388423919678,
+   "perm_z": 133.3225817092157,
+   "n_perm": 200
+  },
+  "RESIDUAL, all": {
+   "n_pairs": 6385,
+   "mean_complex": 0.049083832651376724,
+   "mean_matched": 0.0008858867222443223,
+   "difference": 0.048197947442531586,
+   "perm_z": 181.0686996129249,
+   "n_perm": 200
+  },
+  "PERMUTED membership (residual)": {
+   "n_pairs": 15230,
+   "mean_complex": 0.0006877146661281586,
+   "mean_matched": 8.524332770321053e-06,
+   "difference": 0.000679190328810364,
+   "perm_z": 3.272689379340597,
+   "n_perm": 200
+  }
+ },
+ "verdict": "PASS"
+}

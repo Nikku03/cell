@@ -1,0 +1,470 @@
+{
+ "test": "loop_gate_audit",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/bench_esm2_batch_plan.json",
+    "bytes": 2165,
+    "hash": "2a42232ba077404f",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/bench_esm2_sizes_plan.json",
+    "bytes": 4347,
+    "hash": "fccacec499a67fa1",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/bench_feature_assembly.json",
+    "bytes": 680,
+    "hash": "ad629a737d3df1c8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 201,
+   "used": 201,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 10501,
+  "controls": [
+   "sensitivity tested on three known-bad gates",
+   "specificity tested on three known-good gates",
+   "the inert-null guard tested against both an inert and a live null",
+   "the limit of the record scan stated rather than glossed",
+   "remaining exposure counted rather than blind-retrofitted",
+   "replayed on the actual recorded numbers, not on invented ones"
+  ],
+  "note": "twelve gates fired while measuring nothing in one session; care was not the fix, so the fix is mechanical",
+  "warnings": []
+ },
+ "gates": {
+  "V1 the ratio family is detectable from the record": true,
+  "V2 the guard catches every known ratio case": true,
+  "V3 the guard does not flag real effects": true,
+  "V4 the inert-null guard catches loop 94": true,
+  "V5 the unprotected surface is counted": true,
+  "V6 the guard is used in new work": true
+ },
+ "v1": {
+  "files_scanned": 201,
+  "ratio_fields": 965,
+  "implausible": [
+   {
+    "file": "chromatin_timescale",
+    "field": ".separation_ratio",
+    "value": 641761.3381639607
+   },
+   {
+    "file": "loop_cellcycle",
+    "field": ".z5.survival_order_component.z",
+    "value": 9.0848740216526
+   },
+   {
+    "file": "loop_cellcycle",
+    "field": ".z5.survival_rho_bestproj.z",
+    "value": 15.633799986520765
+   },
+   {
+    "file": "loop_cellcycle",
+    "field": ".z5.survival_rho.z",
+    "value": 18.213411250633552
+   },
+   {
+    "file": "loop_cellcycle",
+    "field": ".z3.survival_expr.z",
+    "value": 9.478666541172599
+   },
+   {
+    "file": "loop_cellcycle",
+    "field": ".z3.survival_full.z",
+    "value": 24.65041870331921
+   },
+   {
+    "file": "loop_cellcycle_axis",
+    "field": ".c2.survival.z",
+    "value": 7.445405153478028
+   },
+   {
+    "file": "loop_cellcycle_axis",
+    "field": ".c2.survival.null_sd",
+    "value": 5.0911265698271535
+   },
+   {
+    "file": "loop_cellcycle_axis",
+    "field": ".c2.survival.null_mean",
+    "value": 50.0945
+   },
+   {
+    "file": "loop_cellcycle_axis",
+    "field": ".c2.survival.real",
+    "value": 88.0
+   },
+   {
+    "file": "loop_chromatin_to_rate",
+    "field": ".x6.survival_identity_target.z",
+    "value": 4.148186491589694
+   },
+   {
+    "file": "loop_chromatin_to_rate",
+    "field": ".declaration.global_scalar_inputs.T_double_h",
+    "value": 27.5
+   },
+   {
+    "file": "loop_chromatin_to_rate",
+    "field": ".declaration.global_scalar_inputs.mrna_hl_median_h",
+    "value": 9.92
+   },
+   {
+    "file": "loop_compartment_mass",
+    "field": ".m6.survival.z",
+    "value": 26.12551941690277
+   },
+   {
+    "file": "loop_compartment_motion",
+    "field": ".w3.survival.z",
+    "value": 363.0384521484375
+   },
+   {
+    "file": "loop_complex_stoich",
+    "field": ".x4.p90_ratio",
+    "value": 3.976486280487805
+   },
+   {
+    "file": "loop_complex_stoich",
+    "field": ".x1.survival.raw_fraction",
+    "value": 3.3551259172660104
+   },
+   {
+    "file": "loop_complex_stoich",
+    "field": ".x1.survival.z",
+    "value": -24.82638632265093
+   },
+   {
+    "file": "loop_doubling",
+    "field": ".d6.null2_survival.null_sd",
+    "value": 313838294355.9252
+   },
+   {
+    "file": "loop_doubling",
+    "field": ".d6.null2_survival.null_mean",
+    "value": 1509551613463.566
+   },
+   {
+    "file": "loop_doubling",
+    "field": ".d6.null2_survival.real",
+    "value": 776780218776.98
+   },
+   {
+    "file": "loop_doubling",
+    "field": ".d6.null1_survival.z",
+    "value": -4.9885810552298135
+   },
+   {
+    "file": "loop_fusion_gnn",
+    "field": ".e5.survival.z",
+    "value": 30.37421459134265
+   },
+   {
+    "file": "loop_fusion_linear",
+    "field": ".e5.per_arm.A3 combined.survival.z",
+    "value": 75.294166303464
+   },
+   {
+    "file": "loop_fusion_transformer",
+    "field": ".e5.survival.z",
+    "value": 24.404158575705715
+   },
+   {
+    "file": "loop_genome",
+    "field": ".chr21_percentiles.mapfrac",
+    "value": 4.3478260869565215
+   },
+   {
+    "file": "loop_geometry",
+    "field": ".v5.survival.z",
+    "value": 6.52602138386911
+   },
+   {
+    "file": "loop_geometry",
+    "field": ".v5.survival.null_mean",
+    "value": 24.481591051627767
+   },
+   {
+    "file": "loop_geometry",
+    "field": ".v5.survival.real",
+    "value": 37.73584838785063
+   },
+   {
+    "file": "loop_integrator",
+    "field": ".i6_protein_tier.survival.z",
+    "value": 17.08754289533801
+   },
+   {
+    "file": "loop_integrator",
+    "field": ".i4_arm_I.survival.z",
+    "value": 21.00621809570068
+   },
+   {
+    "file": "loop_noise",
+    "field": ".n6.survival.z",
+    "value": 22.475630391513405
+   },
+   {
+    "file": "loop_perturb",
+    "field": ".k5.survival_wrong_tf.z",
+    "value": 4.248720593169871
+   },
+   {
+    "file": "loop_perturb",
+    "field": ".k5.survival_fame_rewiring.z",
+    "value": 4.214768415801209
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.tail_check_top20_dropped.survival.z",
+    "value": -6.212329999717329
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.tail_check_top20_dropped.survival.null_sd",
+    "value": 5504611.002265636
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.tail_check_top20_dropped.survival.null_mean",
+    "value": 55524808.82984933
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.tail_check_top20_dropped.survival.real",
+    "value": 21328348.763700448
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.null_b.survival.null_sd",
+    "value": 1590942.1353461808
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.null_b.survival.null_mean",
+    "value": 30748304.222957272
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.null_b.survival.real",
+    "value": 29330783.66484849
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.null_a.survival.z",
+    "value": -3.0432987208158107
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.null_a.survival.null_sd",
+    "value": 16240265.042312142
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.null_a.survival.null_mean",
+    "value": 78754761.49382676
+   },
+   {
+    "file": "loop_proteostasis",
+    "field": ".p5.null_a.survival.real",
+    "value": 29330783.66484849
+   },
+   {
+    "file": "loop_regime",
+    "field": ".best.ratio",
+    "value": 5.0
+   },
+   {
+    "file": "loop_replication_time",
+    "field": ".t3.survival_uniform.z",
+    "value": 24.23517013306378
+   },
+   {
+    "file": "loop_replication_time",
+    "field": ".t3.survival_shift.z",
+    "value": 14.732945928360296
+   },
+   {
+    "file": "loop_response_field",
+    "field": ".reach_ratio",
+    "value": 1061.392511532915
+   },
+   {
+    "file": "loop_signalling_cost",
+    "field": ".y5.survival.z",
+    "value": -3.002939364576032
+   },
+   {
+    "file": "loop_spatial_proteome",
+    "field": ".q6.survival.z",
+    "value": 6.902228726821585
+   },
+   {
+    "file": "loop_spatial_proteome",
+    "field": ".q6.survival.null_sd",
+    "value": 5.3193575880957304
+   },
+   {
+    "file": "loop_spatial_proteome",
+    "field": ".q6.survival.null_mean",
+    "value": 126.60567214385658
+   },
+   {
+    "file": "loop_spatial_proteome",
+    "field": ".q6.survival.real",
+    "value": 163.3210948966473
+   },
+   {
+    "file": "loop_spatial_proteome",
+    "field": ".q2.median_ratio",
+    "value": 5.524822005097327
+   },
+   {
+    "file": "loop_tad_regulation",
+    "field": ".weighted.pub_ratio",
+    "value": -1561.6426078136124
+   },
+   {
+    "file": "loop_tad_regulation",
+    "field": ".weighted.survive",
+    "value": 67.17594823951303
+   },
+   {
+    "file": "loop_tf_rate",
+    "field": ".blocks.full reg.retain_pubs",
+    "value": 7.710114297878245
+   },
+   {
+    "file": "loop_tf_rate",
+    "field": ".blocks.CollecTRI+DoRothEA.retain_pubs",
+    "value": -10.245692060211761
+   },
+   {
+    "file": "loop_type_system",
+    "field": ".corner_ratios.max",
+    "value": 3.835001409329458
+   },
+   {
+    "file": "physics_reduce_unknown",
+    "field": ".spreads.timescale separation -> event stepping",
+    "value": 590636.7459794957
+   }
+  ]
+ },
+ "v2": [
+  {
+   "case": "loop 87 C6 (54% survival)",
+   "defined": false
+  },
+  {
+   "case": "loop 87b B6 (6718% survival)",
+   "defined": false
+  },
+  {
+   "case": "loop 94 N4 (117% survival)",
+   "defined": false
+  }
+ ],
+ "v3": [
+  {
+   "case": "loop 84 O2 (z +6.4, real effect)",
+   "defined": true
+  },
+  {
+   "case": "loop 86 G3 (signature, 23/23 chroms)",
+   "defined": true
+  },
+  {
+   "case": "loop 85 P3 (measured chr21, z +8.7)",
+   "defined": true
+  }
+ ],
+ "v4": {
+  "inert_null_changed": 0.0,
+  "inert_capable": false,
+  "live_null_changed": 0.8530394121576487,
+  "live_capable": true
+ },
+ "v5": {
+  "ratio_like_modules": 225,
+  "using_guard": 20,
+  "exposure": 205
+ },
+ "seconds": 8.126186609268188,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 105 (early) -- twelve gates fired while measuring nothing. Make the fix mechanical.",
+  "====================================================================================================",
+  "",
+  "V1 THE FAILURE IS DETECTABLE FROM THE RECORD ALONE",
+  "     scanned 201 recorded outputs, 965 ratio-style fields",
+  "     implausible (|value| > 3 or nan): 61",
+  "       loop_doubling              .d6.null2_survival.null_mean                   1,509,551,613,463.57",
+  "       loop_doubling              .d6.null2_survival.real                        776,780,218,776.98",
+  "       loop_doubling              .d6.null2_survival.null_sd                     313,838,294,355.93",
+  "       loop_proteostasis          .p5.null_a.survival.null_mean                  78,754,761.49",
+  "       loop_proteostasis          .p5.tail_check_top20_dropped.survival.null_mea 55,524,808.83",
+  "       loop_proteostasis          .p5.null_b.survival.null_mean                  30,748,304.22",
+  "       loop_proteostasis          .p5.null_b.survival.real                       29,330,783.66",
+  "       loop_proteostasis          .p5.null_a.survival.real                       29,330,783.66",
+  "     THE LIMIT, STATED: this finds only the ratio family. An inert null leaves a",
+  "     perfectly ordinary number behind -- loop 94's +0.1438 +/- 0.0000 is not implausible,",
+  "     it is exactly right -- so no scan of recorded values can find that family at all.",
+  "",
+  "V2 THE GUARD CATCHES EVERY KNOWN RATIO CASE",
+  "     loop 87 C6 (54% survival): real -0.0046  null -0.0035 +/- 0.0026  survival UNDEFINED -- |z| 0.43 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator",
+  "     loop 87b B6 (6718% survival): real -0.0001  null -0.0065 +/- 0.0122  survival UNDEFINED -- |z| 0.52 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator",
+  "     loop 94 N4 (117% survival): real +0.0983  null +0.1148 +/- 0.0067  survival UNDEFINED -- the null (+0.1148) equals or exceeds the real value (+0.0983): there is no effect in the claimed direction, so 'survival' has no meaning",
+  "     V2 PASS -- the guard returns UNDEFINED for every known bad case",
+  "",
+  "V3 THE GUARD DOES NOT FLAG THE GOOD ONES",
+  "     loop 84 O2 (z +6.4, real effect): real +0.0666  null -0.0097 +/- 0.0132  z +5.8  survives -14%",
+  "     loop 86 G3 (signature, 23/23 chroms): real +0.3531  null +0.0136 +/- 0.0522  z +6.5  survives 4%",
+  "     loop 85 P3 (measured chr21, z +8.7): real +0.3788  null +0.0158 +/- 0.0480  z +7.6  survives 4%",
+  "     V3 PASS -- the guard leaves real effects alone",
+  "",
+  "V4 THE INERT-NULL GUARD CATCHES LOOP 94",
+  "     loop 94's rewiring, applied to in-degree over 7,485 genes:",
+  "       entries changed 0.0% -- only 0.0% of entries change against 84.9% achievable (0% of the reachable move) -- this null is INERT and its output is not evidence",
+  "       capable: False",
+  "     a null that permutes WHICH GENE holds which degree:",
+  "       entries changed 85.3% -- capable: True",
+  "     V4 PASS -- the guard separates the inert null from the real one",
+  "",
+  "V5 THE UNPROTECTED SURFACE IS COUNTED",
+  "     modules computing a survival-style ratio: 225",
+  "     modules importing gate_guard: 20",
+  "     remaining exposure: 205 modules",
+  "     NOT retrofitted here. Rewriting 225 modules blind, without rerunning",
+  "     each against its own data, would replace a known error with an unknown one. The",
+  "     guard is available and new work uses it; existing results keep their recorded",
+  "     numbers and their recorded corrections.",
+  "",
+  "V6 THE GUARD IS USED, NOT JUST WRITTEN",
+  "     loop 95 performs the capability check before reporting its null: True",
+  "     (written before this module existed, from loop 94's failure -- which is the",
+  "      behaviour this loop is trying to make automatic rather than remembered)",
+  "",
+  "  PASS  V1 the ratio family is detectable from the record",
+  "  PASS  V2 the guard catches every known ratio case",
+  "  PASS  V3 the guard does not flag real effects",
+  "  PASS  V4 the inert-null guard catches loop 94",
+  "  PASS  V5 the unprotected surface is counted",
+  "  PASS  V6 the guard is used in new work",
+  "    manifest: 4 inputs, coverage 201/201 (100.0%) by 'all', seed 10501, controls 6"
+ ]
+}

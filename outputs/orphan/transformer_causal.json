@@ -1,0 +1,48 @@
+{
+ "retrieval": [
+  0.4608,
+  0.0403
+ ],
+ "fused": [
+  0.4608,
+  0.0403
+ ],
+ "beta": [
+  0.0,
+  0.0
+ ],
+ "n_reg": [
+  24.6667,
+  0.4714
+ ],
+ "retrieval_regsub": [
+  0.3519,
+  0.0439
+ ],
+ "fused_regsub": [
+  0.3519,
+  0.0439
+ ],
+ "tracer_specific_regsub": [
+  0.0244,
+  0.0056
+ ],
+ "tide_regsub": [
+  0.218,
+  0.0145
+ ],
+ "tracer_direct_enrichment": [
+  1.6399,
+  1.2207
+ ],
+ "tracer_allmover_recall": [
+  0.021,
+  0.0052
+ ],
+ "oracle": [
+  0.607,
+  0.0322
+ ],
+ "verdict": "DIRECTED-CAUSAL TRACER x TRANSFORMER (transformer_causal.py): a signed directed 1-2 hop tracer (TRRUST + 60k SIGNOR/CollecTRI, sign-composed) validated on the near-field then fused into the transformer's retrieval. 3 splits, held-out K562. THE DECISIVE SPLIT (regulator KOs, n~25): a regulator's curated DIRECT 1-hop targets respond 1.64x the average gene (mean |z|) -- the directed causal structure DOES trace real near-field cause->effect (echoing pathway_ko_verify). BUT on the tide-removed SPECIFIC movers the tracer scores 0.024 vs tide 0.218 (0.11x, BELOW the floor). MEANING: whatever movers the canonical targets capture are the GENERIC/tide movers (genes that move under many perturbations); the knockout-SPECIFIC response is the NON-canonical, context-specific part that no directed annotation names. So cause->effect is traceable (if at all) for the GENERIC cascade, not the specific one. GIVEN TO THE TRANSFORMER: overall 0.461 -> 0.461 (+0.000); regulator subset 0.352 -> 0.352 (+0.000) -- the directed causal channel adds NOTHING even done right (directed+signed+multi-hop), because its signal is the tide the metric removes; the transformer already has the generic part via retrieval. Confirms v6's null with the proper construction and explains WHY: the annotations trace the generic cascade, the metric demands the specific residue. Oracle 0.607. Deterministic.",
+ "note": "DIRECTED-CAUSAL TRACER x TRANSFORMER (transformer_causal.py): a signed directed 1-2 hop tracer (TRRUST + 60k SIGNOR/CollecTRI, sign-composed) validated on the near-field then fused into the transformer's retrieval. 3 splits, held-out K562. THE DECISIVE SPLIT (regulator KOs, n~25): a regulator's curated DIRECT 1-hop targets respond 1.64x the average gene (mean |z|) -- the directed causal structure DOES trace real near-field cause->effect (echoing pathway_ko_verify). BUT on the tide-removed SPECIFIC movers the tracer scores 0.024 vs tide 0.218 (0.11x, BELOW the floor). MEANING: whatever movers the canonical targets capture are the GENERIC/tide movers (genes that move under many perturbations); the knockout-SPECIFIC response is the NON-canonical, context-specific part that no directed annotation names. So cause->effect is traceable (if at all) for the GENERIC cascade, not the specific one. GIVEN TO THE TRANSFORMER: overall 0.461 -> 0.461 (+0.000); regulator subset 0.352 -> 0.352 (+0.000) -- the directed causal channel adds NOTHING even done right (directed+signed+multi-hop), because its signal is the tide the metric removes; the transformer already has the generic part via retrieval. Confirms v6's null with the proper construction and explains WHY: the annotations trace the generic cascade, the metric demands the specific residue. Oracle 0.607. Deterministic."
+}

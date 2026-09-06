@@ -18,6 +18,8 @@ outputs/*.csv
 outputs/*.png
 outputs/*.tmp
 outputs/.wt_*.pkl
+# resumable ensemble checkpoints - regenerable scratch, the result is the loop's json
+outputs/l187_null_*.npz
 *.log
 *.tmp
 
@@ -60,3 +62,54 @@ cell_sim/features/cache/*
 !cell_sim/features/cache/.gitkeep
 figures/output/
 outputs/synthlet/.wt_*.pkl
+
+# large local working model (reconstructed from Drive / the .gz; not committed)
+outputs/orphan/cell_complete.json
+
+# large local models fetched at runtime (not committed)
+HumanGEM.xml
+colab/HumanGEM.xml
+HumanGEM_genes.tsv
+colab/HumanGEM_genes.tsv
+pdbs/
+s669.csv
+s2648.csv
+outputs/orphan/dark_function_ckpt.json
+
+# derived z-scored feature caches (built at runtime, persisted to Drive by persist.py — not committed)
+# EXCEPT depmap_vecs.npz: every dense module loads it, and regenerating it needs the 400 MB
+# CRISPRGeneEffect.csv. At 73 MB it is committed so a fresh clone (e.g. Colab) is self-sufficient.
+# outputs/orphan/depmap_vecs.npz
+outputs/orphan/expr_vecs.npz
+outputs/orphan/tahoe_vecs.npz
+outputs/orphan/pdb_cache/
+data/hgnc.txt
+
+# large regenerable reference chromosome (UCSC; refetch via colab/fetch_invivo.py)
+outputs/orphan/invivo/*.fa
+outputs/orphan/llm_reasoner_cache/
+outputs/orphan/pdb_complexes/
+data_fetch/
+
+# ChIP-Atlas K562 peak sets (~190 MB) - regenerate with colab/fetch_chipatlas.py
+outputs/orphan/invivo/chipatlas/
+
+# GSE277502 bTMP-seq bigWigs (4.0 MB, re-fetchable from GEO; see colab/supercoil_track.py)
+outputs/orphan/supercoil/*.bw
+
+# RNADecayCafe v1.1 AvgKdegs (22 MB, re-fetchable: 10.5281/zenodo.16884513; see colab/supercoil_txn.py)
+outputs/orphan/rnadecay/*.csv
+
+# cell_complete.json stays ignored (38.5 MB, no producer), but its PARTS are versioned --
+# colab/cell_complete_build.py --assemble reconstructs it bit-identically from outputs/orphan/cell_parts/
+!outputs/orphan/cell_parts/
+
+# UniProt raw stream: 90 MB, reproducible with `python colab/fetch_web.py` (G1).
+# The derived per-gene table IS committed; the raw dump is not.
+colab/data/uniprot_sites.tsv.gz
+outputs/*.ckpt.npz
+
+# in-progress benchmark output: renamed to its final name only when the run completes
+benchmarks/*.part
+rem/atlas/recon3d.json
+rem/atlas/trrust_human.tsv

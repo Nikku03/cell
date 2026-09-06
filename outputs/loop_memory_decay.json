@@ -1,0 +1,110 @@
+{
+ "test": "memory decay on the dexamethasone withdrawal timecourse",
+ "n_screened": 3312,
+ "sse": {
+  "CONST": 1898.941903777325,
+  "LIN": 688.961213061966,
+  "EXP1": 902.7782437224821,
+  "EXP2": 461317.570968159
+ },
+ "W1": {
+  "improvement": 0.5245888028871766
+ },
+ "W2": {
+  "improvement": -509.9976610268978,
+  "paired": -139.01412823805452,
+  "se": 22.520681384736648,
+  "z": -6.172731893106534
+ },
+ "W2b": {
+  "improvement": -0.3103469783302375
+ },
+ "W3": {
+  "markov": 0.9936120854731172,
+  "lagged": 0.9936139398535007,
+  "delta": 1.8543803834369933e-06,
+  "se": 1.1078250841414475e-05,
+  "z": 0.16738927561602546
+ },
+ "W4": {
+  "fraction_inside": 0.6271135265700483,
+  "iqr_decades": 0.6004753826141451,
+  "median_tau_h": 4.40473689491364
+ },
+ "W5": {
+  "real": 0.5245888028871766,
+  "shuffled": -25.711115172538335,
+  "fraction": -49.01194045895034
+ },
+ "gates": {
+  "W1": true,
+  "W2": false,
+  "W2b": false,
+  "W3": false,
+  "W4": true,
+  "W5": true
+ },
+ "void": [],
+ "seconds": 2.750779151916504,
+ "log": [
+  "========================================================================================================",
+  "LOOP 247 -- MEMORY, ON A WITHDRAWAL TIMECOURSE WHERE THE FORCING TERM IS GONE",
+  "========================================================================================================",
+  "     After withdrawal Phi = 0, so the equation predicts M_t = exp(-Lambda t) M_0 with",
+  "     nothing else in it -- a bare decay curve, and a curve one can hold timepoints out of.",
+  "     A two-timescale model has 5 parameters per gene against 3. Loop 244's Hill curve had",
+  "     the same shape and LOST to a straight line once dose was held out, so W2 holds out",
+  "     timepoints and W2b asks separately whether the relaxation is exponential at all.",
+  "     19,814 genes, 12 timepoints [np.float64(0.0), np.float64(0.5), np.float64(1.0), np.float64(2.0), np.float64(3.0), np.float64(4.0), np.float64(5.0), np.float64(6.0), np.float64(7.0), np.float64(8.0), np.float64(10.0), np.float64(12.0)] h, 3 replicates",
+  "     screen declared in advance: across-time variance > 2.0x across-replicate",
+  "     variance -> 3,312 genes of 19,814",
+  "     leave-one-timepoint-out, all four models ...",
+  "       CONST  held-out sum of squares 1898.9419   (+0.0% vs CONST)",
+  "       LIN    held-out sum of squares 688.9612   (+63.7% vs CONST)",
+  "       EXP1   held-out sum of squares 902.7782   (+52.5% vs CONST)",
+  "       EXP2   held-out sum of squares 461317.5710   (-24193.4% vs CONST)",
+  "W1 IS THERE A RELAXATION TO FIT AT ALL?",
+  "     EXP1 reduces held-out squared error by 52.5% against a constant",
+  "     W1 PASS -- there is a relaxation: 52.5% of held-out error removed",
+  "W2 DOES MEMORY NEED MORE THAN ONE CLOCK?",
+  "     EXP2 against EXP1 on held-out timepoints: -50999.8% of squared error",
+  "     per-gene paired difference EXP1 minus EXP2: -139.014128 +/- 22.520681 (-6.2 se)",
+  "     W2 FAIL -- a second timescale buys -50999.8% on held-out timepoints, against a 5% bar; five parameters per gene do not beat three",
+  "W2b IS IT EVEN EXPONENTIAL?",
+  "     EXP1 against a straight line in time: -31.0% of held-out squared error",
+  "     W2b FAIL -- EXP1 beats a straight line by -31.0%; over 12 hours the decay is not distinguishable from linear",
+  "W3 IS THE PROCESS NON-MARKOVIAN?",
+  "     replicate 3 at t_i predicted from replicates 1 and 2 at t_{i-1} alone, against",
+  "     t_{i-1} with t_{i-2} and t_{i-3}. Different replicates, so the measurement noise in",
+  "     the features is independent of the noise in the target -- loop 231's L2 confound.",
+  "     one step back only: 0.9936   with three lags: 0.9936",
+  "     paired over 10 gene folds: +0.0000 +/- 0.0000  (+0.2 se)",
+  "     W3 FAIL -- knowing t-2 and t-3 adds +0.0000 once t-1 is known, against a 0.02 bar; S(t-1) is a sufficient statistic here",
+  "W4 ARE THE FITTED TIMESCALES REAL OR GRID ARTEFACTS?",
+  "     tau strictly inside the 0.15-60 h grid: 62.7%",
+  "     median tau 4.40 h, interquartile range of log10(tau) 0.60 decades (2.04 - 8.14 h)",
+  "     W4 PASS -- 63% of taus are off the grid edge and they span 0.60 decades",
+  "W5 CONTROL: TIME LABELS PERMUTED",
+  "     timepoints reassigned: EXP1 improves -2571.1% against a real +52.5% (-4901%)",
+  "     W5 PASS -- collapses to -4901% with the clock scrambled",
+  "W6 WHAT THIS CANNOT SHOW",
+  "     Twelve hours. A chromatin or structural memory with a timescale of days is outside",
+  "     the window entirely and would appear as the offset C, not as a decay.",
+  "     Bulk RNA. A population relaxing coherently and a population switching at different",
+  "     times give the same mean curve; this design cannot separate them.",
+  "     One stimulus, one cell line. Nothing here says other perturbations share these",
+  "     timescales.",
+  "     Withdrawal is not the reverse of addition: removing a ligand leaves receptor,",
+  "     chromatin and transcript pools in states the approach to steady state never passed",
+  "     through.",
+  "========================================================================================================",
+  "  W1  PASS",
+  "  W2  FAIL",
+  "  W2b  FAIL",
+  "  W3  FAIL",
+  "  W4  PASS",
+  "  W5  PASS",
+  "  3/6   [3s]",
+  "========================================================================================================"
+ ]
+}

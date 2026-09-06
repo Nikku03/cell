@@ -1,0 +1,65 @@
+========================================================================================================
+LOOP 257 -- CONTEXT PARAMETERISES THE OPERATOR, ON A SUBSTRATE THAT IS ACTUALLY DENSE
+========================================================================================================
+     Loop 256 showed concatenation is not the fix: two-tower 0.3001/0.3017 against the
+     additive baseline's 0.4518. Its decoder had to rebuild 978 landmarks through a
+     160-dim bottleneck and threw away what the gene mean already carried. Here the
+     output is baseline + correction, correction initialised at ZERO.
+     OmniPath is not the substrate: 9,087 signed gene-to-landmark edges, 0.21% density,
+     median 0 targets per gene, and loop 242 found 102% survived reversing every arrow.
+     The substrate is a learned low-rank basis, mixed by a context hypernetwork.
+     33,197 (gene, line) pairs, 3,801 genes, 978 landmarks
+     context vector: 101 MEASURED dims, principal components fitted on the
+     full DepMap panel (1,076 lines) which never sees a LINCS response
+     training: 9 leave-one-cell-line-out folds x 3 seeds, K=8 experts ...
+       seed 0: gated 0.4366   additive 0.4518   [460s]
+       seed 1: gated 0.4428   additive 0.4518   [889s]
+       seed 2: gated 0.4410   additive 0.4518   [1328s]
+       K=1, context-blind operator   0.4518   val MSE removed 0.0%
+       K=8, context held CONSTANT    0.4518   val MSE removed 0.0%
+       linear twin, same inputs      0.4504
+       the gated arm itself removed 19.5% of validation MSE, so it DID fit the
+       training lines; whatever it does on a held-out line is transfer, not underfitting
+I1 DOES THE HARNESS REPRODUCE THE BASELINE?
+     additive here 0.4518 against loop 252's 0.4477
+     I1 PASS -- reproduces to 0.0041
+I2 DOES THE GATED OPERATOR BEAT THE ADDITIVE BASELINE?
+     gated 0.4366 vs additive 0.4518   paired -0.0152 +/- 0.0003 (-54.7 se)
+     loop 256's concatenated two-tower reached 0.3001 on the same target
+     I2 FAIL -- the correction adds -0.0152 against a 0.02 bar
+I3 DOES CONTEXT-GATING MATTER, OR ONLY THE EXTRA CAPACITY?
+     The ablation is the SAME network with the hypernetwork's input held constant:
+     identical parameter count, identical optimisation, context information removed.
+     The K=1 arm is NOT used here. Run 1 of this loop used it and it never trained --
+     0.0218 correction norm against a 16.42 target -- which is defect H in the ledger.
+     K=8 gated 0.4366 vs K=8 constant-context 0.4518
+     paired -0.0152 +/- 0.0003  (-54.7 se)
+     I3 VOID -- the constant-context control removed only 0.0% of validation MSE, so it never trained and cannot carry this gate (defect H)
+I4 DID THE NETWORK HELP, OR THE FEATURES?
+     gated 0.4366 vs linear twin 0.4504   paired -0.0138 +/- 0.0003 (-49.1 se)
+     I4 FAIL -- -0.0138 against a linear model on identical inputs
+I5 IS THE ADVANTAGE LARGER THAN THE SEED NOISE?
+     seeds: 0.4366, 0.4428, 0.4410   sd 0.00319
+     I5 VOID -- I2 did not pass, so there is nothing here to test
+I6 CONTROL: THE WRONG CELL LINE
+     I6 VOID -- I3 did not pass, so there is nothing here to test
+I7 WHAT THIS CANNOT SHOW
+     Nine cell lines is nine points for the hypernetwork, and it maps measured properties
+     to K gates from eight training examples. Any positive should be suspected of
+     memorising those eight; I6 catches that and I5 uses three seeds.
+     A learned operator basis is dense but is NOT a physical network. Nothing here says
+     which interactions the gates correspond to, and a win would not recover the
+     mechanism loops 253 and 255 failed to find.
+     The gene embedding comes from the gene's own response elsewhere, so this generalises
+     across CONTEXTS, not across genes.
+     978 landmarks and shRNA, not a transcriptome and not a clean knockout.
+========================================================================================================
+  I1  PASS
+  I2  FAIL
+  I3  VOID
+  I4  FAIL
+  I5  VOID
+  I6  VOID
+  1/3   [1534s]   (3 VOID: I3, I5, I6)
+========================================================================================================
+     written outputs/loop_gated_operator.json

@@ -1,0 +1,178 @@
+{
+ "test": "structure vs sequence for enzyme function, before committing to a 3D pipeline",
+ "gates": {
+  "Y1": true,
+  "Y2": false,
+  "Y3": true,
+  "Y4": false,
+  "Y5": false,
+  "Y6": true
+ },
+ "n_enzymes": 2171,
+ "n_clusters": 2062,
+ "results": {
+  "esm35": {
+   "auc": 0.8210378319194347,
+   "sem": 0.004492511139639051,
+   "n": 2171
+  },
+  "esm8": {
+   "auc": 0.8044406880134968,
+   "sem": 0.004604156652084316,
+   "n": 2171
+  },
+  "structure": {
+   "auc": 0.7366360095172855,
+   "sem": 0.004798996769017388,
+   "n": 2171
+  },
+  "esm35+structure": {
+   "auc": 0.8198212891845187,
+   "sem": 0.004500145854654771,
+   "n": 2171
+  },
+  "esm35+esm8": {
+   "auc": 0.8212454246793935,
+   "sem": 0.004489190747497247,
+   "n": 2171
+  },
+  "popularity": {
+   "auc": 0.8503440462877732,
+   "sem": 0.0026820528086265605,
+   "n": 2171
+  },
+  "kmer_homology": {
+   "auc": 0.7600339676301061,
+   "sem": 0.004898590202077417,
+   "n": 2171
+  }
+ },
+ "paired": {
+  "best_vs_popularity": [
+   -0.029098621608379574,
+   0.0038735554128284003
+  ],
+  "best_vs_kmer": [
+   0.061211457049287515,
+   0.0035707469180442783
+  ],
+  "structure_vs_seq": [
+   -0.0844018224021492,
+   0.0038868901065723413
+  ],
+  "combined_vs_seq": [
+   -0.0012165427349158974,
+   0.0009274522826821822
+  ]
+ },
+ "best_arm": "esm35+esm8",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/esm_enzymes.npz",
+    "bytes": 6475346,
+    "hash": "f23e386cab80d238",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/struct_enzymes.npz",
+    "bytes": 410607,
+    "hash": "6cd642194f3083c0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/rem_enzyme.npz",
+    "bytes": 140408,
+    "hash": "6cc33410bbe926e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2171,
+   "used": 2171,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 16300,
+  "controls": [
+   "identical proteins in both arms, by construction (intersection of structure and sequence)",
+   "homology-disjoint folds at 5-mer Jaccard >= 0.30, violations counted not assumed",
+   "a popularity baseline that ignores the protein entirely",
+   "a raw 5-mer homology lookup with no learned representation, the BLAST control",
+   "k-NN rather than a trained model, so the comparison is of representations not of fits",
+   "conclusions emitted through gate_guard.verdict"
+  ],
+  "note": "does monomer structure geometry beat ESM-2 sequence at predicting enzyme function",
+  "warnings": []
+ },
+ "seconds": 114.94971418380737,
+ "log": [
+  "========================================================================================================",
+  "  BEFORE A 3D MODEL OF THE DARK PROTEOME: does structure beat sequence?",
+  "========================================================================================================",
+  "",
+  "     2,178 enzymes with BOTH arms | esm35 480d, esm8 320d, structure 64d",
+  "     2,171 of 2,178 enzymes touch at least one non-currency metabolite; median 6 metabolites each",
+  "",
+  "Y1 SAME PROTEINS, HOMOLOGY-DISJOINT SPLIT",
+  "     2,062 homology clusters at 5-mer Jaccard >= 0.3 over 2,171 proteins",
+  "     fold sizes [435, 434, 434, 434, 434]",
+  "     train/test pairs above the threshold (sampled 200x200 per fold): 0",
+  "     the arms are on identical proteins and no close homologue crosses a fold boundary.",
+  "     Y1 PASS",
+  "",
+  "THE ARMS, cross-validated over the homology folds",
+  "     fold 0: 435 test proteins [28s]",
+  "     fold 1: 434 test proteins [50s]",
+  "     fold 2: 434 test proteins [72s]",
+  "     fold 3: 434 test proteins [96s]",
+  "     fold 4: 434 test proteins [115s]",
+  "",
+  "       popularity           AUC 0.8503 +/- 0.0027   n=2171",
+  "       esm35+esm8           AUC 0.8212 +/- 0.0045   n=2171",
+  "       esm35                AUC 0.8210 +/- 0.0045   n=2171",
+  "       esm35+structure      AUC 0.8198 +/- 0.0045   n=2171",
+  "       esm8                 AUC 0.8044 +/- 0.0046   n=2171",
+  "       kmer_homology        AUC 0.7600 +/- 0.0049   n=2171",
+  "       structure            AUC 0.7366 +/- 0.0048   n=2171",
+  "",
+  "Y2 best arm (esm35+esm8) minus POPULARITY: -0.0291 sem 0.0039 = -7.5 sem",
+  "     no representation beats a baseline that ignores the protein entirely; nothing below means anything and Y3-Y5 are reported as a description of noise.",
+  "     Y2 FAIL",
+  "",
+  "Y3 best arm minus RAW 5-MER HOMOLOGY LOOKUP: +0.0612 sem 0.0036 = +17.1 sem",
+  "     the learned representation beats a homology lookup, so it is not BLAST in a hat.",
+  "     Y3 PASS",
+  "",
+  "Y4 STRUCTURE minus esm35: -0.0844 sem 0.0039 = -21.7 sem",
+  "     structure does NOT beat sequence on identical proteins with an identical split. The fold geometry a monomer carries adds nothing here that the sequence does not already carry, and the dark-gene inference should be run from sequence at 1.3 s per protein rather than from ~9,600 structure downloads. This does not say 3D is useless in general -- it says the monomer-geometry version of it is not what is missing.",
+  "     Y4 FAIL",
+  "",
+  "Y5 esm35+structure minus esm35: -0.0012 sem 0.0009 = -1.3 sem",
+  "     structure does not add to sequence either. Both gates point the same way and the 3D pipeline is not justified on this evidence.",
+  "     Y5 FAIL",
+  "",
+  "Y6 WHAT THIS CANNOT SHOW",
+  "     k-NN is a floor on what a representation supports, not a ceiling; a trained model can",
+  "     extract more than a nearest-neighbour vote from the same vectors.",
+  "     Labels come from Human-GEM's own gene-protein-reaction rules, so a wrong or missing",
+  "     association is scored as if the model were right.",
+  "     AlphaFold monomers carry no ligand, no cofactor and no partner, so any function that",
+  "     lives in a complex is invisible to BOTH arms -- this is not a test of structure in",
+  "     general, it is a test of monomer geometry.",
+  "     The dark genes are dark partly because they are unlike these 2,178, so every number",
+  "     here is an upper bound on what the same method would do on them.",
+  "     Y6 PASS",
+  "",
+  "========================================================================================================",
+  "  Y1  PASS",
+  "  Y2  FAIL",
+  "  Y3  PASS",
+  "  Y4  FAIL",
+  "  Y5  FAIL",
+  "  Y6  PASS",
+  "  3/6   [115s]",
+  "========================================================================================================"
+ ]
+}

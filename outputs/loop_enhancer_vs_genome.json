@@ -1,0 +1,356 @@
+{
+ "test": "enhancer vs matched genome",
+ "gates": {
+  "F1": true,
+  "F2": true,
+  "F3": true,
+  "F4": true,
+  "F5": true,
+  "F6": false,
+  "F7": true,
+  "F8": true,
+  "F9": true
+ },
+ "n_windows": 6933,
+ "n_positive": 482,
+ "n_genomic": 4555,
+ "n_tested": 1896,
+ "auc": {
+  "vs GENOME|distance": [
+   0.5233578986203661,
+   0.5183296819417812,
+   0.5138414309203785,
+   0.5162108120664447,
+   0.5174187318664001
+  ],
+  "vs GENOME|composition": [
+   0.6032659837577601,
+   0.6010810700019587,
+   0.6155043702829867,
+   0.6054841471913132,
+   0.621778766664693
+  ],
+  "vs GENOME|comp+sites": [
+   0.651675009451107,
+   0.6384539355320632,
+   0.649041680520699,
+   0.6469704077868013,
+   0.6480052470724342
+  ],
+  "vs GENOME|+pairing": [
+   0.6522147473707703,
+   0.635202754713028,
+   0.6645553880419585,
+   0.648176277949087,
+   0.6634977750044408
+  ],
+  "vs GENOME|+shape": [
+   0.6830695373740042,
+   0.679131044723094,
+   0.694729242863845,
+   0.684108931410014,
+   0.6993058560425597
+  ],
+  "vs GENOME|+compl_major": [
+   0.6794890481027187,
+   0.6673346967219461,
+   0.6951856288516108,
+   0.6862063939585791,
+   0.6868896065151149
+  ],
+  "vs GENOME|+compl_minor": [
+   0.6816120172533944,
+   0.6805726232173845,
+   0.689279939512915,
+   0.6868253845348006,
+   0.6873655779295017
+  ],
+  "vs GENOME|FULL": [
+   0.6851533356714385,
+   0.6734599250288087,
+   0.679063178942478,
+   0.6783002582543464,
+   0.6873960947570268
+  ],
+  "vs GENOME|FULL_shuffled": [
+   0.6077890786195463,
+   0.6069286862733487,
+   0.6283997795500817,
+   0.6170488861357954,
+   0.614607539933774
+  ],
+  "vs TESTED|distance": [
+   0.6250377514575345,
+   0.5726420111350387,
+   0.6114067396747028,
+   0.607651837456449,
+   0.6130623325804927
+  ],
+  "vs TESTED|composition": [
+   0.5974179097291524,
+   0.550480811317121,
+   0.5989903400038517,
+   0.5595783654603708,
+   0.5926081551902236
+  ],
+  "vs TESTED|comp+sites": [
+   0.5736257375212284,
+   0.4936418885795823,
+   0.5568422054729765,
+   0.519200172453035,
+   0.5567656083127615
+  ],
+  "vs TESTED|+pairing": [
+   0.5652553092774482,
+   0.49024371027890123,
+   0.55115431920444,
+   0.49851510933697496,
+   0.5512216152809146
+  ],
+  "vs TESTED|+shape": [
+   0.5592030393753173,
+   0.516720065829788,
+   0.5614615613565138,
+   0.520715154857573,
+   0.5716577376262759
+  ],
+  "vs TESTED|+compl_major": [
+   0.5635121767599839,
+   0.5183067212913843,
+   0.5601605038780048,
+   0.5250396116742826,
+   0.5660803701174781
+  ],
+  "vs TESTED|+compl_minor": [
+   0.5558787226219865,
+   0.5238873715356198,
+   0.5479312201271076,
+   0.5238600154069717,
+   0.5643273893937006
+  ],
+  "vs TESTED|FULL": [
+   0.5397407952098325,
+   0.5096840695414675,
+   0.555026852775881,
+   0.5228587810984471,
+   0.5554289878670098
+  ],
+  "vs TESTED|FULL_shuffled": [
+   0.5463741092844512,
+   0.5240526025526551,
+   0.5590968975961623,
+   0.5487365845545109,
+   0.5605631860917065
+  ]
+ },
+ "deltas": {
+  "F4": {
+   "mean": 0.06571976442831043,
+   "sem": 0.004652317458109012,
+   "n_up": 5,
+   "passes": true
+  },
+  "F5": {
+   "mean": 0.03533953386684645,
+   "sem": 0.002461048830377313,
+   "n_up": 5,
+   "passes": true
+  },
+  "F6_major": {
+   "mean": -0.005047847652709469,
+   "sem": 0.003027711921578653,
+   "n_up": 2,
+   "passes": false
+  },
+  "F6_minor": {
+   "mean": 0.0021100336596053147,
+   "sem": 0.003106246532198984,
+   "n_up": 4,
+   "passes": false
+  },
+  "F7": {
+   "mean": 0.1441266612322921,
+   "sem": 0.00730494936500175,
+   "n_up": 5,
+   "passes": true
+  }
+ },
+ "matches_per_kb": {
+  "positives": 165.73122082164693,
+  "genome": 181.3910918202755,
+  "enrichment": 0.9136679158745868
+ },
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/dna_shape.npz",
+    "bytes": 22686,
+    "hash": "bfd83511037c6d26",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 6933,
+   "used": 6933,
+   "selection": "validated positives plus distance- and width-matched decoys",
+   "fraction": 1.0
+  },
+  "seed": 174174,
+  "controls": [
+   "distance and width matched by construction, checked at F1/F2",
+   "dinucleotide shuffle of BOTH classes",
+   "the same stack re-run against the benchmark's own tested negatives",
+   "decoys kept clear of every tested element"
+  ],
+  "note": "stage-one test: enhancer against matched genome, not against a pre-filtered candidate pool",
+  "warnings": [
+   "selection 'validated positives plus distance- and width-matched decoys' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 2671.1066949367523,
+ "log": [
+  "========================================================================================================",
+  "LOOP 174  CAN THE SEQUENCE TELL A REAL ENHANCER FROM MATCHED GENOME?",
+  "========================================================================================================",
+  "  PREDECLARED: distance-only within 0.03 of 0.50; full stack above AUC 0.6;",
+  "  real beats dinucleotide-shuffled and each increment positive in >= 4/5 past",
+  "  3 sem; and the random-genome contrast must exceed the tested-negative contrast.",
+  "",
+  "    736 distinct motifs, width 5-29 (median 9)",
+  "    EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz: 10,356 K562 pairs",
+  "    EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz: 1,918 K562 pairs",
+  "    12,274 -> 12,274 valid -> 12,040 powered at PowerAtEffectSize25 >= 0.8",
+  "    11,933/12,040 pairs survive the lift",
+  "    482 positives, 4,562 genomic decoys (5,998 draws rejected for overlapping a tested element), 1,896 tested-negative decoys",
+  "    extracting 6,940 windows",
+  "    chr1: 603 regions from 249,250,621 bp",
+  "    chr2: 315 regions from 243,199,373 bp",
+  "    chr3: 310 regions from 198,022,430 bp",
+  "    chr4: 108 regions from 191,154,276 bp",
+  "    chr5: 150 regions from 180,915,260 bp",
+  "    chr6: 339 regions from 171,115,067 bp",
+  "    chr7: 305 regions from 159,138,663 bp",
+  "    chr8: 522 regions from 146,364,022 bp",
+  "    chr9: 161 regions from 141,213,431 bp",
+  "    chr10: 129 regions from 135,534,747 bp",
+  "    chr11: 959 regions from 135,006,516 bp",
+  "    chr12: 276 regions from 133,851,895 bp",
+  "    chr14: 57 regions from 107,349,540 bp",
+  "    chr15: 44 regions from 102,531,392 bp",
+  "    chr16: 291 regions from 90,354,753 bp",
+  "    chr17: 375 regions from 81,195,210 bp",
+  "    chr18: 84 regions from 78,077,248 bp",
+  "    chr19: 924 regions from 59,128,983 bp",
+  "    chr20: 73 regions from 63,025,520 bp",
+  "    chr21: 84 regions from 48,129,895 bp",
+  "    chr22: 51 regions from 51,304,566 bp",
+  "    chrX: 780 regions from 155,270,560 bp",
+  "    6,933/6,940 windows under 5% N",
+  "    scanning el: 6,933 windows, 5,464,605 bp",
+  "      el motif 100/736 (width 7)  [78s, eta 496s]",
+  "      el motif 200/736 (width 8)  [165s, eta 442s]",
+  "      el motif 300/736 (width 9)  [254s, eta 369s]",
+  "      el motif 400/736 (width 10)  [347s, eta 291s]",
+  "      el motif 500/736 (width 10)  [440s, eta 208s]",
+  "      el motif 600/736 (width 13)  [539s, eta 122s]",
+  "      el motif 700/736 (width 16)  [649s, eta 33s]",
+  "    scanning sh: 6,933 windows, 5,464,605 bp",
+  "      sh motif 100/736 (width 7)  [83s, eta 526s]",
+  "      sh motif 200/736 (width 8)  [170s, eta 455s]",
+  "      sh motif 300/736 (width 9)  [259s, eta 377s]",
+  "      sh motif 400/736 (width 10)  [346s, eta 291s]",
+  "      sh motif 500/736 (width 10)  [444s, eta 210s]",
+  "      sh motif 600/736 (width 13)  [551s, eta 125s]",
+  "      sh motif 700/736 (width 16)  [665s, eta 34s]",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    -> /tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/enh_scan/enh_vs_genome_v2.npz (291.8 MB)  [1496s]",
+  "    6,933 windows: 482 positives, 4,555 genomic decoys, 1,896 tested-negative decoys",
+  "",
+  "F1 IS THE MATCHING REAL?",
+  "     positive width median 580, decoy width equals its positive's on 1.0000 of draws",
+  "     per-pair |log2 distance ratio|: median 0.0801, p90 0.1313",
+  "     positives with the full 10 decoys: 455/482 (0.9440)",
+  "     F1 PASS -- every decoy carries its own positive's width and sits within 8.0% of its distance, and none overlaps a tested element",
+  "",
+  "  vs GENOME: 5,037 windows, 482 positives",
+  "    distance               AUC 0.5178 +/- 0.0016",
+  "    composition            AUC 0.6094 +/- 0.0040",
+  "    comp+sites             AUC 0.6468 +/- 0.0022",
+  "    +pairing               AUC 0.6527 +/- 0.0054",
+  "    +shape                 AUC 0.6881 +/- 0.0038",
+  "    +compl_major           AUC 0.6830 +/- 0.0046",
+  "    +compl_minor           AUC 0.6851 +/- 0.0017",
+  "    FULL                   AUC 0.6807 +/- 0.0025",
+  "    FULL_shuffled          AUC 0.6150 +/- 0.0039",
+  "",
+  "  vs TESTED: 2,378 windows, 482 positives",
+  "    distance               AUC 0.6060 +/- 0.0088",
+  "    composition            AUC 0.5798 +/- 0.0103",
+  "    comp+sites             AUC 0.5400 +/- 0.0146",
+  "    +pairing               AUC 0.5313 +/- 0.0153",
+  "    +shape                 AUC 0.5460 +/- 0.0113",
+  "    +compl_major           AUC 0.5466 +/- 0.0103",
+  "    +compl_minor           AUC 0.5432 +/- 0.0083",
+  "    FULL                   AUC 0.5365 +/- 0.0090",
+  "    FULL_shuffled          AUC 0.5478 +/- 0.0065",
+  "",
+  "F2 IS DISTANCE NEUTRALISED?",
+  "     distance-only AUC 0.5178 against 0.50 +/- 0.03",
+  "     F2 PASS -- distance carries nothing here, so every arm below is reading the window itself",
+  "",
+  "F3 DOES SEQUENCE SEPARATE AN ENHANCER FROM MATCHED GENOME?",
+  "     F3 PASS -- the full sequence stack reaches AUC 0.6807 against distance-matched genome, above the 0.6 bar",
+  "",
+  "F4 MOTIFS, OR BASE COMPOSITION?",
+  "     FULL vs FULL_shuffled   dAUC +0.0657 +/- 0.0047 (5/5 up)",
+  "     F4 PASS -- destroying binding sites while holding every dinucleotide frequency costs real AUC, so the stack is reading sites",
+  "",
+  "F5 DOES SHAPE ADD OVER SITES?",
+  "     +shape vs +pairing   dAUC +0.0353 +/- 0.0025 (5/5 up)",
+  "     F5 PASS -- groove geometry adds over the sites",
+  "",
+  "F6 THE PLAN'S TWO COMPLEMENTARITY STAGES: major groove, then minor",
+  "     major over shape     dAUC -0.0050 +/- 0.0030 (2/5 up)",
+  "     minor over major     dAUC +0.0021 +/- 0.0031 (4/5 up)",
+  "     F6 FAIL -- neither the major-groove nor the minor-groove domain terms add",
+  "",
+  "F7 THE CONTRAST: random genome against the benchmark's own tested negatives",
+  "     FULL vs GENOME 0.6807   FULL vs TESTED 0.5365   dAUC +0.1441 +/- 0.0073 (5/5 up)",
+  "     F7 PASS -- the same stack separates enhancers from raw genome far better than from the pre-filtered elements the screens chose to test, which is why loop 173 measured nothing",
+  "",
+  "F8 THE FUTILITY MEASUREMENT WITH THE RIGHT DENOMINATOR",
+  "     matches per kb: validated enhancers 165.7, distance-matched genome 181.4, enrichment 0.914x",
+  "     loop 173 measured 0.99x inside the pre-filtered pool; NOTES_e9_gate_wrong_denominator.md records why that gate could not fire",
+  "     F8 PASS -- the enrichment is defined and it is 0.914x",
+  "",
+  "F9 WHAT THIS CANNOT SHOW",
+  "     A genomic decoy is not a proven non-enhancer -- it is untested sequence, and some of",
+  "     it is regulatory. Every AUC here is therefore a LOWER bound, and the size of the",
+  "     understatement is unknown.",
+  "     K562 only, and the motifs are in-vitro preferences with no expression filter.",
+  "     Separating an enhancer from genome is NOT the enhancer-gene assignment problem. A",
+  "     pass here would mean the sequence chain is a stage-one instrument, not that it can",
+  "     say which gene the element acts on -- loop 173 already showed it cannot.",
+  "     F9 PASS",
+  "",
+  "========================================================================================================",
+  "  F1  PASS",
+  "  F2  PASS",
+  "  F3  PASS",
+  "  F4  PASS",
+  "  F5  PASS",
+  "  F6  FAIL",
+  "  F7  PASS",
+  "  F8  PASS",
+  "  F9  PASS",
+  "  8/9   [2671s]",
+  "========================================================================================================"
+ ]
+}

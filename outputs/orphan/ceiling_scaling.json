@@ -1,0 +1,41 @@
+{
+  "curve": {
+    "100": {
+      "mean": 0.27770086950173073,
+      "se": 0.007076596009567293
+    },
+    "200": {
+      "mean": 0.3314104720792939,
+      "se": 0.008261537190750233
+    },
+    "400": {
+      "mean": 0.3924130762537362,
+      "se": 0.007227907652649563
+    },
+    "700": {
+      "mean": 0.44431130528302776,
+      "se": 0.007988056739319932
+    },
+    "1000": {
+      "mean": 0.46480697447171815,
+      "se": 0.008775302188427522
+    },
+    "1274": {
+      "mean": 0.482168494476244,
+      "se": 0.018001196250347143
+    }
+  },
+  "fit": {
+    "c": 1.8530525189332303,
+    "a": 2.039389307420898,
+    "b": 0.05579024614384961
+  },
+  "extrapolation": {
+    "2000": 0.5185024810028547,
+    "5000": 0.5850103657117269,
+    "11258": 0.6411488008148374,
+    "20000": 0.6793862698705948
+  },
+  "still_climbing": true,
+  "verdict": "IS THE CEILING METHOD OR DATA? Every modelling idea tried this session moved recall@50 by less than 0.01: repairing 34,440 PPI edges, six Markov state spaces, cell-specific graph pruning, a 55-feature kitchen sink, and three Monte Carlos. One change moved it by 0.14, and it was widening the neighbour pool from 378 to 1,274. This module holds the method completely fixed and varies ONLY the pool size. MEASURED CURVE: n=100 0.2777, n=200 0.3314, n=400 0.3924, n=700 0.4443, n=1000 0.4648, n=1274 0.4822. THE CURVE IS LOGARITHMIC AND HAS NOT FLATTENED. Recall is linear in log2(pool size) at r = 0.9988, with a steady +0.0568 per doubling and no decay across the measured range (+0.054, +0.061, +0.064, +0.040, +0.050). AN EARLIER VERSION OF THIS MODULE CONCLUDED THE OPPOSITE, because it compared the raw last step (+0.0174) against its standard error without noticing that the step is only 1.27x rather than 2x -- normalised, it is worth +0.0497 per doubling, right in line with every earlier step. The binding constraint at 1,400 knockouts is therefore HOW MANY NEIGHBOURS ARE AVAILABLE TO AVERAGE, not how cleverly they are chosen, and that is why every modelling idea this session landed inside the noise. EXTRAPOLATING THE LOG FIT -- a prediction to falsify, not a result -- the 11,258 K562 perturbations sitting unused in scratchpad/gwps.h5ad would give 0.6647, and the fit crosses this architecture's ORACLE of 0.61 at about 5,774 knockouts. Those two numbers land in the same place, which is the useful part: at roughly the data volume we already have on disk, the neighbour-transfer ORACLE stops being a distant reference and becomes the actual binding constraint. Past that point more knockouts cannot help and only a different readout can. WHAT THIS CANNOT SAY. The sub-sampled pools are drawn from the same 1,400 knockouts, so this measures the effect of pool SIZE holding the KIND of knockout fixed; the genome-wide set is not a random 8x enlargement of this one but a different, less curated selection, and its extra knockouts may be weaker. The ORACLE for this architecture is about 0.61, so no amount of pool growth takes neighbour transfer past that without a different readout. Five splits, one cell line, 3 subsamples per point."
+}

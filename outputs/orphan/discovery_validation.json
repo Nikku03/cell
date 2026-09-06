@@ -1,0 +1,11 @@
+{
+  "relation": "sig",
+  "n_edges": 17084,
+  "n_held_out": 1500,
+  "auc_overall": 0.625,
+  "auc_easy_triadic_recoverable": 0.878,
+  "n_hard_edges": 1023,
+  "auc_hard_DISCOVERY": 0.513,
+  "discovery_lift": 0.013,
+  "verdict": "no discovery signal \u2014 recovers only what network closure gives; HARD edges at chance"
+}

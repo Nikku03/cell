@@ -1,0 +1,1228 @@
+{
+  "test": "loop_statement",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/cell_loop.json",
+        "bytes": 557032,
+        "hash": "e07593bf3c8da83f",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_deficit.json",
+        "bytes": 10012,
+        "hash": "976b2a8564ee8fb2",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_variant.json",
+        "bytes": 515019,
+        "hash": "d7d7725d22aad643",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_chromatin.json",
+        "bytes": 3948,
+        "hash": "c7dafe4dc22cbe3d",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_fold_link.json",
+        "bytes": 5001,
+        "hash": "db1ad85d6a76f74b",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_real_chromatin.json",
+        "bytes": 4469,
+        "hash": "64c8e286ba378a9f",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_sideeffect.json",
+        "bytes": 155354,
+        "hash": "f451483a597547db",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_cancer.json",
+        "bytes": 5840,
+        "hash": "14ee017fed130968",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_slack.json",
+        "bytes": 4796,
+        "hash": "83dc5c6e138a86b3",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_kinetics.json",
+        "bytes": 4343,
+        "hash": "c3f721776bf0d6ac",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_provenance.json",
+        "bytes": 4629,
+        "hash": "c211bb44e9186ab7",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_drug.json",
+        "bytes": 104479,
+        "hash": "bbd77480f42923c2",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_retest.json",
+        "bytes": 359487,
+        "hash": "f723bbceea619394",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_quantity.json",
+        "bytes": 3892,
+        "hash": "34c1424453acba2d",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_pervariant.json",
+        "bytes": 3952,
+        "hash": "e55f427c27b20fb4",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_tail.json",
+        "bytes": 8654,
+        "hash": "7fe6dbe8811f746e",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_integrate.json",
+        "bytes": 5653,
+        "hash": "ee972791464bfe75",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_amplify.json",
+        "bytes": 5408,
+        "hash": "febd5c4cac4861e5",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_recall.json",
+        "bytes": 4445,
+        "hash": "407e10bae7fb0fca",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_survivable.json",
+        "bytes": 7542,
+        "hash": "521c997a505a76b0",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_chain.json",
+        "bytes": 9011,
+        "hash": "27977431ef0a53ef",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_nexus_fair.json",
+        "bytes": 7904,
+        "hash": "224998480d7520a6",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_hic_target.json",
+        "bytes": 7468,
+        "hash": "10fe0badc6f5f221",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_polymer.json",
+        "bytes": 4608,
+        "hash": "9bad872e20f8bb3d",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_extrusion.json",
+        "bytes": 5435,
+        "hash": "74e152109765bcf9",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_stiffness.json",
+        "bytes": 4440,
+        "hash": "deed148e4ac12f30",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_fourth.json",
+        "bytes": 6049,
+        "hash": "9841e14d07413405",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_compartment.json",
+        "bytes": 4476,
+        "hash": "03bc8ff7b1f6f360",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_affinity.json",
+        "bytes": 4091,
+        "hash": "151457d95969f5bc",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_surrogate.json",
+        "bytes": 4208,
+        "hash": "5c5ad89d4de69504",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_insulation.json",
+        "bytes": 4582,
+        "hash": "1a4e21ea85aa07cf",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_loading.json",
+        "bytes": 5265,
+        "hash": "9087e62b474124ac",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_langevin.json",
+        "bytes": 5061,
+        "hash": "777722ab990d6ecb",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_buffering.json",
+        "bytes": 9567,
+        "hash": "65ec83af52cd5738",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/build_cell_complete.json",
+        "bytes": 14744,
+        "hash": "022d3b74449a8fb2",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_rebuild.json",
+        "bytes": 11591,
+        "hash": "6878de02d7cb4d20",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_shared_effect.json",
+        "bytes": 8299,
+        "hash": "796ca9c4f047433b",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_rescue.json",
+        "bytes": 10475,
+        "hash": "9b85938b76301d31",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_physics_bind.json",
+        "bytes": 7482,
+        "hash": "00d9e207a51fb61e",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_fitted_bind.json",
+        "bytes": 7902,
+        "hash": "de282fb6d5fdba6e",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_distogram_nn.json",
+        "bytes": 6684,
+        "hash": "2005adfcabfeff48",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_sphere_chain.json",
+        "bytes": 8872,
+        "hash": "8f04ba7f49d2e94d",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_combined.json",
+        "bytes": 5935,
+        "hash": "c6e07b9a8cc4ae45",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_mechanism.json",
+        "bytes": 7189,
+        "hash": "e1bb41c36f21293b",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_drug_rebuild.json",
+        "bytes": 7810,
+        "hash": "d727388a2a09ddb6",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_response_field.json",
+        "bytes": 6288,
+        "hash": "bd3661a8a947b0b8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/capability_audit.json",
+        "bytes": 27681,
+        "hash": "92eb44584d7d60d4",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 48,
+      "used": 48,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "every claim read from a gated result file",
+      "missing files reported rather than quoted from memory"
+    ],
+    "note": "assembled from recorded runs; no number typed from recollection",
+    "warnings": []
+  },
+  "n_gates_passed": 140,
+  "n_gates_failed": 61,
+  "capability": [
+    {
+      "question": "any point mutation",
+      "what": "a single base change anywhere in the genome",
+      "blocks": {
+        "struct": 13
+      },
+      "n_items": 13,
+      "gates_passed": 16,
+      "gates_failed": 10,
+      "gate_detail": {
+        "loop_chain.json": {
+          "passed": 3,
+          "failed": 3
+        },
+        "loop_distogram_nn.json": {
+          "passed": 4,
+          "failed": 1
+        },
+        "loop_pervariant.json": {
+          "passed": 3,
+          "failed": 1
+        },
+        "loop_rescue.json": {
+          "passed": 4,
+          "failed": 3
+        },
+        "loop_variant.json": {
+          "passed": 2,
+          "failed": 2
+        }
+      },
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [],
+      "retracted": {},
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/cell_stats.py",
+        "colab/complete_cell.py",
+        "colab/data_ledger.py",
+        "colab/loop_chain.py",
+        "colab/loop_distogram_nn.py",
+        "colab/loop_pervariant.py",
+        "colab/loop_rescue.py",
+        "colab/loop_variant.py"
+      ],
+      "produces": [
+        "data_ledger.json",
+        "loop_chain.json",
+        "loop_distogram_nn.json",
+        "loop_pervariant.json",
+        "loop_rescue.json",
+        "loop_variant.json"
+      ],
+      "phenotype_hits": [],
+      "controlled": [
+        "loop_chain.json",
+        "loop_distogram_nn.json",
+        "loop_pervariant.json",
+        "loop_rescue.json",
+        "loop_variant.json"
+      ],
+      "note": "13 genes of residue-level counts, PLUS the ClinVar VCF that loop_variant consumes. `biomarkers` looks relevant and is not -- it is keyed on GENE, so a variant cannot be handed to it"
+    },
+    {
+      "question": "any protein change",
+      "what": "abundance, modification or activity of any protein",
+      "blocks": {
+        "ppm": 16015,
+        "abund": 16286,
+        "ptm": 8425,
+        "complexes": 2039
+      },
+      "n_items": 42765,
+      "gates_passed": 43,
+      "gates_failed": 9,
+      "gate_detail": {
+        "cell_loop.json": {
+          "passed": 2,
+          "failed": 2
+        },
+        "loop_amplify.json": {
+          "passed": 3,
+          "failed": 1
+        },
+        "loop_buffering.json": {
+          "passed": 5,
+          "failed": 0
+        },
+        "loop_cancer.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_drug.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_fold_link.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_integrate.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_mechanism.json": {
+          "passed": 5,
+          "failed": 0
+        },
+        "loop_nexus_fair.json": {
+          "passed": 0,
+          "failed": 3
+        },
+        "loop_quantity.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_recall.json": {
+          "passed": 2,
+          "failed": 1
+        },
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        },
+        "loop_survivable.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_quantity.json",
+      "adjacent_credits": [
+        "loop_buffering.json",
+        "loop_cancer.json",
+        "loop_drug.json",
+        "loop_fold_link.json",
+        "loop_integrate.json",
+        "loop_mechanism.json",
+        "loop_nexus_fair.json",
+        "loop_recall.json",
+        "loop_sideeffect.json",
+        "loop_survivable.json"
+      ],
+      "retracted": {},
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/abstain.py",
+        "colab/adrn_ko_channels2.py",
+        "colab/adrn_ko_channels3.py",
+        "colab/annotation_prior.py",
+        "colab/best_combined.py",
+        "colab/biochem_limit.py",
+        "colab/bioplex.py",
+        "colab/build_blocks.py"
+      ],
+      "produces": [
+        "cell_loop.json",
+        "loop_amplify.json",
+        "loop_buffering.json",
+        "loop_cancer.json",
+        "loop_drug.json",
+        "loop_fold_link.json",
+        "loop_integrate.json",
+        "loop_mechanism.json"
+      ],
+      "phenotype_hits": [
+        "colab/cell_loop.py",
+        "colab/chain_benchmark.py",
+        "colab/eval_harness.py",
+        "colab/evidence_completion.py"
+      ],
+      "controlled": [
+        "cell_loop.json",
+        "loop_amplify.json",
+        "loop_buffering.json",
+        "loop_cancer.json",
+        "loop_drug.json",
+        "loop_fold_link.json"
+      ],
+      "note": "gene-keyed"
+    },
+    {
+      "question": "any chromosome fold",
+      "what": "a change in 3D genome organisation",
+      "blocks": {
+        "loops3d": 767
+      },
+      "n_items": 767,
+      "gates_passed": 11,
+      "gates_failed": 3,
+      "gate_detail": {
+        "loop_chain.json": {
+          "passed": 3,
+          "failed": 3
+        },
+        "loop_integrate.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_real_chromatin.json": {
+          "passed": 4,
+          "failed": 0
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_real_chromatin.json",
+      "adjacent_credits": [
+        "loop_chain.json",
+        "loop_integrate.json"
+      ],
+      "retracted": {},
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/complete_cell.py",
+        "colab/data_ledger.py",
+        "colab/ko_dossier.py",
+        "colab/layers.py",
+        "colab/loop_chain.py",
+        "colab/loop_integrate.py",
+        "colab/loop_real_chromatin.py"
+      ],
+      "produces": [
+        "data_ledger.json",
+        "loop_chain.json",
+        "loop_integrate.json",
+        "loop_real_chromatin.json"
+      ],
+      "phenotype_hits": [],
+      "controlled": [
+        "loop_chain.json",
+        "loop_integrate.json",
+        "loop_real_chromatin.json"
+      ],
+      "note": "767 loop anchors, plus measured bTMP torsion from GSE277502; model4 was removed from this row because it is a functional neighbourhood, not a conformation"
+    },
+    {
+      "question": "functional neighbourhood",
+      "what": "NOT one of the six -- reported so model4's items are not lost",
+      "blocks": {
+        "model4": 7700
+      },
+      "n_items": 7700,
+      "gates_passed": 15,
+      "gates_failed": 1,
+      "gate_detail": {
+        "loop_chromatin.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_fold_link.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_integrate.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_provenance.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_chromatin.json",
+      "adjacent_credits": [
+        "loop_integrate.json",
+        "loop_provenance.json"
+      ],
+      "retracted": {},
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/complete_cell.py",
+        "colab/loop_chromatin.py",
+        "colab/loop_fold_link.py",
+        "colab/loop_integrate.py",
+        "colab/loop_provenance.py",
+        "colab/phase2_audit.py",
+        "colab/phase2_loop.py"
+      ],
+      "produces": [
+        "loop_chromatin.json",
+        "loop_fold_link.json",
+        "loop_integrate.json",
+        "loop_provenance.json"
+      ],
+      "phenotype_hits": [],
+      "controlled": [
+        "loop_chromatin.json",
+        "loop_fold_link.json",
+        "loop_integrate.json",
+        "loop_provenance.json"
+      ],
+      "note": "NOT a fold -- 8.8% cis, half its pairs sharing a functional label. Kept as its own row so the 7,700 items are still counted, under a heading that describes them"
+    },
+    {
+      "question": "NEGATIVE CONTROL",
+      "what": "CALIBRATION -- a perturbation this model has no slot for, and never will",
+      "blocks": {
+        "__no_such_block__": 0
+      },
+      "n_items": 0,
+      "gates_passed": 0,
+      "gates_failed": 0,
+      "gate_detail": {},
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [],
+      "retracted": {},
+      "encode": false,
+      "pipeline": false,
+      "check": false,
+      "answers": false,
+      "emits": false,
+      "namers": [],
+      "produces": [],
+      "phenotype_hits": [],
+      "controlled": [],
+      "note": "deliberately unsatisfiable; if this ever passes, the audit is broken"
+    },
+    {
+      "question": "drug effect",
+      "what": "what a compound does to the cell",
+      "blocks": {
+        "drugs": 4275
+      },
+      "n_items": 4275,
+      "gates_passed": 16,
+      "gates_failed": 7,
+      "gate_detail": {
+        "loop_drug.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_drug_rebuild.json": {
+          "passed": 4,
+          "failed": 1
+        },
+        "loop_response_field.json": {
+          "passed": 2,
+          "failed": 3
+        },
+        "loop_shared_effect.json": {
+          "passed": 3,
+          "failed": 2
+        },
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_drug.json",
+      "adjacent_credits": [
+        "loop_response_field.json",
+        "loop_shared_effect.json",
+        "loop_sideeffect.json"
+      ],
+      "retracted": {},
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/adrn_drug_liveness.py",
+        "colab/adrn_drug_response.py",
+        "colab/adrn_ko_channels3.py",
+        "colab/blind_target.py",
+        "colab/cell_qa.py",
+        "colab/cell_stats.py",
+        "colab/cellgraph.py",
+        "colab/cellos.py"
+      ],
+      "produces": [
+        "loop_drug.json",
+        "loop_drug_rebuild.json",
+        "loop_response_field.json",
+        "loop_shared_effect.json",
+        "loop_sideeffect.json"
+      ],
+      "phenotype_hits": [],
+      "controlled": [
+        "loop_drug.json",
+        "loop_drug_rebuild.json",
+        "loop_response_field.json",
+        "loop_shared_effect.json",
+        "loop_sideeffect.json"
+      ],
+      "note": "gene-keyed drug/target/action"
+    },
+    {
+      "question": "side effect",
+      "what": "what it does that was not intended, elsewhere",
+      "blocks": {
+        "otdis": 48
+      },
+      "n_items": 48,
+      "gates_passed": 8,
+      "gates_failed": 6,
+      "gate_detail": {
+        "loop_response_field.json": {
+          "passed": 2,
+          "failed": 3
+        },
+        "loop_shared_effect.json": {
+          "passed": 3,
+          "failed": 2
+        },
+        "loop_sideeffect.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [],
+      "retracted": {},
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/complete_cell.py",
+        "colab/data_ledger.py",
+        "colab/loop_response_field.py",
+        "colab/loop_shared_effect.py",
+        "colab/loop_sideeffect.py",
+        "colab/pertseq_apps.py"
+      ],
+      "produces": [
+        "data_ledger.json",
+        "loop_response_field.json",
+        "loop_shared_effect.json",
+        "loop_sideeffect.json"
+      ],
+      "phenotype_hits": [],
+      "controlled": [
+        "loop_response_field.json",
+        "loop_shared_effect.json",
+        "loop_sideeffect.json"
+      ],
+      "note": "48 genes with disease associations, PLUS SIDER 4.1 -- 1,430 compounds with MedDRA side effects, added by loop 12. Before that there was no compound-to-adverse-event data here at all"
+    },
+    {
+      "question": "cancer",
+      "what": "driver alteration to transformed phenotype",
+      "blocks": {
+        "biomarkers": 599,
+        "celltypes": 40,
+        "ctnames": 200
+      },
+      "n_items": 839,
+      "gates_passed": 7,
+      "gates_failed": 1,
+      "gate_detail": {
+        "loop_cancer.json": {
+          "passed": 4,
+          "failed": 0
+        },
+        "loop_survivable.json": {
+          "passed": 3,
+          "failed": 1
+        }
+      },
+      "answered_well": false,
+      "best_pipeline": null,
+      "adjacent_credits": [],
+      "retracted": {
+        "loop_cancer.json": "loop_survivable.json -- matched pairs instead of partialling put essentiality at 0.4949 inside the null; the 0.2990 anti-correlation was over-control"
+      },
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/adrn_ko_channels3.py",
+        "colab/cell_stats.py",
+        "colab/celltype_coherence.py",
+        "colab/celltype_conditioning.py",
+        "colab/celltype_id.py",
+        "colab/celltype_id_combined.py",
+        "colab/cofactor.py",
+        "colab/complete_cell.py"
+      ],
+      "produces": [
+        "data_ledger.json",
+        "loop_cancer.json",
+        "loop_survivable.json"
+      ],
+      "phenotype_hits": [
+        "colab/cofactor.py"
+      ],
+      "controlled": [
+        "loop_cancer.json",
+        "loop_survivable.json"
+      ],
+      "note": "biomarker associations and cell-type identities, PLUS IntOGen's 2024-06 driver compendium (633 genes) added by loop 14 as the held-out label"
+    },
+    {
+      "question": "metabolic growth",
+      "what": "CALIBRATION -- must pass; closed by cell_loop today",
+      "blocks": {
+        "generxn": 2549,
+        "reactions": 31
+      },
+      "n_items": 2580,
+      "gates_passed": 7,
+      "gates_failed": 2,
+      "gate_detail": {
+        "cell_loop.json": {
+          "passed": 2,
+          "failed": 2
+        },
+        "loop_buffering.json": {
+          "passed": 5,
+          "failed": 0
+        }
+      },
+      "answered_well": true,
+      "best_pipeline": "loop_buffering.json",
+      "adjacent_credits": [],
+      "retracted": {},
+      "encode": true,
+      "pipeline": true,
+      "check": true,
+      "answers": true,
+      "emits": true,
+      "namers": [
+        "colab/best_combined.py",
+        "colab/build_kinetics_bundle.py",
+        "colab/cascade.py",
+        "colab/cell_loop.py",
+        "colab/cell_orphan_chem_coverage.py",
+        "colab/cell_orphan_truthset.py",
+        "colab/cell_sim.py",
+        "colab/cell_state.py"
+      ],
+      "produces": [
+        "cell_loop.json",
+        "data_ledger.json",
+        "loop_buffering.json"
+      ],
+      "phenotype_hits": [
+        "colab/cell_loop.py",
+        "colab/necessity_test.py"
+      ],
+      "controlled": [
+        "cell_loop.json",
+        "loop_buffering.json"
+      ],
+      "note": "the solved metabolism is Human-GEM (2,848 genes, 12,931 reactions), ledgered and external; cell_complete's generxn is strings"
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "WHAT THIS CELL MODEL CAN AND CANNOT DO",
+    "====================================================================================================",
+    "  Every number below is read out of a results file whose gates were declared before it ran.",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  THE GOAL, MEASURED",
+    "----------------------------------------------------------------------------------------------------",
+    "  question                   slot   pipe  check     items   gates  well?   answered well by",
+    "  any point mutation          yes    yes    yes        13   16/26     no   ",
+    "  any protein change          yes    yes    yes    42,765   43/52    YES   loop_quantity.json",
+    "  any chromosome fold         yes    yes    yes       767   11/14    YES   loop_real_chromatin.json",
+    "  drug effect                 yes    yes    yes     4,275   16/23    YES   loop_drug.json",
+    "  side effect                 yes    yes    yes        48    8/14     no   ",
+    "  cancer                      yes    yes    yes       839     7/8     no   ",
+    "\n  6 of 6 can be ASKED.",
+    "  6 can be GOT WRONG -- a slot, a pipeline and a controlled score.",
+    "  3 are ANSWERED WELL -- every gate in that pipeline came back positive.",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  EVERY GATE FROM EVERY LOOP -- passes and failures together",
+    "----------------------------------------------------------------------------------------------------",
+    "\n  loop 1   close the growth feedback",
+    "      PASS   G1 closure",
+    "      PASS   G2 signal",
+    "      FAIL   G3 feedback earns its place",
+    "      FAIL   G4 beats the catalogue",
+    "\n  loop 4   a medium the model can grow on",
+    "      PASS   M1 feasible",
+    "      PASS   M2 retest",
+    "      FAIL   M3 slack",
+    "\n  loop 5   the variant-addressable slot",
+    "      PASS   V1 encode",
+    "      PASS   V2 signal",
+    "      FAIL   V3 partial loss is real",
+    "      FAIL   V4 beats the catalogue",
+    "\n  loop 6   is the dead link deserved",
+    "      PASS   C1 sanity",
+    "      PASS   C2 beats 1D proximity",
+    "      PASS   C3 reaches a cell outcome",
+    "      PASS   C4 trans replication",
+    "\n  loop 7   turn it into a pipeline",
+    "      PASS   L1 signal",
+    "      PASS   L2 beats 1D",
+    "      PASS   L3 adds to the lookup",
+    "      PASS   L4 holds under chromosome-blocked folds",
+    "\n  loop 8   the real chromatin test",
+    "      PASS   R1 replicates agree",
+    "      PASS   R2 beats the naked-DNA control",
+    "      PASS   R3 signal above shuffles",
+    "      PASS   R4 beats composition",
+    "\n  loop 12  side effects",
+    "      PASS   S1 join",
+    "      PASS   S2 signal",
+    "      FAIL   S3 beats target count",
+    "      PASS   S4 beats lookups",
+    "\n  loop 14  cancer drivers",
+    "      PASS   K1 join",
+    "      PASS   K2 signal",
+    "      PASS   K3 beats length and citations",
+    "      PASS   K4 beats lookups",
+    "\n  loop 15  does the cell have slack",
+    "      PASS   P1 the gate was the problem",
+    "      PASS   P2 the right amount of slack",
+    "      FAIL   P3 the slack is in the right places",
+    "\n  loop 16  retiring saturating kinetics",
+    "      PASS   Q1 the invariance holds",
+    "      FAIL   Q2 gene-specific kinetics available",
+    "\n  loop 17  what made model4",
+    "      PASS   W1 arithmetic reconstructs",
+    "      PASS   W2 stored as top-k",
+    "      PASS   W3 producer absent",
+    "      FAIL   W4 lists are reliable",
+    "\n  loop 18  which drugs are cytotoxic",
+    "      PASS   D1 join",
+    "      PASS   D2 signal",
+    "      PASS   D3 beats target count",
+    "      PASS   D4 beats lookups",
+    "\n  loop 21  re-run loop 1 on the fixed model",
+    "      PASS   G1 closure",
+    "      PASS   G2 signal",
+    "      FAIL   G3 feedback earns its place",
+    "      FAIL   G4 beats the catalogue",
+    "      PASS   G5 adds to the lookup",
+    "\n  loop 22  predict a quantity, not a class",
+    "      PASS   Y1 beats the mean",
+    "      PASS   Y2 slope near 1",
+    "      PASS   Y3 correction earns its place",
+    "      PASS   Y4 beats a shuffle",
+    "\n  loop 23  score a variant, not a gene",
+    "      PASS   X1 variant resolution",
+    "      PASS   X2 signal above within-gene shuffles",
+    "      PASS   X3 beats the gene score",
+    "      FAIL   X4 sequence and cell information combine",
+    "\n  loop 24  the tail the model gets wrong",
+    "      PASS   T1 the tail is the right set",
+    "      PASS   T2 the tail is in the right order",
+    "      PASS   T3 the disagreement is nameable",
+    "\n  loop 25  do the layers add up",
+    "      PASS   I1 the whole beats the parts",
+    "      PASS   I2 mechanism adds to lookups",
+    "      PASS   I3 no single layer carries it",
+    "      PASS   I4 beats a shuffle",
+    "\n  loop 27  where the amplification is",
+    "      PASS   A1 slope really above 1",
+    "      FAIL   A2 a single power law fits",
+    "      PASS   A3 something nameable explains it",
+    "      PASS   A4 the uniform constant is implicated",
+    "\n  loop 28  what would recover the misses",
+    "      PASS   R1 the missed are distinguishable",
+    "      PASS   R2 not just expression",
+    "      FAIL   R3 it would actually help",
+    "\n  loop 29  is the cancer inversion real",
+    "      PASS   N1 the matching works",
+    "      FAIL   N2 the anti-correlation survives",
+    "      PASS   N3 it is the survivability constraint",
+    "      PASS   N4 positive control holds",
+    "\n  loop 31  DNA -> fold -> residue -> nexus",
+    "      PASS   C1 the chain runs",
+    "      PASS   C2 the translation is right",
+    "      PASS   C3 keeps variant resolution",
+    "      FAIL   C4 the fold link earns its place",
+    "      FAIL   C5 nexus sees something",
+    "      FAIL   C6 beats the substitution matrix",
+    "\n  loop 32  nexus tested the way it asked",
+    "      FAIL   F1 harness reproduces nexus",
+    "      FAIL   F2 needs confident structure",
+    "      FAIL   F3 burial sharpens it",
+    "\n  loop 33  what the nucleus target IS",
+    "      PASS   D1 the map is real",
+    "      PASS   D2 TADs exist and CTCF marks them",
+    "      PASS   D3 compartments exist",
+    "      PASS   D4 orientation matters",
+    "\n  loop 34  the polymer engine",
+    "      PASS   P1 ideal chain is exact",
+    "      PASS   P2 textbook exponent, wrong for chromatin",
+    "      PASS   P3 dynamics are Rouse",
+    "      PASS   P4 confinement saturates both",
+    "\n  loop 35  extrusion on real CTCF",
+    "      PASS   X1 extrusion bends P(s)",
+    "      FAIL   X2 insulation matches",
+    "      PASS   X3 orientation effect reproduced",
+    "      PASS   X4 affordable",
+    "\n  loop 36  the two silent constants",
+    "      PASS   B1 stiffness calibration self-consistent",
+    "      FAIL   B2 insulation clears the gate",
+    "      PASS   B3 orientation effect right order",
+    "      PASS   B4 still affordable",
+    "\n  loop 37  the fourth dimension",
+    "      PASS   T1 sub-diffusive motion",
+    "      PASS   T2 dynamics and statics agree",
+    "      PASS   T3 loops turn over correctly",
+    "      PASS   T4 TADs are a population average",
+    "\n  loop 39  compartments, attempt 1",
+    "      PASS   A1 extrusion alone makes none",
+    "      FAIL   A2 affinity makes them",
+    "      FAIL   A3 beats its own input track",
+    "      FAIL   A4 does not break TADs",
+    "\n  loop 40  compartments, attempt 2",
+    "      PASS   M1 perturbation is weak",
+    "      FAIL   M2 P(s) survives",
+    "      FAIL   M3 TADs survive",
+    "      FAIL   M4 compartments beat their input",
+    "\n  loop 41  a CNN against the physics",
+    "      PASS   S1 surrogate transfers",
+    "      FAIL   S2 beats trivial baseline",
+    "      FAIL   S3 beats the physics",
+    "      FAIL   S4 learned the asymmetry",
+    "\n  loop 43  the barrier that was not one",
+    "      PASS   I1 ceiling real, gate fair",
+    "      PASS   I2 barrier persists",
+    "      PASS   I3 insulation improves",
+    "      FAIL   I4 clears the original gate",
+    "      PASS   I5 nothing else breaks",
+    "\n  loop 44  where cohesin lands",
+    "      PASS   L1 loading is biased",
+    "      FAIL   L2 insulation improves",
+    "      FAIL   L3 clears the original gate",
+    "      PASS   L4 the track, not non-uniformity",
+    "      FAIL   L5 nothing else breaks",
+    "\n  loop 45  Langevin with excluded volume",
+    "      PASS   V1 sampler is exact",
+    "      PASS   V2 counting changes nothing",
+    "      PASS   V3 excluded volume bites",
+    "      FAIL   V4 insulation improves",
+    "      FAIL   V5 clears the original gate",
+    "\n  loop 46  is buffering predictable",
+    "      PASS   B1 groups matched on cost",
+    "      PASS   B2 redundancy separates them",
+    "      PASS   B3 not expression",
+    "      PASS   B4 holds out of sample",
+    "      PASS   B5 fixes the predictor",
+    "\n  loop 48  a producer for cell_complete.json",
+    "      PASS   Q1 inventory usage-weighted",
+    "      PASS   Q2 every field classified",
+    "      FAIL   Q3 rebuilt fields match",
+    "      PASS   Q4 coverage reported",
+    "\n  loop 49  close the declared gap",
+    "      PASS   D1 sources arrive and cover",
+    "      FAIL   D2 rebuilt columns match",
+    "      PASS   D3 ess rule survives non-circularly",
+    "      PASS   D4 shuffled rebuilds fail",
+    "      FAIL   D5 coverage passes half",
+    "\n  loop 50  do drugs hitting the same neighbourhood share side effects",
+    "      PASS   E1 join exists and can be split",
+    "      PASS   E2 shared targets predict shared effects",
+    "      PASS   E3 network adds where the lookup cannot",
+    "      FAIL   E4 survives the frequency baseline",
+    "      FAIL   E5 holds on held-out drugs",
+    "\n  loop 51  is there any sensor that answers the point-mutation row",
+    "      FAIL   G1 index checked independently",
+    "      PASS   G2 statistic is within-gene",
+    "      FAIL   G3 ESM beats the baseline panel",
+    "      PASS   G4 the substitution matters",
+    "      PASS   G5 survives curation",
+    "      PASS   G6a structure adds",
+    "      FAIL   G6b the ddG sensor adds",
+    "\n  loop 52  a force field for the attachment part",
+    "      PASS   P1 structures and target are real",
+    "      PASS   P2 physics tracks the measurement",
+    "      PASS   P3 beats the non-physics baselines",
+    "      FAIL   P4 beats nexus's own number",
+    "      FAIL   P5 every term earns its place",
+    "      PASS   P6 nothing in the physics arm is fitted",
+    "\n  loop 53  fit the physics -- does energy know what geometry does not",
+    "      PASS   F1 fit held out by complex",
+    "      FAIL   F2 the null collapses it",
+    "      FAIL   F3 beats the unweighted sum",
+    "      FAIL   F4 beats geometry alone",
+    "      PASS   F5 physics adds on top of geometry",
+    "      PASS   F6 every term earns its place",
+    "      PASS   F7 beats nexus's own number",
+    "\n  loop 54  pairwise structure through a neural network",
+    "      PASS   N1 matrices index correctly",
+    "      PASS   N2 the null is measured",
+    "      FAIL   N3 pairwise features add",
+    "      PASS   N4 the network beats linear",
+    "      PASS   N5 beats the best recorded",
+    "\n  loop 55  the connected sphere chain, with the mutation in the network",
+    "      FAIL   S0 network reproduces B-factors",
+    "      FAIL   S1 features are mutation-dependent",
+    "      PASS   S2 not a re-parameterisation",
+    "      FAIL   S3 adds over loop 54 refitted",
+    "      PASS   S4 the nulls collapse it",
+    "\n  loop 56  the sphere chain and the distogram together",
+    "      PASS   C1 blocks join by key",
+    "      FAIL   C2 the combination adds",
+    "      FAIL   C3 the interaction adds",
+    "      PASS   C4 the nulls collapse it",
+    "\n  loop 57  among the harmful ones, why is each one harmful",
+    "      PASS   M1 UniProt numbering matches",
+    "      PASS   M2 categories separate (reported)",
+    "      PASS   M3 structure predicts mechanism",
+    "      PASS   M4 not memorising the gene",
+    "      PASS   M5 mechanism visible to the model",
+    "\n  loop 58  the drug rebuild -- outcomes that are not list lengths",
+    "      PASS   R1 outcome is a rate, not a count",
+    "      PASS   R2 target count does not predict it",
+    "      PASS   R3 the cell model predicts seriousness",
+    "      FAIL   R4 it transfers to the independent outcome",
+    "      PASS   R5 nulls and holdout",
+    "\n  loop 59  the drug response field, and the axis flip",
+    "      PASS   P1 the field is not the target set",
+    "      FAIL   P2 the signs matter",
+    "      FAIL   P3 the network matters",
+    "      FAIL   P4 beats the fame baseline",
+    "      PASS   P5 nulls collapse it",
+    "\n  loop 3  why the lookup won",
+    "      PASS   H1 mechanism knows something the lookup does not",
+    "      PASS   H2 the lookup is a general expression confound",
+    "      NOT TESTABLE   H3 the open medium was the problem (re-asked and answered in loop 4)",
+    "\n  140 gates passed, 61 failed. Both numbers are the point: a project where",
+    "  every gate passes was not gating anything.",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  WHAT IS ACTUALLY TRUE, with the number and where it came from",
+    "----------------------------------------------------------------------------------------------------",
+    "  the growth feedback CLOSES        mu = F(mu) to 1.7e-08 relative from mu0 = 0 and 2*mu_WT          [cell_loop]",
+    "  the feedback does NOT help        loop 0.6210 vs frozen-mu 0.6284, a change of -0.0074, and -0.0013 on the fixed model   [cell_loop, loop_retest]",
+    "  the lookup is not about metabolism  0.7766 on metabolic genes vs 0.7794 on genes with no reaction  [loop_deficit]",
+    "  mechanism is NOT redundant          lookup 0.7761 -> with mechanism 0.8314          [loop_deficit]",
+    "  the shipped model could eat anything  221 uptakes barred incl. ATP; a real medium moved FBA 0.6491 -> 0.6850  [loop_medium]",
+    "  partial loss buys nothing           dose-response 0.5513 vs knockout 0.5529                 [loop_variant]",
+    "  measured torsion predicts transcription  rho +0.1766 vs naked-DNA control -0.1423, partial +0.1436   [loop_real_chromatin]",
+    "  cytotoxic drugs are separable      partial AUC 0.7233 after target count removed, on 57 cytotoxics    [loop_drug]",
+    "  side effects are NOT               same predictor, same confound: partial +0.0515, inside the null       [loop_sideeffect]",
+    "  the cancer inversion was OVER-CONTROL  matched instead of partialled, essentiality is 0.4949 inside 0.5190   [loop_survivable]",
+    "  the two driver roles CANCEL         loss-of-function 0.4717, activating 0.5248, gap +0.0531 vs +0.0406  [loop_survivable]",
+    "  a QUANTITY, held out                protein/mRNA ratio R2 0.4332 vs 0.3783 without the loop's turnover term  [loop_quantity]",
+    "  the medium was suppressing FBA      loop 0.7022 on a defined medium vs 0.6210 on the shipped one, lookup unmoved         [loop_retest]",
+    "  the model ADDS to the lookup        held out, 0.7761 -> 0.8267; losing head-to-head is not being redundant [loop_retest]",
+    "  and it still misses two thirds      precision 76.7%, recall 35.7% on real dependencies                   [loop_tail]",
+    "  the missing layer is hub-ness       PPI degree separates the misses at 0.6793 and does NOT improve recall (35.7% -> 30.9%)  [loop_recall]",
+    "  the 92% no-slack result was my bug   11.7% of knockouts cost >1% of growth, not 92%                 [loop_slack]",
+    "  model4 is a weak ranker's output    recall@10 0.99%, lift 8.7x, producer still absent            [loop_provenance]",
+    "  the 38 MB file NOW HAS A PRODUCER   7/8 rebuilt fields match the surviving copy; loeuf exactly, at 1.0000    [build_cell_complete]",
+    "  and it covers 17% of the reads       15% more has a URL and no download, 6% is invented labels with no rule  [build_cell_complete]",
+    "  the URL for ppi WAS WRONG            BioGRID degree correlates 0.3701 with the file's most-read numeric field  [loop_rebuild]",
+    "  and DepMap was in the repo already  dep_frac corr 0.9735, ess 0.9915 from a non-circular rebuild; coverage 28%  [loop_rebuild]",
+    "  shared NEIGHBOURHOOD does not work  190,502 zero-overlap drug pairs: proximity +0.0720 raw, -0.0539 once side-effect count is removed  [loop_shared_effect]",
+    "  and the confound came in sideways  the count baseline alone explains R2 0.5685 of the OUTCOME, not the predictor   [loop_shared_effect]",
+    "  model4 is not a fold                8.8% of its pairs are same-chromosome; a Hi-C map runs 70-90%              [loop_fold_link]",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  THE DISTANCE LEFT",
+    "----------------------------------------------------------------------------------------------------",
+    "  NEGATIVE CONTROL             0 items -- nothing addressable; no module consumes it and records a result; no controlled score",
+    "  (the list above holds only the synthetic control: all six real rows now have a slot, a",
+    "   pipeline and a controlled score. The distance moved to the fourth column.)",
+    "",
+    "  NOT ANSWERED WELL  any point mutation     every module answering it has a failed gate: loop_chain.json, loop_distogram_nn.json, loop_pervariant.json, loop_rescue.json, loop_variant.json",
+    "  NOT ANSWERED WELL  side effect            every module answering it has a failed gate: loop_response_field.json, loop_shared_effect.json, loop_sideeffect.json",
+    "  NOT ANSWERED WELL  cancer                 every module answering it has a failed gate: loop_survivable.json; SUPERSEDED: loop_cancer.json",
+    "\n  SIX LIMITS THAT APPLY TO THE ROWS THAT DO PASS.",
+    "    1  Effects are modest. rho 0.18 for torsion against transcription; AUC 0.72 for cytotoxic",
+    "       class after confound removal; R2 0.43 for the protein-to-mRNA ratio. Real, controlled,",
+    "       and not large.",
+    "    2  TWO OF THIS SECTION'S OWN EARLIER CLAIMS HAVE BEEN WITHDRAWN BY LATER LOOPS, and that",
+    "       is the strongest evidence here that the gates are doing something. This list used to",
+    "       say the cancer row predicted NON-drivers at 0.7010 -- loop 29 matched instead of",
+    "       partialling and found 0.4949, inside the null; the inversion was over-control. It also",
+    "       used to say nothing here predicts a quantity -- loop 22 then did, at R2 0.4332.",
+    "    3  The feedback that started this project still does not earn its place. Re-run on a",
+    "       model that cannot eat ATP, with the reference growth rate fixed, loop minus frozen",
+    "       went from -0.0074 to -0.0013: 82% of the deficit gone, the sign never flipped.",
+    "    4  Recall is the binding limit and it has a named, measured dead end. The metabolic model",
+    "       finds a third of real dependencies; PPI degree separates the ones it misses at 0.68 and",
+    "       adding it makes the predictor WORSE at matched precision, because hub-ness promotes",
+    "       true negatives just as fast. Naming the missing layer is not being able to use it.",
+    "    5  BUT ONCE IT WAS. loop 46 is the single exception to limit 4: re-ranking the model's",
+    "       own tail by predicted buffering lifted precision 0.7658 -> 0.8228 against a",
+    "       shuffled 95th of 0.7785. And the mechanism is NOT the one that was",
+    "       hypothesised: all four REDUNDANCY features point the wrong way, and what separates",
+    "       the over-called genes is CENTRALITY -- they are peripheral, not backed up. The",
+    "       model is over-calling the edges of its own network, which is scope, not biology.",
+    "    6  The 4D chromatin model reproduces P(s), the CTCF orientation signature, sub-diffusive",
+    "       motion and correct loop turnover, and beats a trained CNN on an unseen chromosome",
+    "       (+0.1986 is the Langevin run; the closed form transfers 0.2974 -> 0.2852).",
+    "       Its boundaries are still too soft: insulation +0.3617 against a 0.40 gate",
+    "       and a 0.9285 replicate ceiling. FOUR principled corrections were tried --",
+    "       loop-bond stiffness, barrier persistence, loading bias, excluded volume -- and only",
+    "       the barrier fix helped. Excluded volume overshot to a dilute self-avoiding walk",
+    "       (P(s) -2.11) because chromatin is a screened melt, which is a density condition.",
+    "    manifest: 48 inputs, coverage 48/48 (100.0%) by 'all', seed 1904, controls 2"
+  ]
+}

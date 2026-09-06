@@ -1,0 +1,1041 @@
+{
+ "provenance": {
+  "rna": "Replogle et al. 2022 genome-scale K562 CRISPRi Perturb-seq (gwps.h5ad pseudobulk)",
+  "protein": "PaxDb 9606-iBAQ_K562_Geiger_2012 (Geiger et al., Mol Cell Proteomics 2012)",
+  "atlas": "cell-object `emask`: 200 atlas cell types, 7,496 genes",
+  "census_snapshot": "1762972271"
+ },
+ "registry_joins": {
+  "lr_ligands": {
+   "joined": 433,
+   "of": 433,
+   "rate": 1.0,
+   "via": "symbol",
+   "label": "lr ligands"
+  },
+  "lr_receptors": {
+   "joined": 375,
+   "of": 375,
+   "rate": 1.0,
+   "via": "symbol",
+   "label": "lr receptors"
+  },
+  "nichenet_ligands": {
+   "joined": 1195,
+   "of": 1195,
+   "rate": 1.0,
+   "via": "symbol",
+   "label": "nichenet ligands"
+  },
+  "nichenet_targets": {
+   "joined": 3226,
+   "of": 3226,
+   "rate": 1.0,
+   "via": "symbol",
+   "label": "nichenet target vocabulary"
+  },
+  "k562_genes": {
+   "joined": 8232,
+   "of": 8248,
+   "rate": 0.9980601357904947,
+   "via": "ensembl",
+   "label": "K562 measured genes"
+  },
+  "k562_perturbations": {
+   "joined": 10419,
+   "of": 11258,
+   "rate": 0.9254752176230236,
+   "via": "symbol",
+   "label": "K562 perturbations"
+  },
+  "k562_proteome": {
+   "joined": 6917,
+   "of": 7031,
+   "rate": 0.9837860901720951,
+   "via": "symbol",
+   "label": "K562 proteome symbols"
+  },
+  "cell_index_agreement": {
+   "agree": 16492,
+   "of": 16492
+  }
+ },
+ "gate": {
+  "n_pairs": 948,
+  "ligands": {
+   "n": 433,
+   "frac_in_k562_rna": 0.11316397228637413,
+   "frac_in_k562_protein": 0.10623556581986143
+  },
+  "receptors": {
+   "n": 375,
+   "frac_in_k562_rna": 0.13066666666666665,
+   "frac_in_k562_protein": 0.10933333333333334
+  },
+  "all_genes": {
+   "n": 16492,
+   "frac_in_k562_rna": 0.43045112781954886,
+   "frac_in_k562_protein": 0.37684938151831193
+  },
+  "both_partners_rna": 13,
+  "both_partners_rna_or_protein": 23,
+  "surviving_fraction": 0.024261603375527425,
+  "receptor_only": 82,
+  "ligand_only": 80,
+  "surviving_pairs": [
+   [
+    "AGRN",
+    "PTPRS"
+   ],
+   [
+    "APLP2",
+    "PLXNA4"
+   ],
+   [
+    "APOB",
+    "APOBR"
+   ],
+   [
+    "CD226",
+    "NECTIN2"
+   ],
+   [
+    "CD55",
+    "ADGRE5"
+   ],
+   [
+    "DAG1",
+    "CELSR3"
+   ],
+   [
+    "DSC2",
+    "DSG2"
+   ],
+   [
+    "DSG1",
+    "DSC2"
+   ],
+   [
+    "FGF2",
+    "FGFR1"
+   ],
+   [
+    "GAS6",
+    "TYRO3"
+   ],
+   [
+    "ICAM1",
+    "SPN"
+   ],
+   [
+    "LRFN4",
+    "PTPRF"
+   ],
+   [
+    "LRFN4",
+    "PTPRS"
+   ],
+   [
+    "LRPAP1",
+    "SORT1"
+   ],
+   [
+    "MDK",
+    "ALK"
+   ],
+   [
+    "PPIA",
+    "BSG"
+   ],
+   [
+    "RELN",
+    "LRP8"
+   ],
+   [
+    "SEMA4C",
+    "PLXNB2"
+   ],
+   [
+    "TENM3",
+    "ADGRL1"
+   ],
+   [
+    "TGFB1",
+    "TGFBR3"
+   ],
+   [
+    "THBS1",
+    "CD36"
+   ],
+   [
+    "TNFSF10",
+    "TNFRSF10A"
+   ],
+   [
+    "TNFSF10",
+    "TNFRSF10B"
+   ]
+  ],
+  "breadth_matched_control": {
+   "lr ligands": {
+    "n": 247,
+    "observed_panel_rate": 0.145748987854251,
+    "matched_panel_rate": 0.4953846153846154,
+    "residual_breadth_imbalance_celltypes": 0.8871255060728749
+   },
+   "lr receptors": {
+    "n": 213,
+    "observed_panel_rate": 0.16901408450704225,
+    "matched_panel_rate": 0.47586854460093897,
+    "residual_breadth_imbalance_celltypes": 2.049389671361503
+   }
+  },
+  "atlas_coexpression": {
+   "n_pairs_with_masks": 354,
+   "mean_cell_types_both": 4.61864406779661,
+   "frac_pairs_never_coexpressed": 0.5480225988700564,
+   "breadth_matched_mean": 2.466666666666667,
+   "n_cell_types": 200,
+   "draws": 25
+  }
+ },
+ "nichenet_shape": {
+  "n_ligands": 1195,
+  "n_targets": 3226,
+  "n_targets_measured": 1175,
+  "mean_pairwise_jaccard_measured": 0.26108439710035913,
+  "top_targets": {
+   "MYC": 0.7949790794979079,
+   "VEGFA": 0.7790794979079498,
+   "CDKN1A": 0.7782426778242678,
+   "CCND1": 0.7690376569037657,
+   "FOS": 0.7464435146443514,
+   "IL6": 0.7121338912133891
+  }
+ },
+ "receptor_test": {
+  "n_receptors": 56,
+  "n_autocrine_plausible": 18,
+  "effect_raw_mean_abs_z": 1.0074736209852355,
+  "effect_raw_median_abs_z": 0.7459698915481567,
+  "effect_raw_frac_targets_abs_z_ge_2": 0.06591290722140476,
+  "controls": {
+   "C1_responsiveness_matched": {
+    "label": "C1 responsiveness-matched genes",
+    "draws": 25,
+    "control_mean": 0.8011023605082717,
+    "control_median": 0.6964687740802765,
+    "ratio_mean": 1.2576091029690992,
+    "ratio_median": 1.071074424741079,
+    "win_rate": 0.5857142857142857,
+    "frac_draws_p_lt_05": 0.16,
+    "median_p": 0.18097408261285086,
+    "residual_imbalance": 0.011714675979954856
+   },
+   "C2_ligand_swap": {
+    "label": "C2 LIGAND SWAP (the null)",
+    "draws": 25,
+    "control_mean": 0.9333250358487879,
+    "control_median": 0.7309250354766845,
+    "ratio_mean": 1.0794456189306174,
+    "ratio_median": 1.0205833092878813,
+    "win_rate": 0.4878571428571428,
+    "frac_draws_p_lt_05": 0.0,
+    "median_p": 0.8384104588084904,
+    "residual_imbalance": -0.0010073226264544896
+   },
+   "C3_receptor_swap": {
+    "label": "C3 receptor swap, matched strength",
+    "draws": 25,
+    "control_mean": 0.8243805190175771,
+    "control_median": 0.7265712428092956,
+    "ratio_mean": 1.2220978028275733,
+    "ratio_median": 1.026698894197706,
+    "win_rate": 0.5414285714285714,
+    "frac_draws_p_lt_05": 0.04,
+    "median_p": 0.5406824420240881,
+    "residual_imbalance": -0.04046005853584835
+   }
+  },
+  "c2_attenuation_frac_cognate_in_swap": 0.3985974658030012,
+  "splits": {
+   "cognate ligand present in K562": {
+    "n": 18,
+    "observed": 1.403636657529407,
+    "control": 1.1812073445982403,
+    "ratio": 1.1883067472856095,
+    "frac_draws_p_lt_05": 0.04
+   },
+   "cognate ligand ABSENT in K562": {
+    "n": 38,
+    "observed": 0.8198174457801016,
+    "control": 0.8090951789523426,
+    "ratio": 1.0132521699630477,
+    "frac_draws_p_lt_05": 0.0
+   },
+   "responsive receptors only": {
+    "n": 23,
+    "observed": 1.570108237473861,
+    "control": 1.360688378240751,
+    "ratio": 1.1539072888267563,
+    "frac_draws_p_lt_05": 0.0
+   }
+  },
+  "power": {
+   "self_knockdown_median_abs_z": 4.360824108123779,
+   "self_knockdown_all_perturbations_median": 5.3477091789245605,
+   "n_receptors_in_panel": 39,
+   "receptor_strength_median": 0.7083405256271362,
+   "all_perturbation_strength_median": 0.774666428565979,
+   "positive_control_complex_full": {
+    "n": 1195,
+    "observed": 1.4059364805411096,
+    "matched": 1.252551102244455,
+    "ratio": 1.1224583795597658,
+    "frac_draws_p_lt_05": 1.0
+   },
+   "positive_control_complex_n_matched": {
+    "n": 56,
+    "observed": 1.2244715440486158,
+    "matched": 1.1338921065309218,
+    "ratio": 1.0798836476556986,
+    "frac_draws_p_lt_05": 0.08
+   },
+   "min_detectable_ratio_80pct": 1.1367861318357981
+  }
+ },
+ "census": {
+  "snapshot_id": "1762972271",
+  "n_genes": 134,
+  "pairs": [
+   {
+    "ligand": "INHBC",
+    "receptor": "ACVR2B",
+    "sender_cell_types": 1,
+    "receiver_cell_types": 71,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "INHBE",
+    "receptor": "ACVR2B",
+    "sender_cell_types": 1,
+    "receiver_cell_types": 71,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "NCAM1",
+    "receptor": "AGRN",
+    "sender_cell_types": 347,
+    "receiver_cell_types": 121,
+    "same_cell_type": 61
+   },
+   {
+    "ligand": "APOB",
+    "receptor": "APOBR",
+    "sender_cell_types": 102,
+    "receiver_cell_types": 78,
+    "same_cell_type": 17
+   },
+   {
+    "ligand": "REN",
+    "receptor": "ATP6AP2",
+    "sender_cell_types": 21,
+    "receiver_cell_types": 530,
+    "same_cell_type": 21
+   },
+   {
+    "ligand": "GAS6",
+    "receptor": "AXL",
+    "sender_cell_types": 302,
+    "receiver_cell_types": 207,
+    "same_cell_type": 153
+   },
+   {
+    "ligand": "CADM3",
+    "receptor": "CADM4",
+    "sender_cell_types": 119,
+    "receiver_cell_types": 76,
+    "same_cell_type": 52
+   },
+   {
+    "ligand": "PVR",
+    "receptor": "CD226",
+    "sender_cell_types": 58,
+    "receiver_cell_types": 117,
+    "same_cell_type": 16
+   },
+   {
+    "ligand": "NRXN1",
+    "receptor": "DAG1",
+    "sender_cell_types": 256,
+    "receiver_cell_types": 123,
+    "same_cell_type": 66
+   },
+   {
+    "ligand": "NRXN2",
+    "receptor": "DAG1",
+    "sender_cell_types": 94,
+    "receiver_cell_types": 123,
+    "same_cell_type": 30
+   },
+   {
+    "ligand": "DSG1",
+    "receptor": "DSC2",
+    "sender_cell_types": 29,
+    "receiver_cell_types": 150,
+    "same_cell_type": 18
+   },
+   {
+    "ligand": "DSC1",
+    "receptor": "DSG2",
+    "sender_cell_types": 2,
+    "receiver_cell_types": 177,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "DSC2",
+    "receptor": "DSG2",
+    "sender_cell_types": 150,
+    "receiver_cell_types": 177,
+    "same_cell_type": 113
+   },
+   {
+    "ligand": "EFNB1",
+    "receptor": "EPHB4",
+    "sender_cell_types": 115,
+    "receiver_cell_types": 92,
+    "same_cell_type": 53
+   },
+   {
+    "ligand": "EFNB2",
+    "receptor": "EPHB4",
+    "sender_cell_types": 223,
+    "receiver_cell_types": 92,
+    "same_cell_type": 75
+   },
+   {
+    "ligand": "EFNB3",
+    "receptor": "EPHB4",
+    "sender_cell_types": 20,
+    "receiver_cell_types": 92,
+    "same_cell_type": 11
+   },
+   {
+    "ligand": "EFNB1",
+    "receptor": "EPHB6",
+    "sender_cell_types": 115,
+    "receiver_cell_types": 99,
+    "same_cell_type": 30
+   },
+   {
+    "ligand": "EFNB2",
+    "receptor": "EPHB6",
+    "sender_cell_types": 223,
+    "receiver_cell_types": 99,
+    "same_cell_type": 48
+   },
+   {
+    "ligand": "EFNB3",
+    "receptor": "EPHB6",
+    "sender_cell_types": 20,
+    "receiver_cell_types": 99,
+    "same_cell_type": 4
+   },
+   {
+    "ligand": "EPO",
+    "receptor": "EPOR",
+    "sender_cell_types": 2,
+    "receiver_cell_types": 62,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "F2",
+    "receptor": "F2R",
+    "sender_cell_types": 15,
+    "receiver_cell_types": 191,
+    "same_cell_type": 4
+   },
+   {
+    "ligand": "CTSG",
+    "receptor": "F2RL3",
+    "sender_cell_types": 42,
+    "receiver_cell_types": 48,
+    "same_cell_type": 9
+   },
+   {
+    "ligand": "F2",
+    "receptor": "F2RL3",
+    "sender_cell_types": 15,
+    "receiver_cell_types": 48,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "FGF1",
+    "receptor": "FGFR1",
+    "sender_cell_types": 95,
+    "receiver_cell_types": 352,
+    "same_cell_type": 70
+   },
+   {
+    "ligand": "FGF2",
+    "receptor": "FGFR1",
+    "sender_cell_types": 98,
+    "receiver_cell_types": 352,
+    "same_cell_type": 93
+   },
+   {
+    "ligand": "FGF4",
+    "receptor": "FGFR1",
+    "sender_cell_types": 0,
+    "receiver_cell_types": 352,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "FGF5",
+    "receptor": "FGFR1",
+    "sender_cell_types": 13,
+    "receiver_cell_types": 352,
+    "same_cell_type": 12
+   },
+   {
+    "ligand": "FGF6",
+    "receptor": "FGFR1",
+    "sender_cell_types": 0,
+    "receiver_cell_types": 352,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "NCAM1",
+    "receptor": "FGFR1",
+    "sender_cell_types": 347,
+    "receiver_cell_types": 352,
+    "same_cell_type": 186
+   },
+   {
+    "ligand": "FGF1",
+    "receptor": "FGFR3",
+    "sender_cell_types": 95,
+    "receiver_cell_types": 81,
+    "same_cell_type": 17
+   },
+   {
+    "ligand": "FGF17",
+    "receptor": "FGFR3",
+    "sender_cell_types": 4,
+    "receiver_cell_types": 81,
+    "same_cell_type": 1
+   },
+   {
+    "ligand": "FGF2",
+    "receptor": "FGFR3",
+    "sender_cell_types": 98,
+    "receiver_cell_types": 81,
+    "same_cell_type": 28
+   },
+   {
+    "ligand": "FGF20",
+    "receptor": "FGFR3",
+    "sender_cell_types": 12,
+    "receiver_cell_types": 81,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "FGF8",
+    "receptor": "FGFR3",
+    "sender_cell_types": 5,
+    "receiver_cell_types": 81,
+    "same_cell_type": 4
+   },
+   {
+    "ligand": "FGF9",
+    "receptor": "FGFR3",
+    "sender_cell_types": 44,
+    "receiver_cell_types": 81,
+    "same_cell_type": 12
+   },
+   {
+    "ligand": "FGF1",
+    "receptor": "FGFR4",
+    "sender_cell_types": 95,
+    "receiver_cell_types": 54,
+    "same_cell_type": 6
+   },
+   {
+    "ligand": "FGF2",
+    "receptor": "FGFR4",
+    "sender_cell_types": 98,
+    "receiver_cell_types": 54,
+    "same_cell_type": 20
+   },
+   {
+    "ligand": "SDC2",
+    "receptor": "FGFR4",
+    "sender_cell_types": 308,
+    "receiver_cell_types": 54,
+    "same_cell_type": 42
+   },
+   {
+    "ligand": "GIP",
+    "receptor": "GIPR",
+    "sender_cell_types": 6,
+    "receiver_cell_types": 30,
+    "same_cell_type": 2
+   },
+   {
+    "ligand": "SELE",
+    "receptor": "GLG1",
+    "sender_cell_types": 59,
+    "receiver_cell_types": 657,
+    "same_cell_type": 53
+   },
+   {
+    "ligand": "HCRT",
+    "receptor": "HCRTR1",
+    "sender_cell_types": 6,
+    "receiver_cell_types": 0,
+    "same_cell_type": 0
+   },
+   {
+    "ligand": "IGF1",
+    "receptor": "IGF1R",
+    "sender_cell_types": 195,
+    "receiver_cell_types": 543,
+    "same_cell_type": 155
+   },
+   {
+    "ligand": "IGF2",
+    "receptor": "IGF1R",
+    "sender_cell_types": 208,
+    "receiver_cell_types": 543,
+    "same_cell_type": 158
+   },
+   {
+    "ligand": "IGF2",
+    "receptor": "IGF2R",
+    "sender_cell_types": 208,
+    "receiver_cell_types": 371,
+    "same_cell_type": 145
+   },
+   {
+    "ligand": "IGFL1",
+    "receptor": "IGFLR1",
+    "sender_cell_types": 12,
+    "receiver_cell_types": 128,
+    "same_cell_type": 6
+   },
+   {
+    "ligand": "IGFL2",
+    "receptor": "IGFLR1",
+    "sender_cell_types": 34,
+    "receiver_cell_types": 128,
+    "same_cell_type": 8
+   },
+   {
+    "ligand": "KISS1",
+    "receptor": "KISS1R",
+    "sender_cell_types": 32,
+    "receiver_cell_types": 7,
+    "same_cell_type": 1
+   },
+   {
+    "ligand": "KITLG",
+    "receptor": "KIT",
+    "sender_cell_types": 139,
+    "receiver_cell_types": 102,
+    "same_cell_type": 32
+   },
+   {
+    "ligand": "LEP",
+    "receptor": "LEPR",
+    "sender_cell_types": 15,
+    "receiver_cell_types": 187,
+    "same_cell_type": 10
+   },
+   {
+    "ligand": "RSPO1",
+    "receptor": "LGR4",
+    "sender_cell_types": 11,
+    "receiver_cell_types": 282,
+    "same_cell_type": 7
+   },
+   {
+    "ligand": "RSPO2",
+    "receptor": "LGR4",
+    "sender_cell_types": 39,
+    "receiver_cell_types": 282,
+    "same_cell_type": 15
+   },
+   {
+    "ligand": "RSPO3",
+    "receptor": "LGR4",
+    "sender_cell_types": 78,
+    "receiver_cell_types": 282,
+    "same_cell_type": 41
+   },
+   {
+    "ligand": "RSPO4",
+    "receptor": "LGR4",
+    "sender_cell_types": 15,
+    "receiver_cell_types": 282,
+    "same_cell_type": 13
+   },
+   {
+    "ligand": "DKK1",
+    "receptor": "LRP5",
+    "sender_cell_types": 51,
+    "receiver_cell_types": 128,
+    "same_cell_type": 21
+   },
+   {
+    "ligand": "SOSTDC1",
+    "receptor": "LRP5",
+    "sender_cell_types": 77,
+    "receiver_cell_types": 128,
+    "same_cell_type": 22
+   },
+   {
+    "ligand": "DKK1",
+    "receptor": "LRP6",
+    "sender_cell_types": 51,
+    "receiver_cell_types": 261,
+    "same_cell_type": 30
+   },
+   {
+    "ligand": "DKK2",
+    "receptor": "LRP6",
+    "sender_cell_types": 53,
+    "receiver_cell_types": 261,
+    "same_cell_type": 42
+   },
+   {
+    "ligand": "SOSTDC1",
+    "receptor": "LRP6",
+    "sender_cell_types": 77,
+    "receiver_cell_types": 261,
+    "same_cell_type": 50
+   },
+   {
+    "ligand": "RELN",
+    "receptor": "LRP8",
+    "sender_cell_types": 153,
+    "receiver_cell_types": 104,
+    "same_cell_type": 54
+   },
+   {
+    "ligand": "TNFSF14",
+    "receptor": "LTBR",
+    "sender_cell_types": 108,
+    "receiver_cell_types": 178,
+    "same_cell_type": 41
+   },
+   {
+    "ligand": "CNTN1",
+    "receptor": "MCAM",
+    "sender_cell_types": 244,
+    "receiver_cell_types": 180,
+    "same_cell_type": 88
+   },
+   {
+    "ligand": "CD226",
+    "receptor": "NECTIN2",
+    "sender_cell_types": 117,
+    "receiver_cell_types": 274,
+    "same_cell_type": 52
+   },
+   {
+    "ligand": "NGF",
+    "receptor": "NTRK1",
+    "sender_cell_types": 48,
+    "receiver_cell_types": 48,
+    "same_cell_type": 5
+   },
+   {
+    "ligand": "NTF3",
+    "receptor": "NTRK1",
+    "sender_cell_types": 28,
+    "receiver_cell_types": 48,
+    "same_cell_type": 5
+   },
+   {
+    "ligand": "LGALS9",
+    "receptor": "P4HB",
+    "sender_cell_types": 222,
+    "receiver_cell_types": 672,
+    "same_cell_type": 218
+   },
+   {
+    "ligand": "PLAU",
+    "receptor": "PLAUR",
+    "sender_cell_types": 147,
+    "receiver_cell_types": 289,
+    "same_cell_type": 126
+   },
+   {
+    "ligand": "SEMA4D",
+    "receptor": "PLXNB1",
+    "sender_cell_types": 245,
+    "receiver_cell_types": 100,
+    "same_cell_type": 53
+   },
+   {
+    "ligand": "SEMA4C",
+    "receptor": "PLXNB2",
+    "sender_cell_types": 48,
+    "receiver_cell_types": 224,
+    "same_cell_type": 28
+   },
+   {
+    "ligand": "SEMA4D",
+    "receptor": "PLXNB2",
+    "sender_cell_types": 245,
+    "receiver_cell_types": 224,
+    "same_cell_type": 99
+   },
+   {
+    "ligand": "SEMA4G",
+    "receptor": "PLXNB2",
+    "sender_cell_types": 27,
+    "receiver_cell_types": 224,
+    "same_cell_type": 16
+   },
+   {
+    "ligand": "SEMA3E",
+    "receptor": "PLXND1",
+    "sender_cell_types": 105,
+    "receiver_cell_types": 197,
+    "same_cell_type": 36
+   },
+   {
+    "ligand": "SEMA4A",
+    "receptor": "PLXND1",
+    "sender_cell_types": 131,
+    "receiver_cell_types": 197,
+    "same_cell_type": 80
+   },
+   {
+    "ligand": "SEMA4D",
+    "receptor": "PTPRC",
+    "sender_cell_types": 245,
+    "receiver_cell_types": 317,
+    "same_cell_type": 199
+   },
+   {
+    "ligand": "LRFN4",
+    "receptor": "PTPRF",
+    "sender_cell_types": 38,
+    "receiver_cell_types": 287,
+    "same_cell_type": 29
+   },
+   {
+    "ligand": "LRFN5",
+    "receptor": "PTPRF",
+    "sender_cell_types": 193,
+    "receiver_cell_types": 287,
+    "same_cell_type": 77
+   },
+   {
+    "ligand": "LRRC4B",
+    "receptor": "PTPRF",
+    "sender_cell_types": 35,
+    "receiver_cell_types": 287,
+    "same_cell_type": 28
+   },
+   {
+    "ligand": "LRRC4C",
+    "receptor": "PTPRF",
+    "sender_cell_types": 210,
+    "receiver_cell_types": 287,
+    "same_cell_type": 91
+   },
+   {
+    "ligand": "AGRN",
+    "receptor": "PTPRS",
+    "sender_cell_types": 121,
+    "receiver_cell_types": 320,
+    "same_cell_type": 73
+   },
+   {
+    "ligand": "LRFN4",
+    "receptor": "PTPRS",
+    "sender_cell_types": 38,
+    "receiver_cell_types": 320,
+    "same_cell_type": 30
+   },
+   {
+    "ligand": "LRFN5",
+    "receptor": "PTPRS",
+    "sender_cell_types": 193,
+    "receiver_cell_types": 320,
+    "same_cell_type": 169
+   },
+   {
+    "ligand": "LRRC4B",
+    "receptor": "PTPRS",
+    "sender_cell_types": 35,
+    "receiver_cell_types": 320,
+    "same_cell_type": 35
+   },
+   {
+    "ligand": "SLITRK1",
+    "receptor": "PTPRS",
+    "sender_cell_types": 23,
+    "receiver_cell_types": 320,
+    "same_cell_type": 16
+   },
+   {
+    "ligand": "SLITRK2",
+    "receptor": "PTPRS",
+    "sender_cell_types": 23,
+    "receiver_cell_types": 320,
+    "same_cell_type": 19
+   },
+   {
+    "ligand": "SLITRK4",
+    "receptor": "PTPRS",
+    "sender_cell_types": 27,
+    "receiver_cell_types": 320,
+    "same_cell_type": 13
+   },
+   {
+    "ligand": "SLITRK5",
+    "receptor": "PTPRS",
+    "sender_cell_types": 26,
+    "receiver_cell_types": 320,
+    "same_cell_type": 25
+   },
+   {
+    "ligand": "SLITRK6",
+    "receptor": "PTPRS",
+    "sender_cell_types": 58,
+    "receiver_cell_types": 320,
+    "same_cell_type": 38
+   },
+   {
+    "ligand": "BDNF",
+    "receptor": "SORT1",
+    "sender_cell_types": 28,
+    "receiver_cell_types": 287,
+    "same_cell_type": 22
+   },
+   {
+    "ligand": "LRPAP1",
+    "receptor": "SORT1",
+    "sender_cell_types": 507,
+    "receiver_cell_types": 287,
+    "same_cell_type": 197
+   },
+   {
+    "ligand": "NGF",
+    "receptor": "SORT1",
+    "sender_cell_types": 48,
+    "receiver_cell_types": 287,
+    "same_cell_type": 39
+   },
+   {
+    "ligand": "NTS",
+    "receptor": "SORT1",
+    "sender_cell_types": 75,
+    "receiver_cell_types": 287,
+    "same_cell_type": 43
+   },
+   {
+    "ligand": "ICAM1",
+    "receptor": "SPN",
+    "sender_cell_types": 288,
+    "receiver_cell_types": 184,
+    "same_cell_type": 101
+   },
+   {
+    "ligand": "TF",
+    "receptor": "TFR2",
+    "sender_cell_types": 167,
+    "receiver_cell_types": 45,
+    "same_cell_type": 29
+   },
+   {
+    "ligand": "TF",
+    "receptor": "TFRC",
+    "sender_cell_types": 167,
+    "receiver_cell_types": 309,
+    "same_cell_type": 93
+   },
+   {
+    "ligand": "TGFB1",
+    "receptor": "TGFBR3",
+    "sender_cell_types": 335,
+    "receiver_cell_types": 314,
+    "same_cell_type": 179
+   },
+   {
+    "ligand": "TGFB2",
+    "receptor": "TGFBR3",
+    "sender_cell_types": 104,
+    "receiver_cell_types": 314,
+    "same_cell_type": 75
+   },
+   {
+    "ligand": "TGFB3",
+    "receptor": "TGFBR3",
+    "sender_cell_types": 42,
+    "receiver_cell_types": 314,
+    "same_cell_type": 37
+   },
+   {
+    "ligand": "IGFBP3",
+    "receptor": "TMEM219",
+    "sender_cell_types": 270,
+    "receiver_cell_types": 496,
+    "same_cell_type": 212
+   },
+   {
+    "ligand": "TNFSF10",
+    "receptor": "TNFRSF10A",
+    "sender_cell_types": 378,
+    "receiver_cell_types": 63,
+    "same_cell_type": 61
+   },
+   {
+    "ligand": "TNFSF10",
+    "receptor": "TNFRSF10B",
+    "sender_cell_types": 378,
+    "receiver_cell_types": 186,
+    "same_cell_type": 148
+   },
+   {
+    "ligand": "TNFSF12",
+    "receptor": "TNFRSF12A",
+    "sender_cell_types": 96,
+    "receiver_cell_types": 311,
+    "same_cell_type": 63
+   },
+   {
+    "ligand": "GAS6",
+    "receptor": "TYRO3",
+    "sender_cell_types": 302,
+    "receiver_cell_types": 58,
+    "same_cell_type": 41
+   },
+   {
+    "ligand": "CD44",
+    "receptor": "TYROBP",
+    "sender_cell_types": 509,
+    "receiver_cell_types": 232,
+    "same_cell_type": 221
+   }
+  ],
+  "pct_cells_threshold": 0.1
+ },
+ "limits": [
+  "MONOCULTURE CANNOT VALIDATE A MULTICELLULAR LAYER. A ligand-receptor edge asserts a sender, a receiver, spatial proximity and a downstream programme. K562 Perturb-seq supplies one cell type and no space, so three of those four are untestable here by construction and nothing below should be read as validating the lr layer as an interaction.",
+  "The receptor-perturbation test checks the INTRACELLULAR HALF ONLY: whether the programme NicheNet attributes to a ligand depends on the cognate receptor's gene product. It does not check that the ligand ever reaches the receptor.",
+  "THE NULL IS UNDERPOWERED AND SAYS SO. At n=56 receptors the smallest effect detectable at 80% power is 1.14x, and the complex-co-membership positive control run through identical machinery at the same n reaches p<0.05 in only 8% of draws. Large ligand-specific effects are excluded; small ones are not.",
+  "NicheNet's ligand-specificity is weak at source: mean Jaccard 0.26 between two ligands' measured target sets, MYC asserted for 79% of ligands. The ligand-swap control therefore shares ~40% of the cognate set and attenuates any true effect by about that much.",
+  "A receptor with no ligand present has nothing to transduce, so absence of a downstream effect is as consistent with 'the pathway was never running' as with 'NicheNet is wrong'. These two are NOT separable in this design and are not separated.",
+  "ABSENCE IS UNKNOWN, NOT ZERO. The Replogle panel is 8,248 genes with a detection floor of mean 0.10, and the K562 proteome is 7,031 proteins with strongly abundance-dependent coverage; secreted ligands are under-detected by BOTH (lysate mass-spec misses secreted protein, low-expressed transcripts fall below the panel floor). The gate is therefore biased toward calling ligands absent, which makes the surviving fraction a LOWER bound.",
+  "emask covers 7,496/16,492 genes only, and its 200 atlas cell types do not include K562 or any leukaemia line; it is used for intercellularity and breadth, never as a K562 expression call.",
+  "CRISPRi knocks down rather than out; residual receptor is not measured here.",
+  "lr and nichenet were joined by gene SYMBOL, the weakest namespace in the registry, because neither layer carries an accession.",
+  "The CELLxGENE census figures are CO-EXPRESSION across cell types, not evidence of an interaction, and are pinned to one snapshot; they validate nothing."
+ ],
+ "verdict": "THE lr LAYER IS 2% ALIVE IN K562, AND THE HALF OF NICHENET A MONOCULTURE CAN TEST IS A WELL-CONTROLLED NULL. Gating the 948 pairs on both partners being present in this cell leaves 13 pairs by mRNA and 23 (2.4%) allowing K562 proteomics as a second axis -- against 43% of cell-object genes reaching the panel, and the depletion survives matching on atlas breadth (0.146 observed vs 0.495 matched for ligands, 0.169 vs 0.476 for receptors, 25 draws). 55% of pairs with atlas masks share NO cell type expressing both partners, which is the layer being intercellular rather than broken. Second: for the 56 receptors perturbed in Replogle K562 whose cognate ligand carries a NicheNet programme, those targets move at mean |robust z| 1.007 -- against 0.933 for the ligand-swap null (1.079x, win rate 0.488, 0% of 25 draws below p 0.05) and 0.824 for a strength-matched receptor swap on the identical genes (1.222x, 4% of draws). The apparent 1.26x over responsiveness-matched random genes is the NicheNet vocabulary, not the pairing: MYC is asserted for 79% of ligands and two ligands' measured target sets already overlap at Jaccard 0.26. THE NULL IS BOUNDED, NOT DECISIVE: at n=56 the smallest detectable effect is 1.14x, and complex co-membership -- real on this readout at 1.122x with 100% of draws significant at n=1,195 -- falls to 1.080x and 8% when subsampled to n=56. So this excludes a large ligand-specific downstream programme and nothing smaller. And it tests only the intracellular half of the arrow: a receptor with no ligand in the dish has nothing to transduce, so 'no effect' and 'pathway never running' are not separable in monoculture. The lr and nichenet layers remain UNVALIDATED as communication; what is now established is how little of lr is even switched on here."
+}

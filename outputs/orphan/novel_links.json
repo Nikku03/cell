@@ -1,0 +1,4151 @@
+{
+ "lines_used": [
+  "K562",
+  "HCT116",
+  "Melanoma",
+  "RPE1",
+  "HepG2",
+  "Jurkat"
+ ],
+ "per_line_candidates": {
+  "K562": 11192,
+  "HCT116": 4741,
+  "Melanoma": 2241,
+  "RPE1": 8142,
+  "HepG2": 14570,
+  "Jurkat": 12591
+ },
+ "n_reproducible_ge3": 332,
+ "expected_by_chance": 0.0,
+ "chance_sd": 0.0,
+ "chance_is_zero": true,
+ "enrichment_over_chance": null,
+ "reproducible_median_abs_z": 0.68,
+ "n_strong_reproducible_z2": 10,
+ "convergent_targets": [
+  {
+   "moved_gene": "PPP1R10",
+   "n_distinct_KOs": 9,
+   "top_KOs": [
+    "EXOSC2",
+    "EXOSC4",
+    "EXOSC9",
+    "DIS3",
+    "EXOSC3",
+    "EXOSC8",
+    "EXOSC5",
+    "MTREX",
+    "EXOSC7"
+   ],
+   "max_median_z": 2.47
+  },
+  {
+   "moved_gene": "RASSF1",
+   "n_distinct_KOs": 7,
+   "top_KOs": [
+    "CSE1L",
+    "KPNB1",
+    "UPF1",
+    "UPF2",
+    "NUP54",
+    "ANKRD17",
+    "SMG7"
+   ],
+   "max_median_z": 1.81
+  },
+  {
+   "moved_gene": "MTHFD2L",
+   "n_distinct_KOs": 5,
+   "top_KOs": [
+    "ZFC3H1",
+    "EXOSC7",
+    "EXOSC4",
+    "EXOSC2",
+    "ZC3H3"
+   ],
+   "max_median_z": 1.82
+  },
+  {
+   "moved_gene": "CRELD2",
+   "n_distinct_KOs": 4,
+   "top_KOs": [
+    "HSPA5",
+    "DERL2",
+    "CALR",
+    "GMPPB"
+   ],
+   "max_median_z": 2.58
+  },
+  {
+   "moved_gene": "HYOU1",
+   "n_distinct_KOs": 4,
+   "top_KOs": [
+    "HSPA5",
+    "DERL2",
+    "RPN1",
+    "GMPPB"
+   ],
+   "max_median_z": 2.38
+  },
+  {
+   "moved_gene": "DNAJC25",
+   "n_distinct_KOs": 4,
+   "top_KOs": [
+    "SMG5",
+    "SMG7",
+    "CASC3",
+    "CLOCK"
+   ],
+   "max_median_z": 1.91
+  },
+  {
+   "moved_gene": "DNAJB11",
+   "n_distinct_KOs": 4,
+   "top_KOs": [
+    "HSPA5",
+    "DAD1",
+    "DDOST",
+    "GMPPB"
+   ],
+   "max_median_z": 1.64
+  },
+  {
+   "moved_gene": "VMA21",
+   "n_distinct_KOs": 3,
+   "top_KOs": [
+    "NUDT21",
+    "CPSF6",
+    "OGFOD1"
+   ],
+   "max_median_z": 1.86
+  },
+  {
+   "moved_gene": "LAMTOR1",
+   "n_distinct_KOs": 3,
+   "top_KOs": [
+    "RRP1",
+    "HJURP",
+    "TMEM214"
+   ],
+   "max_median_z": 1.2
+  },
+  {
+   "moved_gene": "BLOC1S1",
+   "n_distinct_KOs": 3,
+   "top_KOs": [
+    "PXN",
+    "NUP35",
+    "OSTC"
+   ],
+   "max_median_z": 1.04
+  },
+  {
+   "moved_gene": "HSPA1B",
+   "n_distinct_KOs": 3,
+   "top_KOs": [
+    "PSMA3",
+    "PSMB5",
+    "HSPA8"
+   ],
+   "max_median_z": 2.41
+  },
+  {
+   "moved_gene": "OLA1",
+   "n_distinct_KOs": 3,
+   "top_KOs": [
+    "BAG6",
+    "PRXL2A",
+    "NUB1"
+   ],
+   "max_median_z": 1.34
+  },
+  {
+   "moved_gene": "EIF4E2",
+   "n_distinct_KOs": 3,
+   "top_KOs": [
+    "NUB1",
+    "BAG6",
+    "POU3F1"
+   ],
+   "max_median_z": 0.89
+  },
+  {
+   "moved_gene": "AGPS",
+   "n_distinct_KOs": 3,
+   "top_KOs": [
+    "PPIH",
+    "DNAJC8",
+    "YRDC"
+   ],
+   "max_median_z": 0.64
+  }
+ ],
+ "candidates": [
+  {
+   "KO": "CPSF6",
+   "moved_gene": "VMA21",
+   "sign": "up",
+   "n_lines": 5,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.5,
+   "dark": false
+  },
+  {
+   "KO": "PTMA",
+   "moved_gene": "SNX4",
+   "sign": "down",
+   "n_lines": 5,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.59,
+   "dark": true
+  },
+  {
+   "KO": "ORC3",
+   "moved_gene": "RARS2",
+   "sign": "down",
+   "n_lines": 5,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.42,
+   "dark": false
+  },
+  {
+   "KO": "HSPA5",
+   "moved_gene": "CRELD2",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 2.58,
+   "dark": true
+  },
+  {
+   "KO": "HSPA5",
+   "moved_gene": "HYOU1",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 2.38,
+   "dark": false
+  },
+  {
+   "KO": "SMG5",
+   "moved_gene": "DNAJC25",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.91,
+   "dark": true
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "MTHFD2L",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.82,
+   "dark": false
+  },
+  {
+   "KO": "CSE1L",
+   "moved_gene": "RASSF1",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.81,
+   "dark": true
+  },
+  {
+   "KO": "WDR77",
+   "moved_gene": "ATP5PB",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.45,
+   "dark": false
+  },
+  {
+   "KO": "OGFOD1",
+   "moved_gene": "VMA21",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.36,
+   "dark": false
+  },
+  {
+   "KO": "UPF2",
+   "moved_gene": "LETMD1",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.24,
+   "dark": true
+  },
+  {
+   "KO": "NUP54",
+   "moved_gene": "RASSF1",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.23,
+   "dark": true
+  },
+  {
+   "KO": "OGFOD1",
+   "moved_gene": "NDFIP1",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.2,
+   "dark": true
+  },
+  {
+   "KO": "RRP1",
+   "moved_gene": "LAMTOR1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.2,
+   "dark": false
+  },
+  {
+   "KO": "ORC6",
+   "moved_gene": "ST13",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.18,
+   "dark": false
+  },
+  {
+   "KO": "HJURP",
+   "moved_gene": "LAMTOR1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.17,
+   "dark": false
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "MIB2",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.15,
+   "dark": false
+  },
+  {
+   "KO": "EARS2",
+   "moved_gene": "TMED10",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.09,
+   "dark": false
+  },
+  {
+   "KO": "SIGLEC14",
+   "moved_gene": "FAAP20",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.09,
+   "dark": false
+  },
+  {
+   "KO": "PPP4C",
+   "moved_gene": "NDUFA8",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.04,
+   "dark": false
+  },
+  {
+   "KO": "PXN",
+   "moved_gene": "BLOC1S1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.04,
+   "dark": false
+  },
+  {
+   "KO": "DERL2",
+   "moved_gene": "CRELD2",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.02,
+   "dark": true
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "ING5",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.93,
+   "dark": false
+  },
+  {
+   "KO": "NUP35",
+   "moved_gene": "BLOC1S1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.89,
+   "dark": false
+  },
+  {
+   "KO": "SRCAP",
+   "moved_gene": "TXN2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.89,
+   "dark": false
+  },
+  {
+   "KO": "JAZF1",
+   "moved_gene": "MYCBP2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.88,
+   "dark": true
+  },
+  {
+   "KO": "CENPW",
+   "moved_gene": "XRN2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.85,
+   "dark": false
+  },
+  {
+   "KO": "NAPG",
+   "moved_gene": "MRFAP1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.81,
+   "dark": true
+  },
+  {
+   "KO": "OSTC",
+   "moved_gene": "BLOC1S1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.77,
+   "dark": false
+  },
+  {
+   "KO": "MVK",
+   "moved_gene": "HEBP2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.75,
+   "dark": false
+  },
+  {
+   "KO": "RAD9A",
+   "moved_gene": "PPP2R5E",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.74,
+   "dark": false
+  },
+  {
+   "KO": "CENPN",
+   "moved_gene": "CMC2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.67,
+   "dark": false
+  },
+  {
+   "KO": "ZBTB17",
+   "moved_gene": "NDUFA5",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.67,
+   "dark": false
+  },
+  {
+   "KO": "THAP11",
+   "moved_gene": "UBXN8",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.66,
+   "dark": true
+  },
+  {
+   "KO": "CBX1",
+   "moved_gene": "GNPNAT1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.65,
+   "dark": false
+  },
+  {
+   "KO": "HNRNPH1",
+   "moved_gene": "MSRB2",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.65,
+   "dark": false
+  },
+  {
+   "KO": "THAP11",
+   "moved_gene": "ALG14",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.65,
+   "dark": false
+  },
+  {
+   "KO": "USP9X",
+   "moved_gene": "MTHFD1L",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.64,
+   "dark": false
+  },
+  {
+   "KO": "ZRANB2",
+   "moved_gene": "COA5",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.62,
+   "dark": true
+  },
+  {
+   "KO": "TMED10",
+   "moved_gene": "SLC39A7",
+   "sign": "up",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "Melanoma",
+    "RPE1"
+   ],
+   "median_abs_z": 0.59,
+   "dark": false
+  },
+  {
+   "KO": "ANKRD49",
+   "moved_gene": "MRE11",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.55,
+   "dark": true
+  },
+  {
+   "KO": "RAD9A",
+   "moved_gene": "ACBD3",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.55,
+   "dark": false
+  },
+  {
+   "KO": "TARDBP",
+   "moved_gene": "PKN1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.55,
+   "dark": false
+  },
+  {
+   "KO": "ELOVL1",
+   "moved_gene": "GNPNAT1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.54,
+   "dark": false
+  },
+  {
+   "KO": "CS",
+   "moved_gene": "KIF2A",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": false
+  },
+  {
+   "KO": "NISCH",
+   "moved_gene": "IREB2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": false
+  },
+  {
+   "KO": "GOLT1B",
+   "moved_gene": "RECQL",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.52,
+   "dark": true
+  },
+  {
+   "KO": "JAZF1",
+   "moved_gene": "ARIH2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.52,
+   "dark": false
+  },
+  {
+   "KO": "ARL4D",
+   "moved_gene": "CNPY3",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.51,
+   "dark": true
+  },
+  {
+   "KO": "TBX1",
+   "moved_gene": "PFKL",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.51,
+   "dark": false
+  },
+  {
+   "KO": "UBTF",
+   "moved_gene": "DENND10",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.5,
+   "dark": true
+  },
+  {
+   "KO": "SMAGP",
+   "moved_gene": "SNX4",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.49,
+   "dark": true
+  },
+  {
+   "KO": "HUS1",
+   "moved_gene": "KIF3B",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.48,
+   "dark": false
+  },
+  {
+   "KO": "MAD2L2",
+   "moved_gene": "DSG2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.48,
+   "dark": false
+  },
+  {
+   "KO": "UBTF",
+   "moved_gene": "RALGAPA1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.46,
+   "dark": false
+  },
+  {
+   "KO": "TMEM127",
+   "moved_gene": "CIAO1",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.44,
+   "dark": false
+  },
+  {
+   "KO": "HUS1",
+   "moved_gene": "CCDC47",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.42,
+   "dark": false
+  },
+  {
+   "KO": "ZBTB17",
+   "moved_gene": "SCP2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.38,
+   "dark": false
+  },
+  {
+   "KO": "RNF14",
+   "moved_gene": "STX2",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.36,
+   "dark": true
+  },
+  {
+   "KO": "CBX1",
+   "moved_gene": "JMJD4",
+   "sign": "down",
+   "n_lines": 4,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.35,
+   "dark": false
+  },
+  {
+   "KO": "EXOSC2",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 2.47,
+   "dark": false
+  },
+  {
+   "KO": "PSMA3",
+   "moved_gene": "HSPA1B",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 2.41,
+   "dark": false
+  },
+  {
+   "KO": "EXOSC4",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 2.23,
+   "dark": false
+  },
+  {
+   "KO": "PSMB5",
+   "moved_gene": "HSPA1B",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 2.23,
+   "dark": false
+  },
+  {
+   "KO": "EXOSC9",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 2.16,
+   "dark": false
+  },
+  {
+   "KO": "DIS3",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 2.09,
+   "dark": false
+  },
+  {
+   "KO": "EXOSC3",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 2.07,
+   "dark": false
+  },
+  {
+   "KO": "EXOSC8",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 2.06,
+   "dark": false
+  },
+  {
+   "KO": "EXOSC5",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 1.89,
+   "dark": false
+  },
+  {
+   "KO": "NUDT21",
+   "moved_gene": "VMA21",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 1.86,
+   "dark": false
+  },
+  {
+   "KO": "MTREX",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.68,
+   "dark": false
+  },
+  {
+   "KO": "HSPA5",
+   "moved_gene": "DNAJB11",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 1.64,
+   "dark": false
+  },
+  {
+   "KO": "NUDT21",
+   "moved_gene": "VOPP1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.63,
+   "dark": true
+  },
+  {
+   "KO": "THAP11",
+   "moved_gene": "NAA38",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.57,
+   "dark": false
+  },
+  {
+   "KO": "TAF7",
+   "moved_gene": "NDUFV2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.56,
+   "dark": false
+  },
+  {
+   "KO": "LAMTOR3",
+   "moved_gene": "RTRAF",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.54,
+   "dark": false
+  },
+  {
+   "KO": "KPNB1",
+   "moved_gene": "RASSF1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.53,
+   "dark": true
+  },
+  {
+   "KO": "CPSF6",
+   "moved_gene": "DERL1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.52,
+   "dark": false
+  },
+  {
+   "KO": "EXOSC7",
+   "moved_gene": "MTHFD2L",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 1.45,
+   "dark": false
+  },
+  {
+   "KO": "TAMM41",
+   "moved_gene": "STOML2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.4,
+   "dark": false
+  },
+  {
+   "KO": "UPF1",
+   "moved_gene": "RASSF1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.38,
+   "dark": true
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "EPM2AIP1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.37,
+   "dark": true
+  },
+  {
+   "KO": "EXOSC4",
+   "moved_gene": "MTHFD2L",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 1.36,
+   "dark": false
+  },
+  {
+   "KO": "SMG7",
+   "moved_gene": "DNAJC25",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.36,
+   "dark": true
+  },
+  {
+   "KO": "NAE1",
+   "moved_gene": "SRXN1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.35,
+   "dark": false
+  },
+  {
+   "KO": "BAG6",
+   "moved_gene": "OLA1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.34,
+   "dark": false
+  },
+  {
+   "KO": "UPF2",
+   "moved_gene": "RASSF1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.32,
+   "dark": true
+  },
+  {
+   "KO": "PPARGC1B",
+   "moved_gene": "ARPC3",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.3,
+   "dark": false
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "PCF11",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.2,
+   "dark": false
+  },
+  {
+   "KO": "SMG5",
+   "moved_gene": "PTBP2",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.2,
+   "dark": true
+  },
+  {
+   "KO": "CPSF6",
+   "moved_gene": "SOD2",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HCT116",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 1.19,
+   "dark": true
+  },
+  {
+   "KO": "SMG5",
+   "moved_gene": "EMC9",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.18,
+   "dark": true
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "LTO1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.17,
+   "dark": true
+  },
+  {
+   "KO": "AHCTF1",
+   "moved_gene": "CD99",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.17,
+   "dark": false
+  },
+  {
+   "KO": "SMG5",
+   "moved_gene": "LETMD1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 1.16,
+   "dark": true
+  },
+  {
+   "KO": "EXOSC2",
+   "moved_gene": "MTHFD2L",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.15,
+   "dark": false
+  },
+  {
+   "KO": "DERL2",
+   "moved_gene": "HYOU1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.13,
+   "dark": false
+  },
+  {
+   "KO": "PRXL2A",
+   "moved_gene": "OLA1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.12,
+   "dark": true
+  },
+  {
+   "KO": "POLL",
+   "moved_gene": "MRPL28",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.11,
+   "dark": false
+  },
+  {
+   "KO": "TMEM214",
+   "moved_gene": "LAMTOR1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.11,
+   "dark": true
+  },
+  {
+   "KO": "NDUFB10",
+   "moved_gene": "HSBP1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.1,
+   "dark": false
+  },
+  {
+   "KO": "SKA3",
+   "moved_gene": "MRPL57",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.1,
+   "dark": true
+  },
+  {
+   "KO": "TPRKB",
+   "moved_gene": "CAPNS1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.09,
+   "dark": false
+  },
+  {
+   "KO": "ZC3H3",
+   "moved_gene": "MTHFD2L",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.09,
+   "dark": false
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "PIGL",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 1.07,
+   "dark": false
+  },
+  {
+   "KO": "NRF1",
+   "moved_gene": "EBPL",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.07,
+   "dark": true
+  },
+  {
+   "KO": "KLHL17",
+   "moved_gene": "ST13",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.07,
+   "dark": true
+  },
+  {
+   "KO": "CCNL1",
+   "moved_gene": "POLR2J",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.04,
+   "dark": true
+  },
+  {
+   "KO": "PGAM5",
+   "moved_gene": "MRPL28",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.03,
+   "dark": false
+  },
+  {
+   "KO": "NRF1",
+   "moved_gene": "NDUFB8",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.02,
+   "dark": false
+  },
+  {
+   "KO": "POP7",
+   "moved_gene": "MPG",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.01,
+   "dark": false
+  },
+  {
+   "KO": "PTBP1",
+   "moved_gene": "CLTA",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 1.01,
+   "dark": false
+  },
+  {
+   "KO": "CAP1",
+   "moved_gene": "ARF1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.01,
+   "dark": false
+  },
+  {
+   "KO": "NUB1",
+   "moved_gene": "OLA1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.01,
+   "dark": false
+  },
+  {
+   "KO": "SCAP",
+   "moved_gene": "CSNK2A1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 1.01,
+   "dark": false
+  },
+  {
+   "KO": "ANKRD17",
+   "moved_gene": "RASSF1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "RPE1"
+   ],
+   "median_abs_z": 1.0,
+   "dark": true
+  },
+  {
+   "KO": "NRDE2",
+   "moved_gene": "CDC37",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.99,
+   "dark": true
+  },
+  {
+   "KO": "SDC1",
+   "moved_gene": "NDUFB1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.98,
+   "dark": false
+  },
+  {
+   "KO": "SMG5",
+   "moved_gene": "CEP290",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.97,
+   "dark": false
+  },
+  {
+   "KO": "BGLAP",
+   "moved_gene": "PMF1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.97,
+   "dark": false
+  },
+  {
+   "KO": "FAM50A",
+   "moved_gene": "SLC7A6OS",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.97,
+   "dark": false
+  },
+  {
+   "KO": "HSF1",
+   "moved_gene": "FAAP20",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.96,
+   "dark": false
+  },
+  {
+   "KO": "MPG",
+   "moved_gene": "POP7",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.96,
+   "dark": false
+  },
+  {
+   "KO": "RAB4A",
+   "moved_gene": "PYURF",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.96,
+   "dark": false
+  },
+  {
+   "KO": "PABPC4",
+   "moved_gene": "NENF",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.95,
+   "dark": true
+  },
+  {
+   "KO": "ZC3H3",
+   "moved_gene": "MIB2",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.94,
+   "dark": false
+  },
+  {
+   "KO": "NCAPH2",
+   "moved_gene": "KDELR1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.93,
+   "dark": false
+  },
+  {
+   "KO": "MRPL38",
+   "moved_gene": "TMED10",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.93,
+   "dark": false
+  },
+  {
+   "KO": "SLC39A7",
+   "moved_gene": "DNAJC3",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.93,
+   "dark": false
+  },
+  {
+   "KO": "ATP6V1E1",
+   "moved_gene": "DHCR7",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.92,
+   "dark": false
+  },
+  {
+   "KO": "SAMD4B",
+   "moved_gene": "TPGS2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.92,
+   "dark": true
+  },
+  {
+   "KO": "RPN1",
+   "moved_gene": "DNAJC3",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.91,
+   "dark": false
+  },
+  {
+   "KO": "STXBP4",
+   "moved_gene": "COX11",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.91,
+   "dark": true
+  },
+  {
+   "KO": "METTL3",
+   "moved_gene": "ZNF593",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.9,
+   "dark": true
+  },
+  {
+   "KO": "SUGP1",
+   "moved_gene": "YWHAB",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.9,
+   "dark": false
+  },
+  {
+   "KO": "CASC3",
+   "moved_gene": "DNAJC25",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.9,
+   "dark": true
+  },
+  {
+   "KO": "NUB1",
+   "moved_gene": "EIF4E2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.89,
+   "dark": false
+  },
+  {
+   "KO": "SMG7",
+   "moved_gene": "RASSF1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.89,
+   "dark": true
+  },
+  {
+   "KO": "TWNK",
+   "moved_gene": "MRPL43",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.89,
+   "dark": false
+  },
+  {
+   "KO": "METTL14",
+   "moved_gene": "ZNF593",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.88,
+   "dark": true
+  },
+  {
+   "KO": "EXOSC7",
+   "moved_gene": "PPP1R10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.87,
+   "dark": false
+  },
+  {
+   "KO": "HTATSF1",
+   "moved_gene": "ZNHIT1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.87,
+   "dark": true
+  },
+  {
+   "KO": "METTL3",
+   "moved_gene": "SCO2",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.87,
+   "dark": false
+  },
+  {
+   "KO": "ZBTB44",
+   "moved_gene": "SCAF11",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.87,
+   "dark": true
+  },
+  {
+   "KO": "ACSS2",
+   "moved_gene": "PNPT1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.86,
+   "dark": false
+  },
+  {
+   "KO": "METTL14",
+   "moved_gene": "SAR1A",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.85,
+   "dark": true
+  },
+  {
+   "KO": "ORC6",
+   "moved_gene": "VPS35",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.85,
+   "dark": false
+  },
+  {
+   "KO": "TRMT6",
+   "moved_gene": "PCMT1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.85,
+   "dark": false
+  },
+  {
+   "KO": "BAG6",
+   "moved_gene": "EIF4E2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.85,
+   "dark": false
+  },
+  {
+   "KO": "SHOC2",
+   "moved_gene": "CNIH4",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.85,
+   "dark": true
+  },
+  {
+   "KO": "CUL2",
+   "moved_gene": "WDR12",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.84,
+   "dark": false
+  },
+  {
+   "KO": "SIGLEC14",
+   "moved_gene": "TACC1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.84,
+   "dark": true
+  },
+  {
+   "KO": "TTC4",
+   "moved_gene": "SELENOF",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.84,
+   "dark": true
+  },
+  {
+   "KO": "ARPC4",
+   "moved_gene": "TADA3",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.83,
+   "dark": false
+  },
+  {
+   "KO": "SYNGR3",
+   "moved_gene": "METAP2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.83,
+   "dark": true
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "CLN5",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.82,
+   "dark": false
+  },
+  {
+   "KO": "DAD1",
+   "moved_gene": "DNAJB11",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.82,
+   "dark": false
+  },
+  {
+   "KO": "CASC3",
+   "moved_gene": "BTBD1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.82,
+   "dark": false
+  },
+  {
+   "KO": "HSPA8",
+   "moved_gene": "HSPA1B",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.81,
+   "dark": false
+  },
+  {
+   "KO": "ORC6",
+   "moved_gene": "VPS29",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.81,
+   "dark": false
+  },
+  {
+   "KO": "CASC3",
+   "moved_gene": "NDUFAF5",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.8,
+   "dark": false
+  },
+  {
+   "KO": "WTAP",
+   "moved_gene": "ANXA6",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.8,
+   "dark": false
+  },
+  {
+   "KO": "DPPA2",
+   "moved_gene": "DIAPH1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.79,
+   "dark": false
+  },
+  {
+   "KO": "ARIH1",
+   "moved_gene": "DFFA",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.79,
+   "dark": false
+  },
+  {
+   "KO": "CYS1",
+   "moved_gene": "PGRMC1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.79,
+   "dark": false
+  },
+  {
+   "KO": "HMGA1",
+   "moved_gene": "VPS35",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.79,
+   "dark": false
+  },
+  {
+   "KO": "NUB1",
+   "moved_gene": "ACBD6",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.79,
+   "dark": false
+  },
+  {
+   "KO": "GFOD2",
+   "moved_gene": "ETFA",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.78,
+   "dark": true
+  },
+  {
+   "KO": "ZMAT5",
+   "moved_gene": "UBXN4",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.78,
+   "dark": true
+  },
+  {
+   "KO": "BANP",
+   "moved_gene": "ATP5PB",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.77,
+   "dark": false
+  },
+  {
+   "KO": "SDC1",
+   "moved_gene": "BMS1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.77,
+   "dark": false
+  },
+  {
+   "KO": "BAG6",
+   "moved_gene": "ACBD6",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.77,
+   "dark": false
+  },
+  {
+   "KO": "STRIP1",
+   "moved_gene": "SELENOK",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.77,
+   "dark": true
+  },
+  {
+   "KO": "METTL14",
+   "moved_gene": "LAMTOR2",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.76,
+   "dark": false
+  },
+  {
+   "KO": "NRF1",
+   "moved_gene": "MPG",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.76,
+   "dark": false
+  },
+  {
+   "KO": "ATP2A2",
+   "moved_gene": "DDX17",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.76,
+   "dark": false
+  },
+  {
+   "KO": "TRA2B",
+   "moved_gene": "GANAB",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.76,
+   "dark": false
+  },
+  {
+   "KO": "SETD2",
+   "moved_gene": "UBE2D3",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.75,
+   "dark": false
+  },
+  {
+   "KO": "TUBGCP6",
+   "moved_gene": "ANXA11",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.75,
+   "dark": false
+  },
+  {
+   "KO": "VEZT",
+   "moved_gene": "VBP1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.75,
+   "dark": true
+  },
+  {
+   "KO": "DHX36",
+   "moved_gene": "DDX42",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.74,
+   "dark": false
+  },
+  {
+   "KO": "STT3B",
+   "moved_gene": "HSD17B12",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.74,
+   "dark": false
+  },
+  {
+   "KO": "KCMF1",
+   "moved_gene": "MPLKIP",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.73,
+   "dark": false
+  },
+  {
+   "KO": "WDR77",
+   "moved_gene": "PRPF38B",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.73,
+   "dark": true
+  },
+  {
+   "KO": "UCHL5",
+   "moved_gene": "RO60",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.73,
+   "dark": true
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "ENDOV",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.72,
+   "dark": true
+  },
+  {
+   "KO": "CPNE7",
+   "moved_gene": "SRRM2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.72,
+   "dark": false
+  },
+  {
+   "KO": "SUMO2",
+   "moved_gene": "PKNOX1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.72,
+   "dark": false
+  },
+  {
+   "KO": "VPS37A",
+   "moved_gene": "CNOT7",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.72,
+   "dark": false
+  },
+  {
+   "KO": "ZFC3H1",
+   "moved_gene": "MPLKIP",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.71,
+   "dark": false
+  },
+  {
+   "KO": "TCERG1",
+   "moved_gene": "DAZAP1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.71,
+   "dark": true
+  },
+  {
+   "KO": "COMTD1",
+   "moved_gene": "PUM3",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.7,
+   "dark": true
+  },
+  {
+   "KO": "METTL14",
+   "moved_gene": "EMC6",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.69,
+   "dark": true
+  },
+  {
+   "KO": "SNRNP40",
+   "moved_gene": "ZCCHC17",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.69,
+   "dark": true
+  },
+  {
+   "KO": "SRP14",
+   "moved_gene": "STT3B",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.69,
+   "dark": false
+  },
+  {
+   "KO": "PDPK1",
+   "moved_gene": "ASF1A",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.69,
+   "dark": false
+  },
+  {
+   "KO": "DDOST",
+   "moved_gene": "DNAJB11",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.68,
+   "dark": false
+  },
+  {
+   "KO": "POLRMT",
+   "moved_gene": "ETFA",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.68,
+   "dark": false
+  },
+  {
+   "KO": "COQ4",
+   "moved_gene": "TRUB2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.67,
+   "dark": false
+  },
+  {
+   "KO": "MRPL43",
+   "moved_gene": "PIGP",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.67,
+   "dark": false
+  },
+  {
+   "KO": "POLR3E",
+   "moved_gene": "COX11",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.67,
+   "dark": false
+  },
+  {
+   "KO": "SASS6",
+   "moved_gene": "PPP1CA",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.67,
+   "dark": false
+  },
+  {
+   "KO": "THAP11",
+   "moved_gene": "MDH1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.67,
+   "dark": false
+  },
+  {
+   "KO": "TPT1",
+   "moved_gene": "HSBP1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.67,
+   "dark": true
+  },
+  {
+   "KO": "SARS2",
+   "moved_gene": "MCUR1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.67,
+   "dark": true
+  },
+  {
+   "KO": "ZCRB1",
+   "moved_gene": "PPHLN1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.67,
+   "dark": false
+  },
+  {
+   "KO": "RAB4A",
+   "moved_gene": "GANAB",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.66,
+   "dark": false
+  },
+  {
+   "KO": "RPN1",
+   "moved_gene": "HYOU1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.66,
+   "dark": false
+  },
+  {
+   "KO": "BANP",
+   "moved_gene": "TMEM18",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.66,
+   "dark": true
+  },
+  {
+   "KO": "KIF4A",
+   "moved_gene": "PDZD11",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.65,
+   "dark": false
+  },
+  {
+   "KO": "KDM1A",
+   "moved_gene": "SNX6",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.65,
+   "dark": true
+  },
+  {
+   "KO": "ABCB10",
+   "moved_gene": "TIMELESS",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HCT116",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.64,
+   "dark": false
+  },
+  {
+   "KO": "JAZF1",
+   "moved_gene": "DIAPH1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.64,
+   "dark": false
+  },
+  {
+   "KO": "PPIH",
+   "moved_gene": "AGPS",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.64,
+   "dark": false
+  },
+  {
+   "KO": "HERC1",
+   "moved_gene": "NOC3L",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.64,
+   "dark": true
+  },
+  {
+   "KO": "SP1",
+   "moved_gene": "SVBP",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.64,
+   "dark": false
+  },
+  {
+   "KO": "IPO11",
+   "moved_gene": "DDX3X",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.63,
+   "dark": true
+  },
+  {
+   "KO": "MRPL19",
+   "moved_gene": "FKBP5",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.63,
+   "dark": false
+  },
+  {
+   "KO": "CALR",
+   "moved_gene": "CRELD2",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.63,
+   "dark": true
+  },
+  {
+   "KO": "PTPMT1",
+   "moved_gene": "PGRMC2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.63,
+   "dark": false
+  },
+  {
+   "KO": "SRP9",
+   "moved_gene": "STT3B",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.62,
+   "dark": false
+  },
+  {
+   "KO": "INTS14",
+   "moved_gene": "MPDU1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.62,
+   "dark": false
+  },
+  {
+   "KO": "JMJD6",
+   "moved_gene": "ZNF33A",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.62,
+   "dark": false
+  },
+  {
+   "KO": "METTL3",
+   "moved_gene": "LSM10",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.62,
+   "dark": false
+  },
+  {
+   "KO": "NUB1",
+   "moved_gene": "HSDL2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.62,
+   "dark": true
+  },
+  {
+   "KO": "ILF2",
+   "moved_gene": "DAZAP1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.61,
+   "dark": true
+  },
+  {
+   "KO": "ZBTB17",
+   "moved_gene": "RSRC1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.61,
+   "dark": false
+  },
+  {
+   "KO": "RBM33",
+   "moved_gene": "NUDT21",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.61,
+   "dark": true
+  },
+  {
+   "KO": "TBX1",
+   "moved_gene": "MYCBP2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.61,
+   "dark": true
+  },
+  {
+   "KO": "SRP14",
+   "moved_gene": "ACOT13",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "K562"
+   ],
+   "median_abs_z": 0.6,
+   "dark": false
+  },
+  {
+   "KO": "MOCS3",
+   "moved_gene": "XRN2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.6,
+   "dark": false
+  },
+  {
+   "KO": "DICER1",
+   "moved_gene": "TNRC6A",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.59,
+   "dark": false
+  },
+  {
+   "KO": "PTBP1",
+   "moved_gene": "SEPTIN11",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.59,
+   "dark": true
+  },
+  {
+   "KO": "ANKRD11",
+   "moved_gene": "HEBP1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "RPE1"
+   ],
+   "median_abs_z": 0.59,
+   "dark": false
+  },
+  {
+   "KO": "BOD1L1",
+   "moved_gene": "GTF2H5",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.59,
+   "dark": false
+  },
+  {
+   "KO": "DYNLL2",
+   "moved_gene": "ZFP36L2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.59,
+   "dark": false
+  },
+  {
+   "KO": "GATA1",
+   "moved_gene": "ZMPSTE24",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.59,
+   "dark": false
+  },
+  {
+   "KO": "JMJD6",
+   "moved_gene": "METTL23",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.59,
+   "dark": false
+  },
+  {
+   "KO": "GMPPB",
+   "moved_gene": "DNAJB11",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.58,
+   "dark": false
+  },
+  {
+   "KO": "PIK3R4",
+   "moved_gene": "PPIL1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.58,
+   "dark": false
+  },
+  {
+   "KO": "PXN",
+   "moved_gene": "MFF",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.58,
+   "dark": false
+  },
+  {
+   "KO": "HNRNPA1",
+   "moved_gene": "ESD",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Melanoma",
+    "RPE1"
+   ],
+   "median_abs_z": 0.58,
+   "dark": false
+  },
+  {
+   "KO": "ZRSR2",
+   "moved_gene": "ACTL6A",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.57,
+   "dark": false
+  },
+  {
+   "KO": "ABHD11",
+   "moved_gene": "SLC35B1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.57,
+   "dark": true
+  },
+  {
+   "KO": "PCBP2",
+   "moved_gene": "JPT2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.57,
+   "dark": true
+  },
+  {
+   "KO": "STT3B",
+   "moved_gene": "TMEM263",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.57,
+   "dark": true
+  },
+  {
+   "KO": "METTL3",
+   "moved_gene": "EMC6",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.56,
+   "dark": true
+  },
+  {
+   "KO": "PPP2R3C",
+   "moved_gene": "PRORP",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.56,
+   "dark": false
+  },
+  {
+   "KO": "WDR26",
+   "moved_gene": "SAC3D1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.56,
+   "dark": true
+  },
+  {
+   "KO": "CLOCK",
+   "moved_gene": "DNAJC25",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.56,
+   "dark": true
+  },
+  {
+   "KO": "TTC4",
+   "moved_gene": "FBXO9",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.56,
+   "dark": true
+  },
+  {
+   "KO": "HNRNPH1",
+   "moved_gene": "LAMTOR2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.55,
+   "dark": false
+  },
+  {
+   "KO": "JAZF1",
+   "moved_gene": "DBN1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.55,
+   "dark": false
+  },
+  {
+   "KO": "NFRKB",
+   "moved_gene": "SNRNP40",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.55,
+   "dark": false
+  },
+  {
+   "KO": "THOC6",
+   "moved_gene": "HCFC1R1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.55,
+   "dark": true
+  },
+  {
+   "KO": "COX15",
+   "moved_gene": "IDH3A",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.54,
+   "dark": false
+  },
+  {
+   "KO": "JAZF1",
+   "moved_gene": "CEBPZ",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.54,
+   "dark": true
+  },
+  {
+   "KO": "NDOR1",
+   "moved_gene": "TMEM203",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.54,
+   "dark": true
+  },
+  {
+   "KO": "PPIH",
+   "moved_gene": "RAE1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.54,
+   "dark": false
+  },
+  {
+   "KO": "TRMT6",
+   "moved_gene": "MCM8",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.54,
+   "dark": false
+  },
+  {
+   "KO": "WDR18",
+   "moved_gene": "UBE2J2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.54,
+   "dark": false
+  },
+  {
+   "KO": "POU3F1",
+   "moved_gene": "EIF4E2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "Jurkat"
+   ],
+   "median_abs_z": 0.54,
+   "dark": false
+  },
+  {
+   "KO": "SETX",
+   "moved_gene": "MLX",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.54,
+   "dark": false
+  },
+  {
+   "KO": "RARS2",
+   "moved_gene": "ORC3",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": false
+  },
+  {
+   "KO": "TARDBP",
+   "moved_gene": "GOSR2",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": false
+  },
+  {
+   "KO": "HSPA8",
+   "moved_gene": "ZNF207",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": true
+  },
+  {
+   "KO": "MOCS3",
+   "moved_gene": "DPM1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": false
+  },
+  {
+   "KO": "MRPS6",
+   "moved_gene": "GSDMD",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": false
+  },
+  {
+   "KO": "RBM33",
+   "moved_gene": "PDXK",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": true
+  },
+  {
+   "KO": "ZNF292",
+   "moved_gene": "RAP1A",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.53,
+   "dark": false
+  },
+  {
+   "KO": "METTL17",
+   "moved_gene": "RAE1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.52,
+   "dark": true
+  },
+  {
+   "KO": "TARDBP",
+   "moved_gene": "CHID1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.51,
+   "dark": false
+  },
+  {
+   "KO": "WDR83OS",
+   "moved_gene": "PCNP",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.51,
+   "dark": true
+  },
+  {
+   "KO": "SPG7",
+   "moved_gene": "NF1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.5,
+   "dark": false
+  },
+  {
+   "KO": "GMPPB",
+   "moved_gene": "HYOU1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.49,
+   "dark": false
+  },
+  {
+   "KO": "NPEPPS",
+   "moved_gene": "DESI1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.49,
+   "dark": true
+  },
+  {
+   "KO": "WDR18",
+   "moved_gene": "RAB21",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.49,
+   "dark": false
+  },
+  {
+   "KO": "DNAJC8",
+   "moved_gene": "AGPS",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.49,
+   "dark": false
+  },
+  {
+   "KO": "SP1",
+   "moved_gene": "MCRIP1",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.49,
+   "dark": false
+  },
+  {
+   "KO": "TBX1",
+   "moved_gene": "PPID",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.49,
+   "dark": false
+  },
+  {
+   "KO": "EARS2",
+   "moved_gene": "SEC13",
+   "sign": "up",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.48,
+   "dark": false
+  },
+  {
+   "KO": "ELP2",
+   "moved_gene": "PLP2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.48,
+   "dark": true
+  },
+  {
+   "KO": "INO80C",
+   "moved_gene": "COPZ1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.48,
+   "dark": false
+  },
+  {
+   "KO": "YRDC",
+   "moved_gene": "RAB18",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.48,
+   "dark": false
+  },
+  {
+   "KO": "NAGLU",
+   "moved_gene": "CCDC167",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.47,
+   "dark": true
+  },
+  {
+   "KO": "PCNX3",
+   "moved_gene": "SAE1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.47,
+   "dark": true
+  },
+  {
+   "KO": "RPL41",
+   "moved_gene": "GSTM3",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.47,
+   "dark": false
+  },
+  {
+   "KO": "SETX",
+   "moved_gene": "TMEM134",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.47,
+   "dark": true
+  },
+  {
+   "KO": "STAG2",
+   "moved_gene": "STAT3",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.47,
+   "dark": false
+  },
+  {
+   "KO": "CENPW",
+   "moved_gene": "CUTC",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.46,
+   "dark": false
+  },
+  {
+   "KO": "GTF3C4",
+   "moved_gene": "PICALM",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.46,
+   "dark": false
+  },
+  {
+   "KO": "MRPL36",
+   "moved_gene": "RPRD1A",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.45,
+   "dark": false
+  },
+  {
+   "KO": "MVK",
+   "moved_gene": "MMAB",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.45,
+   "dark": false
+  },
+  {
+   "KO": "ZBTB17",
+   "moved_gene": "OGFOD3",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.44,
+   "dark": true
+  },
+  {
+   "KO": "CDK2",
+   "moved_gene": "UGGT2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.43,
+   "dark": false
+  },
+  {
+   "KO": "RAB4A",
+   "moved_gene": "DNMT3A",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.43,
+   "dark": false
+  },
+  {
+   "KO": "SRP14",
+   "moved_gene": "ATP2B1",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "K562"
+   ],
+   "median_abs_z": 0.43,
+   "dark": false
+  },
+  {
+   "KO": "CLASRP",
+   "moved_gene": "UBA5",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HCT116",
+    "HepG2",
+    "Jurkat"
+   ],
+   "median_abs_z": 0.43,
+   "dark": true
+  },
+  {
+   "KO": "DPY19L4",
+   "moved_gene": "ELOVL5",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "HepG2",
+    "Jurkat",
+    "RPE1"
+   ],
+   "median_abs_z": 0.43,
+   "dark": true
+  },
+  {
+   "KO": "CHMP7",
+   "moved_gene": "BCAS2",
+   "sign": "down",
+   "n_lines": 3,
+   "lines": [
+    "Jurkat",
+    "K562",
+    "RPE1"
+   ],
+   "median_abs_z": 0.42,
+   "dark": false
+  }
+ ],
+ "verdict": "MULTI-LINE DISCOVERY WORKS -- reproducibility is REAL, but the credible signal is COMPLEX-CONVERGENCE, not the raw list. Mining the MEASURED knockout-specific far field of all 6 fine-tunable lines for strong, SPECIFIC, UNEXPLAINED (no PPI/regulon/complex/pathway/GO/coexpr/codep) gene->gene effects and requiring reproducibility in >=3 of 6 lines with consistent sign: 332 survive vs ~0.0 expected by chance (permuting KO labels leaves essentially ZERO 3-line agreements) -- so the reproducible set is MASSIVELY above chance and genuinely non-random. That is the real gain over the 2-line pass (which was at chance). BUT two honest qualifiers: (1) most reproducible effects are WEAK (median |z| 0.68; only 10 reach |z|>=2), so they are small-magnitude conserved effects; (2) the STRONG ones are still dominated by known stress programs leaking as annotation gaps (HSPA5->HYOU1/CRELD2 is textbook UPR; PSMA3/PSMB5->HSPA1B is proteasome->HSP70 proteotoxic stress). WHAT IS ACTUALLY CREDIBLE + POSSIBLY NOVEL is COMPLEX-CONVERGENCE: a moved gene hit reproducibly by MANY distinct subunits of one machine. The standout: PPP1R10 is driven UP by 9 distinct reproducible knockouts -- the RNA exosome/decay machinery (EXOSC2, EXOSC4, EXOSC9, DIS3, EXOSC3, EXOSC8...) -- an internally-consistent, testable hypothesis (PPP1R10 mRNA as an RNA-surveillance substrate) that no single KO could establish. Other coherent, possibly-novel convergences: RASSF1 up under NMD factors (UPF1/UPF2/SMG7) = RASSF1 as an NMD substrate; MTHFD2L up under PAXT/nuclear-exosome (ZFC3H1/ZC3H3/EXOSC). Top convergent targets: PPP1R10<-9KOs, RASSF1<-7KOs, MTHFD2L<-5KOs, CRELD2<-4KOs. THIS convergence pattern is the honest filter that separates real biology (a whole complex agreeing) from annotation-gap noise and one-off hits. DELIVERABLE for researchers: prioritise the complex-convergent targets (esp. exosome->PPP1R10), then the strong reproducible pairs after a literature/STRING/OmniPath check to drop known stress programs; the full ranked list is outputs/orphan/novel_links_candidates.csv. HONEST BOTTOM LINE: with 6 well-normalised lines the method DOES surface a real, far-above-chance conserved set and at least one genuinely interesting convergent hypothesis (exosome->PPP1R10) -- but it is hypothesis GENERATION requiring validation, most raw hits are weak or known-stress, and a complete interactome would sharpen it further. This is the version worth a researcher's time, led by the convergent targets, not the long tail.",
+ "note": "MULTI-LINE DISCOVERY WORKS -- reproducibility is REAL, but the credible signal is COMPLEX-CONVERGENCE, not the raw list. Mining the MEASURED knockout-specific far field of all 6 fine-tunable lines for strong, SPECIFIC, UNEXPLAINED (no PPI/regulon/complex/pathway/GO/coexpr/codep) gene->gene effects and requiring reproducibility in >=3 of 6 lines with consistent sign: 332 survive vs ~0.0 expected by chance (permuting KO labels leaves essentially ZERO 3-line agreements) -- so the reproducible set is MASSIVELY above chance and genuinely non-random. That is the real gain over the 2-line pass (which was at chance). BUT two honest qualifiers: (1) most reproducible effects are WEAK (median |z| 0.68; only 10 reach |z|>=2), so they are small-magnitude conserved effects; (2) the STRONG ones are still dominated by known stress programs leaking as annotation gaps (HSPA5->HYOU1/CRELD2 is textbook UPR; PSMA3/PSMB5->HSPA1B is proteasome->HSP70 proteotoxic stress). WHAT IS ACTUALLY CREDIBLE + POSSIBLY NOVEL is COMPLEX-CONVERGENCE: a moved gene hit reproducibly by MANY distinct subunits of one machine. The standout: PPP1R10 is driven UP by 9 distinct reproducible knockouts -- the RNA exosome/decay machinery (EXOSC2, EXOSC4, EXOSC9, DIS3, EXOSC3, EXOSC8...) -- an internally-consistent, testable hypothesis (PPP1R10 mRNA as an RNA-surveillance substrate) that no single KO could establish. Other coherent, possibly-novel convergences: RASSF1 up under NMD factors (UPF1/UPF2/SMG7) = RASSF1 as an NMD substrate; MTHFD2L up under PAXT/nuclear-exosome (ZFC3H1/ZC3H3/EXOSC). Top convergent targets: PPP1R10<-9KOs, RASSF1<-7KOs, MTHFD2L<-5KOs, CRELD2<-4KOs. THIS convergence pattern is the honest filter that separates real biology (a whole complex agreeing) from annotation-gap noise and one-off hits. DELIVERABLE for researchers: prioritise the complex-convergent targets (esp. exosome->PPP1R10), then the strong reproducible pairs after a literature/STRING/OmniPath check to drop known stress programs; the full ranked list is outputs/orphan/novel_links_candidates.csv. HONEST BOTTOM LINE: with 6 well-normalised lines the method DOES surface a real, far-above-chance conserved set and at least one genuinely interesting convergent hypothesis (exosome->PPP1R10) -- but it is hypothesis GENERATION requiring validation, most raw hits are weak or known-stress, and a complete interactome would sharpen it further. This is the version worth a researcher's time, led by the convergent targets, not the long tail.",
+ "min_lines_for_reproducible": 3
+}

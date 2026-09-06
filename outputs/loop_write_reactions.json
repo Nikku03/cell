@@ -1,0 +1,101 @@
+{
+ "test": "loop_write_reactions",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/humangem.json",
+    "bytes": 9831528,
+    "hash": "52cf06a916756ced",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_ham_medium.json",
+    "bytes": 1410,
+    "hash": "659183245af1eb49",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 12931,
+   "used": 12931,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 7201,
+  "controls": [
+   "stoichiometry required non-empty per reaction",
+   "model rebuilt from the WRITTEN json alone, not from HumanGEM",
+   "growth required to reproduce loop 71 within 1%",
+   "existing cell_complete.json field sizes compared before and after",
+   "size cost reported rather than absorbed silently"
+  ],
+  "note": "the live model carried 31 reactions; HumanGEM sat unused since 7 August",
+  "warnings": []
+ },
+ "gates": {
+  "W1 reactions carry stoichiometry": true,
+  "W2 genes and metabolites indexed both ways": true,
+  "W3 existing model undamaged": true,
+  "W4 written data rebuilds a working model": true,
+  "W5 size cost reported": true
+ },
+ "n_reactions": 12931,
+ "n_metabolites": 8461,
+ "n_genes": 2848,
+ "reactions_reachable_from_genes": 0.6018096048256129,
+ "metabolites_with_producer": 7182,
+ "rebuilt_growth": 0.020359220115642406,
+ "target_growth": 0.02036,
+ "rel_error": 3.830473269123101e-05,
+ "bytes": 5148066,
+ "bytes_per_reaction": 398.11816564844173,
+ "existing_fields_changed": [],
+ "seconds": 127.35504007339478,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 72 -- put the whole reaction set into the cell model",
+  "  the gate is not the row count. It is whether the WRITTEN data rebuilds a working model.",
+  "====================================================================================================",
+  "",
+  "W1 THE REACTION LAYER IS COMPLETE AND CARRIES STOICHIOMETRY",
+  "     12,931 reactions written, 0 with an empty stoichiometry",
+  "     objective: 1.0*MAR13082 - 1.0*MAR13082_reverse_11d67",
+  "     W1 PASS",
+  "",
+  "W2 GENES AND METABOLITES ARE INDEXED BOTH WAYS",
+  "     2,848 genes -> reactions;  7,782 of 12,931 reactions reachable from a gene (60.2%)",
+  "     8,461 metabolites indexed; 7,182 have >= 1 producer",
+  "     (reactions with no gene are transports/exchanges/spontaneous -- expected)",
+  "     W2 PASS",
+  "",
+  "W3 THE WRITE DOES NOT DAMAGE THE EXISTING MODEL",
+  "     cell_complete.json has 42 top-level keys; reactions block currently 31",
+  "     written to a SEPARATE file, cell_complete.json untouched: 0 fields changed",
+  "     W3 PASS",
+  "",
+  "W4 THE WRITTEN DATA REBUILDS A WORKING MODEL",
+  "     rebuilt from JSON ALONE: 12,931 reactions, 8,461 metabolites, 2,848 genes",
+  "     growth 0.02036 /h   loop 71 measured 0.02036 /h   relative error 0.0000",
+  "     W4 PASS  -- the cell model now CONTAINS the metabolism",
+  "",
+  "W5 THE SIZE COST",
+  "     cell_complete.json          38.5 MB  (unchanged)",
+  "     cell_reactions.json          5.1 MB  (398 bytes/reaction)",
+  "     combined                    43.7 MB",
+  "     W5 PASS (reported)",
+  "",
+  "  PASS  W1 reactions carry stoichiometry",
+  "  PASS  W2 genes and metabolites indexed both ways",
+  "  PASS  W3 existing model undamaged",
+  "  PASS  W4 written data rebuilds a working model",
+  "  PASS  W5 size cost reported",
+  "    manifest: 3 inputs, coverage 12931/12931 (100.0%) by 'all', seed 7201, controls 5"
+ ]
+}

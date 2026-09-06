@@ -1,0 +1,107 @@
+=================================================================================================
+SPATIAL ORGANISATION: WHEN DOES IT MATTER?
+=================================================================================================
+
+=================================================================================================
+S2  THE DAMKOHLER TABLE IS ARITHMETIC
+=================================================================================================
+  cell diameter 10 um, mixing time tau_diff = L^2 / 2D
+                     species   D (um^2/s)   tau_diff (s)
+            small metabolite       400.00           0.13
+            globular protein        15.00           3.33
+    ribosome / large complex         1.00          50.00
+      mRNA in an RNP granule         0.05        1000.00
+
+  paired with the species that must MOVE for each process to proceed:
+                         process            moving species  tau_react (s)          Da    
+       metabolism, turnover ~1 s          small metabolite            1.0    1.25e-01  <- marginal
+               signalling, ~10 s          globular protein           10.0    3.33e-01  <- marginal
+     expression, mRNA decay ~9 h    mRNA in an RNP granule        46743.3    2.14e-02    
+            protein decay, ~46 h          globular protein       238910.3    1.40e-05    
+                cell cycle, 24 h    mRNA in an RNP granule        86400.0    1.16e-02    
+  Da << 1 means a molecule crosses the cell many times before anything happens to it.
+
+=================================================================================================
+S1/S3  THE CROSSOVER, MEASURED
+=================================================================================================
+  3 compartments in a ring, birth 12.0 total, death 1.0 per molecule,
+  rare event: compartment 0 is empty. Well-mixed limit is Poisson(4.00).
+  linear well-mixed prediction P(empty) = 1.831564e-02
+
+  S3a  IS THE PRODUCT FORM BROKEN?  linear (sigma2 = 0) against nonlinear (sigma2 = 0.25)
+        hop        Da   P(empty) linear   P(empty) nonlinear
+      1e+04    0.0001      1.831564e-02         7.843329e-02
+       1000     0.001      1.831564e-02         7.842543e-02
+        100      0.01      1.831564e-02         7.834744e-02
+         30   0.03333      1.831564e-02         7.814957e-02
+         10       0.1      1.831564e-02         7.761675e-02
+          3    0.3333      1.831564e-02         7.606429e-02
+          1         1      1.831564e-02         7.326255e-02
+        0.3     3.333      1.831564e-02         6.963749e-02
+        0.1        10      1.831564e-02         6.744898e-02
+       0.03     33.33      1.831564e-02         6.640511e-02
+  20 solves in 147s
+
+  spread of P(empty) across the hopping sweep: linear 1.000000x, nonlinear 1.1811x
+  S1: linear model against the Poisson product form, worst relative 5.97e-11   PASS (bar 1e-4)
+  S3a: PASS -- the nonlinear model DOES depend on hopping, so the test is not vacuous
+
+  S3b  THE CROSSOVER
+        hop        Da      P(empty)  ratio to fast-hop limit  log10 gap
+      1e+04    0.0001  7.843329e-02                   1.0000     0.0000
+       1000     0.001  7.842543e-02                   0.9999     0.0000
+        100      0.01  7.834744e-02                   0.9989     0.0005
+         30   0.03333  7.814957e-02                   0.9964     0.0016
+         10       0.1  7.761675e-02                   0.9896     0.0045
+          3    0.3333  7.606429e-02                   0.9698     0.0133
+          1         1  7.326255e-02                   0.9341     0.0296
+        0.3     3.333  6.963749e-02                   0.8879     0.0517
+        0.1        10  6.744898e-02                   0.8600     0.0655
+       0.03     33.33  6.640511e-02                   0.8466     0.0723
+
+  the tail departs from the well-mixed limit by more than 0.05 orders once Da exceeds 3.33
+  That is near Da ~ 1, so the Damkohler argument holds and every well-mixed model here is safe.
+
+=================================================================================================
+S4  THE COMPARTMENT TEST  (nucleus and cytoplasm, not diffusion)
+=================================================================================================
+  Transcription is nuclear, translation cytoplasmic, with an export step between. My
+  expression model collapsed that into one bag. This solves both exactly at matched mean.
+
+    k_export  nuc+cyt mean  1-bag mean   nuc+cyt P(<8)   1-bag P(<8)  log10 gap  edge mass
+       20.00       39.9152     39.9152      2.8594e-09    2.1529e-09     0.1233    3.1e-15
+        5.00       39.3240     39.3240      4.3928e-09    3.4287e-09     0.1076    6.4e-15
+        2.00       38.1968     38.1968      9.9431e-09    8.2266e-09     0.0823    2.4e-15
+        1.00       36.4119     36.4119      3.5552e-08    3.1903e-08     0.0470    5.4e-16
+        0.50       32.4401     32.4401      5.2393e-07    5.7714e-07     0.0420    8.9e-15
+
+  worst |log10 gap| at matched mean: 0.1233 orders
+  Compartmentalising transcription changes the tail by this much AT MATCHED MEAN, so
+  expression.py's one-bag tails are wrong by that factor for structural reasons that
+  have nothing to do with diffusion coefficients.
+
+=================================================================================================
+S5  WHICH EARLIER RESULTS ARE SAFE
+=================================================================================================
+       metabolism, turnover ~1 s  Da = 1.25e-01   MARGINAL -- space is load-bearing here
+               signalling, ~10 s  Da = 3.33e-01   MARGINAL -- space is load-bearing here
+     expression, mRNA decay ~9 h  Da = 2.14e-02   well-mixed is safe
+            protein decay, ~46 h  Da = 1.40e-05   well-mixed is safe
+                cell cycle, 24 h  Da = 1.16e-02   well-mixed is safe
+
+  recon.py, wholecell.py, regulation.py : metabolic Da ~ 0.1, safe by an order
+  expression.py, division.py            : Da ~ 0.01-0.02, safe by two orders
+  signalling                            : Da ~ 0.33, NOT safe -- and it was already
+                                          excluded for having no stationary distribution
+
+=================================================================================================
+S6  WHAT SPACE COSTS IN PARAMETERS
+=================================================================================================
+  One diffusion coefficient per species, which is ~1 parameter per species rather than per
+  reaction: about 2e4 for a human cell, against the 4.6e4 kinetic parameters metabolism
+  alone already needs. Diffusion coefficients are also far better constrained than rate
+  constants -- they follow from size and viscosity within a factor of a few, where kcat
+  spans orders. So space is CHEAP to parameterise and expensive to COMPUTE, which is the
+  opposite of the rate problem this build order has been chasing.
+
+=================================================================================================

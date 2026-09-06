@@ -1,0 +1,439 @@
+{
+  "test": "dock_distogram",
+  "near_A": 5.0,
+  "far_A": 10.0,
+  "bins": [
+    0,
+    5,
+    10,
+    15,
+    20,
+    30,
+    45,
+    60,
+    1000000000.0
+  ],
+  "bin_labels": [
+    "0-5",
+    "5-10",
+    "10-15",
+    "15-20",
+    "20-30",
+    "30-45",
+    "45-60",
+    ">60"
+  ],
+  "arms": {
+    "e_desolv_frac_fav": {
+      "spearman_median": -0.11258510160455258,
+      "auc_far": 0.844715635230148,
+      "auc_close": 0.48854166666666665,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_desolv_median_nz": {
+      "spearman_median": -0.10255002491218795,
+      "auc_far": 0.749182164277585,
+      "auc_close": 0.6726190476190477,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_desolv_sum": {
+      "spearman_median": -0.04588030708182944,
+      "auc_far": 0.6478152807921391,
+      "auc_close": 0.5479166666666666,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_elec_frac_fav": {
+      "spearman_median": -0.047256372995285276,
+      "auc_far": 0.8839916913089247,
+      "auc_close": 0.8107142857142857,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_elec_median_nz": {
+      "spearman_median": -0.010603028850185185,
+      "auc_far": 0.5439219864403946,
+      "auc_close": 0.5833333333333334,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_elec_sum": {
+      "spearman_median": 0.1070547352454633,
+      "auc_far": 0.718175495612382,
+      "auc_close": 0.7333333333333333,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_induc_frac_fav": {
+      "spearman_median": -0.14185505666510798,
+      "auc_far": 0.810431503979891,
+      "auc_close": 0.5273809523809523,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_induc_median_nz": {
+      "spearman_median": 0.14708949627226273,
+      "auc_far": 0.5127054080756314,
+      "auc_close": 0.5,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_induc_sum": {
+      "spearman_median": -0.0025176042899315637,
+      "auc_far": 0.5656339817762518,
+      "auc_close": 0.638095238095238,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_vdw_frac_fav": {
+      "spearman_median": -0.12542365485924006,
+      "auc_far": 0.8226782850012109,
+      "auc_close": 0.5345238095238095,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_vdw_median_nz": {
+      "spearman_median": -0.12084679846925275,
+      "auc_far": 0.7090542057311171,
+      "auc_close": 0.5845238095238094,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "e_vdw_sum": {
+      "spearman_median": -0.04502098977320609,
+      "auc_far": 0.4961256675185497,
+      "auc_close": 0.4375,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "g_bsa_proxy": {
+      "spearman_median": -0.03281384965675171,
+      "auc_far": 0.8734407246512439,
+      "auc_close": 0.75,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "g_contiguity": {
+      "spearman_median": 0.15268071194420005,
+      "auc_far": 0.37398692290267477,
+      "auc_close": 0.65,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "g_elec_compl": {
+      "spearman_median": -0.005472827339032524,
+      "auc_far": 0.6247858192388904,
+      "auc_close": 0.5678571428571428,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "g_n_patches": {
+      "spearman_median": 0.14079600077417687,
+      "auc_far": 0.3353232788716659,
+      "auc_close": 0.6011904761904763,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "g_packing": {
+      "spearman_median": -0.1485638788202906,
+      "auc_far": 0.7588898373496663,
+      "auc_close": 0.6,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "g_phob_compl": {
+      "spearman_median": 0.010503302604740035,
+      "auc_far": 0.5513041554635174,
+      "auc_close": 0.22261904761904763,
+      "n_far": 6,
+      "n_close": 6
+    },
+    "shape": {
+      "spearman_median": -0.058903143147802955,
+      "auc_far": 0.6498498214618482,
+      "auc_close": 0.6666666666666666,
+      "n_far": 6,
+      "n_close": 6
+    }
+  },
+  "distogram": {
+    "e_elec_frac_fav": [
+      1.6318387388640758,
+      -0.1427030949994202,
+      -0.10575665860888654,
+      0.14230929382047164,
+      -0.5763061863713261,
+      -0.5721646960400041,
+      -0.43312935896975846,
+      0.1161052771174096
+    ],
+    "g_bsa_proxy": [
+      1.4466712023167614,
+      0.7750051438807485,
+      0.6377900318204461,
+      0.5197642930437123,
+      -0.21016424018775043,
+      -0.14406795998815491,
+      -0.03225639073292594,
+      -0.33366185398276926
+    ],
+    "e_elec_sum": [
+      0.511437674458356,
+      0.2029480441492417,
+      0.11800235479625701,
+      0.14753788613090216,
+      0.11463445063294245,
+      0.1190453260612124,
+      0.1171483805164103,
+      0.36548218736930205
+    ],
+    "e_desolv_median_nz": [
+      0.17677882117793559,
+      0.0941000083932651,
+      0.08702108986038658,
+      0.08241481718809976,
+      0.05244453298936042,
+      0.04652195249895291,
+      0.04652195249895291,
+      -0.04569258778285204
+    ],
+    "shape": [
+      0.2660582059402394,
+      0.03753069815908394,
+      -0.16120235083872853,
+      -0.08596896469649416,
+      -0.19004092291836894,
+      -0.1939335187473234,
+      -0.2593295670699294,
+      -0.31370048001954287
+    ],
+    "g_contiguity": [
+      0.1424516306474632,
+      -0.23241291333913006,
+      0.13749699569959334,
+      0.18091930777342097,
+      0.2726755234802629,
+      0.33363952814175557,
+      0.40671502100366297,
+      0.4528240011750212
+    ],
+    "e_induc_sum": [
+      -0.11781704091902247,
+      -0.23310478282322084,
+      -0.21652625215333332,
+      -0.1055913645380605,
+      -0.2768169131351747,
+      -0.2968541435288684,
+      -0.10291383146785446,
+      0.04312415236691368
+    ],
+    "g_n_patches": [
+      -0.040302132566523166,
+      -0.7468929418843157,
+      -0.09687141186723297,
+      -0.09687141186723297,
+      -0.02849028185612377,
+      0.31711110143030796,
+      0.42456384664587643,
+      0.45666748637678867
+    ],
+    "g_packing": [
+      1.2569312536050792,
+      0.5867612044209435,
+      0.19594573442776564,
+      0.014583180682599499,
+      -0.23456952222875072,
+      -0.1307620447183951,
+      -0.3045112130411287,
+      -0.37730046769557385
+    ],
+    "e_vdw_median_nz": [
+      0.2557967115422215,
+      0.24838267938544964,
+      0.22665548607102978,
+      0.2003789475450059,
+      0.20095441024366173,
+      0.19893260400703505,
+      0.19010625819843083,
+      0.1761579765999717
+    ],
+    "e_elec_median_nz": [
+      0.3087467080684996,
+      0.2968567220072126,
+      0.1609902424405551,
+      0.19976621887878546,
+      0.2745835743349597,
+      0.19718193672351983,
+      0.07292918909021044,
+      0.24026874435058657
+    ],
+    "g_elec_compl": [
+      0.8452549076435771,
+      0.0760803778099837,
+      0.1842126301684726,
+      -0.06156795373081485,
+      -0.009666417317294921,
+      0.004673385225150405,
+      0.006374875415871262,
+      -0.09988217045465443
+    ]
+  },
+  "complexes": [
+    {
+      "pdb": "1CHO",
+      "n": 2400,
+      "n_near": 0,
+      "best": 14.74537717629324,
+      "secs": 73.77154064178467
+    },
+    {
+      "pdb": "1CSE",
+      "n": 2400,
+      "n_near": 0,
+      "best": 5.853631863108785,
+      "secs": 61.25164294242859
+    },
+    {
+      "pdb": "1CSO",
+      "n": 2400,
+      "n_near": 4,
+      "best": 3.761069240423829,
+      "secs": 57.279080867767334
+    },
+    {
+      "pdb": "1CT0",
+      "n": 2400,
+      "n_near": 4,
+      "best": 4.027057916433033,
+      "secs": 54.68859100341797
+    },
+    {
+      "pdb": "1CT2",
+      "n": 2400,
+      "n_near": 3,
+      "best": 3.9039834606811086,
+      "secs": 54.18723654747009
+    },
+    {
+      "pdb": "1CT4",
+      "n": 2400,
+      "n_near": 3,
+      "best": 3.994226957316726,
+      "secs": 53.96045756340027
+    },
+    {
+      "pdb": "1DVF",
+      "n": 2400,
+      "n_near": 0,
+      "best": 5.697064676622666,
+      "secs": 79.10240173339844
+    },
+    {
+      "pdb": "1E50",
+      "n": 2400,
+      "n_near": 0,
+      "best": 6.527330644642334,
+      "secs": 196.30380725860596
+    },
+    {
+      "pdb": "1E96",
+      "n": 2400,
+      "n_near": 0,
+      "best": 15.570978096418282,
+      "secs": 68.81665658950806
+    },
+    {
+      "pdb": "1EAW",
+      "n": 2400,
+      "n_near": 2,
+      "best": 4.155564056272324,
+      "secs": 95.83218431472778
+    },
+    {
+      "pdb": "1EFN",
+      "n": 2400,
+      "n_near": 2,
+      "best": 3.540874192543911,
+      "secs": 87.69550132751465
+    },
+    {
+      "pdb": "1EMV",
+      "n": 2400,
+      "n_near": 0,
+      "best": 5.7956613379908495,
+      "secs": 55.93907332420349
+    }
+  ],
+  "n_with_near": 6,
+  "npz": "distogram_poses.npz",
+  "log": [
+    "====================================================================================================",
+    "DISTOGRAM OF EVERY RANKING ARM -- does a summary statistic hide a local signal?",
+    "====================================================================================================",
+    "  Spearman is global and monotonic; top-k needs the answer to beat 2,400 rivals. Both can miss an",
+    "  arm that separates near-native from decoys non-monotonically. This asks that directly, as AUC.",
+    "  AUC_far   = near-native (<=5 A) vs far (>10 A)   -- the easy separation",
+    "  AUC_close = near-native (<=5 A) vs close-wrong (5-10 A) -- the one a funnel needs",
+    "  PREDECLARED: AUC_close >= 0.65 with Spearman ~0 => the statistic hid a usable detector.",
+    "  AUC_close ~ 0.5 everywhere => the nulls stand and the distogram explains why.",
+    "  AUC_far high but AUC_close ~ 0.5 => the arms only reject absurd poses, which the clash filter",
+    "  already does -- that would explain every result to date in one sentence.",
+    "\n  600 rotations x 4 peaks, IDENTICAL to every previous ranking run | 12 complexes",
+    "    1CHO: 2400 poses in 74s | near-native 0 | best 14.7 A",
+    "    1CSE: 2400 poses in 61s | near-native 0 | best 5.9 A",
+    "    1CSO: 2400 poses in 57s | near-native 4 | best 3.8 A",
+    "    1CT0: 2400 poses in 55s | near-native 4 | best 4.0 A",
+    "    1CT2: 2400 poses in 54s | near-native 3 | best 3.9 A",
+    "    1CT4: 2400 poses in 54s | near-native 3 | best 4.0 A",
+    "    1DVF: 2400 poses in 79s | near-native 0 | best 5.7 A",
+    "    1E50: 2400 poses in 196s | near-native 0 | best 6.5 A",
+    "    1E96: 2400 poses in 69s | near-native 0 | best 15.6 A",
+    "    1EAW: 2400 poses in 96s | near-native 2 | best 4.2 A",
+    "    1EFN: 2400 poses in 88s | near-native 2 | best 3.5 A",
+    "    1EMV: 2400 poses in 56s | near-native 0 | best 5.8 A",
+    "\n  per-pose values -> distogram_poses.npz (3 MB)",
+    "  12 complexes | 6 contain a near-native pose: ['1CSO', '1CT0', '1CT2', '1CT4', '1EAW', '1EFN']",
+    "  (AUC_far and AUC_close are computed ONLY on those; the rest have no positive class)",
+    "\n  arm                     Spearman   AUC_far   AUC_close   (median over complexes)",
+    "  e_elec_frac_fav           -0.047     0.884       0.811",
+    "  g_bsa_proxy               -0.033     0.873       0.750",
+    "  e_elec_sum                +0.107     0.718       0.733",
+    "  e_desolv_median_nz        -0.103     0.749       0.673",
+    "  shape                     -0.059     0.650       0.667",
+    "  g_contiguity              +0.153     0.374       0.650",
+    "  e_induc_sum               -0.003     0.566       0.638",
+    "  g_n_patches               +0.141     0.335       0.601",
+    "  g_packing                 -0.149     0.759       0.600",
+    "  e_vdw_median_nz           -0.121     0.709       0.585",
+    "  e_elec_median_nz          -0.011     0.544       0.583",
+    "  g_elec_compl              -0.005     0.625       0.568",
+    "  e_desolv_sum              -0.046     0.648       0.548",
+    "  e_vdw_frac_fav            -0.125     0.823       0.535",
+    "  e_induc_frac_fav          -0.142     0.810       0.527",
+    "  e_induc_median_nz         +0.147     0.513       0.500",
+    "  e_desolv_frac_fav         -0.113     0.845       0.489",
+    "  e_vdw_sum                 -0.045     0.496       0.438",
+    "  g_phob_compl              +0.011     0.551       0.223",
+    "  chance                    +0.000     0.500       0.500",
+    "\n  DISTOGRAM -- median z-scored value per RMSD bin (shape of the relationship, not one number)",
+    "    arm                         0-5     5-10    10-15    15-20    20-30    30-45    45-60      >60",
+    "    e_elec_frac_fav            1.63    -0.14    -0.11     0.14    -0.58    -0.57    -0.43     0.12",
+    "    g_bsa_proxy                1.45     0.78     0.64     0.52    -0.21    -0.14    -0.03    -0.33",
+    "    e_elec_sum                 0.51     0.20     0.12     0.15     0.11     0.12     0.12     0.37",
+    "    e_desolv_median_nz         0.18     0.09     0.09     0.08     0.05     0.05     0.05    -0.05",
+    "    shape                      0.27     0.04    -0.16    -0.09    -0.19    -0.19    -0.26    -0.31",
+    "    g_contiguity               0.14    -0.23     0.14     0.18     0.27     0.33     0.41     0.45",
+    "    e_induc_sum               -0.12    -0.23    -0.22    -0.11    -0.28    -0.30    -0.10     0.04",
+    "    g_n_patches               -0.04    -0.75    -0.10    -0.10    -0.03     0.32     0.42     0.46",
+    "    g_packing                  1.26     0.59     0.20     0.01    -0.23    -0.13    -0.30    -0.38",
+    "    e_vdw_median_nz            0.26     0.25     0.23     0.20     0.20     0.20     0.19     0.18",
+    "    e_elec_median_nz           0.31     0.30     0.16     0.20     0.27     0.20     0.07     0.24",
+    "    g_elec_compl               0.85     0.08     0.18    -0.06    -0.01     0.00     0.01    -0.10",
+    "\n  READING",
+    "  A HIDDEN DETECTOR. 'e_elec_frac_fav' separates near-native from CLOSE-WRONG at AUC 0.811 while its",
+    "  Spearman is -0.047. The summary statistic was hiding it: the arm",
+    "  is a near-native detector, not a global ranker, and should be used as one."
+  ]
+}

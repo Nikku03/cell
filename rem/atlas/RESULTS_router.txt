@@ -1,0 +1,73 @@
+================================================================================================
+R3 / R-CEILING  BOUNDARY SWEEP -- where exactly does the router refuse?
+================================================================================================
+  raises for m in [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+  expected        [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+  R3 PASS -- boundary exactly at the declared cap, no off-by-one
+  R-CEILING PASS: both outcomes occur in the sweep (10 raise, 10 do not), so the gate can fire either way
+
+================================================================================================
+R1 / G4.2 / T11  and  R2 -- the two halves that must BOTH hold
+================================================================================================
+  m = 11 raises ScopeError: True
+    message: Conjunctive queries are capped at 10 genes. Error grows linearly in gene count (measured exponent 1.00); at 11 genes the expected error is ~2 orders of magnitude.
+  m = 10 returns an answer: True  -> {'kind': 'conjunctive', 'n': 10, 'rule': 'true joint', 'expected_orders': 2.0}
+  R1 PASS   R2 PASS   (R1 alone would pass on a router that refuses everything)
+
+================================================================================================
+R4  IS THE REFUSAL ACTIONABLE?
+================================================================================================
+    names the cap              True
+    names the scaling          True
+    quantifies the error       True
+    names the requested size   True
+  R4 PASS
+
+================================================================================================
+R6  IS THE CAP IN THE RIGHT PLACE?
+================================================================================================
+      m    expected orders
+      1               0.20
+      5               1.00
+     10               2.00
+     11               2.20
+    100              20.00
+   1000             200.00
+  16000            3200.00
+  error at the cap itself is 2.00 orders (spec: ~2.0), already large enough that the cap
+  is not arbitrary.   R6 PASS
+  at 16,000 genes the router's prediction is 3200 orders; the spec measured 2,311.
+  EXPONENT IMPLIED BY THE SPEC'S OWN TABLE: log(2311.4/2.0)/log(1600) = 0.956
+    the spec STATES 1.06, which fed back into its own first row would give 4982 orders
+    at m = 16,000 rather than the 2,311 it tabulates -- a 2.2x overshoot. Item 2's
+    across-seed estimate is 1.0016. All three land between 0.95 and 1.06, which is
+    why this router uses exactly 1.0: the structural argument (one biased log-tail
+    per gene, biases add) gives 1, and no estimate is far enough from it to matter
+    for a REFUSAL, which only needs the order of magnitude of the damage.
+
+================================================================================================
+R5  DOES THE AGGREGATE PATH APPLY RULE A?
+================================================================================================
+  N = 16000, sigma = 0.4
+  raw aggregate error      +9.1781%   (predicted bias exp(s^2/2)-1 = +8.329%)
+  debiased aggregate error +0.7841%
+  R5 PASS -- the aggregate path is accepted AND corrected
+
+================================================================================================
+R-CONTROL  the router must accept what it should -- each claim broken and retested
+================================================================================================
+    (a) aggregate of 16,000    accepted True   broken router raises True   control FIRES
+    (b) single gene            accepted True   broken router raises True   control FIRES
+    (c) conjunctive of 10      accepted True   broken router raises True   control FIRES
+  R-CONTROL PASS -- verified by breaking the router, not by assertion
+
+================================================================================================
+SUMMARY: 8 of 8 gates PASS
+  R1           PASS
+  R2           PASS
+  R3           PASS
+  R4           PASS
+  R5           PASS
+  R6           PASS
+  R_ceiling    PASS
+  R_control    PASS

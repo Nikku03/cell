@@ -1,0 +1,198 @@
+=================================================================================================
+CAN GROUPING KEEP THE JOINT STATE SMALL AS THE MODEL GROWS?
+=================================================================================================
+  tail-legal thresholds from the measured law tail_err = 20.23 sqrt(MI):
+    eps = 1e-2  ->  MI < 2.4435e-07
+    eps = 1e-3  ->  MI < 2.4435e-09
+  a bulk threshold of 1e-3, which keeps means fine, would admit tail errors of 0.64.
+
+=================================================================================================
+S1  THE SOLVER IS EXACT, AND RETURNS ZERO ON INDEPENDENT VARIABLES
+=================================================================================================
+  N=10  g=0.0  states    1024  residual 4.88e-15  iters    175  max MI 0.0000e+00  PASS
+  N=14  g=0.0  states   16384  residual 1.19e-15  iters    275  max MI 1.5224e-15  PASS
+  N=10  g=2.0  states    1024  residual 6.00e-15  iters    300  max MI 7.3311e-03  PASS
+  N=14  g=2.0  states   16384  residual 2.28e-15  iters    425  max MI 8.5227e-03  PASS
+  N=16  g=2.0  states   65536  residual 8.22e-15  iters    500  max MI 8.5060e-03  PASS
+  g = 0 is an analytic control: the genes are independent, so MI must be exactly zero.
+  S1: PASS
+
+=================================================================================================
+S2/S3  DOES DEPENDENCE DECAY, AND IS THE DECAY LENGTH A REAL NUMBER?
+=================================================================================================
+  numerical floor read off the plateau: 6.519e-15   (values below 10x this are discarded)
+      d          MI(d)     ratio
+      1     6.2608e-03       nan
+      2     1.0353e-04     60.47
+      3     1.7671e-06     58.59
+      4     3.3534e-08     52.70
+      5     6.3289e-10     52.99
+      6     1.0845e-11     58.36
+      7     1.9739e-13     54.94
+      8     1.0858e-14     18.18
+      9     6.6145e-15      1.64
+     10     6.3232e-15      1.05
+     11     6.9677e-15      0.91
+     12     6.4231e-15      1.08
+     13     6.8013e-15      0.94
+     14     6.2598e-15      1.09
+     15     4.6629e-15      1.34
+  fitted on 7 points above the floor:  xi = 0.2486 +- 0.0005   R^2 = 0.999976
+  S2: PASS -- exponential, xi may be quoted
+
+  S3 finite-size control:
+       N         xi       +-        R^2
+      10     0.2482   0.0016   0.999828
+      12     0.2459   0.0010   0.999917
+      14     0.2504   0.0022   0.999631
+      16     0.2486   0.0005   0.999976
+    spread 0.0045 against 2x the largest standard error 0.0043
+  S3: FAIL -- xi drifts with N and must not be extrapolated
+
+=================================================================================================
+S4  WHAT THE SECTION-14 RULE, AS WRITTEN, ACTUALLY COSTS
+=================================================================================================
+       threshold          tau   components   largest     state cost
+       tail 1e-2    2.443e-07            1        16     6.5536e+04
+       tail 1e-3    2.443e-09            1        16     6.5536e+04
+       bulk 1e-3    1.000e-03            1        16     6.5536e+04
+       bulk 1e-2    1.000e-02           16         1     3.2000e+01
+  At the tail-legal threshold the graph is ONE component of 16 variables out of 16.
+  The reason is not slow decay -- decay is very fast. It is that MI at distance 1 is 6e-3,
+  four orders above tau, so every directly regulated pair is joined; and a regulatory
+  network is connected. Thresholding therefore returns the whole network for ANY connected
+  topology at ANY tail tolerance, and costs 2^N.
+  S4: the literal rule is UNUSABLE at scale -- as predeclared, this is stated plainly
+
+=================================================================================================
+S5  IS THE DEPENDENCE GRAPH THE r-TH POWER OF THE REGULATORY GRAPH?
+=================================================================================================
+  tail 1e-2: MI(d) > tau out to d = 3; dependence graph == path^3: True
+  tail 1e-3: MI(d) > tau out to d = 4; dependence graph == path^4: True
+  S5: PASS -- extrapolation by graph power is licensed
+
+=================================================================================================
+S6  THE TIMESCALE LAW  (this gate was written after seeing a probe)
+=================================================================================================
+  The original S4 predicted that conditioning on a global controller would restore decay.
+  It does not. What follows is why, and when it does.
+  The statistic that matters is not the component count -- S4 showed that is always N --
+  but the RADIUS r out to which dependence still exceeds tau, because that sets the
+  treewidth and hence the cost. It is measured at N = 16, so it can resolve r up to 15;
+  at N = 10 it was censored at 9 and said nothing.
+     hub rate  tau_hub/tau_gene    I(i;j) d=5   I(i;j|h) d=5     ratio   r_unc  r_cond
+        0.001           2000.00    1.4049e-02     1.2436e-08 1129759.3      15       3
+        0.002            500.00    1.3996e-02     1.5133e-07   92484.0      15       4
+        0.003            333.33    1.3960e-02     3.2807e-07   42552.6      15      12
+        0.005            200.00    1.3890e-02     8.7713e-07   15835.4      15      15
+        0.010            100.00    1.3716e-02     3.3277e-06    4121.8      15      15
+        0.100             10.00    1.1083e-02     1.8692e-04      59.3      15      15
+        1.000              1.00    2.8081e-03     8.5090e-04       3.3      15      15
+       10.000              0.10    8.1486e-05     6.7431e-05       1.2      15      15
+      100.000              0.01    1.0070e-06     9.8707e-07       1.0      15      15
+      200.000              0.01    2.7317e-07     2.7054e-07       1.0       5       5
+      400.000              0.00    7.9020e-08     7.8667e-08       1.0       4       4
+      700.000              0.00    3.1580e-08     3.1507e-08       1.0       3       3
+     1000.000              0.00    1.8652e-08     1.8625e-08       1.0       3       3
+  conditioning helps most at hub rate 0.0005 (factor 1129759) and least at
+  hub rate 1000.0 (factor 1.0).
+  MECHANISM. A slow controller is quasi-static, so its current state IS its history and
+  conditioning removes everything. A fast controller is white noise on the gene timescale
+  and correlates almost nothing, so there is nothing to remove. At MATCHED timescales the
+  controller's trajectory carries dependence its instantaneous state does not, and no
+  amount of conditioning on that state recovers it. That is the regime a real signalling
+  network occupies, and it is the expensive one.
+  affordable (r_cond <= 4, cost 2^6 per gene) at hub rates: [0.0005, 0.002, 400.0, 700.0, 1000.0]
+  censored at the system size (r_cond >= 15, no grouping helps) at: [0.005, 0.01, 0.1, 1.0, 10.0, 100.0]
+  THE WINDOW. Conditioning on a global controller is affordable only when the controller
+  is at least ~500x SLOWER than what it controls -- so that its state is its history --
+  or at least ~400x FASTER, where it correlates nothing to begin with. Within a factor of
+  a few hundred either way, r_cond runs off the end of a 16-gene system and the cost is
+  2^N. Kinase signalling at seconds against transcription at tens of minutes sits at
+  roughly 100-1000, which is ON that boundary, not comfortably inside it.
+  S6: both regimes observed and the boundary is bracketed
+
+=================================================================================================
+S7  TREEWIDTH, WHICH IS THE COST THAT COMPONENTS GETS WRONG
+=================================================================================================
+  A path is one connected component but has treewidth 1. Cost is sum over bags of 2^|bag|.
+  using r = 3 from S5 at eps = 1e-2
+
+    topology                     N  treewidth     state cost       vs 2^N
+    cascade                     64          3     9.9000e+02         2^64
+    cascade                    512          3     8.1580e+03        2^512
+    cascade                   4096          3     6.5502e+04       2^4096
+    cascade                  20000          3     3.1997e+05      2^20000
+    random degree 2             64        >40     4.6193e+12         2^64
+    random degree 2            512        >40     9.3837e+12        2^512
+    random degree 2           4096        >40     4.5202e+13       2^4096
+    random degree 2          20000        >40     2.6900e+14      2^20000
+    random degree 3             64        >40     9.8956e+12         2^64
+    random degree 3            512        >40     2.8823e+17        2^512
+    random degree 3           4096        >40     1.1529e+18       2^4096
+    random degree 3          20000      >3000          dense           --
+    scale-free m=2              64        >40     2.4195e+13         2^64
+    scale-free m=2             512        >40     8.5269e+12        2^512
+    scale-free m=2            4096      >3000          dense           --
+    scale-free m=2           20000      >3000          dense           --
+
+  cascade with a global hub, treated two ways:
+    hub, not conditioned         64 treewidth 41
+    hub, conditioned on          64 treewidth 4   cost 1.9800e+03
+    hub, not conditioned        512 treewidth 41
+    hub, conditioned on         512 treewidth 4   cost 1.6316e+04
+    hub, not conditioned       4096   dependence graph is COMPLETE -- treewidth N
+    hub, conditioned on        4096 treewidth 4   cost 1.3100e+05
+
+  The hub makes the dependence graph complete, so grouping by thresholding costs 2^N.
+  Putting the controller into every bag drops the treewidth back to r+1 -- but S6 says that
+  is only legitimate when the controller is slow or fast relative to its targets. At
+  matched timescales the residual conditional dependence is 7.7e-4, still 3000x above the
+  tail-legal threshold, so the conditioned graph is complete too and nothing is saved.
+
+=================================================================================================
+S8  ROBUSTNESS  (added after S3 failed and S7 answered -- labelled as such)
+=================================================================================================
+  (a) S3 failed. Refitting every N on the COMMON range d = 1..6:
+       N         xi       +-        R^2
+      10     0.2482   0.0016   0.999828
+      12     0.2444   0.0008   0.999960
+      14     0.2473   0.0016   0.999823
+      16     0.2485   0.0008   0.999963
+    spread 0.0041, monotone in N: False
+    The scatter survives a common fit range and is NOT monotone, so it is residual wobble
+    from averaging over boundary pairs rather than a drift with system size. It still
+    fails the bar as declared. Whether it propagates: the quantity used downstream is the
+    INTEGER r, and r = 3 requires xi anywhere in a wide interval, so a 1.7% wobble in xi
+    cannot move it. The gate failed; the conclusion does not depend on what it measures.
+
+  (b) S7 at r = 1 -- the bare regulatory graph, the most optimistic case possible:
+    topology                   N  tw at r=1  tw at r=3
+    cascade                   64          1          3
+    cascade                  512          1          3
+    cascade                 4096          1          3
+    cascade                20000          1          3
+    random degree 2           64         12        >40
+    random degree 2          512        >40        >40
+    random degree 2         4096        >40        >40
+    random degree 2        20000        >40        >40
+    random degree 3           64         19        >40
+    random degree 3          512        >40        >40
+    random degree 3         4096        >40        >40
+    random degree 3        20000        >40      dense
+    scale-free m=2            64         10        >40
+    scale-free m=2           512        >40        >40
+    scale-free m=2          4096        >40      dense
+    scale-free m=2         20000        >40      dense
+    Everything but the cascade is already past 40 at r = 1, so S7's answer does not
+    depend on r. The obstruction is the topology, not the range of the dependence.
+
+  (c) is r = 3 transferable off the cascade? measured exactly on a random graph, N = 14:
+    mean degree 3.29, residual 4.06e-15
+      d       mean MI        max MI  frac > tau
+      1    1.8879e-03    7.5400e-03       1.000
+      2    3.1190e-05    1.2144e-04       1.000
+      3    1.0423e-06    3.8344e-06       0.682
+      4    3.4028e-08    1.0137e-07       0.000
+    r(tau) on this random graph = 3; the cascade gave 3.
+    S8: PASS -- r transfers, S7 is r-independent, and S3 fails harmlessly

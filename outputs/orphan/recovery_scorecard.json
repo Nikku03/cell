@@ -1,0 +1,796 @@
+{
+  "n_pass": 27,
+  "n_total": 27,
+  "all_pass": [
+    {
+      "test": "algorithm_correctness",
+      "passed": true,
+      "value": {
+        "recall": 1.0,
+        "precision": 0.938
+      },
+      "baseline": {
+        "setdiff_precision": 0.214
+      },
+      "bar": "recall>=0.9 & precision>=0.8",
+      "detail": "Boolean target-control recovers known drivers on synthetic GRNs"
+    },
+    {
+      "test": "reprogramming_recovery",
+      "passed": true,
+      "value": {
+        "recipe_recall": 0.972,
+        "enrichment": 6.18,
+        "reached": 0.667
+      },
+      "baseline": {
+        "random": 0.176
+      },
+      "bar": "recall>=0.5 & enrichment>=2x",
+      "detail": "recovers Yamanaka/GMT/CEBPA recipes blind from the real network"
+    },
+    {
+      "test": "reversal_robustness",
+      "passed": true,
+      "value": {
+        "recipe_stability": 1.0,
+        "passenger_stability": 0.333
+      },
+      "baseline": null,
+      "bar": "recipe - passenger stability >= 0.3",
+      "detail": "edge-bootstrap separates robust drivers from fragile passengers"
+    },
+    {
+      "test": "lens_calibration",
+      "passed": true,
+      "value": {
+        "ge2_over_random": 157.2,
+        "ge2_over_1lens": 2.76
+      },
+      "baseline": {
+        "random": 0.00192
+      },
+      "bar": ">=2 lenses: >=10x random & >=1.5x single-lens",
+      "detail": ">=2 independent lenses -> calibrated high-confidence tier"
+    },
+    {
+      "test": "iem_mechanism_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.786,
+        "specificity_lift": 157.1,
+        "coverage": 0.875
+      },
+      "baseline": {
+        "random": 0.005
+      },
+      "bar": "recall>=0.6 & >=20x over random",
+      "detail": "recovers documented inborn-error-of-metabolism biomarkers (clinical ground truth)"
+    },
+    {
+      "test": "celltype_identity_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.939,
+        "enrichment": 9.1,
+        "coverage": 0.892
+      },
+      "baseline": {
+        "random": 0.339
+      },
+      "bar": "recall>=0.6 & enrich>=2x & >=2x over random",
+      "detail": "populated emask recovers cell-type-lineage master TFs (Phase 1)"
+    },
+    {
+      "test": "tissue_communication_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.812,
+        "context_recall": 0.562,
+        "lift": 106.0
+      },
+      "baseline": {
+        "random": 0.0077
+      },
+      "bar": "recall>=0.6 & >=20x over random",
+      "detail": "tissue model recovers textbook cell-cell signaling axes in the right cells"
+    },
+    {
+      "test": "disease_target_recovery",
+      "passed": true,
+      "value": {
+        "recovered": 5,
+        "ran": 6,
+        "rate": 0.833,
+        "mean_precision": 0.695,
+        "lift": 2.13
+      },
+      "baseline": {
+        "random_label": 0.326
+      },
+      "bar": "recover a known target in >=60% of >=5 OOD diseases & aggregate strong-precision >=1.5x random-label",
+      "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind on 5/6 OOD diseases"
+    },
+    {
+      "test": "measured_cause_recovery",
+      "passed": true,
+      "value": {
+        "driver_recall": 0.875,
+        "suppressor_protector": 1.0,
+        "separation": 1.518
+      },
+      "baseline": {
+        "random": 0.5
+      },
+      "bar": "driver recall>=0.7 & suppressor flagged protector & separation>=0.5",
+      "detail": "measured knockout effects separate DRIVER from PROTECTOR (real interventional causality)"
+    },
+    {
+      "test": "cellgraph_capabilities",
+      "passed": true,
+      "value": {
+        "link_ppi": 0.8261,
+        "perturb_dir": 0.8088,
+        "drug": 0.8032,
+        "struct_fn": 0.749
+      },
+      "baseline": {
+        "random": 0.5
+      },
+      "bar": "link>=0.7 & perturb-dir>=0.7 & drug>=0.7 & struct-fn>=0.65",
+      "detail": "learned graph model: predicts binding, downstream direction, drug off-targets, function"
+    },
+    {
+      "test": "kcat_calibration_honest",
+      "passed": true,
+      "value": {
+        "catpred_fold_error": 3.3005449858578735,
+        "optimal_shrinkage": 1.0,
+        "correction_generalises": false
+      },
+      "baseline": {
+        "rtm_r": -0.3068122132336511
+      },
+      "bar": "no fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0)",
+      "detail": "measured kcat kept as ground truth; the 'recalibration win' is a label-quality artifact, not adopted"
+    },
+    {
+      "test": "ddg_stability",
+      "passed": true,
+      "value": {
+        "pearson_r": 0.472,
+        "rmse": 1.45,
+        "anti_symmetry": 0.997
+      },
+      "baseline": {
+        "baselines": {
+          "DDGun": 0.404,
+          "DDGun3D": 0.432,
+          "ACDC-NN": 0.46,
+          "ThermoNet": 0.391,
+          "FoldX": 0.214,
+          "mCSM": 0.359
+        }
+      },
+      "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (0.472, beats ACDC-NN via ProteinMPNN)",
+      "detail": "predicts mutation stability \u0394\u0394G (structure ProteinMPNN + biophysical); top-benchmark; mutation->phenotype keystone"
+    },
+    {
+      "test": "learned_gnn_beats_fixed",
+      "passed": true,
+      "value": {
+        "fixed_ppi": 0.8261,
+        "learned_ppi": 0.8897,
+        "delta": 0.0636,
+        "wins": 3
+      },
+      "baseline": {
+        "fixed": 0.8261
+      },
+      "bar": "trained GraphSAGE beats fixed SIGN propagation on PPI link AUC (\u0394>0.01) & wins >=2/3 relations",
+      "detail": "the GPU-tier learned encoder measurably improves link prediction over fixed message-passing"
+    },
+    {
+      "test": "ecflux_quantitative",
+      "passed": true,
+      "value": {
+        "ess_precision_lift": 8.35,
+        "ess_precision": 0.819,
+        "buffered_at_50pct": 1.0,
+        "essential_at_KO": 0.253
+      },
+      "baseline": {
+        "base_rate": 0.098
+      },
+      "bar": "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
+      "detail": "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)"
+    },
+    {
+      "test": "celltype_conditioning_gate",
+      "passed": true,
+      "value": {
+        "min_specificity": 0.6,
+        "mean_specificity": 0.833,
+        "mean_fold": 9.4
+      },
+      "baseline": {
+        "background": "cell-type expression base rate"
+      },
+      "bar": "external canonical markers: min specificity>=0.4 across>=5 lineages & mean>=4x background",
+      "detail": "emask gate is cell-type-specific (markers land in their own lineage ~9x background) -> conditioned answers are correct; honest negatives (no predictive lift) recorded, not gated"
+    },
+    {
+      "test": "ecflux_measured_capacity",
+      "passed": true,
+      "value": {
+        "coverage": 0.9,
+        "n_measured": 108,
+        "vmax_spread_log10": 2.604
+      },
+      "baseline": {
+        "blanket_sigma": 0.5
+      },
+      "bar": "measured ppm\u00d7kcat covers>=70% central-carbon enzymes & Vmax spread(log10 std)>=0.5",
+      "detail": "per-enzyme capacity is data-backed (measured abundance\u00d7kcat); buffered-vs-dose-sensitive is measured, not assumed"
+    },
+    {
+      "test": "foldseek_function",
+      "passed": true,
+      "value": {
+        "accuracy": 1.0,
+        "n_ran": 5,
+        "twilight_recoveries": 5
+      },
+      "baseline": {
+        "sequence_methods": "fail in the <30% seqId twilight zone"
+      },
+      "bar": "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 recovered via a <30% seqId structural homolog",
+      "detail": "AlphaFold structure + Foldseek transfers correct function, incl. from twilight-zone homologs sequence methods miss"
+    },
+    {
+      "test": "chain_mechanism",
+      "passed": true,
+      "value": {
+        "precision_when_fires": 0.75,
+        "lift": 1.5,
+        "recall": 0.1,
+        "auc_general": 0.521
+      },
+      "baseline": {
+        "base_rate": 0.5
+      },
+      "bar": "mutation\u2192\u0394\u0394G\u2192flux chain: precision(pathogenic|\u0394\u0394G>1) >= 1.4x base (high-precision destabilization detector)",
+      "detail": "one validated pipeline mutation\u2192phenotype; high-precision LOW-recall (AUC~0.5 as a general classifier \u2014 honest scope)"
+    },
+    {
+      "test": "self_consistency",
+      "passed": true,
+      "value": {
+        "completion_auc": 0.774,
+        "triadic_recall": 0.461
+      },
+      "baseline": {
+        "embedding_only": 0.656
+      },
+      "bar": "anomaly engine's completion proposals recover held-out real edges at triadic-closure AUC >= 0.75",
+      "detail": "model checks itself: hard-constraint > measured > predicted; flags never auto-applied; completions validated leakage-free"
+    },
+    {
+      "test": "reasoned_variant",
+      "passed": true,
+      "value": {
+        "alphamissense_auc": 0.678,
+        "gain_over_chain": 0.157,
+        "sickle_cell_am": 0.227,
+        "blind_spot_caught": true
+      },
+      "baseline": {
+        "chain_baseline": 0.521
+      },
+      "bar": "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is flagged (not trusted benign)",
+      "detail": "reliable+reasoned variant call: AlphaMissense drives accuracy, mechanism rungs explain, GOF pattern overrides false-benign (the sickle-cell lesson)"
+    },
+    {
+      "test": "fill_verify",
+      "passed": true,
+      "value": {
+        "kcat_verified": 17,
+        "measured_escalated": 6,
+        "edge_verified": 25,
+        "physics_restored": true
+      },
+      "baseline": {
+        "anti_trap": true
+      },
+      "bar": "verified fixes resolve the oddness (physics restored / shared-complex); measured values ESCALATED not auto-applied; no false fixes",
+      "detail": "fill-and-verify: propose a fix, re-run the mechanism, report only what verifiably resolves \u2014 the anti-trap loop"
+    },
+    {
+      "test": "ghost_patch",
+      "passed": true,
+      "value": {
+        "function_patched": 3933,
+        "pathway_patched": 520,
+        "pathway_function_agreement": 0.463,
+        "lift": 1.94
+      },
+      "baseline": {
+        "shuffled": 0.239
+      },
+      "bar": "function de-ghosts >=3000 (curated literature) & predicted pathway agrees with function theme >=0.4 & >=1.8x shuffled",
+      "detail": "ghost genes patched into the cell: function (fact tier) + pathway membership (prediction tier, cross-validated by the independent function signal)"
+    },
+    {
+      "test": "kinetics_flux_consistency",
+      "passed": true,
+      "value": {
+        "predicted_consistent": 107,
+        "n_predicted": 117,
+        "consistency_rate": 0.915,
+        "outliers": 10
+      },
+      "baseline": {
+        "measured_reference": 80
+      },
+      "bar": "predicted kcats >=90% distributionally consistent with the measured reference given flux; outliers have verified revisions; measured never altered",
+      "detail": "kinetics<->flux self-consistency: Vmax=kcat*[E] vs flux; measured kcats are the reference, only predicted outliers flagged with a flux-consistent proposal"
+    },
+    {
+      "test": "crossval_measured",
+      "passed": true,
+      "value": {
+        "known_ppi_enrichment": 23.0,
+        "known_ppi_rate": 0.092,
+        "predictions_corroborated": 0,
+        "random_baseline": 0.004
+      },
+      "baseline": {
+        "random": 0.004
+      },
+      "bar": "independent cell-line co-dependency corroborates KNOWN PPI edges >=10x over random (a valid cross-validator)",
+      "detail": "cross-validate predictions against independent measured data; codep validates context-variable edges (23x) but is blind to pan-essential complexes \u2014 match the dataset to the prediction type"
+    },
+    {
+      "test": "whole_cell_kcat",
+      "passed": true,
+      "value": {
+        "enzymes": 2549,
+        "predicted": 2129,
+        "tested_invivo": 581,
+        "flagged_too_low": 228,
+        "flagged_too_high": 0
+      },
+      "baseline": {
+        "measured_left_as_fact": 20
+      },
+      "bar": "test ALL 2,549 kcats (not the ~334 flux-carriers) vs provable bounds: physics ceiling + independent in-vivo floor; measured=facts, predicted outliers flagged with proposals",
+      "detail": "whole-cell kcat audit: found 228 predicted kcats provably too low vs in-vivo (transporters/COX where CatPred underestimates); measured never flagged as error"
+    },
+    {
+      "test": "disease_data",
+      "passed": true,
+      "value": {
+        "mean_corroboration": 0.611,
+        "diseases_with_hit": 4,
+        "n_diseases": 6,
+        "random_baseline": 0.0025
+      },
+      "baseline": {
+        "random": 0.0025
+      },
+      "bar": "disease\u2192target's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & majority of diseases",
+      "detail": "grounds disease\u2192target in real disease evidence (Open Targets: GWAS+expression/GEO+literature); blind picks are real disease genes ~244x over chance"
+    },
+    {
+      "test": "kcat_fixes_applied",
+      "passed": true,
+      "value": {
+        "corrected": 228,
+        "capped_by_physics": 3,
+        "new_violations": 0,
+        "uncapped_below_floor": 0
+      },
+      "baseline": {
+        "measured_untouched": true
+      },
+      "bar": "228 too-low PREDICTED kcats raised to the in-vivo floor; 0 new physics violations; 0 uncapped still-below; measured never changed",
+      "detail": "fill-and-verify applied to kinetics: provably-wrong predicted kcats corrected to evidence-backed floors, capped by the diffusion limit; original kept as source of truth"
+    }
+  ],
+  "tests": [
+    {
+      "test": "algorithm_correctness",
+      "passed": true,
+      "value": {
+        "recall": 1.0,
+        "precision": 0.938
+      },
+      "baseline": {
+        "setdiff_precision": 0.214
+      },
+      "bar": "recall>=0.9 & precision>=0.8",
+      "detail": "Boolean target-control recovers known drivers on synthetic GRNs"
+    },
+    {
+      "test": "reprogramming_recovery",
+      "passed": true,
+      "value": {
+        "recipe_recall": 0.972,
+        "enrichment": 6.18,
+        "reached": 0.667
+      },
+      "baseline": {
+        "random": 0.176
+      },
+      "bar": "recall>=0.5 & enrichment>=2x",
+      "detail": "recovers Yamanaka/GMT/CEBPA recipes blind from the real network"
+    },
+    {
+      "test": "reversal_robustness",
+      "passed": true,
+      "value": {
+        "recipe_stability": 1.0,
+        "passenger_stability": 0.333
+      },
+      "baseline": null,
+      "bar": "recipe - passenger stability >= 0.3",
+      "detail": "edge-bootstrap separates robust drivers from fragile passengers"
+    },
+    {
+      "test": "lens_calibration",
+      "passed": true,
+      "value": {
+        "ge2_over_random": 157.2,
+        "ge2_over_1lens": 2.76
+      },
+      "baseline": {
+        "random": 0.00192
+      },
+      "bar": ">=2 lenses: >=10x random & >=1.5x single-lens",
+      "detail": ">=2 independent lenses -> calibrated high-confidence tier"
+    },
+    {
+      "test": "iem_mechanism_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.786,
+        "specificity_lift": 157.1,
+        "coverage": 0.875
+      },
+      "baseline": {
+        "random": 0.005
+      },
+      "bar": "recall>=0.6 & >=20x over random",
+      "detail": "recovers documented inborn-error-of-metabolism biomarkers (clinical ground truth)"
+    },
+    {
+      "test": "celltype_identity_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.939,
+        "enrichment": 9.1,
+        "coverage": 0.892
+      },
+      "baseline": {
+        "random": 0.339
+      },
+      "bar": "recall>=0.6 & enrich>=2x & >=2x over random",
+      "detail": "populated emask recovers cell-type-lineage master TFs (Phase 1)"
+    },
+    {
+      "test": "tissue_communication_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.812,
+        "context_recall": 0.562,
+        "lift": 106.0
+      },
+      "baseline": {
+        "random": 0.0077
+      },
+      "bar": "recall>=0.6 & >=20x over random",
+      "detail": "tissue model recovers textbook cell-cell signaling axes in the right cells"
+    },
+    {
+      "test": "disease_target_recovery",
+      "passed": true,
+      "value": {
+        "recovered": 5,
+        "ran": 6,
+        "rate": 0.833,
+        "mean_precision": 0.695,
+        "lift": 2.13
+      },
+      "baseline": {
+        "random_label": 0.326
+      },
+      "bar": "recover a known target in >=60% of >=5 OOD diseases & aggregate strong-precision >=1.5x random-label",
+      "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind on 5/6 OOD diseases"
+    },
+    {
+      "test": "measured_cause_recovery",
+      "passed": true,
+      "value": {
+        "driver_recall": 0.875,
+        "suppressor_protector": 1.0,
+        "separation": 1.518
+      },
+      "baseline": {
+        "random": 0.5
+      },
+      "bar": "driver recall>=0.7 & suppressor flagged protector & separation>=0.5",
+      "detail": "measured knockout effects separate DRIVER from PROTECTOR (real interventional causality)"
+    },
+    {
+      "test": "cellgraph_capabilities",
+      "passed": true,
+      "value": {
+        "link_ppi": 0.8261,
+        "perturb_dir": 0.8088,
+        "drug": 0.8032,
+        "struct_fn": 0.749
+      },
+      "baseline": {
+        "random": 0.5
+      },
+      "bar": "link>=0.7 & perturb-dir>=0.7 & drug>=0.7 & struct-fn>=0.65",
+      "detail": "learned graph model: predicts binding, downstream direction, drug off-targets, function"
+    },
+    {
+      "test": "kcat_calibration_honest",
+      "passed": true,
+      "value": {
+        "catpred_fold_error": 3.3005449858578735,
+        "optimal_shrinkage": 1.0,
+        "correction_generalises": false
+      },
+      "baseline": {
+        "rtm_r": -0.3068122132336511
+      },
+      "bar": "no fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0)",
+      "detail": "measured kcat kept as ground truth; the 'recalibration win' is a label-quality artifact, not adopted"
+    },
+    {
+      "test": "ddg_stability",
+      "passed": true,
+      "value": {
+        "pearson_r": 0.472,
+        "rmse": 1.45,
+        "anti_symmetry": 0.997
+      },
+      "baseline": {
+        "baselines": {
+          "DDGun": 0.404,
+          "DDGun3D": 0.432,
+          "ACDC-NN": 0.46,
+          "ThermoNet": 0.391,
+          "FoldX": 0.214,
+          "mCSM": 0.359
+        }
+      },
+      "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (0.472, beats ACDC-NN via ProteinMPNN)",
+      "detail": "predicts mutation stability \u0394\u0394G (structure ProteinMPNN + biophysical); top-benchmark; mutation->phenotype keystone"
+    },
+    {
+      "test": "learned_gnn_beats_fixed",
+      "passed": true,
+      "value": {
+        "fixed_ppi": 0.8261,
+        "learned_ppi": 0.8897,
+        "delta": 0.0636,
+        "wins": 3
+      },
+      "baseline": {
+        "fixed": 0.8261
+      },
+      "bar": "trained GraphSAGE beats fixed SIGN propagation on PPI link AUC (\u0394>0.01) & wins >=2/3 relations",
+      "detail": "the GPU-tier learned encoder measurably improves link prediction over fixed message-passing"
+    },
+    {
+      "test": "ecflux_quantitative",
+      "passed": true,
+      "value": {
+        "ess_precision_lift": 8.35,
+        "ess_precision": 0.819,
+        "buffered_at_50pct": 1.0,
+        "essential_at_KO": 0.253
+      },
+      "baseline": {
+        "base_rate": 0.098
+      },
+      "bar": "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
+      "detail": "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)"
+    },
+    {
+      "test": "celltype_conditioning_gate",
+      "passed": true,
+      "value": {
+        "min_specificity": 0.6,
+        "mean_specificity": 0.833,
+        "mean_fold": 9.4
+      },
+      "baseline": {
+        "background": "cell-type expression base rate"
+      },
+      "bar": "external canonical markers: min specificity>=0.4 across>=5 lineages & mean>=4x background",
+      "detail": "emask gate is cell-type-specific (markers land in their own lineage ~9x background) -> conditioned answers are correct; honest negatives (no predictive lift) recorded, not gated"
+    },
+    {
+      "test": "ecflux_measured_capacity",
+      "passed": true,
+      "value": {
+        "coverage": 0.9,
+        "n_measured": 108,
+        "vmax_spread_log10": 2.604
+      },
+      "baseline": {
+        "blanket_sigma": 0.5
+      },
+      "bar": "measured ppm\u00d7kcat covers>=70% central-carbon enzymes & Vmax spread(log10 std)>=0.5",
+      "detail": "per-enzyme capacity is data-backed (measured abundance\u00d7kcat); buffered-vs-dose-sensitive is measured, not assumed"
+    },
+    {
+      "test": "foldseek_function",
+      "passed": true,
+      "value": {
+        "accuracy": 1.0,
+        "n_ran": 5,
+        "twilight_recoveries": 5
+      },
+      "baseline": {
+        "sequence_methods": "fail in the <30% seqId twilight zone"
+      },
+      "bar": "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 recovered via a <30% seqId structural homolog",
+      "detail": "AlphaFold structure + Foldseek transfers correct function, incl. from twilight-zone homologs sequence methods miss"
+    },
+    {
+      "test": "chain_mechanism",
+      "passed": true,
+      "value": {
+        "precision_when_fires": 0.75,
+        "lift": 1.5,
+        "recall": 0.1,
+        "auc_general": 0.521
+      },
+      "baseline": {
+        "base_rate": 0.5
+      },
+      "bar": "mutation\u2192\u0394\u0394G\u2192flux chain: precision(pathogenic|\u0394\u0394G>1) >= 1.4x base (high-precision destabilization detector)",
+      "detail": "one validated pipeline mutation\u2192phenotype; high-precision LOW-recall (AUC~0.5 as a general classifier \u2014 honest scope)"
+    },
+    {
+      "test": "self_consistency",
+      "passed": true,
+      "value": {
+        "completion_auc": 0.774,
+        "triadic_recall": 0.461
+      },
+      "baseline": {
+        "embedding_only": 0.656
+      },
+      "bar": "anomaly engine's completion proposals recover held-out real edges at triadic-closure AUC >= 0.75",
+      "detail": "model checks itself: hard-constraint > measured > predicted; flags never auto-applied; completions validated leakage-free"
+    },
+    {
+      "test": "reasoned_variant",
+      "passed": true,
+      "value": {
+        "alphamissense_auc": 0.678,
+        "gain_over_chain": 0.157,
+        "sickle_cell_am": 0.227,
+        "blind_spot_caught": true
+      },
+      "baseline": {
+        "chain_baseline": 0.521
+      },
+      "bar": "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is flagged (not trusted benign)",
+      "detail": "reliable+reasoned variant call: AlphaMissense drives accuracy, mechanism rungs explain, GOF pattern overrides false-benign (the sickle-cell lesson)"
+    },
+    {
+      "test": "fill_verify",
+      "passed": true,
+      "value": {
+        "kcat_verified": 17,
+        "measured_escalated": 6,
+        "edge_verified": 25,
+        "physics_restored": true
+      },
+      "baseline": {
+        "anti_trap": true
+      },
+      "bar": "verified fixes resolve the oddness (physics restored / shared-complex); measured values ESCALATED not auto-applied; no false fixes",
+      "detail": "fill-and-verify: propose a fix, re-run the mechanism, report only what verifiably resolves \u2014 the anti-trap loop"
+    },
+    {
+      "test": "ghost_patch",
+      "passed": true,
+      "value": {
+        "function_patched": 3933,
+        "pathway_patched": 520,
+        "pathway_function_agreement": 0.463,
+        "lift": 1.94
+      },
+      "baseline": {
+        "shuffled": 0.239
+      },
+      "bar": "function de-ghosts >=3000 (curated literature) & predicted pathway agrees with function theme >=0.4 & >=1.8x shuffled",
+      "detail": "ghost genes patched into the cell: function (fact tier) + pathway membership (prediction tier, cross-validated by the independent function signal)"
+    },
+    {
+      "test": "kinetics_flux_consistency",
+      "passed": true,
+      "value": {
+        "predicted_consistent": 107,
+        "n_predicted": 117,
+        "consistency_rate": 0.915,
+        "outliers": 10
+      },
+      "baseline": {
+        "measured_reference": 80
+      },
+      "bar": "predicted kcats >=90% distributionally consistent with the measured reference given flux; outliers have verified revisions; measured never altered",
+      "detail": "kinetics<->flux self-consistency: Vmax=kcat*[E] vs flux; measured kcats are the reference, only predicted outliers flagged with a flux-consistent proposal"
+    },
+    {
+      "test": "crossval_measured",
+      "passed": true,
+      "value": {
+        "known_ppi_enrichment": 23.0,
+        "known_ppi_rate": 0.092,
+        "predictions_corroborated": 0,
+        "random_baseline": 0.004
+      },
+      "baseline": {
+        "random": 0.004
+      },
+      "bar": "independent cell-line co-dependency corroborates KNOWN PPI edges >=10x over random (a valid cross-validator)",
+      "detail": "cross-validate predictions against independent measured data; codep validates context-variable edges (23x) but is blind to pan-essential complexes \u2014 match the dataset to the prediction type"
+    },
+    {
+      "test": "whole_cell_kcat",
+      "passed": true,
+      "value": {
+        "enzymes": 2549,
+        "predicted": 2129,
+        "tested_invivo": 581,
+        "flagged_too_low": 228,
+        "flagged_too_high": 0
+      },
+      "baseline": {
+        "measured_left_as_fact": 20
+      },
+      "bar": "test ALL 2,549 kcats (not the ~334 flux-carriers) vs provable bounds: physics ceiling + independent in-vivo floor; measured=facts, predicted outliers flagged with proposals",
+      "detail": "whole-cell kcat audit: found 228 predicted kcats provably too low vs in-vivo (transporters/COX where CatPred underestimates); measured never flagged as error"
+    },
+    {
+      "test": "disease_data",
+      "passed": true,
+      "value": {
+        "mean_corroboration": 0.611,
+        "diseases_with_hit": 4,
+        "n_diseases": 6,
+        "random_baseline": 0.0025
+      },
+      "baseline": {
+        "random": 0.0025
+      },
+      "bar": "disease\u2192target's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & majority of diseases",
+      "detail": "grounds disease\u2192target in real disease evidence (Open Targets: GWAS+expression/GEO+literature); blind picks are real disease genes ~244x over chance"
+    },
+    {
+      "test": "kcat_fixes_applied",
+      "passed": true,
+      "value": {
+        "corrected": 228,
+        "capped_by_physics": 3,
+        "new_violations": 0,
+        "uncapped_below_floor": 0
+      },
+      "baseline": {
+        "measured_untouched": true
+      },
+      "bar": "228 too-low PREDICTED kcats raised to the in-vivo floor; 0 new physics violations; 0 uncapped still-below; measured never changed",
+      "detail": "fill-and-verify applied to kinetics: provably-wrong predicted kcats corrected to evidence-backed floors, capped by the diffusion limit; original kept as source of truth"
+    }
+  ]
+}

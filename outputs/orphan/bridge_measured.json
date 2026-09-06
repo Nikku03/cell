@@ -1,0 +1,210 @@
+{
+ "n_splits": 5,
+ "T_ppi_hops": 1,
+ "summary": {
+  "measured_last_hop": {
+   "delta": 0.33949426817705997,
+   "se": 0.00690343549367074,
+   "sim": 0.4566477199775501,
+   "ctl": 0.11715345180049015,
+   "coverage": 0.7873015873015874,
+   "delta_vs_response_size": 0.3586583134400144,
+   "se_vs_response_size": 0.007713243907410742,
+   "ctl_response_size": 0.09798940653753563
+  },
+  "curated_last_hop": {
+   "delta": 0.14968820014543022,
+   "se": 0.020305789896091206,
+   "sim": 0.2556780402705707,
+   "ctl": 0.10598984012514048,
+   "coverage": 0.35079365079365077,
+   "delta_vs_response_size": 0.15083223807180784,
+   "se_vs_response_size": 0.020469011876122607,
+   "ctl_response_size": 0.10484580219876286
+  },
+  "forward_only": {
+   "delta": 0.18694289273746306,
+   "se": 0.011741022796476305,
+   "sim": 0.29244358496957024,
+   "ctl": 0.10550069223210715,
+   "coverage": 0.8968253968253969,
+   "delta_vs_response_size": 0.19854363783445464,
+   "se_vs_response_size": 0.012744911088894674,
+   "ctl_response_size": 0.09389994713511556
+  }
+ },
+ "paired": {
+  "measured_vs_curated": {
+   "mean": 0.1898060680316297,
+   "se": 0.020629061151126872,
+   "verdict": "BETTER"
+  },
+  "measured_vs_forward": {
+   "mean": 0.15255137543959685,
+   "se": 0.008899533898230784,
+   "verdict": "BETTER"
+  }
+ },
+ "per_split": {
+  "forward_only": [
+   0.17282700408355925,
+   0.17010147915321536,
+   0.17074340774327454,
+   0.23173255926484,
+   0.18931001344242612
+  ],
+  "forward_only_sim": [
+   0.282398878893053,
+   0.27329469015655505,
+   0.2706557093665768,
+   0.3392694599278595,
+   0.2965991865038066
+  ],
+  "forward_only_ctl": [
+   0.10957187480949374,
+   0.10319321100333971,
+   0.09991230162330227,
+   0.10753690066301952,
+   0.10728917306138051
+  ],
+  "forward_only__vs_response_size": [
+   0.18663032551994546,
+   0.18201546934350127,
+   0.17347066625470145,
+   0.24496041130598473,
+   0.2056413167481403
+  ],
+  "forward_only__vs_response_size_sim": [
+   0.282398878893053,
+   0.27329469015655505,
+   0.2706557093665768,
+   0.3392694599278595,
+   0.2965991865038066
+  ],
+  "forward_only__vs_response_size_ctl": [
+   0.09576855337310752,
+   0.0912792208130538,
+   0.09718504311187535,
+   0.0943090486218748,
+   0.09095786975566633
+  ],
+  "measured_last_hop": [
+   0.32648363098569366,
+   0.3234106375473655,
+   0.35273351304100026,
+   0.35800998292375946,
+   0.3368335763874807
+  ],
+  "measured_last_hop_sim": [
+   0.4381823363454686,
+   0.4359073626686527,
+   0.4577393908509795,
+   0.48475887013651503,
+   0.46665063988613453
+  ],
+  "measured_last_hop_ctl": [
+   0.11169870535977491,
+   0.11249672512128724,
+   0.10500587780997918,
+   0.1267488872127555,
+   0.12981706349865385
+  ],
+  "measured_last_hop__vs_response_size": [
+   0.33943139288103996,
+   0.34413323161483866,
+   0.36016942872380725,
+   0.381382138146279,
+   0.3681753758341074
+  ],
+  "measured_last_hop__vs_response_size_sim": [
+   0.4381823363454686,
+   0.4359073626686527,
+   0.4577393908509795,
+   0.48475887013651503,
+   0.46665063988613453
+  ],
+  "measured_last_hop__vs_response_size_ctl": [
+   0.09875094346442864,
+   0.09177413105381409,
+   0.09756996212717221,
+   0.10337673199023599,
+   0.09847526405202715
+  ],
+  "curated_last_hop": [
+   0.14596596005004506,
+   0.13642638534880602,
+   0.08430039458908141,
+   0.2048140810639189,
+   0.17693417967529967
+  ],
+  "curated_last_hop_sim": [
+   0.24026034856864878,
+   0.2502560823296125,
+   0.19471403115428984,
+   0.3143758767921674,
+   0.2787838625081349
+  ],
+  "curated_last_hop_ctl": [
+   0.09429438851860374,
+   0.1138296969808065,
+   0.11041363656520843,
+   0.10956179572824847,
+   0.10184968283283524
+  ],
+  "curated_last_hop__vs_response_size": [
+   0.13401819995149625,
+   0.148280586145866,
+   0.08860222066752613,
+   0.21271185328563055,
+   0.17054833030852024
+  ],
+  "curated_last_hop__vs_response_size_sim": [
+   0.24026034856864878,
+   0.2502560823296125,
+   0.19471403115428984,
+   0.3143758767921674,
+   0.2787838625081349
+  ],
+  "curated_last_hop__vs_response_size_ctl": [
+   0.10624214861715256,
+   0.10197549618374652,
+   0.10611181048676371,
+   0.10166402350653682,
+   0.10823553219961468
+  ]
+ },
+ "coverage": {
+  "forward_only": [
+   0.873015873015873,
+   0.8888888888888888,
+   0.9285714285714286,
+   0.9126984126984127,
+   0.8809523809523809
+  ],
+  "measured_last_hop": [
+   0.7698412698412699,
+   0.7857142857142857,
+   0.7777777777777778,
+   0.8492063492063492,
+   0.753968253968254
+  ],
+  "curated_last_hop": [
+   0.3412698412698413,
+   0.30952380952380953,
+   0.3968253968253968,
+   0.4523809523809524,
+   0.25396825396825395
+  ]
+ },
+ "example_GATA1": null,
+ "fixes_bridge": true,
+ "beats_forward": true,
+ "survives_response_size_control": true,
+ "paired_vs_forward_response_size_matched": {
+  "mean": 0.1601146756055598,
+  "se": 0.008159118009109347,
+  "verdict": "BETTER"
+ },
+ "verdict": "BRIDGE WITH A MEASURED LAST HOP. markov_bridge failed and the diagnosis blamed one component: its final hop ran on the curated regulatory layer, 91% unsigned and -- per infer_network -- 94% disjoint from the causal edges actually measured in this cell line. So the last hop was rebuilt from MEASURED causality (knocking out A moved B, therefore A -> B), keeping PPI for the middle because that layer is confirmed real (z=+29.7 against a degree-preserving null). THE CIRCULARITY THIS WOULD OTHERWISE HAVE was severe and is broken by a DISJOINT GENE SPLIT: a measured edge exists because knocking out A moved B, so nominating A for overlapping with the source's response and then testing that same overlap would be one measurement counted twice. Edges and the conditioning endpoint are built on gene half A; response similarity is scored ONLY on gene half B; knockouts are split as well, so the graph comes from train sources and is tested on held-out ones. RESULT over 5 splits: measured last hop +0.3395 +- 0.0069 (coverage 79% of test knockouts), curated last hop +0.1497 +- 0.0203 (coverage 35%), forward-only PPI +0.1869 +- 0.0117 (coverage 90%). SWAPPING IN MEASURED CAUSALITY REPAIRS THE LAST HOP: it beats the curated version by +0.1898 +- 0.0206, so the bridge's failure really was the map and not the method. AND IT NOW BEATS PLAIN FORWARD-ONLY PPI by +0.1526 +- 0.0089, which is the first time in this project that conditioning on the measured endpoint has earned its place. AND IT SURVIVES THE CONTROL THAT MATTERS MOST. Matching controls on PPI degree is NOT sufficient here, because the measured causal graph only carries edges from knockouts that moved many genes, so this arm structurally nominates BIG RESPONDERS, whose profiles correlate for generic reasons. Re-scored against controls matched on NUMBER OF SPECIFIC MOVERS, the measured arm still gives +0.3587 +- 0.0077, versus +0.1985 for forward-only (paired +0.1601 +- 0.0082, BETTER). COVERAGE WAS EXPECTED TO BE THE STRUCTURAL LIMIT AND IS NOT -- this module was written expecting the measured graph to be too sparse to walk, and the data contradicts that. It nominates candidates for 79% of test knockouts, more than DOUBLE the curated layer's 35%, though still short of forward-only PPI's 90%. So the measured causal layer is both more accurate AND better-covering than the curated one; the pre-written worry that an accurate map might be unwalkable does not apply here and is recorded as a wrong expectation rather than quietly dropped. WHAT THIS CANNOT SAY: half the readout genes are spent on breaking the circularity, so every similarity here is measured on ~3,600 genes rather than 7,223 and the numbers are not comparable to markov_bridge's. Response similarity shows a shared route, not an ordering -- it cannot separate an intermediate from a co-regulator. And the measured causal graph is itself thresholded response data, so 'measured' means 'reproducible in this screen', not 'mechanistically verified'. Deterministic given seed 0.",
+ "note": "BRIDGE WITH A MEASURED LAST HOP. markov_bridge failed and the diagnosis blamed one component: its final hop ran on the curated regulatory layer, 91% unsigned and -- per infer_network -- 94% disjoint from the causal edges actually measured in this cell line. So the last hop was rebuilt from MEASURED causality (knocking out A moved B, therefore A -> B), keeping PPI for the middle because that layer is confirmed real (z=+29.7 against a degree-preserving null). THE CIRCULARITY THIS WOULD OTHERWISE HAVE was severe and is broken by a DISJOINT GENE SPLIT: a measured edge exists because knocking out A moved B, so nominating A for overlapping with the source's response and then testing that same overlap would be one measurement counted twice. Edges and the conditioning endpoint are built on gene half A; response similarity is scored ONLY on gene half B; knockouts are split as well, so the graph comes from train sources and is tested on held-out ones. RESULT over 5 splits: measured last hop +0.3395 +- 0.0069 (coverage 79% of test knockouts), curated last hop +0.1497 +- 0.0203 (coverage 35%), forward-only PPI +0.1869 +- 0.0117 (coverage 90%). SWAPPING IN MEASURED CAUSALITY REPAIRS THE LAST HOP: it beats the curated version by +0.1898 +- 0.0206, so the bridge's failure really was the map and not the method. AND IT NOW BEATS PLAIN FORWARD-ONLY PPI by +0.1526 +- 0.0089, which is the first time in this project that conditioning on the measured endpoint has earned its place. AND IT SURVIVES THE CONTROL THAT MATTERS MOST. Matching controls on PPI degree is NOT sufficient here, because the measured causal graph only carries edges from knockouts that moved many genes, so this arm structurally nominates BIG RESPONDERS, whose profiles correlate for generic reasons. Re-scored against controls matched on NUMBER OF SPECIFIC MOVERS, the measured arm still gives +0.3587 +- 0.0077, versus +0.1985 for forward-only (paired +0.1601 +- 0.0082, BETTER). COVERAGE WAS EXPECTED TO BE THE STRUCTURAL LIMIT AND IS NOT -- this module was written expecting the measured graph to be too sparse to walk, and the data contradicts that. It nominates candidates for 79% of test knockouts, more than DOUBLE the curated layer's 35%, though still short of forward-only PPI's 90%. So the measured causal layer is both more accurate AND better-covering than the curated one; the pre-written worry that an accurate map might be unwalkable does not apply here and is recorded as a wrong expectation rather than quietly dropped. WHAT THIS CANNOT SAY: half the readout genes are spent on breaking the circularity, so every similarity here is measured on ~3,600 genes rather than 7,223 and the numbers are not comparable to markov_bridge's. Response similarity shows a shared route, not an ordering -- it cannot separate an intermediate from a co-regulator. And the measured causal graph is itself thresholded response data, so 'measured' means 'reproducible in this screen', not 'mechanistically verified'. Deterministic given seed 0."
+}

@@ -1,0 +1,87 @@
+{
+  "test": "loop_kinetics",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/loop_variant.json",
+        "bytes": 515019,
+        "hash": "d7d7725d22aad643",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 4,
+      "used": 3,
+      "selection": "all",
+      "fraction": 0.75
+    },
+    "seed": 1904,
+    "controls": [
+      "three independent dose points from the same recorded run",
+      "the knockout score as the extreme of the same axis",
+      "block and field scan for kinetic constants"
+    ],
+    "note": "tests a follow-up this project proposed, rather than leaving it open",
+    "warnings": []
+  },
+  "gates": {
+    "Q1 the invariance holds": true,
+    "Q2 gene-specific kinetics available": false
+  },
+  "dose_points": {
+    "50% capacity": 0.5086588921282799,
+    "25% capacity": 0.5075167638483965,
+    "10% capacity": 0.5053097667638484,
+    "0% (knockout)": 0.552884110787172
+  },
+  "spread": 0.003349125364431438,
+  "kinetic_blocks": [],
+  "kinetic_fields": [],
+  "n_genes_with_kinetics": 0,
+  "log": [
+    "====================================================================================================",
+    "RETIRING A FOLLOW-UP I PROPOSED -- can saturating kinetics rescue the dose-response?",
+    "====================================================================================================",
+    "  loop 5 failed V3 and I wrote a specific follow-up into it. A named follow-up that never gets",
+    "  tested is an excuse with a citation, so this tests it -- and the argument comes first.",
+    "\n  THE ARGUMENT.  With one K shared by all enzymes, capacity(f) = E*f/(f+K) evaluates every",
+    "  gene's curve at f' = f/(f+K) -- the SAME constant for every gene. The family of curves is",
+    "  unchanged; only the point on the dose axis moves. AUC is rank-based, so the ranking cannot",
+    "  change. If that is right, the AUC at 50%, 25% and 10% must be nearly identical.",
+    "\n  dose point                AUC",
+    "  50% capacity           0.5087",
+    "  25% capacity           0.5075",
+    "  10% capacity           0.5053",
+    "  0% (knockout)          0.5529",
+    "\n  Q1 THE INVARIANCE HOLDS -- spread across the three dose points 0.0033  (gate <= 0.02)   Q1 PASS",
+    "    Moving along the dose axis changes the ranking by less than the gate. A uniform",
+    "    saturating kinetic does exactly that and nothing else, so it CANNOT rescue V3.",
+    "    The follow-up is retired on principle, not on appetite.",
+    "\n  Q2 WHAT WOULD BE NEEDED -- gene-specific saturation, i.e. a different K per enzyme.",
+    "    cell_complete blocks carrying kinetics : NONE of the 42",
+    "    per-gene fields carrying kinetics      : NONE of the 27",
+    "    genes with a usable per-enzyme constant : 0   (gate >= 200)   Q2 FAIL",
+    "    There are modules here ABOUT kcat -- biochem_limit tries to predict it, apply_kcat_fixes",
+    "    corrects flagged values -- but no per-gene constant reaches cell_complete, and none of",
+    "    the 42 blocks or the gene fields carries one. The only version of this idea that could",
+    "    change the answer needs a different K for every enzyme, and that quantity is not in",
+    "    this container.",
+    "\n====================================================================================================",
+    "  Q1 the invariance holds                 PASS",
+    "  Q2 gene-specific kinetics available     FAIL",
+    "  THE FOLLOW-UP IS RETIRED, WITH A REASON.  A uniform saturating kinetic provably cannot",
+    "  change loop 5's answer -- it only slides the dose axis, and the three dose points show",
+    "  that sliding it changes nothing. The one version that COULD work needs a per-enzyme",
+    "  saturation constant, which does not exist here. loop_variant's proposed follow-up should",
+    "  not be attempted again on this data, and that is worth more than leaving it open.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 3/4 (75.0%) by 'all', seed 1904, controls 3"
+  ]
+}

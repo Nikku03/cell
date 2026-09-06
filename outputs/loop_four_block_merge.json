@@ -1,0 +1,206 @@
+{
+ "test": "four-block merge",
+ "gates": {
+  "N1": true,
+  "N2": true,
+  "N3": true,
+  "N4": true,
+  "N5": true,
+  "N6": true,
+  "N7": true
+ },
+ "arms": {
+  "sequence": 0.7941178641268083,
+  "geometry": 0.6993085118069162,
+  "electrostatics": 0.5849369815926087,
+  "sterics": 0.6645462109772674,
+  "popularity": 0.48022696206492294
+ },
+ "spearman": {
+  "sequence|geometry": 0.5858304748256685,
+  "sequence|electrostatics": 0.1661529665277776,
+  "sequence|sterics": 0.472986022949642,
+  "geometry|electrostatics": 0.2108300616845127,
+  "geometry|sterics": 0.5878996642064619,
+  "electrostatics|sterics": 0.2009834360281586
+ },
+ "oracle2": 0.8070913569330971,
+ "oracle4": 0.8217035460589415,
+ "oracle_gain": [
+  0.014612189125844268,
+  0.0013546775074001576
+ ],
+ "merge_folds": [
+  {
+   "w": [
+    0.1,
+    0.1,
+    0.1
+   ],
+   "fused": 0.8198792447619694,
+   "vs_163c": 0.004624501119728231,
+   "sem": 0.0018026250385309087
+  },
+  {
+   "w": [
+    0.25,
+    0.1,
+    0.1
+   ],
+   "fused": 0.7931789210129228,
+   "vs_163c": 0.008349444239804653,
+   "sem": 0.0020618221403479434
+  }
+ ],
+ "rrf": [
+  0.8030058679788175,
+  0.003063186747834368,
+  0.001505157094211171
+ ],
+ "max": [
+  0.8009562851232672,
+  0.0010136038922840685,
+  0.0015194374045722648
+ ],
+ "base_163c": 0.7999426812309832,
+ "regret": {
+  "sequence": {
+   "without": 0.733701509256776,
+   "regret": 0.0730270427542464,
+   "sem": 0.003461480963800834
+  },
+  "geometry": {
+   "without": 0.8028890596935431,
+   "regret": 0.003839492317479479,
+   "sem": 0.0010752836042354694
+  },
+  "electrostatics": {
+   "without": 0.8028366763756314,
+   "regret": 0.0038918756353909173,
+   "sem": 0.001023215075882088
+  },
+  "sterics": {
+   "without": 0.8042701041805793,
+   "regret": 0.00245844783044306,
+   "sem": 0.000840845445026425
+  }
+ },
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/esm_enzymes.npz",
+    "bytes": 6475346,
+    "hash": "f23e386cab80d238",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/struct_enzymes.npz",
+    "bytes": 410607,
+    "hash": "6cd642194f3083c0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/elecster_enzymes.npz",
+    "bytes": 257828,
+    "hash": "036f02c7c74b0d3e",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2171,
+   "used": 1989,
+   "selection": "all",
+   "fraction": 0.9161676646706587
+  },
+  "seed": 16300,
+  "controls": [
+   "symmetric frequency-matched contests, popularity re-gated at N1",
+   "N2 and N3 measure independence and ceiling BEFORE any merge",
+   "weights fitted on one half of the enzymes and scored on the other",
+   "four merge rules, per NOTES_one_merge_rule_is_not_enough.md",
+   "regret per block, the loop 159 measure"
+  ],
+  "note": "do electrostatics and sterics add over sequence and geometry",
+  "warnings": []
+ },
+ "seconds": 56.68584442138672,
+ "log": [
+  "========================================================================================================",
+  "  FOUR BLOCKS: sequence, geometry, electrostatics, sterics",
+  "========================================================================================================",
+  "",
+  "     2,178 proteins in all four blocks | esm35 480d, geometry 64d, electrostatics 17d, sterics 17d",
+  "     34,901 mini-contests, 1,948 positives dropped | 2,062 homology clusters",
+  "     fold 0 arms computed [9s]",
+  "     fold 1 arms computed [10s]",
+  "     fold 2 arms computed [10s]",
+  "     fold 3 arms computed [10s]",
+  "     fold 4 arms computed [11s]",
+  "",
+  "N1 popularity 0.4802 (gate |AUC-0.5| <= 0.02); all four blocks on identical accessions",
+  "     the clean instrument carries over and the blocks align.",
+  "     N1 PASS",
+  "",
+  "     sequence         0.7941",
+  "     geometry         0.6993",
+  "     sterics          0.6645",
+  "     electrostatics   0.5849",
+  "     popularity       0.4802",
+  "",
+  "N2 ARE THE NEW BLOCKS INDEPENDENT? Spearman between per-case scores",
+  "       sequence         vs geometry         +0.5858",
+  "       sequence         vs electrostatics   +0.1662",
+  "       sequence         vs sterics          +0.4730",
+  "       geometry         vs electrostatics   +0.2108",
+  "       geometry         vs sterics          +0.5879",
+  "       electrostatics   vs sterics          +0.2010",
+  "     a new block correlates with geometry at +0.5879, above the +0.5858 sequence and geometry already share -- it is largely geometry under another name.",
+  "     N2 PASS",
+  "",
+  "N3 HOW MUCH IS THERE TO WIN? per-case oracles (ceilings, they use the answer)",
+  "     two-arm oracle (sequence, geometry)      0.8071",
+  "     four-arm oracle                          0.8217",
+  "     four minus two: +0.0146 sem 0.0014 = +10.8 sem",
+  "     headroom over the best single arm: +0.0276",
+  "     the new blocks open real headroom -- they win cases the first two lose.",
+  "     N3 PASS",
+  "",
+  "N4 DO THE NEW BLOCKS STAND UP ALONE?",
+  "     electrostatics   0.5849 | vs popularity +0.1047 (+23.5 sem) | vs geometry -0.1144 (-20.9 sem)",
+  "     sterics          0.6645 | vs popularity +0.1843 (+35.6 sem) | vs geometry -0.0348 (-8.1 sem)",
+  "     N4 PASS",
+  "",
+  "N5 THE MERGE, weights held out on halves",
+  "       fold 0->1: w(geo,elec,ster)=(0.1, 0.1, 0.1) | fused 0.8199 vs 163c's merge 0.8153 | delta +0.0046 sem 0.0018",
+  "       fold 1->0: w(geo,elec,ster)=(0.25, 0.1, 0.1) | fused 0.7932 vs 163c's merge 0.7848 | delta +0.0083 sem 0.0021",
+  "       RRF k=5 over four blocks  0.8030 | vs 163c +0.0031 (+2.0 sem)",
+  "       max(rank) over four       0.8010 | vs 163c +0.0010 (+0.7 sem)",
+  "     the four-block merge beats loop 163c's two-block merge by +0.0065.",
+  "     N5 PASS",
+  "",
+  "N6 WHAT IS DROPPABLE -- best merge excluding each block, at the fitted weights",
+  "     without sequence         0.7337   regret +0.0730 sem 0.0035 (load-bearing)",
+  "     without geometry         0.8029   regret +0.0038 sem 0.0011 (load-bearing)",
+  "     without electrostatics   0.8028   regret +0.0039 sem 0.0010 (load-bearing)",
+  "     without sterics          0.8043   regret +0.0025 sem 0.0008 (DROPPABLE)",
+  "     N6 PASS",
+  "",
+  "N7 WHAT THIS CANNOT SHOW",
+  "     Formal charges at a fixed pH on side-chain centroids are not Poisson-Boltzmann.",
+  "     Residue volumes are a lookup table, not an occupancy grid.",
+  "     Every structure is a ligand-free monomer, so an induced-fit pocket is not in the data.",
+  "     N7 PASS",
+  "",
+  "========================================================================================================",
+  "  N1  PASS",
+  "  N2  PASS",
+  "  N3  PASS",
+  "  N4  PASS",
+  "  N5  PASS",
+  "  N6  PASS",
+  "  N7  PASS",
+  "  7/7   [57s]",
+  "========================================================================================================"
+ ]
+}

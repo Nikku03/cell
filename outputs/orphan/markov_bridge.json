@@ -1,0 +1,184 @@
+{
+ "n_knockouts": 378,
+ "n_checkable": 1400,
+ "T_best": 2,
+ "n_ppi_pairs": 191447,
+ "n_reg_edges": 612133,
+ "readout_hours": 192.0,
+ "n_genes_below_99pct_equilibrated": 91,
+ "results": {
+  "T_sweep": [
+   {
+    "label": "bridge T=2",
+    "n_knockouts": 212,
+    "n_intermediates": 675,
+    "sim_intermediates": 0.1872091148870136,
+    "sim_degree_matched": 0.09605410826427616,
+    "delta": 0.09115500662273746,
+    "se": 0.012814317869231612,
+    "wilcoxon_p": 9.174973589072821e-14,
+    "frac_intermediates_that_are_movers": 0.008962264150943398,
+    "frac_top_slots_empty": 0.6428571428571429
+   },
+   {
+    "label": "bridge T=3",
+    "n_knockouts": 367,
+    "n_intermediates": 1783,
+    "sim_intermediates": 0.16084768307745476,
+    "sim_degree_matched": 0.08295949238126625,
+    "delta": 0.07788819069618852,
+    "se": 0.005758236949260236,
+    "wilcoxon_p": 6.723509700319161e-31,
+    "frac_intermediates_that_are_movers": 0.01880108991825613,
+    "frac_top_slots_empty": 0.05661375661375661
+   },
+   {
+    "label": "bridge T=4",
+    "n_knockouts": 375,
+    "n_intermediates": 1870,
+    "sim_intermediates": 0.1651938880238061,
+    "sim_degree_matched": 0.0821611036080867,
+    "delta": 0.08303278441571942,
+    "se": 0.006417864521008252,
+    "wilcoxon_p": 2.4813532462944376e-30,
+    "frac_intermediates_that_are_movers": 0.0192,
+    "frac_top_slots_empty": 0.010582010582010581
+   }
+  ],
+  "bridge": {
+   "label": "BRIDGE (both ends)",
+   "n_knockouts": 212,
+   "n_intermediates": 675,
+   "sim_intermediates": 0.1872091148870136,
+   "sim_degree_matched": 0.09220389885507208,
+   "delta": 0.09500521603194154,
+   "se": 0.012303212012103475,
+   "wilcoxon_p": 2.7184876791494536e-14,
+   "frac_intermediates_that_are_movers": 0.008962264150943398,
+   "frac_top_slots_empty": 0.6428571428571429
+  },
+  "forward": {
+   "label": "forward-only (no end conditioning)",
+   "n_knockouts": 367,
+   "n_intermediates": 1731,
+   "sim_intermediates": 0.19842337918309533,
+   "sim_degree_matched": 0.06304485946865143,
+   "delta": 0.1353785197144439,
+   "se": 0.007994585345522054,
+   "wilcoxon_p": 4.876544470056154e-44,
+   "frac_intermediates_that_are_movers": 0.017302452316076293,
+   "frac_top_slots_empty": 0.08412698412698413
+  },
+  "backward": {
+   "label": "backward-only (ignores which gene was hit)",
+   "n_knockouts": 378,
+   "n_intermediates": 1880,
+   "sim_intermediates": 0.062110166714341004,
+   "sim_degree_matched": 0.050335220648246824,
+   "delta": 0.01177494606609418,
+   "se": 0.0023757004022688356,
+   "wilcoxon_p": 5.033743915645624e-06,
+   "frac_intermediates_that_are_movers": 0.011640211640211642,
+   "frac_top_slots_empty": 0.0052910052910052924
+  },
+  "zweighted": {
+   "label": "bridge, |z|-weighted endpoint",
+   "n_knockouts": 212,
+   "n_intermediates": 675,
+   "sim_intermediates": 0.18849524186774738,
+   "sim_degree_matched": 0.08329084735641856,
+   "delta": 0.10520439451132882,
+   "se": 0.012507491447169393,
+   "wilcoxon_p": 2.4795455254713112e-17,
+   "frac_intermediates_that_are_movers": 0.008962264150943398,
+   "frac_top_slots_empty": 0.6428571428571429
+  },
+  "deattenuated": {
+   "label": "bridge, de-attenuated endpoint",
+   "n_knockouts": 212,
+   "n_intermediates": 675,
+   "sim_intermediates": 0.18849524186774738,
+   "sim_degree_matched": 0.08677424955454145,
+   "delta": 0.10172099231320592,
+   "se": 0.012487123822349686,
+   "wilcoxon_p": 1.8113935690513692e-16,
+   "frac_intermediates_that_are_movers": 0.008962264150943398,
+   "frac_top_slots_empty": 0.6428571428571429
+  },
+  "exclude_movers": {
+   "label": "bridge, intermediates that are movers excluded",
+   "n_knockouts": 212,
+   "n_intermediates": 672,
+   "sim_intermediates": 0.18709826658980674,
+   "sim_degree_matched": 0.08506783666660271,
+   "delta": 0.10203042992320403,
+   "se": 0.012143797911635012,
+   "wilcoxon_p": 2.2657393940258403e-16,
+   "frac_intermediates_that_are_movers": 0.0,
+   "frac_top_slots_empty": 0.6444444444444444
+  },
+  "rewired_null": {
+   "mean": -0.011980330755915963,
+   "sd": 0.0071973039872563465,
+   "z": 14.864669739848102,
+   "p_empirical": 0.09090909090909091,
+   "values": [
+    -0.019023709024602924,
+    -0.011405440429624896,
+    -0.005627308673348756,
+    -0.019736270151315207,
+    -0.0176607982054988,
+    -0.0027001131660323485,
+    -0.01232604643506608,
+    -0.013343210163040823,
+    -0.01841110517579589,
+    0.0004306938651660901
+   ],
+   "forward_only_null_mean": -0.000599832576752869,
+   "forward_only_null_sd": 0.004585603480014559,
+   "forward_only_z": 29.653316708222018
+  }
+ },
+ "example_GATA1": {
+  "source": "GATA1",
+  "n_movers": 233,
+  "intermediates": [
+   {
+    "gene": "MED1",
+    "bridge_score": 0.04762730002403259,
+    "response_similarity_to_source": 0.1599496454000473,
+    "ppi_degree": 111
+   },
+   {
+    "gene": "RBMX",
+    "bridge_score": 0.0,
+    "response_similarity_to_source": 0.056842904537916183,
+    "ppi_degree": 62
+   },
+   {
+    "gene": "RFC5",
+    "bridge_score": 0.0,
+    "response_similarity_to_source": 0.056839823722839355,
+    "ppi_degree": 44
+   },
+   {
+    "gene": "RFC4",
+    "bridge_score": 0.0,
+    "response_similarity_to_source": 0.05810733512043953,
+    "ppi_degree": 33
+   },
+   {
+    "gene": "RFC3",
+    "bridge_score": 0.0,
+    "response_similarity_to_source": 0.05931602418422699,
+    "ppi_degree": 23
+   }
+  ]
+ },
+ "bridge_vs_forward_only": "forward-only BETTER",
+ "bridge_beats_forward_only": false,
+ "beats_rewired_null": true,
+ "works": true,
+ "verdict": "MARKOV BRIDGE: infer the ROUTE, not the endpoint. Every previous network attempt here was one-sided -- propagate forward from the knockout and predict what moves -- and that fails arithmetically, because reachability covers 84% of movers and 82% of non-movers by hop 3, and because the stationary distribution of a walk on an undirected graph is exactly degree/2|E| and therefore forgets the seed entirely. A bridge conditions on BOTH ends: the knockout is known and the final mRNA response is MEASURED, so the two-sided constraint collapses the fan-out. The path is TYPED -- 1 physical PPI hop(s) then ONE regulatory hop -- because a walk using PPI for the last step would be claiming that binding a protein changes its mRNA. THE TEST IS A REAL ONE, which the prediction work never had: an inferred intermediate is a falsifiable claim with ground truth already collected, since knocking out a true intermediate should reproduce part of the source's signature, and this screen holds ~1,400 measured knockouts. RESULT at T=2: nominated intermediates have measured response similarity 0.1872 to their source versus 0.0922 for DEGREE-MATCHED knockouts, a paired difference of +0.0950 +- 0.0123 (Wilcoxon p=2.7e-14, n=212 sources, 675 intermediates). THE TWO-SIDED CONDITIONING ACTIVELY HURTS. Forward-only scores +0.1354 +- 0.0080 against the bridge's +0.0950 +- 0.0123 -- forward-only is SIGNIFICANTLY BETTER, by +0.0404. Multiplying by backward reachability NARROWS the candidate set to neighbours that also regulate the measured movers, and that narrowing costs accuracy. The likeliest reason is visible in the inputs: the backward term is the only place the REGULATORY layer enters, and 91% of those 612,133 edges carry no sign and were never cell-type filtered, so conditioning through them injects more noise than constraint. The bridge framing does NOT earn its keep. And at T=2 forward-only reduces to the DIRECT PPI NEIGHBOURS of the knocked-out gene, which is the one-hop signal this project already had -- PHYS scores 0.40 in the ensemble harness -- so what survives here is a re-derivation of the known result, not a new one. It clears the degree-preserving REWIRED-GRAPH null (-0.0120 +- 0.0072, z=+14.9), so the routes follow real wiring rather than being forced by the conditioning. AND THE BRIDGE SCORE IS NEARLY EMPTY: 64% of its top-5 slots have a score of exactly zero, meaning the ranking fell through to arbitrary tie-breaking and those slots are padding rather than predictions. The GATA1 example shows it plainly -- one real nomination (MED1, a known erythroid GATA1 coactivator, at 0.0476) followed by four ties at 0.0000. The T sweep is also not a clean comparison: T=2 nominates anything at all for only 212 of 378 sources while T=3 and T=4 reach 367 and 375, so the depths are scored on different populations and T was picked on the smallest and easiest of them. Excluding intermediates that are themselves movers of the source gives +0.1020, and 1% of nominated intermediates are themselves movers. ON THE TIME CLAIM that prompted this: only half survives. There is no calibration between a Markov step and an hour, so T stays a swept topological parameter. The usable part would have been de-attenuating slow mRNAs that lag their steady state, but at the ~192 h readout the median K562 half-life is 3.47 h and only 198 of 10,802 genes are below 99% equilibrated -- the snapshot IS the steady state for 98% of genes. Run anyway, de-attenuation gives +0.1017 against the plain +0.1052 |z|-weighted arm, i.e. it changes nothing, exactly as the arithmetic predicted. WHAT THIS CANNOT SAY: the test can only check intermediates that were THEMSELVES knocked out in the screen, which is 1400 of 16492 proteins, so routes through unscreened proteins are invisible to validation. Response similarity between two knockouts is evidence of a shared route but not proof of ordering -- it cannot tell an intermediate from a co-regulator. And a bridge is forced to return a path, so absence of a real edge produces a confident detour rather than an abstention. Deterministic given seed 0.",
+ "note": "MARKOV BRIDGE: infer the ROUTE, not the endpoint. Every previous network attempt here was one-sided -- propagate forward from the knockout and predict what moves -- and that fails arithmetically, because reachability covers 84% of movers and 82% of non-movers by hop 3, and because the stationary distribution of a walk on an undirected graph is exactly degree/2|E| and therefore forgets the seed entirely. A bridge conditions on BOTH ends: the knockout is known and the final mRNA response is MEASURED, so the two-sided constraint collapses the fan-out. The path is TYPED -- 1 physical PPI hop(s) then ONE regulatory hop -- because a walk using PPI for the last step would be claiming that binding a protein changes its mRNA. THE TEST IS A REAL ONE, which the prediction work never had: an inferred intermediate is a falsifiable claim with ground truth already collected, since knocking out a true intermediate should reproduce part of the source's signature, and this screen holds ~1,400 measured knockouts. RESULT at T=2: nominated intermediates have measured response similarity 0.1872 to their source versus 0.0922 for DEGREE-MATCHED knockouts, a paired difference of +0.0950 +- 0.0123 (Wilcoxon p=2.7e-14, n=212 sources, 675 intermediates). THE TWO-SIDED CONDITIONING ACTIVELY HURTS. Forward-only scores +0.1354 +- 0.0080 against the bridge's +0.0950 +- 0.0123 -- forward-only is SIGNIFICANTLY BETTER, by +0.0404. Multiplying by backward reachability NARROWS the candidate set to neighbours that also regulate the measured movers, and that narrowing costs accuracy. The likeliest reason is visible in the inputs: the backward term is the only place the REGULATORY layer enters, and 91% of those 612,133 edges carry no sign and were never cell-type filtered, so conditioning through them injects more noise than constraint. The bridge framing does NOT earn its keep. And at T=2 forward-only reduces to the DIRECT PPI NEIGHBOURS of the knocked-out gene, which is the one-hop signal this project already had -- PHYS scores 0.40 in the ensemble harness -- so what survives here is a re-derivation of the known result, not a new one. It clears the degree-preserving REWIRED-GRAPH null (-0.0120 +- 0.0072, z=+14.9), so the routes follow real wiring rather than being forced by the conditioning. AND THE BRIDGE SCORE IS NEARLY EMPTY: 64% of its top-5 slots have a score of exactly zero, meaning the ranking fell through to arbitrary tie-breaking and those slots are padding rather than predictions. The GATA1 example shows it plainly -- one real nomination (MED1, a known erythroid GATA1 coactivator, at 0.0476) followed by four ties at 0.0000. The T sweep is also not a clean comparison: T=2 nominates anything at all for only 212 of 378 sources while T=3 and T=4 reach 367 and 375, so the depths are scored on different populations and T was picked on the smallest and easiest of them. Excluding intermediates that are themselves movers of the source gives +0.1020, and 1% of nominated intermediates are themselves movers. ON THE TIME CLAIM that prompted this: only half survives. There is no calibration between a Markov step and an hour, so T stays a swept topological parameter. The usable part would have been de-attenuating slow mRNAs that lag their steady state, but at the ~192 h readout the median K562 half-life is 3.47 h and only 198 of 10,802 genes are below 99% equilibrated -- the snapshot IS the steady state for 98% of genes. Run anyway, de-attenuation gives +0.1017 against the plain +0.1052 |z|-weighted arm, i.e. it changes nothing, exactly as the arithmetic predicted. WHAT THIS CANNOT SAY: the test can only check intermediates that were THEMSELVES knocked out in the screen, which is 1400 of 16492 proteins, so routes through unscreened proteins are invisible to validation. Response similarity between two knockouts is evidence of a shared route but not proof of ordering -- it cannot tell an intermediate from a co-regulator. And a bridge is forced to return a path, so absence of a real edge produces a confident detour rather than an abstention. Deterministic given seed 0."
+}

@@ -1,0 +1,567 @@
+{
+ "result": {
+  "chrom": "chr22",
+  "cell": "K562",
+  "frac_of_max_score": 0.8,
+  "rows": [
+   {
+    "tf": "CTCF",
+    "motif_len": 15,
+    "chip_peaks": 1082,
+    "hits_1d": 194,
+    "hits_open": 138,
+    "hits_active": 5,
+    "prec_1d": 0.691,
+    "prec_open": 0.848,
+    "prec_active": 0.8,
+    "recall_1d": 0.14,
+    "recall_active": 0.005,
+    "fp_killed_open": 0.289,
+    "prec_lift_open": 1.2
+   },
+   {
+    "tf": "REST",
+    "motif_len": 20,
+    "chip_peaks": 285,
+    "hits_1d": 22,
+    "hits_open": 15,
+    "hits_active": 0,
+    "prec_1d": 1.0,
+    "prec_open": 1.0,
+    "prec_active": 0.0,
+    "recall_1d": 0.077,
+    "recall_active": 0.0,
+    "fp_killed_open": 0.318,
+    "prec_lift_open": 1.0
+   },
+   {
+    "tf": "GATA1",
+    "motif_len": 7,
+    "chip_peaks": 298,
+    "hits_1d": 7361,
+    "hits_open": 224,
+    "hits_active": 76,
+    "prec_1d": 0.016,
+    "prec_open": 0.335,
+    "prec_active": 0.5,
+    "recall_1d": 0.356,
+    "recall_active": 0.121,
+    "fp_killed_open": 0.97,
+    "prec_lift_open": 20.5
+   },
+   {
+    "tf": "GATA2",
+    "motif_len": 7,
+    "chip_peaks": 306,
+    "hits_1d": 7358,
+    "hits_open": 296,
+    "hits_active": 111,
+    "prec_1d": 0.017,
+    "prec_open": 0.324,
+    "prec_active": 0.387,
+    "recall_1d": 0.346,
+    "recall_active": 0.124,
+    "fp_killed_open": 0.96,
+    "prec_lift_open": 19.4
+   },
+   {
+    "tf": "SPI1",
+    "motif_len": 13,
+    "chip_peaks": 737,
+    "hits_1d": 263,
+    "hits_open": 9,
+    "hits_active": 2,
+    "prec_1d": 0.3,
+    "prec_open": 0.889,
+    "prec_active": 1.0,
+    "recall_1d": 0.103,
+    "recall_active": 0.003,
+    "fp_killed_open": 0.966,
+    "prec_lift_open": 3.0
+   },
+   {
+    "tf": "MYC",
+    "motif_len": 10,
+    "chip_peaks": 229,
+    "hits_1d": 570,
+    "hits_open": 34,
+    "hits_active": 9,
+    "prec_1d": 0.04,
+    "prec_open": 0.441,
+    "prec_active": 0.556,
+    "recall_1d": 0.1,
+    "recall_active": 0.026,
+    "fp_killed_open": 0.94,
+    "prec_lift_open": 10.9
+   },
+   {
+    "tf": "MAX",
+    "motif_len": 6,
+    "chip_peaks": 1614,
+    "hits_1d": 5774,
+    "hits_open": 212,
+    "hits_active": 75,
+    "prec_1d": 0.087,
+    "prec_open": 0.689,
+    "prec_active": 0.8,
+    "recall_1d": 0.287,
+    "recall_active": 0.039,
+    "fp_killed_open": 0.963,
+    "prec_lift_open": 7.9
+   },
+   {
+    "tf": "YY1",
+    "motif_len": 8,
+    "chip_peaks": 212,
+    "hits_1d": 4595,
+    "hits_open": 66,
+    "hits_active": 32,
+    "prec_1d": 0.011,
+    "prec_open": 0.303,
+    "prec_active": 0.531,
+    "recall_1d": 0.189,
+    "recall_active": 0.075,
+    "fp_killed_open": 0.986,
+    "prec_lift_open": 28.4
+   },
+   {
+    "tf": "NRF1",
+    "motif_len": 12,
+    "chip_peaks": 919,
+    "hits_1d": 130,
+    "hits_open": 58,
+    "hits_active": 36,
+    "prec_1d": 0.623,
+    "prec_open": 0.879,
+    "prec_active": 0.917,
+    "recall_1d": 0.072,
+    "recall_active": 0.034,
+    "fp_killed_open": 0.554,
+    "prec_lift_open": 1.4
+   },
+   {
+    "tf": "JUND",
+    "motif_len": 9,
+    "chip_peaks": 1015,
+    "hits_1d": 2590,
+    "hits_open": 163,
+    "hits_active": 55,
+    "prec_1d": 0.104,
+    "prec_open": 0.816,
+    "prec_active": 0.927,
+    "recall_1d": 0.26,
+    "recall_active": 0.05,
+    "fp_killed_open": 0.937,
+    "prec_lift_open": 7.8
+   },
+   {
+    "tf": "USF1",
+    "motif_len": 10,
+    "chip_peaks": 480,
+    "hits_1d": 791,
+    "hits_open": 52,
+    "hits_active": 10,
+    "prec_1d": 0.128,
+    "prec_open": 0.75,
+    "prec_active": 0.9,
+    "recall_1d": 0.202,
+    "recall_active": 0.017,
+    "fp_killed_open": 0.934,
+    "prec_lift_open": 5.9
+   },
+   {
+    "tf": "EGR1",
+    "motif_len": 10,
+    "chip_peaks": 880,
+    "hits_1d": 635,
+    "hits_open": 105,
+    "hits_active": 32,
+    "prec_1d": 0.227,
+    "prec_open": 0.514,
+    "prec_active": 0.625,
+    "recall_1d": 0.152,
+    "recall_active": 0.024,
+    "fp_killed_open": 0.835,
+    "prec_lift_open": 2.3
+   }
+  ]
+ },
+ "gate3_gata1": {
+  "tf": "GATA1",
+  "chrom": "chr22",
+  "surviving_sites": 76,
+  "sites_with_abc_target": 56,
+  "abc_neq_nearest": 22,
+  "frac_abc_neq_nearest": 0.39,
+  "sites": [
+   {
+    "pos": 17633490,
+    "abc_targets": [
+     "BCL2L13",
+     "LINC00528",
+     "PEX26"
+    ],
+    "nearest_gene": "ATP6V1E1",
+    "nearest_dist": 4668,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 19397183,
+    "abc_targets": [
+     "C22orf39",
+     "CDC45",
+     "HIRA",
+     "MRPL40",
+     "UFD1"
+    ],
+    "nearest_gene": "HIRA",
+    "nearest_dist": 34550,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 20025625,
+    "abc_targets": [
+     "DGCR8",
+     "RANBP1",
+     "TRMT2A",
+     "ZDHHC8"
+    ],
+    "nearest_gene": "TANGO2",
+    "nearest_dist": 8626,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 20523333,
+    "abc_targets": [],
+    "nearest_gene": "MED15",
+    "nearest_dist": 15724,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 20557485,
+    "abc_targets": [],
+    "nearest_gene": "MED15",
+    "nearest_dist": 49876,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 20852225,
+    "abc_targets": [
+     "PI4KA",
+     "SNAP29"
+    ],
+    "nearest_gene": "PI4KA",
+    "nearest_dist": 6587,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 20857505,
+    "abc_targets": [
+     "CRKL",
+     "PI4KA",
+     "SNAP29"
+    ],
+    "nearest_gene": "PI4KA",
+    "nearest_dist": 1307,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 20867681,
+    "abc_targets": [
+     "CRKL",
+     "LRRC74BNL",
+     "P2RX6",
+     "THAP7"
+    ],
+    "nearest_gene": "SNAP29",
+    "nearest_dist": 8675,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 21569014,
+    "abc_targets": [],
+    "nearest_gene": "UBE2L3",
+    "nearest_dist": 19568,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 21754700,
+    "abc_targets": [
+     "MAPK1",
+     "PPM1F-AS1"
+    ],
+    "nearest_gene": "YPEL1",
+    "nearest_dist": 18906,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 21779218,
+    "abc_targets": [
+     "MAPK1",
+     "PPM1F-AS1"
+    ],
+    "nearest_gene": "YPEL1",
+    "nearest_dist": 43424,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 21784842,
+    "abc_targets": [
+     "MAPK1",
+     "PPM1F-AS1"
+    ],
+    "nearest_gene": "YPEL1",
+    "nearest_dist": 49048,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 22002069,
+    "abc_targets": [],
+    "nearest_gene": "MAPK1",
+    "nearest_dist": 134424,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 22109761,
+    "abc_targets": [],
+    "nearest_gene": "VPREB1",
+    "nearest_dist": 135024,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 22520952,
+    "abc_targets": [
+     "PRAME"
+    ],
+    "nearest_gene": "ZNF280A",
+    "nearest_dist": 682,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 24729179,
+    "abc_targets": [],
+    "nearest_gene": "PIWIL3",
+    "nearest_dist": 45541,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 26483283,
+    "abc_targets": [
+     "HPS4"
+    ],
+    "nearest_gene": "SRRD",
+    "nearest_dist": 593,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 26493433,
+    "abc_targets": [
+     "CRYBA4",
+     "MIAT",
+     "MIATNB",
+     "TFIP11",
+     "TPST2"
+    ],
+    "nearest_gene": "SRRD",
+    "nearest_dist": 9557,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 26573345,
+    "abc_targets": [
+     "CRYBA4",
+     "MIAT",
+     "TPST2"
+    ],
+    "nearest_gene": "TPST2",
+    "nearest_dist": 16787,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 26630522,
+    "abc_targets": [
+     "MIAT"
+    ],
+    "nearest_gene": "TPST2",
+    "nearest_dist": 40390,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 27913372,
+    "abc_targets": [
+     "CHEK2",
+     "PITPNB"
+    ],
+    "nearest_gene": "PITPNB",
+    "nearest_dist": 5934,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 27913503,
+    "abc_targets": [
+     "CHEK2",
+     "PITPNB"
+    ],
+    "nearest_gene": "PITPNB",
+    "nearest_dist": 5803,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 28242044,
+    "abc_targets": [],
+    "nearest_gene": "PITPNB",
+    "nearest_dist": 322738,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 28560509,
+    "abc_targets": [
+     "CHEK2",
+     "XBP1"
+    ],
+    "nearest_gene": "TTC28",
+    "nearest_dist": 119356,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 29079025,
+    "abc_targets": [
+     "EMID1"
+    ],
+    "nearest_gene": "KREMEN1",
+    "nearest_dist": 5991,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 29097095,
+    "abc_targets": [],
+    "nearest_gene": "KREMEN1",
+    "nearest_dist": 24061,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 29383070,
+    "abc_targets": [
+     "AP1B1"
+    ],
+    "nearest_gene": "AP1B1",
+    "nearest_dist": 5513,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 29569343,
+    "abc_targets": [
+     "NF2",
+     "NIPSNAP1",
+     "UQCR10",
+     "ZMAT5"
+    ],
+    "nearest_gene": "NIPSNAP1",
+    "nearest_dist": 11770,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 29952278,
+    "abc_targets": [],
+    "nearest_gene": "MTMR3",
+    "nearest_dist": 69110,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 30208991,
+    "abc_targets": [
+     "TBC1D10A"
+    ],
+    "nearest_gene": "LIF",
+    "nearest_dist": 37768,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 31585331,
+    "abc_targets": [],
+    "nearest_gene": "PISD",
+    "nearest_dist": 77233,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 31603303,
+    "abc_targets": [
+     "PISD",
+     "PRR14L"
+    ],
+    "nearest_gene": "PISD",
+    "nearest_dist": 59261,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 31630538,
+    "abc_targets": [
+     "PISD"
+    ],
+    "nearest_gene": "PISD",
+    "nearest_dist": 32026,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 31895657,
+    "abc_targets": [
+     "FBXO7",
+     "YWHAH"
+    ],
+    "nearest_gene": "DEPDC5",
+    "nearest_dist": 141639,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 31896012,
+    "abc_targets": [],
+    "nearest_gene": "DEPDC5",
+    "nearest_dist": 141994,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 31901935,
+    "abc_targets": [],
+    "nearest_gene": "SLC5A1",
+    "nearest_dist": 141325,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 31901970,
+    "abc_targets": [
+     "YWHAH"
+    ],
+    "nearest_gene": "SLC5A1",
+    "nearest_dist": 141290,
+    "abc_differs_from_nearest": true
+   },
+   {
+    "pos": 32576702,
+    "abc_targets": [],
+    "nearest_gene": "FBXO7",
+    "nearest_dist": 101892,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 32881143,
+    "abc_targets": [],
+    "nearest_gene": "TIMP3",
+    "nearest_dist": 79439,
+    "abc_differs_from_nearest": false
+   },
+   {
+    "pos": 32887527,
+    "abc_targets": [],
+    "nearest_gene": "TIMP3",
+    "nearest_dist": 85823,
+    "abc_differs_from_nearest": false
+   }
+  ]
+ },
+ "summary": {
+  "mean_prec_1d": 0.27,
+  "mean_prec_active": 0.662,
+  "mean_lift": 2.4
+ },
+ "note": "In-vivo gating of TF motif hits through cell-type chromatin (ENCODE K562: DNase open + H3K27ac active), measured against TF ChIP-seq ground truth on chr22. Precision = predicted sites that are truly bound. Gating raises precision (kills sequence-only false positives) \u2014 the measured version of the ATAC->H3K27ac pipeline. Real data, one-chromosome slice of a genome-wide method. Binding, NOT regulation (which-gene-moves is the separate dynamics wall). Gate 3 (ABC/Hi-C enhancer->gene) via abc_link() when an ABC file is present."
+}

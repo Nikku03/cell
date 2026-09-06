@@ -1,0 +1,4216 @@
+{
+ "WITHDRAWN": true,
+ "reason": "loop 144 Z2: the A signature is present in MaxLFQ (p=0.0000) and absent in raw Intensity (p=0.3005). Withdrawn on the rule loop 143 predeclared.",
+ "what_survives": "294 proteins at BH q<0.05; clustering survives the correct baseline (chi2 124.9); amplitude matching survives (Z4 p=0.0000)",
+ "cannot_be_settled_here": "raw Intensity carries 2.01x the per-point noise, so the channel comparison cannot separate revealing from creating; iBAQ is not independent",
+ "list_retained_for_the_record": [
+  {
+   "gene": "HMMR",
+   "A": 0.7349439027888804,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "TBPL1",
+   "A": 0.7282916240398509,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PATL1",
+   "A": 0.7241896286187717,
+   "C_fall": 1.0,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GLB1",
+   "A": 0.7222452768212169,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "",
+   "A": 0.7191933434489943,
+   "C_fall": 1.0,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CDC25C",
+   "A": 0.7106436373208311,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "transcript only",
+   "canonical": false
+  },
+  {
+   "gene": "TMTC3",
+   "A": 0.7072949594637732,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CHMP1A",
+   "A": 0.7025128530807816,
+   "C_fall": 1.0,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "AZI2",
+   "A": 0.7023383965900395,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ITPK1",
+   "A": 0.6904438484927503,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SAMD4B",
+   "A": 0.6855636241847785,
+   "C_fall": 1.0,
+   "crash_interval": 2,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "CEP152",
+   "A": 0.6848779894802342,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HGF",
+   "A": 0.6823600701890615,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SLMO2",
+   "A": 0.681680699099936,
+   "C_fall": 1.0,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PARVB",
+   "A": 0.6791156736653823,
+   "C_fall": 1.0,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "POMP",
+   "A": 0.6784012438651292,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IGF2BP3",
+   "A": 0.6740461038482598,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TROVE2",
+   "A": 0.6740296437319603,
+   "C_fall": 0.9927046512075451,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "",
+   "A": 0.6739422403133939,
+   "C_fall": 1.0,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ASNS",
+   "A": 0.6717707833846855,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "UFM1",
+   "A": 0.669502918255591,
+   "C_fall": 1.0,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LARP4",
+   "A": 0.6675704784786709,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PI4KA",
+   "A": 0.6674545890092949,
+   "C_fall": 1.0,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GINS2",
+   "A": 0.6649937397541408,
+   "C_fall": 0.959291655642884,
+   "crash_interval": 4,
+   "group": "transcript only",
+   "canonical": false
+  },
+  {
+   "gene": "TRIM26",
+   "A": 0.6646271626565199,
+   "C_fall": 1.0,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIF23",
+   "A": 0.6639219226712433,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "GSKIP",
+   "A": 0.6602755099233844,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "FAM114A2",
+   "A": 0.6598639426103137,
+   "C_fall": 1.0,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MIA3",
+   "A": 0.654282057255223,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FAM175B",
+   "A": 0.6531709983797575,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IFT88",
+   "A": 0.6530290514142448,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SPARC",
+   "A": 0.6481215938253785,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EXOC2",
+   "A": 0.6449269689094261,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CDCA3",
+   "A": 0.641174854066027,
+   "C_fall": 0.9665783903434915,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CENPE",
+   "A": 0.6399662135796704,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "TEX2",
+   "A": 0.6390228810710121,
+   "C_fall": 0.9884455871560625,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MPV17",
+   "A": 0.638763953598275,
+   "C_fall": 0.9894892531307653,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TMCO6",
+   "A": 0.6378054932202878,
+   "C_fall": 1.0,
+   "crash_interval": 1,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "CCNB2",
+   "A": 0.6368599943005169,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": true
+  },
+  {
+   "gene": "PIK3CB",
+   "A": 0.6367519652516715,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "IDH3G",
+   "A": 0.6348672479546473,
+   "C_fall": 1.0,
+   "crash_interval": 1,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "LSM14B",
+   "A": 0.6343135890686762,
+   "C_fall": 0.9847114134383878,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CEBPD",
+   "A": 0.6320067304368528,
+   "C_fall": 0.9756853081794892,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BUB1",
+   "A": 0.6313723595867613,
+   "C_fall": 0.9764904512319943,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": true
+  },
+  {
+   "gene": "DHCR7",
+   "A": 0.6311439221398708,
+   "C_fall": 0.971079984494455,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MYO1B",
+   "A": 0.6273973430715953,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CENPF",
+   "A": 0.6269245138025112,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "TPX2",
+   "A": 0.6255513081060519,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": true
+  },
+  {
+   "gene": "PNPLA8",
+   "A": 0.6247204633216203,
+   "C_fall": 0.979188846810863,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PIAS1",
+   "A": 0.6245507410160627,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GNB4",
+   "A": 0.621642039560788,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SATB2",
+   "A": 0.6213969287511028,
+   "C_fall": 0.939366879344296,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPP2R5C",
+   "A": 0.6212666531091402,
+   "C_fall": 0.9851976291668992,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CNTRL",
+   "A": 0.6211756820922995,
+   "C_fall": 0.9537490309476396,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SAC3D1",
+   "A": 0.6206841053098446,
+   "C_fall": 0.9588548945954923,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ATP5S",
+   "A": 0.617569076819543,
+   "C_fall": 0.9605335864902717,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LPCAT1",
+   "A": 0.6167628079040272,
+   "C_fall": 1.0,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SNX17",
+   "A": 0.6162050638711248,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "DNM1L",
+   "A": 0.6159574727910082,
+   "C_fall": 1.0,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DNAJC11",
+   "A": 0.6158955392514762,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "AURKA",
+   "A": 0.6157199805976323,
+   "C_fall": 0.9453938667757793,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": true
+  },
+  {
+   "gene": "RIF1",
+   "A": 0.6141663060715002,
+   "C_fall": 1.0,
+   "crash_interval": 3,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "WASF2",
+   "A": 0.6128600612061295,
+   "C_fall": 1.0,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SDHAF2",
+   "A": 0.611369144380435,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MYB",
+   "A": 0.611168306370006,
+   "C_fall": 0.9747205798435196,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "G3BP1",
+   "A": 0.610891332723842,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "",
+   "A": 0.6099473359421455,
+   "C_fall": 0.9830213799018223,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HSP90AB4P",
+   "A": 0.6048435952277945,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NFX1",
+   "A": 0.6013703900861173,
+   "C_fall": 0.9406920134271592,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIF20A",
+   "A": 0.5965396706405064,
+   "C_fall": 0.9804116091613548,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": true
+  },
+  {
+   "gene": "CPOX",
+   "A": 0.5958324419038921,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "TRAP1",
+   "A": 0.5957834076227193,
+   "C_fall": 0.9786912653842075,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SEC13",
+   "A": 0.5945782712173449,
+   "C_fall": 0.9196401897528483,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LYST",
+   "A": 0.5943965061280021,
+   "C_fall": 0.9691483491624818,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "PDE12",
+   "A": 0.5915803580289103,
+   "C_fall": 0.9573083038227549,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "INCENP",
+   "A": 0.5913416814297254,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "NXT2",
+   "A": 0.5905516509990107,
+   "C_fall": 0.9915458057901488,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "STX5",
+   "A": 0.5861198918521418,
+   "C_fall": 1.0,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "AURKB",
+   "A": 0.5858148359829215,
+   "C_fall": 0.9633037800569029,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": true
+  },
+  {
+   "gene": "TFCP2",
+   "A": 0.5851190199268375,
+   "C_fall": 0.9328837595243731,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DBP",
+   "A": 0.5849476887032952,
+   "C_fall": 0.9025987918211813,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "YAE1D1",
+   "A": 0.5848820981806127,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RACGAP1",
+   "A": 0.5848312865096994,
+   "C_fall": 0.9600929891214809,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "NSD1",
+   "A": 0.5838254578060087,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SMC2",
+   "A": 0.583320329581754,
+   "C_fall": 0.9561991275771109,
+   "crash_interval": 4,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "NHEJ1",
+   "A": 0.5831825599054703,
+   "C_fall": 1.0,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIFC1",
+   "A": 0.5819110723031173,
+   "C_fall": 0.9735967703100818,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TUBA4A",
+   "A": 0.5815418101029004,
+   "C_fall": 0.9011197958480414,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RAN",
+   "A": 0.5814199305170435,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "DLGAP5",
+   "A": 0.5809823815652737,
+   "C_fall": 0.9625537488894585,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "PTTG1",
+   "A": 0.5803543396790716,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": true
+  },
+  {
+   "gene": "CPPED1",
+   "A": 0.5799469579561841,
+   "C_fall": 1.0,
+   "crash_interval": 1,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "NGRN",
+   "A": 0.5794538251432764,
+   "C_fall": 0.9080352922100562,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "FAM103A1",
+   "A": 0.5778366513903783,
+   "C_fall": 0.964755728950505,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BTK",
+   "A": 0.5770901999522116,
+   "C_fall": 0.9411862588209581,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SURF6",
+   "A": 0.5770426728473812,
+   "C_fall": 0.8896181801582751,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "RPRD1B",
+   "A": 0.576583484090617,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CCNB1",
+   "A": 0.5764135829651995,
+   "C_fall": 0.9451482526388864,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": true
+  },
+  {
+   "gene": "PDSS2",
+   "A": 0.5761889640608948,
+   "C_fall": 1.0,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DIS3L2",
+   "A": 0.5757029429971754,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ANLN",
+   "A": 0.5735445909435597,
+   "C_fall": 0.9126553939980986,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "C20orf11",
+   "A": 0.5735040394642098,
+   "C_fall": 0.9206343291707757,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "AP4M1",
+   "A": 0.5725691679106972,
+   "C_fall": 0.9930407590713314,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PSMD3",
+   "A": 0.5718556671061163,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "SMYD5",
+   "A": 0.5715419729398277,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ANKRD52",
+   "A": 0.570471104068238,
+   "C_fall": 0.9442033760693769,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KCMF1",
+   "A": 0.5679817998174109,
+   "C_fall": 0.952881732207617,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CPSF2",
+   "A": 0.5676524358022814,
+   "C_fall": 0.8528405220798991,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KLF13",
+   "A": 0.567190850024026,
+   "C_fall": 0.9092479924184752,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SET",
+   "A": 0.5665720769625568,
+   "C_fall": 1.0,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SARNP",
+   "A": 0.5653913361473852,
+   "C_fall": 0.8843047928558984,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NIN",
+   "A": 0.5652336816031778,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IFNGR1",
+   "A": 0.5642951464723129,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GLRX3",
+   "A": 0.5639730378061968,
+   "C_fall": 0.8683194360777889,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RPL3L",
+   "A": 0.5632577255237476,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SRP54",
+   "A": 0.5619294194942124,
+   "C_fall": 0.9194300047012351,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CCNA2",
+   "A": 0.5601941791683804,
+   "C_fall": 0.9540568001409544,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": true
+  },
+  {
+   "gene": "C12orf43",
+   "A": 0.5597302615218451,
+   "C_fall": 0.9224921747731032,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ARRB2",
+   "A": 0.5596118222221658,
+   "C_fall": 0.9354257859061131,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RNF220",
+   "A": 0.5591260471406834,
+   "C_fall": 0.9834835343693066,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NOL12",
+   "A": 0.5588599046236419,
+   "C_fall": 0.9523586681176569,
+   "crash_interval": 2,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "UBIAD1",
+   "A": 0.5561469189196091,
+   "C_fall": 0.9900752290913302,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EVI5L",
+   "A": 0.5558631568357393,
+   "C_fall": 1.0,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PSMD7",
+   "A": 0.555323849626626,
+   "C_fall": 0.9832205087199183,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TACC3",
+   "A": 0.5550684920793607,
+   "C_fall": 0.9326654138578334,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "CGREF1",
+   "A": 0.5550638426607658,
+   "C_fall": 0.9660696834879751,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PODXL",
+   "A": 0.5545820215620588,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NDRG1",
+   "A": 0.5545071937569885,
+   "C_fall": 0.9356614130856916,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PSMC2",
+   "A": 0.5544817673647491,
+   "C_fall": 0.9541864872147846,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CDCA5",
+   "A": 0.5538642540990042,
+   "C_fall": 0.9300699930465336,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "CLCN7",
+   "A": 0.5529731039735856,
+   "C_fall": 0.9427426757497344,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ATF7IP",
+   "A": 0.5526889439887123,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "UBE2D1",
+   "A": 0.5522403563960356,
+   "C_fall": 1.0,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TUBG1",
+   "A": 0.5510631886120517,
+   "C_fall": 0.8688631377727546,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "C2orf44",
+   "A": 0.5507479496642326,
+   "C_fall": 0.9168871560528438,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HMGCS1",
+   "A": 0.5501220319382663,
+   "C_fall": 0.9280286560965242,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "MLL3",
+   "A": 0.5494625554326402,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MTO1",
+   "A": 0.5484646316951058,
+   "C_fall": 0.8881935629679951,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HNRNPA0",
+   "A": 0.5468256457376343,
+   "C_fall": 0.8828258685467683,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "SNRPA1",
+   "A": 0.5460993325312901,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CEP85",
+   "A": 0.5453588150691844,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "UNCX",
+   "A": 0.5444402096411616,
+   "C_fall": 0.9031147480351922,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "C3orf38",
+   "A": 0.5443455751526806,
+   "C_fall": 0.9039115282901475,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CMAS",
+   "A": 0.5435158024499498,
+   "C_fall": 0.9450536853149708,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIF18B",
+   "A": 0.543180431418933,
+   "C_fall": 0.8791562623763269,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "SUGP2",
+   "A": 0.542992711813742,
+   "C_fall": 0.9617482100117204,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPL16",
+   "A": 0.5428039646103726,
+   "C_fall": 0.981613609370521,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SGOL2",
+   "A": 0.5407054361115486,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPS31",
+   "A": 0.5393385947050999,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "COPS7A",
+   "A": 0.5379785304403433,
+   "C_fall": 0.9554264344053396,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EIF4G2",
+   "A": 0.5371457745479168,
+   "C_fall": 0.9064519936939005,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MYH9",
+   "A": 0.5362797517960392,
+   "C_fall": 0.9938890800747111,
+   "crash_interval": 3,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "NME7",
+   "A": 0.5347961342921077,
+   "C_fall": 0.922504202320915,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NUP214",
+   "A": 0.5346227573235505,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FBRSL1",
+   "A": 0.5340579213775924,
+   "C_fall": 0.8240085537806063,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RAD21",
+   "A": 0.533841473043572,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NQO1",
+   "A": 0.5337685234255989,
+   "C_fall": 0.929401241859604,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CDC20",
+   "A": 0.5336920075585356,
+   "C_fall": 0.9732178921955054,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": true
+  },
+  {
+   "gene": "PEAK1",
+   "A": 0.5328329756000693,
+   "C_fall": 0.8161249481013186,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CPNE3",
+   "A": 0.5301739510943624,
+   "C_fall": 0.8084955394062634,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ACTR2",
+   "A": 0.5300215534247336,
+   "C_fall": 0.9694000715541442,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NUP88",
+   "A": 0.5281874749681261,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "OS9",
+   "A": 0.5281354033708459,
+   "C_fall": 0.9375861459146712,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPL9",
+   "A": 0.5262804122819972,
+   "C_fall": 0.8444660171768144,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PRC1",
+   "A": 0.5243628427391014,
+   "C_fall": 0.8939176106044716,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "MMAB",
+   "A": 0.5243485728719935,
+   "C_fall": 0.9936319359758118,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "AP3S1",
+   "A": 0.5233366000053407,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KRI1",
+   "A": 0.5224890872839967,
+   "C_fall": 0.9195160616336842,
+   "crash_interval": 3,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "PSMA7",
+   "A": 0.5221080817473789,
+   "C_fall": 0.9109544957040397,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SLC3A2",
+   "A": 0.5218286867608612,
+   "C_fall": 0.9925743103334473,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PRTN3",
+   "A": 0.5216621924400611,
+   "C_fall": 0.9294144152549795,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FBXO22",
+   "A": 0.5213619801348499,
+   "C_fall": 0.9429153872219331,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPL49",
+   "A": 0.5209787445442549,
+   "C_fall": 0.9035591194105774,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "UBXN4",
+   "A": 0.5201052079304761,
+   "C_fall": 0.8857994708098988,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPIE",
+   "A": 0.519838480540602,
+   "C_fall": 0.8657750950535198,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZW10",
+   "A": 0.5192946978425428,
+   "C_fall": 0.9868405981743207,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LMAN2",
+   "A": 0.5180144950691034,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZC3H14",
+   "A": 0.5177510205621139,
+   "C_fall": 0.9005155588526677,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "",
+   "A": 0.5169923375007414,
+   "C_fall": 0.949381353619254,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PRKCD",
+   "A": 0.516918507866873,
+   "C_fall": 0.8811857970958021,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TMEM173",
+   "A": 0.5162161028195253,
+   "C_fall": 0.9034666843021314,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SECISBP2",
+   "A": 0.5159240692307623,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TUBB",
+   "A": 0.5158675938655322,
+   "C_fall": 0.9593817025600423,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "TRNT1",
+   "A": 0.5135699943174863,
+   "C_fall": 0.8663128310375058,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "FLYWCH2",
+   "A": 0.5123108603843138,
+   "C_fall": 0.9402857363091077,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CLIP1",
+   "A": 0.5116526616524258,
+   "C_fall": 0.902427679011676,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CUL3",
+   "A": 0.5114206492412314,
+   "C_fall": 0.8819942031911072,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPS11",
+   "A": 0.5098672774346513,
+   "C_fall": 0.8706552654008493,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KPNA2",
+   "A": 0.509702086504205,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "MED16",
+   "A": 0.5094321949921554,
+   "C_fall": 0.9472423486614923,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SPECC1L",
+   "A": 0.5091289004394989,
+   "C_fall": 0.965279162691491,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIF22",
+   "A": 0.5086624352079968,
+   "C_fall": 0.9934723794368183,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IRAK3",
+   "A": 0.5082560260652336,
+   "C_fall": 0.9934347592533842,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "WDSUB1",
+   "A": 0.5080739211004142,
+   "C_fall": 0.9867567044033558,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CDK4",
+   "A": 0.5080587175455431,
+   "C_fall": 0.9538066122082675,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "YLPM1",
+   "A": 0.5069995109047976,
+   "C_fall": 0.9278048929914747,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RAI14",
+   "A": 0.5062143524625305,
+   "C_fall": 0.916181455494252,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TTC33",
+   "A": 0.5057819670698569,
+   "C_fall": 0.9147824827648398,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EEF2K",
+   "A": 0.5053643554802306,
+   "C_fall": 0.8171919690586109,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "UBE2S",
+   "A": 0.5051889516417022,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ABCA12",
+   "A": 0.5043568922846753,
+   "C_fall": 0.8804949444222501,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TUBGCP3",
+   "A": 0.5036909856499729,
+   "C_fall": 0.8882078669559264,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TMED2",
+   "A": 0.503594909176593,
+   "C_fall": 0.8931074266801932,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PAN3",
+   "A": 0.5033806094332542,
+   "C_fall": 0.904558177386428,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HSD17B11",
+   "A": 0.5031839789812612,
+   "C_fall": 0.8344911933785654,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BIN2",
+   "A": 0.5028599727114487,
+   "C_fall": 0.9205868195004426,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TP53RK",
+   "A": 0.5028535167572591,
+   "C_fall": 0.7913594902347669,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SERPINB1",
+   "A": 0.5018457034310881,
+   "C_fall": 0.9455016213265945,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "USP34",
+   "A": 0.5009673994595273,
+   "C_fall": 0.9706945196387287,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IARS",
+   "A": 0.5007433634454104,
+   "C_fall": 0.9113631965895744,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TYROBP",
+   "A": 0.5005862529658046,
+   "C_fall": 1.0,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TMPPE",
+   "A": 0.4994465451263144,
+   "C_fall": 0.9168723633955447,
+   "crash_interval": 0,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "LEO1",
+   "A": 0.4993796016609705,
+   "C_fall": 0.8556943345526526,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "TCEB1",
+   "A": 0.4993051761879626,
+   "C_fall": 0.7910067837763758,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MED14",
+   "A": 0.49883334846318916,
+   "C_fall": 0.8281397925737576,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PFDN2",
+   "A": 0.4985276949341662,
+   "C_fall": 0.8075813897487236,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MNDA",
+   "A": 0.4985230058271529,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PHF14",
+   "A": 0.49838995416606025,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NMT1",
+   "A": 0.49834669463729464,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MAD2L1",
+   "A": 0.49805733653780004,
+   "C_fall": 0.9210629570671839,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "C18orf8",
+   "A": 0.4971955973965703,
+   "C_fall": 0.8305794928388078,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "C19orf10",
+   "A": 0.49706257231457107,
+   "C_fall": 0.8494864938191692,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "AURKAIP1",
+   "A": 0.49704882767465247,
+   "C_fall": 0.8863615427301887,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PIK3C2A",
+   "A": 0.4965026344682465,
+   "C_fall": 0.772993509269724,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MUL1",
+   "A": 0.4954979782359312,
+   "C_fall": 0.9228225655172847,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GOPC",
+   "A": 0.4948650803336034,
+   "C_fall": 0.9588698077542139,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SASS6",
+   "A": 0.4948593794259086,
+   "C_fall": 0.8903676441354902,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NDUFB8",
+   "A": 0.49362711276045623,
+   "C_fall": 0.9850326153750986,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZNF512",
+   "A": 0.4936034149541858,
+   "C_fall": 0.9594149695290952,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DCAF13",
+   "A": 0.4918297253776153,
+   "C_fall": 0.9772434878033904,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FAM134C",
+   "A": 0.4916502009461464,
+   "C_fall": 0.9483657710740689,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "STOML2",
+   "A": 0.49141474359101894,
+   "C_fall": 0.8205837649871339,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LZTFL1",
+   "A": 0.49127984011260034,
+   "C_fall": 0.9841796504135943,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NQO2",
+   "A": 0.48921968829357,
+   "C_fall": 0.8400881217574571,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ANAPC5",
+   "A": 0.4889826237650658,
+   "C_fall": 0.9427197711751981,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SAP30",
+   "A": 0.48861062146880635,
+   "C_fall": 0.9622810118659104,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "UCK2",
+   "A": 0.48820583108345367,
+   "C_fall": 0.9493963778698032,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SKAP",
+   "A": 0.4878155630911591,
+   "C_fall": 0.9118329414937367,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PHF17",
+   "A": 0.48643950378236833,
+   "C_fall": 0.998578156101963,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NUP155",
+   "A": 0.48607738961017305,
+   "C_fall": 0.8478595610783692,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GFM1",
+   "A": 0.4851419189329561,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NUP107",
+   "A": 0.4845162635849095,
+   "C_fall": 0.8398573782551593,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIAA0391",
+   "A": 0.4838290868050825,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LRRC57",
+   "A": 0.48234814959227246,
+   "C_fall": 1.0,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PRKCI",
+   "A": 0.4816606929272278,
+   "C_fall": 0.9293002707900085,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "SVIL",
+   "A": 0.4813592644393941,
+   "C_fall": 0.8885654526395247,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIF11",
+   "A": 0.48074382135340266,
+   "C_fall": 0.8515439155629381,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "EBP",
+   "A": 0.48061841874937017,
+   "C_fall": 0.9827284459004929,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FCN1",
+   "A": 0.48016118620671216,
+   "C_fall": 0.8606252576793316,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TMX2",
+   "A": 0.4800320953786118,
+   "C_fall": 0.8042527051766718,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IWS1",
+   "A": 0.48001717299475744,
+   "C_fall": 0.9281570589377021,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "INTS7",
+   "A": 0.47994797404295164,
+   "C_fall": 0.9827736864062705,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TBRG4",
+   "A": 0.4798683827010179,
+   "C_fall": 0.8485837317419391,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EIF4G3",
+   "A": 0.4796970038017261,
+   "C_fall": 0.8162468045580582,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MT-ATP6",
+   "A": 0.47952369281381435,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FAM98A",
+   "A": 0.4792218150184664,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SPAG7",
+   "A": 0.4785218331151909,
+   "C_fall": 0.8594251690205479,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PUS7",
+   "A": 0.47744640128582977,
+   "C_fall": 0.8642991791642458,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DDX18",
+   "A": 0.47712687515149477,
+   "C_fall": 0.9013281847298705,
+   "crash_interval": 1,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "AGTPBP1",
+   "A": 0.4762461545894677,
+   "C_fall": 0.8847266580949036,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SETDB1",
+   "A": 0.4762162669733635,
+   "C_fall": 0.9950947807741995,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "CCDC127",
+   "A": 0.47620375010116467,
+   "C_fall": 0.9421510772175442,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "WBP11",
+   "A": 0.475433805228654,
+   "C_fall": 0.7571100837062656,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GRIPAP1",
+   "A": 0.4753193056651651,
+   "C_fall": 0.8102418405651604,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LNPEP",
+   "A": 0.4750993703061243,
+   "C_fall": 0.9448369714550497,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SMCR7L",
+   "A": 0.4745812344128415,
+   "C_fall": 0.8652789611434075,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HNRNPA2B1",
+   "A": 0.4741480721816549,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "STAMBPL1",
+   "A": 0.4736095205462123,
+   "C_fall": 0.9044094002317159,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GTSE1",
+   "A": 0.47216668246631766,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "CNOT10",
+   "A": 0.47186825717919695,
+   "C_fall": 0.9307636440238266,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NUDT1",
+   "A": 0.47149557563124084,
+   "C_fall": 0.9281712681836711,
+   "crash_interval": 3,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "NAT1",
+   "A": 0.47129853824334056,
+   "C_fall": 0.955464038325903,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "REST",
+   "A": 0.4712351589535927,
+   "C_fall": 0.817349078679425,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MAD1L1",
+   "A": 0.46958864801924005,
+   "C_fall": 0.9270417517605618,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZNF518A",
+   "A": 0.46937387102429656,
+   "C_fall": 0.9019016105175247,
+   "crash_interval": 3,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "FIS1",
+   "A": 0.46934862106664665,
+   "C_fall": 0.7814607738518844,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EEF1G",
+   "A": 0.46916052495966165,
+   "C_fall": 0.9852805840467855,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SRSF8",
+   "A": 0.4689066647820253,
+   "C_fall": 0.8816517647341544,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GAPVD1",
+   "A": 0.4680292795186256,
+   "C_fall": 0.9952245940853472,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LARP4B",
+   "A": 0.4669193034708332,
+   "C_fall": 0.8558569389780589,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TSNAX",
+   "A": 0.4669057683826222,
+   "C_fall": 0.7606623640506821,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DIMT1",
+   "A": 0.4646848277939999,
+   "C_fall": 0.966250062114568,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "THOC6",
+   "A": 0.46443827577208185,
+   "C_fall": 0.8532987312314754,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "SLC36A4",
+   "A": 0.46368527302925194,
+   "C_fall": 0.9593059736484957,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPME1",
+   "A": 0.4635540225064,
+   "C_fall": 0.8219163340781984,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPL53",
+   "A": 0.46351599703939395,
+   "C_fall": 0.8491617539793812,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TMUB2",
+   "A": 0.46256109185785976,
+   "C_fall": 0.8260192832261471,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RBM3",
+   "A": 0.4621161487926366,
+   "C_fall": 0.8338489902292772,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ERAL1",
+   "A": 0.4618181778354765,
+   "C_fall": 0.786659012852569,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZCCHC4",
+   "A": 0.4607945531509521,
+   "C_fall": 0.9381827731945322,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SERPINB8",
+   "A": 0.46075513932847806,
+   "C_fall": 0.875261051952139,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IMMT",
+   "A": 0.4591074955872246,
+   "C_fall": 0.8104964748818471,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TTI2",
+   "A": 0.45882087022071816,
+   "C_fall": 0.9464949156409058,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CTSH",
+   "A": 0.4581107099739673,
+   "C_fall": 0.935543566616936,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TUBGCP2",
+   "A": 0.457815027666592,
+   "C_fall": 0.826459696749101,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPP1R21",
+   "A": 0.45775553531706203,
+   "C_fall": 0.8303356499685265,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DOCK5",
+   "A": 0.4575281584192812,
+   "C_fall": 0.9822334169748614,
+   "crash_interval": 4,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "NT5C3",
+   "A": 0.4574544657942258,
+   "C_fall": 0.9067302449891045,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SKAP",
+   "A": 0.4568706114736502,
+   "C_fall": 0.9025384372085258,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TGIF2",
+   "A": 0.45685239895401153,
+   "C_fall": 0.8832413107001883,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BECN1",
+   "A": 0.45674352025448384,
+   "C_fall": 0.9538429812879519,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPIF",
+   "A": 0.4567369954259961,
+   "C_fall": 0.9716223957861605,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SNX14",
+   "A": 0.45663072686425477,
+   "C_fall": 0.9513956837806344,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SKP2",
+   "A": 0.4563896520442062,
+   "C_fall": 0.9147974114136178,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RBMX2",
+   "A": 0.45597328533299475,
+   "C_fall": 0.9556707855393123,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DERA",
+   "A": 0.45520432037134784,
+   "C_fall": 0.8848770104245499,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZMYM3",
+   "A": 0.45426741380200564,
+   "C_fall": 0.8179751942508559,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CDC7",
+   "A": 0.45407689489083836,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "XPA",
+   "A": 0.4529841839761051,
+   "C_fall": 0.9510007003984497,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CHCHD4",
+   "A": 0.4524220227935328,
+   "C_fall": 0.8377307513071437,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CHMP7",
+   "A": 0.45206902797167475,
+   "C_fall": 0.9125814241642104,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RAPGEF6",
+   "A": 0.45119850311521065,
+   "C_fall": 0.8112789437466762,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CCDC85C",
+   "A": 0.4510147104501825,
+   "C_fall": 0.8832264389172462,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BOD1L1",
+   "A": 0.4505587837413591,
+   "C_fall": 0.8822067559655766,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "C1orf149",
+   "A": 0.4495596322541217,
+   "C_fall": 0.7964616285202372,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BCKDHB",
+   "A": 0.4494368016617065,
+   "C_fall": 0.7283847700375354,
+   "crash_interval": 4,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "CC2D1A",
+   "A": 0.4493581507374878,
+   "C_fall": 0.8609596777437761,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "METTL5",
+   "A": 0.4492687221737478,
+   "C_fall": 0.9513001222106533,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SUPT16H",
+   "A": 0.44860341387644964,
+   "C_fall": 0.7753577747708553,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CIT",
+   "A": 0.448163890760646,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GBAS",
+   "A": 0.4475240738713835,
+   "C_fall": 0.9481202374885586,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "POLR3H",
+   "A": 0.4468898675967309,
+   "C_fall": 0.8590823143423327,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SVIP",
+   "A": 0.4450507599282464,
+   "C_fall": 0.9694187765765324,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ALCAM",
+   "A": 0.44316328780722547,
+   "C_fall": 0.9138089034044791,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GNB2",
+   "A": 0.4431608318126241,
+   "C_fall": 0.7721493487002768,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RTN4",
+   "A": 0.44295689063549604,
+   "C_fall": 0.9486665807208239,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPP2R5E",
+   "A": 0.44252950182723516,
+   "C_fall": 0.9767613174478296,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PRMT3",
+   "A": 0.4420811005221964,
+   "C_fall": 0.9494375013649782,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SMS",
+   "A": 0.44190994525965066,
+   "C_fall": 0.7376124414818732,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "COX20",
+   "A": 0.4417708790092448,
+   "C_fall": 0.8114804984893814,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "VCP",
+   "A": 0.44122906052457334,
+   "C_fall": 0.9739287063195616,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "RPS27L",
+   "A": 0.44119848575499016,
+   "C_fall": 0.8862177347193957,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RAB11FIP3",
+   "A": 0.44003253330208036,
+   "C_fall": 0.883830540834239,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "LSM7",
+   "A": 0.4399288375787921,
+   "C_fall": 0.9865339370720244,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ROCK2",
+   "A": 0.4388220711683056,
+   "C_fall": 0.7624551498536112,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SSR1",
+   "A": 0.43874000112455264,
+   "C_fall": 0.8798251806870636,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BRPF1",
+   "A": 0.4379328198746606,
+   "C_fall": 0.7419924396057921,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PIEZO1",
+   "A": 0.4360078400039088,
+   "C_fall": 0.8233434207443464,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ABCF2",
+   "A": 0.4359663665777781,
+   "C_fall": 0.8831988628660634,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "STOM",
+   "A": 0.4355063392379364,
+   "C_fall": 0.8308256659053438,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "POLD2",
+   "A": 0.4340683926771766,
+   "C_fall": 0.860752878915117,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "OGFOD1",
+   "A": 0.43383490425632454,
+   "C_fall": 0.7836191469767263,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SF3A1",
+   "A": 0.4333602066603115,
+   "C_fall": 0.874405628414,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IMPA1",
+   "A": 0.43216838304169136,
+   "C_fall": 0.9919021601808929,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SAFB2",
+   "A": 0.43117774186534996,
+   "C_fall": 0.7873833133296669,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RPL7A",
+   "A": 0.4300917466852212,
+   "C_fall": 0.9956558555040802,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ENO1",
+   "A": 0.4299662283971112,
+   "C_fall": 0.9390168545837918,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ANKLE2",
+   "A": 0.42896541346480466,
+   "C_fall": 0.9426449761793444,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RAB22A",
+   "A": 0.428441377583306,
+   "C_fall": 0.8745570986663915,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "AGPAT6",
+   "A": 0.4284354038444031,
+   "C_fall": 0.8354017638006337,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EIF2C2",
+   "A": 0.4282947324498,
+   "C_fall": 0.8062586467204919,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PUM1",
+   "A": 0.42817851821959235,
+   "C_fall": 0.7540750358721138,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GPX7",
+   "A": 0.4280897692131144,
+   "C_fall": 0.8991293794015897,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HRSP12",
+   "A": 0.42790792756139606,
+   "C_fall": 0.7928397671073086,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ATXN7L3B",
+   "A": 0.4278608742800678,
+   "C_fall": 0.8147866219821085,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MAPK1",
+   "A": 0.42765867642398775,
+   "C_fall": 0.8467773937782611,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RRP36",
+   "A": 0.4242818733365504,
+   "C_fall": 0.8621524632114316,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "NUDT4",
+   "A": 0.4242808575422973,
+   "C_fall": 0.8597914758882385,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SCO2",
+   "A": 0.42422964875730895,
+   "C_fall": 0.978858732667475,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZCCHC7",
+   "A": 0.42264869199469235,
+   "C_fall": 0.860981780608687,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CCNL1",
+   "A": 0.42191530583030923,
+   "C_fall": 0.8844791842634879,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPOX",
+   "A": 0.4218519711432021,
+   "C_fall": 0.8014096990647207,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HSD17B12",
+   "A": 0.4218376850632054,
+   "C_fall": 0.877978552796571,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CDKN2AIPNL",
+   "A": 0.42177227249300275,
+   "C_fall": 0.7766677635824155,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EIF3E",
+   "A": 0.42124332562051137,
+   "C_fall": 0.816498525260181,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EP300",
+   "A": 0.42117180057905373,
+   "C_fall": 0.9077663470134277,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PEX14",
+   "A": 0.42032419576242697,
+   "C_fall": 0.966192442385368,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "",
+   "A": 0.4201767924691211,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PRPF19",
+   "A": 0.41984819330130374,
+   "C_fall": 0.8092034623384347,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "LIMA1",
+   "A": 0.4194749925768383,
+   "C_fall": 0.7414212356984633,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GALK2",
+   "A": 0.41941405432277973,
+   "C_fall": 0.7996759523149197,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ATAD3A",
+   "A": 0.41915845707077765,
+   "C_fall": 0.890963772704444,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CISD3",
+   "A": 0.41877786708406556,
+   "C_fall": 0.8896112380520976,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MT-CO1",
+   "A": 0.41847179151986463,
+   "C_fall": 0.7766500670980082,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIF20B",
+   "A": 0.41833979609553695,
+   "C_fall": 1.0,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "DIAPH2",
+   "A": 0.4174315279170006,
+   "C_fall": 0.8751992251502536,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ACLY",
+   "A": 0.4172970775203232,
+   "C_fall": 0.9848375026679613,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "PRKAG1",
+   "A": 0.41649174454718396,
+   "C_fall": 0.8265456053513947,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "",
+   "A": 0.41592174088697303,
+   "C_fall": 0.8374647294924578,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "STUB1",
+   "A": 0.4146255356329549,
+   "C_fall": 0.8891851368782875,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "POLR3B",
+   "A": 0.4143170439465206,
+   "C_fall": 0.8039715205829542,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KLHL36",
+   "A": 0.41392094750327674,
+   "C_fall": 0.8929930602104761,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TDRD10",
+   "A": 0.4136718803315539,
+   "C_fall": 0.9925520681704619,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RFC4",
+   "A": 0.4128446887217757,
+   "C_fall": 0.9610324799535452,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FKBP14",
+   "A": 0.4127287195445505,
+   "C_fall": 0.989414913431522,
+   "crash_interval": 1,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TIMELESS",
+   "A": 0.4124572063914458,
+   "C_fall": 0.9301360750659656,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "CPD",
+   "A": 0.4121581279412086,
+   "C_fall": 0.8316465731713647,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TRAFD1",
+   "A": 0.4121152966126057,
+   "C_fall": 0.8833008229663386,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TRIM21",
+   "A": 0.41195560693657296,
+   "C_fall": 0.8552817999023131,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "AK4",
+   "A": 0.41145741363101695,
+   "C_fall": 0.8740940047131501,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PIWIL4",
+   "A": 0.41090133007670976,
+   "C_fall": 0.8154661418857992,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "C21orf59",
+   "A": 0.40980668368761103,
+   "C_fall": 0.8542575449844753,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MTMR2",
+   "A": 0.408967041616691,
+   "C_fall": 0.8286238146078089,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CHURC1-FNTB",
+   "A": 0.40857704346817225,
+   "C_fall": 0.9391710185404485,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MAP3K1",
+   "A": 0.4085545150475868,
+   "C_fall": 0.8495334656043272,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PARVG",
+   "A": 0.40842670463155084,
+   "C_fall": 0.8624769818478328,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "POLB",
+   "A": 0.4081810185456687,
+   "C_fall": 0.723769754748109,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CCDC99",
+   "A": 0.4079418554288294,
+   "C_fall": 0.864445829890413,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CTSG",
+   "A": 0.4079122072391846,
+   "C_fall": 0.8500320480442456,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KARS",
+   "A": 0.4077122473661938,
+   "C_fall": 0.8725162822522325,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "POGK",
+   "A": 0.40762275916525814,
+   "C_fall": 0.8813501995226559,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SRI",
+   "A": 0.40681841692620796,
+   "C_fall": 0.8922823131795323,
+   "crash_interval": 4,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "AKAP1",
+   "A": 0.4064626148741563,
+   "C_fall": 0.771407002506126,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "IGSF8",
+   "A": 0.40639330135743496,
+   "C_fall": 0.7834743147410985,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BRCA1",
+   "A": 0.40619901857662466,
+   "C_fall": 0.8163866121666059,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PLEK",
+   "A": 0.40603892231233557,
+   "C_fall": 0.879936449927362,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MKLN1",
+   "A": 0.40534174265138273,
+   "C_fall": 0.7564538669368672,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NUP85",
+   "A": 0.40482677611637485,
+   "C_fall": 0.8979254143707972,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "C8orf33",
+   "A": 0.4047988025969432,
+   "C_fall": 0.7503491423989985,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RALGAPA1",
+   "A": 0.4043269801103945,
+   "C_fall": 0.7423808832418048,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CCDC94",
+   "A": 0.4042718704410822,
+   "C_fall": 0.7873872670637939,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NUP93",
+   "A": 0.4038049461608204,
+   "C_fall": 0.9532763839474141,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TRIM71",
+   "A": 0.4034794430964199,
+   "C_fall": 0.8152735473801089,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EIF2B5",
+   "A": 0.40333452568281275,
+   "C_fall": 0.8919355554296322,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "VAMP8",
+   "A": 0.40301518271404735,
+   "C_fall": 0.8413047874009439,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "XPO6",
+   "A": 0.4025190808515977,
+   "C_fall": 0.9841363738715471,
+   "crash_interval": 4,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "WDHD1",
+   "A": 0.4024619388386461,
+   "C_fall": 0.9266310179107111,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TTI1",
+   "A": 0.40208708757932154,
+   "C_fall": 0.9602376642264825,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPL43",
+   "A": 0.40199863201603875,
+   "C_fall": 0.8669284088573306,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ISCU",
+   "A": 0.4019672261960883,
+   "C_fall": 0.8763949269755883,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BIN3",
+   "A": 0.4019489047504884,
+   "C_fall": 0.8060542155957404,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "B3GNT2",
+   "A": 0.40176302312304957,
+   "C_fall": 0.8704350751196782,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SPATS2L",
+   "A": 0.40155815604009304,
+   "C_fall": 0.7317950225983163,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPS10",
+   "A": 0.40155401407749397,
+   "C_fall": 0.792867262281161,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ARHGDIB",
+   "A": 0.39998507984237314,
+   "C_fall": 0.8777631191337372,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ERP44",
+   "A": 0.399954485467988,
+   "C_fall": 0.6991119592485804,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PSMB10",
+   "A": 0.3996488323082571,
+   "C_fall": 0.7950081497430561,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GTF2I",
+   "A": 0.3991945362624808,
+   "C_fall": 0.8294516056252473,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CYB5A",
+   "A": 0.39912120191448713,
+   "C_fall": 0.7928321491005768,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "CINP",
+   "A": 0.3986640901870142,
+   "C_fall": 0.9108221396208139,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NFRKB",
+   "A": 0.3980560504226491,
+   "C_fall": 0.8957248908212968,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "VAMP3",
+   "A": 0.3976241037406943,
+   "C_fall": 0.8515268983669936,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ALG1",
+   "A": 0.3966034513125809,
+   "C_fall": 0.9867373435759315,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SLC25A5",
+   "A": 0.3962966076225459,
+   "C_fall": 0.9213536651336579,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "N4BP2",
+   "A": 0.3962850408475618,
+   "C_fall": 0.8895119353240171,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIAA1731",
+   "A": 0.39611086885683916,
+   "C_fall": 0.6919234007158469,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "C6orf108",
+   "A": 0.39609902478615744,
+   "C_fall": 0.897275551400655,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FXN",
+   "A": 0.39568780825004907,
+   "C_fall": 0.7322783552455793,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BUB1B",
+   "A": 0.395565172592087,
+   "C_fall": 0.7730815499739514,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "TWF2",
+   "A": 0.3955489129013467,
+   "C_fall": 0.8287521357190164,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ARPC2",
+   "A": 0.3951508324155051,
+   "C_fall": 0.830327865024176,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ATP5C1",
+   "A": 0.39455158391144746,
+   "C_fall": 0.7406394823122264,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPP2R5A",
+   "A": 0.39407264636925854,
+   "C_fall": 0.8857263396992693,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SMAD4",
+   "A": 0.39405217658730757,
+   "C_fall": 0.8035457341090041,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SNX8",
+   "A": 0.39385865996243863,
+   "C_fall": 0.8075199169099629,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NME1-NME2",
+   "A": 0.3937465315404035,
+   "C_fall": 0.8847855068305855,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NUCB2",
+   "A": 0.3932674913748034,
+   "C_fall": 0.846849299564687,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TAF5",
+   "A": 0.3932586293787016,
+   "C_fall": 0.7012942807509598,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MAT2A",
+   "A": 0.39321269701399886,
+   "C_fall": 0.7928010614826589,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PURB",
+   "A": 0.39274819809705896,
+   "C_fall": 0.7718787886068064,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RUNX1",
+   "A": 0.3923921847210133,
+   "C_fall": 0.7627255451150113,
+   "crash_interval": 4,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "HDLBP",
+   "A": 0.3923581906338347,
+   "C_fall": 0.9497662119509476,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MED31",
+   "A": 0.3917818864008719,
+   "C_fall": 0.7838187816037879,
+   "crash_interval": 2,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "PCGF6",
+   "A": 0.3915721620700614,
+   "C_fall": 0.8714559484036758,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ATP5F1",
+   "A": 0.3915565031014355,
+   "C_fall": 0.7045360310815095,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PLBD2",
+   "A": 0.39140624781932326,
+   "C_fall": 0.8813859765250144,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "HDDC2",
+   "A": 0.3905118859669887,
+   "C_fall": 0.8209873842324469,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TRMT61B",
+   "A": 0.3904162298182519,
+   "C_fall": 0.7901219176618062,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ANKRD13A",
+   "A": 0.39004643809666695,
+   "C_fall": 0.7331565546188354,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "API5",
+   "A": 0.3896481340902972,
+   "C_fall": 0.8543374034736724,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CEP164",
+   "A": 0.3896206487668714,
+   "C_fall": 0.9765318931244886,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRS2",
+   "A": 0.3890049193436229,
+   "C_fall": 0.8848329672411921,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CD99L2",
+   "A": 0.38861706036538535,
+   "C_fall": 0.9414489273059105,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ATP6V1B2",
+   "A": 0.3884709181944267,
+   "C_fall": 0.8121698317665991,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CTSD",
+   "A": 0.38809502411174623,
+   "C_fall": 0.9789576510872842,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "WDR19",
+   "A": 0.38792845291713196,
+   "C_fall": 0.8115271855565935,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TDRD3",
+   "A": 0.38781903358799713,
+   "C_fall": 0.8232879730716144,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MRPL48",
+   "A": 0.38722887575708187,
+   "C_fall": 0.9045818079793541,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CKAP2",
+   "A": 0.38686842558794576,
+   "C_fall": 0.9228263041398014,
+   "crash_interval": 5,
+   "group": "both",
+   "canonical": false
+  },
+  {
+   "gene": "COX6A1",
+   "A": 0.385828326474613,
+   "C_fall": 0.8024147744914563,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MED30",
+   "A": 0.38578925817688947,
+   "C_fall": 0.9440340499513626,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DKC1",
+   "A": 0.3853866482687521,
+   "C_fall": 0.8387681500475872,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PTEN",
+   "A": 0.3853680011593398,
+   "C_fall": 0.6873995958254073,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NPM1",
+   "A": 0.385177333232818,
+   "C_fall": 0.7322314291141034,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "APOA1BP",
+   "A": 0.3850387844021903,
+   "C_fall": 0.8254354491096585,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FOPNL",
+   "A": 0.3847143472894868,
+   "C_fall": 0.7846954966959728,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "UQCR11",
+   "A": 0.3846628440848122,
+   "C_fall": 0.7876935208645262,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KIF2A",
+   "A": 0.38458790353242883,
+   "C_fall": 0.7268441659174889,
+   "crash_interval": 4,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "MTR",
+   "A": 0.38418049053901737,
+   "C_fall": 0.7795200118616867,
+   "crash_interval": 2,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "PPP1CC",
+   "A": 0.3833510165304958,
+   "C_fall": 0.8606647653551226,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NAA30",
+   "A": 0.38297831239257996,
+   "C_fall": 0.9462081089306958,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "VPS53",
+   "A": 0.38261736402099,
+   "C_fall": 0.7298237477537153,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SF3B1",
+   "A": 0.3825270901914841,
+   "C_fall": 0.7419451305622902,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EFCAB4B",
+   "A": 0.3823713630006039,
+   "C_fall": 0.7074545415518199,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CUL4B",
+   "A": 0.3822377042860417,
+   "C_fall": 0.7657400801682982,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "EPS15L1",
+   "A": 0.3811714397186915,
+   "C_fall": 0.8113647550913745,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FHL3",
+   "A": 0.3810136171357616,
+   "C_fall": 0.8078757877600148,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DDX10",
+   "A": 0.3805602512057984,
+   "C_fall": 0.7729662423713195,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZC3H18",
+   "A": 0.38043661756825115,
+   "C_fall": 0.7436183815122765,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GPD1L",
+   "A": 0.3800998332052338,
+   "C_fall": 0.8575960526564449,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ZXDC",
+   "A": 0.3797693926294438,
+   "C_fall": 0.7061663360301377,
+   "crash_interval": 2,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "RPS7",
+   "A": 0.37970640742487854,
+   "C_fall": 0.8389285895454054,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MALT1",
+   "A": 0.3791448233073418,
+   "C_fall": 0.8125172538857265,
+   "crash_interval": 0,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "PITHD1",
+   "A": 0.3789293458720351,
+   "C_fall": 0.7610081856689593,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ATP5SL",
+   "A": 0.37861604766414597,
+   "C_fall": 0.7820511288746136,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MAP4",
+   "A": 0.3783229983901413,
+   "C_fall": 0.7670621085885443,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DPH5",
+   "A": 0.3782422579167053,
+   "C_fall": 0.7687436922130579,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "OXSR1",
+   "A": 0.3773679292981888,
+   "C_fall": 0.8217713213236821,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "DDX46",
+   "A": 0.376767161179399,
+   "C_fall": 0.8260945910593778,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KDM2A",
+   "A": 0.37656175405904085,
+   "C_fall": 0.7173683973172229,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "KDM3A",
+   "A": 0.37615676976229173,
+   "C_fall": 0.7644189687480718,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CSTA",
+   "A": 0.375525013689478,
+   "C_fall": 0.9860693884279361,
+   "crash_interval": 5,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "TMEM87A",
+   "A": 0.3755047762033802,
+   "C_fall": 0.9079960681666192,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TMOD3",
+   "A": 0.3753034673110844,
+   "C_fall": 0.7767802228052834,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TSR2",
+   "A": 0.37457677502383585,
+   "C_fall": 0.7983576728367465,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TRIM56",
+   "A": 0.37452740401212176,
+   "C_fall": 0.7636534626221967,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NRD1",
+   "A": 0.3744780918318585,
+   "C_fall": 0.7760044605189097,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TRIM38",
+   "A": 0.3740475222956249,
+   "C_fall": 0.8149077136603864,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "RRAGC",
+   "A": 0.37398191296235406,
+   "C_fall": 0.7907512803903987,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "FUNDC2",
+   "A": 0.3738613696086524,
+   "C_fall": 0.7925843890191013,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "OBSL1",
+   "A": 0.37356748491787817,
+   "C_fall": 0.8915794437210545,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "TERF2",
+   "A": 0.3735169735410074,
+   "C_fall": 0.8209818745258287,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NPM1",
+   "A": 0.3733777903232135,
+   "C_fall": 0.8833456439811322,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MAP1LC3B2",
+   "A": 0.37330181920077193,
+   "C_fall": 0.7043233865440616,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MYL3",
+   "A": 0.37259988815748885,
+   "C_fall": 0.8456680220628425,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "STIP1",
+   "A": 0.3722382730294884,
+   "C_fall": 0.8486048172562778,
+   "crash_interval": 3,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ICT1",
+   "A": 0.37207516667211393,
+   "C_fall": 0.9162545234856468,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "NAGA",
+   "A": 0.3719818591124454,
+   "C_fall": 0.8201720731030442,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "SLC29A2",
+   "A": 0.37185768040080425,
+   "C_fall": 0.6688351829686341,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "MIB1",
+   "A": 0.37181125652712776,
+   "C_fall": 0.8861310755886631,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "CSTF2T",
+   "A": 0.3716604604977037,
+   "C_fall": 0.8198062515074458,
+   "crash_interval": 4,
+   "group": "neither",
+   "canonical": false
+  },
+  {
+   "gene": "IKZF3",
+   "A": 0.3716595815600211,
+   "C_fall": 0.7474396880951621,
+   "crash_interval": 0,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "GSPT1",
+   "A": 0.37130825861697003,
+   "C_fall": 0.9554016567674065,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "ALG8",
+   "A": 0.371047114896616,
+   "C_fall": 0.8362477222928288,
+   "crash_interval": 5,
+   "group": null,
+   "canonical": false
+  },
+  {
+   "gene": "BRCA2",
+   "A": 0.3709579762283313,
+   "C_fall": 0.7563858786304133,
+   "crash_interval": 5,
+   "group": "protein only",
+   "canonical": false
+  },
+  {
+   "gene": "DOK1",
+   "A": 0.37043480563244696,
+   "C_fall": 0.8458170439814139,
+   "crash_interval": 4,
+   "group": null,
+   "canonical": false
+  }
+ ]
+}

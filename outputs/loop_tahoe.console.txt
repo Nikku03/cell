@@ -1,0 +1,90 @@
+========================================================================================================
+LOOP 268 -- THE OFF-DIAGONAL OPERATOR AND THE TRANSFER CURVE, OUTSIDE LINCS
+========================================================================================================
+     Two findings have only ever been tested on LINCS shRNA. Score2 could test one of
+     them: its fitness is a SCALAR per (gene, line), so there is no operator at all.
+     Tahoe is the first data with 50 cell lines AND a 978-gene readout, so both the
+     off-diagonal claim (loop 262) and the transfer curve (loops 265, 267) can run.
+     CONDITIONING DECLARED FIRST: LINCS gave 3,801 perturbations per line against 978
+     genes, 3.8 observations per operator parameter. Tahoe gives 644, so a full
+     978x978 operator would be UNDERdetermined at 0.66:1 and a weak result would be
+     ambiguous. The operator is fitted on the K most variable genes with K set so
+     that observations per parameter exceed 2:1, and K is reported.
+     31,566 conditions x 834 well-covered genes, 49 cell lines, 695 (drug, dose) combos
+U1 IS THE INTERACTION SUBSTANTIAL?
+     drug main 20.0%, line main 7.8%, interaction 75.8%
+     LINCS shRNA was 27.6% / 3.8% / 68.7%
+     U1 PASS -- 75.8% of the variance is drug x line interaction
+U2 DOES LOOP 260'S GEOMETRY REPLICATE A THIRD TIME?
+     best drug-only model of the residual 0.000116, line-only 0.000104
+     LINCS shRNA 0.000270 / 0.000017; Score2 CRISPR 0.000000 / 0.000000
+     U2 PASS -- 0.0116% and 0.0104%; double-centring pins one-way models at zero on a third assay
+     running the operator and transfer analysis ...
+     all doses: 49 lines, ~644 conditions each, operator on the K=322 most variable of 834 genes (2.0 obs per parameter)
+       all doses: held-out line 1/25
+       all doses: held-out line 6/25
+       all doses: held-out line 11/25
+       all doses: held-out line 16/25
+       all doses: held-out line 21/25
+U3 IS THE INTERACTION OFF-DIAGONAL HERE TOO?
+     full operator +0.0752 vs diagonal +0.0062   +0.0690
+     loop 262 on LINCS: +0.0673 full against +0.0238 diagonal, difference +0.0435
+     U3 PASS -- the off-diagonal is worth +0.0690 beyond a diagonal on drug perturbations too, so loop 262's claim is not a LINCS artefact
+U4 LOAD-BEARING -- DOES TRANSFER RISE WITH THE NUMBER OF LINES?
+       n =  2 training lines   excess +0.0011   (null +0.0000)
+       n =  4 training lines   excess +0.0016   (null +0.0001)
+       n =  8 training lines   excess +0.0031   (null +0.0001)
+       n = 16 training lines   excess +0.0056   (null +0.0004)
+       n = 24 training lines   excess +0.0082   (null +0.0007)
+       n = 32 training lines   excess +0.0116   (null +0.0010)
+       n = 40 training lines   excess +0.0187   (null +0.0014)
+       n = 48 training lines   excess +0.0834   (null +0.0016)
+     n=2 -> n=48: +0.0824
+     the bar is RELATIVE to this dataset's own n=2 point. Loop 267's T4 failed
+     by 0.0012 against an ABSOLUTE bar set before its assay's scale was known.
+     U4 PASS -- the excess grows +0.0824 from 2 to 48 training lines, in excess of a gene-shuffled null
+U5 WHERE DOES IT SATURATE?
+     maximum excess +0.0834, 90% of it first reached at n = 48
+     Score2 saturated at 600 of 907; loop 265 extrapolated 61
+     NOT GATED: only 48 training lines exist here, so a saturation point near
+     48 is CENSORED by the data rather than measured, and gating a censored
+     quantity would manufacture a verdict out of a limit of the dataset.
+U6 DOES IT REPLICATE ACROSS DOSE?
+     dose 0.05: 49 lines, ~253 conditions each, operator on the K=126 most variable of 802 genes (2.0 obs per parameter)
+       dose 0.05: held-out line 1/25
+       dose 0.05: held-out line 6/25
+       dose 0.05: held-out line 11/25
+       dose 0.05: held-out line 16/25
+       dose 0.05: held-out line 21/25
+     dose 0.05: off-diagonal +0.0690, transfer growth +0.0710 (K=126)
+     dose 0.5: 49 lines, ~204 conditions each, operator on the K=102 most variable of 873 genes (2.0 obs per parameter)
+       dose 0.5: held-out line 1/25
+       dose 0.5: held-out line 6/25
+       dose 0.5: held-out line 11/25
+       dose 0.5: held-out line 16/25
+       dose 0.5: held-out line 21/25
+     dose 0.5: off-diagonal +0.0260, transfer growth +0.0313 (K=102)
+     between doses: off-diagonal differs by 0.0430, transfer growth by 0.0397
+     U6 FAIL -- the doses differ by 0.0430; the result depends on concentration and is not a property of the cell lines
+U7 WHAT THIS CANNOT SHOW
+     The operator uses K=322 genes, not 978, because 644 conditions per line cannot
+     condition a 978x978 fit. Loop 262's ABSOLUTE numbers are therefore not
+     comparable; only the sign and rough size of the off-diagonal effect are.
+     DRUGS, not gene knockdowns. A drug hits many targets and its 'perturbation
+     identity' is not a gene, so agreement with LINCS is a statement about response
+     structure, not about the same biological intervention.
+     8 points up to 49 training lines. Score2 needed 600 to saturate, so
+     this curve is almost certainly still climbing at its right edge and U5 says so.
+     50 cancer cell lines on one platform. Saturation within that population is not
+     saturation across human cell states.
+     Everything is on the double-centred residual, so by loop 260 and U2 any arm
+     constant across lines is pinned near zero however expressive it is.
+========================================================================================================
+  U1  PASS
+  U2  PASS
+  U3  PASS
+  U4  PASS
+  U6  FAIL
+  4/5   [206s]
+========================================================================================================
+     written outputs/loop_tahoe.json

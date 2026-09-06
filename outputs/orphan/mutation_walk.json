@@ -1,0 +1,98 @@
+[
+  {
+    "gene": "BRAF",
+    "variant": "V600E",
+    "matters": "GOF-candidate",
+    "functional_score": 1.126,
+    "ddg": 0.51,
+    "burial": 167.0,
+    "surface": false,
+    "n_wt_interactions": 33,
+    "interactions_to_walk": [
+      "S100P",
+      "JTB",
+      "ARMCX3",
+      "RPS6KB2",
+      "KSR1",
+      "KSR2",
+      "FKBP5",
+      "HRAS",
+      "PEBP1",
+      "PPP5C"
+    ],
+    "verdict": "functional but STABILITY-NEUTRAL and buried in the MONOMER \u2014 effect is an interface/allosteric change the monomer scaffold cannot see (this is the BRAF-V600E / KRAS-G12D pattern: buried in the monomer, active at the DIMER/GAP interface)",
+    "needs_to_be_certain": "AlphaFold-Multimer of the relevant complex \u2014 the effect is at an interface not present in the monomer"
+  },
+  {
+    "gene": "TP53",
+    "variant": "R175H",
+    "matters": "functional (direction unresolved)",
+    "functional_score": 0.615,
+    "ddg": 0.76,
+    "burial": 182.0,
+    "surface": false,
+    "n_wt_interactions": 219,
+    "interactions_to_walk": [
+      "JUN",
+      "TAF9",
+      "ATG7",
+      "RAD51",
+      "OTUB1",
+      "ATM",
+      "KAT2A",
+      "KAT2B",
+      "KAT5",
+      "KAT6A"
+    ],
+    "verdict": "functional but STABILITY-NEUTRAL and buried in the MONOMER \u2014 effect is an interface/allosteric change the monomer scaffold cannot see (this is the BRAF-V600E / KRAS-G12D pattern: buried in the monomer, active at the DIMER/GAP interface)",
+    "needs_to_be_certain": "AlphaFold-Multimer of the relevant complex \u2014 the effect is at an interface not present in the monomer"
+  },
+  {
+    "gene": "KRAS",
+    "variant": "G12D",
+    "matters": "GOF-candidate",
+    "functional_score": 7.4,
+    "ddg": -0.21,
+    "burial": 142.0,
+    "surface": false,
+    "n_wt_interactions": 35,
+    "interactions_to_walk": [
+      "BCL2L1",
+      "APPL1",
+      "LGALS3",
+      "HRAS",
+      "ARPC1A",
+      "ARPC1B",
+      "BRAF",
+      "CALM1",
+      "CALM3",
+      "CALML4"
+    ],
+    "verdict": "functional but STABILITY-NEUTRAL and buried in the MONOMER \u2014 effect is an interface/allosteric change the monomer scaffold cannot see (this is the BRAF-V600E / KRAS-G12D pattern: buried in the monomer, active at the DIMER/GAP interface)",
+    "needs_to_be_certain": "AlphaFold-Multimer of the relevant complex \u2014 the effect is at an interface not present in the monomer"
+  },
+  {
+    "gene": "VHL",
+    "variant": "R167W",
+    "matters": "functional (direction unresolved)",
+    "functional_score": 1.74,
+    "ddg": -0.23,
+    "burial": 161.0,
+    "surface": false,
+    "n_wt_interactions": 55,
+    "interactions_to_walk": [
+      "KIRREL2",
+      "BCL2L1",
+      "ELOB",
+      "ELOC",
+      "AVP",
+      "COMP",
+      "UTRN",
+      "C1QTNF2",
+      "UBC",
+      "BCL2L14"
+    ],
+    "verdict": "functional but STABILITY-NEUTRAL and buried in the MONOMER \u2014 effect is an interface/allosteric change the monomer scaffold cannot see (this is the BRAF-V600E / KRAS-G12D pattern: buried in the monomer, active at the DIMER/GAP interface)",
+    "needs_to_be_certain": "AlphaFold-Multimer of the relevant complex \u2014 the effect is at an interface not present in the monomer"
+  }
+]

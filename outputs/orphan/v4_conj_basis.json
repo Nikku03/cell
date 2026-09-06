@@ -1,0 +1,62 @@
+{
+  "blocks": 8,
+  "log": [
+    "================================================================================================",
+    "DOES CONJUNCTION GROWTH NEED AN AXIS-ALIGNED BASIS?",
+    "================================================================================================",
+    "  PREDECLARED: named keeps its gain; both rotations lose most or all of it.",
+    "  If all three behave alike, the basis is not what broke the Replogle run.",
+    "  DepMap: 1,150 lines x 17,931 genes (>=100 measured lines)",
+    "  target: per-gene mean residual after the line marginal; sd 0.3829, range [-4.180, 0.645]",
+    "  features: 60 columns from 11 numeric + 3 categorical; EXCLUDED as DepMap-derived ['dep_frac', 'ess', 'ess_prob', 'ess_src']",
+    "  genes with annotation and a finite target: 15,567",
+    "\n  8 held-out gene blocks; every arm scored against plain ridge ON ITS OWN BASIS",
+    "\n  basis           ridge  +learned  +shuffled  learned-ridge  learned-shuffled      MDE  verdict",
+    "  named          0.3303    0.3177     0.3273        -0.0126           -0.0096   0.0014  RESOLVED",
+    "  pca            0.3303    0.3303     0.3303        +0.0000           +0.0000   0.0000  within noise",
+    "  random_rot     0.3303    0.3301     0.3303        -0.0002           -0.0001   0.0004  within noise",
+    "\n  RETENTION of the named basis's genuine gain (-0.0096) after rotation:",
+    "    pca          +0.0000     -0.0% retained",
+    "    random_rot   -0.0001      1.6% retained"
+  ],
+  "n_features": 60,
+  "n_genes": 15567,
+  "summary": {
+    "named": {
+      "blocks_learned_better": 8,
+      "learned": 0.3176782617412526,
+      "learned_minus_ridge": -0.012586245783986899,
+      "learned_minus_shuffled": -0.009588777207521028,
+      "mde": 0.0014279666939729973,
+      "mean_grown": 54.375,
+      "resolved": true,
+      "ridge": 0.3302645075252395,
+      "shuffled": 0.3272670389487736
+    },
+    "pca": {
+      "blocks_learned_better": 0,
+      "learned": 0.3302627198423612,
+      "learned_minus_ridge": 0.0,
+      "learned_minus_shuffled": 0.0,
+      "mde": 0.0,
+      "mean_grown": 0.0,
+      "resolved": false,
+      "ridge": 0.3302627198423612,
+      "shuffled": 0.3302627198423612
+    },
+    "random_rot": {
+      "blocks_learned_better": 1,
+      "learned": 0.3301106690009469,
+      "learned_minus_ridge": -0.00015205084141430708,
+      "learned_minus_shuffled": -0.0001495063577574493,
+      "mde": 0.0004485190732723479,
+      "mean_grown": 0.125,
+      "resolved": false,
+      "ridge": 0.3302627198423612,
+      "shuffled": 0.33026017535870433
+    },
+    "retention_pca": -0.0,
+    "retention_random_rot": 0.015591806392183447
+  },
+  "test": "conjunction_growth_basis_dependence"
+}

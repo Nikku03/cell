@@ -1,0 +1,63 @@
+{
+  "essentiality": {
+    "n": 2568,
+    "known_essential": 252,
+    "predicted_essential": 88,
+    "recall": 0.27,
+    "precision": 0.819,
+    "base_rate": 0.098,
+    "precision_lift": 8.35
+  },
+  "dominance": {
+    "n_enzymes": 150,
+    "buffered_at_50pct": 1.0,
+    "essential_fraction_at_KO": 0.253,
+    "curve": {
+      "100%": 1.0,
+      "75%": 1.0,
+      "50%": 1.0,
+      "35%": 0.923,
+      "25%": 0.871,
+      "15%": 0.819,
+      "5%": 0.768,
+      "0%": 0.742
+    }
+  },
+  "ddg_flux_demo": {
+    "reaction": "MAR00579",
+    "sweep": [
+      {
+        "ddg": 0.0,
+        "active_fraction": 1.0,
+        "biomass_retained": 1.0
+      },
+      {
+        "ddg": 2.0,
+        "active_fraction": 1.0,
+        "biomass_retained": 1.0
+      },
+      {
+        "ddg": 4.0,
+        "active_fraction": 0.992,
+        "biomass_retained": 1.0
+      },
+      {
+        "ddg": 6.0,
+        "active_fraction": 0.835,
+        "biomass_retained": 1.0
+      },
+      {
+        "ddg": 8.0,
+        "active_fraction": 0.165,
+        "biomass_retained": 0.329
+      },
+      {
+        "ddg": 10.0,
+        "active_fraction": 0.008,
+        "biomass_retained": 0.015
+      }
+    ]
+  },
+  "passed": true,
+  "verdict": "FBA gene-deletion recovers known essential genes with high precision-lift; the flux-control curve reproduces metabolic dominance (partial enzyme loss buffered, collapse only near-complete loss). Quantitative enzyme\u2192flux capability, with a \u0394\u0394G\u2192active-fraction\u2192flux link. Absolute %s carry a saturation assumption (no absolute proteomics yet)."
+}

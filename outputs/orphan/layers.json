@@ -1,0 +1,142 @@
+{
+ "n_genes": 16509,
+ "n_tiers": 6,
+ "n_layers": 12,
+ "total_edges": 1253782,
+ "tiers": [
+  {
+   "tier": "physical",
+   "readout": "binding / complex assembly (structural)",
+   "layers": [
+    {
+     "layer": "ppi",
+     "directed": false,
+     "edges": 191944,
+     "edge_means": "two proteins physically associate (STRING)",
+     "predicts": "binding partner / complex",
+     "validated": "physical!=functional (complementary), 46-214x coherent"
+    },
+    {
+     "layer": "complex",
+     "directed": false,
+     "edges": 15843,
+     "edge_means": "co-membership of one protein complex",
+     "predicts": "the machine a protein is a part of",
+     "validated": "2,039 complexes; disassembly on subunit loss"
+    },
+    {
+     "layer": "ligand_receptor",
+     "directed": true,
+     "edges": 948,
+     "edge_means": "a secreted ligand meets a receptor",
+     "predicts": "cell-cell signaling entry",
+     "validated": "948 pairs (curated)"
+    }
+   ]
+  },
+  {
+   "tier": "regulatory",
+   "readout": "transcriptional response (Perturb-seq)",
+   "layers": [
+    {
+     "layer": "regulatory",
+     "directed": true,
+     "edges": 610256,
+     "edge_means": "TF -> target, signed (activates/represses)",
+     "predicts": "TRANSCRIPTION of the target",
+     "validated": "propagate L1 regulon 9.2x chance; sign 73%"
+    },
+    {
+     "layer": "signaling",
+     "directed": true,
+     "edges": 17432,
+     "edge_means": "signaling cascade edge, signed",
+     "predicts": "signaling state of the target",
+     "validated": "17,432 directed"
+    },
+    {
+     "layer": "causal",
+     "directed": true,
+     "edges": 56883,
+     "edge_means": "SIGNOR/CollecTRI signed causal X->Y",
+     "predicts": "Y functionally depends on X",
+     "validated": "curated directed"
+    }
+   ]
+  },
+  {
+   "tier": "reaction",
+   "readout": "metabolic flux",
+   "layers": [
+    {
+     "layer": "reaction_metabolic",
+     "directed": true,
+     "edges": 2549,
+     "edge_means": "an enzyme transforms substrate -> product",
+     "predicts": "metabolic FLUX",
+     "validated": "ecFlux mutation->flux VALIDATED (metabolism)"
+    }
+   ]
+  },
+  {
+   "tier": "dependency",
+   "readout": "fitness / essentiality",
+   "layers": [
+    {
+     "layer": "codependency",
+     "directed": false,
+     "edges": 65571,
+     "edge_means": "DepMap co-essentiality (need each other to live)",
+     "predicts": "shared fitness dependency",
+     "validated": "essentiality centrality+paralog AUC 0.86"
+    },
+    {
+     "layer": "synthetic_lethal",
+     "directed": false,
+     "edges": 1256,
+     "edge_means": "lose BOTH and the cell dies",
+     "predicts": "fitness (redundancy)",
+     "validated": "curated + inferred"
+    },
+    {
+     "layer": "coexpression",
+     "directed": false,
+     "edges": 170867,
+     "edge_means": "co-regulated expression",
+     "predicts": "co-regulation module",
+     "validated": "tracks physical modules"
+    }
+   ]
+  },
+  {
+   "tier": "spatial",
+   "readout": "enhancer->gene 3D contact",
+   "layers": [
+    {
+     "layer": "chromatin_loops",
+     "directed": false,
+     "edges": 767,
+     "edge_means": "3D chromatin contact (Hi-C loop)",
+     "predicts": "enhancer->gene 3D link",
+     "validated": "invivo ABC; nearest-gene wrong 39%"
+    }
+   ]
+  },
+  {
+   "tier": "membership",
+   "readout": "shared-process grouping",
+   "layers": [
+    {
+     "layer": "reactome_pathway",
+     "directed": false,
+     "edges": 119466,
+     "edge_means": "co-membership of a Reactome pathway",
+     "predicts": "shared-process grouping (NOT propagation)",
+     "validated": "condition inference top-1 67%"
+    }
+   ]
+  }
+ ],
+ "principle": "grouped by READOUT: each typed network predicts its OWN readout; do not collapse them. physical->binding, regulatory->transcription, reaction->flux, dependency->fitness.",
+ "note": "The cell graph reorganized into managed, readout-tagged layers (layers.py, 'layers' syscall). Organizing principle = the measured finding that the cell is several typed networks each predicting its OWN readout: PHYSICAL (ppi/complex/ligand_receptor) -> binding/complex; REGULATORY (regulatory/signaling/causal) -> transcription (propagate L1 9.2x); REACTION (metabolic) -> flux (ecFlux validated); DEPENDENCY (codep/SL/coexpr) -> fitness (AUC 0.86); SPATIAL (loops) -> 3D enhancer link; MEMBERSHIP (reactome) -> process grouping. Layers are COMPLEMENTARY (low overlap) yet COHERENT (above chance). A registry/manifest + per-tier query on top of network.py. HONEST: a Reactome 15k-reaction co-membership superset did NOT beat abstract PPI for the transcriptional readout once size-controlled (Wilcoxon p=0.32) -- a readout mismatch, recorded so each layer is applied to its proper target."
+}

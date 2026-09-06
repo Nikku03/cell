@@ -1,0 +1,68 @@
+{
+ "days": [
+  "day2",
+  "day3",
+  "day4",
+  "day5"
+ ],
+ "n_knockouts_common": 23,
+ "knockouts": [
+  "ETS2",
+  "ETV4",
+  "FOXH1",
+  "ID1",
+  "JARID2",
+  "LIN28A",
+  "MYC",
+  "MYCN",
+  "NANOG",
+  "NR5A2",
+  "PDLIM1",
+  "POU5F1",
+  "PRDM14",
+  "RUNX1T1",
+  "SOX2",
+  "TRIM24",
+  "TRIM25",
+  "VENTX",
+  "ZIC2",
+  "ZIC3",
+  "ZNF398",
+  "ZNF649",
+  "ZNF90"
+ ],
+ "direct_target_enrichment_by_day": {
+  "day2": 1.98,
+  "day3": 2.39,
+  "day4": 1.89,
+  "day5": 30.48
+ },
+ "heldout_by_day": {
+  "day2": {
+   "base_rate": 0.0712,
+   "n_pos": 92,
+   "mechanism_lift": 1.12,
+   "prior_lift": 5.23
+  },
+  "day3": {
+   "base_rate": 0.0741,
+   "n_pos": 194,
+   "mechanism_lift": 1.29,
+   "prior_lift": 8.13
+  },
+  "day4": {
+   "base_rate": 0.075,
+   "n_pos": 294,
+   "mechanism_lift": 1.22,
+   "prior_lift": 8.45
+  },
+  "day5": {
+   "base_rate": 0.076,
+   "n_pos": 551,
+   "mechanism_lift": 1.3,
+   "prior_lift": 8.07
+  }
+ },
+ "verdict": "THE WALL HOLDS, EVEN WITH TIME -- held-out MECHANISM lift is FLAT at ~1.12x across all four days (prior dominates 5-8x): predicting which genes move for a held-out KO does not improve with time-resolution here. What IS real: the KO's own DIRECT regulon is strongly enriched among movers (by day [1.98, 2.39, 1.89, 30.48]) -- but that is DESCRIPTIVE (you must know the TF and have its curated regulon; driven by the annotated core), not held-out prediction. TWO honest confounds bound this: (1) RENGE uses CRISPR-KO (protein depletes over DAYS), so day2 is already post-establishment -- this is NOT the fast minutes-to-hours window a DEGRON/4sU gives, where direct-vs-indirect cleanly separates; (2) 23 TFs is too few for held-out generalization, and most lack curated regulons to transfer. So the lever is BOUNDED, not disproven: the definitive test is a FAST-degron (dTAG/4sU), many-TF, dense (hours) time-course in K562 -- which does not exist as clean public data. Time-resolution is the right idea; the data to prove it at the right timescale and scale is still missing.",
+ "note": "Time-resolved KO test (RENGE/GSE213069, hiPSC, 23 pluripotency-TF CRISPR KOs, genome-wide scRNA-seq day2..day5). Tests whether early time points recover the direct-target (regulon) mechanism that steady-state endpoints bury in the generic cascade. Reports direct-target enrichment by day and held-out (GroupKFold-by-KO) mechanism vs prior lift by day. The one lever (time) this project had never sourced, now measured. Scope caveat: hiPSC not K562, 23 TFs and 4 coarse days -- proves/bounds the principle, not a K562 number."
+}

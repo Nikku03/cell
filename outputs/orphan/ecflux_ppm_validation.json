@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "summary": {
+    "n_enzymes": 120,
+    "n_measured_capacity": 108,
+    "coverage": 0.9,
+    "excess_heterogeneity_log10_std": 2.604,
+    "frac_above_median": 0.5,
+    "frac_dose_sensitive": 0.472
+  },
+  "note": "per-enzyme capacity from measured ppm\u00d7kcat covers 108/120 central-carbon enzymes; the excess-capacity distribution spans 2.6 orders of magnitude (measured), so buffered-vs-dose-sensitive is data-backed, not the blanket \u03c3=0.5.",
+  "bar": "coverage>=0.7 & >=50 enzymes & measured Vmax spread (log10 std)>=0.5"
+}

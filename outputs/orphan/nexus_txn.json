@@ -1,0 +1,105 @@
+{
+ "layers": [
+  {
+   "cell_line": "K562",
+   "layer": "L1 basal promoter",
+   "r": 0.3977,
+   "r2": 0.1582,
+   "within_2x": 0.5522,
+   "n": 7631
+  },
+  {
+   "cell_line": "K562",
+   "layer": "L2 + M_ATAC",
+   "r": 0.4082,
+   "r2": 0.1667,
+   "within_2x": 0.5495,
+   "n": 7631
+  },
+  {
+   "cell_line": "K562",
+   "layer": "L3 + distal enhancers (ABC)",
+   "r": 0.4357,
+   "r2": 0.1898,
+   "within_2x": 0.5546,
+   "n": 7631
+  },
+  {
+   "cell_line": "K562",
+   "layer": "L4 + TF occupancy",
+   "r": 0.4394,
+   "r2": 0.1931,
+   "within_2x": 0.5601,
+   "n": 7631
+  },
+  {
+   "cell_line": "K562",
+   "layer": "L5 + multiplicative form",
+   "r": 0.4447,
+   "r2": 0.1978,
+   "within_2x": 0.5603,
+   "n": 7631
+  },
+  {
+   "cell_line": "MCF7",
+   "layer": "L1 basal promoter",
+   "r": 0.4577,
+   "r2": 0.2095,
+   "within_2x": 0.4101,
+   "n": 9401
+  },
+  {
+   "cell_line": "MCF7",
+   "layer": "L2 + M_ATAC",
+   "r": 0.4773,
+   "r2": 0.2278,
+   "within_2x": 0.4152,
+   "n": 9401
+  },
+  {
+   "cell_line": "MCF7",
+   "layer": "L3 + distal enhancers (ABC)",
+   "r": 0.4877,
+   "r2": 0.2379,
+   "within_2x": 0.4144,
+   "n": 9401
+  },
+  {
+   "cell_line": "MCF7",
+   "layer": "L4 + TF occupancy",
+   "r": 0.5011,
+   "r2": 0.2511,
+   "within_2x": 0.4259,
+   "n": 9401
+  },
+  {
+   "cell_line": "MCF7",
+   "layer": "L5 + multiplicative form",
+   "r": 0.5011,
+   "r2": 0.2511,
+   "within_2x": 0.4242,
+   "n": 9401
+  }
+ ],
+ "transfer": [
+  {
+   "target": "MCF7",
+   "n": 9401,
+   "r": 0.5277,
+   "r2": 0.2785,
+   "within_2x": 0.3304,
+   "within_line_r2": 0.2511
+  }
+ ],
+ "atac_gain_r2": 0.0085,
+ "abc_gain_r2": 0.0231,
+ "multiplicative_gain_r2": 0.0047,
+ "best_k562_r2": 0.1978,
+ "best_transfer_r2": 0.2785,
+ "not_built": [
+  "IDR phase-separation beta (no calibration data)",
+  "2-state bursting k_on/k_off/k_ini (unidentifiable from bulk steady-state)"
+ ],
+ "verdict": "NEXUS TRANSCRIPTION ENGINE, built in the form the data supports. Step 2 of the blueprint -- an Orca/Akita CNN predicting synthetic Micro-C to find distal enhancers -- was REPLACED by measured ABC enhancer-gene links, which already exist for K562 on disk and which CATLAS ships for 110 primary cell types; the CNN's only job was to identify those contacts and they are already measured. The IDR phase-separation beta and the 2-state bursting parameters were NOT built: beta has no dataset here to fit against and would be a free parameter that absorbs error, and k_on/k_off/k_ini are unidentifiable from bulk steady-state rates because infinitely many triples give the same mean. NESTED RESULT in K562 on held-out genes: basal promoter R2=0.158, adding real ATAC accessibility 0.167 (+0.008), adding the ABC distal-enhancer layer 0.190 (+0.023), adding TF occupancy 0.193, and the blueprint's multiplicative form 0.198 (+0.005 over the additive version). Best K562 R2 = 0.198. THE DISTAL-ENHANCER LAYER IS WORTH +0.023 R2, against the blueprint's claim that 3D contacts hold roughly 20% of the missing variance. THE TRANSFER TEST, which is what the whole cross-cell-type claim rests on: a model trained on K562 and applied to other lines reaches at best R2=0.279. No cell type has both CATLAS ATAC and rate data, so the exact deployment claim cannot be tested; this is the closest honest proxy. R2 >= 0.90 was not reached and is not close. Deterministic.",
+ "note": "NEXUS TRANSCRIPTION ENGINE, built in the form the data supports. Step 2 of the blueprint -- an Orca/Akita CNN predicting synthetic Micro-C to find distal enhancers -- was REPLACED by measured ABC enhancer-gene links, which already exist for K562 on disk and which CATLAS ships for 110 primary cell types; the CNN's only job was to identify those contacts and they are already measured. The IDR phase-separation beta and the 2-state bursting parameters were NOT built: beta has no dataset here to fit against and would be a free parameter that absorbs error, and k_on/k_off/k_ini are unidentifiable from bulk steady-state rates because infinitely many triples give the same mean. NESTED RESULT in K562 on held-out genes: basal promoter R2=0.158, adding real ATAC accessibility 0.167 (+0.008), adding the ABC distal-enhancer layer 0.190 (+0.023), adding TF occupancy 0.193, and the blueprint's multiplicative form 0.198 (+0.005 over the additive version). Best K562 R2 = 0.198. THE DISTAL-ENHANCER LAYER IS WORTH +0.023 R2, against the blueprint's claim that 3D contacts hold roughly 20% of the missing variance. THE TRANSFER TEST, which is what the whole cross-cell-type claim rests on: a model trained on K562 and applied to other lines reaches at best R2=0.279. No cell type has both CATLAS ATAC and rate data, so the exact deployment claim cannot be tested; this is the closest honest proxy. R2 >= 0.90 was not reached and is not close. Deterministic."
+}

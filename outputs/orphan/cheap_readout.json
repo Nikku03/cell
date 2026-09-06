@@ -1,0 +1,100 @@
+{
+ "K562": {
+  "full_top10": 5.28,
+  "panels": {
+   "tide_hub": {
+    "300": {
+     "top10": 8.25,
+     "coverage_of_true_movers": 0.386
+    },
+    "500": {
+     "top10": 8.33,
+     "coverage_of_true_movers": 0.469
+    },
+    "1000": {
+     "top10": 5.0,
+     "coverage_of_true_movers": 0.594
+    },
+    "2000": {
+     "top10": 4.95,
+     "coverage_of_true_movers": 0.707
+    }
+   },
+   "random": {
+    "300": {
+     "top10": 2.97,
+     "coverage_of_true_movers": 0.044
+    },
+    "500": {
+     "top10": 3.72,
+     "coverage_of_true_movers": 0.069
+    },
+    "1000": {
+     "top10": 5.18,
+     "coverage_of_true_movers": 0.12
+    },
+    "2000": {
+     "top10": 6.03,
+     "coverage_of_true_movers": 0.282
+    }
+   }
+  }
+ },
+ "HCT116": {
+  "full_top10": 6.82,
+  "panels": {
+   "tide_hub": {
+    "300": {
+     "top10": 9.67,
+     "coverage_of_true_movers": 0.195
+    },
+    "500": {
+     "top10": 9.33,
+     "coverage_of_true_movers": 0.28
+    },
+    "1000": {
+     "top10": 9.45,
+     "coverage_of_true_movers": 0.448
+    },
+    "2000": {
+     "top10": 4.37,
+     "coverage_of_true_movers": 0.699
+    }
+   },
+   "random": {
+    "300": {
+     "top10": 3.35,
+     "coverage_of_true_movers": 0.019
+    },
+    "500": {
+     "top10": 3.67,
+     "coverage_of_true_movers": 0.03
+    },
+    "1000": {
+     "top10": 4.48,
+     "coverage_of_true_movers": 0.068
+    },
+    "2000": {
+     "top10": 5.17,
+     "coverage_of_true_movers": 0.118
+    }
+   }
+  }
+ },
+ "coverage_hub_by_panel_size": {
+  "300": 0.29,
+  "500": 0.374,
+  "1000": 0.521,
+  "2000": 0.703
+ },
+ "coverage_random_by_panel_size": {
+  "300": 0.032,
+  "500": 0.05,
+  "1000": 0.094,
+  "2000": 0.2
+ },
+ "hub_vs_random_efficiency_at_1000": 5.5,
+ "top10_within_panel_is_inflated_artifact": true,
+ "verdict": "A SMART TARGETED READOUT IS FAR MORE EFFICIENT THAN RANDOM BUT STILL MISSES HALF THE RESPONSE -- and I am NOT reporting the top-10 numbers as parity, because they are a circular artifact. Reading only a ~1000-gene 'landmark' panel of the most-frequently-moving genes (L1000/TAP-seq style, chosen from prior screens) made held-out top-10 look like 95-158% of the full-transcriptome value -- but that is INFLATED BY CONSTRUCTION: restricting the candidate pool to pre-vetted frequent movers (and grading against panel-restricted movers) makes 'predict a mover' trivially easy and just re-reports the generic tide (the same list every knockout), not knockout-specific accuracy. The HONEST, unambiguous metric is COVERAGE -- what fraction of a knockout's TRUE whole-transcriptome movers the panel even contains. There the result is real and clear: a 1000-gene tide-hub panel covers 52% of true movers vs only 9% for a random 1000-gene panel (~5.5x more efficient), and 300/500-gene hub panels already cover 29%/37% vs ~5% random -- so the tide IS concentrated and a smart landmark panel captures far more response per gene than random. BUT even a 1000-gene panel MISSES about half of each knockout's movers, and a 2000-gene panel still misses ~30% -- and the missed part is the diffuse, knockout-specific far field. NET FOR COST: a cheap targeted readout (~10-50x cheaper sequencing; TAP-seq keeps single cells + pooled guides) is a GENUINE lever for the deployable generic tide -- it captures ~half the response with ~5% of the genes and stacks with the small-screen (~50-200 KO) lever. HONEST LIMITS: (1) it discards ~30-55% of the response, all knockout-specific, so it CANNOT recover the far field (the wall); (2) the apparent top-10 'parity' is a metric artifact, not real parity; (3) sequencing is only part of cost -- library synthesis, delivery and labour are fixed and do NOT shrink; (4) restricts an already-measured universe (faithful ablation, not a real re-run) and presumes a fixed landmark panel transfers across cell types (true for the generic tide, not for cell-type-specific movers). BOTTOM LINE: cheaper readout + fewer knockouts together can bring a per-cell-type TIDE model to the low tens of $k, but the cheap readout buys the generic tide (about half the response), not the specific movers, and neither lever removes the need for SOME of the target cell's own perturbations.",
+ "note": "A SMART TARGETED READOUT IS FAR MORE EFFICIENT THAN RANDOM BUT STILL MISSES HALF THE RESPONSE -- and I am NOT reporting the top-10 numbers as parity, because they are a circular artifact. Reading only a ~1000-gene 'landmark' panel of the most-frequently-moving genes (L1000/TAP-seq style, chosen from prior screens) made held-out top-10 look like 95-158% of the full-transcriptome value -- but that is INFLATED BY CONSTRUCTION: restricting the candidate pool to pre-vetted frequent movers (and grading against panel-restricted movers) makes 'predict a mover' trivially easy and just re-reports the generic tide (the same list every knockout), not knockout-specific accuracy. The HONEST, unambiguous metric is COVERAGE -- what fraction of a knockout's TRUE whole-transcriptome movers the panel even contains. There the result is real and clear: a 1000-gene tide-hub panel covers 52% of true movers vs only 9% for a random 1000-gene panel (~5.5x more efficient), and 300/500-gene hub panels already cover 29%/37% vs ~5% random -- so the tide IS concentrated and a smart landmark panel captures far more response per gene than random. BUT even a 1000-gene panel MISSES about half of each knockout's movers, and a 2000-gene panel still misses ~30% -- and the missed part is the diffuse, knockout-specific far field. NET FOR COST: a cheap targeted readout (~10-50x cheaper sequencing; TAP-seq keeps single cells + pooled guides) is a GENUINE lever for the deployable generic tide -- it captures ~half the response with ~5% of the genes and stacks with the small-screen (~50-200 KO) lever. HONEST LIMITS: (1) it discards ~30-55% of the response, all knockout-specific, so it CANNOT recover the far field (the wall); (2) the apparent top-10 'parity' is a metric artifact, not real parity; (3) sequencing is only part of cost -- library synthesis, delivery and labour are fixed and do NOT shrink; (4) restricts an already-measured universe (faithful ablation, not a real re-run) and presumes a fixed landmark panel transfers across cell types (true for the generic tide, not for cell-type-specific movers). BOTTOM LINE: cheaper readout + fewer knockouts together can bring a per-cell-type TIDE model to the low tens of $k, but the cheap readout buys the generic tide (about half the response), not the specific movers, and neither lever removes the need for SOME of the target cell's own perturbations."
+}

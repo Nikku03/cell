@@ -1,0 +1,603 @@
+{
+ "test": "adrn_conjunctions_sealed_ko",
+ "k": 60,
+ "npred": 20,
+ "n_train": 4720,
+ "n_sealed": 400,
+ "n_channels": 170,
+ "channel_names": [
+  "pathway:Metabolism of proteins",
+  "pathway:Disease",
+  "pathway:Immune System",
+  "pathway:Metabolism",
+  "pathway:Signal Transduction",
+  "pathway:Gene expression (Transcription)",
+  "pathway:Infectious disease",
+  "pathway:RNA Polymerase II Transcription",
+  "pathway:Post-translational protein modification",
+  "pathway:Metabolism of RNA",
+  "pathway:Viral Infection Pathways",
+  "pathway:Generic Transcription Pathway",
+  "pathway:Developmental Biology",
+  "pathway:Cellular responses to stimuli",
+  "pathway:Cellular responses to stress",
+  "pathway:Adaptive Immune System",
+  "pathway:Cell Cycle",
+  "pathway:Innate Immune System",
+  "pathway:Cell Cycle, Mitotic",
+  "pathway:Cytokine Signaling in Immune system",
+  "pathway:Vesicle-mediated transport",
+  "pathway:Membrane Trafficking",
+  "pathway:Translation",
+  "pathway:Signaling by Rho GTPases, Miro GTPases and RHOBTB3",
+  "pathway:Signaling by Rho GTPases",
+  "pathway:Metabolism of lipids",
+  "pathway:Processing of Capped Intron-Containing Pre-mRNA",
+  "pathway:M Phase",
+  "pathway:Nervous system development",
+  "pathway:DNA Repair",
+  "pathway:Transcriptional Regulation by TP53",
+  "pathway:Axon guidance",
+  "pathway:Dengue Virus Infection",
+  "pathway:Transport of small molecules",
+  "pathway:SARS-CoV Infections",
+  "pathway:Chromatin organization",
+  "pathway:Diseases of signal transduction by growth factor receptors and second messengers",
+  "pathway:Cell Cycle Checkpoints",
+  "pathway:rRNA processing",
+  "pathway:Class I MHC mediated antigen processing & presentation",
+  "pathway:Signaling by Receptor Tyrosine Kinases",
+  "pathway:Metabolism of amino acids and derivatives",
+  "pathway:mRNA Splicing",
+  "pathway:rRNA processing in the nucleus and cytosol",
+  "pathway:Neutrophil degranulation",
+  "pathway:Interferon Signaling",
+  "pathway:Hemostasis",
+  "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+  "pathway:mRNA Splicing - Major Pathway",
+  "pathway:Asparagine N-linked glycosylation",
+  "pathway:Aerobic respiration and respiratory electron transport",
+  "pathway:Mitotic Metaphase and Anaphase",
+  "pathway:Mitotic Anaphase",
+  "pathway:Antigen processing: Ubiquitination & Proteasome degradation",
+  "pathway:Organelle biogenesis and maintenance",
+  "pathway:RHO GTPase cycle",
+  "pathway:Epigenetic regulation of gene expression",
+  "pathway:Affinity selection of immunoglobulins",
+  "pathway:Immunoglobulin maturation",
+  "pathway:Signaling by Interleukins",
+  "pathway:Dengue Virus-Host Interactions",
+  "pathway:SARS-CoV-2 Infection",
+  "pathway:Signaling by ROBO receptors",
+  "pathway:HIV Infection",
+  "pathway:Chromatin modifying enzymes",
+  "pathway:Antimicrobial mechanism of IFN-stimulated genes",
+  "pathway:Cellular response to starvation",
+  "pathway:Influenza Infection",
+  "pathway:Deubiquitination",
+  "pathway:Mitotic Prometaphase",
+  "pathway:Regulation of expression of SLITs and ROBOs",
+  "pathway:Ribosome-associated quality control",
+  "pathway:RHO GTPase Effectors",
+  "pathway:DNA Double-Strand Break Repair",
+  "pathway:Neddylation",
+  "pathway:Influenza Viral RNA Transcription and Replication",
+  "pathway:Cap-dependent Translation Initiation",
+  "pathway:Eukaryotic Translation Initiation",
+  "pathway:Intracellular signaling by second messengers",
+  "pathway:Separation of Sister Chromatids",
+  "pathway:Mitotic G2-G2/M phases",
+  "pathway:GTP hydrolysis and joining of the 60S ribosomal subunit",
+  "pathway:mRNA 3'-end processing",
+  "pathway:G2/M Transition",
+  "pathway:Cell-Cell communication",
+  "pathway:Intra-Golgi and retrograde Golgi-to-ER traffic",
+  "pathway:L13a-mediated translational silencing of Ceruloplasmin expression",
+  "pathway:PIP3 activates AKT signaling",
+  "pathway:Nonsense Mediated Decay (NMD) enhanced by the Exon Junction Complex (EJC)",
+  "pathway:Nonsense-Mediated Decay (NMD)",
+  "pathway:Respiratory electron transport",
+  "pathway:SUMOylation",
+  "pathway:Signaling by WNT",
+  "pathway:Cell junction organization",
+  "pathway:Regulation of T cell activation by CD28 family",
+  "pathway:S Phase",
+  "pathway:SARS-CoV-2-host interactions",
+  "pathway:Somatic hypermutation of immunoglobulin genes",
+  "pathway:Formation of a pool of free 40S subunits",
+  "pathway:Mitotic G1 phase and G1/S transition",
+  "pathway:SUMO E3 ligases SUMOylate target proteins",
+  "pathway:Regulation of TP53 Activity",
+  "pathway:SRP-dependent cotranslational protein targeting to membrane",
+  "pathway:MAPK family signaling cascades",
+  "pathway:Cellular response to chemical stress",
+  "pathway:Cell-cell junction organization",
+  "pathway:HIV Life Cycle",
+  "pathway:Adherens junctions interactions",
+  "pathway:Metabolism of carbohydrates and carbohydrate derivatives",
+  "pathway:Response of EIF2AK4 (GCN2) to amino acid deficiency",
+  "pathway:Selenoamino acid metabolism",
+  "pathway:Programmed Cell Death",
+  "pathway:mRNA Polyadenylation",
+  "pathway:Cilium Assembly",
+  "pathway:G1/S Transition",
+  "pathway:Signaling by Nuclear Receptors",
+  "pathway:Transport to the Golgi and subsequent modification",
+  "pathway:Nonsense Mediated Decay (NMD) independent of the Exon Junction Complex (EJC)",
+  "pathway:Selenocysteine synthesis",
+  "pathway:ZNF598 and the Ribosome-associated Quality Trigger (RQT) complex dissociate a ribosome stalled on a no-go mRNA",
+  "compartment:cytosol",
+  "compartment:nucleus",
+  "compartment:plasma membrane",
+  "compartment:mitochondrion",
+  "compartment:endoplasmic reticulum",
+  "compartment:endosome",
+  "compartment:extracellular",
+  "compartment:golgi",
+  "compartment:lysosome",
+  "compartment:cytoskeleton",
+  "compartment:peroxisome",
+  "compartment:other membrane",
+  "lesion:translation_stress",
+  "lesion:er_stress",
+  "lesion:mito_stress",
+  "lesion:proteotoxic",
+  "lesion:proteasome_loss",
+  "lesion:export_block",
+  "lesion:iron_low",
+  "lesion:sterol_low",
+  "lesion:oxidative",
+  "catalyses>=1",
+  "catalyses>=5",
+  "catalyses>=20",
+  "participates>=1",
+  "participates>=5",
+  "participates>=20",
+  "reaction_partners>=1",
+  "reaction_partners>=10",
+  "reaction_partners>=50",
+  "regulon_up>=1",
+  "regulon_up>=5",
+  "regulon_up>=25",
+  "regulon_down>=1",
+  "regulon_down>=5",
+  "regulon_down>=25",
+  "chip_unsigned>=1",
+  "chip_unsigned>=50",
+  "chip_unsigned>=250",
+  "upstream_tfs>=1",
+  "upstream_tfs>=5",
+  "upstream_tfs>=25",
+  "ppi_degree>=1",
+  "ppi_degree>=10",
+  "ppi_degree>=50",
+  "n_pathways>=1",
+  "n_pathways>=10",
+  "n_pathways>=40",
+  "has_signed_regulon",
+  "no_annotation_context"
+ ],
+ "candidates": 20000,
+ "arities": [
+  2,
+  3,
+  5
+ ],
+ "threshold": 4.0,
+ "n_learned": 64,
+ "n_rot_learned": 64,
+ "learned_named": [
+  [
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "lesion:er_stress",
+   "upstream_tfs>=5"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:rRNA processing",
+   "n_pathways>=1"
+  ],
+  [
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Cell-Cell communication",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:Chromatin organization",
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:DNA Double-Strand Break Repair",
+   "pathway:Cell-cell junction organization",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:rRNA processing",
+   "pathway:PIP3 activates AKT signaling",
+   "pathway:Respiratory electron transport",
+   "pathway:G1/S Transition",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:Cell Cycle Checkpoints",
+   "pathway:rRNA processing",
+   "pathway:Influenza Infection",
+   "pathway:Metabolism of carbohydrates and carbohydrate derivatives"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:rRNA processing",
+   "pathway:Influenza Infection",
+   "pathway:S Phase",
+   "pathway:Mitotic G1 phase and G1/S transition"
+  ],
+  [
+   "pathway:rRNA processing",
+   "pathway:Immunoglobulin maturation"
+  ],
+  [
+   "pathway:Immune System",
+   "pathway:rRNA processing",
+   "pathway:Programmed Cell Death"
+  ],
+  [
+   "pathway:Cellular responses to stress",
+   "pathway:rRNA processing in the nucleus and cytosol"
+  ],
+  [
+   "pathway:Adaptive Immune System",
+   "pathway:rRNA processing",
+   "pathway:Antigen processing: Ubiquitination & Proteasome degradation"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "lesion:export_block"
+  ],
+  [
+   "pathway:Nervous system development",
+   "pathway:SARS-CoV Infections",
+   "pathway:rRNA processing",
+   "pathway:mRNA 3'-end processing",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:Cellular responses to stress",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "compartment:cytoskeleton"
+  ],
+  [
+   "pathway:Transcriptional Regulation by TP53",
+   "pathway:rRNA processing",
+   "pathway:Signaling by ROBO receptors",
+   "pathway:Deubiquitination",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:Gene expression (Transcription)",
+   "pathway:Metabolism of RNA",
+   "pathway:SARS-CoV Infections",
+   "pathway:SARS-CoV-2-host interactions",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:Adaptive Immune System",
+   "pathway:rRNA processing in the nucleus and cytosol"
+  ],
+  [
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Influenza Infection",
+   "lesion:er_stress",
+   "regulon_down>=25",
+   "upstream_tfs>=1"
+  ],
+  [
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:Affinity selection of immunoglobulins"
+  ],
+  [
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:Immunoglobulin maturation",
+   "reaction_partners>=1"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:Processing of Capped Intron-Containing Pre-mRNA",
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:mRNA Splicing - Major Pathway",
+   "lesion:oxidative"
+  ],
+  [
+   "pathway:SARS-CoV Infections",
+   "pathway:rRNA processing",
+   "pathway:Cell-cell junction organization",
+   "compartment:endoplasmic reticulum",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:Adaptive Immune System",
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:G2/M Transition",
+   "compartment:mitochondrion",
+   "upstream_tfs>=1"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:RHO GTPase Effectors",
+   "pathway:Separation of Sister Chromatids",
+   "lesion:er_stress",
+   "ppi_degree>=1"
+  ],
+  [
+   "pathway:rRNA processing",
+   "pathway:Affinity selection of immunoglobulins",
+   "pathway:L13a-mediated translational silencing of Ceruloplasmin expression"
+  ],
+  [
+   "pathway:Immunoglobulin maturation",
+   "compartment:endoplasmic reticulum",
+   "lesion:translation_stress"
+  ],
+  [
+   "pathway:Adaptive Immune System",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol"
+  ],
+  [
+   "pathway:Viral Infection Pathways",
+   "pathway:Cellular responses to stress",
+   "pathway:DNA Repair",
+   "pathway:rRNA processing",
+   "lesion:export_block"
+  ],
+  [
+   "pathway:Immune System",
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:Eukaryotic Translation Initiation"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Immunoglobulin maturation"
+  ],
+  [
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Affinity selection of immunoglobulins"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Cellular responses to stress"
+  ],
+  [
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Immunoglobulin maturation",
+   "pathway:Signaling by ROBO receptors",
+   "pathway:Cellular response to starvation",
+   "pathway:PIP3 activates AKT signaling"
+  ],
+  [
+   "pathway:Immune System",
+   "pathway:Metabolism of RNA",
+   "pathway:mRNA 3'-end processing"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Cellular responses to stimuli",
+   "pathway:Transcriptional Regulation by TP53"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:Vesicle-mediated transport",
+   "pathway:rRNA processing"
+  ],
+  [
+   "pathway:rRNA processing",
+   "pathway:mRNA Splicing",
+   "pathway:Immunoglobulin maturation",
+   "pathway:Dengue Virus-Host Interactions",
+   "pathway:Response of EIF2AK4 (GCN2) to amino acid deficiency"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Deubiquitination",
+   "pathway:Intracellular signaling by second messengers",
+   "pathway:PIP3 activates AKT signaling",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:Adaptive Immune System",
+   "pathway:rRNA processing",
+   "pathway:Deubiquitination"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Cellular responses to stimuli",
+   "pathway:Nervous system development"
+  ],
+  [
+   "pathway:Immune System",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Adaptive Immune System"
+  ],
+  [
+   "pathway:Developmental Biology",
+   "pathway:Translation",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Intra-Golgi and retrograde Golgi-to-ER traffic",
+   "lesion:er_stress"
+  ],
+  [
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:Influenza Infection",
+   "pathway:Selenoamino acid metabolism",
+   "lesion:er_stress",
+   "regulon_up>=25"
+  ],
+  [
+   "pathway:Immune System",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Respiratory electron transport",
+   "pathway:Formation of a pool of free 40S subunits",
+   "compartment:endoplasmic reticulum"
+  ],
+  [
+   "pathway:rRNA processing",
+   "pathway:Somatic hypermutation of immunoglobulin genes",
+   "ppi_degree>=1"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:Signaling by Rho GTPases, Miro GTPases and RHOBTB3",
+   "pathway:rRNA processing",
+   "pathway:Intra-Golgi and retrograde Golgi-to-ER traffic",
+   "pathway:Response of EIF2AK4 (GCN2) to amino acid deficiency"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:rRNA processing",
+   "pathway:Antigen processing: Ubiquitination & Proteasome degradation",
+   "pathway:Intra-Golgi and retrograde Golgi-to-ER traffic",
+   "pathway:Nonsense Mediated Decay (NMD) independent of the Exon Junction Complex (EJC)"
+  ],
+  [
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:Organelle biogenesis and maintenance",
+   "pathway:Immunoglobulin maturation"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Cellular responses to stimuli",
+   "pathway:Separation of Sister Chromatids"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Adaptive Immune System",
+   "pathway:Aerobic respiration and respiratory electron transport",
+   "pathway:SARS-CoV-2-host interactions",
+   "reaction_partners>=1"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Cellular responses to stimuli",
+   "pathway:Dengue Virus-Host Interactions",
+   "lesion:proteasome_loss",
+   "reaction_partners>=1"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:Asparagine N-linked glycosylation",
+   "pathway:Regulation of T cell activation by CD28 family",
+   "pathway:Nonsense Mediated Decay (NMD) independent of the Exon Junction Complex (EJC)"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Affinity selection of immunoglobulins",
+   "pathway:Antimicrobial mechanism of IFN-stimulated genes"
+  ],
+  [
+   "pathway:Immune System",
+   "pathway:Innate Immune System",
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:Mitotic G2-G2/M phases",
+   "compartment:peroxisome"
+  ],
+  [
+   "pathway:Metabolism of RNA",
+   "pathway:Immunoglobulin maturation",
+   "pathway:Eukaryotic Translation Initiation",
+   "pathway:PIP3 activates AKT signaling",
+   "no_annotation_context"
+  ],
+  [
+   "pathway:Cellular responses to stress",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Influenza Infection",
+   "pathway:Nonsense Mediated Decay (NMD) enhanced by the Exon Junction Complex (EJC)",
+   "pathway:Regulation of T cell activation by CD28 family"
+  ],
+  [
+   "pathway:Cellular responses to stimuli",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Mitotic G1 phase and G1/S transition"
+  ],
+  [
+   "pathway:Immune System",
+   "pathway:Metabolism of RNA"
+  ],
+  [
+   "pathway:Adaptive Immune System",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:Adherens junctions interactions",
+   "compartment:endosome",
+   "reaction_partners>=1"
+  ],
+  [
+   "pathway:Adaptive Immune System",
+   "pathway:Class I MHC mediated antigen processing & presentation",
+   "pathway:Major pathway of rRNA processing in the nucleolus and cytosol",
+   "pathway:L13a-mediated translational silencing of Ceruloplasmin expression",
+   "catalyses>=20"
+  ],
+  [
+   "pathway:Immune System",
+   "pathway:Metabolism of RNA",
+   "pathway:SARS-CoV Infections",
+   "pathway:Formation of a pool of free 40S subunits",
+   "pathway:Metabolism of carbohydrates and carbohydrate derivatives"
+  ],
+  [
+   "pathway:rRNA processing in the nucleus and cytosol",
+   "pathway:RHO GTPase cycle",
+   "pathway:Immunoglobulin maturation",
+   "lesion:mito_stress",
+   "n_pathways>=1"
+  ]
+ ],
+ "log": [
+  "==============================================================================================================",
+  "ADRN-3 CONJUNCTIONS ON THE SEALED KNOCKOUT PROTOCOL -- named channels, held-out knockouts",
+  "==============================================================================================================",
+  "  PREDECLARED: succeeds only if adrnconj beats the frequency baseline AND its own shuffle AND its",
+  "  own linear part, with adrnrot losing most of the gain. Any other pattern is a failure.",
+  "\n  readout 5,120 perturbations x 8,246 genes; tide 3",
+  "  training pool 4,720 (both sealed cohorts, 400 knockouts, removed BEFORE anything is fitted)",
+  "  factorising 4,720 x 8,246 into 60 components ...",
+  "    reconstruction error 397.2",
+  "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+  "\n  conjunctions grown on the TRAINING residual: 64 cleared threshold 4.0 out of 20,000 candidates, arities (2, 3, 5)",
+  "    top 5 by score, as named products:",
+  "      pathway:rRNA processing in the nucleus and cytosol  AND  lesion:er_stress  AND  upstream_tfs>=5",
+  "      pathway:Cellular responses to stimuli  AND  pathway:rRNA processing  AND  n_pathways>=1",
+  "      pathway:Major pathway of rRNA processing in the nucleolus and cytosol  AND  pathway:Cell-Cell communication  AND  lesion:er_stress",
+  "      pathway:Chromatin organization  AND  pathway:rRNA processing in the nucleus and cytosol  AND  pathway:DNA Double-Strand Break Repair  AND  pathway:Cell-cell junction organization  AND  lesion:er_stress",
+  "      pathway:rRNA processing  AND  pathway:PIP3 activates AKT signaling  AND  pathway:Respiratory electron transport  AND  pathway:G1/S Transition  AND  lesion:er_stress",
+  "  same growth on a full-rank PCA rotation of the identical channels: 64 cleared",
+  "\n  confound controls: adrnles uses 9 lesion channels only; adrnperm uses all 170 with rows permuted across genes",
+  "    adrnlin   design  170 columns",
+  "    adrnconj  design  234 columns",
+  "    adrnshuf  design  234 columns",
+  "    adrnrand  design  234 columns",
+  "    adrnrot   design  234 columns",
+  "    adrnles   design    9 columns",
+  "    adrnperm  design  170 columns",
+  "  cohort1   adrnlin   200 knockouts, empty 0/200 -> ko_predictions_adrnlin.json",
+  "  cohort1   adrnconj  200 knockouts, empty 0/200 -> ko_predictions_adrnconj.json",
+  "  cohort1   adrnshuf  200 knockouts, empty 0/200 -> ko_predictions_adrnshuf.json",
+  "  cohort1   adrnrand  200 knockouts, empty 0/200 -> ko_predictions_adrnrand.json",
+  "  cohort1   adrnrot   200 knockouts, empty 0/200 -> ko_predictions_adrnrot.json",
+  "  cohort1   adrnles   200 knockouts, empty 0/200 -> ko_predictions_adrnles.json",
+  "  cohort1   adrnperm  200 knockouts, empty 0/200 -> ko_predictions_adrnperm.json",
+  "  _holdout  adrnlin   200 knockouts, empty 0/200 -> ko_predictions_adrnlin_holdout.json",
+  "  _holdout  adrnconj  200 knockouts, empty 0/200 -> ko_predictions_adrnconj_holdout.json",
+  "  _holdout  adrnshuf  200 knockouts, empty 0/200 -> ko_predictions_adrnshuf_holdout.json",
+  "  _holdout  adrnrand  200 knockouts, empty 0/200 -> ko_predictions_adrnrand_holdout.json",
+  "  _holdout  adrnrot   200 knockouts, empty 0/200 -> ko_predictions_adrnrot_holdout.json",
+  "  _holdout  adrnles   200 knockouts, empty 0/200 -> ko_predictions_adrnles_holdout.json",
+  "  _holdout  adrnperm  200 knockouts, empty 0/200 -> ko_predictions_adrnperm_holdout.json"
+ ]
+}

@@ -1,0 +1,321 @@
+{
+ "test": "the network as an aid to the additive baseline, not a stage in the path",
+ "arms": {
+  "base": 0.4433101011054601,
+  "aided": 0.44322027165747124,
+  "perm": 0.4432938198040241,
+  "strat": 0.44270562043514194,
+  "strat_perm": 0.44327491008213765,
+  "lin": 0.4431696805911187,
+  "forced": 0.4221230307357397,
+  "aided_mean_over_seeds": 0.44295491056941777
+ },
+ "alpha": {
+  "0": [
+   0.24944986402988434,
+   0.6319504976272583,
+   0.9566125869750977,
+   -0.18106335401535034,
+   0.17390930652618408,
+   -0.40467581152915955,
+   0.012457497417926788,
+   -0.1516895443201065,
+   -0.2338537871837616
+  ],
+  "1": [
+   0.1663912832736969,
+   0.5866662859916687,
+   0.25887975096702576,
+   0.07331814616918564,
+   -0.09972317516803741,
+   -0.43198278546333313,
+   -0.06147954985499382,
+   -0.054109785705804825,
+   0.2958795726299286
+  ],
+  "2": [
+   -0.013412272557616234,
+   0.30730119347572327,
+   0.06963347643613815,
+   0.2989652454853058,
+   0.0853080004453659,
+   -0.3396034836769104,
+   -0.12105514109134674,
+   -0.17637212574481964,
+   0.4463441073894501
+  ]
+ },
+ "per_line": {
+  "PC3": {
+   "alpha": 0.24944986402988434,
+   "base": 0.4260744638607299,
+   "aided": 0.4253192827107269,
+   "strata": [
+    0.2379419505596161,
+    0.2902314364910126,
+    0.13872431218624115,
+    0.1811978667974472,
+    0.1442684829235077,
+    0.16953417658805847,
+    0.1798117309808731,
+    0.216746523976326,
+    0.3474261462688446,
+    0.31453126668930054
+   ]
+  },
+  "MCF7": {
+   "alpha": 0.6319504976272583,
+   "base": 0.47314702185985374,
+   "aided": 0.478089056759292,
+   "strata": [
+    0.3153223395347595,
+    0.39002615213394165,
+    0.2808387875556946,
+    0.5316143035888672,
+    0.4776207506656647,
+    0.3556669354438782,
+    0.5447186827659607,
+    0.6610177159309387,
+    0.6646249890327454,
+    0.9048223495483398
+   ]
+  },
+  "VCAP": {
+   "alpha": 0.9566125869750977,
+   "base": 0.3743624906418528,
+   "aided": 0.37015163739421014,
+   "strata": [
+    0.6857521533966064,
+    0.6177482008934021,
+    0.7061015367507935,
+    0.5414519906044006,
+    0.6655102372169495,
+    0.8075619339942932,
+    0.5595264434814453,
+    0.649470865726471,
+    1.3186054229736328,
+    1.409317970275879
+   ]
+  },
+  "A375": {
+   "alpha": -0.18106335401535034,
+   "base": 0.4567455037354857,
+   "aided": 0.4553196756150819,
+   "strata": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  "HA1E": {
+   "alpha": 0.17390930652618408,
+   "base": 0.4625121201388929,
+   "aided": 0.46342027962699833,
+   "strata": [
+    0.1306685209274292,
+    0.16943588852882385,
+    0.15551933646202087,
+    0.16434822976589203,
+    0.15041039884090424,
+    0.12744569778442383,
+    0.22566892206668854,
+    0.1403154581785202,
+    0.1779235303401947,
+    0.20216521620750427
+   ]
+  },
+  "A549": {
+   "alpha": -0.40467581152915955,
+   "base": 0.5174775973686657,
+   "aided": 0.5177660821664491,
+   "strata": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  "HT29": {
+   "alpha": 0.012457497417926788,
+   "base": 0.42826717266390235,
+   "aided": 0.4277994070326298,
+   "strata": [
+    0.0048647429794073105,
+    0.024773932993412018,
+    0.024732284247875214,
+    0.0,
+    0.0,
+    0.011938708834350109,
+    0.0,
+    0.037073638290166855,
+    0.0009062541066668928,
+    0.021788181737065315
+   ]
+  },
+  "HEPG2": {
+   "alpha": -0.1516895443201065,
+   "base": 0.4744854355677772,
+   "aided": 0.47366140336331053,
+   "strata": [
+    0.09264975786209106,
+    0.12268444150686264,
+    0.042595215141773224,
+    0.08338525146245956,
+    0.06811147183179855,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  "HCC515": {
+   "alpha": -0.2338537871837616,
+   "base": 0.37479951755295904,
+   "aided": 0.3755974266721922,
+   "strata": [
+    0.043705299496650696,
+    0.039821553975343704,
+    0.14911796152591705,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "J2": {
+  "delta": -8.982944798886543e-05,
+  "se": 8.986006286813372e-05,
+  "z": -0.999659304942695,
+  "machinery_only": true
+ },
+ "J3": {
+  "delta": -7.354814655283841e-05,
+  "se": 9.001635108118546e-05,
+  "z": -0.8170531872204592
+ },
+ "J4": {
+  "mean": 0.1170108061697748,
+  "se": 0.14710700693378442
+ },
+ "J5": {
+  "delta": 5.059106635252539e-05,
+  "se": 8.996878641431169e-05,
+  "z": 0.5623179812557488
+ },
+ "J6": {
+  "delta": -0.0005692896469955932,
+  "se": 9.194820633426625e-05,
+  "z": -6.191416556033857,
+  "deciles_used": [
+   10,
+   10,
+   10,
+   0,
+   10,
+   0,
+   7,
+   5,
+   3
+  ]
+ },
+ "gates": {
+  "J1": true,
+  "J2": true,
+  "J3": false,
+  "J4": false,
+  "J5": false,
+  "J6": false,
+  "J7": false
+ },
+ "void": [
+  "J7"
+ ],
+ "seconds": 2267.842975616455,
+ "log": [
+  "========================================================================================================",
+  "LOOP 258 -- THE NETWORK AS AN AID, NOT A STAGE EVERYTHING MUST PASS THROUGH",
+  "========================================================================================================",
+  "     Loop 256 forced every prediction through the network and it lost by -0.1517;",
+  "     its LINEAR twin on identical inputs also lost, by -0.0494, so the framing was",
+  "     wrong rather than the capacity. Here the baseline is the standing answer and the",
+  "     network only proposes a correction, weighted by an alpha fitted on a held-out line.",
+  "     DECLARED BEFORE THE RUN: fitting alpha makes a small gain nearly automatic, so J2",
+  "     is machinery and NOT evidence. J3 -- real correction against its own row",
+  "     permutation, same magnitudes, wrong pairing -- is the only gate that means anything.",
+  "     33,197 (gene, line) pairs, 3,801 genes, 978 landmarks",
+  "     context vector: 101 measured dims, PCs fitted on the full DepMap panel",
+  "     alpha is fitted on a CALIBRATION line the network never trained on, then applied",
+  "     to the outer held-out line, which neither the network nor alpha ever saw",
+  "     9 outer folds x 3 seeds; network trains on 7 lines, alpha on the 8th ...",
+  "       seed 0: base 0.4433  aided 0.4432  permuted 0.4433  forced 0.4221  [801s]",
+  "       seed 1: base 0.4433  aided 0.4423  permuted 0.4433  forced 0.4327  [1597s]",
+  "       seed 2: base 0.4433  aided 0.4434  permuted 0.4433  forced 0.4298  [2268s]",
+  "       stratified real 0.4427   stratified permuted 0.4433   linear correction 0.4432",
+  "J1 DOES THE HARNESS REPRODUCE THE BASELINE?",
+  "     additive here 0.4433 against loop 252's 0.4477",
+  "     J1 PASS -- reproduces to 0.0044",
+  "J2 MACHINERY ONLY -- DOES THE AIDED MODEL AT LEAST NOT LOSE?",
+  "     aided 0.4432 vs baseline 0.4433   -0.0001 +/- 0.0001",
+  "     THIS GATE IS NOT EVIDENCE. A fitted blend weight makes a small gain nearly",
+  "     automatic; it exists only to catch a broken alpha fit. J3 decides the science.",
+  "     J2 PASS (machinery) -- the aid is worth -0.0001, inside the -0.002 machinery floor. This says the plumbing works and says NOTHING about whether the network helped.",
+  "J3 LOAD-BEARING -- DOES THE REAL CORRECTION BEAT ITS OWN ROW PERMUTATION?",
+  "     real 0.4432 vs permuted 0.4433   -0.0001 +/- 0.0001 (-0.8 se)",
+  "     the permuted arm has identical magnitudes and distribution and the wrong pairing,",
+  "     so whatever it scores is the free lunch from fitting a blend weight at all",
+  "     J3 FAIL -- -0.0001 over its own permutation. Every gain came from fitting alpha; the network contributed nothing a random correction of the same size would not have.",
+  "J4 IS THE BLEND WEIGHT DISTINGUISHABLE FROM ZERO?",
+  "     alpha per fold: +0.249, +0.632, +0.957, -0.181, +0.174, -0.405, +0.012, -0.152, -0.234",
+  "     mean +0.1170 +/- 0.1471",
+  "     J4 FAIL -- alpha +0.1170 +/- 0.1471; the calibration line could not decide the network was worth listening to",
+  "J5 DOES THE NETWORK CORRECTION BEAT A LINEAR CORRECTION?",
+  "     network-aided 0.4432 vs linear-aided 0.4432   +0.0001 +/- 0.0001 (+0.6 se)",
+  "     J5 FAIL -- the network is worth +0.0001 over a ridge; the AID framing is doing the work, not the network",
+  "J6 IS THERE A STRATUM WHERE IT HELPS, EVEN IF THE AVERAGE IS FLAT?",
+  "     stratified real 0.4427 vs stratified permuted 0.4433   -0.0006 +/- 0.0001 (-6.2 se)",
+  "     deciles with a non-zero alpha, per fold: 10, 10, 10, 0, 10, 0, 7, 5, 3   (out of 10)",
+  "     J6 FAIL -- -0.0006 over deciles fitted on noise; per-stratum abstention does not find a subset the network genuinely helps on",
+  "J7 CONTROL: THE WRONG CELL LINE",
+  "     J7 VOID -- J3 did not pass, so there is nothing here to test",
+  "J8 WHAT THIS CANNOT SHOW",
+  "     J2 passing is not a result. A fitted blend weight buys a gain from any correction,",
+  "     including the permuted one, and the permuted arm's own score is printed above so",
+  "     that free lunch is visible rather than absorbed into a headline.",
+  "     The network trains on SEVEN lines here, not eight, so it is slightly weaker than",
+  "     loop 257's. That is the price of fitting alpha on a line it never saw.",
+  "     Nine lines means the hypernetwork still generalises from seven examples; J7 is the",
+  "     only thing standing between a positive and memorisation.",
+  "     A stratum where the network helps names WHERE the interaction is learnable. It does",
+  "     not name WHAT the interaction is, and nothing here recovers the mechanism loops",
+  "     253 and 255 failed to find.",
+  "     978 landmarks and shRNA, not a transcriptome and not a clean knockout.",
+  "========================================================================================================",
+  "  J1  PASS",
+  "  J2  PASS",
+  "  J3  FAIL",
+  "  J4  FAIL",
+  "  J5  FAIL",
+  "  J6  FAIL",
+  "  J7  VOID",
+  "  2/6   [2268s]   (1 VOID: J7)",
+  "========================================================================================================"
+ ]
+}

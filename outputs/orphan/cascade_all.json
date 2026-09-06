@@ -1,0 +1,55 @@
+{
+ "n_knockouts": 88,
+ "n_pairs": 23040,
+ "base_rate": 0.0625,
+ "full_AUPRC": 0.5672,
+ "full_lift": 9.08,
+ "prior_only_AUPRC": 0.5591,
+ "prior_lift": 8.95,
+ "Gspecific_only_AUPRC": 0.0661,
+ "Gspecific_lift": 1.06,
+ "top_features": [
+  [
+   "J_movefreq",
+   0.783
+  ],
+  [
+   "G_outdeg",
+   0.059
+  ],
+  [
+   "reg_sign",
+   0.037
+  ],
+  [
+   "J_expr",
+   0.036
+  ],
+  [
+   "rwr",
+   0.03
+  ],
+  [
+   "G_is_tf",
+   0.023
+  ],
+  [
+   "ppi_adj",
+   0.02
+  ],
+  [
+   "coexpr",
+   0.013
+  ]
+ ],
+ "full_minus_prior": 0.0081,
+ "precision_at_10": {
+  "full_model": 1.8,
+  "g_specific_mechanism_only": 0.0,
+  "responsiveness_prior_only": 1.3,
+  "random_base": 0.0,
+  "generic_top10_distinct_genes_across_88_knockouts": 57,
+  "most_common_top10_gene_appears_in": "79/88 knockouts",
+  "interpretation": "top-10 = ~2/10 correct but NEARLY THE SAME 10 genes for every knockout (57 distinct across 88; one gene in 79/88). Knockout-SPECIFIC mechanism = 0/10. The ~2 hits are generic responders, not X-specific."
+ }
+}

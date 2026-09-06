@@ -1,0 +1,596 @@
+<title>Cell model — measured status after forty-seven loops</title>
+<style>
+  :root{
+    --bg:#F5F7F6; --surface:#FFFFFF; --ink:#14181A; --muted:#5B6669; --hair:#DCE2E0;
+    --accent:#0F5F57; --accent-soft:#E4EFEC;
+    --pass:#2C6E4E; --pass-bg:#E6F1EA; --fail:#A63D2A; --fail-bg:#FAEAE6;
+    --nt:#6E777B; --nt-bg:#ECEFEE;
+    --serif: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono: ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#101413; --surface:#171C1B; --ink:#E8EDEB; --muted:#9AA5A5; --hair:#293331;
+      --accent:#6FC2B4; --accent-soft:#16302C;
+      --pass:#79C79B; --pass-bg:#152A21; --fail:#E08A74; --fail-bg:#2E1B16;
+      --nt:#95A0A2; --nt-bg:#1D2422;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#101413; --surface:#171C1B; --ink:#E8EDEB; --muted:#9AA5A5; --hair:#293331;
+    --accent:#6FC2B4; --accent-soft:#16302C;
+    --pass:#79C79B; --pass-bg:#152A21; --fail:#E08A74; --fail-bg:#2E1B16;
+    --nt:#95A0A2; --nt-bg:#1D2422;
+  }
+  :root[data-theme="light"]{
+    --bg:#F5F7F6; --surface:#FFFFFF; --ink:#14181A; --muted:#5B6669; --hair:#DCE2E0;
+    --accent:#0F5F57; --accent-soft:#E4EFEC;
+    --pass:#2C6E4E; --pass-bg:#E6F1EA; --fail:#A63D2A; --fail-bg:#FAEAE6;
+    --nt:#6E777B; --nt-bg:#ECEFEE;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:76ch; margin:0 auto; padding:clamp(2rem,5vw,4.5rem) clamp(1.1rem,4vw,2rem) 5rem;
+        display:flex; flex-direction:column; gap:2.75rem}
+  h1,h2,h3{font-family:var(--serif); font-weight:600; text-wrap:balance; margin:0; line-height:1.22}
+  h1{font-size:clamp(1.9rem,4.6vw,2.7rem); letter-spacing:-.011em}
+  h2{font-size:clamp(1.25rem,2.7vw,1.55rem); letter-spacing:-.006em}
+  h3{font-size:1.02rem; letter-spacing:0}
+  p{margin:0}
+  a{color:var(--accent)}
+  .eyebrow{font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+           color:var(--accent); margin:0}
+  .lede{font-size:1.08rem; color:var(--muted)}
+  section{display:flex; flex-direction:column; gap:1rem}
+  .rule{height:1px; background:var(--hair); border:0; margin:0}
+
+  .figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr)); gap:.85rem}
+  .fig{background:var(--surface); border:1px solid var(--hair); border-radius:3px;
+       padding:1rem 1.1rem; display:flex; flex-direction:column; gap:.2rem}
+  .fig .v{font-family:var(--mono); font-size:1.7rem; font-variant-numeric:tabular-nums;
+          letter-spacing:-.02em; line-height:1.1}
+  .fig .k{font-size:.83rem; color:var(--muted)}
+  .fig.hero .v{color:var(--accent)}
+
+  .chip{font-family:var(--mono); font-size:.68rem; letter-spacing:.07em; text-transform:uppercase;
+        padding:.12rem .42rem; border-radius:2px; white-space:nowrap}
+  .p{color:var(--pass); background:var(--pass-bg)}
+  .f{color:var(--fail); background:var(--fail-bg)}
+  .n{color:var(--nt); background:var(--nt-bg)}
+
+  .loops{display:flex; flex-direction:column; gap:0}
+  .loop{display:grid; grid-template-columns:2.6rem 1fr; gap:.9rem;
+        padding:1.05rem 0; border-top:1px solid var(--hair)}
+  .loop:last-child{border-bottom:1px solid var(--hair)}
+  .loop .idx{font-family:var(--mono); font-size:.9rem; color:var(--accent);
+             font-variant-numeric:tabular-nums; padding-top:.1rem}
+  .loop .body{display:flex; flex-direction:column; gap:.42rem; min-width:0}
+  .loop .q{font-weight:600}
+  .loop .a{color:var(--muted); font-size:.95rem}
+  .gates{display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.1rem}
+
+  .scroll{overflow-x:auto; border:1px solid var(--hair); border-radius:3px; background:var(--surface)}
+  table{border-collapse:collapse; width:100%; font-size:.9rem}
+  th,td{text-align:left; padding:.6rem .8rem; border-bottom:1px solid var(--hair); white-space:nowrap}
+  thead th{font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+           color:var(--muted); font-weight:500}
+  tbody tr:last-child td{border-bottom:0}
+  td.n, th.n{font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right}
+  td.name{white-space:normal}
+  td.src{font-family:var(--mono); font-size:.78rem; color:var(--muted)}
+
+  .callout{background:var(--accent-soft); border-left:2px solid var(--accent);
+           padding:1rem 1.15rem; border-radius:0 3px 3px 0; display:flex; flex-direction:column; gap:.6rem}
+  .callout h3{color:var(--accent)}
+  ul{margin:0; padding-left:1.1rem; display:flex; flex-direction:column; gap:.45rem}
+  li::marker{color:var(--muted)}
+  code{font-family:var(--mono); font-size:.88em; background:var(--accent-soft);
+       padding:.08em .3em; border-radius:2px}
+  footer{color:var(--muted); font-size:.86rem}
+  tr.gone td{color:var(--muted)}
+  tr.gone td.name, tr.gone td.n{text-decoration:line-through; text-decoration-thickness:1px}
+  tr.gone td.src::after{content:" · withdrawn"; text-decoration:none; color:var(--fail); font-weight:600}
+</style>
+
+<div class="wrap">
+
+  <header style="display:flex;flex-direction:column;gap:.75rem">
+    <p class="eyebrow">Whole-cell model · measured status · forty-seven loops</p>
+    <h1>What this cell model can answer, what it cannot, and how each was found out</h1>
+    <p class="lede">The goal was a model that answers anything in the cell — any mutation, any protein
+    change, any chromosome fold, drug effect, side effect, cancer. As stated that cannot fail, so it was
+    turned into axes that can. Every number here is read out of a run that declared its thresholds
+    before it executed.</p>
+  </header>
+
+  <div class="figs">
+    <div class="fig"><span class="v">6</span><span class="k">question types that can be <em>asked</em></span></div>
+    <div class="fig"><span class="v">6</span><span class="k">that can now be <em>got wrong</em></span></div>
+    <div class="fig hero"><span class="v">3</span><span class="k">that are <em>answered well</em></span></div>
+    <div class="fig"><span class="v">100 / 38</span><span class="k">gates passed / failed</span></div>
+  </div>
+
+  <hr class="rule">
+
+  <section>
+    <h2>Three numbers, not one</h2>
+    <p><strong>Asked</strong> means the perturbation is addressable — there's a slot you can hand it to.
+    <strong>Got wrong</strong> means one module both consumes that slot and records a result scored
+    against a named control; a number that cannot be wrong is not an answer. <strong>Answered well</strong>
+    means every gate in that pipeline came back positive. The third is the honest one — the second counts
+    questions that are now falsifiable, which is real progress and is not the same as knowing the answer.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Question</th><th class="n">Items</th><th class="n">Gates</th><th>Answered well</th><th>By</th></tr></thead>
+        <tbody>
+          <tr><td class="name">any chromosome fold</td><td class="n">767</td><td class="n">8/8</td><td><span class="chip p">yes</span></td><td class="src">loop_real_chromatin</td></tr>
+          <tr><td class="name">any protein change</td><td class="n">42,765</td><td class="n">33/39</td><td><span class="chip p">yes</span></td><td class="src">loop_quantity</td></tr>
+          <tr><td class="name">drug effect</td><td class="n">4,275</td><td class="n">7/8</td><td><span class="chip p">yes</span></td><td class="src">loop_drug</td></tr>
+          <tr><td class="name">cancer</td><td class="n">839</td><td class="n">7/8</td><td><span class="chip f">withdrawn</span></td><td class="src">loop_cancer superseded</td></tr>
+          <tr><td class="name">any point mutation</td><td class="n">13</td><td class="n">8/14</td><td><span class="chip f">no</span></td><td class="src">—</td></tr>
+          <tr><td class="name">side effect</td><td class="n">48</td><td class="n">3/4</td><td><span class="chip f">no</span></td><td class="src">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.92rem;color:var(--muted)">The audit refuses to run unless a synthetic negative
+    control fails on every axis. It became synthetic at loop 13 after being invalidated twice by ordinary
+    progress — the instrument's negative control was being eaten by the work it was meant to police.</p>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2>The single most informative pair of results</h2>
+    <div class="callout">
+      <h3>Same predictor. Same confound. Opposite outcome.</h3>
+      <p>Mean essentiality of a drug's targets, with target count partialled out identically both times:</p>
+      <p><strong>Side-effect count</strong> → partial <code>+0.0515</code>, inside the null. <strong>Failed.</strong><br>
+      <strong>Cytotoxic class</strong> → partial <code>0.7233</code>, far outside it. <strong>Passed.</strong></p>
+      <p>The reason was written down before either number existed. An adverse event happens in a patient,
+      after distribution, metabolism and a tissue's response — none of which this model represents.
+      Cytotoxicity happens in a dividing cell, which is the one thing it does. The model succeeds where
+      its scope reaches and fails where it doesn't, which is a better shape than both passing.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2>The forty-seven loops</h2>
+    <p style="font-size:.95rem;color:var(--muted)">Numbered because the order is real: each loop's target
+    was chosen by the previous loop's measurement, not planned in advance.</p>
+    <div class="loops">
+
+      <div class="loop"><div class="idx">01</div><div class="body">
+        <p class="q">Can the growth feedback be closed?</p>
+        <p class="a">Growth appears on both sides of the mRNA and protein balances, so it's an equation,
+        not a pipeline. It converges to <span class="chip n">1.7e-08</span> from either start — the first
+        cycle in what the audit had found to be a pure DAG. The feedback itself changed nothing.</p>
+        <div class="gates"><span class="chip p">closes</span><span class="chip p">signal</span><span class="chip f">feedback earns place</span><span class="chip f">beats catalogue</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">02</div><div class="body">
+        <p class="q">How much of "answer anything" is reachable?</p>
+        <p class="a">The goal made falsifiable. Six askable, one answerable — after three voided runs,
+        each a real defect in the instrument, including one where the audit credited <em>itself</em>.</p>
+      </div></div>
+
+      <div class="loop"><div class="idx">03</div><div class="body">
+        <p class="q">Why did a lookup beat the mechanism?</p>
+        <p class="a">Because it was never about metabolism. mRNA abundance scores 0.7766 on metabolic
+        genes and 0.7794 on genes with no metabolic reaction at all.</p>
+        <div class="gates"><span class="chip p">independent</span><span class="chip p">confound confirmed</span><span class="chip n">medium untestable</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">04</div><div class="body">
+        <p class="q">Was the model ever asked a fair question?</p>
+        <p class="a">No — it shipped able to import ATP, LDL, plasminogen, and metabolites of 9.6 million
+        carbons. With a real medium, FBA moved 0.6491 → 0.6850. Six attempts, each failing differently.</p>
+        <div class="gates"><span class="chip p">feasible</span><span class="chip p">recovers AUC</span><span class="chip f">slack</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">05</div><div class="body">
+        <p class="q">Does partial protein loss predict what deletion cannot?</p>
+        <p class="a">No — and this was the entire reason for building an enzyme-capacity layer. Four extra
+        solves per gene bought <span class="chip n">−0.0016</span> AUC.</p>
+        <div class="gates"><span class="chip p">slot exists</span><span class="chip p">signal</span><span class="chip f">partial loss real</span><span class="chip f">beats catalogue</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">06–07</div><div class="body">
+        <p class="q">Is the chromatin dead link deserved?</p>
+        <p class="a">Loop 6 said no, convincingly. Loop 7 checked <em>what the block actually is</em>:
+        8.8% same-chromosome where a Hi-C map runs 70–90%, half its pairs sharing a functional label.
+        A functional neighbourhood, not a fold. Loop 6's headline was retracted in its own source.</p>
+        <div class="gates"><span class="chip p">8 gates</span><span class="chip f">headline retracted</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">08</div><div class="body">
+        <p class="q">Ask it again, on real chromatin.</p>
+        <p class="a">Measured bTMP torsion against transcription. Replicates agree at 0.6078; torsion
+        gives +0.1766 where the naked-DNA control gives −0.1423 — opposite signs, so not coverage.
+        <strong>The sign came from the physics, not from fitting.</strong></p>
+        <div class="gates"><span class="chip p">reproducible</span><span class="chip p">beats naked DNA</span><span class="chip p">above shuffles</span><span class="chip p">beats composition</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">11–13</div><div class="body">
+        <p class="q">Re-measure, and fix what the measuring found.</p>
+        <p class="a">Two rows were reading NO because the audit's slots hadn't learned about work already
+        done. Then the must-fail calibration was made <em>synthetic</em>, after ordinary progress
+        invalidated it twice, and a fourth column was added because the first three had started to
+        mislead: five rows cleared them while three of those five had a failed decisive gate.</p>
+      </div></div>
+
+      <div class="loop"><div class="idx">12</div><div class="body">
+        <p class="q">Side effects — a row with no data at all.</p>
+        <p class="a">SIDER added. Raw correlation +0.1691; holding target count fixed it collapses to
+        +0.0515, inside the null. Target count alone gives +0.2898. That was the whole signal.</p>
+        <div class="gates"><span class="chip p">join</span><span class="chip p">signal</span><span class="chip f">beats target count</span><span class="chip p">beats lookups</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">14</div><div class="body">
+        <p class="q">Cancer drivers.</p>
+        <p class="a">Citation count alone predicts driver status at 0.83. After removing it and gene
+        length, the model's partial AUC is <strong>0.2990</strong> — an <em>anti</em>-correlation, i.e.
+        0.7010 for non-drivers. Real and interpretable, and not what the module set out to show. The
+        loss-of-function subset sits at 0.5073, which is chance.</p>
+        <div class="gates"><span class="chip p">4 gates</span><span class="chip n">direction inverted</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">15</div><div class="body">
+        <p class="q">Audit my own gate before believing it.</p>
+        <p class="a">Loop 4's "92% of knockouts move growth, so no slack" was an off-by-a-bisection-
+        tolerance error: 1,525 knockouts carried a <em>negative</em> cost of −7.2e-07 because μ_WT was
+        the bisection's last iterate, not a re-solve. The real figure is <strong>11.7%</strong>, against
+        24.3% for DepMap at a matched mark. The model has roughly the right amount of slack — it just
+        can't yet say which genes belong in the tail.</p>
+        <div class="gates"><span class="chip p">gate was the problem</span><span class="chip p">right amount</span><span class="chip f">right places</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">16</div><div class="body">
+        <p class="q">Test the follow-up I proposed, instead of leaving it open.</p>
+        <p class="a">Saturating kinetics can't rescue loop 5, and it's provable: with one shared K it
+        evaluates every gene's curve at the same displaced point, so the ranking cannot change. The data
+        agree — sliding along the dose axis costs 0.0033 AUC. Retired with a reason.</p>
+        <div class="gates"><span class="chip p">invariance holds</span><span class="chip f">no per-enzyme kinetics</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">17</div><div class="body">
+        <p class="q">What made <code>model4</code>?</p>
+        <p class="a">Recovered from five floats nobody had read. <code>10/random_at10 = 8791</code>
+        exactly, which is <code>n_train − 1</code>; lift reproduces to the last digit. It's a learned
+        retrieval model's top-8 output — with a recorded recall@10 of <strong>0.99%</strong> and a
+        negative R². Independently confirms loop 7 by a different route.</p>
+        <div class="gates"><span class="chip p">arithmetic</span><span class="chip p">top-k</span><span class="chip p">producer absent</span><span class="chip f">lists reliable</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">18</div><div class="body">
+        <p class="q">Build the drug pipeline the row was passing without.</p>
+        <p class="a">Cytotoxic class from target essentiality: partial AUC <strong>0.7233</strong> against
+        a null of [0.4363, 0.5853], beating LOEUF and abundance. The strongest positive here.</p>
+        <div class="gates"><span class="chip p">join</span><span class="chip p">signal</span><span class="chip p">beats target count</span><span class="chip p">beats lookups</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">19–20</div><div class="body">
+        <p class="q">Fix over-crediting, then state it.</p>
+        <p class="a">"Answered well" was crediting any module that mentions a block — including as a
+        control — which had marked <em>any protein change</em> as answered by a cancer module. Each
+        question now declares which modules count as its own pipeline. That correction took the headline
+        from 4 down to 3, which is the direction a fix to over-crediting should move it.</p>
+      </div></div>
+
+      <div class="loop"><div class="idx">21</div><div class="body">
+        <p class="q">Loop 1 failed on a broken model. Re-run it on the fixed one.</p>
+        <p class="a">Ten hours of solver time, same gates, same genes, same seed — only the medium is
+        loop 4's 57 defined uptakes instead of 1,660 open exchanges including importable ATP. Every
+        FBA predictor jumped (<span class="chip n">loop 0.6210 → 0.7022</span>) while the expression
+        lookup sat unmoved at 0.7766, which is the control that the gain is the model and not the
+        scoring set. <strong>The feedback still lost:</strong> −0.0074 → −0.0013. 82% of the deficit
+        gone, the sign never flipped.</p>
+        <div class="gates"><span class="chip p">closure</span><span class="chip p">signal</span><span class="chip f">feedback earns place</span><span class="chip f">beats catalogue</span><span class="chip p">adds to lookup</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">22</div><div class="body">
+        <p class="q">Predict a number, not a class.</p>
+        <p class="a">Every result up to here separated groups. This one predicts how much protein a
+        gene makes from its mRNA and decay rate: held-out R² <strong>0.4332</strong>, and the loop's
+        own turnover-and-dilution term is what carries it there from 0.3783 — the first time the
+        equation's own machinery earned its place on held-out data.</p>
+        <div class="gates"><span class="chip p">beats mRNA alone</span><span class="chip p">turnover helps</span><span class="chip p">beats shuffle</span><span class="chip p">no abundance confound</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">23</div><div class="body">
+        <p class="q">Score a <em>variant</em>, not the gene it sits in.</p>
+        <p class="a">A gene-level score gives every mutation in a gene the same number, so it cannot
+        answer "any point mutation" at all. Positions within a gene, scored against leave-one-out
+        centroids with within-gene shuffles as the control. It separates — and it does not beat the
+        per-gene score it was meant to replace.</p>
+        <div class="gates"><span class="chip p">addressable</span><span class="chip p">separates</span><span class="chip p">beats shuffle</span><span class="chip f">beats the gene score</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">24</div><div class="body">
+        <p class="q">What does the metabolic model get <em>wrong</em>?</p>
+        <p class="a">Precision <strong>76.7%</strong>, recall <strong>35.7%</strong>. When it calls a
+        gene costly it's right three times in four; it finds a third of what cells actually depend on.
+        It named the 285 it misses.</p>
+        <div class="gates"><span class="chip p">tail is real</span><span class="chip p">ordered</span><span class="chip p">named</span><span class="chip f">recall</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">25</div><div class="body">
+        <p class="q">Do seven layers add up to more than the best one?</p>
+        <p class="a">All seven together: <span class="chip n">0.8309</span>. Best single: 0.7729. But
+        leave-one-out says only two carry it — metabolic cost (+0.0411) and mRNA (+0.0393). Torsion
+        contributes −0.0012. The verdict first written here said "the layers are complementary";
+        that was false and was corrected before recording.</p>
+        <div class="gates"><span class="chip p">beats best single</span><span class="chip p">beats lookups</span><span class="chip p">no single layer carries it</span><span class="chip p">beats shuffle</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">26</div><div class="body">
+        <p class="q">Re-audit.</p>
+        <p class="a">6 askable, 6 falsifiable, 4 answered well — <em>any protein change</em> joins on
+        loop 22, the first row credited to a pipeline that predicts a number rather than a class.</p>
+      </div></div>
+
+      <div class="loop"><div class="idx">27</div><div class="body">
+        <p class="q">Where does protein amplification come from?</p>
+        <p class="a">Slope rises 0.61 → 1.48 across mRNA thirds. <strong>Two controls were written and
+        thrown out here.</strong> The first was an algebraic identity — ρ(residual, y) ≈ √(1−R²)
+        predicted 0.789 and measured 0.807, so it could not have failed. The replacement stratified by
+        the target, biasing every within-stratum slope by regression to the mean. Only the third,
+        stratifying by the predictor, was a test.</p>
+        <div class="gates"><span class="chip p">slope above 1</span><span class="chip f">single power law</span><span class="chip p">explained</span><span class="chip p">constant implicated</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">28</div><div class="body">
+        <p class="q">What layer would recover the 285 it misses?</p>
+        <p class="a">"Outside metabolism" is a shrug unless it names which layer. Comparing the missed
+        dependencies against genes the model correctly ignores — both invisible to it — <strong>PPI
+        degree</strong> separates them at 0.6793, ahead of expression. Then the gate that mattered:
+        adding it at matched precision moves recall <strong>35.7% → 30.9%</strong>. It makes the
+        predictor worse, because hub-ness promotes true negatives just as fast. Naming the missing
+        layer is not being able to use it.</p>
+        <div class="gates"><span class="chip p">distinguishable</span><span class="chip p">not just expression</span><span class="chip f">would actually help</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">29</div><div class="body">
+        <p class="q">Was the cancer inversion real?</p>
+        <p class="a">Loop 14 reported essentiality anti-predicting drivers at 0.2990 after partialling
+        out citations — which predict the label at 0.8259. Regressing out a confound that strong is how
+        reversed residuals get manufactured. Matched pairs instead of regression:
+        <strong>0.4949, inside the null.</strong> The inversion was over-control and the claim is
+        withdrawn. What survives is sharper: the two driver roles point <em>opposite</em> ways —
+        loss-of-function 0.4717, activating 0.5248 — and cancel. A tumour suppressor must be deletable
+        so it cannot be essential; an oncogene is switched on rather than lost. Thin margin, one test.</p>
+        <div class="gates"><span class="chip p">matching works</span><span class="chip f">anti-correlation survives</span><span class="chip p">role split</span><span class="chip p">positive control</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">30</div><div class="body">
+        <p class="q">Teach the audit to un-believe a result.</p>
+        <p class="a">Gate booleans are written before a retraction exists and can never see one, so
+        <em>cancer</em> kept reading "answered well" on loop 14's 4/4 after loop 29 had withdrawn its
+        central claim. A <code>SUPERSEDED</code> map now takes a module's vote while keeping its row,
+        and each entry must name the loop that did the withdrawing. <strong>The headline went from 4
+        to 3.</strong> A capability count that can only rise was not measuring capability.</p>
+      </div></div>
+
+      <div class="loop"><div class="idx">31</div><div class="body">
+        <p class="q">Chain a point mutation in DNA through the fold, to a residue, into nexus.</p>
+        <p class="a">Four links joined end to end on real variants. The middle one is <em>computed</em>,
+        not looked up: genomic coordinate → walk the transcript's coding exons → CDS offset → codon →
+        substitute the base (complemented on a minus-strand gene) → translate. Nothing about the
+        protein consequence is read from an annotation, because a chain whose middle link is a lookup
+        is a join and not a model.</p>
+        <p class="a"><strong>It is verified against a source it never saw.</strong> Reference base
+        matches the CDS at <span class="chip n">100.00%</span> of 966,223 variants; the computed
+        consequence agrees with ClinVar's held-back field at <span class="chip n">99.99%</span>.
+        TP53&nbsp;R175H, KRAS&nbsp;G12D and BRAF&nbsp;V600E all land on the right residue from raw
+        coordinates. 56,258 mutations carry all four links.</p>
+        <p class="a">Then the part that fails. Scored <em>within gene</em> — so the chain cannot pass by
+        rediscovering which genes are pathogenic — torsion at the variant's own base gives
+        <strong>0.5054</strong> against a null of 0.5063, and BLOSUM62, a substitution table from 1992,
+        beats every structural layer at 0.6623.</p>
+        <div class="gates"><span class="chip p">chain runs</span><span class="chip p">translation right</span><span class="chip p">keeps resolution</span><span class="chip f">fold earns place</span><span class="chip f">nexus sees something</span><span class="chip f">beats BLOSUM62</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">32</div><div class="body">
+        <p class="q">That test of nexus was unfair. Do it properly.</p>
+        <p class="a">Loop 31 called <code>nexus_activity(ddg, 0.0)</code> — binding pinned at zero,
+        because an arbitrary ClinVar gene has no interface partner — then reported near-chance as a
+        verdict on nexus. But nexus had already published that exact configuration at 0.562, already
+        measured it blind to 94% of binding-breakers, and already stated that the hop to whole-cell
+        phenotype "does not compose". <strong>Its task is not pathogenicity at all</strong>; it is
+        whether a mutation breaks a protein–protein interface.</p>
+        <p class="a"><strong>Rebuilt on its own task, its claim holds:</strong> intrinsic 0.625, dual
+        0.770, fusion gain <span class="chip n">+0.145</span> against a recorded +0.193. The absolute
+        numbers miss the gate (621 mutations here vs 808 there) so F1 stays failed — but the
+        <em>difference</em>, which is what nexus actually asserts, reproduces.</p>
+        <p class="a">And my excuse for loop 31's inverted sensor was falsified by my own test.
+        Restricting to confident structure moves it 0.4806 → 0.4902 — toward chance, not toward
+        correct — and burial makes it <em>worse</em> (0.4803 buried vs 0.5104 exposed). Struck. The
+        real limit is reach: only <strong>30.4%</strong> of these variants sit in a gene with any
+        multi-chain experimental structure, so for seven in ten, nexus's second sensor cannot fire
+        at all.</p>
+        <div class="gates"><span class="chip f">reproduces absolutes</span><span class="chip p">reproduces the claim</span><span class="chip f">confident structure rescues</span><span class="chip f">burial sharpens</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">33<br>–41</div><div class="body">
+        <p class="q">Build a 4D chromatin model that behaves like DNA in a nucleus, on four CPUs.</p>
+        <p class="a"><strong>The engine is diagonalised, not integrated.</strong> A chromosome held by
+        harmonic bonds — backbone plus cohesin loops — is a Gaussian network, so one eigendecomposition
+        of its Laplacian yields the contact map <em>and</em> the whole time axis in closed form. No
+        timesteps anywhere. <span class="chip n">0.42 s</span> per configuration at 1,926 bins.</p>
+        <p class="a">Validated first against physics fixed before the code existed: the ideal-chain
+        identity to <span class="chip n">5e-11</span>, the Gaussian exponent at exactly −1.5000, the
+        Rouse exponent 0.4939. And exactly wrong for chromatin — real chr21 measures −0.964, so the
+        bare polymer is the null, not the answer.</p>
+        <p class="a"><strong>Then the mechanism.</strong> Loop extrusion on GM12878's own CTCF, with
+        motif direction scanned from the sequence, using literature parameters only. P(s) went
+        −1.262 → <strong>−1.010</strong> against a measured −0.964. The orientation signature came out
+        +0.2278 against a measured +0.3788 and <em>inverted</em> to −0.042 when orientations were
+        shuffled — that inversion is what makes it extrusion and not coincidence.</p>
+        <p class="a"><strong>The fourth dimension.</strong> Two clocks: relaxation inside a fixed loop
+        set, and rewiring of the set itself. MSD exponent 0.354; loop lifetime 14.8 min out for 15.0 min
+        in; and single configurations reach r = 0.17 where their average reaches 0.22 — TADs are a
+        population object here, exactly as single-cell Hi-C reports.</p>
+        <p class="a"><strong>Held out by chromosome, mechanism beat fitting.</strong> On chr22, unseen:
+        physics <strong>+0.2852</strong> with zero fitted parameters, a trained CNN +0.0893, smoothed
+        CTCF density +0.1110. The network's orientation-shuffled twin scored <em>higher</em> (+0.1290)
+        than the real one — it learned where CTCF binds, never which way it points.</p>
+        <p class="a"><strong>And the ceiling is the same fact as the speed.</strong> Insulation stalled
+        at 0.297 against a 0.40 gate, and two attempts at compartments both collapsed P(s) — the second
+        exposed by its own control, where shuffled GC scored higher than real GC. A long-range harmonic
+        bond is a permanent shortcut; an attraction is not. The linearity that makes one
+        eigendecomposition deliver everything is the same property that forbids distance-dependent
+        attraction. Stopping rules were declared before each run and honoured.</p>
+        <div class="gates"><span class="chip p">target measured 4/4</span><span class="chip p">engine 4/4</span><span class="chip f">extrusion 2/4</span><span class="chip f">stiffness 3/4</span><span class="chip p">4D 4/4</span><span class="chip f">compartments 1/4</span><span class="chip f">affinity 1/4</span><span class="chip f">surrogate 1/4</span></div>
+      </div></div>
+
+      <div class="loop"><div class="idx">43<br>–47</div><div class="body">
+        <p class="q">Close the insulation gap, then fix everything fixable.</p>
+        <p class="a"><strong>First, was the gate even achievable?</strong> I'd asserted 0.40 and never
+        justified it. A second experiment — GM12878 in situ <em>replicate</em> against primary —
+        gives insulation <span class="chip n">r = 0.9285</span>. So the bar was soft and the model was
+        genuinely short. It was not moved.</p>
+        <p class="a"><strong>The fix that worked:</strong> the CTCF barrier re-rolled its blocking
+        probability <em>every timestep</em>, so a median site held a leg 1.9 steps out of a 27-step
+        cohesin lifetime. A barrier that gets a fresh chance to fail every step is not a barrier.
+        Occupancy as a persistent state of the site: insulation <strong>0.2974 → 0.3617</strong>.</p>
+        <p class="a"><strong>Three that didn't.</strong> Loading bias is real (4× over its shuffled
+        control) and makes insulation worse — rejected, not kept. Excluded volume via Langevin
+        overshot to <strong>P(s) = −2.11</strong>, the textbook dilute self-avoiding-walk exponent,
+        where chromatin is a screened melt at −0.96. And a claim of mine was retracted: discrete
+        contact counting cannot beat the closed form, because the Gaussian contact formula is
+        <em>exact</em> per configuration.</p>
+        <p class="a"><strong>A premise I built on for eleven loops was false.</strong> The whole
+        closed-form architecture rests on "Langevin is unaffordable." Measured: <span class="chip n">0.20 s</span>
+        per configuration against the closed form's 0.42 s. Twice cheaper — though a closed-form
+        configuration is an exact ensemble average and a Langevin one is a single noisy snapshot,
+        so the trade only favours sampling when samples are what you want.</p>
+        <p class="a"><strong>Then the buffering test — and the first time naming a missing layer let
+        us use it.</strong> Re-ranking the model's own tail lifted precision <strong>0.7658 →
+        0.8228</strong> against a shuffled 95th of 0.7785. But the hypothesis was wrong: all four
+        <em>redundancy</em> features point the wrong way (more isozymes predicts <em>not</em>
+        buffered), and what separates the over-called genes is <em>centrality</em> — they're
+        peripheral, not backed up. The model over-calls the edges of its own network. That's scope,
+        not biology.</p>
+        <p class="a"><strong>And a guard for the bug that caused two false negatives.</strong>
+        Human-GEM ships empty gene names, so a symbol join silently matched zero of 1,784 genes and
+        the isozyme features read exactly 0.5000 against an exactly 0.5000 band — the signature of a
+        column never computed. <code>check_features</code> now fails loudly on constant columns; an
+        audit across four loops came back clean.</p>
+        <div class="gates"><span class="chip p">ceiling measured</span><span class="chip p">barrier fixed</span><span class="chip f">loading bias</span><span class="chip f">excluded volume</span><span class="chip p">buffering usable</span><span class="chip f">buffering ≠ redundancy</span></div>
+      </div></div>
+
+
+
+
+
+
+
+
+
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2>What is true, with its source</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Finding</th><th class="n">Measured</th><th>From</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Cytotoxic drugs are separable</td><td class="n">0.7233</td><td class="src">loop_drug</td></tr>
+          <tr><td class="name">…side effects are not, same predictor</td><td class="n">+0.0515</td><td class="src">loop_sideeffect</td></tr>
+          <tr><td class="name">A quantity, held out: protein from mRNA</td><td class="n">R² 0.4332</td><td class="src">loop_quantity</td></tr>
+          <tr><td class="name">…without the loop's turnover term</td><td class="n">R² 0.3783</td><td class="src">loop_quantity</td></tr>
+          <tr><td class="name">The model <em>adds</em> to the lookup that beat it</td><td class="n">0.7761 → 0.8267</td><td class="src">loop_retest</td></tr>
+          <tr><td class="name">A real medium recovers FBA</td><td class="n">0.6210 → 0.7022</td><td class="src">loop_retest</td></tr>
+          <tr><td class="name">…and the lookup control does not move</td><td class="n">0.7766</td><td class="src">loop_retest</td></tr>
+          <tr><td class="name">Torsion predicts transcription</td><td class="n">+0.1766</td><td class="src">loop_real_chromatin</td></tr>
+          <tr><td class="name">…where naked DNA gives</td><td class="n">−0.1423</td><td class="src">loop_real_chromatin</td></tr>
+          <tr><td class="name">The lookup is not about metabolism</td><td class="n">0.7766 / 0.7794</td><td class="src">loop_deficit</td></tr>
+          <tr><td class="name">The growth feedback closes</td><td class="n">1.7e-08</td><td class="src">cell_loop</td></tr>
+          <tr><td class="name">…but does not help, on either model</td><td class="n">−0.0074 → −0.0013</td><td class="src">loop_retest</td></tr>
+          <tr><td class="name">Precision on real dependencies</td><td class="n">76.7%</td><td class="src">loop_tail</td></tr>
+          <tr><td class="name">…recall on the same set</td><td class="n">35.7%</td><td class="src">loop_tail</td></tr>
+          <tr><td class="name">Hub-ness separates the misses</td><td class="n">0.6793</td><td class="src">loop_recall</td></tr>
+          <tr><td class="name">…and using it makes recall worse</td><td class="n">30.9%</td><td class="src">loop_recall</td></tr>
+          <tr><td class="name">Partial loss buys nothing</td><td class="n">−0.0016</td><td class="src">loop_variant</td></tr>
+          <tr><td class="name">The 92% no-slack result was my bug</td><td class="n">11.7%</td><td class="src">loop_slack</td></tr>
+          <tr><td class="name"><code>model4</code> is a weak ranker's output</td><td class="n">0.99%</td><td class="src">loop_provenance</td></tr>
+          <tr><td class="name">Genomic coordinate → codon → residue, computed</td><td class="n">99.99%</td><td class="src">loop_chain</td></tr>
+          <tr><td class="name">…reference base agrees with the CDS</td><td class="n">100.00%</td><td class="src">loop_chain</td></tr>
+          <tr><td class="name">Torsion at a variant's own base, within gene</td><td class="n">0.5054 / null 0.5063</td><td class="src">loop_chain</td></tr>
+          <tr><td class="name">BLOSUM62 beats every structural layer</td><td class="n">0.6623</td><td class="src">loop_chain</td></tr>
+          <tr><td class="name">nexus's fusion gain, independently rebuilt</td><td class="n">+0.145 / +0.193</td><td class="src">loop_nexus_fair</td></tr>
+          <tr><td class="name">…its reach across arbitrary point mutations</td><td class="n">≤ 30.4%</td><td class="src">loop_nexus_fair</td></tr>
+          <tr><td class="name">4D engine: one solve gives map + time axis</td><td class="n">0.42 s</td><td class="src">loop_polymer</td></tr>
+          <tr><td class="name">Extrusion bends P(s) toward the chromosome</td><td class="n">−1.010 / −0.964</td><td class="src">loop_stiffness</td></tr>
+          <tr><td class="name">Orientation signature inverts when shuffled</td><td class="n">+0.228 → −0.042</td><td class="src">loop_stiffness</td></tr>
+          <tr><td class="name">Loop lifetime out vs residence in</td><td class="n">14.8 / 15.0 min</td><td class="src">loop_fourth</td></tr>
+          <tr><td class="name">Physics transfers to an unseen chromosome</td><td class="n">+0.2852</td><td class="src">loop_surrogate</td></tr>
+          <tr><td class="name">…a trained CNN on the same task</td><td class="n">+0.0893</td><td class="src">loop_surrogate</td></tr>
+          <tr><td class="name">Insulation ceiling, replicate Hi-C</td><td class="n">0.9285</td><td class="src">loop_insulation</td></tr>
+          <tr><td class="name">Persistent CTCF barrier</td><td class="n">0.2974 → 0.3617</td><td class="src">loop_insulation</td></tr>
+          <tr><td class="name">Excluded volume overshoots to a SAW</td><td class="n">P(s) −2.11</td><td class="src">loop_langevin</td></tr>
+          <tr><td class="name">Langevin cheaper than the closed form</td><td class="n">0.20 s / 0.42 s</td><td class="src">loop_langevin</td></tr>
+          <tr><td class="name">Buffering predicted <em>and</em> usable</td><td class="n">0.7658 → 0.8228</td><td class="src">loop_buffering</td></tr>
+          <tr><td class="name">…and it is centrality, not redundancy</td><td class="n">0 / 4 support</td><td class="src">loop_buffering</td></tr>
+          <tr class="gone"><td class="name">The model says what is <em>not</em> a driver</td><td class="n">0.7010</td><td class="src">loop_cancer</td></tr>
+          <tr class="gone"><td class="name">…and is at chance on LoF drivers</td><td class="n">0.5073</td><td class="src">loop_cancer</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Five limits on the rows that pass</h2>
+    <ul>
+      <li><strong>Effects are modest.</strong> ρ ≈ 0.18 for torsion; AUC ≈ 0.72 for cytotoxic class;
+      R² ≈ 0.43 for protein abundance. Real, controlled, and not large.</li>
+      <li><strong>Three of this page's own earlier claims have been withdrawn.</strong> It used to say
+      the model predicts non-drivers at 0.7010 (loop 29: 0.4949, inside the null); that nothing here
+      predicts a quantity (loop 22: R² 0.4332); and that nexus's sensor "contributes nothing" (loop 32:
+      that was one of its two sensors, run against a target it disclaims). Struck through above rather
+      than quietly deleted.</li>
+      <li><strong>The feedback that started this still does not earn its place.</strong> On a model that
+      cannot eat ATP, with the reference growth rate fixed, its deficit went −0.0074 → −0.0013. The sign
+      never flipped.</li>
+      <li><strong>Recall is the binding limit and its obvious fix is a measured dead end.</strong> The
+      model finds a third of real dependencies; the layer that separates the misses makes the predictor
+      worse when you add it.</li>
+      <li><strong>There is now a real 4D model, and its ceiling is the same fact as its speed.</strong>
+      Loops 33–41 built a Gaussian-network chromosome with loop extrusion that reproduces P(s), the
+      CTCF orientation signature, sub-diffusive motion and correct loop turnover, at 0.42 s per
+      configuration — and beats a trained CNN on an unseen chromosome. But insulation stalls at 0.30
+      against a 0.40 gate and compartments fail twice, because a long-range harmonic bond is a
+      permanent shortcut and an attraction is not. The linearity that makes it cheap is what caps it.
+      Separately, the earlier <em>1D</em> chromatin line stands as it was: what once looked like a fold
+      was a retrieval model's top-8 list at 0.99% recall, and the torsion track that replaced it works
+      at gene scale, carries nothing at variant scale, and contributes −0.0012 to the integrated model.</li>
+    </ul>
+  </section>
+
+  <hr class="rule">
+
+  <footer>
+    <p>100 gates passed, 38 failed, across forty-seven loops. Both numbers are reported because a project
+    where every gate passes was not gating anything. Ten results have been retracted or corrected after
+    being measured more carefully — most of them faults in the instrument rather than the data: an audit
+    that credited itself, a search through its own vocabulary, reachability through a shared 38&nbsp;MB
+    hub, a control that was an algebraic identity, a control that stratified by its own target, a
+    partialled confound strong enough to manufacture the anti-correlation it was meant to remove, a
+    verdict on a dual-sensor model that only ran one of its sensors, a data ledger whose paths pointed
+    at a directory the files had never been in, a demonstration constant carried into a physical run,
+    and a consistency check that was wrong twice before becoming an identity. Each correction is
+    recorded in the module that made the original claim, and the capability count has gone down twice
+    as a result.</p>
+  </footer>
+
+</div>

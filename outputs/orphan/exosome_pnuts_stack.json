@@ -1,0 +1,339 @@
+{
+ "finding": "RNA exosome KO -> PPP1R10 mRNA UP (reproducible >=3 lines)",
+ "cell_dependency": {
+  "EXOSC2": {
+   "dep_frac": 0.99,
+   "ess": 1,
+   "in_model": true,
+   "proc": "translation",
+   "ppi_degree": null
+  },
+  "EXOSC3": {
+   "dep_frac": 1.0,
+   "ess": 1,
+   "in_model": true,
+   "proc": "translation",
+   "ppi_degree": null
+  },
+  "EXOSC4": {
+   "dep_frac": 0.98,
+   "ess": 1,
+   "in_model": true,
+   "proc": "translation",
+   "ppi_degree": null
+  },
+  "EXOSC5": {
+   "dep_frac": 0.95,
+   "ess": 1,
+   "in_model": true,
+   "proc": "translation",
+   "ppi_degree": null
+  },
+  "EXOSC8": {
+   "dep_frac": 0.94,
+   "ess": 1,
+   "in_model": true,
+   "proc": "translation",
+   "ppi_degree": null
+  },
+  "EXOSC9": {
+   "dep_frac": 0.99,
+   "ess": 1,
+   "in_model": true,
+   "proc": "translation",
+   "ppi_degree": null
+  },
+  "DIS3": {
+   "dep_frac": 0.9,
+   "ess": 1,
+   "in_model": true,
+   "proc": "translation",
+   "ppi_degree": null
+  },
+  "MTREX": {
+   "dep_frac": 1.0,
+   "ess": 1,
+   "in_model": true,
+   "proc": "translation",
+   "ppi_degree": null
+  },
+  "PPP1R10": {
+   "dep_frac": 1.0,
+   "ess": 1,
+   "in_model": true,
+   "proc": "other",
+   "ppi_degree": null
+  }
+ },
+ "ppp1r10_tide_rank": {
+  "mover_freq": 7,
+  "n_kos": 237,
+  "is_generic_tide": false
+ },
+ "forecast": {
+  "EXOSC2": {
+   "predicted_PPP1R10": false,
+   "top10": [
+    "FTH1",
+    "PRG2",
+    "MT-ATP6",
+    "TPT1",
+    "MT-CO3",
+    "MALAT1",
+    "MT-CO2",
+    "ALAS2",
+    "CPXM1",
+    "IGFL2-AS1"
+   ]
+  },
+  "EXOSC3": {
+   "predicted_PPP1R10": false,
+   "top10": [
+    "FTH1",
+    "PRG2",
+    "MT-ATP6",
+    "TPT1",
+    "MT-CO3",
+    "MALAT1",
+    "MT-CO2",
+    "ALAS2",
+    "CPXM1",
+    "IGFL2-AS1"
+   ]
+  },
+  "EXOSC4": {
+   "predicted_PPP1R10": false,
+   "top10": [
+    "FTH1",
+    "PRG2",
+    "MT-ATP6",
+    "TPT1",
+    "MT-CO3",
+    "MALAT1",
+    "MT-CO2",
+    "ALAS2",
+    "CPXM1",
+    "IGFL2-AS1"
+   ]
+  },
+  "EXOSC5": {
+   "predicted_PPP1R10": false,
+   "top10": [
+    "FTH1",
+    "PRG2",
+    "MT-ATP6",
+    "TPT1",
+    "MT-CO3",
+    "MALAT1",
+    "MT-CO2",
+    "ALAS2",
+    "CPXM1",
+    "IGFL2-AS1"
+   ]
+  },
+  "EXOSC8": {
+   "predicted_PPP1R10": false,
+   "top10": [
+    "FTH1",
+    "PRG2",
+    "MT-ATP6",
+    "TPT1",
+    "MT-CO3",
+    "MALAT1",
+    "MT-CO2",
+    "ALAS2",
+    "CPXM1",
+    "IGFL2-AS1"
+   ]
+  },
+  "EXOSC9": {
+   "predicted_PPP1R10": false,
+   "top10": [
+    "FTH1",
+    "PRG2",
+    "MT-ATP6",
+    "TPT1",
+    "MT-CO3",
+    "MALAT1",
+    "MT-CO2",
+    "ALAS2",
+    "CPXM1",
+    "IGFL2-AS1"
+   ]
+  },
+  "DIS3": {
+   "predicted_PPP1R10": false,
+   "top10": [
+    "FTH1",
+    "PRG2",
+    "MT-ATP6",
+    "TPT1",
+    "MT-CO3",
+    "MALAT1",
+    "MT-CO2",
+    "ALAS2",
+    "CPXM1",
+    "IGFL2-AS1"
+   ]
+  },
+  "MTREX": {
+   "predicted_PPP1R10": false,
+   "top10": [
+    "FTH1",
+    "PRG2",
+    "MT-ATP6",
+    "TPT1",
+    "MT-CO3",
+    "MALAT1",
+    "MT-CO2",
+    "ALAS2",
+    "CPXM1",
+    "IGFL2-AS1"
+   ]
+  }
+ },
+ "exosome_reaches_pnuts_in_graph": false,
+ "propagate": {
+  "EXOSC2": {
+   "reaches_PPP1R10": false,
+   "n_L2_partners": 2
+  },
+  "EXOSC3": {
+   "reaches_PPP1R10": false,
+   "n_L2_partners": 2
+  },
+  "EXOSC4": {
+   "reaches_PPP1R10": false,
+   "n_L2_partners": 2
+  },
+  "EXOSC5": {
+   "reaches_PPP1R10": false,
+   "n_L2_partners": 2
+  },
+  "EXOSC8": {
+   "reaches_PPP1R10": false,
+   "n_L2_partners": 2
+  },
+  "EXOSC9": {
+   "reaches_PPP1R10": false,
+   "n_L2_partners": 2
+  },
+  "DIS3": {
+   "reaches_PPP1R10": false,
+   "n_L2_partners": 2
+  },
+  "MTREX": {
+   "reaches_PPP1R10": false,
+   "n_L2_partners": 2
+  },
+  "PPP1R10_blast_radius": [
+   {
+    "gene": "PPP1CC",
+    "score": 0.0303,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 1.0
+   },
+   {
+    "gene": "PPP1CA",
+    "score": 0.03,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 1.0
+   },
+   {
+    "gene": "PPP1CB",
+    "score": 0.0291,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 1.0
+   },
+   {
+    "gene": "WDR82",
+    "score": 0.0286,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 1.0
+   },
+   {
+    "gene": "SSRP1",
+    "score": 0.0286,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 1.0
+   },
+   {
+    "gene": "TOP1",
+    "score": 0.0284,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 1.0
+   },
+   {
+    "gene": "PPP1R12A",
+    "score": 0.0281,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 1.0
+   },
+   {
+    "gene": "SNRPB",
+    "score": 0.0279,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 0.999
+   },
+   {
+    "gene": "SNRPA",
+    "score": 0.0278,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 0.999
+   },
+   {
+    "gene": "CPSF6",
+    "score": 0.0277,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 0.999
+   },
+   {
+    "gene": "SNRPF",
+    "score": 0.0275,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 0.999
+   },
+   {
+    "gene": "SNRPC",
+    "score": 0.0274,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 0.999
+   },
+   {
+    "gene": "TOX4",
+    "score": 0.0272,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 0.999
+   },
+   {
+    "gene": "RBM39",
+    "score": 0.0268,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 0.999
+   },
+   {
+    "gene": "FUS",
+    "score": 0.0268,
+    "tier": "near-field",
+    "direction": "",
+    "rwr_pctl": 0.999
+   }
+  ]
+ },
+ "verdict": "OUR STACK CONFIRMS THE FINDING IS A GENUINELY MISSING EDGE, NOT SOMETHING THE MODEL KNEW. (1) FORECAST: our predictor does NOT put PPP1R10 in the top-10 movers of the exosome knockouts -- it predicts the generic usual-suspect tide, and PPP1R10 is a SPECIFIC (non-tide) mover, so the model could never have surfaced this by forward prediction; it had to be MINED from the measured far field (this is 'the wall' in action, and why the discovery pipeline reads measured data instead of trusting the model). (2) PROPAGATE: the forward blast-radius of the exosome subunits does NOT reach PPP1R10 through any known edge (no PPI/complex/pathway/regulon path in our knowledge graph) -- confirming the link is a MISSING EDGE, consistent with the literature check (RNA exosome and PPP1R10 are co-mentioned in ZERO PubMed papers). Meanwhile PPP1R10's own blast radius runs into transcription / PP1-phosphatase / RNA-Pol-II machinery, consistent with PNUTS being a Pol II CTD phosphatase + premature-termination factor -- so IF PNUTS mRNA rises, the plausible downstream is transcription/termination re-tuning. (3) NEXUS/dependency: the exosome subunits are core cellular dependencies (essential), so an autoregulatory loop that tunes PNUTS via exosome-sensitive premature termination would sit on top of essential machinery -- a high-stakes, testable node. NEXUS's structural ddG sensors do not directly score an expression change (this is regulatory, not a coding mutation), so NEXUS contributes the dependency/essentiality context, not a stability number. BOTTOM LINE: our own model neither predicted nor can explain exosome->PPP1R10 -- which is the honest point: it is a real, measured, mechanistically-plausible (termination-factor autoregulation via the exosome; NRD1/HRP1/PCF11 precedent) but UN-annotated link -- exactly the kind of gap a wet-lab experiment should fill (test whether PPP1R10 mRNA is a direct exosome substrate / exosome-sensitive premature-termination target).",
+ "note": "OUR STACK CONFIRMS THE FINDING IS A GENUINELY MISSING EDGE, NOT SOMETHING THE MODEL KNEW. (1) FORECAST: our predictor does NOT put PPP1R10 in the top-10 movers of the exosome knockouts -- it predicts the generic usual-suspect tide, and PPP1R10 is a SPECIFIC (non-tide) mover, so the model could never have surfaced this by forward prediction; it had to be MINED from the measured far field (this is 'the wall' in action, and why the discovery pipeline reads measured data instead of trusting the model). (2) PROPAGATE: the forward blast-radius of the exosome subunits does NOT reach PPP1R10 through any known edge (no PPI/complex/pathway/regulon path in our knowledge graph) -- confirming the link is a MISSING EDGE, consistent with the literature check (RNA exosome and PPP1R10 are co-mentioned in ZERO PubMed papers). Meanwhile PPP1R10's own blast radius runs into transcription / PP1-phosphatase / RNA-Pol-II machinery, consistent with PNUTS being a Pol II CTD phosphatase + premature-termination factor -- so IF PNUTS mRNA rises, the plausible downstream is transcription/termination re-tuning. (3) NEXUS/dependency: the exosome subunits are core cellular dependencies (essential), so an autoregulatory loop that tunes PNUTS via exosome-sensitive premature termination would sit on top of essential machinery -- a high-stakes, testable node. NEXUS's structural ddG sensors do not directly score an expression change (this is regulatory, not a coding mutation), so NEXUS contributes the dependency/essentiality context, not a stability number. BOTTOM LINE: our own model neither predicted nor can explain exosome->PPP1R10 -- which is the honest point: it is a real, measured, mechanistically-plausible (termination-factor autoregulation via the exosome; NRD1/HRP1/PCF11 precedent) but UN-annotated link -- exactly the kind of gap a wet-lab experiment should fill (test whether PPP1R10 mRNA is a direct exosome substrate / exosome-sensitive premature-termination target)."
+}

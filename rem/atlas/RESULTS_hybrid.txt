@@ -1,0 +1,214 @@
+=================================================================================================
+HOW MANY RATES MUST BE MEASURED, IF CHEMISTRY SUPPLIES THE REST?
+=================================================================================================
+  circuit: 8 rates, carrying capacity K = 20 (231 states), g0 = 6, 3 on/off cycles
+  true answer Y = P(eradication) = 1.723690e-02, upward headroom 1.764 orders
+  256 subsets x 600 trials at each of 3 error levels, common random numbers
+  greedy order by |S|: ['k_kill', 'a_on', 'd_death', 'kd_kill', 'b_on', 'mu', 'b_off', 'a_off']
+
+=================================================================================================
+H3  THE FACTORISATION IS EXACT, NOT MERELY FAST
+=================================================================================================
+  worst relative disagreement over 24 (trial, subset) pairs: 1.82e-15   PASS (bar 1e-10)
+
+  running eps = 0.5 kcal/mol ...
+    ... eps=0.5 g0=6: 100/600 trials, 30s
+    ... eps=0.5 g0=6: 200/600 trials, 62s
+    ... eps=0.5 g0=6: 300/600 trials, 90s
+    ... eps=0.5 g0=6: 400/600 trials, 120s
+    ... eps=0.5 g0=6: 500/600 trials, 149s
+
+  running eps = 1.0 kcal/mol ...
+    ... eps=1.0 g0=6: 100/600 trials, 26s
+    ... eps=1.0 g0=6: 200/600 trials, 55s
+    ... eps=1.0 g0=6: 300/600 trials, 84s
+    ... eps=1.0 g0=6: 400/600 trials, 114s
+    ... eps=1.0 g0=6: 500/600 trials, 144s
+
+  running eps = 2.0 kcal/mol ...
+    ... eps=2.0 g0=6: 100/600 trials, 31s
+    ... eps=2.0 g0=6: 200/600 trials, 59s
+    ... eps=2.0 g0=6: 300/600 trials, 86s
+    ... eps=2.0 g0=6: 400/600 trials, 114s
+    ... eps=2.0 g0=6: 500/600 trials, 140s
+
+=================================================================================================
+H1  THE STATE SPACE IS CLOSED, ON PERTURBED DRAWS
+=================================================================================================
+  worst |propagated mass - 1| over sampled draws, no renormalisation: 4.38e-13   PASS (bar 1e-12)
+
+=================================================================================================
+H2  ZERO-ERROR CONTROL  (the all-measured corner must be exact)
+=================================================================================================
+  worst |log10(Y_hat/Y_true)| at m = 8: 5.30e-16   PASS (bar 1e-12)
+
+=================================================================================================
+H4/H5/H6/H7  THE CURVE, ITS OPTIMALITY AND ITS CONTROL  --  tolerance x2
+=================================================================================================
+
+  eps = 0.5 kcal/mol
+    m   greedy     best  shortfall  paired se   random  greedy-rand  best subset is greedy?
+    0   0.2017   0.2017     0.0000     0.0000   0.2017       0.0000                     yes
+    1   0.2867   0.2867     0.0000     0.0000   0.2346       0.0521                     yes
+    2   0.4567   0.4567     0.0000     0.0000   0.2633       0.1934                     yes
+    3   0.6800   0.6800     0.0000     0.0000   0.3012       0.3788                     yes
+    4   0.9733   0.9733     0.0000     0.0000   0.3591       0.6142                     yes
+    5   0.9933   0.9933     0.0000     0.0000   0.4487       0.5446                     yes
+    6   1.0000   1.0000     0.0000     0.0000   0.5790       0.4210                     yes
+    7   1.0000   1.0000     0.0000     0.0000   0.7602       0.2398                     yes
+    8   1.0000   1.0000     0.0000     0.0000   1.0000       0.0000                     yes
+
+  eps = 1.0 kcal/mol
+    m   greedy     best  shortfall  paired se   random  greedy-rand  best subset is greedy?
+    0   0.1000   0.1000     0.0000     0.0000   0.1000       0.0000                     yes
+    1   0.1050   0.1250     0.0200     0.0170   0.1112      -0.0062          NO (8 subsets)
+    2   0.2167   0.2167     0.0000     0.0000   0.1212       0.0955                     yes
+    3   0.3700   0.3700     0.0000     0.0000   0.1414       0.2286                     yes
+    4   0.7900   0.7900     0.0000     0.0000   0.1808       0.6092                     yes
+    5   0.9133   0.9133     0.0000     0.0000   0.2558       0.6576                     yes
+    6   0.9600   1.0000     0.0400     0.0080   0.3892       0.5708         NO (28 subsets)
+    7   1.0000   1.0000     0.0000     0.0000   0.6177       0.3823                     yes
+    8   1.0000   1.0000     0.0000     0.0000   1.0000       0.0000                     yes
+
+  eps = 2.0 kcal/mol
+    m   greedy     best  shortfall  paired se   random  greedy-rand  best subset is greedy?
+    0   0.0417   0.0417     0.0000     0.0000   0.0417       0.0000                     yes
+    1   0.0467   0.0550     0.0083     0.0126   0.0456       0.0010          NO (8 subsets)
+    2   0.0967   0.0967     0.0000     0.0000   0.0525       0.0442                     yes
+    3   0.1933   0.1933     0.0000     0.0000   0.0654       0.1279                     yes
+    4   0.5633   0.5633     0.0000     0.0000   0.0899       0.4735                     yes
+    5   0.7733   0.7733     0.0000     0.0000   0.1431       0.6302                     yes
+    6   0.8600   1.0000     0.1400     0.0142   0.2624       0.5976         NO (28 subsets)
+    7   1.0000   1.0000     0.0000     0.0000   0.5142       0.4858                     yes
+    8   1.0000   1.0000     0.0000     0.0000   1.0000       0.0000                     yes
+
+=================================================================================================
+H4/H5/H6/H7  THE CURVE, ITS OPTIMALITY AND ITS CONTROL  --  tolerance x10
+=================================================================================================
+
+  eps = 0.5 kcal/mol
+    m   greedy     best  shortfall  paired se   random  greedy-rand  best subset is greedy?
+    0   0.6983   0.6983     0.0000     0.0000   0.6983       0.0000                     yes
+    1   0.8433   0.8433     0.0000     0.0000   0.7250       0.1183                     yes
+    2   0.9550   0.9550     0.0000     0.0000   0.7667       0.1883                     yes
+    3   0.9850   0.9850     0.0000     0.0000   0.8111       0.1739                     yes
+    4   1.0000   1.0000     0.0000     0.0000   0.8575       0.1425                     yes
+    5   1.0000   1.0000     0.0000     0.0000   0.9025       0.0975                     yes
+    6   1.0000   1.0000     0.0000     0.0000   0.9437       0.0563                     yes
+    7   1.0000   1.0000     0.0000     0.0000   0.9775       0.0225                     yes
+    8   1.0000   1.0000     0.0000     0.0000   1.0000       0.0000                     yes
+
+  eps = 1.0 kcal/mol
+    m   greedy     best  shortfall  paired se   random  greedy-rand  best subset is greedy?
+    0   0.3567   0.3567     0.0000     0.0000   0.3567       0.0000                     yes
+    1   0.4817   0.4817     0.0000     0.0000   0.3904       0.0913                     yes
+    2   0.6600   0.6600     0.0000     0.0000   0.4320       0.2280                     yes
+    3   0.8183   0.8250     0.0067     0.0207   0.4876       0.3307         NO (56 subsets)
+    4   0.9783   0.9783     0.0000     0.0000   0.5609       0.4175                     yes
+    5   0.9950   0.9950     0.0000     0.0000   0.6515       0.3435                     yes
+    6   1.0000   1.0000     0.0000     0.0000   0.7590       0.2410                     yes
+    7   1.0000   1.0000     0.0000     0.0000   0.8773       0.1227                     yes
+    8   1.0000   1.0000     0.0000     0.0000   1.0000       0.0000                     yes
+
+  eps = 2.0 kcal/mol
+    m   greedy     best  shortfall  paired se   random  greedy-rand  best subset is greedy?
+    0   0.1800   0.1800     0.0000     0.0000   0.1800       0.0000                     yes
+    1   0.1883   0.2150     0.0267     0.0208   0.1867       0.0017          NO (8 subsets)
+    2   0.3467   0.3467     0.0000     0.0000   0.2074       0.1392                     yes
+    3   0.5783   0.5783     0.0000     0.0000   0.2455       0.3329                     yes
+    4   0.8350   0.8350     0.0000     0.0000   0.3091       0.5259                     yes
+    5   0.9550   0.9550     0.0000     0.0000   0.4072       0.5478                     yes
+    6   1.0000   1.0000     0.0000     0.0000   0.5517       0.4483                     yes
+    7   1.0000   1.0000     0.0000     0.0000   0.7498       0.2502                     yes
+    8   1.0000   1.0000     0.0000     0.0000   1.0000       0.0000                     yes
+
+=================================================================================================
+H4  NON-VACUITY
+=================================================================================================
+  hit(m=0) within x10 at 1 kcal/mol = 0.3567   (bar < 0.6)
+  hit(m=8) within x10 at 1 kcal/mol = 1.0000   (bar = 1.0)
+  PASS
+
+=================================================================================================
+H5  MONOTONICITY  (measuring more cannot hurt)
+=================================================================================================
+  worst decrease in the greedy curve over all levels and tolerances: 0.0000
+  PASS (bar 0.03, about 2 paired standard errors)
+
+=================================================================================================
+H6  IS GREEDY OPTIMAL?  (the falsification test)
+=================================================================================================
+  worst shortfall (best subset minus greedy) over all m, tolerances and error levels: 0.1400
+  attained at eps = 2.0, tolerance x2, m = 6
+  FAIL (bar 0.03)
+  greedy was AMONG the best subsets in 48 of 54 (m, tolerance, eps) cells
+  READING: a shortfall inside the band means |S|-ranking picks a subset no worse than the
+  best available one, so cheap derivatives are enough to choose which rates to measure.
+
+=================================================================================================
+H7  THE MATCHED CONTROL  (greedy versus m rates chosen at random)
+=================================================================================================
+  (a) worst (greedy - random) for 1 <= m <= 7: -0.0062   PASS (bar -0.03)
+  (b) largest (greedy - random) anywhere:      +0.6576   PASS (bar 0.15)
+
+=================================================================================================
+H8  THE DELIVERABLE  --  how many of the 8 rates must be measured?
+=================================================================================================
+  m* = the smallest m whose greedy hit fraction reaches 0.90
+    eps kcal/mol   tolerance    m*  of   hit at m*  binomial se  hit at m*-1
+             0.5          x2     4   8      0.9733       0.0066       0.6800
+             0.5         x10     2   8      0.9550       0.0085       0.8433
+             1.0          x2     5   8      0.9133       0.0115       0.7900
+             1.0         x10     4   8      0.9783       0.0059       0.8183
+             2.0          x2     7   8      1.0000       0.0000       0.8600
+             2.0         x10     5   8      0.9550       0.0085       0.8350
+
+=================================================================================================
+H9  SATURATION CHECK AT THE REPORTED m*
+=================================================================================================
+     eps   tolerance    m*   fraction pinned at 0 or 1
+     0.5          x2     4                      0.0000
+     0.5         x10     2                      0.0000
+     1.0          x2     5                      0.0000
+     1.0         x10     4                      0.0000
+     2.0          x2     7                      0.0000
+     2.0         x10     5                      0.0000
+  worst 0.0000   PASS (bar 0.01)
+
+=================================================================================================
+H10  CAN THE CHEAP FORMULA PLAN THE EXPERIMENT WITHOUT THIS?
+=================================================================================================
+     eps   tolerance   predicted m*   measured m*   agree?
+     0.5          x2              4             4      yes
+     0.5         x10              2             2      yes
+     1.0          x2              4             5       NO
+     1.0         x10              4             4      yes
+     2.0          x2              6             7       NO
+     2.0         x10              4             5       NO
+  3 of 6 predictions exact.
+
+=================================================================================================
+H11  DEPTH DEPENDENCE  --  m* is a property of the QUESTION
+=================================================================================================
+  rarer question: g0 = 8, Y = 4.475797e-03  (against 1.723690e-02 at g0 = 6)
+  greedy order there: ['k_kill', 'a_on', 'd_death', 'kd_kill', 'b_on', 'mu', 'b_off', 'a_off']
+  order unchanged from g0 = 6: True
+
+  running the depth sweep at eps = 1.0 ...
+    ... eps=1.0 g0=8: 100/600 trials, 29s
+    ... eps=1.0 g0=8: 200/600 trials, 57s
+    ... eps=1.0 g0=8: 300/600 trials, 86s
+    ... eps=1.0 g0=8: 400/600 trials, 114s
+    ... eps=1.0 g0=8: 500/600 trials, 143s
+
+     tolerance   m* at g0=6   m* at g0=8  hit at that m*
+            x2            5            6          0.9483
+               curve: 0.070 0.077 0.142 0.278 0.728 0.882 0.948 1.000 1.000
+           x10            4            4          0.9333
+               curve: 0.267 0.320 0.508 0.742 0.933 0.982 0.997 1.000 1.000
+
+=================================================================================================
+The number of rates that must be measured is not a property of the circuit alone.
+It is a property of the circuit, the tolerance demanded, the accuracy chemistry brings,
+and the rarity of the question. Every m* above carries all four.
+=================================================================================================

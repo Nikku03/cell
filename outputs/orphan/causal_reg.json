@@ -1,0 +1,73 @@
+{
+ "z_edge": 5.0,
+ "min_cells": 25,
+ "k562": {
+  "n_perturbations": 11258,
+  "n_genes": 8248
+ },
+ "rpe1": {
+  "n_perturbations": 2122,
+  "n_genes": 8749,
+  "median_cells": 80.0
+ },
+ "shared": {
+  "perturbations": 2119,
+  "genes": 7094,
+  "testable_pairs": 15031399,
+  "k562_edges": 216233
+ },
+ "magnitude_transfer": {
+  "mean_abs_z_edge": 1.5516610145568848,
+  "mean_abs_z_matched": 1.1856205463409424,
+  "ratio": 1.3087332248687744,
+  "p": 0.0
+ },
+ "sign_transfer": {
+  "n": 216233,
+  "agree": 0.6718724708994465,
+  "p_vs_half": 0.0,
+  "n_strong": 54559,
+  "agree_strong": 0.8247585183012885,
+  "p_strong_vs_half": 0.0,
+  "swapped_source": 0.5216696803910597,
+  "swapped_source_strong": 0.5108308219140365,
+  "swapped_target": 0.49064573862453925,
+  "swapped_target_strong": 0.44320981606074045,
+  "increment_over_swapped_source": 0.1502027905083868,
+  "increment_strong": 0.31392769638725204,
+  "null_note": "0.5 is the wrong null: a shared stress/proliferation axis makes sign agree above chance with no edge at all. The swapped-source arm is the null."
+ },
+ "registry_joins": {
+  "k562_genes": {
+   "joined": 8232,
+   "of": 8248,
+   "rate": 0.9980601357904947,
+   "via": "ensembl",
+   "label": "K562 measured genes"
+  },
+  "rpe1_genes": {
+   "joined": 8732,
+   "of": 8749,
+   "rate": 0.9980569207909475,
+   "via": "ensembl",
+   "label": "RPE1 measured genes"
+  },
+  "k562_perturbations": {
+   "joined": 10419,
+   "of": 11258,
+   "rate": 0.9254752176230236,
+   "via": "symbol",
+   "label": "K562 perturbations"
+  },
+  "rpe1_perturbations": {
+   "joined": 2059,
+   "of": 2122,
+   "rate": 0.970311027332705,
+   "via": "symbol",
+   "label": "RPE1 perturbations"
+  }
+ },
+ "n_edges_written": 537376,
+ "n_edges_with_rpe1_test": 216263,
+ "verdict": "PERTURBATIONAL EDGES TRANSFER, AND THEY CARRY A SIGN. K562 edges move their targets 1.31x more in RPE1 than pairs matched on RPE1 perturbation strength x gene responsiveness (p 0). Direction agrees 67.2% against 52.2% when the source is swapped for another perturbation of matched strength -- an edge-specific increment of +15.0 points, rising to +31.4 on the RPE1 |z| >= 2 subset (82.5% vs 51.1%). The raw 0.5 comparison is not the null: a shared stress and proliferation axis already pushes agreement to 52.2% with no edge at all. Sign is what the curated layer lacks on 91.2% of its edges and what the benchmark ladder cannot reach."
+}

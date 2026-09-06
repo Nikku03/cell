@@ -1,0 +1,102 @@
+{
+ "n_pos": 8726,
+ "threshold": 4.200000000000003,
+ "sources": {
+  "same chromosome": {
+   "auc": 0.4999,
+   "n_scorable": 12445,
+   "n_nonzero": 578,
+   "ci95": [
+    0.4962,
+    0.5035
+   ],
+   "pos_mean": 0.0463,
+   "neg_mean": 0.0466,
+   "testable": true
+  },
+  "genomic distance | same chr": {
+   "auc": 0.5269,
+   "n_scorable": 578,
+   "n_nonzero": 578,
+   "ci95": [
+    0.4799,
+    0.5687
+   ],
+   "pos_mean": -7.3008,
+   "neg_mean": -7.3546,
+   "testable": true
+  },
+  "same TAD | both assigned": {
+   "auc": null,
+   "n_scorable": 3815,
+   "n_nonzero": 4,
+   "ci95": null,
+   "pos_mean": null,
+   "neg_mean": null,
+   "testable": false
+  },
+  "same subcellular compartment": {
+   "auc": 0.499,
+   "n_scorable": 12463,
+   "n_nonzero": 3369,
+   "ci95": [
+    0.4922,
+    0.5077
+   ],
+   "pos_mean": 0.2693,
+   "neg_mean": 0.2713,
+   "testable": true
+  },
+  "shared Reactome pathways": {
+   "auc": 0.5228,
+   "n_scorable": 8552,
+   "n_nonzero": 4188,
+   "ci95": [
+    0.512,
+    0.5332
+   ],
+   "pos_mean": 1.9905,
+   "neg_mean": 1.2521,
+   "testable": true
+  },
+  "domain-domain interaction": {
+   "auc": null,
+   "n_scorable": 12437,
+   "n_nonzero": 0,
+   "ci95": null,
+   "pos_mean": null,
+   "neg_mean": null,
+   "testable": false
+  },
+  "[control] target publications": {
+   "auc": 0.5029,
+   "n_scorable": 17452,
+   "n_nonzero": 13361,
+   "ci95": [
+    0.4938,
+    0.5106
+   ],
+   "pos_mean": 3.5267,
+   "neg_mean": 3.5115,
+   "testable": true
+  }
+ },
+ "combined_auc": 0.5176,
+ "combined_features": [
+  "same chromosome",
+  "genomic distance | same chr",
+  "same subcellular compartment",
+  "shared Reactome pathways"
+ ],
+ "untestable": [
+  "same TAD | both assigned",
+  "domain-domain interaction"
+ ],
+ "ddi_shared_identifiers": 1,
+ "tad_assigned_frac": 0.498,
+ "best_source": "genomic distance | same chr",
+ "best_auc": 0.5269,
+ "clears_floor": false,
+ "verdict": "ALT DATA SOURCES (altdata_sources.py): 'what besides Perturb-seq could predict the causal graph', answered by scoring every additional static data type in the repository on the SAME task and protocol as infer_network (K562 measured knockout-SPECIFIC edges vs DEGREE-MATCHED non-edges), so each is comparable to that ~0.51 static-feature baseline. 8,726 positives. COVERAGE IS REPORTED FIRST AND IT MATTERS: an earlier version of this module scored same-TAD, domain-domain interaction and genomic proximity at exactly 0.500 and I nearly banked that as a negative result. It was not one -- those features never fired. Our per-gene domain annotation is InterPro keyed by gene index while 3did's vocabulary is Pfam accessions, so the two share 1 identifiers and no DDI can ever match; and the K562 domain calls have a 170 kb median size covering only 4270/8570 genes, so almost no gene PAIR can share a domain. A feature that cannot fire is UNTESTABLE, not refuted. Distance and same-TAD are therefore now scored CONDITIONALLY, on the subset where they are defined. RESULTS (testable only, with bootstrap 95% CI): same chromosome 0.500 [0.496,0.503], genomic distance | same chr 0.527 [0.480,0.569], same subcellular compartment 0.499 [0.492,0.508], shared Reactome pathways 0.523 [0.512,0.533]; combined 0.518; untestable with the identifiers we hold: same TAD | both assigned, domain-domain interaction. NONE OF THE TESTABLE SOURCES CLEARS THE FLOOR, and the distinction between 'no signal' and 'a real but useless signal' is worth stating precisely. same chromosome 0.500 with CI [0.496,0.503] spanning 0.5 -- no detectable signal; genomic distance | same chr 0.527 with CI [0.480,0.569] spanning 0.5 -- no detectable signal; same subcellular compartment 0.499 with CI [0.492,0.508] spanning 0.5 -- no detectable signal; shared Reactome pathways 0.523 with CI [0.512,0.533] excluding 0.5 -- a statistically real but far too weak signal to predict edges (positive pairs average 1.99 vs 1.25 for matched non-edges). So genome position and compartment are flat, shared pathway membership is genuinely above chance yet nowhere near usable, and the combined model over all testable features reaches only 0.518. This is the same picture as co-dependency and PPI before them: the measured causal graph is not predictable from any static annotational or genomic layer we hold, and the genomic hypothesis specifically is NOT supported on the subset where it can be tested (same-TAD could not be tested at all and should be revisited only with finer contact data). The publication-count control sits at 0.503, so there is no popularity artifact inflating these either. Deterministic; degree-matched negatives throughout; coverage reported per source so a dead feature cannot be mistaken for a negative finding.",
+ "note": "ALT DATA SOURCES (altdata_sources.py): 'what besides Perturb-seq could predict the causal graph', answered by scoring every additional static data type in the repository on the SAME task and protocol as infer_network (K562 measured knockout-SPECIFIC edges vs DEGREE-MATCHED non-edges), so each is comparable to that ~0.51 static-feature baseline. 8,726 positives. COVERAGE IS REPORTED FIRST AND IT MATTERS: an earlier version of this module scored same-TAD, domain-domain interaction and genomic proximity at exactly 0.500 and I nearly banked that as a negative result. It was not one -- those features never fired. Our per-gene domain annotation is InterPro keyed by gene index while 3did's vocabulary is Pfam accessions, so the two share 1 identifiers and no DDI can ever match; and the K562 domain calls have a 170 kb median size covering only 4270/8570 genes, so almost no gene PAIR can share a domain. A feature that cannot fire is UNTESTABLE, not refuted. Distance and same-TAD are therefore now scored CONDITIONALLY, on the subset where they are defined. RESULTS (testable only, with bootstrap 95% CI): same chromosome 0.500 [0.496,0.503], genomic distance | same chr 0.527 [0.480,0.569], same subcellular compartment 0.499 [0.492,0.508], shared Reactome pathways 0.523 [0.512,0.533]; combined 0.518; untestable with the identifiers we hold: same TAD | both assigned, domain-domain interaction. NONE OF THE TESTABLE SOURCES CLEARS THE FLOOR, and the distinction between 'no signal' and 'a real but useless signal' is worth stating precisely. same chromosome 0.500 with CI [0.496,0.503] spanning 0.5 -- no detectable signal; genomic distance | same chr 0.527 with CI [0.480,0.569] spanning 0.5 -- no detectable signal; same subcellular compartment 0.499 with CI [0.492,0.508] spanning 0.5 -- no detectable signal; shared Reactome pathways 0.523 with CI [0.512,0.533] excluding 0.5 -- a statistically real but far too weak signal to predict edges (positive pairs average 1.99 vs 1.25 for matched non-edges). So genome position and compartment are flat, shared pathway membership is genuinely above chance yet nowhere near usable, and the combined model over all testable features reaches only 0.518. This is the same picture as co-dependency and PPI before them: the measured causal graph is not predictable from any static annotational or genomic layer we hold, and the genomic hypothesis specifically is NOT supported on the subset where it can be tested (same-TAD could not be tested at all and should be revisited only with finer contact data). The publication-count control sits at 0.503, so there is no popularity artifact inflating these either. Deterministic; degree-matched negatives throughout; coverage reported per source so a dead feature cannot be mistaken for a negative finding."
+}

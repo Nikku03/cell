@@ -1,0 +1,549 @@
+=================================================================================================
+THE TWO OPEN PROBLEMS, MEASURED
+  1. does a real controller make the important parameters explode?
+  2. can grouping keep the joint state small at realistic scale?
+Sources: rem/atlas/RESULTS_controller.txt, rem/atlas/RESULTS_statedim.txt
+=================================================================================================
+
+THE ANSWER IN ONE LINE. They come apart. A controller is CHEAP IN PARAMETERS and EXPENSIVE IN
+STATE: closing the loop leaves the set of rates worth measuring at about five, no matter how big
+the system gets, but a single global regulator takes the joint state from 2^4 per variable to 2^N.
+Regulation does not increase what must be MEASURED. It increases what must be SIMULATED JOINTLY.
+
+=================================================================================================
+PROBLEM 1  --  NO EXPLOSION, AND THE IMPORTANT SET MOVES ONTO THE CONTROLLER
+=================================================================================================
+
+    sweep                             P range     N90 range          exponent b
+    A  add controllers, fixed plant    45 -> 141   4.90 -> 8.55       +0.4688 +- 0.0503
+    B  grow the whole regulated system 37 -> 133   6.75 -> 4.27       -0.2518 +- 0.1251
+    predeclared bands: b > 0.7 EXPLOSION, b < 0.3 SPARSE
+
+Sweep B is the one that answers the scaling question, and it is NEGATIVE: N90 does not grow with
+the system, it shrinks slightly. Seven-fold more parameters, the same five that matter. Sweep A is
+intermediate at +0.47, but even there N90/P falls from 0.109 to 0.061 -- adding regulators adds
+important parameters sublinearly, never in proportion.
+
+TRANSFER IS REAL AND IT IS ABRUPT.
+
+    K       controller share of ||C||^2     rank correlation with the open-loop plant ranking
+    0                            0.0000                                              1.0000
+    1                            0.0926                                              0.4478
+    8                            0.1466                                              0.4458
+   32                            0.6432                                              0.4536
+
+ONE controller edge is enough to halve the rank correlation. The plant ranking computed open-loop
+is not merely incomplete under feedback, it is reordered, and it reorders as soon as the loop
+closes at all. At K = 32, seven of the ten largest control coefficients are controller parameters.
+So the answer is not "sparse", it is TRANSFER: the same small number of things matter, and they
+are different things.
+
+WHAT THIS DOES NOT SAY, per gate C6 as predeclared. Shuffling the regulatory wiring at random --
+random target, random sensor, random sign -- gives the same scaling (b = -0.32 +- 0.32 against
+-0.19 +- 0.21). The sparsity is a property of closed-loop systems of this class, NOT of the
+canonical end-product architecture. C3 therefore says nothing about which biological wiring is
+special. It does say the sparsity is robust to getting the wiring wrong, which is the more useful
+half for a measurement programme.
+
+GATES:  C1 PASS (adjoint to 1e-9 scaled, both FD directions)   C2 PASS (summation theorem exactly
+1.0000000000 in five configurations and correctly BROKEN to 0.8726 for a proteome-sensing
+controller)   C5 PASS (||C|| does not collapse, so this is not homeostasis)   C6 NOT SEPARATED
+C7 FAIL -- the acceptance bars were six orders too loose and caught only 1 of 3 planted runaways.
+Contained: C3 runs canonical wiring only, so no rejected configuration enters the measurement.
+The bars were deliberately not retuned.
+
+=================================================================================================
+PROBLEM 2  --  THE STATE DOES NOT STAY SMALL, AND THE REASON IS TOPOLOGY, NOT DECAY
+=================================================================================================
+
+Dependence decays extremely fast: xi = 0.2486 +- 0.0005, R^2 = 0.999976, a factor of 55 per step.
+That is not enough, and the reason is worth stating precisely.
+
+STEP 1 -- THE THRESHOLD IS NOT FREE. From the measured law tail_err = 20.23 sqrt(MI), a 1% tail
+tolerance forces MI < 2.44e-07. A bulk threshold of 1e-3, which keeps means fine, would admit
+tail errors of 0.64.
+
+STEP 2 -- THE RULE AS WRITTEN RETURNS THE WHOLE NETWORK. MI at distance 1 is 6.3e-03, four orders
+above the tail-legal threshold, so every directly regulated pair is joined; and a regulatory
+network is connected. Thresholding therefore gives ONE component of N for any connected topology
+at any tail tolerance, and costs 2^N. This is not a decay problem. Decay is fast.
+
+STEP 3 -- THE RIGHT COST IS TREEWIDTH. A path is one component but has treewidth 1.
+
+    topology              N = 20,000    treewidth    state cost
+    cascade                                      3     3.20e+05      tractable
+    random degree 2                            >40     2.69e+14      not
+    random degree 3                       too dense to compute       not
+    scale-free m = 2                      too dense to compute       not
+
+Only a pure cascade survives. Anything with mean degree 2 or more is past treewidth 40 by N = 512.
+Robustness (S8b): at r = 1, the BARE regulatory graph and the most optimistic dependence graph
+there could be, the answer is unchanged -- random degree 2 and scale-free are already past 40 at
+N = 512. The obstruction is the topology of gene regulation, not the range of the dependence.
+
+STEP 4 -- A GLOBAL CONTROLLER MAKES IT WORSE, AND CONDITIONING ONLY SOMETIMES SAVES IT. One hub
+makes the dependence graph COMPLETE: treewidth N. Putting the controller into every bag drops it
+back to 4 -- but only when the controller's timescale is far from its targets':
+
+    tau_hub / tau_gene      r_cond       cost per gene
+              2000             3              2^5        affordable
+               500             4              2^6        affordable
+               333            12            2^14         marginal
+        200 down to 0.01      >=15           2^N         no grouping helps
+              0.0025           5              2^7        affordable
+              0.0014           3              2^5        affordable
+
+THE WINDOW: the controller must be at least ~500x SLOWER than what it controls, so that its state
+IS its history, or at least ~400x FASTER, where it correlates nothing to begin with. Within a
+few hundred either way, conditioning fails and the cost is 2^N. Kinase signalling at seconds
+against transcription at tens of minutes is a ratio of roughly 100 to 1000 -- ON that boundary,
+not comfortably inside it.
+
+THE MECHANISM, and it is the reason a prediction was lost. The original S4 predicted conditioning
+on a controller would restore decay. It does not: the correlation is carried by the controller's
+TRAJECTORY, not by its current value, so conditioning on the instantaneous state leaves it. A slow
+controller is quasi-static and its state is its history; a fast one is white noise and correlates
+nothing. In between, its history is genuinely extra state.
+
+GATES:  S1 PASS (residual < 1e-14; MI exactly 0 on independent variables)   S2 PASS   S5 PASS (the
+dependence graph IS path^3, which is what licenses extrapolating past N = 16)   S6 bracketed
+S8 PASS   S3 FAIL -- xi scattered 0.0045 against a 0.0043 bar. Non-monotone in N and surviving a
+common fit range, so wobble rather than drift; and the quantity used downstream is the INTEGER r,
+which a 1.7% wobble cannot move. The gate failed; the conclusion does not rest on it.
+
+=================================================================================================
+WHAT THIS CHANGES
+=================================================================================================
+
+FOR MEASUREMENT. Problem 1's answer is good news and it redirects the programme. The rates worth
+measuring under feedback are the REGULATORY ones -- gains, thresholds, cooperativities -- not the
+catalytic ones, and an open-loop ranking of catalytic rates is reordered by the first controller
+edge you add. This is consistent with what the corrected Recon3D run already said from the other
+direction: with a sealed medium, zero enzyme capacities have a realised sensitivity.
+
+FOR THE ENGINE. Problem 2's answer is bad news and it is structural. Section 14's split criterion,
+applied at a tail-legal threshold, returns the whole network on any connected topology. The repair
+is a tree decomposition rather than a threshold, and then the engine is tractable exactly on
+low-treewidth topologies -- which real gene regulation is not. Three routes remain and none is
+tested here: exploit that the tail-legal graph is a bounded graph POWER (structure a generic
+treewidth bound ignores), accept bounded error from a fixed-width decomposition and measure what
+it costs in tail accuracy, or carry controller history explicitly so conditioning works at matched
+timescales.
+
+FOR HONESTY. Two gates failed in this pair of modules and both are recorded rather than retuned:
+controller C7 (bars six orders too loose, contained) and statedim S3 (a real miss that does not
+propagate). One prediction of mine was made and lost before commit, and is kept as made.
+
+=================================================================================================
+ROUTE 1 OF 3 TESTED: THE BOUNDED GRAPH POWER.  IT FAILS, AND THE FAILURE IS SPECIFIC
+Source: rem/atlas/RESULTS_localclosure.txt
+=================================================================================================
+
+WHAT WAS TRIED. Not lifting a tree decomposition from G to G^r -- S8(b) already killed that, since
+treewidth is past 40 at r = 1. Instead, giving up exact marginalisation: if every dependence above
+tau is confined to distance r, factorise on r-balls,
+
+    P_hat(x) = prod_i P( x_i | x_{B_r(i) and earlier} )
+
+a Bayesian network whose cost is sum_i 2^(1+|pa_i|) -- linear in N, no treewidth term anywhere.
+
+THE APPROXIMATION WORKS. On a cascade, tested at three tail depths down to P = 1.3e-13:
+
+    r   max|pa|   tail rel err at P=1.3e-13    max error in any mean
+    1         1                    1.063e+00                5.0e-16
+    2         2                    4.604e-02                4.4e-16
+    3         3                    5.509e-03                6.1e-16
+    4         4                    1.190e-03                5.6e-16
+
+This is the sharpest instance of the bulk/tail split in this build order, and the cleanest,
+because here the bulk error is EXACTLY ZERO by construction -- the factorisation reproduces every
+marginal in the ball -- while the conjunctive event is wrong by 106% at r = 1. Six modules have
+now measured a bulk quantity right while the tail was wrong; this one measures it at machine
+precision against a 100% tail error in the same row.
+
+THE COST DOES NOT WORK, ON REAL TOPOLOGY. TRRUST v2 human, 2,861 genes, 8,403 edges:
+
+    r    median ball    90th    99th     max      gene at the max
+    1              3      12      62     480      SP1
+    2            118     615    1177    1813      CDKN1A
+    3           1381    2169    2532    2724      SP1
+
+The 3-ball around SP1 is 2,724 of 2,861 genes -- 95% of the network in one factor. Cost is set by
+the WORST ball, so the median of 1,381 is not a reprieve, and quoting it would be ledger S. The
+closure costs 2^2724 against a junction tree's 2^40+. The route does not merely fail to help; on
+real topology it is worse than what it replaces.
+
+HUB CONDITIONING DOES NOT RESCUE IT. Deleting the h highest-degree genes and conditioning:
+
+    h        max|B_2|   treewidth    total cost = 2^h x N x 2^max|B_2|
+    0            1813         >40                            4.6e+63
+   20             682         >40                            4.8e+69
+  200              44          23                            7.5e+76
+  400              14           3                            6.5e+67
+
+The ball sizes fall exactly as hoped -- 400 deletions take treewidth to 3 -- but 2^400 eats the
+saving many times over. There is no h that wins.
+
+THE ASSUMPTION UNDERNEATH WAS CHECKED, AND IT HELD. statedim's S5 verified "dependence graph =
+G^r" on a cascade and a random graph, never on a hub, and the whole cost verdict depends on two of
+SP1's 484 targets really being dependent above tau. Measured exactly (L7):
+
+    out-degree 4, 8, 14  ->  sibling MI 1.35e-4, 1.55e-4, 1.36e-4     FLAT
+    in-degree 1 .. 12    ->  sibling MI 1.50e-4 down to 4.89e-7       307x, and still above tau
+
+Out-degree does not dilute AT ALL: a hub with fourteen targets correlates them exactly as strongly
+as one with four, because its state is shared by all of them equally. In-degree does dilute, as
+roughly its square, but is still above tau at in-degree 12 -- and TRRUST's mean in-degree is 2.9,
+where sibling dependence sits ~80x above tau. So the ball sizes are not overestimates.
+
+WHAT THIS LEAVES. The failure is now specific rather than general, which is worth more than the
+route would have been:
+
+  - the r-ball FACTORISATION is sound and cheap in accuracy: r = 3 buys 0.55% error on a 1e-13
+    event with three-variable factors
+  - the r-ball GEOMETRY is what fails, and only because of hubs
+  - hubs cannot be conditioned away arithmetically (2^h), cannot be diluted away by out-degree,
+    and are not diluted enough by biological in-degree
+
+So the obstruction has been localised to one thing: a small number of very high out-degree
+regulators, whose targets are mutually dependent no matter how many of them there are. Any route
+that survives has to treat those specific vertices differently -- not by conditioning on their
+STATE, which costs 2^h and which statedim's S6 says is only legitimate at a 500x timescale
+separation anyway. The two remaining routes from statedim are untouched: bounded-width
+decomposition with measured error, and carrying controller history explicitly.
+
+ONE BOUND DID NOT SURVIVE. tail_err <= 20.23 sqrt(MI) fails in 5 of 16 rows where the MI is above
+its own numerical floor, so it cannot be used to CHOOSE r. r has to be chosen from a measured
+error curve. (L2 as first written compared against the law at every r including rows where the MI
+was below its floor -- a guard statedim's S2 had and this gate did not; both floors are now
+measured, the tail statistic's by solving the stationary equation twice from independent starts
+and differencing, which gives 3.8e-16.)
+
+=================================================================================================
+ROUTE 2 OF 3 TESTED: BOUNDED WIDTH WITH MEASURED ERROR.  IT FAILS, AND IT FAILS IRREDUCIBLY
+Source: rem/atlas/RESULTS_boundedwidth.txt
+=================================================================================================
+
+WHY THIS WAS BETTER POSED THAN ROUTE 1. Route 1 fixed the geometry and the width came out at
+2,724. Here the width is fixed FIRST at whatever is affordable and the decomposition is forced
+into it by deleting edges, so cost is N 2^(w+1) by construction and cannot blow up. The whole
+question becomes the error, which is what should have been measured all along.
+
+THE ANSWER DEPENDS ENTIRELY ON TOPOLOGY, AND THE DEPENDENCE IS EXTREME.
+
+    deep tail (P ~ 5e-14), tail relative error at width w
+    w        cascade      random degree 2      hub
+    1        1.06e+00     9.67e-01             9.83e-01
+    3        5.51e-03     3.06e-01             9.19e-01
+    5        1.01e-05     3.22e-02             7.46e-01
+    8        6.56e-06     1.07e-01             2.93e-01
+
+On a cascade, width 3 is enough. On a hub graph, width 8 still leaves 29% error. And the random
+graph is NON-MONOTONE -- w = 6 is worse than w = 5 -- so accuracy cannot simply be bought with
+budget.
+
+THE MECHANISM, AND IT IS THE SAME ONE ROUTE 1 FOUND. A hub of degree k is a (k+1)-CLIQUE in the
+dependence graph. No width below k can hold it, so the last edges that any affordable width is
+forced to drop are hub edges -- the strongest ones in the graph. Extending the reference curve
+down to a drop fraction of 0.025 shows the consequence directly: the hub error PLATEAUS at 6-9%
+instead of going to zero. Buying width stops buying accuracy.
+
+THE ONE NUMBER HERE WITH NO MODEL IN IT. On TRRUST v2 human, what fraction of the 8,403 direct
+regulatory edges is still represented at width w -- both endpoints together in some bag:
+
+    w      cost N.2^(w+1)     edges represented     lost
+    5           1.83e+05          6044  (72.8%)    27.2%
+   10           5.86e+06          7167  (86.3%)    13.7%
+   15           1.88e+08          7649  (92.2%)     7.8%
+   20           6.00e+09          7890  (95.1%)     4.9%
+   25           1.92e+11          8049  (97.0%)     3.0%
+
+This contains no dynamics and no mutual information. It is a property of the graph and the budget.
+
+THE VERDICT. Predeclared: affordable = 2^w <= 1e9, accurate = tail error < 1%.
+
+    w     TRRUST lost     err, cascade end     err, hub end     affordable   accurate
+    5           0.272             1.68e-05         5.97e-01        yes         no
+   10           0.137             8.71e-06         2.52e-01        yes         no
+   15           0.078             1.57e-06         6.54e-02        yes         no
+   20           0.049             7.86e-07         7.19e-02        yes         no
+   25           0.030             2.60e-06         8.49e-02        yes         no
+
+EMPTY INTERSECTION. All five affordable widths are inside the measured domain and all five fail
+at the hub end. Note the spread between the two ends -- four to five orders at the same drop
+fraction -- which is why B5 reports a range rather than a number, and why the hub end governs:
+TRRUST is hub-rich.
+
+THE MATCHED CONTROL IS THE MOST USEFUL RESULT IN THE MODULE. Dropping weakest-MI-first against
+dropping at random, at identical width:
+
+    cascade              694x better
+    random degree 2      6.1x better
+    hub                  1.0x -- NO BETTER THAN RANDOM
+
+Choosing which edges to keep is worth five orders of magnitude on a chain and worth exactly
+nothing on a hub. On the topology that matters there is no strategy, only a budget.
+
+FOUR DEFECTS OF MINE IN THIS MODULE, all recorded rather than patched away:
+  - the dependence graph was thresholded at tau before thinning, which left a 7.4e-5 residual in
+    the identity case that had nothing to do with width. Caught before commit; the graph is now
+    complete and MI-weighted so width is the only thing that drops an edge.
+  - B4 counted every deleted edge including FILL-IN, and reported dropping 16,522 of 8,403 edges,
+    a fraction of 1.97. Caught by its own output being impossible.
+  - B5 fed those impossible fractions into an interpolation and numpy CLAMPED instead of
+    refusing, returning one constant that looked like a result.
+  - B6 then printed EMPTY INTERSECTION on the strength of a single in-domain row, and after the
+    first fix printed UNDETERMINED while counting rows that were unaffordable and therefore could
+    never have been in the intersection. The verdict is the same as the first one; it is now
+    supported by its own table instead of asserted over it.
+
+=================================================================================================
+WHERE THE TWO ROUTES LEAVE THE PROBLEM
+=================================================================================================
+Both failed, and they failed at the same place, which is worth more than either would have been
+alone. Route 1 showed hubs are unaffordable: the 3-ball around SP1 is 95% of the genome. Route 2
+shows they are IRREDUCIBLY unaffordable: a degree-k hub is a (k+1)-clique, so no width below k
+represents it, error plateaus rather than falling, and choosing edges cleverly is worth nothing.
+
+The obstruction is now one object, characterised three ways:
+    a hub's targets are mutually dependent regardless of out-degree      (localclosure L7)
+    its ball is the network                                              (localclosure L3)
+    its clique cannot be fitted into any affordable width                (boundedwidth B2, B6)
+
+Route 3 -- carrying controller history explicitly -- is the only one left, and statedim S6 already
+says what it has to beat: conditioning on a controller's STATE works only at a 500x timescale
+separation, and it is the trajectory rather than the state that carries the dependence. Route 3
+is the one that attacks that directly, and it is untested.
+
+=================================================================================================
+ROUTE 3 OF 3 TESTED: CARRY THE CONTROLLER'S HISTORY.  IT WORKS, AT A PRICE, AND ONLY FOR ONE
+CLASS OF QUESTION.  Source: rem/atlas/RESULTS_history.txt
+=================================================================================================
+
+WHY IT COULD NOT FAIL THE WAY THE OTHERS DID. In a star the targets ARE conditionally independent
+given the controller's whole path -- that is what "the hub drives them and they do not touch each
+other" means. So route 3 was never going to hit a structural obstruction. It could only be
+expensive, and the measurement is how expensive.
+
+The controller's path is carried exactly from the transition semigroup. At L = 0 the construction
+reproduces statedim S6's I(i;j|h) to every digit -- 1.464892e-02 both times, on the same system --
+which is the cross-module identity check, not a new number.
+
+WHAT ACTUALLY LIMITS IT, and it was not what I expected. Adding lags at fixed spacing PLATEAUS:
+
+    L        0      1      2      4      6      8     10
+    err   0.244  0.073  0.028  0.015  0.014  0.014  0.014
+
+More lags extend the window backwards and buy nothing after L = 4. The missing information is the
+path BETWEEN samples. Holding the window fixed at W = 1.2 and refining the resolution instead:
+
+    dt      0.300  0.200  0.150  0.120  0.100  0.086  0.075
+    L           4      6      8     10     12     14     16
+    cost       64    256   1024   4096  16384  65536 262144
+    err     6.5e-2 3.5e-2 2.1e-2 1.4e-2 1.0e-2 7.5e-3 5.8e-3
+
+    fitted:  tail error ~ dt^1.753,  cost = 2^(W/dt + 2)
+
+ACCURACY IS POLYNOMIAL IN THE RESOLUTION WHILE COST IS EXPONENTIAL IN IT. Inverting:
+
+    1e-2  needs L = 12,  cost/gene 1.6e+04
+    1e-3  needs L = 44,  cost/gene 9.9e+13
+    1e-4  needs L = 165, cost/gene 2.5e+50
+
+One per cent is reachable. Every further decade costs about nine orders of magnitude.
+
+IT IS THE CONTROLLER'S HISTORY SPECIFICALLY, NOT MORE CONDITIONING (R6). Carrying the same number
+of lags of an ordinary target instead of the hub leaves 480x more residual dependence at every L.
+
+AND IT AGREES WITH statedim S6 FROM THE OTHER SIDE (R3). The gain from carrying history is 54x and
+89x at timescale ratios 1 and 0.1 -- exactly where state-conditioning failed -- and 0 to 4x at the
+extremes where state-conditioning already worked. Two modules, two directions, same shape.
+
+=================================================================================================
+THE DELIVERABLE: HOW MUCH ACCURACY, AT WHAT COMPUTE, FOR EACH ROUTE
+=================================================================================================
+Costs are doubles per gene; the genome-scale column assumes 20,000 genes at 8 bytes.
+
+  ROUTE 1  local closure on r-balls                       (rem/atlas/localclosure.py)
+    best accuracy reachable   arbitrary on chain-like topology; r=3 gives 5.5e-3 at a 1e-13 event
+    compute                   N 2^|B_r|;  |B_3| = 7 on a cascade  ->  20 MB at genome scale
+    on REAL topology          |B_3| around SP1 is 2,724 of 2,861 genes  ->  2^2724.  UNREACHABLE
+    verdict                   fails on any hub-rich graph, at any accuracy, at any cost
+
+  ROUTE 2  bounded-width decomposition                    (rem/atlas/boundedwidth.py)
+    best accuracy reachable   EXACT for events inside one bag; ~6% floor for hub-mediated ones
+    compute                   N 2^(w+1), fixed by construction
+    local questions           w = 4 is exact for a 4-target event  ->  5 MB at genome scale
+    global questions          error GROWS with controller degree at fixed width:
+                              k = 4, 6, 8, 10  ->  2e-16, 9.3e-3, 2.8e-2, 4.3e-2 at w = 4
+    on REAL topology          w = 20 costs 48 GB and still loses 4.9% of direct regulatory edges;
+                              all five affordable widths fail the 1% bar at the hub end
+    verdict                   the cheapest route by far for LOCAL questions; cannot reach 1% on
+                              global ones and gets worse as controllers acquire targets
+
+  ROUTE 3  explicit controller history                    (rem/atlas/history.py)
+    best accuracy reachable   1e-2 practical; 1e-3 at 9.9e13 per gene; 1e-4 never
+    compute                   N 2^(L+2), INDEPENDENT of controller degree
+                              L = 12  ->  1.6e4 per gene  ->  2.6 GB at genome scale for 1%
+    global questions          error FLAT in controller degree:
+                              k = 4, 6, 8, 10  ->  3.6e-3, 5.3e-3, 6.7e-3, 7.9e-3 at L = 10
+    verdict                   the only route whose error does not degrade as a controller
+                              acquires targets, and the only one that reaches 1% on a global
+                              question at genome scale
+
+=================================================================================================
+THE ANSWER IS A MATCHING, NOT A WINNER
+=================================================================================================
+The three routes are not competitors at the same job, and two of my own gates went wrong by
+assuming they were -- R8 was written three times, once with an observable that got harder as the
+variable swept, once with one that fitted inside a single bag and flattered route 2.
+
+    LOCAL question   -- does this pathway carry flux, will these four genes fire together
+                     bounded width, w ~ 4-6, about 5 MB, exact or near it
+    GLOBAL question  -- collective fluctuation across everything a regulator touches
+                     controller history, L ~ 12, about 2.6 GB, 1% and no better
+    CHAIN-LIKE part  -- metabolism, linear cascades
+                     r-balls, r ~ 3, about 20 MB, arbitrary accuracy
+
+Nothing reaches 0.1% on a global question at any compute this decade. That is the ceiling, and it
+is set by a specific and now well-characterised object: a controller whose targets are mutually
+dependent regardless of how many there are, whose ball is the whole network, whose clique fits in
+no affordable width, and whose trajectory -- not its state -- carries the dependence.
+
+All three routes named in statedim are now tested. Two failed against that object and the third
+buys 1% by paying exponentially for path resolution.
+
+=================================================================================================
+THE HYBRID ENGINE: ALL THREE ROUTES COMBINED, AND MEASURED
+Source: rem/atlas/RESULTS_engine.txt
+=================================================================================================
+
+THE CONSTRUCTION.  P_hat(x) = sum_a P(a) prod_i P( x_i | x_pa(i), a )
+
+Controller history supplies the strata a; r-balls on the graph MINUS the controllers supply the
+parent sets; bounded-width thinning caps them. It is a strict generalisation of all three routes,
+and H1 verifies that by reducing it to each EXACTLY -- 0.0, 1.4e-17, 1.4e-17 -- so the comparison
+is against real rivals rather than against the engine's own reimplementation of them.
+
+Test system: a controller over N targets that ALSO regulate each other. Star plus chain. That is
+what a real network is and what no single route handles.
+
+WHAT A POINT COMPARISON SAYS: NOTHING. On N = 8, route 2 at width 7 holds every variable in one
+bag and is EXACT for cost 510, beating every hybrid configuration. On any system small enough to
+solve exactly, the exact method wins. This is reported as uninformative rather than suppressed.
+
+WHAT THE SCALING SAYS, and this is the result. Cheapest configuration reaching 1% relative error
+in Var(total ON count) -- a global observable whose meaning does not change with N:
+
+    N        route 1          route 2           HYBRID
+    6      126 (r=5)        126 (w=5)      176 (r=1,L=2)     <- the hybrid LOSES here
+    8      382 (r=6)        510 (w=7)      432 (r=2,L=2)
+   10     1534 (r=8)       2046 (w=9)      560 (r=2,L=2)
+   12     4094 (r=9)      8190 (w=11)      688 (r=2,L=2)
+
+    growth from N=6 to N=12:   route 1  x32.5    route 2  x65.0    hybrid  x3.9
+
+Route 2 grows as 2^N exactly -- 126, 510, 2046, 8190 is a factor of four per two variables. The
+hybrid grows LINEARLY. At N = 12 it is already six to twelve times cheaper, and the gap widens
+without limit.
+
+THE CROSSOVER IS THE POINT. The hybrid LOSES at N = 6, because at small N exactness is cheap and
+the history machinery is not worth its overhead. A method that won at every size would be suspect.
+
+THE MECHANISM, MEASURED ON REAL TOPOLOGY (H5). TRRUST v2 human, maximum residual 2-ball after
+removing the h highest-degree genes:
+
+    controllers removed      3      13      38     122     281
+    max residual 2-ball   1564     848     423      96      25
+
+localclosure L3 measured that same ball at 2,724 of 2,861 genes with the hubs left in. Removing
+122 controllers -- 4% of the network -- collapses it to 96. That collapse IS the engine.
+
+IT IS THE CONTROLLERS SPECIFICALLY (H6). Carrying the same number of lags of a random gene instead
+of the controller gives 17x worse error at every L. And the controllers are DETECTED by degree
+over a wide threshold band (H4), not hand-picked, which is what has to be true for a network
+nobody has annotated.
+
+WHERE IT STILL FAILS (H7). Converged accuracy 7.09e-3, which meets the 1% bar. The residual is the
+controller's path between sample times, exactly what history.py R5 priced: halving it doubles L
+and squares the cost. The hybrid moves the ceiling; it does not remove it.
+
+FOUR DEFECTS IN THIS MODULE, and the last is a pattern:
+  - hybrid_cost derived "is gene i regulated by a controller" from the target-only adjacency,
+    but the controller is outside that index range, so it returned False for every gene and
+    zeroed the history term. Caught before commit.
+  - the component sweeps stopped at cost ~150 while hybrids ran to 28,000. Extended to equal
+    cost, route 1 at r=6 and route 2 at w=7 both beat every hybrid point. The first run's
+    "23.9x improvement, 8 of 8" was an artefact of under-resourcing the rivals.
+  - the best hybrid point was a ZERO CROSSING. Signed error runs -1.26e-1, -2.53e-2, +5.58e-3,
+    +1.78e-2; the quoted 5.58e-3 was the crossing and the converged value is 1.78e-2. The Var
+    error was monotone throughout, which is what exposed it -- two observables disagreeing about
+    which configuration is best is the signature of a cancellation. H7 then quoted that same
+    cancellation two sections after H2a identified it.
+  - THE PATTERN: a comparison at ONE system size cannot rank approximations, because wherever
+    the exact method is affordable it wins. This build order made that mistake three times --
+    history R7 on a six-target star where exactness costs 128, R8 written three times over the
+    same issue, and engine H2. The rule, stated now so it is not made a fourth time: AN
+    APPROXIMATION IS RANKED BY A SCALING LAW, NEVER AT A POINT.
+
+=================================================================================================
+THE ENGINE, AT GENOME SCALE
+=================================================================================================
+Extrapolating the measured scaling with 20,000 genes, 122 detected controllers, r = 2, L = 8:
+
+    exact junction tree      2^20000                          impossible
+    route 1 alone            2^2724 (SP1's ball)              impossible
+    route 2 alone            48 GB at w=20, still 4.9% of direct edges lost, 1% bar not met
+    route 3 alone            2.6 GB for 1% on global questions, 100x too dear for local ones
+    HYBRID                   linear in N; ~14 MB, 1% on both
+
+That is the answer to problem 2. Grouping cannot keep the joint state small -- statedim settled
+that -- but grouping was never the right decomposition. Controller history plus local balls is,
+and it is linear in the genome where every pure method is exponential.
+
+=================================================================================================
+RETRACTION: "THE ENGINE, AT GENOME SCALE ... HYBRID ~14 MB" IS WRONG BY ~48 ORDERS OF MAGNITUDE
+=================================================================================================
+The section above ends by extrapolating the hybrid engine to 20,000 genes at about 14 MB, 1% on
+both local and global questions. That number is withdrawn. Two defects in engine.hybrid_cost,
+both invisible on every test system this build order used and both fatal on real topology.
+
+(1) HISTORY BITS DO NOT ADD ACROSS CONTROLLERS -- THEY MULTIPLY. hybrid_cost charges (L+1) bits
+    to any gene a controller touches. A gene regulated by k_i controllers needs k_i*(L+1) bits,
+    because the conditioning strata are the JOINT controller histories. Every star test system
+    in this build order gave every gene exactly one controller, so k_i was identically 1 and the
+    error could not appear. On TRRUST at controller threshold 25:
+
+        |C|     k_i mean   median   max   frac k>=2   frac k=0
+          3         0.39        0     3       0.108      0.749
+         13         0.85        0    11       0.208      0.546
+         38         1.37        1    17       0.303      0.393
+        122         1.88        1    17       0.417      0.224
+        281         1.98        1    11       0.460      0.142
+
+    41.7% of genes have two or more controllers and the maximum is 17.
+
+(2) THE CONTROLLER BLOCK IS PRICED AT ZERO. P(a), the joint over the controllers' own histories,
+    never enters the cost at all. That makes the functional degenerate: designating every gene a
+    controller drives the reported cost towards zero. Priced honestly the block is
+    2^(|C|*(L+1)) -- at |C| = 122 and L = 8 that is 2^1098.
+
+    corrected, TRRUST, r = 2, w = 6, L = 8
+        |C|      engine.py reports     corrected per-gene      controller block
+          3              3.877e+07              1.604e+12                  2^27
+         13              6.005e+07              8.256e+31                 2^117
+         38              6.906e+07              1.839e+55                 2^342
+        122              5.386e+07              9.503e+55                >2^400
+
+WHAT SURVIVES. The star-topology results are correct FOR STAR TOPOLOGY, where k_i = 1 by
+construction: the scaling law (route 1 x32.5, route 2 x65.0, hybrid x3.9 from N=6 to N=12), the
+reduction identities, the matched controls, and the accuracy curves. What does not survive is the
+extrapolation of that cost to a real network, and with it the claim that the engine runs at
+genome scale. hybrid_cost is kept under its own name, with the retraction written into the file
+above it, so that which results are affected stays visible.
+
+HOW IT WAS FOUND. Not by a gate. Eight independent adversarial reviewers were asked, before the
+TRRUST module was written, to find ways the measurement could be invalid; two of them
+independently identified both defects, and a third pointed out that the cost functional was
+degenerate. Every gate in engine.py passed on the star system and would have passed again on
+TRRUST, because none of them priced a gene with two controllers.

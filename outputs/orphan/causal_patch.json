@@ -1,0 +1,23 @@
+{
+ "depmap_coessentiality": {
+  "mean": 0.009,
+  "median": 0.008,
+  "n": 400
+ },
+ "string_structure": {
+  "mean": 0.015,
+  "median": 0.014,
+  "n": 369
+ },
+ "random": {
+  "mean": -0.001,
+  "median": -0.0,
+  "n": 400
+ },
+ "n_measured_cols_shared_with_depmap": 7990,
+ "n_knockouts_tested": 400,
+ "depmap_coverage_genes": 18443,
+ "perturbseq_coverage_genes": 2058,
+ "verdict": "PARTIAL/NULL \u2014 DepMap co-essentiality predicts the measured response at +0.009 (structure +0.015, chance -0.001, lift over chance +0.010). It beats structure and chance but is weak \u2014 co-essentiality (shared FITNESS dependency) and transcriptional RESPONSE are related but not the same axis. Honest read: it is a genome-wide FUNCTIONAL-coupling proxy, not a faithful response predictor; use it to name the affected MODULE, not to compute the response vector.",
+ "extends_reach": false
+}

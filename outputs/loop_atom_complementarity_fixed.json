@@ -1,0 +1,172 @@
+{
+ "test": "complementarity, size_fit removed",
+ "gates": {
+  "D1": true,
+  "D2": true,
+  "D3": true,
+  "D4": true,
+  "D5": true,
+  "D6": true
+ },
+ "arms": {
+  "comp4": 0.537926169553611,
+  "comp5": 0.5090224603765935,
+  "popularity": 0.48022696206492294,
+  "sequence": 0.7941178641268083,
+  "geometry": 0.6993085118069162,
+  "electrostatics": 0.5849369815926087,
+  "sterics": 0.6645462109772674
+ },
+ "spearman": {
+  "sequence": -0.07193571789782292,
+  "geometry": -0.08192762787889125,
+  "electrostatics": -0.05598691601368665,
+  "sterics": -0.0674370095943137
+ },
+ "d2": [
+  0.02890370917701757,
+  0.002805434768205674
+ ],
+ "d3_folds": [
+  {
+   "w": 0.05,
+   "fused": 0.8278771196149767,
+   "delta": 0.019474708891310328,
+   "sem": 0.003786542707686656
+  },
+  {
+   "w": 0.05,
+   "fused": 0.8225385199857433,
+   "delta": 0.01796795816298505,
+   "sem": 0.003661877916400892
+  }
+ ],
+ "d3": [
+  0.01872133352714769,
+  0.003724210312043774
+ ],
+ "term_regret": {
+  "charge": {
+   "solo": 0.506537366944587,
+   "without": 0.5407634601266365,
+   "regret": -0.002837290573025437,
+   "sem": 0.003402694378276674
+  },
+  "hbond": {
+   "solo": 0.5115159257408478,
+   "without": 0.5430008965666777,
+   "regret": -0.005074727013066586,
+   "sem": 0.004013987110696041
+  },
+  "hydrophobic": {
+   "solo": 0.549801358167137,
+   "without": 0.5203023585513074,
+   "regret": 0.01762381100230374,
+   "sem": 0.0041028420186798404
+  },
+  "sulfur": {
+   "solo": 0.5139281650423375,
+   "without": 0.5331919924642683,
+   "regret": 0.004734177089342884,
+   "sem": 0.00236970927719849
+  }
+ },
+ "diagnosis": {
+  "cavity_vs_length_pearson": 0.7802,
+  "protein_size_vs_ligand_size_spearman": -0.0376
+ },
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/esm_enzymes.npz",
+    "bytes": 6475346,
+    "hash": "f23e386cab80d238",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/struct_enzymes.npz",
+    "bytes": 410607,
+    "hash": "6cd642194f3083c0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/elecster_enzymes.npz",
+    "bytes": 257828,
+    "hash": "036f02c7c74b0d3e",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2171,
+   "used": 1989,
+   "selection": "all",
+   "fraction": 0.9161676646706587
+  },
+  "seed": 16550,
+  "controls": [
+   "fold partition redrawn at a new seed, homology violations recounted",
+   "the five-term score re-measured alongside, so D2 tests the diagnosis",
+   "the term-drop's contamination stated in D3's own verdict text",
+   "per-term regret again, to see whether one feature carries it"
+  ],
+  "note": "size_fit removed on a measured diagnosis, not on a preference for the better score",
+  "warnings": []
+ },
+ "seconds": 43.757962465286255,
+ "log": [
+  "========================================================================================================",
+  "  COMPLEMENTARITY WITH size_fit REMOVED, on a fresh fold draw",
+  "========================================================================================================",
+  "",
+  "     2,171 enzymes | 34,901 contests | 2,062 clusters",
+  "     NEW fold draw at seed 16550: [435, 434, 434, 434, 434], 0 homology violations",
+  "",
+  "D1 popularity 0.4802, homology violations 0",
+  "     clean instrument on an independently drawn partition.",
+  "     D1 PASS",
+  "",
+  "D2 four terms 0.5379 vs five terms 0.5090 (loop 165 measured 0.5090 with size_fit)",
+  "     dropping size_fit: +0.0289 sem 0.0028 = +10.3 sem",
+  "     P5's regret measure was right and the term was genuinely harmful.",
+  "     D2 PASS",
+  "       fold 0->1: w=0.05 | fused 0.8279 vs four-block 0.8084 | delta +0.0195 sem 0.0038",
+  "       fold 1->0: w=0.05 | fused 0.8225 vs four-block 0.8046 | delta +0.0180 sem 0.0037",
+  "",
+  "D3 fixed complementarity on top of the four blocks: +0.0187 (loop 165 with size_fit: +0.0103 against a 0.0113 bar)",
+  "     the fixed score clears the bar at +0.0187. CAVEAT, stated because it is owed: the decision to drop size_fit was made by looking at these same enzymes, and loop 165's P5 put that term-drop at about +0.029, so this is not independent evidence of the size of the gain -- only that the direction survives a fresh partition.",
+  "     D3 PASS",
+  "",
+  "D4 IS IT STILL ORTHOGONAL?",
+  "     comp4 vs sequence         -0.0719",
+  "     comp4 vs geometry         -0.0819",
+  "     comp4 vs electrostatics   -0.0560",
+  "     comp4 vs sterics          -0.0674",
+  "     D4 PASS",
+  "",
+  "D5 PER-TERM",
+  "     charge         alone 0.5065 | without 0.5408 | regret -0.0028 (droppable)",
+  "     hbond          alone 0.5115 | without 0.5430 | regret -0.0051 (droppable)",
+  "     hydrophobic    alone 0.5498 | without 0.5203 | regret +0.0176 (load-bearing)",
+  "     sulfur         alone 0.5139 | without 0.5332 | regret +0.0047 (droppable)",
+  "     one term carries it -- this is a single feature, not four.",
+  "     D5 PASS",
+  "",
+  "D6 WHAT THIS CANNOT SHOW",
+  "     This is NOT a locked-holdout measurement. REM.test belongs to the gap-prediction task",
+  "     of loops 160-162; the enzyme-function task has no untouched protein set, because every",
+  "     protein has already been scored. A fresh fold draw controls for fold luck and nothing",
+  "     more.",
+  "     D6 PASS",
+  "",
+  "========================================================================================================",
+  "  D1  PASS",
+  "  D2  PASS",
+  "  D3  PASS",
+  "  D4  PASS",
+  "  D5  PASS",
+  "  D6  PASS",
+  "  6/6   [44s]",
+  "========================================================================================================"
+ ]
+}

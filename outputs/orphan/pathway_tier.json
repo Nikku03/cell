@@ -1,0 +1,56 @@
+{
+ "validation": {
+  "per_cascade": {
+   "MAPK/ERK": {
+    "placed": 7,
+    "in_feedback_loop": 5,
+    "spearman": -0.3555285645684319
+   },
+   "apoptosis": {
+    "placed": 6,
+    "in_feedback_loop": 0,
+    "spearman": 0.942857142857143
+   },
+   "PI3K-AKT": {
+    "placed": 6,
+    "in_feedback_loop": 4,
+    "spearman": 0.16903085094570333
+   },
+   "Wnt": {
+    "placed": 6,
+    "in_feedback_loop": 4,
+    "spearman": 0.8451542547285166
+   },
+   "TLR-NFkB": {
+    "placed": 7,
+    "in_feedback_loop": 5,
+    "spearman": -0.6174969805662238
+   },
+   "cellcycle": {
+    "placed": 6,
+    "in_feedback_loop": 6,
+    "spearman": NaN
+   },
+   "hedgehog": {
+    "placed": 4,
+    "in_feedback_loop": 0,
+    "spearman": -0.19999999999999998
+   }
+  },
+  "feedforward_spearman": 0.5466441516693379,
+  "feedback_spearman": -0.16326908133095144,
+  "n_feedforward": 18,
+  "n_feedback": 24
+ },
+ "whole_cell_census": {
+  "membership_genes": 10489,
+  "feedforward_tier_trustworthy": 4960,
+  "feedback_module_flagged": 329,
+  "no_directed_context": 5200,
+  "pct_trustworthy": 0.473,
+  "pct_flagged": 0.031,
+  "pct_no_context": 0.496
+ },
+ "verdict": "TIER-2 WORKS WITH HONEST ABSTENTION. For membership genes (mostly signaling), the SIGNOR directed graph gives an upstream\u2192downstream tier that is RIGHT for feed-forward genes (Spearman +0.55; clean cascades apoptosis/Wnt 0.85\u20130.94) and MEANINGLESS for feedback-loop genes (-0.16) \u2014 but the SCC flag KNOWS which is which. Whole-cell: only 47% of membership genes get a trustworthy tier, 3% sit in feedback modules (no linear level \u2014 the honest answer is a module, not a rank), 50% have no directed context at all. Unlike metabolism (a clean pipeline), signaling is a control system with loops \u2014 so 'level' is only partially definable, and the software says so instead of faking it.",
+ "note": "tier-2 pathway level for membership genes via SIGNOR directed graph + SCC feedback handling; feed-forward = trustworthy tier, feedback module = flagged/abstain, no-edge = no context"
+}

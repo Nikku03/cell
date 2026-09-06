@@ -1,0 +1,1533 @@
+{
+  "test": "adrn_blocks_swept",
+  "ppi_ranks": [
+    64,
+    128,
+    256
+  ],
+  "codep_reps": [
+    "svd64",
+    "svd256",
+    "raw"
+  ],
+  "K_values": [
+    30,
+    60,
+    120
+  ],
+  "absolute": {
+    "K=30|chan2a": {
+      "cohort1": 0.22975,
+      "_holdout": 0.28300000000000003
+    },
+    "K=30|mixed_ppi64": {
+      "cohort1": 0.245,
+      "_holdout": 0.3005
+    },
+    "K=30|mixed_ppi128": {
+      "cohort1": 0.24425,
+      "_holdout": 0.30325
+    },
+    "K=30|mixed_ppi256": {
+      "cohort1": 0.23924999999999996,
+      "_holdout": 0.30674999999999997
+    },
+    "K=30|bioplex_ppi64": {
+      "cohort1": 0.23525,
+      "_holdout": 0.298
+    },
+    "K=30|bioplex_ppi128": {
+      "cohort1": 0.23399999999999999,
+      "_holdout": 0.294
+    },
+    "K=30|bioplex_ppi256": {
+      "cohort1": 0.23525,
+      "_holdout": 0.2915
+    },
+    "K=30|codep_svd64": {
+      "cohort1": 0.247,
+      "_holdout": 0.306
+    },
+    "K=30|codep_svd256": {
+      "cohort1": 0.24050000000000002,
+      "_holdout": 0.309
+    },
+    "K=30|codep_raw": {
+      "cohort1": 0.2515,
+      "_holdout": 0.312
+    },
+    "K=60|chan2a": {
+      "cohort1": 0.23374999999999996,
+      "_holdout": 0.28850000000000003
+    },
+    "K=60|mixed_ppi64": {
+      "cohort1": 0.24625,
+      "_holdout": 0.30199999999999994
+    },
+    "K=60|mixed_ppi128": {
+      "cohort1": 0.24600000000000002,
+      "_holdout": 0.30425
+    },
+    "K=60|mixed_ppi256": {
+      "cohort1": 0.24224999999999997,
+      "_holdout": 0.30725
+    },
+    "K=60|bioplex_ppi64": {
+      "cohort1": 0.23924999999999996,
+      "_holdout": 0.29825
+    },
+    "K=60|bioplex_ppi128": {
+      "cohort1": 0.23700000000000002,
+      "_holdout": 0.29600000000000004
+    },
+    "K=60|bioplex_ppi256": {
+      "cohort1": 0.2415,
+      "_holdout": 0.2955
+    },
+    "K=60|codep_svd64": {
+      "cohort1": 0.2515,
+      "_holdout": 0.30875
+    },
+    "K=60|codep_svd256": {
+      "cohort1": 0.2495,
+      "_holdout": 0.31299999999999994
+    },
+    "K=60|codep_raw": {
+      "cohort1": 0.254,
+      "_holdout": 0.31275
+    },
+    "K=120|chan2a": {
+      "cohort1": 0.23175,
+      "_holdout": 0.29
+    },
+    "K=120|mixed_ppi64": {
+      "cohort1": 0.2445,
+      "_holdout": 0.29375
+    },
+    "K=120|mixed_ppi128": {
+      "cohort1": 0.24325,
+      "_holdout": 0.30925
+    },
+    "K=120|mixed_ppi256": {
+      "cohort1": 0.241,
+      "_holdout": 0.30875
+    },
+    "K=120|bioplex_ppi64": {
+      "cohort1": 0.2335,
+      "_holdout": 0.30324999999999996
+    },
+    "K=120|bioplex_ppi128": {
+      "cohort1": 0.23274999999999998,
+      "_holdout": 0.30325
+    },
+    "K=120|bioplex_ppi256": {
+      "cohort1": 0.23425,
+      "_holdout": 0.299
+    },
+    "K=120|codep_svd64": {
+      "cohort1": 0.24924999999999997,
+      "_holdout": 0.3065
+    },
+    "K=120|codep_svd256": {
+      "cohort1": 0.24600000000000002,
+      "_holdout": 0.313
+    },
+    "K=120|codep_raw": {
+      "cohort1": 0.25425,
+      "_holdout": 0.3165
+    }
+  },
+  "sweeps": {
+    "chan2a+codep - chan2a": {
+      "name": "chan2a+codep - chan2a",
+      "verdict": "ROBUST",
+      "n_cells": 18,
+      "n_resolved_pos": 17,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 12,
+      "passing_configs": [
+        {
+          "rep": "svd64",
+          "K": 30
+        },
+        {
+          "rep": "svd64",
+          "K": 30
+        },
+        {
+          "rep": "svd256",
+          "K": 30
+        },
+        {
+          "rep": "raw",
+          "K": 30
+        },
+        {
+          "rep": "raw",
+          "K": 30
+        },
+        {
+          "rep": "svd64",
+          "K": 60
+        },
+        {
+          "rep": "svd64",
+          "K": 60
+        },
+        {
+          "rep": "svd256",
+          "K": 60
+        },
+        {
+          "rep": "svd256",
+          "K": 60
+        },
+        {
+          "rep": "raw",
+          "K": 60
+        },
+        {
+          "rep": "raw",
+          "K": 60
+        },
+        {
+          "rep": "svd64",
+          "K": 120
+        },
+        {
+          "rep": "svd64",
+          "K": 120
+        },
+        {
+          "rep": "svd256",
+          "K": 120
+        },
+        {
+          "rep": "svd256",
+          "K": 120
+        },
+        {
+          "rep": "raw",
+          "K": 120
+        },
+        {
+          "rep": "raw",
+          "K": 120
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "rep": "svd64",
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.01725,
+          "lo": 0.007749999999999998,
+          "hi": 0.0275
+        },
+        {
+          "config": {
+            "rep": "svd64",
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.023000000000000003,
+          "lo": 0.013000000000000003,
+          "hi": 0.0335
+        },
+        {
+          "config": {
+            "rep": "svd256",
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.01075,
+          "lo": -0.001500000000000002,
+          "hi": 0.02375
+        },
+        {
+          "config": {
+            "rep": "svd256",
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.026000000000000002,
+          "lo": 0.012750000000000001,
+          "hi": 0.04000624999999991
+        },
+        {
+          "config": {
+            "rep": "raw",
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.02175,
+          "lo": 0.010249999999999999,
+          "hi": 0.033999999999999996
+        },
+        {
+          "config": {
+            "rep": "raw",
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.029000000000000005,
+          "lo": 0.018250000000000002,
+          "hi": 0.040749999999999995
+        },
+        {
+          "config": {
+            "rep": "svd64",
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.01775,
+          "lo": 0.008749999999999997,
+          "hi": 0.027249999999999996
+        },
+        {
+          "config": {
+            "rep": "svd64",
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.020250000000000004,
+          "lo": 0.010500000000000008,
+          "hi": 0.030750000000000003
+        },
+        {
+          "config": {
+            "rep": "svd256",
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.015749999999999997,
+          "lo": 0.0037499999999999977,
+          "hi": 0.027999999999999997
+        },
+        {
+          "config": {
+            "rep": "svd256",
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.0245,
+          "lo": 0.01175,
+          "hi": 0.038000000000000006
+        },
+        {
+          "config": {
+            "rep": "raw",
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.020249999999999994,
+          "lo": 0.008999999999999998,
+          "hi": 0.032
+        },
+        {
+          "config": {
+            "rep": "raw",
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.024250000000000004,
+          "lo": 0.013500000000000002,
+          "hi": 0.035750000000000004
+        },
+        {
+          "config": {
+            "rep": "svd64",
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0175,
+          "lo": 0.007749999999999999,
+          "hi": 0.0275
+        },
+        {
+          "config": {
+            "rep": "svd64",
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.0165,
+          "lo": 0.006750000000000002,
+          "hi": 0.026500000000000003
+        },
+        {
+          "config": {
+            "rep": "svd256",
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.014249999999999995,
+          "lo": 0.0024999999999999974,
+          "hi": 0.0265
+        },
+        {
+          "config": {
+            "rep": "svd256",
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.023000000000000007,
+          "lo": 0.010250000000000006,
+          "hi": 0.036500000000000005
+        },
+        {
+          "config": {
+            "rep": "raw",
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0225,
+          "lo": 0.011,
+          "hi": 0.034499999999999996
+        },
+        {
+          "config": {
+            "rep": "raw",
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.026500000000000003,
+          "lo": 0.01525,
+          "hi": 0.03874999999999999
+        }
+      ]
+    },
+    "chan2a+ppi - chan2a+ppi_rw": {
+      "name": "chan2a+ppi - chan2a+ppi_rw",
+      "verdict": "DIRECTIONAL",
+      "n_cells": 36,
+      "n_resolved_pos": 22,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 24,
+      "passing_configs": [
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 128,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 256,
+          "K": 30
+        },
+        {
+          "src": "bioplex",
+          "rank": 64,
+          "K": 30
+        },
+        {
+          "src": "bioplex",
+          "rank": 128,
+          "K": 30
+        },
+        {
+          "src": "bioplex",
+          "rank": 256,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 60
+        },
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 60
+        },
+        {
+          "src": "mixed",
+          "rank": 128,
+          "K": 60
+        },
+        {
+          "src": "mixed",
+          "rank": 256,
+          "K": 60
+        },
+        {
+          "src": "bioplex",
+          "rank": 64,
+          "K": 60
+        },
+        {
+          "src": "bioplex",
+          "rank": 128,
+          "K": 60
+        },
+        {
+          "src": "bioplex",
+          "rank": 256,
+          "K": 60
+        },
+        {
+          "src": "bioplex",
+          "rank": 256,
+          "K": 60
+        },
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 120
+        },
+        {
+          "src": "mixed",
+          "rank": 128,
+          "K": 120
+        },
+        {
+          "src": "mixed",
+          "rank": 128,
+          "K": 120
+        },
+        {
+          "src": "mixed",
+          "rank": 256,
+          "K": 120
+        },
+        {
+          "src": "bioplex",
+          "rank": 64,
+          "K": 120
+        },
+        {
+          "src": "bioplex",
+          "rank": 128,
+          "K": 120
+        },
+        {
+          "src": "bioplex",
+          "rank": 256,
+          "K": 120
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.012249999999999997,
+          "lo": 0.0010000000000000009,
+          "hi": 0.024249999999999997
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.02,
+          "lo": 0.01,
+          "hi": 0.031
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.009999999999999998,
+          "lo": -0.002750000000000002,
+          "hi": 0.023249999999999996
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.02875,
+          "lo": 0.014749999999999996,
+          "hi": 0.04375
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.009749999999999998,
+          "lo": -0.002750000000000003,
+          "hi": 0.02275
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.034249999999999996,
+          "lo": 0.017499999999999995,
+          "hi": 0.05225
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0022500000000000003,
+          "lo": -0.00425,
+          "hi": 0.009250000000000001
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.01825,
+          "lo": 0.005750000000000001,
+          "hi": 0.03175
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0019999999999999974,
+          "lo": -0.005500000000000002,
+          "hi": 0.00925
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.01975,
+          "lo": 0.005250000000000004,
+          "hi": 0.035500000000000004
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.009749999999999998,
+          "lo": -0.00375,
+          "hi": 0.023
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.022000000000000002,
+          "lo": 0.006750000000000001,
+          "hi": 0.0385
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.012249999999999999,
+          "lo": 0.0014999999999999992,
+          "hi": 0.023999999999999994
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.01925,
+          "lo": 0.008250000000000004,
+          "hi": 0.031
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0125,
+          "lo": -0.0010000000000000002,
+          "hi": 0.026000000000000002
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.032499999999999994,
+          "lo": 0.016999999999999998,
+          "hi": 0.049
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.009,
+          "lo": -0.004750000000000001,
+          "hi": 0.0225
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.0375,
+          "lo": 0.02075,
+          "hi": 0.05575
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.004249999999999999,
+          "lo": -0.0027500000000000024,
+          "hi": 0.011749999999999997
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.01625,
+          "lo": 0.004000000000000003,
+          "hi": 0.03
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.002,
+          "lo": -0.006000000000000002,
+          "hi": 0.010250000000000004
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.016749999999999998,
+          "lo": 0.0032500000000000007,
+          "hi": 0.031749999999999994
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.016749999999999998,
+          "lo": 0.003749999999999999,
+          "hi": 0.030750000000000003
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.021750000000000002,
+          "lo": 0.006250000000000005,
+          "hi": 0.03875
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.012500000000000004,
+          "lo": 0.0015000000000000002,
+          "hi": 0.0245
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.00825,
+          "lo": -0.004500000000000002,
+          "hi": 0.022000000000000002
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.013999999999999999,
+          "lo": 0.0002499999999999997,
+          "hi": 0.027749999999999993
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.034,
+          "lo": 0.0175,
+          "hi": 0.052000000000000005
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.01075,
+          "lo": -0.003500000000000002,
+          "hi": 0.024756249999999914
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.0375,
+          "lo": 0.021000000000000005,
+          "hi": 0.05550000000000001
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0017499999999999998,
+          "lo": -0.00575,
+          "hi": 0.0095
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.017,
+          "lo": 0.005499999999999998,
+          "hi": 0.029750000000000002
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0007499999999999996,
+          "lo": -0.006500000000000001,
+          "hi": 0.008
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.019499999999999997,
+          "lo": 0.0055,
+          "hi": 0.0345
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.012999999999999998,
+          "lo": -0.0002500000000000002,
+          "hi": 0.0275
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.01975,
+          "lo": 0.004000000000000001,
+          "hi": 0.036000000000000004
+        }
+      ]
+    },
+    "chan2a+ppi - chan2a": {
+      "name": "chan2a+ppi - chan2a",
+      "verdict": "DIRECTIONAL",
+      "n_cells": 36,
+      "n_resolved_pos": 17,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 24,
+      "passing_configs": [
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 128,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 128,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 256,
+          "K": 30
+        },
+        {
+          "src": "bioplex",
+          "rank": 64,
+          "K": 30
+        },
+        {
+          "src": "bioplex",
+          "rank": 128,
+          "K": 30
+        },
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 60
+        },
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 60
+        },
+        {
+          "src": "mixed",
+          "rank": 128,
+          "K": 60
+        },
+        {
+          "src": "mixed",
+          "rank": 256,
+          "K": 60
+        },
+        {
+          "src": "bioplex",
+          "rank": 64,
+          "K": 60
+        },
+        {
+          "src": "mixed",
+          "rank": 64,
+          "K": 120
+        },
+        {
+          "src": "mixed",
+          "rank": 128,
+          "K": 120
+        },
+        {
+          "src": "mixed",
+          "rank": 256,
+          "K": 120
+        },
+        {
+          "src": "bioplex",
+          "rank": 64,
+          "K": 120
+        },
+        {
+          "src": "bioplex",
+          "rank": 128,
+          "K": 120
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.01525,
+          "lo": 0.0045000000000000005,
+          "hi": 0.026750000000000003
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.0175,
+          "lo": 0.007250000000000001,
+          "hi": 0.02875
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.014499999999999997,
+          "lo": 0.0014999999999999987,
+          "hi": 0.027749999999999993
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.020249999999999994,
+          "lo": 0.0077500000000000025,
+          "hi": 0.034
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.009499999999999998,
+          "lo": -0.004750000000000001,
+          "hi": 0.024499999999999994
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.02375,
+          "lo": 0.010500000000000002,
+          "hi": 0.038
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0055,
+          "lo": -0.0027500000000000007,
+          "hi": 0.014249999999999999
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.015000000000000003,
+          "lo": 0.005750000000000004,
+          "hi": 0.024750000000000005
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.004249999999999998,
+          "lo": -0.005250000000000004,
+          "hi": 0.014499999999999997
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.011000000000000005,
+          "lo": 3.3983232894385668e-18,
+          "hi": 0.022750000000000003
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 30
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0055,
+          "lo": -0.005749999999999998,
+          "hi": 0.017249999999999998
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 30
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.008500000000000002,
+          "lo": -0.002749999999999999,
+          "hi": 0.02075
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.012499999999999995,
+          "lo": 0.0019999999999999974,
+          "hi": 0.024249999999999997
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.013500000000000002,
+          "lo": 0.0025000000000000035,
+          "hi": 0.025500000000000002
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.012249999999999997,
+          "lo": -0.0005000000000000026,
+          "hi": 0.025249999999999995
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.01575,
+          "lo": 0.001993750000000002,
+          "hi": 0.030749999999999996
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.008499999999999997,
+          "lo": -0.005750000000000001,
+          "hi": 0.023
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.018750000000000003,
+          "lo": 0.004500000000000005,
+          "hi": 0.03375
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.005499999999999998,
+          "lo": -0.0027500000000000024,
+          "hi": 0.013499999999999998
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.009750000000000003,
+          "lo": 0.00025000000000000353,
+          "hi": 0.020500000000000008
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.003249999999999999,
+          "lo": -0.00575,
+          "hi": 0.01225
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.007500000000000002,
+          "lo": -0.003749999999999996,
+          "hi": 0.019750000000000004
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 60
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.007749999999999999,
+          "lo": -0.0032500000000000016,
+          "hi": 0.01925
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 60
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.007000000000000004,
+          "lo": -0.005249999999999994,
+          "hi": 0.020500000000000008
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.01275,
+          "lo": 0.00275,
+          "hi": 0.0235
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 64,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.003749999999999999,
+          "lo": -0.00825,
+          "hi": 0.0165
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.011499999999999996,
+          "lo": -0.0015000000000000035,
+          "hi": 0.02475624999999991
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 128,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.019250000000000003,
+          "lo": 0.005250000000000002,
+          "hi": 0.03425
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.009250000000000001,
+          "lo": -0.006000000000000001,
+          "hi": 0.024749999999999998
+        },
+        {
+          "config": {
+            "src": "mixed",
+            "rank": 256,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.018750000000000003,
+          "lo": 0.003500000000000003,
+          "hi": 0.03475
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0017499999999999998,
+          "lo": -0.0065000000000000014,
+          "hi": 0.009750000000000002
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 64,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.013249999999999998,
+          "lo": 0.0032499999999999994,
+          "hi": 0.024000000000000004
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0010000000000000002,
+          "lo": -0.008000000000000002,
+          "hi": 0.010006249999999913
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 128,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.013250000000000001,
+          "lo": 0.0017500000000000005,
+          "hi": 0.025750000000000002
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 120
+          },
+          "cohort": "cohort1",
+          "n": 200,
+          "delta": 0.0024999999999999988,
+          "lo": -0.0085,
+          "hi": 0.013756249999999911
+        },
+        {
+          "config": {
+            "src": "bioplex",
+            "rank": 256,
+            "K": 120
+          },
+          "cohort": "_holdout",
+          "n": 200,
+          "delta": 0.009,
+          "lo": -0.0034999999999999996,
+          "hi": 0.022249999999999995
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "BLOCK ABLATION x ROBUSTNESS HARNESS -- swept over representation rank AND the NMF programme count K",
+    "====================================================================================================",
+    "  axes: ppi src ('mixed', 'bioplex') x rank (64, 128, 256) x K (30, 60, 120); codep rep ('svd64', 'svd256', 'raw') x K (30, 60, 120)",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  codep: 1150 cell lines x 18,443 genes; missing for 134 of 5,120 universe genes",
+    "  bioplex: 114,329 distinct edges at pInt>=0.75 (59,311 rows dropped: gene not in the cell's symbol space or self-loop)",
+    "    mixed: 191,447 edges, rewired + embedded in 35s",
+    "    bioplex: 114,329 edges, rewired + embedded in 23s",
+    "  source matrices built (79s elapsed)",
+    "\n  K=30: chan2a cohort1 0.2298  _holdout 0.2830",
+    "  K=30 done in 35s",
+    "\n  K=60: chan2a cohort1 0.2337  _holdout 0.2885",
+    "  K=60 done in 53s",
+    "\n  K=120: chan2a cohort1 0.2318  _holdout 0.2900",
+    "  K=120 done in 123s",
+    "\n  SWEEP chan2a+codep - chan2a   axes[rep,K]  18 cells\n  config                       cohort         delta                 95% CI\n  rep=svd64 K=30               cohort1      +0.0173 [ +0.0077, +0.0275] RES+\n  rep=svd64 K=30               _holdout     +0.0230 [ +0.0130, +0.0335] RES+\n  rep=svd256 K=30              cohort1      +0.0107 [ -0.0015, +0.0238] ns\n  rep=svd256 K=30              _holdout     +0.0260 [ +0.0128, +0.0400] RES+\n  rep=raw K=30                 cohort1      +0.0217 [ +0.0102, +0.0340] RES+\n  rep=raw K=30                 _holdout     +0.0290 [ +0.0183, +0.0407] RES+\n  rep=svd64 K=60               cohort1      +0.0177 [ +0.0087, +0.0272] RES+\n  rep=svd64 K=60               _holdout     +0.0203 [ +0.0105, +0.0308] RES+\n  rep=svd256 K=60              cohort1      +0.0157 [ +0.0037, +0.0280] RES+\n  rep=svd256 K=60              _holdout     +0.0245 [ +0.0118, +0.0380] RES+\n  rep=raw K=60                 cohort1      +0.0202 [ +0.0090, +0.0320] RES+\n  rep=raw K=60                 _holdout     +0.0243 [ +0.0135, +0.0358] RES+\n  rep=svd64 K=120              cohort1      +0.0175 [ +0.0077, +0.0275] RES+\n  rep=svd64 K=120              _holdout     +0.0165 [ +0.0068, +0.0265] RES+\n  rep=svd256 K=120             cohort1      +0.0142 [ +0.0025, +0.0265] RES+\n  rep=svd256 K=120             _holdout     +0.0230 [ +0.0103, +0.0365] RES+\n  rep=raw K=120                cohort1      +0.0225 [ +0.0110, +0.0345] RES+\n  rep=raw K=120                _holdout     +0.0265 [ +0.0152, +0.0387] RES+\n  -> ROBUST   resolved +17/-0 of 18 (>= 12 needed), sign-consistent True",
+    "\n  SWEEP chan2a+ppi - chan2a+ppi_rw   axes[src,rank,K]  36 cells\n  config                       cohort         delta                 95% CI\n  src=mixed rank=64 K=30       cohort1      +0.0122 [ +0.0010, +0.0242] RES+\n  src=mixed rank=64 K=30       _holdout     +0.0200 [ +0.0100, +0.0310] RES+\n  src=mixed rank=128 K=30      cohort1      +0.0100 [ -0.0028, +0.0232] ns\n  src=mixed rank=128 K=30      _holdout     +0.0288 [ +0.0147, +0.0437] RES+\n  src=mixed rank=256 K=30      cohort1      +0.0097 [ -0.0028, +0.0227] ns\n  src=mixed rank=256 K=30      _holdout     +0.0342 [ +0.0175, +0.0522] RES+\n  src=bioplex rank=64 K=30     cohort1      +0.0023 [ -0.0043, +0.0093] ns\n  src=bioplex rank=64 K=30     _holdout     +0.0182 [ +0.0058, +0.0318] RES+\n  src=bioplex rank=128 K=30    cohort1      +0.0020 [ -0.0055, +0.0092] ns\n  src=bioplex rank=128 K=30    _holdout     +0.0198 [ +0.0053, +0.0355] RES+\n  src=bioplex rank=256 K=30    cohort1      +0.0097 [ -0.0037, +0.0230] ns\n  src=bioplex rank=256 K=30    _holdout     +0.0220 [ +0.0068, +0.0385] RES+\n  src=mixed rank=64 K=60       cohort1      +0.0122 [ +0.0015, +0.0240] RES+\n  src=mixed rank=64 K=60       _holdout     +0.0192 [ +0.0083, +0.0310] RES+\n  src=mixed rank=128 K=60      cohort1      +0.0125 [ -0.0010, +0.0260] ns\n  src=mixed rank=128 K=60      _holdout     +0.0325 [ +0.0170, +0.0490] RES+\n  src=mixed rank=256 K=60      cohort1      +0.0090 [ -0.0048, +0.0225] ns\n  src=mixed rank=256 K=60      _holdout     +0.0375 [ +0.0208, +0.0558] RES+\n  src=bioplex rank=64 K=60     cohort1      +0.0042 [ -0.0028, +0.0117] ns\n  src=bioplex rank=64 K=60     _holdout     +0.0163 [ +0.0040, +0.0300] RES+\n  src=bioplex rank=128 K=60    cohort1      +0.0020 [ -0.0060, +0.0103] ns\n  src=bioplex rank=128 K=60    _holdout     +0.0167 [ +0.0033, +0.0317] RES+\n  src=bioplex rank=256 K=60    cohort1      +0.0167 [ +0.0037, +0.0308] RES+\n  src=bioplex rank=256 K=60    _holdout     +0.0218 [ +0.0063, +0.0387] RES+\n  src=mixed rank=64 K=120      cohort1      +0.0125 [ +0.0015, +0.0245] RES+\n  src=mixed rank=64 K=120      _holdout     +0.0083 [ -0.0045, +0.0220] ns\n  src=mixed rank=128 K=120     cohort1      +0.0140 [ +0.0002, +0.0277] RES+\n  src=mixed rank=128 K=120     _holdout     +0.0340 [ +0.0175, +0.0520] RES+\n  src=mixed rank=256 K=120     cohort1      +0.0107 [ -0.0035, +0.0248] ns\n  src=mixed rank=256 K=120     _holdout     +0.0375 [ +0.0210, +0.0555] RES+\n  src=bioplex rank=64 K=120    cohort1      +0.0017 [ -0.0057, +0.0095] ns\n  src=bioplex rank=64 K=120    _holdout     +0.0170 [ +0.0055, +0.0298] RES+\n  src=bioplex rank=128 K=120   cohort1      +0.0007 [ -0.0065, +0.0080] ns\n  src=bioplex rank=128 K=120   _holdout     +0.0195 [ +0.0055, +0.0345] RES+\n  src=bioplex rank=256 K=120   cohort1      +0.0130 [ -0.0003, +0.0275] ns\n  src=bioplex rank=256 K=120   _holdout     +0.0198 [ +0.0040, +0.0360] RES+\n  -> DIRECTIONAL   resolved +22/-0 of 36 (>= 24 needed), sign-consistent True\n     DIRECTIONAL means every cell agrees on the sign but too few resolve. Real but not bankable; say so rather than quoting the best cell.",
+    "\n  SWEEP chan2a+ppi - chan2a   axes[src,rank,K]  36 cells\n  config                       cohort         delta                 95% CI\n  src=mixed rank=64 K=30       cohort1      +0.0152 [ +0.0045, +0.0268] RES+\n  src=mixed rank=64 K=30       _holdout     +0.0175 [ +0.0073, +0.0288] RES+\n  src=mixed rank=128 K=30      cohort1      +0.0145 [ +0.0015, +0.0277] RES+\n  src=mixed rank=128 K=30      _holdout     +0.0202 [ +0.0078, +0.0340] RES+\n  src=mixed rank=256 K=30      cohort1      +0.0095 [ -0.0048, +0.0245] ns\n  src=mixed rank=256 K=30      _holdout     +0.0238 [ +0.0105, +0.0380] RES+\n  src=bioplex rank=64 K=30     cohort1      +0.0055 [ -0.0028, +0.0142] ns\n  src=bioplex rank=64 K=30     _holdout     +0.0150 [ +0.0058, +0.0248] RES+\n  src=bioplex rank=128 K=30    cohort1      +0.0042 [ -0.0053, +0.0145] ns\n  src=bioplex rank=128 K=30    _holdout     +0.0110 [ +0.0000, +0.0228] RES+\n  src=bioplex rank=256 K=30    cohort1      +0.0055 [ -0.0057, +0.0172] ns\n  src=bioplex rank=256 K=30    _holdout     +0.0085 [ -0.0027, +0.0208] ns\n  src=mixed rank=64 K=60       cohort1      +0.0125 [ +0.0020, +0.0242] RES+\n  src=mixed rank=64 K=60       _holdout     +0.0135 [ +0.0025, +0.0255] RES+\n  src=mixed rank=128 K=60      cohort1      +0.0122 [ -0.0005, +0.0252] ns\n  src=mixed rank=128 K=60      _holdout     +0.0158 [ +0.0020, +0.0307] RES+\n  src=mixed rank=256 K=60      cohort1      +0.0085 [ -0.0058, +0.0230] ns\n  src=mixed rank=256 K=60      _holdout     +0.0188 [ +0.0045, +0.0338] RES+\n  src=bioplex rank=64 K=60     cohort1      +0.0055 [ -0.0028, +0.0135] ns\n  src=bioplex rank=64 K=60     _holdout     +0.0098 [ +0.0003, +0.0205] RES+\n  src=bioplex rank=128 K=60    cohort1      +0.0032 [ -0.0057, +0.0123] ns\n  src=bioplex rank=128 K=60    _holdout     +0.0075 [ -0.0037, +0.0198] ns\n  src=bioplex rank=256 K=60    cohort1      +0.0077 [ -0.0033, +0.0192] ns\n  src=bioplex rank=256 K=60    _holdout     +0.0070 [ -0.0052, +0.0205] ns\n  src=mixed rank=64 K=120      cohort1      +0.0127 [ +0.0027, +0.0235] RES+\n  src=mixed rank=64 K=120      _holdout     +0.0037 [ -0.0083, +0.0165] ns\n  src=mixed rank=128 K=120     cohort1      +0.0115 [ -0.0015, +0.0248] ns\n  src=mixed rank=128 K=120     _holdout     +0.0193 [ +0.0053, +0.0343] RES+\n  src=mixed rank=256 K=120     cohort1      +0.0093 [ -0.0060, +0.0247] ns\n  src=mixed rank=256 K=120     _holdout     +0.0188 [ +0.0035, +0.0348] RES+\n  src=bioplex rank=64 K=120    cohort1      +0.0017 [ -0.0065, +0.0098] ns\n  src=bioplex rank=64 K=120    _holdout     +0.0132 [ +0.0032, +0.0240] RES+\n  src=bioplex rank=128 K=120   cohort1      +0.0010 [ -0.0080, +0.0100] ns\n  src=bioplex rank=128 K=120   _holdout     +0.0133 [ +0.0018, +0.0258] RES+\n  src=bioplex rank=256 K=120   cohort1      +0.0025 [ -0.0085, +0.0138] ns\n  src=bioplex rank=256 K=120   _holdout     +0.0090 [ -0.0035, +0.0222] ns\n  -> DIRECTIONAL   resolved +17/-0 of 36 (>= 24 needed), sign-consistent True\n     DIRECTIONAL means every cell agrees on the sign but too few resolve. Real but not bankable; say so rather than quoting the best cell.",
+    "\n  SUMMARY",
+    "    chan2a+codep - chan2a              ROBUST       (+17/-0 of 18 cells, sign-consistent True)",
+    "    chan2a+ppi - chan2a+ppi_rw         DIRECTIONAL  (+22/-0 of 36 cells, sign-consistent True)",
+    "    chan2a+ppi - chan2a                DIRECTIONAL  (+17/-0 of 36 cells, sign-consistent True)",
+    "\n  total 291s"
+  ]
+}

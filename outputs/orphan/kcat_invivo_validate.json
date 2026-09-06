@@ -1,0 +1,50 @@
+{
+ "source": "davidi_kcat.json (Drive) \u2014 592 enzymes, in-vivo kapp = max|v|/[E] over 13 NCI-60 conditions",
+ "n_total_enzymes": 592,
+ "n_measured_reference": 148,
+ "reference_tiers_used": [
+  "measured",
+  "EC-measured"
+ ],
+ "flag": {
+  "frac_kapp_le_measured_kcat": 0.6959459459459459,
+  "false_flag_rate": 0.30405405405405406,
+  "flag_100x_too_slow": 0.6486486486486487,
+  "flag_10x_too_slow": 0.49324324324324326,
+  "detection_curve": {
+   "100": 0.12837837837837837,
+   "10": 0.16891891891891891,
+   "3": 0.22972972972972974,
+   "1": 0.30405405405405406,
+   "0.3": 0.43243243243243246,
+   "0.1": 0.49324324324324326,
+   "0.01": 0.6486486486486487,
+   "0.001": 0.7702702702702703
+  }
+ },
+ "predict": {
+  "spearman_kapp_vs_measured_kcat": 0.08090293216340264,
+  "pearson_log": 0.13950295985894323,
+  "median_fold_error": 91.62429969674943,
+  "within_3x": 0.19594594594594594,
+  "within_10x": 0.32432432432432434,
+  "experimental_noise_floor_fold": 8.7
+ },
+ "median_saturation_kapp_over_kcat": 0.09615634365634365,
+ "file_own_validation": {
+  "n": 105,
+  "median_fold_error": 95.89,
+  "within_2x": 0.21,
+  "within_3x": 0.22,
+  "single_condition_fold_error": 125.49,
+  "imputed_baseline_fold_error": 9.61,
+  "under_over": -1.378
+ },
+ "ecoli_reference_r": 0.6,
+ "supersedes": [
+  "kcat_flag.json",
+  "kcat_verify.json"
+ ],
+ "circularity_note": "earlier kcat_flag/kcat_verify used enzyme_records incell_rate_per_s = kcat_invitro*sigma (incell_rates.py:161 -> enzyme_record.py:70); correlating/kcat-bounding against it was circular. This file uses flux-derived kapp with NO kcat input.",
+ "verdict": "CORRECTED / HONEST NULL. On 148 enzymes with a MEASURED kcat and an INDEPENDENT flux-derived kapp: the flag is WEAK (kapp \u2264 kcat only 70%, so 30% of correct kcats would be false-flagged; a 100x-too-slow kcat is caught only 65%), and kapp does NOT predict the kcat value (Spearman +0.08, 92x fold-error \u226b 8.7x noise). This OVERTURNS the earlier kcat_flag/kcat_verify claims (99% flag, 0.93 Spearman), which were CIRCULAR \u2014 they used incell_rate = kcat\u00d7sigma. The kapp method is real (works in E. coli, r\u22480.6), but our human reconstruction uses FBA-PREDICTED flux + a reference proteome, which is too noisy to flag or recover kcat per-enzyme. What survives: flux kapp is a genuine but noisy LOWER-BOUND signal, useful in aggregate, not as a per-enzyme verdict."
+}

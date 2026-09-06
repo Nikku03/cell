@@ -1,0 +1,44 @@
+{
+  "test": "chromatin_resolution",
+  "bp": 2000.0,
+  "sigma": -0.05,
+  "dlk": -9.523809523809524,
+  "sweeps": 60,
+  "rows": [
+    {
+      "n": 120,
+      "bp_bead": 16.666666666666668,
+      "nm_bead": 5.666666666666667,
+      "wr": -9.010962744449069,
+      "frac": 0.9461510881671522,
+      "tw": -0.512846779360455,
+      "e_bend_kT": 133.28898785124062,
+      "bend_per_wr": 14.791869818055709,
+      "rg_nm": 34.635642759251915,
+      "acc": 0.36187500000000006,
+      "sec": 46.25034260749817
+    }
+  ],
+  "gates": {
+    "falls": false,
+    "bending_costlier": false,
+    "reaches_literature": false
+  },
+  "log": [
+    "====================================================================================================",
+    "IS THE WRITHE OVERSHOOT A RESOLUTION ARTEFACT? -- testing the excuse, not asserting it",
+    "====================================================================================================",
+    "  2000 bp, sigma -0.05, dLk -9.52, contour 680 nm, 60 sweeps (20 burn-in)",
+    "  Only the bead count varies. A plectonemic superhelix radius is ~5-9 nm, so the sweep",
+    "  brackets it rather than chasing the finest possible mesh.",
+    "\n      N   bp/bead   nm/bead     <Wr>   Wr/dLk     <Tw>   E_bend/kT  bend/|Wr|   Rg nm   acc      s",
+    "    120      16.7       5.7   -9.011    0.946   -0.513       133.3      14.79    34.6  0.36     46",
+    "\n  READING",
+    "    Wr/dLk        0.946 at 5.7 nm  ->  0.946 at 5.7 nm   change +0.000",
+    "    bending cost per unit writhe   14.79 -> 14.79 kT   ratio 1.00x",
+    "  MY EXPLANATION WAS WRONG. The partition does not care about resolution, so the overshoot",
+    "  lives in the model -- excluded-volume diameter and the bending discretisation are the",
+    "  first two places to look. Nothing should be layered on top until it is found.",
+    "\n  COST NOTE: 1x from N=120 to N=120, against N^3 = 1x predicted."
+  ]
+}

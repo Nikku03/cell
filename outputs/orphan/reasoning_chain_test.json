@@ -1,0 +1,2805 @@
+{
+  "gene": "VHL",
+  "pdb": "1LM8",
+  "interface_density": {
+    "structure_positions": 150,
+    "at_interface": 50,
+    "density": 0.333,
+    "covered_range": [
+      60,
+      209
+    ]
+  },
+  "n_path": 178,
+  "n_benign": 80,
+  "path_base_rate_all": 0.69,
+  "n_in_domain": 204,
+  "in_domain_path_base_rate": 0.848,
+  "esm_alone_auc_all": 0.4194873595505618,
+  "esm_alone_auc_in_domain": 0.49561812418422524,
+  "rescue_test": {
+    "esm_missed_total": 92,
+    "path_missed": 80,
+    "path_missed_at_interface": 27,
+    "benign_missed": 12,
+    "benign_missed_at_interface": 4,
+    "missed_pool_path_rate": 0.87,
+    "path_missed_iface_rate": 0.338,
+    "benign_missed_iface_rate": 0.333,
+    "rescued_total": 31,
+    "rescued_are_path": 27,
+    "rescue_precision": 0.871,
+    "binom_p_vs_missed_pool": 0.6229,
+    "fisher_p_interface_x_path": 1.0
+  },
+  "esm_gate": {
+    "acc": 0.515,
+    "tp": 93,
+    "fp": 19,
+    "tn": 12,
+    "fn": 80,
+    "sensitivity": 0.538,
+    "specificity": 0.387
+  },
+  "chain_gate": {
+    "acc": 0.627,
+    "tp": 120,
+    "fp": 23,
+    "tn": 8,
+    "fn": 53,
+    "sensitivity": 0.694,
+    "specificity": 0.258
+  },
+  "verdict": [
+    "ESM in-domain AUC 0.50 \u2014 at chance (ESM uninformative here)",
+    "rescue NEUTRAL: rescued 87% ~ 87% within-missed-pool null (no clear gain)",
+    "gate change: sensitivity +0.16, specificity -0.13 (ESM->chain)"
+  ],
+  "rows": [
+    {
+      "pos": 1,
+      "sub": "M1I",
+      "label": "benign",
+      "llr": -5.968,
+      "fs": 8.3552,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 1,
+      "sub": "M1L",
+      "label": "benign",
+      "llr": -4.67,
+      "fs": 6.537999999999999,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 2,
+      "sub": "P2L",
+      "label": "benign",
+      "llr": -0.932,
+      "fs": 0.932,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 3,
+      "sub": "R3W",
+      "label": "benign",
+      "llr": -2.366,
+      "fs": 2.366,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 4,
+      "sub": "R4K",
+      "label": "benign",
+      "llr": -1.413,
+      "fs": 1.413,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 6,
+      "sub": "E6A",
+      "label": "benign",
+      "llr": 0.543,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 6,
+      "sub": "E6D",
+      "label": "benign",
+      "llr": -0.487,
+      "fs": 0.487,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 7,
+      "sub": "N7K",
+      "label": "benign",
+      "llr": 0.075,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 8,
+      "sub": "W8R",
+      "label": "benign",
+      "llr": 1.962,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 9,
+      "sub": "D9A",
+      "label": "benign",
+      "llr": 1.074,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 9,
+      "sub": "D9E",
+      "label": "benign",
+      "llr": 0.778,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 9,
+      "sub": "D9N",
+      "label": "benign",
+      "llr": -1.609,
+      "fs": 1.609,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 10,
+      "sub": "E10K",
+      "label": "benign",
+      "llr": -3.229,
+      "fs": 3.229,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 11,
+      "sub": "A11P",
+      "label": "benign",
+      "llr": -0.411,
+      "fs": 0.5753999999999999,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 13,
+      "sub": "V13I",
+      "label": "benign",
+      "llr": -1.554,
+      "fs": 1.554,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 13,
+      "sub": "V13L",
+      "label": "benign",
+      "llr": 0.076,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 13,
+      "sub": "V13A",
+      "label": "benign",
+      "llr": 2.351,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 15,
+      "sub": "A15T",
+      "label": "benign",
+      "llr": -2.306,
+      "fs": 2.306,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 18,
+      "sub": "A18V",
+      "label": "benign",
+      "llr": -0.129,
+      "fs": 0.129,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 20,
+      "sub": "V20A",
+      "label": "benign",
+      "llr": 2.758,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 23,
+      "sub": "Y23D",
+      "label": "benign",
+      "llr": 2.625,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 24,
+      "sub": "G24S",
+      "label": "benign",
+      "llr": -3.861,
+      "fs": 5.4054,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 25,
+      "sub": "P25L",
+      "label": "benign",
+      "llr": -2.429,
+      "fs": 2.429,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 28,
+      "sub": "D28G",
+      "label": "benign",
+      "llr": 1.308,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 30,
+      "sub": "G30E",
+      "label": "benign",
+      "llr": -0.406,
+      "fs": 0.5684,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 30,
+      "sub": "G30R",
+      "label": "benign",
+      "llr": -0.568,
+      "fs": 0.7951999999999999,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 31,
+      "sub": "E31D",
+      "label": "benign",
+      "llr": -3.776,
+      "fs": 5.2863999999999995,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 37,
+      "sub": "E37D",
+      "label": "benign",
+      "llr": -3.99,
+      "fs": 5.586,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 39,
+      "sub": "G39R",
+      "label": "benign",
+      "llr": -3.805,
+      "fs": 5.327,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 40,
+      "sub": "P40L",
+      "label": "benign",
+      "llr": -2.696,
+      "fs": 3.7744,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 40,
+      "sub": "P40T",
+      "label": "benign",
+      "llr": -2.658,
+      "fs": 3.7211999999999996,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 44,
+      "sub": "G44A",
+      "label": "benign",
+      "llr": -4.115,
+      "fs": 5.761,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 44,
+      "sub": "G44R",
+      "label": "benign",
+      "llr": -3.817,
+      "fs": 5.3438,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 44,
+      "sub": "G44V",
+      "label": "benign",
+      "llr": -4.497,
+      "fs": 6.2958,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 45,
+      "sub": "P45L",
+      "label": "benign",
+      "llr": -2.886,
+      "fs": 4.0404,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 45,
+      "sub": "P45R",
+      "label": "benign",
+      "llr": -3.913,
+      "fs": 5.478199999999999,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 46,
+      "sub": "E46K",
+      "label": "benign",
+      "llr": -4.789,
+      "fs": 6.704599999999999,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 48,
+      "sub": "L48Q",
+      "label": "benign",
+      "llr": -1.948,
+      "fs": 2.7272,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 49,
+      "sub": "G49R",
+      "label": "benign",
+      "llr": -3.07,
+      "fs": 4.297999999999999,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 50,
+      "sub": "A50G",
+      "label": "benign",
+      "llr": -1.378,
+      "fs": 1.378,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 50,
+      "sub": "A50P",
+      "label": "benign",
+      "llr": 0.79,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 50,
+      "sub": "A50T",
+      "label": "benign",
+      "llr": -2.397,
+      "fs": 2.397,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 51,
+      "sub": "E51Q",
+      "label": "benign",
+      "llr": -4.125,
+      "fs": 5.7749999999999995,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 52,
+      "sub": "E52K",
+      "label": "benign",
+      "llr": -3.907,
+      "fs": 3.907,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 53,
+      "sub": "E53G",
+      "label": "benign",
+      "llr": -0.556,
+      "fs": 0.556,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 54,
+      "sub": "M54I",
+      "label": "path",
+      "llr": 0.648,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 54,
+      "sub": "M54L",
+      "label": "path",
+      "llr": 1.857,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 54,
+      "sub": "M54R",
+      "label": "path",
+      "llr": 2.206,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 55,
+      "sub": "E55G",
+      "label": "benign",
+      "llr": 0.391,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 57,
+      "sub": "G57A",
+      "label": "path",
+      "llr": 0.418,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 59,
+      "sub": "P59L",
+      "label": "benign",
+      "llr": -0.806,
+      "fs": 0.806,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 61,
+      "sub": "P61R",
+      "label": "path",
+      "llr": 0.655,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 62,
+      "sub": "V62C",
+      "label": "path",
+      "llr": -2.09,
+      "fs": 2.09,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 62,
+      "sub": "V62L",
+      "label": "benign",
+      "llr": -0.085,
+      "fs": 0.085,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 63,
+      "sub": "L63P",
+      "label": "path",
+      "llr": 0.302,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 64,
+      "sub": "R64P",
+      "label": "path",
+      "llr": 0.071,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 64,
+      "sub": "R64S",
+      "label": "path",
+      "llr": -0.795,
+      "fs": 0.795,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 65,
+      "sub": "S65C",
+      "label": "path",
+      "llr": -1.119,
+      "fs": 1.119,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 65,
+      "sub": "S65L",
+      "label": "path",
+      "llr": 1.019,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 65,
+      "sub": "S65P",
+      "label": "path",
+      "llr": 1.092,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 65,
+      "sub": "S65T",
+      "label": "path",
+      "llr": 0.02,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 65,
+      "sub": "S65W",
+      "label": "path",
+      "llr": -0.88,
+      "fs": 0.88,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 68,
+      "sub": "S68P",
+      "label": "path",
+      "llr": 1.036,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 69,
+      "sub": "R69A",
+      "label": "path",
+      "llr": 0.021,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 70,
+      "sub": "E70A",
+      "label": "path",
+      "llr": 0.289,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 70,
+      "sub": "E70G",
+      "label": "path",
+      "llr": 0.455,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 70,
+      "sub": "E70K",
+      "label": "path",
+      "llr": -0.207,
+      "fs": 0.207,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 72,
+      "sub": "S72P",
+      "label": "path",
+      "llr": 0.23,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 74,
+      "sub": "V74D",
+      "label": "path",
+      "llr": -4.523,
+      "fs": 4.523,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 74,
+      "sub": "V74F",
+      "label": "path",
+      "llr": -1.489,
+      "fs": 1.489,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 75,
+      "sub": "I75S",
+      "label": "path",
+      "llr": -0.463,
+      "fs": 0.463,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 76,
+      "sub": "F76Y",
+      "label": "path",
+      "llr": -2.07,
+      "fs": 2.07,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 78,
+      "sub": "N78D",
+      "label": "path",
+      "llr": -4.165,
+      "fs": 5.8309999999999995,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 78,
+      "sub": "N78H",
+      "label": "path",
+      "llr": -4.175,
+      "fs": 5.845,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 78,
+      "sub": "N78I",
+      "label": "path",
+      "llr": -5.009,
+      "fs": 7.0126,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 78,
+      "sub": "N78S",
+      "label": "path",
+      "llr": -3.169,
+      "fs": 4.436599999999999,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 78,
+      "sub": "N78T",
+      "label": "path",
+      "llr": -4.093,
+      "fs": 5.7302,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 79,
+      "sub": "R79C",
+      "label": "benign",
+      "llr": -2.408,
+      "fs": 2.408,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC",
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 79,
+      "sub": "R79G",
+      "label": "path",
+      "llr": -1.005,
+      "fs": 1.005,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC",
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 80,
+      "sub": "S80G",
+      "label": "path",
+      "llr": -1.577,
+      "fs": 1.577,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 80,
+      "sub": "S80I",
+      "label": "path",
+      "llr": -3.666,
+      "fs": 3.666,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 80,
+      "sub": "S80N",
+      "label": "path",
+      "llr": -2.365,
+      "fs": 2.365,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 80,
+      "sub": "S80R",
+      "label": "path",
+      "llr": -2.531,
+      "fs": 2.531,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 81,
+      "sub": "P81L",
+      "label": "path",
+      "llr": -1.591,
+      "fs": 1.591,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 81,
+      "sub": "P81S",
+      "label": "benign",
+      "llr": 0.469,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 82,
+      "sub": "R82G",
+      "label": "path",
+      "llr": -0.963,
+      "fs": 0.963,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 82,
+      "sub": "R82L",
+      "label": "path",
+      "llr": -0.618,
+      "fs": 0.618,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 82,
+      "sub": "R82P",
+      "label": "path",
+      "llr": -3.177,
+      "fs": 3.177,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 83,
+      "sub": "V83R",
+      "label": "path",
+      "llr": 0.053,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 84,
+      "sub": "V84C",
+      "label": "path",
+      "llr": -2.435,
+      "fs": 2.435,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 84,
+      "sub": "V84E",
+      "label": "path",
+      "llr": -2.505,
+      "fs": 2.505,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 84,
+      "sub": "V84L",
+      "label": "path",
+      "llr": -0.468,
+      "fs": 0.468,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 84,
+      "sub": "V84M",
+      "label": "path",
+      "llr": -2.576,
+      "fs": 2.576,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 85,
+      "sub": "L85V",
+      "label": "benign",
+      "llr": 0.442,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 86,
+      "sub": "P86A",
+      "label": "path",
+      "llr": 0.238,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 86,
+      "sub": "P86L",
+      "label": "path",
+      "llr": 1.462,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 86,
+      "sub": "P86R",
+      "label": "path",
+      "llr": -0.136,
+      "fs": 0.136,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 86,
+      "sub": "P86S",
+      "label": "path",
+      "llr": -0.361,
+      "fs": 0.361,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 87,
+      "sub": "V87I",
+      "label": "benign",
+      "llr": -0.857,
+      "fs": 0.857,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 88,
+      "sub": "W88C",
+      "label": "path",
+      "llr": -1.226,
+      "fs": 1.226,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 88,
+      "sub": "W88R",
+      "label": "path",
+      "llr": 0.598,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 88,
+      "sub": "W88S",
+      "label": "path",
+      "llr": 0.34,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 89,
+      "sub": "L89F",
+      "label": "path",
+      "llr": -1.105,
+      "fs": 1.105,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 89,
+      "sub": "L89P",
+      "label": "path",
+      "llr": -2.466,
+      "fs": 2.466,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 90,
+      "sub": "N90I",
+      "label": "path",
+      "llr": 0.542,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 91,
+      "sub": "F91V",
+      "label": "benign",
+      "llr": 1.15,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 92,
+      "sub": "D92V",
+      "label": "benign",
+      "llr": -1.726,
+      "fs": 1.726,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 92,
+      "sub": "D92Y",
+      "label": "benign",
+      "llr": -1.372,
+      "fs": 1.372,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 93,
+      "sub": "G93C",
+      "label": "path",
+      "llr": -4.089,
+      "fs": 4.089,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 93,
+      "sub": "G93D",
+      "label": "path",
+      "llr": -1.238,
+      "fs": 1.238,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 93,
+      "sub": "G93R",
+      "label": "path",
+      "llr": -2.055,
+      "fs": 2.055,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 93,
+      "sub": "G93S",
+      "label": "path",
+      "llr": -2.007,
+      "fs": 2.007,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 93,
+      "sub": "G93V",
+      "label": "path",
+      "llr": -3.075,
+      "fs": 3.075,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 97,
+      "sub": "P97T",
+      "label": "benign",
+      "llr": -0.56,
+      "fs": 0.56,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 98,
+      "sub": "Y98C",
+      "label": "path",
+      "llr": -0.121,
+      "fs": 0.121,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 98,
+      "sub": "Y98H",
+      "label": "path",
+      "llr": -0.277,
+      "fs": 0.277,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 98,
+      "sub": "Y98N",
+      "label": "path",
+      "llr": -0.164,
+      "fs": 0.164,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 98,
+      "sub": "Y98S",
+      "label": "path",
+      "llr": 1.711,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 99,
+      "sub": "P99T",
+      "label": "benign",
+      "llr": 0.032,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 100,
+      "sub": "T100A",
+      "label": "benign",
+      "llr": 0.19,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 101,
+      "sub": "L101P",
+      "label": "path",
+      "llr": -3.255,
+      "fs": 3.255,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 101,
+      "sub": "L101Q",
+      "label": "path",
+      "llr": -4.104,
+      "fs": 4.104,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 102,
+      "sub": "P102S",
+      "label": "benign",
+      "llr": -1.692,
+      "fs": 1.692,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 103,
+      "sub": "P103A",
+      "label": "benign",
+      "llr": -0.825,
+      "fs": 0.825,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 103,
+      "sub": "P103L",
+      "label": "path",
+      "llr": -3.357,
+      "fs": 3.357,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 104,
+      "sub": "G104A",
+      "label": "path",
+      "llr": -2.035,
+      "fs": 2.035,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 104,
+      "sub": "G104V",
+      "label": "path",
+      "llr": -3.331,
+      "fs": 3.331,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 105,
+      "sub": "T105P",
+      "label": "path",
+      "llr": -2.352,
+      "fs": 2.352,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 107,
+      "sub": "R107G",
+      "label": "path",
+      "llr": -1.411,
+      "fs": 1.411,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 107,
+      "sub": "R107H",
+      "label": "path",
+      "llr": -1.203,
+      "fs": 1.203,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 107,
+      "sub": "R107P",
+      "label": "path",
+      "llr": -2.914,
+      "fs": 2.914,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 107,
+      "sub": "R107S",
+      "label": "path",
+      "llr": -1.438,
+      "fs": 1.438,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 108,
+      "sub": "R108H",
+      "label": "benign",
+      "llr": -1.445,
+      "fs": 1.445,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 109,
+      "sub": "I109M",
+      "label": "benign",
+      "llr": -1.92,
+      "fs": 1.92,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 109,
+      "sub": "I109N",
+      "label": "path",
+      "llr": -2.822,
+      "fs": 2.822,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 111,
+      "sub": "S111C",
+      "label": "path",
+      "llr": -0.58,
+      "fs": 0.58,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 111,
+      "sub": "S111G",
+      "label": "path",
+      "llr": 0.572,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 111,
+      "sub": "S111N",
+      "label": "path",
+      "llr": -0.435,
+      "fs": 0.435,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 111,
+      "sub": "S111R",
+      "label": "path",
+      "llr": -0.134,
+      "fs": 0.134,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 112,
+      "sub": "Y112C",
+      "label": "path",
+      "llr": -1.138,
+      "fs": 1.138,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 112,
+      "sub": "Y112H",
+      "label": "path",
+      "llr": 0.325,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 112,
+      "sub": "Y112N",
+      "label": "path",
+      "llr": 0.656,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 112,
+      "sub": "Y112S",
+      "label": "path",
+      "llr": 1.314,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 114,
+      "sub": "G114R",
+      "label": "path",
+      "llr": -1.311,
+      "fs": 1.311,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 114,
+      "sub": "G114S",
+      "label": "path",
+      "llr": -1.579,
+      "fs": 1.579,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 114,
+      "sub": "G114V",
+      "label": "path",
+      "llr": -2.928,
+      "fs": 2.928,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 115,
+      "sub": "H115Q",
+      "label": "path",
+      "llr": 0.396,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 115,
+      "sub": "H115R",
+      "label": "path",
+      "llr": 1.339,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 115,
+      "sub": "H115Y",
+      "label": "path",
+      "llr": -0.213,
+      "fs": 0.213,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "HIF1a"
+      ]
+    },
+    {
+      "pos": 117,
+      "sub": "W117C",
+      "label": "path",
+      "llr": -0.51,
+      "fs": 0.51,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 117,
+      "sub": "W117G",
+      "label": "path",
+      "llr": -0.048,
+      "fs": 0.048,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 117,
+      "sub": "W117R",
+      "label": "path",
+      "llr": 0.574,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 118,
+      "sub": "L118P",
+      "label": "path",
+      "llr": -3.073,
+      "fs": 3.073,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 118,
+      "sub": "L118R",
+      "label": "path",
+      "llr": 0.138,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 119,
+      "sub": "F119L",
+      "label": "path",
+      "llr": 1.045,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 120,
+      "sub": "R120G",
+      "label": "path",
+      "llr": 0.206,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 121,
+      "sub": "D121G",
+      "label": "path",
+      "llr": 0.604,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 121,
+      "sub": "D121N",
+      "label": "path",
+      "llr": -0.48,
+      "fs": 0.48,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 122,
+      "sub": "A122V",
+      "label": "path",
+      "llr": -0.118,
+      "fs": 0.118,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 124,
+      "sub": "T124A",
+      "label": "path",
+      "llr": 0.053,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 124,
+      "sub": "T124I",
+      "label": "path",
+      "llr": -0.449,
+      "fs": 0.449,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 125,
+      "sub": "H125P",
+      "label": "path",
+      "llr": 1.362,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 126,
+      "sub": "D126G",
+      "label": "path",
+      "llr": 0.237,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 126,
+      "sub": "D126N",
+      "label": "path",
+      "llr": -0.847,
+      "fs": 0.847,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 126,
+      "sub": "D126Y",
+      "label": "path",
+      "llr": 0.209,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 128,
+      "sub": "L128F",
+      "label": "path",
+      "llr": -0.547,
+      "fs": 0.547,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 128,
+      "sub": "L128P",
+      "label": "path",
+      "llr": -0.234,
+      "fs": 0.234,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 129,
+      "sub": "L129P",
+      "label": "path",
+      "llr": -0.174,
+      "fs": 0.174,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 130,
+      "sub": "V130F",
+      "label": "path",
+      "llr": -0.221,
+      "fs": 0.221,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 130,
+      "sub": "V130I",
+      "label": "path",
+      "llr": -0.489,
+      "fs": 0.489,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 130,
+      "sub": "V130L",
+      "label": "path",
+      "llr": 0.374,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 131,
+      "sub": "N131S",
+      "label": "path",
+      "llr": 0.708,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 131,
+      "sub": "N131Y",
+      "label": "path",
+      "llr": 0.087,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 132,
+      "sub": "Q132P",
+      "label": "path",
+      "llr": 0.549,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 133,
+      "sub": "T133P",
+      "label": "path",
+      "llr": 0.38,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 136,
+      "sub": "F136S",
+      "label": "path",
+      "llr": 0.232,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 136,
+      "sub": "F136V",
+      "label": "path",
+      "llr": 0.631,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 137,
+      "sub": "V137C",
+      "label": "path",
+      "llr": -1.581,
+      "fs": 1.581,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 138,
+      "sub": "P138L",
+      "label": "path",
+      "llr": 0.418,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 139,
+      "sub": "S139F",
+      "label": "path",
+      "llr": -0.181,
+      "fs": 0.181,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 141,
+      "sub": "N141H",
+      "label": "benign",
+      "llr": -0.542,
+      "fs": 0.542,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 149,
+      "sub": "A149P",
+      "label": "path",
+      "llr": -0.292,
+      "fs": 0.292,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 149,
+      "sub": "A149S",
+      "label": "path",
+      "llr": -0.201,
+      "fs": 0.201,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 149,
+      "sub": "A149T",
+      "label": "path",
+      "llr": -0.252,
+      "fs": 0.252,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 149,
+      "sub": "A149V",
+      "label": "path",
+      "llr": 0.394,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 151,
+      "sub": "I151S",
+      "label": "path",
+      "llr": 0.278,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 151,
+      "sub": "I151T",
+      "label": "path",
+      "llr": 0.25,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 151,
+      "sub": "I151V",
+      "label": "path",
+      "llr": 0.721,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 153,
+      "sub": "L153Q",
+      "label": "path",
+      "llr": -0.942,
+      "fs": 0.942,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 154,
+      "sub": "P154L",
+      "label": "path",
+      "llr": -0.49,
+      "fs": 0.49,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 154,
+      "sub": "P154S",
+      "label": "path",
+      "llr": -0.349,
+      "fs": 0.349,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 155,
+      "sub": "V155M",
+      "label": "path",
+      "llr": -1.687,
+      "fs": 1.687,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 156,
+      "sub": "Y156C",
+      "label": "path",
+      "llr": -0.932,
+      "fs": 0.932,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 157,
+      "sub": "T157I",
+      "label": "path",
+      "llr": -0.531,
+      "fs": 0.531,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 158,
+      "sub": "L158P",
+      "label": "path",
+      "llr": -0.08,
+      "fs": 0.08,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 158,
+      "sub": "L158V",
+      "label": "path",
+      "llr": -0.312,
+      "fs": 0.312,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 160,
+      "sub": "E160V",
+      "label": "path",
+      "llr": -0.796,
+      "fs": 0.796,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 161,
+      "sub": "R161G",
+      "label": "path",
+      "llr": 0.406,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 161,
+      "sub": "R161P",
+      "label": "path",
+      "llr": -0.407,
+      "fs": 0.407,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 161,
+      "sub": "R161Q",
+      "label": "path",
+      "llr": -0.604,
+      "fs": 0.604,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 162,
+      "sub": "C162F",
+      "label": "path",
+      "llr": 1.134,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 162,
+      "sub": "C162R",
+      "label": "path",
+      "llr": 2.198,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 162,
+      "sub": "C162W",
+      "label": "path",
+      "llr": 0.246,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 162,
+      "sub": "C162Y",
+      "label": "path",
+      "llr": 1.354,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 163,
+      "sub": "L163F",
+      "label": "path",
+      "llr": -1.067,
+      "fs": 1.067,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 163,
+      "sub": "L163I",
+      "label": "path",
+      "llr": -0.832,
+      "fs": 0.832,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 163,
+      "sub": "L163P",
+      "label": "path",
+      "llr": -0.422,
+      "fs": 0.422,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 163,
+      "sub": "L163R",
+      "label": "path",
+      "llr": 0.137,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 164,
+      "sub": "Q164H",
+      "label": "path",
+      "llr": -0.751,
+      "fs": 0.751,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 164,
+      "sub": "Q164R",
+      "label": "path",
+      "llr": 0.566,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 166,
+      "sub": "V166A",
+      "label": "path",
+      "llr": -0.031,
+      "fs": 0.031,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB",
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 166,
+      "sub": "V166D",
+      "label": "path",
+      "llr": -0.514,
+      "fs": 0.514,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB",
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 166,
+      "sub": "V166F",
+      "label": "path",
+      "llr": -0.52,
+      "fs": 0.52,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB",
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 167,
+      "sub": "R167G",
+      "label": "path",
+      "llr": -0.257,
+      "fs": 0.257,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 167,
+      "sub": "R167L",
+      "label": "path",
+      "llr": 0.261,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 167,
+      "sub": "R167P",
+      "label": "path",
+      "llr": -0.078,
+      "fs": 0.078,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 167,
+      "sub": "R167Q",
+      "label": "path",
+      "llr": -0.732,
+      "fs": 0.732,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 167,
+      "sub": "R167W",
+      "label": "path",
+      "llr": -1.74,
+      "fs": 1.74,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 168,
+      "sub": "S168N",
+      "label": "benign",
+      "llr": -0.43,
+      "fs": 0.43,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 169,
+      "sub": "L169P",
+      "label": "path",
+      "llr": -0.55,
+      "fs": 0.55,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB",
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 170,
+      "sub": "V170D",
+      "label": "path",
+      "llr": -0.063,
+      "fs": 0.063,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB"
+      ]
+    },
+    {
+      "pos": 170,
+      "sub": "V170L",
+      "label": "path",
+      "llr": 0.716,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB"
+      ]
+    },
+    {
+      "pos": 171,
+      "sub": "K171N",
+      "label": "benign",
+      "llr": 0.668,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB"
+      ]
+    },
+    {
+      "pos": 175,
+      "sub": "Y175C",
+      "label": "path",
+      "llr": -0.629,
+      "fs": 0.629,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 178,
+      "sub": "L178P",
+      "label": "path",
+      "llr": -0.792,
+      "fs": 0.792,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB",
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 178,
+      "sub": "L178Q",
+      "label": "path",
+      "llr": -1.207,
+      "fs": 1.207,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB",
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 178,
+      "sub": "L178R",
+      "label": "path",
+      "llr": -0.49,
+      "fs": 0.49,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginB",
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 182,
+      "sub": "R182G",
+      "label": "benign",
+      "llr": -1.522,
+      "fs": 1.522,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 182,
+      "sub": "R182M",
+      "label": "benign",
+      "llr": -2.156,
+      "fs": 2.156,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 182,
+      "sub": "R182T",
+      "label": "benign",
+      "llr": -1.501,
+      "fs": 1.501,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 184,
+      "sub": "L184P",
+      "label": "path",
+      "llr": -2.035,
+      "fs": 2.035,
+      "in_structure": true,
+      "at_interface": true,
+      "partners": [
+        "ElonginC"
+      ]
+    },
+    {
+      "pos": 185,
+      "sub": "Y185N",
+      "label": "benign",
+      "llr": -0.684,
+      "fs": 0.684,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 186,
+      "sub": "E186D",
+      "label": "benign",
+      "llr": -0.186,
+      "fs": 0.186,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 188,
+      "sub": "L188P",
+      "label": "path",
+      "llr": -0.645,
+      "fs": 0.645,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 188,
+      "sub": "L188V",
+      "label": "path",
+      "llr": -1.001,
+      "fs": 1.001,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 191,
+      "sub": "H191D",
+      "label": "path",
+      "llr": 1.617,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 191,
+      "sub": "H191P",
+      "label": "path",
+      "llr": -0.814,
+      "fs": 0.814,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 192,
+      "sub": "P192L",
+      "label": "path",
+      "llr": -0.305,
+      "fs": 0.305,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 192,
+      "sub": "P192T",
+      "label": "path",
+      "llr": -1.625,
+      "fs": 1.625,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 193,
+      "sub": "N193K",
+      "label": "benign",
+      "llr": 0.508,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 193,
+      "sub": "N193S",
+      "label": "benign",
+      "llr": 0.856,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 194,
+      "sub": "V194G",
+      "label": "path",
+      "llr": -1.402,
+      "fs": 1.402,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 195,
+      "sub": "Q195R",
+      "label": "benign",
+      "llr": 0.999,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 197,
+      "sub": "D197N",
+      "label": "path",
+      "llr": -0.711,
+      "fs": 0.711,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 198,
+      "sub": "L198R",
+      "label": "path",
+      "llr": -1.25,
+      "fs": 1.25,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 198,
+      "sub": "L198P",
+      "label": "path",
+      "llr": -2.688,
+      "fs": 2.688,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 199,
+      "sub": "E199D",
+      "label": "path",
+      "llr": -0.163,
+      "fs": 0.163,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 199,
+      "sub": "E199G",
+      "label": "benign",
+      "llr": -2.562,
+      "fs": 2.562,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 200,
+      "sub": "R200L",
+      "label": "path",
+      "llr": -1.038,
+      "fs": 1.038,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 200,
+      "sub": "R200W",
+      "label": "path",
+      "llr": -2.379,
+      "fs": 2.379,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 201,
+      "sub": "L201P",
+      "label": "path",
+      "llr": -4.037,
+      "fs": 4.037,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 205,
+      "sub": "R205C",
+      "label": "benign",
+      "llr": -1.777,
+      "fs": 1.777,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 205,
+      "sub": "R205H",
+      "label": "benign",
+      "llr": -1.15,
+      "fs": 1.15,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 205,
+      "sub": "R205L",
+      "label": "benign",
+      "llr": 1.366,
+      "fs": 0.0,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 207,
+      "sub": "A207V",
+      "label": "benign",
+      "llr": -0.722,
+      "fs": 0.722,
+      "in_structure": true,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 210,
+      "sub": "R210Q",
+      "label": "benign",
+      "llr": -0.575,
+      "fs": 0.575,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 210,
+      "sub": "R210W",
+      "label": "path",
+      "llr": -2.104,
+      "fs": 2.104,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    },
+    {
+      "pos": 211,
+      "sub": "M211I",
+      "label": "benign",
+      "llr": 0.687,
+      "fs": 0.0,
+      "in_structure": false,
+      "at_interface": false,
+      "partners": []
+    }
+  ]
+}

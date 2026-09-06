@@ -1,0 +1,187 @@
+{
+ "test": "adrn_mechanism_decoder",
+ "top_terms": 10,
+ "n_pathways": 1248,
+ "summary": {
+  "cohort1": {
+   "n_scored": 179,
+   "means": {
+    "oracle_half (CEILING)": 0.576536312849162,
+    "from_genes (deployed)": 0.3944134078212291,
+    "direct (channels->pathways)": 0.305586592178771,
+    "own_pathways (naive)": 0.06927374301675977,
+    "frequency": 0.04916201117318436,
+    "shuffled (floor)": 0.007821229050279328
+   },
+   "contrasts": {
+    "from_genes - own_pathways": {
+     "gap": 0.32513966480446926,
+     "ci": [
+      0.2743016759776536,
+      0.3776536312849162
+     ],
+     "resolved": true
+    },
+    "from_genes - frequency": {
+     "gap": 0.34525139664804466,
+     "ci": [
+      0.28603351955307266,
+      0.4033519553072626
+     ],
+     "resolved": true
+    },
+    "direct - own_pathways": {
+     "gap": 0.23631284916201115,
+     "ci": [
+      0.17819832402234637,
+      0.29608938547486036
+     ],
+     "resolved": true
+    },
+    "direct - frequency": {
+     "gap": 0.2564245810055866,
+     "ci": [
+      0.19888268156424582,
+      0.31564245810055863
+     ],
+     "resolved": true
+    },
+    "from_genes - shuffled": {
+     "gap": 0.38659217877094976,
+     "ci": [
+      0.32905027932960895,
+      0.4435754189944134
+     ],
+     "resolved": true
+    },
+    "own_pathways - frequency": {
+     "gap": 0.02011173184357542,
+     "ci": [
+      -0.005586592178770947,
+      0.04636871508379889
+     ],
+     "resolved": false
+    }
+   },
+   "ceiling": 0.576536312849162,
+   "floor": 0.007821229050279328
+  },
+  "_holdout": {
+   "n_scored": 191,
+   "means": {
+    "oracle_half (CEILING)": 0.4952879581151832,
+    "from_genes (deployed)": 0.3591623036649214,
+    "direct (channels->pathways)": 0.3282722513089005,
+    "own_pathways (naive)": 0.024607329842931933,
+    "frequency": 0.06335078534031413,
+    "shuffled (floor)": 0.01099476439790576
+   },
+   "contrasts": {
+    "from_genes - own_pathways": {
+     "gap": 0.3345549738219895,
+     "ci": [
+      0.28272251308900526,
+      0.38691099476439794
+     ],
+     "resolved": true
+    },
+    "from_genes - frequency": {
+     "gap": 0.2958115183246073,
+     "ci": [
+      0.24083769633507854,
+      0.3528926701570679
+     ],
+     "resolved": true
+    },
+    "direct - own_pathways": {
+     "gap": 0.3036649214659686,
+     "ci": [
+      0.2481675392670157,
+      0.3591623036649214
+     ],
+     "resolved": true
+    },
+    "direct - frequency": {
+     "gap": 0.26492146596858646,
+     "ci": [
+      0.20837696335078537,
+      0.3214659685863875
+     ],
+     "resolved": true
+    },
+    "from_genes - shuffled": {
+     "gap": 0.3481675392670157,
+     "ci": [
+      0.2931937172774869,
+      0.4041884816753927
+     ],
+     "resolved": true
+    },
+    "own_pathways - frequency": {
+     "gap": -0.0387434554973822,
+     "ci": [
+      -0.05654450261780105,
+      -0.02041884816753927
+     ],
+     "resolved": true
+    }
+   },
+   "ceiling": 0.4952879581151832,
+   "floor": 0.01099476439790576
+  }
+ },
+ "log": [
+  "==========================================================================================================",
+  "MECHANISM DECODER -- which processes does this knockout disturb, and can we predict them?",
+  "==========================================================================================================",
+  "  PREDECLARED: worth reporting only if from_genes or direct beats BOTH own_pathways AND frequency,",
+  "  CI excluding zero, on BOTH cohorts. If the gene's own pathways win, the mechanism is a lookup.",
+  "  Reactome: 1,248 pathways with 10-500 measured members (of 8,243 scored genes)",
+  "  training knockouts with >= 5 movers: 438",
+  "  frequency baseline = the 10 most-often-disturbed pathways across training:",
+  "      Translation",
+  "      Cytokine Signaling in Immune system",
+  "      rRNA processing",
+  "      Nervous system development",
+  "      Axon guidance",
+  "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+  "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+  "  direct ridge fitted: 696 channels -> 1,248 pathway scores on 438 training knockouts",
+  "\n### cohort 1   200 knockouts, 179 with a non-empty mechanism truth; median movers 11",
+  "  arm                           precision@10       sd",
+  "  oracle_half (CEILING)               0.5765   0.4036",
+  "  from_genes (deployed)               0.3944   0.3896",
+  "  direct (channels->pathways)         0.3056   0.3801",
+  "  own_pathways (naive)                0.0693   0.1476",
+  "  frequency                           0.0492   0.0794",
+  "  shuffled (floor)                    0.0078   0.0358",
+  "\n  contrast                                  gap                 95% CI  verdict",
+  "  from_genes - own_pathways             +0.3251     [+0.2743, +0.3777]  RESOLVED",
+  "  from_genes - frequency                +0.3453     [+0.2860, +0.4034]  RESOLVED",
+  "  direct - own_pathways                 +0.2363     [+0.1782, +0.2961]  RESOLVED",
+  "  direct - frequency                    +0.2564     [+0.1989, +0.3156]  RESOLVED",
+  "  from_genes - shuffled                 +0.3866     [+0.3291, +0.4436]  RESOLVED",
+  "  own_pathways - frequency              +0.0201     [-0.0056, +0.0464]  within noise",
+  "\n  SPLIT-HALF CEILING 0.5765: half of a knockout's own movers recovers only this much",
+  "  of the mechanism built from all of them -- the truth's own reproducibility.",
+  "  best arm covers  68.0% of the floor->ceiling range",
+  "\n### cohort 2 (holdout)   200 knockouts, 191 with a non-empty mechanism truth; median movers 16",
+  "  arm                           precision@10       sd",
+  "  oracle_half (CEILING)               0.4953   0.3792",
+  "  from_genes (deployed)               0.3592   0.3828",
+  "  direct (channels->pathways)         0.3283   0.3854",
+  "  own_pathways (naive)                0.0246   0.0861",
+  "  frequency                           0.0634   0.0887",
+  "  shuffled (floor)                    0.0110   0.0515",
+  "\n  contrast                                  gap                 95% CI  verdict",
+  "  from_genes - own_pathways             +0.3346     [+0.2827, +0.3869]  RESOLVED",
+  "  from_genes - frequency                +0.2958     [+0.2408, +0.3529]  RESOLVED",
+  "  direct - own_pathways                 +0.3037     [+0.2482, +0.3592]  RESOLVED",
+  "  direct - frequency                    +0.2649     [+0.2084, +0.3215]  RESOLVED",
+  "  from_genes - shuffled                 +0.3482     [+0.2932, +0.4042]  RESOLVED",
+  "  own_pathways - frequency              -0.0387     [-0.0565, -0.0204]  RESOLVED",
+  "\n  SPLIT-HALF CEILING 0.4953: half of a knockout's own movers recovers only this much",
+  "  of the mechanism built from all of them -- the truth's own reproducibility.",
+  "  best arm covers  71.9% of the floor->ceiling range"
+ ]
+}

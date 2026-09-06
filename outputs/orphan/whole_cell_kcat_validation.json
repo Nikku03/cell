@@ -1,0 +1,198 @@
+{
+  "summary": {
+    "n_enzymes": 2549,
+    "n_predicted": 2129,
+    "n_measured": 420,
+    "n_tested_against_invivo": 581,
+    "predicted_flagged_too_low": 228,
+    "predicted_flagged_too_high": 0,
+    "predicted_flagged_diffusion": 8,
+    "total_predicted_flagged": 236,
+    "measured_below_invivo_left_as_fact": 20,
+    "coverage_vs_central_only": "2,549 enzymes vs the ~334 flux-carrying central-carbon subset"
+  },
+  "top_too_low": [
+    {
+      "enzyme": "SLC16A8",
+      "tier": "catpred(calibrated)",
+      "kcat": 0.552,
+      "invivo_rate": 53761.3,
+      "fold_too_low": 97411.4,
+      "proposed_kcat": 53761.3,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC9A2",
+      "tier": "catpred(calibrated)",
+      "kcat": 0.386,
+      "invivo_rate": 35420.9,
+      "fold_too_low": 91764.0,
+      "proposed_kcat": 35420.9,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC16A5",
+      "tier": "catpred(calibrated)",
+      "kcat": 0.263,
+      "invivo_rate": 19013.2,
+      "fold_too_low": 72293.4,
+      "proposed_kcat": 19013.2,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC9A5",
+      "tier": "catpred(calibrated)",
+      "kcat": 0.17,
+      "invivo_rate": 11334.7,
+      "fold_too_low": 66713.9,
+      "proposed_kcat": 11334.7,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "COX4I2",
+      "tier": "catpred(calibrated)",
+      "kcat": 1.833,
+      "invivo_rate": 61626.1,
+      "fold_too_low": 33618.5,
+      "proposed_kcat": 61626.1,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "AQP7",
+      "tier": "network-propagated",
+      "kcat": 0.772,
+      "invivo_rate": 22658.9,
+      "fold_too_low": 29350.9,
+      "proposed_kcat": 22658.9,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "COX6B2",
+      "tier": "catpred(calibrated)",
+      "kcat": 1.552,
+      "invivo_rate": 42578.0,
+      "fold_too_low": 27430.8,
+      "proposed_kcat": 42578.0,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC9A4",
+      "tier": "catpred(calibrated)",
+      "kcat": 0.303,
+      "invivo_rate": 7871.3,
+      "fold_too_low": 25935.1,
+      "proposed_kcat": 7871.3,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC9A3",
+      "tier": "catpred(calibrated)",
+      "kcat": 0.414,
+      "invivo_rate": 6440.2,
+      "fold_too_low": 15537.2,
+      "proposed_kcat": 6440.2,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "COX7B2",
+      "tier": "catpred(calibrated)",
+      "kcat": 3.021,
+      "invivo_rate": 36027.5,
+      "fold_too_low": 11924.1,
+      "proposed_kcat": 36027.5,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC16A4",
+      "tier": "catpred(calibrated)",
+      "kcat": 1.287,
+      "invivo_rate": 11634.9,
+      "fold_too_low": 9043.1,
+      "proposed_kcat": 11634.9,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC29A4",
+      "tier": "catpred(calibrated)",
+      "kcat": 0.084,
+      "invivo_rate": 681.3,
+      "fold_too_low": 8149.4,
+      "proposed_kcat": 681.3,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "CA5B",
+      "tier": "EC-class",
+      "kcat": 2.3,
+      "invivo_rate": 17966.2,
+      "fold_too_low": 7811.4,
+      "proposed_kcat": 17966.2,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC16A7",
+      "tier": "catpred(calibrated)",
+      "kcat": 0.571,
+      "invivo_rate": 2510.6,
+      "fold_too_low": 4394.5,
+      "proposed_kcat": 2510.6,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "MT-ND6",
+      "tier": "catpred(calibrated)",
+      "kcat": 2.655,
+      "invivo_rate": 7264.6,
+      "fold_too_low": 2736.5,
+      "proposed_kcat": 7264.6,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "SLC27A6",
+      "tier": "catpred+ECprior",
+      "kcat": 4.445,
+      "invivo_rate": 11302.5,
+      "fold_too_low": 2542.7,
+      "proposed_kcat": 11302.5,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "AQP6",
+      "tier": "network-propagated",
+      "kcat": 4.283,
+      "invivo_rate": 9938.1,
+      "fold_too_low": 2320.4,
+      "proposed_kcat": 9938.1,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "AQP8",
+      "tier": "network-propagated",
+      "kcat": 5.718,
+      "invivo_rate": 11329.5,
+      "fold_too_low": 1981.4,
+      "proposed_kcat": 11329.5,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "CYP4B1",
+      "tier": "catpred+ECprior",
+      "kcat": 0.102,
+      "invivo_rate": 177.6,
+      "fold_too_low": 1742.9,
+      "proposed_kcat": 177.6,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    },
+    {
+      "enzyme": "CYP4F8",
+      "tier": "catpred+ECprior",
+      "kcat": 0.122,
+      "invivo_rate": 199.8,
+      "fold_too_low": 1639.0,
+      "proposed_kcat": 199.8,
+      "reason": "observed in-vivo rate exceeds the predicted max -> kcat provably too low"
+    }
+  ],
+  "note": "whole-cell test of predicted kcats against PROVABLE bounds (physics ceiling + independent in-vivo floor), flux-free so it reaches the whole enzyme set, not just central carbon. Measured kcats are the reference and are never flagged as errors; only predicted kcats are flagged, each with a proposed value pinned to the independent evidence (apply-pending-review).",
+  "passed": true
+}

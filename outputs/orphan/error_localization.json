@@ -1,0 +1,100 @@
+{
+ "hit_miss_pattern": {
+  "K562": {
+   "n": 375,
+   "weak": 0.24267782426778242,
+   "strong": 0.37528604118993136,
+   "priv": 0.030477759472817133,
+   "shared": 0.543171114599686,
+   "fp_freq": 0.01949788148991336
+  },
+  "RPE1": {
+   "n": 706,
+   "weak": 0.23573794626426206,
+   "strong": 0.3528773072747014,
+   "priv": 0.040328603435399554,
+   "shared": 0.3825301204819277,
+   "fp_freq": 0.021782625545883304
+  },
+  "HepG2": {
+   "n": 605,
+   "weak": 0.21438665912945168,
+   "strong": 0.31363331094694424,
+   "priv": 0.021678966789667898,
+   "shared": 0.4194585901902975,
+   "fp_freq": 0.022011563155019884
+  },
+  "Jurkat": {
+   "n": 392,
+   "weak": 0.275310254735467,
+   "strong": 0.4816753926701571,
+   "priv": 0.05214521452145215,
+   "shared": 0.6246672582076309,
+   "fp_freq": 0.015832347472053178
+  }
+ },
+ "reproducibility_by_z": {
+  "1.0-1.5": {
+   "reproduce_pct": 11.0,
+   "base_pct": 0.8,
+   "enrichment": 13.3,
+   "n": 29466
+  },
+  "1.5-2.0": {
+   "reproduce_pct": 15.0,
+   "base_pct": 0.9,
+   "enrichment": 17.4,
+   "n": 5570
+  },
+  "2.0-3.0": {
+   "reproduce_pct": 18.6,
+   "base_pct": 0.8,
+   "enrichment": 23.0,
+   "n": 2152
+  },
+  "3.0-99.0": {
+   "reproduce_pct": 26.2,
+   "base_pct": 0.8,
+   "enrichment": 31.8,
+   "n": 794
+  }
+ },
+ "reproducibility_per_line": {
+  "RPE1": {
+   "n_paired": 1398,
+   "enrichment_by_z": {
+    "1.0-1.5": 12.1,
+    "1.5-2.0": 16.5,
+    "2.0-3.0": 21.6,
+    "3.0-99.0": 34.4
+   }
+  },
+  "HepG2": {
+   "n_paired": 1399,
+   "enrichment_by_z": {
+    "1.0-1.5": 12.2,
+    "1.5-2.0": 16.7,
+    "2.0-3.0": 22.2,
+    "3.0-99.0": 25.4
+   }
+  },
+  "Jurkat": {
+   "n_paired": 1398,
+   "enrichment_by_z": {
+    "1.0-1.5": 19.2,
+    "1.5-2.0": 21.6,
+    "2.0-3.0": 31.2,
+    "3.0-99.0": 55.1
+   }
+  }
+ },
+ "private_movers": {
+  "reproduce_pct": 5.1,
+  "base_pct": 0.8,
+  "enrichment": 6.2,
+  "n": 13945
+ },
+ "missed_signal_is_real": true,
+ "verdict": "ERROR LOCALIZATION (error_localization.py): WHERE the retrieval model's error lives, and whether the missed part is real. (A) The pattern is universal across K562/RPE1/HepG2/Jurkat: recall is set by mover COMMONNESS, not strength -- PRIVATE movers (move in <0.5% of KOs) are recalled ~0.04 vs shared movers (>2%) ~0.49; magnitude matters far less (weak ~0.24 vs strong ~0.38). The false positives are commonly-moving genes the model defaults to. So the model gets the SHARED/retrievable response and misses the PRIVATE, single-KO response -- exactly the tide-removed specific signal. (B) DECISIVE: those rare private movers are REAL, not noise -- they reproduce in the SAME KO in another cell line at 6.2x the base rate (n=13945), and reproducibility RISES monotonically with |z| (13.3x -> 31.8x). So the missed signal is genuine biology that retrieval cannot reach (no neighbour KO carries it) -- meaning the wall is not that the target is noise, but that each private response is (i) near the single-measurement noise floor and (ii) idiosyncratic to the KO. The one DATA lever that would actually move the ceiling is therefore WITHIN-LINE REPLICATES (average up the weak-but-real private response and separate real cell-specific signal from noise), not more KOs, more lines, or a better model. Deterministic.",
+ "note": "ERROR LOCALIZATION (error_localization.py): WHERE the retrieval model's error lives, and whether the missed part is real. (A) The pattern is universal across K562/RPE1/HepG2/Jurkat: recall is set by mover COMMONNESS, not strength -- PRIVATE movers (move in <0.5% of KOs) are recalled ~0.04 vs shared movers (>2%) ~0.49; magnitude matters far less (weak ~0.24 vs strong ~0.38). The false positives are commonly-moving genes the model defaults to. So the model gets the SHARED/retrievable response and misses the PRIVATE, single-KO response -- exactly the tide-removed specific signal. (B) DECISIVE: those rare private movers are REAL, not noise -- they reproduce in the SAME KO in another cell line at 6.2x the base rate (n=13945), and reproducibility RISES monotonically with |z| (13.3x -> 31.8x). So the missed signal is genuine biology that retrieval cannot reach (no neighbour KO carries it) -- meaning the wall is not that the target is noise, but that each private response is (i) near the single-measurement noise floor and (ii) idiosyncratic to the KO. The one DATA lever that would actually move the ceiling is therefore WITHIN-LINE REPLICATES (average up the weak-but-real private response and separate real cell-specific signal from noise), not more KOs, more lines, or a better model. Deterministic."
+}

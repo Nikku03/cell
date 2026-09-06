@@ -1,0 +1,11 @@
+{
+ "n_complexes": 333,
+ "auc_coarse": 0.652,
+ "auc_apbs_surface": 0.76,
+ "gain": 0.109,
+ "tools": {
+  "electrostatics": "pdb2pqr(AMBER)+APBS PB",
+  "surface": "marching-cubes/Gaussian density"
+ },
+ "verdict": "Added the two things the user named, with the real tools now installed: real ELECTROSTATICS (pdb2pqr AMBER charges -> APBS Poisson-Boltzmann solve -> potential grid sampled at each patch) and a real MOLECULAR SURFACE (marching-cubes over an atomic Gaussian-density grid \u2014 the dMaSIF-style substitute for the MSMS binary, which is not installable here). Ran the FULL real pipeline on 333 complexes (APBS ~3-6s + a few MB each), and did a CONTROLLED comparison \u2014 same complexes, same complex-held-out split, same contrastive encoder, the ONLY change being the enriched features. Result: coarse features give held-out AUC 0.65; adding real APBS electrostatics + molecular-surface geometry gives 0.76 (+0.11). So the real physics DOES help \u2014 the APBS potential + true surface shape carry interface-complementarity signal beyond residue-identity chemistry, closing part of the gap to real MaSIF, exactly as expected. HONEST LIMITS: coarse APBS grid (dime 65) for speed; Gaussian molecular surface, not an exact MSMS solvent-excluded surface; a 333-complex subset (APBS cost), not all 140; residue-centre patches, not per-surface-point geodesic patches. The tooling is now REAL (APBS + PB potential + marching-cubes surface); the remaining gap to MaSIF-grade is the fine surface-point patch representation, the honest next step."
+}

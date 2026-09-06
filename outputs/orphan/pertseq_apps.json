@@ -1,0 +1,203 @@
+{
+ "grn": {
+  "tf_nodes": 617,
+  "tf_tf_edges": 4132,
+  "ffl_count": 73878,
+  "ffl_coherent_frac": 0.524,
+  "ffl_enrichment_z_vs_null": 25.0,
+  "ffl_vs_null_fold": 2.2,
+  "mutual_pairs": 26,
+  "toggle_switches_double_neg": 4,
+  "n_curated_causal_tf_edges": 2972,
+  "curated_causal_recovered_frac": 0.0106,
+  "curated_chance": 0.0069,
+  "curated_fold": 1.6,
+  "sign_agreement_on_recovered": 0.48,
+  "sensitivity_curated_edges_found": 0.0148,
+  "example_ffls": [
+   "PHB2 -| PARK7; PHB2/PARK7 -> UGGT2",
+   "PHB2 -| ENO1; PHB2/ENO1 -> MT-CO1",
+   "PHB2 -| SFPQ; PHB2/SFPQ -> ACTG1",
+   "PHB2 -| YBX1; PHB2/YBX1 -> MT-CO3"
+  ]
+ },
+ "fingerprint_function": {
+  "validation_known_recovery_top10": 0.843,
+  "chance": 0.206,
+  "lift": 4.1,
+  "n_tested": 800,
+  "n_dark_with_fingerprint": 1597,
+  "n_dark_confident_gt0.3cos": 128,
+  "top_dark_predictions": [
+   {
+    "dark": "CSE1L",
+    "nearest_known": "DLD",
+    "cos": 0.94,
+    "inferred": "Aerobic respiration and respiratory electron transport"
+   },
+   {
+    "dark": "TIMM23B",
+    "nearest_known": "HSPA9",
+    "cos": 0.94,
+    "inferred": "Cristae formation"
+   },
+   {
+    "dark": "DNTTIP2",
+    "nearest_known": "RPS12",
+    "cos": 0.92,
+    "inferred": "Viral mRNA Translation"
+   },
+   {
+    "dark": "GPN3",
+    "nearest_known": "RPAP2",
+    "cos": 0.91,
+    "inferred": "RNA polymerase II transcribes snRNA genes"
+   },
+   {
+    "dark": "DDX18",
+    "nearest_known": "RPS24",
+    "cos": 0.89,
+    "inferred": "Viral mRNA Translation"
+   },
+   {
+    "dark": "DDX24",
+    "nearest_known": "RPL24",
+    "cos": 0.86,
+    "inferred": "Viral mRNA Translation"
+   },
+   {
+    "dark": "GNL2",
+    "nearest_known": "RPL24",
+    "cos": 0.86,
+    "inferred": "Viral mRNA Translation"
+   },
+   {
+    "dark": "DDX56",
+    "nearest_known": "RPL24",
+    "cos": 0.85,
+    "inferred": "Viral mRNA Translation"
+   },
+   {
+    "dark": "NLE1",
+    "nearest_known": "WDR12",
+    "cos": 0.84,
+    "inferred": "Major pathway of rRNA processing in the nucleolus and cytosol"
+   },
+   {
+    "dark": "CASP8AP2",
+    "nearest_known": "SLBP",
+    "cos": 0.83,
+    "inferred": "Gene expression (Transcription)"
+   },
+   {
+    "dark": "GPN1",
+    "nearest_known": "RPAP2",
+    "cos": 0.83,
+    "inferred": "RNA polymerase II transcribes snRNA genes"
+   },
+   {
+    "dark": "NIFK",
+    "nearest_known": "RPL24",
+    "cos": 0.83,
+    "inferred": "Viral mRNA Translation"
+   }
+  ]
+ },
+ "disease_convergence": {
+  "positive_controls": {
+   "proteasome": {
+    "n": 25,
+    "mean_cos": 0.381,
+    "null_mean": 0.013,
+    "z": 70.7
+   },
+   "spliceosom": {
+    "n": 91,
+    "mean_cos": 0.292,
+    "null_mean": 0.012,
+    "z": 156.1
+   }
+  },
+  "n_diseases_testable": 1,
+  "disease_convergence": {
+   "neurodegenerative disease": {
+    "n": 7,
+    "mean_cos": 0.032,
+    "null_mean": 0.01,
+    "z": 2.1
+   }
+  }
+ },
+ "immune_logic": {
+  "feasible": false,
+  "needs": [
+   "a +/- stimulus axis (KO then stimulate; brakes vs gas is defined by the CHANGE in the stimulus response)",
+   "immune cells (T-cell / macrophage) \u2014 the response program must exist"
+  ],
+  "have": "K562 (leukemia), single unstimulated condition \u2014 no stimulus contrast, not an immune cell",
+  "proxy_basal_regulators_of_immune_panel": [
+   {
+    "gene": "CHMP3",
+    "panel_mean_abs": 4.173,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "VPS28",
+    "panel_mean_abs": 2.577,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "TSG101",
+    "panel_mean_abs": 1.862,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "CHMP2A",
+    "panel_mean_abs": 1.807,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "GATD1",
+    "panel_mean_abs": 1.638,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "CHMP6",
+    "panel_mean_abs": 0.988,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "CDC5L",
+    "panel_mean_abs": 0.94,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "RAB1B",
+    "panel_mean_abs": 0.94,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "TFCP2L1",
+    "panel_mean_abs": 0.844,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "GATA1",
+    "panel_mean_abs": 0.805,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "HGS",
+    "panel_mean_abs": 0.792,
+    "direction": "represses(gas released on KO)"
+   },
+   {
+    "gene": "SLC2A8",
+    "panel_mean_abs": 0.733,
+    "direction": "represses(gas released on KO)"
+   }
+  ],
+  "proxy_caveat": "this only finds BASAL regulators of an immune-gene panel in K562; it is NOT brakes-vs-gas (that requires the stimulus axis) and K562 does not mount an immune response."
+ },
+ "verdict": "Of the four canonical Perturb-seq applications, this K562 data cleanly supports ONE, gives a validated method-demo for another, and cannot honestly do the other two. [1] GRN WIRING DOES NOT (on this data): 4132 TF->TF influence edges were inferred, but they recover curated signed direct regulation at only 1.6x chance with 48% sign agreement (=chance), and the feed-forward loops are only 52% coherent \u2014 so this is a CO-RESPONSE network, not the causal wiring diagram. Why: a single bulk steady-state condition mixes direct+indirect (the 84%-unresolved result), and real GRN/FFL mapping needs time-resolved or nascent-RNA data to separate direct targets. The data property, not the idea, is the blocker. [2] UNKNOWN-GENE FUNCTION WORKS: fingerprint-kNN recovers a held-out known gene's pathway 84% (4.1x chance) and yields 128 confident dark-gene calls (TIMM23B~mito-import, GPN3~RNA-pol-assembly) \u2014 a validated similarity HINT, not proof, and it can be fooled by shared phenotype (a growth-arrest fingerprint looks alike regardless of mechanism). [3] DISEASE CONVERGENCE: the METHOD is validated hard (spliceosome positive control z=156.1), but it is thin here \u2014 only 1 disease has enough knocked-out risk genes and K562 is the wrong cell context for the neuro/immune diseases the application targets. [4] IMMUNE BRAKES-vs-GAS: NOT feasible \u2014 it needs a +/- stimulus axis and immune cells; this is a single unstimulated leukemia condition, so only basal regulators of an immune panel can be listed, a different and much weaker claim. Honest scorecard: one works, one is a validated hint, one is a method waiting for the right data, one is out of scope."
+}

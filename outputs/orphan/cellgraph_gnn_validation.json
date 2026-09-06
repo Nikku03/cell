@@ -1,0 +1,59 @@
+{
+  "relations": [
+    {
+      "relation": "ppi",
+      "n_edges": 191447,
+      "fixed_auc": 0.8261,
+      "sage_auc": 0.8698,
+      "rgcn_auc": 0.881,
+      "device": "cpu",
+      "hybrid_auc": 0.8897,
+      "learned_auc": 0.8897,
+      "fixed_ap": 0.8234,
+      "learned_ap": 0.8925,
+      "delta": 0.0636
+    },
+    {
+      "relation": "reg",
+      "n_edges": 606178,
+      "fixed_auc": 0.8127,
+      "sage_auc": 0.8601,
+      "rgcn_auc": 0.843,
+      "device": "cpu",
+      "learned_auc": 0.843,
+      "fixed_ap": 0.7871,
+      "learned_ap": 0.81,
+      "delta": 0.0303
+    },
+    {
+      "relation": "sig",
+      "n_edges": 17084,
+      "fixed_auc": 0.7636,
+      "sage_auc": 0.8049,
+      "rgcn_auc": 0.9447,
+      "device": "cpu",
+      "learned_auc": 0.9447,
+      "fixed_ap": 0.7303,
+      "learned_ap": 0.9372,
+      "delta": 0.1811
+    }
+  ],
+  "n_relations": 3,
+  "learned_wins": 3,
+  "ladder_ppi": {
+    "fixed": 0.8261,
+    "graphsage": 0.8698,
+    "rgcn": 0.881,
+    "hybrid": 0.8897
+  },
+  "headline_ppi": {
+    "fixed": 0.8261,
+    "learned": 0.8897,
+    "delta": 0.0636
+  },
+  "best_encoder": "hybrid: R-GCN over [node features | fixed SIGN embedding] (ML takes input from fixed)",
+  "device": "cpu",
+  "epochs": 150,
+  "passed": true,
+  "detail": "fixed SIGN vs GraphSAGE vs R-GCN vs hybrid(R-GCN+fixed-embedding); leakage-free split"
+}

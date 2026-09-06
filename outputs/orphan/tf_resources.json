@@ -1,0 +1,71 @@
+{
+ "fetched": [
+  {
+   "file": "lambert_tfs.csv",
+   "bytes": 2107299,
+   "desc": "Lambert et al. definitive human TF list",
+   "status": "fetched",
+   "url": "http://humantfs.ccbr.utoronto.ca/download/v_1.01/DatabaseExtract_v_1.01.csv"
+  },
+  {
+   "file": "jaspar_core_vert.meme",
+   "bytes": 469100,
+   "desc": "JASPAR 2024 CORE vertebrate PWMs",
+   "status": "fetched",
+   "url": "https://jaspar.elixir.no/download/data/2024/CORE/JASPAR2024_CORE_vertebrates_non-redundant_pfms_meme.txt"
+  },
+  {
+   "file": "hocomoco11_human.meme",
+   "bytes": 381420,
+   "desc": "HOCOMOCO v11 human mononucleotide PWMs",
+   "status": "fetched",
+   "url": "https://hocomoco11.autosome.org/final_bundle/hocomoco11/core/HUMAN/mono/HOCOMOCOv11_core_HUMAN_mono_meme_format.meme"
+  },
+  {
+   "file": "chipatlas_experiments.tab",
+   "bytes": 344939718,
+   "desc": "ChIP-Atlas experiment index (all assays, all species)",
+   "status": "fetched",
+   "url": "https://chip-atlas.dbcls.jp/data/metadata/experimentList.tab"
+  }
+ ],
+ "summary": {
+  "lambert": {
+   "rows": 2765,
+   "is_tf_yes": 1639,
+   "tf_column": "Is TF?",
+   "name_column": "HGNC symbol",
+   "n_symbols": 1639
+  },
+  "jaspar_core_vert.meme": {
+   "motifs": 879
+  },
+  "hocomoco11_human.meme": {
+   "motifs": 401
+  },
+  "chipatlas": {
+   "hg38_experiments": 197044,
+   "k562_experiments": 6906
+  }
+ },
+ "not_fetched": [
+  {
+   "name": "CATLAS 222-cell-type cCREs",
+   "url": "http://catlas.org/catlas_downloads/humantissues/cCRE_by_cell_type.tar.gz",
+   "size": "~2-4 GB",
+   "note": "404 on the paths tried; needs the current CATLAS download URL confirmed"
+  },
+  {
+   "name": "ChIP-Atlas all peaks hg38 q<0.05",
+   "url": "https://chip-atlas.dbcls.jp/data/hg38/allPeaks_light/allPeaks_light.hg38.05.bed.gz",
+   "size": "~5 GB",
+   "note": "reachable (200) but would exhaust the disk allowance"
+  },
+  {
+   "name": "ENCODE 4sU/RNA half-life",
+   "url": "https://www.encodeproject.org/search/?type=Experiment&format=json",
+   "size": "varies",
+   "note": "portal search reachable (200); assay_title=4sU-seq is not a valid facet, needs the correct facet name"
+  }
+ ]
+}

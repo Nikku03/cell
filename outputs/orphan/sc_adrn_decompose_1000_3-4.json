@@ -1,0 +1,743 @@
+{
+  "test": "sc_adrn_decompose",
+  "bins": [
+    3,
+    4
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "means": {
+    "bins=3|seed=0": {
+      "gene": {
+        "r": 0.1962818391830026,
+        "p20": 0.15711206896551724
+      },
+      "gene_line": {
+        "r": 0.22195661356436452,
+        "p20": 0.16745689655172413
+      },
+      "gene_line_bin": {
+        "r": 0.23502935381112325,
+        "p20": 0.1713362068965517
+      },
+      "gene_line_state": {
+        "r": 0.24762764973518503,
+        "p20": 0.17392241379310341
+      },
+      "gene_line_nodepth": {
+        "r": 0.24464575326068838,
+        "p20": 0.17047413793103447
+      }
+    },
+    "bins=3|seed=1": {
+      "gene": {
+        "r": 0.1556837237602098,
+        "p20": 0.09639423076923076
+      },
+      "gene_line": {
+        "r": 0.17199923414585203,
+        "p20": 0.10384615384615385
+      },
+      "gene_line_bin": {
+        "r": 0.18263202682692764,
+        "p20": 0.11370192307692308
+      },
+      "gene_line_state": {
+        "r": 0.20103188648116505,
+        "p20": 0.11971153846153845
+      },
+      "gene_line_nodepth": {
+        "r": 0.19559099898551427,
+        "p20": 0.11875
+      }
+    },
+    "bins=3|seed=2": {
+      "gene": {
+        "r": 0.1786595204522977,
+        "p20": 0.1040650406504065
+      },
+      "gene_line": {
+        "r": 0.20394196900717618,
+        "p20": 0.1201219512195122
+      },
+      "gene_line_bin": {
+        "r": 0.21269923330171614,
+        "p20": 0.12662601626016262
+      },
+      "gene_line_state": {
+        "r": 0.22500758345146904,
+        "p20": 0.1335365853658537
+      },
+      "gene_line_nodepth": {
+        "r": 0.2212698805294918,
+        "p20": 0.13252032520325208
+      }
+    },
+    "bins=4|seed=0": {
+      "gene": {
+        "r": 0.18983100331002573,
+        "p20": 0.15324675324675327
+      },
+      "gene_line": {
+        "r": 0.2093609375173641,
+        "p20": 0.162987012987013
+      },
+      "gene_line_bin": {
+        "r": 0.22502593586383465,
+        "p20": 0.1681818181818182
+      },
+      "gene_line_state": {
+        "r": 0.2362211730660439,
+        "p20": 0.16839826839826844
+      },
+      "gene_line_nodepth": {
+        "r": 0.232206772682777,
+        "p20": 0.16861471861471863
+      }
+    },
+    "bins=4|seed=1": {
+      "gene": {
+        "r": 0.14318600144148547,
+        "p20": 0.0927860696517413
+      },
+      "gene_line": {
+        "r": 0.15837929060797723,
+        "p20": 0.09950248756218906
+      },
+      "gene_line_bin": {
+        "r": 0.17179383971132112,
+        "p20": 0.10746268656716419
+      },
+      "gene_line_state": {
+        "r": 0.19070440648499784,
+        "p20": 0.1174129353233831
+      },
+      "gene_line_nodepth": {
+        "r": 0.1827672790004365,
+        "p20": 0.11019900497512439
+      }
+    },
+    "bins=4|seed=2": {
+      "gene": {
+        "r": 0.17959012161433152,
+        "p20": 0.10962264150943396
+      },
+      "gene_line": {
+        "r": 0.2047617401216177,
+        "p20": 0.12301886792452828
+      },
+      "gene_line_bin": {
+        "r": 0.21525801919236937,
+        "p20": 0.12943396226415096
+      },
+      "gene_line_state": {
+        "r": 0.22979216296010843,
+        "p20": 0.13471698113207548
+      },
+      "gene_line_nodepth": {
+        "r": 0.22493469203373068,
+        "p20": 0.13415094339622644
+      }
+    }
+  },
+  "verdicts": {
+    "G2a gene_line - gene": {
+      "name": "G2a gene_line - gene",
+      "verdict": "ROBUST",
+      "n_cells": 12,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 12,
+      "n_resolved_pos": 12,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 8,
+      "passing_configs": [
+        {
+          "bins": 3,
+          "seed": 0
+        },
+        {
+          "bins": 3,
+          "seed": 0
+        },
+        {
+          "bins": 3,
+          "seed": 1
+        },
+        {
+          "bins": 3,
+          "seed": 1
+        },
+        {
+          "bins": 3,
+          "seed": 2
+        },
+        {
+          "bins": 3,
+          "seed": 2
+        },
+        {
+          "bins": 4,
+          "seed": 0
+        },
+        {
+          "bins": 4,
+          "seed": 0
+        },
+        {
+          "bins": 4,
+          "seed": 1
+        },
+        {
+          "bins": 4,
+          "seed": 1
+        },
+        {
+          "bins": 4,
+          "seed": 2
+        },
+        {
+          "bins": 4,
+          "seed": 2
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "bins": 3,
+            "seed": 0
+          },
+          "cohort": "r|3|0",
+          "n": 232,
+          "delta": 0.025674774381361946,
+          "lo": 0.020704468559969595,
+          "hi": 0.03103476004473478
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 0
+          },
+          "cohort": "p|3|0",
+          "n": 232,
+          "delta": 0.010344827586206896,
+          "lo": 0.004094827586206897,
+          "hi": 0.016594827586206895
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 1
+          },
+          "cohort": "r|3|1",
+          "n": 208,
+          "delta": 0.01631551038564222,
+          "lo": 0.010967094064033331,
+          "hi": 0.021818111163244377
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 1
+          },
+          "cohort": "p|3|1",
+          "n": 208,
+          "delta": 0.0074519230769230765,
+          "lo": 0.002403846153846153,
+          "hi": 0.012740384615384617
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 2
+          },
+          "cohort": "r|3|2",
+          "n": 246,
+          "delta": 0.0252824485548785,
+          "lo": 0.020564836320054455,
+          "hi": 0.030151114765103428
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 2
+          },
+          "cohort": "p|3|2",
+          "n": 246,
+          "delta": 0.01605691056910569,
+          "lo": 0.010772357723577236,
+          "hi": 0.021544715447154476
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 0
+          },
+          "cohort": "r|4|0",
+          "n": 231,
+          "delta": 0.01952993420733834,
+          "lo": 0.014897306549182091,
+          "hi": 0.02413451633537114
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 0
+          },
+          "cohort": "p|4|0",
+          "n": 231,
+          "delta": 0.00974025974025974,
+          "lo": 0.004545454545454544,
+          "hi": 0.015367965367965366
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 1
+          },
+          "cohort": "r|4|1",
+          "n": 201,
+          "delta": 0.015193289166491732,
+          "lo": 0.01013316259410286,
+          "hi": 0.020377860016430736
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 1
+          },
+          "cohort": "p|4|1",
+          "n": 201,
+          "delta": 0.00671641791044776,
+          "lo": 0.0009950248756218892,
+          "hi": 0.012686567164179105
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 2
+          },
+          "cohort": "r|4|2",
+          "n": 265,
+          "delta": 0.025171618507286206,
+          "lo": 0.02083230010523184,
+          "hi": 0.02967010670717211
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 2
+          },
+          "cohort": "p|4|2",
+          "n": 265,
+          "delta": 0.01339622641509434,
+          "lo": 0.008490566037735849,
+          "hi": 0.018490566037735846
+        }
+      ]
+    },
+    "G2b gene_line_state - gene_line": {
+      "name": "G2b gene_line_state - gene_line",
+      "verdict": "ROBUST",
+      "n_cells": 12,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 12,
+      "n_resolved_pos": 10,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 8,
+      "passing_configs": [
+        {
+          "bins": 3,
+          "seed": 0
+        },
+        {
+          "bins": 3,
+          "seed": 1
+        },
+        {
+          "bins": 3,
+          "seed": 1
+        },
+        {
+          "bins": 3,
+          "seed": 2
+        },
+        {
+          "bins": 3,
+          "seed": 2
+        },
+        {
+          "bins": 4,
+          "seed": 0
+        },
+        {
+          "bins": 4,
+          "seed": 1
+        },
+        {
+          "bins": 4,
+          "seed": 1
+        },
+        {
+          "bins": 4,
+          "seed": 2
+        },
+        {
+          "bins": 4,
+          "seed": 2
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "bins": 3,
+            "seed": 0
+          },
+          "cohort": "r|3|0",
+          "n": 232,
+          "delta": 0.025671036170820553,
+          "lo": 0.017226002836937433,
+          "hi": 0.034109239496795514
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 0
+          },
+          "cohort": "p|3|0",
+          "n": 232,
+          "delta": 0.006465517241379311,
+          "lo": -0.0010775862068965521,
+          "hi": 0.014224137931034483
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 1
+          },
+          "cohort": "r|3|1",
+          "n": 208,
+          "delta": 0.029032652335313047,
+          "lo": 0.022540434696067948,
+          "hi": 0.035516271027717386
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 1
+          },
+          "cohort": "p|3|1",
+          "n": 208,
+          "delta": 0.015865384615384615,
+          "lo": 0.008173076923076924,
+          "hi": 0.023798076923076925
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 2
+          },
+          "cohort": "r|3|2",
+          "n": 246,
+          "delta": 0.02106561444429284,
+          "lo": 0.014516969157938021,
+          "hi": 0.028300523754961362
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 2
+          },
+          "cohort": "p|3|2",
+          "n": 246,
+          "delta": 0.013414634146341463,
+          "lo": 0.00670731707317073,
+          "hi": 0.020528455284552848
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 0
+          },
+          "cohort": "r|4|0",
+          "n": 231,
+          "delta": 0.0268602355486798,
+          "lo": 0.018826215260788433,
+          "hi": 0.03535445504631384
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 0
+          },
+          "cohort": "p|4|0",
+          "n": 231,
+          "delta": 0.005411255411255411,
+          "lo": -0.0008658008658008661,
+          "hi": 0.011904761904761904
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 1
+          },
+          "cohort": "r|4|1",
+          "n": 201,
+          "delta": 0.03232511587702063,
+          "lo": 0.025554818133328723,
+          "hi": 0.03938353168498806
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 1
+          },
+          "cohort": "p|4|1",
+          "n": 201,
+          "delta": 0.017910447761194027,
+          "lo": 0.011442786069651741,
+          "hi": 0.02462686567164179
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 2
+          },
+          "cohort": "r|4|2",
+          "n": 265,
+          "delta": 0.025030422838490725,
+          "lo": 0.018197966319514338,
+          "hi": 0.03231732771226147
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 2
+          },
+          "cohort": "p|4|2",
+          "n": 265,
+          "delta": 0.011698113207547172,
+          "lo": 0.0047169811320754715,
+          "hi": 0.018867924528301886
+        }
+      ]
+    },
+    "G2c gene_line_nodepth - gene_line": {
+      "name": "G2c gene_line_nodepth - gene_line",
+      "verdict": "ROBUST",
+      "n_cells": 12,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 12,
+      "n_resolved_pos": 10,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 8,
+      "passing_configs": [
+        {
+          "bins": 3,
+          "seed": 0
+        },
+        {
+          "bins": 3,
+          "seed": 1
+        },
+        {
+          "bins": 3,
+          "seed": 1
+        },
+        {
+          "bins": 3,
+          "seed": 2
+        },
+        {
+          "bins": 3,
+          "seed": 2
+        },
+        {
+          "bins": 4,
+          "seed": 0
+        },
+        {
+          "bins": 4,
+          "seed": 1
+        },
+        {
+          "bins": 4,
+          "seed": 1
+        },
+        {
+          "bins": 4,
+          "seed": 2
+        },
+        {
+          "bins": 4,
+          "seed": 2
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "bins": 3,
+            "seed": 0
+          },
+          "cohort": "r|3|0",
+          "n": 232,
+          "delta": 0.022689139696323864,
+          "lo": 0.01672164377547394,
+          "hi": 0.02890334181910907
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 0
+          },
+          "cohort": "p|3|0",
+          "n": 232,
+          "delta": 0.003017241379310345,
+          "lo": -0.004094827586206899,
+          "hi": 0.010129310344827587
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 1
+          },
+          "cohort": "r|3|1",
+          "n": 208,
+          "delta": 0.023591764839662258,
+          "lo": 0.019292778655310927,
+          "hi": 0.027800382984504875
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 1
+          },
+          "cohort": "p|3|1",
+          "n": 208,
+          "delta": 0.014903846153846153,
+          "lo": 0.008894230769230769,
+          "hi": 0.021153846153846155
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 2
+          },
+          "cohort": "r|3|2",
+          "n": 246,
+          "delta": 0.01732791152231557,
+          "lo": 0.012641376127899291,
+          "hi": 0.022245386229957344
+        },
+        {
+          "config": {
+            "bins": 3,
+            "seed": 2
+          },
+          "cohort": "p|3|2",
+          "n": 246,
+          "delta": 0.012398373983739837,
+          "lo": 0.006707317073170732,
+          "hi": 0.018292682926829267
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 0
+          },
+          "cohort": "r|4|0",
+          "n": 231,
+          "delta": 0.022845835165412956,
+          "lo": 0.01762301674063894,
+          "hi": 0.028523505223247408
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 0
+          },
+          "cohort": "p|4|0",
+          "n": 231,
+          "delta": 0.005627705627705627,
+          "lo": -0.00043290043290043436,
+          "hi": 0.012121212121212121
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 1
+          },
+          "cohort": "r|4|1",
+          "n": 201,
+          "delta": 0.02438798839245927,
+          "lo": 0.019721403733610855,
+          "hi": 0.029153341853822144
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 1
+          },
+          "cohort": "p|4|1",
+          "n": 201,
+          "delta": 0.010696517412935326,
+          "lo": 0.0054726368159203976,
+          "hi": 0.01616915422885572
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 2
+          },
+          "cohort": "r|4|2",
+          "n": 265,
+          "delta": 0.020172951912112963,
+          "lo": 0.015012915500658308,
+          "hi": 0.025558004250046052
+        },
+        {
+          "config": {
+            "bins": 4,
+            "seed": 2
+          },
+          "cohort": "p|4|2",
+          "n": 265,
+          "delta": 0.011132075471698111,
+          "lo": 0.005471698113207546,
+          "hi": 0.017169811320754718
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "STEP 4b -- DECOMPOSE: is the gain cell STATE, or just cell LINE?",
+    "====================================================================================================",
+    "  PREDECLARED  G2a line>gene | G2b state>line THE CLAIM | G2c state-without-depth>line",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 537 kept of 691 built  (TIER A 528, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "\n  bins=3: 5,599 groups",
+    "    seed 0  gene: r 0.1963/p 0.1571  gene_line: r 0.2220/p 0.1675  gene_line_bin: r 0.2350/p 0.1713  gene_line_state: r 0.2476/p 0.1739  gene_line_nodepth: r 0.2446/p 0.1705",
+    "    seed 1  gene: r 0.1557/p 0.0964  gene_line: r 0.1720/p 0.1038  gene_line_bin: r 0.1826/p 0.1137  gene_line_state: r 0.2010/p 0.1197  gene_line_nodepth: r 0.1956/p 0.1187",
+    "    seed 2  gene: r 0.1787/p 0.1041  gene_line: r 0.2039/p 0.1201  gene_line_bin: r 0.2127/p 0.1266  gene_line_state: r 0.2250/p 0.1335  gene_line_nodepth: r 0.2213/p 0.1325",
+    "\n  bins=4: 5,663 groups",
+    "    seed 0  gene: r 0.1898/p 0.1532  gene_line: r 0.2094/p 0.1630  gene_line_bin: r 0.2250/p 0.1682  gene_line_state: r 0.2362/p 0.1684  gene_line_nodepth: r 0.2322/p 0.1686",
+    "    seed 1  gene: r 0.1432/p 0.0928  gene_line: r 0.1584/p 0.0995  gene_line_bin: r 0.1718/p 0.1075  gene_line_state: r 0.1907/p 0.1174  gene_line_nodepth: r 0.1828/p 0.1102",
+    "    seed 2  gene: r 0.1796/p 0.1096  gene_line: r 0.2048/p 0.1230  gene_line_bin: r 0.2153/p 0.1294  gene_line_state: r 0.2298/p 0.1347  gene_line_nodepth: r 0.2249/p 0.1342",
+    "\n  SWEEP G2a gene_line - gene   axes[bins,seed]  12 cells\n  config                       cohort         delta                 95% CI\n  bins=3 seed=0                r|3|0        +0.0257 [ +0.0207, +0.0310] RES+\n  bins=3 seed=0                p|3|0        +0.0103 [ +0.0041, +0.0166] RES+\n  bins=3 seed=1                r|3|1        +0.0163 [ +0.0110, +0.0218] RES+\n  bins=3 seed=1                p|3|1        +0.0075 [ +0.0024, +0.0127] RES+\n  bins=3 seed=2                r|3|2        +0.0253 [ +0.0206, +0.0302] RES+\n  bins=3 seed=2                p|3|2        +0.0161 [ +0.0108, +0.0215] RES+\n  bins=4 seed=0                r|4|0        +0.0195 [ +0.0149, +0.0241] RES+\n  bins=4 seed=0                p|4|0        +0.0097 [ +0.0045, +0.0154] RES+\n  bins=4 seed=1                r|4|1        +0.0152 [ +0.0101, +0.0204] RES+\n  bins=4 seed=1                p|4|1        +0.0067 [ +0.0010, +0.0127] RES+\n  bins=4 seed=2                r|4|2        +0.0252 [ +0.0208, +0.0297] RES+\n  bins=4 seed=2                p|4|2        +0.0134 [ +0.0085, +0.0185] RES+\n  -> ROBUST   resolved +12/-0 of 12 (>= 8 needed), sign-consistent True",
+    "\n  SWEEP G2b gene_line_state - gene_line   axes[bins,seed]  12 cells\n  config                       cohort         delta                 95% CI\n  bins=3 seed=0                r|3|0        +0.0257 [ +0.0172, +0.0341] RES+\n  bins=3 seed=0                p|3|0        +0.0065 [ -0.0011, +0.0142] ns\n  bins=3 seed=1                r|3|1        +0.0290 [ +0.0225, +0.0355] RES+\n  bins=3 seed=1                p|3|1        +0.0159 [ +0.0082, +0.0238] RES+\n  bins=3 seed=2                r|3|2        +0.0211 [ +0.0145, +0.0283] RES+\n  bins=3 seed=2                p|3|2        +0.0134 [ +0.0067, +0.0205] RES+\n  bins=4 seed=0                r|4|0        +0.0269 [ +0.0188, +0.0354] RES+\n  bins=4 seed=0                p|4|0        +0.0054 [ -0.0009, +0.0119] ns\n  bins=4 seed=1                r|4|1        +0.0323 [ +0.0256, +0.0394] RES+\n  bins=4 seed=1                p|4|1        +0.0179 [ +0.0114, +0.0246] RES+\n  bins=4 seed=2                r|4|2        +0.0250 [ +0.0182, +0.0323] RES+\n  bins=4 seed=2                p|4|2        +0.0117 [ +0.0047, +0.0189] RES+\n  -> ROBUST   resolved +10/-0 of 12 (>= 8 needed), sign-consistent True",
+    "\n  SWEEP G2c gene_line_nodepth - gene_line   axes[bins,seed]  12 cells\n  config                       cohort         delta                 95% CI\n  bins=3 seed=0                r|3|0        +0.0227 [ +0.0167, +0.0289] RES+\n  bins=3 seed=0                p|3|0        +0.0030 [ -0.0041, +0.0101] ns\n  bins=3 seed=1                r|3|1        +0.0236 [ +0.0193, +0.0278] RES+\n  bins=3 seed=1                p|3|1        +0.0149 [ +0.0089, +0.0212] RES+\n  bins=3 seed=2                r|3|2        +0.0173 [ +0.0126, +0.0222] RES+\n  bins=3 seed=2                p|3|2        +0.0124 [ +0.0067, +0.0183] RES+\n  bins=4 seed=0                r|4|0        +0.0228 [ +0.0176, +0.0285] RES+\n  bins=4 seed=0                p|4|0        +0.0056 [ -0.0004, +0.0121] ns\n  bins=4 seed=1                r|4|1        +0.0244 [ +0.0197, +0.0292] RES+\n  bins=4 seed=1                p|4|1        +0.0107 [ +0.0055, +0.0162] RES+\n  bins=4 seed=2                r|4|2        +0.0202 [ +0.0150, +0.0256] RES+\n  bins=4 seed=2                p|4|2        +0.0111 [ +0.0055, +0.0172] RES+\n  -> ROBUST   resolved +10/-0 of 12 (>= 8 needed), sign-consistent True",
+    "\n  READING",
+    "  line identity: ROBUST | cell state beyond line: ROBUST | state without depth: ROBUST",
+    "  CELL STATE EARNS ITS KEEP beyond line identity, and not via the depth covariate.",
+    "  The single-cell route is justified on prediction, not just on the raw interaction."
+  ]
+}

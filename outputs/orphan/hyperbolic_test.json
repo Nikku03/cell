@@ -1,0 +1,85 @@
+{
+ "branch": "biological_process",
+ "n_terms": 4069,
+ "n_genes": 14511,
+ "n_nodes": 18580,
+ "n_train_edges": 96973,
+ "n_heldout_isa": 364,
+ "n_test_pairs": 33874,
+ "dims": [
+  5,
+  10
+ ],
+ "epochs": 30,
+ "negatives": 10,
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "arms": {
+  "hyperbolic_d5": {
+   "fidelity_auc": 0.6330455259026687,
+   "fidelity_sd": 0.0069640058080712745,
+   "utility_spearman": -0.005875828944171383,
+   "utility_sd": 0.006362795328979275,
+   "per_seed_utility": [
+    0.0026907994234724483,
+    -0.007774314956881026,
+    -0.012543971299105571
+   ]
+  },
+  "euclidean_d5": {
+   "fidelity_auc": 0.6167884313488708,
+   "fidelity_sd": 0.01777832092933441,
+   "utility_spearman": -0.006120977286198076,
+   "utility_sd": 0.006744747827368471,
+   "per_seed_utility": [
+    0.0027708171292523324,
+    -0.007576986713886836,
+    -0.013556762273959725
+   ]
+  },
+  "hyperbolic_d10": {
+   "fidelity_auc": 0.6320190798212777,
+   "fidelity_sd": 0.00684655332901912,
+   "utility_spearman": 0.0016590881640466367,
+   "utility_sd": 0.014726839342197413,
+   "per_seed_utility": [
+    0.017990682021905707,
+    -0.017699517932504547,
+    0.00468610040273875
+   ]
+  },
+  "euclidean_d10": {
+   "fidelity_auc": 0.6299058084772371,
+   "fidelity_sd": 0.010326761607418937,
+   "utility_spearman": 0.0010924698869074737,
+   "utility_sd": 0.014763160180748091,
+   "per_seed_utility": [
+    0.01762528121989333,
+    -0.01821594464819989,
+    0.003868073089028983
+   ]
+  },
+  "hyperbolic_matched": {
+   "spearman": 0.016269980609395985,
+   "sd": 0.003162084549909064
+  },
+  "euclidean_matched": {
+   "spearman": 0.015821458781606155,
+   "sd": 0.003273529103445044
+  }
+ },
+ "graph_distance_baseline": {
+  "spearman": -0.004720922738804285,
+  "n": 3000
+ },
+ "summary": {
+  "fidelity_advantage": 0.0021132713440406015,
+  "utility_advantage_raw": -0.000566618277139163,
+  "utility_advantage_matched": -0.0004485218277898301,
+  "graph_baseline": -0.004720922738804285
+ },
+ "verdict": "NEITHER GEOMETRY SEPARATES. At d=10 hyperbolic and Euclidean reconstruct the held-out hierarchy comparably (0.6320 vs 0.6299) and predict co-response comparably after matching (+0.0163 vs +0.0158). With the ontology shortest-path baseline at -0.0047, nothing here justifies a curvature choice. Note also that neither embedding beats raw ontology graph distance in absolute terms, which puts the whole embedding step in question before the curvature question is even reached."
+}

@@ -1,0 +1,337 @@
+{
+ "test": "loop 153 -- D-box quality on the 77",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ly2014_supp1-v1.txt",
+    "bytes": 5458223,
+    "hash": "73d036e6c3232913",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/elm_classes.tsv",
+    "bytes": 88298,
+    "hash": "068498b20a2dbb83",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2821,
+   "used": 2821,
+   "selection": "filtered",
+   "fraction": 1.0
+  },
+  "seed": 15300,
+  "controls": [
+   "an EXTERNAL published number reproduced before any own-data result is read (W0)",
+   "the presence failure reproduced, so the explanation is tested rather than assumed (W1b)",
+   "fame, abundance-matched and length controls read BEFORE the headline number (W3)",
+   "conclusions emitted through gate_guard.verdict"
+  ],
+  "note": "Lu/Wang/Kirschner Science 2015 (doi 10.1126/science.1248737) report 64% more lysines within 60 residues of the D-box in published APC substrates. That is a computable definition of D-box quality with a number attached, so W0 reproduces it on an independent implementation before the 77 are touched.",
+  "warnings": []
+ },
+ "gates": {
+  "W0": true,
+  "W1": false,
+  "W2": false,
+  "W3": true,
+  "W4": true,
+  "W5": true,
+  "W6": true
+ },
+ "citations": [
+  {
+   "ref": "Lu Y, Wang W, Kirschner MW. Science 2015;348:1248737",
+   "doi": "10.1126/science.1248737",
+   "pmid": "25859049"
+  },
+  {
+   "ref": "Rape M, Reddy SK, Kirschner MW. Cell 2006;124:89-103",
+   "doi": "10.1016/j.cell.2005.10.032",
+   "pmid": "16413484"
+  }
+ ],
+ "w0": {
+  "n_substrates": 25,
+  "substrates_found": [
+   "CCNA2",
+   "CCNB1",
+   "CCNB2",
+   "PTTG1",
+   "GMNN",
+   "PLK1",
+   "AURKA",
+   "AURKB",
+   "UBE2C",
+   "CDC6",
+   "KIF20A",
+   "ANLN",
+   "SPAG5",
+   "BUB1",
+   "BUB1B",
+   "CENPE",
+   "CENPF",
+   "KIF22",
+   "KIF23",
+   "ASPM",
+   "FOXM1",
+   "SKP2",
+   "CDC25B",
+   "RRM2",
+   "CLSPN"
+  ],
+  "k_substrates": 10.04,
+  "k_random": 6.664601869579908,
+  "enrichment": 0.5064665821715251,
+  "published": 0.64,
+  "p": 0.0004997501249375312,
+  "within_factor_2": true,
+  "pass": true
+ },
+ "w1": {
+  "promiscuity": 0.44050858358482164,
+  "presence_auc": 0.5323018366812554,
+  "frac_osc_with_dbox": 0.5473684210526316,
+  "frac_flat_with_dbox": 0.48276474769012084,
+  "pass": false
+ },
+ "w3": {
+  "rho_fame": 0.12085262172405184,
+  "rho_length": 0.24607800600750032,
+  "fame_ok": true,
+  "pass": true
+ },
+ "w2": {
+  "n_osc": 104,
+  "n_flat": 2717,
+  "k_osc": 8.403846153846153,
+  "k_flat": 7.893632683106367,
+  "enrichment": 0.06463607963817775,
+  "auc_raw": 0.5381324141445599,
+  "auc_length_residualised": 0.5325107584722969,
+  "null_mean_auc": 0.4852326838141615,
+  "p": 0.0239880059970015,
+  "pass": false
+ },
+ "w4": {
+  "D-box count": {
+   "auc": 0.5188255570340591,
+   "osc_mean": 2.0673076923076925,
+   "flat_mean": 1.827015090172985,
+   "rho_pubs": 0.023357540002419797,
+   "fame_ok": true
+  },
+  "N-terminal position": {
+   "auc": 0.4485238951332069,
+   "osc_mean": 0.3408333245316968,
+   "flat_mean": 0.38911338538601503,
+   "rho_pubs": 0.007079473240911613,
+   "fame_ok": true
+  },
+  "full RxxLxxxxN consensus count": {
+   "auc": 0.525714164378132,
+   "osc_mean": 0.2980769230769231,
+   "flat_mean": 0.1910195068089805,
+   "rho_pubs": 0.03985447983234787,
+   "fame_ok": true
+  },
+  "mean lysines over all D-boxes": {
+   "auc": 0.5439327878599134,
+   "osc_mean": 7.439239926739928,
+   "flat_mean": 6.954145850060462,
+   "rho_pubs": 0.11500462650702285,
+   "fame_ok": true
+  }
+ },
+ "w5": {
+  "mechanisms": [
+   {
+    "name": "transcription",
+    "killed_as": "production",
+    "explained_by_processivity": false
+   },
+   {
+    "name": "TF network (CollecTRI)",
+    "killed_as": "production",
+    "explained_by_processivity": false
+   },
+   {
+    "name": "TF network (second)",
+    "killed_as": "production",
+    "explained_by_processivity": false
+   },
+   {
+    "name": "5'UTR / translation control",
+    "killed_as": "production",
+    "explained_by_processivity": false
+   },
+   {
+    "name": "relocalisation",
+    "killed_as": "localisation annotation",
+    "explained_by_processivity": false
+   },
+   {
+    "name": "protease competition",
+    "killed_as": "capacity measurement",
+    "explained_by_processivity": false
+   },
+   {
+    "name": "degron motifs (loop 121)",
+    "killed_as": "motif PRESENCE",
+    "explained_by_processivity": true
+   },
+   {
+    "name": "annotated ubiquitin targeting",
+    "killed_as": "annotation PRESENCE",
+    "explained_by_processivity": true
+   },
+   {
+    "name": "phosphodegrons, naive (loop 145)",
+    "killed_as": "motif PRESENCE",
+    "explained_by_processivity": true
+   },
+   {
+    "name": "phosphodegrons, ELM (loop 146)",
+    "killed_as": "motif PRESENCE",
+    "explained_by_processivity": true
+   }
+  ],
+  "n_explained": 4,
+  "n_total": 10,
+  "corrects_loop152_v5": "V5 said 'reconciles the failures'; it reconciles 4 of 10"
+ },
+ "w6": {
+  "proxy_not_measurement": true,
+  "window": 60,
+  "published_source": "Lu Y, Wang W, Kirschner MW. Science 2015;348:1248737"
+ },
+ "seconds": 5.729409456253052,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 153 -- D-box QUALITY on the 77, with a published number to hit first",
+  "====================================================================================================",
+  "",
+  "  ELM DEG_APCC_DBOX_1 regex: .R..L..[LIVM].    fuller consensus checked separately: R..L....N",
+  "  20,213 proteins in the human FASTA; 8,904 carry a D-box",
+  "",
+  "  Ly 2014: 209 oscillating >= 2-fold, 6,163 flat",
+  "",
+  "W0 THE EXTERNAL REGRESSION -- reproduce Lu 2015's +64% before anything else",
+  "     25 published APC substrates with a D-box (of 35 declared)",
+  "     lysines within 60 residues of the best D-box: substrates 10.04, random D-box proteins 6.66",
+  "     ENRICHMENT +50.6%   published +64%   p 0.0005 against 2000 resamples",
+  "     the published result reproduces on an independent implementation. This repo is entitled to compute the same quantity on its own genes.",
+  "     W0 PASS",
+  "",
+  "W1 THE PROMISCUITY CHECK, AND THE PRESENCE BASELINE",
+  "     (a) fraction of the proteome carrying a D-box: 44.1%   Lu 2015 reports 69%   gate 50%-85%",
+  "     (b) D-box PRESENCE, oscillators vs flat: AUC 0.5323   gate [0.45, 0.55] -- it must find NOTHING, as loop 146 did",
+  "         54.7% of oscillators carry one against 48.3% of flat",
+  "     the presence baseline does not behave as loop 146's did (promiscuity 44%, AUC 0.532), so this pipeline is not the one that failed and W2 tests something else.",
+  "     W1 FAIL",
+  "",
+  "W3 THE CONTROLS, read BEFORE W2's number",
+  "     (a) fame: rho(pubs, lysines-near-D-box) +0.1209   gate |rho| < 0.2",
+  "     (c) length: rho(protein length, lysines-near-D-box) +0.2461 -- the score is partly a length measurement and W2 is therefore also run on a length-residualised score",
+  "",
+  "W2 THE QUALITY TEST ON THE 77",
+  "     104 oscillators and 2,717 flat proteins carry a D-box",
+  "     lysines within 60 residues: oscillators 8.40, flat 7.89   enrichment +6.5%",
+  "     AUC (raw) 0.5381",
+  "     AUC (length-residualised) 0.5325",
+  "     abundance-matched null: mean AUC 0.4852, real 0.5381, p 0.0240   gate AUC >= 0.6 and p < 0.01",
+  "     D-box quality measured as lysine proximity does NOT separate them either (AUC 0.538 raw, 0.533 length-residualised, p 0.024). That is a TENTH failure and it is recorded as one. The published enrichment is real -- W0 reproduced it -- so what fails is the transfer from 'known APC substrates' to 'proteins that oscillate by mass spectrometry', which are not the same set.",
+  "     W2 FAIL     W3 PASS",
+  "",
+  "W4 THE OTHER COMPONENTS OF QUALITY",
+  "       D-box count                      AUC 0.5188   osc    2.067  flat    1.827   rho(pubs) +0.023",
+  "       N-terminal position              AUC 0.4485   osc    0.341  flat    0.389   rho(pubs) +0.007",
+  "       full RxxLxxxxN consensus count   AUC 0.5257   osc    0.298  flat    0.191   rho(pubs) +0.040",
+  "       mean lysines over all D-boxes    AUC 0.5439   osc    7.439  flat    6.954   rho(pubs) +0.115",
+  "     strongest surviving component: N-terminal position at AUC 0.4485",
+  "",
+  "W5 THE ACCOUNTING, AND A CORRECTION TO LOOP 152",
+  "     loop 152's V5 said the processivity story 'reconciles the failures'. It does not reconcile all of them and that sentence is corrected here.",
+  "       untouched   transcription                      killed as: production",
+  "       untouched   TF network (CollecTRI)             killed as: production",
+  "       untouched   TF network (second)                killed as: production",
+  "       untouched   5'UTR / translation control        killed as: production",
+  "       untouched   relocalisation                     killed as: localisation annotation",
+  "       untouched   protease competition               killed as: capacity measurement",
+  "       EXPLAINED  degron motifs (loop 121)           killed as: motif PRESENCE",
+  "       EXPLAINED  annotated ubiquitin targeting      killed as: annotation PRESENCE",
+  "       EXPLAINED  phosphodegrons, naive (loop 145)   killed as: motif PRESENCE",
+  "       EXPLAINED  phosphodegrons, ELM (loop 146)     killed as: motif PRESENCE",
+  "     4 of 10 are presence-versus-quality errors and could be explained by it. The other 6 are not.",
+  "     THE PRODUCTION-SIDE ONES STAY DEAD AND ARE NOT A MEASUREMENT PROBLEM. Transcription,",
+  "     both TF networks and translation control were killed by tanh(b*T/4), an arithmetic",
+  "     bound on ANY production waveform, which 55 of 80 oscillators exceed. No instrument",
+  "     improvement touches that. Protease competition was killed by a capacity measurement",
+  "     and relocalisation was not a motif test at all.",
+  "",
+  "W6 WHAT THIS CANNOT DO",
+  "     lysine proximity is a SEQUENCE PROXY for a KINETIC quantity. Processivity is a rate,",
+  "     measured on single molecules in Lu 2015 on a handful of substrates. Counting lysines",
+  "     near a regex is not that, and this repo has now killed nine sequence proxies.",
+  "     W0 shows the proxy carries real signal on Lu's own comparison. Whether it carries it",
+  "     on the 77 is W2's business, and W2's answer stands on its own.",
+  "",
+  "====================================================================================================",
+  "  W0  PASS",
+  "  W1  FAIL",
+  "  W2  FAIL",
+  "  W3  PASS",
+  "  W4  PASS",
+  "  W5  PASS",
+  "  W6  PASS",
+  "  5/7",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 2821/2821 (100.0%) by 'filtered', seed 15300, controls 4"
+ ],
+ "addendum_post_hoc": {
+  "label": "POST-HOC, written after loop 153's output",
+  "w1_failure_diagnosed": {
+   "arm_a_promiscuity": "44.1% against a 50-85% gate. ELM's DEG_APCC_DBOX_1 regex is .R..L..[LIVM]. which demands a hydrophobic at position 8, stricter than the bare RxxL; and Lu 2015's 69% is for D AND KEN boxes combined, not D alone. The discrepancy is identified, not mysterious.",
+   "arm_b_presence_baseline": "AUC 0.5323, INSIDE the required [0.45, 0.55]. This arm passed. W1's verdict() message was emitted on the conjunction and asserts the pipeline 'is not the one that failed', which is wrong about arm (b) specifically.",
+   "correction": "W1's FAIL is arm (a) only. The presence baseline reproduced loop 146's null exactly as required."
+  },
+  "why_w2_failed": {
+   "external_validation_of_the_oscillation_call": "24 of 31 published APC substrates quantified by Ly are called oscillating (77.4%) against a base rate of 209/6372 = 3.3%. A 23.6x enrichment, and the first time this arc's oscillation call has been checked against an external ground truth.",
+   "but_the_converse": "the 209 oscillators contain only 24 known APC substrates. Among D-box carriers it is 18 of 104 = 17.3%.",
+   "dilution_arithmetic": {
+    "w0_enrichment_on_lus_set": 0.506,
+    "apc_fraction_of_oscillators": 0.173,
+    "predicted_enrichment": 0.088,
+    "observed_enrichment": 0.065,
+    "reading": "W2's +6.5% is what dilution predicts from +50.6% carried by 17.3% of the set. The signature is not absent from the oscillators; it is present in the minority of them that are APC substrates and swamped by the rest."
+   },
+   "caveat_direction": "the declared substrate list is fame-biased, so it undercounts obscure APC substrates. The true fraction is likely higher than 17.3%, which would predict a LARGER enrichment than observed, not a smaller one."
+  },
+  "within_oscillator_test_STRUCK": {
+   "test": "can the lysine score find the 18 known APC substrates among the 104 D-box-carrying oscillators?",
+   "result_auc": 0.6092,
+   "fame_on_the_same_split": {
+    "pubs_apc": 308,
+    "pubs_other": 130,
+    "auc_pubs": 0.8049
+   },
+   "verdict": "STRUCK. The label is 80% recoverable from publication count alone, far past the loop-137 threshold. The standing rule strikes on much less, and this result is uninterpretable.",
+   "note": "the SCORE is not a fame proxy -- W3 measured rho(pubs, lysine score) = +0.121, under the 0.20 threshold. It is the LABEL that is fame. That distinction is why W0 survives and this does not."
+  },
+  "tally_caveat": "the repo's standing phrase is 'nine mechanisms eliminated'; loop 142's log says 'six' and then lists seven. This loop's enumeration gives ten. The denominator is loose. The substantive split -- 4 presence-based, 6 not -- does not depend on it."
+ }
+}

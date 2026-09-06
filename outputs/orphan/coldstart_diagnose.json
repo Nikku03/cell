@@ -1,0 +1,25 @@
+{
+ "threshold": 4.200000000000003,
+ "n_eval": 293,
+ "recall": 0.3498,
+ "continuous": {
+  "r_all": 0.4136,
+  "rho_all": 0.288,
+  "r_signed": 0.5442,
+  "sign_acc_movers": 0.9343,
+  "sign_acc_hits": 0.9901,
+  "sign_acc_mu_baseline": 0.8625,
+  "sign_acc_alwaysup": 0.9432
+ },
+ "misses": {
+  "median_rank_of_true_movers": 749.3345,
+  "median_rank_of_missed": 969.5509,
+  "frac_missed_in_top200": 0.3529,
+  "frac_missed_in_top500": 0.5477,
+  "frac_missed_beyond_2000": 0.229
+ },
+ "breadth_spearman": 0.0663,
+ "target_jaccard_under_threshold_shift": 0.5823,
+ "verdict": "COLD-START DIAGNOSIS (coldstart_diagnose.py): decomposing the 0.350 recall@50 into the failure modes it conflates, because a single binarised top-50 number cannot tell a ranking problem from a comprehension problem and the two need different fixes. A) CONTINUOUS AGREEMENT: |predicted| vs |true| profile correlates r=+0.414 (Spearman +0.288), the SIGNED correlation is r=+0.544, and on the genes that really move the model gets the DIRECTION right 93.4% of the time, which sounds strong until it is baselined. IT DOES NOT SURVIVE BASELINING: specific movers in this data are 94.3% UP-regulated, so the constant predictor 'everything goes up' scores 94.3% and BEATS the model's 93.4% by +0.009. The model therefore has NO directional skill whatsoever -- it is marginally worse than a constant. (Predicting the sign of the shared mean response mu scores 86.2%, worse than both, because mu is negative for some genes that in fact rise.) The signed correlation of r=+0.544 is likewise inflated by this class imbalance and should not be read as the model understanding up versus down. B) WHERE THE MISSES LAND: the median true mover sits at rank 749 of ~8,500, and a MISSED mover at rank 970; 35% of misses are still inside the top 200 and 23% are beyond rank 2,000. C) BREADTH: Spearman between predicted response scale and true mover count is +0.066. D) The headline hides real heterogeneity across knockouts -- see the stratification table. E) TARGET STABILITY: moving the threshold by only +-0.4 changes the truth set enough to give a mean Jaccard of 0.58 against the truth set actually used, which is a LOWER bound on how much of the missing recall is unreachable target noise rather than unlearned signal. It is not a replicate estimate; there are no duplicate guides in this data. Deterministic.",
+ "note": "COLD-START DIAGNOSIS (coldstart_diagnose.py): decomposing the 0.350 recall@50 into the failure modes it conflates, because a single binarised top-50 number cannot tell a ranking problem from a comprehension problem and the two need different fixes. A) CONTINUOUS AGREEMENT: |predicted| vs |true| profile correlates r=+0.414 (Spearman +0.288), the SIGNED correlation is r=+0.544, and on the genes that really move the model gets the DIRECTION right 93.4% of the time, which sounds strong until it is baselined. IT DOES NOT SURVIVE BASELINING: specific movers in this data are 94.3% UP-regulated, so the constant predictor 'everything goes up' scores 94.3% and BEATS the model's 93.4% by +0.009. The model therefore has NO directional skill whatsoever -- it is marginally worse than a constant. (Predicting the sign of the shared mean response mu scores 86.2%, worse than both, because mu is negative for some genes that in fact rise.) The signed correlation of r=+0.544 is likewise inflated by this class imbalance and should not be read as the model understanding up versus down. B) WHERE THE MISSES LAND: the median true mover sits at rank 749 of ~8,500, and a MISSED mover at rank 970; 35% of misses are still inside the top 200 and 23% are beyond rank 2,000. C) BREADTH: Spearman between predicted response scale and true mover count is +0.066. D) The headline hides real heterogeneity across knockouts -- see the stratification table. E) TARGET STABILITY: moving the threshold by only +-0.4 changes the truth set enough to give a mean Jaccard of 0.58 against the truth set actually used, which is a LOWER bound on how much of the missing recall is unreachable target noise rather than unlearned signal. It is not a replicate estimate; there are no duplicate guides in this data. Deterministic."
+}

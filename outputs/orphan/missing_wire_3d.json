@@ -1,0 +1,17 @@
+{
+ "n_genes": 4337,
+ "n_tads": 1923,
+ "median_genes_per_tad": 1,
+ "spearman_TAD3D_only": 0.016,
+ "spearman_LINEARproxy_only": 0.039,
+ "spearman_EXPRESSION_only": 0.194,
+ "spearman_CONTROL_ppi_only": 0.091,
+ "spearman_expr_plus_PPI": 0.219,
+ "spearman_expr_PPI_plus_LINEAR": 0.225,
+ "spearman_expr_PPI_plus_TAD3D": 0.236,
+ "spearman_expr_PPI_LINEAR_plus_TAD3D": 0.243,
+ "spearman_FULL": 0.248,
+ "corr_tad_density_vs_tide": 0.038,
+ "verdict": "3D CHROMATIN (real Hi-C TADs) IS A WEAK WIRE FOR THE TIDE -- honest, measured. Using real K562 in-situ Hi-C contact domains, a gene's TAD-neighbourhood tide density predicts tide membership at Spearman 0.016 (corr 0.038) -- comparable to / below the PPI control, and it adds only +0.017 beyond expression+PPI and +0.018 beyond the cruder linear +/-1Mb proxy. So real 3D TAD co-localisation is a real but SMALL signal -- barely better than 1D genomic proximity and well short of a dominant wire. Combined with the promoter-ATAC negative (missing_wire.py), the physical-genome hypothesis for the tide is only weakly supported: which genes are 'usual suspects' is best explained by network connectivity + baseline expression, with 3D neighbourhood adding a minor increment. The stereotyped tide is a property of the resting transcriptional/network state more than of chromatin geography, at least at TAD resolution. (A finer test -- shared stress ENHANCERS within a TAD, or per-cell Perturb-ATAC -- remains open; Perturb-ATAC is not cleanly available as an h5ad.)",
+ "note": "3D CHROMATIN (real Hi-C TADs) IS A WEAK WIRE FOR THE TIDE -- honest, measured. Using real K562 in-situ Hi-C contact domains, a gene's TAD-neighbourhood tide density predicts tide membership at Spearman 0.016 (corr 0.038) -- comparable to / below the PPI control, and it adds only +0.017 beyond expression+PPI and +0.018 beyond the cruder linear +/-1Mb proxy. So real 3D TAD co-localisation is a real but SMALL signal -- barely better than 1D genomic proximity and well short of a dominant wire. Combined with the promoter-ATAC negative (missing_wire.py), the physical-genome hypothesis for the tide is only weakly supported: which genes are 'usual suspects' is best explained by network connectivity + baseline expression, with 3D neighbourhood adding a minor increment. The stereotyped tide is a property of the resting transcriptional/network state more than of chromatin geography, at least at TAD resolution. (A finer test -- shared stress ENHANCERS within a TAD, or per-cell Perturb-ATAC -- remains open; Perturb-ATAC is not cleanly available as an h5ad.)"
+}

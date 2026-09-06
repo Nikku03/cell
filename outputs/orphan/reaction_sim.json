@@ -1,0 +1,80 @@
+{
+ "capability": {
+  "state_edges_ungated": 18680,
+  "state_edges_gated": 17155,
+  "pruned_by_mask_pct": 8.2,
+  "n_knockouts_scored": 31,
+  "n_TFs_as_terminal_readout": 795
+ },
+ "conditions": {
+  "ungated_boolean": {
+   "full_set": {
+    "n_pred": 10373,
+    "median_set": 265.0,
+    "precision": 0.0039,
+    "enrichment": 3.38
+   },
+   "top10": {
+    "n_pred": 347,
+    "median_set": 10.0,
+    "precision": 0.0029,
+    "enrichment": 2.54
+   }
+  },
+  "ungated_magnitude": {
+   "full_set": {
+    "n_pred": 3640,
+    "median_set": 99.5,
+    "precision": 0.0058,
+    "enrichment": 4.19
+   },
+   "top10": {
+    "n_pred": 251,
+    "median_set": 10.0,
+    "precision": 0.0159,
+    "enrichment": 13.61
+   }
+  },
+  "gated_boolean": {
+   "full_set": {
+    "n_pred": 9837,
+    "median_set": 265.0,
+    "precision": 0.0036,
+    "enrichment": 3.13
+   },
+   "top10": {
+    "n_pred": 323,
+    "median_set": 10.0,
+    "precision": 0.0031,
+    "enrichment": 2.67
+   }
+  },
+  "gated_magnitude": {
+   "full_set": {
+    "n_pred": 3408,
+    "median_set": 68.0,
+    "precision": 0.0059,
+    "enrichment": 4.21
+   },
+   "top10": {
+    "n_pred": 251,
+    "median_set": 10.0,
+    "precision": 0.0159,
+    "enrichment": 13.61
+   }
+  }
+ },
+ "generic_control": {
+  "full_mean": 3.37,
+  "full_sd": 0.7,
+  "top10_mean": 3.86,
+  "top10_sd": 2.94
+ },
+ "params": {
+  "max_hops": 3,
+  "attenuation": 0.5,
+  "threshold": 0.04
+ },
+ "verdict": "GATED BIPARTITE PROPAGATION, both ways, measured -- and it lands where the prior results said it would. (Q1 GATING) the cell-mask (spatial+abundance) prunes 8.2% of state edges and raises enrichment (ungated_magnitude 4.19x -> gated_magnitude 4.21x): gating removes impossible edges and modestly sharpens the possible set, as predicted -- it does not manufacture magnitude. (Q2 TERMINATION LAW) magnitude beats boolean, exactly because boolean over-propagates: gated_boolean predicts a big unranked set at 3.13x while gated_magnitude, by attenuating and RANKING, reaches 13.61x at top-10 (vs boolean top-10 2.67x, unranked). The blueprint's boolean 'dies-at-a-closed-gate' rebuilds a cleaner hairball; the mass-action magnitude law concentrates the signal -- my termination law is the better one to hand the coding agent. (Q3 FAR FIELD) the honest split from the shuffled-KO control: the FULL-SET enrichment (4.21x) is barely above the generic full-set floor (3.37x) -- so the broad prediction is mostly the responsiveness prior, as always. BUT the RANKED TOP-10 (13.61x) is clearly specific -- well above the top-10 generic control (3.86x): the magnitude ranking concentrates genuinely specific near-field signal. So this does NOT break the far field -- the broad set stays generic -- but the magnitude law's confident TOP predictions are a real, specific, terminal-TF near-field reached through gated signaling hops, not a compounded far field. BOTTOM LINE for CellOS-2.0: build the bipartite typed graph (done) with the cell-mask gates and a MAGNITUDE termination law (not boolean); it yields a cleaner, mutation-addressable Operational Interactome that predicts the near-field transcriptional footprint of signaling-protein knockouts -- a real capability gain -- but the far-field magnitude past the terminal TF remains the measurement gap the gates cannot fill.",
+ "note": "CellOS-2.0 gated bipartite propagation built BOTH ways and measured vs K562 Perturb-seq. The typed causal graph (SIGNOR + TRRUST) is masked by spatial (compartment) + abundance (K562-expressed) gates -> Operational Interactome, then propagated step-wise from each KO with mRNA readout at terminal TFs (respecting the readout mismatch: only mRNA-terminal predictions scored). RESULTS: (Q1) gating prunes ~impossible edges and modestly sharpens enrichment but does not create magnitude (matches cond_network 1.12x). (Q2) MAGNITUDE termination (attenuate by confidence x per-hop, threshold, rank) beats the blueprint's BOOLEAN termination, which over-propagates into a cleaner hairball -- magnitude concentrates signal (top-10 13.61x vs boolean 2.67x). (Q3) honest split from the shuffled-KO control: the FULL SET (4.21x) is barely above the generic full-set floor (3.37x) = mostly responsiveness prior, but the RANKED TOP-10 (13.61x) is clearly specific vs the top-10 generic control (3.86x, sd 2.9) -- ~3sd above. So it does NOT break the far field (broad set stays generic) but the magnitude law's confident TOP predictions are a real specific terminal-TF near-field reached via gated signaling hops, not a compounded far field. Conclusion: adopt the bipartite typed graph + gates + MAGNITUDE (mass-action) termination for CellOS-2.0 -- a cleaner mutation-addressable Operational Interactome with a real near-field capability gain; far-field magnitude past the terminal TF stays a measurement gap the gates cannot fill. Answers the blueprint's central promise honestly: gating helps precision, magnitude-termination is the right law, but predictability of the far field is not recovered by architecture."
+}

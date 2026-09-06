@@ -1,0 +1,55 @@
+{
+ "n_test_knockouts": 59,
+ "curve": [
+  {
+   "n_train_knockouts": 20,
+   "n_train_pairs": 2795,
+   "mechanism_AUPRC": 0.0787,
+   "mechanism_lift": 1.03,
+   "prior_AUPRC": 0.2365,
+   "prior_lift": 3.09,
+   "base_rate": 0.0766
+  },
+  {
+   "n_train_knockouts": 40,
+   "n_train_pairs": 3912,
+   "mechanism_AUPRC": 0.0772,
+   "mechanism_lift": 1.01,
+   "prior_AUPRC": 0.3305,
+   "prior_lift": 4.31,
+   "base_rate": 0.0766
+  },
+  {
+   "n_train_knockouts": 80,
+   "n_train_pairs": 7524,
+   "mechanism_AUPRC": 0.0787,
+   "mechanism_lift": 1.03,
+   "prior_AUPRC": 0.4689,
+   "prior_lift": 6.12,
+   "base_rate": 0.0766
+  },
+  {
+   "n_train_knockouts": 160,
+   "n_train_pairs": 16739,
+   "mechanism_AUPRC": 0.0767,
+   "mechanism_lift": 1.0,
+   "prior_AUPRC": 0.5982,
+   "prior_lift": 7.81,
+   "base_rate": 0.0766
+  },
+  {
+   "n_train_knockouts": 178,
+   "n_train_pairs": 18753,
+   "mechanism_AUPRC": 0.0732,
+   "mechanism_lift": 0.96,
+   "prior_AUPRC": 0.597,
+   "prior_lift": 7.79,
+   "base_rate": 0.0766
+  }
+ ],
+ "mechanism_lift_delta": -0.07,
+ "prior_lift_delta": 4.7,
+ "hypothesis": "H2_kind",
+ "verdict": "MECHANISM STAYS FLAT at chance (1.03x -> 0.96x) even as training knockouts grow 20->178, while the PRIOR climbs (3.09x -> 7.79x). H2: MORE SINGLE-KNOCKOUT STEADY-STATE DATA DOES NOT BREAK THE WALL. The G-specific transmission signal is not being under-sampled -- it is not RECOVERABLE from single-KO pseudobulk endpoints at all (direct vs indirect confounded; buffering unobserved). What would break it is a DIFFERENT KIND of measurement: (1) COMBINATORIAL double-KO Perturb-seq (Norman/GI) to observe epistasis/buffering directly; (2) TIME-COURSE / 4sU nascent-RNA to separate direct targets (early) from cascade (late); (3) MULTI-CONTEXT Perturb-seq (Replogle-Nadig multi-cell-line) to learn conserved transmission vs context-specific responsiveness. Those measure the transmission coefficient; single-KO endpoints never can.",
+ "note": "Learning-curve diagnosis of the far-field wall: grow training knockouts against a FIXED held-out set, measure G-specific-mechanism vs responsiveness-prior AUPRC. If mechanism is flat at chance while the prior climbs, more single-KO steady-state Perturb-seq cannot break the wall (H2); the fix is combinatorial (double-KO/GI), time-course (4sU nascent), or multi-context (multi-cell-line) data that actually measures the per-edge transmission coefficient. Sparse machinery, no torch, no dense transition matrix."
+}

@@ -1,0 +1,193 @@
+{
+ "test": "atom complementarity",
+ "gates": {
+  "P1": false,
+  "P2": true,
+  "P3": true,
+  "P4": false,
+  "P5": true,
+  "P6": true
+ },
+ "arms": {
+  "complementarity": 0.5090224603765935,
+  "popularity": 0.48022696206492294,
+  "sequence": 0.7941178641268083,
+  "geometry": 0.6993085118069162,
+  "electrostatics": 0.5849369815926087,
+  "sterics": 0.6645462109772674
+ },
+ "spearman": {
+  "sequence": -0.08249519348012244,
+  "geometry": -0.07408603723740728,
+  "electrostatics": -0.04807705884387077,
+  "sterics": -0.06411485122893146
+ },
+ "filter": {
+  "shrink": 0.019221642145230144,
+  "recall": 0.9729707837104797
+ },
+ "p4_folds": [
+  {
+   "w": 0.1,
+   "fused": 0.8263340271588412,
+   "delta": 0.006454782396871841,
+   "sem": 0.0036460213989920067
+  },
+  {
+   "w": 0.1,
+   "fused": 0.807373816658825,
+   "delta": 0.014142523144304702,
+   "sem": 0.00387252028078093
+  }
+ ],
+ "solo_terms": {
+  "charge": 0.506537366944587,
+  "hbond": 0.5115159257408478,
+  "hydrophobic": 0.549801358167137,
+  "size_fit": 0.43278172536276494,
+  "sulfur": 0.5139281650423375
+ },
+ "term_regret": {
+  "charge": {
+   "solo": 0.506537366944587,
+   "without": 0.5101674613020467,
+   "regret": -0.0011450009254532242,
+   "sem": 0.003170816254880661
+  },
+  "hbond": {
+   "solo": 0.5115159257408478,
+   "without": 0.5113151746026732,
+   "regret": -0.0022927142260797343,
+   "sem": 0.003715500328456124
+  },
+  "hydrophobic": {
+   "solo": 0.549801358167137,
+   "without": 0.4822144109489837,
+   "regret": 0.02680804942760976,
+   "sem": 0.0037204306131060167
+  },
+  "size_fit": {
+   "solo": 0.43278172536276494,
+   "without": 0.537926169553611,
+   "regret": -0.02890370917701757,
+   "sem": 0.002805434768205674
+  },
+  "sulfur": {
+   "solo": 0.5139281650423375,
+   "without": 0.5032894626328812,
+   "regret": 0.005732997743712279,
+   "sem": 0.0023207830100487542
+  }
+ },
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/esm_enzymes.npz",
+    "bytes": 6475346,
+    "hash": "f23e386cab80d238",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/struct_enzymes.npz",
+    "bytes": 410607,
+    "hash": "6cd642194f3083c0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/elecster_enzymes.npz",
+    "bytes": 257828,
+    "hash": "036f02c7c74b0d3e",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2171,
+   "used": 1989,
+   "selection": "all",
+   "fraction": 0.9161676646706587
+  },
+  "seed": 16300,
+  "controls": [
+   "the literal presence-filter claim gated separately from the count-based one",
+   "frequency-matched contests, popularity reported alongside",
+   "independence measured against every existing block",
+   "the fusion weight fitted on one half of the enzymes and scored on the other",
+   "per-term regret, so a passing total cannot hide four dead terms"
+  ],
+  "note": "atom-level pairwise complementarity between protein surface and candidate",
+  "warnings": []
+ },
+ "seconds": 51.13262367248535,
+ "log": [
+  "========================================================================================================",
+  "  ATOM-LEVEL COMPLEMENTARITY: a score of the PAIR, not of the protein",
+  "========================================================================================================",
+  "",
+  "     8,428 non-currency candidates | median 7 H-bond atoms, heteroatom fraction 0.318, 2,062 carry sulfur",
+  "",
+  "P1 THE FILTER CLAIM, MEASURED",
+  "     >= 1 H-bond atom(s): keeps  98.1% of candidates, 97.30% of true answers",
+  "     >= 2 H-bond atom(s): keeps  95.1% of candidates, 93.93% of true answers",
+  "     >= 4 H-bond atom(s): keeps  75.2% of candidates, 68.79% of true answers",
+  "     the literal rule (needs >= 1 N/O/F): removes 1.9% of candidates, retains 97.30% of answers",
+  "     the presence filter is NOT a shortlist. It removes 1.9% of candidates, far under the 20% bar, because 98.1% of biological metabolites already contain N or O. Atom PRESENCE does not discriminate; atom COUNTS and ratios might, and P2 tests those.",
+  "     P1 FAIL",
+  "     34,901 mini-contests | 2,062 homology clusters",
+  "     fold 0 arms computed [14s]",
+  "     fold 1 arms computed [14s]",
+  "     fold 2 arms computed [14s]",
+  "     fold 3 arms computed [15s]",
+  "     fold 4 arms computed [15s]",
+  "",
+  "P2 DOES COMPLEMENTARITY SCORE ABOVE CHANCE, alone?",
+  "     sequence           0.7941",
+  "     geometry           0.6993",
+  "     sterics            0.6645",
+  "     electrostatics     0.5849",
+  "     complementarity    0.5090",
+  "     popularity         0.4802",
+  "     complementarity minus popularity: +0.0288 sem 0.0055 = +5.3 sem",
+  "     a pairwise chemical score with no learning and no graph beats chance.",
+  "     P2 PASS",
+  "",
+  "P3 IS IT INDEPENDENT of the four existing blocks?",
+  "     complementarity vs sequence         -0.0825",
+  "     complementarity vs geometry         -0.0741",
+  "     complementarity vs electrostatics   -0.0481",
+  "     complementarity vs sterics          -0.0641",
+  "     it is close to orthogonal to everything already in the merge, which is what loop 163d showed decides whether a block earns its place.",
+  "     P3 PASS",
+  "",
+  "P4 DOES IT ADD TO THE FOUR-BLOCK MERGE? weight held out on halves",
+  "       fold 0->1: w=0.1 | fused 0.8263 vs 163d 0.8199 | delta +0.0065 sem 0.0036",
+  "       fold 1->0: w=0.1 | fused 0.8074 vs 163d 0.7932 | delta +0.0141 sem 0.0039",
+  "     complementarity adds +0.0103 against a 3-sem bar of 0.0113.",
+  "     P4 FAIL",
+  "",
+  "P5 WHICH TERM CARRIES IT",
+  "     charge         alone 0.5065 | without it 0.5102 | regret -0.0011 (droppable)",
+  "     hbond          alone 0.5115 | without it 0.5113 | regret -0.0023 (droppable)",
+  "     hydrophobic    alone 0.5498 | without it 0.4822 | regret +0.0268 (load-bearing)",
+  "     size_fit       alone 0.4328 | without it 0.5379 | regret -0.0289 (droppable)",
+  "     sulfur         alone 0.5139 | without it 0.5033 | regret +0.0057 (droppable)",
+  "     P5 PASS",
+  "",
+  "P6 WHAT THIS CANNOT SHOW",
+  "     Elemental formulas carry no connectivity: an N in an amine and an N in a nitrile are",
+  "     the same atom here, so 'can hydrogen bond' is an upper bound on every candidate.",
+  "     Surface composition is a whole-protein average, not the composition of a binding site.",
+  "     The P4 weight is fitted on DEV enzymes; the locked test split is still untouched.",
+  "     P6 PASS",
+  "",
+  "========================================================================================================",
+  "  P1  FAIL",
+  "  P2  PASS",
+  "  P3  PASS",
+  "  P4  FAIL",
+  "  P5  PASS",
+  "  P6  PASS",
+  "  4/6   [51s]",
+  "========================================================================================================"
+ ]
+}
