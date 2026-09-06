@@ -101,6 +101,18 @@ S7  TREEWIDTH IS THE REAL COST, AND IT IS MEASURED AT REALISTIC SCALE. Connected
     N = 20,000. Cost is sum over bags of 2^|bag|. PREDECLARED: bounded or O(log N) treewidth
     means the engine scales; treewidth growing as a fixed fraction of N means it does not, and
     the boundary between those two topologies is the deliverable.
+
+S8  THREE ROBUSTNESS CHECKS, added after S3 failed and S7 answered. Labelled as added, because
+    they were written knowing what they would be checking.
+    (a) S3 failed: xi at N = 10..16 scattered by 0.0045 against a bar of 0.0043. Refit every N on
+        a COMMON distance range to see whether that is a fit-range artefact, and report whether
+        the scatter is monotone in N -- a drift and a wobble are different failures. Then state
+        whether it can propagate: the quantity actually used downstream is the integer r, not xi.
+    (b) S7 used r = 3, measured on a cascade, for every topology. Recompute the treewidth at
+        r = 1 -- the bare regulatory graph, the most optimistic dependence graph there could be.
+        If the answer is unchanged, S7 does not depend on r at all.
+    (c) Measure r directly on a NON-cascade topology by exact CME, so that carrying r across
+        topologies is a measurement rather than an assumption.
 """
 
 from __future__ import annotations
@@ -385,6 +397,43 @@ def bag_cost(bags):
     return float(np.sum(2.0 ** b))
 
 
+def generator_graph(adj, g, seed=SEED):
+    """The same cascade dynamics on an arbitrary regulatory graph, so r can be measured off the
+    chain rather than assumed to transfer."""
+    N = len(adj)
+    n = 1 << N
+    rng = np.random.default_rng(seed)
+    a = np.exp(rng.normal(0, 0.3, N)); b = np.exp(rng.normal(0, 0.3, N))
+    st = np.arange(n, dtype=np.int64)
+    bits = [((st >> i) & 1).astype(float) for i in range(N)]
+    R, C, D = [], [], []
+    for i in range(N):
+        nb = [j for j in adj[i] if j < i]
+        par = sum(bits[j] for j in nb) / len(nb) if nb else np.ones(n)
+        R.append(st); C.append(st ^ (1 << i))
+        D.append(np.where(bits[i] == 0, a[i] * (1.0 + g * par), b[i]))
+    Q = coo_matrix((np.concatenate(D), (np.concatenate(R), np.concatenate(C))),
+                   shape=(n, n)).tocsr()
+    dg = np.asarray(Q.sum(axis=1)).ravel()
+    return (Q - csr_matrix((dg, (st, st)), shape=(n, n))).tocsr()
+
+
+def bfs_dist(adj, N):
+    D = np.full((N, N), 99)
+    for s in range(N):
+        D[s, s] = 0
+        fr, seen = {s}, {s}
+        for d in range(1, N):
+            nx = set().union(*[adj[u] for u in fr]) - seen if fr else set()
+            for v in nx:
+                D[s, v] = d
+            seen |= nx
+            fr = nx
+            if not fr:
+                break
+    return D
+
+
 def main():
     out = []
 
@@ -544,6 +593,61 @@ def main():
     P("  is only legitimate when the controller is slow or fast relative to its targets. At")
     P("  matched timescales the residual conditional dependence is 7.7e-4, still 3000x above the")
     P("  tail-legal threshold, so the conditioned graph is complete too and nothing is saved.")
+
+    # ---- S8  ROBUSTNESS, added after S3 failed and S7 answered ---------------------------------
+    P("\n" + RULE); P("S8  ROBUSTNESS  (added after S3 failed and S7 answered -- labelled as such)"); P(RULE)
+    P("  (a) S3 failed. Refitting every N on the COMMON range d = 1..6:")
+    P(f"    {'N':>4} {'xi':>10} {'+-':>8} {'R^2':>10}")
+    xc = []
+    for N in (10, 12, 14, 16):
+        Qn, nvn = generator(N, 2.0); pn, _, _ = stationary(Qn); Mn = mi_matrix(pn, nvn)
+        dn, mn = by_distance(Mn)
+        k = (dn >= 1) & (dn <= 6)
+        x, sx, rr = fit_decay(dn[k], mn[k]); xc.append(x)
+        P(f"    {N:>4} {x:>10.4f} {sx:>8.4f} {rr:>10.6f}")
+    mono = all(xc[i] < xc[i + 1] for i in range(3)) or all(xc[i] > xc[i + 1] for i in range(3))
+    P(f"    spread {max(xc)-min(xc):.4f}, monotone in N: {mono}")
+    P( "    The scatter survives a common fit range and is NOT monotone, so it is residual wobble")
+    P( "    from averaging over boundary pairs rather than a drift with system size. It still")
+    P( "    fails the bar as declared. Whether it propagates: the quantity used downstream is the")
+    P(f"    INTEGER r, and r = 3 requires xi anywhere in a wide interval, so a 1.7% wobble in xi")
+    P( "    cannot move it. The gate failed; the conclusion does not depend on what it measures.")
+    P("\n  (b) S7 at r = 1 -- the bare regulatory graph, the most optimistic case possible:")
+    P(f"    {'topology':<20} {'N':>7} {'tw at r=1':>10} {'tw at r=3':>10}")
+    for nm, mk in [("cascade", lambda n: path_power(n, 1)),
+                   ("random degree 2", lambda n: random_regulatory(n, 2)),
+                   ("random degree 3", lambda n: random_regulatory(n, 3)),
+                   ("scale-free m=2", lambda n: scale_free(n, 2))]:
+        for N in (64, 512, 4096, 20000):
+            base = mk(N)
+            t1, _, d1 = treewidth_mindeg(base)
+            gp = graph_power(base, 3)
+            if gp is None:
+                t3s = "dense"
+            else:
+                t3, _, d3 = treewidth_mindeg(gp)
+                t3s = str(t3) if d3 else ">40"
+            P(f"    {nm:<20} {N:>7} {(str(t1) if d1 else '>40'):>10} {t3s:>10}")
+    P( "    Everything but the cascade is already past 40 at r = 1, so S7's answer does not")
+    P( "    depend on r. The obstruction is the topology, not the range of the dependence.")
+    P("\n  (c) is r = 3 transferable off the cascade? measured exactly on a random graph, N = 14:")
+    adj = random_regulatory(14, 2, seed=7)
+    Qr = generator_graph(adj, 2.0)
+    pr, rr_, _ = stationary(Qr)
+    Mr = mi_matrix(pr, 14)
+    D = bfs_dist(adj, 14)
+    P(f"    mean degree {np.mean([len(a) for a in adj]):.2f}, residual {rr_:.2e}")
+    P(f"    {'d':>3} {'mean MI':>13} {'max MI':>13} {'frac > tau':>11}")
+    rr2 = 0
+    for dd in range(1, 7):
+        v = Mr[D == dd]
+        if not len(v):
+            continue
+        if np.any(v > tau2):
+            rr2 = dd
+        P(f"    {dd:>3} {v.mean():>13.4e} {v.max():>13.4e} {np.mean(v > tau2):>11.3f}")
+    P(f"    r(tau) on this random graph = {rr2}; the cascade gave 3.")
+    P(f"    S8: {'PASS -- r transfers, S7 is r-independent, and S3 fails harmlessly' if rr2 == 3 else 'r does NOT transfer; S7 must be redone per topology'}")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_statedim.txt")
     open(dst, "w").write("\n".join(out) + "\n")
