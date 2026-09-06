@@ -65,6 +65,32 @@ A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?
   the earlier energy-related results ARE affected and must be requalified.
 
 =================================================================================================
+A7  THE MASS-BALANCE AUDIT
+=================================================================================================
+  reactions with parseable formulas checked: 7863
+  elementally IMBALANCED: 152 (1.9%)
+  Such a reaction lets the optimiser create atoms: it breaks conservation of matter, not
+  merely of free energy.
+
+=================================================================================================
+A8  THE DECISIVE TEST -- CAN IT GROW ON NOTHING?
+=================================================================================================
+  maximum biomass with every exchange, demand and sink closed: 1.202481e+02 /h
+  against open-medium growth 370.382723 /h  (32.5% of it)
+  FAIL -- the model builds a cell out of nothing
+  Set overlap could not have shown this: shared reactions only mean shared central
+  metabolism. Growth in a sealed box shows the solution can be MANUFACTURED.
+
+=================================================================================================
+A9  THE REQUALIFICATION
+=================================================================================================
+  with the 152 imbalanced reactions removed:
+    sealed-box biomass : -0.000000e+00 /h   (was 1.202481e+02)
+    open-medium growth : 1.688875 /h   (was 370.382723, ratio 0.0046)
+  Sealed-box growth is removed but open growth changes by 99.5%, so every Recon3D-derived result in this
+  build order must be requalified by that amount.
+
+=================================================================================================
 Active transport is paid for in the stoichiometry and unconstrained in direction. The first
 is why this model is not getting transport for free; the second is why it can still make
 energy from nothing. Only the second is a defect, and it belongs to the reconstruction.

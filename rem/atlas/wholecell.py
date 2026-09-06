@@ -214,8 +214,10 @@ def main():
     lb = np.array([r["lower_bound"] for r in R], float)
     ub = np.array([r["upper_bound"] for r in R], float)
     for j, r in enumerate(R):
-        if r["id"].startswith("EX_"):
+        if r["id"].startswith(("EX_", "SK_", "DM_")):     # SK_/DM_ were leaking; see recon.py
             lb[j] = 0.0
+        if r["id"].startswith(("SK_", "DM_")):
+            ub[j] = 0.0
     for k, v in MEDIUM.items():
         if k in idx:
             lb[idx[k]] = v

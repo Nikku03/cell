@@ -120,7 +120,7 @@ def sealed_bounds(R):
     lb = np.array([r["lower_bound"] for r in R], float)
     ub = np.array([r["upper_bound"] for r in R], float)
     for j, r in enumerate(R):
-        if r["id"].startswith(("EX_", "DM_", "sink_")):
+        if r["id"].startswith(("EX_", "DM_", "SK_", "sink_")):   # SK_ is Recon3D's sink prefix
             lb[j] = ub[j] = 0.0
     return lb, ub
 
@@ -130,8 +130,10 @@ def open_bounds(R):
     ub = np.array([r["upper_bound"] for r in R], float)
     idx = {r["id"]: j for j, r in enumerate(R)}
     for j, r in enumerate(R):
-        if r["id"].startswith("EX_"):
+        if r["id"].startswith(("EX_", "SK_", "DM_")):
             lb[j] = 0.0
+        if r["id"].startswith(("SK_", "DM_")):
+            ub[j] = 0.0
     for k, v in MEDIUM.items():
         if k in idx:
             lb[idx[k]] = v
@@ -154,8 +156,8 @@ def imbalanced(R, M):
     mf = {m["id"]: m.get("formula", "") for m in M}
     bad, checked = [], 0
     for j, r in enumerate(R):
-        if r["id"].startswith(("EX_", "DM_", "sink_", "BIOMASS")):
-            continue
+        if r["id"].startswith(("EX_", "DM_", "SK_", "sink_", "BIOMASS")):
+            continue   # boundary reactions are unbalanced BY DESIGN; SK_ is the sink prefix
         tot = collections.Counter()
         ok = True
         for met, co in r["metabolites"].items():

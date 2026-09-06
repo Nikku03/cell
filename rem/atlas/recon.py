@@ -142,8 +142,14 @@ def bounds_for(R, medium, richer=False):
     ub = np.array([r["upper_bound"] for r in R], float)
     idx = {r["id"]: j for j, r in enumerate(R)}
     for j, r in enumerate(R):
-        if r["id"].startswith("EX_"):
-            lb[j] = 0.0                      # close every uptake, then reopen the medium
+        # CORRECTED. This closed only EX_ reactions, leaving Recon3D's 101 SK_ sinks and 145 DM_
+        # demands open, which supplied metabolites for free: growth came out 370.4/h against
+        # 1.689/h once they are closed, so 99.5% of it was fed by the leak rather than by the
+        # medium. The exclusion list said "sink_" and Recon3D writes "SK_".
+        if r["id"].startswith(("EX_", "SK_", "DM_")):
+            lb[j] = 0.0
+        if r["id"].startswith(("SK_", "DM_")):
+            ub[j] = 0.0
     for k, v in medium.items():
         if k in idx:
             lb[idx[k]] = v * (10.0 if richer else 1.0)
