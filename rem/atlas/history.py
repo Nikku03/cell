@@ -77,6 +77,15 @@ R6  THE MATCHED CONTROL. Condition on L lags of a RANDOM NON-HUB GENE instead of
     If that works as well, the gain comes from adding conditioning variables and not from the
     controller's history, and R2 says nothing about controllers.
 
+R8  COST AT FIXED ACCURACY AGAINST HUB DEGREE  (added after R7, and labelled). R7 as first run
+    compared the three routes on a SIX-target star, where route 1 is exact for 2^6 = 128 and
+    therefore wins outright -- and the run's closing sentence, that route 3 is the only one
+    reaching 1% affordably, was not supported by its own table. The comparison was rigged by
+    system size. The costs scale differently in the hub degree k: route 1's exact point is 2^k,
+    route 2's error at fixed width worsens with k, and route 3's cost is 2^(L+2) with NO k in it.
+    R8 sweeps k and reports the cheapest configuration of each route that reaches 1%, which is
+    the comparison that decides the question at genome scale, where SP1 has k = 484.
+
 R7  ALL THREE ROUTES ON ONE AXIS, same system, same observable. This is the deliverable: how much
     accuracy is reachable by each route, and at what compute. Routes that cannot reach a given
     accuracy at any cost must be shown as not reaching it, rather than omitted from the plot.
@@ -341,9 +350,48 @@ def main():
         cur = lag_joint(Qs, pis, Ns, L, dt)
         e3 = abs(conjunctive(history_approx(cur, Ns, list(range(Ns))), Ns) - t_exs) / t_exs
         P(f"    {'3  history L=' + str(L) + ', dt=' + str(dt):<34} {2**(L+2):>12} {e3:>13.3e}")
-    P("\n  Route 1 has only two points on a star: condition on the hub alone, or be exact at 2^N.")
-    P("  Route 2 buys accuracy slowly because the hub clique defeats every small width. Route 3")
-    P("  is the only one whose curve reaches 1% at a cost a genome-scale engine could pay.")
+    P("\n  READ THIS TABLE CAREFULLY, because at THIS system size it favours route 1: being exact")
+    P(f"  costs only 2^{Ns} = {2**Ns} here. That is an artefact of a six-target star and not a")
+    P("  result. The three costs scale differently in the hub degree k -- route 1's exact point is")
+    P("  2^k, route 2's error at fixed width worsens with k, and route 3's cost has no k in it at")
+    P("  all. R8 makes that comparison; this table alone must not be used to rank the routes.")
+
+    # ---- R8  COST AT FIXED ACCURACY AGAINST HUB DEGREE -----------------------------------------
+    P("\n" + RULE); P("R8  COST AT FIXED ACCURACY vs HUB DEGREE  (added after R7, labelled)"); P(RULE)
+    P("  The question genome scale actually asks: to hold 1% tail error, how does each route's")
+    P("  cost grow as the controller acquires more targets? SP1 has 484.")
+    P(f"    {'k targets':>10} {'route 1':>22} {'route 2':>22} {'route 3':>22}")
+    for k in (4, 6, 8, 10):
+        Qk = star(k, 3.0, 1.0, boff=4.0)
+        pk, _, _ = stationary(Qk)
+        tk = conjunctive(target_marginal(pk, k), k)
+        # route 1: r=1, else exact at r=2
+        c1 = lag_joint(Qk, pk, k, 0, 0.1)
+        e1k = abs(conjunctive(history_approx(c1, k, list(range(k))), k) - tk) / tk
+        r1s = "4 (r=1)" if e1k <= 0.01 else f"2^{k} = {2**k} (exact)"
+        # route 2: smallest width reaching 1%
+        Mk = mi_matrix(pk, k + 1)
+        Wk = {i: {j: Mk[i, j] for j in range(k + 1)} for i in range(k + 1)}
+        r2s = f">2^{k+1}"
+        for w in range(1, k + 1):
+            pa, order, dr = bounded_elimination(complete_graph(k + 1), w, weight=Wk)
+            e2k = abs(conjunctive(target_marginal(approx_dist(pk, k + 1, pa, order), k), k) - tk) / tk
+            if e2k <= 0.01:
+                r2s = f"2^{w+1} = {2**(w+1)} (w={w})"
+                break
+        # route 3: smallest L reaching 1%
+        r3s = ">2^14"
+        for dt, L in [(0.3, 4), (0.2, 6), (0.15, 8), (0.12, 10), (0.10, 12)]:
+            cur = lag_joint(Qk, pk, k, L, dt)
+            e3k = abs(conjunctive(history_approx(cur, k, list(range(k))), k) - tk) / tk
+            if e3k <= 0.01:
+                r3s = f"2^{L+2} = {2**(L+2)} (L={L})"
+                break
+        P(f"    {k:>10} {r1s:>22} {r2s:>22} {r3s:>22}")
+    P("\n  Route 1's exact column doubles with every target the controller acquires; at SP1's 484")
+    P("  it is 2^484. Route 3's cost does not move with k at all -- the controller's history is")
+    P("  the same object however many genes read it. That, and not the six-target table above, is")
+    P("  why route 3 is the one that survives to genome scale.")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_history.txt")
     open(dst, "w").write("\n".join(out) + "\n")
