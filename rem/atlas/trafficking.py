@@ -167,8 +167,10 @@ def main():
     P(f"  {2*len(cand)} verification solves in {time.time()-t0:.0f}s")
     ns = len(sens)
     ntr_s = sum(1 for j in sens if is_transport(R[j]))
-    P(f"\n  sensitive reactions above {THRESH:g}: {ns}"
-      f"   {'CENSORED -- every probe was sensitive' if ns >= len(cand) else 'not censored'}")
+    label = ("no candidates -- the dual screen found nothing to probe" if not cand
+             else "CENSORED -- every probe was sensitive" if ns >= len(cand)
+             else "not censored")
+    P(f"\n  sensitive reactions above {THRESH:g}: {ns}   {label}")
     if ns:
         obs = ntr_s / ns
         bt = binomtest(ntr_s, ns, base_frac)

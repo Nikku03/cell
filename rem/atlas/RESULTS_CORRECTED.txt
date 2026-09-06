@@ -1,0 +1,70 @@
+=================================================================================================
+CORRECTED NUMBERS AFTER THE LEAKY-MEDIUM FIX
+=================================================================================================
+Every Recon3D-derived module in this build order closed only EX_ reactions, leaving Recon3D's
+101 SK_ sinks and 145 DM_ demands open to supply metabolites for free. The exclusion list said
+"sink_"; Recon3D writes "SK_". All four bounds builders now close EX_, SK_ and DM_, and everything
+below was rerun on the corrected model.
+
+    quantity                                   leaky            sealed        change
+    ------------------------------------------------------------------------------------
+    open-medium growth (recon)               370.383 /h        1.689 /h       219x lower
+    coupled growth (wholecell)                 0.649 /h        0.616 /h        -5%
+    plain FBA growth (wholecell W4)          370.383 /h        1.689 /h       219x lower
+
+    recon.py  reactions with a realised sensitivity     8            0
+    recon.py  R4 degeneracy control                  PASS         FAIL
+    recon.py  R8 top-20 overlap across variants    6/20, 8/20   0/20, 0/20
+
+    wholecell k_elong (ribosome speed)          +0.977180    +0.920381
+    wholecell proteome budget                   +0.038796    +0.085279
+    wholecell k_dp, non-metabolic proteome      -0.010216    -0.010159
+    wholecell best individual kcat              +0.000775    +0.000005
+    wholecell ribosome speed / best kcat          1,261x     184,076x
+
+    regulation count at phi=0 (1e-3 threshold)        20            0
+    regulation flux-proportional, all phi          20-24        0, 0, 0
+    regulation uniform/random at phi=0.85          24, 22       41, 40
+
+    trafficking sensitive set                    pending    0 (no candidates at all)
+
+=================================================================================================
+WHAT DIED
+=================================================================================================
+recon.py's central metabolic result is GONE, not reduced. With a properly sealed medium no
+individual enzyme capacity binds: growth is limited by nutrient uptake alone, so d(growth)/d(kcat)
+is zero for all 5,938 enzyme-catalysed reactions. The eight named rates -- GAPD, ATPS4mi, NMNAT,
+AKGDm, ENO, PGMT, TALA, DRPA -- were an artefact of a cell being fed through 246 open boundary
+reactions, which created internal bottlenecks that do not exist when the medium is the only supply.
+R4 now fails outright and R8's overlap is 0/20 under both variants, so there is no list to quote.
+
+trafficking.py's question is unanswerable for the same reason. The dual screen returned ZERO
+candidates -- 0 verification solves -- so there is no sensitive set to split into transport and
+internal, and the 39.9%-baseline comparison has nothing to compare. (The run printed "CENSORED"
+for this, which was a labelling bug: an empty candidate list is the opposite of censoring. Fixed.)
+
+=================================================================================================
+WHAT SURVIVED, AND GOT STRONGER
+=================================================================================================
+wholecell.py's conclusion is intact and now far more extreme. Ribosome speed scores +0.920381
+against a best individual kcat of +0.000005 -- a ratio of 184,076x, where the leaky model gave
+1,261x. Translation capacity binds in all eight W7 variants, and the model is MORE responsive than
+before, not less: dividing every catalytic rate by ten now costs 42% of growth against 26% in the
+leaky version. So "the whole-cell answer is set by allocation, not by any individual rate" does not
+merely survive the correction, it is the only thing left standing.
+
+regulation.py's picture is cleaner than it was. At the optimum with a proper medium NOTHING is
+enzyme-limited, so the count is 0. Forcing the cell off its optimum CREATES enzyme limitations --
+41 and 40 reactions at phi=0.85 under the uniform and random programmes -- while the
+flux-proportional programme stays at 0 throughout. That is a more interpretable result than the
+20-25 the leaky model gave: a growth-maximising cell on a limiting medium is uptake-limited and has
+no internal bottleneck, and a misallocated cell manufactures its own.
+
+=================================================================================================
+THE GATE THAT SHOULD HAVE CAUGHT THIS
+=================================================================================================
+recon.py's R2 exists to check that the medium actually binds. It passed on the leaky model because
+it tested two things that were both true while the cell was fed from elsewhere: that growth fell
+below the all-open value (755 -> 370), and that glucose sat at its bound. Necessary conditions,
+treated as sufficient. The test it needed was the one activetransport.py's A8 eventually supplied
+by accident -- seal everything and check that growth goes to zero.
