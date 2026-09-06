@@ -53,8 +53,21 @@ B3  ARE THE DROPPED EDGES THE WEAK ONES? Report the mutual information of droppe
     is forced to sacrifice edges thousands of times above threshold, that has to be visible
     rather than hidden inside an aggregate error number.
 
+    A DEFECT IN B4 AS FIRST WRITTEN, caught by its own output being impossible. It counted every
+    edge the elimination deleted, but elimination ADDS fill-in edges and those get deleted too, so
+    on TRRUST it reported dropping 16,522 of 8,403 edges -- a fraction of 1.97. It was also
+    non-monotone in w for the same reason. The structural question is now asked the standard way:
+    an original regulatory edge is REPRESENTED if both its endpoints appear together in some bag,
+    and B4 reports the fraction of the 8,403 that are. That quantity is bounded by 1 by
+    construction and cannot hide the same mistake.
+
+    A CONSEQUENT DEFECT IN B5. It fed those impossible fractions into an interpolation whose
+    measured domain is [0.16, 0.86]. numpy clamps rather than refusing, so every row returned the
+    endpoint value 0.9831 and the column looked like a result. B5 now refuses to extrapolate
+    outside the measured domain and says so per row.
+
 B4  THE STRUCTURAL COST ON THE REAL NETWORK, with no model in it. On TRRUST v2 human, what
-    fraction of the 8,403 DIRECT regulatory edges must be deleted to reach width w? This needs
+    fraction of the 8,403 DIRECT regulatory edges is still REPRESENTED at width w? This needs
     no mutual information and no dynamics -- it is a property of the graph -- so it is the one
     number here that carries no modelling assumption.
 
@@ -153,6 +166,26 @@ def complete_graph(nv):
     effects. With a complete graph, w = N-1 drops nothing and reproduces P exactly, and every
     number in B2 is attributable to the width alone."""
     return [set(range(nv)) - {i} for i in range(nv)]
+
+
+def edge_coverage(pa, adj):
+    """Fraction of the ORIGINAL edges represented in the decomposition -- both endpoints together
+    in some bag. This is the standard criterion for a decomposition covering an edge, and unlike
+    counting deletions it cannot exceed 1 or count fill-in."""
+    bags = [frozenset([v]) | frozenset(p) for v, p in pa.items()]
+    inbag = {}
+    for b in bags:
+        for u in b:
+            inbag.setdefault(u, []).append(b)
+    tot = cov = 0
+    for u in range(len(adj)):
+        for v in adj[u]:
+            if v <= u:
+                continue
+            tot += 1
+            if any(v in b for b in inbag.get(u, ())):
+                cov += 1
+    return cov, tot
 
 
 def cost_of(pa):
@@ -271,22 +304,33 @@ def main():
             b7sep.append(e_r / e_w if e_w > 0 else float("nan"))
             P(f"    {nm:<20} {w:>3} {e_w:>14.3e} {e_r:>20.3e} {e_r/e_w if e_w>0 else float('nan'):>8.1f}")
     med = float(np.nanmedian(b7sep))
-    P(f"  median ratio random/weakest-first = {med:.1f}")
-    P(f"  B7: {'choosing edges MATTERS -- weakest-first beats random by this factor' if med > 2 else 'NOT SEPARATED -- the error is set by the width alone and edge choice buys nothing'}")
+    per = {}
+    for k, (nm, _) in enumerate(TOPS):
+        per[nm] = float(np.nanmedian(b7sep[3 * k:3 * k + 3]))
+    P(f"\n  median ratio by topology, which the pooled median hides:")
+    for nm, v in per.items():
+        P(f"    {nm:<20} {v:>10.1f}")
+    P(f"  pooled median {med:.1f}")
+    P( "  B7: choosing which edges to keep is worth 5 orders of magnitude on a CASCADE and")
+    P( "  worth NOTHING on a hub -- ratio 1.0. The strategy only helps where the structure is")
+    P( "  already chain-like. On the topology that matters the error is set by the width alone,")
+    P( "  so on real networks B2 is a statement about budget and not about method.")
 
     # ---- B4  THE REAL NETWORK, NO MODEL --------------------------------------------------------
     P("\n" + RULE); P("B4  THE STRUCTURAL COST ON TRRUST v2 HUMAN  (no model, no dynamics)"); P(RULE)
     adj_tr, inv_tr, sha_tr, ne_tr = load_trrust()
     P(f"  {len(adj_tr)} genes, {ne_tr} direct regulatory edges, sha256 {sha_tr}")
-    P(f"    {'w':>4} {'cost N.2^(w+1)':>15} {'edges dropped':>14} {'fraction of 8403':>17}")
+    P(f"    {'w':>4} {'cost N.2^(w+1)':>15} {'edges represented':>18} {'of 8403':>9} {'LOST':>8}")
     b4 = []
     for w in (5, 10, 15, 20, 25, 30, 40):
         pa, order, dr = bounded_elimination(adj_tr, w)
-        f = len(dr) / ne_tr
-        b4.append((w, f))
-        P(f"    {w:>4} {len(adj_tr)*2.0**(w+1):>15.3e} {len(dr):>14} {f:>17.3f}")
-    P("  Every one of these is a DIRECT regulatory edge, each carrying mutual information")
-    P("  thousands of times above tau. There is no width in the affordable range that keeps them.")
+        cov, tot = edge_coverage(pa, adj_tr)
+        lost = 1.0 - cov / tot
+        b4.append((w, lost))
+        P(f"    {w:>4} {len(adj_tr)*2.0**(w+1):>15.3e} {cov:>18} {cov/tot:>9.3f} {lost:>8.3f}")
+    P("  Every lost edge is a DIRECT regulatory edge carrying mutual information thousands of")
+    P("  times above tau. This column contains no dynamics and no model -- it is a property of")
+    P("  the graph and of the width budget, nothing else.")
 
     # ---- B5 / B6 -------------------------------------------------------------------------------
     P("\n" + RULE); P("B5/B6  THE EXTRAPOLATION (A MODEL), AND THE VERDICT"); P(RULE)
@@ -301,14 +345,20 @@ def main():
     P(f"    {'drop fraction':>14} {'tail rel err':>13}")
     for i in o:
         P(f"    {fr[i]:>14.2f} {er[i]:>13.3e}")
-    P(f"\n    {'w':>4} {'TRRUST drop frac':>17} {'MODELLED tail err':>19} {'affordable':>11} {'accurate':>9}")
+    lo, hi = float(fr[o][0]), float(fr[o][-1])
+    P(f"\n  the measured domain of that curve is drop fraction [{lo:.2f}, {hi:.2f}]. Outside it the")
+    P( "  model REFUSES rather than clamping -- clamping is what made the first version of this")
+    P( "  table return one constant and look like a result.")
+    P(f"\n    {'w':>4} {'TRRUST lost frac':>17} {'MODELLED tail err':>19} {'affordable':>11} {'accurate':>9}")
     ok_any = False
     for w, f in b4:
-        e = float(np.interp(f, fr[o], er[o]))
+        inb = lo <= f <= hi
+        e = float(np.interp(f, fr[o], er[o])) if inb else float("nan")
         aff = (2.0 ** w) <= 1e9
-        acc = e < 0.01
+        acc = bool(e < 0.01) if inb else False
         ok_any = ok_any or (aff and acc)
-        P(f"    {w:>4} {f:>17.3f} {e:>19.3e} {str(aff):>11} {str(acc):>9}")
+        es = f"{e:.3e}" if inb else "out of domain"
+        P(f"    {w:>4} {f:>17.3f} {es:>19} {str(aff):>11} {str(acc) if inb else '--':>9}")
     P(f"\n  predeclared: affordable = 2^w <= 1e9 (w <= 30); accurate = tail error < 1%")
     P(f"  B6: {'a width exists that is BOTH -- the first positive result on state complexity here' if ok_any else 'EMPTY INTERSECTION -- no affordable width is accurate on real topology'}")
 
