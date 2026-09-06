@@ -16,31 +16,31 @@ W1  THE PARTS CONNECT
 =================================================================================================
 W3  THE FIXED POINT EXISTS AND IS FOUND
 =================================================================================================
-  bisection: 21 linear programs in 36.1s
-  coupled growth rate mu = 0.616044 /h   (doubling time 1.13 h)
+  bisection: 21 linear programs in 36.5s
+  coupled growth rate mu = 0.616435 /h   (doubling time 1.12 h)
   PASS (a fixed point was located)
 
 =================================================================================================
 W4  THE COUPLING CHANGES THE ANSWER
 =================================================================================================
   plain FBA, no enzyme or proteome constraint : mu = 1.688875 /h
-  coupled metabolism + expression             : mu = 0.616044 /h
-  ratio 0.3648   PASS -- expression genuinely constrains metabolism
+  coupled metabolism + expression             : mu = 0.616435 /h
+  ratio 0.3650   PASS -- expression genuinely constrains metabolism
 
 =================================================================================================
 W2  THE LINEAR PROGRAM IS WELL POSED
 =================================================================================================
-  worst |S v| = 1.02e-12   PASS
+  worst |S v| = 5.46e-12   PASS
   protein used 0.275000 g/gDW of the 0.275000 available to metabolism + ribosome   binding: False
-  ribosome 0.251408 g/gDW = 50.28% of total protein  (mammalian cells are a few per cent)
+  ribosome 0.251559 g/gDW = 50.31% of total protein  (mammalian cells are a few per cent)
 
 =================================================================================================
 W5  WHICH LAYER LIMITS
 =================================================================================================
-  enzyme-capacity constraints binding : 1007 of 5938
+  enzyme-capacity constraints binding : 1013 of 5938
   proteome-budget shadow price        : -0.000000e+00
-  translation-capacity shadow price   : -1.602080e+00
-  ribosome mass fraction of the metabolic proteome: 0.9142
+  translation-capacity shadow price   : -1.603084e+00
+  ribosome mass fraction of the metabolic proteome: 0.9148
   the binding limitation is: translation capacity
 
 =================================================================================================
@@ -48,21 +48,21 @@ W6  THE WHOLE-CELL SENSITIVITY
 =================================================================================================
   Screening by dual, then verifying by finite difference on the bisection -- the two-stage
   pattern recon.py's R3 forced, since LP duals fire falsely at degenerate optima.
-  bisection tolerance 1e-09 on mu = 0.616044 with a 5%
-  perturbation puts the RESOLUTION FLOOR at |d log mu / d log k| = 3.33e-08.
+  bisection tolerance 1e-09 on mu = 0.616435 with a 5%
+  perturbation puts the RESOLUTION FLOOR at |d log mu / d log k| = 3.32e-08.
   Anything at or below that is noise, not a sensitivity, and is marked so.
                         rate   d log mu / d log k    
-               kcat HMR_0767             0.000005    
-                kcat RE1573M             0.000005    
-          kcat FAOXC123C102m             0.000005    
-                  kcat r1477             0.000005    
-                  kcat r0743             0.000005    
-               kcat HMR_2684             0.000005    
-               kcat HMR_3234             0.000005    
-                   kcat ADSK             0.000005    
-    k_elong (ribosome speed)             0.920381    
-             proteome budget             0.085279    
-  k_dp of the non-metabolic proteome            -0.010159    
+               kcat HMR_0767             0.000016    
+          kcat FAOXC123C102m             0.000016    
+                  kcat r1477             0.000016    
+                  kcat r0743             0.000016    
+             kcat NACHEXA8ly             0.000016    
+               kcat HMR_2684             0.000016    
+               kcat HMR_3234             0.000016    
+                kcat GLDBRAN             0.000016    
+    k_elong (ribosome speed)             0.920829    
+             proteome budget             0.084673    
+  k_dp of the non-metabolic proteome            -0.010141    
   A global parameter that outranks every individual kcat means the whole-cell answer is
   set by allocation, not by any one enzyme.
 
@@ -70,14 +70,14 @@ W6  THE WHOLE-CELL SENSITIVITY
 W7  THE ASSUMPTIONS DO NOT CARRY THE CONCLUSION
 =================================================================================================
                              variant          mu  ratio to base                  limiting
-                                base    0.616028         1.0000      translation capacity
-                     kcat median x10    0.668823         1.0857      translation capacity
-                     kcat median /10    0.355591         0.5772      translation capacity
-                  proteome budget x2    0.644165         1.0456      translation capacity
-                   ribosome speed x2    1.126465         1.8285      translation capacity
-          non-metabolic fraction 0.7    0.332031         0.5390      translation capacity
-          non-metabolic fraction 0.2    0.898743         1.4589      translation capacity
-                   ribosome speed /2    0.317444         0.5153      translation capacity
+                                base    0.616394         0.9999      translation capacity
+                     kcat median x10    0.668884         1.0851      translation capacity
+                     kcat median /10    0.357544         0.5800      translation capacity
+                  proteome budget x2    0.644409         1.0454      translation capacity
+                   ribosome speed x2    1.127869         1.8297      translation capacity
+          non-metabolic fraction 0.7    0.332336         0.5391      translation capacity
+          non-metabolic fraction 0.2    0.899475         1.4592      translation capacity
+                   ribosome speed /2    0.317627         0.5153      translation capacity
 
 =================================================================================================
 W8  WHAT IS ABSENT

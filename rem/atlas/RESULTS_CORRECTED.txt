@@ -68,3 +68,31 @@ it tested two things that were both true while the cell was fed from elsewhere: 
 below the all-open value (755 -> 370), and that glucose sat at its bound. Necessary conditions,
 treated as sufficient. The test it needed was the one activetransport.py's A8 eventually supplied
 by accident -- seal everything and check that growth goes to zero.
+
+=================================================================================================
+A CORRECTION TO THIS FILE: "184,076x" IS NOT REPRODUCIBLE TO THE PRECISION IT WAS QUOTED AT
+=================================================================================================
+The table above reports "wholecell ribosome speed / best kcat  184,076x". An independent rerun of
+the same module on the same sealed model gives 57,552x. Nothing changed but the LP's choice among
+alternative optima.
+
+    quantity                          run 1        run 2      swing
+    k_elong (ribosome speed)       0.920381     0.920829      0.05%   stable
+    best individual kcat           0.000005     0.000016       3.2x   NOT stable
+    ratio                           184,076       57,552       3.2x   NOT stable
+
+The numerator is stable to four digits. The denominator is a degenerate tie -- eight kcats share
+the top value to six decimal places, and the eight reaction NAMES differ between runs (RE1573M and
+ADSK in one, NACHEXA8ly and GLDBRAN in the other). This is the same degeneracy that recon.py's R4
+gate was built to catch, appearing in a place no gate was watching: not in a ranked list, but in
+the denominator of a ratio quoted from one.
+
+WHAT SURVIVES, stated at the precision the evidence supports: the best individual kcat scores
+between 5e-6 and 1.6e-5, and ribosome speed scores 0.92. The gap is FOUR TO FIVE ORDERS OF
+MAGNITUDE. That is the claim. "184,076x" implied six significant figures on a quantity whose
+denominator moves by a factor of three between solver runs, and it should not have been written
+that way. The conclusion -- allocation dominates any individual catalytic rate -- is untouched;
+its precision was overstated.
+
+This is ledger S in miniature: a number without its applicability domain. The domain here is the
+solver's vertex selection, and inside that domain the last five digits are noise.

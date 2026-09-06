@@ -40,8 +40,8 @@ A3  WHICH REACTIONS CARRY THE LOOP
 =================================================================================================
 A4  DOES THE GROWTH SOLUTION ACTUALLY USE IT?
 =================================================================================================
-  open-medium growth 1.688875 /h, carrying flux through 1488 reactions
-  overlap with the sealed-box loop: 994 reactions (88.8% of the loop)
+  open-medium growth 1.688875 /h, carrying flux through 1521 reactions
+  overlap with the sealed-box loop: 999 reactions (89.2% of the loop)
   READING: SUBSTANTIAL overlap -- earlier energy-related results are contaminated
 
 =================================================================================================

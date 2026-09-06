@@ -35,7 +35,7 @@ T2/T3  ARE TRANSPORTERS OVER-REPRESENTED AMONG THE RATES THAT MATTER?
   probing the top 0 by dual, verifying each in BOTH directions at threshold 0.001
   0 verification solves in 0s
 
-  sensitive reactions above 0.001: 0   CENSORED -- every probe was sensitive
+  sensitive reactions above 0.001: 0   no candidates -- the dual screen found nothing to probe
 
 =================================================================================================
 T4  THE SECRETORY CHAIN  (does multi-step transit change the tail?)
