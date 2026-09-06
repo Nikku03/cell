@@ -74,7 +74,7 @@ from rem.atlas.hybrid_tune import RULE
 from rem.atlas.recon import MODEL, MEDIUM, fetch_if_missing
 from rem.atlas.wholecell import parse_gpr, MW_PROT, KCAT_MEDIAN, KCAT_SIGMA, PROT_TOTAL
 
-PHIS = (0.0, 0.05, 0.15, 0.35, 0.60, 0.85)
+PHIS = (0.0, 0.35, 0.85)
 BUDGET_METAB = PROT_TOTAL * 0.55
 RECON_EIGHT = {"GAPD", "ATPS4mi", "NMNAT", "AKGDm", "ENO", "PGMT", "TALA", "DRPA"}
 SEED = 20260906
@@ -125,13 +125,16 @@ def solve_at(S, lb, ub, kcat, enz, obj_idx, phi, e_ref, maximise=True):
                    bounds=list(zip(lo, hi)), method="highs"), nR, nE
 
 
-def sensitive_set(S, lb, ub, kcat, enz, obj_idx, phi, e_ref, res, mu, n_probe=40):
+THRESHOLDS = (1e-3, 1e-4, 1e-6)
+
+
+def sensitive_set(S, lb, ub, kcat, enz, obj_idx, phi, e_ref, res, mu, n_probe=150):
     """Dual screens, finite differences in BOTH directions decide. recon.py's R3 measured 97.7%
     of nonzero duals as ghosts at a degenerate optimum, so the count is never taken from duals."""
     nE = len(enz)
     marg = np.asarray(res.ineqlin.marginals)[:nE]
     cand = [k for k in np.argsort(-np.abs(marg))[:n_probe] if abs(marg[k]) > 1e-12]
-    real, ghosts = [], 0
+    real, ghosts, mags = [], 0, []
     for k in cand:
         j = int(enz[k])
         d = 0.0
@@ -143,11 +146,12 @@ def sensitive_set(S, lb, ub, kcat, enz, obj_idx, phi, e_ref, res, mu, n_probe=40
             m2 = -r2.fun
             if m2 > 0 and mu > 0:
                 d = max(d, abs(np.log(m2) - np.log(mu)) / abs(np.log(f)))
+        mags.append((j, d))
         if d > 1e-9:
             real.append(j)
         else:
             ghosts += 1
-    return real, ghosts, len(cand)
+    return real, ghosts, len(cand), mags
 
 
 def main():
@@ -189,8 +193,8 @@ def main():
     results = {}
     for pname, e_ref in programmes.items():
         P("\n" + RULE); P(f"REGULATORY PROGRAMME: {pname}"); P(RULE)
-        P(f"  {'phi':>6}{'mu':>11}{'mu/mu0':>9}{'floors active':>15}{'probed':>8}"
-          f"{'ghosts':>8}{'SENSITIVE':>11}{'overlap with recon 8':>22}")
+        P(f"  {'phi':>6}{'mu':>11}{'mu/mu0':>9}{'floors':>13}{'probed':>7}"
+          f"{'>1e-3':>8}{'>1e-4':>8}{'>1e-6':>8}{'recon':>8}")
         rows = []
         for phi in PHIS:
             t0 = time.time()
@@ -201,13 +205,15 @@ def main():
             mu = -res.fun
             E = res.x[nR:]
             nfloor = int((E <= phi * e_ref + 1e-12).sum()) if phi > 0 else 0
-            real, ghosts, nprobe = sensitive_set(S, lb, ub, kcat, enz, obj_idx, phi, e_ref,
-                                                 res, mu)
+            real, ghosts, nprobe, mags = sensitive_set(S, lb, ub, kcat, enz, obj_idx, phi,
+                                                      e_ref, res, mu)
             ids = {R[j]["id"] for j in real}
             ov = len(ids & RECON_EIGHT)
-            rows.append((phi, mu, nfloor, nprobe, ghosts, len(real), ov, ids))
-            P(f"  {phi:>6.2f}{mu:>11.6f}{mu/max(mu0,1e-12):>9.4f}{nfloor:>15}{nprobe:>8}"
-              f"{ghosts:>8}{len(real):>11}{f'{ov}/8':>22}   ({time.time()-t0:.0f}s)")
+            at = [sum(1 for _, d in mags if d > t) for t in THRESHOLDS]
+            cens = "CENSORED" if len(real) >= nprobe else ""
+            rows.append((phi, mu, nfloor, nprobe, ghosts, len(real), ov, ids, at, mags))
+            P(f"  {phi:>6.2f}{mu:>11.6f}{mu/max(mu0,1e-12):>9.4f}{nfloor:>13}{nprobe:>7}"
+              f"{at[0]:>8}{at[1]:>8}{at[2]:>8}{f'{ov}/8':>8} {cens:<9}({time.time()-t0:.0f}s)")
         results[pname] = rows
 
     # ---- G1, G2, G3, G5, G6 ----------------------------------------------------------------------
@@ -228,11 +234,12 @@ def main():
         P("  and a per-reaction enzyme variable, so exact agreement is not expected.")
 
     P("\n" + RULE); P("G3  THE DELIVERABLE"); P(RULE)
+    P("  counts at the 1e-3 threshold, which is the level that could move a factor-of-two answer")
     P(f"  {'programme':>34}" + "".join(f"{'phi='+str(p):>10}" for p in PHIS))
     for pname, rows in results.items():
-        d = {r[0]: r[5] for r in rows}
+        d = {r[0]: r[8][0] for r in rows}
         P(f"  {pname:>34}" + "".join(f"{d.get(p, '--'):>10}" for p in PHIS))
-    allc = [r[5] for rows in results.values() for r in rows]
+    allc = [r[8][0] for rows in results.values() for r in rows]
     if allc:
         P(f"\n  count across every programme and phi: min {min(allc)}, max {max(allc)}")
         if max(allc) <= 2 * max(min(allc), 8):
@@ -255,7 +262,7 @@ def main():
 
     P("\n" + RULE); P("G6  THE PROGRAMME IS NOT THE RESULT"); P(RULE)
     for pname, rows in results.items():
-        cs = [r[5] for r in rows]
+        cs = [r[8][0] for r in rows]
         P(f"  {pname:>34}: counts {cs}")
     P("  If the three programmes disagree, the conclusion belongs to the programme imposed and")
     P("  not to regulation in general, and must be reported that way.")
