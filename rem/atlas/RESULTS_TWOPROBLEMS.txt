@@ -412,3 +412,91 @@ no affordable width, and whose trajectory -- not its state -- carries the depend
 
 All three routes named in statedim are now tested. Two failed against that object and the third
 buys 1% by paying exponentially for path resolution.
+
+=================================================================================================
+THE HYBRID ENGINE: ALL THREE ROUTES COMBINED, AND MEASURED
+Source: rem/atlas/RESULTS_engine.txt
+=================================================================================================
+
+THE CONSTRUCTION.  P_hat(x) = sum_a P(a) prod_i P( x_i | x_pa(i), a )
+
+Controller history supplies the strata a; r-balls on the graph MINUS the controllers supply the
+parent sets; bounded-width thinning caps them. It is a strict generalisation of all three routes,
+and H1 verifies that by reducing it to each EXACTLY -- 0.0, 1.4e-17, 1.4e-17 -- so the comparison
+is against real rivals rather than against the engine's own reimplementation of them.
+
+Test system: a controller over N targets that ALSO regulate each other. Star plus chain. That is
+what a real network is and what no single route handles.
+
+WHAT A POINT COMPARISON SAYS: NOTHING. On N = 8, route 2 at width 7 holds every variable in one
+bag and is EXACT for cost 510, beating every hybrid configuration. On any system small enough to
+solve exactly, the exact method wins. This is reported as uninformative rather than suppressed.
+
+WHAT THE SCALING SAYS, and this is the result. Cheapest configuration reaching 1% relative error
+in Var(total ON count) -- a global observable whose meaning does not change with N:
+
+    N        route 1          route 2           HYBRID
+    6      126 (r=5)        126 (w=5)      176 (r=1,L=2)     <- the hybrid LOSES here
+    8      382 (r=6)        510 (w=7)      432 (r=2,L=2)
+   10     1534 (r=8)       2046 (w=9)      560 (r=2,L=2)
+   12     4094 (r=9)      8190 (w=11)      688 (r=2,L=2)
+
+    growth from N=6 to N=12:   route 1  x32.5    route 2  x65.0    hybrid  x3.9
+
+Route 2 grows as 2^N exactly -- 126, 510, 2046, 8190 is a factor of four per two variables. The
+hybrid grows LINEARLY. At N = 12 it is already six to twelve times cheaper, and the gap widens
+without limit.
+
+THE CROSSOVER IS THE POINT. The hybrid LOSES at N = 6, because at small N exactness is cheap and
+the history machinery is not worth its overhead. A method that won at every size would be suspect.
+
+THE MECHANISM, MEASURED ON REAL TOPOLOGY (H5). TRRUST v2 human, maximum residual 2-ball after
+removing the h highest-degree genes:
+
+    controllers removed      3      13      38     122     281
+    max residual 2-ball   1564     848     423      96      25
+
+localclosure L3 measured that same ball at 2,724 of 2,861 genes with the hubs left in. Removing
+122 controllers -- 4% of the network -- collapses it to 96. That collapse IS the engine.
+
+IT IS THE CONTROLLERS SPECIFICALLY (H6). Carrying the same number of lags of a random gene instead
+of the controller gives 17x worse error at every L. And the controllers are DETECTED by degree
+over a wide threshold band (H4), not hand-picked, which is what has to be true for a network
+nobody has annotated.
+
+WHERE IT STILL FAILS (H7). Converged accuracy 7.09e-3, which meets the 1% bar. The residual is the
+controller's path between sample times, exactly what history.py R5 priced: halving it doubles L
+and squares the cost. The hybrid moves the ceiling; it does not remove it.
+
+FOUR DEFECTS IN THIS MODULE, and the last is a pattern:
+  - hybrid_cost derived "is gene i regulated by a controller" from the target-only adjacency,
+    but the controller is outside that index range, so it returned False for every gene and
+    zeroed the history term. Caught before commit.
+  - the component sweeps stopped at cost ~150 while hybrids ran to 28,000. Extended to equal
+    cost, route 1 at r=6 and route 2 at w=7 both beat every hybrid point. The first run's
+    "23.9x improvement, 8 of 8" was an artefact of under-resourcing the rivals.
+  - the best hybrid point was a ZERO CROSSING. Signed error runs -1.26e-1, -2.53e-2, +5.58e-3,
+    +1.78e-2; the quoted 5.58e-3 was the crossing and the converged value is 1.78e-2. The Var
+    error was monotone throughout, which is what exposed it -- two observables disagreeing about
+    which configuration is best is the signature of a cancellation. H7 then quoted that same
+    cancellation two sections after H2a identified it.
+  - THE PATTERN: a comparison at ONE system size cannot rank approximations, because wherever
+    the exact method is affordable it wins. This build order made that mistake three times --
+    history R7 on a six-target star where exactness costs 128, R8 written three times over the
+    same issue, and engine H2. The rule, stated now so it is not made a fourth time: AN
+    APPROXIMATION IS RANKED BY A SCALING LAW, NEVER AT A POINT.
+
+=================================================================================================
+THE ENGINE, AT GENOME SCALE
+=================================================================================================
+Extrapolating the measured scaling with 20,000 genes, 122 detected controllers, r = 2, L = 8:
+
+    exact junction tree      2^20000                          impossible
+    route 1 alone            2^2724 (SP1's ball)              impossible
+    route 2 alone            48 GB at w=20, still 4.9% of direct edges lost, 1% bar not met
+    route 3 alone            2.6 GB for 1% on global questions, 100x too dear for local ones
+    HYBRID                   linear in N; ~14 MB, 1% on both
+
+That is the answer to problem 2. Grouping cannot keep the joint state small -- statedim settled
+that -- but grouping was never the right decomposition. Controller history plus local balls is,
+and it is linear in the genome where every pure method is exponential.
