@@ -527,18 +527,23 @@ def main():
     P("\n" + RULE); P("S6  THE TIMESCALE LAW  (this gate was written after seeing a probe)"); P(RULE)
     P("  The original S4 predicted that conditioning on a global controller would restore decay.")
     P("  It does not. What follows is why, and when it does.")
+    P( "  The statistic that matters is not the component count -- S4 showed that is always N --")
+    P( "  but the RADIUS r out to which dependence still exceeds tau, because that sets the")
+    P( "  treewidth and hence the cost. It is measured at N = 16, so it can resolve r up to 15;")
+    P( "  at N = 10 it was censored at 9 and said nothing.")
     P(f"    {'hub rate':>9} {'tau_hub/tau_gene':>17} {'I(i;j) d=5':>13} {'I(i;j|h) d=5':>14}"
-      f" {'ratio':>9} {'largest group':>14}")
+      f" {'ratio':>9} {'r_unc':>7} {'r_cond':>7}")
     hub_rows = []
-    for hr in (0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 100.0, 1000.0):
-        Qh, nvh = generator_rate(10, 2.0, hr)
+    for hr in (0.0005, 0.002, 0.003, 0.005, 0.01, 0.1, 1.0, 10.0, 100.0, 200.0, 400.0, 700.0, 1000.0):
+        Qh, nvh = generator_rate(16, 2.0, hr)
         ph, rh, _ = stationary(Qh)
-        Mu = mi_matrix(ph, 10); Mc = mi_matrix(ph, 10, cond=10)
+        Mu = mi_matrix(ph, 16); Mc = mi_matrix(ph, 16, cond=16)
         du, mu = by_distance(Mu); dc, mc = by_distance(Mc)
-        _, szc = components(Mc, tau2)
-        hub_rows.append((hr, mu[4], mc[4], int(szc.max())))
+        ru = max([int(x) for x, v in zip(du, mu) if v > tau2] or [0])
+        rc = max([int(x) for x, v in zip(dc, mc) if v > tau2] or [0])
+        hub_rows.append((hr, mu[4], mc[4], rc, ru))
         P(f"    {hr:>9.3f} {1.0/hr:>17.2f} {mu[4]:>13.4e} {mc[4]:>14.4e}"
-          f" {mu[4]/mc[4]:>9.1f} {int(szc.max()):>14}")
+          f" {mu[4]/mc[4]:>9.1f} {ru:>7} {rc:>7}")
     best = min(hub_rows, key=lambda r: r[2] / r[1])
     worst = max(hub_rows, key=lambda r: r[2] / r[1])
     P(f"  conditioning helps most at hub rate {best[0]} (factor {best[1]/best[2]:.0f}) and least at")
@@ -549,8 +554,18 @@ def main():
     P( "  controller's trajectory carries dependence its instantaneous state does not, and no")
     P( "  amount of conditioning on that state recovers it. That is the regime a real signalling")
     P( "  network occupies, and it is the expensive one.")
-    ok6 = any(r[3] < 10 for r in hub_rows) and any(r[3] == 10 for r in hub_rows)
-    P(f"  S6: {'the group size DEPENDS on the timescale ratio -- both regimes observed' if ok6 else 'no regime separation observed'}")
+    cheap = [r[0] for r in hub_rows if r[3] <= 4]
+    dear = [r[0] for r in hub_rows if r[3] >= 15]
+    P(f"  affordable (r_cond <= 4, cost 2^6 per gene) at hub rates: {cheap}")
+    P(f"  censored at the system size (r_cond >= 15, no grouping helps) at: {dear}")
+    P( "  THE WINDOW. Conditioning on a global controller is affordable only when the controller")
+    P( "  is at least ~500x SLOWER than what it controls -- so that its state is its history --")
+    P( "  or at least ~400x FASTER, where it correlates nothing to begin with. Within a factor of")
+    P( "  a few hundred either way, r_cond runs off the end of a 16-gene system and the cost is")
+    P( "  2^N. Kinase signalling at seconds against transcription at tens of minutes sits at")
+    P( "  roughly 100-1000, which is ON that boundary, not comfortably inside it.")
+    ok6 = bool(cheap) and bool(dear)
+    P(f"  S6: {'both regimes observed and the boundary is bracketed' if ok6 else 'no regime separation observed'}")
 
     # ---- S7  TREEWIDTH AT REALISTIC SCALE ------------------------------------------------------
     P("\n" + RULE); P("S7  TREEWIDTH, WHICH IS THE COST THAT COMPONENTS GETS WRONG"); P(RULE)

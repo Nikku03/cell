@@ -90,6 +90,22 @@ mine, none were the model's, and all four are recorded here rather than quietly 
 (4) THE INTEGRATOR DROVE STATES NEGATIVE and x**n produced NaN. Integration is now done in
     log coordinates, du/dt = F(e^u)/e^u, which keeps every state positive by construction.
 
+(5) TWO FURTHER DEFECTS FOUND IN THE REPAIRED RUN, recorded here rather than re-tuned away.
+    C7 FAILED: only 1 of 3 exit-repressed configurations was rejected. The other two had
+    cond(G) ~ 1e11 and metabolites at 2e7 -- plainly pathological against the canonical runs'
+    20 to 750 -- and slipped under bars I set at 1e12 and 1e8. The bars were about six orders
+    too loose. They are NOT retuned here, because retuning a bar to catch the case that
+    embarrassed it is how a gate stops being evidence. What is stated instead is the
+    containment: C3 runs only the canonical wiring, so no rejected or borderline configuration
+    enters the measurement, and the C7 failure does not touch the result.
+
+    SWEEP B IS A SELECTED SAMPLE AT LARGE L. Rejections rise 0, 0, 1, 1, 2, 6, 9 out of 12 as
+    L goes 4..32, all "singular" -- long chains under full end-product repression become
+    numerically degenerate. So sweep B's negative exponent is fitted on a survivor population
+    that shrinks to 3 of 12. The tables now carry the rejection count, and the exponent is
+    quoted twice: on everything, and restricted to the range where at least 10 of 12 survive.
+    Only the restricted one is evidence.
+
 Also: a single lognormal parameter draw makes N90 a random variable, and the first run fitted an
 exponent to one sample per configuration, getting b = 0.58 +- 0.33 -- a number spanning both
 predeclared bands and therefore worth nothing. C3 now averages over independent seeds and fits
@@ -551,20 +567,20 @@ def main():
     P_("\n" + RULE); P_("C3  THE MEASUREMENT: does the important set grow with the parameter count?"); P_(RULE)
     P_("  every row is the mean over 12 independent lognormal parameter draws")
     P_("\n  sweep A: L = 8, controllers added to a fixed plant")
-    P_(f"    {'K':>4} {'P':>5} {'N90_J':>8} {'+-':>6} {'N90/P':>7} {'Npr_J':>8} {'+-':>6} {'N90_E':>8}")
+    P_(f"    {'K':>4} {'P':>5} {'kept':>5} {'rej':>4} {'N90_J':>8} {'+-':>6} {'N90/P':>7} {'Npr_J':>8} {'N90_E':>8}")
     for a in krows:
-        P_(f"    {a['K']:>4} {a['P']:>5} {a['n90_J']:>8.2f} {a['n90_J_se']:>6.2f}"
-           f" {a['n90_J']/a['P']:>7.3f} {a['npr_J']:>8.2f} {a['npr_J_se']:>6.2f} {a['n90_E']:>8.2f}")
+        P_(f"    {a['K']:>4} {a['P']:>5} {a['n']:>5} {a['rejected']:>4} {a['n90_J']:>8.2f}"
+           f" {a['n90_J_se']:>6.2f} {a['n90_J']/a['P']:>7.3f} {a['npr_J']:>8.2f} {a['n90_E']:>8.2f}")
     P_("\n  sweep B: K = L (every chain enzyme regulated), the plant itself grows")
-    P_(f"    {'L':>4} {'K':>4} {'P':>5} {'N90_J':>8} {'+-':>6} {'N90/P':>7} {'Npr_J':>8} {'+-':>6}")
+    P_(f"    {'L':>4} {'K':>4} {'P':>5} {'kept':>5} {'rej':>4} {'N90_J':>8} {'+-':>6} {'N90/P':>7} {'Npr_J':>8}")
     lrows = []
     for L in [4, 6, 8, 12, 16, 24, 32]:
         a = replicate(L, L)
         if a is None:
             P_(f"    {L:>4}  every replicate rejected"); continue
         lrows.append(a)
-        P_(f"    {L:>4} {a['K']:>4} {a['P']:>5} {a['n90_J']:>8.2f} {a['n90_J_se']:>6.2f}"
-           f" {a['n90_J']/a['P']:>7.3f} {a['npr_J']:>8.2f} {a['npr_J_se']:>6.2f}")
+        P_(f"    {L:>4} {a['K']:>4} {a['P']:>5} {a['n']:>5} {a['rejected']:>4} {a['n90_J']:>8.2f}"
+           f" {a['n90_J_se']:>6.2f} {a['n90_J']/a['P']:>7.3f} {a['npr_J']:>8.2f}")
     allr = krows + lrows
     bA, sA = fit_power([a["P"] for a in krows], [a["n90_J"] for a in krows])
     bB, sB = fit_power([a["P"] for a in lrows], [a["n90_J"] for a in lrows])
@@ -574,6 +590,16 @@ def main():
     P_(f"                  sweep B (grow the plant)   b = {bB:+.4f} +- {sB:.4f}")
     P_(f"                  pooled                     b = {bAll:+.4f} +- {sAll:.4f}")
     P_(f"  Npr_J ~ P^b     pooled                     b = {pA:+.4f} +- {qA:.4f}   (continuous measure)")
+    lo = [a for a in lrows if a["rejected"] <= 2]
+    if len(lo) >= 3:
+        bR, sR = fit_power([a["P"] for a in lo], [a["n90_J"] for a in lo])
+        P_(f"\n  RESTRICTED to the range where at least 10 of 12 replicates survive"
+           f" (L <= {max(a['L'] for a in lo)}):")
+        P_(f"    sweep B  b = {bR:+.4f} +- {sR:.4f}   over P = {min(a['P'] for a in lo)}"
+           f" to {max(a['P'] for a in lo)}, N90 = {min(a['n90_J'] for a in lo):.2f}"
+           f" to {max(a['n90_J'] for a in lo):.2f}")
+        P_( "    Only this one is evidence. The unrestricted fit runs over a survivor population")
+        P_( "    that shrinks to 3 of 12, and a selected sample cannot carry a scaling exponent.")
     lab = ("EXPLOSION" if bAll > 0.7 else "SPARSE" if bAll < 0.3 else "INTERMEDIATE")
     P_(f"  predeclared bands: b > 0.7 EXPLOSION, b < 0.3 SPARSE, else intermediate")
     P_(f"  C3: {lab}")
