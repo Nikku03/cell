@@ -24,19 +24,19 @@ V4  THE CENTRAL TEST: THE MEAN-MATCHED CONTROL
 =================================================================================================
   Division lowers the mean about threefold on its own, which would change any tail. The
   question is whether the cycle changes it BEYOND a stationary model matched on the mean.
-        a      b   cyc mean  stat mean    cyc P(<T)   stat P(<T)  log10 gap
-     9.19  23.68    103.789    118.300   4.7542e-03   1.7512e-03     0.4337
-    18.77   9.30     84.752     95.714   8.7115e-04   1.1565e-04     0.8769
-     7.53   9.22     33.708     38.062   2.3252e-01   1.5015e-01     0.1899
-    12.67  11.67     71.801     81.084   8.9910e-03   2.6379e-03     0.5325
-    14.09   4.76     32.612     36.824   1.7649e-01   8.6290e-02     0.3108
-    23.04  11.44    126.491    144.082   8.7826e-06   4.5904e-07     1.2818
-    13.54  11.21     73.703     83.232   6.5214e-03   1.7188e-03     0.5791
-     7.17  15.13     52.681     59.488   8.4448e-02   4.7484e-02     0.2500
-  8 genes in 75s
+        a      b   cyc mean  stat mean    cyc P(<T)   stat P(<T)  log10 gap  mean err
+     9.19  23.68    103.789    103.789   4.7542e-03   5.2166e-03     0.0403  6.50e-10
+    18.77   9.30     84.752     84.752   8.7115e-04   5.4660e-04     0.2024  8.89e-10
+     7.53   9.22     33.708     33.708   2.3252e-01   2.1693e-01     0.0301  5.27e-10
+    12.67  11.67     71.801     71.801   8.9910e-03   7.3212e-03     0.0892  6.67e-10
+    14.09   4.76     32.612     32.612   1.7649e-01   1.4878e-01     0.0742  2.21e-10
+    23.04  11.44    126.491    126.491   8.7826e-06   5.7371e-06     0.1849  7.75e-10
+    13.54  11.21     73.703     73.703   6.5214e-03   5.1388e-03     0.1035  4.70e-10
+     7.17  15.13     52.681     52.681   8.4448e-02   7.9942e-02     0.0238  2.81e-10
+  8 genes in 98s
 
   V1: all converged True, worst boundary mass 1.93e-16   PASS
-  V4: worst |log10 gap| between the cycling and the mean-matched stationary model: 1.2818 orders
+  V4: worst |log10 gap| between the cycling and the mean-matched stationary model: 0.2024 orders
   FAIL -- steady-state expression models MISSTATE the tail by this much, and
   expression.py's numbers inherit the error. Recorded, not explained away.
 
@@ -89,3 +89,37 @@ V6  WHAT IS STILL ABSENT AFTER THIS
   mathematics, because they have no stationary distribution to compute a rare event from.
 
 =================================================================================================
+
+=================================================================================================
+POST-RUN READING, THIRD RUN (comparator matched on the mean to 1e-9).  Hand-written.
+=================================================================================================
+
+MY PREVIOUS CLAIM WAS SIX TIMES TOO LARGE, AND IN THE WRONG DIRECTION. The formula-matched
+comparator left the means 13% apart and gave a worst gap of 1.2818 orders, which I recorded as
+"steady-state expression models UNDERSTATE the tail". With the comparator's removal rate solved so
+the means agree to about 5e-10, the worst gap is 0.2024 orders and there is no systematic
+direction at all -- three of the eight genes have the CYCLING tail lower than the stationary one:
+
+    a        b      cycling P(<T)   stationary P(<T)   gap      direction
+     9.19   23.68     4.7542e-03       5.2166e-03      0.0403   cycling LOWER
+    18.77    9.30     8.7115e-04       5.4660e-04      0.2024   cycling higher
+     7.53    9.22     2.3252e-01       2.1693e-01      0.0301   cycling higher
+    12.67   11.67     8.9910e-03       7.3212e-03      0.0892   cycling higher
+    23.04   11.44     8.7826e-06       5.7371e-06      0.1849   cycling higher
+     7.17   15.13     8.4448e-02       7.9942e-02      0.0238   cycling higher
+
+So most of what I reported as an effect of the cell cycle was an effect of comparing distributions
+with different means. The correction stands in the record beside the claim.
+
+V4 STILL FAILS, at 0.2024 orders against a 0.05 bar, and this residual is real: it is the SHAPE
+difference between a cycling and a stationary distribution at identical mean. A factor of 1.6 on a
+tail probability is worth knowing and is not nothing, but it is not the order-of-magnitude error I
+first reported, and expression.py's numbers inherit a factor of 1.6, not a factor of 19.
+
+V7 IS UNAFFECTED AND REMAINS THE MORE INTERESTING RESULT. Immediately after division the
+probability of running below threshold is 1.69x to 4.08x the cycle average. That is not a
+correction to a steady state -- no stationary model contains a phase at all, so it cannot represent
+a periodic window of elevated exposure however well its mean is matched.
+
+V5 IS UNAFFECTED: watching the cycle closes 21.8% and 22.2% of the two blind directions. Four
+fifths of what abundance assays cannot see is still unseen after the cell cycle is added.
