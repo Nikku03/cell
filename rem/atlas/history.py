@@ -86,6 +86,13 @@ R8  COST AT FIXED ACCURACY AGAINST HUB DEGREE  (added after R7, and labelled). R
     R8 sweeps k and reports the cheapest configuration of each route that reaches 1%, which is
     the comparison that decides the question at genome scale, where SP1 has k = 484.
 
+    A DEFECT IN R8 AS FIRST WRITTEN, found in its own output. It used P(all k targets ON) as the
+    observable, which gets RARER at every k -- so it raised the difficulty of the target while
+    sweeping the variable, and route 3 appeared to fail at k >= 6 for a reason that had nothing to
+    do with hub degree. The observable is now held FIXED at P(targets 0..3 all ON) for every k, so
+    the only thing changing across the sweep is the controller's degree. That is the comparison
+    the gate was supposed to make.
+
 R7  ALL THREE ROUTES ON ONE AXIS, same system, same observable. This is the deliverable: how much
     accuracy is reachable by each route, and at what compute. Routes that cannot reach a given
     accuracy at any cost must be shown as not reaching it, rather than omitted from the plot.
@@ -361,13 +368,18 @@ def main():
     P("  The question genome scale actually asks: to hold 1% tail error, how does each route's")
     P("  cost grow as the controller acquires more targets? SP1 has 484.")
     P(f"    {'k targets':>10} {'route 1':>22} {'route 2':>22} {'route 3':>22}")
+    KOBS = 4          # the observable is held FIXED across the sweep: P(targets 0..3 all ON)
+    P(f"  observable held FIXED at P(targets 0..{KOBS-1} all ON) for every k, so the only thing")
+    P( "  changing is the controller's degree.")
     for k in (4, 6, 8, 10):
         Qk = star(k, 3.0, 1.0, boff=4.0)
         pk, _, _ = stationary(Qk)
-        tk = conjunctive(target_marginal(pk, k), k)
+        mk = target_marginal(pk, k)
+        obs = lambda v: conjunctive(v, k, k=KOBS)
+        tk = obs(mk)
         # route 1: r=1, else exact at r=2
         c1 = lag_joint(Qk, pk, k, 0, 0.1)
-        e1k = abs(conjunctive(history_approx(c1, k, list(range(k))), k) - tk) / tk
+        e1k = abs(obs(history_approx(c1, k, list(range(k)))) - tk) / tk
         r1s = "4 (r=1)" if e1k <= 0.01 else f"2^{k} = {2**k} (exact)"
         # route 2: smallest width reaching 1%
         Mk = mi_matrix(pk, k + 1)
@@ -375,7 +387,7 @@ def main():
         r2s = f">2^{k+1}"
         for w in range(1, k + 1):
             pa, order, dr = bounded_elimination(complete_graph(k + 1), w, weight=Wk)
-            e2k = abs(conjunctive(target_marginal(approx_dist(pk, k + 1, pa, order), k), k) - tk) / tk
+            e2k = abs(obs(target_marginal(approx_dist(pk, k + 1, pa, order), k)) - tk) / tk
             if e2k <= 0.01:
                 r2s = f"2^{w+1} = {2**(w+1)} (w={w})"
                 break
@@ -383,11 +395,11 @@ def main():
         r3s = ">2^14"
         for dt, L in [(0.3, 4), (0.2, 6), (0.15, 8), (0.12, 10), (0.10, 12)]:
             cur = lag_joint(Qk, pk, k, L, dt)
-            e3k = abs(conjunctive(history_approx(cur, k, list(range(k))), k) - tk) / tk
+            e3k = abs(obs(history_approx(cur, k, list(range(k)))) - tk) / tk
             if e3k <= 0.01:
                 r3s = f"2^{L+2} = {2**(L+2)} (L={L})"
                 break
-        P(f"    {k:>10} {r1s:>22} {r2s:>22} {r3s:>22}")
+        P(f"    {k:>10} {r1s:>22} {r2s:>22} {r3s:>22}    (P={tk:.2e})")
     P("\n  Route 1's exact column doubles with every target the controller acquires; at SP1's 484")
     P("  it is 2^484. Route 3's cost does not move with k at all -- the controller's history is")
     P("  the same object however many genes read it. That, and not the six-target table above, is")
