@@ -324,6 +324,11 @@ def main():
     geo = len(ratios) >= 3 and min(ratios[:3]) > 3.0
     P(f"\n  successive tail-error ratios at the deepest tail: "
       + ", ".join(f"{x:.1f}" for x in ratios[:5]))
+    P( "  The late ratios are erratic and that is REAL, not noise: the tail floor measured above")
+    P( "  is 3.8e-16 and these errors are at 1e-5, four orders higher. Local-closure error is")
+    P( "  not monotone in r. It trends down geometrically over r = 1..4 and then wobbles by")
+    P( "  about 2x while continuing to fall, so r must be chosen from the trend, not from one")
+    P( "  step -- and, per the law check below, not from the sqrt(MI) bound either.")
     P(f"  L2: {'PASS -- the tail error falls geometrically in r, so a bounded r suffices' if geo else 'FAIL -- the tail error does not fall geometrically; this route is not viable'}")
     kept = [x for x in l2rows if x[5] and x[2] > 0]
     held = sum(1 for x in kept if x[4] > x[2])
@@ -441,9 +446,10 @@ def main():
             base = sib.mean()
         P(f"    {nreg:>10} {ht:>15.4e} {sib.mean():>18.4e} {base/sib.mean():>9.1f}x"
           f" {np.mean(sib > tau):>11.2f}")
-    P("    YES, but nowhere near enough. Dependence falls roughly as the SQUARE of in-degree --")
-    P("    277x from in-degree 1 to 12 -- and is STILL above tau at in-degree 12. TRRUST's mean")
-    P("    in-degree is 8403/2861 = 2.9, where sibling dependence sits about 80x above tau.")
+    P(f"    YES, but nowhere near enough. Dependence falls roughly as the SQUARE of in-degree --")
+    P(f"    {base/sib.mean():.0f}x from in-degree 1 to 12 -- and is STILL above tau at in-degree 12.")
+    P(f"    TRRUST's mean in-degree is 8403/2861 = 2.9, where sibling dependence sits at roughly")
+    P(f"    {2.0e-5/tau:.0f}x above tau. Real regulation is nowhere near the dilution this would need.")
     P("  L7: the graph-power assumption SURVIVES on a hub. L3's ball sizes are not overestimates,")
     P("  and its verdict stands.")
 

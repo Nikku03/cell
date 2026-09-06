@@ -133,3 +133,88 @@ timescales.
 FOR HONESTY. Two gates failed in this pair of modules and both are recorded rather than retuned:
 controller C7 (bars six orders too loose, contained) and statedim S3 (a real miss that does not
 propagate). One prediction of mine was made and lost before commit, and is kept as made.
+
+=================================================================================================
+ROUTE 1 OF 3 TESTED: THE BOUNDED GRAPH POWER.  IT FAILS, AND THE FAILURE IS SPECIFIC
+Source: rem/atlas/RESULTS_localclosure.txt
+=================================================================================================
+
+WHAT WAS TRIED. Not lifting a tree decomposition from G to G^r -- S8(b) already killed that, since
+treewidth is past 40 at r = 1. Instead, giving up exact marginalisation: if every dependence above
+tau is confined to distance r, factorise on r-balls,
+
+    P_hat(x) = prod_i P( x_i | x_{B_r(i) and earlier} )
+
+a Bayesian network whose cost is sum_i 2^(1+|pa_i|) -- linear in N, no treewidth term anywhere.
+
+THE APPROXIMATION WORKS. On a cascade, tested at three tail depths down to P = 1.3e-13:
+
+    r   max|pa|   tail rel err at P=1.3e-13    max error in any mean
+    1         1                    1.063e+00                5.0e-16
+    2         2                    4.604e-02                4.4e-16
+    3         3                    5.509e-03                6.1e-16
+    4         4                    1.190e-03                5.6e-16
+
+This is the sharpest instance of the bulk/tail split in this build order, and the cleanest,
+because here the bulk error is EXACTLY ZERO by construction -- the factorisation reproduces every
+marginal in the ball -- while the conjunctive event is wrong by 106% at r = 1. Six modules have
+now measured a bulk quantity right while the tail was wrong; this one measures it at machine
+precision against a 100% tail error in the same row.
+
+THE COST DOES NOT WORK, ON REAL TOPOLOGY. TRRUST v2 human, 2,861 genes, 8,403 edges:
+
+    r    median ball    90th    99th     max      gene at the max
+    1              3      12      62     480      SP1
+    2            118     615    1177    1813      CDKN1A
+    3           1381    2169    2532    2724      SP1
+
+The 3-ball around SP1 is 2,724 of 2,861 genes -- 95% of the network in one factor. Cost is set by
+the WORST ball, so the median of 1,381 is not a reprieve, and quoting it would be ledger S. The
+closure costs 2^2724 against a junction tree's 2^40+. The route does not merely fail to help; on
+real topology it is worse than what it replaces.
+
+HUB CONDITIONING DOES NOT RESCUE IT. Deleting the h highest-degree genes and conditioning:
+
+    h        max|B_2|   treewidth    total cost = 2^h x N x 2^max|B_2|
+    0            1813         >40                            4.6e+63
+   20             682         >40                            4.8e+69
+  200              44          23                            7.5e+76
+  400              14           3                            6.5e+67
+
+The ball sizes fall exactly as hoped -- 400 deletions take treewidth to 3 -- but 2^400 eats the
+saving many times over. There is no h that wins.
+
+THE ASSUMPTION UNDERNEATH WAS CHECKED, AND IT HELD. statedim's S5 verified "dependence graph =
+G^r" on a cascade and a random graph, never on a hub, and the whole cost verdict depends on two of
+SP1's 484 targets really being dependent above tau. Measured exactly (L7):
+
+    out-degree 4, 8, 14  ->  sibling MI 1.35e-4, 1.55e-4, 1.36e-4     FLAT
+    in-degree 1 .. 12    ->  sibling MI 1.50e-4 down to 4.89e-7       307x, and still above tau
+
+Out-degree does not dilute AT ALL: a hub with fourteen targets correlates them exactly as strongly
+as one with four, because its state is shared by all of them equally. In-degree does dilute, as
+roughly its square, but is still above tau at in-degree 12 -- and TRRUST's mean in-degree is 2.9,
+where sibling dependence sits ~80x above tau. So the ball sizes are not overestimates.
+
+WHAT THIS LEAVES. The failure is now specific rather than general, which is worth more than the
+route would have been:
+
+  - the r-ball FACTORISATION is sound and cheap in accuracy: r = 3 buys 0.55% error on a 1e-13
+    event with three-variable factors
+  - the r-ball GEOMETRY is what fails, and only because of hubs
+  - hubs cannot be conditioned away arithmetically (2^h), cannot be diluted away by out-degree,
+    and are not diluted enough by biological in-degree
+
+So the obstruction has been localised to one thing: a small number of very high out-degree
+regulators, whose targets are mutually dependent no matter how many of them there are. Any route
+that survives has to treat those specific vertices differently -- not by conditioning on their
+STATE, which costs 2^h and which statedim's S6 says is only legitimate at a 500x timescale
+separation anyway. The two remaining routes from statedim are untouched: bounded-width
+decomposition with measured error, and carrying controller history explicitly.
+
+ONE BOUND DID NOT SURVIVE. tail_err <= 20.23 sqrt(MI) fails in 5 of 16 rows where the MI is above
+its own numerical floor, so it cannot be used to CHOOSE r. r has to be chosen from a measured
+error curve. (L2 as first written compared against the law at every r including rows where the MI
+was below its floor -- a guard statedim's S2 had and this gate did not; both floors are now
+measured, the tail statistic's by solving the stationary equation twice from independent starts
+and differencing, which gives 3.8e-16.)
