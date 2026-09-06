@@ -42,6 +42,13 @@ WHAT THIS BUILD ORDER HAS LEARNED THAT IS WIRED IN HERE, so the same mistakes ar
 GATES, PREDECLARED BEFORE THE FIRST RUN
 =================================================================================================
 
+    X1 FAILED ON THE FIRST RUN AND THE FAILURE WAS REAL. With ligand and synthesis off the
+    sealed system retained 92.6% of its mass: unbound membrane receptor had no exit path at all,
+    because binding requires ligand and nothing degraded or internalised it otherwise. The fix is
+    constitutive internalisation, which is documented receptor biology -- so the audit found a
+    missing biological pathway, not a broken test. That is what a physics audit is for, and it is
+    why this stage runs before any number is computed.
+
 X1  PHYSICS AUDIT. Receptor number is conserved by every reaction except the two declared to
     change it (synthesis, degradation). Every propensity is non-negative on every reachable state.
     With ligand and synthesis both off the system must relax to exactly the empty state -- the
@@ -95,6 +102,12 @@ PARAMS = dict(
     k_on=1.2,       # ligand binding (scaled by ligand level L)
     k_off=0.4,
     k_int=0.9,      # active receptor internalises
+    k_int0=0.15,    # CONSTITUTIVE internalisation of unbound membrane receptor.
+                    # Added because X1 FAILED on the first run: without it Rm has no exit at all
+                    # (binding needs ligand, and there was no membrane turnover), so with ligand
+                    # and synthesis both off the sealed system retained 92.6% of its mass instead
+                    # of emptying. Constitutive internalisation is documented receptor biology,
+                    # so the audit found a missing pathway rather than a broken test.
     k_rec=0.5,      # endosome recycles to membrane
     k_degR=0.3,     # endosome degrades
     Ktot=2,
@@ -138,6 +151,8 @@ def reactions(spec, p, L, feedback=True, npro=0):
         lambda s: p["k_on"] * L * s[ix["Rm"]] if s[ix["Ra"]] < caps["Ra"] else 0.0, 0)
     add("unbinding", {"Ra": -1, "Rm": +1},
         lambda s: p["k_off"] * s[ix["Ra"]] if s[ix["Rm"]] < caps["Rm"] else 0.0, 0)
+    add("constitutive internalisation", {"Rm": -1, "Re": +1},
+        lambda s: p["k_int0"] * s[ix["Rm"]] if s[ix["Re"]] < caps["Re"] else 0.0, 0)
     add("internalisation", {"Ra": -1, "Re": +1},
         lambda s: p["k_int"] * s[ix["Ra"]] if s[ix["Re"]] < caps["Re"] else 0.0, 0)
     add("recycling", {"Re": -1, "Rm": +1},
@@ -317,9 +332,11 @@ def main():
     d = float(abs(Qa - Qb).max())
     b_ok = d < 1e-14
     P_(f"  (b) k_fb = 0 equals the open-loop generator: max|diff| = {d:.3e}   {'PASS' if b_ok else 'FAIL'}")
-    ph_full, _ = engine_promoters(Q, pi, states, ix, 1, "width", w=1)
-    # full-width engine on a 1-promoter marginal is the exact marginal
-    mg = promoter_marginal(pi, states, ix, 1); mg = mg / mg.sum()
+    spec2 = CORE + [("g0", 1), ("g1", 1)]
+    Q2, st2, id2, ix2, _ = build_generator(spec2, p, L=1.0, npro=2)
+    pi2, _, _ = stationary(Q2)
+    ph_full, _ = engine_promoters(Q2, pi2, st2, ix2, 2, "width", w=1)
+    mg = promoter_marginal(pi2, st2, ix2, 2); mg = mg / mg.sum()
     c_ok = float(np.abs(ph_full - mg).max()) < 1e-14
     P_(f"  (c) engine at full width reproduces the exact marginal: {np.abs(ph_full-mg).max():.3e}"
        f"   {'PASS' if c_ok else 'FAIL'}")
