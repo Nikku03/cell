@@ -126,14 +126,49 @@ from rem.atlas.engine import residual_graph
 TSV = os.path.join(os.path.dirname(__file__), "trrust_human.tsv")
 
 
-def signed_edges(path=TSV):
-    E = []
+def signed_edges(path=TSV, conflict="repression"):
+    """DEDUPLICATED to distinct directed pairs, which is defect C1.
+
+    TRRUST lists a (TF, target) pair once per supporting publication: 9,369 non-self records
+    collapse to 8,403 distinct pairs. The first version appended one regulatory factor PER RECORD,
+    so a pair supported by three papers had its Hill factor applied three times -- eleven of the
+    twelve subnetworks solved in the first run contained duplicates, NFKB1 at N=12 having seven
+    among twenty. Every accuracy number from that run was computed on kinetics the module did not
+    describe.
+
+    207 pairs carry BOTH Activation and Repression from different papers. That conflict was
+    previously resolved by dict-append order, which is to say by accident; the rule is now named
+    and is a parameter."""
+    rec = collections.defaultdict(set)
+    self_loops = 0
+    nrec = 0
     for ln in open(path, encoding="utf8", errors="replace"):
         f = ln.rstrip("\n").split("\t")
-        if len(f) < 3 or f[0] == f[1]:
+        if len(f) < 3:
             continue
-        E.append((f[0], f[1], f[2]))
-    return E
+        if f[0] == f[1]:
+            self_loops += 1
+            continue
+        nrec += 1
+        rec[(f[0], f[1])].add(f[2])
+    E = []
+    for (u, v), modes in rec.items():
+        if "Activation" in modes and "Repression" in modes:
+            m = {"repression": "Repression", "activation": "Activation",
+                 "unknown": "Unknown"}[conflict]
+        elif "Activation" in modes:
+            m = "Activation"
+        elif "Repression" in modes:
+            m = "Repression"
+        else:
+            m = "Unknown"
+        E.append((u, v, m))
+    E.sort()
+    return E, dict(records=nrec, pairs=len(E), self_loops=self_loops,
+                   dup=nrec - len(E),
+                   conflicts=sum(1 for v in rec.values()
+                                 if "Activation" in v and "Repression" in v),
+                   only_unknown=sum(1 for v in rec.values() if v == {"Unknown"}))
 
 
 def subnetwork(E, tf, n_targets, rs=7):
@@ -229,17 +264,32 @@ def main():
         out.append(s)
 
     tau = tau_for(1e-2)
-    E = signed_edges()
+    E, prov = signed_edges()
     adj, inv, sha, ne = load_trrust()
     n = len(adj)
     deg = np.array([len(a) for a in adj])
     sgn = collections.Counter(m for _, _, m in E)
+    outd = collections.Counter(u for u, v, _ in E)
+    outdeg = np.zeros(len(adj))
+    name2i = {g: i for i, g in inv.items()}
+    for gname, d in outd.items():
+        if gname in name2i:
+            outdeg[name2i[gname]] = d
 
     P(RULE); P("THE HYBRID ENGINE ON THE REAL HUMAN NETWORK"); P(RULE)
     P(f"  TRRUST v2 human: {n} genes, {ne} edges, sha256 {sha}")
-    P(f"  edge signs: " + ", ".join(f"{k} {v}" for k, v in sgn.most_common()))
-    P(f"  {100*sgn['Unknown']/sum(sgn.values()):.0f}% of edges carry NO sign -- T7 treats that as a")
-    P( "  factor, not a default.")
+    P(f"  provenance: {prov['records']} non-self records -> {prov['pairs']} DISTINCT directed"
+      f" pairs ({prov['dup']} duplicate records), {prov['self_loops']} self-loop rows dropped")
+    P(f"  {prov['conflicts']} pairs carry BOTH Activation and Repression from different papers;"
+      f" resolved by a NAMED rule, not by append order")
+    P(f"  edge signs after resolution: " + ", ".join(f"{k} {v}" for k, v in sgn.most_common()))
+    P(f"  unsigned: {prov['only_unknown']} of {prov['pairs']} distinct pairs"
+      f" ({100*prov['only_unknown']/prov['pairs']:.1f}%) carry only Unknown records."
+      f" Defect C2: this was previously quoted as 51% and 46% in three places, using a record")
+    P( "  count as the denominator. T7 treats the sign as a factor, not a default.")
+    P(f"  CONTROLLERS are detected by OUT-degree (defect C4: the prose said out-degree while the")
+    P( "  code thresholded total degree; 21 of the top-122 by total degree have out-degree ZERO")
+    P( "  and regulate nothing).")
     P( "  engine.py's genome-scale figure is already retracted; see the top of this file.")
 
     # ---- T1  NON-DEGENERACY --------------------------------------------------------------------
@@ -251,10 +301,10 @@ def main():
     P(f"    {'threshold':>10} {'|C|':>5} {'engine.py total':>17} {'corrected per-gene':>20} {'block':>10}")
     old_seq, new_seq = [], []
     for th in (400, 200, 100, 50, 25, 12, 6, 2):
-        C = {int(i) for i in np.nonzero(deg >= th)[0]}
+        C = {int(i) for i in np.nonzero(outdeg >= th)[0]}
         res = residual_graph(adj, C, n)
         pa, order, _ = bounded_elimination([ball(res, i, r0) - {i} for i in range(n)], w0)
-        kvec = np.array([len(adj[i] & C) for i in range(n)])
+        kvec = np.array([len(adj[i] & C) if i not in C else 0 for i in range(n)])
         per, blk = cost_real(pa, L0, kvec, len(C), n)
         old = float(sum(2.0 ** (1 + len(pa[i]) + (L0 + 1 if kvec[i] > 0 else 0)) for i in range(n)))
         old_seq.append(old); new_seq.append(float(per.sum()) + blk)
@@ -267,17 +317,21 @@ def main():
     # ---- T2  THE CORRECTED COST ----------------------------------------------------------------
     P("\n" + RULE); P("T2  THE CORRECTED COST, AS DISTRIBUTIONS"); P(RULE)
     P("  38% of TRRUST has degree 1, so a mean is a number no gene pays. Percentiles only.")
+    P("  k_i is counted over NON-controllers only (defect C3: the first run took the census over")
+    P("  all genes, so controller-controller adjacency was counted as history to carry, giving a")
+    P("  maximum of 53 where the target-side truth is 17).")
     P(f"    {'thr':>5} {'|C|':>5} {'k med':>6} {'k 99%':>6} {'k max':>6}"
       f" {'pa med':>7} {'pa max':>7} {'cost med':>10} {'cost 99%':>11} {'cost max':>11}")
     for th in (200, 100, 50, 25, 12):
-        C = {int(i) for i in np.nonzero(deg >= th)[0]}
+        C = {int(i) for i in np.nonzero(outdeg >= th)[0]}
         res = residual_graph(adj, C, n)
         pa, order, _ = bounded_elimination([ball(res, i, r0) - {i} for i in range(n)], w0)
-        kvec = np.array([len(adj[i] & C) for i in range(n)])
+        kvec = np.array([len(adj[i] & C) if i not in C else 0 for i in range(n)])
         per, blk = cost_real(pa, L0, kvec, len(C), n)
         pl = np.array([len(pa[i]) for i in range(n)])
-        P(f"    {th:>5} {len(C):>5} {int(np.median(kvec)):>6} {int(np.percentile(kvec,99)):>6}"
-          f" {kvec.max():>6} {int(np.median(pl)):>7} {pl.max():>7}"
+        kv = np.array([kvec[i] for i in range(n) if i not in C])
+        P(f"    {th:>5} {len(C):>5} {int(np.median(kv)):>6} {int(np.percentile(kv,99)):>6}"
+          f" {kv.max():>6} {int(np.median(pl)):>7} {pl.max():>7}"
           f" {np.median(per):>10.2e} {np.percentile(per,99):>11.2e} {per.max():>11.2e}")
 
     # ---- T3  IS ANYTHING AFFORDABLE? -----------------------------------------------------------
@@ -290,8 +344,8 @@ def main():
     for L in (0, 1, 2, 3, 4, 6, 8):
         bb = None
         for th in (400, 200, 100, 50, 25):
-            C = {int(i) for i in np.nonzero(deg >= th)[0]}
-            kvec = np.array([len(adj[i] & C) for i in range(n)])
+            C = {int(i) for i in np.nonzero(outdeg >= th)[0]}
+            kvec = np.array([len(adj[i] & C) if i not in C else 0 for i in range(n)])
             res = residual_graph(adj, C, n)
             for r in (1, 2):
                 for w in (4, 6, 8):
@@ -313,11 +367,11 @@ def main():
     P("  Capping k_i at m makes the cost affordable by DISCARDING controller-target edges. Those")
     P("  edges go in the same ledger as everything else rather than vanishing.")
     th = 25
-    C = {int(i) for i in np.nonzero(deg >= th)[0]}
-    kvec = np.array([len(adj[i] & C) for i in range(n)])
+    C = {int(i) for i in np.nonzero(outdeg >= th)[0]}
+    kvec = np.array([len(adj[i] & C) if i not in C else 0 for i in range(n)])
     res = residual_graph(adj, C, n)
     pa, order, _ = bounded_elimination([ball(res, i, r0) - {i} for i in range(n)], w0)
-    tot_ce = int(kvec.sum())
+    tot_ce = int(kvec.sum())   # non-controller side only, per C3
     P(f"  at threshold {th}: |C|={len(C)}, {tot_ce} controller-target edge endpoints in total")
     P(f"    {'m':>3} {'per-gene cost':>15} {'+ block':>11} {'edges kept':>11} {'edges DISCARDED':>17}")
     for m in (1, 2, 3, 5, 17):
