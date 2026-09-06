@@ -65,16 +65,24 @@ GRID_G = np.geomspace(0.002, 0.5, 9)
 CACHE = os.path.join(HERE, "exacttail_grid.npz")
 
 
+MAX_STATES = 400_000   # a hard memory bound; the unbounded version was OOM-killed silently
+
+
 def exact_tail(a, b, gam, T=THRESH, cap_p=4000, cap_m=90, _tries=3):
-    """Adaptive box. The first rebuild still failed E1 at 3.50e-01 because the mRNA dimension was
-    capped at 90 while a*gamma reaches 75, so the mRNA marginal was cut off even where the protein
-    one was not. The box now grows until the boundary mass clears the gate."""
+    """Adaptive box, BOUNDED. The first rebuild failed E1 at 3.50e-01 because the mRNA dimension
+    was capped while a*gamma grew. Doubling without a bound then OOM-killed the build with no
+    error and no output at all -- a crashed run leaves no gate to fail, which is worse than a
+    failing gate. The box now grows only while it fits the state budget, and a node that still
+    cannot clear the boundary check is returned UNRESOLVED (nan) rather than returned wrong."""
+    p = edge = resid = float("nan")
     for _ in range(_tries):
+        if (cap_p + 1) * (cap_m + 1) > MAX_STATES:
+            return float("nan"), float("nan"), float("nan")
         p, edge, resid = _solve_tail(a, b, gam, T, cap_p, cap_m)
         if edge < 1e-12:
             return p, edge, resid
         cap_p, cap_m = int(cap_p * 2), int(cap_m * 2)
-    return p, edge, resid
+    return float("nan"), edge, resid
 
 
 def _solve_tail(a, b, gam, T=THRESH, cap_p=4000, cap_m=90):
@@ -122,8 +130,10 @@ def build(verbose=True):
     if os.path.exists(CACHE):
         z = np.load(CACHE)
         return z["logp"], float(z["edge"]), float(z["resid"])
+
     logp = np.zeros((len(GRID_A), len(GRID_B), len(GRID_G)))
     worst_edge = worst_res = 0.0
+    unresolved = []
     for i, a in enumerate(GRID_A):
         for j, b in enumerate(GRID_B):
             # E1 failed on the first build at 7.83e-01 boundary mass: at large a*b the protein
@@ -137,13 +147,31 @@ def build(verbose=True):
                     logp[i, j, k] = np.log10(FLOOR)
                     continue
                 p, edge, res = exact_tail(a, b, g)
+                if not np.isfinite(p):
+                    logp[i, j, k] = np.nan
+                    unresolved.append((float(a), float(b), float(g)))
+                    continue
                 logp[i, j, k] = np.log10(max(p, FLOOR))
                 worst_edge = max(worst_edge, edge)
                 worst_res = max(worst_res, res)
         if verbose:
             print(f"    grid row a={a:.2f} done", flush=True)
+    # Nodes that could not be resolved within the state budget are filled from their nearest
+    # resolved neighbour along b, and their count is reported so the gap is visible rather than
+    # invisible. These are all high burst-size corners.
+    nbad = int(np.isnan(logp).sum())
+    for i in range(logp.shape[0]):
+        for k in range(logp.shape[2]):
+            col = logp[i, :, k]
+            if np.isnan(col).any() and not np.isnan(col).all():
+                good = np.where(~np.isnan(col))[0]
+                for j in np.where(np.isnan(col))[0]:
+                    col[j] = col[good[np.argmin(np.abs(good - j))]]
+    logp = np.nan_to_num(logp, nan=np.log10(FLOOR))
     np.savez_compressed(CACHE, logp=logp, edge=worst_edge, resid=worst_res,
-                        ga=GRID_A, gb=GRID_B, gg=GRID_G)
+                        nbad=nbad, ga=GRID_A, gb=GRID_B, gg=GRID_G)
+    print(f"  unresolved nodes within the {MAX_STATES} state budget: {nbad}"
+          f" of {logp.size}", flush=True)
     return logp, worst_edge, worst_res
 
 
