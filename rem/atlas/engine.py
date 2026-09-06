@@ -354,8 +354,15 @@ def main():
 
     # ---- H7 ------------------------------------------------------------------------------------
     P("\n" + RULE); P("H7  WHERE DOES IT STILL FAIL?"); P(RULE)
-    P(f"  best hybrid configuration reaches {best_hyb:.3e} on this system.")
-    P(f"  Against the 1% bar: {'MET' if best_hyb < 0.01 else 'NOT met'}.")
+    # Quote the CONVERGED value, not the unsigned minimum. H2a showed the r=1 branch crosses
+    # zero, so its minimum is a cancellation; the r=2 branch is monotone and is what converges.
+    conv = [(lbl, c, te) for lbl, c, te, ve in rows if lbl.startswith("H  r=2")]
+    conv.sort(key=lambda t: t[1])
+    lbl_c, cost_c, te_c = conv[-1]
+    P(f"  unsigned minimum over all hybrid points: {best_hyb:.3e}  -- NOT quotable, it is the")
+    P( "  zero crossing of the r=1 branch that H2a identified.")
+    P(f"  CONVERGED hybrid accuracy ({lbl_c}, cost {cost_c:.3e}): {te_c:.3e} tail")
+    P(f"  Against the 1% bar: {'MET' if te_c < 0.01 else 'NOT met'} on the converged value.")
     P( "  The residual is carried by the same thing history.py R5 priced: the controller's path")
     P( "  between sample times. Halving that residual means halving dt, which doubles L, which")
     P( "  squares the cost -- the hybrid moves the ceiling, it does not remove it.")
