@@ -211,6 +211,18 @@ def target_marginal(pi, N):
     return np.bincount(st & ((1 << N) - 1), weights=pi, minlength=1 << N)
 
 
+def var_count(p, k):
+    """Variance of the total ON count -- a GLOBAL observable involving every pair, whose meaning
+    does not change with k. R8(b) needs one, because a conjunctive event over a fixed set of
+    targets fits inside a bounded-width bag and flatters route 2."""
+    st = np.arange(len(p), dtype=np.int64)
+    c = np.zeros(len(p))
+    for i in range(k):
+        c += ((st >> i) & 1)
+    m = float((p * c).sum())
+    return float((p * c * c).sum()) - m * m
+
+
 def fit_pow(x, y):
     x, y = np.asarray(x, float), np.asarray(y, float)
     m = (x > 0) & (y > 0)
@@ -367,6 +379,7 @@ def main():
     P("\n" + RULE); P("R8  COST AT FIXED ACCURACY vs HUB DEGREE  (added after R7, labelled)"); P(RULE)
     P("  The question genome scale actually asks: to hold 1% tail error, how does each route's")
     P("  cost grow as the controller acquires more targets? SP1 has 484.")
+    P("  (a) LOCAL observable, a conjunctive event over a bounded set of targets:")
     P(f"    {'k targets':>10} {'route 1':>22} {'route 2':>22} {'route 3':>22}")
     KOBS = 4          # the observable is held FIXED across the sweep: P(targets 0..3 all ON)
     P(f"  observable held FIXED at P(targets 0..{KOBS-1} all ON) for every k, so the only thing")
@@ -400,10 +413,35 @@ def main():
                 r3s = f"2^{L+2} = {2**(L+2)} (L={L})"
                 break
         P(f"    {k:>10} {r1s:>22} {r2s:>22} {r3s:>22}    (P={tk:.2e})")
-    P("\n  Route 1's exact column doubles with every target the controller acquires; at SP1's 484")
-    P("  it is 2^484. Route 3's cost does not move with k at all -- the controller's history is")
-    P("  the same object however many genes read it. That, and not the six-target table above, is")
-    P("  why route 3 is the one that survives to genome scale.")
+    P("\n  (a) says: for a LOCAL event, bounded width wins outright and route 3 is 100x more")
+    P("  expensive for the same accuracy. A width-4 bag holds the four observed targets exactly.")
+    P("")
+    P("  (b) THE GLOBAL OBSERVABLE: relative error in Var(total ON count), which involves every")
+    P("  pair and whose meaning does not change with k. Route costs held FIXED while k grows.")
+    P(f"    {'k targets':>10} {'exact Var':>11} {'route 2, w=4':>14} {'route 2, w=6':>14} {'route 3, L=10':>15}")
+    for k in (4, 6, 8, 10):
+        Qk = star(k, 3.0, 1.0, boff=4.0)
+        pk, _, _ = stationary(Qk)
+        v_ex = var_count(target_marginal(pk, k), k)
+        Mk = mi_matrix(pk, k + 1)
+        Wk = {i: {j: Mk[i, j] for j in range(k + 1)} for i in range(k + 1)}
+        e2 = []
+        for w in (4, 6):
+            pa, order, dr = bounded_elimination(complete_graph(k + 1), w, weight=Wk)
+            e2.append(abs(var_count(target_marginal(approx_dist(pk, k + 1, pa, order), k), k) - v_ex) / v_ex)
+        cur = lag_joint(Qk, pk, k, 10, 0.12)
+        e3 = abs(var_count(history_approx(cur, k, list(range(k))), k) - v_ex) / v_ex
+        P(f"    {k:>10} {v_ex:>11.4f} {e2[0]:>14.3e} {e2[1]:>14.3e} {e3:>15.3e}")
+    P("\n  On the GLOBAL observable route 2's error GROWS with the controller's degree at fixed")
+    P("  width -- a bag cannot hold all k targets, so the covariances it misses accumulate --")
+    P("  while route 3's is flat. Route 1's exact point is 2^k throughout and at SP1's 484 that")
+    P("  is 2^484.")
+    P("")
+    P("  THE ANSWER IS NOT A WINNER, IT IS A MATCHING. Local events over a bounded set of targets")
+    P("  belong to bounded width, which represents them exactly and cheaply. Global events over")
+    P("  everything a controller touches belong to controller history, which is the only")
+    P("  representation whose error does not degrade as the controller acquires targets. Choosing")
+    P("  one observable and declaring a winner is exactly how this gate went wrong twice.")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_history.txt")
     open(dst, "w").write("\n".join(out) + "\n")
