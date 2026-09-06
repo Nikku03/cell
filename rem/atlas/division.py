@@ -40,12 +40,20 @@ V3  THE LIMIT CHECK, which is the strongest correctness test available. Remove d
     generator instead -- and the periodic state must converge to the STATIONARY state of the same
     generator. Worst relative disagreement in the tail below 1e-6.
 
-V4  THE CENTRAL TEST: THE MEAN-MATCHED CONTROL. Compare the periodic tail against a stationary
+V4  THE CENTRAL TEST: THE MEAN-MATCHED CONTROL, on the CYCLE-AVERAGED distribution. (The first
+    run compared the POST-DIVISION state against a cycle-averaged stationary model and was
+    therefore confounded: the means came out 74.3 against 118.3, a ratio of 1.592 against a dose
+    factor of 1.600, which identified the error rather than merely suggesting it. Both quantities
+    are wanted and V7 now reports the other one.) Compare the periodic tail against a stationary
     model matched on cycle-averaged transcription and total protein removal, so the two have the
     same mean by construction and only the cycle structure differs. Predeclared readings: agreement
     within 0.05 orders means the cell cycle is absorbable into an effective steady state and the
     earlier analysis stands; a larger gap means steady-state expression models misstate tails and
     expression.py's numbers inherit that error.
+
+V7  THE RISK WINDOW, which is a finding rather than a control. Report the post-division tail
+    beside the cycle-averaged one. Division halves every molecule at an instant, so immediately
+    afterwards a cell is at its most exposed, and no stationary model contains that window at all.
 
 V5  THE STRUCTURAL REFINEMENT, exact. With T observable, recompute the least-squares residual of
     the tail-controlling directions on the observable rows, and compare against the no-division
@@ -100,9 +108,14 @@ def gen(Mm, Mp, k_tx, k_tl, k_dm, k_dp, dilute=0.0):
     return coo_matrix((v_, (r_, c_)), shape=(n, n)).tocsc()
 
 
-def periodic(k_tx, k_tl, k_dm, k_dp, T, fS, Mm, Mp, divide=True, iters=400, tol=1e-13):
+def periodic(k_tx, k_tl, k_dm, k_dp, T, fS, Mm, Mp, divide=True, iters=400, tol=1e-13,
+             n_phase=12):
     """Floquet state: the fixed point of one cycle. G1 at one gene copy, S/G2/M at two, then
-    binomial partitioning at division."""
+    binomial partitioning at division.
+
+    Returns BOTH the post-division state and the time-averaged state over the cycle. The first
+    run returned only the post-division one and compared it against a cycle-averaged stationary
+    model, which is not the same quantity -- the means differed by exactly the dose factor."""
     L1 = gen(Mm, Mp, k_tx, k_tl, k_dm, k_dp)
     L2 = gen(Mm, Mp, 2 * k_tx if divide else k_tx, k_tl, k_dm, k_dp)
     Bm, Bp = (binom_thin(Mm), binom_thin(Mp)) if divide else (np.eye(Mm + 1), np.eye(Mp + 1))
@@ -119,7 +132,17 @@ def periodic(k_tx, k_tl, k_dm, k_dp, T, fS, Mm, Mp, divide=True, iters=400, tol=
             x = y
             break
         x = y
-    return x.reshape(Mm + 1, Mp + 1), it
+    # time-average over the cycle: march the converged post-division state through both phases,
+    # sampling at n_phase points each, weighted by the duration of each segment
+    acc = np.zeros_like(x)
+    z = x.copy()
+    for L, dur in ((L1, d1), (L2, d2)):
+        step = dur / n_phase
+        for _ in range(n_phase):
+            acc += z * step
+            z = expm_multiply(L * step, z)
+    acc = acc / acc.sum()
+    return x.reshape(Mm + 1, Mp + 1), it, acc.reshape(Mm + 1, Mp + 1)
 
 
 def stationary(k_tx, k_tl, k_dm, k_dp, Mm, Mp, dilute=0.0):
@@ -168,7 +191,8 @@ def main():
     k_dp0, k_dm0 = KDP_MEDIAN, 0.30
     a0, b0 = 9.0, 12.0
     k_tx0, k_tl0 = a0 * k_dp0, b0 * k_dm0
-    Xn, itn = periodic(k_tx0, k_tl0, k_dm0, k_dp0, T_CYCLE, F_S, Mm, Mp, divide=False)
+    Xn, itn, Xn_avg = periodic(k_tx0, k_tl0, k_dm0, k_dp0, T_CYCLE, F_S, Mm, Mp,
+                               divide=False)
     Xs = stationary(k_tx0, k_tl0, k_dm0, k_dp0, Mm, Mp)
     mn, tn = stats(Xn)
     ms, ts = stats(Xs)
@@ -186,6 +210,7 @@ def main():
       f"{'log10 gap':>11}")
     rng = np.random.default_rng(11)
     worst_gap, worst_edge, allconv = 0.0, 0.0, True
+    window = []
     t0 = time.time()
     for g in range(N_GENES):
         a = float(np.exp(rng.normal(np.log(9.0), 0.6)))
@@ -193,18 +218,20 @@ def main():
         k_dp = KDP_MEDIAN
         k_dm = 0.30
         k_tx, k_tl = a * k_dp, b * k_dm
-        Xc, itc = periodic(k_tx, k_tl, k_dm, k_dp, T_CYCLE, F_S, Mm, Mp, divide=True)
+        Xc, itc, Xa = periodic(k_tx, k_tl, k_dm, k_dp, T_CYCLE, F_S, Mm, Mp, divide=True)
         allconv &= itc < 399
         worst_edge = max(worst_edge, float(Xc[Mm, :].sum() + Xc[:, Mp].sum()))
         # matched stationary: cycle-averaged transcription, total removal including dilution
         dose = F_S * 1.0 + (1 - F_S) * 2.0
         dil = np.log(2.0) / T_CYCLE
         Xm = stationary(k_tx * dose, k_tl, k_dm, k_dp + dil, Mm, Mp)
-        mc, tc = stats(Xc)
+        ma, ta = stats(Xa)          # cycle-averaged: what a randomly sampled cell shows
+        mc, tc = stats(Xc)          # post-division: the most exposed phase
         mm_, tm = stats(Xm)
-        gap = abs(np.log10(max(tc, 1e-300)) - np.log10(max(tm, 1e-300)))
+        gap = abs(np.log10(max(ta, 1e-300)) - np.log10(max(tm, 1e-300)))
         worst_gap = max(worst_gap, gap)
-        P(f"  {a:>7.2f}{b:>7.2f}{mc:>11.3f}{mm_:>11.3f}{tc:>13.4e}{tm:>13.4e}{gap:>11.4f}")
+        window.append((a, b, ta, tc))
+        P(f"  {a:>7.2f}{b:>7.2f}{ma:>11.3f}{mm_:>11.3f}{ta:>13.4e}{tm:>13.4e}{gap:>11.4f}")
     P(f"  {N_GENES} genes in {time.time()-t0:.0f}s")
     P(f"\n  V1: all converged {allconv}, worst boundary mass {worst_edge:.2e}"
       f"   {'PASS' if allconv and worst_edge < 1e-12 else 'FAIL'}")
@@ -216,6 +243,17 @@ def main():
     else:
         P("  FAIL -- steady-state expression models MISSTATE the tail by this much, and")
         P("  expression.py's numbers inherit the error. Recorded, not explained away.")
+
+    P("\n" + RULE); P("V7  THE RISK WINDOW  (post-division against cycle-averaged)"); P(RULE)
+    P("  Division halves every molecule at an instant. Immediately afterwards a cell is at its")
+    P("  most exposed, and no stationary model contains that window at all.")
+    P(f"  {'a':>7}{'b':>7}{'cycle-avg P(<T)':>18}{'post-division P(<T)':>21}{'ratio':>10}")
+    worst_w = 0.0
+    for a, b, ta, tc in window:
+        r = tc / max(ta, 1e-300)
+        worst_w = max(worst_w, r)
+        P(f"  {a:>7.2f}{b:>7.2f}{ta:>18.4e}{tc:>21.4e}{r:>10.2f}x")
+    P(f"  worst elevation of risk just after division: {worst_w:.2f}x")
 
     # ---- V5 -------------------------------------------------------------------------------------
     P("\n" + RULE); P("V5  THE STRUCTURAL REFINEMENT: HOW MUCH DOES OBSERVING THE CYCLE CLOSE?")
