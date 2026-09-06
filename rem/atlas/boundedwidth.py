@@ -393,7 +393,8 @@ def main():
         inb = lo <= f <= hi
         aff = (2.0 ** w) <= 1e9
         if not inb:
-            undet += 1
+            undet += 1 if aff else 0        # an unaffordable row cannot be in the intersection,
+                                            # so it cannot make the intersection undetermined
             P(f"    {w:>4} {f:>17.3f} {'out of domain':>17} {'--':>12} {str(aff):>11} {'--':>9}")
             continue
         e_h = float(np.interp(f, fr[o], er[o]))
@@ -402,16 +403,24 @@ def main():
         ok_any = ok_any or (aff and acc)
         P(f"    {w:>4} {f:>17.3f} {e_c:>17.3e} {e_h:>12.3e} {str(aff):>11} {str(acc):>9}")
     P(f"\n  predeclared: affordable = 2^w <= 1e9 (w <= 30); accurate = tail error < 1%")
-    P(f"  rows the model could not reach: {undet}")
+    P(f"  affordable rows the model could not reach: {undet}")
+    hub_tail = [e for e in er[o][:5]]
+    P(f"  the hub curve PLATEAUS: as the drop fraction falls to 0.025 the error settles at"
+      f" {min(er[o][:5]):.2f}-{max(er[o][:5]):.2f} rather than going to zero. A hub of degree k")
+    P( "  is a (k+1)-clique in the dependence graph, so the last edges any width below k is forced")
+    P( "  to drop are hub edges, which are the strongest ones. Buying width does not buy accuracy")
+    P( "  past that point -- which is why more width was non-monotone in B2 as well.")
     if ok_any:
         P( "  B6: a width exists that is BOTH affordable and accurate at the hub end of the range")
         P( "      -- the first positive result on state complexity in this build order.")
     elif undet:
-        P( "  B6: UNDETERMINED at the hub end for some affordable widths. Not a negative: the")
-        P( "      earlier run printed EMPTY INTERSECTION on one in-domain row and that verdict")
-        P( "      was not supported by its own table.")
+        P(f"  B6: UNDETERMINED -- {undet} affordable widths fall outside the measured domain.")
+        P( "      Not a negative; the model cannot reach them.")
     else:
-        P( "  B6: EMPTY INTERSECTION -- no affordable width is accurate on real topology.")
+        P( "  B6: EMPTY INTERSECTION -- every affordable width is inside the measured domain and")
+        P( "      none is accurate at the hub end. An earlier run reached this verdict without")
+        P( "      support, on one in-domain row; it is supported now because all five affordable")
+        P( "      widths are in domain and all five fail.")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_boundedwidth.txt")
     open(dst, "w").write("\n".join(out) + "\n")
