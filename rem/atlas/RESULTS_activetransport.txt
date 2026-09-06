@@ -1,0 +1,71 @@
+=================================================================================================
+ACTIVE TRANSPORT, AND A THERMODYNAMIC DEFECT IT EXPOSES
+=================================================================================================
+
+=================================================================================================
+A1  THE MECHANISM SPLIT
+=================================================================================================
+                   class   count   share of transport
+                 passive    2730                64.5%
+        secondary active    1018                24.1%
+          primary active     482                11.4%
+  internal (one compartment)    6370
+  transport total 4230 of 10600 reactions (39.9%)
+  criterion: primary active if the reaction carries both atp and adp; secondary active if
+  it moves Na+, K+, H+ or Ca2+ alongside the solute; passive otherwise.
+  The energy cost IS in the stoichiometry, so mass balance already charges it -- a solute
+  cannot move uphill without the ATP or the ion appearing as a substrate.
+
+=================================================================================================
+A2  THE FREE-LUNCH TEST
+=================================================================================================
+  every exchange, demand and sink bounded to zero -- nothing enters or leaves the cell
+  reversible transport reactions under those bounds: 2323
+  maximum ATP flux through ATPM: 1000.0000
+  FAIL -- the model creates energy from nothing (bar: exactly zero)
+  This is a known pathology of genome-scale reconstructions, not a bug in this code. What
+  matters is whether the results in this build order depended on it, which A4 and A6 decide.
+
+=================================================================================================
+A3  WHICH REACTIONS CARRY THE LOOP
+=================================================================================================
+  reactions carrying flux in the sealed box: 1260
+                  internal    383    30.4%
+                   passive    673    53.4%
+          secondary active    201    16.0%
+            primary active      3     0.2%
+  transport share of the loop 69.6% against 39.9% of the network
+  READING: transport DOMINATES the loop, so active transport is the mechanism
+
+=================================================================================================
+A4  DOES THE GROWTH SOLUTION ACTUALLY USE IT?
+=================================================================================================
+  open-medium growth 370.382723 /h, carrying flux through 1648 reactions
+  overlap with the sealed-box loop: 1101 reactions (87.4% of the loop)
+  READING: SUBSTANTIAL overlap -- earlier energy-related results are contaminated
+
+=================================================================================================
+A5  THE FIX AND ITS COST
+=================================================================================================
+  primary-active transporters forced to the ATP-consuming direction: 4 closed
+  sealed-box ATP after the fix: 1000.0000   (was 1000.0000)
+  the free lunch SURVIVES -- it does not run through primary active transport
+  open-medium growth after the fix: 325.038065 /h against 370.382723  (ratio 0.8776)
+
+=================================================================================================
+A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?
+=================================================================================================
+  wholecell.py found translation capacity binding, the proteome budget's shadow price
+  exactly zero, and every individual kcat three orders below ribosome speed. If ATP were
+  free, metabolism could not bind and that conclusion would follow from the defect.
+
+  growth with loops open  : 370.382723 /h
+  growth with loops closed: 325.038065 /h
+  Growth changes by 12.2% when the loops are closed, so
+  the earlier energy-related results ARE affected and must be requalified.
+
+=================================================================================================
+Active transport is paid for in the stoichiometry and unconstrained in direction. The first
+is why this model is not getting transport for free; the second is why it can still make
+energy from nothing. Only the second is a defect, and it belongs to the reconstruction.
+=================================================================================================

@@ -56,6 +56,19 @@ A5  THE FIX AND ITS COST. Force primary-active transport to run only in the ATP-
     direction and re-test A2. Report how much of the free lunch that removes, and what it costs
     in growth.
 
+A7  THE MASS-BALANCE AUDIT. Count reactions whose elemental formulas do not balance. A
+    mass-imbalanced reaction lets the optimiser create atoms, which is a different and worse
+    defect than an energy loop.
+
+A8  THE DECISIVE TEST, which set overlap cannot substitute for. Seal every exchange and maximise
+    BIOMASS. Growth above zero means the model builds a cell out of nothing, and every
+    Recon3D-derived result in this build order is contaminated at the root.
+
+A9  THE REQUALIFICATION. Remove the mass-imbalanced reactions, retest A8, and re-measure growth
+    and the limiting layer. Predeclared: if sealed-box growth falls to zero and open growth is
+    materially unchanged, the earlier conclusions survive with the defect recorded; if open growth
+    changes, they must be requalified by that amount.
+
 A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX? Recompute growth and the limiting constraint
     with the loops blocked. Predeclared: if translation still binds and kcats still rank three
     orders below ribosome speed, wholecell.py's conclusion stands and was never resting on free
@@ -123,6 +136,42 @@ def open_bounds(R):
         if k in idx:
             lb[idx[k]] = v
     return lb, ub, idx
+
+
+def parse_formula(f):
+    import re
+    out = collections.Counter()
+    if not f:
+        return out
+    for el, n in re.findall(r"([A-Z][a-z]?)(\d*)", f):
+        if el:
+            out[el] += int(n) if n else 1
+    return out
+
+
+def imbalanced(R, M):
+    """Reactions whose elemental formulas do not balance. Exchanges, demands, sinks and biomass
+    are exempt by construction -- they are boundary reactions, not chemistry."""
+    mf = {m["id"]: m.get("formula", "") for m in M}
+    bad, checked = [], 0
+    for j, r in enumerate(R):
+        if r["id"].startswith(("EX_", "DM_", "sink_", "BIOMASS")):
+            continue
+        tot = collections.Counter()
+        ok = True
+        for met, co in r["metabolites"].items():
+            f = mf.get(met, "")
+            if not f or "R" in f or "X" in f:
+                ok = False
+                break
+            for el, n in parse_formula(f).items():
+                tot[el] += co * n
+        if not ok:
+            continue
+        checked += 1
+        if any(abs(v) > 1e-6 for v in tot.values()):
+            bad.append(j)
+    return bad, checked
 
 
 def block_uphill(R, lb, ub):
@@ -236,7 +285,20 @@ def main():
       f"  (ratio {mu2/max(mu_open,1e-12):.4f})")
 
     # ---- A6 -------------------------------------------------------------------------------------
-    P("\n" + RULE); P("A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?"); P(RULE)
+    P("\n" + RULE); P("A7  THE MASS-BALANCE AUDIT. Count reactions whose elemental formulas do not balance. A
+    mass-imbalanced reaction lets the optimiser create atoms, which is a different and worse
+    defect than an energy loop.
+
+A8  THE DECISIVE TEST, which set overlap cannot substitute for. Seal every exchange and maximise
+    BIOMASS. Growth above zero means the model builds a cell out of nothing, and every
+    Recon3D-derived result in this build order is contaminated at the root.
+
+A9  THE REQUALIFICATION. Remove the mass-imbalanced reactions, retest A8, and re-measure growth
+    and the limiting layer. Predeclared: if sealed-box growth falls to zero and open growth is
+    materially unchanged, the earlier conclusions survive with the defect recorded; if open growth
+    changes, they must be requalified by that amount.
+
+A6  DOES THE WHOLE-CELL CONCLUSION SURVIVE THE FIX?"); P(RULE)
     P("  wholecell.py found translation capacity binding, the proteome budget's shadow price")
     P("  exactly zero, and every individual kcat three orders below ribosome speed. If ATP were")
     P("  free, metabolism could not bind and that conclusion would follow from the defect.")
@@ -252,6 +314,51 @@ def main():
     else:
         P(f"  Growth changes by {100*abs(mu2-mu_open)/mu_open:.1f}% when the loops are closed, so")
         P("  the earlier energy-related results ARE affected and must be requalified.")
+
+    # ---- A7, A8, A9 ------------------------------------------------------------------------
+    P("\n" + RULE); P("A7  THE MASS-BALANCE AUDIT"); P(RULE)
+    bad, checked = imbalanced(R, M)
+    P(f"  reactions with parseable formulas checked: {checked}")
+    P(f"  elementally IMBALANCED: {len(bad)} ({100*len(bad)/max(checked,1):.1f}%)")
+    P("  A mass-imbalanced reaction lets the optimiser create atoms, which is worse than an")
+    P("  energy loop: it breaks conservation of matter, not just of free energy.")
+
+    P("\n" + RULE); P("A8  THE DECISIVE TEST -- CAN IT GROW ON NOTHING?"); P(RULE)
+    res_bm = linprog(cg, A_eq=S, b_eq=np.zeros(S.shape[0]),
+                     bounds=list(zip(lb_s, ub_s)), method="highs")
+    mu_seal = -res_bm.fun if res_bm.status == 0 else float("nan")
+    P(f"  maximum biomass with every exchange, demand and sink closed: {mu_seal:.6e} /h")
+    P(f"  against open-medium growth {mu_open:.6f} /h"
+      f"  ({100*mu_seal/max(mu_open,1e-12):.1f}% of it)")
+    P(f"  {'FAIL -- the model builds a cell out of nothing' if mu_seal > 1e-6 else 'PASS'}")
+    P("  Set overlap could not have shown this: shared reactions only mean shared central")
+    P("  metabolism. Growth in a sealed box shows the solution can be MANUFACTURED.")
+
+    P("\n" + RULE); P("A9  THE REQUALIFICATION"); P(RULE)
+    lb_f, ub_f = lb_s.copy(), ub_s.copy()
+    lb_f[bad] = 0.0; ub_f[bad] = 0.0
+    res_bm2 = linprog(cg, A_eq=S, b_eq=np.zeros(S.shape[0]),
+                      bounds=list(zip(lb_f, ub_f)), method="highs")
+    mu_seal2 = -res_bm2.fun if res_bm2.status == 0 else float("nan")
+    lb_o2, ub_o2 = lb_o.copy(), ub_o.copy()
+    lb_o2[bad] = 0.0; ub_o2[bad] = 0.0
+    res_g3 = linprog(cg, A_eq=S, b_eq=np.zeros(S.shape[0]),
+                     bounds=list(zip(lb_o2, ub_o2)), method="highs")
+    mu_open2 = -res_g3.fun if res_g3.status == 0 else float("nan")
+    P(f"  with the {len(bad)} imbalanced reactions removed:")
+    P(f"    sealed-box biomass : {mu_seal2:.6e} /h   (was {mu_seal:.6e})")
+    P(f"    open-medium growth : {mu_open2:.6f} /h   (was {mu_open:.6f},"
+      f" ratio {mu_open2/max(mu_open,1e-12):.4f})")
+    if mu_seal2 > 1e-6:
+        P("  Sealed-box growth SURVIVES removing the imbalanced reactions, so mass creation is")
+        P("  not the only route and the reconstruction has a deeper problem than 152 reactions.")
+    elif abs(mu_open2 - mu_open) / max(mu_open, 1e-12) < 0.05:
+        P("  Sealed-box growth is removed and open growth is unchanged to within 5%. The earlier")
+        P("  Recon3D results survive, with the defect recorded as a property of the model.")
+    else:
+        P(f"  Sealed-box growth is removed but open growth changes by"
+          f" {100*abs(mu_open2-mu_open)/mu_open:.1f}%, so every Recon3D-derived result in this")
+        P("  build order must be requalified by that amount.")
 
     P("\n" + RULE)
     P("Active transport is paid for in the stoichiometry and unconstrained in direction. The first")
