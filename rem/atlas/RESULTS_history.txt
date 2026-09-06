@@ -1,0 +1,149 @@
+=================================================================================================
+ROUTE 3: CARRY THE CONTROLLER'S HISTORY -- AND PRICE ALL THREE ROUTES
+=================================================================================================
+  Routes 1 and 2 both failed against the same object: a degree-k hub is a (k+1)-clique in
+  the dependence graph. Route 3 cannot fail that way, because in a star the targets ARE
+  conditionally independent given the controller's whole path. It can only be expensive.
+  tail-legal threshold: MI < 2.4435e-07
+
+=================================================================================================
+R1  THE HISTORY JOINT IS CORRECT, CHECKED AGAINST ANOTHER MODULE
+=================================================================================================
+  sum over patterns and states = 1.00000000000000
+  L=0 max I(i;j|history) = 1.464892e-02
+  statedim S6 max I(i;j|h) = 1.464892e-02   identical: True
+  R1: PASS -- the semigroup recursion reproduces another module exactly at L=0
+
+=================================================================================================
+R2  DOES RESIDUAL DEPENDENCE FALL WITH THE NUMBER OF LAGS?
+=================================================================================================
+  pure star, 9 targets, hub rate 1.0 -- the matched timescale where statedim S6 says
+  state-conditioning fails. exact P(all ON) = 9.9641e-04, residual 6.0e-15
+      L     dt  cost/gene  resid MI / tau  tail rel err
+      0  0.100          4          1196.3     2.442e-01
+      1  0.100          8           253.6     7.256e-02
+      2  0.100         16            64.8     2.751e-02
+      4  0.100         64            26.3     1.456e-02
+      6  0.100        256            26.0     1.374e-02
+      8  0.100       1024            26.0     1.366e-02
+     10  0.100       4096            26.0     1.365e-02
+  It PLATEAUS. More lags at fixed spacing extend the window backwards and buy nothing --
+  the missing information is the path BETWEEN samples, which is resolution, not extent.
+
+=================================================================================================
+R4  THE WINDOW AND THE RESOLUTION ARE DIFFERENT KNOBS
+=================================================================================================
+  residual max I(i;j|history) / tau,   rows = L,  columns = dt
+      L       0.05      0.10      0.20      0.40      0.80
+      1      414.1     189.4     153.3     436.1     849.0
+      2      166.2      46.8     127.0     433.1     849.0
+      4       29.3      20.2     124.9     433.1     849.0
+      6        6.3      19.8     124.9     433.1     849.0
+      8        2.2      19.7     124.9     433.1     849.0
+  There is an optimum in dt at every L. Too coarse and the path is lost between samples;
+  too fine and the window no longer reaches back over the controller's correlation time.
+
+=================================================================================================
+R5  THE ACCURACY/COMPUTE CURVE: refine resolution at a FIXED window
+=================================================================================================
+  window W = 1.2 held fixed, L = W/dt.  exact P(all ON) = 5.7197e-03
+         dt    L   cost/gene  resid MI/tau  tail rel err
+      0.300    4          64         280.2     6.475e-02
+      0.200    6         256         124.9     3.475e-02
+      0.150    8        1024          62.1     2.109e-02
+      0.120   10        4096          33.8     1.406e-02
+      0.100   12       16384          19.7     1.001e-02
+      0.086   14       65536          12.3     7.520e-03
+      0.075   16      262144           7.9     5.785e-03
+
+  fitted   tail error ~ dt^1.753   and   cost = 2^(W/dt + 2)
+  so accuracy is POLYNOMIAL in the resolution while cost is EXPONENTIAL in it. Inverting:
+    tail error 1e-02  needs dt = 0.1003, L = 12, cost/gene = 2^14 = 1.60e+04
+    tail error 1e-03  needs dt = 0.0270, L = 44, cost/gene = 2^46 = 9.89e+13
+    tail error 1e-04  needs dt = 0.0073, L = 165, cost/gene = 2^167 = 2.51e+50
+  That is the shape of route 3: it REACHES the 1% bar the other two never reached, and
+  every further decade of accuracy costs about nine orders of magnitude more.
+
+=================================================================================================
+R3  THE TIMESCALE LAW, RE-DERIVED FROM THE HISTORY SIDE
+=================================================================================================
+  statedim S6 measured from the STATE side that conditioning works at extreme timescale
+  ratios and fails in between. The lags needed must show the same shape or one of the two
+  measurements is wrong.
+     hub rate  tau_h/tau_gene        L=0        L=4        L=8  gain L0->L8
+         0.01          100.00        0.5       12.8       12.8          0.0
+         0.10           10.00       39.9       38.4       38.4          1.0
+         1.00            1.00     1073.2       20.2       19.7         54.4
+        10.00            0.10      730.4       50.4        8.2         89.4
+       100.00            0.01       19.4        8.5        4.5          4.3
+
+=================================================================================================
+R6  THE MATCHED CONTROL: history of the HUB against history of a TARGET
+=================================================================================================
+  If carrying any variable's history works as well, the gain is from adding conditioning
+  variables and R2 says nothing about controllers.
+      L    hub history   target history     ratio
+      2           46.8          10352.3     221.4
+      4           20.2           9759.5     484.3
+      6           19.8           9542.8     482.9
+      8           19.7           9460.4     479.4
+
+=================================================================================================
+R7  ALL THREE ROUTES, SAME SYSTEM, SAME OBSERVABLE
+=================================================================================================
+  pure star, 6 targets + hub, matched timescale. exact P(all ON) = 5.7197e-03
+  Every route may condition on the hub; none is handicapped.
+
+    route                                 cost/gene  tail rel err
+    1  r-ball, r=1 (= route 3 at L=0)             4     1.617e-01
+    1  r-ball, r=2                              128     0.000e+00   (exact, and that is the point)
+    2  bounded width w=1                          4     4.485e-01
+    2  bounded width w=2                          8     9.625e-02
+    2  bounded width w=3                         16     5.546e-02
+    2  bounded width w=4                         32     2.709e-02
+    3  history L=6, dt=0.2                      256     3.475e-02
+    3  history L=10, dt=0.12                   4096     1.406e-02
+    3  history L=12, dt=0.1                   16384     1.001e-02
+    3  history L=16, dt=0.075                262144     5.785e-03
+
+  READ THIS TABLE CAREFULLY, because at THIS system size it favours route 1: being exact
+  costs only 2^6 = 64 here. That is an artefact of a six-target star and not a
+  result. The three costs scale differently in the hub degree k -- route 1's exact point is
+  2^k, route 2's error at fixed width worsens with k, and route 3's cost has no k in it at
+  all. R8 makes that comparison; this table alone must not be used to rank the routes.
+
+=================================================================================================
+R8  COST AT FIXED ACCURACY vs HUB DEGREE  (added after R7, labelled)
+=================================================================================================
+  The question genome scale actually asks: to hold 1% tail error, how does each route's
+  cost grow as the controller acquires more targets? SP1 has 484.
+  (a) LOCAL observable, a conjunctive event over a bounded set of targets:
+     k targets                route 1                route 2                route 3
+  observable held FIXED at P(targets 0..3 all ON) for every k, so the only thing
+  changing is the controller's degree.
+             4       2^4 = 16 (exact)         2^5 = 32 (w=4)    2^14 = 16384 (L=12)    (P=1.67e-02)
+             6       2^6 = 64 (exact)         2^5 = 32 (w=4)     2^12 = 4096 (L=10)    (P=3.70e-02)
+             8      2^8 = 256 (exact)         2^6 = 64 (w=5)     2^12 = 4096 (L=10)    (P=5.91e-02)
+            10    2^10 = 1024 (exact)         2^5 = 32 (w=4)     2^12 = 4096 (L=10)    (P=2.87e-02)
+
+  (a) says: for a LOCAL event, bounded width wins outright and route 3 is 100x more
+  expensive for the same accuracy. A width-4 bag holds the four observed targets exactly.
+
+  (b) THE GLOBAL OBSERVABLE: relative error in Var(total ON count), which involves every
+  pair and whose meaning does not change with k. Route costs held FIXED while k grows.
+     k targets   exact Var   route 2, w=4   route 2, w=6   route 3, L=10
+             4      1.0148      2.188e-16      2.188e-16       3.626e-03
+             6      1.8247      9.313e-03      0.000e+00       5.272e-03
+             8      2.9109      2.843e-02      7.572e-03       6.679e-03
+            10      3.9207      4.348e-02      2.058e-02       7.898e-03
+
+  On the GLOBAL observable route 2's error GROWS with the controller's degree at fixed
+  width -- a bag cannot hold all k targets, so the covariances it misses accumulate --
+  while route 3's is flat. Route 1's exact point is 2^k throughout and at SP1's 484 that
+  is 2^484.
+
+  THE ANSWER IS NOT A WINNER, IT IS A MATCHING. Local events over a bounded set of targets
+  belong to bounded width, which represents them exactly and cheaply. Global events over
+  everything a controller touches belong to controller history, which is the only
+  representation whose error does not degrade as the controller acquires targets. Choosing
+  one observable and declaring a winner is exactly how this gate went wrong twice.

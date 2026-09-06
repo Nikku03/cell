@@ -314,3 +314,101 @@ Route 3 -- carrying controller history explicitly -- is the only one left, and s
 says what it has to beat: conditioning on a controller's STATE works only at a 500x timescale
 separation, and it is the trajectory rather than the state that carries the dependence. Route 3
 is the one that attacks that directly, and it is untested.
+
+=================================================================================================
+ROUTE 3 OF 3 TESTED: CARRY THE CONTROLLER'S HISTORY.  IT WORKS, AT A PRICE, AND ONLY FOR ONE
+CLASS OF QUESTION.  Source: rem/atlas/RESULTS_history.txt
+=================================================================================================
+
+WHY IT COULD NOT FAIL THE WAY THE OTHERS DID. In a star the targets ARE conditionally independent
+given the controller's whole path -- that is what "the hub drives them and they do not touch each
+other" means. So route 3 was never going to hit a structural obstruction. It could only be
+expensive, and the measurement is how expensive.
+
+The controller's path is carried exactly from the transition semigroup. At L = 0 the construction
+reproduces statedim S6's I(i;j|h) to every digit -- 1.464892e-02 both times, on the same system --
+which is the cross-module identity check, not a new number.
+
+WHAT ACTUALLY LIMITS IT, and it was not what I expected. Adding lags at fixed spacing PLATEAUS:
+
+    L        0      1      2      4      6      8     10
+    err   0.244  0.073  0.028  0.015  0.014  0.014  0.014
+
+More lags extend the window backwards and buy nothing after L = 4. The missing information is the
+path BETWEEN samples. Holding the window fixed at W = 1.2 and refining the resolution instead:
+
+    dt      0.300  0.200  0.150  0.120  0.100  0.086  0.075
+    L           4      6      8     10     12     14     16
+    cost       64    256   1024   4096  16384  65536 262144
+    err     6.5e-2 3.5e-2 2.1e-2 1.4e-2 1.0e-2 7.5e-3 5.8e-3
+
+    fitted:  tail error ~ dt^1.753,  cost = 2^(W/dt + 2)
+
+ACCURACY IS POLYNOMIAL IN THE RESOLUTION WHILE COST IS EXPONENTIAL IN IT. Inverting:
+
+    1e-2  needs L = 12,  cost/gene 1.6e+04
+    1e-3  needs L = 44,  cost/gene 9.9e+13
+    1e-4  needs L = 165, cost/gene 2.5e+50
+
+One per cent is reachable. Every further decade costs about nine orders of magnitude.
+
+IT IS THE CONTROLLER'S HISTORY SPECIFICALLY, NOT MORE CONDITIONING (R6). Carrying the same number
+of lags of an ordinary target instead of the hub leaves 480x more residual dependence at every L.
+
+AND IT AGREES WITH statedim S6 FROM THE OTHER SIDE (R3). The gain from carrying history is 54x and
+89x at timescale ratios 1 and 0.1 -- exactly where state-conditioning failed -- and 0 to 4x at the
+extremes where state-conditioning already worked. Two modules, two directions, same shape.
+
+=================================================================================================
+THE DELIVERABLE: HOW MUCH ACCURACY, AT WHAT COMPUTE, FOR EACH ROUTE
+=================================================================================================
+Costs are doubles per gene; the genome-scale column assumes 20,000 genes at 8 bytes.
+
+  ROUTE 1  local closure on r-balls                       (rem/atlas/localclosure.py)
+    best accuracy reachable   arbitrary on chain-like topology; r=3 gives 5.5e-3 at a 1e-13 event
+    compute                   N 2^|B_r|;  |B_3| = 7 on a cascade  ->  20 MB at genome scale
+    on REAL topology          |B_3| around SP1 is 2,724 of 2,861 genes  ->  2^2724.  UNREACHABLE
+    verdict                   fails on any hub-rich graph, at any accuracy, at any cost
+
+  ROUTE 2  bounded-width decomposition                    (rem/atlas/boundedwidth.py)
+    best accuracy reachable   EXACT for events inside one bag; ~6% floor for hub-mediated ones
+    compute                   N 2^(w+1), fixed by construction
+    local questions           w = 4 is exact for a 4-target event  ->  5 MB at genome scale
+    global questions          error GROWS with controller degree at fixed width:
+                              k = 4, 6, 8, 10  ->  2e-16, 9.3e-3, 2.8e-2, 4.3e-2 at w = 4
+    on REAL topology          w = 20 costs 48 GB and still loses 4.9% of direct regulatory edges;
+                              all five affordable widths fail the 1% bar at the hub end
+    verdict                   the cheapest route by far for LOCAL questions; cannot reach 1% on
+                              global ones and gets worse as controllers acquire targets
+
+  ROUTE 3  explicit controller history                    (rem/atlas/history.py)
+    best accuracy reachable   1e-2 practical; 1e-3 at 9.9e13 per gene; 1e-4 never
+    compute                   N 2^(L+2), INDEPENDENT of controller degree
+                              L = 12  ->  1.6e4 per gene  ->  2.6 GB at genome scale for 1%
+    global questions          error FLAT in controller degree:
+                              k = 4, 6, 8, 10  ->  3.6e-3, 5.3e-3, 6.7e-3, 7.9e-3 at L = 10
+    verdict                   the only route whose error does not degrade as a controller
+                              acquires targets, and the only one that reaches 1% on a global
+                              question at genome scale
+
+=================================================================================================
+THE ANSWER IS A MATCHING, NOT A WINNER
+=================================================================================================
+The three routes are not competitors at the same job, and two of my own gates went wrong by
+assuming they were -- R8 was written three times, once with an observable that got harder as the
+variable swept, once with one that fitted inside a single bag and flattered route 2.
+
+    LOCAL question   -- does this pathway carry flux, will these four genes fire together
+                     bounded width, w ~ 4-6, about 5 MB, exact or near it
+    GLOBAL question  -- collective fluctuation across everything a regulator touches
+                     controller history, L ~ 12, about 2.6 GB, 1% and no better
+    CHAIN-LIKE part  -- metabolism, linear cascades
+                     r-balls, r ~ 3, about 20 MB, arbitrary accuracy
+
+Nothing reaches 0.1% on a global question at any compute this decade. That is the ceiling, and it
+is set by a specific and now well-characterised object: a controller whose targets are mutually
+dependent regardless of how many there are, whose ball is the whole network, whose clique fits in
+no affordable width, and whose trajectory -- not its state -- carries the dependence.
+
+All three routes named in statedim are now tested. Two failed against that object and the third
+buys 1% by paying exponentially for path resolution.
