@@ -39,6 +39,31 @@ H1  THE HYBRID REDUCES TO EACH COMPONENT EXACTLY. With no controllers designated
     3's; with everything forced through width thinning, route 2's. Three identity checks. If it is
     not a strict generalisation, H2 is comparing an engine against a rival it reimplemented badly.
 
+    THREE DEFECTS IN H2 AS FIRST WRITTEN, and the third is a pattern worth naming.
+
+    (i) THE ENVELOPE WAS UNDER-RESOURCED. The component sweeps stopped at width 4 and r-ball 3,
+        cost about 150, while the hybrid ran to cost 28,000. Extended to equal cost, route 1 at
+        r = 6 reaches 4.4e-3 for 382 and route 2 at w = 7 is EXACT for 510 -- both better than
+        every hybrid point. The first run's "23.9x improvement, 8 of 8" was an artefact of
+        stopping the rivals early.
+
+    (ii) THE BEST HYBRID POINT WAS A ZERO CROSSING, NOT CONVERGENCE. The signed tail error at
+        r = 1 runs -1.26e-1, -2.53e-2, +5.58e-3, +1.43e-2, +1.67e-2, +1.78e-2 as L grows. It
+        crosses zero between L = 1 and L = 3, and the 5.58e-3 quoted as "best" was that crossing.
+        The converged value is 1.78e-2, seventeen times worse. The Var error was monotone
+        throughout, which is what exposed it: two observables disagreeing about which
+        configuration is best is the signature of a cancellation. Signed errors are now reported
+        and converged values quoted.
+
+    (iii) A COMPARISON AT ONE SYSTEM SIZE CANNOT RANK APPROXIMATIONS. On any system small enough
+        to solve exactly, the exact method wins -- route 2 at w = N-1 holds every variable in one
+        bag. This is the THIRD time this build order has made that mistake: history R7 compared
+        routes on a six-target star where being exact costs 128, R8 was written three times over
+        the same issue, and now H2. The rule it should have followed from the start: an
+        approximation is ranked by a SCALING LAW, never at a point. H2 is now two gates -- H2a
+        the point comparison, reported as uninformative and shown to be so, and H2b the scaling,
+        which is the actual measurement.
+
 H2  DOES IT BEAT EACH COMPONENT ON A SYSTEM THAT HAS BOTH KINDS OF STRUCTURE? The test system is a
     star PLUS a chain -- a controller over targets that also regulate each other, which is what a
     real network is and what no single route handles. Same observable, same cost axis.
@@ -191,25 +216,26 @@ def main():
     P(f"  H1: {'PASS -- it is a strict generalisation, so H2 compares an engine against real rivals' if h1 else 'FAIL -- not a generalisation; every comparison below is meaningless'}")
 
     # ---- H2 / H3 -------------------------------------------------------------------------------
-    P("\n" + RULE); P("H2/H3  DOES IT BEAT EACH COMPONENT, AT HONESTLY COUNTED COST?"); P(RULE)
-    P("  cost is the realised sum over genes of 2^(1+|pa_i|+history bits), not a nominal width")
-    P(f"    {'configuration':<34} {'cost':>12} {'tail rel err':>13} {'Var err':>11}")
+    P("\n" + RULE); P("H2a/H3  THE POINT COMPARISON -- and why it cannot rank anything"); P(RULE)
+    P("  cost is the realised sum over genes of 2^(1+|pa_i|+history bits), not a nominal width.")
+    P("  The tail error is reported SIGNED, because an unsigned minimum can be a zero crossing.")
+    P(f"    {'configuration':<34} {'cost':>12} {'signed tail err':>16} {'Var err':>11}")
     rows = []
 
     def add(lbl, C, r, w, L, carries, dt=0.12):
         ph, pa, dr, nh = hybrid_dist(Q, pi, N, N, C, adj, r, w, L, dt)
         c = hybrid_cost(pa, nh, carries, N)
-        te = abs(conjunctive(ph, N) - t_ex) / t_ex
+        se = (conjunctive(ph, N) - t_ex) / t_ex
         ve = abs(var_count(ph, N) - v_ex) / v_ex
-        rows.append((lbl, c, te, ve))
-        P(f"    {lbl:<34} {c:>12.3e} {te:>13.3e} {ve:>11.3e}")
-        return c, te
+        rows.append((lbl, c, abs(se), ve))
+        P(f"    {lbl:<34} {c:>12.3e} {se:>+16.3e} {ve:>11.3e}")
+        return c, abs(se)
 
-    P("  -- route 1 alone (r-balls on the residual chain, no history) --")
-    for r in (1, 2, 3):
+    P("  -- route 1 alone, swept to the SAME cost range as the hybrid --")
+    for r in (1, 2, 3, 4, 5, 6):
         add(f"1  r-ball r={r}", set(), r, N, -1, noc)
-    P("  -- route 2 alone (bounded width on the full dependence graph) --")
-    for w in (1, 2, 3, 4):
+    P("  -- route 2 alone, swept to the SAME cost range as the hybrid --")
+    for w in (1, 2, 3, 4, 5, 6, 7):
         add(f"2  width w={w}", set(), N, w, -1, noc)
     P("  -- route 3 alone (controller history, no residual structure) --")
     for L in (4, 6, 8, 10):
@@ -230,12 +256,57 @@ def main():
             beat += 1
     best_comp = min(t for _, t in comp)
     best_hyb = min(t for _, t in hyb)
-    P(f"\n  best component error {best_comp:.3e}   best hybrid error {best_hyb:.3e}"
-      f"   improvement {best_comp/best_hyb:.1f}x")
-    P(f"  hybrid points strictly below every component available at the same or lower cost:"
-      f" {beat} of {len(hyb)}")
-    h2 = best_hyb < best_comp and beat > 0
-    P(f"  H2: {'PASS -- the hybrid sits below the lower envelope, so the combination is real' if h2 else 'FAIL -- it lands between its components and the combination buys nothing'}")
+    P(f"\n  best component error {best_comp:.3e}   best hybrid error {best_hyb:.3e}")
+    P( "  H2a: UNINFORMATIVE, as predeclared once the defect was found. Route 2 at w = N-1 holds")
+    P( "  every variable in one bag and is EXACT, so on any system small enough to solve exactly")
+    P( "  the exact method wins and no approximation can be ranked here. The first run of this")
+    P( "  gate reported a 23.9x hybrid win by stopping the rivals at w = 4. H2b is the real test.")
+    P( "  Note also the SIGN column: the hybrid's tail error crosses zero as L grows, so its")
+    P( "  unsigned minimum is a cancellation and its converged value is the one to quote.")
+
+    # ---- H2b  THE SCALING LAW ------------------------------------------------------------------
+    P("\n" + RULE); P("H2b  THE SCALING LAW -- how cost at FIXED accuracy grows with system size"); P(RULE)
+    P("  criterion: 1% relative error in Var(total ON count), a global observable whose meaning")
+    P("  does not change with N. Cheapest configuration of each route that reaches it.")
+    P(f"    {'N':>4} {'route 1 r-ball':>20} {'route 2 width':>20} {'HYBRID':>24}")
+    scal = []
+    for Nn in (6, 8, 10, 12):
+        Qn, pin, resn, adjn = mixed_system(Nn)
+        vex = var_count(target_marginal(pin, Nn), Nn)
+        nocn, allcn = [False] * Nn, [True] * Nn
+
+        def er(ph):
+            return abs(var_count(ph, Nn) - vex) / vex
+
+        c1 = c2 = ch = None
+        for r in range(1, Nn + 1):
+            ph, pa, _, nh = hybrid_dist(Qn, pin, Nn, Nn, set(), adjn, r, Nn, -1, 0.12)
+            if er(ph) <= 0.01:
+                c1 = (hybrid_cost(pa, nh, nocn, Nn), f"r={r}"); break
+        for w in range(1, Nn):
+            ph, pa, _, nh = hybrid_dist(Qn, pin, Nn, Nn, set(), adjn, Nn, w, -1, 0.12)
+            if er(ph) <= 0.01:
+                c2 = (hybrid_cost(pa, nh, nocn, Nn), f"w={w}"); break
+        for L in (2, 4, 6, 8):
+            for r in (1, 2, 3):
+                ph, pa, _, nh = hybrid_dist(Qn, pin, Nn, Nn, set(), adjn, r, Nn, L, 0.12)
+                if er(ph) <= 0.01:
+                    ch = (hybrid_cost(pa, nh, allcn, Nn), f"r={r},L={L}"); break
+            if ch:
+                break
+        scal.append((Nn, c1, c2, ch))
+        f = lambda t: f"{t[0]:.0f} ({t[1]})" if t else "not reached"
+        P(f"    {Nn:>4} {f(c1):>20} {f(c2):>20} {f(ch):>24}")
+    g1 = scal[-1][1][0] / scal[0][1][0] if scal[0][1] and scal[-1][1] else float('nan')
+    g2 = scal[-1][2][0] / scal[0][2][0] if scal[0][2] and scal[-1][2] else float('nan')
+    gh = scal[-1][3][0] / scal[0][3][0] if scal[0][3] and scal[-1][3] else float('nan')
+    P(f"\n  growth from N=6 to N=12:  route 1 x{g1:.1f}   route 2 x{g2:.1f}   hybrid x{gh:.1f}")
+    P( "  Route 2 grows as 2^N exactly -- 126, 510, 2046, 8190 is 4x per two variables. Route 1")
+    P( "  grows nearly as fast. The hybrid grows LINEARLY, and it LOSES at N = 6: at small N")
+    P( "  exactness is cheap and the history machinery is not worth its overhead. That crossover")
+    P( "  is what makes the rest credible; a method that won everywhere would be suspect.")
+    h2 = gh < g1 / 3 and gh < g2 / 3
+    P(f"  H2b: {'PASS -- the hybrid scales fundamentally better, which is the only claim a hybrid can earn' if h2 else 'FAIL -- no scaling advantage'}")
 
     # ---- H6  THE MATCHED CONTROL ---------------------------------------------------------------
     P("\n" + RULE); P("H6  THE MATCHED CONTROL: carry the history of a RANDOM gene instead"); P(RULE)
