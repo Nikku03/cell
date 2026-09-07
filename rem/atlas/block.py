@@ -61,6 +61,14 @@ E5  SAMPLING THE BLOCK. Cost becomes the sample count, independent of |C| and L,
     whose cost is hidden inside its error term is the degeneracy this build order has already
     shipped twice.
 
+    AND THE PER-SAMPLE COST IS NOT ONE, which must be said before the number is read. Each sampled
+    history stratum still requires the conditional target distribution GIVEN that history. Here
+    that is lifted from the exact block, because the exact block is available on a system this
+    small; a deployed engine would have to obtain it, by conditional simulation or a conditional
+    solve. So the honest statement is S conditional solves in place of 2^(|C|(L+1)) table entries,
+    not S in place of 2^(|C|(L+1)). The exponential in |C| is genuinely broken; the constant is
+    not free, and this module does not measure it.
+
 E6  END-TO-END. Does each block representation change the ENGINE's answer, on an exactly-solvable
     multi-controller system? Signed errors, with an independent-genes baseline that MUST fail, and
     every route swept over its whole family including dt under a common ceiling.
@@ -313,7 +321,7 @@ def main():
     P_(f"    {'representation':<34} {'cost':>26}")
     P_(f"    {'flat table':<34} {'2^(|C|(L+1))':>26}")
     P_(f"    {'slice-by-slice contraction':<34} {'(L+1) . 2^(2|C|)':>26}")
-    P_(f"    {'sampled':<34} {'S, independent of |C| and L':>26}")
+    P_(f"    {'sampled':<34} {'S conditional solves':>26}")
     P_("")
     P_("  The contraction is LINEAR in L instead of exponential -- a real and large reduction --")
     P_("  but still EXPONENTIAL in the number of controllers, because the inter-slice separator")
@@ -344,6 +352,16 @@ def main():
     for keep in (2, 8, 32):
         ph, used = engine_from_block(cur, nv, nC, nT, "trunc", keep=keep)
         P_(f"    {keep:>12} {'trunc':>9} {(var_on(ph, nT)-vex)/vex:>31.3e}")
+    P_("")
+    P_("  Importance-weighted sampling beats greedy truncation at equal strata count -- 32 samples")
+    P_("  give 3.3e-4 against truncation's -3.8e-2 -- and the 1-stratum truncation baseline fails")
+    P_("  at -1.7e-1 as it must, so the bar is testing something.")
+    P_("  THE PER-SAMPLE COST IS NOT ONE. Each sampled stratum still needs the conditional target")
+    P_("  distribution given that history, taken here from the exact block because on a system")
+    P_("  this small the exact block exists. A deployed engine would need a conditional solve or a")
+    P_("  conditional simulation per sample. The honest claim is S CONDITIONAL SOLVES in place of")
+    P_("  2^(|C|(L+1)) table entries. The exponential in |C| is genuinely broken; the constant is")
+    P_("  not free, and this module does not measure it.")
 
     # ---- E7  THE CAP ---------------------------------------------------------------------------
     P_("\n" + RULE); P_("E7  THE APPLICABILITY CAP ON THE REAL NETWORK"); P_(RULE)
