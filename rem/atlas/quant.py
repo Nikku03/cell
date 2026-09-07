@@ -86,14 +86,24 @@ TurboQuant:
       also in the sampled-block route of Q5, where centring is worth 3.7x at 2 bits and 5.5x
       at 8. Centring is now done inside quantize(), before the rotation, for one extra float64.
 
+The defect table in Q3/Q4 reproduces the first run's numbers exactly -- 1.286e-01, 1.000e+00,
+4.354e-03, 7.078e-01 -- which is the check that the diagnosis is the right one and not a story.
+Fixing D1 and D2 is worth 24x-25x on linear and 211x-1685x on log.
+
 Corrected -- identical protocol for both spaces (pad neutrally, reconstruct on the real support,
-clip, normalise) and 16 rotation seeds instead of one -- the prediction is still REFUTED, but in
-the opposite direction to the first run. Log space does not lose. It also does not win. The two
-are within 1.2x-2.6x at every bit width, their ranges over rotation seeds overlap everywhere, and
-the spread WITHIN one space across seeds is up to 12x, larger than the gap being measured. The
-predeclared claim that the choice of space "is the operative engineering decision and it is not
-close" is WITHDRAWN. The operative decision is the protocol, which is worth 5x on linear and
-1700x on log.
+clip, normalise) and 16 rotation seeds instead of one -- the prediction is still REFUTED, and the
+point estimate leans the OTHER WAY: linear has the better median tail error at 4 of 5 bit widths.
+But it is not resolved in that direction either. The largest median gap is 3.23x, it changes sign
+with bit width, the seed ranges overlap at every width, and the spread WITHIN one space across
+rotation seeds reaches 191x -- larger than the effect being ranked. So the measurement does not
+separate the two spaces at all, and the predeclared claim that the choice of space "is the
+operative engineering decision and it is not close" is WITHDRAWN on both counts: wrong direction,
+and not close to significant. The operative decision was the protocol. The only surviving
+argument for log space is not about accuracy: it cannot emit a negative probability, while linear
+emits hundreds that must be clipped before the table is a distribution at all.
+
+None of this touches Q0. The ceiling gate is arithmetic on bit widths and it stands whichever
+space is used: quantization buys half a controller.
 
 This is the fifth appearance in this session of one failure class: an approximation ranked at a
 POINT rather than over a distribution. Previous forms were ranking at one system size, one dt,
@@ -300,7 +310,7 @@ def main():
     P_("  where a Hadamard transform concentrates it into one clipped coordinate.")
     P_(f"\n    {'bits':>5} {'space':>6} {'as first run':>14} {'D1 fixed':>12} {'D1+D2 fixed':>14}"
        f" {'gain':>9}")
-    sg0 = rng.choice([-1.0, 1.0], size=n)
+    sg0 = signs        # the exact draw the first run used, so this column reproduces it
     for b in (2, 8):
         cb = lloyd_max(b)
         for space in ("linear", "log"):
@@ -322,6 +332,7 @@ def main():
        f" {'TAIL min':>10} {'TAIL max':>10} {'neg':>6}")
     seeds = [np.random.default_rng(100 + i).choice([-1.0, 1.0], size=n) for i in range(16)]
     med = {}
+    bulkmed = {}
     rngs = {}
     for b in (2, 3, 4, 6, 8):
         cb = lloyd_max(b)
@@ -332,27 +343,35 @@ def main():
                 bulk.append(a); tails.append(t); negs.append(ng)
             tails = np.array(tails)
             med[(b, space)] = float(np.median(tails))
+            bulkmed[(b, space)] = float(np.median(bulk))
             rngs[(b, space)] = (tails.min(), tails.max())
             P_(f"    {b:>5} {space:>6} {float(np.median(bulk)):>14.3e}"
                f" {float(np.median(tails)):>14.3e} {tails.min():>10.3e} {tails.max():>10.3e}"
                f" {int(np.median(negs)):>6}")
 
-    P_("\n  Q3: PASS -- both observables are reported and both improve with bits. Note that the")
-    P_("  tail is NOT systematically harder than the bulk here, which is the first time in this")
-    P_("  session an approximation has been neutral between them. It is neutral because a")
-    P_("  quantizer perturbs every entry by a comparable RELATIVE amount after centring, unlike")
-    P_("  truncation, thinning and history, which discard the small entries preferentially.")
+    ratios = [med[(b, sp)] / bulkmed[(b, sp)] for b in (2, 3, 4, 6, 8) for sp in ("linear", "log")]
+    P_(f"\n  Q3: PASS -- both observables are reported and both improve with bits. The tail/bulk")
+    P_(f"  ratio stays inside [{min(ratios):.2f}, {max(ratios):.2f}] across every width and both")
+    P_( "  spaces, so the tail is not orders of magnitude harder than the bulk the way it was for")
+    P_( "  truncation, thinning and history. The reason is structural: after centring, a quantizer")
+    P_( "  perturbs every entry by a comparable RELATIVE amount, whereas those three methods")
+    P_( "  discard the smallest entries preferentially, and the smallest entries ARE the tail.")
     overlap = all(not (rngs[(b, 'linear')][0] > rngs[(b, 'log')][1] or
                        rngs[(b, 'log')][0] > rngs[(b, 'linear')][1]) for b in (2, 3, 4, 6, 8))
     worst = max(max(med[(b, 'linear')] / med[(b, 'log')], med[(b, 'log')] / med[(b, 'linear')])
                 for b in (2, 3, 4, 6, 8))
     spread = max(rngs[(b, sp)][1] / rngs[(b, sp)][0]
                  for b in (2, 3, 4, 6, 8) for sp in ("linear", "log"))
+    lin_wins = sum(1 for b in (2, 3, 4, 6, 8) if med[(b, "linear")] < med[(b, "log")])
     P_(f"\n  Q4: PREDICTION MADE AND LOST. Predeclared: log space wins and 'it is not close'.")
-    P_(f"  Measured: the largest median gap between the spaces is {worst:.2f}x, it changes sign")
-    P_(f"  with bit width, the seed ranges overlap at every width ({overlap}), and the spread")
-    P_(f"  WITHIN one space across seeds reaches {spread:.0f}x -- larger than the effect. The")
-    P_( "  choice of space is not the operative decision and the predeclared claim is withdrawn.")
+    P_(f"  Measured: LINEAR has the better median at {lin_wins} of 5 widths -- if anything the")
+    P_(f"  point estimate leans the OTHER WAY from the prediction. But it is not resolved either:")
+    P_(f"  the largest median gap is {worst:.2f}x, it changes sign with bit width, the seed ranges")
+    P_(f"  overlap at every width ({overlap}), and the spread WITHIN one space across seeds reaches")
+    P_(f"  {spread:.0f}x -- larger than the effect being ranked. So the honest statement is that")
+    P_( "  this measurement does not separate the two spaces, and the predeclared claim that the")
+    P_( "  choice 'is not close' is withdrawn on both counts: wrong direction, and not close to")
+    P_( "  significant.")
     P_( "  What IS operative is the protocol in the table above. Log space keeps one real")
     P_( "  advantage that is not an accuracy claim: it cannot produce a negative probability,")
     P_( "  while linear produces hundreds that must be clipped before the table is a")
