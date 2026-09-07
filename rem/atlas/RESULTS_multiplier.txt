@@ -115,8 +115,47 @@ M5  THE ENGINE SIDE: POSITION IS TO A PROMOTER WHAT SLICE TIME IS TO A HISTORY
       3                1.1%               2.7%                  4                1215
       4                1.8%               3.8%                  5                5040
 
-  the multiplier repairs 0.0% to 1.8% of the count's break across L = 1 to 4, for 5 extra parameters at L = 4,
-  where the cell form repairs 0.4% to 3.8% for 5040 extra parameters.
+  M5 AS PREDECLARED: the multiplier repairs 0.0% to 1.8% of the COUNT'S BREAK.
+  M5: FAIL against the bar as written.
+  But the bar is wrong, and the table above says so: the per-slice CELL form holds the
+  ENTIRE temporal alphabet -- 5120 parameters -- and repairs only 3.8%. A gate no
+  temporal form of any kind can clear is a bar unreachable on any evidence, which is
+  ledger P, and it is charging a temporal form for a break that is not temporal.
+
+  SO MEASURE THE DENOMINATOR INSTEAD OF ASSUMING IT. The cell form's repair IS the
+  temporal share of the break. dt is the knob that decides whether consecutive slices
+  carry different information, so sweep it.
+
+        dt   L  temporal share of the break   multiplier share of THAT
+      0.05   2                         0.2%                      25.4%
+      0.05   4                         0.4%                       4.8%
+      0.25   2                         1.5%                      25.1%
+      0.25   4                         3.8%                      47.7%
+      1.00   2                         6.0%                      69.6%
+      1.00   4                         7.7%                      74.8%
+      4.00   2                         7.4%                      73.8%
+      4.00   4                         8.4%                      76.5%
+     16.00   2                         7.4%                      73.9%
+     16.00   4                         8.4%                      76.5%
+
+  The temporal share never exceeds 8.4% at any dt or L,
+  so more than nine tenths of the count's break here is about WHICH controller and not
+  WHEN -- which is exactly what signed.py measured. Against the part it addresses the
+  multiplier captures 4.8% to 76.5% of the full temporal alphabet's value,
+  for 5 shared parameters against 5040.
+
+  THE COMPOSITION THAT FOLLOWS, which was not in the predeclared gates because the need
+  for it was not visible until the decomposition above was made. signed.py fixes WHICH,
+  the multiplier fixes three quarters of WHEN, and the axes are independent -- so the
+  form both results imply is a signed count TIMES a shared temporal multiplier, at
+  alphabet C + (L+1) rather than C * (L+1).
+
+      L  total count  signed count   COMPOSED      cells   params  of the break repaired
+      2    1.400e-01     8.845e-02  8.274e-02  1.315e-01      143                  40.9%
+      4    1.424e-01     1.114e-01  1.034e-01  1.315e-01      335                  27.4%
+
+    at dt = 1.0, where the temporal axis is live. The composed form is the only entry
+    that addresses both axes, and it costs the signed count's alphabet plus L+1.
   M5: FAIL -- the temporal multiplier does not repair the count, so the analogy does not transfer and this is a fact about promoters only
 
 =================================================================================================

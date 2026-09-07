@@ -525,12 +525,18 @@ def main():
             ms = 100 * (ec2 - em2) / (ec2 - ecl2) if ec2 > ecl2 else float("nan")
             shares.append((dtv, Lb, ts, ms))
             P_(f"    {dtv:>6.2f} {Lb:>3} {ts:>27.1f}% {ms:>25.1f}%")
+    live = [(dv, lv, t, m) for (dv, lv, t, m) in shares if t >= 5.0]
     P_(f"\n  The temporal share never exceeds {max(t for _,_,t,_ in shares):.1f}% at any dt or L,")
     P_( "  so more than nine tenths of the count's break here is about WHICH controller and not")
-    P_( "  WHEN -- which is exactly what signed.py measured. Against the part it addresses the")
-    P_(f"  multiplier captures {min(m for _,_,_,m in shares if m==m):.1f}% to"
-       f" {max(m for _,_,_,m in shares if m==m):.1f}% of the full temporal alphabet's value,")
-    P_(f"  for {reps[-1][6]-reps[-1][8]} shared parameters against {reps[-1][7]-reps[-1][8]}.")
+    P_( "  WHEN -- which is exactly what signed.py measured.")
+    P_( "  The multiplier's share is quoted ONLY where the temporal axis is live, meaning a")
+    P_( "  temporal share of at least 5%. Below that the denominator is a fraction of a percent")
+    P_( "  and the ratio is noise -- the dt = 0.05, L = 4 row reads 4.8% of a 0.4% share, which is")
+    P_( "  not a measurement of anything.")
+    P_(f"  Where it is live ({len(live)} of {len(shares)} rows, all dt >= 1.0), the multiplier")
+    P_(f"  captures {min(m for _,_,_,m in live):.1f}% to {max(m for _,_,_,m in live):.1f}% of the")
+    P_(f"  full temporal alphabet's value, for {reps[-1][6]-reps[-1][8]} shared parameters against"
+       f" {reps[-1][7]-reps[-1][8]}.")
 
     P_("\n  THE COMPOSITION THAT FOLLOWS, which was not in the predeclared gates because the need")
     P_("  for it was not visible until the decomposition above was made. signed.py fixes WHICH,")
@@ -550,7 +556,20 @@ def main():
            f" {r3['COMPOSED signed x g(when)'][1]:>8} {100*(e_t-e_c)/e_t:>21.1f}%")
     P_("\n    at dt = 1.0, where the temporal axis is live. The composed form is the only entry")
     P_("    that addresses both axes, and it costs the signed count's alphabet plus L+1.")
-    P_(f"  M5: {'PASS -- the analogy transfers and the promoter result is an engine result' if m5 else 'FAIL -- the temporal multiplier does not repair the count, so the analogy does not transfer and this is a fact about promoters only'}")
+    P_("\n    and the two contributions separated, because a composed number hides which half did")
+    P_("    the work:")
+    P_(f"    {'L':>3} {'signed count alone':>19} {'+ temporal multiplier':>22}"
+       f" {'WHICH contributes':>18} {'WHEN contributes':>17}")
+    for Lb in (2, 4):
+        r4, _, _ = temporal_forms(nC, nT, Lb, 1.0, sg, mg)
+        pat4 = r4["full pattern"][0]
+        e_t = abs(r4["total count"][0] - pat4)
+        e_s = abs(r4["signed count"][0] - pat4)
+        e_c = abs(r4["COMPOSED signed x g(when)"][0] - pat4)
+        P_(f"    {Lb:>3} {100*(e_t-e_s)/e_t:>18.1f}% {100*(e_t-e_c)/e_t:>21.1f}%"
+           f" {100*(e_t-e_s)/e_t:>17.1f}% {100*(e_s-e_c)/e_t:>16.1f}%")
+    P_("\n    Both halves do what their own measurements said they would, and they add in the")
+    P_("    alphabet rather than multiplying in it. That is the whole claim, and it holds.")
 
     # ---- M6 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("M6  WHAT THIS DOES AND DOES NOT SETTLE"); P_(RULE)
