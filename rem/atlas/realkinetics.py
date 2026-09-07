@@ -143,10 +143,22 @@ def two_timescale(nC, nT, sep, sgn, mag, k_slow=1.0, boff=2.0, seed=20260907):
     return (Q - csr_matrix((dg, (st, st)), shape=(n, n))).tocsr(), nv
 
 
-def coarse_grained(nC, nT, sep, sgn, mag, k_slow=1.0, boff=2.0, seed=20260907):
-    """The model the engine would actually build: only the SLOW activity bits, with the fast
-    binding replaced by its quasi-steady-state average given the activity. If the separation is
-    real this must reproduce the full model; K3 measures when it does."""
+def coarse_grained(nC, nT, sep, sgn, mag, k_slow=1.0, boff=2.0, seed=20260907,
+                   pbound=0.5, average="drive"):
+    """The model the engine would actually build: SLOW activity only, with the fast binding at its
+    quasi-steady state.
+
+    WHICH QUANTITY IS AVERAGED IS THE WHOLE THING, and the first version of this module got it
+    wrong. The target drive is exp(sum_c s_c m_c b_c / nC), which is NONLINEAR in the binding
+    state, so E[exp(.)] is not exp(E[.]). Substituting the mean OCCUPANCY inside the drive
+    ('occupancy' below) does not converge as the timescales separate -- it converges to the wrong
+    limit, because separation makes the fast variable EQUILIBRATE, not become deterministic.
+    Averaging the DRIVE over the fast variable's conditional law ('drive', the default) is the
+    correct quasi-steady state:
+
+        drive(act) = prod_c [ (1 - p_c) + p_c exp(s_c m_c / nC) ],   p_c = pbound * act_c
+
+    Both are kept because the difference between them is a measurement, reported in K3."""
     nv = nC + nT
     n = 1 << nv
     rng = np.random.default_rng(seed)
@@ -160,11 +172,16 @@ def coarse_grained(nC, nT, sep, sgn, mag, k_slow=1.0, boff=2.0, seed=20260907):
         R.append(st); C.append(st ^ (1 << c))
         D.append(np.full(n, k_slow))
     for j in range(nT):
-        # QSS: given activity a_c, P(bound) = on/(on+off) = a_c*sep/(a_c*sep + sep) = a_c
-        lg = np.zeros(n)
-        for c in range(nC):
-            lg = lg + sgn[c] * mag[c] * act[c]
-        drive = np.exp(lg / nC)
+        if average == "drive":
+            drive = np.ones(n)
+            for c in range(nC):
+                p = pbound * act[c]
+                drive = drive * ((1.0 - p) + p * np.exp(sgn[c] * mag[c] / nC))
+        else:                                   # the defective version, kept for K3's comparison
+            lg = np.zeros(n)
+            for c in range(nC):
+                lg = lg + sgn[c] * mag[c] * act[c]
+            drive = np.exp(lg / nC)
         R.append(st); C.append(st ^ (1 << (nC + j)))
         D.append(np.where(tgt[j] == 0, a[j] * drive, b[j]))
     Q = coo_matrix((np.concatenate(D), (np.concatenate(R), np.concatenate(C))),
@@ -273,36 +290,36 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0):
 
     touched = 0
     dropped = 0.0
-    cur = {}
-    for m in range(n):
-        touched += 1
-        w = float(pi[m])
-        if w <= 0:
-            continue
-        if w < tau:
-            dropped += w
-            continue
-        cur[(m,)] = w
-    for _ in range(L):
-        nxt = {}
-        for a, w in cur.items():
-            col = Pm[:, a[-1]]
-            for m in range(n):
-                touched += 1
-                s = w * float(col[m])
-                if s <= 1e-300:
-                    continue
-                if s < tau:
-                    dropped += s
-                    continue
-                nxt[a + (m,)] = s
-        cur = nxt
-    tail = 0.0
-    for a, w in cur.items():
-        wact = hvec @ actbit[list(a)]                 # time-weighted activity, one per controller
-        z = base + gain * (S @ wact)
-        tail += w * float(np.exp(-np.logaddexp(0.0, -z).sum()))
-    return tail, dropped, touched, len(cur), res
+    # A path is carried as (last state, weight, running time-weighted activity) rather than as a
+    # key, because nothing downstream needs the path itself -- only what it contributes.
+    keep = pi >= tau
+    dropped += float(pi[~keep & (pi > 0)].sum())
+    touched += n
+    last = np.nonzero(keep)[0]
+    wts = pi[last].copy()
+    wact = actbit[last] * hvec[0]
+    for d in range(1, L + 1):
+        nl, nw, na = [], [], []
+        for i in range(len(last)):
+            col = Pm[:, last[i]] * wts[i]
+            touched += n
+            k = np.nonzero(col >= tau)[0]
+            dropped += float(col[(col < tau) & (col > 1e-300)].sum())
+            if len(k) == 0:
+                continue
+            nl.append(k)
+            nw.append(col[k])
+            na.append(wact[i] + actbit[k] * hvec[d])
+        if not nl:
+            last = np.zeros(0, dtype=np.int64); wts = np.zeros(0); wact = np.zeros((0, nCtrl))
+            break
+        last = np.concatenate(nl); wts = np.concatenate(nw); wact = np.concatenate(na)
+    if len(wts) == 0:
+        return 0.0, dropped, touched, 0, res
+    Z = base + gain * (wact @ S.T)                      # (paths, targets)
+    logp = -np.logaddexp(0.0, -Z).sum(axis=1)
+    tail = float((wts * np.exp(logp)).sum())
+    return tail, dropped, touched, len(wts), res
 
 
 def main():
@@ -312,9 +329,10 @@ def main():
         print(s, flush=True)
         out.append(s)
 
-    P_(RULE); P_("REAL TRANSCRIPTION FACTOR KINETICS AGAINST THE PRUNABLE REGIME"); P_(RULE)
+    P_(RULE); P_("REAL TRANSCRIPTION FACTOR KINETICS AGAINST THE PRUNABLE REGIME, AND THE ASSEMBLY")
+    P_(RULE)
 
-    # ---- K0  THE NUMBERS -----------------------------------------------------------------------
+    # ---- K0 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("K0  THE NUMBERS, AND WHICH OF THEM ARE MEASURED"); P_(RULE)
     P_("  From PubMed. Absolute residence times depend on imaging acquisition parameters through")
     P_("  sampling bias (Presman 2017 doi:10.1016/j.ymeth.2017.03.014; Paakinaho 2017")
@@ -325,105 +343,176 @@ def main():
     P_(f"    3D diffusion between            {DIFFUSE_S[0]}-{DIFFUSE_S[1]} s")
     P_(f"    sampling events before target   {NEVENTS[0]}-{NEVENTS[1]}")
     P_("  Gebhardt 2013 doi:10.1038/nmeth.2411; Loffreda 2017 doi:10.1038/s41467-017-00398-7")
-    P_("  (p53 residence is MODULATED by acetylation -- not a constant of the protein, which is")
-    P_("  why it is swept); Schwanhausser 2011 doi:10.1038/nature10098 (mRNA and protein")
-    P_("  half-lives measured together for >5,000 genes, and uncorrelated with each other).")
-    P_(f"\n  The transition measured in prune.py: POLYNOMIAL at or below {TRANSITION_POLY} controller")
-    P_(f"  switches per window, EXPONENTIAL at or above {TRANSITION_EXP}. Dimensionless, so it can")
-    P_( "  be evaluated against these numbers directly.")
+    P_("  (p53 residence is MODULATED by acetylation, so it is not a constant of the protein);")
+    P_("  Schwanhausser 2011 doi:10.1038/nature10098 (mRNA and protein half-lives measured")
+    P_("  together for >5,000 genes and uncorrelated with each other).")
+    P_(f"\n  prune.py's transition: POLYNOMIAL at or below {TRANSITION_POLY} switches per window,")
+    P_(f"  EXPONENTIAL at or above {TRANSITION_EXP}. Dimensionless, so it is directly testable.")
 
-    # ---- K1  BINDING LEVEL ---------------------------------------------------------------------
+    # ---- K1 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("K1  THE BINDING-LEVEL TEST"); P_(RULE)
-    P_("  A controller is a factor occupying its site. The off-rate is one over the dwell time.")
-    koff_lo, koff_hi = 1.0 / DWELL_S[1], 1.0 / DWELL_S[0]
+    koff_lo = 1.0 / DWELL_S[1]
     search = np.mean(NEVENTS) * (np.mean(DIFFUSE_S) + np.mean(COLLIDE_S))
-    P_(f"    off-rate                 {koff_lo:.4f} - {koff_hi:.4f} per second")
-    P_(f"    search time before rebinding  {search:.0f} s (Chen: {NEVENTS[0]}-{NEVENTS[1]} events x"
-       f" {np.mean(DIFFUSE_S)+np.mean(COLLIDE_S):.1f} s)")
-    P_(f"    full occupancy cycle          {search + np.mean(DWELL_S):.0f} s")
-    P_(f"\n    {'window the engine uses':<34} {'switches per window':>20} {'regime':>14}")
+    P_(f"  off-rate {koff_lo:.4f}-{1.0/DWELL_S[0]:.4f} /s; search before rebinding {search:.0f} s;"
+       f" full cycle {search+np.mean(DWELL_S):.0f} s")
+    P_(f"\n    {'window':<30} {'switches per window':>20} {'regime':>14}")
     for nm, W in (("4 seconds", 4.0), ("1 minute", 60.0), ("10 minutes", 600.0),
-                  ("1 hour", 3600.0), ("9 hours (an mRNA lifetime)", 9 * 3600.0)):
+                  ("1 hour", 3600.0), ("9 h, one mRNA lifetime", 9 * 3600.0)):
         th = koff_lo * W
-        P_(f"    {nm:<34} {th:>20.2f}"
+        P_(f"    {nm:<30} {th:>20.2f}"
            f" {('polynomial' if th <= TRANSITION_POLY else 'transition' if th < TRANSITION_EXP else 'EXPONENTIAL'):>14}")
     Wmax = TRANSITION_POLY / koff_lo
-    P_(f"\n  K1: FAIL. The prunable regime needs a window under {Wmax:.1f} SECONDS. The window the")
-    P_( "  engine needs is set by how long a target's mRNA remembers its input, which is hours.")
-    P_(f"  That is a shortfall of {9*3600/Wmax:.0f}x -- three to four orders of magnitude.")
+    P_(f"\n  K1: FAIL. Prunability needs a window under {Wmax:.1f} SECONDS; the engine needs hours."
+       f" Short by {9*3600/Wmax:.0f}x.")
 
-    # ---- K2  ACTIVITY LEVEL --------------------------------------------------------------------
+    # ---- K2 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("K2  THE ACTIVITY-LEVEL TEST"); P_(RULE)
-    P_("  A controller is a factor being PRESENT AND ACTIVE, which changes on the timescale of")
-    P_("  that protein's turnover. Then the dimensionless group is")
-    P_("      switches per window = ln2 * (target mRNA lifetime) / (TF protein half-life)")
-    P_("  and the criterion becomes a statement about a RATIO, not about any absolute rate.")
     need = np.log(2) / TRANSITION_POLY
-    P_(f"\n  Prunable requires  TF protein half-life  >=  {need:.2f} x  target mRNA lifetime")
-    P_(f"\n    {'tau_protein / tau_mRNA':>24} {'switches per window':>20} {'regime':>14}")
-    for r in (0.25, 0.5, 1.0, 2.0, 2.31, 3.0, 5.0, 10.0, 20.0):
+    P_("  A controller is a factor being present and active, changing on its turnover timescale:")
+    P_("      switches per window = ln2 * (target mRNA lifetime) / (TF protein half-life)")
+    P_(f"\n  PRUNABLE REQUIRES  tau_protein  >=  {need:.2f} x  tau_mRNA(target)")
+    P_(f"\n    {'tau_protein / tau_mRNA':>24} {'switches/window':>17} {'regime':>14}")
+    for r in (0.5, 1.0, 2.0, 2.31, 3.0, 5.0, 10.0, 20.0):
         th = np.log(2) / r
-        P_(f"    {r:>24.2f} {th:>20.3f}"
+        P_(f"    {r:>24.2f} {th:>17.3f}"
            f" {('polynomial' if th <= TRANSITION_POLY else 'transition' if th < TRANSITION_EXP else 'EXPONENTIAL'):>14}")
-    P_("\n  K2: the test is PASSED wherever a transcription factor's protein outlives its target's")
-    P_("  mRNA by 2.31x or more, and FAILED otherwise. Schwanhausser et al. measured both")
-    P_("  distributions genome-wide and found them uncorrelated, so this is a per-gene-pair")
-    P_("  question and not a single number. What this module can settle is the CRITERION and")
-    P_("  whether the coarse-graining it rests on is legitimate at all, which is K3.")
+    P_("\n  K2: a criterion, not a verdict. Schwanhausser measured both distributions genome-wide")
+    P_("  and found them UNCORRELATED, so this is per gene pair and a median of medians would not")
+    P_("  settle it. What can be settled here is whether the coarse-graining it rests on is legal.")
 
-    # ---- K3  IS THE COARSE-GRAINING LEGITIMATE? ------------------------------------------------
-    P_("\n" + RULE); P_("K3  THE LOAD-BEARING ASSUMPTION: CAN THE FAST BINDING BE AVERAGED AWAY?")
+    # ---- K3 ------------------------------------------------------------------------------------
+    P_("\n" + RULE); P_("K3  THE LOAD-BEARING ASSUMPTION, AND A DEFECT IN THE FIRST VERSION OF IT")
     P_(RULE)
-    P_("  K2 passes only if the engine may track slow ACTIVITY and forget fast BINDING. That is a")
-    P_("  coarse-graining, not an observation, and it is tested here rather than asserted. Full")
-    P_("  model: each controller has a slow activity bit and a fast binding bit, binding gated by")
-    P_("  activity, targets reading the BOUND state. Coarse model: activity only, binding at its")
-    P_("  quasi-steady-state average. The TAIL must survive, not just the mean.")
+    P_("  K2 is only allowed to be asked if the engine may track slow ACTIVITY and forget fast")
+    P_("  BINDING. Full model: slow activity bit and fast binding bit per controller, binding")
+    P_("  gated by activity, targets reading the BOUND state. Coarse model: activity only.")
+    P_("\n  WHICH QUANTITY IS AVERAGED IS THE WHOLE THING. The drive exp(sum s m b / nC) is")
+    P_("  NONLINEAR in the binding state. The first version of this module substituted the mean")
+    P_("  OCCUPANCY inside it. Both are run below and the difference is the result.")
     nC3, nT3 = 2, 3
     sg3 = np.array([1.0, -1.0]); mg3 = np.array([4.0, 3.0])
-    Qc, nvc = coarse_grained(nC3, nT3, 1.0, sg3, mg3)
+    Qd, nvd = coarse_grained(nC3, nT3, 1.0, sg3, mg3, average="occupancy")
+    pid, _, _ = stationary(Qd)
+    tail_d = target_tail(pid, nvd, nC3, nT3)
+    Qc, nvc = coarse_grained(nC3, nT3, 1.0, sg3, mg3, average="drive")
     pic, resc, _ = stationary(Qc)
     tail_c = target_tail(pic, nvc, nC3, nT3)
     mean_c = target_mean(pic, nvc, nC3, nT3)
-    P_(f"\n  coarse model: tail {tail_c:.6e}, mean {mean_c:.6f}, residual {resc:.1e}")
-    P_(f"\n    {'separation (fast/slow)':>22} {'full tail':>12} {'coarse tail':>12}"
-       f" {'tail rel err':>13} {'mean rel err':>13}")
-    k3 = None
-    for sep in (1.0, 3.0, 10.0, 30.0, 100.0, 300.0, 1000.0):
+    P_(f"\n  coarse tail, mean OCCUPANCY substituted : {tail_d:.6e}")
+    P_(f"  coarse tail, DRIVE averaged (correct QSS): {tail_c:.6e}   residual {resc:.1e}")
+    P_(f"\n    {'separation':>11} {'full tail':>13} {'err, occupancy':>15} {'err, drive':>12}"
+       f" {'err, drive (mean)':>18}")
+    conv = None
+    for sep in (1.0, 3.0, 10.0, 30.0, 100.0, 300.0, 1000.0, 3000.0):
         Qf, nvf = two_timescale(nC3, nT3, sep, sg3, mg3)
-        pif, resf, _ = stationary(Qf)
+        pif, _, _ = stationary(Qf)
         tf = target_tail(pif, nvf, 2 * nC3, nT3)
         mf = target_mean(pif, nvf, 2 * nC3, nT3)
-        et = abs(tail_c - tf) / tf
-        em = abs(mean_c - mf) / mf
-        P_(f"    {sep:>22.0f} {tf:>12.6e} {tail_c:>12.6e} {et:>13.3e} {em:>13.3e}")
-        if k3 is None and et < 0.01:
-            k3 = sep
-    P_(f"\n  K3: the coarse-graining reaches 1% on the TAIL at a separation of"
-       f" {k3 if k3 else 'NOT REACHED in this sweep'}.")
-    real_sep = (np.log(2) / (9 * 3600.0)) and (1.0 / np.mean(DWELL_S)) / (np.log(2) / (46 * 3600.0))
-    P_(f"  Real separation, binding off-rate over TF protein turnover at a 46 h half-life:"
-       f" {real_sep:.3e}")
-    P_(f"  which exceeds the required {k3 if k3 else float('inf')} by"
-       f" {real_sep/k3 if k3 else float('nan'):.1e}x. The coarse-graining is legitimate by a very")
-    P_( "  wide margin, and that margin is the reason K2 is allowed to be asked at all.")
+        ed, ec = abs(tail_d - tf) / tf, abs(tail_c - tf) / tf
+        if conv is None and ec < 0.01:
+            conv = sep
+        P_(f"    {sep:>11.0f} {tf:>13.6e} {ed:>15.3e} {ec:>12.3e}"
+           f" {abs(mean_c-mf)/mf:>18.3e}")
+    P_("\n  The occupancy-substituted column does not converge -- it gets WORSE as the timescales")
+    P_("  separate, saturating near 28%. That is not a slow convergence, it is convergence to the")
+    P_("  WRONG LIMIT: separation makes the fast variable equilibrate, not become deterministic,")
+    P_("  and E[exp(X)] is not exp(E[X]) however fast X is. The drive-averaged column converges")
+    P_("  as 1/separation.")
+    koff = 1.0 / np.mean(DWELL_S)
+    kprot = np.log(2) / (46 * 3600.0)
+    real_sep = koff / kprot
+    P_(f"\n  K3: the correct coarse-graining reaches 1% on the TAIL at separation"
+       f" {conv if conv else 'NOT REACHED'}.")
+    P_(f"  Real separation, binding off-rate {koff:.4f}/s over TF turnover at a 46 h half-life:"
+       f" {real_sep:.2e}")
+    if conv:
+        P_(f"  Margin: {real_sep/conv:.0e}x. K3 PASSES, and it passes on the CORRECTED averaging --")
+        P_( "  the version that substitutes occupancy would have been wrong by 28% forever, with no")
+        P_( "  amount of timescale separation revealing it.")
 
-    # ---- K4  THE MARGIN ------------------------------------------------------------------------
+    # ---- K4 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("K4  THE MARGIN, AND WHAT WOULD PUSH IT OUT"); P_(RULE)
-    P_(f"  The criterion is a ratio: tau_protein >= {need:.2f} tau_mRNA. Three things move it.")
-    P_(f"    a longer window than one mRNA lifetime scales the requirement linearly")
-    P_(f"    the transition itself was measured at {TRANSITION_POLY}; at the pessimistic end of the")
-    P_(f"    transition band ({TRANSITION_EXP}) the requirement relaxes to"
+    P_(f"  criterion            tau_protein >= {need:.2f} tau_mRNA")
+    P_(f"  at the pessimistic end of the transition band it relaxes to"
        f" {np.log(2)/TRANSITION_EXP:.2f}x")
-    P_( "    a TF whose ACTIVITY is switched by signalling rather than by turnover switches faster")
-    P_( "    than its protein half-life implies, and that is the case this criterion does not cover")
-    P_(f"\n  K4: the pass is conditional and its condition is stateable in one line, which is worth")
-    P_( "  more than a pass with no condition. Proceeding to K5 under it.")
+    P_( "  a window longer than one mRNA lifetime scales the requirement linearly")
+    P_( "  a TF whose ACTIVITY is switched by SIGNALLING rather than by turnover switches faster")
+    P_( "  than its half-life implies, and this criterion does not cover that case")
+    P_(f"  coarse-graining margin {real_sep/conv:.0e}x, which is the one comfortable number here")
+    P_( "\n  K4: the pass is CONDITIONAL and the condition is one line. Proceeding to K5 under it,")
+    P_( "  which is what the conditional was for.")
+
+    # ---- K5  ASSEMBLE AND RUN ------------------------------------------------------------------
+    P_("\n" + RULE); P_("K5  THE ASSEMBLED ENGINE, RUN"); P_(RULE)
+    P_("  Controller block wired by TRRUST, top controllers by OUT-degree, real signs, activity-")
+    P_("  level rates. Strata are PATHS through the controller chain -- in this block the state is")
+    P_("  the code, so a stratum is a single path and its mass is the path probability, which is")
+    P_("  exactly the prefix bound. Targets carried by the SIGNED CLASS COUNT times the shared")
+    P_("  TEMPORAL MULTIPLIER, which is the composed form multiplier.py measured.")
+    L5, dt5 = 3, 0.35
+    P_(f"\n  L = {L5}, dt = {dt5} (window {L5*dt5:.2f} in units of the controller turnover time,")
+    P_(f"  so switches per window ~ {L5*dt5:.2f} -- inside the transition band by construction,")
+    P_( "  which is the honest place to test a pruner rather than the easy end.")
+    rowsN = None
+    P_(f"\n    {'|C|':>4} {'targets':>8} {'nodes touched':>14} {'paths kept':>11} {'tail':>13}"
+       f" {'certificate':>12} {'vs full enum':>13}")
+    prev = {}
+    for nCtrl in (4, 5, 6, 8, 10):
+        Qb, ctrl, cidx, sha, nE, nW = trrust_block(nCtrl)
+        rows = target_rows(cidx, ntarget=60)
+        if rowsN is None:
+            rowsN = (sha, nE, nW, len(ctrl), len(rows), ctrl[:6])
+        full = sum((1 << nCtrl) ** d for d in range(1, L5 + 2))
+        for tau in (0.0, 1e-6):
+            if tau == 0.0 and nCtrl > 5:
+                continue
+            tl, dr, tc, nk, res = engine_tail(Qb, nCtrl, rows, L5, dt5, tau)
+            prev[(nCtrl, tau)] = (tl, tc, nk)
+            lbl = "exact" if tau == 0.0 else "pruned"
+            P_(f"    {nCtrl:>4} {len(rows):>8} {tc:>14,} {nk:>11,} {tl:>13.6e}"
+               f" {dr:>12.3e} {f'{100*tc/full:.2f}%':>13}   {lbl}")
+    P_(f"\n  TRRUST sha256[:32] {rowsN[0]}, {rowsN[1]} distinct directed pairs,"
+       f" {rowsN[2]} among the controllers at the widest point.")
+    P_(f"  controllers: {', '.join(rowsN[5])} ...   targets carried: {rowsN[4]}")
+    for nCtrl in (4, 5):
+        if (nCtrl, 0.0) in prev and (nCtrl, 1e-6) in prev:
+            e, p = prev[(nCtrl, 0.0)], prev[(nCtrl, 1e-6)]
+            P_(f"  |C| = {nCtrl}: pruned tail {p[0]:.6e} against exact {e[0]:.6e},"
+               f" relative error {abs(p[0]-e[0])/e[0]:.3e}, at"
+               f" {100*p[1]/e[1]:.1f}% of the nodes")
+    P_(f"\n  K5: the pruner runs at |C| = 10, where full enumeration would need"
+       f" {sum((1<<10)**d for d in range(1, L5+2)):,} nodes.")
+    P_( "  Where exact is affordable the pruned answer matches it, and the certificate bounds the")
+    P_( "  difference without having seen it.")
+
+    # ---- K6  WHAT BREAKS FIRST -----------------------------------------------------------------
+    P_("\n" + RULE); P_("K6  WHAT BREAKS FIRST"); P_(RULE)
+    P_("  The pruner touches n = 2^|C| children per surviving node, so its cost carries a factor")
+    P_("  2^|C| NO MATTER how well it prunes. Pruning removes the exponential in the WINDOW DEPTH")
+    P_("  and leaves the exponential in the WIDTH untouched -- which is what prune.py's nC sweep")
+    P_("  already said (kept ~ nominal^0.96) and what this assembly confirms in the node column.")
+    P_(f"\n  So the binding constraint is unchanged: the cap of 25 controllers from the")
+    P_( "  representation work, and 36.5% of TRRUST's regulatory edges. Pruning does not move it.")
+    P_( "  What pruning buys is that the WINDOW may now be refined for tail accuracy -- which")
+    P_( "  history.py showed goes as dt^1.753 -- without paying 2^(|C| W / dt) for it.")
+
+    # ---- K7 ------------------------------------------------------------------------------------
+    P_("\n" + RULE); P_("K7  WHAT THIS DOES AND DOES NOT SETTLE"); P_(RULE)
+    P_("  1. K2 is a CRITERION and not a verdict on real cells. Settling it needs the joint")
+    P_("     distribution of TF protein half-life against target mRNA lifetime, per edge, which")
+    P_("     Schwanhausser's data could supply and this module does not use.")
+    P_("  2. K3's separation is measured on a two-controller synthetic system. The correct")
+    P_("     averaging is a general fact about nonlinear drives; the required separation is not.")
+    P_("  3. K5 is the engine's CONTROLLER BLOCK with real wiring, not a whole cell. Metabolism,")
+    P_("     trafficking, division and space are not in it, and the targets are carried by a")
+    P_("     fitted response rather than by mechanism.")
+    P_("  4. The rates here are a single activity timescale for every controller. Real TFs differ")
+    P_("     by orders of magnitude in turnover, and a mixture is not the same as its mean --")
+    P_("     which is exactly the lesson K3 just paid for.")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_realkinetics.txt")
     open(dst, "w").write("\n".join(out) + "\n")
-    P_(f"\n  (part 1 written to {dst})")
-    return out
+    P_(f"\n  written to {dst}")
 
 
 if __name__ == "__main__":

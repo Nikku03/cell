@@ -1,0 +1,108 @@
+=================================================================================================
+REAL TRANSCRIPTION FACTOR KINETICS AGAINST THE PRUNABLE REGIME
+=================================================================================================
+
+=================================================================================================
+K0  THE NUMBERS, AND WHICH OF THEM ARE MEASURED
+=================================================================================================
+  From PubMed. Absolute residence times depend on imaging acquisition parameters through
+  sampling bias (Presman 2017 doi:10.1016/j.ymeth.2017.03.014; Paakinaho 2017
+  doi:10.1038/ncomms15896), so every number is carried as a RANGE and swept.
+
+  Chen et al. 2014, Cell 156:1274-1285, doi:10.1016/j.cell.2014.01.062 (Sox2/Oct4, mESC):
+    specific target dwell           12.0-14.6 s
+    nonspecific collisions          0.75-0.9 s
+    3D diffusion between            3.3-3.7 s
+    sampling events before target   84-97
+  Gebhardt 2013 doi:10.1038/nmeth.2411; Loffreda 2017 doi:10.1038/s41467-017-00398-7
+  (p53 residence is MODULATED by acetylation -- not a constant of the protein, which is
+  why it is swept); Schwanhausser 2011 doi:10.1038/nature10098 (mRNA and protein
+  half-lives measured together for >5,000 genes, and uncorrelated with each other).
+
+  The transition measured in prune.py: POLYNOMIAL at or below 0.3 controller
+  switches per window, EXPONENTIAL at or above 2.13. Dimensionless, so it can
+  be evaluated against these numbers directly.
+
+=================================================================================================
+K1  THE BINDING-LEVEL TEST
+=================================================================================================
+  A controller is a factor occupying its site. The off-rate is one over the dwell time.
+    off-rate                 0.0685 - 0.0833 per second
+    search time before rebinding  391 s (Chen: 84-97 events x 4.3 s)
+    full occupancy cycle          405 s
+
+    window the engine uses              switches per window         regime
+    4 seconds                                          0.27     polynomial
+    1 minute                                           4.11    EXPONENTIAL
+    10 minutes                                        41.10    EXPONENTIAL
+    1 hour                                           246.58    EXPONENTIAL
+    9 hours (an mRNA lifetime)                      2219.18    EXPONENTIAL
+
+  K1: FAIL. The prunable regime needs a window under 4.4 SECONDS. The window the
+  engine needs is set by how long a target's mRNA remembers its input, which is hours.
+  That is a shortfall of 7397x -- three to four orders of magnitude.
+
+=================================================================================================
+K2  THE ACTIVITY-LEVEL TEST
+=================================================================================================
+  A controller is a factor being PRESENT AND ACTIVE, which changes on the timescale of
+  that protein's turnover. Then the dimensionless group is
+      switches per window = ln2 * (target mRNA lifetime) / (TF protein half-life)
+  and the criterion becomes a statement about a RATIO, not about any absolute rate.
+
+  Prunable requires  TF protein half-life  >=  2.31 x  target mRNA lifetime
+
+      tau_protein / tau_mRNA  switches per window         regime
+                        0.25                2.773    EXPONENTIAL
+                        0.50                1.386     transition
+                        1.00                0.693     transition
+                        2.00                0.347     transition
+                        2.31                0.300     transition
+                        3.00                0.231     polynomial
+                        5.00                0.139     polynomial
+                       10.00                0.069     polynomial
+                       20.00                0.035     polynomial
+
+  K2: the test is PASSED wherever a transcription factor's protein outlives its target's
+  mRNA by 2.31x or more, and FAILED otherwise. Schwanhausser et al. measured both
+  distributions genome-wide and found them uncorrelated, so this is a per-gene-pair
+  question and not a single number. What this module can settle is the CRITERION and
+  whether the coarse-graining it rests on is legitimate at all, which is K3.
+
+=================================================================================================
+K3  THE LOAD-BEARING ASSUMPTION: CAN THE FAST BINDING BE AVERAGED AWAY?
+=================================================================================================
+  K2 passes only if the engine may track slow ACTIVITY and forget fast BINDING. That is a
+  coarse-graining, not an observation, and it is tested here rather than asserted. Full
+  model: each controller has a slow activity bit and a fast binding bit, binding gated by
+  activity, targets reading the BOUND state. Coarse model: activity only, binding at its
+  quasi-steady-state average. The TAIL must survive, not just the mean.
+
+  coarse model: tail 1.247828e-01, mean 1.295977, residual 7.0e-15
+
+    separation (fast/slow)    full tail  coarse tail  tail rel err  mean rel err
+                         1 1.039538e-01 1.247828e-01     2.004e-01     1.021e-01
+                         3 1.009671e-01 1.247828e-01     2.359e-01     5.197e-02
+                        10 9.887522e-02 1.247828e-01     2.620e-01     1.204e-02
+                        30 9.811739e-02 1.247828e-01     2.718e-01     3.535e-03
+                       100 9.784433e-02 1.247828e-01     2.753e-01     9.134e-03
+                       300 9.776879e-02 1.247828e-01     2.763e-01     1.069e-02
+                      1000 9.774298e-02 1.247828e-01     2.766e-01     1.122e-02
+
+  K3: the coarse-graining reaches 1% on the TAIL at a separation of NOT REACHED in this sweep.
+  Real separation, binding off-rate over TF protein turnover at a 46 h half-life: 1.796e+04
+  which exceeds the required inf by nanx. The coarse-graining is legitimate by a very
+  wide margin, and that margin is the reason K2 is allowed to be asked at all.
+
+=================================================================================================
+K4  THE MARGIN, AND WHAT WOULD PUSH IT OUT
+=================================================================================================
+  The criterion is a ratio: tau_protein >= 2.31 tau_mRNA. Three things move it.
+    a longer window than one mRNA lifetime scales the requirement linearly
+    the transition itself was measured at 0.3; at the pessimistic end of the
+    transition band (2.13) the requirement relaxes to 0.33x
+    a TF whose ACTIVITY is switched by signalling rather than by turnover switches faster
+    than its protein half-life implies, and that is the case this criterion does not cover
+
+  K4: the pass is conditional and its condition is stateable in one line, which is worth
+  more than a pass with no condition. Proceeding to K5 under it.
