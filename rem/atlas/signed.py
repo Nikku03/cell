@@ -76,6 +76,24 @@ S5  THE ENGINE SIDE, AND A SUSPICION ABOUT THE SYNTHETIC SYSTEM. In block.py's g
     of the thing promoter.py measured.
 
 S6  WHAT THIS DOES AND DOES NOT SETTLE.
+
+=================================================================================================
+TWO DEFECTS IN THIS MODULE'S OWN FIRST RUN, FOUND BEFORE THE RESULT WAS REPORTED
+=================================================================================================
+D1  THE CAP WAS NON-MONOTONE IN C. The first run gave cap 13 at C = 12 and cap 16 at C = 16, which
+    cannot be a property of the family -- a finer partition can only split a class, never merge
+    two, so the cost can only rise. The cause was drawing an INDEPENDENT random class map for
+    each C, so consecutive rows were comparing two unrelated partitions and the difference between
+    them was assignment noise. One uniform draw per gene with class = floor(u*C) makes the
+    partitions nested at every doubling and the cap monotone by construction.
+
+D2  S5 SCORED EVERY SUMMARY AGAINST ZERO. The full pattern is not exact in this construction
+    either: the product over targets and the finite window both cost something, and the pattern
+    carried 2.2e-2 of error on its own. Reading a summary's raw error as "how much the summary
+    costs" therefore charged it for the harness. Every S5 number is now an EXCESS over the
+    pattern floor of the same variant, which changes the headline: the signed count repairs 77%
+    of the break rather than 68%, and the comparison against the real promoter number moves with
+    it.
 """
 
 from __future__ import annotations
@@ -199,8 +217,14 @@ def class_caps(Cs, L, bar=1e12, capexp=400, maxC=420, seed=20260907):
         if gname in name2i:
             od[name2i[gname]] = d
     order = list(np.argsort(-od))
+    # ONE uniform draw per gene, then class = floor(u*C). Drawing an INDEPENDENT random class
+    # map for each C made the cap non-monotone in C -- 13 at C=12 but 16 at C=16 -- which is
+    # noise between two different partitions, not a property of the family. With a shared u the
+    # partitions are nested at every doubling, so a finer C can only split a class, never merge
+    # two, and the cap is monotone by construction.
     rng = np.random.default_rng(seed)
-    asg = {C: rng.integers(0, C, size=n) for C in Cs}
+    u = rng.random(n)
+    asg = {C: np.minimum((u * C).astype(int), C - 1) for C in Cs}
 
     def slot(m):
         return m * (L + 1) + 1.0
@@ -426,6 +450,7 @@ def main():
        f"{edge_coverage(caps[('count', 0)]):>14.1%}")
     P_("      A class count is polynomial of degree (occupied classes), so the cap falls as C")
     P_("      rises. That is the trade this module exists to price.")
+    caps_by_C = {C: caps[("class", C)] for C in CS}
 
     # ---- S1  THE SCALING LAW -------------------------------------------------------------------
     P_("\n" + RULE); P_("S1  THE SCALING LAW: ERROR AGAINST C, WITH THE CAP BESIDE IT"); P_(RULE)
@@ -465,6 +490,27 @@ def main():
     P_(f"\n  S1: the smallest C inside one noise floor of identity is"
        f" {min(inside) if inside else 'NONE of those tested'}.")
     P_( "  The signed count (C = 2) is one point on this curve and it is not the knee.")
+    P_( "  The C = 404 row is close to identity but not equal to it: classes are fitted IN-FOLD,")
+    P_( "  so factors absent from a training fold have no bin and fall together into class 0,")
+    P_( "  where the identity model keys on the factor name. That merging is why C = 404 abstains")
+    P_( "  slightly less often than identity and scores slightly worse.")
+    ok_acc = [C for C in CS if (rows[C][0] - e_idn) <= floor]
+    ok_cost = [C for C in CS if caps[("class", C)] > caps[("pattern", 0)] + 1]
+    both = sorted(set(ok_acc) & set(ok_cost))
+    P_(f"\n  S0's PREDECLARED bar, evaluated: a C counts as a candidate only if its cap beats the")
+    P_(f"  pattern cap by more than one AND its error is inside one noise floor of identity.")
+    P_(f"    inside one floor of identity : {ok_acc}")
+    P_(f"    cap beats pattern by > 1     : {ok_cost}")
+    P_(f"    BOTH                         : {both if both else 'NONE'}")
+    if both:
+        c0 = min(both)
+        P_(f"  So a candidate exists, and it is C = {c0}: cap {caps[('pattern', 0)]} ->"
+           f" {caps[('class', c0)]}, coverage {edge_coverage(caps[('pattern', 0)]):.1%} ->"
+           f" {edge_coverage(caps[('class', c0)]):.1%}. That is a real gain and a modest one. It")
+        P_( "  is emphatically NOT the polynomial collapse the total count promised, which was")
+        P_(f"  cap {caps[('class', 1)]} and {edge_coverage(caps[('class', 1)]):.1%} coverage --")
+        P_( "  and which this data refutes. The cheap end of the family is as wrong as the count;")
+        P_( "  the accurate end costs nearly what identity costs. There is no C that is both.")
 
     # ---- S2  LEAKAGE ---------------------------------------------------------------------------
     P_("\n" + RULE); P_("S2  WHAT THE SIGN ORACLE WAS WORTH: HONEST MINUS LEAKY"); P_(RULE)
@@ -532,29 +578,48 @@ def main():
     ]
     P_(f"\n    nC={nC} controllers, nT={nT} targets, L={Lb}, dt={dtb}; signed relative error on")
     P_( "    the variance of the target count, against the exact joint")
-    P_(f"\n    {'variant':<42} {'total count':>13} {'signed count':>13} {'signed diff':>12}"
-       f" {'pattern':>10}")
+    P_("    Every summary is scored against the FULL PATTERN of the same construction, not")
+    P_("    against zero. The pattern is not exact either -- the product over targets and the")
+    P_("    finite window L, dt both cost something -- so the pattern's own error is the floor")
+    P_("    of this experiment, and a summary's EXCESS over it is the only part that is about")
+    P_("    the summary.")
+    P_(f"\n    {'variant':<42} {'pattern':>10} {'total count':>13} {'signed count':>13}"
+       f" {'signed diff':>12}")
     keep = {}
     for nm, sg, mg in variants:
         res, nrows, rr = sufficiency_signed(nC, nT, Lb, dtb, sg, mg)
         keep[nm[0]] = res
-        P_(f"    {nm:<42} {res['total count'][0]:>13.2e} {res['signed count'][0]:>13.2e}"
-           f" {res['signed difference'][0]:>12.2e} {res['full pattern'][0]:>10.1e}")
-    P_(f"    {'(no conditioning, the baseline that must fail)':<42}"
+        P_(f"    {nm:<42} {res['full pattern'][0]:>10.1e} {res['total count'][0]:>13.2e}"
+           f" {res['signed count'][0]:>13.2e} {res['signed difference'][0]:>12.2e}")
+    P_(f"    {'(no conditioning, the baseline that must fail)':<42} {'':>10}"
        f" {keep['C']['no conditioning'][0]:>13.2e}")
-    brk = abs(keep["C"]["total count"][0])
-    rep = abs(keep["C"]["signed count"][0])
-    P_(f"\n  Variant A reproduces summary.py: the total count is exact to"
-       f" {abs(keep['A']['total count'][0]):.1e}, because the system was built that way.")
-    P_(f"  Variant B: the total count breaks to {abs(keep['B']['total count'][0]):.1e} and the")
-    P_(f"  signed count is exact to {abs(keep['B']['signed count'][0]):.1e} -- BY CONSTRUCTION,")
-    P_( "  since the drive there is a function of the signed difference. That is not evidence.")
-    P_(f"  Variant C is the informative one. The total count breaks to {brk:.2e}; the signed")
-    P_(f"  count repairs it to {rep:.2e}, which is"
-       f" {100*(brk-rep)/brk:.1f}% of the break.")
+
+    def exc(v, k):
+        return abs(keep[v][k][0] - keep[v]["full pattern"][0])
+
+    P_(f"\n    {'variant':<42} {'total count':>13} {'signed count':>13} {'repaired':>10}")
+    for v in ("A", "B", "C"):
+        et, es = exc(v, "total count"), exc(v, "signed count")
+        P_(f"    {'excess over the pattern floor, ' + v:<42} {et:>13.2e} {es:>13.2e}"
+           f" {100*(et-es)/et if et > 0 else float('nan'):>9.1f}%")
+    P_(f"\n  Variant A reproduces summary.py: the total count's excess over the pattern is")
+    P_(f"  {exc('A', 'total count'):.1e}, essentially nothing, because the system was built so")
+    P_( "  that the drive is a symmetric function of the count.")
+    P_(f"  Variant B: the total count's excess rises to {exc('B', 'total count'):.2e} and the")
+    P_(f"  signed count's is {exc('B', 'signed count'):.2e} -- and that is BY CONSTRUCTION, since")
+    P_( "  the drive is a function of the signed difference. Not evidence, and not exactly zero")
+    P_( "  either: the drive is a function of the signed difference at each INSTANT, while the")
+    P_( "  summary is over a window of L+1 slices, so the construction makes the signed count")
+    P_( "  sufficient for the drive and not for the history.")
+    et, es = exc("C", "total count"), exc("C", "signed count")
+    P_(f"  Variant C is the only informative one. Heterogeneous magnitudes WITHIN each sign class")
+    P_(f"  are the synthetic analogue of what the promoter data has. The total count's excess is")
+    P_(f"  {et:.2e}, the signed count repairs {100*(et-es)/et:.1f}% of it.")
     P_(f"  On real promoters the signed count closed {100*(e_cnt-e_sgn)/gap:.1f}% of the")
-    P_( "  count-to-identity gap. S5 asks whether those two numbers agree, because if they do not")
-    P_( "  the synthetic system is not a model of what promoter.py measured.")
+    P_(f"  count-to-identity gap. The two agree to within"
+       f" {abs(100*(et-es)/et - 100*(e_cnt-e_sgn)/gap):.0f} points, which is the finding: once the")
+    P_( "  synthetic system is given repressors AND within-sign heterogeneity it reproduces what")
+    P_( "  the measurements show. Before that it could not, because it had neither.")
 
     # ---- S6 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("S6  WHAT THIS DOES AND DOES NOT SETTLE"); P_(RULE)
