@@ -326,27 +326,62 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0):
     return tail, dropped, touched, len(wts), res
 
 
-def engine_budget(Q, nCtrl, rows, L, dt, budget, lo=1e-30, hi=1.0, iters=26):
-    """Specify the error BUDGET and let the pruner find its threshold, instead of fixing tau.
+def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0):
+    """Specify the error BUDGET and spend it, in ONE pass.
 
-    A fixed absolute tau does not scale: path probabilities fall like n^-L, so a threshold that
-    is gentle at |C| = 4 discards almost everything at |C| = 8. That was a defect in the first
-    run of K5, where the certificate reached 0.92 -- the pruner had dropped 92% of the mass and
-    the number it returned meant nothing. Binary-searching tau against the certificate fixes it,
-    and it is also the honest interface: a user states the error they will accept."""
-    best = None
-    for _ in range(iters):
-        mid = np.sqrt(lo * hi)
-        tl, dr, tc, nk, res = engine_tail(Q, nCtrl, rows, L, dt, mid)
-        if dr <= budget:
-            best = (mid, tl, dr, tc, nk, res)
-            lo = mid
-        else:
-            hi = mid
-    if best is None:
-        tl, dr, tc, nk, res = engine_tail(Q, nCtrl, rows, L, dt, 0.0)
-        best = (0.0, tl, dr, tc, nk, res)
-    return best
+    A fixed absolute tau does not scale -- path probabilities fall like n^-L, so a threshold that
+    is gentle at |C| = 4 discards almost everything at |C| = 8, which is how the first run of this
+    gate produced a certificate of 0.92. Binary-searching tau fixes the interface but re-runs the
+    whole enumeration a couple of dozen times, which is the wrong algorithm at the widths this
+    gate exists to reach.
+
+    Instead: at each level, rank the children by mass and drop the smallest ones until this
+    level's share of the budget is spent. One pass, and the certificate is EXACT rather than
+    bounded afterwards, because the dropped mass is summed as it is dropped."""
+    pi, res, _ = stationary(Q)
+    n = Q.shape[0]
+    Pm = expm((Q.T * dt).toarray())
+    if hvec is None:
+        hvec = np.exp(-0.5 * np.arange(L, -1, -1))
+        hvec = hvec / hvec.sum()
+    S = np.zeros((len(rows), nCtrl))
+    for i, (g, regs) in enumerate(rows):
+        for c, sg in regs:
+            if c < nCtrl:
+                S[i, c] += sg
+        S[i] /= max(len(regs), 1)
+    actbit = np.array([[(m >> c) & 1 for c in range(nCtrl)] for m in range(n)], dtype=float)
+    per_level = budget / (L + 1)
+
+    def spend(mass):
+        o = np.argsort(mass)
+        c = np.cumsum(mass[o])
+        k = int(np.searchsorted(c, per_level, side="right"))
+        return o[k:], (float(c[k - 1]) if k > 0 else 0.0)
+
+    touched = n
+    keep, dr = spend(pi)
+    dropped = dr
+    last = keep
+    wts = pi[keep].copy()
+    wact = actbit[keep] * hvec[0]
+    for d in range(1, L + 1):
+        if len(last) == 0:
+            break
+        ch = Pm[:, last].T * wts[:, None]
+        touched += ch.size
+        flat = ch.ravel()
+        kept, dr = spend(flat)
+        dropped += dr
+        par, code = kept // n, kept % n
+        wts = flat[kept]
+        wact = wact[par] + actbit[code] * hvec[d]
+        last = code
+    if len(wts) == 0:
+        return 0.0, dropped, touched, 0, res
+    Z = base + gain * (wact @ S.T)
+    tail = float((wts * np.exp(-np.logaddexp(0.0, -Z).sum(axis=1))).sum())
+    return tail, dropped, touched, len(wts), res
 
 
 def main():
@@ -502,7 +537,7 @@ def main():
         for nCtrl in (4, 5, 6, 8):
             Qb, ctrl, cidx, _, _, _ = trrust_block(nCtrl)
             full = sum((1 << nCtrl) ** d for d in range(1, L5 + 2))
-            tau, tl, dr, tc, nk, res = engine_budget(Qb, nCtrl, rows, L5, dt5, BUD)
+            tl, dr, tc, nk, res = engine_budget(Qb, nCtrl, rows, L5, dt5, BUD)
             ex = ""
             if nCtrl <= 5:
                 te, _, _, _, _ = engine_tail(Qb, nCtrl, rows, L5, dt5, 0.0)
