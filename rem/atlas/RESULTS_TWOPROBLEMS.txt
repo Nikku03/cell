@@ -620,3 +620,86 @@ EVERY history depth is |C| = 1. The engine is affordable on the real network onl
 nothing is designated a controller, because the controller block 2^(|C|(L+1)) is exponential in
 the NUMBER of controllers. That is a fourth obstruction, distinct from the three statedim named,
 and no route yet addresses it.
+
+=================================================================================================
+THE FOURTH OBSTRUCTION ATTACKED: THE CONTROLLER BLOCK
+Source: rem/atlas/RESULTS_block.txt
+=================================================================================================
+
+THE REFRAMING THAT MADE IT TRACTABLE. Every gene's factor depends only on the k_i controllers that
+regulate IT -- median 1 on TRRUST. So the engine's sum_a P(a) prod_i f_i(a_C(i)) is a CONTRACTION
+over a factor graph, not an enumeration, and if P(a) factorised over controllers it would separate
+completely with no block term at all. The block exists ONLY because controllers are correlated
+with one another. That turns an architectural problem into a measurable one.
+
+E2  THE MOST ATTRACTIVE PRONG IS CONDITIONAL, NOT FREE. Writing P(a) as a dynamic Bayesian network
+    over time slices is linear in L instead of exponential -- but it is exact if and only if the
+    controllers' sampled trajectory is Markov in themselves, which holds if and only if they are
+    an AUTONOMOUS subsystem. Feedback from targets is the knob, and it turns the error on sharply:
+
+        target->controller feedback   0.00    0.05     0.20     0.50     1.00     2.00
+        non-Markovianity / tau         0.0     1.0     16.4    106.8    463.5   1787.3
+
+    On circuit.py, where protein feeds back onto the kinase, the same statistic runs 288 to 2,273
+    times tau. So a closed loop -- the thing that makes a cell a cell -- is exactly what breaks
+    the temporal factorisation.
+
+E3  THE BLOCK CANNOT BE DELETED. Pairwise mutual information between controllers' histories:
+
+        controller coupling    0.00      0.05      0.20      0.80      1.50
+        max pair MI / tau       0.0     227.1    3317.9   38917.2  102158.5
+
+    Any nonzero coupling puts it hundreds to hundreds of thousands of times above the tail-legal
+    threshold. Real controller subnetworks are dense -- mean degree 9.5 inside TRRUST's top 76 --
+    so this route is closed.
+
+E4  WHAT THE CONTRACTION ACTUALLY BUYS. Eliminating slice by slice, the separator between
+    consecutive time slices is the WHOLE controller slice, because every controller at t has a
+    child at t+1. Slice-internal treewidth does not help that separator.
+
+        flat table                    2^(|C|(L+1))
+        slice-by-slice contraction    (L+1) . 2^(2|C|)
+        sampled                       S conditional solves
+
+    At |C| = 122, L = 8 that is 2^1098 -> 2^244 x 9, a saving of 2^854. LINEAR in L instead of
+    exponential -- real and enormous -- and still EXPONENTIAL in the number of controllers.
+
+E5  SAMPLING IS THE ONLY THING THAT BREAKS THE EXPONENTIAL.
+
+        strata     mode      signed error in Var(targets ON)
+           512     exact     6.6e-16
+             1     trunc    -1.7e-01     <- the baseline that must fail, and does
+             8    sample    -1.4e-02 +- 3.4e-02
+            32    sample     3.3e-04 +- 1.7e-02
+           128    sample     3.2e-03 +- 6.1e-03
+           512    sample     8.7e-04 +- 4.9e-03
+            32     trunc    -3.8e-02
+
+    Importance-weighted sampling beats greedy truncation at equal strata count by two orders, and
+    a few hundred samples hold ~1%. The cost is independent of |C| and of L.
+
+    BUT THE PER-SAMPLE COST IS NOT ONE, and saying so is part of the result. Each sampled stratum
+    still needs the conditional target distribution given that history, lifted here from the exact
+    block because on a system this small the exact block exists. A deployed engine needs a
+    conditional solve per sample. The honest claim is S CONDITIONAL SOLVES in place of
+    2^(|C|(L+1)) TABLE ENTRIES: the exponential in |C| is genuinely broken, the constant is not
+    free, and this module does not measure it.
+
+E7  THE CAP, STATED AS A CAP. Against a budget of 1e12 entries, using the measured TRRUST
+    controller-subnetwork structure:
+
+        |C|         3      9     15     20     30     76    122
+        contracted  6e2   2e6   1e10   1e13   1e19   5e46   3e74
+        affordable  yes   yes    yes     no     no     no     no
+        edges cov  11.3% 21.9%  28.8%  32.7%  39.7%  57.8%  68.5%
+
+    The contraction moves the cap from |C| = 1 -- which is where trrust_engine left it -- to about
+    |C| = 19, roughly a third of the human network's regulatory edges. That is a real gain and it
+    is not a solution.
+
+THE HONEST HEADLINE. The fourth obstruction is REDUCED, not removed. Exact contraction buys a
+factor of 2^854 in the exponent and takes the affordable controller count from 1 to about 19.
+Beyond that only sampling works, and sampling converts an exponential cost into a variance whose
+per-sample constant this module has not priced. And the temporal factorisation -- the prong that
+would have made the whole thing linear -- is exact only for controllers with no feedback from what
+they control, which is to say only for systems that are not closed loops.
