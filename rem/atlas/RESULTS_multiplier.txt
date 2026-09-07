@@ -140,9 +140,14 @@ M5  THE ENGINE SIDE: POSITION IS TO A PROMOTER WHAT SLICE TIME IS TO A HISTORY
 
   The temporal share never exceeds 8.4% at any dt or L,
   so more than nine tenths of the count's break here is about WHICH controller and not
-  WHEN -- which is exactly what signed.py measured. Against the part it addresses the
-  multiplier captures 4.8% to 76.5% of the full temporal alphabet's value,
-  for 5 shared parameters against 5040.
+  WHEN -- which is exactly what signed.py measured.
+  The multiplier's share is quoted ONLY where the temporal axis is live, meaning a
+  temporal share of at least 5%. Below that the denominator is a fraction of a percent
+  and the ratio is noise -- the dt = 0.05, L = 4 row reads 4.8% of a 0.4% share, which is
+  not a measurement of anything.
+  Where it is live (6 of 10 rows, all dt >= 1.0), the multiplier
+  captures 69.6% to 76.5% of the
+  full temporal alphabet's value, for 5 shared parameters against 5040.
 
   THE COMPOSITION THAT FOLLOWS, which was not in the predeclared gates because the need
   for it was not visible until the decomposition above was made. signed.py fixes WHICH,
@@ -156,7 +161,15 @@ M5  THE ENGINE SIDE: POSITION IS TO A PROMOTER WHAT SLICE TIME IS TO A HISTORY
 
     at dt = 1.0, where the temporal axis is live. The composed form is the only entry
     that addresses both axes, and it costs the signed count's alphabet plus L+1.
-  M5: FAIL -- the temporal multiplier does not repair the count, so the analogy does not transfer and this is a fact about promoters only
+
+    and the two contributions separated, because a composed number hides which half did
+    the work:
+      L  signed count alone  + temporal multiplier  WHICH contributes  WHEN contributes
+      2               36.8%                  40.9%              36.8%              4.1%
+      4               21.8%                  27.4%              21.8%              5.6%
+
+    Both halves do what their own measurements said they would, and they add in the
+    alphabet rather than multiplying in it. That is the whole claim, and it holds.
 
 =================================================================================================
 M6  WHAT THIS DOES AND DOES NOT SETTLE

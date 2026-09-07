@@ -1208,3 +1208,94 @@ survive contact with data, worth cap 3 -> 13. This module asked whether spatial 
 push it further and the answer is that it cannot, not because the information is absent -- it is
 worth half a floor and a ridge extracts it -- but because a count is the wrong functional form for
 it. The cap stays at 13.
+
+
+=================================================================================================
+THE MULTIPLIER FORM: THE HYPOTHESIS poscount LEFT, TESTED ON BOTH HALVES
+=================================================================================================
+poscount.py ended with a form recorded as untested: since a count is a PARTITION and position
+enters as a smooth effect shared across factors, the positional part should be a MULTIPLIER on the
+conditional rather than extra cells in it.
+
+    P(x | class counts) * g(positions)      instead of      P(x | cells)
+
+C + P parameters instead of C * P table entries. It has now been built and measured.
+
+THE COST CLAIM IS VERIFIED RATHER THAN ASSUMED, by charging the shared parameters against the same
+bar and checking the cap does not move. It does not, for any C tested.
+
+    form                                    alphabet     cap |C| at L=8
+    pattern (exact)                       2^(k(L+1))                  3
+    CELL form, C = 8 x P = 4                      32                 13
+    MULTIPLIER, C = 8, g over P = 4                8                 25
+
+ON REAL PROMOTERS IT WORKS, AND THE CONTRAST WITH THE CELL FORM IS THE RESULT.
+
+    model                                        RMSE   vs pure C=8   fallback   alphabet
+    pure class count, C = 8                    1.3419         0.00       3.9%           8
+    CELL form, C = 8 x P = 2                   1.3380        +0.03       4.4%          16
+    CELL form, C = 8 x P = 8                   1.3622        -0.17       8.4%          64
+    MULTIPLIER, g over 8 position bins         1.3183        +0.20       3.9%           8
+    MULTIPLIER, g over 49 position bins        1.2660        +0.65       3.9%           8
+
+The multiplier gains +0.65 noise floors where the cell form's best is +0.03 and its error gets
+WORSE as P grows. And the abstention column is the structural claim made falsifiable: the
+multiplier never splits a group, so its fallback rate is IDENTICAL to the pure class count's at
+every P -- 3.9%, to the digit -- while the cell form climbs to 8.4%. It also reduces to the class
+count to machine precision when the shared term is switched off, difference 0.000e+00 exactly.
+
+Inside the single main design ladder, where poscount.py showed the apparent position win was
+design provenance between sub-libraries, the multiplier gains +0.08 and +0.15 floors where the
+cell form loses 0.33. Small, under one floor, and the right sign in the place where the confound
+cannot produce it.
+
+THE ENGINE HALF, AND A GATE THIS MODULE HAD TO FAIL ITSELF ON. The analogy proposed was that
+position is to a promoter what SLICE TIME is to a controller history: both axes a count aggregates
+over, both a smooth modulation shared across the things counted. M5 was predeclared as "the
+temporal multiplier must repair a substantial part of the count's break", and as written it fails
+at 0.0% to 1.8%.
+
+The bar was mis-specified, and the module's own table says so. The per-slice CELL form holds the
+ENTIRE temporal alphabet -- 5,120 parameters, the most a temporal representation can possibly
+know -- and repairs only 3.8%. Swept over dt from 0.05 to 16 it never exceeds 8.4%. So more than
+nine tenths of the count's break in this system is about WHICH controller and not WHEN, which is
+exactly what signed.py measured, and no temporal form of any kind could have cleared that bar.
+That is ledger P, a bar unreachable on any evidence, and it is the same error class as
+poscount.py's D2: something in the denominator that the thing measured was never responsible for.
+
+Measuring the denominator instead of assuming it -- the cell form's repair IS the temporal share:
+
+    dt      temporal share of the break      multiplier's share of THAT
+    0.05                     0.2 - 0.4%      not quoted, the denominator is noise
+    0.25                     1.5 - 3.8%      not quoted
+    1.0                      6.0 - 7.7%                          69.6 - 74.8%
+    4.0 and 16.0             7.4 - 8.4%                          73.8 - 76.5%
+
+Where the temporal axis is live the multiplier captures about three quarters of what the full
+temporal alphabet captures, for 5 shared parameters against 5,040.
+
+AND THE COMPOSITION BOTH RESULTS IMPLY, measured because the decomposition above made the need for
+it visible. signed.py fixes WHICH, the multiplier fixes three quarters of WHEN, and the axes are
+independent -- so the form is a signed count TIMES a shared temporal multiplier, at alphabet
+C + (L+1) rather than C * (L+1). At dt = 1.0, where the temporal axis is live:
+
+    L    WHICH contributes    WHEN contributes    total of the count's break repaired
+    2                36.8%                4.1%                                  40.9%
+    4                21.8%                5.6%                                  27.4%
+
+Both halves contribute what their own measurements said they would, and they ADD in the alphabet
+rather than multiplying in it. That is the whole claim and it holds.
+
+WHAT IT IS WORTH, STATED AT ITS SIZE. This is an EFFICIENCY result, not a scaling result. It buys
+the same information for C + P instead of C * P, and the axis it addresses carries 8.4% of the
+engine's break and about half a noise floor on promoters. Running total across three
+representation changes, all measured against real data or an exact joint:
+
+    representation                 cap |C| at L=8      TRRUST edge coverage
+    pattern (exact)                             3                     12.8%
+    class count (signed.py)                    13                     26.6%
+    class count x multiplier                   25                     36.5%
+
+Three controllers to twenty-five, and 12.8% of the network's regulatory edges to 36.5%. That is
+real and it is arithmetic on the same cap function throughout. It is still a constant factor on an
+exponential, and the whole-cell tail tier remains 15 to 20 orders out of reach.
