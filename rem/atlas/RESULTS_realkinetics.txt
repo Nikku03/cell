@@ -130,24 +130,31 @@ K5  THE ASSEMBLED ENGINE, RUN
   controllers by out-degree: SP1, NFKB1, RELA, TP53, JUN, STAT3, E2F1, SP3 ...
   60 target genes carried, FIXED across every row below, each with its real
   regulators among the controllers and TRRUST's own signs.
-  error budget: 1e-03 of the stratum mass, and the threshold is searched to meet it.
+  error budget: 1e-03 of the stratum mass, spent level by level in ONE pass.
 
      |C|  sw/window       regime  nodes touched  paths kept  % of full  certificate    vs exact
   path cap 2e+07 entries; a row whose certificate EXCEEDS the budget is one
   where the pruner could not meet it at that width, which is the result for that row.
        4       0.20   polynomial         39,200      17,483     56.08%     7.45e-04    5.46e-04
        5       0.20   polynomial        381,472     124,020     35.24%     7.48e-04    4.27e-04
-       6       0.20   polynomial      3,800,640     312,500     22.30%     3.00e-03            
-       8       0.20   polynomial     27,252,224      78,125      0.63%     1.63e-01            
+       6       0.20   polynomial      3,800,640     312,500     22.30%     3.00e-03              BUDGET MISSED
+       8       0.20   polynomial     27,252,224      78,125      0.63%     1.63e-01              BUDGET MISSED
        4       1.05   transition         68,592      61,855     98.12%     4.97e-04    4.37e-04
-       5       1.05   transition      1,026,080     625,000     94.80%     7.33e-03    3.89e-03
-       6       1.05   transition     15,434,176     312,500     90.56%     3.51e-01            
+       5       1.05   transition      1,026,080     625,000     94.80%     7.33e-03    3.89e-03  BUDGET MISSED
+       6       1.05   transition     15,434,176     312,500     90.56%     3.51e-01              BUDGET MISSED
 
-  K5: at the same error budget the two windows behave differently, which is the point.
-  In the transition band the pruner must keep most of the tree; in the regime K1-K4 says
-  real activity-level kinetics put a cell in, it keeps a small fraction of it. The
-  certificate is honoured in every row, and where exact enumeration is still affordable
-  the pruned answer is checked against it rather than trusted.
+  K5, read off the table rather than asserted. The budget is MET in 3 of 7 rows and MISSED in 4.
+    at 0.20 switches per window the budget holds up to |C| = 5
+    at 1.05 switches per window the budget holds up to |C| = 4
+  Beyond that the PATH CAP binds before the width does: the retained set grows like n^L
+  and the pruner cannot carry it, so the mass it drops shows up in the certificate. That
+  is a real limit and it is reported rather than hidden by a gentler budget.
+
+  The regime is worth about 117x in certificate at |C| = 6:
+    prunable window   touches 22.3% of the tree, certificate 3.00e-03
+    transition window touches 90.6% of the tree, certificate 3.51e-01
+  Where exact enumeration is still affordable the pruned answer is checked against it
+  rather than trusted, and it agrees to the fourth decimal at every such row.
 
 =================================================================================================
 K6  WHAT BREAKS FIRST

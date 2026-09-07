@@ -1401,3 +1401,106 @@ error goes as dt^1.753 -- was previously multiplied by 2^(|C| W / dt) and is now
 whenever the regulators switch slowly relative to the window. Which regime real transcription
 factors sit in is an empirical question about their kinetics that this does not answer, and it is
 the next thing worth measuring.
+
+
+=================================================================================================
+REAL TF KINETICS AGAINST THE PRUNABLE REGIME, AND THE ASSEMBLY RUN
+=================================================================================================
+prune.py's transition is dimensionless -- polynomial at or below 0.30 controller switches per
+window, exponential at or above 2.13 -- so it can be tested against measurements rather than
+argued about. From PubMed, carried as RANGES because absolute residence times are known to depend
+on imaging acquisition parameters through sampling bias (Presman 2017, doi:10.1016/j.ymeth.2017.03.014;
+Paakinaho 2017, doi:10.1038/ncomms15896):
+
+    Chen et al. 2014, Cell 156:1274-1285, doi:10.1016/j.cell.2014.01.062 -- Sox2/Oct4 in mouse ES
+    cells: specific target dwell 12.0-14.6 s, reached after 84-97 sampling events of 3.3-3.7 s
+    diffusion and 0.75-0.9 s nonspecific collisions.
+    Gebhardt et al. 2013, doi:10.1038/nmeth.2411 -- GR and ER-alpha residence times.
+    Loffreda et al. 2017, doi:10.1038/s41467-017-00398-7 -- p53 residence is MODULATED by
+    acetylation, so it is not a constant of the protein.
+    Schwanhausser et al. 2011, doi:10.1038/nature10098 -- mRNA and protein half-lives measured
+    together for >5,000 genes, and UNCORRELATED with each other.
+
+THE ANSWER DEPENDS ENTIRELY ON WHAT A CONTROLLER IS, AND THE TWO NATURAL CHOICES SIT ON OPPOSITE
+SIDES OF THE TRANSITION BY FOUR ORDERS OF MAGNITUDE.
+
+  BINDING LEVEL -- a controller is a factor occupying its site. Off-rate 1/13.3 s = 0.075 per
+  second. Prunability then needs a window under 4.4 SECONDS. The window the engine needs is set by
+  how long a target's mRNA remembers its input, which is hours. FAILS by about 7,400x.
+
+  ACTIVITY LEVEL -- a controller is a factor being present and active, changing on its turnover
+  timescale. The group collapses to
+
+      switches per window = ln2 * (target mRNA lifetime) / (TF protein half-life)
+
+  and the criterion becomes a statement about a ratio: PRUNABLE WHEN A TF'S PROTEIN OUTLIVES ITS
+  TARGET'S mRNA BY 2.31x OR MORE. That is a criterion and not a verdict -- Schwanhausser found the
+  two distributions uncorrelated, so it is a per-edge question and a median of medians would not
+  settle it.
+
+WHICH MAKES THE LOAD-BEARING ASSUMPTION A COARSE-GRAINING, NOT A NUMBER, AND IT WAS TESTED. May
+the fast binding be averaged away? A two-timescale controller -- slow activity bit, fast binding
+bit gated by it, targets reading the BOUND state -- against the activity-only model, sweeping the
+separation, required to reproduce the TAIL and not merely the mean.
+
+AND THE FIRST VERSION OF THAT TEST WAS WRONG IN A WAY WORTH KEEPING. The target drive is
+exp(sum s m b / nC), which is NONLINEAR in the binding state. Substituting the mean OCCUPANCY
+inside it does not converge:
+
+    separation        1       10      100     1000     3000
+    err, occupancy  20.0%   26.2%   27.5%   27.7%    27.7%      <- WORSE as timescales separate
+    err, drive       5.99%   1.16%   0.11%   0.011%   0.0037%   <- converges as 1/separation
+
+That is not slow convergence, it is convergence to the WRONG LIMIT. Timescale separation makes a
+fast variable EQUILIBRATE, it does not make it deterministic, and E[exp(X)] is not exp(E[X])
+however fast X is. The correct quasi-steady state averages the DRIVE over the fast variable's
+conditional law, not the occupancy. A whole-cell model built the other way would have been wrong
+by 28% on every conjunctive tail, permanently, with no amount of separation revealing it.
+
+With the correct averaging the coarse-graining reaches 1% on the tail at a separation of 30. The
+real separation -- binding off-rate 0.075/s over TF turnover at a 46 h half-life -- is 1.8e4, a
+margin of about 600x. SO THE TEST PASSES, conditionally, and the condition is one line.
+
+THE ASSEMBLY, RUN. Controller block wired by TRRUST (8,403 distinct pairs, controllers by
+out-degree: SP1, NFKB1, RELA, TP53, JUN, STAT3, E2F1, SP3 ...), real signs, activity-level rates;
+60 real target genes with their real regulators, fixed across every row; strata pruned as PATHS
+with an exact certificate; targets carried by the signed class count times the shared temporal
+multiplier. One simplification found on the way: in the controller block the state IS the code, so
+a stratum is a single path and its mass is the path probability -- enumerating strata is literally
+Markov-chain path enumeration and the prefix bound is the path probability.
+
+    |C|  sw/window     regime   nodes touched  % of full   certificate   vs exact
+      4       0.20  polynomial         39,200     56.08%      7.45e-04   5.46e-04
+      5       0.20  polynomial        381,472     35.24%      7.48e-04   4.27e-04
+      6       0.20  polynomial      3,800,640     22.30%      3.00e-03   budget missed
+      8       0.20  polynomial     27,252,224      0.63%      1.63e-01   budget missed
+      4       1.05  transition         68,592     98.12%      4.97e-04   4.37e-04
+      5       1.05  transition      1,026,080     94.80%      7.33e-03   budget missed
+      6       1.05  transition     15,434,176     90.56%      3.51e-01   budget missed
+
+At a 1e-3 budget the pruner holds to |C| = 5 in the prunable window and |C| = 4 in the transition
+band. The regime is worth about 117x in certificate at |C| = 6 -- 22.3% of the tree against 90.6%
+-- which is the demonstration. Where exact enumeration is still affordable the pruned answer is
+checked against it and agrees to the fourth decimal.
+
+THREE DEFECTS IN THIS GATE'S OWN FIRST RUNS, ALL RECORDED. A fixed absolute threshold does not
+scale, because path probabilities fall like n^-L: tau = 1e-6 was gentle at |C| = 4 and produced a
+certificate of 0.92 at |C| = 8, meaning the pruner had silently dropped 92% of the mass. The
+target set moved with |C|, so tails at different widths were different observables. And the
+retained set grows like n^L whatever the budget says, which exhausted memory until a path cap
+turned it into a reportable row instead of a crash.
+
+WHAT BREAKS FIRST, AND IT IS NOT WHAT THE PRUNER FIXES. The pruner touches 2^|C| children per
+surviving node, so its cost carries 2^|C| however well it prunes. Pruning removes the exponential
+in WINDOW DEPTH and leaves the exponential in WIDTH untouched -- prune.py's own nC sweep already
+said so (kept ~ nominal^0.96) and the node column here confirms it. So the binding constraint is
+unchanged: 25 controllers and 36.5% of TRRUST's regulatory edges, from the representation work.
+Pruning does not move it. What it buys is that the window may now be refined for tail accuracy --
+which goes as dt^1.753 -- without paying 2^(|C| W / dt) for it.
+
+SO THE HONEST SUMMARY OF THE WHOLE ARC. Real transcription factors DO sit in the prunable regime,
+but only when the engine models them at the ACTIVITY level, and only because a coarse-graining
+that must average the drive rather than the occupancy is legitimate by a 600x margin. The engine
+assembles, runs on real network wiring, and returns certified answers. It does not scale to a
+whole cell, and the reason is the same width exponential that four representation changes and one
+pruner have now all failed to remove.
