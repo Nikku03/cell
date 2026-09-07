@@ -283,8 +283,12 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0):
     S = np.zeros((len(rows), nCtrl))       # signed class count per target, normalised by k_g
     for i, (g, regs) in enumerate(rows):
         for c, sg in regs:
-            S[i, c] += sg
-        S[i] /= max(len(regs), 1)
+            if c < nCtrl:                  # a regulator OUTSIDE the controller set contributes
+                S[i, c] += sg              # nothing, because the engine does not carry it --
+        S[i] /= max(len(regs), 1)          # but it still counts in k_g, which is what edge
+                                           # coverage measures. Normalising by the regulators
+                                           # that happen to be inside would silently change the
+                                           # observable with |C| and make the rows incomparable.
     codes = np.arange(n, dtype=np.int64)
     actbit = np.array([[(m >> c) & 1 for c in range(nCtrl)] for m in range(n)], dtype=float)
 
