@@ -904,3 +904,59 @@ TWO DEFECTS OF MINE IN THIS MODULE.
     1.83 floors. That is not evidence that position does not matter -- the same paper reports a
     10 bp periodicity. It is the group-mean estimator running out of data: fallback rises from
     11.1% to 15.4% and 34.7% as the groups get finer. Reported with the fallback rates beside it.
+
+=================================================================================================
+WHAT A WHOLE CELL COSTS, UNCOMPRESSED
+Source: rem/atlas/RESULTS_compute.txt
+=================================================================================================
+
+Every figure is labelled MEASURED (timed on this machine), ANCHORED (a cost model validated
+against an exact answer), or ASSUMED (literature count, given as a range).
+
+MEASURED PRIMITIVES
+    Recon3D FBA LP, 5835 x 10600, 40,425 nonzeros          0.735 s
+    exact CME, 5,184 states, 50,220 nonzeros               0.28 s
+    exact SSA, 2,000 species / 4,000 reactions, Python     31,703 events/s
+    ASSUMED a compiled SSA reaches 1e7 events/s -- 315x the Python rate, stated not folded in
+
+ANCHOR. The sampler is run on a two-state switch whose stationary law is known in closed form and
+reproduces it at four settings (0.64991 vs 0.65000; 0.15995 vs 0.16000). A rate is only usable if
+the sampler it describes is correct, and this gate would have withdrawn the costing if it were not.
+
+THE TIERS, one mammalian cell cycle
+
+    T1  deterministic ODE / flux                      17 min           laptop
+    T2  ONE stochastic trajectory, exact SSA          1.2 to 116 d     one core
+    T3  1,000-trajectory ensemble for means           2.8 h            on 1e4 cores
+    T4  direct sampling of a 1e-6 event               31.7 yr          on 1e4 cores
+    T4  direct sampling of a 1e-13 event              317 Myr          on 1e4 cores
+    T5  exact joint, 100 binary species               2.2e9 Gyr
+    T5  exact joint, 12,000 species                   1e3601 years
+
+    The T5 arithmetic overflows a float64 at 2^12000 and has to be reported in log space, which
+    is itself the answer.
+
+WHERE THE LINE IS, AND IT IS NOT A GENTLE SLOPE. Between T3 and T4. The MEAN behaviour of a whole
+cell is a cluster job today -- under three hours on ten thousand cores. The conjunctive rare
+events this build order has spent itself on -- does any lesion fail to sterilise, does any cell
+survive, does a memory element ever flip -- sit 15 to 20 orders of magnitude further out.
+
+WHY THE CONCLUSION SURVIVES ITS OWN ASSUMPTIONS. If the event count is wrong by 10x, T2 and T3
+move by 10x and stay feasible while T4 stays impossible by 14 orders instead of 15. If the
+compiled SSA rate is wrong by 100x, the same. NO plausible error in any input moves the T3/T4
+boundary. That is why a costing built on ranges still gives a firm answer.
+
+THE POINT THIS MAKES ABOUT THE WHOLE BUILD ORDER. Hardware does not close the gap. Going from ten
+thousand cores to an exascale machine buys about five orders of magnitude against a shortfall of
+fifteen to twenty. What closes it is a change of ALGORITHM -- rare-event sampling, or a
+representation whose cost is not exponential in the number of coupled variables. This session has
+now tested four such representations. r-balls die on hubs; bounded width has a 6% floor on
+hub-mediated dependence; controller history is exact only when controllers have no feedback from
+what they control, which is to say only for systems that are not closed loops; and the count
+summary that would have made the cost polynomial is refuted on real promoter data, because
+activators and repressors cannot be added together.
+
+So the honest position is: the uncompressed whole cell is affordable for means and unaffordable
+for tails by a margin no machine will close, every obvious compression has been tried and
+measured, and the one that survives contact with data has not been found yet. The signed count is
+the nearest untested candidate.
