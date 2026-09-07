@@ -703,3 +703,63 @@ Beyond that only sampling works, and sampling converts an exponential cost into 
 per-sample constant this module has not priced. And the temporal factorisation -- the prong that
 would have made the whole thing linear -- is exact only for controllers with no feedback from what
 they control, which is to say only for systems that are not closed loops.
+
+=================================================================================================
+RETRACTION: "THE CAP MOVES FROM |C| = 1 TO ABOUT 19" IS FALSE, AND THE BLOCK WAS THE WRONG TARGET
+=================================================================================================
+The section above reports that contracting the controller block moves the affordable controller
+count from 1 to about 19, covering roughly a third of TRRUST's regulatory edges. That is withdrawn.
+
+WHAT WENT WRONG. E7's affordability column compared the BLOCK term alone, (L+1)*2^(2|C|), against
+the 1e12 budget. The engine's cost is per-gene PLUS block, and the per-gene term -- 2,861 tables
+of 2^(1+|pa_i|+k_i(L+1)) -- was priced at zero in that comparison. It is not small:
+
+    per-gene alone, L = 8:   |C|=1  4.56e6      |C|=3  3.27e11     |C|=4  5.21e13  OVER BUDGET
+                             |C|=2  7.17e8                         |C|=19 7.14e44
+
+    The real cap at L = 8 is |C| = 3, not 19.
+
+AND THE CEILING GATE, WHICH IS WORSE AND SHOULD HAVE RUN FIRST. Price the block at ZERO and ask
+whether the cap moves. That is one line and it bounds what any block work can ever buy:
+
+    L                0     1     2     3     4     6     8
+    flat block      39    19    12     8     6     4     3
+    contracted      19    19    13     8     6     4     3
+    block FREE      53    22    13     8     6     4     3
+
+At L >= 3 the FREE column EQUALS the FLAT column. Setting the block cost to literally zero does
+not move the cap, so no representation of P(a) whatsoever -- contraction, sampling, tensor-train,
+anything -- can help at the history depths the engine actually needs. At L = 0 the contraction is
+a REGRESSION, 39 -> 19, because (L+1)2^(2|C|) exceeds the flat table it replaces. The single real
+gain is +1 at L = 2.
+
+WHAT THIS MEANS. The fourth obstruction as I named it -- the controller block -- is not the
+binding constraint at realistic history depth. What binds is k_i, the number of controllers
+regulating ONE gene, through the per-gene term 2^(k_i(L+1)). I attacked the wrong term, and a
+one-line ceiling check run before the attack would have said so.
+
+WHAT SURVIVES FROM THE MODULE. The measurements, which were not affected by the cost accounting:
+  E2 the temporal DBN factorisation is exact iff the controllers are autonomous; non-Markovianity
+     goes 0.0, 1.0, 16.4, 106.8, 463.5, 1787.3 times tau as target-to-controller feedback rises
+     from 0 to 2, and runs 288-2273 on circuit.py's closed loop. A closed loop is what breaks it.
+  E3 the block cannot be deleted: any nonzero controller coupling puts pairwise history mutual
+     information 227 to 102,159 times above the threshold.
+  E5 importance-weighted sampling of the strata beats greedy truncation by two orders at equal
+     count, and the 1-stratum baseline fails as it must. That is a fact about representing P(a);
+     it is now a fact of no consequence for the cap.
+
+FOUR FURTHER DEFECTS CONFIRMED BY THE SAME REVIEW, all mine:
+  - E4 and E7 are STRING ARITHMETIC ("2^" + str(2*c)), not executed code. No elimination was run
+    to produce them.
+  - engine_from_block documents an 'indep' mode and raises ValueError on it; no temporal/DBN mode
+    exists at all despite E2 being about one; E6 is predeclared in the docstring and absent from
+    main().
+  - cost_real's cap=400 is printed as a value: trrust_engine's "cost max 2.58e+120" is the clamp
+    2^400, not a cost.
+  - the k_i figures "median 1, max 17, 41.7% with k_i >= 2" come from the top-122 by TOTAL degree
+    with undirected neighbour counting -- the definition already retracted as defect C4. The
+    module's own corrected table prints k max = 42 at |C| = 76.
+
+HOW IT WAS FOUND. Not by a gate. A pre-mortem of five adversarial lenses, run before the module
+was written and returning after it was run, recomputed the cost from the TSV and found the missing
+term. Every gate in block.py passed.

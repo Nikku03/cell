@@ -73,6 +73,28 @@ E6  END-TO-END. Does each block representation change the ENGINE's answer, on an
     multi-controller system? Signed errors, with an independent-genes baseline that MUST fail, and
     every route swept over its whole family including dt under a common ceiling.
 
+E0  THE CEILING GATE, WHICH SHOULD HAVE RUN FIRST AND DID NOT.  Before pricing any block
+    representation, price the block at ZERO and ask whether the cap moves. That is the ceiling on
+    what ANY block work can possibly buy, and it costs one line to compute.
+
+    IT WAS NOT RUN, AND THE MODULE'S HEADLINE WAS WRONG BECAUSE OF IT. E7 compared
+    (L+1)*2^(2|C|) against 1e12 and reported the cap moving from |C| = 1 to |C| = 19. That
+    comparison priced the PER-GENE term -- 2,861 tables of 2^(1+|pa_i|+k_i(L+1)) -- at zero. With
+    the same functional trrust_engine actually uses, per-gene + block:
+
+        L                0     1     2     3     4     6     8
+        flat block      39    19    12     8     6     4     3
+        contracted      19    19    13     8     6     4     3
+        block FREE      53    22    13     8     6     4     3
+
+    At L >= 3 the FREE column equals the FLAT column: setting the block cost to zero does not move
+    the cap at all, so no representation of P(a) whatsoever can help there. At L = 0 the
+    contraction is a REGRESSION, 39 -> 19, because (L+1)2^(2|C|) exceeds the flat table it
+    replaces. The one gain is +1 at L = 2.
+
+    The real cap at L = 8 is |C| = 3, not 19. What binds is k_i -- the number of controllers
+    regulating a single gene -- not the block. The attack was aimed at the wrong term.
+
 E7  THE APPLICABILITY CAP. Using the MEASURED controller-subnetwork treewidths on TRRUST
     (tw = 2, 4, 12, 24, >40 at |C| = 3, 9, 30, 76, 159), state at what |C| each representation
     becomes affordable and what fraction of the network's regulatory edges that many controllers
