@@ -30,14 +30,14 @@ S0  THE CEILING GATE, BOTH HALVES
       SIGNED count (C=2)                   419          93.3%
       class count C=3                      419          93.3%
       class count C=4                      419          93.3%
-      class count C=6                       57          51.4%
-      class count C=8                       24          35.8%
-      class count C=12                      13          26.6%
-      class count C=16                      16          29.5%
-      class count C=32                      16          29.5%
-      class count C=64                      11          24.5%
-      class count C=128                     12          25.6%
-      class count C=404                     11          24.5%
+      class count C=6                       55          50.7%
+      class count C=8                       25          36.5%
+      class count C=12                      15          28.6%
+      class count C=16                      15          28.6%
+      class count C=32                      13          26.6%
+      class count C=64                      13          26.6%
+      class count C=128                     13          26.6%
+      class count C=404                     12          25.6%
       total count, summary.py              419          93.3%
       A class count is polynomial of degree (occupied classes), so the cap falls as C
       rises. That is the trade this module exists to price.
@@ -51,18 +51,33 @@ S1  THE SCALING LAW: ERROR AGAINST C, WITH THE CAP BESIDE IT
         2       1.4683      1.4605         2.61     58.4%     3.1%      419    93.3%
         3       1.4466      1.4389         2.43     61.4%     3.2%      419    93.3%
         4       1.4077      1.3930         2.09     66.7%     3.4%      419    93.3%
-        6       1.3425      1.3242         1.53     75.6%     3.5%       57    51.4%
-        8       1.3410      1.3235         1.52     75.8%     3.8%       24    35.8%
-       12       1.3323      1.3050         1.45     77.0%     3.9%       13    26.6%
-       16       1.3330      1.2901         1.45     76.9%     4.0%       16    29.5%
-       32       1.3151      1.2806         1.30     79.4%     7.4%       16    29.5%
-       64       1.1858      1.1534         0.19     97.0%     9.8%       11    24.5%
-      128       1.2078      1.1524         0.38     94.0%    10.1%       12    25.6%
-      404       1.2065      1.1641         0.36     94.2%    10.3%       11    24.5%
+        6       1.3425      1.3242         1.53     75.6%     3.5%       55    50.7%
+        8       1.3410      1.3235         1.52     75.8%     3.8%       25    36.5%
+       12       1.3323      1.3050         1.45     77.0%     3.9%       15    28.6%
+       16       1.3330      1.2901         1.45     76.9%     4.0%       15    28.6%
+       32       1.3151      1.2806         1.30     79.4%     7.4%       13    26.6%
+       64       1.1858      1.1534         0.19     97.0%     9.8%       13    26.6%
+      128       1.2078      1.1524         0.38     94.0%    10.1%       13    26.6%
+      404       1.2065      1.1641         0.36     94.2%    10.3%       12    25.6%
     ident       1.1641      1.1641         0.00    100.0%    11.1%        3    12.8%
 
   S1: the smallest C inside one noise floor of identity is 64.
   The signed count (C = 2) is one point on this curve and it is not the knee.
+  The C = 404 row is close to identity but not equal to it: classes are fitted IN-FOLD,
+  so factors absent from a training fold have no bin and fall together into class 0,
+  where the identity model keys on the factor name. That merging is why C = 404 abstains
+  slightly less often than identity and scores slightly worse.
+
+  S0's PREDECLARED bar, evaluated: a C counts as a candidate only if its cap beats the
+  pattern cap by more than one AND its error is inside one noise floor of identity.
+    inside one floor of identity : [64, 128, 404]
+    cap beats pattern by > 1     : [1, 2, 3, 4, 6, 8, 12, 16, 32, 64, 128, 404]
+    BOTH                         : [64, 128, 404]
+  So a candidate exists, and it is C = 64: cap 3 -> 13, coverage 12.8% -> 26.6%. That is a real gain and a modest one. It
+  is emphatically NOT the polynomial collapse the total count promised, which was
+  cap 419 and 93.3% coverage --
+  and which this data refutes. The cheap end of the family is as wrong as the count;
+  the accurate end costs nearly what identity costs. There is no C that is both.
 
 =================================================================================================
 S2  WHAT THE SIGN ORACLE WAS WORTH: HONEST MINUS LEAKY
@@ -126,22 +141,39 @@ S5  THE ENGINE SIDE, AND WHAT THE SYNTHETIC SYSTEM WAS ACTUALLY TESTING
 
     nC=4 controllers, nT=5 targets, L=2, dt=0.25; signed relative error on
     the variance of the target count, against the exact joint
+    Every summary is scored against the FULL PATTERN of the same construction, not
+    against zero. The pattern is not exact either -- the product over targets and the
+    finite window L, dt both cost something -- so the pattern's own error is the floor
+    of this experiment, and a summary's EXCESS over it is the only part that is about
+    the summary.
 
-    variant                                      total count  signed count  signed diff    pattern
-    A  all activators, equal strength              -3.71e-02     -3.71e-02    -3.71e-02   -2.2e-02
-    B  half repressors, equal magnitude            -1.77e-01     -2.50e-02    -2.58e-02   -1.9e-02
-    C  half repressors, HETEROGENEOUS magnitude     -1.86e-01     -5.93e-02    -6.21e-02   -2.2e-02
-    (no conditioning, the baseline that must fail)     -1.98e-01
+    variant                                       pattern   total count  signed count  signed diff
+    A  all activators, equal strength            -2.2e-02     -3.71e-02     -3.71e-02    -3.71e-02
+    B  half repressors, equal magnitude          -1.9e-02     -1.77e-01     -2.50e-02    -2.58e-02
+    C  half repressors, HETEROGENEOUS magnitude   -2.2e-02     -1.86e-01     -5.93e-02    -6.21e-02
+    (no conditioning, the baseline that must fail)                -1.98e-01
 
-  Variant A reproduces summary.py: the total count is exact to 3.7e-02, because the system was built that way.
-  Variant B: the total count breaks to 1.8e-01 and the
-  signed count is exact to 2.5e-02 -- BY CONSTRUCTION,
-  since the drive there is a function of the signed difference. That is not evidence.
-  Variant C is the informative one. The total count breaks to 1.86e-01; the signed
-  count repairs it to 5.93e-02, which is 68.2% of the break.
+    variant                                      total count  signed count   repaired
+    excess over the pattern floor, A                1.55e-02      1.55e-02       0.0%
+    excess over the pattern floor, B                1.58e-01      5.55e-03      96.5%
+    excess over the pattern floor, C                1.64e-01      3.74e-02      77.3%
+
+  Variant A reproduces summary.py: the total count's excess over the pattern is
+  1.6e-02, essentially nothing, because the system was built so
+  that the drive is a symmetric function of the count.
+  Variant B: the total count's excess rises to 1.58e-01 and the
+  signed count's is 5.55e-03 -- and that is BY CONSTRUCTION, since
+  the drive is a function of the signed difference. Not evidence, and not exactly zero
+  either: the drive is a function of the signed difference at each INSTANT, while the
+  summary is over a window of L+1 slices, so the construction makes the signed count
+  sufficient for the drive and not for the history.
+  Variant C is the only informative one. Heterogeneous magnitudes WITHIN each sign class
+  are the synthetic analogue of what the promoter data has. The total count's excess is
+  1.64e-01, the signed count repairs 77.3% of it.
   On real promoters the signed count closed 61.6% of the
-  count-to-identity gap. S5 asks whether those two numbers agree, because if they do not
-  the synthetic system is not a model of what promoter.py measured.
+  count-to-identity gap. The two agree to within 16 points, which is the finding: once the
+  synthetic system is given repressors AND within-sign heterogeneity it reproduces what
+  the measurements show. Before that it could not, because it had neither.
 
 =================================================================================================
 S6  WHAT THIS DOES AND DOES NOT SETTLE

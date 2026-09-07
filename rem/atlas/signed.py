@@ -509,8 +509,11 @@ def main():
            f" {edge_coverage(caps[('class', c0)]):.1%}. That is a real gain and a modest one. It")
         P_( "  is emphatically NOT the polynomial collapse the total count promised, which was")
         P_(f"  cap {caps[('class', 1)]} and {edge_coverage(caps[('class', 1)]):.1%} coverage --")
-        P_( "  and which this data refutes. The cheap end of the family is as wrong as the count;")
-        P_( "  the accurate end costs nearly what identity costs. There is no C that is both.")
+        P_( "  and which this data refutes. Both ends of the family fail in opposite directions:")
+        P_(f"  everything cheap enough to keep the {caps[('class', 1)]}-controller cap (C <= 4) is")
+        P_( "  two or more noise floors from identity, and everything accurate enough to be inside")
+        P_( "  one floor has already given back nine tenths of the coverage. What survives is the")
+        P_( "  middle, and the middle is worth cap 3 -> 13, not 3 -> 419.")
 
     # ---- S2  LEAKAGE ---------------------------------------------------------------------------
     P_("\n" + RULE); P_("S2  WHAT THE SIGN ORACLE WAS WORTH: HONEST MINUS LEAKY"); P_(RULE)
@@ -602,9 +605,17 @@ def main():
         et, es = exc(v, "total count"), exc(v, "signed count")
         P_(f"    {'excess over the pattern floor, ' + v:<42} {et:>13.2e} {es:>13.2e}"
            f" {100*(et-es)/et if et > 0 else float('nan'):>9.1f}%")
+    span = {v: exc(v, "no conditioning") for v in ("A", "B", "C")}
+    P_(f"\n    the span this is measured on -- no conditioning at all, minus the pattern floor:")
+    for v in ("A", "B", "C"):
+        P_(f"      variant {v}: {span[v]:.2e}   total count uses"
+           f" {100*(1-exc(v, 'total count')/span[v]):.1f}% of it,"
+           f" signed count {100*(1-exc(v, 'signed count')/span[v]):.1f}%")
     P_(f"\n  Variant A reproduces summary.py: the total count's excess over the pattern is")
-    P_(f"  {exc('A', 'total count'):.1e}, essentially nothing, because the system was built so")
-    P_( "  that the drive is a symmetric function of the count.")
+    P_(f"  {exc('A', 'total count'):.1e}, which is {100*exc('A','total count')/span['A']:.1f}% of")
+    P_( "  the span between the pattern and no conditioning at all -- so the count recovers")
+    P_(f"  {100*(1-exc('A','total count')/span['A']):.0f}% of what the full history is worth, because the system was")
+    P_( "  built so that the drive is a symmetric function of the count. Not zero, but close.")
     P_(f"  Variant B: the total count's excess rises to {exc('B', 'total count'):.2e} and the")
     P_(f"  signed count's is {exc('B', 'signed count'):.2e} -- and that is BY CONSTRUCTION, since")
     P_( "  the drive is a function of the signed difference. Not evidence, and not exactly zero")
@@ -616,10 +627,13 @@ def main():
     P_(f"  are the synthetic analogue of what the promoter data has. The total count's excess is")
     P_(f"  {et:.2e}, the signed count repairs {100*(et-es)/et:.1f}% of it.")
     P_(f"  On real promoters the signed count closed {100*(e_cnt-e_sgn)/gap:.1f}% of the")
-    P_(f"  count-to-identity gap. The two agree to within"
-       f" {abs(100*(et-es)/et - 100*(e_cnt-e_sgn)/gap):.0f} points, which is the finding: once the")
-    P_( "  synthetic system is given repressors AND within-sign heterogeneity it reproduces what")
-    P_( "  the measurements show. Before that it could not, because it had neither.")
+    P_(f"  count-to-identity gap. The synthetic number is {abs(100*(et-es)/et - 100*(e_cnt-e_sgn)/gap):.0f}"
+       f" points MORE FORGIVING than the measurement, which is the honest way to put it -- the")
+    P_( "  two are the same order and the same sign, and the synthetic one flatters the summary.")
+    P_( "  The finding is still that the synthetic system only reproduces the measured behaviour")
+    P_( "  once it is given repressors AND within-sign heterogeneity. Before that it had neither,")
+    P_( "  which is why summary.py's synthetic verdict and promoter.py's measured verdict")
+    P_( "  disagreed: they were not testing the same thing.")
 
     # ---- S6 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("S6  WHAT THIS DOES AND DOES NOT SETTLE"); P_(RULE)
