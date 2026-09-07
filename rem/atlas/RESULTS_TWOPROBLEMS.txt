@@ -960,3 +960,74 @@ So the honest position is: the uncompressed whole cell is affordable for means a
 for tails by a margin no machine will close, every obvious compression has been tried and
 measured, and the one that survives contact with data has not been found yet. The signed count is
 the nearest untested candidate.
+
+
+=================================================================================================
+QUANTIZATION (TURBOQUANT, arXiv:2504.19874) -- THE CEILING GATE ANSWERS IT IN ONE LINE
+=================================================================================================
+TurboQuant randomly rotates a vector, which makes its coordinates near-independent and Gaussian,
+then applies an optimal scalar quantizer per coordinate, landing within ~2.7x of the distortion
+lower bound. It reduces the BITS PER VALUE. Our cost is the NUMBER of values: 2^(k_i(L+1)) and
+2^(|C|(L+1)).
+
+So the ceiling gate is arithmetic. At a fixed byte budget, b bits buys log2(64/b) bits of
+exponent. At L = 8 one extra controller costs 9 bits of exponent.
+
+    quantization at 2.5 bits supplies                              4.68 bits  =  0.52 controllers
+    reach a 1e-13 event in a year on 1e4 cores                     28.2 bits
+    exact joint over 100 binary species, in a year                129.6 bits
+    go from the affordable |C| = 3 to the network's 122 at L = 8  1071.0 bits
+
+QUANTIZATION BUYS HALF A CONTROLLER. No quantizer can do better, because the problem is
+exponential in the number of coupled variables and quantization is a constant factor on the
+entries. And the tail tier is bounded by the NUMBER OF TRAJECTORIES rather than by memory, so
+quantization does not apply to it at all. This is the same ceiling-gate discipline that block.py
+cost an entire module by skipping: price the term at zero first and see whether the cap moves.
+
+WHAT IT IS ACTUALLY GOOD FOR, measured rather than assumed. Every tier that ALREADY FITS gets
+more of itself. The sampled-block route from block.py is exactly such a tier -- memory-bound,
+cost independent of |C| and L -- and there quantization is worth having: 512 strata of 32 entries
+each, 32x fewer bytes per stratum at 4.3e-2 mean tail error, 8x at 8.3e-4. It composes with the
+other routes as a final storage layer and never as an alternative to them, because the random
+rotation destroys exactly the locality in the gene basis that r-balls, bounded width and
+controller history all depend on, and because "which genes are ON" is not a rotation-invariant
+observable.
+
+AND ONE METHODOLOGICAL RESULT, which is the more useful half. Q4 was predeclared with a
+prediction attached: that quantizing log-probabilities would beat quantizing probabilities,
+because a mean-squared-error quantizer spends its bits on the large entries and the tail is not
+there. The first run appeared to refute it violently, returning a tail relative error of exactly
+1.000 for log space at 2, 3, 4 and 6 bits.
+
+Exactly 1.000 is the signature of a broken measurement rather than a broken method. Two defects,
+both in the harness:
+
+    D1  the power-of-two PADDING was quantized as data. 5184 states padded to 8192; in log space
+        those zeros became -690.8 against real entries in [-19.2, -4.8], and 63% of the log
+        vector's variance then came from coordinates that are not states of the model.
+
+    D2  the DC offset was left in. A Walsh-Hadamard transform maps a constant vector onto a
+        single coordinate, which then sits far outside the Gaussian marginal the scalar quantizer
+        is optimal for and is clipped. Not specific to log space or to padding -- it was also in
+        the sampled-block route, worth 10.5x there at 8 bits.
+
+Fixing them is worth 24x-25x on linear and 211x-1685x on log. With one protocol applied to both
+spaces and 16 rotation seeds instead of one, the prediction is still LOST but in the opposite
+direction to the first run -- linear has the better median at 4 of 5 widths -- and it is not
+resolved in that direction either: largest median gap 3.23x, sign changes with bit width, seed
+ranges overlap at every width, and the spread WITHIN one space across seeds reaches 191x, larger
+than the effect being ranked.
+
+That is the fifth appearance in this session of a single failure class: AN APPROXIMATION RANKED
+AT A POINT RATHER THAN OVER A DISTRIBUTION. The earlier forms were ranking at one system size,
+one dt, one observable and one zero crossing. Here the point was one rotation seed. The rule has
+now been rediscovered often enough to state without qualification: a number that ranks two
+methods is not a result until the spread of the thing it is ranked over has been measured too.
+
+One incidental finding worth keeping. Quantization is the first approximation in this session
+whose tail error is NOT orders of magnitude worse than its bulk error -- the tail/bulk ratio
+stays inside [0.33, 5.59] at every width and in both spaces. The reason is structural: after
+centring, a quantizer perturbs every entry by a comparable RELATIVE amount, while truncation,
+thinning and history all discard the smallest entries preferentially, and the smallest entries
+ARE the tail. If a compression is ever found that changes the exponent, this is the property to
+look for in it.
