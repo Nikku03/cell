@@ -68,6 +68,15 @@ K4  THE COST/ACCURACY FRONTIER, both terms in the functional. The per-gene AND b
 K5  THE CAP AND THE COVERAGE on the real network, computed with the same functional
     trrust_engine uses.
 
+K7  THE ADVERSARIAL LOGIC, AND AN ADVERSARIAL OBSERVABLE  (added after K2 answered, labelled).
+    A count summary should die when controller IDENTITY matters. Build generators whose targets
+    read a SPECIFIC PAIR of controllers -- an AND gate and an XOR gate -- so that "two controllers
+    on" is ambiguous, and score on BOTH a symmetric observable and a target-specific one.
+    PREDECLARED: if the count summary survives an AND gate on a symmetric observable, that is
+    evidence about the OBSERVABLE and not about the summary, because a statistic symmetric across
+    targets cannot see which controller drove which. The no-conditioning baseline must be checked
+    separately on every observable, and an observable whose baseline passes is unreadable.
+
 K6  WHAT CANNOT BE CLAIMED.
 """
 
@@ -196,6 +205,68 @@ def edge_coverage(nC):
     return sum(1 for u, v, _ in E if u in C) / len(E)
 
 
+def adversarial(nC, nT, L, dt, logic, g=3.0, cc=1.5, boff=2.0, seed=20260907):
+    """Generators where targets read a SPECIFIC controller PAIR -- the case a count summary
+    should not survive. Scored on a symmetric and a target-specific observable."""
+    from scipy.sparse import coo_matrix, csr_matrix
+    nv = nC + nT
+    n = 1 << nv
+    rng = np.random.default_rng(seed)
+    a = np.exp(rng.normal(0, 0.3, nv)); b = boff * np.exp(rng.normal(0, 0.3, nv))
+    st = np.arange(n, dtype=np.int64)
+    bts = [((st >> i) & 1).astype(float) for i in range(nv)]
+    R, C, D = [], [], []
+    for c in range(nC):
+        drive = 1.0 + cc * bts[c - 1] if c > 0 else np.ones(n)
+        R.append(st); C.append(st ^ (1 << c))
+        D.append(np.where(bts[c] == 0, a[c] * drive, b[c]))
+    for t in range(nC, nv):
+        j = t - nC
+        if logic == "additive":
+            drive = np.ones(n)
+            for c in range(nC):
+                drive = drive * (1.0 + g * bts[c]) ** (1.0 / nC)
+        else:
+            c1, c2 = j % nC, (j + 1) % nC
+            drive = 1.0 + g * (bts[c1] * bts[c2] if logic == "and" else np.abs(bts[c1] - bts[c2]))
+        R.append(st); C.append(st ^ (1 << t))
+        D.append(np.where(bts[t] == 0, a[t] * drive, b[t]))
+    Q = coo_matrix((np.concatenate(D), (np.concatenate(R), np.concatenate(C))),
+                   shape=(n, n)).tocsr()
+    dg = np.asarray(Q.sum(axis=1)).ravel()
+    Q = (Q - csr_matrix((dg, (st, st)), shape=(n, n))).tocsr()
+    pi, res, _ = stationary(Q)
+    cur = block_joint(Q, pi, nC, L, dt)
+    exact = marginalise_targets(pi, nv, nC); exact = exact / exact.sum()
+    stt = np.arange(1 << nT, dtype=np.int64)
+    bits = [((stt >> j) & 1) for j in range(nT)]
+    pair = lambda p: float(p[(bits[0] == 1) & (bits[1] == 1)].sum())
+    vex, pex = var_on(exact, nT), pair(exact)
+    rows = {}
+    for aa, v in cur.items():
+        w = float(v.sum())
+        if w <= 1e-300:
+            continue
+        m = marginalise_targets(v, nv, nC); sm = m.sum()
+        if sm > 0:
+            rows[aa] = (w, np.array([float((m / sm)[bits[j] == 1].sum()) for j in range(nT)]))
+    out = {}
+    for name, keyfn in SUMMARIES.items():
+        grp = collections.defaultdict(lambda: [0.0, np.zeros(nT)])
+        for aa, (w, q) in rows.items():
+            gg = grp[keyfn(aa, nC)]; gg[0] += w; gg[1] += w * q
+        tot = np.zeros(1 << nT)
+        for aa, (w, q) in rows.items():
+            qa = grp[keyfn(aa, nC)][1] / grp[keyfn(aa, nC)][0]
+            term = np.full(1 << nT, w)
+            for j in range(nT):
+                term = term * np.where(bits[j] == 1, qa[j], 1.0 - qa[j])
+            tot += term
+        tot = tot / tot.sum()
+        out[name] = ((var_on(tot, nT) - vex) / vex, (pair(tot) - pex) / pex)
+    return out
+
+
 def main():
     out = []
 
@@ -275,6 +346,26 @@ def main():
     P_(f"  count summary reaches the search bound {caps[8][2]}, covering"
        f" {100*edge_coverage(caps[8][2]):.1f}%.")
 
+    # ---- K7  ADVERSARIAL LOGIC AND OBSERVABLE ---------------------------------------------------
+    P_("\n" + RULE); P_("K7  ADVERSARIAL LOGIC AND AN ADVERSARIAL OBSERVABLE  (added after K2)"); P_(RULE)
+    P_("  Targets read a SPECIFIC PAIR of controllers, so 'two on' is ambiguous and a count")
+    P_("  summary should die. Scored on a symmetric observable AND a target-specific one, with")
+    P_("  the no-conditioning baseline checked separately on each.")
+    for logic in ("additive", "and", "xor"):
+        o = adversarial(3, 5, 2, 0.25, logic)
+        P_(f"\n  logic = {logic}")
+        P_(f"    {'summary':<18} {'Var err':>12} {'':>6} {'pair err':>12} {'':>6}")
+        for name, (es, ep) in o.items():
+            P_(f"    {name:<18} {es:>+12.3e} {'ok' if abs(es)<0.01 else 'FAILS':>6}"
+               f" {ep:>+12.3e} {'ok' if abs(ep)<0.01 else 'FAILS':>6}")
+        bs, bp = o["no conditioning"]
+        if abs(bp) < 0.01:
+            P_(f"    the pair observable is UNREADABLE here: its no-conditioning baseline PASSES")
+            P_(f"    at {bp:+.3e}, so nothing on that column tests dependence.")
+    P_("\n  K7: the count summary survives AND and XOR on the observable whose baseline fails.")
+    P_("  On XOR the target-specific observable is unreadable because its baseline passes -- which")
+    P_("  is the baseline check doing its job, and is why it must run per observable, not once.")
+
     # ---- K6 -------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("K6  WHAT CANNOT BE CLAIMED"); P_(RULE)
     P_("  1. The sufficiency measurements are on synthetic systems of 2-4 controllers and 5")
@@ -284,9 +375,10 @@ def main():
     P_("  2. The cap is a COST statement computed from graph arithmetic. It says the engine could")
     P_("     be built at that size, not that it would be accurate there -- K3's error is measured")
     P_("     only at the sizes where exact ground truth exists.")
-    P_("  3. The additive form of the test generator's regulation may itself favour a count")
-    P_("     summary. A generator whose targets respond to specific controller COMBINATIONS -- an")
-    P_("     AND gate between two TFs -- is the adversarial case, and it is not run here.")
+    P_("  3. K7 runs the adversarial AND and XOR generators. The count summary survives them on")
+    P_("     the observable whose baseline fails, but a target-specific observable turned out to")
+    P_("     be UNREADABLE on the XOR system because its no-conditioning baseline passed. So the")
+    P_("     adversarial case is tested and partly inconclusive, which is different from untested.")
     P_("  4. Nothing here says the count is the BEST low-dimensional summary, only that it is")
     P_("     sufficient where tested and that identity does not matter.")
 
