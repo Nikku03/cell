@@ -65,6 +65,28 @@ V5  THE AXIS THIS CANNOT SPEAK FOR. The same paper reports that position and ori
     so is more useful than a verdict on the wrong axis.
 
 V6  WHAT THIS DOES AND DOES NOT VALIDATE.
+
+=================================================================================================
+V5's DIAGNOSIS WAS TESTED LATER, BY poscount.py, AND IT WAS RIGHT
+=================================================================================================
+V5 found that adding position and orientation made the identity model WORSE, and asserted -- did
+not test -- that this shows a group-mean estimator cannot exploit position at this sample size
+rather than that position is unimportant. poscount.py tested it, by running a ridge, which uses
+position without partitioning by it.
+
+    context + per-factor counts                      1.2199
+      + position bins                                1.1568     +0.54 noise floors
+
+The ridge with position beats V5's own identity group mean (1.1641) outright. Restricted to the
+3,184 promoters on the single main design ladder, where the group-mean position gain is -0.33
+floors at four bins, the ridge still gains +0.41. So the information is there, partitioning is
+the wrong way to reach it, and V5's diagnosis stands on evidence rather than on assertion.
+
+One correction to V5's arithmetic rather than its conclusion: V5 tested start//10, which is
+LOCATION. The paper's reported ~10 bp periodicity is PHASE, start mod 10. poscount.py tested both
+and phase is WORSE than location in both estimators, so the periodicity is not what carries the
+signal at this design resolution -- the design ladder steps by 7 bp, and nothing finer than that
+can be resolved however real it is.
 """
 
 from __future__ import annotations

@@ -1127,3 +1127,84 @@ history is exact only when controllers have no feedback from what they control. 
 refuted on real promoter data. The class count -- of which the signed count is the two-class
 member -- is the first one that survives contact with data, and it buys 3 -> 13 controllers rather
 than 3 -> 419. That is a real result and it does not change the exponent.
+
+
+=================================================================================================
+POSITION AND ORIENTATION IN A CLASS COUNT: AN EXCHANGE RATE, AND A REPRESENTATION FAULT
+=================================================================================================
+Position and orientation do not add a dimension to a class count. They MULTIPLY the alphabet: a
+count over (factor class x position bin x orientation) has K = C*P*O cells, and the engine's cost
+depends only on how many cells a summary distinguishes, never on what makes them distinguishable.
+So signed.py's cap curve already prices every possible split and the only open question is
+accuracy at fixed K. That makes this an exchange rate: is a position bin worth more than the
+factor class it displaces?
+
+    budget K       cap |C| at L=8      edge coverage
+    pattern                     3              12.8%
+    4                         419              93.3%
+    8                          25              36.5%
+    16                         15              28.6%
+    32-128                     13              26.6%
+
+THE ANSWER IS NO, AND THE WAY IT IS NO IS THE INTERESTING PART. Of 54 spatial splits, 4 beat the
+pure-identity split of the same budget and 2 also showed any improvement from the spatial axis
+over their own class resolution. Both margins are under one noise floor. And the feature carrying
+them is not a position feature at all.
+
+A PREDICTION MADE AND LOST. The paper reports a ~10 bp PERIODIC dependence of expression on site
+location, and promoter.py's V5 had tested start//10, which is LOCATION rather than PHASE. The
+prediction was that phase -- start mod 10 -- is the feature that carries what V5 missed. Measured:
+phase 1.3830 against location 1.3430 in the group mean, and +0.12 floors against +0.77 in a ridge.
+Phase is worse in both estimators. The design ladder steps by 7 bp, so nothing finer can be
+resolved however real it is in the paper.
+
+AND THE FEATURE THAT WON WAS THE CONTROL. A 7 bp feature was included only to tell grid from DNA,
+and it beat every biologically motivated position feature: +0.48 floors against location's -0.01.
+Two controls say what it is.
+
+    PERMUTATION. Partition the same 49 start values into 4 bins at random, 24 times, bin sizes
+    matched. Median gain -0.06 floors, range [-0.26, +0.18]; the ladder sits at the 100th
+    percentile. So it is not merely that any partition of position helps.
+
+    RESTRICTION, the decisive one. Restrict to the 3,184 promoters whose every site lies on the
+    main ladder, where the feature is CONSTANT and can contribute nothing. Position gain there:
+    +0.01 floors at P = 2, -0.33 at P = 4, -0.96 at P = 8. It vanishes.
+
+So the ladder's win is BETWEEN design sub-libraries and not within one -- design provenance
+wearing the costume of a position effect. Without the control it would have been this module's
+headline. A second finding of the same kind: orientation contributes EXACTLY 0.0000 at every C,
+so a split with O = 2 is a class count wearing twice its budget, and the first run's "best spatial
+split" was that artefact rather than a spatial result.
+
+THE REPRESENTATION FAULT, which is what this is actually worth. promoter.py's V5 asserted, without
+testing, that position fails because a group-mean estimator cannot exploit it at this sample size
+-- finer groups are sparser, so held-out promoters abstain. That is now tested, by running a ridge,
+which uses position without partitioning by it:
+
+    group mean, class counts + 4 position bins            -0.01 floors
+    ridge,      class counts + one term per position      +0.77 floors
+    ridge,      per-factor counts + position bins         +0.54 floors  (1.1568, beating the
+                                                                        identity group mean's
+                                                                        1.1641 outright)
+    and within the main ladder, where the confound is constant:
+    group mean, class counts + 4 position bins            -0.33 floors
+    ridge,      class counts + one term per position      +0.41 floors
+
+The information is real, it is worth about half a noise floor, and a COUNT CANNOT REACH IT. The
+reason is structural rather than statistical: a count summary is a PARTITION, and position enters
+as a smooth effect shared across all factors. Partitioning by position destroys exactly the
+sharing that makes the effect estimable, and it does so while multiplying the alphabet -- paying
+the full cost for information it has just made unusable.
+
+WHAT THAT IMPLIES FOR THE ENGINE, stated as a hypothesis and not a result, because it has not been
+run. The positional part should enter as a MULTIPLIER on the conditional rather than as extra
+cells in it -- P(x_i | class counts) * g(positions) rather than P(x_i | cells). A multiplier costs
+ADDITIVELY in the alphabet where a cell costs multiplicatively, so the same information would be
+had for P + C cells instead of P * C. Every measurement here is consistent with that form and none
+of them tests it. It is the next thing to build.
+
+WHERE THIS LEAVES THE COUNT FAMILY. signed.py found the class count is the first representation to
+survive contact with data, worth cap 3 -> 13. This module asked whether spatial information could
+push it further and the answer is that it cannot, not because the information is absent -- it is
+worth half a floor and a ridge extracts it -- but because a count is the wrong functional form for
+it. The cap stays at 13.
