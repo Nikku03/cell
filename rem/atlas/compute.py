@@ -222,10 +222,18 @@ def main():
 
     P_("\n  T5  THE EXACT JOINT DISTRIBUTION")
     P_(f"      MEASURED here: {len(st)} states = {cme:.2f} s. Cost scales with the state count.")
+    rate_states = len(st) / cme
     for n in (20, 40, 100, 1000, 12000):
-        states = 2.0 ** n
-        secs = states / (len(st) / cme)
-        P_(f"      {n:>6} binary species: 2^{n} = {states:.2e} states -> {human(secs)}")
+        log10_states = n * np.log10(2.0)
+        log10_secs = log10_states - np.log10(rate_states)
+        if log10_secs < 300:
+            P_(f"      {n:>6} binary species: 2^{n} = 1e{log10_states:.0f} states"
+               f" -> {human(10.0 ** log10_secs)}")
+        else:
+            P_(f"      {n:>6} binary species: 2^{n} = 1e{log10_states:.0f} states"
+               f" -> 1e{log10_secs - np.log10(SECONDS_PER_YEAR):.0f} years")
+    P_(f"      (reported in log space above 1e300 -- the direct arithmetic overflows a float64,")
+    P_( "       which is itself the answer to the question)")
     P_( "      VERDICT: impossible by a margin that has no useful name. 100 binary species already")
     P_( "      exceeds the age of the universe on this machine, and a cell has 1e4.")
     P_( "      statedim measured the treewidth-bounded version on real topology at >40, so even")
