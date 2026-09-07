@@ -1031,3 +1031,99 @@ centring, a quantizer perturbs every entry by a comparable RELATIVE amount, whil
 thinning and history all discard the smallest entries preferentially, and the smallest entries
 ARE the tail. If a compression is ever found that changes the exponent, this is the property to
 look for in it.
+
+
+=================================================================================================
+THE SIGNED COUNT: REFUTED AT ITS OWN CEILING, AND THE FAMILY IT SITS IN PRICED PROPERLY
+=================================================================================================
+promoter.py refuted the count summary on 5,790 designed yeast promoters and named the signed count
+-- count activators and repressors separately -- as the nearest untested candidate, on the grounds
+that activators and repressors cannot be added together. It has now been tested.
+
+THE CEILING GATE, run standalone before any module was written. Give the signed count a
+DELIBERATELY LEAKY sign oracle: per-factor effects fitted on all the data, held-out promoters
+included, so the number is an upper bound on what any honest sign-learning scheme could reach.
+
+    plain count      RMSE 1.8960     6.29 noise floors from identity
+    SIGNED count     RMSE 1.4451     2.41 floors      closes 61.6% of the gap
+    identity         RMSE 1.1641     0
+
+The signed count does not reach identity even when handed the answer. That is a refutation that no
+cleverness in estimating signs can overturn, and it was available in one probe before a line of
+the module existed.
+
+SO THE MODULE ASKS THE QUESTION THE REFUTATION EXPOSES. The signed count is C = 2 in a
+one-parameter family: partition the factors into C classes and count within each. C = 1 is the
+plain count, C = n_TF is identity, and the useful object is the whole curve priced against the cap
+each C buys. Error is in noise floors from identity, cap and coverage are on TRRUST at L = 8, and
+every class map is refitted INSIDE each training fold.
+
+    C        floors from identity      cap |C|      edge coverage
+    1  (count)              6.29           419              93.3%
+    2  (SIGNED)             2.61           419              93.3%
+    4                       2.09           419              93.3%
+    8                       1.52            25              36.5%
+    16                      1.45            15              28.6%
+    64                      0.19            13              26.6%
+    identity                0                 3              12.8%
+
+BOTH ENDS OF THE FAMILY FAIL, IN OPPOSITE DIRECTIONS. Everything cheap enough to keep the
+419-controller cap -- C <= 4, the signed count among them -- is two or more noise floors from
+identity. Everything accurate enough to be inside one floor has already given back nine tenths of
+the coverage it was supposed to buy. There is no C that is both cheap and sufficient.
+
+WHAT SURVIVES IS THE MIDDLE, AND IT IS REAL BUT MODEST. C = 64 is the smallest tested class count
+inside one noise floor of identity, and it moves the cap from 3 to 13 controllers and edge
+coverage from 12.8% to 26.6%. That is a genuine gain over the exact pattern representation. It is
+not the polynomial collapse the total count promised, which was cap 419 and 93.3% coverage, and
+which the measurements refute.
+
+THREE CONTROLS, because each of them could have produced this answer spuriously.
+
+  LEAKAGE. Refitting the class map in-fold costs at most 0.0554 log2 = 0.48 noise floors against
+  the leaky oracle, at every C. So the classes CAN be learned from training data alone and the
+  leaky ceiling was a fair upper bound rather than a fantasy.
+
+  ABSTENTION. The identity model wins partly by refusing to predict: 11.1% of held-out promoters
+  have no training group and fall back to the context mean, against 3.1% for the signed count. On
+  the 5,146 promoters where NO model abstains, the ordering is unchanged and sharper -- signed
+  count 3.28 floors, C = 8 1.90, C = 64 0.12, C = 128 0.01. The result is not an artefact of who
+  answered which question.
+
+  AVAILABILITY. A signed count needs a sign per edge. Of TRRUST's 8,403 distinct directed pairs,
+  42.3% are annotated Unknown, against 34.8% Activation and 22.8% Repression. On the real network
+  the representation is not two classes but three, and the largest of the three is the one that
+  carries no information. The annotation, not the method, is the binding limit there.
+
+AND A CORRECTION TO AN EARLIER MODULE, which is the more important half. summary.py's K2 concluded
+that the per-controller count does no better than the total count, and read that as evidence that
+WHICH controllers are active does not matter. That verdict was built into the generator:
+block.py's multi_controller drives every target by prod_c (1 + g*b_c)^(1/nC) with ONE g shared by
+all controllers, so the drive is a symmetric function of the count and the total count was
+count-sufficient BY CONSTRUCTION. No arrangement of that system could have refuted it.
+
+Rebuilt with a per-controller signed gain, and scoring every summary against the FULL PATTERN of
+the same construction rather than against zero -- the pattern is not exact either, and charging a
+summary for the harness is not a measurement of the summary:
+
+    variant                                   fraction of the span the total count recovers
+    A  all activators, equal strength                                              92.9%
+    B  half repressors, equal magnitude                                             5.9%
+    C  half repressors, heterogeneous magnitude                                     6.6%
+
+With repressors present the total count recovers almost nothing -- it is barely better than not
+conditioning on the history at all. The signed count recovers 78.8% in variant C, repairing 77.3%
+of the break, against the 61.6% measured on real promoters. The synthetic number is 16 points more
+forgiving than the measurement; they are the same order and the same sign, and the synthetic one
+flatters the summary.
+
+So summary.py's K2 is withdrawn as a statement about promoters and kept only as a statement about
+that generator. This is why the synthetic verdict and the measured verdict disagreed: they were
+not testing the same thing, and the synthetic one could not have failed.
+
+WHERE THIS LEAVES THE STATE-COMPLEXITY PROBLEM. Five representations have now been tested against
+it. r-balls die on hubs. Bounded width has a 6% floor on hub-mediated dependence. Controller
+history is exact only when controllers have no feedback from what they control. The total count is
+refuted on real promoter data. The class count -- of which the signed count is the two-class
+member -- is the first one that survives contact with data, and it buys 3 -> 13 controllers rather
+than 3 -> 419. That is a real result and it does not change the exponent.

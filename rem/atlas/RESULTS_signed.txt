@@ -76,8 +76,11 @@ S1  THE SCALING LAW: ERROR AGAINST C, WITH THE CAP BESIDE IT
   So a candidate exists, and it is C = 64: cap 3 -> 13, coverage 12.8% -> 26.6%. That is a real gain and a modest one. It
   is emphatically NOT the polynomial collapse the total count promised, which was
   cap 419 and 93.3% coverage --
-  and which this data refutes. The cheap end of the family is as wrong as the count;
-  the accurate end costs nearly what identity costs. There is no C that is both.
+  and which this data refutes. Both ends of the family fail in opposite directions:
+  everything cheap enough to keep the 419-controller cap (C <= 4) is
+  two or more noise floors from identity, and everything accurate enough to be inside
+  one floor has already given back nine tenths of the coverage. What survives is the
+  middle, and the middle is worth cap 3 -> 13, not 3 -> 419.
 
 =================================================================================================
 S2  WHAT THE SIGN ORACLE WAS WORTH: HONEST MINUS LEAKY
@@ -158,9 +161,16 @@ S5  THE ENGINE SIDE, AND WHAT THE SYNTHETIC SYSTEM WAS ACTUALLY TESTING
     excess over the pattern floor, B                1.58e-01      5.55e-03      96.5%
     excess over the pattern floor, C                1.64e-01      3.74e-02      77.3%
 
+    the span this is measured on -- no conditioning at all, minus the pattern floor:
+      variant A: 2.18e-01   total count uses 92.9% of it, signed count 92.9%
+      variant B: 1.68e-01   total count uses 5.9% of it, signed count 96.7%
+      variant C: 1.76e-01   total count uses 6.6% of it, signed count 78.8%
+
   Variant A reproduces summary.py: the total count's excess over the pattern is
-  1.6e-02, essentially nothing, because the system was built so
-  that the drive is a symmetric function of the count.
+  1.6e-02, which is 7.1% of
+  the span between the pattern and no conditioning at all -- so the count recovers
+  93% of what the full history is worth, because the system was
+  built so that the drive is a symmetric function of the count. Not zero, but close.
   Variant B: the total count's excess rises to 1.58e-01 and the
   signed count's is 5.55e-03 -- and that is BY CONSTRUCTION, since
   the drive is a function of the signed difference. Not evidence, and not exactly zero
@@ -171,9 +181,12 @@ S5  THE ENGINE SIDE, AND WHAT THE SYNTHETIC SYSTEM WAS ACTUALLY TESTING
   are the synthetic analogue of what the promoter data has. The total count's excess is
   1.64e-01, the signed count repairs 77.3% of it.
   On real promoters the signed count closed 61.6% of the
-  count-to-identity gap. The two agree to within 16 points, which is the finding: once the
-  synthetic system is given repressors AND within-sign heterogeneity it reproduces what
-  the measurements show. Before that it could not, because it had neither.
+  count-to-identity gap. The synthetic number is 16 points MORE FORGIVING than the measurement, which is the honest way to put it -- the
+  two are the same order and the same sign, and the synthetic one flatters the summary.
+  The finding is still that the synthetic system only reproduces the measured behaviour
+  once it is given repressors AND within-sign heterogeneity. Before that it had neither,
+  which is why summary.py's synthetic verdict and promoter.py's measured verdict
+  disagreed: they were not testing the same thing.
 
 =================================================================================================
 S6  WHAT THIS DOES AND DOES NOT SETTLE

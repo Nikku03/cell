@@ -78,6 +78,26 @@ K7  THE ADVERSARIAL LOGIC, AND AN ADVERSARIAL OBSERVABLE  (added after K2 answer
     separately on every observable, and an observable whose baseline passes is unreadable.
 
 K6  WHAT CANNOT BE CLAIMED.
+
+=================================================================================================
+CORRECTED LATER, BY signed.py's S5 -- THIS MODULE'S SYNTHETIC VERDICT WAS BUILT IN
+=================================================================================================
+K2 concluded that the per-controller count does no better than the total count, and read that as
+the strong and useful statement that WHICH controllers are active does not matter, only how many.
+That conclusion is an artefact of the generator. block.py's multi_controller drives every target
+by prod_c (1 + g*b_c)^(1/nC) with ONE g shared by every controller, so all controllers act
+identically and positively and the drive is a symmetric function of the count. The total count
+was count-sufficient here BY CONSTRUCTION, and no arrangement of this generator could have
+refuted it.
+
+signed.py rebuilds the same experiment with a per-controller signed gain. With half the
+controllers made repressors, the total count's error rises from 7.1% of the pattern-to-
+no-conditioning span to 93.4% of it -- that is, it becomes almost as bad as not conditioning on
+the history at all. K2's finding is therefore withdrawn as a statement about promoters and kept
+only as a statement about this generator.
+
+promoter.py had already refuted the count on real measurements, and this is why the synthetic and
+the measured verdicts disagreed: they were not testing the same thing.
 """
 
 from __future__ import annotations
