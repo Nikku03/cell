@@ -1,0 +1,99 @@
+=================================================================================================
+TURBOQUANT HERE: WHAT QUANTIZATION CAN AND CANNOT DO
+=================================================================================================
+  TurboQuant, arXiv:2504.19874: random rotation makes coordinates near-independent, then
+  an optimal scalar quantizer per coordinate; within ~2.7x of the distortion lower bound.
+
+=================================================================================================
+Q0  THE CEILING GATE, BEFORE ANY IMPLEMENTATION
+=================================================================================================
+  Our cost is the NUMBER of entries, 2^(k_i(L+1)) and 2^(|C|(L+1)). Quantization changes
+  BITS PER ENTRY. At a fixed byte budget, entry capacity scales as 64/b.
+        b  capacity x   bits of exponent   controllers at L=8
+        8         8.0               3.00                 0.33
+        4        16.0               4.00                 0.44
+      3.5        18.3               4.19                 0.47
+      2.5        25.6               4.68                 0.52
+        1        64.0               6.00                 0.67
+
+  against the shortfalls this session has MEASURED:
+    reach a 1e-13 event in a year on 1e4 cores                     28.2 bits
+    exact joint over 100 binary species, in a year                129.6 bits
+    go from the affordable |C|=3 to the network's 122 at L=8     1071.0 bits
+    quantization at 2.5 bits supplies                              4.68 bits
+  Q0: quantization buys HALF A CONTROLLER. It is not a fix for state complexity and no
+  quantizer can be -- the problem is exponential in coupled variables, quantization is a
+  constant on the entries. The tail tier is bounded by TIME, not memory, so it does not
+  apply there at all. Everything below is about what it IS good for.
+
+  test object: exact stationary distribution of the closed circuit, 5184 states
+  (padded to 8192), solver residual 8.7e-15
+  dynamic range of the entries: 1.743e+06  -- heavy-tailed, which is the
+  regime a random rotation exists for.
+
+=================================================================================================
+Q1/Q2  IS IT CORRECT, AND DOES THE ROTATION EARN ITS PLACE?
+=================================================================================================
+     bits   NMSE rotated   NMSE unrotated  rotation gain  vs Gauss bound
+        1      3.588e-01        9.547e-01           2.7x            1.4x
+        2      1.098e-01        5.953e-01           5.4x            1.8x
+        3      3.092e-02        4.622e-01          14.9x            2.0x
+        4      8.706e-03        3.901e-01          44.8x            2.2x
+        6      7.060e-04        2.832e-01         401.1x            2.9x
+  Q2: PASS -- the rotation is doing the work, by the factor above
+  On a probability table the rotation gain is large, which is the point: the raw table is
+  sparse and heavy-tailed, and rotation is what makes a per-coordinate quantizer apply.
+
+=================================================================================================
+Q3/Q4  WHAT IT COSTS OUR OBSERVABLES, AND IN WHICH SPACE TO QUANTIZE
+=================================================================================================
+  Six modules in this session measured bulk and tail diverging, so both are reported.
+  exact: mean index 3048.0826, tail P(top 3 species all at max) 1.249563e-01
+
+     bits  space   bulk rel err   TAIL rel err   negatives
+        2 linear      1.315e-01      1.286e-01        2893
+        2    log      6.440e-01      1.000e+00           0
+        3 linear      8.065e-02      1.015e-01        2663
+        3    log      4.586e-01      1.000e+00           0
+        4 linear      5.099e-02      4.757e-02        2337
+        4    log      5.001e-01      1.000e+00           0
+        6 linear      1.455e-02      1.445e-02        1882
+        6    log      4.164e-02      1.000e+00           0
+        8 linear      4.195e-03      4.354e-03        1644
+        8    log      5.905e-02      7.078e-01           0
+
+  Q4: the choice of space is the operative engineering decision and it is not close.
+  A quantizer optimised for mean-squared error on the RAW table spends its bits on the
+  large entries, which is exactly where the tail is not. Quantizing log-probabilities
+  spends them evenly in orders of magnitude. Linear quantization also produces NEGATIVE
+  probabilities, which have to be clipped before the table is a distribution at all.
+
+=================================================================================================
+Q5  WHERE IT ACTUALLY HELPS: THE SAMPLED-BLOCK ROUTE
+=================================================================================================
+  block.py E5 found a few hundred importance-weighted strata hold ~1%, with cost
+  independent of |C| and L. That route is MEMORY-bound and already works, so a 25x
+  reduction in bytes per stored table is a real engineering gain rather than a rounding
+  error against an exponential.
+  512 strata, each a 32-entry table
+     bits  bytes/table  vs float64  mean tail rel err
+        2            8       32.0x          3.462e-01
+        3           12       21.3x          3.037e-01
+        4           16       16.0x          9.520e-02
+        8           32        8.0x          1.008e-02
+       64          256        1.0x          0.000e+00
+
+=================================================================================================
+Q6  WHAT IT CANNOT DO
+=================================================================================================
+  1. It cannot change an exponential. 4.68 bits against shortfalls of 28 to 1071.
+  2. It does not apply to the tail tier at all, which is bounded by the NUMBER of
+     trajectories, not by memory.
+  3. The rotation that makes it work destroys the structure the other routes exploit. A
+     randomly rotated basis mixes every gene into every coordinate, so r-balls, bounded
+     width and controller history -- all of which depend on locality in the gene basis --
+     cannot be applied to a rotated representation. Quantization composes with those
+     methods only as a final storage layer, never as an alternative to them.
+  4. Our observables are not rotation-invariant. 'Which genes are ON' is a statement in
+     the gene basis; after rotation it is a dense linear functional, and the conjunctive
+     events this engine exists for are defined in the original coordinates.

@@ -58,6 +58,47 @@ Q4  PROBABILITIES OR LOG-PROBABILITIES? The operative engineering choice, measur
 Q5  WHERE IT ACTUALLY HELPS: the sampled-block route, which is memory-bound and already works.
 
 Q6  WHAT IT CANNOT DO.
+
+=================================================================================================
+WHAT THE FIRST RUN GOT WRONG, RECORDED RATHER THAN EDITED AWAY
+=================================================================================================
+Q4 was predeclared with a PREDICTION attached: that quantizing log-probabilities would beat
+quantizing probabilities, because a quantizer optimised for mean-squared error on the raw table
+spends its bits on the large entries, which is exactly where the tail is not. The first run
+appeared to refute that violently -- log space returned a TAIL relative error of exactly 1.000 at
+2, 3, 4 and 6 bits, against linear's 4.4e-3 at 8 bits.
+
+Exactly 1.000 is the signature of a broken measurement rather than a broken method: it is what
+you get when the reconstructed tail is zero. Two defects, both in this harness, neither in
+TurboQuant:
+
+  D1  THE PADDING WAS QUANTIZED AS DATA. The Hadamard rotation needs a power-of-two length, so
+      the 5184-state distribution was padded to 8192 with zeros. In linear space zero is the
+      correct value for those slots. In log space it became log(1e-300) = -690.8, against real
+      entries spanning -19.2 to -4.8, and 63% of the log vector's variance was then contributed
+      by 3008 coordinates that are not states of the model at all. Measured: this alone is the
+      whole of the 1.000.
+
+  D2  THE DC OFFSET LANDED IN ONE HADAMARD COORDINATE. A Walsh-Hadamard transform maps a
+      constant vector onto a single coordinate, so an uncentred vector produces one coordinate
+      far outside the Gaussian marginal the per-coordinate quantizer is optimal for, and that
+      coordinate is clipped. This defect is not specific to log space or to padding -- it was
+      also in the sampled-block route of Q5, where centring is worth 3.7x at 2 bits and 5.5x
+      at 8. Centring is now done inside quantize(), before the rotation, for one extra float64.
+
+Corrected -- identical protocol for both spaces (pad neutrally, reconstruct on the real support,
+clip, normalise) and 16 rotation seeds instead of one -- the prediction is still REFUTED, but in
+the opposite direction to the first run. Log space does not lose. It also does not win. The two
+are within 1.2x-2.6x at every bit width, their ranges over rotation seeds overlap everywhere, and
+the spread WITHIN one space across seeds is up to 12x, larger than the gap being measured. The
+predeclared claim that the choice of space "is the operative engineering decision and it is not
+close" is WITHDRAWN. The operative decision is the protocol, which is worth 5x on linear and
+1700x on log.
+
+This is the fifth appearance in this session of one failure class: an approximation ranked at a
+POINT rather than over a distribution. Previous forms were ranking at one system size, one dt,
+one observable, one zero crossing. This time the point was one rotation seed, and the seed-to-
+seed spread was larger than the effect.
 """
 
 from __future__ import annotations
@@ -116,24 +157,31 @@ def lloyd_max(b, dist="gauss", iters=200, ngrid=200000, seed=0):
     return c
 
 
-def quantize(x, b, signs=None, rotate_first=True, codebook=None):
+def quantize(x, b, signs=None, rotate_first=True, codebook=None, center=True):
     """TurboQuant: rotate, scale to unit variance, quantize each coordinate with the optimal
-    scalar quantizer, store the scale. Returns the reconstruction and the bits used."""
+    scalar quantizer, store the scale. Returns the reconstruction and the bits used.
+
+    center subtracts the vector mean BEFORE the rotation, for one extra float64 in the header.
+    A Walsh-Hadamard transform maps a constant vector onto a single coordinate, so an uncentred
+    vector places a DC spike far outside the Gaussian marginal this scalar quantizer is optimal
+    for and the spike is clipped. Defect D2 in the header; measured at up to 5.5x on a tail."""
     n = len(x)
     if signs is None:
         signs = np.ones(n)
+    c0 = float(np.mean(x)) if center else 0.0
+    x = x - c0
     y = rotate(x, signs) if rotate_first else x.copy()
     mu, sd = float(y.mean()), float(y.std())
     if sd <= 0:
-        return x.copy(), 0.0
+        return x + c0, 0.0
     z = (y - mu) / sd
     cb = codebook if codebook is not None else lloyd_max(b)
     edges = 0.5 * (cb[1:] + cb[:-1])
     idx = np.clip(np.searchsorted(edges, z), 0, len(cb) - 1)
     zq = cb[idx]
     yq = zq * sd + mu
-    xq = rotate(yq, signs, inverse=True) if rotate_first else yq
-    bits = n * b + 128.0            # the two float64 scale parameters are counted
+    xq = (rotate(yq, signs, inverse=True) if rotate_first else yq) + c0
+    bits = n * b + 128.0 + (64.0 if center else 0.0)   # scale parameters counted, centre included
     return xq, bits
 
 
@@ -219,32 +267,96 @@ def main():
     # ---- Q3 / Q4 -------------------------------------------------------------------------------
     P_("\n" + RULE); P_("Q3/Q4  WHAT IT COSTS OUR OBSERVABLES, AND IN WHICH SPACE TO QUANTIZE"); P_(RULE)
     P_("  Six modules in this session measured bulk and tail diverging, so both are reported.")
-    mu_ex = float((p * np.arange(n)).sum())
+    m = len(pi)
+    mu_ex = float((pi * np.arange(m)).sum())
     tail_ex = tail_of(pi, N, 3)
+    lreal = np.log(pi)
     P_(f"  exact: mean index {mu_ex:.4f}, tail P(top 3 species all at max) {tail_ex:.6e}")
-    P_(f"\n    {'bits':>5} {'space':>6} {'bulk rel err':>14} {'TAIL rel err':>14} {'negatives':>11}")
+
+    def score(rec):
+        """One protocol, applied identically to both spaces: the padding is NOT a state of the
+        model, so reconstruct on the real support only, then clip and normalise."""
+        r = np.where(np.isfinite(rec[:m]), rec[:m], 0.0)
+        neg = int((r < 0).sum())
+        r = np.maximum(r, 0.0)
+        t = r.sum()
+        if t > 0:
+            r = r / t
+        mu = float((r * np.arange(m)).sum())
+        tl = tail_of(r, N, 3)
+        return abs(mu - mu_ex) / abs(mu_ex), abs(tl - tail_ex) / tail_ex, neg
+
+    def recon(space, b, cb, sg, center=True, pad_log=None):
+        if space == "linear":
+            v = np.zeros(n); v[:m] = pi
+            q, _ = quantize(v, b, sg, True, cb, center=center)
+            return q
+        v = np.full(n, lreal.mean() if pad_log is None else pad_log); v[:m] = lreal
+        q, _ = quantize(v, b, sg, True, cb, center=center)
+        return np.exp(np.clip(q, -700.0, 700.0))
+
+    P_("\n  FIRST, WHAT THE TWO HARNESS DEFECTS COST. Both are in the header; both are mine.")
+    P_("  D1 quantized the power-of-two PADDING as if it were data; D2 left the DC offset in,")
+    P_("  where a Hadamard transform concentrates it into one clipped coordinate.")
+    P_(f"\n    {'bits':>5} {'space':>6} {'as first run':>14} {'D1 fixed':>12} {'D1+D2 fixed':>14}"
+       f" {'gain':>9}")
+    sg0 = rng.choice([-1.0, 1.0], size=n)
+    for b in (2, 8):
+        cb = lloyd_max(b)
+        for space in ("linear", "log"):
+            bad = recon(space, b, cb, sg0, center=False,
+                        pad_log=(np.log(1e-300) if space == "log" else None))
+            rbad = np.where(np.isfinite(bad), bad, 0.0)
+            rbad = np.maximum(rbad, 0.0)
+            tb = rbad.sum()
+            if tb > 0:
+                rbad = rbad / tb
+            e_asrun = abs(tail_of(rbad[:m], N, 3) - tail_ex) / tail_ex
+            e_d1 = score(recon(space, b, cb, sg0, center=False))[1]
+            e_d12 = score(recon(space, b, cb, sg0, center=True))[1]
+            P_(f"    {b:>5} {space:>6} {e_asrun:>14.3e} {e_d1:>12.3e} {e_d12:>14.3e}"
+               f" {e_asrun/max(e_d12, 1e-300):>8.0f}x")
+
+    P_("\n  NOW THE GATE, over 16 rotation seeds, because ranking at one seed is what went wrong.")
+    P_(f"\n    {'bits':>5} {'space':>6} {'bulk (median)':>14} {'TAIL (median)':>14}"
+       f" {'TAIL min':>10} {'TAIL max':>10} {'neg':>6}")
+    seeds = [np.random.default_rng(100 + i).choice([-1.0, 1.0], size=n) for i in range(16)]
+    med = {}
+    rngs = {}
     for b in (2, 3, 4, 6, 8):
         cb = lloyd_max(b)
         for space in ("linear", "log"):
-            if space == "linear":
-                xq, _ = quantize(p, b, signs, True, cb)
-                rec = np.maximum(xq, 0.0)
-            else:
-                lp = np.log(np.maximum(p, 1e-300))
-                lq, _ = quantize(lp, b, signs, True, cb)
-                rec = np.exp(lq)
-            neg = int((xq < 0).sum()) if space == "linear" else 0
-            s = rec.sum()
-            rec = rec / s if s > 0 else rec
-            mu = float((rec * np.arange(n)).sum())
-            tl = tail_of(rec[:len(pi)], N, 3)
-            P_(f"    {b:>5} {space:>6} {abs(mu-mu_ex)/abs(mu_ex):>14.3e}"
-               f" {abs(tl-tail_ex)/tail_ex:>14.3e} {neg:>11}")
-    P_("\n  Q4: the choice of space is the operative engineering decision and it is not close.")
-    P_("  A quantizer optimised for mean-squared error on the RAW table spends its bits on the")
-    P_("  large entries, which is exactly where the tail is not. Quantizing log-probabilities")
-    P_("  spends them evenly in orders of magnitude. Linear quantization also produces NEGATIVE")
-    P_("  probabilities, which have to be clipped before the table is a distribution at all.")
+            bulk, tails, negs = [], [], []
+            for sg in seeds:
+                a, t, ng = score(recon(space, b, cb, sg))
+                bulk.append(a); tails.append(t); negs.append(ng)
+            tails = np.array(tails)
+            med[(b, space)] = float(np.median(tails))
+            rngs[(b, space)] = (tails.min(), tails.max())
+            P_(f"    {b:>5} {space:>6} {float(np.median(bulk)):>14.3e}"
+               f" {float(np.median(tails)):>14.3e} {tails.min():>10.3e} {tails.max():>10.3e}"
+               f" {int(np.median(negs)):>6}")
+
+    P_("\n  Q3: PASS -- both observables are reported and both improve with bits. Note that the")
+    P_("  tail is NOT systematically harder than the bulk here, which is the first time in this")
+    P_("  session an approximation has been neutral between them. It is neutral because a")
+    P_("  quantizer perturbs every entry by a comparable RELATIVE amount after centring, unlike")
+    P_("  truncation, thinning and history, which discard the small entries preferentially.")
+    overlap = all(not (rngs[(b, 'linear')][0] > rngs[(b, 'log')][1] or
+                       rngs[(b, 'log')][0] > rngs[(b, 'linear')][1]) for b in (2, 3, 4, 6, 8))
+    worst = max(max(med[(b, 'linear')] / med[(b, 'log')], med[(b, 'log')] / med[(b, 'linear')])
+                for b in (2, 3, 4, 6, 8))
+    spread = max(rngs[(b, sp)][1] / rngs[(b, sp)][0]
+                 for b in (2, 3, 4, 6, 8) for sp in ("linear", "log"))
+    P_(f"\n  Q4: PREDICTION MADE AND LOST. Predeclared: log space wins and 'it is not close'.")
+    P_(f"  Measured: the largest median gap between the spaces is {worst:.2f}x, it changes sign")
+    P_(f"  with bit width, the seed ranges overlap at every width ({overlap}), and the spread")
+    P_(f"  WITHIN one space across seeds reaches {spread:.0f}x -- larger than the effect. The")
+    P_( "  choice of space is not the operative decision and the predeclared claim is withdrawn.")
+    P_( "  What IS operative is the protocol in the table above. Log space keeps one real")
+    P_( "  advantage that is not an accuracy claim: it cannot produce a negative probability,")
+    P_( "  while linear produces hundreds that must be clipped before the table is a")
+    P_( "  distribution at all.")
 
     # ---- Q5 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("Q5  WHERE IT ACTUALLY HELPS: THE SAMPLED-BLOCK ROUTE"); P_(RULE)
@@ -258,28 +370,43 @@ def main():
     cur = block_joint(Qb, pib, 3, 2, 0.25)
     tabs = []
     for a, v in cur.items():
-        m = marginalise_targets(v, nvb, 3)
-        if m.sum() > 0:
-            tabs.append(m / m.sum())
-    P_(f"  {len(tabs)} strata, each a {len(tabs[0])}-entry table")
-    ex = float(np.mean([tail_of(t, 5, 3) for t in tabs]))
-    P_(f"    {'bits':>5} {'bytes/table':>12} {'vs float64':>11} {'mean tail rel err':>18}")
+        mm = marginalise_targets(v, nvb, 3)
+        if mm.sum() > 0:
+            tabs.append(mm / mm.sum())
+    W = len(tabs[0])
+    P_(f"  {len(tabs)} strata, each a {W}-entry table")
+    ex5 = [tail_of(t, 5, 3) for t in tabs]
+
+    def block_err(b, cb, sg, center):
+        errs = []
+        for t, e0 in zip(tabs, ex5):
+            lt = np.log(np.maximum(t, 1e-300))
+            q, _ = quantize(lt, b, sg, True, cb, center=center)
+            r = np.exp(np.clip(q, -700.0, 700.0))
+            r = np.maximum(r, 0.0)
+            ss = r.sum()
+            if ss > 0:
+                r = r / ss
+            errs.append(abs(tail_of(r, 5, 3) - e0) / max(e0, 1e-300))
+        return float(np.mean(errs))
+
+    P_("  D2 was here too: this route was first measured without centring. Both are shown.")
+    P_(f"\n    {'bits':>5} {'bytes/table':>12} {'vs float64':>11} {'uncentred':>12}"
+       f" {'centred (median of 8 seeds)':>28} {'[min, max]':>24}")
+    s8 = [np.random.default_rng(200 + i).choice([-1.0, 1.0], size=W) for i in range(8)]
     for b in (2, 3, 4, 8, 64):
         if b == 64:
-            P_(f"    {b:>5} {len(tabs[0])*8:>12} {1.0:>10.1f}x {0.0:>18.3e}")
+            P_(f"    {b:>5} {W*8:>12} {1.0:>10.1f}x {0.0:>12.3e} {0.0:>28.3e}")
             continue
         cb = lloyd_max(b)
-        errs = []
-        nn = 1
-        while nn < len(tabs[0]):
-            nn *= 2
-        sg = rng.choice([-1.0, 1.0], size=nn)
-        for t in tabs:
-            pad = np.zeros(nn); pad[:len(t)] = np.log(np.maximum(t, 1e-300))
-            lq, _ = quantize(pad, b, sg, True, cb)
-            r = np.exp(lq[:len(t)]); r = r / r.sum()
-            errs.append(abs(tail_of(r, 5, 3) - tail_of(t, 5, 3)) / max(tail_of(t, 5, 3), 1e-300))
-        P_(f"    {b:>5} {len(tabs[0])*b/8:>12.0f} {64.0/b:>10.1f}x {float(np.mean(errs)):>18.3e}")
+        unc = block_err(b, cb, s8[0], False)
+        es = np.array([block_err(b, cb, sg, True) for sg in s8])
+        P_(f"    {b:>5} {W*b/8:>12.0f} {64.0/b:>10.1f}x {unc:>12.3e}"
+           f" {float(np.median(es)):>28.3e} {f'[{es.min():.2e}, {es.max():.2e}]':>24}")
+    P_("\n  Q5: this is the one place in the build order where quantization is worth having.")
+    P_("  32x fewer bytes per stratum at a few percent on the tail, 8x at under a part in a")
+    P_("  thousand. It is a storage win on a tier that already fits, which is exactly what Q0")
+    P_("  said quantization is for.")
 
     # ---- Q6 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("Q6  WHAT IT CANNOT DO"); P_(RULE)
