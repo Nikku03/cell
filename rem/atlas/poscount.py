@@ -80,6 +80,38 @@ P5  ESTIMATOR OR DATA? If position carries signal a group-mean estimator cannot 
 
 P6  WHAT THIS DOES AND DOES NOT SETTLE.
 
+=================================================================================================
+WHAT THE FIRST RUN GOT WRONG, AND ONE PREDICTION LOST, RECORDED RATHER THAN EDITED AWAY
+=================================================================================================
+P1's PREDICTION IS LOST, TWICE. Phase does not beat location. At C = 8 with four bins the
+group-mean scores location 1.3430 and phase 1.3830, and in a ridge an explicit helical-phase
+basis at 10 and 10.5 bp buys +0.12 floors against +0.77 for one term per position. The paper's
+periodicity is real in the paper; it is not the feature that carries the signal here, at this
+design resolution, in either estimator. Recorded as made and lost.
+
+AND THE FEATURE THAT WON WAS THE CONTROL, WHICH IS WHY THE CONTROL WAS THERE. The 7 bp
+design-ladder feature -- included only to tell grid from DNA -- beat every biologically motivated
+position feature, +0.48 floors against location's -0.01. Two controls settle what it is:
+
+  a PERMUTATION control. Partition the same 49 start values into 4 bins at random, with bin sizes
+  matched to the ladder's, 24 times. Median gain -0.06 floors, range [-0.26, +0.18]. The ladder's
+  +0.48 sits at the 100th percentile, so it is not merely that any partition of position helps.
+
+  a RESTRICTION control, which is the decisive one. Restrict to the 3,184 promoters whose every
+  site sits on the main ladder (start mod 7 == 1, fourteen designed positions). There the ladder
+  feature is CONSTANT and can contribute nothing. Group-mean position gain there: +0.01 floors at
+  P = 2, -0.33 at P = 4, -0.96 at P = 8. It vanishes.
+
+So the ladder gain is BETWEEN design sub-libraries, not within. It is design provenance wearing
+the costume of a position effect, and without the control it would have been reported as the
+module's positive result.
+
+P2's "BEST SPATIAL SPLIT" WAS NOT SPATIAL. Orientation contributes exactly 0.0000 at every C --
+identical RMSE to four decimals -- so the split K = 128 as C = 64, P = 1, O = 2 is C = 64 wearing
+a budget of 128, and its apparent win over pure C = 128 is the C = 64 versus C = 128 comparison
+signed.py had already made. A spatial split now has to pass TWO tests to count: beat the pure
+split at the same budget, AND be improved by the spatial axis over its own class resolution.
+
 NO LEAKAGE NOTE. The factor classes are fitted from the response and are therefore refitted inside
 each training fold. The position bins and the orientation flag are properties of the DESIGN, not
 of the response, so they carry no information from held-out promoters and are fixed once.
@@ -118,6 +150,19 @@ def cell_key(cls, posb, use_ori, r):
     for t in r["tfs"]:
         cells[(cls.get(t[0], 0), posb(t[3]), 1 if t[2] == "minus" else 0)] += 1
     return (r["ctx"], tuple(sorted(cells.items())))
+
+
+def _mk_perm(sub, fits, asg):
+    """A key function for one random position partition, sharing the per-fold class fits."""
+    st = {"f": 0}
+
+    def mk(tr):
+        f = st["f"]; st["f"] += 1
+        if f not in fits:
+            fits[f] = tf_effects(tr)
+        cl = class_bins(fits[f], 8)
+        return lambda r: cell_key(cl, lambda x, a=asg: a.get(x, 0), False, r)
+    return mk
 
 
 def ridge_cv(sub, featfn, folds=5, seed=0, lam=1.0):
@@ -230,13 +275,74 @@ def main():
         P_(f"    {mode:<28} {e:>9.4f} {ei-e:>+9.4f} {(ei-e)/floor:>+8.2f} {f:>8.1%}")
     best = min(p1, key=lambda m: p1[m][0])
     won = p1["phase"][0] < p1["loc"][0]
-    P_(f"\n  P1: best position feature at C = 8 is '{best}'.")
-    P_(f"  The prediction was that PHASE beats LOCATION. Measured: phase {p1['phase'][0]:.4f}"
-       f" against location {p1['loc'][0]:.4f}, so the prediction is"
+    P_(f"\n  P1: the prediction was that PHASE beats LOCATION. Measured: phase"
+       f" {p1['phase'][0]:.4f} against location {p1['loc'][0]:.4f}, so the prediction is"
        f" {'UPHELD' if won else 'LOST'}")
-    P_(f"  by {abs(p1['phase'][0]-p1['loc'][0])/floor:.2f} floors. The 7 bp design-ladder control"
-       f" scores {p1['ladder'][0]:.4f};")
-    P_( "  a phase feature that does no better than the ladder is fitting the grid, not the DNA.")
+    P_(f"  by {abs(p1['phase'][0]-p1['loc'][0])/floor:.2f} floors, and neither beats P = 1.")
+    P_(f"  The best feature is '{best}' -- which is the DESIGN LADDER, the control. Two controls")
+    P_( "  now have to say what that is, because without them it is this module's headline.")
+
+    P_("\n  CONTROL 1, PERMUTATION. Partition the same 49 start values into 4 bins at random,")
+    P_("  with bin sizes matched to the ladder's. If any partition of position helps this much,")
+    P_("  the 7 bp period is doing nothing.")
+    sitecnt = collections.Counter()
+    for r in sub:
+        for t in r["tfs"]:
+            sitecnt[t[3]] += 1
+    ladb = pos_binner(sub, 4, "ladder")
+    target = [sum(c for st_, c in sitecnt.items() if ladb(st_) == b) for b in range(4)]
+    allst = sorted(sitecnt)
+    prng = np.random.default_rng(11)
+    gains = []
+    for _ in range(24):
+        o = list(allst)
+        prng.shuffle(o)
+        asg = {}
+        filled = [0, 0, 0, 0]
+        b = 0
+        for st_ in o:
+            while b < 3 and filled[b] + sitecnt[st_] > target[b]:
+                b += 1
+            asg[st_] = b
+            filled[b] += sitecnt[st_]
+        e, _, _, _ = cv_grouped(sub, _mk_perm(sub, fits, asg))
+        gains.append((base8 - e) / floor)
+    g = np.array(gains)
+    lg = (base8 - p1["ladder"][0]) / floor
+    P_(f"    24 random partitions: median {np.median(g):+.2f} floors, range"
+       f" [{g.min():+.2f}, {g.max():+.2f}]")
+    P_(f"    the ladder:           {lg:+.2f} floors, at the {100*(g < lg).mean():.0f}th percentile")
+    P_( "    So it is not that any partition of position helps. Something about this one does.")
+
+    P_("\n  CONTROL 2, RESTRICTION, which is the decisive one. Restrict to the promoters whose")
+    P_("  EVERY site sits on the main ladder. There the ladder feature is CONSTANT and cannot")
+    P_("  contribute, so any position gain that survives is within-ladder and therefore real.")
+    mainl = [r for r in sub if all(t[3] % 7 == 1 for t in r["tfs"])]
+    P_(f"    {len(mainl)} of {len(sub)} promoters, over"
+       f" {len({t[3] for r in mainl for t in r['tfs']})} designed positions")
+    fits2 = {}
+
+    def make2(C, P__, mode):
+        posb = pos_binner(mainl, P__, mode)
+        stt = {"f": 0}
+
+        def mk(tr):
+            f = stt["f"]; stt["f"] += 1
+            if f not in fits2:
+                fits2[f] = tf_effects(tr)
+            cl = class_bins(fits2[f], C)
+            return lambda r: cell_key(cl, posb, False, r)
+        return mk
+
+    bm, fbm, _, _ = cv_grouped(mainl, make2(8, 1, "loc"))
+    P_(f"\n    {'within the main ladder, C = 8':<34} {'RMSE':>9} {'gain':>8} {'fallback':>9}")
+    P_(f"    {'P = 1':<34} {bm:>9.4f} {0.0:>8.2f} {fbm:>8.1%}")
+    for P__, mode in ((2, "loc"), (4, "loc"), (8, "loc"), (4, "phase"), (4, "phase105")):
+        e, f, _, _ = cv_grouped(mainl, make2(8, P__, mode))
+        P_(f"    {f'P = {P__}, {mode}':<34} {e:>9.4f} {(bm-e)/floor:>+8.2f} {f:>8.1%}")
+    P_("\n    The gain vanishes. So the ladder's win is BETWEEN design sub-libraries and not")
+    P_("    within one, which makes it design provenance and not a position effect. Without")
+    P_("    this control it would have been reported as this module's positive result.")
 
     # ---- P2  THE EXCHANGE RATE -----------------------------------------------------------------
     P_("\n" + RULE); P_("P2  THE EXCHANGE RATE AT A FIXED BUDGET"); P_(RULE)
@@ -268,19 +374,38 @@ def main():
                 "  BEATS IT" if pure is not None and e < pure else "")
             P_(f"    {K:>5} {C:>5} {Pb:>4} {O:>3} {tag:>9} {e:>9.4f}"
                f" {(pure-e) if pure else 0.0:>+10.4f} {(e-e_idn)/floor:>18.2f} {f:>8.1%}{mark}")
-    wins = [(K, C, Pb, O) for (K, C, Pb, O) in rows
-            if (Pb > 1 or O > 1) and rows[(K, C, Pb, O)][0] < rows[(K, K, 1, 1)][0]]
-    P_(f"\n  P2: {len(wins)} of {len([k for k in rows if k[2] > 1 or k[3] > 1])} spatial splits beat"
-       f" the pure-identity split of the same budget.")
+    # A split has to pass TWO tests, because the first run's "best spatial split" passed only
+    # one: it must beat the pure split at the same BUDGET, and the spatial axis must actually
+    # have changed anything over the same CLASS RESOLUTION. Orientation contributes exactly
+    # 0.0000, so without the second test an O = 2 split is C wearing a budget of 2C and its
+    # apparent win is a comparison between two pure class counts that signed.py already made.
+    pure_at = {}
+    for (K, C, Pb, O) in list(rows):
+        if C not in pure_at:
+            pure_at[C] = cv_grouped(sub, make(C, 1, "loc", False))[0]
+    spatial = [k for k in rows if k[2] > 1 or k[3] > 1]
+    beats_budget = [k for k in spatial if rows[k][0] < rows[(k[0], k[0], 1, 1)][0]]
+    axis_live = [k for k in spatial if rows[k][0] < pure_at[k[1]] - 1e-9]
+    wins = [k for k in beats_budget if k in axis_live]
+    P_(f"\n  P2: of {len(spatial)} spatial splits,")
+    P_(f"    {len(beats_budget)} beat the pure-identity split of the same BUDGET")
+    P_(f"    {len(axis_live)} were improved at all by the spatial axis over their own class"
+       f" resolution")
+    P_(f"    {len(wins)} did BOTH, which is what it takes to count")
     if wins:
         bk = min(wins, key=lambda k: rows[k][0])
-        P_(f"  best spatial split overall: K={bk[0]} as C={bk[1]}, P={bk[2]}, O={bk[3]},"
+        pb = rows[(bk[0], bk[0], 1, 1)][0]
+        P_(f"  best genuine spatial split: K={bk[0]} as C={bk[1]}, P={bk[2]}, O={bk[3]},"
            f" RMSE {rows[bk][0]:.4f}")
-        P_(f"  against pure C={bk[0]} at {rows[(bk[0], bk[0], 1, 1)][0]:.4f}"
-           f" -- {(rows[(bk[0], bk[0], 1, 1)][0]-rows[bk][0])/floor:+.2f} floors.")
+        P_(f"    against pure C={bk[0]} at {pb:.4f}: {(pb-rows[bk][0])/floor:+.2f} floors")
+        P_(f"    against pure C={bk[1]} at {pure_at[bk[1]]:.4f}:"
+           f" {(pure_at[bk[1]]-rows[bk][0])/floor:+.2f} floors")
+        P_(f"  Both margins are under one noise floor of {floor:.4f}, so this is not a result you")
+        P_( "  could act on -- and the feature carrying it is the design ladder, which control 2")
+        P_( "  in P1 shows is design provenance rather than position.")
     else:
         P_("  NONE. Spatial resolution is never worth the factor classes it displaces, at any")
-        P_("  budget tested. Position is informative and it is still not worth buying.")
+        P_("  budget tested. Position is informative and it is still not worth buying HERE.")
 
     # ---- P3  FALLBACK --------------------------------------------------------------------------
     P_("\n" + RULE); P_("P3  FALLBACK, WHICH IS WHAT KILLED V5"); P_(RULE)
@@ -369,6 +494,37 @@ def main():
     P_(f"    {'context + per-factor counts':<38} {r_tf:>9.4f} {'--':>21}")
     v = ridge_cv(sub, f_tf_pos)
     P_(f"    {'  + position bins':<38} {v:>9.4f} {(r_tf-v)/floor:>+20.2f}f")
+    P_("\n  and the same two, restricted to the main ladder, where P1's control 2 showed the")
+    P_("  group mean gains nothing:")
+    eff_m = tf_effects(mainl)
+    clm = class_bins(eff_m, 8)
+
+    def m_cls(r):
+        f = {("ctx", r["ctx"]): 1.0}
+        for t in r["tfs"]:
+            f[("cl", clm.get(t[0], 0))] = f.get(("cl", clm.get(t[0], 0)), 0.0) + 1.0
+        return f
+
+    def m_pos(r):
+        f = m_cls(r)
+        for t in r["tfs"]:
+            f[("pos", t[3])] = f.get(("pos", t[3]), 0.0) + 1.0
+        return f
+
+    def m_ph(r):
+        f = m_cls(r)
+        for t in r["tfs"]:
+            for per in (10.0, 10.5):
+                ph = 2 * np.pi * t[3] / per
+                f[("cos", per)] = f.get(("cos", per), 0.0) + float(np.cos(ph))
+                f[("sin", per)] = f.get(("sin", per), 0.0) + float(np.sin(ph))
+        return f
+
+    mb = ridge_cv(mainl, m_cls)
+    P_(f"    {'class counts, main ladder only':<38} {mb:>9.4f} {'--':>21}")
+    for nm, fn in (("  + one term per position", m_pos), ("  + helical phase 10, 10.5", m_ph)):
+        v = ridge_cv(mainl, fn)
+        P_(f"    {nm:<38} {v:>9.4f} {(mb-v)/floor:>+20.2f}f")
     P_("\n  A ridge that gains from position where the group mean does not is a statement about")
     P_("  the ESTIMATOR: the information is there and partitioning is the wrong way to reach it.")
     P_("  A ridge that gains nothing either is a statement about the DATA at this sample size.")

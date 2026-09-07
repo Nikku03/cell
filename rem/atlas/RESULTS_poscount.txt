@@ -1,0 +1,192 @@
+=================================================================================================
+THE CLASS COUNT WITH POSITION AND ORIENTATION: AN EXCHANGE RATE
+=================================================================================================
+  Sharon et al. 2012, doi:10.1038/nbt.2205, GEO GSE37851, sha256[:32] 6a68ee26db7a1d3f4813ae29ed4e69bd.
+  5790 promoters, 404 factors, 49 distinct designed start positions in [-1, 113].
+  orientation: 10087 plus, 482 minus (4.6% of sites). Noise floor 0.1164 log2.
+  position is a live variable for 4903 of 5790 promoters (84.7%):
+  that many sit in a (context, factor multiset) group holding more than one layout.
+  identity reference: RMSE 1.1641, abstains on 11.1% of held-out promoters.
+
+=================================================================================================
+P0(a)  THE COST CEILING: POSITION MULTIPLIES THE ALPHABET
+=================================================================================================
+  A class count over (factor class x position bin x orientation) has K = C*P*O cells. The
+  engine's cost depends only on HOW MANY cells the summary distinguishes, never on what
+  makes them distinguishable -- so signed.py's cap curve prices every split already, and
+  a position bin costs exactly what a factor class costs.
+
+      budget K = C*P*O  cap |C| at L=8  edge coverage
+       pattern (exact)               3         12.8%
+                     4             419         93.3%
+                     8              25         36.5%
+                    16              15         28.6%
+                    32              13         26.6%
+                    64              13         26.6%
+                   128              13         26.6%
+  So the question is never 'is position informative'. It is whether a position bin is
+  worth more than the factor class it displaces at the same K.
+
+=================================================================================================
+P1  PHASE IS NOT LOCATION -- A PREDICTION, TESTED
+=================================================================================================
+  Predicted before the test: the paper reports a ~10 bp PERIODIC dependence, V5 tested
+  start//10 which is LOCATION, and phase is the feature that should carry what V5 missed.
+  Period 7 is the DESIGN LADDER and is here only as the control that tells grid from DNA.
+
+    held out, at a fixed factor-class resolution C = 8 and P = 4 position bins
+    position feature                  RMSE    vs P=1   floors  fallback
+    none (P = 1)                    1.3419    0.0000     0.00     3.9%
+    loc                             1.3430   -0.0011    -0.01     5.2%
+    phase                           1.3830   -0.0412    -0.35     6.0%
+    phase105                        1.3738   -0.0319    -0.27     5.5%
+    ladder                          1.2864   +0.0555    +0.48     4.6%
+
+    the same four on the IDENTITY model, which is what V5 tested:
+    none (P = 1)                    1.2140    0.0000     0.00    13.5%
+    loc                             1.2678   -0.0537    -0.46    16.5%
+    phase                           1.3433   -0.1293    -1.11    18.5%
+
+  P1: best position feature at C = 8 is 'ladder'.
+  The prediction was that PHASE beats LOCATION. Measured: phase 1.3830 against location 1.3430, so the prediction is LOST
+  by 0.34 floors. The 7 bp design-ladder control scores 1.2864;
+  a phase feature that does no better than the ladder is fitting the grid, not the DNA.
+
+=================================================================================================
+P2  THE EXCHANGE RATE AT A FIXED BUDGET
+=================================================================================================
+  At each budget K the same number of cells is spent differently. The pure-identity split
+  P = O = 1 is the incumbent from signed.py; anything else has to beat it at equal cost.
+
+        K     C    P   O   feature      RMSE  vs pure C  floors from ident  fallback
+        4     4    1   1        --    1.4061    +0.0000               2.08     3.4%  <-- incumbent
+        4     2    2   1    ladder    1.4333    -0.0271               2.31     3.2%
+        4     1    4   1    ladder    1.8427    -0.4365               5.83     2.9%
+        4     2    1   2        --    1.4513    -0.0452               2.47     3.1%
+        4     1    2   2    ladder    1.8630    -0.4568               6.01     2.7%
+        8     8    1   1        --    1.3419    +0.0000               1.53     3.9%  <-- incumbent
+        8     4    2   1    ladder    1.3968    -0.0549               2.00     3.8%
+        8     2    4   1    ladder    1.3909    -0.0490               1.95     3.4%
+        8     1    8   1    ladder    1.8334    -0.4915               5.75     2.9%
+        8     4    1   2        --    1.4061    -0.0643               2.08     3.4%
+        8     2    2   2    ladder    1.4333    -0.0914               2.31     3.2%
+        8     1    4   2    ladder    1.8427    -0.5008               5.83     2.9%
+       16    16    1   1        --    1.3400    +0.0000               1.51     4.2%  <-- incumbent
+       16     8    2   1    ladder    1.3310    +0.0090               1.43     4.4%  BEATS IT
+       16     4    4   1    ladder    1.3524    -0.0123               1.62     4.0%
+       16     2    8   1    ladder    1.3837    -0.0436               1.89     3.4%
+       16     1   16   1    ladder    1.8334    -0.4934               5.75     2.9%
+       16     8    1   2        --    1.3419    -0.0018               1.53     3.9%
+       16     4    2   2    ladder    1.3968    -0.0567               2.00     3.8%
+       16     2    4   2    ladder    1.3909    -0.0509               1.95     3.4%
+       16     1    8   2    ladder    1.8334    -0.4934               5.75     2.9%
+       32    32    1   1        --    1.3250    +0.0000               1.38     7.7%  <-- incumbent
+       32    16    2   1    ladder    1.3337    -0.0087               1.46     4.9%
+       32     8    4   1    ladder    1.2864    +0.0386               1.05     4.6%  BEATS IT
+       32     4    8   1    ladder    1.3422    -0.0173               1.53     4.1%
+       32     2   16   1    ladder    1.3837    -0.0587               1.89     3.4%
+       32     1   32   1    ladder    1.8334    -0.5084               5.75     2.9%
+       32    16    1   2        --    1.3400    -0.0150               1.51     4.2%
+       32     8    2   2    ladder    1.3310    -0.0060               1.43     4.4%
+       32     4    4   2    ladder    1.3524    -0.0274               1.62     4.0%
+       32     2    8   2    ladder    1.3837    -0.0587               1.89     3.4%
+       32     1   16   2    ladder    1.8334    -0.5084               5.75     2.9%
+       64    64    1   1        --    1.1984    +0.0000               0.29    11.0%  <-- incumbent
+       64    32    2   1    ladder    1.3253    -0.1270               1.39     8.6%
+       64    16    4   1    ladder    1.2931    -0.0947               1.11     5.4%
+       64     8    8   1    ladder    1.2828    -0.0844               1.02     4.8%
+       64     4   16   1    ladder    1.3422    -0.1439               1.53     4.1%
+       64     2   32   1    ladder    1.3837    -0.1853               1.89     3.4%
+       64     1   64   1    ladder    1.8334    -0.6350               5.75     2.9%
+       64    32    1   2        --    1.3250    -0.1266               1.38     7.7%
+       64    16    2   2    ladder    1.3337    -0.1353               1.46     4.9%
+       64     8    4   2    ladder    1.2864    -0.0880               1.05     4.6%
+       64     4    8   2    ladder    1.3422    -0.1439               1.53     4.1%
+       64     2   16   2    ladder    1.3837    -0.1853               1.89     3.4%
+       64     1   32   2    ladder    1.8334    -0.6350               5.75     2.9%
+      128   128    1   1        --    1.2091    +0.0000               0.39    12.0%  <-- incumbent
+      128    64    2   1    ladder    1.2057    +0.0034               0.36    12.2%  BEATS IT
+      128    32    4   1    ladder    1.2862    -0.0771               1.05     9.1%
+      128    16    8   1    ladder    1.2901    -0.0810               1.08     5.5%
+      128     8   16   1    ladder    1.2828    -0.0737               1.02     4.8%
+      128     4   32   1    ladder    1.3422    -0.1331               1.53     4.1%
+      128     2   64   1    ladder    1.3837    -0.1745               1.89     3.4%
+      128     1  128   1    ladder    1.8334    -0.6243               5.75     2.9%
+      128    64    1   2        --    1.1984    +0.0107               0.29    11.0%  BEATS IT
+      128    32    2   2    ladder    1.3253    -0.1162               1.39     8.6%
+      128    16    4   2    ladder    1.2931    -0.0840               1.11     5.4%
+      128     8    8   2    ladder    1.2828    -0.0737               1.02     4.8%
+      128     4   16   2    ladder    1.3422    -0.1331               1.53     4.1%
+      128     2   32   2    ladder    1.3837    -0.1745               1.89     3.4%
+      128     1   64   2    ladder    1.8334    -0.6243               5.75     2.9%
+
+  P2: 4 of 54 spatial splits beat the pure-identity split of the same budget.
+  best spatial split overall: K=128 as C=64, P=1, O=2, RMSE 1.1984
+  against pure C=128 at 1.2091 -- +0.09 floors.
+
+=================================================================================================
+P3  FALLBACK, WHICH IS WHAT KILLED V5
+=================================================================================================
+  4984 of 5790 promoters scored by every split below without fallback
+
+    split                          all  no-fallback  floors from ident
+    K=4 C=4 P=1 O=1             1.4061       1.3808               2.62
+    K=8 C=8 P=1 O=1             1.3419       1.3036               1.95
+    K=16 C=16 P=1 O=1           1.3400       1.2885               1.82
+    K=32 C=32 P=1 O=1           1.3250       1.2655               1.63
+    K=64 C=64 P=1 O=1           1.1984       1.1040               0.24
+    K=128 C=128 P=1 O=1         1.2091       1.0932               0.15
+    K=128 C=64 P=1 O=2          1.1984       1.1040               0.24
+    K=128 C=64 P=2 O=1          1.2057       1.1016               0.22
+    K=32 C=8 P=4 O=1            1.2864       1.2323               1.34
+    identity                    1.1641       1.0761               0.00
+  If a spatial split wins on all promoters but loses here, it won by abstaining less,
+  not by predicting better. If it wins in both columns, the gain is real.
+
+=================================================================================================
+P4  ORIENTATION ON ITS OWN, THE CHEAPEST REFINEMENT AVAILABLE
+=================================================================================================
+        C  without orientation   with orientation   floors
+        4               1.4061             1.4061    +0.00
+        8               1.3419             1.3419    +0.00
+       32               1.3250             1.3250    +0.00
+       64               1.1984             1.1984    +0.00
+
+  Orientation is a doubling of the alphabet -- the cheapest refinement there is -- and
+  only 4.6% of sites are 'minus'. Whatever it does
+  biologically, this experiment barely varies it, so a null here is an AVAILABILITY
+  result and not a biological one. Same shape as the 42.3% of TRRUST edges with no sign.
+
+=================================================================================================
+P5  IS IT THE ESTIMATOR OR THE DATA?
+=================================================================================================
+  V5 asserted that a group-mean estimator cannot exploit position at this sample size,
+  and did not test it. A ridge can use position without splitting groups at all, because
+  it shares strength across positions instead of partitioning by them.
+
+    ridge model                                 RMSE  gain vs its own base
+    context + class counts (C=8)              1.4206                    --
+      + position bins                         1.3554                +0.56f
+      + explicit phase (10, 10.5, 7 bp)       1.4034                +0.15f
+    context + per-factor counts               1.2199                    --
+      + position bins                         1.1568                +0.54f
+
+  A ridge that gains from position where the group mean does not is a statement about
+  the ESTIMATOR: the information is there and partitioning is the wrong way to reach it.
+  A ridge that gains nothing either is a statement about the DATA at this sample size.
+
+=================================================================================================
+P6  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  1. Position here is a DESIGNED coordinate in a synthetic promoter with at most 49
+     distinct values stepping mostly by 7 bp. It is not a dense scan, and a periodicity
+     finer than the design step cannot be seen however real it is.
+  2. Orientation is 4.6% varied. A null on orientation is an availability result.
+  3. The cap is a COST statement from graph arithmetic on TRRUST. It says the engine
+     could be built at that size, not that it would be accurate there. And TRRUST has no
+     position information at all, so the spatial axis is priced by alphabet size only --
+     which is exactly right for the cost and says nothing about whether real regulatory
+     positions would cluster helpfully.
+  4. The exchange rate measured here is between position and FACTOR IDENTITY at equal
+     alphabet. It does not say position is unimportant to a promoter; it says that if you
+     have a fixed number of distinguishable cells, this is where they are best spent.
