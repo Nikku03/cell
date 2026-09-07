@@ -1299,3 +1299,105 @@ representation changes, all measured against real data or an exact joint:
 Three controllers to twenty-five, and 12.8% of the network's regulatory edges to 36.5%. That is
 real and it is arithmetic on the same cap function throughout. It is still a constant factor on an
 exponential, and the whole-cell tail tier remains 15 to 20 orders out of reach.
+
+
+=================================================================================================
+RULING OUT INSTEAD OF ENUMERATING: THE FIRST ATTACK ON STRATA RATHER THAN ON TABLE SIZE
+=================================================================================================
+Every representation change in this session -- class count, signed count, multiplier -- shrank the
+TABLE the engine stores. None touched the number of STRATA it must enumerate, 2^(|C|(L+1)), which
+block_joint still builds in full and prunes only exact zeros. This is a different axis.
+
+TWO WAYS TO REDUCE IT, AND THEY ARE NOT THE SAME KIND OF THING. block.py's E5 SAMPLED the block:
+32 of 512 strata, 3.3e-4 error. But a sample is an estimate with a variance and certifies nothing.
+Ruling a branch out with an admissible bound is stronger, and here the bound is free and exact:
+block_joint extends a prefix by a stochastic matrix and then masks, so no descendant can carry
+more mass than its prefix, and any conjunctive observable is bounded by mass. Cutting a prefix
+therefore costs at most its mass -- a number the pruner accumulates as it goes, without seeing the
+answer. That is a certificate.
+
+THE CEILING GATE SAID NO AT THE BUILD ORDER'S OWN OPERATING POINT. An oracle that keeps exactly
+the top-contributing strata needs 3,059 of 4,096 for 99% of the mass and 2,229 for 99% of the
+tail -- 54.4% -- and every prefix node sits above mass 1e-12. The distribution is flat there.
+There is nothing to rule out, and a constant FRACTION means a constant factor.
+
+SO THE QUESTION BECAME WHAT MAKES IT FLAT, AND THE ANSWER IS PHYSICS. Sweeping the window depth L
+at fixed window length, the nominal count is 4^(L+1) and the kept count is not:
+
+    switches per window   keep99 at L=7   keep99 at L=8   step ratio     regime
+                  0.152              91             111        1.220   polynomial
+                  0.305             235             301        1.281   polynomial
+                  0.609             919           1,346        1.465   transition
+                  0.914           2,079           3,417        1.644   transition
+                  1.523           6,167          11,887        1.928   transition
+                  2.132          12,039          26,448        2.197   exponential
+                  3.046          22,495          57,623        2.562   exponential
+                  4.569          38,008         115,909        3.050   exponential
+
+A quadratic predicts a step ratio of 1.306 and the nominal count gives 4.000. Below about 0.3
+controller switches per window the kept count is POLYNOMIAL in L while the nominal count is
+exponential. Above about 2 it is exponential with a smaller base, which is a constant factor.
+Monotone over a thirtyfold range with no exceptions.
+
+A PREDICTION MADE AND LOST ON THE WAY THERE. The mechanism was predeclared as switches per
+SAMPLING INTERVAL, tested as a collapse, and refuted at R2 = 0.75: switches/slice = 0.1523 occurs
+twice with kept fractions of 0.0726 and 0.4531, a sixfold spread at one value of the supposed
+controlling parameter. The corrected parameter is switches per WINDOW, and the discriminating fact
+was already inside the sweep -- each sweep holds the window fixed, so switches per window is
+constant while switches per slice falls fourfold, and the regime never changes inside a sweep,
+only between them. The physical reading is that the amount of genuinely distinct history in a
+window is set by how often the controllers switch during it; sampling more finely adds slices that
+carry no new information. A units check confirming that only rate x time matters is reported
+beside it and LABELLED as a units check, because at fixed L the two candidate parameters are
+proportional and it discriminates nothing.
+
+THE ORACLE IS NOT AN ALGORITHM, AND THE CERTIFICATE HOLDS. A real pruner expands a prefix tree and
+cuts on the bound without seeing the answer. On a peaked system with 16,384 strata:
+
+        tau   nodes touched   strata kept    rel err   certificate   held?
+      1e-03             580            52   4.62e-02      2.40e-01     yes
+      1e-04           1,720           221   1.25e-02      7.18e-02     yes
+      1e-06           5,300         1,196   2.56e-04      1.29e-03     yes
+      1e-09          14,952         6,239   4.03e-07      2.36e-06     yes
+          0          21,844        16,384   1.28e-15             0     yes
+
+The certificate held at every threshold. At 1e-6 the pruner touches 24% of the tree, keeps 7.3% of
+the strata, and is right to 2.6e-4 -- with a bound of 1.3e-3 it computed itself.
+
+AND THE MASS BOUND DOES NOT LOSE THE TAIL HERE, which had to be checked because six modules in
+this session found bulk and tail diverging. Keeping the top-k strata by MASS retains slightly MORE
+of the tail than of the mass at every k. The strata carrying the conjunctive tail are the same
+heavy ones carrying the mass, which is a negative for the usual worry and is exactly what makes a
+mass bound usable as a tail certificate at all. It is a property of this system and has to be
+rechecked wherever the method is used.
+
+SAMPLING VERSUS RULING OUT, AT EQUAL BUDGET, AND THE PREDECLARED CROSSOVER IS CONFIRMED.
+
+    system                     budget   PRUNE err   certified   SAMPLE err (8 seeds)
+    flat   (0.76 sw/window)       128    4.40e-01         yes   7.27e-02 +- 7.2e-02
+    peaked (0.05 sw/window)       128    2.78e-02         yes   7.78e-02 +- 6.5e-02
+
+Sampling wins where the distribution is flat, pruning wins where it is peaked, and the two columns
+are not the same kind of number: a pruner's error comes with a bound it computed itself, a
+sampler's with a spread over seeds and no bound at all.
+
+THE COMBINED FORM IS BETTER THAN EITHER HALF BY ABOUT TENFOLD. Prune with the certificate, then
+sample the residue -- whose mass is exactly what the certificate bounded, so the sample is
+unbiased for the part that was cut and the bound still holds if the sample is bad.
+
+        tau   strata kept   prune only   + residue sampled   certificate
+      1e-03            52     4.62e-02   4.66e-03 +- 2.6e-03    2.40e-01
+      1e-04           221     1.25e-02   1.67e-03 +- 1.1e-03    7.18e-02
+      1e-06         1,196     2.56e-04   2.92e-05 +- 1.3e-05    1.29e-03
+
+WHAT THIS IS AND IS NOT. It is the first result in this session that changes the SHAPE of a cost
+curve rather than its constant -- but along ONE axis only. Sweeping the controller count instead
+of the window depth gives kept ~ nominal^0.96, so pruning does not touch the WIDTH explosion at
+all. The whole-cell problem is a width problem: 122 controllers, and a cap that three
+representation changes moved from 3 to 25. Pruning does not move it further.
+
+What it does buy is that the tail-accuracy refinement history.py demanded -- small dt, where tail
+error goes as dt^1.753 -- was previously multiplied by 2^(|C| W / dt) and is now nearly free
+whenever the regulators switch slowly relative to the window. Which regime real transcription
+factors sit in is an empirical question about their kinetics that this does not answer, and it is
+the next thing worth measuring.

@@ -68,38 +68,56 @@ N1  THE SCALING LAW: WHERE DOES PRUNING STOP BEING A CONSTANT FACTOR?
     -> POLYNOMIAL in L against an exponential nominal: pruning defeats the explosion here
 
 =================================================================================================
-N2  DO THE TWO SWEEPS COLLAPSE ONTO ONE CURVE?
+N2  THE MECHANISM: A PREDICTION MADE AND LOST, AND THE CORRECTED LAW
 =================================================================================================
-  If the mechanism is switches per sampling interval, then the kept FRACTION should be a
-  function of that parameter alone, whether it was reached by shrinking dt or by slowing
-  the controllers. Two regimes explained by one number are worth more than two facts.
+  PREDECLARED: if the mechanism is switches per SAMPLING INTERVAL, the kept fraction is a
+  function of that parameter alone and the sweeps collapse onto one curve in it.
 
-     switches/slice     hr   L  kept fraction     kept
-             0.0381    0.1   8         0.0011      301
-             0.0435    0.1   7         0.0036      235
-             0.0508    0.1   6         0.0108      177
-             0.0609    0.1   5         0.0312      128
-             0.0761    0.1   4         0.0850       87
-             0.1015    0.1   3         0.2109       54
-             0.1142    0.3   8         0.0130     3417
-             0.1305    0.3   7         0.0317     2079
-             0.1523    0.3   6         0.0726     1189
-             0.1523    0.1   2         0.4531       29
-             0.1827    0.3   5         0.1543      632
-             0.2284    0.3   4         0.2998      307
-             0.3046    0.3   3         0.5156      132
-             0.3807    1.0   8         0.2198    57623
-             0.4351    1.0   7         0.3432    22495
-             0.4569    0.3   2         0.7656       49
-             0.5076    1.0   6         0.4958     8124
-             0.6091    1.0   5         0.6580     2695
-             0.7614    1.0   4         0.7988      818
-             1.0152    1.0   3         0.8906      228
-             1.5228    1.0   2         0.9219       59
+  one-parameter fit over 21 points: R2 = 0.7536
+  at switches/slice = 0.1523 the kept fraction is 0.0726 (hr=0.3, L=6) and 0.4531 (hr=0.1, L=2) -- a 6.2x spread at one value of the
+  supposed controlling parameter, which is what refutes it.
+  N2: FAIL -- REFUTED. The mechanism is not switches per sampling interval.
 
-  one-parameter fit  log(kept fraction) = 1.573 log(switches/slice) + 0.386
-  R2 = 0.7536 over 21 points spanning 40x in the parameter and 7 window depths
-  N2: FAIL -- they do not collapse; the mechanism is not switches per slice
+  THE CORRECTED MECHANISM, and the evidence for it is already in N1. The amount of
+  genuinely distinct history in a window is set by how many times the controllers SWITCH
+  during that window -- not by how finely it is sampled. Sampling finer adds slices that
+  carry no new information, which is why the kept count can grow polynomially while the
+  nominal count grows exponentially. The parameter is therefore switches per WINDOW.
+
+  WHAT DISCRIMINATES THE TWO. Inside each N1 sweep the window is fixed at 1.0, so
+  switches per WINDOW is CONSTANT while switches per SLICE falls fourfold from L = 2 to
+  L = 8. The regime does not change anywhere inside a sweep -- it changes only BETWEEN
+  sweeps, which is where switches per window changes. That is the discriminating fact.
+
+        hr  switches/window   switches/slice range         regime
+       1.0            3.046        0.3807 - 1.5228    exponential
+       0.3            0.914        0.1142 - 0.4569     transition
+       0.1            0.305        0.0381 - 0.1523     polynomial
+
+  AND THE TRANSITION, located. Step ratio at L = 7 -> 8 against switches per window; a
+  quadratic predicts 1.306 and the nominal count gives 4.000.
+
+     switches/window  keep99 L=7  keep99 L=8  step ratio        regime
+               0.152          91         111       1.220    polynomial
+               0.305         235         301       1.281    polynomial
+               0.609         919        1346       1.465    transition
+               0.914        2079        3417       1.644    transition
+               1.523        6167       11887       1.928    transition
+               2.132       12039       26448       2.197   exponential
+               3.046       22495       57623       2.562   exponential
+               4.569       38008      115909       3.050   exponential
+
+  polynomial up to 0.30 switches per window, exponential from 2.13. The step ratio is monotone in the parameter over a 30x range with no exceptions.
+
+  A UNITS CHECK, labelled as one rather than passed off as a mechanism test. The same
+  switches-per-window reached by trading controller rate against window length gives the
+  same answer -- but at fixed L the two candidate parameters are proportional, so this
+  confirms the system depends only on rate x time and does NOT discriminate between them.
+
+     switches/window     hr  window       dt  step ratio
+               0.914    0.3     1.0   0.1250       1.644
+               0.914    0.6     0.5   0.0625       1.644
+               0.914   0.15     2.0   0.2500       1.642
 
 =================================================================================================
 N3  WHAT A REAL PRUNER PAYS FOR NOT BEING AN ORACLE
