@@ -71,6 +71,36 @@ M5  THE ENGINE SIDE, AND IT IS THE GATE THAT MATTERS. Position is to a promoter 
     transfer to the engine.
 
 M6  WHAT THIS DOES AND DOES NOT SETTLE.
+
+=================================================================================================
+M5 WAS MIS-SPECIFIED, AND THE MODULE'S OWN DATA IS WHAT SAYS SO
+=================================================================================================
+M5 was predeclared as "the temporal multiplier must repair a substantial part of the COUNT'S
+BREAK". As written it fails: the multiplier repairs 0.0% to 1.8% of it across L = 1 to 4.
+
+But the denominator is wrong, and the giveaway is in the same table. The per-slice CELL form --
+which holds the ENTIRE temporal alphabet, up to 5,120 parameters, and is the most a temporal
+representation can possibly know -- repairs only 3.8%. Swept over dt from 0.05 to 16 the cell
+form's repair never exceeds 8.4%. So more than nine tenths of the count's break in this system is
+not temporal at all; it is about WHICH controller, which is precisely what signed.py measured. A
+gate that charges a temporal form for a break that is 92% non-temporal cannot be passed by any
+temporal form whatsoever, and a bar no candidate can clear is ledger P.
+
+Scored against the part of the break it addresses -- the temporal part, whose size is measured
+rather than assumed, as the cell form's repair -- the multiplier captures 70% to 77% of what the
+full temporal alphabet captures, for 5 shared parameters against 5,040. The share rises with dt
+and with L and saturates near dt = 1.
+
+This is the same error class as poscount.py's D2, which scored summaries against zero instead of
+against the pattern floor: both put a quantity in the denominator that the thing being measured
+was never responsible for. Recorded rather than edited away, and the corrected reading is stated
+beside the failed gate rather than in place of it.
+
+AND THE COMPOSITION THAT FOLLOWS. signed.py fixes the WHICH axis, this fixes three quarters of the
+WHEN axis, and they are independent, so the form both results imply is a signed or class count
+TIMES a shared temporal multiplier -- alphabet C + (L+1), not C * (L+1). That composition is now
+measured too, and it was not in the predeclared gates because the need for it was not visible
+until the decomposition above was made.
 """
 
 from __future__ import annotations
@@ -226,8 +256,15 @@ def temporal_forms(nC, nT, L, dt, sgn, mag, cc=1.5, lam=1e-6):
             out[ii] = (W[ii, None] * Z[ii]).sum(axis=0) / W[ii].sum()
         return out, len(gi) * nT
 
+    nact = np.array([[sum((s >> c) & 1 for c in range(nC) if sgn[c] > 0) for s in a] for a in A],
+                    dtype=float).sum(axis=1)
+    nrep = np.array([[sum((s >> c) & 1 for c in range(nC) if sgn[c] < 0) for s in a] for a in A],
+                    dtype=float).sum(axis=1)
+    signed = [(int(x), int(y)) for x, y in zip(nact, nrep)]
+
     fits = {}
     fits["total count"] = group_fit([int(t) for t in tot])
+    fits["signed count"] = group_fit(signed)
     fits["per-slice cells"] = group_fit([tuple(r) for r in nsl])
     fits["full pattern"] = group_fit(list(range(len(A))))
     fits["no conditioning"] = group_fit([0] * len(A))
@@ -238,26 +275,28 @@ def temporal_forms(nC, nT, L, dt, sgn, mag, cc=1.5, lam=1e-6):
     # squares for h reduces exactly to a fit against the per-stratum MEAN residual over targets,
     # with weight W[i] * nT. Writing it that way rather than stacking (i, j) rows is the same
     # estimator and makes the sharing explicit.
-    gi = collections.defaultdict(list)
-    for i, k in enumerate([int(t) for t in tot]):
-        gi[k].append(np.int64(i))
-    gidx = {k: np.array(v) for k, v in gi.items()}
-    h = np.zeros(L + 1)
-    mu = np.zeros_like(Z)
-    for _ in range(12):
-        R = Z - (nsl @ h)[:, None]
+    def backfit(keys):
+        gi = collections.defaultdict(list)
+        for i, k in enumerate(keys):
+            gi[k].append(np.int64(i))
+        gidx = {k: np.array(v) for k, v in gi.items()}
+        h = np.zeros(L + 1)
+        mu = np.zeros_like(Z)
+        for _ in range(12):
+            R = Z - (nsl @ h)[:, None]
+            for k, ii in gidx.items():
+                mu[ii] = (W[ii, None] * R[ii]).sum(axis=0) / W[ii].sum()
+            resid = (Z - mu).mean(axis=1)
+            sw = np.sqrt(W)
+            X = nsl * sw[:, None]
+            h = np.linalg.solve(X.T @ X + lam * np.eye(L + 1), X.T @ (resid * sw))
+        R = Z - (nsl @ h)[:, None]                # mu must be refreshed against the FINAL h
         for k, ii in gidx.items():
             mu[ii] = (W[ii, None] * R[ii]).sum(axis=0) / W[ii].sum()
-        resid = (Z - mu).mean(axis=1)
-        sw = np.sqrt(W)
-        X = nsl * sw[:, None]
-        h = np.linalg.solve(X.T @ X + lam * np.eye(L + 1), X.T @ (resid * sw))
-    R = Z - (nsl @ h)[:, None]                    # mu must be refreshed against the FINAL h
-    for k, ii in gidx.items():
-        mu[ii] = (W[ii, None] * R[ii]).sum(axis=0) / W[ii].sum()
-    zmul = mu + (nsl @ h)[:, None]
-    npar_mul = len(gidx) * nT + (L + 1)
-    fits["MULTIPLIER count x g(when)"] = (zmul, npar_mul)
+        return mu + (nsl @ h)[:, None], len(gidx) * nT + (L + 1)
+
+    fits["MULTIPLIER count x g(when)"] = backfit([int(t) for t in tot])
+    fits["COMPOSED signed x g(when)"] = backfit(signed)
 
     out = {}
     for name, (zz, npar) in fits.items():
@@ -459,13 +498,58 @@ def main():
        f" {'extra params, mul':>18} {'extra params, cell':>19}")
     for (Lb, rep, repc, ec, em, ecell, pm, pc, p0, nocond, pat) in reps:
         P_(f"    {Lb:>3} {rep:>18.1f}% {repc:>17.1f}% {pm-p0:>18} {pc-p0:>19}")
-    rep_last = reps[-1][1]
     m5 = all(r[1] > 25.0 for r in reps)
-    P_(f"\n  the multiplier repairs {min(r[1] for r in reps):.1f}% to"
-       f" {max(r[1] for r in reps):.1f}% of the count's break across L = 1 to 4, for"
-       f" {reps[-1][6]-reps[-1][8]} extra parameters at L = 4,")
-    P_(f"  where the cell form repairs {min(r[2] for r in reps):.1f}% to"
-       f" {max(r[2] for r in reps):.1f}% for {reps[-1][7]-reps[-1][8]} extra parameters.")
+    P_(f"\n  M5 AS PREDECLARED: the multiplier repairs {min(r[1] for r in reps):.1f}% to"
+       f" {max(r[1] for r in reps):.1f}% of the COUNT'S BREAK.")
+    P_(f"  M5: {'PASS' if m5 else 'FAIL against the bar as written'}.")
+    P_( "  But the bar is wrong, and the table above says so: the per-slice CELL form holds the")
+    P_(f"  ENTIRE temporal alphabet -- {reps[-1][7]} parameters -- and repairs only"
+       f" {reps[-1][2]:.1f}%. A gate no")
+    P_( "  temporal form of any kind can clear is a bar unreachable on any evidence, which is")
+    P_( "  ledger P, and it is charging a temporal form for a break that is not temporal.")
+
+    P_("\n  SO MEASURE THE DENOMINATOR INSTEAD OF ASSUMING IT. The cell form's repair IS the")
+    P_("  temporal share of the break. dt is the knob that decides whether consecutive slices")
+    P_("  carry different information, so sweep it.")
+    P_(f"\n    {'dt':>6} {'L':>3} {'temporal share of the break':>28}"
+       f" {'multiplier share of THAT':>26}")
+    shares = []
+    for dtv in (0.05, 0.25, 1.0, 4.0, 16.0):
+        for Lb in (2, 4):
+            r2, ns2, _ = temporal_forms(nC, nT, Lb, dtv, sg, mg)
+            pat2 = r2["full pattern"][0]
+            ec2 = abs(r2["total count"][0] - pat2)
+            ecl2 = abs(r2["per-slice cells"][0] - pat2)
+            em2 = abs(r2["MULTIPLIER count x g(when)"][0] - pat2)
+            ts = 100 * (ec2 - ecl2) / ec2 if ec2 > 0 else float("nan")
+            ms = 100 * (ec2 - em2) / (ec2 - ecl2) if ec2 > ecl2 else float("nan")
+            shares.append((dtv, Lb, ts, ms))
+            P_(f"    {dtv:>6.2f} {Lb:>3} {ts:>27.1f}% {ms:>25.1f}%")
+    P_(f"\n  The temporal share never exceeds {max(t for _,_,t,_ in shares):.1f}% at any dt or L,")
+    P_( "  so more than nine tenths of the count's break here is about WHICH controller and not")
+    P_( "  WHEN -- which is exactly what signed.py measured. Against the part it addresses the")
+    P_(f"  multiplier captures {min(m for _,_,_,m in shares if m==m):.1f}% to"
+       f" {max(m for _,_,_,m in shares if m==m):.1f}% of the full temporal alphabet's value,")
+    P_(f"  for {reps[-1][6]-reps[-1][8]} shared parameters against {reps[-1][7]-reps[-1][8]}.")
+
+    P_("\n  THE COMPOSITION THAT FOLLOWS, which was not in the predeclared gates because the need")
+    P_("  for it was not visible until the decomposition above was made. signed.py fixes WHICH,")
+    P_("  the multiplier fixes three quarters of WHEN, and the axes are independent -- so the")
+    P_("  form both results imply is a signed count TIMES a shared temporal multiplier, at")
+    P_("  alphabet C + (L+1) rather than C * (L+1).")
+    P_(f"\n    {'L':>3} {'total count':>12} {'signed count':>13} {'COMPOSED':>10}"
+       f" {'cells':>10} {'params':>8} {'of the break repaired':>22}")
+    for Lb in (2, 4):
+        r3, ns3, _ = temporal_forms(nC, nT, Lb, 1.0, sg, mg)
+        pat3 = r3["full pattern"][0]
+        e_t = abs(r3["total count"][0] - pat3)
+        e_s = abs(r3["signed count"][0] - pat3)
+        e_c = abs(r3["COMPOSED signed x g(when)"][0] - pat3)
+        e_cl = abs(r3["per-slice cells"][0] - pat3)
+        P_(f"    {Lb:>3} {e_t:>12.3e} {e_s:>13.3e} {e_c:>10.3e} {e_cl:>10.3e}"
+           f" {r3['COMPOSED signed x g(when)'][1]:>8} {100*(e_t-e_c)/e_t:>21.1f}%")
+    P_("\n    at dt = 1.0, where the temporal axis is live. The composed form is the only entry")
+    P_("    that addresses both axes, and it costs the signed count's alphabet plus L+1.")
     P_(f"  M5: {'PASS -- the analogy transfers and the promoter result is an engine result' if m5 else 'FAIL -- the temporal multiplier does not repair the count, so the analogy does not transfer and this is a fact about promoters only'}")
 
     # ---- M6 ------------------------------------------------------------------------------------

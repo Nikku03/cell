@@ -1,0 +1,135 @@
+=================================================================================================
+THE MULTIPLIER FORM: PAY ADDITIVELY FOR AN AXIS A COUNT PAYS MULTIPLICATIVELY FOR
+=================================================================================================
+  Sharon et al. 2012, doi:10.1038/nbt.2205, GEO GSE37851, sha256[:32] 6a68ee26db7a1d3f4813ae29ed4e69bd.
+  5790 promoters. Replicate noise floor 0.1164 log2.
+  The form under test: P(x | class counts) * g(positions), which in log2 expression is a
+  group mean on the class counts PLUS a shared additive positional term, backfit.
+
+=================================================================================================
+M0(a)  THE COST CEILING: IS THE CLAIM 'C + P, NOT C * P' TRUE?
+=================================================================================================
+  The cap functional counts the per-gene TABLE SIZE. A cell form multiplies that table by
+  P; a multiplier leaves the table alone and adds P parameters SHARED across all genes.
+  So the claim is that the multiplier's cap is the cap at alphabet C. Verified, not
+  assumed, by adding the shared parameters to the functional and checking it does not move.
+
+    form                                alphabet  cap |C| at L=8
+    pattern (exact)                    2^(k(L+1))               3
+    CELL form, C=8 x P=4                      32              13
+    MULTIPLIER, C=8 and g over P=4             8              25
+    CELL form, C=16 x P=8                    128              13
+    MULTIPLIER, C=16 and g over P=8           16              15
+    CELL form, C=32 x P=4                    128              13
+    MULTIPLIER, C=32 and g over P=4           32              13
+
+  the P shared parameters charged against the same bar move the cap for: NO C -- the claim holds
+  M0(a): PASS. A multiplier over P bins at C classes caps at 25 controllers where the
+  cell form of the same expressive reach caps at 13. That is the entire point of the form.
+
+=================================================================================================
+M1  IT MUST REDUCE EXACTLY TO WHAT IT GENERALISES
+=================================================================================================
+    pure class count C=8, group mean      1.3418861331
+    multiplier with the shared term OFF   1.3418861331
+    max |difference| over all promoters   0.000e+00
+  M1: PASS
+
+=================================================================================================
+M2  ON REAL PROMOTERS
+=================================================================================================
+    model                                             RMSE  vs pure C=8  fallback  alphabet
+    pure class count, C = 8                         1.3419         0.00     3.9%         8
+    CELL form, C = 8 x P = 2                        1.3380        +0.03     4.4%        16
+    MULTIPLIER, C = 8, g over 2 position bins       1.3420        -0.00     3.9%         8
+    CELL form, C = 8 x P = 4                        1.3430        -0.01     5.2%        32
+    MULTIPLIER, C = 8, g over 4 position bins       1.3424        -0.00     3.9%         8
+    CELL form, C = 8 x P = 8                        1.3622        -0.17     8.4%        64
+    MULTIPLIER, C = 8, g over 8 position bins       1.3183        +0.20     3.9%         8
+    MULTIPLIER, C = 8, g over 49 position bins      1.2660        +0.65     3.9%         8
+
+    reference points, for what position is worth at all:
+    identity group mean                             1.1641        +1.53    11.1%
+    context only, no site information               1.9408
+
+  M2: the multiplier's best is +0.65 floors over the pure class count, at 49 bins.
+  The cell form's best over the same base is +0.03 floors, at an alphabet up to
+  8x larger. The multiplier gets more for less.
+
+=================================================================================================
+M3  ABSTENTION MUST NOT RISE -- THE FORM'S STRUCTURAL CLAIM
+=================================================================================================
+    model                                         fallback   vs pure
+    pure class count, C = 8                          3.9%      0.0%
+    CELL form, C = 8 x P = 2                         4.4%     +0.5%
+    MULTIPLIER, g over 2 bins                        3.9%     +0.0%
+    CELL form, C = 8 x P = 4                         5.2%     +1.3%
+    MULTIPLIER, g over 4 bins                        3.9%     +0.0%
+    CELL form, C = 8 x P = 8                         8.4%     +4.6%
+    MULTIPLIER, g over 8 bins                        3.9%     +0.0%
+    MULTIPLIER, g over 49 bins                       3.9%     +0.0%
+  M3: PASS -- the multiplier never splits a group, so abstention is identical
+
+=================================================================================================
+M4  INSIDE THE MAIN LADDER, WHERE poscount's CONFOUND IS CONSTANT
+=================================================================================================
+  3184 of 5790 promoters, all sites at start mod 7 == 1. poscount.py found
+  the group-mean position gain VANISHES here (-0.33 floors at four bins) while a ridge
+  still gains +0.41. This is where the multiplier has to work if the form is right.
+
+    model                                             RMSE  vs pure C=8  fallback
+    pure class count, C = 8                         1.2608         0.00     6.1%
+    CELL form, C = 8 x P = 4                        1.2992        -0.33     9.2%
+    MULTIPLIER, g over 4 bins                       1.2519        +0.08     6.1%
+    MULTIPLIER, g over 14 bins                      1.2436        +0.15     6.1%
+
+=================================================================================================
+M5  THE ENGINE SIDE: POSITION IS TO A PROMOTER WHAT SLICE TIME IS TO A HISTORY
+=================================================================================================
+  summary.py's total count sums controller-slices over the whole window and discards WHEN.
+  That is the same shape of loss as discarding where a site sits. So the same form is
+  testable: P(x | total count) * g(when), with g SHARED across targets.
+  All four parameterisations are on the LOG ODDS so the comparison is about the form.
+  SWEPT over the window length L, not measured at one. The count discards MORE as the
+  window lengthens, so a form that repairs the count has to keep repairing it as L grows;
+  a single L is the error this session has now made five times.
+  NOTE: these errors are not comparable with summary.py's, which averaged the probability
+  where this averages the log odds. Within this table the link is matched throughout.
+
+  nC=3 controllers (two activators, one repressor, heterogeneous magnitudes), nT=5, dt=0.25
+
+      L  strata   count err  MULTIPLIER       cells    pattern  repaired  params mul  params cell
+      1      64   1.989e-01   1.988e-01   1.980e-01  -4.96e-02      0.0%          37           80
+      2     512   2.142e-01   2.134e-01   2.110e-01  -3.57e-02      0.4%          53          320
+      3    4096   2.196e-01   2.172e-01   2.136e-01  -3.29e-02      1.1%          69         1280
+      4   32768   2.225e-01   2.185e-01   2.142e-01  -3.22e-02      1.8%          85         5120
+
+    'count err', 'MULTIPLIER' and 'cells' are EXCESSES over the full pattern of the same
+    system -- the pattern is not exact either and charging a form for the harness is not a
+    measurement of the form. 'repaired' is the fraction of the count's excess the
+    multiplier removes.
+
+      L  multiplier repairs  cell form repairs  extra params, mul  extra params, cell
+      1                0.0%               0.4%                  2                  45
+      2                0.4%               1.5%                  3                 270
+      3                1.1%               2.7%                  4                1215
+      4                1.8%               3.8%                  5                5040
+
+  the multiplier repairs 0.0% to 1.8% of the count's break across L = 1 to 4, for 5 extra parameters at L = 4,
+  where the cell form repairs 0.4% to 3.8% for 5040 extra parameters.
+  M5: FAIL -- the temporal multiplier does not repair the count, so the analogy does not transfer and this is a fact about promoters only
+
+=================================================================================================
+M6  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  1. The promoter half is steady state with no time axis; the engine half is a synthetic
+     four-controller system. Neither is a real regulatory network over time, and the
+     ANALOGY between position and slice time is an argument, tested here on one system,
+     not a theorem.
+  2. The shared term is LINEAR in the position or slice counts. A multiplier that had to
+     be nonlinear in them would need more than this and is not tested.
+  3. The cap is a cost statement about TABLE SIZE. It says the tables fit, not that the
+     engine is accurate at that size, and the strata still have to be enumerated.
+  4. g is shared across all genes and all targets here. Whether a real network needs
+     per-gene positional responses -- which would put the P back inside the product and
+     undo the whole saving -- is exactly the thing this form assumes away.
