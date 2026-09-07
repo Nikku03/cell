@@ -352,11 +352,18 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0)
         S[i] /= max(len(regs), 1)
     actbit = np.array([[(m >> c) & 1 for c in range(nCtrl)] for m in range(n)], dtype=float)
     per_level = budget / (L + 1)
+    # A hard cap on retained paths, so that a budget the pruner CANNOT meet at this width shows
+    # up in the certificate instead of exhausting memory. In the transition band the retained set
+    # grows like n^L whatever the budget says, and a row that blows the budget is the result --
+    # it is what "this regime does not prune" looks like when it is reported rather than crashed.
+    cap = max(1, int(2e7 // max(n, 1)))
 
     def spend(mass):
         o = np.argsort(mass)
         c = np.cumsum(mass[o])
         k = int(np.searchsorted(c, per_level, side="right"))
+        if len(o) - k > cap:                  # budget met but too many survivors to carry
+            k = len(o) - cap
         return o[k:], (float(c[k - 1]) if k > 0 else 0.0)
 
     touched = n
@@ -531,10 +538,12 @@ def main():
     P_(f"  error budget: {BUD:.0e} of the stratum mass, and the threshold is searched to meet it.")
     P_(f"\n    {'|C|':>4} {'sw/window':>10} {'regime':>12} {'nodes touched':>14} {'paths kept':>11}"
        f" {'% of full':>10} {'certificate':>12} {'vs exact':>11}")
-    for theta, dt5 in ((1.05, 0.35), (0.20, 0.0667)):
+    P_(f"  path cap {int(2e7)//1:.0e} entries; a row whose certificate EXCEEDS the budget is one")
+    P_( "  where the pruner could not meet it at that width, which is the result for that row.")
+    for theta, dt5 in ((0.20, 0.0667), (1.05, 0.35)):
         reg = ("polynomial" if theta <= TRANSITION_POLY
                else "transition" if theta < TRANSITION_EXP else "EXPONENTIAL")
-        for nCtrl in (4, 5, 6, 8):
+        for nCtrl in ((4, 5, 6, 8) if theta <= TRANSITION_POLY else (4, 5, 6)):
             Qb, ctrl, cidx, _, _, _ = trrust_block(nCtrl)
             full = sum((1 << nCtrl) ** d for d in range(1, L5 + 2))
             tl, dr, tc, nk, res = engine_budget(Qb, nCtrl, rows, L5, dt5, BUD)
