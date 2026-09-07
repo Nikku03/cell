@@ -763,3 +763,72 @@ FOUR FURTHER DEFECTS CONFIRMED BY THE SAME REVIEW, all mine:
 HOW IT WAS FOUND. Not by a gate. A pre-mortem of five adversarial lenses, run before the module
 was written and returning after it was run, recomputed the cost from the TSV and found the missing
 term. Every gate in block.py passed.
+
+=================================================================================================
+ATTACKING k_i: THE TERM WAS NEVER THE PROBLEM, THE REPRESENTATION WAS
+Source: rem/atlas/RESULTS_summary.txt
+=================================================================================================
+
+K0  THE CEILING GATE, RUN FIRST THIS TIME. block.py skipped it and spent a module on a term whose
+    ceiling was zero. Priced at its best case, k_i work buys AT MOST +1 controller at every
+    history depth, and truncating to one controller per gene already captures the whole ceiling:
+
+        L                  0     1     2     3     4     6     8
+        k_i as measured   39    19    12     8     6     4     3
+        k_i FREE (= 0)    39    19    13     9     7     5     4
+
+    Together with block.py's result -- pricing the block at zero moves the cap by nothing at
+    L >= 3 -- BOTH terms sit at the wall simultaneously. The cost is exponential in |C| by two
+    independent routes and removing either leaves the other. There is no local fix.
+
+THE FIX IS A CHANGE OF FORM, NOT OF TERM. Both terms are exponential because the controller
+history is carried as a PATTERN, 2^(L+1) distinguishable values per controller. If a gene's
+response depends on that history only through a low-dimensional SUMMARY, both collapse at once:
+
+        representation          per-gene              block
+        pattern                 2^(k_i(L+1))          2^(|C|(L+1))
+        per-controller count    (L+2)^(k_i)           (L+2)^|C|
+        total count             k_i(L+1)+1            |C|(L+1)+1
+
+    resulting cap on TRRUST      L=0    L=1    L=2    L=3    L=4    L=6    L=8
+        pattern                   39     19     12      8      6      4      3
+        per-controller count      39     25     19     16     15     --     --
+        TOTAL COUNT              419    419    419    419    419    419    419
+
+    419 is the search bound, not a limit. Pattern at L=8 caps at |C| = 3, covering 12.8% of
+    TRRUST's regulatory edges; the count summary covers 93.3%.
+
+K2  CONTROLLER IDENTITY DOES NOT MATTER -- ONLY HOW MANY, AND FOR HOW LONG. Per-controller count
+    does no better than total count at any size tested, and sometimes worse. That is a stronger
+    statement than the cost saving, and it is what licenses the collapse.
+
+K3  THE ERROR DEGRADES WITH HISTORY DEPTH AND IS FLAT IN CONTROLLER COUNT, which is exactly the
+    right shape, because |C| is what must grow and L is what can stay small:
+
+        L                1      2      3      4         nC              2      3      4
+        summary/pattern  1.08   1.29   2.39   3.81      summary/pattern 1.23   1.29   1.27
+
+    At L <= 2 the count summary is within 1.3x of the full pattern's error at every controller
+    count tested. At L = 4 it is 3.8x worse and fails the 1% bar. Controller coupling and
+    target-to-controller feedback degrade it mildly (1.25 -> 1.95 as feedback goes 0 -> 2).
+
+K7  THE ADVERSARIAL CASE IS TESTED, AND PARTLY INCONCLUSIVE. Generators whose targets read a
+    SPECIFIC controller pair -- AND and XOR gates, where "two on" is ambiguous -- should kill a
+    count summary. It survives both on the symmetric observable. But that is evidence about the
+    OBSERVABLE as much as the summary: Var(total ON) cannot see which controller drove which. A
+    target-specific observable was therefore added, and on the XOR system it turned out to be
+    UNREADABLE, because its no-conditioning baseline PASSES at -6.7e-3. The baseline check has to
+    run per observable rather than once per system; here it did, and it stopped a conclusion.
+
+A DEFECT THAT MADE THE FIRST SUFFICIENCY TEST UNFAILABLE. It replaced each pattern's conditional
+by its group average and summed, weighting by that pattern's own probability. That telescopes back
+to sum_a w_a m_a -- the exact answer. Every summary scored 1e-15 INCLUDING "no history at all",
+because every summary WAS the exact answer by construction. The approximation has to bite in the
+PRODUCT over genes, where the engine's does.
+
+THE HONEST HEADLINE. The obstruction was never k_i and never the block. It was carrying controller
+history as a PATTERN. Replacing the pattern with a count makes both terms polynomial, lifts the
+affordable controller count from 3 to beyond the search bound, and takes edge coverage from 12.8%
+to 93.3% -- at the price of about 1.3x the pattern's error, provided the history stays shallow
+(L <= 2). Whether a real promoter integrating several transcription factors is count-sufficient is
+an empirical question about promoters that these synthetic systems cannot settle.
