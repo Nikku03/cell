@@ -832,3 +832,75 @@ affordable controller count from 3 to beyond the search bound, and takes edge co
 to 93.3% -- at the price of about 1.3x the pattern's error, provided the history stays shallow
 (L <= 2). Whether a real promoter integrating several transcription factors is count-sufficient is
 an empirical question about promoters that these synthetic systems cannot settle.
+
+=================================================================================================
+THE COUNT SUMMARY IS REFUTED ON REAL PROMOTER DATA
+Source: rem/atlas/RESULTS_promoter.txt
+=================================================================================================
+
+WHAT WAS AT STAKE. summary.py's whole result rested on count-sufficiency: if a gene's response
+depends on its regulators only through HOW MANY are active rather than WHICH, both exponential
+terms in the engine's cost collapse to polynomial, the affordable controller count goes from 3 to
+past the search bound, and TRRUST edge coverage goes from 12.8% to 93.3%. summary.py said plainly
+that whether a real promoter is count-sufficient is an empirical question its synthetic systems
+could not settle. It is settled now, and the answer is no.
+
+THE DATA. Sharon et al. 2012, Nature Biotechnology 30:521-30, doi 10.1038/nbt.2205, found via
+PubMed; NCBI GEO GSE37851, two replicates. 6,016 designed yeast promoters with both replicates,
+varying site identity, number, strength, orientation and position INDEPENDENTLY. Within one
+sequence context, two-site promoters span 38 distinct factor multisets -- if expression were a
+function of site count those 38 would be interchangeable.
+
+THE NOISE FLOOR, MEASURED BEFORE ANY MODEL WAS FITTED. Replicate Pearson r on log2 expression
+0.9974; RMS replicate difference 0.165 log2; noise in the averaged response 0.116 log2. Nothing
+smaller than that is a result.
+
+THE ANSWER.
+
+    model                          held-out RMSE (log2)      fallback
+    context only, no site info                   1.9570          0.6%
+    context + site COUNT                         1.8960          2.6%
+    context + factor IDENTITY                    1.1641         11.1%
+
+    identity advantage over count: 0.7319 log2 = 6.3 NOISE FLOORS
+
+The count model beats a model that knows nothing about the sites at all by 0.52 floors -- which is
+to say, by nothing. Knowing how many binding sites a promoter has is worth almost no more than
+knowing only its sequence context. Knowing WHICH factors bind is worth 6.8 floors. A ridge
+regression agrees: 1.9408 context-only, 1.9055 with count, 1.1299 with per-factor counts.
+
+It is not an average hiding a subpopulation. Broken down by site count, the identity advantage is
+5.65, 6.56 and 8.37 floors at one, two and three sites -- it grows with the number of sites, which
+is the direction that matters for the engine.
+
+WHY, AND IT IS OBVIOUS IN HINDSIGHT. Single-site promoters in one context, mean log2 shift against
+the context mean: MATALPHA2 -3.79, GAL4 +2.33, ADR1 -1.61, MIG1_2 -1.55, CBF1 -1.46, GCN4 +1.44.
+These factors are activators and repressors. Counting them together adds a repressor to an
+activator and calls the sum "two sites". No count can survive that, and the synthetic generators
+in summary.py could not have revealed it because their regulation was signed uniformly.
+
+WHAT THIS DOES AND DOES NOT KILL.
+
+  KILLED: count-sufficiency as a general property of promoters, and with it summary.py's headline
+  that the cap goes from 3 to past 419 and coverage from 12.8% to 93.3%. That collapse required an
+  assumption which is false on measurements.
+
+  NOT KILLED, and worth separating: a SIGNED count -- activators minus repressors, or a count per
+  sign class -- was not tested and is the obvious next candidate. It is still polynomial: two or
+  three counts instead of one, k_i(L+1)+1 becoming a small product. The refutation here is of the
+  UNSIGNED count, which is what summary.py measured.
+
+  NOT TESTED: the temporal half of the claim. The engine's summary is over controller HISTORY --
+  how many were active and for how long. This data is steady-state with no time axis, so it speaks
+  only to count-versus-identity, not to how much of the trajectory a summary can discard.
+
+TWO DEFECTS OF MINE IN THIS MODULE.
+  - V2 was specified as "the baseline must be worse than both site models" and implemented against
+    the COUNT model alone. Since the count model is barely better than no site information, V2
+    reported FAIL and would have blocked reading the entire module. That conflates "the data
+    cannot test this" with "the count is useless". The data test it decisively; it is the count
+    that is useless, and that belongs in V3.
+  - V5 shows adding position or orientation to identity makes the predictor WORSE, by 0.26 and
+    1.83 floors. That is not evidence that position does not matter -- the same paper reports a
+    10 bp periodicity. It is the group-mean estimator running out of data: fallback rises from
+    11.1% to 15.4% and 34.7% as the groups get finer. Reported with the fallback rates beside it.
