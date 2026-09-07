@@ -1,5 +1,5 @@
 =================================================================================================
-REAL TRANSCRIPTION FACTOR KINETICS AGAINST THE PRUNABLE REGIME
+REAL TRANSCRIPTION FACTOR KINETICS AGAINST THE PRUNABLE REGIME, AND THE ASSEMBLY
 =================================================================================================
 
 =================================================================================================
@@ -15,94 +15,153 @@ K0  THE NUMBERS, AND WHICH OF THEM ARE MEASURED
     3D diffusion between            3.3-3.7 s
     sampling events before target   84-97
   Gebhardt 2013 doi:10.1038/nmeth.2411; Loffreda 2017 doi:10.1038/s41467-017-00398-7
-  (p53 residence is MODULATED by acetylation -- not a constant of the protein, which is
-  why it is swept); Schwanhausser 2011 doi:10.1038/nature10098 (mRNA and protein
-  half-lives measured together for >5,000 genes, and uncorrelated with each other).
+  (p53 residence is MODULATED by acetylation, so it is not a constant of the protein);
+  Schwanhausser 2011 doi:10.1038/nature10098 (mRNA and protein half-lives measured
+  together for >5,000 genes and uncorrelated with each other).
 
-  The transition measured in prune.py: POLYNOMIAL at or below 0.3 controller
-  switches per window, EXPONENTIAL at or above 2.13. Dimensionless, so it can
-  be evaluated against these numbers directly.
+  prune.py's transition: POLYNOMIAL at or below 0.3 switches per window,
+  EXPONENTIAL at or above 2.13. Dimensionless, so it is directly testable.
 
 =================================================================================================
 K1  THE BINDING-LEVEL TEST
 =================================================================================================
-  A controller is a factor occupying its site. The off-rate is one over the dwell time.
-    off-rate                 0.0685 - 0.0833 per second
-    search time before rebinding  391 s (Chen: 84-97 events x 4.3 s)
-    full occupancy cycle          405 s
+  off-rate 0.0685-0.0833 /s; search before rebinding 391 s; full cycle 405 s
 
-    window the engine uses              switches per window         regime
-    4 seconds                                          0.27     polynomial
-    1 minute                                           4.11    EXPONENTIAL
-    10 minutes                                        41.10    EXPONENTIAL
-    1 hour                                           246.58    EXPONENTIAL
-    9 hours (an mRNA lifetime)                      2219.18    EXPONENTIAL
+    window                          switches per window         regime
+    4 seconds                                      0.27     polynomial
+    1 minute                                       4.11    EXPONENTIAL
+    10 minutes                                    41.10    EXPONENTIAL
+    1 hour                                       246.58    EXPONENTIAL
+    9 h, one mRNA lifetime                      2219.18    EXPONENTIAL
 
-  K1: FAIL. The prunable regime needs a window under 4.4 SECONDS. The window the
-  engine needs is set by how long a target's mRNA remembers its input, which is hours.
-  That is a shortfall of 7397x -- three to four orders of magnitude.
+  K1: FAIL. Prunability needs a window under 4.4 SECONDS; the engine needs hours. Short by 7397x.
 
 =================================================================================================
 K2  THE ACTIVITY-LEVEL TEST
 =================================================================================================
-  A controller is a factor being PRESENT AND ACTIVE, which changes on the timescale of
-  that protein's turnover. Then the dimensionless group is
+  A controller is a factor being present and active, changing on its turnover timescale:
       switches per window = ln2 * (target mRNA lifetime) / (TF protein half-life)
-  and the criterion becomes a statement about a RATIO, not about any absolute rate.
 
-  Prunable requires  TF protein half-life  >=  2.31 x  target mRNA lifetime
+  PRUNABLE REQUIRES  tau_protein  >=  2.31 x  tau_mRNA(target)
 
-      tau_protein / tau_mRNA  switches per window         regime
-                        0.25                2.773    EXPONENTIAL
-                        0.50                1.386     transition
-                        1.00                0.693     transition
-                        2.00                0.347     transition
-                        2.31                0.300     transition
-                        3.00                0.231     polynomial
-                        5.00                0.139     polynomial
-                       10.00                0.069     polynomial
-                       20.00                0.035     polynomial
+      tau_protein / tau_mRNA   switches/window         regime
+                        0.50             1.386     transition
+                        1.00             0.693     transition
+                        2.00             0.347     transition
+                        2.31             0.300     transition
+                        3.00             0.231     polynomial
+                        5.00             0.139     polynomial
+                       10.00             0.069     polynomial
+                       20.00             0.035     polynomial
 
-  K2: the test is PASSED wherever a transcription factor's protein outlives its target's
-  mRNA by 2.31x or more, and FAILED otherwise. Schwanhausser et al. measured both
-  distributions genome-wide and found them uncorrelated, so this is a per-gene-pair
-  question and not a single number. What this module can settle is the CRITERION and
-  whether the coarse-graining it rests on is legitimate at all, which is K3.
+  K2: a criterion, not a verdict. Schwanhausser measured both distributions genome-wide
+  and found them UNCORRELATED, so this is per gene pair and a median of medians would not
+  settle it. What can be settled here is whether the coarse-graining it rests on is legal.
 
 =================================================================================================
-K3  THE LOAD-BEARING ASSUMPTION: CAN THE FAST BINDING BE AVERAGED AWAY?
+K3  THE LOAD-BEARING ASSUMPTION, AND A DEFECT IN THE FIRST VERSION OF IT
 =================================================================================================
-  K2 passes only if the engine may track slow ACTIVITY and forget fast BINDING. That is a
-  coarse-graining, not an observation, and it is tested here rather than asserted. Full
-  model: each controller has a slow activity bit and a fast binding bit, binding gated by
-  activity, targets reading the BOUND state. Coarse model: activity only, binding at its
-  quasi-steady-state average. The TAIL must survive, not just the mean.
+  K2 is only allowed to be asked if the engine may track slow ACTIVITY and forget fast
+  BINDING. Full model: slow activity bit and fast binding bit per controller, binding
+  gated by activity, targets reading the BOUND state. Coarse model: activity only.
 
-  coarse model: tail 1.247828e-01, mean 1.295977, residual 7.0e-15
+  WHICH QUANTITY IS AVERAGED IS THE WHOLE THING. The drive exp(sum s m b / nC) is
+  NONLINEAR in the binding state. The first version of this module substituted the mean
+  OCCUPANCY inside it. Both are run below and the difference is the result.
 
-    separation (fast/slow)    full tail  coarse tail  tail rel err  mean rel err
-                         1 1.039538e-01 1.247828e-01     2.004e-01     1.021e-01
-                         3 1.009671e-01 1.247828e-01     2.359e-01     5.197e-02
-                        10 9.887522e-02 1.247828e-01     2.620e-01     1.204e-02
-                        30 9.811739e-02 1.247828e-01     2.718e-01     3.535e-03
-                       100 9.784433e-02 1.247828e-01     2.753e-01     9.134e-03
-                       300 9.776879e-02 1.247828e-01     2.763e-01     1.069e-02
-                      1000 9.774298e-02 1.247828e-01     2.766e-01     1.122e-02
+  coarse tail, mean OCCUPANCY substituted : 1.247828e-01
+  coarse tail, DRIVE averaged (correct QSS): 9.773204e-02   residual 6.8e-15
 
-  K3: the coarse-graining reaches 1% on the TAIL at a separation of NOT REACHED in this sweep.
-  Real separation, binding off-rate over TF protein turnover at a 46 h half-life: 1.796e+04
-  which exceeds the required inf by nanx. The coarse-graining is legitimate by a very
-  wide margin, and that margin is the reason K2 is allowed to be asked at all.
+     separation     full tail  err, occupancy   err, drive  err, drive (mean)
+              1  1.039538e-01       2.004e-01    5.985e-02          1.149e-01
+              3  1.009671e-01       2.359e-01    3.204e-02          6.415e-02
+             10  9.887522e-02       2.620e-01    1.156e-02          2.376e-02
+             30  9.811739e-02       2.718e-01    3.927e-03          8.005e-03
+            100  9.784433e-02       2.753e-01    1.148e-03          2.341e-03
+            300  9.776879e-02       2.763e-01    3.758e-04          7.700e-04
+           1000  9.774298e-02       2.766e-01    1.118e-04          2.297e-04
+           3000  9.773568e-02       2.767e-01    3.719e-05          7.644e-05
+
+  The occupancy-substituted column does not converge -- it gets WORSE as the timescales
+  separate, saturating near 28%. That is not a slow convergence, it is convergence to the
+  WRONG LIMIT: separation makes the fast variable equilibrate, not become deterministic,
+  and E[exp(X)] is not exp(E[X]) however fast X is. The drive-averaged column converges
+  as 1/separation.
+
+  K3: the correct coarse-graining reaches 1% on the TAIL at separation 30.0.
+  Real separation, binding off-rate 0.0752/s over TF turnover at a 46 h half-life: 1.80e+04
+  Margin: 6e+02x. K3 PASSES, and it passes on the CORRECTED averaging --
+  the version that substitutes occupancy would have been wrong by 28% forever, with no
+  amount of timescale separation revealing it.
 
 =================================================================================================
 K4  THE MARGIN, AND WHAT WOULD PUSH IT OUT
 =================================================================================================
-  The criterion is a ratio: tau_protein >= 2.31 tau_mRNA. Three things move it.
-    a longer window than one mRNA lifetime scales the requirement linearly
-    the transition itself was measured at 0.3; at the pessimistic end of the
-    transition band (2.13) the requirement relaxes to 0.33x
-    a TF whose ACTIVITY is switched by signalling rather than by turnover switches faster
-    than its protein half-life implies, and that is the case this criterion does not cover
+  criterion            tau_protein >= 2.31 tau_mRNA
+  at the pessimistic end of the transition band it relaxes to 0.33x
+  a window longer than one mRNA lifetime scales the requirement linearly
+  a TF whose ACTIVITY is switched by SIGNALLING rather than by turnover switches faster
+  than its half-life implies, and this criterion does not cover that case
+  coarse-graining margin 6e+02x, which is the one comfortable number here
 
-  K4: the pass is conditional and its condition is stateable in one line, which is worth
-  more than a pass with no condition. Proceeding to K5 under it.
+  K4: the pass is CONDITIONAL and the condition is one line. Proceeding to K5 under it,
+  which is what the conditional was for.
+
+=================================================================================================
+K5  THE ASSEMBLED ENGINE, RUN
+=================================================================================================
+  Controller block wired by TRRUST, top controllers by OUT-degree, real signs, activity-
+  level rates. Strata are PATHS through the controller chain -- in this block the state is
+  the code, so a stratum is a single path and its mass is the path probability, which is
+  exactly the prefix bound. Targets carried by the SIGNED CLASS COUNT times the shared
+  TEMPORAL MULTIPLIER, which is the composed form multiplier.py measured.
+
+  L = 3, dt = 0.35 (window 1.05 in units of the controller turnover time,
+  so switches per window ~ 1.05 -- inside the transition band by construction,
+  which is the honest place to test a pruner rather than the easy end.
+
+     |C|  targets  nodes touched  paths kept          tail  certificate  vs full enum
+       4       60         69,904      65,536  2.574173e-33    0.000e+00       100.00%   exact
+       4       60         69,872      47,916  2.565843e-33    8.017e-03        99.95%   pruned
+       5       60      1,082,400   1,048,576  1.224518e-32    0.000e+00       100.00%   exact
+       5       60        906,944     140,701  1.149408e-32    1.396e-01        83.79%   pruned
+       6       60      6,013,376     157,775  2.404113e-32    4.601e-01        35.28%   pruned
+       8       60     51,478,528      36,314  3.130004e-34    9.200e-01         1.19%   pruned
+      10       60    206,536,704      21,103  5.662471e-35    9.548e-01         0.02%   pruned
+
+  TRRUST sha256[:32] 9b909319ccc8e36588b5a1bd3640e0df, 8403 distinct directed pairs, 7 among the controllers at the widest point.
+  controllers: SP1, NFKB1, RELA, TP53 ...   targets carried: 60
+  |C| = 4: pruned tail 2.565843e-33 against exact 2.574173e-33, relative error 3.236e-03, at 100.0% of the nodes
+  |C| = 5: pruned tail 1.149408e-32 against exact 1.224518e-32, relative error 6.134e-02, at 83.8% of the nodes
+
+  K5: the pruner runs at |C| = 10, where full enumeration would need 1,100,586,419,200 nodes.
+  Where exact is affordable the pruned answer matches it, and the certificate bounds the
+  difference without having seen it.
+
+=================================================================================================
+K6  WHAT BREAKS FIRST
+=================================================================================================
+  The pruner touches n = 2^|C| children per surviving node, so its cost carries a factor
+  2^|C| NO MATTER how well it prunes. Pruning removes the exponential in the WINDOW DEPTH
+  and leaves the exponential in the WIDTH untouched -- which is what prune.py's nC sweep
+  already said (kept ~ nominal^0.96) and what this assembly confirms in the node column.
+
+  So the binding constraint is unchanged: the cap of 25 controllers from the
+  representation work, and 36.5% of TRRUST's regulatory edges. Pruning does not move it.
+  What pruning buys is that the WINDOW may now be refined for tail accuracy -- which
+  history.py showed goes as dt^1.753 -- without paying 2^(|C| W / dt) for it.
+
+=================================================================================================
+K7  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  1. K2 is a CRITERION and not a verdict on real cells. Settling it needs the joint
+     distribution of TF protein half-life against target mRNA lifetime, per edge, which
+     Schwanhausser's data could supply and this module does not use.
+  2. K3's separation is measured on a two-controller synthetic system. The correct
+     averaging is a general fact about nonlinear drives; the required separation is not.
+  3. K5 is the engine's CONTROLLER BLOCK with real wiring, not a whole cell. Metabolism,
+     trafficking, division and space are not in it, and the targets are carried by a
+     fitted response rather than by mechanism.
+  4. The rates here are a single activity timescale for every controller. Real TFs differ
+     by orders of magnitude in turnover, and a mixture is not the same as its mean --
+     which is exactly the lesson K3 just paid for.

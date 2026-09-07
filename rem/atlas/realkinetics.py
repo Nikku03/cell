@@ -322,6 +322,29 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0):
     return tail, dropped, touched, len(wts), res
 
 
+def engine_budget(Q, nCtrl, rows, L, dt, budget, lo=1e-30, hi=1.0, iters=26):
+    """Specify the error BUDGET and let the pruner find its threshold, instead of fixing tau.
+
+    A fixed absolute tau does not scale: path probabilities fall like n^-L, so a threshold that
+    is gentle at |C| = 4 discards almost everything at |C| = 8. That was a defect in the first
+    run of K5, where the certificate reached 0.92 -- the pruner had dropped 92% of the mass and
+    the number it returned meant nothing. Binary-searching tau against the certificate fixes it,
+    and it is also the honest interface: a user states the error they will accept."""
+    best = None
+    for _ in range(iters):
+        mid = np.sqrt(lo * hi)
+        tl, dr, tc, nk, res = engine_tail(Q, nCtrl, rows, L, dt, mid)
+        if dr <= budget:
+            best = (mid, tl, dr, tc, nk, res)
+            lo = mid
+        else:
+            hi = mid
+    if best is None:
+        tl, dr, tc, nk, res = engine_tail(Q, nCtrl, rows, L, dt, 0.0)
+        best = (0.0, tl, dr, tc, nk, res)
+    return best
+
+
 def main():
     out = []
 
@@ -449,41 +472,44 @@ def main():
     P_("  the code, so a stratum is a single path and its mass is the path probability, which is")
     P_("  exactly the prefix bound. Targets carried by the SIGNED CLASS COUNT times the shared")
     P_("  TEMPORAL MULTIPLIER, which is the composed form multiplier.py measured.")
-    L5, dt5 = 3, 0.35
-    P_(f"\n  L = {L5}, dt = {dt5} (window {L5*dt5:.2f} in units of the controller turnover time,")
-    P_(f"  so switches per window ~ {L5*dt5:.2f} -- inside the transition band by construction,")
-    P_( "  which is the honest place to test a pruner rather than the easy end.")
-    rowsN = None
-    P_(f"\n    {'|C|':>4} {'targets':>8} {'nodes touched':>14} {'paths kept':>11} {'tail':>13}"
-       f" {'certificate':>12} {'vs full enum':>13}")
-    prev = {}
-    for nCtrl in (4, 5, 6, 8, 10):
-        Qb, ctrl, cidx, sha, nE, nW = trrust_block(nCtrl)
-        rows = target_rows(cidx, ntarget=60)
-        if rowsN is None:
-            rowsN = (sha, nE, nW, len(ctrl), len(rows), ctrl[:6])
-        full = sum((1 << nCtrl) ** d for d in range(1, L5 + 2))
-        for tau in (0.0, 1e-6):
-            if tau == 0.0 and nCtrl > 5:
-                continue
-            tl, dr, tc, nk, res = engine_tail(Qb, nCtrl, rows, L5, dt5, tau)
-            prev[(nCtrl, tau)] = (tl, tc, nk)
-            lbl = "exact" if tau == 0.0 else "pruned"
-            P_(f"    {nCtrl:>4} {len(rows):>8} {tc:>14,} {nk:>11,} {tl:>13.6e}"
-               f" {dr:>12.3e} {f'{100*tc/full:.2f}%':>13}   {lbl}")
-    P_(f"\n  TRRUST sha256[:32] {rowsN[0]}, {rowsN[1]} distinct directed pairs,"
-       f" {rowsN[2]} among the controllers at the widest point.")
-    P_(f"  controllers: {', '.join(rowsN[5])} ...   targets carried: {rowsN[4]}")
-    for nCtrl in (4, 5):
-        if (nCtrl, 0.0) in prev and (nCtrl, 1e-6) in prev:
-            e, p = prev[(nCtrl, 0.0)], prev[(nCtrl, 1e-6)]
-            P_(f"  |C| = {nCtrl}: pruned tail {p[0]:.6e} against exact {e[0]:.6e},"
-               f" relative error {abs(p[0]-e[0])/e[0]:.3e}, at"
-               f" {100*p[1]/e[1]:.1f}% of the nodes")
-    P_(f"\n  K5: the pruner runs at |C| = 10, where full enumeration would need"
-       f" {sum((1<<10)**d for d in range(1, L5+2)):,} nodes.")
-    P_( "  Where exact is affordable the pruned answer matches it, and the certificate bounds the")
-    P_( "  difference without having seen it.")
+    P_("\n  TWO DEFECTS IN THE FIRST RUN OF THIS GATE, FIXED HERE AND RECORDED.")
+    P_("  (a) A FIXED tau DOES NOT SCALE. Path probabilities fall like n^-L, so tau = 1e-6 was")
+    P_("      gentle at |C| = 4 and destroyed the answer at |C| = 8, where the certificate reached")
+    P_("      0.92 -- the pruner had dropped 92% of the mass and the tail it returned meant")
+    P_("      nothing. The threshold is now found by binary search against a stated error BUDGET,")
+    P_("      which is also the honest interface.")
+    P_("  (b) THE TARGET SET MOVED WITH |C|, so tails at different |C| were different observables")
+    P_("      and their comparison was meaningless. The target set is now fixed once, from the")
+    P_("      widest controller set, and carried unchanged at every |C|.")
+    L5 = 3
+    BUD = 1e-3
+    Qw, ctrlw, cidxw, sha, nE, nWw = trrust_block(10)
+    rows = target_rows(cidxw, ntarget=60)
+    P_(f"\n  TRRUST sha256[:32] {sha}, {nE} distinct directed pairs.")
+    P_(f"  controllers by out-degree: {', '.join(ctrlw[:8])} ...")
+    P_(f"  {len(rows)} target genes carried, FIXED across every row below, each with its real")
+    P_(f"  regulators among the controllers and TRRUST's own signs.")
+    P_(f"  error budget: {BUD:.0e} of the stratum mass, and the threshold is searched to meet it.")
+    P_(f"\n    {'|C|':>4} {'sw/window':>10} {'regime':>12} {'nodes touched':>14} {'paths kept':>11}"
+       f" {'% of full':>10} {'certificate':>12} {'vs exact':>11}")
+    for theta, dt5 in ((1.05, 0.35), (0.20, 0.0667)):
+        reg = ("polynomial" if theta <= TRANSITION_POLY
+               else "transition" if theta < TRANSITION_EXP else "EXPONENTIAL")
+        for nCtrl in (4, 5, 6, 8):
+            Qb, ctrl, cidx, _, _, _ = trrust_block(nCtrl)
+            full = sum((1 << nCtrl) ** d for d in range(1, L5 + 2))
+            tau, tl, dr, tc, nk, res = engine_budget(Qb, nCtrl, rows, L5, dt5, BUD)
+            ex = ""
+            if nCtrl <= 5:
+                te, _, _, _, _ = engine_tail(Qb, nCtrl, rows, L5, dt5, 0.0)
+                ex = f"{abs(tl-te)/abs(te):.2e}" if te != 0 else "n/a"
+            P_(f"    {nCtrl:>4} {theta:>10.2f} {reg:>12} {tc:>14,} {nk:>11,}"
+               f" {100*tc/full:>9.2f}% {dr:>12.2e} {ex:>11}")
+    P_("\n  K5: at the same error budget the two windows behave differently, which is the point.")
+    P_("  In the transition band the pruner must keep most of the tree; in the regime K1-K4 says")
+    P_("  real activity-level kinetics put a cell in, it keeps a small fraction of it. The")
+    P_("  certificate is honoured in every row, and where exact enumeration is still affordable")
+    P_("  the pruned answer is checked against it rather than trusted.")
 
     # ---- K6  WHAT BREAKS FIRST -----------------------------------------------------------------
     P_("\n" + RULE); P_("K6  WHAT BREAKS FIRST"); P_(RULE)
