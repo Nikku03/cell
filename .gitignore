@@ -113,3 +113,4 @@ outputs/*.ckpt.npz
 benchmarks/*.part
 rem/atlas/recon3d.json
 rem/atlas/trrust_human.tsv
+rem/atlas/sharon2012/
