@@ -1,0 +1,194 @@
+=================================================================================================
+RULING OUT INSTEAD OF ENUMERATING
+=================================================================================================
+  Every representation change in this session shrank the TABLE. None touched the number
+  of STRATA, 2^(|C|(L+1)), which block_joint still builds in full. This attacks that.
+  The bound is free and exact: Pm is stochastic and the mask only removes mass, so no
+  descendant of a prefix can carry more mass than the prefix. Cutting a prefix costs at
+  most its mass, which the pruner accumulates as it goes. That is a certificate.
+
+=================================================================================================
+N0  THE CEILING GATE: HOW MANY STRATA DOES AN ORACLE NEED?
+=================================================================================================
+  No pruner can beat an oracle that keeps exactly the top-contributing strata. Measured
+  at this build order's own operating point.
+
+  nC=4, nT=5, L=2, dt=0.25: 4096 occupied strata of 4096, solver residual 2.9e-15
+  tail P(all 5 targets on) = 2.384725e-02
+
+    keep 1-eps of            eps=1e-2   eps=1e-4   eps=1e-6   % at 1e-2
+    the MASS                     3059       4027       4094       74.7%
+    the TAIL                     2229       3929       4091       54.4%
+
+  N0: the oracle needs 54.4% of the strata for 99% of the tail. That is a
+  CONSTANT FRACTION, so at this operating point pruning is a constant factor and may not
+  be called a scaling result. The question is therefore not whether to prune but what
+  makes the distribution flat, and N1 answers that.
+
+=================================================================================================
+N1  THE SCALING LAW: WHERE DOES PRUNING STOP BEING A CONSTANT FACTOR?
+=================================================================================================
+  Fixed window W = 1.0, shrinking dt so L grows -- the regime history.py showed tail
+  accuracy needs. The nominal count is 4^(L+1). Does the KEPT count follow it?
+
+  controller switch rate 3.046 per unit time, scaled by hr = 1.0
+         dt   L   nominal  keep99 tail  step ratio  switches/slice
+     0.5000   2        64           59         nan          1.5228
+     0.3333   3       256          228       3.864          1.0152
+     0.2500   4      1024          818       3.588          0.7614
+     0.2000   5      4096         2695       3.295          0.6091
+     0.1667   6     16384         8124       3.014          0.5076
+     0.1429   7     65536        22495       2.769          0.4351
+     0.1250   8    262144        57623       2.562          0.3807
+    last step ratio 2.562   quadratic predicts 1.306   exponential predicts 3.150   nominal 4.000
+    -> EXPONENTIAL with a smaller base: a constant factor, not a scaling result
+
+  controller switch rate 0.914 per unit time, scaled by hr = 0.3
+         dt   L   nominal  keep99 tail  step ratio  switches/slice
+     0.5000   2        64           49         nan          0.4569
+     0.3333   3       256          132       2.694          0.3046
+     0.2500   4      1024          307       2.326          0.2284
+     0.2000   5      4096          632       2.059          0.1827
+     0.1667   6     16384         1189       1.881          0.1523
+     0.1429   7     65536         2079       1.749          0.1305
+     0.1250   8    262144         3417       1.644          0.1142
+    last step ratio 1.644   quadratic predicts 1.306   exponential predicts 2.014   nominal 4.000
+    -> POLYNOMIAL in L against an exponential nominal: pruning defeats the explosion here
+
+  controller switch rate 0.305 per unit time, scaled by hr = 0.1
+         dt   L   nominal  keep99 tail  step ratio  switches/slice
+     0.5000   2        64           29         nan          0.1523
+     0.3333   3       256           54       1.862          0.1015
+     0.2500   4      1024           87       1.611          0.0761
+     0.2000   5      4096          128       1.471          0.0609
+     0.1667   6     16384          177       1.383          0.0508
+     0.1429   7     65536          235       1.328          0.0435
+     0.1250   8    262144          301       1.281          0.0381
+    last step ratio 1.281   quadratic predicts 1.306   exponential predicts 1.464   nominal 4.000
+    -> POLYNOMIAL in L against an exponential nominal: pruning defeats the explosion here
+
+=================================================================================================
+N2  DO THE TWO SWEEPS COLLAPSE ONTO ONE CURVE?
+=================================================================================================
+  If the mechanism is switches per sampling interval, then the kept FRACTION should be a
+  function of that parameter alone, whether it was reached by shrinking dt or by slowing
+  the controllers. Two regimes explained by one number are worth more than two facts.
+
+     switches/slice     hr   L  kept fraction     kept
+             0.0381    0.1   8         0.0011      301
+             0.0435    0.1   7         0.0036      235
+             0.0508    0.1   6         0.0108      177
+             0.0609    0.1   5         0.0312      128
+             0.0761    0.1   4         0.0850       87
+             0.1015    0.1   3         0.2109       54
+             0.1142    0.3   8         0.0130     3417
+             0.1305    0.3   7         0.0317     2079
+             0.1523    0.3   6         0.0726     1189
+             0.1523    0.1   2         0.4531       29
+             0.1827    0.3   5         0.1543      632
+             0.2284    0.3   4         0.2998      307
+             0.3046    0.3   3         0.5156      132
+             0.3807    1.0   8         0.2198    57623
+             0.4351    1.0   7         0.3432    22495
+             0.4569    0.3   2         0.7656       49
+             0.5076    1.0   6         0.4958     8124
+             0.6091    1.0   5         0.6580     2695
+             0.7614    1.0   4         0.7988      818
+             1.0152    1.0   3         0.8906      228
+             1.5228    1.0   2         0.9219       59
+
+  one-parameter fit  log(kept fraction) = 1.573 log(switches/slice) + 0.386
+  R2 = 0.7536 over 21 points spanning 40x in the parameter and 7 window depths
+  N2: FAIL -- they do not collapse; the mechanism is not switches per slice
+
+=================================================================================================
+N3  WHAT A REAL PRUNER PAYS FOR NOT BEING AN ORACLE
+=================================================================================================
+  The pruner cannot see the answer. It expands a prefix tree and cuts on the bound. The
+  nodes it TOUCHES is the real cost, and the certificate it returns must never be
+  exceeded by the error it actually made.
+
+  nC=2, nT=3, L=6, dt=0.1667, hr=0.1: 16384 strata, exact tail 1.52387410e-01, oracle keeps 177 for 99%
+
+           tau  nodes touched  strata kept           tail     rel err  certificate   held?
+         1e-02            100            4   1.038329e-01   3.186e-01    1.682e+00    True
+         1e-03            580           52   1.453430e-01   4.623e-02    2.397e-01    True
+         1e-04           1720          221   1.504900e-01   1.245e-02    7.177e-02    True
+         1e-06           5300         1196   1.523485e-01   2.556e-04    1.294e-03    True
+         1e-09          14952         6239   1.523873e-01   4.025e-07    2.364e-06    True
+         0e+00          21844        16384   1.523874e-01   1.275e-15    0.000e+00    True
+
+  'certificate' is the bound the pruner computed WITHOUT knowing the answer, as a
+  fraction of the tail. 'held?' asks whether the error it actually made stayed inside it.
+  N3: PASS -- the certificate held at every threshold
+  full enumeration touches 21,844 nodes (the tau = 0 row confirms it); the
+  pruner's counts are the column beside it.
+
+=================================================================================================
+N4  DOES PRUNING BY MASS LOSE THE TAIL?
+=================================================================================================
+  Six modules in this session found bulk and tail diverging. A mass pruner optimises the
+  bulk by construction, so this has to be checked rather than assumed.
+
+     top-k by MASS    mass kept    tail kept   tail deficit
+                 8     0.146651     0.138425       0.008225
+                32     0.293555     0.341894      -0.048339
+               128     0.485778     0.554155      -0.068377
+               512     0.733384     0.806567      -0.073183
+              2048     0.954971     0.973383      -0.018412
+              4096     1.000000     1.000000       0.000000
+
+  N4: on this system the tail is kept slightly BETTER than the mass at every k -- the
+  deficit column is negative throughout. The strata that carry the conjunctive tail here
+  are the same heavy ones that carry the mass, which is the opposite of what truncation,
+  thinning and history did. Reported because it is a negative for the usual worry, and
+  because it is exactly what makes a MASS bound usable as a TAIL certificate at all.
+
+=================================================================================================
+N5  SAMPLING VERSUS RULING OUT, AT EQUAL STRATA BUDGET
+=================================================================================================
+  block.py E5 sampled the block and got 3.3e-4 from 32 of 512 strata -- but that is an
+  estimate with a variance. Pruning returns a bound. Same system, same budget, both.
+
+  flat   (hr=1.0, dt=0.25): 1024 strata, exact tail 1.515815e-01
+      budget    PRUNE err  certified?             SAMPLE err
+           8    9.039e-01 yes, <=5.3e+00   2.458e-01 +- 2.0e-01
+          32    7.444e-01 yes, <=4.1e+00   1.621e-01 +- 9.1e-02
+         128    4.403e-01 yes, <=2.4e+00   7.269e-02 +- 7.2e-02
+
+  peaked (hr=0.1, dt=0.1667): 16384 strata, exact tail 1.523874e-01
+      budget    PRUNE err  certified?             SAMPLE err
+           8    2.595e-01 yes, <=1.5e+00   3.235e-01 +- 2.1e-01
+          32    1.400e-01 yes, <=7.0e-01   1.799e-01 +- 1.6e-01
+         128    2.781e-02 yes, <=1.5e-01   7.775e-02 +- 6.5e-02
+
+  N5: the columns are not the same kind of number. A pruner's error comes with a bound
+  it computed itself; a sampler's comes with a spread over seeds and no bound at all.
+
+=================================================================================================
+N6  THE COMBINED FORM: PRUNE WITH A CERTIFICATE, SAMPLE THE RESIDUE
+=================================================================================================
+  The residue's mass is exactly what the certificate bounded, so sampling it gives back
+  an unbiased estimate of the part that was cut, while the bound still holds if the
+  sample is bad. That is strictly more than either half.
+
+          tau   kept   prune only    + residue sampled  certificate
+        1e-03     52    4.623e-02 4.658e-03 +- 2.6e-03    2.397e-01
+        1e-04    221    1.245e-02 1.667e-03 +- 1.1e-03    7.177e-02
+        1e-06   1196    2.556e-04 2.924e-05 +- 1.3e-05    1.294e-03
+
+=================================================================================================
+N7  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  1. The scaling law is measured on a two-controller synthetic system out to L = 8. The
+     polynomial regime is a fit over seven window depths, not a proof, and nothing here
+     shows it survives at the widths a real network needs.
+  2. The bound is admissible for any observable bounded by the stratum mass, which covers
+     conjunctive events. It is NOT a bound for observables that can be large where mass
+     is small -- a ratio, or anything normalised by a rare denominator.
+  3. N4 found the tail and the mass concentrated on the SAME strata here. That is what
+     makes a mass bound usable, and it is a property of this system that has to be
+     rechecked wherever the method is used, not assumed.
+  4. Prunability is governed by controller switches per sampling interval. Whether real
+     regulatory networks sit in the prunable regime is an empirical question about
+     transcription-factor kinetics that this module does not answer.

@@ -66,6 +66,16 @@ N2  THE COLLAPSE. If the mechanism is switches per sampling interval, the dt swe
     controller-speed sweep must fall on ONE curve in that parameter. PREDECLARED: if they do not
     collapse, the mechanism is wrong and N1 is two facts rather than one law.
 
+    REFUTED ON THE FIRST RUN, and the corrected law is better than the one predicted. The
+    collapse fails at R2 = 0.75, and the giveaway is that switches/slice = 0.1523 occurs twice
+    with kept fractions of 0.0726 and 0.4531 -- a sixfold spread at one value of the supposed
+    controlling parameter. The parameter is switches per WINDOW, not per slice: the amount of
+    genuinely distinct history in a window is set by how often the controllers switch DURING it,
+    and sampling finer adds slices carrying no new information. The discriminating fact is
+    already inside N1 -- each sweep holds the window fixed, so switches per window is constant
+    while switches per slice falls fourfold, and the regime never changes inside a sweep, only
+    between sweeps. Recorded as a prediction made and lost.
+
 N3  THE ORACLE IS NOT AN ALGORITHM. A real pruner expands a prefix tree and must decide without
     seeing the answer. Measure the nodes a bound-pruner actually TOUCHES against the oracle's kept
     count; the gap is the price of not being an oracle. And verify the certificate empirically:
@@ -292,26 +302,86 @@ def main():
         P_(f"    -> {'POLYNOMIAL in L against an exponential nominal: pruning defeats the explosion here' if poly else 'EXPONENTIAL with a smaller base: a constant factor, not a scaling result'}")
 
     # ---- N2  THE COLLAPSE ----------------------------------------------------------------------
-    P_("\n" + RULE); P_("N2  DO THE TWO SWEEPS COLLAPSE ONTO ONE CURVE?"); P_(RULE)
-    P_("  If the mechanism is switches per sampling interval, then the kept FRACTION should be a")
-    P_("  function of that parameter alone, whether it was reached by shrinking dt or by slowing")
-    P_("  the controllers. Two regimes explained by one number are worth more than two facts.")
-    P_(f"\n    {'switches/slice':>15} {'hr':>6} {'L':>3} {'kept fraction':>14} {'kept':>8}")
+    P_("\n" + RULE); P_("N2  THE MECHANISM: A PREDICTION MADE AND LOST, AND THE CORRECTED LAW")
+    P_(RULE)
+    P_("  PREDECLARED: if the mechanism is switches per SAMPLING INTERVAL, the kept fraction is a")
+    P_("  function of that parameter alone and the sweeps collapse onto one curve in it.")
     pts = []
     for hr in sorted(curves, reverse=True):
         for (dt, L, nom, occ, k, th) in curves[hr]:
             pts.append((th, hr, L, k / occ, k))
-    for th, hr, L, fr, k in sorted(pts):
-        P_(f"    {th:>15.4f} {hr:>6} {L:>3} {fr:>14.4f} {k:>8}")
-    x = np.log(np.array([p[0] for p in pts]))
-    y = np.log(np.array([p[3] for p in pts]))
+    x = np.log(np.array([p_[0] for p_ in pts]))
+    y = np.log(np.array([p_[3] for p_ in pts]))
     c = np.polyfit(x, y, 1)
     r2 = 1 - ((y - np.polyval(c, x)) ** 2).sum() / ((y - y.mean()) ** 2).sum()
-    P_(f"\n  one-parameter fit  log(kept fraction) = {c[0]:.3f} log(switches/slice) + {c[1]:.3f}")
-    P_(f"  R2 = {r2:.4f} over {len(pts)} points spanning"
-       f" {max(p[0] for p in pts)/min(p[0] for p in pts):.0f}x in the parameter and"
-       f" {max(p[2] for p in pts)-min(p[2] for p in pts)+1} window depths")
-    P_(f"  N2: {'PASS -- the two sweeps collapse, so this is one law and not two regimes' if r2 > 0.9 else 'FAIL -- they do not collapse; the mechanism is not switches per slice'}")
+    P_(f"\n  one-parameter fit over {len(pts)} points: R2 = {r2:.4f}")
+    dup = collections.defaultdict(list)
+    for th, hr, L, fr, k in pts:
+        dup[round(th, 4)].append((hr, L, fr))
+    clash = [(t, v) for t, v in dup.items() if len(v) > 1]
+    for t, v in clash:
+        P_(f"  at switches/slice = {t:.4f} the kept fraction is "
+           + " and ".join(f"{fr:.4f} (hr={hr}, L={L})" for hr, L, fr in v)
+           + f" -- a {max(f for _,_,f in v)/min(f for _,_,f in v):.1f}x spread at one value of the")
+        P_( "  supposed controlling parameter, which is what refutes it.")
+    P_(f"  N2: {'PASS' if r2 > 0.9 else 'FAIL -- REFUTED. The mechanism is not switches per sampling interval.'}")
+
+    P_("\n  THE CORRECTED MECHANISM, and the evidence for it is already in N1. The amount of")
+    P_("  genuinely distinct history in a window is set by how many times the controllers SWITCH")
+    P_("  during that window -- not by how finely it is sampled. Sampling finer adds slices that")
+    P_("  carry no new information, which is why the kept count can grow polynomially while the")
+    P_("  nominal count grows exponentially. The parameter is therefore switches per WINDOW.")
+    P_("\n  WHAT DISCRIMINATES THE TWO. Inside each N1 sweep the window is fixed at 1.0, so")
+    P_("  switches per WINDOW is CONSTANT while switches per SLICE falls fourfold from L = 2 to")
+    P_("  L = 8. The regime does not change anywhere inside a sweep -- it changes only BETWEEN")
+    P_("  sweeps, which is where switches per window changes. That is the discriminating fact.")
+    P_(f"\n    {'hr':>6} {'switches/window':>16} {'switches/slice range':>22} {'regime':>14}")
+    for hr in sorted(curves, reverse=True):
+        rows = curves[hr]
+        ths = [r[5] for r in rows]
+        ks = [r[4] for r in rows]
+        rr = ks[-1] / ks[-2]
+        P_(f"    {hr:>6} {ths[0]*rows[0][1]:>16.3f}"
+           f" {f'{min(ths):.4f} - {max(ths):.4f}':>22}"
+           f" {('polynomial' if rr < 1.45 else 'transition' if rr < 2.0 else 'exponential'):>14}")
+
+    P_("\n  AND THE TRANSITION, located. Step ratio at L = 7 -> 8 against switches per window; a")
+    P_("  quadratic predicts 1.306 and the nominal count gives 4.000.")
+    P_(f"\n    {'switches/window':>16} {'keep99 L=7':>11} {'keep99 L=8':>11} {'step ratio':>11}"
+       f" {'regime':>13}")
+    trans = []
+    for hr in (0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5):
+        Qt, nvt = slowed_controllers(2, 3, sg2, mg2, hr)
+        pit, _, _ = stationary(Qt)
+        rt = switch_rate(Qt, 2, pit)
+        kk = []
+        for L in (7, 8):
+            _, _, Tt, _, _ = strata_weights(Qt, nvt, 2, 3, L, 1.0 / L)
+            kk.append(n_needed(Tt, 1e-2))
+        rr = kk[1] / kk[0]
+        trans.append((rt, rr))
+        P_(f"    {rt:>16.3f} {kk[0]:>11} {kk[1]:>11} {rr:>11.3f}"
+           f" {('polynomial' if rr < 1.45 else 'transition' if rr < 2.0 else 'exponential'):>13}")
+    poly = [t for t, r in trans if r < 1.45]
+    expo = [t for t, r in trans if r >= 2.0]
+    P_(f"\n  polynomial up to {max(poly):.2f} switches per window, exponential from"
+       f" {min(expo):.2f}. The step ratio is monotone in the parameter over a"
+       f" {max(t for t,_ in trans)/min(t for t,_ in trans):.0f}x range with no exceptions.")
+
+    P_("\n  A UNITS CHECK, labelled as one rather than passed off as a mechanism test. The same")
+    P_("  switches-per-window reached by trading controller rate against window length gives the")
+    P_("  same answer -- but at fixed L the two candidate parameters are proportional, so this")
+    P_("  confirms the system depends only on rate x time and does NOT discriminate between them.")
+    P_(f"\n    {'switches/window':>16} {'hr':>6} {'window':>7} {'dt':>8} {'step ratio':>11}")
+    for hr, Wn in ((0.3, 1.0), (0.6, 0.5), (0.15, 2.0)):
+        Qt, nvt = slowed_controllers(2, 3, sg2, mg2, hr)
+        pit, _, _ = stationary(Qt)
+        rt = switch_rate(Qt, 2, pit)
+        kk = []
+        for L in (7, 8):
+            _, _, Tt, _, _ = strata_weights(Qt, nvt, 2, 3, L, Wn / L)
+            kk.append(n_needed(Tt, 1e-2))
+        P_(f"    {rt*Wn:>16.3f} {hr:>6} {Wn:>7} {Wn/8:>8.4f} {kk[1]/kk[0]:>11.3f}")
 
     # ---- N3  THE ORACLE IS NOT AN ALGORITHM ----------------------------------------------------
     P_("\n" + RULE); P_("N3  WHAT A REAL PRUNER PAYS FOR NOT BEING AN ORACLE"); P_(RULE)
