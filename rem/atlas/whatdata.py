@@ -524,26 +524,24 @@ def main():
     P_("  regulator effect spread divided by the accuracy demanded of it. Demand less accuracy")
     P_("  and C falls; demand more and C rises. It is a quantisation count.")
     P_("\n  SO THE CAP IS NOT A NUMBER AT C = 64. IT IS THIS CURVE:")
-    P_(f"\n    {'demanded accuracy':>19} {'C supported':>12} {'cap, controllers':>18}")
+    P_("  Swept over C directly rather than over an accuracy grid: the accuracy grid collapsed")
+    P_("  three of its rows onto C = 1 and hid the shape. The accuracy column is the inverse law.")
+    P_(f"\n    {'C supported':>12} {'demanded accuracy':>19} {'cap, controllers':>20}")
     from rem.atlas.scalarcap import cap_with_scalar
     MAXC = int(os.environ.get("REM_WHATDATA_MAXC", "2000"))
     spread = rho          # measured between-regulator spread, in units of the current floor
     sat_any = False
-    memo = {}
-    for mult in (4.0, 2.0, 1.0, 0.5, 0.25):
-        Cq = int(max(1, round(np.exp(a) * (spread / mult) ** b)))
-        if Cq in memo:
-            cp = memo[Cq]
-        else:
-            try:
-                cp = cap_with_scalar(max(Cq, 1), True, maxC=MAXC)
-            except Exception as e:                            # pragma: no cover
-                P_(f"    cap functional failed at C = {Cq}: {e}")
-                continue
-            memo[Cq] = cp
+    for Cq in (1, 2, 4, 8, 16, 64):
+        try:
+            cp = cap_with_scalar(Cq, True, maxC=MAXC)
+        except Exception as e:                                # pragma: no cover
+            P_(f"    cap functional failed at C = {Cq}: {e}")
+            continue
+        acc = spread / (Cq / np.exp(a)) ** (1.0 / b)
         sat = cp >= MAXC - 1
         sat_any = sat_any or sat
-        P_(f"    {f'{mult:.2f} floors':>19} {Cq:>12} {(f'>= {cp}  SATURATED' if sat else str(cp)):>18}")
+        P_(f"    {Cq:>12} {f'{acc:.3f} floors':>19}"
+           f" {(f'>= {cp}  SATURATED' if sat else str(cp)):>20}")
     P_("\n  A ROW MARKED SATURATED IS NOT A MEASUREMENT. The cap functional walks the controller")
     P_(f"  count upward until the bar is breached and stops at its own ceiling of {MAXC}; a row that")
     P_("  reaches the ceiling means the bar was never breached, so the number is the ceiling and")
