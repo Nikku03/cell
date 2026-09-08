@@ -2282,3 +2282,159 @@ including this build order, and stating it that way is what the curve is for. C 
 regulator-blind count summary that yeast refuted at 8.89 floors, corresponds to 0.93 floors --
 which is a coherent standard, just a weak one. The engine has been paying an exponent for a
 resolution nobody chose deliberately.
+
+
+=================================================================================================
+WHAT ACCURACY SHOULD THE ENGINE TARGET? THE WRONG TERM WAS BEING OPTIMISED
+=================================================================================================
+whatdata left C as a CHOICE rather than a constant, which raises the question of what to choose it
+by. The ground has to be an error budget: an approximation should not be polished far below the
+largest error the engine already carries, because precision under the binding term buys nothing
+and costs an exponent. This priced them against each other, and the answer is that the class map
+-- the thing this build order has spent modules optimising -- is not the binding term.
+
+FIRST, A CORRECTION TO THE MODULE THAT ASKED THE QUESTION. whatdata derived an accuracy per class
+count by inverting a law fitted INSIDE its own simulation and reported it as the useful new
+object. It was not new. signed.py MEASURED it on held-out yeast promoters, and that column has
+been sitting beside the cap column this ledger has quoted throughout:
+
+       C   MEASURED floors from identity    whatdata SIMULATED
+       1                            6.29                 0.930
+       2                            2.61                 0.480
+       4                            2.09                 0.247
+       8                            1.52                 0.127
+      16                            1.45                 0.066
+      64                            0.19                 0.017
+
+The simulated column is 7 to 11 times too small at every point and is WITHDRAWN. whatdata's claim
+that C = 64 demands 1.7% of a noise floor is wrong; the measured demand is 0.19 floors, 19%. What
+whatdata's simulation DID establish -- that the ladder criterion returns a resolution and not a
+structural count -- stands, because that came from the estimator's behaviour rather than from the
+fitted constant.
+
+AND THE SATURATION DEFECT HAS A THIRD INSTANCE, IN THE FOUNDATIONAL MODULE. signed.py's cap column
+reports 419 at C = 1, 2 AND 4. Its class_caps walks nC over range(1, maxC) with maxC = 420, so 419
+is maxC - 1 and three identical values at exactly the ceiling is the signature of a loop that
+never breached the bar. Recomputed with the ceiling raised to 2500:
+
+    representation        as reported     recomputed
+    count                         419        >= 2499
+    class C = 1                   419        >= 2499
+    class C = 2                   419        >= 2499
+    class C = 4                   419            442
+    class C = 8                    25             25
+    class C = 16                   15             15
+    class C = 64                   13             13
+
+So "the total count promised cap 419 and 93.3% coverage" UNDERSTATES the promise -- the count
+summary is cheaper than the ledger has been saying, by at least a factor of six. It does not
+rescue the count summary, which was refuted on ACCURACY at 6.29 floors and not on cost. Two
+independent cap functionals now agree at 442 for C = 4, which is the cross-check that the
+recomputation is real. This is the third instance of the same defect after scalarcap's 59 and
+whatdata's 199, and all three were the same mistake: reading a loop ceiling as a measurement.
+
+=================================================================================================
+THE UNIT PROBLEM, WHICH IS WHY THE RANKING WAS NEVER DONE BEFORE
+=================================================================================================
+"0.19 noise floors from identity" is an error in a promoter's log2 expression. THE ENGINE DOES NOT
+REPORT LOG2 EXPRESSION. It reports a rare-event tail -- the probability that a whole target set is
+simultaneously ON across a window -- and a small error in a per-gene response can be enormous or
+negligible in that tail depending on how it propagates. Every module in this build order has
+compared its error terms in floors, which is the wrong unit for all of them. This one converts:
+it substitutes the coarser representation into the ASSEMBLED engine and reads the error off the
+tail itself, at 10 controllers, 200 real target rows, window L = 6.
+
+MY OWN FIRST GATE WAS DEGENERATE AND IS SUPERSEDED IN PLACE. A1 swept the pruning BUDGET across
+five decades. Two of the five rows retained no paths at all -- a tail of exactly zero is an absent
+number, not a small one -- and the other three returned the IDENTICAL tail from the IDENTICAL
+retained set, because engine_budget carries a hard cap of 2e7/n retained paths and that cap, not
+the budget, decided every row. The "infinity orders of magnitude" it produced was manufactured
+from two absent rows. Ledger U, in this module's own gate, in the module that OPENED by correcting
+another module for the same class of error.
+
+AND THE SECOND ATTEMPT WAS CONFOUNDED TOO, WHICH IS WORTH RECORDING BECAUSE THE REASON IS REAL.
+Sweeping the retained-path cap at a fixed budget of 1e-3 wiped out four of six rows. Not a crash:
+the per-level budget is ABSOLUTE, so a smaller cap retains less mass, the retained mass falls below
+the budget at the next level, and the pruner then drops everything. Cap and budget were confounded
+and the sweep measured their interaction. With the budget set to zero the cap alone decides, and
+the sweep finally measures what it claims to.
+
+=================================================================================================
+THE TWO ERROR TERMS, IN THE SAME UNIT AT LAST
+=================================================================================================
+THE PRUNER, sweeping the retained-path cap with the budget at zero:
+
+      path cap       kept             tail   log10 tail      step
+           100        100       1.5395e-99       -98.81
+           300        300       2.9663e-99       -98.53     +0.28
+          1000       1000       7.3706e-99       -98.13     +0.40
+          3000       3000       1.2285e-98       -97.91     +0.22
+         10000      10000       2.6793e-98       -97.57     +0.34
+         19531      19531       3.7208e-98       -97.43     +0.14
+
+THE CLASS MAP, substituted into the same engine in the same regime, behind two checks it had to
+pass first -- an explicit one-controller-per-class labelling reproduces the unprojected weights
+bit for bit, and every row's total weight is preserved at every C:
+
+       C  ctrl per class            tail   log10 error vs identity
+       1            10.0     3.0622e-103                      5.08
+       2             5.0     6.2615e-103                      4.77
+       3             3.3     2.8072e-101                      3.12
+       5             2.0     7.7753e-101                      2.68
+      10             1.0     3.9166e-100                      1.98
+
+AND THE THING THE CAP TABLE HIDES. At the C = 64 row the cap is THIRTEEN controllers, and 64
+classes over 13 controllers is about one class each -- so the class map makes NO APPROXIMATION at
+its own operating point and costs ZERO accuracy there. Be precise about what that does and does
+not mean: it does not mean the representation buys nothing, because it still buys the cap, 13
+against the exact pattern's 3, via a product of slot() terms rather than a pattern table. It means
+the 0.19 floors is NOT BEING PAID at the operating point the cap describes. The accuracy is paid
+only where controllers SHARE a class -- the 140-controller row, at 2.2 controllers per class.
+
+=================================================================================================
+THE RANKING, AND WHY IT HAD TO BE DONE AS A SCALING LAW
+=================================================================================================
+Compared AT A POINT the pruner's last increment is 0.14 orders against the class ladder's 5.08,
+and the class map looks like the binding term. That comparison is wrong, in the way this build
+order has been wrong three times before -- prune.py's N2, realkinetics' fixed tau, the grouping
+law -- and the rule earned from those is that an approximation is ranked by a SCALING LAW and
+never at a point.
+
+The pruner's last step is not its error. Its error is how far the tail still has to travel, and
+the tail is RISING MONOTONICALLY and not levelling off. It rises for a structural reason: retaining
+more paths can only ADD mass, so every tail this engine reports is a LOWER BOUND.
+
+    log10 tail  =  -100.01 + 0.608 * log10(retained paths)      R^2 = 0.997
+
+    pruning error reaches the class ladder's whole span of 5.08 orders   at 10^12.7 paths
+    the full path set the engine is approximating                            10^21.1 paths
+
+The crossing lies BELOW the full set by 8.4 decades. PRUNING IS THE BINDING TERM, and by a wide
+margin. The honest size of the extrapolation is stated with it: the slope is measured over about
+two decades of retained paths and the full set is nineteen decades further out, so this is NOT a
+prediction of the true tail. The claim does not need the far end. The tail is still rising at the
+largest set that can be enumerated, and it only has to keep rising for a few more decades -- a
+tiny fraction of the way -- before the pruner's error exceeds every representation choice inside
+the engine. Nothing measured here suggests it stops.
+
+=================================================================================================
+THE ANSWER
+=================================================================================================
+1. TARGET A BOUND ON THE OBSERVABLE, NOT ON THE DROPPED MASS. The pruner certifies the mass it
+   discards, and the tail is not a function of mass -- realkinetics measured that gap at 1.9e29
+   and this module measures its consequence: the reported tail is a lower bound still rising at
+   0.6 orders per decade of retained paths. This was already named in the record as "the sharpest
+   open problem the pruning route leaves behind". It is now also the measured binding term, which
+   promotes it from an open problem to THE problem.
+
+2. THEN THE CLASS MAP, set at whatever that bound turns out to allow. Its entire ladder is worth
+   5.08 orders, and at the C = 64 operating point it costs zero accuracy because each controller
+   is alone in its class.
+
+CHOOSING C FIRST OPTIMISES THE SMALLER TERM. That is what this build order has been doing for
+several modules -- signed, poscount, multiplier, genegroups, scalarcap, whatdata -- and the
+measurement that would have said so was never made, because every one of those modules compared
+its error in noise floors of a log2 expression rather than in the observable the engine reports.
+The modules were not wrong in their own terms. They were answering a question that was not the
+binding one, and nothing in their gates could have told them, because the unit conversion lives
+outside all of them.
