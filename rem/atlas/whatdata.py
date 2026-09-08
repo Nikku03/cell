@@ -529,13 +529,18 @@ def main():
     MAXC = int(os.environ.get("REM_WHATDATA_MAXC", "2000"))
     spread = rho          # measured between-regulator spread, in units of the current floor
     sat_any = False
+    memo = {}
     for mult in (4.0, 2.0, 1.0, 0.5, 0.25):
         Cq = int(max(1, round(np.exp(a) * (spread / mult) ** b)))
-        try:
-            cp = cap_with_scalar(max(Cq, 1), True, maxC=MAXC)
-        except Exception as e:                                # pragma: no cover
-            P_(f"    cap functional failed at C = {Cq}: {e}")
-            continue
+        if Cq in memo:
+            cp = memo[Cq]
+        else:
+            try:
+                cp = cap_with_scalar(max(Cq, 1), True, maxC=MAXC)
+            except Exception as e:                            # pragma: no cover
+                P_(f"    cap functional failed at C = {Cq}: {e}")
+                continue
+            memo[Cq] = cp
         sat = cp >= MAXC - 1
         sat_any = sat_any or sat
         P_(f"    {f'{mult:.2f} floors':>19} {Cq:>12} {(f'>= {cp}  SATURATED' if sat else str(cp)):>18}")
