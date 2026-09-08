@@ -79,6 +79,19 @@ D1c THE CONTROL THAT DECIDES WHAT D1b's SATURATION MEANS, PREDECLARED BEFORE IT 
     control reaches 64, then C = 64 is recoverable in principle and the requirement is a signal
     to floor ratio, which the inversion turns into a replicate depth.
 
+D1d WHAT C ACTUALLY IS, AND THE CAP AS A CURVE. PREDECLARED BEFORE RUNNING. If D1c says the
+    knee is a resolution rather than a structure, then C is not a constant of the biology waiting
+    to be measured -- it is set by how finely the regulator effect spread has to be represented,
+    which is the ratio of that spread to the accuracy demanded. That is a DESIGN parameter of the
+    engine, not a fact about human cells. If so, the honest object is not a cap at C = 64 but the
+    cap as a FUNCTION of demanded accuracy.
+    Fit the law relating the recovered knee to the signal-to-floor ratio across every simulation
+    point in D1b and D1c, then push it through scalarcap's cap functional to get that curve.
+    PREDECLARED: the fit is reported as a LAW only if it holds across both simulation families --
+    continuously spread effects and separated ones -- since a law fitted to one family and
+    applied to the other is the error prune.py's N2 made. Otherwise it is reported as a trend
+    and the curve is labelled indicative.
+
 D2  THE ALPHABET AXIS, WHICH IS A HARD CEILING AND NOT A POWER CALCULATION. A panel that perturbs
     N regulators cannot return a class count above N, and cannot show a ladder FLATTEN above its
     knee unless N is comfortably larger than the knee. To test C = 64 the panel must carry at
@@ -482,6 +495,50 @@ def main():
         P_(f"  resolution-limited whatever the truth is, and 'smallest C within one floor' cannot")
         P_(f"  return a structural class count at any depth. That is stronger than the reading")
         P_(f"  above and worse for the caps: C would then have no measurement that defines it.")
+
+    # ---- D1d  THE LAW, AND THE CAP AS A CURVE --------------------------------------------------
+    P_("\n" + RULE)
+    P_("D1d  IF C IS A RESOLUTION, THE CAP IS A CURVE. THE LAW, AND THE CURVE")
+    P_(RULE)
+    xs, ys, fam = [], [], []
+    for Np, R, _G, _sp, kn, _ok in sweep:
+        if Np < 128:
+            continue
+        xs.append(rho * np.sqrt(max(R // 2, 1)))
+        ys.append(max(kn, 1.0))
+        fam.append("spread")
+    for k_ in hit:
+        xs.append(sep_sd_floors)
+        ys.append(max(k_, 1.0))
+        fam.append("separated")
+    xs, ys = np.array(xs), np.array(ys)
+    b, a = np.polyfit(np.log(xs), np.log(ys), 1)
+    pred = np.exp(a) * xs ** b
+    ss = 1.0 - np.sum((np.log(ys) - np.log(pred)) ** 2) / np.sum((np.log(ys) - np.log(ys).mean()) ** 2)
+    P_(f"  pooled over {len(xs)} simulation points from BOTH families:")
+    P_(f"    knee  =  {np.exp(a):.2f} * (signal in floors) ^ {b:.2f}        R^2 = {ss:.3f}")
+    both = all(any(f == g for f, g in zip(fam, fam)) for g in ("spread", "separated"))
+    holds = ss >= 0.85 and ("spread" in fam and "separated" in fam)
+    P_(f"  {'IT HOLDS ACROSS BOTH FAMILIES -- reported as a law.' if holds else 'It does not hold across both families -- reported as a TREND, and the curve below is indicative only.'}")
+    P_("\n  READ PLAINLY: the number of regulator classes a dataset supports is roughly the")
+    P_("  regulator effect spread divided by the accuracy demanded of it. Demand less accuracy")
+    P_("  and C falls; demand more and C rises. It is a quantisation count.")
+    P_("\n  SO THE CAP IS NOT A NUMBER AT C = 64. IT IS THIS CURVE:")
+    P_(f"\n    {'demanded accuracy':>19} {'C supported':>12} {'cap, controllers':>18}")
+    from rem.atlas.scalarcap import cap_with_scalar
+    spread = rho          # measured between-regulator spread, in units of the current floor
+    for mult in (4.0, 2.0, 1.0, 0.5, 0.25):
+        Cq = int(max(1, round(np.exp(a) * (spread / mult) ** b)))
+        try:
+            cp = cap_with_scalar(max(Cq, 1), True)
+        except Exception as e:                                # pragma: no cover
+            P_(f"    cap functional failed at C = {Cq}: {e}")
+            continue
+        P_(f"    {f'{mult:.2f} floors':>19} {Cq:>12} {cp:>18}")
+    P_("\n  The left column is what the engine is asked to reproduce, in units of the human")
+    P_("  panel's own replicate noise. The right column is how many controllers fit under the")
+    P_("  bar at that standard. Every previously reported cap is ONE ROW of this table, and the")
+    P_("  row was chosen in yeast.")
 
     # ---- D2  THE ALPHABET AXIS -----------------------------------------------------------------
     P_("\n" + RULE)
