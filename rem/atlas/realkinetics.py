@@ -282,7 +282,7 @@ def target_rows(cidx, ntarget=200):
     return rows[:ntarget]
 
 
-def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0):
+def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0, S=None):
     """The assembled engine.
 
     ONE SIMPLIFICATION THAT MATTERS. In the controller block the state IS the controller code, so
@@ -300,12 +300,13 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0):
     if hvec is None:                       # recent slices weigh more; SHARED across all targets,
         hvec = np.exp(-0.5 * np.arange(L, -1, -1))   # which is what makes it a multiplier and not
         hvec = hvec / hvec.sum()                     # a per-gene table
-    S = np.zeros((len(rows), nCtrl))       # signed class count per target, normalised by k_g
-    for i, (g, regs) in enumerate(rows):
-        for c, sg in regs:
-            if c < nCtrl:                  # a regulator OUTSIDE the controller set contributes
-                S[i, c] += sg              # nothing, because the engine does not carry it --
-        S[i] /= max(len(regs), 1)          # but it still counts in k_g, which is what edge
+    if S is None:                          # an explicit S lets a caller substitute a COARSER
+        S = np.zeros((len(rows), nCtrl))   # representation of the same rows -- the class-count
+        for i, (g, regs) in enumerate(rows):        # projection -- without touching this default
+            for c, sg in regs:             # a regulator OUTSIDE the controller set contributes
+                if c < nCtrl:              # nothing, because the engine does not carry it --
+                    S[i, c] += sg          # but it still counts in k_g, which is what edge
+            S[i] /= max(len(regs), 1)
                                            # coverage measures. Normalising by the regulators
                                            # that happen to be inside would silently change the
                                            # observable with |C| and make the rows incomparable.
@@ -346,7 +347,7 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0):
     return tail, dropped, touched, len(wts), res
 
 
-def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0):
+def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0, S=None):
     """Specify the error BUDGET and spend it, in ONE pass.
 
     A fixed absolute tau does not scale -- path probabilities fall like n^-L, so a threshold that
@@ -364,12 +365,13 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0)
     if hvec is None:
         hvec = np.exp(-0.5 * np.arange(L, -1, -1))
         hvec = hvec / hvec.sum()
-    S = np.zeros((len(rows), nCtrl))
-    for i, (g, regs) in enumerate(rows):
-        for c, sg in regs:
-            if c < nCtrl:
-                S[i, c] += sg
-        S[i] /= max(len(regs), 1)
+    if S is None:
+        S = np.zeros((len(rows), nCtrl))
+        for i, (g, regs) in enumerate(rows):
+            for c, sg in regs:
+                if c < nCtrl:
+                    S[i, c] += sg
+            S[i] /= max(len(regs), 1)
     actbit = np.array([[(m >> c) & 1 for c in range(nCtrl)] for m in range(n)], dtype=float)
     per_level = budget / (L + 1)
     # A hard cap on retained paths, so that a budget the pruner CANNOT meet at this width shows
