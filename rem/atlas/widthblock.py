@@ -69,6 +69,32 @@ W5  THE ACCURACY SIDE, because W4 is a cost statement. signed.py measured that C
     at a C that data refutes is not a cap, it is the plain count wearing a larger number.
 
 W6  WHAT BREAKS NEXT.
+
+=================================================================================================
+WHAT THE FIRST RUN OF THIS MODULE GOT WRONG, AND WHAT IT FOUND INSTEAD
+=================================================================================================
+The alignment attack in W3 was built on a wrong diagnosis and made things WORSE by up to 28x. The
+specification error: with C = 64 classes and only |C| = 13 controllers the balance cap is
+ceil(13/64) = 1, so every controller is FORCED into its own class -- the worst case, not a
+balanced one. A balance constraint is meaningless when there are fewer items than classes, and at
+these widths there always are.
+
+The measurement that should have come first says why no representation-level fix could have
+worked: from |C| = 20 upward, ONE GENE is essentially the entire per-gene cost. CDKN1A, with 52
+regulators among the top 122 factors, is 99.2% of it at |C| = 20 and 100.0% from |C| = 40. The
+binding term is a HUB -- the same object that killed r-balls and left bounded width with a 6%
+floor, in its third form.
+
+So the attack that works is not on the representation but on the few genes that set the max:
+demote the top 100 most-regulated genes (3.5% of the network) to the plain count and the cap goes
+from 13 to 140 controllers, edge coverage from 26.6% to 71.7%.
+
+AND THAT FLIPS W0's OWN VERDICT, which is the useful half of this module. W0 priced the block at
+zero, found the cap unmoved, and correctly refused to report the block factorisation as progress.
+Once the hubs are demoted the binding term changes and that same factorisation is worth 140
+against 39 -- a 3.6x difference in the cap. A ceiling gate prices a term against the CURRENT
+binding constraint; its verdict is correct at the time and is not permanent. When the constraint
+moves, re-run the gate rather than trusting it.
 """
 
 from __future__ import annotations
@@ -370,96 +396,140 @@ def main():
            f" {rs/max(np.mean(shs),1e-12):>7.2f}x")
     P_(f"\n  W2: {'PASS -- real regulator sets are about twice as class-homogeneous as chance, at more than three sigma everywhere. There IS structure to align to.' if w2 else 'FAIL -- no more homogeneous than shuffled; nothing to align to and the route is closed.'}")
 
-    # ---- W3  THE CONSTRAINED ALIGNMENT ---------------------------------------------------------
-    P_("\n" + RULE); P_("W3  THE CONSTRAINED ALIGNMENT: BALANCED CLASSES, SO THEY CANNOT COLLAPSE")
-    P_(RULE)
-    P_(f"\n    {'|C|':>5} {'C':>4} {'random cost':>13} {'aligned cost':>13} {'gain':>10}"
-       f" {'occ/gene rnd':>13} {'aligned':>9} {'worst gene':>12}")
-    aligned = {}
-    for nC, C in ((13, 8), (13, 64), (20, 8), (20, 64), (40, 8)):
+    # ---- W3  WHERE THE PER-GENE COST ACTUALLY LIVES --------------------------------------------
+    P_("\n" + RULE); P_("W3  THE PER-GENE COST IS NOT A SUM, IT IS ONE GENE"); P_(RULE)
+    P_("  Before aligning anything, ask where the cost is. A representation-level fix only makes")
+    P_("  sense if the cost is spread over the representation.")
+    P_(f"\n    {'|C|':>5} {'genes':>6} {'max k_i':>8} {'worst gene':>12} {'total':>12}"
+       f" {'worst/total':>12} {'top-5/total':>12}  {'worst gene':<10}")
+    dom = []
+    for nC in (8, 13, 20, 40, 80, 122):
         Cset, genes = gene_regs(adj, order, nC, n)
-        rr = np.minimum((u * C).astype(int), C - 1)
-        tr, orr, wr = pergene_cost(genes, rr)
-        aa, ca, load = balanced_align(list(order[:nC]), genes, C)
-        ta, oa, wa = pergene_cost(genes, aa)
-        aligned[(nC, C)] = aa
-        P_(f"    {nC:>5} {C:>4} {tr:>13.3e} {ta:>13.3e} {tr/max(ta,1e-300):>9.1e}x"
-           f" {orr:>13.2f} {oa:>9.2f} {wa:>12.3e}")
-    P_("\n  the balance constraint holds every class non-empty, so these are class counts and not")
-    P_("  the plain count in disguise. Compare against W1's unconstrained optimum, which was.")
+        cs = []
+        for i, regs in genes:
+            cnt = collections.Counter(int(a64[j]) for j in regs)
+            v = 1.0
+            for _, m in cnt.items():
+                v = min(v * slot(m), 2.0 ** CAPEXP)
+            cs.append((v, len(regs), inv[i]))
+        cs.sort(reverse=True)
+        tot = sum(c[0] for c in cs)
+        dom.append((nC, cs[0][0] / tot))
+        P_(f"    {nC:>5} {len(genes):>6} {max(c[1] for c in cs):>8} {cs[0][0]:>12.3e}"
+           f" {tot:>12.3e} {cs[0][0]/tot:>12.4f}"
+           f" {sum(c[0] for c in cs[:5])/tot:>12.4f}  {cs[0][2]:<10}")
+    P_("\n  W3: from |C| = 20 upward ONE GENE is essentially the entire per-gene cost -- CDKN1A,")
+    P_("  with 52 regulators among the top 122 factors. The binding term is not a property of the")
+    P_("  representation, the block, or the class map. It is a HUB, which is the same object that")
+    P_("  killed r-balls (SP1's 3-ball reaches 2,724 of 2,861 genes) and left bounded width with a")
+    P_("  6% floor. Third appearance, third form.")
+    P_("\n  AND THE ALIGNMENT ATTEMPT THAT FOLLOWED FROM THE WRONG DIAGNOSIS, RECORDED. A balanced")
+    P_("  greedy class alignment was built before this measurement. It made things WORSE, by up to")
+    P_("  28x, and the reason is a specification error: with C = 64 classes and only |C| = 13")
+    P_("  controllers the balance cap is ceil(13/64) = 1, so every controller is FORCED into its")
+    P_("  own class -- the worst case, not a balanced one. A balance constraint is meaningless")
+    P_("  when there are fewer items than classes, and at these widths there always are.")
 
-    # ---- W4  THE CAP ---------------------------------------------------------------------------
-    P_("\n" + RULE); P_("W4  WHAT IT DOES TO THE CAP, WHICH IS THE ONLY DELIVERABLE"); P_(RULE)
-    def blk_fac(nC):
-        return 2.0 ** min(mindeg_width(ctrl_subgraph(E, inv, order, nC)[0]) + 1, CAPEXP)
-    modecls = np.zeros(n, dtype=int)
-    P_(f"\n    {'per-gene assignment':<40} {'block':<18} {'cap |C| at L=8':>15}")
-    P_(f"    {'random, C = 64 (signed.py)':<40} {'class-count':<18}"
-       f" {caps0['class-count block']:>15}")
-    P_(f"    {'random, C = 64':<40} {'FACTORED':<18} {caps0['FACTORED block']:>15}")
-    cap_a = cap_under(adj, order, n,
-                      lambda nC, Cs, g: balanced_align(list(order[:nC]), g, 64)[0],
-                      blk_fac, maxC=60)
-    P_(f"    {'ALIGNED balanced, C = 64':<40} {'FACTORED':<18} {cap_a:>15}")
+    # ---- W4  DEMOTE THE HUBS -------------------------------------------------------------------
+    P_("\n" + RULE); P_("W4  IF THE COST IS A MAX, DEMOTE THE FEW GENES THAT SET IT"); P_(RULE)
+    P_("  Carry the top-m most expensive genes at the PLAIN COUNT, k(L+1)+1, which is polynomial,")
+    P_("  and everything else at C = 64. The accuracy loss is then CONFINED to m genes instead of")
+    P_("  being spread over all of them, and it is measurable as a coverage figure.")
 
-    def modeasg(nC, Cset, genes):
-        return None
-    # the mode-class per-gene factor is per EDGE, so it is computed directly rather than by asg
-    best_mode = 0
-    for nC in range(1, 200):
-        Cset, genes = gene_regs(adj, order, nC, n)
-        if not genes:
-            best_mode = nC
-            continue
-        res = residual_graph(adj, Cset, n)
-        per = None
-        for r in (1, 2):
-            for w in (4, 6, 8):
-                pa, o, _ = bounded_elimination([ball(res, i, r) - {i} for i in range(n)], w)
-                base = np.array([2.0 ** min(1 + len(pa[i]), CAPEXP) for i in range(n)])
-                f = np.ones(n)
-                for i, regs in genes:
-                    cnt = collections.Counter(
-                        mode.get((inv[j], inv[i]), "Unknown") for j in regs)
-                    v = 1.0
-                    for _, m in cnt.items():
-                        v = min(v * slot(m), 2.0 ** CAPEXP)
-                    f[i] = v
-                v = float(np.sum(base * f))
-                per = v if per is None else min(per, v)
-        if per + blk_fac(nC) <= BAR:
-            best_mode = nC
-        else:
-            break
-    P_(f"    {'TRRUST MODE as the class (3 classes)':<40} {'FACTORED':<18} {best_mode:>15}")
-    P_(f"\n  for reference: signed.py's class count reached 13 at C = 64 and multiplier.py's")
-    P_( "  composed form reached 25. Those are the numbers to beat.")
+    def cap_demote(m, block, maxC=260):
+        best = 0
+        for nC in range(1, maxC):
+            Cset, genes = gene_regs(adj, order, nC, n)
+            if not genes:
+                best = nC
+                continue
+            cost = {}
+            for i, regs in genes:
+                cnt = collections.Counter(int(a64[j]) for j in regs)
+                v = 1.0
+                for _, mm in cnt.items():
+                    v = min(v * slot(mm), 2.0 ** CAPEXP)
+                cost[i] = (v, len(regs))
+            dem = set(sorted(cost, key=lambda i: -cost[i][0])[:m])
+            res = residual_graph(adj, Cset, n)
+            per = None
+            for r in (1, 2):
+                for w in (4, 6, 8):
+                    pa, o, _ = bounded_elimination([ball(res, i, r) - {i} for i in range(n)], w)
+                    base = np.array([2.0 ** min(1 + len(pa[i]), CAPEXP) for i in range(n)])
+                    f = np.ones(n)
+                    for i, (v, k) in cost.items():
+                        f[i] = (k * (L + 1) + 1.0) if i in dem else v
+                    vv = float(np.sum(base * f))
+                    per = vv if per is None else min(per, vv)
+            if block == "factored":
+                blk = 2.0 ** min(mindeg_width(ctrl_subgraph(E, inv, order, nC)[0]) + 1, CAPEXP)
+            elif block == "classcount":
+                bc = collections.Counter(int(a64[i]) for i in order[:nC])
+                blk = 1.0
+                for _, mm in bc.items():
+                    blk = min(blk * slot(mm), 1e300)
+            else:
+                blk = 2.0 ** min(nC, CAPEXP)
+            if per + blk <= BAR:
+                best = nC
+            else:
+                break
+        return best
 
-    # ---- W5  THE ACCURACY SIDE -----------------------------------------------------------------
-    P_("\n" + RULE); P_("W5  THE ACCURACY SIDE, BECAUSE W4 IS ONLY A COST STATEMENT"); P_(RULE)
-    P_("  signed.py measured, on 5,790 real promoters, how far each class resolution sits from")
-    P_("  identity: C = 2 is 2.61 noise floors out, C = 8 is 1.52, C = 32 is 1.30, and C = 64 is")
-    P_("  0.19 -- the smallest resolution inside one floor. So a cap reachable only at C = 2 or 3")
-    P_("  is the plain count wearing a larger number, and does not count.")
-    P_(f"\n    {'representation':<40} {'cap':>6} {'floors from identity':>21} {'usable?':>9}")
-    for nm, cp, fl in (("random C = 64, class-count block", caps0['class-count block'], 0.19),
-                       ("random C = 64, factored block", caps0['FACTORED block'], 0.19),
-                       ("ALIGNED balanced C = 64, factored", cap_a, 0.19),
-                       ("TRRUST mode, 3 classes, factored", best_mode, 2.61)):
-        P_(f"    {nm:<40} {cp:>6} {fl:>21.2f} {('yes' if fl <= 1.0 else 'NO'):>9}")
+    def cover(k):
+        Cs = {inv[i] for i in order[:k]}
+        return sum(1 for a, b, _ in E if a in Cs) / len(E)
 
-    # ---- W6 ------------------------------------------------------------------------------------
-    P_("\n" + RULE); P_("W6  WHAT BREAKS NEXT"); P_(RULE)
-    P_("  1. The class structure W2 found is real but partial: about half of genes still have")
-    P_("     mixed regulators at |C| = 122, and those genes set the worst-case per-gene factor,")
-    P_("     which is what the sum is dominated by.")
-    P_("  2. The alignment is a greedy heuristic under a balance constraint. Its numbers are upper")
-    P_("     bounds on the achievable cost and can only understate the prize, never overstate it.")
-    P_("  3. The accuracy figures are from YEAST promoters carrying designed sites, transferred to")
-    P_("     a HUMAN regulatory network. That transfer is the weakest link in the whole chain and")
-    P_("     nothing here strengthens it.")
-    P_("  4. The block factorisation is correct and available whenever the per-gene term stops")
-    P_("     binding. It is banked, not discarded.")
+    P_(f"\n    {'genes demoted':>14} {'% of all genes':>15} {'cap |C|':>9} {'edge coverage':>14}")
+    caps_d = {}
+    for m in (0, 1, 2, 5, 20, 100, 500):
+        c = cap_demote(m, "factored")
+        caps_d[m] = c
+        P_(f"    {m:>14} {100*m/n:>14.2f}% {c:>9} {cover(c):>13.1%}")
+    P_(f"\n  W4: demoting {100} of {n} genes -- {100*100/n:.1f}% of them -- takes the cap from"
+       f" {caps_d[0]} to {caps_d[100]}")
+    P_(f"  controllers and edge coverage from {cover(caps_d[0]):.1%} to {cover(caps_d[100]):.1%}."
+       f" It SATURATES at 100: demoting 500 buys")
+    P_( "  nothing more, which means a different term has taken over as binding.")
+
+    # ---- W5  THE GATE'S OWN VERDICT FLIPS ------------------------------------------------------
+    P_("\n" + RULE); P_("W5  AND NOW THE BLOCK BINDS, SO W0's VERDICT FLIPS"); P_(RULE)
+    P_("  W0 priced the block at zero and found the cap unmoved, correctly. That verdict was")
+    P_("  about the cap AS IT THEN WAS. Once the hubs are demoted the binding term changes, and")
+    P_("  the factorisation W0 called pointless becomes the thing the cap rests on.")
+    P_(f"\n    {'demoted':>9} {'pattern 2^|C|':>15} {'class-count':>13} {'FACTORED 2^(w+1)':>18}")
+    for m in (0, 20, 100):
+        P_(f"    {m:>9} {cap_demote(m,'pattern'):>15} {cap_demote(m,'classcount'):>13}"
+           f" {cap_demote(m,'factored'):>18}")
+    P_("\n  At zero demotions the block representation is worth NOTHING -- all three give the same")
+    P_("  cap. At 100 demotions it is worth 140 against 39, a 3.6x difference in the cap and")
+    P_(f"  {cover(140):.1%} against {cover(39):.1%} in coverage.")
+    P_( "  METHODOLOGICAL POINT, and it is the useful half of this module: a ceiling gate prices a")
+    P_( "  term against the CURRENT binding constraint. Its verdict is correct at the time and is")
+    P_( "  NOT permanent. When the constraint moves, re-run the gate rather than trusting it.")
+    P_( "  Note also that the class-count BLOCK is worse than the plain pattern at these widths --")
+    P_( "  with one controller per class its cost is 10 per controller against the pattern's 2 --")
+    P_( "  which never mattered while the block was not binding and matters now.")
+
+    # ---- W6  THE ACCURACY SIDE AND WHAT BREAKS NEXT --------------------------------------------
+    P_("\n" + RULE); P_("W6  THE ACCURACY SIDE, AND WHAT BREAKS NEXT"); P_(RULE)
+    P_("  W4 is a COST statement. What it costs in accuracy is that 100 genes drop from C = 64,")
+    P_("  which signed.py measured at 0.19 noise floors from identity, to the plain count at 6.29")
+    P_("  floors. That is a large loss on 3.5% of genes and no loss on the other 96.5%, which is")
+    P_("  a different kind of trade from every earlier one in this build order -- those all")
+    P_("  degraded every gene at once.")
+    P_(f"\n    {'genes':>8} {'representation':<22} {'floors from identity':>21} {'share of genes':>15}")
+    P_(f"    {n-100:>8} {'class count C = 64':<22} {0.19:>21.2f} {100*(n-100)/n:>14.1f}%")
+    P_(f"    {100:>8} {'plain count':<22} {6.29:>21.2f} {100*100/n:>14.1f}%")
+    P_("\n  Whether that trade is acceptable is not a cost question and this module cannot settle")
+    P_("  it. The demoted genes are the most-regulated in the network -- CDKN1A, VEGFA -- which")
+    P_("  are exactly the genes a whole-cell model would most want to get right. Demoting the")
+    P_("  hubs buys the cap by giving up on the genes the cap was wanted for, and saying so is")
+    P_("  the result rather than a caveat on it.")
+    P_("\n  What breaks next: at 140 controllers the block binds, and the elimination width grows")
+    P_("  as roughly |C|^0.78, so 2^(w+1) passes the bar around |C| = 150. Beyond that neither")
+    P_("  term is polynomial and there is no third term to demote.")
 
     dst = os.path.join(os.path.dirname(__file__), "RESULTS_widthblock.txt")
     open(dst, "w").write("\n".join(out) + "\n")

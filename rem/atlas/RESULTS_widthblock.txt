@@ -1,0 +1,121 @@
+=================================================================================================
+ATTACKING THE WIDTH EXPONENTIAL
+=================================================================================================
+  TRRUST sha256[:32] 9b909319ccc8e36588b5a1bd3640e0df, 8403 distinct directed pairs, 2861 genes.
+
+=================================================================================================
+W0  THE CEILING GATE: IS THE BLOCK THE BINDING TERM?
+=================================================================================================
+  Third application of block.py's rule, and the first time it has stopped an attack before
+  any of it was built. Under the class-count representation at C = 64, bar 1e12, L = 8.
+
+      |C|    per-gene term  block, class-count   block, FACTORED
+        8        9.783e+07           1.900e+07         1.600e+01
+       13        1.001e+10           6.859e+10         1.280e+02
+       20        3.637e+15           1.303e+17         1.024e+03
+
+    block representation        cap |C| at L=8
+    class-count block                       13
+    FACTORED block                          13
+    block priced at ZERO                    13
+
+  W0: the cap does NOT move -- pricing the block at ZERO changes nothing.
+  The width exponential in the block is NOT the binding term. The per-gene factor is.
+
+  AND THE WORK THAT WOULD HAVE BEEN DONE, MEASURED SO NOBODY DOES IT. The controller
+  subgraph is sparse and its elimination width grows sublinearly, so the block DOES
+  factorise -- correctly, hugely, and pointlessly.
+
+      |C|  edges among them  elim width     2^(w+1)       2^|C|      ratio
+       10                29           5    6.40e+01    1.02e+03    1.6e+01
+       20                77           9    1.02e+03    1.05e+06    1.0e+03
+       40               183          16    1.31e+05    1.10e+12    8.4e+06
+       80               378          25    6.71e+07    1.21e+24    1.8e+16
+      122               561          35    6.87e+10    5.32e+36    7.7e+25
+      200               871          46    1.41e+14    1.61e+60    1.1e+46
+      300              1117          59    1.15e+18    2.04e+90    1.8e+72
+      420              1363          63    1.84e+19   2.58e+120   1.4e+101
+
+=================================================================================================
+W1  THE DEGENERATE OPTIMUM, REPORTED RATHER THAN HIDDEN
+=================================================================================================
+  The per-gene factor is exponential in the OCCUPIED CLASSES per gene, which is a property
+  of the assignment. An unconstrained greedy optimiser on that cost was run first:
+    random C = 64 assignment : cost 1.001e+10, mean occupied classes 1.84
+    unconstrained optimum    : cost 2.315e+04, mean occupied classes 1.00
+  It reaches the theoretical minimum by putting every controller in ONE class, which is
+  the plain count -- refuted on promoter data at 6.29 noise floors. A cost optimiser with
+  no accuracy constraint will always rediscover the cheapest refuted representation.
+  W1: ledger U in this module's own probe. Every alignment below is CONSTRAINED to keep
+  the classes balanced, and the constraint is stated before the number.
+
+=================================================================================================
+W2  DOES THE NETWORK CARRY CLASS STRUCTURE, AGAINST A MATCHED SHUFFLE?
+=================================================================================================
+  The one class label this network actually carries is TRRUST's own regulatory mode per
+  EDGE. If a gene's regulators are all the same kind its factor is small at NO accuracy
+  cost, because the classes are given by the data rather than chosen. The control shuffles
+  the modes across edges keeping their counts, which is the null that matters.
+
+      |C|  genes k>=2  real modes           shuffled  real all-same   shuffled   enrich
+       13         535       1.540     1.873 +- 0.023         52.9%     25.8%    2.05x
+       40         775       1.695     2.001 +- 0.012         43.2%     21.2%    2.04x
+      122        1026       1.762     2.059 +- 0.015         40.8%     20.2%    2.03x
+      200        1087       1.772     2.091 +- 0.011         40.9%     18.8%    2.17x
+
+  W2: PASS -- real regulator sets are about twice as class-homogeneous as chance, at more than three sigma everywhere. There IS structure to align to.
+
+=================================================================================================
+W3  THE CONSTRAINED ALIGNMENT: BALANCED CLASSES, SO THEY CANNOT COLLAPSE
+=================================================================================================
+
+      |C|    C   random cost  aligned cost       gain  occ/gene rnd   aligned   worst gene
+       13    8     6.437e+07     9.035e+07   7.1e-01x          1.74      1.75    2.476e+07
+       13   64     1.001e+10     2.128e+11   4.7e-02x          1.84      1.89    1.000e+11
+       20    8     3.395e+09     2.487e+09   1.4e+00x          1.83      1.83    6.933e+08
+       20   64     3.637e+15     1.003e+17   3.6e-02x          2.00      2.04    1.000e+17
+       40    8     1.211e+11     1.047e+12   1.2e-01x          1.96      2.01    8.714e+11
+
+  the balance constraint holds every class non-empty, so these are class counts and not
+  the plain count in disguise. Compare against W1's unconstrained optimum, which was.
+
+=================================================================================================
+W4  WHAT IT DOES TO THE CAP, WHICH IS THE ONLY DELIVERABLE
+=================================================================================================
+
+    per-gene assignment                      block               cap |C| at L=8
+    random, C = 64 (signed.py)               class-count                     13
+    random, C = 64                           FACTORED                        13
+    ALIGNED balanced, C = 64                 FACTORED                        12
+    TRRUST MODE as the class (3 classes)     FACTORED                       140
+
+  for reference: signed.py's class count reached 13 at C = 64 and multiplier.py's
+  composed form reached 25. Those are the numbers to beat.
+
+=================================================================================================
+W5  THE ACCURACY SIDE, BECAUSE W4 IS ONLY A COST STATEMENT
+=================================================================================================
+  signed.py measured, on 5,790 real promoters, how far each class resolution sits from
+  identity: C = 2 is 2.61 noise floors out, C = 8 is 1.52, C = 32 is 1.30, and C = 64 is
+  0.19 -- the smallest resolution inside one floor. So a cap reachable only at C = 2 or 3
+  is the plain count wearing a larger number, and does not count.
+
+    representation                              cap  floors from identity   usable?
+    random C = 64, class-count block             13                  0.19       yes
+    random C = 64, factored block                13                  0.19       yes
+    ALIGNED balanced C = 64, factored            12                  0.19       yes
+    TRRUST mode, 3 classes, factored            140                  2.61        NO
+
+=================================================================================================
+W6  WHAT BREAKS NEXT
+=================================================================================================
+  1. The class structure W2 found is real but partial: about half of genes still have
+     mixed regulators at |C| = 122, and those genes set the worst-case per-gene factor,
+     which is what the sum is dominated by.
+  2. The alignment is a greedy heuristic under a balance constraint. Its numbers are upper
+     bounds on the achievable cost and can only understate the prize, never overstate it.
+  3. The accuracy figures are from YEAST promoters carrying designed sites, transferred to
+     a HUMAN regulatory network. That transfer is the weakest link in the whole chain and
+     nothing here strengthens it.
+  4. The block factorisation is correct and available whenever the per-gene term stops
+     binding. It is banked, not discarded.
