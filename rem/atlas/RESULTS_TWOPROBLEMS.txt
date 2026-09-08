@@ -1933,3 +1933,78 @@ the entire point -- without it the per-gene factor is exponential in k_i and the
 The honest position is that the engine's mathematics is sound, its cost model is sound, and the
 compression that made the cost model interesting rests on an assumption that human data does not
 support and that yeast data could not have tested, because yeast held context fixed by design.
+
+
+=================================================================================================
+SHARING CLASSES ACROSS GROUPS OF GENES: THE GROUPS COLLAPSE TO ONE NUMBER
+=================================================================================================
+The compression's damaged assumption is that classes are SHARED ACROSS GENES. The obvious repair
+is to share them across GROUPS instead -- G class maps, interpolating between a global map (cheap,
+captures only the between-motif minority) and a per-gene map (adequate, no saving). This tested it.
+
+THE CEILING GATE RAN FIRST AND CHANGED THE MODULE. Grouping is worth building only if the context
+variance is not already explained by something cheaper, and it is. ONE per-enhancer scalar -- the
+wild-type activity of the context, how strong it is before anything is removed -- absorbs 94.2% of
+the context variance in HepG2 and 72.2% in K562. Stronger contexts lose more when a site is
+removed. That is saturation, and it is not surprising once stated.
+
+AND THE CONTROL THAT NEARLY KILLED IT. The disruption effect is activity(mutant) minus
+activity(wild type), so the covariate sits on both sides of the equation and shared measurement
+noise manufactures exactly this correlation. Measured ACROSS replicates, where the two noises are
+independent:
+
+    cell     same-replicate      cross-replicate
+    HepG2    -0.865, -0.880      -0.758, -0.758
+    K562     -0.811, -0.698      -0.546, -0.441
+
+It survives. Shared noise inflates it from about -0.76 to -0.87 in HepG2 but does not create it,
+and every coefficient below is cross-fitted.
+
+THE LADDER, FIT ON REPLICATE 1 AND SCORED ON REPLICATE 2, AGAINST THE NOISE LIMIT.
+
+    model                                HepG2    x limit      K562    x limit   parameters
+    global class map                    0.6648       1.69    0.9168       1.46          136
+    global map x per-gene GAIN          0.5391       1.37    0.9693       1.54          137
+    global map + per-gene SCALAR        0.4723       1.20    0.8176       1.30          138
+    per-group class maps, G = 2         0.6129       1.56    0.9027       1.43          272
+    per-group class maps, G = 8         0.5539       1.41    0.9125       1.45         1088
+    per-group class maps, G = 16        0.5514       1.40    0.9124       1.45         2176
+    per-group class maps, G = 32        0.5604       1.42    0.9185       1.46         4352
+    the NOISE LIMIT                     0.3935       1.00    0.6295       1.00           --
+
+    one scalar closes 71% (HepG2) and 35% (K562) of the gap from the global map to the limit
+    the best group model closes 42% and 5% of it, at up to 4,352 parameters against 138
+
+GROUPS DO NOT PAY. In both cell types a single per-gene number beats every group model tested, at
+3 to 32 times fewer parameters, and the group ladder is flat from G = 4 upward. The answer to
+"share classes across groups of genes" is that the group structure is one-dimensional and
+continuous, so the right object is a covariate rather than a partition.
+
+TWO ERRORS OF MY OWN IN THE FIRST RUN, RECORDED RATHER THAN EDITED AWAY.
+
+  THE PREDICTED FORM WAS WRONG. I reasoned to a MULTIPLICATIVE form -- a shared class effect
+  scaled by a per-gene gain -- by analogy with multiplier.py, which validated exactly that shape on
+  the TIME axis. Measured, the ADDITIVE form wins in both cells, by 0.17 and 0.24 of the floor. The
+  reasoning by analogy was good and the analogy was false. A shared modulation that multiplies on
+  the time axis adds on the gene axis, and nothing in the earlier result implied otherwise; it was
+  read as if it did.
+
+  THE "CEILING" WAS NOT A CEILING. The per-enhancer row -- predicting replicate 2 from replicate 1
+  of the same construct -- was labelled the bound no model can pass, and two models passed it. It
+  carries BOTH replicates' noise so it sits at sqrt(2)*sigma, while a fitted model averages and can
+  approach sigma. That is the SAME error humantransfer's H3 had already recorded, made again in the
+  very next module. Twice now, a one-measurement predictor has been mistaken for an upper bound.
+
+WHAT IT MEANS FOR THE ENGINE. The cap does not move either way: a per-gene covariate adds one
+global coefficient and changes no gene's alphabet, and G class maps multiply a stored table that
+was never the binding term. So this was never a cost question. What it buys is accuracy, and the
+finding is that the context-dependence which damaged the compression is mostly ONE OBSERVABLE
+SCALAR PER GENE rather than an irreducible per-gene function. That is the cheapest possible repair
+-- cheaper than groups, cheaper than per-gene maps -- and it is available to every representation
+in this build order without changing any of their cost arithmetic.
+
+It does not restore the yeast accuracy standard. One scalar closes 71% of the gap in HepG2 and 35%
+in K562, so a globally shared class map plus a per-gene strength term is still short of the noise
+limit, and the copy-number question that the whole count summary is about remains unasked of human
+data. But the shape of the repair is now known and it is additive, which is the only kind of repair
+this build order has ever found that does not cost an exponent.

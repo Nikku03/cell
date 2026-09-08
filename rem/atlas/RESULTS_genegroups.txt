@@ -29,34 +29,45 @@ J0  THE CEILING GATE: ARE GROUPS NEEDED AT ALL?
 =================================================================================================
 J1/J2  THE LADDER, HELD OUT: FIT ON REPLICATE 1, SCORE ON REPLICATE 2
 =================================================================================================
-  Nothing here is graded on what it was fitted to. The per-enhancer row is the ceiling no
-  model can pass, because it is the other replicate of the same measurement.
+  Nothing here is graded on what it was fitted to.
+  THE REFERENCE IS THE NOISE LIMIT, NOT THE OTHER REPLICATE. The first version of this
+  gate called the per-enhancer row 'the ceiling no model can pass' and TWO models passed
+  it. It is not a ceiling: predicting replicate 2 from replicate 1 carries BOTH replicates'
+  noise, so it sits at sqrt(2)*sigma, while a fitted model averages and can approach sigma.
+  Exactly the error humantransfer's H3 already recorded -- a one-measurement predictor is
+  not an upper bound on achievable accuracy. Every row below is scored against sigma.
 
   HepG2: floor 0.3935 log2, 196 disruptions
-    model                               held-out RMSE  floors vs ceiling  parameters
-    global class map                           0.6648               0.28         136
-    global map x per-gene gain                 0.5391              -0.04         137
-    global map + per-gene scalar               0.4723              -0.21         138
-    per-group class maps, G = 2                0.6129               0.14         272
-    per-group class maps, G = 4                0.5782               0.06         544
-    per-group class maps, G = 8                0.5539              -0.01        1088
-    per-group class maps, G = 16               0.5514              -0.01        2176
-    per-group class maps, G = 32               0.5604               0.01        4352
-    per-enhancer (the ceiling)                 0.5565               0.00         196
-    -> best group model beats the per-gene gain by -0.03 floors (NOT by a floor: groups are not worth their cost)
+    model                               held-out RMSE  x the noise limit  parameters
+    global class map                           0.6648               1.69         136
+    global map x per-gene gain                 0.5391               1.37         137
+    global map + per-gene scalar               0.4723               1.20         138
+    per-group class maps, G = 2                0.6129               1.56         272
+    per-group class maps, G = 4                0.5782               1.47         544
+    per-group class maps, G = 8                0.5539               1.41        1088
+    per-group class maps, G = 16               0.5514               1.40        2176
+    per-group class maps, G = 32               0.5604               1.42        4352
+    per-enhancer (the OTHER replicate)         0.5565               1.41         196
+    the NOISE LIMIT (a perfect model)          0.3935               1.00          --
+    -> ONE SCALAR closes 71% of the gap between the global class map and the noise limit
+       the best GROUP model closes 42% of it, using up to 4352 parameters against 138
+       and the ADDITIVE scalar beats the MULTIPLICATIVE gain by +0.17 of the floor
 
   K562: floor 0.6295 log2, 196 disruptions
-    model                               held-out RMSE  floors vs ceiling  parameters
-    global class map                           0.9168               0.04         136
-    global map x per-gene gain                 0.9693               0.13         137
-    global map + per-gene scalar               0.8176              -0.12         138
-    per-group class maps, G = 2                0.9027               0.02         272
-    per-group class maps, G = 4                0.9193               0.05         544
-    per-group class maps, G = 8                0.9125               0.04        1088
-    per-group class maps, G = 16               0.9124               0.04        2176
-    per-group class maps, G = 32               0.9185               0.04        4352
-    per-enhancer (the ceiling)                 0.8902               0.00         196
-    -> best group model beats the per-gene gain by +0.11 floors (NOT by a floor: groups are not worth their cost)
+    model                               held-out RMSE  x the noise limit  parameters
+    global class map                           0.9168               1.46         136
+    global map x per-gene gain                 0.9693               1.54         137
+    global map + per-gene scalar               0.8176               1.30         138
+    per-group class maps, G = 2                0.9027               1.43         272
+    per-group class maps, G = 4                0.9193               1.46         544
+    per-group class maps, G = 8                0.9125               1.45        1088
+    per-group class maps, G = 16               0.9124               1.45        2176
+    per-group class maps, G = 32               0.9185               1.46        4352
+    per-enhancer (the OTHER replicate)         0.8902               1.41         196
+    the NOISE LIMIT (a perfect model)          0.6295               1.00          --
+    -> ONE SCALAR closes 35% of the gap between the global class map and the noise limit
+       the best GROUP model closes 5% of it, using up to 4352 parameters against 138
+       and the ADDITIVE scalar beats the MULTIPLICATIVE gain by +0.24 of the floor
 
 =================================================================================================
 J4  WHAT IT DOES TO THE CAP
