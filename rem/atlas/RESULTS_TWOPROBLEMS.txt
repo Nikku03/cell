@@ -2008,3 +2008,84 @@ in K562, so a globally shared class map plus a per-gene strength term is still s
 limit, and the copy-number question that the whole count summary is about remains unasked of human
 data. But the shape of the repair is now known and it is additive, which is the only kind of repair
 this build order has ever found that does not cost an exponent.
+
+
+=================================================================================================
+THE PER-GENE SCALAR IN THE ENGINE, AND THE CAPS RERUN
+=================================================================================================
+The request was to put the per-gene scalar into the engine and rerun the caps. It is in, it is
+free, and the caps do not move. That is the whole result, and two of this module's three planned
+gates had to be withdrawn to reach it honestly.
+
+WHAT WENT IN. genegroups found that the context-dependence damaging every compression here is
+mostly ONE OBSERVABLE SCALAR PER GENE -- the gene's own baseline strength -- and that sharing class
+maps across groups loses to it at 3-32x the parameters. The scalar costs the engine one global
+coefficient plus a functional of state it already carries, so nothing new is stored per gene.
+
+V0 PASSES, IN EXECUTED CODE. genegroups asserted in prose that the scalar cannot move the cap.
+block.py's E4 and E7 asserted their arithmetic in prose too, were never executed, and were false by
+a wide margin -- so this was run, not argued:
+
+     C classes   cap without scalar   cap WITH scalar   same?
+             4                   59                59    True
+             8                   30                30    True
+            16                   15                15    True
+            64                   13                13    True
+
+The reason is structural, not numerical: the per-gene factor is a PRODUCT over occupied classes and
+the scalar ADDS one value to one factor, so it cannot multiply anything. Adding a value to a factor
+that is already a sum of a class's slots changes that factor by a bounded amount and changes no cap
+at any C tested.
+
+V1 IS DEGENERATE AND FAILS AS A GATE -- LEDGER U, ON THIS MODULE'S OWN CRITERION. V1 asked the
+question that actually matters, since C is what drives the cap: does the scalar buy a SMALLER class
+count on human data? Held out on the human MPRA, fit on replicate 1 and scored on replicate 2,
+sweeping C with and without the scalar, and taking signed.py's own criterion -- the smallest C
+within one noise floor of the finest model. The ladder is narrower than the floor:
+
+    cell     floor    ladder span, no scalar    ladder span, with scalar
+    HepG2    0.3935                    0.0615                      0.0003
+    K562     0.6295                    0.1006                      0.0213
+
+Every C sits within one floor of the finest model, C = 1 included. "Smallest C within one floor"
+therefore returns 1 whatever the truth is, and NO class count may be derived from this data. This
+is the flat ladder mpra_human already reported, meeting a criterion built for yeast's, which
+separated its ends by 8.6 floors. The criterion is not wrong; it is being asked of a quantity that
+has saturated, which is exactly ledger U and exactly what signed.py's D1/D2 and widthblock's
+collapse to C = 1 were.
+
+WHAT IS MEASURABLE IN V1 ANYWAY: the scalar's gain, which is real and FLAT IN C -- +0.64 floors at
+C = 1 and +0.49 at C = 136 in HepG2, +0.25 and +0.16 in K562. On this data the per-gene scalar does
+essentially all the work and the class map almost none. But the class map's flatness is the DATA's
+limitation, not a finding about class maps, and it must not be reported as one.
+
+V2 IS WITHDRAWN. The plan was to take V1's measured class count, carry it to TRRUST as a fraction
+of the alphabet, and rerun the caps there. V1 cannot supply that number. Had the degeneracy gone
+unnoticed the module would have reported "human data says C = 3 suffices, so the cap is 140 at
+71.7% coverage" -- a spectacular claim resting entirely on a statistic that returns 1 or 3 by
+construction. It is recorded here as a withdrawn gate rather than deleted.
+
+THE CAPS, THEREFORE, STAND EXACTLY AS THEY WERE:
+
+    representation                              cap   coverage
+    pattern (exact)                               3     12.8%
+    class count C = 64                           13     26.6%
+    + hub demotion + factored block             140     71.7%
+    + per-gene scalar                          unchanged, at whichever row it is added to
+
+WHAT THIS SETTLES AND WHAT IT DOES NOT. The scalar is a free ACCURACY gain, not a cap gain. V0 is a
+statement about the COST functional only: it says the scalar is free, not that it is sufficient.
+The class count that sets the cap remains the yeast-derived C = 64, still unvalidated for human,
+exactly as humantransfer left it -- and the human data now in hand is provably incapable of
+validating it, which is a stronger and more useful statement than "not yet validated." The fraction
+transfer from 136 motif classes in a reporter assay to 404 regulators in a curated network remains
+an assumption. And the scalar is fitted and tested on SINGLE-SITE contexts, because that is all the
+open human data has; whether one scalar still absorbs the context when several sites are present is
+the copy-number question, still unasked of human data.
+
+A NOTE ON THE FIRST RUN, WHICH WAS WRONG IN THREE WAYS, ALL MINE. The first version fixed the block
+term to the factored representation alone and reported C = 4 giving cap 59 against signed.py's 419
+-- the fix is to take the MINIMUM over all three block representations, which the engine has always
+been entitled to do. V1's degeneracy was not detected, and V2 propagated it into a cap table. All
+three were repaired before the run whose numbers appear above, and the module now refuses V1
+explicitly instead of passing it.

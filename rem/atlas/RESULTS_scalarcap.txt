@@ -43,8 +43,20 @@ V1  DOES THE SCALAR BUY A SMALLER CLASS COUNT?
         32      0.6690        0.4724             0.50
         64      0.6659        0.4723             0.49
        136      0.6648        0.4723             0.49
-    smallest C within one floor of the finest model: 1 without the scalar, 1 WITH it
-    as a fraction of the alphabet: 0.7% -> 0.7%
+    the WHOLE ladder spans 0.0615 without the scalar and 0.0003 with it,
+    against a noise floor of 0.3935.
+    THE CRITERION IS DEGENERATE HERE. Every C sits within one floor of the finest
+    model, C = 1 included, because the entire ladder is narrower than the floor.
+    'Smallest C within one floor' therefore returns 1 whatever the truth is, and
+    NO class count may be derived from this data. That is the flat ladder
+    mpra_human already reported, meeting a criterion built for yeast's, which
+    separated its ends by 8.6 floors. Ledger U -- a gate passing on a saturated
+    quantity -- and it is this module's own gate.
+
+    WHAT IS MEASURABLE HERE: the scalar's gain, which is real and flat in C --
+    +0.64 floors at C = 1 and +0.49 floors at C = 136. On this data the per-gene
+    scalar does essentially all the work and the class map almost none, but the class
+    map's flatness is the data's limitation and not a finding about class maps.
 
   K562: 136 motif classes, floor 0.6295
          C   no scalar   with scalar   gain in floors
@@ -60,27 +72,45 @@ V1  DOES THE SCALAR BUY A SMALLER CLASS COUNT?
         32      0.8875        0.8089             0.12
         64      0.9065        0.8149             0.15
        136      0.9168        0.8176             0.16
-    smallest C within one floor of the finest model: 1 without the scalar, 1 WITH it
-    as a fraction of the alphabet: 0.7% -> 0.7%
+    the WHOLE ladder spans 0.1006 without the scalar and 0.0213 with it,
+    against a noise floor of 0.6295.
+    THE CRITERION IS DEGENERATE HERE. Every C sits within one floor of the finest
+    model, C = 1 included, because the entire ladder is narrower than the floor.
+    'Smallest C within one floor' therefore returns 1 whatever the truth is, and
+    NO class count may be derived from this data. That is the flat ladder
+    mpra_human already reported, meeting a criterion built for yeast's, which
+    separated its ends by 8.6 floors. Ledger U -- a gate passing on a saturated
+    quantity -- and it is this module's own gate.
+
+    WHAT IS MEASURABLE HERE: the scalar's gain, which is real and flat in C --
+    +0.25 floors at C = 1 and +0.16 floors at C = 136. On this data the per-gene
+    scalar does essentially all the work and the class map almost none, but the class
+    map's flatness is the data's limitation and not a finding about class maps.
 
 =================================================================================================
-V2/V3  THE CAPS AT THOSE CLASS COUNTS
+V2/V3  THE CAPS, AND WHY THEY DO NOT MOVE
 =================================================================================================
-  The MPRA alphabet is motif classes and TRRUST's is regulators, so what transfers is the
-  FRACTION of the alphabet, not C itself. That is an assumption and is labelled as one:
-  yeast needed 15.8% of its 404 factors, which is where signed.py's C = 64 came from.
+  The plan was to take the class count V1 measured on human data, carry it to TRRUST as a
+  fraction of the alphabet, and rerun the caps there. V1 CANNOT SUPPLY THAT NUMBER: its
+  ladder is narrower than its own noise floor, so the criterion returns C = 1 regardless
+  of the truth. Deriving a cap from it would have produced 'human data says C = 3 suffices,
+  so the cap is 140 at 71.7% coverage' -- a spectacular claim resting entirely on a
+  degenerate statistic. It is withdrawn rather than reported.
 
-    source                               fraction   C on TRRUST    cap   coverage
-    yeast standard (signed.py)              15.8%            64     13     26.6%
-    HepG2, no scalar                         0.7%             3    140     71.7%
-    HepG2, WITH scalar                       0.7%             3    140     71.7%
-    K562, no scalar                          0.7%             3    140     71.7%
-    K562, WITH scalar                        0.7%             3    140     71.7%
+  WHAT SURVIVES IS V0, AND IT IS WHAT WAS ASKED FOR. The per-gene scalar is FREE: it adds
+  one value per gene where the per-gene factor is a PRODUCT over classes, so it cannot
+  multiply anything, and the cap is identical with and without it at every class count
+  tested. The caps therefore stand exactly as they were:
 
-  for reference, the running total this replaces or confirms:
-    pattern (exact)                        3    12.8%
-    class count C = 64                    13    26.6%
-    + hub demotion + factored block      140    71.7%
+    representation                              cap   coverage
+    pattern (exact)                               3     12.8%
+    class count C = 64                           13     26.6%
+    + hub demotion + factored block             140     71.7%
+    + per-gene scalar                          unchanged, at whichever row it is added to
+
+  So the scalar is a free ACCURACY gain, not a cap gain, and the class count that sets
+  the cap remains the yeast-derived C = 64 -- still unvalidated for human, exactly as
+  humantransfer left it. Nothing here changes that, and nothing here pretended to.
 
 =================================================================================================
 V4  WHAT THIS DOES AND DOES NOT SETTLE
