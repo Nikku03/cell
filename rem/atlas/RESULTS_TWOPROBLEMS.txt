@@ -1717,3 +1717,77 @@ weak, they were answering the questions their author thought to ask. An auditor 
 record, with no stake in it, asked different ones. The rule that follows is that a module's gates
 verify its INTERNAL consistency and cannot certify the quantity it reports; that needs a reader
 who did not write it.
+
+
+=================================================================================================
+THE WEAKEST LINK, TESTED: DOES THE YEAST RESULT TRANSFER TO HUMAN CELLS?
+=================================================================================================
+Every accuracy figure in this build order comes from one experiment -- Sharon et al. 2012, ~5,800
+designed yeast promoters -- and has been applied throughout to a human network. Four modules flag
+that transfer as the weakest link and none of them tests it. This does.
+
+THE MATCHED HUMAN QUESTION is not another reporter assay. It is the same question asked of real
+regulatory relationships: for a gene with several known regulators, does it matter WHICH one is
+perturbed? ENCODE CRISPRi RNA-seq in K562 answers it -- one factor silenced per experiment, whole
+transcriptome, two biological replicates. Restricted to TRRUST regulators that is 48 factors
+cached, 153 expressed target genes with two or more of them, 400 (gene, regulator) pairs measured
+twice each. One assay in one cell line, deliberately: mixing shRNA, CRISPR and CRISPRi would
+confound the comparison being made. No control experiment is needed, because centring each gene
+across the panel removes exactly the per-gene constant a control supplies and that constant
+cancels anyway in a comparison between regulators of the same gene.
+
+TWO GATES OF THIS MODULE'S OWN WERE MIS-SPECIFIED, AND FINDING THAT OUT WAS THE WHOLE WORK.
+
+H2 failed and COULD NOT HAVE PASSED. The centring that makes the test possible also removes each
+gene's own level, so the "knows the gene" baseline was guaranteed to sit near the "knows nothing"
+one. Ledger P, built into the preprocessing rather than the threshold. The question it should have
+asked -- is there reproducible signal at all -- answers yes: the replicates correlate at r = 0.63.
+
+H3's instrument was too blunt for the design. A held-out comparison of a regulator-blind model
+against an identity model conflates signal with PREDICTOR NOISE: the blind model predicts from the
+mean of K ~ 2.6 noisy measurements while identity predicts from one, so it is quieter by about
+sqrt(K), and with K this small that cancels most of identity's advantage in signal. Taken at face
+value it reads 0.11 floors and says the regulators are interchangeable. The yeast experiment never
+suffered this because its groups were large.
+
+THE RIGHT INSTRUMENT IS A VARIANCE COMPONENT -- within a grouping unit, how much response variance
+is attributable to which regulator, after subtracting the replicate noise the averaging leaves --
+bootstrapped over the grouping unit, and applied to BOTH organisms with the same estimator:
+
+    organism   grouping unit       floor    effect sd      in floors        95% CI
+    HUMAN      target gene        0.2200       0.2302           1.05    [0.90, 1.18]
+    YEAST      sequence context   0.0823       1.3049          15.86    [9.32, 21.36]
+
+    ratio yeast/human: 5.67x in absolute log2, 15.15x in floors
+
+THE ANSWER IS IN TWO PARTS, WHICH IS WHY NO SINGLE GATE COULD HAVE CARRIED IT.
+
+QUALITATIVELY IT TRANSFERS. A human gene's regulators are demonstrably NOT interchangeable: the
+between-regulator effect excludes zero with a comfortable margin, and it is LARGER than the
+variance between genes (0.0530 against 0.0378). Every count-like summary in this build order
+assumes the opposite, and that assumption is refuted on human data as it was on yeast. The main
+confound runs the same way -- a knockdown carries indirect effects that are shared across a gene's
+regulators, which biases this measurement TOWARD interchangeability -- so the true effect is more
+likely larger than measured than smaller.
+
+QUANTITATIVELY IT DOES NOT. The effect is 15 times smaller relative to measurement noise than in
+yeast and 5.7 times smaller in absolute log2. Because the entire regulator-identity effect spans
+about ONE noise floor here, the yeast bar -- "within one floor of identity" -- is satisfied by
+almost any class resolution, C = 1 included, and the class ladder is flat across its whole range
+where yeast's separated its ends by 8.6 floors.
+
+SO THE SPECIFIC NUMBER EVERY CAP DEPENDS ON DOES NOT SURVIVE THE TRANSFER. signed.py's C = 64 of
+404 -- 15.8% of the alphabet -- is what makes a cap meaningful, because a cap is only a cap at a
+stated accuracy. That figure is not reproduced on human data and is not currently testable there:
+this panel cannot distinguish class resolutions at all. The caps are not thereby WRONG. Their
+status is now precise and worse than it was assumed to be: 3, 13 and 140 are cost arithmetic
+carried out at an accuracy standard measured in yeast and ASSUMED for human. Where the ledger has
+been reporting them as measured results at a stated accuracy, that stated accuracy is an
+extrapolation across a kingdom.
+
+WHAT WOULD SETTLE IT. Not more of this panel -- the limit is that a single CRISPRi knockdown moves
+an individual target by about a quarter of a log2 against a noise floor of the same size. It needs
+either many more replicates per factor, or a human assay with the yeast experiment's actual
+structure: designed combinations of sites in a fixed context, where the number and identity of
+regulators are varied independently and the response is measured with a tight floor. Human MPRAs
+of that design exist; none was used here, and that is the next measurement rather than a caveat.
