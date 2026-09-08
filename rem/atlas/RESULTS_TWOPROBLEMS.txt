@@ -2089,3 +2089,177 @@ term to the factored representation alone and reported C = 4 giving cap 59 again
 been entitled to do. V1's degeneracy was not detected, and V2 propagated it into a cap table. All
 three were repaired before the run whose numbers appear above, and the module now refuses V1
 explicitly instead of passing it.
+
+
+=================================================================================================
+WHAT DATA WOULD VALIDATE C? THE QUESTION IS PARTLY MALFORMED, AND HERE IS WHY
+=================================================================================================
+humantransfer and scalarcap both closed by naming what C needs in PROSE -- "many more replicates,
+or a human assay with the yeast experiment's structure". Prose is where this build order has
+repeatedly gone wrong: block.py's E4 and E7 were prose arithmetic and false by a wide margin. So
+this converted the wish into numbers. It did not run a new experiment; it computed how big one
+would have to be, and priced the catalogue that exists against that number. The answer that came
+back was not the expected one.
+
+THE CEILING GATE FIRST, AS ALWAYS, AND IT CLOSES THE CHEAP ROUTE. A live census of the ENCODE
+K562 CRISPRi RNA-seq catalogue: 77 released experiments, 74 distinct factors, replicate histogram
+{2: 66, 3: 8, 4: 3}. Against thresholds predeclared BEFORE the query -- 128 factors and 7
+replicates -- it fails on both. Not the 48 factors cached here: the ENTIRE released catalogue
+cannot express C = 64 and cannot reach the depth. "Download more of the same" is not the answer.
+
+D1 WAS MINE AND IT WAS WRONG, AND IT IS LEFT IN THE OUTPUT SO THE ERROR IS VISIBLE. D1 set its
+bar on the between-regulator sd, 1.05 floors, and returned R(bar = 1) = 2 replicates -- a bar the
+current data ALREADY MEETS, which can say nothing about what to fix. The quantity that was
+degenerate in scalarcap is not the sd. It is the LADDER SPAN, a difference of held-out RMSEs, and
+RMSE differences compress a signal. Superseded, not deleted.
+
+THE POWER CALCULATION THAT REPLACED IT, AND THE RESULT NOBODY WAS LOOKING FOR. Simulate a world
+in which the class hypothesis is EXACTLY TRUE with C = 64 classes shared across genes, at the
+measured between-regulator variance and the measured floor, with TRRUST's real depth
+distribution. Build the ladder the way signed.py and humantransfer build it. Sweep panel size N
+and replicate depth R.
+
+    THE KNEE NEVER REACHES 64 ANYWHERE IN THE SWEEP. It climbs 1, 2, 4, 8, 16 as R goes 2 to 128,
+    with the truth held fixed at 64 the whole time. At N = 48 it is 1 to 8 at every depth,
+    because a panel of 48 cannot express 64 classes however often it is replicated -- depth
+    cannot buy alphabet.
+
+AND THE CONTROL THAT DECIDES WHAT THAT MEANS. Two incompatible readings: either the estimator is
+resolution-limited whatever the truth is, or 64 levels drawn from a continuous spread simply are
+not separable at these depths. So: rerun with the 64 class effects EQUALLY SPACED ONE FLOOR
+APART, separable by construction. If the estimator can ever return 64, it returns it here.
+
+    IT RETURNS 16. At every panel size and every depth, on a ladder spanning 17.7 floors.
+
+    knee ~ R^0.57 -- the signature of a RESOLUTION statistic, the number of distinguishable
+    levels growing as the square root of the precision. A structural count would be FLAT in R:
+    it would find 64 and stop.
+
+SO "SMALLEST C WITHIN ONE FLOOR OF THE FINEST MODEL" CANNOT RETURN A STRUCTURAL CLASS COUNT AT
+ANY DEPTH, ON ANY PANEL. Pooled across both simulation families -- continuously spread effects
+and separated ones -- the law is
+
+    knee  =  0.88 * (signal in floors) ^ 1.05        R^2 = 0.947
+
+C is a QUANTISATION COUNT: the regulator effect spread divided by the accuracy demanded of it.
+Demand less accuracy and C falls; demand more and C rises. That makes C a design parameter of the
+engine, not a fact about human cells waiting to be measured -- which is why no dataset validates
+it, and why the search for one was the wrong search.
+
+WHAT THIS DOES NOT ESTABLISH, STATED BECAUSE THE DISCREPANCY IS REAL. The law is measured INSIDE
+the simulation. It licenses the statement that the estimator returns a resolution -- it could not
+return 64 even when told 64 was true, and signed.py uses that estimator. It does NOT license
+reading 64 off the law. The one crude yeast signal-to-floor figure available is about 16 floors,
+which the law maps to a knee near 16, not 64. That 4x discrepancy is unexplained here and is
+itself the reason not to over-read the reframing. Reconciling it needs signed.py's ladder rebuilt
+in floors, which was not done.
+
+=================================================================================================
+THE CAP IS A CURVE, AND scalarcap's 59 WAS ITS OWN LOOP CEILING
+=================================================================================================
+Pushing the law through the cap functional required evaluating it at low C, and that exposed a
+defect in the module shipped one turn earlier. scalarcap called cap_with_scalar with maxC = 60
+and reported a cap of 59 at C = 4. 59 is 60 - 1: the functional walks the controller count upward
+until the bar is breached and stops at its own ceiling, so that row WAS THE CEILING AND NOT A CAP.
+Recomputed with the ceiling raised to 2000:
+
+    C classes    cap, controllers      as previously reported
+            1              >= 1999      not reported
+            2              >= 1999      not reported
+            4                  442      59      <- wrong by 7.5x, and it was a ceiling
+            8                   30      30
+           16                   15      15
+           64                   13      13
+
+scalarcap's V0 VERDICT SURVIVES UNCHANGED: with and without the per-gene scalar both hit the same
+ceiling, so the scalar still changes no cap, and that was what V0 measured. But the NUMBER 59 was
+a saturated statistic reported as a measurement -- ledger U -- in the very module that withdrew
+its own V1 for exactly that. Two gates in one module, one caught and one missed, and the one that
+was missed had already been pushed. The C = 8, 16 and 64 rows broke on the bar rather than the
+ceiling and are unaffected.
+
+READ AS A CURVE, THE ENGINE'S POSITION IS SHARPER THAN ANY SINGLE CAP EVER MADE IT. The cost of
+accuracy is not gradual: between C = 4 and C = 8 the cap falls 442 to 30, a factor of 15 for one
+doubling of resolution. Every cap this build order has reported -- 3, 13, 140 -- is ONE ROW of
+that curve, and the row was chosen in yeast.
+
+=================================================================================================
+THE REST OF THE SPECIFICATION, FOR THE PART OF THE QUESTION THAT IS WELL POSED
+=================================================================================================
+C is not validatable as a structural constant. The signal-to-floor ratio that SETS it is, and so
+are the other three axes, so the spec still has content.
+
+THE ALPHABET AXIS is a hard ceiling, not a power calculation: a panel of N regulators cannot
+return C > N. The coverage scaling law, bracketed between the best panel of size N (highest
+out-degree first) and the worst (drawn at random, mean of 40 draws), counting TRRUST targets
+reached at each regulator depth:
+
+        N          k>=2         k>=4         k>=8        k>=20
+       48      857/64       303/7         64/1          6/0
+       74      987/108      349/16        89/2         11/0
+      128     1128/238      433/50       132/9         20/0
+      200     1225/398      509/99       167/21        27/2
+      300     1296/613      561/183      187/46        34/5
+      794     1416/1416     639/639      221/221       42/42
+
+THE CEILING OF THE IDEAL EXPERIMENT -- every one of TRRUST's 794 regulators perturbed -- is 42
+targets at k >= 20. That is the entire population available to test the regime the 140 cap
+actually lives in, and no panel can do better, because TRRUST does not know of more regulators
+for those genes.
+
+THE DEPTH AXIS REFUSED ITSELF, AS PREDECLARED. Does the identity margin grow with the number of
+regulators a gene has? k >= 2: 1.05 floors, CI [0.91, 1.18]. k >= 3: 1.08, CI [0.89, 1.24].
+k >= 4: 1.19, CI [0.92, 1.42]. The CIs overlap across every bin, the deepest holds 26 genes, and
+the gate's predeclared response to overlapping CIs is that the scaling is UNMEASURABLE and no
+extrapolation to k = 20 is permitted. The spec carries the depth requirement as an unknown.
+
+THE COMBINATORIAL AXIS IS WHAT NO AMOUNT OF SINGLE KNOCKDOWNS SUPPLIES. The per-gene factor is a
+PRODUCT over occupied classes of (k_ij (L+1) + 1) -- a statement about JOINT states. Every
+measurement used here is a MARGINAL. Two regulators can have identical marginals and different
+joint behaviour, and the class hypothesis asserts they do not. TRRUST offers 46,712 same-target
+regulator pairs and 615,193 triples; the pair count is the size of the smallest design that could
+ask the question. This is the copy-number question, still unasked of human data.
+
+APPLICABILITY DOMAIN, because a number without one is ledger S. A C measured on CRISPRi knockdown
+log-ratios is a C for that response function. The engine's C is for a steady-state transcription
+rate. The two coincide only if the knockdown response is monotone in the same latent quantity the
+rate depends on -- an assumption no module here has tested.
+
+TWO NAMED CANDIDATES, NEITHER DOWNLOADED NOR TESTED, AND FLAGGED AS SUCH. Genome-scale Perturb-seq
+(Replogle et al., Cell 2022, PMID 35688146, doi:10.1016/j.cell.2022.05.013; via PubMed) targets
+all expressed genes with CRISPRi across more than 2.5 million human cells, the only published
+design plausibly meeting the alphabet and depth criteria. For the combinatorial criterion the
+nearest published design is the CRISPRa genetic-interaction map of Norman et al. (Science 2019,
+PMID 31395745, doi:10.1126/science.aax4438; via PubMed). Per-perturbation depth is not stated in
+either abstract, so whether either clears the bar is unknown. This is exactly the status
+humantransfer gave the human MPRA before it was run -- and when that one WAS run, it failed. A
+named candidate is not a validated one.
+
+THE HONEST BOTTOM LINE. The question "what data would validate C" has no answer, because C is not
+the kind of thing data validates: it is the resolution at which one chooses to represent regulator
+effects, and the criterion this build order used to measure it returns that resolution and never a
+structural count. What data CAN settle is the signal-to-floor ratio that sets C, and the joint
+behaviour the cost functional actually reads -- and for those the requirement is a
+multi-perturbation panel over at least 128 regulators, which no released dataset in this cell line
+provides. Until then the caps are not wrong; they are one row of a curve, chosen in yeast.
+
+=================================================================================================
+CORRECTION TO THE RUNNING CAP TABLE, FOLLOWING THE SATURATION DEFECT ABOVE
+=================================================================================================
+The table this ledger has been carrying reads:
+
+    representation                              cap   coverage
+    pattern (exact)                               3     12.8%
+    class count C = 64                           13     26.6%
+    + hub demotion + factored block             140     71.7%
+
+Those three rows are UNAFFECTED by the saturation defect: 3, 13 and 140 all broke on the bar
+rather than on a loop ceiling. What changes is that the table was never a ladder of
+representations at one accuracy -- it is three points on an accuracy curve, and the curve is
+steeper than the table suggests. At C = 4 the cap is 442, not the 59 scalarcap reported, and at
+C = 1 and C = 2 it exceeds 1999 and was not bounded at all.
+
+The correct summary of the engine's position is therefore: the cap is a FUNCTION of the
+resolution demanded of the regulator response, it falls by a factor of 15 for one doubling of
+that resolution near C = 8, and the resolution itself is a choice rather than a measured
+constant of human biology.
