@@ -273,10 +273,18 @@ def main():
     P_(RULE)
     P_("  An advantage that shrinks with depth is not an answer for an engine built to run deep")
     P_("  windows. PREDECLARED before running.")
-    P_(f"\n    {'nCtrl':>6} {'L':>3} {'paths':>12} {'top-1% share':>14} {'bound/mass tail at 1% kept':>28}")
-    for nc, ll in ((4, 3), (4, 4), (4, 5), (5, 3), (5, 4)):
-        if nc ** (ll + 1) > 3_000_000:
-            P_(f"    {nc:>6} {ll:>3} {nc ** (ll + 1):>12,}  not enumerable within this module's budget")
+    trend = []
+    P_("  B5's FIRST RUN HAD A BUG OF MINE AND IT IS RECORDED RATHER THAN QUIETLY FIXED: the")
+    P_("  path count was written nCtrl^(L+1) instead of (2^nCtrl)^(L+1), so the enumerability")
+    P_("  guard was computing 5^5 = 3,125 for a case that is really 32^5 = 33,554,432, let it")
+    P_("  through, and the module died. The printed path column was wrong by the same factor.")
+    P_("  DEPTH IS NOW ISOLATED PROPERLY: L is swept at FIXED width, since varying both at once")
+    P_("  cannot show what depth alone does -- which is the whole predeclared question.")
+    P_(f"\n    {'nCtrl':>6} {'L':>3} {'paths':>14} {'top-1% share':>14} {'bound/mass tail at 1% kept':>28}")
+    for nc, ll in ((3, 3), (3, 4), (3, 5), (3, 6), (4, 3), (4, 4), (5, 3)):
+        npaths = (2 ** nc) ** (ll + 1)
+        if npaths > 3_000_000:
+            P_(f"    {nc:>6} {ll:>3} {npaths:>14,}  not enumerable within this module's budget")
             continue
         Q2, Pm2, pi2, n2, hv2, S2, ab2, rw2, _ = setup(nc, ll)
         Sp2 = np.maximum(S2, 0.0).sum(axis=1)
@@ -295,8 +303,16 @@ def main():
         k = max(1, int(0.01 * len(bd2)))
         tm = float(tr2[np.argsort(-wp2)[:k]].sum())
         tb = float(tr2[np.argsort(-bd2)[:k]].sum())
-        P_(f"    {nc:>6} {ll:>3} {nc ** (ll + 1):>12,} {top * 100:>13.2f}%"
-           f" {(tb / max(tm, 1e-300)):>28.3e}")
+        adv = tb / max(tm, 1e-300)
+        trend.append((nc, ll, adv))
+        P_(f"    {nc:>6} {ll:>3} {npaths:>14,} {top * 100:>13.2f}%"
+           f" {adv:>28.3f}")
+    dep = [(ll, a) for nc, ll, a in trend if nc == 3]
+    if len(dep) >= 3:
+        sl = np.polyfit([d for d, _ in dep], [a for _, a in dep], 1)[0]
+        P_(f"\n  DEPTH TREND AT FIXED WIDTH (nCtrl = 3, L = {dep[0][0]}..{dep[-1][0]}):"
+           f" advantage changes by {sl:+.3f} per level of window depth.")
+        P_(f"  B5: the advantage {'GROWS with depth -- it is an answer for the engine, which exists to run deep windows.' if sl > 0.02 else ('SHRINKS with depth, and as predeclared that is not an answer for an engine built to run deep windows.' if sl < -0.02 else 'is FLAT in depth: it neither grows nor decays over the range enumerable here.')}")
 
     # ---- B6  LIMITS ----------------------------------------------------------------------------
     P_("\n" + RULE)
