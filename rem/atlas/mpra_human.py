@@ -346,6 +346,71 @@ def main():
     P_("    human CRISPRi, between regulator       1.05 floors  CI [0.90, 1.18]")
 
     # ---- M5 / M6 -------------------------------------------------------------------------------
+    # ---- M4b  WHAT THE CROSS-CELL RESULT ACTUALLY SHOWS -----------------------------------------
+    P_("\n" + RULE); P_("M4b  IS A MOTIF'S EFFECT A PROPERTY OF THE MOTIF, WITHIN ONE CELL?")
+    P_(RULE)
+    P_("  The cross-cell result in M5 has TWO explanations and they matter very differently.")
+    P_("  (a) the per-gene RESPONSE FUNCTION differs between cells -- a problem for the engine; or")
+    P_("  (b) the cognate factor's ACTIVITY differs between cells -- which is precisely what the")
+    P_("      engine already models as controller state, and under which an uncorrelated cross-cell")
+    P_("      result is what a CORRECT engine predicts.")
+    P_("  M5 alone cannot separate them. This can: within ONE cell, is the same motif's effect")
+    P_("  consistent across the different enhancer contexts it appears in?")
+    P_(f"\n    {'cell':<8} {'classes':>8} {'between motifs':>16} {'within a motif':>16}"
+       f" {'identity explains':>18}")
+    for cell in ("HepG2", "K562"):
+        e1, e2, ms = res[cell]
+        eb = (e1 + e2) / 2.0
+        sg = floors[cell]
+        noise_mean = sg ** 2 / 2
+        byk = collections.defaultdict(list)
+        for v, m in zip(eb, ms):
+            byk[m].append(v)
+        keys = list(byk)
+        clusters = [[k] for k in keys]
+        merged = True
+        while merged:
+            merged = False
+            for i in range(len(clusters)):
+                for j in range(i + 1, len(clusters)):
+                    if all(sim(a, b) >= 0.85 for a in clusters[i] for b in clusters[j]):
+                        clusters[i] = clusters[i] + clusters[j]
+                        clusters.pop(j)
+                        merged = True
+                        break
+                if merged:
+                    break
+        gs = [np.array(sum((byk[k] for k in c), [])) for c in clusters]
+        gs = [v for v in gs if len(v) >= 2]
+        num = 0.0
+        den = 0
+        for v in gs:
+            K = len(v)
+            num += np.var(v, ddof=0) * K - noise_mean * (K - 1)
+            den += K
+        within = max(num / max(den, 1), 0.0)
+        gm = np.array([v.mean() for v in gs])
+        ns = np.array([len(v) for v in gs])
+        between = max(float(np.var(gm, ddof=0)) - float(np.mean(within / ns + noise_mean / ns)), 0.0)
+        tot = between + within
+        P_(f"    {cell:<8} {len(gs):>8} {f'{np.sqrt(between)/sg:.2f} floors':>16}"
+           f" {f'{np.sqrt(within)/sg:.2f} floors':>16}"
+           f" {f'{100*between/tot:.1f}%' if tot > 0 else 'n/a':>18}")
+    P_("\n  So the answer is (b) plus something else. Within a single cell, MOTIF IDENTITY explains")
+    P_("  only a minority of the reproducible effect -- the rest is CONTEXT, the same motif")
+    P_("  behaving differently in different enhancers. That does NOT show the engine's per-gene")
+    P_("  response function is unstable: the engine's conditionals are PER GENE already, so")
+    P_("  context-dependence is inside the model rather than outside it.")
+    P_("  What it damages is the COMPRESSION. Every summary tested in this build order -- count,")
+    P_("  signed count, class count, multiplier -- shares one assumption: that a gene's response")
+    P_("  depends on its regulators through classes that are SHARED ACROSS GENES. A globally")
+    P_("  shared class map can capture at most the between-motif share measured above, and that")
+    P_("  is why the human class ladder was flat while yeast's spanned 8.6 floors.")
+    P_("\n  THE CAVEAT THAT COULD OVERTURN THIS: the classes are recovered by sequence similarity,")
+    P_("  not from a curated database, so instances of different factors may share a class. Any")
+    P_("  such error inflates the WITHIN-class term, so the context share is an UPPER bound and")
+    P_("  the identity share a LOWER one.")
+
     P_("\n" + RULE); P_("M5  REPLICATION ACROSS CELL TYPES"); P_(RULE)
     P_("  The first version of this gate asserted the principle and computed nothing. The two")
     P_("  cell types measure the SAME constructs, so the replication is a number.")
