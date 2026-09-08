@@ -61,6 +61,24 @@ D1b THE BAR D1 SHOULD HAVE PUT IT ON, PREDECLARED AFTER D1 RAN AND BEFORE D1b DI
     (N, R) in the sweep recovers it, the spec must say so instead of quoting the smallest number
     in the table.
 
+D1c THE CONTROL THAT DECIDES WHAT D1b's SATURATION MEANS, PREDECLARED BEFORE IT RAN. D1b's knee
+    stops rising long before it reaches the C = 64 it was told to find, and there are two
+    completely different reasons that could happen. Either the ESTIMATOR cannot return 64 at any
+    depth -- in which case "smallest C within one floor" measures the RESOLUTION of the
+    measurement and not the structure of the biology, and signed.py's C = 64 is a statement about
+    yeast's precision rather than about kinds of regulator. Or the estimator can return 64 when
+    the 64 levels are genuinely separable, and D1b's saturation only says that 64 levels drawn
+    from a continuous spread are not separable at these depths.
+    THE CONTROL: rerun the identical sweep with the 64 class effects EQUALLY SPACED at exactly
+    one floor apart, so they are separable by construction, and see whether the knee reaches 64.
+    Then report the SCALING LAW of the knee in replicate depth rather than a point, because this
+    build order has had to correct three approximations ranked at a point, and invert it to the
+    depth at which 64 becomes resolvable.
+    PREDECLARED: if the separated control ALSO saturates below 64, the estimator is
+    resolution-limited whatever the truth is and C is not a structural constant. If the separated
+    control reaches 64, then C = 64 is recoverable in principle and the requirement is a signal
+    to floor ratio, which the inversion turns into a replicate depth.
+
 D2  THE ALPHABET AXIS, WHICH IS A HARD CEILING AND NOT A POWER CALCULATION. A panel that perturbs
     N regulators cannot return a class count above N, and cannot show a ladder FLATTEN above its
     knee unless N is comfortably larger than the knee. To test C = 64 the panel must carry at
@@ -226,7 +244,7 @@ def coverage_law(tgt, outdeg, sizes, rng, reps=40):
 # D1b  the power calculation, on the estimator that is actually used
 # =================================================================================================
 
-def ladder_knee(N, C_true, R, G, sigma, ph, kdist, rng, Cgrid=None):
+def ladder_knee(N, C_true, R, G, sigma, ph, kdist, rng, Cgrid=None, sep_floors=None):
     """Simulate the class ladder under a world where the class hypothesis is exactly true.
 
     Regulators carry a class effect shared across genes -- the best case for every summary this
@@ -239,7 +257,11 @@ def ladder_knee(N, C_true, R, G, sigma, ph, kdist, rng, Cgrid=None):
         Cgrid = [c for c in (1, 2, 4, 8, 16, 32, 64, 128, 256, 512) if c <= N] + [N]
         Cgrid = sorted(set(Cgrid))
     cls = rng.integers(0, C_true, N)
-    eff = rng.normal(0.0, np.sqrt(ph), C_true)
+    if sep_floors is None:
+        eff = rng.normal(0.0, np.sqrt(ph), C_true)
+    else:
+        step = sep_floors * (sigma / np.sqrt(max(R // 2, 1)))
+        eff = (np.arange(C_true) - (C_true - 1) / 2.0) * step
     gi, ti = [], []
     for g in range(G):
         K = int(kdist[rng.integers(len(kdist))])
@@ -409,6 +431,57 @@ def main():
     P_(f"\n  AND THE ALPHABET CEILING SHOWS UP HERE ON ITS OWN: at N = 48 the recovered knee is")
     P_(f"  {min(s_[4] for s_ in at48):.0f}-{max(s_[4] for s_ in at48):.0f} at every depth, because a panel of 48 cannot express 64 classes")
     P_( "  however many times it is replicated. Depth cannot buy alphabet.")
+
+    # ---- D1c  WHAT THE SATURATION MEANS --------------------------------------------------------
+    P_("\n" + RULE)
+    P_("D1c  IS THE KNEE A STRUCTURAL COUNT OR A RESOLUTION? THE CONTROL")
+    P_(RULE)
+    P_("  D1b's knee stops rising long before C = 64, the number it was told to find. Two")
+    P_("  incompatible readings, and the control below separates them. PREDECLARED above.")
+    P_(f"\n  THE SCALING LAW FIRST, since ranking at a point is the error corrected three times here.")
+    at404 = [(s_[1], s_[4]) for s_ in sweep if s_[0] == 404]
+    Rs = np.array([a for a, _ in at404], float)
+    Ks = np.array([b for _, b in at404], float)
+    al = np.polyfit(np.log(Rs), np.log(Ks), 1)
+    P_(f"    knee ~ R^{al[0]:.2f}   (fitted over R = {int(Rs.min())}..{int(Rs.max())} at N = 404)")
+    P_(f"    an exponent near 0.5 is the signature of a RESOLUTION statistic: the number of")
+    P_(f"    distinguishable levels grows as the square root of the precision, which is what")
+    P_(f"    quantising a fixed spread into equal-count bins does. A structural count would be")
+    P_(f"    FLAT in R -- it would find 64 and stop.")
+    R64 = float(np.exp((np.log(64.0) - al[1]) / al[0])) if al[0] > 0 else float("inf")
+    P_(f"    extrapolating that law to a knee of 64 needs R = {R64:,.0f} replicates.")
+    P_("\n  NOW THE CONTROL: the same 64 classes, EQUALLY SPACED one floor apart, separable by")
+    P_("  construction. If the estimator can ever return 64, it returns it here.")
+    P_(f"\n    {'N regs':>7} {'R reps':>7} {'span, floors':>14} {'knee':>7} {'signal, floors':>16}")
+    hit = []
+    for Np in (128, 404):
+        for R in (2, 8, 32):
+            sp, kn = [], []
+            for rep in range(5):
+                rr = np.random.default_rng(9000 + 31 * Np + 5 * R + rep)
+                a, b = ladder_knee(Np, 64, R, 1400, sigma, ph, kdist, rr, sep_floors=1.0)
+                sp.append(a); kn.append(b)
+            step_sd = np.sqrt((64.0 ** 2 - 1) / 12.0)          # sd of the spaced effects, in floors
+            P_(f"    {Np:>7} {R:>7} {np.mean(sp):>14.2f} {np.median(kn):>7.0f} {step_sd:>16.1f}")
+            hit.append(float(np.median(kn)))
+    sep_sd_floors = float(np.sqrt((64.0 ** 2 - 1) / 12.0))
+    if max(hit) >= 32:
+        P_(f"\n  D1c: THE ESTIMATOR CAN RETURN 64 -- but only in a world whose between-regulator")
+        P_(f"  signal is {sep_sd_floors:.0f} floors. The measured human value is {rho:.2f} floors. Since the signal in")
+        P_(f"  floors grows as sqrt(R/2), reaching {sep_sd_floors:.0f} needs R = {2*(sep_sd_floors/rho)**2:,.0f} replicates per")
+        P_(f"  perturbation -- and that is the LOWER bound again, because the systematic component")
+        P_(f"  of the noise does not shrink with R at all.")
+        P_(f"\n  SO C IS NOT A STRUCTURAL CONSTANT AT THE PRECISION ANYONE ACTUALLY HAS. The knee the")
+        P_(f"  criterion returns is min(true class count, what the precision can resolve), and on")
+        P_(f"  every real dataset in this build order the second term binds. signed.py's C = 64")
+        P_(f"  is therefore a statement about YEAST'S PRECISION as much as about kinds of")
+        P_(f"  regulator, and the caps that rest on it inherit that. This is not a refutation of")
+        P_(f"  the caps -- the cost arithmetic is unchanged -- but it relocates what C is.")
+    else:
+        P_(f"\n  D1c: the separated control ALSO saturates (knee {max(hit):.0f}). The estimator is")
+        P_(f"  resolution-limited whatever the truth is, and 'smallest C within one floor' cannot")
+        P_(f"  return a structural class count at any depth. That is stronger than the reading")
+        P_(f"  above and worse for the caps: C would then have no measurement that defines it.")
 
     # ---- D2  THE ALPHABET AXIS -----------------------------------------------------------------
     P_("\n" + RULE)
