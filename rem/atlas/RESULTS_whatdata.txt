@@ -1,0 +1,252 @@
+=================================================================================================
+WHAT DATA WOULD ACTUALLY VALIDATE C? THE SPECIFICATION, COMPUTED
+=================================================================================================
+  Two modules closed by naming what was needed in prose. This turns the prose into
+  numbers, using only data already in hand plus a live census of what exists.
+
+=================================================================================================
+D0  THE CEILING GATE: DOES THE DATA ALREADY EXIST?
+=================================================================================================
+  PREDECLARED ABOVE, before the census ran: >= 128 distinct factors AND >= 7 biological
+  replicates would mean no new experiment is needed and this module stops here.
+  ENCODE K562 CRISPRi RNA-seq, released: 77 experiments, 74 distinct factors.
+  biological replicates per experiment: {2: 66, 3: 8, 4: 3}
+  the deepest experiment in the entire catalogue has 4 biological replicates.
+
+  D0: FAIL on BOTH axes.
+    factors 74 against the 128 required: short by 54.
+    depth 4 against the 7 required: short by 3.
+  The whole ENCODE CRISPRi K562 catalogue -- not the 48 factors cached here, the
+  ENTIRE released catalogue -- cannot express C = 64 and cannot reach the depth.
+  So the answer is not 'download more of the same', and the rest of this module
+  is not a wish list but a specification with a purpose.
+
+=================================================================================================
+D1  THE REPLICATE AXIS: HOW DEEP WOULD THE SAME ASSAY HAVE TO BE?
+=================================================================================================
+  153 expressed targets with >= 2 perturbed regulators, 400 pairs,
+  measured twice each. noise floor sigma = 0.2200 log2.
+  between-regulator sd 0.2302 log2 = 1.05 floors   CI [0.90, 1.18]
+  humantransfer's H3 reported this same quantity at about 1.05 floors. If the figure
+  above is not that number, this module is reading the data differently from the module
+  it is extending, and nothing below it is readable.
+
+  DEPTH REQUIRED, R = 2 (bar/rho)^2, for a margin of:
+    bar, in floors                            total biological replicates
+    1.0  (the ladder merely clears its own floor)                            2
+    2.0  (some class resolutions excluded)                              7
+    8.6  (yeast-grade resolution, the reference)                          135
+
+  D1 as predeclared: R(1) = 2 <= 8, so depth IS a fixable axis; R(8.6) = 135 > 100, so yeast-grade resolution is NOT reachable by replicating this assay.
+  CAVEAT THAT IS NOT OPTIONAL: sqrt(R) holds only for the component of the noise that is
+  INDEPENDENT across biological replicates. A guide's off-target and indirect effects are
+  shared by both replicates of the same experiment, so they are invisible to sigma and
+  are NOT reduced by replication. With two replicates that systematic floor cannot be
+  bounded from these data at all, and R above is therefore a LOWER bound on the depth.
+
+=================================================================================================
+D1b  THE BAR D1 PUT ON THE WRONG QUANTITY, AND THE POWER CALCULATION THAT REPLACES IT
+=================================================================================================
+  D1 returned R(bar = 1) = 2: the CURRENT depth already clears it, because the
+  between-regulator sd is 1.05 floors and D1 set its bar directly on that sd. A bar the
+  data already meets cannot tell you what to fix. The quantity that was degenerate in
+  scalarcap is not the sd -- it is the LADDER SPAN, a difference of held-out RMSEs, and
+  RMSE differences compress a signal. D1's arithmetic is superseded, left above so the
+  error is visible, and the bar is now put on the estimator that is actually used.
+
+  THE SIMULATION GRANTS THE CLASS HYPOTHESIS. Regulator effects are drawn from C = 64
+  classes SHARED ACROSS GENES, at the measured between-regulator variance and the
+  measured floor, with TRRUST's real depth distribution. genegroups measured the
+  shared-across-genes component to be a MINORITY of the real signal, so this is the best
+  case and every requirement below is a LOWER BOUND on what real data would need.
+
+   N regs  R reps  targets   ladder span, floors   knee recovered
+       48       2     1400                  0.47                1
+       48       4     1400                  0.79                1
+       48       8     1400                  1.21                2
+       48      16     1400                  2.12                4
+       48      32     1400                  3.45                4
+       48      64     1400                  4.88                8
+       48     128     1400                  7.59                8
+      128       2     1400                  0.46                1
+      128       4     1400                  0.82                1
+      128       8     1400                  1.41                2
+      128      16     1400                  1.78                2
+      128      32     1400                  2.86                4
+      128      64     1400                  4.74                8
+      128     128     1400                  6.59                8
+      404       2     1400                  0.42                1
+      404       4     1400                  0.75                1
+      404       8     1400                  1.31                2
+      404      16     1400                  2.01                4
+      404      32     1400                  3.22                4
+      404      64     1400                  4.60                8
+      404     128     1400                  7.33                8
+      794       2     1400                  0.41                1
+      794       4     1400                  0.63                1
+      794       8     1400                  1.32                2
+      794      16     1400                  2.00                2
+      794      32     1400                  2.96                4
+      794      64     1400                  4.89                8
+      794     128     1400                  7.74               16
+
+  D1b: NO point in the sweep recovers the knee. As predeclared, the spec says so
+  rather than quoting the smallest number in the table.
+
+  AND THE ALPHABET CEILING SHOWS UP HERE ON ITS OWN: at N = 48 the recovered knee is
+  1-8 at every depth, because a panel of 48 cannot express 64 classes
+  however many times it is replicated. Depth cannot buy alphabet.
+
+=================================================================================================
+D1c  IS THE KNEE A STRUCTURAL COUNT OR A RESOLUTION? THE CONTROL
+=================================================================================================
+  D1b's knee stops rising long before C = 64, the number it was told to find. Two
+  incompatible readings, and the control below separates them. PREDECLARED above.
+
+  THE SCALING LAW FIRST, since ranking at a point is the error corrected three times here.
+    knee ~ R^0.57   (fitted over R = 2..128 at N = 404)
+    an exponent near 0.5 is the signature of a RESOLUTION statistic: the number of
+    distinguishable levels grows as the square root of the precision, which is what
+    quantising a fixed spread into equal-count bins does. A structural count would be
+    FLAT in R -- it would find 64 and stop.
+    extrapolating that law to a knee of 64 needs R = 3,444 replicates.
+
+  NOW THE CONTROL: the same 64 classes, EQUALLY SPACED one floor apart, separable by
+  construction. If the estimator can ever return 64, it returns it here.
+
+     N regs  R reps   span, floors    knee   signal, floors
+        128       2          17.71      16             18.5
+        128       8          17.73      16             18.5
+        128      32          17.64      16             18.5
+        404       2          17.65      16             18.5
+        404       8          17.25      16             18.5
+        404      32          17.00      16             18.5
+
+  D1c: the separated control ALSO saturates (knee 16). The estimator is
+  resolution-limited whatever the truth is, and 'smallest C within one floor' cannot
+  return a structural class count at any depth. That is stronger than the reading
+  above and worse for the caps: C would then have no measurement that defines it.
+
+=================================================================================================
+D1d  IF C IS A RESOLUTION, THE CAP IS A CURVE. THE LAW, AND THE CURVE
+=================================================================================================
+  pooled over 27 simulation points from BOTH families:
+    knee  =  0.88 * (signal in floors) ^ 1.05        R^2 = 0.947
+  IT HOLDS ACROSS BOTH FAMILIES -- reported as a law.
+
+  READ PLAINLY: the number of regulator classes a dataset supports is roughly the
+  regulator effect spread divided by the accuracy demanded of it. Demand less accuracy
+  and C falls; demand more and C rises. It is a quantisation count.
+
+  SO THE CAP IS NOT A NUMBER AT C = 64. IT IS THIS CURVE:
+
+      demanded accuracy  C supported   cap, controllers
+            4.00 floors            1                199
+            2.00 floors            1                199
+            1.00 floors            1                199
+            0.50 floors            2                199
+            0.25 floors            4                199
+
+  The left column is what the engine is asked to reproduce, in units of the human
+  panel's own replicate noise. The right column is how many controllers fit under the
+  bar at that standard. Every previously reported cap is ONE ROW of this table, and the
+  row was chosen in yeast.
+
+=================================================================================================
+D2  THE ALPHABET AXIS: HOW MANY FACTORS MUST BE PERTURBED?
+=================================================================================================
+  TRRUST: 794 regulators, 2491 targets.
+  A panel of N regulators cannot return C > N. To test C = 64 and see the ladder flatten
+  above the knee, N >= 128. That is the hard part of the requirement. The rest is
+  coverage: how many targets does a panel of N actually reach at a useful depth?
+
+  TARGETS REACHED AT DEPTH >= k, BRACKETED BY THE BEST AND WORST PANEL OF SIZE N
+  (best = the N highest-out-degree regulators; worst = N drawn at random, mean of 40)
+        N           k>=2          k>=4          k>=8         k>=20
+       48     857/64        303/7          64/1           6/0     
+       74     987/108       349/16         89/2          11/0     
+      128    1128/238       433/50        132/9          20/0     
+      200    1225/398       509/99        167/21         27/2     
+      300    1296/613       561/183       187/46         34/5     
+      794    1416/1416      639/639       221/221        42/42    
+    read as best/worst.
+
+  THE CEILING OF THE IDEAL EXPERIMENT -- every TRRUST regulator perturbed:
+    1416 targets at k >= 2, 639 at k >= 4, 221 at k >= 8, 42 at k >= 20.
+  That number at k >= 20 is the population available to test the regime the 140 cap
+  actually lives in, and it is the ceiling: no panel can do better, because TRRUST does
+  not know of more regulators for those genes.
+
+=================================================================================================
+D3  THE DEPTH AXIS: IS THE IDENTITY MARGIN FLAT IN k?
+=================================================================================================
+  PREDECLARED: overlapping CIs across every bin means the scaling is unmeasurable here
+  and no extrapolation to k = 20 is permitted.
+
+    bin           genes   pairs   sd, log2   floors       95% CI, floors
+    k >= 2          153     400     0.2302     1.05         [0.91, 1.18]
+    k >= 3           57     208     0.2376     1.08         [0.89, 1.24]
+    k >= 4           26     115     0.2622     1.19         [0.92, 1.42]
+
+  D3: the CIs overlap across every bin. THE SCALING IS UNMEASURABLE IN THIS PANEL.
+  As predeclared, no extrapolation to k = 20 is permitted and the spec must carry the
+  depth requirement as an UNKNOWN. That is the honest reading: the deepest bin here
+  holds 26 genes, and a bin that small cannot rank anything.
+
+=================================================================================================
+D4  THE COMBINATORIAL AXIS, WHICH SINGLE KNOCKDOWNS CANNOT SUPPLY AT ANY DEPTH
+=================================================================================================
+  The engine's per-gene factor is a PRODUCT over occupied classes of (k_ij (L+1) + 1). It
+  is a statement about JOINT states of a gene's regulators. Every measurement above is a
+  MARGINAL: one factor silenced, everything else left alone. Two regulators can have
+  identical marginals and different joint behaviour, and the class hypothesis asserts
+  they do not. No number of single knockdowns tests that assertion.
+
+  WHAT A COMBINATORIAL DESIGN WOULD HAVE TO COVER, counted in TRRUST:
+    same-target regulator PAIRS        46712
+    same-target regulator TRIPLES     615193
+  The test at pair level: for regulators a and b that a class map places in the SAME
+  class, the double knockdown must be predicted by the class count -- that is, {a,b}
+  must behave like any other same-class pair with the same count. A class map that
+  survives its marginals and fails this is a class map the engine cannot use, because the
+  cost functional only ever reads the count vector.
+  This is the copy-number question, unasked of human data since the engine module, and
+  the pair count above is the size of the smallest design that could ask it.
+
+=================================================================================================
+D5  THE SPECIFICATION
+=================================================================================================
+  A dataset validates C for this engine if and only if it has all four of:
+    1. ALPHABET   >= 128 distinct regulators perturbed  (ENCODE K562 CRISPRi has 74)
+    2. DEPTH      UNRESOLVED -- no point in D1b's sweep recovered the knee
+    3. BREADTH    enough targets at k >= 20 to test the regime the 140 cap
+                  lives in -- ceiling 42 targets, and only if EVERY TRRUST
+                  regulator is perturbed
+    4. JOINT      multi-perturbation, not single knockdowns, or criterion 1-3 validate
+                  marginals of a functional defined on joints
+
+  APPLICABILITY DOMAIN, stated because a number without one is ledger S and this build
+  order has recorded that twice. A C validated on CRISPRi knockdown log-ratios is a C for
+  THAT response function. The engine's C is for a steady-state transcription rate. The
+  two coincide only if the knockdown response is monotone in the same latent quantity the
+  rate depends on, which is an assumption this module does not test and no module here
+  has tested.
+
+  TWO NAMED CANDIDATES, NOT ANALYSED HERE AND FLAGGED AS SUCH. Genome-scale Perturb-seq
+  (Replogle et al., Cell 2022, PMID 35688146, doi:10.1016/j.cell.2022.05.013; via PubMed)
+  targets all expressed genes with CRISPRi across >2.5 million human cells, which is the
+  only published design plausibly meeting criteria 1-3 -- its alphabet is every expressed
+  regulator and its per-perturbation cell counts are the replication. For criterion 4 the
+  nearest published design is the combinatorial CRISPRa GI map of Norman et al. (Science
+  2019, PMID 31395745, doi:10.1126/science.aax4438; via PubMed). NEITHER WAS DOWNLOADED,
+  NEITHER WAS TESTED, and their per-perturbation depth is not stated in either abstract,
+  so whether they clear the D1 bar is unknown. They are named as the next measurement,
+  which is exactly the status humantransfer gave the human MPRA before it was run -- and
+  when that one WAS run it failed. A named candidate is not a validated one.
+
+  AND THE HONEST BOTTOM LINE. Criterion 1 alone rules out every released CRISPRi panel
+  in this cell line. Criterion 4 rules out ALL single-perturbation data whatever its size.
+  So the answer to 'what data would validate C' is not a bigger version of what was
+  already used: it is a multi-perturbation panel over >= 128 regulators with replicate
+  depth in the tens, and until such a panel is analysed the caps 3, 13 and 140 remain
+  cost arithmetic at an accuracy standard measured in yeast.
