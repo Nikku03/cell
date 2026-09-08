@@ -141,16 +141,42 @@ D1d  IF C IS A RESOLUTION, THE CAP IS A CURVE. THE LAW, AND THE CURVE
   SO THE CAP IS NOT A NUMBER AT C = 64. IT IS THIS CURVE:
 
       demanded accuracy  C supported   cap, controllers
-            4.00 floors            1                199
-            2.00 floors            1                199
-            1.00 floors            1                199
-            0.50 floors            2                199
-            0.25 floors            4                199
+            4.00 floors            1 >= 1999  SATURATED
+            2.00 floors            1 >= 1999  SATURATED
+            1.00 floors            1 >= 1999  SATURATED
+            0.50 floors            2 >= 1999  SATURATED
+            0.25 floors            4                442
+
+  A ROW MARKED SATURATED IS NOT A MEASUREMENT. The cap functional walks the controller
+  count upward until the bar is breached and stops at its own ceiling of 2000; a row that
+  reaches the ceiling means the bar was never breached, so the number is the ceiling and
+  not the cap.
+  Some rows above are saturated and are reported as lower bounds only.
+
+  AND THAT DEFECT REACHES BACKWARD, INTO THE MODULE SHIPPED BEFORE THIS ONE. scalarcap
+  called the same functional with maxC = 60 and reported a cap of 59 at C = 4. 59 is
+  60 - 1: that row was ITS OWN LOOP CEILING, not a cap. scalarcap's V0 VERDICT SURVIVES
+  -- with and without the scalar both hit the same ceiling, so the scalar still changes
+  nothing -- but the NUMBER 59 was a saturated statistic reported as a measurement,
+  which is ledger U, in a module whose own V1 was withdrawn for exactly that. The rows
+  at C = 8, 16 and 64 gave 30, 15 and 13, well under the ceiling, and are unaffected.
 
   The left column is what the engine is asked to reproduce, in units of the human
   panel's own replicate noise. The right column is how many controllers fit under the
   bar at that standard. Every previously reported cap is ONE ROW of this table, and the
   row was chosen in yeast.
+
+  WHAT THIS DOES NOT ESTABLISH, AND THE DISCREPANCY THAT SAYS SO. The law above is
+  measured INSIDE the simulation. It licenses the statement that the estimator returns a
+  resolution count -- it could not return 64 even when told 64 was true -- and signed.py
+  uses that estimator, so signed.py's C = 64 is at least partly a resolution. It does NOT
+  license reading 64 off this law. Doing so needs yeast's signal-to-floor ratio in these
+  same units; the one crude figure available is about 16 floors, which the law maps to
+  a knee near 16, not 64. That 4x discrepancy is unexplained here and is itself the
+  reason not to over-read the reframing: what is established is that the criterion cannot
+  identify a structural class count, not that yeast's particular 64 is fully accounted
+  for. Reconciling it needs signed.py's ladder rebuilt in floors, which this module did
+  not do.
 
 =================================================================================================
 D2  THE ALPHABET AXIS: HOW MANY FACTORS MUST BE PERTURBED?
