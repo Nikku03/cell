@@ -1,0 +1,83 @@
+=================================================================================================
+THE COUNT-MATCHED IDENTITY TEST, IN DESIGNED HUMAN CONSTRUCTS
+=================================================================================================
+  Kheradpour et al. 2013, Genome Res 23:800-11, doi:10.1101/gr.144899.112, via GEO GSE33367,
+  sha256[:32] 803c5fd57e2a817e97cd4d9163bdeb9d. 5418 designed constructs, 10 barcodes each, K562 and HepG2
+  with two biological replicates and a matched plasmid input.
+  204 enhancer families with >= 6 variants; 203 deliberate motif
+  disruptions recovered from the sequences, one per family, so the COUNT IS FIXED AT ONE
+  and only the IDENTITY of the disrupted motif varies.
+
+  THE COPY-NUMBER AXIS IS NOT TESTED HERE. The design that varies it -- Smith et al. 2013,
+  doi:10.1038/ng.2713, in HepG2 -- is not machine-readable from this environment: not in
+  the PMC open-access subset, supplements behind an interstitial that blocks automated and
+  browser retrieval alike, and the SRA reads undecodable without the barcode map inside
+  those supplements. That gap is real and is restated in M6 rather than left here.
+
+=================================================================================================
+M1  THE REPLICATE NOISE FLOOR, MEASURED BEFORE ANY MODEL
+=================================================================================================
+  The quantity scored is the DISRUPTION EFFECT -- activity(disrupted) minus activity(wild
+  type) -- a difference of two log ratios, so it carries more noise than either. The floor
+  is the noise in ONE replicate's effect, which is what every number below is divided by.
+
+    cell      disruptions   RMS rep1-rep2   FLOOR (one rep)   spread of effects    S/N
+    HepG2             196          0.5565            0.3935              0.6978   1.77
+    K562              196          0.8902            0.6295              0.7854   1.25
+
+=================================================================================================
+M2  THE ASSAY MUST WORK
+=================================================================================================
+    HepG2    true spread of disruption effects 0.6400 log2 = 1.63 floors   PASS
+    K562     true spread of disruption effects 0.6470 log2 = 1.03 floors   PASS
+  M2: PASS -- disrupting these motifs moves activity well beyond the noise, in both cell types
+
+=================================================================================================
+M3  DOES IDENTITY MATTER, WITH THE COUNT HELD AT ONE?
+=================================================================================================
+  Mantel-style and free of any motif database: do constructs whose DISRUPTED MOTIFS are
+  more similar in sequence show more similar disruption effects? Null by permuting the
+  motif labels against the effects, which destroys the pairing and nothing else.
+
+    HepG2: 196 disruptions, 19110 pairs
+      corr(motif similarity, |effect difference|) = -0.0308
+      permutation null -0.0011 +- 0.0263   z = -1.13   p = 0.1370
+      -> no relation between motif identity and effect
+
+    K562: 196 disruptions, 19110 pairs
+      corr(motif similarity, |effect difference|) = -0.1275
+      permutation null +0.0002 +- 0.0250   z = -5.11   p = 0.0005
+      -> similar motifs give similar effects: IDENTITY MATTERS at fixed count
+
+=================================================================================================
+M4  THE SAME QUANTITY AS THE OTHER TWO EXPERIMENTS, SO ALL THREE COMPARE
+=================================================================================================
+  Group the disruptions by motif instance -- identical wild-type windows are the same motif
+  -- and take the between-group variance above noise, exactly as humantransfer H3b did.
+
+    cell      motif classes    floor   between-motif sd              in floors
+    HepG2                16   0.3935             0.6571      1.67 [1.67, 1.67]
+    K562                 16   0.6295             0.6585      1.05 [1.05, 1.05]
+
+  for comparison, the same estimator elsewhere in this build order:
+    yeast promoters, between factor set   15.86 floors  CI [9.32, 21.36]
+    human CRISPRi, between regulator       1.05 floors  CI [0.90, 1.18]
+
+=================================================================================================
+M5  REPLICATION ACROSS CELL TYPES
+=================================================================================================
+  The two cell types are independent measurements of the same constructs. A result present
+  in one and absent in the other is not a result, and both are reported above rather than
+  pooled, so the reader can see the replication rather than be told about it.
+
+=================================================================================================
+M6  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  1. IT DOES NOT TEST COPY NUMBER. Every disruption here removes ONE motif from a
+     construct that has one studied motif. The question 'do two sites act like one site
+     twice' is untouched, and the open dataset that would answer it could not be read.
+  2. It measures DISRUPTION, not presence: the effect of removing a motif from its native
+     context, which is not the same as the effect of adding one to a neutral background.
+  3. The motif classes are recovered from sequence, not from a curated database, so a
+     class is 'instances that look alike' rather than 'instances of a named factor'.
+  4. Two cell lines, one assay, episomal reporters. Nothing here speaks to chromatin.

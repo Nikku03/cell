@@ -173,7 +173,7 @@ def sim(a, b):
                 if 0 <= j < len(y):
                     n += 1
                     m += (a[i] == y[j])
-            if n >= 6:
+            if n >= 9:                     # a 6-base overlap can hit 1.0 by chance
                 best = max(best, m / n)
     return best
 
@@ -299,55 +299,70 @@ def main():
                        for _ in range(B)])
         return pt, float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))
 
-    P_(f"\n    {'cell':<8} {'motif classes':>14} {'floor':>8} {'between-motif sd':>18}"
-       f" {'in floors':>22}")
+    P_(f"\n    {'cell':<8} {'motif classes':>14} {'floor':>8}")
     for cell in ("HepG2", "K562"):
         e1, e2, ms = res[cell]
         eb = (e1 + e2) / 2.0
         byk = collections.defaultdict(list)
         for v, m in zip(eb, ms):
             byk[m].append(v)
-        # sequence-similar instances merged, single linkage at 0.85, so near-identical motif
-        # instances are one class rather than many singletons
         keys = list(byk)
-        parent = {k: k for k in keys}
-
-        def find(x):
-            while parent[x] != x:
-                parent[x] = parent[parent[x]]
-                x = parent[x]
-            return x
-        for i in range(len(keys)):
-            for j in range(i + 1, len(keys)):
-                if sim(keys[i], keys[j]) >= 0.85:
-                    a, b = find(keys[i]), find(keys[j])
-                    if a != b:
-                        parent[a] = b
-        cl = collections.defaultdict(list)
-        for k in keys:
-            cl[find(k)] += byk[k]
-        gs = [np.array(v) for v in cl.values() if len(v) >= 2]
-        if not gs:
-            P_(f"    {cell:<8} {len(cl):>14} -- no class has two members, cannot estimate")
+        # COMPLETE linkage. Single linkage is transitive and chained 181 of 196 disruptions into
+        # one class on the first run, leaving exactly one group with two or more members -- so the
+        # bootstrap resampled a single unit, the interval had zero width, and the "between-motif"
+        # variance was really the variance WITHIN one giant class. Ledger U, in this module's own
+        # statistic. Complete linkage cannot chain: a class is merged only if EVERY pair across it
+        # is similar.
+        clusters = [[k] for k in keys]
+        merged = True
+        while merged:
+            merged = False
+            for i in range(len(clusters)):
+                for j in range(i + 1, len(clusters)):
+                    if all(sim(a, b) >= 0.85 for a in clusters[i] for b in clusters[j]):
+                        clusters[i] = clusters[i] + clusters[j]
+                        clusters.pop(j)
+                        merged = True
+                        break
+                if merged:
+                    break
+        cl = [sum((byk[k] for k in c), []) for c in clusters]
+        sizes = sorted((len(v) for v in cl), reverse=True)
+        gs = [np.array(v) for v in cl if len(v) >= 2]
+        P_(f"    {cell:<8} {len(cl):>14} {floors[cell]:>8.4f}", )
+        P_(f"      class sizes {sizes[:8]}{' ...' if len(sizes) > 8 else ''};"
+           f" {len(gs)} classes have two or more members")
+        if len(gs) < 3 or max(sizes) > 0.5 * sum(sizes):
+            P_( "      NOT REPORTED: the partition is degenerate -- one class holds most of the")
+            P_( "      disruptions, so a between-class variance would be a within-class variance")
+            P_( "      wearing the wrong name, and its bootstrap interval would be meaningless.")
             continue
         pt, lo, hi = comp(gs, floors[cell], np.random.default_rng(1))
-        P_(f"    {cell:<8} {len(cl):>14} {floors[cell]:>8.4f} {np.sqrt(pt):>18.4f}"
-           f" {f'{np.sqrt(pt)/floors[cell]:.2f} [{np.sqrt(lo)/floors[cell]:.2f}, {np.sqrt(hi)/floors[cell]:.2f}]':>22}")
+        P_(f"      between-motif sd {np.sqrt(pt):.4f} log2 ="
+           f" {np.sqrt(pt)/floors[cell]:.2f} floors"
+           f" CI [{np.sqrt(lo)/floors[cell]:.2f}, {np.sqrt(hi)/floors[cell]:.2f}]")
     P_("\n  for comparison, the same estimator elsewhere in this build order:")
     P_("    yeast promoters, between factor set   15.86 floors  CI [9.32, 21.36]")
     P_("    human CRISPRi, between regulator       1.05 floors  CI [0.90, 1.18]")
 
     # ---- M5 / M6 -------------------------------------------------------------------------------
     P_("\n" + RULE); P_("M5  REPLICATION ACROSS CELL TYPES"); P_(RULE)
-    e1h, e2h, mh = res["HepG2"]
-    e1k, e2k, mk = res["K562"]
-    common = {}
-    for arr, cell in ((res["HepG2"], "HepG2"), (res["K562"], "K562")):
-        pass
-    P_("  The two cell types are independent measurements of the same constructs. A result present")
-    P_("  in one and absent in the other is not a result, and both are reported above rather than")
-    P_("  pooled, so the reader can see the replication rather than be told about it.")
-
+    P_("  The first version of this gate asserted the principle and computed nothing. The two")
+    P_("  cell types measure the SAME constructs, so the replication is a number.")
+    eh = (res["HepG2"][0] + res["HepG2"][1]) / 2.0
+    ek = (res["K562"][0] + res["K562"][1]) / 2.0
+    n = min(len(eh), len(ek))
+    rc = float(np.corrcoef(eh[:n], ek[:n])[0, 1])
+    P_(f"\n    disruption effects, HepG2 against K562, same {n} constructs: r = {rc:+.4f}")
+    P_(f"    within-cell reproducibility for comparison:")
+    for cell in ("HepG2", "K562"):
+        e1, e2, _ = res[cell]
+        P_(f"      {cell:<8} replicate 1 against replicate 2: r = {float(np.corrcoef(e1, e2)[0,1]):+.4f}")
+    P_("\n  M5: the M3 result appears in K562 and not in HepG2. By this gate as predeclared, that")
+    P_("  is NOT a result. The cross-cell correlation above says why it need not be a")
+    P_("  contradiction -- these are cell-type-specific enhancers and the same motif need not act")
+    P_("  in both -- but a mechanism for a split is not the same as a replication, and the")
+    P_("  predeclared bar was replication.")
     P_("\n" + RULE); P_("M6  WHAT THIS DOES AND DOES NOT SETTLE"); P_(RULE)
     P_("  1. IT DOES NOT TEST COPY NUMBER. Every disruption here removes ONE motif from a")
     P_("     construct that has one studied motif. The question 'do two sites act like one site")
