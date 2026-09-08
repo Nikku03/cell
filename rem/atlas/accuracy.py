@@ -287,11 +287,17 @@ def main():
                            ("pattern (exact)", 3, 3)):
         P_(f"    {name:<34} {ctrls:>12} {C:>5} {ctrls / C:>15.2f}")
     P_("\n  AND THERE IS THE THING THE CAP TABLE HIDES. At the C = 64 row the cap is THIRTEEN")
-    P_("  controllers. Sixty-four classes over thirteen controllers is one class each: the class")
-    P_("  map IS the identity at its own operating point, and buys exactly nothing there. It")
-    P_("  bites only on the 140-controller row, at 2.2 controllers per class -- which on the")
-    P_("  ladder above sits between C = 5 and C = 10, in the region where the measured tail error")
-    P_("  is smallest.")
+    P_("  controllers, and sixty-four classes over thirteen controllers is about one class each.")
+    P_("  SO THE CLASS MAP MAKES NO APPROXIMATION AT ITS OWN OPERATING POINT: with each")
+    P_("  controller alone in its class the projection is exact and costs ZERO accuracy.")
+    P_("  BE PRECISE ABOUT WHAT THAT DOES AND DOES NOT MEAN, because the loose version of this")
+    P_("  sentence is wrong. It does NOT mean the representation buys nothing -- it still buys")
+    P_("  the cap, 13 controllers against the exact pattern's 3, because the per-gene factor is")
+    P_("  a product of slot() terms rather than a 2^(k(L+1)) pattern table. What it means is that")
+    P_("  the ACCURACY cost of classing is zero there, so the 0.19 floors signed.py measured at")
+    P_("  C = 64 is not being paid at the operating point the cap describes. The accuracy is")
+    P_("  paid only where controllers SHARE a class -- the 140-controller row, at 2.2 per class,")
+    P_("  which on the ladder above sits between C = 5 and C = 10.")
 
     # ---- A4  THE ANSWER ------------------------------------------------------------------------
     P_("\n" + RULE)
