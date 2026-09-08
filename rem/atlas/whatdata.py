@@ -556,6 +556,17 @@ def main():
     P_("  panel's own replicate noise. The right column is how many controllers fit under the")
     P_("  bar at that standard. Every previously reported cap is ONE ROW of this table, and the")
     P_("  row was chosen in yeast.")
+    P_("\n  WHAT THIS DOES NOT ESTABLISH, AND THE DISCREPANCY THAT SAYS SO. The law above is")
+    P_("  measured INSIDE the simulation. It licenses the statement that the estimator returns a")
+    P_("  resolution count -- it could not return 64 even when told 64 was true -- and signed.py")
+    P_("  uses that estimator, so signed.py's C = 64 is at least partly a resolution. It does NOT")
+    P_("  license reading 64 off this law. Doing so needs yeast's signal-to-floor ratio in these")
+    P_(f"  same units; the one crude figure available is about {rho*15:.0f} floors, which the law maps to")
+    P_(f"  a knee near {np.exp(a)*(rho*15)**b:.0f}, not 64. That 4x discrepancy is unexplained here and is itself the")
+    P_("  reason not to over-read the reframing: what is established is that the criterion cannot")
+    P_("  identify a structural class count, not that yeast's particular 64 is fully accounted")
+    P_("  for. Reconciling it needs signed.py's ladder rebuilt in floors, which this module did")
+    P_("  not do.")
 
     # ---- D2  THE ALPHABET AXIS -----------------------------------------------------------------
     P_("\n" + RULE)
