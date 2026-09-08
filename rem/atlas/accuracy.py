@@ -197,12 +197,18 @@ def main():
     P_("  If the reported tail is still moving as the retained set grows, the pruning error is")
     P_("  not converged and the increments show its size. If it has stopped moving, it has")
     P_("  converged and comparing it with the class ladder is legitimate.")
+    P_("\n  THE BUDGET IS SET TO ZERO FOR THIS SWEEP, AND THAT IS NOT A DETAIL. The first attempt")
+    P_("  swept the cap at a fixed budget of 1e-3 and four of six rows returned NO paths. That is")
+    P_("  a real interaction and not a crash: the per-level budget is ABSOLUTE, so a small cap")
+    P_("  retains less mass, the retained mass falls below the budget at the next level, and the")
+    P_("  pruner then drops everything. Cap and budget were confounded and the sweep measured")
+    P_("  their interaction rather than the cap. With the budget at zero the cap alone decides.")
     P_(f"\n    {'path cap':>10} {'kept':>10} {'tail':>16} {'log10 tail':>12} {'step':>9}")
     caps = (100, 300, 1000, 3000, 10000, 19531)
     lgc, kept_seen = [], []
     prev = None
     for cp in caps:
-        t, dr, tou, kept, res = engine_budget(Q, nCtrl, rows, L, dt, 1e-3, cap=cp)
+        t, dr, tou, kept, res = engine_budget(Q, nCtrl, rows, L, dt, 0.0, cap=cp)
         if kept == 0 or t <= 0:
             P_(f"    {cp:>10} {kept:>10} {'no paths retained':>16} {'--':>12} {'--':>9}")
             continue
@@ -239,14 +245,16 @@ def main():
     if not (chk1 and chk2):
         P_("  A projection that fails its own checks cannot be read. STOPPING.")
         return
-    BUDGET = 1e-3
-    t_id, _, _, _, _ = engine_budget(Q, nCtrl, rows, L, dt, BUDGET, S=S_id)
-    P_(f"\n  reference tail at the identity representation, budget {BUDGET:.0e}: {t_id:.4e}")
+    BUDGET, CAP = 0.0, 19531
+    t_id, _, _, _, _ = engine_budget(Q, nCtrl, rows, L, dt, BUDGET, S=S_id, cap=CAP)
+    P_(f"\n  reference tail at the identity representation, {CAP} retained paths: {t_id:.4e}")
+    P_("  Run in the SAME regime as A1b -- budget zero, cap fixed -- so the two gates' numbers")
+    P_("  are differences of the same object and can be put in one table.")
     P_(f"\n    {'C':>4} {'ctrl per class':>15} {'tail':>15} {'log10 error vs identity':>25}")
     lad = []
     for C in (1, 2, 3, 5, 10):
         Sp = project(S_id, nested_labels(nCtrl, C), C)
-        t, _, _, _, _ = engine_budget(Q, nCtrl, rows, L, dt, BUDGET, S=Sp)
+        t, _, _, _, _ = engine_budget(Q, nCtrl, rows, L, dt, BUDGET, S=Sp, cap=CAP)
         e = abs(np.log10(t) - np.log10(t_id)) if (t > 0 and t_id > 0) else float("inf")
         lad.append((C, e))
         P_(f"    {C:>4} {nCtrl / C:>15.1f} {t:>15.4e} {e:>25.2f}")
