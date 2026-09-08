@@ -46,6 +46,31 @@ V3  THE TRANSFER IS BY FRACTION OF THE ALPHABET, NOT BY C ITSELF. The MPRA has 1
     assumption rather than a measurement, because it is one.
 
 V4  WHAT THIS DOES AND DOES NOT SETTLE.
+
+=================================================================================================
+V1 WAS DEGENERATE AND V2 IS WITHDRAWN
+=================================================================================================
+V1 asked for the smallest class count within one noise floor of the finest model, which is
+signed.py's own criterion. On this data the ENTIRE ladder is narrower than the floor -- 0.06 log2
+against 0.39 in HepG2 -- so every C qualifies, C = 1 included, and the criterion returns 1
+whatever the truth is. That is the flat ladder mpra_human already reported, meeting a bar built
+for yeast's, which separated its ends by 8.6 floors. Ledger U, in this module's own gate.
+
+V2 was to carry that class count to TRRUST as a fraction of the alphabet and rerun the caps. Run
+as written it produced "human data says C = 3 suffices, so the cap is 140 at 71.7% coverage" --
+a spectacular claim resting entirely on the degenerate statistic above. It is withdrawn.
+
+A THIRD THING THE FIRST RUN GOT WRONG, quieter but worth the same treatment: V0 fixed the block
+representation to the factored one, which put the C = 4 cap at 59 against signed.py's 419, because
+the factored block is the WORSE choice at low C and large |C|. The engine would obviously use the
+cheapest available block, so the functional now takes the minimum over the three.
+
+WHAT SURVIVES IS THE THING THAT WAS ASKED FOR. The per-gene scalar is FREE -- it adds one value
+per gene where the per-gene factor is a PRODUCT over classes, so it cannot multiply anything -- and
+the cap is identical with and without it at every class count tested, in executed code rather than
+prose. It is a free ACCURACY gain, worth +0.64 noise floors in HepG2 and +0.13 to +0.25 in K562,
+flat in C. The class count that sets the cap remains the yeast-derived C = 64, still unvalidated
+for human, exactly as humantransfer left it.
 """
 
 from __future__ import annotations
@@ -96,7 +121,15 @@ def cap_with_scalar(nC_classes, scalar, maxC=200, seed=20260907):
                     f[i] = (v + 1.0) if scalar else v
                 per = float(np.sum(base * f)) if per is None else min(
                     per, float(np.sum(base * f)))
-        blk = 2.0 ** min(mindeg_width(ctrl_subgraph(E, inv, order, nCtrl)[0]) + 1, CAPEXP)
+        # the engine would use the CHEAPEST available block, so take the minimum rather than
+        # fixing one. Using only the factored block put the C = 4 cap at 59 against signed.py's
+        # 419, because the factored block is the worse choice at low C and large |C|.
+        bc = collections.Counter(int(asg[i]) for i in order[:nCtrl])
+        blk_cls = 1.0
+        for _, m in bc.items():
+            blk_cls = min(blk_cls * slot(m), 1e300)
+        blk = min(2.0 ** min(mindeg_width(ctrl_subgraph(E, inv, order, nCtrl)[0]) + 1, CAPEXP),
+                  blk_cls, 2.0 ** min(nCtrl, CAPEXP))
         if per + blk + (1.0 if scalar else 0.0) <= BAR:
             best = nCtrl
         else:
@@ -168,33 +201,52 @@ def main():
         fine_s = rows[-1][2]
         okp = [C for C, p, s in rows if p - fine_p <= sg]
         oks = [C for C, p, s in rows if s - fine_s <= sg]
-        need[cell] = (min(okp), min(oks), ncl, sg)
+        span_p = max(p for _, p, _ in rows) - min(p for _, p, _ in rows)
+        span_s = max(s for _, _, s in rows) - min(s for _, _, s in rows)
+        degenerate = span_p <= sg and span_s <= sg
+        need[cell] = (min(okp), min(oks), ncl, sg, degenerate, span_p, span_s)
         P_(f"\n  {cell}: {ncl} motif classes, floor {sg:.4f}")
         P_(f"    {'C':>6} {'no scalar':>11} {'with scalar':>13} {'gain in floors':>16}")
         for C, p, s in rows:
             P_(f"    {C:>6} {p:>11.4f} {s:>13.4f} {(p-s)/sg:>16.2f}")
-        P_(f"    smallest C within one floor of the finest model:"
-           f" {min(okp)} without the scalar, {min(oks)} WITH it")
-        P_(f"    as a fraction of the alphabet: {100*min(okp)/ncl:.1f}% -> {100*min(oks)/ncl:.1f}%")
+        P_(f"    the WHOLE ladder spans {span_p:.4f} without the scalar and {span_s:.4f} with it,")
+        P_(f"    against a noise floor of {sg:.4f}.")
+        if degenerate:
+            P_( "    THE CRITERION IS DEGENERATE HERE. Every C sits within one floor of the finest")
+            P_(f"    model, C = 1 included, because the entire ladder is narrower than the floor.")
+            P_( "    'Smallest C within one floor' therefore returns 1 whatever the truth is, and")
+            P_( "    NO class count may be derived from this data. That is the flat ladder")
+            P_( "    mpra_human already reported, meeting a criterion built for yeast's, which")
+            P_( "    separated its ends by 8.6 floors. Ledger U -- a gate passing on a saturated")
+            P_( "    quantity -- and it is this module's own gate.")
+        else:
+            P_(f"    smallest C within one floor: {min(okp)} without, {min(oks)} WITH the scalar")
+        P_(f"\n    WHAT IS MEASURABLE HERE: the scalar's gain, which is real and flat in C --")
+        P_(f"    {(rows[0][1]-rows[0][2])/sg:+.2f} floors at C = 1 and"
+           f" {(rows[-1][1]-rows[-1][2])/sg:+.2f} floors at C = {ncl}. On this data the per-gene")
+        P_( "    scalar does essentially all the work and the class map almost none, but the class")
+        P_( "    map's flatness is the data's limitation and not a finding about class maps.")
 
     # ---- V2 / V3  THE CAPS ---------------------------------------------------------------------
-    P_("\n" + RULE); P_("V2/V3  THE CAPS AT THOSE CLASS COUNTS"); P_(RULE)
-    P_("  The MPRA alphabet is motif classes and TRRUST's is regulators, so what transfers is the")
-    P_("  FRACTION of the alphabet, not C itself. That is an assumption and is labelled as one:")
-    P_("  yeast needed 15.8% of its 404 factors, which is where signed.py's C = 64 came from.")
-    P_(f"\n    {'source':<34} {'fraction':>10} {'C on TRRUST':>13} {'cap':>6} {'coverage':>10}")
-    rows2 = [("yeast standard (signed.py)", 64 / 404, 64)]
-    for cell in ("HepG2", "K562"):
-        okp, oks, ncl, sg = need[cell]
-        rows2.append((f"{cell}, no scalar", okp / ncl, max(1, int(round(okp / ncl * 404)))))
-        rows2.append((f"{cell}, WITH scalar", oks / ncl, max(1, int(round(oks / ncl * 404)))))
-    for nm, fr, Ct in rows2:
-        cp = cap_with_scalar(max(Ct, 1), True, maxC=200)
-        P_(f"    {nm:<34} {100*fr:>9.1f}% {Ct:>13} {cp:>6} {coverage(cp):>9.1%}")
-    P_("\n  for reference, the running total this replaces or confirms:")
-    P_("    pattern (exact)                        3    12.8%")
-    P_("    class count C = 64                    13    26.6%")
-    P_("    + hub demotion + factored block      140    71.7%")
+    P_("\n" + RULE); P_("V2/V3  THE CAPS, AND WHY THEY DO NOT MOVE"); P_(RULE)
+    P_("  The plan was to take the class count V1 measured on human data, carry it to TRRUST as a")
+    P_("  fraction of the alphabet, and rerun the caps there. V1 CANNOT SUPPLY THAT NUMBER: its")
+    P_("  ladder is narrower than its own noise floor, so the criterion returns C = 1 regardless")
+    P_("  of the truth. Deriving a cap from it would have produced 'human data says C = 3 suffices,")
+    P_("  so the cap is 140 at 71.7% coverage' -- a spectacular claim resting entirely on a")
+    P_("  degenerate statistic. It is withdrawn rather than reported.")
+    P_("\n  WHAT SURVIVES IS V0, AND IT IS WHAT WAS ASKED FOR. The per-gene scalar is FREE: it adds")
+    P_("  one value per gene where the per-gene factor is a PRODUCT over classes, so it cannot")
+    P_("  multiply anything, and the cap is identical with and without it at every class count")
+    P_("  tested. The caps therefore stand exactly as they were:")
+    P_(f"\n    {'representation':<40} {'cap':>6} {'coverage':>10}")
+    for nm, cp in (("pattern (exact)", 3), ("class count C = 64", 13),
+                   ("+ hub demotion + factored block", 140)):
+        P_(f"    {nm:<40} {cp:>6} {coverage(cp):>9.1%}")
+    P_("    + per-gene scalar                          unchanged, at whichever row it is added to")
+    P_("\n  So the scalar is a free ACCURACY gain, not a cap gain, and the class count that sets")
+    P_("  the cap remains the yeast-derived C = 64 -- still unvalidated for human, exactly as")
+    P_("  humantransfer left it. Nothing here changes that, and nothing here pretended to.")
 
     # ---- V4 ------------------------------------------------------------------------------------
     P_("\n" + RULE); P_("V4  WHAT THIS DOES AND DOES NOT SETTLE"); P_(RULE)
