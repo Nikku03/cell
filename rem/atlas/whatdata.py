@@ -526,15 +526,32 @@ def main():
     P_("\n  SO THE CAP IS NOT A NUMBER AT C = 64. IT IS THIS CURVE:")
     P_(f"\n    {'demanded accuracy':>19} {'C supported':>12} {'cap, controllers':>18}")
     from rem.atlas.scalarcap import cap_with_scalar
+    MAXC = int(os.environ.get("REM_WHATDATA_MAXC", "2000"))
     spread = rho          # measured between-regulator spread, in units of the current floor
+    sat_any = False
     for mult in (4.0, 2.0, 1.0, 0.5, 0.25):
         Cq = int(max(1, round(np.exp(a) * (spread / mult) ** b)))
         try:
-            cp = cap_with_scalar(max(Cq, 1), True)
+            cp = cap_with_scalar(max(Cq, 1), True, maxC=MAXC)
         except Exception as e:                                # pragma: no cover
             P_(f"    cap functional failed at C = {Cq}: {e}")
             continue
-        P_(f"    {f'{mult:.2f} floors':>19} {Cq:>12} {cp:>18}")
+        sat = cp >= MAXC - 1
+        sat_any = sat_any or sat
+        P_(f"    {f'{mult:.2f} floors':>19} {Cq:>12} {(f'>= {cp}  SATURATED' if sat else str(cp)):>18}")
+    P_("\n  A ROW MARKED SATURATED IS NOT A MEASUREMENT. The cap functional walks the controller")
+    P_(f"  count upward until the bar is breached and stops at its own ceiling of {MAXC}; a row that")
+    P_("  reaches the ceiling means the bar was never breached, so the number is the ceiling and")
+    P_("  not the cap.")
+    if sat_any:
+        P_("  Some rows above are saturated and are reported as lower bounds only.")
+    P_("\n  AND THAT DEFECT REACHES BACKWARD, INTO THE MODULE SHIPPED BEFORE THIS ONE. scalarcap")
+    P_("  called the same functional with maxC = 60 and reported a cap of 59 at C = 4. 59 is")
+    P_("  60 - 1: that row was ITS OWN LOOP CEILING, not a cap. scalarcap's V0 VERDICT SURVIVES")
+    P_("  -- with and without the scalar both hit the same ceiling, so the scalar still changes")
+    P_("  nothing -- but the NUMBER 59 was a saturated statistic reported as a measurement,")
+    P_("  which is ledger U, in a module whose own V1 was withdrawn for exactly that. The rows")
+    P_("  at C = 8, 16 and 64 gave 30, 15 and 13, well under the ceiling, and are unaffected.")
     P_("\n  The left column is what the engine is asked to reproduce, in units of the human")
     P_("  panel's own replicate noise. The right column is how many controllers fit under the")
     P_("  bar at that standard. Every previously reported cap is ONE ROW of this table, and the")
