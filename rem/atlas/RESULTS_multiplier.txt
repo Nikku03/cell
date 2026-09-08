@@ -2,7 +2,7 @@
 THE MULTIPLIER FORM: PAY ADDITIVELY FOR AN AXIS A COUNT PAYS MULTIPLICATIVELY FOR
 =================================================================================================
   Sharon et al. 2012, doi:10.1038/nbt.2205, GEO GSE37851, sha256[:32] 6a68ee26db7a1d3f4813ae29ed4e69bd.
-  5790 promoters. Replicate noise floor 0.1164 log2.
+  5790 promoters. Replicate noise floor 0.0823 log2.
   The form under test: P(x | class counts) * g(positions), which in log2 expression is a
   group mean on the class counts PLUS a shared additive positional term, backfit.
 
@@ -40,20 +40,20 @@ M2  ON REAL PROMOTERS
 =================================================================================================
     model                                             RMSE  vs pure C=8  fallback  alphabet
     pure class count, C = 8                         1.3419         0.00     3.9%         8
-    CELL form, C = 8 x P = 2                        1.3380        +0.03     4.4%        16
+    CELL form, C = 8 x P = 2                        1.3380        +0.05     4.4%        16
     MULTIPLIER, C = 8, g over 2 position bins       1.3420        -0.00     3.9%         8
     CELL form, C = 8 x P = 4                        1.3430        -0.01     5.2%        32
-    MULTIPLIER, C = 8, g over 4 position bins       1.3424        -0.00     3.9%         8
-    CELL form, C = 8 x P = 8                        1.3622        -0.17     8.4%        64
-    MULTIPLIER, C = 8, g over 8 position bins       1.3183        +0.20     3.9%         8
-    MULTIPLIER, C = 8, g over 49 position bins      1.2660        +0.65     3.9%         8
+    MULTIPLIER, C = 8, g over 4 position bins       1.3424        -0.01     3.9%         8
+    CELL form, C = 8 x P = 8                        1.3622        -0.25     8.4%        64
+    MULTIPLIER, C = 8, g over 8 position bins       1.3183        +0.29     3.9%         8
+    MULTIPLIER, C = 8, g over 49 position bins      1.2660        +0.92     3.9%         8
 
     reference points, for what position is worth at all:
-    identity group mean                             1.1641        +1.53    11.1%
+    identity group mean                             1.1641        +2.16    11.1%
     context only, no site information               1.9408
 
-  M2: the multiplier's best is +0.65 floors over the pure class count, at 49 bins.
-  The cell form's best over the same base is +0.03 floors, at an alphabet up to
+  M2: the multiplier's best is +0.92 floors over the pure class count, at 49 bins.
+  The cell form's best over the same base is +0.05 floors, at an alphabet up to
   8x larger. The multiplier gets more for less.
 
 =================================================================================================
@@ -79,9 +79,9 @@ M4  INSIDE THE MAIN LADDER, WHERE poscount's CONFOUND IS CONSTANT
 
     model                                             RMSE  vs pure C=8  fallback
     pure class count, C = 8                         1.2608         0.00     6.1%
-    CELL form, C = 8 x P = 4                        1.2992        -0.33     9.2%
-    MULTIPLIER, g over 4 bins                       1.2519        +0.08     6.1%
-    MULTIPLIER, g over 14 bins                      1.2436        +0.15     6.1%
+    CELL form, C = 8 x P = 4                        1.2992        -0.47     9.2%
+    MULTIPLIER, g over 4 bins                       1.2519        +0.11     6.1%
+    MULTIPLIER, g over 14 bins                      1.2436        +0.21     6.1%
 
 =================================================================================================
 M5  THE ENGINE SIDE: POSITION IS TO A PROMOTER WHAT SLICE TIME IS TO A HISTORY

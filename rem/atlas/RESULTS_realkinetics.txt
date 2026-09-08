@@ -157,6 +157,43 @@ K5  THE ASSEMBLED ENGINE, RUN
   rather than trusted, and it agrees to the fourth decimal at every such row.
 
 =================================================================================================
+K5b  TWO THINGS THE FIRST REPORTING OF THIS GATE GOT WRONG
+=================================================================================================
+  (a) THE TAIL VALUE IS SET BY A CONSTANT I INVENTED, NOT BY THE NETWORK. engine_tail's
+  target response has a base log-odds and a gain, and neither has any measurement behind
+  it -- they were chosen. Sensitivity, on the exact 60-target conjunction:
+
+    parameter                    value     exact tail   orders vs nominal
+    nominal                    -1.0/2.0     4.7851e-33                0.00
+    base                          -1.5     2.0333e-42               -9.37
+    base                          -0.5     6.4732e-25                8.13
+    gain                           1.0     7.6324e-34               -0.80
+    gain                           3.0     2.0319e-32                0.63
+
+  Moving the base by half a log-odds unit moves the reported tail by EIGHT TO NINE ORDERS
+  OF MAGNITUDE. So the tail column in K5 is NOT a calibrated prediction about CDKN1A or
+  anything else, and must never be quoted as one. What it legitimately is: a fixed
+  reference against which the PRUNED computation is checked, at identical constants, which
+  is what the 'vs exact' column measures. That check is unaffected -- both sides move
+  together -- and it is the only thing K5 establishes about the number.
+
+  (b) THE CERTIFICATE BOUNDS DROPPED MASS, NOT THE TAIL, AND HERE THE TWO ARE 29 ORDERS
+  APART. The observable is a 60-way conjunction of order 1e-33. The certificate is stratum
+  mass of order 1e-3. As a bound on the reported tail it is vacuous:
+
+     |C|     exact tail   certificate (mass)        ratio
+       4     4.7851e-33             7.45e-04     1.56e+29
+       5     6.4453e-33             7.48e-04     1.16e+29
+
+  So 'the certificate is honoured in every row' is true as a statement about MASS and was
+  wrong to present as though it validated the TAIL. The distinction is the observable's
+  magnitude: prune.py's N3 certificate was meaningful because its observable was of order
+  one (tail 1.52e-01, certificate 1.29e-03, ratio 8.5), and that claim stands unchanged.
+  A mass bound is a usable tail bound only when the tail is a decent fraction of the mass.
+  For a deep conjunction it is not, and bounding it needs a bound on the OBSERVABLE, which
+  this build order does not have.
+
+=================================================================================================
 K6  WHAT BREAKS FIRST
 =================================================================================================
   The pruner touches n = 2^|C| children per surviving node, so its cost carries a factor

@@ -13,8 +13,14 @@ V1  THE REPLICATE NOISE FLOOR, MEASURED BEFORE ANY MODEL IS FITTED
 =================================================================================================
   replicate Pearson r on log2 expression : 0.9974
   RMS replicate-to-replicate difference   : 0.1646 log2 units
-  NOISE FLOOR on a single promoter's mean : 0.0823 log2
-  measurement noise in the averaged response y: 0.1164 log2
+  noise in a SINGLE replicate             : 0.1164 log2
+  NOISE FLOOR, the noise in y = (l1+l2)/2 : 0.0823 log2
+  The first version of this module used the per-replicate figure as the floor, which is
+  sqrt(2) too large, because y is the MEAN of two replicates and not one of them. Every
+  'floors' number in this module and in signed/poscount/multiplier was understated by
+  1.414x. Checked empirically: std(l1 - y) = 0.0823.
+  Correcting it makes every REFUTATION stronger and every VALIDATION margin tighter; no
+  gate verdict in the arc changes, which was checked before the change was made.
   No model difference smaller than this is a result.
 
 =================================================================================================
@@ -26,8 +32,8 @@ V2  THE BASELINE THAT MUST FAIL
     context + site COUNT                       1.8960      2.6%
     context + factor IDENTITY                  1.1641     11.1%
   spread of the response itself: 2.0155 log2
-  best site model beats the no-site baseline by 6.81 floors
-  the COUNT model alone beats it by only 0.52 floors -- which is
+  best site model beats the no-site baseline by 9.63 floors
+  the COUNT model alone beats it by only 0.74 floors -- which is
   a result for V3, not a gate failure. The first run tested V2 against the count model and
   reported FAIL, conflating 'the data cannot test this' with 'the count is useless'.
   V2: PASS -- the data test site dependence decisively
@@ -37,10 +43,10 @@ V3  COUNT AGAINST IDENTITY, HELD OUT
 =================================================================================================
   count model RMSE    1.8960
   identity model RMSE 1.1641
-  identity advantage  +0.7319 log2   against a noise floor of 0.1164
-  ratio to floor      6.29
+  identity advantage  +0.7319 log2   against a noise floor of 0.0823
+  ratio to floor      8.89
   V3: the count summary is REFUTED on this data -- identity buys more than the noise
-      floor, by a factor of 6.3.
+      floor, by a factor of 8.9.
 
   ridge-regression check, in case the group-mean estimator is doing the work:
     context only 1.9408   +count 1.9055   +per-factor counts 1.1299
@@ -49,9 +55,11 @@ V3  COUNT AGAINST IDENTITY, HELD OUT
 V4  WHERE DOES IT BREAK?
 =================================================================================================
      site count      n   count RMSE  identity RMSE  gap/floor
-              1   2133       1.6611         1.0039       5.65
-              2   3018       2.0226         1.2594       6.56
-              3    385       2.0444         1.0704       8.37
+              1   2133       1.6611         1.0039       7.99
+              2   3018       2.0226         1.2594       9.27
+              3    385       2.0444         1.0704      11.84
+              4    114       1.8651         1.6250       2.92
+              5     76       2.2003         1.9348       3.23
 
   the factors whose identity matters most (single-site promoters, one context):
     factor                        n  mean log2 shift vs context mean
@@ -73,8 +81,8 @@ V5  THE AXIS A COUNT ALSO DISCARDS: POSITION AND ORIENTATION
   count discards position too, so if position carries more than identity then
   count-versus-identity is not the operative question.
     identity only                    1.1641
-    identity + orientation           1.1945   gain -0.26 floors
-    identity + position (10 bp bins) 1.3774   gain -1.83 floors
+    identity + orientation           1.1945   gain -0.37 floors
+    identity + position (10 bp bins) 1.3774   gain -2.59 floors
     fallback rates: identity 11.1%, +orientation 13.9%, +position 25.7%
     Both refinements make it WORSE, and the fallback column says why: finer groups are
     sparser, so the held-out promoter more often has no training group and drops to the

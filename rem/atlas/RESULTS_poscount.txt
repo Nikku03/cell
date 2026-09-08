@@ -3,7 +3,7 @@ THE CLASS COUNT WITH POSITION AND ORIENTATION: AN EXCHANGE RATE
 =================================================================================================
   Sharon et al. 2012, doi:10.1038/nbt.2205, GEO GSE37851, sha256[:32] 6a68ee26db7a1d3f4813ae29ed4e69bd.
   5790 promoters, 404 factors, 49 distinct designed start positions in [-1, 113].
-  orientation: 10087 plus, 482 minus (4.6% of sites). Noise floor 0.1164 log2.
+  orientation: 10087 plus, 482 minus (4.6% of sites). Noise floor 0.0823 log2.
   position is a live variable for 4903 of 5790 promoters (84.7%):
   that many sit in a (context, factor multiset) group holding more than one layout.
   identity reference: RMSE 1.1641, abstains on 11.1% of held-out promoters.
@@ -38,25 +38,25 @@ P1  PHASE IS NOT LOCATION -- A PREDICTION, TESTED
     position feature                  RMSE    vs P=1   floors  fallback
     none (P = 1)                    1.3419    0.0000     0.00     3.9%
     loc                             1.3430   -0.0011    -0.01     5.2%
-    phase                           1.3830   -0.0412    -0.35     6.0%
-    phase105                        1.3738   -0.0319    -0.27     5.5%
-    ladder                          1.2864   +0.0555    +0.48     4.6%
+    phase                           1.3830   -0.0412    -0.50     6.0%
+    phase105                        1.3738   -0.0319    -0.39     5.5%
+    ladder                          1.2864   +0.0555    +0.67     4.6%
 
     the same four on the IDENTITY model, which is what V5 tested:
     none (P = 1)                    1.2140    0.0000     0.00    13.5%
-    loc                             1.2678   -0.0537    -0.46    16.5%
-    phase                           1.3433   -0.1293    -1.11    18.5%
+    loc                             1.2678   -0.0537    -0.65    16.5%
+    phase                           1.3433   -0.1293    -1.57    18.5%
 
   P1: the prediction was that PHASE beats LOCATION. Measured: phase 1.3830 against location 1.3430, so the prediction is LOST
-  by 0.34 floors, and neither beats P = 1.
+  by 0.49 floors, and neither beats P = 1.
   The best feature is 'ladder' -- which is the DESIGN LADDER, the control. Two controls
   now have to say what that is, because without them it is this module's headline.
 
   CONTROL 1, PERMUTATION. Partition the same 49 start values into 4 bins at random,
   with bin sizes matched to the ladder's. If any partition of position helps this much,
   the 7 bp period is doing nothing.
-    24 random partitions: median -0.06 floors, range [-0.26, +0.18]
-    the ladder:           +0.48 floors, at the 100th percentile
+    24 random partitions: median -0.08 floors, range [-0.36, +0.26]
+    the ladder:           +0.67 floors, at the 100th percentile
     So it is not that any partition of position helps. Something about this one does.
 
   CONTROL 2, RESTRICTION, which is the decisive one. Restrict to the promoters whose
@@ -66,11 +66,11 @@ P1  PHASE IS NOT LOCATION -- A PREDICTION, TESTED
 
     within the main ladder, C = 8           RMSE     gain  fallback
     P = 1                                 1.2608     0.00     6.1%
-    P = 2, loc                            1.2594    +0.01     7.0%
-    P = 4, loc                            1.2992    -0.33     9.2%
-    P = 8, loc                            1.3726    -0.96    12.8%
-    P = 4, phase                          1.3298    -0.59     9.0%
-    P = 4, phase105                       1.3150    -0.47     8.1%
+    P = 2, loc                            1.2594    +0.02     7.0%
+    P = 4, loc                            1.2992    -0.47     9.2%
+    P = 8, loc                            1.3726    -1.36    12.8%
+    P = 4, phase                          1.3298    -0.84     9.0%
+    P = 4, phase105                       1.3150    -0.66     8.1%
 
     The gain vanishes. So the ladder's win is BETWEEN design sub-libraries and not
     within one, which makes it design provenance and not a position effect. Without
@@ -83,75 +83,75 @@ P2  THE EXCHANGE RATE AT A FIXED BUDGET
   P = O = 1 is the incumbent from signed.py; anything else has to beat it at equal cost.
 
         K     C    P   O   feature      RMSE  vs pure C  floors from ident  fallback
-        4     4    1   1        --    1.4061    +0.0000               2.08     3.4%  <-- incumbent
-        4     2    2   1    ladder    1.4333    -0.0271               2.31     3.2%
-        4     1    4   1    ladder    1.8427    -0.4365               5.83     2.9%
-        4     2    1   2        --    1.4513    -0.0452               2.47     3.1%
-        4     1    2   2    ladder    1.8630    -0.4568               6.01     2.7%
-        8     8    1   1        --    1.3419    +0.0000               1.53     3.9%  <-- incumbent
-        8     4    2   1    ladder    1.3968    -0.0549               2.00     3.8%
-        8     2    4   1    ladder    1.3909    -0.0490               1.95     3.4%
-        8     1    8   1    ladder    1.8334    -0.4915               5.75     2.9%
-        8     4    1   2        --    1.4061    -0.0643               2.08     3.4%
-        8     2    2   2    ladder    1.4333    -0.0914               2.31     3.2%
-        8     1    4   2    ladder    1.8427    -0.5008               5.83     2.9%
-       16    16    1   1        --    1.3400    +0.0000               1.51     4.2%  <-- incumbent
-       16     8    2   1    ladder    1.3310    +0.0090               1.43     4.4%  BEATS IT
-       16     4    4   1    ladder    1.3524    -0.0123               1.62     4.0%
-       16     2    8   1    ladder    1.3837    -0.0436               1.89     3.4%
-       16     1   16   1    ladder    1.8334    -0.4934               5.75     2.9%
-       16     8    1   2        --    1.3419    -0.0018               1.53     3.9%
-       16     4    2   2    ladder    1.3968    -0.0567               2.00     3.8%
-       16     2    4   2    ladder    1.3909    -0.0509               1.95     3.4%
-       16     1    8   2    ladder    1.8334    -0.4934               5.75     2.9%
-       32    32    1   1        --    1.3250    +0.0000               1.38     7.7%  <-- incumbent
-       32    16    2   1    ladder    1.3337    -0.0087               1.46     4.9%
-       32     8    4   1    ladder    1.2864    +0.0386               1.05     4.6%  BEATS IT
-       32     4    8   1    ladder    1.3422    -0.0173               1.53     4.1%
-       32     2   16   1    ladder    1.3837    -0.0587               1.89     3.4%
-       32     1   32   1    ladder    1.8334    -0.5084               5.75     2.9%
-       32    16    1   2        --    1.3400    -0.0150               1.51     4.2%
-       32     8    2   2    ladder    1.3310    -0.0060               1.43     4.4%
-       32     4    4   2    ladder    1.3524    -0.0274               1.62     4.0%
-       32     2    8   2    ladder    1.3837    -0.0587               1.89     3.4%
-       32     1   16   2    ladder    1.8334    -0.5084               5.75     2.9%
-       64    64    1   1        --    1.1984    +0.0000               0.29    11.0%  <-- incumbent
-       64    32    2   1    ladder    1.3253    -0.1270               1.39     8.6%
-       64    16    4   1    ladder    1.2931    -0.0947               1.11     5.4%
-       64     8    8   1    ladder    1.2828    -0.0844               1.02     4.8%
-       64     4   16   1    ladder    1.3422    -0.1439               1.53     4.1%
-       64     2   32   1    ladder    1.3837    -0.1853               1.89     3.4%
-       64     1   64   1    ladder    1.8334    -0.6350               5.75     2.9%
-       64    32    1   2        --    1.3250    -0.1266               1.38     7.7%
-       64    16    2   2    ladder    1.3337    -0.1353               1.46     4.9%
-       64     8    4   2    ladder    1.2864    -0.0880               1.05     4.6%
-       64     4    8   2    ladder    1.3422    -0.1439               1.53     4.1%
-       64     2   16   2    ladder    1.3837    -0.1853               1.89     3.4%
-       64     1   32   2    ladder    1.8334    -0.6350               5.75     2.9%
-      128   128    1   1        --    1.2091    +0.0000               0.39    12.0%  <-- incumbent
-      128    64    2   1    ladder    1.2057    +0.0034               0.36    12.2%  BEATS IT
-      128    32    4   1    ladder    1.2862    -0.0771               1.05     9.1%
-      128    16    8   1    ladder    1.2901    -0.0810               1.08     5.5%
-      128     8   16   1    ladder    1.2828    -0.0737               1.02     4.8%
-      128     4   32   1    ladder    1.3422    -0.1331               1.53     4.1%
-      128     2   64   1    ladder    1.3837    -0.1745               1.89     3.4%
-      128     1  128   1    ladder    1.8334    -0.6243               5.75     2.9%
-      128    64    1   2        --    1.1984    +0.0107               0.29    11.0%  BEATS IT
-      128    32    2   2    ladder    1.3253    -0.1162               1.39     8.6%
-      128    16    4   2    ladder    1.2931    -0.0840               1.11     5.4%
-      128     8    8   2    ladder    1.2828    -0.0737               1.02     4.8%
-      128     4   16   2    ladder    1.3422    -0.1331               1.53     4.1%
-      128     2   32   2    ladder    1.3837    -0.1745               1.89     3.4%
-      128     1   64   2    ladder    1.8334    -0.6243               5.75     2.9%
+        4     4    1   1        --    1.4061    +0.0000               2.94     3.4%  <-- incumbent
+        4     2    2   1    ladder    1.4333    -0.0271               3.27     3.2%
+        4     1    4   1    ladder    1.8427    -0.4365               8.25     2.9%
+        4     2    1   2        --    1.4513    -0.0452               3.49     3.1%
+        4     1    2   2    ladder    1.8630    -0.4568               8.49     2.7%
+        8     8    1   1        --    1.3419    +0.0000               2.16     3.9%  <-- incumbent
+        8     4    2   1    ladder    1.3968    -0.0549               2.83     3.8%
+        8     2    4   1    ladder    1.3909    -0.0490               2.76     3.4%
+        8     1    8   1    ladder    1.8334    -0.4915               8.13     2.9%
+        8     4    1   2        --    1.4061    -0.0643               2.94     3.4%
+        8     2    2   2    ladder    1.4333    -0.0914               3.27     3.2%
+        8     1    4   2    ladder    1.8427    -0.5008               8.25     2.9%
+       16    16    1   1        --    1.3400    +0.0000               2.14     4.2%  <-- incumbent
+       16     8    2   1    ladder    1.3310    +0.0090               2.03     4.4%  BEATS IT
+       16     4    4   1    ladder    1.3524    -0.0123               2.29     4.0%
+       16     2    8   1    ladder    1.3837    -0.0436               2.67     3.4%
+       16     1   16   1    ladder    1.8334    -0.4934               8.13     2.9%
+       16     8    1   2        --    1.3419    -0.0018               2.16     3.9%
+       16     4    2   2    ladder    1.3968    -0.0567               2.83     3.8%
+       16     2    4   2    ladder    1.3909    -0.0509               2.76     3.4%
+       16     1    8   2    ladder    1.8334    -0.4934               8.13     2.9%
+       32    32    1   1        --    1.3250    +0.0000               1.96     7.7%  <-- incumbent
+       32    16    2   1    ladder    1.3337    -0.0087               2.06     4.9%
+       32     8    4   1    ladder    1.2864    +0.0386               1.49     4.6%  BEATS IT
+       32     4    8   1    ladder    1.3422    -0.0173               2.17     4.1%
+       32     2   16   1    ladder    1.3837    -0.0587               2.67     3.4%
+       32     1   32   1    ladder    1.8334    -0.5084               8.13     2.9%
+       32    16    1   2        --    1.3400    -0.0150               2.14     4.2%
+       32     8    2   2    ladder    1.3310    -0.0060               2.03     4.4%
+       32     4    4   2    ladder    1.3524    -0.0274               2.29     4.0%
+       32     2    8   2    ladder    1.3837    -0.0587               2.67     3.4%
+       32     1   16   2    ladder    1.8334    -0.5084               8.13     2.9%
+       64    64    1   1        --    1.1984    +0.0000               0.42    11.0%  <-- incumbent
+       64    32    2   1    ladder    1.3253    -0.1270               1.96     8.6%
+       64    16    4   1    ladder    1.2931    -0.0947               1.57     5.4%
+       64     8    8   1    ladder    1.2828    -0.0844               1.44     4.8%
+       64     4   16   1    ladder    1.3422    -0.1439               2.17     4.1%
+       64     2   32   1    ladder    1.3837    -0.1853               2.67     3.4%
+       64     1   64   1    ladder    1.8334    -0.6350               8.13     2.9%
+       64    32    1   2        --    1.3250    -0.1266               1.96     7.7%
+       64    16    2   2    ladder    1.3337    -0.1353               2.06     4.9%
+       64     8    4   2    ladder    1.2864    -0.0880               1.49     4.6%
+       64     4    8   2    ladder    1.3422    -0.1439               2.17     4.1%
+       64     2   16   2    ladder    1.3837    -0.1853               2.67     3.4%
+       64     1   32   2    ladder    1.8334    -0.6350               8.13     2.9%
+      128   128    1   1        --    1.2091    +0.0000               0.55    12.0%  <-- incumbent
+      128    64    2   1    ladder    1.2057    +0.0034               0.51    12.2%  BEATS IT
+      128    32    4   1    ladder    1.2862    -0.0771               1.48     9.1%
+      128    16    8   1    ladder    1.2901    -0.0810               1.53     5.5%
+      128     8   16   1    ladder    1.2828    -0.0737               1.44     4.8%
+      128     4   32   1    ladder    1.3422    -0.1331               2.17     4.1%
+      128     2   64   1    ladder    1.3837    -0.1745               2.67     3.4%
+      128     1  128   1    ladder    1.8334    -0.6243               8.13     2.9%
+      128    64    1   2        --    1.1984    +0.0107               0.42    11.0%  BEATS IT
+      128    32    2   2    ladder    1.3253    -0.1162               1.96     8.6%
+      128    16    4   2    ladder    1.2931    -0.0840               1.57     5.4%
+      128     8    8   2    ladder    1.2828    -0.0737               1.44     4.8%
+      128     4   16   2    ladder    1.3422    -0.1331               2.17     4.1%
+      128     2   32   2    ladder    1.3837    -0.1745               2.67     3.4%
+      128     1   64   2    ladder    1.8334    -0.6243               8.13     2.9%
 
   P2: of 54 spatial splits,
     4 beat the pure-identity split of the same BUDGET
     45 were improved at all by the spatial axis over their own class resolution
     2 did BOTH, which is what it takes to count
   best genuine spatial split: K=32 as C=8, P=4, O=1, RMSE 1.2864
-    against pure C=32 at 1.3250: +0.33 floors
-    against pure C=8 at 1.3419: +0.48 floors
-  Both margins are under one noise floor of 0.1164, so this is not a result you
+    against pure C=32 at 1.3250: +0.47 floors
+    against pure C=8 at 1.3419: +0.67 floors
+  Both margins are under one noise floor of 0.0823, so this is not a result you
   could act on -- and the feature carrying it is the design ladder, which control 2
   in P1 shows is design provenance rather than position.
 
@@ -161,14 +161,14 @@ P3  FALLBACK, WHICH IS WHAT KILLED V5
   5027 of 5790 promoters scored by every split below without fallback
 
     split                          all  no-fallback  floors from ident
-    K=4 C=4 P=1 O=1             1.4061       1.3890               2.57
-    K=8 C=8 P=1 O=1             1.3419       1.3123               1.92
-    K=16 C=16 P=1 O=1           1.3400       1.2970               1.78
-    K=32 C=32 P=1 O=1           1.3250       1.2742               1.59
-    K=64 C=64 P=1 O=1           1.1984       1.1168               0.24
-    K=128 C=128 P=1 O=1         1.2091       1.1061               0.14
-    K=32 C=8 P=4 O=1            1.2864       1.2339               1.24
-    K=16 C=8 P=2 O=1            1.3310       1.2898               1.72
+    K=4 C=4 P=1 O=1             1.4061       1.3890               3.64
+    K=8 C=8 P=1 O=1             1.3419       1.3123               2.71
+    K=16 C=16 P=1 O=1           1.3400       1.2970               2.52
+    K=32 C=32 P=1 O=1           1.3250       1.2742               2.25
+    K=64 C=64 P=1 O=1           1.1984       1.1168               0.33
+    K=128 C=128 P=1 O=1         1.2091       1.1061               0.20
+    K=32 C=8 P=4 O=1            1.2864       1.2339               1.76
+    K=16 C=8 P=2 O=1            1.3310       1.2898               2.44
     identity                    1.1641       1.0893               0.00
   If a spatial split wins on all promoters but loses here, it won by abstaining less,
   not by predicting better. If it wins in both columns, the gain is real.
@@ -196,16 +196,16 @@ P5  IS IT THE ESTIMATOR OR THE DATA?
 
     ridge model                                 RMSE  gain vs its own base
     context + class counts (C=8)              1.4206                    --
-      + position bins                         1.3554                +0.56f
-      + explicit phase (10, 10.5, 7 bp)       1.4034                +0.15f
+      + position bins                         1.3554                +0.79f
+      + explicit phase (10, 10.5, 7 bp)       1.4034                +0.21f
     context + per-factor counts               1.2199                    --
-      + position bins                         1.1568                +0.54f
+      + position bins                         1.1568                +0.77f
 
   and the same two, restricted to the main ladder, where P1's control 2 showed the
   group mean gains nothing:
     class counts, main ladder only            1.3736                    --
-      + one term per position                 1.3261                +0.41f
-      + helical phase 10, 10.5                1.3606                +0.11f
+      + one term per position                 1.3261                +0.58f
+      + helical phase 10, 10.5                1.3606                +0.16f
 
   A ridge that gains from position where the group mean does not is a statement about
   the ESTIMATOR: the information is there and partitioning is the wrong way to reach it.

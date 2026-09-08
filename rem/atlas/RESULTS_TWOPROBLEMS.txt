@@ -1597,3 +1597,123 @@ Three controllers to a hundred and forty, 12.8% of the network's regulatory edge
 step measured on the same cap function against the same bar. What remains is not a representation
 problem: at 140 the block binds, the elimination width grows as roughly |C|^0.78 so 2^(w+1) passes
 the bar near |C| = 150, and there is no third term left to demote.
+
+
+=================================================================================================
+CORRECTION: FIVE DEFECTS FOUND BY AN INDEPENDENT AUDIT OF THIS RECORD
+=================================================================================================
+Four auditors were run over this ledger and the modules behind it, each through one lens -- cost,
+accuracy, biology, defect-record -- and told to separate what has been MEASURED from what has been
+ASSERTED. They found five things, all verified independently before being accepted, and one of
+their claims was checked and found wrong.
+
+DEFECT 1: THE NOISE FLOOR WAS sqrt(2) TOO LARGE, IN FOUR MODULES. promoter.py set
+floor = std(l1-l2)/sqrt(2) = 0.1164, which is the PER-REPLICATE sigma. But every model in this
+arc is fitted and scored against y = (l1+l2)/2, whose noise is std(l1-l2)/2 = 0.0823. Verified
+empirically: std(l1 - y) = 0.0823. signed.py, poscount.py and multiplier.py each recomputed the
+same wrong divisor. promoter.py also printed the two figures with their LABELS SWAPPED.
+
+Every "floors" number in this ledger was therefore understated by 1.414x. Restated:
+
+    quantity                                        old floors   corrected
+    count vs identity, the central refutation             6.29        8.89
+    signed count C = 2                                    2.61        3.70
+    class count C = 8                                     1.52        2.15
+    class count C = 64, the one inside a floor            0.19        0.26
+    signed.py S2 largest leakage                          0.48        0.67
+    poscount P2 best spatial split vs pure C = 32         0.33        0.47
+    poscount P2 best spatial split vs pure C = 8          0.48        0.67
+    multiplier M2 gain at 49 position bins                0.65        0.92
+    signed.py S3 no-fallback, C = 2                       3.28        4.64
+    signed.py S3 no-fallback, C = 64                      0.12        0.17
+
+NO GATE VERDICT CHANGES. Refutations get stronger and validation margins tighten by 41%, and
+every module was rerun to confirm it. The auditor additionally claimed poscount's "both margins
+under one floor" no longer held; checked, and it does -- 0.47 and 0.67 are both still under one.
+Their finding was right and their consequence was overstated, which is why it was checked.
+
+DEFECT 2: THE RUNNING-TOTAL TABLE IN THIS LEDGER MIXED TWO ACCURACY STANDARDS. The closing table
+of the width section reads 3 -> 13 -> 25 -> 140 and claims "every step measured on the same cap
+function against the same bar". That is true of the 1e12 COST bar and FALSE of the accuracy bar.
+Cap 13 and cap 140 are at C = 64, which sits 0.26 floors from identity -- the only resolution that
+passes signed.py's predeclared one-floor gate. Cap 25 is at C = 8, which sits 2.15 floors out, a
+resolution signed.py's own S0 gate explicitly REJECTED as a candidate. At C = 64 the multiplier
+form gives cap 13, not 25.
+
+    CORRECTED RUNNING TOTAL, all at C = 64, all inside one noise floor of identity:
+
+        representation                                   cap |C|   edge coverage
+        pattern (exact)                                        3           12.8%
+        class count                                           13           26.6%
+        class count x temporal multiplier                     13           26.6%
+        + hub demotion + factored block                      140           71.7%
+
+The multiplier form's contribution is NOT a cap increase. It is +0.92 noise floors of accuracy at
+the SAME alphabet, which is what multiplier.py actually measured and what its own M0(a) table
+shows. The 3 -> 13 -> 25 -> 140 framing bought a step by silently lowering the accuracy standard
+for one row, and it is withdrawn.
+
+DEFECT 3: A TREND ASSERTED FROM THREE POINTS WITH FIVE AVAILABLE. promoter.py's V4 ran a hardcoded
+`for k in (1, 2, 3)` while site counts 4 (n = 114) and 5 (n = 76) both clear its own n >= 60
+inclusion rule. This ledger reports "the identity advantage is 5.65, 6.56 and 8.37 floors at one,
+two and three sites -- it grows with the number of sites, which is the direction that matters for
+the engine." Swept over every site count that clears the rule, with the corrected floor:
+
+    site count      n   count RMSE   identity RMSE   gap/floor   identity fallback   per group
+             1   2133       1.6611          1.0039        7.99              19.5%        4.09
+             2   3018       2.0226          1.2594        9.27               3.1%       17.75
+             3    385       2.0444          1.0704       11.84               6.0%        7.40
+             4    114       1.8651          1.6250        2.92              23.7%        3.45
+             5     76       2.2003          1.9348        3.23              35.5%        2.38
+
+The advantage rises to k = 3 and then falls by a factor of four. But the drop is NOT evidence that
+identity stops mattering: at k = 4 and 5 the identity model abstains on 23.7% and 35.5% of
+held-out promoters, against 3.1% at k = 2, because there are only 3.45 and 2.38 promoters per
+identity group. It is the estimator running out of data, the same failure poscount.py's V5 already
+diagnosed. So neither the growth NOR the reversal is established beyond three sites, and the
+correct statement is that the trend holds over k = 1..3 and this data cannot speak past it.
+
+DEFECT 4: THE ASSEMBLED ENGINE'S TAIL VALUE IS SET BY A CONSTANT I INVENTED. realkinetics'
+engine_tail carries a target-response base log-odds of -1.0 and a gain of 2.0, neither with any
+measurement behind it. Measured on the exact 60-target conjunction:
+
+    parameter    value      exact tail    orders vs nominal
+    nominal   -1.0/2.0      2.574e-33                 0.00
+    base          -1.5      2.033e-42                -9.37
+    base          -0.5      6.473e-25                +8.13
+    gain           1.0      7.632e-34                -0.80
+    gain           3.0      2.032e-32                +0.63
+
+Half a log-odds unit moves the reported tail by EIGHT TO NINE ORDERS OF MAGNITUDE. The tail column
+in K5 is therefore not a calibrated prediction about CDKN1A or anything else and must never be
+quoted as one. What it legitimately is: a fixed reference against which the PRUNED computation is
+checked at identical constants -- and that check is unaffected, because both sides move together.
+It is the only thing K5 establishes about the number.
+
+DEFECT 5: THAT ENGINE'S "CERTIFICATE" BOUNDS DROPPED MASS, NOT THE TAIL, AND HERE THE TWO ARE 29
+ORDERS APART. The observable is a 60-way conjunction of order 1e-33; the certificate is stratum
+mass of order 1e-3.
+
+    |C|      exact tail    certificate (mass)      ratio
+      4       2.574e-33              4.97e-04    1.93e+29
+      5       3.990e-33              7.33e-03    1.84e+30
+
+"The certificate is honoured in every row" is true as a statement about MASS and was wrong to
+present as though it validated the TAIL. The distinction is the observable's magnitude relative to
+the dropped mass: prune.py's N3 certificate WAS meaningful, because its observable was of order
+one (tail 1.52e-01, certificate 1.29e-03, ratio 8.5), and that claim stands unchanged. A mass
+bound is a usable tail bound only when the tail is a decent fraction of the mass. For a deep
+conjunction it is not, and bounding one needs a bound on the OBSERVABLE, which this build order
+does not have.
+
+THAT LAST POINT IS NOW THE SHARPEST OPEN PROBLEM THE PRUNING ROUTE LEAVES BEHIND, and it was not
+visible from inside the module that created it.
+
+WHAT THIS EPISODE IS WORTH, BEYOND THE FIVE FIXES. Every one of these defects sat inside a module
+whose own predeclared gates all PASSED, and four of the five were in work reported as successful
+within the last few hours. That is the same lesson twice already recorded here -- adversarial
+review catches what a module's own gates cannot -- but with a sharper edge: the gates were not
+weak, they were answering the questions their author thought to ask. An auditor reading only the
+record, with no stake in it, asked different ones. The rule that follows is that a module's gates
+verify its INTERNAL consistency and cannot certify the quantity it reports; that needs a reader
+who did not write it.

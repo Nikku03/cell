@@ -3,7 +3,7 @@ THE SIGNED COUNT, RANKED AS A CURVE
 =================================================================================================
   Sharon et al. 2012, Nat Biotechnol 30:521-30, doi:10.1038/nbt.2205, via NCBI GEO
   GSE37851, sha256[:32] 6a68ee26db7a1d3f4813ae29ed4e69bd. 5790 promoters with at least one site,
-  404 distinct factors. Replicate noise floor 0.1164 log2, measured before any model.
+  404 distinct factors. Replicate noise floor 0.0823 log2, measured before any model.
   leaky oracle over all folds: 170 activating factors, 234 repressing.
 
 =================================================================================================
@@ -16,7 +16,7 @@ S0  THE CEILING GATE, BOTH HALVES
       SIGNED count RMSE  1.4451   fallback  3.0%   (leaky oracle)
       identity RMSE      1.1641   fallback 11.1%
       the signed count closes 61.6% of the count-to-identity gap
-      and leaves 2.41 noise floors open.
+      and leaves 3.42 noise floors open.
       S0(a): FAIL -- REFUTED AT ITS OWN CEILING. The signed count does not reach identity even
       when handed the answer, so no honest sign estimator can make it do so. What follows
       is therefore not a verdict on C = 2 but the curve C = 2 sits on.
@@ -47,18 +47,18 @@ S1  THE SCALING LAW: ERROR AGAINST C, WITH THE CAP BESIDE IT
 =================================================================================================
         C  honest RMSE  leaky RMSE  floors from  % of gap  fallback  cap |C|  coverage
                                        identity    closed             at L=8          
-        1       1.8960      1.8960         6.29      0.0%     2.6%      419    93.3%
-        2       1.4683      1.4605         2.61     58.4%     3.1%      419    93.3%
-        3       1.4466      1.4389         2.43     61.4%     3.2%      419    93.3%
-        4       1.4077      1.3930         2.09     66.7%     3.4%      419    93.3%
-        6       1.3425      1.3242         1.53     75.6%     3.5%       55    50.7%
-        8       1.3410      1.3235         1.52     75.8%     3.8%       25    36.5%
-       12       1.3323      1.3050         1.45     77.0%     3.9%       15    28.6%
-       16       1.3330      1.2901         1.45     76.9%     4.0%       15    28.6%
-       32       1.3151      1.2806         1.30     79.4%     7.4%       13    26.6%
-       64       1.1858      1.1534         0.19     97.0%     9.8%       13    26.6%
-      128       1.2078      1.1524         0.38     94.0%    10.1%       13    26.6%
-      404       1.2065      1.1641         0.36     94.2%    10.3%       12    25.6%
+        1       1.8960      1.8960         8.89      0.0%     2.6%      419    93.3%
+        2       1.4683      1.4605         3.70     58.4%     3.1%      419    93.3%
+        3       1.4466      1.4389         3.43     61.4%     3.2%      419    93.3%
+        4       1.4077      1.3930         2.96     66.7%     3.4%      419    93.3%
+        6       1.3425      1.3242         2.17     75.6%     3.5%       55    50.7%
+        8       1.3410      1.3235         2.15     75.8%     3.8%       25    36.5%
+       12       1.3323      1.3050         2.04     77.0%     3.9%       15    28.6%
+       16       1.3330      1.2901         2.05     76.9%     4.0%       15    28.6%
+       32       1.3151      1.2806         1.84     79.4%     7.4%       13    26.6%
+       64       1.1858      1.1534         0.26     97.0%     9.8%       13    26.6%
+      128       1.2078      1.1524         0.53     94.0%    10.1%       13    26.6%
+      404       1.2065      1.1641         0.52     94.2%    10.3%       12    25.6%
     ident       1.1641      1.1641         0.00    100.0%    11.1%        3    12.8%
 
   S1: the smallest C inside one noise floor of identity is 64.
@@ -87,19 +87,19 @@ S2  WHAT THE SIGN ORACLE WAS WORTH: HONEST MINUS LEAKY
 =================================================================================================
         C  honest - leaky   in floors
         1          0.0000        0.00
-        2          0.0078        0.07
-        3          0.0078        0.07
-        4          0.0147        0.13
-        6          0.0183        0.16
-        8          0.0175        0.15
-       12          0.0273        0.23
-       16          0.0429        0.37
-       32          0.0345        0.30
-       64          0.0325        0.28
-      128          0.0554        0.48
-      404          0.0424        0.36
+        2          0.0078        0.09
+        3          0.0078        0.09
+        4          0.0147        0.18
+        6          0.0183        0.22
+        8          0.0175        0.21
+       12          0.0273        0.33
+       16          0.0429        0.52
+       32          0.0345        0.42
+       64          0.0325        0.39
+      128          0.0554        0.67
+      404          0.0424        0.52
 
-  largest leakage advantage 0.0554 log2 = 0.48 floors
+  largest leakage advantage 0.0554 log2 = 0.67 floors
   S2: PASS -- the classes can be learned in-fold, so the leaky ceiling was a fair upper bound
 
 =================================================================================================
@@ -111,11 +111,11 @@ S3  FALLBACK IS PART OF THE ANSWER
 
   5146 of 5790 promoters are scored by every model without fallback
     model                     all promoters  no-fallback subset  floors from ident
-    plain count                      1.8960              1.9105               7.10
-    SIGNED count (C=2)               1.4683              1.4665               3.28
-    class count C=8                  1.3410              1.3051               1.90
-    class count C=64                 1.1858              1.0978               0.12
-    class count C=128                1.2078              1.0857               0.01
+    plain count                      1.8960              1.9105              10.04
+    SIGNED count (C=2)               1.4683              1.4665               4.64
+    class count C=8                  1.3410              1.3051               2.68
+    class count C=64                 1.1858              1.0978               0.17
+    class count C=128                1.2078              1.0857               0.02
     identity                         1.1641              1.0842               0.00
   This is the comparison that counts, because it is the only one where every model is
   answering the same questions.
