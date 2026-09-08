@@ -44,6 +44,23 @@ observable per gene, where per-gene class maps cost C per gene, and -- the point
 it does not enlarge the per-gene alphabet at all, so the cap does not move.
 
 =================================================================================================
+TWO THINGS THE FIRST RUN GOT WRONG, RECORDED RATHER THAN EDITED AWAY
+=================================================================================================
+THE PREDICTED FORM WAS THE WRONG ONE. The docstring above reasons its way to a MULTIPLICATIVE
+form -- a shared class effect scaled by a per-gene gain -- on the strength of multiplier.py having
+validated exactly that shape on the time axis. Measured, the ADDITIVE form wins in both cell
+types: 0.4723 against 0.5391 in HepG2 and 0.8176 against 0.9693 in K562. The reasoning by analogy
+was good and the analogy was false; recorded as a prediction made and lost, and the multiplicative
+row is kept in the table so the comparison stays visible.
+
+AND THE "CEILING" WAS NOT A CEILING. The per-enhancer row -- predicting replicate 2 from replicate
+1 for the same construct -- was labelled the bound no model can pass, and two models passed it.
+It carries BOTH replicates' noise and therefore sits at sqrt(2)*sigma, while a fitted model
+averages and can approach sigma. This is the same error humantransfer's H3 already recorded, made
+again in the next module: a one-measurement predictor is not an upper bound on achievable
+accuracy. Everything is now scored against sigma, the actual noise limit.
+
+=================================================================================================
 GATES, PREDECLARED BEFORE THE FIRST RUN
 =================================================================================================
 
@@ -166,8 +183,13 @@ def main():
     # ---- J1 / J2  HELD-OUT LADDER --------------------------------------------------------------
     P_("\n" + RULE); P_("J1/J2  THE LADDER, HELD OUT: FIT ON REPLICATE 1, SCORE ON REPLICATE 2")
     P_(RULE)
-    P_("  Nothing here is graded on what it was fitted to. The per-enhancer row is the ceiling no")
-    P_("  model can pass, because it is the other replicate of the same measurement.")
+    P_("  Nothing here is graded on what it was fitted to.")
+    P_("  THE REFERENCE IS THE NOISE LIMIT, NOT THE OTHER REPLICATE. The first version of this")
+    P_("  gate called the per-enhancer row 'the ceiling no model can pass' and TWO models passed")
+    P_("  it. It is not a ceiling: predicting replicate 2 from replicate 1 carries BOTH replicates'")
+    P_("  noise, so it sits at sqrt(2)*sigma, while a fitted model averages and can approach sigma.")
+    P_("  Exactly the error humantransfer's H3 already recorded -- a one-measurement predictor is")
+    P_("  not an upper bound on achievable accuracy. Every row below is scored against sigma.")
 
     def rmse(p, y):
         return float(np.sqrt(np.mean((y - p) ** 2)))
@@ -202,17 +224,22 @@ def main():
                     pred[s2] = float(E1[s2].mean()) if s2.sum() else float(E1[sel].mean())
             rows.append((f"per-group class maps, G = {G}", rmse(pred, E2), ncl * G))
         # per-enhancer limit: the other replicate of the same construct
-        rows.append(("per-enhancer (the ceiling)", rmse(E1, E2), n))
+        rows.append(("per-enhancer (the OTHER replicate)", rmse(E1, E2), n))
         P_(f"\n  {cell}: floor {sg:.4f} log2, {n} disruptions")
-        P_(f"    {'model':<34} {'held-out RMSE':>14} {'floors vs ceiling':>18} {'parameters':>11}")
-        ceil = rows[-1][1]
+        P_(f"    {'model':<34} {'held-out RMSE':>14} {'x the noise limit':>18} {'parameters':>11}")
         for nm, e, p in rows:
-            P_(f"    {nm:<34} {e:>14.4f} {(e-ceil)/sg:>18.2f} {p:>11}")
+            P_(f"    {nm:<34} {e:>14.4f} {e/sg:>18.2f} {p:>11}")
+        P_(f"    {'the NOISE LIMIT (a perfect model)':<34} {sg:>14.4f} {1.00:>18.2f} {'--':>11}")
         best_grp = min(e for nm, e, p in rows if nm.startswith("per-group"))
-        scal = [e for nm, e, p in rows if nm.startswith("global map x")][0]
-        P_(f"    -> best group model beats the per-gene gain by"
-           f" {(scal-best_grp)/sg:+.2f} floors"
-           f" {'(groups win)' if best_grp < scal - sg else '(NOT by a floor: groups are not worth their cost)'}")
+        add = [e for nm, e, p in rows if nm.startswith("global map + ")][0]
+        mul = [e for nm, e, p in rows if nm.startswith("global map x")][0]
+        glob = rows[0][1]
+        P_(f"    -> ONE SCALAR closes {100*(glob-add)/(glob-sg):.0f}% of the gap between the global"
+           f" class map and the noise limit")
+        P_(f"       the best GROUP model closes {100*(glob-best_grp)/(glob-sg):.0f}% of it, using"
+           f" up to {32*res[cell][6]} parameters against {res[cell][6]+2}")
+        P_(f"       and the ADDITIVE scalar beats the MULTIPLICATIVE gain by"
+           f" {(mul-add)/sg:+.2f} of the floor")
 
     # ---- J4  THE CAP ---------------------------------------------------------------------------
     P_("\n" + RULE); P_("J4  WHAT IT DOES TO THE CAP"); P_(RULE)

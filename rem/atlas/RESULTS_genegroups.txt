@@ -1,0 +1,87 @@
+=================================================================================================
+SHARING CLASSES ACROSS GROUPS OF GENES
+=================================================================================================
+  Every compression in this build order assumes a gene's response reaches it through
+  classes SHARED ACROSS GENES. mpra_human measured that a globally shared map can capture
+  only 21.5% (HepG2) and 46.8% (K562) of the reproducible effect; the rest is context.
+  Sharing across GROUPS interpolates between a global map and a per-gene one. This tests
+  it -- after first testing whether groups are needed at all.
+
+  GEO GSE33367 sha256[:32] 803c5fd57e2a817e97cd4d9163bdeb9d; 196 disruptions, 136 motif classes.
+
+=================================================================================================
+J0  THE CEILING GATE: ARE GROUPS NEEDED AT ALL?
+=================================================================================================
+  Grouping is worth building only if the context variance is not already explained by
+  something cheaper. The candidate is one scalar: the wild-type activity of the context.
+  The correlation is suspicious by construction -- the effect is mutant minus wild type,
+  so the covariate sits on both sides and shared noise manufactures it -- so it is also
+  measured ACROSS replicates, where the two noises are independent.
+
+    cell                    same-rep corr               cross-rep corr
+    HepG2                  -0.865, -0.880               -0.758, -0.758
+    K562                   -0.811, -0.698               -0.546, -0.440
+
+  It survives the control. Shared noise inflates it but does not create it, and every
+  coefficient below is CROSS-FITTED: fitted on one replicate's covariate against the
+  other's response, so it can never be an artefact of the coupling.
+
+=================================================================================================
+J1/J2  THE LADDER, HELD OUT: FIT ON REPLICATE 1, SCORE ON REPLICATE 2
+=================================================================================================
+  Nothing here is graded on what it was fitted to. The per-enhancer row is the ceiling no
+  model can pass, because it is the other replicate of the same measurement.
+
+  HepG2: floor 0.3935 log2, 196 disruptions
+    model                               held-out RMSE  floors vs ceiling  parameters
+    global class map                           0.6648               0.28         136
+    global map x per-gene gain                 0.5391              -0.04         137
+    global map + per-gene scalar               0.4723              -0.21         138
+    per-group class maps, G = 2                0.6129               0.14         272
+    per-group class maps, G = 4                0.5782               0.06         544
+    per-group class maps, G = 8                0.5539              -0.01        1088
+    per-group class maps, G = 16               0.5514              -0.01        2176
+    per-group class maps, G = 32               0.5604               0.01        4352
+    per-enhancer (the ceiling)                 0.5565               0.00         196
+    -> best group model beats the per-gene gain by -0.03 floors (NOT by a floor: groups are not worth their cost)
+
+  K562: floor 0.6295 log2, 196 disruptions
+    model                               held-out RMSE  floors vs ceiling  parameters
+    global class map                           0.9168               0.04         136
+    global map x per-gene gain                 0.9693               0.13         137
+    global map + per-gene scalar               0.8176              -0.12         138
+    per-group class maps, G = 2                0.9027               0.02         272
+    per-group class maps, G = 4                0.9193               0.05         544
+    per-group class maps, G = 8                0.9125               0.04        1088
+    per-group class maps, G = 16               0.9124               0.04        2176
+    per-group class maps, G = 32               0.9185               0.04        4352
+    per-enhancer (the ceiling)                 0.8902               0.00         196
+    -> best group model beats the per-gene gain by +0.11 floors (NOT by a floor: groups are not worth their cost)
+
+=================================================================================================
+J4  WHAT IT DOES TO THE CAP
+=================================================================================================
+  The cap counts the number of distinguishable values a gene's conditional must carry.
+    a PER-GENE GAIN driven by an observable adds ONE global coefficient and changes no
+      gene's alphabet at all, so the cap is exactly unchanged: 13 at C = 64, 140 with hub
+      demotion and the factored block.
+    G CLASS MAPS multiply the STORED alphabet by G but likewise leave each gene's own
+      alphabet unchanged, so the cap is also unchanged -- G maps cost G times a table that
+      was never the binding term. Neither option moves the cap; they differ only in what
+      they buy in ACCURACY, which is what J1/J2 measured.
+  So the question was never cost. It was whether either repair recovers the context share,
+  and the ladder above answers it.
+
+=================================================================================================
+J5  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  1. The grouping variable here is the context's own wild-type activity, chosen because
+     the ceiling gate showed it absorbs most of the context variance. A grouping on some
+     other property -- chromatin, promoter class, co-factor content -- is untested, and a
+     better one would raise the group rows without changing the scalar row.
+  2. Every enhancer here carries ONE studied motif, so 'per-gene gain' is measured on
+     single-site contexts. Whether the same gain applies when several sites are present is
+     exactly the copy-number question that no open human dataset could answer.
+  3. This is an episomal reporter in two cell lines. The gain is a property of the assay's
+     dynamic range as much as of the biology, and saturation in a plasmid need not be
+     saturation in chromatin.
