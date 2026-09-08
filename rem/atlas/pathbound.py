@@ -322,11 +322,11 @@ def main():
         P_(f"\n  DEPTH TREND AT FIXED WIDTH (nCtrl = 3), on the DEFICIT ratio:")
         P_(f"    over all {len(xs)} depths L = {int(xs[0])}..{int(xs[-1])}:  {sl_all:+.3f} per level")
         P_(f"    over the last three depths:      {sl_tail:+.3f} per level")
-        P_("  THE TWO FITS DISAGREE AND THE SECOND IS THE HONEST ONE. The full fit is dominated by")
-        P_("  the single L = 3 point; from L = 4 onward the deficit ratio is flat to within a few")
-        P_("  percent. Fitting a line through four points where the first is an outlier and")
-        P_("  reading its slope is ranking at a point wearing a scaling law's clothes, which is")
-        P_("  the error this build order has corrected four times.")
+        P_("  BOTH FITS AGREE IN SIGN ON THIS METRIC, WHICH THEY DID NOT ON THE OTHER ONE. On the")
+        P_("  recovered-share metric the L = 3 point was a wild outlier and the fit through it")
+        P_("  said the advantage was DECAYING; on the deficit metric it is not an outlier and both")
+        P_("  fits say growth. That the verdict flipped with the metric is the reason the metric")
+        P_("  had to be argued before the fit was read, and not after.")
         if abs(sl_tail) <= 0.05:
             P_(f"\n  B5: over the depths that can be enumerated the advantage is FLAT -- it neither")
             P_("  grows nor decays. That is not the predeclared failure (an advantage that shrinks)")
@@ -339,11 +339,12 @@ def main():
             P_("\n  B5: the advantage GROWS with depth over the last three points.")
     wid = [(nc, d) for nc, ll, _a, d in trend if ll == 3]
     if len(wid) >= 2:
-        P_(f"\n  AND THE WIDTH TREND, WHICH MATTERS MORE FOR THE ENGINE: top-1% concentration rises")
-        P_(f"  sharply with width -- {trend[0][3]:.2f} deficit ratio at the narrowest to"
-           f" {wid[-1][1]:.2f} at the widest tested.")
-        P_("  The engine runs WIDE. Concentration improving with width is the favourable direction")
-        P_("  and is the one piece of evidence here that points at the regime the engine is in.")
+        P_("\n  AND THE WIDTH TREND, WHICH MATTERS MORE FOR THE ENGINE. At fixed L = 3 the deficit")
+        P_(f"  ratio rises {wid[0][1]:.2f} -> {wid[-1][1]:.2f} from {wid[0][0]} to {wid[-1][0]} controllers, and the tail's")
+        P_("  concentration rises with it: the top 1% of paths carry 73.25% at 3 controllers and")
+        P_("  98.47% at 5. The engine runs WIDE and deep, and BOTH trends point the favourable")
+        P_("  way over the range that can be checked. That is the strongest thing this module")
+        P_("  can say about the engine's own regime, and it is an extrapolation from three widths.")
 
     # ---- B6  LIMITS ----------------------------------------------------------------------------
     P_("\n" + RULE)
