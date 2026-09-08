@@ -243,12 +243,26 @@ def main():
     # ---- V1  NOISE FLOOR, FIRST ----------------------------------------------------------------
     P_("\n" + RULE); P_("V1  THE REPLICATE NOISE FLOOR, MEASURED BEFORE ANY MODEL IS FITTED"); P_(RULE)
     l1 = np.array([r["l1"] for r in recs]); l2 = np.array([r["l2"] for r in recs])
+    # THE NOISE FLOOR, CORRECTED. std(l1 - l2) = sigma * sqrt(2) where sigma is the PER-REPLICATE
+    # noise, so sigma = std/sqrt(2). But every model here is fitted and scored against
+    # y = (l1 + l2)/2, whose noise is sigma/sqrt(2) = std/2. The first version divided by sqrt(2)
+    # and used the per-replicate sigma as the floor, which is sqrt(2) too large: verified
+    # empirically, std(l1 - y) = 0.0823 = std(l1 - l2)/2. Every "floors" figure computed against
+    # the old value was understated by 1.414x. Found by an independent audit of the record.
     rms_rep = float(np.std(l1 - l2))
-    floor = rms_rep / np.sqrt(2.0)
+    sigma_rep = rms_rep / np.sqrt(2.0)          # noise in ONE replicate
+    floor = rms_rep / 2.0                       # noise in y, the mean of the two -- the response
+                                                # every model below is actually scored against
     P_(f"  replicate Pearson r on log2 expression : {np.corrcoef(l1, l2)[0, 1]:.4f}")
     P_(f"  RMS replicate-to-replicate difference   : {rms_rep:.4f} log2 units")
-    P_(f"  NOISE FLOOR on a single promoter's mean : {floor / np.sqrt(2.0):.4f} log2")
-    P_(f"  measurement noise in the averaged response y: {floor:.4f} log2")
+    P_(f"  noise in a SINGLE replicate             : {sigma_rep:.4f} log2")
+    P_(f"  NOISE FLOOR, the noise in y = (l1+l2)/2 : {floor:.4f} log2")
+    P_( "  The first version of this module used the per-replicate figure as the floor, which is")
+    P_( "  sqrt(2) too large, because y is the MEAN of two replicates and not one of them. Every")
+    P_( "  'floors' number in this module and in signed/poscount/multiplier was understated by")
+    P_(f"  1.414x. Checked empirically: std(l1 - y) = {float(np.std(l1 - np.array([r['y'] for r in recs]))):.4f}.")
+    P_( "  Correcting it makes every REFUTATION stronger and every VALIDATION margin tighter; no")
+    P_( "  gate verdict in the arc changes, which was checked before the change was made.")
     P_( "  No model difference smaller than this is a result.")
 
     # ---- V2  BASELINE THAT MUST FAIL -----------------------------------------------------------
@@ -295,7 +309,10 @@ def main():
     # ---- V4  WHERE DOES IT BREAK ---------------------------------------------------------------
     P_("\n" + RULE); P_("V4  WHERE DOES IT BREAK?"); P_(RULE)
     P_(f"    {'site count':>11} {'n':>6} {'count RMSE':>12} {'identity RMSE':>14} {'gap/floor':>10}")
-    for k in (1, 2, 3):
+    # SWEPT over every site count that clears the inclusion rule, not a hardcoded (1, 2, 3).
+    # The first version stopped at three while k = 4 (n = 114) and k = 5 (n = 76) both clear the
+    # n >= 60 rule, so a trend was asserted from three points with two more available unlooked at.
+    for k in sorted({len(r["tfs"]) for r in sub}):
         s = [r for r in sub if len(r["tfs"]) == k]
         if len(s) < 60:
             continue

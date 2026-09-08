@@ -82,6 +82,26 @@ K5  CONDITIONAL ON K1-K4: ASSEMBLE AND RUN. The controller block with TRRUST wir
 K6  WHAT BREAKS FIRST, at scale, with the measured scaling laws rather than hope.
 
 K7  WHAT THIS DOES AND DOES NOT SETTLE.
+
+=================================================================================================
+TWO THINGS THE FIRST REPORTING OF K5 GOT WRONG, FOUND BY AN INDEPENDENT AUDIT
+=================================================================================================
+(a) THE TAIL VALUE IS SET BY AN INVENTED CONSTANT. engine_tail's target response carries a base
+    log-odds of -1.0 and a gain of 2.0, and neither has any measurement behind it. Moving the base
+    by half a unit moves the reported tail by eight to nine ORDERS OF MAGNITUDE. The tail column is
+    therefore not a calibrated prediction about any gene and must not be quoted as one. What it
+    legitimately is: a fixed reference against which the pruned computation is checked at
+    identical constants. That check is unaffected, since both sides move together, and it is the
+    only thing K5 establishes about the number.
+
+(b) THE CERTIFICATE BOUNDS DROPPED MASS, NOT THE TAIL. The observable is a 60-way conjunction of
+    order 1e-33 while the certificate is stratum mass of order 1e-3 -- a ratio near 1e29. Saying
+    "the certificate is honoured in every row" was true of MASS and wrong to present as though it
+    validated the TAIL. prune.py's N3 certificate was meaningful because its observable was of
+    order one (tail 1.52e-01, certificate 1.29e-03), and that claim stands. A mass bound is a
+    usable tail bound only when the tail is a decent fraction of the mass; for a deep conjunction
+    it is not, and bounding that needs a bound on the OBSERVABLE, which this build order does not
+    have. That is now the sharpest open problem the pruning route leaves behind.
 """
 
 from __future__ import annotations
@@ -578,6 +598,48 @@ def main():
                f" certificate {b[0][6]:.2e}")
     P_("  Where exact enumeration is still affordable the pruned answer is checked against it")
     P_("  rather than trusted, and it agrees to the fourth decimal at every such row.")
+
+    # ---- K5b  TWO THINGS THE FIRST REPORTING OF THIS GATE GOT WRONG ----------------------------
+    P_("\n" + RULE); P_("K5b  TWO THINGS THE FIRST REPORTING OF THIS GATE GOT WRONG"); P_(RULE)
+    Q4, c4, ci4, _, _, _ = trrust_block(4)
+    r4 = target_rows(ci4, ntarget=60)
+    t_nom, _, _, _, _ = engine_tail(Q4, 4, r4, L5, 0.0667, 0.0)
+
+    P_("  (a) THE TAIL VALUE IS SET BY A CONSTANT I INVENTED, NOT BY THE NETWORK. engine_tail's")
+    P_("  target response has a base log-odds and a gain, and neither has any measurement behind")
+    P_("  it -- they were chosen. Sensitivity, on the exact 60-target conjunction:")
+    P_(f"\n    {'parameter':<26} {'value':>7} {'exact tail':>14} {'orders vs nominal':>19}")
+    P_(f"    {'nominal':<26} {'-1.0/2.0':>7} {t_nom:>14.4e} {0.0:>19.2f}")
+    for b in (-1.5, -0.5):
+        tv, _, _, _, _ = engine_tail(Q4, 4, r4, L5, 0.0667, 0.0, base=b)
+        P_(f"    {'base':<26} {b:>7.1f} {tv:>14.4e} {np.log10(tv/t_nom):>19.2f}")
+    for g in (1.0, 3.0):
+        tv, _, _, _, _ = engine_tail(Q4, 4, r4, L5, 0.0667, 0.0, gain=g)
+        P_(f"    {'gain':<26} {g:>7.1f} {tv:>14.4e} {np.log10(tv/t_nom):>19.2f}")
+    P_("\n  Moving the base by half a log-odds unit moves the reported tail by EIGHT TO NINE ORDERS")
+    P_("  OF MAGNITUDE. So the tail column in K5 is NOT a calibrated prediction about CDKN1A or")
+    P_("  anything else, and must never be quoted as one. What it legitimately is: a fixed")
+    P_("  reference against which the PRUNED computation is checked, at identical constants, which")
+    P_("  is what the 'vs exact' column measures. That check is unaffected -- both sides move")
+    P_("  together -- and it is the only thing K5 establishes about the number.")
+
+    P_("\n  (b) THE CERTIFICATE BOUNDS DROPPED MASS, NOT THE TAIL, AND HERE THE TWO ARE 29 ORDERS")
+    P_("  APART. The observable is a 60-way conjunction of order 1e-33. The certificate is stratum")
+    P_("  mass of order 1e-3. As a bound on the reported tail it is vacuous:")
+    P_(f"\n    {'|C|':>4} {'exact tail':>14} {'certificate (mass)':>20} {'ratio':>12}")
+    for nC in (4, 5):
+        Qk, _, cik, _, _, _ = trrust_block(nC)
+        rk = target_rows(ci4, ntarget=60)
+        te, _, _, _, _ = engine_tail(Qk, nC, rk, L5, 0.0667, 0.0)
+        _, drb, _, _, _ = engine_budget(Qk, nC, rk, L5, 0.0667, BUD)
+        P_(f"    {nC:>4} {te:>14.4e} {drb:>20.2e} {drb/te:>12.2e}")
+    P_("\n  So 'the certificate is honoured in every row' is true as a statement about MASS and was")
+    P_("  wrong to present as though it validated the TAIL. The distinction is the observable's")
+    P_("  magnitude: prune.py's N3 certificate was meaningful because its observable was of order")
+    P_("  one (tail 1.52e-01, certificate 1.29e-03, ratio 8.5), and that claim stands unchanged.")
+    P_("  A mass bound is a usable tail bound only when the tail is a decent fraction of the mass.")
+    P_("  For a deep conjunction it is not, and bounding it needs a bound on the OBSERVABLE, which")
+    P_("  this build order does not have.")
 
     # ---- K6  WHAT BREAKS FIRST -----------------------------------------------------------------
     P_("\n" + RULE); P_("K6  WHAT BREAKS FIRST"); P_(RULE)

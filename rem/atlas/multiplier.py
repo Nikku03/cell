@@ -325,7 +325,13 @@ def main():
     recs = load(d)
     sub = [r for r in recs if r["tfs"]]
     l1 = np.array([r["l1"] for r in recs]); l2 = np.array([r["l2"] for r in recs])
-    floor = float(np.std(l1 - l2)) / np.sqrt(2.0)
+    # THE NOISE FLOOR, CORRECTED. std(l1 - l2) = sigma * sqrt(2) where sigma is the PER-REPLICATE
+    # noise, so sigma = std/sqrt(2). But every model here is fitted and scored against
+    # y = (l1 + l2)/2, whose noise is sigma/sqrt(2) = std/2. The first version divided by sqrt(2)
+    # and used the per-replicate sigma as the floor, which is sqrt(2) too large: verified
+    # empirically, std(l1 - y) = 0.0823 = std(l1 - l2)/2. Every "floors" figure computed against
+    # the old value was understated by 1.414x. Found by an independent audit of the record.
+    floor = float(np.std(l1 - l2)) / 2.0
     P_(f"  Sharon et al. 2012, doi:10.1038/nbt.2205, GEO GSE37851, sha256[:32] {sha}.")
     P_(f"  {len(sub)} promoters. Replicate noise floor {floor:.4f} log2.")
     P_( "  The form under test: P(x | class counts) * g(positions), which in log2 expression is a")
