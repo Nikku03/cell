@@ -68,6 +68,37 @@ M4  THE SAME QUANTITY AS THE OTHER TWO EXPERIMENTS, SO ALL THREE COMPARE
     human CRISPRi, between regulator       1.05 floors  CI [0.90, 1.18]
 
 =================================================================================================
+M4b  IS A MOTIF'S EFFECT A PROPERTY OF THE MOTIF, WITHIN ONE CELL?
+=================================================================================================
+  The cross-cell result in M5 has TWO explanations and they matter very differently.
+  (a) the per-gene RESPONSE FUNCTION differs between cells -- a problem for the engine; or
+  (b) the cognate factor's ACTIVITY differs between cells -- which is precisely what the
+      engine already models as controller state, and under which an uncorrelated cross-cell
+      result is what a CORRECT engine predicts.
+  M5 alone cannot separate them. This can: within ONE cell, is the same motif's effect
+  consistent across the different enhancer contexts it appears in?
+
+    cell      classes   between motifs   within a motif  identity explains
+    HepG2          34      0.83 floors      1.58 floors              21.5%
+    K562           34      0.72 floors      0.77 floors              46.8%
+
+  So the answer is (b) plus something else. Within a single cell, MOTIF IDENTITY explains
+  only a minority of the reproducible effect -- the rest is CONTEXT, the same motif
+  behaving differently in different enhancers. That does NOT show the engine's per-gene
+  response function is unstable: the engine's conditionals are PER GENE already, so
+  context-dependence is inside the model rather than outside it.
+  What it damages is the COMPRESSION. Every summary tested in this build order -- count,
+  signed count, class count, multiplier -- shares one assumption: that a gene's response
+  depends on its regulators through classes that are SHARED ACROSS GENES. A globally
+  shared class map can capture at most the between-motif share measured above, and that
+  is why the human class ladder was flat while yeast's spanned 8.6 floors.
+
+  THE CAVEAT THAT COULD OVERTURN THIS: the classes are recovered by sequence similarity,
+  not from a curated database, so instances of different factors may share a class. Any
+  such error inflates the WITHIN-class term, so the context share is an UPPER bound and
+  the identity share a LOWER one.
+
+=================================================================================================
 M5  REPLICATION ACROSS CELL TYPES
 =================================================================================================
   The first version of this gate asserted the principle and computed nothing. The two

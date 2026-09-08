@@ -1868,3 +1868,68 @@ The qualitative claim that regulators are not interchangeable survives in yeast 
 panel. At fixed count, in designed human constructs, it does not replicate across cell types. And
 the copy-number question -- the one the whole count summary is about -- has still never been asked
 of human data.
+
+
+=================================================================================================
+CORRECTION AND SYNTHESIS: WHAT THE CELL-SPECIFICITY RESULT ACTUALLY MEANS FOR THE ENGINE
+=================================================================================================
+The section above closed by saying that if a motif's effect does not transfer between two cell
+lines then the per-gene response function "is not a property of the network at all". THAT WAS TOO
+STRONG, and the measurement that shows why was not run before it was written.
+
+AN UNCORRELATED CROSS-CELL RESULT HAS TWO EXPLANATIONS AND THEY MATTER OPPOSITELY.
+  (a) the per-gene response function itself differs between cells -- a problem for the engine; or
+  (b) the cognate factor's ACTIVITY differs between cells -- which is exactly what the engine
+      already models as controller state, and under which an uncorrelated cross-cell result is
+      what a CORRECT engine predicts, not evidence against one.
+The r = +0.02 alone cannot separate them, and reading it as (a) was an error.
+
+WHAT SEPARATES THEM: within ONE cell type, is the same motif's effect consistent across the
+different enhancer contexts it appears in?
+
+    cell     motif classes    between motifs    within a motif    identity explains
+    HepG2               34       0.83 floors       1.58 floors                21.5%
+    K562                34       0.72 floors       0.77 floors                46.8%
+
+So the answer is (b) PLUS something the arc had not measured. Within a single cell, motif identity
+explains only a minority of the reproducible effect -- 21.5% and 46.8% -- and the remainder is
+CONTEXT: the same motif behaving differently in different enhancers. The caveat runs one way and
+is stated with its direction: classes are recovered by sequence similarity rather than from a
+curated database, so any misassignment inflates the within-class term, making the context share an
+UPPER bound and the identity share a LOWER one.
+
+WHAT THIS DOES AND DOES NOT DO TO THE ENGINE.
+
+  THE FORM SURVIVES. The engine computes sum_a P(a) prod_i P(x_i | summary(a)), and those
+  conditionals are PER GENE already. Context-dependence is therefore inside the model rather than
+  outside it, and cross-cell differences in which factors are active are represented as controller
+  states, which is what the controller block is for. Nothing measured here contradicts the
+  factorisation, the pruning, the certificate, or the cost arithmetic.
+
+  THE COST ARITHMETIC SURVIVES AS COST. The caps -- 3, 13, 140 controllers, 12.8% to 71.7% of
+  TRRUST's edges -- are graph and table arithmetic against a fixed bar. They do not depend on what
+  the response function IS, only on how many distinguishable values it must carry.
+
+  THE COMPRESSION IS WHAT IS DAMAGED, AND IT IS DAMAGED AT ITS SHARED ASSUMPTION. Every summary
+  tested in this build order -- total count, signed count, class count, class count times temporal
+  multiplier -- assumes a gene's response depends on its regulators through classes that are
+  SHARED ACROSS GENES. That is what makes them cheap: one global alphabet, reused by every gene.
+  A globally shared class map can capture at most the BETWEEN-MOTIF share of the signal, which is
+  a minority here. That is not a new failure; it is the explanation of one already recorded. It is
+  why the human class ladder was flat across its whole range while yeast's separated its ends by
+  8.6 floors, and why C = 1 already sat inside one floor of identity on human data.
+
+  AND THE ACCURACY STANDARD BEHIND EVERY CAP IS NOW UNSUPPORTED IN A SPECIFIC WAY. signed.py's
+  C = 64 of 404 was measured in yeast, within a handful of fixed sequence contexts. The human data
+  says the shared-across-genes component -- the only component a global class map can exploit --
+  is a minority of the effect. So the caps are cost statements at an accuracy standard that was
+  measured under conditions where context was held fixed, and applied to a network where it is
+  not.
+
+WHERE THAT LEAVES THE ENGINE, PLAINLY. It is a correct and well-tested machine for a factorisation
+whose per-gene conditionals must be learned per gene. Everything built to make those conditionals
+CHEAP by sharing structure across genes is undercut by the same measurement, and the cheapness was
+the entire point -- without it the per-gene factor is exponential in k_i and the cap returns to 3.
+The honest position is that the engine's mathematics is sound, its cost model is sound, and the
+compression that made the cost model interesting rests on an assumption that human data does not
+support and that yeast data could not have tested, because yeast held context fixed by design.
