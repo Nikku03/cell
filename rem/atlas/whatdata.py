@@ -42,6 +42,25 @@ D1  THE REPLICATE AXIS. Reproduce humantransfer's between-regulator variance com
     R(B=8.6) > 100 means yeast-grade resolution is NOT reachable by replicating this assay, and
     the design has to change rather than the depth.
 
+D1b THE BAR D1 SHOULD HAVE PUT IT ON, PREDECLARED AFTER D1 RAN AND BEFORE D1b DID. D1's first
+    run returned R(bar = 1) = 2 -- that is, the CURRENT depth already clears it -- because the
+    between-regulator sd is 1.05 floors and D1 set its bar directly on that sd. But the quantity
+    that was degenerate is not the sd: it is the LADDER SPAN, the difference in held-out RMSE
+    between the coarsest and finest class model, and RMSE differences COMPRESS a signal. A gate
+    whose bar is met at the current depth tells you nothing about what to fix, which is a bar no
+    evidence can fail -- the mirror of ledger P -- and D1's arithmetic is therefore superseded
+    rather than deleted, and left in the output above this gate so the error is visible.
+    D1b puts the bar on the estimator that is actually used, and measures rather than derives it:
+    simulate a world in which the class hypothesis is EXACTLY TRUE with C = 64 shared classes, at
+    the measured between-regulator variance and the measured noise floor, with the real TRRUST
+    depth distribution; build the ladder the way signed.py and humantransfer build it; and sweep
+    panel size N and replicate depth R to find where the knee is recovered.
+    Because the simulation grants a purely shared class structure -- which genegroups measured to
+    be a MINORITY of the real signal -- every requirement it returns is a LOWER BOUND.
+    PREDECLARED: the knee counts as recovered if it lands within a factor of two of C = 64. If no
+    (N, R) in the sweep recovers it, the spec must say so instead of quoting the smallest number
+    in the table.
+
 D2  THE ALPHABET AXIS, WHICH IS A HARD CEILING AND NOT A POWER CALCULATION. A panel that perturbs
     N regulators cannot return a class count above N, and cannot show a ladder FLATTEN above its
     knee unless N is comfortably larger than the knee. To test C = 64 the panel must carry at
@@ -204,6 +223,59 @@ def coverage_law(tgt, outdeg, sizes, rng, reps=40):
 
 
 # =================================================================================================
+# D1b  the power calculation, on the estimator that is actually used
+# =================================================================================================
+
+def ladder_knee(N, C_true, R, G, sigma, ph, kdist, rng, Cgrid=None):
+    """Simulate the class ladder under a world where the class hypothesis is exactly true.
+
+    Regulators carry a class effect shared across genes -- the best case for every summary this
+    build order has tested. Half the replicates fit, half are scored, so the floor on the scored
+    quantity is sigma/sqrt(R/2), which is what replication actually buys.
+
+    Returns (span in floors, recovered knee), where the knee is the smallest C whose held-out
+    RMSE is within one floor of the finest model -- signed.py's criterion, verbatim."""
+    if Cgrid is None:
+        Cgrid = [c for c in (1, 2, 4, 8, 16, 32, 64, 128, 256, 512) if c <= N] + [N]
+        Cgrid = sorted(set(Cgrid))
+    cls = rng.integers(0, C_true, N)
+    eff = rng.normal(0.0, np.sqrt(ph), C_true)
+    gi, ti = [], []
+    for g in range(G):
+        K = int(kdist[rng.integers(len(kdist))])
+        K = min(K, N)
+        for t in rng.choice(N, K, replace=False):
+            gi.append(g)
+            ti.append(int(t))
+    ti = np.array(ti)
+    if ti.size == 0:
+        return 0.0, 1
+    mu = eff[cls[ti]]
+    half = max(R // 2, 1)
+    fl = sigma / np.sqrt(half)
+    yf = mu + rng.normal(0.0, fl, ti.size)
+    yt = mu + rng.normal(0.0, fl, ti.size)
+    # per-regulator effect fitted on the fitting half only
+    sums = np.bincount(ti, weights=yf, minlength=N)
+    cnts = np.bincount(ti, minlength=N).astype(float)
+    seen = cnts > 0
+    fitted = np.where(seen, sums / np.maximum(cnts, 1), 0.0)
+    rank = np.empty(N, dtype=int)
+    rank[np.argsort(fitted, kind="stable")] = np.arange(N)
+    errs = {}
+    for C in Cgrid:
+        lab = np.minimum((rank * C) // N, C - 1)
+        ls = np.bincount(lab[ti], weights=yf, minlength=C)
+        lc = np.bincount(lab[ti], minlength=C).astype(float)
+        pred = np.where(lc[lab[ti]] > 0, ls[lab[ti]] / np.maximum(lc[lab[ti]], 1), 0.0)
+        errs[C] = float(np.sqrt(np.mean((yt - pred) ** 2)))
+    fine = errs[max(Cgrid)]
+    span = (errs[1] - fine) / fl
+    knee = min((C for C in Cgrid if errs[C] <= fine + fl), default=max(Cgrid))
+    return span, knee
+
+
+# =================================================================================================
 
 def main():
     out = []
@@ -287,11 +359,61 @@ def main():
     P_("  are NOT reduced by replication. With two replicates that systematic floor cannot be")
     P_("  bounded from these data at all, and R above is therefore a LOWER bound on the depth.")
 
+    depths, outdeg, tgt = trrust_depths()
+
+    # ---- D1b  THE BAR ON THE RIGHT QUANTITY ----------------------------------------------------
+    P_("\n" + RULE)
+    P_("D1b  THE BAR D1 PUT ON THE WRONG QUANTITY, AND THE POWER CALCULATION THAT REPLACES IT")
+    P_(RULE)
+    P_(f"  D1 returned R(bar = 1) = {r1_:.0f}: the CURRENT depth already clears it, because the")
+    P_( "  between-regulator sd is 1.05 floors and D1 set its bar directly on that sd. A bar the")
+    P_( "  data already meets cannot tell you what to fix. The quantity that was degenerate in")
+    P_( "  scalarcap is not the sd -- it is the LADDER SPAN, a difference of held-out RMSEs, and")
+    P_( "  RMSE differences compress a signal. D1's arithmetic is superseded, left above so the")
+    P_( "  error is visible, and the bar is now put on the estimator that is actually used.")
+    P_( "\n  THE SIMULATION GRANTS THE CLASS HYPOTHESIS. Regulator effects are drawn from C = 64")
+    P_( "  classes SHARED ACROSS GENES, at the measured between-regulator variance and the")
+    P_( "  measured floor, with TRRUST's real depth distribution. genegroups measured the")
+    P_( "  shared-across-genes component to be a MINORITY of the real signal, so this is the best")
+    P_( "  case and every requirement below is a LOWER BOUND on what real data would need.")
+    kdist = np.array([len(s_) for s_ in tgt.values() if len(s_) >= 2])
+    P_(f"\n  {'N regs':>7} {'R reps':>7} {'targets':>8} {'ladder span, floors':>21} {'knee recovered':>16}")
+    sweep = []
+    for Np in (48, 128, 404, len(outdeg)):
+        av = {k: sum(1 for s_ in tgt.values() if len(s_) >= k) for k in (2,)}
+        G = min(av[2], 1400)
+        for R in (2, 4, 8, 16, 32, 64, 128):
+            sp, kn = [], []
+            for rep in range(5):
+                rr = np.random.default_rng(4000 + 97 * Np + 7 * R + rep)
+                a, b = ladder_knee(Np, 64, R, G, sigma, ph, kdist, rr)
+                sp.append(a)
+                kn.append(b)
+            spm, knm = float(np.mean(sp)), float(np.median(kn))
+            ok = (32 <= knm <= 128) and Np >= 64
+            sweep.append((Np, R, G, spm, knm, ok))
+            P_(f"  {Np:>7} {R:>7} {G:>8} {spm:>21.2f} {f'{knm:.0f}':>16}"
+               + ("   <-- recovered" if ok else ""))
+    good = [s_ for s_ in sweep if s_[5]]
+    if good:
+        best = min(good, key=lambda s_: (s_[1], s_[0]))
+        P_(f"\n  D1b: the knee is recovered. The cheapest point in the sweep that does it is")
+        P_(f"  N = {best[0]} regulators at R = {best[1]} replicates, ladder span {best[3]:.2f} floors.")
+        P_( "  Below that depth the ladder is narrower than its own floor and 'smallest C within")
+        P_( "  one floor' returns 1 -- which is exactly the degeneracy scalarcap recorded, now")
+        P_( "  reproduced from first principles rather than discovered after the fact.")
+    else:
+        P_("\n  D1b: NO point in the sweep recovers the knee. As predeclared, the spec says so")
+        P_("  rather than quoting the smallest number in the table.")
+    at48 = [s_ for s_ in sweep if s_[0] == 48]
+    P_(f"\n  AND THE ALPHABET CEILING SHOWS UP HERE ON ITS OWN: at N = 48 the recovered knee is")
+    P_(f"  {min(s_[4] for s_ in at48):.0f}-{max(s_[4] for s_ in at48):.0f} at every depth, because a panel of 48 cannot express 64 classes")
+    P_( "  however many times it is replicated. Depth cannot buy alphabet.")
+
     # ---- D2  THE ALPHABET AXIS -----------------------------------------------------------------
     P_("\n" + RULE)
     P_("D2  THE ALPHABET AXIS: HOW MANY FACTORS MUST BE PERTURBED?")
     P_(RULE)
-    depths, outdeg, tgt = trrust_depths()
     P_(f"  TRRUST: {len(outdeg)} regulators, {len(tgt)} targets.")
     P_("  A panel of N regulators cannot return C > N. To test C = 64 and see the ladder flatten")
     P_("  above the knee, N >= 128. That is the hard part of the requirement. The rest is")
@@ -370,11 +492,16 @@ def main():
     P_("  A dataset validates C for this engine if and only if it has all four of:")
     P_(f"    1. ALPHABET   >= 128 distinct regulators perturbed"
        f"  (ENCODE K562 CRISPRi has {nfac if nfac is not None else '?'})")
-    P_(f"    2. DEPTH      >= {r1_:.0f} independent replicates per perturbation for a ladder that")
-    P_(f"                  merely clears its floor, >= {r86:.0f} for yeast-grade resolution")
-    P_(f"                  (ENCODE's deepest experiment has {maxrep if maxrep is not None else '?'})"
-       f"; and this is a LOWER bound, since the shared systematic")
-    P_( "                  component of the noise is invisible to two replicates")
+    if good:
+        P_(f"    2. DEPTH      >= {best[1]} independent replicates per perturbation -- the cheapest point")
+        P_(f"                  in D1b's sweep that recovers the knee, at N = {best[0]}")
+        P_(f"                  (ENCODE's deepest experiment has"
+           f" {maxrep if maxrep is not None else '?'}). This is a LOWER bound twice over:")
+        P_( "                  the simulation grants a purely shared class structure, and the")
+        P_( "                  systematic component of the noise is invisible to two replicates")
+        P_( "                  and is not reduced by replication at all")
+    else:
+        P_( "    2. DEPTH      UNRESOLVED -- no point in D1b's sweep recovered the knee")
     P_(f"    3. BREADTH    enough targets at k >= {CAP_BINDING_DEPTH} to test the regime the 140 cap")
     P_(f"                  lives in -- ceiling {full[20]} targets, and only if EVERY TRRUST")
     P_( "                  regulator is perturbed")
