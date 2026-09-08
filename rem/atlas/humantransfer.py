@@ -200,3 +200,209 @@ def build_cache(cell="K562", assay="CRISPRi RNA-seq", path=None):
 def load_panel(path=None):
     z = np.load(path or CACHE, allow_pickle=False)
     return (list(z["genes"]), list(z["tfs"]), z["r1"], z["r2"], str(z["hgnc_sha"]))
+
+
+# =================================================================================================
+# the test
+# =================================================================================================
+
+def prepare(min_tpm=1.0):
+    """log2(TPM+1), then CENTRE EACH GENE ACROSS THE PANEL, per replicate independently.
+
+    Centring per replicate matters: doing it once on the pooled data would leak replicate 2 into
+    the predictor built from replicate 1, which is the same class of defect this build order has
+    caught in its own gates four times."""
+    genes, tfs, r1, r2, sha = load_panel()
+    L1 = np.log2(np.nan_to_num(r1, nan=0.0) + 1.0)
+    L2 = np.log2(np.nan_to_num(r2, nan=0.0) + 1.0)
+    expressed = (np.nanmean(np.nan_to_num(r1, nan=0.0), axis=0) >= min_tpm)
+    D1 = L1 - L1.mean(axis=0, keepdims=True)
+    D2 = L2 - L2.mean(axis=0, keepdims=True)
+    return genes, tfs, D1, D2, expressed, sha
+
+
+def regulator_index(genes, tfs):
+    """For each carried gene, which perturbed factors TRRUST calls its regulators, and with what
+    sign. A gene with none is not a test of anything the engine does."""
+    from rem.atlas.humantransfer import symbol_map
+    s2e, e2s, _ = symbol_map()
+    tfi = {t: i for i, t in enumerate(tfs)}
+    gsym = [e2s.get(g, "") for g in genes]
+    E, _ = signed_edges()
+    regs = collections.defaultdict(list)
+    for u, v, m in E:
+        if u in tfi:
+            regs[v].append((tfi[u], m))
+    out = {}
+    for j, s in enumerate(gsym):
+        if s and s in regs and len(regs[s]) >= 1:
+            out[j] = regs[s]
+    return out, gsym
+
+
+def main():
+    out = []
+
+    def P_(s=""):
+        print(s, flush=True)
+        out.append(s)
+
+    P_(RULE); P_("DOES THE YEAST PROMOTER RESULT TRANSFER TO HUMAN CELLS?"); P_(RULE)
+    genes, tfs, D1, D2, expressed, sha_h = prepare()
+    regs, gsym = regulator_index(genes, tfs)
+    P_(f"  ENCODE CRISPRi RNA-seq, K562. {len(tfs)} transcription factors silenced, each with two")
+    P_(f"  biological replicates. HGNC map sha256[:32] {sha_h}.")
+    E, _ = signed_edges()
+    P_(f"  TRRUST provides the regulator sets; {len(genes)} of its genes are quantified here.")
+
+    keep = {j: r for j, r in regs.items() if expressed[j] and len(r) >= 2}
+    P_(f"  carried: {len(keep)} target genes that are EXPRESSED and have >= 2 of these factors as")
+    P_(f"  TRRUST regulators; {sum(1 for r in keep.values() if len(r) >= 3)} have >= 3,"
+       f" most-regulated has {max((len(r) for r in keep.values()), default=0)}.")
+
+    pairs = [(j, ti, m) for j, r in keep.items() for ti, m in r]
+    y1 = np.array([D1[ti, j] for j, ti, m in pairs])
+    y2 = np.array([D2[ti, j] for j, ti, m in pairs])
+    P_(f"  {len(pairs)} (gene, regulator) pairs measured twice each.")
+
+    # ---- H1  NOISE FLOOR, FIRST ----------------------------------------------------------------
+    P_("\n" + RULE); P_("H1  THE REPLICATE NOISE FLOOR, MEASURED BEFORE ANY MODEL"); P_(RULE)
+    dif = y1 - y2
+    sigma = float(np.std(dif)) / np.sqrt(2.0)
+    P_(f"  RMS replicate-to-replicate difference in the centred response : {np.std(dif):.4f} log2")
+    P_(f"  NOISE FLOOR, the noise in ONE replicate's response            : {sigma:.4f} log2")
+    P_( "  The quantity every model below is scored against is a SINGLE replicate's response, so")
+    P_( "  the floor is the single-replicate noise. Stated explicitly because the yeast module got")
+    P_( "  exactly this wrong -- it scored against a two-replicate MEAN while dividing by the")
+    P_( "  single-replicate figure -- and had to be corrected by an audit.")
+    P_(f"  spread of the response itself: {float(np.std(y2)):.4f} log2"
+       f"   (signal-to-noise {float(np.std(y2))/sigma:.2f})")
+
+    def rmse(pred):
+        return float(np.sqrt(np.mean((y2 - pred) ** 2)))
+
+    # ---- H2  THE BASELINE THAT MUST FAIL -------------------------------------------------------
+    P_("\n" + RULE); P_("H2  THE BASELINE THAT MUST FAIL"); P_(RULE)
+    e_zero = rmse(np.zeros_like(y2))
+    gmean = {}
+    for j, r in keep.items():
+        gmean[j] = float(np.mean([D1[ti, j] for ti, m in r]))
+    e_blind = rmse(np.array([gmean[j] for j, ti, m in pairs]))
+    e_ident = rmse(y1)
+    P_(f"    {'model':<44} {'held-out RMSE':>14} {'floors vs identity':>19}")
+    P_(f"    {'no information at all (predict zero)':<44} {e_zero:>14.4f}"
+       f" {(e_zero-e_ident)/sigma:>19.2f}")
+    P_(f"    {'the GENE only, blind to which regulator':<44} {e_blind:>14.4f}"
+       f" {(e_blind-e_ident)/sigma:>19.2f}")
+    P_(f"    {'the (gene, regulator) pair -- IDENTITY':<44} {e_ident:>14.4f} {0.0:>19.2f}")
+    h2 = (e_zero - e_blind) > sigma
+    P_(f"\n  H2: {'PASS -- knowing the gene beats knowing nothing, so these data carry regulation' if h2 else 'FAIL -- knowing the gene buys nothing; these data are not measuring regulation and nothing below is readable'}")
+    P_( "  Note the identity model predicts one replicate from the other, so its error carries TWO")
+    P_(f"  replicates' noise: sqrt(2)*sigma = {np.sqrt(2)*sigma:.4f}, which is what it measures")
+    P_( "  against. It is a reference, not a fitted model, and no model here can beat it.")
+
+    # ---- H3  THE HEAD TO HEAD ------------------------------------------------------------------
+    P_("\n" + RULE); P_("H3  DOES IT MATTER WHICH REGULATOR YOU PERTURB?"); P_(RULE)
+    gap = e_blind - e_ident
+    P_(f"  regulator-blind RMSE  {e_blind:.4f}")
+    P_(f"  identity RMSE         {e_ident:.4f}")
+    P_(f"  identity advantage    {gap:+.4f} log2   against a noise floor of {sigma:.4f}")
+    P_(f"  ratio to floor        {gap/sigma:.2f}")
+    if gap > sigma:
+        P_("\n  H3: THE YEAST RESULT TRANSFERS. In human cells, as in yeast, a gene's regulators are")
+        P_(f"  NOT interchangeable -- knowing which one was perturbed is worth {gap/sigma:.2f} noise")
+        P_("  floors. A count summary, which by construction cannot tell them apart, is refuted on")
+        P_("  human data too.")
+    else:
+        P_("\n  H3: THE YEAST RESULT DOES NOT TRANSFER. On human data a gene's regulators are")
+        P_(f"  interchangeable to within {gap/sigma:.2f} of the noise floor, which is what a count")
+        P_("  summary assumes. Every accuracy figure in this build order rests on a yeast")
+        P_("  experiment that does not describe this network, and the caps that depend on them")
+        P_("  must be recomputed or withdrawn.")
+
+    # ---- H4  THE CLASS LADDER ------------------------------------------------------------------
+    P_("\n" + RULE); P_("H4  THE CLASS LADDER: HOW MANY CLASSES DOES HUMAN NEED?"); P_(RULE)
+    P_("  The direct analogue of signed.py's S1. Partition the factors into C classes by their")
+    P_("  fitted effect and predict from the class mean. Classes are fitted on replicate 1 only;")
+    P_("  replicate 2 is never seen by the partition. C = 1 is regulator-blind, C = all is identity.")
+    # each factor's fitted effect: its mean centred response across the genes TRRUST says it
+    # regulates, taken from REPLICATE 1 ONLY, so replicate 2 never touches the partition.
+    eff = np.zeros(len(tfs))
+    for ti in range(len(tfs)):
+        vals = [D1[ti, j] for j, r in keep.items() if any(t == ti for t, _ in r)]
+        eff[ti] = float(np.mean(vals)) if vals else 0.0
+    order = np.argsort(eff)
+    P_(f"\n    {'C':>5} {'held-out RMSE':>14} {'floors from identity':>21} {'% of gap closed':>16}")
+    ladder = []
+    CS = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, len(tfs)]
+    for C in CS:
+        if C < 1:
+            continue
+        cls = np.zeros(len(tfs), dtype=int)
+        for b, grp in enumerate(np.array_split(order, min(C, len(tfs)))):
+            cls[grp] = b
+        cm = {}
+        for j, r in keep.items():
+            byc = collections.defaultdict(list)
+            for ti, m in r:
+                byc[cls[ti]].append(D1[ti, j])
+            cm[j] = {c: float(np.mean(v)) for c, v in byc.items()}
+        pred = np.array([cm[j].get(cls[ti], gmean[j]) for j, ti, m in pairs])
+        e = rmse(pred)
+        ladder.append((C, e))
+        P_(f"    {C:>5} {e:>14.4f} {(e-e_ident)/sigma:>21.2f}"
+           f" {100*(e_blind-e)/max(gap,1e-12):>15.1f}%")
+    inside = [C for C, e in ladder if (e - e_ident) <= sigma]
+    smallest = min(inside) if inside else None
+    P_(f"\n  smallest C inside one noise floor of identity: {smallest if smallest else 'NONE of those tested'}")
+    if smallest:
+        P_(f"  as a FRACTION of the alphabet: {smallest}/{len(tfs)} = {100*smallest/len(tfs):.1f}%")
+    P_(f"  yeast needed 64 of 404 = 15.8%. That fraction is the number that decides whether the")
+    P_( "  caps in this build order transfer, because a cap is only meaningful at a stated accuracy.")
+
+    # ---- H5  TRRUST's OWN SIGN AS THE CLASS ----------------------------------------------------
+    P_("\n" + RULE); P_("H5  TRRUST's OWN SIGN AS THE CLASS -- THE ONE LABEL THAT IS NOT FITTED")
+    P_(RULE)
+    modes = sorted({m for j, ti, m in pairs})
+    mcm = {}
+    for j, r in keep.items():
+        bym = collections.defaultdict(list)
+        for ti, m in r:
+            bym[m].append(D1[ti, j])
+        mcm[j] = {m: float(np.mean(v)) for m, v in bym.items()}
+    e_mode = rmse(np.array([mcm[j].get(m, gmean[j]) for j, ti, m in pairs]))
+    P_(f"  modes present: {', '.join(f'{m} ({sum(1 for p in pairs if p[2]==m)})' for m in modes)}")
+    P_(f"    {'regulator-blind':<40} {e_blind:>10.4f} {(e_blind-e_ident)/sigma:>8.2f} floors")
+    P_(f"    {'TRRUST sign as the class':<40} {e_mode:>10.4f} {(e_mode-e_ident)/sigma:>8.2f} floors")
+    P_(f"    {'identity':<40} {e_ident:>10.4f} {0.0:>8.2f} floors")
+    P_(f"  the signed count was refuted on yeast at 3.70 floors; here the real annotation leaves")
+    P_(f"  {(e_mode-e_ident)/sigma:.2f} floors, and it closes"
+       f" {100*(e_blind-e_mode)/max(gap,1e-12):.1f}% of the gap identity opens.")
+
+    # ---- H6 / H7 -------------------------------------------------------------------------------
+    P_("\n" + RULE); P_("H6  WHAT DIFFERS BETWEEN THE TWO EXPERIMENTS"); P_(RULE)
+    P_("  1. Yeast measured SITES designed into a promoter; this measures PERTURBATIONS of factors")
+    P_("     in their native network. A knockdown effect includes everything downstream of that")
+    P_("     factor, not only its direct action on the gene -- so this test is, if anything,")
+    P_("     biased TOWARD regulators looking interchangeable, since indirect effects are shared.")
+    P_("  2. Yeast varied the number of sites; here exactly one factor is perturbed at a time, so")
+    P_("     the count-versus-identity question becomes which-versus-whether, which is the half")
+    P_("     that matters for the engine's per-gene factor.")
+    P_("  3. TRRUST's regulator sets are literature-curated and incomplete, so a gene's true")
+    P_("     regulator set is larger than the one used here.")
+    P_("  4. One cell line, one assay, and CRISPRi silences transcription rather than removing")
+    P_("     protein, so factors acting post-translationally are under-represented.")
+    P_("\n" + RULE); P_("H7  WHAT THIS DOES AND DOES NOT SETTLE"); P_(RULE)
+    P_("  It settles whether a HUMAN gene's response depends on WHICH of its regulators is hit,")
+    P_("  on this panel, which is the assumption every count-like summary in this build order")
+    P_("  makes. It does not settle the temporal half of the engine's summary, it does not")
+    P_("  validate any cap directly, and it cannot say anything about factors absent from the")
+    P_("  panel or edges absent from TRRUST.")
+
+    dst = os.path.join(os.path.dirname(__file__), "RESULTS_humantransfer.txt")
+    open(dst, "w").write("\n".join(out) + "\n")
+    P_(f"\n  written to {dst}")
+
+
+if __name__ == "__main__":
+    main()
