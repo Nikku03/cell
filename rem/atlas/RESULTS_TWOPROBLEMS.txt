@@ -1504,3 +1504,96 @@ that must average the drive rather than the occupancy is legitimate by a 600x ma
 assembles, runs on real network wiring, and returns certified answers. It does not scale to a
 whole cell, and the reason is the same width exponential that four representation changes and one
 pruner have now all failed to remove.
+
+
+=================================================================================================
+THE WIDTH EXPONENTIAL: IT IS ONE GENE, AND THE CEILING GATE'S VERDICT IS NOT PERMANENT
+=================================================================================================
+Four representation changes and one pruner all left the same exponential in WIDTH standing. This
+attacks it, and the first thing the attack did was refute its own premise.
+
+THE CEILING GATE, RUN FIRST, KILLED THE OBVIOUS TARGET. Under the class-count representation at
+C = 64, L = 8, bar 1e12, pricing the controller block at ZERO moves the cap by NOTHING -- 13 with
+the class-count block, 13 factored, 13 free. At |C| = 13 the per-gene term is 2.96e11 against a
+bar of 1e12 while the block is 6.86e10. Third application of block.py's rule and the first time it
+has stopped an attack BEFORE the module was built rather than after one was spent.
+
+The factorisation that would have been built was measured anyway so nobody builds it: the
+controller-controller subgraph is sparse (561 edges among the top 122 factors, density 0.042) and
+its min-degree elimination width grows sublinearly -- 2, 5, 9, 16, 25, 35, 46, 59, 63 at
+|C| = 5 to 420 -- giving 2^36 in place of 2^122, a factor of 7.7e25. Correct, huge, and at that
+moment useless.
+
+TWO DEFECTS IN THE PROBES THAT GOT THERE. bounded_elimination returns DROPPED EDGES, not a success
+flag, so a first pass "measured" width 2 on a graph of mean degree 10 by silently sacrificing 74%
+of its edges; the true width needs an unbounded min-degree pass. And an unconstrained greedy
+alignment of the class map reached the theoretical minimum cost with mean occupied classes exactly
+1.00 -- by putting every controller in ONE class, which is the plain count that promoter data
+refutes at 6.29 noise floors. A cost optimiser with no accuracy constraint always rediscovers the
+cheapest refuted representation. Ledger U, in this module's own probe.
+
+THEN THE MEASUREMENT THAT SHOULD HAVE COME FIRST. The per-gene cost is not a sum, it is one gene:
+
+    |C|    max k_i    worst gene cost      total      worst/total   worst gene
+     13         11          3.610e+09   1.001e+10        36.07%     VEGFA
+     20         17          3.610e+15   3.637e+15        99.24%     CDKN1A
+     40         28          1.303e+25   1.303e+25       100.00%     CDKN1A
+    122         52          1.332e+43   1.332e+43       100.00%     CDKN1A
+
+From |C| = 20 upward ONE GENE is the entire per-gene cost. CDKN1A, with 52 regulators among the
+top 122 transcription factors. The binding term is a HUB -- the same object that killed r-balls
+(SP1's 3-ball reaches 2,724 of 2,861 genes) and left bounded width with a 6% floor. Third
+appearance, third form. No representation-level fix could ever have worked, which is why the
+alignment attack built before this measurement made things WORSE by up to 28x. Its specification
+error is recorded too: with C = 64 classes and |C| = 13 controllers the balance cap is 1, so every
+controller is FORCED into its own class -- the worst case, not a balanced one.
+
+SO THE ATTACK THAT WORKS IS ON THE GENES, NOT THE REPRESENTATION. Carry the top-m most-regulated
+genes at the plain count and everything else at C = 64:
+
+    genes demoted   % of network   cap |C| at L=8   edge coverage
+                0          0.00%               13           26.6%
+                1          0.03%               14           27.6%
+               20          0.70%               39           44.3%
+              100          3.50%              140           71.7%
+              500         17.48%              140           71.7%
+
+Demoting 100 genes -- 3.5% of the network -- takes the cap from 13 to 140 controllers and edge
+coverage from 26.6% to 71.7%. That is the largest single movement of this cap in the whole build
+order, and it saturates at 100 because a different term has taken over as binding.
+
+AND THAT FLIPS THE CEILING GATE'S OWN VERDICT, which is the most useful thing here.
+
+    demoted   pattern 2^|C|   class-count block   FACTORED 2^(w+1)
+          0              13                  13                 13
+         20              36                  14                 39
+        100              39                  14                140
+
+At zero demotions the block representation is worth nothing and W0 was right to refuse it. At 100
+demotions the same factorisation is worth 140 against 39 -- a 3.6x difference in the cap. A
+CEILING GATE PRICES A TERM AGAINST THE CURRENT BINDING CONSTRAINT. Its verdict is correct at the
+time and is NOT permanent; when the constraint moves the gate must be re-run rather than trusted.
+That is a rule this build order did not previously have, and it was earned by nearly discarding a
+7.7e25 factor that turned out to be load-bearing two gates later. Incidentally the class-count
+BLOCK is worse than the plain pattern at these widths -- one controller per class costs 10 against
+the pattern's 2 -- which never mattered while the block was not binding.
+
+THE ACCURACY TRADE, STATED RATHER THAN BURIED. The 100 demoted genes drop from C = 64 (0.19 noise
+floors from identity) to the plain count (6.29 floors). That is a large loss on 3.5% of genes and
+none on the other 96.5% -- a different KIND of trade from every earlier one, which all degraded
+every gene at once. But the demoted genes are the most-regulated in the network: CDKN1A, VEGFA.
+Demoting the hubs buys the cap by giving up on precisely the genes the cap was wanted for, and
+that is the result rather than a caveat on it.
+
+WHERE THE WHOLE ARC NOW STANDS.
+
+    representation                                    cap |C|   edge coverage
+    pattern (exact)                                         3           12.8%
+    class count (signed.py)                                13           26.6%
+    class count x temporal multiplier (multiplier.py)      25           36.5%
+    + hub demotion + factored block (this module)          140           71.7%
+
+Three controllers to a hundred and forty, 12.8% of the network's regulatory edges to 71.7%. Every
+step measured on the same cap function against the same bar. What remains is not a representation
+problem: at 140 the block binds, the elimination width grows as roughly |C|^0.78 so 2^(w+1) passes
+the bar near |C| = 150, and there is no third term left to demote.

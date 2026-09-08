@@ -66,56 +66,93 @@ W2  DOES THE NETWORK CARRY CLASS STRUCTURE, AGAINST A MATCHED SHUFFLE?
   W2: PASS -- real regulator sets are about twice as class-homogeneous as chance, at more than three sigma everywhere. There IS structure to align to.
 
 =================================================================================================
-W3  THE CONSTRAINED ALIGNMENT: BALANCED CLASSES, SO THEY CANNOT COLLAPSE
+W3  THE PER-GENE COST IS NOT A SUM, IT IS ONE GENE
 =================================================================================================
+  Before aligning anything, ask where the cost is. A representation-level fix only makes
+  sense if the cost is spread over the representation.
 
-      |C|    C   random cost  aligned cost       gain  occ/gene rnd   aligned   worst gene
-       13    8     6.437e+07     9.035e+07   7.1e-01x          1.74      1.75    2.476e+07
-       13   64     1.001e+10     2.128e+11   4.7e-02x          1.84      1.89    1.000e+11
-       20    8     3.395e+09     2.487e+09   1.4e+00x          1.83      1.83    6.933e+08
-       20   64     3.637e+15     1.003e+17   3.6e-02x          2.00      2.04    1.000e+17
-       40    8     1.211e+11     1.047e+12   1.2e-01x          1.96      2.01    8.714e+11
+      |C|  genes  max k_i   worst gene        total  worst/total  top-5/total  worst gene
+        8   1055        8    1.900e+07    9.783e+07       0.1942       0.7871  VEGFA     
+       13   1286       11    3.610e+09    1.001e+10       0.3607       0.9574  VEGFA     
+       20   1455       17    3.610e+15    3.637e+15       0.9924       0.9999  CDKN1A    
+       40   1719       28    1.303e+25    1.303e+25       1.0000       1.0000  CDKN1A    
+       80   2002       44    6.131e+36    6.131e+36       1.0000       1.0000  CDKN1A    
+      122   2117       52    1.332e+43    1.332e+43       1.0000       1.0000  CDKN1A    
 
-  the balance constraint holds every class non-empty, so these are class counts and not
-  the plain count in disguise. Compare against W1's unconstrained optimum, which was.
+  W3: from |C| = 20 upward ONE GENE is essentially the entire per-gene cost -- CDKN1A,
+  with 52 regulators among the top 122 factors. The binding term is not a property of the
+  representation, the block, or the class map. It is a HUB, which is the same object that
+  killed r-balls (SP1's 3-ball reaches 2,724 of 2,861 genes) and left bounded width with a
+  6% floor. Third appearance, third form.
 
-=================================================================================================
-W4  WHAT IT DOES TO THE CAP, WHICH IS THE ONLY DELIVERABLE
-=================================================================================================
-
-    per-gene assignment                      block               cap |C| at L=8
-    random, C = 64 (signed.py)               class-count                     13
-    random, C = 64                           FACTORED                        13
-    ALIGNED balanced, C = 64                 FACTORED                        12
-    TRRUST MODE as the class (3 classes)     FACTORED                       140
-
-  for reference: signed.py's class count reached 13 at C = 64 and multiplier.py's
-  composed form reached 25. Those are the numbers to beat.
-
-=================================================================================================
-W5  THE ACCURACY SIDE, BECAUSE W4 IS ONLY A COST STATEMENT
-=================================================================================================
-  signed.py measured, on 5,790 real promoters, how far each class resolution sits from
-  identity: C = 2 is 2.61 noise floors out, C = 8 is 1.52, C = 32 is 1.30, and C = 64 is
-  0.19 -- the smallest resolution inside one floor. So a cap reachable only at C = 2 or 3
-  is the plain count wearing a larger number, and does not count.
-
-    representation                              cap  floors from identity   usable?
-    random C = 64, class-count block             13                  0.19       yes
-    random C = 64, factored block                13                  0.19       yes
-    ALIGNED balanced C = 64, factored            12                  0.19       yes
-    TRRUST mode, 3 classes, factored            140                  2.61        NO
+  AND THE ALIGNMENT ATTEMPT THAT FOLLOWED FROM THE WRONG DIAGNOSIS, RECORDED. A balanced
+  greedy class alignment was built before this measurement. It made things WORSE, by up to
+  28x, and the reason is a specification error: with C = 64 classes and only |C| = 13
+  controllers the balance cap is ceil(13/64) = 1, so every controller is FORCED into its
+  own class -- the worst case, not a balanced one. A balance constraint is meaningless
+  when there are fewer items than classes, and at these widths there always are.
 
 =================================================================================================
-W6  WHAT BREAKS NEXT
+W4  IF THE COST IS A MAX, DEMOTE THE FEW GENES THAT SET IT
 =================================================================================================
-  1. The class structure W2 found is real but partial: about half of genes still have
-     mixed regulators at |C| = 122, and those genes set the worst-case per-gene factor,
-     which is what the sum is dominated by.
-  2. The alignment is a greedy heuristic under a balance constraint. Its numbers are upper
-     bounds on the achievable cost and can only understate the prize, never overstate it.
-  3. The accuracy figures are from YEAST promoters carrying designed sites, transferred to
-     a HUMAN regulatory network. That transfer is the weakest link in the whole chain and
-     nothing here strengthens it.
-  4. The block factorisation is correct and available whenever the per-gene term stops
-     binding. It is banked, not discarded.
+  Carry the top-m most expensive genes at the PLAIN COUNT, k(L+1)+1, which is polynomial,
+  and everything else at C = 64. The accuracy loss is then CONFINED to m genes instead of
+  being spread over all of them, and it is measurable as a coverage figure.
+
+     genes demoted  % of all genes   cap |C|  edge coverage
+                 0           0.00%        13         26.6%
+                 1           0.03%        14         27.6%
+                 2           0.07%        16         29.5%
+                 5           0.17%        16         29.5%
+                20           0.70%        39         44.3%
+               100           3.50%       140         71.7%
+               500          17.48%       140         71.7%
+
+  W4: demoting 100 of 2861 genes -- 3.5% of them -- takes the cap from 13 to 140
+  controllers and edge coverage from 26.6% to 71.7%. It SATURATES at 100: demoting 500 buys
+  nothing more, which means a different term has taken over as binding.
+
+=================================================================================================
+W5  AND NOW THE BLOCK BINDS, SO W0's VERDICT FLIPS
+=================================================================================================
+  W0 priced the block at zero and found the cap unmoved, correctly. That verdict was
+  about the cap AS IT THEN WAS. Once the hubs are demoted the binding term changes, and
+  the factorisation W0 called pointless becomes the thing the cap rests on.
+
+      demoted   pattern 2^|C|   class-count   FACTORED 2^(w+1)
+            0              13            13                 13
+           20              36            14                 39
+          100              39            14                140
+
+  At zero demotions the block representation is worth NOTHING -- all three give the same
+  cap. At 100 demotions it is worth 140 against 39, a 3.6x difference in the cap and
+  71.7% against 44.3% in coverage.
+  METHODOLOGICAL POINT, and it is the useful half of this module: a ceiling gate prices a
+  term against the CURRENT binding constraint. Its verdict is correct at the time and is
+  NOT permanent. When the constraint moves, re-run the gate rather than trusting it.
+  Note also that the class-count BLOCK is worse than the plain pattern at these widths --
+  with one controller per class its cost is 10 per controller against the pattern's 2 --
+  which never mattered while the block was not binding and matters now.
+
+=================================================================================================
+W6  THE ACCURACY SIDE, AND WHAT BREAKS NEXT
+=================================================================================================
+  W4 is a COST statement. What it costs in accuracy is that 100 genes drop from C = 64,
+  which signed.py measured at 0.19 noise floors from identity, to the plain count at 6.29
+  floors. That is a large loss on 3.5% of genes and no loss on the other 96.5%, which is
+  a different kind of trade from every earlier one in this build order -- those all
+  degraded every gene at once.
+
+       genes representation          floors from identity  share of genes
+        2761 class count C = 64                      0.19           96.5%
+         100 plain count                             6.29            3.5%
+
+  Whether that trade is acceptable is not a cost question and this module cannot settle
+  it. The demoted genes are the most-regulated in the network -- CDKN1A, VEGFA -- which
+  are exactly the genes a whole-cell model would most want to get right. Demoting the
+  hubs buys the cap by giving up on the genes the cap was wanted for, and saying so is
+  the result rather than a caveat on it.
+
+  What breaks next: at 140 controllers the block binds, and the elimination width grows
+  as roughly |C|^0.78, so 2^(w+1) passes the bar around |C| = 150. Beyond that neither
+  term is polynomial and there is no third term to demote.
