@@ -2438,3 +2438,108 @@ its error in noise floors of a log2 expression rather than in the observable the
 The modules were not wrong in their own terms. They were answering a question that was not the
 binding one, and nothing in their gates could have told them, because the unit conversion lives
 outside all of them.
+
+
+=================================================================================================
+HOW DO WE KNOW A PATH IS IRRELEVANT TO THE TARGET BEFORE DELETING IT?
+=================================================================================================
+YOU DO NOT KNOW IT FROM MASS, AND THAT IS THE ENGINE'S BINDING DEFECT. accuracy.py ranked the
+error terms in the unit the engine reports and found pruning binding by 8.4 decades. The reason
+is this question. The pruner ranks paths by MASS and certifies the mass it dropped, but the
+reported quantity is
+
+    tail = SUM over paths of  w_p * PROD over targets of sigma(Z_p[t])
+
+A path with negligible mass can carry a large ON-probability and a heavy path can carry none.
+realkinetics measured the gap between the mass certificate and the tail at 1.9e29.
+
+THE ANSWER, AND IT IS CONSTRUCTIVE. You can know it from an admissible upper bound on the best
+contribution ANY completion of a prefix could make, and that bound is available in closed form.
+For a prefix through level d: the remaining activity is a sum of 0/1 vectors weighted by
+hvec[d+1..L], so it lies in the BOX [0, H_d]^nCtrl; sigma is increasing and Z is linear in the
+activity, so target t is maximised by turning on exactly the positively-weighted controllers; and
+the subtree's total mass is EXACTLY the prefix weight, because the transition matrix is column
+stochastic and children's weights sum to the parent's. Hence
+
+    BOUND(prefix) = w_prefix * PROD_t sigma(base + gain*(wact_prefix . S[t] + H_d * S+[t]))
+    with S+[t] = sum_c max(S[t,c], 0)
+
+That bounds the WHOLE SUBTREE and not one completion, which is what branch-and-bound requires,
+and the certificate becomes the summed dropped bound, which bounds the TAIL DEFICIT rather than
+the mass. Everything after this is measurement, at 4 controllers and L = 4 where all 1,048,576
+paths can be enumerated exactly.
+
+THE CEILING GATE COULD HAVE KILLED THE ROUTE AND DID NOT. Before asking whether a better bound
+finds the important paths, ask whether there ARE few important paths. Predeclared: top 1% of paths
+carrying under 50% of the tail kills the route whatever one ranks by.
+
+      top fraction of paths   share of the tail
+                      0.01%              25.66%
+                      0.10%              60.43%
+                      1.00%              91.11%
+                      5.00%              98.89%
+                     10.00%              99.73%
+
+ADMISSIBILITY IS PROVED BY CONSTRUCTION AND CHECKED EXHAUSTIVELY ANYWAY, because this build order
+has shipped false prose arithmetic before -- block.py's E4 and E7. Every prefix at every level,
+bound against the exact subtree contribution: 16 + 256 + 4096 + 65536 prefixes, ZERO violations.
+
+AND IT IS TIGHTER THAN THE BOUND THE ENGINE HAS BY A MARGIN THAT IS HARD TO STATE SOBERLY:
+
+     level   median ratio, NEW bound   median ratio, MASS bound         gain
+         0                 1.271e+24                 1.034e+102    8.138e+77
+         1                 8.160e+21                 1.570e+102    1.924e+80
+         2                 1.501e+18                 3.834e+102    2.554e+84
+         3                 4.681e+11                 3.048e+103    6.511e+91
+
+HEAD TO HEAD AT EQUAL RETAINED-PATH COUNT, which is the fair comparison because retained paths are
+what the engine pays for. The bound ranking wins at EVERY count tested, as predeclared it had to:
+
+          kept    mass recovers    bound recovers
+            65           16.51%            30.09%
+           655           38.76%            66.34%
+          3276           65.12%            88.91%
+          6553           77.34%            94.89%
+         16384           91.08%            98.94%
+
+BUT THE CERTIFICATE FAILS ITS OWN PREDECLARED BAR AND THAT IS RECORDED AS A FAILURE. Certificate
+over actual deficit: the mass certificate runs at 1e102, the new one at 2.5e11 to 4.2e11. Ninety
+orders of magnitude better and still nine orders short of the 1e3 that was predeclared as useful.
+SO THE HONEST POSITION IS: the ranking is fixed, the certificate is not. The engine can now decide
+what to delete on the right grounds, and still cannot state a tight guarantee about what deleting
+it cost.
+
+THE SCALING, WHERE THE METRIC HAD TO BE ARGUED BEFORE THE FIT WAS READ. The recovered-share ratio
+SATURATES -- once mass ranking already recovers most of the tail the ratio is squeezed towards 1
+however good the bound is -- so it measures how easy the case is, not how good the bound is. On
+the MISSED share, which does not saturate:
+
+     nCtrl   L          paths   top-1%   DEFICIT ratio
+         3   3          4,096   73.25%           1.362
+         3   4         32,768   79.78%           1.294
+         3   5        262,144   82.96%           1.432
+         3   6      2,097,152   85.29%           1.512
+         4   3         65,536   89.04%           1.646
+         4   4      1,048,576   91.11%           1.819
+         5   3      1,048,576   98.47%           2.083
+
+The advantage GROWS with depth (+0.109 per level over the last three) and GROWS with width (1.36
+to 2.08 from three controllers to five), and the tail's concentration grows with width too, 73.25%
+to 98.47%. The engine runs wide and deep and both trends point the favourable way. THE VERDICT
+FLIPPED WITH THE METRIC -- on the recovered-share metric the same data said the advantage was
+DECAYING at -0.263 per level -- which is why the metric had to be settled before the fit was read
+and not after.
+
+TWO DEFECTS OF MINE IN THIS MODULE, RECORDED RATHER THAN QUIETLY FIXED. The path count in B5 was
+written nCtrl^(L+1) instead of (2^nCtrl)^(L+1), so the enumerability guard computed 3,125 for a
+case that is really 33,554,432, let it through, and the module died; the printed path column was
+wrong by the same factor. And two sentences of the verdict survived the metric change and were
+false of the new numbers until corrected.
+
+WHAT THIS DOES NOT SETTLE. Everything is at widths small enough to enumerate exactly, which is the
+only way to check admissibility and know the true tail; that the bound stays admissible at the
+engine's widths follows from the derivation, that it stays USEFUL there does not. The bound
+relaxes the coupling between targets -- each is allowed its own best completion -- so a tighter
+one exists and is not built. And the pruner itself is NOT modified: wiring this into
+engine_budget is the next step and was not taken here, so none of the engine's reported tails
+have moved yet.
