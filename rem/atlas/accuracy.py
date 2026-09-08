@@ -43,6 +43,24 @@ A1  THE CEILING GATE, WHICH ASKS WHETHER THE QUESTION IS ANSWERABLE AT ALL. Befo
     module says so rather than inventing one. Inventing a number here is precisely the defect
     that put base = -1.0 into the tail and moved it eight orders.
 
+A1b THE INSTRUMENT A1 SHOULD HAVE USED, PREDECLARED AFTER A1 RAN AND BEFORE A1b DID. A1's budget
+    sweep did not vary what it claimed to vary. At budgets of 1e-1 and 1e-2 the pruner returned
+    NOTHING -- zero retained paths and a tail of exactly zero, which is not a small tail but an
+    absent one -- and at 1e-3, 1e-4 and 1e-5 it returned the IDENTICAL tail from the identical
+    19,531 retained paths, because engine_budget carries a hard cap on retained paths of
+    2e7 / n and that cap, not the budget, decided every one of those rows. So the sweep produced
+    "inf orders of magnitude" out of two absent rows and three identical ones. That is a gate
+    passing on a degenerate quantity -- ledger U -- and it is this module's own gate, in the very
+    module that opened by correcting another module for the same class of error.
+    A1b sweeps the quantity that actually binds: the RETAINED-PATH CAP. If the reported tail is
+    still moving as the retained set grows, the pruning error is not converged and its size is
+    visible in the increments; if it has stopped moving, it has converged and the comparison with
+    the class ladder is legitimate.
+    PREDECLARED: pruning is the binding term if the tail is still moving, between the two largest
+    retained sets, by more than the class ladder's whole span. The class map is the binding term
+    if the tail has converged to less than that. A row that returns zero paths is reported as
+    "no paths retained" and is excluded from every span, since -inf is not a measurement.
+
 A2  THE CLASS LADDER IN THE UNIT THAT MATTERS. Substitute the class-count representation into the
     assembled engine and read the error off the tail. The projection gives every controller in a
     class the same weight for a given target, which IS the class hypothesis: the response may
@@ -164,11 +182,46 @@ def main():
         lg.append(np.log10(t) if t > 0 else float("-inf"))
         P_(f"    {bd:>10.0e} {t:>16.4e} {lg[-1]:>12.2f} {dr:>13.4f} {kept:>10}")
     span_prune = float(np.nanmax(lg) - np.nanmin(lg))
-    P_(f"\n  SPREAD IN log10 TAIL ACROSS THE BUDGET SWEEP: {span_prune:.2f} orders of magnitude.")
-    P_("  And note the certificate column: the pruner certifies the MASS it dropped, which runs")
-    P_("  to essentially 1. realkinetics already recorded that this certificate does not bound")
-    P_("  the TAIL -- the ratio was 1.9e29 -- so the spread above is the honest measure of what")
-    P_("  the pruner costs the reported number, and the certificate is not.")
+    P_("\n  A1 IS DEGENERATE AND IS SUPERSEDED, NOT DELETED. Two of those rows retained NO paths")
+    P_("  at all -- a tail of exactly zero is an absent number, not a small one -- and the other")
+    P_("  three returned the IDENTICAL tail from the IDENTICAL retained set, because")
+    P_("  engine_budget carries a hard cap of 2e7/n retained paths and that cap, not the budget,")
+    P_("  decided every one of them. The sweep did not vary what it claimed to vary, and the")
+    P_("  'spread' it produced was infinity manufactured from two absent rows. Ledger U, in this")
+    P_("  module's own gate, in the module that opened by correcting another for the same thing.")
+
+    # ---- A1b  THE INSTRUMENT THAT REPLACES IT --------------------------------------------------
+    P_("\n" + RULE)
+    P_("A1b  SWEEPING THE QUANTITY THAT ACTUALLY BINDS: THE RETAINED-PATH CAP")
+    P_(RULE)
+    P_("  If the reported tail is still moving as the retained set grows, the pruning error is")
+    P_("  not converged and the increments show its size. If it has stopped moving, it has")
+    P_("  converged and comparing it with the class ladder is legitimate.")
+    P_(f"\n    {'path cap':>10} {'kept':>10} {'tail':>16} {'log10 tail':>12} {'step':>9}")
+    caps = (100, 300, 1000, 3000, 10000, 19531)
+    lgc, kept_seen = [], []
+    prev = None
+    for cp in caps:
+        t, dr, tou, kept, res = engine_budget(Q, nCtrl, rows, L, dt, 1e-3, cap=cp)
+        if kept == 0 or t <= 0:
+            P_(f"    {cp:>10} {kept:>10} {'no paths retained':>16} {'--':>12} {'--':>9}")
+            continue
+        g = float(np.log10(t))
+        step = "" if prev is None else f"{g - prev:+.2f}"
+        P_(f"    {cp:>10} {kept:>10} {t:>16.4e} {g:>12.2f} {step:>9}")
+        lgc.append(g)
+        kept_seen.append(kept)
+        prev = g
+    if len(lgc) >= 2:
+        last_step = abs(lgc[-1] - lgc[-2])
+        span_prune = float(max(lgc) - min(lgc))
+    else:
+        last_step, span_prune = float("nan"), float("nan")
+    P_(f"\n  movement between the two largest retained sets: {last_step:.2f} orders of magnitude.")
+    P_(f"  movement across the whole retained-set sweep:   {span_prune:.2f} orders of magnitude.")
+    P_("  The certificate column is not used for this and cannot be: the pruner certifies the")
+    P_("  MASS it dropped, which runs to essentially 1 in every row above, and realkinetics")
+    P_("  measured that the mass certificate misses the tail by a factor of 1.9e29.")
 
     # ---- A2  THE CLASS LADDER, WITH ITS CHECKS -------------------------------------------------
     P_("\n" + RULE)
@@ -221,9 +274,10 @@ def main():
     P_("A4  THE TARGET")
     P_(RULE)
     P_(f"    {'error term':<44} {'orders of magnitude in the tail':>32}")
-    P_(f"    {'pruning, across a 4-decade budget sweep':<44} {span_prune:>32.2f}")
+    P_(f"    {'pruning, across the retained-set sweep':<44} {span_prune:>32.2f}")
+    P_(f"    {'pruning, still moving at the largest set':<44} {last_step:>32.2f}")
     P_(f"    {'class map, across the whole ladder to C = 1':<44} {span_class:>32.2f}")
-    if span_prune > span_class:
+    if last_step > span_class:
         P_("\n  A1 AS PREDECLARED: the pruner moves the reported tail by MORE than the entire class")
         P_("  ladder does. Class-map accuracy is NOT the binding term, and no accuracy target for")
         P_("  it can be honestly derived while the pruning error on the OBSERVABLE is unbounded.")
@@ -248,7 +302,7 @@ def main():
     P_(f"  1. Measured at {nCtrl} controllers and L = {L}, which is what can be enumerated. The")
     P_("     140-controller row cannot be run; its ratio is placed on the ladder by analogy and")
     P_("     that step is an assumption, not a measurement.")
-    P_("  2. The budget sweep measures how far the tail MOVES, which is a lower bound on the")
+    P_("  2. The retained-set sweep measures how far the tail MOVES, a lower bound on the")
     P_("     pruning error, not a bound on it. The true error could be larger and nothing here")
     P_("     bounds it -- that is the open problem, restated in the unit that matters.")
     P_("  3. base and gain are fixed at the module defaults. realkinetics recorded that base")

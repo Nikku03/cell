@@ -347,7 +347,8 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0, S=No
     return tail, dropped, touched, len(wts), res
 
 
-def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0, S=None):
+def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0, S=None,
+                  cap=None):
     """Specify the error BUDGET and spend it, in ONE pass.
 
     A fixed absolute tau does not scale -- path probabilities fall like n^-L, so a threshold that
@@ -378,7 +379,9 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0,
     # up in the certificate instead of exhausting memory. In the transition band the retained set
     # grows like n^L whatever the budget says, and a row that blows the budget is the result --
     # it is what "this regime does not prune" looks like when it is reported rather than crashed.
-    cap = max(1, int(2e7 // max(n, 1)))
+    # an explicit cap lets a caller SWEEP the retained-path budget, which is the only way to
+    # see whether the reported tail has converged; None keeps the memory-derived default.
+    cap = max(1, int(2e7 // max(n, 1))) if cap is None else max(1, int(cap))
 
     def spend(mass):
         o = np.argsort(mass)
