@@ -139,13 +139,16 @@ D1d  IF C IS A RESOLUTION, THE CAP IS A CURVE. THE LAW, AND THE CURVE
   and C falls; demand more and C rises. It is a quantisation count.
 
   SO THE CAP IS NOT A NUMBER AT C = 64. IT IS THIS CURVE:
+  Swept over C directly rather than over an accuracy grid: the accuracy grid collapsed
+  three of its rows onto C = 1 and hid the shape. The accuracy column is the inverse law.
 
-      demanded accuracy  C supported   cap, controllers
-            4.00 floors            1 >= 1999  SATURATED
-            2.00 floors            1 >= 1999  SATURATED
-            1.00 floors            1 >= 1999  SATURATED
-            0.50 floors            2 >= 1999  SATURATED
-            0.25 floors            4                442
+     C supported   demanded accuracy     cap, controllers
+               1        0.930 floors   >= 1999  SATURATED
+               2        0.480 floors   >= 1999  SATURATED
+               4        0.247 floors                  442
+               8        0.127 floors                   30
+              16        0.066 floors                   15
+              64        0.017 floors                   13
 
   A ROW MARKED SATURATED IS NOT A MEASUREMENT. The cap functional walks the controller
   count upward until the bar is breached and stops at its own ceiling of 2000; a row that

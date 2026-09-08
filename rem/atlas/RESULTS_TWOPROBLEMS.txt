@@ -2263,3 +2263,22 @@ The correct summary of the engine's position is therefore: the cap is a FUNCTION
 resolution demanded of the regulator response, it falls by a factor of 15 for one doubling of
 that resolution near C = 8, and the resolution itself is a choice rather than a measured
 constant of human biology.
+
+AND THE ACCURACY COLUMN, WHICH IS THE MOST USEFUL THING THE CURVE PRODUCED. Inverting the law
+gives, for each class count, the accuracy it is buying, in units of the human panel's own
+replicate noise floor:
+
+     C supported   demanded accuracy     cap, controllers
+               1        0.930 floors   >= 1999  SATURATED
+               2        0.480 floors   >= 1999  SATURATED
+               4        0.247 floors                  442
+               8        0.127 floors                   30
+              16        0.066 floors                   15
+              64        0.017 floors                   13
+
+C = 64 -- the standard every cap in this ledger has been quoted at -- is a demand that the
+regulator response be reproduced to 1.7% OF A NOISE FLOOR. Nobody ever stated it that way,
+including this build order, and stating it that way is what the curve is for. C = 1, the
+regulator-blind count summary that yeast refuted at 8.89 floors, corresponds to 0.93 floors --
+which is a coherent standard, just a weak one. The engine has been paying an exponent for a
+resolution nobody chose deliberately.
