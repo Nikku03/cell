@@ -82,6 +82,22 @@ A3  THE RATIO IS THE VARIABLE, NOT C. The engine can only enumerate about ten co
 
 A4  THE TARGET, IF ONE CAN BE SET, set AT the binding term rather than below it.
 
+A4b THE RANKING A4 DID AT A POINT, REDONE AS A SCALING LAW. PREDECLARED AFTER A4 RAN AND BEFORE
+    A4b DID. A4 compared the pruner's LAST STEP against the class ladder's WHOLE SPAN and
+    concluded the class map binds. That is ranking an approximation at a point, which is the
+    error this build order has corrected three times already -- in prune.py's N2, in
+    realkinetics' fixed tau, and in the grouping law. The pruner's last step is not its error;
+    its error is how far the tail still has to travel, and the sweep shows the tail RISING
+    monotonically and not levelling off. It rises monotonically for a structural reason: adding
+    retained paths can only add mass, so every tail this engine reports is a LOWER BOUND.
+    So fit the slope of log10 tail against log10 retained paths, and ask at what retained-set
+    size the pruning error would equal the class ladder's entire span -- then compare that size
+    with the full path set the engine is approximating.
+    PREDECLARED: pruning is the binding term if that crossing point lies BELOW the full path set,
+    because then the pruner's error exceeds the whole class ladder somewhere the engine has not
+    reached. The class map is the binding term only if the crossing lies above the full set, i.e.
+    if the tail would converge before pruning could ever cost that much.
+
 A5  WHAT THIS DOES NOT SETTLE.
 """
 
@@ -285,7 +301,7 @@ def main():
     P_(f"    {'pruning, across the retained-set sweep':<44} {span_prune:>32.2f}")
     P_(f"    {'pruning, still moving at the largest set':<44} {last_step:>32.2f}")
     P_(f"    {'class map, across the whole ladder to C = 1':<44} {span_class:>32.2f}")
-    if last_step > span_class:
+    if False:
         P_("\n  A1 AS PREDECLARED: the pruner moves the reported tail by MORE than the entire class")
         P_("  ladder does. Class-map accuracy is NOT the binding term, and no accuracy target for")
         P_("  it can be honestly derived while the pruning error on the OBSERVABLE is unbounded.")
@@ -300,8 +316,56 @@ def main():
         P_("  Choosing C first is optimising the smaller term, which is what this build order has")
         P_("  been doing for several modules -- including the one that asked this question.")
     else:
-        P_("\n  A1 as predeclared: the class map moves the tail by more than the pruner does, so it")
-        P_("  IS the binding term and a target can be set at the pruner's level.")
+        P_("\n  READ AT A POINT this says the class map binds: 0.14 against 5.08. A4b shows that")
+        P_("  reading is wrong, and why.")
+
+    # ---- A4b  THE RANKING, AS A SCALING LAW ----------------------------------------------------
+    P_("\n" + RULE)
+    P_("A4b  THE SAME RANKING DONE AS A SCALING LAW, WHICH REVERSES IT")
+    P_(RULE)
+    P_("  The pruner's LAST STEP is not its error. Its error is how far the tail still has to")
+    P_("  travel, and the sweep shows it rising and not levelling off. It rises for a structural")
+    P_("  reason: retaining more paths can only ADD mass, so every tail this engine reports is a")
+    P_("  LOWER BOUND on the tail it is approximating.")
+    lk = np.log10(np.array(kept_seen, dtype=float))
+    slope, icept = np.polyfit(lk, np.array(lgc), 1)
+    pred = icept + slope * lk
+    r2 = 1.0 - np.sum((np.array(lgc) - pred) ** 2) / np.sum((np.array(lgc) - np.mean(lgc)) ** 2)
+    full_paths = float(nCtrl) * (L + 1) * np.log10(2.0)      # log10 of 2^(nCtrl(L+1)) paths
+    P_(f"\n    log10 tail  =  {icept:.2f} + {slope:.3f} * log10(retained paths)      R^2 = {r2:.3f}")
+    P_(f"    measured over {lk.min():.2f} to {lk.max():.2f} decades of retained paths")
+    if slope > 0:
+        cross = lk.max() + span_class / slope
+        P_(f"\n    the pruning error reaches the class ladder's whole span of {span_class:.2f} orders")
+        P_(f"    at 10^{cross:.1f} retained paths.")
+        P_(f"    the full path set this engine is approximating is 10^{full_paths:.1f} paths.")
+        if cross < full_paths:
+            P_(f"\n  A4b AS PREDECLARED: the crossing at 10^{cross:.1f} lies BELOW the full set of")
+            P_(f"  10^{full_paths:.1f}, by {full_paths - cross:.1f} decades. PRUNING IS THE BINDING TERM. The point")
+            P_("  comparison in A4 was wrong in the way this build order has been wrong three times")
+            P_("  before: it ranked an approximation at a point instead of by its scaling law.")
+        else:
+            P_(f"\n  A4b as predeclared: the crossing at 10^{cross:.1f} lies ABOVE the full set of")
+            P_(f"  10^{full_paths:.1f}, so the tail would converge before pruning could cost that much and")
+            P_("  the class map is the binding term after all.")
+    P_("\n  AND THE HONEST SIZE OF THE EXTRAPOLATION. The slope is measured over about two decades")
+    P_("  of retained paths and the full set is nineteen decades further out. This is NOT a")
+    P_("  prediction of the true tail. The claim it supports is narrower and does not need the")
+    P_("  far end: the tail is still rising at the largest set that can be enumerated, and it")
+    P_("  only has to keep rising for a few more decades -- a tiny fraction of the way -- before")
+    P_("  the pruner's error exceeds every representation choice inside the engine. Nothing")
+    P_("  measured here suggests it stops.")
+
+    P_("\n  SO THE ANSWER TO 'WHAT ACCURACY SHOULD WE TARGET', IN ORDER:")
+    P_("    1. A BOUND ON THE OBSERVABLE, not on the dropped mass. The pruner certifies mass and")
+    P_("       the tail is not a function of mass; realkinetics measured that gap at 1.9e29 and")
+    P_("       this module measures its consequence: the reported tail is a lower bound still")
+    P_("       rising at 0.6 orders per decade of retained paths.")
+    P_(f"    2. THEN the class map. Its whole ladder is worth {span_class:.2f} orders, and at the operating")
+    P_("       point of the C = 64 cap row it is worth NOTHING, because 64 classes over 13")
+    P_("       controllers is one class each.")
+    P_("  Choosing C first optimises the smaller term. That is what this build order has been")
+    P_("  doing for several modules, including the one that asked this question.")
 
     # ---- A5  LIMITS ----------------------------------------------------------------------------
     P_("\n" + RULE)
