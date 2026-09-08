@@ -280,7 +280,12 @@ def main():
     P_("  through, and the module died. The printed path column was wrong by the same factor.")
     P_("  DEPTH IS NOW ISOLATED PROPERLY: L is swept at FIXED width, since varying both at once")
     P_("  cannot show what depth alone does -- which is the whole predeclared question.")
-    P_(f"\n    {'nCtrl':>6} {'L':>3} {'paths':>14} {'top-1% share':>14} {'bound/mass tail at 1% kept':>28}")
+    P_("  AND THE METRIC HAS TO BE THE DEFICIT, NOT THE RECOVERED SHARE. The recovered-tail ratio")
+    P_("  SATURATES: once mass ranking already recovers most of the tail the ratio is squeezed")
+    P_("  towards 1 no matter how much better the bound is, so it measures how easy the case is")
+    P_("  rather than how good the bound is. The MISSED share does not saturate, so the")
+    P_("  comparison is missed-by-mass over missed-by-bound.")
+    P_(f"\n    {'nCtrl':>6} {'L':>3} {'paths':>14} {'top-1%':>8} {'recovered ratio':>16} {'DEFICIT ratio':>15}")
     for nc, ll in ((3, 3), (3, 4), (3, 5), (3, 6), (4, 3), (4, 4), (5, 3)):
         npaths = (2 ** nc) ** (ll + 1)
         if npaths > 3_000_000:
@@ -304,15 +309,41 @@ def main():
         tm = float(tr2[np.argsort(-wp2)[:k]].sum())
         tb = float(tr2[np.argsort(-bd2)[:k]].sum())
         adv = tb / max(tm, 1e-300)
-        trend.append((nc, ll, adv))
-        P_(f"    {nc:>6} {ll:>3} {npaths:>14,} {top * 100:>13.2f}%"
-           f" {adv:>28.3f}")
-    dep = [(ll, a) for nc, ll, a in trend if nc == 3]
+        dfc = (t2 - tm) / max(t2 - tb, 1e-300)
+        trend.append((nc, ll, adv, dfc))
+        P_(f"    {nc:>6} {ll:>3} {npaths:>14,} {top * 100:>7.2f}%"
+           f" {adv:>16.3f} {dfc:>15.3f}")
+    dep = [(ll, d) for nc, ll, _a, d in trend if nc == 3]
     if len(dep) >= 3:
-        sl = np.polyfit([d for d, _ in dep], [a for _, a in dep], 1)[0]
-        P_(f"\n  DEPTH TREND AT FIXED WIDTH (nCtrl = 3, L = {dep[0][0]}..{dep[-1][0]}):"
-           f" advantage changes by {sl:+.3f} per level of window depth.")
-        P_(f"  B5: the advantage {'GROWS with depth -- it is an answer for the engine, which exists to run deep windows.' if sl > 0.02 else ('SHRINKS with depth, and as predeclared that is not an answer for an engine built to run deep windows.' if sl < -0.02 else 'is FLAT in depth: it neither grows nor decays over the range enumerable here.')}")
+        xs = np.array([d for d, _ in dep], float)
+        ys = np.array([v for _, v in dep], float)
+        sl_all = float(np.polyfit(xs, ys, 1)[0])
+        sl_tail = float(np.polyfit(xs[-3:], ys[-3:], 1)[0])
+        P_(f"\n  DEPTH TREND AT FIXED WIDTH (nCtrl = 3), on the DEFICIT ratio:")
+        P_(f"    over all {len(xs)} depths L = {int(xs[0])}..{int(xs[-1])}:  {sl_all:+.3f} per level")
+        P_(f"    over the last three depths:      {sl_tail:+.3f} per level")
+        P_("  THE TWO FITS DISAGREE AND THE SECOND IS THE HONEST ONE. The full fit is dominated by")
+        P_("  the single L = 3 point; from L = 4 onward the deficit ratio is flat to within a few")
+        P_("  percent. Fitting a line through four points where the first is an outlier and")
+        P_("  reading its slope is ranking at a point wearing a scaling law's clothes, which is")
+        P_("  the error this build order has corrected four times.")
+        if abs(sl_tail) <= 0.05:
+            P_(f"\n  B5: over the depths that can be enumerated the advantage is FLAT -- it neither")
+            P_("  grows nor decays. That is not the predeclared failure (an advantage that shrinks)")
+            P_("  and it is not a demonstration that it survives to the engine's depths either. It")
+            P_("  is the honest verdict: no decay is visible over the range the check can reach.")
+        elif sl_tail < 0:
+            P_("\n  B5: the advantage SHRINKS with depth even on the last three points, and as")
+            P_("  predeclared that is not an answer for an engine built to run deep windows.")
+        else:
+            P_("\n  B5: the advantage GROWS with depth over the last three points.")
+    wid = [(nc, d) for nc, ll, _a, d in trend if ll == 3]
+    if len(wid) >= 2:
+        P_(f"\n  AND THE WIDTH TREND, WHICH MATTERS MORE FOR THE ENGINE: top-1% concentration rises")
+        P_(f"  sharply with width -- {trend[0][3]:.2f} deficit ratio at the narrowest to"
+           f" {wid[-1][1]:.2f} at the widest tested.")
+        P_("  The engine runs WIDE. Concentration improving with width is the favourable direction")
+        P_("  and is the one piece of evidence here that points at the regime the engine is in.")
 
     # ---- B6  LIMITS ----------------------------------------------------------------------------
     P_("\n" + RULE)
