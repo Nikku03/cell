@@ -1791,3 +1791,80 @@ either many more replicates per factor, or a human assay with the yeast experime
 structure: designed combinations of sites in a fixed context, where the number and identity of
 regulators are varied independently and the response is measured with a tight floor. Human MPRAs
 of that design exist; none was used here, and that is the next measurement rather than a caveat.
+
+
+=================================================================================================
+LOOKING FOR A HUMAN MPRA WITH THE YEAST DESIGN: WHAT WAS FOUND, AND WHAT IT SAYS
+=================================================================================================
+humantransfer.py closed by naming what was needed: a human assay with the yeast experiment's
+structure -- designed site combinations in a fixed context, number and identity varied
+independently, tight floor. This went to find one.
+
+THE RIGHT DATASET EXISTS AND COULD NOT BE READ. Smith et al. 2013, Nat Genet 45:1021-1028,
+doi:10.1038/ng.2713, varied "copy number, spacing, combination and order" of 12 liver
+transcription-factor sites across ~5,000 synthetic elements in HepG2 -- the Sharon design in human
+cells, exactly. Its processed data is not machine-readable from this environment: the article is
+not in the PMC open-access subset, the supplementary tables sit behind an interstitial that
+defeats both automated retrieval and a real browser driven through the proxy, and the raw reads at
+SRA SRP018414 cannot be decoded without the barcode map that lives in those same supplements.
+THE COPY-NUMBER AXIS THEREFORE REMAINS UNTESTED ON HUMAN DATA. That is a gap, not a footnote.
+
+WHAT IS OPEN ANSWERS THE OTHER HALF. Kheradpour et al. 2013, Genome Res 23:800-11,
+doi:10.1101/gr.144899.112, GEO GSE33367: designed human enhancer constructs in K562 and HepG2 with
+selected motif instances directly disrupted -- activators and repressors in both cell types -- ten
+barcodes per construct, two biological replicates, matched plasmid input. That FIXES THE COUNT AT
+ONE and varies the IDENTITY, which is precisely what a count summary assumes away, and it does so
+with a floor far tighter than the CRISPRi panel's. Identity is recovered from the data rather than
+looked up: constructs sharing both flanks are one enhancer family, the wild type is the member
+minimising total Hamming distance, the disrupted variant differs in a contiguous block, and the
+wild-type sequence in that block IS the motif instance. 196 disruptions were recovered.
+
+THREE DEFECTS OF THIS MODULE'S OWN, ALL FOUND AND FIXED BEFORE THE RESULT WAS READ.
+  Single linkage is transitive and chained 181 of 196 disruptions into ONE class, leaving exactly
+  one group with two or more members -- so the bootstrap resampled a single unit, produced a
+  zero-width interval, and the "between-motif" variance was the variance WITHIN one giant class.
+  Ledger U. Complete linkage, which cannot chain, gives 136 classes of which 34 have two or more.
+  The similarity function accepted a six-base overlap, which can score 1.0 by chance; it now
+  requires nine. And M5 asserted its principle while computing nothing -- a dead loop.
+
+THE RESULT, AND IT DOES NOT REPLICATE.
+
+    instrument                                    HepG2                      K562
+    M3 motif similarity vs effect similarity   z = -0.47, p = 0.31    z = -5.03, p = 0.0005
+    M4 between-motif variance component        1.58 floors [0.91, 2.10]  0.77 floors [0.00, 1.21]
+
+The two instruments point at DIFFERENT cell types. M3 finds the identity effect in K562 and not
+HepG2; M4's variance component excludes zero in HepG2 and not K562. M5 was predeclared as "a
+result that appears in one and not the other is not a result", and that bar is not met by either
+instrument. THE COUNT-MATCHED IDENTITY EFFECT IS NOT ESTABLISHED BY THIS MODULE.
+
+AND THE INCIDENTAL FINDING IS THE STRONGEST THING HERE, AND IT WAS NOT PREDECLARED.
+
+    disruption effects, HepG2 against K562, the SAME 196 constructs :  r = +0.02
+    within-cell reproducibility, replicate 1 against replicate 2    :  r = +0.73 (HepG2)
+                                                                       r = +0.52 (K562)
+
+The same construct, the same disrupted motif, measured in two human cell lines, gives effects
+that are UNCORRELATED -- while each cell line reproduces itself well. The effect of removing a
+regulatory site is not a property of the site. It is a property of the site AND the cell.
+
+THAT IS A PROBLEM FOR THE ENGINE THAT IS LARGER THAN THE ONE THIS MODULE SET OUT TO TEST. Every
+representation in this build order -- pattern, class count, signed count, multiplier -- carries a
+per-gene response function P(x_i | summary of its regulators) and assumes it is a fixed object to
+be learned once. If a motif's effect does not transfer between two cell lines of the same
+organism, that function is not a property of the network at all, and the accuracy figures the caps
+rest on are conditional on a cell type that was never named. The yeast measurement was made in one
+organism in one condition; so was every human measurement here; and the cross-cell correlation
+above says those conditions do not commute.
+
+WHERE THE ACCURACY EVIDENCE NOW STANDS, ALL THREE EXPERIMENTS ON THE SAME ESTIMATOR:
+
+    experiment                                     effect size    replicates?
+    yeast promoters, between factor set            15.86 floors   single condition
+    human CRISPRi, between regulator                1.05 floors   single cell line
+    human MPRA, between motif at fixed count     0.77-1.58 floors NO -- opposite cells
+
+The qualitative claim that regulators are not interchangeable survives in yeast and in the CRISPRi
+panel. At fixed count, in designed human constructs, it does not replicate across cell types. And
+the copy-number question -- the one the whole count summary is about -- has still never been asked
+of human data.

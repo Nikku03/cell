@@ -40,13 +40,13 @@ M3  DOES IDENTITY MATTER, WITH THE COUNT HELD AT ONE?
   motif labels against the effects, which destroys the pairing and nothing else.
 
     HepG2: 196 disruptions, 19110 pairs
-      corr(motif similarity, |effect difference|) = -0.0308
-      permutation null -0.0011 +- 0.0263   z = -1.13   p = 0.1370
+      corr(motif similarity, |effect difference|) = -0.0136
+      permutation null -0.0013 +- 0.0263   z = -0.47   p = 0.3060
       -> no relation between motif identity and effect
 
     K562: 196 disruptions, 19110 pairs
-      corr(motif similarity, |effect difference|) = -0.1275
-      permutation null +0.0002 +- 0.0250   z = -5.11   p = 0.0005
+      corr(motif similarity, |effect difference|) = -0.1282
+      permutation null +0.0000 +- 0.0255   z = -5.03   p = 0.0005
       -> similar motifs give similar effects: IDENTITY MATTERS at fixed count
 
 =================================================================================================
@@ -55,9 +55,13 @@ M4  THE SAME QUANTITY AS THE OTHER TWO EXPERIMENTS, SO ALL THREE COMPARE
   Group the disruptions by motif instance -- identical wild-type windows are the same motif
   -- and take the between-group variance above noise, exactly as humantransfer H3b did.
 
-    cell      motif classes    floor   between-motif sd              in floors
-    HepG2                16   0.3935             0.6571      1.67 [1.67, 1.67]
-    K562                 16   0.6295             0.6585      1.05 [1.05, 1.05]
+    cell      motif classes    floor
+    HepG2               136   0.3935
+      class sizes [11, 7, 4, 4, 3, 3, 3, 3] ...; 34 classes have two or more members
+      between-motif sd 0.6230 log2 = 1.58 floors CI [0.91, 2.10]
+    K562                136   0.6295
+      class sizes [11, 7, 4, 4, 3, 3, 3, 3] ...; 34 classes have two or more members
+      between-motif sd 0.4837 log2 = 0.77 floors CI [0.00, 1.21]
 
   for comparison, the same estimator elsewhere in this build order:
     yeast promoters, between factor set   15.86 floors  CI [9.32, 21.36]
@@ -66,9 +70,19 @@ M4  THE SAME QUANTITY AS THE OTHER TWO EXPERIMENTS, SO ALL THREE COMPARE
 =================================================================================================
 M5  REPLICATION ACROSS CELL TYPES
 =================================================================================================
-  The two cell types are independent measurements of the same constructs. A result present
-  in one and absent in the other is not a result, and both are reported above rather than
-  pooled, so the reader can see the replication rather than be told about it.
+  The first version of this gate asserted the principle and computed nothing. The two
+  cell types measure the SAME constructs, so the replication is a number.
+
+    disruption effects, HepG2 against K562, same 196 constructs: r = +0.0235
+    within-cell reproducibility for comparison:
+      HepG2    replicate 1 against replicate 2: r = +0.7274
+      K562     replicate 1 against replicate 2: r = +0.5222
+
+  M5: the M3 result appears in K562 and not in HepG2. By this gate as predeclared, that
+  is NOT a result. The cross-cell correlation above says why it need not be a
+  contradiction -- these are cell-type-specific enhancers and the same motif need not act
+  in both -- but a mechanism for a split is not the same as a replication, and the
+  predeclared bar was replication.
 
 =================================================================================================
 M6  WHAT THIS DOES AND DOES NOT SETTLE
