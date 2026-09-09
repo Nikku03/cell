@@ -395,6 +395,22 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0,
         u = base + gain * (actbit * hvec[0]) @ S.T + gain * Hrem[0] * Splus[None, :]
         return pi * np.exp(-np.logaddexp(0.0, -u).sum(axis=1))
 
+    def bound_children_exact(wact_par, ch, d, chunk=24):
+        """(P, n) EXACT subtree bound -- no tangent relaxation.
+
+        The exact bound needs, for every (parent, child) candidate, a sum over targets of
+        log sigma. That is a parents x children x targets tensor and does not fit at this width,
+        so parents are processed in chunks and reduced over targets immediately. Cost is the same
+        4e9 target-evaluations either way; only the peak memory changes."""
+        cst = base + gain * Hrem[d] * Splus                    # (T,) the box's best case
+        outk = np.empty(ch.shape)
+        for a in range(0, wact_par.shape[0], chunk):
+            b = min(a + chunk, wact_par.shape[0])
+            x = wact_par[a:b, None, :] + hvec[d] * actbit[None, :, :]      # (m, n, nCtrl)
+            Zc = cst[None, None, :] + gain * (x @ S.T)                     # (m, n, T)
+            outk[a:b] = np.exp(-np.logaddexp(0.0, -Zc).sum(axis=2))
+        return ch * outk
+
     def bound_children(wact_par, ch, d):
         """(P, n) admissible bound for every candidate, via the tangent relaxation."""
         u = base + gain * (wact_par @ S.T) + gain * Hrem[d] * Splus[None, :]
@@ -436,7 +452,12 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0,
         ch = Pm[:, last].T * wts[:, None]
         touched += ch.size
         flat = ch.ravel()
-        key = flat if rank == "mass" else bound_children(wact, ch, d).ravel()
+        if rank == "mass":
+            key = flat
+        elif rank == "exact":
+            key = bound_children_exact(wact, ch, d).ravel()
+        else:
+            key = bound_children(wact, ch, d).ravel()
         kept, dr = spend(key)
         dropped += dr                      # with rank="bound" this accumulates dropped BOUND,
         par, code = kept // n, kept % n    # which bounds the TAIL deficit and not the mass
