@@ -108,21 +108,29 @@ def main():
         idx = rng.choice(N, k, replace=True, p=p)
         return idx, f[idx] / (N * p[idx])
 
+    massorder = np.argsort(-g)
+
     def adaptive_keep(idx, cap):
-        """A genuinely data-dependent rule: keep the largest OBSERVED bounds, then fill by mass."""
+        """A genuinely data-dependent rule: keep the largest OBSERVED bounds, then fill by mass.
+
+        Masked rather than looped -- the first version tested membership inside a loop over the
+        mass order, which is O(cap*N) and was the slowest thing in the module."""
         seen = np.unique(idx)
-        order = seen[np.argsort(-f[seen])]
-        kept = list(order[:cap])
-        if len(kept) < cap:
-            rest = np.argsort(-g)
-            for j in rest:
-                if len(kept) >= cap:
-                    break
-                if j not in set(kept):
-                    kept.append(j)
-        return np.array(kept[:cap])
+        order = seen[np.argsort(-f[seen])][:cap]
+        keep = np.zeros(N, dtype=bool)
+        keep[order] = True
+        short = cap - int(keep.sum())
+        if short > 0:
+            fill = massorder[~keep[massorder]][:short]
+            keep[fill] = True
+        return np.nonzero(keep)[0]
 
     CAP = 1000
+    P_(f"\n  NOTE ON SAMPLE SIZES. The naive procedure needs MORE samples than the cap of {CAP}: with")
+    P_("  fewer, the rule keeps every candidate it sampled and the dropped side of the sample is")
+    P_("  empty, so there is nothing to estimate from. That is a degenerate configuration rather")
+    P_("  than a small-sample one, and the sizes below are chosen to avoid it rather than to")
+    P_("  flatter the method.")
 
     # ---- P0  THE CEILING GATE ------------------------------------------------------------------
     P_("\n" + RULE)
@@ -131,7 +139,7 @@ def main():
     P_("  The naive procedure: one sample selects the partition, and the same sample restricted to")
     P_("  the dropped side estimates the dropped sum.")
     P_(f"\n    {'evals':>8} {'coverage':>10} {'median UCB/true':>17} {'median est/true':>17}")
-    for k in (300, 1000, 3000, 10000):
+    for k in (3000, 10000, 30000):
         hits, rat, bias = 0, [], []
         for _ in range(REPS):
             idx, w = sample(k)
@@ -148,6 +156,10 @@ def main():
             rat.append(u / Dtrue)
             bias.append(est / Dtrue)
             hits += int(u >= Dtrue)
+        if not rat:
+            P_(f"    {k:>8,}   DEGENERATE -- every sampled candidate was retained; nothing to"
+               f" estimate from")
+            continue
         P_(f"    {k:>8,} {hits / len(rat) * 100:>9.1f}% {np.median(rat):>17.3f}"
            f" {np.median(bias):>17.3f}")
     P_("\n  P0: read the last column. An estimator that is unbiased would sit at 1.000; the")
@@ -164,10 +176,10 @@ def main():
     P_(f"  so the retained share is {(Ttrue - Dtrue) / Ttrue * 100:.2f}% of the total.")
     P_(f"\n    {'evals':>8} {'coverage':>10} {'median UCB/true':>17}")
     p1 = {}
-    for k in (300, 1000, 3000, 10000):
+    for k in (3000, 10000, 30000):
         hits, rat = 0, []
         for _ in range(REPS):
-            idx, w = sample(k - CAP if k > CAP else k)
+            idx, w = sample(k - CAP)
             keep = adaptive_keep(idx, CAP)
             R = float(f[keep].sum())                      # exact: retained bounds were evaluated
             u = ucb_fixed(w, N, b, DELTA) - R
@@ -185,8 +197,8 @@ def main():
     P_("P2  SAMPLE SPLITTING, HEAD TO HEAD AT EQUAL TOTAL EVALUATIONS")
     P_(RULE)
     P_(f"\n    {'evals':>8} {'coverage':>10} {'median UCB/true':>17} {'vs identity':>13}")
-    for k in (300, 1000, 3000, 10000):
-        half = max(2, (k - CAP if k > CAP else k) // 2)
+    for k in (3000, 10000, 30000):
+        half = max(2, (k - CAP) // 2)
         hits, rat = 0, []
         for _ in range(REPS):
             idx_a, _ = sample(half)
@@ -202,6 +214,9 @@ def main():
             u = ucb_fixed(w_b[m], Nd, b, DELTA) * frac
             rat.append(u / D)
             hits += int(u >= D)
+        if not rat:
+            P_(f"    {k:>8,}   DEGENERATE -- the certifying half had no dropped samples")
+            continue
         P_(f"    {k:>8,} {hits / len(rat) * 100:>9.1f}% {np.median(rat):>17.3f}"
            f" {np.median(rat) / p1[k][1]:>12.2f}x")
     P_("\n  P2: splitting is valid too -- conditional on the first half, the partition is fixed --")
