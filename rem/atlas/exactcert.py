@@ -49,6 +49,18 @@ E0b THE NUMBER THAT MATTERS, PREDECLARED AFTER E0's DECOMPOSITION AND BEFORE IT 
     bound would deliver IF the reachable completion set could be described tightly. Reporting it
     as an achieved certificate would be the same error as reading a loop ceiling as a cap.
 
+E0c THE SCALING OF THE IRREDUCIBLE FLOOR, PREDECLARED BEFORE IT RAN AND BEFORE THE CONCLUSION IS
+    ALLOWED TO REST ON IT. E0b's verdict that the certificate is closable rests entirely on
+    BESTCOMP / TRUTH being small -- about ten to twenty at four controllers. But the engine runs at
+    ten controllers and L = 6, and the quantity is a MAXIMUM over completions against their
+    weighted average, so it should grow as there are more completions to maximise over. The first
+    draft of this module asserted that direction in prose. Prose arithmetic is what block.py's E4
+    and E7 were, so it is measured.
+    PREDECLARED: fit the floor's growth in width and in depth over the enumerable range. If
+    extrapolating it to ten controllers and L = 6 puts it above 1e3, then the certificate is NOT
+    closable at the engine's width and E0b's verdict holds only at toy widths -- which must be
+    said plainly, because E0b is the encouraging result and this is the gate that can take it away.
+
 E1  THE LITERAL QUESTION, ANSWERED AT THE ENGINE'S WIDTH REGARDLESS OF E0, because it was asked
     and because E0's width is not the engine's. Run the pruner with rank="exact" at 10 controllers
     and L = 6 and compare its certificate against the tangent's, both as a ratio to the reported
@@ -185,6 +197,49 @@ def main():
     P_("  described tightly. Quoting it as an achieved certificate would be the same error as")
     P_("  reading a loop ceiling as a cap, which this build order has now done three times.")
 
+    # ---- E0c  DOES THE FLOOR SURVIVE THE ENGINE'S WIDTH? ---------------------------------------
+    P_("\n" + RULE)
+    P_("E0c  THE SCALING OF THE IRREDUCIBLE FLOOR, SINCE E0b's VERDICT RESTS ON IT")
+    P_(RULE)
+    P_("  BESTCOMP / TRUTH is a MAXIMUM over completions against their weighted average, so it")
+    P_("  should grow as there are more completions. The engine runs at 10 controllers and L = 6.")
+    P_(f"\n    {'nCtrl':>6} {'L':>3} {'paths':>12} {'completions per prefix':>23} {'BESTCOMP/TRUTH':>16}")
+    grid = []
+    for nc, ll in ((3, 3), (3, 4), (3, 5), (4, 3), (4, 4), (5, 3)):
+        np_ = (2 ** nc) ** (ll + 1)
+        if np_ > 3_000_000:
+            continue
+        Q3, Pm3, pi3, n3, hv3, S3, ab3, rw3, _ = setup(nc, ll)
+        Sp3 = np.maximum(S3, 0.0).sum(axis=1)
+        w3, a3 = enumerate_all(Pm3, pi3, n3, ll, hv3, ab3)
+        lo3 = logon(a3, S3)
+        c3 = w3 * np.exp(lo3)
+        on3 = np.exp(lo3)
+        d = ll - 2 if ll >= 3 else ll - 1                 # two levels of completions left
+        wp3, ap3 = prefix_level(Pm3, pi3, n3, ll, hv3, ab3, d)
+        blk3 = n3 ** (ll - d)
+        tr3 = c3.reshape(-1, blk3).sum(axis=1)
+        bc3 = wp3 * on3.reshape(-1, blk3).max(axis=1)
+        r = float(np.median(bc3 / np.maximum(tr3, 1e-300)))
+        grid.append((nc, ll, blk3, r))
+        P_(f"    {nc:>6} {ll:>3} {np_:>12,} {blk3:>23,} {r:>16.3f}")
+    if len(grid) >= 4:
+        # the floor should be a function of the number of completions, which is what varies
+        cw = np.log10([g[2] for g in grid])
+        fv = np.log10([g[3] for g in grid])
+        sl, ic = np.polyfit(cw, fv, 1)
+        r2 = 1.0 - np.sum((fv - (ic + sl * cw)) ** 2) / np.sum((fv - fv.mean()) ** 2)
+        P_(f"\n    log10(floor) = {ic:.3f} + {sl:.3f} * log10(completions per prefix)   R^2 = {r2:.3f}")
+        comp_engine = (2 ** 10) ** 2                       # two levels of completions at nCtrl=10
+        pred = 10 ** (ic + sl * np.log10(comp_engine))
+        P_(f"    at the engine's width the same prefix depth leaves {comp_engine:,} completions,")
+        P_(f"    which the law puts at a floor of about {pred:.1f}.")
+        P_(f"\n  E0c AS PREDECLARED: extrapolated floor {pred:.1f}"
+           f" {'is BELOW 1e3, so E0b s verdict survives the engine width: the certificate is closable there too.' if pred < 1e3 else 'is ABOVE 1e3, so E0b s verdict holds only at toy widths and the certificate is NOT closable at the engine width.'}")
+        P_("    The law is fitted over three decades of completion count and the engine sits about")
+        P_("    three decades beyond the widest point, so this is an extrapolation of comparable")
+        P_("    reach to the ones accuracy.py and boundprune had to make, and no better founded.")
+
     # ---- E1  THE ENGINE-WIDTH RUN --------------------------------------------------------------
     P_("\n" + RULE)
     P_("E1  THE EXACT BOUND AT THE ENGINE'S WIDTH, RUN REGARDLESS OF E0")
@@ -248,9 +303,9 @@ def main():
     P_("\n" + RULE)
     P_("E3  WHAT THIS DOES NOT SETTLE")
     P_(RULE)
-    P_("  1. E0's floor is measured at 4 controllers and L = 4. The substitution it prices gets")
-    P_("     WORSE with width and depth, not better -- more completions to take a maximum over --")
-    P_("     so it is a floor at the engine's width too, but its VALUE there is not measured.")
+    P_("  1. E0c MEASURES the floor's growth rather than asserting it, but it still extrapolates")
+    P_("     about three decades of completion count beyond the widest enumerable point. The")
+    P_("     DIRECTION is measured; the engine-width VALUE is extrapolated.")
     P_("  2. BESTCOMP is the tightest bound of the form mass x best-single-completion. A bound")
     P_("     that distributes the ON-probability over the subtree is outside the family and is")
     P_("     not bounded by E0's floor. That is where a closing certificate would have to come")
