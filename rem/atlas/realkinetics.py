@@ -348,7 +348,7 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0, S=No
 
 
 def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0, S=None,
-                  cap=None):
+                  cap=None, rank="mass"):
     """Specify the error BUDGET and spend it, in ONE pass.
 
     A fixed absolute tau does not scale -- path probabilities fall like n^-L, so a threshold that
@@ -374,6 +374,35 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0,
                     S[i, c] += sg
             S[i] /= max(len(regs), 1)
     actbit = np.array([[(m >> c) & 1 for c in range(nCtrl)] for m in range(n)], dtype=float)
+
+    # ---- the TARGET-AWARE bound, when asked for -------------------------------------------------
+    # pathbound.py derived and exhaustively verified the admissible bound on a prefix's whole
+    # subtree: the remaining activity lives in the box [0, H_d]^nCtrl, sigma is increasing and Z is
+    # linear in it, and the subtree's mass is exactly the prefix weight because Pm is column
+    # stochastic. So BOUND = w * PROD_t sigma(base + gain*(wact.S[t] + H_d*S+[t])).
+    #
+    # AT THIS WIDTH THAT EXACT BOUND CANNOT BE FORMED. Scoring every (parent, child) candidate
+    # needs a parents x children x targets tensor -- 19531 x 1024 x 200 -- which is 4e9 entries.
+    # But log sigma is CONCAVE, so its tangent at the parent's own drive lies ABOVE it:
+    #     log sigma(u + v) <= log sigma(u) + sigma(-u) * v
+    # Summing over targets turns the child's contribution into a single matmul, and the result is
+    # still an UPPER bound on the exact bound, hence still admissible. Looser, and computable.
+    Splus = np.maximum(S, 0.0).sum(axis=1)                 # (T,) best case over the box
+    Bst = actbit @ S.T                                     # (n, T) one state's drive per target
+    Hrem = np.array([float(hvec[d + 1:].sum()) for d in range(L + 1)])
+
+    def bound_root():
+        u = base + gain * (actbit * hvec[0]) @ S.T + gain * Hrem[0] * Splus[None, :]
+        return pi * np.exp(-np.logaddexp(0.0, -u).sum(axis=1))
+
+    def bound_children(wact_par, ch, d):
+        """(P, n) admissible bound for every candidate, via the tangent relaxation."""
+        u = base + gain * (wact_par @ S.T) + gain * Hrem[d] * Splus[None, :]
+        ls = -np.logaddexp(0.0, -u)                                   # log sigma(u), (P, T)
+        g = 1.0 / (1.0 + np.exp(u))                                   # sigma(-u), (P, T)
+        lg = ls.sum(axis=1)[:, None] + g @ (gain * hvec[d] * Bst).T    # (P, n)
+        return ch * np.exp(lg)
+
     per_level = budget / (L + 1)
     # A hard cap on retained paths, so that a budget the pruner CANNOT meet at this width shows
     # up in the certificate instead of exhausting memory. In the transition band the retained set
@@ -384,6 +413,9 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0,
     cap = max(1, int(2e7 // max(n, 1))) if cap is None else max(1, int(cap))
 
     def spend(mass):
+        """`mass` is whatever quantity the caller ranks by -- path mass, or the target-aware
+        bound. The returned certificate is the sum of the DROPPED values of that same quantity,
+        so with rank="bound" it bounds the tail deficit rather than the discarded mass."""
         o = np.argsort(mass)
         c = np.cumsum(mass[o])
         k = int(np.searchsorted(c, per_level, side="right"))
@@ -392,7 +424,8 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0,
         return o[k:], (float(c[k - 1]) if k > 0 else 0.0)
 
     touched = n
-    keep, dr = spend(pi)
+    k0 = pi if rank == "mass" else bound_root()
+    keep, dr = spend(k0)
     dropped = dr
     last = keep
     wts = pi[keep].copy()
@@ -403,9 +436,10 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0,
         ch = Pm[:, last].T * wts[:, None]
         touched += ch.size
         flat = ch.ravel()
-        kept, dr = spend(flat)
-        dropped += dr
-        par, code = kept // n, kept % n
+        key = flat if rank == "mass" else bound_children(wact, ch, d).ravel()
+        kept, dr = spend(key)
+        dropped += dr                      # with rank="bound" this accumulates dropped BOUND,
+        par, code = kept // n, kept % n    # which bounds the TAIL deficit and not the mass
         wts = flat[kept]
         wact = wact[par] + actbit[code] * hvec[d]
         last = code
