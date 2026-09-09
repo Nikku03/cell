@@ -2773,3 +2773,129 @@ fitted over n = 8 to 32 and the engine sits five doublings beyond; the two-varia
 that to one well-determined exponent per axis rather than an exponent that changed with the axis,
 but it is still an extrapolation and should be read as a magnitude. And certificate/tail is the
 readable ratio at the engine's width only because the true deficit is unknowable there.
+
+
+=================================================================================================
+WHAT A PATH MUST RETAIN FOR ITS REMAINING EVENT PROBABILITY, AND HOW LARGE THAT GETS
+=================================================================================================
+exactcert closed the bounding route and named the way out: a representation that does not take a
+MAXIMUM over the subtree. If paths could be MERGED whenever they have the same future, the merged
+part needs no bound at all -- it is exact. So: what must a path retain?
+
+THE STATISTIC, DERIVED. The observable reads a path only through its accumulated time-weighted
+activity, wact_p = SUM_d actbit[s_d] hvec[d]. For a prefix through level d with last state s_d,
+every completion c contributes w_prefix * P(c | s_d) * PROD_t sigma(base + gain*((wact_prefix +
+r_c).S[t])), so the prefix's ENTIRE remaining contribution is
+
+    w_prefix  *  G_d(s_d, wact_prefix)
+
+THE WEIGHT FACTORS OUT COMPLETELY. Therefore the sufficient statistic is exactly
+
+    (level,  current state,  accumulated time-weighted activity vector)
+
+and nothing else about how the path arrived matters. Two prefixes sharing it merge by ADDING
+weights, exactly. That answers the first half of the question.
+
+SUFFICIENCY IS CHECKED WHERE THE CHECK IS NOT VACUOUS. Under the engine's own weighting there are
+no collisions at all, so comparing prefixes that share the statistic would compare nothing. Under a
+quantised weighting collisions are abundant: at 4 controllers, L = 4, Q = 8, the 65,536 prefixes
+collapse to 4,096 statistics with 3,840 groups holding more than one prefix, and the worst relative
+spread of remaining-contribution-per-unit-weight WITHIN a group is 7.795e-16. The derivation holds.
+
+=================================================================================================
+AND THE SIZE IS A THEOREM BEFORE IT IS A MEASUREMENT
+=================================================================================================
+Each component of the statistic is a subset sum of hvec, so the statistic is injective on paths
+exactly when hvec has distinct subset sums. The engine's hvec is geometric with ratio rho =
+exp(1/2). A collision would mean SUM_d a_d rho^d = 0 with a_d in {-1,0,1} not all zero, which would
+make rho ALGEBRAIC; by Lindemann-Weierstrass exp(1/2) is transcendental. SO NO COLLISION EXISTS AT
+ANY DEPTH OR WIDTH.
+
+    nCtrl   L  level   prefixes  distinct statistics   merge?
+        3   4      4      32768                32768     none
+        4   4      4    1048576              1048576     none
+
+WITH THE ENGINE'S OWN TIME WEIGHTING THERE IS NO EXACT MERGE. The sufficient statistic IS the path,
+the representation is the full path set -- 2^70 = 1.18e21 at the engine's width -- and nothing can
+be retained more cheaply. That is the answer to the second half of the question, and it is negative.
+
+BUT THE OBSTRUCTION IS THE IRRATIONALITY OF THE WEIGHTS, NOT THE STRUCTURE OF THE PROBLEM, and that
+is a constructive difference. Quantise hvec onto a grid and every component of wact becomes one of
+finitely many rationals, so the count is bounded by
+
+    n * (Q+1)^nCtrl
+
+-- a bound that CONTAINS NO L AT ALL. Exponential in width, independent of depth, against
+2^(nCtrl*(L+1)) for paths. Measured at 3 and 4 controllers with Q held fixed and L varied:
+
+     nCtrl    Q   L          paths   statistics      ceiling    x paths
+         3   12   3          4,096        2,744       17,576         1x
+         3   12   4         32,768        4,096       17,576         8x
+         3   12   5        262,144        5,832       17,576        45x
+         4   12   3         65,536       38,416      456,976         2x
+         4   12   4      1,048,576       65,536      456,976        16x
+
+ZERO ceiling violations across all ten configurations, and the compression RISES with every extra
+level of window -- 1x to 45x at three controllers, 2x to 16x at four. What is NOT shown, and the
+first version of this gate conflated it: the count is bounded independently of L but has not
+SATURATED over L = 3 to 5, so the growth seen is the approach to a fixed bound rather than
+unbounded growth. Over three points those look identical unless the bound itself is checked.
+
+=================================================================================================
+THE PRICE, AND THE TRADE
+=================================================================================================
+Quantising the weighting changes the observable, so it has a price, and the reference it must be
+judged against is what pruning ALREADY costs -- accuracy.py measured the reported tail still rising
+at 0.608 orders per decade of retained paths.
+
+      Qeff  subset sums   statistics            tail  price, orders   vs a pruning decade
+         5            6       10,000   8.059727e-103         0.1685                 0.277
+        10           11       65,536   1.002083e-102         0.0739                 0.122
+        20           21      331,776   1.225633e-102         0.0136                 0.022
+       160           32    1,048,576   1.202539e-102         0.0053                 0.009
+
+THE PRICE IS A FEW HUNDREDTHS OF AN ORDER AGAINST A PRUNING ERROR MEASURED IN WHOLE ORDERS. At an
+effective denominator of 10 the representation is 16x smaller than the path set and the observable
+moves by 0.07 orders, about a TWELFTH of what one decade of pruning costs. In the only unit that
+matters here the quantisation is close to free.
+
+THE AXIS IS NOT Q, AND THE FIRST TABLE GOT THAT WRONG. Quantising at Q = 40 returns numerators
+whose gcd is 2 -- the same rationals as Q = 20 -- so the first version listed one approximation
+twice with byte-identical tails and presented them as two resolutions. The controlling quantity is
+the number of DISTINCT SUBSET SUMS of the numerators, and the table is now keyed on that and on the
+effective denominator, with duplicate weight vectors collapsed.
+
+EXTRAPOLATED TO THE ENGINE by the derived ceiling, which the measurements test rather than assume:
+
+        Q    statistics, n(Q+1)^10    paths, 2^70    compression
+        7                1.100e+12      1.181e+21     1.074e+09x
+       14                5.905e+14      1.181e+21     1.999e+06x
+       28                4.308e+17      1.181e+21     2.740e+03x
+
+=================================================================================================
+WHAT THIS SETTLES FOR THE ENGINE
+=================================================================================================
+1. THE EXACT ANSWER IS (LEVEL, STATE, ACCUMULATED WEIGHTED ACTIVITY), the weight factors out, and
+   merging is exact. That is complete and checked.
+2. AT FULL PRECISION THE REPRESENTATION IS THE PATH SET AND THERE IS NOTHING TO GAIN, for a reason
+   from number theory rather than from biology or from the engine's design.
+3. QUANTISING THE TIME WEIGHTING BUYS A DIFFERENT EXPONENT: the bound loses its L entirely, so the
+   compression grows with window depth instead of shrinking, and it costs a few hundredths of an
+   order against a pruning error measured in whole orders.
+4. BUT IT BUYS AN EXPONENT, NOT A SMALL NUMBER. n*(Q+1)^10 is 1.1e12 even at the coarsest useful
+   resolution -- nine orders below the path set and still far beyond memory. Calling that tractable
+   would be exactly the overstatement this record keeps correcting. What it changes is the SHAPE of
+   the cost: the depth exponential, which is what made deep windows impossible, is an artefact of
+   carrying the path rather than what the path is for. The width exponential remains, and
+   widthblock already showed the width exponential is one gene.
+5. AND IT IS IN TENSION WITH AN EARLIER RESULT THAT IS NOT TESTED HERE. multiplier.py measured that
+   the temporal multiplier PAYS -- recent slices weighing more is worth real accuracy. Coarsening
+   exactly that weighting to buy the merge trades against that result, and the interaction was not
+   measured.
+
+TWO DEFECTS OF MINE IN THIS MODULE, BOTH RECORDED. The depth exponent was first fitted with Q tied
+to L as Q = 2(L+1), so it measured the two together -- the identical confound corrected in
+exactcert's floor law one module earlier, repeated immediately. And the corrected gate's verdict
+used a threshold I invented, growth below (path growth)^0.34, which returned FAIL on data with zero
+ceiling violations; that is the invented-bar defect already in this record as K5's base = -1.0.
+Both are superseded in place.
