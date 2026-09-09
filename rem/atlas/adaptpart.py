@@ -126,6 +126,7 @@ def main():
         return np.nonzero(keep)[0]
 
     CAP = 1000
+    Ttrue = float(f.sum())
     P_(f"\n  NOTE ON SAMPLE SIZES. The naive procedure needs MORE samples than the cap of {CAP}: with")
     P_("  fewer, the rule keeps every candidate it sampled and the dropped side of the sample is")
     P_("  empty, so there is nothing to estimate from. That is a degenerate configuration rather")
@@ -172,7 +173,6 @@ def main():
     P_("\n" + RULE)
     P_("P1  THE SUBTRACTION IDENTITY: UCB(TOTAL) MINUS THE EXACT RETAINED SUM")
     P_(RULE)
-    Ttrue = float(f.sum())
     P_(f"  T = {Ttrue:.6e} is the total bound over the CANDIDATE POPULATION being partitioned")
     P_( "  here -- which is this level's mass-dropped set, the population a second-stage pruner")
     P_( "  would re-partition. It is fixed whatever the pruner then decides, and that is the only")
