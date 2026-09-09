@@ -100,7 +100,13 @@ def build(nCtrl=10, L=6, dt=0.5, cap=3000):
     keep = np.argpartition(-massflat, cap)[:cap]          # MASS-selected, as sampcert's C2b
     mask = np.ones(massflat.size, dtype=bool)
     mask[keep] = False
-    return bnd.ravel()[mask], massflat[mask], sha, ch.size
+    # A CHEAP AND VALID CEILING ON THE ON-PROBABILITY. For a fixed parent, lg over its children is
+    # at most ls_p + max_c g_p.v_c, and that max is bounded per target by the largest increment any
+    # child can supply. Costs O(parents*targets + states*targets) and touches no candidate.
+    V = gain * hvec[d] * Bst
+    lin_max = np.maximum(g, 0.0) @ V.max(axis=0)
+    on_ceiling = float(np.exp(np.max(ls + lin_max)))
+    return bnd.ravel()[mask], massflat[mask], sha, ch.size, on_ceiling
 
 
 def ucb(x, N, b, conf=CONF):
@@ -123,7 +129,7 @@ def main():
     P_(RULE)
     P_("HOW RELIABLY DOES sampcert's BOUND HOLD? COVERAGE, NOT ONE DRAW")
     P_(RULE)
-    f, gmass, sha, ncand = build()
+    f, gmass, sha, ncand, on_ceiling = build()
     N = len(f)
     truth = float(f.sum())
     p = gmass / gmass.sum()
@@ -219,13 +225,49 @@ def main():
        f" against {ncand:,} for the full scan"
        f"{f' -- a factor of {ncand / min(need):,.0f}.' if need else '.'}")
 
+    # ---- K3b  THE VALID RANGE THAT IS ALSO TIGHT -----------------------------------------------
+    P_("\n" + RULE)
+    P_("K3b  THE RANGE THAT IS BOTH VALID AND TIGHT")
+    P_(RULE)
+    P_("  K3's range is valid and worthless: bound <= mass assumes an ON-probability of ONE, and")
+    P_(f"  the real ones here are around 1e-76. So it overstates every weight by about that much.")
+    P_("  THE FIX IS CHEAP AND STILL VALID. For a fixed parent, lg over its children is at most")
+    P_("  ls_p + max_c g_p.v_c, and that maximum is bounded per target by the largest increment any")
+    P_("  child can supply -- O(parents*targets + states*targets), touching no candidate at all.")
+    b_tight = float(gmass.sum() / N * on_ceiling)
+    P_(f"\n    ON-probability ceiling over all candidates : {on_ceiling:.4e}")
+    P_(f"    resulting weight range                     : {b_tight:.4e}")
+    P_(f"    the largest weight that actually occurs    : {wmax_true:.4e}")
+    P_(f"    looseness of the valid range               : {b_tight / wmax_true:,.1f}x")
+    P_(f"    (K3's range was                              {gmass.sum() / N:.4e},"
+       f" {gmass.sum() / N / wmax_true:.2e}x)")
+    P_(f"\n    {'sample':>8} {'coverage':>10} {'median UCB/true':>17}")
+    cov_t = {}
+    for k in sizes:
+        hits, rat = 0, []
+        for _ in range(REPS):
+            idx = rng.choice(N, k, replace=True, p=p)
+            w = f[idx] / (N * p[idx])
+            u = ucb(w, N, b_tight)
+            rat.append(u / truth)
+            hits += int(u >= truth)
+        cov_t[k] = (hits / REPS, float(np.median(rat)))
+        P_(f"    {k:>8,} {hits / REPS * 100:>9.1f}% {np.median(rat):>17.3f}")
+    ok = [k for k in sizes if cov_t[k][0] >= 0.95 and cov_t[k][1] <= 2.0]
+    P_(f"\n  K3b: {'a VALID bound within 2x at ' + f'{min(ok):,}' + f' evaluations, a factor of {ncand / min(ok):,.0f} against the full scan.' if ok else 'the valid-and-tight range still does not reach 2x at any size tested.'}")
+    P_("  This is the honest version of sampcert's headline: valid by construction rather than by")
+    P_("  luck, and the cost of validity is the difference between this size and the 306 the")
+    P_("  heuristic quoted.")
+
     # ---- K4 ------------------------------------------------------------------------------------
     P_("\n" + RULE)
     P_("K4  THE VERDICT, AND WHAT IT DOES NOT SETTLE")
     P_(RULE)
     P_(f"  heuristic range, coverage at 306: {cov_heur[306] * 100:.1f}%")
-    P_(f"  known range,      coverage at 306: {cov_valid[306][0] * 100:.1f}%"
-       f"  at {cov_valid[306][1]:.2f}x the true sum")
+    P_(f"  known range (mass only), coverage at 306: {cov_valid[306][0] * 100:.1f}%"
+       f"  -- valid and useless, {cov_valid[306][1]:.2e}x the true sum")
+    P_(f"  valid AND tight range,   coverage at 306: {cov_t[306][0] * 100:.1f}%"
+       f"  at {cov_t[306][1]:.2f}x the true sum")
     P_("\n  NOT SETTLED.")
     P_("  1. One pruning level, one width, one partition. Coverage is a property of the summand")
     P_("     distribution and that changes with level.")
