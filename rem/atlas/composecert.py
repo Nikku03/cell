@@ -89,10 +89,22 @@ def levels(nCtrl=10, L=6, dt=0.5, cap=1000):
     Splus = np.maximum(S, 0.0).sum(axis=1)
     Bst = actbit @ S.T
     base, gain = -1.0, 2.0
-    last = np.argsort(-pi)[:cap]
+    lv = []
+    # LEVEL 0 IS A PRUNING DECISION TOO. The initial selection keeps the top `cap` states by
+    # stationary mass and discards the rest; the first version of this module left it uncertified,
+    # so the composed guarantee covered six of the engine's seven decisions. It is included here.
+    H0 = float(hvec[1:].sum())
+    u0 = base + gain * ((actbit * hvec[0]) @ S.T) + gain * H0 * Splus[None, :]
+    b0 = pi * np.exp((-np.logaddexp(0.0, -u0)).sum(axis=1))
+    keep0 = np.argpartition(-pi, cap)[:cap]
+    m0 = np.ones(n, dtype=bool)
+    m0[keep0] = False
+    lv.append({"f": b0[m0], "g": pi[m0], "true": float(b0[m0].sum()),
+               "ceil": float(np.exp(np.max((-np.logaddexp(0.0, -u0)).sum(axis=1)))),
+               "ncand": n})
+    last = keep0
     wts = pi[last].copy()
     wact = actbit[last] * hvec[0]
-    lv = []
     for d in range(1, L + 1):
         ch = Pm[:, last].T * wts[:, None]
         Hr = float(hvec[d + 1:].sum())
@@ -268,7 +280,7 @@ def main():
     P_("Z3  THE SEQUENTIAL CONSTRUCTION'S PRICE, AND Z4 THE RECOMMENDATION")
     P_(RULE)
     P_(f"\n    {'construction':<34} {'valid under':<26} {'median total/true':>19}")
-    P_(f"    {'per-level 95%, summed':<34} {'nothing -- 65% guaranteed':<26} {z0[1000][1]:>19.3f}")
+    P_(f"    {'per-level 95%, summed':<34} {f'nothing -- {100 * (1 - K * DELTA):.0f}% guaranteed':<26} {z0[1000][1]:>19.3f}")
     P_(f"    {'failure budget delta/K':<34} {'a fixed schedule of calls':<26} "
        f"{z2[('bonf', 300)][1]:>19.3f}")
     P_(f"    {'sequential, delta/K per level':<34} {'optional stopping, adaptive':<26} "
