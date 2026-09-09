@@ -119,7 +119,18 @@ def reachable(Pm, n, hvec, actbit, d):
 
 
 def enclose(Pm, pi, n, hvec, S, actbit, L, deg):
-    """Build hlo/hhi with the inequalities VERIFIED at every reachable point."""
+    """Build hlo/hhi with the inequalities VERIFIED at every reachable point.
+
+    CONVENTION, and the first version got it wrong: reachable(d) returns the accumulation
+    INCLUDING level d, so U_d(s, x) is indexed by that inclusive accumulation and the shift into
+    level d+1 belongs to the SUCCESSOR, not to the current state:
+
+        U_L(s, x) = g(x)
+        U_d(s, x) = SUM_s' Pm[s',s] U_{d+1}(s', x + a_{s'} h_{d+1})
+        p         = SUM_s pi[s] U_0(s, a_s h_0)
+
+    The first version added the current state's contribution a second time, which double-counted
+    one level of activity and put both bounds about three orders above the truth. E0 caught it."""
     k = actbit.shape[1]
     mons = mono(k, deg)
     Chi = Clo = None
@@ -128,18 +139,20 @@ def enclose(Pm, pi, n, hvec, S, actbit, L, deg):
     for d in range(L - 1, -1, -1):
         SD, XD = reachable(Pm, n, hvec, actbit, d)
         M = len(SD)
-        Y = XD + actbit[SD] * hvec[d]                  # what level d+1 sees
-        if d == L - 1:                                 # terminal is EXACT: no approximation
-            H = np.empty((M, n))
-            for sp in range(n):
-                H[:, sp] = np.exp(logg(Y + actbit[sp] * hvec[L], S))
-            Khi = Klo = (H * Pm[:, SD].T).sum(axis=1)
-        else:
-            A = design(Y, mons)
-            Ehi = np.exp(np.clip(A @ Chi.T, -700, 700))
-            Elo = np.exp(np.clip(A @ Clo.T, -700, 700))
-            Khi = (Ehi * Pm[:, SD].T).sum(axis=1)
-            Klo = (Elo * Pm[:, SD].T).sum(axis=1)
+        Hhi = np.empty((M, n))
+        Hlo = np.empty((M, n))
+        for sp in range(n):
+            Y = XD + actbit[sp] * hvec[d + 1]           # the SUCCESSOR's contribution
+            if d == L - 1:                              # terminal is EXACT: no approximation
+                v = np.exp(logg(Y, S))
+                Hhi[:, sp] = v
+                Hlo[:, sp] = v
+            else:
+                A = design(Y, mons)
+                Hhi[:, sp] = np.exp(np.clip(A @ Chi[sp], -700, 700))
+                Hlo[:, sp] = np.exp(np.clip(A @ Clo[sp], -700, 700))
+        Khi = (Hhi * Pm[:, SD].T).sum(axis=1)
+        Klo = (Hlo * Pm[:, SD].T).sum(axis=1)
         AD = design(XD, mons)
         Chi = np.zeros((n, len(mons)))
         Clo = np.zeros((n, len(mons)))
@@ -157,9 +170,10 @@ def enclose(Pm, pi, n, hvec, S, actbit, L, deg):
             Chi[s], Clo[s] = chi, clo
             checks += 2 * int(m.sum())
             viol += int(np.sum(a @ chi < yhi - 1e-9)) + int(np.sum(a @ clo > ylo + 1e-9))
-    z = design(np.zeros((1, k)), mons)
-    hi = float((pi * np.exp(np.clip(Chi @ z.T, -700, 700)).ravel()).sum())
-    lo = float((pi * np.exp(np.clip(Clo @ z.T, -700, 700)).ravel()).sum())
+    X0 = actbit * hvec[0]                               # level 0's own reachable accumulation
+    A0 = design(X0, mons)
+    hi = float((pi * np.exp(np.clip(np.einsum('sc,sc->s', A0, Chi), -700, 700))).sum())
+    lo = float((pi * np.exp(np.clip(np.einsum('sc,sc->s', A0, Clo), -700, 700))).sum())
     return lo, hi, checks, viol
 
 
