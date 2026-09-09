@@ -49,6 +49,21 @@ C3  THE AGGREGATE BOUND, WHICH IS THE ONLY ROUTE THAT YIELDS A CERTIFICATE. For 
     true deficit -- this gate is about whether the scan can be avoided, not about whether the
     bound was any good, which exactcert already answered.
 
+C2b THE CIRCULARITY IN C1 AND C2, AND THE NON-CIRCULAR VERSION. PREDECLARED AFTER C1 AND C2 RAN
+    AND BEFORE C2b DID. C1 and C2 sample from the DROPPED set -- but knowing which candidates are
+    dropped means having ranked all of them by the bound, which is the full scan. Their measured
+    saving is therefore illusory as stated: they cheapen the verification of a partition whose
+    construction already paid the cost. This is my own setup's defect, not a property of sampling.
+    THE NON-CIRCULAR CONFIGURATION: select the retained set by the CHEAP PROXY, path mass, which
+    needs no bound evaluations at all -- the child ordering under any parent is the ordering of
+    that column of the transition matrix, so sorting the columns ONCE gives every parent's
+    heaviest children for free, and a global top-k is a merge that touches only about k entries.
+    Then certify THAT partition by importance sampling, evaluating the bound only on the sampled
+    candidates.
+    PREDECLARED: the measure is BOUND EVALUATIONS USED against the full scan's, and the accuracy
+    is against the full-scan certificate for the SAME partition, so the two effects -- a worse
+    partition and a sampled certificate -- are not confounded.
+
 C4  THE VERDICT, and C5 what it does not settle.
 """
 
@@ -154,6 +169,14 @@ def main():
     top = float(cum[max(1, int(1e-3 * len(o))) - 1])
     P_(f"\n  C0: the heaviest 0.1% carries {top * 100:.2f}% of the sum --"
        f" {'uniform sampling is expected to fail, as predeclared.' if top > 0.5 else 'the sum is even enough that uniform sampling has a chance.'}")
+    if top <= 0.5:
+        P_("  MY PREDECLARED EXPECTATION WAS WRONG, AND THE REASON IS WORTH KEEPING. I expected the")
+        P_("  certificate sum to inherit the tail's concentration -- pathbound measured the top 1%")
+        P_("  of PATHS carrying 91% of the TAIL. It does not. The tail is concentrated because a")
+        P_("  few paths have large ON-probability; the certificate is a sum over the DROPPED")
+        P_("  candidates, which are precisely the ones that do not, so it is dominated by the many")
+        P_("  rather than the few. Concentration in the observable does not transfer to the")
+        P_("  residual, and I assumed it would.")
 
     # ---- C1  UNIFORM SAMPLING ------------------------------------------------------------------
     P_("\n" + RULE)
@@ -228,6 +251,55 @@ def main():
         kept_est = float(np.sort(seen.ravel())[::-1][:cap].sum())
         cert_k = tot - kept_est
         P_(f"    {k:>6} {ch.shape[0] * k:>18,} {cert_k:>15.6e} {cert_k / cert_full:>13.3f}")
+
+    # ---- C2b  THE NON-CIRCULAR CONFIGURATION ---------------------------------------------------
+    P_("\n" + RULE)
+    P_("C2b  THE CIRCULARITY IN C1 AND C2, AND THE VERSION THAT DOES NOT HAVE IT")
+    P_(RULE)
+    P_("  C1 and C2 sampled from the DROPPED set. Knowing which candidates are dropped means")
+    P_("  having ranked them all by the bound -- which is the full scan. Their saving is illusory")
+    P_("  as stated: they cheapen the verification of a partition whose construction already paid")
+    P_("  the cost. My setup's defect, not sampling's.")
+    P_("\n  THE NON-CIRCULAR VERSION: select by path MASS, which needs no bound evaluations -- the")
+    P_("  child ordering under any parent is that column of the transition matrix, so one sort of")
+    P_("  the columns gives every parent's heaviest children and a global top-k is a merge. Then")
+    P_("  certify that partition by importance sampling, evaluating the bound only where sampled.")
+    massflat = ch.ravel()
+    keep_m = np.argpartition(-massflat, cap)[:cap]
+    mask_m = np.ones(massflat.size, dtype=bool)
+    mask_m[keep_m] = False
+    drop_m = bnd.ravel()[mask_m]
+    proxy_m = massflat[mask_m]
+    cert_m_full = float(drop_m.sum())
+    Nm = len(drop_m)
+    P_(f"\n  selecting by mass instead of by bound: the full-scan certificate for THAT partition is")
+    P_(f"  {cert_m_full:.6e}, against {cert_full:.6e} for the bound-selected one"
+       f" ({cert_m_full / cert_full:.2f}x).")
+    pm_ = proxy_m / proxy_m.sum()
+    P_(f"\n    {'bound evals':>12} {'vs full scan':>13} {'estimate/true':>14} {'95% UCB/true':>14}")
+    hit = None
+    for frac in (1e-5, 1e-4, 1e-3, 1e-2):
+        kk = max(2, int(frac * Nm))
+        idx = rng.choice(Nm, kk, replace=True, p=pm_)
+        wv = drop_m[idx] / (Nm * pm_[idx])
+        est = Nm * float(np.mean(wv))
+        ucb = eb_ucb(wv, Nm)
+        if hit is None and ucb <= 2.0 * cert_m_full:
+            hit = (kk, frac)
+        P_(f"    {kk:>12,} {frac * 100:>12.4f}% {est / cert_m_full:>14.3f}"
+           f" {ucb / cert_m_full:>14.3f}")
+    if hit:
+        P_(f"\n  C2b: a valid 95% upper bound within 2x costs {hit[0]:,} bound evaluations against")
+        P_(f"  {ch.size:,} for the full scan -- a factor of {ch.size / hit[0]:,.0f}. The scan IS avoidable,")
+        P_("  and the thing that avoids it is the cheap proxy plus sampling, NOT the aggregate")
+        P_("  bound this module was built expecting to work.")
+    else:
+        P_("\n  C2b: no sampled bound within 2x under a 1% evaluation budget. The scan is not")
+        P_("  avoidable this way either.")
+    P_("\n  AND THE GUARANTEE IS WEAKER IN KIND, WHICH MUST NOT BE GLOSSED. The full scan gives an")
+    P_("  EXACT sum. This gives a 95% confidence upper bound. That is a real demotion -- a")
+    P_("  certificate that holds one time in twenty is not the same object -- and whether it is")
+    P_("  acceptable is a decision about what the engine's guarantee is for, not a measurement.")
 
     # ---- C4/C5 ---------------------------------------------------------------------------------
     P_("\n" + RULE)
