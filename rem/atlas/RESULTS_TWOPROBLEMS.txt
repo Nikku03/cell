@@ -3052,3 +3052,123 @@ WHAT THESE TWO RUNS SETTLE OF THE FIVE OPEN ITEMS
     arbitrary irregularity is not the obstacle for this engine; dimension is, and the polynomial
     representation is the thing that handles dimension.
   ITEM 5, the biological cell model: UNTOUCHED. Nothing here tested cellular dynamics.
+
+
+=================================================================================================
+HOW GOOD ARE THE TWO NUMBERS? BACKPOLY'S ESTIMATE AND SAMPCERT'S BOUND, TESTED
+=================================================================================================
+Two conclusions from the previous round rested on assumptions measured at one point each: a
+reversal of accuracy.py's error ranking rested on backpoly's engine-width estimate, whose accuracy
+was known only at four controllers and L = 4; and a claimed factor of 10,039 in verification cost
+rested on ONE draw per sample size, which says nothing about coverage. Both are now tested.
+
+=================================================================================================
+1. THE FULL-TAIL ESTIMATE: ACCURATE ENOUGH, AND THE REVERSAL SURVIVES
+=================================================================================================
+STABLE TO ITS OWN ARBITRARY CHOICES. Across three collocation seeds and three point-count
+multiples, the engine-width estimate moves by 0.0018 orders at degree 2 and 0.0003 at degree 3 --
+against the 2.91-order margin the reversal argument has to resolve. The randomness in the method
+does not move the answer.
+
+CONVERGED IN THE REPRESENTATION, and now properly, since two adjacent degrees agreeing is not
+convergence:
+
+     degree  coefficients            tail   change, orders   seconds
+          1            11    3.690152e-95                        0.3
+          2            66    1.566277e-95          -0.3722       3.2
+          3           286    1.603289e-95          +0.0101      42.9
+          4          1001    1.612735e-95          +0.0026     361.2
+
+The successive changes are 0.3722, 0.0101, 0.0026 -- shrinking by a factor of thirty-seven and
+then four. That is convergence, where backpoly's original 2.4% agreement between degrees 2 and 3
+was only a coincidence of neighbours.
+
+AND THE ERROR LAW, measured against exact enumeration wherever exact is computable:
+
+     nCtrl   L        paths           exact       poly deg3  err, orders   sign
+         3   3        4,096    6.973226e-99    6.607133e-99       0.0234      -
+         3   4       32,768    5.977817e-99    5.293203e-99       0.0528      -
+         3   5      262,144    5.363614e-99    4.706899e-99       0.0567      -
+         4   3       65,536   1.503368e-102   1.423952e-102       0.0236      -
+         4   4    1,048,576   1.187971e-102   1.080006e-102       0.0414      -
+         5   3    1,048,576    1.173530e-97    1.271985e-97       0.0350      +
+
+    log10|error| = -2.357 + 0.049*nCtrl + 0.203*L      R^2 = 0.805
+    extrapolated to 10 controllers and L = 6: 0.2203 orders, 2-sigma [0.1617, 0.3003]
+
+THE ERROR GROWS WITH DEPTH AND BARELY WITH WIDTH -- the depth exponent is four times the width
+one, which is what the method's structure predicts, since the log-space projection error compounds
+once per level and the polynomial simply gains coefficients as the width grows.
+
+SO THE ANSWER TO "HOW ACCURATE": about 0.22 orders at the engine's width, with a two-sigma interval
+reaching 0.30, against a margin of 2.91. Signs are mixed -- five negative, one positive -- so there
+is no consistent bias to correct for.
+
+    implied remaining pruning rise   2.18 orders  +/- 0.30
+    the class map's whole ladder     5.08 orders
+
+THE PRUNING ERROR IS 1.88 TO 2.48 ORDERS, ENTIRELY BELOW THE CLASS LADDER, AND THE REVERSAL HOLDS.
+accuracy.py's A4b concluded pruning binds by extrapolating a locally-measured slope 16.8 decades;
+that extrapolation gave 10.22 orders where the direct estimate gives 2.18. The class map is the
+binding term, which is what A4 said before A4b overturned it.
+The extrapolation still spans nCtrl 3 to 5 against an engine at 10 -- five controllers beyond the
+widest measured point -- and its purpose is to say whether the margin is reached, not to predict a
+value.
+
+=================================================================================================
+2. THE SAMPLED BOUND: IT HOLDS, BUT NOT FOR THE REASON CLAIMED, AND THE HONEST FACTOR IS 100
+=================================================================================================
+THE INSTRUMENT WAS INVALID. sampcert's empirical-Bernstein bound took the summand's RANGE to be the
+SAMPLE maximum. The sample maximum understates the true maximum in 100% of draws at every size
+tested -- by 2.2x at 30 samples down to 1.2x at 30,690. So the "95%" was never established.
+
+BUT IT HELD ANYWAY, over 400 independent repetitions:
+
+      sample   coverage   median UCB/true   worst UCB/true
+          30      99.8%             3.142            0.985
+         306     100.0%             1.373            1.165
+       3,069     100.0%             1.075            1.010
+      30,690     100.0%             1.019            1.002
+
+100% coverage at the headline size of 306, where 95% was claimed. The bound is CONSERVATIVE IN
+PRACTICE by a margin much larger than the amount by which its range is wrong. That is luck with a
+mechanism: the importance weights are well behaved here, max over mean is only 12x, and the rank
+correlation between bound and mass is 0.9386.
+
+AND MY PROPOSED FIX WAS VALID AND WORTHLESS. Every summand is a mass times an ON-probability at
+most one, so bound <= mass gives a range known in advance. But the ON-probabilities here are around
+1e-76, so that range overstates every weight by 3.5e73 and the resulting bound came out 1.2e73
+times the true sum. Valid, and useless.
+
+THE RANGE THAT IS BOTH VALID AND TIGHT, AND CHEAP. For a fixed parent, the log-bound over its
+children is at most ls_p plus the largest linear term any child can supply, bounded per target by
+the largest increment in the child space. That costs O(parents*targets + states*targets) and
+touches no candidate:
+
+    ON-probability ceiling over all candidates : 1.3292e-72
+    resulting weight range                     : 1.8480e-80
+    the largest weight that actually occurs    : 3.9445e-82
+    looseness                                  : 46.8x     (against 3.5e73x for mass alone)
+
+      sample   coverage   median UCB/true
+         306     100.0%            17.185
+       3,069     100.0%             2.648
+      30,690     100.0%             1.177
+
+SO THE ANSWER TO "HOW RELIABLY": the bound as sampcert computed it is not valid by construction but
+was conservative in every one of 400 draws at its headline size. A bound that IS valid by
+construction reaches the same 2x tightness at 30,690 evaluations rather than 306 -- a factor of
+100 against the full scan's 3,072,000, not 10,039.
+
+THE CORRECTED HEADLINE IS 100x WITH A REAL GUARANTEE, or 10,039x with one that held 400 times out
+of 400 and is not proven. sampcert's figure is not withdrawn; it is relabelled, and the price of
+the label is two orders of magnitude.
+
+=================================================================================================
+WHAT NEITHER OF THESE SETTLES
+=================================================================================================
+Coverage is measured against the TRUE sum for one partition at one level and one width, which
+required the full scan to know -- so this validates the procedure and not any particular run of it,
+and in use there is nothing to check against, which is what a guarantee is for. The error law spans
+three widths and three depths. And a 95% bound remains a confidence statement rather than the exact
+sum the full scan gives: adopting it demotes the engine's guarantee in kind, whatever the factor.
