@@ -3414,3 +3414,101 @@ The identity bounds the dropped sum for WHATEVER partition was chosen. It says n
 whether that partition was a good one: a pruner that adapts badly gets a valid certificate for a
 bad decision.
 And the object is still the certificate rather than the tail. exactcert's finding stands.
+
+
+=================================================================================================
+HOW TIGHTLY THE COMPOSED CERTIFICATE BOUNDS THE ACTUAL RARE-EVENT PROBABILITY
+=================================================================================================
+Four modules -- sampcert, certcover, composecert, adaptpart -- built a guarantee that is valid,
+composes across levels, survives adaptive sample sizes and adaptive partitions, and costs a few
+percent in width. Every one of them certified the same object: the summed bound over dropped
+candidates. NONE OF THEM ASKED WHAT THAT OBJECT SAYS ABOUT THE TAIL. This does.
+
+THE GATE THAT HAD NEVER BEEN RUN. The certificate's purpose is an interval,
+pruned <= true <= pruned + certificate, the lower end being a bound because retaining more paths
+can only add mass. Whether the interval CONTAINS the truth had not been checked in any of the four.
+At four controllers with all 1,048,576 paths enumerated it does, at every cap, with the pruned
+value below the exact tail and the upper end above it. The certificate bounds what it claims to.
+
+AND THEN THE ANSWER, WHICH IS BAD:
+
+      cap  paths kept  interval width, orders   cert/true deficit
+        2           2                   25.81           7.814e+23
+        8           8                   25.26           3.679e+23
+       16          16                   23.36           4.615e+21
+       64          64                   22.44           2.858e+21
+
+THE CERTIFICATE PLACES THE RARE-EVENT PROBABILITY INSIDE AN INTERVAL SPANNING TWENTY-TWO TO
+TWENTY-SIX ORDERS OF MAGNITUDE. It is a valid upper bound and it is not a statement about a
+probability. Its validity is not consolation.
+
+AT THE ENGINE'S WIDTH, ten controllers, L = 6, cap 1000:
+
+    pruned tail (a lower bound)          7.371433e-99
+    composed certificate                 4.293539e-72
+    interval width                       26.77 orders
+    backpoly's estimate of the truth     1.6127e-95  +/- 0.30 orders
+    the certificate's upper end is       23.43 orders above that estimate
+
+Carrying backpolyerr's error interval explicitly rather than dropping it: even at the estimate's
+upper end the certificate is 23.13 orders too high.
+
+=================================================================================================
+THE DECOMPOSITION, AND IT INDICTS THE LAST FOUR MODULES
+=================================================================================================
+    term                                           orders
+    sampling slack (composecert, ~1.10x)             0.04
+    family floor 0.52 n^1.05 m^1.03, m_eff = 4.99    3.59
+    THE BOX RELAXATION, by subtraction              19.80
+    total                                           23.43
+
+THE BOX RELAXATION IS 19.80 OF THE 23.43 ORDERS. exactcert measured that same term independently at
+ten to twenty orders, so this is a second and consistent measurement of it. And the sampling term --
+the thing sampcert, certcover, composecert and adaptpart spent four modules making valid,
+composable, and robust to adaptive partitions -- IS WORTH 0.04 ORDERS OF THE TOTAL.
+
+That is the uncomfortable summary and it is the correct one. Those modules answered the questions
+they were asked and each answer was right. They were tightening a term four hundred times smaller
+than the one that dominates, and the measurement that would have said so is this one, which nobody
+asked for until now. The ceiling-gate discipline exists precisely to catch this and it was never
+applied to the certificate as a whole -- only within each module, against the question that module
+had already decided to ask.
+
+=================================================================================================
+WHAT WOULD CLOSE IT, AND WHAT COULD NOT
+=================================================================================================
+    best conceivable certificate of this family   6.8681e-92
+    observed certificate                          4.2935e-72
+    the gap, entirely the box                     19.80 orders
+
+Fixing the box -- bounding over the REACHABLE completions instead of relaxing them to a box, which
+exactcert showed recovers exactly this -- would take the interval from 26.77 orders wide to 6.97.
+That is a real prize and it is the single highest-value target in the whole engine.
+
+BUT 6.97 ORDERS IS STILL NOT A PROBABILITY STATEMENT. The 3.59 orders of family floor is
+irreducible: no bound of the form "subtree mass times the best ON-probability any completion could
+reach" escapes 0.52 n^1.05 m^1.03, so even the best conceivable member of this family bounds the
+rare-event probability to within a factor of about four thousand. A certificate tight on the TAIL
+requires leaving the family -- a bound that distributes ON-probability across the subtree rather
+than taking its maximum. That is exactly what exactcert concluded, and nothing in the five modules
+since has changed it.
+
+=================================================================================================
+WHERE THIS LEAVES THE ENGINE
+=================================================================================================
+  THE TAIL ITSELF is estimated at 1.61e-95 with 0.22 orders of error (backpoly, backpolyerr), in
+    three seconds, against a path set of 1.18e21. That estimate is uncertified and it is the best
+    number the engine has.
+  THE PRUNED LOWER BOUND is 3.34 orders below it -- a valid floor, and a loose one.
+  THE CERTIFICATE'S UPPER BOUND is 23.43 orders above it -- valid, composable, adaptive-safe, and
+    useless as a statement about the probability.
+  SO THE ENGINE'S GUARANTEED INTERVAL FOR ITS OWN OBSERVABLE IS TWENTY-SEVEN ORDERS WIDE, and its
+    best ESTIMATE sits at 0.22 orders. The gap between what it can compute and what it can prove
+    is the whole remaining problem, and it is one term: the box.
+
+LIMITS. T1 is exact at four controllers; the engine-width comparison rests on backpoly's estimate,
+whose interval is carried but which is not a bound. The decomposition attributes the residual to
+the box by subtraction against exactcert's floor law and composecert's sampling slack -- a budget
+that sums to the observed total, not three independent measurements. And m_eff is a
+certificate-weighted mean of levels remaining, which is the right summary for a sum dominated by
+one level and is a summary nonetheless.
