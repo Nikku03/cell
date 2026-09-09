@@ -3172,3 +3172,125 @@ required the full scan to know -- so this validates the procedure and not any pa
 and in use there is nothing to check against, which is what a guarantee is for. The error law spans
 three widths and three depths. And a 95% bound remains a confidence statement rather than the exact
 sum the full scan gives: adopting it demotes the engine's guarantee in kind, whatever the factor.
+
+
+=================================================================================================
+COMPOSING THE GUARANTEE: SEVEN CALLS, ONE FAILURE BUDGET
+=================================================================================================
+certcover validated ONE level's sampled bound at ONE partition. The engine prunes at every level,
+and giving each call a separate 95% bound does not give the final answer 95% coverage: with seven
+decisions -- the initial selection plus one per level -- a union bound guarantees only 65%. And
+adaptive spending breaks fixed-time validity outright, because a bound applied at a sample size
+chosen after looking at the data is not valid at that size.
+
+THE COMPOSITION ITSELF IS ADDITIVE, AND THAT PART IS SOUND. A subtree bound already covers that
+prefix's whole contribution to the final tail, so dropping a prefix costs at most its bound, and the
+total deficit is bounded by the SUM of the level-wise dropped bounds. That is what a composed
+guarantee has to cover.
+
+AND THE SUM IS ALMOST ENTIRELY ONE LEVEL:
+
+     level      dropped       true cert    share
+         1           24    4.138681e-75    0.10%
+         2    1,023,000    4.225322e-72   98.41%
+         3    1,023,000    6.399304e-74    1.49%
+         4    1,023,000    8.552906e-77    0.00%
+         5    1,023,000    6.069607e-81    0.00%
+         6    1,023,000    3.297560e-87    0.00%
+         7    1,023,000    5.316948e-97    0.00%
+
+    TRUE TOTAL: 4.293539e-72
+
+98.4% of the composed certificate is the SECOND decision. That is exactly what exactcert's floor law
+predicted -- looseness grows with the number of levels left to complete -- and it means a failure
+budget spent uniformly is spent almost entirely on levels that contribute nothing.
+
+=================================================================================================
+THE CEILING GATE DISSOLVED THE PROBLEM, AND THAT IS NOT THE SAME AS CLOSING IT
+=================================================================================================
+     samples/level   coverage   median total/true
+               100     100.0%               2.393
+               300     100.0%               1.485
+             1,000     100.0%               1.161
+             3,000     100.0%               1.061
+
+THE NAIVE COMPOSITION COVERS 100% AT EVERY SAMPLE SIZE, against a nominal 95% and a union-bound
+guarantee of 65%. The union bound is a worst case that does not bind here, and the reason is not
+that the composition is sound -- it is that every per-level bound is far more conservative than its
+nominal, which certcover measured as 100% coverage where 95% was claimed. THE GAP IS REAL IN
+PRINCIPLE AND ABSENT IN PRACTICE AT THIS SCALE. Those are different statements and the engine should
+not rely on the second.
+
+AND THE FIX IS CHEAP ENOUGH THAT THERE IS NO REASON TO RELY ON IT:
+
+     samples/level   coverage   median total/true   vs naive
+               100     100.0%               3.022     1.263x
+               300     100.0%               1.702     1.146x
+             1,000     100.0%               1.229     1.058x
+             3,000     100.0%               1.085     1.023x
+
+Allocating delta/K per level costs 2% to 26% in bound width at equal sample size, and is VALID by
+the union bound whenever the schedule of calls is fixed in advance. At the sample sizes the engine
+would actually use it is a 2-6% price for a guarantee that holds by construction rather than by
+slack.
+
+=================================================================================================
+ADAPTIVITY: THE FIXED-TIME BOUND SURVIVED, AND SURVIVAL IS NOT PERMISSION
+=================================================================================================
+A genuinely adaptive rule -- pilot sample everywhere, then spend the remaining budget where the
+running certificates look largest, so each level's sample size depends on data already seen:
+
+    construction        pilot+extra   coverage   median total/true
+    fixed-time             100+2000     100.0%               1.199
+    fixed-time             300+6000     100.0%               1.073
+    sequential             100+2000     100.0%               1.352
+    sequential             300+6000     100.0%               1.129
+
+THE FIXED-TIME CONSTRUCTION DID NOT BREAK. It is still invalid: a fixed-time bound applied at a
+data-dependent sample size is not valid at that size regardless of what it does on any particular
+distribution, and the reason it survives here is the same slack that made every other coverage
+number 100%. Reporting it as adequate would repeat precisely the error that made sampcert's
+10,039x need relabelling one round earlier, and it is refused on that ground rather than on
+evidence.
+
+THE SEQUENTIAL CONSTRUCTION -- a union over dyadic epochs, spending delta*6/(pi^2 (j+1)^2) in epoch
+j, which sums to delta over all epochs -- is valid at every sample size at once and therefore under
+optional stopping and adaptive continuation. It costs 5% more in bound width than the invalid
+fixed-time version at 300+6000.
+
+=================================================================================================
+THE RECOMMENDATION, WITH THE NUMBERS
+=================================================================================================
+    construction                       valid under                    price
+    per-level 95%, summed              nothing -- 65% guaranteed       baseline
+    failure budget delta/K             a fixed schedule of calls       +2% to +6%
+    sequential, delta/K per level      optional stopping, adaptive     +5% on top
+
+  1. USE delta/K PER LEVEL AS THE DEFAULT. The composition is additive, the price is a few percent
+     at realistic sample sizes, and it is valid by construction.
+  2. SWITCH TO THE SEQUENTIAL CONSTRUCTION THE MOMENT THE ENGINE USES ITS OWN CERTIFICATES TO
+     DECIDE WHERE TO SPEND, which is the whole point of an adaptive pruner. Another 5%.
+  3. AND SPEND THE BUDGET WHERE THE CERTIFICATE IS, NOT UNIFORMLY. One decision carries 98.4% of
+     the total. A uniform delta/K allocation gives six sevenths of the failure budget to levels
+     contributing under 2% between them; allocating delta proportional to the pilot estimates
+     would tighten the composed bound at no cost in validity, since any fixed-in-advance
+     allocation rule is admissible and a data-dependent one is exactly what the sequential
+     construction licenses.
+
+=================================================================================================
+AND A DEFECT OF MINE, RECORDED: THE FIRST VERSION COMPOSED SIX OF SEVEN DECISIONS
+=================================================================================================
+The initial selection keeps the top states by stationary mass and discards the rest. Its dropped
+bound was simply absent from the sum -- a composition that omits a decision is not a composition.
+It contributes 0.10% here, so no number moved materially, but the omission was structural rather
+than numerical and the fix was to build level 0 like every other level. The summary table also
+carried a hardcoded union figure where the computed one differs; it is now derived from the level
+count.
+
+WHAT THIS DOES NOT SETTLE. The partitions here are MASS-selected and therefore fixed given the
+chain. A pruner that SELECTED using the sampled certificates would make the partitions themselves
+random, and the sequential bound handles adaptive sample sizes, not adaptive partitions -- that is
+the next construction and it is not built. Coverage is measured against a true summed bound that
+needed a full scan per level to know, so this validates the composition and not any run of it. And
+the object composed is the certificate, not the tail: exactcert's finding stands that the bound
+being composed is far looser than the quantity it bounds.
