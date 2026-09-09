@@ -97,14 +97,18 @@ def affine_terminal(S, H, k, gain=2.0, base=-1.0):
     hi = base + gain * (np.maximum(S, 0.0).sum(axis=1) * H)
     ls = lambda z: -np.logaddexp(0.0, -z)
     mid = 0.5 * (lo + hi)
+    # THE CONSTANT MUST CARRY `base`. A bound on log sigma is stated in z, and z = base +
+    # gain*(x.S[t]), so substituting leaves a slope*(base - anchor) term in the constant. The first
+    # version dropped slope*base, which with 200 targets put the terminal about 87 orders too high
+    # and both ends of the enclosure above the truth. The containment gate caught it.
     # upper: tangent at the midpoint of each drive's exact range
     slope_u = 1.0 / (1.0 + np.exp(mid))                    # d/dz log sigma = sigma(-z)
-    a_u = float(np.sum(ls(mid) - slope_u * mid))
+    a_u = float(np.sum(ls(mid) + slope_u * (base - mid)))
     b_u = gain * (slope_u @ S)
     # lower: chord across each drive's exact range
     wide = hi - lo > 1e-12
     slope_l = np.where(wide, (ls(hi) - ls(lo)) / np.where(wide, hi - lo, 1.0), slope_u)
-    a_l = float(np.sum(ls(lo) - slope_l * lo))
+    a_l = float(np.sum(ls(lo) + slope_l * (base - lo)))
     b_l = gain * (slope_l @ S)
     return (a_u, b_u), (a_l, b_l)
 
@@ -122,7 +126,6 @@ def fast_enclose(Pm, pi, n, hvec, S, actbit, L, margin=FP_MARGIN):
         H = float(hvec[:d + 1].sum())
         xbar = np.full(k, 0.5 * H)
         for (A, B, upper) in ((Au, Bu, True), (Al, Bl, False)):
-            shift = (actbit * hvec[d + 1]) @ B.T                 # (s', s') diag use below
             c = logPm + (A + np.einsum('sc,sc->s', actbit * hvec[d + 1], B))[:, None]  # (s', s)
             base_at = c + (B @ xbar)[:, None]                    # (s', s)
             w = np.exp(base_at - logsumexp(base_at, axis=0)[None, :])   # softmax over s'
