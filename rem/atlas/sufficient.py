@@ -267,20 +267,38 @@ def main():
                 P_(f"    {nc:>6} {Q:>4} {ll:>3} {n ** (ll + 1):>14,} {nuq:>12,}"
                    f" {n * (Q + 1) ** nc:>12,} {n ** (ll + 1) / nuq:>9,.0f}x")
     P_("")
-    allflat = True
+    P_("  THE FIRST VERSION OF THIS VERDICT USED A THRESHOLD I INVENTED -- growth below")
+    P_("  (path growth)^0.34 -- and it returned FAIL on data that does not support a fail. That is")
+    P_("  the invented-bar defect this record already carries once, in K5's base = -1.0. The claim")
+    P_("  has two parts and neither needs a threshold: the ceiling must never be violated, and the")
+    P_("  COMPRESSION must grow with depth.")
+    viol, comp_ok = 0, True
     for (nc, Q), v in sorted(sat.items()):
+        ceil = (2 ** nc) * (Q + 1) ** nc
+        for ll, nuq in v:
+            if nuq > ceil:
+                viol += 1
         if len(v) < 2:
             continue
+        comps = [((2 ** nc) ** (ll + 1)) / nuq for ll, nuq in v]
+        rising = all(b >= a for a, b in zip(comps, comps[1:]))
+        comp_ok = comp_ok and rising
         growth = v[-1][1] / v[0][1]
         pathgrowth = (2.0 ** nc) ** (v[-1][0] - v[0][0])
-        flat = growth < pathgrowth ** 0.34
-        allflat = allflat and flat
-        P_(f"    nCtrl = {nc}, Q = {Q}: over L = {v[0][0]}..{v[-1][0]} the statistic count grows"
-           f" {growth:.2f}x while the path set grows {pathgrowth:.0f}x.")
-    P_(f"\n  F2b AS PREDECLARED: {'the count is essentially FLAT in depth while the path set is exponential in it. The statistic does what it was derived to do.' if allflat else 'the count grows with depth even at fixed Q, so the derived ceiling is wrong and the flat-in-depth claim FAILS.'}")
-    P_("  The depth exponential the engine has been fighting is therefore an artefact of carrying")
-    P_("  the PATH rather than what the path is for -- but only once the weighting is quantised,")
-    P_("  which F0 established is an approximation and not a reformulation.")
+        P_(f"    nCtrl = {nc}, Q = {Q}: over L = {v[0][0]}..{v[-1][0]} statistics grow {growth:.2f}x,"
+           f" paths {pathgrowth:.0f}x, compression {comps[0]:.0f}x -> {comps[-1]:.0f}x"
+           f" {'(rising)' if rising else '(NOT rising)'}")
+    P_(f"\n    ceiling violations across all {sum(len(v) for v in sat.values())} configurations:"
+       f" {viol}")
+    P_(f"\n  F2b: {'the ceiling holds everywhere and the compression RISES with depth in every configuration.' if viol == 0 and comp_ok else ('the ceiling is VIOLATED, so the derived bound is wrong.' if viol else 'the ceiling holds but the compression does not rise everywhere.')}")
+    P_("  WHAT IT DOES NOT SHOW, AND THE FIRST VERSION CONFLATED THIS: the count is bounded")
+    P_("  independently of L, but it has NOT SATURATED at L = 3 to 5 -- it is still filling up")
+    P_("  toward the ceiling. The growth observed is the approach to a fixed bound, not unbounded")
+    P_("  growth, and those two look identical over three points unless the bound is checked. It")
+    P_("  is checked above.")
+    P_("  So the depth exponential the engine has been fighting is an artefact of carrying the")
+    P_("  PATH rather than what the path is for -- but only once the weighting is quantised, which")
+    P_("  F0 established is an approximation and not a reformulation.")
 
     # ---- F3  THE PRICE -------------------------------------------------------------------------
     P_("\n" + RULE)
@@ -295,8 +313,7 @@ def main():
     w0, a0 = enumerate_all(Pm, pi, n, ll, hvec, actbit)
     t0 = float((w0 * np.exp(logon(a0, S))).sum())
     P_(f"\n  exact tail under the engine's own hvec: {t0:.6e}")
-    P_(f"\n    {'Q':>5} {'statistics':>12} {'tail':>15} {'price, orders':>14} {'vs one pruning decade':>23}")
-    P_("  AND THE AXIS IS NOT Q. Quantising at 40 returns numerators whose gcd is 2, i.e. the same")
+    P_("\n  AND THE AXIS IS NOT Q. Quantising at 40 returns numerators whose gcd is 2, i.e. the same")
     P_("  rationals as 20, so a table keyed on Q shows one approximation twice. Keyed instead on")
     P_("  the EFFECTIVE denominator Q/gcd and the number of DISTINCT SUBSET SUMS of the numerators,")
     P_("  which is what actually controls the count. Duplicate weight vectors are collapsed.")
@@ -347,9 +364,11 @@ def main():
     P_("  out, and merging is exact. Under the engine's geometric weighting the statistic is")
     P_("  injective on paths -- by transcendence of exp(1/2), not by measurement -- so the exact")
     P_("  representation is the full path set and there is nothing to gain.")
-    P_("  Under a quantised weighting the count obeys n*(Q+1)^nCtrl: exponential in width, FLAT")
-    P_("  in depth. The depth exponential the engine has been fighting is an artefact of carrying")
-    P_("  the path instead of the statistic.")
+    P_("  Under a quantised weighting the count is BOUNDED BY n*(Q+1)^nCtrl, a bound that contains")
+    P_("  no L at all: exponential in width, independent of depth. Measured at 3 and 4 controllers")
+    P_("  the bound is never violated and the compression rises with every extra level of window.")
+    P_("  It has not saturated over L = 3 to 5, so what is demonstrated is a bound independent of")
+    P_("  depth and a compression that grows with it -- not that the count has stopped growing.")
     P_("\n  NOT SETTLED.")
     P_("  1. The engine-width row is the DERIVED CEILING, tested at 3 and 4 controllers, not")
     P_("     measured at 10. n*(Q+1)^10 is still 1e13 at Q = 14 -- nine orders below the path set")
