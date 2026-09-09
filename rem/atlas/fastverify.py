@@ -113,7 +113,8 @@ def affine_terminal(S, H, k, gain=2.0, base=-1.0):
     return (a_u, b_u), (a_l, b_l)
 
 
-def fast_enclose(Pm, pi, n, hvec, S, actbit, L, margin=FP_MARGIN):
+def fast_enclose(Pm, pi, n, hvec, S, actbit, L, margin=FP_MARGIN, kill_M=False,
+                 trace=None):
     """Affine enclosure with closed-form bounds. Visits no accumulation."""
     k = actbit.shape[1]
     work = 0
@@ -135,12 +136,17 @@ def fast_enclose(Pm, pi, n, hvec, S, actbit, L, margin=FP_MARGIN):
             if upper:
                 Dv = B[:, None, :] - beta[None, :, :]            # (s', s, k)
                 M = (np.maximum(Dv, 0.0) * H).sum(axis=2)        # (s', s) exact for affine
+                if kill_M:
+                    M = np.zeros_like(M)          # DIAGNOSTIC ONLY -- not a valid bound
                 An = logsumexp(c + M, axis=0)
                 Bn = beta
                 Au, Bu = An + margin, Bn
             else:
                 An = lse_at - np.einsum('sc,c->s', beta, xbar)
                 Al, Bl = An - margin, beta
+        if trace is not None:
+            xb = np.full(k, 0.5 * float(hvec[:d + 1].sum()))
+            trace.append((d, float(np.mean((Au + Bu @ xb) - (Al + Bl @ xb)) / np.log(10.0))))
     X0 = actbit * hvec[0]
     hi = float((pi * np.exp(np.clip(Au + np.einsum('sc,sc->s', X0, Bu), -700, 700))).sum())
     lo = float((pi * np.exp(np.clip(Al + np.einsum('sc,sc->s', X0, Bl), -700, 700))).sum())
@@ -219,6 +225,40 @@ def main():
     P_("    The fast verifier's work is O(states^2 * k) per level and does NOT grow with depth")
     P_("    beyond the level count, so the ratio falls as the path set grows. That is the property")
     P_("    being tested, and a falling ratio is what would establish it.")
+
+    # ---- V3b  WHERE THE WIDTH COMES FROM -------------------------------------------------------
+    P_("\n" + RULE)
+    P_("V3b  DECOMPOSING THE WIDTH, SINCE THE GATE FAILED ON IT")
+    P_(RULE)
+    P_("  Two relaxations are in play: the chord/tangent gap on log sigma at the terminal, and the")
+    P_("  decoupled residual spread M in the upper log-sum-exp bound. This separates them.")
+    Pm, pi, n, hvec, S, actbit, sha = prep(4, 4)
+    k = actbit.shape[1]
+    (au, bu), (al, bl) = affine_terminal(S, float(hvec.sum()), k)
+    rng = np.random.default_rng(5)
+    Xs = rng.random((2000, k)) * float(hvec.sum())
+    gex = logg(Xs, S)
+    gap_t = float(np.mean((au + Xs @ bu) - (al + Xs @ bl)) / np.log(10.0))
+    P_(f"\n  TERMINAL GAP ALONE, averaged over 2,000 points in the box:"
+       f" {gap_t:.3f} orders")
+    P_(f"    upper exceeds exact log g by {float(np.mean((au + Xs @ bu) - gex) / np.log(10.0)):.3f}"
+       f" orders, lower falls short by"
+       f" {float(np.mean(gex - (al + Xs @ bl)) / np.log(10.0)):.3f}")
+    tr = []
+    lo, hi, _ = fast_enclose(Pm, pi, n, hvec, S, actbit, 4, trace=tr)
+    P_(f"\n  HOW THE GAP ACCUMULATES DOWN THE RECURSION (mean over states, at the box centre):")
+    P_(f"\n    {'level':>6} {'gap, orders':>13}")
+    P_(f"    {'terminal':>6} {gap_t:>13.3f}")
+    for d, gp in tr:
+        P_(f"    {d:>6} {gp:>13.3f}")
+    lok, hik, _ = fast_enclose(Pm, pi, n, hvec, S, actbit, 4, kill_M=True)
+    P_(f"\n  AND WITH THE DECOUPLED SPREAD M FORCED TO ZERO -- NOT A VALID BOUND, A DIAGNOSTIC:")
+    P_(f"    width with M      : {np.log10(hi / lo):.3f} orders")
+    P_(f"    width without M   : {np.log10(hik / lok):.3f} orders")
+    P_(f"    so M contributes    {np.log10(hi / lo) - np.log10(hik / lok):.3f} orders and the terminal")
+    P_(f"    plus the tangent gap contribute {np.log10(hik / lok):.3f}")
+    P_("\n  V3b: the term to attack is whichever of those two dominates, and the answer is in the")
+    P_("  two numbers above rather than in an argument about which ought to.")
 
     # ---- V4  THE MARGIN ------------------------------------------------------------------------
     P_("\n" + RULE)
