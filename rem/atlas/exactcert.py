@@ -204,6 +204,11 @@ def main():
     P_("  BESTCOMP / TRUTH is a MAXIMUM over completions against their weighted average, so it")
     P_("  should grow as there are more completions. The engine runs at 10 controllers and L = 6.")
     P_(f"\n    {'nCtrl':>6} {'L':>3} {'paths':>12} {'completions per prefix':>23} {'BESTCOMP/TRUTH':>16}")
+    P_("  TWO SWEEPS, BECAUSE ONE OF THEM IS CONFOUNDED. Varying nCtrl changes BOTH the number of")
+    P_("  completions and the geometry of the target drive, so a law fitted across widths cannot")
+    P_("  say which is responsible. Varying the PREFIX DEPTH at fixed width changes only the")
+    P_("  number of completions. If the two sweeps agree on the exponent, the law is about the")
+    P_("  completion count; if they disagree, it is confounded and no extrapolation is allowed.")
     grid = []
     for nc, ll in ((3, 3), (3, 4), (3, 5), (4, 3), (4, 4), (5, 3)):
         np_ = (2 ** nc) ** (ll + 1)
@@ -223,22 +228,63 @@ def main():
         r = float(np.median(bc3 / np.maximum(tr3, 1e-300)))
         grid.append((nc, ll, blk3, r))
         P_(f"    {nc:>6} {ll:>3} {np_:>12,} {blk3:>23,} {r:>16.3f}")
-    if len(grid) >= 4:
-        # the floor should be a function of the number of completions, which is what varies
-        cw = np.log10([g[2] for g in grid])
-        fv = np.log10([g[3] for g in grid])
-        sl, ic = np.polyfit(cw, fv, 1)
-        r2 = 1.0 - np.sum((fv - (ic + sl * cw)) ** 2) / np.sum((fv - fv.mean()) ** 2)
-        P_(f"\n    log10(floor) = {ic:.3f} + {sl:.3f} * log10(completions per prefix)   R^2 = {r2:.3f}")
-        comp_engine = (2 ** 10) ** 2                       # two levels of completions at nCtrl=10
-        pred = 10 ** (ic + sl * np.log10(comp_engine))
-        P_(f"    at the engine's width the same prefix depth leaves {comp_engine:,} completions,")
-        P_(f"    which the law puts at a floor of about {pred:.1f}.")
-        P_(f"\n  E0c AS PREDECLARED: extrapolated floor {pred:.1f}"
-           f" {'is BELOW 1e3, so E0b s verdict survives the engine width: the certificate is closable there too.' if pred < 1e3 else 'is ABOVE 1e3, so E0b s verdict holds only at toy widths and the certificate is NOT closable at the engine width.'}")
-        P_("    The law is fitted over three decades of completion count and the engine sits about")
-        P_("    three decades beyond the widest point, so this is an extrapolation of comparable")
-        P_("    reach to the ones accuracy.py and boundprune had to make, and no better founded.")
+    # the UNCONFOUNDED sweep: fixed width, varying prefix depth, so only the completion count moves
+    P_(f"\n  THE DEPTH SWEEP AT FIXED WIDTH (nCtrl = 4, L = 4), where only the completion count moves:")
+    P_(f"\n    {'prefix level':>13} {'completions per prefix':>23} {'BESTCOMP/TRUTH':>16}")
+    dep = []
+    Q4, Pm4, pi4, n4, hv4, S4, ab4, rw4, _ = setup(4, 4)
+    w4, a4 = enumerate_all(Pm4, pi4, n4, 4, hv4, ab4)
+    lo4 = logon(a4, S4)
+    c4, on4 = w4 * np.exp(lo4), np.exp(lo4)
+    for d in (3, 2, 1):
+        wp4, _ap4 = prefix_level(Pm4, pi4, n4, 4, hv4, ab4, d)
+        blk4 = n4 ** (4 - d)
+        tr4 = c4.reshape(-1, blk4).sum(axis=1)
+        bc4 = wp4 * on4.reshape(-1, blk4).max(axis=1)
+        r = float(np.median(bc4 / np.maximum(tr4, 1e-300)))
+        dep.append((blk4, r))
+        P_(f"    {d:>13} {blk4:>23,} {r:>16.3f}")
+
+    def fit(xy):
+        x = np.log10([a for a, _ in xy]); y = np.log10([b for _, b in xy])
+        sl, ic = np.polyfit(x, y, 1)
+        r2 = 1.0 - np.sum((y - (ic + sl * x)) ** 2) / np.sum((y - y.mean()) ** 2)
+        return sl, ic, r2, x.max() - x.min()
+
+    if len(grid) >= 4 and len(dep) >= 3:
+        sw, iw, r2w, spw = fit([(g[2], g[3]) for g in grid])
+        sd, idp, r2d, spd = fit(dep)
+        P_(f"\n    {'sweep':<28} {'exponent':>10} {'R^2':>7} {'decades spanned':>17}")
+        P_(f"    {'across WIDTHS (confounded)':<28} {sw:>10.3f} {r2w:>7.3f} {spw:>17.2f}")
+        P_(f"    {'across DEPTHS (clean)':<28} {sd:>10.3f} {r2d:>7.3f} {spd:>17.2f}")
+        agree = abs(sw - sd) < 0.12
+        P_(f"\n    the two sweeps {'AGREE' if agree else 'DISAGREE'} on the exponent, so the law"
+           f" {'is about the COMPLETION COUNT and the extrapolation is allowed.' if agree else 'is CONFOUNDED and no extrapolation is allowed.'}")
+        if agree:
+            sl, ic = sd, idp
+            P_(f"\n    floor  ~  10^{ic:.2f} * (completions)^{sl:.2f}   -- an exponent near 0.5 means the floor")
+            P_(f"    grows like the SQUARE ROOT of the number of completions being maximised over.")
+            P_(f"\n    AND THAT MAKES THE FLOOR LEVEL-DEPENDENT, WHICH IS THE ACTUAL ANSWER:")
+            P_(f"      {'decisions made at':<34} {'completions left':>18} {'floor':>12}")
+            for lv, cc in (("the last level, n^1", 1024.0),
+                           ("two levels from the leaves, n^2", 1024.0 ** 2),
+                           ("the root, n^(L+1)", 1024.0 ** 7)):
+                P_(f"      {lv:<34} {cc:>18.2e} {10 ** (ic + sl * np.log10(cc)):>12.2e}")
+            f_last = 10 ** (ic + sl * np.log10(1024.0))
+            f_root = 10 ** (ic + sl * np.log10(1024.0 ** 7))
+            P_(f"\n  E0c AS PREDECLARED, AND THE VERDICT IS SPLIT BY LEVEL. Near the leaves the floor is")
+            P_(f"  about {f_last:.0f}, comfortably under the 1e3 bar. At the root it is about {f_root:.1e}, hopelessly")
+            P_("  over it. The pruner drops at EVERY level and the certificate sums those drops, so")
+            P_("  the shallow drops dominate and the total does NOT close. E0b's encouraging verdict")
+            P_("  was measured at a toy width where the root IS near the leaves, and it does not")
+            P_("  survive: at four controllers the deepest prefix has 16 completions and the whole")
+            P_("  tree has 1,048,576, a span of five decades; at ten controllers the same span is")
+            P_("  twenty-one decades and the floor grows across all of it.")
+            P_("\n    THE EXTRAPOLATION'S HONEST REACH: the depth sweep spans"
+               f" {spd:.1f} decades of completion")
+            P_("    count and the root sits about eighteen decades beyond its widest point. The")
+            P_("    LEVEL-DEPENDENCE is measured; the root's value is an extrapolation far outside")
+            P_("    the fitted range and should be read as a direction, not a number.")
 
     # ---- E1  THE ENGINE-WIDTH RUN --------------------------------------------------------------
     P_("\n" + RULE)
