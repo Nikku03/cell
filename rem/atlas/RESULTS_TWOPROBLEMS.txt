@@ -3556,3 +3556,92 @@ FIVE CORRECTIONS TO THE PRECEDING SECTION, ALL ACCEPTED
    error from the same degree.
    And the 0.22 orders is an EMPIRICAL CALIBRATION extrapolated from three widths and three
    depths, not a certified interval. The engine has no certified interval on its estimate at all.
+
+
+=================================================================================================
+THE VERIFIED ENCLOSURE: THE ACCEPTANCE GATE PASSES AT 0.001 TO 0.004 ORDERS
+=================================================================================================
+The construction: carry FUNCTIONS through the backward recursion rather than bounding each subtree
+by its mass times a coordinate-wise maximum over a box.
+
+    hlo_L <= g <= hhi_L,     hlo_d <= K_d hlo_{d+1},     hhi_d >= K_d hhi_{d+1}
+
+K_d is a nonnegative operator -- transition probabilities composed with a positive accumulation
+shift -- so these imply hlo_0(s0) <= p <= hhi_0(s0). backpoly supplies the starting approximation;
+the work is the CORRECTIONS that make the inequalities hold, and a verifier that does not smuggle
+the box back in.
+
+HOW THE VERIFIER AVOIDS THE BOX. The inequalities are checked BY ENUMERATION OVER THE EXACTLY
+REACHABLE SET. sufficient.py proved that under the engine's geometric weighting every path yields a
+DISTINCT accumulation, so the reachable set at level d is the path set through level d, and at
+enumerable widths the inequalities can be checked at every point the operator will ever touch. No
+interval arithmetic on coordinates, no sampling, every dependency among coordinates preserved
+because the points are the real ones. The corrections are built from the residuals at those same
+points -- inflate the upper fit until it dominates, deflate the lower until it is dominated.
+
+THE ACCEPTANCE GATE, AS SPECIFIED: FINAL INTERVAL WIDTH AT TOTAL COMPUTATIONAL COST, under one
+order on independent exact instances.
+
+     nCtrl   L  targets      exact tail             hlo             hhi  width, orders   seconds
+         3   3      200    6.973226e-99    6.957371e-99    6.984161e-99          0.002       0.0
+         3   4      200    5.977817e-99    5.958236e-99    6.018769e-99          0.004       0.2
+         4   3      200   1.503368e-102   1.500887e-102   1.505960e-102          0.001       0.4
+         4   4      200   1.187971e-102   1.183855e-102   1.191630e-102          0.003       5.5
+         4   3      100    1.275136e-52    1.274992e-52    1.275295e-52          0.000       0.2
+         3   4      100    4.420102e-52    4.418218e-52    4.420870e-52          0.000       0.1
+
+PASS ON EVERY INSTANCE, at 0.001 to 0.004 orders. For scale, tailtight measured the previous
+certificate's interval at 22 to 27 orders on the same kind of instance. THE ENCLOSURE IS FOUR
+ORDERS OF MAGNITUDE NARROWER THAN THE THING IT REPLACES, and it is a rigorous interval rather than
+an estimate: the exact tail lies inside on every instance, checked by full enumeration.
+
+AND THE WIDTH IS THE FIT RESIDUAL MADE RIGOROUS, which the degree sweep shows directly:
+
+     degree  coefficients  width, orders   seconds
+          1             5          0.270       5.8
+          2            15          0.044       5.6
+          3            35          0.003       5.5
+          4            70          0.001       5.6
+
+Sixfold, fifteenfold, threefold reductions per degree at essentially constant cost, because the
+cost is dominated by the enumeration and not by the representation.
+
+THE VERIFIER FOUND ZERO VIOLATIONS across 139,808 checks at the largest instance -- as it must,
+since the corrections are constructed from those residuals; a nonzero count would have meant
+construction and verification disagreed about what is reachable.
+
+=================================================================================================
+AND THE CONTAINMENT GATE EARNED ITS PLACE, BY FAILING FIRST
+=================================================================================================
+The first run put BOTH bounds about three orders ABOVE the exact tail. The interval width was
+0.003 orders -- a perfectly respectable number -- while both ends were wrong. The cause was a
+double-counted level: reachable(d) returns the accumulation INCLUDING level d, and the recursion
+then added the current state's contribution a second time, so the shift belonged to the successor
+rather than to the current state.
+
+THIS IS EXACTLY THE FAILURE MODE A CONTAINMENT CHECK EXISTS FOR, AND IT IS INVISIBLE IN THE WIDTH.
+Had the gate been "is the interval narrow", the module would have passed with a wrong answer. It
+was predeclared as "does the interval contain the exact tail, checked before any width is quoted",
+and that ordering is what caught it.
+
+=================================================================================================
+WHAT THIS DOES AND DOES NOT ESTABLISH
+=================================================================================================
+ESTABLISHED: a rigorous, verified enclosure of this engine's tail whose width is 0.001 to 0.004
+orders on six independent exact instances, against 22 to 27 for the certificate it replaces, with
+the verification containing no relaxation of any kind.
+
+NOT ESTABLISHED, and the first one is the whole remaining problem:
+  1. THE VERIFIER COSTS O(PATHS). It is exact because it visits every reachable point, which is
+     precisely why it does not scale. The gate was width AT a stated cost and the cost stated here
+     is enumeration -- 1,048,576 paths at the largest instance, against 1.18e21 at the engine's
+     width. Making the verification cheap WITHOUT reintroducing a relaxation is the next problem
+     and nothing here solves it.
+  2. Nothing shows the width stays under an order at the engine's width, where the verifier cannot
+     run at all. The degree sweep says the width is the fit residual, and backpolyerr measured that
+     residual growing with depth and barely with width -- which is encouraging and is not evidence.
+  3. The enclosure is of the tail computed at this engine's fixed base and gain. It is a rigorous
+     interval for THAT quantity and not for a biological probability.
+  4. It addresses one term of one calculation. Class-map validity, transfer to other instances, and
+     biological validation are untouched, and tailtight's own qualification stands: removing the
+     dominant term does not finish the job.
