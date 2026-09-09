@@ -59,6 +59,19 @@ G3  THE ACTUAL REM TAIL, at 10 controllers and L = 6 -- the run the external rou
     method is REFUTED at the engine's width, with no exact reference needed. If it returns a value
     above, that is consistent and is reported as consistency, not as accuracy.
 
+G3b WHAT G3's ESTIMATE IMPLIES FOR accuracy.py's RANKING. PREDECLARED AFTER G3 RAN AND BEFORE G3b
+    DID, because G3's numbers make a question answerable that was not answerable before. accuracy.py
+    ranked the engine's error terms by extrapolating the pruned tail's rise -- 0.608 orders per
+    decade of retained paths -- from 10^4.29 out to the full path set at 10^21.1, and concluded
+    pruning binds because that reaches the class map's whole 5.08-order span at 10^12.6. It flagged
+    the extrapolation as a direction rather than a value, and this is the first INDEPENDENT estimate
+    of where the tail actually ends up.
+    PREDECLARED: compute the remaining rise G3's estimate implies, against what the slope
+    extrapolation implies. If they disagree, the slope FLATTENS and accuracy.py's crossing is wrong;
+    and if the implied total pruning error falls below 5.08 orders, accuracy.py's verdict REVERSES
+    and the class map becomes the binding term after all. That must be reported whichever way it
+    lands, and reported as CONDITIONAL on an estimate that carries no bound.
+
 G4  THE TIMING, AS A SCALING LAW AND NOT AS THE 28x POINT. The external note compared 0.34 s
     against 0.012 s for exact DP. That comparison is against a baseline REM does not have. Report
     instead how the polynomial backward's cost grows with width and depth, and what it is being
@@ -293,6 +306,43 @@ def main():
         P_(f"    {deg:>7} {ncf:>13} {tl:>15.6e} {rel:>15.3f}x {el:>9.1f}")
     ok = [r for r in g3 if r[2] >= PRUNED_BOUND]
     P_(f"\n  G3 AS PREDECLARED: {'the polynomial backward lands ABOVE the pruned lower bound at ' + str(len(ok)) + ' of ' + str(len(g3)) + ' degrees. That is CONSISTENCY, not accuracy -- it is not refuted, and nothing here says how close to the truth it is.' if ok else 'every degree lands BELOW the pruned lower bound. THE METHOD IS REFUTED at the engine width, with no exact reference needed.'}")
+
+    # ---- G3b  WHAT IT IMPLIES FOR accuracy.py --------------------------------------------------
+    P_("\n" + RULE)
+    P_("G3b  WHAT THAT ESTIMATE IMPLIES FOR accuracy.py's RANKING OF THE ENGINE'S ERROR TERMS")
+    P_(RULE)
+    conv = [r for r in g3 if r[0] >= 2]
+    est = float(np.mean([r[2] for r in conv]))
+    spread = max(r[2] for r in conv) / min(r[2] for r in conv)
+    P_(f"  degrees 2 and 3 give {conv[0][2]:.4e} and {conv[-1][2]:.4e}, agreeing to"
+       f" {(spread - 1) * 100:.1f}% -- the representation")
+    P_(f"  has converged even though its accuracy is uncertified. Taking {est:.4e} as the estimate:")
+    CLASS_LADDER, SLOPE, LOG_FULL, LOG_AT = 5.08, 0.608, 21.1, 4.29
+    implied = float(np.log10(est) - np.log10(PRUNED_BOUND))
+    extrap = SLOPE * (LOG_FULL - LOG_AT)
+    P_(f"\n    {'quantity':<46} {'orders':>10}")
+    P_(f"    {'remaining rise implied by this estimate':<46} {implied:>10.2f}")
+    P_(f"    {'remaining rise from accuracy.py s slope':<46} {extrap:>10.2f}")
+    P_(f"    {'the class map s whole ladder':<46} {CLASS_LADDER:>10.2f}")
+    P_(f"\n  THE SLOPE MUST FLATTEN. {SLOPE} orders per decade held over the two decades it was")
+    P_(f"  measured on, and extrapolating it {LOG_FULL - LOG_AT:.1f} decades gives {extrap:.1f} orders where this estimate")
+    P_(f"  says {implied:.2f}. accuracy.py flagged that extrapolation as a direction and not a value; this")
+    P_("  is the first independent number to put against it, and it says the local slope is local.")
+    if implied < CLASS_LADDER:
+        P_(f"\n  AND THE RANKING REVERSES. accuracy.py's A4b concluded pruning binds because the")
+        P_(f"  extrapolated error crossed {CLASS_LADDER} orders at 10^12.6. If the total pruning error is")
+        P_(f"  {implied:.2f} orders it never reaches {CLASS_LADDER} at all, and the CLASS MAP is the binding term --")
+        P_("  which is what A4 said before A4b overturned it on the scaling law. A4b was right to")
+        P_("  distrust the point comparison; it was wrong about which way the law bent.")
+        P_("\n  CONDITIONAL, AND THE CONDITION IS NOT SMALL. This rests on an ESTIMATE that carries no")
+        P_("  bound. Its evidence is G1: 0.012 to 0.10 orders against an exact answer at four")
+        P_("  controllers. Nothing tests that transfer at ten. If the estimate is low, the pruning")
+        P_("  error is larger than stated and the reversal weakens or vanishes. What is NOT")
+        P_("  conditional is the direction: the tail is at least 1.0640e-97 by the lower bound and")
+        P_(f"  this estimate puts it near {est:.2e}, so the slope cannot continue at {SLOPE} for {LOG_FULL - LOG_AT:.0f} more decades.")
+    else:
+        P_(f"\n  The implied error {implied:.2f} still exceeds the class ladder's {CLASS_LADDER}, so pruning remains")
+        P_("  the binding term and accuracy.py's verdict stands, with a corrected magnitude.")
 
     # ---- G4  TIMING AS A LAW -------------------------------------------------------------------
     P_("\n" + RULE)
