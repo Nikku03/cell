@@ -2543,3 +2543,103 @@ relaxes the coupling between targets -- each is allowed its own best completion 
 one exists and is not built. And the pruner itself is NOT modified: wiring this into
 engine_budget is the next step and was not taken here, so none of the engine's reported tails
 have moved yet.
+
+
+=================================================================================================
+THE TARGET-AWARE BOUND WIRED INTO THE REAL PRUNER: WHAT THE REM TAIL ACTUALLY GAINED
+=================================================================================================
+pathbound derived and verified the bound but did not touch the pruner, so no reported tail had
+moved. This wired it in and ran the real thing at accuracy.py's width and depth -- 10 controllers,
+1024 states, L = 6, 200 real TRRUST target rows -- so the numbers are comparable with the
+8.4-decade finding rather than with a fresh baseline.
+
+ONE NEW PIECE OF MATHEMATICS WAS NEEDED TO MAKE IT RUN AT ALL. Scoring every (parent, child)
+candidate with the exact bound needs a 19531 x 1024 x 200 tensor, 4e9 entries, which does not fit.
+But log sigma is CONCAVE, so its tangent at the parent's own drive lies above it:
+
+    log sigma(u + v)  <=  log sigma(u) + sigma(-u) * v
+
+Summing over targets turns the child's contribution into ONE matmul. The result is still an upper
+bound on the exact bound, hence still admissible -- just looser. Every number below is therefore a
+LOWER bound on what the exact bound would achieve.
+
+THE BASELINE WAS CHECKED FIRST. rank='mass' returns 3.720818e-98 at cap 19531, against the
+3.7208e-98 accuracy.py reported. The baseline did not move, so what follows measures the RANKING
+and not a change to the engine underneath it.
+
+WHAT IT BUYS, AT EQUAL RETAINED-PATH COUNT -- equal cost, which is what the engine pays:
+
+         cap      tail, MASS     tail, BOUND  gain, orders
+         100      1.5395e-99      6.1775e-99         0.603
+         300      2.9663e-99      1.1583e-98         0.592
+        1000      7.3706e-99      2.3093e-98         0.496
+        3000      1.2285e-98      4.1759e-98         0.531
+       10000      2.6793e-98      7.6642e-98         0.456
+       19531      3.7208e-98      1.0567e-97         0.453
+
+Between 0.45 and 0.60 ORDERS OF MAGNITUDE of recovered tail at every retained count, for the same
+number of retained paths and within 15% of the same wall-clock. Read as a saving instead: mass
+ranking needs 10^2.90 retained paths to reach what the bound reaches with 10^2.00, so the engine
+buys the same accuracy for about EIGHT TIMES FEWER PATHS. At the top of the sweep the 0.453-order
+gain is worth about 0.75 decades on the mass curve, so the saving is 6x to 8x across the range.
+
+MY CEILING GATE WAS CIRCULAR AND ITS FAILURE IS THE BEST RESULT IN THE MODULE. The first oracle
+re-ranked the paths the MASS-ranked run had retained and asked what share of the mass-to-oracle gap
+the bound captured. It returned 99.2%, 98.6%, 99.4%, then 116.8%, then 320.1%, then a division by
+zero. A share above 100% of a ceiling is impossible, so it was not a ceiling: defining it from the
+LOSER's candidate set lets the winner escape it. And escaping it is the finding -- THE BOUND IS NOT
+MERELY RE-ORDERING THE SAME CANDIDATES, it reaches parts of the path tree that mass ranking never
+generates. At cap 60,000 the two candidate sets are worth 6.72e-98 and 1.77e-97, a factor of 2.6.
+
+THE NON-CIRCULAR CEILING: run both rankings at three times the largest compared cap, score every
+retained path's exact contribution, and take the better of the two best-possible re-rankings.
+
+         cap            MASS           BOUND          ORACLE   share of gap
+         100      1.5395e-99      6.1775e-99      6.2490e-99          99.2%
+         300      2.9663e-99      1.1583e-98      1.1807e-98          98.6%
+        1000      7.3706e-99      2.3093e-98      2.3328e-98          99.1%
+        3000      1.2285e-98      4.1759e-98      4.2087e-98          99.4%
+       10000      2.6793e-98      7.6642e-98      7.7256e-98          99.2%
+       19531      3.7208e-98      1.0567e-97      1.0654e-97          99.2%
+
+The bound captures 99% of the achievable gain at every cap. There is essentially nothing left for
+a better ranking rule to find at this width: the ranking problem is closed to within 1%.
+
+=================================================================================================
+AND THE DECISIVE GATE SAYS IT HELPS AND DOES NOT FIX IT
+=================================================================================================
+accuracy.py's finding was not that the tail was wrong somewhere -- it was that the tail was still
+RISING at 0.608 orders per decade of retained paths, so the pruning error crossed the class map's
+whole 5.08-order span at 10^12.6 paths against a full set of 10^21.1. A better ranking that leaves
+the slope alone reorders without converging any faster.
+
+    ranking        slope, orders per decade   crossing of 5.08 orders
+    mass                              0.608                   10^12.6
+    bound                             0.539                   10^13.7
+
+    the full path set being approximated is                    10^21.1
+
+THE SLOPE FALLS BY 11% AND THE CROSSING MOVES ONE DECADE. It needed to move EIGHT AND A HALF. So
+PRUNING REMAINS THE BINDING TERM, and the honest verdict is the one the module was predeclared to
+report rather than the one it was built hoping for: a constant-factor win of 6x to 8x in retained
+paths, and no change to the asymptotics.
+
+THE CERTIFICATE IMPROVES BY SEVENTY-THREE ORDERS AND IS STILL NOT QUOTABLE. Certificate over the
+reported tail: the mass certificate runs at 6.5e98 down to 2.7e97; the bound certificate at 2.9e27
+down to 1.7e25. A guarantee 25 orders larger than the quantity it bounds is not a guarantee.
+
+WHAT THIS MEANS FOR THE ENGINE, PLAINLY. The ranking question -- how do we know a path is
+irrelevant to the target before deleting it -- is answered and closed to within 1% of the best
+available rule. The CONVERGENCE question is not, and the two were being conflated. Ranking better
+gets you the same answer for a fraction of the work; it does not get you a different answer, and
+the engine's reported tail is still a lower bound whose distance from the truth is unbounded. The
+next thing is not a better ranking rule. It is either a bound that closes the certificate -- the
+tangent relaxation gives away orders that the exact bound does not, and the exact bound is not
+computable at this width by the method used -- or a different decomposition of the observable that
+does not require enumerating paths at all.
+
+TWO THINGS THIS DOES NOT SETTLE. The oracle re-ranks what either rule can REACH, not all 10^21
+paths, so "99% of the achievable gain" is 99% of a computable ceiling and not of the true one. And
+the slopes are fitted over about two decades while the crossing points sit far outside that range;
+what the extrapolation is used for is the COMPARISON between two slopes measured over the same
+range, which is far better conditioned than either absolute crossing.
