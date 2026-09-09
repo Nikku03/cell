@@ -260,6 +260,34 @@ def main():
     P_("\n  V3b: the term to attack is whichever of those two dominates, and the answer is in the")
     P_("  two numbers above rather than in an argument about which ought to.")
 
+    # ---- V3c  THE WIDTH'S SCALING LAW, AND A LIMIT OF THE REPRESENTATION CLASS -----------------
+    P_("\n" + RULE)
+    P_("V3c  WHY THE AFFINE CLASS CANNOT DO BETTER, AND WHAT THE WIDTH SCALES WITH")
+    P_(RULE)
+    P_("  THE CHORD IS THE BEST AFFINE MINORANT OF A CONCAVE FUNCTION ON AN INTERVAL. Any affine")
+    P_("  function below log sigma at both endpoints is below the chord at both endpoints, hence")
+    P_("  below it throughout. So the 3.97-order lower-bound gap is not an implementation shortfall")
+    P_("  -- it is the tightest an affine lower bound can be, given each drive's range.")
+    P_("  WHICH MAKES THE WIDTH A SUM OF PER-TARGET GAPS, and predicts it grows with the number of")
+    P_("  targets. That is a scaling law and it is measured rather than argued.")
+    P_(f"\n    {'targets':>8} {'width, orders':>14} {'orders per target':>18}")
+    pts = []
+    for nt in (10, 25, 50, 100, 200):
+        Pm, pi, n, hvec, S, actbit, sha = prep(4, 4, ntarget=nt)
+        lo, hi, _ = fast_enclose(Pm, pi, n, hvec, S, actbit, 4)
+        w = float(np.log10(hi / max(lo, 1e-308)))
+        pts.append((len(S), w))
+        P_(f"    {len(S):>8} {w:>14.3f} {w / max(len(S), 1):>18.4f}")
+    xs = np.log([a for a, _ in pts])
+    ys = np.log([b for _, b in pts])
+    sl = float(np.polyfit(xs, ys, 1)[0])
+    r2 = 1.0 - np.sum((ys - np.polyval(np.polyfit(xs, ys, 1), xs)) ** 2) / np.sum((ys - ys.mean()) ** 2)
+    P_(f"\n    width ~ targets^{sl:.3f}   R^2 = {r2:.3f}")
+    P_(f"  An exponent near one confirms the width is a SUM of per-target gaps. So this verifier")
+    P_(f"  meets the one-order gate below about {int(round(10 ** ((0.0 - np.polyfit(xs, ys, 1)[1]) / max(sl, 1e-9)))):,} targets and fails above it, and the")
+    P_(f"  quantity a better representation must attack is the PER-TARGET gap of about")
+    P_(f"  {pts[-1][1] / pts[-1][0]:.4f} orders, not the total.")
+
     # ---- V4  THE MARGIN ------------------------------------------------------------------------
     P_("\n" + RULE)
     P_("V4  THE FLOATING-POINT MARGIN, AND WHAT IT DOES NOT ESTABLISH")
