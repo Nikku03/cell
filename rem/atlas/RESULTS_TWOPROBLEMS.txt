@@ -2899,3 +2899,156 @@ exactcert's floor law one module earlier, repeated immediately. And the correcte
 used a threshold I invented, growth below (path growth)^0.34, which returned FAIL on data with zero
 ceiling violations; that is the invented-bar defect already in this record as K5's base = -1.0.
 Both are superseded in place.
+
+
+=================================================================================================
+TWO EXTERNAL ROUNDS, CHECKED AGAINST THE ENGINE: THE COMPACT BACKWARD, AND VERIFICATION COST
+=================================================================================================
+PROVENANCE FIRST. Two rounds of computational tests were reported from outside this session -- a
+backward-function approximation that worked on a smooth benchmark and failed on an irregular one,
+and a Fourier repair that rescued the irregular case at 512 and 768 coefficients. THOSE RUNS ARE
+NOT IN THIS RECORD AND ARE NOT REPRODUCED HERE. What follows is what this repo can say about them,
+plus the two runs they identified as missing, which were done here.
+
+AND ONE NUMBER FROM THE EXTERNAL REPORT WAS CHECKABLE, WHICH CHANGED THE QUESTION. Their exact
+reference ran 1,024 states and 200 steps in 0.012 s. The engine's controller block has exactly
+nCtrl off-diagonal entries per state, so a STATE-INDEXED backward pass costs 1024 * 10 * 200 =
+2.05e6 operations -- which is 0.012 s. That arithmetic says their backward function is indexed by
+the current state alone. REM's is not: sufficient.py showed it is indexed by (level, state,
+accumulated time-weighted activity) and is injective on paths at full precision. So REM has no
+cheap exact DP at all, and their reported 28x slowdown is measured against a baseline REM does not
+have. That reframing is what made the two runs below worth doing.
+
+=================================================================================================
+THE COMPACT BACKWARD, RUN ON REM: IT IS A DIMENSION PROBLEM, NOT AN OSCILLATION PROBLEM
+=================================================================================================
+The method: carry log V_d(s, .) as a total-degree polynomial in the accumulated activity vector.
+C(k+p, p) coefficients -- 66 at degree 2 in ten variables -- so POLYNOMIAL in width, not
+exponential, which is the only reason it can run at the engine's own size. The shift by the
+current state's activity is exact for polynomials; the single approximation is projecting the log
+of a weighted sum of exponentials back onto that space.
+
+THE CEILING GATE DECIDED WHETHER THE EXTERNAL ROUNDS TESTED THE SAME PROBLEM. Fitting the exact
+backward function with polynomials against random Fourier features at EQUAL coefficient count:
+
+     coefficients   polynomial rel err    Fourier rel err    winner
+                5            5.997e-05          3.500e-02      poly
+               15            2.457e-06          5.773e-03      poly
+               35            3.113e-08          8.740e-04      poly
+
+POLYNOMIALS WIN AT EVERY SIZE, BY FOUR ORDERS AT 35 COEFFICIENTS. REM's backward function is
+SMOOTH in the accumulated statistic. Its obstruction is the DIMENSION of that statistic, not
+oscillation -- so the external round 1's irregular failure is not REM's failure mode, and round 2's
+Fourier repair, however well it worked on its own benchmark, is solving a different problem.
+
+END TO END WHERE AN EXACT ANSWER EXISTS (4 controllers, L = 4, 1,048,576 paths enumerated):
+
+     degree  coefficients            tail  error, orders   vs a pruning decade
+          1             5   1.307192e-102         0.0415                 0.068
+          2            15   9.428400e-103         0.1004                 0.165
+          3            35   1.080006e-102         0.0414                 0.068
+          4            70   1.154653e-102         0.0124                 0.020
+
+Against an exact 1.187971e-102. Degree 4 is within 0.0124 orders -- two percent of what one decade
+of pruning costs.
+
+AND THE RUN THE EXTERNAL ROUNDS DID NOT DO: THE ACTUAL REM TAIL at 10 controllers, L = 6. There is
+no exact answer there, but there is a sharp falsifiable check -- the pruned tail is a LOWER BOUND,
+since retaining more paths can only add mass, so landing below it refutes the method outright.
+
+     degree  coefficients            tail   vs lower bound   seconds
+          1            11    3.690152e-95         346.819x       0.3
+          2            66    1.566277e-95         147.206x       3.1
+          3           286    1.603289e-95         150.685x      44.6
+
+Not refuted at any degree, and degrees 2 and 3 agree to 2.4%. Three seconds against a path set of
+1.18e21. There is no 28x to quote because the thing it replaces cannot be run at all.
+
+=================================================================================================
+AND IT REVERSES accuracy.py's RANKING OF THE ENGINE'S ERROR TERMS
+=================================================================================================
+This is the first INDEPENDENT estimate of where the REM tail actually ends up, and accuracy.py's
+verdict depended on an extrapolation it explicitly flagged as a direction rather than a value.
+
+    quantity                                           orders
+    remaining rise implied by this estimate              2.17
+    remaining rise from accuracy.py's slope             10.22
+    the class map's whole ladder                         5.08
+
+THE SLOPE MUST FLATTEN. 0.608 orders per decade held over the two decades it was measured on;
+extrapolated 16.8 decades it gives 10.2 orders where this estimate says 2.17. THE LOCAL SLOPE IS
+LOCAL.
+
+AND SO THE RANKING REVERSES. accuracy.py's A4b concluded pruning binds because the extrapolated
+error crossed the class map's 5.08 orders at 10^12.6. If the total pruning error is 2.17 orders it
+never reaches 5.08 at all, and the CLASS MAP is the binding term -- which is what A4 said before
+A4b overturned it on the scaling law. A4b was right to distrust a point comparison and wrong about
+which way the law bent.
+
+CONDITIONAL, AND THE CONDITION IS NOT SMALL. This rests on an ESTIMATE that carries no bound. Its
+evidence is 0.012 to 0.10 orders against an exact answer at four controllers; nothing tests that
+transfer at ten. What is NOT conditional is the direction: the tail is at least 1.0640e-97 by the
+lower bound and this estimate puts it near 1.58e-95, so the slope cannot continue at 0.608 for
+seventeen more decades.
+
+=================================================================================================
+VERIFICATION WITHOUT SCANNING EVERY STATE: THE SCAN IS AVOIDABLE, BY THE ROUTE I EXPECTED TO FAIL
+=================================================================================================
+This was the blocker rather than a bottleneck: a verification that costs a full scan costs what
+exact DP costs, so no speed-up of the approximation can rescue it.
+
+MY PREDECLARED EXPECTATION WAS WRONG AND THE REASON IS WORTH KEEPING. I expected the certificate
+sum to inherit the tail's concentration -- pathbound measured the top 1% of PATHS carrying 91% of
+the TAIL -- and predicted uniform sampling would be hopeless. It is not: the heaviest 0.1% of the
+dropped set carries 13.77% of the certificate. The tail is concentrated because a few paths have
+large ON-probability; the certificate sums the DROPPED candidates, which are precisely the ones
+that do not. CONCENTRATION IN THE OBSERVABLE DOES NOT TRANSFER TO THE RESIDUAL.
+
+AND MY OWN FIRST TWO SAMPLING GATES WERE CIRCULAR. They sampled from the dropped set, but knowing
+which candidates are dropped means having ranked them all by the bound -- the full scan. They
+cheapened the verification of a partition whose construction had already paid the cost.
+
+THE NON-CIRCULAR CONFIGURATION: select by path MASS, which needs no bound evaluations at all --
+the child ordering under any parent is that column of the transition matrix, so one sort gives
+every parent's heaviest children and a global top-k is a merge -- then certify that partition by
+importance sampling, evaluating the bound only where sampled.
+
+     bound evals  vs full scan  estimate/true   95% UCB/true
+              30       0.0010%          0.997          2.807
+             306       0.0100%          1.044          1.424
+           3,069       0.1000%          0.988          1.063
+          30,690       1.0000%          0.994          1.013
+
+A valid 95% upper bound within 2x costs 306 bound evaluations against 3,072,000 for the full scan,
+a factor of 10,039, and selecting by mass instead of by bound costs only 1.09x in the certificate.
+THE SCAN IS AVOIDABLE.
+
+AND THE AGGREGATE BOUND -- THE ROUTE I CALLED THE ONLY ONE THAT YIELDS A CERTIFICATE -- FAILED:
+
+         k   children touched     certificate   / full scan
+         1              3,000    2.550553e-74       195.149
+        16             48,000    1.507067e-74       115.309
+        64            192,000    6.113019e-75        46.772
+
+47x to 195x too loose, and for a reason already in this record: its aggregate term is a BOX bound
+over the child space, the same relaxation exactcert measured at ten to twenty orders. The box is
+loose wherever it appears.
+
+THE GUARANTEE IS WEAKER IN KIND AND THAT MUST NOT BE GLOSSED. The full scan gives an EXACT sum;
+this gives a 95% confidence upper bound. A certificate that holds nineteen times in twenty is not
+the same object, and whether that is acceptable is a decision about what the engine's guarantee is
+for, not a measurement.
+
+=================================================================================================
+WHAT THESE TWO RUNS SETTLE OF THE FIVE OPEN ITEMS
+=================================================================================================
+  ITEM 2, verify without scanning: SETTLED, at 10,039x fewer bound evaluations, by sampling rather
+    than by the structural bound -- with the guarantee demoted from exact to 95% confidence.
+  ITEM 4, test the actual REM tail: DONE. It runs in three seconds at the engine's width, is not
+    refuted by the lower-bound check, and its estimate reverses accuracy.py's ranking.
+  ITEM 1, make it faster: DISSOLVED RATHER THAN SOLVED. The 28x was against a baseline REM does
+    not have. REM's alternative is enumeration of 1.18e21 paths, so there is no ratio.
+  ITEM 3, broader irregularity: NOT SETTLED, but REDIRECTED. REM's backward function is smooth, so
+    arbitrary irregularity is not the obstacle for this engine; dimension is, and the polynomial
+    representation is the thing that handles dimension.
+  ITEM 5, the biological cell model: UNTOUCHED. Nothing here tested cellular dynamics.
