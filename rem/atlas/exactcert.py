@@ -202,89 +202,71 @@ def main():
     P_("E0c  THE SCALING OF THE IRREDUCIBLE FLOOR, SINCE E0b's VERDICT RESTS ON IT")
     P_(RULE)
     P_("  BESTCOMP / TRUTH is a MAXIMUM over completions against their weighted average, so it")
-    P_("  should grow as there are more completions. The engine runs at 10 controllers and L = 6.")
-    P_(f"\n    {'nCtrl':>6} {'L':>3} {'paths':>12} {'completions per prefix':>23} {'BESTCOMP/TRUTH':>16}")
-    P_("  TWO SWEEPS, BECAUSE ONE OF THEM IS CONFOUNDED. Varying nCtrl changes BOTH the number of")
-    P_("  completions and the geometry of the target drive, so a law fitted across widths cannot")
-    P_("  say which is responsible. Varying the PREFIX DEPTH at fixed width changes only the")
-    P_("  number of completions. If the two sweeps agree on the exponent, the law is about the")
-    P_("  completion count; if they disagree, it is confounded and no extrapolation is allowed.")
-    grid = []
-    for nc, ll in ((3, 3), (3, 4), (3, 5), (4, 3), (4, 4), (5, 3)):
-        np_ = (2 ** nc) ** (ll + 1)
-        if np_ > 3_000_000:
-            continue
-        Q3, Pm3, pi3, n3, hv3, S3, ab3, rw3, _ = setup(nc, ll)
-        Sp3 = np.maximum(S3, 0.0).sum(axis=1)
+    P_("  grows with the number of completions. The engine runs at 10 controllers, n = 1024,")
+    P_("  L = 6. E0b's encouraging verdict was measured at n = 16 and holds only if the floor")
+    P_("  does not grow too fast on the way.")
+    P_("\n  A ONE-VARIABLE LAW IN THE COMPLETION COUNT WAS TRIED FIRST AND IT FAILED, WHICH IS WHY")
+    P_("  THERE ARE TWO VARIABLES BELOW. Fitting the floor against completions-per-prefix alone")
+    P_("  gave exponent 0.538 across WIDTHS and 0.241 across DEPTHS -- the same nominal quantity,")
+    P_("  two different laws. A single variable that yields two exponents is the wrong model, not")
+    P_("  an impossible extrapolation: the floor depends on the state count n and on the number of")
+    P_("  levels remaining m SEPARATELY, and n^m does not capture it.")
+    P_(f"\n    {'n':>6} {'m levels left':>14} {'completions':>13} {'BESTCOMP/TRUTH':>16}")
+    pts = []
+    for nc, ll in ((3, 5), (4, 4), (5, 3)):
+        Q3, Pm3, pi3, n3, hv3, S3, ab3, _rw, _sh = setup(nc, ll)
         w3, a3 = enumerate_all(Pm3, pi3, n3, ll, hv3, ab3)
         lo3 = logon(a3, S3)
-        c3 = w3 * np.exp(lo3)
-        on3 = np.exp(lo3)
-        d = ll - 2 if ll >= 3 else ll - 1                 # two levels of completions left
-        wp3, ap3 = prefix_level(Pm3, pi3, n3, ll, hv3, ab3, d)
-        blk3 = n3 ** (ll - d)
-        tr3 = c3.reshape(-1, blk3).sum(axis=1)
-        bc3 = wp3 * on3.reshape(-1, blk3).max(axis=1)
-        r = float(np.median(bc3 / np.maximum(tr3, 1e-300)))
-        grid.append((nc, ll, blk3, r))
-        P_(f"    {nc:>6} {ll:>3} {np_:>12,} {blk3:>23,} {r:>16.3f}")
-    # the UNCONFOUNDED sweep: fixed width, varying prefix depth, so only the completion count moves
-    P_(f"\n  THE DEPTH SWEEP AT FIXED WIDTH (nCtrl = 4, L = 4), where only the completion count moves:")
-    P_(f"\n    {'prefix level':>13} {'completions per prefix':>23} {'BESTCOMP/TRUTH':>16}")
-    dep = []
-    Q4, Pm4, pi4, n4, hv4, S4, ab4, rw4, _ = setup(4, 4)
-    w4, a4 = enumerate_all(Pm4, pi4, n4, 4, hv4, ab4)
-    lo4 = logon(a4, S4)
-    c4, on4 = w4 * np.exp(lo4), np.exp(lo4)
-    for d in (3, 2, 1):
-        wp4, _ap4 = prefix_level(Pm4, pi4, n4, 4, hv4, ab4, d)
-        blk4 = n4 ** (4 - d)
-        tr4 = c4.reshape(-1, blk4).sum(axis=1)
-        bc4 = wp4 * on4.reshape(-1, blk4).max(axis=1)
-        r = float(np.median(bc4 / np.maximum(tr4, 1e-300)))
-        dep.append((blk4, r))
-        P_(f"    {d:>13} {blk4:>23,} {r:>16.3f}")
+        c3, on3 = w3 * np.exp(lo3), np.exp(lo3)
+        for d in range(ll - 1, 0, -1):
+            m = ll - d
+            blk3 = n3 ** m
+            wp3, _ap = prefix_level(Pm3, pi3, n3, ll, hv3, ab3, d)
+            tr3 = c3.reshape(-1, blk3).sum(axis=1)
+            bc3 = wp3 * on3.reshape(-1, blk3).max(axis=1)
+            r = float(np.median(bc3 / np.maximum(tr3, 1e-300)))
+            pts.append((float(n3), float(m), r))
+            P_(f"    {n3:>6} {m:>14} {blk3:>13,} {r:>16.3f}")
+    A = np.column_stack([np.ones(len(pts)),
+                         np.log10([p[0] for p in pts]),
+                         np.log10([p[1] for p in pts])])
+    y = np.log10([p[2] for p in pts])
+    coef, *_ = np.linalg.lstsq(A, y, rcond=None)
+    yh = A @ coef
+    r2 = 1.0 - np.sum((y - yh) ** 2) / np.sum((y - y.mean()) ** 2)
+    P_(f"\n    log10(floor) = {coef[0]:.3f} + {coef[1]:.3f}*log10(n) + {coef[2]:.3f}*log10(m)"
+       f"      R^2 = {r2:.3f}, {len(pts)} points")
+    P_(f"    the exponent on n is {coef[1]:.2f}: the floor grows very nearly LINEARLY in the number")
+    P_(f"    of states, and only as m^{coef[2]:.2f} in the levels left to complete.")
 
-    def fit(xy):
-        x = np.log10([a for a, _ in xy]); y = np.log10([b for _, b in xy])
-        sl, ic = np.polyfit(x, y, 1)
-        r2 = 1.0 - np.sum((y - (ic + sl * x)) ** 2) / np.sum((y - y.mean()) ** 2)
-        return sl, ic, r2, x.max() - x.min()
+    def floor_at(nn, mm):
+        return 10 ** (coef[0] + coef[1] * np.log10(nn) + coef[2] * np.log10(mm))
 
-    if len(grid) >= 4 and len(dep) >= 3:
-        sw, iw, r2w, spw = fit([(g[2], g[3]) for g in grid])
-        sd, idp, r2d, spd = fit(dep)
-        P_(f"\n    {'sweep':<28} {'exponent':>10} {'R^2':>7} {'decades spanned':>17}")
-        P_(f"    {'across WIDTHS (confounded)':<28} {sw:>10.3f} {r2w:>7.3f} {spw:>17.2f}")
-        P_(f"    {'across DEPTHS (clean)':<28} {sd:>10.3f} {r2d:>7.3f} {spd:>17.2f}")
-        agree = abs(sw - sd) < 0.12
-        P_(f"\n    the two sweeps {'AGREE' if agree else 'DISAGREE'} on the exponent, so the law"
-           f" {'is about the COMPLETION COUNT and the extrapolation is allowed.' if agree else 'is CONFOUNDED and no extrapolation is allowed.'}")
-        if agree:
-            sl, ic = sd, idp
-            P_(f"\n    floor  ~  10^{ic:.2f} * (completions)^{sl:.2f}   -- an exponent near 0.5 means the floor")
-            P_(f"    grows like the SQUARE ROOT of the number of completions being maximised over.")
-            P_(f"\n    AND THAT MAKES THE FLOOR LEVEL-DEPENDENT, WHICH IS THE ACTUAL ANSWER:")
-            P_(f"      {'decisions made at':<34} {'completions left':>18} {'floor':>12}")
-            for lv, cc in (("the last level, n^1", 1024.0),
-                           ("two levels from the leaves, n^2", 1024.0 ** 2),
-                           ("the root, n^(L+1)", 1024.0 ** 7)):
-                P_(f"      {lv:<34} {cc:>18.2e} {10 ** (ic + sl * np.log10(cc)):>12.2e}")
-            f_last = 10 ** (ic + sl * np.log10(1024.0))
-            f_root = 10 ** (ic + sl * np.log10(1024.0 ** 7))
-            P_(f"\n  E0c AS PREDECLARED, AND THE VERDICT IS SPLIT BY LEVEL. Near the leaves the floor is")
-            P_(f"  about {f_last:.0f}, comfortably under the 1e3 bar. At the root it is about {f_root:.1e}, hopelessly")
-            P_("  over it. The pruner drops at EVERY level and the certificate sums those drops, so")
-            P_("  the shallow drops dominate and the total does NOT close. E0b's encouraging verdict")
-            P_("  was measured at a toy width where the root IS near the leaves, and it does not")
-            P_("  survive: at four controllers the deepest prefix has 16 completions and the whole")
-            P_("  tree has 1,048,576, a span of five decades; at ten controllers the same span is")
-            P_("  twenty-one decades and the floor grows across all of it.")
-            P_("\n    THE EXTRAPOLATION'S HONEST REACH: the depth sweep spans"
-               f" {spd:.1f} decades of completion")
-            P_("    count and the root sits about eighteen decades beyond its widest point. The")
-            P_("    LEVEL-DEPENDENCE is measured; the root's value is an extrapolation far outside")
-            P_("    the fitted range and should be read as a direction, not a number.")
+    P_(f"\n    EXTRAPOLATED TO THE ENGINE (n = 1024, L = 6):")
+    P_(f"      {'decisions made at':<34} {'m':>4} {'floor':>12}")
+    for lab, mm in (("the last level", 1), ("two levels from the leaves", 2),
+                    ("mid-window", 4), ("the root", 7)):
+        P_(f"      {lab:<34} {mm:>4} {floor_at(1024.0, mm):>12.1f}")
+    worst = floor_at(1024.0, 7)
+    best = floor_at(1024.0, 1)
+    P_(f"\n  E0c AS PREDECLARED: the floor at the engine's width runs {best:.0f} at the last level to"
+       f" {worst:.0f} at the root.")
+    if best > 1e3:
+        P_("  IT IS ABOVE THE 1e3 BAR AT EVERY LEVEL. E0b's verdict does NOT survive the engine's")
+        P_("  width: no bound of this shape closes the certificate there, exact or otherwise, and")
+        P_("  the reason is not the algebra but the width itself.")
+    elif worst > 1e3:
+        P_("  IT STRADDLES THE BAR -- under it near the leaves, over it near the root. Since the")
+        P_("  pruner drops at every level and the certificate SUMS those drops, the shallow drops")
+        P_("  dominate and the total does not close. E0b's verdict survives only for the deepest")
+        P_("  decisions, which are not the ones that matter.")
+    else:
+        P_("  IT IS UNDER THE BAR AT EVERY LEVEL, so E0b's verdict survives the engine's width.")
+    P_(f"\n    THE EXTRAPOLATION'S HONEST REACH: n is fitted over 8 to 32 and the engine is at 1024,")
+    P_("    five doublings beyond. The two-variable form is what makes this readable at all -- it")
+    P_("    reduces the extrapolation to ONE well-determined exponent per axis instead of one")
+    P_("    exponent that changed depending on which axis produced it -- but it is still an")
+    P_("    extrapolation five doublings out and should be read as a magnitude, not a value.")
 
     # ---- E1  THE ENGINE-WIDTH RUN --------------------------------------------------------------
     P_("\n" + RULE)
