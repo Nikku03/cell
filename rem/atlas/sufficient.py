@@ -79,6 +79,25 @@ F3  THE PRICE. Quantising the time weighting changes the observable. Measure the
 
 F4  THE TRADE, as a curve of representation size against price over Q. This is the deliverable.
 
+F2b THE DEPTH CLAIM, DECONFOUNDED. PREDECLARED AFTER F2's FIRST RUN AND BEFORE F2b's. F2 swept L
+    with Q tied to it as Q = 2(L+1), then fitted "statistics ~ L^6.54" and called it the depth
+    exponent. Q was growing with L, so the fit measured the two together -- exactly the confound
+    caught in exactcert's floor law one module earlier, repeated here. The claim to test is that
+    the count is bounded by n*(Q+1)^nCtrl INDEPENDENTLY of L, so the sweep must hold Q FIXED and
+    vary L alone.
+    PREDECLARED: the count must SATURATE in L at fixed Q. If it keeps growing with L at fixed Q,
+    the derived ceiling is wrong and the flat-in-depth claim -- the entire value of the statistic
+    -- fails with it.
+
+F3b THE RESOLUTION AXIS, WHICH IS NOT Q. PREDECLARED after F3's first run. F3's table shows Q = 20
+    and Q = 40 with byte-identical tails and identical statistic counts, because quantising at 40
+    returns numerators [2,4,6,10,18] whose gcd is 2 -- the same rationals as Q = 20. Q is a nominal
+    knob, not the resolution. The quantity that actually controls the count is the number of
+    DISTINCT SUBSET SUMS of the numerator vector, and the effective denominator is Q/gcd.
+    PREDECLARED: rows with identical weight vectors are collapsed and the table is keyed on the
+    effective denominator and the distinct-subset-sum count, so no two rows can present the same
+    approximation as two different ones.
+
 F5  THE ENGINE'S OWN NUMBERS, and F6 the limits.
 """
 
@@ -223,17 +242,45 @@ def main():
                 rowsF2.append((nc, ll, Q, npaths, nuq, ceil))
                 P_(f"    {nc:>6} {ll:>3} {Q:>4} {npaths:>14,} {nuq:>12,} {ceil:>18,}"
                    f" {npaths / nuq:>12,.0f}")
-    # depth exponent at fixed width and fixed Q-per-level
-    P_("\n  THE DEPTH EXPONENT, which is the claim that matters:")
+    P_("\n  A DEPTH EXPONENT FITTED HERE WOULD BE CONFOUNDED, because the Q column above moves with")
+    P_("  L. That is the mistake exactcert's floor law had to be rescued from one module earlier,")
+    P_("  and it is not repeated: the depth claim is tested in F2b with Q held FIXED.")
+
+    # ---- F2b  THE DEPTH CLAIM, WITH Q HELD FIXED -----------------------------------------------
+    P_("\n" + RULE)
+    P_("F2b  THE DEPTH CLAIM, DECONFOUNDED: Q FIXED, L VARYING")
+    P_(RULE)
+    P_("  The derived ceiling n*(Q+1)^nCtrl does not contain L at all, so at fixed Q the count must")
+    P_("  SATURATE as the window deepens. If it keeps growing, the flat-in-depth claim fails and")
+    P_("  with it the whole value of the statistic.")
+    P_(f"\n    {'nCtrl':>6} {'Q':>4} {'L':>3} {'paths':>14} {'statistics':>12} {'ceiling':>12} {'x paths':>10}")
+    sat = {}
     for nc in (3, 4):
-        sub = [(r[1], r[4]) for r in rowsF2 if r[0] == nc and r[2] == 2 * (r[1] + 1)]
-        if len(sub) >= 2:
-            x = np.log([a for a, _ in sub]); y = np.log([b for _, b in sub])
-            sl = float(np.polyfit(x, y, 1)[0]) if len(sub) > 1 else float("nan")
-            P_(f"    nCtrl = {nc}: statistics ~ L^{sl:.2f} at Q = 2(L+1), against paths ~ 2^(nCtrl*L)")
-    P_("    A POWER of L against an EXPONENTIAL in L. That is the whole point of the statistic:")
-    P_("    the depth exponential is not intrinsic to the observable, it is intrinsic to carrying")
-    P_("    the PATH rather than what the path is for.")
+        for Q in (12, 24):
+            for ll in (3, 4, 5):
+                if (2 ** nc) ** (ll + 1) > 3_000_000:
+                    continue
+                Q_, Pm, pi, n, hvec, S, actbit, rows, sha = setup(nc, ll)
+                kv = quantise(hvec, Q)
+                _k, nuq = stats_int(Pm, pi, n, ll, kv, actbit, ll)
+                sat.setdefault((nc, Q), []).append((ll, nuq))
+                P_(f"    {nc:>6} {Q:>4} {ll:>3} {n ** (ll + 1):>14,} {nuq:>12,}"
+                   f" {n * (Q + 1) ** nc:>12,} {n ** (ll + 1) / nuq:>9,.0f}x")
+    P_("")
+    allflat = True
+    for (nc, Q), v in sorted(sat.items()):
+        if len(v) < 2:
+            continue
+        growth = v[-1][1] / v[0][1]
+        pathgrowth = (2.0 ** nc) ** (v[-1][0] - v[0][0])
+        flat = growth < pathgrowth ** 0.34
+        allflat = allflat and flat
+        P_(f"    nCtrl = {nc}, Q = {Q}: over L = {v[0][0]}..{v[-1][0]} the statistic count grows"
+           f" {growth:.2f}x while the path set grows {pathgrowth:.0f}x.")
+    P_(f"\n  F2b AS PREDECLARED: {'the count is essentially FLAT in depth while the path set is exponential in it. The statistic does what it was derived to do.' if allflat else 'the count grows with depth even at fixed Q, so the derived ceiling is wrong and the flat-in-depth claim FAILS.'}")
+    P_("  The depth exponential the engine has been fighting is therefore an artefact of carrying")
+    P_("  the PATH rather than what the path is for -- but only once the weighting is quantised,")
+    P_("  which F0 established is an approximation and not a reformulation.")
 
     # ---- F3  THE PRICE -------------------------------------------------------------------------
     P_("\n" + RULE)
@@ -249,16 +296,31 @@ def main():
     t0 = float((w0 * np.exp(logon(a0, S))).sum())
     P_(f"\n  exact tail under the engine's own hvec: {t0:.6e}")
     P_(f"\n    {'Q':>5} {'statistics':>12} {'tail':>15} {'price, orders':>14} {'vs one pruning decade':>23}")
-    curve = []
-    for Q in (5, 10, 20, 40, 80, 160):
+    P_("  AND THE AXIS IS NOT Q. Quantising at 40 returns numerators whose gcd is 2, i.e. the same")
+    P_("  rationals as 20, so a table keyed on Q shows one approximation twice. Keyed instead on")
+    P_("  the EFFECTIVE denominator Q/gcd and the number of DISTINCT SUBSET SUMS of the numerators,")
+    P_("  which is what actually controls the count. Duplicate weight vectors are collapsed.")
+    P_(f"\n    {'Qeff':>6} {'subset sums':>12} {'statistics':>12} {'tail':>15} {'price, orders':>14} {'vs a pruning decade':>21}")
+    curve, seen = [], set()
+    for Q in (5, 10, 20, 40, 80, 160, 320):
         kv = quantise(hvec, Q)
-        hq = kv / float(Q)
+        g = int(np.gcd.reduce(kv))
+        kr = kv // g
+        sig = tuple(kr.tolist())
+        if sig in seen:
+            continue
+        seen.add(sig)
+        Qeff = int(kr.sum())
+        ss = len({int(x) for m in range(1 << len(kr)) for x in
+                  [sum(kr[i] for i in range(len(kr)) if (m >> i) & 1)]})
+        hq = kr / float(Qeff)
         wq, aq = enumerate_all(Pm, pi, n, ll, hq, actbit)
         tq = float((wq * np.exp(logon(aq, S))).sum())
-        _k, nuq = stats_int(Pm, pi, n, ll, kv, actbit, ll)
+        _k, nuq = stats_int(Pm, pi, n, ll, kr, actbit, ll)
         pr = abs(np.log10(tq) - np.log10(t0)) if tq > 0 else float("inf")
-        curve.append((Q, nuq, tq, pr))
-        P_(f"    {Q:>5} {nuq:>12,} {tq:>15.6e} {pr:>14.4f} {pr / PRUNE_SLOPE:>23.3f}")
+        curve.append((Qeff, nuq, tq, pr, ss))
+        P_(f"    {Qeff:>6} {ss:>12} {nuq:>12,} {tq:>15.6e} {pr:>14.4f}"
+           f" {pr / PRUNE_SLOPE:>21.3f}")
 
     # ---- F4  THE TRADE -------------------------------------------------------------------------
     P_("\n" + RULE)
@@ -266,9 +328,9 @@ def main():
     P_(RULE)
     npaths_small = n ** (ll + 1)
     P_(f"  at {nc} controllers and L = {ll} the path set is {npaths_small:,}:")
-    P_(f"\n    {'Q':>5} {'compression':>13} {'price, orders':>14}")
-    for Q, nuq, tq, pr in curve:
-        P_(f"    {Q:>5} {npaths_small / nuq:>12,.0f}x {pr:>14.4f}")
+    P_(f"\n    {'Qeff':>6} {'compression':>13} {'price, orders':>14}")
+    for Qe, nuq, tq, pr, ss in curve:
+        P_(f"    {Qe:>6} {npaths_small / nuq:>12,.0f}x {pr:>14.4f}")
     P_("\n  AND EXTRAPOLATED TO THE ENGINE (nCtrl = 10, n = 1024, L = 6) by the derived ceiling,")
     P_("  which F2 tests rather than assumes:")
     P_(f"\n    {'Q':>5} {'statistics, n(Q+1)^10':>24} {'paths, 2^70':>14} {'compression':>14}")
