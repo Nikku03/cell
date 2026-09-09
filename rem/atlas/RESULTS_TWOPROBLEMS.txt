@@ -3294,3 +3294,123 @@ the next construction and it is not built. Coverage is measured against a true s
 needed a full scan per level to know, so this validates the composition and not any run of it. And
 the object composed is the certificate, not the tail: exactcert's finding stands that the bound
 being composed is far looser than the quantity it bounds.
+
+
+=================================================================================================
+ADAPTIVE PARTITIONS: THE SELECTION EFFECT IS REMOVED RATHER THAN CORRECTED
+=================================================================================================
+composecert's sequential construction handles adaptive SAMPLE SIZES. It does not handle adaptive
+PARTITIONS -- a pruner that decides WHAT TO DROP using the same evaluations it then certifies.
+That is the pruner anyone would actually want, since boundprune measured that selecting by the
+bound beats selecting by mass by six to eight times in retained paths, while evaluating the bound
+everywhere is the full scan the whole line of work exists to avoid.
+
+THE PROBLEM IS REAL, AND MEASURED. The naive procedure -- one sample selects, and the same sample
+restricted to the dropped side estimates the dropped sum:
+
+       evals   coverage   median UCB/true   median est/true
+       3,000       0.0%             0.705             0.632
+      10,000       0.0%             0.939             0.910
+      30,000      87.2%             1.003             0.990
+
+The estimator sits at 0.63 where an unbiased one would sit at 1.000, and the bound COVERS ZERO
+TIMES IN 400 at the smaller budgets. This is the winner's curse: the dropped set is exactly the
+candidates that looked small, so estimating from those samples understates by construction. Note
+that this is the first construction in this whole line of work whose coverage actually collapsed --
+every previous one survived on slack.
+
+=================================================================================================
+THE FIX: D = T - R, AND THE RETAINED TERM CANCELS
+=================================================================================================
+Do not estimate the dropped sum. Write
+
+    D  =  T  -  R
+
+with T the total bound over the candidate population and R the total over the retained ones. T does
+not depend on the partition -- it is fixed whatever the pruner later decides. And R is known
+EXACTLY, because a candidate cannot be retained without its bound having been evaluated. Then
+
+    D <= UCB(T) - R    <=>    T - R <= UCB(T) - R    <=>    T <= UCB(T)
+
+THE RETAINED TERM CANCELS OUT OF THE INEQUALITY. The guarantee holds with probability 1 - delta
+however the partition was chosen, including by the very samples that estimated T. There is no
+selection effect to correct because it never enters.
+
+       evals   coverage   median UCB/true
+       3,000     100.0%             1.089
+      10,000     100.0%             1.027
+      30,000     100.0%             1.011
+
+Against sample splitting at EQUAL total evaluations -- the obvious alternative, which is also valid
+because the partition is fixed conditional on the first half:
+
+       evals   coverage   median UCB/true   vs identity
+       3,000     100.0%             1.162         1.07x
+      10,000     100.0%             1.050         1.02x
+      30,000     100.0%             1.021         1.01x
+
+The identity wins, by 1 to 7 percent, because splitting certifies with half the budget while the
+identity certifies with all of it.
+
+=================================================================================================
+AND THE PRICE, WHICH IS A SUBTRACTION AND NOT A SELECTION EFFECT
+=================================================================================================
+D = T - R is a difference and the error in UCB(T) is ABSOLUTE, so the relative width on D grows as
+the retained set captures more of the total:
+
+         cap   retained share of T   median UCB/true
+         100                 2.06%             1.061
+       1,000                13.49%             1.069
+      10,000                49.05%             1.117
+     100,000                87.97%             1.488
+     400,000                98.76%             5.737
+
+THE IDENTITY IS FREE OF THE SELECTION EFFECT AND IS NOT FREE OF THIS. And the degradation bites in
+exactly the regime a good pruner is trying to reach -- keeping most of the bound mass -- which is
+the same regime where evaluating the retained set exactly becomes the dominant cost. BOTH LIMITS
+BITE FROM THE SAME SIDE, which is the honest characterisation of the method: it is cheap and tight
+for aggressive pruning and neither for conservative pruning.
+
+COMPOSED ACROSS ALL SEVEN LEVELS with adaptive partitions at every one, carrying composecert's
+delta/K failure budget:
+
+     evals/level   coverage   median total/true
+           1,000     100.0%               1.266
+           3,000     100.0%               1.098
+          10,000     100.0%               1.036
+
+The identity composes exactly as the sum does, because each level's guarantee is still a statement
+about a fixed T.
+
+=================================================================================================
+FOUR DEFECTS OF MINE IN THIS MODULE, ALL RECORDED
+=================================================================================================
+The first run died dividing by an empty list, and the cause was DEGENERATE rather than numerical:
+with fewer samples than the cap, the adaptive rule keeps every candidate it sampled and the dropped
+side of the sample is empty. The sample sizes now sit above the cap and the condition is reported
+where it arises.
+
+P0 and P2 estimated a sub-population sum by taking the surviving draws and rescaling them by a
+probability share. That is not an unbiased estimator of anything; the correct one is the full
+sample with retained draws set to ZERO. This mattered: with the wrong estimator, sample splitting
+appeared to lose coverage at larger budgets, which would have been reported as a failure of
+splitting when it was a failure of mine.
+
+P0 also scored itself against the whole population's total rather than against the dropped sum for
+the partition it had just chosen, inflating the apparent winner's curse from 0.63 to 0.17.
+
+And P1 described T as "the total over all candidates" when it is the total over the population
+being partitioned, then reported a retained share computed as (T - T)/T = 0.00% -- a quantity
+compared with itself.
+
+=================================================================================================
+WHAT IS STILL NOT HANDLED
+=================================================================================================
+T is fixed only WITHIN a level. Across levels the candidate set at level d+1 depends on what level
+d retained, so T at the next level is itself random, and the composition above conditions on the
+realised chain -- which is what composecert did too. A guarantee unconditional on the whole
+trajectory is the next construction and it is not built here.
+The identity bounds the dropped sum for WHATEVER partition was chosen. It says nothing about
+whether that partition was a good one: a pruner that adapts badly gets a valid certificate for a
+bad decision.
+And the object is still the certificate rather than the tail. exactcert's finding stands.
