@@ -36,6 +36,19 @@ E0  THE CEILING GATE, WHICH IS A FLOOR UNDER THE CERTIFICATE. At 4 controllers a
     shape is capable of a useful certificate and the remaining looseness is the relaxations'
     fault, which is fixable.
 
+E0b THE NUMBER THAT MATTERS, PREDECLARED AFTER E0's DECOMPOSITION AND BEFORE IT RAN. E0 prices the
+    three steps as RATIOS PER PREFIX. That is not yet a certificate: a certificate is the SUM of
+    the bound over the dropped set against the ACTUAL deficit that dropping them caused. So form
+    both, for the same dropped set, at several retained fractions -- once with the exact box bound
+    and once with BESTCOMP, the true maximum over actual completions.
+    PREDECLARED: if the BESTCOMP certificate lands under the 1e3 bar while the exact one does not,
+    then the certificate is CLOSABLE and the thing to fix is the completion set, not the bound's
+    algebra. If both fail, the route is dead whatever E0's per-prefix ratios suggested.
+    AND THE LIMIT MUST BE STATED WITH THE RESULT: BESTCOMP IS NOT AN ALGORITHM. It is computed by
+    enumerating the completions, which is exactly what the engine cannot do. It measures what a
+    bound would deliver IF the reachable completion set could be described tightly. Reporting it
+    as an achieved certificate would be the same error as reading a loop ceiling as a cap.
+
 E1  THE LITERAL QUESTION, ANSWERED AT THE ENGINE'S WIDTH REGARDLESS OF E0, because it was asked
     and because E0's width is not the engine's. Run the pruner with rank="exact" at 10 controllers
     and L = 6 and compare its certificate against the tangent's, both as a ratio to the reported
@@ -127,6 +140,50 @@ def main():
         P_("  refinement yet to be invented -- cannot get under this floor. A closing certificate")
         P_("  requires bounding the SUM over the subtree, not its largest member, which is a")
         P_("  different object and not a tighter version of this one.")
+
+    # ---- E0b  THE CERTIFICATE ITSELF, NOT THE PER-PREFIX RATIO ---------------------------------
+    P_("\n" + RULE)
+    P_("E0b  THE CERTIFICATE ITSELF: SUMMED BOUND OVER DROPPED, AGAINST THE ACTUAL DEFICIT")
+    P_(RULE)
+    P_("  E0's ratios are per prefix. A certificate is the SUM of the bound over the dropped set")
+    P_("  against the deficit dropping them actually caused. Both are formed here on the SAME")
+    P_("  dropped set, once with the exact box bound and once with BESTCOMP.")
+    P_(f"\n    {'level':>6} {'kept':>7} {'EXACT cert/deficit':>21} {'BESTCOMP cert/deficit':>23}")
+    bc_ratios = []
+    ex_ratios = []
+    for d in (2, 3):
+        wp, ap = prefix_level(Pm, pi, n, L, hvec, actbit, d)
+        H = float(hvec[d + 1:].sum())
+        ex = bound_of(ap, wp, S, Splus, H)
+        blk = n ** (L - d)
+        true = contrib.reshape(-1, blk).sum(axis=1)
+        bc = wp * onprob.reshape(-1, blk).max(axis=1)
+        oe, ob = np.argsort(-ex), np.argsort(-bc)
+        for kf in (0.01, 0.10, 0.50):
+            k = max(1, int(kf * len(ex)))
+            de = tail - float(true[oe[:k]].sum())
+            ce = float(ex[oe[k:]].sum())
+            db = tail - float(true[ob[:k]].sum())
+            cb = float(bc[ob[k:]].sum())
+            re_, rb = ce / max(de, 1e-300), cb / max(db, 1e-300)
+            ex_ratios.append(re_)
+            bc_ratios.append(rb)
+            P_(f"    {d:>6} {f'{kf * 100:.0f}%':>7} {re_:>21.3e} {rb:>23.3e}")
+    P_(f"\n  E0b AS PREDECLARED: the exact box certificate runs {min(ex_ratios):.2e} to"
+       f" {max(ex_ratios):.2e}; BESTCOMP runs {min(bc_ratios):.2f} to {max(bc_ratios):.2f}.")
+    if max(bc_ratios) < 1e3 <= max(ex_ratios):
+        P_("  THE CERTIFICATE IS CLOSABLE, AND THE THING TO FIX IS THE COMPLETION SET RATHER THAN")
+        P_("  THE BOUND'S ALGEBRA. Describing the reachable completions instead of relaxing them to")
+        P_(f"  a box moves the certificate from {max(ex_ratios):.1e} times the deficit to about"
+           f" {max(bc_ratios):.0f} times it,")
+        P_("  which clears the 1e3 bar by two orders.")
+    elif max(bc_ratios) >= 1e3:
+        P_("  BOTH FAIL. The route is dead whatever E0's per-prefix ratios suggested.")
+    P_("\n  AND THE LIMIT, STATED WITH THE RESULT: BESTCOMP IS NOT AN ALGORITHM. It is computed by")
+    P_("  ENUMERATING the completions, which is exactly what the engine cannot do at its own")
+    P_("  width. It measures what a bound would deliver IF the reachable completion set could be")
+    P_("  described tightly. Quoting it as an achieved certificate would be the same error as")
+    P_("  reading a loop ceiling as a cap, which this build order has now done three times.")
 
     # ---- E1  THE ENGINE-WIDTH RUN --------------------------------------------------------------
     P_("\n" + RULE)
