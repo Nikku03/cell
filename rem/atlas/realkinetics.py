@@ -348,7 +348,7 @@ def engine_tail(Q, nCtrl, rows, L, dt, tau, hvec=None, base=-1.0, gain=2.0, S=No
 
 
 def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0, S=None,
-                  cap=None, rank="mass"):
+                  cap=None, rank="mass", return_paths=False):
     """Specify the error BUDGET and spend it, in ONE pass.
 
     A fixed absolute tau does not scale -- path probabilities fall like n^-L, so a threshold that
@@ -444,9 +444,12 @@ def engine_budget(Q, nCtrl, rows, L, dt, budget, hvec=None, base=-1.0, gain=2.0,
         wact = wact[par] + actbit[code] * hvec[d]
         last = code
     if len(wts) == 0:
-        return 0.0, dropped, touched, 0, res
+        return (0.0, dropped, touched, 0, res) + ((np.zeros(0), np.zeros(0)) if return_paths else ())
     Z = base + gain * (wact @ S.T)
-    tail = float((wts * np.exp(-np.logaddexp(0.0, -Z).sum(axis=1))).sum())
+    per = wts * np.exp(-np.logaddexp(0.0, -Z).sum(axis=1))
+    tail = float(per.sum())
+    if return_paths:                   # the retained paths' EXACT contributions, so a caller can
+        return tail, dropped, touched, len(wts), res, per, wts   # build an oracle re-ranking
     return tail, dropped, touched, len(wts), res
 
 

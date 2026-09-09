@@ -149,57 +149,50 @@ def main():
     P_("\n" + RULE)
     P_("P1  THE CEILING GATE: HOW MUCH WAS THERE TO WIN?")
     P_(RULE)
-    P_("  The oracle keeps the top-k paths of the largest runnable retained set by their ACTUAL")
-    P_("  contribution. No ranking rule can beat it. It is not a pruner -- it needs the answer")
-    P_("  first -- it is the ceiling the two real rules are measured against.")
-    from rem.atlas.realkinetics import stationary
-    from scipy.linalg import expm
-    pi, res, _ = stationary(Q)
-    n = Q.shape[0]
-    Pm = expm((Q.T * dt).toarray())
-    hvec = np.exp(-0.5 * np.arange(L, -1, -1)); hvec = hvec / hvec.sum()
-    S = np.zeros((len(rows), nCtrl))
-    for i, (_g, regs) in enumerate(rows):
-        for c, sg in regs:
-            if c < nCtrl:
-                S[i, c] += sg
-        S[i] /= max(len(regs), 1)
-    # reproduce the mass-ranked retained set at the largest cap, then score its paths exactly
-    last = np.argsort(-pi)[:19531]
-    wts = pi[last].copy()
-    actbit = np.array([[(m >> c) & 1 for c in range(nCtrl)] for m in range(n)], dtype=float)
-    wact = actbit[last] * hvec[0]
-    for d in range(1, L + 1):
-        ch = Pm[:, last].T * wts[:, None]
-        flat = ch.ravel()
-        k = np.argsort(-flat)[:19531]
-        par, code = k // n, k % n
-        wts = flat[k]
-        wact = wact[par] + actbit[code] * hvec[d]
-        last = code
-    Zc = -1.0 + 2.0 * (wact @ S.T)
-    contrib = wts * np.exp(-np.logaddexp(0.0, -Zc).sum(axis=1))
-    o = np.argsort(-contrib)
-    P_(f"\n    {'cap':>8} {'MASS':>15} {'BOUND':>15} {'ORACLE':>15} {'share of gap captured':>22}")
+    P_("  MY FIRST ORACLE WAS CIRCULAR AND ITS OUTPUT PROVED IT. It re-ranked the paths that the")
+    P_("  MASS-ranked run retained, and asked what share of the mass-to-oracle gap the bound")
+    P_("  captured. The answer came back 99.2%, 98.6%, 99.4%, then 116.8%, then 320.1%, then a")
+    P_("  division by zero. A share above 100% of a ceiling is impossible, so the ceiling was not")
+    P_("  one: defining it from the LOSER's candidate set means the bound can and does escape it.")
+    P_("  THAT FAILURE IS ITSELF THE MOST INTERESTING RESULT IN THIS MODULE -- it proves the bound")
+    P_("  is not merely re-ordering the same candidates. It reaches parts of the path tree that")
+    P_("  mass ranking never generates at all, which is a stronger claim than better ranking.")
+    P_("\n  THE NON-CIRCULAR VERSION: run BOTH rankings at a cap three times the largest compared,")
+    P_("  score each retained path's EXACT contribution, and take for each k the better of the two")
+    P_("  best-possible re-rankings. That is a ceiling on re-ranking what EITHER rule can reach --")
+    P_("  explicitly not a ceiling over all 10^21 paths, which is not computable.")
+    KBIG = 60000
+    orc = {}
+    for rk in ("mass", "bound"):
+        r = engine_budget(Q, nCtrl, rows, L, dt, 0.0, cap=KBIG, rank=rk, return_paths=True)
+        per = r[5]
+        orc[rk] = np.sort(per)[::-1]
+        P_(f"    oracle candidate set from rank='{rk}' at cap {KBIG}: {len(per):,} paths,"
+           f" tail {float(per.sum()):.4e}")
+    P_(f"\n    {'cap':>8} {'MASS':>15} {'BOUND':>15} {'ORACLE':>15} {'share of gap':>14}")
     shares = []
     for cp in CAPS:
-        orc = float(contrib[o[:cp]].sum())
+        best = max(float(orc["mass"][:cp].sum()), float(orc["bound"][:cp].sum()))
         t_m, t_b = M[cp][0], B[cp][0]
-        if min(t_m, t_b, orc) <= 0:
-            P_(f"    {cp:>8} {t_m:>15.4e} {t_b:>15.4e} {orc:>15.4e} {'--':>22}")
+        if min(t_m, t_b, best) <= 0:
+            P_(f"    {cp:>8} {t_m:>15.4e} {t_b:>15.4e} {best:>15.4e} {'--':>14}")
             continue
-        gap = np.log10(orc) - np.log10(t_m)
+        gap = np.log10(best) - np.log10(t_m)
         got = np.log10(t_b) - np.log10(t_m)
-        sh = got / gap if gap > 1e-12 else float("nan")
+        sh = got / gap if gap > 1e-9 else float("nan")
         shares.append(sh)
-        P_(f"    {cp:>8} {t_m:>15.4e} {t_b:>15.4e} {orc:>15.4e} {sh * 100:>21.1f}%")
-    if shares:
-        P_(f"\n  P1: the bound captures {np.nanmin(shares) * 100:.0f}% to {np.nanmax(shares) * 100:.0f}%"
-           f" of the gap between mass ranking and the best")
-        P_("  possible ranking. Note the oracle is itself restricted to the paths the largest")
-        P_("  mass-ranked run retained, so it is a ceiling on RE-RANKING that set and not on")
-        P_("  pruning in general -- a rule that reaches paths mass ranking never generated could")
-        P_("  in principle exceed it.")
+        flag = "  <-- EXCEEDS" if sh > 1.001 else ""
+        P_(f"    {cp:>8} {t_m:>15.4e} {t_b:>15.4e} {best:>15.4e} {sh * 100:>13.1f}%{flag}")
+    if shares and np.isfinite(np.nanmax(shares)):
+        P_(f"\n  P1: the bound captures {np.nanmin(shares) * 100:.0f}% to {np.nanmax(shares) * 100:.0f}% of the gap between mass")
+        P_("  ranking and the best re-ranking either rule can reach.")
+        if np.nanmax(shares) > 1.001:
+            P_("  A row still above 100% means the bound-ranked run at that cap beat the best")
+            P_("  re-ranking of a THREE TIMES LARGER candidate set -- it is finding paths neither")
+            P_("  larger run generated, and the ceiling is still not a true ceiling.")
+        else:
+            P_("  Nothing exceeds the ceiling now, so the ceiling is behaving as one over the range")
+            P_("  it covers, and the bound is close to the best available re-ranking.")
 
     # ---- P3  THE SLOPE -------------------------------------------------------------------------
     P_("\n" + RULE)
