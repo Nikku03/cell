@@ -283,10 +283,18 @@ def main():
     sl = float(np.polyfit(xs, ys, 1)[0])
     r2 = 1.0 - np.sum((ys - np.polyval(np.polyfit(xs, ys, 1), xs)) ** 2) / np.sum((ys - ys.mean()) ** 2)
     P_(f"\n    width ~ targets^{sl:.3f}   R^2 = {r2:.3f}")
+    icpt = float(np.polyfit(xs, ys, 1)[1])
+    cross = float(np.exp((0.0 - icpt) / max(sl, 1e-9)))     # the fit is in NATURAL logs
     P_(f"  An exponent near one confirms the width is a SUM of per-target gaps. So this verifier")
-    P_(f"  meets the one-order gate below about {int(round(10 ** ((0.0 - np.polyfit(xs, ys, 1)[1]) / max(sl, 1e-9)))):,} targets and fails above it, and the")
-    P_(f"  quantity a better representation must attack is the PER-TARGET gap of about")
-    P_(f"  {pts[-1][1] / pts[-1][0]:.4f} orders, not the total.")
+    P_(f"  meets the one-order gate below about {cross:,.0f} targets and fails above it.")
+    P_(f"  (The first version of this line exponentiated a natural-log fit with base ten and")
+    P_(f"  printed 5,448 -- wrong by two orders, in the one number here that says whether the")
+    P_(f"  method is usable. The data alone locate the crossover between 25 targets at 0.672")
+    P_(f"  orders and 50 at 1.185, which is what the corrected formula returns.)")
+    P_(f"\n  THE ENGINE CARRIES 200 TARGETS, so the affine verifier is short by a factor of")
+    P_(f"  {200.0 / cross:.1f} on width. The quantity a better representation must attack is the")
+    P_(f"  PER-TARGET gap of about {pts[-1][1] / pts[-1][0]:.4f} orders, which has to fall by that same")
+    P_(f"  factor -- not the total.")
 
     # ---- V4  THE MARGIN ------------------------------------------------------------------------
     P_("\n" + RULE)
