@@ -3512,3 +3512,47 @@ the box by subtraction against exactcert's floor law and composecert's sampling 
 that sums to the observed total, not three independent measurements. And m_eff is a
 certificate-weighted mean of levels remaining, which is the right summary for a sum dominated by
 one level and is a summary nonetheless.
+
+
+=================================================================================================
+FIVE CORRECTIONS TO THE PRECEDING SECTION, ALL ACCEPTED
+=================================================================================================
+1. "THE INTERVAL CONTAINS THE EXACT TAIL" is verified on the enumerated FOUR-CONTROLLER instances
+   and nowhere else. At the engine's width there is no exact tail to check against, so containment
+   there is inherited from the construction and not observed.
+
+2. "THE BOX RELAXATION CONTRIBUTES 19.80 ORDERS" IS A RESIDUAL ATTRIBUTION, NOT A MEASUREMENT. It
+   is what remains after subtracting the floor law and the sampling slack from the observed total.
+   The ledger called it "a second and consistent measurement" of exactcert's box term and that is
+   WRONG: exactcert measured EXACT/BESTCOMP directly as a ratio at four controllers; this infers a
+   residual at ten. They are consistent in magnitude, which is worth something, and they are not
+   two measurements of the same kind. An isolated measurement -- replacing the box and re-running
+   -- has not been done.
+
+3. "REMOVING THE BOX LEAVES 6.97 ORDERS" IS A PROJECTION that holds the other two terms fixed. It
+   is arithmetic on the decomposition, not a result of removing anything.
+
+4. "THE 3.59-ORDER FLOOR IS IRREDUCIBLE" SPLITS INTO A THEOREM AND AN EXTRAPOLATION, and the
+   ledger ran them together. THE THEOREM: for bounds of the form (subtree mass) x (an
+   ON-probability at least as large as every completion's), BESTCOMP -- the true maximum over
+   actual completions -- is the pointwise smallest such bound, so no member of the family is
+   tighter. That part is immediate. THE EXTRAPOLATION: the VALUE of BESTCOMP/truth at n = 1024 is
+   3.59 orders, read off a law fitted over n in {8,16,32} and m in {1..4}, five doublings short of
+   the engine. The structure is proved for the family; the magnitude at the engine's width is
+   empirical and carries the extrapolation's uncertainty.
+
+5. AND A CONFLATION OF THREE SEPARATE RUNS, WHICH IS MINE AND WHICH MATTERS MOST. The ledger and
+   the summary said the tail is "estimated at 1.61e-95 with 0.22 orders of error, in three
+   seconds". Those three numbers come from three different degrees:
+
+     degree   estimate         seconds   error law fitted at this degree?
+          2   1.566277e-95         3.2   no
+          3   1.603289e-95        42.9   YES -- 0.22 orders, 2-sigma upper 0.30
+          4   1.612735e-95       361.2   no
+
+   THE MATCHED TRIPLE IS DEGREE 3: 1.603289e-95, about 43 seconds, 0.22 orders. The 1.61e-95 is
+   degree 4 at 361 seconds with no error law measured for it; the three seconds is degree 2 with
+   no error law measured for it either. Every future statement pairs the value, the cost and the
+   error from the same degree.
+   And the 0.22 orders is an EMPIRICAL CALIBRATION extrapolated from three widths and three
+   depths, not a certified interval. The engine has no certified interval on its estimate at all.
