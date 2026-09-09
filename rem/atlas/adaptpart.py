@@ -145,17 +145,19 @@ def main():
             idx, w = sample(k)
             keep = adaptive_keep(idx, CAP)
             ks = set(keep.tolist())
-            m = np.array([j not in ks for j in idx])
+            m = np.array([j not in ks for j in idx], dtype=float)
             if m.sum() < 2:
                 continue
-            # reweight the surviving sample to the dropped population
-            frac = float(p[idx[m]].sum() / max(p[idx].sum(), 1e-300))
-            Nd = N - len(keep)
-            u = ucb_fixed(w[m], Nd, b, DELTA) * frac
-            est = Nd * float(np.mean(w[m])) * frac
-            rat.append(u / Dtrue)
-            bias.append(est / Dtrue)
-            hits += int(u >= Dtrue)
+            # THE CORRECT SUB-POPULATION ESTIMATOR is the full sample with retained draws set to
+            # ZERO, not the surviving draws rescaled by a probability share. The first version used
+            # the latter, which is not an unbiased estimator of anything.
+            wd = w * m
+            Dpart = Ttrue - float(f[keep].sum())          # the truth FOR THIS partition
+            u = ucb_fixed(wd, N, b, DELTA)
+            est = N * float(np.mean(wd))
+            rat.append(u / Dpart)
+            bias.append(est / Dpart)
+            hits += int(u >= Dpart)
         if not rat:
             P_(f"    {k:>8,}   DEGENERATE -- every sampled candidate was retained; nothing to"
                f" estimate from")
@@ -171,9 +173,16 @@ def main():
     P_("P1  THE SUBTRACTION IDENTITY: UCB(TOTAL) MINUS THE EXACT RETAINED SUM")
     P_(RULE)
     Ttrue = float(f.sum())
-    P_(f"  total bound over all candidates, T = {Ttrue:.6e} -- a fixed number for this level,")
-    P_(f"  independent of any partition. The dropped sum for a cap of {CAP} is {Dtrue:.6e},")
-    P_(f"  so the retained share is {(Ttrue - Dtrue) / Ttrue * 100:.2f}% of the total.")
+    P_(f"  T = {Ttrue:.6e} is the total bound over the CANDIDATE POPULATION being partitioned")
+    P_( "  here -- which is this level's mass-dropped set, the population a second-stage pruner")
+    P_( "  would re-partition. It is fixed whatever the pruner then decides, and that is the only")
+    P_( "  property the identity needs. The first version of this line called T the total over ALL")
+    P_( "  candidates and then reported a retained share of 0.00%, which was a quantity compared")
+    P_( "  with itself; both are corrected.")
+    _idx0, _ = sample(4000)
+    _k0 = adaptive_keep(_idx0, CAP)
+    P_(f"  a typical adaptive keep of {CAP} from {N:,} captures"
+       f" {float(f[_k0].sum()) / Ttrue * 100:.2f}% of T.")
     P_(f"\n    {'evals':>8} {'coverage':>10} {'median UCB/true':>17}")
     p1 = {}
     for k in (3000, 10000, 30000):
@@ -205,13 +214,11 @@ def main():
             keep = adaptive_keep(idx_a, CAP)
             ks = set(keep.tolist())
             idx_b, w_b = sample(half)
-            m = np.array([j not in ks for j in idx_b])
+            m = np.array([j not in ks for j in idx_b], dtype=float)
             if m.sum() < 2:
                 continue
-            frac = float(p[idx_b[m]].sum() / max(p[idx_b].sum(), 1e-300))
-            Nd = N - len(keep)
             D = Ttrue - float(f[keep].sum())
-            u = ucb_fixed(w_b[m], Nd, b, DELTA) * frac
+            u = ucb_fixed(w_b * m, N, b, DELTA)           # zero-padded, as in P0
             rat.append(u / D)
             hits += int(u >= D)
         if not rat:
