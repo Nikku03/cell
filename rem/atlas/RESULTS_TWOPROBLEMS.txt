@@ -3645,3 +3645,104 @@ NOT ESTABLISHED, and the first one is the whole remaining problem:
   4. It addresses one term of one calculation. Class-map validity, transfer to other instances, and
      biological validation are untouched, and tailtight's own qualification stands: removing the
      dominant term does not finish the job.
+
+
+=================================================================================================
+VERIFICATION WITHOUT ENUMERATION: COST SOLVED, WIDTH NOT -- AND THE LIMIT IS IN THE CLASS
+=================================================================================================
+THREE CORRECTIONS ACCEPTED FIRST.
+  CONTAINMENT AND PROOF ARE SEPARATE. Finding the exact tail inside the interval validates the
+  implementation on those instances; the mathematical guarantee comes from the terminal bounds and
+  backward inequalities holding everywhere required, and for a machine-rigorous claim the rounding
+  errors in evaluating them must themselves be enclosed. Floating-point "zero violations" is not
+  that, and enclose.py's claim is corrected to rigour MODULO floating point.
+  INJECTIVITY DOES NOT LICENSE ENUMERATION. Exhaustive reachable-state checking is valid whether or
+  not paths merge. What injectivity establishes is that deduplicating accumulated states cannot
+  remove the exponential growth -- it explains why enumeration is EXPENSIVE, not why it is sound.
+  The previous section had that backwards.
+  AND THE GATE NEEDS BOTH CONTAINMENT AND WIDTH, which enclose.py's double-counting bug paid for.
+
+THE CONSTRUCTION THAT VISITS NO ACCUMULATION. Carry affine functions in the log. The drives are
+AFFINE in the accumulation, so their range over the coordinate box is EXACT -- a box bound on an
+affine function is not a relaxation, which is precisely what the old box bound got wrong by applying
+interval reasoning to a nonlinear function. log sigma is concave and log-sum-exp is convex, so the
+terminal gets affine bounds from per-target chords and tangents and the backward step gets an affine
+lower bound from a tangent and an affine upper bound by centring on that tangent's slope.
+
+THE COST PROPERTY WORKS, AND IT IS THE POINT:
+
+     nCtrl   L          paths     work   seconds   peak MB   width, orders   containment
+         4   4      1.049e+06    3,360      0.00      3334           4.628   yes
+         6   4      1.074e+09   36,640      0.01      3334           4.755   unavailable
+         8   5      2.815e+14  676,640      0.04      3334           4.751   unavailable
+        10   6      1.181e+21  12.7e+06     1.22      3334           4.652   unavailable
+
+Work over path count falls from 0.32 to 1e-14. The engine's own instance verifies in 1.22 seconds
+and 3.3 GB against a path set of 1.18e21, and containment holds on every instance where an exact
+tail exists to check against.
+
+BUT THE WIDTH GATE FAILS: 4.63 to 4.99 orders against the one-order bar. Against enclose.py's
+enumerating cubic verifier at 0.001 to 0.004 orders, that is the price of dropping enumeration.
+
+=================================================================================================
+AND THE DECOMPOSITION SAYS THE LIMIT IS IN THE REPRESENTATION CLASS, NOT THE IMPLEMENTATION
+=================================================================================================
+    terminal chord/tangent gap alone      4.695 orders
+      of which the UPPER is high by       0.722
+      and the LOWER falls short by        3.973
+    the decoupled residual spread M       0.000 orders
+    accumulated through the recursion     4.695 -> 4.631  (it NARROWS)
+
+THE DECOUPLING I EXPECTED TO DOMINATE CONTRIBUTES NOTHING. All of it is the terminal, and four
+fifths of that is the chord LOWER bound.
+
+AND THE CHORD IS THE BEST AFFINE MINORANT OF A CONCAVE FUNCTION ON AN INTERVAL: any affine function
+below log sigma at both endpoints is below the chord at both endpoints, hence below it throughout.
+So the 3.97 orders is not an implementation shortfall. It is the tightest an affine lower bound can
+be, given each drive's exact range -- a limit of the class, and the reason the width is a SUM of
+per-target gaps:
+
+     targets  width, orders  orders per target
+          10          0.217             0.0217
+          50          1.185             0.0237
+         200          4.628             0.0231
+
+    width ~ targets^1.007    R^2 = 0.996
+
+THE VERIFIER MEETS THE ONE-ORDER GATE BELOW ABOUT 42 TARGETS AND THE ENGINE CARRIES 200, so it is
+short by a factor of 4.8. The quantity a better representation must attack is the PER-TARGET gap of
+0.023 orders, not the total, and it has to fall by that same factor.
+
+=================================================================================================
+THREE DEFECTS OF MINE IN THIS MODULE
+=================================================================================================
+The terminal tangent DROPPED THE base TERM. A bound on log sigma is stated in the drive z, and
+z = base + gain*(x.S[t]), so substituting leaves a slope*(base - anchor) term in the constant; I
+kept -slope*anchor and lost slope*base. Summed over 200 targets that is about 87 orders, and it put
+BOTH ends of the enclosure above the truth. THE CONTAINMENT GATE CAUGHT IT -- the second time in two
+modules that a containment check has caught a wrong enclosure, and the first time the width was 5
+orders while the answer was 56 orders out, so width alone would not have flagged it either.
+
+Removing a dead assignment broke the block's indentation and the module would not parse.
+
+AND THE CROSSOVER TARGET COUNT WAS COMPUTED AS 10**((0-intercept)/slope) ON A FIT TAKEN IN NATURAL
+LOGS, printing 5,448 where the data plainly locate it between 25 targets at 0.672 orders and 50 at
+1.185. Wrong by two orders, in the single number in this module that says whether the method is
+usable at the engine's target count. Corrected to 42.
+
+=================================================================================================
+THE CORRECTED STATUS
+=================================================================================================
+    component                     established by these tests
+    backward approximation        fits the tested function accurately
+    enclosure construction        narrow intervals containing independently enumerated tails
+    reachable-state verification  checks all relevant inequalities on those finite instances
+    ENUMERATION-FREE VERIFICATION cost solved -- 1e-14 of the path count, seconds at engine width,
+                                  containment holding wherever it can be checked
+    SCALABLE CERTIFICATION        NOT established: the width is 4.8x over the gate at the engine's
+                                  target count, and the shortfall is a property of the affine class
+
+Rigour throughout is modulo floating point: an explicit margin plus an extended-precision
+cross-check, not directed rounding. Containment is observed only where exact enumeration runs. And
+this is one term of one calculation -- class-map validity, transfer to other instances, and
+biological validation are untouched, and removing this term would not finish the job.
