@@ -2643,3 +2643,133 @@ paths, so "99% of the achievable gain" is 99% of a computable ceiling and not of
 the slopes are fitted over about two decades while the crossing points sit far outside that range;
 what the extrapolation is used for is the COMPARISON between two slopes measured over the same
 range, which is far better conditioned than either absolute crossing.
+
+
+=================================================================================================
+THE EXACT BOUND: THE CERTIFICATE DOES NOT CLOSE, AND EXACTNESS WAS NEVER THE PROBLEM
+=================================================================================================
+boundprune's pruner used the TANGENT relaxation of the target-aware bound, and its certificate came
+out 25 orders LARGER than the tail it bounds. Two candidates for the blame: the relaxation, or the
+shape of the bound itself. The exact bound was implemented -- rank="exact", forming the true
+per-candidate subtree bound with parents chunked so the parents x children x targets tensor never
+exists in full -- and run at the engine's own width.
+
+THE ANSWER TO THE LITERAL QUESTION IS NO, AND IT IS NOT CLOSE:
+
+        cap     rank            tail     cert/tail
+        100    bound      6.1775e-99     2.880e+27
+        100    exact      6.1713e-99     2.875e+27
+       1000    bound      2.3093e-98     1.839e+26
+       1000    exact      2.3137e-98     1.810e+26
+      10000    bound      7.6642e-98     3.088e+25
+      10000    exact      7.7094e-98     3.027e+25
+      19531    bound      1.0567e-97     1.701e+25
+      19531    exact      1.0640e-97     1.666e+25
+
+THE EXACT BOUND IS 1.02x TIGHTER THAN THE TANGENT RELAXATION, AT ROUGHLY THIRTY TIMES THE COMPUTE
+-- the module records per-run wall-clock, which varied by a factor of three between runs on this
+machine and is not quoted here for that reason; the ~30x ratio between the two ranks held in both.
+A 2% improvement on a quantity that needs to shrink by 25 orders. And it ranks IDENTICALLY -- the
+two orderings agree to within 0.003 orders of recovered tail at every cap -- which explains after
+the fact why boundprune's 6x-8x ranking win never needed it.
+
+=================================================================================================
+WHERE THE LOOSENESS ACTUALLY LIVES, DECOMPOSED WHERE EVERYTHING ENUMERATES
+=================================================================================================
+Every bound in this family has one shape: the subtree's mass times the best ON-probability any
+single completion could reach. THE MASS FACTOR IS EXACT -- the subtree's weights sum to the prefix
+weight because the transition matrix is column stochastic -- so all the looseness is in the second
+factor. At 4 controllers and L = 4, where all 1,048,576 paths enumerate, it splits into three:
+
+     level  prefixes   TANGENT/EXACT   EXACT/BESTCOMP   BESTCOMP/TRUTH        total
+         1       256       1.099e+00        2.147e+20        3.755e+01    8.855e+21
+         2      4096       1.297e+00        7.436e+16        2.046e+01    1.973e+18
+         3     65536       2.028e+00        4.860e+10        9.880e+00    9.738e+11
+         4   1048576       5.990e+00        1.000e+00        1.000e+00    5.990e+00
+
+BESTCOMP is the true maximum over ACTUAL completions -- the tightest bound of this shape that could
+ever exist. Read the columns: the tangent relaxation costs a factor of one to six. The irreducible
+max-versus-average step costs ten to forty. THE BOX RELAXATION COSTS TEN TO TWENTY ORDERS OF
+MAGNITUDE. Relaxing the reachable completions to a continuous box and letting every target pick its
+own best point in it is the entire defect, and it is neither the exactness of the algebra nor the
+shape of the bound.
+
+AND AS A CERTIFICATE RATHER THAN A PER-PREFIX RATIO, THAT LOOKED LIKE VERY GOOD NEWS:
+
+     level    kept    EXACT cert/deficit   BESTCOMP cert/deficit
+         2      1%             9.081e+17               1.304e+01
+         2     50%             1.496e+18               2.270e+01
+         3      1%             2.643e+11               4.514e+00
+         3     50%             4.220e+11               1.023e+01
+
+A certificate at 4.5 to 22.7 times the true deficit clears pathbound's 1e3 bar by two orders. On
+that reading the certificate is closable and the thing to fix is the description of the completion
+set, not the bound's algebra.
+
+=================================================================================================
+AND THE GATE THAT WAS BUILT TO TAKE THAT VERDICT AWAY DID TAKE IT AWAY
+=================================================================================================
+The encouraging number rests on BESTCOMP / TRUTH being about ten to twenty, and that was measured
+at n = 16 while the engine runs at n = 1024. The quantity is a MAXIMUM over completions against
+their weighted average, so it grows with the number of completions. A one-variable law in the
+completion count was tried and FAILED -- exponent 0.538 fitted across widths, 0.241 across depths,
+the same nominal quantity giving two different laws. A single variable that yields two exponents is
+the wrong model, not an impossible extrapolation. The floor depends on the state count n and the
+levels remaining m separately:
+
+         n  m levels left   completions   BESTCOMP/TRUTH
+         8              1             8            5.043
+         8              2            64            9.389
+         8              3           512           13.565
+         8              4         4,096           16.196
+        16              1            16            9.880
+        16              2           256           20.463
+        16              3         4,096           37.548
+        32              1            32           16.525
+        32              2         1,024           41.602
+
+    log10(floor) = -0.280 + 1.048*log10(n) + 1.028*log10(m)      R^2 = 0.963, 9 points
+
+BOTH EXPONENTS ARE ESSENTIALLY ONE, so the irreducible floor is very nearly
+
+    floor  ~  0.52 * n * m
+
+-- linear in the number of states and linear in the levels left to complete. That is the cleanest
+law this build order has found for anything, and it is bad news. Extrapolated to the engine:
+
+      decisions made at                     m        floor
+      the last level                        1        750.5
+      two levels from the leaves            2       1530.3
+      mid-window                            4       3120.4
+      the root                              7       5546.6
+
+IT STRADDLES THE BAR: under 1e3 only for decisions at the very last level, over it everywhere else.
+The pruner drops at EVERY level and the certificate SUMS those drops, so the shallow drops dominate
+and the total does not close. E0b's encouraging verdict was an artefact of a toy width where the
+root IS nearly the leaves.
+
+=================================================================================================
+WHAT THIS SETTLES
+=================================================================================================
+1. THE EXACT BOUND DOES NOT CLOSE THE CERTIFICATE, and it was never going to: it differs from the
+   tangent relaxation by 2% on the certificate and by 0.003 orders on the ranking.
+2. THE BOX RELAXATION IS THE WHOLE DEFECT, worth ten to twenty orders, and fixing it would close
+   the certificate at toy widths.
+3. BUT IT WOULD NOT CLOSE IT AT THE ENGINE'S WIDTH, because the irreducible floor of the whole
+   mass-times-best-completion FAMILY grows as 0.52*n*m and is already 750 to 5500 at n = 1024.
+   No refinement within this family -- exact instead of tangent, reachable set instead of box, or
+   anything not yet invented -- gets under that.
+4. SO A CLOSING CERTIFICATE REQUIRES LEAVING THE FAMILY. The floor exists because the bound
+   replaces a weighted AVERAGE of ON-probabilities over the subtree with their MAXIMUM. A bound
+   that distributes the ON-probability across the subtree instead of taking its largest member is
+   outside the family and is not bounded by 0.52*n*m. That is now the well-posed target, and its
+   size is known in advance: it must beat 0.52*n*m to be worth building.
+
+THE LIMITS. BESTCOMP is not an algorithm -- it is computed by enumerating the completions, which is
+exactly what the engine cannot do -- so it measures what a bound WOULD deliver if the reachable set
+could be described tightly, and quoting it as an achieved certificate would be the same error as
+reading a loop ceiling as a cap, which this build order has done three times. The floor law is
+fitted over n = 8 to 32 and the engine sits five doublings beyond; the two-variable form reduces
+that to one well-determined exponent per axis rather than an exponent that changed with the axis,
+but it is still an extrapolation and should be read as a magnitude. And certificate/tail is the
+readable ratio at the engine's width only because the true deficit is unknowable there.
