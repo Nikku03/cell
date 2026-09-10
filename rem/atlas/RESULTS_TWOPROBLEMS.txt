@@ -3833,3 +3833,98 @@ now measured rather than suspected is WHY the affine side is stuck: not the coup
 a third, but the curvature of log sigma across a drive range of width two, which no affine bound
 escapes. The next construction has to be piecewise or quadratic, and its cost multiplier is the
 thing to price before building it.
+
+
+=================================================================================================
+PARTITIONING THE SHARED ACCUMULATION: THE FIRST OUTCOME, NOT THE SECOND
+=================================================================================================
+THE IDEA IS RIGHT AND THE MEASUREMENT REFUTES IT. Every drive reads the same accumulation, so one
+split of one accumulation coordinate narrows all 200 drives at once -- which is why the region count
+could stay small where splitting drives independently is 2^200. And the terminal side works exactly
+as intended. It is the propagation that fails, in the specific way the experiment was built to
+detect.
+
+THE PROPAGATION IS SOUND AND ITS PROBABILITIES ARE EXACT. Transitions are enclosed per source
+region: the transition probabilities are used unchanged and only region MEMBERSHIP is relaxed, by
+taking the extreme over every region a shifted region can reach, pessimistically on both sides.
+Probability is never reassigned to whichever region gives the preferred answer.
+
+THE SWEEP, at 4 controllers, L = 4, 200 targets, exact tail 1.187971e-102:
+
+     regions   terminal gap   final width  contains  mean crossings   seconds
+           1         71.540        71.540       yes            1.00      0.00
+           2         57.600        59.825       yes            1.75      0.00
+           4         44.152        48.317       yes            3.06       0.00
+           8         38.186        44.973       yes            5.36      0.01
+          16         34.620        42.851       yes            9.38      0.02
+
+And at 8 controllers, L = 5, where 32 regions is genuine:
+
+     regions   terminal gap   final width  mean crossings
+           1         77.543        77.543            1.00
+           8         51.161        57.287            5.36
+          32         44.458        52.725           16.41
+
+THE TERMINAL GAP FALLS BY HALF AND THE FINAL INTERVAL FALLS BY A THIRD. The difference between them
+-- zero at one region, 8.2 orders at sixteen, 8.3 at thirty-two -- is transition-induced widening,
+and it grows monotonically with every split. THIS IS THE FIRST OUTCOME AND NOT THE SECOND. The
+partitioning does not advance the engine.
+
+=================================================================================================
+AND THE MECHANISM IS GEOMETRIC, NOT A MATTER OF WHAT EACH REGION CARRIES
+=================================================================================================
+     level   shift h_d   cut spacing  shift / spacing
+         1      0.0956        0.5000             0.19
+         2      0.1577        0.5000             0.32
+         3      0.2600        0.5000             0.52
+         4      0.4287        0.5000             0.86
+
+REGION MEMBERSHIP IS INFORMATIVE ONLY IF A REGION IS LARGE COMPARED WITH HOW FAR THE ACCUMULATION
+MOVES IN ONE LEVEL, and at the last level the shift is 0.86 of the cut spacing. So a shifted region
+straddles the cut for most starting positions -- and splitting further makes it WORSE, because the
+regions shrink while the shift does not. The crossings column doubles per split: 1.00, 1.75, 3.06,
+5.36, 9.38, 16.41, so at thirty-two regions a shifted region reaches sixteen of them. Membership
+carries almost no information after a single step.
+
+THAT IS A PROPERTY OF THE GEOMETRY AND NOT OF THE BOUND CARRIED INSIDE EACH REGION, so it would
+afflict any per-region representation, constant or affine. And it is sufficient.py's injectivity
+seen from another side: the accumulation lands somewhere different after every step, which is
+exactly why coarse membership in it cannot survive one.
+
+=================================================================================================
+THE GATES
+=================================================================================================
+    CORRECTNESS   PASS. Terminal enclosure holds at 8 regions x 400 interior points with zero
+                  violations; every reachable accumulation lies in the region its index selects.
+    CONTAINMENT   PASS. The exact tail lies inside at every region count where it can be checked.
+    TIGHTNESS     FAIL, and not marginally: 42.9 orders at 200 targets against a bar of 1.
+    COST          PASS. 4.4e-2 of the path count at four controllers falling to 3.4e-13 at ten,
+                  4.2 seconds at the engine's width.
+
+AND THE COMPARISON THAT MATTERS IS WITH WHAT ALREADY EXISTED:
+
+    verifier                             width, orders   cost
+    enumerating, cubic                     0.001-0.004   O(paths)
+    closed form, affine chord                4.63-4.99   1e-14 of paths
+    closed form, vertex-LP minorant          3.48-4.17   1e-14 of paths
+    regions, piecewise constant, 32         42.9-55.9    3e-13 of paths
+
+THE REGION METHOD IS TEN TIMES WORSE THAN THE SINGLE AFFINE BOUND IT WAS MEANT TO IMPROVE ON. Part
+of that is the representation -- a constant per region is coarse in ten dimensions and a
+piecewise-constant enclosure needs many regions to match one affine function -- and the sweep shows
+the region count cannot buy its way out, because the transition ambiguity grows faster than the
+terminal gap falls.
+
+WHAT WOULD HAVE TO BE TRUE FOR THIS ROUTE TO WORK. The per-level shift would have to be small
+compared with the region size, which means either many more regions along each coordinate -- and the
+crossings measurement says that makes it worse, not better -- or a time weighting whose per-level
+increments are small, which is exactly the quantisation sufficient.py priced and which changes the
+observable. The route is not blocked by an implementation detail; it is blocked by the size of the
+step the accumulation takes.
+
+WHAT THIS DOES NOT SETTLE. The bound carried per region is a constant, which is the specification's
+letter; whether regions around an AFFINE representation do better is untested, and the crossings
+measurement suggests the ceiling is the same because the ambiguity is geometric. Cuts are at
+coordinate midpoints chosen greedily by curvature, and neither the position nor the order is
+optimised. Rigour is modulo floating point and containment is observed only where exact enumeration
+runs.
