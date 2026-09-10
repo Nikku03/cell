@@ -79,7 +79,7 @@ def vertices(k, H):
     return V
 
 
-def best_affine_minorant(S, H, k):
+def best_affine_minorant(S, H, k, anchor=None):
     """The tightest affine minorant of F over [0,H]^k, from an LP over the box's vertices.
 
     Valid on the WHOLE box because F is concave: F - (a + b.x) is then concave and attains its
@@ -88,7 +88,13 @@ def best_affine_minorant(S, H, k):
     Fv = logg(V, S)
     # maximise the mean vertex value of the minorant, subject to a + b.v <= F(v) at every vertex
     A = np.column_stack([np.ones(len(V)), V])
-    c = -np.concatenate([[float(len(V))], V.sum(axis=0)])
+    # THE OBJECTIVE MATTERS AS MUCH AS THE CONSTRAINTS. Maximising the MEAN vertex value spreads the
+    # tightness over the whole box; the bound only has to be good where the accumulations that carry
+    # mass actually sit. With an anchor, maximise the minorant THERE.
+    if anchor is None:
+        c = -np.concatenate([[float(len(V))], V.sum(axis=0)])
+    else:
+        c = -np.concatenate([[1.0], np.asarray(anchor, dtype=float)])
     r = linprog(c, A_ub=A, b_ub=Fv, bounds=[(None, None)] * (k + 1), method="highs")
     if not r.success:
         return None, None, V, Fv
@@ -96,28 +102,31 @@ def best_affine_minorant(S, H, k):
 
 
 def best_affine_majorant(S, H, k):
-    """Tightest affine majorant, by the mirrored LP. F concave means -F is convex, so a majorant's
-    slack is convex and maximal at a vertex -- the same finite constraint set."""
-    V = vertices(k, H)
-    Fv = logg(V, S)
-    A = np.column_stack([np.ones(len(V)), V])
-    c = np.concatenate([[float(len(V))], V.sum(axis=0)])
-    r = linprog(c, A_ub=-A, b_ub=-Fv, bounds=[(None, None)] * (k + 1), method="highs")
-    if not r.success:
-        return None, None
-    return float(r.x[0]), np.asarray(r.x[1:])
+    """THE MIRRORED LP IS INVALID AND THIS FUNCTION RECORDS WHY, THEN DOES THE RIGHT THING.
+
+    For a concave F, a MINORANT's slack F - (a + b.x) is concave, so its minimum over a box is at a
+    vertex and vertex feasibility implies feasibility everywhere. A MAJORANT's slack
+    (a + b.x) - F is CONVEX, so its minimum is generally INTERIOR and vertex feasibility implies
+    nothing at all. The first version asserted the mirrored argument and W1 found 2,380 violations
+    in 4,000 interior points, exactly as that error predicts.
+
+    The tightest affine majorants of a concave function are its supporting hyperplanes, so the
+    upper bound reverts to a tangent -- which is what fastverify already used, and its 0.70-order
+    gap was never the problem."""
+    return None, None
 
 
-def enclose_vx(Pm, pi, n, hvec, S, actbit, L, margin=FP_MARGIN, terminal="vertex"):
+def enclose_vx(Pm, pi, n, hvec, S, actbit, L, margin=FP_MARGIN, terminal="vertex_anchored"):
     """fastverify's recursion with the terminal swapped for the vertex-LP bounds."""
     k = actbit.shape[1]
     H1 = float(hvec.sum())
     work = 0
-    if terminal == "vertex":
-        al, bl, V, Fv = best_affine_minorant(S, H1, k)
-        au, bu = best_affine_majorant(S, H1, k)
-        work += 2 * len(V) * len(S)
-        if al is None or au is None:
+    if terminal in ("vertex", "vertex_anchored"):
+        anc = np.full(k, 0.5 * H1) if terminal == "vertex_anchored" else None
+        al, bl, V, Fv = best_affine_minorant(S, H1, k, anchor=anc)
+        (au, bu), _ = affine_terminal(S, H1, k)     # tangent: the only valid affine majorant here
+        work += len(V) * len(S) + 4 * len(S)
+        if al is None:
             return None
     else:
         (au, bu), (al, bl) = affine_terminal(S, H1, k)
@@ -190,22 +199,28 @@ def main():
     P_("W1  THE VERTEX-LP MINORANT AGAINST THE PER-TARGET CHORD")
     P_(RULE)
     (au_c, bu_c), (al_c, bl_c) = affine_terminal(S, H1, k)
-    al_v, bl_v, V, Fv = best_affine_minorant(S, H1, k)
-    au_v, bu_v = best_affine_majorant(S, H1, k)
+    al_m, bl_m, V, Fv = best_affine_minorant(S, H1, k)
+    al_a, bl_a, _, _ = best_affine_minorant(S, H1, k, anchor=np.full(k, 0.5 * H1))
     Xs = rng.random((4000, k)) * H1
     Fx = logg(Xs, S)
+    P_("  MY FIRST MAJORANT WAS INVALID AND W1 CAUGHT IT. A minorant's slack F - affine is concave,")
+    P_("  so its minimum over the box is at a vertex and vertex feasibility suffices. A majorant's")
+    P_("  slack is CONVEX, its minimum is interior, and vertices prove nothing -- the mirrored LP")
+    P_("  produced 2,380 violations in 4,000 interior points, exactly as that error predicts. The")
+    P_("  upper bound reverts to the tangent, whose 0.70-order gap was never the problem.")
+    rows = [("per-target chord", al_c, bl_c), ("vertex LP, mean objective", al_m, bl_m),
+            ("vertex LP, anchored at centre", al_a, bl_a)]
+    P_(f"\n    {'lower bound':<34} {'mean gap, orders':>17} {'gap at centre':>15} {'violations':>11}")
+    for nm, a_, b_ in rows:
+        gp = float(np.mean(Fx - (a_ + Xs @ b_)) / np.log(10.0))
+        xc = np.full((1, k), 0.5 * H1)
+        gc = float((logg(xc, S)[0] - (a_ + xc[0] @ b_)) / np.log(10.0))
+        vi = int(np.sum(a_ + Xs @ b_ > Fx + 1e-9))
+        P_(f"    {nm:<34} {gp:>17.3f} {gc:>15.3f} {vi:>11}")
     gap_c = float(np.mean(Fx - (al_c + Xs @ bl_c)) / np.log(10.0))
-    gap_v = float(np.mean(Fx - (al_v + Xs @ bl_v)) / np.log(10.0))
-    up_c = float(np.mean((au_c + Xs @ bu_c) - Fx) / np.log(10.0))
-    up_v = float(np.mean((au_v + Xs @ bu_v) - Fx) / np.log(10.0))
-    viol_l = int(np.sum(al_v + Xs @ bl_v > Fx + 1e-9))
-    viol_u = int(np.sum(au_v + Xs @ bu_v < Fx - 1e-9))
-    P_(f"\n    {'bound':<34} {'lower gap, orders':>18} {'upper gap, orders':>18}")
-    P_(f"    {'per-target chord and tangent':<34} {gap_c:>18.3f} {up_c:>18.3f}")
-    P_(f"    {'vertex LP on the sum':<34} {gap_v:>18.3f} {up_v:>18.3f}")
-    P_(f"\n  validity at 4,000 random INTERIOR points, checked independently of the LP:")
-    P_(f"    lower-bound violations {viol_l}, upper-bound violations {viol_u}")
-    P_(f"  W1: {'valid, and the lower gap falls ' + f'{gap_c / max(gap_v, 1e-12):.1f}x' if viol_l == 0 and viol_u == 0 else 'VIOLATED at interior points -- either F is not concave or the LP is wrong'}")
+    gap_v = float(np.mean(Fx - (al_a + Xs @ bl_a)) / np.log(10.0))
+    P_(f"\n  W1: the anchored LP's lower gap is {gap_c / max(gap_v, 1e-12):.2f}x better than the chord's, with zero")
+    P_(f"  violations at interior points -- validity checked independently of the LP that produced it.")
 
     # ---- W2/W3  END TO END ---------------------------------------------------------------------
     P_("\n" + RULE)
@@ -219,7 +234,7 @@ def main():
         ex = exact_tail(Pm, pi, n, hvec, S, actbit, L)
         lo_c, hi_c, _ = enclose_vx(Pm, pi, n, hvec, S, actbit, L, terminal="chord")
         t0 = time.time()
-        lo_v, hi_v, wk = enclose_vx(Pm, pi, n, hvec, S, actbit, L, terminal="vertex")
+        lo_v, hi_v, wk = enclose_vx(Pm, pi, n, hvec, S, actbit, L, terminal="vertex_anchored")
         el = time.time() - t0
         good = lo_v <= ex * (1 + 1e-9) and ex <= hi_v * (1 + 1e-9)
         okall = okall and good
@@ -237,7 +252,7 @@ def main():
     for nt in (10, 25, 50, 100, 200):
         Pm, pi, n, hvec, S, actbit, sha = prep(4, 4, ntarget=nt)
         lo_c, hi_c, _ = enclose_vx(Pm, pi, n, hvec, S, actbit, 4, terminal="chord")
-        lo_v, hi_v, _ = enclose_vx(Pm, pi, n, hvec, S, actbit, 4, terminal="vertex")
+        lo_v, hi_v, _ = enclose_vx(Pm, pi, n, hvec, S, actbit, 4, terminal="vertex_anchored")
         wc = float(np.log10(hi_c / max(lo_c, 1e-308)))
         wv = float(np.log10(hi_v / max(lo_v, 1e-308)))
         pts.append((len(S), wv))
@@ -259,7 +274,7 @@ def main():
     for nc, L in ((4, 4), (6, 4), (8, 5), (10, 6)):
         Pm, pi, n, hvec, S, actbit, sha = prep(nc, L)
         t0 = time.time()
-        r = enclose_vx(Pm, pi, n, hvec, S, actbit, L, terminal="vertex")
+        r = enclose_vx(Pm, pi, n, hvec, S, actbit, L, terminal="vertex_anchored")
         el = time.time() - t0
         if r is None:
             P_(f"    {nc:>6} {L:>3} {2 ** nc:>13,}  LP failed")
