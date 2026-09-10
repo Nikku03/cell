@@ -202,18 +202,59 @@ def main():
     P_(f"\n  4 controllers, L = 4, 200 targets. exact tail {ex:.6e}")
     P_(f"\n    {'regions':>8} {'terminal gap':>14} {'final width':>13} {'contains':>9}"
        f" {'mean crossings':>15} {'work':>12} {'seconds':>9}")
+    seen_R = set()
     for m in range(0, 6):
         cuts = choose_cuts(S, k, m)
+        R = 1 << len(cuts)                                # ACTUAL count: k caps the split count
+        if R in seen_R:
+            P_(f"    {R:>8}  -- only {k} coordinates exist at this width, so the partition"
+               f" saturates here")
+            break
+        seen_R.add(R)
         t0 = time.time()
         plo, phi, work, tg, cross = run_regions(Pm, pi, n, hvec, S, actbit, 4, cuts)
         el = time.time() - t0
         good = plo <= ex * (1 + 1e-9) and ex <= phi * (1 + 1e-9)
-        P_(f"    {1 << m:>8} {tg / np.log(10.0):>14.3f}"
+        P_(f"    {R:>8} {tg / np.log(10.0):>14.3f}"
            f" {np.log10(phi / max(plo, 1e-308)):>13.3f} {'yes' if good else 'NO':>9}"
            f" {cross:>15.2f} {work:>12,} {el:>9.2f}")
     P_("\n  The terminal-gap column is per region, in orders. The crossings column is how many")
     P_("  regions a shifted region reaches on average -- the transition ambiguity, and the thing")
     P_("  that grows if this approach is going to fail.")
+
+    # ---- R1b  THE MECHANISM: WHY THE CROSSINGS GROW --------------------------------------------
+    P_("\n" + RULE)
+    P_("R1b  THE MECHANISM: THE ACCUMULATION MOVES AS FAR AS THE PARTITION IS WIDE")
+    P_(RULE)
+    P_("  Region membership is informative only if a region is large compared with how far the")
+    P_("  accumulation moves in one level. It is not.")
+    P_(f"\n    {'level':>6} {'shift h_d':>11} {'cut spacing':>13} {'shift / spacing':>16}")
+    for d in range(1, 5):
+        sp = 0.5                                          # midpoint cuts on a unit coordinate
+        P_(f"    {d:>6} {hvec[d]:>11.4f} {sp:>13.4f} {hvec[d] / sp:>16.2f}")
+    P_("\n  A shift comparable to the cut spacing means a shifted region straddles the cut for most")
+    P_("  starting positions, and SPLITTING FURTHER MAKES IT WORSE: the regions shrink while the")
+    P_("  shift does not. That is why the crossings column roughly doubles per split, and it is a")
+    P_("  property of the geometry rather than of the bound carried inside each region.")
+    P_("  It is also sufficient.py's injectivity seen from another side: the accumulation is a")
+    P_("  different point after every step, so coarse membership in it survives no step at all.")
+
+    # ---- R1c  A SWEEP WIDE ENOUGH FOR 32 REGIONS -----------------------------------------------
+    P_("\n" + RULE)
+    P_("R1c  THE SWEEP AT A WIDTH WITH ENOUGH COORDINATES TO REACH 32 REGIONS")
+    P_(RULE)
+    P_("  8 controllers, L = 5: containment cannot be checked -- 2.8e14 paths -- and is marked so.")
+    Pm8, pi8, n8, hv8, S8, ab8, _s8 = prep(8, 5)
+    k8 = ab8.shape[1]
+    P_(f"\n    {'regions':>8} {'terminal gap':>14} {'final width':>13} {'mean crossings':>15}"
+       f" {'seconds':>9}")
+    for m in range(0, 6):
+        cuts8 = choose_cuts(S8, k8, m)
+        t0 = time.time()
+        plo, phi, work, tg, cross = run_regions(Pm8, pi8, n8, hv8, S8, ab8, 5, cuts8)
+        el = time.time() - t0
+        P_(f"    {1 << len(cuts8):>8} {tg / np.log(10.0):>14.3f}"
+           f" {np.log10(phi / max(plo, 1e-308)):>13.3f} {cross:>15.2f} {el:>9.2f}")
 
     # ---- R2  THE GATES -------------------------------------------------------------------------
     P_("\n" + RULE)
