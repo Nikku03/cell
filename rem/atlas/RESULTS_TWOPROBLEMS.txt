@@ -3928,3 +3928,94 @@ measurement suggests the ceiling is the same because the ambiguity is geometric.
 coordinate midpoints chosen greedily by curvature, and neither the position nor the order is
 optimised. Rigour is modulo floating point and containment is observed only where exact enumeration
 runs.
+
+
+=================================================================================================
+ALPHAGENOME: WHAT IT DOES, THE USE WORTH MAKING, AND WHY THE OBVIOUS USE IS THE WRONG ONE
+=================================================================================================
+WHAT IT IS, read off the installed client rather than quoted from the announcement: a DNA sequence
+model served over gRPC, input windows of 16KB / 100KB / 500KB / 1MB, organisms HOMO_SAPIENS and
+MUS_MUSCULUS, and ELEVEN output modalities -- ATAC, CAGE, CHIP_HISTONE, CHIP_TF, CONTACT_MAPS,
+DNASE, PROCAP, RNA_SEQ, SPLICE_JUNCTIONS, SPLICE_SITES, SPLICE_SITE_USAGE -- at single-base
+resolution for most, with variant-effect scoring built in. Free for non-commercial use, API key
+required, sized for thousands rather than millions of custom predictions.
+
+ACCESS FROM HERE: the endpoint gdmscience.googleapis.com:443 IS REACHABLE and there is NO API KEY in
+this environment. The live experiment therefore cannot be run, and that is reported as the state of
+affairs rather than replaced by a proxy measurement described as a test. Everything below is the
+pricing of the experiment and the pre-registration of it.
+
+THE OBVIOUS USE IS THE WRONG ONE. whatdata's blocking finding was a human class ladder narrower than
+its own noise floor, which invites using a deterministic model to remove the noise. That adds
+nothing: humantransfer's variance-component estimator ALREADY removes replicate noise from the
+marginal question and returned a between-regulator effect of 1.05 floors with a CI excluding zero.
+The noise was corrected four modules ago.
+
+=================================================================================================
+THE CEILING GATE: WHAT NO DATASET IN THIS RECORD SUPPLIES
+=================================================================================================
+PART ONE, VERIFIED ON THE CACHED ENCODE PANEL RATHER THAN ASSERTED. Across 153 target genes and 400
+(gene, regulator) observations, the number of perturbed regulators takes exactly one distinct value:
+ONE. Every observation is a single knockdown.
+
+    A summary that says the response depends on HOW MANY regulators are perturbed predicts a
+    CONSTANT for each gene in that data. So this data can REFUTE the count summary -- which
+    humantransfer did, at 1.05 floors -- and can NEVER CALIBRATE it. And it cannot test a
+    class-count functional at all, because per-class counts never move either.
+
+That is a sharper statement of the record's own limitation than anything it has carried so far. Six
+modules have been testing a count summary against data in which the count never varies.
+
+PART TWO: the engine's per-gene factor is a PRODUCT over occupied classes, so it counts the joint
+states the engine must represent. What share of those does a single-knockdown panel pin down?
+
+     targets with k >=    count   median marginals / joint dof
+                     2     1416                         0.1562
+                     4      639                         0.0547
+                     8      221                         0.0054
+                    20       42                         0.0000
+
+15.6% at two regulators, falling to effectively zero at twenty -- which is the regime the 140-cap
+row lives in. A VANISHING SHARE, so the joint experiment is the only route to the question, and an
+in-silico one is the only available source of it.
+
+AND THE NUANCE THAT DECIDES WHAT THE EXPERIMENT IS FOR. If the class hypothesis is TRUE, marginals
+plus the class map determine the counts and the joint response follows. The joint data is needed to
+TEST the hypothesis, not to fit it under the hypothesis. That is exactly the test this record has
+never been able to run, and it is what AlphaGenome could supply.
+
+=================================================================================================
+THE PIPELINE, VALIDATED WHERE VALIDATION IS POSSIBLE
+=================================================================================================
+Since no dataset here varies the count, the count-versus-identity decomposition is validated on
+synthetic responses whose truth is known:
+
+    synthetic truth      var by COUNT   var by IDENTITY   recovered?
+    pure count                  1.000             0.000          yes
+    pure identity               0.005             0.995          yes
+    half and half               0.244             0.756          yes
+
+It recovers each. The instrument is fit to be pointed at model predictions; only the predictions are
+missing.
+
+THE EXPERIMENT IS PRE-REGISTERED IN THE MODULE and runs unchanged the moment a key exists: TRRUST's
+most-regulated genes, a 100KB window on the TSS, one site per annotated regulator chosen by
+predicted CHIP_TF binding, then RNA_SEQ predicted under all singleton and pairwise deletions plus a
+stratified sample of larger subsets -- so the COUNT varies, which is the property no real dataset
+here has. The statistic is the validated decomposition, then the class ladder asked where the count
+actually moves.
+
+=================================================================================================
+AND WHAT IT WOULD NOT SETTLE, WHICH IS MOST OF WHAT MATTERS
+=================================================================================================
+  1. A CLASS COUNT MEASURED ON A MODEL'S PREDICTIONS IS A CLASS COUNT FOR THAT MODEL. It bears on
+     biology only to the extent the model is right about the joint effect of deleting several sites
+     -- the regime it is LEAST constrained in, since its training data is overwhelmingly
+     observational rather than combinatorially perturbed. Ledger S. This would be a test of the
+     hypothesis's COHERENCE, not a measurement of a constant.
+  2. The model is deterministic, which removes the noise floor that blocked whatdata AND removes
+     the yardstick every accuracy figure in this record is quoted in. A new one would have to be
+     defined, and re-predicting identical sequences is not it -- that measures serialisation, not
+     uncertainty.
+  3. It touches the accuracy standard only. The pruning certificate, the enclosure width, the
+     27-order guaranteed interval and the whole cost line are untouched by it.
