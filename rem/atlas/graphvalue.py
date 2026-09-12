@@ -309,7 +309,7 @@ def main():
     P_("  EXACTLY, so the controller order is identical and the class map is unchanged. The only")
     P_("  thing that moves is which TF binds which gene.")
 
-    probe = (13, 20, 40)
+    probe = (5, 10, 13, 20, 30, 40)
     caps_real, pv_real = cap_scan(D, n, a64, ms=(0,), probe=probe)
     P_(f"\n    {'graph':<18} {'swaps':>8} {'cap |C|':>9}  "
        f"{'per @13':>11} {'per @20':>11} {'per @40':>11}")
@@ -340,6 +340,52 @@ def main():
                f" ratio {np.median(rp)/pv_real[k][0]:.3g}x")
     P_("\n  V0 VERDICT (bar predeclared at 1.5x on the cap):")
     P_(f"    {'PASS -- wiring is load-bearing' if (ratio > 1.5 or ratio < 1/1.5) else 'FAIL -- the cap is a function of the DEGREE SEQUENCE'}")
+
+    # ---- V0c  WHY A 100x EFFECT IN THE COST BOUGHT 1.08x IN THE CAP ----------------------------
+    P_("\n" + RULE)
+    P_("V0c THE EXCHANGE RATE: HOW MANY CONTROLLERS IS A FACTOR OF X IN THE COST WORTH?")
+    P_(RULE)
+    P_("  The integer cap hid a factor of 100, which is exactly the failure mode V0 predeclared")
+    P_("  reporting the continuous term against. The reason is the growth rate of the cost.")
+    ks = sorted(k for k in probe if k in pv_real)
+    yy = np.array([np.log10(pv_real[k][0]) for k in ks])
+    xx = np.array(ks, float)
+    slope, icpt = np.polyfit(xx, yy, 1)
+    r2 = 1.0 - float(np.sum((yy - (slope * xx + icpt)) ** 2)
+                     / max(np.sum((yy - yy.mean()) ** 2), 1e-30))
+    P_(f"\n    {'|C|':>6} {'per-gene term':>15} {'log10':>8}")
+    for k in ks:
+        P_(f"    {k:>6} {pv_real[k][0]:>15.3e} {np.log10(pv_real[k][0]):>8.2f}")
+    P_(f"\n  log10(per) = {slope:.3f} * |C| + {icpt:.2f}   R^2 = {r2:.3f}")
+    P_(f"  THE EXCHANGE RATE: {slope:.3f} decades of cost per controller, so a cost reduction of")
+    P_(f"  a factor F buys log10(F) / {slope:.3f} controllers of cap.")
+    r40 = [p[40][0] for p in rpers if 40 in p]
+    fac = float("nan")
+    if r40 and 40 in pv_real:
+        fac = pv_real[40][0] / float(np.median(r40))
+        P_(f"\n  Read far out, at |C| = 40, the rewired graph is {fac:.0f}x CHEAPER than the real one --")
+        P_( "  the real wiring is WORSE for this engine than random wiring at matched degrees.")
+
+    # THE RATIO MUST BE READ AT THE CAP, AND THE FIRST WRITING OF THIS SECTION DID NOT.
+    kc = min(ks, key=lambda k: abs(k - caps_real[0]))
+    i = ks.index(kc)
+    prev = ks[i - 1] if i > 0 else ks[i + 1]
+    loc = abs((np.log10(pv_real[kc][0]) - np.log10(pv_real[prev][0])) / (kc - prev))
+    rc = [p[kc][0] for p in rpers if kc in p]
+    ratio_cap = pv_real[kc][0] / float(np.median(rc)) if rc else float("nan")
+    P_("\n  AND THAT FACTOR DOES NOT TRANSFER TO THE CAP, WHICH THE FIRST WRITING OF THIS SECTION")
+    P_(f"  GOT WRONG. It set the {fac:.0f}x measured at |C| = 40 beside the 1-controller change measured")
+    P_(f"  at |C| = {caps_real[0]} and called the gap unexplained. The two are at different points. The ratio")
+    P_("  that governs the cap is the one AT the cap:")
+    P_(f"\n    real / rewired at |C| = {kc:<3}                     {ratio_cap:.2f}x")
+    P_(f"    local slope, |C| = {prev} to {kc}                   {loc:.3f} decades per controller")
+    P_(f"    predicted cap change  log10({ratio_cap:.2f}) / {loc:.3f}     {np.log10(ratio_cap)/loc:.2f} controllers")
+    P_(f"    MEASURED cap change                        {med - caps_real[0]:.0f}")
+    P_(f"\n  which agrees. The {fac:.0f}x at |C| = 40 is a ratio read {40 - caps_real[0]} controllers BEYOND the cap,")
+    P_("  where neither graph is affordable, and it was never going to transfer. So the deliverable")
+    P_("  statement is the small one: at the point the engine actually operates, the curated wiring")
+    P_("  differs from random wiring at matched degrees by a factor of two, worth ONE controller.")
+    P_("  V0's bar was set on the cap before the run. The verdict stands at FAIL.")
 
     # ---- V1 / V1b -------------------------------------------------------------------------------
     P_("\n" + RULE); P_("V1  TRUNCATE THE HUBS' REGULATOR SETS -- AND THE MATCHED CONTROL"); P_(RULE)
@@ -398,6 +444,56 @@ def main():
     P_("  derived edge set COULD differ. It does not show any edge is wrong, and it does not")
     P_("  show a predicted edge would be right. It is an upper bound on the size of the change,")
     P_("  not evidence about its direction.")
+
+    # ---- V3 -------------------------------------------------------------------------------
+    P_("\n" + RULE); P_("V3  WHAT A REPLACEMENT EDGE SET WOULD HAVE TO CHANGE"); P_(RULE)
+    P_("  Not the wiring. V0 preserved every degree and moved the cap by one controller, and the")
+    P_("  direction was the wrong way round -- random wiring is CHEAPER than the curated wiring,")
+    P_("  so a sequence-derived edge set helps only if it is LESS concentrated than TRRUST. A")
+    P_("  ChIP-style binding predictor is if anything MORE concentrated, because the promoters")
+    P_("  that attract many factors are the ones it will also predict many factors for.")
+    P_("\n  What moves the cap is IN-DEGREE, and only in bulk. V1's sweep against V1b's matched")
+    P_("  control at equal edge count:")
+    P_(f"\n    {'genes cut':>10} {'edges removed':>14} {'hubs cut':>10} {'random cut':>12}"
+       f" {'attributable':>13}")
+    for m in (1, 2, 5, 20, 100):
+        nd, ch, cc = v1[m]
+        P_(f"    {m:>10} {nd:>14} {ch:>10} {cc:>12} {ch/cc if cc else float('nan'):>12.2f}x")
+    P_("\n  V3: one gene is not the cap. widthblock's 'from |C| = 20 upward ONE GENE is")
+    P_("  essentially the entire per-gene cost' is a true statement about the cost's MAXIMUM and")
+    P_("  a false one about the cap -- deleting that gene's 113 excess in-edges moves the cap from")
+    P_(f"  {base_cap} to {v1[1][1]}. The hub effect is real but it is COLLECTIVE: at 100 genes the cut is worth")
+    P_(f"  {v1[100][1]}/{v1[100][2]} = {v1[100][1]/v1[100][2]:.1f}x over deleting the same {v1[100][0]} edges at random.")
+    P_("  Note also that CDKN1A's in-degree here is 115; widthblock's 52 was its regulators AMONG")
+    P_("  THE TOP 122 FACTORS, a different quantity, and the two are not in conflict.")
+
+    # ---- V4 -------------------------------------------------------------------------------
+    P_("\n" + RULE); P_("V4  THE RANKED USES, AND WHICH OF THEM THIS MODULE HAS PRICED"); P_(RULE)
+    P_("  PRICED HERE, AND REJECTED. Replacing TRRUST's edge set with a sequence-derived one.")
+    worth = np.log10(max(ratio_cap, 1.0)) / loc if loc else float("nan")
+    P_(f"  Worth {worth:.1f} controllers at the exchange rate measured AT the cap, {loc:.3f} decades per")
+    P_("  controller, and in the wrong direction. V2 removes the motivating hypothesis too:")
+    P_("  the hubs are the BETTER-replicated part of TRRUST, not the worse. No API key is needed")
+    P_("  to reach this conclusion, which is the point of running it first.")
+    P_("\n  NOT PRICED HERE, AND NOW THE LARGEST MEASURED LEVERAGE IN THE RECORD. The target")
+    P_("  response sigma(base + gain * wact). realkinetics K5b measured the sensitivity of its own")
+    P_("  reported tail to these two constants and recorded that both were INVENTED:")
+    P_("      base -1.5  ->  -9.37 orders        base -0.5  ->  +8.13 orders")
+    P_("      gain  1.0  ->  -0.80 orders        gain  3.0  ->  +0.63 orders")
+    P_("  Half a log-odds unit on an unmeasured constant moves the answer by eight to nine orders.")
+    P_("  tailtight's whole composed certificate is 26.77 orders wide. So the base constant is")
+    P_("  within a factor of two of the entire certification problem, and unlike the box")
+    P_("  relaxation it is not a mathematical defect -- it is a MISSING MEASUREMENT, which is the")
+    P_("  one kind of gap a predictor can close.")
+    P_("\n  THE LIMIT ON THAT USE, STATED BEFORE IT IS ATTEMPTED. AlphaGenome predicts expression;")
+    P_("  base + gain * wact is a log-odds for a firing event in a CME. A dose-response in intact")
+    P_("  site count pins the SHAPE -- curvature, saturation point, the ratio of gain to base --")
+    P_("  but not the absolute log-odds scale, which needs a link neither the model nor this")
+    P_("  record supplies. A shape with an unknown offset is still strictly more than invented.")
+    P_("\n  UNCHANGED FROM alphagenome.py's A0: the joint regime. Single-perturbation data pins a")
+    P_("  median 15.6% of the engine's per-gene joint degrees of freedom at k >= 2 and 0.00% at")
+    P_("  k >= 20, and ENCODE supplies 74 perturbed regulators against whatdata's requirement of")
+    P_("  128. In silico there is no such limit. That gate passed; this one did not.")
 
     P_(f"\n  runtime {time.time() - t0:.1f}s")
     open(OUT, "w").write("\n".join(out) + "\n")

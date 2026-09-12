@@ -4019,3 +4019,87 @@ AND WHAT IT WOULD NOT SETTLE, WHICH IS MOST OF WHAT MATTERS
      uncertainty.
   3. It touches the accuracy standard only. The pruning certificate, the enclosure width, the
      27-order guaranteed interval and the whole cost line are untouched by it.
+
+=================================================================================================
+GRAPHVALUE -- PRICING ALPHAGENOME'S LARGEST APPARENT USE, AND FINDING IT IS NOT ONE
+=================================================================================================
+  alphagenome.py priced ONE use, the in-silico joint-deletion experiment. The obvious LARGER one
+  was never priced: the engine's entire cost line rests on TRRUST, a literature-curated graph, and
+  AlphaGenome's CHIP_TF head predicts TF binding from sequence with no citation bias in it. Before
+  recommending that, the ceiling gate in its fifth application -- and it needs no API key, because
+  the question is not about AlphaGenome. It is about how much of OUR cap is the curated wiring.
+
+  V0  DEGREE-PRESERVING REWIRING. Every out-degree and in-degree preserved exactly, so the
+      controller order is unchanged by construction and the class map, attached to nodes, is
+      unchanged too. Bar predeclared at 1.5x on the cap.
+
+        real cap 13, rewired median 14 over five seeds        1.08x       FAIL
+
+      The cap is a function of the DEGREE SEQUENCE. Changing which TF binds which gene -- exactly
+      what a sequence model changes -- does not move it.
+
+  V0c WHY, AND THE CORRECTION THIS SECTION NEEDED. The continuous cost DOES move: at |C| = 40 the
+      rewired graph is 100x cheaper, so the real wiring is WORSE for this engine than random
+      wiring at matched degrees. The first writing of V0c set that 100x beside the 1-controller
+      cap change and called the gap unexplained. They are at different points. Read at the cap:
+
+        real / rewired at |C| = 13                      1.94x
+        local slope, |C| = 10 to 13                     0.355 decades per controller
+        predicted cap change                            0.81 controllers
+        MEASURED                                        1
+
+      which agrees. log10(per) = 0.538 |C| + 5.06, R^2 = 0.991: the cost grows half a decade per
+      controller, so a factor F in cost buys log10(F)/0.538 controllers and even a 100x better
+      edge set would buy under four. The 100x at |C| = 40 is read 27 controllers beyond the cap
+      where neither graph is affordable. It was never going to transfer.
+
+  V1  TRUNCATING HUBS' REGULATOR SETS AT THE EDGE LEVEL, against V1b's matched control that
+      deletes the SAME NUMBER of directed edges at random -- without which the comparison means
+      nothing, since deleting edges always lowers a monotone cost.
+
+        genes cut   edges removed   hubs cut   random cut   attributable
+                1             113         14           13          1.08x
+                5             351         16           14          1.14x
+               20             861         24           15          1.60x
+              100            2079        170           17         10.00x
+
+      Bar was predeclared on the SINGLE top gene at 1.5x. 13 -> 14 is 1.08x. FAIL.
+
+      AND THIS CORRECTS A CLAIM IN THIS RECORD. widthblock's W3 -- "from |C| = 20 upward ONE GENE
+      is essentially the entire per-gene cost" -- is true of the cost's MAXIMUM and false of the
+      cap. Deleting CDKN1A's 113 excess in-edges outright moves the cap by one controller. The
+      hub effect is real and large but COLLECTIVE: it takes 100 genes to reach 10x over the
+      matched random control. (CDKN1A's in-degree is 115; widthblock's 52 was its regulators
+      among the top 122 factors -- a different quantity, not a conflict.)
+
+  V2  AND THE MOTIVATING HYPOTHESIS IS REFUTED TOO. The guess was that hub regulator sets are
+      citation artefacts. TRRUST carries a PMID per record, so this is measurable in the file:
+
+        8403 pairs, 6554 distinct publications, 7112 (84.6%) supported by exactly ONE paper
+        CDKN1A  115 in-edges, 187 distinct PMIDs, 72.2% singly reported
+        all other regulated genes (2483):         91.2% singly reported
+
+      The hubs are the BETTER-replicated part of TRRUST, not the worse. Two readings remain and
+      this measurement does not separate them -- hub edges may be better replicated, or hub genes
+      may be studied enough that each edge gets more chances at replication. Either way the
+      artefact hypothesis does not survive as stated. STATED LIMIT: a publication count bounds how
+      much a sequence-derived edge set COULD differ. It is not evidence about direction.
+
+  SO THE RANKING CHANGES, WHICH IS WHAT THE GATE WAS FOR.
+    REJECTED, priced here: replacing the edge set. 0.8 controllers at the exchange rate measured
+    at the cap, in the wrong direction, on a hypothesis the PMIDs refute.
+
+    NOW FIRST, and it is the largest measured leverage anywhere in this record: the two constants
+    in the target response sigma(base + gain*wact). realkinetics K5b measured them and recorded
+    that both were INVENTED -- base -0.5 moves the reported tail +8.13 orders, base -1.5 moves it
+    -9.37. tailtight's entire composed certificate is 26.77 orders wide. One unmeasured constant
+    is within a factor of two of the whole certification problem. Unlike the box relaxation it is
+    not a mathematical defect but a MISSING MEASUREMENT, which is the one kind of gap a predictor
+    can close. LIMIT, stated before it is attempted: predicted expression against intact site
+    count pins the response SHAPE -- curvature, saturation, gain relative to base -- not the
+    absolute log-odds scale of a CME firing event, for which neither the model nor this record
+    supplies a link. A shape with an unknown offset is still strictly more than invented.
+
+    UNCHANGED: the joint regime, alphagenome.py A0. Single perturbations pin a median 15.6% of
+    the per-gene joint degrees of freedom at k >= 2 and 0.00% at k >= 20; ENCODE has 74 perturbed
+    regulators against whatdata's requirement of 128. That gate passed. This one did not.
