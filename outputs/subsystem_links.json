@@ -1,0 +1,278 @@
+{
+  "test": "subsystem_links",
+  "members": {
+    "cell model": [
+      "colab/cell_conditions.py",
+      "colab/cell_levels.py",
+      "colab/cell_map.py",
+      "colab/cell_orphan_candidates.py",
+      "colab/cell_orphan_channel_gate.py",
+      "colab/cell_orphan_chem_coverage.py",
+      "colab/cell_orphan_cluster_stats.py",
+      "colab/cell_orphan_context.py",
+      "colab/cell_orphan_evidence.py",
+      "colab/cell_orphan_evidence_score.py",
+      "colab/cell_orphan_fill.py",
+      "colab/cell_orphan_holdout.py",
+      "colab/cell_orphan_howmany.py",
+      "colab/cell_orphan_incontext.py",
+      "colab/cell_orphan_llm.py",
+      "colab/cell_orphan_llm_audit.py",
+      "colab/cell_orphan_llm_merge.py",
+      "colab/cell_orphan_obscurity.py",
+      "colab/cell_orphan_rank_v2.py",
+      "colab/cell_orphan_selective.py",
+      "colab/cell_orphan_shortlist.py",
+      "colab/cell_orphan_spatial.py",
+      "colab/cell_orphan_ties.py",
+      "colab/cell_orphan_ties_nn.py",
+      "colab/cell_orphan_transfer.py",
+      "colab/cell_orphan_truthset.py",
+      "colab/cell_orphan_why_unsure.py",
+      "colab/cell_partslist.py",
+      "colab/cell_pathway_map.py",
+      "colab/cell_qa.py",
+      "colab/cell_sim.py",
+      "colab/cell_state.py",
+      "colab/cell_stats.py",
+      "colab/cell_web_fill.py",
+      "colab/cell_would_we_have_found_it.py",
+      "colab/cellos.py"
+    ],
+    "4d chromatin": [
+      "colab/chromatin_bond_energy.py",
+      "colab/chromatin_cost_model.py",
+      "colab/chromatin_greens.py",
+      "colab/chromatin_mark_cost.py",
+      "colab/chromatin_modal.py",
+      "colab/chromatin_resolution.py",
+      "colab/chromatin_rod.py",
+      "colab/chromatin_sphere_scaling.py",
+      "colab/chromatin_spheres.py",
+      "colab/chromatin_supercoil.py",
+      "colab/chromatin_time.py",
+      "colab/chromatin_timescale.py",
+      "colab/chromatin_twist_energy.py",
+      "colab/chromatin_twolevel.py",
+      "colab/physics_design.py",
+      "colab/physics_doctrine.py",
+      "colab/physics_reduce.py",
+      "colab/physics_reduce_rod.py",
+      "colab/physics_reduce_unknown.py"
+    ],
+    "nexus": [
+      "colab/nexus.py",
+      "colab/nexus_catalyst_compose.py",
+      "colab/nexus_catalyst_esm.py",
+      "colab/nexus_catalyst_nn.py",
+      "colab/nexus_catalyst_pilot.py",
+      "colab/nexus_cell.py",
+      "colab/nexus_dna_scale.py",
+      "colab/nexus_dna_spheres.py",
+      "colab/nexus_dock_screen.py",
+      "colab/nexus_doesitbind.py",
+      "colab/nexus_ko.py",
+      "colab/nexus_ko_fetch.py",
+      "colab/nexus_ko_struct.py",
+      "colab/nexus_massaction.py",
+      "colab/nexus_methyl_propagate.py",
+      "colab/nexus_pairs.py",
+      "colab/nexus_pocket_modes.py",
+      "colab/nexus_regulate.py",
+      "colab/nexus_screen_feasibility.py",
+      "colab/nexus_train.py",
+      "colab/nexus_txn.py",
+      "colab/nexus_wall.py"
+    ]
+  },
+  "code_links": {
+    "cell model -> nexus": [
+      [
+        "colab/cell_orphan_selective.py",
+        "colab/nexus_dock_screen.py"
+      ],
+      [
+        "colab/cell_orphan_selective.py",
+        "colab/nexus_pocket_modes.py"
+      ],
+      [
+        "colab/cellos.py",
+        "colab/nexus.py"
+      ],
+      [
+        "colab/cellos.py",
+        "colab/nexus_cell.py"
+      ],
+      [
+        "colab/cellos.py",
+        "colab/nexus_regulate.py"
+      ]
+    ],
+    "4d chromatin -> nexus": [
+      [
+        "colab/chromatin_bond_energy.py",
+        "colab/nexus_dna_spheres.py"
+      ],
+      [
+        "colab/chromatin_bond_energy.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/chromatin_greens.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/chromatin_mark_cost.py",
+        "colab/nexus_dna_spheres.py"
+      ],
+      [
+        "colab/chromatin_mark_cost.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/chromatin_modal.py",
+        "colab/nexus_dna_spheres.py"
+      ],
+      [
+        "colab/chromatin_modal.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/chromatin_sphere_scaling.py",
+        "colab/nexus_dna_spheres.py"
+      ],
+      [
+        "colab/chromatin_sphere_scaling.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/chromatin_time.py",
+        "colab/nexus_dna_spheres.py"
+      ],
+      [
+        "colab/chromatin_time.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/chromatin_timescale.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/chromatin_twist_energy.py",
+        "colab/nexus_dna_spheres.py"
+      ],
+      [
+        "colab/chromatin_twist_energy.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/chromatin_twolevel.py",
+        "colab/nexus_dna_spheres.py"
+      ],
+      [
+        "colab/chromatin_twolevel.py",
+        "colab/nexus_methyl_propagate.py"
+      ],
+      [
+        "colab/physics_reduce.py",
+        "colab/nexus_methyl_propagate.py"
+      ]
+    ],
+    "nexus -> cell model": [
+      [
+        "colab/nexus_catalyst_compose.py",
+        "colab/cell_orphan_llm.py"
+      ],
+      [
+        "colab/nexus_catalyst_compose.py",
+        "colab/cell_orphan_obscurity.py"
+      ],
+      [
+        "colab/nexus_catalyst_compose.py",
+        "colab/cell_orphan_ties_nn.py"
+      ],
+      [
+        "colab/nexus_catalyst_esm.py",
+        "colab/cell_orphan_ties_nn.py"
+      ],
+      [
+        "colab/nexus_catalyst_pilot.py",
+        "colab/cell_orphan_ties_nn.py"
+      ],
+      [
+        "colab/nexus_cell.py",
+        "colab/cellos.py"
+      ],
+      [
+        "colab/nexus_dock_screen.py",
+        "colab/cell_orphan_chem_coverage.py"
+      ],
+      [
+        "colab/nexus_dock_screen.py",
+        "colab/cell_orphan_ties_nn.py"
+      ]
+    ]
+  },
+  "data_links": {
+    "cell model -> nexus": [
+      "holdout_meta.json"
+    ]
+  },
+  "connected_pairs": [
+    [
+      "4d chromatin",
+      "nexus"
+    ],
+    [
+      "cell model",
+      "nexus"
+    ]
+  ],
+  "missing_pairs": [
+    [
+      "4d chromatin",
+      "cell model"
+    ]
+  ],
+  "log": [
+    "====================================================================================================",
+    "WHAT ALREADY CONNECTS CELL MODEL, NEXUS AND 4D CHROMATIN",
+    "====================================================================================================",
+    "  cell model      36 modules",
+    "  4d chromatin    19 modules",
+    "  nexus           22 modules",
+    "\n  CODE LINKS -- module A imports module B, so B's functions run inside A",
+    "    4d chromatin  ->  nexus   (17)",
+    "      chromatin_bond_energy.py           imports  nexus_dna_spheres.py",
+    "      chromatin_bond_energy.py           imports  nexus_methyl_propagate.py",
+    "      chromatin_greens.py                imports  nexus_methyl_propagate.py",
+    "      chromatin_mark_cost.py             imports  nexus_dna_spheres.py",
+    "      chromatin_mark_cost.py             imports  nexus_methyl_propagate.py",
+    "      chromatin_modal.py                 imports  nexus_dna_spheres.py",
+    "    cell model  ->  nexus   (5)",
+    "      cell_orphan_selective.py           imports  nexus_dock_screen.py",
+    "      cell_orphan_selective.py           imports  nexus_pocket_modes.py",
+    "      cellos.py                          imports  nexus.py",
+    "      cellos.py                          imports  nexus_cell.py",
+    "      cellos.py                          imports  nexus_regulate.py",
+    "    nexus  ->  cell model   (8)",
+    "      nexus_catalyst_compose.py          imports  cell_orphan_llm.py",
+    "      nexus_catalyst_compose.py          imports  cell_orphan_obscurity.py",
+    "      nexus_catalyst_compose.py          imports  cell_orphan_ties_nn.py",
+    "      nexus_catalyst_esm.py              imports  cell_orphan_ties_nn.py",
+    "      nexus_catalyst_pilot.py            imports  cell_orphan_ties_nn.py",
+    "      nexus_cell.py                      imports  cellos.py",
+    "\n  DATA LINKS -- A writes a file B reads (static paths + runtime traces)",
+    "    cell model  ->  nexus   (1 files)",
+    "      holdout_meta.json                      read by nexus_dock_screen.py, nexus_pocket_modes.py",
+    "\n  CONNECTION MATRIX   (c = code link, d = data link, . = none)",
+    "    from / to            cell model          nexus   4d chromatin",
+    "    cell model                   --             cd              .",
+    "    nexus                         c             --              .",
+    "    4d chromatin                  .              c             --",
+    "\n  2 of 3 subsystem PAIRS are connected in at least one direction",
+    "    4d chromatin  <->  nexus",
+    "    cell model  <->  nexus",
+    "    NOT CONNECTED:  4d chromatin  <->  cell model"
+  ]
+}

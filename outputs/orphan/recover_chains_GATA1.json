@@ -1,0 +1,66 @@
+{
+ "knockout": "GATA1",
+ "calibrated_threshold": 4.2,
+ "movers_uncensored": 637,
+ "specific_uncensored": 621,
+ "ladder": [
+  {
+   "regime": "(a) censored data + database signs",
+   "verified": 2,
+   "of": 545,
+   "sign_tested": 50,
+   "sign_correct": 3,
+   "states": {
+    "NO-DATA": 1087,
+    "MOVED-UNSIGNED": 232,
+    "CONTRADICTED": 47,
+    "CONFIRMED": 3
+   }
+  },
+  {
+   "regime": "(b) UNCENSORED data + database signs",
+   "verified": 3,
+   "of": 545,
+   "sign_tested": 62,
+   "sign_correct": 13,
+   "states": {
+    "FLAT": 412,
+    "MOVED-UNSIGNED": 564,
+    "NO-DATA": 331,
+    "CONTRADICTED": 49,
+    "CONFIRMED": 13
+   }
+  },
+  {
+   "regime": "(c) UNCENSORED data + LEARNED signs",
+   "verified": 9,
+   "of": 545,
+   "sign_tested": 109,
+   "sign_correct": 52,
+   "states": {
+    "FLAT": 412,
+    "MOVED-UNSIGNED": 517,
+    "NO-DATA": 331,
+    "CONFIRMED": 52,
+    "CONTRADICTED": 57
+   }
+  }
+ ],
+ "gain_from_data": 1,
+ "gain_from_learned_signs": 6,
+ "head_to_head_hop1": {
+  "n": 32,
+  "database_correct": 0,
+  "learned_correct": 2
+ },
+ "binding_constraint": {
+  "intermediates": 308,
+  "profiled_as_knockouts": 48,
+  "with_readable_knockout": 8,
+  "panel_knockouts": 1971,
+  "panel_weak_lt20_movers": 1634,
+  "panel_median_movers": 1
+ },
+ "verdict": "RECOVER CHAINS (GATA1; recover_chains.py): attacking the 7-of-230 verification gap with the two things the audit blamed -- missing MEASUREMENT (82% of failed hops) and missing/wrong SIGNS. FIX 1, uncensored expression: the harness pickle keeps only the top ~250 genes per knockout, while a dense matrix of the SAME experiment (1971x8563, 0% zeros, 100% sign agreement, spearman 0.90) exists; calibrated to the pickle's own untruncated knockouts, GATA1 has 637 movers (621 specific), so the pickle was showing about 39% of the response. FIX 2, learned signs: instead of trusting a database direction that is wrong most of the time, infer each edge's sign from how the two genes co-move across all OTHER knockouts (GATA1 held out, so not circular), abstaining below |corr|=0.15. RESULT -- chains verified end to end: censored+database 2/545 (0.4%) -> uncensored+database 3/545 (0.6%) -> uncensored+learned 9/545 (1.7%). So better DATA contributes +1 verified chains and learned SIGNS +6. HEAD-TO-HEAD, on the hop-1 edges where both make a claim, the database sign is right 0% and the learned sign 6%. BUT THE LADDER IS NOT THE POINT -- THE BINDING CONSTRAINT IS. Of the 308 distinct intermediate proteins on GATA1's chains, only 48 (16%) were THEMSELVES knocked out in this experiment, and only 8 (3%) had a knockout strong enough to read. To verify GATA1->X->Y you must know what removing X does, and for ~97% of the intermediates that experiment was never run. Worse, the panel is mostly null: 1634/1971 (83%) of profiled knockouts move fewer than 20 genes (median 1), and only 3% move >=100 -- most knockouts carry no signal to propagate at all. CONCLUSION, and it is actionable: the route from a handful of verified chains to most of them is NOT more clever analysis of this dataset, and NOT primarily an activity readout -- it is PERTURBING THE INTERMEDIATES. A targeted second screen that knocks out the few hundred proteins sitting on the chains (with verified depletion, since most current knockdowns are null) would make each hop directly checkable by measurement instead of inferable by annotation. That is a few-hundred-gene screen, not a genome-wide one, and it is chosen by the graph rather than at random. Deterministic; signs learned with the target knockout held out.",
+ "note": "RECOVER CHAINS (GATA1; recover_chains.py): attacking the 7-of-230 verification gap with the two things the audit blamed -- missing MEASUREMENT (82% of failed hops) and missing/wrong SIGNS. FIX 1, uncensored expression: the harness pickle keeps only the top ~250 genes per knockout, while a dense matrix of the SAME experiment (1971x8563, 0% zeros, 100% sign agreement, spearman 0.90) exists; calibrated to the pickle's own untruncated knockouts, GATA1 has 637 movers (621 specific), so the pickle was showing about 39% of the response. FIX 2, learned signs: instead of trusting a database direction that is wrong most of the time, infer each edge's sign from how the two genes co-move across all OTHER knockouts (GATA1 held out, so not circular), abstaining below |corr|=0.15. RESULT -- chains verified end to end: censored+database 2/545 (0.4%) -> uncensored+database 3/545 (0.6%) -> uncensored+learned 9/545 (1.7%). So better DATA contributes +1 verified chains and learned SIGNS +6. HEAD-TO-HEAD, on the hop-1 edges where both make a claim, the database sign is right 0% and the learned sign 6%. BUT THE LADDER IS NOT THE POINT -- THE BINDING CONSTRAINT IS. Of the 308 distinct intermediate proteins on GATA1's chains, only 48 (16%) were THEMSELVES knocked out in this experiment, and only 8 (3%) had a knockout strong enough to read. To verify GATA1->X->Y you must know what removing X does, and for ~97% of the intermediates that experiment was never run. Worse, the panel is mostly null: 1634/1971 (83%) of profiled knockouts move fewer than 20 genes (median 1), and only 3% move >=100 -- most knockouts carry no signal to propagate at all. CONCLUSION, and it is actionable: the route from a handful of verified chains to most of them is NOT more clever analysis of this dataset, and NOT primarily an activity readout -- it is PERTURBING THE INTERMEDIATES. A targeted second screen that knocks out the few hundred proteins sitting on the chains (with verified depletion, since most current knockdowns are null) would make each hop directly checkable by measurement instead of inferable by annotation. That is a few-hundred-gene screen, not a genome-wide one, and it is chosen by the graph rather than at random. Deterministic; signs learned with the target knockout held out."
+}

@@ -1,0 +1,140 @@
+=================================================================================================
+VERIFICATION WITHOUT VISITING EVERY ACCUMULATION
+=================================================================================================
+  Affine functions in the log, with closed-form bounds from concavity of log sigma and
+  convexity of log-sum-exp. Box ranges of AFFINE drives are exact, which is the specific
+  thing the old box bound got wrong by applying interval reasoning to a nonlinear function.
+
+=================================================================================================
+V0  THE CEILING GATE: IS THE REACHABLE SET INSIDE THE BOX, AND DOES IT FILL IT?
+=================================================================================================
+    level 0:      8 reachable points, box [0, 0.1015]^3, coords span [0.0000, 0.1015]
+    level 1:     64 reachable points, box [0, 0.2689]^3, coords span [0.0000, 0.2689]
+    level 2:    512 reachable points, box [0, 0.5449]^3, coords span [0.0000, 0.5449]
+
+  V0: inside the box: yes; reaches both extremes in every coordinate: yes.
+  The reachable set is the FULL GRID of coordinate-wise subset sums -- every bit pattern is
+  a state and the chain reaches all of them -- so the box is its exact bounding box and
+  contributes no looseness of its own. What looseness there is comes from the chord and
+  tangent gaps, not from the box.
+
+=================================================================================================
+V1/V2/V3  CONTAINMENT AND WIDTH TOGETHER, WITH COST, AGAINST THE ENUMERATING VERIFIER
+=================================================================================================
+
+     nCtrl   L        paths      exact tail  fast width  contains   fast work   fast s  enum width   enum s
+         3   3        4,096    6.973226e-99       4.982       yes       1,328     0.00       0.002     0.03
+         3   4       32,768    5.977817e-99       4.984       yes       1,504     0.00       0.004     0.20
+         4   3       65,536   1.503368e-102       4.626       yes       2,720     0.00       0.001     0.35
+         4   4    1,048,576   1.187971e-102       4.628       yes       3,360     0.00       0.003     5.58
+         3   5      262,144    5.363614e-99       4.986       yes       1,680     0.01       0.007     1.21
+
+  V1 AS PREDECLARED: containment holds on every instance; widest fast interval 4.986 orders. FAIL.
+
+  V2 THE COST. Verification work against path count:
+
+     nCtrl   L        paths    fast work   work / paths
+         3   3        4,096        1,328         0.3242
+         3   4       32,768        1,504         0.0459
+         4   3       65,536        2,720         0.0415
+         4   4    1,048,576        3,360         0.0032
+         3   5      262,144        1,680         0.0064
+    The fast verifier's work is O(states^2 * k) per level and does NOT grow with depth
+    beyond the level count, so the ratio falls as the path set grows. That is the property
+    being tested, and a falling ratio is what would establish it.
+
+=================================================================================================
+V3b  DECOMPOSING THE WIDTH, SINCE THE GATE FAILED ON IT
+=================================================================================================
+  Two relaxations are in play: the chord/tangent gap on log sigma at the terminal, and the
+  decoupled residual spread M in the upper log-sum-exp bound. This separates them.
+
+  TERMINAL GAP ALONE, averaged over 2,000 points in the box: 4.695 orders
+    upper exceeds exact log g by 0.722 orders, lower falls short by 3.973
+
+  HOW THE GAP ACCUMULATES DOWN THE RECURSION (mean over states, at the box centre):
+
+     level   gap, orders
+    terminal         4.695
+         3         4.663
+         2         4.646
+         1         4.637
+         0         4.631
+
+  AND WITH THE DECOUPLED SPREAD M FORCED TO ZERO -- NOT A VALID BOUND, A DIAGNOSTIC:
+    width with M      : 4.628 orders
+    width without M   : 4.628 orders
+    so M contributes    0.000 orders and the terminal
+    plus the tangent gap contribute 4.628
+
+  V3b: the term to attack is whichever of those two dominates, and the answer is in the
+  two numbers above rather than in an argument about which ought to.
+
+=================================================================================================
+V3c  WHY THE AFFINE CLASS CANNOT DO BETTER, AND WHAT THE WIDTH SCALES WITH
+=================================================================================================
+  THE CHORD IS THE BEST AFFINE MINORANT OF A CONCAVE FUNCTION ON AN INTERVAL. Any affine
+  function below log sigma at both endpoints is below the chord at both endpoints, hence
+  below it throughout. So the 3.97-order lower-bound gap is not an implementation shortfall
+  -- it is the tightest an affine lower bound can be, given each drive's range.
+  WHICH MAKES THE WIDTH A SUM OF PER-TARGET GAPS, and predicts it grows with the number of
+  targets. That is a scaling law and it is measured rather than argued.
+
+     targets  width, orders  orders per target
+          10          0.217             0.0217
+          25          0.672             0.0269
+          50          1.185             0.0237
+         100          2.423             0.0242
+         200          4.628             0.0231
+
+    width ~ targets^1.007   R^2 = 0.996
+  An exponent near one confirms the width is a SUM of per-target gaps. So this verifier
+  meets the one-order gate below about 42 targets and fails above it.
+  (The first version of this line exponentiated a natural-log fit with base ten and
+  printed 5,448 -- wrong by two orders, in the one number here that says whether the
+  method is usable. The data alone locate the crossover between 25 targets at 0.672
+  orders and 50 at 1.185, which is what the corrected formula returns.)
+
+  THE ENGINE CARRIES 200 TARGETS, so the affine verifier is short by a factor of
+  4.8 on width. The quantity a better representation must attack is the
+  PER-TARGET gap of about 0.0231 orders, which has to fall by that same
+  factor -- not the total.
+
+=================================================================================================
+V4  THE FLOATING-POINT MARGIN, AND WHAT IT DOES NOT ESTABLISH
+=================================================================================================
+  margin 0, float64      : [7.8416531093e-105, 3.3271574224e-100]
+  margin 1e-09, float64  : [7.8416530779e-105, 3.3271574357e-100]
+  margin 0, longdouble   : [7.8416531093e-105, 3.3271574224e-100]
+  float64 vs longdouble disagreement: 3.086e-14 orders on the upper end, 1.167e-14 on the lower
+  the applied margin is worth 1.737e-09 orders, which exceeds that
+  disagreement by 56294.4x.
+
+  WHAT THIS ESTABLISHES: a margin argument, plus an empirical cross-check in a wider
+  format. WHAT IT DOES NOT ESTABLISH: machine rigour. That needs directed rounding through
+  every operation, which this does not do. The enclosure is therefore rigorous MODULO
+  floating-point evaluation, and calling it verified without that qualifier would be an
+  overstatement of exactly the kind this record keeps correcting.
+
+=================================================================================================
+V5  WIDTHS AND COSTS WHERE EXACT ENUMERATION IS INFEASIBLE
+=================================================================================================
+
+     nCtrl   L          paths  width, orders         work   seconds   peak MB   containment
+         6   4      1.074e+09          4.755       36,640      0.01      3334   unavailable
+         8   5      2.815e+14          4.751      676,640      0.04      3334   unavailable
+        10   6      1.181e+21          4.652   12,706,592      1.16      3334   unavailable
+
+  Containment cannot be checked here -- there is no exact tail -- and is marked so rather
+  than inferred from the small instances.
+
+=================================================================================================
+V6  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. Containment is verified only where exact enumeration runs. At the engine's width the
+     enclosure's correctness rests on the construction's inequalities, not on observation.
+  2. Rigour is modulo floating point, as V4 states.
+  3. The affine representation is coarser than enclose.py's cubic, and the width gap
+     between them is the price of dropping enumeration. Whether an intermediate
+     representation -- affine bounds around a polynomial centre -- does better is untried.
+  4. One term of one calculation. Class-map validity, transfer, and biology are untouched.

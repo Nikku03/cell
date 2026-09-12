@@ -1,0 +1,246 @@
+{
+  "banned_fields": [
+    "dep_frac",
+    "ess",
+    "ess_prob",
+    "ess_src"
+  ],
+  "log": [
+    "================================================================================================",
+    "TEST B on REAL cell data: does ADRN-3 conjunction growth predict a gene it has never seen?",
+    "================================================================================================",
+    "  PREDECLARED: it should not help. Criterion 2 measured an untrained zero-parameter bag",
+    "  beating a Set Transformer on this data, so the limit is noise-fitting, not capacity.",
+    "  DepMap: 1,150 lines x 17,931 genes (>=100 measured lines)",
+    "  target: per-gene mean residual after the line marginal; sd 0.3829, range [-4.180, 0.645]",
+    "  features: 60 columns from 11 numeric + 3 categorical; EXCLUDED as DepMap-derived ['dep_frac', 'ess', 'ess_prob', 'ess_src']",
+    "  genes with annotation and a finite target: 15,567",
+    "\n  held-out GENE blocks: 8 disjoint blocks of ~1,946 genes; unit of replication is the block",
+    "\n  conjunctions grown per block: mean 54.4, min 48, max 64 (cap 64)",
+    "\n  arm                         RMSE       sd    vs baseline      MDE  verdict",
+    "  baseline_zero             0.3959   0.0174        +0.0000   0.0000  ",
+    "  ridge_linear              0.3303   0.0085        -0.0656   0.0109  BEATS",
+    "  ridge_plus_learned        0.3177   0.0076        -0.0782   0.0117  BEATS",
+    "  ridge_plus_random         0.3250   0.0104        -0.0708   0.0099  BEATS",
+    "  ridge_plus_shuffled       0.3257   0.0071        -0.0702   0.0131  BEATS",
+    "\n  contrast                                     gap       MDE  blocks  verdict",
+    "  learned_minus_linear                     -0.0126    0.0019  8/8   RESOLVED",
+    "  random_minus_linear                      -0.0052    0.0023  8/8   RESOLVED",
+    "  shuffled_minus_linear                    -0.0045    0.0038  7/8   RESOLVED",
+    "  learned_minus_random                     -0.0074    0.0036  8/8   RESOLVED",
+    "  learned_minus_shuffled                   -0.0080    0.0039  8/8   RESOLVED",
+    "  shuffled_minus_random                    +0.0007    0.0053  3/8   within noise",
+    "\n  learned/shuffled conjunction overlap: mean 0.2 of 54.4 -- near zero is expected; a high overlap would mean the permutation failed to break the correspondence",
+    "\n  DECOMPOSITION of the learned arm's -0.0126 over plain ridge:",
+    "    uniform capacity         -0.0052  ( 41.6%)",
+    "    selection-on-noise       -0.0045  ( 36.1%)",
+    "    genuine conjunction find -0.0080  ( 63.9%)  RESOLVED"
+  ],
+  "mean_conjunctions_grown": 54.375,
+  "n_blocks": 8,
+  "n_features": 60,
+  "n_genes": 15567,
+  "predeclared_expectation": "conjunction growth should NOT help; the criterion-2 result implies the limit is noise-fitting, not capacity",
+  "summary": {
+    "baseline_zero": {
+      "beats_baseline_by_more_than_mde": false,
+      "mde": 0.0,
+      "paired_gap_sd": 0.0,
+      "paired_gap_vs_baseline": 0.0,
+      "per_block_rmse": [
+        0.3847949504852295,
+        0.4153328835964203,
+        0.38275375962257385,
+        0.40098729729652405,
+        0.37225744128227234,
+        0.4103536307811737,
+        0.41788873076438904,
+        0.38258135318756104
+      ],
+      "rmse_mean": 0.395868755877018,
+      "rmse_sd": 0.017437333384367412
+    },
+    "learned_minus_linear": {
+      "left_better_blocks": 8,
+      "mde": 0.0018687501136875435,
+      "mean": -0.012586245783986899,
+      "n_blocks": 8,
+      "per_block": [
+        -0.014444352056841192,
+        -0.011673153813012094,
+        -0.010953033717740868,
+        -0.014293392323677545,
+        -0.009707704399086636,
+        -0.012530964164811531,
+        -0.014476141293716105,
+        -0.012611224503009222
+      ],
+      "resolved": true,
+      "sd": 0.0017618745036421248
+    },
+    "learned_minus_random": {
+      "left_better_blocks": 8,
+      "mde": 0.003593773131701542,
+      "mean": -0.0073546701145833365,
+      "n_blocks": 8,
+      "per_block": [
+        -0.009634332065303397,
+        -0.008128955103767155,
+        -0.001729446195477935,
+        -0.00848542825010895,
+        -0.002727736608395648,
+        -0.010072992325825536,
+        -0.010931473069554831,
+        -0.00712699729823324
+      ],
+      "resolved": true,
+      "sd": 0.003388241801962901
+    },
+    "learned_minus_shuffled": {
+      "left_better_blocks": 8,
+      "mde": 0.003923010466936441,
+      "mean": -0.008038398131566246,
+      "n_blocks": 8,
+      "per_block": [
+        -0.011901323797236352,
+        -0.0012002667987796034,
+        -0.011354462089908923,
+        -0.005012205290406191,
+        -0.006444859186318319,
+        -0.00813118797197493,
+        -0.01127469990239649,
+        -0.008988180015509162
+      ],
+      "resolved": true,
+      "sd": 0.003698649738448749
+    },
+    "mean_learned_shuffled_overlap": 0.25,
+    "random_minus_linear": {
+      "left_better_blocks": 8,
+      "mde": 0.0023012930235545514,
+      "mean": -0.0052315756694035626,
+      "n_blocks": 8,
+      "per_block": [
+        -0.004810019991537795,
+        -0.003544198709244939,
+        -0.009223587522262933,
+        -0.0058079640735685945,
+        -0.0069799677906909885,
+        -0.002457971838985995,
+        -0.0035446682241612737,
+        -0.005484227204775982
+      ],
+      "resolved": true,
+      "sd": 0.0021696798699369553
+    },
+    "ridge_linear": {
+      "beats_baseline_by_more_than_mde": true,
+      "mde": 0.01092775305657223,
+      "paired_gap_sd": 0.010302784385912327,
+      "paired_gap_vs_baseline": -0.06560424835177849,
+      "per_block_rmse": [
+        0.331178515143098,
+        0.3402727824437312,
+        0.320892283659943,
+        0.3308957582616267,
+        0.31651831936915087,
+        0.33868090113122,
+        0.3367247369010279,
+        0.32695276329211825
+      ],
+      "rmse_mean": 0.3302645075252395,
+      "rmse_sd": 0.008466181615697569
+    },
+    "ridge_plus_learned": {
+      "beats_baseline_by_more_than_mde": true,
+      "mde": 0.01165297984096552,
+      "paired_gap_sd": 0.010986534755435807,
+      "paired_gap_vs_baseline": -0.07819049413576538,
+      "per_block_rmse": [
+        0.3167341630862568,
+        0.3285996286307191,
+        0.3099392499422021,
+        0.31660236593794916,
+        0.30681061497006423,
+        0.3261499369664085,
+        0.3222485956073118,
+        0.31434153878910903
+      ],
+      "rmse_mean": 0.3176782617412526,
+      "rmse_sd": 0.007588658187251354
+    },
+    "ridge_plus_random": {
+      "beats_baseline_by_more_than_mde": true,
+      "mde": 0.00985064570657215,
+      "paired_gap_sd": 0.009287277837577757,
+      "paired_gap_vs_baseline": -0.07083582402118205,
+      "per_block_rmse": [
+        0.3263684951515602,
+        0.3367285837344863,
+        0.31166869613768006,
+        0.3250877941880581,
+        0.3095383515784599,
+        0.336222929292234,
+        0.3331800686768666,
+        0.32146853608734227
+      ],
+      "rmse_mean": 0.3250329318558359,
+      "rmse_sd": 0.01043042681336736
+    },
+    "ridge_plus_shuffled": {
+      "beats_baseline_by_more_than_mde": true,
+      "mde": 0.013132822358003842,
+      "paired_gap_sd": 0.012381743660617096,
+      "paired_gap_vs_baseline": -0.07015209600419914,
+      "per_block_rmse": [
+        0.32863548688349314,
+        0.3297998954294987,
+        0.32129371203211105,
+        0.32161457122835535,
+        0.31325547415638255,
+        0.3342811249383834,
+        0.3335232955097083,
+        0.3233297188046182
+      ],
+      "rmse_mean": 0.32571665987281884,
+      "rmse_sd": 0.007139970203291583
+    },
+    "shuffled_minus_linear": {
+      "left_better_blocks": 7,
+      "mde": 0.0038109290397016415,
+      "mean": -0.004547847652420653,
+      "n_blocks": 8,
+      "per_block": [
+        -0.0025430282596048404,
+        -0.01047288701423249,
+        0.0004014283721680556,
+        -0.009281187033271354,
+        -0.003262845212768317,
+        -0.004399776192836602,
+        -0.003201441391319615,
+        -0.00362304448750006
+      ],
+      "resolved": true,
+      "sd": 0.0035929783554583578
+    },
+    "shuffled_minus_random": {
+      "left_better_blocks": 3,
+      "mde": 0.005307537564638824,
+      "mean": 0.0006837280169829096,
+      "n_blocks": 8,
+      "per_block": [
+        0.0022669917319329547,
+        -0.006928688304987551,
+        0.009625015894430988,
+        -0.0034732229597027597,
+        0.0037171225779226713,
+        -0.001941804353850607,
+        0.0003432268328416588,
+        0.001861182717275922
+      ],
+      "resolved": false,
+      "sd": 0.005003994404477928
+    }
+  },
+  "test": "B_held_out_gene_real_depmap"
+}

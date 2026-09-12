@@ -1,0 +1,1677 @@
+{
+ "model": "synthetic-lethal-v1",
+ "source": "10.25452/figshare.plus.25880521.v1",
+ "corrects": "outputs/orphan/fix_sl.json blocked_sources -- the portal is blocked, figshare is not",
+ "panel": {
+  "n_lines": 1066,
+  "n_lineages": 29
+ },
+ "candidates": {
+  "n_B": 11301,
+  "n_A": 4246,
+  "n_pairs": 47984046,
+  "n_testable": 47798592
+ },
+ "definition": {
+  "deficiency": "bottom 10% of the gene's own expression AND >= 1 log2 below its median",
+  "min_deficient": 10,
+  "max_deficient_frac": 0.5,
+  "min_intact": 50,
+  "silenced_gap_threshold": 2.0,
+  "A_filter": "sd(gene effect) >= 0.15 over >= 200 screens"
+ },
+ "null": {
+  "kind": "deficiency labels permuted WITHIN lineage",
+  "n_perm": 20
+ },
+ "fdr": {
+  "target": 0.05,
+  "cut_t": -16.5,
+  "q_at_cut": 0.02,
+  "n_pairs": 5,
+  "expected_by_lineage_alone": 0.1,
+  "curve": [
+   {
+    "cut": -3.0,
+    "observed": 1408274,
+    "null_mean": 769523.4,
+    "q": 0.546430169129019
+   },
+   {
+    "cut": -3.25,
+    "observed": 1082112,
+    "null_mean": 573040.75,
+    "q": 0.5295577075201088
+   },
+   {
+    "cut": -3.5,
+    "observed": 837538,
+    "null_mean": 433206.1,
+    "q": 0.517237546236708
+   },
+   {
+    "cut": -3.75,
+    "observed": 651119,
+    "null_mean": 332027.85,
+    "q": 0.5099342055753249
+   },
+   {
+    "cut": -4.0,
+    "observed": 508821,
+    "null_mean": 257529.2,
+    "q": 0.5061292674634106
+   },
+   {
+    "cut": -4.25,
+    "observed": 399723,
+    "null_mean": 201626.3,
+    "q": 0.5044150574272683
+   },
+   {
+    "cut": -4.5,
+    "observed": 315542,
+    "null_mean": 159006.2,
+    "q": 0.5039145343567576
+   },
+   {
+    "cut": -4.75,
+    "observed": 250188,
+    "null_mean": 126085.95,
+    "q": 0.5039648184565206
+   },
+   {
+    "cut": -5.0,
+    "observed": 198689,
+    "null_mean": 100425.75,
+    "q": 0.5054419217973818
+   },
+   {
+    "cut": -5.25,
+    "observed": 158519,
+    "null_mean": 80243.15,
+    "q": 0.5062052498438673
+   },
+   {
+    "cut": -5.5,
+    "observed": 126738,
+    "null_mean": 64345.8,
+    "q": 0.5077072385551294
+   },
+   {
+    "cut": -5.75,
+    "observed": 101621,
+    "null_mean": 51772.85,
+    "q": 0.5094699914387774
+   },
+   {
+    "cut": -6.0,
+    "observed": 81755,
+    "null_mean": 41760.25,
+    "q": 0.5107975047397713
+   },
+   {
+    "cut": -6.25,
+    "observed": 65800,
+    "null_mean": 33743.85,
+    "q": 0.5128244680851064
+   },
+   {
+    "cut": -6.5,
+    "observed": 52979,
+    "null_mean": 27334.45,
+    "q": 0.5159487721550048
+   },
+   {
+    "cut": -6.75,
+    "observed": 42713,
+    "null_mean": 22197.5,
+    "q": 0.5196895558729192
+   },
+   {
+    "cut": -7.0,
+    "observed": 34463,
+    "null_mean": 18097.5,
+    "q": 0.525128398572382
+   },
+   {
+    "cut": -7.25,
+    "observed": 28107,
+    "null_mean": 14773.9,
+    "q": 0.5256306258227488
+   },
+   {
+    "cut": -7.5,
+    "observed": 22919,
+    "null_mean": 12100.7,
+    "q": 0.5279767878179676
+   },
+   {
+    "cut": -7.75,
+    "observed": 18785,
+    "null_mean": 9931.85,
+    "q": 0.5287117380889007
+   },
+   {
+    "cut": -8.0,
+    "observed": 15374,
+    "null_mean": 8146.8,
+    "q": 0.5299076362690256
+   },
+   {
+    "cut": -8.25,
+    "observed": 12667,
+    "null_mean": 6688.95,
+    "q": 0.528061103655167
+   },
+   {
+    "cut": -8.5,
+    "observed": 10475,
+    "null_mean": 5473.95,
+    "q": 0.5225727923627684
+   },
+   {
+    "cut": -8.75,
+    "observed": 8587,
+    "null_mean": 4469.6,
+    "q": 0.520507744264586
+   },
+   {
+    "cut": -9.0,
+    "observed": 7081,
+    "null_mean": 3643.95,
+    "q": 0.5146095184296003
+   },
+   {
+    "cut": -9.25,
+    "observed": 5774,
+    "null_mean": 2967.9,
+    "q": 0.5140110841704192
+   },
+   {
+    "cut": -9.5,
+    "observed": 4716,
+    "null_mean": 2398.5,
+    "q": 0.5085877862595419
+   },
+   {
+    "cut": -9.75,
+    "observed": 3847,
+    "null_mean": 1928.7,
+    "q": 0.5013517026254224
+   },
+   {
+    "cut": -10.0,
+    "observed": 3114,
+    "null_mean": 1538.6,
+    "q": 0.49409120102761717
+   },
+   {
+    "cut": -10.25,
+    "observed": 2495,
+    "null_mean": 1223.9,
+    "q": 0.4905410821643287
+   },
+   {
+    "cut": -10.5,
+    "observed": 2020,
+    "null_mean": 969.5,
+    "q": 0.47995049504950493
+   },
+   {
+    "cut": -10.75,
+    "observed": 1650,
+    "null_mean": 764.05,
+    "q": 0.463060606060606
+   },
+   {
+    "cut": -11.0,
+    "observed": 1311,
+    "null_mean": 601.45,
+    "q": 0.45877192982456144
+   },
+   {
+    "cut": -11.25,
+    "observed": 1019,
+    "null_mean": 467.15,
+    "q": 0.4584396467124632
+   },
+   {
+    "cut": -11.5,
+    "observed": 803,
+    "null_mean": 364.5,
+    "q": 0.4539227895392279
+   },
+   {
+    "cut": -11.75,
+    "observed": 617,
+    "null_mean": 280.4,
+    "q": 0.4544570502431118
+   },
+   {
+    "cut": -12.0,
+    "observed": 461,
+    "null_mean": 214.35,
+    "q": 0.46496746203904554
+   },
+   {
+    "cut": -12.25,
+    "observed": 369,
+    "null_mean": 160.3,
+    "q": 0.43441734417344174
+   },
+   {
+    "cut": -12.5,
+    "observed": 293,
+    "null_mean": 120.1,
+    "q": 0.4098976109215017
+   },
+   {
+    "cut": -12.75,
+    "observed": 230,
+    "null_mean": 88.75,
+    "q": 0.3858695652173913
+   },
+   {
+    "cut": -13.0,
+    "observed": 171,
+    "null_mean": 64.35,
+    "q": 0.37631578947368416
+   },
+   {
+    "cut": -13.25,
+    "observed": 124,
+    "null_mean": 46.7,
+    "q": 0.3766129032258065
+   },
+   {
+    "cut": -13.5,
+    "observed": 99,
+    "null_mean": 34.05,
+    "q": 0.34393939393939393
+   },
+   {
+    "cut": -13.75,
+    "observed": 74,
+    "null_mean": 23.85,
+    "q": 0.32229729729729734
+   },
+   {
+    "cut": -14.0,
+    "observed": 56,
+    "null_mean": 17.6,
+    "q": 0.31428571428571433
+   },
+   {
+    "cut": -14.25,
+    "observed": 43,
+    "null_mean": 12.55,
+    "q": 0.2918604651162791
+   },
+   {
+    "cut": -14.5,
+    "observed": 33,
+    "null_mean": 9.15,
+    "q": 0.2772727272727273
+   },
+   {
+    "cut": -14.75,
+    "observed": 25,
+    "null_mean": 6.0,
+    "q": 0.24
+   },
+   {
+    "cut": -15.0,
+    "observed": 20,
+    "null_mean": 4.1,
+    "q": 0.205
+   },
+   {
+    "cut": -15.25,
+    "observed": 13,
+    "null_mean": 2.6,
+    "q": 0.2
+   },
+   {
+    "cut": -15.5,
+    "observed": 11,
+    "null_mean": 1.65,
+    "q": 0.15
+   },
+   {
+    "cut": -15.75,
+    "observed": 10,
+    "null_mean": 1.0,
+    "q": 0.1
+   },
+   {
+    "cut": -16.0,
+    "observed": 7,
+    "null_mean": 0.7,
+    "q": 0.09999999999999999
+   },
+   {
+    "cut": -16.25,
+    "observed": 6,
+    "null_mean": 0.35,
+    "q": 0.05833333333333333
+   },
+   {
+    "cut": -16.5,
+    "observed": 5,
+    "null_mean": 0.1,
+    "q": 0.02
+   },
+   {
+    "cut": -16.75,
+    "observed": 5,
+    "null_mean": 0.1,
+    "q": 0.02
+   },
+   {
+    "cut": -17.0,
+    "observed": 5,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -17.25,
+    "observed": 4,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -17.5,
+    "observed": 4,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -17.75,
+    "observed": 2,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -18.0,
+    "observed": 2,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -18.25,
+    "observed": 2,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -18.5,
+    "observed": 2,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -18.75,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -19.0,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -19.25,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -19.5,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -19.75,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -20.0,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -20.25,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -20.5,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -20.75,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -21.0,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -21.25,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -21.5,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -21.75,
+    "observed": 1,
+    "null_mean": 0.0,
+    "q": 0.0
+   },
+   {
+    "cut": -22.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -22.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -22.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -22.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -23.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -23.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -23.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -23.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -24.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -24.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -24.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -24.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -25.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -25.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -25.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -25.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -26.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -26.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -26.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -26.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -27.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -27.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -27.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -27.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -28.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -28.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -28.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -28.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -29.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -29.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -29.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -29.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -30.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -30.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -30.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -30.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -31.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -31.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -31.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -31.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -32.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -32.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -32.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -32.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -33.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -33.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -33.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -33.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -34.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -34.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -34.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -34.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -35.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -35.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -35.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -35.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -36.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -36.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -36.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -36.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -37.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -37.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -37.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -37.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -38.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -38.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -38.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -38.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -39.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -39.25,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -39.5,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -39.75,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   },
+   {
+    "cut": -40.0,
+    "observed": 0,
+    "null_mean": 0.0,
+    "q": 1.0
+   }
+  ]
+ },
+ "concentration": {
+  "n_distinct_dependency_genes": 4,
+  "top10_share_of_layer": 1.0,
+  "most_frequent": [
+   [
+    "NAMPT",
+    2
+   ],
+   [
+    "FAM50A",
+    1
+   ],
+   [
+    "RPP25L",
+    1
+   ],
+   [
+    "INTS6",
+    1
+   ]
+  ]
+ },
+ "benchmark": {
+  "rank_test": {
+   "n_known_tested": 20,
+   "median_percentile_known": 2.380892307455416,
+   "median_percentile_random": 50.03444452924471,
+   "enrichment": 21.014996928911554,
+   "mannwhitney_p": 5.245411599125292e-08,
+   "n_in_top_1pct": 7,
+   "n_in_top_5pct": 12
+  },
+  "method_recovers_known_pairs": true,
+  "all": [
+   {
+    "pair": "MTAP->PRMT5",
+    "expr_gap_log2": 4.200473308563232,
+    "in_scan": true,
+    "t": -5.941296415951021,
+    "delta_effect": -0.21535110473632812,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 86054,
+    "percentile": 0.18003459181391787,
+    "passes_cut": false
+   },
+   {
+    "pair": "MTAP->MAT2A",
+    "expr_gap_log2": 4.200473308563232,
+    "in_scan": true,
+    "t": -2.98241365529054,
+    "delta_effect": -0.1398165225982666,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 1434940,
+    "percentile": 3.002054955928409,
+    "passes_cut": false
+   },
+   {
+    "pair": "MTAP->RIOK1",
+    "expr_gap_log2": 4.200473308563232,
+    "in_scan": true,
+    "t": -2.180009116527346,
+    "delta_effect": -0.05572021007537842,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 3424504,
+    "percentile": 7.164445346005171,
+    "passes_cut": false
+   },
+   {
+    "pair": "VPS4A->VPS4B",
+    "expr_gap_log2": 0.7175397872924805,
+    "in_scan": true,
+    "t": -3.548613303886603,
+    "delta_effect": -0.3480418920516968,
+    "n_deficient": 42,
+    "n_intact": 1024,
+    "too_few": false,
+    "status": "tested",
+    "rank": 797062,
+    "percentile": 1.6675428431029935,
+    "passes_cut": false
+   },
+   {
+    "pair": "VPS4B->VPS4A",
+    "expr_gap_log2": 0.9160852432250977,
+    "in_scan": true,
+    "t": -4.342875105735487,
+    "delta_effect": -0.21548354625701904,
+    "n_deficient": 85,
+    "n_intact": 981,
+    "too_few": false,
+    "status": "tested",
+    "rank": 366011,
+    "percentile": 0.7657359446905884,
+    "passes_cut": false
+   },
+   {
+    "pair": "STAG2->STAG1",
+    "expr_gap_log2": 0.9554495811462402,
+    "in_scan": true,
+    "t": -4.861816721369011,
+    "delta_effect": -0.20443541556596756,
+    "n_deficient": 102,
+    "n_intact": 964,
+    "too_few": false,
+    "status": "tested",
+    "rank": 225673,
+    "percentile": 0.47213315404771755,
+    "passes_cut": false
+   },
+   {
+    "pair": "ME2->ME3",
+    "expr_gap_log2": 1.294867753982544,
+    "in_scan": false,
+    "t": 0.9645274172960763,
+    "delta_effect": 0.01130896620452404,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 35879501,
+    "percentile": 75.06392866132961,
+    "passes_cut": false
+   },
+   {
+    "pair": "MAGOH->MAGOHB",
+    "expr_gap_log2": 0.779930591583252,
+    "in_scan": true,
+    "t": -3.3068043880617526,
+    "delta_effect": -0.06947710551321507,
+    "n_deficient": 62,
+    "n_intact": 1004,
+    "too_few": false,
+    "status": "tested",
+    "rank": 1020318,
+    "percentile": 2.1346193628465038,
+    "passes_cut": false
+   },
+   {
+    "pair": "CNOT7->CNOT8",
+    "expr_gap_log2": 0.9346256256103516,
+    "in_scan": false,
+    "t": -3.258221383881618,
+    "delta_effect": -0.05776757746934891,
+    "n_deficient": 99,
+    "n_intact": 967,
+    "too_few": false,
+    "status": "tested",
+    "rank": 1072959,
+    "percentile": 2.2447502219312234,
+    "passes_cut": false
+   },
+   {
+    "pair": "ASF1A->ASF1B",
+    "expr_gap_log2": 0.9769668579101562,
+    "in_scan": true,
+    "t": -5.072363046530393,
+    "delta_effect": -0.147279292345047,
+    "n_deficient": 101,
+    "n_intact": 965,
+    "too_few": false,
+    "status": "tested",
+    "rank": 186128,
+    "percentile": 0.38940059154880546,
+    "passes_cut": false
+   },
+   {
+    "pair": "RPP25->RPP25L",
+    "expr_gap_log2": 2.815962791442871,
+    "in_scan": true,
+    "t": -18.644305143954853,
+    "delta_effect": -0.7233597338199615,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 3,
+    "percentile": 6.276335503773835e-06,
+    "passes_cut": true
+   },
+   {
+    "pair": "COPS7B->COPS7A",
+    "expr_gap_log2": 0.8647251129150391,
+    "in_scan": false,
+    "t": -4.440566648012779,
+    "delta_effect": -0.12291356548666954,
+    "n_deficient": 86,
+    "n_intact": 980,
+    "too_few": false,
+    "status": "tested",
+    "rank": 333535,
+    "percentile": 0.697792520750402,
+    "passes_cut": false
+   },
+   {
+    "pair": "UBB->UBC",
+    "expr_gap_log2": 1.142171859741211,
+    "in_scan": true,
+    "t": -3.1487298551519767,
+    "delta_effect": -0.256822407245636,
+    "n_deficient": 22,
+    "n_intact": 244,
+    "too_few": false,
+    "status": "tested",
+    "rank": 1203107,
+    "percentile": 2.517034392979609,
+    "passes_cut": false
+   },
+   {
+    "pair": "FAM50A->FAM50B",
+    "expr_gap_log2": 1.0316925048828125,
+    "in_scan": false,
+    "t": -1.4372232885630094,
+    "delta_effect": -0.03660419583320618,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 7493788,
+    "percentile": 15.677842560718107,
+    "passes_cut": false
+   },
+   {
+    "pair": "DDX3X->DDX3Y",
+    "expr_gap_log2": 0.9184012413024902,
+    "in_scan": false,
+    "t": -0.7444661108117243,
+    "delta_effect": -0.01966845989227295,
+    "n_deficient": 19,
+    "n_intact": 247,
+    "too_few": false,
+    "status": "tested",
+    "rank": 14133068,
+    "percentile": 29.567958821883288,
+    "passes_cut": false
+   },
+   {
+    "pair": "ENO1->ENO2",
+    "expr_gap_log2": 1.1151237487792969,
+    "in_scan": false,
+    "t": 0.8581004620007985,
+    "delta_effect": 0.008541051298379898,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 34729751,
+    "percentile": 72.65852307950829,
+    "passes_cut": false
+   },
+   {
+    "pair": "PAPSS1->PAPSS2",
+    "expr_gap_log2": 1.0147027969360352,
+    "in_scan": false,
+    "t": -1.3358515009660052,
+    "delta_effect": -0.015691496431827545,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 8285986,
+    "percentile": 17.335209371857648,
+    "passes_cut": false
+   },
+   {
+    "pair": "SMARCA4->SMARCA2",
+    "expr_gap_log2": 1.0730547904968262,
+    "in_scan": true,
+    "t": -7.0054507501886,
+    "delta_effect": -0.3175821150653064,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 34295,
+    "percentile": 0.07174897536730789,
+    "passes_cut": false
+   },
+   {
+    "pair": "ARID1A->ARID1B",
+    "expr_gap_log2": 1.2209270000457764,
+    "in_scan": true,
+    "t": -1.905381211390727,
+    "delta_effect": -0.04196222871541977,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 4606096,
+    "percentile": 9.63646795286355,
+    "passes_cut": false
+   },
+   {
+    "pair": "CREBBP->EP300",
+    "expr_gap_log2": 1.0966124534606934,
+    "in_scan": true,
+    "t": 0.9673456780931102,
+    "delta_effect": 0.042180001735687256,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 35909163,
+    "percentile": 75.12598488256725,
+    "passes_cut": false
+   }
+  ],
+  "silenced": [
+   {
+    "pair": "MTAP->PRMT5",
+    "expr_gap_log2": 4.200473308563232,
+    "in_scan": true,
+    "t": -5.941296415951021,
+    "delta_effect": -0.21535110473632812,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 86054,
+    "percentile": 0.18003459181391787,
+    "passes_cut": false
+   },
+   {
+    "pair": "MTAP->MAT2A",
+    "expr_gap_log2": 4.200473308563232,
+    "in_scan": true,
+    "t": -2.98241365529054,
+    "delta_effect": -0.1398165225982666,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 1434940,
+    "percentile": 3.002054955928409,
+    "passes_cut": false
+   },
+   {
+    "pair": "MTAP->RIOK1",
+    "expr_gap_log2": 4.200473308563232,
+    "in_scan": true,
+    "t": -2.180009116527346,
+    "delta_effect": -0.05572021007537842,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 3424504,
+    "percentile": 7.164445346005171,
+    "passes_cut": false
+   },
+   {
+    "pair": "RPP25->RPP25L",
+    "expr_gap_log2": 2.815962791442871,
+    "in_scan": true,
+    "t": -18.644305143954853,
+    "delta_effect": -0.7233597338199615,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 3,
+    "percentile": 6.276335503773835e-06,
+    "passes_cut": true
+   }
+  ],
+  "reduced_not_silenced": [
+   {
+    "pair": "VPS4A->VPS4B",
+    "expr_gap_log2": 0.7175397872924805,
+    "in_scan": true,
+    "t": -3.548613303886603,
+    "delta_effect": -0.3480418920516968,
+    "n_deficient": 42,
+    "n_intact": 1024,
+    "too_few": false,
+    "status": "tested",
+    "rank": 797062,
+    "percentile": 1.6675428431029935,
+    "passes_cut": false
+   },
+   {
+    "pair": "VPS4B->VPS4A",
+    "expr_gap_log2": 0.9160852432250977,
+    "in_scan": true,
+    "t": -4.342875105735487,
+    "delta_effect": -0.21548354625701904,
+    "n_deficient": 85,
+    "n_intact": 981,
+    "too_few": false,
+    "status": "tested",
+    "rank": 366011,
+    "percentile": 0.7657359446905884,
+    "passes_cut": false
+   },
+   {
+    "pair": "STAG2->STAG1",
+    "expr_gap_log2": 0.9554495811462402,
+    "in_scan": true,
+    "t": -4.861816721369011,
+    "delta_effect": -0.20443541556596756,
+    "n_deficient": 102,
+    "n_intact": 964,
+    "too_few": false,
+    "status": "tested",
+    "rank": 225673,
+    "percentile": 0.47213315404771755,
+    "passes_cut": false
+   },
+   {
+    "pair": "ME2->ME3",
+    "expr_gap_log2": 1.294867753982544,
+    "in_scan": false,
+    "t": 0.9645274172960763,
+    "delta_effect": 0.01130896620452404,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 35879501,
+    "percentile": 75.06392866132961,
+    "passes_cut": false
+   },
+   {
+    "pair": "MAGOH->MAGOHB",
+    "expr_gap_log2": 0.779930591583252,
+    "in_scan": true,
+    "t": -3.3068043880617526,
+    "delta_effect": -0.06947710551321507,
+    "n_deficient": 62,
+    "n_intact": 1004,
+    "too_few": false,
+    "status": "tested",
+    "rank": 1020318,
+    "percentile": 2.1346193628465038,
+    "passes_cut": false
+   },
+   {
+    "pair": "CNOT7->CNOT8",
+    "expr_gap_log2": 0.9346256256103516,
+    "in_scan": false,
+    "t": -3.258221383881618,
+    "delta_effect": -0.05776757746934891,
+    "n_deficient": 99,
+    "n_intact": 967,
+    "too_few": false,
+    "status": "tested",
+    "rank": 1072959,
+    "percentile": 2.2447502219312234,
+    "passes_cut": false
+   },
+   {
+    "pair": "ASF1A->ASF1B",
+    "expr_gap_log2": 0.9769668579101562,
+    "in_scan": true,
+    "t": -5.072363046530393,
+    "delta_effect": -0.147279292345047,
+    "n_deficient": 101,
+    "n_intact": 965,
+    "too_few": false,
+    "status": "tested",
+    "rank": 186128,
+    "percentile": 0.38940059154880546,
+    "passes_cut": false
+   },
+   {
+    "pair": "COPS7B->COPS7A",
+    "expr_gap_log2": 0.8647251129150391,
+    "in_scan": false,
+    "t": -4.440566648012779,
+    "delta_effect": -0.12291356548666954,
+    "n_deficient": 86,
+    "n_intact": 980,
+    "too_few": false,
+    "status": "tested",
+    "rank": 333535,
+    "percentile": 0.697792520750402,
+    "passes_cut": false
+   },
+   {
+    "pair": "UBB->UBC",
+    "expr_gap_log2": 1.142171859741211,
+    "in_scan": true,
+    "t": -3.1487298551519767,
+    "delta_effect": -0.256822407245636,
+    "n_deficient": 22,
+    "n_intact": 244,
+    "too_few": false,
+    "status": "tested",
+    "rank": 1203107,
+    "percentile": 2.517034392979609,
+    "passes_cut": false
+   },
+   {
+    "pair": "FAM50A->FAM50B",
+    "expr_gap_log2": 1.0316925048828125,
+    "in_scan": false,
+    "t": -1.4372232885630094,
+    "delta_effect": -0.03660419583320618,
+    "n_deficient": 108,
+    "n_intact": 958,
+    "too_few": false,
+    "status": "tested",
+    "rank": 7493788,
+    "percentile": 15.677842560718107,
+    "passes_cut": false
+   },
+   {
+    "pair": "DDX3X->DDX3Y",
+    "expr_gap_log2": 0.9184012413024902,
+    "in_scan": false,
+    "t": -0.7444661108117243,
+    "delta_effect": -0.01966845989227295,
+    "n_deficient": 19,
+    "n_intact": 247,
+    "too_few": false,
+    "status": "tested",
+    "rank": 14133068,
+    "percentile": 29.567958821883288,
+    "passes_cut": false
+   },
+   {
+    "pair": "ENO1->ENO2",
+    "expr_gap_log2": 1.1151237487792969,
+    "in_scan": false,
+    "t": 0.8581004620007985,
+    "delta_effect": 0.008541051298379898,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 34729751,
+    "percentile": 72.65852307950829,
+    "passes_cut": false
+   },
+   {
+    "pair": "PAPSS1->PAPSS2",
+    "expr_gap_log2": 1.0147027969360352,
+    "in_scan": false,
+    "t": -1.3358515009660052,
+    "delta_effect": -0.015691496431827545,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 8285986,
+    "percentile": 17.335209371857648,
+    "passes_cut": false
+   },
+   {
+    "pair": "SMARCA4->SMARCA2",
+    "expr_gap_log2": 1.0730547904968262,
+    "in_scan": true,
+    "t": -7.0054507501886,
+    "delta_effect": -0.3175821150653064,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 34295,
+    "percentile": 0.07174897536730789,
+    "passes_cut": false
+   },
+   {
+    "pair": "ARID1A->ARID1B",
+    "expr_gap_log2": 1.2209270000457764,
+    "in_scan": true,
+    "t": -1.905381211390727,
+    "delta_effect": -0.04196222871541977,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 4606096,
+    "percentile": 9.63646795286355,
+    "passes_cut": false
+   },
+   {
+    "pair": "CREBBP->EP300",
+    "expr_gap_log2": 1.0966124534606934,
+    "in_scan": true,
+    "t": 0.9673456780931102,
+    "delta_effect": 0.042180001735687256,
+    "n_deficient": 107,
+    "n_intact": 959,
+    "too_few": false,
+    "status": "tested",
+    "rank": 35909163,
+    "percentile": 75.12598488256725,
+    "passes_cut": false
+   }
+  ],
+  "n_pass_reachable": 1,
+  "n_tested_reachable": 4,
+  "median_percentile_reachable": 1.5910447738711635,
+  "median_percentile_random": 50.03444452924471,
+  "n_random": 3982
+ },
+ "old_sl_layer_sign_check": {
+  "n_testable": 1797,
+  "mean_t": 0.515295246813805,
+  "mean_t_all": 0.003864952363073826,
+  "frac_passing_cut": 0.0,
+  "frac_passing_cut_all": 1.0460559172956392e-07
+ },
+ "top_pairs": [
+  {
+   "deficient": "FAM50B",
+   "dependency": "FAM50A",
+   "t": -21.789173126220703,
+   "delta_effect": -0.6848335862159729,
+   "n_deficient": 138
+  },
+  {
+   "deficient": "RPP25",
+   "dependency": "RPP25L",
+   "t": -18.644309997558594,
+   "delta_effect": -0.7233597040176392,
+   "n_deficient": 107
+  },
+  {
+   "deficient": "AMOTL2",
+   "dependency": "NAMPT",
+   "t": -17.695281982421875,
+   "delta_effect": -0.5737332105636597,
+   "n_deficient": 107
+  },
+  {
+   "deficient": "TJP1",
+   "dependency": "NAMPT",
+   "t": -17.621522903442383,
+   "delta_effect": -0.5907726883888245,
+   "n_deficient": 107
+  },
+  {
+   "deficient": "INTS6L",
+   "dependency": "INTS6",
+   "t": -17.239585876464844,
+   "delta_effect": -1.0367112159729004,
+   "n_deficient": 107
+  }
+ ],
+ "limits": [
+  "deficiency is expression-based, so truncating mutations that leave mRNA intact are invisible. The benchmark is split on exactly this line and the mutation-driven group is scored as a known blind spot, not as a failure",
+  "the within-lineage null removes lineage but not everything correlated with it -- mutational burden, culture medium, screen batch and passage all vary between lineages and none is recorded per line here",
+  "one expression cut (log2(TPM+1) < 1) is a hard call on a continuous quantity; a gene at 1.05 is treated as intact and a gene at 0.95 as absent",
+  "the FDR is a permutation FDR over a grid of cuts. It bounds the expected proportion of the reported set that within-lineage structure could produce; it says nothing about the individual pairs",
+  "a pair passing here is a statistical association across a cell-line panel, not a demonstrated genetic interaction. The known-pair benchmark is what connects the two, and it covers 20 pairs",
+  "THE BENCHMARK IS NOT CLEAN. Both candidate filters were revised AFTER seeing the first run's benchmark come back nearly empty -- the dependency side moved from an essentiality window to a variance cut, and deficiency moved from an absolute to a relative call. Neither revision was a search for a higher score: each fixed an identified error, with MTAP -> PRMT5 as the explicit counterexample to the essentiality window. But the benchmark still informed the method, so the 21x enrichment is an optimistic estimate and a fresh set of published pairs would be the honest test",
+  "the 20 published pairs were assembled from the paralog-lethality literature by recall, not from a curated resource with inclusion criteria. They are a convenience set",
+  "the A side is bounded by sd(gene effect) >= 0.15 for compute rather than for science; sd >= 0.10 would admit 14,536 genes. Pairs whose dependency gene falls between those cuts are outside the scan and their absence from the layer means nothing"
+ ],
+ "method_works": true,
+ "layer_promoted": false,
+ "verdict": "THE METHOD WORKS AND THE LAYER DOES NOT, AND THOSE ARE DIFFERENT RESULTS. First, the correction: fix_sl.py called synthetic lethality externally blocked because DepMap's portal is behind a verification challenge. That is one host, not the source -- this project's own depmap_codep.py was already fetching the identical release from figshare, md5s asserted, and it was open the whole time. THE STATISTIC FINDS KNOWN SYNTHETIC LETHALITY. Scored outside the scan's own filters so no filter can empty the benchmark, the 20 published pairs sit at median percentile 2.38% of 47,798,592 tested pairs against 50.0% for random pairs from the same candidate sets -- 21x enrichment, Mann-Whitney p 5.2e-08, with 7/20 in the top 1%. RPP25 -> RPP25L is rank 3 of 47.8 million and MTAP -> PRMT5 is in the top 0.2%. THE DISCOVERED SET IS NOT PROMOTED, for a reason that has nothing to do with the above: at 5% FDR the cut admits only 5 pairs, and 100% of them point at 4 dependency genes. That shape is a cell-state marker, not 5 independent genetic interactions, and a within-lineage null over 29 coarse Oncotree lineages cannot remove a programme that cuts across them. WHY THE LAYER IS SMALL IS ALSO MEASURABLE, and it is the deficiency definition rather than the statistic: only 4 of 20 published pairs have a deficient gene this panel ever SILENCES (expression gap >= 2 log2). The other 16 are lost by copy number or mutation at gaps of 0.7-1.2 log2, and an expression cut sees a shadow of them -- a shadow that is still enough to rank SMARCA4 -> SMARCA2 in the top 0.1%, which is more than I predicted for it. That split is measured from each gene's own expression, not assumed: my first pass classified 17 pairs as reachable by mechanism and only 2 of them are. The `sl` name is now attached to the right relationship either way: the old layer's pairs sit at mean t +0.515, on the co-dependency side of zero, which is the opposite sign and independently confirms the rename. NEXT: copy number is the deficiency state this needs, it is in the same figshare release, and it would reach the 16 pairs expression cannot.",
+ "log": [
+  "====================================================================================================",
+  "SYNTHETIC LETHALITY -- built from a deficiency state, not from co-dependency",
+  "====================================================================================================",
+  "\n  0. SOURCES (one release; md5s asserted against figshare's manifest)",
+  "    CRISPRGeneEffect.csv                                 md5 d10d73692672380b3792231549e97d5a ASSERTED",
+  "    Model.csv                                            md5 e5b60d1ce7636542d93f45494019eded ASSERTED",
+  "    gene effect: 1,150 cell lines x 18,443 genes",
+  "    expression:  1,066 lines x 19,193 genes",
+  "    joined panel: 1,066/1,150 lines (92.7%) with screen + expression + lineage, over 29 lineages",
+  "\n  1. CANDIDATES",
+  "     B (deficient side): 11,301/19,193 genes have a bottom-10% subgroup at least 1 log2 below their own median, of size 10..533",
+  "       of those, 1,271 have a gap >= 2 log2, i.e. are genuinely SILENCED somewhere rather than merely reduced",
+  "     A (dependency side): 4,246/18,443 genes with sd(gene effect) >= 0.15 over >= 200 screens -- a variance filter, because a gene with no variance in effect cannot show a difference between subgroups whatever its mean level is",
+  "       this cut is a COMPUTE bound as much as a scientific one: sd >= 0.10 would admit 14,536 genes and the scan would not finish. The benchmark below is scored OUTSIDE this filter so nothing known is silently dropped",
+  "     scan size: 47,984,046 (B, A) pairs",
+  "\n  2. OBSERVED vs a WITHIN-LINEAGE PERMUTATION NULL (20 draws)",
+  "     47,798,592 pairs testable; observed t: -21.8..31.2",
+  "       permutation 1/20: 766,990 pairs at t <= -3 (observed 1,408,274)",
+  "       permutation 6/20: 772,527 pairs at t <= -3 (observed 1,408,274)",
+  "       permutation 11/20: 768,343 pairs at t <= -3 (observed 1,408,274)",
+  "       permutation 16/20: 768,965 pairs at t <= -3 (observed 1,408,274)",
+  "      cut t <=   observed  null mean   null sd        q",
+  "         -3.00  1,408,274   769523.4    1895.4   0.5464",
+  "         -4.00    508,821   257529.2    1005.3   0.5061",
+  "         -5.00    198,689   100425.8     473.9   0.5054",
+  "         -6.00     81,755    41760.2     245.4   0.5108",
+  "         -7.00     34,463    18097.5     135.3   0.5251",
+  "         -8.00     15,374     8146.8     105.2   0.5299",
+  "         -9.00      7,081     3643.9      71.8   0.5146",
+  "        -10.00      3,114     1538.6      48.3   0.4941",
+  "        -11.00      1,311      601.5      25.6   0.4588",
+  "        -12.00        461      214.3      13.5   0.4650",
+  "        -13.00        171       64.3       9.7   0.3763",
+  "        -14.00         56       17.6       3.0   0.3143",
+  "        -15.00         20        4.1       1.9   0.2050",
+  "        -16.00          7        0.7       1.0   0.1000",
+  "        -16.50          5        0.1       0.3   0.0200",
+  "     -> FDR 5% is reached at t <= -16.5: 5 pairs, 0 expected by lineage alone (q 0.0200)",
+  "\n  3. KNOWN-PAIR RECOVERY -- scored outside the scan's filters, split by MEASURED expression gap",
+  "     GENUINELY SILENCED somewhere (expression gap >= 2 log2) -- 4/4 testable",
+  "       pair                     gap        t   d(eff)  n def       rank    top %  cut  scan",
+  "       MTAP->PRMT5             4.20    -5.94   -0.215    108     86,054  0.1800%     .  Y",
+  "       MTAP->MAT2A             4.20    -2.98   -0.140    108  1,434,940  3.0021%     .  Y",
+  "       MTAP->RIOK1             4.20    -2.18   -0.056    108  3,424,504  7.1644%     .  Y",
+  "       RPP25->RPP25L           2.82   -18.64   -0.723    107          3  0.0000%  PASS  Y",
+  "       -> 1/4 pass the FDR cut; median percentile 1.5910%",
+  "     REDUCED BUT NOT SILENCED (gap < 2 log2) -- the loss is by copy number or mutation and an expression cut can only see a shadow of it -- 16/16 testable",
+  "       pair                     gap        t   d(eff)  n def       rank    top %  cut  scan",
+  "       VPS4A->VPS4B            0.72    -3.55   -0.348     42    797,062  1.6675%     .  Y",
+  "       VPS4B->VPS4A            0.92    -4.34   -0.215     85    366,011  0.7657%     .  Y",
+  "       STAG2->STAG1            0.96    -4.86   -0.204    102    225,673  0.4721%     .  Y",
+  "       ME2->ME3                1.29     0.96    0.011    108 35,879,501 75.0639%     .  n",
+  "       MAGOH->MAGOHB           0.78    -3.31   -0.069     62  1,020,318  2.1346%     .  Y",
+  "       CNOT7->CNOT8            0.93    -3.26   -0.058     99  1,072,959  2.2448%     .  n",
+  "       ASF1A->ASF1B            0.98    -5.07   -0.147    101    186,128  0.3894%     .  Y",
+  "       COPS7B->COPS7A          0.86    -4.44   -0.123     86    333,535  0.6978%     .  n",
+  "       UBB->UBC                1.14    -3.15   -0.257     22  1,203,107  2.5170%     .  Y",
+  "       FAM50A->FAM50B          1.03    -1.44   -0.037    108  7,493,788 15.6778%     .  n",
+  "       DDX3X->DDX3Y            0.92    -0.74   -0.020     19 14,133,068 29.5680%     .  n",
+  "       ENO1->ENO2              1.12     0.86    0.009    107 34,729,751 72.6585%     .  n",
+  "       PAPSS1->PAPSS2          1.01    -1.34   -0.016    107  8,285,986 17.3352%     .  n",
+  "       SMARCA4->SMARCA2        1.07    -7.01   -0.318    107     34,295  0.0717%     .  Y",
+  "       ARID1A->ARID1B          1.22    -1.91   -0.042    107  4,606,096  9.6365%     .  Y",
+  "       CREBBP->EP300           1.10     0.97    0.042    107 35,909,163 75.1260%     .  Y",
+  "       -> 0/16 pass the FDR cut; median percentile 2.3809%",
+  "     random pairs from the same candidate sets: median percentile 50.03% over 3,982 draws (50% is chance by construction)",
+  "     BENCHMARK AS A RANK TEST -- 20 known pairs vs 3,982 random:",
+  "       median percentile 2.381% vs 50.03% = 21x enrichment; Mann-Whitney p 5.25e-08",
+  "       7/20 known pairs in the top 1% of all 47,798,592 tested pairs, 12/20 in the top 5% (0.01 and 0.05 expected by chance)",
+  "\n  4. SIGN CHECK -- the co-requirement pairs must NOT come out synthetic lethal",
+  "     1,797 testable ORIENTATIONS from 1,256 co-requirement pairs (each pair is tried both ways; both orientations counting is why this can exceed the pair count)",
+  "     their mean t +0.515 against +0.004 for all tested pairs; 0.00% pass the synthetic-lethal cut against 0.00% overall",
+  "\n  5. LAYER: 5 pairs at t <= -16.5 (q 0.0200)",
+  "           FAM50B deficient -> FAM50A       t  -21.79  d(effect) -0.685  in 138 lines",
+  "            RPP25 deficient -> RPP25L       t  -18.64  d(effect) -0.723  in 107 lines",
+  "           AMOTL2 deficient -> NAMPT        t  -17.70  d(effect) -0.574  in 107 lines",
+  "             TJP1 deficient -> NAMPT        t  -17.62  d(effect) -0.591  in 107 lines",
+  "           INTS6L deficient -> INTS6        t  -17.24  d(effect) -1.037  in 107 lines",
+  "     CONCENTRATION: 4 distinct dependency genes over 5 pairs; the top 10 account for 100%",
+  "       most frequent dependencies: NAMPT x2, FAM50A x1, RPP25L x1, INTS6 x1",
+  "       -> more than half the layer points at ten genes. Read it as a set of cell-state markers rather than as 5 independent genetic interactions.",
+  "\n====================================================================================================",
+  "  VERDICT: THE METHOD WORKS AND THE LAYER DOES NOT, AND THOSE ARE DIFFERENT RESULTS. First, the correction: fix_sl.py called synthetic lethality externally blocked because DepMap's portal is behind a verification challenge. That is one host, not the source -- this project's own depmap_codep.py was already fetching the identical release from figshare, md5s asserted, and it was open the whole time. THE STATISTIC FINDS KNOWN SYNTHETIC LETHALITY. Scored outside the scan's own filters so no filter can empty the benchmark, the 20 published pairs sit at median percentile 2.38% of 47,798,592 tested pairs against 50.0% for random pairs from the same candidate sets -- 21x enrichment, Mann-Whitney p 5.2e-08, with 7/20 in the top 1%. RPP25 -> RPP25L is rank 3 of 47.8 million and MTAP -> PRMT5 is in the top 0.2%. THE DISCOVERED SET IS NOT PROMOTED, for a reason that has nothing to do with the above: at 5% FDR the cut admits only 5 pairs, and 100% of them point at 4 dependency genes. That shape is a cell-state marker, not 5 independent genetic interactions, and a within-lineage null over 29 coarse Oncotree lineages cannot remove a programme that cuts across them. WHY THE LAYER IS SMALL IS ALSO MEASURABLE, and it is the deficiency definition rather than the statistic: only 4 of 20 published pairs have a deficient gene this panel ever SILENCES (expression gap >= 2 log2). The other 16 are lost by copy number or mutation at gaps of 0.7-1.2 log2, and an expression cut sees a shadow of them -- a shadow that is still enough to rank SMARCA4 -> SMARCA2 in the top 0.1%, which is more than I predicted for it. That split is measured from each gene's own expression, not assumed: my first pass classified 17 pairs as reachable by mechanism and only 2 of them are. The `sl` name is now attached to the right relationship either way: the old layer's pairs sit at mean t +0.515, on the co-dependency side of zero, which is the opposite sign and independently confirms the rename. NEXT: copy number is the deficiency state this needs, it is in the same figshare release, and it would reach the 16 pairs expression cannot."
+ ]
+}

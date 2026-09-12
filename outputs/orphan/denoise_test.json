@@ -1,0 +1,16 @@
+{
+ "n_paired": 111,
+ "frac_confirmed_real": 0.265,
+ "recall": {
+  "model_full": 0.4041,
+  "model_repro": 0.5264,
+  "oracle_full": 0.6487,
+  "oracle_repro": 0.7533
+ },
+ "model_hits_repro": 0.353,
+ "model_miss_noise": 0.79,
+ "consensus_oracle": 0.5671,
+ "single_oracle": 0.6558,
+ "verdict": "DENOISE TEST (denoise_test.py): would denoising the target (what within-line replicates buy) raise the ceiling? Scored against only the cross-line CONFIRMED-REAL part of each K562 response. 111 paired held-out KOs; 26% of a typical response is confirmed-real, the rest non-reproducing (noise or cell-specific). Restricting to the real subset: model recall 0.40->0.53 (+0.12), oracle 0.65->0.75 (+0.10). The model's MISSES are 79% non-reproducing and its HITS are 35% confirmed-real. So the ceiling is set largely by target NOISE: the model already finds the real movers and mostly misses the non-reproducing ones, so cleaner targets (WITHIN-line replicates) would raise the achievable recall and let the metric stop penalising unconfirmable calls. Replicates are the worthwhile data lever. (Raw counts are not in-repo, so a proper multi-guide re-aggregation would require fetching the raw Perturb-seq.) Deterministic.",
+ "note": "DENOISE TEST (denoise_test.py): would denoising the target (what within-line replicates buy) raise the ceiling? Scored against only the cross-line CONFIRMED-REAL part of each K562 response. 111 paired held-out KOs; 26% of a typical response is confirmed-real, the rest non-reproducing (noise or cell-specific). Restricting to the real subset: model recall 0.40->0.53 (+0.12), oracle 0.65->0.75 (+0.10). The model's MISSES are 79% non-reproducing and its HITS are 35% confirmed-real. So the ceiling is set largely by target NOISE: the model already finds the real movers and mostly misses the non-reproducing ones, so cleaner targets (WITHIN-line replicates) would raise the achievable recall and let the metric stop penalising unconfirmable calls. Replicates are the worthwhile data lever. (Raw counts are not in-repo, so a proper multi-guide re-aggregation would require fetching the raw Perturb-seq.) Deterministic."
+}

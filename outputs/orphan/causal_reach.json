@@ -1,0 +1,52 @@
+{
+ "whole_field_biosim_style": {
+  "mean": 0.02,
+  "n": 200
+ },
+ "reach_curve": {
+  "dist_1": {
+   "predicted": {
+    "mean": -0.025,
+    "n": 139
+   },
+   "random_baseline": {
+    "mean": -0.003,
+    "n": 110
+   },
+   "lift": -0.022,
+   "mean_shell_size": 8
+  },
+  "dist_2": {
+   "predicted": {
+    "mean": -0.021,
+    "n": 178
+   },
+   "random_baseline": {
+    "mean": 0.028,
+    "n": 142
+   },
+   "lift": -0.05,
+   "mean_shell_size": 23
+  },
+  "dist_3": {
+   "predicted": {
+    "mean": -0.034,
+    "n": 180
+   },
+   "random_baseline": {
+    "mean": 0.067,
+    "n": 146
+   },
+   "lift": -0.101,
+   "mean_shell_size": 55
+  }
+ },
+ "investigate_screen": {
+  "median_fractional_rank_of_true_cause": 0.565,
+  "frac_true_cause_in_top_10pct": 0.142,
+  "n_pool": 200,
+  "n_tested": 197
+ },
+ "n_knockouts_tested": 200,
+ "verdict": "THE CENSUS DOES NOT GIVE CAUSATION \u2014 STRUCTURE-ALONE IS NULL EVEN NEAR-FIELD. The one positive number (whole-field Spearman +0.020, biosim's) is just the DISTANCE ENVELOPE \u2014 'closer to the removed piece = more affected, on average' \u2014 which is trivially true and does NOT tell you the effect. The moment you ask the real question \u2014 WITHIN the immediate neighbourhood, which pieces actually fire? \u2014 structure propagation is at chance (1-hop lift -0.022, 2-hop -0.050, 3-hop -0.101). The structure-only cause screen is likewise near-chance. So: the MAP (who exists, who neighbours whom) is done, but it CANNOT compute a removal's effect \u2014 only that a coherent module exists there (biosim's blast radius, real for tight complexes, coarse). Genuine remove-and-calculate lives ENTIRELY in the intervention data: for the ~2,000 pieces measured (Perturb-seq) the effect is known, and the engines that work (whodunit/diagnose) stand on that MEASURED fingerprint, not on the census. The bottleneck to 'remove ANY piece and calculate its effect' is therefore SURVEILLANCE \u2014 measured interventions across more pieces and conditions \u2014 not more census. This is the sharpest form of the structure-vs-dynamics split the whole project keeps hitting."
+}

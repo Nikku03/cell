@@ -1,0 +1,156 @@
+{
+  "banned_fields": [
+    "dep_frac",
+    "ess",
+    "ess_prob",
+    "ess_src"
+  ],
+  "blocks": 6,
+  "log": [
+    "====================================================================================================",
+    "THE (GENE, LINE) INTERACTION -- how much, how much is real, how much is reachable",
+    "====================================================================================================",
+    "  PREDECLARED: the interaction should hold a large variance share, only a",
+    "  modest fraction should be reproducible, and the annotation arm should be",
+    "  at or near zero. A positive annotation result would reopen the cross-cell",
+    "  question that the dense-response work closed at n=4 contexts.",
+    "\n  DepMap: 1,150 lines x 17,931 genes, 99.1% observed",
+    "\n  === 1. VARIANCE BUDGET of DepMap gene effect ===",
+    "  component                variance    share",
+    "  gene_marginal             0.14659    86.5%",
+    "  line_marginal             0.00004     0.0%",
+    "  interaction               0.02558    15.1%",
+    "  total                     0.16947   100.0%",
+    "\n  === 2. REPRODUCIBILITY of the interaction (split-half over LINES) ===",
+    "  canonical correlations between the two halves' gene loadings, rank 16:",
+    "    real     [0.9649999737739563, 0.9359999895095825, 0.9300000071525574, 0.9139999747276306, 0.8989999890327454, 0.8880000114440918, 0.8709999918937683, 0.8600000143051147, 0.8190000057220459, 0.8090000152587891, 0.7549999952316284, 0.7149999737739563, 0.6660000085830688, 0.6209999918937683, 0.5299999713897705, 0.12600000202655792]",
+    "    permuted [0.06300000101327896, 0.04899999871850014, 0.04399999976158142, 0.041999999433755875, 0.03799999877810478, 0.03400000184774399, 0.02800000086426735, 0.02500000037252903, 0.02199999988079071, 0.017000000923871994, 0.014000000432133675, 0.009999999776482582, 0.008999999612569809, 0.007000000216066837, 0.003000000026077032, 0.0]",
+    "  factors clearing the permutation floor (0.063): 16 of 16",
+    "  mean canonical correlation: real 0.7691 vs permuted 0.0253",
+    "\n  === 3. IS THE REPRODUCIBLE PART REACHABLE FROM ANNOTATION? ===",
+    "  DepMap: 1,150 lines x 17,931 genes, per-line marginal removed",
+    "  features: 60 columns; EXCLUDED ['dep_frac', 'ess', 'ess_prob', 'ess_src']",
+    "  genes carried forward: 15,567",
+    "  genes with both a DepMap column and annotation: 15,567",
+    "\n  held-out (gene block, line block) pairs: 6, rank 16",
+    "  arm                       RMSE       sd    vs zero      MDE  verdict",
+    "  zero                    0.1624   0.0012    +0.0000   0.0000  ",
+    "  annotation              0.1612   0.0012    -0.0012   0.0002  BEATS zero",
+    "  shuffled_loading        0.1635   0.0011    +0.0011   0.0002  no",
+    "  oracle_loading          0.1422   0.0015    -0.0202   0.0011  BEATS zero",
+    "\n  FRACTION OF THE ACHIEVABLE CEILING reached by annotation: 5.8%",
+    "    (oracle loadings buy +0.0202; annotation buys +0.0012)"
+  ],
+  "n_genes": 15567,
+  "n_lines": 1150,
+  "rank": 16,
+  "summary": {
+    "annotation": {
+      "gap_vs_zero": -0.0011806556315138161,
+      "mde": 0.0001693100909027891,
+      "per_block": [
+        0.16243361197022418,
+        0.16000037616332874,
+        0.15980193592337857,
+        0.16252691039351058,
+        0.16177126271499406,
+        0.16070193369277405
+      ],
+      "resolved": true,
+      "rmse_mean": 0.16120600514303504,
+      "rmse_sd": 0.0012041897660098968
+    },
+    "ceiling_fraction": 0.058460802447222605,
+    "oracle_loading": {
+      "gap_vs_zero": -0.02019370347261429,
+      "mde": 0.0010834858044229331,
+      "per_block": [
+        0.143706277012825,
+        0.1402205526828766,
+        0.14055590331554413,
+        0.1429147869348526,
+        0.14252562820911407,
+        0.14323459565639496
+      ],
+      "resolved": true,
+      "rmse_mean": 0.14219295730193457,
+      "rmse_sd": 0.0014544538972365397
+    },
+    "shuffled_loading": {
+      "gap_vs_zero": 0.001131672550696262,
+      "mde": 0.00015939650574361787,
+      "per_block": [
+        0.1648326113077537,
+        0.16249389192125013,
+        0.16227471357969966,
+        0.16460039153241585,
+        0.16403460868532643,
+        0.16287378292502488
+      ],
+      "resolved": true,
+      "rmse_mean": 0.1635183333252451,
+      "rmse_sd": 0.0011114164212025367
+    },
+    "split_half_alignment": {
+      "factors_above_floor": 16,
+      "permutation_floor": [
+        0.06323406100273132,
+        0.048860449343919754,
+        0.04391545429825783,
+        0.04163087159395218,
+        0.037592098116874695,
+        0.03414110466837883,
+        0.027865855023264885,
+        0.0252496600151062,
+        0.02200607769191265,
+        0.01717168465256691,
+        0.014273781329393387,
+        0.01012351643294096,
+        0.009222584776580334,
+        0.006966426968574524,
+        0.0025876518338918686,
+        0.00038794177817180753
+      ],
+      "rank": 16,
+      "real": [
+        0.9654329419136047,
+        0.9364310503005981,
+        0.9297084808349609,
+        0.9141085743904114,
+        0.898592472076416,
+        0.8875888586044312,
+        0.871312141418457,
+        0.8604828715324402,
+        0.8187231421470642,
+        0.8092317581176758,
+        0.7546371221542358,
+        0.7151113152503967,
+        0.6656818985939026,
+        0.6210735440254211,
+        0.5304787158966064,
+        0.12632696330547333
+      ]
+    },
+    "variance_budget": {
+      "gene_marginal": 0.8649547288947773,
+      "interaction": 0.1509692484980706,
+      "line_marginal": 0.0002618942881757935
+    },
+    "zero": {
+      "gap_vs_zero": 0.0,
+      "mde": 0.0,
+      "per_block": [
+        0.16374994814395905,
+        0.1613115519285202,
+        0.16091212630271912,
+        0.16353105008602142,
+        0.16305139660835266,
+        0.16176389157772064
+      ],
+      "resolved": false,
+      "rmse_mean": 0.16238666077454886,
+      "rmse_sd": 0.0012106201293956898
+    }
+  },
+  "test": "gene_line_interaction"
+}

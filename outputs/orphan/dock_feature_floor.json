@@ -1,0 +1,76 @@
+{
+  "test": "dock_feature_floor",
+  "n_train": 40,
+  "n_eval": 14,
+  "n_pos": 795,
+  "n_neg": 2665,
+  "single_feature": {
+    "apbs_potential": {
+      "product": 0.4343464665415885,
+      "similarity": 0.4736139332365747,
+      "product_flipped": 0.5656535334584115,
+      "similarity_flipped": 0.5263860667634253
+    },
+    "curvature": {
+      "product": 0.4633351033074917,
+      "similarity": 0.5591079330241778,
+      "product_flipped": 0.5366648966925083,
+      "similarity_flipped": 0.5591079330241778
+    },
+    "hydrophobicity": {
+      "product": 0.495595124311185,
+      "similarity": 0.4739374845127261,
+      "product_flipped": 0.504404875688815,
+      "similarity_flipped": 0.5260625154872739
+    },
+    "charge": {
+      "product": 0.5037034939289886,
+      "similarity": 0.46685876786198915,
+      "product_flipped": 0.5037034939289886,
+      "similarity_flipped": 0.5331412321380109
+    },
+    "hbond": {
+      "product": 0.5152489173658065,
+      "similarity": 0.5001286181221754,
+      "product_flipped": 0.5152489173658065,
+      "similarity_flipped": 0.5001286181221754
+    }
+  },
+  "best_single": "apbs_potential",
+  "best_single_auc": 0.5656535334584115,
+  "logistic_auc": 0.5466619467355777,
+  "geoconv_ref": 0.6171,
+  "log": [
+    "====================================================================================================",
+    "WHAT IS AUC 0.617 MEASURING? -- decompose it against the parameter-free feature floor",
+    "====================================================================================================",
+    "  GeoConv sees a ~6 A patch (K=16 neighbours) and 5 per-point features. Before calling 0.617 a",
+    "  learned result, measure how much of it is available with NO model: raw features multiplied.",
+    "  The task is largely 'are BOTH points interface points', since positives are contacts and",
+    "  negatives are far pairs -- not a genuine test that two patches FIT.",
+    "  PREDECLARED: a single raw feature near 0.60 => the network adds almost nothing and 0.617 is",
+    "  local chemistry already present in the input. All arms at 0.50 => the aggregation earned it.",
+    "  NO COORDINATES in any arm -- position would make the task trivial.",
+    "\n  54 complexes | train 40 | eval 14 (identical split to dock_arch)",
+    "  eval pairs: 795 contacting / 2,665 far",
+    "\n  PARAMETER-FREE ARMS (one feature, one operation, nothing fitted)",
+    "    feature              product   similarity",
+    "    apbs_potential        0.4343       0.4736",
+    "    curvature             0.4633       0.5591",
+    "    hydrophobicity        0.4956       0.4739",
+    "    charge                0.5037       0.4669",
+    "    hbond                 0.5152       0.5001",
+    "    (0.5 = chance; a value BELOW 0.5 is informative with the sign flipped)",
+    "    best single feature, sign-corrected: apbs_potential at 0.5657",
+    "\n  FITTED, NO GEOMETRY: logistic over 10 pair features (5 products + 5 abs-diffs) = 0.5467",
+    "  GEOCONV (dock_arch, same split): 0.6171",
+    "    network minus best single feature : +0.0514",
+    "    network minus fitted logistic     : +0.0704",
+    "\n  READING",
+    "  THE AGGREGATION EARNS IT. Best single feature 0.5657, fitted logistic 0.5467, both",
+    "  well under the network's 0.6171. The K=16 neighbourhood is contributing real",
+    "  structure beyond what the per-point features contain.",
+    "\n  Either way 0.617 is a WEAK number in absolute terms: on a task whose negatives are pairs >12 A",
+    "  apart -- the easy negatives -- it ranks the contacting pair first barely 3 times in 5."
+  ]
+}

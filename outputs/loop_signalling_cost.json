@@ -1,0 +1,187 @@
+{
+ "test": "loop_signalling_cost",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 17432,
+   "used": 13195,
+   "selection": "filtered",
+   "fraction": 0.7569412574575494
+  },
+  "seed": 9601,
+  "controls": [
+   "the phosphosite lifetime swept over 60x rather than assumed",
+   "translation ATP taken from loop 92's measured codon demand",
+   "copy numbers and site counts from one cell type, per loop 92's rule",
+   "publication count against site count and against the bill",
+   "a site-count shuffle checked for capability before use",
+   "uncovered edges counted as uncovered"
+  ],
+  "note": "cell_sim.py records that signalling cannot enter mass balance for want of stoichiometry; phosphorylation's stoichiometry does not need the annotation, only the site counts",
+  "warnings": []
+ },
+ "gates": {
+  "Y1 the stoichiometry can be written": true,
+  "Y2 signalling is a minority of the ATP budget": false,
+  "Y3 the cost driver is identified": true,
+  "Y4 fame reported": true,
+  "Y5 the null is capable and fired": true,
+  "Y6 the limit is stated": true
+ },
+ "y1": {
+  "n_edges": 17432,
+  "n_covered": 13195,
+  "n_reactions": 13195,
+  "fraction": 0.7569412574575494
+ },
+ "y2": {
+  "total_phosphosites": 16703302336.29998,
+  "translation_atp_h": 123049350080.0,
+  "sweep": {
+   "10.0": {
+    "k_per_h": 249.5329850015803,
+    "atp_per_h": 4168024891360.804,
+    "vs_translation": 33.87279078394954
+   },
+   "60.0": {
+    "k_per_h": 41.58883083359672,
+    "atp_per_h": 694670815226.8007,
+    "vs_translation": 5.6454651306582555
+   },
+   "300.0": {
+    "k_per_h": 8.317766166719345,
+    "atp_per_h": 138934163045.36017,
+    "vs_translation": 1.1290930261316514
+   },
+   "600.0": {
+    "k_per_h": 4.158883083359672,
+    "atp_per_h": 69467081522.68008,
+    "vs_translation": 0.5645465130658257
+   }
+  }
+ },
+ "y3": {
+  "top20_share": 0.4156710087466447,
+  "rho_bill_sites": 0.36123229424388154,
+  "rho_bill_copies": 0.9218056924556777,
+  "top": [
+   "ENO1",
+   "LMNA",
+   "EEF1A1",
+   "HNRNPA1",
+   "HSPD1",
+   "HSPA8",
+   "MDH2",
+   "CFL1",
+   "NCL",
+   "PGK1",
+   "LDHA",
+   "NPM1",
+   "HMGB1",
+   "RPS27A",
+   "ANXA2",
+   "PPIA",
+   "LGALS1",
+   "SLC25A5",
+   "RPS3",
+   "PFN1"
+  ]
+ },
+ "y4": {
+  "pubs_vs_sites": 0.3608163072377836,
+  "pubs_vs_bill": 0.49423085613909534,
+  "pubs_vs_copies": 0.39165690280937804
+ },
+ "y5": {
+  "capability": {
+   "capable": true,
+   "changed": 0.9312546957175056,
+   "reason": "the null changes the statistic's input"
+  },
+  "survival": {
+   "real": 0.9218056924556777,
+   "n_null": 20,
+   "null_mean": 0.9255112863750912,
+   "null_sd": 0.0012339889253596928,
+   "z": -3.002939364576032,
+   "defined": false,
+   "fraction": "UNDEFINED",
+   "raw_fraction": 1.0040199295249976,
+   "reason": "the null (+0.9255) equals or exceeds the real value (+0.9218): there is no effect in the claimed direction, so 'survival' has no meaning"
+  }
+ },
+ "seconds": 1.3463478088378906,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 96 -- give signalling a stoichiometry, and make it pay for itself",
+  "====================================================================================================",
+  "",
+  "  7,210 genes carry phosphosite counts; 4,821 have protein copies",
+  "  17,432 signalling edges in the model",
+  "",
+  "Y1 THE STOICHIOMETRY CAN ACTUALLY BE WRITTEN",
+  "     edges whose target carries a phosphosite: 13,195 of 17,432 (75.7%)",
+  "     each becomes:  kinase + substrate + ATP -> kinase + phospho-substrate + ADP",
+  "     balanced reactions written: 13,195",
+  "     uncovered edges are counted as uncovered, not assumed to be something else",
+  "",
+  "Y2 SIGNALLING IS A MINORITY OF THE ATP BUDGET",
+  "     2,662 proteins with both a site count and a copy number",
+  "     total phosphosites in the cell: 16,703,302,336",
+  "     translation: 30,762,337,520 codons/h x 4 ATP = 123,049,350,080 ATP/h  (loop 92)",
+  "     phosphosite half-life     10 s ->    4,168,024,891,361 ATP/h      33.87x translation",
+  "     phosphosite half-life     60 s ->      694,670,815,227 ATP/h       5.65x translation",
+  "     phosphosite half-life    300 s ->      138,934,163,045 ATP/h       1.13x translation",
+  "     phosphosite half-life    600 s ->       69,467,081,523 ATP/h       0.56x translation",
+  "     gate: signalling below translation at EVERY lifetime in the swept range",
+  "     Y2 FAIL -- affordable only at the LONGER lifetimes",
+  "",
+  "Y3 THE COST IS CARRIED BY ABUNDANCE, NOT BY HEAVY PHOSPHORYLATION",
+  "     top 20 proteins carry 41.6% of the phosphorylation bill: ENO1, LMNA, EEF1A1, HNRNPA1, HSPD1, HSPA8",
+  "     bill vs site count +0.3612   bill vs copy number +0.9218",
+  "     median sites/protein 5, max 282",
+  "     -> a signalling model needs CONCENTRATIONS first",
+  "",
+  "Y4 THE FAME CONTROL",
+  "     pubs vs phosphosite count +0.3608   vs the ATP bill +0.4942   vs copy number +0.3917   (n 2,662)",
+  "     phosphosite counts come from mass spectrometry, which finds abundant and studied",
+  "     proteins first, so a positive correlation here is expected and is NOT evidence of",
+  "     anything biological. It bounds what a site-count-based claim could ever mean.",
+  "",
+  "Y5 THE NULL FIRES, AND IS CHECKED FOR THE ABILITY TO",
+  "     CAPABILITY CHECK: shuffling site counts changes 92.8% of entries -- capable: True",
+  "     bill-vs-abundance under a site-count shuffle: real +0.9218  null +0.9255 +/- 0.0012  survival UNDEFINED -- the null (+0.9255) equals or exceeds the real value (+0.9218): there is no effect in the claimed direction, so 'survival' has no meaning",
+  "     interpretation: if the correlation survives shuffling the SITE COUNTS, the bill is",
+  "     abundance and the site annotation adds nothing to it",
+  "     Y5 PASS -- the null is capable and its verdict is usable",
+  "",
+  "Y6 WHAT THIS DOES NOT GIVE",
+  "     a stoichiometry is not a rate law. 13,195 balanced reactions now exist and can",
+  "     enter a mass balance, but nothing here supplies kinase kinetics, phosphatase",
+  "     activities, or the ordering of a cascade. This prices the layer; it does not run it.",
+  "     The phosphosite half-life is swept rather than known, and it is the single largest",
+  "     uncertainty in the number: a factor of 60 across the swept range.",
+  "",
+  "  PASS  Y1 the stoichiometry can be written",
+  "  FAIL  Y2 signalling is a minority of the ATP budget",
+  "  PASS  Y3 the cost driver is identified",
+  "  PASS  Y4 fame reported",
+  "  PASS  Y5 the null is capable and fired",
+  "  PASS  Y6 the limit is stated",
+  "    manifest: 2 inputs, coverage 13195/17432 (75.7%) by 'filtered', seed 9601, controls 6"
+ ]
+}

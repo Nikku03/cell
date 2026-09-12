@@ -1,0 +1,33 @@
+{
+ "n_nodes": 8339,
+ "n_dynamic": 7480,
+ "n_input": 859,
+ "theta": 0.35000000000000003,
+ "beta": 4.0,
+ "T1": {
+  "converged_frac": 1.0,
+  "median_steps": 30.0,
+  "n_distinct_attractors": 40
+ },
+ "T2": {
+  "on_frac": 0.28120877803093897,
+  "mean_activity": 0.4150314927101135,
+  "frac_intermediate": 0.7769516728624535
+ },
+ "T3": {
+  "median_fragility": 0.44573667645454407,
+  "frac_small_effect": 0.6843582887700534,
+  "max_fragility": 3.495586633682251,
+  "p95_fragility": 0.719195845723152
+ },
+ "T4": {
+  "n": 7380,
+  "n_essential": 777,
+  "auc_fragility": 0.4738491980654634,
+  "auc_outdegree_baseline": 0.46569292730128714,
+  "auc_on_in_baseline": 0.512253604938748,
+  "spearman_fragility_dep": 0.008989822889866241,
+  "partial_spearman_ctrl_outdeg": -0.008076269364262865
+ },
+ "verdict": "HONEST NULL: the cell runs and is robust, but its dynamical fragility does NOT predict essentiality (AUC 0.47). Running it doesn't tell us which genes matter."
+}

@@ -1,0 +1,21 @@
+{
+ "n_directed_sources": 91,
+ "frac_ko_are_sources": 0.241,
+ "coverage_movers": {
+  "1": 0.0025,
+  "2": 0.0606,
+  "3": 0.2388,
+  "4": 0.4031
+ },
+ "coverage_nonmovers": {
+  "1": 0.0008,
+  "2": 0.0225,
+  "3": 0.1399,
+  "4": 0.2657
+ },
+ "movers_reachable": 0.4031,
+ "directed_closeness_recall": 0.016,
+ "tide_recall": 0.2262,
+ "verdict": "DIRECTED CHAIN (directed_chain.py): put ARROWS on the edges and follow DIRECTED chains, to beat the small-world collapse of undirected PPI. Directed layer = SIGNOR signed signaling + TRRUST (avg out-degree 14.3). Only 24% of knockouts are directed sources (have outgoing arrows) -- the rest have NO directed edge to propagate. On those that do: directed discrimination stays 2.69x at 2 hops and 1.71x at 3 hops (vs undirected's collapse to 1.0x) -- so DIRECTION DOES restore specificity: a directed cascade does not fan out to the whole cell. BUT only 40% of a knockout's movers are directionally reachable at all, and directed-closeness recall is 0.016 vs tide 0.226. So the concept is VALIDATED -- arrows fix the fan-out problem -- but the directed edges we have (SIGNOR/TRRUST, canonical) are too SPARSE to cover the response: most knockouts aren't even sources, and most movers are never reached. The bottleneck moves from 'undirected explosion' to 'directed-edge coverage'. The user's assembly-order idea is exactly the right KIND of data (it would add directed edges), but assembly order isn't in any database at scale; the scalable path to a dense DIRECTED interactome is a time-course readout (order genes by when they move) + kinase-substrate/SIGNOR-style directed edges. Deterministic.",
+ "note": "DIRECTED CHAIN (directed_chain.py): put ARROWS on the edges and follow DIRECTED chains, to beat the small-world collapse of undirected PPI. Directed layer = SIGNOR signed signaling + TRRUST (avg out-degree 14.3). Only 24% of knockouts are directed sources (have outgoing arrows) -- the rest have NO directed edge to propagate. On those that do: directed discrimination stays 2.69x at 2 hops and 1.71x at 3 hops (vs undirected's collapse to 1.0x) -- so DIRECTION DOES restore specificity: a directed cascade does not fan out to the whole cell. BUT only 40% of a knockout's movers are directionally reachable at all, and directed-closeness recall is 0.016 vs tide 0.226. So the concept is VALIDATED -- arrows fix the fan-out problem -- but the directed edges we have (SIGNOR/TRRUST, canonical) are too SPARSE to cover the response: most knockouts aren't even sources, and most movers are never reached. The bottleneck moves from 'undirected explosion' to 'directed-edge coverage'. The user's assembly-order idea is exactly the right KIND of data (it would add directed edges), but assembly order isn't in any database at scale; the scalable path to a dense DIRECTED interactome is a time-course readout (order genes by when they move) + kinase-substrate/SIGNOR-style directed edges. Deterministic."
+}

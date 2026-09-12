@@ -1,0 +1,30 @@
+{
+ "n_overlap": 16,
+ "overlap_kos": [
+  "BCLAF1",
+  "CDC5L",
+  "CEBPZ",
+  "GATA1",
+  "GTF2B",
+  "HINFP",
+  "HSPA5",
+  "MYC",
+  "NRF1",
+  "SETDB1",
+  "TBP",
+  "TFDP1",
+  "THAP1",
+  "YY1",
+  "ZBTB11",
+  "ZNF407"
+ ],
+ "codep_to_chromatin_r": 0.0096,
+ "codep_to_mrna_r": -0.0149,
+ "chromatin_mrna_agreement_r": -0.0451,
+ "transfer_chromatin": 0.0821,
+ "transfer_mrna": 0.0192,
+ "codep_chromatin_shuffle_null": 0.0723,
+ "pivot_directionally_helps": false,
+ "verdict": "ACTIVITY-TARGET PIVOT (activity_target.py): the user's proposal -- invert the model to predict CHROMATIN ACTIVITY (where the mechanistic signal survives) instead of buffered mRNA. Tested on the 16 K562 knockouts with BOTH readouts + a co-dependency input. DECISIVE TEST -- is the chromatin target better predicted by a generalizable input (co-dependency) than mRNA is? co-dep->chromatin r=+0.010 vs co-dep->mRNA r=-0.015; nearest-neighbour transfer chromatin +0.082 vs mRNA +0.019. The chromatin target is NOT clearly more predictable from the input than mRNA is (both alignments are similar/low). MEANING: the pivot is intuitive but does not, on this overlap, escape the representation gap -- the chromatin response is about as PRIVATE (poorly predicted from generalizable inputs) as the mRNA response. Inverting the model to predict activity moves the target but not the wall: the specific signal is still only in the knockout's own measured profile, now a chromatin one. (co-dep->chromatin alignment vs shuffle null 0.072.) HONEST BLOCKERS that bound the pivot regardless of direction: (1) LABEL SCARCITY -- Spear-ATAC has ~36 TF knockdowns vs Perturb-seq's 1400, so a GENERAL knockout->activity model cannot be trained (this test's n is tiny and TF-biased); (2) READOUT NARROWNESS -- chromVAR activity moved for only 4/25 sequence-specific TFs and is family-level, so 'chromatin activity' is a target only for accessibility-shaping TFs, blind to the metabolic/structural majority of knockouts. CONCLUSION: the pivot is the right INSTINCT (measure/predict the layer that carries the signal), and directionally unsupported at this resolution, but the operational blocker is DATA: an activity-layer target at Perturb-seq SCALE and BREADTH does not exist yet. The lever is generating that measurement (genome-wide Perturb-ATAC / nascent / phospho), after which the target-pivot becomes trainable. Deterministic; small n, stated.",
+ "note": "ACTIVITY-TARGET PIVOT (activity_target.py): the user's proposal -- invert the model to predict CHROMATIN ACTIVITY (where the mechanistic signal survives) instead of buffered mRNA. Tested on the 16 K562 knockouts with BOTH readouts + a co-dependency input. DECISIVE TEST -- is the chromatin target better predicted by a generalizable input (co-dependency) than mRNA is? co-dep->chromatin r=+0.010 vs co-dep->mRNA r=-0.015; nearest-neighbour transfer chromatin +0.082 vs mRNA +0.019. The chromatin target is NOT clearly more predictable from the input than mRNA is (both alignments are similar/low). MEANING: the pivot is intuitive but does not, on this overlap, escape the representation gap -- the chromatin response is about as PRIVATE (poorly predicted from generalizable inputs) as the mRNA response. Inverting the model to predict activity moves the target but not the wall: the specific signal is still only in the knockout's own measured profile, now a chromatin one. (co-dep->chromatin alignment vs shuffle null 0.072.) HONEST BLOCKERS that bound the pivot regardless of direction: (1) LABEL SCARCITY -- Spear-ATAC has ~36 TF knockdowns vs Perturb-seq's 1400, so a GENERAL knockout->activity model cannot be trained (this test's n is tiny and TF-biased); (2) READOUT NARROWNESS -- chromVAR activity moved for only 4/25 sequence-specific TFs and is family-level, so 'chromatin activity' is a target only for accessibility-shaping TFs, blind to the metabolic/structural majority of knockouts. CONCLUSION: the pivot is the right INSTINCT (measure/predict the layer that carries the signal), and directionally unsupported at this resolution, but the operational blocker is DATA: an activity-layer target at Perturb-seq SCALE and BREADTH does not exist yet. The lever is generating that measurement (genome-wide Perturb-ATAC / nascent / phospho), after which the target-pivot becomes trainable. Deterministic; small n, stated."
+}

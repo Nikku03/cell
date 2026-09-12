@@ -1,0 +1,62 @@
+{
+  "counts": {
+    "n_pos": 6000,
+    "n_hard_neg": 3000,
+    "n_easy_neg": 3000,
+    "features": [
+      "shared_partners",
+      "jaccard",
+      "same_complex",
+      "coexpression",
+      "codependency",
+      "coessentiality",
+      "domain_compat"
+    ]
+  },
+  "features_all": [
+    "shared_partners",
+    "jaccard",
+    "same_complex",
+    "coexpression",
+    "codependency",
+    "coessentiality",
+    "domain_compat"
+  ],
+  "kept_features": [
+    "shared_partners",
+    "jaccard",
+    "same_complex",
+    "coessentiality",
+    "domain_compat"
+  ],
+  "sklearn_version": "1.9.0",
+  "dropped": {
+    "coexpression": 0.51,
+    "codependency": 0.51
+  },
+  "per_feature_auc": {
+    "shared_partners": 0.634,
+    "jaccard": 0.684,
+    "same_complex": 0.535,
+    "coexpression": 0.51,
+    "codependency": 0.51,
+    "coessentiality": 0.557,
+    "domain_compat": 0.549
+  },
+  "auc_structural_only": 0.701,
+  "auc_independent_only": 0.606,
+  "combined_auc": 0.801,
+  "combined_auc_all_features": 0.8,
+  "auc_logistic": 0.71,
+  "auc_gbm": 0.801,
+  "chosen_model": "gbm",
+  "brier": 0.1713,
+  "threshold_at_0p9_precision": 0.657,
+  "recall_at_that_threshold": 0.559,
+  "informative_independent": [
+    "same_complex",
+    "coessentiality",
+    "domain_compat"
+  ],
+  "note": "add->measure->keep: any independent feature below AUC 0.53 alone is DROPPED (and can no longer gate the loop). combined_auc vs combined_auc_all_features shows dropping the dead weight did not cost anything."
+}

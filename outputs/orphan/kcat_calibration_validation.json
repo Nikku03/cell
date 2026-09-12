@@ -1,0 +1,74 @@
+{
+  "summary": {
+    "n_measured_invitro": 278,
+    "catpred_raw_fold_error": 3.3005449858578735,
+    "catpred_within_2x": 0.37050359712230213,
+    "residual_regression_to_mean_r": -0.3068122132336511,
+    "cv_optimal_shrinkage": 1.0,
+    "best_fitted_corrector_fold_error": 3.3005449858578735,
+    "correction_generalises": false,
+    "recalibration_hurts_real_measured": true,
+    "recalibration_helps_only_synthetic_tiers": true
+  },
+  "residual_correlations": {
+    "catpred_pred_regression_to_mean": -0.3068122132336511,
+    "log_km": -0.2156056105844832,
+    "catpred_unc": 0.19438247480451112,
+    "log_protein_len": 0.0005877798183945378,
+    "log_substrate_size": 0.1146269025051845
+  },
+  "regression_to_mean_slope": -0.29510987233184016,
+  "corrector_cv_fold_error": {
+    "raw_catpred": 3.3005449858578735,
+    "linear_deshrinkage": 4.505723287179534,
+    "linear_catpred_km_unc": 3.722637978370548,
+    "gbm_all_features": 5.490956841160697
+  },
+  "shrinkage_scan_fold_error": {
+    "1.0": 3.50950496517112,
+    "0.9": 3.5966918333869073,
+    "0.8": 3.9765869628421155,
+    "0.7": 4.533407044776368,
+    "0.6": 4.899306421045824,
+    "0.5": 5.581423523500463
+  },
+  "label_quality_artifact_by_davidi_tier": {
+    "global-prior": {
+      "n": 36,
+      "catpred_raw": 8.50288469322552,
+      "recalibrated": 1.0000000000000004,
+      "delta": -7.5028846932255195
+    },
+    "EC-class": {
+      "n": 144,
+      "catpred_raw": 3.2051546095716628,
+      "recalibrated": 2.8774249748471816,
+      "delta": -0.32772963472448113
+    },
+    "network-propagated": {
+      "n": 144,
+      "catpred_raw": 2.5973243773740795,
+      "recalibrated": 1.0584341283175223,
+      "delta": -1.5388902490565572
+    },
+    "measured": {
+      "n": 89,
+      "catpred_raw": 5.45667129952074,
+      "recalibrated": 11.68317116076587,
+      "delta": 6.22649986124513
+    },
+    "EC-measured": {
+      "n": 39,
+      "catpred_raw": 4.919150870492093,
+      "recalibrated": 12.724314084198562,
+      "delta": 7.80516321370647
+    }
+  },
+  "real_measured_recal": {
+    "catpred_raw": 5.2965487163856695,
+    "recalibrated": 17.187835498084546,
+    "n": 128
+  },
+  "verdict": "No fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0); the apparent recalibration win is a label-quality artifact. Use CatPred at measured accuracy; keep literature-measured kcat as ground truth.",
+  "passed": true
+}

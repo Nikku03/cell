@@ -1,0 +1,111 @@
+[
+ {
+  "mutation": "MLH1 K618T",
+  "regime": "PROTEIN HIT, cell-dependency unresolved",
+  "variant_layer": {
+   "call": "likely damaging",
+   "score": 0.83,
+   "source": "AlphaMissense",
+   "mechanisms": [
+    "function-altering (mechanism not localized)"
+   ],
+   "why": "AlphaMissense flags it, but it is not at an annotated site nor destabilizing \u2014 a functional change our mechanism rungs don't localize",
+   "ml_blind_spot": null
+  },
+  "cell_layer": {
+   "essentiality": "UNCERTAIN",
+   "p_essential": 0.42,
+   "lines": "1 of 3"
+  },
+  "cell_level_conclusion": "variant damages the protein; the cell-dependency lines split \u2014 treat the cell impact as uncertain.",
+  "joint_confidence": "MEDIUM-LOW",
+  "caveats": [
+   "AlphaMissense is strong but misses gain-of-function (sickle-cell class) \u2014 the override flags it",
+   "cell essentiality is a cell-fitness lens (DepMap/Perturb-seq, cell-line/context specific), NOT disease pathogenicity \u2014 they diverge for suppressors/GOF/tissue-specific genes",
+   "\u0394\u0394G is the noisy mechanism rung (r~0.4) \u2014 trust it for ranking strong effects, not per-call"
+  ],
+  "clinical_truth": "PATHOGENIC \u2014 Lynch syndrome (DNA mismatch-repair, load-bearing)"
+ },
+ {
+  "mutation": "TP53 R175H",
+  "regime": "LOSS-OF-FUNCTION in a LOAD-BEARING gene  (both layers agree)",
+  "variant_layer": {
+   "call": "likely damaging",
+   "score": 0.978,
+   "source": "AlphaMissense",
+   "mechanisms": [
+    "disrupts a functional residue"
+   ],
+   "why": "1 residue(s) from a UniProt Binding site \u2014 function altered even if the fold holds",
+   "ml_blind_spot": null
+  },
+  "cell_layer": {
+   "essentiality": "ESSENTIAL",
+   "p_essential": 0.76,
+   "lines": "2 of 3"
+  },
+  "cell_level_conclusion": "the variant disables a protein the cell CANNOT buffer \u2192 expect a strong phenotype. This is the regime where the two independent reasonings reinforce each other \u2014 highest confidence.",
+  "joint_confidence": "HIGH",
+  "caveats": [
+   "AlphaMissense is strong but misses gain-of-function (sickle-cell class) \u2014 the override flags it",
+   "cell essentiality is a cell-fitness lens (DepMap/Perturb-seq, cell-line/context specific), NOT disease pathogenicity \u2014 they diverge for suppressors/GOF/tissue-specific genes",
+   "\u0394\u0394G is the noisy mechanism rung (r~0.4) \u2014 trust it for ranking strong effects, not per-call"
+  ],
+  "clinical_truth": "PATHOGENIC \u2014 Li-Fraumeni hotspot (dominant-negative/GOF tumor suppressor)"
+ },
+ {
+  "mutation": "TP53 P72R",
+  "regime": "TOLERATED",
+  "variant_layer": {
+   "call": "likely tolerated",
+   "score": 0.087,
+   "source": "AlphaMissense",
+   "mechanisms": [
+    "no localized mechanism"
+   ],
+   "why": "no localized mechanism; AlphaMissense score near neutral",
+   "ml_blind_spot": null
+  },
+  "cell_layer": {
+   "essentiality": "ESSENTIAL",
+   "p_essential": 0.76,
+   "lines": "2 of 3"
+  },
+  "cell_level_conclusion": "no protein-level damage predicted \u2192 no cell consequence expected (whatever the gene's importance).",
+  "joint_confidence": "MEDIUM-HIGH",
+  "caveats": [
+   "AlphaMissense is strong but misses gain-of-function (sickle-cell class) \u2014 the override flags it",
+   "cell essentiality is a cell-fitness lens (DepMap/Perturb-seq, cell-line/context specific), NOT disease pathogenicity \u2014 they diverge for suppressors/GOF/tissue-specific genes",
+   "\u0394\u0394G is the noisy mechanism rung (r~0.4) \u2014 trust it for ranking strong effects, not per-call"
+  ],
+  "clinical_truth": "BENIGN \u2014 P72R common polymorphism (same gene, contrast)"
+ },
+ {
+  "mutation": "HBB E7V",
+  "regime": "GAIN-OF-FUNCTION / BLIND SPOT",
+  "variant_layer": {
+   "call": "uncertain \u2014 possible ML blind spot",
+   "score": 0.227,
+   "source": "AlphaMissense",
+   "mechanisms": [
+    "disrupts a functional residue",
+    "possible gain-of-function/aggregation"
+   ],
+   "why": "1 residue(s) from a UniProt Site \u2014 function altered even if the fold holds; AlphaMissense says benign (0.23), BUT charge\u2192hydrophobic (E\u2192V) with the fold intact is the sickle-cell-like pattern per-residue predictors systematically MISS \u2014 do not trust the benign call; needs a functional assay",
+   "ml_blind_spot": true
+  },
+  "cell_layer": {
+   "essentiality": "NON-ESSENTIAL",
+   "p_essential": 0.1,
+   "lines": "0 of 2"
+  },
+  "cell_level_conclusion": "DO NOT TRUST a benign call \u2014 the per-residue predictors miss this mechanism (aggregation/gain-of-function). Needs a functional assay. The cell-dependency layer can't rescue this.",
+  "joint_confidence": "LOW (honest uncertainty)",
+  "caveats": [
+   "AlphaMissense is strong but misses gain-of-function (sickle-cell class) \u2014 the override flags it",
+   "cell essentiality is a cell-fitness lens (DepMap/Perturb-seq, cell-line/context specific), NOT disease pathogenicity \u2014 they diverge for suppressors/GOF/tissue-specific genes",
+   "\u0394\u0394G is the noisy mechanism rung (r~0.4) \u2014 trust it for ranking strong effects, not per-call"
+  ],
+  "clinical_truth": "PATHOGENIC via GAIN-OF-FUNCTION \u2014 sickle cell (the blind-spot case)"
+ }
+]

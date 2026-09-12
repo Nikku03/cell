@@ -1,0 +1,698 @@
+{
+  "test": "nexus_doesitbind",
+  "n_rows": 80,
+  "n_paired_receptors": 40,
+  "n_rot": 600,
+  "auc_docking": 0.45625,
+  "auc_size_only": 0.438125,
+  "perm_median": 0.49593750000000003,
+  "perm_p95": 0.6356562500000001,
+  "p_value": 0.66,
+  "features": [
+    "z_best",
+    "z_top10",
+    "z_top100",
+    "skew",
+    "kurt",
+    "n_z3",
+    "n_z4",
+    "gap_1_10",
+    "gap_10_100",
+    "p99_p50"
+  ],
+  "rows": [
+    {
+      "receptor": "10VB",
+      "group": "10VB",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 21.369693756103516
+    },
+    {
+      "receptor": "10VB",
+      "group": "10VB",
+      "label": 0,
+      "partner": "foreign:1A7R",
+      "n_poses": 2400,
+      "secs": 23.891162633895874
+    },
+    {
+      "receptor": "10VC",
+      "group": "10VC",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.95891809463501
+    },
+    {
+      "receptor": "10VC",
+      "group": "10VC",
+      "label": 0,
+      "partner": "foreign:1A7N",
+      "n_poses": 2400,
+      "secs": 21.416422367095947
+    },
+    {
+      "receptor": "10ZO",
+      "group": "10ZO",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.443702220916748
+    },
+    {
+      "receptor": "10ZO",
+      "group": "10ZO",
+      "label": 0,
+      "partner": "foreign:1A30",
+      "n_poses": 2400,
+      "secs": 20.695913791656494
+    },
+    {
+      "receptor": "12AJ",
+      "group": "12AJ",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 21.19809365272522
+    },
+    {
+      "receptor": "12AJ",
+      "group": "12AJ",
+      "label": 0,
+      "partner": "foreign:1A01",
+      "n_poses": 2400,
+      "secs": 20.933650732040405
+    },
+    {
+      "receptor": "12NP",
+      "group": "12NP",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.67000699043274
+    },
+    {
+      "receptor": "12NP",
+      "group": "12NP",
+      "label": 0,
+      "partner": "foreign:1A0Z",
+      "n_poses": 2400,
+      "secs": 21.468863010406494
+    },
+    {
+      "receptor": "12RH",
+      "group": "12RH",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 21.051942110061646
+    },
+    {
+      "receptor": "12RH",
+      "group": "12RH",
+      "label": 0,
+      "partner": "foreign:12NP",
+      "n_poses": 2400,
+      "secs": 21.112001180648804
+    },
+    {
+      "receptor": "12RM",
+      "group": "12RM",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.405101537704468
+    },
+    {
+      "receptor": "12RM",
+      "group": "12RM",
+      "label": 0,
+      "partner": "foreign:12RH",
+      "n_poses": 2400,
+      "secs": 20.32077932357788
+    },
+    {
+      "receptor": "1A00",
+      "group": "1A00",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 21.1825213432312
+    },
+    {
+      "receptor": "1A00",
+      "group": "1A00",
+      "label": 0,
+      "partner": "foreign:12NP",
+      "n_poses": 2400,
+      "secs": 21.12195086479187
+    },
+    {
+      "receptor": "1A01",
+      "group": "1A01",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.644148588180542
+    },
+    {
+      "receptor": "1A01",
+      "group": "1A01",
+      "label": 0,
+      "partner": "foreign:1A07",
+      "n_poses": 2400,
+      "secs": 23.533530712127686
+    },
+    {
+      "receptor": "1A07",
+      "group": "1A07",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 23.560468435287476
+    },
+    {
+      "receptor": "1A07",
+      "group": "1A07",
+      "label": 0,
+      "partner": "foreign:1A7Q",
+      "n_poses": 2400,
+      "secs": 22.523545503616333
+    },
+    {
+      "receptor": "1A09",
+      "group": "1A09",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.221639156341553
+    },
+    {
+      "receptor": "1A09",
+      "group": "1A09",
+      "label": 0,
+      "partner": "foreign:1A7N",
+      "n_poses": 2400,
+      "secs": 22.736690521240234
+    },
+    {
+      "receptor": "1A0O",
+      "group": "1A0O",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.414919137954712
+    },
+    {
+      "receptor": "1A0O",
+      "group": "1A0O",
+      "label": 0,
+      "partner": "foreign:1ACB",
+      "n_poses": 2400,
+      "secs": 23.122467517852783
+    },
+    {
+      "receptor": "1A0U",
+      "group": "1A0U",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 23.173904418945312
+    },
+    {
+      "receptor": "1A0U",
+      "group": "1A0U",
+      "label": 0,
+      "partner": "foreign:1A3O",
+      "n_poses": 2400,
+      "secs": 21.9385666847229
+    },
+    {
+      "receptor": "1A0Z",
+      "group": "1A0Z",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.473739862442017
+    },
+    {
+      "receptor": "1A0Z",
+      "group": "1A0Z",
+      "label": 0,
+      "partner": "foreign:1A6U",
+      "n_poses": 2400,
+      "secs": 22.48050022125244
+    },
+    {
+      "receptor": "1A1B",
+      "group": "1A1B",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.74415397644043
+    },
+    {
+      "receptor": "1A1B",
+      "group": "1A1B",
+      "label": 0,
+      "partner": "foreign:1AB9",
+      "n_poses": 2400,
+      "secs": 23.093693017959595
+    },
+    {
+      "receptor": "1A1E",
+      "group": "1A1E",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.747403860092163
+    },
+    {
+      "receptor": "1A1E",
+      "group": "1A1E",
+      "label": 0,
+      "partner": "foreign:1A7O",
+      "n_poses": 2400,
+      "secs": 21.156871795654297
+    },
+    {
+      "receptor": "1A1R",
+      "group": "1A1R",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 21.24249768257141
+    },
+    {
+      "receptor": "1A1R",
+      "group": "1A1R",
+      "label": 0,
+      "partner": "foreign:1A3O",
+      "n_poses": 2400,
+      "secs": 20.263588428497314
+    },
+    {
+      "receptor": "1A2C",
+      "group": "1A2C",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.314547777175903
+    },
+    {
+      "receptor": "1A2C",
+      "group": "1A2C",
+      "label": 0,
+      "partner": "foreign:1ABI",
+      "n_poses": 2400,
+      "secs": 21.189300537109375
+    },
+    {
+      "receptor": "1A2X",
+      "group": "1A2X",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.051254749298096
+    },
+    {
+      "receptor": "1A2X",
+      "group": "1A2X",
+      "label": 0,
+      "partner": "foreign:1ABI",
+      "n_poses": 2400,
+      "secs": 21.07594633102417
+    },
+    {
+      "receptor": "1A2Y",
+      "group": "1A2Y",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.567117929458618
+    },
+    {
+      "receptor": "1A2Y",
+      "group": "1A2Y",
+      "label": 0,
+      "partner": "foreign:1ABY",
+      "n_poses": 2400,
+      "secs": 21.29453206062317
+    },
+    {
+      "receptor": "1A30",
+      "group": "1A30",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 21.28560733795166
+    },
+    {
+      "receptor": "1A30",
+      "group": "1A30",
+      "label": 0,
+      "partner": "foreign:1A09",
+      "n_poses": 2400,
+      "secs": 20.777740716934204
+    },
+    {
+      "receptor": "1A3N",
+      "group": "1A3N",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.806820154190063
+    },
+    {
+      "receptor": "1A3N",
+      "group": "1A3N",
+      "label": 0,
+      "partner": "foreign:1A7Q",
+      "n_poses": 2400,
+      "secs": 20.898364543914795
+    },
+    {
+      "receptor": "1A3O",
+      "group": "1A3O",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.736563205718994
+    },
+    {
+      "receptor": "1A3O",
+      "group": "1A3O",
+      "label": 0,
+      "partner": "foreign:1A6W",
+      "n_poses": 2400,
+      "secs": 20.81353497505188
+    },
+    {
+      "receptor": "1A4F",
+      "group": "1A4F",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 20.783216953277588
+    },
+    {
+      "receptor": "1A4F",
+      "group": "1A4F",
+      "label": 0,
+      "partner": "foreign:12AJ",
+      "n_poses": 2400,
+      "secs": 22.01033043861389
+    },
+    {
+      "receptor": "1A6U",
+      "group": "1A6U",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 23.47327947616577
+    },
+    {
+      "receptor": "1A6U",
+      "group": "1A6U",
+      "label": 0,
+      "partner": "foreign:1A1B",
+      "n_poses": 2400,
+      "secs": 23.004100799560547
+    },
+    {
+      "receptor": "1A6V",
+      "group": "1A6V",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.38300895690918
+    },
+    {
+      "receptor": "1A6V",
+      "group": "1A6V",
+      "label": 0,
+      "partner": "foreign:1A9W",
+      "n_poses": 2400,
+      "secs": 22.575338125228882
+    },
+    {
+      "receptor": "1A6W",
+      "group": "1A6W",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.024256229400635
+    },
+    {
+      "receptor": "1A6W",
+      "group": "1A6W",
+      "label": 0,
+      "partner": "foreign:1A3N",
+      "n_poses": 2400,
+      "secs": 22.825516939163208
+    },
+    {
+      "receptor": "1A7N",
+      "group": "1A7N",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.505196809768677
+    },
+    {
+      "receptor": "1A7N",
+      "group": "1A7N",
+      "label": 0,
+      "partner": "foreign:10VB",
+      "n_poses": 2400,
+      "secs": 23.34143614768982
+    },
+    {
+      "receptor": "1A7O",
+      "group": "1A7O",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 23.984073877334595
+    },
+    {
+      "receptor": "1A7O",
+      "group": "1A7O",
+      "label": 0,
+      "partner": "foreign:1A7Q",
+      "n_poses": 2400,
+      "secs": 24.01553225517273
+    },
+    {
+      "receptor": "1A7P",
+      "group": "1A7P",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 23.297744035720825
+    },
+    {
+      "receptor": "1A7P",
+      "group": "1A7P",
+      "label": 0,
+      "partner": "foreign:1A7N",
+      "n_poses": 2400,
+      "secs": 24.3392231464386
+    },
+    {
+      "receptor": "1A7Q",
+      "group": "1A7Q",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 23.65843939781189
+    },
+    {
+      "receptor": "1A7Q",
+      "group": "1A7Q",
+      "label": 0,
+      "partner": "foreign:1A7P",
+      "n_poses": 2400,
+      "secs": 29.035298109054565
+    },
+    {
+      "receptor": "1A7R",
+      "group": "1A7R",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.35423183441162
+    },
+    {
+      "receptor": "1A7R",
+      "group": "1A7R",
+      "label": 0,
+      "partner": "foreign:12NP",
+      "n_poses": 2400,
+      "secs": 21.950881242752075
+    },
+    {
+      "receptor": "1A9W",
+      "group": "1A9W",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 21.365551710128784
+    },
+    {
+      "receptor": "1A9W",
+      "group": "1A9W",
+      "label": 0,
+      "partner": "foreign:12RM",
+      "n_poses": 2400,
+      "secs": 21.445937395095825
+    },
+    {
+      "receptor": "1AB9",
+      "group": "1AB9",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 21.765396118164062
+    },
+    {
+      "receptor": "1AB9",
+      "group": "1AB9",
+      "label": 0,
+      "partner": "foreign:1A7Q",
+      "n_poses": 2400,
+      "secs": 24.69379758834839
+    },
+    {
+      "receptor": "1ABI",
+      "group": "1ABI",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 23.54873824119568
+    },
+    {
+      "receptor": "1ABI",
+      "group": "1ABI",
+      "label": 0,
+      "partner": "foreign:1A2C",
+      "n_poses": 2400,
+      "secs": 23.000110149383545
+    },
+    {
+      "receptor": "1ABW",
+      "group": "1ABW",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.981700658798218
+    },
+    {
+      "receptor": "1ABW",
+      "group": "1ABW",
+      "label": 0,
+      "partner": "foreign:1A3O",
+      "n_poses": 2400,
+      "secs": 22.995506525039673
+    },
+    {
+      "receptor": "1ABY",
+      "group": "1ABY",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.33530044555664
+    },
+    {
+      "receptor": "1ABY",
+      "group": "1ABY",
+      "label": 0,
+      "partner": "foreign:12RM",
+      "n_poses": 2400,
+      "secs": 23.092962980270386
+    },
+    {
+      "receptor": "1ACB",
+      "group": "1ACB",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.201807260513306
+    },
+    {
+      "receptor": "1ACB",
+      "group": "1ACB",
+      "label": 0,
+      "partner": "foreign:10VC",
+      "n_poses": 2400,
+      "secs": 23.903789281845093
+    },
+    {
+      "receptor": "1ACM",
+      "group": "1ACM",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 23.389434814453125
+    },
+    {
+      "receptor": "1ACM",
+      "group": "1ACM",
+      "label": 0,
+      "partner": "foreign:1A30",
+      "n_poses": 2400,
+      "secs": 22.07211709022522
+    },
+    {
+      "receptor": "1AE8",
+      "group": "1AE8",
+      "label": 1,
+      "partner": "true",
+      "n_poses": 2400,
+      "secs": 22.599303007125854
+    },
+    {
+      "receptor": "1AE8",
+      "group": "1AE8",
+      "label": 0,
+      "partner": "foreign:1A2X",
+      "n_poses": 2400,
+      "secs": 22.88251256942749
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "DO THESE TWO PROTEINS INTERACT AT ALL? -- the question that does not need pose ranking solved",
+    "====================================================================================================",
+    "  Dock-then-score is blocked: the top pose is rank ~1,791 of 9,600, so it scores a wrong structure.",
+    "  But WHETHER they bind can be read from the pose-score DISTRIBUTION without knowing WHERE.",
+    "  PAIRED design: every receptor appears once with its true partner and once with a size-matched",
+    "  foreign chain, so per-protein effects cancel. Features are z-scored WITHIN each pair, so raw",
+    "  magnitude (which tracks size) cannot reach the classifier.",
+    "  PREDECLARED: beats size_only AND label_perm => detection works where ranking does not.",
+    "  ~ size_only => it learned protein size. ~ label_perm => nothing at all.",
+    "\n  80 usable complexes; building 40 paired examples",
+    "    10 docked (388s)",
+    "    20 docked (605s)",
+    "    30 docked (830s)",
+    "    40 docked (1040s)",
+    "    50 docked (1254s)",
+    "    60 docked (1485s)",
+    "    70 docked (1718s)",
+    "    80 docked (1947s)",
+    "\n  80 docked runs | 40 positive, 40 negative | 40 distinct receptors",
+    "  receptors appearing in BOTH classes (the paired design): 40",
+    "\n  arm                    AUC   (GroupKFold by receptor, so no receptor spans train and test)",
+    "  docking dist         0.456",
+    "  size_only            0.438   <- the artefact baseline",
+    "  label_perm           0.496   median of 200, 95th 0.636",
+    "  chance               0.500",
+    "  permutation p = 0.6600",
+    "\n  READING",
+    "  IT LEARNED SIZE. docking 0.456 vs size_only 0.438 -- the distribution",
+    "  features add nothing over how big the two chains are, despite per-pair z-scoring. The paired",
+    "  design and the size arm are exactly what make that visible rather than flattering."
+  ]
+}

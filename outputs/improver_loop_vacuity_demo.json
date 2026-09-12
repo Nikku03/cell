@@ -1,0 +1,39 @@
+{
+ "test": "vacuity demonstration -- the stall rule switched OFF",
+ "why": "The stall rule is the loop's central claim: a turn that consumes no new measurement is decoration. Asserting that is cheap. This runs all 10 turns with IMPROVER_ALLOW_VACUOUS=1, hashes each turn's plan, and counts the distinct values. If the rule were merely a convenience the plans would differ; they do not.",
+ "tracks": {
+  "ml_kcat": {
+   "turns": 10,
+   "distinct_plans": 1,
+   "per_turn": {
+    "turn_01_ml_kcat.json": "6b61748a123a",
+    "turn_02_ml_kcat.json": "6b61748a123a",
+    "turn_03_ml_kcat.json": "6b61748a123a",
+    "turn_04_ml_kcat.json": "6b61748a123a",
+    "turn_05_ml_kcat.json": "6b61748a123a",
+    "turn_06_ml_kcat.json": "6b61748a123a",
+    "turn_07_ml_kcat.json": "6b61748a123a",
+    "turn_08_ml_kcat.json": "6b61748a123a",
+    "turn_09_ml_kcat.json": "6b61748a123a",
+    "turn_10_ml_kcat.json": "6b61748a123a"
+   }
+  },
+  "cell": {
+   "turns": 10,
+   "distinct_plans": 1,
+   "per_turn": {
+    "turn_01_cell.json": "38976a5cf202",
+    "turn_02_cell.json": "38976a5cf202",
+    "turn_03_cell.json": "38976a5cf202",
+    "turn_04_cell.json": "38976a5cf202",
+    "turn_05_cell.json": "38976a5cf202",
+    "turn_06_cell.json": "38976a5cf202",
+    "turn_07_cell.json": "38976a5cf202",
+    "turn_08_cell.json": "38976a5cf202",
+    "turn_09_cell.json": "38976a5cf202",
+    "turn_10_cell.json": "38976a5cf202"
+   }
+  }
+ },
+ "verdict": "every track produced exactly ONE distinct plan across ten turns. Turns 2-10 are byte-identical re-derivations of turn 1, which is what the stall rule refuses to print. The loop stops at the turn after the last measurement, and that turn number is the finding."
+}

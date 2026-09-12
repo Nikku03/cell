@@ -1,0 +1,118 @@
+{
+ "test": "the fourth replicate",
+ "pairwise": {
+  "1v2": 0.12446146165839421,
+  "1v3": 0.11947507493571563,
+  "1v4": 0.1360644652113842,
+  "2v3": 0.600738229783868,
+  "2v4": 0.16160552889500582,
+  "3v4": 0.14809162633730086
+ },
+ "ceilings": {
+  "(1, 2, 3)": -0.5402810327362856,
+  "(1, 2, 4)": -1.025639891248245,
+  "(1, 3, 4)": -1.0414708137975832,
+  "(2, 3, 4)": -0.5575091371689589
+ },
+ "ceiling_all4": -0.7912252187377682,
+ "clean_split": {
+  "0.1": {
+   "model": -0.2314638444217716,
+   "persistence": -0.0062413189707222205,
+   "margin": -0.22522252545104937,
+   "n": 60
+  },
+  "0.25": {
+   "model": -0.16059335801325036,
+   "persistence": -0.004035684862450539,
+   "margin": -0.15655767315079983,
+   "n": 150
+  },
+  "0.5": {
+   "model": -0.135383885729623,
+   "persistence": -0.011555505761501328,
+   "margin": -0.12382837996812168,
+   "n": 300
+  },
+  "1.0": {
+   "model": -0.09682480443930452,
+   "persistence": -0.015196408653704863,
+   "margin": -0.08162839578559966,
+   "n": 600
+  }
+ },
+ "dense_grid": {
+  "nine": -0.5575091371689589,
+  "eleven": -0.5334638209559514
+ },
+ "gates": {
+  "M1": true,
+  "M2": true,
+  "M3": false,
+  "M4": false,
+  "M5": true
+ },
+ "void": [],
+ "seconds": 31.2028386592865,
+ "log": [
+  "========================================================================================================",
+  "LOOP 218 -- THE FOURTH REPLICATE: A RESCUE, OR A FOURTH OPINION?",
+  "========================================================================================================",
+  "M1 IS REPLICATE 4 THE SAME EXPERIMENT?",
+  "       replicate 1: covers 9/9 grid points, 14 timepoints overall",
+  "       replicate 2: covers 9/9 grid points, 15 timepoints overall",
+  "       replicate 3: covers 9/9 grid points, 16 timepoints overall",
+  "       replicate 4: covers 9/9 grid points, 11 timepoints overall",
+  "       library size at t=30: r1 9.932e+05  r2 9.990e+05  r3 9.883e+05  r4 9.987e+05",
+  "       baseline Spearman, replicate 4 against 1/2/3: 0.9783  0.9762  0.9667",
+  "     M1 PASS -- 9/9 grid points, baseline Spearman >= 0.967, library sizes within 1.01x",
+  "M2 WHERE DOES REPLICATE 4 SIT?",
+  "       replicate 1 vs 2   pearson +0.1245   R2 -0.97148",
+  "       replicate 1 vs 3   pearson +0.1195   R2 -0.88438",
+  "       replicate 1 vs 4   pearson +0.1361   R2 -1.21896",
+  "       replicate 2 vs 3   pearson +0.6007   R2 +0.23502",
+  "       replicate 2 vs 4   pearson +0.1616   R2 -0.88648",
+  "       replicate 3 vs 4   pearson +0.1481   R2 -1.02107",
+  "     replicate 1's mean agreement with 2 and 3: +0.1220",
+  "     replicate 4's mean agreement with 2 and 3: +0.1548",
+  "     M2 PASS -- replicate 4 agrees with 2 and 3 at +0.1548 against replicate 1's +0.1220, so replicate 1 is the lone outlier and the clean split is available",
+  "M3 WHAT DOES A FOUR-REPLICATE NOISE CEILING LOOK LIKE?",
+  "       replicates (1, 2, 3)   mean pairwise R2 -0.54028",
+  "       replicates (1, 2, 4)   mean pairwise R2 -1.02564",
+  "       replicates (1, 3, 4)   mean pairwise R2 -1.04147",
+  "       replicates (2, 3, 4)   mean pairwise R2 -0.55751",
+  "       all four                mean pairwise R2 -0.79123",
+  "     best trio (1, 2, 3) at -0.54028; loop 216's (1,2,3) recorded -0.54028",
+  "     M3 FAIL -- the best trio (1, 2, 3) reaches -0.5403 against -0.5403",
+  "M4 THE CLEAN SPLIT: SELECT ON 2+3, SCORE ON 4",
+  "       top  10%   model -0.23146   persistence -0.00624   margin -0.22522   n 60",
+  "       top  25%   model -0.16059   persistence -0.00404   margin -0.15656   n 150",
+  "       top  50%   model -0.13538   persistence -0.01156   margin -0.12383   n 300",
+  "       top 100%   model -0.09682   persistence -0.01520   margin -0.08163   n 600",
+  "     M4 FAIL -- the best selection buys -0.08163 even with a fully independent scorer",
+  "M5 DOES THE DENSER GRID HELP?",
+  "       9-point grid  (8 intervals)   ceiling -0.55751",
+  "      11-point grid (10 intervals)   ceiling -0.53346   delta +0.02405",
+  "       the extra points are 300 and 360 min, which replicate 1 lacks",
+  "     M5 PASS -- the denser grid raises the ceiling by +0.02405",
+  "M6 WHAT THIS CANNOT SHOW",
+  "     Replicate 4 was on disk the whole time and no loop used it. That is a fetch",
+  "     failure in this project, not a discovery about biology, and nothing below should",
+  "     be read as new data.",
+  "     Four ENCODE isogenic replicates still share cell line, protocol and lab. They bound",
+  "     technical reproducibility, not biological variability, so every ceiling here",
+  "     remains an overestimate of what is really measurable.",
+  "     If M2 passes, replicate 1 has been in every number this project has reported since",
+  "     loop 191d, including the plateau that the set-point model was trained against.",
+  "     Re-deriving that target on replicates 2, 3 and 4 is a separate loop and is not",
+  "     done here.",
+  "========================================================================================================",
+  "  M1  PASS",
+  "  M2  PASS",
+  "  M3  FAIL",
+  "  M4  FAIL",
+  "  M5  PASS",
+  "  3/5   [31s]",
+  "========================================================================================================"
+ ]
+}

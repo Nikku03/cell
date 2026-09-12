@@ -1,0 +1,205 @@
+====================================================================================================
+MODEL -- exact CME, two-state promoter -> mRNA -> protein, six rates
+====================================================================================================
+  k_promoter_on         0.05000 /min
+  k_promoter_off        0.20000 /min
+  k_transcription       0.50000 /min
+  k_mRNA_decay          0.35000 /min
+  k_translation         0.58300 /min
+  k_protein_decay       0.02310 /min
+  caps from truncation_cap: mRNA 0..43, protein 0..66, N = 5896 states
+  CROSS-CHECK, exact CME vs the closed-form Lyapunov moments (independent route):
+    mean protein  CME 7.210877224   analytic 7.210884354   rel err 9.89e-07
+    sd   protein  CME 5.967970646   analytic 5.968010209   rel err 6.63e-06
+    mean mRNA     analytic 0.285714   sd mRNA analytic 0.690066
+    Fano factor (protein) = 4.939      P(n >= 18) = 6.593465e-02
+    threshold sits 1.81 sd above the mean
+
+====================================================================================================
+E-truncation  CERTIFICATE -- doubled caps must move nothing by more than 1e-6
+====================================================================================================
+  baseline  N 5896 -> 23142   mean moves 9.89e-07   tail moves 1.50e-06
+  boundary mass at the caps: 1.00e-07
+  the replicate half of this certificate needs E1's draws and runs after E1.
+
+====================================================================================================
+E-control  NEGATIVE CONTROL -- sigma = 0 must collapse the envelope EXACTLY
+====================================================================================================
+  200 replicates through the identical code path, 54.3 s
+  mean bias 0.0   tail bias 0.0
+  mean IQR  0.0   tail IQR  0.0
+  distinct tail values across replicates: 1 (must be 1)
+  CATCHES: caps drawn from anything but the rates (a), a baseline solved by a different
+  path than the replicates (b), a sampler whose noise does not scale with sigma (c),
+  nondeterminism in the norm_row two-pass (d).
+
+====================================================================================================
+E1  ENVELOPE at sigma = 0.4, 400 replicates
+====================================================================================================
+  400 exact solves in 133.9 s   largest state space N = 38592
+  two-pass norm_row needed on 227/400 replicates; self-inconsistent on 0; worst boundary mass 1.5e-04
+
+  quantity                           SPEC       MEASURED    verdict
+  mean bias (orders)              -0.0049        -0.0057       PASS
+  tail bias (orders)              -0.1140         0.0363       FAIL
+  mean IQR (orders)                0.4270         0.5772       FAIL
+  tail IQR (orders)                2.1060         1.5856       FAIL
+  IQR ratio tail/mean              4.9321         2.7473       FAIL
+  Monte-Carlo standard errors at 400 replicates (Gaussian formulae):
+    median +-0.0254 (mean) / +-0.0824 (tail);  IQR +-0.0319 (mean) / +-0.1034 (tail)
+  HOW DECISIVE IS EACH VERDICT? deviation from spec, the declared band, and the
+  deviation in Monte-Carlo standard errors. A fail inside ~2 SE is a coin flip.
+    clause             deviation        band        SE   dev/SE
+    E1a mean bias         0.0008      0.0500    0.0254     0.03
+    E1b tail bias         0.1503      0.1500    0.0824     1.82
+    E1c mean IQR          0.1502      0.0854    0.0319     4.71
+    E1d tail IQR          0.5204      0.4212    0.1034     5.03
+    E1b misses its band by 0.0003 orders at 1.8 SE -- it is a MARGINAL fail and should
+    not be read as a reproduction failure; E1c and E1d are 4.7 and 5.0 SE and are.
+  reproducibility factors: mean 10^0.577 = 3.8x    tail 10^1.586 = 39x
+  bias ratio tail/mean: spec 23.3x   measured 6.4x
+
+====================================================================================================
+E-truncation (cont.)  the two largest-state-space replicates, re-solved at 2x caps
+====================================================================================================
+  replicate 120  N  38592 ->  152570 (73s)  P=9.566e-01  mean moves 5.31e-06  tail moves 5.77e-08
+  replicate 268  N  23876 ->   94302 (25s)  P=8.465e-01  mean moves 4.86e-05  tail moves 1.75e-06
+  WORST over baseline + 2 replicates: mean 4.86e-05   tail 1.75e-06   bar 1e-6  -> FAIL
+  IMPACT ARITHMETIC (does this failure change any verdict?): a relative tail error of
+  1.75e-06 is 7.59e-07 orders. The smallest measured quantity anywhere in E1 is the tail bias,
+  0.0363 orders, which is 4.7 orders of magnitude larger. The truncation error cannot
+  move any E1/E2/E3 verdict. Reported as a FAIL, not excused away.
+
+====================================================================================================
+A1  POST-HOC ARITHMETIC (added after E1c failed) -- is 0.427 even reachable?
+====================================================================================================
+  mean_n = f(k_on,k_off) * k_tx * k_tl / (k_mdeg * k_pdeg) exactly, so k_tx, k_tl,
+  k_mdeg and k_pdeg enter log(mean) with coefficient +-1 in ANY model of this shape.
+    sd(log10 mean) >= 2*sigma/ln10 = 2*0.4/2.302585 = 0.34744 orders (exact floor)
+    closed-form Monte Carlo, 400,000 draws, no solver: sd 0.39738  IQR 0.53586  IQR/sd 1.3485
+    CME envelope (400 draws):                          sd 0.40564  IQR 0.57716  IQR/sd 1.4228
+    spec IQR 0.427 at the measured IQR/sd 1.3485 implies sd = 0.31665
+    equivalently the floor in IQR units is 0.4685 orders; spec 0.427 is 8.9% under it
+    -> the spec's 0.427 is BELOW the exact floor by 8.9%
+    Consequence: 0.427 cannot come from sigma = 0.4 on all six rates. It is
+    consistent with the build order's 'per-rate sigma' if some of the four
+    unit-exponent rates carry a sigma smaller than 0.4; the spec does not say which.
+
+====================================================================================================
+E-vacuity  is the tail threshold non-vacuous?
+====================================================================================================
+  baseline P(n >= 18) = 6.5935e-02
+  log10 tail across 400 replicates: min -9.17  p10 -3.20  p25 -2.14  med -1.14  p75 -0.55  p90 -0.24  max -0.00
+  linear range: 6.766e-10 .. 9.914e-01
+  pinned below 1e-40: 0   pinned above 0.999: 0   p90-p10 spread 2.952 orders
+  solver floor is 2.75e-52 (item 1); the deepest replicate is 6.77e-10, 42.4 orders above it
+
+====================================================================================================
+E2  RATE-SENSITIVITY RANKING -- each rate perturbed +20% ALONE
+====================================================================================================
+  CEILING, predeclared (ethos rule 5): a x1.2 single-rate perturbation cannot move
+  log10 P(n >= 18) by more than T*log10(1.2) = 18 * 0.079181 = 1.4253 orders.
+  spec magnitudes ABOVE that ceiling: k_translation 3.49, k_mRNA_decay 2.54, k_transcription 2.18, k_protein_decay 1.79
+  -> E2a (magnitudes) is VOID. It is reported but decides nothing.
+
+  primary (E. coli scale)   baseline P(n >= 18) = 6.5935e-02
+    rate                     SPEC     MEASURED  spec/meas
+    k_mRNA_decay             2.54       0.2774        9.2x
+    k_translation            3.49       0.2329       15.0x
+    k_transcription          2.18       0.2170       10.0x
+    k_protein_decay          1.79       0.1950        9.2x
+    k_promoter_off           0.52       0.1817        2.9x
+    k_promoter_on            0.11       0.1322        0.8x
+    Spearman rho vs spec ranking: 0.943
+    burst-SIZE floor  k_promoter_off = 0.1817   vs  burst-FREQUENCY k_promoter_on = 0.1322   -> size dominates
+    separation: size floor is 1.37x the frequency rate (spec: 0.52/0.11 = 4.7x)
+
+  robustness (round set)   baseline P(n >= 18) = 9.3889e-02
+    rate                     SPEC     MEASURED  spec/meas
+    k_mRNA_decay             2.54       0.2897        8.8x
+    k_translation            3.49       0.2384       14.6x
+    k_promoter_off           0.52       0.2357        2.2x
+    k_transcription          2.18       0.2298        9.5x
+    k_protein_decay          1.79       0.2165        8.3x
+    k_promoter_on            0.11       0.1839        0.6x
+    Spearman rho vs spec ranking: 0.771
+    burst-SIZE floor  k_transcription = 0.2298   vs  burst-FREQUENCY k_promoter_on = 0.1839   -> size dominates
+    separation: size floor is 1.25x the frequency rate (spec: 0.52/0.11 = 4.7x)
+
+  EMPIRICAL CEILING CHECK -- drive k_translation down and watch the slope saturate:
+    k_tl factor      P(n >= 18)  orders/+20%
+    x1.00             6.593e-02       0.2329
+    x0.60             7.611e-03       0.3888
+    x0.40             5.837e-04       0.5464
+    x0.25             1.009e-05       0.7444
+    x0.15             3.400e-08       0.9444
+    x0.10             1.646e-10       1.0750
+    x0.06             9.121e-14       1.1989
+    x0.04             1.508e-16       1.2684
+    largest slope reached 1.2684, ceiling 1.4253, never crossed: True
+    and it is only approached where P(n>=18) is 1e-16, i.e. vacuous.
+
+====================================================================================================
+E3  RATIO VS ABSOLUTE -- declared reference: ON/OFF fold change, k_promoter_on x3.0
+====================================================================================================
+  OFF P(n >= 18) = 6.5935e-02   ON P(n >= 18) = 3.5054e-01   fold change R = 5.317
+  rate                 abs orders    ratio ord      benefit   spec benefit
+  k_mRNA_decay             0.2774       0.0763        3.64x         17.33x
+  k_translation            0.2329       0.0832        2.80x          5.45x
+  k_transcription          0.2170       0.0630        3.45x          4.38x
+  k_protein_decay          0.1950       0.0107       18.19x          4.26x
+  k_promoter_off           0.1817       0.0736        2.47x          4.07x
+  k_promoter_on            0.1322       0.0417        3.17x             --
+  median benefit factor: 3.31x     spec 6.2 factors: 17.33x, 5.45x, 4.38x, 4.26x, 4.07x
+
+  DISCLOSURE / DIAGNOSIS -- the benefit factor is a property of the REFERENCE, which
+  the spec does not state. Sweep of the induction fold, same six perturbations:
+    induction       P_on(n>=18)          R median benefit
+    x1.5             1.2886e-01       1.95         13.08x
+    x2.0             2.0167e-01       3.06          6.65x
+    x3.0             3.5054e-01       5.32          3.31x
+    x4.0             4.8064e-01       7.29          2.30x
+    the spec's 4-5x is reached between x2 and x3 induction; at x4 it is ~2x.
+
+====================================================================================================
+E1d DIAGNOSIS -- what circuit WOULD give a tail IQR of 2.106?
+====================================================================================================
+  Burst size swept with the MEAN PROTEIN NUMBER HELD EXACTLY FIXED, so only the
+  burst structure moves. 64 replicates per point (REDUCED from E1's 400 to keep the
+  module inside its 10-minute budget; IQR standard error is 1.5734*sd/sqrt(64), about
+  +-0.06 orders on the mean column and +-0.22 on the tail column). Same multipliers
+  at every point, so the comparison ACROSS rows is paired and far tighter than that.
+    s      mRNA/brst   Fano   P(n>=18)   meanIQR   mIQRpop   tailIQR   ratio  tailbias
+    0.25       0.62   2.60  2.448e-02     0.429     0.476     2.021    4.71   -0.1758
+    0.40       1.00   2.94  3.105e-02     0.495     0.499     2.023    4.08   -0.2557
+    0.60       1.50   3.56  4.277e-02     0.508     0.519     1.966    3.87   -0.2285
+    1.00       2.50   4.94  6.593e-02     0.503     0.539     1.560    3.10   -0.1578
+    1.60       4.00   7.08  9.199e-02     0.508     0.552     1.201    2.37   -0.1547
+    2.50       6.25  10.31  1.143e-01     0.508     0.560     0.889    1.75   -0.1415
+    spec 6.1 row for comparison:                                  0.427        --     2.106    4.93   -0.1140
+  mIQRpop is the POPULATION mean IQR from 200,000 closed-form draws (no solver, no
+  sampling noise); the meanIQR column is the 64-replicate CME estimate and carries
+  the +-0.06 error quoted above. mIQRpop never falls below the A1 floor 0.4685 --
+  the spec's 0.427 does.
+  The IQR ratio falls monotonically with burstiness. The spec's 4.93 corresponds to a
+  much less bursty circuit than the one it calls 'correctly built'; the spec never
+  states the circuit, so 2.106 is not reproducible from section 6 alone.
+
+====================================================================================================
+GATE SUMMARY -- expected (spec) beside measured
+====================================================================================================
+  gate                           EXPECTED (spec)                          MEASURED                   verdict
+  E-control sigma=0 collapse     0.0 / 0.0 / 0.0 / 0.0 exactly            0.0 / 0.0 / 0.0 / 0.0      PASS  
+  E1a mean bias                  -0.0049                                  -0.0057                    PASS  
+  E1b tail bias                  -0.1140                                  0.0363                     FAIL  
+  E1c mean IQR                   0.4270                                   0.5772                     FAIL  
+  E1d tail IQR                   2.1060                                   1.5856                     FAIL  
+  E1e IQR ratio                  4.9321                                   2.7473                     FAIL  
+  E-vacuity                      no replicate pinned; base in [1e-4,0.5]; p90-p10 >= 1.0 pinned 0/0; base 6.59e-02; spread 2.95 PASS  
+  E2a sensitivity magnitudes     3.49 / 2.54 / 2.18 / 1.79 / 0.52 / 0.11  0.233 / 0.277 / 0.217 / 0.195 / 0.182 / 0.132 VOID  
+  E2b ranking (Spearman rho)     1.00 (PASS >= 0.70)                      0.943                      PASS  
+  E2c burst SIZE > FREQUENCY     true on both rate sets                   True / True                PASS  
+  E3 ratio benefit (median)      4.26-17.3x, min 4.07 (PASS >= 4.0)       3.31x at the declared x3.0 FAIL  
+  E-truncation (own arithmetic)  < 1e-6 relative movement                 4.9e-05 mean, 1.7e-06 tail (worst) FAIL  
+
+  5 PASS, 6 FAIL, 1 VOID   total runtime 447.2 s

@@ -1,0 +1,262 @@
+{
+  "test": "chromatin_cost_model",
+  "measured": {
+    "n_atom_nucleosome": 13625,
+    "nnz_nucleosome": 4870395,
+    "t_direct": 21.868,
+    "t_fine": 1.544,
+    "tau_min": 7.232,
+    "tau_max": 48793.5
+  },
+  "atomistic": [
+    {
+      "scale": "one nucleosome",
+      "atoms": 13625,
+      "nnz": 4870395.0,
+      "bytes": 58444740.0
+    },
+    {
+      "scale": "chr1",
+      "atoms": 16963125000.0,
+      "nnz": 6063641775000.0,
+      "bytes": 72763701300000.0
+    },
+    {
+      "scale": "genome",
+      "atoms": 211187500000.0,
+      "nnz": 75491122500000.0,
+      "bytes": 905893470000000.0
+    }
+  ],
+  "event_scenarios": [
+    {
+      "scenario": "transcribe one 10 kb gene, 10 bp/event",
+      "events": 1000.0,
+      "s_per_iter": 0.81672,
+      "warm_s": 4083.6,
+      "cold_s": 52270.08
+    },
+    {
+      "scenario": "transcribe 1,000 genes concurrently",
+      "events": 1000000.0,
+      "s_per_iter": 0.81672,
+      "warm_s": 4083600.0,
+      "cold_s": 52270080.0
+    },
+    {
+      "scenario": "one replication fork, 1 kb/event, chr1",
+      "events": 249000.0,
+      "s_per_iter": 0.81672,
+      "warm_s": 1016816.4,
+      "cold_s": 13015249.92
+    },
+    {
+      "scenario": "full S phase, genome, 1 kb/event",
+      "events": 3100000.0,
+      "s_per_iter": 10.168,
+      "warm_s": 157604000.0,
+      "cold_s": 2017331199.9999998
+    }
+  ],
+  "assumptions": {
+    "nnz_per_bead": 256,
+    "n_coarse": 200,
+    "iters_cold": 64,
+    "iters_warm": 5,
+    "flops_per_core": 1000000000.0,
+    "dt_bd": 1e-08
+  },
+  "cores": 4,
+  "amr": [
+    {
+      "domain": "100 kb",
+      "bead_steps": 1733585338336.455,
+      "seconds_4core": 86679.26691682274
+    },
+    {
+      "domain": "1 Mb",
+      "bead_steps": 1734833429917.4636,
+      "seconds_4core": 86741.67149587319
+    },
+    {
+      "domain": "10 Mb",
+      "bead_steps": 1747314345727.5476,
+      "seconds_4core": 87365.71728637737
+    },
+    {
+      "domain": "chr1 249 Mb",
+      "bead_steps": 2078751998906.449,
+      "seconds_4core": 103937.59994532245
+    }
+  ],
+  "sequential": [
+    {
+      "level": 0,
+      "bead_bp": 10000,
+      "dt_s": 2.1851543338423805e-05,
+      "sim_time_s": 303.030303030303,
+      "bead_steps": 1386768423.3426836
+    },
+    {
+      "level": 1,
+      "bead_bp": 5000,
+      "dt_s": 5.462885834605951e-06,
+      "sim_time_s": 0.0010925771669211902,
+      "bead_steps": 40000.0
+    },
+    {
+      "level": 2,
+      "bead_bp": 2500,
+      "dt_s": 1.3657214586514878e-06,
+      "sim_time_s": 0.00027314429173029754,
+      "bead_steps": 80000.0
+    },
+    {
+      "level": 3,
+      "bead_bp": 1250,
+      "dt_s": 3.4143036466287195e-07,
+      "sim_time_s": 6.828607293257438e-05,
+      "bead_steps": 160000.0
+    },
+    {
+      "level": 4,
+      "bead_bp": 625,
+      "dt_s": 8.535759116571799e-08,
+      "sim_time_s": 1.7071518233143596e-05,
+      "bead_steps": 320000.0
+    },
+    {
+      "level": 5,
+      "bead_bp": 312,
+      "dt_s": 2.127116634735527e-08,
+      "sim_time_s": 4.254233269471054e-06,
+      "bead_steps": 641025.641025641
+    },
+    {
+      "level": 6,
+      "bead_bp": 200,
+      "dt_s": 8.740617335369522e-09,
+      "sim_time_s": 1.7481234670739044e-06,
+      "bead_steps": 1000000.0
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "WHAT 4D CHROMATIN WOULD COST -- multiplied out from what was actually measured here",
+    "====================================================================================================",
+    "\n  chr1 249 Mbp -> 1.2 M nucleosomes | genome 3.1 Gbp -> 15.5 M nucleosomes  (at 200 bp repeat)",
+    "\n  WALL 1 -- MEMORY. The atomistic route, priced from the measured sparsity.",
+    "    measured: 4,870,395 nonzeros over 13,625 atoms = 357 per atom",
+    "    one nucleosome       13.6 katoms       4.9 Mnonzeros       58.4 MB for the Hessian alone",
+    "    chr1                 17.0 Gatoms       6.1 Tnonzeros       72.8 TB for the Hessian alone",
+    "    genome              211.2 Gatoms      75.5 Tnonzeros      905.9 TB for the Hessian alone",
+    "    Chromosome-scale atomistics is not slow, it is impossible: the matrix does not fit, and",
+    "    no amount of waiting changes that. This is why the route below is coarse-grained.",
+    "\n  WALL 2 -- TIMESTEP. A twistable worm-like chain, one bead per nucleosome, integrated.",
+    "    4 degrees of freedom per bead (position + twist), 200 flops per bead-step (ESTIMATE)",
+    "    chr1       memory    39.8 MB | 0.1 s/step | transcribing one 10 kb gene takes 303 s biological",
+    "               = 30.3 Gsteps at dt=1e-08 s -> 59.8 years of compute",
+    "    genome     memory   496.0 MB | 0.8 s/step | transcribing one 10 kb gene takes 303 s biological",
+    "               = 30.3 Gsteps at dt=1e-08 s -> 744.7 years of compute",
+    "    Memory is now trivial and the wall has MOVED, not gone. Integration pays for every",
+    "    1e-08 s whether anything happened or not, and biology runs on seconds.",
+    "\n  WALL 3 -- OR NOT A WALL. Stop integrating. The measured relaxation spectrum says why.",
+    "    Chromatin is overdamped (Reynolds ~1e-9) and this repo measured its relaxation times",
+    "    spanning tau 7.2 to 48794 within a single nucleosome. A polymerase adds",
+    "    one base every 30 ms. If elastic re-equilibration is fast against that --",
+    "    and overdamped relaxation is -- then nothing is gained by resolving the interval. The",
+    "    scheme becomes: advance to the next EVENT, re-solve the static problem, repeat.",
+    "    That is exactly the closed-form solver already built here, used as a stepper.",
+    "",
+    "    AND THE PER-EVENT COST IS NOT A FULL RE-SOLVE, which is the whole point of the two-level",
+    "    machinery. Priced at the iteration level instead, because that is what the solver does:",
+    "      matvec        2 x nnz, with ~256 nonzeros per bead (bonded, bending, twist, excluded volume)",
+    "      coarse        2 x DOF x 200 modes -- project, solve a diagonal, prolong",
+    "      local solves  one small dense solve per sphere, ~one matvec in total at the measured H^1.2",
+    "    A COLD solve took 64 two-level iterations here. A polymerase step perturbs a few",
+    "    hundred base pairs and the previous state is an excellent initial guess, so a WARM restart",
+    "    should need far fewer -- 5 is assumed below and is the softest number in this file.",
+    "",
+    "    scenario                             events  per event        warm        cold",
+    "    transcribe one 10 kb gene, 10 bp/event    1.0 k      4.1 s       1.1 h      14.5 h",
+    "    transcribe 1,000 genes concurrently    1.0 M      4.1 s   47.3 days   1.7 years",
+    "    one replication fork, 1 kb/event, chr1  249.0 k      4.1 s   11.8 days  150.6 days",
+    "    full S phase, genome, 1 kb/event      3.1 M     50.8 s   5.0 years  64.0 years",
+    "    on 4 cores. These divide by cores almost exactly -- every operation above is a",
+    "    matvec or a dense projection, both of which parallelise without communication headaches.",
+    "    On 256 cores the S-phase row falls to 28.5 days.",
+    "\n  ADAPTIVE REFINEMENT -- coarse everywhere, fine only where it is needed",
+    "    coarse 10 kb   dt  21.85 us   1.39e+07 steps",
+    "    fine   200 bp  dt   8.74 ns   3.47e+10 steps   (1.36 persistence lengths)",
+    "\n    THE DOMAIN IS ALMOST FREE. 10 kb fine window, multiple time stepping:",
+    "    domain          coarse beads    4 cores   256 cores",
+    "    100 kb                     9   1.0 days    22.6 min",
+    "    1 Mb                      99   1.0 days    22.6 min",
+    "    10 Mb                    999   1.0 days    22.8 min",
+    "    chr1 249 Mb            24899   1.2 days    27.1 min",
+    "    A 2,490-fold increase in domain costs 20% more, because the coarse level is nothing.",
+    "\n    IT IS ENTIRELY THE FINE WINDOW, and that is linear in window size:",
+    "    window          fine beads    4 cores   256 cores",
+    "    2 kb                    10      4.8 h     4.5 min",
+    "    10 kb                   50   1.0 days    22.6 min",
+    "    50 kb                  250   5.0 days       1.9 h",
+    "    100 kb                 500  10.0 days       3.8 h",
+    "\n    MULTIPLE TIME STEPPING IS NOT OPTIONAL. With one global dt, refining anywhere forces the",
+    "    fine timestep EVERYWHERE and most of the saving evaporates:",
+    "      uniform 200 bp everywhere          100.3 days      100x",
+    "      refine the window, one global dt     3.0 days      3.0x",
+    "      refine the window + MTS              1.0 days      1.0x",
+    "\n  SEQUENTIAL REFINEMENT -- coarse for the full time, then break the beads down",
+    "    The modes that appear on halving a bead have tau between tau(b) and 4 tau(b), so they",
+    "    equilibrate in ~20 tau(b) at dt = tau(b)/10: about 200 steps per level, at every level.",
+    "    level      bead         dt    sim time     steps   beads  bead-steps",
+    "    L0      10000bp  21.8515us        303s  13867684     100    1.39e+09  FULL biological time",
+    "    L1       5000bp   5.4629us    0.00109s       200     200       4e+04",
+    "    L2       2500bp   1.3657us   0.000273s       200     400       8e+04",
+    "    L3       1250bp   0.3414us   6.83e-05s       200     800     1.6e+05",
+    "    L4        625bp   0.0854us   1.71e-05s       200    1600     3.2e+05",
+    "    L5        312bp   0.0213us   4.25e-06s       200    3205    6.41e+05",
+    "    L6        200bp   0.0087us   1.75e-06s       200    5000       1e+06",
+    "    TOTAL 1.39e+09 bead-steps = 1.2 min for 1 Mb on 4 cores",
+    "    The coarse level is 99.8% of that; all six refinements together add 0.16%.",
+    "    Against uniform 200 bp for the whole 303 s: 100.3 days, a 124798x difference.",
+    "\n    WHAT IT ACTUALLY BUYS, and this is the whole caveat. Sequential refinement gives an",
+    "    EQUILIBRATED FINE SNAPSHOT, not a fine TRAJECTORY. It is legitimate because the fine",
+    "    modes are slaved to the coarse ones -- tau(200 bp) = 87 ns against tau(10 kb) = 219 us,",
+    "    a factor of ~2,500 -- so the fine structure is a FUNCTION of the coarse state and can be",
+    "    regenerated on demand rather than carried.",
+    "    It breaks precisely when that stops being true:",
+    "      HYSTERESIS   a plectoneme pinned at a sequence feature, a bubble that stays open. Then",
+    "                   the fine state depends on history, not on the current coarse state.",
+    "      FEEDBACK     a melted segment has C ~ 0 and ssDNA bending stiffness, which changes the",
+    "                   COARSE rod's mechanics. Tier 1B is exactly this case, so denaturation",
+    "                   cannot be a post-hoc refinement -- it has to run inside the loop wherever",
+    "                   melting is possible.",
+    "    So the practical scheme is both: sequential refinement everywhere for conformation and",
+    "    topology, and a persistent fine window only where melting or polymerase activity lives.",
+    "\n    THE ENGINEERING RISK, and it is one thing rather than many. Splitting a 10 kb bead into",
+    "    fifty 200 bp beads and merging them back must conserve LINKING NUMBER EXACTLY. Lk is the",
+    "    quantity the whole model exists to track, it is topological rather than energetic, and a",
+    "    small leak at a moving refinement boundary will not show up as an instability -- it will",
+    "    show up as slowly drifting supercoiling that looks like physics. Lk conservation across",
+    "    every refine and coarsen operation should be an assertion, not a hope.",
+    "    What is NOT a risk: the stiffness mapping. A persistence length is scale-free, so the",
+    "    discrete bending stiffness is just A/b at any level. Atomistic coarse-graining has no such",
+    "    luxury, and this is the one place the rod model is genuinely easier.",
+    "\n  THE ASSUMPTION THAT CARRIES ALL OF IT, stated so it can be attacked.",
+    "    Quasi-static stepping is only valid if the structure re-equilibrates BETWEEN events. The",
+    "    slowest mode measured here is tau_max = 48794 in the solver's units, and those units",
+    "    are not seconds -- gamma was never calibrated to water. THAT CALIBRATION IS THE ONE",
+    "    MISSING NUMBER, and it decides whether this whole scheme is legitimate or a fiction.",
+    "    It is a small measurement (fit one mode's relaxation against a known diffusion",
+    "    coefficient) and it should be done before any of the costs above are quoted as real.",
+    "\n  READING",
+    "  Atomistic chromosome: ruled out on memory, permanently.",
+    "  Coarse-grained + integration: possible in principle, decades of compute, ruled out in practice.",
+    "  Coarse-grained + EVENT stepping: hours to days on hardware we have, because the cost stops",
+    "  scaling with simulated TIME and starts scaling with the number of things that HAPPEN.",
+    "  Twist and polymerase fit that scheme directly. Replication fits it as a topology edit between",
+    "  solves. Denaturation does NOT -- it is a bond-breaking event the harmonic model cannot",
+    "  represent at any cost, and needs a base-pair free-energy layer instead of more compute."
+  ]
+}

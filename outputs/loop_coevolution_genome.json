@@ -1,0 +1,138 @@
+{
+ "test": "genome-wide mammalian co-evolution",
+ "pairs": {
+  "n": 30641,
+  "omnipath": 26989,
+  "loop225": 595,
+  "n_genes": 15694
+ },
+ "genome_auc": {
+  "auc": 0.5184099432253862,
+  "se": 0.00646658599416278,
+  "pos_med": 0.022778787651618986,
+  "neg_med": 0.003931587754562203,
+  "loop225": 0.5117
+ },
+ "matched": {
+  "auc": 0.5129125739826856,
+  "kept": 0.7013912984196465,
+  "n_neg": 61239
+ },
+ "dose": {
+  "auc_by_quartile": [
+   0.5080538645670207,
+   0.5164974546580725,
+   0.5136728697871915,
+   0.5138636058846147
+  ]
+ },
+ "learned": {
+  "factor": 0.5130731081559666,
+  "mlp": 0.5010152323238078,
+  "erc": 0.5129125739826856,
+  "top_component": 0.13268818799486481
+ },
+ "stack": {
+  "coev_factor": 0.11895078523112566,
+  "coev_neighbour_y": 0.02413714530699459,
+  "coev_meta": 0.01931194786184731,
+  "combined": 0.1037311364143788,
+  "reference": 0.5474
+ },
+ "ridge_vs_mlp": {
+  "ridge_real": 0.1037311364143788,
+  "ridge_shuf": 0.04554367404949874,
+  "mlp_real": 0.048723969142652895,
+  "mlp_shuf": 0.04820227235862765,
+  "winner": "ridge"
+ },
+ "shuffle": {
+  "auc": 0.49962465714547455
+ },
+ "gates": {
+  "F1": true,
+  "F2": false,
+  "F3": false,
+  "F4": false,
+  "F5": false,
+  "F6": false,
+  "F7": true,
+  "F8": true
+ },
+ "void": [
+  "F3",
+  "F5"
+ ],
+ "seconds": 62.48104286193848,
+ "log": [
+  "========================================================================================================",
+  "LOOP 226 -- THE SAME CO-EVOLUTION TEST AT GENOME SCALE",
+  "========================================================================================================",
+  "     Loop 225 failed its positive control at AUC 0.5117 on 595 pairs. It scored on the",
+  "     1,336-gene A549 responder set when all 18,757 genes were already in the same file.",
+  "     The 0.60 bar is UNCHANGED so the comparison stays interpretable.",
+  "     15,699 of 18,757 genes have >=50 mammalian orthologs; 15,694 carry a unique symbol",
+  "     doubly-centred residual matrix 15,694 genes x 95 species",
+  "F1 IS THE POSITIVE SET NOW LARGE ENOUGH TO SETTLE THE QUESTION?",
+  "     interacting pairs: 30,641  (OmniPath 26,989, SIGNOR adds 3,652)",
+  "     loop 225 had 595 on 1,246 genes; this is 51x more",
+  "     F1 PASS -- 30,641 pairs, enough to separate a real absence from an underpowered one",
+  "F2 DOES CO-EVOLUTION RECOVER KNOWN INTERACTIONS AT GENOME SCALE?",
+  "     interacting pairs ERC median +0.0228   random pairs +0.0039",
+  "     AUC 0.5184 over 30,634 positives and 91,848 negatives",
+  "     bootstrap standard error 0.0065; that is +2.8 standard errors from chance -- SIGNIFICANCE, reported and NOT gated",
+  "     loop 225 on 595 pairs measured 0.5117",
+  "     F2 FAIL -- AUC 0.5184 against the unchanged 0.60 bar, on 30,641 pairs rather than 595. Sample size was not the reason",
+  "F3 IS F2 A CONFOUND?",
+  "     negatives matched on ortholog count, mean divergence and profile variance, 8^3 strata; 61,239 matched negatives",
+  "     matched AUC 0.5129 against unmatched 0.5184; excess +0.0129 of +0.0184 = 70.1% retained",
+  "     F3 VOID -- F2 did not pass, so there is nothing here to test",
+  "F4 DOES SEPARATION GROW WITH THE NUMBER OF SHARED SPECIES?",
+  "       shared species 0-67: AUC 0.5081   (7,708 positives, 15,754 negatives)",
+  "       shared species 67-75: AUC 0.5165   (7,650 positives, 15,195 negatives)",
+  "       shared species 75-81: AUC 0.5137   (8,051 positives, 16,020 negatives)",
+  "       shared species 81-95: AUC 0.5139   (7,232 positives, 14,270 negatives)",
+  "     F4 FAIL -- quartile AUCs [0.5081, 0.5165, 0.5137, 0.5139]; the pooled result is not a diluted real effect",
+  "F5 DOES A LEARNED EMBEDDING BEAT PAIRWISE ERC?",
+  "     FACTOR rank-32, top component 13.3% of variance: matched AUC 0.5131",
+  "     MLP matched AUC 0.5010   (masked autoencoder, 32 units, 15% masked, train loss 0.0696)",
+  "     ERC matched AUC 0.5129",
+  "     F5 VOID -- F2 did not pass, so there is nothing here to test",
+  "F6 DOES IT ADD TO THE STANDING STACK?",
+  "     embeddings trained on 15,694 genes, scored on the 1,248-gene A549 intersection",
+  "       coev_factor          held-out |r| 0.1190",
+  "       coev_neighbour_y     held-out |r| 0.0241",
+  "       coev_meta            held-out |r| 0.0193",
+  "       all co-evolution     held-out |r| 0.1037",
+  "     loop 213's stack 0.5474; fame-only 0.0940; loop 225 got 0.0887",
+  "     F6 FAIL -- 0.1037 against the standing stack's 0.5474",
+  "F7 RIDGE AGAINST MLP, SHUFFLED CONTROL ON BOTH",
+  "       ridge real 0.1037  shuffled 0.0455  margin +0.0582",
+  "       MLP   real 0.0487  shuffled 0.0482  margin +0.0005",
+  "     loop 225 had ridge 0.0887/0.0221 and MLP 0.1222/0.0116; loop 211 had ridge 0.4057 and MLP-wide 0.2072",
+  "     F7 PASS -- ridge wins at 0.1037, +0.0582 over its own shuffled control",
+  "F8 SPECIES-SHUFFLE CONTROL",
+  "     species permuted independently within each gene; marginals preserved exactly",
+  "     shuffled AUC 0.4996 against the real matched 0.5129",
+  "     F8 PASS -- the shuffle drops to 0.4996",
+  "F9 WHAT THIS CANNOT SHOW",
+  "     A genome-wide FAIL is a statement about protein IDENTITY across 95 mammals, not",
+  "     about co-evolution as such and not about Evo 2, whose nucleotide representation",
+  "     reads intra-genic, promoter and non-coding covariation a gene-level rate cannot.",
+  "     Every dn and ds field in Compara 116 is NULL, which is what forced identity; real",
+  "     ERC correlates BRANCH rates from gene trees, and that version remains untested.",
+  "     OmniPath and SIGNOR edges are literature-curated and biased toward studied genes;",
+  "     F3 matches ortholog count, divergence and variance but cannot match study effort.",
+  "========================================================================================================",
+  "  F1  PASS",
+  "  F2  FAIL",
+  "  F3  VOID",
+  "  F4  FAIL",
+  "  F5  VOID",
+  "  F6  FAIL",
+  "  F7  PASS",
+  "  F8  PASS",
+  "  3/6   (2 VOID: F3, F5)",
+  "========================================================================================================"
+ ]
+}

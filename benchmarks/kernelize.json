@@ -1,0 +1,92 @@
+{
+ "controls": [
+  {
+   "name": "path 200",
+   "n": 200,
+   "edges": 199,
+   "kernel_n": 0,
+   "kernel_edges": 0,
+   "survive_frac": 0.0,
+   "low": 1,
+   "tally": {
+    "simplicial": 200,
+    "almost_simplicial": 0
+   },
+   "kernel_seconds": 0.0003895119999981489,
+   "n_components": 0,
+   "component_sizes": [],
+   "kernel_tw_ub": 0,
+   "kernel_cutwidth": 0,
+   "tw_bracket": 1,
+   "orig_tw_ub": 1
+  },
+  {
+   "name": "random tree 200",
+   "n": 200,
+   "edges": 199,
+   "kernel_n": 0,
+   "kernel_edges": 0,
+   "survive_frac": 0.0,
+   "low": 1,
+   "tally": {
+    "simplicial": 200,
+    "almost_simplicial": 0
+   },
+   "kernel_seconds": 0.0002982110000004923,
+   "n_components": 0,
+   "component_sizes": [],
+   "kernel_tw_ub": 0,
+   "kernel_cutwidth": 0,
+   "tw_bracket": 1,
+   "orig_tw_ub": 1
+  },
+  {
+   "name": "3-regular expander 200",
+   "n": 200,
+   "edges": 299,
+   "kernel_n": 200,
+   "kernel_edges": 299,
+   "survive_frac": 1.0,
+   "low": 0,
+   "tally": {
+    "simplicial": 0,
+    "almost_simplicial": 0
+   },
+   "kernel_seconds": 0.00016521000000579988,
+   "n_components": 1,
+   "component_sizes": [
+    200
+   ],
+   "kernel_tw_ub": 37,
+   "kernel_cutwidth": 259,
+   "kernel_midcut": 258,
+   "tw_bracket": 37,
+   "orig_tw_ub": 37
+  }
+ ],
+ "networks": [
+  {
+   "name": "TRRUST v2 (human, curated)",
+   "n": 2861,
+   "edges": 8300,
+   "kernel_n": 888,
+   "kernel_edges": 5919,
+   "survive_frac": 0.3103809856693464,
+   "low": 6,
+   "tally": {
+    "simplicial": 1346,
+    "almost_simplicial": 627
+   },
+   "kernel_seconds": 0.021217857000010554,
+   "n_components": 1,
+   "component_sizes": [
+    888
+   ],
+   "kernel_tw_ub": 200,
+   "kernel_cutwidth": 3574,
+   "kernel_midcut": 1972,
+   "tw_bracket": 200
+  }
+ ],
+ "K1": true
+}

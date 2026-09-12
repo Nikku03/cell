@@ -1,0 +1,99 @@
+{
+  "train": {
+    "n_pairs": 8000,
+    "n_pos": 4000,
+    "auc_coessentiality_only": 0.58,
+    "auc_triadic_only": 0.854,
+    "auc_combined": 0.866,
+    "mean_coess_pos": 0.033,
+    "mean_coess_neg": 0.002,
+    "redundant_on_known_edges": true,
+    "note": "triadic closure already predicts KNOWN edges well; DepMap adds only ~0.012 AUC there (redundant). DepMap is NOT redundant for MISSING edges \u2014 see extend.triadic_blind_frac"
+  },
+  "corroborate_v2": {
+    "n_scored": 893,
+    "mean_coess_additions": 0.034,
+    "mean_coess_random": 0.002,
+    "frac_above_thresh": 0.153,
+    "random_frac_above_thresh": 0.051,
+    "pan_essential_pairs": 154,
+    "frac_above_thresh_context_variable": 0.122,
+    "frac_above_thresh_pan_essential": 0.286,
+    "enrichment_vs_random": 3.0,
+    "enrichment_context_variable": 2.4,
+    "top_corroborated": [
+      {
+        "a": "TEDC1",
+        "b": "TEDC2",
+        "coess": 0.653,
+        "pan_essential": false
+      },
+      {
+        "a": "TEDC1",
+        "b": "TUBE1",
+        "coess": 0.642,
+        "pan_essential": false
+      },
+      {
+        "a": "SKIC2",
+        "b": "SKIC3",
+        "coess": 0.618,
+        "pan_essential": false
+      },
+      {
+        "a": "MAEA",
+        "b": "YPEL5",
+        "coess": 0.6,
+        "pan_essential": false
+      },
+      {
+        "a": "TEDC2",
+        "b": "TUBE1",
+        "coess": 0.571,
+        "pan_essential": false
+      },
+      {
+        "a": "TEDC1",
+        "b": "TUBD1",
+        "coess": 0.57,
+        "pan_essential": false
+      },
+      {
+        "a": "TEDC2",
+        "b": "TUBD1",
+        "coess": 0.547,
+        "pan_essential": false
+      },
+      {
+        "a": "POLR1E",
+        "b": "POLR1H",
+        "coess": 0.52,
+        "pan_essential": true
+      },
+      {
+        "a": "POLR1E",
+        "b": "POLR1G",
+        "coess": 0.48,
+        "pan_essential": false
+      },
+      {
+        "a": "DNTTIP1",
+        "b": "MIDEAS",
+        "coess": 0.47,
+        "pan_essential": false
+      }
+    ],
+    "note": "co-essentiality corroborates the CONTEXT-VARIABLE additions; PAN-ESSENTIAL complex members (low-variance profiles) stay verified by complex membership, not co-essentiality"
+  },
+  "extend": {
+    "n_candidates_scanned": 10874,
+    "n_strong": 3018,
+    "n_added": 2000,
+    "capped": true,
+    "add_coess": 0.4,
+    "triadic_blind_frac": 0.617,
+    "triadic_blind_note": "1233/2000 additions have ZERO shared PPI partners \u2014 triadic closure is structurally blind to them; DepMap co-essentiality is the ONLY signal that finds these (the real complementarity)"
+  },
+  "source": "DepMap 24Q2 CRISPRGeneEffect (Achilles gene-effect)",
+  "hierarchy": "DepMap is an independent validator/trainer; never overwrites a measured value"
+}

@@ -1,0 +1,39 @@
+=================================================================================================
+THE EXACT-TAIL GRID: WHAT IT RESOLVES AND WHAT IT DOES NOT
+=================================================================================================
+Hand-written record of the grid build, since the builder prints only summary lines.
+
+BUILD HISTORY, all three attempts recorded because two of them failed differently.
+
+  attempt 1   fixed box                E1 FAILED, worst boundary mass 7.83e-01
+  attempt 2   skip on sd above T       E1 FAILED, worst boundary mass 3.50e-01 -- the criterion
+                                       fixed the protein dimension but not the mRNA one
+  attempt 3   unbounded adaptive box   OOM-KILLED with no error, no traceback, no output file
+  attempt 4   bounded adaptive box     E1 PASSES, worst boundary mass 9.36e-13, |L pi| 1.21e-13
+
+The third attempt is the one worth remembering. A crashed run is worse than a failing gate: a
+failing gate is printed and read, a crash leaves nothing at all, and the only evidence was a
+missing file and a freed process id. Every adaptive loop in this build order now carries a bound.
+
+WHAT IS UNRESOLVED, AND WHY THE HEADLINE NUMBER IS MISLEADING.
+
+  grid nodes unresolved within the 400,000-state budget:   953 of 1,287  (74.0%)
+
+That figure looks fatal and is not, because the grid box is deliberately wider than the parameter
+region real genes occupy. Measured against the actual 19,900-gene population:
+
+  fully resolvable                                       18,949   95.22%
+  analytically skipped, tail correctly at the floor         557    2.80%
+  beyond the state budget, filled from a neighbour           394    1.98%
+
+So the table is exact for 95% of genes, correct-by-construction for a further 3%, and an
+interpolation for the remaining 2%. Those 2% are high burst-size, high burst-frequency genes whose
+protein distributions need more than 400,000 states to represent, and any tail quoted for them is
+a neighbour substitution rather than a solve. That is the domain of this table, and it should be
+stated wherever the table is used.
+
+WHY THIS EXISTS AT ALL. The Gamma (negative-binomial) tail it replaces is the k_dm >> k_dp limit
+and was measured wrong by up to 4.7 orders in the deep tail -- at a = 30, b = 5, gamma = 0.1 it
+gives 9.13e-17 against an exact 1.34e-12. Restricting to where the Gamma holds was not available:
+Schwanhausser et al. measured mammalian mRNA half-lives in hours against protein half-lives near
+two days, a separation of about five, so most of the genome sits where it fails.

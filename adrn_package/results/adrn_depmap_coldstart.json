@@ -1,0 +1,280 @@
+{
+ "test": "adrn_depmap_coldstart",
+ "n_genes": 17931,
+ "n_channels": 810,
+ "folds": 5,
+ "summary": {
+  "random": {
+   "means": {
+    "global_mean": 0.3828439176082611,
+    "ridge": 0.26844260692596433,
+    "poly": 0.24447157382965087,
+    "trees": 0.20745141475541726,
+    "partner_mean": 0.35193322896957396,
+    "raw_bag": 0.26704185009002684,
+    "adrn": 0.26760475635528563,
+    "partner_mean_CODEP": 0.23942132592201232
+   },
+   "adrn_vs": {
+    "ridge": {
+     "gap": -0.0008378505706787109,
+     "mde": 0.0028166066953669504,
+     "resolved": false
+    },
+    "poly": {
+     "gap": 0.023133182525634767,
+     "mde": 0.003740856247831751,
+     "resolved": true
+    },
+    "trees": {
+     "gap": 0.06015334159986837,
+     "mde": 0.00500624848141319,
+     "resolved": true
+    },
+    "partner_mean": {
+     "gap": -0.08432847261428833,
+     "mde": 0.0076968187036346005,
+     "resolved": true
+    },
+    "raw_bag": {
+     "gap": 0.0005629062652587891,
+     "mde": 0.00555945290096953,
+     "resolved": false
+    },
+    "global_mean": {
+     "gap": -0.11523916125297547,
+     "mde": 0.0046283934160649175,
+     "resolved": true
+    }
+   }
+  },
+  "pfam": {
+   "means": {
+    "global_mean": 0.3827365398406982,
+    "ridge": 0.2717015087604523,
+    "poly": 0.24645752012729644,
+    "trees": 0.21089542595401561,
+    "partner_mean": 0.35659982562065123,
+    "raw_bag": 0.2705300748348236,
+    "adrn": 0.27089184522628784,
+    "partner_mean_CODEP": 0.24336665868759155
+   },
+   "adrn_vs": {
+    "ridge": {
+     "gap": -0.0008096635341644287,
+     "mde": 0.003408113747204875,
+     "resolved": false
+    },
+    "poly": {
+     "gap": 0.024434325098991395,
+     "mde": 0.00268143031128042,
+     "resolved": true
+    },
+    "trees": {
+     "gap": 0.059996419272272214,
+     "mde": 0.006853647093172899,
+     "resolved": true
+    },
+    "partner_mean": {
+     "gap": -0.0857079803943634,
+     "mde": 0.01850607876672406,
+     "resolved": true
+    },
+    "raw_bag": {
+     "gap": 0.0003617703914642334,
+     "mde": 0.002209996143270724,
+     "resolved": false
+    },
+    "global_mean": {
+     "gap": -0.1118446946144104,
+     "mde": 0.019206021105973494,
+     "resolved": true
+    }
+   }
+  },
+  "complex": {
+   "means": {
+    "global_mean": 0.3794075965881348,
+    "ridge": 0.28411238789558413,
+    "poly": 0.2555230677127838,
+    "trees": 0.21716104232915737,
+    "partner_mean": 0.36508563756942747,
+    "raw_bag": 0.2821355164051056,
+    "adrn": 0.28153852820396424,
+    "partner_mean_CODEP": 0.2537888169288635
+   },
+   "adrn_vs": {
+    "ridge": {
+     "gap": -0.002573859691619873,
+     "mde": 0.006054693695729983,
+     "resolved": false
+    },
+    "poly": {
+     "gap": 0.02601546049118042,
+     "mde": 0.008729580676303661,
+     "resolved": true
+    },
+    "trees": {
+     "gap": 0.06437748587480689,
+     "mde": 0.011692898641172934,
+     "resolved": true
+    },
+    "partner_mean": {
+     "gap": -0.08354710936546325,
+     "mde": 0.02107537507030287,
+     "resolved": true
+    },
+    "raw_bag": {
+     "gap": -0.0005969882011413574,
+     "mde": 0.008866392764096764,
+     "resolved": false
+    },
+    "global_mean": {
+     "gap": -0.09786906838417053,
+     "mde": 0.052041944877202824,
+     "resolved": true
+    }
+   }
+  },
+  "pathway": {
+   "means": {
+    "global_mean": 0.38415666222572326,
+    "ridge": 0.29296178221702573,
+    "poly": 0.26520742774009703,
+    "trees": 0.2224160994311636,
+    "partner_mean": 0.3721227765083313,
+    "raw_bag": 0.2916244089603424,
+    "adrn": 0.2890366315841675,
+    "partner_mean_CODEP": 0.25768007040023805
+   },
+   "adrn_vs": {
+    "ridge": {
+     "gap": -0.003925150632858277,
+     "mde": 0.00591161185180695,
+     "resolved": false
+    },
+    "poly": {
+     "gap": 0.023829203844070435,
+     "mde": 0.009799915725938487,
+     "resolved": true
+    },
+    "trees": {
+     "gap": 0.06662053215300387,
+     "mde": 0.02559348672066965,
+     "resolved": true
+    },
+    "partner_mean": {
+     "gap": -0.08308614492416382,
+     "mde": 0.011886581599778123,
+     "resolved": true
+    },
+    "raw_bag": {
+     "gap": -0.0025877773761749266,
+     "mde": 0.0039987328782053735,
+     "resolved": false
+    },
+    "global_mean": {
+     "gap": -0.09512003064155579,
+     "mde": 0.03938939632686047,
+     "resolved": true
+    }
+   }
+  }
+ },
+ "log": [
+  "========================================================================================================",
+  "DEPMAP COLD-START ENTITY LEARNER -- predict a gene's dependency propensity from biology alone",
+  "========================================================================================================",
+  "  GATE (spec Phase 2): ADRN must beat ridge, sparse polynomial, trees, partner mean and raw bag.",
+  "  Co-dependency is EXCLUDED from partners: codep is computed from this same DepMap matrix.",
+  "  DepMap: 1,150 lines x 17,931 genes (>=100 measured lines); target sd 0.3829",
+  "  pfam     groups: 12,732 distinct, 1,004 with >1 gene",
+  "  complex  groups: 16,106 distinct, 667 with >1 gene",
+  "  pathway  groups: 7,549 distinct, 419 with >1 gene",
+  "  named channels: 171 kept of 171 built (120 pathways, 13 compartments, 9 lesion classes, rest structural); mean channels per gene 11.5",
+  "  extra channels: 648 kept of 692 built  (TIER A 639, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+  "  channels: 810 named columns; asserted free of ['dep_frac', 'ess', 'ess_prob', 'ess_src']",
+  "\n  [random] fold 1: 14,344 train / 3,587 held; 64 conjunctions grown",
+  "\n### random split   (5 folds, RMSE, lower is better)",
+  "  arm                      RMSE       sd",
+  "  global_mean            0.3828   0.0044",
+  "  ridge                  0.2684   0.0059",
+  "  poly                   0.2445   0.0030",
+  "  trees                  0.2075   0.0055",
+  "  partner_mean           0.3519   0.0066",
+  "  raw_bag                0.2670   0.0078",
+  "  adrn                   0.2676   0.0040",
+  "  partner_mean_CODEP     0.2394   0.0100",
+  "\n  ADRN vs                    gap      MDE  verdict   (negative = ADRN better)",
+  "  ridge                  -0.0008   0.0028  within noise",
+  "  poly                   +0.0231   0.0037  RESOLVED",
+  "  trees                  +0.0602   0.0050  RESOLVED",
+  "  partner_mean           -0.0843   0.0077  RESOLVED  ADRN BETTER",
+  "  raw_bag                +0.0006   0.0056  within noise",
+  "  global_mean            -0.1152   0.0046  RESOLVED  ADRN BETTER",
+  "\n  [pfam] fold 1: 14,558 train / 3,373 held; 64 conjunctions grown",
+  "\n### pfam split   (5 folds, RMSE, lower is better)",
+  "  arm                      RMSE       sd",
+  "  global_mean            0.3827   0.0126",
+  "  ridge                  0.2717   0.0091",
+  "  poly                   0.2465   0.0081",
+  "  trees                  0.2109   0.0047",
+  "  partner_mean           0.3566   0.0120",
+  "  raw_bag                0.2705   0.0085",
+  "  adrn                   0.2709   0.0077",
+  "  partner_mean_CODEP     0.2434   0.0120",
+  "\n  ADRN vs                    gap      MDE  verdict   (negative = ADRN better)",
+  "  ridge                  -0.0008   0.0034  within noise",
+  "  poly                   +0.0244   0.0027  RESOLVED",
+  "  trees                  +0.0600   0.0069  RESOLVED",
+  "  partner_mean           -0.0857   0.0185  RESOLVED  ADRN BETTER",
+  "  raw_bag                +0.0004   0.0022  within noise",
+  "  global_mean            -0.1118   0.0192  RESOLVED  ADRN BETTER",
+  "\n  [complex] fold 1: 14,388 train / 3,543 held; 64 conjunctions grown",
+  "\n### complex split   (5 folds, RMSE, lower is better)",
+  "  arm                      RMSE       sd",
+  "  global_mean            0.3794   0.0546",
+  "  ridge                  0.2841   0.0232",
+  "  poly                   0.2555   0.0172",
+  "  trees                  0.2172   0.0199",
+  "  partner_mean           0.3651   0.0239",
+  "  raw_bag                0.2821   0.0248",
+  "  adrn                   0.2815   0.0197",
+  "  partner_mean_CODEP     0.2538   0.0560",
+  "\n  ADRN vs                    gap      MDE  verdict   (negative = ADRN better)",
+  "  ridge                  -0.0026   0.0061  within noise",
+  "  poly                   +0.0260   0.0087  RESOLVED",
+  "  trees                  +0.0644   0.0117  RESOLVED",
+  "  partner_mean           -0.0835   0.0211  RESOLVED  ADRN BETTER",
+  "  raw_bag                -0.0006   0.0089  within noise",
+  "  global_mean            -0.0979   0.0520  RESOLVED  ADRN BETTER",
+  "\n  [pathway] fold 1: 14,520 train / 3,411 held; 64 conjunctions grown",
+  "\n### pathway split   (5 folds, RMSE, lower is better)",
+  "  arm                      RMSE       sd",
+  "  global_mean            0.3842   0.0432",
+  "  ridge                  0.2930   0.0300",
+  "  poly                   0.2652   0.0240",
+  "  trees                  0.2224   0.0138",
+  "  partner_mean           0.3721   0.0288",
+  "  raw_bag                0.2916   0.0279",
+  "  adrn                   0.2890   0.0293",
+  "  partner_mean_CODEP     0.2577   0.0291",
+  "\n  ADRN vs                    gap      MDE  verdict   (negative = ADRN better)",
+  "  ridge                  -0.0039   0.0059  within noise",
+  "  poly                   +0.0238   0.0098  RESOLVED",
+  "  trees                  +0.0666   0.0256  RESOLVED",
+  "  partner_mean           -0.0831   0.0119  RESOLVED  ADRN BETTER",
+  "  raw_bag                -0.0026   0.0040  within noise",
+  "  global_mean            -0.0951   0.0394  RESOLVED  ADRN BETTER",
+  "\n### the honest cold-start summary: random vs structured",
+  "  arm                      random       pfam    complex    pathway",
+  "  global_mean              0.3828     0.3827     0.3794     0.3842",
+  "  ridge                    0.2684     0.2717     0.2841     0.2930",
+  "  poly                     0.2445     0.2465     0.2555     0.2652",
+  "  trees                    0.2075     0.2109     0.2172     0.2224",
+  "  partner_mean             0.3519     0.3566     0.3651     0.3721",
+  "  raw_bag                  0.2670     0.2705     0.2821     0.2916",
+  "  adrn                     0.2676     0.2709     0.2815     0.2890",
+  "  partner_mean_CODEP       0.2394     0.2434     0.2538     0.2577"
+ ]
+}

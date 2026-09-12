@@ -1,0 +1,227 @@
+{
+ "test": "loop 154 -- sensitivity audit of the five ruled-out mechanisms",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ly2014_supp1-v1.txt",
+    "bytes": 5458223,
+    "hash": "73d036e6c3232913",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_proteostasis.json",
+    "bytes": 23916,
+    "hash": "cd8c97b832fc31c4",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 80,
+   "used": 80,
+   "selection": "filtered",
+   "fraction": 1.0
+  },
+  "seed": 15400,
+  "controls": [
+   "a per-protein noise floor simulated from the data's own successive differences, applied to the statistic that clears the ceiling (X1)",
+   "cycle length, half-life transfer and sweep time all swept rather than assumed (X2, X3, X4)",
+   "the scope qualifier restored to a claim that has been quoted without it (X5)",
+   "conclusions emitted through gate_guard.verdict"
+  ],
+  "note": "a null is made robust, not certain. This audit names the single number each of the five ruled-out mechanisms is most sensitive to and sweeps it. It is written to be able to overturn the arc's own premise.",
+  "warnings": []
+ },
+ "gates": {
+  "X1": true,
+  "X2": true,
+  "X3": true,
+  "X4": false,
+  "X5": true,
+  "X6": true
+ },
+ "x1": {
+  "median_sigma_log": 0.249116548745985,
+  "median_null_mean": 0.14919966745747626,
+  "median_null_p95": 0.292790288427086,
+  "median_measured": 0.4452698110682305,
+  "baseline": 0.725,
+  "survive_minus_mean": 0.625,
+  "survive_minus_p95": 0.4,
+  "survive_strict": 0.55,
+  "pass": true
+ },
+ "x2": {
+  "by_T": {
+   "12.0": 0.875,
+   "16.0": 0.7,
+   "18.0": 0.675,
+   "20.0": 0.65,
+   "24.0": 0.625,
+   "27.5": 0.625,
+   "30.0": 0.625,
+   "36.0": 0.525,
+   "48.0": 0.425
+  },
+  "band": [
+   18.0,
+   30.0
+  ],
+  "band_ok": true,
+  "flip_at": 48.0,
+  "pass": true
+ },
+ "x3": {
+  "by_factor": {
+   "0.25": 0.975,
+   "0.5": 0.875,
+   "0.75": 0.675,
+   "1.0": 0.625,
+   "1.5": 0.525,
+   "2.0": 0.425,
+   "3.0": 0.3375,
+   "4.0": 0.275
+  },
+  "flip_at": 2.0,
+  "pass": true
+ },
+ "x4": {
+  "particles": 1382245.5950000002,
+  "load_per_h": 29330783.66484849,
+  "utilisation_by_sweep_s": {
+   "1.0": 0.0058943504225111,
+   "2.0": 0.0117887008450222,
+   "3.0": 0.017683051267533303,
+   "10.0": 0.058943504225111,
+   "30.0": 0.176830512675333,
+   "60.0": 0.353661025350666,
+   "120.0": 0.707322050701332,
+   "300.0": 1.76830512675333,
+   "600.0": 3.53661025350666
+  },
+  "saturates_at_s": 300.0,
+  "repo_assumption_s": [
+   1.0,
+   3.0
+  ],
+  "assumption_not_measurement": true,
+  "pass": false
+ },
+ "x5": {
+  "n_over": 50,
+  "n_total": 80,
+  "fraction": 0.625,
+  "production_not_ruled_out_for": 30
+ },
+ "x6": {
+  "verdicts": {
+   "transcription / TF networks / translation (4)": "robust, and only for the 62% that exceed the ceiling",
+   "protease competition (1)": "ruled out CONDITIONALLY on a 1-3 s sweep time; reverses at 300 s",
+   "the equation form (iv)": "not testable on anything in this repo -- needs single-cell time-lapse, not population mass spectrometry"
+  }
+ },
+ "seconds": 0.39615583419799805,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 154 -- the sensitivity audit: what would it take to overturn the five ruled-out mechanisms?",
+  "====================================================================================================",
+  "",
+  "  80 oscillators with a measured amplitude and a half-life (loop 123's set, its max-fold duplicate rule)",
+  "  median amplitude 0.4453; median half-life 29.53 h",
+  "  BASELINE, as recorded: 72.5% exceed tanh(b*T/4) at T = 24 h",
+  "",
+  "X1 THE NOISE FLOOR UNDER THE AMPLITUDE",
+  "     (max-min)/(2*mean) on six unreplicated points is biased UP: noise raises the max and",
+  "     lowers the min. A flat protein returns a positive apparent amplitude, and that bias",
+  "     inflates the very statistic used to clear the ceiling.",
+  "     per-protein noise from the median absolute successive difference on log intensity:",
+  "       median sigma 0.2491 (log units) = 28.3% per point",
+  "     simulated apparent amplitude of a TRULY FLAT protein at each protein's own sigma:",
+  "       median 0.1492 (mean) and 0.2928 (95th pct)",
+  "       against a median MEASURED amplitude of 0.4453",
+  "     recount, three ways:",
+  "       raw, as recorded                                  72.5%",
+  "       amplitude minus its own noise-only MEAN            62.5%",
+  "       amplitude minus its own noise-only 95th percentile 40.0%",
+  "       exceeds the ceiling AND its own 95th-pct null      55.0%",
+  "     the ceiling result survives its own noise floor: 62% still exceed after subtracting the apparent amplitude that noise alone produces. The bias is real but it is not what produced the result.",
+  "     X1 PASS",
+  "",
+  "X2 THE CYCLE LENGTH",
+  "       T =  12.0 h    87.5% exceed (noise-corrected)",
+  "       T =  16.0 h    70.0% exceed (noise-corrected)",
+  "       T =  18.0 h    67.5% exceed (noise-corrected)",
+  "       T =  20.0 h    65.0% exceed (noise-corrected)",
+  "       T =  24.0 h    62.5% exceed (noise-corrected)",
+  "       T =  27.5 h    62.5% exceed (noise-corrected)",
+  "       T =  30.0 h    62.5% exceed (noise-corrected)",
+  "       T =  36.0 h    52.5% exceed (noise-corrected)",
+  "       T =  48.0 h    42.5% exceed (noise-corrected)",
+  "     majority survives across 18-30 h: True",
+  "     conclusion flips at T = 48.0 h",
+  "     cycle length is not the load-bearing number; the result holds across the whole defensible band.",
+  "     X2 PASS",
+  "",
+  "X3 THE HALF-LIFE TRANSFER (mouse NIH3T3 -> human NB4)",
+  "       b x 0.25    97.5% exceed (noise-corrected)",
+  "       b x 0.50    87.5% exceed (noise-corrected)",
+  "       b x 0.75    67.5% exceed (noise-corrected)",
+  "       b x 1.00    62.5% exceed (noise-corrected)",
+  "       b x 1.50    52.5% exceed (noise-corrected)",
+  "       b x 2.00    42.5% exceed (noise-corrected)",
+  "       b x 3.00    33.8% exceed (noise-corrected)",
+  "       b x 4.00    27.5% exceed (noise-corrected)",
+  "     conclusion flips when every half-life is wrong by 2.0x in the same direction",
+  "     the transfer would have to be wrong by 2.0x across the whole proteome, in one direction, to overturn it. Species transfer error of that size is not plausible.",
+  "     X3 PASS",
+  "",
+  "X4 THE PROTEASOME SWEEP TIME",
+  "     1,382,246 particles, load 29,330,784 /h. Capacity = particles * 3600 / sweep.",
+  "            1 s/substrate   capacity 4.976e+09/h   utilisation   0.59%",
+  "            2 s/substrate   capacity 2.488e+09/h   utilisation   1.18%",
+  "            3 s/substrate   capacity 1.659e+09/h   utilisation   1.77%",
+  "           10 s/substrate   capacity 4.976e+08/h   utilisation   5.89%",
+  "           30 s/substrate   capacity 1.659e+08/h   utilisation  17.68%",
+  "           60 s/substrate   capacity 8.293e+07/h   utilisation  35.37%",
+  "          120 s/substrate   capacity 4.147e+07/h   utilisation  70.73%",
+  "          300 s/substrate   capacity 1.659e+07/h   utilisation 176.83%   SATURATED",
+  "          600 s/substrate   capacity 8.293e+06/h   utilisation 353.66%   SATURATED",
+  "     saturation reached at 300.0 s per substrate",
+  "     the repo used 1-3 s. Single-molecule work on the 26S puts engagement plus unfolding plus translocation in the tens of seconds to minutes for many substrates,",
+  "     so 1-3 s is the OPTIMISTIC end of a wide range and it was chosen, not measured.",
+  "     the elimination reverses at 300 s per substrate. That is inside the range real proteasomal degradation takes, so protease competition is NOT ruled out -- it is ruled out AT 1-3 s, which is an assumption and not a measurement. This one is hostage to a single literature scalar and should be relabelled from 'ruled out' to 'ruled out conditionally'.",
+  "     X4 FAIL",
+  "",
+  "X5 THE SCOPE THAT WAS NEVER IN THE HEADLINE",
+  "     the ceiling argument rules out production ONLY for the oscillators that exceed it.",
+  "     noise-corrected: 50 of 80 = 62.5%",
+  "     for the other 30 (37.5%), production is NOT ruled out and never was. 'Four mechanisms eliminated' has been quoted in this arc",
+  "     without that qualifier and it should not be again.",
+  "",
+  "X6 WHAT 'FOR SURE' CAN AND CANNOT MEAN HERE",
+  "       transcription / TF networks / translation (4)    robust, and only for the 62% that exceed the ceiling",
+  "       protease competition (1)                         ruled out CONDITIONALLY on a 1-3 s sweep time; reverses at 300 s",
+  "       the equation form (iv)                           not testable on anything in this repo -- needs single-cell time-lapse, not population mass spectrometry",
+  "     A null is not made certain by more evidence. It is made robust by naming the number",
+  "     it is most sensitive to and showing the conclusion survives that number's range.",
+  "     Two of the five are now robust in that sense. One is hostage to a scalar nobody in",
+  "     this repo measured. One is untestable here and is labelled so.",
+  "",
+  "====================================================================================================",
+  "  X1  PASS",
+  "  X2  PASS",
+  "  X3  PASS",
+  "  X4  FAIL",
+  "  X5  PASS",
+  "  X6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 80/80 (100.0%) by 'filtered', seed 15400, controls 4"
+ ]
+}

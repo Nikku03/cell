@@ -1,0 +1,52 @@
+{
+ "K562": [
+  {
+   "n_train": 50,
+   "top10": 4.8
+  },
+  {
+   "n_train": 100,
+   "top10": 5.43
+  },
+  {
+   "n_train": 200,
+   "top10": 6.38
+  },
+  {
+   "n_train": 400,
+   "top10": 6.43
+  },
+  {
+   "n_train": 800,
+   "top10": 7.12
+  }
+ ],
+ "HCT116": [
+  {
+   "n_train": 50,
+   "top10": 6.35
+  },
+  {
+   "n_train": 100,
+   "top10": 7.08
+  },
+  {
+   "n_train": 200,
+   "top10": 7.47
+  },
+  {
+   "n_train": 400,
+   "top10": 8.73
+  },
+  {
+   "n_train": 800,
+   "top10": 8.53
+  }
+ ],
+ "verdict": "DATA EFFICIENCY -- the answer to 'can it scale to all cell types' hinges here, and it is ENCOURAGING. Held-out top-10 deployment reaches ~90% of its plateau by about 400 training knockouts for K562 and 400 for HCT116 -- i.e. a NEW cell type does NOT need a genome-wide screen; a few hundred well-chosen knockouts are enough to fine-tune its tide prior to most of the achievable accuracy. That is the crux: because fine-tuning is data-cheap (hundreds, not thousands, of KOs per cell type), covering MANY cell types is realistic as perturb-seq atlases grow (the field is already producing genome-wide screens across a handful of lines and smaller screens across many). The honest limits remain: (1) each new cell type still needs SOME of its own perturbation data -- there is no free zero-shot transfer (K562->other halved accuracy); (2) the gain is on the deployable top-10/tide, not the specific far field; (3) tissue/organ level is a DIFFERENT problem -- a tissue is a MIXTURE of cell types with cell-cell signalling, so it needs per-cell-type models PLUS an intercellular layer we have not built or measured. BOTTOM LINE on scaling: per-cell-type fine-tuning is data-efficient enough to extend to many/most cell types as screens accumulate; tissue/organ is reachable only as 'a bag of fine-tuned cell types + a signalling layer', which is a real, additional build, not a free extrapolation.",
+ "note": "DATA EFFICIENCY -- the answer to 'can it scale to all cell types' hinges here, and it is ENCOURAGING. Held-out top-10 deployment reaches ~90% of its plateau by about 400 training knockouts for K562 and 400 for HCT116 -- i.e. a NEW cell type does NOT need a genome-wide screen; a few hundred well-chosen knockouts are enough to fine-tune its tide prior to most of the achievable accuracy. That is the crux: because fine-tuning is data-cheap (hundreds, not thousands, of KOs per cell type), covering MANY cell types is realistic as perturb-seq atlases grow (the field is already producing genome-wide screens across a handful of lines and smaller screens across many). The honest limits remain: (1) each new cell type still needs SOME of its own perturbation data -- there is no free zero-shot transfer (K562->other halved accuracy); (2) the gain is on the deployable top-10/tide, not the specific far field; (3) tissue/organ level is a DIFFERENT problem -- a tissue is a MIXTURE of cell types with cell-cell signalling, so it needs per-cell-type models PLUS an intercellular layer we have not built or measured. BOTTOM LINE on scaling: per-cell-type fine-tuning is data-efficient enough to extend to many/most cell types as screens accumulate; tissue/organ is reachable only as 'a bag of fine-tuned cell types + a signalling layer', which is a real, additional build, not a free extrapolation.",
+ "plateau_train_kos": {
+  "K562": 400,
+  "HCT116": 400
+ }
+}

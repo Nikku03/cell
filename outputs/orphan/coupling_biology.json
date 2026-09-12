@@ -1,0 +1,117 @@
+{
+ "n_genes": 11636,
+ "meas_features": [
+  "prot_mean",
+  "prot_sd",
+  "rna_mean",
+  "rna_sd",
+  "n_samples",
+  "n_cohorts"
+ ],
+ "bio_features": [
+  "log_ppi_degree_700",
+  "log_ppi_degree_900",
+  "log_protein_size",
+  "log_n_pathways",
+  "log_pathway_partners"
+ ],
+ "bio_coverage": {
+  "log_ppi_degree_700": 0.8978171192849776,
+  "log_ppi_degree_900": 0.7420075627363355,
+  "log_protein_size": 0.9894293571674114,
+  "log_n_pathways": 0.6585596424888278,
+  "log_pathway_partners": 0.6585596424888278
+ },
+ "clean_block": [
+  "log_ppi_degree_700",
+  "log_ppi_degree_900",
+  "log_n_pathways",
+  "log_pathway_partners"
+ ],
+ "quarantined": [
+  "log_protein_size"
+ ],
+ "measurability only": {
+  "r2": 0.2760868415883861,
+  "shuffled": -0.020698329946053643,
+  "net": 0.29678517153443973
+ },
+ "biology (clean)": {
+  "r2": 0.04764128183498504,
+  "shuffled": -0.01786152467507132,
+  "net": 0.06550280651005636
+ },
+ "protein length only": {
+  "r2": 0.00404991995063757,
+  "shuffled": -0.016815004935917255,
+  "net": 0.020864924886554826
+ },
+ "meas + clean biology": {
+  "r2": 0.3033857028939895,
+  "shuffled": -0.022430278706722984,
+  "net": 0.32581598160071246
+ },
+ "everything": {
+  "r2": 0.32309498260410113,
+  "shuffled": -0.020039745347351187,
+  "net": 0.34313472795145233
+ },
+ "clean_over_meas": 0.027298861305603384,
+ "all_over_meas": 0.047008141015715044,
+ "residual": {
+  "n": 7764,
+  "sd": 0.19498255543206358,
+  "clean biology (PPI + Reactome)": {
+   "r2": 0.022711524374330484,
+   "shuffled": -0.03450149106685853,
+   "net": 0.05721301544118901
+  },
+  "protein length alone": {
+   "r2": 0.003346104312425613,
+   "shuffled": -0.01876352665511336,
+   "net": 0.02210963096753897
+  },
+  "all five together": {
+   "r2": 0.03633945995030767,
+   "shuffled": -0.036144081948258695,
+   "net": 0.07248354189856637
+  },
+  "clean_linear_r2": 0.0046087022395503215,
+  "res_sd_before": 0.19498255543206358,
+  "res_sd_after": 0.19275566325464236
+ },
+ "direction": {
+  "log_ppi_degree_700": {
+   "spearman": -0.011805204353590337,
+   "p": 0.2983086005377807,
+   "expected": "negative if complex members are buffered",
+   "verdict": "as predicted"
+  },
+  "log_ppi_degree_900": {
+   "spearman": -0.030608480233408206,
+   "p": 0.006992107510988301,
+   "expected": "negative if complex members are buffered",
+   "verdict": "as predicted"
+  },
+  "log_protein_size": {
+   "spearman": 0.10039514347678831,
+   "p": 7.503560397502952e-19,
+   "expected": "negative if long proteins are translation-limited",
+   "verdict": "OPPOSITE to the mechanism"
+  },
+  "log_n_pathways": {
+   "spearman": 0.009331555278069649,
+   "p": 0.4110074126701815,
+   "expected": "no prediction",
+   "verdict": "-- no prediction"
+  },
+  "log_pathway_partners": {
+   "spearman": 0.04579102884445563,
+   "p": 5.4305814237088983e-05,
+   "expected": "no prediction",
+   "verdict": "-- no prediction"
+  }
+ },
+ "effect_size_read": "raw held-out R2 of the clean block; shuffled arm used only for significance",
+ "verdict": "MOSTLY CONFIDENCE -- the clean block explains 2.3% of the measurability residual (ridge floor 0.5%), which shrinks the residual spread from 0.1950 to 0.1928 rho units. The direction of high-confidence PPI degree is negative as complex buffering predicts, so this is not nothing -- but it is far too small to correct a protein count from, and study bias makes even this an upper bound. Use as a per-node WEIGHT, not a correction."
+}

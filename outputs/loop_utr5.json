@@ -1,0 +1,395 @@
+{
+ "test": "loop_utr5",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/Homo_sapiens.GRCh38.cdna.all.fa.gz",
+    "bytes": 183898799,
+    "hash": "d1c6a06d427461d4",
+    "method": "sha256:ends8M"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/Homo_sapiens.GRCh38.cds.all.fa.gz",
+    "bytes": 36943537,
+    "hash": "f8c6731e185957e2",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/MANE.summary.txt.gz",
+    "bytes": 1115288,
+    "hash": "d10ace2720681a3b",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/proteinatlas.tsv",
+    "bytes": 43055808,
+    "hash": "5c546331ec5dda4b",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 1524,
+   "used": 1497,
+   "selection": "filtered",
+   "fraction": 0.9822834645669292
+  },
+  "seed": 12200,
+  "controls": [
+   "ribosomal-protein 5'TOP as a pre-measured positive control",
+   "Kozak -3 purine as an unseen CDS-boundary control",
+   "publication count per feature, excluding the ones that fail",
+   "776 imaged non-CCD proteins as the assay-matched control",
+   "composition-preserving 5' UTR shuffle for the motif features",
+   "the degron and geometry features recomputed on the same genes"
+  ],
+  "note": "5' UTR obtained by subtracting the CDS from the cDNA of the MANE Select transcript; exact, not predicted, and the isoform is NCBI's choice rather than this loop's",
+  "warnings": []
+ },
+ "gates": {
+  "U1": true,
+  "U2": true,
+  "U3": false,
+  "U4": false,
+  "U5": false,
+  "U6": true
+ },
+ "build": {
+  "cdna": 465769,
+  "cds": 382428,
+  "mane_select": 19363,
+  "utr_recovered": 19293,
+  "median_len": 133.0
+ },
+ "n": {
+  "called_with_utr": 1497,
+  "yes": 729,
+  "no": 768,
+  "groups": {
+   "both": 87,
+   "protein only": 360,
+   "transcript only": 38,
+   "neither": 636
+  }
+ },
+ "u1": {
+  "top_ribosomal": 0.7160493827160493,
+  "top_other": 0.04403497813866333,
+  "ratio": 16.260922861395674,
+  "kozak_purine_all": 0.8613856153886804,
+  "kozak_purine_called": 0.8777555110220441
+ },
+ "u2": {
+  "rho_vs_pubs": {
+   "5'UTR length": -0.06730873104099497,
+   "log10 length": -0.06730873104099497,
+   "GC content": 0.1115411463820748,
+   "cap-proximal GC (first 40 nt)": 0.07056134232167269,
+   "uORF count": -0.15377678958483262,
+   "uORF density/100nt": -0.11428548293537383,
+   "5'TOP motif": 0.3296099270501007
+  },
+  "survivors": [
+   "5'UTR length",
+   "log10 length",
+   "GC content",
+   "cap-proximal GC (first 40 nt)",
+   "uORF density/100nt"
+  ]
+ },
+ "u3": {
+  "5'UTR length": {
+   "ccd": 212.8148148148148,
+   "nonccd": 189.7890625,
+   "difference": 23.02575231481481,
+   "p": 0.0475,
+   "p_bonferroni": 0.2375,
+   "auc": 0.5319912408550526
+  },
+  "log10 length": {
+   "ccd": 2.1347149894590984,
+   "nonccd": 2.0885973225176824,
+   "difference": 0.04611766694141606,
+   "p": 0.038,
+   "p_bonferroni": 0.19,
+   "auc": 0.5319912408550526
+  },
+  "GC content": {
+   "ccd": 0.6533059305654764,
+   "nonccd": 0.6543603363741867,
+   "difference": -0.0010544058087103014,
+   "p": 0.845,
+   "p_bonferroni": 1.0,
+   "auc": 0.49440050582990397
+  },
+  "cap-proximal GC (first 40 nt)": {
+   "ccd": 0.6600422894215054,
+   "nonccd": 0.6582225224147115,
+   "difference": 0.001819767006793982,
+   "p": 0.7445,
+   "p_bonferroni": 1.0,
+   "auc": 0.5032194858824874
+  },
+  "uORF density/100nt": {
+   "ccd": 0.39061831187033536,
+   "nonccd": 0.4011354765956509,
+   "difference": -0.010517164725315553,
+   "p": 0.7625,
+   "p_bonferroni": 1.0,
+   "auc": 0.5026443544238683,
+   "seq_null": {
+    "real": -0.010517164725315553,
+    "n_null": 200,
+    "null_mean": -0.004975137874160842,
+    "null_sd": 0.05037952552939608,
+    "z": -0.1100055388159815,
+    "defined": false,
+    "fraction": "UNDEFINED",
+    "reason": "|z| 0.11 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator"
+   }
+  }
+ },
+ "u4": {
+  "5'UTR length": {
+   "means": {
+    "both": 144.6551724137931,
+    "protein only": 191.99444444444444,
+    "transcript only": 186.3684210526316,
+    "neither": 184.35377358490567
+   },
+   "protein_minus_transcript": 5.626023391812851,
+   "p": 0.86,
+   "predicted_up": true
+  },
+  "log10 length": {
+   "means": {
+    "both": 2.0530415477737054,
+    "protein only": 2.1077927750968763,
+    "transcript only": 2.111508844364918,
+    "neither": 2.074254034136282
+   },
+   "protein_minus_transcript": -0.0037160692680417995,
+   "p": 0.9695,
+   "predicted_up": true
+  },
+  "GC content": {
+   "means": {
+    "both": 0.6346133186690844,
+    "protein only": 0.6668677046912032,
+    "transcript only": 0.6455106021872143,
+    "neither": 0.6567144042210729
+   },
+   "protein_minus_transcript": 0.021357102503988812,
+   "p": 0.228,
+   "predicted_up": true
+  },
+  "cap-proximal GC (first 40 nt)": {
+   "means": {
+    "both": 0.6328038500452293,
+    "protein only": 0.6736546735593248,
+    "transcript only": 0.6465114811658326,
+    "neither": 0.6604967084648465
+   },
+   "protein_minus_transcript": 0.027143192393492277,
+   "p": 0.1235,
+   "predicted_up": true
+  },
+  "uORF density/100nt": {
+   "means": {
+    "both": 0.11866247561515329,
+    "protein only": 0.3551114843720227,
+    "transcript only": 0.23557620274633706,
+    "neither": 0.40769682129007456
+   },
+   "protein_minus_transcript": 0.11953528162568566,
+   "p": 0.22,
+   "predicted_up": true
+  }
+ },
+ "u5": {
+  "best_utr_feature": "5'UTR length",
+  "auc_utr": 0.5310592556581861,
+  "auc_degron": 0.5345414933650228,
+  "auc_geometry": 0.5991168368173716,
+  "n": 1491
+ },
+ "posthoc": {
+  "threshold_h": 24.549892880242624,
+  "split": {
+   "CCD fast (explainable)": {
+    "dbox": 0.14149217678717033,
+    "n_dbox": 79,
+    "dual": 0.9113924050632911,
+    "n_dual": 79,
+    "n": 79
+   },
+   "CCD slow (NOT explainable)": {
+    "dbox": 0.12413674135396499,
+    "n_dbox": 132,
+    "dual": 0.9166666666666666,
+    "n_dual": 132,
+    "n": 132
+   },
+   "imaged controls": {
+    "dbox": 0.13797952139529351,
+    "n_dbox": 265,
+    "dual": 0.6981132075471698,
+    "n_dual": 265,
+    "n": 265
+   }
+  },
+  "dbox_fast_vs_ctrl": [
+   0.003512655391876812,
+   0.893
+  ],
+  "dbox_slow_vs_ctrl": [
+   -0.013842780041328523,
+   0.517
+  ],
+  "dual_fast_vs_ctrl": [
+   0.21327919751612134,
+   0.0005
+  ],
+  "dual_slow_vs_ctrl": [
+   0.21855345911949686,
+   0.0
+  ],
+  "note": "added after the run, gated on nothing; the half-life association from an independent instrument (loop 119, AUC 0.5999) rules out a pure imaging artefact, so the population is split at the bound rather than dismissed"
+ },
+ "u6": {
+  "max_rel_deviation": 2.793513908200336e-15,
+  "median_disagreement": 0.002171454522839432,
+  "median_amp_translation": 0.16473808762172376,
+  "median_amp_degradation": 0.1643802513256668,
+  "threshold_h": 24.549892880242624,
+  "ccd_above_threshold": 0.6255924170616114,
+  "n_ccd_hl": 211
+ },
+ "seconds": 36.34431266784668,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 122 -- the last term: regulated translation, and the bound on all of them",
+  "====================================================================================================",
+  "",
+  "  Ensembl GRCh38 cdna+cds: 465,769 / 382,428 transcripts; MANE Select v1.5: 19,363 genes",
+  "  5' UTR recovered by CDS subtraction for 19,293 genes, median 133 nt",
+  "  CCD called AND with a 5' UTR: 1,497  (729 Yes / 768 No)",
+  "",
+  "U1 THE INSTRUMENT IS CORRECT",
+  "     (a) PRE-MEASURED and disclosed: 5'TOP motif in ribosomal proteins 71.6% (81) vs 4.4% (19,212) = 16.3x  gate >= 5.0x",
+  "     (b) NOT PRE-RUN: Kozak -3 purine, genome-wide 86.1% of 18,923; on the called set 87.8%  gate >= 70%",
+  "         a misplaced CDS boundary would give ~50%; this validates the window the features are measured in",
+  "     U1 PASS",
+  "",
+  "U2 THE FEATURES ARE NOT FAME PROXIES, ONE BY ONE",
+  "     5'UTR length                     rho vs pubs -0.0673   kept",
+  "     log10 length                     rho vs pubs -0.0673   kept",
+  "     GC content                       rho vs pubs +0.1115   kept",
+  "     cap-proximal GC (first 40 nt)    rho vs pubs +0.0706   kept",
+  "     uORF count                       rho vs pubs -0.1538   EXCLUDED",
+  "     uORF density/100nt               rho vs pubs -0.1143   kept",
+  "     5'TOP motif                      rho vs pubs +0.3296   EXCLUDED",
+  "     5 of 7 features survive; gate >= 3",
+  "     U2 PASS",
+  "",
+  "U3 CCD PROTEINS DIFFER FROM THE IMAGED CONTROLS",
+  "     5'UTR length                     CCD  212.8148  non-CCD  189.7891  diff +23.0258  p 0.0475  p*5 0.2375  AUC 0.5320",
+  "     log10 length                     CCD    2.1347  non-CCD    2.0886  diff +0.0461  p 0.0380  p*5 0.1900  AUC 0.5320",
+  "     GC content                       CCD    0.6533  non-CCD    0.6544  diff -0.0011  p 0.8450  p*5 1.0000  AUC 0.4944",
+  "     cap-proximal GC (first 40 nt)    CCD    0.6600  non-CCD    0.6582  diff +0.0018  p 0.7445  p*5 1.0000  AUC 0.5032",
+  "     uORF density/100nt               CCD    0.3906  non-CCD    0.4011  diff -0.0105  p 0.7625  p*5 1.0000  AUC 0.5026",
+  "     composition-preserving 5' UTR shuffle, 200 rounds, for ['uORF density/100nt']",
+  "          uORF density/100nt vs composition shuffle: real -0.0105  null -0.0050 +/- 0.0504  survival UNDEFINED -- |z| 0.11 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator",
+  "     the shuffle changes 77.2% of 74.0% achievable -- capable",
+  "     U3 FAIL",
+  "",
+  "U4 THE DISCRIMINATING TEST",
+  "     PREDICTED IN ADVANCE: protein-only should be LONGER, MORE GC-RICH, MORE uORF-BEARING",
+  "     5'UTR length",
+  "       both 144.6552 (n=87)   protein only 191.9944 (n=360)   transcript only 186.3684 (n=38)   neither 184.3538 (n=636)",
+  "       protein-only minus transcript-only: +5.6260, p = 0.8600   predicted UP",
+  "     log10 length",
+  "       both 2.0530 (n=87)   protein only 2.1078 (n=360)   transcript only 2.1115 (n=38)   neither 2.0743 (n=636)",
+  "       protein-only minus transcript-only: -0.0037, p = 0.9695   predicted UP",
+  "     GC content",
+  "       both 0.6346 (n=87)   protein only 0.6669 (n=360)   transcript only 0.6455 (n=38)   neither 0.6567 (n=636)",
+  "       protein-only minus transcript-only: +0.0214, p = 0.2280   predicted UP",
+  "     cap-proximal GC (first 40 nt)",
+  "       both 0.6328 (n=87)   protein only 0.6737 (n=360)   transcript only 0.6465 (n=38)   neither 0.6605 (n=636)",
+  "       protein-only minus transcript-only: +0.0271, p = 0.1235   predicted UP",
+  "     uORF density/100nt",
+  "       both 0.1187 (n=87)   protein only 0.3551 (n=360)   transcript only 0.2356 (n=38)   neither 0.4077 (n=636)",
+  "       protein-only minus transcript-only: +0.1195, p = 0.2200   predicted UP",
+  "     U4 FAIL -- the post-transcriptional group does NOT differ as predicted",
+  "",
+  "U5 TRANSLATION AGAINST DEGRADATION AGAINST GEOMETRY, HEAD TO HEAD",
+  "     on the same 1,491 genes (726 CCD / 765 not):",
+  "       5' UTR   best surviving feature '5'UTR length'   AUC 0.5311",
+  "       degron   D-box+ R..L..[LIVM] density          AUC 0.5345   (loop 121)",
+  "       geometry dual localisation                    AUC 0.5991   (loop 121 post-hoc)",
+  "     U5 FAIL -- the 5' UTR does NOT beat the degron feature",
+  "     geometry is reported, NOT gated: it is post-hoc and comes from the same images as the CCD call, and gating on it would launder that into a result",
+  "",
+  "U6 THE FILTER BOUNDS EVERY MECHANISM EQUALLY",
+  "     (a) beta = 0: max relative deviation 2.794e-15, residual 0.000e+00",
+  "     (b) translation-driven median amplitude 0.1647; degradation-driven 0.1644; analytic gain(bbar,T) 0.1647",
+  "         median per-gene disagreement 0.2171%   gate < 1%",
+  "         they are the SAME first-order filter driven from opposite sides",
+  "     (c) no mechanism inside dP/dt = k_sp*M - b*P can exceed gain(bbar,T), whichever",
+  "         term it drives. At 20% amplitude that needs a half-life under 24.5 h.",
+  "         62.6% of the 211 measured CCD proteins with a half-life are ABOVE it.",
+  "         For those, the answer is not which term -- it is that the EQUATION is wrong, or",
+  "         that the measurement is not measuring copy number.",
+  "     U6 PASS",
+  "",
+  "====================================================================================================",
+  "  U1  PASS",
+  "  U2  PASS",
+  "  U3  FAIL",
+  "  U4  FAIL",
+  "  U5  FAIL",
+  "  U6  PASS",
+  "  3/6",
+  "====================================================================================================",
+  "",
+  "AFTER THE FACT -- splitting the population instead of dismissing it",
+  "",
+  "  (i) THE GEOMETRY HYPOTHESIS CANNOT BE THE WHOLE ANSWER, and loop 119 is why.",
+  "      Protein HALF-LIFE predicts the CCD call at AUC 0.5999 -- measured by SILAC mass",
+  "      spectrometry in mouse fibroblasts, an instrument with no camera in it and no",
+  "      connection to the imaging that made the call. A pure localisation artefact has no",
+  "      reason to track turnover in a different species by a different method. So genuine",
+  "      abundance change is part of this population.",
+  "",
+  "  (ii) SO SPLIT IT AT THE BOUND. Above the half-life threshold no mechanism in the",
+  "      equation can reach 20%; below it, they all can.",
+  "      CCD, half-life < 24.5 h  (explainable): 79",
+  "      CCD, half-life >= 24.5 h (NOT explainable): 132",
+  "      imaged controls with a half-life: 265",
+  "        CCD fast (explainable)       D-box+ 0.1415 (n=79)   dual-localised 91.1% (n=79)",
+  "        CCD slow (NOT explainable)   D-box+ 0.1241 (n=132)   dual-localised 91.7% (n=132)",
+  "        imaged controls              D-box+ 0.1380 (n=265)   dual-localised 69.8% (n=265)",
+  "      vs the controls:",
+  "        D-box+          fast +0.0035 p 0.8930    slow -0.0138 p 0.5170",
+  "        dual-localised  fast +21.3% p 0.0005    slow +21.9% p 0.0000",
+  "",
+  "  (iii) WHAT THE WHOLE ARC ADDS UP TO, in one sentence per candidate:",
+  "        M(t) transcription       ELIMINATED  loop 119, p = 2e-67 in the wrong direction",
+  "        the regulatory wiring    ELIMINATED  loop 120, shuffled signs score higher",
+  "        b(t) timed destruction   PARTIAL     loop 121, signal on the already-explained",
+  "                                             genes; and bounded by the same filter",
+  "        k_sp(t) translation      NO SIGNAL   this loop, U3/U4/U5 all fail",
+  "        the equation itself      IMPLICATED  U6: all of the above share one bound, and",
+  "                                             63% of CCD proteins sit above it",
+  "        measurement geometry     LEADING     AUC 0.5991, the largest number in four",
+  "                                             loops -- and same-instrument, so unproven",
+  "",
+  "    manifest: 5 inputs, coverage 1497/1524 (98.2%) by 'filtered', seed 12200, controls 6"
+ ]
+}

@@ -1,0 +1,314 @@
+{
+  "parts": {
+    "genes": 16492,
+    "human_protein_coding": 19900,
+    "gene_coverage": 0.8287437185929648,
+    "genes_with_reaction": 2549,
+    "humangem_reactions": 13078,
+    "ppi": 191447,
+    "reg": 612133,
+    "complexes": 2039
+  },
+  "closure": {
+    "references": 2052578,
+    "dangling": 0,
+    "sets": [
+      {
+        "set": "reg source/target",
+        "refs": 1224266,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "ppi",
+        "refs": 382894,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "sig",
+        "refs": 34864,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "sl",
+        "refs": 2512,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "lr",
+        "refs": 1896,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "complex members",
+        "refs": 8240,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "codep partners",
+        "refs": 76749,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "coexpr partners",
+        "refs": 195439,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "codep keys",
+        "refs": 13451,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "coexpr keys",
+        "refs": 16374,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "abund keys",
+        "refs": 16286,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "ppm keys",
+        "refs": 16015,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "emask keys",
+        "refs": 7496,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "drugs keys",
+        "refs": 4275,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "ptm keys",
+        "refs": 8425,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "model4 keys",
+        "refs": 7700,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "darkfn keys",
+        "refs": 4993,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "cellcycle keys",
+        "refs": 153,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "generxn keys",
+        "refs": 2549,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "loops3d keys",
+        "refs": 767,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "gene2cplx keys",
+        "refs": 3257,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "go keys (by name)",
+        "refs": 16412,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "nichenet keys (by name)",
+        "refs": 1195,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "biomarkers keys (by name)",
+        "refs": 599,
+        "dangling": 0,
+        "examples": []
+      },
+      {
+        "set": "gene2cplx -> complexes",
+        "refs": 5771,
+        "dangling": 0,
+        "examples": []
+      }
+    ]
+  },
+  "provenance": {
+    "PARTIAL": 1,
+    "HYPOTHESIS": 20,
+    "UNKNOWN": 15,
+    "RESOLVED": 4,
+    "EMPTY": 2
+  },
+  "reproducibility": {
+    "modules_declaring_a_result": 153,
+    "run_clean": 98,
+    "ledger_inputs": 12,
+    "ledger_ok": 12
+  },
+  "coupling": {
+    "modules": 918,
+    "edges": 852,
+    "cycles": 1,
+    "biological_cycles": 0,
+    "cycle_members": [
+      [
+        "trace_all.py",
+        "data_fitness.py",
+        "data_doctrine.py"
+      ]
+    ]
+  },
+  "falsifiability": {
+    "transcription_R2_holdout": 0.198,
+    "transcription_transfer_R2": 0.278,
+    "enhancer_gene_AUPRC": 0.6737,
+    "enhancer_gene_baseline": 0.6076,
+    "essentiality_from_ppi_degree_AUC": 0.7936
+  },
+  "scale": {
+    "tau_max_ns": 47.2,
+    "rouse_fails_between": "100 kb and 1 Mb",
+    "affordable_window_kb_per_day_256core": 638
+  },
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_parts",
+        "kind": "directory",
+        "files": 43,
+        "bytes": 6873388,
+        "hash": "da550836c2ad2c1d",
+        "method": "sha256:tree"
+      },
+      {
+        "path": "/home/user/cell/outputs/trace_all.json",
+        "bytes": 3189743,
+        "hash": "2263a5571a1cf31a",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/data_ledger.json",
+        "bytes": 7463,
+        "hash": "83e1bcd7ba4a402f",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/cell_parts_provenance.json",
+        "bytes": 8309,
+        "hash": "eb1eb93e98658dfb",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 42,
+      "used": 42,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 2718,
+    "controls": [
+      "tooling cycles excluded from biological feedback",
+      "closure checked against the gene array length"
+    ],
+    "note": "seven criteria declared before measurement",
+    "warnings": []
+  },
+  "log": [
+    "====================================================================================================",
+    "THE DOCTRINE TURNED ON THE CELL MODEL ITSELF",
+    "====================================================================================================",
+    "  Seven criteria, written down before measuring, because whether this is a cell model depends",
+    "  on standards nobody had stated. Criterion 5 decides the question and is exactly measurable.",
+    "\n  1  PARTS -- are the entities there, and how much of the cell do they cover",
+    "    genes 16,492 of ~19,900 human protein-coding = 83%",
+    "    genes carrying a metabolic reaction: 2,549 = 15% of the model",
+    "    edges: 612,133 regulatory, 191,447 protein-protein, 2,039 complexes",
+    "    VERDICT: the parts list is broad on genes and thin on mechanism -- 15% of genes have a",
+    "    reaction, so metabolism covers a small fraction of what the model names.",
+    "\n  2  CLOSURE -- do internal references resolve",
+    "    2,052,578 internal references checked across 25 reference sets",
+    "    0 do not resolve",
+    "    VERDICT: HOLDS -- the assembled object is internally consistent",
+    "\n  3  PROVENANCE -- can each part's origin be named",
+    "    {'PARTIAL': 1, 'HYPOTHESIS': 20, 'UNKNOWN': 15, 'RESOLVED': 4, 'EMPTY': 2}",
+    "    VERDICT: 3 of 42 blocks have a verified source. reg is confirmed TF-derived and contains",
+    "    TRRUST (93.1% vs 0.4% control) but 91% of its 612,133 edges have no identified origin.",
+    "\n  4  REPRODUCIBILITY -- can a recorded result be regenerated today",
+    "    98 of 153 modules that record a result run cleanly today",
+    "    12 of 12 external inputs present and hash-matching",
+    "    VERDICT: PARTIAL. The transcription ladder reproduces within 0.007 on every rung with all",
+    "    four inputs re-fetched from different sources, which is strong. 55 modules still do not run.",
+    "\n  5  COUPLING -- do layers feed each other, or is it one-way",
+    "    918 modules, 852 write->read edges",
+    "    feedback cycles found: 1   of which BIOLOGICAL: 0",
+    "      size 3 [tooling]: data_doctrine.py, data_fitness.py, trace_all.py",
+    "    VERDICT: NO BIOLOGICAL FEEDBACK -- the data flow is a DAG",
+    "    Every quantity is a function of fixed inputs. Nothing evolves, nothing returns.",
+    "    The one cycle found is among the audit tools written today, not biology.",
+    "\n  6  FALSIFIABILITY -- bars that can fail, and what they score",
+    "    transcription rate, held-out K562 genes      R2 0.198   transfer to another line 0.278",
+    "    enhancer-gene, held-out chromosomes         AUPRC 0.674  against a 0.608 baseline",
+    "    essentiality from STRING physical degree      AUC 0.794",
+    "    VERDICT: real bars that can fail and do. None approaches the R2 >= 0.90 the repo's own",
+    "    blueprint asks for, and nexus_txn says so in its own verdict.",
+    "\n  7  SCALE -- do the physical and biological scales meet",
+    "    nucleosome relaxation tau_max 47.2 ns; timescale separation FAILS between 100 kb and 1 Mb",
+    "    affordable resolved window: 638 kb per day on 256 cores, against a 249 Mb chromosome",
+    "    VERDICT: the physics and the biology do not meet. A 390x gap between what can be resolved",
+    "    in a day and one chromosome.",
+    "\n  ================================================================================================",
+    "  WHAT WOULD HAVE TO BE TRUE",
+    "  ================================================================================================",
+    "  1  A LOOP MUST EXIST. This is the finding. 918 modules, 852 write->read edges, and zero",
+    "     biological cycles: expression never feeds protein which never feeds flux which never",
+    "     feeds back. Adding parts cannot fix that; only closing a loop can. The smallest honest",
+    "     one is transcription -> protein -> flux -> growth -> expression on the K562 parts that",
+    "     already exist, scored against essentiality with a shuffled control.",
+    "  2  reg AND ppi MUST BE SOURCED. They are 804,000 of the model's edges and 91% of reg has no",
+    "     named origin. A model whose largest edge sets are of unknown provenance cannot be trusted",
+    "     at the scale a cell model is meant to be trusted.",
+    "  3  THE ACCURACY CEILING MUST MOVE. R2 0.198 on transcription caps everything downstream.",
+    "     A coupled model inherits it; no amount of architecture fixes a weak first layer.",
+    "  4  SCALE MUST BE CONCEDED, NOT SOLVED. 638 kb/day against 249 Mb is not an engineering gap.",
+    "     A whole-chromosome physical model is not reachable from here and the honest design",
+    "     treats chromatin as a boundary condition rather than a simulated object.",
+    "\n  WHAT IS ALREADY SOUND, and should not be rebuilt: closure is exact -- 1,990,000 internal",
+    "  references, zero dangling. The assembled object is consistent even where its sources are not.",
+    "    manifest: 4 inputs, coverage 42/42 (100.0%) by 'all', seed 2718, controls 2"
+  ],
+  "test": "cell_model_audit"
+}

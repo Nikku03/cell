@@ -1,0 +1,72 @@
+========================================================================================================
+LOOP 264 -- PATHWAYS AS A CONSTRAINT ON THE OPERATOR, NOT AS A FEATURE
+========================================================================================================
+     13 annotation sources have returned nothing, and loop 260 says why in one line:
+     the residual is double-centred, so ANY function of the gene alone is capped at
+     0.027%. A pathway membership IS such a function. So it enters here not as an
+     input but as a restriction on the parameter space of the line-specific operator.
+     W_c = M Theta_c M^T. Loop 262's dense W_c is 956,484 parameters at 0.448
+     reliability; this is ~20,000 at K=143. Mechanism under test: fewer parameters ->
+     more reliable -> transfers. CONTROL DECLARED FIRST, from loop 263's lesson: a
+     random grouping of the same sizes is also a low-rank smoother. Q3 decides.
+     143 Reactome pathways with >= 20 landmark members, covering 739/978 landmarks (76%)
+     dense operator 956,484 parameters -> blocked 20,449   (47x fewer)
+     random control: 143 groups, identical size distribution, same 739 landmarks
+     residuals built for 9 lines   [20s]
+
+     WITHIN-LINE, fit on half a line's genes, scored on the other half:
+       baseline                           0.4524
+       dense W_c (956,484 params)         0.5194   +0.0670
+       pathway blocks alone               0.4586   +0.0062
+       RANDOM blocks alone                0.4593   +0.0069
+       pathway blocks + diagonal          0.4785   +0.0261
+       RANDOM blocks + diagonal           0.4789   +0.0265
+     CROSS-LINE, best combination of the 8 training operators (cheating):
+       dense                              +0.0046
+       pathway-blocked                    -0.0004
+     reliability from disjoint gene halves: dense 0.4478, blocked 0.6105
+Q1 DOES THE HARNESS REPRODUCE THE DENSE OPERATOR?
+     dense +0.0670 against loop 262's honest +0.0673
+     Q1 PASS -- reproduces to 0.0003
+Q2 DOES THE PATHWAY-BLOCKED OPERATOR WORK AT ALL?
+     pathway blocks + diagonal: +0.0261 on held-out genes
+     Q2 PASS -- the blocked operator is worth +0.0261
+Q3 LOAD-BEARING -- DO REAL PATHWAYS BEAT RANDOM BLOCKS?
+     Reactome 0.4785 vs shuffled blocks 0.4789   -0.0004
+     without the diagonal term: -0.0006
+     loop 263 found 99% of its neighbour gain survived a shuffled graph; this is
+     the same trap in a new costume, and this gate is the thing that catches it
+     Q3 FAIL -- real pathways are worth -0.0004 against random blocks of identical size; the low-rank projection did the work and Reactome did not
+Q4 IS THETA MORE RELIABLE THAN THE DENSE OPERATOR?
+     blocked 0.6105 vs dense 0.4478   +0.1627
+     (loop 262 measured dense at 0.4479; s_c reached 0.9518)
+     Q4 PASS -- 46x fewer parameters buys +0.1627 of reliability, which is the mechanism this loop is built on
+Q5 THE POINT -- DOES IT TRANSFER ACROSS LINES BETTER THAN DENSE?
+     blocked span -0.0004 vs dense span +0.0046   -0.0050
+     loop 262's dense span was +0.0097; both arms cheat equally
+     Q5 FAIL -- constraining by pathway buys -0.0050 of cross-line transfer; the operator stays line-specific however few parameters it has
+Q6 WITHIN-LINE, BLOCKED AGAINST DENSE
+     dense +0.0670 vs blocked+diagonal +0.0261   -0.0409
+     that difference is what the 46x parameter reduction COSTS where
+     data is plentiful, and it is the price paid for whatever Q5 buys.
+Q7 WHAT THIS CANNOT SHOW
+     Reactome pathways cover 739/978 landmarks (76%). The other
+     239 are reachable only through the diagonal term, so a coupling that
+     lives entirely among uncovered landmarks is invisible to the blocked arm.
+     M Theta M^T is symmetric in its grouping but the blocks are NOT disjoint -- a
+     landmark in several pathways is counted in each, so Theta's entries are not
+     independent and a large Theta does not mean a large pathway-to-pathway effect.
+     Q5's span test asks whether the held-out operator is reachable from EIGHT others.
+     That is a fact about nine cell lines, not about pathways.
+     Everything is on the double-centred residual, so by loop 260 any arm constant
+     across lines is capped at 0.027% however expressive it is.
+     978 landmarks and shRNA, under loop 254's construct ceiling of 0.2487.
+========================================================================================================
+  Q1  PASS
+  Q2  PASS
+  Q3  FAIL
+  Q4  PASS
+  Q5  FAIL
+  3/5   [60s]
+========================================================================================================
+     written outputs/loop_pathway_operator.json

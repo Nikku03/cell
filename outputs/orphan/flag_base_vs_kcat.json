@@ -1,0 +1,102 @@
+{
+ "n": 46,
+ "flag_base": "operating rate = FBA flux / measured abundance",
+ "flag_rule": "kcat < flag_base -> IMPOSSIBLE",
+ "frac_base_below_actual": 1.0,
+ "headroom_median": 2.4929763055440723,
+ "headroom_p10": 1.0755075215422814,
+ "headroom_p90": 12.490809182706673,
+ "flag_line_pct_of_true_kcat": 0.4011269572743725,
+ "examples": [
+  {
+   "enzyme": "GPI",
+   "flag_base_per_s": 468102.392,
+   "actual_kcat_per_s": 1000000.0,
+   "headroom": 2.1362847468636734
+  },
+  {
+   "enzyme": "LDHA",
+   "flag_base_per_s": 91069.267,
+   "actual_kcat_per_s": 1000000.0,
+   "headroom": 10.98065278157998
+  },
+  {
+   "enzyme": "CKM",
+   "flag_base_per_s": 203212.645,
+   "actual_kcat_per_s": 577800.0,
+   "headroom": 2.843326998671761
+  },
+  {
+   "enzyme": "SHMT1",
+   "flag_base_per_s": 22320.554,
+   "actual_kcat_per_s": 47280.0,
+   "headroom": 2.1182269938281997
+  },
+  {
+   "enzyme": "SHMT2",
+   "flag_base_per_s": 27255.856,
+   "actual_kcat_per_s": 34500.0,
+   "headroom": 1.2657830302596256
+  },
+  {
+   "enzyme": "CAD",
+   "flag_base_per_s": 10011.248,
+   "actual_kcat_per_s": 11480.0,
+   "headroom": 1.1467101803890984
+  },
+  {
+   "enzyme": "AADAT",
+   "flag_base_per_s": 8204.13,
+   "actual_kcat_per_s": 10760.0,
+   "headroom": 1.3115345563758742
+  },
+  {
+   "enzyme": "FASN",
+   "flag_base_per_s": 906.922,
+   "actual_kcat_per_s": 1200.0,
+   "headroom": 1.3231567874635304
+  },
+  {
+   "enzyme": "ARG1",
+   "flag_base_per_s": 69.318,
+   "actual_kcat_per_s": 1132.0,
+   "headroom": 16.330534637467903
+  },
+  {
+   "enzyme": "CS",
+   "flag_base_per_s": 178.904,
+   "actual_kcat_per_s": 260.0,
+   "headroom": 1.453293386397174
+  },
+  {
+   "enzyme": "G6PD",
+   "flag_base_per_s": 64.708,
+   "actual_kcat_per_s": 247.0,
+   "headroom": 3.817147802435557
+  },
+  {
+   "enzyme": "ARG2",
+   "flag_base_per_s": 14.499,
+   "actual_kcat_per_s": 203.0,
+   "headroom": 14.000965583833366
+  },
+  {
+   "enzyme": "BCAT2",
+   "flag_base_per_s": 27.214,
+   "actual_kcat_per_s": 186.0,
+   "headroom": 6.834717424854855
+  },
+  {
+   "enzyme": "ME2",
+   "flag_base_per_s": 14.05,
+   "actual_kcat_per_s": 130.5,
+   "headroom": 9.288256227758007
+  },
+  {
+   "enzyme": "SDS",
+   "flag_base_per_s": 1.858,
+   "actual_kcat_per_s": 71.0,
+   "headroom": 38.21313240043057
+  }
+ ]
+}

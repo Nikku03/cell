@@ -1,0 +1,11 @@
+{
+ "screen": "rpe1.h5ad",
+ "perturbed_genes": 2394,
+ "in_model_universe": 2155,
+ "already_covered_by_K562": 2155,
+ "NEW_genes_added": 0,
+ "examples": [],
+ "measured_genes_before": 8696,
+ "measured_genes_after": 8696,
+ "coverage_gain_genes": 0
+}

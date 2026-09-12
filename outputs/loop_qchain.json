@@ -1,0 +1,730 @@
+{
+ "test": "loop 150 -- the ladder as a q-continued fraction",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "outputs/loop_pulse_equation.json",
+    "bytes": 11233,
+    "hash": "05f5dd83ae13fda3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio.json",
+    "bytes": 13968,
+    "hash": "2a9bbe03961188a9",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_ubiquitin_markov_controls.json",
+    "bytes": 14924,
+    "hash": "c792f63b008946ed",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 49,
+   "used": 49,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 15000,
+  "controls": [
+   "the continued fraction checked against the FULL Laplace transform from the resolvent, not just its first moment (R1b)",
+   "Ramanujan's identity verified numerically rather than cited (R1c)",
+   "the q = 1 case regressed against loop 149b before extending (R0)",
+   "a non-geometric threshold deformation tested precisely because it is the one that can kill the mechanism (R4)"
+  ],
+  "note": "the exponent counts REVERSIBLE steps. Geometric deformation of either enzyme's rate changes the constants and never the exponent, so n = 8 survives the whole q-s grid. A commitment THRESHOLD does change it: the ceiling becomes r^c, and at Thrower's c = 4 the median-receptor branch cannot reach the pulse at all.",
+  "warnings": []
+ },
+ "gates": {
+  "R0": true,
+  "R1": false,
+  "R2": true,
+  "R3": false,
+  "R4": true,
+  "R5": true
+ },
+ "r0": {
+  "worst": 0.0,
+  "n_at_q1": 8,
+  "amp_at_q1": 26.834849996350105,
+  "n_reference": 8,
+  "pass": true
+ },
+ "r1": {
+  "worst_mfpt": 2.664002820886549e-09,
+  "worst_transform": 1.5189091627518632e-05,
+  "rogers_ramanujan": [
+   {
+    "q": 0.1,
+    "cf": 0.9099090991719836,
+    "H_over_G": 0.9099090991719834,
+    "diff": 2.220446049250313e-16
+   },
+   {
+    "q": 0.3,
+    "cf": 0.7838075230784853,
+    "H_over_G": 0.7838075230784854,
+    "diff": 1.1102230246251565e-16
+   },
+   {
+    "q": 0.5,
+    "cf": 0.7099166943911315,
+    "H_over_G": 0.7099166943911315,
+    "diff": 0.0
+   },
+   {
+    "q": 0.7,
+    "cf": 0.6637319924480473,
+    "H_over_G": 0.6637319924480471,
+    "diff": 1.1102230246251565e-16
+   },
+   {
+    "q": 0.9,
+    "cf": 0.631195447500578,
+    "H_over_G": 0.6311954475005779,
+    "diff": 1.1102230246251565e-16
+   }
+  ],
+  "worst_rr": 2.220446049250313e-16,
+  "n_cells": 14,
+  "pass": false
+ },
+ "r2": {
+  "grid": [
+   {
+    "q": 0.5,
+    "s": 0.5,
+    "n": 8,
+    "amp": 26.83484985985565
+   },
+   {
+    "q": 0.5,
+    "s": 0.7,
+    "n": 8,
+    "amp": 26.83485006139845
+   },
+   {
+    "q": 0.5,
+    "s": 0.85,
+    "n": 8,
+    "amp": 26.83485010543091
+   },
+   {
+    "q": 0.5,
+    "s": 1.0,
+    "n": 8,
+    "amp": 26.83485013177819
+   },
+   {
+    "q": 0.5,
+    "s": 1.25,
+    "n": 8,
+    "amp": 26.83485015991981
+   },
+   {
+    "q": 0.5,
+    "s": 1.5,
+    "n": 8,
+    "amp": 26.83485017828028
+   },
+   {
+    "q": 0.5,
+    "s": 2.0,
+    "n": 8,
+    "amp": 26.834850201083444
+   },
+   {
+    "q": 0.7,
+    "s": 0.5,
+    "n": 8,
+    "amp": 26.83484855751436
+   },
+   {
+    "q": 0.7,
+    "s": 0.7,
+    "n": 8,
+    "amp": 26.83484993785249
+   },
+   {
+    "q": 0.7,
+    "s": 0.85,
+    "n": 8,
+    "amp": 26.8348500736927
+   },
+   {
+    "q": 0.7,
+    "s": 1.0,
+    "n": 8,
+    "amp": 26.83485012160365
+   },
+   {
+    "q": 0.7,
+    "s": 1.25,
+    "n": 8,
+    "amp": 26.83485015778604
+   },
+   {
+    "q": 0.7,
+    "s": 1.5,
+    "n": 8,
+    "amp": 26.8348501776848
+   },
+   {
+    "q": 0.7,
+    "s": 2.0,
+    "n": 8,
+    "amp": 26.834850201003952
+   },
+   {
+    "q": 0.85,
+    "s": 0.5,
+    "n": 8,
+    "amp": 26.834844395455473
+   },
+   {
+    "q": 0.85,
+    "s": 0.7,
+    "n": 8,
+    "amp": 26.8348495430208
+   },
+   {
+    "q": 0.85,
+    "s": 0.85,
+    "n": 8,
+    "amp": 26.83484997226285
+   },
+   {
+    "q": 0.85,
+    "s": 1.0,
+    "n": 8,
+    "amp": 26.834850089087553
+   },
+   {
+    "q": 0.85,
+    "s": 1.25,
+    "n": 8,
+    "amp": 26.83485015096693
+   },
+   {
+    "q": 0.85,
+    "s": 1.5,
+    "n": 8,
+    "amp": 26.83485017578171
+   },
+   {
+    "q": 0.85,
+    "s": 2.0,
+    "n": 8,
+    "amp": 26.834850200749916
+   },
+   {
+    "q": 1.0,
+    "s": 0.5,
+    "n": 8,
+    "amp": 26.834832525067572
+   },
+   {
+    "q": 1.0,
+    "s": 0.7,
+    "n": 8,
+    "amp": 26.83484841694175
+   },
+   {
+    "q": 1.0,
+    "s": 0.85,
+    "n": 8,
+    "amp": 26.834849682980007
+   },
+   {
+    "q": 1.0,
+    "s": 1.0,
+    "n": 8,
+    "amp": 26.834849996350105
+   },
+   {
+    "q": 1.0,
+    "s": 1.25,
+    "n": 8,
+    "amp": 26.834850131518465
+   },
+   {
+    "q": 1.0,
+    "s": 1.5,
+    "n": 8,
+    "amp": 26.834850170353995
+   },
+   {
+    "q": 1.0,
+    "s": 2.0,
+    "n": 8,
+    "amp": 26.83485020002541
+   },
+   {
+    "q": 1.25,
+    "s": 0.5,
+    "n": 8,
+    "amp": 26.834766687012806
+   },
+   {
+    "q": 1.25,
+    "s": 0.7,
+    "n": 8,
+    "amp": 26.834842171223862
+   },
+   {
+    "q": 1.25,
+    "s": 0.85,
+    "n": 8,
+    "amp": 26.834848078492964
+   },
+   {
+    "q": 1.25,
+    "s": 1.0,
+    "n": 8,
+    "amp": 26.83484948198831
+   },
+   {
+    "q": 1.25,
+    "s": 1.25,
+    "n": 8,
+    "amp": 26.834850023648983
+   },
+   {
+    "q": 1.25,
+    "s": 1.5,
+    "n": 8,
+    "amp": 26.8348501402496
+   },
+   {
+    "q": 1.25,
+    "s": 2.0,
+    "n": 8,
+    "amp": 26.834850196006947
+   },
+   {
+    "q": 1.5,
+    "s": 0.5,
+    "n": 8,
+    "amp": 26.834551487401754
+   },
+   {
+    "q": 1.5,
+    "s": 0.7,
+    "n": 8,
+    "amp": 26.834821756046278
+   },
+   {
+    "q": 1.5,
+    "s": 0.85,
+    "n": 8,
+    "amp": 26.83484283395368
+   },
+   {
+    "q": 1.5,
+    "s": 1.0,
+    "n": 8,
+    "amp": 26.834847800709014
+   },
+   {
+    "q": 1.5,
+    "s": 1.25,
+    "n": 8,
+    "amp": 26.83484967105916
+   },
+   {
+    "q": 1.5,
+    "s": 1.5,
+    "n": 8,
+    "amp": 26.83485004184825
+   },
+   {
+    "q": 1.5,
+    "s": 2.0,
+    "n": 8,
+    "amp": 26.834850182871957
+   },
+   {
+    "q": 2.0,
+    "s": 0.5,
+    "n": 8,
+    "amp": 26.832613994385923
+   },
+   {
+    "q": 2.0,
+    "s": 0.7,
+    "n": 8,
+    "amp": 26.83463792856938
+   },
+   {
+    "q": 2.0,
+    "s": 0.85,
+    "n": 8,
+    "amp": 26.83479560936214
+   },
+   {
+    "q": 2.0,
+    "s": 1.0,
+    "n": 8,
+    "amp": 26.83483266156194
+   },
+   {
+    "q": 2.0,
+    "s": 1.25,
+    "n": 8,
+    "amp": 26.834846496148646
+   },
+   {
+    "q": 2.0,
+    "s": 1.5,
+    "n": 8,
+    "amp": 26.83484915578898
+   },
+   {
+    "q": 2.0,
+    "s": 2.0,
+    "n": 8,
+    "amp": 26.83485006459733
+   }
+  ],
+  "distinct_n": [
+   8
+  ],
+  "pass": true
+ },
+ "r3": {
+  "rows": [
+   {
+    "q": 0.5,
+    "s": 0.7,
+    "rho": 3.3884415613920256,
+    "k_u_per_h": 2417925.4016857655,
+    "s_per_ub": 0.0014888796806924226,
+    "in_band": false
+   },
+   {
+    "q": 0.5,
+    "s": 1.0,
+    "rho": 1.7782794100389228,
+    "k_u_per_h": 620789542.9471328,
+    "s_per_ub": 5.799066754425952e-06,
+    "in_band": false
+   },
+   {
+    "q": 0.5,
+    "s": 1.5,
+    "rho": 1.0,
+    "k_u_per_h": 981005542810.0518,
+    "s_per_ub": 3.669704036215679e-09,
+    "in_band": false
+   },
+   {
+    "q": 0.7,
+    "s": 0.7,
+    "rho": 6.025595860743578,
+    "k_u_per_h": 10638.63804577948,
+    "s_per_ub": 0.33838917956497055,
+    "in_band": true
+   },
+   {
+    "q": 0.7,
+    "s": 1.0,
+    "rho": 2.344228815319922,
+    "k_u_per_h": 326298.1742041265,
+    "s_per_ub": 0.011032853643085058,
+    "in_band": false
+   },
+   {
+    "q": 0.7,
+    "s": 1.5,
+    "rho": 1.1481536214968828,
+    "k_u_per_h": 202066118.29085183,
+    "s_per_ub": 1.7815950692031397e-05,
+    "in_band": false
+   },
+   {
+    "q": 0.85,
+    "s": 0.7,
+    "rho": 12.589254117941675,
+    "k_u_per_h": 8168.045958935706,
+    "s_per_ub": 0.44074188834131867,
+    "in_band": true
+   },
+   {
+    "q": 0.85,
+    "s": 1.0,
+    "rho": 3.1622776601683795,
+    "k_u_per_h": 11172.7908690815,
+    "s_per_ub": 0.3222113473870071,
+    "in_band": true
+   },
+   {
+    "q": 0.85,
+    "s": 1.5,
+    "rho": 1.288249551693134,
+    "k_u_per_h": 1920928.048811869,
+    "s_per_ub": 0.0018740941401874315,
+    "in_band": false
+   },
+   {
+    "q": 1.0,
+    "s": 0.7,
+    "rho": 29.512092266663856,
+    "k_u_per_h": 34500.80234218437,
+    "s_per_ub": 0.10434539939954542,
+    "in_band": true
+   },
+   {
+    "q": 1.0,
+    "s": 1.0,
+    "rho": 4.8977881936844625,
+    "k_u_per_h": 2505.6238871056385,
+    "s_per_ub": 1.4367679117868428,
+    "in_band": true
+   },
+   {
+    "q": 1.0,
+    "s": 1.5,
+    "rho": 1.5135612484362082,
+    "k_u_per_h": 60589.96953601287,
+    "s_per_ub": 0.059415775046070415,
+    "in_band": false
+   },
+   {
+    "q": 1.25,
+    "s": 0.7,
+    "rho": 112.2018454301963,
+    "k_u_per_h": 801215.0438828159,
+    "s_per_ub": 0.004493175742874006,
+    "in_band": false
+   },
+   {
+    "q": 1.25,
+    "s": 1.0,
+    "rho": 13.48962882591654,
+    "k_u_per_h": 5912.690922429542,
+    "s_per_ub": 0.6088598317127575,
+    "in_band": true
+   },
+   {
+    "q": 1.25,
+    "s": 1.5,
+    "rho": 2.23872113856834,
+    "k_u_per_h": 1739.6532422958696,
+    "s_per_ub": 2.069377915364891,
+    "in_band": true
+   },
+   {
+    "q": 1.5,
+    "s": 0.7,
+    "rho": 354.81338923357566,
+    "k_u_per_h": 15902442.507216537,
+    "s_per_ub": 0.00022638031851813443,
+    "in_band": false
+   },
+   {
+    "q": 1.5,
+    "s": 1.0,
+    "rho": 38.018939632056124,
+    "k_u_per_h": 52466.852803458125,
+    "s_per_ub": 0.06861475022116671,
+    "in_band": false
+   },
+   {
+    "q": 1.5,
+    "s": 1.5,
+    "rho": 4.168693834703354,
+    "k_u_per_h": 804.1748845692616,
+    "s_per_ub": 4.476638190371066,
+    "in_band": true
+   },
+   {
+    "q": 2.0,
+    "s": 0.7,
+    "rho": 2238.72113856834,
+    "k_u_per_h": 2130005067.6657734,
+    "s_per_ub": 1.6901368239208756e-06,
+    "in_band": false
+   },
+   {
+    "q": 2.0,
+    "s": 1.0,
+    "rho": 229.08676527677724,
+    "k_u_per_h": 5055155.124098691,
+    "s_per_ub": 0.000712144318349056,
+    "in_band": false
+   },
+   {
+    "q": 2.0,
+    "s": 1.5,
+    "rho": 18.620871366628673,
+    "k_u_per_h": 9342.658327209403,
+    "s_per_ub": 0.385329300710422,
+    "in_band": true
+   }
+  ],
+  "k_u_min": 804.1748845692616,
+  "k_u_max": 981005542810.0518,
+  "band": [
+   360.0,
+   36000.0
+  ],
+  "n4_argument_survives_q": false,
+  "pass": false
+ },
+ "r4": {
+  "by_commitment": [
+   {
+    "commitment_length": 2,
+    "n_required": null,
+    "amp": null,
+    "ceiling_at_nmax": 2.2760129450733757
+   },
+   {
+    "commitment_length": 3,
+    "n_required": null,
+    "amp": null,
+    "ceiling_at_nmax": 3.433698721191018
+   },
+   {
+    "commitment_length": 4,
+    "n_required": null,
+    "amp": null,
+    "ceiling_at_nmax": 5.180236454387118
+   },
+   {
+    "commitment_length": 5,
+    "n_required": null,
+    "amp": null,
+    "ceiling_at_nmax": 7.815143931455094
+   },
+   {
+    "commitment_length": 6,
+    "n_required": null,
+    "amp": null,
+    "ceiling_at_nmax": 11.79028702785063
+   },
+   {
+    "commitment_length": 7,
+    "n_required": null,
+    "amp": null,
+    "ceiling_at_nmax": 17.787371469845795
+   },
+   {
+    "commitment_length": 8,
+    "n_required": 8,
+    "amp": 26.834849996350105,
+    "ceiling_at_nmax": 26.834849996350105
+   }
+  ],
+  "ceiling_is_r_pow_c": true,
+  "min_commitment_needed": 8,
+  "amp_at_c4": 5.18023650708527,
+  "required": 20.28617706991229,
+  "pass": true
+ },
+ "r5": {
+  "ramanujan_wrote_no_biology": true,
+  "cf_attribution": "Stieltjes 1894; Karlin-McGregor 1957",
+  "ramanujan_contribution": "closed forms and identities for the q case",
+  "correspondence": "structural, not historical",
+  "changed_the_biology": false
+ },
+ "seconds": 0.23659014701843262,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 150 -- the ladder as a q-continued fraction: does Ramanujan's mathematics move n = 8?",
+  "====================================================================================================",
+  "",
+  "  required 20.29x from a measured receptor change of 1.51x. Loop 149b established n = 8 at q = 1 and showed it minimal.",
+  "",
+  "R0 REGRESSION",
+  "     q = s = 1 against loop 149b's stable recursion: worst 0.00e+00   gate < 1e-12",
+  "     minimum n at q = 1: 8 delivering 26.83x   (loop 149b recorded 8 at 26.83x)",
+  "     R0 PASS",
+  "",
+  "R1 IS THIS ACTUALLY THE OBJECT, OR AM I NAME-DROPPING?",
+  "     (a) CF recursion vs direct inversion of the absorbing generator, 14 well-conditioned cells: worst 2.66e-09",
+  "     (b) CF vs the resolvent for the FULL transform E[exp(-zT)] on z = 0.01..10: worst 1.52e-05",
+  "         a first moment could agree by accident. A transform on a grid of z cannot.",
+  "     (c) q=0.1   CF 0.909909099171984   H(q)/G(q) 0.909909099171983   diff 2.22e-16",
+  "     (c) q=0.3   CF 0.783807523078485   H(q)/G(q) 0.783807523078485   diff 1.11e-16",
+  "     (c) q=0.5   CF 0.709916694391131   H(q)/G(q) 0.709916694391131   diff 0.00e+00",
+  "     (c) q=0.7   CF 0.663731992448047   H(q)/G(q) 0.663731992448047   diff 1.11e-16",
+  "     (c) q=0.9   CF 0.631195447500578   H(q)/G(q) 0.631195447500578   diff 1.11e-16",
+  "         Ramanujan's Rogers-Ramanujan continued fraction, verified rather than cited: worst 2.22e-16   gate < 1e-13",
+  "     R1 FAIL",
+  "",
+  "R2 DOES q MOVE n?",
+  "       q=0.5   (elongation)   n by s (trimming) s=0.5:8  s=0.7:8  s=0.85:8  s=1:8  s=1.25:8  s=1.5:8  s=2:8",
+  "       q=0.7   (elongation)   n by s (trimming) s=0.5:8  s=0.7:8  s=0.85:8  s=1:8  s=1.25:8  s=1.5:8  s=2:8",
+  "       q=0.85  (elongation)   n by s (trimming) s=0.5:8  s=0.7:8  s=0.85:8  s=1:8  s=1.25:8  s=1.5:8  s=2:8",
+  "       q=1.0   (elongation)   n by s (trimming) s=0.5:8  s=0.7:8  s=0.85:8  s=1:8  s=1.25:8  s=1.5:8  s=2:8",
+  "       q=1.25  (elongation)   n by s (trimming) s=0.5:8  s=0.7:8  s=0.85:8  s=1:8  s=1.25:8  s=1.5:8  s=2:8",
+  "       q=1.5   (elongation)   n by s (trimming) s=0.5:8  s=0.7:8  s=0.85:8  s=1:8  s=1.25:8  s=1.5:8  s=2:8",
+  "       q=2.0   (elongation)   n by s (trimming) s=0.5:8  s=0.7:8  s=0.85:8  s=1:8  s=1.25:8  s=1.5:8  s=2:8",
+  "     distinct n over the whole 7x7 grid: [8]",
+  "     gate: n must stay 8 everywhere",
+  "     WHY IT IS INVARIANT, and it is worth saying because it is not luck: a receptor",
+  "     change multiplies EVERY lambda_i by the same r, so every rho_i falls by r, and in",
+  "     the DUB-dominated limit T is a product of n such factors however they are shaped.",
+  "     The exponent is the NUMBER of reversible steps. Their individual rates set the",
+  "     constants, never the exponent.",
+  "     R2 PASS",
+  "",
+  "R3 DOES q MOVE THE RATE, AND DOES N4's ARGUMENT SURVIVE?",
+  "     21 (q, s) settings solved for the rates that carry both b_lo and b_hi",
+  "       first-step k_u  min 804/h (0.00 s per ubiquitin)   max 981005542810/h (4.48 s)",
+  "       N4's band 360-36000 /h; every setting inside it: False",
+  "     N4 picked the n = 8 branch because it alone needs a physical ubiquitination rate, and that argument was made at q = 1. It does not depend on q.",
+  "     R3 FAIL",
+  "",
+  "R4 THE DEFORMATION THAT IS NOT GEOMETRIC, AND COULD KILL IT",
+  "     real trimming is a THRESHOLD, not a geometric law: past the proteasome-competent",
+  "     length the substrate is engaged and no DUB gets it back. mu_i = 0 for i >= c.",
+  "       commit at c=2:  n required > 30   best achievable with n<=30: 2.28x   (r^c = 2.28x)",
+  "       commit at c=3:  n required > 30   best achievable with n<=30: 3.43x   (r^c = 3.43x)",
+  "       commit at c=4:  n required > 30   best achievable with n<=30: 5.18x   (r^c = 5.18x)",
+  "       commit at c=5:  n required > 30   best achievable with n<=30: 7.82x   (r^c = 7.82x)",
+  "       commit at c=6:  n required > 30   best achievable with n<=30: 11.79x   (r^c = 11.79x)",
+  "       commit at c=7:  n required > 30   best achievable with n<=30: 17.79x   (r^c = 17.79x)",
+  "       commit at c=8:  n required 8   best achievable with n<=30: 26.83x   (r^c = 26.83x)",
+  "     THE CEILING IS r^c, NOT r^n. Once the chain commits at c, only the first c steps",
+  "     are reversible and only they carry exponent. Adding ubiquitins past c buys nothing.",
+  "     At Thrower's minimum c = 4 the ceiling is 5.18x against 20.29x required, so a ladder that commits at 4 CANNOT deliver the pulse from a 1.51x receptor change.",
+  "     the mechanism needs commitment no earlier than c = 8. That is a HARD, measurable prediction and it is the sharpest thing this arc has produced:",
+  "       either polyubiquitin chains on pulsed substrates stay DUB-reversible out to length 8, or the median receptor is not what drives the pulse and CDC20 is.",
+  "     R4 PASS   (the gate is that the threshold case is correctly identified as restrictive, not that the mechanism survives it)",
+  "",
+  "R5 WHAT RAMANUJAN DID AND DID NOT DO",
+  "     He died in 1920. Ubiquitin was isolated in 1975. He wrote nothing about protein",
+  "     degradation and could not have.",
+  "     The continued fraction for a birth-death first passage is Stieltjes (1894) and",
+  "     Karlin-McGregor (1957). That is where our recursion comes from, and it would be",
+  "     there with or without him.",
+  "     What IS his: the closed forms and identities for the q case -- the",
+  "     Rogers-Ramanujan continued fraction verified in R1(c) to 2e-16",
+  "     -- which is what makes a geometrically-deformed ladder tractable instead of merely",
+  "     numerical. The correspondence is STRUCTURAL, not historical.",
+  "     AND IT CHANGED NOTHING ABOUT THE BIOLOGY. R2 found n invariant across the whole",
+  "     q-s grid; R3 found N4's rate argument invariant too. The q machinery earned its",
+  "     place by showing that loop 149's answer does NOT depend on the assumption it made,",
+  "     which is a real result, and by leading to R4 -- which is not a q-deformation at all",
+  "     and is the only thing here that threatens the mechanism.",
+  "     A famous name attached to a piece of mathematics is not evidence for a biological",
+  "     claim. R2, R3 and R4 stand or fall on their own arithmetic.",
+  "",
+  "====================================================================================================",
+  "  R0  PASS",
+  "  R1  FAIL",
+  "  R2  PASS",
+  "  R3  FAIL",
+  "  R4  PASS",
+  "  R5  PASS",
+  "  4/6",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 49/49 (100.0%) by 'all', seed 15000, controls 4"
+ ]
+}

@@ -1,0 +1,204 @@
+{
+ "n_tfs": 9,
+ "tfs": [
+  "GATA1",
+  "SPI1",
+  "MYOD1",
+  "POU5F1",
+  "PAX5",
+  "HNF4A",
+  "TP53",
+  "FOXP3",
+  "RUNX1"
+ ],
+ "hit_at_1": 8,
+ "median_rank_own": 1,
+ "specificity_auc": 0.9876543209876543,
+ "indirect_only_auc": 0.669921875,
+ "n_indirect_program_genes": 8,
+ "matrix": {
+  "GATA1": {
+   "GATA1": 0.08751409181526729,
+   "SPI1": 0.003991804644465446,
+   "MYOD1": 8.068978786468505e-05,
+   "POU5F1": 0.00011518150568008423,
+   "PAX5": -0.0007861196994781494,
+   "HNF4A": 0.002410256862640381,
+   "TP53": 0.0005052208900451661,
+   "FOXP3": 0.0010319292545318604,
+   "RUNX1": 0.0179934161901474
+  },
+  "SPI1": {
+   "GATA1": -0.0009309155600411553,
+   "SPI1": 0.031358924135565756,
+   "MYOD1": 0.002414053678512573,
+   "POU5F1": 0.0014693374435106913,
+   "PAX5": 0.049872024854024255,
+   "HNF4A": 0.0016077359517415364,
+   "TP53": 0.0036665196220080055,
+   "FOXP3": 0.0023387208580970763,
+   "RUNX1": 0.006750912666320802
+  },
+  "MYOD1": {
+   "GATA1": 0.002018616029194423,
+   "SPI1": 0.000377964973449707,
+   "MYOD1": 0.030206387241681416,
+   "POU5F1": 1.0981162389119472e-05,
+   "PAX5": 0.000334520141283671,
+   "HNF4A": 0.0012130409479141236,
+   "TP53": 0.002055397133032481,
+   "FOXP3": 0.0007356554269790649,
+   "RUNX1": 0.0009272801876068116
+  },
+  "POU5F1": {
+   "GATA1": -0.00048121256487710127,
+   "SPI1": -0.0011007443070411682,
+   "MYOD1": 0.0010958780845006309,
+   "POU5F1": 0.0399550015727679,
+   "PAX5": 0.0012948920329411823,
+   "HNF4A": -0.0018141676982243854,
+   "TP53": 0.0024272878964742024,
+   "FOXP3": -0.0004751160740852356,
+   "RUNX1": 0.00018408417701721195
+  },
+  "PAX5": {
+   "GATA1": 0.00011605024337768556,
+   "SPI1": -0.003204720839858055,
+   "MYOD1": 0.0002732614676157634,
+   "POU5F1": 0.0004189247886339823,
+   "PAX5": 0.04917829136053722,
+   "HNF4A": 0.00011620124181111655,
+   "TP53": 0.004529495537281036,
+   "FOXP3": -9.691864252090452e-05,
+   "RUNX1": 0.00024516403675079346
+  },
+  "HNF4A": {
+   "GATA1": 0.004874587910515921,
+   "SPI1": 0.002254670485854149,
+   "MYOD1": 0.0029234608014424637,
+   "POU5F1": 0.0027272477746009827,
+   "PAX5": 0.0021227220694224037,
+   "HNF4A": 0.04126867155234019,
+   "TP53": 0.0023847917715708413,
+   "FOXP3": 0.00194377601146698,
+   "RUNX1": 0.002081018090248108
+  },
+  "TP53": {
+   "GATA1": 0.005502448337418693,
+   "SPI1": 0.005881106108427047,
+   "MYOD1": 0.01506140728791555,
+   "POU5F1": 0.0016578435897827146,
+   "PAX5": 0.005892754594484965,
+   "HNF4A": 0.004696051279703776,
+   "TP53": 0.02042456070582072,
+   "FOXP3": 0.007707679271697998,
+   "RUNX1": 0.0023002582788467407
+  },
+  "FOXP3": {
+   "GATA1": 0.00010309176785605296,
+   "SPI1": 0.0002963081002235413,
+   "MYOD1": -6.763637065887451e-05,
+   "POU5F1": 0.00017918397982915246,
+   "PAX5": 0.0003148883581161499,
+   "HNF4A": 0.0021901081005732217,
+   "TP53": 0.0003102322419484456,
+   "FOXP3": 0.10081979483366012,
+   "RUNX1": 0.00028592169284820553
+  },
+  "RUNX1": {
+   "GATA1": 0.008112546801567078,
+   "SPI1": 0.012940839305520058,
+   "MYOD1": 0.0015495806932449337,
+   "POU5F1": 0.0009125421444574992,
+   "PAX5": 0.005931487679481506,
+   "HNF4A": 0.002114354570706685,
+   "TP53": 0.0029886802037556964,
+   "FOXP3": 0.021578678488731386,
+   "RUNX1": 0.023379985690116883
+  }
+ },
+ "per_tf": {
+  "GATA1": {
+   "own_induction": 0.08751409181526729,
+   "rank_of_own_program": 1,
+   "top_induced": "GATA1",
+   "direct_targets_in_program": 6,
+   "program_size_in_core": 7
+  },
+  "SPI1": {
+   "own_induction": 0.031358924135565756,
+   "rank_of_own_program": 2,
+   "top_induced": "PAX5",
+   "direct_targets_in_program": 7,
+   "program_size_in_core": 8
+  },
+  "MYOD1": {
+   "own_induction": 0.030206387241681416,
+   "rank_of_own_program": 1,
+   "top_induced": "MYOD1",
+   "direct_targets_in_program": 4,
+   "program_size_in_core": 6
+  },
+  "POU5F1": {
+   "own_induction": 0.0399550015727679,
+   "rank_of_own_program": 1,
+   "top_induced": "POU5F1",
+   "direct_targets_in_program": 5,
+   "program_size_in_core": 6
+  },
+  "PAX5": {
+   "own_induction": 0.04917829136053722,
+   "rank_of_own_program": 1,
+   "top_induced": "PAX5",
+   "direct_targets_in_program": 4,
+   "program_size_in_core": 6
+  },
+  "HNF4A": {
+   "own_induction": 0.04126867155234019,
+   "rank_of_own_program": 1,
+   "top_induced": "HNF4A",
+   "direct_targets_in_program": 6,
+   "program_size_in_core": 6
+  },
+  "TP53": {
+   "own_induction": 0.02042456070582072,
+   "rank_of_own_program": 1,
+   "top_induced": "TP53",
+   "direct_targets_in_program": 6,
+   "program_size_in_core": 6
+  },
+  "FOXP3": {
+   "own_induction": 0.10081979483366012,
+   "rank_of_own_program": 1,
+   "top_induced": "FOXP3",
+   "direct_targets_in_program": 4,
+   "program_size_in_core": 4
+  },
+  "RUNX1": {
+   "own_induction": 0.023379985690116883,
+   "rank_of_own_program": 1,
+   "top_induced": "RUNX1",
+   "direct_targets_in_program": 4,
+   "program_size_in_core": 5
+  }
+ },
+ "direct_targets": {
+  "GATA1": 6,
+  "SPI1": 7,
+  "MYOD1": 4,
+  "POU5F1": 5,
+  "PAX5": 4,
+  "HNF4A": 6,
+  "TP53": 6,
+  "FOXP3": 4,
+  "RUNX1": 4
+ },
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": "REAL: forcing a master TF ON drives its OWN lineage program specifically \u2014 the wiring encodes correct reprogramming logic (hit@1 8/9, AUC 0.99)."
+}

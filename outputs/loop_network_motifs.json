@@ -1,0 +1,272 @@
+{
+ "test": "network motifs",
+ "gates": {
+  "B1": true,
+  "B2": false,
+  "B3": true,
+  "B4": false,
+  "B5": true,
+  "B6": true,
+  "B7": true
+ },
+ "void": [],
+ "autoregulation": {
+  "source": "TRRUST v2 (Han et al., NAR 2018)",
+  "edges": 8427,
+  "regulators": 795,
+  "observed": 24,
+  "null_mean": 10.9289,
+  "null_sd": 3.298322707569459,
+  "analytic": 10.868992524029904,
+  "z": 3.9629536461070303,
+  "draws": 10000,
+  "net_bundle_self_edges": 0
+ },
+ "tiers": {
+  "curated": {
+   "edges": 55716,
+   "regulators": 1177,
+   "signed": 53124
+  },
+  "binding": {
+   "edges": 222689,
+   "regulators": 472,
+   "signed": 370
+  },
+  "unidentified": {
+   "edges": 333728,
+   "regulators": 1212,
+   "signed": 634
+  }
+ },
+ "observed": {
+  "curated": {
+   "ffl": 318683,
+   "two_cycle": 1630,
+   "three_cycle": 18039,
+   "self_loop": 0,
+   "n_reg": 1177,
+   "n_edge": 55716
+  },
+  "binding": {
+   "ffl": 1217327,
+   "two_cycle": 324,
+   "three_cycle": 3592,
+   "self_loop": 0,
+   "n_reg": 472,
+   "n_edge": 222689
+  }
+ },
+ "z": {
+  "curated": {
+   "ffl": {
+    "obs": 318683,
+    "null_mean": 313959.42,
+    "null_sd": 3626.4004670017775,
+    "z": 1.302553328839978
+   },
+   "two_cycle": {
+    "obs": 1630,
+    "null_mean": 713.78,
+    "null_sd": 20.895400876216225,
+    "z": 43.847926413456335
+   },
+   "three_cycle": {
+    "obs": 18039,
+    "null_mean": 16710.32,
+    "null_sd": 346.7450342656384,
+    "z": 3.831864536471227
+   },
+   "self_loop": {
+    "obs": 0,
+    "null_mean": 0.0,
+    "null_sd": 0.0,
+    "z": NaN
+   }
+  },
+  "binding": {
+   "ffl": {
+    "obs": 1217327,
+    "null_mean": 1634149.67,
+    "null_sd": 19644.27621834221,
+    "z": -21.21853029183153
+   },
+   "two_cycle": {
+    "obs": 324,
+    "null_mean": 234.6,
+    "null_sd": 11.279730636514476,
+    "z": 7.925721179067562
+   },
+   "three_cycle": {
+    "obs": 3592,
+    "null_mean": 3275.18,
+    "null_sd": 233.36901805050854,
+    "z": 1.3575923772856178
+   },
+   "self_loop": {
+    "obs": 0,
+    "null_mean": 0.0,
+    "null_sd": 0.0,
+    "z": NaN
+   }
+  }
+ },
+ "coherence": {
+  "coherent": 186260,
+  "incoherent": 78559,
+  "unsigned": 53864,
+  "fraction": 0.7033483247047984,
+  "null_mean": 0.7018149700517533,
+  "null_sd": 0.005017000938611595,
+  "z": 0.30563172536885946
+ },
+ "feedback_signs": {
+  "positive": 816,
+  "negative": 330,
+  "unsigned": 484
+ },
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/net_bundle.json.gz",
+    "bytes": 3667843,
+    "hash": "126e67aa72c13d95",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_autoregulation.json",
+    "bytes": 73460,
+    "hash": "368248422c749fb8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 612133,
+   "used": 278405,
+   "selection": "curated and binding tiers, kept separate",
+   "fraction": 0.454811291010287
+  },
+  "seed": 187187,
+  "controls": [
+   "100 degree-preserving double-edge-swap randomisations, the same null for both tiers",
+   "the matrix counter checked against the nested-loop reference on three graphs before any gate is scored",
+   "the curated tier required to out-enrich the occupancy tier",
+   "a sign-shuffled null on the identical topology for coherence"
+  ],
+  "note": "feedforward and feedback motif enrichment in the K562 TF network",
+  "warnings": [
+   "selection 'curated and binding tiers, kept separate' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 8.668694019317627,
+ "log": [
+  "========================================================================================================",
+  "LOOP 187  FEEDFORWARD AND FEEDBACK LOOPS: are they there beyond the degree sequence?",
+  "========================================================================================================",
+  "  PREDECLARED: at least 50% of curated edges must carry a sign; every motif",
+  "  count judged against 100 DEGREE-PRESERVING randomisations at z > 3.0; the",
+  "  curated tier must out-enrich the binding tier before any circuit claim is made, because",
+  "  two factors on one promoter make a feedforward triangle without a circuit; and coherence",
+  "  is judged against a SIGN-SHUFFLED null on the identical topology.",
+  "  NOT ATTEMPTED: the functional claims. The Perturb-seq matrices are not on disk after the",
+  "  container reset and re-fetching the raw single-cell data is a multi-gigabyte download",
+  "  against 2.7 GB of headroom. This loop is structure only and says so.",
+  "",
+  "    network: 16,492 symbols, 612,133 edges",
+  "",
+  "B1 IS THE NETWORK USABLE FOR THIS?",
+  "     curated        55,716 edges, 1,177 regulators,  7,485 targets, signed 95.3%, out-degree median 9 max 1,406",
+  "     binding       222,689 edges,   472 regulators, 15,656 targets, signed 0.2%, out-degree median 300 max 11,661",
+  "     unidentified  333,728 edges, 1,212 regulators,  7,701 targets, signed 0.2%, out-degree median 335 max 370",
+  "     B1 PASS -- 95.3% of curated edges carry a sign, so coherence can be asked",
+  "",
+  "   SELF-CHECK: the matrix counter against the nested-loop reference",
+  "     curated observed     ffl 318,683  two_cycle 1,630  three_cycle 18,039  self_loop 0   AGREE",
+  "     curated randomised   ffl 311,341  two_cycle 710  three_cycle 16,220  self_loop 0   AGREE",
+  "     binding observed     ffl 1,217,327  two_cycle 324  self_loop 0   AGREE",
+  "     coherence enumeration  reference (186260, 78559, 53864)  vectorised (186260, 78559, 53864)   AGREE",
+  "     all 4 checks agree",
+  "",
+  "   counting motifs and building 100 degree-preserving nulls per tier, identically for both",
+  "     curated: FFL 318,683  2-cycles 1,630  3-cycles 18,039  self-loops 0",
+  "      curated: resuming from checkpoint at 100/100",
+  "       ffl          observed   318,683  null   313,959.4 +/-  3,626.4  z      +1.3",
+  "       two_cycle    observed     1,630  null       713.8 +/-     20.9  z     +43.8",
+  "       three_cycle  observed    18,039  null    16,710.3 +/-    346.7  z      +3.8",
+  "       self_loop    observed         0  null         0.0 +/-      0.0  z      +nan",
+  "     binding: FFL 1,217,327  2-cycles 324  3-cycles 3,592  self-loops 0",
+  "      binding: resuming from checkpoint at 100/100",
+  "       ffl          observed 1,217,327  null 1,634,149.7 +/- 19,644.3  z     -21.2",
+  "       two_cycle    observed       324  null       234.6 +/-     11.3  z      +7.9",
+  "       three_cycle  observed     3,592  null     3,275.2 +/-    233.4  z      +1.4",
+  "       self_loop    observed         0  null         0.0 +/-      0.0  z      +nan",
+  "",
+  "B2 ARE FEEDFORWARD LOOPS ENRICHED?",
+  "     curated tier FFL z = +1.3 against 100 degree-preserving randomisations",
+  "     B2 FAIL -- z +1.3; the feedforward count is what the degree sequence alone predicts",
+  "",
+  "B3 IS THE ENRICHMENT A CO-BINDING ARTEFACT?",
+  "     curated z +1.3 against binding z -21.2, both from 100 randomisations with every motif counted",
+  "     B3 PASS -- the curated causal tier is more enriched than the occupancy tier, so this is not simply two factors sharing a promoter",
+  "",
+  "B4 ARE FEEDFORWARD LOOPS COHERENT?",
+  "     curated FFLs with all three edges signed: 264,819 (53,864 had an unsigned edge and are excluded)",
+  "     coherent 186,260 (70.3%), incoherent 78,559 (29.7%); E. coli's published answer is about 85% coherent",
+  "     sign-shuffled null on the identical topology: 70.2% +/- 0.5%  ->  z +0.3",
+  "     B4 FAIL -- shuffling the signs across the same edges reproduces the coherent fraction, so the coherence is a composition effect",
+  "",
+  "B5 ARE FEEDBACK LOOPS ENRICHED?",
+  "     curated 2-cycles 1,630, null 713.8, z +43.8",
+  "     curated 3-cycles 18,039, null 16,710.3, z +3.8",
+  "     of the signed 2-cycles: 816 POSITIVE feedback, 330 NEGATIVE (484 with an unsigned edge)",
+  "     B5 PASS -- mutual regulation is far commoner than the degree sequence predicts",
+  "",
+  "B6 AUTOREGULATION AGAINST CHANCE",
+  "     this project's own network carries 0 self-edges in the curated tier and 0 across all 612,133 edges, so it",
+  "     cannot represent autoregulation at all and B6 reads TRRUST directly instead",
+  "     TRRUST v2: 8,427 unique curated edges, 795 regulators, 24 with a curated self-loop (3.0%)",
+  "     the modes of those self-loops: {'Repression': 4, 'Unknown': 13, 'Activation': 10}",
+  "     configuration-model null over 10,000 stub matchings: 10.93 +/- 3.30",
+  "     analytic expectation sum_i dout(i) x din(i) / m = 10.87   (agrees, so the sampler is doing what it claims)",
+  "     observed 24  ->  z +4.0",
+  "     loop 175 reported this as a small fraction against the plan's expected 50% -- an E. coli figure (Thieffry et al. 1998) -- without asking what chance gives",
+  "     B6 PASS -- self-regulation runs at 2.2x the chance rate. The curated fraction is small and the ENRICHMENT is large, and loop 175 reporting only the fraction understated it",
+  "",
+  "B7 WHAT THIS CANNOT SHOW",
+  "     Nothing here is functional. Whether a coherent feedforward loop actually delays a",
+  "     response, or a negative feedback actually speeds one, needs perturbation time-course",
+  "     data that is not on this disk, and this loop does not gesture at those claims.",
+  "     CollecTRI is literature-curated, so its edges are enriched for the interactions",
+  "     people looked for. A motif can be over-represented because it is over-studied, and",
+  "     no degree-preserving null can see that.",
+  "     The double-edge swap preserves in-degree and out-degree exactly but not higher-order",
+  "     structure, so an enrichment could still reflect modularity rather than circuitry.",
+  "     Signs are Activation/Repression/Unknown as curated; a context-dependent factor that",
+  "     activates in one setting and represses in another is recorded as one or the other.",
+  "     B6's null is a configuration model sampled by stub matching, which permits multi-",
+  "     edges, so it compares a simple observed graph against a multigraph ensemble. For a",
+  "     rare-event count that is the standard null, but it is not the same object.",
+  "     And a curated self-loop needs someone to have specifically tested whether a factor",
+  "     binds its own promoter. Holding out-degree and in-degree fixed controls for how much",
+  "     a factor has been studied in general; it cannot control for whether THAT experiment",
+  "     was the one somebody ran. B6 measures curation against chance, not biology against",
+  "     chance, and a positive result would be consistent with either.",
+  "     B3 compares two z-scores from two DIFFERENT graphs. Equalising the nulls removes one",
+  "     confound and not the others: the tiers differ in density, in how signs were assigned",
+  "     and in what an edge means, and a z-score is not a quantity those differences leave",
+  "     alone. B3 is a direction-of-difference test and is not read as a ratio.",
+  "     B7 PASS",
+  "",
+  "========================================================================================================",
+  "  B1  PASS",
+  "  B2  FAIL",
+  "  B3  PASS",
+  "  B4  FAIL",
+  "  B5  PASS",
+  "  B6  PASS",
+  "  B7  PASS",
+  "  5/7   [9s]",
+  "========================================================================================================"
+ ]
+}

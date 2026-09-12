@@ -1,0 +1,72 @@
+  5 complexes, 2550 sampled poses, 6 degenerate (0.2%) excluded from Q1
+
+  STEP 0  THE REACHABLE-SET CEILING -- could this search produce an acceptable pose AT ALL?
+      translations enumerated in closed form  988512 total, 190367 median/complex
+      enumeration cap hit on                  0 complexes
+      best L_rmsd ANY rotation could reach    min 1.76, median 2.80 A   (rotation-set limit, translation optimal)
+      CEILING                                 5/5 complexes can produce >= 1 CAPRI-acceptable pose
+      screen validation: 102801 poses had exact I_rmsd <= 4; the largest DIRECT interface rmsd among them was 11.9985 A vs a screen at 12 A (headroom 0.0015 A, one grid step is 1.5 A) -> SATURATED -- the screen is binding
+      5/5 complexes came within one grid step of the screen. n_acceptable is therefore a LOWER BOUND, not a count. This does NOT weaken the CEILING verdict, which asserts >= 1 acceptable pose and can only be helped by finding more, but any statement about HOW MANY is undercounted.
+
+  STEP 2  Q1 RETEST -- does basin breadth track nativeness when the poses were NOT chosen by a scorer?
+      pooled Spearman(T*S_conf, I_rmsd)     -0.1627   (prior, score-selected: -0.4498)
+      per-complex median                    -0.2008
+      sign test over complexes              5/5 negative, p = 6.25e-02   <- the complex is the unit of replication, not the pose
+      partial | geometric contact count     -0.1440
+      partial | n_repack (extensivity)      -0.0797
+      partial | BOTH                        -0.0767
+      SIGN CLAUSE UNREACHABLE at n = 5: the smallest two-sided p a sign test can return is 0.0625 >= ALPHA 0.05, so it cannot pass on ANY evidence (ledger defect P). Dropped from the conjunction rather than allowed to decide it; 5/5 negative is reported as a direction, not a test.
+      failing clause(s): survives the size control
+      Q1 FAILS   (bar: rho <= -0.1, majority negative by sign test, and survives the size control)
+      effect retained vs the score-selected estimate: 36%
+      DOMAIN SENSITIVITY -- the same correlation on stricter subsets:
+        all defined      n=  2550  pooled -0.1627  per-complex median -0.2008  sign 5/5 p=6.25e-02
+        n_repack >= 1    n=  2544  pooled -0.1614  per-complex median -0.2008  sign 5/5 p=6.25e-02
+        n_repack >= 2    n=  2265  pooled -0.1489  per-complex median -0.1805  sign 5/5 p=6.25e-02
+      domain of the claim: I_rmsd spans 1.12 to 47.10 A
+      COLLIDER CHECK -- the prior study's selection rule reapplied to THIS sample:
+        top 20 by grid score   median rho -0.2060  (n=5)
+        whole sample           median rho -0.2008  (n=5)
+        -> a correlation much stronger in the selected slice is the selection effect itself.
+
+  STEP 3  RETRIEVAL -- how often does an acceptable pose reach the top 20?
+      complexes with >= 1 acceptable pose in the sample: 5/5
+      chance expectation 1.66 hits; an ORACLE scores 5, exact p = 0.00404
+           ranking   hits    exact p   Holm thr  verdict
+            energy      4     0.0447     0.0167  not above chance
+           entropy      1      0.867     0.0250  not above chance
+             50/50      0          1     0.0500  not above chance
+        size(ctrl)      5    0.00404     0.0125  SIGNAL
+
+      WHAT WAS RETRIEVED -- the best qualifying pose in each top 20, and its margin to the bar
+        ranking     cid    quality      f_nat  I_rmsd  L_rmsd  margin to the CAPRI bar
+        energy      1A2K   acceptable   0.103    4.18    9.70  L +0.30 A
+        energy      1ACB   acceptable   0.129    5.82    9.76  L +0.24 A
+        energy      1B6C   -- none -- 
+        energy      1BKD   acceptable   0.446    4.68    9.88  L +0.12 A
+        energy      1BUH   acceptable   0.171    4.15    9.88  L +0.12 A
+        entropy     1A2K   -- none -- 
+        entropy     1ACB   -- none -- 
+        entropy     1B6C   medium       0.800    1.56    6.65  L +3.35 A, I +2.44 A
+        entropy     1BKD   -- none -- 
+        entropy     1BUH   -- none -- 
+        50/50       1A2K   -- none -- 
+        50/50       1ACB   -- none -- 
+        50/50       1B6C   -- none -- 
+        50/50       1BKD   -- none -- 
+        50/50       1BUH   -- none -- 
+        size(ctrl)  1A2K   medium       0.897    1.78    7.11  L +2.89 A, I +2.22 A
+        size(ctrl)  1ACB   medium       0.714    1.16    3.08  L +6.92 A, I +2.84 A
+        size(ctrl)  1B6C   medium       0.800    1.56    6.65  L +3.35 A, I +2.44 A
+        size(ctrl)  1BKD   medium       0.745    1.12    2.70  L +7.30 A, I +2.88 A
+        size(ctrl)  1BUH   medium       0.927    2.04    4.84  L +5.16 A, I +1.96 A
+      PAIRED, the hypothesis itself: 50/50 vs energy alone -- 0 complexes gained, 4 lost, exact one-sided p = 1
+      and against the size control: entropy 1 vs size 5 hits -- beating chance is not the bar, beating size is.
+      lambda sweep of rank(E) + lambda*rank(-T*S) -- DIAGNOSTIC, NOT A GATE:
+        lambda=0.00     hits=  4  energy only
+        lambda=0.25     hits=  2  
+        lambda=0.50     hits=  1  
+        lambda=1.00     hits=  0  
+        lambda=2.00     hits=  0  
+        lambda=4.00     hits=  0  
+        lambda=1000000000.00 hits=  1  entropy only

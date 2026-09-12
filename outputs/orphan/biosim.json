@@ -1,0 +1,10 @@
+{
+ "validation": {
+  "n": 259,
+  "mean_spearman": 0.022075342994148688,
+  "baseline_random_seed": 0.012545250379016666,
+  "lift_over_baseline": 0.009530092615132022
+ },
+ "verdict": "IT RUNS \u2014 and splits exactly like the cell does. NEAR-FIELD (validated): the propagation recovers the functional MODULE \u2014 perturb PSMB5 and the blast radius is the proteasome, RPL13 the ribosome, SF3B1 the spliceosome, and the checkpoint fires on the essential hubs it reaches. That part is real (it's the whodunit complex-coherence on the physical graph). FAR-FIELD (honest null): it does NOT reproduce the measured transcriptional RESPONSE \u2014 propagated stress vs Perturb-seq response is Spearman +0.02 (baseline +0.01, lift +0.01), barely above chance, because the response is downstream/regulatory, not on the physical network. So 'biology as running software' is REAL as propagation + robustness + checkpoint over the near-field, and a NULL for the whole-cell dynamic response \u2014 the same structure-vs-dynamics split as the GRN essentiality null (0.47) and mechanistic sim (r=0.01). The running network shows you WHO is in the blast radius, not HOW the whole cell responds.",
+ "note": "cell-as-running-software: perturbation propagation on the STRING physical network, validated against measured Perturb-seq responses (M: 2058 KOs x 8563 genes)"
+}

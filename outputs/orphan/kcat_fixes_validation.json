@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "summary": {
+    "n_corrected": 228,
+    "n_capped_by_diffusion_limit": 3,
+    "new_violations_created": 0,
+    "still_below_floor_uncapped": 0,
+    "measured_untouched": true,
+    "note_capped": "3 enzymes' in-vivo rate implies kcat/Km past the diffusion limit \u2014 physics wins, capped at the limit (a deeper data conflict flagged)"
+  },
+  "examples": [
+    {
+      "enzyme": "CYP2A7",
+      "old": 0.2859,
+      "new": 54.0,
+      "capped": false
+    },
+    {
+      "enzyme": "NDUFB10",
+      "old": 8.178,
+      "new": 22.1,
+      "capped": false
+    },
+    {
+      "enzyme": "SLC12A5",
+      "old": 1.0451,
+      "new": 5.1,
+      "capped": false
+    },
+    {
+      "enzyme": "NDUFB8",
+      "old": 24.0392,
+      "new": 110.5,
+      "capped": false
+    },
+    {
+      "enzyme": "SLC16A9",
+      "old": 2.1963,
+      "new": 202.3,
+      "capped": false
+    },
+    {
+      "enzyme": "CHDH",
+      "old": 3.1693,
+      "new": 286.2,
+      "capped": false
+    },
+    {
+      "enzyme": "BCKDHA",
+      "old": 3.8479,
+      "new": 17.7,
+      "capped": false
+    },
+    {
+      "enzyme": "COX6A2",
+      "old": 4.0583,
+      "new": 1536.6,
+      "capped": false
+    }
+  ],
+  "bar": "all too-low PREDICTED kcats raised to the in-vivo floor; none past the diffusion limit; no UNCAPPED enzyme left below floor; measured untouched"
+}

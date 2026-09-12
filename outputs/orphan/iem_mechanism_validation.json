@@ -1,0 +1,142 @@
+{
+  "summary": {
+    "n_iem": 16,
+    "n_present": 14,
+    "coverage": 0.875,
+    "recall": 0.786,
+    "n_recovered": 11,
+    "median_enzymes_sharing_biomarker": 15,
+    "random_pair_baseline": 0.005,
+    "specificity_lift": 157.1
+  },
+  "per_iem": [
+    {
+      "gene": "CBS",
+      "disease": "homocystinuria",
+      "biomarker": "homocysteine",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 8
+    },
+    {
+      "gene": "ASS1",
+      "disease": "citrullinemia I",
+      "biomarker": "citrulline",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 7
+    },
+    {
+      "gene": "ARG1",
+      "disease": "argininemia",
+      "biomarker": "arginine",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 27
+    },
+    {
+      "gene": "OTC",
+      "disease": "OTC deficiency",
+      "biomarker": "ornithine",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 15
+    },
+    {
+      "gene": "HPD",
+      "disease": "tyrosinemia III",
+      "biomarker": "hydroxyphenylpyruvate",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 2
+    },
+    {
+      "gene": "IVD",
+      "disease": "isovaleric acidemia",
+      "biomarker": "isovaleryl-coa",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 4
+    },
+    {
+      "gene": "PCCA",
+      "disease": "propionic acidemia",
+      "biomarker": "propanoyl-coa",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 32
+    },
+    {
+      "gene": "PCCB",
+      "disease": "propionic acidemia",
+      "biomarker": "propanoyl-coa",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 32
+    },
+    {
+      "gene": "ACADM",
+      "disease": "MCAD deficiency",
+      "biomarker": "octanoyl-coa",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 34
+    },
+    {
+      "gene": "ALDOB",
+      "disease": "hereditary fructose intolerance",
+      "biomarker": "fructose-1-phosphate",
+      "present": true,
+      "recovered": false,
+      "n_enzymes_sharing": 0
+    },
+    {
+      "gene": "BCKDHA",
+      "disease": "MSUD",
+      "biomarker": "4-methyl-2-oxopentanoate",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 17
+    },
+    {
+      "gene": "GAA",
+      "disease": "Pompe disease",
+      "biomarker": "glycogen",
+      "present": true,
+      "recovered": false,
+      "n_enzymes_sharing": 11
+    },
+    {
+      "gene": "SMPD1",
+      "disease": "Niemann-Pick A/B",
+      "biomarker": "sphingomyelin",
+      "present": true,
+      "recovered": false,
+      "n_enzymes_sharing": 1
+    },
+    {
+      "gene": "GLA",
+      "disease": "Fabry disease",
+      "biomarker": "galactosylceramide",
+      "present": true,
+      "recovered": true,
+      "n_enzymes_sharing": 8
+    },
+    {
+      "gene": "ASL",
+      "disease": "argininosuccinic aciduria",
+      "biomarker": "argininosuccinate",
+      "present": false,
+      "recovered": null,
+      "n_enzymes_sharing": null
+    },
+    {
+      "gene": "MUT",
+      "disease": "methylmalonic acidemia",
+      "biomarker": "methylmalonyl-coa",
+      "present": false,
+      "recovered": null,
+      "n_enzymes_sharing": null
+    }
+  ]
+}

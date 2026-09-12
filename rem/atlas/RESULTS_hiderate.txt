@@ -1,0 +1,94 @@
+=================================================================================================
+HIDE THE RATES, LET CHEMISTRY SUPPLY THEM, AND SEE HOW CLOSE THE ANSWER GETS
+=================================================================================================
+  True answer Y = P(eradication) = 4.377079e-03
+  Chemistry represented by its measured error: eps kcal/mol -> eps * 0.7330
+  orders of log-rate error, drawn independently per rate. 800 trials per level.
+  PREDICTION ON THE RECORD (linear sensitivities in quadrature): 3.891 orders
+  at 1 kcal/mol. This Monte-Carlo is nonlinear and can refute it.
+
+=================================================================================================
+H4  ZERO-ERROR CONTROL
+=================================================================================================
+  worst relative deviation at 0 kcal/mol: 0.000e+00   PASS (bar 1e-12)
+
+=================================================================================================
+H1 / H2  THE SPREAD, AND WHETHER IT IS EVEN MEASURABLE
+=================================================================================================
+   kcal/mol  sd (orders)    median       p05       p95  frac at 0  frac at 1
+        0.5        1.988    +0.024    -4.357    +1.948     0.0013     0.0000
+        1.0        4.002    -0.672    -9.872    +2.324     0.0525     0.0138
+        2.0        7.405    -1.503   -19.465    +2.359     0.1925     0.0762
+
+  H1 at 1 kcal/mol: measured sd 4.002 orders vs predicted 3.891 -> relative gap 0.029
+     CONFIRMS the linear analysis within 30%.
+  H2 worst fraction of draws pinned at 0 or 1: 0.2687
+     A material fraction is CLIPPED, so the measured sd UNDERSTATES the true spread.
+     The honest statement is not 'the error is N orders' but that the answer is
+     uninformative over much of the draw range.
+
+=================================================================================================
+H3  WHICH RATE DOES THE DAMAGE  (hide one at a time, 1 kcal/mol, others exact)
+=================================================================================================
+      rate  |S| measured  sd (orders)  within x10
+        mu         0.051        0.027      1.0000
+    k_kill         4.089        2.819      0.2475
+         a         3.370        2.549      0.3300
+         b         0.317        0.165      1.0000
+  ranking by |S|:  ['k_kill', 'a', 'b', 'mu']
+  ranking by sd :  ['k_kill', 'a', 'b', 'mu']
+  H3 PASS -- same order
+
+=================================================================================================
+H5  IS INDEPENDENCE GENEROUS?  (single shared bias on all four rates)
+=================================================================================================
+   kcal/mol  independent sd   correlated sd    ratio
+        0.5           1.988           0.394    0.198
+        1.0           4.002           1.139    0.285
+        2.0           7.405           3.761    0.508
+  A ratio above 1 means correlated force-field error is WORSE than independent draws, so
+  the independent numbers above are the optimistic case.
+
+=================================================================================================
+H6  THE DELIVERABLE -- how often does hiding the rates still give a usable answer?
+=================================================================================================
+   kcal/mol   within x2   within x10   within x100
+        0.5      0.1275       0.4213        0.7588
+        1.0      0.0587       0.2037        0.4688
+        2.0      0.0262       0.1062        0.2412
+
+=================================================================================================
+POST-RUN READING.  Hand-written after the run; NOT produced by hiderate.py.
+The machine output above is left exactly as printed.
+=================================================================================================
+
+H1 CONFIRMED THE PREDICTION.  Predicted 3.891 orders at 1 kcal/mol from linear sensitivities in
+quadrature; measured 4.002 from a fully nonlinear Monte-Carlo, a relative gap of 0.029.  The
+predeclared refutation condition -- a measured spread below 1.0 order -- did not occur.
+
+H5 REFUTED MY PREDECLARED EXPECTATION.  The docstring says independent draws are the generous case
+and correlated error should be worse.  Measured ratios 0.198 / 0.285 / 0.508 are all BELOW 1, so a
+shared systematic bias is up to five times LESS damaging here.  The cause is a sign cancellation
+I had the numbers for and did not use: the small-error ratio is |sum S| / sqrt(sum S^2), and this
+circuit's signed sensitivities are mu -0.0507, k_kill +4.0891, a -3.3703, b +0.3172, giving
+0.9853 / 5.3088 = 0.1856 against 0.198 measured.  The two dominant terms oppose each other.
+Flipping a's sign gives 1.4553 instead, so correlation can help or hurt by up to sqrt(n) and the
+direction must be computed per circuit.  Full correction recorded in hiderate.py's docstring.
+
+WHAT THE DELIVERABLE MEANS, WITH ITS DOMAIN.  At 1 kcal/mol -- the accuracy alchemical free-energy
+methods report on well-behaved systems in vitro -- hiding all four rates and letting chemistry
+supply them leaves 20.4% of trials within a factor of ten of the true eradication probability and
+5.9% within a factor of two.  These are the INDEPENDENT-error numbers, which H5 now shows are
+pessimistic for this particular circuit; under a shared bias they would rise.  They are measured
+on one four-rate circuit at one tail depth, and rateneed's N6 already showed the requirement
+tightens as the question gets rarer, so they should not be read as a figure for chemistry-supplied
+rates in general.
+
+H2 QUALIFIES H1.  26.9% of draws at 2 kcal/mol are pinned at 0 or 1, so the reported standard
+deviations UNDERSTATE the spread.  The defensible claim is not "the error is 4 orders" but that
+over much of the draw range the answer carries no information at all.
+
+H3 IS THE ONE PIECE OF GOOD NEWS.  Ranking rates by measured sensitivity and by realised damage
+gives the same order, k_kill > a > b > mu.  So the cheap linear sensitivity is a valid TRIAGE
+signal even where it is not a valid error bar: it says correctly which rates must be measured.
+That is what M3-style targeting needs from it.

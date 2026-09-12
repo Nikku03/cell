@@ -1,0 +1,104 @@
+{
+  "test": "supercoil_gate2",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/orphan/supercoil/GSM8706920_1_RPKM.bw",
+        "bytes": 107688596,
+        "hash": "d5666543ffbdba3e",
+        "method": "sha256:ends8M"
+      },
+      {
+        "path": "outputs/orphan/supercoil/GSM8706924_5_RPKM.bw",
+        "bytes": 110110646,
+        "hash": "3bd9623fde9afd35",
+        "method": "sha256:ends8M"
+      },
+      {
+        "path": "outputs/orphan/crispr_features_compendium.csv",
+        "bytes": 1241443,
+        "hash": "23ef417996da8b6e",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/orphan/invivo/crispr_egpairs.tsv",
+        "bytes": 3298116,
+        "hash": "3fe657eaceb46a8a",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 10331,
+      "used": 10331,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 7734,
+    "controls": [
+      "displaced 2 Mb track",
+      "replicate agreement",
+      "CTCF-count bar"
+    ],
+    "note": "protocol copied from rouse_gate: same folds, same metric, same thresholds",
+    "warnings": []
+  },
+  "arms": {
+    "epi + TF identity (311)": 0.6075574090157142,
+    "+ CTCF-count contact  [the 0.663 bar]": 0.6737319791377248,
+    "+ TORSION-fine only": 0.6132093837069116,
+    "+ TORSION-fine + CTCF-count": 0.6711869357684028,
+    "+ TORSION-fine [displaced 2 Mb]": 0.6046125325830051
+  },
+  "verdict": "PARTIAL",
+  "note": "Torsion beats its displaced control, so the track is reading something real about position -- but it adds nothing beyond CTCF counting. Redundant, not absent.",
+  "replicate_r": 0.22398205323677436,
+  "accession": "GSE285699",
+  "cell_line_track": "SH-SY5Y",
+  "cell_line_assay": "K562",
+  "bin_bp": 1000,
+  "strand_asymmetry": {
+    "n": 10331,
+    "mean": 0.14506242416984091,
+    "se": 0.006251008238050489,
+    "z": 23.206244280215785
+  },
+  "log": [
+    "====================================================================================================",
+    "MEASURED DNA TORSION vs THE 0.663 BAR",
+    "====================================================================================================",
+    "  ATTEMPT 2. GSE285699 TMP-seq, SH-SY5Y WT, hg38, run-length encoded at 70-90 bp -- about",
+    "  250x finer than attempt 1's 20 kb bins, which is the confound most likely to have caused",
+    "  the PARTIAL. Still not K562: no per-locus torsion measurement exists for K562 anywhere.",
+    "  This track ships NO naked-DNA control, so every value is locally normalised by the 200 kb",
+    "  mean around it -- otherwise raw RPKM in a neuroblastoma line largely measures karyotype.",
+    "",
+    "  THE BAR IS RECOMPUTED, NOT ASSUMED. The CTCF peak file the recorded 0.6632 was produced",
+    "  from lived in the ephemeral scratch directory and is gone, so the arm is rebuilt from",
+    "  ENCODE ENCFF362OPG (K562 CTCF IDR thresholded, ENCSR000AKO, GRCh38, 44,104 peaks). That is",
+    "  a DIFFERENT peak set, so the bar measured here is the one torsion is judged against, and",
+    "  its distance from the recorded 0.6632 is reported as a check on the reconstruction.",
+    "\n  10,331 pairs, torsion window 1 kb, shuffled control displaced 2 Mb",
+    "  torsion at enhancer: median 0.7338   at TSS: 0.5010   |difference| median 0.5132",
+    "  replicate agreement on the enhancer feature across pairs: r = 0.2240",
+    "\n  TWIN-DOMAIN, measured at 2 kb arms rather than 20 kb -- the test that was",
+    "  meaningless at attempt 1's bin size. Predicts upstream > downstream.",
+    "    n = 10331   mean (up-down)/local = +0.14506   se 0.00625   z = +23.21",
+    "    SIGNIFICANT, predicted direction",
+    "",
+    "    epi + TF identity (311)                  AUPRC 0.6076",
+    "    + CTCF-count contact  [the 0.663 bar]    AUPRC 0.6737",
+    "    + TORSION-fine only                      AUPRC 0.6132",
+    "    + TORSION-fine + CTCF-count              AUPRC 0.6712",
+    "    + TORSION-fine [displaced 2 Mb]          AUPRC 0.6046",
+    "\n  reconstructed bar 0.6737 against the recorded 0.6632  (delta +0.0105) -- a different CTCF peak set, so exact agreement is not expected",
+    "\n  ------------------------------------------------------------------------------------------------",
+    "  TORSION+count MINUS the bar     : -0.0025",
+    "  TORSION-only  MINUS the bar     : -0.0605",
+    "  TORSION-only  MINUS its displaced control : +0.0086",
+    "\n  VERDICT: PARTIAL",
+    "    Torsion beats its displaced control, so the track is reading something real about position -- ",
+    "    but it adds nothing beyond CTCF counting. Redundant, not absent.",
+    "    manifest: 4 inputs, coverage 10331/10331 (100.0%) by 'all', seed 7734, controls 3"
+  ]
+}

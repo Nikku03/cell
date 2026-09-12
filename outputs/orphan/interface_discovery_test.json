@@ -1,0 +1,28 @@
+{
+  "source": "Predictomes (Schmid & Walter, Mol Cell 2025), AlphaFold-Multimer human screen, num_unique_contacts",
+  "in_model_pairs": 1277959,
+  "pos_in_pdb": 6322,
+  "pos_no_pdb": 139322,
+  "clean_negatives": 624297,
+  "median_contacts": {
+    "pos_in_pdb": 65.0,
+    "pos_no_pdb": 0.0,
+    "clean_neg": 0.0
+  },
+  "MEMORISED_in_pdb_pos_vs_clean_neg": {
+    "contacts_ALL": 0.823,
+    "contacts_HARD": 0.824,
+    "note": "AF trained on these co-structures -> RECALL, not discovery"
+  },
+  "GENUINE_no_pdb_pos_vs_clean_neg": {
+    "contacts_ALL": 0.526,
+    "contacts_HARD": 0.5,
+    "note": "real interactions AF had to PREDICT -> the honest discovery number"
+  },
+  "baselines_on_discovery": {
+    "topology": 0.5,
+    "domain_compat": 0.61,
+    "note": "from struct_discovery_test.py (matched negatives)"
+  },
+  "verdict": "AF-Multimer interface contacts = 0.5 on genuine discovery (in_pdb=0, 0-shared) \u2014 CHANCE. The 0.82 on in_pdb=1 pairs is PDB memorisation, not discovery. Domains (0.61) beat AF contacts here. Fetched data answered it without GPU; a careful full-MSA ipTM run is the only untested variant (notebook)."
+}

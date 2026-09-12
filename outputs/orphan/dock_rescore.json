@@ -1,0 +1,582 @@
+{
+  "test": "dock_rescore",
+  "n_train": 50,
+  "n_eval": 14,
+  "epochs": 25,
+  "auc_bound_graph": 0.7980050376936088,
+  "auc_unbound_graph": 0.7137148019828969,
+  "auc_untrained": 0.5244836565912842,
+  "leak": 0.08429023571071181,
+  "clash_w": 50.0,
+  "contact_A": 4.5,
+  "complexes": [
+    {
+      "pdb": "1CHO",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 14.74537717629324,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      }
+    },
+    {
+      "pdb": "1CSE",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 5.853631863108785,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      }
+    },
+    {
+      "pdb": "1CSO",
+      "n_poses": 2400,
+      "near_native_frac": 0.0016666666666666668,
+      "best_rmsd": 3.761069240423829,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0016666666666667052,
+        "10": 0.016542220605088476,
+        "100": 0.15363596462686013
+      }
+    },
+    {
+      "pdb": "1CT0",
+      "n_poses": 2400,
+      "near_native_frac": 0.0016666666666666668,
+      "best_rmsd": 4.027057916433033,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": true
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": true
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": true
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0016666666666667052,
+        "10": 0.016542220605088476,
+        "100": 0.15363596462686013
+      }
+    },
+    {
+      "pdb": "1CT2",
+      "n_poses": 2400,
+      "near_native_frac": 0.00125,
+      "best_rmsd": 3.9039834606811086,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0012499999999999734,
+        "10": 0.012429921363072638,
+        "100": 0.11757209729646811
+      }
+    },
+    {
+      "pdb": "1CT4",
+      "n_poses": 2400,
+      "near_native_frac": 0.00125,
+      "best_rmsd": 3.994226957316726,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": true
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0012499999999999734,
+        "10": 0.012429921363072638,
+        "100": 0.11757209729646811
+      }
+    },
+    {
+      "pdb": "1DVF",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 5.697064676622666,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      }
+    },
+    {
+      "pdb": "1E50",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 6.527330644642334,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      }
+    },
+    {
+      "pdb": "1E96",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 15.570978096418282,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      }
+    },
+    {
+      "pdb": "1EAW",
+      "n_poses": 2400,
+      "near_native_frac": 0.0008333333333333334,
+      "best_rmsd": 4.155564056272324,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0008333333333333526,
+        "10": 0.008302152676606056,
+        "100": 0.07998754856093948
+      }
+    },
+    {
+      "pdb": "1EFN",
+      "n_poses": 2400,
+      "near_native_frac": 0.0008333333333333334,
+      "best_rmsd": 3.540874192543911,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": true
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0008333333333333526,
+        "10": 0.008302152676606056,
+        "100": 0.07998754856093948
+      }
+    },
+    {
+      "pdb": "1EMV",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 5.7956613379908495,
+      "hits": {
+        "shape": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_mean": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "learned_sum": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "untrained": {
+          "1": false,
+          "10": false,
+          "100": false
+        },
+        "shape+learned": {
+          "1": false,
+          "10": false,
+          "100": false
+        }
+      },
+      "dead_arms": [],
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      }
+    }
+  ],
+  "arms": {
+    "shape": {
+      "1": 0,
+      "10": 0,
+      "100": 2
+    },
+    "learned_mean": {
+      "1": 0,
+      "10": 0,
+      "100": 0
+    },
+    "learned_sum": {
+      "1": 0,
+      "10": 0,
+      "100": 1
+    },
+    "shape+learned": {
+      "1": 0,
+      "10": 0,
+      "100": 1
+    },
+    "untrained": {
+      "1": 0,
+      "10": 0,
+      "100": 1
+    }
+  },
+  "chance": {
+    "1": 0.007500000000000062,
+    "10": 0.07454858928953434,
+    "100": 0.7023912209685355
+  },
+  "n_reranked": 12,
+  "test_pdbs": [
+    "1CHO",
+    "1CSE",
+    "1CSO",
+    "1CT0",
+    "1CT2",
+    "1CT4",
+    "1DVF",
+    "1E50",
+    "1E96",
+    "1EAW",
+    "1EFN",
+    "1EMV"
+  ],
+  "log": [
+    "====================================================================================================",
+    "CAN THE INTERFACE MODEL SUPPLY THE ORIENTATION THE DOCKING SEARCH IS MISSING?",
+    "====================================================================================================",
+    "  PREDECLARED (leak): unbound AUC ~ bound AUC => 0.9019 stands. unbound << bound => 0.9019 was",
+    "  inflated by the graph reaching across the interface, and the docking number is the unbound one.",
+    "  PREDECLARED (join): learned beats BOTH shape and UNTRAINED in top-10 => the join is real.",
+    "  learned ~ untrained => embedding geometry, not learning. learned ~ chance => the join fails.",
+    "\n  345 structures | docking TEST set to re-rank: ['1CHO', '1CSE', '1CSO', '1CT0', '1CT2', '1CT4', '1DVF', '1E50', '1E96', '1EAW', '1EFN', '1EMV']",
+    "\n  building UNBOUND per-chain surfaces (own atoms, own APBS, own KNN)...",
+    "    10 built (122s)",
+    "    20 built (243s)",
+    "    30 built (351s)",
+    "    40 built (469s)",
+    "    50 built (584s)",
+    "    60 built (693s)",
+    "    70 built (848s)",
+    "    76 complexes usable unbound, in 924s",
+    "    train 50 | AUC-eval 14 | docking test 12: ['1CHO', '1CSE', '1CSO', '1CT0', '1CT2', '1CT4', '1DVF', '1E50', '1E96', '1EAW', '1EFN', '1EMV']",
+    "\n  TRAINING both models on the same 50 complexes, 25 epochs each",
+    "    bound   graph (whole complex, cross-chain KNN): AUC 0.7980   22s",
+    "    unbound graph (per chain, own APBS + KNN)     : AUC 0.7137   31s",
+    "    THE LEAK = +0.0843   (evaluated on the same 14 held-out complexes)",
+    "    UNTRAINED control (random init, unbound)      : AUC 0.5245",
+    "\n  RE-RANKING the FFT pose sets of 12 complexes with the UNBOUND model",
+    "    1CHO: 2400 poses, near-native frac 0.000 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1CSE: 2400 poses, near-native frac 0.000 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1CSO: 2400 poses, near-native frac 0.002 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1CT0: 2400 poses, near-native frac 0.002 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1CT2: 2400 poses, near-native frac 0.001 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1CT4: 2400 poses, near-native frac 0.001 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1DVF: 2400 poses, near-native frac 0.000 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1E50: 2400 poses, near-native frac 0.000 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1E96: 2400 poses, near-native frac 0.000 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1EAW: 2400 poses, near-native frac 0.001 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1EFN: 2400 poses, near-native frac 0.001 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "    1EMV: 2400 poses, near-native frac 0.000 | top10 shape False  learned_mean False  learned_sum False  untrained False",
+    "\n  12 complexes re-ranked",
+    "\n    arm                  top-1    top-10   top-100",
+    "    shape                 0/12      0/12      2/12",
+    "    learned_mean          0/12      0/12      0/12",
+    "    learned_sum           0/12      0/12      1/12",
+    "    shape+learned         0/12      0/12      1/12",
+    "    untrained             0/12      0/12      1/12",
+    "    chance                0.01      0.07      0.70",
+    "\n  READING",
+    "  LEAK CONFIRMED: bound-graph AUC 0.7980 vs unbound 0.7137, a gap of 0.0843 on the",
+    "  same held-out complexes. The reported 0.9019 was measured with the KNN graph reaching across",
+    "  the interface, so a point's embedding already saw its partner. The docking-relevant number",
+    "  is the unbound one, 0.7137. This corrects a result recorded earlier today.",
+    "  The join FAILS: learned 0/12, shape 0, untrained 0, chance 0.07. A model that discriminates interface points does not thereby rank poses --",
+    "  scoring contacts of a GIVEN pose and choosing among poses are different problems."
+  ]
+}

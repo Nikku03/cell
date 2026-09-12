@@ -1,0 +1,30 @@
+{
+ "n_simulated": 395,
+ "minutes": 14.78899081548055,
+ "device": "cpu",
+ "median_inv3": 0.0006463241986542319,
+ "median_p_hard": 0.0,
+ "coil_ratio": 1.5212461615236061,
+ "n_positives": 25,
+ "identity": 0.39957257916704914,
+ "count_contact": 0.5200009215198187,
+ "mean_dist_only": 0.4124911036365987,
+ "SIM_only": 0.4080273461054871,
+ "SIM_plus_count": 0.5426182283812863,
+ "SIM_shuffled_plus_count": 0.5325680600073437,
+ "delta_vs_count": 0.022617306861467578,
+ "delta_vs_count_per_seed": [
+  0.04376861145026456,
+  0.03743294896351157,
+  0.007212347421314158,
+  0.013086884612968142,
+  0.011585741859279464
+ ],
+ "delta_shuffled_control": 0.012567138487524993,
+ "delta_shuffled_control_sd": 0.019421049132705603,
+ "delta_net_of_control": 0.010050168373942585,
+ "delta_net_se": 0.008421578849066432,
+ "delta_shape_vs_moment": -0.004463757531111579,
+ "sign_consistent": true,
+ "verdict": "UNDERPOWERED -- net +0.0101 but 1 se is 0.0084, so this run cannot tell the effect from the control's own scatter. Raise EXT_NSUB and re-run."
+}

@@ -1,0 +1,51 @@
+{
+ "baseline": [
+  0.4891,
+  0.0111
+ ],
+ "oracle": 0.6218,
+ "levers": {
+  "I1_simweight": {
+   "recall": 0.4903,
+   "sd": 0.0106,
+   "delta": 0.0012,
+   "seeds_beating_baseline": 3
+  },
+  "I2_rankfusion": {
+   "recall": 0.4856,
+   "sd": 0.0118,
+   "delta": -0.0035,
+   "seeds_beating_baseline": 1
+  },
+  "I3_agreegate": {
+   "recall": 0.4778,
+   "sd": 0.0075,
+   "delta": -0.0113,
+   "seeds_beating_baseline": 1
+  },
+  "I5_simfusion": {
+   "recall": 0.4921,
+   "sd": 0.0116,
+   "delta": 0.003,
+   "seeds_beating_baseline": 3
+  },
+  "ALL": {
+   "recall": 0.4659,
+   "sd": 0.0092,
+   "delta": -0.0232,
+   "seeds_beating_baseline": 0
+  }
+ },
+ "sign_head": {
+  "accuracy": 0.9621,
+  "global_majority_baseline": 0.6687,
+  "coinflip": 0.5,
+  "per_gene_prior_baseline": 0.919,
+  "disagree_frac": 0.0997,
+  "head_right_when_disagree": 0.6894,
+  "beats_per_gene_prior": true
+ },
+ "any_recall_lever_helped": false,
+ "verdict": "IMPROVE V2 (improve_v2.py): four evidence-motivated improvements A/B'd against the multimodal_stack baseline (0.489+/-0.011 specific recall@50, oracle 0.622), same splits, 3 seeds. RESULTS: I1_simweight +0.001, I2_rankfusion -0.004, I3_agreegate -0.011, I5_simfusion +0.003, ALL -0.023. NONE of the recall levers clears a real margin (>+0.005 on >=2/3 seeds): similarity-weighting, rank fusion, agreement-gating and similarity-level fusion all land within seed noise of the baseline. This is the ceiling_cartography prediction confirmed at the engineering level -- the retrieval channels are bounded by WHICH knockouts exist to retrieve, not by how their outputs are combined. THE REAL GAIN IS I4, A NEW CAPABILITY, NOT A RECALL BUMP: a sign head predicts the DIRECTION of change on 96% of correctly-retrieved movers vs 50% coin-flip, 67% global-majority-class, and -- THE DECISIVE CONTROL -- 92% for a PER-GENE direction prior (each gene's usual direction, learned from train KOs, needing no knockout-specific information). Head and per-gene prior disagree on 10% of hits; where they disagree the head is right 69% -- so the head carries genuine KNOCKOUT-SPECIFIC direction beyond each gene's own habit. The model can now say up-or-down, which it previously could not do at all. READING: recall is saturated for this model class on this data, exactly as the ceiling work predicted; the productive direction is adding CAPABILITIES (direction, calibrated abstention) rather than chasing recall points. Deterministic; hyper-params tuned on validation only.",
+ "note": "IMPROVE V2 (improve_v2.py): four evidence-motivated improvements A/B'd against the multimodal_stack baseline (0.489+/-0.011 specific recall@50, oracle 0.622), same splits, 3 seeds. RESULTS: I1_simweight +0.001, I2_rankfusion -0.004, I3_agreegate -0.011, I5_simfusion +0.003, ALL -0.023. NONE of the recall levers clears a real margin (>+0.005 on >=2/3 seeds): similarity-weighting, rank fusion, agreement-gating and similarity-level fusion all land within seed noise of the baseline. This is the ceiling_cartography prediction confirmed at the engineering level -- the retrieval channels are bounded by WHICH knockouts exist to retrieve, not by how their outputs are combined. THE REAL GAIN IS I4, A NEW CAPABILITY, NOT A RECALL BUMP: a sign head predicts the DIRECTION of change on 96% of correctly-retrieved movers vs 50% coin-flip, 67% global-majority-class, and -- THE DECISIVE CONTROL -- 92% for a PER-GENE direction prior (each gene's usual direction, learned from train KOs, needing no knockout-specific information). Head and per-gene prior disagree on 10% of hits; where they disagree the head is right 69% -- so the head carries genuine KNOCKOUT-SPECIFIC direction beyond each gene's own habit. The model can now say up-or-down, which it previously could not do at all. READING: recall is saturated for this model class on this data, exactly as the ceiling work predicted; the productive direction is adding CAPABILITIES (direction, calibrated abstention) rather than chasing recall points. Deterministic; hyper-params tuned on validation only."
+}

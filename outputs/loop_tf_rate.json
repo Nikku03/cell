@@ -1,0 +1,138 @@
+{
+ "test": "loop_tf_rate",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 4821,
+   "used": 3363,
+   "selection": "filtered",
+   "fraction": 0.6975731176104543
+  },
+  "seed": 9401,
+  "controls": [
+   "degree-preserving rewiring that keeps popularity and breaks identity",
+   "publication count as a gated baseline, not a footnote",
+   "mRNA abundance partialled out as a second confound",
+   "all three edge blocks reported, not just the best",
+   "signed against unsigned on the same edges",
+   "the rate itself validated in loop 91 before being used here"
+  ],
+  "note": "the TF network has never been tested against a transcription rate because until loop 91 there was no transcription rate",
+  "warnings": []
+ },
+ "gates": {
+  "N1 the network predicts transcription rate at all": true,
+  "N2 it beats the fame baseline": false,
+  "N3 the signs earn their place": false,
+  "N4 the degree-matched null fires": false,
+  "N5 it adds over abundance": false,
+  "N6 coverage declared": true
+ },
+ "n_genes": 3363,
+ "blocks": {
+  "CollecTRI curated": {
+   "rho_indegree": 0.1437872018038419,
+   "rho_weighted": 0.0982709412055453,
+   "n": 3363,
+   "partial_pubs": -0.03180801096261463,
+   "retain_pubs": -0.2212158701440474,
+   "partial_abundance": -0.029580837972221517
+  },
+  "CollecTRI+DoRothEA": {
+   "rho_indegree": 0.011708724507971347,
+   "rho_weighted": 0.024550827690866424,
+   "n": 3363,
+   "partial_pubs": -0.1199639857265289,
+   "retain_pubs": -10.245692060211761,
+   "partial_abundance": -0.05844340506406202
+  },
+  "full reg": {
+   "rho_indegree": -0.014466655871080446,
+   "rho_weighted": 0.008780083758576156,
+   "n": 3363,
+   "partial_pubs": -0.1115395702741016,
+   "retain_pubs": 7.710114297878245,
+   "partial_abundance": -0.02585860732775685
+  }
+ },
+ "pubs_rho": 0.32771377721850764,
+ "abundance_rho": 0.9351444006963566,
+ "n3": {
+  "signed": 0.1348482766150446,
+  "unsigned": 0.1437872018038419,
+  "n_signed_edges": 53124
+ },
+ "n4": {
+  "feature": "regulator-rate sum (in-degree is invariant under this null)",
+  "real": 0.0982709412055453,
+  "null_mean": 0.11498200034655096,
+  "null_sd": 0.007909152555289452,
+  "survive": 1.1700508709492514
+ },
+ "seconds": 3.3823280334472656,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 94 -- does the TF network predict transcription rate?",
+  "====================================================================================================",
+  "",
+  "  3,363 genes with a transcription rate from loop 91",
+  "  edge blocks: CollecTRI curated 55,716, CollecTRI+DoRothEA 278,405, full reg 612,133",
+  "",
+  "N1 THE NETWORK PREDICTS TRANSCRIPTION RATE AT ALL",
+  "     CollecTRI curated      in-degree +0.1438   regulator-rate sum +0.0983   n 3,363",
+  "     CollecTRI+DoRothEA     in-degree +0.0117   regulator-rate sum +0.0246   n 3,363",
+  "     full reg               in-degree -0.0145   regulator-rate sum +0.0088   n 3,363",
+  "",
+  "N2 IT BEATS THE FAME BASELINE",
+  "     pubs vs transcription rate +0.3277",
+  "     CollecTRI curated      raw +0.1438 -> given pubs -0.0318   retained   -22%   FAILS",
+  "     CollecTRI+DoRothEA     raw +0.0117 -> given pubs -0.1200   retained -1025%   FAILS",
+  "     full reg               raw -0.0145 -> given pubs -0.1115   retained   771%   FAILS",
+  "     N2 FAIL -- the network is FAME, in every block",
+  "",
+  "N3 THE SIGNS EARN THEIR PLACE",
+  "     53,124 of 55,716 curated edges carry a sign",
+  "     signed sum +0.1348   unsigned count +0.1438",
+  "     N3 FAIL -- the signs add NOTHING over the bare count",
+  "",
+  "N4 THE DEGREE-MATCHED NULL FIRES",
+  "     in-degree cannot be tested this way -- rewiring preserves it exactly, so the null",
+  "     returns the real value by construction. Reported: real +0.1438, null identical.",
+  "     the control is therefore applied to the REGULATOR-RATE SUM, which depends on identity",
+  "     regulator-rate sum: real +0.0983   rewired +0.1150 +/- 0.0079   survives 117%",
+  "     N4 FAIL -- the effect is TOPOLOGY, not regulatory identity",
+  "",
+  "N5 THE ABUNDANCE TRAP",
+  "     mRNA copies vs transcription rate +0.9351 -- k_sm is mostly abundance",
+  "     CollecTRI curated      raw +0.1438 -> given mRNA copies -0.0296   GONE",
+  "     CollecTRI+DoRothEA     raw +0.0117 -> given mRNA copies -0.0584   GONE",
+  "     full reg               raw -0.0145 -> given mRNA copies -0.0259   GONE",
+  "     N5 FAIL -- the network predicts only what abundance already predicts",
+  "",
+  "N6 COVERAGE DECLARED",
+  "     3,363 genes have both a transcription rate and a position in the network",
+  "     of 16,492 in the model and 4,821 in Schwanhausser",
+  "",
+  "  PASS  N1 the network predicts transcription rate at all",
+  "  FAIL  N2 it beats the fame baseline",
+  "  FAIL  N3 the signs earn their place",
+  "  FAIL  N4 the degree-matched null fires",
+  "  FAIL  N5 it adds over abundance",
+  "  PASS  N6 coverage declared",
+  "    manifest: 2 inputs, coverage 3363/4821 (69.8%) by 'filtered', seed 9401, controls 6"
+ ]
+}

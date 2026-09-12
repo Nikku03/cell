@@ -1,0 +1,131 @@
+{
+ "n": 820,
+ "n_repressive": 159,
+ "n_matched": 276,
+ "near_bp": 10000,
+ "distance-matched": {
+  "GO repressor": {
+   "repressive": 0.10869565217391304,
+   "activating": 0.057971014492753624,
+   "p": 0.19041782756907,
+   "n_rep": 138,
+   "n_act": 138
+  },
+  "is TF": {
+   "repressive": 0.2028985507246377,
+   "activating": 0.10144927536231885,
+   "p": 0.02848369517144395,
+   "n_rep": 138,
+   "n_act": 138
+  },
+  "frac negative out": {
+   "repressive": 0.026383116883116883,
+   "activating": 0.14285714285714285,
+   "p": 0.24717405258621272,
+   "n_rep": 64,
+   "n_act": 49
+  },
+  "signed out-degree": {
+   "repressive": 0.0,
+   "activating": 0.0,
+   "p": 0.05009565811381914,
+   "n_rep": 138,
+   "n_act": 138
+  },
+  "publications": {
+   "repressive": 70.5,
+   "activating": 54.0,
+   "p": 0.15034608658788265,
+   "n_rep": 138,
+   "n_act": 138
+  },
+  "NEGATIVE edge neighbour->target": {
+   "repressive": 0.008333333333333333,
+   "activating": 0.0,
+   "p": 0.49586776859504134,
+   "hits_rep": 1,
+   "hits_act": 0,
+   "n_rep": 120,
+   "n_act": 122
+  },
+  "positive edge neighbour->target": {
+   "repressive": 0.0,
+   "activating": 0.0,
+   "p": 1.0,
+   "hits_rep": 0,
+   "hits_act": 0,
+   "n_rep": 120,
+   "n_act": 122
+  }
+ },
+ "matched AND neighbour <10kb": {
+  "GO repressor": {
+   "repressive": 0.13793103448275862,
+   "activating": 0.125,
+   "p": 1.0,
+   "n_rep": 58,
+   "n_act": 24
+  },
+  "is TF": {
+   "repressive": 0.20689655172413793,
+   "activating": 0.20833333333333334,
+   "p": 1.0,
+   "n_rep": 58,
+   "n_act": 24
+  },
+  "frac negative out": {
+   "repressive": 0.0,
+   "activating": 0.1712707182320442,
+   "p": 0.1302477278858024,
+   "n_rep": 32,
+   "n_act": 14
+  },
+  "signed out-degree": {
+   "repressive": 1.0,
+   "activating": 1.0,
+   "p": 0.7398537109640478,
+   "n_rep": 58,
+   "n_act": 24
+  },
+  "publications": {
+   "repressive": 91.0,
+   "activating": 53.0,
+   "p": 0.09434453194162648,
+   "n_rep": 58,
+   "n_act": 24
+  },
+  "NEGATIVE edge neighbour->target": {
+   "repressive": 0.02040816326530612,
+   "activating": 0.0,
+   "p": 1.0,
+   "hits_rep": 1,
+   "hits_act": 0,
+   "n_rep": 49,
+   "n_act": 19
+  },
+  "positive edge neighbour->target": {
+   "repressive": 0.0,
+   "activating": 0.0,
+   "p": 1.0,
+   "hits_rep": 0,
+   "hits_act": 0,
+   "n_rep": 49,
+   "n_act": 19
+  }
+ },
+ "pubs_matched": {
+  "n": 242,
+  "residual_p": 0.7660388395708853,
+  "GO repressor": {
+   "repressive": 0.09090909090909091,
+   "activating": 0.05785123966942149,
+   "p": 0.46333542433535124
+  },
+  "frac negative out": {
+   "repressive": 0.0,
+   "activating": 0.16236803238334885,
+   "p": 0.10484072797264653
+  }
+ },
+ "verdict": "CHAIN NOT CLOSED. The neighbours of repressive elements are NOT detectably enriched for repressors: GO-repressor p 0.19, outgoing-negative-fraction p 0.247, negative neighbour->target edge 1/120 vs 0/122. The POSITIONAL fact stands -- these elements sit beside other promoters -- but its causal interpretation is unconfirmed. The most likely reason is annotation coverage rather than biology: signed regulatory edges cover a small fraction of gene pairs, so the specific N->G edge is usually simply absent from any database, and this test has little power to find it."
+}

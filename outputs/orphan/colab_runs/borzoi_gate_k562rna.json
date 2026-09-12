@@ -1,0 +1,16 @@
+{
+ "n_pairs_full": 10331, "n_addressable": 3960, "n_scored": 3953,
+ "subset_base_rate": 0.12218568176068809, "model": "johahi/borzoi-replicate-0",
+ "tracks": "94 K562 RNA tracks of 7611", "bins_axis": 2, "minutes": 15.8,
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+ "baseline_on_subset": 0.7743164341061453, "plus_borzoi": 0.7787196525268929,
+ "shuffled_control": 0.7732858246650518, "sham_corrected": 0.77834362894224,
+ "delta": 0.004403218420747668, "delta_control": -0.0010306094410934997,
+ "net": 0.0054338278618411675, "se": 0.003326946314307595, "z": 1.6332778916428223,
+ "sign_consistent": false,
+ "median_lfc_real": 5.9676745877368376e-05, "median_lfc_sham": 9.854269592324272e-05,
+ "verdict": "NO-GO -- Borzoi in-silico deletion does not beat the measured-track stack.",
+ "superseded_run": {
+   "note": "first run read TRACKS 3068:3076 averaged over all 6144 bins because the transpose heuristic was shape[1]<shape[2] and 7611>6144. Invalid.",
+   "net": 0.0021, "se": 0.0023, "z": 0.93, "median_lfc_real": 0.00048, "median_lfc_sham": 0.00017}
+}

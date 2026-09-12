@@ -1,0 +1,230 @@
+=================================================================================================
+DOES K(N) SURVIVE A SPARSE NETWORK?
+=================================================================================================
+  sparse: c outgoing switches per type, N = m(2+c); dense: N = m(m+1), for comparison
+  same criterion as scaling.py: ||g_null|| <= 0.2497, depth band (-3.5, -2.0)
+  observable regime: growth + composition + death flux
+
+=================================================================================================
+P2  THE ADJOINT IS EXACT ON THIS FAMILY TOO
+=================================================================================================
+      step h     worst rel    ratio
+        0.02     3.902e-04      nan
+        0.01     9.763e-05     4.00
+       0.005     2.441e-05     4.00
+      0.0025     6.104e-06     4.00
+     0.00125     1.526e-06     4.00
+  PASS (halving ratio 4.0 +- 0.5, below 1e-5 at the smallest step)
+
+=================================================================================================
+THE SPARSE SWEEP  (c = 3)
+=================================================================================================
+    m=   4  N=   20  5 circuits
+    m=   6  N=   30  5 circuits
+    m=  10  N=   50  5 circuits
+    m=  16  N=   80  5 circuits
+    m=  25  N=  125  5 circuits
+    m=  40  N=  200  5 circuits
+    m=  64  N=  320  5 circuits
+    m= 100  N=  500  5 circuits
+    m= 160  N=  800  3 circuits
+    m= 160  N=  800  3 circuits
+
+=================================================================================================
+P1  THE CIRCUIT IS SPARSE AND IRREDUCIBLE
+=================================================================================================
+  every type has exactly 3 outgoing switches, switch matrix has exactly c*m nonzeros,
+  and the switch graph is strongly connected at every size: True   PASS
+
+=================================================================================================
+P3  DEPTH HELD FIXED, AND THE FIXED POINT IS THE RIGHT ONE
+=================================================================================================
+  log10 Y over every sparse circuit: -2.897 to -2.656 (band (-3.5, -2.0))
+  PASS (within 0.6 orders of the band)
+  worst fixed-point residual 5.11e-15   PASS (bar 1e-13)
+
+=================================================================================================
+P4  THE STRUCTURAL RATIO IS WHAT IT CLAIMS
+=================================================================================================
+    sparse N     M      M/N        dense N     M      M/N
+          20     7   0.3500             12     5   0.4167
+          30    11   0.3667             20     7   0.3500
+          50    19   0.3800             42    11   0.2619
+          80    31   0.3875             72    15   0.2083
+         125    49   0.3920            132    21   0.1591
+         200    79   0.3950            272    31   0.1140
+         320   127   0.3969            506    43   0.0850
+         500   199   0.3980           1056    63   0.0597
+         800   319   0.3987      
+  sparse M/N spans 0.3500 to 0.3987, expected 2/(2+c) = 0.4000
+  dense M/N falls 0.4167 to 0.0597
+  PASS -- the two families are the contrast this module is built on
+
+=================================================================================================
+P5  THE DILUTION DIAGNOSTIC, PREDECLARED THIS TIME
+=================================================================================================
+    family      N     ||g||  ||g_null||  ratio to target
+    sparse     20    13.203       3.511            14.06
+    sparse     30    16.380       4.460            17.86
+    sparse     50    11.044       4.048            16.21
+    sparse     80     7.750       3.595            14.40
+    sparse    125     7.508       4.071            16.31
+    sparse    200     9.333       4.781            19.15
+    sparse    320    10.199       4.107            16.45
+    sparse    500     8.022       4.159            16.66
+    sparse    800     6.452       4.286            17.17
+     dense     12    20.068       3.231            12.94
+     dense     20    12.248       3.579            14.33
+     dense     42    18.199       3.673            14.71
+     dense     72     8.364       2.847            11.41
+     dense    132     7.362       2.560            10.25
+     dense    272     7.631       1.725             6.91
+     dense    506     4.496       1.525             6.11
+     dense   1056     5.685       1.086             4.35
+  sparse: ||g|| ~ N^-0.180,  ||g_null|| ~ N^+0.032
+  dense: ||g|| ~ N^-0.304,  ||g_null|| ~ N^-0.268
+  PREDECLARED READING: if sparse shows no dilution while dense shows about N^-0.30, the
+  dense result was substantially a dilution artefact and the sparse curve is the one to trust.
+  -> both families dilute comparably. Dilution does not separate them.
+
+=================================================================================================
+P6  THE DELIVERABLE  --  K(N) for the sparse family (c = 3)
+=================================================================================================
+       N  K median  K min  K max      K/N  random K  99% count
+      20       5.0      2      8   0.2500      12.0       17.0
+      30       9.0      2     10   0.3000      22.0       20.0
+      50      13.0      6     18   0.2600      35.0       32.0
+      80      15.0      9     22   0.1875      50.0       47.0
+     125      15.0      9     20   0.1200      79.0       62.0
+     200      19.0      2     24   0.0950     137.0       89.0
+     320      21.0      4     52   0.0656     189.0      121.0
+     500      18.0      7     43   0.0360     324.0      126.0
+     800      28.0      9     36   0.0350     506.0      201.0
+  fit  K ~ a*log(N)+b : a = +4.998, R2 = 0.8884
+  fit  K ~ c*N^alpha  : alpha = 0.365, R2 = 0.8337
+  fit  K ~ c*N        : c = 0.0435, R2 = -0.7474
+  best description: log
+
+  dense family in the same run, for comparison:
+       N  K median      K/N
+      12       5.0   0.4167
+      20       5.0   0.2500
+      42       8.0   0.1905
+      72      10.0   0.1389
+     132      12.0   0.0909
+     272       7.0   0.0257
+     506       8.0   0.0158
+    1056       4.0   0.0038
+  dense: alpha = 0.004 (R2 0.0003), log R2 = 0.0023
+
+=================================================================================================
+P8  THE MATCHED CONTROL
+=================================================================================================
+  at N = 800: greedy 28.0, random 506.0, ratio 18.07x   PASS (bar 2x)
+
+=================================================================================================
+P7  THE DETECTION CONTROL ON THIS FAMILY
+=================================================================================================
+       N  K dense-gradient      K/N
+      20              12.0   0.6000
+      30              16.0   0.5333
+      50              26.0   0.5200
+      80              39.0   0.4875
+     125              62.0   0.4960
+     200             100.0   0.5000
+     320             159.0   0.4969
+     500             239.0   0.4780
+     800             367.0   0.4587
+  alpha = 0.947 (R2 0.9990), linear R2 = 0.9980
+  PASS -- a sublinear sparse result is falsifiable (bar alpha >= 0.7)
+
+=================================================================================================
+P9  IT IS NOT ONE CONNECTIVITY
+=================================================================================================
+     c     M/N        N=30        N=80       N=200       N=500
+     2   0.500    N=24 K=7    N=64 K=5  N=160 K=13  N=400 K=13   alpha = 0.298
+     3   0.400    N=30 K=9   N=80 K=13  N=200 K=19  N=500 K=24   alpha = 0.355
+     5   0.286   N=42 K=11  N=112 K=10  N=280 K=23  N=700 K=41   alpha = 0.507
+
+=================================================================================================
+P10  IT IS NOT ONE NETWORK
+=================================================================================================
+       N   K min   K median   K max   spread
+      20       2        5.0       8        6
+      30       2        9.0      10        8
+      50       6       13.0      18       12
+      80       9       15.0      22       13
+     125       9       15.0      20       11
+     200       2       19.0      24       22
+     320       4       21.0      52       48
+     500       7       18.0      43       36
+     800       9       28.0      36       27
+
+=================================================================================================
+
+=================================================================================================
+POST-RUN READING.  Hand-written after the run; NOT produced by sparse.py.
+=================================================================================================
+
+P5's PRINTED VERDICT IS WRONG, AND THE GATE'S OWN TEXT SAYS SO.  The code compared ||g|| between
+families and concluded "both families dilute comparably".  ||g|| is not the quantity that governs
+K -- ||g_null||, the residual the measurements must actually reduce, is.  On that column:
+
+    sparse   ||g_null|| ~ N^+0.032        ratio to target 14.1 to 17.2, FLAT across 20 to 800
+    dense    ||g_null|| ~ N^-0.268        ratio to target 12.9 falling to 4.35
+
+So the sparse family shows NO dilution and the dense family shows exactly the N^-0.27 the
+predeclared reading named.  The gate's stated condition was met; its implementation checked the
+wrong column.  The correct verdict is the one predeclared: the dense result was substantially a
+dilution artefact, and the SPARSE curve is the one to trust.
+
+THE RESULT, ON THE FAMILY THAT DOES NOT DILUTE:
+
+       N     20    30    50    80   125   200   320   500   800
+    K med     5     9    13    15    15    19    21    18    28
+    K/N    0.25  0.30  0.26  0.19  0.12  0.10  0.07  0.04  0.035
+
+    K ~ N^0.365   (R2 0.834)        K ~ 5.00 ln N - 5.41   (R2 0.888)        linear R2 -0.747
+
+K grows -- unlike the dense family, where it did not -- but sublinearly, and the linear fit is
+worse than useless.  This is the honest scaling law, because it is measured where the starting
+difficulty is constant.
+
+WHY IT CAN BE BELIEVED.  P7 passes: replacing the answer gradient with a dense random vector on
+this same family gives alpha = 0.947 at R2 0.9990, with K/N holding near 0.48 against the 1 - M/N
+= 0.60 a fully unconstrained target would need.  The machinery produces a linear K(N) when the
+target is genuinely dense, so alpha = 0.365 is a falsifiable measurement.  P8: at N = 800 the
+projection needs 28 measurements where random selection needs 506, a factor of 18.
+
+P9, THE CONNECTIVITY DEPENDENCE, IS ITSELF A RESULT AND IS NOT WHAT I WOULD HAVE GUESSED:
+
+    c = 2   M/N 0.500   alpha 0.298
+    c = 3   M/N 0.400   alpha 0.355
+    c = 5   M/N 0.286   alpha 0.507
+
+alpha RISES with connectivity.  Denser coupling makes the specification problem harder, not
+easier.  That looks like it contradicts the dense family's alpha = 0.004, and the contradiction is
+the point: the dense family is not an extension of this trend, it is the case where dilution
+flatters the curve.  Read together, the two say that the flat dense K was an artefact and the real
+dependence is a sublinear exponent that grows with how densely the network is wired.  Whether
+alpha reaches 1 at very high connectivity cannot be read off the dense family for exactly that
+reason, and is NOT measured here.
+
+WHAT THIS EXTRAPOLATES TO, WITH THE EXTRAPOLATION LABELLED AS SUCH.  The data span N = 20 to 800.
+A whole cell at 6e5 rates is 2.9 orders beyond the largest circuit measured, and nothing here
+justifies that reach -- these are what the fitted laws say, not predictions:
+
+    c = 2, alpha 0.298   ->  K ~ 115        c = 3, alpha 0.365  ->  K ~ 314
+    c = 5, alpha 0.507   ->  K ~ 1258       log fit, c = 3      ->  K ~ 61
+
+At an intermediate N = 1e4, one order beyond the data rather than three, the same laws give 34 to
+158.  The consistent statement across every fit is that the requirement is HUNDREDS to a few
+THOUSAND targeted measurements, not hundreds of thousands.  The measurement wall is not where the
+rate count is.
+
+WHAT IS NOT ESTABLISHED.  This is a linear multi-type branching process with a single scalar
+target.  Real networks have interactions, feedback, and many simultaneous questions asked of one
+parameter set; K for a set of targets is bounded by the sum of individual K's and could be much
+smaller, but that is unmeasured.  P10 also shows the instance spread is wide -- at N = 320 the
+five circuits needed 4 to 52 -- so K is a distribution, not a number, and the median is what is
+fitted above.

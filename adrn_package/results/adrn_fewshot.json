@@ -1,0 +1,323 @@
+{
+  "test": "adrn_fewshot",
+  "lines": [
+    "RPE1",
+    "Jurkat",
+    "HepG2"
+  ],
+  "shots": [
+    25,
+    100,
+    400
+  ],
+  "K": 60,
+  "means": {
+    "RPE1|N=25": {
+      "k562_plus_N": 0.042,
+      "scratch_N": 0.03149999999999999,
+      "freq_N": 0.03325,
+      "within_full": 0.07525
+    },
+    "RPE1|N=100": {
+      "k562_plus_N": 0.0415,
+      "scratch_N": 0.038000000000000006,
+      "freq_N": 0.03775,
+      "within_full": 0.07525
+    },
+    "RPE1|N=400": {
+      "k562_plus_N": 0.04425,
+      "scratch_N": 0.06075000000000001,
+      "freq_N": 0.034,
+      "within_full": 0.07525
+    },
+    "Jurkat|N=25": {
+      "k562_plus_N": 0.034,
+      "scratch_N": 0.03874999999999999,
+      "freq_N": 0.03975,
+      "within_full": 0.06425
+    },
+    "Jurkat|N=100": {
+      "k562_plus_N": 0.03375,
+      "scratch_N": 0.03875,
+      "freq_N": 0.037,
+      "within_full": 0.06425
+    },
+    "Jurkat|N=400": {
+      "k562_plus_N": 0.035,
+      "scratch_N": 0.055,
+      "freq_N": 0.043,
+      "within_full": 0.06425
+    },
+    "HepG2|N=25": {
+      "k562_plus_N": 0.04025,
+      "scratch_N": 0.03625,
+      "freq_N": 0.03375,
+      "within_full": 0.07875
+    },
+    "HepG2|N=100": {
+      "k562_plus_N": 0.04,
+      "scratch_N": 0.044000000000000004,
+      "freq_N": 0.042,
+      "within_full": 0.07875
+    },
+    "HepG2|N=400": {
+      "k562_plus_N": 0.03975,
+      "scratch_N": 0.06325000000000001,
+      "freq_N": 0.049749999999999996,
+      "within_full": 0.07875
+    }
+  },
+  "sweep_vs_scratch": {
+    "name": "k562_plus_N - scratch_N",
+    "verdict": "FRAGILE",
+    "n_cells": 9,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 9,
+    "n_resolved_pos": 0,
+    "n_resolved_neg": 3,
+    "sign_consistent": false,
+    "cells_needed_for_robust": 6,
+    "passing_configs": [],
+    "cells": [
+      {
+        "config": {
+          "line": "RPE1",
+          "N": 25
+        },
+        "cohort": "RPE1",
+        "n": 200,
+        "delta": 0.0105,
+        "lo": -0.0002499999999999997,
+        "hi": 0.022000000000000002
+      },
+      {
+        "config": {
+          "line": "RPE1",
+          "N": 100
+        },
+        "cohort": "RPE1",
+        "n": 200,
+        "delta": 0.003500000000000001,
+        "lo": -0.007000000000000001,
+        "hi": 0.01475
+      },
+      {
+        "config": {
+          "line": "RPE1",
+          "N": 400
+        },
+        "cohort": "RPE1",
+        "n": 200,
+        "delta": -0.0165,
+        "lo": -0.03,
+        "hi": -0.004000000000000001
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "N": 25
+        },
+        "cohort": "Jurkat",
+        "n": 200,
+        "delta": -0.00475,
+        "lo": -0.014500000000000002,
+        "hi": 0.0055000000000000005
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "N": 100
+        },
+        "cohort": "Jurkat",
+        "n": 200,
+        "delta": -0.005,
+        "lo": -0.014750000000000001,
+        "hi": 0.0052499999999999995
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "N": 400
+        },
+        "cohort": "Jurkat",
+        "n": 200,
+        "delta": -0.02,
+        "lo": -0.0315,
+        "hi": -0.0085
+      },
+      {
+        "config": {
+          "line": "HepG2",
+          "N": 25
+        },
+        "cohort": "HepG2",
+        "n": 200,
+        "delta": 0.003999999999999998,
+        "lo": -0.006750000000000001,
+        "hi": 0.014499999999999999
+      },
+      {
+        "config": {
+          "line": "HepG2",
+          "N": 100
+        },
+        "cohort": "HepG2",
+        "n": 200,
+        "delta": -0.004,
+        "lo": -0.012999999999999998,
+        "hi": 0.005
+      },
+      {
+        "config": {
+          "line": "HepG2",
+          "N": 400
+        },
+        "cohort": "HepG2",
+        "n": 200,
+        "delta": -0.0235,
+        "lo": -0.037000000000000005,
+        "hi": -0.010750000000000003
+      }
+    ]
+  },
+  "sweep_vs_freq": {
+    "name": "k562_plus_N - freq_N",
+    "verdict": "FRAGILE",
+    "n_cells": 9,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 9,
+    "n_resolved_pos": 0,
+    "n_resolved_neg": 1,
+    "sign_consistent": false,
+    "cells_needed_for_robust": 6,
+    "passing_configs": [],
+    "cells": [
+      {
+        "config": {
+          "line": "RPE1",
+          "N": 25
+        },
+        "cohort": "RPE1",
+        "n": 200,
+        "delta": 0.00875,
+        "lo": -0.0017499999999999994,
+        "hi": 0.020250000000000004
+      },
+      {
+        "config": {
+          "line": "RPE1",
+          "N": 100
+        },
+        "cohort": "RPE1",
+        "n": 200,
+        "delta": 0.00375,
+        "lo": -0.006999999999999999,
+        "hi": 0.015
+      },
+      {
+        "config": {
+          "line": "RPE1",
+          "N": 400
+        },
+        "cohort": "RPE1",
+        "n": 200,
+        "delta": 0.010249999999999999,
+        "lo": -0.0017499999999999983,
+        "hi": 0.02275
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "N": 25
+        },
+        "cohort": "Jurkat",
+        "n": 200,
+        "delta": -0.005750000000000002,
+        "lo": -0.0155,
+        "hi": 0.0045000000000000005
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "N": 100
+        },
+        "cohort": "Jurkat",
+        "n": 200,
+        "delta": -0.0032500000000000007,
+        "lo": -0.0125,
+        "hi": 0.006
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "N": 400
+        },
+        "cohort": "Jurkat",
+        "n": 200,
+        "delta": -0.008,
+        "lo": -0.0175,
+        "hi": 0.00225
+      },
+      {
+        "config": {
+          "line": "HepG2",
+          "N": 25
+        },
+        "cohort": "HepG2",
+        "n": 200,
+        "delta": 0.006500000000000001,
+        "lo": -0.0034999999999999988,
+        "hi": 0.01625
+      },
+      {
+        "config": {
+          "line": "HepG2",
+          "N": 100
+        },
+        "cohort": "HepG2",
+        "n": 200,
+        "delta": -0.002000000000000001,
+        "lo": -0.01125,
+        "hi": 0.007499999999999999
+      },
+      {
+        "config": {
+          "line": "HepG2",
+          "N": 400
+        },
+        "cohort": "HepG2",
+        "n": 200,
+        "delta": -0.01,
+        "lo": -0.01975,
+        "hi": -5.551115123125783e-19
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "FEW-SHOT CROSS-LINE: does K562 pretraining beat scratch, given N knockouts from a new line?",
+    "====================================================================================================",
+    "  PREDECLARED: k562_plus_N must beat scratch_N. Per-line tide removed from key AND predictions.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 15.0",
+    "  extra channels: 543 kept of 691 built  (TIER A 534, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "\n  === RPE1: 6,149 genes, tide 817 removed, 66 movers left per held-out knockout ===",
+    "    N=  25  k562_plus 0.0420 | scratch 0.0315 | freq_N 0.0333 | within_full 0.0752",
+    "    N= 100  k562_plus 0.0415 | scratch 0.0380 | freq_N 0.0377 | within_full 0.0752",
+    "    N= 400  k562_plus 0.0442 | scratch 0.0608 | freq_N 0.0340 | within_full 0.0752",
+    "\n  === Jurkat: 6,341 genes, tide 1,125 removed, 92 movers left per held-out knockout ===",
+    "    N=  25  k562_plus 0.0340 | scratch 0.0387 | freq_N 0.0398 | within_full 0.0643",
+    "    N= 100  k562_plus 0.0338 | scratch 0.0387 | freq_N 0.0370 | within_full 0.0643",
+    "    N= 400  k562_plus 0.0350 | scratch 0.0550 | freq_N 0.0430 | within_full 0.0643",
+    "\n  === HepG2: 6,430 genes, tide 951 removed, 92 movers left per held-out knockout ===",
+    "    N=  25  k562_plus 0.0403 | scratch 0.0362 | freq_N 0.0338 | within_full 0.0788",
+    "    N= 100  k562_plus 0.0400 | scratch 0.0440 | freq_N 0.0420 | within_full 0.0788",
+    "    N= 400  k562_plus 0.0398 | scratch 0.0633 | freq_N 0.0497 | within_full 0.0788",
+    "\n  SWEEP k562_plus_N - scratch_N   axes[line,N]  9 cells\n  config                       cohort         delta                 95% CI\n  line=RPE1 N=25               RPE1         +0.0105 [ -0.0002, +0.0220] ns\n  line=RPE1 N=100              RPE1         +0.0035 [ -0.0070, +0.0147] ns\n  line=RPE1 N=400              RPE1         -0.0165 [ -0.0300, -0.0040] RES-\n  line=Jurkat N=25             Jurkat       -0.0047 [ -0.0145, +0.0055] ns\n  line=Jurkat N=100            Jurkat       -0.0050 [ -0.0148, +0.0052] ns\n  line=Jurkat N=400            Jurkat       -0.0200 [ -0.0315, -0.0085] RES-\n  line=HepG2 N=25              HepG2        +0.0040 [ -0.0068, +0.0145] ns\n  line=HepG2 N=100             HepG2        -0.0040 [ -0.0130, +0.0050] ns\n  line=HepG2 N=400             HepG2        -0.0235 [ -0.0370, -0.0108] RES-\n  -> FRAGILE   resolved +0/-3 of 9 (>= 6 needed), sign-consistent False\n     FRAGILE means the effect lives in a corner of the grid -- the argmax of choices nobody deliberated. Do not report it as a finding.",
+    "\n  SWEEP k562_plus_N - freq_N   axes[line,N]  9 cells\n  config                       cohort         delta                 95% CI\n  line=RPE1 N=25               RPE1         +0.0088 [ -0.0017, +0.0203] ns\n  line=RPE1 N=100              RPE1         +0.0037 [ -0.0070, +0.0150] ns\n  line=RPE1 N=400              RPE1         +0.0102 [ -0.0017, +0.0227] ns\n  line=Jurkat N=25             Jurkat       -0.0058 [ -0.0155, +0.0045] ns\n  line=Jurkat N=100            Jurkat       -0.0033 [ -0.0125, +0.0060] ns\n  line=Jurkat N=400            Jurkat       -0.0080 [ -0.0175, +0.0022] ns\n  line=HepG2 N=25              HepG2        +0.0065 [ -0.0035, +0.0163] ns\n  line=HepG2 N=100             HepG2        -0.0020 [ -0.0112, +0.0075] ns\n  line=HepG2 N=400             HepG2        -0.0100 [ -0.0198, -0.0000] RES-\n  -> FRAGILE   resolved +0/-1 of 9 (>= 6 needed), sign-consistent False\n     FRAGILE means the effect lives in a corner of the grid -- the argmax of choices nobody deliberated. Do not report it as a finding.",
+    "\n  READING",
+    "  K562 pretraining neither helps nor hurts -- it carries nothing that the target line's own",
+    "  samples do not already provide."
+  ]
+}

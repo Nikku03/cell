@@ -1,0 +1,44 @@
+================================================================================================
+STEP 1  WHAT THE CURVE DETERMINES
+================================================================================================
+  fit to the published shape, RMSE 0.087 log10 units
+    kill rate        4.447 /h
+    persister form.  0.010 /h
+    wake rate        0.316 /h   (mean lag 3.16 h)
+    dormant decay    0.005 /h
+
+  identifiability of that fit -- what the curve CANNOT separate:
+    singular values 2.56e+00  1.34e+00  3.39e-01  1.33e-07
+    condition number 1.9e+07
+    flattest direction: k_kill=-0.00, a=+0.00, b=-0.02, k_dorm_death=+1.00
+    -> that combination is the one a single time-kill curve cannot pin down, and
+       it is the first thing worth measuring separately.
+
+================================================================================================
+STEP 2  THE QUANTITY UNDER THE ASSAY FLOOR
+================================================================================================
+  9 drug-hours held FIXED; only the split changes.
+   doses  T_on (h)   P(eradicate)   P(relapse)
+       1      9.00       0.999425     0.000575
+       2      4.50       0.999778     0.000222
+       3      3.00       0.999938     0.000062
+       5      1.80       0.999976     0.000024
+      10      0.90       0.999981     0.000019
+      30      0.30       0.999974     0.000026
+
+  best 10 x 0.90 h   worst 1 x 9.00 h
+  RELAPSE PROBABILITY DIFFERS BY 31.0x AT IDENTICAL TOTAL DRUG
+
+================================================================================================
+STEP 3  THE BAND, AND THE CONTROL THAT MATTERS MOST
+================================================================================================
+  under 40% lognormal uncertainty on every fitted rate, 40 replicates:
+    median 25.93x   IQR [14.49, 48.40]   range [1.89, 381.25]
+    direction survives (25th pct > 1): True
+
+  AND THE CONTROL: the same model with the drug level time-averaged, which is
+  what an AUC or time-above-MIC comparison effectively does.
+     10 doses -> time-averaged P(relapse) 0.000037
+      1 doses -> time-averaged P(relapse) 0.000037
+  If those two numbers are equal, the averaged model carries NO schedule
+  information -- which is the whole question worth asking them.

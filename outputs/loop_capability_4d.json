@@ -1,0 +1,270 @@
+{
+ "test": "capability 4d",
+ "gates": {
+  "P1": true,
+  "P2": true,
+  "P3": false,
+  "P4": true,
+  "P5": true
+ },
+ "void": [],
+ "rules_checked": [
+  {
+   "rule": "promoter accessibility leads transcription",
+   "gate": "U6",
+   "recorded": true,
+   "claimed": true,
+   "void": false,
+   "match": true
+  },
+  {
+   "rule": "feedback sign orders response time",
+   "gate": "U7",
+   "recorded": false,
+   "claimed": false,
+   "void": false,
+   "match": true
+  },
+  {
+   "rule": "promoter occupancy carries timing",
+   "gate": "U8b",
+   "recorded": false,
+   "claimed": false,
+   "void": false,
+   "match": true
+  },
+  {
+   "rule": "enzymes sharing chemistry are co-timed",
+   "gate": "V3",
+   "recorded": false,
+   "claimed": false,
+   "void": false,
+   "match": true
+  },
+  {
+   "rule": "curated pathway members are co-timed",
+   "gate": "V5",
+   "recorded": false,
+   "claimed": false,
+   "void": false,
+   "match": true
+  },
+  {
+   "rule": "the accessibility clock replicates outside A549",
+   "gate": "W3",
+   "recorded": false,
+   "claimed": false,
+   "void": false,
+   "match": true
+  }
+ ],
+ "capabilities": [
+  {
+   "question": "which metabolite completes a reaction",
+   "value": "hit@1 0.8506",
+   "loop": "170",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "which enzyme catalyses a reaction",
+   "value": "0.825",
+   "loop": "163d",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "is this DNA an enhancer",
+   "value": "AUC 0.8506",
+   "loop": "177",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "which element does a gene use",
+   "value": "R@1 0.6734 vs distance 0.5930",
+   "loop": "185",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "what makes a TF bind an enhancer",
+   "value": "co-binding 0.8455 > accessibility 0.7902 > H3K27ac 0.7510 > motif 0.6228",
+   "loop": "184",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "do feedforward loops exist beyond chance",
+   "value": "z +1.3, no",
+   "loop": "187",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "do feedback two-cycles",
+   "value": "z +43.8, yes",
+   "loop": "187",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "is autoregulation above chance",
+   "value": "z +4.0, 2.2x",
+   "loop": "187",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "does chromatin state add over measured binding",
+   "value": "no, +0.0086 AUPRC",
+   "loop": "188b",
+   "horizon": "STATIC",
+   "single_system": true
+  },
+  {
+   "question": "does accessibility lead transcription",
+   "value": "+48 min, p 6.4e-58",
+   "loop": "191d",
+   "horizon": "ONE-STEP",
+   "single_system": true
+  },
+  {
+   "question": "is metabolic timing coordinated",
+   "value": "no, z -0.8",
+   "loop": "194",
+   "horizon": "ONE-STEP",
+   "single_system": true
+  },
+  {
+   "question": "can the map run a trajectory forward",
+   "value": "no -- persistence R2 -0.0295 beats informed -0.0520",
+   "loop": "198",
+   "horizon": "NONE DEMONSTRATED",
+   "single_system": true
+  }
+ ],
+ "step_forward": {
+  "grid": [
+   30,
+   60,
+   120,
+   180,
+   240,
+   420,
+   480,
+   600,
+   720
+  ],
+  "n_train": 6,
+  "n_train_rows": 6680,
+  "n_test_rows": 4008,
+  "r2_persistence": -0.02953459251266377,
+  "r2_mean": -0.030343051974178747,
+  "r2_informed": -0.05204663206527527
+ },
+ "horizon": "NONE DEMONSTRATED",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/grtc/rna.npz",
+    "bytes": 3789429,
+    "hash": "5496b7c455b82c23",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 58735,
+   "used": 1336,
+   "selection": "filtered",
+   "fraction": 0.022746233080786583
+  },
+  "seed": 198198,
+  "controls": [
+   "persistence and mean-change baselines on a held-out TIME window",
+   "every rule verdict read from the JSON output that recorded it"
+  ],
+  "note": "capability statement with a horizon column, and the step-forward test",
+  "warnings": []
+ },
+ "seconds": 30.885423183441162,
+ "log": [
+  "========================================================================================================",
+  "LOOP 198 (PHASE 5)  THE CAPABILITY STATEMENT WITH A TIME COLUMN",
+  "========================================================================================================",
+  "  PREDECLARED: this is NOT a simulator, because phases 1-4 tested five candidate dynamic",
+  "  rules and four failed, so a simulator would encode one unreplicated relation and four",
+  "  refuted ones. Every capability must carry a HORIZON and every single-system result must",
+  "  be marked UNREPLICATED. The rule ledger is read FROM THE JSON OUTPUTS rather than",
+  "  transcribed. And the step-forward test is scored against PERSISTENCE -- predict no",
+  "  change -- because a model that cannot beat persistence has learned that tomorrow",
+  "  resembles today, not dynamics. The split is over TIME, not over genes.",
+  "",
+  "P2 IS THE RULE LEDGER COMPLETE AND HONEST?",
+  "     ok   loop_response_timing_d.json:U6 recorded  True claimed  True  promoter accessibility leads transcription",
+  "     ok   loop_response_timing_d.json:U7 recorded False claimed False  feedback sign orders response time",
+  "     ok   loop_response_timing_d.json:U8b recorded False claimed False  promoter occupancy carries timing",
+  "     ok   loop_pathway_timing.json:V3 recorded False claimed False  enzymes sharing chemistry are co-timed",
+  "     ok   loop_pathway_timing.json:V5 recorded False claimed False  curated pathway members are co-timed",
+  "     ok   loop_timing_replication.json:W3 recorded False claimed False  the accessibility clock replicates outside A549",
+  "     P2 PASS -- all 6 rules verified against the files that decided them, so the table below quotes the record and not my memory of it",
+  "",
+  "P3 CAN THE MAP STEP STATE FORWARD?",
+  "     grid [30, 60, 120, 180, 240, 420, 480, 600, 720]; train on the first 6, score on the rest",
+  "     1,336 genes are responders with a promoter DNase peak",
+  "     6,680 training rows, 4,008 held-out rows (intervals ending at [480, 600, 720])",
+  "     held-out R2 -- persistence (predict no change): -0.0295",
+  "     held-out R2 -- training-set mean change:        -0.0303",
+  "     held-out R2 -- accessibility-informed ridge:    -0.0520",
+  "     P3 FAIL -- the informed model does not beat persistence (-0.0520 vs -0.0295). Predicting that nothing changes is at least as good as everything this project knows, so the map does not step state forward",
+  "",
+  "P1 THE CAPABILITY TABLE, WITH A HORIZON COLUMN",
+  "     question                                         horizon            replicated  value",
+  "     which metabolite completes a reaction            STATIC             no          hit@1 0.8506",
+  "     which enzyme catalyses a reaction                STATIC             no          0.825",
+  "     is this DNA an enhancer                          STATIC             no          AUC 0.8506",
+  "     which element does a gene use                    STATIC             no          R@1 0.6734 vs distance 0.5930",
+  "     what makes a TF bind an enhancer                 STATIC             no          co-binding 0.8455 > accessibility 0.7902 > H3K27ac 0.7510 > motif 0.6228",
+  "     do feedforward loops exist beyond chance         STATIC             no          z +1.3, no",
+  "     do feedback two-cycles                           STATIC             no          z +43.8, yes",
+  "     is autoregulation above chance                   STATIC             no          z +4.0, 2.2x",
+  "     does chromatin state add over measured binding   STATIC             no          no, +0.0086 AUPRC",
+  "     does accessibility lead transcription            ONE-STEP           no          +48 min, p 6.4e-58",
+  "     is metabolic timing coordinated                  ONE-STEP           no          no, z -0.8",
+  "     can the map run a trajectory forward             NONE DEMONSTRATED  no          no -- persistence R2 -0.0295 beats informed -0.0520",
+  "     P1 PASS -- every capability carries a horizon and every single-system result is marked unreplicated",
+  "",
+  "P4 WHAT IS THE HONEST HORIZON?",
+  "     of 12 capabilities: 9 STATIC, 2 ONE-STEP, 0 TRAJECTORY",
+  "     none is replicated outside its own system",
+  "     maximum demonstrated horizon: STATIC -- the map does not run forward",
+  "     P4 PASS -- the horizon assigned is the one P3 measured",
+  "     wrote NOTES_capability_4d.md",
+  "",
+  "P5 WHAT THE MAP CANNOT DO",
+  "     It cannot run a cell. Nine descriptive layers plus one unreplicated timing relation",
+  "     is a description, and no combination of the loops in this arc turns it into a",
+  "     simulation.",
+  "     It cannot be quoted as one system. K562 for the enhancer arc, A549 for timing, mixed",
+  "     lines for the network, and nothing in this project has ever measured two of those",
+  "     layers in the same cells at the same time.",
+  "     P3 is one dataset, one drug, one split. A pass would show the map can step forward",
+  "     HERE, not that it generalises; a fail leaves open that a different feature set would",
+  "     do better, and neither reading is settled by one ridge regression.",
+  "     Every trajectory is bulk. A fast response in a fifth of the cells and a slow one",
+  "     everywhere give the same curve, and nothing in this arc can separate them.",
+  "     The capability table lists what was MEASURED, not what is TRUE. A number that",
+  "     survived its gates on one benchmark is a number about that benchmark.",
+  "     P5 PASS",
+  "",
+  "========================================================================================================",
+  "  P1  PASS",
+  "  P2  PASS",
+  "  P3  FAIL",
+  "  P4  PASS",
+  "  P5  PASS",
+  "  4/5   [31s]",
+  "========================================================================================================"
+ ]
+}

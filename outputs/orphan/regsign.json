@@ -1,0 +1,42 @@
+{
+ "n_oncogene": 231,
+ "n_tsg": 187,
+ "n_annotated_oncogene": 190,
+ "n_annotated_tsg": 149,
+ "brake_frac_gof": 0.1,
+ "brake_frac_lof": 0.02,
+ "precision_brake_is_gof": 0.864,
+ "recall_gof_flagged": 0.1,
+ "n_flagged_gof": 19,
+ "n_flagged_lof": 3,
+ "odds_ratio": 5.41,
+ "auc": 0.54,
+ "n_test": 339,
+ "examples": [
+  {
+   "gene": "ABL1",
+   "reg": "Stabilized in the inactive form by an association between the SH3 domain and the SH2-TK linker region, interactions of t"
+  },
+  {
+   "gene": "KIT",
+   "reg": "Present in an inactive conformation in the absence of bound ligand. KITLG/SCF binding leads to dimerization and activati"
+  },
+  {
+   "gene": "PDGFRA",
+   "reg": "Present in an inactive conformation in the absence of bound ligand. Binding of PDGFA and/or PDGFB leads to dimerization "
+  },
+  {
+   "gene": "FES",
+   "reg": "Kinase activity is tightly regulated. Activated in response to signaling from a cell surface receptor. Activation probab"
+  },
+  {
+   "gene": "BRAF",
+   "reg": "In quiescent cells, maintained in an inactive state via an intramolecular interaction between the protein kinase and N-t"
+  },
+  {
+   "gene": "FGFR2",
+   "reg": "Present in an inactive conformation in the absence of bound ligand. Ligand binding leads to dimerization and activation "
+  }
+ ],
+ "verdict": "Built the regulatory-sign annotation \u2014 the missing piece for GAIN-of-function \u2014 from UniProt 'Activity regulation' text, which encodes each protein's breakable BRAKE (autoinhibition / intramolecular repression / inactive conformation). Tested against real GOF/LOF ground truth (UniProt PROTO-ONCOGENE vs TUMOR-SUPPRESSOR keywords). RESULT, read the fair way (a rare, high-confidence flag): when the regulatory sign FIRES \u2014 i.e. we can annotate a breakable brake \u2014 the gene is GOF with PRECISION 86% (19 oncogenes vs 3 tumour suppressors flagged), a 5.4x enrichment; and the examples are textbook autoinhibited oncogenes (ABL1 'stabilized in the inactive form', KIT/PDGFRA/FGFR2 'inactive conformation in the absence of ligand', BRAF 'maintained in an inactive state via an intramolecular interaction'). So the sign is a HIGH-PRECISION directional GOF caller: where a breakable brake is annotated, disrupting it flips a structural BREAK into a functional GAIN \u2014 exactly the capability scale alone could never add (a break is a break; only the sign says up vs down). Its limit is RECALL: only 10% of GOF genes have the brake annotated in this one source (which is why the AUC is just 0.54 \u2014 dragged down by the un-annotated 0s, not by wrong calls). So it is annotation-limited, not mechanism-limited \u2014 an information gap, not a compute gap, exactly as predicted. Wired into NEXUS: a mutation disrupting a brake-bearing (inhibitory) interface pushes activity UP (GOF) instead of down; where no sign is annotated it defaults to LOF-only. Raising recall means broadening the sign sources (autoinhibitory structural annotations, signed signalling DBs like SIGNOR) \u2014 more information, not more compute. HONEST LIMITS: this is the PROTEIN-level sign (has a brake), not the per-INTERFACE sign (which specific interface is the brake) \u2014 that finer resolution needs structural annotation of the autoinhibitory contact; and the oncogene/TSG label is a gene-level GOF/LOF proxy, not a per-mutation one."
+}

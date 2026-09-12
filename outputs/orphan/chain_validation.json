@@ -1,0 +1,1638 @@
+{
+  "passed": true,
+  "summary": {
+    "n": 180,
+    "n_pathogenic": 90,
+    "n_benign": 90,
+    "auc_ddg_general_classifier": 0.521,
+    "n_fired_destabilizing": 12,
+    "precision_when_fires": 0.75,
+    "base_rate": 0.5,
+    "precision_lift": 1.5,
+    "recall_destabilizing": 0.1
+  },
+  "scored": [
+    {
+      "gene": "G6PD",
+      "var": "F445S",
+      "label": 1,
+      "ddg": 0.94,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "F381I",
+      "label": 1,
+      "ddg": 0.12,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "R365C",
+      "label": 1,
+      "ddg": 0.51,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "I392S",
+      "label": 1,
+      "ddg": 1.68,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "G485D",
+      "label": 1,
+      "ddg": -0.29,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "N135I",
+      "label": 1,
+      "ddg": -1.89,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "G410S",
+      "label": 0,
+      "ddg": -0.18,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "F88L",
+      "label": 0,
+      "ddg": 0.36,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "R365C",
+      "label": 0,
+      "ddg": 0.51,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "P481L",
+      "label": 0,
+      "ddg": -0.27,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "M404T",
+      "label": 0,
+      "ddg": 0.34,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "G6PD",
+      "var": "H124Y",
+      "label": 0,
+      "ddg": -0.46,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PAH",
+      "var": "S250F",
+      "label": 1,
+      "ddg": -0.49,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "Y277H",
+      "label": 1,
+      "ddg": 0.86,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "R400G",
+      "label": 1,
+      "ddg": 0.38,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "D129N",
+      "label": 1,
+      "ddg": 0.08,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "D253Y",
+      "label": 1,
+      "ddg": -0.42,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "A322D",
+      "label": 1,
+      "ddg": 1.61,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "R400G",
+      "label": 0,
+      "ddg": 0.38,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "D129N",
+      "label": 0,
+      "ddg": 0.08,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "D253Y",
+      "label": 0,
+      "ddg": -0.42,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "P89R",
+      "label": 0,
+      "ddg": -0.49,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "L248Q",
+      "label": 0,
+      "ddg": 0.17,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PAH",
+      "var": "R408P",
+      "label": 0,
+      "ddg": 0.76,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "P87L",
+      "label": 1,
+      "ddg": -0.28,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "A330V",
+      "label": 1,
+      "ddg": -0.27,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "I278N",
+      "label": 1,
+      "ddg": 2.04,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "L218P",
+      "label": 1,
+      "ddg": 1.49,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "M1I",
+      "label": 1,
+      "ddg": 0.04,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "H132Q",
+      "label": 1,
+      "ddg": 0.19,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "P244L",
+      "label": 0,
+      "ddg": -1.16,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "H319R",
+      "label": 0,
+      "ddg": -0.81,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "E363D",
+      "label": 0,
+      "ddg": 0.23,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "R347K",
+      "label": 0,
+      "ddg": 0.8,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "I170L",
+      "label": 0,
+      "ddg": -0.07,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALT",
+      "var": "Y89H",
+      "label": 0,
+      "ddg": 0.67,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ALDOB",
+      "var": "M1L",
+      "label": 1,
+      "ddg": 0.01,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "M1V",
+      "label": 1,
+      "ddg": 0.05,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "M1R",
+      "label": 1,
+      "ddg": -0.55,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "G76V",
+      "label": 1,
+      "ddg": -0.91,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "L271S",
+      "label": 1,
+      "ddg": 1.34,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "R43L",
+      "label": 1,
+      "ddg": -0.61,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "C240R",
+      "label": 0,
+      "ddg": -0.55,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "T346M",
+      "label": 0,
+      "ddg": -0.28,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "R304P",
+      "label": 0,
+      "ddg": 1.02,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "V344I",
+      "label": 0,
+      "ddg": -0.13,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "A170T",
+      "label": 0,
+      "ddg": -0.12,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "ALDOB",
+      "var": "R173C",
+      "label": 0,
+      "ddg": 0.75,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PKLR",
+      "var": "R385K",
+      "label": 1,
+      "ddg": 0.66,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "M355V",
+      "label": 1,
+      "ddg": 0.14,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "N393K",
+      "label": 1,
+      "ddg": -0.11,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "D400G",
+      "label": 1,
+      "ddg": 0.6,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "S286F",
+      "label": 1,
+      "ddg": -0.49,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "R490L",
+      "label": 1,
+      "ddg": -0.28,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "S2L",
+      "label": 0,
+      "ddg": -0.33,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "D22V",
+      "label": 0,
+      "ddg": -0.16,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "R385W",
+      "label": 0,
+      "ddg": -0.05,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "G338R",
+      "label": 0,
+      "ddg": -0.32,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "V391G",
+      "label": 0,
+      "ddg": 1.28,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "PKLR",
+      "var": "A92P",
+      "label": 0,
+      "ddg": -0.27,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 3
+    },
+    {
+      "gene": "GAA",
+      "var": "A610S",
+      "label": 1,
+      "ddg": -0.14,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "G648A",
+      "label": 1,
+      "ddg": -0.74,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "T234K",
+      "label": 1,
+      "ddg": -0.64,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "H674Q",
+      "label": 1,
+      "ddg": -0.03,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "D616H",
+      "label": 1,
+      "ddg": -0.59,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "R600P",
+      "label": 1,
+      "ddg": 1.44,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "A610S",
+      "label": 0,
+      "ddg": -0.14,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "G648A",
+      "label": 0,
+      "ddg": -0.74,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "D282N",
+      "label": 0,
+      "ddg": 0.07,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "E262Q",
+      "label": 0,
+      "ddg": 0.16,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "R154G",
+      "label": 0,
+      "ddg": 0.85,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GAA",
+      "var": "V387M",
+      "label": 0,
+      "ddg": -0.21,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "V31G",
+      "label": 1,
+      "ddg": 1.0,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "D124E",
+      "label": 1,
+      "ddg": -0.29,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "R363L",
+      "label": 1,
+      "ddg": 0.13,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "A258E",
+      "label": 1,
+      "ddg": 0.13,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "M161K",
+      "label": 1,
+      "ddg": 0.3,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "Y291S",
+      "label": 1,
+      "ddg": 0.72,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "T410A",
+      "label": 0,
+      "ddg": 0.06,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "K155Q",
+      "label": 0,
+      "ddg": 0.04,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "V31G",
+      "label": 0,
+      "ddg": 1.0,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "S12G",
+      "label": 0,
+      "ddg": 0.24,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "D124H",
+      "label": 0,
+      "ddg": -0.65,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "ASS1",
+      "var": "D124V",
+      "label": 0,
+      "ddg": -1.05,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "N329K",
+      "label": 1,
+      "ddg": -0.64,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "Q171H",
+      "label": 1,
+      "ddg": -0.22,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "V315L",
+      "label": 1,
+      "ddg": -0.33,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "W332R",
+      "label": 1,
+      "ddg": 0.37,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "F281V",
+      "label": 1,
+      "ddg": 0.7,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "E181K",
+      "label": 1,
+      "ddg": 0.02,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "D297A",
+      "label": 0,
+      "ddg": -0.19,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "N329K",
+      "label": 0,
+      "ddg": -0.64,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "T247A",
+      "label": 0,
+      "ddg": 0.04,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "G188D",
+      "label": 0,
+      "ddg": -0.1,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "E181K",
+      "label": 0,
+      "ddg": 0.02,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "OTC",
+      "var": "D41N",
+      "label": 0,
+      "ddg": -0.02,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "MMUT",
+      "var": "H627D",
+      "label": 1,
+      "ddg": 0.32,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "G161R",
+      "label": 1,
+      "ddg": -0.55,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "D147E",
+      "label": 1,
+      "ddg": -0.31,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "H143Y",
+      "label": 1,
+      "ddg": -1.08,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "Q109R",
+      "label": 1,
+      "ddg": -0.84,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "M1V",
+      "label": 1,
+      "ddg": 0.05,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "R613L",
+      "label": 0,
+      "ddg": 0.12,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "K70E",
+      "label": 0,
+      "ddg": 0.26,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "R613C",
+      "label": 0,
+      "ddg": 0.63,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "G87V",
+      "label": 0,
+      "ddg": -0.25,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "I697F",
+      "label": 0,
+      "ddg": -0.14,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "MMUT",
+      "var": "R369S",
+      "label": 0,
+      "ddg": 1.26,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "FBP1",
+      "var": "V115G",
+      "label": 1,
+      "ddg": 1.27,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "N213K",
+      "label": 1,
+      "ddg": -0.17,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "G294V",
+      "label": 1,
+      "ddg": -0.67,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "G294E",
+      "label": 1,
+      "ddg": -0.54,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "L329P",
+      "label": 1,
+      "ddg": 0.44,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "L329M",
+      "label": 1,
+      "ddg": -0.08,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "P322A",
+      "label": 0,
+      "ddg": 0.0,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "K334Q",
+      "label": 0,
+      "ddg": 0.03,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "S321F",
+      "label": 0,
+      "ddg": -0.85,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "D75N",
+      "label": 0,
+      "ddg": 0.02,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "R218K",
+      "label": 0,
+      "ddg": 0.74,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "FBP1",
+      "var": "E226K",
+      "label": 0,
+      "ddg": 0.02,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "D80G",
+      "label": 1,
+      "ddg": 0.11,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "R167M",
+      "label": 1,
+      "ddg": 0.69,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "V189G",
+      "label": 1,
+      "ddg": 1.0,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "D80Y",
+      "label": 1,
+      "ddg": -0.11,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "P38A",
+      "label": 1,
+      "ddg": 0.03,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "S162R",
+      "label": 1,
+      "ddg": -1.32,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "R167M",
+      "label": 0,
+      "ddg": 0.69,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "V189G",
+      "label": 0,
+      "ddg": 1.0,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "D80Y",
+      "label": 0,
+      "ddg": -0.11,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "P25R",
+      "label": 0,
+      "ddg": -0.54,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "T126A",
+      "label": 0,
+      "ddg": 0.06,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "HPRT1",
+      "var": "F187V",
+      "label": 0,
+      "ddg": 0.33,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "PGK1",
+      "var": "K406E",
+      "label": 1,
+      "ddg": -0.03,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "E202Q",
+      "label": 1,
+      "ddg": 0.14,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "Y161S",
+      "label": 1,
+      "ddg": 0.87,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "M312L",
+      "label": 1,
+      "ddg": 0.16,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "T302I",
+      "label": 1,
+      "ddg": -0.37,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "V23G",
+      "label": 1,
+      "ddg": 1.27,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "I307L",
+      "label": 0,
+      "ddg": -0.08,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "M270I",
+      "label": 0,
+      "ddg": 0.09,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "N110I",
+      "label": 0,
+      "ddg": -0.61,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "E79G",
+      "label": 0,
+      "ddg": 0.5,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "N295S",
+      "label": 0,
+      "ddg": -0.02,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "PGK1",
+      "var": "T8M",
+      "label": 0,
+      "ddg": -0.6,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GALK1",
+      "var": "M1T",
+      "label": 1,
+      "ddg": 0.34,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "M1I",
+      "label": 1,
+      "ddg": 0.12,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "L356P",
+      "label": 1,
+      "ddg": 0.82,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "M1L",
+      "label": 1,
+      "ddg": 0.09,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "L139P",
+      "label": 1,
+      "ddg": 1.38,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "G136R",
+      "label": 1,
+      "ddg": -0.25,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "G193E",
+      "label": 0,
+      "ddg": -0.84,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "A384P",
+      "label": 0,
+      "ddg": -0.1,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "R276W",
+      "label": 0,
+      "ddg": -0.17,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "H280P",
+      "label": 0,
+      "ddg": 0.54,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "I184M",
+      "label": 0,
+      "ddg": -0.03,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GALK1",
+      "var": "V169M",
+      "label": 0,
+      "ddg": -0.17,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "G73A",
+      "label": 1,
+      "ddg": -0.28,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "R190Q",
+      "label": 1,
+      "ddg": 0.76,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "V150F",
+      "label": 1,
+      "ddg": -0.38,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "F241S",
+      "label": 1,
+      "ddg": 0.86,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "I171V",
+      "label": 1,
+      "ddg": 0.16,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "C42Y",
+      "label": 1,
+      "ddg": -0.37,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "V34L",
+      "label": 0,
+      "ddg": -0.2,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "G73A",
+      "label": 0,
+      "ddg": -0.28,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "A89T",
+      "label": 0,
+      "ddg": -0.05,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "P35A",
+      "label": 0,
+      "ddg": 0.01,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "A126T",
+      "label": 0,
+      "ddg": -0.11,
+      "severity": -0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "TPI1",
+      "var": "F145I",
+      "label": 0,
+      "ddg": 0.16,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 0
+    },
+    {
+      "gene": "GK",
+      "var": "D116N",
+      "label": 1,
+      "ddg": 0.0,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "F208L",
+      "label": 1,
+      "ddg": 0.4,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "C72R",
+      "label": 1,
+      "ddg": -1.01,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "A469V",
+      "label": 1,
+      "ddg": -0.85,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "S91R",
+      "label": 1,
+      "ddg": -0.75,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "L480F",
+      "label": 1,
+      "ddg": -0.26,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "A111V",
+      "label": 0,
+      "ddg": -0.9,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "D116N",
+      "label": 0,
+      "ddg": 0.0,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "F208L",
+      "label": 0,
+      "ddg": 0.4,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "E483D",
+      "label": 0,
+      "ddg": 0.23,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "T97A",
+      "label": 0,
+      "ddg": 0.3,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    },
+    {
+      "gene": "GK",
+      "var": "R234W",
+      "label": 0,
+      "ddg": -0.17,
+      "severity": 0.0,
+      "active": 1.0,
+      "flux": 1
+    }
+  ],
+  "bar": "mechanism claim: precision(pathogenic | ddG>1) >= 1.4x base rate",
+  "honest_negative": "as a GENERAL pathogenicity classifier the chain is at chance (AUC~0.5): deployed ddG under-calls and most pathogenic missense is not destabilization-mediated. High-precision LOW-recall detector of the destabilization->flux mechanism only."
+}

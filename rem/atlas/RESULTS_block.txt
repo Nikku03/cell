@@ -1,0 +1,113 @@
+=================================================================================================
+THE FOURTH OBSTRUCTION: THE CONTROLLER BLOCK
+=================================================================================================
+  P_hat(x) = sum_a P(a) prod_i P(x_i | x_pa(i), a). As a flat table P(a) costs
+  2^(|C|(L+1)) -- 2^1098 at |C|=122, L=8 -- and that is why trrust_engine's cheapest
+  configuration at every L is |C| = 1. tail-legal threshold MI < 2.443e-07
+
+  test system: 3 interacting controllers driving 5 targets, 256 states,
+  residual 9.1e-15, block strata 512 = 2^(3x3)
+
+=================================================================================================
+E1  IDENTITY
+=================================================================================================
+  block strata sum to 1.00000000000000
+  with controller coupling switched off, max controller-pair history MI = 0.000e+00   PASS
+  E1: PASS
+
+=================================================================================================
+E2  IS THE TEMPORAL (DBN) FACTORISATION EXACT?
+=================================================================================================
+  It is exact iff the controllers' sampled joint trajectory is Markov in themselves. That
+  holds iff the controllers are an AUTONOMOUS subsystem. Feedback from targets is the knob.
+     target->controller feedback   I(a_2;a_0|a_1)      x tau                verdict
+                            0.00       1.2563e-17        0.0     EXACT (autonomous)
+                            0.05       2.5491e-07        1.0          approximation
+                            0.20       4.0027e-06       16.4          approximation
+                            0.50       2.6095e-05      106.8          approximation
+                            1.00       1.1326e-04      463.5          approximation
+                            2.00       4.3671e-04     1787.3          approximation
+  E2: the temporal factorisation is an IDENTITY when the controllers are autonomous and an
+  approximation otherwise, with error rising steeply in the feedback strength. On the
+  closed circuit of circuit.py, where protein feeds back onto the kinase, the same
+  statistic runs 288 to 2,273 times tau. So this prong is conditional, not free.
+
+=================================================================================================
+E3  CAN THE BLOCK BE DELETED ENTIRELY?
+=================================================================================================
+  The block exists ONLY because controllers are correlated with each other. If their
+  histories were independent the sum would separate and there would be no block at all.
+     controller coupling   max pair-history MI      x tau
+                    0.00            0.0000e+00        0.0
+                    0.05            5.5483e-05      227.1
+                    0.20            8.1073e-04     3317.9
+                    0.80            9.5093e-03    38917.2
+                    1.50            2.4962e-02   102158.5
+  E3: NO. Any nonzero controller coupling puts the pair-history dependence hundreds to
+  hundreds of thousands of times above the tail-legal threshold. The block cannot be
+  deleted; it can only be represented more cheaply.
+
+=================================================================================================
+E4  THE CONTRACTION: WHAT EXPONENT DOES IT ACTUALLY BUY?
+=================================================================================================
+  The engine needs sum_a P(a) prod_i f_i(a_C(i)), a contraction rather than an enumeration.
+  Eliminating time-slice by time-slice, the separator between consecutive slices is the
+  WHOLE controller slice, because every controller at t has a child at t+1. So:
+
+    representation                                           cost
+    flat table                                       2^(|C|(L+1))
+    slice-by-slice contraction                   (L+1) . 2^(2|C|)
+    sampled                                  S conditional solves
+
+  The contraction is LINEAR in L instead of exponential -- a real and large reduction --
+  but still EXPONENTIAL in the number of controllers, because the inter-slice separator
+  is the full slice. Slice-internal treewidth does not help that separator. Concretely:
+      |C|   flat 2^(|C|(L+1)), L=8   contracted (L+1)2^(2|C|)        ratio
+        3                     2^27                    2^6 x 9         2^21
+        9                     2^81                   2^18 x 9         2^63
+       15                    2^135                   2^30 x 9        2^105
+       20                    2^180                   2^40 x 9        2^140
+       30                    2^270                   2^60 x 9        2^210
+       76                    2^684                  2^152 x 9        2^532
+      122                   2^1098                  2^244 x 9        2^854
+
+=================================================================================================
+E5  SAMPLING THE BLOCK, with the samples COUNTED as cost
+=================================================================================================
+     strata used      mode   signed err in Var(targets ON)
+             512     exact                       6.550e-16
+               1     trunc                      -1.684e-01   <- baseline that must FAIL
+               8    sample       -1.449e-02 +- 3.390e-02   (8 seeds)
+              32    sample        3.346e-04 +- 1.665e-02   (8 seeds)
+             128    sample        3.181e-03 +- 6.070e-03   (8 seeds)
+             512    sample        8.720e-04 +- 4.860e-03   (8 seeds)
+               2     trunc                      -1.209e-01
+               8     trunc                      -7.151e-02
+              32     trunc                      -3.760e-02
+
+  Importance-weighted sampling beats greedy truncation at equal strata count -- 32 samples
+  give 3.3e-4 against truncation's -3.8e-2 -- and the 1-stratum truncation baseline fails
+  at -1.7e-1 as it must, so the bar is testing something.
+  THE PER-SAMPLE COST IS NOT ONE. Each sampled stratum still needs the conditional target
+  distribution given that history, taken here from the exact block because on a system
+  this small the exact block exists. A deployed engine would need a conditional solve or a
+  conditional simulation per sample. The honest claim is S CONDITIONAL SOLVES in place of
+  2^(|C|(L+1)) table entries. The exponential in |C| is genuinely broken; the constant is
+  not free, and this module does not measure it.
+
+=================================================================================================
+E7  THE APPLICABILITY CAP ON THE REAL NETWORK
+=================================================================================================
+  Measured TRRUST controller-subnetwork treewidths: 2, 4, 12, 24, >40 at |C| = 3, 9, 30,
+  76, 159. Against a budget of 1e12 table entries:
+      |C|      flat, L=8     contracted   affordable?   edges covered
+        3           2^27       5.76e+02          True           11.3%
+        9           2^81       2.36e+06          True           21.9%
+       15          2^135       9.66e+09          True           28.8%
+       20          2^180       9.90e+12         False           32.7%
+       30          2^270       1.04e+19         False           39.7%
+       76          2^684       5.14e+46         False           57.8%
+      122         2^1098       2.54e+74         False           68.5%
+  The contraction moves the cap from |C| = 1 to |C| ~ 19, covering roughly a third of
+  TRRUST's regulatory edges. That is a real gain and it is NOT a solution: the block is
+  still exponential in the number of controllers, and only sampling breaks that.

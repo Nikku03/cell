@@ -1,0 +1,136 @@
+{
+ "test": "motif evidence",
+ "sources": {
+  "collectri": 43536,
+  "signor": 19533,
+  "omnipath": 85526,
+  "literature_union": 60465,
+  "tier_counts": {
+   "2": 44624,
+   "3": 15841
+  },
+  "p_e3": 0.2619862730505251
+ },
+ "tier_provenance": {
+  "curated_tier_edges": 53839,
+  "collectri_fetched": 43536,
+  "intersection": 39443,
+  "tier_not_in_collectri": 14396,
+  "collectri_not_in_tier": 4093
+ },
+ "motifs": {
+  "literature": {
+   "feedback_total": 2280,
+   "feedback_by_tier": {
+    "3": 505,
+    "2": 1775
+   },
+   "ffl_total": 226062,
+   "ffl_by_tier": {
+    "2": 203371,
+    "3": 22691
+   },
+   "obs_fb_e3": 0.22149122807017543,
+   "obs_ffl_e3": 0.10037511833036955,
+   "p_e3": 0.2619862730505251,
+   "ratio": 0.4531787520658269,
+   "fb_single_paper": 1232,
+   "ffl_single_paper": 151389,
+   "frac_fb_single": 0.5403508771929825,
+   "frac_ffl_single": 0.6696791145791863,
+   "doubly_confirmed": 55,
+   "null_mean": 2.84,
+   "null_sd": 1.7533967035442948,
+   "z": 29.747974257373933
+  },
+  "loop187_curated": {
+   "two_cycles_undirected": 1630,
+   "ffl": 318683,
+   "two_cycles_by_tier": {
+    "3": 144,
+    "2": 704,
+    "1": 0,
+    "0": 782
+   },
+   "ffl_by_tier": {
+    "3": 8922,
+    "2": 111640,
+    "1": 0,
+    "0": 198121
+   }
+  }
+ },
+ "gates": {
+  "Q1": true,
+  "Q2": true,
+  "Q3": true,
+  "Q4": true,
+  "Q5": true,
+  "Q6": true
+ },
+ "void": [],
+ "seconds": 7.3812620639801025,
+ "log": [
+  "========================================================================================================",
+  "LOOP 202 -- OF ALL THE FEEDBACK AND FEEDFORWARD LOOPS, HOW MANY CAN WE TRUST?",
+  "========================================================================================================",
+  "Q1 IS THE EVIDENCE TABLE HONEST?",
+  "     CollecTRI 43,536  without a PMID 0",
+  "     SIGNOR    19,533  without a PMID 0",
+  "     OmniPath  85,526",
+  "     200 sampled tier assignments re-derived from raw fields   mismatches 0",
+  "     Q1 PASS -- every literature edge carries a PMID and the tiers re-derive",
+  "     literature network (CollecTRI + SIGNOR)  60,465 edges",
+  "     per-edge tier: E3 15,841 (0.262)  E2 44,624 (0.738)",
+  "Q2 IS MOTIF EVIDENCE CLUSTERED, OR SCATTERED?",
+  "     feedback loops in the literature network  2,280",
+  "       both edges at E3 or better: 505",
+  "       both edges at E2 or better: 2,280",
+  "       both edges at E1 or better: 2,280",
+  "       both edges at E0 or better: 2,280",
+  "     observed both-E3 fraction 0.2215   independence predicts p^2 = 0.0686   (p = 0.2620)",
+  "     Q2 PASS -- evidence CLUSTERS: 0.2215 vs p^2 0.0686, so a well-attested edge tends to sit opposite another one",
+  "Q3 DOES FEEDFORWARD TRUST FALL FASTER THAN FEEDBACK TRUST?",
+  "     feedforward loops in the literature network  226,062",
+  "       all three edges at E3 or better: 22,691",
+  "       all three edges at E2 or better: 226,062",
+  "       all three edges at E1 or better: 226,062",
+  "       all three edges at E0 or better: 226,062",
+  "     observed all-E3 fraction 0.1004",
+  "     FFL/feedback trust ratio 0.4532   independence predicts p = 0.2620",
+  "     Q3 PASS -- 0.4532 above the arithmetic prediction 0.2620",
+  "Q4 HOW MANY MOTIFS REST ON A SINGLE PAPER?",
+  "     feedback loops with >=1 single-paper edge     1,232 of 2,280 = 0.5404",
+  "     feedforward loops with >=1 single-paper edge  151,389 of 226,062 = 0.6697",
+  "     Q4 PASS -- the majority of both rest on at least one single-paper edge (54.0% feedback, 67.0% feedforward)",
+  "Q5 HOW MANY FEEDBACK LOOPS ARE CONFIRMED BY TWO INDEPENDENT CATALOGUES?",
+  "     both edges in CollecTRI AND both in SIGNOR   55",
+  "     stub-shuffled SIGNOR null  2.84 +/- 1.75   z +29.7   (200 draws)",
+  "     Q5 PASS -- 55 feedback loops carry independent confirmation from two separately curated catalogues, z +29.7",
+  "Q6 WHAT DOES THIS DO TO LOOP 187'S HEADLINE?",
+  "     loop 187 curated tier: two-cycles 1,630 (loop 187 said 1,630 DIRECTED = 3,260 ordered)   feedforward 318,683 (loop 187 said 318,683)",
+  "     two-cycles by trust tier: E3 144  E2 704  E1 0  E0 782   sum 1,630 of 1,630",
+  "     feedforward by trust tier: E3 8,922  E2 111,640  E1 0  E0 198,121   sum 318,683 of 318,683",
+  "     NOTE the E0 rows are a PROVENANCE gap, not an evidence gap: 14,396 of the tier's 53,839 edges (0.267) are absent from the CollecTRI release fetched this session, so no PMID can be attached to them here",
+  "     Q6 PASS -- the tier breakdown accounts for every motif it claims to describe",
+  "Q7 WHAT THIS CANNOT SHOW",
+  "     A PMID count is not a quality measure. Ten papers citing one original observation",
+  "     look like ten pieces of evidence here and are one. This design cannot see that, so",
+  "     every E3 count is an UPPER bound on corroboration.",
+  "     CollecTRI aggregates twelve resources that themselves overlap, so its resource",
+  "     count is not twelve independent groups either.",
+  "     Absence of a PMID is not absence of evidence -- the binding tier is real ChIP data,",
+  "     it just has no paper attached to the individual edge.",
+  "     Loop 187's enrichments were measured on the tiers as-is. Nothing here re-runs them",
+  "     at E3 only, and the null would have to be rebuilt on the E3 subgraph to do that.",
+  "========================================================================================================",
+  "  Q1  PASS",
+  "  Q2  PASS",
+  "  Q3  PASS",
+  "  Q4  PASS",
+  "  Q5  PASS",
+  "  Q6  PASS",
+  "  6/6   [7s]",
+  "========================================================================================================"
+ ]
+}

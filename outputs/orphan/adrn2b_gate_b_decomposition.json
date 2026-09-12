@@ -1,0 +1,411 @@
+{
+  "arms": {
+    "digital_only": {
+      "decision_gates": {
+        "A_routing_recovery": {
+          "defined": true,
+          "oracle_shared_denominator": 0.18000890028591032,
+          "passed": false,
+          "reason": "feedback-free return balanced accuracy",
+          "threshold": ">=0.80 with oracle-shared denominator >0.05",
+          "value": 0.39550667431403036
+        },
+        "B_workspace_necessity": {
+          "ci_high": 0.12681246212813863,
+          "ci_low": 0.07023307941458147,
+          "defined": true,
+          "paired_n": 26,
+          "passed": true,
+          "reason": "oracle-bank A(128), held-out workspace-required rules",
+          "threshold": ">=0.05 and paired 95% lower bound >0",
+          "value": 0.09819368708106233
+        },
+        "C_sparse_acquisition": {
+          "defined": true,
+          "passed": false,
+          "reason": "full learned-router + meta-initializer held-out acquisition curve",
+          "threshold": "A(8)>=0.65 and A(32)>=0.75",
+          "value": {
+            "A32": 0.5393876319088067,
+            "A8": 0.5064321207954886
+          }
+        },
+        "D_memory_retention": {
+          "defined": true,
+          "passed": false,
+          "reason": "same immutable probes at first endpoint and feedback-free return",
+          "return_balanced_accuracy": 0.5782327477972304,
+          "threshold": ">=0.90 and absolute return balanced accuracy >=0.70",
+          "value": 0.5235183865789105
+        },
+        "E_efficiency": {
+          "defined": false,
+          "passed": false,
+          "reason": "explicit full-online parameter-matched Transformer comparator",
+          "threshold": "no worse A(32), no greater online state, at least one strict",
+          "value": {
+            "ADRN_A32": 0.5393876319088067,
+            "ADRN_online_capacity_bytes": 1221688,
+            "Transformer_A32": null,
+            "Transformer_online_capacity_bytes": null
+          }
+        },
+        "cue_validity": {
+          "defined": true,
+          "passed": true,
+          "reason": "label-free Monte Carlo over opaque 12-D cue prototypes",
+          "threshold": "within +/-0.03 of label-free difficulty target",
+          "value": 0.80175
+        }
+      },
+      "gate_b": {
+        "ci_high": 0.12681246212813863,
+        "ci_low": 0.07023307941458147,
+        "defined": true,
+        "mean_delta": 0.09819368708106233,
+        "paired_n": 26,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "machinery_null_self_delta": {
+        "ci_high": 0.0,
+        "ci_low": 0.0,
+        "defined": true,
+        "mean_delta": 0.0,
+        "paired_n": 26,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "non_temporal_control": {
+        "ci_high": 0.02308452160440408,
+        "ci_low": -0.05324122012022739,
+        "defined": true,
+        "mean_delta": -0.013767773508363152,
+        "paired_n": 30,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "per_operation": {
+        "last_event": {
+          "ci_high": 0.14758487546803142,
+          "ci_low": 0.07747350015110903,
+          "defined": true,
+          "mean_delta": 0.11364359855871861,
+          "paired_n": 11,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "running_parity": {
+          "ci_high": 0.18269930720658836,
+          "ci_low": 0.0988693731587174,
+          "defined": true,
+          "mean_delta": 0.1416932052152641,
+          "paired_n": 6,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "temporal_order": {
+          "ci_high": 0.032006899546421774,
+          "ci_low": -0.0057259352100511125,
+          "defined": true,
+          "mean_delta": 0.015009828627433691,
+          "paired_n": 6,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "toggle_reset": {
+          "ci_high": 0.19623343408509641,
+          "ci_low": 0.0032670032670032434,
+          "defined": true,
+          "mean_delta": 0.12091269230184291,
+          "paired_n": 3,
+          "reason": "paired task-level percentile bootstrap"
+        }
+      },
+      "wall_seconds": 3680.897296405001,
+      "workspace_oracle_summary": {
+        "feedback_free_return_balanced_accuracy": 0.6957122000791813,
+        "first_visit_balanced_accuracy_by_labels": {
+          "0": 0.5,
+          "1": 0.5001234638988732,
+          "128": 0.7032664986654724,
+          "16": 0.545484392658056,
+          "2": 0.5115473938117571,
+          "32": 0.5873714089657877,
+          "4": 0.5214624543990117,
+          "64": 0.6507908028421612,
+          "8": 0.5207234422250181
+        }
+      }
+    },
+    "recurrent_only": {
+      "decision_gates": {
+        "A_routing_recovery": {
+          "defined": true,
+          "oracle_shared_denominator": 0.10898730507233911,
+          "passed": false,
+          "reason": "feedback-free return balanced accuracy",
+          "threshold": ">=0.80 with oracle-shared denominator >0.05",
+          "value": 0.28517243694974415
+        },
+        "B_workspace_necessity": {
+          "ci_high": 0.01052083148894645,
+          "ci_low": -0.030487629185897418,
+          "defined": true,
+          "paired_n": 26,
+          "passed": false,
+          "reason": "oracle-bank A(128), held-out workspace-required rules",
+          "threshold": ">=0.05 and paired 95% lower bound >0",
+          "value": -0.009640037714368107
+        },
+        "C_sparse_acquisition": {
+          "defined": true,
+          "passed": false,
+          "reason": "full learned-router + meta-initializer held-out acquisition curve",
+          "threshold": "A(8)>=0.65 and A(32)>=0.75",
+          "value": {
+            "A32": 0.5481445024059018,
+            "A8": 0.515221961095172
+          }
+        },
+        "D_memory_retention": {
+          "defined": true,
+          "passed": false,
+          "reason": "same immutable probes at first endpoint and feedback-free return",
+          "return_balanced_accuracy": 0.5371277582873247,
+          "threshold": ">=0.90 and absolute return balanced accuracy >=0.70",
+          "value": 0.3955538556106068
+        },
+        "E_efficiency": {
+          "defined": false,
+          "passed": false,
+          "reason": "explicit full-online parameter-matched Transformer comparator",
+          "threshold": "no worse A(32), no greater online state, at least one strict",
+          "value": {
+            "ADRN_A32": 0.5481445024059018,
+            "ADRN_online_capacity_bytes": 1221688,
+            "Transformer_A32": null,
+            "Transformer_online_capacity_bytes": null
+          }
+        },
+        "cue_validity": {
+          "defined": true,
+          "passed": true,
+          "reason": "label-free Monte Carlo over opaque 12-D cue prototypes",
+          "threshold": "within +/-0.03 of label-free difficulty target",
+          "value": 0.80175
+        }
+      },
+      "gate_b": {
+        "ci_high": 0.01052083148894645,
+        "ci_low": -0.030487629185897418,
+        "defined": true,
+        "mean_delta": -0.009640037714368107,
+        "paired_n": 26,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "machinery_null_self_delta": {
+        "ci_high": 0.0,
+        "ci_low": 0.0,
+        "defined": true,
+        "mean_delta": 0.0,
+        "paired_n": 26,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "non_temporal_control": {
+        "ci_high": -0.08306749224034266,
+        "ci_low": -0.15899473431945588,
+        "defined": true,
+        "mean_delta": -0.1204342647114646,
+        "paired_n": 30,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "per_operation": {
+        "last_event": {
+          "ci_high": -0.006731940868427921,
+          "ci_low": -0.060764519089062205,
+          "defined": true,
+          "mean_delta": -0.033173996576293344,
+          "paired_n": 11,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "running_parity": {
+          "ci_high": 0.024791532972877135,
+          "ci_low": -0.04634255201406432,
+          "defined": true,
+          "mean_delta": -0.004801352125638499,
+          "paired_n": 6,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "temporal_order": {
+          "ci_high": 0.0681454456413286,
+          "ci_low": 0.0009633485114769377,
+          "defined": true,
+          "mean_delta": 0.03545324415643029,
+          "paired_n": 6,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "toggle_reset": {
+          "ci_high": 0.041579477640858675,
+          "ci_low": -0.061776061776061764,
+          "defined": true,
+          "mean_delta": -0.023212790139698236,
+          "paired_n": 3,
+          "reason": "paired task-level percentile bootstrap"
+        }
+      },
+      "wall_seconds": 3661.674456560999,
+      "workspace_oracle_summary": {
+        "feedback_free_return_balanced_accuracy": 0.6183536948309512,
+        "first_visit_balanced_accuracy_by_labels": {
+          "0": 0.5,
+          "1": 0.5217999084606622,
+          "128": 0.6250273250816465,
+          "16": 0.5480825616914288,
+          "2": 0.5190474118430103,
+          "32": 0.5675214430600765,
+          "4": 0.5343433438344423,
+          "64": 0.591612366062829,
+          "8": 0.5429534469458561
+        }
+      }
+    },
+    "shipped": {
+      "decision_gates": {
+        "A_routing_recovery": {
+          "defined": true,
+          "oracle_shared_denominator": 0.10693987276497818,
+          "passed": false,
+          "reason": "feedback-free return balanced accuracy",
+          "threshold": ">=0.80 with oracle-shared denominator >0.05",
+          "value": 0.38244607150806403
+        },
+        "B_workspace_necessity": {
+          "ci_high": 0.042497739705641316,
+          "ci_low": -0.006178319863689041,
+          "defined": true,
+          "paired_n": 26,
+          "passed": false,
+          "reason": "oracle-bank A(128), held-out workspace-required rules",
+          "threshold": ">=0.05 and paired 95% lower bound >0",
+          "value": 0.019019908559346082
+        },
+        "C_sparse_acquisition": {
+          "defined": true,
+          "passed": false,
+          "reason": "full learned-router + meta-initializer held-out acquisition curve",
+          "threshold": "A(8)>=0.65 and A(32)>=0.75",
+          "value": {
+            "A32": 0.5429593043050417,
+            "A8": 0.5130794374631661
+          }
+        },
+        "D_memory_retention": {
+          "defined": true,
+          "passed": false,
+          "reason": "same immutable probes at first endpoint and feedback-free return",
+          "return_balanced_accuracy": 0.5488429925940757,
+          "threshold": ">=0.90 and absolute return balanced accuracy >=0.70",
+          "value": 0.4694915592298652
+        },
+        "E_efficiency": {
+          "defined": false,
+          "passed": false,
+          "reason": "explicit full-online parameter-matched Transformer comparator",
+          "threshold": "no worse A(32), no greater online state, at least one strict",
+          "value": {
+            "ADRN_A32": 0.5429593043050417,
+            "ADRN_online_capacity_bytes": 1239292,
+            "Transformer_A32": null,
+            "Transformer_online_capacity_bytes": null
+          }
+        },
+        "cue_validity": {
+          "defined": true,
+          "passed": true,
+          "reason": "label-free Monte Carlo over opaque 12-D cue prototypes",
+          "threshold": "within +/-0.03 of label-free difficulty target",
+          "value": 0.80175
+        }
+      },
+      "gate_b": {
+        "ci_high": 0.042497739705641316,
+        "ci_low": -0.006178319863689041,
+        "defined": true,
+        "mean_delta": 0.019019908559346082,
+        "paired_n": 26,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "machinery_null_self_delta": {
+        "ci_high": 0.0,
+        "ci_low": 0.0,
+        "defined": true,
+        "mean_delta": 0.0,
+        "paired_n": 26,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "non_temporal_control": {
+        "ci_high": -0.08181176466478929,
+        "ci_low": -0.16859468764784713,
+        "defined": true,
+        "mean_delta": -0.12402675798550324,
+        "paired_n": 30,
+        "reason": "paired task-level percentile bootstrap"
+      },
+      "per_operation": {
+        "last_event": {
+          "ci_high": 0.024755083001694697,
+          "ci_low": -0.046892387421249924,
+          "defined": true,
+          "mean_delta": -0.006558924375582809,
+          "paired_n": 11,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "running_parity": {
+          "ci_high": 0.08579058914085874,
+          "ci_low": 0.0006998589817919232,
+          "defined": true,
+          "mean_delta": 0.04173455090636726,
+          "paired_n": 6,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "temporal_order": {
+          "ci_high": 0.05898678515811004,
+          "ci_low": 0.012728234436470226,
+          "defined": true,
+          "mean_delta": 0.036825197757254215,
+          "paired_n": 6,
+          "reason": "paired task-level percentile bootstrap"
+        },
+        "toggle_reset": {
+          "ci_high": 0.15682399441990225,
+          "ci_low": -0.09006534006534006,
+          "defined": true,
+          "mean_delta": 0.03176909956422672,
+          "paired_n": 3,
+          "reason": "paired task-level percentile bootstrap"
+        }
+      },
+      "wall_seconds": 3641.828715749998,
+      "workspace_oracle_summary": {
+        "feedback_free_return_balanced_accuracy": 0.6235461824099324,
+        "first_visit_balanced_accuracy_by_labels": {
+          "0": 0.5,
+          "1": 0.5118275675421259,
+          "128": 0.6344061379759445,
+          "16": 0.5471797984010763,
+          "2": 0.5177039626565051,
+          "32": 0.5735602479367807,
+          "4": 0.5244583442126658,
+          "64": 0.5956595890046676,
+          "8": 0.5385005395294458
+        }
+      }
+    }
+  },
+  "decomposition": {
+    "digital_block_alone": 0.09819368708106233,
+    "gate_b_as_shipped": 0.019019908559346082,
+    "gate_b_threshold": ">=0.05 and paired 95% lower bound >0",
+    "gru_alone": -0.009640037714368107,
+    "marginal_value_of_digital_block": 0.02865994627371419,
+    "marginal_value_of_gru": -0.07917377852171624,
+    "passes_as_shipped": false,
+    "passes_with_gru_removed": true
+  },
+  "scale": "full"
+}

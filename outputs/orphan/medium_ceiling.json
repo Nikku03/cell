@@ -1,0 +1,69 @@
+{
+ "rich": {
+  "growth": 20.55761070639896,
+  "n_flux_reactions": 1991,
+  "n_essential": 310,
+  "n_reachable": 174,
+  "ceiling": 0.5612903225806452,
+  "score": {
+   "wt": 20.557610706399,
+   "n": 2741,
+   "n_essential": 310,
+   "n_called": 86,
+   "precision": 0.7325581395348837,
+   "recall": 0.2032258064516129,
+   "auc": 0.6698106447632064
+  },
+  "n_exchanges_open": 1634,
+  "n_imports_used": 418
+ },
+ "minimal": {
+  "growth": 2.0565899299567074,
+  "n_flux_reactions": 676,
+  "n_essential": 310,
+  "n_reachable": 168,
+  "ceiling": 0.5419354838709678,
+  "score": {
+   "wt": 2.056589929956712,
+   "n": 2741,
+   "n_essential": 310,
+   "n_called": 176,
+   "precision": 0.5170454545454546,
+   "recall": 0.29354838709677417,
+   "auc": 0.6780708854712649
+  },
+  "n_closed": 1607,
+  "n_kept": 27,
+  "kept": [
+   "MAR09269",
+   "MAR09107",
+   "MAR09109",
+   "MAR09154",
+   "MAR09167",
+   "MAR09152",
+   "MAR09159",
+   "MAR10602",
+   "MAR10724",
+   "MAR10729",
+   "MAR10738",
+   "MAR11401",
+   "MAR11897",
+   "MAR12700",
+   "MAR09144",
+   "MAR04341",
+   "MAR08964",
+   "MAR04384",
+   "MAR09041",
+   "MAR09234",
+   "MAR10193",
+   "MAR09253",
+   "MAR09034",
+   "MAR09042",
+   "MAR09065",
+   "MAR09048",
+   "MAR09072"
+  ]
+ },
+ "delta_recall": 0.09032258064516127,
+ "passed": false
+}

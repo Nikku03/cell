@@ -1,0 +1,257 @@
+{
+ "test": "hole scope",
+ "gates": {
+  "Z1": true,
+  "Z2": true,
+  "Z3": true,
+  "Z4": true,
+  "Z5": true,
+  "Z6": true,
+  "Z7": true
+ },
+ "void": [],
+ "holes": {
+  "enzymes with an EC number OUTSIDE the metabolic model": 2078,
+  "transcription factors with NO motif in this project": 2647,
+  "transcription factors absent from the regulatory network": 2227,
+  "genes with NO curated TF regulator": 9007,
+  "genes with no UniProt function evidence": 635,
+  "genes in NO mechanistic layer at all": 1643
+ },
+ "enzyme_split": {
+  "related chemistry, same EC subclass": 669,
+  "chemistry ALREADY modelled -- a GPR/annotation gap": 1149,
+  "chemistry the model does not contain": 260
+ },
+ "motif": {
+  "covered": 543,
+  "uncovered": 2104
+ },
+ "reactions": {
+  "orphans": 5149,
+  "transport": 2315,
+  "single_compartment": 2834,
+  "no_species": 0,
+  "modelled_transport": 2427
+ },
+ "zero_layer": {
+  "total": 1643,
+  "truly_unknown": 104,
+  "quadrants": {
+   "unstudied+annotated": 281,
+   "studied+annotated": 1103,
+   "studied+unannotated": 155,
+   "unstudied+unannotated": 104
+  }
+ },
+ "ledger": [
+  {
+   "hole": "reactions with no gene",
+   "n": 5149,
+   "fetchable": 0,
+   "residue": 5149,
+   "resource": "none -- the single-compartment orphans need literature curation, which is work and not a fetch; the transport ones are not missing knowledge",
+   "note": "the largest number in the census is 2,315 transport steps that legitimately have no enzyme plus 2,834 that need curation. Neither is fetchable and the total should stop being quoted as one deficit"
+  },
+  {
+   "hole": "enzymes with an EC outside the model",
+   "n": 2078,
+   "fetchable": 1149,
+   "residue": 260,
+   "resource": "Human-GEM GPR curation for the already-modelled part; Rhea or MetaCyc for the new chemistry",
+   "note": "the already-modelled part is an annotation join, not new biology"
+  },
+  {
+   "hole": "TFs with no motif",
+   "n": 2647,
+   "fetchable": 543,
+   "residue": 2104,
+   "resource": "CIS-BP or HOCOMOCO family inference",
+   "note": "loop 184 ranks motif last among binding predictors, so this hole may not be worth its size"
+  },
+  {
+   "hole": "TFs absent from the regulatory network",
+   "n": 2227,
+   "fetchable": null,
+   "residue": null,
+   "resource": "ChIP-seq archives (ReMap, ChIP-Atlas) would add BINDING edges, not curated causal ones",
+   "note": "loop 187 B3 measured the occupancy tier DEPLETED of feedforward structure relative to its degree sequence, so these edges are a different object"
+  },
+  {
+   "hole": "genes with no curated TF regulator",
+   "n": 9007,
+   "fetchable": null,
+   "residue": null,
+   "resource": "same as above",
+   "note": "loop 190 D6 already recorded that 'has a regulator' partly means 'has been studied'"
+  },
+  {
+   "hole": "genes in no mechanistic layer",
+   "n": 1643,
+   "fetchable": 1539,
+   "residue": 104,
+   "resource": "STRING or BioGRID would give many of them a PPI edge; TCDB would classify the transporters",
+   "note": "a PPI edge moves a gene out of this hole without telling you what it does"
+  },
+  {
+   "hole": "genes with no UniProt function evidence",
+   "n": 635,
+   "fetchable": 0,
+   "residue": 635,
+   "resource": "none -- UniProt IS the resource",
+   "note": "this is the floor: nothing to fetch, only work to be done"
+  }
+ ],
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/cell_complete.json.gz",
+    "bytes": 6747165,
+    "hash": "91109280442eab70",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/all_gene_annotation.json",
+    "bytes": 24062012,
+    "hash": "25464876ff76b172",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/net_bundle.json.gz",
+    "bytes": 3667843,
+    "hash": "126e67aa72c13d95",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 16492,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 0,
+  "controls": [
+   "every hole recomputed and checked against loop 190's census",
+   "nothing fetched; every split from files already on disk"
+  ],
+  "note": "scoping the census holes into annotation, representation and study gaps",
+  "warnings": []
+ },
+ "seconds": 3.1163485050201416,
+ "log": [
+  "========================================================================================================",
+  "LOOP 195  THE HOLES: which are fetchable, which are category errors, which are unknown",
+  "========================================================================================================",
+  "  PREDECLARED: the hole inventory must reproduce loop 190's census EXACTLY before any",
+  "  split is believed; every split is computed from files already on disk and this loop",
+  "  fetches NOTHING, because a scoping loop that downloads half a database to tell you what",
+  "  to download has not scoped anything; and every one of the six census holes must come",
+  "  out of Z6 with a split, since a hole left whole is a hole this loop failed to scope.",
+  "",
+  "Z1 DOES THE HOLE INVENTORY REPRODUCE?",
+  "      2,078  vs census   2078  match  enzymes with an EC number OUTSIDE the metabolic model",
+  "      2,647  vs census   2647  match  transcription factors with NO motif in this project",
+  "      2,227  vs census   2227  match  transcription factors absent from the regulatory network",
+  "      9,007  vs census   9007  match  genes with NO curated TF regulator",
+  "        635  vs census    635  match  genes with no UniProt function evidence",
+  "      1,643  vs census   1643  match  genes in NO mechanistic layer at all",
+  "      5,149  vs census   5149  match  reactions with no gene",
+  "     Z1 PASS -- every hole reproduces the census exactly, so the splits below are about the genes the census counted",
+  "",
+  "Z2 THE ENZYME HOLE: annotation gap or new chemistry?",
+  "     861 distinct EC numbers among the 2,848 modelled genes",
+  "        1,149  chemistry ALREADY modelled -- a GPR/annotation gap   e.g. AADACL2, AADACL4, AAK1, AARS2, AATK, ABCA10",
+  "          669  related chemistry, same EC subclass   e.g. A3GALT2, ABCD4, ACVR1, ACVR1B, ACVR1C, ACVR2A",
+  "          260  chemistry the model does not contain   e.g. ABCB9, ABHD13, ABHD14A, ABHD8, ABL1, ABL2",
+  "     Z2 PASS -- 100.0% carry a parseable EC, so the split describes the hole and not a parseable subset of it",
+  "",
+  "Z3 THE MOTIF HOLE: is a family-inferred motif available in principle?",
+  "     81 distinct domain names carried by TFs that DO have a motif",
+  "     of the 2,647 TFs with no motif:",
+  "          543  share a domain with a motif-bearing TF -- a CIS-BP-style inference could reach them",
+  "        2,104  share no domain with any motif-bearing TF",
+  "     this is an UPPER BOUND on what family inference reaches, not a claim the inferred",
+  "     motifs would be any good -- loop 184 measured motif at 0.6228 against co-binding at",
+  "     0.8455, so more motifs is not obviously the binding answer anyway",
+  "     Z3 (descriptive)",
+  "",
+  "Z4 THE REACTION HOLE: which orphans legitimately have no gene?",
+  "     5,149 reactions with no gene",
+  "        2,315  span more than one compartment -- transport steps, where a missing enzyme is a modelling choice",
+  "        2,834  sit in one compartment -- the genuine orphan chemistry",
+  "            0  have no metabolites recorded at all -- exchange or boundary reactions",
+  "     for scale, 2,427 transport reactions DO carry a gene, so the model does assign transporters when it can",
+  "     Z4 (descriptive)",
+  "",
+  "Z5 THE ZERO-LAYER GENES: unstudied or unknown?",
+  "        1,103     studied + annotated",
+  "          281   unstudied + annotated",
+  "          155     studied + unannotated",
+  "          104   unstudied + unannotated",
+  "     genuinely unknown -- fewer than 5 publications AND no UniProt function evidence: 104",
+  "       e.g. ARIH2OS, C10ORF105, C11ORF96, C11ORF97, C18ORF15, C2ORF66, C3ORF80, CCDC163, CCDC188, CCER2",
+  "     median publications across the zero-layer set: 10; across the whole table: 51",
+  "     Z5 (descriptive)",
+  "",
+  "Z6 THE RANKED LEDGER: what a fetch would buy, and what nothing would",
+  "      5,149  reactions with no gene                       fetchable      0  residue  5,149",
+  "             none -- the single-compartment orphans need literature curation, which is work and not a fetch; the transport ones are not missing knowledge",
+  "             the largest number in the census is 2,315 transport steps that legitimately have no enzyme plus 2,834 that need curation. Neither is fetchable and the total should stop being quoted as one deficit",
+  "      2,078  enzymes with an EC outside the model         fetchable  1,149  residue    260",
+  "             Human-GEM GPR curation for the already-modelled part; Rhea or MetaCyc for the new chemistry",
+  "             the already-modelled part is an annotation join, not new biology",
+  "      2,647  TFs with no motif                            fetchable    543  residue  2,104",
+  "             CIS-BP or HOCOMOCO family inference",
+  "             loop 184 ranks motif last among binding predictors, so this hole may not be worth its size",
+  "      2,227  TFs absent from the regulatory network       fetchable      -  residue      -",
+  "             ChIP-seq archives (ReMap, ChIP-Atlas) would add BINDING edges, not curated causal ones",
+  "             loop 187 B3 measured the occupancy tier DEPLETED of feedforward structure relative to its degree sequence, so these edges are a different object",
+  "      9,007  genes with no curated TF regulator           fetchable      -  residue      -",
+  "             same as above",
+  "             loop 190 D6 already recorded that 'has a regulator' partly means 'has been studied'",
+  "      1,643  genes in no mechanistic layer                fetchable  1,539  residue    104",
+  "             STRING or BioGRID would give many of them a PPI edge; TCDB would classify the transporters",
+  "             a PPI edge moves a gene out of this hole without telling you what it does",
+  "        635  genes with no UniProt function evidence      fetchable      0  residue    635",
+  "             none -- UniProt IS the resource",
+  "             this is the floor: nothing to fetch, only work to be done",
+  "     Z6 PASS -- all 7 holes carry a split and a named resource or an explicit 'none'",
+  "",
+  "Z7 WHAT THIS CANNOT SHOW",
+  "     'Fetchable' means a database exists whose records would populate the field. It does",
+  "     not mean the fetched values would be correct, or useful, or that the resulting model",
+  "     would predict anything better. Loop 188b is the cautionary case: the epigenetic",
+  "     layer was fetched in full and added nothing over measured binding.",
+  "     The EC split treats an exact 4-level match as 'already modelled'. Two enzymes sharing",
+  "     an EC number catalyse the same chemistry on possibly different substrates in",
+  "     different compartments, so some of that count is optimistic.",
+  "     The motif family bound uses UniProt domain NAME equality. Real family inference uses",
+  "     binding-domain sequence similarity, which is both stricter and more permissive than",
+  "     string matching in ways this cannot quantify.",
+  "     Publication counts come from the gene table and measure attention, not knowledge. A",
+  "     gene with four papers that solved it is not unknown; a gene with forty that",
+  "     contradict each other is.",
+  "     Nothing here was fetched, so nothing here is validated. Every number is a promise",
+  "     about what a fetch would find, and the next loop's job is to collect on one of them",
+  "     and report the difference.",
+  "     Z7 PASS",
+  "",
+  "========================================================================================================",
+  "  Z1  PASS",
+  "  Z2  PASS",
+  "  Z3  PASS",
+  "  Z4  PASS",
+  "  Z5  PASS",
+  "  Z6  PASS",
+  "  Z7  PASS",
+  "  7/7   [3s]",
+  "========================================================================================================"
+ ]
+}

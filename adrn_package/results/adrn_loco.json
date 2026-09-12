@@ -1,0 +1,357 @@
+{
+  "test": "adrn_loco",
+  "clusters": [
+    8,
+    16,
+    32
+  ],
+  "K_values": [
+    30,
+    60,
+    120
+  ],
+  "detail": {
+    "K=30|ncl=8|cohort1": {
+      "n": 200,
+      "loco": 0.166,
+      "control": 0.22650000000000003,
+      "clusters_used": 8
+    },
+    "K=30|ncl=8|_holdout": {
+      "n": 200,
+      "loco": 0.22175,
+      "control": 0.26825000000000004,
+      "clusters_used": 8
+    },
+    "K=30|ncl=16|cohort1": {
+      "n": 198,
+      "loco": 0.16212121212121208,
+      "control": 0.22601010101010102,
+      "clusters_used": 16
+    },
+    "K=30|ncl=16|_holdout": {
+      "n": 196,
+      "loco": 0.2229591836734694,
+      "control": 0.28316326530612246,
+      "clusters_used": 16
+    },
+    "K=30|ncl=32|cohort1": {
+      "n": 191,
+      "loco": 0.1950261780104712,
+      "control": 0.22277486910994762,
+      "clusters_used": 31
+    },
+    "K=30|ncl=32|_holdout": {
+      "n": 190,
+      "loco": 0.24815789473684213,
+      "control": 0.28657894736842104,
+      "clusters_used": 31
+    },
+    "K=60|ncl=8|cohort1": {
+      "n": 200,
+      "loco": 0.15175,
+      "control": 0.22950000000000004,
+      "clusters_used": 8
+    },
+    "K=60|ncl=8|_holdout": {
+      "n": 200,
+      "loco": 0.20549999999999996,
+      "control": 0.275,
+      "clusters_used": 8
+    },
+    "K=60|ncl=16|cohort1": {
+      "n": 198,
+      "loco": 0.1532828282828283,
+      "control": 0.23106060606060605,
+      "clusters_used": 16
+    },
+    "K=60|ncl=16|_holdout": {
+      "n": 196,
+      "loco": 0.22193877551020408,
+      "control": 0.28341836734693876,
+      "clusters_used": 16
+    },
+    "K=60|ncl=32|cohort1": {
+      "n": 191,
+      "loco": 0.19345549738219897,
+      "control": 0.2298429319371728,
+      "clusters_used": 31
+    },
+    "K=60|ncl=32|_holdout": {
+      "n": 190,
+      "loco": 0.2476315789473684,
+      "control": 0.295,
+      "clusters_used": 31
+    },
+    "K=120|ncl=8|cohort1": {
+      "n": 200,
+      "loco": 0.15225000000000002,
+      "control": 0.22524999999999998,
+      "clusters_used": 8
+    },
+    "K=120|ncl=8|_holdout": {
+      "n": 200,
+      "loco": 0.21475000000000002,
+      "control": 0.27399999999999997,
+      "clusters_used": 8
+    },
+    "K=120|ncl=16|cohort1": {
+      "n": 198,
+      "loco": 0.15404040404040403,
+      "control": 0.22424242424242427,
+      "clusters_used": 16
+    },
+    "K=120|ncl=16|_holdout": {
+      "n": 196,
+      "loco": 0.22959183673469388,
+      "control": 0.2846938775510204,
+      "clusters_used": 16
+    },
+    "K=120|ncl=32|cohort1": {
+      "n": 191,
+      "loco": 0.19293193717277485,
+      "control": 0.22670157068062827,
+      "clusters_used": 31
+    },
+    "K=120|ncl=32|_holdout": {
+      "n": 190,
+      "loco": 0.24236842105263157,
+      "control": 0.2913157894736842,
+      "clusters_used": 31
+    }
+  },
+  "sweep": {
+    "name": "LOCO - size-matched CONTROL",
+    "verdict": "HARMFUL",
+    "n_cells": 18,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 18,
+    "n_resolved_pos": 0,
+    "n_resolved_neg": 18,
+    "sign_consistent": true,
+    "cells_needed_for_robust": 12,
+    "passing_configs": [],
+    "cells": [
+      {
+        "config": {
+          "clusters": 8,
+          "K": 30
+        },
+        "cohort": "cohort1",
+        "n": 200,
+        "delta": -0.0605,
+        "lo": -0.08224999999999999,
+        "hi": -0.039743750000000085
+      },
+      {
+        "config": {
+          "clusters": 8,
+          "K": 30
+        },
+        "cohort": "_holdout",
+        "n": 200,
+        "delta": -0.04650000000000001,
+        "lo": -0.06974999999999999,
+        "hi": -0.0245
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 30
+        },
+        "cohort": "cohort1",
+        "n": 198,
+        "delta": -0.06388888888888888,
+        "lo": -0.08510101010101011,
+        "hi": -0.04343434343434343
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 30
+        },
+        "cohort": "_holdout",
+        "n": 196,
+        "delta": -0.06020408163265306,
+        "lo": -0.07934311224489796,
+        "hi": -0.04107142857142858
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 30
+        },
+        "cohort": "cohort1",
+        "n": 191,
+        "delta": -0.027748691099476443,
+        "lo": -0.04371727748691099,
+        "hi": -0.012303664921465967
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 30
+        },
+        "cohort": "_holdout",
+        "n": 190,
+        "delta": -0.03842105263157895,
+        "lo": -0.05447368421052631,
+        "hi": -0.022631578947368426
+      },
+      {
+        "config": {
+          "clusters": 8,
+          "K": 60
+        },
+        "cohort": "cohort1",
+        "n": 200,
+        "delta": -0.07775,
+        "lo": -0.10024999999999999,
+        "hi": -0.05600000000000001
+      },
+      {
+        "config": {
+          "clusters": 8,
+          "K": 60
+        },
+        "cohort": "_holdout",
+        "n": 200,
+        "delta": -0.0695,
+        "lo": -0.09375,
+        "hi": -0.04625
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 60
+        },
+        "cohort": "cohort1",
+        "n": 198,
+        "delta": -0.07777777777777779,
+        "lo": -0.10025252525252526,
+        "hi": -0.05555555555555555
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 60
+        },
+        "cohort": "_holdout",
+        "n": 196,
+        "delta": -0.06147959183673468,
+        "lo": -0.08290816326530612,
+        "hi": -0.04056122448979592
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 60
+        },
+        "cohort": "cohort1",
+        "n": 191,
+        "delta": -0.03638743455497383,
+        "lo": -0.052617801047120424,
+        "hi": -0.020942408376963352
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 60
+        },
+        "cohort": "_holdout",
+        "n": 190,
+        "delta": -0.04736842105263158,
+        "lo": -0.06447368421052632,
+        "hi": -0.03052631578947369
+      },
+      {
+        "config": {
+          "clusters": 8,
+          "K": 120
+        },
+        "cohort": "cohort1",
+        "n": 200,
+        "delta": -0.073,
+        "lo": -0.09475,
+        "hi": -0.051500000000000004
+      },
+      {
+        "config": {
+          "clusters": 8,
+          "K": 120
+        },
+        "cohort": "_holdout",
+        "n": 200,
+        "delta": -0.05925,
+        "lo": -0.085,
+        "hi": -0.0345
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 120
+        },
+        "cohort": "cohort1",
+        "n": 198,
+        "delta": -0.0702020202020202,
+        "lo": -0.09242424242424241,
+        "hi": -0.04848484848484849
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 120
+        },
+        "cohort": "_holdout",
+        "n": 196,
+        "delta": -0.05510204081632653,
+        "lo": -0.07551020408163267,
+        "hi": -0.03494897959183674
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 120
+        },
+        "cohort": "cohort1",
+        "n": 191,
+        "delta": -0.033769633507853405,
+        "lo": -0.05026178010471205,
+        "hi": -0.01780104712041885
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 120
+        },
+        "cohort": "_holdout",
+        "n": 190,
+        "delta": -0.048947368421052635,
+        "lo": -0.0663157894736842,
+        "hi": -0.031578947368421054
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "LEAVE-ONE-FUNCTIONAL-CLASS-OUT: biology, or per-class lookup?",
+    "====================================================================================================",
+    "  PREDECLARED: LOCO ~= size-matched CONTROL means it transfers across functions.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  K=30 clusters=8: 8 classes held out | cohort1 LOCO 0.1660 vs ctrl 0.2265 _holdout LOCO 0.2218 vs ctrl 0.2683",
+    "  K=30 clusters=16: 16 classes held out | cohort1 LOCO 0.1621 vs ctrl 0.2260 _holdout LOCO 0.2230 vs ctrl 0.2832",
+    "  K=30 clusters=32: 31 classes held out | cohort1 LOCO 0.1950 vs ctrl 0.2228 _holdout LOCO 0.2482 vs ctrl 0.2866",
+    "  K=60 clusters=8: 8 classes held out | cohort1 LOCO 0.1517 vs ctrl 0.2295 _holdout LOCO 0.2055 vs ctrl 0.2750",
+    "  K=60 clusters=16: 16 classes held out | cohort1 LOCO 0.1533 vs ctrl 0.2311 _holdout LOCO 0.2219 vs ctrl 0.2834",
+    "  K=60 clusters=32: 31 classes held out | cohort1 LOCO 0.1935 vs ctrl 0.2298 _holdout LOCO 0.2476 vs ctrl 0.2950",
+    "  K=120 clusters=8: 8 classes held out | cohort1 LOCO 0.1523 vs ctrl 0.2252 _holdout LOCO 0.2148 vs ctrl 0.2740",
+    "  K=120 clusters=16: 16 classes held out | cohort1 LOCO 0.1540 vs ctrl 0.2242 _holdout LOCO 0.2296 vs ctrl 0.2847",
+    "  K=120 clusters=32: 31 classes held out | cohort1 LOCO 0.1929 vs ctrl 0.2267 _holdout LOCO 0.2424 vs ctrl 0.2913",
+    "\n  SWEEP LOCO - size-matched CONTROL   axes[clusters,K]  18 cells\n  config                       cohort         delta                 95% CI\n  clusters=8 K=30              cohort1      -0.0605 [ -0.0822, -0.0397] RES-\n  clusters=8 K=30              _holdout     -0.0465 [ -0.0697, -0.0245] RES-\n  clusters=16 K=30             cohort1      -0.0639 [ -0.0851, -0.0434] RES-\n  clusters=16 K=30             _holdout     -0.0602 [ -0.0793, -0.0411] RES-\n  clusters=32 K=30             cohort1      -0.0277 [ -0.0437, -0.0123] RES-\n  clusters=32 K=30             _holdout     -0.0384 [ -0.0545, -0.0226] RES-\n  clusters=8 K=60              cohort1      -0.0777 [ -0.1002, -0.0560] RES-\n  clusters=8 K=60              _holdout     -0.0695 [ -0.0938, -0.0462] RES-\n  clusters=16 K=60             cohort1      -0.0778 [ -0.1003, -0.0556] RES-\n  clusters=16 K=60             _holdout     -0.0615 [ -0.0829, -0.0406] RES-\n  clusters=32 K=60             cohort1      -0.0364 [ -0.0526, -0.0209] RES-\n  clusters=32 K=60             _holdout     -0.0474 [ -0.0645, -0.0305] RES-\n  clusters=8 K=120             cohort1      -0.0730 [ -0.0948, -0.0515] RES-\n  clusters=8 K=120             _holdout     -0.0592 [ -0.0850, -0.0345] RES-\n  clusters=16 K=120            cohort1      -0.0702 [ -0.0924, -0.0485] RES-\n  clusters=16 K=120            _holdout     -0.0551 [ -0.0755, -0.0349] RES-\n  clusters=32 K=120            cohort1      -0.0338 [ -0.0503, -0.0178] RES-\n  clusters=32 K=120            _holdout     -0.0489 [ -0.0663, -0.0316] RES-\n  -> HARMFUL   resolved +0/-18 of 18 (>= 12 needed), sign-consistent True",
+    "\n  READING:",
+    "  Removing a whole function costs MORE than removing the same number of random genes.",
+    "  -> the class was carrying its own prediction: PER-CLASS LOOKUP."
+  ]
+}

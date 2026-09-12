@@ -1,0 +1,91 @@
+{
+ "n": 4532,
+ "mechanism_demo": [
+  {
+   "pdb": "1TM1",
+   "site": "I58",
+   "rigid": 86311117517.22826,
+   "softcore": 115.55347633941841,
+   "rot_rigid": -2.3513051014409663,
+   "rot_softcore": -2.3513051014409663,
+   "flex": -2.9114820050115364,
+   "shift": 1.99,
+   "n_rotamers": 9
+  },
+  {
+   "pdb": "1BRS",
+   "site": "D35",
+   "rigid": 14487631.11589718,
+   "softcore": 125.77461850598458,
+   "rot_rigid": 243.7851807180448,
+   "rot_softcore": 32.72717986358756,
+   "flex": 24.859890428661238,
+   "shift": 2.27,
+   "n_rotamers": 9
+  },
+  {
+   "pdb": "1BRS",
+   "site": "D39",
+   "rigid": 77265180.67625412,
+   "softcore": 190.55394167282546,
+   "rot_rigid": 2155.494055222714,
+   "rot_softcore": 45.96800360700754,
+   "flex": 22.214139732389143,
+   "shift": 1.78,
+   "n_rotamers": 9
+  },
+  {
+   "pdb": "1JCK",
+   "site": "B20",
+   "rigid": 1334.364661537868,
+   "softcore": 78.73803214295842,
+   "rot_rigid": -2.5890841611484987,
+   "rot_softcore": -2.5890841611484987,
+   "flex": -2.756062655427031,
+   "shift": 1.78,
+   "n_rotamers": 9
+  },
+  {
+   "pdb": "1JCK",
+   "site": "B23",
+   "rigid": 503008405.44492704,
+   "softcore": 188.23126998255876,
+   "rot_rigid": -1.7723761106547713,
+   "rot_softcore": -1.7723761106547713,
+   "flex": -0.48896248005563087,
+   "shift": 1.73,
+   "n_rotamers": 9
+  }
+ ],
+ "alanine": {
+  "n": 1156,
+  "r_contacts": 0.465,
+  "r_elec": -0.163,
+  "r_induc": -0.349,
+  "r_desolv": -0.182,
+  "r_empirical": 0.369,
+  "r_steric": 0.485,
+  "r_combined": 0.521,
+  "r_with_desolv": 0.531,
+  "desolv_gain": 0.009,
+  "chem_gain_over_steric": 0.037,
+  "physics_gain": 0.153
+ },
+ "to_bigger": {
+  "n": 148,
+  "explosion_frac": {
+   "rigid": 0.331,
+   "softcore": 0.081,
+   "rotamer": 0.041,
+   "flex": 0.027
+  },
+  "spearman": {
+   "rigid": 0.354,
+   "softcore": 0.348,
+   "rotamer": 0.132,
+   "flex": 0.104
+  },
+  "best_score": "rigid"
+ },
+ "verdict": "Added the chemistry the proposal asked for \u2014 sp3 ROTAMER sampling (discrete chi wells) and ELECTROSTATICS + INDUCTION \u2014 and measured each against SKEMPI, which gives a two-sided, honest result. (1) ROTAMER sampling is the RIGHT PHYSICS for the buried clash that minimisation alone could not solve last pass, and it is dramatic on the mechanism: letting a bulky mutant jump to its lowest-clash sp3 well turns impossible energies physical (e.g. 1TM1 I58->Trp goes from ~9e10 to -2.4 kcal/mol; 1JCK B23->Trp from ~5e8 to -1.8) and cuts the bulky-mutation explosion rate to 4% (vs 33% rigid single-rotamer, 8% soft-core, 3% flex). This is exactly what you need for an ABSOLUTE, usable energy. BUT \u2014 the honest catch, measured not assumed \u2014 as a standalone RANK predictor of measured \u0394\u0394G on the bulky set, the RELIEVED best-rotamer score correlates WORSE (Spearman +0.13) than the RAW, un-relieved rigid clash magnitude (+0.35; soft-core +0.35, flex +0.10; best = rigid). The reason is real, not a bug: the raw rigid magnitude encodes 'how much steric burden this bigger residue imposes', which tracks destabilisation; once you relieve the clash to the best well, that variance is discarded and the residual energies compress. So the correct use is BOTH \u2014 rotamer-relieved energy as the physical absolute value, and the raw steric burden kept as a separate ranking feature. (2) ELECTROSTATICS/INDUCTION added real, held-out signal: the lost cross-interface Coulomb term alone correlates r -0.16 with measured \u0394\u0394G(X->Ala) and the Debye induction term r -0.35; stacked on the held-out predictor the chemistry climbs r 0.48 (sterics) -> 0.52 (+elec/induction). (3) implicit DESOLVATION \u2014 an honest NEGATIVE result. The EEF1/Eisenberg occlusion desolvation term is physically real (burying a carbon is favourable, burying an unsatisfied polar/charged atom costs energy) but on THIS alanine-heavy validation it is a weak signal (r -0.18) that is largely REDUNDANT with the buried-contact count (both encode hydrophobic burial): adding it moved the alanine held-out r only +0.01 (0.52 -> 0.53), and on the larger 2602-mutation flex_vs_rosetta split it slightly HURT (0.528 -> 0.515). So the term is implemented and available but is NOT folded into the headline feature set \u2014 forcing in a partly-redundant weak feature just adds variance. A proper SASA / Poisson-Boltzmann solvation model (what FoldX/Rosetta use) might extract more, but our O(n) occlusion proxy does not on this data. HONEST LIMITS: rotamers are sampled on the canonical wells and selected by lowest steric energy (NOT Dunbrack probability-weighted, no partner repacking); charges are united-atom approximate. So this remains a fast TRIAGE force field speaking only to the near-field INTERFACE effect. Net: rotamer sampling fixed the buried-clash PHYSICS but not bulky-mutation RANKING (the raw clash magnitude still ranks better); electrostatics + induction gave the genuine held-out accuracy gain (research 0.37 -> 0.52); implicit desolvation, tested honestly, did NOT help on this validation and was left out of the headline."
+}

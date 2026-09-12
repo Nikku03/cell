@@ -1,0 +1,178 @@
+{
+ "test": "loop_collectri",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/omnipath_collectri.tsv",
+    "bytes": 17163512,
+    "hash": "bd7ab4cfc6169b0c",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/proteinatlas.tsv",
+    "bytes": 43055808,
+    "hash": "5c546331ec5dda4b",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 64516,
+   "used": 239,
+   "selection": "filtered",
+   "fraction": 0.0037045074090148182
+  },
+  "seed": 13000,
+  "controls": [
+   "loop 120's protocol run unchanged so the two are comparable",
+   "edge signs shuffled, capability-checked, integrator re-run",
+   "cell-cycle status shuffled within out-degree deciles",
+   "regulator count held fixed by quintile",
+   "the gene's own publication count and its regulators' mean",
+   "the existing network scored on the identical shared genes"
+  ],
+  "note": "the gap-2 fetch measured coverage and CollecTRI lost; this measures whether it is RIGHT, which is the question that mattered",
+  "warnings": []
+ },
+ "gates": {
+  "T1": true,
+  "T2": false,
+  "T3": false,
+  "T4": false,
+  "T5": true,
+  "T6": true
+ },
+ "loop120": {
+  "auc_real": 0.5465,
+  "auc_shuf": 0.5494,
+  "auc_shuf_sd": 0.0079,
+  "w2_real": 0.0986,
+  "w2_null": 0.0486,
+  "w2_sd": 0.0792,
+  "w2_z": 0.63,
+  "auc_regcount": 0.5806,
+  "auc_own_pubs": 0.5536,
+  "n": 273
+ },
+ "wiring": {
+  "raw": 64516,
+  "signed_in_model": 45507,
+  "regulators": 1165,
+  "targets": 6210
+ },
+ "t1": {
+  "n": 239,
+  "n_yes": 105,
+  "n_no": 134,
+  "ccd_regulators": 64
+ },
+ "t2": {
+  "auc_real": 0.5717128642501776,
+  "auc_shuf": 0.5731915200781805,
+  "auc_shuf_sd": 0.006368305259042142,
+  "capability": {
+   "capable": true,
+   "changed": 0.212874442319949,
+   "achievable": 0.221491850752368,
+   "threshold": 0.110745925376184,
+   "reason": "the null changes the statistic's input"
+  }
+ },
+ "t3": {
+  "frac_yes": 0.47619047619047616,
+  "frac_no": 0.3358208955223881,
+  "difference": 0.14036958066808808,
+  "survival": {
+   "real": 0.14036958066808808,
+   "n_null": 2000,
+   "null_mean": 0.04607363184079603,
+   "null_sd": 0.07342386253718072,
+   "z": 1.2842684322081535,
+   "defined": false,
+   "fraction": "UNDEFINED",
+   "reason": "|z| 1.28 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator"
+  }
+ },
+ "t4": {
+  "auc_regcount": 0.5855721393034826,
+  "auc_stratified": 0.5491320300214023
+ },
+ "t5": {
+  "auc_own_pubs": 0.5585998578535892,
+  "auc_regulator_pubs": 0.5615493958777541
+ },
+ "t6": {
+  "n_shared": 239,
+  "auc_existing": 0.5609808102345416,
+  "auc_collectri": 0.5717128642501776
+ },
+ "seconds": 16.40639901161194,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 130 -- do CollecTRI's signs carry information, where this model's do not?",
+  "====================================================================================================",
+  "",
+  "  CollecTRI: 64,516 raw edges -> 45,507 signed with both ends in the model, 1,165 regulators, 6,210 targets",
+  "  the existing network, for comparison: 54,128 signed, 1,451 regulators, 7,485 targets",
+  "T1 THE WIRING BUILDS AND REACHES ENOUGH TO TEST",
+  "     test set: 239 genes with a CCD-transcript call, a CollecTRI regulator and an mRNA state",
+  "     105 Yes / 134 No   (loop 120 had 273: 124/149)",
+  "     CCD proteins that are CollecTRI regulators: 64 of 748",
+  "     T1 PASS",
+  "",
+  "T2 DO THE SIGNS DO WORK?",
+  "     real CollecTRI signs   AUC 0.5717",
+  "     SHUFFLED signs         AUC 0.5732 +/- 0.0064  (64 shuffles)",
+  "     null capability: the null changes the statistic's input",
+  "     loop 120, existing network: real 0.5465 against shuffled 0.5494 +/- 0.0079 -- the shuffle scored HIGHER",
+  "     T2 FAIL -- CollecTRI's signs carry NO more than shuffled ones, same as the existing network",
+  "",
+  "T3 CCD TRANSCRIPTS HAVE CCD-PROTEIN REGULATORS ABOVE CHANCE",
+  "     CCD transcripts with >=1 CCD-protein regulator 47.6%, non-CCD 33.6%",
+  "     enrichment difference: real +0.1404  null +0.0461 +/- 0.0734  survival UNDEFINED -- |z| 1.28 < 2.0: the real value is not distinguishable from the null, so a survival fraction has no denominator",
+  "     loop 120: real +0.0986, null +0.0486 +/- 0.0792, z 0.63",
+  "     T3 FAIL",
+  "",
+  "T4 THE REGULATOR-COUNT CONFOUND",
+  "     regulator count alone   AUC 0.5856   (loop 120: 0.5806)",
+  "     CollecTRI integrated    AUC 0.5717 unstratified, 0.5491 holding regulator count fixed by quintile",
+  "     loop 120's network collapsed from 0.5465 to 0.5348 under the same stratification",
+  "     T4 FAIL -- the network does NOT survive; it is measuring how many regulators a gene has been assigned",
+  "",
+  "T5 FAME",
+  "     the gene's own publication count   AUC 0.5586   (loop 120: 0.5536)",
+  "     mean count of its regulators       AUC 0.5615",
+  "     CollecTRI integrated               AUC 0.5717",
+  "     T5 PASS -- the network beats fame",
+  "",
+  "T6 HEAD TO HEAD ON IDENTICAL GENES",
+  "     239 genes carried by BOTH networks",
+  "     existing network  AUC 0.5610",
+  "     CollecTRI         AUC 0.5717",
+  "     same genes, same statistic, same drive -- the only thing that varies is the network",
+  "     T6 PASS",
+  "",
+  "====================================================================================================",
+  "  T1  PASS",
+  "  T2  FAIL",
+  "  T3  FAIL",
+  "  T4  FAIL",
+  "  T5  PASS",
+  "  T6  PASS",
+  "  3/6",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 239/64516 (0.4%) by 'filtered', seed 13000, controls 6"
+ ]
+}

@@ -1,0 +1,179 @@
+{
+  "test": "adrn_programme_model",
+  "K_selected": 64,
+  "K_swept": [
+    16,
+    32,
+    64,
+    128,
+    256
+  ],
+  "summary": {
+    "cohort1": {
+      "means": {
+        "ridge": 0.2335,
+        "elastic_net": 0.21725000000000003,
+        "mlp": 0.22274999999999998,
+        "knn": 0.23349999999999999,
+        "gbm": 0.2285,
+        "sparse_poly": 0.22899999999999998,
+        "adrn": 0.22625,
+        "adrn_rotated": 0.23375,
+        "permuted_CONTROL": 0.12100000000000001,
+        "chan2a": 0.23374999999999996
+      },
+      "contrasts": {
+        "GATE best - chan2a": {
+          "arm": "adrn_rotated",
+          "gap": 2.220446049250313e-18,
+          "ci": [
+            -0.0062562499999999945,
+            0.006250000000000001
+          ]
+        },
+        "adrn - ridge": {
+          "arm": "adrn",
+          "gap": -0.0072499999999999995,
+          "ci": [
+            -0.014000000000000002,
+            -0.0007499999999999998
+          ]
+        },
+        "adrn - gbm": {
+          "arm": "adrn",
+          "gap": -0.00225,
+          "ci": [
+            -0.014750000000000001,
+            0.010000000000000004
+          ]
+        },
+        "adrn - adrn_rotated": {
+          "arm": "adrn",
+          "gap": -0.007500000000000002,
+          "ci": [
+            -0.01625,
+            0.000999999999999997
+          ]
+        },
+        "ridge - permuted": {
+          "arm": "ridge",
+          "gap": 0.1125,
+          "ci": [
+            0.085,
+            0.14075624999999992
+          ]
+        }
+      }
+    },
+    "_holdout": {
+      "means": {
+        "ridge": 0.28825,
+        "elastic_net": 0.26425,
+        "mlp": 0.28075000000000006,
+        "knn": 0.28575,
+        "gbm": 0.28924999999999995,
+        "sparse_poly": 0.285,
+        "adrn": 0.28775,
+        "adrn_rotated": 0.28375,
+        "permuted_CONTROL": 0.1475,
+        "chan2a": 0.28850000000000003
+      },
+      "contrasts": {
+        "GATE best - chan2a": {
+          "arm": "gbm",
+          "gap": 0.0007500000000000036,
+          "ci": [
+            -0.013256249999999995,
+            0.014750000000000006
+          ]
+        },
+        "adrn - ridge": {
+          "arm": "adrn",
+          "gap": -0.0004999999999999983,
+          "ci": [
+            -0.0072499999999999995,
+            0.006250000000000003
+          ]
+        },
+        "adrn - gbm": {
+          "arm": "adrn",
+          "gap": -0.0014999999999999992,
+          "ci": [
+            -0.014999999999999998,
+            0.012249999999999997
+          ]
+        },
+        "adrn - adrn_rotated": {
+          "arm": "adrn",
+          "gap": 0.004000000000000001,
+          "ci": [
+            -0.0037499999999999977,
+            0.011500000000000003
+          ]
+        },
+        "ridge - permuted": {
+          "arm": "ridge",
+          "gap": 0.14075,
+          "ci": [
+            0.11074374999999999,
+            0.17175
+          ]
+        }
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "RESPONSE-PROGRAMME MODEL: K sweep, S_i removal, signed basis, encoder bake-off",
+    "====================================================================================================",
+    "  K selected on a VALIDATION SLICE OF TRAINING, never on the sealed cohorts.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  channels 696; training 4,720",
+    "  removed T_j (target tide) and S_i (perturbation magnitude); residual sd 0.0766",
+    "\n  K sweep (ridge encoder, validation slice of training)",
+    "    K=  16  validation precision@20 0.2900  (n=60)",
+    "    K=  32  validation precision@20 0.3000  (n=60)",
+    "    K=  64  validation precision@20 0.3208  (n=60)",
+    "    K= 128  validation precision@20 0.3175  (n=60)",
+    "    K= 256  validation precision@20 0.3175  (n=60)",
+    "  -> K = 64 selected on validation",
+    "\n  9 encoders fitted at K=64",
+    "\n### cohort 1",
+    "  encoder               precision@20",
+    "  ridge                       0.2335",
+    "  elastic_net                 0.2173",
+    "  mlp                         0.2227",
+    "  knn                         0.2335",
+    "  gbm                         0.2285",
+    "  sparse_poly                 0.2290",
+    "  adrn                        0.2263",
+    "  adrn_rotated                0.2338",
+    "  permuted_CONTROL            0.1210",
+    "  chan2a (incumbent)          0.2337",
+    "\n  contrast                                gap                 95% CI  verdict",
+    "  GATE best - chan2a [adrn_rotated]   +0.0000     [-0.0063, +0.0063]  within noise",
+    "  adrn - ridge [adrn]                 -0.0072     [-0.0140, -0.0007]  RESOLVED",
+    "  adrn - gbm [adrn]                   -0.0022     [-0.0148, +0.0100]  within noise",
+    "  adrn - adrn_rotated [adrn]          -0.0075     [-0.0163, +0.0010]  within noise",
+    "  ridge - permuted [ridge]            +0.1125     [+0.0850, +0.1408]  RESOLVED",
+    "\n### cohort 2 (holdout)",
+    "  encoder               precision@20",
+    "  ridge                       0.2883",
+    "  elastic_net                 0.2642",
+    "  mlp                         0.2808",
+    "  knn                         0.2858",
+    "  gbm                         0.2892",
+    "  sparse_poly                 0.2850",
+    "  adrn                        0.2878",
+    "  adrn_rotated                0.2838",
+    "  permuted_CONTROL            0.1475",
+    "  chan2a (incumbent)          0.2885",
+    "\n  contrast                                gap                 95% CI  verdict",
+    "  GATE best - chan2a [gbm]            +0.0008     [-0.0133, +0.0148]  within noise",
+    "  adrn - ridge [adrn]                 -0.0005     [-0.0072, +0.0063]  within noise",
+    "  adrn - gbm [adrn]                   -0.0015     [-0.0150, +0.0122]  within noise",
+    "  adrn - adrn_rotated [adrn]          +0.0040     [-0.0037, +0.0115]  within noise",
+    "  ridge - permuted [ridge]            +0.1407     [+0.1107, +0.1718]  RESOLVED"
+  ]
+}
