@@ -4103,3 +4103,62 @@ GRAPHVALUE -- PRICING ALPHAGENOME'S LARGEST APPARENT USE, AND FINDING IT IS NOT 
     UNCHANGED: the joint regime, alphagenome.py A0. Single perturbations pin a median 15.6% of
     the per-gene joint degrees of freedom at k >= 2 and 0.00% at k >= 20; ENCODE has 74 perturbed
     regulators against whatdata's requirement of 128. That gate passed. This one did not.
+
+=================================================================================================
+PRODUCTJOIN -- WIRING THE ENCYCLOPEDIA TO REAL GENE PRODUCTS, AND THE CEILING GATE SAYING NO
+=================================================================================================
+  The encyclopedia tiers 16,492 genes by how far a mechanistic chain gets, and its metabolic tier
+  looked like the template: gene -> enzyme -> reaction. It is not one. generxn holds reaction
+  STRINGS for 2,549 genes; only 31 rows in the whole blob are structured. The audited model --
+  Recon3D, 10,600 reactions, six blocking gates in MODELAUDIT.txt -- is a separate file the
+  encyclopedia never references. This module joins them.
+
+  J0  PROVENANCE FIRST, AND IT CHANGED THE DESIGN. generxn writes 'chylomicron[e] -> chylomicron
+      remnant[e] + ...' (Human-GEM names, bracket compartments); Recon3D writes '10fthf_c' (BiGG).
+      DIFFERENT RECONSTRUCTIONS. Reaction identifiers cannot be transferred, so the join is at the
+      GENE level only and no cross-model reaction mapping is emitted. Checking this before
+      building is what stopped an authoritative-looking and wrong artifact.
+
+  J2  THE JOIN. 2,248 Recon3D gene records -> 1,865 distinct symbols (transcript splits collapsed:
+      314_AT1 / 314_AT2). 1,635 of 1,865 (87.7%) match an encyclopedia gene; 230 do not, and they
+      are real metabolic genes the encyclopedia lacks (ACAD10, ACMSD, ACPP, ACYP1, ADSL, ...).
+
+  J1  THE CEILING GATE, AND IT FAILED.
+        generxn genes (strings)                              2,549
+        Recon3D GPR genes present                            1,635
+        in BOTH                                              1,576
+        Recon3D ONLY -- genuinely new structured mechanism      59
+        generxn ONLY -- string, no Recon3D GPR                 973
+      59 against a predeclared bar of 200. FAIL: the join buys IDENTIFIERS, not coverage, and may
+      not be reported as a coverage gain. Recorded as a failed gate rather than reworded.
+
+      WHAT IT DOES BUY, WHICH IS NOT COVERAGE. Mechanism QUALITY. HK1's entry goes from the string
+      'ATP[c] + fructose[c] -> ...' to 12 Recon3D reactions across three named subsystems with
+      balanced stoichiometry: HEX1 {atp_c -1, glc__D_c -1, adp_c +1, g6p_c +1, h_c +1}. That is a
+      different kind of object, and the gate is right that it is not more genes.
+
+  J3  AND THE INFORMATIVE RESULT IS THE ONE NOBODY ASKED FOR. Two independently built human
+      metabolic reconstructions agree on 60.4% of the genes they call metabolic:
+        union 2,608   intersection 1,576   Jaccard 0.604
+      973 genes are metabolic in Human-GEM and carry no Recon3D GPR; 59 the reverse. So 'the
+      metabolic genes' is a 40%-disputed set, and any coverage fraction quoted against it inherits
+      that dispute. This bounds the denominator of every metabolic coverage claim in the record.
+
+  J4  THE UNIFIED OBJECT, outputs/gene_product_join.json, 16,492 genes, 2.4 MB:
+        tier                       genes       %
+        1 balanced reaction        1,635     9.9%
+        2 signed action            4,199    25.5%
+        3 complex only             2,074    12.6%
+        4 product only             8,184    49.6%
+        5 none                       400     2.4%
+      MECHANISTIC (1+2) 5,834 = 35.4%. Genes with BOTH a reaction and a signed action: 121.
+
+      AND THIS CORRECTS AN EARLIER NUMBER IN THIS SESSION. An ad-hoc tiering counted generxn's
+      2,549 STRINGS as tier 1 and reported 39.2% mechanistic. Counting only genes with a real
+      stoichiometric reaction gives 35.4%. The earlier figure counted display text as mechanism.
+
+  J5  LIMITS. A symbol match is not an identity proof, and the encyclopedia records no provenance
+      for its own symbols. Tier 1 means a balanced reaction EXISTS, not that it carries flux --
+      MODELAUDIT M2 found 60 internal reactions that do not conserve elements. Tier 2 inherits the
+      default-activation defect: about half the regulatory signs are a rule, not evidence, and the
+      'sig' layer (17,432 edges, 97.1% signed, 35% repression) is the trustworthy half.
