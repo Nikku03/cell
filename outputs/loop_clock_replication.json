@@ -1,0 +1,109 @@
+{
+ "test": "two-clock memory: boundary separated, gene holdout, opposite-direction replication",
+ "Y1": {
+  "n_admissible": 47,
+  "n_violations": 0
+ },
+ "interior_sse": {
+  "CONST": 1318.1275939941406,
+  "LIN": 457.8293177544218,
+  "EXP1": 326.11104996072925,
+  "EXP2": 258.90995040857405
+ },
+ "Y2": {
+  "improvement": 0.20606814629632342,
+  "status": "post-hoc"
+ },
+ "Y3": {
+  "real": 0.803577474905874,
+  "shuffled": -14.444450429770523,
+  "fraction": -17.97518083923701
+ },
+ "Y4": {
+  "tau1": [
+   8.046215811896236
+  ],
+  "tau2": [
+   1.9404969130602387,
+   5.251556721899637
+  ],
+  "sse_one": 199.08954571878945,
+  "sse_two": 139.3271974126251,
+  "improvement": 0.30017823432365265
+ },
+ "Y5": {
+  "sse_one": 191.44363339053155,
+  "sse_two": 170.27481326640282,
+  "improvement": 0.11057468848256669,
+  "n_genes": 1656,
+  "timepoints": [
+   0.0,
+   1.0,
+   4.0,
+   8.0,
+   12.0
+  ]
+ },
+ "gates": {
+  "Y1": true,
+  "Y2": true,
+  "Y3": true,
+  "Y4": true,
+  "Y5": true
+ },
+ "void": [],
+ "seconds": 15.772515296936035,
+ "log": [
+  "========================================================================================================",
+  "LOOP 249 -- THE TWO-CLOCK RESULT, SEPARATED FROM THE BOUNDARY AND TESTED WHERE IT IS BLIND",
+  "========================================================================================================",
+  "     The interior numbers below (EXP2 over EXP1 +20.6%) were computed diagnostically",
+  "     AFTER loop 248's X1 failed. They enter this record as a diagnostic with that status",
+  "     attached, not as a blind test. Y3, Y4 and Y5 are the blind ones.",
+  "     3,312 screened genes, withdrawal timepoints [np.float64(0.0), np.float64(0.5), np.float64(1.0), np.float64(2.0), np.float64(3.0), np.float64(4.0), np.float64(5.0), np.float64(6.0), np.float64(7.0), np.float64(8.0), np.float64(10.0), np.float64(12.0)] h",
+  "Y1 IS THE BOUNDARY DIAGNOSIS CORRECT?",
+  "     47 admissible taus; for each, basis(t=0) against its maximum over the",
+  "     other eleven timepoints. Counterexamples (basis(0) NOT the strict maximum): 0",
+  "     Y1 PASS -- basis(0) is the strict maximum for all 47 admissible taus, so t=0 is an extrapolation fold for EVERY decay model, not a convenience to drop",
+  "     interior folds: [0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0] h (t=0 and t=12 are the boundaries)",
+  "     leave-one-timepoint-out on interior folds, all four models ...",
+  "       CONST     1318.13   vs CONST +0.0%",
+  "       LIN        457.83   vs CONST +65.3%",
+  "       EXP1       326.11   vs CONST +75.3%",
+  "       EXP2       258.91   vs CONST +80.4%",
+  "Y2 THE INTERIOR COMPARISON -- POST-HOC, LABELLED AS SUCH",
+  "     EXP2 against EXP1 on interior folds: +20.6%",
+  "     THIS NUMBER WAS KNOWN BEFORE THIS FILE WAS WRITTEN. It is not evidence on its own.",
+  "     Y2 PASS (post-hoc) -- +20.6%, a value already seen when the gate was written; Y3-Y5 carry the evidence",
+  "Y3 DOES THE INTERIOR RESULT SURVIVE SCRAMBLING THE CLOCK?",
+  "     timepoints permuted: EXP2 improves -1444.4% against a real +80.4% (-1798%)",
+  "     Y3 PASS -- collapses to -1798% with the clock scrambled",
+  "Y4 DO THE TAUS TRANSFER TO GENES THEY WERE NOT FITTED ON?",
+  "     taus chosen on 1,656 genes: one clock 8.05 h; two clocks 1.94 h and 5.25 h (ratio 2.71)",
+  "     applied FROZEN to the other 1,656 genes: one clock 199.09, two clocks 139.33  (+30.0%)",
+  "     Y4 PASS -- taus fitted on other genes still help by +30.0%; two clocks are a property of the relaxation, not per-gene curve fitting",
+  "Y5 DOES IT REPLICATE IN THE OPPOSITE DIRECTION?",
+  "     ADDITION timecourse [np.float64(0.0), np.float64(1.0), np.float64(4.0), np.float64(8.0), np.float64(12.0)] h, 1,656 of the withdrawal-screened genes matched and above median time-variance",
+  "     interior folds there: [1.0, 4.0, 8.0] h",
+  "     taus FROZEN from withdrawal, amplitudes free: one clock 191.44, two clocks 170.27  (+11.1%)",
+  "     Y5 PASS -- the two timescales measured on withdrawal transfer to ADDITION at +11.1%",
+  "Y6 WHAT THIS CANNOT SHOW",
+  "     Dropping t=0 removes the only fold that could reveal a sub-30-minute component, so",
+  "     this loop is structurally blind to the fastest clock. No analysis recovers it from",
+  "     a grid whose second sample is at 30 minutes.",
+  "     Two exponentials beating one does not establish two physical memory pools. A",
+  "     stretched exponential, a power law, or a distribution of single rates across genes",
+  "     all produce the same improvement; Y4 tests transferability, not mechanism.",
+  "     Addition and withdrawal are not time-reverses, so a Y5 failure has a biological",
+  "     reading as well as a statistical one.",
+  "     Bulk RNA throughout: coherent relaxation and staggered switching give the same mean.",
+  "========================================================================================================",
+  "  Y1  PASS",
+  "  Y2  PASS",
+  "  Y3  PASS",
+  "  Y4  PASS",
+  "  Y5  PASS",
+  "  5/5   [16s]",
+  "========================================================================================================"
+ ]
+}

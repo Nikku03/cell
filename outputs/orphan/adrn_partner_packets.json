@@ -1,0 +1,143 @@
+{
+ "test": "adrn_named_partner_packets",
+ "n_knockouts": 745,
+ "n_channels": 696,
+ "blocks": 3,
+ "random_floor": 0.006065752759917505,
+ "means": {
+  "bag_named": 0.21568435030444358,
+  "bag_pca": 0.21790538498078335,
+  "bag_pca64": 0.21436034460422337,
+  "bag_perm": 0.15648475622921798,
+  "self_only": 0.19926015891523083,
+  "partner_random": 0.06165770609318996,
+  "conj_named": 0.17064678067107142,
+  "conj_shuffled": 0.1782259144103295,
+  "conj_random": 0.17948676426134647
+ },
+ "per_block": {
+  "bag_named": [
+   0.21084337349397594,
+   0.21024193548387096,
+   0.22596774193548388
+  ],
+  "bag_pca": [
+   0.21839357429718875,
+   0.21225806451612902,
+   0.22306451612903228
+  ],
+  "bag_pca64": [
+   0.21590361445783135,
+   0.20903225806451614,
+   0.2181451612903226
+  ],
+  "bag_perm": [
+   0.15534136546184743,
+   0.1603225806451613,
+   0.15379032258064515
+  ],
+  "self_only": [
+   0.1904417670682731,
+   0.1975,
+   0.20983870967741938
+  ],
+  "partner_random": [
+   0.06666666666666667,
+   0.05709677419354839,
+   0.06120967741935484
+  ],
+  "conj_named": [
+   0.1787951807228916,
+   0.1664516129032258,
+   0.1666935483870968
+  ],
+  "conj_shuffled": [
+   0.17991967871485945,
+   0.17193548387096774,
+   0.1828225806451613
+  ],
+  "conj_random": [
+   0.18184738955823293,
+   0.17975806451612905,
+   0.17685483870967744
+  ]
+ },
+ "contrasts": {
+  "bag_named - bag_pca64 (INGESTION)": {
+   "gap": 0.0013240057002202321,
+   "mde": 0.011158168716589346,
+   "resolved": false
+  },
+  "bag_named - bag_pca (rotation, nil)": {
+   "gap": -0.002221034676339754,
+   "mde": 0.009058149101192103,
+   "resolved": false
+  },
+  "bag_named - bag_perm (leakage)": {
+   "gap": 0.05919959407522563,
+   "mde": 0.020058125479013814,
+   "resolved": true
+  },
+  "bag_named - self_only (partners)": {
+   "gap": 0.016424191389212767,
+   "mde": 0.006648228091486741,
+   "resolved": true
+  },
+  "bag_named - partner_random (WHO)": {
+   "gap": 0.15402664421125364,
+   "mde": 0.0178729541640747,
+   "resolved": true
+  },
+  "conj_named - bag_named (MECHANISM)": {
+   "gap": -0.045037569633372194,
+   "mde": 0.02365251562662995,
+   "resolved": true
+  },
+  "conj_named - conj_shuffled (noise)": {
+   "gap": -0.007579133739258097,
+   "mde": 0.013368987250000656,
+   "resolved": false
+  },
+  "conj_named - conj_random (structure)": {
+   "gap": -0.008839983590275075,
+   "mde": 0.009098916805739394,
+   "resolved": false
+  }
+ },
+ "mean_grown": 14.666666666666666,
+ "log": [
+  "============================================================================================================",
+  "NAMED PER-PARTNER PACKETS -- does named ingestion beat the raw bag, and does ADRN beat its controls?",
+  "============================================================================================================",
+  "  PREDECLARED: success condition 3 passes only if bag_named beats bag_pca past the MDE.",
+  "  The ADRN mechanism passes only if conj_named beats bag_named AND conj_shuffled AND conj_random.",
+  "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+  "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+  "  named channel basis: 696 columns",
+  "  partner sources: codep 13,451 genes, complex 3,257, ppi 14,230",
+  "  usable knockouts: 745 (>= 5 specific movers AND >= 1 annotated partner); mean partners 12.28",
+  "  block 1/3: 249 held, 258 donors, 9 conjunctions grown",
+  "  block 2/3: 248 held, 254 donors, 18 conjunctions grown",
+  "  block 3/3: 248 held, 258 donors, 17 conjunctions grown",
+  "\n  random floor recall@50 = 0.0061; 3 blocks; mean conjunctions grown 14.7",
+  "\n  arm               recall@50       sd   per block",
+  "  bag_named            0.2157   0.0089   0.2108 0.2102 0.2260",
+  "  bag_pca              0.2179   0.0054   0.2184 0.2123 0.2231",
+  "  bag_pca64            0.2144   0.0047   0.2159 0.2090 0.2181",
+  "  bag_perm             0.1565   0.0034   0.1553 0.1603 0.1538",
+  "  self_only            0.1993   0.0098   0.1904 0.1975 0.2098",
+  "  partner_random       0.0617   0.0048   0.0667 0.0571 0.0612",
+  "  conj_named           0.1706   0.0071   0.1788 0.1665 0.1667",
+  "  conj_shuffled        0.1782   0.0056   0.1799 0.1719 0.1828",
+  "  conj_random          0.1795   0.0025   0.1818 0.1798 0.1769",
+  "\n  contrast                                 gap      MDE  verdict",
+  "  bag_named - bag_pca64 (INGESTION)    +0.0013   0.0112  within noise",
+  "  bag_named - bag_pca (rotation, nil)   -0.0022   0.0091  within noise",
+  "  bag_named - bag_perm (leakage)       +0.0592   0.0201  RESOLVED",
+  "  bag_named - self_only (partners)     +0.0164   0.0066  RESOLVED",
+  "  bag_named - partner_random (WHO)     +0.1540   0.0179  RESOLVED",
+  "  conj_named - bag_named (MECHANISM)   -0.0450   0.0237  RESOLVED",
+  "  conj_named - conj_shuffled (noise)   -0.0076   0.0134  within noise",
+  "  conj_named - conj_random (structure)   -0.0088   0.0091  within noise"
+ ]
+}

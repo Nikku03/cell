@@ -1,0 +1,595 @@
+{
+ "model": "v4-context-neighbours-v1",
+ "question": "CELLFORMER4.md sec 19 -- F_context takes N_c(p), a partner set that DEPENDS ON THE CELL. Every prior context test used cell-conditioned NODE FEATURES over a cell-INVARIANT neighbour set and returned 0/7. Does choosing DIFFERENT PARTNERS per cell help? Never tested.",
+ "task": {
+  "source": "colab/dense_context.py target and decomposition, unchanged",
+  "data": "dense_response.npz -- 4 cells x 1,763 perturbations x 6,550 genes, 100% DENSE (NOT the nlz_* benches, which are 3.5% dense and whose zeros mean NOT RECORDED)",
+  "target": "delta = Y - mean over the THREE TRAINING cells; zero-mean by construction, so no cell-blind feature can beat 0",
+  "primary_metric": "Pearson r between predicted and true held-out-cell delta",
+  "secondary_metric": "sign accuracy on the large-|delta| half",
+  "held_out_cell_inputs": "baseline transcriptome only (pooled non-targeting controls); its responses are never an input, never fit mu, never standardise",
+  "n_cells": 4,
+  "n_perturbations": 1763,
+  "n_genes": 6521,
+  "sampled_pairs_per_fold": 20000,
+  "only_thing_that_varies": "which partners enter the 5-column neighbour block; the 7-column shared block is byte-identical across arms"
+ },
+ "partner_sets": {
+  "source": "outputs/orphan/v4_relations.parquet",
+  "max_per_relation_type": 8,
+  "max_total": 40,
+  "perturbations_with_partners": 1711,
+  "degree_median": 25.0,
+  "type_mix": {
+   "codependency": 8779,
+   "complex": 8987,
+   "ppi": 11357,
+   "regulatory": 8988,
+   "signalling": 1542
+  },
+  "gate": "drop partners below the 25th percentile of baseline expression in cell c",
+  "gate_thresholds_per_line": {
+   "HepG2": 4.432619094848633,
+   "Jurkat": 4.8491926193237305,
+   "K562": 4.563923358917236,
+   "RPE1": 4.421009540557861
+  },
+  "swap_map": {
+   "HepG2": "Jurkat",
+   "Jurkat": "K562",
+   "K562": "RPE1",
+   "RPE1": "HepG2"
+  },
+  "cell_context_coverage_perturbations": {
+   "HepG2": 704,
+   "Jurkat": 110,
+   "K562": 1062,
+   "RPE1": 0
+  },
+  "empty_gated_sets_per_arm": {
+   "1 cell-invariant N(p)": 208,
+   "2 cell-gated N_c(p) ABSOLUTE": 224,
+   "3 cell-gated N_c(p) DIFFERENTIAL": 295,
+   "4 cell-context EVIDENCE preference": 208,
+   "5 SWAPPED-cell gating (COUNTERFACTUAL)": 224,
+   "6 random gating, matched retention (CONTROL)": 224,
+   "7 degree-matched rewiring (CONTROL)": 216,
+   "8 random partners (CONTROL)": 222,
+   "9 wrong-perturbation set (identity CONTROL)": 224
+  }
+ },
+ "how_cell_specific_is_the_set": {
+  "1 cell-invariant N(p)": {
+   "cross_cell_jaccard": 1.0,
+   "mean_retention": 0.8738143903024256
+  },
+  "2 cell-gated N_c(p) ABSOLUTE": {
+   "cross_cell_jaccard": 0.8598423724549732,
+   "mean_retention": 0.7333685064212994
+  },
+  "3 cell-gated N_c(p) DIFFERENTIAL": {
+   "cross_cell_jaccard": 0.24783842722819868,
+   "mean_retention": 0.42392990890558513
+  },
+  "4 cell-context EVIDENCE preference": {
+   "cross_cell_jaccard": 0.5883098158547295,
+   "mean_retention": 0.6525914501637872
+  },
+  "6 random gating, matched retention (CONTROL)": {
+   "cross_cell_jaccard": 0.765830762665695,
+   "mean_retention": 0.7435472635132693
+  }
+ },
+ "how_cell_specific_is_the_set_note": "cross-cell Jaccard measured on the DATA before any model. The ABSOLUTE percentile gate named in the specification produces sets that are ~85% identical across the four lines, because the four baseline transcriptomes correlate at r 0.80-0.88. That bounds what any model could have extracted from this construction and is the single most important number in this file.",
+ "arms": {
+  "Z zero contrast (0 param)": {
+   "r_mean": 0.0,
+   "r_sd_across_cells": 0.0,
+   "r_per_cell": {
+    "HepG2": 0.0,
+    "Jurkat": 0.0,
+    "K562": 0.0,
+    "RPE1": 0.0
+   },
+   "sign_mean": 0.5,
+   "sign_sd_across_cells": 0.0,
+   "sign_per_cell": {
+    "HepG2": 0.5,
+    "Jurkat": 0.5,
+    "K562": 0.5,
+    "RPE1": 0.5
+   }
+  },
+  "NC nearest-cell copy (0 param)": {
+   "r_mean": 0.057362385150821926,
+   "r_sd_across_cells": 0.04718886105549671,
+   "r_per_cell": {
+    "HepG2": 0.08706701850637809,
+    "Jurkat": -0.00482669247562111,
+    "K562": 0.04711970928254476,
+    "RPE1": 0.10008950528998595
+   },
+   "sign_mean": 0.527725,
+   "sign_sd_across_cells": 0.01375096966277896,
+   "sign_per_cell": {
+    "HepG2": 0.5326,
+    "Jurkat": 0.5126,
+    "K562": 0.5214,
+    "RPE1": 0.5443
+   }
+  },
+  "LS least squares on arm 2's columns (0 param)": {
+   "r_mean": 0.00541281819416916,
+   "r_sd_across_cells": 0.19371682404444016,
+   "r_per_cell": {
+    "HepG2": 0.11287705215902462,
+    "Jurkat": -0.27366643632310805,
+    "K562": 0.026339768090489258,
+    "RPE1": 0.15610088885027082
+   },
+   "sign_mean": 0.51205,
+   "sign_sd_across_cells": 0.04896648513694512,
+   "sign_per_cell": {
+    "HepG2": 0.5524,
+    "Jurkat": 0.4452,
+    "K562": 0.506,
+    "RPE1": 0.5446
+   }
+  },
+  "1 cell-invariant N(p)": {
+   "r_mean": 0.013787687694662504,
+   "r_sd_across_cells": 0.15872693856673983,
+   "r_per_cell": {
+    "HepG2": 0.1330688707308201,
+    "Jurkat": -0.20208906344743907,
+    "K562": -0.008930719650100933,
+    "RPE1": 0.13310166314536992
+   },
+   "sign_mean": 0.50545,
+   "sign_sd_across_cells": 0.026831511325305576,
+   "sign_per_cell": {
+    "HepG2": 0.536,
+    "Jurkat": 0.4886,
+    "K562": 0.478,
+    "RPE1": 0.5192
+   }
+  },
+  "2 cell-gated N_c(p) ABSOLUTE": {
+   "r_mean": 0.014998127542869765,
+   "r_sd_across_cells": 0.1477441827278851,
+   "r_per_cell": {
+    "HepG2": 0.1384624184044831,
+    "Jurkat": -0.19104561816227378,
+    "K562": 0.009501686354147823,
+    "RPE1": 0.10307402357512192
+   },
+   "sign_mean": 0.5032749999999999,
+   "sign_sd_across_cells": 0.030594266892126472,
+   "sign_per_cell": {
+    "HepG2": 0.5425,
+    "Jurkat": 0.4716,
+    "K562": 0.4886,
+    "RPE1": 0.5104
+   }
+  },
+  "3 cell-gated N_c(p) DIFFERENTIAL": {
+   "r_mean": 0.010560316528969198,
+   "r_sd_across_cells": 0.13247853409747834,
+   "r_per_cell": {
+    "HepG2": 0.07799306345702478,
+    "Jurkat": -0.18248826166682194,
+    "K562": 0.034981459990457014,
+    "RPE1": 0.11175500433521694
+   },
+   "sign_mean": 0.503225,
+   "sign_sd_across_cells": 0.0064520668523091445,
+   "sign_per_cell": {
+    "HepG2": 0.5048,
+    "Jurkat": 0.4937,
+    "K562": 0.5074,
+    "RPE1": 0.507
+   }
+  },
+  "4 cell-context EVIDENCE preference": {
+   "r_mean": -0.030192261388041552,
+   "r_sd_across_cells": 0.10873382359173123,
+   "r_per_cell": {
+    "HepG2": -0.002601233117043851,
+    "Jurkat": -0.16197386717320375,
+    "K562": -0.05527740568525984,
+    "RPE1": 0.09908346042334122
+   },
+   "sign_mean": 0.471475,
+   "sign_sd_across_cells": 0.023581966980442202,
+   "sign_per_cell": {
+    "HepG2": 0.4902,
+    "Jurkat": 0.4373,
+    "K562": 0.4753,
+    "RPE1": 0.4831
+   }
+  },
+  "5 SWAPPED-cell gating (COUNTERFACTUAL)": {
+   "r_mean": 0.014051607567158973,
+   "r_sd_across_cells": 0.14062533419390305,
+   "r_per_cell": {
+    "HepG2": 0.12753449778574244,
+    "Jurkat": -0.18152735736659034,
+    "K562": 0.005971886922254672,
+    "RPE1": 0.10422740292722912
+   },
+   "sign_mean": 0.5061249999999999,
+   "sign_sd_across_cells": 0.012976998882638448,
+   "sign_per_cell": {
+    "HepG2": 0.5225,
+    "Jurkat": 0.4969,
+    "K562": 0.4946,
+    "RPE1": 0.5105
+   }
+  },
+  "6 random gating, matched retention (CONTROL)": {
+   "r_mean": 0.013971684230642531,
+   "r_sd_across_cells": 0.16076241865604302,
+   "r_per_cell": {
+    "HepG2": 0.12809322678959015,
+    "Jurkat": -0.20325767368591816,
+    "K562": -0.0119525809705234,
+    "RPE1": 0.14300376478942153
+   },
+   "sign_mean": 0.501225,
+   "sign_sd_across_cells": 0.031839113785824276,
+   "sign_per_cell": {
+    "HepG2": 0.5341,
+    "Jurkat": 0.4701,
+    "K562": 0.4781,
+    "RPE1": 0.5226
+   }
+  },
+  "7 degree-matched rewiring (CONTROL)": {
+   "r_mean": -0.020148544215722975,
+   "r_sd_across_cells": 0.12568550767680647,
+   "r_per_cell": {
+    "HepG2": 0.10393542002880032,
+    "Jurkat": -0.19341635452140424,
+    "K562": -0.015081616607476506,
+    "RPE1": 0.023968374237188523
+   },
+   "sign_mean": 0.48714999999999997,
+   "sign_sd_across_cells": 0.023782136153003605,
+   "sign_per_cell": {
+    "HepG2": 0.5179,
+    "Jurkat": 0.4614,
+    "K562": 0.4785,
+    "RPE1": 0.4908
+   }
+  },
+  "8 random partners (CONTROL)": {
+   "r_mean": 0.005627734435205126,
+   "r_sd_across_cells": 0.10767949841475993,
+   "r_per_cell": {
+    "HepG2": 0.11300455960245998,
+    "Jurkat": -0.1414107279385625,
+    "K562": 0.0048671907307940515,
+    "RPE1": 0.04604991534612897
+   },
+   "sign_mean": 0.495825,
+   "sign_sd_across_cells": 0.0320354361085762,
+   "sign_per_cell": {
+    "HepG2": 0.5332,
+    "Jurkat": 0.4583,
+    "K562": 0.4842,
+    "RPE1": 0.5076
+   }
+  },
+  "9 wrong-perturbation set (identity CONTROL)": {
+   "r_mean": -0.037768753030068714,
+   "r_sd_across_cells": 0.1121522747557893,
+   "r_per_cell": {
+    "HepG2": 0.03611480470071784,
+    "Jurkat": -0.2045221416642118,
+    "K562": -0.00018038291420148414,
+    "RPE1": 0.017512707757420563
+   },
+   "sign_mean": 0.48450000000000004,
+   "sign_sd_across_cells": 0.021146158043483933,
+   "sign_per_cell": {
+    "HepG2": 0.503,
+    "Jurkat": 0.4542,
+    "K562": 0.4928,
+    "RPE1": 0.488
+   }
+  },
+  "10 no neighbourhood": {
+   "r_mean": 0.04041474203083262,
+   "r_sd_across_cells": 0.09627533226203908,
+   "r_per_cell": {
+    "HepG2": 0.051147877718239594,
+    "Jurkat": -0.0924605228201414,
+    "K562": 0.06559407541103894,
+    "RPE1": 0.13737753781419335
+   },
+   "sign_mean": 0.503275,
+   "sign_sd_across_cells": 0.024916443700228705,
+   "sign_per_cell": {
+    "HepG2": 0.4852,
+    "Jurkat": 0.4785,
+    "K562": 0.5261,
+    "RPE1": 0.5233
+   }
+  },
+  "11 test-time neighbour-block SWAP (COUNTERFACTUAL)": {
+   "r_mean": -0.04799379947297531,
+   "r_sd_across_cells": 0.08671628195711036,
+   "r_per_cell": {
+    "HepG2": -0.07213068523877555,
+    "Jurkat": -0.11398824967196665,
+    "K562": -0.0852672324586423,
+    "RPE1": 0.0794109694774833
+   },
+   "sign_mean": 0.48734999999999995,
+   "sign_sd_across_cells": 0.029851242296873796,
+   "sign_per_cell": {
+    "HepG2": 0.4842,
+    "Jurkat": 0.5057,
+    "K562": 0.4465,
+    "RPE1": 0.513
+   }
+  }
+ },
+ "unit_of_replication": "a HELD-OUT CELL LINE. The per-cell dicts above hold one value per held-out cell (n = 4), NOT model-init seeds. Gaps are formed per cell FIRST and then averaged, because pooling arms and differencing the pooled values is a different quantity and hid a sign flip in dense_context.py.",
+ "mde": {
+  "value": 0.1867483629231026,
+  "convention": "3*sd/sqrt(n)",
+  "n": 4,
+  "n_counts": "held-out cell lines",
+  "pooled_across_cell_sd": 0.12449890861540173,
+  "sign_mde": 0.03769901490236959,
+  "pooled_across_cell_sd_sign": 0.025132676601579727,
+  "paired_mde_per_gap": {
+   "G0_invariant_minus_none": 0.12688290106090325,
+   "G1_gated_minus_invariant": 0.0322482570579736,
+   "differential_minus_invariant": 0.06572574633589418,
+   "cellcontext_minus_invariant": 0.10811076191048331,
+   "G2_gated_minus_swapped_cell": 0.01285173836468408,
+   "G3_gated_minus_random_gating": 0.04159726473500512,
+   "G4_gated_minus_degree_matched": 0.04836286597100832,
+   "gated_minus_random_partners": 0.06727036106263512,
+   "gated_minus_wrong_perturbation": 0.07211322974010376,
+   "gated_minus_testtime_nb_swap": 0.18156909834739093,
+   "G5_best_learned_minus_best_free": 0.08464343760695302
+  },
+  "init_seed_sd_within_fold_DO_NOT_GRADE_ON_THIS": null,
+  "init_seed_mde_DO_NOT_GRADE_ON_THIS": null,
+  "power_note": "n = 4 gives the cross-cell sd 3 degrees of freedom, so the MDE is itself poorly estimated. CELLFORMER4.md sec 18 estimates ~30 contexts are needed at 3 sigma for an effect of this size. A NULL HERE IS UNDERPOWERED AND IS NOT A REFUTATION."
+ },
+ "gates": {
+  "G0 PRECONDITION  the neighbour channel carries signal at all (arm 1 > arm 10)": false,
+  "G1 PRIMARY       cell-gated N_c(p) beats cell-invariant N(p)": false,
+  "G2 COUNTERFACTUAL gated beats SWAPPED-cell gating": false,
+  "G3 RETENTION     gated beats random gating at matched retention": false,
+  "G4 WIRING        gated beats degree-matched configuration-model rewiring": false,
+  "G5 FREE          the best learned arm beats the best 0-parameter arm": false,
+  "G6 EVERY-CELL    the primary gap is positive in ALL four held-out cells": false,
+  "G7 AGREE         sign accuracy reaches the same verdict as r on the primary gap": true
+ },
+ "gates_passed": 1,
+ "n_c_p_credited": false,
+ "credit_rule": "N_c(p) is credited only if G0, G1, G2 and G3 all pass",
+ "gaps": {
+  "G0_invariant_minus_no_neighbourhood": -0.026627054336170113,
+  "G1_gated_minus_invariant_PRIMARY": 0.0012104398482072586,
+  "G1_per_cell": {
+   "HepG2": 0.005393547673662985,
+   "Jurkat": 0.011043445285165293,
+   "K562": 0.018432406004248756,
+   "RPE1": -0.030027639570247996
+  },
+  "differential_minus_invariant_SECONDARY": -0.003227371165693306,
+  "differential_per_cell": {
+   "HepG2": -0.055075807273795324,
+   "Jurkat": 0.019600801780617128,
+   "K562": 0.04391217964055795,
+   "RPE1": -0.021346658810152977
+  },
+  "cellcontext_minus_invariant_ASYMMETRIC": -0.043979949082704056,
+  "cellcontext_per_cell": {
+   "HepG2": -0.13567010384786396,
+   "Jurkat": 0.04011519627423532,
+   "K562": -0.0463466860351589,
+   "RPE1": -0.0340182027220287
+  },
+  "G2_gated_minus_swapped_cell_gating": 0.0009465199757107909,
+  "G3_gated_minus_random_gating_matched_retention": 0.001026443312227232,
+  "G4_gated_minus_degree_matched_rewiring": 0.03514667175859274,
+  "gated_minus_random_partners": 0.009370393107664639,
+  "gated_minus_wrong_perturbation_identity": 0.05276688057293848,
+  "gated_minus_testtime_neighbour_block_swap": 0.06299192701584506,
+  "G5_best_learned_minus_best_zero_parameter": -0.0169476431199893,
+  "best_learned_arm": "10 no neighbourhood",
+  "best_zero_parameter_arm": "NC nearest-cell copy (0 param)"
+ },
+ "controls_reproducing_the_effect": {
+  "arm 5 SWAPPED-cell gating reproduces this fraction of arm 2's gain over cell-invariant N(p)": 0.21803633851558304,
+  "arm 6 random gating at matched retention reproduces this fraction of the same gain": 0.15200799631021528,
+  "arm 7 degree-matched rewiring reproduces this fraction of the same gain": -28.036281158991322,
+  "arm 10 NO NEIGHBOURHOOD AT ALL reproduces this fraction of arm 2's r": 2.694652510142583,
+  "the 0-parameter nearest-cell copy reproduces this fraction of arm 2's r": 3.824636441239792
+ },
+ "controls_reproducing_the_effect_are_meaningful": false,
+ "controls_reproducing_the_effect_note": "fractions of arm 2's raw gain over cell-invariant N(p). If that denominator is itself below the paired MDE the ratios are meaningless and the flag above is false.",
+ "nearest_training_cell_by_baseline": {
+  "HepG2": "RPE1",
+  "Jurkat": "K562",
+  "K562": "Jurkat",
+  "RPE1": "HepG2"
+ },
+ "circularity_check": "partner sets come from v4_relations.parquet (IntAct PPI, huMAP2/ComplexPortal co-membership, DepMap co-essentiality, UniBind ChIP-seq); the gate comes from pooled non-targeting-control baseline expression; the scored target is Perturb-seq response z per line. No feature is scored on the dataset it derives from. mu, the feature centring and the standardisation are refit on the three TRAINING cells inside every fold. DECLARED CONFOUND: baselines and responses come from the SAME four deposits, so expression level and per-cell measurement noise are not independent -- see limits.",
+ "config": {
+  "pctl": 25.0,
+  "epochs": 2,
+  "seeds": 1,
+  "n_sample": 20000,
+  "max_per_type": 8,
+  "max_nb": 40,
+  "zclip": 10.0
+ },
+ "smoke": true,
+ "limits": [
+  "n = 4 CELL LINES. This is the binding constraint and it is not architectural. The cross-cell sd has 3 degrees of freedom, the arm-level MDE is 0.1867, and CELLFORMER4.md sec 18 puts the contexts needed at ~30. A NULL HERE IS UNDERPOWERED AND DOES NOT REFUTE N_c(p). What would falsify the null is more independent cell contexts, not more perturbations or genes",
+  "WHAT WOULD FALSIFY A POSITIVE RESULT: if arm 5 (swapped-cell gating) or arm 6 (random gating at matched retention) reproduces the gap, the gain is a set-size or set-sparsification effect and has nothing to do with the cell. Both are run and both are reported next to the primary",
+  "THE GATE NAMED IN THE SPECIFICATION BARELY CONDITIONS ON THE CELL. Cross-cell Jaccard of the absolute-percentile sets is 0.860: the four baseline transcriptomes correlate at r 0.80-0.88 so 'expressed here' is very nearly 'expressed everywhere'. A null on arm 2 is therefore partly a statement about the CONSTRUCTION, not about the hypothesis. Arm 3's differential gate (Jaccard 0.248) is the version that actually varies and was declared secondary in advance; a positive there needs its own confirmatory run",
+  "CONFOUNDED: baseline profiles and response z-scores come from the SAME four Perturb-seq deposits, so a gene's expression level in cell c and the noise on its z in cell c are not independent. The gate acts on PARTNER genes while the target is at a response gene, so this is not a direct leak, but a gating variable correlated with per-cell noise structure remains a live alternative explanation for any positive result",
+  "the cell_context evidence route (arm 4) is not comparable across cells: K562 and HepG2 have hundreds to a thousand line-matched perturbations, Jurkat a few hundred, RPE1 exactly zero. For RPE1 arm 4 IS arm 1 by construction, so its cross-cell mean mixes two different estimands and only its per-cell values should be read",
+  "context is BASELINE RNA only. Chromatin accessibility and protein state are absent for these four lines, so a null is a null for RNA-defined partner selection, not for cell state",
+  "the held-out cell's delta is measured against three cells that exclude it, so it carries a systematic offset no model trained on the other three can learn. That caps the achievable r for every arm equally and is why absolute r values here are small",
+  "the perturbation set is the ~1,763 knockouts screened in all four lines, a biased subset: perturbations chosen to be screened everywhere are not a random sample of perturbations",
+  "K562 is not re-derived while the other three are pseudobulked in dense_response.py, so the processing asymmetry lies along the cell axis, which is the axis being measured",
+  "the neighbour block is five summary scalars (mean, deviation, mu-interaction, spread, retention), not a learned set encoder. A richer aggregator could read structure these five numbers discard; what is tested here is whether CHANGING THE MEMBERSHIP of the set moves a fixed aggregator, which is the cheapest honest version of the question and not the only one",
+  "the gate percentile is a free parameter fixed at 25 before the run and not tuned. Sweeping it would be a multiple-comparison problem unless the sweep is itself predeclared and the MDE adjusted; it was not swept here"
+ ],
+ "verdict": "SMOKE RUN (20,000 sampled (perturbation, gene) pairs per fold, 2 epochs, 1 seed) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. At this sample size every arm sits inside its own noise, the arms cannot be separated, the gate outcomes below are arbitrary, and no sentence in this paragraph should be quoted as a finding. Rerun with V4C_SMOKE unset. N_c(p) IS NOT CREDITED (1/8 predeclared gates): on a 100%-dense 4-cell x 1,763-perturbation x 6,521-gene rectangle, with the shared response frozen out by construction so that no cell-blind feature can beat zero, and with the seven-column shared block held IDENTICAL across arms so that ONLY THE MEMBERSHIP OF THE PARTNER SET VARIES, the cell-gated partner set N_c(p) reaches r +0.0150 against the cell-invariant N(p)'s +0.0138 -- a paired per-cell gap of +0.0012 against a cross-cell minimum detectable increment of 0.0322 (3*sd/sqrt(n), n = 4 HELD-OUT CELL LINES; the model-init-seed floor, not estimable at this seed count, measures optimiser noise inside a fixed cell set and is deliberately NOT what this is graded on). THE PRECONDITION COMES FIRST: the cell-invariant neighbour block beats having no neighbourhood at all by -0.0266 against a 0.1269 floor, so the neighbour channel IS NOT DETECTED AS CARRYING ANY SIGNAL, which means every gating comparison below is a comparison between variants of a channel that contributes nothing and NO VERDICT ABOUT CELL-CONDITIONING CAN BE DRAWN FROM THEM. THE COUNTERFACTUAL, which accuracy alone cannot supply: gating the set with ANOTHER cell's expression while still reading features in the correct cell changes r by +0.0009 against a 0.0129 floor, and handing the trained network another cell's entire neighbour block at test time changes it by +0.0630 -- a gap at or below the floor means the cell-conditioned partner set is IGNORED rather than useless, and those two are not distinguishable by accuracy. Matched controls: random gating at the same retention rate +0.0010, a degree-matched configuration-model rewiring that preserves every per-type degree and every partner multiplicity +0.0351, count- and type-matched random partners +0.0094, and the wrong-perturbation identity control +0.0528. THE CHEAPEST ARMS ARE REPORTED NEXT TO THE MODEL: the best 0-parameter arm is 'NC nearest-cell copy (0 param)' at r +0.0574 against the best learned arm '10 no neighbourhood' at +0.0404, a gap of -0.0169 against a 0.0846 floor -- A ZERO-PARAMETER BASELINE MATCHES OR BEATS EVERY LEARNED ARM, WHICH IS THE HEADLINE AND NOT A FOOTNOTE. A STRUCTURAL FACT ABOUT THE DATA THAT BOUNDS WHAT THIS COULD EVER HAVE SHOWN, measured before any model was fit: the four baseline transcriptomes correlate at r 0.80-0.88, so the ABSOLUTE percentile gate named in the specification keeps sets whose mean cross-cell Jaccard is 0.860 at retention 0.733 -- N_c(p) under that gate is barely a function of c. The DIFFERENTIAL gate, declared before the run as SECONDARY, reaches a Jaccard of 0.248 and is the only construction here whose sets genuinely differ between cells; its gap over cell-invariant N(p) is -0.0032 against a 0.0657 floor, reported as a hypothesis for a future run and NOT as a passed gate, because the primary was fixed in advance. The cell_context evidence route is unusable as a cross-cell comparison and is reported per cell only: K562 1,062 perturbations carry a line-matched edge, HepG2 704, Jurkat 110 and RPE1 0, so for RPE1 that arm IS the cell-invariant arm by construction. FINALLY AND DECISIVELY FOR HOW THIS SHOULD BE READ: n = 4 cell lines gives the cross-cell sd three degrees of freedom and an arm-level MDE of 0.1867. CELLFORMER4.md section 18 already estimated that roughly 30 cell contexts are needed to resolve an effect of the size this branch plausibly has. A NULL HERE IS THEREFORE UNDERPOWERED AND IS NOT A REFUTATION OF N_c(p); it says that if the cell-conditioned partner set buys anything it buys less than four cells can see, and the binding constraint is the number of independent cell contexts, which cannot be recovered from disk. All effect sizes quoted are RAW held-out values; the controls establish significance and attribution and no arm is reported net of a control.",
+ "log": [
+  "============================================================================================================",
+  "V4 SECTION 19 -- N_c(p), the CELL-CONDITIONED PARTNER SET (never tested)",
+  "============================================================================================================",
+  "  GATE, declared before the run: N_c(p) is credited only if G0 (the neighbour channel carries",
+  "  signal at all), G1 (gated beats cell-invariant), G2 (gated beats SWAPPED-cell gating) and G3",
+  "  (gated beats random gating at matched retention) all pass, each against a PAIRED MDE =",
+  "  3*sd/sqrt(n) with n = 4 HELD-OUT CELL LINES. At n = 4 the MDE is large: a null here is",
+  "  UNDERPOWERED, not a refutation. Model-init seeds are reported and are NOT graded on.",
+  "\n  *** V4C_SMOKE=1 -- PLUMBING CHECK ONLY. Nothing below is a result. ***",
+  "\n  dense rectangle: 4 cells x 1,763 perturbations x 6,550 genes, 100% DENSE (['HepG2', 'Jurkat', 'K562', 'RPE1'])",
+  "  NOT the nlz_* benches: those are 3.5% dense and their zeros mean NOT RECORDED, never a target",
+  "  dropped 29 genes with an undefined robust z; clipped 12,423 values (0.0270%) at |z| = 10 -- max |z| was 357, which is an artefact of a near-zero MAD, not a 357-sigma biological response",
+  "  genes with a control-only baseline in all 4 lines: 6,521",
+  "  baseline source: pooled NON-TARGETING CONTROL cells (response-free by construction); the held-out cell contributes THIS and nothing else",
+  "  perturbations whose target gene has no baseline here: 295/1,763 (given the line median)",
+  "\n  N(p) from v4_relations.parquet, <= 8 partners per relation type, <= 40 total, ranked by edge confidence",
+  "    perturbations with >= 1 partner carrying a baseline: 1,711/1,763; degree median 25  q25 18  q75 29  max 40",
+  "    type mix of the kept edges: codependency 8,779  complex 8,987  ppi 11,357  regulatory 8,988  signalling 1,542",
+  "    perturbations with >= 1 partner whose edge names this line in `cell_context`: HepG2 704  Jurkat 110  K562 1,062  RPE1 0",
+  "    ^ ASYMMETRIC BY A LOT. For any line at 0 the evidence-preference arm IS the cell-invariant arm by construction, so that arm is not comparable across cells and is reported per cell for exactly that reason.",
+  "\n  THE GATE. N_c(p) = partners of p whose baseline expression in cell c clears the 25th percentile",
+  "    per-line thresholds: HepG2 4.43  Jurkat 4.85  K562 4.56  RPE1 4.42",
+  "    swapped-cell gating maps HepG2<-Jurkat, Jurkat<-K562, K562<-RPE1, RPE1<-HepG2",
+  "\n  HOW CELL-SPECIFIC IS N_c(p) REALLY? (a property of the DATA, measured before any model)",
+  "    1 cell-invariant N(p)                          retention 0.874   cross-cell Jaccard 1.000",
+  "    2 cell-gated N_c(p) ABSOLUTE                   retention 0.733   cross-cell Jaccard 0.860",
+  "    3 cell-gated N_c(p) DIFFERENTIAL               retention 0.424   cross-cell Jaccard 0.248",
+  "    4 cell-context EVIDENCE preference             retention 0.653   cross-cell Jaccard 0.588",
+  "    6 random gating, matched retention (CONTROL)   retention 0.744   cross-cell Jaccard 0.766",
+  "    ^ the four baseline transcriptomes correlate at r 0.80-0.88, so an ABSOLUTE percentile gate keeps nearly the same set in every cell. Only the DIFFERENTIAL gate makes N_c(p) genuinely cell-specific, and that asymmetry is a limit of the data, not of the model.",
+  "    empty gated sets falling back to the line's gene-universe mean, per arm: 1:208  2:224  3:295  4:208  5:224  6:224  7:216  8:222  9:224",
+  "\n  HELD-OUT CELL: HepG2  (train on Jurkat, K562, RPE1)",
+  "    Z zero contrast (0 param)                            r +0.0000   sign 0.5000",
+  "    NC nearest-cell copy (0 param)                       r +0.0871   sign 0.5326",
+  "    1 cell-invariant N(p)                                r +0.1331   sign 0.5360",
+  "    2 cell-gated N_c(p) ABSOLUTE                         r +0.1385   sign 0.5425",
+  "    11 test-time neighbour-block SWAP (COUNTERFACTUAL)   r -0.0721   sign 0.4842",
+  "    3 cell-gated N_c(p) DIFFERENTIAL                     r +0.0780   sign 0.5048",
+  "    4 cell-context EVIDENCE preference                   r -0.0026   sign 0.4902",
+  "    5 SWAPPED-cell gating (COUNTERFACTUAL)               r +0.1275   sign 0.5225",
+  "    6 random gating, matched retention (CONTROL)         r +0.1281   sign 0.5341",
+  "    7 degree-matched rewiring (CONTROL)                  r +0.1039   sign 0.5179",
+  "    8 random partners (CONTROL)                          r +0.1130   sign 0.5332",
+  "    9 wrong-perturbation set (identity CONTROL)          r +0.0361   sign 0.5030",
+  "    10 no neighbourhood                                  r +0.0511   sign 0.4852",
+  "    LS least squares on arm 2's columns (0 param)        r +0.1129   sign 0.5524",
+  "\n  HELD-OUT CELL: Jurkat  (train on HepG2, K562, RPE1)",
+  "    Z zero contrast (0 param)                            r +0.0000   sign 0.5000",
+  "    NC nearest-cell copy (0 param)                       r -0.0048   sign 0.5126",
+  "    1 cell-invariant N(p)                                r -0.2021   sign 0.4886",
+  "    2 cell-gated N_c(p) ABSOLUTE                         r -0.1910   sign 0.4716",
+  "    11 test-time neighbour-block SWAP (COUNTERFACTUAL)   r -0.1140   sign 0.5057",
+  "    3 cell-gated N_c(p) DIFFERENTIAL                     r -0.1825   sign 0.4937",
+  "    4 cell-context EVIDENCE preference                   r -0.1620   sign 0.4373",
+  "    5 SWAPPED-cell gating (COUNTERFACTUAL)               r -0.1815   sign 0.4969",
+  "    6 random gating, matched retention (CONTROL)         r -0.2033   sign 0.4701",
+  "    7 degree-matched rewiring (CONTROL)                  r -0.1934   sign 0.4614",
+  "    8 random partners (CONTROL)                          r -0.1414   sign 0.4583",
+  "    9 wrong-perturbation set (identity CONTROL)          r -0.2045   sign 0.4542",
+  "    10 no neighbourhood                                  r -0.0925   sign 0.4785",
+  "    LS least squares on arm 2's columns (0 param)        r -0.2737   sign 0.4452",
+  "\n  HELD-OUT CELL: K562  (train on HepG2, Jurkat, RPE1)",
+  "    Z zero contrast (0 param)                            r +0.0000   sign 0.5000",
+  "    NC nearest-cell copy (0 param)                       r +0.0471   sign 0.5214",
+  "    1 cell-invariant N(p)                                r -0.0089   sign 0.4780",
+  "    2 cell-gated N_c(p) ABSOLUTE                         r +0.0095   sign 0.4886",
+  "    11 test-time neighbour-block SWAP (COUNTERFACTUAL)   r -0.0853   sign 0.4465",
+  "    3 cell-gated N_c(p) DIFFERENTIAL                     r +0.0350   sign 0.5074",
+  "    4 cell-context EVIDENCE preference                   r -0.0553   sign 0.4753",
+  "    5 SWAPPED-cell gating (COUNTERFACTUAL)               r +0.0060   sign 0.4946",
+  "    6 random gating, matched retention (CONTROL)         r -0.0120   sign 0.4781",
+  "    7 degree-matched rewiring (CONTROL)                  r -0.0151   sign 0.4785",
+  "    8 random partners (CONTROL)                          r +0.0049   sign 0.4842",
+  "    9 wrong-perturbation set (identity CONTROL)          r -0.0002   sign 0.4928",
+  "    10 no neighbourhood                                  r +0.0656   sign 0.5261",
+  "    LS least squares on arm 2's columns (0 param)        r +0.0263   sign 0.5060",
+  "\n  HELD-OUT CELL: RPE1  (train on HepG2, Jurkat, K562)",
+  "    Z zero contrast (0 param)                            r +0.0000   sign 0.5000",
+  "    NC nearest-cell copy (0 param)                       r +0.1001   sign 0.5443",
+  "    1 cell-invariant N(p)                                r +0.1331   sign 0.5192",
+  "    2 cell-gated N_c(p) ABSOLUTE                         r +0.1031   sign 0.5104",
+  "    11 test-time neighbour-block SWAP (COUNTERFACTUAL)   r +0.0794   sign 0.5130",
+  "    3 cell-gated N_c(p) DIFFERENTIAL                     r +0.1118   sign 0.5070",
+  "    4 cell-context EVIDENCE preference                   r +0.0991   sign 0.4831",
+  "    5 SWAPPED-cell gating (COUNTERFACTUAL)               r +0.1042   sign 0.5105",
+  "    6 random gating, matched retention (CONTROL)         r +0.1430   sign 0.5226",
+  "    7 degree-matched rewiring (CONTROL)                  r +0.0240   sign 0.4908",
+  "    8 random partners (CONTROL)                          r +0.0460   sign 0.5076",
+  "    9 wrong-perturbation set (identity CONTROL)          r +0.0175   sign 0.4880",
+  "    10 no neighbourhood                                  r +0.1374   sign 0.5233",
+  "    LS least squares on arm 2's columns (0 param)        r +0.1561   sign 0.5446",
+  "\n  arm                                                     HepG2   Jurkat     K562     RPE1     mean      sd    sign",
+  "  Z zero contrast (0 param)                             +0.0000  +0.0000  +0.0000  +0.0000  +0.0000  0.0000  0.5000",
+  "  NC nearest-cell copy (0 param)                        +0.0871  -0.0048  +0.0471  +0.1001  +0.0574  0.0472  0.5277",
+  "  LS least squares on arm 2's columns (0 param)         +0.1129  -0.2737  +0.0263  +0.1561  +0.0054  0.1937  0.5121",
+  "  1 cell-invariant N(p)                                 +0.1331  -0.2021  -0.0089  +0.1331  +0.0138  0.1587  0.5054",
+  "  2 cell-gated N_c(p) ABSOLUTE                          +0.1385  -0.1910  +0.0095  +0.1031  +0.0150  0.1477  0.5033",
+  "  3 cell-gated N_c(p) DIFFERENTIAL                      +0.0780  -0.1825  +0.0350  +0.1118  +0.0106  0.1325  0.5032",
+  "  4 cell-context EVIDENCE preference                    -0.0026  -0.1620  -0.0553  +0.0991  -0.0302  0.1087  0.4715",
+  "  5 SWAPPED-cell gating (COUNTERFACTUAL)                +0.1275  -0.1815  +0.0060  +0.1042  +0.0141  0.1406  0.5061",
+  "  6 random gating, matched retention (CONTROL)          +0.1281  -0.2033  -0.0120  +0.1430  +0.0140  0.1608  0.5012",
+  "  7 degree-matched rewiring (CONTROL)                   +0.1039  -0.1934  -0.0151  +0.0240  -0.0201  0.1257  0.4871",
+  "  8 random partners (CONTROL)                           +0.1130  -0.1414  +0.0049  +0.0460  +0.0056  0.1077  0.4958",
+  "  9 wrong-perturbation set (identity CONTROL)           +0.0361  -0.2045  -0.0002  +0.0175  -0.0378  0.1122  0.4845",
+  "  10 no neighbourhood                                   +0.0511  -0.0925  +0.0656  +0.1374  +0.0404  0.0963  0.5033",
+  "  11 test-time neighbour-block SWAP (COUNTERFACTUAL)    -0.0721  -0.1140  -0.0853  +0.0794  -0.0480  0.0867  0.4873",
+  "\n  MDE = 3*sd/sqrt(n), n = 4 HELD-OUT CELL LINES (the unit of replication -- the claim is",
+  "  generalisation to a cell never seen). Pooled across-cell sd 0.1245 -> arm-level MDE +0.1867; sign MDE +0.0377.",
+  "  Every GAP below carries its OWN paired MDE from the four per-cell differences.",
+  "  The model-init-seed floor is NOT ESTIMABLE at V4C_SEEDS=1. It would not have been graded on in any case -- seeds measure optimiser noise inside a FIXED cell set.",
+  "  AT n = 4 THIS MODULE IS UNDERPOWERED BY DESIGN: the sd has 3 degrees of freedom, so the MDE is itself poorly estimated and a null is a null of POWER, not a refutation of N_c(p).",
+  "\n  PREDECLARED GATES",
+  "    FAIL  G0 PRECONDITION  the neighbour channel carries signal at all (arm 1 > arm 10)",
+  "    FAIL  G1 PRIMARY       cell-gated N_c(p) beats cell-invariant N(p)",
+  "    FAIL  G2 COUNTERFACTUAL gated beats SWAPPED-cell gating",
+  "    FAIL  G3 RETENTION     gated beats random gating at matched retention",
+  "    FAIL  G4 WIRING        gated beats degree-matched configuration-model rewiring",
+  "    FAIL  G5 FREE          the best learned arm beats the best 0-parameter arm",
+  "    FAIL  G6 EVERY-CELL    the primary gap is positive in ALL four held-out cells",
+  "    PASS  G7 AGREE         sign accuracy reaches the same verdict as r on the primary gap",
+  "\n  gap (formed PER CELL, then averaged)                          mean  paired MDE  per-cell",
+  "  G0  arm 1 cell-invariant  -  arm 10 no neighbourhood       -0.0266      0.1269  [ 0.0819 -0.1096 -0.0745 -0.0043]",
+  "  G1  arm 2 ABSOLUTE gate   -  arm 1 cell-invariant          +0.0012      0.0322  [ 0.0054  0.011   0.0184 -0.03  ]",
+  "      arm 3 DIFFERENTIAL gate - arm 1 (SECONDARY, declared)   -0.0032      0.0657  [-0.0551  0.0196  0.0439 -0.0213]",
+  "      arm 4 cell-context evidence - arm 1 (asymmetric)       -0.0440      0.1081  [-0.1357  0.0401 -0.0463 -0.034 ]",
+  "  G2  arm 2  -  arm 5 SWAPPED-cell gating                    +0.0009      0.0129  [ 0.0109 -0.0095  0.0035 -0.0012]",
+  "  G3  arm 2  -  arm 6 random gating, matched retention       +0.0010      0.0416  [ 0.0104  0.0122  0.0215 -0.0399]",
+  "  G4  arm 2  -  arm 7 degree-matched rewiring                +0.0351      0.0484  [0.0345 0.0024 0.0246 0.0791]",
+  "      arm 2  -  arm 8 random partners                        +0.0094      0.0673",
+  "      arm 2  -  arm 9 wrong-perturbation (identity)          +0.0528      0.0721",
+  "      arm 2  -  arm 11 test-time neighbour-block swap        +0.0630      0.1816",
+  "  G5  best learned  -  best 0-parameter arm                  -0.0169      0.0846",
+  "    best learned = '10 no neighbourhood' at r +0.0404; best 0-parameter = 'NC nearest-cell copy (0 param)' at r +0.0574",
+  "    nearest training cell by baseline transcriptome, per held-out cell: HepG2<-RPE1, Jurkat<-K562, K562<-Jurkat, RPE1<-HepG2",
+  "\n  CONTROLS THAT REPRODUCE THE EFFECT (reported as the finding, not as a footnote)",
+  "        21.8%  arm 5 SWAPPED-cell gating reproduces this fraction of arm 2's gain over cell-invariant N(p)",
+  "        15.2%  arm 6 random gating at matched retention reproduces this fraction of the same gain",
+  "     -2803.6%  arm 7 degree-matched rewiring reproduces this fraction of the same gain",
+  "       269.5%  arm 10 NO NEIGHBOURHOOD AT ALL reproduces this fraction of arm 2's r",
+  "       382.5%  the 0-parameter nearest-cell copy reproduces this fraction of arm 2's r",
+  "    ^ the primary gap is +0.0012 against a 0.0322 paired MDE, i.e. undetected, so the first three percentages are ratios of two undetected quantities and mean nothing. They are printed rather than suppressed so the denominator stays visible.",
+  "\n============================================================================================================",
+  "  VERDICT: SMOKE RUN (20,000 sampled (perturbation, gene) pairs per fold, 2 epochs, 1 seed) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. At this sample size every arm sits inside its own noise, the arms cannot be separated, the gate outcomes below are arbitrary, and no sentence in this paragraph should be quoted as a finding. Rerun with V4C_SMOKE unset. N_c(p) IS NOT CREDITED (1/8 predeclared gates): on a 100%-dense 4-cell x 1,763-perturbation x 6,521-gene rectangle, with the shared response frozen out by construction so that no cell-blind feature can beat zero, and with the seven-column shared block held IDENTICAL across arms so that ONLY THE MEMBERSHIP OF THE PARTNER SET VARIES, the cell-gated partner set N_c(p) reaches r +0.0150 against the cell-invariant N(p)'s +0.0138 -- a paired per-cell gap of +0.0012 against a cross-cell minimum detectable increment of 0.0322 (3*sd/sqrt(n), n = 4 HELD-OUT CELL LINES; the model-init-seed floor, not estimable at this seed count, measures optimiser noise inside a fixed cell set and is deliberately NOT what this is graded on). THE PRECONDITION COMES FIRST: the cell-invariant neighbour block beats having no neighbourhood at all by -0.0266 against a 0.1269 floor, so the neighbour channel IS NOT DETECTED AS CARRYING ANY SIGNAL, which means every gating comparison below is a comparison between variants of a channel that contributes nothing and NO VERDICT ABOUT CELL-CONDITIONING CAN BE DRAWN FROM THEM. THE COUNTERFACTUAL, which accuracy alone cannot supply: gating the set with ANOTHER cell's expression while still reading features in the correct cell changes r by +0.0009 against a 0.0129 floor, and handing the trained network another cell's entire neighbour block at test time changes it by +0.0630 -- a gap at or below the floor means the cell-conditioned partner set is IGNORED rather than useless, and those two are not distinguishable by accuracy. Matched controls: random gating at the same retention rate +0.0010, a degree-matched configuration-model rewiring that preserves every per-type degree and every partner multiplicity +0.0351, count- and type-matched random partners +0.0094, and the wrong-perturbation identity control +0.0528. THE CHEAPEST ARMS ARE REPORTED NEXT TO THE MODEL: the best 0-parameter arm is 'NC nearest-cell copy (0 param)' at r +0.0574 against the best learned arm '10 no neighbourhood' at +0.0404, a gap of -0.0169 against a 0.0846 floor -- A ZERO-PARAMETER BASELINE MATCHES OR BEATS EVERY LEARNED ARM, WHICH IS THE HEADLINE AND NOT A FOOTNOTE. A STRUCTURAL FACT ABOUT THE DATA THAT BOUNDS WHAT THIS COULD EVER HAVE SHOWN, measured before any model was fit: the four baseline transcriptomes correlate at r 0.80-0.88, so the ABSOLUTE percentile gate named in the specification keeps sets whose mean cross-cell Jaccard is 0.860 at retention 0.733 -- N_c(p) under that gate is barely a function of c. The DIFFERENTIAL gate, declared before the run as SECONDARY, reaches a Jaccard of 0.248 and is the only construction here whose sets genuinely differ between cells; its gap over cell-invariant N(p) is -0.0032 against a 0.0657 floor, reported as a hypothesis for a future run and NOT as a passed gate, because the primary was fixed in advance. The cell_context evidence route is unusable as a cross-cell comparison and is reported per cell only: K562 1,062 perturbations carry a line-matched edge, HepG2 704, Jurkat 110 and RPE1 0, so for RPE1 that arm IS the cell-invariant arm by construction. FINALLY AND DECISIVELY FOR HOW THIS SHOULD BE READ: n = 4 cell lines gives the cross-cell sd three degrees of freedom and an arm-level MDE of 0.1867. CELLFORMER4.md section 18 already estimated that roughly 30 cell contexts are needed to resolve an effect of the size this branch plausibly has. A NULL HERE IS THEREFORE UNDERPOWERED AND IS NOT A REFUTATION OF N_c(p); it says that if the cell-conditioned partner set buys anything it buys less than four cells can see, and the binding constraint is the number of independent cell contexts, which cannot be recovered from disk. All effect sizes quoted are RAW held-out values; the controls establish significance and attribution and no arm is reported net of a control."
+ ]
+}

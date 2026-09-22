@@ -1,0 +1,70 @@
+{
+ "distance": {
+  "auprc": 0.39345056386445565,
+  "seeds": [
+   0.3911,
+   0.3909,
+   0.3983
+  ]
+ },
+ "epigenetics": {
+  "auprc": 0.51851030037155,
+  "seeds": [
+   0.5134,
+   0.5205,
+   0.5217
+  ]
+ },
+ "epi + TF identity (311)": {
+  "auprc": 0.6075574090157142,
+  "seeds": [
+   0.6094,
+   0.6008,
+   0.6125
+  ]
+ },
+ "epi + TF + CONTACT": {
+  "auprc": 0.6631813437390706,
+  "seeds": [
+   0.6596,
+   0.6633,
+   0.6666
+  ]
+ },
+ "epi + TF + contact SHUFFLED": {
+  "auprc": 0.6047698409377104,
+  "seeds": [
+   0.6024,
+   0.6016,
+   0.6104
+  ]
+ },
+ "CONTACT only": {
+  "auprc": 0.4390304963051439,
+  "seeds": [
+   0.4519,
+   0.428,
+   0.4371
+  ]
+ },
+ "label_shuffle": 0.06639863575275726,
+ "groups": {
+  "BETWEEN (insulation)": {
+   "real": 0.6589356507237933,
+   "shuffled": 0.6130340561082096,
+   "vs_identity": 0.05137824170807914,
+   "vs_shuffled": 0.04590159461558374
+  },
+  "NEAR (anchor proximity)": {
+   "real": 0.6206404319259649,
+   "shuffled": 0.6021427878203321,
+   "vs_identity": 0.013083022910250652,
+   "vs_shuffled": 0.018497644105632705
+  }
+ },
+ "verdict": "GO -- loop-aware contact adds real signal beyond 311 measured TFs AND beats its own shuffled control. A better contact model is worth building.",
+ "deltas": {
+  "vs_identity": 0.05562393472335636,
+  "vs_shuffled_contact": 0.058411502801360204
+ }
+}

@@ -1,0 +1,422 @@
+{
+ "test": "enhancer tf network",
+ "gates": {
+  "W1": true,
+  "W2": true,
+  "W3": false,
+  "W4": false,
+  "W5": false,
+  "W6": true,
+  "W7": true,
+  "W8": true
+ },
+ "coverage": {
+  "cur": 0.5527638190954773,
+  "bind": 0.8743718592964824,
+  "unk": 0.4221105527638191
+ },
+ "n_matrices_on_roster": 723,
+ "arms": {
+  "distance": {
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ]
+  },
+  "gene_only": {
+   "r1": [
+    0.5879396984924623,
+    0.5778894472361809,
+    0.6080402010050251,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2642693843422068,
+    0.23399861999211158,
+    0.26648565771143456,
+    0.2715101963212155,
+    0.2596996505568266
+   ]
+  },
+  "base": {
+   "r1": [
+    0.592964824120603,
+    0.6130653266331658,
+    0.5778894472361809,
+    0.6180904522613065,
+    0.6080402010050251
+   ],
+   "ap": [
+    0.30260185577031584,
+    0.3287847881594063,
+    0.32348946945808404,
+    0.3204824357258981,
+    0.3345418287490969
+   ]
+  },
+  "+curated": {
+   "r1": [
+    0.592964824120603,
+    0.6331658291457286,
+    0.6231155778894473,
+    0.5979899497487438,
+    0.6030150753768844
+   ],
+   "ap": [
+    0.297211803578827,
+    0.30338115674496585,
+    0.3167778566671152,
+    0.3111957260897549,
+    0.31106487196910215
+   ]
+  },
+  "+binding": {
+   "r1": [
+    0.5979899497487438,
+    0.6381909547738693,
+    0.6582914572864321,
+    0.6130653266331658,
+    0.628140703517588
+   ],
+   "ap": [
+    0.3346869930792272,
+    0.3354873672099305,
+    0.33021231791665456,
+    0.32918119024048825,
+    0.35887860005697003
+   ]
+  },
+  "+network": {
+   "r1": [
+    0.5979899497487438,
+    0.6231155778894473,
+    0.6331658291457286,
+    0.6030150753768844,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.334614509441076,
+    0.3138773225204744,
+    0.3239866553049709,
+    0.3089911400234312,
+    0.33147271866859507
+   ]
+  },
+  "+network_perm": {
+   "r1": [
+    0.5829145728643216,
+    0.6130653266331658,
+    0.6030150753768844,
+    0.6130653266331658,
+    0.6030150753768844
+   ],
+   "ap": [
+    0.31937118501983147,
+    0.31524875146308523,
+    0.3224746139367268,
+    0.29535058945111814,
+    0.32179526105993106
+   ]
+  },
+  "best_shuffled": {
+   "r1": [
+    0.5628140703517588,
+    0.5376884422110553,
+    0.6030150753768844,
+    0.5879396984924623,
+    0.592964824120603
+   ],
+   "ap": [
+    0.28998648646156155,
+    0.2889343735368557,
+    0.3035002031231796,
+    0.30205781514911495,
+    0.2978414095644831
+   ]
+  }
+ },
+ "deltas": {
+  "W2": {
+   "d_r1": [
+    0.005025125628140725,
+    -0.01005025125628145,
+    0.01005025125628134,
+    0.0,
+    0.0
+   ],
+   "d_ap": [
+    -0.01863566107822967,
+    -0.04770586973629526,
+    -0.022686569870390694,
+    -0.01831619620194136,
+    -0.01891194123340323
+   ],
+   "mean_r1": 0.0010050251256281228,
+   "sem_r1": 0.003333291246588341,
+   "mean_ap": -0.025251247624052044,
+   "n_pos_r1": 2,
+   "n_ap_pass": 0
+  },
+  "W3": {
+   "d_r1": [
+    0.005025125628140725,
+    0.01005025125628145,
+    0.055276381909547756,
+    -0.015075376884422176,
+    -0.01005025125628134
+   ],
+   "d_ap": [
+    0.03201265367076017,
+    -0.014907465638931916,
+    0.0004971858468868495,
+    -0.011491295702466875,
+    -0.0030691100805018134
+   ],
+   "mean_r1": 0.009045226130653283,
+   "sem_r1": 0.012451770546094343,
+   "mean_ap": 0.0006083936191492833,
+   "n_pos_r1": 3,
+   "n_ap_pass": 1
+  },
+  "W4_curated": {
+   "d_r1": [
+    0.0,
+    0.02010050251256279,
+    0.045226130653266416,
+    -0.02010050251256279,
+    -0.005025125628140725
+   ],
+   "d_ap": [
+    -0.005390052191488859,
+    -0.025403631414440464,
+    -0.006711612790968824,
+    -0.009286709636143198,
+    -0.02347695677999473
+   ],
+   "mean_r1": 0.008040201005025139,
+   "sem_r1": 0.011303740582112566,
+   "mean_ap": -0.014053792562607215,
+   "n_pos_r1": 2,
+   "n_ap_pass": 0
+  },
+  "W4_binding": {
+   "d_r1": [
+    0.005025125628140725,
+    0.025125628140703515,
+    0.08040201005025127,
+    -0.005025125628140725,
+    0.0201005025125629
+   ],
+   "d_ap": [
+    0.03208513730891138,
+    0.006702579050524182,
+    0.006722848458570518,
+    0.008698754514590179,
+    0.02433677130787315
+   ],
+   "mean_r1": 0.025125628140703536,
+   "sem_r1": 0.01482199115955038,
+   "mean_ap": 0.015709218128093883,
+   "n_pos_r1": 4,
+   "n_ap_pass": 2
+  },
+  "W5": {
+   "d_r1": [
+    0.015075376884422176,
+    0.01005025125628145,
+    0.03015075376884424,
+    -0.01005025125628145,
+    -0.005025125628140614
+   ],
+   "d_ap": [
+    0.015243324421244542,
+    -0.0013714289426108306,
+    0.0015120413682441214,
+    0.01364055057231306,
+    0.009677457608664009
+   ],
+   "mean_r1": 0.008040201005025161,
+   "sem_r1": 0.007212412107742377,
+   "mean_ap": 0.00774038900557098,
+   "n_pos_r1": 3,
+   "n_ap_pass": 2
+  },
+  "W6": {
+   "d_r1": [
+    0.015075376884422176,
+    0.05025125628140703,
+    0.06030150753768837,
+    0.015075376884422065,
+    0.03015075376884424
+   ],
+   "d_ap": [
+    0.05178194765879074,
+    0.05378287748152366,
+    0.041040090334829304,
+    0.03935479771733141,
+    0.08026700826674021
+   ],
+   "mean_r1": 0.03417085427135678,
+   "sem_r1": 0.00918375220225982,
+   "mean_ap": 0.053245344291843064,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  },
+  "W7": {
+   "d_r1": [
+    0.035175879396984966,
+    0.10050251256281406,
+    0.055276381909547756,
+    0.025125628140703515,
+    0.035175879396984966
+   ],
+   "d_ap": [
+    0.04470050661766567,
+    0.046552993673074805,
+    0.02671211479347496,
+    0.027123375091373303,
+    0.06103719049248696
+   ],
+   "mean_r1": 0.05025125628140705,
+   "sem_r1": 0.013483826999998725,
+   "mean_ap": 0.04122523613361514,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  }
+ },
+ "best_arm": "+binding",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/net_bundle.json.gz",
+    "bytes": 3667843,
+    "hash": "126e67aa72c13d95",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 11933,
+   "selection": "loop 173's pairs",
+   "fraction": 1.0
+  },
+  "seed": 91173,
+  "controls": [
+   "a gene-level-only arm gated on AUPRC, where it is not inert",
+   "the curated tier put head to head with the binding tier",
+   "regulator sets permuted across genes, counts held exactly",
+   "the shuffle on the arm selected by measured R@1"
+  ],
+  "note": "TF regulatory network as the source of which factors run each gene",
+  "warnings": [
+   "selection 'loop 173's pairs' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 143.06680846214294,
+ "log": [
+  "========================================================================================================",
+  "LOOP 183  THE TF REGULATORY NETWORK: does the element carry sites for THIS gene's factors?",
+  "========================================================================================================",
+  "  PREDECLARED: the binding tier must cover >= 80% of evaluable genes with a",
+  "  regulator that carries a matrix here; the gene-only control is gated on AUPRC because on",
+  "  R@1 it is inert by construction; every arm on loop 173's E3 bar -- paired R@1 positive",
+  "  in >= 4/5 past 3 sem AND paired AUPRC >= +0.01 in >= 4/5; the",
+  "  curated tier must beat the binding tier for the feature to be about regulation; the",
+  "  regulator sets must not be permutable at no cost; the winner must clear distance-only",
+  "  R@1 0.593; and the shuffle runs on the arm selected by measured R@1.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    723 network genes carry one of the 736 matrices",
+  "",
+  "W1 DOES THE JOIN SUPPORT THE FEATURE?",
+  "     cur   tier: 110/199 evaluable genes (55.3%) have a regulator with a matrix here; median 1",
+  "     bind  tier: 174/199 evaluable genes (87.4%) have a regulator with a matrix here; median 13",
+  "     unk   tier: 84/199 evaluable genes (42.2%) have a regulator with a matrix here; median 0",
+  "     W1 PASS -- the binding tier reaches 87.4%; the curated tier at 55.3% is the better evidence and the thinner column, and its arm is labelled coverage-limited",
+  "",
+  "   building features",
+  "    element frame (el): 27 intrinsic + 51 class/family columns",
+  "    element frame (sh): 27 intrinsic + 51 class/family columns",
+  "    base 85 columns; network block 15",
+  "    distance                                 R@1 0.5930 +/- 0.0032   AUPRC 0.2844",
+  "    distance + gene-level counts (W2 control) R@1 0.5940 +/- 0.0051   AUPRC 0.2592",
+  "    base stack                               R@1 0.6020 +/- 0.0074   AUPRC 0.3220",
+  "    + curated causal regulators              R@1 0.6101 +/- 0.0077   AUPRC 0.3079",
+  "    + binding-tier regulators                R@1 0.6271 +/- 0.0103   AUPRC 0.3377",
+  "    + the whole network block                R@1 0.6111 +/- 0.0072   AUPRC 0.3226",
+  "",
+  "W2 IS THE NETWORK ENCODING HOW WELL STUDIED A GENE IS?",
+  "     gene-level counts + distance vs distance   dR@1 +0.0010 +/- 0.0033 (2/5 up)   dAUPRC -0.0253 (0/5 >= 0.01)",
+  "     (R@1 is inert here by construction: a per-gene constant cannot reorder that gene's own candidates)",
+  "     W2 PASS -- regulator counts alone do not clear the AUPRC bar, so the block below is not buying accuracy from how well studied a gene is",
+  "",
+  "W3 DOES THE REGULATOR-MATCH BLOCK ADD?",
+  "     +network vs base   dR@1 +0.0090 +/- 0.0125 (3/5 up)   dAUPRC +0.0006 (1/5 >= 0.01)",
+  "     W3 FAIL -- knowing which factors run the gene does not help pick which element runs it",
+  "",
+  "W4 CURATED CAUSAL EDGES, OR BINDING EDGES?",
+  "     curated increment  dR@1 +0.0080 +/- 0.0113 (2/5 up)   dAUPRC -0.0141 (0/5 >= 0.01)   (coverage 55.3%)",
+  "     binding increment  dR@1 +0.0251 +/- 0.0148 (4/5 up)   dAUPRC +0.0157 (2/5 >= 0.01)   (coverage 87.4%)",
+  "     curated minus binding   -0.0171 +/- 0.0059 (0/5 up)",
+  "     W4 FAIL -- the curated tier does not beat the binding tier, so whatever the block reads is occupancy, which the sequence columns already measure",
+  "",
+  "W5 WHICH FACTORS, OR HOW MANY?",
+  "    +network, regulator sets permuted        R@1 0.6030   AUPRC 0.3148",
+  "     real vs permuted   dR@1 +0.0080 +/- 0.0072 (3/5 up)   dAUPRC +0.0077 (2/5 >= 0.01)",
+  "     W5 FAIL -- permuting the regulator sets across genes costs nothing, so the block reads regulator COUNT and not regulator identity",
+  "",
+  "W6 THE DECISIVE ONE",
+  "     best arm +binding at R@1 0.6271 / AUPRC 0.3377 against distance 0.5930 / 0.2844",
+  "     dR@1 +0.0342 +/- 0.0092 (5/5 up)   dAUPRC +0.0532 (5/5 >= 0.01)",
+  "     W6 PASS -- +binding clears the bar every stage-two loop has been held to",
+  "",
+  "W7 THE SHUFFLE, ON THE ARM SELECTED BY MEASURED R@1",
+  "     selected arm: +binding",
+  "    +binding, SHUFFLED elements              R@1 0.5769 +/- 0.0118   AUPRC 0.2965",
+  "     real vs dinucleotide-shuffled   dR@1 +0.0503 +/- 0.0135 (5/5 up)   dAUPRC +0.0412 (5/5 >= 0.01)",
+  "     W7 PASS -- on the arm that won, real sequence beats a composition-matched shuffle",
+  "",
+  "W8 WHAT THIS CANNOT SHOW",
+  "     A TF-gene edge says nothing about WHICH element the factor acts through, so this",
+  "     block can only reweight the element's own motif content. It cannot supply the",
+  "     element-to-promoter correspondence that stage two actually lacks.",
+  "     CollecTRI and DoRothEA are literature-derived. A gene studied through its enhancers",
+  "     may have edges that exist because of the very experiments this benchmark scores, and",
+  "     W2 bounds only the gene-level channel of that, not the per-factor one.",
+  "     The third tier's provenance is recorded as unidentified in cell_tfnet.json, best",
+  "     guess ENCODE ChIP by roster match, and it is carried but never leaned on.",
+  "     Loop 178's element-intrinsic ceiling of R@1 0.4422 and loop 181's 5 kb resolution",
+  "     limit still bound everything here.",
+  "     W8 PASS",
+  "",
+  "========================================================================================================",
+  "  W1  PASS",
+  "  W2  PASS",
+  "  W3  FAIL",
+  "  W4  FAIL",
+  "  W5  FAIL",
+  "  W6  PASS",
+  "  W7  PASS",
+  "  W8  PASS",
+  "  5/8   [143s]",
+  "========================================================================================================"
+ ]
+}

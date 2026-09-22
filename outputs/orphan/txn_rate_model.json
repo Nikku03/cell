@@ -1,0 +1,221 @@
+{
+ "n_pairs": 88695,
+ "cell_lines": [
+  "Calu3",
+  "HEK293T",
+  "K562",
+  "MCF7",
+  "MDAMB",
+  "MOLM14",
+  "MV411",
+  "Nalm6"
+ ],
+ "n_tfs_with_column": 1213,
+ "k562_median_ksyn_rpkm_per_h": 3.4151578040925568,
+ "k562_orders_of_magnitude": 4.575425433176452,
+ "table": [
+  {
+   "cell_line": "K562",
+   "model": "promoter only",
+   "algo": "ridge",
+   "pearson_r": 0.3957,
+   "r2": 0.1566,
+   "mse": 0.1732
+  },
+  {
+   "cell_line": "K562",
+   "model": "+ gene class",
+   "algo": "ridge",
+   "pearson_r": 0.4547,
+   "r2": 0.2067,
+   "mse": 0.1628
+  },
+  {
+   "cell_line": "K562",
+   "model": "+ how many TFs",
+   "algo": "ridge",
+   "pearson_r": 0.4648,
+   "r2": 0.216,
+   "mse": 0.1609
+  },
+  {
+   "cell_line": "K562",
+   "model": "+ WHICH TFs",
+   "algo": "ridge",
+   "pearson_r": 0.3911,
+   "r2": 0.153,
+   "mse": 0.2259
+  },
+  {
+   "cell_line": "K562",
+   "model": "+ WHICH TFs (GBM)",
+   "algo": "gbm",
+   "pearson_r": 0.5676,
+   "r2": 0.3222,
+   "mse": 0.1395
+  },
+  {
+   "cell_line": "Calu3",
+   "model": "promoter only",
+   "algo": "ridge",
+   "pearson_r": 0.4474,
+   "r2": 0.2002,
+   "mse": 0.2795
+  },
+  {
+   "cell_line": "Calu3",
+   "model": "+ gene class",
+   "algo": "ridge",
+   "pearson_r": 0.4847,
+   "r2": 0.235,
+   "mse": 0.2674
+  },
+  {
+   "cell_line": "Calu3",
+   "model": "+ how many TFs",
+   "algo": "ridge",
+   "pearson_r": 0.49,
+   "r2": 0.2401,
+   "mse": 0.2656
+  },
+  {
+   "cell_line": "Calu3",
+   "model": "+ WHICH TFs",
+   "algo": "ridge",
+   "pearson_r": 0.4348,
+   "r2": 0.1891,
+   "mse": 0.3283
+  },
+  {
+   "cell_line": "Calu3",
+   "model": "+ WHICH TFs (GBM)",
+   "algo": "gbm",
+   "pearson_r": 0.5678,
+   "r2": 0.3223,
+   "mse": 0.2375
+  },
+  {
+   "cell_line": "HEK293T",
+   "model": "promoter only",
+   "algo": "ridge",
+   "pearson_r": 0.4508,
+   "r2": 0.2033,
+   "mse": 0.3282
+  },
+  {
+   "cell_line": "HEK293T",
+   "model": "+ gene class",
+   "algo": "ridge",
+   "pearson_r": 0.5561,
+   "r2": 0.3092,
+   "mse": 0.2845
+  },
+  {
+   "cell_line": "HEK293T",
+   "model": "+ how many TFs",
+   "algo": "ridge",
+   "pearson_r": 0.5569,
+   "r2": 0.3102,
+   "mse": 0.2842
+  },
+  {
+   "cell_line": "HEK293T",
+   "model": "+ WHICH TFs",
+   "algo": "ridge",
+   "pearson_r": 0.5511,
+   "r2": 0.3037,
+   "mse": 0.309
+  },
+  {
+   "cell_line": "HEK293T",
+   "model": "+ WHICH TFs (GBM)",
+   "algo": "gbm",
+   "pearson_r": 0.6534,
+   "r2": 0.4269,
+   "mse": 0.2364
+  },
+  {
+   "cell_line": "MCF7",
+   "model": "promoter only",
+   "algo": "ridge",
+   "pearson_r": 0.4307,
+   "r2": 0.1855,
+   "mse": 0.3329
+  },
+  {
+   "cell_line": "MCF7",
+   "model": "+ gene class",
+   "algo": "ridge",
+   "pearson_r": 0.4531,
+   "r2": 0.2053,
+   "mse": 0.3249
+  },
+  {
+   "cell_line": "MCF7",
+   "model": "+ how many TFs",
+   "algo": "ridge",
+   "pearson_r": 0.4614,
+   "r2": 0.2129,
+   "mse": 0.3218
+  },
+  {
+   "cell_line": "MCF7",
+   "model": "+ WHICH TFs",
+   "algo": "ridge",
+   "pearson_r": 0.4211,
+   "r2": 0.1773,
+   "mse": 0.3987
+  },
+  {
+   "cell_line": "MCF7",
+   "model": "+ WHICH TFs (GBM)",
+   "algo": "gbm",
+   "pearson_r": 0.5491,
+   "r2": 0.3015,
+   "mse": 0.2871
+  },
+  {
+   "cell_line": "MDAMB",
+   "model": "promoter only",
+   "algo": "ridge",
+   "pearson_r": 0.3615,
+   "r2": 0.1307,
+   "mse": 0.4118
+  },
+  {
+   "cell_line": "MDAMB",
+   "model": "+ gene class",
+   "algo": "ridge",
+   "pearson_r": 0.4099,
+   "r2": 0.168,
+   "mse": 0.3942
+  },
+  {
+   "cell_line": "MDAMB",
+   "model": "+ how many TFs",
+   "algo": "ridge",
+   "pearson_r": 0.4177,
+   "r2": 0.1745,
+   "mse": 0.391
+  },
+  {
+   "cell_line": "MDAMB",
+   "model": "+ WHICH TFs",
+   "algo": "ridge",
+   "pearson_r": 0.372,
+   "r2": 0.1384,
+   "mse": 0.4795
+  },
+  {
+   "cell_line": "MDAMB",
+   "model": "+ WHICH TFs (GBM)",
+   "algo": "gbm",
+   "pearson_r": 0.5116,
+   "r2": 0.2618,
+   "mse": 0.3504
+  }
+ ],
+ "tf_identity_r2_gain": -0.063,
+ "verdict": "TRANSCRIPTION RATE (88695 gene-celltype pairs, 8 cell lines): computes the quantity this project had been discussing without ever calculating. RNAdecayCafe carries both steady-state abundance and measured decay constant per gene per cell line, and at steady state k_syn = RPKM * k_deg, so the absolute synthesis rate follows directly in RPKM per hour -- no modelling required. In K562 the median gene is transcribed at 3.42 RPKM/h and rates span 4.6 orders of magnitude. AN EQUATION was then fitted to log10 k_syn from promoter structure, gene class and regulatory wiring, scored on HELD-OUT GENES, with expression, protein abundance and any other level-carrying feature EXCLUDED because k_syn is built from abundance and would otherwise be trivially predictable. Nested layers, K562: promoter alone R2=0.157, plus gene class 0.207, plus how many TFs regulate the gene 0.216, plus which 1213 specific TFs 0.153, and a gradient-boosted fit on the same features 0.322. TF IDENTITY IS WORTH -0.0630 R2 over merely counting regulators, which is the honest answer to whether regulatory wiring carries rate information. WHAT THIS IS NOT: it is not 'TF X boosts gene Y by Z-fold'. No TF is manipulated anywhere in this data; the 13 cell lines differ in thousands of ways simultaneously, so the TF-identity layer measures association between wiring and rate, not the causal effect of any single factor. Getting that would need a TF induction series with nascent-RNA readout, which is not on disk. Deterministic.",
+ "note": "TRANSCRIPTION RATE (88695 gene-celltype pairs, 8 cell lines): computes the quantity this project had been discussing without ever calculating. RNAdecayCafe carries both steady-state abundance and measured decay constant per gene per cell line, and at steady state k_syn = RPKM * k_deg, so the absolute synthesis rate follows directly in RPKM per hour -- no modelling required. In K562 the median gene is transcribed at 3.42 RPKM/h and rates span 4.6 orders of magnitude. AN EQUATION was then fitted to log10 k_syn from promoter structure, gene class and regulatory wiring, scored on HELD-OUT GENES, with expression, protein abundance and any other level-carrying feature EXCLUDED because k_syn is built from abundance and would otherwise be trivially predictable. Nested layers, K562: promoter alone R2=0.157, plus gene class 0.207, plus how many TFs regulate the gene 0.216, plus which 1213 specific TFs 0.153, and a gradient-boosted fit on the same features 0.322. TF IDENTITY IS WORTH -0.0630 R2 over merely counting regulators, which is the honest answer to whether regulatory wiring carries rate information. WHAT THIS IS NOT: it is not 'TF X boosts gene Y by Z-fold'. No TF is manipulated anywhere in this data; the 13 cell lines differ in thousands of ways simultaneously, so the TF-identity layer measures association between wiring and rate, not the causal effect of any single factor. Getting that would need a TF induction series with nascent-RNA readout, which is not on disk. Deterministic."
+}

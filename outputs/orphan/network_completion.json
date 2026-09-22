@@ -1,0 +1,329 @@
+{
+ "question": "can the model complete the network itself (with an LLM reasoner in the loop)?",
+ "reasoner": "Opus 4.8 (this session), grounded in live PubMed mechanism-class retrieval",
+ "n_candidates_adjudicated": 26,
+ "added_edges": [
+  {
+   "source_machine": "RNA_exosome",
+   "relation": "degrades_mRNA",
+   "target": "PPP1R10",
+   "converging_subunits": [
+    "EXOSC2",
+    "EXOSC4",
+    "EXOSC9",
+    "DIS3",
+    "EXOSC3",
+    "EXOSC8",
+    "EXOSC6",
+    "EXOSC5",
+    "MTREX",
+    "EXOSC7"
+   ],
+   "mechanism_class": "exosome_surveillance_substrate",
+   "grounding_pmids": [
+    "32710631",
+    "28017589",
+    "31530651",
+    "32187185"
+   ],
+   "mechanism": "PNUTS/PPP1R10 is a Pol II CTD phosphatase and premature-termination factor (activates the Restrictor ZC3H4/WDR82); termination factors autoregulate via exosome-sensitive premature termination (NRD1/PCF11 precedent), so a prematurely-terminated PPP1R10 isoform is a plausible direct exosome substrate whose mRNA rises when the exosome is lost.",
+   "refutation": "Could be an INDIRECT stress response to global RNA-surveillance failure rather than a direct substrate; only a half-life/4sU-seq assay on the isoform distinguishes them.",
+   "confidence": 0.72,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "NMD",
+   "relation": "degrades_mRNA",
+   "target": "LETMD1",
+   "converging_subunits": [
+    "UPF1",
+    "UPF2",
+    "RBM8A",
+    "SMG5",
+    "MAGOH",
+    "SMG7"
+   ],
+   "mechanism_class": "nmd_substrate",
+   "grounding_pmids": [],
+   "mechanism": "The converging set spans BOTH the EJC core (RBM8A, MAGOH) and NMD effectors (UPF1/2, SMG5/7) -- the canonical signature of a transcript cleared by EJC-dependent NMD (a PTC-generating uORF, long 3'UTR, or NMD-sensitive isoform).",
+   "refutation": "The EJC also governs splicing/export, so the increase could be an isoform shift rather than stabilization of an NMD substrate.",
+   "confidence": 0.62,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "PAXT_nuclear_exosome",
+   "relation": "degrades_mRNA",
+   "target": "MTHFD2L",
+   "converging_subunits": [
+    "EXOSC9",
+    "TAF7",
+    "DIS3",
+    "EXOSC3",
+    "EXOSC8",
+    "ZFC3H1",
+    "EXOSC5",
+    "EXOSC7",
+    "EXOSC4",
+    "MTREX"
+   ],
+   "mechanism_class": "paxt_exosome_substrate",
+   "grounding_pmids": [
+    "32710631",
+    "28017589",
+    "32187185"
+   ],
+   "mechanism": "Convergence of exosome catalytic subunits with ZFC3H1 (the PAXT connector) marks a polyadenylated nuclear-exosome (PAXT) substrate; MTHFD2L (folate one-carbon enzyme, paralog of the highly-regulated MTHFD2) has a PAXT-sensitive isoform.",
+   "refutation": "TAF7 (a transcription factor) sits in the converging set, hinting at partial transcriptional contamination of the convergence.",
+   "confidence": 0.6,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "m6A_writer",
+   "relation": "marks_mRNA_for_decay",
+   "target": "SCO2",
+   "converging_subunits": [
+    "ZC3H13",
+    "METTL3",
+    "METTL14",
+    "RBM15"
+   ],
+   "mechanism_class": "m6a_decay_substrate",
+   "grounding_pmids": [
+    "41672172",
+    "42384087"
+   ],
+   "mechanism": "The converging knockouts are the m6A writer complex (MACOM: METTL3/METTL14/RBM15/ZC3H13); m6A marks transcripts for YTHDF2-mediated decay, so writer loss stabilizes an m6A-marked SCO2 transcript.",
+   "refutation": "m6A also modulates translation and splicing; the mRNA rise could be a secondary consequence rather than direct decay relief.",
+   "confidence": 0.6,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "PAXT_nuclear_exosome",
+   "relation": "degrades_mRNA",
+   "target": "EPM2AIP1",
+   "converging_subunits": [
+    "EXOSC2",
+    "EXOSC9",
+    "ZFC3H1",
+    "EXOSC6",
+    "DIS3",
+    "EXOSC7",
+    "ZC3H3",
+    "ZBTB4",
+    "MBNL1"
+   ],
+   "mechanism_class": "paxt_exosome_substrate",
+   "grounding_pmids": [
+    "32710631",
+    "28017589",
+    "32187185"
+   ],
+   "mechanism": "Exosome catalytic subunits converge with the PAXT/ZC3H3 poly(A)-tail-targeting factors, marking EPM2AIP1 mRNA as a PAXT-routed nuclear-exosome substrate.",
+   "refutation": "Same indirect-stress caveat as the other exosome substrates; convergence is real but the direct-substrate call needs a half-life assay.",
+   "confidence": 0.56,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "PAXT_nuclear_exosome",
+   "relation": "degrades_mRNA",
+   "target": "BANP",
+   "converging_subunits": [
+    "EXOSC6",
+    "EXOSC4",
+    "EXOSC3",
+    "MTREX",
+    "ZC3H3",
+    "ZFC3H1"
+   ],
+   "mechanism_class": "paxt_exosome_substrate",
+   "grounding_pmids": [
+    "32710631",
+    "28017589",
+    "32187185"
+   ],
+   "mechanism": "MTREX (exosome helicase) + EXOSC + ZC3H3/ZFC3H1 (PAXT) converge on BANP (a CGCG-box tumor-suppressor TF), consistent with its mRNA being a PAXT substrate.",
+   "refutation": "BANP autoregulates its own promoter, so the rise could be transcriptional feedback rather than decay relief.",
+   "confidence": 0.55,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "m6A_writer",
+   "relation": "marks_mRNA_for_decay",
+   "target": "SAR1A",
+   "converging_subunits": [
+    "YTHDC1",
+    "METTL14",
+    "CBLL1",
+    "CPSF6",
+    "METTL3"
+   ],
+   "mechanism_class": "m6a_decay_substrate",
+   "grounding_pmids": [
+    "41672172",
+    "42384087"
+   ],
+   "mechanism": "Writer (METTL3/METTL14/CBLL1=HAKAI) plus the nuclear reader YTHDC1 converge on SAR1A, consistent with an m6A-marked, decay-sensitive SAR1A transcript.",
+   "refutation": "CPSF6 (3'-end processing) in the set makes the convergence mechanistically mixed rather than purely m6A.",
+   "confidence": 0.52,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "NMD",
+   "relation": "degrades_mRNA",
+   "target": "BAG1",
+   "converging_subunits": [
+    "SMG7",
+    "SMG5",
+    "UPF1",
+    "UPF2",
+    "CLOCK",
+    "EIF3L"
+   ],
+   "mechanism_class": "nmd_substrate",
+   "grounding_pmids": [],
+   "mechanism": "Core NMD effectors (UPF1/2, SMG5/7) converge on BAG1, which has alternative-translation isoforms (upstream CUG start, long 5'UTR) plausibly NMD-sensitive.",
+   "refutation": "CLOCK and EIF3L in the converging set are off-pathway, weakening the claim that this is a clean NMD-only convergence.",
+   "confidence": 0.5,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "Integrator",
+   "relation": "attenuates_transcription",
+   "target": "MPDU1",
+   "converging_subunits": [
+    "INTS10",
+    "INTS14",
+    "INTS13"
+   ],
+   "mechanism_class": "integrator_attenuation_target",
+   "grounding_pmids": [
+    "32800671",
+    "37995689",
+    "31530651"
+   ],
+   "mechanism": "Integrator cleavage/backbone subunits (INTS10/13/14) attenuate Pol II at protein-coding genes; loss de-represses the attenuated MPDU1 transcript.",
+   "refutation": "Only three Integrator subunits converge and the effect is modest; could be an indirect snRNA-processing consequence.",
+   "confidence": 0.48,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "PAXT_nuclear_exosome",
+   "relation": "degrades_mRNA",
+   "target": "VMP1",
+   "converging_subunits": [
+    "MTREX",
+    "EXOSC5",
+    "ZFC3H1",
+    "ZC3H3"
+   ],
+   "mechanism_class": "paxt_exosome_substrate",
+   "grounding_pmids": [
+    "32710631",
+    "28017589",
+    "32187185"
+   ],
+   "mechanism": "PAXT/exosome factors converge on VMP1, nominally a PAXT substrate.",
+   "refutation": "VMP1 is an autophagy/ER-stress effector, so its up-regulation is very plausibly a STRESS response to RNA-surveillance loss rather than a direct substrate -- the weakest of the exosome calls, flagged.",
+   "confidence": 0.42,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  },
+  {
+   "source_machine": "RNA_exosome",
+   "relation": "degrades_mRNA",
+   "target": "ANKRD54",
+   "converging_subunits": [
+    "MTREX",
+    "EXOSC4",
+    "EXOSC9"
+   ],
+   "mechanism_class": "exosome_surveillance_substrate",
+   "grounding_pmids": [
+    "32710631",
+    "28017589",
+    "31530651",
+    "32187185"
+   ],
+   "mechanism": "MTREX + two exosome core subunits converge on ANKRD54, nominally an exosome surveillance substrate.",
+   "refutation": "Only three converging knockouts -- the weakest convergence in the added set; low confidence, include only as a lead.",
+   "confidence": 0.4,
+   "pubmed_comentions": 0,
+   "absent_in_our_graph": true,
+   "already_in_graph": null
+  }
+ ],
+ "downgraded_uncertain": [
+  {
+   "target": "SNRNP40",
+   "machine": "Ino80 (INO80,ACTR8,INO80B,NFRKB)",
+   "reason": "Ino80 is a chromatin remodeler and SNRNP40 a tri-snRNP splicing protein; there is no clean direct decay/attenuation route from remodeler loss to a specific splicing-gene mRNA rise.",
+   "refutation": "KRT17 (a keratin) in the converging set looks like contamination; the convergence may be a chromatin/transcription artifact, so it is NOT added as a mechanistic edge."
+  },
+  {
+   "target": "ACTL6A",
+   "machine": "minor spliceosome (ZCRB1,PDCD7,ZRSR2)",
+   "reason": "Minor-spliceosome loss causes minor-intron retention; whether ACTL6A rises as an unspliced species or is instead routed to NMD is direction-ambiguous.",
+   "refutation": "Direction of effect is not mechanistically determined, so it is held back rather than added."
+  }
+ ],
+ "killed": [
+  {
+   "target": "DHCR7",
+   "machine": "V-ATPase (ATP6V1C1/E1,ATP6AP1)",
+   "decision": "KILL_KNOWN",
+   "reason": "V-ATPase loss blocks lysosomal cholesterol sensing -> SREBP activation -> cholesterol-biosynthesis genes rise. DHCR7 is a cholesterol-biosynthesis enzyme."
+  },
+  {
+   "target": "HMGCR",
+   "machine": "V-ATPase",
+   "decision": "KILL_KNOWN",
+   "reason": "HMGCR is THE rate-limiting cholesterol-biosynthesis enzyme and the canonical SREBP target; up-regulation under V-ATPase loss is the classic sterol-depletion response."
+  },
+  {
+   "target": "SOD2",
+   "machine": "ESCRT-III (CHMP3/4B/6,TSG101)",
+   "decision": "KILL_STRESS",
+   "reason": "SOD2 (mitochondrial MnSOD) is the archetypal oxidative/mitochondrial-stress response gene; ESCRT-III loss drives membrane/mitophagy stress that induces it."
+  }
+ ],
+ "confirmed_known": {
+  "HYOU1": "UPR/OST",
+  "DNAJB11": "UPR/OST",
+  "DNAJC3": "UPR/OST",
+  "HSPA1B": "proteasome->HSP70",
+  "MLLT11": "proteasome->HSP70",
+  "ERG28": "sterol/SREBP",
+  "ACAT2": "sterol/SREBP",
+  "MVD": "sterol/SREBP",
+  "INSIG1": "sterol/SREBP",
+  "HMGCS1": "sterol/SREBP"
+ },
+ "completion_is_local_to_layers": [
+  "exosome_surveillance_substrate",
+  "integrator_attenuation_target",
+  "m6a_decay_substrate",
+  "nmd_substrate",
+  "paxt_exosome_substrate"
+ ],
+ "verdict": "CAN THE MODEL COMPLETE THE NETWORK ITSELF? Honest answer: NO for 'the network' -- ~19k genes and millions of possible edges, and the wall means the knockout-specific far field is mostly unpredictable, so the software only ever sees edges backed by a measured convergent signal. But YES for one thin, mechanistically-LEGIBLE LAYER: with an LLM reasoner in the loop it completes 11 RNA-surveillance/decay/attenuation substrate edges (11/11 undocumented in PubMed = 0 co-mentions, the primary novelty signal), each grounded in a real mechanism CLASS (exosome_surveillance_substrate, integrator_attenuation_target, m6a_decay_substrate, nmd_substrate, paxt_exosome_substrate). IMPORTANT HONESTY FIX: novelty here rests on the LITERATURE (0 PubMed co-mentions), NOT on 'absent from our graph' -- our knowledge graph is itself incomplete (a positive control shows it does not even contain the EXOSC2-EXOSC3 co-complex edge), so graph-absence is necessary-but-not-sufficient and is reported only as a secondary check. This layer is legible for a first-principles reason: knock out a DEGRADER and its SUBSTRATES accumulate cleanly and specifically (reverse-direction logic), whereas knocking out a signaling/metabolic node scatters into the unpredictable far field -- which is why EVERY addable edge falls in this one layer and none elsewhere. The LLM reasoner earned its slot by OVERRULING the deterministic/mock 'novel' flag on DHCR7 & HMGCR (the SREBP/sterol program) and SOD2 (the oxidative-stress program) -- known biology a keyword rule mislabelled as novel -- and by holding back SNRNP40 & ACTL6A where the convergence is real but the mechanism is not clean. Bottom line: not a whole-network completion, but a real, LOCAL, FALSIFIABLE one -- each added edge is an experiment (measure the target mRNA's half-life on the machine knockout; a direct substrate's half-life should drop). Led, again, by exosome->PPP1R10.",
+ "note": "CAN THE MODEL COMPLETE THE NETWORK ITSELF? Honest answer: NO for 'the network' -- ~19k genes and millions of possible edges, and the wall means the knockout-specific far field is mostly unpredictable, so the software only ever sees edges backed by a measured convergent signal. But YES for one thin, mechanistically-LEGIBLE LAYER: with an LLM reasoner in the loop it completes 11 RNA-surveillance/decay/attenuation substrate edges (11/11 undocumented in PubMed = 0 co-mentions, the primary novelty signal), each grounded in a real mechanism CLASS (exosome_surveillance_substrate, integrator_attenuation_target, m6a_decay_substrate, nmd_substrate, paxt_exosome_substrate). IMPORTANT HONESTY FIX: novelty here rests on the LITERATURE (0 PubMed co-mentions), NOT on 'absent from our graph' -- our knowledge graph is itself incomplete (a positive control shows it does not even contain the EXOSC2-EXOSC3 co-complex edge), so graph-absence is necessary-but-not-sufficient and is reported only as a secondary check. This layer is legible for a first-principles reason: knock out a DEGRADER and its SUBSTRATES accumulate cleanly and specifically (reverse-direction logic), whereas knocking out a signaling/metabolic node scatters into the unpredictable far field -- which is why EVERY addable edge falls in this one layer and none elsewhere. The LLM reasoner earned its slot by OVERRULING the deterministic/mock 'novel' flag on DHCR7 & HMGCR (the SREBP/sterol program) and SOD2 (the oxidative-stress program) -- known biology a keyword rule mislabelled as novel -- and by holding back SNRNP40 & ACTL6A where the convergence is real but the mechanism is not clean. Bottom line: not a whole-network completion, but a real, LOCAL, FALSIFIABLE one -- each added edge is an experiment (measure the target mRNA's half-life on the machine knockout; a direct substrate's half-life should drop). Led, again, by exosome->PPP1R10."
+}

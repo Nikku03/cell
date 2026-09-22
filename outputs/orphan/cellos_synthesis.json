@@ -1,0 +1,30 @@
+{
+ "screen": "k562.h5ad",
+ "truth": "DepMap dep_frac>0.5",
+ "topdown_fba": {
+  "auc": 0.6577952297847586,
+  "n": 2526,
+  "auc_solo": 0.8088639740361008,
+  "n_solo": 2250
+ },
+ "bottomup_data": {
+  "auc": 0.7138907079967983,
+  "n": 1832,
+  "auc_solo": 0.7191875291686113,
+  "n_solo": 1556
+ },
+ "overlap": {
+  "n": 295,
+  "auc_fba": 0.5977517708654142,
+  "auc_data": 0.6690483523252233,
+  "rank_agreement": 0.19590761636766488
+ },
+ "combined": {
+  "auc_router_calibrated": 0.9325880795330314,
+  "auc_naive_pool": 0.6182126361434975,
+  "effective_accuracy_cw": 0.7670054418704931,
+  "n": 4082,
+  "coverage_gain_over_best_single": 1556
+ },
+ "verdict": "SYNERGY (coverage): routing each gene to its specialist nearly doubles coverage (2526\u21924082 genes) while effective per-gene accuracy 0.77 stays at/above the best single modality (0.71). Physics and data are blind in different places, so the union is broader without going wrong. CAVEAT: the pooled AUC 0.93 is base-rate-inflated (separates metabolic-vs-screen populations) \u2014 0.77 is the honest number, not 0.93. Naive pooling scored 0.62; calibration + routing is what makes it work."
+}

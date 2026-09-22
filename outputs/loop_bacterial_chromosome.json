@@ -1,0 +1,173 @@
+{
+ "test": "loop_bacterial_chromosome",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/cc",
+    "kind": "directory",
+    "files": 40,
+    "bytes": 11776423,
+    "hash": "2672793afc6bb232",
+    "method": "sha256:tree"
+   }
+  ],
+  "coverage": {
+   "available": 17,
+   "used": 7,
+   "selection": "filtered",
+   "fraction": 0.4117647058823529
+  },
+  "seed": 7001,
+  "controls": [
+   "cross-enzyme (NcoI vs BglII) as a bias-independent ceiling",
+   "circular genomic distance, so long range is not manufactured",
+   "boundary strength measured at fixed WT positions in every condition",
+   "replicate-to-replicate difference as the noise floor for effects",
+   "smc knockout as a specificity control with an opposite prediction"
+  ],
+  "note": "Le et al. GSE45966. Every prior chromatin result in this project is correlational; these are knockouts and drug inhibitions",
+  "warnings": []
+ },
+ "gates": {
+  "K1 map is real, ceiling measured": true,
+  "K2 P(s) transfers": true,
+  "K3 CIDs exist": true,
+  "K4 perturbations are causal and specific": true,
+  "K5 what does not transfer is named": true
+ },
+ "n_bins": 405,
+ "bin_bp": 10000,
+ "replicate_spearman": 0.9712370849743406,
+ "cross_enzyme_spearman": 0.9594314586836575,
+ "ps_slope": -0.953347055531292,
+ "human_ps_slope": -0.9636,
+ "n_boundaries": 19,
+ "boundaries_bp": [
+  170000,
+  250000,
+  350000,
+  520000,
+  780000,
+  980000,
+  1170000,
+  1430000,
+  1760000,
+  1900000,
+  2160000,
+  2340000,
+  2550000,
+  2730000,
+  2850000,
+  2990000,
+  3260000,
+  3490000,
+  3670000
+ ],
+ "conditions": {
+  "WT rep1": {
+   "boundary_strength": 0.1617485018068244,
+   "secondary": 2.758954278310895
+  },
+  "WT rep2": {
+   "boundary_strength": 0.19799169856468557,
+   "secondary": 2.7839418368265867
+  },
+  "rifampicin": {
+   "boundary_strength": 0.013013101520287463,
+   "secondary": 3.0837969025466823
+  },
+  "novobiocin 50": {
+   "boundary_strength": -0.06372843593381221,
+   "secondary": 2.311293117359202
+  },
+  "novobiocin 25": {
+   "boundary_strength": -0.05432176521338137,
+   "secondary": 2.547996947930566
+  },
+  "smc knockout": {
+   "boundary_strength": 0.16124947372419685,
+   "secondary": 1.9099481332922847
+  },
+  "hup1hup2 KO": {
+   "boundary_strength": 0.09631644596006797,
+   "secondary": 2.5470073969199927
+  }
+ },
+ "replicate_noise": 0.20149650620326662,
+ "boundaries_rep2": 19,
+ "boundary_agreement": 17,
+ "hup_effect": 0.5354778023729363,
+ "rifampicin_effect": 0.9276527810522782,
+ "novobiocin_effect": 1.3543025542766627,
+ "smc_secondary_effect": 0.31084830254123863,
+ "smc_boundary_effect": 0.10352263351345392,
+ "rouse_spread_bacterial": 66476.161922074,
+ "rouse_spread_human": 75038649.91169451,
+ "seconds": 0.6446933746337891,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 70 -- the bacterial chromosome: what transfers, and a causal test",
+  "  every chromatin result in this project so far has been correlational. These are knockouts.",
+  "====================================================================================================",
+  "",
+  "K1 THE MAP IS REAL AND THE CEILING IS MEASURED",
+  "     405 bins x 10 kb over a 4.02 Mb circular genome",
+  "     BglII rep1 vs rep2 (biological)     Spearman 0.9712",
+  "     BglII vs NcoI (different enzyme)    Spearman 0.9594   <- the stricter ceiling",
+  "     K1 PASS  (both >= 0.9)",
+  "",
+  "K2 P(s) TRANSFERS",
+  "     circular separation used -- distance wraps at n/2, so long range is not manufactured",
+  "     log-log slope over 5-100 bins (50-1000 kb): -0.9533",
+  "     this project's HUMAN value: -0.9636",
+  "     K2 PASS  (gate -1.5 to -0.5)",
+  "",
+  "K3 CIDs EXIST AND ARE COUNTED",
+  "     insulation window 10 bins (100 kb)",
+  "     boundaries found: 19   (Le et al. report 23 CIDs; gate 10-40)",
+  "     positions (Mb): 0.17, 0.25, 0.35, 0.52, 0.78, 0.98, 1.17, 1.43, 1.76, 1.90, 2.16, 2.34, 2.55, 2.73 ...",
+  "     REPRODUCIBILITY: rep2 finds 19; 17 of 19 agree within +/-2 bins. Boundary calling is not a property of one replicate.",
+  "     K3 PASS",
+  "",
+  "K4 THE PERTURBATIONS ARE CAUSAL AND SPECIFIC",
+  "     condition         bnd strength     vs WT  2nd diagonal     vs WT",
+  "     WT rep1                 0.1617     0.899        2.7590     0.995",
+  "     WT rep2                 0.1980     1.101        2.7839     1.005",
+  "     rifampicin              0.0130     0.072        3.0838     1.113",
+  "     novobiocin 50          -0.0637    -0.354        2.3113     0.834",
+  "     novobiocin 25          -0.0543    -0.302        2.5480     0.919",
+  "     smc knockout            0.1612     0.896        1.9099     0.689",
+  "     hup1hup2 KO             0.0963     0.535        2.5470     0.919",
+  "     replicate noise on boundary strength: 0.2015 -- effects must exceed this",
+  "     rifampicin weakens boundaries by  +0.9277   (must exceed 0.2015)",
+  "     novobiocin weakens boundaries by  +1.3543   (must exceed 0.2015)",
+  "     smc KO weakens 2nd diagonal by    +0.3108",
+  "     smc KO changes boundaries by      +0.1035   (must stay near replicate noise)",
+  "     K4 PASS  -- perturbations are separable: transcription and supercoiling build CIDs, SMC juxtaposes the arms",
+  "",
+  "K5 WHAT DOES NOT TRANSFER, AND THE TIMESCALE",
+  "     human gates with NO bacterial counterpart (inapplicable, not failed):",
+  "       D2 TADs marked by CTCF        boundary_ctcf 88.66   -- no CTCF in bacteria",
+  "       D3 compartments exist         compartment_r 0.4848  -- no A/B compartments",
+  "       D4 orientation matters        359 oriented loops    -- no cohesin/CTCF",
+  "     Rouse mode spread lam_max/lam_min:",
+  "       Caulobacter 405 bins      6.6476e+04",
+  "       human       13607 beads   7.5039e+07",
+  "       improvement 1129x -- the 641,761x separation that blocks the",
+  "       human model is a property of chain length, and it shrinks by that factor here",
+  "     K5 PASS (named and computed)",
+  "",
+  "     OBSERVED BUT NOT PREDECLARED, reported as such: the hup1/hup2 knockout weakens",
+  "     boundaries to 0.535 of WT -- about half",
+  "     the effect of stopping transcription. Nucleoid-associated proteins were not part of",
+  "     any prediction here, so this is a lead rather than a result.",
+  "",
+  "  PASS  K1 map is real, ceiling measured",
+  "  PASS  K2 P(s) transfers",
+  "  PASS  K3 CIDs exist",
+  "  PASS  K4 perturbations are causal and specific",
+  "  PASS  K5 what does not transfer is named",
+  "    manifest: 1 inputs, coverage 7/17 (41.2%) by 'filtered', seed 7001, controls 5"
+ ]
+}

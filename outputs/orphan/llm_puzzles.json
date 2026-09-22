@@ -1,0 +1,9553 @@
+[
+ {
+  "pid": 0,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "G00021",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "UDP-N-acetylglucosamine",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "G00022",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "UDP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "MGAT5"
+  ]
+ },
+ {
+  "pid": 1,
+  "source": "reactome",
+  "category": "omitted",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ub-2p-GLI2,3:SPOP:CUL3:RBX1",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "SPOP:CUL3:RBX1",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "Ub",
+    "type": "SET",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "RBX1"
+  ]
+ },
+ {
+  "pid": 2,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "AKG",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "isocitrate",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "AKG",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "isocitrate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "IDH1"
+  ]
+ },
+ {
+  "pid": 3,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "cAMP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 11,
+  "candidates": [
+   "ADCY1",
+   "ADCY2",
+   "ADCY3",
+   "ADCY4",
+   "ADCY5",
+   "ADCY6",
+   "ADCY7",
+   "ADCY8",
+   "ADCY9",
+   "CALM1",
+   "GNAS"
+  ]
+ },
+ {
+  "pid": 4,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "GSH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "HCO3-",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "prostaglandin D3",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "GSH",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "HCO3-",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "prostaglandin D3",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "ABCC5",
+   "SLC22A10"
+  ]
+ },
+ {
+  "pid": 5,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "thymidine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "thymidine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "SLC28A3",
+   "SLC29A1",
+   "SLC29A2"
+  ]
+ },
+ {
+  "pid": 6,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "17alpha-hydroxyprogesterone",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "4-androstene-3,17-dione",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "acetaldehyde",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CYP17A1"
+  ]
+ },
+ {
+  "pid": 7,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "PCNA",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "SUMO1:C93-UBE2I",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "2993783",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "2993783",
+    "type": "UNRESOLVED"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "UBE2I",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "monoSUMO1-K164,K254,K-PCNA",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 6,
+  "candidates": [
+   "CDKN2A",
+   "PIAS1",
+   "PIAS4",
+   "RANBP2",
+   "TRIM28",
+   "UBE2I"
+  ]
+ },
+ {
+  "pid": 8,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "FAD",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "myristoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(2E)-tetradecenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "FADH2",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "ACADM",
+   "ACADS",
+   "ACADVL",
+   "HADHA"
+  ]
+ },
+ {
+  "pid": 9,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "eicosenoylcarnitine(9)",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "eicosenoylcarnitine(9)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CRAT"
+  ]
+ },
+ {
+  "pid": 10,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "stearidonic acid",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "stearidonic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 26,
+  "candidates": [
+   "ACOT1",
+   "ACOT7",
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "BAAT",
+   "CD36",
+   "FABP1",
+   "FABP12",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "SLC27A1",
+   "SLC27A2",
+   "SLC27A3",
+   "SLC27A4",
+   "SLC27A5",
+   "SLC27A6"
+  ]
+ },
+ {
+  "pid": 11,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "p21 RAS:GDP",
+    "type": "COMPLEX",
+    "compartment": "plasma membrane"
+   },
+   {
+    "name": "GTP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "p21 RAS:GTP",
+    "type": "COMPLEX",
+    "compartment": "plasma membrane"
+   },
+   {
+    "name": "GDP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 71,
+  "candidates": [
+   "ACTN2",
+   "BAG4",
+   "BTC",
+   "CALM1",
+   "CAMK2A",
+   "CAMK2B",
+   "CAMK2D",
+   "CAMK2G",
+   "CDC37",
+   "DLG1",
+   "DLG2",
+   "DLG3",
+   "DLG4",
+   "EGF",
+   "EGFR",
+   "ERBB2",
+   "ERBB3",
+   "ERBB4",
+   "EREG",
+   "ERLIN2",
+   "FGF1",
+   "FGF10",
+   "FGF16",
+   "FGF17",
+   "FGF18",
+   "FGF19",
+   "FGF2",
+   "FGF20",
+   "FGF22",
+   "FGF23",
+   "FGF3",
+   "FGF4",
+   "FGF5",
+   "FGF6",
+   "FGF7",
+   "FGF8",
+   "FGF9",
+   "FGFR1",
+   "FGFR2",
+   "FGFR3",
+   "FGFR4",
+   "FRS2",
+   "FRS3",
+   "GRB2",
+   "GRIN1",
+   "GRIN2B",
+   "GRIN2D",
+   "HBEGF",
+   "HGF",
+   "HRAS",
+   "HSP90AA1",
+   "IRS1",
+   "IRS2",
+   "KL",
+   "KLB",
+   "KRAS",
+   "LRRC7",
+   "MET",
+   "NEFL",
+   "NRAS",
+   "NRG1",
+   "NRG2",
+   "NRG3",
+   "NRG4",
+   "RANBP9",
+   "RASGRF1",
+   "RASGRF2",
+   "RASGRP1",
+   "RASGRP3",
+   "SHC1",
+   "SOS1"
+  ]
+ },
+ {
+  "pid": 12,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "dithiothreitol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "selenocysteine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "alanine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "oxidized dithiothreitol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "selenide",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SCLY"
+  ]
+ },
+ {
+  "pid": 13,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "isoleucine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "lysine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "isoleucine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "lysine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SLC7A6"
+  ]
+ },
+ {
+  "pid": 14,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "12(S)-HETE",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "12,20-diHETE",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "ALOX12",
+   "ALOX5",
+   "HSD17B12",
+   "PTGR1",
+   "TECRL"
+  ]
+ },
+ {
+  "pid": 15,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "stearoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "stearoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "SLC22A4",
+   "SLC25A20"
+  ]
+ },
+ {
+  "pid": 16,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "9,10-epoxy-(6Z,12Z)-octadecadienoic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "7,8-epoxy-(4Z,10Z)-hexadecadienoic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "acetyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "AMP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 24,
+  "candidates": [
+   "AASDH",
+   "ACAA1",
+   "ACAA2",
+   "ACOT1",
+   "ACOT2",
+   "ACOT4",
+   "ACOT7",
+   "ACOT8",
+   "ACOX1",
+   "ACOX3",
+   "ACSF2",
+   "ACSF3",
+   "AMACR",
+   "BAAT",
+   "ECHS1",
+   "HADH",
+   "HADHA",
+   "HADHB",
+   "HSD17B10",
+   "HSD17B4",
+   "SLC27A1",
+   "SLC27A2",
+   "SLC27A3",
+   "SLC27A4"
+  ]
+ },
+ {
+  "pid": 17,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "acetate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "formate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "acetate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "formate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 6,
+  "candidates": [
+   "SLC16A1",
+   "SLC16A3",
+   "SLC16A4",
+   "SLC16A5",
+   "SLC16A7",
+   "SLC16A8"
+  ]
+ },
+ {
+  "pid": 18,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "noradrenochrome-O-semiquinone",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "noradrenochrome",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 20,
+  "candidates": [
+   "GSTA1",
+   "GSTA2",
+   "GSTA3",
+   "GSTA4",
+   "GSTA5",
+   "GSTK1",
+   "GSTM1",
+   "GSTM2",
+   "GSTM3",
+   "GSTM4",
+   "GSTM5",
+   "GSTO1",
+   "GSTO2",
+   "GSTP1",
+   "GSTT2B",
+   "GSTZ1",
+   "HPGDS",
+   "MGST1",
+   "MGST2",
+   "MGST3"
+  ]
+ },
+ {
+  "pid": 19,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "1-pyrroline-5-carboxylate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "proline",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "PRODH",
+   "PRODH2",
+   "PYCR1",
+   "PYCR2"
+  ]
+ },
+ {
+  "pid": 20,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "(15Z)-tetracosenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(15Z)-tetracosenoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 15,
+  "candidates": [
+   "ABCD1",
+   "ABCD2",
+   "ACOT6",
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "BAAT",
+   "SLC25A20",
+   "SLC27A2",
+   "TECR",
+   "TECRL"
+  ]
+ },
+ {
+  "pid": 21,
+  "source": "reactome",
+  "category": "omitted",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ITCH",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "K48polyUb",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "9b:PCBP2:MAVS",
+    "type": "COMPLEX",
+    "compartment": "mitochondrial outer membrane"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "9b:K48polyUb-MAVS:PCBP2:ITCH",
+    "type": "COMPLEX",
+    "compartment": "mitochondrial outer membrane"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "ITCH"
+  ]
+ },
+ {
+  "pid": 22,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "CMP-N-acetylneuraminate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "GD1a",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "CMP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "GT1aalpha",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 9,
+  "candidates": [
+   "ST3GAL1",
+   "ST3GAL2",
+   "ST3GAL4",
+   "ST6GALNAC3",
+   "ST6GALNAC4",
+   "ST6GALNAC5",
+   "ST6GALNAC6",
+   "ST8SIA1",
+   "ST8SIA5"
+  ]
+ },
+ {
+  "pid": 23,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(9Z,12Z,15Z,18Z,21Z)-tetracosapentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "cholesterol",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "cholesterol-ester-9,12,15,18,21-tetra",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "CEL",
+   "LIPA"
+  ]
+ },
+ {
+  "pid": 24,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "2-hydroxy-atorvastatin-acid / ortho-hydroxy-atorvastatin acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "2-hydroxy-atorvastatin-acid / ortho-hydroxy-atorvastatin acid",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "SLCO1B1",
+   "SLCO2B1"
+  ]
+ },
+ {
+  "pid": 25,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "Alpha-Linolenyl Carnitine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "linolenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "CPT2",
+   "CRAT"
+  ]
+ },
+ {
+  "pid": 26,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "glucose-1-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "UDP-galactose",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "alpha-D-galactose-1-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "UDP-glucose",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "GALT"
+  ]
+ },
+ {
+  "pid": 27,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "TRAF2:TRADD:RIPK1",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "TRAF2:TRADD:p-S357-RIPK1",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "MAPKAPK2"
+  ]
+ },
+ {
+  "pid": 28,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "calcidiol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(24R)-24,25-dihydroxycalciol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 9,
+  "candidates": [
+   "COQ6",
+   "CUBN",
+   "CYP24A1",
+   "CYP27B1",
+   "CYP2E1",
+   "CYP2R1",
+   "CYP4V2",
+   "GC",
+   "LRP2"
+  ]
+ },
+ {
+  "pid": 29,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "1-acylglycerol-3P pool",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "acyl-CoA pool",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "phosphatidate-CL pool",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "GPAM",
+   "GPAT2",
+   "GPAT3",
+   "GPAT4"
+  ]
+ },
+ {
+  "pid": 30,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(6Z,9Z,12Z,15Z,18Z)-tetracosapentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "sn-glycerol-3-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "1-acylglycerol-3P-6,9,12,15,18-tetraco",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 20,
+  "candidates": [
+   "ABCD1",
+   "ACOT6",
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "BAAT",
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "GK",
+   "GK2",
+   "GK3P",
+   "GK5",
+   "GPD1",
+   "GPD1L",
+   "SLC27A2"
+  ]
+ },
+ {
+  "pid": 31,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "23S,25,26-trihydroxyvitamin D3",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "25-hydroxyvitamin D3-26,23-lactol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "COQ6",
+   "CYP2E1",
+   "CYP4V2"
+  ]
+ },
+ {
+  "pid": 32,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "threonine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "valine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "threonine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "valine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 14,
+  "candidates": [
+   "SLC36A1",
+   "SLC38A1",
+   "SLC38A2",
+   "SLC38A4",
+   "SLC3A2",
+   "SLC43A1",
+   "SLC43A2",
+   "SLC6A15",
+   "SLC6A19",
+   "SLC7A10",
+   "SLC7A3",
+   "SLC7A5",
+   "SLC7A7",
+   "SLC7A8"
+  ]
+ },
+ {
+  "pid": 33,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "selenite",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "selenide",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "SEPHS1",
+   "SEPHS2"
+  ]
+ },
+ {
+  "pid": 34,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "DNMT3B",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "SUMO1:C93-UBE2I",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "UBE2I",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "SUMO1-K-DNMT3B",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 8,
+  "candidates": [
+   "CBX4",
+   "PIAS1",
+   "PIAS4",
+   "RANBP2",
+   "SAE1",
+   "TOPORS",
+   "UBA2",
+   "UBE2I"
+  ]
+ },
+ {
+  "pid": 35,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "GTP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "mesaconate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "GDP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "mesaconyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "SUCLA2",
+   "SUCLG1",
+   "SUCLG2"
+  ]
+ },
+ {
+  "pid": 36,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "chondroitin sulfate D (GlcNAc6S-GlcA2S), precursor 5",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "PAPS",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "chondroitin sulfate D (GlcNAc6S-GlcA2S) proteoglycan",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "PAP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "CHST15",
+   "CHST3",
+   "CHST7"
+  ]
+ },
+ {
+  "pid": 37,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tyrosine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-dopa",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "TYR"
+  ]
+ },
+ {
+  "pid": 38,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "20alpha,22beta dihydroxycholesterol",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "isocaproic-aldehyde",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "pregnenolone",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CYP11A1"
+  ]
+ },
+ {
+  "pid": 39,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "delta2-THA-CoA",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "3-hydroxy-THA-CoA",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "ACAA1",
+   "ACOX1",
+   "ACOX3",
+   "EHHADH",
+   "HSD17B4"
+  ]
+ },
+ {
+  "pid": 40,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "histamine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "histamine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "SLC18A1",
+   "SLC18A2"
+  ]
+ },
+ {
+  "pid": 41,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "PE-LD pool",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "PE-LD pool",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "ATP10A",
+   "ATP8A1",
+   "FABP1"
+  ]
+ },
+ {
+  "pid": 42,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "malonate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "sulfite",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "malonate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "sulfite",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SLC25A10"
+  ]
+ },
+ {
+  "pid": 43,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "Complement factor 3",
+    "type": "COMPLEX",
+    "compartment": "extracellular region"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "C3b",
+    "type": "COMPLEX",
+    "compartment": "extracellular region"
+   },
+   {
+    "name": "C3a",
+    "type": "PROTEIN",
+    "compartment": "extracellular region"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CFB"
+  ]
+ },
+ {
+  "pid": 44,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "cholate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "cholate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "ABCB11",
+   "ABCC3",
+   "SLCO1A2",
+   "SLCO1B1",
+   "SLCO1B3"
+  ]
+ },
+ {
+  "pid": 45,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "asparagine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "serine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "asparagine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "serine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "SLC1A5",
+   "SLC7A5",
+   "SLC7A6"
+  ]
+ },
+ {
+  "pid": 46,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CDP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CMP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CMPK1"
+  ]
+ },
+ {
+  "pid": 47,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "uroporphyrinogen III",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "CO2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "coproporphyrinogen III",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CPOX"
+  ]
+ },
+ {
+  "pid": 48,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "I(1,4,5)P3",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "I(1,4,5)P3",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 27,
+  "candidates": [
+   "GNA11",
+   "GNA14",
+   "GNA15",
+   "GNAQ",
+   "GNB1",
+   "GNB2",
+   "GNB3",
+   "GNB4",
+   "GNB5",
+   "GNG10",
+   "GNG11",
+   "GNG12",
+   "GNG13",
+   "GNG2",
+   "GNG3",
+   "GNG4",
+   "GNG5",
+   "GNG7",
+   "GNG8",
+   "GNGT1",
+   "GNGT2",
+   "PLCB1",
+   "PLCB2",
+   "PLCB3",
+   "PLCB4",
+   "PLCG1",
+   "PLCG2"
+  ]
+ },
+ {
+  "pid": 49,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(13Z,16Z)-docosadienoic acid",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(13Z,16Z)-docosadienoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "AMP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 11,
+  "candidates": [
+   "ACOT2",
+   "ACOT4",
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "SLC27A2",
+   "SLC27A5"
+  ]
+ },
+ {
+  "pid": 50,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(6Z,9Z)-octadecadienoic acid",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(6Z,9Z)-octadecadienoic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 13,
+  "candidates": [
+   "ACOT1",
+   "ACOT13",
+   "ACOT7",
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "BAAT",
+   "SLC27A2",
+   "THEM4"
+  ]
+ },
+ {
+  "pid": 51,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "5,10-methenyl-THF",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "5,10-methylene-THF",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "MTHFD2",
+   "MTHFD2L"
+  ]
+ },
+ {
+  "pid": 52,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "acetyl-[ACP]",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "malonyl-[ACP]",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "[ACP]",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "acetoacetyl-[ACP]",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CO2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "FASN",
+   "OXSM"
+  ]
+ },
+ {
+  "pid": 53,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "acetoacetate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "butyrate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "acetoacetate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "butyrate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 20,
+  "candidates": [
+   "CD36",
+   "FABP1",
+   "FABP12",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "SLC16A1",
+   "SLC16A4",
+   "SLC16A5",
+   "SLC16A6",
+   "SLC16A7",
+   "SLC16A8",
+   "SLC27A1",
+   "SLC27A4",
+   "SLC27A6",
+   "SLC5A8"
+  ]
+ },
+ {
+  "pid": 54,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "17(R)-HDHA",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "7(S)-Hp-17(R)-HDHA",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "ALOX5"
+  ]
+ },
+ {
+  "pid": 55,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "BLM",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "UBE2I:SUMO2,UBE2I:SUMO3",
+    "type": "SET",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "4SUMO2,3-BLM",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "UBE2I",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   }
+  ],
+  "n_candidates": 7,
+  "candidates": [
+   "CBX4",
+   "HDAC4",
+   "MDM2",
+   "PIAS1",
+   "PIAS4",
+   "RANBP2",
+   "UBE2I"
+  ]
+ },
+ {
+  "pid": 56,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "D-lactate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "ferricytochrome C",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ferrocytochrome C",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "pyruvate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CYB5D1"
+  ]
+ },
+ {
+  "pid": 57,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "K+",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "K+",
+    "type": "METABOLITE",
+    "compartment": "extracellular region"
+   }
+  ],
+  "n_candidates": 19,
+  "candidates": [
+   "ABCC9",
+   "HCN1",
+   "HCN2",
+   "HCN3",
+   "HCN4",
+   "KCNE1",
+   "KCNE2",
+   "KCNE3",
+   "KCNE4",
+   "KCNE5",
+   "KCNH2",
+   "KCNJ11",
+   "KCNJ2",
+   "KCNMA1",
+   "KCNMB1",
+   "KCNMB2",
+   "KCNMB3",
+   "KCNMB4",
+   "P2RX7"
+  ]
+ },
+ {
+  "pid": 58,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "glutamine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "tyrosine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "glutamine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tyrosine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "SLC7A5",
+   "SLC7A6"
+  ]
+ },
+ {
+  "pid": 59,
+  "source": "reactome",
+  "category": "omitted",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "NUMB:ITCH:ub-pS-GLI1:SUFU",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "SUFU",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "NUMB:ITCH",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "ITCH"
+  ]
+ },
+ {
+  "pid": 60,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "D-proline",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "D-proline",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "DAO",
+   "SLC36A1"
+  ]
+ },
+ {
+  "pid": 61,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "chondroitin sulfate E (GalNAc4,6diS-GlcA), degradation product 3",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "chondroitin sulfate E (GalNAc4,6diS-GlcA), degradation product 4",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "glucuronate",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "n_candidates": 6,
+  "candidates": [
+   "GUSB",
+   "HEXA",
+   "HEXB",
+   "HEXD",
+   "KL",
+   "SLC17A5"
+  ]
+ },
+ {
+  "pid": 62,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "sulfate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "sulfate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 8,
+  "candidates": [
+   "SLC13A1",
+   "SLC13A4",
+   "SLC26A1",
+   "SLC26A11",
+   "SLC26A2",
+   "SLC26A7",
+   "SLC26A8",
+   "SLC26A9"
+  ]
+ },
+ {
+  "pid": 63,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "AMPK heterotrimer:AMP",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "Activated AMPK heterotrimer",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 7,
+  "candidates": [
+   "KARS1",
+   "PRKAA2",
+   "PRKAB2",
+   "PRKACA",
+   "PRKACB",
+   "PRKACG",
+   "PRKAG2"
+  ]
+ },
+ {
+  "pid": 64,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "1-phosphatidyl-1D-myo-inositol-5-phosphate",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "phosphatidylinositol-4,5-bisphosphate",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "PIK3C3",
+   "PIP5K1A",
+   "PIP5K1B",
+   "PIP5K1C",
+   "PIP5KL1"
+  ]
+ },
+ {
+  "pid": 65,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "RAC1:GTP",
+    "type": "COMPLEX",
+    "compartment": "plasma membrane"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "113592",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "PAK1 dimer",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "pPAK1:Rac1-GTP",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "29370",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "PAK1",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 43,
+  "candidates": [
+   "ARHGAP39",
+   "ARHGEF7",
+   "CRK",
+   "DOCK1",
+   "DOCK3",
+   "DOCK7",
+   "EFNA1",
+   "EFNA2",
+   "EFNA3",
+   "EFNA4",
+   "EFNA5",
+   "EFNB1",
+   "EFNB2",
+   "EFNB3",
+   "ELMO1",
+   "ELMO2",
+   "EPHA1",
+   "EPHA10",
+   "EPHA2",
+   "EPHA3",
+   "EPHA4",
+   "EPHA5",
+   "EPHA6",
+   "EPHA7",
+   "EPHA8",
+   "EPHB1",
+   "EPHB2",
+   "EPHB3",
+   "EPHB4",
+   "EPHB6",
+   "FARP2",
+   "FYN",
+   "GIT1",
+   "LYN",
+   "PXN",
+   "SOS1",
+   "SOS2",
+   "SRC",
+   "TIAM1",
+   "VAV1",
+   "VAV2",
+   "VAV3",
+   "YES1"
+  ]
+ },
+ {
+  "pid": 66,
+  "source": "reactome",
+  "category": "uncertain",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "PI(4,5)P2",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "PI(3,4,5)P3",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 123,
+  "candidates": [
+   "ALK",
+   "AREG",
+   "BCR",
+   "BDNF",
+   "BTC",
+   "CD19",
+   "CD28",
+   "CD80",
+   "CD86",
+   "CDC37",
+   "CEP43",
+   "CLTC",
+   "CNTRL",
+   "CPSF6",
+   "CUX1",
+   "DCTN1",
+   "EGF",
+   "EGFR",
+   "EML4",
+   "EPGN",
+   "ERBB2",
+   "ERBB3",
+   "ERBB4",
+   "EREG",
+   "ESR1",
+   "ESR2",
+   "FGF1",
+   "FGF10",
+   "FGF16",
+   "FGF17",
+   "FGF18",
+   "FGF19",
+   "FGF2",
+   "FGF20",
+   "FGF22",
+   "FGF23",
+   "FGF3",
+   "FGF4",
+   "FGF5",
+   "FGF6",
+   "FGF7",
+   "FGF8",
+   "FGF9",
+   "FGFR1",
+   "FGFR1OP2",
+   "FGFR2",
+   "FGFR3",
+   "FGFR4",
+   "FLT3",
+   "FLT3LG",
+   "FN1",
+   "FRS2",
+   "FYN",
+   "GAB1",
+   "GAB2",
+   "GNB1",
+   "GNB2",
+   "GNB3",
+   "GNB4",
+   "GNB5",
+   "GNG10",
+   "GNG11",
+   "GNG12",
+   "GNG13",
+   "GNG2",
+   "GNG3",
+   "GNG4",
+   "GNG5",
+   "GNG7",
+   "GNG8",
+   "GNGT1",
+   "GNGT2",
+   "GRB2",
+   "HBEGF",
+   "HGF",
+   "HSP90AA1",
+   "ICOS",
+   "IRS1",
+   "IRS2",
+   "KIF5B",
+   "KIT",
+   "KITLG",
+   "KL",
+   "KLB",
+   "LCK",
+   "LRRFIP1",
+   "MET",
+   "MYO18A",
+   "NPM1",
+   "NRG1",
+   "NRG2",
+   "NRG3",
+   "NRG4",
+   "NTF3",
+   "NTF4",
+   "NTRK2",
+   "NTRK3",
+   "PDGFA",
+   "PDGFB",
+   "PDGFRA",
+   "PDGFRB",
+   "PIK3AP1",
+   "PIK3CA",
+   "PIK3CB",
+   "PIK3CD",
+   "PIK3CG",
+   "PIK3R1",
+   "PIK3R2",
+   "PIK3R3",
+   "PIK3R5",
+   "PIK3R6",
+   "PTEN",
+   "PTPN11",
+   "RAC1",
+   "RAC2",
+   "RHOG",
+   "SRC",
+   "STRN",
+   "TGFA",
+   "TRAT1",
+   "TRIM24",
+   "VAV1",
+   "ZMYM2"
+  ]
+ },
+ {
+  "pid": 67,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "UDP-glucuronate",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "Losartan",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "UDP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "Losartan-N1-glucuronide",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 9,
+  "candidates": [
+   "UGT1A1",
+   "UGT1A10",
+   "UGT1A3",
+   "UGT1A4",
+   "UGT1A7",
+   "UGT1A8",
+   "UGT1A9",
+   "UGT2B17",
+   "UGT2B7"
+  ]
+ },
+ {
+  "pid": 68,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "12-keto-LTB4",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "12-oxo-20-hydroxy-LTB4",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 11,
+  "candidates": [
+   "CBR1",
+   "CBR3",
+   "CYP4F11",
+   "CYP4F2",
+   "CYP4F22",
+   "CYP4F3",
+   "CYP4F8",
+   "DHRS4",
+   "HSD17B12",
+   "PTGR1",
+   "TECRL"
+  ]
+ },
+ {
+  "pid": 69,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "selenomethionine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(met)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "AMP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "selenomethionyl-tRNA(met)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 14,
+  "candidates": [
+   "ACE2",
+   "CLTRN",
+   "FMO1",
+   "FMO2",
+   "FMO3",
+   "FMO4",
+   "FMO5",
+   "MAT1A",
+   "MAT2A",
+   "MAT2B",
+   "SLC22A5",
+   "SLC38A1",
+   "SLC38A2",
+   "SLC6A19"
+  ]
+ },
+ {
+  "pid": 70,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "phosphatidylinositol-3,5-bisphosphate",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "phosphatidylinositol-3,4,5-trisphosphate",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "PIP5K1A",
+   "PIP5K1B",
+   "PIP5K1C"
+  ]
+ },
+ {
+  "pid": 71,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 13,
+  "candidates": [
+   "PI4KA",
+   "PI4KB",
+   "PIK3C2A",
+   "PIK3C2B",
+   "PIK3C2G",
+   "PIK3C3",
+   "PIP4K2A",
+   "PIP4K2B",
+   "PIP4K2C",
+   "PIP5K1A",
+   "PIP5K1B",
+   "PIP5K1C",
+   "PIP5KL1"
+  ]
+ },
+ {
+  "pid": 72,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "2(S)-pristanal",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "pristanic acid",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 35,
+  "candidates": [
+   "ADH1A",
+   "ADH1B",
+   "ADH1C",
+   "ADH4",
+   "ADH5",
+   "ADH6",
+   "ADH7",
+   "AKR1C1",
+   "AKR1C2",
+   "AKR1C3",
+   "AKR1C4",
+   "ALDH1A1",
+   "ALDH1A2",
+   "ALDH1B1",
+   "ALDH2",
+   "ALDH3A1",
+   "ALDH3A2",
+   "ALDH7A1",
+   "ALDH9A1",
+   "CBR3",
+   "DHRS4",
+   "H6PD",
+   "HSD11B2",
+   "HSD17B1",
+   "HSD17B11",
+   "HSD17B12",
+   "HSD17B2",
+   "HSD17B6",
+   "HSD17B7",
+   "HSD17B8",
+   "HSD3B1",
+   "HSD3B2",
+   "HSD3B7",
+   "RDH5",
+   "SDR16C5"
+  ]
+ },
+ {
+  "pid": 73,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "docosahexaenoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "docosahexaenoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "CPT2",
+   "CRAT"
+  ]
+ },
+ {
+  "pid": 74,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "5-hydroxyindoleacetaldehyde",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "5-hydroxyindoleacetate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "AOX1"
+  ]
+ },
+ {
+  "pid": 75,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "APEX2:POLH,I,Z,REV1:MonoUb-K164-PCNA:single-strand break(AP->5'dRP)-dRP",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "APEX2:POLH,I,Z,REV1:MonoUb-K164-PCNA:single-strand gap-dsDNA",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 8,
+  "candidates": [
+   "APEX2",
+   "MAD2L2",
+   "POLD2",
+   "POLD3",
+   "POLH",
+   "POLI",
+   "REV1",
+   "REV3L"
+  ]
+ },
+ {
+  "pid": 76,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(alpha-D-mannosyl)6-beta-D-mannosyl-diacetylchitobiosyl-L-asparagine (protein) (A)",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(alpha-D-mannosyl)5-beta-D-mannosyl-diacetylchitobiosyl-L-asparagine (protein) (C)",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "mannose",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "MAN1A1",
+   "MAN1A2",
+   "MAN1B1",
+   "MAN1C1"
+  ]
+ },
+ {
+  "pid": 77,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(Gi alpha1:GTP:Adenylate cyclase):(G alpha-olf:GTP)",
+    "type": "COMPLEX",
+    "compartment": "plasma membrane"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(Gi alpha1:GTP:Adenylate cyclase):(G alpha-olf:GDP)",
+    "type": "COMPLEX",
+    "compartment": "plasma membrane"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "GNAI1"
+  ]
+ },
+ {
+  "pid": 78,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "3(S)-hydroxy-tetracosa-9,12,15,18,21-all-cis-pentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "2-trans-9,12,15,18,21-all-cis-tetracosahexaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "ELOVL1"
+  ]
+ },
+ {
+  "pid": 79,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "SP100",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "SUMO1:C93-UBE2I",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "UBE2I",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "monoSUMO1-K297-SP100",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 8,
+  "candidates": [
+   "CBX4",
+   "PIAS1",
+   "PIAS4",
+   "RANBP2",
+   "SAE1",
+   "TOPORS",
+   "UBA2",
+   "UBE2I"
+  ]
+ },
+ {
+  "pid": 80,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "(2E)-Octadecenoyl-ACP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Stearoyl-ACP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "FASN"
+  ]
+ },
+ {
+  "pid": 81,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "CAP",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial matrix"
+   },
+   {
+    "name": "L-Orn",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial matrix"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "L-Cit",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial matrix"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial matrix"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial matrix"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CPS1"
+  ]
+ },
+ {
+  "pid": 82,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "trans,cis,cis,cis,cis-2,12,15,18,21-tetracosapentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "12,15,18,21-tetracosatetraenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 19,
+  "candidates": [
+   "ABCD1",
+   "ACOT6",
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "BAAT",
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HIGD2A",
+   "SLC27A2"
+  ]
+ },
+ {
+  "pid": 83,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "keratan sulfate II (core 4-linked), biosynthesis, precursor 6",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "UDP-galactose",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "keratan sulfate II (core 4-linked), biosynthesis, precursor 7",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "UDP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 41,
+  "candidates": [
+   "A4GALT",
+   "A4GNT",
+   "ABO",
+   "ALG1L2",
+   "B3GALT1",
+   "B3GALT2",
+   "B3GALT4",
+   "B3GALT5",
+   "B3GALT6",
+   "B3GNT2",
+   "B3GNT3",
+   "B3GNT4",
+   "B3GNT7",
+   "B3GNT8",
+   "B3GNT9",
+   "B4GALNT2",
+   "B4GALNT4",
+   "B4GALT1",
+   "B4GALT2",
+   "B4GALT3",
+   "B4GALT4",
+   "B4GALT5",
+   "B4GALT6",
+   "B4GALT7",
+   "B4GAT1",
+   "C1GALT1",
+   "C1GALT1C1",
+   "FUT10",
+   "FUT11",
+   "FUT4",
+   "GALNT7",
+   "GBGT1",
+   "GCNT7",
+   "GLT6D1",
+   "GLT8D1",
+   "GLT8D2",
+   "LALBA",
+   "PIGZ",
+   "POMGNT1",
+   "STT3B",
+   "UGT8"
+  ]
+ },
+ {
+  "pid": 84,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(9E)-octadecenoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(9E)-octadecenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SLC22A5"
+  ]
+ },
+ {
+  "pid": 85,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "PI(4,5)P2",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "PI(3,4,5)P3",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   }
+  ],
+  "n_candidates": 123,
+  "candidates": [
+   "ALK",
+   "AREG",
+   "BCR",
+   "BDNF",
+   "BTC",
+   "CD19",
+   "CD28",
+   "CD80",
+   "CD86",
+   "CDC37",
+   "CEP43",
+   "CLTC",
+   "CNTRL",
+   "CPSF6",
+   "CUX1",
+   "DCTN1",
+   "EGF",
+   "EGFR",
+   "EML4",
+   "EPGN",
+   "ERBB2",
+   "ERBB3",
+   "ERBB4",
+   "EREG",
+   "ESR1",
+   "ESR2",
+   "FGF1",
+   "FGF10",
+   "FGF16",
+   "FGF17",
+   "FGF18",
+   "FGF19",
+   "FGF2",
+   "FGF20",
+   "FGF22",
+   "FGF23",
+   "FGF3",
+   "FGF4",
+   "FGF5",
+   "FGF6",
+   "FGF7",
+   "FGF8",
+   "FGF9",
+   "FGFR1",
+   "FGFR1OP2",
+   "FGFR2",
+   "FGFR3",
+   "FGFR4",
+   "FLT3",
+   "FLT3LG",
+   "FN1",
+   "FRS2",
+   "FYN",
+   "GAB1",
+   "GAB2",
+   "GNB1",
+   "GNB2",
+   "GNB3",
+   "GNB4",
+   "GNB5",
+   "GNG10",
+   "GNG11",
+   "GNG12",
+   "GNG13",
+   "GNG2",
+   "GNG3",
+   "GNG4",
+   "GNG5",
+   "GNG7",
+   "GNG8",
+   "GNGT1",
+   "GNGT2",
+   "GRB2",
+   "HBEGF",
+   "HGF",
+   "HSP90AA1",
+   "ICOS",
+   "IRS1",
+   "IRS2",
+   "KIF5B",
+   "KIT",
+   "KITLG",
+   "KL",
+   "KLB",
+   "LCK",
+   "LRRFIP1",
+   "MET",
+   "MYO18A",
+   "NPM1",
+   "NRG1",
+   "NRG2",
+   "NRG3",
+   "NRG4",
+   "NTF3",
+   "NTF4",
+   "NTRK2",
+   "NTRK3",
+   "PDGFA",
+   "PDGFB",
+   "PDGFRA",
+   "PDGFRB",
+   "PIK3AP1",
+   "PIK3CA",
+   "PIK3CB",
+   "PIK3CD",
+   "PIK3CG",
+   "PIK3R1",
+   "PIK3R2",
+   "PIK3R3",
+   "PIK3R5",
+   "PIK3R6",
+   "PTEN",
+   "PTPN11",
+   "RAC1",
+   "RAC2",
+   "RHOG",
+   "SRC",
+   "STRN",
+   "TGFA",
+   "TRAT1",
+   "TRIM24",
+   "VAV1",
+   "ZMYM2"
+  ]
+ },
+ {
+  "pid": 86,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "triol metabolite of pravastatin",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "3-keto-5,6,-dihydroxy-pravastatin",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CYP3A4"
+  ]
+ },
+ {
+  "pid": 87,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "18(R)-HEPE",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(18R)-resolvin E3",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "ALOX5"
+  ]
+ },
+ {
+  "pid": 88,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "chondroitin sulfate D (GlcNAc6S-GlcA2S), precursor 4",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "PAPS",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "chondroitin sulfate D (GlcNAc6S-GlcA2S), precursor 5",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "PAP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "UST"
+  ]
+ },
+ {
+  "pid": 89,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "Ca2+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "K+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "Ca2+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "K+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 28,
+  "candidates": [
+   "ABCC8",
+   "ABCC9",
+   "ATP12A",
+   "ATP1A1",
+   "ATP1A2",
+   "ATP1A3",
+   "ATP1A4",
+   "ATP1B1",
+   "ATP1B2",
+   "ATP1B3",
+   "ATP1B4",
+   "ATP2A1",
+   "ATP2A2",
+   "ATP2A3",
+   "ATP2B1",
+   "ATP2B2",
+   "ATP2B3",
+   "ATP2B4",
+   "ATP2C1",
+   "ATP2C2",
+   "ATP4A",
+   "ATP4B",
+   "FXYD2",
+   "KCNJ11",
+   "KCNJ8",
+   "SLC8A1",
+   "SLC8A2",
+   "SLC8A3"
+  ]
+ },
+ {
+  "pid": 90,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "[protein]-L-arginine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "[protein]-L-citrulline",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NH4+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 6,
+  "candidates": [
+   "RHAG",
+   "RHBG",
+   "RHCG",
+   "SLC9A1",
+   "SLC9A2",
+   "SLC9A3"
+  ]
+ },
+ {
+  "pid": 91,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "3-demethylubiquinol-10",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "SAM",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "SAH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "ubiquinol",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "COQ3",
+   "COQ5",
+   "PEMT",
+   "SLC25A26"
+  ]
+ },
+ {
+  "pid": 92,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(2E)-docosenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "docosanoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 20,
+  "candidates": [
+   "ABCD1",
+   "ABCD2",
+   "ACOT6",
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "BAAT",
+   "CPT1A",
+   "CPT1B",
+   "CPT1C",
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HIGD2A",
+   "SLC27A2"
+  ]
+ },
+ {
+  "pid": 93,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H2O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "DUOX1",
+   "DUOX2"
+  ]
+ },
+ {
+  "pid": 94,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "SUCCA",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial matrix"
+   },
+   {
+    "name": "CoQ",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial inner membrane"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "FUMA",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial matrix"
+   },
+   {
+    "name": "CoQH2",
+    "type": "METABOLITE",
+    "compartment": "mitochondrial inner membrane"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "SDHA",
+   "SDHB",
+   "SDHC",
+   "SDHD"
+  ]
+ },
+ {
+  "pid": 95,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "4-OH-midazolam",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "1,4-Dihydroxy-midazolam",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "CYP3A4",
+   "CYP3A5"
+  ]
+ },
+ {
+  "pid": 96,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "AKG",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "lysine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "saccharopine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "AASS",
+   "GLUD1",
+   "GLUD2",
+   "IDH2"
+  ]
+ },
+ {
+  "pid": 97,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "Alpha-Linolenyl Carnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "Alpha-Linolenyl Carnitine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "CPT1A",
+   "CPT1B"
+  ]
+ },
+ {
+  "pid": 98,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "20-COOH-10,11-dihydro-LTB4",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "20-COOH-LTB4",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "n_candidates": 30,
+  "candidates": [
+   "CBR1",
+   "CBR3",
+   "CYP1A1",
+   "CYP1A2",
+   "CYP1B1",
+   "CYP2A13",
+   "CYP2A6",
+   "CYP2A7",
+   "CYP2B6",
+   "CYP2C18",
+   "CYP2C19",
+   "CYP2C8",
+   "CYP2C9",
+   "CYP2D6",
+   "CYP2E1",
+   "CYP2F1",
+   "CYP2J2",
+   "CYP2S1",
+   "CYP2U1",
+   "CYP3A4",
+   "CYP3A43",
+   "CYP3A5",
+   "CYP3A7",
+   "CYP4B1",
+   "CYP4F11",
+   "CYP4F12",
+   "CYP4F8",
+   "CYP4Z1",
+   "DECR2",
+   "DHRS4"
+  ]
+ },
+ {
+  "pid": 99,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "9-heptadecenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "9-heptadecylenic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 8,
+  "candidates": [
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "SLC27A2"
+  ]
+ },
+ {
+  "pid": 100,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "NR4A1",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "p-S351-NR4A1",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "AKT1"
+  ]
+ },
+ {
+  "pid": 101,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "cysteine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2S",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NH3",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "pyruvate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "CBS",
+   "SDS",
+   "SDSL",
+   "SRR"
+  ]
+ },
+ {
+  "pid": 102,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "3alpha,7alpha,12alpha-trihydroxy-5beta-cholestanate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "3alpha,7alpha,12alpha-trihydroxy-5beta-cholestanate",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 9,
+  "candidates": [
+   "ABCB11",
+   "ABCC11",
+   "ABCC3",
+   "ALDH3A1",
+   "ALDH9A1",
+   "CYP27A1",
+   "SLC10A1",
+   "SLC27A2",
+   "SLC27A5"
+  ]
+ },
+ {
+  "pid": 103,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "5,6-EET",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "5,6-DHET",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 26,
+  "candidates": [
+   "CYP1A1",
+   "CYP1A2",
+   "CYP1B1",
+   "CYP2A13",
+   "CYP2A6",
+   "CYP2A7",
+   "CYP2B6",
+   "CYP2C18",
+   "CYP2C19",
+   "CYP2C8",
+   "CYP2C9",
+   "CYP2D6",
+   "CYP2E1",
+   "CYP2F1",
+   "CYP2J2",
+   "CYP2S1",
+   "CYP2U1",
+   "CYP3A4",
+   "CYP3A43",
+   "CYP3A5",
+   "CYP3A7",
+   "CYP4B1",
+   "CYP4F11",
+   "CYP4F12",
+   "CYP4F8",
+   "CYP4Z1"
+  ]
+ },
+ {
+  "pid": 104,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "testosterone",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "6beta-hydroxytestosterone",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CYP19A1"
+  ]
+ },
+ {
+  "pid": 105,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "glycogenin G4G7",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "glucose",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Glycogen, Structure 4 (Glycogenin-1,6-{2[1,4-Glc], [1,4-Glc]})",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SI"
+  ]
+ },
+ {
+  "pid": 106,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "D-xylose",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "xylitol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "DCXR",
+   "DHDH",
+   "SLC2A3",
+   "SORD"
+  ]
+ },
+ {
+  "pid": 107,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "retinol",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "retinal",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 10,
+  "candidates": [
+   "ADH1A",
+   "ADH1B",
+   "ADH1C",
+   "ADH4",
+   "ADH5",
+   "ADH6",
+   "ADH7",
+   "HSD17B6",
+   "RDH5",
+   "SDR16C5"
+  ]
+ },
+ {
+  "pid": 108,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "hypoxanthine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H2O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "xanthine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "XDH"
+  ]
+ },
+ {
+  "pid": 109,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "5beta-cholestane-3alpha,7alpha,26-triol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "5beta-cholestane-3alpha,7alpha,26-triol",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "ABCB11",
+   "ABCC11",
+   "ABCC3"
+  ]
+ },
+ {
+  "pid": 110,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "citrate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "succinate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "citrate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "succinate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SLC25A1"
+  ]
+ },
+ {
+  "pid": 111,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "PI(4,5)P2",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "PI(3,4,5)P3",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   }
+  ],
+  "n_candidates": 123,
+  "candidates": [
+   "ALK",
+   "AREG",
+   "BCR",
+   "BDNF",
+   "BTC",
+   "CD19",
+   "CD28",
+   "CD80",
+   "CD86",
+   "CDC37",
+   "CEP43",
+   "CLTC",
+   "CNTRL",
+   "CPSF6",
+   "CUX1",
+   "DCTN1",
+   "EGF",
+   "EGFR",
+   "EML4",
+   "EPGN",
+   "ERBB2",
+   "ERBB3",
+   "ERBB4",
+   "EREG",
+   "ESR1",
+   "ESR2",
+   "FGF1",
+   "FGF10",
+   "FGF16",
+   "FGF17",
+   "FGF18",
+   "FGF19",
+   "FGF2",
+   "FGF20",
+   "FGF22",
+   "FGF23",
+   "FGF3",
+   "FGF4",
+   "FGF5",
+   "FGF6",
+   "FGF7",
+   "FGF8",
+   "FGF9",
+   "FGFR1",
+   "FGFR1OP2",
+   "FGFR2",
+   "FGFR3",
+   "FGFR4",
+   "FLT3",
+   "FLT3LG",
+   "FN1",
+   "FRS2",
+   "FYN",
+   "GAB1",
+   "GAB2",
+   "GNB1",
+   "GNB2",
+   "GNB3",
+   "GNB4",
+   "GNB5",
+   "GNG10",
+   "GNG11",
+   "GNG12",
+   "GNG13",
+   "GNG2",
+   "GNG3",
+   "GNG4",
+   "GNG5",
+   "GNG7",
+   "GNG8",
+   "GNGT1",
+   "GNGT2",
+   "GRB2",
+   "HBEGF",
+   "HGF",
+   "HSP90AA1",
+   "ICOS",
+   "IRS1",
+   "IRS2",
+   "KIF5B",
+   "KIT",
+   "KITLG",
+   "KL",
+   "KLB",
+   "LCK",
+   "LRRFIP1",
+   "MET",
+   "MYO18A",
+   "NPM1",
+   "NRG1",
+   "NRG2",
+   "NRG3",
+   "NRG4",
+   "NTF3",
+   "NTF4",
+   "NTRK2",
+   "NTRK3",
+   "PDGFA",
+   "PDGFB",
+   "PDGFRA",
+   "PDGFRB",
+   "PIK3AP1",
+   "PIK3CA",
+   "PIK3CB",
+   "PIK3CD",
+   "PIK3CG",
+   "PIK3R1",
+   "PIK3R2",
+   "PIK3R3",
+   "PIK3R5",
+   "PIK3R6",
+   "PTEN",
+   "PTPN11",
+   "RAC1",
+   "RAC2",
+   "RHOG",
+   "SRC",
+   "STRN",
+   "TGFA",
+   "TRAT1",
+   "TRIM24",
+   "VAV1",
+   "ZMYM2"
+  ]
+ },
+ {
+  "pid": 112,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "globoside",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "N-acetylgalactosamine",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "beta-GalNAc-globoside",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 23,
+  "candidates": [
+   "PDE10A",
+   "PDE11A",
+   "PDE1A",
+   "PDE1B",
+   "PDE1C",
+   "PDE2A",
+   "PDE3A",
+   "PDE3B",
+   "PDE4A",
+   "PDE4B",
+   "PDE4C",
+   "PDE4D",
+   "PDE5A",
+   "PDE6A",
+   "PDE6B",
+   "PDE6C",
+   "PDE6G",
+   "PDE6H",
+   "PDE7A",
+   "PDE7B",
+   "PDE8A",
+   "PDE8B",
+   "PDE9A"
+  ]
+ },
+ {
+  "pid": 113,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "AKG",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "retinoate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "AKG",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "retinoate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SLC13A3"
+  ]
+ },
+ {
+  "pid": 114,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "GSH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "hepoxilin A3",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "hepoxilin A3-c",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 20,
+  "candidates": [
+   "ABCC5",
+   "CYP4F11",
+   "CYP4F2",
+   "CYP4F22",
+   "CYP4F3",
+   "CYP4F8",
+   "EPHX1",
+   "EPHX2",
+   "GPX1",
+   "GPX2",
+   "GPX3",
+   "GPX4",
+   "GPX5",
+   "GPX6",
+   "GPX7",
+   "GPX8",
+   "GSR",
+   "PRDX6",
+   "SLC25A39",
+   "SLC25A40"
+  ]
+ },
+ {
+  "pid": 115,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "7alpha-hydroxycholesterol",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "7alpha-hydroxycholest-4-en-3-one",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "HSD3B7"
+  ]
+ },
+ {
+  "pid": 116,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "Extended D-Loop:p-MRN:p-S1981,Ac-K3016-ATM:KAT5:EXO1,DNA2:BLM,WRN:p-S990,Ac-K1249-BRIP1:p-BRCA1-C complex:PALB2:p-T3387-BRCA2:SEM1:p-T309-RAD51:RAD51AP1:CX3 complex",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ss-gap-reannealed DNA",
+    "type": "OTHER",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "Sister Chromatid",
+    "type": "OTHER",
+    "compartment": "chromosome"
+   },
+   {
+    "name": "CX3 complex",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "EXO1,DNA2:BLM,WRN",
+    "type": "SET",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "BCDX2 complex",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "p-MRN",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "KAT5",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "SEM1:p-T3387-BRCA2:p-T309-RAD51 complex",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "RAD51AP1",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "PALB2",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "p-S327,T847,T859-RBBP8 homotetramer",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "p-S990,Ac-K1249-BRIP1",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "p-S1981,Ac-K3016-ATM",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "p-5S-BRCA1:p-2T-BARD1",
+    "type": "SET",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "BLM",
+   "RMI1",
+   "RMI2",
+   "TOP3A"
+  ]
+ },
+ {
+  "pid": 117,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "7-palmitoleic acid",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "7-hexadecenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "AMP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 11,
+  "candidates": [
+   "ACOT2",
+   "ACOT4",
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "SLC27A2",
+   "SLC27A5"
+  ]
+ },
+ {
+  "pid": 118,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "methanol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "formaldehyde",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "CAT",
+   "EPX",
+   "LPO",
+   "PRDX6",
+   "PXDN"
+  ]
+ },
+ {
+  "pid": 119,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "dopamine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "HCO3-",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "S-glutathionyl-ethacrynic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "dopamine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "HCO3-",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "S-glutathionyl-ethacrynic acid",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 9,
+  "candidates": [
+   "ABCC5",
+   "SLC18A1",
+   "SLC18A2",
+   "SLC22A1",
+   "SLC22A2",
+   "SLC22A3",
+   "SLC29A4",
+   "SLC6A2",
+   "SLC6A3"
+  ]
+ },
+ {
+  "pid": 120,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "GTP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "GDP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "AK3",
+   "GUK1"
+  ]
+ },
+ {
+  "pid": 121,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "2x DDX58 ligand:2x DDX58:2xATP",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "K63polyUb",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "450152",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "RNF135,TRIM25,TRIM4",
+    "type": "SET",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "936435",
+    "type": "UNRESOLVED"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "2xviral dsRNA:2xK63polyUb-DDX58:2xRNF135,TRIM25:2xATP",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "TNFAIP3"
+  ]
+ },
+ {
+  "pid": 122,
+  "source": "reactome",
+  "category": "omitted",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "SNCAIP",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "PolyUb",
+    "type": "SET",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "PolyUb-SNCAIP",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 26,
+  "candidates": [
+   "ATXN3",
+   "PRKN",
+   "USP10",
+   "USP11",
+   "USP17L1",
+   "USP17L10",
+   "USP17L11",
+   "USP17L12",
+   "USP17L13",
+   "USP17L15",
+   "USP17L17",
+   "USP17L18",
+   "USP17L19",
+   "USP17L2",
+   "USP17L20",
+   "USP17L21",
+   "USP17L22",
+   "USP17L24; USP17L25; USP17L26; USP17L27; USP17L28; USP17L29; USP17L30",
+   "USP17L3",
+   "USP17L4",
+   "USP17L5",
+   "USP17L8",
+   "USP20",
+   "USP21",
+   "USP33",
+   "USP4"
+  ]
+ },
+ {
+  "pid": 123,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "cholesterol-ester-13-docose",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "cholesterol",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "cis-erucic acid",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "CEL",
+   "LIPA",
+   "STS"
+  ]
+ },
+ {
+  "pid": 124,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "adenosine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "adenine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "ribose-1-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 9,
+  "candidates": [
+   "ACP3",
+   "ADK",
+   "DCK",
+   "NT5C",
+   "NT5C1A",
+   "NT5C1B",
+   "NT5C2",
+   "NT5E",
+   "RBAK"
+  ]
+ },
+ {
+  "pid": 125,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "glycine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "phenylalanine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "glycine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "phenylalanine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SLC7A5"
+  ]
+ },
+ {
+  "pid": 126,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "10,13,16-docosatrienoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "10,13,16-docosatrienoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CRAT"
+  ]
+ },
+ {
+  "pid": 127,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "sulfate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "sulfate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 7,
+  "candidates": [
+   "SLC13A1",
+   "SLC26A1",
+   "SLC26A11",
+   "SLC26A2",
+   "SLC26A7",
+   "SLC26A8",
+   "SLC26A9"
+  ]
+ },
+ {
+  "pid": 128,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "chenodeoxycholoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "glycine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "glycochenodeoxycholate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 29,
+  "candidates": [
+   "ABCB11",
+   "ABCC3",
+   "ABCC4",
+   "ACOT4",
+   "ACOT8",
+   "BAAT",
+   "CNDP1",
+   "CNDP2",
+   "SLC10A1",
+   "SLC10A2",
+   "SLC25A38",
+   "SLC27A5",
+   "SLC32A1",
+   "SLC36A1",
+   "SLC36A2",
+   "SLC36A3",
+   "SLC38A1",
+   "SLC38A2",
+   "SLC38A4",
+   "SLC38A5",
+   "SLC3A2",
+   "SLC43A1",
+   "SLC51A",
+   "SLC51B",
+   "SLC6A18",
+   "SLC6A19",
+   "SLC7A10",
+   "SLC7A5",
+   "SLC7A8"
+  ]
+ },
+ {
+  "pid": 129,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "5-oxo-6-trans-LTB4",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "6,7-dihydro-5-oxo-LTB4",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 23,
+  "candidates": [
+   "CYP1A1",
+   "CYP1A2",
+   "CYP1B1",
+   "CYP2A13",
+   "CYP2A6",
+   "CYP2A7",
+   "CYP2B6",
+   "CYP2C18",
+   "CYP2C19",
+   "CYP2C8",
+   "CYP2C9",
+   "CYP2D6",
+   "CYP2E1",
+   "CYP2F1",
+   "CYP2J2",
+   "CYP2S1",
+   "CYP2U1",
+   "CYP3A4",
+   "CYP3A43",
+   "CYP3A5",
+   "CYP4B1",
+   "CYP4F11",
+   "CYP4Z1"
+  ]
+ },
+ {
+  "pid": 130,
+  "source": "reactome",
+  "category": "omitted",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "eIF4F:mRNP",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "eIF4A subunits complex",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "EIF4B",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "EIF4H",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "72576",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "mRNA:eIF4F:eIF4B:eIF4H",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "RNA-binding protein in RNP (ribonucleoprotein) complexes",
+    "type": "OTHER",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "RPS6KB1"
+  ]
+ },
+ {
+  "pid": 131,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "i"
+   },
+   {
+    "name": "5,8,11,14,17-Eicosapentenoic Acid",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "5,8,11,14,17-Eicosapentenoic Acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "SLC25A14",
+   "SLC25A27",
+   "UCP1",
+   "UCP2",
+   "UCP3"
+  ]
+ },
+ {
+  "pid": 132,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "glycyl-tRNA(gly)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-alanyl-tRNA(ala)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-arginyl-tRNA(arg)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-asparaginyl-tRNA(asn)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-aspartyl-tRNA(asp)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-glutaminyl-tRNA(gln)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-glutamyl-tRNA(glu)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-isoleucyl-tRNA(ile)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-leucyl-tRNA(leu)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-lysyl-tRNA(lys)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-methionyl-tRNA(met)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-phenylalanyl-tRNA(phe)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-prolyl-tRNA(pro)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-seryl-tRNA(ser)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-threonyl-tRNA(thr)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-tryptophanyl-tRNA(trp)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-valyl-tRNA(val)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "apoC1",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(ala)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(arg)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(asn)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(asp)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(gln)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(glu)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(gly)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(ile)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(leu)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(lys)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(met)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(phe)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(pro)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(ser)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(thr)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(trp)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "tRNA(val)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "APOC2"
+  ]
+ },
+ {
+  "pid": 133,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "L-1-pyrroline-3-hydroxy-5-carboxylate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "L-erythro-4-hydroxyglutamate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "ALDH4A1"
+  ]
+ },
+ {
+  "pid": 134,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "eicosenoylcarnitine(9)",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "eicosenoylcarnitine(9)",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "CPT2",
+   "CRAT"
+  ]
+ },
+ {
+  "pid": 135,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "VEGFA:p-6Y-VEGFR2:p-SHB:p-5Y-PTK2:SRC-1:HSP90AA1",
+    "type": "COMPLEX",
+    "compartment": "plasma membrane"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "VEGFA:p-6Y-VEGFR2:pS-SHB:p-5Y,S732-PTK2:SRC-1:HSP90AA1",
+    "type": "COMPLEX",
+    "compartment": "plasma membrane"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "ITGAV",
+   "ITGB3",
+   "KDR",
+   "PTK2B",
+   "VEGFA"
+  ]
+ },
+ {
+  "pid": 136,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "alpha-D-galactose-1-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "UTP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "UDP-galactose",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "GALT"
+  ]
+ },
+ {
+  "pid": 137,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "retinal",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "retinoate",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 12,
+  "candidates": [
+   "ADH1A",
+   "ADH1B",
+   "ADH1C",
+   "ADH4",
+   "ADH5",
+   "ADH6",
+   "ADH7",
+   "ALDH1A1",
+   "ALDH1A2",
+   "HSD17B6",
+   "RDH5",
+   "SDR16C5"
+  ]
+ },
+ {
+  "pid": 138,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "malonyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "acetyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "CO2",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "ALDH6A1"
+  ]
+ },
+ {
+  "pid": 139,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "10,11-dihydro-12-epi-LTB4",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "10,11-dihydro-12-oxo-LTB4",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "CBR1",
+   "CBR3",
+   "DHRS4"
+  ]
+ },
+ {
+  "pid": 140,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "MLXIPL:MLX",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "163700",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "PKLR gene",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "MLXIPL:MLX:PKLR gene",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "MLX",
+   "MLXIPL"
+  ]
+ },
+ {
+  "pid": 141,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "cholesterol-ester-13,16-docosa",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(13Z,16Z)-docosadienoic acid",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "cholesterol",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "SOAT1",
+   "SOAT2"
+  ]
+ },
+ {
+  "pid": 142,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "L-lactate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "L-lactate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 6,
+  "candidates": [
+   "SLC16A1",
+   "SLC16A3",
+   "SLC16A4",
+   "SLC16A5",
+   "SLC16A7",
+   "SLC16A8"
+  ]
+ },
+ {
+  "pid": 143,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "3-oxo-all-cis-6,9,12,15,18-tetracosapentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(7Z,10Z,13Z,16Z)-docosatetraenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "acetyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "ACAA1",
+   "MYO5B"
+  ]
+ },
+ {
+  "pid": 144,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "palmitolate",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "AMP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "palmitoleoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 7,
+  "candidates": [
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "SLC27A2"
+  ]
+ },
+ {
+  "pid": 145,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "3-iodo-L-tyrosine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "iodine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "3,5-diiodo-L-tyrosine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "hydroiodic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "TPO"
+  ]
+ },
+ {
+  "pid": 146,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(Glc)3 (GlcNAc)2 (Man)9 (PP-Dol)1",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "[protein]-L-asparagine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(alpha-D-Glucosyl)3-(alpha-D-mannosyl)8-beta-D-mannosyl-diacetylchitobiosyl-L-asparagine (protein)",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "dolichyl-diphosphate",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "DOLPP1",
+   "MOGS"
+  ]
+ },
+ {
+  "pid": 147,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "formate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "pyruvate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "formate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "pyruvate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 8,
+  "candidates": [
+   "SLC16A1",
+   "SLC16A3",
+   "SLC16A4",
+   "SLC16A5",
+   "SLC16A6",
+   "SLC16A7",
+   "SLC16A8",
+   "SLC5A8"
+  ]
+ },
+ {
+  "pid": 148,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "keratan sulfate II (core 2-linked), degradation product 1",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "keratan sulfate II (core 2-linked), degradation product 2",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "sulfate",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "n_candidates": 17,
+  "candidates": [
+   "ARSA",
+   "ARSB",
+   "ARSD",
+   "ARSL",
+   "CTSA",
+   "GALNS",
+   "GLB1",
+   "GNS",
+   "HYAL1",
+   "HYAL2",
+   "HYAL3",
+   "HYAL4",
+   "IDS",
+   "NEU1",
+   "SGSH",
+   "SPAM1",
+   "STS"
+  ]
+ },
+ {
+  "pid": 149,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "3-phospho-D-glycerate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "3-phosphonooxypyruvate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 10,
+  "candidates": [
+   "ACYP1",
+   "ACYP2",
+   "BPGM",
+   "CRISP3",
+   "GLYCTK",
+   "PGAM1",
+   "PGAM2",
+   "PGAM4",
+   "PGK1",
+   "PGK2"
+  ]
+ },
+ {
+  "pid": 150,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "citrulline",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "glutamine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "citrulline",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "glutamine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "SLC3A1",
+   "SLC7A6",
+   "SLC7A9"
+  ]
+ },
+ {
+  "pid": 151,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(4Z,7Z,10Z,13Z,16Z)-docosapentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "cholesterol",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "cholesterol-ester-4,7,10,13,16-docosa",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "CEL",
+   "LIPA"
+  ]
+ },
+ {
+  "pid": 152,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "arginine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "methionine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "arginine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "methionine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Na+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "SLC3A1",
+   "SLC3A2",
+   "SLC7A6",
+   "SLC7A7",
+   "SLC7A9"
+  ]
+ },
+ {
+  "pid": 153,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(6Z,9Z,12Z,15Z,18Z)-TPA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(6Z,9Z,12Z,15Z,18Z)-tetracosapentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "AMP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "ACOT6",
+   "BAAT"
+  ]
+ },
+ {
+  "pid": 154,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "isocitrate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "AKG",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "CO2",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "IDH2"
+  ]
+ },
+ {
+  "pid": 155,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "5-alpha-dihydrotestosterone",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "sulfate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "5alpha-dihydrotestosterone-sulfate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SULT2A1"
+  ]
+ },
+ {
+  "pid": 156,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "PI(4,5)P2",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "PI(3,4,5)P3",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 116,
+  "candidates": [
+   "AREG",
+   "BCR",
+   "BDNF",
+   "BTC",
+   "CD19",
+   "CD28",
+   "CD80",
+   "CD86",
+   "CDC37",
+   "CEP43",
+   "CNTRL",
+   "CPSF6",
+   "CUX1",
+   "EGF",
+   "EGFR",
+   "EPGN",
+   "ERBB2",
+   "ERBB3",
+   "ERBB4",
+   "EREG",
+   "ESR1",
+   "ESR2",
+   "FGF1",
+   "FGF10",
+   "FGF16",
+   "FGF17",
+   "FGF18",
+   "FGF19",
+   "FGF2",
+   "FGF20",
+   "FGF22",
+   "FGF23",
+   "FGF3",
+   "FGF4",
+   "FGF5",
+   "FGF6",
+   "FGF7",
+   "FGF8",
+   "FGF9",
+   "FGFR1",
+   "FGFR1OP2",
+   "FGFR2",
+   "FGFR3",
+   "FGFR4",
+   "FLT3",
+   "FLT3LG",
+   "FRS2",
+   "FYN",
+   "GAB1",
+   "GAB2",
+   "GNB1",
+   "GNB2",
+   "GNB3",
+   "GNB4",
+   "GNB5",
+   "GNG10",
+   "GNG11",
+   "GNG12",
+   "GNG13",
+   "GNG2",
+   "GNG3",
+   "GNG4",
+   "GNG5",
+   "GNG7",
+   "GNG8",
+   "GNGT1",
+   "GNGT2",
+   "GRB2",
+   "HBEGF",
+   "HGF",
+   "HSP90AA1",
+   "ICOS",
+   "IRS1",
+   "IRS2",
+   "KIT",
+   "KITLG",
+   "KL",
+   "KLB",
+   "LCK",
+   "LRRFIP1",
+   "MET",
+   "MYO18A",
+   "NRG1",
+   "NRG2",
+   "NRG3",
+   "NRG4",
+   "NTF3",
+   "NTF4",
+   "NTRK2",
+   "NTRK3",
+   "PDGFA",
+   "PDGFB",
+   "PDGFRA",
+   "PDGFRB",
+   "PIK3AP1",
+   "PIK3CA",
+   "PIK3CB",
+   "PIK3CD",
+   "PIK3CG",
+   "PIK3R1",
+   "PIK3R2",
+   "PIK3R3",
+   "PIK3R5",
+   "PIK3R6",
+   "PTEN",
+   "PTPN11",
+   "RAC1",
+   "RAC2",
+   "RHOG",
+   "SRC",
+   "STRN",
+   "TGFA",
+   "TRAT1",
+   "TRIM24",
+   "VAV1",
+   "ZMYM2"
+  ]
+ },
+ {
+  "pid": 157,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "(9E)-tetradecenoic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(9E)-tetradecenoic acid",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 14,
+  "candidates": [
+   "CD36",
+   "FABP1",
+   "FABP12",
+   "FABP2",
+   "FABP3",
+   "FABP4",
+   "FABP5",
+   "FABP6",
+   "FABP7",
+   "FABP9",
+   "SLC27A1",
+   "SLC27A3",
+   "SLC27A4",
+   "SLC27A6"
+  ]
+ },
+ {
+  "pid": 158,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "7(S)-Hp-17(S)-HDHA",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "7S(8)-epoxy-17(S)-HDHA",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 10,
+  "candidates": [
+   "ALOX15",
+   "ALOX5",
+   "DHCR7",
+   "DHFR",
+   "G6PD",
+   "NDOR1",
+   "NOX4",
+   "SPR",
+   "SRD5A2",
+   "TM7SF2"
+  ]
+ },
+ {
+  "pid": 159,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "Tn-antigen",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "UDP-galactose",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "T-antigen",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "UDP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 57,
+  "candidates": [
+   "A4GALT",
+   "A4GNT",
+   "ABO",
+   "ALG1L2",
+   "B3GALT1",
+   "B3GALT2",
+   "B3GALT4",
+   "B3GALT5",
+   "B3GALT6",
+   "B3GNT3",
+   "B3GNT6",
+   "B3GNT7",
+   "B3GNT9",
+   "B4GALNT2",
+   "B4GALNT4",
+   "B4GALT1",
+   "B4GALT2",
+   "B4GALT3",
+   "B4GALT4",
+   "B4GALT5",
+   "B4GALT6",
+   "B4GALT7",
+   "FUT10",
+   "FUT11",
+   "FUT4",
+   "GALNT1",
+   "GALNT10",
+   "GALNT11",
+   "GALNT12",
+   "GALNT13",
+   "GALNT14",
+   "GALNT15",
+   "GALNT16",
+   "GALNT17",
+   "GALNT18",
+   "GALNT2",
+   "GALNT3",
+   "GALNT4",
+   "GALNT5",
+   "GALNT6",
+   "GALNT7",
+   "GALNT8",
+   "GALNT9",
+   "GALNTL6",
+   "GBGT1",
+   "GCNT1",
+   "GCNT3",
+   "GCNT4",
+   "GCNT7",
+   "GLT6D1",
+   "GLT8D1",
+   "GLT8D2",
+   "LALBA",
+   "PIGZ",
+   "POMGNT1",
+   "STT3B",
+   "UGT8"
+  ]
+ },
+ {
+  "pid": 160,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "RPA1",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "UBE2I:SUMO2,UBE2I:SUMO3",
+    "type": "SET",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "3899312",
+    "type": "UNRESOLVED"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "polySUMO2,3-K449,K577-RPA1",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "UBE2I",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "912481",
+    "type": "UNRESOLVED"
+   }
+  ],
+  "n_candidates": 7,
+  "candidates": [
+   "CBX4",
+   "HDAC4",
+   "MDM2",
+   "PIAS1",
+   "PIAS4",
+   "RANBP2",
+   "UBE2I"
+  ]
+ },
+ {
+  "pid": 161,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "3beta-hydroxy-5-cholestene-27-oate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "3beta,7alpha-dihydroxy-5-cholestenoate",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CYP27A1"
+  ]
+ },
+ {
+  "pid": 162,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "[protein]-N6-methyl-L-lysine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "SAM",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "[protein]-N6,N6-dimethyl-L-lysine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "SAH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 24,
+  "candidates": [
+   "ASH1L",
+   "DOT1L",
+   "EHMT1",
+   "EHMT2",
+   "KMT2A",
+   "KMT2B",
+   "KMT2C",
+   "KMT2D",
+   "KMT5A",
+   "KMT5B",
+   "KMT5C",
+   "NSD1",
+   "NSD2",
+   "NSD3",
+   "SETD1A",
+   "SETD1B",
+   "SETD2",
+   "SETD7",
+   "SETDB1",
+   "SETDB2",
+   "SETMAR",
+   "SMYD3",
+   "SUV39H1",
+   "SUV39H2"
+  ]
+ },
+ {
+  "pid": 163,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Chenodeoxycholic acid-24glucuronide, CDCA-24G",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Chenodeoxycholic acid-24glucuronide, CDCA-24G",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "UGT1A3",
+   "UGT2A1",
+   "UGT2A3"
+  ]
+ },
+ {
+  "pid": 164,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "triiodothyronine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "triiodothyronine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "SLCO1A2",
+   "SLCO1B1",
+   "SLCO1B3",
+   "SLCO1C1",
+   "SLCO4A1"
+  ]
+ },
+ {
+  "pid": 165,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "dATP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "dADP",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "SLC25A4",
+   "SLC25A5",
+   "SLC25A6"
+  ]
+ },
+ {
+  "pid": 166,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "sphinganine-1-phosphate",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "sphinganine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "SLC17A3",
+   "SLC17A7",
+   "SLC37A4"
+  ]
+ },
+ {
+  "pid": 167,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "acetyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "carboxybiotin-carboxyl-carrier",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "apoC-lys_btn",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "malonyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "MLYCD"
+  ]
+ },
+ {
+  "pid": 168,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "25-hydroxyvitamin D3-26,23-lactol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "25-hydroxyvitamin D3-26,23-lactone",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "COQ6",
+   "CYP2E1",
+   "CYP4V2"
+  ]
+ },
+ {
+  "pid": 169,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "Smooth muscle/non-muscle myosin II",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "p-T19,S20-MRLC-smooth muscle/non-muscle myosin II",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 9,
+  "candidates": [
+   "CALM1",
+   "CIT",
+   "MYLK",
+   "PPP1CB",
+   "PPP1R12A",
+   "PPP1R12B",
+   "RHOA",
+   "ROCK1",
+   "ROCK2"
+  ]
+ },
+ {
+  "pid": 170,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "deamido-NAD",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "glutamine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "AMP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "glutamate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "CAD",
+   "GLS2",
+   "GLUL"
+  ]
+ },
+ {
+  "pid": 171,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "orotidine-5-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "CO2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "UMP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "CA1",
+   "CA13",
+   "CA2",
+   "CA3",
+   "CA7"
+  ]
+ },
+ {
+  "pid": 172,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "D-glyceraldehyde 3-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "sedoheptulose-7-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "erythrose-4-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "fructose-6-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "TKT",
+   "TKTL1",
+   "TKTL2"
+  ]
+ },
+ {
+  "pid": 173,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "DHA",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "17-HDHA",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "ALOX15",
+   "ALOX5",
+   "PTGS2"
+  ]
+ },
+ {
+  "pid": 174,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "N-acetyl-S-[2-carboxy-1-(1H-imidazol-4-yl)ethyl]-L-cysteine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "acetate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "S-[2-carboxy-1-(1H-imidazol-4-yl)ethyl]-L-cysteine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "ELOVL1",
+   "ELOVL2",
+   "ELOVL3",
+   "ELOVL7"
+  ]
+ },
+ {
+  "pid": 175,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "hexanoyl-[ACP]",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "malonyl-[ACP]",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "[ACP]",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "3-oxooctanoyl-[ACP]",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "CO2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "FASN",
+   "OXSM"
+  ]
+ },
+ {
+  "pid": 176,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "leukotriene C4",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "leukotriene C4",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "ABCC1",
+   "SLCO1B1",
+   "SLCO1B3"
+  ]
+ },
+ {
+  "pid": 177,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "D-galactosyl-N-acylsphingosine",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ceramide pool",
+    "type": "METABOLITE",
+    "compartment": "l"
+   },
+   {
+    "name": "glucose",
+    "type": "METABOLITE",
+    "compartment": "l"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "GALC",
+   "GBA",
+   "SAPCD1"
+  ]
+ },
+ {
+  "pid": 178,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "glutathionyl-leukotriene C4",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "HCO3-",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "sulfotaurolithocholate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "glutathionyl-leukotriene C4",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "HCO3-",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "sulfotaurolithocholate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "ABCC1",
+   "ABCC5",
+   "SLC10A6"
+  ]
+ },
+ {
+  "pid": 179,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "HCO3-",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "prostaglandin E2",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "S-glutathionyl-ethacrynic acid",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "HCO3-",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "prostaglandin E2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "S-glutathionyl-ethacrynic acid",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 9,
+  "candidates": [
+   "ABCC4",
+   "ABCC5",
+   "SLC22A1",
+   "SLC22A2",
+   "SLC22A3",
+   "SLCO1A2",
+   "SLCO2A1",
+   "SLCO3A1",
+   "SLCO4A1"
+  ]
+ },
+ {
+  "pid": 180,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "benzo[a]pyrene-7,8-diol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "O2",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "benzo[a]pyrene-7,8-dihydrodiol-9,10-oxide",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "EPHX1"
+  ]
+ },
+ {
+  "pid": 181,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "FOXO3",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "29358",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "29358",
+    "type": "UNRESOLVED"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "p-T32,S253,S315-FOXO3",
+    "type": "PROTEIN",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "113582",
+    "type": "UNRESOLVED"
+   },
+   {
+    "name": "113582",
+    "type": "UNRESOLVED"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "AKT1",
+   "AKT2",
+   "AKT3"
+  ]
+ },
+ {
+  "pid": 182,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "K+",
+    "type": "METABOLITE",
+    "compartment": "extracellular region"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "K+",
+    "type": "METABOLITE",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 28,
+  "candidates": [
+   "ABCC9",
+   "HCN1",
+   "HCN2",
+   "HCN3",
+   "HCN4",
+   "KCNE1",
+   "KCNE2",
+   "KCNE3",
+   "KCNE4",
+   "KCNE5",
+   "KCNH2",
+   "KCNJ10",
+   "KCNJ11",
+   "KCNJ12",
+   "KCNJ15",
+   "KCNJ16",
+   "KCNJ2",
+   "KCNJ3",
+   "KCNJ4",
+   "KCNJ5",
+   "KCNJ6",
+   "KCNJ9",
+   "KCNMA1",
+   "KCNMB1",
+   "KCNMB2",
+   "KCNMB3",
+   "KCNMB4",
+   "P2RX7"
+  ]
+ },
+ {
+  "pid": 183,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "4-cholesten-7alpha,27-diol-3-one",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "5beta-cholestan-7alpha,27-diol-3-one",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "AKR1C4",
+   "CYP8B1",
+   "HSD3B7"
+  ]
+ },
+ {
+  "pid": 184,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "(4Z,7Z,10Z,13Z,16Z)-docosapentaenoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "(4Z,7Z,10Z,13Z,16Z)-docosapentaenoylcarnitine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "CRAT"
+  ]
+ },
+ {
+  "pid": 185,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "NEIL2:5-OHU-dsDNA",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "5-OHU",
+    "type": "METABOLITE",
+    "compartment": "nucleoplasm"
+   },
+   {
+    "name": "NEIL2:AP-dsDNA",
+    "type": "COMPLEX",
+    "compartment": "nucleoplasm"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "UNG"
+  ]
+ },
+ {
+  "pid": 186,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "(7Z)-octadecenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "m"
+   },
+   {
+    "name": "octadecenoylcarnitine(11)",
+    "type": "METABOLITE",
+    "compartment": "m"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "SLC22A1",
+   "SLC22A4",
+   "SLC25A20"
+  ]
+ },
+ {
+  "pid": 187,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "MTMR7",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   },
+   {
+    "name": "MTMR9",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "MTMR7:MTMR9",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "MTMR9"
+  ]
+ },
+ {
+  "pid": 188,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "methionine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "serine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "methionine",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "serine",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 2,
+  "candidates": [
+   "SLC7A5",
+   "SLC7A6"
+  ]
+ },
+ {
+  "pid": 189,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "UDP-glucuronate",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "cerivastatin-M1",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "UDP",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "cerivastatin-M1-glucuronide",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 20,
+  "candidates": [
+   "UGT1A1",
+   "UGT1A10",
+   "UGT1A3",
+   "UGT1A4",
+   "UGT1A5",
+   "UGT1A6",
+   "UGT1A7",
+   "UGT1A8",
+   "UGT1A9",
+   "UGT2A1",
+   "UGT2A3",
+   "UGT2B10",
+   "UGT2B11",
+   "UGT2B15",
+   "UGT2B17",
+   "UGT2B28",
+   "UGT2B4",
+   "UGT2B7",
+   "UGT3A1",
+   "UGT3A2"
+  ]
+ },
+ {
+  "pid": 190,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "6,7-dihydro-5-oxo-12-epi-LTB4",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "5-oxo-12(R)-hydroxy-eicosa-(8E,10E,14Z)-trienoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "AMP",
+    "type": "METABOLITE",
+    "compartment": "x"
+   },
+   {
+    "name": "PPi",
+    "type": "METABOLITE",
+    "compartment": "x"
+   }
+  ],
+  "n_candidates": 8,
+  "candidates": [
+   "ACSBG1",
+   "ACSBG2",
+   "ACSL1",
+   "ACSL3",
+   "ACSL4",
+   "ACSL5",
+   "ACSL6",
+   "SLC27A2"
+  ]
+ },
+ {
+  "pid": 191,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "3-oxo-all-cis-6,9,12,15,18-tetracosapentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "3(S)-hydroxy-tetracosa-9,12,15,18,21-all-cis-pentaenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "ELOVL1"
+  ]
+ },
+ {
+  "pid": 192,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "(7Z)-octadecenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "L-carnitine",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "CoA",
+    "type": "METABOLITE",
+    "compartment": "r"
+   },
+   {
+    "name": "octadecenoylcarnitine(11)",
+    "type": "METABOLITE",
+    "compartment": "r"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "SLC22A5"
+  ]
+ },
+ {
+  "pid": 193,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "NAD+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "prostaglandin F2alpha",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "15-Keto-Prostaglandin F2A",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 7,
+  "candidates": [
+   "AKR1C3",
+   "CBR1",
+   "CBR3",
+   "DHRS4",
+   "SLC22A1",
+   "SLC22A2",
+   "SLCO2A1"
+  ]
+ },
+ {
+  "pid": 194,
+  "source": "reactome",
+  "category": "transition",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "atROL",
+    "type": "METABOLITE",
+    "compartment": "plasma membrane"
+   },
+   {
+    "name": "RBP2",
+    "type": "PROTEIN",
+    "compartment": "cytosol"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "RBP2:atROL",
+    "type": "COMPLEX",
+    "compartment": "cytosol"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "RBP2"
+  ]
+ },
+ {
+  "pid": 195,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "fructose-1,6-bisphosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "fructose-6-phosphate",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 3,
+  "candidates": [
+   "PFKL",
+   "PFKM",
+   "PFKP"
+  ]
+ },
+ {
+  "pid": 196,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "ATP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H2O",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Coprostanol",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "ADP",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Pi",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "Coprostanol",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 4,
+  "candidates": [
+   "SLC10A1",
+   "SLC10A2",
+   "SLCO1B1",
+   "SLCO1B3"
+  ]
+ },
+ {
+  "pid": 197,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "T-antigen",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "UDP-N-acetylglucosamine",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "core 2",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "g"
+   },
+   {
+    "name": "UDP",
+    "type": "METABOLITE",
+    "compartment": "g"
+   }
+  ],
+  "n_candidates": 1,
+  "candidates": [
+   "A4GNT"
+  ]
+ },
+ {
+  "pid": 198,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": true,
+  "inputs": [
+   {
+    "name": "H2O2",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "urate",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "alloxan",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "e"
+   },
+   {
+    "name": "urea",
+    "type": "METABOLITE",
+    "compartment": "e"
+   }
+  ],
+  "n_candidates": 5,
+  "candidates": [
+   "ABCC4",
+   "AQP9",
+   "SLC14A1",
+   "SLC14A2",
+   "SLC2A9"
+  ]
+ },
+ {
+  "pid": 199,
+  "source": "humangem",
+  "category": "metabolic",
+  "reversible": false,
+  "inputs": [
+   {
+    "name": "3-oxo-tetracosa-9,12,15,18-all-cis-tetraenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "H+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADPH",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "outputs": [
+   {
+    "name": "3(S)-hydroxy-tetracosa-12,15,18,21-all-cis-tetraenoyl-CoA",
+    "type": "METABOLITE",
+    "compartment": "c"
+   },
+   {
+    "name": "NADP+",
+    "type": "METABOLITE",
+    "compartment": "c"
+   }
+  ],
+  "n_candidates": 6,
+  "candidates": [
+   "HACD1",
+   "HACD2",
+   "HACD3",
+   "HACD4",
+   "HIGD2A",
+   "HSD17B12"
+  ]
+ }
+]

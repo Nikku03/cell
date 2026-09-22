@@ -1,0 +1,332 @@
+{
+  "summary": {
+    "onco_pt": {
+      "hits": 22,
+      "n": 29,
+      "pct": 75.9
+    },
+    "fusion": {
+      "hits": 4,
+      "n": 5,
+      "pct": 80.0
+    },
+    "lof": {
+      "hits": 5,
+      "n": 6,
+      "pct": 83.3
+    },
+    "amp": {
+      "hits": 0,
+      "n": 3,
+      "pct": 0.0
+    }
+  },
+  "overall": {
+    "hits": 31,
+    "n": 43
+  },
+  "rows": [
+    {
+      "tumor": "A375 melanoma",
+      "class": "onco_pt",
+      "proposed": "BRAF",
+      "true": "BRAF",
+      "hit": true
+    },
+    {
+      "tumor": "HT-29 colon",
+      "class": "onco_pt",
+      "proposed": "BRAF",
+      "true": "BRAF",
+      "hit": true
+    },
+    {
+      "tumor": "BCPAP thyroid (PTC)",
+      "class": "onco_pt",
+      "proposed": "BRAF",
+      "true": "BRAF",
+      "hit": true
+    },
+    {
+      "tumor": "HCC827 lung adeno",
+      "class": "onco_pt",
+      "proposed": "EGFR",
+      "true": "EGFR",
+      "hit": true
+    },
+    {
+      "tumor": "H1975 lung adeno",
+      "class": "onco_pt",
+      "proposed": "EGFR",
+      "true": "EGFR",
+      "hit": true
+    },
+    {
+      "tumor": "A549 lung",
+      "class": "onco_pt",
+      "proposed": "KRAS",
+      "true": "KRAS",
+      "hit": true
+    },
+    {
+      "tumor": "HCT116 colon",
+      "class": "onco_pt",
+      "proposed": "KRAS",
+      "true": "KRAS",
+      "hit": true
+    },
+    {
+      "tumor": "PANC-1 pancreatic",
+      "class": "onco_pt",
+      "proposed": "KRAS",
+      "true": "KRAS",
+      "hit": true
+    },
+    {
+      "tumor": "SK-MEL-2 melanoma",
+      "class": "onco_pt",
+      "proposed": "NRAS",
+      "true": "NRAS",
+      "hit": true
+    },
+    {
+      "tumor": "T24 bladder",
+      "class": "onco_pt",
+      "proposed": "HRAS",
+      "true": "HRAS",
+      "hit": true
+    },
+    {
+      "tumor": "GIST882",
+      "class": "onco_pt",
+      "proposed": "KIT",
+      "true": "KIT",
+      "hit": true
+    },
+    {
+      "tumor": "HMC-1 mastocytosis",
+      "class": "onco_pt",
+      "proposed": "KIT",
+      "true": "KIT",
+      "hit": true
+    },
+    {
+      "tumor": "GIST (PDGFRA)",
+      "class": "onco_pt",
+      "proposed": "PDGFRA",
+      "true": "PDGFRA",
+      "hit": true
+    },
+    {
+      "tumor": "92.1 uveal melanoma",
+      "class": "onco_pt",
+      "proposed": "BAP1",
+      "true": "GNAQ",
+      "hit": false
+    },
+    {
+      "tumor": "OMM1 uveal melanoma",
+      "class": "onco_pt",
+      "proposed": "GNA11",
+      "true": "GNA11",
+      "hit": true
+    },
+    {
+      "tumor": "MOLM-13 AML",
+      "class": "onco_pt",
+      "proposed": "FLT3",
+      "true": "FLT3",
+      "hit": true
+    },
+    {
+      "tumor": "HEL erythroleukemia",
+      "class": "onco_pt",
+      "proposed": "TP53",
+      "true": "JAK2",
+      "hit": false
+    },
+    {
+      "tumor": "U87 / IDH-glioma",
+      "class": "onco_pt",
+      "proposed": "PTEN",
+      "true": "IDH1",
+      "hit": false
+    },
+    {
+      "tumor": "IDH2 AML",
+      "class": "onco_pt",
+      "proposed": "DNMT3A",
+      "true": "IDH2",
+      "hit": false
+    },
+    {
+      "tumor": "RT4 bladder",
+      "class": "onco_pt",
+      "proposed": "FGFR3",
+      "true": "FGFR3",
+      "hit": true
+    },
+    {
+      "tumor": "TT medullary thyroid",
+      "class": "onco_pt",
+      "proposed": "RET",
+      "true": "RET",
+      "hit": true
+    },
+    {
+      "tumor": "Waldenstrom lymphoma",
+      "class": "onco_pt",
+      "proposed": "MYD88",
+      "true": "MYD88",
+      "hit": true
+    },
+    {
+      "tumor": "H596 lung (MET ex14)",
+      "class": "onco_pt",
+      "proposed": "MET",
+      "true": "MET",
+      "hit": true
+    },
+    {
+      "tumor": "hairy-cell leukemia",
+      "class": "onco_pt",
+      "proposed": "BRAF",
+      "true": "BRAF",
+      "hit": true
+    },
+    {
+      "tumor": "MCL (SF3B1)",
+      "class": "onco_pt",
+      "proposed": "ATM",
+      "true": "SF3B1",
+      "hit": false
+    },
+    {
+      "tumor": "MDS (U2AF1)",
+      "class": "onco_pt",
+      "proposed": "TET2",
+      "true": "U2AF1",
+      "hit": false
+    },
+    {
+      "tumor": "ET / MPN (MPL)",
+      "class": "onco_pt",
+      "proposed": "MPL",
+      "true": "MPL",
+      "hit": true
+    },
+    {
+      "tumor": "DLBCL (EZH2)",
+      "class": "onco_pt",
+      "proposed": "TP53",
+      "true": "EZH2",
+      "hit": false
+    },
+    {
+      "tumor": "ER+ breast (ESR1)",
+      "class": "onco_pt",
+      "proposed": "ESR1",
+      "true": "ESR1",
+      "hit": true
+    },
+    {
+      "tumor": "K562 CML",
+      "class": "fusion",
+      "proposed": "ABL1",
+      "true": "ABL1",
+      "hit": true
+    },
+    {
+      "tumor": "H2228 lung (EML4-ALK)",
+      "class": "fusion",
+      "proposed": "ALK",
+      "true": "ALK",
+      "hit": true
+    },
+    {
+      "tumor": "HCC78 lung (ROS1)",
+      "class": "fusion",
+      "proposed": "TP53",
+      "true": "ROS1",
+      "hit": false
+    },
+    {
+      "tumor": "LC-2/ad lung (RET-fus)",
+      "class": "fusion",
+      "proposed": "RET",
+      "true": "RET",
+      "hit": true
+    },
+    {
+      "tumor": "Ewing sarcoma",
+      "class": "fusion",
+      "proposed": "EWSR1",
+      "true": "EWSR1",
+      "hit": true
+    },
+    {
+      "tumor": "786-O renal (VHL)",
+      "class": "lof",
+      "proposed": "VHL",
+      "true": "VHL",
+      "hit": true
+    },
+    {
+      "tumor": "WERI retinoblastoma",
+      "class": "lof",
+      "proposed": "RB1",
+      "true": "RB1",
+      "hit": true
+    },
+    {
+      "tumor": "HGSOC ovarian (BRCA1)",
+      "class": "lof",
+      "proposed": "BRCA1",
+      "true": "BRCA1",
+      "hit": true
+    },
+    {
+      "tumor": "endometrial (PTEN)",
+      "class": "lof",
+      "proposed": "PTEN",
+      "true": "PTEN",
+      "hit": true
+    },
+    {
+      "tumor": "H69 SCLC",
+      "class": "lof",
+      "proposed": "TP53",
+      "true": "(none targetable)",
+      "hit": false
+    },
+    {
+      "tumor": "diffuse gastric (CDH1)",
+      "class": "lof",
+      "proposed": "CDH1",
+      "true": "CDH1",
+      "hit": true
+    },
+    {
+      "tumor": "SK-BR-3 breast (HER2)",
+      "class": "amp",
+      "proposed": "TP53",
+      "true": "ERBB2",
+      "hit": false
+    },
+    {
+      "tumor": "neuroblastoma (MYCN)",
+      "class": "amp",
+      "proposed": "ALK",
+      "true": "MYCN",
+      "hit": false
+    },
+    {
+      "tumor": "MCF7 breast",
+      "class": "amp",
+      "proposed": "GATA3",
+      "true": "PIK3CA",
+      "hit": false
+    }
+  ],
+  "note": "Scored by driver class. onco_pt is the method's designed scope; fusion/amp are known structural blind spots; lof is nameable but not a direct drug target (GOF/LOF wall)."
+}

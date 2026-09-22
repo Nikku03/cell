@@ -1,0 +1,25 @@
+{
+  "test": "sc_dataset",
+  "n_cells": 107082,
+  "n_genes": 2000,
+  "n_perts": 200,
+  "n_guides": 220,
+  "n_batches": 56,
+  "gb": 0.7978230714797974,
+  "log": [
+    "====================================================================================================",
+    "STEP 2 -- build the per-cell cohort tensor",
+    "====================================================================================================",
+    "  cohort: 200 perturbations",
+    "  shared genes 6,985; HVG space 2,000 (mean fano, min mean expr > 0.05)",
+    "  RPE1: 37,461 cells kept (25,976 perturbed, 11,485 NTC in shared batches)",
+    "  Jurkat: 43,207 cells kept (31,194 perturbed, 12,013 NTC in shared batches)",
+    "  HepG2: 26,414 cells kept (21,438 perturbed, 4,976 NTC in shared batches)",
+    "\n  tensor (107082, 2000) = 0.80 GB",
+    "  cells 107,082 | perturbed 78,608 | NTC 28,474",
+    "  distinct perturbations 200 | guides 220 | batches 56",
+    "    RPE1     37,461 cells, 25,976 perturbed, 11,485 NTC",
+    "    Jurkat   43,207 cells, 31,194 perturbed, 12,013 NTC",
+    "    HepG2    26,414 cells, 21,438 perturbed,  4,976 NTC"
+  ]
+}

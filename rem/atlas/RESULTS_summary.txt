@@ -1,0 +1,124 @@
+=================================================================================================
+ATTACKING k_i -- AND FINDING THE TERM WAS NEVER THE PROBLEM
+=================================================================================================
+
+=================================================================================================
+K0  THE CEILING GATE, RUN BEFORE ANYTHING IS DESIGNED
+=================================================================================================
+  block.py skipped this, spent a module contracting the controller block, and reported a
+  cap movement that was false because the block was not binding. One line prevents that.
+      L  pattern rep  per-ctrl count   total count     gain
+      0           39              39           419     +380
+      1           19              25           419     +400
+      2           12              19           419     +407
+      3            8              16           419     +411
+      4            6              15           419     +413
+      6            4              12           419     +415
+      8            3              11           419     +416
+  A count summary lifts the cap past the search bound at EVERY history depth, where
+  freeing k_i alone bought +1 and freeing the block alone bought 0. The reason is that a
+  summary collapses BOTH exponential terms at once; neither earlier ceiling gate tested a
+  treatment that touched both, which is why both concluded 'nothing can be done'.
+  K0: PASS -- a prong with a real ceiling exists, so it is worth pursuing
+
+=================================================================================================
+K1/K2  IS THE SUMMARY SUFFICIENT, AND DOES CONTROLLER IDENTITY MATTER?
+=================================================================================================
+  P_hat(x) = sum_a P(a) prod_i P(x_i | summary(a)), scored on Var(targets ON). The
+  approximation bites in the PRODUCT -- an earlier version averaged group JOINTS, which
+  telescopes to the exact answer and scored every summary at 1e-15.
+
+  nC=3 L=2: 512 patterns, solver residual 9.1e-15
+    summary              levels   signed err  vs 1% bar
+    full pattern            512   -7.350e-03         ok
+    per-ctrl count           64   -9.242e-03         ok
+    total count              10   -9.455e-03         ok
+    last slice only           8   -3.549e-02      fails
+    no conditioning           1   -9.249e-02  MUST FAIL
+
+  nC=3 L=4: 32768 patterns, solver residual 9.1e-15
+    summary              levels   signed err  vs 1% bar
+    full pattern          32768   -6.583e-03         ok
+    per-ctrl count          216   -2.490e-02      fails
+    total count              16   -2.511e-02      fails
+    last slice only           8   -3.549e-02      fails
+    no conditioning           1   -9.249e-02  MUST FAIL
+
+  nC=2 L=4: 1024 patterns, solver residual 1.2e-15
+    summary              levels   signed err  vs 1% bar
+    full pattern           1024   -9.936e-03         ok
+    per-ctrl count           36   -3.314e-02      fails
+    total count              11   -3.351e-02      fails
+    last slice only           4   -5.132e-02      fails
+    no conditioning           1   -1.192e-01  MUST FAIL
+
+  nC=4 L=2: 4096 patterns, solver residual 4.2e-15
+    summary              levels   signed err  vs 1% bar
+    full pattern           4096   -5.732e-03         ok
+    per-ctrl count          256   -7.171e-03         ok
+    total count              13   -7.302e-03         ok
+    last slice only          16   -2.696e-02      fails
+    no conditioning           1   -6.781e-02  MUST FAIL
+
+  K2: per-controller count does essentially no better than TOTAL count at every size
+  tested. WHICH controllers are active does not matter -- only how many, and for how long.
+  That is a stronger statement than the cost saving and it is what licenses the collapse.
+
+=================================================================================================
+K3  DOES THE SUMMARY'S ERROR STAY BOUNDED?  (the gate that can kill it)
+=================================================================================================
+  A representation whose error grows without bound is useless at scale however cheap.
+
+  sweeping history depth L (nC=3):
+      L      pattern   total count    ratio
+      1   -1.118e-02    -1.203e-02     1.08
+      2   -7.350e-03    -9.455e-03     1.29
+      3   -6.698e-03    -1.602e-02     2.39
+      4   -6.583e-03    -2.511e-02     3.81
+
+  sweeping controller count (L=2):
+     nC      pattern   total count    ratio
+      2   -1.136e-02    -1.399e-02     1.23
+      3   -7.350e-03    -9.455e-03     1.29
+      4   -5.732e-03    -7.302e-03     1.27
+
+  sweeping controller coupling and target->controller feedback (nC=3, L=2):
+       cc    fb      pattern   total count    ratio
+     0.20  0.00   -6.323e-03    -7.914e-03     1.25
+     1.50  0.00   -7.350e-03    -9.455e-03     1.29
+     1.50  0.50   -7.565e-03    -1.129e-02     1.49
+     1.50  2.00   -7.841e-03    -1.526e-02     1.95
+
+=================================================================================================
+K5  THE CAP AND WHAT IT COVERS ON THE REAL NETWORK
+=================================================================================================
+  Both terms in the functional, as trrust_engine computes it. Pricing one at zero is the
+  defect that invalidated block.py's headline and it is not repeated.
+      |C|  edge coverage
+        3          12.8%
+        4          14.7%
+        8          21.1%
+       19          32.1%
+       40          44.7%
+      100          63.7%
+      200          79.6%
+      400          92.6%
+
+  pattern representation caps at |C| = 3 at L = 8, covering 12.8% of regulatory edges.
+  count summary reaches the search bound 419, covering 93.3%.
+
+=================================================================================================
+K6  WHAT CANNOT BE CLAIMED
+=================================================================================================
+  1. The sufficiency measurements are on synthetic systems of 2-4 controllers and 5
+     targets with invented kinetics. Whether a real promoter integrating several
+     transcription factors is count-sufficient is an empirical question about promoters,
+     not something these numbers settle.
+  2. The cap is a COST statement computed from graph arithmetic. It says the engine could
+     be built at that size, not that it would be accurate there -- K3's error is measured
+     only at the sizes where exact ground truth exists.
+  3. The additive form of the test generator's regulation may itself favour a count
+     summary. A generator whose targets respond to specific controller COMBINATIONS -- an
+     AND gate between two TFs -- is the adversarial case, and it is not run here.
+  4. Nothing here says the count is the BEST low-dimensional summary, only that it is
+     sufficient where tested and that identity does not matter.

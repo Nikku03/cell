@@ -1,0 +1,180 @@
+{
+  "n_modes": 194,
+  "tau_min": 7.232157076581651,
+  "tau_max": 48793.53752596177,
+  "marks": {
+    "5mC": {
+      "ts": [
+        146.38061257788533,
+        487.93537525961773,
+        1463.8061257788531,
+        4879.353752596177,
+        14638.061257788531,
+        48793.53752596177,
+        146380.61257788533,
+        487935.3752596177
+      ],
+      "labels": [
+        "0.003",
+        "0.01",
+        "0.03",
+        "0.1",
+        "0.3",
+        "1",
+        "3",
+        "10"
+      ],
+      "arms": {
+        "closed_form": [
+          0.07994075249434643,
+          0.04259634859528709,
+          0.005212902985683354,
+          0.0011087433127326492,
+          0.0009802787977523759,
+          0.0005142832926698967,
+          5.873436631060259e-05,
+          4.0225366596631567e-07
+        ],
+        "modal_only": [
+          0.7373296831646826,
+          0.6508275707357607,
+          0.5947247336944054,
+          0.5612658338449196,
+          0.44922729473794387,
+          0.27645486825275517,
+          0.209253996260927,
+          0.20252973988812537
+        ],
+        "static_only": [
+          3.402814434026737,
+          2.982113518476398,
+          2.6603200052844045,
+          2.3083120056630517,
+          1.4661936976882055,
+          0.41757009680635615,
+          0.03883553064569486,
+          3.231066613646588e-05
+        ]
+      },
+      "progress": [
+        0.2762726784742451,
+        0.3118491570924556,
+        0.3405485849100623,
+        0.3608366464539179,
+        0.4508305052992746,
+        0.7325797436888347,
+        0.9678424196864501,
+        0.9999760341600602
+      ]
+    },
+    "acetyl": {
+      "ts": [
+        146.38061257788533,
+        487.93537525961773,
+        1463.8061257788531,
+        4879.353752596177,
+        14638.061257788531,
+        48793.53752596177,
+        146380.61257788533,
+        487935.3752596177
+      ],
+      "labels": [
+        "0.003",
+        "0.01",
+        "0.03",
+        "0.1",
+        "0.3",
+        "1",
+        "3",
+        "10"
+      ],
+      "arms": {
+        "closed_form": [
+          0.17778772501622733,
+          0.05182043886924907,
+          0.02113647754456816,
+          0.0014808208409150517,
+          0.00016341068456813637,
+          5.115736983764674e-05,
+          9.292156276223145e-06,
+          1.669553831659638e-08
+        ],
+        "modal_only": [
+          0.395081341769209,
+          0.2682058321219425,
+          0.18216385177868605,
+          0.1586519303618302,
+          0.15728199933061263,
+          0.1560918425499005,
+          0.15523152194091783,
+          0.1551518930574174
+        ],
+        "static_only": [
+          1.5381713845927005,
+          0.8678247037545472,
+          0.2805627838346086,
+          0.15724043463545695,
+          0.11258151364252995,
+          0.04294592556814468,
+          0.003628289278529968,
+          1.1444768720790768e-06
+        ]
+      },
+      "progress": [
+        0.43953779752203026,
+        0.5895899015905185,
+        0.8575079115761134,
+        0.9779813889554118,
+        0.986457196712893,
+        0.9939781747188094,
+        0.9994869260549987,
+        0.9999998927256357
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "THE TIME AXIS IN CLOSED FORM -- and where it stops being valid",
+    "====================================================================================================",
+    "  Overdamped is not a simplification here: a nucleosome in water sits at Reynolds ~1e-9, so",
+    "  inertia is irrelevant and gamma u' = f - K u is the equation. In the eigenbasis every mode",
+    "  relaxes independently, so any instant is one evaluation and the 10^9-timestep wall is gone.",
+    "  THE TRICK: write the series around its ENDPOINT. u(t) = u_static - sum c_k exp(-t/tau_k).",
+    "  The truncated part then multiplies a DECAYING exponential, so the high-frequency modes a",
+    "  modal basis cannot represent are exactly the ones that have already finished relaxing --",
+    "  and the endpoint comes from the two-level solver, which is accurate to 4e-6.",
+    "\n  1KX5 no waters: 13625 atoms, 40875 DOF, 263765 springs",
+    "  194 internal modes | relaxation times span 7.23 to 4.88e+04 (ratio 6.75e+03)",
+    "  Units: spring constants are arbitrary and gamma = 1, so ABSOLUTE times are not physical.",
+    "  The spectrum's SHAPE is, because it comes from connectivity. Times below are in units of",
+    "  tau_slow, the slowest mode's relaxation time. No picosecond or microsecond claim is made.",
+    "\n  --- 5mC ---   relative error against implicit-Euler integration",
+    "    t / tau_slow         0.003      0.01      0.03       0.1       0.3         1         3        10",
+    "    closed_form         0.0799    0.0426    0.0052    0.0011    0.0010    0.0005    0.0001    0.0000",
+    "    modal_only          0.7373    0.6508    0.5947    0.5613    0.4492    0.2765    0.2093    0.2025",
+    "    static_only         3.4028    2.9821    2.6603    2.3083    1.4662    0.4176    0.0388    0.0000",
+    "    (fraction done)      0.276     0.312     0.341     0.361     0.451     0.733     0.968     1.000",
+    "\n  --- acetyl ---   relative error against implicit-Euler integration",
+    "    t / tau_slow         0.003      0.01      0.03       0.1       0.3         1         3        10",
+    "    closed_form         0.1778    0.0518    0.0211    0.0015    0.0002    0.0001    0.0000    0.0000",
+    "    modal_only          0.3951    0.2682    0.1822    0.1587    0.1573    0.1561    0.1552    0.1552",
+    "    static_only         1.5382    0.8678    0.2806    0.1572    0.1126    0.0429    0.0036    0.0000",
+    "    (fraction done)      0.440     0.590     0.858     0.978     0.986     0.994     0.999     1.000",
+    "\n  READING",
+    "    5mC: closed form within 5% at t/tau_slow = 0.01, 0.03, 0.1, 0.3, 1, 3, 10",
+    "      endpoint error   closed_form 0.0000   modal_only 0.2025",
+    "      earliest time    closed_form 0.0799   static_only 3.4028",
+    "    acetyl: closed form within 5% at t/tau_slow = 0.03, 0.1, 0.3, 1, 3, 10",
+    "      endpoint error   closed_form 0.0000   modal_only 0.1552",
+    "      earliest time    closed_form 0.1778   static_only 1.5382",
+    "    THE ENDPOINT FIX WORKS. Writing the series around u_static removes the modal basis's",
+    "    truncation error at long times entirely (0.0000 against 0.2025 for the",
+    "    naive sum), which is what made a 200-mode basis unusable before.",
+    "    AND THERE IS REAL DYNAMICS TO COMPUTE. Assuming the response is instantaneous is",
+    "    3.40 wrong at the earliest time sampled, so the trajectory carries",
+    "    information the static answer does not.",
+    "    VALIDITY FLOOR, measured not assumed: the closed form misses at t/tau_slow = 0.003.",
+    "    Below that the dropped high-frequency modes are still relaxing, so the truncation",
+    "    is wrong there. Above it the method is exact for the price of one evaluation."
+  ]
+}

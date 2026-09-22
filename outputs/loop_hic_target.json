@@ -1,0 +1,159 @@
+{
+  "test": "loop_hic_target",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb.npy",
+        "bytes": 14838032,
+        "hash": "3768cedcefe29085",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ctcf_gm12878_hg19.bed.gz",
+        "bytes": 655789,
+        "hash": "8795b92127be542e",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hg19_chr21.fa.gz",
+        "bytes": 11549785,
+        "hash": "1953ac4ea94b6588",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1926,
+      "used": 1377,
+      "selection": "filtered",
+      "fraction": 0.7149532710280374
+    },
+    "seed": 1904,
+    "controls": [
+      "200 within-chromosome CTCF shuffles preserving count",
+      "separation-matched comparison for every orientation claim",
+      "GC content from the same assembly as the map",
+      "unmappable centromeric bins excluded up front",
+      "literature dynamics values labelled as literature"
+    ],
+    "note": "measures the target before any model exists so the model can fail; the fourth dimension is explicitly NOT scorable on Hi-C",
+    "warnings": []
+  },
+  "gates": {
+    "D1 the map is real": true,
+    "D2 TADs exist and CTCF marks them": true,
+    "D3 compartments exist": true,
+    "D4 orientation matters": true
+  },
+  "n_bins": 1926,
+  "n_mappable": 1377,
+  "ps_slope": -0.9636271223546161,
+  "boundary_ctcf": 88.65752591240874,
+  "boundary_null95": 73.1967904489051,
+  "n_boundaries": 137,
+  "compartment_r": 0.4848424901268835,
+  "n_peaks": 404,
+  "n_oriented": 359,
+  "target": {
+    "ps_slope": {
+      "value": -0.9636271223546161,
+      "window": [
+        -1.1636271223546162,
+        -0.763627122354616
+      ],
+      "why": "P(s) is the most robust property of interphase chromatin; miss it and the object is not a chromosome at any scale"
+    },
+    "insulation_pearson": {
+      "gate": 0.4,
+      "why": "the simulated insulation profile must track the measured one along the chromosome, not merely have boundaries somewhere"
+    },
+    "boundary_ctcf_enrichment": {
+      "measured": 88.65752591240874,
+      "null95": 73.1967904489051,
+      "why": "boundaries must land on CTCF, as they do here"
+    },
+    "compartment_r": {
+      "measured": 0.4848424901268835,
+      "gate": 0.3,
+      "why": "A/B segregation against GC, the same anchor used here"
+    },
+    "convergent_minus_other": {
+      "measured": 0.37879493573816586,
+      "why": "the extrusion signature: orientation must matter at matched separation"
+    }
+  },
+  "literature": {
+    "msd_exponent": {
+      "window": [
+        0.35,
+        0.55
+      ],
+      "source": "live-imaging of tagged loci, LITERATURE not measured here"
+    },
+    "cohesin_residence_min": {
+      "window": [
+        10,
+        25
+      ],
+      "source": "FRAP/single-molecule, LITERATURE not measured here"
+    },
+    "extrusion_speed_kb_s": {
+      "window": [
+        0.1,
+        2.0
+      ],
+      "source": "single-molecule extrusion, LITERATURE not measured here"
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "THE TARGET -- what a model has to reproduce, measured on real Hi-C before any model exists",
+    "====================================================================================================",
+    "  This loop builds NO model. It writes down the windows a simulation will have to land in,",
+    "  so that the simulation can later fail.",
+    "  Prior arc, so none of it is rebuilt: CTCF-count moved a CRISPR classifier 0.6076 -> 0.6632;",
+    "  analytic Rouse added +0.005 on top of that; and MEASURED Hi-C added -0.0031, z = -1.06.",
+    "  That last one says the CLASSIFIER cannot use 3D -- not that chromatin cannot be modelled.",
+    "\n  chr21 at 25 kb: 1,926 bins, 1,377 mappable (the rest is the short arm and centromere, excluded rather than averaged in)",
+    "\n  D1 THE MAP IS REAL -- P(s) slope over 100 kb to 10 Mb: -0.964",
+    "     fractal globule is about -1.0, equilibrium globule -1.5; gate is [-1.6, -0.7]",
+    "     D1 PASS",
+    "\n  CTCF: 404 GM12878 IDR peaks on chr21 (cell-type matched to the map)",
+    "  chr21 sequence: 48,129,895 bp from the same assembly as the map",
+    "  motif orientation assigned to 359/404 peaks by scanning JASPAR MA0139.1 (score > 6 bits)",
+    "\n  D2 TADS EXIST AND CTCF MARKS THEM -- 137 boundaries (lowest decile of insulation)",
+    "     CTCF signal at boundaries 88.7 vs shuffled 95th 73.2 (null mean 57.8)",
+    "     D2 PASS",
+    "\n  D3 COMPARTMENTS EXIST -- PC1 of the observed/expected correlation matrix vs GC content",
+    "     r = +0.4848 against a shuffled 95th of 0.0504; A compartment is GC-rich, as it should be",
+    "     D3 PASS",
+    "\n  D4 ORIENTATION MATTERS -- 1923 convergent pairs vs 3970 non-convergent,",
+    "     scored as observed/expected so genomic separation is already divided out",
+    "     1923 separation-matched pairs: convergent 1.353 vs non-convergent 0.974, difference +0.379",
+    "     against a shuffled 95th of +0.025",
+    "     D4 PASS",
+    "\n----------------------------------------------------------------------------------------------------",
+    "  THE WINDOWS A MODEL WILL HAVE TO LAND IN -- written now, before the model exists",
+    "----------------------------------------------------------------------------------------------------",
+    "    ps_slope                    {\"value\": -0.9636271223546161, \"window\": [-1.1636271223546162, -0.763627122354616]}",
+    "    insulation_pearson          {\"gate\": 0.4}",
+    "    boundary_ctcf_enrichment    {\"measured\": 88.65752591240874, \"null95\": 73.1967904489051}",
+    "    compartment_r               {\"measured\": 0.4848424901268835, \"gate\": 0.3}",
+    "    convergent_minus_other      {\"measured\": 0.37879493573816586}",
+    "    the FOURTH dimension cannot be scored on this map at all -- Hi-C is a fixed population",
+    "    average with no time axis. Dynamics will be scored against LITERATURE values, labelled:",
+    "    msd_exponent                [0.35, 0.55]   <- live-imaging of tagged loci, LITERATURE not measured here",
+    "    cohesin_residence_min       [10, 25]   <- FRAP/single-molecule, LITERATURE not measured here",
+    "    extrusion_speed_kb_s        [0.1, 2.0]   <- single-molecule extrusion, LITERATURE not measured here",
+    "\n====================================================================================================",
+    "  D1 the map is real                      PASS",
+    "  D2 TADs exist and CTCF marks them       PASS",
+    "  D3 compartments exist                   PASS",
+    "  D4 orientation matters                  PASS",
+    "  THE TARGET IS REAL AND FALSIFIABLE. All four signatures are present in this map, and",
+    "  the convergent-CTCF effect survives separation matching, which means loop extrusion is",
+    "  visible here and a model that lacks it can be caught.",
+    "====================================================================================================",
+    "    manifest: 3 inputs, coverage 1377/1926 (71.5%) by 'filtered', seed 1904, controls 5"
+  ]
+}

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rem"
+version = "0.1.0"
+description = "Exact inference and optimization over bounded-treewidth structure"
+requires-python = ">=3.9"
+dependencies = ["numpy>=1.22"]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+bio = ["biopython>=1.80", "scipy>=1.9"]
+
+[tool.setuptools.packages.find]
+include = ["rem*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

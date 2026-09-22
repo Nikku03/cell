@@ -1,0 +1,685 @@
+{
+ "function": {
+  "validation_wellconnected_top1": 0.204,
+  "baseline_chance": 0.0004,
+  "lift_over_chance": 559.2,
+  "dark_median_vote_margin": 0.024,
+  "n_dark_high_margin": 20,
+  "verdict": "NULL on the dark proteome \u2014 label transfer validates 20% on well-connected annotated genes (their neighbours are pathway-coherent), but on dark genes the neighbours scatter (median vote margin 0.02) so only 20 dark genes get a concentrated call. This is the well-connected-vs-dark split, not a general dark-gene function predictor.",
+  "top_predictions": [
+   {
+    "gene": "NOL10",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.206
+   },
+   {
+    "gene": "NOM1",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.205
+   },
+   {
+    "gene": "PPAN",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.205
+   },
+   {
+    "gene": "MAK16",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.198
+   },
+   {
+    "gene": "GTPBP4",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.196
+   },
+   {
+    "gene": "ABT1",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.193
+   },
+   {
+    "gene": "TMEM242",
+    "predicted_function": "Aerobic respiration and respiratory electron transport",
+    "margin": 0.186
+   },
+   {
+    "gene": "URB2",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.182
+   },
+   {
+    "gene": "DDX54",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.177
+   },
+   {
+    "gene": "MRPL45",
+    "predicted_function": "Mitochondrial ribosome-associated quality control",
+    "margin": 0.173
+   },
+   {
+    "gene": "NOP16",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.171
+   },
+   {
+    "gene": "RSL1D1",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.171
+   },
+   {
+    "gene": "TRUB1",
+    "predicted_function": "Aerobic respiration and respiratory electron transport",
+    "margin": 0.171
+   },
+   {
+    "gene": "DDX56",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.17
+   },
+   {
+    "gene": "EIPR1",
+    "predicted_function": "Intra-Golgi and retrograde Golgi-to-ER traffic",
+    "margin": 0.166
+   },
+   {
+    "gene": "JTB",
+    "predicted_function": "Intra-Golgi and retrograde Golgi-to-ER traffic",
+    "margin": 0.166
+   },
+   {
+    "gene": "LSG1",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.159
+   },
+   {
+    "gene": "NOC3L",
+    "predicted_function": "Major pathway of rRNA processing in the nucleolus and cytosol",
+    "margin": 0.154
+   },
+   {
+    "gene": "CCDC93",
+    "predicted_function": "Neddylation",
+    "margin": 0.151
+   },
+   {
+    "gene": "DDX51",
+    "predicted_function": "rRNA processing in the nucleus and cytosol",
+    "margin": 0.151
+   }
+  ]
+ },
+ "selective": {
+  "n_selective": 2959,
+  "known_recovered_top500": 20,
+  "known_total": 22,
+  "enrichment_top500_vs_chance": 33.5,
+  "top_selective_targets": [
+   {
+    "gene": "SHLD3",
+    "skew": 8.42,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.42,
+    "mean_effect": -0.6,
+    "known": false
+   },
+   {
+    "gene": "SPDEF",
+    "skew": 7.41,
+    "n_strong_dep_lines": 7,
+    "min_effect": -3.38,
+    "mean_effect": 0.04,
+    "known": true
+   },
+   {
+    "gene": "DCP1A",
+    "skew": 7.06,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.34,
+    "mean_effect": -0.55,
+    "known": false
+   },
+   {
+    "gene": "JUP",
+    "skew": 6.9,
+    "n_strong_dep_lines": 6,
+    "min_effect": -3.06,
+    "mean_effect": -0.11,
+    "known": false
+   },
+   {
+    "gene": "CD24",
+    "skew": 6.7,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.25,
+    "mean_effect": -0.5,
+    "known": false
+   },
+   {
+    "gene": "NEDD4L",
+    "skew": 6.67,
+    "n_strong_dep_lines": 4,
+    "min_effect": -2.59,
+    "mean_effect": 0.03,
+    "known": false
+   },
+   {
+    "gene": "FGFR2",
+    "skew": 5.99,
+    "n_strong_dep_lines": 6,
+    "min_effect": -2.56,
+    "mean_effect": -0.05,
+    "known": false
+   },
+   {
+    "gene": "CWC15",
+    "skew": 5.91,
+    "n_strong_dep_lines": 7,
+    "min_effect": -1.89,
+    "mean_effect": -0.88,
+    "known": false
+   },
+   {
+    "gene": "UMAD1",
+    "skew": 5.9,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.77,
+    "mean_effect": -0.56,
+    "known": false
+   },
+   {
+    "gene": "FOXA1",
+    "skew": 5.85,
+    "n_strong_dep_lines": 22,
+    "min_effect": -4.35,
+    "mean_effect": -0.12,
+    "known": true
+   },
+   {
+    "gene": "MAF",
+    "skew": 5.65,
+    "n_strong_dep_lines": 5,
+    "min_effect": -2.28,
+    "mean_effect": -0.12,
+    "known": false
+   },
+   {
+    "gene": "FER1L5",
+    "skew": 5.58,
+    "n_strong_dep_lines": 6,
+    "min_effect": -1.88,
+    "mean_effect": -0.76,
+    "known": false
+   },
+   {
+    "gene": "WDR64",
+    "skew": 5.28,
+    "n_strong_dep_lines": 7,
+    "min_effect": -1.81,
+    "mean_effect": -0.79,
+    "known": false
+   },
+   {
+    "gene": "FZD5",
+    "skew": 5.16,
+    "n_strong_dep_lines": 8,
+    "min_effect": -2.31,
+    "mean_effect": -0.06,
+    "known": false
+   },
+   {
+    "gene": "MYOG",
+    "skew": 5.16,
+    "n_strong_dep_lines": 4,
+    "min_effect": -1.7,
+    "mean_effect": 0.06,
+    "known": false
+   },
+   {
+    "gene": "CYB561A3",
+    "skew": 5.06,
+    "n_strong_dep_lines": 6,
+    "min_effect": -1.9,
+    "mean_effect": -0.03,
+    "known": false
+   },
+   {
+    "gene": "ZNF431",
+    "skew": 5.05,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.36,
+    "mean_effect": -0.57,
+    "known": false
+   },
+   {
+    "gene": "OTX2",
+    "skew": 4.99,
+    "n_strong_dep_lines": 6,
+    "min_effect": -2.4,
+    "mean_effect": 0.04,
+    "known": false
+   },
+   {
+    "gene": "WRN",
+    "skew": 4.99,
+    "n_strong_dep_lines": 27,
+    "min_effect": -3.81,
+    "mean_effect": -0.11,
+    "known": true
+   },
+   {
+    "gene": "MYCN",
+    "skew": 4.98,
+    "n_strong_dep_lines": 25,
+    "min_effect": -2.45,
+    "mean_effect": -0.17,
+    "known": true
+   },
+   {
+    "gene": "TNFSF10",
+    "skew": 4.97,
+    "n_strong_dep_lines": 8,
+    "min_effect": -1.82,
+    "mean_effect": 0.04,
+    "known": false
+   },
+   {
+    "gene": "ASCL1",
+    "skew": 4.92,
+    "n_strong_dep_lines": 11,
+    "min_effect": -2.23,
+    "mean_effect": -0.08,
+    "known": false
+   },
+   {
+    "gene": "MYOD1",
+    "skew": 4.9,
+    "n_strong_dep_lines": 9,
+    "min_effect": -1.96,
+    "mean_effect": -0.02,
+    "known": false
+   },
+   {
+    "gene": "MILR1",
+    "skew": 4.89,
+    "n_strong_dep_lines": 8,
+    "min_effect": -2.24,
+    "mean_effect": -0.92,
+    "known": false
+   },
+   {
+    "gene": "IL2RG",
+    "skew": 4.85,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.64,
+    "mean_effect": -0.02,
+    "known": false
+   }
+  ],
+  "top_novel_selective": [
+   {
+    "gene": "SHLD3",
+    "skew": 8.42,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.42,
+    "mean_effect": -0.6,
+    "known": false
+   },
+   {
+    "gene": "DCP1A",
+    "skew": 7.06,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.34,
+    "mean_effect": -0.55,
+    "known": false
+   },
+   {
+    "gene": "JUP",
+    "skew": 6.9,
+    "n_strong_dep_lines": 6,
+    "min_effect": -3.06,
+    "mean_effect": -0.11,
+    "known": false
+   },
+   {
+    "gene": "CD24",
+    "skew": 6.7,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.25,
+    "mean_effect": -0.5,
+    "known": false
+   },
+   {
+    "gene": "NEDD4L",
+    "skew": 6.67,
+    "n_strong_dep_lines": 4,
+    "min_effect": -2.59,
+    "mean_effect": 0.03,
+    "known": false
+   },
+   {
+    "gene": "FGFR2",
+    "skew": 5.99,
+    "n_strong_dep_lines": 6,
+    "min_effect": -2.56,
+    "mean_effect": -0.05,
+    "known": false
+   },
+   {
+    "gene": "CWC15",
+    "skew": 5.91,
+    "n_strong_dep_lines": 7,
+    "min_effect": -1.89,
+    "mean_effect": -0.88,
+    "known": false
+   },
+   {
+    "gene": "UMAD1",
+    "skew": 5.9,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.77,
+    "mean_effect": -0.56,
+    "known": false
+   },
+   {
+    "gene": "MAF",
+    "skew": 5.65,
+    "n_strong_dep_lines": 5,
+    "min_effect": -2.28,
+    "mean_effect": -0.12,
+    "known": false
+   },
+   {
+    "gene": "FER1L5",
+    "skew": 5.58,
+    "n_strong_dep_lines": 6,
+    "min_effect": -1.88,
+    "mean_effect": -0.76,
+    "known": false
+   },
+   {
+    "gene": "WDR64",
+    "skew": 5.28,
+    "n_strong_dep_lines": 7,
+    "min_effect": -1.81,
+    "mean_effect": -0.79,
+    "known": false
+   },
+   {
+    "gene": "FZD5",
+    "skew": 5.16,
+    "n_strong_dep_lines": 8,
+    "min_effect": -2.31,
+    "mean_effect": -0.06,
+    "known": false
+   },
+   {
+    "gene": "MYOG",
+    "skew": 5.16,
+    "n_strong_dep_lines": 4,
+    "min_effect": -1.7,
+    "mean_effect": 0.06,
+    "known": false
+   },
+   {
+    "gene": "CYB561A3",
+    "skew": 5.06,
+    "n_strong_dep_lines": 6,
+    "min_effect": -1.9,
+    "mean_effect": -0.03,
+    "known": false
+   },
+   {
+    "gene": "ZNF431",
+    "skew": 5.05,
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.36,
+    "mean_effect": -0.57,
+    "known": false
+   },
+   {
+    "gene": "OTX2",
+    "skew": 4.99,
+    "n_strong_dep_lines": 6,
+    "min_effect": -2.4,
+    "mean_effect": 0.04,
+    "known": false
+   },
+   {
+    "gene": "TNFSF10",
+    "skew": 4.97,
+    "n_strong_dep_lines": 8,
+    "min_effect": -1.82,
+    "mean_effect": 0.04,
+    "known": false
+   },
+   {
+    "gene": "ASCL1",
+    "skew": 4.92,
+    "n_strong_dep_lines": 11,
+    "min_effect": -2.23,
+    "mean_effect": -0.08,
+    "known": false
+   },
+   {
+    "gene": "MYOD1",
+    "skew": 4.9,
+    "n_strong_dep_lines": 9,
+    "min_effect": -1.96,
+    "mean_effect": -0.02,
+    "known": false
+   },
+   {
+    "gene": "MILR1",
+    "skew": 4.89,
+    "n_strong_dep_lines": 8,
+    "min_effect": -2.24,
+    "mean_effect": -0.92,
+    "known": false
+   }
+  ]
+ },
+ "disease_new": {
+  "n_candidates_scored": 11574,
+  "axis_auc": 0.652,
+  "resolution": "COARSE \u2014 6 calibration buckets; top bucket is a SET",
+  "n_in_top_bucket": 36,
+  "top_bucket_probability": 0.621,
+  "top_novel_disease_candidates": [
+   {
+    "gene": "ARNT",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "ATF2",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "ATF4",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "CDK1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "CLOCK",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "CSNK1A1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "CSNK2A2",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "CXXC1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "E2F1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "E2F3",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "FOXO3",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "FYN",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "HIF1A",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "HSP90AB1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "HSPA8",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "KAT2B",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "MAPKAP1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "MTA1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "NCOA1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "NCOA2",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "NRG1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "PDPK1",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "PPP1CA",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "PRKCE",
+    "prior": 0.621,
+    "n_agree": 5
+   },
+   {
+    "gene": "PTK2",
+    "prior": 0.621,
+    "n_agree": 5
+   }
+  ]
+ },
+ "druggable": {
+  "note": "selective dependency + surface-accessible (no Pharos/DGIdb tractability loaded yet \u2014 partial)",
+  "n": 9,
+  "shortlist": [
+   {
+    "gene": "JUP",
+    "n_strong_dep_lines": 6,
+    "min_effect": -3.06,
+    "compartment": "Cell membrane",
+    "known": false
+   },
+   {
+    "gene": "CD24",
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.25,
+    "compartment": "Cell membrane",
+    "known": false
+   },
+   {
+    "gene": "FGFR2",
+    "n_strong_dep_lines": 6,
+    "min_effect": -2.56,
+    "compartment": "Cell membrane",
+    "known": false
+   },
+   {
+    "gene": "FER1L5",
+    "n_strong_dep_lines": 6,
+    "min_effect": -1.88,
+    "compartment": "Cell membrane",
+    "known": false
+   },
+   {
+    "gene": "FZD5",
+    "n_strong_dep_lines": 8,
+    "min_effect": -2.31,
+    "compartment": "Cell membrane",
+    "known": false
+   },
+   {
+    "gene": "CYB561A3",
+    "n_strong_dep_lines": 6,
+    "min_effect": -1.9,
+    "compartment": "Membrane",
+    "known": false
+   },
+   {
+    "gene": "TNFSF10",
+    "n_strong_dep_lines": 8,
+    "min_effect": -1.82,
+    "compartment": "Cell membrane",
+    "known": false
+   },
+   {
+    "gene": "MILR1",
+    "n_strong_dep_lines": 8,
+    "min_effect": -2.24,
+    "compartment": "Cell membrane",
+    "known": false
+   },
+   {
+    "gene": "IL2RG",
+    "n_strong_dep_lines": 3,
+    "min_effect": -1.64,
+    "compartment": "Cell membrane",
+    "known": false
+   }
+  ]
+ }
+}

@@ -1,0 +1,677 @@
+{
+  "n_atoms": 16755,
+  "n_dna": 6021,
+  "n_water": 3130,
+  "perturbed_atom": 3030,
+  "arms": {
+    "dna_charged": {
+      "captured": {
+        "4.0": 0.34989380420525135,
+        "6.0": 0.39610334408485953,
+        "8.0": 0.44291039872461907,
+        "10.0": 0.47831807694457823,
+        "12.0": 0.49936320161328546,
+        "16.0": 0.5475030250852267,
+        "20.0": 0.591890575322381,
+        "24.0": 0.6251294897974117,
+        "32.0": 0.7048223381967682,
+        "40.0": 0.7626249448428412
+      },
+      "total_abs": 2322.665285950905,
+      "shell_abs": [
+        {
+          "lo": 0,
+          "hi": 4,
+          "n": 8,
+          "signed": -812.68619279684,
+          "abs": 812.68619279684
+        },
+        {
+          "lo": 4,
+          "hi": 8,
+          "n": 34,
+          "signed": -192.73444286733775,
+          "abs": 216.04641510750656
+        },
+        {
+          "lo": 8,
+          "hi": 12,
+          "n": 41,
+          "signed": -131.12096556413417,
+          "abs": 131.12096556413417
+        },
+        {
+          "lo": 12,
+          "hi": 16,
+          "n": 80,
+          "signed": -107.58228312845708,
+          "abs": 111.81269685008283
+        },
+        {
+          "lo": 16,
+          "hi": 20,
+          "n": 122,
+          "signed": -98.22143849104243,
+          "abs": 103.09742206424019
+        },
+        {
+          "lo": 20,
+          "hi": 25,
+          "n": 218,
+          "signed": -67.72247751585654,
+          "abs": 101.71466638448243
+        },
+        {
+          "lo": 25,
+          "hi": 30,
+          "n": 386,
+          "signed": -79.40223714653126,
+          "abs": 122.64884493324286
+        },
+        {
+          "lo": 30,
+          "hi": 40,
+          "n": 1037,
+          "signed": -119.72060355762844,
+          "abs": 172.19528188616175
+        },
+        {
+          "lo": 40,
+          "hi": 50,
+          "n": 1620,
+          "signed": -62.61355237885564,
+          "abs": 126.86641568521942
+        },
+        {
+          "lo": 50,
+          "hi": 70,
+          "n": 4305,
+          "signed": -23.175053963618588,
+          "abs": 169.1863574122409
+        }
+      ]
+    },
+    "dna_screened": {
+      "captured": {
+        "4.0": 0.7210336046478093,
+        "6.0": 0.809075480303523,
+        "8.0": 0.886147595399418,
+        "10.0": 0.9189954315563994,
+        "12.0": 0.9373559773607866,
+        "16.0": 0.9612592720016339,
+        "20.0": 0.9772445854559452,
+        "24.0": 0.9856229567918589,
+        "32.0": 0.9951871461911357,
+        "40.0": 0.9984363985093611
+      },
+      "total_abs": 290.4674398946043,
+      "shell_abs": [
+        {
+          "lo": 0,
+          "hi": 4,
+          "n": 8,
+          "signed": -4.285298466447642,
+          "abs": 209.43678522002742
+        },
+        {
+          "lo": 4,
+          "hi": 8,
+          "n": 34,
+          "signed": -35.346771174248516,
+          "abs": 47.96023818440117
+        },
+        {
+          "lo": 8,
+          "hi": 12,
+          "n": 41,
+          "signed": -14.401583948493089,
+          "abs": 14.874367609463814
+        },
+        {
+          "lo": 12,
+          "hi": 16,
+          "n": 80,
+          "signed": -4.717211913033056,
+          "abs": 6.943128799373253
+        },
+        {
+          "lo": 16,
+          "hi": 20,
+          "n": 122,
+          "signed": -2.9710489994322127,
+          "abs": 4.643213074986588
+        },
+        {
+          "lo": 20,
+          "hi": 25,
+          "n": 218,
+          "signed": -1.2150612935665155,
+          "abs": 2.819169245305976
+        },
+        {
+          "lo": 25,
+          "hi": 30,
+          "n": 386,
+          "signed": -0.8920678048856228,
+          "abs": 1.9679597266912396
+        },
+        {
+          "lo": 30,
+          "hi": 40,
+          "n": 1037,
+          "signed": -0.8540937883768216,
+          "abs": 1.368402712353622
+        },
+        {
+          "lo": 40,
+          "hi": 50,
+          "n": 1620,
+          "signed": -0.18149901974905164,
+          "abs": 0.34825088577026053
+        },
+        {
+          "lo": 50,
+          "hi": 70,
+          "n": 4305,
+          "signed": -0.05028186941320921,
+          "abs": 0.09959733791795003
+        }
+      ]
+    },
+    "dna_neutral": {
+      "captured": {
+        "4.0": 0.4310421519853936,
+        "6.0": 0.46651505294432377,
+        "8.0": 0.5076338820047726,
+        "10.0": 0.539859578210081,
+        "12.0": 0.5583774671173638,
+        "16.0": 0.6003997505809269,
+        "20.0": 0.6388025343303547,
+        "24.0": 0.66659854375409,
+        "32.0": 0.7374247853072075,
+        "40.0": 0.7884332938188087
+      },
+      "total_abs": 2513.228908536943,
+      "shell_abs": [
+        {
+          "lo": 0,
+          "hi": 4,
+          "n": 8,
+          "signed": -1083.3075971676658,
+          "abs": 1083.3075971676658
+        },
+        {
+          "lo": 4,
+          "hi": 8,
+          "n": 34,
+          "signed": -187.97204702770958,
+          "abs": 192.49255003956006
+        },
+        {
+          "lo": 8,
+          "hi": 12,
+          "n": 41,
+          "signed": -127.53024502776927,
+          "abs": 127.53024502776927
+        },
+        {
+          "lo": 12,
+          "hi": 16,
+          "n": 80,
+          "signed": -104.57280602100508,
+          "abs": 105.61161760336053
+        },
+        {
+          "lo": 16,
+          "hi": 20,
+          "n": 122,
+          "signed": -94.36243079371361,
+          "abs": 96.51498628735506
+        },
+        {
+          "lo": 20,
+          "hi": 25,
+          "n": 218,
+          "signed": -62.88387233192446,
+          "abs": 94.00047881928927
+        },
+        {
+          "lo": 25,
+          "hi": 30,
+          "n": 386,
+          "signed": -77.19321705907697,
+          "abs": 116.53289822616205
+        },
+        {
+          "lo": 30,
+          "hi": 40,
+          "n": 1037,
+          "signed": -119.31856795007894,
+          "abs": 165.52297330726927
+        },
+        {
+          "lo": 40,
+          "hi": 50,
+          "n": 1620,
+          "signed": -61.21191877172242,
+          "abs": 120.11409920469532
+        },
+        {
+          "lo": 50,
+          "hi": 70,
+          "n": 4305,
+          "signed": -21.09569569041222,
+          "abs": 161.68523877529088
+        }
+      ]
+    },
+    "shuffled_chg": {
+      "captured": {
+        "4.0": 0.4555774415436886,
+        "6.0": 0.5158796485929164,
+        "8.0": 0.5424703505858648,
+        "10.0": 0.5639288086867147,
+        "12.0": 0.5773707777704864,
+        "16.0": 0.6200235867336477,
+        "20.0": 0.6534163841555688,
+        "24.0": 0.6783775392868975,
+        "32.0": 0.7395552526729738,
+        "40.0": 0.7889329893879821
+      },
+      "total_abs": 2925.443320317797,
+      "shell_abs": [
+        {
+          "lo": 0,
+          "hi": 4,
+          "n": 8,
+          "signed": -1304.7252739669807,
+          "abs": 1332.7659832514555
+        },
+        {
+          "lo": 4,
+          "hi": 8,
+          "n": 34,
+          "signed": -217.69687737327493,
+          "abs": 254.2002803404164
+        },
+        {
+          "lo": 8,
+          "hi": 12,
+          "n": 41,
+          "signed": -92.65098047602498,
+          "abs": 102.09922158348836
+        },
+        {
+          "lo": 12,
+          "hi": 16,
+          "n": 80,
+          "signed": -118.36243487968596,
+          "abs": 124.77837507407122
+        },
+        {
+          "lo": 16,
+          "hi": 20,
+          "n": 122,
+          "signed": -90.93818423081426,
+          "abs": 97.6887361646849
+        },
+        {
+          "lo": 20,
+          "hi": 25,
+          "n": 218,
+          "signed": -82.29904732846995,
+          "abs": 100.56863427897719
+        },
+        {
+          "lo": 25,
+          "hi": 30,
+          "n": 386,
+          "signed": -79.37697487604996,
+          "abs": 118.09792776093596
+        },
+        {
+          "lo": 30,
+          "hi": 40,
+          "n": 1037,
+          "signed": -114.30857871836281,
+          "abs": 177.77958552939424
+        },
+        {
+          "lo": 40,
+          "hi": 50,
+          "n": 1620,
+          "signed": -79.033554243027,
+          "abs": 153.43391408075712
+        },
+        {
+          "lo": 50,
+          "hi": 70,
+          "n": 4305,
+          "signed": -21.701776774510456,
+          "abs": 189.06693920671407
+        }
+      ]
+    }
+  },
+  "shells": {
+    "4.0": [
+      {
+        "lo": 0,
+        "hi": 4,
+        "n": 8,
+        "live": 8,
+        "rel_err": 1.0790237222323722,
+        "slope": -0.15383203020058622,
+        "pearson": -0.531654997314229
+      },
+      {
+        "lo": 4,
+        "hi": 8,
+        "n": 34,
+        "live": 34,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 8,
+        "hi": 12,
+        "n": 41,
+        "live": 41,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 12,
+        "hi": 20,
+        "n": 202,
+        "live": 201,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 20,
+        "hi": 35,
+        "n": 1039,
+        "live": 972,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 35,
+        "hi": 60,
+        "n": 4214,
+        "live": 2423,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      }
+    ],
+    "8.0": [
+      {
+        "lo": 0,
+        "hi": 4,
+        "n": 8,
+        "live": 8,
+        "rel_err": 0.9682110106429854,
+        "slope": -0.01566145284022318,
+        "pearson": -0.1836826926249966
+      },
+      {
+        "lo": 4,
+        "hi": 8,
+        "n": 34,
+        "live": 34,
+        "rel_err": 0.6534739877373374,
+        "slope": 0.44855513600087804,
+        "pearson": 0.7173700622018905
+      },
+      {
+        "lo": 8,
+        "hi": 12,
+        "n": 41,
+        "live": 41,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 12,
+        "hi": 20,
+        "n": 202,
+        "live": 201,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 20,
+        "hi": 35,
+        "n": 1039,
+        "live": 972,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 35,
+        "hi": 60,
+        "n": 4214,
+        "live": 2423,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      }
+    ],
+    "12.0": [
+      {
+        "lo": 0,
+        "hi": 4,
+        "n": 8,
+        "live": 8,
+        "rel_err": 0.8739540351232962,
+        "slope": 0.0886060586803426,
+        "pearson": 0.1588655611257586
+      },
+      {
+        "lo": 4,
+        "hi": 8,
+        "n": 34,
+        "live": 34,
+        "rel_err": 0.6170116651476294,
+        "slope": 0.4849690122552756,
+        "pearson": 0.7688657825931545
+      },
+      {
+        "lo": 8,
+        "hi": 12,
+        "n": 41,
+        "live": 41,
+        "rel_err": 0.6226465848963831,
+        "slope": 0.404167604104071,
+        "pearson": 0.7435268967361205
+      },
+      {
+        "lo": 12,
+        "hi": 20,
+        "n": 202,
+        "live": 201,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 20,
+        "hi": 35,
+        "n": 1039,
+        "live": 972,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 35,
+        "hi": 60,
+        "n": 4214,
+        "live": 2423,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      }
+    ],
+    "20.0": [
+      {
+        "lo": 0,
+        "hi": 4,
+        "n": 8,
+        "live": 8,
+        "rel_err": 0.7666881217785418,
+        "slope": 0.21645120011299396,
+        "pearson": 0.5524585165878099
+      },
+      {
+        "lo": 4,
+        "hi": 8,
+        "n": 34,
+        "live": 34,
+        "rel_err": 0.5445859614467518,
+        "slope": 0.5536930469922132,
+        "pearson": 0.8292800793246019
+      },
+      {
+        "lo": 8,
+        "hi": 12,
+        "n": 41,
+        "live": 41,
+        "rel_err": 0.5589129939750069,
+        "slope": 0.4718076307746263,
+        "pearson": 0.8301301604141602
+      },
+      {
+        "lo": 12,
+        "hi": 20,
+        "n": 202,
+        "live": 201,
+        "rel_err": 0.6666009500972814,
+        "slope": 0.40430079795736024,
+        "pearson": 0.7652325565911677
+      },
+      {
+        "lo": 20,
+        "hi": 35,
+        "n": 1039,
+        "live": 972,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      },
+      {
+        "lo": 35,
+        "hi": 60,
+        "n": 4214,
+        "live": 2423,
+        "rel_err": 1.0,
+        "slope": 0.0,
+        "pearson": NaN
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "NEXUS SPHERE COVERAGE ON REAL DNA -- how far does a single-atom change actually reach?",
+    "====================================================================================================",
+    "  The proposal: tile chromatin's DNA in ~4 A overlapping spheres, run NEXUS chemistry in each,",
+    "  and let overlap carry a single-atom change across the structure. A sphere of radius R around",
+    "  an atom IS an interaction truncation at R, so 'is 4 A enough' has an exact answer on a real",
+    "  structure. Reference = every pair, no cutoff. Nothing here is compared against a model.",
+    "  NEXUS's OWN cutoffs: LJ 6 A, desolvation 8 A, electrostatics 10 A, induction 10 A -- every one",
+    "  larger than the proposed 4 A sphere. That is a reason to measure, not a proof.",
+    "\n  1KX5: 16755 atoms | 6021 DNA | 3130 ordered water | 7604 histone+ion",
+    "  147 bp on a histone octamer at 1.9 A -- chromatin at atomic resolution, small enough to be exact.",
+    "  PERTURBATION: atom 3030 (OP1 of DT chain J) charge -0.78 -> +0.22. One atom.",
+    "\n  Precomputing the static field at all 16k atoms in a single O(N^2) pass per arm...",
+    "    dna_charged  (the case) done at 67s",
+    "    dna_screened (control) done at 100s",
+    "    dna_neutral  (control) done at 128s",
+    "    shuffled_chg (control) done at 156s",
+    "\n  ARM 1 -- REACH: fraction of the TOTAL |response| captured inside radius R.",
+    "  Absolute, not signed: a signed fraction can read 100% while a large positive and a large",
+    "  negative in the far field merely cancel, and cancellation is not capture.",
+    "    arm                            4A      6A      8A     10A     12A     16A     20A     24A     32A     40A",
+    "    dna_charged  (the case)     0.350   0.396   0.443   0.478   0.499   0.548   0.592   0.625   0.705   0.763",
+    "    dna_screened (control)      0.721   0.809   0.886   0.919   0.937   0.961   0.977   0.986   0.995   0.998",
+    "    dna_neutral  (control)      0.431   0.467   0.508   0.540   0.558   0.600   0.639   0.667   0.737   0.788",
+    "    shuffled_chg (control)      0.456   0.516   0.542   0.564   0.577   0.620   0.653   0.678   0.740   0.789",
+    "\n  ARM 2 -- THE SHELL-INTEGRATED RESPONSE, which is the decisive curve and is NOT the per-atom",
+    "  decay. For a kernel U ~ q q / r^2 the atom count in a shell grows as r^2 while the interaction",
+    "  falls as r^-2, so the shell SUM can stay flat while the per-atom response decays reassuringly.",
+    "  A per-atom plot would look convergent for a sum that is not.",
+    "    dna_charged  (the case)   (kcal/mol per shell, |.| = absolute)",
+    "            0-4      4-8     8-12    12-16    16-20    20-25    25-30    30-40    40-50    50-70",
+    "         812.69   216.05   131.12   111.81   103.10   101.71   122.65   172.20   126.87   169.19",
+    "    dna_screened (control)   (kcal/mol per shell, |.| = absolute)",
+    "            0-4      4-8     8-12    12-16    16-20    20-25    25-30    30-40    40-50    50-70",
+    "         209.44    47.96    14.87     6.94     4.64     2.82     1.97     1.37     0.35     0.10",
+    "    dna_neutral  (control)   (kcal/mol per shell, |.| = absolute)",
+    "            0-4      4-8     8-12    12-16    16-20    20-25    25-30    30-40    40-50    50-70",
+    "        1083.31   192.49   127.53   105.61    96.51    94.00   116.53   165.52   120.11   161.69",
+    "    shuffled_chg (control)   (kcal/mol per shell, |.| = absolute)",
+    "            0-4      4-8     8-12    12-16    16-20    20-25    25-30    30-40    40-50    50-70",
+    "        1332.77   254.20   102.10   124.78    97.69   100.57   118.10   177.78   153.43   189.07",
+    "\n  ARM 3 -- FIDELITY per distance shell: truncated (= sphere of radius R) vs exact.",
+    "  rel.err = sum|trunc-exact| / sum|exact|.  slope = regression of truncated on exact; a scheme",
+    "  that is right up to a uniform factor scores pearson 1.0 and slope != 1, so slope is the",
+    "  number that matters. Metrics over LIVE atoms only -- matched zeros would manufacture r ~ 1.",
+    "    sphere R = 4 A     total |response| exact 2322.7 vs truncated 335.4 kcal/mol (14.4% of it)",
+    "      shell          atoms   live   rel.err   slope  pearson",
+    "      0-4 A              8      8     1.079  -0.154   -0.532",
+    "      4-8 A             34     34     1.000   0.000      nan",
+    "      8-12 A            41     41     1.000   0.000      nan",
+    "      12-20 A          202    201     1.000   0.000      nan",
+    "      20-35 A         1039    972     1.000   0.000      nan",
+    "      35-60 A         4214   2423     1.000   0.000      nan",
+    "    sphere R = 8 A     total |response| exact 2322.7 vs truncated 365.1 kcal/mol (15.7% of it)",
+    "      shell          atoms   live   rel.err   slope  pearson",
+    "      0-4 A              8      8     0.968  -0.016   -0.184",
+    "      4-8 A             34     34     0.653   0.449    0.717",
+    "      8-12 A            41     41     1.000   0.000      nan",
+    "      12-20 A          202    201     1.000   0.000      nan",
+    "      20-35 A         1039    972     1.000   0.000      nan",
+    "      35-60 A         4214   2423     1.000   0.000      nan",
+    "    sphere R = 12 A     total |response| exact 2322.7 vs truncated 450.9 kcal/mol (19.4% of it)",
+    "      shell          atoms   live   rel.err   slope  pearson",
+    "      0-4 A              8      8     0.874   0.089    0.159",
+    "      4-8 A             34     34     0.617   0.485    0.769",
+    "      8-12 A            41     41     0.623   0.404    0.744",
+    "      12-20 A          202    201     1.000   0.000      nan",
+    "      20-35 A         1039    972     1.000   0.000      nan",
+    "      35-60 A         4214   2423     1.000   0.000      nan",
+    "    sphere R = 20 A     total |response| exact 2322.7 vs truncated 609.8 kcal/mol (26.3% of it)",
+    "      shell          atoms   live   rel.err   slope  pearson",
+    "      0-4 A              8      8     0.767   0.216    0.552",
+    "      4-8 A             34     34     0.545   0.554    0.829",
+    "      8-12 A            41     41     0.559   0.472    0.830",
+    "      12-20 A          202    201     0.667   0.404    0.765",
+    "      20-35 A         1039    972     1.000   0.000      nan",
+    "      35-60 A         4214   2423     1.000   0.000      nan",
+    "\n  READING",
+    "  TRUNCATION DOES NOT MERELY LOSE THE FAR FIELD, IT CORRUPTS THE NEAR ONE. In the 0-4 A shell",
+    "  -- entirely INSIDE the 4 A sphere, where the scheme should be exact -- the slope against",
+    "  the true response is -0.154 and the correlation -0.532.",
+    "  The reason is induction: its energy is -1/2 (alpha/KE)|E|^2, a SQUARE of a sum, so the",
+    "  change contains a cross term 2*E0.dE that multiplies the perturbation by the PRE-EXISTING",
+    "  field. Truncating corrupts E0, and a wrong E0 inside the sphere is enough to flip the sign",
+    "  of the answer there. No sphere size fixes a term that is a square of a truncated sum.",
+    "  A 4 A sphere captures 35.0% of the unscreened response and 72.1% of the screened one.",
+    "  UNSCREENED: no radius in the sweep reaches 90%. The sphere scheme cannot represent bare",
+    "  Coulomb on DNA at ANY size short of the whole particle -- the fix is not a bigger sphere,",
+    "  it is a far-field channel (Ewald/multipole), which is a different proposal.",
+    "  SCREENED (150 mM, Debye 7.9 A): 90% captured at R = 10 A. Screening is what makes",
+    "  a local scheme legitimate -- but NEXUS does not screen, so this is a change to the physics",
+    "  rather than a vindication of the tiling as it stands.",
+    "\n  total 156s  -> outputs/orphan/nexus_dna_spheres.json"
+  ]
+}

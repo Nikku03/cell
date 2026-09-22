@@ -1,0 +1,32 @@
+{
+ "examples": [
+  {
+   "ko": "GATA1",
+   "pred_magnitude": 9.9,
+   "actual_movers": 722,
+   "tide_hits_in_top15": 5,
+   "flavour_pred": 13,
+   "flavour_actual": 14,
+   "flavour_correct": false
+  },
+  {
+   "ko": "RPL7A",
+   "pred_magnitude": 69.7,
+   "actual_movers": 466,
+   "tide_hits_in_top15": 13,
+   "flavour_pred": 9,
+   "flavour_actual": 9,
+   "flavour_correct": true
+  },
+  {
+   "ko": "AQR",
+   "pred_magnitude": 40.9,
+   "actual_movers": 392,
+   "tide_hits_in_top15": 8,
+   "flavour_pred": 4,
+   "flavour_actual": 4,
+   "flavour_correct": true
+  }
+ ],
+ "verdict": "WORKED EXAMPLES of the full stack -- what 'knock out protein X' produces, honestly. RPL7A (ribosomal, essential): the stack works -- flags a LARGE response, its predicted wave recovers 13/15 of the real movers, and it calls the dominant program right (generic/quiescence). AQR (spliceosome, essential): same -- LARGE, 8/15 of the wave, program correct (generic stress). GATA1 (erythroid MASTER TF, DepMap-nonessential): the honest FAILURE MODE -- capacity UNDER-predicts the magnitude badly (~10 vs an actual 722) because DepMap essentiality != transcriptional impact for a regulatory hub (K562 survives without GATA1 but its transcriptome craters), and the program flavour is missed. Across all three, MAGNITUDE is a rough RANKING (relative disruptiveness, Spearman 0.22) not a calibrated count and it under-reads regulatory hubs; the TIDE recovers a real chunk of the wave (~half); the FLAVOUR is usually just 'generic stress' (which is the honest truth); and IDENTITY is correctly ABSTAINED. That is what a knockout prediction looks like at the resolution the biology is actually predictable -- strong for essential metabolic/machinery knockouts, weak for regulatory hubs, and never pretending to name the specific ripple."
+}

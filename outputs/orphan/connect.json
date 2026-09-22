@@ -1,0 +1,14 @@
+{
+ "validation": {
+  "n": 5409,
+  "lit_only_top1": 0.125,
+  "ppi_only_top1": 0.536,
+  "corroborated_top1": 0.701,
+  "corroborated_coverage": 0.183,
+  "corroboration_lift": 5.61,
+  "ppi_colocalize": 0.927,
+  "random_colocalize": 0.507,
+  "coloc_enrichment": 1.83
+ },
+ "note": "Triangulation of literature (noisy pathway hypothesis) + PPI (stronger partner-pathway vote) + spatial (direct compartment). The WIN is cross-source AGREEMENT: corroborated (lit AND ppi) pathway top-1 0.701 vs lit-only 0.125 = 5.61x, at 18% coverage. PPI partners co-localize 0.927 vs 0.507 random (1.83x), grounding the location cross-check; the transport carrier is a flagged HEURISTIC lead on the ~7% that don't co-localize. Descriptive near-field triangulation -- a strong starting mechanism (corroborated ~71% precision), NOT a proven annotation or a phenotype predictor."
+}

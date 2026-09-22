@@ -1,0 +1,228 @@
+{
+ "test": "loop 145 -- phosphodegrons",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/uniprot_human_ptm.tsv.gz",
+    "bytes": 2003000,
+    "hash": "204cae8a9166c3f3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/proteinatlas.tsv",
+    "bytes": 43055808,
+    "hash": "5c546331ec5dda4b",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 20213,
+   "used": 8020,
+   "selection": "all",
+   "fraction": 0.3967743531390689
+  },
+  "seed": 14500,
+  "controls": [
+   "the APC/C degrons as a falsification arm -- they are NOT phospho-dependent, so requiring a site should help them less",
+   "the comparison made WITHIN phospho-annotated genes, so annotation depth is held fixed",
+   "textbook SCF substrates, independent of loop 143's APC/C set",
+   "power stated before the positive control is read",
+   "publication count against co-location GIVEN the motif"
+  ],
+  "note": "loop 121 searched D-box and KEN-box, which APC/C binds without phosphorylation. The phospho-DEPENDENT degrons were never tested.",
+  "warnings": []
+ },
+ "gates": {
+  "P1": false,
+  "P2": true,
+  "P3": true,
+  "P4": true,
+  "P5": false,
+  "P6": true
+ },
+ "p1": {
+  "n_phospho_genes": 8020,
+  "motifs": {
+   "betaTrCP DSGxxS": {
+    "n_with_motif": 236,
+    "n_occupied": 48,
+    "frac_occupied": 0.2033898305084746
+   },
+   "Fbw7 CPD": {
+    "n_with_motif": 2208,
+    "n_occupied": 781,
+    "frac_occupied": 0.353713768115942
+   },
+   "D-box R..L": {
+    "n_with_motif": 7053,
+    "n_occupied": 487,
+    "frac_occupied": 0.06904863178789168
+   },
+   "KEN-box": {
+    "n_with_motif": 1239,
+    "n_occupied": 0,
+    "frac_occupied": 0.0
+   }
+  }
+ },
+ "p2": {
+  "n_substrates": 11,
+  "n_occupied": 4,
+  "rate": 0.36363636363636365,
+  "background": 0.05168329177057356
+ },
+ "p3": {
+  "per_motif": {
+   "betaTrCP DSGxxS": {
+    "auc_motif_count": 0.6215621062668135,
+    "auc_phospho_occupied": 0.588037321649508,
+    "gain": -0.03352478461730557
+   },
+   "Fbw7 CPD": {
+    "auc_motif_count": 0.5809430300003405,
+    "auc_phospho_occupied": 0.6333102532378347,
+    "gain": 0.05236722323749421
+   },
+   "D-box R..L": {
+    "auc_motif_count": 0.5349493183804583,
+    "auc_phospho_occupied": 0.4695967037083281,
+    "gain": -0.06535261467213022
+   },
+   "KEN-box": {
+    "auc_motif_count": 0.5619246529472525,
+    "auc_phospho_occupied": 0.5,
+    "gain": -0.06192465294725247
+   }
+  },
+  "phospho_gain": 0.00942121931009432,
+  "apc_gain": -0.06363863380969134
+ },
+ "p4": {
+  "rho_pubs_nsites": 0.2908344394342962,
+  "betaTrCP DSGxxS": {
+   "n": 206,
+   "rho_pubs_occupancy_given_motif": 0.18044275210261612
+  },
+  "Fbw7 CPD": {
+   "n": 1980,
+   "rho_pubs_occupancy_given_motif": 0.1718212455338825
+  }
+ },
+ "p5": {
+  "groups": {
+   "both": {
+    "n": 83,
+    "rate": 0.2289156626506024
+   },
+   "protein only": {
+    "n": 225,
+    "rate": 0.10666666666666667
+   },
+   "transcript only": {
+    "n": 29,
+    "rate": 0.13793103448275862
+   },
+   "neither": {
+    "n": 356,
+    "rate": 0.14606741573033707
+   }
+  },
+  "fisher_protein_only_vs_neither": 0.20648570726596885
+ },
+ "p6": {
+  "split_justified": false
+ },
+ "seconds": 3.8398118019104004,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 145 -- the lock exists; was the key ever turned?",
+  "====================================================================================================",
+  "",
+  "  proteome: 20,213 genes with a sequence",
+  "  phospho-annotated genes: 8,041",
+  "",
+  "P1 DO THE MOTIFS AND THE SITES EXIST, AND CAN THEY CO-LOCATE?",
+  "     genes with a sequence AND at least one annotated phosphosite: 8,020",
+  "     betaTrCP DSGxxS    motif in    236 phospho-genes; a site lands inside it in     48  (20.3%)",
+  "     Fbw7 CPD           motif in  2,208 phospho-genes; a site lands inside it in    781  (35.4%)",
+  "     D-box R..L         motif in  7,053 phospho-genes; a site lands inside it in    487  (6.9%)",
+  "     KEN-box            motif in  1,239 phospho-genes; a site lands inside it in      0  (0.0%)",
+  "     P1 FAIL -- co-location IS DEGENERATE and can measure nothing",
+  "",
+  "P2 THE POSITIVE CONTROL, WITH ITS POWER STATED FIRST",
+  "     textbook SCF substrates with sequence and phosphosites: 11/12",
+  "     BEFORE reading the result: at n = 11, a background rate of 0.052 and a",
+  "     two-fold enrichment gives roughly 70% chance that at least one substrate is hit.",
+  "     A small-n POSITIVE here is weak. A small-n NEGATIVE is strong, because these are the",
+  "     proteins the motifs were DEFINED on.",
+  "       CTNNB1   betaTrCP  motif copies  1  sites  15   phospho-occupied: YES",
+  "       NFKBIA   betaTrCP  motif copies  1  sites   8   phospho-occupied: YES",
+  "       CDC25A   betaTrCP  motif copies  0  sites  13   phospho-occupied: no",
+  "       CDC25B   betaTrCP  motif copies  0  sites   8   phospho-occupied: no",
+  "       WEE1     betaTrCP  motif copies  0  sites  16   phospho-occupied: no",
+  "       FBXO5    betaTrCP  motif copies  1  sites   2   phospho-occupied: no",
+  "       CCNE1    Fbw7      motif copies  1  sites   5   phospho-occupied: YES",
+  "       MYC      Fbw7      motif copies  1  sites  16   phospho-occupied: YES",
+  "       JUN      Fbw7      motif copies  0  sites  12   phospho-occupied: no",
+  "       MCL1     Fbw7      motif copies  0  sites   4   phospho-occupied: no",
+  "       NOTCH1   Fbw7      motif copies  2  sites   1   phospho-occupied: no",
+  "     substrates with a phospho-occupied degron of THEIR OWN ligase: 4/11 (36.4%) against a background of 5.2%",
+  "     P2 PASS -- the motifs do find the proteins they were defined on",
+  "",
+  "P3 THE COMPARISON LOOP 121 COULD NOT MAKE",
+  "     scored on 8,020 phospho-annotated genes, 11 of them textbook SCF substrates",
+  "     betaTrCP DSGxxS    motif count AUC 0.6216   phospho-occupied AUC 0.5880   -0.0335",
+  "     Fbw7 CPD           motif count AUC 0.5809   phospho-occupied AUC 0.6333   +0.0524",
+  "     D-box R..L         motif count AUC 0.5349   phospho-occupied AUC 0.4696   -0.0654",
+  "     KEN-box            motif count AUC 0.5619   phospho-occupied AUC 0.5000   -0.0619",
+  "     mean gain from requiring a phosphosite:  PHOSPHO-degrons +0.0094   APC/C degrons -0.0636",
+  "     the APC/C arm is the falsification control: those degrons are NOT phospho-dependent,",
+  "     so requiring a phosphosite should help them LESS. If it helps them equally, the",
+  "     statistic is measuring phospho-annotation depth and not phospho-dependence.",
+  "     P3 PASS -- phospho-occupancy helps the phospho-dependent degrons specifically",
+  "",
+  "P4 IS CO-LOCATION FAME?",
+  "     publication count vs NUMBER OF ANNOTATED SITES: rho +0.2908  (expected large)",
+  "     betaTrCP DSGxxS    among genes that HAVE the motif, pubs vs occupancy: rho +0.1804 (n=206)",
+  "     Fbw7 CPD           among genes that HAVE the motif, pubs vs occupancy: rho +0.1718 (n=1,980)",
+  "     the KEN-box was struck at +0.2429 and the 5'TOP motif at +0.3296. Worst here +0.1804.",
+  "     P4 PASS -- co-location is not simply fame",
+  "",
+  "P5 DOES IT REACH THE CELL-CYCLE GROUPS?",
+  "     both             n   83   phospho-occupied degron 22.9%",
+  "     protein only     n  225   phospho-occupied degron 10.7%",
+  "     transcript only  n   29   phospho-occupied degron 13.8%",
+  "     neither          n  356   phospho-occupied degron 14.6%",
+  "     protein-only against neither: Fisher p = 0.2065",
+  "     P5 FAIL -- the 362 are NOT enriched",
+  "",
+  "P6 THE STRUCTURAL CONSEQUENCE",
+  "     the phospho gain is +0.0094 against a required +0.0200",
+  "     the signalling layer is STATIC because 'phospho-forms share a node so the chain is",
+  "     chemically inert'. Splitting each phosphoprotein into an unmodified and a modified",
+  "     state is what would let information propagate through 17,432 signal edges.",
+  "     THAT BUILD IS NOT JUSTIFIED BY THIS RESULT. Splitting the nodes would make the",
+  "     network able to propagate, but nothing here says the propagated quantity",
+  "     predicts which protein is destroyed when. Building it would be adding",
+  "     machinery in the hope that a mechanism appears, which is what the previous",
+  "     eight attempts each did in their own way.",
+  "",
+  "====================================================================================================",
+  "  P1  FAIL",
+  "  P2  PASS",
+  "  P3  PASS",
+  "  P4  PASS",
+  "  P5  FAIL",
+  "  P6  PASS",
+  "  4/6",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 8020/20213 (39.7%) by 'all', seed 14500, controls 5"
+ ]
+}

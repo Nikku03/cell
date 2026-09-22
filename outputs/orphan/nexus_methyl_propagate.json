@@ -1,0 +1,323 @@
+{
+  "n_atoms": 13625,
+  "n_springs": 263765,
+  "rc": 6.0,
+  "sites": {
+    "exposed": {
+      "force_norm": 11.492364801277317,
+      "n_forced": 36,
+      "cg_info": 0,
+      "noise_norm": 0.0,
+      "profile": [
+        {
+          "lo": 0,
+          "hi": 3,
+          "n": 4,
+          "rms": 0.24238814482657914,
+          "scrambled": 1.765615301850934,
+          "noise": 0.0
+        },
+        {
+          "lo": 3,
+          "hi": 6,
+          "n": 32,
+          "rms": 0.07801754078909778,
+          "scrambled": 1.7810780995247084,
+          "noise": 0.0
+        },
+        {
+          "lo": 6,
+          "hi": 10,
+          "n": 80,
+          "rms": 0.05755812458415266,
+          "scrambled": 1.7634378212082944,
+          "noise": 0.0
+        },
+        {
+          "lo": 10,
+          "hi": 15,
+          "n": 155,
+          "rms": 0.02915170675324334,
+          "scrambled": 1.6767778536594866,
+          "noise": 0.0
+        },
+        {
+          "lo": 15,
+          "hi": 25,
+          "n": 482,
+          "rms": 0.027283209306231352,
+          "scrambled": 1.9076989114975633,
+          "noise": 0.0
+        },
+        {
+          "lo": 25,
+          "hi": 40,
+          "n": 1374,
+          "rms": 0.013797576512527747,
+          "scrambled": 5.1578926100032305,
+          "noise": 0.0
+        },
+        {
+          "lo": 40,
+          "hi": 70,
+          "n": 5203,
+          "rms": 0.018290263967859748,
+          "scrambled": 5.5237110167277,
+          "noise": 0.0
+        }
+      ]
+    },
+    "buried": {
+      "force_norm": 9.339513879802306,
+      "n_forced": 41,
+      "cg_info": 0,
+      "noise_norm": 0.0,
+      "profile": [
+        {
+          "lo": 0,
+          "hi": 3,
+          "n": 7,
+          "rms": 0.25244192384947184,
+          "scrambled": 1.1449126490332973,
+          "noise": 0.0
+        },
+        {
+          "lo": 3,
+          "hi": 6,
+          "n": 34,
+          "rms": 0.08346123005556004,
+          "scrambled": 1.1191156630658667,
+          "noise": 0.0
+        },
+        {
+          "lo": 6,
+          "hi": 10,
+          "n": 96,
+          "rms": 0.0641359677766318,
+          "scrambled": 1.2049021699069358,
+          "noise": 0.0
+        },
+        {
+          "lo": 10,
+          "hi": 15,
+          "n": 256,
+          "rms": 0.04396847357949418,
+          "scrambled": 1.3571012260821833,
+          "noise": 0.0
+        },
+        {
+          "lo": 15,
+          "hi": 25,
+          "n": 618,
+          "rms": 0.029882140571421682,
+          "scrambled": 1.3841156910239933,
+          "noise": 0.0
+        },
+        {
+          "lo": 25,
+          "hi": 40,
+          "n": 2271,
+          "rms": 0.015264873033116673,
+          "scrambled": 4.22785637200079,
+          "noise": 0.0
+        },
+        {
+          "lo": 40,
+          "hi": 70,
+          "n": 6255,
+          "rms": 0.019698160548234832,
+          "scrambled": 5.74490363618502,
+          "noise": 0.0
+        }
+      ]
+    }
+  },
+  "arms": {
+    "R8": {
+      "n_spheres": 2898,
+      "schwarz_true": {
+        "sweeps": 60,
+        "final_rel_err": 0.9570818993891567,
+        "hist": [
+          0.9833069301764209,
+          0.9794204893332541,
+          0.9768153641857268,
+          0.974911667218777,
+          0.9734040572094281,
+          0.9721713415768884,
+          0.9711257438588596,
+          0.970221750803088,
+          0.9694247136027556,
+          0.9687130660936478,
+          0.9680703055510052,
+          0.9674847521581638
+        ],
+        "reached_fixed_point": false,
+        "last_change": 0.00010642696535367868
+      },
+      "schwarz_local": {
+        "sweeps": 4,
+        "final_rel_err": 0.9833069301764209,
+        "hist": [
+          0.9833069301764209,
+          0.9833069301764209,
+          0.9833069301764209,
+          0.9833069301764209
+        ],
+        "reached_fixed_point": true,
+        "last_change": 0.0
+      },
+      "schwarz_true_accelerated": {
+        "iters": 2035,
+        "rel_err": 1.6388220255366465e-07,
+        "info": 0
+      }
+    },
+    "R12": {
+      "n_spheres": 1221,
+      "schwarz_true": {
+        "sweeps": 60,
+        "final_rel_err": 0.9524874252263842,
+        "hist": [
+          0.9816545055848149,
+          0.9767081974834451,
+          0.9736951960584609,
+          0.9715666399405137,
+          0.9699006085319349,
+          0.9685423675771287,
+          0.9673976230074673,
+          0.9664122044600474,
+          0.9655491554419118,
+          0.9647829298687849,
+          0.9640948755868292,
+          0.9634710970619933
+        ],
+        "reached_fixed_point": false,
+        "last_change": 0.00011438120254902984
+      },
+      "schwarz_local": {
+        "sweeps": 4,
+        "final_rel_err": 0.9816545055848149,
+        "hist": [
+          0.9816545055848149,
+          0.9816545055848149,
+          0.9816545055848149,
+          0.9816545055848149
+        ],
+        "reached_fixed_point": true,
+        "last_change": 0.0
+      },
+      "schwarz_true_accelerated": {
+        "iters": 1372,
+        "rel_err": 8.926181753127892e-08,
+        "info": 0
+      }
+    },
+    "R16": {
+      "n_spheres": 652,
+      "schwarz_true": {
+        "sweeps": 60,
+        "final_rel_err": 0.9476428205872188,
+        "hist": [
+          0.9789398719153821,
+          0.9721172603741582,
+          0.968696874011988,
+          0.9664298107556174,
+          0.9647289784407754,
+          0.963366311388958,
+          0.962226387927587,
+          0.961246751807571,
+          0.9603887704466353,
+          0.9596269649223262,
+          0.9589433119347898,
+          0.9583244512590711
+        ],
+        "reached_fixed_point": false,
+        "last_change": 0.00010901578338928797
+      },
+      "schwarz_local": {
+        "sweeps": 4,
+        "final_rel_err": 0.9789398719153821,
+        "hist": [
+          0.9789398719153821,
+          0.9789398719153821,
+          0.9789398719153821,
+          0.9789398719153821
+        ],
+        "reached_fixed_point": true,
+        "last_change": 0.0
+      },
+      "schwarz_true_accelerated": {
+        "iters": 1115,
+        "rel_err": 1.9002796320981968e-07,
+        "info": 0
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "DOES A STRUCTURAL CHANGE PROPAGATE THROUGH CONNECTED SPHERES -- and does it carry the TRUTH?",
+    "====================================================================================================",
+    "  Methylate a cytosine and let the consequence spread: what moves, how far, and what that moves",
+    "  in turn. Energy was already shown not to stay inside a small sphere; STRUCTURE is a different",
+    "  question, because displacement really does travel through contacts. So it gets its own run.",
+    "  Ground truth is available -- the network is sparse, so the exact displacement field is solved",
+    "  directly and every sphere scheme is graded against it, not against another model.",
+    "\n  1KX5 without waters: 13625 atoms (6021 DNA). Ordered waters are dropped from",
+    "  the MECHANICAL network deliberately -- they are not covalently held and would act as springs",
+    "  transmitting stress they cannot actually transmit.",
+    "  elastic network: 263765 springs within 6.0 A (covalent pairs under 1.8 A stiffened 20x)",
+    "    built at 14s",
+    "\n  METHYLATION SITES, chosen by how much histone sits within 10 A of the C5:",
+    "    exposed  atom 55 (DC chain I), 0 histone atoms nearby",
+    "    buried   atom 4844 (DC chain J), 32 histone atoms nearby",
+    "  exact solve converged: residual 9.77e-11, max |u| = 4.587e-01 A",
+    "\n  --- EXPOSED SITE ---   |f| = 11.492 kcal/mol/A over 36 atoms",
+    "  REACH: RMS displacement (A) by distance from the methyl, EXACT solve.",
+    "    shell          atoms     rms |u|   scrambled   noise floor",
+    "    0-3 A              4   2.424e-01   1.766e+00     0.000e+00",
+    "    3-6 A             32   7.802e-02   1.781e+00     0.000e+00",
+    "    6-10 A            80   5.756e-02   1.763e+00     0.000e+00",
+    "    10-15 A          155   2.915e-02   1.677e+00     0.000e+00",
+    "    15-25 A          482   2.728e-02   1.908e+00     0.000e+00",
+    "    25-40 A         1374   1.380e-02   5.158e+00     0.000e+00",
+    "    40-70 A         5203   1.829e-02   5.524e+00     0.000e+00",
+    "  exact solve converged: residual 9.80e-11, max |u| = 5.322e-01 A",
+    "\n  --- BURIED SITE ---   |f| = 9.340 kcal/mol/A over 41 atoms",
+    "  REACH: RMS displacement (A) by distance from the methyl, EXACT solve.",
+    "    shell          atoms     rms |u|   scrambled   noise floor",
+    "    0-3 A              7   2.524e-01   1.145e+00     0.000e+00",
+    "    3-6 A             34   8.346e-02   1.119e+00     0.000e+00",
+    "    6-10 A            96   6.414e-02   1.205e+00     0.000e+00",
+    "    10-15 A          256   4.397e-02   1.357e+00     0.000e+00",
+    "    15-25 A          618   2.988e-02   1.384e+00     0.000e+00",
+    "    25-40 A         2271   1.526e-02   4.228e+00     0.000e+00",
+    "    40-70 A         6255   1.970e-02   5.745e+00     0.000e+00",
+    "\n  SPHERE SCHEMES on the buried site. Both tile the same structure and solve inside each",
+    "  sphere; they differ in ONE line -- whether the error each sphere corrects is computed from",
+    "  the whole network or only from the sphere's own atoms.",
+    "    R=   8 A |  2898 spheres | schwarz_true    60 sweeps -> rel err 9.571e-01  still moving (last change 1.1e-04)",
+    "    R=   8 A |  2898 spheres | schwarz_local    4 sweeps -> rel err 9.833e-01  FIXED POINT (last change 0.0e+00)",
+    "    R=   8 A |  2898 spheres | same tiling + CG 2035 iters -> rel err 1.639e-07",
+    "    R=  12 A |  1221 spheres | schwarz_true    60 sweeps -> rel err 9.525e-01  still moving (last change 1.1e-04)",
+    "    R=  12 A |  1221 spheres | schwarz_local    4 sweeps -> rel err 9.817e-01  FIXED POINT (last change 0.0e+00)",
+    "    R=  12 A |  1221 spheres | same tiling + CG 1372 iters -> rel err 8.926e-08",
+    "    R=  16 A |   652 spheres | schwarz_true    60 sweeps -> rel err 9.476e-01  still moving (last change 1.1e-04)",
+    "    R=  16 A |   652 spheres | schwarz_local    4 sweeps -> rel err 9.789e-01  FIXED POINT (last change 0.0e+00)",
+    "    R=  16 A |   652 spheres | same tiling + CG 1115 iters -> rel err 1.900e-07",
+    "\n  READING",
+    "  best relative error:  schwarz_true 9.476e-01   schwarz_local 9.789e-01   same tiling + CG 8.926e-08",
+    "  THE TILING IS FINE. THE COMMUNICATION RULE IS WHAT DECIDES IT.",
+    "  The SAME spheres reach the exact field to 8.9e-08 once each sphere is corrected",
+    "  against a whole-structure residual. So sphere coverage genuinely can carry a structural",
+    "  change -- the geometry was never the problem.",
+    "  But spheres that see ONLY THEIR OWN ATOMS stop dead at 0.979 relative error and",
+    "  STOP BECAUSE THEY HAVE CONVERGED, not because they ran out of sweeps. They settle onto",
+    "  the exact solution of a network cut at every sphere boundary, and from inside the scheme",
+    "  that is indistinguishable from success: the updates go to zero, everything looks done.",
+    "  THAT IS THE FALSE INFORMATION. It is not noise in the answer, it is a confident answer",
+    "  to a different question, and no amount of extra sweeps or smaller spheres repairs it.",
+    "  What repairs it is one global pass per sweep -- which is the thing the scheme was meant",
+    "  to avoid needing."
+  ]
+}

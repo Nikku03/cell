@@ -1,0 +1,144 @@
+=================================================================================================
+WHICH TRANSCRIPTION AND TRANSLATION RATES MUST BE MEASURED?
+=================================================================================================
+  four rates per gene; human protein-coding genome 19900 genes -> 79,600 rates
+  rare event: {k} or more of the genome's proteins simultaneously below 20 copies -- k set per genome so the event stays rare
+  criterion: ||g_null|| <= 0.2497, i.e. a factor of two on the answer at 90%
+
+=================================================================================================
+X2  THE STRUCTURAL CLAIM IS EXACT
+=================================================================================================
+  assay regime             rank  free dimsburst frequency log a residburst size      log b resid
+  RNA-seq only                1          3                    1.2247                    1.2247
+  RNA-seq + proteomics        2          2                    1.0000                    1.0000
+  + ribosome profiling        3          1                    0.7071                    0.7071
+  + mRNA half-life            4          0                    0.0000                    0.0000
+  PASS -- abundance assays leave both tail parameters free; a degradation rate closes it
+  The protein MEAN is a*b, which is the sum of the two abundance rows, so it is pinned
+  exactly while both of its factors are free. residence.py and katg.py measured that on
+  small circuits; here it is an identity holding for every gene in the genome.
+
+=================================================================================================
+X1  THE TAIL IS THE RIGHT TAIL
+=================================================================================================
+   gene   k_dm/k_dp        a        b   Gamma P(<T)     exact CME  log10 err
+      0         6.5    22.29     3.11    8.3883e-07    2.3871e-05     1.4542
+      1        32.0     8.56     6.20    9.7594e-03    1.5507e-02     0.2011
+      2        30.8     4.60    29.93    1.4735e-03    1.8331e-03     0.0948
+      3        48.0     2.50    17.27    1.9521e-01    1.9571e-01     0.0011
+      4        22.6     5.46     3.54    5.8766e-01    5.6180e-01     0.0195
+      5         5.8     0.45    22.72    8.3749e-01    8.2521e-01     0.0064
+  worst |log10 disagreement| 1.4542   FAIL -- outside the bursting regime, the Gamma tail is wrong (bar 0.5 orders)
+
+=================================================================================================
+X3  THE GRADIENT IS A GRADIENT
+=================================================================================================
+      step h     worst rel    ratio
+        0.02     9.850e-02      nan
+        0.01     2.584e-02     3.81
+       0.005     1.189e-02     2.17
+      0.0025     4.649e-02     0.26
+  FAIL (h^2 decay, or below 1e-4 at the smallest step)
+
+=================================================================================================
+X4  THE DELIVERABLE  --  K(G) under each assay regime
+=================================================================================================
+
+  RNA-seq only   (rank 1, 3 free directions per gene)
+    genes    rates      k   log10 Y      K      K/G  ||g_null||  random K  99% genes
+      100      400     32    -3.154     33   0.3300       4.326       201         35
+      300     1200     68    -3.035     70   0.2333       3.365       559         78
+     1000     4000    189    -3.110    242   0.2420       3.953      1894        267
+     3000    12000    513    -3.021    738   0.2460       3.761      5716        842
+    10000    40000   1638    -3.019   2543   0.2543       3.704     18523       2843
+    19900    79600   3075    -3.011   5125   0.2575       3.735     37594       5691
+  K ~ G^0.974
+
+  RNA-seq + proteomics   (rank 2, 2 free directions per gene)
+    genes    rates      k   log10 Y      K      K/G  ||g_null||  random K  99% genes
+      100      400     32    -3.154     27   0.2700       0.697       142         36
+      300     1200     68    -3.035     71   0.2367       0.541       462         81
+     1000     4000    189    -3.110     18   0.0180       0.568      1059        292
+     3000    12000    513    -3.021    561   0.1870       0.573      4312        952
+    10000    40000   1638    -3.019   1636   0.1636       0.576     13752       3144
+    19900    79600   3075    -3.011   2578   0.1295       0.581     26685       6356
+  K ~ G^0.930
+
+  + ribosome profiling   (rank 3, 1 free directions per gene)
+    genes    rates      k   log10 Y      K      K/G  ||g_null||  random K  99% genes
+      100      400     32    -3.154     16   0.1600       0.493        63         36
+      300     1200     68    -3.035     23   0.0767       0.383       158         81
+     1000     4000    189    -3.110     88   0.0880       0.402       579        292
+     3000    12000    513    -3.021    284   0.0947       0.405      1822        952
+    10000    40000   1638    -3.019    987   0.0987       0.407      6076       3144
+    19900    79600   3075    -3.011   1982   0.0996       0.411     12366       6356
+  K ~ G^0.958
+
+  + mRNA half-life: rank 4, nothing is free, K = 0 by construction
+
+=================================================================================================
+
+=================================================================================================
+POST-RUN READING.  Hand-written after the run.
+=================================================================================================
+
+THE RESULT, AND IT IS THE OPPOSITE OF METABOLISM. recon.py found 8 rates of 5,938 mattered, a
+sparsity coming from the constraint side. Here K grows essentially in proportion to the genome:
+
+    assay regime              free dims/gene    K at 19,900 genes    K/G      exponent
+    RNA-seq only                    3                 5,125         0.258     G^0.974
+    RNA-seq + proteomics            2                 2,578         0.130     G^0.930
+    + ribosome profiling            1                 1,982         0.100     G^0.958
+    + mRNA half-life                0                     0         0         --
+
+Expression is a measurement wall. Adding assays lowers the constant -- a quarter of the genome,
+then an eighth, then a tenth -- but not the exponent, because every gene keeps at least one free
+direction and there are always more genes.
+
+THE ESCAPE IS EXACT, NOT STATISTICAL. The final row is not a small K, it is zero, and it is zero
+by the identity in X2 rather than by measurement: once a degradation rate is known the per-gene
+rank is 4 and nothing is free at all. So the single highest-value genome-wide experiment for
+expression is not more abundance data. It is turnover. RNA-seq, proteomics and ribosome profiling
+together still leave a wall; adding mRNA half-lives removes it completely.
+
+That experiment exists. Schwanhausser et al. measured abundance and turnover together for more
+than 5,000 genes, which is the assay this analysis says is the one that matters, and their finding
+that the two half-lives are uncorrelated is why no amount of abundance data can substitute for it.
+
+=================================================================================================
+TWO GATES FAILED, AND ONE OF THEM IS SUBSTANTIVE
+=================================================================================================
+
+X1 FAILED, and in the worst possible pattern. The Gamma tail was checked against an exact solve of
+the two-stage master equation:
+
+    gene   k_dm/k_dp     Gamma P(<T)     exact CME    log10 error
+      0         6.5      8.3883e-07    2.3871e-05        1.4542
+      1        32.0      9.7594e-03    1.5507e-02        0.2011
+      2        30.8      1.4735e-03    1.8331e-03        0.0948
+      3        48.0      1.9521e-01    1.9571e-01        0.0011
+
+The error tracks the timescale separation, and the worst case is the DEEPEST tail: at
+k_dm/k_dp = 6.5 the Gamma form understates the true probability by a factor of 28. The
+approximation fails precisely where the rare event lives. Genes whose mRNA and protein lifetimes
+are within about an order of each other are outside this analysis, and the median separation of
+30 in the draw hides a spread that reaches down to 6. Every K above therefore carries a tail model
+that is good to about 0.1 orders for well-separated genes and wrong by up to 1.5 for the rest.
+
+X3 FAILED, but as a gate-design error rather than a defect in the quantity. The "analytic"
+gradient itself uses an internal finite difference for dP/da and dP/db, so X3 compares one finite
+difference against another and the h^2 signature cannot appear -- the ratios came out 3.81, 2.17,
+0.26. The two agree to between 1% and 5% across the sweep, which is adequate for a ranking, but
+the gate as written could not have passed and should have been stated as an agreement bound.
+
+ONE SEED PER GENOME SIZE, and it shows. At G = 1000 under RNA-seq + proteomics K came out 18
+against 71 at G = 300 and 561 at G = 3000 -- a single draw where the starting residual happened to
+sit just above the criterion. The exponents are fitted through points with that much scatter, so
+they are good to perhaps the first decimal, which is enough to separate 0.95 from the metabolic
+case but not enough to quote as a law. connectivity.py's C1 taught the same lesson and it was not
+applied here.
+
+WHAT SURVIVES ALL OF IT. X2 is an identity and does not depend on the tail model, the gradient, or
+the seeds: abundance assays pin the protein mean exactly and leave both of its factors free, and
+only a degradation measurement closes the rank. That is the finding, and the K(G) table is
+supporting evidence for how expensive the alternative is rather than the result itself.

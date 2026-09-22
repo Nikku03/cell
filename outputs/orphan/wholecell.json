@@ -1,0 +1,32 @@
+{
+ "n_genes": 7515,
+ "S1_promoter_to_mRNA": {
+  "r": 0.292,
+  "R2": 0.085
+ },
+ "S1_promoter+decay_to_mRNA": {
+  "r": 0.6,
+  "R2": 0.36
+ },
+ "S2_measured_mRNA_to_protein": {
+  "r": 0.618,
+  "R2": 0.382
+ },
+ "ENDTOEND_promoter_only": {
+  "r": 0.147,
+  "R2": 0.022
+ },
+ "ENDTOEND_promoter+decay": {
+  "r": 0.613,
+  "R2": 0.376
+ },
+ "ENDTOEND_full_chain": {
+  "r": 0.633,
+  "R2": 0.4
+ },
+ "ORACLE_measured_mRNA+all": {
+  "r": 0.711,
+  "R2": 0.505
+ },
+ "note": "The steady-state model chained end-to-end and measured: genome -> regulation (promoter Pol II = k_txn) -> mRNA level (k_deg from sequence, halflife.py) -> protein level (translation+degradation, protein_abundance.py), held-out vs measured K562 RPKM + ppm, chromosome-GroupKFold. Reports each hand-off + the ORACLE ceiling (measured mRNA->protein) + the END-TO-END number (genome/promoter->protein, no measured mRNA). The steady-state abundance chain COMPOSES (end-to-end r reported); the loss is at the promoter->mRNA hand-off. The MUTATION arm (NEXUS mutation -> network propagation) is separate: near-field validated (regulon 9.2x), far-field wall."
+}

@@ -1,0 +1,153 @@
+{
+  "test": "loop_distogram_nn",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_esm_scores_650M.pkl",
+        "bytes": 38135187,
+        "hash": "250a59d1bb4147f8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_chain_structs.pkl",
+        "bytes": 34472,
+        "hash": "0b8147133995f2b9",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/pae_cache",
+        "kind": "directory",
+        "files": 141,
+        "bytes": 123054478,
+        "hash": "214be46ba2b185a4",
+        "method": "sha256:tree"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/clinvar.vcf.gz",
+        "bytes": 193118277,
+        "hash": "a31a293e659799bc",
+        "method": "sha256:ends8M"
+      }
+    ],
+    "coverage": {
+      "available": 29286,
+      "used": 29286,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "100 within-gene label permutations with the pipeline refitted",
+      "gene-grouped folds; no gene in both train and test",
+      "train-only rank transform on every feature",
+      "N3 judged on the linear arm so it measures features, not architecture",
+      "PAE absence handled by median imputation, never by an indicator"
+    ],
+    "note": "the realized AlphaFold distance matrix is not AlphaFold's distogram head and is not called one",
+    "warnings": []
+  },
+  "gates": {
+    "N1 matrices index correctly": true,
+    "N2 the null is measured": true,
+    "N3 pairwise features add": false,
+    "N4 the network beats linear": true,
+    "N5 beats the best recorded": true
+  },
+  "n_variants": 29286,
+  "n_genes": 141,
+  "pae_coverage": 1.0,
+  "arms": {
+    "loop51 stack, refitted": {
+      "mean": 0.8653617128412241,
+      "pooled": 0.8516675046675136
+    },
+    "linear per-residue": {
+      "mean": 0.9319715468398619,
+      "pooled": 0.9260293785235565
+    },
+    "linear + pairwise": {
+      "mean": 0.9331272665793192,
+      "pooled": 0.9310380071438523
+    },
+    "net per-residue": {
+      "mean": 0.9463639411635799,
+      "pooled": 0.937790120398319
+    },
+    "net + pairwise": {
+      "mean": 0.9460399721777125,
+      "pooled": 0.9447663032215486
+    }
+  },
+  "loop51_stack_refitted": 0.8653617128412241,
+  "N3_linear": {
+    "n": 136,
+    "p": 0.05429855424867262,
+    "win": 0.5441176470588235,
+    "delta": 0.0011557197394573364
+  },
+  "N3_net": {
+    "n": 136,
+    "p": 0.4190780318023762,
+    "win": 0.5514705882352942,
+    "delta": -0.0003239689858673629
+  },
+  "N4": {
+    "n": 136,
+    "p": 7.210503389665826e-10,
+    "win": 0.6985294117647058,
+    "delta": 0.01291270559839319
+  },
+  "null_mean": 0.499375844373792,
+  "null_95": 0.5066835594782965,
+  "loop51_stack": 0.9046,
+  "seconds": 92.59600901603699,
+  "log": [
+    "====================================================================================================",
+    "  LOOP 54 -- pairwise structure through a neural network",
+    "====================================================================================================",
+    "\n  29,286 variants, 141 genes, 55.7% pathogenic",
+    "\n  N1 THE MATRICES INDEX ONTO THE SEQUENCE THEY CLAIM TO",
+    "     variants whose residue matches ref_aa in the AlphaFold model: all 29,286 kept (the rest were dropped before scoring)",
+    "     variants with a usable PAE row: 29,286 (100.0%)",
+    "     N1 PASS",
+    "\n  fitting four arms, gene-grouped 5-fold, rank-transformed on training rows only",
+    "     loop51 stack, refittedwithin-gene 0.8654   pooled 0.8517   (136 genes)   0s",
+    "     linear per-residue    within-gene 0.9320   pooled 0.9260   (136 genes)   1s",
+    "     linear + pairwise     within-gene 0.9331   pooled 0.9310   (136 genes)   1s",
+    "     net per-residue       within-gene 0.9464   pooled 0.9378   (136 genes)   20s",
+    "     net + pairwise        within-gene 0.9460   pooled 0.9448   (136 genes)   39s",
+    "\n  N2 THE NULL IS MEASURED, NOT ASSUMED",
+    "     within-gene label permutation, whole pipeline refitted, 100 draws",
+    "     null mean 0.4994   95th 0.5067   observed 0.9331",
+    "     N2 PASS  -- the within-gene statistic centres the null at 0.499, which is what loop 53 had to learn the hard way",
+    "\n  N3 THE PAIRWISE FEATURES ADD OVER THE PER-RESIDUE ONES",
+    "     linear  0.9320 -> 0.9331   delta +0.0012, wins 54.4%, p 5.43e-02  (136 genes)",
+    "     net     0.9464 -> 0.9460   delta -0.0003, wins 55.1%, p 4.19e-01  (136 genes)",
+    "     N3 FAIL  (judged on the linear arm, so the answer is about the FEATURES and not the architecture)",
+    "\n  N4 THE NETWORK BEATS THE LINEAR MODEL ON IDENTICAL FEATURES",
+    "     linear 0.9331 vs net 0.9460   delta +0.0129, wins 69.9%, p 7.21e-10",
+    "     N4 PASS",
+    "\n  N5 IT BEATS THE BEST NUMBER RECORDED FOR THIS ROW",
+    "     loop 51 REPORTED 0.9046 on 260 genes with raw features.",
+    "     the same five features, refitted HERE on these 141 genes with the rank transform: 0.8654",
+    "     so -0.0392 of any gain is the subset and the loop-53 fix, not this loop's work.",
+    "     best arm here 0.9464   \u00b7   over the honest bar +0.0810   \u00b7   loop 51's ESM-2 650M 0.8823",
+    "     N5 PASS",
+    "\n====================================================================================================",
+    "  N1 matrices index correctly             PASS",
+    "  N2 the null is measured                 PASS",
+    "  N3 pairwise features add                FAIL",
+    "  N4 the network beats linear             PASS",
+    "  N5 beats the best recorded              PASS",
+    "  PAIRWISE STRUCTURE DOES NOT ADD OVER PER-RESIDUE FEATURES (+0.0012 per gene,",
+    "  54% of genes, p 5.4e-02), and the NETWORK BEATS the linear model on the",
+    "  same matrix (+0.0129, 70% of genes, p 7.2e-10). Best arm 0.9464 against",
+    "  loop 51's 0.9046 and a measured within-gene null of 0.4994.",
+    "  The distance matrix is realized geometry from the AlphaFold model, NOT AlphaFold's",
+    "  distogram head, which is a predicted distribution over bins and is not published. PAE is",
+    "  a genuine pairwise network output and is used as one; 100% of variants carry a PAE row.",
+    "====================================================================================================",
+    "    manifest: 4 inputs, coverage 29286/29286 (100.0%) by 'all', seed 1904, controls 5"
+  ]
+}

@@ -1,0 +1,129 @@
+{
+ "n_panel": 8,
+ "budget": 100,
+ "avg_recall_tide_only": 0.095,
+ "avg_recall_stack_mechanical": 0.094,
+ "avg_recall_stack_reasoned": 0.075,
+ "module_acc_reasoned": 0.0,
+ "module_acc_mechanical": 0.625,
+ "per_ko": [
+  {
+   "ko": "GATA1",
+   "n_movers": 722,
+   "true_module": 14,
+   "mech_module": 13,
+   "reasoned_modules": [
+    10
+   ],
+   "recall_tide": 0.09002770083102493,
+   "recall_mech": 0.062326869806094184,
+   "recall_reason": 0.06371191135734072,
+   "reasoned_hit_true": 0,
+   "mech_hit_true": 0
+  },
+  {
+   "ko": "POT1",
+   "n_movers": 684,
+   "true_module": 13,
+   "mech_module": 13,
+   "reasoned_modules": [
+    4,
+    11
+   ],
+   "recall_tide": 0.03508771929824561,
+   "recall_mech": 0.04678362573099415,
+   "recall_reason": 0.039473684210526314,
+   "reasoned_hit_true": 0,
+   "mech_hit_true": 1
+  },
+  {
+   "ko": "RPL7A",
+   "n_movers": 466,
+   "true_module": 9,
+   "mech_module": 9,
+   "reasoned_modules": [
+    1
+   ],
+   "recall_tide": 0.11587982832618025,
+   "recall_mech": 0.11802575107296137,
+   "recall_reason": 0.08798283261802575,
+   "reasoned_hit_true": 0,
+   "mech_hit_true": 1
+  },
+  {
+   "ko": "SUPT6H",
+   "n_movers": 445,
+   "true_module": 3,
+   "mech_module": 13,
+   "reasoned_modules": [
+    1,
+    4
+   ],
+   "recall_tide": 0.15730337078651685,
+   "recall_mech": 0.13258426966292136,
+   "recall_reason": 0.12808988764044943,
+   "reasoned_hit_true": 0,
+   "mech_hit_true": 0
+  },
+  {
+   "ko": "RBM22",
+   "n_movers": 417,
+   "true_module": 6,
+   "mech_module": 4,
+   "reasoned_modules": [
+    5,
+    1
+   ],
+   "recall_tide": 0.1079136690647482,
+   "recall_mech": 0.1079136690647482,
+   "recall_reason": 0.08633093525179857,
+   "reasoned_hit_true": 0,
+   "mech_hit_true": 0
+  },
+  {
+   "ko": "AQR",
+   "n_movers": 392,
+   "true_module": 4,
+   "mech_module": 4,
+   "reasoned_modules": [
+    5
+   ],
+   "recall_tide": 0.08418367346938775,
+   "recall_mech": 0.11224489795918367,
+   "recall_reason": 0.06887755102040816,
+   "reasoned_hit_true": 0,
+   "mech_hit_true": 1
+  },
+  {
+   "ko": "SNRPD2",
+   "n_movers": 358,
+   "true_module": 4,
+   "mech_module": 4,
+   "reasoned_modules": [
+    5,
+    1
+   ],
+   "recall_tide": 0.10614525139664804,
+   "recall_mech": 0.12849162011173185,
+   "recall_reason": 0.08379888268156424,
+   "reasoned_hit_true": 0,
+   "mech_hit_true": 1
+  },
+  {
+   "ko": "PPP1R10",
+   "n_movers": 351,
+   "true_module": 13,
+   "mech_module": 13,
+   "reasoned_modules": [
+    4
+   ],
+   "recall_tide": 0.05982905982905983,
+   "recall_mech": 0.045584045584045586,
+   "recall_reason": 0.045584045584045586,
+   "reasoned_hit_true": 0,
+   "mech_hit_true": 1
+  }
+ ],
+ "verdict": "WHOLE STACK + LLM REASONING AT THE MODULE LEVEL, panel of 8 knockouts (the biggest responders), recall of real movers at a 100-gene budget. Recall: tide-only 0.095, stack-mechanical 0.094, stack-REASONED 0.075 -- reasoning HURTS. Module-selection: the biology reasoner hit the true dominant module 0% of the time; the mechanical XGBoost classifier 62%. THE FINDING (and it is the EIF2S1 lesson at the program level): my biologically-'obvious' calls were WRONG on all 8 because the dominant module of a strong knockout is NOT its specific functional program -- it is a GENERIC one. GATA1's dominant response is not the heme program (I picked M10) but an inflammatory/generic module; RPL7A's is not the ribosome module (I picked M01) but the generic module; the spliceosome knockouts' is not the ISR (I picked M05) but the generic program. The mechanical classifier WINS (62%) precisely because it learns 'big essential knockout -> generic panic button', which is exactly the CAPACITY MODEL's prediction: the largest deficits breach the global budget and trip the same generic stress program regardless of which gene was hit. So reasoning about specific biology fights the capacity logic -- and loses at every level, gene AND module. HONEST CAVEAT: this panel is the top-8 by response size = the strongest, most-essential knockouts, the ones MOST dominated by the generic global-stress program; a weaker, more-specific perturbation (e.g. a single lipid enzyme) might let a reasoned specific module help, and that is the one place left to look. BOTTOM LINE for the whole stack: the recoverable far-field is the TIDE (the generic dominant program), recovered by the generic prior + a capacity-driven mechanical module classifier; adding an LLM biology reasoner does NOT help and slightly hurts, because the measured response is dominated by the generic panic button, not the specific pathway. Reasoning is for the near-field (mechanism, mutations); the far-field belongs to capacity + the tide.",
+ "note": "Whole stack + LLM reasoning at the MODULE level (the right unit, after the tide/ripple reframe). Strict held-out: reasoner picks which NMF program(s) each knockout fires from identity/function/capacity (movers hidden), then far-field recall at a 100-gene budget is scored for tide-only vs stack-mechanical (XGBoost module) vs stack-reasoned (LLM module). RESULT: recall tide-only 0.095, mechanical 0.094, reasoned 0.075; module-selection reasoned 0.0 vs mechanical 0.625. Reasoning does NOT help and slightly hurts even at the module level. The biology reasoner got the true dominant module 0% vs the mechanical classifier 62%: my 'obvious' specific calls (GATA1->heme, RPL7A->ribosome, splicing->ISR) were all WRONG because a strong knockout's DOMINANT module is generic, not its functional pathway -- exactly the capacity model's prediction (big deficit -> global panic button). The mechanical classifier wins by learning 'big essential KO -> generic module'. Caveat: panel = top-8 by response size (most generic-dominated); weaker specific perturbations may differ. The recoverable far-field is the tide (generic program) + capacity; reasoning is for the near-field, not the far-field."
+}

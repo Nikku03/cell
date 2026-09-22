@@ -1,0 +1,700 @@
+{
+  "test": "dock_poserank",
+  "apbs_available": true,
+  "n_train": 40,
+  "epochs": 20,
+  "decoy_min_A": 10.0,
+  "decoys_per_complex": 24,
+  "n_pos_pairs": 98411,
+  "n_neg_pairs": 1427210,
+  "arms": {
+    "shape": {
+      "top": {
+        "1": 0,
+        "10": 0,
+        "100": 2
+      },
+      "spearman_median": -0.058903143147802955,
+      "top100_mean_rmsd": 36.40236169426705
+    },
+    "new": {
+      "top": {
+        "1": 0,
+        "10": 0,
+        "100": 0
+      },
+      "spearman_median": 0.0027086352343328856,
+      "top100_mean_rmsd": 41.13449737813116
+    },
+    "old": {
+      "top": {
+        "1": 0,
+        "10": 0,
+        "100": 0
+      },
+      "spearman_median": 0.13115304581560133,
+      "top100_mean_rmsd": 41.144808711127034
+    },
+    "untrained": {
+      "top": {
+        "1": 0,
+        "10": 0,
+        "100": 1
+      },
+      "spearman_median": -0.07538690475482099,
+      "top100_mean_rmsd": 39.011348089377044
+    }
+  },
+  "chance": {
+    "1": 0.007500000000000062,
+    "10": 0.07454858928953434,
+    "100": 0.7023912209685355
+  },
+  "complexes": [
+    {
+      "pdb": "1CHO",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 14.74537717629324,
+      "mean_rmsd": 36.381106656877684,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.1327835221827544,
+          "top100_mean_rmsd": 33.835521963037564,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.048248678102309,
+          "top100_mean_rmsd": 33.71347181743876,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.4117957069089769,
+          "top100_mean_rmsd": 40.81504886655571,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.21353290586602236,
+          "top100_mean_rmsd": 35.50241115647357,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1CSE",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 5.853631863108785,
+      "mean_rmsd": 41.017297990292946,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.07861170513531845,
+          "top100_mean_rmsd": 37.91692312904428,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.01962175774683294,
+          "top100_mean_rmsd": 43.92059430967931,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.12082638346866013,
+          "top100_mean_rmsd": 43.932612381367875,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.21462021139202592,
+          "top100_mean_rmsd": 28.143672853039998,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1CSO",
+      "n_poses": 2400,
+      "near_native_frac": 0.0016666666666666668,
+      "best_rmsd": 3.761069240423829,
+      "mean_rmsd": 35.07516063219191,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.059444156340538845,
+          "top100_mean_rmsd": 30.873290710957498,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.053198416376981326,
+          "top100_mean_rmsd": 41.81527107489838,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.033110055241810835,
+          "top100_mean_rmsd": 32.08065078572446,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.022542660360705624,
+          "top100_mean_rmsd": 35.59476257217044,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1CT0",
+      "n_poses": 2400,
+      "near_native_frac": 0.0016666666666666668,
+      "best_rmsd": 4.027057916433033,
+      "mean_rmsd": 34.6659570262487,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": true
+          },
+          "spearman": -0.07496516850551468,
+          "top100_mean_rmsd": 30.15356654317043,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.12350973807613064,
+          "top100_mean_rmsd": 45.72287223347387,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.12940261149758994,
+          "top100_mean_rmsd": 33.99500360693664,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.05521993504336332,
+          "top100_mean_rmsd": 33.08206466312384,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1CT2",
+      "n_poses": 2400,
+      "near_native_frac": 0.00125,
+      "best_rmsd": 3.9039834606811086,
+      "mean_rmsd": 34.87695128039113,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.05852525184254978,
+          "top100_mean_rmsd": 32.73696708673657,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.09071005828299623,
+          "top100_mean_rmsd": 37.998280594448595,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.1879256624818536,
+          "top100_mean_rmsd": 29.26620207602087,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.09555387446627865,
+          "top100_mean_rmsd": 34.713634727682745,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1CT4",
+      "n_poses": 2400,
+      "near_native_frac": 0.00125,
+      "best_rmsd": 3.994226957316726,
+      "mean_rmsd": 35.15558803269482,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.05803326266676816,
+          "top100_mean_rmsd": 32.6541989680108,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.06857026322152361,
+          "top100_mean_rmsd": 38.81167572889524,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.1810910467089886,
+          "top100_mean_rmsd": 45.82471029447295,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": true
+          },
+          "spearman": -0.15218566638137948,
+          "top100_mean_rmsd": 32.157225295471655,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1DVF",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 5.697064676622666,
+      "mean_rmsd": 39.484924857435736,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.03447573635922296,
+          "top100_mean_rmsd": 37.58315652135302,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.06415421861708531,
+          "top100_mean_rmsd": 36.585740945269414,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.13290348013361275,
+          "top100_mean_rmsd": 42.050224145914015,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.0033631925358338748,
+          "top100_mean_rmsd": 41.972142870570245,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1E50",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 6.527330644642334,
+      "mean_rmsd": 40.75339172194503,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.05928103445305614,
+          "top100_mean_rmsd": 38.497070292237936,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.13210083245331328,
+          "top100_mean_rmsd": 44.552126334176,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.039992697047343234,
+          "top100_mean_rmsd": 39.58676421335217,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.09824520611742106,
+          "top100_mean_rmsd": 38.354891378964176,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1E96",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 15.570978096418282,
+      "mean_rmsd": 50.70662105727626,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.015762860715636536,
+          "top100_mean_rmsd": 47.31664298909111,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.04136387784992755,
+          "top100_mean_rmsd": 49.10694422547174,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.2521008516026222,
+          "top100_mean_rmsd": 58.22469828938788,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.02463055488420487,
+          "top100_mean_rmsd": 50.71024958227086,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1EAW",
+      "n_poses": 2400,
+      "near_native_frac": 0.0008333333333333334,
+      "best_rmsd": 4.155564056272324,
+      "mean_rmsd": 39.692556600002824,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.06726023595493301,
+          "top100_mean_rmsd": 38.51694615967526,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.08697387800347743,
+          "top100_mean_rmsd": 37.69109192122493,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.1837986360761521,
+          "top100_mean_rmsd": 36.68261606067054,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.10143817099508728,
+          "top100_mean_rmsd": 41.73610420834875,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1EFN",
+      "n_poses": 2400,
+      "near_native_frac": 0.0008333333333333334,
+      "best_rmsd": 3.540874192543911,
+      "mean_rmsd": 37.872818473367445,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": true
+          },
+          "spearman": -0.051806147141922755,
+          "top100_mean_rmsd": 35.606017611369026,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.16293151273243778,
+          "top100_mean_rmsd": 42.97376234648615,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.3475697570319825,
+          "top100_mean_rmsd": 43.125708407441905,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.7153845117487779,
+          "top100_mean_rmsd": 48.58221680309033,
+          "live": true
+        }
+      }
+    },
+    {
+      "pdb": "1EMV",
+      "n_poses": 2400,
+      "near_native_frac": 0.0,
+      "best_rmsd": 5.7956613379908495,
+      "mean_rmsd": 41.90748368991259,
+      "arms": {
+        "shape": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.051178558522530324,
+          "top100_mean_rmsd": 41.138038356521044,
+          "live": true
+        },
+        "new": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": -0.014204487278167168,
+          "top100_mean_rmsd": 40.722137006111524,
+          "live": true
+        },
+        "old": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.17637153736012565,
+          "top100_mean_rmsd": 48.153465405679434,
+          "live": true
+        },
+        "untrained": {
+          "hits": {
+            "1": false,
+            "10": false,
+            "100": false
+          },
+          "spearman": 0.14584776482764572,
+          "top100_mean_rmsd": 47.58680096131791,
+          "live": true
+        }
+      }
+    }
+  ],
+  "n_testable": 6,
+  "log": [
+    "====================================================================================================",
+    "A POSE RANKER TRAINED ON DECOY-POSE CONTACTS -- the negatives the last model never saw",
+    "====================================================================================================",
+    "  positives = contacts at the NATIVE pose | negatives = contacts at poses > 10 A RMSD,",
+    "  from the FFT search's own output (24/complex), so they are the real confusions",
+    "  APBS/pdb2pqr available: True",
+    "  PREDECLARED: new beats old AND untrained on Spearman AND top-k => the negatives were the problem.",
+    "  new beats old on Spearman only => real but too weak for a 2-in-2400 needle. new ~ old ~ untrained",
+    "  => the negatives were NOT the problem and the failure is the representation or the task.",
+    "\n  311 structures on disk | docking test set: ['1CHO', '1CSE', '1CSO', '1CT0', '1CT2', '1CT4', '1DVF', '1E50', '1E96', '1EAW', '1EFN', '1EMV']",
+    "\n  building/loading UNBOUND surfaces (cached to surf_cache/)...",
+    "    10 ready (61s)",
+    "    20 ready (146s)",
+    "    30 ready (206s)",
+    "    40 ready (270s)",
+    "    50 ready (336s)",
+    "    52 complexes in 350s | train 40 | test 12",
+    "\n  generating FFT pose sets (train + test)...",
+    "    10/52 pose sets (207s)",
+    "    20/52 pose sets (433s)",
+    "    30/52 pose sets (696s)",
+    "    40/52 pose sets (904s)",
+    "    50/52 pose sets (1097s)",
+    "    done in 1136s",
+    "\n  extracting contact pairs: native (positive) + 24 decoys > 10 A",
+    "    training pairs: 98,411 native-pose contacts / 1,427,210 decoy-pose contacts",
+    "\n  TRAINING on 40 complexes, 20 epochs, identical architecture -- only NEGATIVES differ",
+    "    new_negatives (decoy-pose)  29s",
+    "    old_negatives (far-apart)   27s",
+    "\n  RANKING 12 held-out pose sets",
+    "    1CHO: 2400 poses, frac 0.0000 | Spearman(score,RMSD) shape -0.133  new -0.048  old +0.412  untrained -0.214",
+    "    1CSE: 2400 poses, frac 0.0000 | Spearman(score,RMSD) shape -0.079  new +0.020  old -0.121  untrained -0.215",
+    "    1CSO: 2400 poses, frac 0.0017 | Spearman(score,RMSD) shape -0.059  new +0.053  old +0.033  untrained +0.023",
+    "    1CT0: 2400 poses, frac 0.0017 | Spearman(score,RMSD) shape -0.075  new +0.124  old +0.129  untrained -0.055",
+    "    1CT2: 2400 poses, frac 0.0013 | Spearman(score,RMSD) shape -0.059  new -0.091  old -0.188  untrained -0.096",
+    "    1CT4: 2400 poses, frac 0.0013 | Spearman(score,RMSD) shape -0.058  new -0.069  old +0.181  untrained -0.152",
+    "    1DVF: 2400 poses, frac 0.0000 | Spearman(score,RMSD) shape -0.034  new -0.064  old +0.133  untrained -0.003",
+    "    1E50: 2400 poses, frac 0.0000 | Spearman(score,RMSD) shape -0.059  new +0.132  old -0.040  untrained -0.098",
+    "    1E96: 2400 poses, frac 0.0000 | Spearman(score,RMSD) shape -0.016  new +0.041  old +0.252  untrained -0.025",
+    "    1EAW: 2400 poses, frac 0.0008 | Spearman(score,RMSD) shape -0.067  new -0.087  old -0.184  untrained -0.101",
+    "    1EFN: 2400 poses, frac 0.0008 | Spearman(score,RMSD) shape -0.052  new +0.163  old +0.348  untrained +0.715",
+    "    1EMV: 2400 poses, frac 0.0000 | Spearman(score,RMSD) shape -0.051  new -0.014  old +0.176  untrained +0.146",
+    "\n  12 ranked | 6 have a near-native pose at all: ['1CSO', '1CT0', '1CT2', '1CT4', '1EAW', '1EFN']",
+    "\n  arm              top-1  top-10  top-100   Spearman  top100 RMSD  set mean",
+    "  shape                0       0       2     -0.059         36.4      39.0",
+    "  new                  0       0       0      0.003         41.1      39.0",
+    "  old                  0       0       0      0.131         41.1      39.0",
+    "  untrained            0       0       1     -0.075         39.0      39.0",
+    "  chance            0.01    0.07    0.70      0.000         39.0      39.0",
+    "  (top-k denominator is the 6 complexes where a near-native pose exists; Spearman uses all 12)",
+    "\n  READING",
+    "  THE NEGATIVES WERE NOT THE PROBLEM. Spearman +0.003 vs old +0.131 vs untrained",
+    "  -0.075 -- retraining on exactly the confusions the search produces changes nothing.",
+    "  The limit is the surface representation or the task, not the choice of negatives."
+  ]
+}

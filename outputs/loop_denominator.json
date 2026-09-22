@@ -1,0 +1,155 @@
+{
+ "test": "the denominator",
+ "counts": {
+  "reactions": 12931,
+  "species": 8461,
+  "genes": 2848,
+  "empty": 0,
+  "unresolved": 0
+ },
+ "distinct": {
+  "reactions": 12931,
+  "distinct": 10250,
+  "groups_gt1": 2082,
+  "ec_groups": 1041,
+  "ec_agree_real": 0.808837656099904,
+  "ec_agree_control": 0.007444764649375601
+ },
+ "confidence": {
+  "0": {
+   "n": 12882,
+   "outside": 0.6620866325104797
+  },
+  "2": {
+   "n": 37,
+   "outside": 0.6486486486486487
+  },
+  "4": {
+   "n": 12,
+   "outside": 0.9166666666666666
+  }
+ },
+ "outside": {
+  "n": 8564,
+  "fraction": 0.6622844327584874,
+  "by_source": {
+   "rhea": 2003,
+   "kegg": 2415,
+   "ec": 5429,
+   "mnx": 6863,
+   "vmh": 12470,
+   "bigg": 7588
+  }
+ },
+ "reverse_recall": {
+  "rhea_master_with_reviewed": 13997,
+  "rhea_human": 6068,
+  "rhea_nonhuman": 7929,
+  "gem_rhea_ids": 1774,
+  "recovered_human": 1010,
+  "recovered_nonhuman": 147,
+  "hit_human": 0.16644693473961766,
+  "hit_nonhuman": 0.018539538403329548,
+  "missing_human": 5058,
+  "control": {
+   "real": 0.16644693473961766,
+   "control": 0.018539538403329548,
+   "ratio": 0.11138407824891455,
+   "weakened": true
+  }
+ },
+ "enzymes": {
+  "human_reviewed": 20431,
+  "catalytic": 4142,
+  "in_model": 2107,
+  "outside_model": 2035,
+  "gem_uniprot": 2841
+ },
+ "subset": {
+  "only_rhea": 5058,
+  "only_gem": 764
+ },
+ "gates": {
+  "W1": true,
+  "W2": true,
+  "W3": true,
+  "W4": true,
+  "W5": false,
+  "W6": true,
+  "W7": true
+ },
+ "void": [],
+ "seconds": 4.031849384307861,
+ "log": [
+  "========================================================================================================",
+  "LOOP 200 -- THE DENOMINATOR: how much of a cell's chemistry is in Human-GEM at all?",
+  "========================================================================================================",
+  "W1 IS THE INSTRUMENT READING THE FILE CORRECTLY?",
+  "     reactions 12,931   species 8,461   gene products 2,848",
+  "     reactions with no participant  0",
+  "     participant ids not declared   0",
+  "     W1 PASS -- the parse matches the file this project has been using throughout",
+  "W2 HOW MUCH DISTINCT CHEMISTRY IS IN THE 12,931?",
+  "     reactions                 12,931",
+  "     distinct chemistries      10,250",
+  "     groups with >1 member     2,082   covering 4,763 reactions",
+  "     EC-annotated groups of >=2 members   1,041",
+  "     members share an EC code             real 0.8088   random-group control 0.0074   (20,820 draws)",
+  "     W2 PASS -- 12,931 reactions are 10,250 distinct chemistries (1.26 compartment copies each), and the collapse groups reactions that genuinely share an EC (0.8088 vs 0.0074 random)",
+  "W3 DOES HUMAN-GEM'S OWN CONFIDENCE FIELD SEPARATE ANYTHING?",
+  "     level    0   n 12,882   with outside support 0.6621",
+  "     level    2   n     37   with outside support 0.6486",
+  "     level    4   n     12   with outside support 0.9167",
+  "     W3 PASS -- the confidence field separates: level>0 0.7143 vs level 0 0.6621",
+  "W4 WHAT FRACTION OF THE MODEL HAS SUPPORT FROM OUTSIDE ITS OWN LINEAGE?",
+  "     Rhea                          2,003   0.1549",
+  "     KEGG reaction                 2,415   0.1868",
+  "     EC code                       5,429   0.4198",
+  "     MetaNetX                      6,863   0.5307",
+  "     VMH (lineage, NOT counted)   12,470   0.9643",
+  "     BiGG (lineage, NOT counted)   7,588   0.5868",
+  "     ANY outside identifier        8,564   0.6623",
+  "     W4 PASS -- 66.2% of the model carries an identifier from outside its own reconstruction lineage",
+  "W5 THE REVERSE RECALL -- WHAT DOES INDEPENDENT CURATION HAVE THAT THE MODEL LACKS?",
+  "     Rhea master reactions with a reviewed accession   13,997",
+  "     ...with a reviewed HUMAN accession                6,068",
+  "     ...reviewed but NO human accession (control)      7,929",
+  "     distinct Rhea ids carried by Human-GEM            1,774",
+  "     Human-GEM recovers  human set  1,010/6,068 = 0.1664",
+  "     Human-GEM recovers  non-human  147/7,929 = 0.0185   (control)",
+  "     control check: |human| 0.1664 vs |non-human| 0.0185 -> SEPARATES",
+  "     W5 FAIL -- Human-GEM contains 16.6% of the 6,068 Rhea reactions curated to reviewed human enzymes. 5,058 curated human reactions are absent from the model this project has treated as the universe",
+  "W6 HOW MANY CATALYTICALLY-ANNOTATED HUMAN ENZYMES ARE OUTSIDE THE MODEL?",
+  "     reviewed human accessions                       20,431",
+  "     ...with at least one curated Rhea reaction      4,142",
+  "     Human-GEM gene products carrying a UniProt id   2,841 of 2,848",
+  "     ...present among Human-GEM's gene products      2,107",
+  "     ...ABSENT from Human-GEM                        2,035",
+  "     W6 PASS -- 2,107 of 4,142 catalytic human enzymes are in the model and only 2,035 are outside it",
+  "W7 IS EITHER CATALOGUE A SUBSET OF THE OTHER?",
+  "     in Rhea-human, not in Human-GEM   5,058",
+  "     in Human-GEM, not in Rhea-human   764",
+  "     W7 PASS -- neither contains the other (5,058 and 764 exclusive). Both catalogues are incomplete and NO denominator is available from either of them",
+  "W8 WHAT THIS CANNOT SHOW",
+  "     The true number of reactions a human cell performs is not in any database, and this",
+  "     loop does not produce it. Rhea is curation, so the missing set below is a LOWER",
+  "     bound of unknown tightness -- reactions absent from both catalogues are invisible to",
+  "     this design and are not counted anywhere in it.",
+  "     The Rhea join is by reaction identity, so a reaction Human-GEM contains under",
+  "     different chemistry but no Rhea id counts as missing here. That biases W5 DOWN.",
+  "     Only 1,774 of 12,931 Human-GEM reactions carry a Rhea id at all, so W5 and W7 speak",
+  "     about the Rhea-annotated slice, not about the whole model.",
+  "     Nothing here says the missing reactions matter: an absent reaction may be rare,",
+  "     tissue-specific, or irrelevant to any question this project asks.",
+  "========================================================================================================",
+  "  W1  PASS",
+  "  W2  PASS",
+  "  W3  PASS",
+  "  W4  PASS",
+  "  W5  FAIL",
+  "  W6  PASS",
+  "  W7  PASS",
+  "  6/7   [4s]",
+  "========================================================================================================"
+ ]
+}

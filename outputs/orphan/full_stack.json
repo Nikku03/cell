@@ -1,0 +1,12 @@
+{
+ "n_knockouts_scored": 824,
+ "MAGNITUDE_spearman": 0.224,
+ "TIDE_recall@100": 0.484,
+ "TIDE_recall@200": 0.633,
+ "FLAVOUR_module_accuracy": 0.64,
+ "STACK_recall@100_tide+module": 0.485,
+ "STACK_beats_tide_fraction": 0.24,
+ "IDENTITY_precision@10_of_10": 2.04,
+ "verdict": "FULL STACK, REASONING OUT, 824 knockouts. The mechanical CellOS far-field predictor, honestly, at the resolution each layer actually works: (1) MAGNITUDE -- how disruptive a knockout is -- predictable at Spearman 0.224 from node capacity. (2) TIDE -- which wave of genes shifts -- the generic responsiveness prior recovers 48% of a knockout's real movers at a 100-gene budget and 63% at 200. THIS is the far-field, and it is predictable at the program level (precision@10's ~2/10 was scoring the wrong unit). (3) FLAVOUR -- which panic-button program -- the mechanical classifier calls the dominant module 64% of the time from capacity/function; but layering it on the tide does NOT beat tide-alone on recall (48% vs 48%) -- the dominant program the tide already carries is usually the answer, so the module is at best a wash at this budget. (4) IDENTITY -- the one specific distal gene -- stays WALLED at ~2.04/10 precision@10, and no measurement we have changes that. BOTTOM LINE: with reasoning removed, the full stack predicts the far-field as a MAGNITUDE (capacity) + a TIDE (generic program, ~half the movers at 100 genes, ~two-thirds at 200) + a modest capacity-driven FLAVOUR call; the chaotic per-gene ripple is the only part that stays unpredictable. That is the honest, measured ceiling of CellOS's far-field -- and it is a real predictor at the right unit, not the 1-in-10 the wrong metric implied.",
+ "note": "Full mechanical CellOS far-field stack, REASONING OUT, over all knockouts (not the biggest-8 panel). Four resolutions: MAGNITUDE (capacity, Spearman 0.224), TIDE (generic prior recovers 48% of movers @top-100, 63% @top-200 -- the far-field IS predictable at the program level), FLAVOUR (mechanical module classifier 64% accuracy; layering on the tide is ~a wash at this budget), IDENTITY (the specific distal gene stays walled at ~2.04/10 precision@10). Honest ceiling: far-field = magnitude + tide + modest flavour; only the per-gene ripple is unpredictable. Reasoning removed -- purely mechanical, and it is a real predictor at the right unit."
+}

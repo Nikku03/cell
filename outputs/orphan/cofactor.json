@@ -1,0 +1,9 @@
+{
+ "validation": {
+  "n_composite": 479,
+  "mean_composite_len": 14.4,
+  "mean_solo_len": 10.6,
+  "frac_composite_longer_than_solo": 0.82
+ },
+ "note": "Cofactor-switch via the DATA route: JASPAR composite (heterodimer) motifs = the pair-specific sequence (measured HT-SELEX), filtered by cell-type expression (emask) + physical pairing (PPI). Skips the compute-blocked structural route (AF-Multimer + absolute affinity). Delivers the pair's in-vitro binding site (the concrete switch), NOT de-novo complex formation or in-vivo regulation. ~479 pairs."
+}

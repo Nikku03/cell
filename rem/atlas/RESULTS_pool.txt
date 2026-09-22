@@ -1,0 +1,17 @@
+exit=0
+P4 / RULE C  PRODUCT-OF-MARGINALS vs EXACT JOINT for two genes on one pool
+====================================================================================================
+    supply  spec ratio   measured   corr(g1,g2)       sign
+      30.0       0.725      0.665        0.0895   POSITIVE
+       6.0       0.586      0.302        0.3256   POSITIVE
+       1.5       0.480      0.184        0.6498   POSITIVE
+  every pair POSITIVELY correlated, as the spec says and competition intuition does not: True
+
+====================================================================================================
+P5 / SEC 4.4  POOL FIXED POINT -- iteration, not a joint solve
+====================================================================================================
+  converged: True in 3 iterations (tol 1e-4 on relative change)
+  residual trace: 1.24e-01 -> 1.26e-03 -> 1.29e-05
+  P5 PASS
+
+[exited with code 0]

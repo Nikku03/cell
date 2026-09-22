@@ -1,0 +1,139 @@
+{
+  "n_atoms": 13625,
+  "H": 8.0,
+  "n_spheres": 2898,
+  "n_modes": 194,
+  "n_aggr_vecs": 2181,
+  "t_fine": 1.5436780452728271,
+  "t_aggr": 35.29297208786011,
+  "t_modal": 79.56912612915039,
+  "marks": {
+    "5mC": [
+      {
+        "arm": "one_level",
+        "iters": 1785,
+        "rel_err": 0.0005643062838311881,
+        "seconds": 50.24176216125488,
+        "per_iter_flops": 34941330.0,
+        "solve_flops": 62370274050.0,
+        "info": 0
+      },
+      {
+        "arm": "two_level_aggr",
+        "iters": 151,
+        "rel_err": 0.0001753534805406586,
+        "seconds": 10.359606504440308,
+        "per_iter_flops": 401048352.0,
+        "solve_flops": 60558301152.0,
+        "info": 0
+      },
+      {
+        "arm": "two_level_modal",
+        "iters": 64,
+        "rel_err": 4.11905669415648e-06,
+        "seconds": 2.0436909198760986,
+        "per_iter_flops": 66735602.0,
+        "solve_flops": 4271078528.0,
+        "info": 0
+      },
+      {
+        "arm": "coarse_only_aggr",
+        "iters": 4000,
+        "rel_err": 0.9392517024058951,
+        "seconds": 192.17064142227173,
+        "per_iter_flops": 375847812.0,
+        "solve_flops": 1503391248000.0,
+        "info": 4000
+      },
+      {
+        "arm": "coarse_only_modal",
+        "iters": 4000,
+        "rel_err": NaN,
+        "seconds": 61.77174425125122,
+        "per_iter_flops": 41535062.0,
+        "solve_flops": 166140248000.0,
+        "info": 4000
+      }
+    ],
+    "acetyl": [
+      {
+        "arm": "one_level",
+        "iters": 1598,
+        "rel_err": 0.0002482356393829111,
+        "seconds": 45.18027114868164,
+        "per_iter_flops": 34941330.0,
+        "solve_flops": 55836245340.0,
+        "info": 0
+      },
+      {
+        "arm": "two_level_aggr",
+        "iters": 99,
+        "rel_err": 4.9219781897984506e-06,
+        "seconds": 6.943048000335693,
+        "per_iter_flops": 401048352.0,
+        "solve_flops": 39703786848.0,
+        "info": 0
+      },
+      {
+        "arm": "two_level_modal",
+        "iters": 63,
+        "rel_err": 3.265243893537775e-07,
+        "seconds": 2.2754459381103516,
+        "per_iter_flops": 66735602.0,
+        "solve_flops": 4204342926.0,
+        "info": 0
+      },
+      {
+        "arm": "coarse_only_aggr",
+        "iters": 4000,
+        "rel_err": 0.9794456403592561,
+        "seconds": 196.04687356948853,
+        "per_iter_flops": 375847812.0,
+        "solve_flops": 1503391248000.0,
+        "info": 4000
+      },
+      {
+        "arm": "coarse_only_modal",
+        "iters": 4000,
+        "rel_err": 0.15516778724315494,
+        "seconds": 60.1832799911499,
+        "per_iter_flops": 41535062.0,
+        "solve_flops": 166140248000.0,
+        "info": 4000
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "TWO LEVELS -- local spheres for the near field, a coarse space for the global one",
+    "====================================================================================================",
+    "  Measured previously: a local region captures a charge mark to 3.5% but never a methyl's",
+    "  global floor; the 294 lowest modes capture that floor inside 50 modes and then flatline at",
+    "  14-20% because local detail is high-frequency. Each fails where the other works, so this",
+    "  puts them together. One-level Schwarz moves information one sphere per iteration and needed",
+    "  800-2,800 of them; a coarse space spanning the whole structure should remove that entirely.",
+    "\n  1KX5 no waters: 13625 atoms, 40875 DOF, 263765 springs, 4870395 nonzeros",
+    "  fine level: 2898 spheres of 8 A (0 added to close coverage gaps), built in 1.5 s",
+    "  coarse A: 372 spatial aggregates of 12 A -> 2181 rigid-body basis vectors, built in 35.3 s (no eigensolve)",
+    "  coarse B: 194 lowest modes, built in 79.6 s (eigensolve)",
+    "\n  mark     arm                    iters    rel err   flops/iter   solve flops   seconds",
+    "  5mC      one_level               1785   5.64e-04     3.49e+07      6.24e+10     50.24",
+    "  5mC      two_level_aggr           151   1.75e-04     4.01e+08      6.06e+10     10.36",
+    "  5mC      two_level_modal           64   4.12e-06     6.67e+07      4.27e+09      2.04",
+    "  5mC      coarse_only_aggr        4000   9.39e-01     3.76e+08       1.5e+12    192.17",
+    "  5mC      coarse_only_modal       4000        nan     4.15e+07      1.66e+11     61.77",
+    "  acetyl   one_level               1598   2.48e-04     3.49e+07      5.58e+10     45.18",
+    "  acetyl   two_level_aggr            99   4.92e-06     4.01e+08      3.97e+10      6.94",
+    "  acetyl   two_level_modal           63   3.27e-07     6.67e+07       4.2e+09      2.28",
+    "  acetyl   coarse_only_aggr        4000   9.79e-01     3.76e+08       1.5e+12    196.05",
+    "  acetyl   coarse_only_modal       4000   1.55e-01     4.15e+07      1.66e+11     60.18",
+    "\n  READING",
+    "    5mC: one-level 1785 iters -> best two-level 64 (two_level_modal), 28x fewer iterations, 14.6x fewer flops",
+    "    acetyl: one-level 1598 iters -> best two-level 63 (two_level_modal), 25x fewer iterations, 13.3x fewer flops",
+    "    THE COARSE SPACE IS WHAT THE SPHERES WERE MISSING. Iteration count collapses because",
+    "    information no longer has to walk one sphere at a time -- the coarse level carries it",
+    "    across the structure in a single application.",
+    "    GENOME-WIDE at 3.5e+08 marks: 1.49e+18 flops = 41.5 GPU-hours",
+    "    at 10 TFLOPS, against 16 GPU-days for the one-level route."
+  ]
+}

@@ -1,0 +1,160 @@
+=================================================================================================
+THE HYBRID ENGINE ON THE REAL HUMAN NETWORK
+=================================================================================================
+  TRRUST v2 human: 2861 genes, 8403 edges, sha256 9b909319ccc8e36588b5a1bd3640e0df
+  provenance: 9369 non-self records -> 8403 DISTINCT directed pairs (966 duplicate records), 27 self-loop rows dropped
+  207 pairs carry BOTH Activation and Repression from different papers; resolved by a NAMED rule, not by append order
+  edge signs after resolution: Unknown 3558, Activation 2927, Repression 1918
+  unsigned: 3558 of 8403 distinct pairs (42.3%) carry only Unknown records. Defect C2: this was previously quoted as 51% and 46% in three places, using a record
+  count as the denominator. T7 treats the sign as a factor, not a default.
+  CONTROLLERS are detected by OUT-degree (defect C4: the prose said out-degree while the
+  code thresholded total degree; 21 of the top-122 by total degree have out-degree ZERO
+  and regulate nothing).
+  engine.py's genome-scale figure is already retracted; see the top of this file.
+
+=================================================================================================
+T1  IS THE COST FUNCTIONAL NON-DEGENERATE?
+=================================================================================================
+  engine.py's functional priced the controller block at zero, so promoting genes to
+  controllers only ever made it cheaper. A functional minimised by declaring the whole
+  network to be controllers is not a cost.
+     threshold   |C|   engine.py total   corrected per-gene      block
+           400     1         2.628e+07            2.628e+07   5.12e+02
+           200     3         3.877e+07            1.604e+12   1.34e+08
+           100     9         5.471e+07            9.291e+26   2.42e+24
+            50    30         6.576e+07            5.142e+61   1.90e+81
+            25    76         6.156e+07           7.880e+115  2.58e+120
+            12   159         4.245e+07           2.582e+120  2.58e+120
+             6   285         1.075e+07           7.747e+120  2.58e+120
+             2   580         2.387e+06           1.291e+121  2.58e+120
+  engine.py's total falls monotonically as controllers are added: False
+  T1: PASS -- the corrected functional is not minimised by promoting everything
+
+=================================================================================================
+T2  THE CORRECTED COST, AS DISTRIBUTIONS
+=================================================================================================
+  38% of TRRUST has degree 1, so a mean is a number no gene pays. Percentiles only.
+  k_i is counted over NON-controllers only (defect C3: the first run took the census over
+  all genes, so controller-controller adjacency was counted as history to carry, giving a
+  maximum of 53 where the target-side truth is 17).
+      thr   |C|  k med  k 99%  k max  pa med  pa max   cost med    cost 99%    cost max
+      200     3      0      3      3       6       6   1.28e+02    1.72e+10    1.72e+10
+      100     9      0      5      9       6       6   1.28e+02    4.50e+15    3.09e+26
+       50    30      1      8     22       6       6   1.02e+03    6.04e+23    5.14e+61
+       25    76      1     11     42       5       6   1.02e+03    8.11e+31   7.88e+115
+       12   159      1     16     61       0       6   2.05e+03    2.12e+43   2.58e+120
+
+=================================================================================================
+T3  IS ANY CONFIGURATION AFFORDABLE AT ALL?
+=================================================================================================
+  predeclared bar: total table entries <= 1e12 (about 8 TB, and generous)
+  Reported PER L. Minimising over L returned |C|=1, L=0 -- the engine switched off -- and
+  called it PASS; that is the ledger-U mistake and is recorded in the docstring.
+      L  best threshold   |C|     per-gene       block        total   <= 1e12
+      0             400     1    4.941e+04    2.00e+00    4.941e+04      True
+      1             400     1    6.709e+04    4.00e+00    6.709e+04      True
+      2             400     1    1.024e+05    8.00e+00    1.025e+05      True
+      3             400     1    1.732e+05    1.60e+01    1.732e+05      True
+      4             400     1    3.146e+05    3.20e+01    3.146e+05      True
+      6             400     1    1.163e+06    1.28e+02    1.163e+06      True
+      8             400     1    4.558e+06    5.12e+02    4.558e+06      True
+  affordable at L = [0, 1, 2, 3, 4, 6, 8]
+  T3: PASS -- history is affordable on the real network at some L > 0
+
+=================================================================================================
+T4  TRUNCATING TO THE TOP-m CONTROLLERS IS A FOURTH METHOD, NOT A TIDY-UP
+=================================================================================================
+  Capping k_i at m makes the cost affordable by DISCARDING controller-target edges. Those
+  edges go in the same ledger as everything else rather than vanishing.
+  at threshold 25: |C|=76, 4816 controller-target edge endpoints in total
+      m   per-gene cost     + block  edges kept   edges DISCARDED
+      1       6.156e+07   2.58e+120        1976              2840
+      2       2.067e+10   2.58e+120        2990              1826
+      3       7.095e+12   2.58e+120        3548              1268
+      5       9.554e+17   2.58e+120        4145               671
+     17       1.754e+49   2.58e+120        4740                76
+  Even at m = 1 -- one controller per gene, which is the ONLY case engine.py ever priced --
+  2840 controller-target edges are discarded, and the
+  controller block is untouched by truncation because it does not depend on m at all.
+
+=================================================================================================
+T5/T6/T7  ACCURACY ON REAL SUBNETWORKS, EXACT CME, REAL SIGNS
+=================================================================================================
+  Every route swept over its whole family under a COMMON cost ceiling of 2^18.
+  dt is SWEPT, not hard-coded and not derived -- see the docstring; deriving it as tau_c/10
+  landed in a region where the hybrid cannot reach 1% at all, and changed the conclusion.
+  Observable: relative error in Var(total ON count). Bar: 1%.
+
+  --- T7 treatment: Unknown edges -> activation ---
+        TF   N  ed   tau_c      indep          route1          route2            HYBRID
+       SP1   8   8   0.319  3.055e-01         OK       510 (r=2)       382 (w=6) 2048 (r=1,L=6,dt=0.12)
+       SP1  10  11   0.348  2.103e-01         OK      2046 (r=2)      1534 (w=8) 704 (r=1,L=4,dt=0.12)
+       SP1  12  14   0.358  3.582e-01         OK      8190 (r=2)     8190 (w=11) 3584 (r=1,L=6,dt=0.12)
+      TP53   8   8   0.319  1.581e-02         OK       510 (r=2)        30 (w=1) 32 (r=1,L=0,dt=0.03)
+      TP53  10  11   0.226  8.239e-03   UNUSABLE        20 (r=1)       638 (w=6) 40 (r=1,L=0,dt=0.03)
+      TP53  12  14   0.132  1.249e-02         OK      8190 (r=2)       286 (w=4) 48 (r=1,L=0,dt=0.03)
+      E2F1   8   8   0.319  3.055e-01         OK       510 (r=2)       382 (w=6) 2048 (r=1,L=6,dt=0.12)
+      E2F1  10  10   0.348  2.652e-01         OK      2046 (r=2)       638 (w=6) 640 (r=1,L=4,dt=0.12)
+      E2F1  12  15   0.358  2.659e-01         OK      8190 (r=2)     6142 (w=10) 1472 (r=2,L=4,dt=0.12)
+     NFKB1   8   8   0.319  1.074e-01         OK       510 (r=2)        54 (w=2) 512 (r=1,L=4,dt=0.06)
+     NFKB1  10  10   0.348  2.642e-01         OK      2046 (r=2)      1022 (w=7) 640 (r=1,L=4,dt=0.12)
+     NFKB1  12  13   0.401  1.660e-01         OK      8190 (r=2)      1534 (w=7) 768 (r=1,L=4,dt=0.06)
+    T6: a row marked UNUSABLE has an independent-genes baseline already inside the 1%
+    bar, so nothing on that row tests dependence and no engine number may be read from
+    it. Those rows are kept visible rather than filtered out.
+
+  --- T7 treatment: Unknown edges -> repression ---
+        TF   N  ed   tau_c      indep          route1          route2            HYBRID
+       SP1   8   8   0.319  6.050e-02         OK       510 (r=2)       382 (w=6) 128 (r=1,L=2,dt=0.25)
+       SP1  10  11   0.348  1.525e-01         OK      2046 (r=2)       638 (w=6) 704 (r=1,L=4,dt=0.12)
+       SP1  12  14   0.358  2.019e-02         OK      8190 (r=2)     8190 (w=11) 224 (r=1,L=2,dt=0.03)
+      TP53   8   8   0.319  5.348e-02         OK       510 (r=2)        94 (w=3) 128 (r=1,L=2,dt=0.25)
+      TP53  10  11   0.403  1.437e-01         OK      2046 (r=2)       382 (w=5) 640 (r=1,L=4,dt=0.12)
+      TP53  12  14   0.293  7.770e-02         OK      8190 (r=2)      1534 (w=7) 12288 (r=1,L=8,dt=0.12)
+      E2F1   8   8   0.319  1.212e-02         OK       510 (r=2)        30 (w=1) 32 (r=1,L=0,dt=0.03)
+      E2F1  10  10   0.348  2.558e-02         OK      2046 (r=2)       382 (w=5) 40 (r=1,L=0,dt=0.03)
+      E2F1  12  15   0.358  2.582e-02         OK      8190 (r=2)        86 (w=2) 60 (r=1,L=0,dt=0.03)
+     NFKB1   8   8   0.319  3.004e-02         OK       510 (r=2)        30 (w=1) 128 (r=1,L=2,dt=0.03)
+     NFKB1  10  10   0.348  2.229e-02         OK      2046 (r=2)       126 (w=3) 160 (r=1,L=2,dt=0.03)
+     NFKB1  12  13   0.401  3.768e-02         OK      8190 (r=2)      2558 (w=8) 48 (r=1,L=0,dt=0.03)
+    T6: a row marked UNUSABLE has an independent-genes baseline already inside the 1%
+    bar, so nothing on that row tests dependence and no engine number may be read from
+    it. Those rows are kept visible rather than filtered out.
+
+=================================================================================================
+T9  WHY IT WINS ON SYNTHETIC TOPOLOGY AND LOSES ON REAL  (added after T5)
+=================================================================================================
+  engine.py's mixed system gave every target a chain neighbour. Real hub neighbourhoods
+  have almost none, so the hybrid degenerates to route 3 alone -- which history.py measured
+  as 100x dearer than bounded width for a local question. Sweeping residual density p:
+        p  resid edges         route1         route2           HYBRID
+     0.00            0     2046 (r=2)     1534 (w=8)      not reached
+     0.25            2     2046 (r=2)     2046 (w=9)      not reached
+     0.50            4     2046 (r=2)     2046 (w=9)      not reached
+     0.75            7     2046 (r=2)     2046 (w=9)      not reached
+     1.00            9     2046 (r=2)     2046 (w=9)      not reached
+
+  real TRRUST hub neighbourhoods sit at p = 0.00 (range 0.00 to 0.27)
+  T9: real hub neighbourhoods have almost no residual structure, so the r-ball component
+  of the hybrid has nothing to do and the engine reduces to route 3, which is the
+  expensive one. The advantage measured on synthetic star-plus-chain does NOT transfer.
+
+=================================================================================================
+T8  WHAT CANNOT BE CLAIMED FROM THIS MEASUREMENT
+=================================================================================================
+  1. No accuracy number for the full 2,861-gene network. Only cost is measured there.
+  2. Nothing about human gene regulation. TRRUST supplies topology and a sign; every rate,
+     Hill form and timescale is invented, so accuracy results are statements about this
+     model ON real topology, not about cells.
+  3. Nothing about the 51% of edges whose sign is Unknown beyond the spread across the
+     two treatments run here. The third, deleting Unknown edges, was dropped for runtime
+     and its earlier run showed it removes most of the dependence entirely (an independent-
+     genes baseline of 9.9e-16), so it is largely vacuous rather than informative.
+  4. No claim that the controller threshold is principled. It is swept; TRRUST's degree
+     distribution has no gap, so the threshold is a free parameter and its effect is
+     reported rather than optimised away.
+  5. Nothing about dynamics, only about the stationary distribution.
+  6. The controller/target timescale ratio is set by the invented kinetics, not by TRRUST.
+     Measured tau_c is around 0.3 against target rates of order 1-2, i.e. MATCHED -- which
+     statedim S6 identified as the expensive regime. A different rate choice would move
+     the answer, and that is a property of the model, not a finding about the network.

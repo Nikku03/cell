@@ -1,0 +1,105 @@
+{
+ "n_enzymes": 2511,
+ "n_essential": 232,
+ "features": [
+  "family_paralogs",
+  "redundancy",
+  "constraint(LOEUF)",
+  "ppi_deg",
+  "codep_deg",
+  "in_complex",
+  "n_reactions",
+  "n_pathways",
+  "disease_ct",
+  "master"
+ ],
+ "univariate": {
+  "family_paralogs": {
+   "med_ess": 0.0,
+   "med_non": 2.0,
+   "effect": -0.298,
+   "p": 2.07093228848484e-14
+  },
+  "redundancy": {
+   "med_ess": 13.0,
+   "med_non": 4.0,
+   "effect": 0.169,
+   "p": 2.0320335980279055e-05
+  },
+  "constraint(LOEUF)": {
+   "med_ess": 0.53,
+   "med_non": 0.88,
+   "effect": -0.351,
+   "p": 1.1399920351679786e-18
+  },
+  "ppi_deg": {
+   "med_ess": 29.0,
+   "med_non": 10.0,
+   "effect": 0.425,
+   "p": 1.0887601923934715e-26
+  },
+  "codep_deg": {
+   "med_ess": 7.0,
+   "med_non": 6.0,
+   "effect": 0.259,
+   "p": 4.704410894413872e-11
+  },
+  "in_complex": {
+   "med_ess": 1.0,
+   "med_non": 0.0,
+   "effect": 0.496,
+   "p": 1.6255306871013066e-78
+  },
+  "n_reactions": {
+   "med_ess": 1.0,
+   "med_non": 2.0,
+   "effect": -0.313,
+   "p": 2.6173190751025255e-16
+  },
+  "n_pathways": {
+   "med_ess": 4.0,
+   "med_non": 2.0,
+   "effect": 0.485,
+   "p": 3.7297900556031816e-36
+  },
+  "disease_ct": {
+   "med_ess": 1.0,
+   "med_non": 0.0,
+   "effect": 0.19,
+   "p": 1.3215208037848627e-07
+  },
+  "master": {
+   "med_ess": 0.0,
+   "med_non": 0.0,
+   "effect": 0.0,
+   "p": 1.0
+  }
+ },
+ "auc_full": 0.862,
+ "auc_null": 0.514,
+ "solo_auc": {
+  "family_paralogs": 0.649,
+  "redundancy": 0.591,
+  "constraint(LOEUF)": 0.675,
+  "ppi_deg": 0.71,
+  "codep_deg": 0.627,
+  "in_complex": 0.728,
+  "n_reactions": 0.653,
+  "n_pathways": 0.738,
+  "disease_ct": 0.592,
+  "master": 0.497
+ },
+ "ablation_drop": {
+  "family_paralogs": 0.01,
+  "redundancy": 0.009,
+  "constraint(LOEUF)": 0.013,
+  "ppi_deg": 0.0,
+  "codep_deg": 0.002,
+  "in_complex": 0.016,
+  "n_reactions": -0.003,
+  "n_pathways": 0.006,
+  "disease_ct": 0.006,
+  "master": -0.005
+ },
+ "verdict": "Research arc on 2,511 metabolic enzymes, and the process is the point. I expected the paralog-buffering law (essential = no isoenzyme backup). My first redundancy proxy \u2014 genes sharing a REACTION \u2014 REFUTED it, even reversing the sign (essential enzymes shared reactions with MORE genes, +0.17). But that proxy was CONFOUNDED (it counts obligate complex co-members as 'backups'), so I fetched UniProt sequence FAMILIES and measured true isoenzyme paralogs \u2014 and buffering came back clean and correct: essential enzymes have far FEWER same-family paralogs (median 0 vs 2, effect -0.30, p=2e-14). So the honest finding is TWO independent axes of metabolic essentiality: (1) CENTRALITY \u2014 the dominant one \u2014 embedded in a complex (effect +0.50), spanning many pathways (+0.48), a PPI hub (+0.42), and a SPECIALIST (fewer reactions, -0.31); and (2) PARALOG BUFFERING \u2014 real and orthogonal \u2014 lacking a sequence-family backup, which still adds +0.021 AUC on top of centrality alone. Together held-out AUC 0.862 vs a label-shuffled null 0.514: an enzyme is indispensable when it sits at a central junction AND has no twin to cover for it. This is the near-field structure/network layer that IS recoverable, and the run is a live example of the session's core discipline \u2014 a confounded proxy gave a confident WRONG answer until a cleaner measurement corrected it. HONEST LIMITS: UniProt family granularity varies (broad superfamilies dilute paralog counts); centrality's sub-features are correlated (one latent axis); LOEUF/dep_frac are both importance measures; and this explains WHICH enzymes are essential, not the downstream phenotype of removing one (that stays measurement's job)."
+}

@@ -1,0 +1,158 @@
+{
+ "labels": {
+  "n_human_records": 2437,
+  "n_ec": 362,
+  "global_median_kcat": 1.85
+ },
+ "part_a_all_labels": {
+  "ecHumanGEM (GECKO/ECMpy tier)": {
+   "n": 2022,
+   "median_fold_error": 18.192933213044988,
+   "log10_rmse": 2.0609949981373443,
+   "log10_bias": 1.1238461104400825,
+   "within_2x": 0.20079129574678536,
+   "within_3x": 0.27794263105835804,
+   "within_10x": 0.43125618199802174
+  },
+  "CatPred": {
+   "n": 950,
+   "median_fold_error": 8.075492672009437,
+   "log10_rmse": 1.4764112318115028,
+   "log10_bias": 0.2630635692300868,
+   "within_2x": 0.19473684210526315,
+   "within_3x": 0.29157894736842105,
+   "within_10x": 0.5357894736842105
+  },
+  "EC-max any organism (ECMpy rule)": {
+   "n": 2384,
+   "median_fold_error": 39.33505141767724,
+   "log10_rmse": 2.5108101954537023,
+   "log10_bias": 1.57813795089789,
+   "within_2x": 0.1325503355704698,
+   "within_3x": 0.18540268456375839,
+   "within_10x": 0.35444630872483224
+  },
+  "EC-median human (build 1/9)": {
+   "n": 2337,
+   "median_fold_error": 2.803738317757009,
+   "log10_rmse": 1.087786105819044,
+   "log10_bias": 0.0,
+   "within_2x": 0.3632862644415918,
+   "within_3x": 0.521181001283697,
+   "within_10x": 0.7702182284980744
+  },
+  "global median (null)": {
+   "n": 2437,
+   "median_fold_error": 9.25,
+   "log10_rmse": 1.4538934357706201,
+   "log10_bias": 0.0,
+   "within_2x": 0.18506360279031597,
+   "within_3x": 0.2745178498153467,
+   "within_10x": 0.5145670906852687
+  }
+ },
+ "part_a_common_subset": {
+  "ecHumanGEM (GECKO/ECMpy tier)": {
+   "n": 915,
+   "median_fold_error": 66.33182366666666,
+   "log10_rmse": 2.3436381471776166,
+   "log10_bias": 1.7080163775832795,
+   "within_2x": 0.1092896174863388,
+   "within_3x": 0.17486338797814208,
+   "within_10x": 0.30601092896174864
+  },
+  "CatPred": {
+   "n": 915,
+   "median_fold_error": 8.37726744705567,
+   "log10_rmse": 1.4866485014514,
+   "log10_bias": 0.2594071908512406,
+   "within_2x": 0.1901639344262295,
+   "within_3x": 0.28743169398907104,
+   "within_10x": 0.5278688524590164
+  },
+  "EC-max any organism (ECMpy rule)": {
+   "n": 915,
+   "median_fold_error": 40.6918239245283,
+   "log10_rmse": 2.426426092703611,
+   "log10_bias": 1.6095071566167463,
+   "within_2x": 0.12459016393442623,
+   "within_3x": 0.16721311475409836,
+   "within_10x": 0.35956284153005463
+  },
+  "EC-median human (build 1/9)": {
+   "n": 915,
+   "median_fold_error": 2.6202531645569622,
+   "log10_rmse": 1.0698935197125272,
+   "log10_bias": 0.0,
+   "within_2x": 0.37486338797814206,
+   "within_3x": 0.5322404371584699,
+   "within_10x": 0.7781420765027323
+  },
+  "global median (null)": {
+   "n": 915,
+   "median_fold_error": 14.23076923076923,
+   "log10_rmse": 1.4535242766056942,
+   "log10_bias": -0.14780161956780416,
+   "within_2x": 0.1551912568306011,
+   "within_3x": 0.2262295081967213,
+   "within_10x": 0.44043715846994536
+  }
+ },
+ "ec_median_stratified": {
+  "1 sibling": {
+   "n": 30,
+   "median_fold_error": 1.5,
+   "log10_rmse": 0.633615753177287,
+   "log10_bias": 0.0,
+   "within_2x": 0.6,
+   "within_3x": 0.7333333333333333,
+   "within_10x": 0.8
+  },
+  "2-3": {
+   "n": 72,
+   "median_fold_error": 2.3355263157894735,
+   "log10_rmse": 0.8066301443588597,
+   "log10_bias": -0.002689138241033099,
+   "within_2x": 0.4305555555555556,
+   "within_3x": 0.5694444444444444,
+   "within_10x": 0.8194444444444444
+  },
+  "4-9": {
+   "n": 95,
+   "median_fold_error": 5.062111801242236,
+   "log10_rmse": 1.409949755749853,
+   "log10_bias": 0.0,
+   "within_2x": 0.28421052631578947,
+   "within_3x": 0.37894736842105264,
+   "within_10x": 0.6105263157894737
+  },
+  "10+": {
+   "n": 718,
+   "median_fold_error": 2.6142784670000507,
+   "log10_rmse": 1.055314146269463,
+   "log10_bias": 0.0,
+   "within_2x": 0.37186629526462395,
+   "within_3x": 0.5403899721448467,
+   "within_10x": 0.7952646239554317
+  }
+ },
+ "best": {
+  "source": "EC-median human (build 1/9)",
+  "n": 915,
+  "median_fold_error": 2.6202531645569622,
+  "log10_rmse": 1.0698935197125272,
+  "log10_bias": 0.0,
+  "within_2x": 0.37486338797814206,
+  "within_3x": 0.5322404371584699,
+  "within_10x": 0.7781420765027323
+ },
+ "part_b": {
+  "n_mw_joined": 2145,
+  "mw_abundance_weighted_g_per_mol": 44293.44763533672,
+  "p_tot_g_per_gdw": 0.6,
+  "mol_protein_per_gdw": 1.3546021635970554e-05,
+  "derived_scale": 4.876567788949399e-05,
+  "fitted_scale": 0.0003259,
+  "fitted_over_derived": 6.682978974239
+ }
+}

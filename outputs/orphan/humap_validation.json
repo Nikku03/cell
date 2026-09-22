@@ -1,0 +1,18 @@
+{
+  "question": "Do richer complex databases (hu.MAP 2.0) raise the trustworthy coverage above 55%?",
+  "method": "leave-one-out predict a measured gene's knockout effect from its complex partners (in the gwps screen); Pearson r vs real.",
+  "result_predict_r": {
+    "curated_complexes": 0.233,
+    "humap_conf>=5": 0.087,
+    "humap_conf>=4": 0.091,
+    "humap_conf>=3": 0.1,
+    "humap_conf>=2": 0.101,
+    "humap_conf>=1": 0.102
+  },
+  "coverage_count": {
+    "curated_only_trustworthy": 0.55,
+    "with_humap_trustworthy_COUNT": 0.67,
+    "but_added_genes_predict_r": 0.06
+  },
+  "verdict": "REJECTED. hu.MAP physical complexes do NOT confer knockout predictability (r~0.09 even at confidence 5, vs curated 0.23). Physical co-purification != a functional unit sharing a knockout effect. Adding them inflates the trustworthy COUNT (55->67%) without adding capability. Coverage stays 55% (curated complexes, r=0.23). Raising it needs more INTERVENTIONAL data, not more complex annotation."
+}

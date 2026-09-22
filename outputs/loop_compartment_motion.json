@@ -1,0 +1,414 @@
+{
+ "test": "loop_compartment_motion",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/depmap_expr.npz",
+    "bytes": 73518835,
+    "hash": "5fa71d83f5a12811",
+    "method": "sha256:ends8M"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 16208,
+   "selection": "filtered",
+   "fraction": 0.9827795294688334
+  },
+  "seed": 11700,
+  "controls": [
+   "size-matched random gene sets, which price compartment size",
+   "per-compartment state shuffle that keeps each spread and kills co-variation",
+   "the null checked for capability before any verdict is read",
+   "publication mass per compartment against measured motion",
+   "the verdict made per compartment, not globally",
+   "1,517 states declared as STATES, not as a time course"
+  ],
+  "note": "loops 102 and 116 both treated compartment composition as a constant without testing it; this tests it",
+  "warnings": []
+ },
+ "gates": {
+  "W1 coverage declared per compartment": true,
+  "W2 the moves-or-fixed verdict is made": true,
+  "W3 the motion is co-ordinated, not independent wobble": true,
+  "W4 the pattern is named": true,
+  "W5 fixed-state constants handed over where they apply": true,
+  "W6 the null is capable and fame reported": true
+ },
+ "w1": {
+  "nucleus": {
+   "joined": 3966,
+   "total": 4007
+  },
+  "cytoplasm": {
+   "joined": 3531,
+   "total": 3581
+  },
+  "plasma membrane": {
+   "joined": 2732,
+   "total": 2782
+  },
+  "membrane": {
+   "joined": 1413,
+   "total": 1462
+  },
+  "extracellular": {
+   "joined": 1402,
+   "total": 1455
+  },
+  "mitochondrion": {
+   "joined": 944,
+   "total": 952
+  },
+  "ER": {
+   "joined": 778,
+   "total": 787
+  },
+  "cytoskeleton": {
+   "joined": 607,
+   "total": 619
+  },
+  "Golgi": {
+   "joined": 433,
+   "total": 435
+  },
+  "endosome": {
+   "joined": 186,
+   "total": 193
+  },
+  "lysosome": {
+   "joined": 154,
+   "total": 157
+  },
+  "peroxisome": {
+   "joined": 62,
+   "total": 62
+  }
+ },
+ "w2": [
+  {
+   "compartment": "nucleus",
+   "n_genes": 3966,
+   "sd_across_states": 0.36635622382164,
+   "null_p95": 0.24993406236171722,
+   "null_mean": 0.24533969163894653,
+   "ratio": 1.4658115038814947,
+   "moves": true
+  },
+  {
+   "compartment": "cytoplasm",
+   "n_genes": 3531,
+   "sd_across_states": 0.2721458673477173,
+   "null_p95": 0.2491232305765152,
+   "null_mean": 0.24468594789505005,
+   "ratio": 1.0924146524510125,
+   "moves": true
+  },
+  {
+   "compartment": "plasma membrane",
+   "n_genes": 2732,
+   "sd_across_states": 0.17474262416362762,
+   "null_p95": 0.2511645555496216,
+   "null_mean": 0.24518883228302002,
+   "ratio": 0.6957296334319132,
+   "moves": false
+  },
+  {
+   "compartment": "membrane",
+   "n_genes": 1413,
+   "sd_across_states": 0.2109542042016983,
+   "null_p95": 0.25442588329315186,
+   "null_mean": 0.245426744222641,
+   "ratio": 0.8291381422016522,
+   "moves": false
+  },
+  {
+   "compartment": "extracellular",
+   "n_genes": 1402,
+   "sd_across_states": 0.16248098015785217,
+   "null_p95": 0.2540650963783264,
+   "null_mean": 0.24536457657814026,
+   "ratio": 0.6395249976246362,
+   "moves": false
+  },
+  {
+   "compartment": "mitochondrion",
+   "n_genes": 944,
+   "sd_across_states": 0.3419220745563507,
+   "null_p95": 0.25659358501434326,
+   "null_mean": 0.24602752923965454,
+   "ratio": 1.332543346854278,
+   "moves": true
+  },
+  {
+   "compartment": "ER",
+   "n_genes": 778,
+   "sd_across_states": 0.32089972496032715,
+   "null_p95": 0.2602485120296478,
+   "null_mean": 0.24778065085411072,
+   "ratio": 1.2330511419937336,
+   "moves": true
+  },
+  {
+   "compartment": "cytoskeleton",
+   "n_genes": 607,
+   "sd_across_states": 0.3311191201210022,
+   "null_p95": 0.2601819634437561,
+   "null_mean": 0.24723201990127563,
+   "ratio": 1.2726444052397994,
+   "moves": true
+  },
+  {
+   "compartment": "Golgi",
+   "n_genes": 433,
+   "sd_across_states": 0.3282967507839203,
+   "null_p95": 0.2622455060482025,
+   "null_mean": 0.2487718164920807,
+   "ratio": 1.2518679756654327,
+   "moves": true
+  },
+  {
+   "compartment": "endosome",
+   "n_genes": 186,
+   "sd_across_states": 0.3580895662307739,
+   "null_p95": 0.2768925428390503,
+   "null_mean": 0.25493544340133667,
+   "ratio": 1.2932438069988803,
+   "moves": true
+  },
+  {
+   "compartment": "lysosome",
+   "n_genes": 154,
+   "sd_across_states": 0.3578313887119293,
+   "null_p95": 0.2791286110877991,
+   "null_mean": 0.2560803294181824,
+   "ratio": 1.2819588336624315,
+   "moves": true
+  },
+  {
+   "compartment": "peroxisome",
+   "n_genes": 62,
+   "sd_across_states": 0.3342173099517822,
+   "null_p95": 0.3053129315376282,
+   "null_mean": 0.2705877125263214,
+   "ratio": 1.0946713205647227,
+   "moves": true
+  }
+ ],
+ "n_movers": 9,
+ "movers": [
+  "nucleus",
+  "cytoplasm",
+  "mitochondrion",
+  "ER",
+  "cytoskeleton",
+  "Golgi",
+  "endosome",
+  "lysosome",
+  "peroxisome"
+ ],
+ "w3": {
+  "ev": [
+   0.7980577349662781,
+   0.09191427379846573,
+   0.04421820864081383,
+   0.021443471312522888,
+   0.015238638035953045
+  ],
+  "null_mean": 0.12510767579078674,
+  "null_sd": 0.0018536604475229979,
+  "survival": {
+   "real": 0.7980577349662781,
+   "n_null": 50,
+   "null_mean": 0.12510768800973893,
+   "null_sd": 0.0018536604396539827,
+   "z": 363.0384521484375,
+   "defined": true,
+   "fraction": 0.15676520764827728,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  }
+ },
+ "w4": {
+  "loadings": {
+   "nucleus": 0.33153024315834045,
+   "cytoplasm": 0.2782577872276306,
+   "plasma membrane": 0.15409579873085022,
+   "membrane": 0.20637010037899017,
+   "extracellular": 0.10342175513505936,
+   "mitochondrion": 0.29274117946624756,
+   "ER": 0.31318873167037964,
+   "cytoskeleton": 0.32562169432640076,
+   "Golgi": 0.33458849787712097,
+   "endosome": 0.36352887749671936,
+   "lysosome": 0.3235362768173218,
+   "peroxisome": 0.3115085959434509
+  },
+  "top_pairs": [
+   [
+    "membrane",
+    "Golgi",
+    0.9452138388898652
+   ],
+   [
+    "cytoplasm",
+    "cytoskeleton",
+    0.9449354609363417
+   ],
+   [
+    "ER",
+    "Golgi",
+    0.9384184038003859
+   ],
+   [
+    "Golgi",
+    "endosome",
+    0.9358748216325015
+   ],
+   [
+    "plasma membrane",
+    "membrane",
+    0.9357776172135093
+   ],
+   [
+    "nucleus",
+    "cytoplasm",
+    0.9326628420310346
+   ],
+   [
+    "cytoplasm",
+    "endosome",
+    0.9112883758662327
+   ],
+   [
+    "nucleus",
+    "cytoskeleton",
+    0.9016490830387003
+   ],
+   [
+    "cytoplasm",
+    "Golgi",
+    0.8970525806713251
+   ],
+   [
+    "ER",
+    "lysosome",
+    0.8947329291067047
+   ]
+  ]
+ },
+ "w5": {
+  "fixed": [
+   "plasma membrane",
+   "membrane",
+   "extracellular"
+  ]
+ },
+ "w6": {
+  "capability": {
+   "capable": true,
+   "changed": 1.0,
+   "reason": "the null changes the statistic's input"
+  },
+  "pubs_vs_motion": -0.37762237762237766,
+  "size_vs_motion": -0.35664335664335667
+ },
+ "seconds": 7.446316719055176,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 117 -- X-ray the cell 1,517 times: do the compartments move, or are they fixed?",
+  "====================================================================================================",
+  "",
+  "  DepMap: 19,193 genes x 1,517 cell lines, each gene standardised across lines",
+  "  1,517 independent snapshots of a cell in a different STATE -- not a time course of one",
+  "  cell. This answers 'can this move', not 'how fast'.",
+  "",
+  "W1 THE X-RAYS ARE COMPARABLE AND THE COVERAGE IS DECLARED",
+  "     nucleus          3,966 of 4,007 genes join DepMap (99.0%)",
+  "     cytoplasm        3,531 of 3,581 genes join DepMap (98.6%)",
+  "     plasma membrane  2,732 of 2,782 genes join DepMap (98.2%)",
+  "     membrane         1,413 of 1,462 genes join DepMap (96.6%)",
+  "     extracellular    1,402 of 1,455 genes join DepMap (96.4%)",
+  "     mitochondrion      944 of   952 genes join DepMap (99.2%)",
+  "     ER                 778 of   787 genes join DepMap (98.9%)",
+  "     cytoskeleton       607 of   619 genes join DepMap (98.1%)",
+  "     Golgi              433 of   435 genes join DepMap (99.5%)",
+  "     endosome           186 of   193 genes join DepMap (96.4%)",
+  "     lysosome           154 of   157 genes join DepMap (98.1%)",
+  "     peroxisome          62 of    62 genes join DepMap (100.0%)",
+  "     12 compartments with at least 30 genes",
+  "",
+  "W2 DO COMPARTMENTS MOVE",
+  "     nucleus          sd 0.3664   size-matched null 95th 0.2499   ratio  1.47   MOVES",
+  "     cytoplasm        sd 0.2721   size-matched null 95th 0.2491   ratio  1.09   MOVES",
+  "     plasma membrane  sd 0.1747   size-matched null 95th 0.2512   ratio  0.70   fixed",
+  "     membrane         sd 0.2110   size-matched null 95th 0.2544   ratio  0.83   fixed",
+  "     extracellular    sd 0.1625   size-matched null 95th 0.2541   ratio  0.64   fixed",
+  "     mitochondrion    sd 0.3419   size-matched null 95th 0.2566   ratio  1.33   MOVES",
+  "     ER               sd 0.3209   size-matched null 95th 0.2602   ratio  1.23   MOVES",
+  "     cytoskeleton     sd 0.3311   size-matched null 95th 0.2602   ratio  1.27   MOVES",
+  "     Golgi            sd 0.3283   size-matched null 95th 0.2622   ratio  1.25   MOVES",
+  "     endosome         sd 0.3581   size-matched null 95th 0.2769   ratio  1.29   MOVES",
+  "     lysosome         sd 0.3578   size-matched null 95th 0.2791   ratio  1.28   MOVES",
+  "     peroxisome       sd 0.3342   size-matched null 95th 0.3053   ratio  1.09   MOVES",
+  "     9 of 12 compartments move more than size-matched chance",
+  "     W2 verdict: compartments MOVE -- a fixed number is wrong",
+  "",
+  "W3 IF THEY MOVE, IS IT STRUCTURE OR NOISE",
+  "     leading component explains 79.8% of compartment-by-state variance",
+  "     independently-shuffled states give 12.5% +/- 0.2%",
+  "     top 3 components: 79.8%, 9.2%, 4.4%",
+  "     leading-component variance vs per-compartment shuffle: real +0.7981  null +0.1251 +/- 0.0019  z +363.0  survives 16%",
+  "     W3 PASS -- the motion is CO-ORDINATED across compartments, not each wobbling alone",
+  "",
+  "W4 THE PATTERN, NAMED",
+  "     leading component loadings (the axis compartments move along):",
+  "       endosome         +0.364  ##############",
+  "       Golgi            +0.335  #############",
+  "       nucleus          +0.332  #############",
+  "       cytoskeleton     +0.326  #############",
+  "       lysosome         +0.324  ############",
+  "       ER               +0.313  ############",
+  "       peroxisome       +0.312  ############",
+  "       mitochondrion    +0.293  ###########",
+  "       cytoplasm        +0.278  ###########",
+  "       membrane         +0.206  ########",
+  "       plasma membrane  +0.154  ######",
+  "       extracellular    +0.103  ####",
+  "     compartments with POSITIVE loading rise together; NEGATIVE ones fall as they rise",
+  "     strongest co-variation:",
+  "       membrane         Golgi            r +0.945",
+  "       cytoplasm        cytoskeleton     r +0.945",
+  "       ER               Golgi            r +0.938",
+  "       Golgi            endosome         r +0.936",
+  "       plasma membrane  membrane         r +0.936",
+  "",
+  "W5 THE FIXED STATE, FOR WHATEVER DOES NOT MOVE",
+  "     plasma membrane  mean-Z 0 by construction, spread 0.1747 -- usable as a constant with that error bar",
+  "     membrane         mean-Z 0 by construction, spread 0.2110 -- usable as a constant with that error bar",
+  "     extracellular    mean-Z 0 by construction, spread 0.1625 -- usable as a constant with that error bar",
+  "",
+  "W6 FAME AND A NULL THAT CAN FIRE",
+  "     CAPABILITY: a size-matched random gene set differs from the real membership in 100.0% of slots -- capable: True",
+  "     compartment publication mass vs measured motion: rho -0.3776",
+  "     compartment SIZE vs measured motion:              rho -0.3566",
+  "     (loop 116 found compartment protein mass vs publication mass at +1.0000 over 7)",
+  "     the size-matched null already prices size; fame is reported because it is the",
+  "     confound that has beaten the biology in six loops this session",
+  "     W6 PASS",
+  "",
+  "  PASS  W1 coverage declared per compartment",
+  "  PASS  W2 the moves-or-fixed verdict is made",
+  "  PASS  W3 the motion is co-ordinated, not independent wobble",
+  "  PASS  W4 the pattern is named",
+  "  PASS  W5 fixed-state constants handed over where they apply",
+  "  PASS  W6 the null is capable and fame reported",
+  "    manifest: 2 inputs, coverage 16208/16492 (98.3%) by 'filtered', seed 11700, controls 6"
+ ]
+}

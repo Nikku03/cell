@@ -1,0 +1,38 @@
+{
+ "n_per_line": {
+  "K562": 1300,
+  "RPE1": 1300,
+  "HCT116": 1300
+ },
+ "fine_tuned": {
+  "K562": {
+   "top10": 5.05,
+   "median_movers": 108,
+   "n_panel": 60
+  },
+  "RPE1": {
+   "top10": 2.22,
+   "median_movers": 113,
+   "n_panel": 60
+  },
+  "HCT116": {
+   "top10": 6.98,
+   "median_movers": 245,
+   "n_panel": 60
+  }
+ },
+ "transfer_from_K562": {
+  "RPE1": {
+   "top10": 0.95,
+   "median_movers": 113,
+   "n_panel": 60
+  },
+  "HCT116": {
+   "top10": 3.35,
+   "median_movers": 245,
+   "n_panel": 60
+  }
+ },
+ "verdict": "FINE-TUNING PER CELL TYPE SUBSTANTIALLY BEATS TRANSFER (measured, held-out deployment; scale-free rank-based movers so all three lines are comparable). Deploying within each cell line with its OWN fine-tuned forecast gives top-10: K562 5.05, RPE1 2.22, HCT116 6.98. Applying the K562 model UNCHANGED to the other lines COLLAPSES it: RPE1 0.95 (fine-tuning recovers +1.27, more than 2x) and HCT116 3.35 (+3.63, ~2x). So the answer to \"do we need a model per cell type\" is YES, clearly: the K562 model's tide prior -- WHICH genes usually move in K562 -- is the wrong prior for a different cell type, and each line's own perturb-seq re-fits that prior to its own usual-suspect program, roughly DOUBLING deployment top-10. This is exactly what the cross-line reproducibility (K562->RPE1/HCT116 rho 0.13) predicted: the response is strongly cell-type-specific, so the deployed model must be too. HONEST CAVEATS: (1) HCT116's z is compressed, so it needed the rank-based mover definition to be scorable at all (a fixed |z|>1 gave ~0 movers); (2) only the forecast's TIDE PRIOR is being fine-tuned here -- the magnitude and near-field/regulon features are still GENERIC, so a fully cell-type-specific model would gain even more from cell-type essentiality + cell-type regulons (which we largely lack); (3) RPE1's absolute number is lower (2.22) than K562/HCT116, likely because it is the essential-gene screen with a noisier pseudobulk, but the fine-tune>>transfer gap holds on every line. BOTTOM LINE: you genuinely need to fine-tune per cell type -- doing so roughly doubles held-out deployment vs naive K562-transfer, and the single most valuable per-cell-type ingredient is each line's own tide (its usual-suspect movers); bigger gains still need cell-type-specific essentiality and regulons.",
+ "note": "FINE-TUNING PER CELL TYPE SUBSTANTIALLY BEATS TRANSFER (measured, held-out deployment; scale-free rank-based movers so all three lines are comparable). Deploying within each cell line with its OWN fine-tuned forecast gives top-10: K562 5.05, RPE1 2.22, HCT116 6.98. Applying the K562 model UNCHANGED to the other lines COLLAPSES it: RPE1 0.95 (fine-tuning recovers +1.27, more than 2x) and HCT116 3.35 (+3.63, ~2x). So the answer to \"do we need a model per cell type\" is YES, clearly: the K562 model's tide prior -- WHICH genes usually move in K562 -- is the wrong prior for a different cell type, and each line's own perturb-seq re-fits that prior to its own usual-suspect program, roughly DOUBLING deployment top-10. This is exactly what the cross-line reproducibility (K562->RPE1/HCT116 rho 0.13) predicted: the response is strongly cell-type-specific, so the deployed model must be too. HONEST CAVEATS: (1) HCT116's z is compressed, so it needed the rank-based mover definition to be scorable at all (a fixed |z|>1 gave ~0 movers); (2) only the forecast's TIDE PRIOR is being fine-tuned here -- the magnitude and near-field/regulon features are still GENERIC, so a fully cell-type-specific model would gain even more from cell-type essentiality + cell-type regulons (which we largely lack); (3) RPE1's absolute number is lower (2.22) than K562/HCT116, likely because it is the essential-gene screen with a noisier pseudobulk, but the fine-tune>>transfer gap holds on every line. BOTTOM LINE: you genuinely need to fine-tune per cell type -- doing so roughly doubles held-out deployment vs naive K562-transfer, and the single most valuable per-cell-type ingredient is each line's own tide (its usual-suspect movers); bigger gains still need cell-type-specific essentiality and regulons."
+}

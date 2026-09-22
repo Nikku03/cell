@@ -1,0 +1,26 @@
+{
+ "solver": {
+  "err_nuc": 5.627498467219994e-15,
+  "err_cyt": 1.923581294249743e-14
+ },
+ "export": {
+  "export_export": 0.11571165919303894,
+  "ribi_ribi": 0.6217705607414246,
+  "cross": 0.0922873467206955,
+  "random_mean": 0.02887353563681245,
+  "random_sd": 0.0117915631801639,
+  "z": 7.364428467152517,
+  "within_minus_cross_export": 0.023424312472343445,
+  "within_minus_cross_ribi": 0.5294832140207291,
+  "verdict": "export knockouts share a WEAK but real signature (+0.0234 within-minus-cross), an order of magnitude below a genuine functional module like ribosome biogenesis (+0.5295)"
+ },
+ "transfactor": {
+  "status": "inputs absent",
+  "bar": 0.3266,
+  "have": {
+   "ENCODE eCLIP (RBP 3'UTR binding, K562)": false,
+   "ENCORI Ago-CLIP (miRNA targets)": false,
+   "m6A-Atlas / RMBase (DRACH sites)": false
+  }
+ }
+}

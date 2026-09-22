@@ -1,0 +1,173 @@
+{
+ "model": "humangem-layer-v1",
+ "n_reactions": 12931,
+ "n_metabolites": 8461,
+ "n_gene_products": 2848,
+ "join_rate": 0.901685393258427,
+ "n_metabolic_genes_in_universe": 2568,
+ "n_with_measured_essentiality": 2527,
+ "frac_sole_catalyst": 0.39453897902651364,
+ "abundance_coverage": 0.9948555599525128,
+ "label": "dep_frac (fraction of DepMap lines where the gene is a dependency); ess is exactly dep_frac>0.5 and is not an independent endpoint",
+ "replaces_in_object_reactions": 31,
+ "raw": {
+  "depfrac_sole": 0.16741223671013036,
+  "depfrac_iso": 0.06768627450980393,
+  "depfrac_diff": 0.09972596220032644,
+  "depfrac_p": 2.1094693912034803e-18,
+  "lift": 2.7081243731193583,
+  "fisher_p": 2.4844242017866184e-15
+ },
+ "controls": {
+  "PPI degree": {
+   "sole_median": 2.0,
+   "iso_median": 2.0,
+   "p": 0.8559165654915433
+  },
+  "publications": {
+   "sole_median": 80.0,
+   "iso_median": 59.0,
+   "p": 5.492894543875991e-13
+  },
+  "log abundance ppm": {
+   "sole_median": 0.6693168805661122,
+   "iso_median": 0.20547292934388722,
+   "p": 6.24571239577559e-31
+  },
+  "reactions per gene": {
+   "sole_median": 2.0,
+   "iso_median": 2.0,
+   "p": 3.5853298676343053e-07
+  }
+ },
+ "matched": {
+  "covariates": [
+   "PPI degree",
+   "reactions",
+   "abundance"
+  ],
+  "n_draws": 20,
+  "n": 1786,
+  "depfrac_diff": 0.0809837625979843,
+  "depfrac_p_median": 9.992361602767749e-10,
+  "frac_draws_p05": 1.0,
+  "lift": 2.1312775266454502,
+  "fisher_p_median": 3.368075344906236e-07,
+  "residual": {
+   "PPI degree": 0.7792853180722068,
+   "reactions": 0.9037891569770373,
+   "abundance": 0.708497777520296,
+   "publications": 0.01577254943657957
+  }
+ },
+ "matched_pubs": {
+  "covariates": [
+   "PPI degree",
+   "reactions",
+   "abundance",
+   "publications"
+  ],
+  "n_draws": 20,
+  "n": 1616,
+  "depfrac_diff": 0.08449938118811881,
+  "depfrac_p_median": 1.2732920361354745e-09,
+  "frac_draws_p05": 1.0,
+  "lift": 2.1807197927198336,
+  "fisher_p_median": 2.280149282529174e-07,
+  "residual": {
+   "PPI degree": 0.5722945774060697,
+   "reactions": 0.9373556481953692,
+   "abundance": 0.6457064336202636,
+   "publications": 0.6107173222589615
+  }
+ },
+ "dose": {
+  "buckets": [
+   {
+    "bucket": "0",
+    "n": 1530,
+    "mean_depfrac": 0.06768627450980393
+   },
+   {
+    "bucket": "1",
+    "n": 497,
+    "mean_depfrac": 0.21287726358148892
+   },
+   {
+    "bucket": "2",
+    "n": 180,
+    "mean_depfrac": 0.24355555555555553
+   },
+   {
+    "bucket": "3-5",
+    "n": 166,
+    "mean_depfrac": 0.061204819277108434
+   },
+   {
+    "bucket": "6+",
+    "n": 154,
+    "mean_depfrac": 0.046168831168831165
+   }
+  ],
+  "spearman": 0.13327671188822016,
+  "spearman_p": 1.738691168595346e-11,
+  "monotone": false
+ },
+ "split": {
+  "required for 1-2": {
+   "covariates": [
+    "PPI degree",
+    "reactions",
+    "abundance"
+   ],
+   "n_draws": 20,
+   "n": 1252,
+   "depfrac_diff": 0.10899440894568688,
+   "depfrac_p_median": 3.58073427095573e-10,
+   "frac_draws_p05": 1.0,
+   "lift": 2.1504042804868995,
+   "fisher_p_median": 2.0691776140393618e-07,
+   "residual": {
+    "PPI degree": 0.9013033691788668,
+    "reactions": 0.33915001035781983,
+    "abundance": 0.8256144463521986,
+    "publications": 0.7446732865566573
+   }
+  },
+  "required for 3+": {
+   "covariates": [
+    "PPI degree",
+    "reactions",
+    "abundance"
+   ],
+   "n_draws": 20,
+   "n": 602,
+   "depfrac_diff": 0.020652823920265784,
+   "depfrac_p_median": 0.07207659609957143,
+   "frac_draws_p05": 0.35,
+   "lift": 1.9635930735930731,
+   "fisher_p_median": 0.23074357586994698,
+   "residual": {
+    "PPI degree": 0.5592307248111439,
+    "reactions": 0.1783762079038019,
+    "abundance": 0.7962298738248076,
+    "publications": 5.491488652403792e-05
+   }
+  }
+ },
+ "subsystems": {
+  "required for 1-2": {
+   "Transport reactions": 0.1855309218203034,
+   "Oxidative phosphorylation": 0.08751458576429405,
+   "Nucleotide metabolism": 0.073512252042007,
+   "Isolated": 0.05484247374562427
+  },
+  "required for 3+": {
+   "Transport reactions": 0.3141860465116279,
+   "Fatty acid oxidation": 0.11255813953488372,
+   "Bile acid biosynthesis": 0.032325581395348836,
+   "Carnitine shuttle (endoplasmic reticular)": 0.028372093023255815
+  }
+ },
+ "verdict": "THE LAYER CARRIES INFORMATION, WITHIN A LIMIT. Genes that are the sole or required catalyst of at least one reaction have dep_frac +0.0810 higher than genes whose reactions all have isozymes, after matching on PPI degree, reaction count and abundance (100% of 20 matched draws at p<0.05; 2.13x on the binarised label). Essentiality is not part of Human-GEM, so the catalytic-redundancy structure predicts something it was not built from; 81% of the raw +0.0997 survives matching. Adding publications to the matching moves it to +0.0845 (100% of draws p<0.05), so study effort is not what is producing it. BUT IT IS CONFINED: the effect lives in genes required for 1-2 reactions (+0.1090, 100% of draws p<0.05) and is not detectable for genes required for 3+ (+0.0207, only 35% of draws p<0.05), both matched against the same required-for-nothing group. The dose curve rises then falls, so the overall Spearman +0.1333 is positive only because the 0->1 step dominates the counts. Being required for MORE reactions does not make a gene more necessary. Those high-count genes sit disproportionately in replicated reaction families -- Transport reactions 31%, Fatty acid oxidation 11% -- where the count reflects how the model enumerates transport and acyl-chain chemistry rather than how many distinct jobs the gene holds."
+}

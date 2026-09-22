@@ -1,0 +1,467 @@
+{
+ "model": "measurement-power-rpe1-v1",
+ "source": "Replogle et al. 2022 genome-scale Perturb-seq, RPE1 CRISPRi arm (raw UMI counts)",
+ "cell_type": "RPE1",
+ "n_cells": 247914,
+ "n_genes": 8749,
+ "n_perturbations": 2394,
+ "n_analysis_perturbations": 2122,
+ "n_control_cells": 11485,
+ "median_cells_per_perturbation": 80.0,
+ "pipeline": "sum raw UMI per group -> CPM -> log2(1+x) -> subtract non-targeting; identical to colab/causal_reg.py and asserted against its cached pseudobulk",
+ "design": {
+  "n_random_splits": 20,
+  "n_batch_splits": 20,
+  "control_split_with_perturbations": true,
+  "min_cells": 25,
+  "min_cells_per_half": 8,
+  "seed": 20260731
+ },
+ "ceiling": {
+  "pooled_raw_lfc": {
+   "name": "pooled raw lfc",
+   "half_r": 0.359534286316204,
+   "sd": 0.0004347999843223426,
+   "reliability_full_sb": 0.5289080090659554,
+   "n_draws": 20
+  },
+  "pooled_raw_lfc_shuffled": {
+   "name": "  same, perturbation labels SHUFFLED",
+   "half_r": 0.11544741249384768,
+   "sd": 0.0031349797309324365,
+   "reliability_full_sb": 0.20699749930072917,
+   "n_draws": 20
+  },
+  "pooled_gene_mean_removed": {
+   "name": "pooled lfc, gene mean removed",
+   "half_r": 0.2867294200146743,
+   "sd": 0.0004365462176475942,
+   "reliability_full_sb": 0.4456716626738888,
+   "n_draws": 20
+  },
+  "pooled_gene_mean_removed_shuffled": {
+   "name": "  same, perturbation labels SHUFFLED",
+   "half_r": 0.013759562627617888,
+   "sd": 0.003489845244804292,
+   "reliability_full_sb": 0.027145613486404485,
+   "n_draws": 20
+  },
+  "pooled_robust_z": {
+   "name": "pooled per-gene robust z",
+   "half_r": 0.3128808164831825,
+   "sd": 0.0004082397627566554,
+   "reliability_full_sb": 0.47663247501977707,
+   "n_draws": 20
+  },
+  "pooled_robust_z_shuffled": {
+   "name": "  same, perturbation labels SHUFFLED",
+   "half_r": 0.007464545900782568,
+   "sd": 0.0027385103903602753,
+   "reliability_full_sb": 0.014818478587965504,
+   "n_draws": 20
+  },
+  "shared_control_variant": {
+   "name": "pooled lfc, SHARED control (variant)",
+   "half_r": 0.28672942001596036,
+   "sd": 0.00043654621830043486,
+   "reliability_full_sb": 0.44567166267544234,
+   "n_draws": 20
+  },
+  "per_perturbation_random": {
+   "name": "per-perturbation, random split",
+   "half_r": 0.2830714001794431,
+   "sd": 0.0003883268156125322,
+   "reliability_full_sb": 0.4412402928470767,
+   "n_draws": 20
+  },
+  "per_perturbation_batch": {
+   "name": "per-perturbation, batch-disjoint",
+   "half_r": 0.2802258776286632,
+   "sd": 0.0005548568620210802,
+   "reliability_full_sb": 0.4377756808786274,
+   "n_draws": 20
+  },
+  "per_perturbation_shuffled": {
+   "name": "per-perturbation, SHUFFLED",
+   "half_r": 0.09616833390946311,
+   "sd": 0.00191817425194863,
+   "reliability_full_sb": 0.1754627112178667,
+   "n_draws": 20
+  },
+  "frac_draws_beating_shuffle": {
+   "raw": 1.0,
+   "dev": 1.0,
+   "z": 1.0
+  }
+ },
+ "per_perturbation_distribution": {
+  "p10": 0.04023044684194098,
+  "median": 0.24740090166706746,
+  "p90": 0.5865562360589813,
+  "frac_negative": 0.007540056550424128,
+  "frac_above_shuffled_p95": 0.32704995287464655,
+  "shuffled_p95": 0.36310860756742863,
+  "frac_draws_positive": 0.8742272347535506
+ },
+ "per_gene_summary": {
+  "median_r": 0.25971387204507207,
+  "p90_r": 0.6212190469328303,
+  "frac_negative": 0.0,
+  "spearman_cpm_vs_r": 0.7762354052466182,
+  "p": 0.0
+ },
+ "vs_cells_per_perturbation": {
+  "deciles": [
+   {
+    "decile": 0,
+    "n": 208,
+    "cells": 29.485576923076923,
+    "umi": 419773.13942307694,
+    "ngenes": 3500.6791538270895,
+    "mito": 0.06382922380441762,
+    "se": 0.6236436136798638,
+    "signal": 0.37513000669355223,
+    "obs": 0.7538694990542413,
+    "r": 0.2671568702880687,
+    "reliability": 0.42166345233536034,
+    "r_batch": 0.2618795567924241,
+    "noise_fraction": 0.7039625758117042
+   },
+   {
+    "decile": 1,
+    "n": 195,
+    "cells": 39.57948717948718,
+    "umi": 554996.3025641026,
+    "ngenes": 3458.6673630670607,
+    "mito": 0.0622107833920326,
+    "se": 0.5138792541915054,
+    "signal": 0.3731500685489687,
+    "obs": 0.6573261844819446,
+    "r": 0.2942586767073403,
+    "reliability": 0.45471385589772406,
+    "r_batch": 0.28989587059093913,
+    "noise_fraction": 0.6285358298580401
+   },
+   {
+    "decile": 2,
+    "n": 223,
+    "cells": 49.67713004484305,
+    "umi": 697981.5067264574,
+    "ngenes": 3494.1214078354187,
+    "mito": 0.062000302245165916,
+    "se": 0.4319986571336735,
+    "signal": 0.32670734460651457,
+    "obs": 0.5681103939910556,
+    "r": 0.28948462050265644,
+    "reliability": 0.44899274624898106,
+    "r_batch": 0.2859749486345604,
+    "noise_fraction": 0.6134191017435356
+   },
+   {
+    "decile": 3,
+    "n": 221,
+    "cells": 61.37556561085973,
+    "umi": 841924.5701357466,
+    "ngenes": 3462.866704012847,
+    "mito": 0.06071233632761898,
+    "se": 0.3780989216820191,
+    "signal": 0.3363511821713018,
+    "obs": 0.5303912725027367,
+    "r": 0.3175772055993107,
+    "reliability": 0.48206238579371613,
+    "r_batch": 0.31331378707912927,
+    "noise_fraction": 0.5606015037258574
+   },
+   {
+    "decile": 4,
+    "n": 207,
+    "cells": 73.26570048309179,
+    "umi": 991598.2077294686,
+    "ngenes": 3462.732252364411,
+    "mito": 0.061923821672126865,
+    "se": 0.3363948639262547,
+    "signal": 0.3285817666414436,
+    "obs": 0.49766450019387026,
+    "r": 0.3373696316920102,
+    "reliability": 0.5045271310148978,
+    "r_batch": 0.3338658458907401,
+    "noise_fraction": 0.550865588512377
+   },
+   {
+    "decile": 5,
+    "n": 210,
+    "cells": 85.53809523809524,
+    "umi": 1140505.8952380952,
+    "ngenes": 3454.312369705271,
+    "mito": 0.060572761380652096,
+    "se": 0.30496909246361764,
+    "signal": 0.24323967812935404,
+    "obs": 0.42090724272914776,
+    "r": 0.26568094687172045,
+    "reliability": 0.41982293804514037,
+    "r_batch": 0.26392739686062955,
+    "noise_fraction": 0.7023565504082466
+   },
+   {
+    "decile": 6,
+    "n": 219,
+    "cells": 102.56164383561644,
+    "umi": 1372678.0547945206,
+    "ngenes": 3482.844066685509,
+    "mito": 0.060249650196391114,
+    "se": 0.2719482579502055,
+    "signal": 0.2236623772891185,
+    "obs": 0.3818560585016644,
+    "r": 0.26469915322990833,
+    "reliability": 0.4185962369847321,
+    "r_batch": 0.2624051676650751,
+    "noise_fraction": 0.7439059976210338
+   },
+   {
+    "decile": 7,
+    "n": 209,
+    "cells": 124.47846889952153,
+    "umi": 1654768.6076555024,
+    "ngenes": 3499.4602743869127,
+    "mito": 0.06104707846206988,
+    "se": 0.2411736837601936,
+    "signal": 0.19039244215089546,
+    "obs": 0.32892480825230885,
+    "r": 0.24634702904488284,
+    "reliability": 0.39531049267019436,
+    "r_batch": 0.24522320860143823,
+    "noise_fraction": 0.6956876450054493
+   },
+   {
+    "decile": 8,
+    "n": 216,
+    "cells": 160.875,
+    "umi": 2138282.263888889,
+    "ngenes": 3502.152110628069,
+    "mito": 0.06197204190046784,
+    "se": 0.20916923126346845,
+    "signal": 0.17331313193752887,
+    "obs": 0.29057569546972095,
+    "r": 0.2509273294833233,
+    "reliability": 0.4011861018129088,
+    "r_batch": 0.24928607793713783,
+    "noise_fraction": 0.7131324535427414
+   },
+   {
+    "decile": 9,
+    "n": 214,
+    "cells": 361.2429906542056,
+    "umi": 4792654.528037383,
+    "ngenes": 3523.185977975228,
+    "mito": 0.062268917381413394,
+    "se": 0.1551030586044995,
+    "signal": 0.15611250538660015,
+    "obs": 0.23742647630314567,
+    "r": 0.2976838691306207,
+    "reliability": 0.45879258610196505,
+    "r_batch": 0.2963235191736474,
+    "noise_fraction": 0.6425692294514042
+   }
+  ],
+  "spearman_cells_vs_se": -0.9787949935565906,
+  "spearman_cells_vs_signal": -0.34025462262295103,
+  "spearman_cells_vs_observed": -0.7744164983402302,
+  "spearman_cells_vs_reliability": -0.11199323060060314,
+  "p_reliability": 2.3132150732670614e-07,
+  "note": "noise falls with cells as power predicts, but true signal falls too (CRISPRi depletes costly perturbations), so reliability stays flat. Cells-per-perturbation is not a clean power axis in this dataset."
+ },
+ "vs_gene_expression": {
+  "deciles": [
+   {
+    "decile": 0,
+    "n": 875,
+    "cpm": 9.34387617839137,
+    "dropout": 0.887569671049523,
+    "r": 0.14513951670128528,
+    "reliability": 0.25348791930502484,
+    "r_batch": 0.140189950663829,
+    "overdispersion": 1.2602001256074014
+   },
+   {
+    "decile": 1,
+    "n": 875,
+    "cpm": 12.693843284175905,
+    "dropout": 0.8510762096072486,
+    "r": 0.15616405836920108,
+    "reliability": 0.27014169354040374,
+    "r_batch": 0.15037936858701897,
+    "overdispersion": 1.2425807042773183
+   },
+   {
+    "decile": 2,
+    "n": 875,
+    "cpm": 16.874358245318295,
+    "dropout": 0.8098405184286256,
+    "r": 0.18231267528815273,
+    "reliability": 0.3084001027794438,
+    "r_batch": 0.17541631385577985,
+    "overdispersion": 1.212793725439505
+   },
+   {
+    "decile": 3,
+    "n": 875,
+    "cpm": 22.10453733422203,
+    "dropout": 0.7597929742917763,
+    "r": 0.20484394104531756,
+    "reliability": 0.3400339812766055,
+    "r_batch": 0.19682247907445824,
+    "overdispersion": 1.1777439981469058
+   },
+   {
+    "decile": 4,
+    "n": 874,
+    "cpm": 28.746272824102384,
+    "dropout": 0.7048661676045518,
+    "r": 0.24286570669994728,
+    "reliability": 0.39081568570236513,
+    "r_batch": 0.23389708667514716,
+    "overdispersion": 1.1469631291546634
+   },
+   {
+    "decile": 5,
+    "n": 875,
+    "cpm": 38.028561006206004,
+    "dropout": 0.6358578631530057,
+    "r": 0.28378130496806486,
+    "reliability": 0.4421022550645792,
+    "r_batch": 0.27506029171616064,
+    "overdispersion": 1.1258423976496934
+   },
+   {
+    "decile": 6,
+    "n": 875,
+    "cpm": 51.63239030069919,
+    "dropout": 0.5480395206171725,
+    "r": 0.33198477907663837,
+    "reliability": 0.498481340465133,
+    "r_batch": 0.32356377675049136,
+    "overdispersion": 1.1089620681353483
+   },
+   {
+    "decile": 7,
+    "n": 875,
+    "cpm": 74.1907576805783,
+    "dropout": 0.4392370672318396,
+    "r": 0.4034341718387293,
+    "reliability": 0.5749242535688928,
+    "r_batch": 0.3955005771801313,
+    "overdispersion": 1.111794218278877
+   },
+   {
+    "decile": 8,
+    "n": 875,
+    "cpm": 123.20446513070658,
+    "dropout": 0.2862176445979539,
+    "r": 0.4997777838677101,
+    "reliability": 0.6664691119491788,
+    "r_batch": 0.49247085126141177,
+    "overdispersion": 1.1318753538831396
+   },
+   {
+    "decile": 9,
+    "n": 875,
+    "cpm": 766.0709337559703,
+    "dropout": 0.07894153617786813,
+    "r": 0.681057327474241,
+    "reliability": 0.810272578267771,
+    "r_batch": 0.6753234297078727,
+    "overdispersion": 1.3107578831616902
+   }
+  ]
+ },
+ "coverage": {
+  "n_perturbations_in_analysis_set": 2122,
+  "n_perturbations_excluded_below_min_cells": 271,
+  "n_perturbations_not_estimable": 0,
+  "n_genes_estimable": 8749,
+  "n_genes_not_estimable": 0,
+  "note": "not-estimable is written as null, never 0"
+ },
+ "standard_error": {
+  "method": "empirical split-half: sigma = rms(lfcA - lfcB)/2, unbiased for the full-data lfc because Var(lfcA-lfcB) = 4 Var(lfc_full) exactly including the control term; cross-checked against a cell-level bootstrap",
+  "median_rms_se": 0.31515508622187205,
+  "median_rms_se_batch": 0.3198283194542043,
+  "median_poisson_se": 0.2748934697127943,
+  "median_overdispersion": 1.1481520269019998,
+  "overdispersion_low_expr_decile": 1.2602001256074014,
+  "overdispersion_high_expr_decile": 1.3107578831616902,
+  "bootstrap_check_pearson": 0.9251360760394047,
+  "bootstrap_check_median_ratio": 1.0098136166945952,
+  "n_bootstrap_perturbations": 50,
+  "n_resamples": 200
+ },
+ "magnitude_confound": {
+  "spearman_cells_vs_observed_rms": -0.7744164983402302,
+  "spearman_cells_vs_signal_rms": -0.34025462262295103,
+  "median_noise_fraction": 0.6575647765354087,
+  "noise_fraction_low_cells_decile": 0.7039625758117042,
+  "noise_fraction_high_cells_decile": 0.6425692294514042
+ },
+ "edge_replication_within_rpe1": {
+  "2.0": {
+   "n_per_draw": 1697726.2,
+   "sign_agree": 0.7255088049073077,
+   "sd": 0.0005372190807389676,
+   "mean_abs_z_B": 1.5539462268352509,
+   "frac_zB_ge2": 0.27579182472374986,
+   "mean_cpm_of_selected": 138.82005325825125,
+   "mean_gene_reliability_of_selected": 0.3202675614183528,
+   "n_draws": 20
+  },
+  "3.0": {
+   "n_per_draw": 575946.9,
+   "sign_agree": 0.7402780666109985,
+   "sd": 0.0010446271999990295,
+   "mean_abs_z_B": 1.9098927557468415,
+   "frac_zB_ge2": 0.35892004316937254,
+   "mean_cpm_of_selected": 155.16392854574863,
+   "mean_gene_reliability_of_selected": 0.3185855415910988,
+   "n_draws": 20
+  },
+  "5.0": {
+   "n_per_draw": 141388.7,
+   "sign_agree": 0.6891923426024784,
+   "sd": 0.0020515756279066715,
+   "mean_abs_z_B": 2.2545912981033327,
+   "frac_zB_ge2": 0.3562121997293501,
+   "mean_cpm_of_selected": 137.35405584010874,
+   "mean_gene_reliability_of_selected": 0.2537867657341309,
+   "n_draws": 20
+  }
+ },
+ "registry_joins": {
+  "genes": {
+   "joined": 8732,
+   "of": 8749,
+   "rate": 0.9980569207909475,
+   "via": "ensembl",
+   "label": "RPE1 measured genes (ensembl)"
+  },
+  "perturbations": {
+   "joined": 2321,
+   "of": 2393,
+   "rate": 0.9699122440451317,
+   "via": "symbol",
+   "label": "RPE1 perturbations (symbol)"
+  }
+ },
+ "limits": [
+  "RPE1 ONLY. Split-half needs cells, and this project's K562 arm (gwps.h5ad) is already pseudobulked to 11,258 x 8,248 with the cells discarded. No ceiling is computed for K562 here, and the RPE1 ceiling must NOT be used to rescale a K562 score -- cells per perturbation, control size and library depth all differ",
+  "the random split shares gemgroups between halves so batch effects cancel and are not counted as noise; the batch-disjoint split counts them. A within-batch question takes the random number, a cross-batch question the batch number. Here they barely differ, because the control is split the same way and a depth shift cancels in the difference",
+  "Spearman-Brown assumes the halves are parallel measurements differing only in length. That holds for the random split (balanced within perturbation); for the batch split the halves are only approximately equal in size, so SB is approximate there",
+  "reliability is a property of a QUANTITY, not of a dataset. The pooled raw-lfc ceiling is largely reproduced by shuffled perturbation labels because it contains per-gene main effects; only the gene-mean-removed and robust-z ceilings bound a model scored above a responsiveness baseline",
+  "the empirical SE captures cell sampling and cell-to-cell biological variability. It does NOT capture guide-level effects (off-target activity, variable knockdown), which are shared by every cell carrying that guide and therefore cancel in a within-perturbation split -- so every reliability here is an OVER-estimate with respect to 'what does losing this gene do'",
+  "cells-per-perturbation is not a clean power axis: CRISPRi depletes cells carrying guides against genes whose loss is costly, so low-cell perturbations have systematically LARGER true effects. Noise and signal both fall as cells rise and reliability stays roughly flat",
+  "perturbations below 25 cells (271 of 2394) are outside the analysis set; their reliability is not reported",
+  "8,749 genes are measured. A gene not measured has no reliability here and absence is unknown rather than zero; dropout is reported per gene so the missingness is visible, and it is strongly expression-dependent",
+  "the R2 ceiling assumes observed = signal + independent noise. Noise correlated between the halves (ambient RNA, index hopping, a systematic artefact shared by a perturbation's cells) would be counted as signal and would push the true ceiling LOWER",
+  "the edge-replication rows select on a HALF-sized measurement and evaluate on the other half, so both sides are noisier than a full-data measurement. Those agreement rates are a LOWER bound on full-power within-dataset replication",
+  "`noise_fraction` and `1 - reliability` are NOT the same number and must not be quoted interchangeably. noise_fraction is SE^2 / rms(lfc)^2, taken about zero, so a perturbation's mean shift across genes counts as signal; reliability is a CORRELATION, so each profile is mean-removed first and only gene-to-gene structure counts. The first answers 'how much of the measured magnitude is noise', the second 'how much of the measured pattern is reproducible', and they can differ severalfold for one perturbation"
+ ],
+ "verdict": "THE CEILING ON REPLOGLE RPE1 IS R2 = 0.477, NOT 1. Splitting each perturbation's cells into halves -- with the 11,485 non-targeting cells split alongside them, so no control noise is shared -- the halves agree at r = 0.3129 (sd 0.0004 over 20 draws) on the per-gene robust z this project defines its edges on, which Spearman-Brown puts at reliability 0.4766 for the full-size measurement. On raw lfc with the per-gene mean removed the ceiling is 0.4457. Leaving the gene main effects in gives 0.5289, but SHUFFLING the perturbation labels reproduces 32% of that number, so it is a ceiling on a quantity a gene-responsiveness baseline already owns. A model scored on perturbation-SPECIFIC RPE1 response therefore cannot exceed R2 ~0.48 however good it is: the target is 52% noise. THIS DOES NOT RESCALE THIS PROJECT'S K562 NUMBERS -- the ladder's R2 0.0151 and the 1.208x/1.070x/1.021x matched ratios were all scored on K562, whose cells were discarded when gwps.h5ad was pseudobulked, so K562's own ceiling is unmeasured and dividing by an RPE1 one would be the cross-axis substitution this project keeps getting burned by. What it does establish is that a ceiling of this kind exists and is nowhere near 1, and that the same computation is cheap wherever cell-level counts survive. Per perturbation the profile reliability is 0.441 (33% of perturbations beat the 95th percentile of a label-shuffled control), essentially unchanged at 0.438 under batch-disjoint splits because splitting the control the same way cancels gemgroup depth. Reliability tracks EXPRESSION cleanly (half-r 0.145 at 9.3 CPM to 0.681 at 766 CPM, Spearman 0.776) but NOT cells-per-perturbation (-0.112): the SE falls with cells exactly as power predicts (-0.979) while the true signal falls with it just as fast (-0.340), because CRISPRi depletes the cells of perturbations that hurt. So the magnitude-vs-power confound this project found (+0.0881) is real but is NOT fixed by matching on cell count -- that matches on effect size at the same time. The median perturbation's observed rms |lfc| is 66% noise variance, and a log fold change carries a median rms SE of 0.315, 1.1x the Poisson delta-method value (1.3x for the highest-expression decile), reproduced by a cell-level bootstrap at r 0.925. Finally, the |z|>=5 cut that defines this project's 537,376-edge layer replicates its SIGN 68.9% of the time between two halves of the SAME cell line -- a LOWER bound, since both sides are half-power. That is the honest reference for the 67.2% this project measured for K562 edges evaluated on RPE1: the cross-cell-line penalty is small next to the measurement-noise penalty, because most of the loss is already there when the SAME cells are split in two. And replication PEAKS at |z|>=3 (74.0%) and falls to 68.9% at |z|>=5, on genes whose own reliability drops from 0.319 to 0.254 while their expression barely moves -- the extreme tail of a MAD-normalised z is enriched for low-reliability genes, so that threshold buys noise along with effect size."
+}

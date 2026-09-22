@@ -1,0 +1,301 @@
+{
+ "test": "enhancer stage one",
+ "gates": {
+  "H1": true,
+  "H2": true,
+  "H3": false,
+  "H4": true,
+  "H5": false,
+  "H6": true,
+  "H7": true,
+  "H8": true
+ },
+ "n_windows": 5037,
+ "n_positive": 482,
+ "baseline_l174": 0.6807,
+ "arms": {
+  "FULL": [
+   0.6851533356714385,
+   0.6734599250288087,
+   0.679063178942478,
+   0.6783002582543464,
+   0.6873960947570268
+  ],
+  "+family": [
+   0.8318035445067433,
+   0.8374933386775737,
+   0.8337447791173805,
+   0.8396208625786263,
+   0.842219347668651
+  ],
+  "+family+spectrum": [
+   0.8484771192114816,
+   0.8424215785853855,
+   0.8469271376582207,
+   0.8521200085629308,
+   0.8490054702552025
+  ],
+  "+cluster": [
+   0.674676954329518,
+   0.6661878105770414,
+   0.6793610596171278,
+   0.6765362034333708,
+   0.6762105387814221
+  ],
+  "ALL": [
+   0.8320945930558276,
+   0.8339219589070421,
+   0.8349162609143206,
+   0.8410004964677912,
+   0.8386971592021899
+  ],
+  "ALL+spectrum": [
+   0.8499332729069784,
+   0.8494349832157448,
+   0.8459515101274875,
+   0.8543513807725769,
+   0.8531011017941161
+  ]
+ },
+ "learners": {
+  "logistic": [
+   0.8438085000751534,
+   0.8375060919786291,
+   0.8489631110766974,
+   0.850525390455976,
+   0.8534427080723841
+  ],
+  "gbm": [
+   0.8499332729069784,
+   0.8494349832157448,
+   0.8459515101274875,
+   0.8543513807725769,
+   0.8531011017941161
+  ],
+  "gbm_deep": [
+   0.847377146995459,
+   0.847761112452232,
+   0.8423924281829733,
+   0.8503195157389399,
+   0.8458622370201001
+  ],
+  "mlp": [
+   0.8213417383660289,
+   0.7765475903093131,
+   0.7885329604511027,
+   0.8119926577423924,
+   0.8258190579865271
+  ]
+ },
+ "shuffled": [
+  0.609315830945885,
+  0.5914748737195458,
+  0.6043570742105479,
+  0.6034242613333576,
+  0.6069523709753086
+ ],
+ "leaky": [
+  0.8495989542293135,
+  0.8448884313895176,
+  0.8431690131222359,
+  0.8518544666159571,
+  0.8535319811797714
+ ],
+ "deltas": {
+  "H2": {
+   "mean": 0.16711570432382453,
+   "sem": 0.0021634459334282444,
+   "n_up": 5,
+   "passes": true
+  },
+  "H3": {
+   "mean": -0.006080045183123661,
+   "sem": 0.002303483799247781,
+   "n_up": 1,
+   "passes": false
+  },
+  "H4": {
+   "mean": 0.16987989123256106,
+   "sem": 0.0025261015034868523,
+   "n_up": 5,
+   "passes": true
+  },
+  "H5": {
+   "mean": 0.003705289431612746,
+   "sem": 0.002597980721229955,
+   "n_up": 3,
+   "passes": false
+  },
+  "H6": {
+   "mean": 0.24744956752645178,
+   "sem": 0.003203260384743173,
+   "n_up": 5,
+   "passes": true
+  },
+  "H7": {
+   "mean": -0.0008183064527149009,
+   "sem": 0.001390666441234733,
+   "n_up": 2,
+   "passes": false
+  }
+ },
+ "best_arm": "ALL+spectrum",
+ "best_learner": "gbm",
+ "n_family_columns": 51,
+ "n_pc": 32,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/dna_shape.npz",
+    "bytes": 22686,
+    "hash": "bfd83511037c6d26",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 5037,
+   "used": 5037,
+   "selection": "loop 174's vs-genome contrast",
+   "fraction": 1.0
+  },
+  "seed": 174174,
+  "controls": [
+   "the projection refitted inside every training fold, with the leaky variant reported beside it",
+   "dinucleotide shuffle of both classes through the whole new stack",
+   "logistic regression on identical columns",
+   "GC recomputed from sequence and matched against the cache"
+  ],
+  "note": "per-motif resolution and motif clustering on the stage-one task",
+  "warnings": [
+   "selection 'loop 174's vs-genome contrast' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 1130.3063206672668,
+ "log": [
+  "========================================================================================================",
+  "LOOP 177  CLOSE THE HEADROOM ON STAGE ONE: enhancer against distance-matched genome",
+  "========================================================================================================",
+  "  PREDECLARED: the rebuilt baseline must land within 0.01 of loop 174's 0.6807",
+  "  and the recomputed GC must match the cache exactly; each new block judged on paired",
+  "  per-seed AUC positive in >= 4/5 past 3 sem; the best non-linear learner must",
+  "  beat logistic regression past 3 sem or the learner never mattered; the dinucleotide",
+  "  shuffle must still cost the best configuration; and the fold-internal projection must",
+  "  not out-score the deliberately leaked one.",
+  "",
+  "    scan cache: enh_vs_genome_v2.npz (291.8 MB)",
+  "    5,037 windows in the vs-genome contrast, 482 positives",
+  "    736 distinct motifs, width 5-29 (median 9)",
+  "    EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz: 10,356 K562 pairs",
+  "    EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz: 1,918 K562 pairs",
+  "    12,274 -> 12,274 valid -> 12,040 powered at PowerAtEffectSize25 >= 0.8",
+  "    11,933/12,040 pairs survive the lift",
+  "    482 positives, 4,562 genomic decoys (5,998 draws rejected for overlapping a tested element), 1,896 tested-negative decoys",
+  "    chr1: 603 regions from 249,250,621 bp",
+  "    chr2: 315 regions from 243,199,373 bp",
+  "    chr3: 310 regions from 198,022,430 bp",
+  "    chr4: 108 regions from 191,154,276 bp",
+  "    chr5: 150 regions from 180,915,260 bp",
+  "    chr6: 339 regions from 171,115,067 bp",
+  "    chr7: 305 regions from 159,138,663 bp",
+  "    chr8: 522 regions from 146,364,022 bp",
+  "    chr9: 161 regions from 141,213,431 bp",
+  "    chr10: 129 regions from 135,534,747 bp",
+  "    chr11: 959 regions from 135,006,516 bp",
+  "    chr12: 276 regions from 133,851,895 bp",
+  "    chr14: 57 regions from 107,349,540 bp",
+  "    chr15: 44 regions from 102,531,392 bp",
+  "    chr16: 291 regions from 90,354,753 bp",
+  "    chr17: 375 regions from 81,195,210 bp",
+  "    chr18: 84 regions from 78,077,248 bp",
+  "    chr19: 924 regions from 59,128,983 bp",
+  "    chr20: 73 regions from 63,025,520 bp",
+  "    chr21: 84 regions from 48,129,895 bp",
+  "    chr22: 51 regions from 51,304,566 bp",
+  "    chrX: 780 regions from 155,270,560 bp",
+  "    clustering el: 6,933 windows, 5,464,605 bp",
+  "      el cluster motif 200/736  [62s, eta 167s]",
+  "      el cluster motif 400/736  [130s, eta 109s]",
+  "      el cluster motif 600/736  [213s, eta 48s]",
+  "    clusters: homotypic best median 3 sites in 100 bp, 9 motifs with >= 2; heterotypic density median 0.15 motifs/bp",
+  "    clustering sh: 6,933 windows, 5,464,605 bp",
+  "      sh cluster motif 200/736  [54s, eta 146s]",
+  "      sh cluster motif 400/736  [126s, eta 106s]",
+  "      sh cluster motif 600/736  [213s, eta 48s]",
+  "    clusters: homotypic best median 3 sites in 100 bp, 7 motifs with >= 2; heterotypic density median 0.12 motifs/bp",
+  "    -> /tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/enh_scan/enh_vs_genome_clusters.npz [638s]",
+  "",
+  "H1 DOES THE BASELINE REPRODUCE?",
+  "     recomputed GC matches the cached GC on every window, bit for bit: True",
+  "    FULL (loop 174 baseline)           AUC 0.6807 +/- 0.0025",
+  "     H1 PASS -- 0.6807 against loop 174's 0.6807, and the windows are the same windows",
+  "    51 class/family occupancy columns (groups with >= 5 matrices)",
+  "    51 class/family occupancy columns (groups with >= 5 matrices)",
+  "    columns: base 32, +family 83, +cluster 38, +both 89, spectrum adds 32 more inside each fold",
+  "    +class/family occupancy            AUC 0.8370 +/- 0.0019",
+  "    +class/family+spectrum             AUC 0.8478 +/- 0.0016",
+  "    +clustering                        AUC 0.6746 +/- 0.0022",
+  "    +family+cluster                    AUC 0.8361 +/- 0.0016",
+  "    +family+cluster+spectrum           AUC 0.8506 +/- 0.0015",
+  "",
+  "H2 DOES PER-MOTIF RESOLUTION ADD?",
+  "     +class/family+spectrum vs FULL   dAUC +0.1671 +/- 0.0022 (5/5 up)",
+  "     (family alone: dAUC +0.1563 +/- 0.0030 (5/5 up))",
+  "     H2 PASS -- keeping motif identity instead of summing it away adds",
+  "",
+  "H3 DOES CLUSTERING ADD?",
+  "     +clustering vs FULL   dAUC -0.0061 +/- 0.0023 (1/5 up)",
+  "     H3 FAIL -- homotypic and heterotypic density add nothing over the counts",
+  "",
+  "H4 EVERYTHING TOGETHER",
+  "     everything vs FULL   dAUC +0.1699 +/- 0.0025 (5/5 up)",
+  "     H4 PASS -- the combined stack reaches 0.8506 from 0.6807",
+  "",
+  "H5 WHAT DOES NON-LINEARITY ACTUALLY BUY?",
+  "     on the best feature set so far: ALL+spectrum",
+  "    ALL+spectrum / logistic            AUC 0.8468 +/- 0.0028",
+  "    ALL+spectrum / gbm                 AUC 0.8506 +/- 0.0015",
+  "    ALL+spectrum / gbm_deep            AUC 0.8467 +/- 0.0013",
+  "    ALL+spectrum / mlp                 AUC 0.8048 +/- 0.0096",
+  "     best non-linear (gbm) vs logistic   dAUC +0.0037 +/- 0.0026 (3/5 up)",
+  "     H5 FAIL -- a logistic regression on the same columns does as well, so the signal is additive and the learner was never the constraint",
+  "",
+  "H6 THE SHUFFLE STILL DECIDES",
+  "    everything, SHUFFLED               AUC 0.6031 +/- 0.0031",
+  "    everything, real                   AUC 0.8506 +/- 0.0015",
+  "     real vs dinucleotide-shuffled   dAUC +0.2474 +/- 0.0032 (5/5 up)",
+  "     H6 PASS -- the shuffle costs 0.2474, so the combined stack is still reading sites and not composition",
+  "",
+  "H7 IS THE PROJECTION LEAKING?",
+  "    spectrum fitted on ALL data (leaky control) AUC 0.8486 +/- 0.0020",
+  "     honest minus leaky   dAUC -0.0008 +/- 0.0014 (2/5 up)",
+  "     H7 PASS -- the fold-internal projection does not out-score the one fitted on the held-out chromosome as well, which is the only ordering that is possible if the fitting is honest",
+  "",
+  "H8 WHAT THIS CANNOT SHOW",
+  "     A genomic decoy is untested sequence, not a proven non-enhancer, so every AUC here",
+  "     is a lower bound by an unknown amount.",
+  "     This is stage one -- enhancer against genome. Loop 173 showed the same features",
+  "     cannot say WHICH gene an element acts on, and nothing here changes that; loop 176's",
+  "     gene-blind oracle put that ceiling at R@1 0.8844, far above where the features are.",
+  "     K562 only, JASPAR in-vitro preferences, no expression filter on the factor set.",
+  "     H8 PASS",
+  "",
+  "========================================================================================================",
+  "  H1  PASS",
+  "  H2  PASS",
+  "  H3  FAIL",
+  "  H4  PASS",
+  "  H5  FAIL",
+  "  H6  PASS",
+  "  H7  PASS",
+  "  H8  PASS",
+  "  6/8   [1130s]",
+  "========================================================================================================"
+ ]
+}

@@ -1,0 +1,258 @@
+{
+  "test": "adrn_learned_metric",
+  "npreds": [
+    10,
+    20,
+    50
+  ],
+  "ranks": [
+    32,
+    64
+  ],
+  "knn": [
+    1,
+    5,
+    10
+  ],
+  "n_pairs": 399120,
+  "cells": {
+    "n10|r32": {
+      "best_learned": "metric_linear10",
+      "frequency": 0.1975,
+      "nn_annot1": 0.19924999999999998,
+      "metric_linear1": 0.19125,
+      "nn_ORACLE1": 0.5735,
+      "nn_scorable1": 0.257,
+      "metric_pair1": 0.11375,
+      "nn_annot5": 0.27575,
+      "metric_linear5": 0.26275,
+      "nn_ORACLE5": 0.6024999999999999,
+      "nn_scorable5": 0.30400000000000005,
+      "metric_pair5": 0.20475000000000002,
+      "nn_annot10": 0.313,
+      "metric_linear10": 0.2875,
+      "nn_ORACLE10": 0.5927500000000001,
+      "nn_scorable10": 0.2965,
+      "metric_pair10": 0.22700000000000004,
+      "oracle_gap": 0.2894999999999999,
+      "fraction_closed": -0.08808290155440425
+    },
+    "n20|r32": {
+      "best_learned": "metric_linear10",
+      "frequency": 0.18025000000000002,
+      "nn_annot1": 0.161875,
+      "metric_linear1": 0.150625,
+      "nn_ORACLE1": 0.436125,
+      "nn_scorable1": 0.201375,
+      "metric_pair1": 0.100625,
+      "nn_annot5": 0.22,
+      "metric_linear5": 0.208875,
+      "nn_ORACLE5": 0.461875,
+      "nn_scorable5": 0.24674999999999997,
+      "metric_pair5": 0.16200000000000003,
+      "nn_annot10": 0.2445,
+      "metric_linear10": 0.231,
+      "nn_ORACLE10": 0.45575000000000004,
+      "nn_scorable10": 0.24549999999999997,
+      "metric_pair10": 0.18725000000000003,
+      "oracle_gap": 0.21737499999999998,
+      "fraction_closed": -0.062104657849338635
+    },
+    "n50|r32": {
+      "best_learned": "metric_linear10",
+      "frequency": 0.13995000000000002,
+      "nn_annot1": 0.10905,
+      "metric_linear1": 0.10055000000000001,
+      "nn_ORACLE1": 0.281,
+      "nn_scorable1": 0.1371,
+      "metric_pair1": 0.07115,
+      "nn_annot5": 0.15280000000000002,
+      "metric_linear5": 0.14415,
+      "nn_ORACLE5": 0.29535000000000006,
+      "nn_scorable5": 0.17,
+      "metric_pair5": 0.11475000000000002,
+      "nn_annot10": 0.17020000000000002,
+      "metric_linear10": 0.1584,
+      "nn_ORACLE10": 0.2905,
+      "nn_scorable10": 0.17350000000000002,
+      "metric_pair10": 0.1384,
+      "oracle_gap": 0.12515000000000004,
+      "fraction_closed": -0.09428685577307232
+    },
+    "n10|r64": {
+      "best_learned": "metric_linear10",
+      "frequency": 0.1975,
+      "nn_annot1": 0.19924999999999998,
+      "metric_linear1": 0.18475000000000003,
+      "nn_ORACLE1": 0.5735,
+      "nn_scorable1": 0.257,
+      "metric_pair1": 0.11375,
+      "nn_annot5": 0.27575,
+      "metric_linear5": 0.2655,
+      "nn_ORACLE5": 0.6024999999999999,
+      "nn_scorable5": 0.30400000000000005,
+      "metric_pair5": 0.20475000000000002,
+      "nn_annot10": 0.313,
+      "metric_linear10": 0.29925,
+      "nn_ORACLE10": 0.5927500000000001,
+      "nn_scorable10": 0.2965,
+      "metric_pair10": 0.22700000000000004,
+      "oracle_gap": 0.2894999999999999,
+      "fraction_closed": -0.04749568221070807
+    },
+    "n20|r64": {
+      "best_learned": "metric_linear10",
+      "frequency": 0.18025000000000002,
+      "nn_annot1": 0.161875,
+      "metric_linear1": 0.14675000000000002,
+      "nn_ORACLE1": 0.436125,
+      "nn_scorable1": 0.201375,
+      "metric_pair1": 0.100625,
+      "nn_annot5": 0.22,
+      "metric_linear5": 0.2095,
+      "nn_ORACLE5": 0.461875,
+      "nn_scorable5": 0.24674999999999997,
+      "metric_pair5": 0.16200000000000003,
+      "nn_annot10": 0.2445,
+      "metric_linear10": 0.23837499999999998,
+      "nn_ORACLE10": 0.45575000000000004,
+      "nn_scorable10": 0.24549999999999997,
+      "metric_pair10": 0.18725000000000003,
+      "oracle_gap": 0.21737499999999998,
+      "fraction_closed": -0.02817711328349635
+    },
+    "n50|r64": {
+      "best_learned": "metric_linear10",
+      "frequency": 0.13995000000000002,
+      "nn_annot1": 0.10905,
+      "metric_linear1": 0.09824999999999999,
+      "nn_ORACLE1": 0.281,
+      "nn_scorable1": 0.1371,
+      "metric_pair1": 0.07115,
+      "nn_annot5": 0.15280000000000002,
+      "metric_linear5": 0.14250000000000002,
+      "nn_ORACLE5": 0.29535000000000006,
+      "nn_scorable5": 0.17,
+      "metric_pair5": 0.11475000000000002,
+      "nn_annot10": 0.17020000000000002,
+      "metric_linear10": 0.16625,
+      "nn_ORACLE10": 0.2905,
+      "nn_scorable10": 0.17350000000000002,
+      "metric_pair10": 0.1384,
+      "oracle_gap": 0.12515000000000004,
+      "fraction_closed": -0.03156212544946071
+    }
+  },
+  "mean_fraction_closed": -0.058618222686746733,
+  "sweep": {
+    "name": "best learned metric - best annotation nn",
+    "verdict": "FRAGILE",
+    "n_cells": 6,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 6,
+    "n_resolved_pos": 0,
+    "n_resolved_neg": 3,
+    "sign_consistent": true,
+    "cells_needed_for_robust": 4,
+    "passing_configs": [],
+    "cells": [
+      {
+        "config": {
+          "npred": 10,
+          "rank": 32
+        },
+        "cohort": "n10|r32",
+        "n": 400,
+        "delta": -0.0255,
+        "lo": -0.041499999999999995,
+        "hi": -0.009249999999999998
+      },
+      {
+        "config": {
+          "npred": 20,
+          "rank": 32
+        },
+        "cohort": "n20|r32",
+        "n": 400,
+        "delta": -0.013500000000000002,
+        "lo": -0.025374999999999995,
+        "hi": -0.001500000000000002
+      },
+      {
+        "config": {
+          "npred": 50,
+          "rank": 32
+        },
+        "cohort": "n50|r32",
+        "n": 400,
+        "delta": -0.011800000000000001,
+        "lo": -0.019700000000000002,
+        "hi": -0.004050000000000001
+      },
+      {
+        "config": {
+          "npred": 10,
+          "rank": 64
+        },
+        "cohort": "n10|r64",
+        "n": 400,
+        "delta": -0.01375,
+        "lo": -0.02875,
+        "hi": 0.001499999999999998
+      },
+      {
+        "config": {
+          "npred": 20,
+          "rank": 64
+        },
+        "cohort": "n20|r64",
+        "n": 400,
+        "delta": -0.006124999999999999,
+        "lo": -0.01775,
+        "hi": 0.006125
+      },
+      {
+        "config": {
+          "npred": 50,
+          "rank": 64
+        },
+        "cohort": "n50|r64",
+        "n": 400,
+        "delta": -0.0039499999999999995,
+        "lo": -0.011149999999999998,
+        "hi": 0.003300000000000001
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "CAN WE LEARN THE SIMILARITY ANNOTATION CANNOT EXPRESS?",
+    "====================================================================================================",
+    "  PREDECLARED: learned > nn_annot => the descriptors had findable signal, the fix is math.",
+    "               learned ~ nn_annot => annotation cannot express it; only new MEASUREMENTS close it.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "\n  training pool 4,720; scorable 465; sealed 400",
+    "  399,120 training pairs; target response-cosine mean 0.5779 sd 0.0759",
+    "  validation: 93 held-out genes -> 143,767 pairs excluded from fitting",
+    "  pair ridge fitted on 255,353 pairs",
+    "\n  rank 32: linear metric fitted, val MSE 0.00879",
+    "    N=10: freq 0.1975 | annot 0.3130 | scorable 0.3040 | linear 0.2875 | pair 0.2270 | ORACLE 0.6025 | closed -8.8%",
+    "    N=20: freq 0.1803 | annot 0.2445 | scorable 0.2467 | linear 0.2310 | pair 0.1873 | ORACLE 0.4619 | closed -6.2%",
+    "    N=50: freq 0.1400 | annot 0.1702 | scorable 0.1735 | linear 0.1584 | pair 0.1384 | ORACLE 0.2954 | closed -9.4%",
+    "\n  rank 64: linear metric fitted, val MSE 0.00734",
+    "    N=10: freq 0.1975 | annot 0.3130 | scorable 0.3040 | linear 0.2993 | pair 0.2270 | ORACLE 0.6025 | closed -4.7%",
+    "    N=20: freq 0.1803 | annot 0.2445 | scorable 0.2467 | linear 0.2384 | pair 0.1873 | ORACLE 0.4619 | closed -2.8%",
+    "    N=50: freq 0.1400 | annot 0.1702 | scorable 0.1735 | linear 0.1663 | pair 0.1384 | ORACLE 0.2954 | closed -3.2%",
+    "\n  SWEEP best learned metric - best annotation nn   axes[npred,rank]  6 cells\n  config                       cohort         delta                 95% CI\n  npred=10 rank=32             n10|r32      -0.0255 [ -0.0415, -0.0092] RES-\n  npred=20 rank=32             n20|r32      -0.0135 [ -0.0254, -0.0015] RES-\n  npred=50 rank=32             n50|r32      -0.0118 [ -0.0197, -0.0041] RES-\n  npred=10 rank=64             n10|r64      -0.0138 [ -0.0288, +0.0015] ns\n  npred=20 rank=64             n20|r64      -0.0061 [ -0.0177, +0.0061] ns\n  npred=50 rank=64             n50|r64      -0.0039 [ -0.0111, +0.0033] ns\n  -> FRAGILE   resolved +0/-3 of 6 (>= 4 needed), sign-consistent True\n     FRAGILE means the effect lives in a corner of the grid -- the argmax of choices nobody deliberated. Do not report it as a finding.",
+    "\n  MEAN fraction of the oracle gap closed by a learned metric: -5.9%",
+    "\n  READING",
+    "  A learned metric does NOT beat annotation cosine. Re-weighting and rotating the channels, and",
+    "  learning which SHARED labels matter, both fail to find the neighbour the oracle finds.",
+    "  So the +0.2128 is not recoverable from these descriptors by any similarity function of them:",
+    "  the information is ABSENT from the annotation, not merely badly weighted. Closing it needs",
+    "  new MEASUREMENTS of the genes, not new mathematics over the ones we have. That is the honest",
+    "  end of the road for data already on disk."
+  ]
+}

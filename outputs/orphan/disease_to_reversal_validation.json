@@ -1,0 +1,92 @@
+{
+  "driver_recovery": {
+    "n_instances": 60,
+    "basins_valid": true,
+    "control_recall": 1.0,
+    "control_recall_sd": 0.0,
+    "control_precision": 0.938,
+    "control_precision_sd": 0.152,
+    "setdiff_precision": 0.214,
+    "reached_healthy_rate": 0.983,
+    "exact_driver_set_rate": 0.85,
+    "mean_barrier": 9.35,
+    "mean_true_drivers": 1.9,
+    "mean_path_len": 2.117
+  },
+  "motifs": {
+    "toggle": {
+      "attractors": [
+        [],
+        [
+          "A"
+        ],
+        [
+          "A",
+          "B"
+        ],
+        [
+          "B"
+        ]
+      ],
+      "ok": true
+    },
+    "lateral_inhibition_3": {
+      "attractors": [
+        [
+          "A"
+        ],
+        [
+          "B"
+        ],
+        [
+          "C"
+        ]
+      ],
+      "ok": true
+    },
+    "cascade": {
+      "master_on": [
+        "M",
+        "a",
+        "b",
+        "c"
+      ],
+      "master_off": [],
+      "ok": true
+    },
+    "all_ok": true
+  },
+  "single_mutation": {
+    "n": 50,
+    "exact_and_reached_rate": 0.96,
+    "one_step_cure_rate": 0.96,
+    "mean_control_precision": 0.977
+  },
+  "noise_sweep": {
+    "cross+noise=0": {
+      "control_recall": 1.0,
+      "control_precision": 1.0,
+      "reached_rate": 1.0
+    },
+    "cross+noise=8": {
+      "control_recall": 1.0,
+      "control_precision": 0.931,
+      "reached_rate": 1.0
+    },
+    "cross+noise=16": {
+      "control_recall": 0.979,
+      "control_precision": 0.857,
+      "reached_rate": 0.9
+    },
+    "cross+noise=32": {
+      "control_recall": 0.992,
+      "control_precision": 0.811,
+      "reached_rate": 0.925
+    },
+    "cross+noise=64": {
+      "control_recall": 1.0,
+      "control_precision": 0.668,
+      "reached_rate": 0.9
+    }
+  }
+}

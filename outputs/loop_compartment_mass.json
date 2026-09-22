@@ -1,0 +1,563 @@
+{
+ "test": "loop_compartment_mass",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/paxdb_hela.txt",
+    "bytes": 232026,
+    "hash": "dd78bb8089b6196e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ens_gtf.gz",
+    "bytes": 55529204,
+    "hash": "8c87436bab973c87",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 6463,
+   "selection": "filtered",
+   "fraction": 0.39188697550327434
+  },
+  "seed": 10201,
+  "controls": [
+   "compartment labels shuffled 200x, checked with null_can_move before the verdict was used",
+   "publication count given its own turn as a rival profile, scored against the same published reference by the same distance",
+   "molar ppm multiplied by sequence MW, never one abundance dataset divided by another (loop 92's rule)",
+   "the whole profile recomputed in an independent proteome (Schwanhausser NIH3T3 copies) rather than only HeLa",
+   "per-compartment abundance coverage reported and a coverage-corrected profile computed as a sensitivity",
+   "published reference values and the factor-2 tolerance fixed in the docstring before any number was computed"
+  ],
+  "note": "the `comp` annotation has never been asked to reproduce a physical quantity; organelle protein mass fractions were measured by fractionation long before genomics and are an external answer",
+  "warnings": []
+ },
+ "gates": {
+  "M1 the join is real and its coverage is declared": true,
+  "M2 the ordering is right (cytosol largest)": false,
+  "M3 the mitochondrion is within a factor of 2 of 0.15": false,
+  "M4 >= 3 of 4 referenced compartments within a factor of 2": false,
+  "M5 measured abundance beats the publication-count rival": true,
+  "M6 the label shuffle is capable, fired, and flattens the profile": true,
+  "M7 the limit is stated": true
+ },
+ "reference": {
+  "cytoplasm": 0.5,
+  "mitochondrion": 0.15,
+  "nucleus": 0.125,
+  "ER": 0.1
+ },
+ "factor": 2.0,
+ "m1": {
+  "model_genes": 16492,
+  "with_ppm": 6463,
+  "with_mw": 6463,
+  "mw_coverage": 1.0,
+  "used": 6463,
+  "per_compartment_n": {
+   "nucleus": 1958,
+   "cytoplasm": 1840,
+   "plasma membrane": 461,
+   "mitochondrion": 680,
+   "membrane": 284,
+   "endosome": 105,
+   "peroxisome": 30,
+   "ER": 422,
+   "cytoskeleton": 287,
+   "Golgi": 200,
+   "extracellular": 112,
+   "lysosome": 84
+  },
+  "thin_compartments": []
+ },
+ "profile_mass": {
+  "nucleus": 0.3315616580742623,
+  "cytoplasm": 0.29860118206899866,
+  "plasma membrane": 0.07117365833564737,
+  "mitochondrion": 0.07156092672216119,
+  "membrane": 0.03651618319102415,
+  "endosome": 0.015781554056447766,
+  "peroxisome": 0.004052640245992334,
+  "ER": 0.0573112638081845,
+  "cytoskeleton": 0.06278046596239048,
+  "Golgi": 0.02703043366704028,
+  "extracellular": 0.013329961931388084,
+  "lysosome": 0.010300071936463312
+ },
+ "profile_molar": {
+  "nucleus": 0.3008828901040402,
+  "cytoplasm": 0.29856966617558894,
+  "plasma membrane": 0.06264509321570748,
+  "mitochondrion": 0.11659101418984368,
+  "membrane": 0.03952811876450356,
+  "endosome": 0.014648334619497678,
+  "peroxisome": 0.005083189497562914,
+  "ER": 0.06975605425852686,
+  "cytoskeleton": 0.0416465879325877,
+  "Golgi": 0.026376517765942832,
+  "extracellular": 0.012575882795673777,
+  "lysosome": 0.011696650680523543
+ },
+ "headcount_fraction": {
+  "nucleus": 0.3029552839238744,
+  "cytoplasm": 0.2846975088967972,
+  "plasma membrane": 0.07132910413120842,
+  "mitochondrion": 0.10521429676620764,
+  "membrane": 0.0439424415905926,
+  "endosome": 0.016246325235958533,
+  "peroxisome": 0.004641807210273866,
+  "ER": 0.06529475475785239,
+  "cytoskeleton": 0.04440662231161999,
+  "Golgi": 0.03094538140182578,
+  "extracellular": 0.017329413585022435,
+  "lysosome": 0.012997060188766826
+ },
+ "compartment_coverage": {
+  "ER": 0.5362134688691232,
+  "Golgi": 0.45977011494252873,
+  "cytoplasm": 0.5138229544819882,
+  "cytoskeleton": 0.46365105008077545,
+  "endosome": 0.5440414507772021,
+  "extracellular": 0.07697594501718213,
+  "lysosome": 0.535031847133758,
+  "membrane": 0.19425444596443228,
+  "mitochondrion": 0.7142857142857143,
+  "nucleus": 0.4886448714749189,
+  "peroxisome": 0.4838709677419355,
+  "plasma membrane": 0.16570812365204887
+ },
+ "merged_cytosol": 0.36138164803138917,
+ "order": [
+  "nucleus",
+  "cytoplasm",
+  "mitochondrion",
+  "plasma membrane",
+  "cytoskeleton",
+  "ER",
+  "membrane",
+  "Golgi",
+  "endosome",
+  "extracellular",
+  "lysosome",
+  "peroxisome"
+ ],
+ "top_contributors": {
+  "nucleus": [
+   "SYNE1",
+   "AHNAK",
+   "SYNE2",
+   "PRKDC",
+   "AHNAK2"
+  ],
+  "cytoplasm": [
+   "RNF213",
+   "UBR4",
+   "FLNB",
+   "MKI67",
+   "APOB"
+  ],
+  "mitochondrion": [
+   "VPS13C",
+   "VPS13A",
+   "CPS1",
+   "PITRM1",
+   "IMMT"
+  ],
+  "plasma membrane": [
+   "DMD",
+   "PLXNB2",
+   "LRP1",
+   "UTRN",
+   "LRBA"
+  ],
+  "cytoskeleton": [
+   "PLEC",
+   "MACF1",
+   "DST",
+   "SPTAN1",
+   "DYNC1H1"
+  ],
+  "ER": [
+   "RTN4",
+   "SEC16A",
+   "ITPR1",
+   "ITPR3",
+   "RTN3"
+  ],
+  "membrane": [
+   "HERC1",
+   "TLN1",
+   "ABCA13",
+   "PTPRF",
+   "HECTD4"
+  ],
+  "Golgi": [
+   "BIRC6",
+   "AKAP9",
+   "GOLGB1",
+   "IGF2R",
+   "PDE4DIP"
+  ],
+  "endosome": [
+   "VPS13B",
+   "DNAJC13",
+   "MON2",
+   "EEA1",
+   "PIK3R4"
+  ],
+  "extracellular": [
+   "COL12A1",
+   "LAMA1",
+   "FBN1",
+   "LAMA5",
+   "LAMB1"
+  ],
+  "lysosome": [
+   "MTOR",
+   "TSC2",
+   "RPTOR",
+   "MAN2B1",
+   "CLCN7"
+  ],
+  "peroxisome": [
+   "ACOX1",
+   "HSD17B4",
+   "ABCD3",
+   "LONP2",
+   "AGPS"
+  ]
+ },
+ "m2": {
+  "largest": "nucleus",
+  "largest_fraction": 0.3315616580742623,
+  "runner_up": "cytoplasm"
+ },
+ "m3": {
+  "mitochondrion": 0.07156092672216119,
+  "window": [
+   0.075,
+   0.3
+  ],
+  "ratio_to_published": 0.4770728448144079
+ },
+ "m4": {
+  "within": {
+   "cytoplasm": true,
+   "mitochondrion": false,
+   "nucleus": false,
+   "ER": true
+  },
+  "n_within": 2,
+  "distance_real": 1.0054713038684615,
+  "schwanhausser_profile": {
+   "cytoskeleton": 0.13162936592665359,
+   "cytoplasm": 0.44462849988893677,
+   "extracellular": 0.022991843685373835,
+   "nucleus": 0.2035833948818393,
+   "plasma membrane": 0.03558641493564722,
+   "mitochondrion": 0.06604337761396174,
+   "ER": 0.06524053218911063,
+   "Golgi": 0.005346414589404947,
+   "membrane": 0.018336072567791423,
+   "endosome": 0.004274712364281883,
+   "lysosome": 0.0014082867893947092,
+   "peroxisome": 0.0009310845675999218
+  },
+  "schwanhausser_n": 3831,
+  "schwanhausser_within": {
+   "cytoplasm": true,
+   "mitochondrion": false,
+   "nucleus": true,
+   "ER": true
+  },
+  "schwanhausser_n_within": 3,
+  "distance_schwanhausser": 0.668163925831891,
+  "rho_hela_vs_nih3t3": 0.9160839160839163
+ },
+ "m5": {
+  "fame_profile": {
+   "nucleus": 0.3341044184566682,
+   "cytoplasm": 0.3182773614855683,
+   "plasma membrane": 0.10994720495050814,
+   "mitochondrion": 0.039495587929338924,
+   "membrane": 0.029565946825670663,
+   "endosome": 0.00832954132230093,
+   "peroxisome": 0.002135557779875533,
+   "ER": 0.035543790955470646,
+   "cytoskeleton": 0.05323767218162099,
+   "Golgi": 0.016576718269626037,
+   "extracellular": 0.03565621158953688,
+   "lysosome": 0.01712998825381766
+  },
+  "distance_fame": 1.3718860371746144,
+  "distance_real": 1.0054713038684615,
+  "rho_ppm_pubs_gene": 0.4550008251979963,
+  "n_gene": 6463,
+  "rho_mass_medpubs_comp": 0.4055944055944056,
+  "rho_mass_headcount_comp": 0.9860139860139862,
+  "rho_coverage_medpubs_comp": -0.2377622377622378,
+  "median_pubs": {
+   "ER": 74.0,
+   "Golgi": 61.0,
+   "cytoplasm": 98.0,
+   "cytoskeleton": 89.0,
+   "endosome": 71.0,
+   "extracellular": 97.5,
+   "lysosome": 72.0,
+   "membrane": 58.0,
+   "mitochondrion": 69.0,
+   "nucleus": 101.5,
+   "peroxisome": 79.0,
+   "plasma membrane": 101.0
+  }
+ },
+ "m6": {
+  "capability": {
+   "capable": true,
+   "changed": 0.803187374284388,
+   "reason": "the null changes the statistic's input"
+  },
+  "survival": {
+   "real": 0.013362008474525233,
+   "n_null": 200,
+   "null_mean": 0.0010304622174735739,
+   "null_sd": 0.00047201152483396594,
+   "z": 26.12551941690277,
+   "defined": true,
+   "fraction": 0.07711881184914361,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "real_kl": 0.013362008474525233,
+  "null_kl_mean": 0.0010304622174735739,
+  "null_kl_sd": 0.00047201152483396594,
+  "entropy_real": 1.852339687301537,
+  "entropy_null_mean": 1.9247755730032177,
+  "entropy_max": 2.4849066497880004,
+  "max_frac_real": 0.3315616580742623,
+  "max_frac_null_mean": 0.30295780845160253,
+  "mean_abs_log2_mass_over_headcount": 0.2383236744224514
+ },
+ "m7": {
+  "best_covered": [
+   "mitochondrion",
+   "endosome",
+   "ER",
+   "lysosome"
+  ],
+  "worst_covered": [
+   "Golgi",
+   "membrane",
+   "plasma membrane",
+   "extracellular"
+  ],
+  "coverage_corrected_profile": {
+   "ER": 0.04261228613062149,
+   "Golgi": 0.023439311051816868,
+   "cytoplasm": 0.23169175983608606,
+   "cytoskeleton": 0.053984098670332596,
+   "endosome": 0.011565125364941493,
+   "extracellular": 0.06904090053156875,
+   "lysosome": 0.007675261691561769,
+   "membrane": 0.07494574436214492,
+   "mitochondrion": 0.039942620994547026,
+   "nucleus": 0.2705225829509581,
+   "peroxisome": 0.0033391894181659006,
+   "plasma membrane": 0.171241118997255
+  },
+  "distance_coverage_corrected": 1.340790632820184,
+  "post_hoc": {
+   "top20_mass_share": 0.03772729725953458,
+   "top20": [
+    "PLEC",
+    "MACF1",
+    "RNF213",
+    "SYNE1",
+    "AHNAK",
+    "DST",
+    "UBR4",
+    "SPTAN1",
+    "SYNE2",
+    "DYNC1H1",
+    "FLNB",
+    "MKI67",
+    "PRKDC",
+    "AHNAK2",
+    "SPTBN1",
+    "MDN1",
+    "DMD",
+    "BIRC6",
+    "APOB",
+    "HYDIN"
+   ],
+   "profile_without_top20": {
+    "Golgi": 0.026798524376427463,
+    "nucleus": 0.3335456026832216,
+    "plasma membrane": 0.0726041220308363,
+    "ER": 0.059558235046018676,
+    "cytoplasm": 0.3001526863330977,
+    "membrane": 0.037947853126280275,
+    "mitochondrion": 0.07436657666622137,
+    "cytoskeleton": 0.04985809344955225,
+    "endosome": 0.016400292777196363,
+    "extracellular": 0.013852582426401059,
+    "lysosome": 0.010703901198828136,
+    "peroxisome": 0.004211529885915667
+   },
+   "order_without_top20": [
+    "nucleus",
+    "cytoplasm",
+    "mitochondrion"
+   ],
+   "profile_shortest_isoform": {
+    "nucleus": 0.3317196002077217,
+    "cytoplasm": 0.2994098429739494,
+    "plasma membrane": 0.07119762005130581,
+    "mitochondrion": 0.07173889848354716,
+    "membrane": 0.03666296000131082,
+    "endosome": 0.015844988018142356,
+    "peroxisome": 0.004068929834787374,
+    "ER": 0.05752887329284936,
+    "cytoskeleton": 0.061293318668038436,
+    "Golgi": 0.026912597051132036,
+    "extracellular": 0.013280898338232918,
+    "lysosome": 0.010341473078982746
+   },
+   "largest_shortest_isoform": "nucleus"
+  }
+ },
+ "seconds": 8.626744031906128,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 102 -- compartments: does the predicted protein mass per compartment match measurement?",
+  "====================================================================================================",
+  "",
+  "  model genes 16,492   compartments 12   PaxDb HeLa symbols 7,222   UniProt MWs 20,213",
+  "  reference (fixed in the docstring): cytoplasm 0.500  mitochondrion 0.150  nucleus 0.125  ER 0.100   tolerance x2",
+  "",
+  "M1 THE JOIN IS REAL, AND ITS COVERAGE IS DECLARED",
+  "     model genes with a HeLa ppm: 6,463 of 16,492 (39.2%)",
+  "     of those, carrying a UniProt MW: 6,463 (100.0%)  [gate: >= 50%]",
+  "     genes entering the mass profile: 6,463",
+  "     compartments with < 20 such genes: none",
+  "     M1 PASS -- every compartment is supported and the sequence join holds",
+  "",
+  "    THE PROFILE  (mass fraction = sum ppm x MW, normalised over covered genes)",
+  "    compartment          mass    molar   genes  headcount   cover  medpubs   published",
+  "    nucleus            0.3316   0.3009   1,958     0.3030   48.9%      102   0.125",
+  "    cytoplasm          0.2986   0.2986   1,840     0.2847   51.4%       98   0.500",
+  "    mitochondrion      0.0716   0.1166     680     0.1052   71.4%       69   0.150",
+  "    plasma membrane    0.0712   0.0626     461     0.0713   16.6%      101   --",
+  "    cytoskeleton       0.0628   0.0416     287     0.0444   46.4%       89   --",
+  "    ER                 0.0573   0.0698     422     0.0653   53.6%       74   0.100",
+  "    membrane           0.0365   0.0395     284     0.0439   19.4%       58   --",
+  "    Golgi              0.0270   0.0264     200     0.0309   46.0%       61   --",
+  "    endosome           0.0158   0.0146     105     0.0162   54.4%       71   --",
+  "    extracellular      0.0133   0.0126     112     0.0173    7.7%       98   --",
+  "    lysosome           0.0103   0.0117      84     0.0130   53.5%       72   --",
+  "    peroxisome         0.0041   0.0051      30     0.0046   48.4%       79   --",
+  "     merged cytoplasm+cytoskeleton (classical 'cytosolic fraction'): 0.3614",
+  "",
+  "M2 THE ORDERING IS RIGHT",
+  "     largest compartment by protein mass: nucleus at 0.3316",
+  "     runner-up: cytoplasm at 0.2986",
+  "     M2 FAIL -- cytosol is NOT largest (nucleus is)",
+  "     sanity, the heaviest contributors per compartment:",
+  "       nucleus         SYNE1, AHNAK, SYNE2, PRKDC, AHNAK2",
+  "       cytoplasm       RNF213, UBR4, FLNB, MKI67, APOB",
+  "       mitochondrion   VPS13C, VPS13A, CPS1, PITRM1, IMMT",
+  "       plasma membrane DMD, PLXNB2, LRP1, UTRN, LRBA",
+  "       cytoskeleton    PLEC, MACF1, DST, SPTAN1, DYNC1H1",
+  "",
+  "M3 THE MITOCHONDRION IS THE RIGHT SIZE",
+  "     mitochondrial protein mass fraction: 0.0716   published 0.150   window [0.0750, 0.3000]",
+  "     ratio observed/published: 0.48x  (log2 -1.07)",
+  "     M3 FAIL -- TOO LOW",
+  "",
+  "M4 THE WHOLE PROFILE, NOT ONE LUCKY NUMBER",
+  "     cytoplasm       observed 0.2986   published 0.500    0.60x   within",
+  "     mitochondrion   observed 0.0716   published 0.150    0.48x   OUTSIDE",
+  "     nucleus         observed 0.3316   published 0.125    2.65x   OUTSIDE",
+  "     ER              observed 0.0573   published 0.100    0.57x   within",
+  "     within a factor of 2: 2 of 4   [gate: >= 3]",
+  "     mean |log2(obs/published)| over the four: 1.005",
+  "     REPLICATE in a different proteome (Schwanhausser NIH3T3 copies, 3,831 genes):",
+  "       largest cytoplasm 0.4446   cytoplasm 0.4446   mitochondrion 0.0660   nucleus 0.2036   ER 0.0652",
+  "       mean |log2(obs/published)|: 0.668   cytosol-first: True",
+  "       by M4's own rule the replicate scores 3 of 4 within a factor of 2 (would PASS), against 2 of 4 in HeLa",
+  "       the ANNOTATION is identical in both, so the difference is the ABUNDANCE DATA",
+  "       HeLa vs NIH3T3 compartment profiles: rho +0.9161 over 12 compartments",
+  "     M4 FAIL -- the profile as a whole does NOT match measurement",
+  "",
+  "M5 THE FAME CONTROL, RUN AS A RIVAL MODEL",
+  "     gene level: ppm vs pubs  rho +0.4550  (n 6,463)",
+  "     compartment level: mass fraction vs median pubs  rho +0.4056  (n 12)",
+  "     compartment level: mass fraction vs headcount    rho +0.9860",
+  "     compartment level: HeLa coverage vs median pubs  rho -0.2378   -- does the abundance dataset prefer studied compartments?",
+  "     RIVAL PROFILE built from publication count instead of abundance:",
+  "       largest nucleus 0.3341   cytoplasm 0.3183   mitochondrion 0.0395   nucleus 0.3341   ER 0.0355",
+  "       distance to published: fame 1.372  vs  measured abundance 1.005",
+  "     M5 PASS -- measured abundance beats publication count at reproducing the published profile",
+  "",
+  "M6 THE NULL THAT COULD FIRE, AND IS CHECKED FOR THE ABILITY TO",
+  "     CAPABILITY CHECK: shuffling compartment labels changes 80.1% of entries -- capable: True",
+  "     statistic = KL(mass fractions || gene-count fractions); 0 means mass follows headcount",
+  "     mass-vs-headcount KL under a compartment-label shuffle: real +0.0134  null +0.0010 +/- 0.0005  z +26.1  survives 8%",
+  "     the distribution flattens: entropy real 1.8523 -> null 1.9248 +/- 0.0122   (max of 12 = 2.4849)",
+  "     largest single compartment: real 0.3316 -> null 0.3030 +/- 0.0061",
+  "     BUT THE MAGNITUDE IS SMALL, and the gate does not measure magnitude: mass departs",
+  "     from headcount by only 0.238 in mean |log2(mass/headcount)| across the 12 buckets,",
+  "     and entropy falls 3.8% below the shuffle. Knowing a",
+  "     compartment's gene count already tells you its protein mass to within ~1.18x.",
+  "     M6 PASS -- the null is capable, fired, and the real value stands clear of it",
+  "",
+  "M7 WHAT THIS DOES NOT GIVE",
+  "     BEST covered by the abundance data:  mitochondrion 71%, endosome 54%, ER 54%, lysosome 54%",
+  "     WORST covered by the abundance data: Golgi 46%, membrane 19%, plasma membrane 17%, extracellular 8%",
+  "     coverage-corrected sensitivity (each compartment's mass divided by its own coverage,",
+  "     i.e. unmeasured genes assumed to look like the measured ones in the same bucket):",
+  "       cytoplasm 0.2317   mitochondrion 0.0399   nucleus 0.2705   ER 0.0426",
+  "       corrected mitochondrion 0.0399 vs raw 0.0716; distance to published 1.341 vs 1.005",
+  "",
+  "     POST-HOC DIAGNOSTICS, added after M2/M3/M4 failed. They change no gate and no window.",
+  "     (i)  CONCENTRATION: the 20 heaviest contributors carry 3.8% of all protein mass",
+  "          PLEC/cyto, MACF1/cyto, RNF213/cyto, SYNE1/nucl, AHNAK/nucl, DST/cyto, UBR4/cyto, SPTAN1/cyto",
+  "          delete them and the order becomes: nucleus 0.3335 > cytoplasm 0.3002 > mitochondrion 0.0744   cytosol-first: False",
+  "     (ii) ISOFORM CHOICE: with the SHORTEST UniProt isoform instead of the longest, nucleus leads at 0.3317",
+  "          nucleus 0.3317  cytoplasm 0.2994  mitochondrion 0.0717   cytosol-first: False",
+  "          -> the nucleus/cytosol verdict is ROBUST to the isoform choice",
+  "     one bucket per gene is a lie about biology: a GO cellular-component term collapsed to",
+  "     a single label cannot represent a protein that is nuclear and cytosolic, or one that",
+  "     is made on the ER and delivered to the plasma membrane. Every dual-localised protein",
+  "     is charged entirely to one compartment here, and there is no way to know from this",
+  "     data which. PaxDb HeLa also omits ACTB and POLR2A outright.",
+  "",
+  "  PASS  M1 the join is real and its coverage is declared",
+  "  FAIL  M2 the ordering is right (cytosol largest)",
+  "  FAIL  M3 the mitochondrion is within a factor of 2 of 0.15",
+  "  FAIL  M4 >= 3 of 4 referenced compartments within a factor of 2",
+  "  PASS  M5 measured abundance beats the publication-count rival",
+  "  PASS  M6 the label shuffle is capable, fired, and flattens the profile",
+  "  PASS  M7 the limit is stated",
+  "    manifest: 5 inputs, coverage 6463/16492 (39.2%) by 'filtered', seed 10201, controls 6"
+ ]
+}

@@ -1,0 +1,152 @@
+{
+  "test": "adrn_evidence_reasoner",
+  "weights": [
+    2.093837261199951,
+    0.49009791016578674,
+    -0.5898977518081665
+  ],
+  "summary": {
+    "cohort1": {
+      "means": {
+        "combined": 0.22575000000000003,
+        "entity_only": 0.23399999999999999,
+        "experience_only": 0.1855,
+        "relationship_only": 0.01575,
+        "minus_entity": 0.057249999999999995,
+        "minus_experience": 0.21425,
+        "minus_relationship": 0.24325,
+        "random_evidence": 0.20600000000000002,
+        "wrong_query": 0.22825000000000004
+      },
+      "contrasts": {
+        "GATE combined - entity_only": {
+          "gap": -0.00825,
+          "ci": [
+            -0.015500000000000003,
+            -0.0010000000000000015
+          ]
+        },
+        "combined - random_evidence": {
+          "gap": 0.01975,
+          "ci": [
+            0.01225,
+            0.0275
+          ]
+        },
+        "combined - wrong_query": {
+          "gap": -0.002500000000000001,
+          "ci": [
+            -0.011000000000000001,
+            0.006
+          ]
+        },
+        "minus_experience - combined": {
+          "gap": -0.0115,
+          "ci": [
+            -0.018,
+            -0.005499999999999998
+          ]
+        },
+        "minus_relationship - combined": {
+          "gap": 0.0175,
+          "ci": [
+            0.010750000000000003,
+            0.02475
+          ]
+        }
+      }
+    },
+    "_holdout": {
+      "means": {
+        "combined": 0.27299999999999996,
+        "entity_only": 0.28850000000000003,
+        "experience_only": 0.2375,
+        "relationship_only": 0.0215,
+        "minus_entity": 0.08525,
+        "minus_experience": 0.25875,
+        "minus_relationship": 0.2965,
+        "random_evidence": 0.252,
+        "wrong_query": 0.2775
+      },
+      "contrasts": {
+        "GATE combined - entity_only": {
+          "gap": -0.015499999999999996,
+          "ci": [
+            -0.023,
+            -0.008249999999999997
+          ]
+        },
+        "combined - random_evidence": {
+          "gap": 0.021,
+          "ci": [
+            0.013250000000000001,
+            0.02925
+          ]
+        },
+        "combined - wrong_query": {
+          "gap": -0.004499999999999999,
+          "ci": [
+            -0.01275,
+            0.003750000000000001
+          ]
+        },
+        "minus_experience - combined": {
+          "gap": -0.01425,
+          "ci": [
+            -0.020999999999999998,
+            -0.008
+          ]
+        },
+        "minus_relationship - combined": {
+          "gap": 0.0235,
+          "ci": [
+            0.01625,
+            0.03125
+          ]
+        }
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "ADRN EVIDENCE REASONER v1: does combining evidence stores beat the best single store?",
+    "====================================================================================================",
+    "  PREDECLARED: earns the headline only if `combined` beats `entity_only` on BOTH cohorts.",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  entity store: 696 channels -> 60 programmes",
+    "  experience store: 4,720 training profiles, retrieval by annotation cosine",
+    "  relationship store: 15,721 genes with neighbours",
+    "  combination weights (entity, experience, relationship): +2.094 +0.490 -0.590   fitted on 400 training knockouts",
+    "\n### cohort 1  (200 knockouts)",
+    "  combined             0.2258",
+    "  entity_only          0.2340",
+    "  experience_only      0.1855",
+    "  relationship_only    0.0158",
+    "  minus_entity         0.0572",
+    "  minus_experience     0.2142",
+    "  minus_relationship   0.2432",
+    "  random_evidence      0.2060",
+    "  wrong_query          0.2283",
+    "  GATE combined - entity_only     -0.0083 [-0.0155, -0.0010]  RESOLVED",
+    "  combined - random_evidence      +0.0198 [+0.0123, +0.0275]  RESOLVED",
+    "  combined - wrong_query          -0.0025 [-0.0110, +0.0060]  within noise",
+    "  minus_experience - combined     -0.0115 [-0.0180, -0.0055]  RESOLVED",
+    "  minus_relationship - combined   +0.0175 [+0.0108, +0.0248]  RESOLVED",
+    "\n### cohort 2 (holdout)  (200 knockouts)",
+    "  combined             0.2730",
+    "  entity_only          0.2885",
+    "  experience_only      0.2375",
+    "  relationship_only    0.0215",
+    "  minus_entity         0.0853",
+    "  minus_experience     0.2587",
+    "  minus_relationship   0.2965",
+    "  random_evidence      0.2520",
+    "  wrong_query          0.2775",
+    "  GATE combined - entity_only     -0.0155 [-0.0230, -0.0082]  RESOLVED",
+    "  combined - random_evidence      +0.0210 [+0.0133, +0.0293]  RESOLVED",
+    "  combined - wrong_query          -0.0045 [-0.0127, +0.0038]  within noise",
+    "  minus_experience - combined     -0.0143 [-0.0210, -0.0080]  RESOLVED",
+    "  minus_relationship - combined   +0.0235 [+0.0163, +0.0312]  RESOLVED"
+  ]
+}

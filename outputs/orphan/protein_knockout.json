@@ -1,0 +1,316 @@
+{
+ "validation": {
+  "structural_coherence": {
+   "proteins_checked": 1322,
+   "frac_with_a_codependent_matemate": 0.459,
+   "chance": 0.0004
+  },
+  "measured_machine_disruption": {
+   "proteins_measured": 705,
+   "median_mate_vs_random_fold": 1.07,
+   "frac_with_transcriptional_feedback_gt1p5x": 0.183
+  }
+ },
+ "verdict": "Knocking out a PROTEIN is a different operation from knocking out its GENE, and the software now does both. The gene knockout (`knockout`/`strace`) is the MEASURED transcriptional blast radius. The protein knockout (`degrade`) is the STRUCTURAL disassembly: a protein is a shared component wired into several machines, so removing it (a PROTAC-style degradation) pulls it from EVERY complex at once \u2014 SMARCA4 collapses all four SWI/SNF variants, PSMA1 all four proteasome assemblies \u2014 leaving the co-subunits expressed but their assembly incomplete. The STRONG validation is structural: 46% of complex proteins have a complex-mate among their top co-dependencies (vs 0.04% chance, ~1000x) \u2014 machine parts are co-essential, so removing one cripples the assembly's function, and the fitness data proves it. The measured TRANSCRIPTIONAL signal is deliberately weak (median 1.07x mate movement): a protein knockout acts post-transcriptionally, so mRNA-seq is mostly blind to it \u2014 it shows only where a complex is transcriptionally feedback-wired (proteasome 3.1x, spliceosome). That blindness is the POINT: the structural `degrade` sees exactly the machine-level damage the measured `knockout` cannot. HONEST LIMITS: one-protein-per-gene (the cell image has no isoform/PTM/domain-resolved network, so no isoform-specific knockout); it names the machines that BREAK from curated complex membership, not the far-field cascade \u2014 that stays the measured `knockout`, and cascades still don't compose.",
+ "example_SMARCA4": {
+  "status": "ok",
+  "protein": "SMARCA4",
+  "n_machines": 4,
+  "n_orphaned_subunits": 16,
+  "n_interactions_severed": 92,
+  "machines_disrupted": [
+   {
+    "complex": "Embryonic stem cell-specific SWI/SNF ATP-dependent chromatin remodeling complex",
+    "loses": "SMARCA4",
+    "orphaned_co_subunits": [
+     "ACTB",
+     "ACTL6A",
+     "ARID1A",
+     "DPF2",
+     "PHF10",
+     "SMARCB1",
+     "SMARCC1",
+     "SMARCD1",
+     "SMARCE1"
+    ]
+   },
+   {
+    "complex": "Polybromo-associated SWI/SNF ATP-dependent chromatin remodeling complex, ACTL6B variant",
+    "loses": "SMARCA4",
+    "orphaned_co_subunits": [
+     "ACTB",
+     "ACTL6B",
+     "ARID2",
+     "BRD7",
+     "PBRM1",
+     "PHF10",
+     "SMARCB1",
+     "SMARCC1",
+     "SMARCC2",
+     "SMARCD1",
+     "SMARCD2",
+     "SMARCE1"
+    ]
+   },
+   {
+    "complex": "Polybromo-associated SWI/SNF ATP-dependent chromatin remodeling complex, ACTL6A variant",
+    "loses": "SMARCA4",
+    "orphaned_co_subunits": [
+     "ACTB",
+     "ACTL6A",
+     "ARID2",
+     "BRD7",
+     "PBRM1",
+     "PHF10",
+     "SMARCB1",
+     "SMARCC1",
+     "SMARCC2",
+     "SMARCD1",
+     "SMARCD2",
+     "SMARCE1"
+    ]
+   },
+   {
+    "complex": "SWI/SNF ATP-dependent chromatin remodeling complex, ACTL6A-ARID1A-SMARCA4 variant",
+    "loses": "SMARCA4",
+    "orphaned_co_subunits": [
+     "ACTB",
+     "ACTL6A",
+     "ARID1A",
+     "SMARCB1",
+     "SMARCC1",
+     "SMARCC2",
+     "SMARCD1",
+     "SMARCD2",
+     "SMARCD3",
+     "SMARCE1"
+    ]
+   }
+  ],
+  "interactions_severed": [
+   "ELOB",
+   "ELOC",
+   "KAT2A",
+   "KAT2B",
+   "H2AC21",
+   "H2AC6",
+   "CTNNB1",
+   "H2BC17",
+   "H2BC21",
+   "H3-4",
+   "H3-5",
+   "VHL"
+  ],
+  "measured_confirmation": {
+   "measured": true,
+   "mates_measured": 15,
+   "mate_mean_abs_response": 0.072,
+   "all_gene_mean_abs_response": 0.082,
+   "fold": 0.88,
+   "top_moved_mates": [
+    [
+     "SMARCB1",
+     -0.16
+    ],
+    [
+     "PHF10",
+     0.12
+    ],
+    [
+     "DPF2",
+     -0.12
+    ],
+    [
+     "ARID1A",
+     -0.12
+    ],
+    [
+     "SMARCD2",
+     0.09
+    ],
+    [
+     "ACTL6A",
+     -0.09
+    ],
+    [
+     "BRD7",
+     -0.08
+    ],
+    [
+     "SMARCC1",
+     0.07
+    ],
+    [
+     "ARID2",
+     -0.06
+    ],
+    [
+     "SMARCD1",
+     0.05
+    ],
+    [
+     "SMARCD3",
+     0.04
+    ],
+    [
+     "ACTB",
+     -0.03
+    ]
+   ]
+  },
+  "note": "degrading the protein removes it from ALL these machines at once (a shared component pulled from every assembly) \u2014 distinct from `knockout` which deletes the gene and measures the transcriptional response."
+ },
+ "example_PSMA1": {
+  "status": "ok",
+  "protein": "PSMA1",
+  "n_machines": 4,
+  "n_orphaned_subunits": 22,
+  "n_interactions_severed": 119,
+  "machines_disrupted": [
+   {
+    "complex": "26S proteasome complex",
+    "loses": "PSMA1",
+    "orphaned_co_subunits": [
+     "ADRM1",
+     "PSMA2",
+     "PSMA3",
+     "PSMA4",
+     "PSMA5",
+     "PSMA6",
+     "PSMA7",
+     "PSMB1",
+     "PSMB2",
+     "PSMB3",
+     "PSMB4",
+     "PSMB5"
+    ]
+   },
+   {
+    "complex": "20S proteasome complex",
+    "loses": "PSMA1",
+    "orphaned_co_subunits": [
+     "PSMA2",
+     "PSMA3",
+     "PSMA4",
+     "PSMA5",
+     "PSMA6",
+     "PSMA7",
+     "PSMB1",
+     "PSMB2",
+     "PSMB3",
+     "PSMB4",
+     "PSMB5",
+     "PSMB6"
+    ]
+   },
+   {
+    "complex": "PA200-20S single-capped proteasome",
+    "loses": "PSMA1",
+    "orphaned_co_subunits": [
+     "PSMA2",
+     "PSMA3",
+     "PSMA4",
+     "PSMA5",
+     "PSMA6",
+     "PSMA7",
+     "PSMB1",
+     "PSMB2",
+     "PSMB3",
+     "PSMB4",
+     "PSMB5",
+     "PSMB6"
+    ]
+   },
+   {
+    "complex": "PA28-alphabeta double-capped 20S proteasome complex",
+    "loses": "PSMA1",
+    "orphaned_co_subunits": [
+     "PSMA2",
+     "PSMA3",
+     "PSMA4",
+     "PSMA5",
+     "PSMA6",
+     "PSMA7",
+     "PSMB1",
+     "PSMB2",
+     "PSMB3",
+     "PSMB4",
+     "PSMB5",
+     "PSMB6"
+    ]
+   }
+  ],
+  "interactions_severed": [
+   "ROPN1",
+   "PICK1",
+   "KAZN",
+   "C22orf39",
+   "VCP",
+   "EMSY",
+   "ZMYND19",
+   "VMAC",
+   "PRIMPOL",
+   "PSMC5",
+   "ABI2",
+   "CABP5"
+  ],
+  "measured_confirmation": {
+   "measured": true,
+   "mates_measured": 22,
+   "mate_mean_abs_response": 0.332,
+   "all_gene_mean_abs_response": 0.107,
+   "fold": 3.12,
+   "top_moved_mates": [
+    [
+     "PSMB7",
+     0.73
+    ],
+    [
+     "PSMB3",
+     0.65
+    ],
+    [
+     "PSMB4",
+     0.58
+    ],
+    [
+     "PSMB2",
+     0.52
+    ],
+    [
+     "PSMC4",
+     0.48
+    ],
+    [
+     "ADRM1",
+     0.42
+    ],
+    [
+     "PSMC3",
+     0.39
+    ],
+    [
+     "PSMC5",
+     0.39
+    ],
+    [
+     "PSMC6",
+     0.36
+    ],
+    [
+     "PSMA7",
+     0.34
+    ],
+    [
+     "PSMA5",
+     0.32
+    ],
+    [
+     "PSMC1",
+     0.3
+    ]
+   ]
+  },
+  "note": "degrading the protein removes it from ALL these machines at once (a shared component pulled from every assembly) \u2014 distinct from `knockout` which deletes the gene and measures the transcriptional response."
+ }
+}

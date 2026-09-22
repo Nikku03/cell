@@ -1,0 +1,104 @@
+=================================================================================================
+HOW MANY RATE DIRECTIONS DOES MEASURED PHYSIOLOGY PIN?
+=================================================================================================
+  answer gradient g = d log10 Y / d log10 k, ||g|| = 2.9063
+           mu -0.1324
+        a_off +0.0078
+        b_off -0.0484
+      d_death +0.9434
+       k_kill +1.9685
+         a_on -1.6757
+         b_on +0.1435
+      kd_kill +0.9126
+  chemistry error sigma = 0.7330 orders per rate (1.0 kcal/mol)
+
+=================================================================================================
+R1  THE JACOBIAN IS A JACOBIAN
+=================================================================================================
+  worst entry change on halving the step: 1.50e-03   PASS (bar 1%)
+
+=================================================================================================
+R2  HOW MANY INDEPENDENT CONSTRAINTS ARE THERE REALLY?
+=================================================================================================
+  J is 4 observables x 8 rates. Singular values:
+    s1 = 5.112677e+00   (ratio to s1: 1.000e+00)
+    s2 = 1.439793e+00   (ratio to s1: 2.816e-01)
+    s3 = 5.817324e-02   (ratio to s1: 1.138e-02)
+    s4 = 1.636000e-15   (ratio to s1: 3.200e-16)
+  numerical rank at rcond 1e-8: 3 of 4 nominal measurements
+  the dependency, as a combination of the observables (left null vector):
+    doubling -0.1487  logkill +0.9551  plateau +0.0000  lag +0.2563
+  READING: the nominal count of measurements OVERSTATES the real one.
+
+=================================================================================================
+R3  THE DELIVERABLE  --  what perfect physiology cannot reach
+=================================================================================================
+  ||g||       = 2.9063   (unconstrained)
+  ||g_row||   = 2.7477   (pinned by perfect physiology)
+  ||g_null||  = 0.9467   (free no matter how good the instruments)
+  fraction of the answer's sensitivity that survives perfect physiology: 0.3258
+  irreducible answer uncertainty at 1.0 kcal/mol: sigma*||g_null|| = 0.6939 orders
+  against the unconstrained     : sigma*||g||      = 2.1302 orders
+  the free direction, by rate:
+           mu -0.0131
+        a_off -0.0378
+        b_off -0.0463
+      d_death +0.9434
+       k_kill -0.0120
+         a_on -0.0124
+         b_on -0.0462
+      kd_kill +0.0132
+  READING: partial -- reported as measured
+
+=================================================================================================
+R4  THE EXACT MANIFOLD SAMPLE  (constrain.py's unanswerable C7, answered)
+=================================================================================================
+  solving for ['kd_kill', 'mu', 'a_on'] to match the observables exactly,
+  with ['a_off', 'b_off', 'd_death', 'k_kill', 'b_on'] drawn from chemistry at 1.0 kcal/mol.
+  227 exact-manifold points (173 solver failures, reported not hidden)
+  measured sd of log10(Y/Y_true) on the manifold : 0.5984 orders
+  linear prediction sigma*||g_null||             : 0.6939 orders
+  relative disagreement 0.1377   PASS (bar 30%)
+  p05 -0.4625, p95 +1.5344, full range 2.3335 orders
+  within x2 0.4890, within x10 0.8767
+  These are cells with EXACTLY the true physiology -- no tolerance at all.
+
+=================================================================================================
+R5  THE LAG DEFECT, REPAIRED
+=================================================================================================
+  outgrowth redefined from the post-drug composition rather than the total count.
+  singular values: 9.5695e+00, 1.6097e+00, 4.8204e-01, 4.3343e-02
+  rank 4 (was 3 with the original definition)
+  fraction surviving perfect physiology: 0.3256  (was 0.3258)
+  irreducible uncertainty: 0.6936 orders  (was 0.6939)
+  READING: the repair recovers a real constraint; BOTH numbers are reported
+
+=================================================================================================
+R6  WHAT SHOULD BE MEASURED NEXT?
+=================================================================================================
+  baseline ||g_null|| with the repaired aggregate set: 0.9462
+            candidate additional measurement  new ||g_null||   reduction
+               direct measurement of d_death          0.0730      0.8732
+               direct measurement of kd_kill          0.9442      0.0021
+                  direct measurement of b_on          0.9451      0.0012
+                direct measurement of k_kill          0.9452      0.0010
+                 log-kill at half the window          0.9452      0.0010
+              log-kill at 2x the drug window          0.9452      0.0010
+                  direct measurement of a_on          0.9453      0.0010
+                 direct measurement of a_off          0.9455      0.0007
+                 direct measurement of b_off          0.9455      0.0007
+                    direct measurement of mu          0.9456      0.0006
+      dormant fraction after the drug window          0.9458      0.0004
+
+=================================================================================================
+R7  DOMAIN  --  the rarer question
+=================================================================================================
+  g0 = 8: ||g|| = 3.8709, ||g_null|| = 1.2631
+  fraction surviving perfect physiology: 0.3263  (against 0.3256 at g0 = 6)
+  irreducible uncertainty 0.9259 orders  (against 0.6936)
+
+=================================================================================================
+R3 and R4 together answer the question rejection sampling could not: not 'how good are
+our instruments' but 'what is left when the instruments are perfect'. R6 says what to
+measure next, with aggregate assays and direct rate measurements in the same currency.
+=================================================================================================

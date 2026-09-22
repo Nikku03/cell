@@ -1,0 +1,112 @@
+{
+ "test": "co-change modules",
+ "modules": {
+  "n": 10,
+  "sizes": [
+   122,
+   34,
+   20,
+   163,
+   157,
+   10,
+   37,
+   9,
+   17,
+   31
+  ],
+  "threshold": 0.5
+ },
+ "reproduce": {
+  "median": 0.26375721329113266,
+  "mean": 0.262411132035651
+ },
+ "ceiling": {
+  "module_23": 0.6784072839550952,
+  "module_234": -1.65494055224522,
+  "gene_ref": -0.54028
+ },
+ "random_control": {
+  "median": 0.28884028657357985,
+  "p95": 0.45532677138300015,
+  "max": 0.6507628082612955,
+  "real": 0.6784072839550952
+ },
+ "forward": {
+  "model": -1.0490443172692614,
+  "persistence": -0.011887006470961081,
+  "margin": -1.0371573107983003,
+  "lam": 0.004060322665703414
+ },
+ "decomposition": {
+  "var_total": 0.06353011982274227,
+  "var_module": 0.02625149260550355,
+  "fraction": 0.4132133337501772
+ },
+ "gates": {
+  "N1": true,
+  "N2": false,
+  "N3": false,
+  "N4": false,
+  "N5": false,
+  "N6": true
+ },
+ "void": [
+  "N3",
+  "N4",
+  "N5"
+ ],
+ "seconds": 30.16223955154419,
+ "log": [
+  "========================================================================================================",
+  "LOOP 219 -- GENES THAT MOVE TOGETHER: IS THE CHANGE MEASURABLE AT MODULE LEVEL?",
+  "========================================================================================================",
+  "     600 genes, 8 intervals, replicates 1-4",
+  "N1 ARE THE MODULES DISCOVERED WITHOUT TOUCHING THE SCORER?",
+  "     discovery input: replicates 2+3, training intervals only, 5 x 600",
+  "     cut at correlation distance 0.50: 10 clusters, 10 with >=5 genes, largest 163",
+  "     modules kept: 10  sizes [163, 157, 122, 37, 34, 31, 20, 17, 10, 9]",
+  "     genes in a kept module: 600 of 600",
+  "     N1 PASS -- 10 modules, largest 163, discovered on replicates 2+3 training intervals only",
+  "N2 DO THE MODULES REPRODUCE ON A HELD-OUT REPLICATE?",
+  "     module trajectory correlation, replicates 2+3 against replicate 4:",
+  "       median +0.2638   mean +0.2624   fraction above 0.3 40.0%",
+  "     N2 FAIL -- median +0.264; the modules are noise structure",
+  "N3 IS THE MODULE-LEVEL CHANGE MEASURABLE?",
+  "     module level:  rep2 predicts rep3   R2 +0.67841",
+  "                    rep2+3 predicts rep4 R2 -1.65494",
+  "     gene level (loop 216, replicates 1-3): -0.54028",
+  "     N3 VOID -- N2 did not pass, so there is nothing here to test",
+  "N4 IS IT THE CO-CHANGE, OR JUST THE AVERAGING?",
+  "     RANDOM modules, same sizes, 200 draws:",
+  "       median +0.28884   95th pct +0.45533   max +0.65076",
+  "     real modules  +0.67841",
+  "     N4 VOID -- N3 did not pass, so there is nothing here to test",
+  "N5 CAN THE MODEL PREDICT MODULE CHANGE?",
+  "     module-level forward: model -1.04904   persistence -0.01189   margin -1.03716",
+  "     N5 VOID -- N4 did not pass, so there is nothing here to test",
+  "N6 DOES MODULE MEMBERSHIP HELP AN INDIVIDUAL GENE?",
+  "     genes in a module 600",
+  "     variance of the module term 0.026251 of total 0.063530 = 41.3%",
+  "     N6 PASS -- 41% of the change variance is shared within modules",
+  "N7 WHAT THIS CANNOT SHOW",
+  "     A module mean is not a gene. Predicting that a group of genes rises is a weaker",
+  "     claim than predicting which ones, and N6 measures how much weaker.",
+  "     Modules are discovered from CO-CHANGE, which is a correlation and not a mechanism.",
+  "     Loop 187 measured that this project's regulatory network does not explain",
+  "     co-expression, so a module here need not correspond to a regulon.",
+  "     Replicate 4 is the scorer, and loop 218 measured that replicate 4 agrees with 2 and",
+  "     3 no better than any other pair -- the only real agreement in this dataset is",
+  "     between 2 and 3. Discovering on the one agreeing pair and scoring on an outlier is",
+  "     the strictest available test and also the harshest.",
+  "     Eight intervals is a very short series to cluster trajectories on.",
+  "========================================================================================================",
+  "  N1  PASS",
+  "  N2  FAIL",
+  "  N3  VOID",
+  "  N4  VOID",
+  "  N5  VOID",
+  "  N6  PASS",
+  "  2/3   [30s]   (3 VOID: N3, N4, N5)",
+  "========================================================================================================"
+ ]
+}

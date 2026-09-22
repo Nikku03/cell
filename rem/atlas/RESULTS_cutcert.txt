@@ -1,0 +1,78 @@
+====================================================================================================
+C1  TOPOLOGY SIGN PATTERN -- separator speed swept with its MEAN held fixed
+====================================================================================================
+  joint tail region A >= 4 and B >= 4
+  topology     CMI slow   CMI fast  better by CMI   spec says  tail err slow  tail err fast
+  CASCADE        0.0016     0.0117           slow        slow          3.44%         -4.55%  PASS
+  COLLIDER       0.0001     0.0223           slow        slow          9.23%        142.49%  PASS
+  FANOUT         0.0324     0.0036           fast        fast        -13.85%         -8.03%  PASS
+  POOL           0.0352     0.0022           fast        fast        -15.66%         -6.45%  PASS
+  C1 PASS  -- the direction must DEPEND on topology; a single law would be the wrong answer
+
+====================================================================================================
+C-VACUITY and C-CEILING -- is the region real, and can the gates move?
+====================================================================================================
+  exact joint tail probability over all 28 conditions: 3.61e-04 to 1.92e-01   non-vacuous: True
+  joint tail error observed range: -18.49% to +158.42%
+  CMI observed range: 0.00001 to 0.03521 bits
+  C-VACUITY PASS;  C-CEILING: both gate bars (5% and 10%) lie inside the observed error range, so both can fire
+
+====================================================================================================
+C2 / T17  DOES A CONDITION EXIST WHERE CMI ACCEPTS AND THE TAIL REJECTS?
+====================================================================================================
+  looking for CMI < 0.01 bits AND |joint tail error| > 10%
+    COLLIDER  sep speed   1.0   CMI 0.00371 bits   tail error  +66.94%   exact P 3.61e-04
+    COLLIDER  sep speed   0.5   CMI 0.00091 bits   tail error  +33.37%   exact P 3.61e-04
+    POOL      sep speed   2.0   CMI 0.00897 bits   tail error  -12.10%   exact P 1.40e-01
+  3 such condition(s) found.   C2/T17 PASS
+  WORST: COLLIDER at sep speed 1.0, 0.00371 bits conceals 66.9% joint tail error.
+  The spec's example is 0.0022 bits concealing 24.6%. Same phenomenon: CMI is
+  D(P||Q), a mass-weighted average, and the tail carries almost none of the mass.
+
+====================================================================================================
+C3  DOES CMI PREDICT TAIL ERROR? (predeclared bar: |Spearman| < 0.7)
+====================================================================================================
+  pooled over all 28 conditions: Spearman(CMI, |tail err|) = +0.579
+    within CASCADE   rho = +0.679
+    within COLLIDER  rho = +1.000
+    within FANOUT    rho = +0.821
+    within POOL      rho = +0.750
+  WORST within-topology |rho| = 1.000 (pooled would give 0.579 and PASS)
+  C3 FAIL under the declared worst-case rule
+
+  AND THE FAILURE IS A REFINEMENT OF THE SPEC, NOT A CONTRADICTION OF IT. Within a FIXED
+  topology CMI ranks conditions almost perfectly -- rho = 1.000 in COLLIDER, 0.821 in FANOUT,
+  0.750 in POOL, 0.679 in CASCADE. Pooled across topologies it collapses to 0.579, because a
+  given number of bits means different amounts of tail error in different graph shapes. That
+  is exactly the use section 4.3 permits ("a cheap pre-filter to rank candidates") and exactly
+  the use it forbids ("it may never be the certificate"): CMI orders cuts WITHIN one topology
+  and cannot compare them ACROSS topologies, so no absolute threshold in bits is portable.
+  The C2 result is the sharp form of the same statement -- 0.00371 bits conceals 66.9% here
+  while 0.0324 bits costs only 13.9% in FANOUT, an ordering inversion of nearly 9x in bits.
+
+====================================================================================================
+C4  DOES THE CERTIFICATE ITSELF DISCRIMINATE?
+====================================================================================================
+  CASCADE best corner : sep speed 1.0   tail error   +0.87%   (spec's best corner: 1.24%)
+  CASCADE worst corner: sep speed 10.0  tail error   -5.87%   (spec's worst: -22.45%)
+  C4 FAIL  (bars: best < 5%, worst > 10%)
+  DIAGNOSIS: the best-corner half passes (0.87% against 5%); the worst-corner half fails
+  because THIS cascade parameterisation is milder than the spec's -- it reaches only 5.87%
+  against the spec's 22.45%. The machinery is not the limit: COLLIDER at speed 10.0 reaches 158.4%.
+  So this is a testbed that does not span the spec's dynamic range on ONE topology, not a
+  failure of the certificate, and the gate is left failed rather than rebarred to fit.
+
+====================================================================================================
+C-CONTROL  a cut that is VALID by construction -- and each claim tested by breaking it
+====================================================================================================
+  valid cut, correct factorisation : CMI -2.072e-16 bits, tail error -3.062e-14%   exact P 1.133e-02
+  the certificate ACCEPTS a valid cut (does not over-reject): True
+  now each thing the control claims to catch, tested by actually breaking it:
+    (a) P(a,c)*P(b,c): forgetting to divide by P(c)      tail error     -14.32%   control FIRES
+    (b) conditioning on the wrong marginal               tail error    +508.78%   control FIRES
+    (c) tail region on the wrong variable (ta=tb=0)      tail error      +0.00%   SILENT -- claim is FALSE, and it must be: a full-support
+        region is normalisation, which is 0 by construction for any Q that sums
+        to 1. Claim (c) is WITHDRAWN rather than left in the docstring: no
+        certificate can detect a degenerate region, and pretending otherwise is
+        exactly the false 'what it catches' entry this build order keeps finding.
+  C-CONTROL PASS (on claims (a) and (b); claim (c) withdrawn as false)

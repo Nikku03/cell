@@ -1,0 +1,123 @@
+=================================================================================================
+THE CIRCUIT ISONIAZID ATTACKS: KatG, AND WHY ITS MEAN CANNOT PREDICT RELAPSE
+=================================================================================================
+  INH is a prodrug activated by the bacterium's own KatG, so the killing rate on a cell is
+  proportional to that cell's KatG level. Wakamoto et al. (Science 339:91-95, 2013,
+  doi:10.1126/science.1229858) measured that KatG is expressed in stochastic pulses
+  'negatively correlated with cell survival', and heritable between sibling cells.
+
+  CALIBRATION, STATED IN FULL. Mean KatG fixed at 12 (an arbitrary copy-number
+  scale, absorbed entirely into kappa). kappa = 0.020804 per KatG per hour, fixed so a
+  MEAN-FIELD model reproduces the ~5% INH tolerance at 12 h that
+  Srinivas et al. report (doi:10.1128/mSystems.01127-20). No other quantity is fitted.
+
+=================================================================================================
+KG1  THE TWO LIMITS -- validating the instrument before any claim
+=================================================================================================
+  mean-field asymptotic killing rate kappa*E[n] = 0.249644 /h
+        s (fluctuation speed)   exact |lambda_max|   ratio to mean-field
+                         0.01             0.018517              0.074172
+                          0.1             0.111041              0.444796
+                            1             0.221941              0.889029
+                           10             0.246567              0.987672
+                          100             0.249333              0.998753
+                         1000             0.249613              0.999875
+  (a) FAST limit |ratio - 1| at s = 1000: 0.0001   PASS (bar 1%)
+  (b) SLOW limit at s = 1e-4, t = 12 h: exact 1.67602805e-01 vs frozen 1.67643845e-01, rel 2.448e-04   PASS (bar 1%)
+
+=================================================================================================
+KG2  BIPHASIC KILLING FROM EXPRESSION HETEROGENEITY ALONE -- no persister state exists
+     anywhere in this generator
+=================================================================================================
+        at the declared setting s = 1: early 0.101301, late 0.096388 log10/h
+        late is 1.05x shallower   FAIL (bar 5x)
+     KG2 AS WRITTEN NEVER FIXED THE FLUCTUATION SPEED, which is this module's central knob.
+     That is a defect in the gate, not a result: a bar stated without its operating point
+     is not a test. The declared-setting verdict stands above; the sweep the gate should
+     have specified is below, and it is labelled as the repair it is.
+        s (fluctuation speed)   early     late      late shallower by
+                        0.001   0.096658  0.015089               6.41x
+                         0.01   0.096718  0.018737               5.16x
+                          0.1   0.097293  0.048813               1.99x
+                            1   0.101301  0.096388               1.05x
+                           10   0.107149  0.107083               1.00x
+     biphasic emerges as the fluctuation slows; best separation 6.4x >= 5x
+     Wakamoto et al. report KatG pulsing CORRELATED BETWEEN SIBLING CELLS -- heritable,
+     therefore slow -- which places the real system at the low-s end of this table.
+     The generator contains production, decay and killing. It contains no dormant state,
+     no switching, and no second compartment. The separation is attributable to the spread
+     of KatG across cells and to nothing else -- which is what Wakamoto et al. concluded
+     from watching the cells divide under drug rather than sit dormant.
+
+=================================================================================================
+KG4  THE DECISIVE TEST: hold the MEAN KatG exactly fixed, change only its spread
+=================================================================================================
+        burst b   E[n] (held)   Fano    mean-field rate   exact |lambda|   ratio
+              1     12.000000    1.00          0.249644         0.244557   0.979620
+              2     12.000000    2.00          0.249644         0.239672   0.960055
+              4     12.000000    4.00          0.249644         0.230466   0.923178
+              8     12.000000    8.00          0.249644         0.214024   0.857317
+             16     12.000000   16.00          0.249644         0.187300   0.750267
+             32     12.000000   32.00          0.249644         0.149872   0.600342
+     mean-field rate relative span across the sweep: 2.891e-15   PASS (bar 1e-12 -- it depends on the mean alone)
+     exact asymptotic rate spans 0.149872 to 0.244557 = 1.63x
+     READING IT: the mean of KatG is held EXACTLY constant down the whole table, so every
+     bulk assay of KatG returns the same answer for every row. The true killing rate
+     changes by the factor above. A measurement of the mean therefore carries no
+     information about survival -- and that is a property of the measurement, not of the
+     model.
+
+=================================================================================================
+KG3  WHAT THE MEAN-FIELD COSTS OVER THE ACTUAL 8-WEEK COURSE
+=================================================================================================
+     mean-field, calibrated to 5% at 12 h, extrapolated to 8 weeks:
+        log10 S = -145.7   (i.e. 1.926e-146; below the
+        floor of double precision, so it is reported as a logarithm and not floored)
+        burst b   exact log10 S at 8 weeks   gap vs mean-field (orders)
+              1                     -142.7                          3.0
+              4                     -134.5                         11.2
+             16                     -109.3                         36.4
+             32                      -87.5                         58.2
+     NON-VACUITY, AND IT IS THE FINDING RATHER THAN A CAVEAT: both numbers are far below
+     1e-12, so neither is a probability anyone should quote. What is quotable is the GAP.
+     A mean-field model calibrated on a 12 h tolerance measurement and run to 8 weeks is
+     wrong by the number in the last column, and it is wrong in the direction of declaring
+     sterilisation certain.
+
+=================================================================================================
+KG5  A FALSIFIABLE PREDICTION ON DATA WAKAMOTO ET AL. ALREADY COLLECTED
+=================================================================================================
+     Under frozen heterogeneity the survivors are enriched in low-KatG cells by an exactly
+     computable amount. For a gamma-shaped KatG law the survivor mean falls as
+     E[n] / (1 + kappa*b*t).
+        t (h)   exact survivor mean KatG   closed form E[n]/(1+kappa*b*t)
+            0                  12.000000                       12.000000
+            1                  10.656028                       10.668353
+            3                   8.655899                        8.730660
+            6                   6.676249                        6.861326
+           12                   4.444185                        4.804101
+     THE PREDICTION: the mean KatG of the surviving population must FALL during exposure,
+     by the amount above, with no change in the shape of its distribution. Wakamoto et al.
+     imaged KatG in single cells through INH exposure, so the trajectory needed to confirm
+     or refute this is already in hand.
+
+=================================================================================================
+KG-CONTROL  remove the heterogeneity and everything above must vanish
+=================================================================================================
+     burst size 1 and fast fluctuation (s = 400):
+        early slope 0.108414, late slope 0.108414, |late/early - 1| = 0.0000   PASS (bar 5%)
+        exact rate 0.249631 vs mean-field 0.249644, |ratio - 1| = 0.0001   PASS (bar 1%)
+     Killing is single-exponential and mean-field is exact once the spread is removed, so
+     every gap above is attributable to the spread rather than to the solver.
+
+=================================================================================================
+WHAT IS NOT CLAIMED
+=================================================================================================
+  * The copy-number scale is arbitrary and absorbed into kappa. Only kappa*E[n] is
+    calibrated, and it is calibrated to ONE published number.
+  * M. smegmatis (Wakamoto, Srinivas) is not M. tuberculosis, and a macaque granuloma is
+    not a microfluidic chamber. The circuit is the same; the rates are not measured here.
+  * Killing is taken as linear in KatG. That is the mechanism of prodrug activation, not a
+    fitted functional form, but it is an assumption and it is load-bearing.
+  * Rifampin was given alongside isoniazid in the macaque study. This module speaks only
+    to the INH arm; rifampin does not act through a self-supplied activator.

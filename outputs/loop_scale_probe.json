@@ -1,0 +1,216 @@
+{
+ "test": "can the per-line landmark scale s_c be predicted from cell annotation?",
+ "arms": {
+  "base": 0.45148580810979116,
+  "oracle": 0.4761734535287964,
+  "const": 0.45158305149787814,
+  "ridge": 0.45071712119763835,
+  "perm": 0.44974771968444954
+ },
+ "per_fold": {
+  "base": [
+   0.447792586921923,
+   0.4758683935382256,
+   0.3749570491461872,
+   0.4728715384489811,
+   0.4828317543693294,
+   0.5166662361008565,
+   0.433154973767469,
+   0.47578377451940945,
+   0.3834459661757389
+  ],
+  "oracle": [
+   0.46899458045568715,
+   0.49347107885027414,
+   0.43007556063878205,
+   0.4862741931798878,
+   0.49968903548145577,
+   0.5296652621030435,
+   0.46151575877522844,
+   0.4931536171763112,
+   0.42272199509849795
+  ],
+  "const": [
+   0.44792928160645085,
+   0.47592460540894893,
+   0.375188886859888,
+   0.47293343917590935,
+   0.4829462586709592,
+   0.5167324917888482,
+   0.4332572714188777,
+   0.47584403278957743,
+   0.38349119576144347
+  ],
+  "ridge": [
+   0.4500594033358787,
+   0.4769296247137153,
+   0.3737549979289304,
+   0.47141743273079406,
+   0.48168175229668053,
+   0.5167133617476897,
+   0.43334609659967316,
+   0.4752257140100334,
+   0.37732570741534943
+  ],
+  "perm": [
+   0.4476723562741613,
+   0.470572764043202,
+   0.3740681737920829,
+   0.4714038342592879,
+   0.48199798934610827,
+   0.5155986804131021,
+   0.4346130947747659,
+   0.47547997894730953,
+   0.376322605310026
+  ]
+ },
+ "lambda": [
+  0.1,
+  0.1,
+  0.1,
+  0.1,
+  0.1,
+  0.1,
+  0.1,
+  0.1,
+  0.1
+ ],
+ "M1": {
+  "oracle_gain": 0.024687645419005255,
+  "reference": 0.0247
+ },
+ "M2": {
+  "split_half": 0.951846775293943,
+  "per_fold": [
+   0.9565378940156396,
+   0.9604794347915895,
+   0.9347900143043198,
+   0.9520313096336306,
+   0.9576795638094473,
+   0.9595905343946333,
+   0.9576580571475625,
+   0.9556061860119833,
+   0.93224798353668
+  ]
+ },
+ "M3": {
+  "delta_vs_baseline": 9.724338808697608e-05
+ },
+ "M4": {
+  "delta_vs_constant": -0.0008659303002397922
+ },
+ "M6": {
+  "fraction_recovered": 0.0039389494800551265,
+  "best_out_of_sample": 9.724338808697608e-05
+ },
+ "M7": {
+  "ridge_r": 0.05490021506918616,
+  "const_r": 0.161694827577623,
+  "reliability": 0.951846775293943,
+  "ridge_per_fold": [
+   0.24190516324756361,
+   0.22329998548699054,
+   0.019935525041866336,
+   0.0858923182827359,
+   -0.04321072587226246,
+   0.038708779870705236,
+   0.022637159488354455,
+   -0.12827731084530497,
+   0.03321104092202679
+  ],
+  "const_per_fold": [
+   0.2926057143533344,
+   0.09385276113918287,
+   0.22829962452228444,
+   0.10239403940899464,
+   0.24356694976136137,
+   0.19274869374227477,
+   0.11993217386985319,
+   0.016486769225531633,
+   0.16536672217578974
+  ]
+ },
+ "gates": {
+  "M1": true,
+  "M2": true,
+  "M3": false,
+  "M4": false,
+  "M5": false,
+  "M6": false
+ },
+ "void": [
+  "M5"
+ ],
+ "seconds": 72.24294710159302,
+ "log": [
+  "========================================================================================================",
+  "LOOP 261 -- CAN THE PER-LINE SCALE VECTOR s_c BE PREDICTED FROM ANNOTATION?",
+  "========================================================================================================",
+  "     Loop 259's branches collapsed: for a FIXED line, B1, B2 and B4 are all s_c * xg,",
+  "     and their oracles matched to four decimals (0.4762 both). One 978-vector per line",
+  "     is the whole target. Oracle s_c is worth +0.0247; every out-of-sample attempt so",
+  "     far has taken 0.0000 of it (B1 +0.0001, B4 -0.0003, B3 -0.0152, loop 258 -0.0001).",
+  "     DECLARED FIRST: if the s_c share a common component, a CONSTANT predictor using no",
+  "     annotation transfers and buys the headroom. M4 is scored against that, not the",
+  "     baseline, because the shared part is not something annotation earned.",
+  "     33,197 (gene, line) pairs, 3,801 genes, 978 landmarks, 9 cell lines",
+  "     annotation z_c: 101 dims per line (50 expression PCs + 50 dependency PCs + mutation burden)",
+  "     lambda chosen per fold: 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1",
+  "",
+  "     baseline                           0.4515",
+  "     + ORACLE s_c (cheating)            0.4762   +0.0247",
+  "     + constant s (no annotation)       0.4516   +0.0001",
+  "     + ridge from z_c                   0.4507   -0.0008",
+  "     + ridge, line labels shuffled      0.4497   -0.0017",
+  "M1 DOES THE ORACLE REPRODUCE +0.0247?",
+  "     oracle s_c fitted on the held-out line's own answers: +0.0247 against the +0.0247 already measured",
+  "     M1 PASS -- reproduces to 0.0000; there is +0.0247 of headroom and the target is correctly extracted",
+  "M2 IS s_c ITSELF RELIABLE, OR IS IT NOISE?",
+  "     split-half over GENES within each line, correlation of the two s_c estimates:",
+  "     0.957, 0.960, 0.935, 0.952, 0.958, 0.960, 0.958, 0.956, 0.932",
+  "     mean 0.9518",
+  "     M2 PASS -- s_c reproduces at 0.952 from disjoint halves of its own line, so it is a real quantity and worth trying to predict",
+  "M3 DOES A CONSTANT, ANNOTATION-FREE SCALE ALREADY TRANSFER?",
+  "     mean of the 8 training lines' s_c, applied to the held-out line: +0.0001",
+  "     this uses NO annotation and no line-specific information at all",
+  "     M3 FAIL -- a shared scale is worth +0.0001; there is no transferable common component, so the whole +0.0247 is line-specific",
+  "M4 LOAD-BEARING -- DOES ANNOTATION PREDICT THE LINE-SPECIFIC PART?",
+  "     ridge from z_c 0.4507 vs constant predictor 0.4516   -0.0009",
+  "     scored against the CONSTANT, not the baseline: the shared component is not",
+  "     something the annotation earned, and crediting it there would be double-counting",
+  "     M4 FAIL -- annotation is worth -0.0009 beyond a constant scale; z_c does not predict which line gets which scaling",
+  "M5 PERMUTED CONTROL",
+  "     M5 VOID -- M4 did not pass, so there is nothing here to test",
+  "M6 HOW MUCH OF THE HEADROOM IS RECOVERED?",
+  "     best out-of-sample arm +0.0001 of the oracle's +0.0247 = 0.4%",
+  "     M6 FAIL -- only 0.4% of the +0.0247 headroom is recovered; the scale exists and remains unpredictable",
+  "M7 HOW WELL IS s_c PREDICTED AS A VECTOR?",
+  "     leave-one-line-out correlation between predicted and true s_c:",
+  "       ridge from z_c      +0.0549",
+  "       constant predictor  +0.1617",
+  "     split-half reliability of s_c itself was 0.9518, which is the ceiling both",
+  "     of these live under. Reported, not gated.",
+  "M8 WHAT THIS CANNOT SHOW",
+  "     Nine cell lines. The ridge fits 101 annotation dims from EIGHT training lines, so",
+  "     it is underdetermined by construction and lambda is doing most of the work; the",
+  "     inner leave-one-line-out picks it honestly but cannot manufacture degrees of",
+  "     freedom. A FAIL here does not prove annotation is uninformative in general -- it",
+  "     proves it is not learnable from eight examples in this form.",
+  "     s_c is a DIAGONAL scaling. It is the exact object loop 259's branches spanned, but",
+  "     it cannot express a rotation, and a genuinely off-diagonal interaction would be",
+  "     invisible to every number here.",
+  "     s_c* for the held-out line is fitted on that line's own residual, so the oracle",
+  "     is an upper bound that no honest model can reach, not a target to aim at.",
+  "     978 landmarks and shRNA, not a transcriptome and not a clean knockout, and every",
+  "     number lives under loop 254's construct ceiling.",
+  "========================================================================================================",
+  "  M1  PASS",
+  "  M2  PASS",
+  "  M3  FAIL",
+  "  M4  FAIL",
+  "  M5  VOID",
+  "  M6  FAIL",
+  "  2/5   [72s]   (1 VOID: M5)",
+  "========================================================================================================"
+ ]
+}

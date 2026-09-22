@@ -1,0 +1,239 @@
+<style>
+:root { --bg:#f6f7f9; --panel:#fff; --ink:#1a2230; --muted:#66707e; --line:#d9dee6;
+  --band0:#eef4f3; --band1:#eaf0f6; --band2:#f0eef7; --band3:#f3edf0; --edge:#c2c9d4; --inter:#5b6472; --cut:#d1495b; --up:#3a9d5d; --down:#3d7fd1; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0e1219; --panel:#151b25; --ink:#e6eaf1; --muted:#8b95a5; --line:#26303d;
+  --band0:#111a1a; --band1:#101722; --band2:#15131f; --band3:#1a1218; --edge:#2c3644; --inter:#8892a3; --cut:#e06c82; --up:#4bb06e; --down:#5a97e0; } }
+:root[data-theme="light"] { --bg:#f6f7f9; --panel:#fff; --ink:#1a2230; --muted:#66707e; --line:#d9dee6; --band0:#eef4f3; --band1:#eaf0f6; --band2:#f0eef7; --band3:#f3edf0; --edge:#c2c9d4; --inter:#5b6472; --cut:#d1495b; --up:#3a9d5d; --down:#3d7fd1; }
+:root[data-theme="dark"] { --bg:#0e1219; --panel:#151b25; --ink:#e6eaf1; --muted:#8b95a5; --line:#26303d; --band0:#111a1a; --band1:#101722; --band2:#15131f; --band3:#1a1218; --edge:#2c3644; --inter:#8892a3; --cut:#e06c82; --up:#4bb06e; --down:#5a97e0; }
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 20px 48px} h1{font-size:22px;margin:0 0 4px} .sub{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:920px;line-height:1.5}
+.legend{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin:0 0 12px;font-size:12.5px} .lg{display:inline-flex;align-items:center;gap:6px}
+.lg .d{width:13px;height:13px;border-radius:50%;display:inline-block} .lg .up{background:var(--up)} .lg .down{background:var(--down)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px;overflow-x:auto}
+svg{display:block;width:100%;height:auto;min-width:940px}
+.band0{fill:var(--band0)} .band1{fill:var(--band1)} .band2{fill:var(--band2)} .band3{fill:var(--band3)}
+.bandlab{fill:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.colhdr{font-size:13px;font-weight:700;text-anchor:middle} .colrule{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+.edge{fill:none} .edge.intra{stroke:var(--edge);stroke-width:1;opacity:.5} .edge.inter{stroke:var(--inter);stroke-width:1.8;opacity:.75}
+.cut{stroke:var(--cut);stroke-width:1.8;opacity:.85;stroke-dasharray:4 3}
+.node circle{stroke:var(--panel);stroke-width:2} .node.shared circle{stroke:#caa43a;stroke-width:2.5}
+.rem circle{fill:none;stroke:var(--cut);stroke-width:2.5;opacity:.5} .rem line{stroke:var(--cut);stroke-width:2.5} .remlab{fill:var(--cut);font-weight:700;text-decoration:line-through}
+.mvdot{stroke:var(--panel);stroke-width:1.5;opacity:.9} .mvdot.up{fill:var(--up)} .mvdot.down{fill:var(--down)}
+.mvarr{font-size:8px;fill:#fff;text-anchor:middle;font-weight:700}
+.glab{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;fill:var(--ink);text-anchor:middle}
+.foot{color:var(--muted);font-size:12px;line-height:1.55;margin-top:16px;max-width:980px} .foot b{color:var(--ink);font-weight:600} .stats{font-family:ui-monospace,monospace;color:var(--ink)}
+</style>
+<div class="wrap">
+  <h1>Remove CTNNB1 &mdash; structural cut vs the REAL measured effect</h1>
+  <p class="sub">The graph with <b style="color:var(--cut)">CTNNB1 removed</b> (red &times;, edges cut), overlaid with
+  what <b>actually moved</b> when CTNNB1 was knocked out in real Perturb&#8209;seq: <span style="color:var(--up)">&#9650; up</span> /
+  <span style="color:var(--down)">&#9660; down</span>, sized by effect. Compare the <b>structural</b> cut (local) with the
+  <b>measured</b> movers (elsewhere).</p>
+  <div class="legend"><span class="lg"><span class="d up"></span>measured UP on knockout</span><span class="lg"><span class="d down"></span>measured DOWN</span></div>
+  <div class="card"><svg viewBox="0 0 1200 860" role="img" aria-label="Five-pathway graph with a removal and its measured knockout effect overlaid"><rect x="30" y="150" width="1140" height="152" class="band band0"/>
+<text x="24" y="166" class="bandlab">extracellular</text>
+<rect x="30" y="302" width="1140" height="152" class="band band1"/>
+<text x="24" y="318" class="bandlab">membrane</text>
+<rect x="30" y="455" width="1140" height="152" class="band band2"/>
+<text x="24" y="471" class="bandlab">cytoplasm</text>
+<rect x="30" y="608" width="1140" height="152" class="band band3"/>
+<text x="24" y="624" class="bandlab">nucleus</text>
+<text x="176" y="110" class="colhdr" fill="#2ca6a4">PI3K/AKT</text>
+<line x1="176" y1="120" x2="176" y2="768" class="colrule"/>
+<text x="388" y="110" class="colhdr" fill="#7c6cd6">EGFR receptor</text>
+<line x1="388" y1="120" x2="388" y2="768" class="colrule"/>
+<text x="600" y="110" class="colhdr" fill="#e08a2b">MAPK activation</text>
+<line x1="600" y1="120" x2="600" y2="768" class="colrule"/>
+<text x="812" y="110" class="colhdr" fill="#d1495b">MAPK nuclear targets</text>
+<line x1="812" y1="120" x2="812" y2="768" class="colrule"/>
+<text x="1024" y="110" class="colhdr" fill="#4c9f70">WNT</text>
+<line x1="1024" y1="120" x2="1024" y2="768" class="colrule"/>
+<line x1="1024.0" y1="531.2" x2="1024.0" y2="683.8" class="edge intra"/>
+<line x1="1024.0" y1="531.2" x2="918.0" y2="531.2" class="edge intra"/>
+<line x1="1024.0" y1="531.2" x2="1024.0" y2="226.2" class="edge intra"/>
+<line x1="812.0" y1="683.8" x2="812.0" y2="577.2" class="edge intra"/>
+<line x1="812.0" y1="683.8" x2="706.0" y2="378.8" class="edge intra"/>
+<line x1="918.0" y1="531.2" x2="1024.0" y2="226.2" class="edge intra"/>
+<line x1="388.0" y1="378.8" x2="176.0" y2="531.2" class="edge inter"/>
+<line x1="388.0" y1="378.8" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="388.0" y1="378.8" x2="282.0" y2="531.2" class="edge intra"/>
+<line x1="388.0" y1="378.8" x2="1024.0" y2="332.8" class="cut"/>
+<line x1="388.0" y1="378.8" x2="388.0" y2="226.2" class="edge intra"/>
+<line x1="388.0" y1="378.8" x2="282.0" y2="485.2" class="edge intra"/>
+<line x1="388.0" y1="378.8" x2="282.0" y2="577.2" class="edge intra"/>
+<line x1="388.0" y1="378.8" x2="600.0" y2="286.8" class="edge inter"/>
+<line x1="388.0" y1="378.8" x2="176.0" y2="180.2" class="edge inter"/>
+<line x1="388.0" y1="378.8" x2="176.0" y2="332.8" class="edge inter"/>
+<line x1="1024.0" y1="683.8" x2="918.0" y2="531.2" class="edge intra"/>
+<line x1="1024.0" y1="683.8" x2="1024.0" y2="226.2" class="edge intra"/>
+<line x1="1024.0" y1="683.8" x2="600.0" y2="286.8" class="edge inter"/>
+<line x1="494.0" y1="378.8" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="494.0" y1="378.8" x2="282.0" y2="531.2" class="edge intra"/>
+<line x1="494.0" y1="378.8" x2="706.0" y2="378.8" class="edge intra"/>
+<line x1="494.0" y1="378.8" x2="494.0" y2="470.8" class="edge intra"/>
+<line x1="494.0" y1="378.8" x2="706.0" y2="332.8" class="edge intra"/>
+<line x1="494.0" y1="378.8" x2="494.0" y2="332.8" class="edge intra"/>
+<line x1="1024.0" y1="378.8" x2="1024.0" y2="531.2" class="edge intra"/>
+<line x1="1024.0" y1="378.8" x2="1024.0" y2="286.8" class="edge intra"/>
+<line x1="1024.0" y1="378.8" x2="1024.0" y2="332.8" class="cut"/>
+<line x1="1024.0" y1="378.8" x2="1024.0" y2="424.8" class="edge intra"/>
+<line x1="1024.0" y1="378.8" x2="918.0" y2="485.2" class="edge intra"/>
+<line x1="600.0" y1="378.8" x2="706.0" y2="378.8" class="edge intra"/>
+<line x1="600.0" y1="378.8" x2="494.0" y2="378.8" class="edge intra"/>
+<line x1="600.0" y1="378.8" x2="494.0" y2="470.8" class="edge intra"/>
+<line x1="600.0" y1="378.8" x2="600.0" y2="424.8" class="edge intra"/>
+<line x1="600.0" y1="378.8" x2="706.0" y2="332.8" class="edge intra"/>
+<line x1="600.0" y1="378.8" x2="494.0" y2="332.8" class="edge intra"/>
+<line x1="600.0" y1="378.8" x2="600.0" y2="286.8" class="edge intra"/>
+<line x1="600.0" y1="332.8" x2="1024.0" y2="531.2" class="edge inter"/>
+<line x1="600.0" y1="332.8" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="600.0" y1="332.8" x2="1024.0" y2="683.8" class="edge inter"/>
+<line x1="600.0" y1="332.8" x2="918.0" y2="531.2" class="edge inter"/>
+<line x1="600.0" y1="332.8" x2="706.0" y2="378.8" class="edge intra"/>
+<line x1="600.0" y1="332.8" x2="1024.0" y2="378.8" class="edge inter"/>
+<line x1="600.0" y1="332.8" x2="600.0" y2="424.8" class="edge intra"/>
+<line x1="600.0" y1="332.8" x2="706.0" y2="332.8" class="edge intra"/>
+<line x1="600.0" y1="332.8" x2="600.0" y2="378.8" class="edge intra"/>
+<line x1="600.0" y1="332.8" x2="812.0" y2="577.2" class="edge inter"/>
+<line x1="600.0" y1="332.8" x2="918.0" y2="485.2" class="edge inter"/>
+<line x1="600.0" y1="332.8" x2="918.0" y2="577.2" class="edge inter"/>
+<line x1="600.0" y1="332.8" x2="918.0" y2="378.8" class="edge inter"/>
+<line x1="176.0" y1="332.8" x2="494.0" y2="286.8" class="edge inter"/>
+<line x1="176.0" y1="332.8" x2="282.0" y2="485.2" class="edge intra"/>
+<line x1="176.0" y1="332.8" x2="706.0" y2="378.8" class="edge inter"/>
+<line x1="176.0" y1="332.8" x2="282.0" y2="577.2" class="edge intra"/>
+<line x1="388.0" y1="332.8" x2="282.0" y2="577.2" class="edge intra"/>
+<line x1="388.0" y1="332.8" x2="282.0" y2="531.2" class="edge intra"/>
+<line x1="388.0" y1="332.8" x2="388.0" y2="226.2" class="edge intra"/>
+<line x1="388.0" y1="226.2" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="388.0" y1="226.2" x2="282.0" y2="485.2" class="edge intra"/>
+<line x1="388.0" y1="226.2" x2="282.0" y2="531.2" class="edge intra"/>
+<line x1="388.0" y1="226.2" x2="282.0" y2="577.2" class="edge intra"/>
+<line x1="1024.0" y1="332.8" x2="494.0" y2="286.8" class="cut"/>
+<line x1="1024.0" y1="332.8" x2="282.0" y2="485.2" class="cut"/>
+<line x1="1024.0" y1="332.8" x2="388.0" y2="226.2" class="cut"/>
+<line x1="1024.0" y1="332.8" x2="176.0" y2="424.8" class="cut"/>
+<line x1="1024.0" y1="332.8" x2="1024.0" y2="424.8" class="cut"/>
+<line x1="1024.0" y1="332.8" x2="1024.0" y2="286.8" class="cut"/>
+<line x1="600.0" y1="424.8" x2="706.0" y2="378.8" class="edge intra"/>
+<line x1="600.0" y1="424.8" x2="706.0" y2="332.8" class="edge intra"/>
+<line x1="600.0" y1="424.8" x2="600.0" y2="286.8" class="edge intra"/>
+<line x1="1024.0" y1="424.8" x2="1024.0" y2="286.8" class="edge intra"/>
+<line x1="1024.0" y1="424.8" x2="1024.0" y2="226.2" class="edge intra"/>
+<line x1="1024.0" y1="286.8" x2="1024.0" y2="226.2" class="edge intra"/>
+<line x1="176.0" y1="531.2" x2="282.0" y2="485.2" class="edge intra"/>
+<line x1="176.0" y1="531.2" x2="282.0" y2="531.2" class="edge intra"/>
+<line x1="282.0" y1="531.2" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="282.0" y1="531.2" x2="282.0" y2="485.2" class="edge intra"/>
+<line x1="282.0" y1="485.2" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="706.0" y1="378.8" x2="812.0" y2="531.2" class="edge intra"/>
+<line x1="706.0" y1="378.8" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="706.0" y1="378.8" x2="812.0" y2="485.2" class="edge intra"/>
+<line x1="706.0" y1="378.8" x2="706.0" y2="332.8" class="edge intra"/>
+<line x1="706.0" y1="378.8" x2="918.0" y2="485.2" class="edge intra"/>
+<line x1="812.0" y1="485.2" x2="706.0" y2="332.8" class="edge intra"/>
+<line x1="706.0" y1="332.8" x2="812.0" y2="531.2" class="edge intra"/>
+<line x1="706.0" y1="332.8" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="706.0" y1="332.8" x2="918.0" y2="485.2" class="edge intra"/>
+<line x1="494.0" y1="424.8" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="176.0" y1="424.8" x2="282.0" y2="531.2" class="edge intra"/>
+<line x1="176.0" y1="424.8" x2="176.0" y2="226.2" class="edge intra"/>
+<line x1="176.0" y1="424.8" x2="176.0" y2="378.8" class="edge intra"/>
+<line x1="176.0" y1="424.8" x2="282.0" y2="577.2" class="edge intra"/>
+<line x1="176.0" y1="424.8" x2="176.0" y2="180.2" class="edge intra"/>
+<line x1="176.0" y1="424.8" x2="176.0" y2="332.8" class="edge intra"/>
+<line x1="176.0" y1="424.8" x2="176.0" y2="272.2" class="edge intra"/>
+<line x1="176.0" y1="424.8" x2="176.0" y2="168.0" class="edge intra"/>
+<line x1="176.0" y1="180.2" x2="812.0" y2="531.2" class="edge inter"/>
+<line x1="176.0" y1="180.2" x2="282.0" y2="531.2" class="edge intra"/>
+<line x1="176.0" y1="180.2" x2="176.0" y2="378.8" class="edge intra"/>
+<line x1="176.0" y1="180.2" x2="282.0" y2="577.2" class="edge intra"/>
+<line x1="176.0" y1="180.2" x2="176.0" y2="332.8" class="edge intra"/>
+<line x1="176.0" y1="180.2" x2="176.0" y2="272.2" class="edge intra"/>
+<line x1="176.0" y1="272.2" x2="176.0" y2="226.2" class="edge intra"/>
+<line x1="176.0" y1="272.2" x2="282.0" y2="577.2" class="edge intra"/>
+<line x1="176.0" y1="168.0" x2="176.0" y2="226.2" class="edge intra"/>
+<line x1="176.0" y1="168.0" x2="176.0" y2="378.8" class="edge intra"/>
+<line x1="176.0" y1="168.0" x2="282.0" y2="577.2" class="edge intra"/>
+<line x1="176.0" y1="168.0" x2="176.0" y2="332.8" class="edge intra"/>
+<line x1="494.0" y1="286.8" x2="600.0" y2="286.8" class="edge intra"/>
+<line x1="494.0" y1="470.8" x2="706.0" y2="378.8" class="edge intra"/>
+<line x1="494.0" y1="470.8" x2="600.0" y2="424.8" class="edge intra"/>
+<line x1="494.0" y1="470.8" x2="706.0" y2="332.8" class="edge intra"/>
+<line x1="494.0" y1="470.8" x2="494.0" y2="332.8" class="edge intra"/>
+<line x1="494.0" y1="470.8" x2="600.0" y2="286.8" class="edge intra"/>
+<line x1="812.0" y1="378.8" x2="812.0" y2="577.2" class="edge intra"/>
+<line x1="812.0" y1="378.8" x2="706.0" y2="378.8" class="edge intra"/>
+<line x1="812.0" y1="378.8" x2="812.0" y2="683.8" class="edge intra"/>
+<line x1="282.0" y1="577.2" x2="176.0" y2="531.2" class="edge intra"/>
+<line x1="282.0" y1="577.2" x2="494.0" y2="286.8" class="edge intra"/>
+<line x1="282.0" y1="577.2" x2="282.0" y2="531.2" class="edge intra"/>
+<line x1="282.0" y1="577.2" x2="282.0" y2="485.2" class="edge intra"/>
+<line x1="282.0" y1="577.2" x2="494.0" y2="378.8" class="edge intra"/>
+<line x1="918.0" y1="485.2" x2="1024.0" y2="531.2" class="edge intra"/>
+<line x1="918.0" y1="485.2" x2="1024.0" y2="683.8" class="edge intra"/>
+<line x1="918.0" y1="485.2" x2="918.0" y2="531.2" class="edge intra"/>
+<line x1="918.0" y1="485.2" x2="918.0" y2="577.2" class="edge intra"/>
+<line x1="918.0" y1="485.2" x2="918.0" y2="378.8" class="edge intra"/>
+<line x1="918.0" y1="577.2" x2="1024.0" y2="531.2" class="edge intra"/>
+<line x1="918.0" y1="577.2" x2="1024.0" y2="683.8" class="edge intra"/>
+<line x1="918.0" y1="577.2" x2="918.0" y2="531.2" class="edge intra"/>
+<line x1="918.0" y1="577.2" x2="918.0" y2="378.8" class="edge intra"/>
+<line x1="918.0" y1="378.8" x2="1024.0" y2="531.2" class="edge intra"/>
+<line x1="918.0" y1="378.8" x2="1024.0" y2="683.8" class="edge intra"/>
+<line x1="918.0" y1="378.8" x2="918.0" y2="531.2" class="edge intra"/>
+<g class="node"><title>RPS6KA2</title><circle cx="812.0" cy="531.2" r="10" fill="#d1495b"/><text x="812.0" y="552.2" class="glab">RPS6KA2</text></g>
+<g class="node"><title>PPP2R5A</title><circle cx="1024.0" cy="531.2" r="10" fill="#4c9f70"/><text x="1024.0" y="552.2" class="glab">PPP2R5A</text></g>
+<g class="node"><title>JUN</title><circle cx="812.0" cy="683.8" r="10" fill="#d1495b"/><text x="812.0" y="704.8" class="glab">JUN</text></g>
+<g class="node shared"><title>PPP2R5D</title><circle cx="918.0" cy="531.2" r="13" fill="#caa43a"/><text x="918.0" y="555.2" class="glab">PPP2R5D</text></g>
+<g class="mv"><title>PPP2R5D moved +0.51 when CTNNB1 knocked out (MEASURED)</title><circle cx="934.0" cy="516.2" r="10.0" class="mvdot up"/><text x="934.0" y="519.2" class="mvarr">▲</text></g>
+<g class="node"><title>CBL</title><circle cx="388.0" cy="378.8" r="10" fill="#7c6cd6"/><text x="388.0" y="399.8" class="glab">CBL</text></g>
+<g class="node"><title>PPP2R5C</title><circle cx="1024.0" cy="683.8" r="10" fill="#4c9f70"/><text x="1024.0" y="704.8" class="glab">PPP2R5C</text></g>
+<g class="node"><title>KL</title><circle cx="176.0" cy="226.2" r="10" fill="#2ca6a4"/><text x="176.0" y="247.2" class="glab">KL</text></g>
+<g class="node"><title>KLB</title><circle cx="176.0" cy="378.8" r="10" fill="#2ca6a4"/><text x="176.0" y="399.8" class="glab">KLB</text></g>
+<g class="node shared"><title>HRAS</title><circle cx="494.0" cy="378.8" r="13" fill="#caa43a"/><text x="494.0" y="402.8" class="glab">HRAS</text></g>
+<g class="node"><title>AXIN1</title><circle cx="1024.0" cy="378.8" r="10" fill="#4c9f70"/><text x="1024.0" y="399.8" class="glab">AXIN1</text></g>
+<g class="node"><title>WNT3A</title><circle cx="1024.0" cy="226.2" r="10" fill="#4c9f70"/><text x="1024.0" y="247.2" class="glab">WNT3A</text></g>
+<g class="node"><title>BRAF</title><circle cx="600.0" cy="378.8" r="10" fill="#e08a2b"/><text x="600.0" y="399.8" class="glab">BRAF</text></g>
+<g class="node"><title>ARRB2</title><circle cx="600.0" cy="332.8" r="10" fill="#e08a2b"/><text x="600.0" y="353.8" class="glab">ARRB2</text></g>
+<g class="node"><title>FRS2</title><circle cx="176.0" cy="332.8" r="10" fill="#2ca6a4"/><text x="176.0" y="353.8" class="glab">FRS2</text></g>
+<g class="node"><title>EGF</title><circle cx="388.0" cy="332.8" r="10" fill="#7c6cd6"/><text x="388.0" y="353.8" class="glab">EGF</text></g>
+<g class="node"><title>EGFR</title><circle cx="388.0" cy="226.2" r="10" fill="#7c6cd6"/><text x="388.0" y="247.2" class="glab">EGFR</text></g>
+<g class="rem"><title>CTNNB1 — REMOVED</title><circle cx="1024.0" cy="332.8" r="10"/><line x1="1014.0" y1="322.8" x2="1034.0" y2="342.8"/><line x1="1014.0" y1="342.8" x2="1034.0" y2="322.8"/><text x="1024.0" y="353.8" class="glab remlab">CTNNB1</text></g>
+<g class="node"><title>MAP2K1</title><circle cx="600.0" cy="424.8" r="10" fill="#e08a2b"/><text x="600.0" y="445.8" class="glab">MAP2K1</text></g>
+<g class="node"><title>LRP5</title><circle cx="1024.0" cy="424.8" r="10" fill="#4c9f70"/><text x="1024.0" y="445.8" class="glab">LRP5</text></g>
+<g class="node"><title>LRP6</title><circle cx="1024.0" cy="286.8" r="10" fill="#4c9f70"/><text x="1024.0" y="307.8" class="glab">LRP6</text></g>
+<g class="node"><title>PIK3CB</title><circle cx="176.0" cy="531.2" r="10" fill="#2ca6a4"/><text x="176.0" y="552.2" class="glab">PIK3CB</text></g>
+<g class="node shared"><title>PIK3R1</title><circle cx="282.0" cy="531.2" r="13" fill="#caa43a"/><text x="282.0" y="555.2" class="glab">PIK3R1</text></g>
+<g class="node shared"><title>PTPN11</title><circle cx="282.0" cy="485.2" r="13" fill="#caa43a"/><text x="282.0" y="509.2" class="glab">PTPN11</text></g>
+<g class="node shared"><title>MAPK1</title><circle cx="706.0" cy="378.8" r="13" fill="#caa43a"/><text x="706.0" y="402.8" class="glab">MAPK1</text></g>
+<g class="mv"><title>MAPK1 moved +0.52 when CTNNB1 knocked out (MEASURED)</title><circle cx="722.0" cy="363.8" r="10.1" class="mvdot up"/><text x="722.0" y="366.8" class="mvarr">▲</text></g>
+<g class="node"><title>MAPK14</title><circle cx="812.0" cy="485.2" r="10" fill="#d1495b"/><text x="812.0" y="506.2" class="glab">MAPK14</text></g>
+<g class="mv"><title>MAPK14 moved +0.53 when CTNNB1 knocked out (MEASURED)</title><circle cx="825.0" cy="473.2" r="10.2" class="mvdot up"/><text x="825.0" y="476.2" class="mvarr">▲</text></g>
+<g class="node shared"><title>MAPK3</title><circle cx="706.0" cy="332.8" r="13" fill="#caa43a"/><text x="706.0" y="356.8" class="glab">MAPK3</text></g>
+<g class="node shared"><title>NRAS</title><circle cx="494.0" cy="332.8" r="13" fill="#caa43a"/><text x="494.0" y="356.8" class="glab">NRAS</text></g>
+<g class="node"><title>YWHAB</title><circle cx="600.0" cy="286.8" r="10" fill="#e08a2b"/><text x="600.0" y="307.8" class="glab">YWHAB</text></g>
+<g class="node shared"><title>CSK</title><circle cx="494.0" cy="424.8" r="13" fill="#caa43a"/><text x="494.0" y="448.8" class="glab">CSK</text></g>
+<g class="node"><title>MAPK9</title><circle cx="812.0" cy="577.2" r="10" fill="#d1495b"/><text x="812.0" y="598.2" class="glab">MAPK9</text></g>
+<g class="node"><title>FGFR1</title><circle cx="176.0" cy="424.8" r="10" fill="#2ca6a4"/><text x="176.0" y="445.8" class="glab">FGFR1</text></g>
+<g class="node"><title>FGFR2</title><circle cx="176.0" cy="180.2" r="10" fill="#2ca6a4"/><text x="176.0" y="201.2" class="glab">FGFR2</text></g>
+<g class="node"><title>FGFR3</title><circle cx="176.0" cy="272.2" r="10" fill="#2ca6a4"/><text x="176.0" y="293.2" class="glab">FGFR3</text></g>
+<g class="node"><title>FGFR4</title><circle cx="176.0" cy="168.0" r="10" fill="#2ca6a4"/><text x="176.0" y="189.0" class="glab">FGFR4</text></g>
+<g class="node shared"><title>SRC</title><circle cx="494.0" cy="286.8" r="13" fill="#caa43a"/><text x="494.0" y="310.8" class="glab">SRC</text></g>
+<g class="node shared"><title>KRAS</title><circle cx="494.0" cy="470.8" r="13" fill="#caa43a"/><text x="494.0" y="494.8" class="glab">KRAS</text></g>
+<g class="node"><title>ATF2</title><circle cx="812.0" cy="378.8" r="10" fill="#d1495b"/><text x="812.0" y="399.8" class="glab">ATF2</text></g>
+<g class="node shared"><title>GRB2</title><circle cx="282.0" cy="577.2" r="13" fill="#caa43a"/><text x="282.0" y="601.2" class="glab">GRB2</text></g>
+<g class="node shared"><title>PPP2CA</title><circle cx="918.0" cy="485.2" r="13" fill="#caa43a"/><text x="918.0" y="509.2" class="glab">PPP2CA</text></g>
+<g class="node shared"><title>PPP2CB</title><circle cx="918.0" cy="577.2" r="13" fill="#caa43a"/><text x="918.0" y="601.2" class="glab">PPP2CB</text></g>
+<g class="node shared"><title>PPP2R1A</title><circle cx="918.0" cy="378.8" r="13" fill="#caa43a"/><text x="918.0" y="402.8" class="glab">PPP2R1A</text></g></svg></div>
+  <p class="foot">
+    <b>Structural vs measured &mdash; they're different sets.</b> Removing <span class="stats">CTNNB1</span> knocked out
+    moved <b>168 genes cell&#8209;wide</b> (measured), but only <b>3</b> land anywhere in this 5&#8209;pathway graph,
+    and <b>0</b> are structural neighbours of CTNNB1. The real effect is almost entirely <b>off&#8209;graph</b>:
+    top movers <span class="stats">MAP1B(+1.6), APOE(-1.1), ARG2(+1.1), IGFBP2(+1.1), PHGDH(+1.0), CALCOCO2(+1.0), RABIF(+1.0), ANXA3(+1.0)</span> &mdash; none of them in the pathway wiring.<br>
+    <b>Why this is the honest picture.</b> The pathway graph shows who&#8209;shares&#8209;and&#8209;touches; the measured
+    knockout effect goes somewhere else (mostly indirect/regulatory, and signalling acts post&#8209;transcriptionally so
+    mRNA is blind to it). This is the ~3%&#8209;recall wall, drawn: the wiring is real but does <b>not</b> carry the
+    downstream effect. The structural cut is certain; the cascade must be measured, not read off the graph.
+  </p>
+</div>

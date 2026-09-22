@@ -1,0 +1,56 @@
+{
+ "tau": 1.0,
+ "random_baseline": {
+  "mrna_move": 0.00045,
+  "codep": 0.0005
+ },
+ "by_edge_type": {
+  "reg": {
+   "n_edges": 40000,
+   "mrna_rate": 0.0021077988557663355,
+   "mrna_enrich": 4.683997457258523,
+   "mrna_cov": 3321,
+   "codep_rate": 0.001175,
+   "codep_enrich": 2.35,
+   "codep_enrich_matched": 1.7625000000000002
+  },
+  "sig": {
+   "n_edges": 17432,
+   "mrna_rate": 0.0017804154302670622,
+   "mrna_enrich": 3.9564787339268053,
+   "mrna_cov": 1685,
+   "codep_rate": 0.017726021110601193,
+   "codep_enrich": 35.45204222120238,
+   "codep_enrich_matched": 53.17806333180358
+  },
+  "lr": {
+   "n_edges": 948,
+   "mrna_rate": 0.0,
+   "mrna_enrich": 0.0,
+   "mrna_cov": 8,
+   "codep_rate": 0.0,
+   "codep_enrich": 0.0,
+   "codep_enrich_matched": 0.0
+  },
+  "nichenet": {
+   "n_edges": 26904,
+   "mrna_rate": 0.0,
+   "mrna_enrich": 0.0,
+   "mrna_cov": 298,
+   "codep_rate": 0.0006690454950936663,
+   "codep_enrich": 1.3380909901873326,
+   "codep_enrich_matched": 0.5017841213202497
+  },
+  "complex": {
+   "n_edges": 15843,
+   "mrna_rate": 0.00982581509602501,
+   "mrna_enrich": 21.835144657833357,
+   "mrna_cov": 6717,
+   "codep_rate": 0.14025121504765511,
+   "codep_enrich": 280.5024300953102,
+   "codep_enrich_matched": 38.25033137663321
+  }
+ },
+ "verdict": "TYPED-EDGE x READOUT MATRIX (the interaction atlas we already have; no GPU). Question answered: do the typed SIGNALING / PTM-style edges add a knockout-consequence signal beyond what we had? YES -- in the PROTEIN-COUPLING readout. THE CLEAN, DECISIVE READOUT IS CO-DEPENDENCY (DepMap; not tide-confounded): essentiality-matched enrichment is COMPLEX 38x, SIGNALING/sig 53x -- both strongly co-dependent BEYOND shared essentiality -- vs REGULATORY 1.8x, ligand-receptor 0.0x, nichenet 0.5x (~1x = not coupled). So the typed SIGNALING edge (SIGNOR/OmniPath-style 'what A does to B') genuinely predicts protein-level co-failure, same class as complexes -- a real addition, using data we already had. THE mRNA READOUT is messier and I flag it honestly: REGULATORY (TF->target) is the transmitter (4.7x specific, matching pathway_ko_verify's ~6x), but the physical edges' apparent mRNA signal (complex 22x even after tide removal) is threshold-sensitive coordinated-feedback co-movement, NOT clean specific transmission -- the strict per-edge mRNA verdict remains pathway_ko_verify's (complex/signaling ~0x to the transcriptome). NET, the two knockout-consequence layers are carried by DIFFERENT typed edges -- REGULATORY -> mRNA far field, PHYSICAL/SIGNALING -> protein co-dependency -- and the atlas already encodes both. This is exactly why the AF-Multimer interface-energy branch was low-value: it was re-deriving a quantitative shade of the physical/complex edge the typed atlas already gives us (and even crude interface size was null). Honest caveat: the ess-matched control is approximate; lr/nichenet coverage in the KO+codep sets is small (n shown).",
+ "note": "TYPED-EDGE x READOUT MATRIX (the interaction atlas we already have; no GPU). Question answered: do the typed SIGNALING / PTM-style edges add a knockout-consequence signal beyond what we had? YES -- in the PROTEIN-COUPLING readout. THE CLEAN, DECISIVE READOUT IS CO-DEPENDENCY (DepMap; not tide-confounded): essentiality-matched enrichment is COMPLEX 38x, SIGNALING/sig 53x -- both strongly co-dependent BEYOND shared essentiality -- vs REGULATORY 1.8x, ligand-receptor 0.0x, nichenet 0.5x (~1x = not coupled). So the typed SIGNALING edge (SIGNOR/OmniPath-style 'what A does to B') genuinely predicts protein-level co-failure, same class as complexes -- a real addition, using data we already had. THE mRNA READOUT is messier and I flag it honestly: REGULATORY (TF->target) is the transmitter (4.7x specific, matching pathway_ko_verify's ~6x), but the physical edges' apparent mRNA signal (complex 22x even after tide removal) is threshold-sensitive coordinated-feedback co-movement, NOT clean specific transmission -- the strict per-edge mRNA verdict remains pathway_ko_verify's (complex/signaling ~0x to the transcriptome). NET, the two knockout-consequence layers are carried by DIFFERENT typed edges -- REGULATORY -> mRNA far field, PHYSICAL/SIGNALING -> protein co-dependency -- and the atlas already encodes both. This is exactly why the AF-Multimer interface-energy branch was low-value: it was re-deriving a quantitative shade of the physical/complex edge the typed atlas already gives us (and even crude interface size was null). Honest caveat: the ess-matched control is approximate; lr/nichenet coverage in the KO+codep sets is small (n shown)."
+}

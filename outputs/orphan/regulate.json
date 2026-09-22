@@ -1,0 +1,129 @@
+{
+ "result": {
+  "n_elements": 3961,
+  "base_rate_regulator": 0.125,
+  "marks": {
+   "dnase": {
+    "n_pos": 3231,
+    "prec_pos": 0.144,
+    "n_neg": 730,
+    "prec_neg": 0.041,
+    "enrichment": 1.15,
+    "prec_pos_vs_neg": 3.51
+   },
+   "h3k27ac": {
+    "n_pos": 2347,
+    "prec_pos": 0.187,
+    "n_neg": 1614,
+    "prec_neg": 0.035,
+    "enrichment": 1.49,
+    "prec_pos_vs_neg": 5.3
+   },
+   "polr2a": {
+    "n_pos": 507,
+    "prec_pos": 0.268,
+    "n_neg": 3454,
+    "prec_neg": 0.104,
+    "enrichment": 2.14,
+    "prec_pos_vs_neg": 2.57
+   },
+   "polr2s5": {
+    "n_pos": 1290,
+    "prec_pos": 0.239,
+    "n_neg": 2671,
+    "prec_neg": 0.07,
+    "enrichment": 1.91,
+    "prec_pos_vs_neg": 3.39
+   },
+   "procap_bi": {
+    "n_pos": 1286,
+    "prec_pos": 0.235,
+    "n_neg": 2675,
+    "prec_neg": 0.073,
+    "enrichment": 1.88,
+    "prec_pos_vs_neg": 3.24
+   }
+  },
+  "ladder": [
+   {
+    "stage": "all tested elements",
+    "n": 3961,
+    "prec": 0.125,
+    "enrichment": 1.0
+   },
+   {
+    "stage": "open (DNase)",
+    "n": 3231,
+    "prec": 0.144,
+    "enrichment": 1.15
+   },
+   {
+    "stage": "+ active (H3K27ac)",
+    "n": 2090,
+    "prec": 0.2,
+    "enrichment": 1.59
+   },
+   {
+    "stage": "+ Pol II (POLR2A)",
+    "n": 478,
+    "prec": 0.276,
+    "enrichment": 2.21
+   },
+   {
+    "stage": "+ eRNA (PRO-cap bidir)",
+    "n": 443,
+    "prec": 0.289,
+    "enrichment": 2.31
+   }
+  ],
+  "among_active": {
+   "n_active": 2090,
+   "prec_active": 0.2,
+   "polII_pos": [
+    478,
+    0.276
+   ],
+   "polII_neg": [
+    1612,
+    0.177
+   ],
+   "eRNA_pos": [
+    1124,
+    0.26
+   ],
+   "eRNA_neg": [
+    966,
+    0.129
+   ],
+   "polII_and_eRNA": [
+    443,
+    0.289
+   ],
+   "neither": [
+    931,
+    0.13
+   ]
+  }
+ },
+ "pair_test": {
+  "n_pairs": 10331,
+  "base_rate": 0.055,
+  "productive": [
+   3806,
+   0.095
+  ],
+  "abc_linked": [
+   788,
+   0.253
+  ],
+  "productive_AND_abc": [
+   449,
+   0.314
+  ],
+  "neither": [
+   6186,
+   0.024
+  ]
+ },
+ "note": "Tests 'binding=regulation only if it recruits polymerase' on real K562 data vs CRISPR ground truth (ENCFF968BZL, harmonised Nasser/Gasperini/Schraivogel enhancer-perturbation; Significant=element truly regulates a gene). Productivity marks: POLR2A + POLR2AphosphoS5 (Pol II recruited/initiating), PRO-cap bidirectional (eRNA firing). Measures the MARGINAL value of the productivity signal on accessibility-preselected elements. HONEST: ChIP occupancy proxies residence-time x conc, not single-molecule dwell time (no genome-wide data). Real data; the answer is measured, not asserted."
+}

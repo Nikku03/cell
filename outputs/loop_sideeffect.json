@@ -1,0 +1,6521 @@
+{
+  "test": "loop_sideeffect",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/sider_se.tsv.gz",
+        "bytes": 2381171,
+        "hash": "119b2f5319a9398d",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/sider_names.tsv",
+        "bytes": 34759,
+        "hash": "6427a3e3202c71a8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 6246,
+      "used": 640,
+      "selection": "filtered",
+      "fraction": 0.10246557796990073
+    },
+    "seed": 1904,
+    "controls": [
+      "200 label shuffles",
+      "target count partialled out",
+      "target count as a predictor in its own right",
+      "mean LOEUF lookup",
+      "mean abundance lookup"
+    ],
+    "note": "per-target MEANS used rather than sums, because a sum smuggles the target count back into the predictor",
+    "warnings": []
+  },
+  "gates": {
+    "S1 join": true,
+    "S2 signal": true,
+    "S3 beats target count": false,
+    "S4 beats lookups": true
+  },
+  "n_drugs": 640,
+  "r_target_count": 0.28977115816714866,
+  "predictors": {
+    "mean essentiality of targets": {
+      "raw": 0.16905285495666325,
+      "partial": 0.051529302616204795,
+      "n": 640
+    },
+    "mean growth cost of targets (loop 4 model)": {
+      "raw": 0.09101099594733256,
+      "partial": 0.00591194638723512,
+      "n": 320
+    },
+    "mean LOEUF of targets (lookup)": {
+      "raw": -0.012078312245918477,
+      "partial": 0.01831134658777883,
+      "n": 640
+    },
+    "mean abundance of targets (lookup)": {
+      "raw": 0.10509928487725394,
+      "partial": -0.01679396770482974,
+      "n": 640
+    }
+  },
+  "best_model": "mean essentiality of targets",
+  "null_p95": 0.07576273611244683,
+  "null_partial_p95": 0.07556950049065357,
+  "rows": [
+    {
+      "drug": "clozapine",
+      "n_se": 254,
+      "n_targets": 65,
+      "mean_cost": 0.09090856391194334,
+      "n_metabolic": 11,
+      "mean_ess": 0.03076923076923077,
+      "mean_loeuf": 0.8263384615384615,
+      "mean_ppm": 2.4628219710266332
+    },
+    {
+      "drug": "ziprasidone",
+      "n_se": 340,
+      "n_targets": 10,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7137,
+      "mean_ppm": 3.083659145464073
+    },
+    {
+      "drug": "frovatriptan",
+      "n_se": 147,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.208,
+      "mean_ppm": 3.623559493335066
+    },
+    {
+      "drug": "naratriptan",
+      "n_se": 185,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9503333333333334,
+      "mean_ppm": 3.410666242197891
+    },
+    {
+      "drug": "iloperidone",
+      "n_se": 146,
+      "n_targets": 10,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0619,
+      "mean_ppm": 2.9285485966711686
+    },
+    {
+      "drug": "cabergoline",
+      "n_se": 119,
+      "n_targets": 9,
+      "mean_cost": -7.2461801847723e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.1111111111111111,
+      "mean_loeuf": 0.81,
+      "mean_ppm": 2.942815888614306
+    },
+    {
+      "drug": "pentoxifylline",
+      "n_se": 94,
+      "n_targets": 19,
+      "mean_cost": -5.797001469964869e-07,
+      "n_metabolic": 5,
+      "mean_ess": 0.05263157894736842,
+      "mean_loeuf": 0.7369999999999999,
+      "mean_ppm": 1.2657125709374004
+    },
+    {
+      "drug": "capsaicin",
+      "n_se": 62,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.9175000000000002,
+      "mean_ppm": 1.5582689548641095
+    },
+    {
+      "drug": "digoxin",
+      "n_se": 57,
+      "n_targets": 19,
+      "mean_cost": 0.1666660627154126,
+      "n_metabolic": 6,
+      "mean_ess": 0.10526315789473684,
+      "mean_loeuf": 0.4902631578947368,
+      "mean_ppm": 1.762339712667095
+    },
+    {
+      "drug": "nicardipine",
+      "n_se": 99,
+      "n_targets": 6,
+      "mean_cost": -7.246244373426691e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 0.45016666666666666,
+      "mean_ppm": 0.3907585287387172
+    },
+    {
+      "drug": "reserpine",
+      "n_se": 40,
+      "n_targets": 15,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7556666666666667,
+      "mean_ppm": 1.3459406554927253
+    },
+    {
+      "drug": "nimodipine",
+      "n_se": 50,
+      "n_targets": 10,
+      "mean_cost": -7.24624442449695e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.1,
+      "mean_loeuf": 0.5226,
+      "mean_ppm": 0.7619503790716541
+    },
+    {
+      "drug": "leflunomide",
+      "n_se": 218,
+      "n_targets": 5,
+      "mean_cost": 1.0,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4042,
+      "mean_ppm": 0.6553689724520623
+    },
+    {
+      "drug": "lamivudine",
+      "n_se": 191,
+      "n_targets": 19,
+      "mean_cost": -6.587482202351098e-07,
+      "n_metabolic": 11,
+      "mean_ess": 0.15789473684210525,
+      "mean_loeuf": 0.9967368421052631,
+      "mean_ppm": 3.0977598313280916
+    },
+    {
+      "drug": "gemcitabine",
+      "n_se": 161,
+      "n_targets": 60,
+      "mean_cost": 0.13044043344767556,
+      "n_metabolic": 23,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.6539333333333333,
+      "mean_ppm": 1.1579878520923756
+    },
+    {
+      "drug": "carboplatin",
+      "n_se": 109,
+      "n_targets": 47,
+      "mean_cost": 0.10089792537987878,
+      "n_metabolic": 10,
+      "mean_ess": 0.10638297872340426,
+      "mean_loeuf": 0.7448936170212765,
+      "mean_ppm": 1.5586156469971957
+    },
+    {
+      "drug": "paclitaxel",
+      "n_se": 397,
+      "n_targets": 61,
+      "mean_cost": 0.19999941926787035,
+      "n_metabolic": 10,
+      "mean_ess": 0.14754098360655737,
+      "mean_loeuf": 0.7113770491803278,
+      "mean_ppm": 2.1931700517664594
+    },
+    {
+      "drug": "aspirin",
+      "n_se": 70,
+      "n_targets": 91,
+      "mean_cost": 0.019452840490059065,
+      "n_metabolic": 22,
+      "mean_ess": 0.02197802197802198,
+      "mean_loeuf": 0.8935824175824174,
+      "mean_ppm": 2.168619691987071
+    },
+    {
+      "drug": "milrinone",
+      "n_se": 21,
+      "n_targets": 5,
+      "mean_cost": -3.6231370148520625e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6036,
+      "mean_ppm": 0.1801832418482273
+    },
+    {
+      "drug": "dyphylline",
+      "n_se": 24,
+      "n_targets": 3,
+      "mean_cost": -3.62315633606336e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.636,
+      "mean_ppm": 0.30713932784642134
+    },
+    {
+      "drug": "theophylline",
+      "n_se": 76,
+      "n_targets": 19,
+      "mean_cost": -5.797009136720988e-07,
+      "n_metabolic": 5,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6776315789473685,
+      "mean_ppm": 1.2375318329774547
+    },
+    {
+      "drug": "cilostazol",
+      "n_se": 178,
+      "n_targets": 4,
+      "mean_cost": -6.824318887765912e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.672,
+      "mean_ppm": 0.314972630834431
+    },
+    {
+      "drug": "levosimendan",
+      "n_se": 24,
+      "n_targets": 3,
+      "mean_cost": -3.6231562616784174e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.48866666666666664,
+      "mean_ppm": 0.7983974057921482
+    },
+    {
+      "drug": "aminophylline",
+      "n_se": 54,
+      "n_targets": 5,
+      "mean_cost": -7.246244280167957e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9416,
+      "mean_ppm": -0.6671577330056484
+    },
+    {
+      "drug": "roflumilast",
+      "n_se": 66,
+      "n_targets": 5,
+      "mean_cost": -7.246228056108824e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.38639999999999997,
+      "mean_ppm": -0.3244049436132537
+    },
+    {
+      "drug": "tadalafil",
+      "n_se": 144,
+      "n_targets": 2,
+      "mean_cost": -7.246205786515247e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.536,
+      "mean_ppm": 1.3180111329695618
+    },
+    {
+      "drug": "amlexanox",
+      "n_se": 12,
+      "n_targets": 5,
+      "mean_cost": -7.24621743053433e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.6474,
+      "mean_ppm": 2.879963486519362
+    },
+    {
+      "drug": "apremilast",
+      "n_se": 24,
+      "n_targets": 7,
+      "mean_cost": -7.246233972857397e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.2857142857142857,
+      "mean_loeuf": 0.4112857142857143,
+      "mean_ppm": 0.7549268638787299
+    },
+    {
+      "drug": "proguanil",
+      "n_se": 25,
+      "n_targets": 1,
+      "mean_cost": -7.246231279456339e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.904,
+      "mean_ppm": 0.04960561259497315
+    },
+    {
+      "drug": "pralatrexate",
+      "n_se": 37,
+      "n_targets": 3,
+      "mean_cost": -7.246237825331292e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.6666666666666666,
+      "mean_loeuf": 1.031,
+      "mean_ppm": 0.8380721209760512
+    },
+    {
+      "drug": "ustekinumab",
+      "n_se": 68,
+      "n_targets": 18,
+      "mean_cost": -7.246237746505457e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.001166666666667,
+      "mean_ppm": 0.7430129948505897
+    },
+    {
+      "drug": "meprobamate",
+      "n_se": 51,
+      "n_targets": 2,
+      "mean_cost": -7.246231279456339e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.052,
+      "mean_ppm": -0.0896424427271224
+    },
+    {
+      "drug": "trimetrexate",
+      "n_se": 22,
+      "n_targets": 3,
+      "mean_cost": -7.246237825331292e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 0.9863333333333332,
+      "mean_ppm": 0.7689585865041043
+    },
+    {
+      "drug": "sunitinib",
+      "n_se": 295,
+      "n_targets": 35,
+      "mean_cost": 0.0005831562242261298,
+      "n_metabolic": 6,
+      "mean_ess": 0.05714285714285714,
+      "mean_loeuf": 0.5718285714285715,
+      "mean_ppm": 1.085372137794032
+    },
+    {
+      "drug": "imatinib",
+      "n_se": 323,
+      "n_targets": 44,
+      "mean_cost": 0.20179672237442858,
+      "n_metabolic": 5,
+      "mean_ess": 0.022727272727272728,
+      "mean_loeuf": 0.6189772727272728,
+      "mean_ppm": 1.1200936087724755
+    },
+    {
+      "drug": "axitinib",
+      "n_se": 112,
+      "n_targets": 12,
+      "mean_cost": -7.246244522196577e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7687499999999999,
+      "mean_ppm": 1.5210803047413923
+    },
+    {
+      "drug": "nilotinib",
+      "n_se": 339,
+      "n_targets": 9,
+      "mean_cost": -7.246244346781339e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.758,
+      "mean_ppm": 0.917954567584949
+    },
+    {
+      "drug": "vandetanib",
+      "n_se": 205,
+      "n_targets": 36,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.05555555555555555,
+      "mean_loeuf": 0.4806944444444444,
+      "mean_ppm": 0.9421927612318443
+    },
+    {
+      "drug": "sorafenib",
+      "n_se": 180,
+      "n_targets": 64,
+      "mean_cost": -7.246221305212686e-07,
+      "n_metabolic": 5,
+      "mean_ess": 0.0625,
+      "mean_loeuf": 0.583375,
+      "mean_ppm": 1.2030507441509521
+    },
+    {
+      "drug": "pazopanib",
+      "n_se": 213,
+      "n_targets": 30,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 0.5087666666666666,
+      "mean_ppm": 1.115962020343916
+    },
+    {
+      "drug": "progesterone",
+      "n_se": 273,
+      "n_targets": 27,
+      "mean_cost": -7.246210097511252e-07,
+      "n_metabolic": 6,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7823333333333333,
+      "mean_ppm": 2.047979005949334
+    },
+    {
+      "drug": "mecamylamine",
+      "n_se": 26,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 0.7066666666666667,
+      "mean_ppm": -0.8022601139818509
+    },
+    {
+      "drug": "celecoxib",
+      "n_se": 311,
+      "n_targets": 48,
+      "mean_cost": 3.2204686214298836e-05,
+      "n_metabolic": 5,
+      "mean_ess": 0.0625,
+      "mean_loeuf": 0.5350625,
+      "mean_ppm": 1.4879166139277242
+    },
+    {
+      "drug": "ivermectin",
+      "n_se": 88,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 1.0,
+      "mean_loeuf": 1.091,
+      "mean_ppm": -1.0132282657337552
+    },
+    {
+      "drug": "vincristine",
+      "n_se": 127,
+      "n_targets": 52,
+      "mean_cost": -7.246198012733629e-07,
+      "n_metabolic": 5,
+      "mean_ess": 0.11538461538461539,
+      "mean_loeuf": 0.7651730769230769,
+      "mean_ppm": 2.566684961823922
+    },
+    {
+      "drug": "methotrexate",
+      "n_se": 276,
+      "n_targets": 68,
+      "mean_cost": 0.09316778852515732,
+      "n_metabolic": 16,
+      "mean_ess": 0.11764705882352941,
+      "mean_loeuf": 0.7528382352941178,
+      "mean_ppm": 1.7329457387534442
+    },
+    {
+      "drug": "prednisone",
+      "n_se": 226,
+      "n_targets": 17,
+      "mean_cost": -7.246241646718943e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.058823529411764705,
+      "mean_loeuf": 0.9496470588235295,
+      "mean_ppm": 2.130736652260402
+    },
+    {
+      "drug": "cytarabine",
+      "n_se": 206,
+      "n_targets": 37,
+      "mean_cost": 0.09090853097343649,
+      "n_metabolic": 22,
+      "mean_ess": 0.21621621621621623,
+      "mean_loeuf": 0.7098648648648649,
+      "mean_ppm": 1.6626639200189952
+    },
+    {
+      "drug": "ticagrelor",
+      "n_se": 119,
+      "n_targets": 7,
+      "mean_cost": 1.0,
+      "n_metabolic": 1,
+      "mean_ess": 0.14285714285714285,
+      "mean_loeuf": 0.9508571428571428,
+      "mean_ppm": 0.2710113740490876
+    },
+    {
+      "drug": "flutamide",
+      "n_se": 80,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1055000000000001,
+      "mean_ppm": 2.14478974474593
+    },
+    {
+      "drug": "melatonin",
+      "n_se": 129,
+      "n_targets": 13,
+      "mean_cost": -7.246209978717388e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.861230769230769,
+      "mean_ppm": 1.4468668132483662
+    },
+    {
+      "drug": "phenobarbital",
+      "n_se": 79,
+      "n_targets": 10,
+      "mean_cost": -7.246244462244533e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.1,
+      "mean_loeuf": 0.7704000000000001,
+      "mean_ppm": 1.4972490275047965
+    },
+    {
+      "drug": "desogestrel",
+      "n_se": 44,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.47,
+      "mean_ppm": -0.2580609222708011
+    },
+    {
+      "drug": "anastrozole",
+      "n_se": 152,
+      "n_targets": 10,
+      "mean_cost": -6.839639965505739e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5902000000000001,
+      "mean_ppm": 1.8891245863223871
+    },
+    {
+      "drug": "tamoxifen",
+      "n_se": 192,
+      "n_targets": 42,
+      "mean_cost": -6.52161565173337e-07,
+      "n_metabolic": 10,
+      "mean_ess": 0.11904761904761904,
+      "mean_loeuf": 0.8142142857142856,
+      "mean_ppm": 2.5416611864196224
+    },
+    {
+      "drug": "levonorgestrel",
+      "n_se": 193,
+      "n_targets": 4,
+      "mean_cost": -7.246244360104015e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8314999999999999,
+      "mean_ppm": -0.7689128794151773
+    },
+    {
+      "drug": "exemestane",
+      "n_se": 114,
+      "n_targets": 10,
+      "mean_cost": -3.623156422660756e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0062000000000002,
+      "mean_ppm": 1.0169456363657825
+    },
+    {
+      "drug": "capecitabine",
+      "n_se": 427,
+      "n_targets": 29,
+      "mean_cost": 0.19999956522571102,
+      "n_metabolic": 5,
+      "mean_ess": 0.06896551724137931,
+      "mean_loeuf": 0.45710344827586197,
+      "mean_ppm": 0.4856235352421475
+    },
+    {
+      "drug": "lansoprazole",
+      "n_se": 382,
+      "n_targets": 7,
+      "mean_cost": -7.246244404512936e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.018,
+      "mean_ppm": 0.5095865139404718
+    },
+    {
+      "drug": "methamphetamine",
+      "n_se": 19,
+      "n_targets": 10,
+      "mean_cost": -7.246244264624835e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8554999999999999,
+      "mean_ppm": -0.06113017848701338
+    },
+    {
+      "drug": "lovastatin",
+      "n_se": 106,
+      "n_targets": 14,
+      "mean_cost": 0.3999995652329239,
+      "n_metabolic": 5,
+      "mean_ess": 0.14285714285714285,
+      "mean_loeuf": 0.9167142857142856,
+      "mean_ppm": 2.0179582123608046
+    },
+    {
+      "drug": "epinephrine",
+      "n_se": 69,
+      "n_targets": 15,
+      "mean_cost": 2.864140879124677e-05,
+      "n_metabolic": 4,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.5359333333333333,
+      "mean_ppm": 2.866146648216895
+    },
+    {
+      "drug": "phenylephrine",
+      "n_se": 64,
+      "n_targets": 7,
+      "mean_cost": -7.246175619535222e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.2857142857142857,
+      "mean_loeuf": 0.6424285714285715,
+      "mean_ppm": 1.4022957806553162
+    },
+    {
+      "drug": "heparin",
+      "n_se": 49,
+      "n_targets": 22,
+      "mean_cost": -7.246227201052058e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.045454545454545456,
+      "mean_loeuf": 0.9004545454545454,
+      "mean_ppm": 2.530470741939145
+    },
+    {
+      "drug": "everolimus",
+      "n_se": 388,
+      "n_targets": 21,
+      "mean_cost": -7.246219675960397e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.14285714285714285,
+      "mean_loeuf": 0.33566666666666667,
+      "mean_ppm": 1.4491829652523593
+    },
+    {
+      "drug": "gefitinib",
+      "n_se": 111,
+      "n_targets": 46,
+      "mean_cost": 0.3333328502536035,
+      "n_metabolic": 3,
+      "mean_ess": 0.021739130434782608,
+      "mean_loeuf": 0.48436956521739133,
+      "mean_ppm": 1.429133072686625
+    },
+    {
+      "drug": "mitoxantrone",
+      "n_se": 158,
+      "n_targets": 13,
+      "mean_cost": -7.246220538603687e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.15384615384615385,
+      "mean_loeuf": 0.7495384615384614,
+      "mean_ppm": 0.9377724224590015
+    },
+    {
+      "drug": "oxaliplatin",
+      "n_se": 261,
+      "n_targets": 19,
+      "mean_cost": -7.246238867275601e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.05263157894736842,
+      "mean_loeuf": 0.767842105263158,
+      "mean_ppm": 0.9041686680960548
+    },
+    {
+      "drug": "carfilzomib",
+      "n_se": 62,
+      "n_targets": 34,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.6176470588235294,
+      "mean_loeuf": 0.5282058823529412,
+      "mean_ppm": 2.1258945051352915
+    },
+    {
+      "drug": "bortezomib",
+      "n_se": 588,
+      "n_targets": 48,
+      "mean_cost": -7.246244321246209e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.4583333333333333,
+      "mean_loeuf": 0.6356666666666667,
+      "mean_ppm": 2.201276527126296
+    },
+    {
+      "drug": "allopurinol",
+      "n_se": 224,
+      "n_targets": 22,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9167727272727274,
+      "mean_ppm": -0.1268644236810442
+    },
+    {
+      "drug": "amiloride",
+      "n_se": 79,
+      "n_targets": 14,
+      "mean_cost": -7.246165525387482e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8675714285714287,
+      "mean_ppm": 0.8916728300471647
+    },
+    {
+      "drug": "hydralazine",
+      "n_se": 83,
+      "n_targets": 4,
+      "mean_cost": -7.246226414459045e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.77675,
+      "mean_ppm": 2.921963867243746
+    },
+    {
+      "drug": "nitazoxanide",
+      "n_se": 57,
+      "n_targets": 2,
+      "mean_cost": -7.246217457179682e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.4345,
+      "mean_ppm": 3.1977810180930866
+    },
+    {
+      "drug": "erlotinib",
+      "n_se": 141,
+      "n_targets": 24,
+      "mean_cost": 0.3333328502528703,
+      "n_metabolic": 3,
+      "mean_ess": 0.08333333333333333,
+      "mean_loeuf": 0.5475416666666667,
+      "mean_ppm": 1.1880456459887174
+    },
+    {
+      "drug": "etoposide",
+      "n_se": 78,
+      "n_targets": 33,
+      "mean_cost": 0.16666618358328564,
+      "n_metabolic": 6,
+      "mean_ess": 0.15151515151515152,
+      "mean_loeuf": 0.663878787878788,
+      "mean_ppm": 1.7083972055475716
+    },
+    {
+      "drug": "clobetasol",
+      "n_se": 63,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.4975,
+      "mean_ppm": 2.671377440741083
+    },
+    {
+      "drug": "gentamicin",
+      "n_se": 74,
+      "n_targets": 10,
+      "mean_cost": 0.03923188765534946,
+      "n_metabolic": 2,
+      "mean_ess": 0.1,
+      "mean_loeuf": 0.7202,
+      "mean_ppm": 2.2051217751625027
+    },
+    {
+      "drug": "cortisone",
+      "n_se": 60,
+      "n_targets": 3,
+      "mean_cost": -7.24606724400445e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.304,
+      "mean_ppm": 0.9925387907434449
+    },
+    {
+      "drug": "permethrin",
+      "n_se": 16,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.868,
+      "mean_ppm": 1.3526840797772677
+    },
+    {
+      "drug": "temozolomide",
+      "n_se": 219,
+      "n_targets": 10,
+      "mean_cost": -7.24624432901777e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.3,
+      "mean_loeuf": 0.4941,
+      "mean_ppm": 1.9593295536968716
+    },
+    {
+      "drug": "atenolol",
+      "n_se": 118,
+      "n_targets": 23,
+      "mean_cost": -7.246244385269071e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.652391304347826,
+      "mean_ppm": 1.132664719579531
+    },
+    {
+      "drug": "fluorometholone",
+      "n_se": 37,
+      "n_targets": 2,
+      "mean_cost": -7.246244373426691e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4535,
+      "mean_ppm": 0.6619072927660208
+    },
+    {
+      "drug": "acetaminophen",
+      "n_se": 164,
+      "n_targets": 25,
+      "mean_cost": 0.08562774625999037,
+      "n_metabolic": 5,
+      "mean_ess": 0.08,
+      "mean_loeuf": 1.0476400000000001,
+      "mean_ppm": 1.9663122244109952
+    },
+    {
+      "drug": "fluticasone",
+      "n_se": 56,
+      "n_targets": 8,
+      "mean_cost": -7.246244373426691e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.938625,
+      "mean_ppm": 1.9544131777593152
+    },
+    {
+      "drug": "olanzapine",
+      "n_se": 416,
+      "n_targets": 37,
+      "mean_cost": -6.950473378323588e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.02702702702702703,
+      "mean_loeuf": 0.9750540540540538,
+      "mean_ppm": 0.55775749044293
+    },
+    {
+      "drug": "melphalan",
+      "n_se": 106,
+      "n_targets": 8,
+      "mean_cost": -7.2462308516504e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.5985,
+      "mean_ppm": 0.6344772701607316
+    },
+    {
+      "drug": "dacarbazine",
+      "n_se": 55,
+      "n_targets": 8,
+      "mean_cost": -7.246230679935906e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.8291249999999999,
+      "mean_ppm": 2.188811461473184
+    },
+    {
+      "drug": "mifepristone",
+      "n_se": 84,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0291666666666666,
+      "mean_ppm": 0.8400642528957732
+    },
+    {
+      "drug": "bleomycin",
+      "n_se": 92,
+      "n_targets": 7,
+      "mean_cost": -7.24624431791554e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7695714285714287,
+      "mean_ppm": 1.1986335260360246
+    },
+    {
+      "drug": "ruxolitinib",
+      "n_se": 41,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6748333333333333,
+      "mean_ppm": -0.13608262304213956
+    },
+    {
+      "drug": "hydrochlorothiazide",
+      "n_se": 143,
+      "n_targets": 31,
+      "mean_cost": -7.246233861835094e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0967741935483871,
+      "mean_loeuf": 0.7609032258064515,
+      "mean_ppm": 1.4492767947718221
+    },
+    {
+      "drug": "verapamil",
+      "n_se": 119,
+      "n_targets": 19,
+      "mean_cost": -4.6413983767479294e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.10526315789473684,
+      "mean_loeuf": 0.6704736842105262,
+      "mean_ppm": 1.2502633095660665
+    },
+    {
+      "drug": "clopidogrel",
+      "n_se": 213,
+      "n_targets": 23,
+      "mean_cost": -7.24624437675736e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.043478260869565216,
+      "mean_loeuf": 0.7981739130434783,
+      "mean_ppm": 1.6276975073975077
+    },
+    {
+      "drug": "ranolazine",
+      "n_se": 101,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.443,
+      "mean_ppm": 3.5460489899211938
+    },
+    {
+      "drug": "oxymetholone",
+      "n_se": 32,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6695,
+      "mean_ppm": 3.245074327442136
+    },
+    {
+      "drug": "toremifene",
+      "n_se": 83,
+      "n_targets": 5,
+      "mean_cost": -6.839639965505739e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8916000000000001,
+      "mean_ppm": 2.009099748748472
+    },
+    {
+      "drug": "idarubicin",
+      "n_se": 85,
+      "n_targets": 27,
+      "mean_cost": -6.44110148871767e-07,
+      "n_metabolic": 9,
+      "mean_ess": 0.037037037037037035,
+      "mean_loeuf": 0.8835555555555555,
+      "mean_ppm": 1.1856218904267595
+    },
+    {
+      "drug": "simvastatin",
+      "n_se": 130,
+      "n_targets": 29,
+      "mean_cost": 0.4999996376877863,
+      "n_metabolic": 2,
+      "mean_ess": 0.13793103448275862,
+      "mean_loeuf": 0.6123793103448276,
+      "mean_ppm": 2.057853456093273
+    },
+    {
+      "drug": "erythromycin",
+      "n_se": 23,
+      "n_targets": 7,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.14285714285714285,
+      "mean_loeuf": 0.901,
+      "mean_ppm": 1.3373479991921486
+    },
+    {
+      "drug": "hexachlorophene",
+      "n_se": 3,
+      "n_targets": 26,
+      "mean_cost": 0.1666672994157888,
+      "n_metabolic": 6,
+      "mean_ess": 0.11538461538461539,
+      "mean_loeuf": 0.5641538461538461,
+      "mean_ppm": 2.218392379765219
+    },
+    {
+      "drug": "acitretin",
+      "n_se": 249,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.308875,
+      "mean_ppm": 0.8307409978600631
+    },
+    {
+      "drug": "levobunolol",
+      "n_se": 47,
+      "n_targets": 2,
+      "mean_cost": 0.0001167394802038535,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.05900000000000005,
+      "mean_ppm": 1.288014347854213
+    },
+    {
+      "drug": "norepinephrine",
+      "n_se": 18,
+      "n_targets": 12,
+      "mean_cost": 5.8007427342354756e-05,
+      "n_metabolic": 2,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 0.7343333333333334,
+      "mean_ppm": 1.268583821715238
+    },
+    {
+      "drug": "mirabegron",
+      "n_se": 72,
+      "n_targets": 2,
+      "mean_cost": 0.0001167394802038535,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.4005,
+      "mean_ppm": 1.2878465002495176
+    },
+    {
+      "drug": "nadolol",
+      "n_se": 88,
+      "n_targets": 4,
+      "mean_cost": 0.0001167394802038535,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.49475,
+      "mean_ppm": 0.988904382329187
+    },
+    {
+      "drug": "isoproterenol",
+      "n_se": 28,
+      "n_targets": 5,
+      "mean_cost": 5.8007431622264516e-05,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9632000000000002,
+      "mean_ppm": 1.7115389799125553
+    },
+    {
+      "drug": "tazarotene",
+      "n_se": 41,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.2658333333333333,
+      "mean_ppm": 1.349604501610759
+    },
+    {
+      "drug": "ketoprofen",
+      "n_se": 140,
+      "n_targets": 3,
+      "mean_cost": -7.246244428937842e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9596666666666667,
+      "mean_ppm": 2.3793024955098514
+    },
+    {
+      "drug": "orlistat",
+      "n_se": 146,
+      "n_targets": 9,
+      "mean_cost": 0.1999994203004482,
+      "n_metabolic": 5,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6052222222222222,
+      "mean_ppm": 1.3771463164024764
+    },
+    {
+      "drug": "dalbavancin",
+      "n_se": 49,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.989,
+      "mean_ppm": 0.6054127981530513
+    },
+    {
+      "drug": "prednisolone",
+      "n_se": 133,
+      "n_targets": 11,
+      "mean_cost": -4.830827254516853e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.09090909090909091,
+      "mean_loeuf": 0.8651818181818182,
+      "mean_ppm": 2.3309036925094215
+    },
+    {
+      "drug": "fludarabine",
+      "n_se": 154,
+      "n_targets": 22,
+      "mean_cost": 0.20000900346702524,
+      "n_metabolic": 15,
+      "mean_ess": 0.4090909090909091,
+      "mean_loeuf": 0.6397727272727273,
+      "mean_ppm": 1.20299577892891
+    },
+    {
+      "drug": "nelarabine",
+      "n_se": 145,
+      "n_targets": 2,
+      "mean_cost": -7.246152121664906e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.3775,
+      "mean_ppm": 0.7063763558396902
+    },
+    {
+      "drug": "clofarabine",
+      "n_se": 167,
+      "n_targets": 14,
+      "mean_cost": 0.24999951691948427,
+      "n_metabolic": 12,
+      "mean_ess": 0.6428571428571429,
+      "mean_loeuf": 0.4610714285714285,
+      "mean_ppm": 0.9270915976317002
+    },
+    {
+      "drug": "bepridil",
+      "n_se": 69,
+      "n_targets": 8,
+      "mean_cost": -7.101875036201003e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.806875,
+      "mean_ppm": 2.5191448534353005
+    },
+    {
+      "drug": "cisplatin",
+      "n_se": 139,
+      "n_targets": 76,
+      "mean_cost": 0.07206979142412215,
+      "n_metabolic": 14,
+      "mean_ess": 0.19736842105263158,
+      "mean_loeuf": 0.7343552631578947,
+      "mean_ppm": 1.8830555102387494
+    },
+    {
+      "drug": "azithromycin",
+      "n_se": 177,
+      "n_targets": 3,
+      "mean_cost": 0.4999996376902326,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7356666666666666,
+      "mean_ppm": 1.1424207542195595
+    },
+    {
+      "drug": "colchicine",
+      "n_se": 77,
+      "n_targets": 15,
+      "mean_cost": 0.33333309179115317,
+      "n_metabolic": 3,
+      "mean_ess": 0.13333333333333333,
+      "mean_loeuf": 0.6898,
+      "mean_ppm": 2.353025196435461
+    },
+    {
+      "drug": "nevirapine",
+      "n_se": 108,
+      "n_targets": 12,
+      "mean_cost": -7.246196803145644e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2429166666666667,
+      "mean_ppm": 1.2591895755169282
+    },
+    {
+      "drug": "zidovudine",
+      "n_se": 168,
+      "n_targets": 14,
+      "mean_cost": -7.246241503722217e-07,
+      "n_metabolic": 5,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0667857142857144,
+      "mean_ppm": 1.9461152542755953
+    },
+    {
+      "drug": "rivaroxaban",
+      "n_se": 113,
+      "n_targets": 5,
+      "mean_cost": -7.246244333458662e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5660000000000001,
+      "mean_ppm": 1.8584228945075494
+    },
+    {
+      "drug": "apixaban",
+      "n_se": 98,
+      "n_targets": 2,
+      "mean_cost": -7.246244333458662e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.07900000000000001,
+      "mean_ppm": 1.5409673064292457
+    },
+    {
+      "drug": "linagliptin",
+      "n_se": 35,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.23600000000000002,
+      "mean_ppm": 0.19893186993220904
+    },
+    {
+      "drug": "carbamazepine",
+      "n_se": 287,
+      "n_targets": 16,
+      "mean_cost": -7.246186407572353e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0625,
+      "mean_loeuf": 0.9233125,
+      "mean_ppm": 1.734017815773906
+    },
+    {
+      "drug": "risperidone",
+      "n_se": 588,
+      "n_targets": 26,
+      "mean_cost": -7.246244320135986e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.765,
+      "mean_ppm": 2.2258785223058517
+    },
+    {
+      "drug": "gemfibrozil",
+      "n_se": 104,
+      "n_targets": 6,
+      "mean_cost": -7.246231386037749e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8913333333333334,
+      "mean_ppm": 0.08671566394488242
+    },
+    {
+      "drug": "carvedilol",
+      "n_se": 217,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.83775,
+      "mean_ppm": -0.023248931005381078
+    },
+    {
+      "drug": "bezafibrate",
+      "n_se": 56,
+      "n_targets": 3,
+      "mean_cost": -7.246231386037749e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.618,
+      "mean_ppm": 0.22124031133544728
+    },
+    {
+      "drug": "metformin",
+      "n_se": 114,
+      "n_targets": 17,
+      "mean_cost": -7.246219529595995e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.058823529411764705,
+      "mean_loeuf": 0.7275294117647059,
+      "mean_ppm": 0.5556988947189014
+    },
+    {
+      "drug": "triamterene",
+      "n_se": 24,
+      "n_targets": 11,
+      "mean_cost": -7.246244293490633e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8468181818181819,
+      "mean_ppm": 1.7942845719927096
+    },
+    {
+      "drug": "rosiglitazone",
+      "n_se": 72,
+      "n_targets": 12,
+      "mean_cost": -3.6231434508149363e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 0.6486666666666666,
+      "mean_ppm": 3.3094309991627204
+    },
+    {
+      "drug": "treprostinil",
+      "n_se": 96,
+      "n_targets": 6,
+      "mean_cost": -7.246244002612201e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.3335,
+      "mean_ppm": 3.6697369603180103
+    },
+    {
+      "drug": "troglitazone",
+      "n_se": 29,
+      "n_targets": 9,
+      "mean_cost": -7.246244002612201e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.1111111111111111,
+      "mean_loeuf": 0.8313333333333334,
+      "mean_ppm": 2.235948790855485
+    },
+    {
+      "drug": "riluzole",
+      "n_se": 375,
+      "n_targets": 10,
+      "mean_cost": 0.0981382275982132,
+      "n_metabolic": 5,
+      "mean_ess": 0.1,
+      "mean_loeuf": 0.4755,
+      "mean_ppm": 1.4178468678276965
+    },
+    {
+      "drug": "chlorpromazine",
+      "n_se": 87,
+      "n_targets": 7,
+      "mean_cost": -7.246223947543484e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2915714285714284,
+      "mean_ppm": 0.35550625163029537
+    },
+    {
+      "drug": "methylprednisolone",
+      "n_se": 194,
+      "n_targets": 8,
+      "mean_cost": -7.246223947543484e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.759875,
+      "mean_ppm": 0.6322167945129611
+    },
+    {
+      "drug": "nortriptyline",
+      "n_se": 129,
+      "n_targets": 17,
+      "mean_cost": -4.830844256472252e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.058823529411764705,
+      "mean_loeuf": 0.5764117647058823,
+      "mean_ppm": 0.9512946530324812
+    },
+    {
+      "drug": "desflurane",
+      "n_se": 122,
+      "n_targets": 12,
+      "mean_cost": 0.24534629362939947,
+      "n_metabolic": 2,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 0.3133333333333333,
+      "mean_ppm": 1.2740172968362895
+    },
+    {
+      "drug": "isoflurane",
+      "n_se": 40,
+      "n_targets": 16,
+      "mean_cost": 0.2453462936309651,
+      "n_metabolic": 2,
+      "mean_ess": 0.0625,
+      "mean_loeuf": 0.55325,
+      "mean_ppm": 1.1104886998366692
+    },
+    {
+      "drug": "sevoflurane",
+      "n_se": 124,
+      "n_targets": 20,
+      "mean_cost": 0.16356395421145165,
+      "n_metabolic": 3,
+      "mean_ess": 0.1,
+      "mean_loeuf": 0.4984,
+      "mean_ppm": 1.054291235733786
+    },
+    {
+      "drug": "enflurane",
+      "n_se": 17,
+      "n_targets": 13,
+      "mean_cost": 0.24534629362939947,
+      "n_metabolic": 2,
+      "mean_ess": 0.15384615384615385,
+      "mean_loeuf": 0.30953846153846154,
+      "mean_ppm": 1.243526474534985
+    },
+    {
+      "drug": "omeprazole",
+      "n_se": 264,
+      "n_targets": 6,
+      "mean_cost": -7.24606724400445e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 1.0896666666666668,
+      "mean_ppm": 2.0580892904138777
+    },
+    {
+      "drug": "rabeprazole",
+      "n_se": 306,
+      "n_targets": 11,
+      "mean_cost": -7.246155853124492e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6236363636363635,
+      "mean_ppm": 0.639794262013916
+    },
+    {
+      "drug": "nifedipine",
+      "n_se": 240,
+      "n_targets": 21,
+      "mean_cost": -7.246128688187525e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.047619047619047616,
+      "mean_loeuf": 0.7133809523809523,
+      "mean_ppm": 1.340668805752882
+    },
+    {
+      "drug": "pimecrolimus",
+      "n_se": 114,
+      "n_targets": 2,
+      "mean_cost": -7.246215767420239e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.34800000000000003,
+      "mean_ppm": 2.2520054515111227
+    },
+    {
+      "drug": "clotrimazole",
+      "n_se": 26,
+      "n_targets": 24,
+      "mean_cost": -3.6231551903131987e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.08333333333333333,
+      "mean_loeuf": 0.6712083333333334,
+      "mean_ppm": 2.170359762934063
+    },
+    {
+      "drug": "lamotrigine",
+      "n_se": 338,
+      "n_targets": 9,
+      "mean_cost": -7.24624432901777e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8613333333333333,
+      "mean_ppm": 1.438350693070538
+    },
+    {
+      "drug": "benazepril",
+      "n_se": 95,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.945,
+      "mean_ppm": 2.3322636969775186
+    },
+    {
+      "drug": "rosuvastatin",
+      "n_se": 73,
+      "n_targets": 15,
+      "mean_cost": -7.246244002612201e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.06666666666666667,
+      "mean_loeuf": 1.0348666666666666,
+      "mean_ppm": 0.8925212636855969
+    },
+    {
+      "drug": "fluvastatin",
+      "n_se": 146,
+      "n_targets": 5,
+      "mean_cost": 1.0,
+      "n_metabolic": 1,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.40440000000000004,
+      "mean_ppm": 0.0023388808920563934
+    },
+    {
+      "drug": "pentostatin",
+      "n_se": 164,
+      "n_targets": 3,
+      "mean_cost": -7.246244213554576e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.828,
+      "mean_ppm": 1.6665741356934505
+    },
+    {
+      "drug": "quinidine",
+      "n_se": 164,
+      "n_targets": 6,
+      "mean_cost": 0.4906933118747816,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7324999999999999,
+      "mean_ppm": 1.7316424779419741
+    },
+    {
+      "drug": "rivastigmine",
+      "n_se": 417,
+      "n_targets": 4,
+      "mean_cost": -7.246244002612201e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8327499999999999,
+      "mean_ppm": 2.6011132839915296
+    },
+    {
+      "drug": "perphenazine",
+      "n_se": 111,
+      "n_targets": 8,
+      "mean_cost": -7.246244386749368e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.6488750000000001,
+      "mean_ppm": 1.5946880573838973
+    },
+    {
+      "drug": "donepezil",
+      "n_se": 303,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.20350000000000001,
+      "mean_ppm": -0.4491603949342149
+    },
+    {
+      "drug": "fluoxymesterone",
+      "n_se": 27,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.415,
+      "mean_ppm": -0.8927900303521317
+    },
+    {
+      "drug": "mannitol",
+      "n_se": 125,
+      "n_targets": 5,
+      "mean_cost": -7.246227691215523e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.059,
+      "mean_ppm": 1.5908150944315431
+    },
+    {
+      "drug": "warfarin",
+      "n_se": 84,
+      "n_targets": 25,
+      "mean_cost": -7.15961865083159e-07,
+      "n_metabolic": 5,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.93384,
+      "mean_ppm": 1.459704223416338
+    },
+    {
+      "drug": "zileuton",
+      "n_se": 49,
+      "n_targets": 4,
+      "mean_cost": -7.246115014680754e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.28524999999999995,
+      "mean_ppm": 0.7346198360177536
+    },
+    {
+      "drug": "pimozide",
+      "n_se": 109,
+      "n_targets": 4,
+      "mean_cost": -7.246223947543484e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.25,
+      "mean_loeuf": 1.0094999999999998,
+      "mean_ppm": 0.18927971263717705
+    },
+    {
+      "drug": "ziconotide",
+      "n_se": 147,
+      "n_targets": 2,
+      "mean_cost": -7.246244360104015e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.259,
+      "mean_ppm": -1.8239087409443189
+    },
+    {
+      "drug": "ticlopidine",
+      "n_se": 75,
+      "n_targets": 7,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0517142857142856,
+      "mean_ppm": 1.6540609714292624
+    },
+    {
+      "drug": "vismodegib",
+      "n_se": 50,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.51,
+      "mean_ppm": 1.321810658927777
+    },
+    {
+      "drug": "vemurafenib",
+      "n_se": 81,
+      "n_targets": 20,
+      "mean_cost": -7.246213560296866e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.05,
+      "mean_loeuf": 0.49815000000000015,
+      "mean_ppm": 2.4032287379967285
+    },
+    {
+      "drug": "dexamethasone",
+      "n_se": 219,
+      "n_targets": 46,
+      "mean_cost": -7.246212544220754e-07,
+      "n_metabolic": 5,
+      "mean_ess": 0.08695652173913043,
+      "mean_loeuf": 0.8042608695652175,
+      "mean_ppm": 2.0289487359687177
+    },
+    {
+      "drug": "bimatoprost",
+      "n_se": 109,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9632499999999999,
+      "mean_ppm": 3.642576492447126
+    },
+    {
+      "drug": "caffeine",
+      "n_se": 51,
+      "n_targets": 20,
+      "mean_cost": -7.246244310143979e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.05,
+      "mean_loeuf": 0.7061499999999998,
+      "mean_ppm": 0.1897709563468738
+    },
+    {
+      "drug": "iloprost",
+      "n_se": 60,
+      "n_targets": 7,
+      "mean_cost": -7.246244002612201e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.3978571428571427,
+      "mean_ppm": 3.82392680721899
+    },
+    {
+      "drug": "misoprostol",
+      "n_se": 106,
+      "n_targets": 4,
+      "mean_cost": -7.246244002612201e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1955,
+      "mean_ppm": 3.6219335066822755
+    },
+    {
+      "drug": "betamethasone",
+      "n_se": 28,
+      "n_targets": 2,
+      "mean_cost": -7.246184756670715e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.633,
+      "mean_ppm": 1.1679520632985891
+    },
+    {
+      "drug": "indomethacin",
+      "n_se": 175,
+      "n_targets": 13,
+      "mean_cost": -4.830828737034665e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.07692307692307693,
+      "mean_loeuf": 0.8993846153846154,
+      "mean_ppm": 1.804192398242787
+    },
+    {
+      "drug": "tafluprost",
+      "n_se": 36,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.845,
+      "mean_ppm": 3.9435939520224492
+    },
+    {
+      "drug": "latanoprost",
+      "n_se": 57,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.845,
+      "mean_ppm": 3.9435939520224492
+    },
+    {
+      "drug": "travoprost",
+      "n_se": 173,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.754,
+      "mean_ppm": -1.6989700043360187
+    },
+    {
+      "drug": "nabumetone",
+      "n_se": 117,
+      "n_targets": 5,
+      "mean_cost": -7.246244393410706e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.813,
+      "mean_ppm": 0.9674356441541145
+    },
+    {
+      "drug": "flurbiprofen",
+      "n_se": 233,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1105,
+      "mean_ppm": 1.3593800878746347
+    },
+    {
+      "drug": "ibandronate",
+      "n_se": 180,
+      "n_targets": 3,
+      "mean_cost": -7.246231858992758e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 1.0816666666666668,
+      "mean_ppm": 1.761722414138086
+    },
+    {
+      "drug": "vinblastine",
+      "n_se": 54,
+      "n_targets": 13,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.15384615384615385,
+      "mean_loeuf": 0.879230769230769,
+      "mean_ppm": 2.0888856732297776
+    },
+    {
+      "drug": "ponatinib",
+      "n_se": 179,
+      "n_targets": 11,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4757272727272727,
+      "mean_ppm": 1.3924395291290947
+    },
+    {
+      "drug": "crizotinib",
+      "n_se": 92,
+      "n_targets": 9,
+      "mean_cost": -6.834310894987539e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.46811111111111114,
+      "mean_ppm": 2.2862995005415905
+    },
+    {
+      "drug": "isradipine",
+      "n_se": 97,
+      "n_targets": 3,
+      "mean_cost": -7.280704469684688e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.6666666666666666,
+      "mean_loeuf": 0.8153333333333332,
+      "mean_ppm": 1.531661963390312
+    },
+    {
+      "drug": "tofacitinib",
+      "n_se": 64,
+      "n_targets": 7,
+      "mean_cost": -7.24624441339472e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.3648571428571429,
+      "mean_ppm": 1.466038896758724
+    },
+    {
+      "drug": "tetracycline",
+      "n_se": 39,
+      "n_targets": 8,
+      "mean_cost": -7.246244232428367e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.80025,
+      "mean_ppm": 2.6271212410000864
+    },
+    {
+      "drug": "trandolapril",
+      "n_se": 185,
+      "n_targets": 5,
+      "mean_cost": -7.246244448921857e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7445999999999999,
+      "mean_ppm": 0.9930215789948632
+    },
+    {
+      "drug": "temsirolimus",
+      "n_se": 185,
+      "n_targets": 7,
+      "mean_cost": -7.246194897447822e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.2857142857142857,
+      "mean_loeuf": 0.4030000000000001,
+      "mean_ppm": 1.8354939849776832
+    },
+    {
+      "drug": "nisoldipine",
+      "n_se": 142,
+      "n_targets": 3,
+      "mean_cost": -7.297934464522982e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 0.6050000000000001,
+      "mean_ppm": 1.412869168768954
+    },
+    {
+      "drug": "thalidomide",
+      "n_se": 357,
+      "n_targets": 16,
+      "mean_cost": -6.831868404333363e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.823625,
+      "mean_ppm": 1.7296339752762155
+    },
+    {
+      "drug": "adapalene",
+      "n_se": 48,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.52425,
+      "mean_ppm": 1.198244586228236
+    },
+    {
+      "drug": "phenelzine",
+      "n_se": 65,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6274,
+      "mean_ppm": 1.5747672072685523
+    },
+    {
+      "drug": "lithium",
+      "n_se": 108,
+      "n_targets": 26,
+      "mean_cost": -2.415459074978088e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6648076923076923,
+      "mean_ppm": 1.1190438689260027
+    },
+    {
+      "drug": "amisulpride",
+      "n_se": 80,
+      "n_targets": 20,
+      "mean_cost": -7.246134650085168e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.898,
+      "mean_ppm": -0.011285010508864986
+    },
+    {
+      "drug": "mirtazapine",
+      "n_se": 317,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8965,
+      "mean_ppm": 0.8682769838658371
+    },
+    {
+      "drug": "paliperidone",
+      "n_se": 348,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.52425,
+      "mean_ppm": 0.5681136824783088
+    },
+    {
+      "drug": "azathioprine",
+      "n_se": 92,
+      "n_targets": 15,
+      "mean_cost": 3.503108740710026e-05,
+      "n_metabolic": 4,
+      "mean_ess": 0.13333333333333333,
+      "mean_loeuf": 0.8246666666666668,
+      "mean_ppm": 1.5626306498634623
+    },
+    {
+      "drug": "dabrafenib",
+      "n_se": 142,
+      "n_targets": 14,
+      "mean_cost": -7.246219315693025e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.07142857142857142,
+      "mean_loeuf": 0.4673571428571428,
+      "mean_ppm": 1.2300180627755395
+    },
+    {
+      "drug": "prochlorperazine",
+      "n_se": 119,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 0.5393333333333333,
+      "mean_ppm": 0.07310709833543158
+    },
+    {
+      "drug": "thioridazine",
+      "n_se": 82,
+      "n_targets": 5,
+      "mean_cost": -7.246244440040073e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7936,
+      "mean_ppm": -0.015742798294583926
+    },
+    {
+      "drug": "ketoconazole",
+      "n_se": 116,
+      "n_targets": 5,
+      "mean_cost": -4.6413983767479294e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.4,
+      "mean_loeuf": 1.0144,
+      "mean_ppm": 1.7416478769384909
+    },
+    {
+      "drug": "regorafenib",
+      "n_se": 85,
+      "n_targets": 13,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4958461538461539,
+      "mean_ppm": 0.6036356230570992
+    },
+    {
+      "drug": "valsartan",
+      "n_se": 101,
+      "n_targets": 2,
+      "mean_cost": -7.246244373426691e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.25,
+      "mean_ppm": 1.7709992051639407
+    },
+    {
+      "drug": "irbesartan",
+      "n_se": 204,
+      "n_targets": 3,
+      "mean_cost": -7.246244373426691e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9870000000000001,
+      "mean_ppm": 2.1162102335830344
+    },
+    {
+      "drug": "eprosartan",
+      "n_se": 132,
+      "n_targets": 1,
+      "mean_cost": -7.246244373426691e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.153,
+      "mean_ppm": 2.0718856877522414
+    },
+    {
+      "drug": "letrozole",
+      "n_se": 154,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5535,
+      "mean_ppm": 0.7132384615456617
+    },
+    {
+      "drug": "lenalidomide",
+      "n_se": 462,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.6982499999999999,
+      "mean_ppm": 1.1291660388985096
+    },
+    {
+      "drug": "pomalidomide",
+      "n_se": 105,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.6666666666666666,
+      "mean_loeuf": 0.4033333333333333,
+      "mean_ppm": 1.380651344991083
+    },
+    {
+      "drug": "fluorescein",
+      "n_se": 85,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8421666666666668,
+      "mean_ppm": 1.4523615331345738
+    },
+    {
+      "drug": "citalopram",
+      "n_se": 722,
+      "n_targets": 25,
+      "mean_cost": 0.24999963769059796,
+      "n_metabolic": 4,
+      "mean_ess": 0.08,
+      "mean_loeuf": 0.73708,
+      "mean_ppm": 1.139159702082132
+    },
+    {
+      "drug": "voriconazole",
+      "n_se": 367,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8825000000000001,
+      "mean_ppm": 0.7263196121107753
+    },
+    {
+      "drug": "aliskiren",
+      "n_se": 87,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.959,
+      "mean_ppm": -1.1487416512809248
+    },
+    {
+      "drug": "lapatinib",
+      "n_se": 68,
+      "n_targets": 9,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.1111111111111111,
+      "mean_loeuf": 0.631,
+      "mean_ppm": 0.2903809189930253
+    },
+    {
+      "drug": "tramadol",
+      "n_se": 535,
+      "n_targets": 8,
+      "mean_cost": -6.839639965505739e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.72325,
+      "mean_ppm": 0.5232911291867901
+    },
+    {
+      "drug": "oxycodone",
+      "n_se": 263,
+      "n_targets": 6,
+      "mean_cost": -7.246244821956793e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5996666666666667,
+      "mean_ppm": -0.47517131363539444
+    },
+    {
+      "drug": "conivaptan",
+      "n_se": 60,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9235,
+      "mean_ppm": -1.1821042428382045
+    },
+    {
+      "drug": "desmopressin",
+      "n_se": 125,
+      "n_targets": 7,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8817142857142858,
+      "mean_ppm": -0.9625735020593764
+    },
+    {
+      "drug": "atosiban",
+      "n_se": 31,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0114,
+      "mean_ppm": -1.3645162531850878
+    },
+    {
+      "drug": "terlipressin",
+      "n_se": 42,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0426666666666666,
+      "mean_ppm": -1.298144307426493
+    },
+    {
+      "drug": "tolvaptan",
+      "n_se": 72,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8006666666666667,
+      "mean_ppm": -1.1210953975265396
+    },
+    {
+      "drug": "amikacin",
+      "n_se": 27,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5385,
+      "mean_ppm": 3.0058241815384186
+    },
+    {
+      "drug": "ribavirin",
+      "n_se": 405,
+      "n_targets": 26,
+      "mean_cost": 3.5212245190596736e-05,
+      "n_metabolic": 4,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8521153846153846,
+      "mean_ppm": 1.7961781750602814
+    },
+    {
+      "drug": "testosterone",
+      "n_se": 168,
+      "n_targets": 26,
+      "mean_cost": -7.246185368033528e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.038461538461538464,
+      "mean_loeuf": 0.8928076923076923,
+      "mean_ppm": 2.929412656893496
+    },
+    {
+      "drug": "clindamycin",
+      "n_se": 105,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.64,
+      "mean_ppm": 2.5693750802185407
+    },
+    {
+      "drug": "pyrazinamide",
+      "n_se": 39,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8078,
+      "mean_ppm": 2.106831833159252
+    },
+    {
+      "drug": "trimipramine",
+      "n_se": 85,
+      "n_targets": 12,
+      "mean_cost": -7.246244380088029e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.08333333333333333,
+      "mean_loeuf": 0.6669166666666668,
+      "mean_ppm": 0.9755198839964755
+    },
+    {
+      "drug": "hydroxyurea",
+      "n_se": 105,
+      "n_targets": 14,
+      "mean_cost": 0.5999997101502277,
+      "n_metabolic": 5,
+      "mean_ess": 0.35714285714285715,
+      "mean_loeuf": 0.4530714285714285,
+      "mean_ppm": 1.0683528659712165
+    },
+    {
+      "drug": "cladribine",
+      "n_se": 175,
+      "n_targets": 9,
+      "mean_cost": 0.5999997101502293,
+      "n_metabolic": 5,
+      "mean_ess": 0.2222222222222222,
+      "mean_loeuf": 0.7825555555555554,
+      "mean_ppm": 1.3517039944834754
+    },
+    {
+      "drug": "disulfiram",
+      "n_se": 29,
+      "n_targets": 7,
+      "mean_cost": -7.246210607843769e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6525714285714285,
+      "mean_ppm": 1.5163219042785936
+    },
+    {
+      "drug": "sulfasalazine",
+      "n_se": 146,
+      "n_targets": 5,
+      "mean_cost": -4.830805512649287e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.6976000000000001,
+      "mean_ppm": 1.9508106050785052
+    },
+    {
+      "drug": "sulindac",
+      "n_se": 129,
+      "n_targets": 5,
+      "mean_cost": -7.246215696365965e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9486000000000001,
+      "mean_ppm": 1.4697307309347274
+    },
+    {
+      "drug": "triclosan",
+      "n_se": 1,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.54,
+      "mean_ppm": 2.3954854013728393
+    },
+    {
+      "drug": "bexarotene",
+      "n_se": 263,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.42525,
+      "mean_ppm": 0.039066941475546874
+    },
+    {
+      "drug": "rocuronium",
+      "n_se": 28,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9673999999999999,
+      "mean_ppm": -0.5171264163912462
+    },
+    {
+      "drug": "succinylcholine",
+      "n_se": 42,
+      "n_targets": 9,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8684444444444446,
+      "mean_ppm": 2.888326293975001
+    },
+    {
+      "drug": "dantrolene",
+      "n_se": 94,
+      "n_targets": 4,
+      "mean_cost": -7.246244313474648e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.36875,
+      "mean_ppm": 0.6000194496794257
+    },
+    {
+      "drug": "procaine",
+      "n_se": 30,
+      "n_targets": 2,
+      "mean_cost": -7.246244313474648e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.21050000000000002,
+      "mean_ppm": -0.040958607678906384
+    },
+    {
+      "drug": "bromocriptine",
+      "n_se": 138,
+      "n_targets": 12,
+      "mean_cost": -7.246157417428734e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8503333333333334,
+      "mean_ppm": 2.487119866876048
+    },
+    {
+      "drug": "dofetilide",
+      "n_se": 56,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.162,
+      "mean_ppm": 0.2820553706837064
+    },
+    {
+      "drug": "imiquimod",
+      "n_se": 237,
+      "n_targets": 3,
+      "mean_cost": -6.831868404333363e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.06166666666666667,
+      "mean_ppm": -0.3239163546353781
+    },
+    {
+      "drug": "hydroxychloroquine",
+      "n_se": 111,
+      "n_targets": 9,
+      "mean_cost": -4.830844002601253e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.633888888888889,
+      "mean_ppm": 0.873946753885406
+    },
+    {
+      "drug": "ibutilide",
+      "n_se": 25,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9544999999999999,
+      "mean_ppm": 0.5637183399656777
+    },
+    {
+      "drug": "disopyramide",
+      "n_se": 101,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.533,
+      "mean_ppm": 0.8482507146770425
+    },
+    {
+      "drug": "chloroprocaine",
+      "n_se": 34,
+      "n_targets": 6,
+      "mean_cost": -7.246244453362749e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.561,
+      "mean_ppm": -1.6049649819713696
+    },
+    {
+      "drug": "zonisamide",
+      "n_se": 248,
+      "n_targets": 10,
+      "mean_cost": -7.246190774079508e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0596999999999999,
+      "mean_ppm": 1.6176753854165327
+    },
+    {
+      "drug": "oxcarbazepine",
+      "n_se": 275,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7577499999999999,
+      "mean_ppm": -1.080921907623926
+    },
+    {
+      "drug": "rufinamide",
+      "n_se": 83,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4055,
+      "mean_ppm": 1.26007536502256
+    },
+    {
+      "drug": "fosphenytoin",
+      "n_se": 201,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.31475,
+      "mean_ppm": -1.4377071355435251
+    },
+    {
+      "drug": "tetracaine",
+      "n_se": 30,
+      "n_targets": 4,
+      "mean_cost": -7.246244453362749e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.44825,
+      "mean_ppm": -1.4717262228329562
+    },
+    {
+      "drug": "mephenytoin",
+      "n_se": 60,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.1255,
+      "mean_ppm": -1.4089353929735007
+    },
+    {
+      "drug": "ethotoin",
+      "n_se": 25,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.49,
+      "mean_ppm": -1.6078895349886861
+    },
+    {
+      "drug": "fospropofol",
+      "n_se": 20,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.378,
+      "mean_ppm": -2.221848749616356
+    },
+    {
+      "drug": "propafenone",
+      "n_se": 304,
+      "n_targets": 4,
+      "mean_cost": -7.246244349001785e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.25,
+      "mean_loeuf": -0.05000000000000002,
+      "mean_ppm": -0.03116695510957014
+    },
+    {
+      "drug": "prilocaine",
+      "n_se": 70,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.308,
+      "mean_ppm": -1.7958800173440752
+    },
+    {
+      "drug": "lidocaine",
+      "n_se": 124,
+      "n_targets": 3,
+      "mean_cost": -7.246244453362749e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8406666666666666,
+      "mean_ppm": -1.1782681783099558
+    },
+    {
+      "drug": "lacosamide",
+      "n_se": 100,
+      "n_targets": 2,
+      "mean_cost": -7.246244453362749e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.491,
+      "mean_ppm": 1.716074328277485
+    },
+    {
+      "drug": "bumetanide",
+      "n_se": 54,
+      "n_targets": 11,
+      "mean_cost": -3.623104034566893e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6876363636363637,
+      "mean_ppm": 0.8306178267288562
+    },
+    {
+      "drug": "furosemide",
+      "n_se": 141,
+      "n_targets": 11,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9276363636363638,
+      "mean_ppm": 3.27653111028749
+    },
+    {
+      "drug": "hydrocodone",
+      "n_se": 74,
+      "n_targets": 5,
+      "mean_cost": -7.246250006698318e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7134,
+      "mean_ppm": 1.3012514293889503
+    },
+    {
+      "drug": "methysergide",
+      "n_se": 65,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.040333333333333,
+      "mean_ppm": 3.1538207564870038
+    },
+    {
+      "drug": "alclometasone",
+      "n_se": 12,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.488,
+      "mean_ppm": 2.3673577849468344
+    },
+    {
+      "drug": "beclomethasone",
+      "n_se": 20,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.488,
+      "mean_ppm": 2.3673577849468344
+    },
+    {
+      "drug": "rimexolone",
+      "n_se": 28,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.989,
+      "mean_ppm": 2.067808938485173
+    },
+    {
+      "drug": "triamcinolone",
+      "n_se": 256,
+      "n_targets": 5,
+      "mean_cost": -7.246244360104015e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5626,
+      "mean_ppm": 1.7754633527124666
+    },
+    {
+      "drug": "ciclesonide",
+      "n_se": 91,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.488,
+      "mean_ppm": 2.3673577849468344
+    },
+    {
+      "drug": "cetrorelix",
+      "n_se": 35,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 0.5676666666666667,
+      "mean_ppm": 2.8684516370256397
+    },
+    {
+      "drug": "vorinostat",
+      "n_se": 62,
+      "n_targets": 37,
+      "mean_cost": 0.4999996376877768,
+      "n_metabolic": 2,
+      "mean_ess": 0.16216216216216217,
+      "mean_loeuf": 0.5759189189189189,
+      "mean_ppm": 2.391407506770086
+    },
+    {
+      "drug": "busulfan",
+      "n_se": 232,
+      "n_targets": 7,
+      "mean_cost": -7.246155780959995e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2341428571428572,
+      "mean_ppm": 1.6873747841522275
+    },
+    {
+      "drug": "triazolam",
+      "n_se": 90,
+      "n_targets": 18,
+      "mean_cost": -7.246203638233695e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.05555555555555555,
+      "mean_loeuf": 0.2933333333333333,
+      "mean_ppm": 0.38436337170854157
+    },
+    {
+      "drug": "acarbose",
+      "n_se": 40,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.186,
+      "mean_ppm": 1.0609495323235096
+    },
+    {
+      "drug": "sacrosidase",
+      "n_se": 14,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.04,
+      "mean_ppm": -0.5816987086802545
+    },
+    {
+      "drug": "naltrexone",
+      "n_se": 226,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.615,
+      "mean_ppm": 1.3359791423403533
+    },
+    {
+      "drug": "bupivacaine",
+      "n_se": 189,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.73,
+      "mean_ppm": 2.618305457652524
+    },
+    {
+      "drug": "ropivacaine",
+      "n_se": 205,
+      "n_targets": 2,
+      "mean_cost": -7.246244415615166e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6495,
+      "mean_ppm": 1.9398211570393602
+    },
+    {
+      "drug": "chlorthalidone",
+      "n_se": 54,
+      "n_targets": 7,
+      "mean_cost": -7.246192692544895e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.14285714285714285,
+      "mean_loeuf": 1.2077142857142855,
+      "mean_ppm": 3.154092593376007
+    },
+    {
+      "drug": "methyclothiazide",
+      "n_se": 48,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.824,
+      "mean_ppm": -0.27164621797877153
+    },
+    {
+      "drug": "diazoxide",
+      "n_se": 76,
+      "n_targets": 7,
+      "mean_cost": -7.246244255743051e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.971857142857143,
+      "mean_ppm": -0.04321433288901725
+    },
+    {
+      "drug": "indapamide",
+      "n_se": 215,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.45675,
+      "mean_ppm": -1.0567528748621382
+    },
+    {
+      "drug": "polythiazide",
+      "n_se": 36,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.198,
+      "mean_ppm": -0.5816987086802545
+    },
+    {
+      "drug": "captopril",
+      "n_se": 134,
+      "n_targets": 6,
+      "mean_cost": -7.246244448921857e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.44883333333333336,
+      "mean_ppm": 0.4754532601697003
+    },
+    {
+      "drug": "acyclovir",
+      "n_se": 155,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9799999999999999,
+      "mean_ppm": -1.1893195247894364
+    },
+    {
+      "drug": "rescinnamine",
+      "n_se": 66,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.511,
+      "mean_ppm": -1.7958800173440752
+    },
+    {
+      "drug": "raltitrexed",
+      "n_se": 53,
+      "n_targets": 4,
+      "mean_cost": 0.5044925305640005,
+      "n_metabolic": 2,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.7382500000000001,
+      "mean_ppm": 1.1357526293291766
+    },
+    {
+      "drug": "glutamine",
+      "n_se": 65,
+      "n_targets": 5,
+      "mean_cost": -7.246237018199153e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.013400000000000033,
+      "mean_ppm": 2.1787939873754016
+    },
+    {
+      "drug": "eltrombopag",
+      "n_se": 48,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.162,
+      "mean_ppm": -0.7138804974096374
+    },
+    {
+      "drug": "tropisetron",
+      "n_se": 34,
+      "n_targets": 9,
+      "mean_cost": -7.246217209599948e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.3144444444444445,
+      "mean_ppm": 0.8570240914880467
+    },
+    {
+      "drug": "rasagiline",
+      "n_se": 264,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.673,
+      "mean_ppm": -0.9136401693252518
+    },
+    {
+      "drug": "probenecid",
+      "n_se": 27,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 1.0078333333333334,
+      "mean_ppm": 1.2644518229351622
+    },
+    {
+      "drug": "cimetidine",
+      "n_se": 64,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9916666666666667,
+      "mean_ppm": 0.8014608803566602
+    },
+    {
+      "drug": "sulfamethoxazole",
+      "n_se": 81,
+      "n_targets": 5,
+      "mean_cost": -7.246244415615166e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1332,
+      "mean_ppm": 1.8772480670758984
+    },
+    {
+      "drug": "carnitine",
+      "n_se": 71,
+      "n_targets": 1,
+      "mean_cost": 0.0035025604563864166,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.358,
+      "mean_ppm": -1.4202164033831899
+    },
+    {
+      "drug": "dicloxacillin",
+      "n_se": 75,
+      "n_targets": 3,
+      "mean_cost": -7.246244406733382e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8806666666666666,
+      "mean_ppm": 0.9610570518021607
+    },
+    {
+      "drug": "oxacillin",
+      "n_se": 47,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.145,
+      "mean_ppm": -1.0177287669604316
+    },
+    {
+      "drug": "felodipine",
+      "n_se": 98,
+      "n_targets": 6,
+      "mean_cost": -7.246244440040073e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4616666666666666,
+      "mean_ppm": 0.34706968593292076
+    },
+    {
+      "drug": "clevidipine",
+      "n_se": 14,
+      "n_targets": 4,
+      "mean_cost": -7.246244440040073e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5595,
+      "mean_ppm": 0.1015752462559335
+    },
+    {
+      "drug": "metoprolol",
+      "n_se": 154,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9083333333333333,
+      "mean_ppm": 1.4830830611204748
+    },
+    {
+      "drug": "tenofovir",
+      "n_se": 116,
+      "n_targets": 10,
+      "mean_cost": -6.038512539256283e-07,
+      "n_metabolic": 6,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9862,
+      "mean_ppm": 2.1847144222698134
+    },
+    {
+      "drug": "ivacaftor",
+      "n_se": 48,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8905,
+      "mean_ppm": -1.3187587626244128
+    },
+    {
+      "drug": "tropicamide",
+      "n_se": 36,
+      "n_targets": 4,
+      "mean_cost": -7.246174027475405e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.79725,
+      "mean_ppm": 1.8039416708324523
+    },
+    {
+      "drug": "thymidine",
+      "n_se": 91,
+      "n_targets": 4,
+      "mean_cost": -7.246244360104015e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.98875,
+      "mean_ppm": 1.1680553034591392
+    },
+    {
+      "drug": "adenosine",
+      "n_se": 92,
+      "n_targets": 10,
+      "mean_cost": -7.246244375647137e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9475,
+      "mean_ppm": 0.24077382528419275
+    },
+    {
+      "drug": "boceprevir",
+      "n_se": 296,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.81725,
+      "mean_ppm": -2.0338582672609675
+    },
+    {
+      "drug": "histamine",
+      "n_se": 96,
+      "n_targets": 7,
+      "mean_cost": -7.246207057720611e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7994285714285713,
+      "mean_ppm": 1.7966199208363323
+    },
+    {
+      "drug": "nystatin",
+      "n_se": 25,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6485000000000001,
+      "mean_ppm": 0.3752062210993302
+    },
+    {
+      "drug": "galantamine",
+      "n_se": 168,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.768,
+      "mean_ppm": 1.7824941233609592
+    },
+    {
+      "drug": "repaglinide",
+      "n_se": 64,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8503749999999999,
+      "mean_ppm": 0.3431623253073784
+    },
+    {
+      "drug": "glycine",
+      "n_se": 37,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.3005,
+      "mean_ppm": -1.1870866433571443
+    },
+    {
+      "drug": "pyrimethamine",
+      "n_se": 14,
+      "n_targets": 6,
+      "mean_cost": -7.246244457803641e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0101666666666667,
+      "mean_ppm": 1.4013919237420513
+    },
+    {
+      "drug": "canagliflozin",
+      "n_se": 84,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2380000000000002,
+      "mean_ppm": 0.2992893340876799
+    },
+    {
+      "drug": "empagliflozin",
+      "n_se": 50,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1592500000000001,
+      "mean_ppm": 0.9466610102619384
+    },
+    {
+      "drug": "cocaine",
+      "n_se": 11,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.15,
+      "mean_ppm": -0.8013429130455774
+    },
+    {
+      "drug": "loratadine",
+      "n_se": 67,
+      "n_targets": 8,
+      "mean_cost": -7.246186100040575e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8825,
+      "mean_ppm": 1.0871644874603275
+    },
+    {
+      "drug": "phendimetrazine",
+      "n_se": 23,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9345,
+      "mean_ppm": -1.0409586076789064
+    },
+    {
+      "drug": "milnacipran",
+      "n_se": 135,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5086666666666667,
+      "mean_ppm": 1.355949322787796
+    },
+    {
+      "drug": "gabapentin",
+      "n_se": 465,
+      "n_targets": 17,
+      "mean_cost": -7.24622953640619e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6675882352941176,
+      "mean_ppm": 0.8052009103034609
+    },
+    {
+      "drug": "celiprolol",
+      "n_se": 43,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.27,
+      "mean_ppm": -0.9136401693252518
+    },
+    {
+      "drug": "lorazepam",
+      "n_se": 114,
+      "n_targets": 8,
+      "mean_cost": -7.246244002612201e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9886250000000001,
+      "mean_ppm": 2.2658365701616616
+    },
+    {
+      "drug": "mycophenolate",
+      "n_se": 447,
+      "n_targets": 13,
+      "mean_cost": -5.434694036465793e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.15384615384615385,
+      "mean_loeuf": 0.9979230769230768,
+      "mean_ppm": 1.6970481812388347
+    },
+    {
+      "drug": "primaquine",
+      "n_se": 7,
+      "n_targets": 6,
+      "mean_cost": -7.246213724609873e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9035000000000001,
+      "mean_ppm": 1.8101081279242126
+    },
+    {
+      "drug": "sildenafil",
+      "n_se": 309,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.63225,
+      "mean_ppm": 1.3287922928959939
+    },
+    {
+      "drug": "darunavir",
+      "n_se": 267,
+      "n_targets": 1,
+      "mean_cost": -7.246244384528922e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.442,
+      "mean_ppm": -1.0861861476162833
+    },
+    {
+      "drug": "vinorelbine",
+      "n_se": 140,
+      "n_targets": 15,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.26666666666666666,
+      "mean_loeuf": 0.639,
+      "mean_ppm": 2.8164508600534868
+    },
+    {
+      "drug": "perindopril",
+      "n_se": 159,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2256666666666665,
+      "mean_ppm": -0.5697098939450762
+    },
+    {
+      "drug": "trifluoperazine",
+      "n_se": 106,
+      "n_targets": 6,
+      "mean_cost": -7.246219315693025e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7565,
+      "mean_ppm": 1.7136921030365624
+    },
+    {
+      "drug": "halofantrine",
+      "n_se": 53,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.193,
+      "mean_ppm": 0.7745899502647945
+    },
+    {
+      "drug": "atazanavir",
+      "n_se": 213,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8795,
+      "mean_ppm": -0.8054856581175327
+    },
+    {
+      "drug": "chloroquine",
+      "n_se": 63,
+      "n_targets": 6,
+      "mean_cost": -7.246244301262195e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.07966666666666666,
+      "mean_ppm": 0.9082973202140836
+    },
+    {
+      "drug": "pamidronate",
+      "n_se": 168,
+      "n_targets": 11,
+      "mean_cost": -7.246231858992758e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.09090909090909091,
+      "mean_loeuf": 0.5853636363636363,
+      "mean_ppm": 1.4190029491487353
+    },
+    {
+      "drug": "betaine",
+      "n_se": 28,
+      "n_targets": 3,
+      "mean_cost": -7.246244322356432e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0410000000000001,
+      "mean_ppm": 0.9599154643938256
+    },
+    {
+      "drug": "naftifine",
+      "n_se": 16,
+      "n_targets": 1,
+      "mean_cost": 1.0,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.314,
+      "mean_ppm": -0.019996628416253676
+    },
+    {
+      "drug": "bosutinib",
+      "n_se": 116,
+      "n_targets": 15,
+      "mean_cost": -4.6413983767479294e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.06666666666666667,
+      "mean_loeuf": 0.6050666666666668,
+      "mean_ppm": 1.7329981343753131
+    },
+    {
+      "drug": "dutasteride",
+      "n_se": 46,
+      "n_targets": 3,
+      "mean_cost": -7.246244346781339e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4206666666666667,
+      "mean_ppm": -0.7367585652254186
+    },
+    {
+      "drug": "finasteride",
+      "n_se": 47,
+      "n_targets": 4,
+      "mean_cost": -7.246244360104015e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.66025,
+      "mean_ppm": 0.5993098180151598
+    },
+    {
+      "drug": "ganciclovir",
+      "n_se": 267,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5792,
+      "mean_ppm": -0.13632033212410213
+    },
+    {
+      "drug": "romidepsin",
+      "n_se": 76,
+      "n_targets": 20,
+      "mean_cost": 0.9999999999999984,
+      "n_metabolic": 1,
+      "mean_ess": 0.15,
+      "mean_loeuf": 0.55005,
+      "mean_ppm": 1.0356898367003613
+    },
+    {
+      "drug": "estramustine",
+      "n_se": 58,
+      "n_targets": 4,
+      "mean_cost": -7.24606724400445e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.05925,
+      "mean_ppm": 1.2432737445790862
+    },
+    {
+      "drug": "estrone",
+      "n_se": 65,
+      "n_targets": 5,
+      "mean_cost": -7.246189452914109e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.4,
+      "mean_loeuf": 0.751,
+      "mean_ppm": 1.3588709990812438
+    },
+    {
+      "drug": "danazol",
+      "n_se": 98,
+      "n_targets": 6,
+      "mean_cost": -7.246134650085168e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 0.18266666666666664,
+      "mean_ppm": 2.7235221657215916
+    },
+    {
+      "drug": "triptorelin",
+      "n_se": 172,
+      "n_targets": 1,
+      "mean_cost": -7.246134650085168e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.442,
+      "mean_ppm": 0.937568038600383
+    },
+    {
+      "drug": "acenocoumarol",
+      "n_se": 26,
+      "n_targets": 5,
+      "mean_cost": -7.246244335679108e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9461999999999999,
+      "mean_ppm": 1.4595010478102657
+    },
+    {
+      "drug": "minoxidil",
+      "n_se": 36,
+      "n_targets": 4,
+      "mean_cost": -7.246244404512936e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.97125,
+      "mean_ppm": 0.7897216939809218
+    },
+    {
+      "drug": "tapentadol",
+      "n_se": 118,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.789,
+      "mean_ppm": 1.348324337700387
+    },
+    {
+      "drug": "oxandrolone",
+      "n_se": 27,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.828,
+      "mean_ppm": 0.5133507988059569
+    },
+    {
+      "drug": "cefdinir",
+      "n_se": 100,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8230000000000001,
+      "mean_ppm": 1.584659083394027
+    },
+    {
+      "drug": "levetiracetam",
+      "n_se": 176,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.048,
+      "mean_ppm": 2.315384597192658
+    },
+    {
+      "drug": "flumazenil",
+      "n_se": 95,
+      "n_targets": 11,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.24145454545454548,
+      "mean_ppm": 0.305234082373335
+    },
+    {
+      "drug": "flunitrazepam",
+      "n_se": 38,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.153,
+      "mean_ppm": 0.8145805160103187
+    },
+    {
+      "drug": "alprazolam",
+      "n_se": 199,
+      "n_targets": 12,
+      "mean_cost": -7.246202451405281e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.08333333333333333,
+      "mean_loeuf": 0.23650000000000002,
+      "mean_ppm": 0.6430988455937819
+    },
+    {
+      "drug": "clonazepam",
+      "n_se": 247,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.11875000000000002,
+      "mean_ppm": -0.898768613209301
+    },
+    {
+      "drug": "diazepam",
+      "n_se": 199,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.17,
+      "mean_ppm": 3.600557777414445
+    },
+    {
+      "drug": "baclofen",
+      "n_se": 200,
+      "n_targets": 7,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6351428571428571,
+      "mean_ppm": -0.453457336521869
+    },
+    {
+      "drug": "nizatidine",
+      "n_se": 69,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.535,
+      "mean_ppm": -0.32605800136591223
+    },
+    {
+      "drug": "mexiletine",
+      "n_se": 97,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.535,
+      "mean_ppm": -0.32605800136591223
+    },
+    {
+      "drug": "aprepitant",
+      "n_se": 214,
+      "n_targets": 3,
+      "mean_cost": -7.246244544401037e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9963333333333333,
+      "mean_ppm": -0.2831622767004755
+    },
+    {
+      "drug": "fosaprepitant",
+      "n_se": 146,
+      "n_targets": 2,
+      "mean_cost": -7.246244544401037e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7755000000000001,
+      "mean_ppm": -0.5917600346881504
+    },
+    {
+      "drug": "fluconazole",
+      "n_se": 143,
+      "n_targets": 5,
+      "mean_cost": 0.008985061127103178,
+      "n_metabolic": 1,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.6856,
+      "mean_ppm": 3.622937417048309
+    },
+    {
+      "drug": "chloramphenicol",
+      "n_se": 52,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7516666666666666,
+      "mean_ppm": 2.483393283033036
+    },
+    {
+      "drug": "ofloxacin",
+      "n_se": 419,
+      "n_targets": 3,
+      "mean_cost": -7.246192740284485e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6876666666666665,
+      "mean_ppm": 1.5571983139213212
+    },
+    {
+      "drug": "procainamide",
+      "n_se": 70,
+      "n_targets": 2,
+      "mean_cost": -7.246244349001785e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.1215,
+      "mean_ppm": 0.1420764610732848
+    },
+    {
+      "drug": "loperamide",
+      "n_se": 42,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.743,
+      "mean_ppm": -1.1487416512809248
+    },
+    {
+      "drug": "nelfinavir",
+      "n_se": 116,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6265000000000001,
+      "mean_ppm": 0.08990511143939793
+    },
+    {
+      "drug": "indinavir",
+      "n_se": 201,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.261,
+      "mean_ppm": 0.37125262912493934
+    },
+    {
+      "drug": "amprenavir",
+      "n_se": 63,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.261,
+      "mean_ppm": 0.37125262912493934
+    },
+    {
+      "drug": "aminoglutethimide",
+      "n_se": 32,
+      "n_targets": 7,
+      "mean_cost": -7.246227691215523e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9231428571428572,
+      "mean_ppm": 1.4398219864240036
+    },
+    {
+      "drug": "acebutolol",
+      "n_se": 113,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.219,
+      "mean_ppm": 0.4226718983272867
+    },
+    {
+      "drug": "tobramycin",
+      "n_se": 158,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.252,
+      "mean_ppm": 0.7846885995014213
+    },
+    {
+      "drug": "desipramine",
+      "n_se": 96,
+      "n_targets": 11,
+      "mean_cost": -7.246190938392516e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9098181818181819,
+      "mean_ppm": 0.8239067668740054
+    },
+    {
+      "drug": "penciclovir",
+      "n_se": 54,
+      "n_targets": 1,
+      "mean_cost": -7.24624430681331e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.781,
+      "mean_ppm": 0.9661886809561372
+    },
+    {
+      "drug": "zalcitabine",
+      "n_se": 283,
+      "n_targets": 4,
+      "mean_cost": -7.246244326797324e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6545,
+      "mean_ppm": 1.7820729036830556
+    },
+    {
+      "drug": "saquinavir",
+      "n_se": 327,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.962,
+      "mean_ppm": -1.0087739243075051
+    },
+    {
+      "drug": "ritonavir",
+      "n_se": 319,
+      "n_targets": 10,
+      "mean_cost": -2.4154529080592607e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.2,
+      "mean_loeuf": 1.2689,
+      "mean_ppm": 3.450786838423617
+    },
+    {
+      "drug": "mitomycin",
+      "n_se": 58,
+      "n_targets": 7,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8794285714285713,
+      "mean_ppm": 1.781647684984131
+    },
+    {
+      "drug": "estazolam",
+      "n_se": 129,
+      "n_targets": 8,
+      "mean_cost": -7.246202451405281e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.22987500000000002,
+      "mean_ppm": 0.13317950875087173
+    },
+    {
+      "drug": "dapsone",
+      "n_se": 46,
+      "n_targets": 3,
+      "mean_cost": -7.246190938392516e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8536666666666667,
+      "mean_ppm": 2.0254014541586214
+    },
+    {
+      "drug": "stavudine",
+      "n_se": 116,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.661,
+      "mean_ppm": -0.30950858199213227
+    },
+    {
+      "drug": "didanosine",
+      "n_se": 81,
+      "n_targets": 4,
+      "mean_cost": -7.246206955580092e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.659,
+      "mean_ppm": 1.0935267436996752
+    },
+    {
+      "drug": "methimazole",
+      "n_se": 32,
+      "n_targets": 7,
+      "mean_cost": -7.246244404512936e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8131428571428572,
+      "mean_ppm": 1.2857822737793947
+    },
+    {
+      "drug": "propylthiouracil",
+      "n_se": 48,
+      "n_targets": 8,
+      "mean_cost": -7.246244404512936e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.806125,
+      "mean_ppm": 1.3016673977066526
+    },
+    {
+      "drug": "teniposide",
+      "n_se": 60,
+      "n_targets": 4,
+      "mean_cost": 1.0,
+      "n_metabolic": 1,
+      "mean_ess": 0.75,
+      "mean_loeuf": 0.31275000000000003,
+      "mean_ppm": 1.3248172754538279
+    },
+    {
+      "drug": "amsacrine",
+      "n_se": 99,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.26749999999999996,
+      "mean_ppm": 1.328399992372424
+    },
+    {
+      "drug": "dexrazoxane",
+      "n_se": 93,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.3666666666666667,
+      "mean_ppm": 3.012373589318195
+    },
+    {
+      "drug": "carbimazole",
+      "n_se": 49,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0583333333333333,
+      "mean_ppm": 1.6982948757550773
+    },
+    {
+      "drug": "propofol",
+      "n_se": 151,
+      "n_targets": 11,
+      "mean_cost": -3.6231453548474235e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6071818181818183,
+      "mean_ppm": 1.6537754156034816
+    },
+    {
+      "drug": "vildagliptin",
+      "n_se": 39,
+      "n_targets": 7,
+      "mean_cost": -7.24624440229249e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.42,
+      "mean_ppm": 0.17376882313664987
+    },
+    {
+      "drug": "lubiprostone",
+      "n_se": 77,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.685,
+      "mean_ppm": -0.2302535328205465
+    },
+    {
+      "drug": "tafamidis",
+      "n_se": 7,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.763,
+      "mean_ppm": 4.280942428741391
+    },
+    {
+      "drug": "ixabepilone",
+      "n_se": 140,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 0.735,
+      "mean_ppm": 3.0399743082956645
+    },
+    {
+      "drug": "cabazitaxel",
+      "n_se": 133,
+      "n_targets": 15,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.7627999999999999,
+      "mean_ppm": 2.9008131030313837
+    },
+    {
+      "drug": "fotemustine",
+      "n_se": 32,
+      "n_targets": 1,
+      "mean_cost": -6.81313630401803e-07,
+      "n_metabolic": 1,
+      "mean_ess": 1.0,
+      "mean_loeuf": 0.721,
+      "mean_ppm": 1.6031552027714753
+    },
+    {
+      "drug": "monobenzone",
+      "n_se": 3,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.964,
+      "mean_ppm": -1.3010299956639813
+    },
+    {
+      "drug": "deferoxamine",
+      "n_se": 100,
+      "n_targets": 8,
+      "mean_cost": -7.246223947543484e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.52875,
+      "mean_ppm": 0.6220714805042619
+    },
+    {
+      "drug": "miglustat",
+      "n_se": 72,
+      "n_targets": 3,
+      "mean_cost": -7.24623008707681e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.128,
+      "mean_ppm": 1.909015499129042
+    },
+    {
+      "drug": "eliglustat",
+      "n_se": 22,
+      "n_targets": 1,
+      "mean_cost": -7.246244406733382e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.349,
+      "mean_ppm": -1.1135092748275182
+    },
+    {
+      "drug": "nitroglycerin",
+      "n_se": 93,
+      "n_targets": 8,
+      "mean_cost": -7.246209520565353e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.024249999999999994,
+      "mean_ppm": 0.9930116489727548
+    },
+    {
+      "drug": "belinostat",
+      "n_se": 38,
+      "n_targets": 20,
+      "mean_cost": 0.49999963768778233,
+      "n_metabolic": 2,
+      "mean_ess": 0.1,
+      "mean_loeuf": 0.4283,
+      "mean_ppm": 1.0203343456087894
+    },
+    {
+      "drug": "deferasirox",
+      "n_se": 103,
+      "n_targets": 5,
+      "mean_cost": -7.246184308140613e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.2,
+      "mean_loeuf": 1.0665999999999998,
+      "mean_ppm": 3.1567598269331705
+    },
+    {
+      "drug": "febuxostat",
+      "n_se": 240,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1333333333333335,
+      "mean_ppm": -0.05461348885158682
+    },
+    {
+      "drug": "oxazepam",
+      "n_se": 40,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.5855000000000001,
+      "mean_ppm": -0.1681302257194983
+    },
+    {
+      "drug": "ciprofloxacin",
+      "n_se": 431,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.4616666666666667,
+      "mean_ppm": 0.07175930791785244
+    },
+    {
+      "drug": "afatinib",
+      "n_se": 80,
+      "n_targets": 9,
+      "mean_cost": 0.49999963768843403,
+      "n_metabolic": 2,
+      "mean_ess": 0.1111111111111111,
+      "mean_loeuf": 0.2894444444444445,
+      "mean_ppm": 1.4996443229695353
+    },
+    {
+      "drug": "zafirlukast",
+      "n_se": 69,
+      "n_targets": 5,
+      "mean_cost": -7.246244300151972e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.2,
+      "mean_loeuf": 0.9400000000000001,
+      "mean_ppm": -0.4195312160489983
+    },
+    {
+      "drug": "paricalcitol",
+      "n_se": 181,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.878,
+      "mean_ppm": -3.0
+    },
+    {
+      "drug": "arginine",
+      "n_se": 30,
+      "n_targets": 2,
+      "mean_cost": -7.246244522196577e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.249,
+      "mean_ppm": -0.1830961606243397
+    },
+    {
+      "drug": "clarithromycin",
+      "n_se": 203,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9644999999999999,
+      "mean_ppm": 0.26416825605168476
+    },
+    {
+      "drug": "papaverine",
+      "n_se": 17,
+      "n_targets": 2,
+      "mean_cost": -7.246202451405281e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4615,
+      "mean_ppm": -0.08144546944972642
+    },
+    {
+      "drug": "zanamivir",
+      "n_se": 66,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.31,
+      "mean_ppm": -1.3187587626244128
+    },
+    {
+      "drug": "eslicarbazepine",
+      "n_se": 182,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.31,
+      "mean_ppm": -1.3187587626244128
+    },
+    {
+      "drug": "varenicline",
+      "n_se": 279,
+      "n_targets": 9,
+      "mean_cost": -7.246244255743051e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.844,
+      "mean_ppm": -1.1166540712038135
+    },
+    {
+      "drug": "cinacalcet",
+      "n_se": 58,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5875,
+      "mean_ppm": -0.3279021420642826
+    },
+    {
+      "drug": "dothiepin",
+      "n_se": 83,
+      "n_targets": 5,
+      "mean_cost": 0.9999999999998361,
+      "n_metabolic": 1,
+      "mean_ess": 0.4,
+      "mean_loeuf": 0.5846,
+      "mean_ppm": 1.47460957421471
+    },
+    {
+      "drug": "bethanechol",
+      "n_se": 23,
+      "n_targets": 4,
+      "mean_cost": 0.9999999999998361,
+      "n_metabolic": 1,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.3955,
+      "mean_ppm": 1.3094864432666518
+    },
+    {
+      "drug": "darifenacin",
+      "n_se": 83,
+      "n_targets": 4,
+      "mean_cost": 0.9999999999998361,
+      "n_metabolic": 1,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.3955,
+      "mean_ppm": 1.3094864432666518
+    },
+    {
+      "drug": "cevimeline",
+      "n_se": 396,
+      "n_targets": 5,
+      "mean_cost": 0.9999999999998361,
+      "n_metabolic": 1,
+      "mean_ess": 0.4,
+      "mean_loeuf": 0.359,
+      "mean_ppm": 1.2130287344691737
+    },
+    {
+      "drug": "dichlorphenamide",
+      "n_se": 39,
+      "n_targets": 3,
+      "mean_cost": -7.246190774079508e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.386,
+      "mean_ppm": 2.14029744400833
+    },
+    {
+      "drug": "acetazolamide",
+      "n_se": 63,
+      "n_targets": 11,
+      "mean_cost": -7.246184084615711e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.09090909090909091,
+      "mean_loeuf": 0.8699090909090909,
+      "mean_ppm": 2.9884169387408117
+    },
+    {
+      "drug": "dorzolamide",
+      "n_se": 161,
+      "n_targets": 3,
+      "mean_cost": -7.246180739883812e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 1.1663333333333334,
+      "mean_ppm": 3.5347513560768666
+    },
+    {
+      "drug": "brinzolamide",
+      "n_se": 170,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.459,
+      "mean_ppm": -0.835647144215563
+    },
+    {
+      "drug": "methazolamide",
+      "n_se": 49,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0943333333333334,
+      "mean_ppm": -0.44611697335612566
+    },
+    {
+      "drug": "topiramate",
+      "n_se": 478,
+      "n_targets": 9,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5141111111111111,
+      "mean_ppm": -0.5174439992075214
+    },
+    {
+      "drug": "rimonabant",
+      "n_se": 69,
+      "n_targets": 5,
+      "mean_cost": -2.4154431603011045e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8196,
+      "mean_ppm": -0.2944783865773329
+    },
+    {
+      "drug": "mafenide",
+      "n_se": 28,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.917,
+      "mean_ppm": 1.1702910586253934
+    },
+    {
+      "drug": "pregabalin",
+      "n_se": 742,
+      "n_targets": 12,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5628333333333333,
+      "mean_ppm": -1.2117137581885733
+    },
+    {
+      "drug": "methsuximide",
+      "n_se": 40,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.3056666666666667,
+      "mean_ppm": -1.4993976494308145
+    },
+    {
+      "drug": "trimethadione",
+      "n_se": 54,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.211,
+      "mean_ppm": -1.3187587626244128
+    },
+    {
+      "drug": "ethosuximide",
+      "n_se": 66,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.3056666666666667,
+      "mean_ppm": -1.4993976494308145
+    },
+    {
+      "drug": "lercanidipine",
+      "n_se": 156,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.032,
+      "mean_ppm": 0.6021142747455575
+    },
+    {
+      "drug": "clomipramine",
+      "n_se": 394,
+      "n_targets": 13,
+      "mean_cost": -3.6231544209286426e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.07692307692307693,
+      "mean_loeuf": 0.4540769230769231,
+      "mean_ppm": 0.8883048071138792
+    },
+    {
+      "drug": "nateglinide",
+      "n_se": 40,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.596,
+      "mean_ppm": -0.21183162885883233
+    },
+    {
+      "drug": "apomorphine",
+      "n_se": 52,
+      "n_targets": 11,
+      "mean_cost": 2.985180579340163e-06,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9886363636363636,
+      "mean_ppm": 1.5709365133323816
+    },
+    {
+      "drug": "oxybutynin",
+      "n_se": 204,
+      "n_targets": 4,
+      "mean_cost": 0.9999999999998361,
+      "n_metabolic": 1,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.47225,
+      "mean_ppm": 1.2859115757755704
+    },
+    {
+      "drug": "clofazimine",
+      "n_se": 49,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8903333333333334,
+      "mean_ppm": 1.561772986502785
+    },
+    {
+      "drug": "mometasone",
+      "n_se": 93,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2075,
+      "mean_ppm": 1.4142126668371933
+    },
+    {
+      "drug": "roxithromycin",
+      "n_se": 45,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0085,
+      "mean_ppm": -0.1678105389314869
+    },
+    {
+      "drug": "maraviroc",
+      "n_se": 236,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.6185,
+      "mean_ppm": -1.1837587000082168
+    },
+    {
+      "drug": "benztropine",
+      "n_se": 30,
+      "n_targets": 2,
+      "mean_cost": -7.246255191439843e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.3115,
+      "mean_ppm": 1.6939862174132507
+    },
+    {
+      "drug": "fenoprofen",
+      "n_se": 92,
+      "n_targets": 3,
+      "mean_cost": 0.21398812931534555,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.4433333333333334,
+      "mean_ppm": 2.38569741225931
+    },
+    {
+      "drug": "bendamustine",
+      "n_se": 113,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.917,
+      "mean_ppm": 0.2229764498933913
+    },
+    {
+      "drug": "metolazone",
+      "n_se": 96,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.746,
+      "mean_ppm": 0.4032921451582542
+    },
+    {
+      "drug": "venlafaxine",
+      "n_se": 511,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.72175,
+      "mean_ppm": 1.2360835848950462
+    },
+    {
+      "drug": "maprotiline",
+      "n_se": 148,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.425,
+      "mean_ppm": -0.9956786262173574
+    },
+    {
+      "drug": "bicalutamide",
+      "n_se": 182,
+      "n_targets": 3,
+      "mean_cost": -7.246244428937842e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.2743333333333333,
+      "mean_ppm": 0.7980518408465337
+    },
+    {
+      "drug": "tetrabenazine",
+      "n_se": 68,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.269,
+      "mean_ppm": 1.0437158580612063
+    },
+    {
+      "drug": "thiamine",
+      "n_se": 18,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7085,
+      "mean_ppm": 0.08332341847352494
+    },
+    {
+      "drug": "bisoprolol",
+      "n_se": 194,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.426,
+      "mean_ppm": -0.6420651529995461
+    },
+    {
+      "drug": "selenium",
+      "n_se": 2,
+      "n_targets": 8,
+      "mean_cost": 0.1999994203051428,
+      "n_metabolic": 5,
+      "mean_ess": 0.125,
+      "mean_loeuf": 0.780375,
+      "mean_ppm": 3.110714888583155
+    },
+    {
+      "drug": "fesoterodine",
+      "n_se": 70,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.213,
+      "mean_ppm": -1.0705810742857071
+    },
+    {
+      "drug": "tolterodine",
+      "n_se": 49,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.718,
+      "mean_ppm": -1.958607314841775
+    },
+    {
+      "drug": "atropine",
+      "n_se": 173,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8365,
+      "mean_ppm": 1.2856726180105462
+    },
+    {
+      "drug": "aclidinium",
+      "n_se": 28,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.249,
+      "mean_ppm": -1.6989700043360187
+    },
+    {
+      "drug": "scopolamine",
+      "n_se": 76,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.743,
+      "mean_ppm": -1.4559319556497243
+    },
+    {
+      "drug": "cyclopentolate",
+      "n_se": 37,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.743,
+      "mean_ppm": -1.4559319556497243
+    },
+    {
+      "drug": "flavoxate",
+      "n_se": 18,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.743,
+      "mean_ppm": -1.4559319556497243
+    },
+    {
+      "drug": "atracurium",
+      "n_se": 33,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.259,
+      "mean_ppm": -2.154901959985743
+    },
+    {
+      "drug": "mivacurium",
+      "n_se": 24,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.259,
+      "mean_ppm": -2.154901959985743
+    },
+    {
+      "drug": "vigabatrin",
+      "n_se": 211,
+      "n_targets": 2,
+      "mean_cost": -7.246244444480965e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.39549999999999996,
+      "mean_ppm": 0.9225697689857123
+    },
+    {
+      "drug": "buprenorphine",
+      "n_se": 201,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5895,
+      "mean_ppm": 0.372175286115064
+    },
+    {
+      "drug": "nabilone",
+      "n_se": 138,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1425,
+      "mean_ppm": -1.2218487496163564
+    },
+    {
+      "drug": "fluvoxamine",
+      "n_se": 411,
+      "n_targets": 3,
+      "mean_cost": -7.246255191439843e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.995,
+      "mean_ppm": 1.5184393576540551
+    },
+    {
+      "drug": "efavirenz",
+      "n_se": 224,
+      "n_targets": 3,
+      "mean_cost": -4.6413983767479294e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.3333333333333333,
+      "mean_loeuf": 1.1420000000000001,
+      "mean_ppm": 0.9254839872002523
+    },
+    {
+      "drug": "nefazodone",
+      "n_se": 235,
+      "n_targets": 2,
+      "mean_cost": -5.543787651163257e-12,
+      "n_metabolic": 2,
+      "mean_ess": 0.5,
+      "mean_loeuf": 1.0875,
+      "mean_ppm": 1.5038042970908778
+    },
+    {
+      "drug": "nepafenac",
+      "n_se": 64,
+      "n_targets": 1,
+      "mean_cost": 0.427976983255134,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.837,
+      "mean_ppm": 1.0294243640580163
+    },
+    {
+      "drug": "spironolactone",
+      "n_se": 49,
+      "n_targets": 6,
+      "mean_cost": -7.246244522196577e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9263333333333333,
+      "mean_ppm": 1.6047371106173214
+    },
+    {
+      "drug": "mitotane",
+      "n_se": 103,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.118,
+      "mean_ppm": 1.197996897597136
+    },
+    {
+      "drug": "metyrapone",
+      "n_se": 21,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.3023333333333333,
+      "mean_ppm": 0.44138088491651134
+    },
+    {
+      "drug": "testolactone",
+      "n_se": 14,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.433,
+      "mean_ppm": 0.5066403055665025
+    },
+    {
+      "drug": "suprofen",
+      "n_se": 11,
+      "n_targets": 2,
+      "mean_cost": 8.159864682105722e-05,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9994999999999999,
+      "mean_ppm": 1.343920385393226
+    },
+    {
+      "drug": "oxaprozin",
+      "n_se": 127,
+      "n_targets": 2,
+      "mean_cost": 8.159864682105722e-05,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9994999999999999,
+      "mean_ppm": 1.343920385393226
+    },
+    {
+      "drug": "etodolac",
+      "n_se": 166,
+      "n_targets": 1,
+      "mean_cost": 0.00016392191808500822,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.172,
+      "mean_ppm": 1.5403419903016569
+    },
+    {
+      "drug": "telavancin",
+      "n_se": 123,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.714,
+      "mean_ppm": -2.0969100130080562
+    },
+    {
+      "drug": "chlorambucil",
+      "n_se": 75,
+      "n_targets": 6,
+      "mean_cost": -7.24624432901777e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.16666666666666666,
+      "mean_loeuf": 1.1778333333333333,
+      "mean_ppm": 1.0222564890912242
+    },
+    {
+      "drug": "rasburicase",
+      "n_se": 57,
+      "n_targets": 3,
+      "mean_cost": -7.246213724609873e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0526666666666669,
+      "mean_ppm": 2.0988224822367725
+    },
+    {
+      "drug": "silodosin",
+      "n_se": 53,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.6666666666666666,
+      "mean_loeuf": 0.5436666666666667,
+      "mean_ppm": 1.3373261238028253
+    },
+    {
+      "drug": "phenoxybenzamine",
+      "n_se": 9,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.91,
+      "mean_ppm": -1.1674910872937636
+    },
+    {
+      "drug": "terazosin",
+      "n_se": 110,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.761,
+      "mean_ppm": 1.4681183052566995
+    },
+    {
+      "drug": "ceftriaxone",
+      "n_se": 105,
+      "n_targets": 4,
+      "mean_cost": -5.43465814073496e-07,
+      "n_metabolic": 4,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.84975,
+      "mean_ppm": 1.9033382781597912
+    },
+    {
+      "drug": "abacavir",
+      "n_se": 116,
+      "n_targets": 5,
+      "mean_cost": -7.24624431791554e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.4268,
+      "mean_ppm": 1.3806923182150388
+    },
+    {
+      "drug": "medroxyprogesterone",
+      "n_se": 176,
+      "n_targets": 2,
+      "mean_cost": -6.839639965505739e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.3504999999999998,
+      "mean_ppm": -0.042632191568472554
+    },
+    {
+      "drug": "ifosfamide",
+      "n_se": 291,
+      "n_targets": 4,
+      "mean_cost": -7.24624430681331e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.5,
+      "mean_loeuf": 0.9470000000000001,
+      "mean_ppm": 0.656146134740865
+    },
+    {
+      "drug": "ospemifene",
+      "n_se": 16,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1219999999999999,
+      "mean_ppm": -1.4034029043735399
+    },
+    {
+      "drug": "midodrine",
+      "n_se": 60,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.871,
+      "mean_ppm": -0.7281583934635011
+    },
+    {
+      "drug": "butorphanol",
+      "n_se": 116,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.4313333333333336,
+      "mean_ppm": 2.2070029745202957
+    },
+    {
+      "drug": "albendazole",
+      "n_se": 31,
+      "n_targets": 2,
+      "mean_cost": -7.246244393410706e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.631,
+      "mean_ppm": 2.516594201279559
+    },
+    {
+      "drug": "chlorzoxazone",
+      "n_se": 16,
+      "n_targets": 4,
+      "mean_cost": -1.2428058582258927e-11,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.81375,
+      "mean_ppm": 0.17143390094300825
+    },
+    {
+      "drug": "cobicistat",
+      "n_se": 46,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.189,
+      "mean_ppm": -0.3590219426416679
+    },
+    {
+      "drug": "vardenafil",
+      "n_se": 146,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.387,
+      "mean_ppm": -0.5421181032660077
+    },
+    {
+      "drug": "nedocromil",
+      "n_se": 51,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.697,
+      "mean_ppm": -1.2291479883578558
+    },
+    {
+      "drug": "alogliptin",
+      "n_se": 17,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.275,
+      "mean_ppm": 0.20978301484851494
+    },
+    {
+      "drug": "sitagliptin",
+      "n_se": 120,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7849999999999999,
+      "mean_ppm": -0.08539243222891947
+    },
+    {
+      "drug": "perindoprilat",
+      "n_se": 45,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.692,
+      "mean_ppm": -0.1243600629958316
+    },
+    {
+      "drug": "cilazapril",
+      "n_se": 142,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0685,
+      "mean_ppm": 2.621047428892189
+    },
+    {
+      "drug": "sumatriptan",
+      "n_se": 338,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9968333333333333,
+      "mean_ppm": 0.7474377042211797
+    },
+    {
+      "drug": "dabigatran",
+      "n_se": 39,
+      "n_targets": 7,
+      "mean_cost": -4.830852331494384e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.2857142857142857,
+      "mean_loeuf": 0.671,
+      "mean_ppm": 2.8579048879978783
+    },
+    {
+      "drug": "lomustine",
+      "n_se": 37,
+      "n_targets": 2,
+      "mean_cost": -7.246244323466655e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2905,
+      "mean_ppm": 1.474230837472069
+    },
+    {
+      "drug": "labetalol",
+      "n_se": 108,
+      "n_targets": 4,
+      "mean_cost": -7.24624429571108e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2197500000000001,
+      "mean_ppm": 0.8785935975154072
+    },
+    {
+      "drug": "prazosin",
+      "n_se": 63,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.496,
+      "mean_ppm": 0.24748226067705423
+    },
+    {
+      "drug": "modafinil",
+      "n_se": 191,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.314,
+      "mean_ppm": -2.0
+    },
+    {
+      "drug": "dopamine",
+      "n_se": 21,
+      "n_targets": 6,
+      "mean_cost": -7.246157417428734e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9513333333333334,
+      "mean_ppm": 1.4231639238503484
+    },
+    {
+      "drug": "niacin",
+      "n_se": 156,
+      "n_targets": 8,
+      "mean_cost": -7.246139750449743e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2578749999999999,
+      "mean_ppm": 1.6191872784052852
+    },
+    {
+      "drug": "tetrahydrozoline",
+      "n_se": 13,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.605,
+      "mean_ppm": -1.1249387366083
+    },
+    {
+      "drug": "metipranolol",
+      "n_se": 35,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.542,
+      "mean_ppm": -1.0362121726544447
+    },
+    {
+      "drug": "dobutamine",
+      "n_se": 16,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.542,
+      "mean_ppm": -1.0362121726544447
+    },
+    {
+      "drug": "pindolol",
+      "n_se": 82,
+      "n_targets": 2,
+      "mean_cost": -7.246134650085168e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.384,
+      "mean_ppm": 0.3474275986185414
+    },
+    {
+      "drug": "carteolol",
+      "n_se": 39,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.591,
+      "mean_ppm": -1.3010299956639813
+    },
+    {
+      "drug": "penbutolol",
+      "n_se": 34,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.591,
+      "mean_ppm": -1.3010299956639813
+    },
+    {
+      "drug": "ephedrine",
+      "n_se": 47,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.683,
+      "mean_ppm": -2.5228787452803374
+    },
+    {
+      "drug": "trihexyphenidyl",
+      "n_se": 38,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.3135,
+      "mean_ppm": -0.5662301660751342
+    },
+    {
+      "drug": "nesiritide",
+      "n_se": 30,
+      "n_targets": 4,
+      "mean_cost": -7.246244406733382e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.69175,
+      "mean_ppm": -1.1706962271689751
+    },
+    {
+      "drug": "linaclotide",
+      "n_se": 36,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7284999999999999,
+      "mean_ppm": -1.4034029043735399
+    },
+    {
+      "drug": "trazodone",
+      "n_se": 176,
+      "n_targets": 3,
+      "mean_cost": 2.9851799345226304e-06,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.341,
+      "mean_ppm": 1.9177137669206379
+    },
+    {
+      "drug": "cyclobenzaprine",
+      "n_se": 129,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.307,
+      "mean_ppm": -2.5228787452803374
+    },
+    {
+      "drug": "domperidone",
+      "n_se": 45,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.439,
+      "mean_ppm": -2.154901959985743
+    },
+    {
+      "drug": "ropinirole",
+      "n_se": 607,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.3335000000000001,
+      "mean_ppm": -2.0457574905606752
+    },
+    {
+      "drug": "pramipexole",
+      "n_se": 611,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.86,
+      "mean_ppm": -2.5228787452803374
+    },
+    {
+      "drug": "rotigotine",
+      "n_se": 118,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.123,
+      "mean_ppm": 1.2601191100313733
+    },
+    {
+      "drug": "zuclopenthixol",
+      "n_se": 174,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.936,
+      "mean_ppm": -2.0969100130080562
+    },
+    {
+      "drug": "budesonide",
+      "n_se": 206,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0015,
+      "mean_ppm": 0.3994141053637703
+    },
+    {
+      "drug": "ambrisentan",
+      "n_se": 98,
+      "n_targets": 4,
+      "mean_cost": -7.246244421166281e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.66425,
+      "mean_ppm": 0.6998377258672457
+    },
+    {
+      "drug": "macitentan",
+      "n_se": 16,
+      "n_targets": 4,
+      "mean_cost": -7.246244421166281e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.66425,
+      "mean_ppm": 0.6998377258672457
+    },
+    {
+      "drug": "quinapril",
+      "n_se": 93,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.445,
+      "mean_ppm": 2.9216869955964424
+    },
+    {
+      "drug": "procarbazine",
+      "n_se": 122,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.452,
+      "mean_ppm": 0.061075323629791727
+    },
+    {
+      "drug": "thiabendazole",
+      "n_se": 47,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.154,
+      "mean_ppm": -0.8477116556169435
+    },
+    {
+      "drug": "argatroban",
+      "n_se": 68,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.536,
+      "mean_ppm": 3.603901939845793
+    },
+    {
+      "drug": "bivalirudin",
+      "n_se": 108,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.536,
+      "mean_ppm": 3.603901939845793
+    },
+    {
+      "drug": "vorapaxar",
+      "n_se": 12,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.353,
+      "mean_ppm": 3.097814747681315
+    },
+    {
+      "drug": "minocycline",
+      "n_se": 140,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.327,
+      "mean_ppm": -1.1426675035687315
+    },
+    {
+      "drug": "acetate",
+      "n_se": 4,
+      "n_targets": 2,
+      "mean_cost": -6.834088850382614e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.5,
+      "mean_loeuf": 1.316,
+      "mean_ppm": 2.655642097191536
+    },
+    {
+      "drug": "tirofiban",
+      "n_se": 29,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6527999999999999,
+      "mean_ppm": 3.4077648655938293
+    },
+    {
+      "drug": "eptifibatide",
+      "n_se": 66,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6527999999999999,
+      "mean_ppm": 3.4077648655938293
+    },
+    {
+      "drug": "emtricitabine",
+      "n_se": 127,
+      "n_targets": 3,
+      "mean_cost": -7.246189656454997e-07,
+      "n_metabolic": 3,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8169999999999998,
+      "mean_ppm": 0.3656127642286071
+    },
+    {
+      "drug": "tolbutamide",
+      "n_se": 22,
+      "n_targets": 4,
+      "mean_cost": -7.246244415615166e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6649999999999999,
+      "mean_ppm": 1.6386090458071148
+    },
+    {
+      "drug": "miglitol",
+      "n_se": 21,
+      "n_targets": 3,
+      "mean_cost": -7.246244286829295e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.665,
+      "mean_ppm": 0.9710902131371154
+    },
+    {
+      "drug": "thiotepa",
+      "n_se": 176,
+      "n_targets": 2,
+      "mean_cost": -7.246238933333871e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.594,
+      "mean_ppm": 2.8108713884963947
+    },
+    {
+      "drug": "quazepam",
+      "n_se": 10,
+      "n_targets": 8,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6565,
+      "mean_ppm": -1.266602090638578
+    },
+    {
+      "drug": "zopiclone",
+      "n_se": 228,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.3865,
+      "mean_ppm": -1.2967086218813386
+    },
+    {
+      "drug": "temazepam",
+      "n_se": 81,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.4086666666666667,
+      "mean_ppm": -1.3404006875632557
+    },
+    {
+      "drug": "clobazam",
+      "n_se": 96,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6975,
+      "mean_ppm": -1.431798275933005
+    },
+    {
+      "drug": "clorazepate",
+      "n_se": 21,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.35650000000000004,
+      "mean_ppm": -1.8167301563171954
+    },
+    {
+      "drug": "butabarbital",
+      "n_se": 34,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.2936666666666667,
+      "mean_ppm": -0.6096537668606109
+    },
+    {
+      "drug": "etomidate",
+      "n_se": 21,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.378,
+      "mean_ppm": -1.585026652029182
+    },
+    {
+      "drug": "chlordiazepoxide",
+      "n_se": 20,
+      "n_targets": 7,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6208571428571429,
+      "mean_ppm": -1.4267967486945115
+    },
+    {
+      "drug": "flurazepam",
+      "n_se": 57,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.44083333333333324,
+      "mean_ppm": -1.4580049642725896
+    },
+    {
+      "drug": "ofatumumab",
+      "n_se": 87,
+      "n_targets": 2,
+      "mean_cost": -7.246244342340447e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.9,
+      "mean_ppm": 1.6994127589410788
+    },
+    {
+      "drug": "ezetimibe",
+      "n_se": 114,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.03199999999999997,
+      "mean_ppm": -1.978810700930062
+    },
+    {
+      "drug": "tranylcypromine",
+      "n_se": 71,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7695,
+      "mean_ppm": 0.731467887193129
+    },
+    {
+      "drug": "tesamorelin",
+      "n_se": 54,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0575,
+      "mean_ppm": -0.4406919890929875
+    },
+    {
+      "drug": "rofecoxib",
+      "n_se": 206,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.6256666666666666,
+      "mean_ppm": 2.342907372424524
+    },
+    {
+      "drug": "liraglutide",
+      "n_se": 63,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.437,
+      "mean_ppm": -1.7212463990471711
+    },
+    {
+      "drug": "exenatide",
+      "n_se": 108,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.648,
+      "mean_ppm": 0.08218675618735004
+    },
+    {
+      "drug": "teduglutide",
+      "n_se": 52,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.113,
+      "mean_ppm": 0.9979758207866558
+    },
+    {
+      "drug": "ciclopirox",
+      "n_se": 26,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.393,
+      "mean_ppm": 2.4031222377514054
+    },
+    {
+      "drug": "abarelix",
+      "n_se": 23,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.75,
+      "mean_ppm": -1.853871964321762
+    },
+    {
+      "drug": "nafarelin",
+      "n_se": 110,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 1.0,
+      "mean_loeuf": -1.0,
+      "mean_ppm": -3.0
+    },
+    {
+      "drug": "gonadorelin",
+      "n_se": 47,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 1.0,
+      "mean_loeuf": -1.0,
+      "mean_ppm": -3.0
+    },
+    {
+      "drug": "degarelix",
+      "n_se": 112,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 1.0,
+      "mean_loeuf": -1.0,
+      "mean_ppm": -3.0
+    },
+    {
+      "drug": "tolcapone",
+      "n_se": 253,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.509,
+      "mean_ppm": -1.6777807052660807
+    },
+    {
+      "drug": "meclofenamate",
+      "n_se": 49,
+      "n_targets": 1,
+      "mean_cost": -7.246115014680754e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.636,
+      "mean_ppm": 0.4134674129858248
+    },
+    {
+      "drug": "balsalazide",
+      "n_se": 88,
+      "n_targets": 1,
+      "mean_cost": -7.246115014680754e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.636,
+      "mean_ppm": 0.4134674129858248
+    },
+    {
+      "drug": "bisacodyl",
+      "n_se": 24,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.707,
+      "mean_ppm": -1.744727494896694
+    },
+    {
+      "drug": "perampanel",
+      "n_se": 58,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.28200000000000003,
+      "mean_ppm": -0.22822884625413206
+    },
+    {
+      "drug": "orphenadrine",
+      "n_se": 25,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.46,
+      "mean_ppm": -0.719535453373082
+    },
+    {
+      "drug": "felbamate",
+      "n_se": 229,
+      "n_targets": 7,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.40057142857142863,
+      "mean_ppm": -0.8464028817026011
+    },
+    {
+      "drug": "phentolamine",
+      "n_se": 38,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.295,
+      "mean_ppm": 1.298874899704699
+    },
+    {
+      "drug": "anidulafungin",
+      "n_se": 120,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.129,
+      "mean_ppm": -1.9208187539523751
+    },
+    {
+      "drug": "deferiprone",
+      "n_se": 115,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 1.0,
+      "mean_loeuf": 0.393,
+      "mean_ppm": 0.6128897692874847
+    },
+    {
+      "drug": "glipizide",
+      "n_se": 93,
+      "n_targets": 4,
+      "mean_cost": -7.246244255743051e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.78975,
+      "mean_ppm": -0.555564826993254
+    },
+    {
+      "drug": "gliclazide",
+      "n_se": 228,
+      "n_targets": 3,
+      "mean_cost": -7.246244255743051e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.0866666666666667,
+      "mean_ppm": -1.532638582569494
+    },
+    {
+      "drug": "glimepiride",
+      "n_se": 104,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6914,
+      "mean_ppm": -0.47185492174689364
+    },
+    {
+      "drug": "tolazamide",
+      "n_se": 30,
+      "n_targets": 4,
+      "mean_cost": -7.246244255743051e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.00525,
+      "mean_ppm": -1.4288737229156883
+    },
+    {
+      "drug": "riociguat",
+      "n_se": 31,
+      "n_targets": 5,
+      "mean_cost": -7.246192077481339e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.3636,
+      "mean_ppm": 0.7440581658788356
+    },
+    {
+      "drug": "entacapone",
+      "n_se": 180,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": -1.0,
+      "mean_ppm": 2.1038071405840837
+    },
+    {
+      "drug": "ivabradine",
+      "n_se": 47,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.25,
+      "mean_loeuf": 0.758,
+      "mean_ppm": 1.3181625014664904
+    },
+    {
+      "drug": "suvorexant",
+      "n_se": 23,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.6073333333333334,
+      "mean_ppm": -0.8229447128417019
+    },
+    {
+      "drug": "thyroxine",
+      "n_se": 64,
+      "n_targets": 2,
+      "mean_cost": -7.246155778739549e-07,
+      "n_metabolic": 2,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1300000000000001,
+      "mean_ppm": 1.6527393576855125
+    },
+    {
+      "drug": "itraconazole",
+      "n_se": 203,
+      "n_targets": 3,
+      "mean_cost": -7.246244353442677e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1766666666666665,
+      "mean_ppm": 2.4977048767910026
+    },
+    {
+      "drug": "diphenhydramine",
+      "n_se": 46,
+      "n_targets": 1,
+      "mean_cost": -6.8338668057776886e-12,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.796,
+      "mean_ppm": 0.9886035433456639
+    },
+    {
+      "drug": "cosyntropin",
+      "n_se": 86,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.8695,
+      "mean_ppm": 1.7443047206527618
+    },
+    {
+      "drug": "praziquantel",
+      "n_se": 39,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.626,
+      "mean_ppm": -0.3316140833099998
+    },
+    {
+      "drug": "desloratadine",
+      "n_se": 68,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.156,
+      "mean_ppm": -1.1135092748275182
+    },
+    {
+      "drug": "dimenhydrinate",
+      "n_se": 16,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.156,
+      "mean_ppm": -1.1135092748275182
+    },
+    {
+      "drug": "famotidine",
+      "n_se": 120,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.811,
+      "mean_ppm": -1.3665315444204134
+    },
+    {
+      "drug": "betahistine",
+      "n_se": 40,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.693,
+      "mean_ppm": -0.8601209135987634
+    },
+    {
+      "drug": "diflunisal",
+      "n_se": 75,
+      "n_targets": 1,
+      "mean_cost": 6.694979177157556e-06,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.342,
+      "mean_ppm": 2.3944534320101125
+    },
+    {
+      "drug": "agomelatine",
+      "n_se": 57,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8142499999999999,
+      "mean_ppm": 0.09829753649469763
+    },
+    {
+      "drug": "tasimelteon",
+      "n_se": 6,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8142499999999999,
+      "mean_ppm": 0.09829753649469763
+    },
+    {
+      "drug": "ramelteon",
+      "n_se": 20,
+      "n_targets": 4,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.8142499999999999,
+      "mean_ppm": 0.09829753649469763
+    },
+    {
+      "drug": "buspirone",
+      "n_se": 159,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.699,
+      "mean_ppm": -2.3010299956639813
+    },
+    {
+      "drug": "ergotamine",
+      "n_se": 21,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.296,
+      "mean_ppm": -3.0
+    },
+    {
+      "drug": "eletriptan",
+      "n_se": 232,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1975,
+      "mean_ppm": -1.9030899869919435
+    },
+    {
+      "drug": "zolmitriptan",
+      "n_se": 236,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.099,
+      "mean_ppm": -1.6197887582883939
+    },
+    {
+      "drug": "dolasetron",
+      "n_se": 132,
+      "n_targets": 6,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.125333333333333,
+      "mean_ppm": -0.7561355105659234
+    },
+    {
+      "drug": "granisetron",
+      "n_se": 121,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2657999999999998,
+      "mean_ppm": -1.9208187539523751
+    },
+    {
+      "drug": "tegaserod",
+      "n_se": 118,
+      "n_targets": 2,
+      "mean_cost": -7.246244286829295e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2685,
+      "mean_ppm": 0.1796953833245065
+    },
+    {
+      "drug": "asenapine",
+      "n_se": 117,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.149,
+      "mean_ppm": -1.7695510786217261
+    },
+    {
+      "drug": "sofosbuvir",
+      "n_se": 61,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.914,
+      "mean_ppm": -1.8239087409443189
+    },
+    {
+      "drug": "auranofin",
+      "n_se": 46,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.29,
+      "mean_ppm": 0.5564231213712854
+    },
+    {
+      "drug": "bazedoxifene",
+      "n_se": 39,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.5205,
+      "mean_ppm": 0.06874229293298156
+    },
+    {
+      "drug": "isoniazid",
+      "n_se": 44,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.631,
+      "mean_ppm": -0.28441444810680383
+    },
+    {
+      "drug": "ethionamide",
+      "n_se": 38,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.016,
+      "mean_ppm": -0.4596705252091263
+    },
+    {
+      "drug": "dronedarone",
+      "n_se": 44,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.919,
+      "mean_ppm": -2.154901959985743
+    },
+    {
+      "drug": "sotalol",
+      "n_se": 113,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.175,
+      "mean_ppm": -0.2975694635544747
+    },
+    {
+      "drug": "halobetasol",
+      "n_se": 18,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.03,
+      "mean_ppm": 2.9698821092280103
+    },
+    {
+      "drug": "desoximetasone",
+      "n_se": 28,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.03,
+      "mean_ppm": 2.9698821092280103
+    },
+    {
+      "drug": "chlorpropamide",
+      "n_se": 31,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.023,
+      "mean_ppm": -1.3516399890190685
+    },
+    {
+      "drug": "acipimox",
+      "n_se": 26,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.078,
+      "mean_ppm": 0.2743887955503788
+    },
+    {
+      "drug": "loxapine",
+      "n_se": 91,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.471,
+      "mean_ppm": -1.853871964321762
+    },
+    {
+      "drug": "brimonidine",
+      "n_se": 139,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7745,
+      "mean_ppm": 0.05346260492545521
+    },
+    {
+      "drug": "ecallantide",
+      "n_se": 18,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.004,
+      "mean_ppm": 2.7581553798977616
+    },
+    {
+      "drug": "olsalazine",
+      "n_se": 119,
+      "n_targets": 2,
+      "mean_cost": -7.246244337899554e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.11800000000000001,
+      "mean_ppm": 0.09551804232315081
+    },
+    {
+      "drug": "cefotetan",
+      "n_se": 41,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.204,
+      "mean_ppm": -0.38686320178834616
+    },
+    {
+      "drug": "methylnaltrexone",
+      "n_se": 16,
+      "n_targets": 5,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.1792000000000002,
+      "mean_ppm": 1.9858592055603754
+    },
+    {
+      "drug": "nalmefene",
+      "n_se": 67,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.464,
+      "mean_ppm": -0.0381045263321496
+    },
+    {
+      "drug": "mipomersen",
+      "n_se": 50,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.461,
+      "mean_ppm": 2.437752147833853
+    },
+    {
+      "drug": "parecoxib",
+      "n_se": 87,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.164,
+      "mean_ppm": 2.432970893434113
+    },
+    {
+      "drug": "moclobemide",
+      "n_se": 84,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.1455,
+      "mean_ppm": 1.885931987287233
+    },
+    {
+      "drug": "isocarboxazid",
+      "n_se": 41,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.1455,
+      "mean_ppm": 1.885931987287233
+    },
+    {
+      "drug": "sufentanil",
+      "n_se": 35,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.2446666666666666,
+      "mean_ppm": 2.206835766683822
+    },
+    {
+      "drug": "pirfenidone",
+      "n_se": 58,
+      "n_targets": 3,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.7513333333333333,
+      "mean_ppm": 1.0474565968529113
+    },
+    {
+      "drug": "nilutamide",
+      "n_se": 80,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.291,
+      "mean_ppm": 0.16465021593429674
+    },
+    {
+      "drug": "ramipril",
+      "n_se": 184,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.365,
+      "mean_ppm": 0.8965813275057327
+    },
+    {
+      "drug": "hydroxocobalamin",
+      "n_se": 65,
+      "n_targets": 1,
+      "mean_cost": -7.246244360104015e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": -1.0,
+      "mean_ppm": 1.0294243640580163
+    },
+    {
+      "drug": "tolmetin",
+      "n_se": 49,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.145,
+      "mean_ppm": 2.305353519413985
+    },
+    {
+      "drug": "retapamulin",
+      "n_se": 21,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 1.0,
+      "mean_loeuf": -1.0,
+      "mean_ppm": -1.0409586076789064
+    },
+    {
+      "drug": "atovaquone",
+      "n_se": 65,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 1.0,
+      "mean_loeuf": -1.0,
+      "mean_ppm": 0.6600112212893308
+    },
+    {
+      "drug": "prucalopride",
+      "n_se": 44,
+      "n_targets": 1,
+      "mean_cost": -7.246244286829295e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.886,
+      "mean_ppm": 0.4699692094999595
+    },
+    {
+      "drug": "protriptyline",
+      "n_se": 89,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.138,
+      "mean_ppm": 1.004364371107751
+    },
+    {
+      "drug": "moxonidine",
+      "n_se": 27,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.285,
+      "mean_ppm": -0.2572748686953017
+    },
+    {
+      "drug": "nitroprusside",
+      "n_se": 26,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.483,
+      "mean_ppm": -0.958607314841775
+    },
+    {
+      "drug": "rifapentine",
+      "n_se": 202,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.174,
+      "mean_ppm": -1.5228787452803376
+    },
+    {
+      "drug": "oxymorphone",
+      "n_se": 109,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.154,
+      "mean_ppm": -1.031517051446065
+    },
+    {
+      "drug": "halcinonide",
+      "n_se": 25,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.32,
+      "mean_ppm": 0.38756777941718856
+    },
+    {
+      "drug": "eplerenone",
+      "n_se": 122,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.35,
+      "mean_ppm": -1.3010299956639813
+    },
+    {
+      "drug": "drospirenone",
+      "n_se": 27,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.35,
+      "mean_ppm": -1.3010299956639813
+    },
+    {
+      "drug": "pegaptanib",
+      "n_se": 132,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.3,
+      "mean_ppm": 0.840168849240756
+    },
+    {
+      "drug": "adefovir",
+      "n_se": 59,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.856,
+      "mean_ppm": -3.0
+    },
+    {
+      "drug": "propoxyphene",
+      "n_se": 21,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.193,
+      "mean_ppm": -2.0457574905606752
+    },
+    {
+      "drug": "apraclonidine",
+      "n_se": 101,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.58,
+      "mean_ppm": 0.041787318971751766
+    },
+    {
+      "drug": "timolol",
+      "n_se": 163,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": -1.0,
+      "mean_ppm": -1.744727494896694
+    },
+    {
+      "drug": "indacaterol",
+      "n_se": 50,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.3195,
+      "mean_ppm": -0.0971815319177465
+    },
+    {
+      "drug": "terbutaline",
+      "n_se": 28,
+      "n_targets": 2,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": -0.3195,
+      "mean_ppm": -0.0971815319177465
+    },
+    {
+      "drug": "prasugrel",
+      "n_se": 63,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 1.406,
+      "mean_ppm": -2.0969100130080562
+    },
+    {
+      "drug": "olodaterol",
+      "n_se": 25,
+      "n_targets": 1,
+      "mean_cost": NaN,
+      "n_metabolic": 0,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.361,
+      "mean_ppm": 0.19893186993220904
+    },
+    {
+      "drug": "trabectedin",
+      "n_se": 90,
+      "n_targets": 1,
+      "mean_cost": -7.246244380088029e-07,
+      "n_metabolic": 1,
+      "mean_ess": 0.0,
+      "mean_loeuf": 0.479,
+      "mean_ppm": 2.3483068105526814
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "SIDE EFFECTS -- the row that had no data at all",
+    "====================================================================================================",
+    "  capability_audit used `side effect` as its MUST-FAIL calibration because nothing here could",
+    "  answer it. This adds SIDER, so that calibration will have to move again -- which is the point.",
+    "\n  SIDER 4.1: 1,344 named compounds with MedDRA preferred-term side effects",
+    "  cell_complete: 6,246 distinct drug names with protein targets",
+    "  loop 4's defined-medium growth cost available for 1,784 genes",
+    "\n  JOINED: 640 drugs with both a side-effect list and targets in this model",
+    "  S1 JOIN (>= 200)   PASS",
+    "    side effects per drug: median 85, range 1-742",
+    "    targets per drug     : median 4, range 1-91",
+    "\n  THE CONFOUND, measured before anything is claimed:",
+    "    number of targets alone vs side-effect count : +0.2898",
+    "\n  predictor                                           raw   partial      n",
+    "  mean essentiality of targets                    +0.1691   +0.0515    640",
+    "  mean growth cost of targets (loop 4 model)      +0.0910   +0.0059    320",
+    "  mean LOEUF of targets (lookup)                  -0.0121   +0.0183    640",
+    "  mean abundance of targets (lookup)              +0.1051   -0.0168    640",
+    "    'partial' holds the number of targets fixed. That column is the one that matters.",
+    "\n  S2 SIGNAL -- best model predictor is 'mean essentiality of targets'",
+    "    raw +0.1691 vs |null| 95th pct 0.0758   S2 PASS",
+    "\n  S3 BEATS TARGET COUNT -- partial +0.0515 vs |null| 95th pct 0.0756   S3 FAIL",
+    "    Holding the number of targets fixed, the cell model's estimate of what a gene costs",
+    "    says nothing about how many side effects a drug hitting it has. The apparent signal",
+    "    was target counting, which needs no model at all.",
+    "\n  S4 BEATS LOOKUPS -- vs mean LOEUF of targets (lookup): 0.0515 against 0.0183   PASS",
+    "\n====================================================================================================",
+    "  S1 join                         PASS",
+    "  S2 signal                       PASS",
+    "  S3 beats target count           FAIL",
+    "  S4 beats lookups                PASS",
+    "  The correlation exists and is explained by how many proteins a drug hits. The cell model",
+    "  contributed nothing beyond target counting, and that is the honest reading.",
+    "====================================================================================================",
+    "    manifest: 4 inputs, coverage 640/6246 (10.2%) by 'filtered', seed 1904, controls 5"
+  ]
+}

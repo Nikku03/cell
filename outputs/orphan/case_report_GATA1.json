@@ -1,0 +1,62 @@
+{
+ "knockout": "GATA1",
+ "readout_censored": true,
+ "stored_genes": 250,
+ "censoring_floor": 1.531,
+ "effective_threshold": 1.531,
+ "moved_lower_bound": 250,
+ "tide": 17,
+ "specific": 233,
+ "named": 230,
+ "unknown": 3,
+ "routes": {
+  "CHAIN-2hop": 47,
+  "UNKNOWN": 3,
+  "CHAIN-3hop": 112,
+  "COFACTOR": 60,
+  "DIRECT": 9,
+  "CHAIN-4hop": 2
+ },
+ "operative_chains": 7,
+ "n_intermediates": 162,
+ "intermediate_states": {
+  "ACTIVITY-UNCHANGED": 9,
+  "NO-EXPRESSION-DATA": 61,
+  "ACTIVITY-CHANGED": 11,
+  "UNTESTED": 51,
+  "ABUNDANCE-CONTRADICTED": 4,
+  "DEFENDED-UNTESTABLE": 21,
+  "ABUNDANCE-MOVED-UNSIGNED": 4,
+  "ABUNDANCE-CHANGED": 1
+ },
+ "activity_testable": 30,
+ "activity_changed_among_testable": 11,
+ "endpoint_sign": {
+  "unsigned_autopass": 207,
+  "matched": 8,
+  "contradicted": 15
+ },
+ "ko_chromatin_activity": -2.599278211593628,
+ "discrimination": {
+  "COMBINED": {
+   "1": 3.63,
+   "2": 1.31,
+   "3": 1.03,
+   "4": 1.02
+  },
+  "REGULATORY only": {
+   "1": 4.71,
+   "2": 2.18,
+   "3": 1.52,
+   "4": 1.47
+  },
+  "PHYSICAL only": {
+   "1": 1.24,
+   "2": 1.16,
+   "3": 0.98,
+   "4": 1.02
+  }
+ },
+ "verdict": "CASE REPORT (GATA1, K562; case_report.py): one knockout end-to-end, establishing what CHANGED at every hop. READOUT CAVEAT FIRST: the K562 store keeps only the top ~250 genes per knockout, and for GATA1 the smallest stored |z| is 1.53 -- so a nominal |z|>=1.0 threshold is UNREACHABLE and every count here is a LOWER BOUND at an effective threshold of 1.53. >=250 genes moved = 17 tide + 233 GATA1-specific; the knocked-out protein's own chromatin activity is -2.60z, so its regulatory function is measurably lost. NAMING: 230/233 reachable within 4 hops, 3 unreachable. PER-HOP AUDIT over 162 intermediates: NO-EXPRESSION-DATA 61, UNTESTED 51, DEFENDED-UNTESTABLE 21, ACTIVITY-CHANGED 11, ACTIVITY-UNCHANGED 9, ABUNDANCE-CONTRADICTED 4, ABUNDANCE-MOVED-UNSIGNED 4, ABUNDANCE-CHANGED 1. Only 7/230 chains are operative end to end. THE SIGN RESULT, stated honestly: 207/230 endpoints were reached by an UNSIGNED edge and cannot fail, so they prove nothing; among the 23 endpoints where a direction WAS predicted, 15 (65%) moved the WRONG way -- when the annotation is actually testable, contradiction is the majority outcome, not the exception. THE GUARD, DECOMPOSED, OVERTURNS THE OBVIOUS READING: pooled reachability decays with depth, but that is not about chain LENGTH -- the REGULATORY layer holds discrimination at 1.47x even at 4 hops, while the PHYSICAL interactome is at chance at EVERY depth including hop 1 (1.24x). Long curated regulatory chains still carry signal; it is the physical layer that adds reach without information, and mixing the two is what makes 'reachable' look meaningless. ACTIVITY: only 30/162 intermediates are motif-testable; of the 20 that got an activity verdict, 11 CHANGED function with abundance below threshold and 9 did not -- so where we can look at all, a changed function with a held-constant level is roughly as common as no change, and it is invisible to abundance either way. MEANING: most of a drawn pathway is a claim about connectivity; demand that each protein demonstrably changed and few chains survive, the testable annotations are wrong more often than right, and the largest class is simply not measurable with an abundance readout. Corrections applied after adversarial review: readout censoring detected and reported; unsigned hops no longer auto-pass as confirmations; ACTIVITY-CHANGED nodes now propagate the measured chromatin sign instead of discarding it; direction is destroyed rather than inherited across directionless hops; graph iteration sorted so results are genuinely deterministic; route tie-breaks disclosed. Deterministic.",
+ "note": "CASE REPORT (GATA1, K562; case_report.py): one knockout end-to-end, establishing what CHANGED at every hop. READOUT CAVEAT FIRST: the K562 store keeps only the top ~250 genes per knockout, and for GATA1 the smallest stored |z| is 1.53 -- so a nominal |z|>=1.0 threshold is UNREACHABLE and every count here is a LOWER BOUND at an effective threshold of 1.53. >=250 genes moved = 17 tide + 233 GATA1-specific; the knocked-out protein's own chromatin activity is -2.60z, so its regulatory function is measurably lost. NAMING: 230/233 reachable within 4 hops, 3 unreachable. PER-HOP AUDIT over 162 intermediates: NO-EXPRESSION-DATA 61, UNTESTED 51, DEFENDED-UNTESTABLE 21, ACTIVITY-CHANGED 11, ACTIVITY-UNCHANGED 9, ABUNDANCE-CONTRADICTED 4, ABUNDANCE-MOVED-UNSIGNED 4, ABUNDANCE-CHANGED 1. Only 7/230 chains are operative end to end. THE SIGN RESULT, stated honestly: 207/230 endpoints were reached by an UNSIGNED edge and cannot fail, so they prove nothing; among the 23 endpoints where a direction WAS predicted, 15 (65%) moved the WRONG way -- when the annotation is actually testable, contradiction is the majority outcome, not the exception. THE GUARD, DECOMPOSED, OVERTURNS THE OBVIOUS READING: pooled reachability decays with depth, but that is not about chain LENGTH -- the REGULATORY layer holds discrimination at 1.47x even at 4 hops, while the PHYSICAL interactome is at chance at EVERY depth including hop 1 (1.24x). Long curated regulatory chains still carry signal; it is the physical layer that adds reach without information, and mixing the two is what makes 'reachable' look meaningless. ACTIVITY: only 30/162 intermediates are motif-testable; of the 20 that got an activity verdict, 11 CHANGED function with abundance below threshold and 9 did not -- so where we can look at all, a changed function with a held-constant level is roughly as common as no change, and it is invisible to abundance either way. MEANING: most of a drawn pathway is a claim about connectivity; demand that each protein demonstrably changed and few chains survive, the testable annotations are wrong more often than right, and the largest class is simply not measurable with an abundance readout. Corrections applied after adversarial review: readout censoring detected and reported; unsigned hops no longer auto-pass as confirmations; ACTIVITY-CHANGED nodes now propagate the measured chromatin sign instead of discarding it; direction is destroyed rather than inherited across directionless hops; graph iteration sorted so results are genuinely deterministic; route tie-breaks disclosed. Deterministic."
+}

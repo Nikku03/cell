@@ -1,0 +1,211 @@
+{
+ "test": "loop_spatial_proteome",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/itzhak_supp1.xlsx",
+    "bytes": 1653563,
+    "hash": "ce542f6561706a9a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM.xml",
+    "bytes": 43115559,
+    "hash": "cc5a4383c6116b0c",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 8710,
+   "used": 7202,
+   "selection": "filtered",
+   "fraction": 0.826865671641791
+  },
+  "seed": 11800,
+  "controls": [
+   "the same shape tests that condemned the previous abundance file",
+   "an independent copy-number source compared, never divided by",
+   "annotation and measurement scored against the same GEM reactions",
+   "unmappable Itzhak categories named rather than defaulted",
+   "a pool-fraction shuffle checked for capability before its verdict",
+   "publication count against measured copy number"
+  ],
+  "note": "Itzhak 2016 eLife 16950 measures WHERE and HOW MUCH in one experiment, which is what loops 92, 102 and 116 each lacked separately",
+  "warnings": []
+ },
+ "gates": {
+  "Q1 the fetched data is a real proteome": true,
+  "Q2 it agrees with the independent copy-number source": true,
+  "Q3 measured localisation beats annotation": true,
+  "Q4 the crowding ceiling is reached with the missing protein": true,
+  "Q5 dual localisation quantified": true,
+  "Q6 fame, capable null, coverage": true
+ },
+ "source": "Itzhak et al. 2016 eLife 16950, Dynamic Organellar Maps, HeLa",
+ "q1": {
+  "n": 8710,
+  "median": 82632.55868066575,
+  "mean": 899834.0923138263,
+  "max_over_median": 1433.8751802323768,
+  "top1": 0.3380111446464322,
+  "top10": 0.7947152690313009,
+  "total_molecules": 7837554944.053427
+ },
+ "q2": {
+  "n_shared": 4144,
+  "spearman": 0.7252650101949032,
+  "median_ratio": 5.524822005097327
+ },
+ "q3": {
+  "annotation": 0.4028417653390743,
+  "measurement": 0.5386175426736521,
+  "n_ann": 23225,
+  "n_meas": 5917
+ },
+ "q4": {
+  "total_pg": 534.1363741671255,
+  "cytosolic_pg": 254.7809080387698,
+  "cytosol_mg_ml": 163.3210948966473,
+  "wholecell_mg_ml": 178.0454580557085
+ },
+ "q5": {
+  "n_split": 4158,
+  "n_with_pool": 8710,
+  "whole": {
+   "Endosome": 0.020112775930694164,
+   "ER": 0.04629565403711084,
+   "ER_high_curvature": 0.002820644700846957,
+   "Ergic/cisGolgi": 0.005303471596266964,
+   "Golgi": 0.02610124671556973,
+   "Lysosome": 0.0019868522896956276,
+   "Mitochondrion": 0.07263717715131515,
+   "Peroxisome": 0.0012966722601833716,
+   "Plasma membrane": 0.0600787273398086,
+   "Actin binding proteins": 0.05433249074208578,
+   "Large Protein Complex": 0.6601203181430583,
+   "Nuclear pore complex": 0.005245640849836682,
+   "No Prediction": 0.014646008816324739,
+   "nan": 0.029022319427203132
+  },
+  "split": {
+   "Endosome": 0.010108297763569947,
+   "Cytosol": 0.4769959889663886,
+   "ER": 0.042416540715310355,
+   "ER_high_curvature": 0.002039982768768402,
+   "Ergic/cisGolgi": 0.004005270154837159,
+   "Golgi": 0.011795120457111835,
+   "Lysosome": 0.0017500051855999326,
+   "Mitochondrion": 0.06644310668742462,
+   "Peroxisome": 0.0012664806603825624,
+   "Plasma membrane": 0.041889340247711744,
+   "Actin binding proteins": 0.025784152846401866,
+   "Large Protein Complex": 0.2875218431222522,
+   "Nuclear pore complex": 0.004531603853019668,
+   "No Prediction": 0.009630563333712821,
+   "nan": 0.013821703237506994
+  }
+ },
+ "q6": {
+  "pubs_rho": 0.43981653150217764,
+  "capability": {
+   "capable": true,
+   "changed": 0.968,
+   "reason": "the null changes the statistic's input"
+  },
+  "survival": {
+   "real": 163.3210948966473,
+   "n_null": 20,
+   "null_mean": 126.60567214385658,
+   "null_sd": 5.3193575880957304,
+   "z": 6.902228726821585,
+   "defined": true,
+   "fraction": 0.7751948529611258,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "coverage_gene": 0.4366965801600776
+ },
+ "seconds": 26.307600021362305,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 118 -- the measured spatial proteome, fetched: where AND how much, in one act",
+  "====================================================================================================",
+  "",
+  "  Itzhak 2016 eLife 16950, Dynamic Organellar Maps: 8,710 HeLa proteins",
+  "  columns used: copy number, molecular weight, cytosolic pool fraction, compartment prediction, confidence",
+  "",
+  "Q1 THE FETCHED DATA IS A REAL PROTEOME, NOT A COMPRESSED ONE",
+  "     median 82,633   mean 899,834   mean > median: True",
+  "     max/median 1,434   (gate > 100; the PaxDb file gave 3.6)",
+  "     top 1% hold 33.8%, top 10% hold 79.5%   (gate top10 > 50%; the PaxDb file gave 17.4%)",
+  "     total protein 7.84e+09 molecules/cell -- loops 91, 92 and 116 all SWEPT 2e9-1e10 for want of this",
+  "     Q1 PASS",
+  "",
+  "Q2 IT AGREES WITH THE INDEPENDENT COPY-NUMBER SOURCE",
+  "     4,144 shared genes; Itzhak HeLa vs Schwanhausser NIH3T3",
+  "     Spearman +0.7253   (gate >= 0.5)",
+  "     median copy-number ratio Itzhak/Schwanhausser 5.52x -- a cell-type and method",
+  "     difference, REPORTED not divided out (loop 92's rule)",
+  "     Q2 PASS",
+  "",
+  "Q3 COMPARTMENT ASSIGNMENT BY MEASUREMENT BEATS ANNOTATION",
+  "     ANNOTATION (`comp` label) agrees with its own reaction's compartment: 9,356/23,225 = 40.3%",
+  "     MEASUREMENT (Itzhak) agrees:                                        3,187/5,917 = 53.9%",
+  "     mappable Itzhak categories only; Endosome, Plasma membrane, Large Protein Complex",
+  "     and Actin binding proteins have no GEM counterpart and are NOT defaulted",
+  "     Q3 PASS -- measuring where a protein is beats annotating it",
+  "",
+  "Q4 THE CROWDING CEILING, WITH THE PROTEIN THAT WAS MISSING",
+  "     total protein mass 534.1 pg/cell over 8,710 proteins",
+  "     of which cytosolic, by MEASURED pool fraction: 254.8 pg",
+  "     cytosol at 52% of a 3,000 um^3 cell -> 163.3 mg/mL",
+  "     whole-cell average protein concentration -> 178.0 mg/mL",
+  "     loop 116 got 38.5 mg/mL and passed because five sixths of the protein was absent",
+  "     gate: cytosol inside 100-400 mg/mL",
+  "     Q4 PASS",
+  "",
+  "Q5 DUAL LOCALISATION IS QUANTIFIED, NOT ASSUMED AWAY",
+  "     4,158 of 8,710 proteins are split between cytosol and",
+  "     an organelle (pool fraction between 5% and 95%)",
+  "     pool-fraction distribution: median 0.196, quartiles 0.001 / 0.810",
+  "     compartment mass share, ALL-OR-NOTHING vs SPLIT BY MEASURED FRACTION:",
+  "       Large Protein Complex       66.0%  ->   28.8%   delta -37.3%",
+  "       Mitochondrion                7.3%  ->    6.6%   delta -0.6%",
+  "       Plasma membrane              6.0%  ->    4.2%   delta -1.8%",
+  "       Actin binding proteins       5.4%  ->    2.6%   delta -2.9%",
+  "       ER                           4.6%  ->    4.2%   delta -0.4%",
+  "       nan                          2.9%  ->    1.4%   delta -1.5%",
+  "       Golgi                        2.6%  ->    1.2%   delta -1.4%",
+  "       Endosome                     2.0%  ->    1.0%   delta -1.0%",
+  "       Cytosol (recovered)          0.0%  ->   47.7%",
+  "     loop 102 assigned every protein whole; the cytosol column is the mass that error hid",
+  "",
+  "Q6 FAME, A CAPABLE NULL, AND COVERAGE BY THREE DENOMINATORS",
+  "     pubs vs measured copy number: rho +0.4398 over 7,202 genes",
+  "     CAPABILITY: shuffling compartment labels changes 96.8% -- capable: True",
+  "     cytosolic concentration under a pool-fraction shuffle: real +163.3211  null +126.6057 +/- 5.3194  z +6.9  survives 78%",
+  "     coverage by GENE: 7,202 of 16,492 = 43.7%",
+  "     coverage by MASS: 100% of the measured proteome by construction; against the model's gene list, 82.7% of Itzhak's proteins join",
+  "     Q6 PASS",
+  "",
+  "  PASS  Q1 the fetched data is a real proteome",
+  "  PASS  Q2 it agrees with the independent copy-number source",
+  "  PASS  Q3 measured localisation beats annotation",
+  "  PASS  Q4 the crowding ceiling is reached with the missing protein",
+  "  PASS  Q5 dual localisation quantified",
+  "  PASS  Q6 fame, capable null, coverage",
+  "    manifest: 4 inputs, coverage 7202/8710 (82.7%) by 'filtered', seed 11800, controls 6"
+ ]
+}

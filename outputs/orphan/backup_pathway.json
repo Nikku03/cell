@@ -1,0 +1,21 @@
+{
+ "shortest_broken": 1404,
+ "network_backup_rescued": 22,
+ "network_backup_frac": 0.0157,
+ "silent_intermediate_movability": 0.0017,
+ "confirmed_intermediate_movability": 0.0139,
+ "genome_movability": 0.0019,
+ "silent_essentiality": 0.281,
+ "confirmed_essentiality": 0.0,
+ "silent_ppi_degree": 49.0,
+ "confirmed_ppi_degree": 53.5,
+ "cond_move_real": 0.1256,
+ "cond_move_baseline": 0.0137,
+ "cond_move_null": 0.0,
+ "n_broken_pairs": 25,
+ "myc_ltb_conditional": null,
+ "buffering_supported": true,
+ "links_real_elsewhere": true,
+ "verdict": "BACKUP PATHWAY (backup_pathway.py): the user's objection -- a SILENT intermediate may be a BACKUP/BUFFER, not a broken link, so hop_accountability's 'broken' overstates it. Testing the three ways a flat intermediate can still be real. (1) NETWORK BACKUP: 22/1404 (2%) of shortest-broken movers are rescued by an alternative all-confirmed route within the known graph -- so redundant routing explains a real slice, though most are still not reachable by ANY confirmed route. (2) BUFFERING: SILENT intermediates move in 0.2% of KOs vs CONFIRMED 1.4% and are MORE essential (0.28 vs 0.00) -- consistent with buffering: the silent nodes are more defended/essential, so a flat level does NOT prove they were untouched. (3) REAL-BUT-DIDN'T-FIRE: across the panel, when a silent intermediate A actually moves, its target m moves 13% of the time vs a 1% baseline (0% for random pairs) -- so many of these A->m links ARE real; they just didn't fire in this KO because A stayed flat. CONCLUSION: the user is right that 'broken' is too strong. A silent intermediate is UNCONFIRMED, not disproven: some endpoints are reached by a backup route, some intermediates are buffered/essential (level defended while activity may change), and many A->m links are genuinely real but simply didn't fire in this particular knockout. What stays true from hop_accountability is narrower and still holds: we cannot, from mRNA abundance alone, TRACE the specific response as a chain of confirmed state-changes -- precisely because backups, buffering, and activity-level effects are invisible to this readout. The honest statement is 'unconfirmable with this data', and the fix is a readout that sees activity (phospho/degron/nascent), not a better wiring diagram. Deterministic; K562.",
+ "note": "BACKUP PATHWAY (backup_pathway.py): the user's objection -- a SILENT intermediate may be a BACKUP/BUFFER, not a broken link, so hop_accountability's 'broken' overstates it. Testing the three ways a flat intermediate can still be real. (1) NETWORK BACKUP: 22/1404 (2%) of shortest-broken movers are rescued by an alternative all-confirmed route within the known graph -- so redundant routing explains a real slice, though most are still not reachable by ANY confirmed route. (2) BUFFERING: SILENT intermediates move in 0.2% of KOs vs CONFIRMED 1.4% and are MORE essential (0.28 vs 0.00) -- consistent with buffering: the silent nodes are more defended/essential, so a flat level does NOT prove they were untouched. (3) REAL-BUT-DIDN'T-FIRE: across the panel, when a silent intermediate A actually moves, its target m moves 13% of the time vs a 1% baseline (0% for random pairs) -- so many of these A->m links ARE real; they just didn't fire in this KO because A stayed flat. CONCLUSION: the user is right that 'broken' is too strong. A silent intermediate is UNCONFIRMED, not disproven: some endpoints are reached by a backup route, some intermediates are buffered/essential (level defended while activity may change), and many A->m links are genuinely real but simply didn't fire in this particular knockout. What stays true from hop_accountability is narrower and still holds: we cannot, from mRNA abundance alone, TRACE the specific response as a chain of confirmed state-changes -- precisely because backups, buffering, and activity-level effects are invisible to this readout. The honest statement is 'unconfirmable with this data', and the fix is a readout that sees activity (phospho/degron/nascent), not a better wiring diagram. Deterministic; K562."
+}

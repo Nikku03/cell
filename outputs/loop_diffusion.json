@@ -1,0 +1,242 @@
+{
+ "test": "loop_diffusion",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/itzhak_supp1.xlsx",
+    "bytes": 1653563,
+    "hash": "ce542f6561706a9a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/uniprot_kinetics_human.tsv",
+    "bytes": 3402310,
+    "hash": "23921e8cc3968e29",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/kinetics_bundle.json.gz",
+    "bytes": 193597,
+    "hash": "b00f3fdb8642fa3f",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM_genes.tsv",
+    "bytes": 1132077,
+    "hash": "2a6058a157b3b9f3",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2549,
+   "used": 751,
+   "selection": "filtered",
+   "fraction": 0.29462534327187134
+  },
+  "seed": 12600,
+  "controls": [
+   "GFP's measured diffusion constant as the Stokes-Einstein control",
+   "cell volume and crowding factor both swept, 3x3",
+   "the Smoluchowski limit, which owes nothing to any dataset",
+   "measured kinetics against predicted, on the same ceiling",
+   "the canonical catalytically perfect enzymes as a rank control",
+   "three denominators"
+  ],
+  "note": "no fitted parameter appears in this loop; every quantity is either measured or derived from physical constants",
+  "warnings": []
+ },
+ "gates": {
+  "F1": true,
+  "F2": true,
+  "F3": true,
+  "F4": true,
+  "F5": false,
+  "F6": true
+ },
+ "f1": {
+  "radius_27kda_nm": 2.8112652517216272,
+  "D_water_um2_s": 116.89220838824603,
+  "D_cyto": {
+   "3.0": 38.96406946274868,
+   "4.0": 29.223052097061508,
+   "5.0": 23.378441677649207
+  },
+  "D_metabolite_water": 799.6066565686338
+ },
+ "f2": {
+  "n_genes": 751,
+  "sweep": {
+   "V2000_c3": {
+    "median_Da": 0.0004347068816659797,
+    "frac_gt1": 0.02663115845539281,
+    "tau_diff_s": 0.02470150550790582,
+    "L_um": 6.285139335191904
+   },
+   "V2000_c4": {
+    "median_Da": 0.0005796091755546395,
+    "frac_gt1": 0.02796271637816245,
+    "tau_diff_s": 0.032935340677207756,
+    "L_um": 6.285139335191904
+   },
+   "V2000_c5": {
+    "median_Da": 0.0007245114694432994,
+    "frac_gt1": 0.03195739014647137,
+    "tau_diff_s": 0.0411691758465097,
+    "L_um": 6.285139335191904
+   },
+   "V3000_c3": {
+    "median_Da": 0.00037975143970983376,
+    "frac_gt1": 0.02663115845539281,
+    "tau_diff_s": 0.03236812899192392,
+    "L_um": 7.194688513426351
+   },
+   "V3000_c4": {
+    "median_Da": 0.0005063352529464449,
+    "frac_gt1": 0.02796271637816245,
+    "tau_diff_s": 0.04315750532256522,
+    "L_um": 7.194688513426351
+   },
+   "V3000_c5": {
+    "median_Da": 0.0006329190661830562,
+    "frac_gt1": 0.02929427430093209,
+    "tau_diff_s": 0.05394688165320653,
+    "L_um": 7.194688513426351
+   },
+   "V4000_c3": {
+    "median_Da": 0.0003450270806271958,
+    "frac_gt1": 0.02663115845539281,
+    "tau_diff_s": 0.03921119582844797,
+    "L_um": 7.918779349930547
+   },
+   "V4000_c4": {
+    "median_Da": 0.0004600361075029277,
+    "frac_gt1": 0.02663115845539281,
+    "tau_diff_s": 0.052281594437930616,
+    "L_um": 7.918779349930547
+   },
+   "V4000_c5": {
+    "median_Da": 0.0005750451343786597,
+    "frac_gt1": 0.02796271637816245,
+    "tau_diff_s": 0.06535199304741328,
+    "L_um": 7.918779349930547
+   }
+  }
+ },
+ "f3": {
+  "n": 235,
+  "median_kcatkm": 17266.64481692773,
+  "max": 7656916514.320535,
+  "violation_rate": 0.00425531914893617,
+  "limit_water": 26918327685.573513,
+  "limit_cyto": 6729581921.393378
+ },
+ "f4": {
+  "n": 751,
+  "median_kcatkm": 53401.7556437703,
+  "max": 11993411774.35578,
+  "violation_rate": 0.002663115845539281,
+  "ratio": 0.6258322237017311
+ },
+ "f5": {
+  "present": [
+   "SOD1",
+   "SOD2",
+   "CAT"
+  ],
+  "mean_percentile_predicted": 0.512,
+  "mean_percentile_measured": NaN,
+  "predicted": {
+   "SOD1": 0.2773333333333333,
+   "SOD2": 0.304,
+   "CAT": 0.9546666666666667
+  },
+  "measured": {}
+ },
+ "f6": {
+  "k_obs_median": 0.011732264160359237,
+  "crossover_radius_um": 319.73701306590385,
+  "reactions": 4133,
+  "gene_rule_reactions": 7782
+ },
+ "seconds": 1.2844691276550293,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 126 -- diffusion: is well-stirred wrong, and does physics falsify the kinetics?",
+  "====================================================================================================",
+  "",
+  "  Itzhak 2016: 8,469 molecular weights, 8,469 copy numbers (measured)",
+  "  kinetics bundle: 2,549 gene kcat, 1,487 gene K_M (all predicted)",
+  "  UniProt measured: 239 kcat, 1275 K_M (loop 124's parser)",
+  "",
+  "F1 THE DIFFUSION CONSTANTS ARE PHYSICAL",
+  "     27 kDa protein: hydrodynamic radius 2.81 nm",
+  "     D in water 116.9 um^2/s   gate 100.0-135.0 (GFP 87 at 25 C = 116.5 at 37 C)",
+  "     D in cytoplasm at crowding 3x: 39.0 um^2/s   in gate 20.0-45.0 (GFP in cytoplasm ~25-30 at 25 C)",
+  "     D in cytoplasm at crowding 4x: 29.2 um^2/s   in gate 20.0-45.0 (GFP in cytoplasm ~25-30 at 25 C)",
+  "     D in cytoplasm at crowding 5x: 23.4 um^2/s   in gate 20.0-45.0 (GFP in cytoplasm ~25-30 at 25 C)",
+  "     a 200 Da metabolite: D in water 800 um^2/s (glucose ~670 at 25 C = 897 at 37 C)",
+  "     F1 PASS",
+  "",
+  "F2 IS THE WELL-STIRRED ASSUMPTION WRONG?",
+  "     751 genes with a kcat, a K_M and a measured copy number",
+  "     at 3000 um^3 and 4x crowding: cytosol radius 7.19 um, metabolite crossing time 43.2 ms",
+  "     Damkohler number: median 5.063e-04, 2.80% of enzymes above 1",
+  "     swept over 3 cell volumes x 3 crowding factors:",
+  "       median Da ranges 3.45e-04 to 7.25e-04",
+  "       fraction above 1 ranges 2.663% to 3.196%",
+  "     F2 PASS -- well-stirred is a JUSTIFIED approximation, not a defect",
+  "",
+  "F3 THE DIFFUSION LIMIT AS A CEILING, ON MEASURED VALUES",
+  "     Smoluchowski limit for a 50 kDa enzyme and a 200 Da metabolite:",
+  "       crowding 1x: 2.69e+10 M^-1 s^-1   (water; textbook 1e9-1e10)",
+  "       crowding 3x: 8.97e+09 M^-1 s^-1",
+  "       crowding 4x: 6.73e+09 M^-1 s^-1",
+  "       crowding 5x: 5.38e+09 M^-1 s^-1",
+  "     235 genes with BOTH a measured kcat and a measured K_M",
+  "     k_cat/K_M: median 1.73e+04, 90th 7.72e+05, max 7.66e+09 M^-1 s^-1",
+  "     exceed the diffusion limit: 1 of 235 = 0.43%   gate < 5%",
+  "     worst offenders (fold above the limit): ANGEL2 1.1x",
+  "     F3 PASS",
+  "",
+  "F4 THE SAME CEILING, ON THE PREDICTED VALUES",
+  "     751 genes with a PREDICTED kcat and K_M",
+  "     k_cat/K_M: median 5.34e+04, 90th 1.18e+06, max 1.20e+10 M^-1 s^-1",
+  "     exceed the diffusion limit: 2 of 751 = 0.27%",
+  "     measured 0.43% vs predicted 0.27%   ratio 0.63x   gate < 2.0x",
+  "     F4 PASS -- the predictions respect physics as well as the measurements do",
+  "",
+  "F5 THE TEXTBOOK NEAR-LIMIT ENZYMES",
+  "     enzyme     PREDICTED k_cat/K_M     pct       MEASURED k_cat/K_M     pct",
+  "     SOD1                  1.43e+04   27.7%                        -       -",
+  "     SOD2                  1.67e+04   30.4%                        -       -",
+  "     CAT                   5.79e+06   95.5%                        -       -",
+  "     mean percentile: PREDICTED 51.2% (n=3)   MEASURED nan% (n=0)   gate >= 90%",
+  "     F5 FAIL -- the PREDICTED axis does NOT rank the perfect enzymes at the top",
+  "     SOD1's real k_cat/K_M is about 2e9 M^-1 s^-1, within a factor of a few of the",
+  "     diffusion limit -- it is the textbook example of a catalytically perfect enzyme.",
+  "     The bundle predicts 1.43e+04, low by a factor of 1e+05, and ranks it at the 28% percentile.",
+  "     This is the same failure loop 124 measured as a 12.95x fold-error, seen from a",
+  "     direction that needs no held-out data at all: the predictions do not know which",
+  "     enzymes are fast.",
+  "",
+  "F6 THE CROSSOVER, AND THREE DENOMINATORS",
+  "     median pseudo-first-order consumption rate 1.173e-02 /s",
+  "     Da = 1 when the compartment radius reaches 320 um",
+  "     for comparison: cytosol 7.2 um, a mitochondrion ~0.5 um, a lysosome ~0.25 um, a whole cell ~9 um",
+  "     the crossover is 36x the radius of the cell, so no organelle in this model is close to being diffusion-limited",
+  "     THREE DENOMINATORS  by gene 751 of 16,492 = 4.6%",
+  "                         by reaction 4,133 of 7,782 with a gene rule = 53.1%, and of 12,931 = 32.0%",
+  "     F6 PASS",
+  "",
+  "====================================================================================================",
+  "  F1  PASS",
+  "  F2  PASS",
+  "  F3  PASS",
+  "  F4  PASS",
+  "  F5  FAIL",
+  "  F6  PASS",
+  "  5/6",
+  "===================================================================================================="
+ ]
+}

@@ -1,0 +1,21 @@
+{
+ "n_kos": 375,
+ "coverage_movers": {
+  "1": 0.0643,
+  "2": 0.3289,
+  "3": 0.8368,
+  "4": 0.9653
+ },
+ "coverage_nonmovers": {
+  "1": 0.0102,
+  "2": 0.2022,
+  "3": 0.8182,
+  "4": 0.9561
+ },
+ "median_dist_movers": 2.791,
+ "median_dist_nonmovers": 3.037,
+ "closeness_recall": 0.0303,
+ "tide_recall": 0.2597,
+ "verdict": "MULTI-HOP PPI CHAIN (multi_hop_chain.py): follow chains of physical interactions (not just direct PPI) from the knockout to each mover. 375 knockouts, held-out K562. COVERAGE explodes with hops as expected in a small-world graph (6% of movers within 1 hop -> 97% within 4) -- BUT so does coverage of NON-movers (1% -> 96%), the small-world trap. The only thing that matters is DISCRIMINATION: are movers CLOSER than random genes? Enrichment within 2 hops is 1.63x; median hop-distance to movers 2.79 vs 3.04 to random; and ranking by chain-closeness recalls 0.030 vs tide 0.260. Movers are only marginally closer than random and chain-closeness does NOT beat the tide-null. So multi-hop PPI chaining does not rescue coverage: because the physical interactome is small-world and UNDIRECTED, within 2-3 hops nearly every gene is 'reachable', so a chain reaches the true movers and a huge number of non-movers alike -- reachability stops discriminating. The knockout->end-state cascade IS multi-step, but the missing ingredient is DIRECTION/TIME-ORDER (which physical PPI lacks), not more hops. Consistent with mechanistic_propagate (propagating to convergence over-diffused) and network_attribution (90% unexplained): adding hops trades a coverage gap for a specificity collapse. Deterministic.",
+ "note": "MULTI-HOP PPI CHAIN (multi_hop_chain.py): follow chains of physical interactions (not just direct PPI) from the knockout to each mover. 375 knockouts, held-out K562. COVERAGE explodes with hops as expected in a small-world graph (6% of movers within 1 hop -> 97% within 4) -- BUT so does coverage of NON-movers (1% -> 96%), the small-world trap. The only thing that matters is DISCRIMINATION: are movers CLOSER than random genes? Enrichment within 2 hops is 1.63x; median hop-distance to movers 2.79 vs 3.04 to random; and ranking by chain-closeness recalls 0.030 vs tide 0.260. Movers are only marginally closer than random and chain-closeness does NOT beat the tide-null. So multi-hop PPI chaining does not rescue coverage: because the physical interactome is small-world and UNDIRECTED, within 2-3 hops nearly every gene is 'reachable', so a chain reaches the true movers and a huge number of non-movers alike -- reachability stops discriminating. The knockout->end-state cascade IS multi-step, but the missing ingredient is DIRECTION/TIME-ORDER (which physical PPI lacks), not more hops. Consistent with mechanistic_propagate (propagating to convergence over-diffused) and network_attribution (90% unexplained): adding hops trades a coverage gap for a specificity collapse. Deterministic."
+}

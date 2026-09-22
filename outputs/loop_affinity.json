@@ -1,0 +1,93 @@
+{
+  "test": "loop_affinity",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb.npy",
+        "bytes": 14838032,
+        "hash": "3768cedcefe29085",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hg19_chr21.fa.gz",
+        "bytes": 11549785,
+        "hash": "1953ac4ea94b6588",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1926,
+      "used": 1377,
+      "selection": "filtered",
+      "fraction": 0.7149532710280374
+    },
+    "seed": 1904,
+    "controls": [
+      "shuffled GC through the identical edge-selection procedure",
+      "extrusion-only model carried forward",
+      "GC's own correlation as the comparator",
+      "a weakness design gate that loop 39 lacked",
+      "a stopping rule declared before the run"
+    ],
+    "note": "edge set determined by the polymer's own contacts within separation, not chosen; if compartments still fail the limit is the Gaussian network",
+    "warnings": []
+  },
+  "gates": {
+    "M1 perturbation is weak": true,
+    "M2 P(s) survives": false,
+    "M3 TADs survive": false,
+    "M4 compartments beat their input": false
+  },
+  "r_gc": 0.48488010480224664,
+  "band": 0.05594353228843063,
+  "results": {
+    "affinity from GC": {
+      "r": 0.27825909397571574,
+      "ps": -0.25340046655544973,
+      "orient": 0.08013214239374046,
+      "n_edges": 15029,
+      "k": 0.009162286246589928,
+      "added_conductance": 0.2,
+      "degree": 21.82861292665214
+    },
+    "affinity from SHUFFLED GC": {
+      "r": 0.3054071898490319,
+      "ps": -0.22614825915711545,
+      "orient": 0.07584708979682608,
+      "n_edges": 11594,
+      "k": 0.01187683284457478,
+      "added_conductance": 0.2,
+      "degree": 16.839506172839506
+    }
+  },
+  "prev_orient": 0.22783980942910131,
+  "seconds": 59.4378445148468,
+  "log": [
+    "====================================================================================================",
+    "PROXIMITY-CONDITIONED AFFINITY -- one correction, then the stopping rule",
+    "====================================================================================================",
+    "  loop 39 placed permanent bonds between same-type bins whether or not they were near each",
+    "  other. That is a small-world graph: P(s) went to -0.016. An attraction acts only between",
+    "  segments already close, so the edge set must come from the polymer, not from me.",
+    "\n  GC alone vs the measured eigenvector: +0.4849   shuffle band 0.0559",
+    "  loop 36 left orientation at +0.2278 and P(s) at -1.0095",
+    "\n  step 1: extrusion-only map, P(s) -1.0141",
+    "    affinity from GC              15029 edges  k 0.009  added/backbone 10.0%   eigen r +0.2783  P(s) -0.2534  orient +0.0801",
+    "    affinity from SHUFFLED GC     11594 edges  k 0.012  added/backbone 10.0%   eigen r +0.3054  P(s) -0.2261  orient +0.0758",
+    "\n  M1 THE PERTURBATION IS WEAK -- 10.0% of backbone conductance (cap 10%)   M1 PASS",
+    "  M2 P(s) SURVIVES -- -0.2534  (loop 39 destroyed it at -0.0163)   M2 FAIL",
+    "  M3 TADS SURVIVE -- orientation +0.0801 against loop 36's +0.2278   M3 FAIL",
+    "  M4 COMPARTMENTS APPEAR AND BEAT THEIR INPUT -- model +0.2783, band 0.0559, GC +0.4849",
+    "     shuffled-GC control +0.3054",
+    "     M4 FAIL",
+    "\n====================================================================================================",
+    "  M1 perturbation is weak                 PASS",
+    "  M2 P(s) survives                        FAIL",
+    "  M3 TADs survive                         FAIL",
+    "  M4 compartments beat their input        FAIL",
+    "  THE CORRECTION DID NOT HOLD ITS OWN DESIGN CHECKS. Recorded as measured.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1377/1926 (71.5%) by 'filtered', seed 1904, controls 5"
+  ]
+}

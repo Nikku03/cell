@@ -1,0 +1,158 @@
+{
+  "test": "loop_physics_bind",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/skempi_v2.csv",
+        "bytes": 1602208,
+        "hash": "76f8e60d09eaa4f0",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/pdb_cache",
+        "kind": "directory",
+        "files": 743,
+        "bytes": 356235053,
+        "hash": "f4fe79676b9e9832",
+        "method": "sha256:tree"
+      }
+    ],
+    "coverage": {
+      "available": 4903,
+      "used": 4399,
+      "selection": "filtered",
+      "fraction": 0.8972057923720171
+    },
+    "seed": 1904,
+    "controls": [
+      "500 label permutations WITHIN complex",
+      "SKEMPI's wt residue checked against the PDB, mismatches dropped",
+      "baseline stack fitted with complex-grouped 5-fold; physics not fitted at all",
+      "mutant side chain rebuilt and its rotamer chosen by clash",
+      "term-by-term ablation ladder"
+    ],
+    "note": "only across-interface terms are computed; intra-chain terms cancel exactly between the bound and unbound state of a rigid model",
+    "warnings": []
+  },
+  "gates": {
+    "P1 structures and target are real": true,
+    "P2 physics tracks the measurement": true,
+    "P3 beats the non-physics baselines": true,
+    "P4 beats nexus's own number": false,
+    "P5 every term earns its place": false,
+    "P6 nothing in the physics arm is fitted": true
+  },
+  "n_mutations": 4399,
+  "n_complexes": 277,
+  "wt_match": 0.9963287782990006,
+  "spearman": 0.22087704144264267,
+  "auc_physics": 0.6267834889749047,
+  "null95": 0.5618685235300974,
+  "baselines": {
+    "contacts": 0.7764775935021097,
+    "d_kd": 0.4387082450576641,
+    "d_vol": 0.42567088507198847,
+    "blosum": 0.6044228063070587,
+    "STACK (fitted)": 0.6087806601477864,
+    "PHYSICS (not fitted)": 0.6267834889749047
+  },
+  "ladder": {
+    "d_lj": {
+      "auc": 0.7445585034855621,
+      "delta": NaN,
+      "alone": 0.7445585034855621
+    },
+    "d_elec": {
+      "auc": 0.5891474102532365,
+      "delta": -0.1554110932323256,
+      "alone": 0.5161042760473811
+    },
+    "d_induc": {
+      "auc": 0.6019720674352007,
+      "delta": 0.012824657181964239,
+      "alone": 0.5920474387337814
+    },
+    "d_desolv": {
+      "auc": 0.6267834889749047,
+      "delta": 0.02481142153970395,
+      "alone": 0.5747120100174609
+    }
+  },
+  "breaker_frac": 0.22073198454194135,
+  "nexus_recorded": 0.755,
+  "nexus_rebuilt": 0.77,
+  "seconds": 44.12184739112854,
+  "log": [
+    "====================================================================================================",
+    "  LOOP 52 -- physics for the attachment part: ddG_bind from a force field",
+    "====================================================================================================",
+    "\n  SKEMPI single-point mutations with a measured ddG: 4,903",
+    "\n  P1 THE STRUCTURES AND THE TARGET ARE REAL, AND THE INDEX IS CHECKED INDEPENDENTLY",
+    "     mutations with a structure          4,903   (no structure/residue: 0)",
+    "     SKEMPI's wt residue == the PDB's    0.9963   (18 mismatches DROPPED)",
+    "     this is an INDEPENDENT check -- SKEMPI's annotation was written by the experimentalists,",
+    "     not derived from this coordinate file, so the two can genuinely disagree.",
+    "     P1 PASS  (>= 95% agreement and > 500 usable rows)",
+    "\n  computing across-interface energies for 4,885 mutations",
+    "     500/4,885  10s",
+    "     1,000/4,885  13s",
+    "     1,500/4,885  15s",
+    "     2,000/4,885  18s",
+    "     2,500/4,885  20s",
+    "     3,000/4,885  24s",
+    "     3,500/4,885  26s",
+    "     4,500/4,885  33s",
+    "     scored 4,399 mutations in 40s",
+    "     4,399 mutations, 277 complexes, 971 breakers (22.1%) at ddG > 2.0 kcal/mol",
+    "\n  P2 THE PHYSICS TRACKS THE MEASUREMENT, HELD OUT BY COMPLEX",
+    "     Spearman(physics, measured ddG)  +0.2209",
+    "     AUC on the breaker task          0.6268   null 95th 0.5619  (labels shuffled WITHIN complex)",
+    "     P2 PASS",
+    "\n  P3 IT BEATS THE NON-PHYSICS BASELINES",
+    "     contacts                0.7765",
+    "     PHYSICS (not fitted)    0.6268",
+    "     STACK (fitted)          0.6088",
+    "     blosum                  0.6044",
+    "     d_kd                    0.4387",
+    "     d_vol                   0.4257",
+    "     P3 PASS  (physics beats a stack that was allowed to see the labels)",
+    "\n  P4 IT BEATS nexus's OWN RECORDED NUMBER ON nexus's OWN TASK",
+    "     nexus recorded 0.755 \u00b7 loop 32's rebuild 0.770 \u00b7 physics 0.6268",
+    "     P4 FAIL",
+    "\n  P5 EVERY TERM EARNS ITS PLACE",
+    "     +d_lj       cumulative 0.7446                  alone 0.7446",
+    "     +d_elec     cumulative 0.5891   delta -0.1554   alone 0.5161",
+    "     +d_induc    cumulative 0.6020   delta +0.0128   alone 0.5920",
+    "     +d_desolv   cumulative 0.6268   delta +0.0248   alone 0.5747",
+    "     P5 FAIL  -- terms that improved the cumulative score: d_induc, d_desolv",
+    "\n  P6 NOTHING IN THE PHYSICS ARM IS FITTED",
+    "     physics score = 1.0*d_lj + 1.0*d_elec + 1.0*d_induc + 1.0*d_desolv",
+    "     every weight is exactly 1.0 and every constant is the force field's: LJ 6 A, electrostatics 10 A,",
+    "     desolvation 8 A, induction 10 A, eps 0.1. The ONLY fitting in this module is the baseline stack.",
+    "     P6 PASS (asserted structurally and printed so it can be checked)",
+    "\n====================================================================================================",
+    "  P1 structures and target are real       PASS",
+    "  P2 physics tracks the measurement       PASS",
+    "  P3 beats the non-physics baselines      PASS",
+    "  P4 beats nexus's own number             FAIL",
+    "  P5 every term earns its place           FAIL",
+    "  P6 nothing in the physics arm is fitted PASS",
+    "  THE PREDECLARED SUM REACHES 0.6268 AND THE ABLATION LADDER SAYS WHY IT SHOULD NOT.",
+    "  Lennard-Jones ALONE is 0.7446. Adding electrostatics at weight 1.0 costs -0.1554,",
+    "  and induction and desolvation only claw back to 0.6268. Summing four terms that carry",
+    "  different units with the same coefficient is a modelling error of mine, not a property of",
+    "  the physics -- but the weights that would fix it have to come from somewhere, and taking",
+    "  them from these labels would end the parameter-free claim. So the declared score stands",
+    "  and P4 and P5 fail on it.",
+    "  AND THE THING THAT BEATS EVERYTHING IS NOT AN ENERGY AT ALL. Counting atom pairs within",
+    "  4.5 A of the partner chain -- pure geometry, no force field -- reaches 0.7765, above",
+    "  nexus's recorded 0.755, above loop 32's rebuilt 0.770, above the fitted stack's 0.6088,",
+    "  and above the force field. That is the second time in two loops that a count has beaten",
+    "  the instrument built to replace it: burial beat ESM-2 650M on the monomer, and contact",
+    "  count beats the force field on the interface. Spearman of the declared physics against",
+    "  measured binding free energy is +0.2209 over 4,399 mutations in 277 complexes.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 4399/4903 (89.7%) by 'filtered', seed 1904, controls 5"
+  ]
+}

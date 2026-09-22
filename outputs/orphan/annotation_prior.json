@@ -1,0 +1,92 @@
+{
+ "n_per_line": {
+  "K562": 1300,
+  "RPE1": 1300,
+  "HCT116": 1300
+ },
+ "results": {
+  "K562": {
+   "real_tide": {
+    "hit10": 3.73,
+    "recall50": 0.272
+   },
+   "annot_apriori": {
+    "hit10": 1.28,
+    "recall50": 0.125
+   },
+   "annot_xline": {
+    "hit10": 1.5,
+    "recall50": 0.133
+   },
+   "depfrac_only": {
+    "hit10": 0.27,
+    "recall50": 0.023
+   },
+   "random": {
+    "hit10": 0.17,
+    "recall50": 0.016
+   }
+  },
+  "RPE1": {
+   "real_tide": {
+    "hit10": 0.53,
+    "recall50": 0.05
+   },
+   "annot_apriori": {
+    "hit10": 0.13,
+    "recall50": 0.018
+   },
+   "annot_xline": {
+    "hit10": 0.2,
+    "recall50": 0.019
+   },
+   "depfrac_only": {
+    "hit10": 0.08,
+    "recall50": 0.013
+   },
+   "random": {
+    "hit10": 0.15,
+    "recall50": 0.013
+   }
+  },
+  "HCT116": {
+   "real_tide": {
+    "hit10": 3.0,
+    "recall50": 0.249
+   },
+   "annot_apriori": {
+    "hit10": 0.72,
+    "recall50": 0.05
+   },
+   "annot_xline": {
+    "hit10": 0.15,
+    "recall50": 0.029
+   },
+   "depfrac_only": {
+    "hit10": 0.45,
+    "recall50": 0.043
+   },
+   "random": {
+    "hit10": 0.12,
+    "recall50": 0.014
+   }
+  }
+ },
+ "spearman_annot_vs_realmf": {
+  "K562": 0.139,
+  "RPE1": -0.01,
+  "HCT116": 0.353
+ },
+ "verdict": "ANNOTATION IS A WEAK COLD-START, NOT A SUBSTITUTE FOR A SCREEN -- honest, held-out, reproducible (sorted candidate order + fixed seed), with controls. Ranking a cell's expressed genes by annotation ALONE (function/proc + protein abundance ppm + TF in-degree + essentiality + PPI degree), with NO perturbation data for the target cell type, recaptures only a MODEST slice of the perturbation-learned tide. Measured as 'fraction of the real-tide top-10 recovered above the random floor', the fixed a-priori score recovers 31% on K562 and 21% on HCT116 (the two clean lines, ~21-31% -- roughly a fifth-to-a-third of the ceiling), and effectively 0 on RPE1 (uninformative: RPE1's OWN real_tide sits near the random floor, noisy pseudobulk, so nothing could score). The a-priori score does beat essentiality-alone on the clean lines and ranks genes like the true mover-frequency at Spearman 0.139 (K562) / 0.353 (HCT116) / ~0 (RPE1) -- so the tide IS partly written in gene annotation (essential, highly-expressed, transcription/translation machinery move most), just a minority of it. TWO HONEST NEGATIVES: (1) the LEARNED cross-line map -- training 'what makes a frequent mover' on the OTHER two lines and transferring it -- DOES NOT TRANSFER: it recovers 37% on K562 but collapses to ~1% (the random floor) on HCT116, because the annotation->tide mapping is itself cell-type-specific; the FIXED a-priori score is the more trustworthy variant. (2) annotation gives a GENERIC per-gene propensity, and the only cell-type-specific ingredient available without a screen is which genes the cell expresses -- a broad, weakly-discriminating gate -- so an annotation prior can only behave like a generic/transferred tide, never the cell's own fine-tuned one (exactly the part that made K562->other transfer lose half its accuracy in fullstack_multicell). BOTTOM LINE: 'fine-tune without perturbation data' buys a real but small cold-start (~21-31% of the deployable top-10 on clean lines) for the CONSERVED, essential part of the tide -- better than random or essentiality-alone, and usable for the ~185 zero-screen atlas cell types -- but it recovers only a minority of the signal and CANNOT supply the cell-type-specific reweighting, which still needs some of that cell's own perturbations. Annotation narrows the cold-start gap; it does not close it.",
+ "note": "ANNOTATION IS A WEAK COLD-START, NOT A SUBSTITUTE FOR A SCREEN -- honest, held-out, reproducible (sorted candidate order + fixed seed), with controls. Ranking a cell's expressed genes by annotation ALONE (function/proc + protein abundance ppm + TF in-degree + essentiality + PPI degree), with NO perturbation data for the target cell type, recaptures only a MODEST slice of the perturbation-learned tide. Measured as 'fraction of the real-tide top-10 recovered above the random floor', the fixed a-priori score recovers 31% on K562 and 21% on HCT116 (the two clean lines, ~21-31% -- roughly a fifth-to-a-third of the ceiling), and effectively 0 on RPE1 (uninformative: RPE1's OWN real_tide sits near the random floor, noisy pseudobulk, so nothing could score). The a-priori score does beat essentiality-alone on the clean lines and ranks genes like the true mover-frequency at Spearman 0.139 (K562) / 0.353 (HCT116) / ~0 (RPE1) -- so the tide IS partly written in gene annotation (essential, highly-expressed, transcription/translation machinery move most), just a minority of it. TWO HONEST NEGATIVES: (1) the LEARNED cross-line map -- training 'what makes a frequent mover' on the OTHER two lines and transferring it -- DOES NOT TRANSFER: it recovers 37% on K562 but collapses to ~1% (the random floor) on HCT116, because the annotation->tide mapping is itself cell-type-specific; the FIXED a-priori score is the more trustworthy variant. (2) annotation gives a GENERIC per-gene propensity, and the only cell-type-specific ingredient available without a screen is which genes the cell expresses -- a broad, weakly-discriminating gate -- so an annotation prior can only behave like a generic/transferred tide, never the cell's own fine-tuned one (exactly the part that made K562->other transfer lose half its accuracy in fullstack_multicell). BOTTOM LINE: 'fine-tune without perturbation data' buys a real but small cold-start (~21-31% of the deployable top-10 on clean lines) for the CONSERVED, essential part of the tide -- better than random or essentiality-alone, and usable for the ~185 zero-screen atlas cell types -- but it recovers only a minority of the signal and CANNOT supply the cell-type-specific reweighting, which still needs some of that cell's own perturbations. Annotation narrows the cold-start gap; it does not close it.",
+ "ceiling_recovery_pct_top10_xline": {
+  "K562": 37,
+  "RPE1": 13,
+  "HCT116": 1
+ },
+ "ceiling_recovery_pct_top10_apriori": {
+  "K562": 31,
+  "RPE1": -5,
+  "HCT116": 21
+ }
+}

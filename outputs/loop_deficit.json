@@ -1,0 +1,327 @@
+{
+  "test": "loop_deficit",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/cell_loop.json",
+        "bytes": 557032,
+        "hash": "e07593bf3c8da83f",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM.xml",
+        "bytes": 43115559,
+        "hash": "cc5a4383c6116b0c",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM_genes.tsv",
+        "bytes": 1132077,
+        "hash": "2a6058a157b3b9f3",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/rnadecay/AvgKdegs.csv",
+        "bytes": 21962834,
+        "hash": "b8869c749b2b4a24",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1784,
+      "used": 1784,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "200 label shuffles",
+      "non-metabolic gene set (H2)",
+      "open vs defined medium on identical code (H3)",
+      "abundance-matched strata (H1)",
+      "5-fold cross-validation (H1)"
+    ],
+    "note": "H1 and H2 reuse loop 1's recorded scores; only H3 re-solves the model",
+    "warnings": []
+  },
+  "H1_independence": {
+    "pass": true,
+    "stratified": {
+      "plain": {
+        "stratified_auc": 0.6460814474125065,
+        "bins": [
+          {
+            "bin": 0,
+            "n": 179,
+            "pos": 2,
+            "auc": 0.4887005649717514
+          },
+          {
+            "bin": 1,
+            "n": 178,
+            "pos": 2,
+            "auc": 0.5298295454545454
+          },
+          {
+            "bin": 2,
+            "n": 178,
+            "pos": 7,
+            "auc": 0.4423558897243108
+          },
+          {
+            "bin": 3,
+            "n": 179,
+            "pos": 11,
+            "auc": 0.6696428571428571
+          },
+          {
+            "bin": 4,
+            "n": 178,
+            "pos": 13,
+            "auc": 0.575058275058275
+          },
+          {
+            "bin": 5,
+            "n": 178,
+            "pos": 27,
+            "auc": 0.7064017660044151
+          },
+          {
+            "bin": 6,
+            "n": 179,
+            "pos": 29,
+            "auc": 0.6293103448275862
+          },
+          {
+            "bin": 7,
+            "n": 178,
+            "pos": 31,
+            "auc": 0.7480798771121352
+          },
+          {
+            "bin": 8,
+            "n": 178,
+            "pos": 49,
+            "auc": 0.6322575541844645
+          },
+          {
+            "bin": 9,
+            "n": 179,
+            "pos": 70,
+            "auc": 0.6328309305373525
+          }
+        ]
+      },
+      "frozen": {
+        "stratified_auc": 0.6297706435990374,
+        "bins": [
+          {
+            "bin": 0,
+            "n": 179,
+            "pos": 2,
+            "auc": 0.4943502824858757
+          },
+          {
+            "bin": 1,
+            "n": 178,
+            "pos": 2,
+            "auc": 0.4943181818181818
+          },
+          {
+            "bin": 2,
+            "n": 178,
+            "pos": 7,
+            "auc": 0.4578111946532999
+          },
+          {
+            "bin": 3,
+            "n": 179,
+            "pos": 11,
+            "auc": 0.6471861471861472
+          },
+          {
+            "bin": 4,
+            "n": 178,
+            "pos": 13,
+            "auc": 0.5582750582750583
+          },
+          {
+            "bin": 5,
+            "n": 178,
+            "pos": 27,
+            "auc": 0.6152808437576649
+          },
+          {
+            "bin": 6,
+            "n": 179,
+            "pos": 29,
+            "auc": 0.7329885057471265
+          },
+          {
+            "bin": 7,
+            "n": 178,
+            "pos": 31,
+            "auc": 0.674347158218126
+          },
+          {
+            "bin": 8,
+            "n": 178,
+            "pos": 49,
+            "auc": 0.6359753203607024
+          },
+          {
+            "bin": 9,
+            "n": 179,
+            "pos": 70,
+            "auc": 0.6022935779816514
+          }
+        ]
+      },
+      "loop": {
+        "stratified_auc": 0.6210136760988091,
+        "bins": [
+          {
+            "bin": 0,
+            "n": 179,
+            "pos": 2,
+            "auc": 0.2810734463276836
+          },
+          {
+            "bin": 1,
+            "n": 178,
+            "pos": 2,
+            "auc": 0.5198863636363636
+          },
+          {
+            "bin": 2,
+            "n": 178,
+            "pos": 7,
+            "auc": 0.5321637426900585
+          },
+          {
+            "bin": 3,
+            "n": 179,
+            "pos": 11,
+            "auc": 0.6536796536796536
+          },
+          {
+            "bin": 4,
+            "n": 178,
+            "pos": 13,
+            "auc": 0.5524475524475524
+          },
+          {
+            "bin": 5,
+            "n": 178,
+            "pos": 27,
+            "auc": 0.6561196958547952
+          },
+          {
+            "bin": 6,
+            "n": 179,
+            "pos": 29,
+            "auc": 0.6629885057471264
+          },
+          {
+            "bin": 7,
+            "n": 178,
+            "pos": 31,
+            "auc": 0.6445029624753127
+          },
+          {
+            "bin": 8,
+            "n": 178,
+            "pos": 49,
+            "auc": 0.6497389653535833
+          },
+          {
+            "bin": 9,
+            "n": 179,
+            "pos": 70,
+            "auc": 0.5862385321100917
+          }
+        ]
+      }
+    },
+    "combined": {
+      "lookup only": 0.7761352971390001,
+      "lookup + mechanism": 0.8313733821326671,
+      "mechanism only": 0.6390296964204559
+    }
+  },
+  "H2_confound": {
+    "pass": true,
+    "auc_metabolic": 0.776589765585713,
+    "auc_nonmetabolic": 0.7794320411576466,
+    "n_metabolic": 1784,
+    "n_nonmetabolic": 8511
+  },
+  "H3_medium": {
+    "pass": null,
+    "auc": NaN,
+    "open_medium_best": 0.6491,
+    "matched_exchanges": 403,
+    "missing": [
+      "Cl-",
+      "Zn2+",
+      "Mn2+",
+      "cobalamin"
+    ],
+    "rows": []
+  },
+  "null": {
+    "mean": 0.4991244423349459,
+    "sd": 0.018043556668343418
+  },
+  "log": [
+    "====================================================================================================",
+    "WHY THE LOOKUP WON -- three tests on loop 1's negative",
+    "====================================================================================================",
+    "  mRNA abundance alone scored 0.7766; the whole mechanistic stack scored 0.6210. Before any",
+    "  more mechanism gets built on that, three things have to be known: whether the mechanism",
+    "  knows anything the lookup does not, whether the lookup is even about metabolism, and",
+    "  whether the model was ever asked a fair question.",
+    "\n  loop 1's recorded scores: 1784 genes, 241 essential",
+    "    loop 0.6210  frozen 0.6284  plainFBA 0.6491  mRNA 0.7766",
+    "\n  H1 INDEPENDENCE -- does the mechanism know anything the lookup does not?",
+    "    plain    within matched-abundance deciles: AUC 0.6461  (10 usable bins)",
+    "    frozen   within matched-abundance deciles: AUC 0.6298  (10 usable bins)",
+    "    loop     within matched-abundance deciles: AUC 0.6210  (10 usable bins)",
+    "    5-fold CV: lookup 0.7761 -> lookup+mechanism 0.8314 (+0.0552); mechanism alone 0.6390",
+    "    best stratified 0.6461 (gate 0.55), combined gain +0.0552 (gate +0.02)   H1 PASS",
+    "\n  H2 CONFOUND -- does mRNA abundance predict essentiality outside metabolism too?",
+    "    metabolic genes     n= 1,784  essential   241  AUC 0.7766",
+    "    NON-metabolic genes n= 8,511  essential 1,256  AUC 0.7794",
+    "    difference -0.0028 (gate |d| < 0.05)   H2 CONFOUND",
+    "    The lookup predicts essentiality just as well for genes with no metabolic reaction at",
+    "    all. 0.7766 is a property of gene expression, not of metabolism, so loop 1's headline",
+    "    comparison was never mechanism against mechanism. It remains a real baseline that the",
+    "    mechanism failed to beat -- it just is not evidence that metabolism is understood.",
+    "\n  H3 MEDIUM -- was the model ever asked a fair question?",
+    "    1660 exchange reactions, all shipped open at -1000.0: the cell may eat",
+    "    anything at any rate, so almost nothing it can SYNTHESISE can be essential.",
+    "    declared medium of 44 components matched 403 exchanges (40/44 components found)",
+    "    NOT MATCHED and therefore absent from the medium: Cl-, Zn2+, Mn2+, cobalamin",
+    "    growth on the defined medium, enzymes unconstrained: 0.0000/h (open medium was 124.9/h)",
+    "    The defined medium does not support growth at all. That is a defect in the medium, not",
+    "    a result about the model, and H3 CANNOT BE EVALUATED from it. Reported as NOT TESTABLE",
+    "    rather than as a failure, because a medium too poor to grow on says nothing about",
+    "    whether an adequate one would have helped.",
+    "\n  control: 200 label shuffles on the mechanistic score -> 0.4991 +/- 0.0180",
+    "\n====================================================================================================",
+    "  H1 mechanism knows something the lookup does not : YES",
+    "  H2 the lookup is a general expression confound   : YES",
+    "  H3 the open medium was the problem               : NOT TESTABLE",
+    "  The mechanism is worse than the lookup but not redundant with it: it carries information",
+    "  the lookup does not, so it is worth combining rather than discarding.",
+    "====================================================================================================",
+    "    manifest: 5 inputs, coverage 1784/1784 (100.0%) by 'all', seed 1904, controls 5"
+  ]
+}

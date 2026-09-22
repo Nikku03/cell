@@ -1,0 +1,178 @@
+{
+ "persistence_length_bp": 147.05882352941177,
+ "n_pairs": 14659,
+ "blocks": [
+  "distance",
+  "element activity",
+  "element Pol II",
+  "promoter (TSS side)",
+  "CTCF (contact proxy)",
+  "competition"
+ ],
+ "metric": "AUROC (base-rate independent; strata base rates span 14x)",
+ "strata": {
+  "<10 kb": {
+   "n": 297,
+   "n_pos": 170,
+   "base_rate": 0.5723905723905723,
+   "full_auroc": 0.8290782769800835,
+   "drop": {
+    "distance": 0.005970356646595842,
+    "element activity": 0.0039045854562298477,
+    "element Pol II": -0.002325150532653919,
+    "promoter (TSS side)": 0.030893932376100275,
+    "CTCF (contact proxy)": 0.008212135247799957,
+    "competition": 0.062005558128763405
+   },
+   "solo": {
+    "distance": 0.5686984715145901,
+    "element activity": 0.7211672070402964,
+    "element Pol II": 0.6153913849004169,
+    "promoter (TSS side)": 0.5855303381194998,
+    "CTCF (contact proxy)": 0.586577119036591,
+    "competition": 0.7727883279295971
+   }
+  },
+  "10-100 kb": {
+   "n": 2185,
+   "n_pos": 364,
+   "base_rate": 0.1665903890160183,
+   "full_auroc": 0.8444122598982565,
+   "drop": {
+    "distance": 0.026823505983308182,
+    "element activity": 0.003265021634049625,
+    "element Pol II": 0.0027627918484590674,
+    "promoter (TSS side)": 0.0014887364146013438,
+    "CTCF (contact proxy)": -0.0015198146170140037,
+    "competition": 0.05918104410690883
+   },
+   "solo": {
+    "distance": 0.6396951620592477,
+    "element activity": 0.7151998056858024,
+    "element Pol II": 0.638531539849497,
+    "promoter (TSS side)": 0.6539940016052043,
+    "CTCF (contact proxy)": 0.5319910868922401,
+    "competition": 0.8143287108278873
+   }
+  },
+  "100-250 kb": {
+   "n": 2778,
+   "n_pos": 114,
+   "base_rate": 0.04103671706263499,
+   "full_auroc": 0.7660930667509616,
+   "drop": {
+    "distance": 0.0064739081186449,
+    "element activity": 0.015415415415415357,
+    "element Pol II": -0.0004445234708391199,
+    "promoter (TSS side)": -0.014553369158632257,
+    "CTCF (contact proxy)": -0.0018189241873450834,
+    "competition": 0.11419807965860607
+   },
+   "solo": {
+    "distance": 0.5414253068858332,
+    "element activity": 0.6082082082082082,
+    "element Pol II": 0.47478597018070695,
+    "promoter (TSS side)": 0.5605707681365576,
+    "CTCF (contact proxy)": 0.5613330435698857,
+    "competition": 0.7395909066961698
+   }
+  },
+  ">250 kb": {
+   "n": 9399,
+   "n_pos": 165,
+   "base_rate": 0.017555059048834983,
+   "full_auroc": 0.6969427871961984,
+   "drop": {
+    "distance": -0.0060323836152297305,
+    "element activity": 0.012377708206168125,
+    "element Pol II": -0.007945405976595099,
+    "promoter (TSS side)": 0.026166998116315843,
+    "CTCF (contact proxy)": 0.010121159614336905,
+    "competition": 0.070899836572351
+   },
+   "solo": {
+    "distance": 0.5142818043987636,
+    "element activity": 0.5315181050268769,
+    "element Pol II": 0.47863002999455234,
+    "promoter (TSS side)": 0.6027734131437835,
+    "CTCF (contact proxy)": 0.5533444910442962,
+    "competition": 0.6568584480280386
+   }
+  }
+ },
+ "directional": {
+  "distance": {
+   "sequence": [
+    0.005970356646595842,
+    0.026823505983308182,
+    0.0064739081186449,
+    -0.0060323836152297305
+   ],
+   "spearman_vs_distance": -0.39999999999999997,
+   "trend": "flat",
+   "predicted": "no prediction",
+   "verdict": "--"
+  },
+  "element activity": {
+   "sequence": [
+    0.0039045854562298477,
+    0.003265021634049625,
+    0.015415415415415357,
+    0.012377708206168125
+   ],
+   "spearman_vs_distance": 0.6000000000000001,
+   "trend": "rises",
+   "predicted": "no prediction",
+   "verdict": "--"
+  },
+  "element Pol II": {
+   "sequence": [
+    -0.002325150532653919,
+    0.0027627918484590674,
+    -0.0004445234708391199,
+    -0.007945405976595099
+   ],
+   "spearman_vs_distance": -0.39999999999999997,
+   "trend": "flat",
+   "predicted": "falls with distance",
+   "verdict": "no gradient (unsupported)"
+  },
+  "promoter (TSS side)": {
+   "sequence": [
+    0.030893932376100275,
+    0.0014887364146013438,
+    -0.014553369158632257,
+    0.026166998116315843
+   ],
+   "spearman_vs_distance": -0.39999999999999997,
+   "trend": "flat",
+   "predicted": "falls with distance",
+   "verdict": "no gradient (unsupported)"
+  },
+  "CTCF (contact proxy)": {
+   "sequence": [
+    0.008212135247799957,
+    -0.0015198146170140037,
+    -0.0018189241873450834,
+    0.010121159614336905
+   ],
+   "spearman_vs_distance": 0.19999999999999998,
+   "trend": "flat",
+   "predicted": "rises with distance",
+   "verdict": "no gradient (unsupported)"
+  },
+  "competition": {
+   "sequence": [
+    0.062005558128763405,
+    0.05918104410690883,
+    0.11419807965860607,
+    0.070899836572351
+   ],
+   "spearman_vs_distance": 0.6000000000000001,
+   "trend": "rises",
+   "predicted": "no prediction",
+   "verdict": "--"
+  }
+ },
+ "verdict": "NOT SUPPORTED, BUT NOT CONTRADICTED EITHER -- no gradient. None of the predicted blocks varies monotonically with distance (CTCF flat, promoter flat, Pol II flat), so the data does not distinguish a short-range occupancy mechanism from a distance-independent one. Two specifics worth keeping: the promoter block contributes most in the <10 kb stratum (+0.0309, its largest of any stratum), which is the TF half of the hypothesis; while element Pol II contributes essentially nothing at any distance (-0.0023, +0.0028, -0.0004, -0.0079), so the polymerase-allocation half is specifically unsupported. The largest block everywhere is competition, which is neither occupancy nor contact."
+}
