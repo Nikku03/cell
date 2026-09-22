@@ -4162,3 +4162,69 @@ PRODUCTJOIN -- WIRING THE ENCYCLOPEDIA TO REAL GENE PRODUCTS, AND THE CEILING GA
       MODELAUDIT M2 found 60 internal reactions that do not conserve elements. Tier 2 inherits the
       default-activation defect: about half the regulatory signs are a rule, not evidence, and the
       'sig' layer (17,432 edges, 97.1% signed, 35% repression) is the trustworthy half.
+
+=================================================================================================
+PROTEINLAYER -- THE PROTEIN AND SPLICING LAYERS, AND WHAT SPLICING DOES TO EVERY PER-GENE NUMBER
+=================================================================================================
+  THE PREMISE WAS CHECKED BEFORE IT WAS BUILT ON, AND TWO THIRDS OF IT WAS FALSE. The working
+  assumption was "we know the genes, the mRNA and the splicing patterns, so fetch the protein
+  data". cell_complete.json has NO transcript, isoform or exon layer -- `ncrna` holds zero entries
+  and there is exactly one record per GENE -- and its protein side is `struct` (13 genes) and
+  `fold` (1). No sequences, no domains, no isoforms. It silently assumes one gene, one protein.
+
+  ONE FETCH SUPPLIED BOTH LAYERS. UniProt's reviewed human proteome (20,190 entries with a primary
+  symbol, 17.5 MB, CC BY 4.0 -- commercially clean, unlike the CC-BY-NC SIGNOR data in-tree)
+  carries sequence, mass, Pfam domains, evidence-coded location, modified residues, GeneID, and
+  cc_alternative_products, which names the splicing isoforms. Splicing was a COLUMN of the protein
+  fetch, not a separate acquisition.
+
+  P1  THE JOIN. 16,472 / 16,492 matched on primary symbol (99.9%); 19 rescued via synonym,
+      reported separately as predeclared; 1 unmatched; 0 ambiguous. Symbol drift is not a problem
+      in this pair, which is worth knowing because it usually is.
+
+  P0  THE CEILING GATE, BY FIELD, before -> after:
+        sequence length            0 -> 16,491     NEW LAYER
+        molecular mass             0 -> 16,491     NEW LAYER
+        isoform count              0 -> 16,491     NEW LAYER
+        Pfam domains               0 -> 16,124     NEW LAYER
+        subcellular location  16,492 -> 16,491     already covered (quality, not coverage)
+        PTM sites              8,425 ->  8,400     already covered
+      PASS on the four fields that were at zero. The location field is explicitly NOT counted as a
+      gain: `comp` already labels every gene, just coarsely and without evidence codes.
+
+  P2  AND THE RESULT THAT REACHES BACK THROUGH THE WHOLE RECORD.
+        ONE protein  (1 isoform)     7,235   43.9%
+        MORE THAN ONE                9,256   56.1%
+        mean 2.20 per gene, max 37 (CACNA1C)
+      56.1% OF THE PROTEOME IS NOT ONE GENE, ONE PROTEIN. Every per-gene record in this repo --
+      the 16,492 rows, the 21,955 signed edges, the 1,635 genes with a balanced reaction, every
+      coverage fraction ever quoted -- aggregates over that silently. The aggregation error is
+      unmeasured and nothing in the record has ever bounded it. NR3C1 shows the mechanism
+      concretely: 16 isoforms, and UniProt's location for it is "[Isoform Alpha]: Cytoplasm" --
+      the compartment is isoform-specific, so the encyclopedia's single `comp` value per gene is
+      not merely coarse, it is a category error for over half the proteome.
+
+  P3  LABELLING THE TF NETWORK FROM THREE SOURCES, AND THEY DISAGREE.
+        UniProt keyword TF-like   2,790
+        CollecTRI regulators      1,189    (dbTF 1,022 / coTF 163 / GTF 4)
+        encyclopedia `tf` flag    1,285
+        UniProt CollecTRI ency.tf   genes
+           T        F        F      1,585     <- UniProt's 'DNA-binding' keyword is broad
+           T        T        T      1,116     <- all three agree
+           T        F        T         78
+           F        T        T         51
+           F        F        T         40     <- the flag no independent source corroborates
+           T        T        F         11
+      Corroboration COUNT is carried per gene in the artifact rather than a verdict, so a consumer
+      picks a threshold instead of inheriting one.
+
+  P4  THE LABELLED NETWORK. 4,633 distinct regulators; only 1,248 (26.9%) are TF-labelled by two
+      or more independent sources. Edge signs restated: reg 54,128 signed / 558,005 unsigned;
+      sig 16,924 signed / 508 unsigned.
+      Artifact: outputs/protein_tf_layer.json, 16,492 genes, 3.8 MB.
+
+  P5  LIMITS. Isoform COUNTS are not isoform-resolved edges: TP53 has 9 forms and we still cannot
+      say which carries any of its 1,310 signed targets, so the network remains gene-level. A
+      UniProt keyword is a curator's label, not a measurement. Reviewed/Swiss-Prot only. The
+      location text is not mapped into the encyclopedia's 12-compartment vocabulary and no mapping
+      is asserted.
