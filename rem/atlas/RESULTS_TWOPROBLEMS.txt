@@ -4228,3 +4228,54 @@ PROTEINLAYER -- THE PROTEIN AND SPLICING LAYERS, AND WHAT SPLICING DOES TO EVERY
       UniProt keyword is a curator's label, not a measurement. Reviewed/Swiss-Prot only. The
       location text is not mapped into the encyclopedia's 12-compartment vocabulary and no mapping
       is asserted.
+
+=================================================================================================
+ISOEDGE -- PUTTING ISOFORMS ON THE EDGES BY RULING OUT, SINCE ASSIGNMENT IS NOT AVAILABLE
+=================================================================================================
+  proteinlayer measured that 56.1% of the proteome is not one gene, one protein, while every edge
+  in this repo is gene-to-gene. "Which isoform carries this edge" cannot be answered: it needs
+  isoform-resolved ChIP on the regulator side and isoform-level response on the target side, and
+  neither exists at scale for human. What IS available is a NECESSARY condition -- a TF cannot
+  carry a transcriptional edge if its DNA-binding domain has been spliced away. So the output is
+  an UPPER BOUND on the isoform set per edge, never an assignment.
+
+  I1  THE BLOCKING VALIDATION RAN FIRST AND PASSED. Intersecting UniProt DNA_BIND coordinates with
+      VAR_SEQ splice coordinates:
+        TP53   DBD 102..292, 9 named isoforms
+               DISRUPTED  isoform 7, 8, 9      <- Delta-133, a documented dominant negative
+               INTACT     isoform 2, 3, 4, 5, 6 <- beta/gamma differ only at the C-terminus
+        NR3C1  DBD 418..493, 16 named isoforms
+               DISRUPTED  Alpha-2, Beta-2, GR-A alpha, GR-A beta
+               N-terminal translational isoforms INTACT
+      The method recovers cases whose answer was already known, which is what licenses any
+      coverage number from it.
+
+  I0  THE CEILING GATE, PASSED AT 12.3% AGAINST A PREDECLARED 5%:
+        distinct regulators on signed edges          4,320
+        ...with a DNA_BIND annotation                  467    <- 10.8%, and this is the bottleneck
+        ...and >1 named isoform                        270
+        ...and a splice event hitting the DBD          123    <- eligible
+        signed edges total                          71,052
+        signed edges with an eligible regulator      8,769    12.3%
+      THE BINDING CONSTRAINT IS ANNOTATION, NOT METHOD. Only 467 of 4,320 regulators carry a
+      DNA_BIND region at all; the other 89.2% are never eligible by construction. Improving the
+      method cannot move this. Only more annotated DNA-binding regions can.
+
+  I2  THE CONSTRAINT, AS A DISTRIBUTION RATHER THAN A MEAN. Across the 8,769 eligible edges the
+      regulator-side candidate set falls from 53,088 isoform-slots to 36,057 -- 32.1% of the
+      regulator-side isoform space removed. The shape matters more than the total: TP53's 1,310
+      edges go 9 -> 6 candidates, NR3C1's 350 go 16 -> 12, and 1,217 edges collapse from 2 -> 1,
+      which is the only bucket where an edge becomes ISOFORM-RESOLVED on the regulator side.
+
+  I3  THE TARGET SIDE IS UNTOUCHED AND IS THE LARGER RESIDUAL. 43,420 of 71,052 signed edges
+      (61.1%) have a target with more than one isoform, mean 2.75 per edge. Nothing here
+      constrains which transcript responds; that needs isoform-level expression, which no dataset
+      in this record supplies. A regulator-side bound does NOT make an edge resolved.
+
+  I4  LIMITS. An intact DBD is necessary, not sufficient -- dimerisation, cofactors and
+      localisation all still gate binding. Only sequence-specific DNA binding is treated, so
+      cofactors and chromatin regulators are never eligible. UniProt's named isoforms are curated,
+      not exhaustive. And the shipped edges remain gene-level everywhere: this module bounds them,
+      it does not rewrite them.
+
+  Artifact: outputs/isoform_edge_bounds.json, 123 regulators.
