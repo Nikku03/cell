@@ -87,7 +87,10 @@ DBD_NAMES = (
     "e2f", "cbf", "nf-ya", "nf-yb", "ccaat", "dm dna-binding", "at-hook",
 )
 # Zinc-finger TYPES that bind DNA. Deliberately narrow: PHD/RING/LIM/FYVE/B-box are excluded.
-ZF_OK = ("c2h2", "gata-type", "gata type", "nr c4-type", "c4-type", "dm", "thap", "bed")
+# NOTE: bare "C4-type" is the Arf-GAP zinc finger (ACAP/ADAP/AGAP) and does NOT bind DNA; only
+# the nuclear-receptor "NR C4-type" does. The first run admitted both -- R3 caught it and R1 now
+# carries ACAP1/ADAP1 as named negative controls so it cannot come back.
+ZF_OK = ("c2h2", "gata-type", "gata type", "nr c4-type", "dm dna-binding", "thap", "bed")
 # Named negative controls for R1.
 BLACKLIST = ("phd", "ring", "lim", "fyve", "b-box", "ctck", "pdz", "sh2", "sh3", "brct",
              "bromo", "chromo", "wd40", "ankyrin", "kinase", "ph domain")
@@ -200,6 +203,13 @@ def main():
     checks.append(("TP53 DNA_BIND unchanged (102..292)", tp.get("core") == [(102, 292)], tp.get("core")))
     dand = P.get("DAND5", {})
     checks.append(("DAND5 CTCK REJECTED", not dand.get("dom"), dand.get("dom", [])))
+    for neg in ("ACAP1", "ADAP1", "AGAP2"):
+        r = P.get(neg, {})
+        checks.append((f"{neg} Arf-GAP C4-type REJECTED", not r.get("zf"), r.get("zf", [])))
+    nr = P.get("NR3C1", {})
+    checks.append(("NR3C1 NR C4-type still accepted", bool(nr.get("zf")), nr.get("zf", [])[:1]))
+    ga = P.get("GATA1", {})
+    checks.append(("GATA1 GATA-type still accepted", bool(ga.get("zf")), ga.get("zf", [])[:1]))
     leaks = []
     for s, r in P.items():
         for b in ("PHD", "RING", "LIM domain", "FYVE"):

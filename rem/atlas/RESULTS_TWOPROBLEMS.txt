@@ -4279,3 +4279,60 @@ ISOEDGE -- PUTTING ISOFORMS ON THE EDGES BY RULING OUT, SINCE ASSIGNMENT IS NOT 
       it does not rewrite them.
 
   Artifact: outputs/isoform_edge_bounds.json, 123 regulators.
+
+=================================================================================================
+DBDEXTEND -- DNA-BINDING REGIONS FOR THE REST, AND A WHITELIST BUG ITS OWN GATE CAUGHT
+=================================================================================================
+  isoedge established the blocker was ANNOTATION: only 467 of 4,320 signed-edge regulators carry a
+  UniProt DNA_BIND feature. But the feature is absent for whole families because UniProt files the
+  DNA-binding region under a different feature type:
+      SOX2 -> DNA_BIND "HMG box"            PAX6 -> DNA_BIND "Paired" + "Homeobox"
+      SP1  -> ZN_FING  "C2H2-type 1..3"     JUN  -> DOMAIN   "bZIP"
+  So the union of DNA_BIND + ZN_FING + DOMAIN under a family whitelist recovers positions the
+  single-feature query missed.
+
+  R1  THE BLOCKING VALIDATION, TWO-DIRECTIONAL, RAN FIRST:
+        PASS  SP1 recovered via C2H2 zinc fingers       PASS  JUN recovered via bZIP
+        PASS  TP53 DNA_BIND unchanged (102..292)        PASS  DAND5 CTCK rejected
+        PASS  no PHD / RING / LIM / FYVE admitted anywhere in the proteome
+      A leaking whitelist would turn a NECESSARY condition into a false one and every isoform
+      ruled out would be ruled out wrongly, so the negative controls block everything below.
+
+  AND R3 CAUGHT A LEAK R1 HAD NOT THOUGHT TO TEST, WHICH IS WHY R3 IS A MEASUREMENT.
+      The first run admitted bare "C4-type" zinc fingers on the reasoning that the nuclear-receptor
+      DBD is C4. It is not: UniProt writes the DNA-binding one as "NR C4-type", while bare
+      "C4-type" is the Arf-GAP zinc finger -- ACAP1, ACAP2, ADAP1, AGAP1..4, which bind no DNA at
+      all and led the leak list. Fixed by requiring "NR C4-type", and ACAP1/ADAP1/AGAP2 are now
+      NAMED NEGATIVE CONTROLS in R1 with NR3C1 and GATA1 as matched positives, so it cannot return.
+      Leak fell 696 -> 632 and 1,159 -> 1,093 gained genes. Recorded rather than quietly patched.
+
+  R0  THE CEILING GATE, AGAINST THE HONEST DENOMINATOR. Most of the 4,320 regulators are not
+      sequence-specific TFs, so quoting the gap against 4,320 inflates it. Against credible TFs
+      (corroborated by >=2 independent sources, from proteinlayer):
+        credible TFs on signed edges                 1,231
+        with a positioned DBD, before                  449   36.5%
+        with a positioned DBD, after                   902   73.3%
+        LIFT                                        +36.8 points   (bar 10)   PASS
+      All regulators: 467 -> 1,065.
+
+  R2  ON ISOEDGE'S OWN TERMS:
+                                    before     after
+        eligible regulators            123       294
+        eligible signed edges        8,769    13,827    1.58x
+        % of all signed edges        12.3%     19.5%
+        isoform space removed        32.1%     36.2%
+
+  R3  THE LEAK, AFTER THE FIX, AND IT IS NO LONGER ONE THING. 1,093 genes gain a DBD only from the
+      extension; 632 (57.8%) are called a TF by no source. But the examples are now ARID3C, ASCL5,
+      ATMIN, AKAP8/8L -- several of which ARE genuine transcription factors that the corroboration
+      sources missed. So the residual is a MIXTURE of whitelist over-match and TF-label under-
+      coverage, and it cannot be attributed to either without per-gene work. Claims are restricted
+      to the credible-TF subset regardless.
+
+  R4  LIMITS. A name-matched whitelist is weaker evidence than a curated DNA_BIND feature, and the
+      artifact tags which of the two each region came from so a consumer can use only the first.
+      Zinc fingers are both the main source of lift and the main source of leak. Coverage remains
+      bounded by UniProt curation. And everything isoedge could not settle is still unsettled: an
+      intact DBD is necessary and not sufficient, and the target side of every edge is untouched.
+
+  Artifact: outputs/dbd_regions.json, 1,704 proteins, each tagged DNA_BIND / ZN_FING / DOMAIN.
