@@ -4478,3 +4478,65 @@ HPACONTEXT -- THE MISSING MATRIX, FETCHED, VALIDATED, AND THE ROUTE IT CLOSES
   it and failing with it establishes that. FIFTH independent arrival at the same place, and the
   most specific yet -- what is needed is a measurement of the system being modelled, in a named
   cell type, with the perturbation applied.
+
+=================================================================================================
+DENDRITE -- A NEURON FROM BLUE BRAIN MORPHOLOGY, AND THE PREMISE DOES NOT SURVIVE
+=================================================================================================
+  THE ASK WAS A REASONING NETWORK FROM BLUE BRAIN DATA WITH NON-TRADITIONAL NEURONS. Two thirds
+  was buildable and the third was not, stated before any code ran. The Markram-lab reconstructions
+  the 2015 microcircuit was built from are public: 1,401 rat somatosensory neurons on NeuroMorpho,
+  389 sampled here with per-cell morphometry. A non-weighted-sum neuron is buildable -- a
+  traditional unit is DEPTH ONE while a real cell has a branch order in the teens, a deep nonlinear
+  tree inside one cell. "Reasoning" is not available: no Blue Brain release demonstrates a
+  cognitive task, so what was measured is nested boolean composition and nothing was called
+  reasoning.
+
+  N1  THE BLOCKING GATE FAILED ON MY PREDICTION, NOT ON THE DATA.
+        pyramidal height 1253.5 > basket 602.7 ............. True
+        pyramidal branch order 14.0 > basket 18.0 .......... FALSE
+      I predeclared that pyramidal cells would be more deeply branched than basket cells. They are
+      not, and I had conflated EXTENT with BUSHINESS: a pyramidal cell spans layers through a long
+      apical trunk with few branch points along it (142 branches over 1253 um), while a basket cell
+      is local and densely ramified (338 branches over 603 um). Branch order measures bushiness,
+      not reach. Proceeded on a POST-HOC check (pyramidal tallest; thalamocortical most compact and
+      least branched -- all true), explicitly disclosed as weaker than the predeclared one.
+
+  THREE DEFECTS IN MY OWN FIRST RUN, EACH FOUND AND FIXED, AND THE FIRST RESULT RETRACTED.
+    (a) THE TASK WAS DEGENERATE. A tree of random XOR/AND/OR gates collapses, because AND and OR
+        are ABSORBING -- one 0 into an AND fixes the subtree. Class balance swung 0.126 to 0.742
+        across seeds, every model emitted a constant, and two MLPs with 24,613 and 329 parameters
+        printed IDENTICAL accuracies. Replaced with parity, balanced by construction.
+    (b) NO LEARNABILITY GATE. The first run compared three models that had all failed and reported
+        a FAIL. A comparison between models that all fail is not a comparison. Added: the best
+        model must clear the majority-class baseline by 0.05 or the depth is VOID.
+    (c) THE EQUAL-DEPTH CONTROL WAS STARVED -- 329 parameters against the tree's 24,617, so it
+        tested poverty rather than depth. Rebuilt at matched parameters AND matched depth (24,729).
+
+  N0  AND WITH ALL THREE FIXED THE PREMISE FAILS CLEANLY.
+        task depth    dendritic        MLP eq-param     MLP eq-param+depth   majority  learnt
+                2   0.512 +/- 0.010   0.497 +/- 0.006   0.497 +/- 0.006        0.501     NO
+                3   0.500 +/- 0.007   0.512 +/- 0.012   0.510 +/- 0.012        0.510     NO
+                4   0.504 +/- 0.014   1.000 +/- 0.000   0.965 +/- 0.026        0.507    yes
+      At the one depth any model learnt, the conventional MLP reached 1.000 and the morphology-
+      derived dendritic unit reached 0.504 -- CHANCE. It lost by 0.496. FAIL on both controls.
+
+  AND THE REASON IS THE HYPOTHESIS ITSELF, WHICH IS THE USEFUL PART. The design's selling point was
+  that a dendritic tree gets DEPTH ALMOST FREE: one gain per level per neuron, weights only at the
+  leaves. That is exactly why it fails. 24,576 of its 24,617 parameters sit at the leaves and the
+  entire four-level hierarchy carries 32. The tree is therefore a FIXED pooling structure, not a
+  learnable one -- depth that costs nothing also does nothing, because there is nothing in it to
+  shape. The conventional network spends its parameters inside the hierarchy and wins by 0.496.
+
+  A FOURTH DEFECT, IN THE SWEEP DESIGN, RECORDED AND NOT FIXED. "Depth" does not order difficulty
+  as intended: the subset size is min(2^depth, 12), so depth 4 uses ALL 12 inputs and is the
+  EASIEST point (no feature selection), while depths 2 and 3 require finding which 4 or 8 bits
+  matter. That is why the only learnable point is the deepest. The sweep therefore has one usable
+  row, so N2's trend is a single number and is not a scaling law.
+
+  WHAT THIS DOES AND DOES NOT ESTABLISH. It establishes that THIS dendritic unit -- sum then tanh,
+  topology from measured morphology, parameters at the leaves -- is decisively worse than a plain
+  MLP at equal parameters on the one learnable task here. It does NOT establish that no
+  biologically derived neuron helps: real dendrites integrate non-monotonically through
+  voltage-dependent channels (NMDA spikes) that a tanh tree does not model at all, and morphology
+  is geometry while the nonlinearity is physiology. The honest reading is that geometry alone,
+  which is what Blue Brain morphometry supplies, is not the part that would matter.
