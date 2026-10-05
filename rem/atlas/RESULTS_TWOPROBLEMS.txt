@@ -4391,3 +4391,43 @@ DYNCELL -- A DYNAMIC MEMORY BANK: THE CELL AS STATE THAT CHANGES ITSELF
   anywhere. Making the loop touch data is the next step and it is the whole remaining problem.
 
   Bank: memory_bank/cell/{state.json, journal.jsonl, edge_confidence.json, schema.json}
+
+=================================================================================================
+CONTEXT -- THE RIGHT VARIABLE, AND THE DATA ON DISK CANNOT CARRY IT
+=================================================================================================
+  dyncell left 1,169 genes it could not explain, and the examples were real biology: BCL2 UP from
+  TP53/NR3C1 and DOWN from RELA, CRH UP from NR3C1 and DOWN from RELA -- p53 represses BCL2 while
+  NF-kB induces it, and the glucocorticoid receptor antagonises NF-kB at CRH. Both directions are
+  correct in different contexts, and a context-free network has nowhere to put that.
+
+  THE CONTEXT ON DISK. cell_complete.json carries `emask`, a per-gene bitmask over the 200 cell
+  types in `ctnames`, for 7,496 of 16,492 genes (45.5%). A regulator cannot act where it is not
+  expressed, so a contradiction resolves wherever only one side is present. That is the move
+  biology makes and it needs no rate constants. The design was right.
+
+  X1  AND THE BLOCKING GATE FAILED, SO NO RESOLUTION NUMBER EXISTS.
+        marker TFs recovered in their own cell type   45/89 = 50.6%   (bar 70%)
+        restricted to markers WITH mask coverage      45/68 = 66.2%   (still below)
+        markers with no mask coverage at all          21
+        worst: CD8 memory T cell 0/3, CD4 memory T cell 0/1,
+               CD16-neg CD56-bright NK cell 0/4, pancreatic ductal cell 0/3
+        best:  erythroid progenitor 4/4, classical monocyte 1/1, pDC 1/1
+      A marker gene is BY DEFINITION expressed in the cell type it defines -- that is what makes it
+      a marker. A mask that misses half of them is missing ordinary expression, not edge cases.
+      Whole cell types come back 0 of 3 and 0 of 4. The module stopped as predeclared and reported
+      nothing downstream.
+
+  WHY THE GATE WAS WORTH HAVING, STATED PLAINLY. Without it this module would have reported a
+  resolution rate for the 1,169 contradictions computed on a mask that cannot find GATA1-grade
+  markers in their own cell types. That number would have looked like progress on the hardest open
+  problem in the record, and it would have been meaningless. The gate was also not free to pass:
+  a five-cell-type probe before the module was written had already shown CD8 memory T cell failing
+  3/3, and the bar was set at 70% ABOVE what that probe suggested, so this is a measured failure
+  and not a formality.
+
+  WHAT IS NOW ESTABLISHED, AND IT NARROWS THE PROBLEM USEFULLY. The contradictions are real, the
+  context variable that resolves them is cell-type expression, and the resolution is cheap once the
+  data exists -- no rate constants, no magnitudes, no time. What is missing is one ordinary object:
+  a cell-type expression matrix. That is the SAME conclusion three independent routes reached
+  earlier in this record (the rate-constant census, the set-point curve, and graphvalue's exchange
+  rate): the blocker is a missing measurement, not a missing method. Fourth independent arrival.
