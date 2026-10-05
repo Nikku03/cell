@@ -92,13 +92,26 @@ RULE = "=" * 97
 E_DEP, E_HYP = 1.0, -1.0
 
 
-def make_task(n_bits, k, n, rng):
-    """Parity over a random k-subset of n_bits. Balanced by construction; the subset is redrawn per
-    dataset and never shown to the model. k orders difficulty, which dendrite.py's sweep did not."""
+def make_task(n_bits, k, n, rng, sub=None):
+    """Parity over a FIXED k-subset of n_bits, shared between train and test.
+
+    THE BUG THIS SIGNATURE EXISTS TO FIX, RECORDED RATHER THAN QUIETLY PATCHED. The previous
+    version drew the subset INSIDE the function, so the two calls that built the train and test
+    sets drew DIFFERENT subsets. Every model learnt parity over one set of bits and was scored on
+    parity over another, which is chance by construction. That single defect explains every void
+    row in both this module and dendrite.py -- and it explains the one row that was NOT void:
+    dendrite.py used k = min(2**depth, 12), so at depth 4 the subset was ALL 12 bits, the one case
+    where the two draws cannot disagree. That row is therefore the only valid comparison either
+    module has produced so far.
+
+    The harness positive control is what caught it: a plain MLP with 21,151 parameters scoring
+    0.504 on XOR is impossible for working code, which is a statement about the harness and not
+    about any architecture. Without that control the run would have read as four more void rows."""
     X = rng.integers(0, 2, size=(n, n_bits)).astype(np.float64)
-    sub = rng.choice(n_bits, size=k, replace=False)
+    if sub is None:
+        sub = rng.choice(n_bits, size=k, replace=False)
     y = (X[:, sub].sum(axis=1) % 2).astype(np.float64)
-    return X * 2 - 1, y
+    return X * 2 - 1, y, sub
 
 
 def adam(ps, gs, st, lr):
@@ -331,8 +344,8 @@ def main():
         acc = collections.defaultdict(list)
         for seed in range(3):
             r1 = np.random.default_rng(100 + seed)
-            Xtr, ytr = make_task(D, k, NTR, r1)
-            Xte, yte = make_task(D, k, NTE, r1)
+            Xtr, ytr, sub = make_task(D, k, NTR, r1)
+            Xte, yte, _ = make_task(D, k, NTE, r1, sub=sub)   # SAME subset, which was the bug
             ct = ChannelTree(D, U, b, L, np.random.default_rng(200 + seed))
             P0 = nparams(ct)
             tt = TanhTree(D, U, b, L, np.random.default_rng(200 + seed))

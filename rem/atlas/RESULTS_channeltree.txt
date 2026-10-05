@@ -26,26 +26,29 @@ C1  GRADIENT CHECK, HAND-DERIVED BACKWARD (BLOCKING)
 =================================================================================================
 C3  WHERE THE PARAMETERS NOW SIT
 =================================================================================================
-  leaves (synapses)        32,768   87.3%
-  INSIDE the hierarchy      4,760   12.7%   (dendrite.py: 32 = 0.1%)
+  leaves (synapses)        16,384   77.5%
+  INSIDE the hierarchy      4,760   22.5%   (dendrite.py: 32 = 0.1%)
   readout                       9    0.0%
-  total                    37,537
+  total                    21,153
 
-  C3: the hierarchy holds 12.7% of parameters against 0.1% before. Applied in substance.
+  C3: the hierarchy holds 22.5% of parameters against 0.1% before. Applied in substance.
 
 =================================================================================================
 C0 + C2 + C4  THE CEILING GATE, SWEPT OVER PARITY ORDER k
 =================================================================================================
-  inputs 16 (fixed), neurons 8, steps 8000, 8000 train / 4000 test, 4 seeds
+  inputs 8 (fixed), neurons 8, steps 12000, 8000 train / 4000 test, 3 seeds
 
       k      channel tree         tanh tree      MLP eq-param  MLP eq-par+depth  learnt
-      4     0.500+/-0.007     0.503+/-0.003     0.500+/-0.007     0.500+/-0.007      NO
-      6     0.496+/-0.008     0.496+/-0.004     0.496+/-0.008     0.497+/-0.008      NO
-      8     0.488+/-0.006     0.498+/-0.004     0.488+/-0.006     0.488+/-0.006      NO
-     10     0.497+/-0.007     0.502+/-0.008     0.497+/-0.007     0.498+/-0.006      NO
+      2     0.504+/-0.004     0.505+/-0.021     0.504+/-0.004     0.504+/-0.004      NO
+      3     0.499+/-0.002     0.499+/-0.002     0.499+/-0.002     0.499+/-0.002      NO
+      4     0.503+/-0.002     0.518+/-0.023     0.503+/-0.002     0.503+/-0.002      NO
+      5     0.500+/-0.002     0.500+/-0.002     0.500+/-0.002     0.500+/-0.002      NO
+      6     0.498+/-0.007     0.511+/-0.001     0.498+/-0.007     0.498+/-0.007      NO
 
-  parameters: channel tree 37,537  tanh tree 32,809  MLP 37,531  MLP deep 37,933
+  parameters: channel tree 21,153  tanh tree 16,425  MLP 21,151  MLP deep 21,239
 
-  C2 LEARNABILITY: 0 of 4 k values learnt by any model. 
+  HARNESS POSITIVE CONTROL (k=2, XOR of 2 of 8 bits, plain MLP): 0.504
+  FAIL -- a plain MLP cannot even learn XOR here, so the HARNESS is broken
+  and no statement about architectures can be made from this run at all.
 
-  C0: VOID -- nothing was learnt at any k. Untested, not answered.
+  C0: VOID -- harness control failed. Untested, and the fault is mine, not the models'.
