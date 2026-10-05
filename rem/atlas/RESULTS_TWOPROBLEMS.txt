@@ -4540,3 +4540,46 @@ DENDRITE -- A NEURON FROM BLUE BRAIN MORPHOLOGY, AND THE PREMISE DOES NOT SURVIV
   voltage-dependent channels (NMDA spikes) that a tanh tree does not model at all, and morphology
   is geometry while the nonlinearity is physiology. The honest reading is that geometry alone,
   which is what Blue Brain morphometry supplies, is not the part that would matter.
+
+=================================================================================================
+CHANNELTREE -- CHANNEL DYNAMICS INSIDE THE TREE: TIES THE MLP, AND A SYMMETRY CORRECTION
+=================================================================================================
+  Per-node weights plus a Hodgkin-Huxley-style conductance, g * m(v) * (E_rev - v), whose
+  driving force changes sign at the reversal potential. Gradient check worst 1.28e-08. Parameters
+  inside the hierarchy 4,760 (12.7%) against dendrite.py's 32 (0.1%).
+
+  THE ROAD TO A VALID RUN, RECORDED. First sweep VOID at every k. Second sweep VOID with the
+  HARNESS POSITIVE CONTROL failing -- a plain MLP scored 0.504 on XOR -- which located a bug:
+  make_task drew the parity subset inside the function, so train and test used DIFFERENT subsets
+  and every model was scored on the wrong function. Fixed; the harness control then reached 1.000.
+
+  THE VALID SWEEP (input width 8, 3 seeds, all rows learnt):
+        k   channel tree   tanh tree   MLP eq-param   MLP eq-param+depth
+        2      1.000         0.508        1.000           1.000      <- harness control PASS
+        3      1.000         1.000        1.000           1.000
+        4      1.000         0.477        1.000           1.000
+        5      1.000         1.000        1.000           1.000
+        6      1.000         0.502        1.000           1.000
+  C0: FAIL. The channel tree TIES both conventional controls at 1.000 everywhere and beats neither.
+  The benchmark is saturated -- the same defect found in the uploaded Reasoning-Engine-v2 package,
+  where a biological network, an MLP and a neuron-free symbolic system all score 100%.
+
+  C6, AND IT CORRECTS TWO EARLIER CLAIMS. The tanh tree fails at EVERY EVEN k and succeeds at
+  every odd k. Measured: the tanh tree is EXACTLY ODD, max |f(-x) + f(x)| = 0.00e+00, because tanh
+  is odd and the tree carries no internal biases. In +/-1 encoding k-bit parity is an EVEN
+  function for even k, and an odd network plus one output bias cannot represent it. The channel
+  tree is not odd (3.13e-01) because its sigmoid gate is not odd and it learns a threshold.
+    CORRECTION 1. The channel tree's wins over the tanh tree are explained by SYMMETRY BREAKING,
+    not shown to come from the sign-flipping driving force. A tanh tree with one bias per node was
+    never tested, so "channel dynamics help" is UNSUPPORTED against that much simpler fix.
+    CORRECTION 2. dendrite.py's only valid row used all 12 bits: k = 12, EVEN. Its dendritic
+    unit's 0.504 was this symmetry defect, NOT "depth with no parameters does nothing / fixed
+    pooling", which was the explanation recorded in this ledger and given to the user. Withdrawn.
+
+  WHERE THIS LEAVES THE NEURON QUESTION. Two independent efforts -- this module and the uploaded
+  package -- reach the same place: biologically motivated units MATCH conventional ones on these
+  tasks and do not beat them, and in both the benchmarks are saturated, so neither can show a
+  difference in either direction. The uploaded package's one unsaturated test, ARC-AGI-1, scores
+  0/400 and was verified genuine here with 7/8 synthetic positive controls and a negative control.
+  The missing capability it identifies is learning abstractions from few examples, which no
+  change of neuron type addresses.

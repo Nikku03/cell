@@ -363,8 +363,8 @@ def main():
         f = lambda x: f"{np.mean(acc[x]):.3f}+/-{np.std(acc[x]):.3f}"
         P_(f"    {k:>3} {f('ct'):>17} {f('tt'):>17} {f('m1'):>17} {f('m2'):>17}"
            f" {'yes' if learnt else 'NO':>7}")
-        rows.append(dict(k=k, ct=np.mean(acc["ct"]), tt=np.mean(acc["tt"]),
-                         m1=np.mean(acc["m1"]), m2=np.mean(acc["m2"]), learnt=learnt,
+        rows.append(dict(k=k, ct=float(np.mean(acc["ct"])), tt=float(np.mean(acc["tt"])),
+                         m1=float(np.mean(acc["m1"])), m2=float(np.mean(acc["m2"])), learnt=bool(learnt),
                          params=dict(ct=nparams(ct), tt=nparams(tt),
                                      m1=nparams(m1), m2=nparams(m2))))
     pp = rows[0]["params"]
@@ -409,6 +409,27 @@ def main():
         tag = "" if r["learnt"] else "   (VOID, nothing learnt)"
         P_(f"    k={r['k']}: ct-tanh {r['ct']-r['tt']:+.3f}   ct-MLP {r['ct']-r['m1']:+.3f}"
            f"   ct-MLPdeep {r['ct']-r['m2']:+.3f}{tag}")
+
+    P_("\n" + RULE); P_("C6  WHY THE TANH TREE ALTERNATES: SYMMETRY, MEASURED"); P_(RULE)
+    Xs = np.random.default_rng(0).choice([-1.0, 1.0], size=(500, D))
+    t6 = TanhTree(D, U, b, L, np.random.default_rng(1))
+    c6 = ChannelTree(D, U, b, L, np.random.default_rng(1))
+    od_t = float(np.abs((t6.forward(-Xs) - t6.bo) + (t6.forward(Xs) - t6.bo)).max())
+    od_c = float(np.abs((c6.forward(-Xs) - c6.bo) + (c6.forward(Xs) - c6.bo)).max())
+    P_(f"  tanh tree     max |f(-x) + f(x)| = {od_t:.2e}   -> {'EXACTLY ODD' if od_t < 1e-12 else 'not odd'}")
+    P_(f"  channel tree  max |g(-x) + g(x)| = {od_c:.2e}   -> {'odd' if od_c < 1e-12 else 'NOT odd'}")
+    P_( "  tanh is odd and the tanh tree has NO internal biases, so the whole network is odd.")
+    P_( "  In +/-1 encoding, k-bit parity is EVEN in x when k is even. An odd network plus one")
+    P_( "  output bias cannot represent an even function whose sign varies, so the tanh tree is")
+    P_( "  STRUCTURALLY INCAPABLE of even-k parity at any width or budget -- which is exactly the")
+    P_( "  pattern above: chance at k=2,4,6 and 1.000 at k=3,5.")
+    P_( "\n  CONSEQUENCE 1: the channel tree's wins over the tanh tree are explained by SYMMETRY")
+    P_( "  BREAKING (its sigmoid gate is not odd, and it learns a threshold), not shown to come from")
+    P_( "  the sign-flipping driving force specifically. A tanh tree with one bias per node was NOT")
+    P_( "  tested, so 'channel dynamics help' is UNSUPPORTED against that simpler fix.")
+    P_( "  CONSEQUENCE 2: dendrite.py's only valid row used all 12 bits, k = 12, which is EVEN. Its")
+    P_( "  0.504 was this symmetry defect, not 'depth with no parameters does nothing'. That earlier")
+    P_( "  mechanistic explanation is withdrawn.")
 
     os.makedirs(os.path.dirname(ART), exist_ok=True)
     json.dump({"morphology": {"b": b, "L": L, "leaves": b ** L, "n_cells": len(M)},

@@ -39,16 +39,42 @@ C0 + C2 + C4  THE CEILING GATE, SWEPT OVER PARITY ORDER k
   inputs 8 (fixed), neurons 8, steps 12000, 8000 train / 4000 test, 3 seeds
 
       k      channel tree         tanh tree      MLP eq-param  MLP eq-par+depth  learnt
-      2     0.504+/-0.004     0.505+/-0.021     0.504+/-0.004     0.504+/-0.004      NO
-      3     0.499+/-0.002     0.499+/-0.002     0.499+/-0.002     0.499+/-0.002      NO
-      4     0.503+/-0.002     0.518+/-0.023     0.503+/-0.002     0.503+/-0.002      NO
-      5     0.500+/-0.002     0.500+/-0.002     0.500+/-0.002     0.500+/-0.002      NO
-      6     0.498+/-0.007     0.511+/-0.001     0.498+/-0.007     0.498+/-0.007      NO
+      2     1.000+/-0.000     0.508+/-0.016     1.000+/-0.000     1.000+/-0.000     yes
+      3     1.000+/-0.000     1.000+/-0.000     1.000+/-0.000     1.000+/-0.000     yes
+      4     1.000+/-0.000     0.477+/-0.009     1.000+/-0.000     1.000+/-0.000     yes
+      5     1.000+/-0.000     1.000+/-0.000     1.000+/-0.000     1.000+/-0.000     yes
+      6     1.000+/-0.000     0.502+/-0.015     1.000+/-0.000     1.000+/-0.000     yes
 
   parameters: channel tree 21,153  tanh tree 16,425  MLP 21,151  MLP deep 21,239
 
-  HARNESS POSITIVE CONTROL (k=2, XOR of 2 of 8 bits, plain MLP): 0.504
-  FAIL -- a plain MLP cannot even learn XOR here, so the HARNESS is broken
-  and no statement about architectures can be made from this run at all.
+  HARNESS POSITIVE CONTROL (k=2, XOR of 2 of 8 bits, plain MLP): 1.000
+  PASS -- the optimiser and budget can learn a 2-bit composition, so a void row above
+  means the task is hard, not that training is broken.
 
-  C0: VOID -- harness control failed. Untested, and the fault is mine, not the models'.
+  C2 LEARNABILITY: 4 of 4 non-control k values learnt by any model. Only those are used.
+
+  channel tree beats the TANH TREE at      2/4 learnt k   <- did the two fixes do anything?
+  channel tree beats equal-param MLP at    0/4
+  channel tree beats equal-param+depth MLP 0/4
+
+  C0: FAIL -- it does NOT beat both conventional controls, so the biological neuron still is not carrying the result
+  The fixes helped at 2 of 4 k values but not uniformly.
+
+  C4 THE SWEEP, which ranks the approach rather than one point:
+    k=2: ct-tanh +0.492   ct-MLP +0.000   ct-MLPdeep +0.000
+    k=3: ct-tanh +0.000   ct-MLP +0.000   ct-MLPdeep +0.000
+    k=4: ct-tanh +0.523   ct-MLP +0.000   ct-MLPdeep +0.000
+    k=5: ct-tanh +0.000   ct-MLP +0.000   ct-MLPdeep +0.000
+    k=6: ct-tanh +0.498   ct-MLP +0.000   ct-MLPdeep +0.000
+
+  [RUN NOTE] The run crashed AFTER every gate above was computed and printed, while
+  serialising the artifact (numpy bool -> JSON). This file is reconstituted from that run's stdout;
+  the serialisation bug is fixed and C6 below was added and measured separately in seconds.
+
+=================================================================================================
+C6  WHY THE TANH TREE ALTERNATES: SYMMETRY, MEASURED
+=================================================================================================
+  tanh tree     max |f(-x) + f(x)| = 0.00e+00   -> EXACTLY ODD
+  channel tree  max |g(-x) + g(x)| = 3.13e-01   -> NOT odd
+  Even-k parity is an EVEN function in +/-1 encoding; an odd network plus one output bias
+  cannot represent it. Hence chance at k=2,4,6 and 1.000 at k=3,5.
