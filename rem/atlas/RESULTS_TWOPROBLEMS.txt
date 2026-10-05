@@ -4431,3 +4431,50 @@ CONTEXT -- THE RIGHT VARIABLE, AND THE DATA ON DISK CANNOT CARRY IT
   a cell-type expression matrix. That is the SAME conclusion three independent routes reached
   earlier in this record (the rate-constant census, the set-point curve, and graphvalue's exchange
   rate): the blocker is a missing measurement, not a missing method. Fourth independent arrival.
+
+=================================================================================================
+HPACONTEXT -- THE MISSING MATRIX, FETCHED, VALIDATED, AND THE ROUTE IT CLOSES
+=================================================================================================
+  context.py failed on data: the encyclopedia's emask recovered marker TFs in their own cell type
+  50.6% of the time. So the matrix four independent routes called missing was fetched: Human
+  Protein Atlas consensus single-cell RNA, 3,087,080 rows, 18,906 genes x 154 cell types, against
+  the mask's 7,496 genes. LICENCE: CC BY-SA 4.0 -- free with attribution but SHARE-ALIKE, so not
+  the clean class UniProt's CC BY 4.0 is in, flagged before use rather than discovered later.
+
+  H1  AND AN ABSOLUTE THRESHOLD FAILED FIRST, WHICH TAUGHT US THE RULE. At HPA's nominal
+      nCPM >= 1.0 the median gene reads as present in 133 of 154 cell types, and the gate fired on
+      a negative control: SFTPC, an alveolar type-2 surfactant protein, scores 44.9 in t-cells
+      against 101,266 in its own cell type -- a 2,255x ratio. That 44.9 is ambient RNA bleed.
+      Contamination scales with the SOURCE gene's abundance, so NO absolute cutoff can separate it
+      from real low expression: 44.9 exceeds most genes' genuine peak. The discriminator must be
+      relative to each gene's own maximum, which is mechanistic reasoning about the artefact and
+      not a tuned constant. Under nCPM >= max(1.0, 10% of the gene's peak): positives 12/12,
+      negatives 5/5. The sweep passes 12/12 and 5/5 across FRAC 0.01-0.20 while the median cell
+      types per gene falls 88 -> 9, so the validation RULES OUT 0 and 0.5 and cannot pin the value
+      inside that range. DISCLOSED: the 10% was picked off that sweep, so the 17 pairs are now a
+      CALIBRATION set, not an independent test -- the same error the set-point work made with a
+      noised oracle, named so it is not repeated silently.
+
+  H2  THE APPARENT RESULT, WHICH IS NOT A RESULT. 1,167 of 1,169 contradictions have both sides
+      covered; 1,161 resolve in at least one cell type = 99.3%. BCL2 resolves in 39 cell types,
+      CRH in 85, RB1 in 98, each with the direction named per cell type.
+
+  H3  AND THE MATCHED CONTROL REFUTES IT.
+        'resolves in >=1 of 154 cell types'    real 1,162   permuted 1,161   = 1.001x
+        cell types resolving each contradiction, p25/median/p75:
+              real       41 / 73 /  98
+              permuted   46 / 73 / 103
+        paired: real beats permuted on 539 of 1,168 = 46.1%   (chance 50%)   FAIL
+      Permuting WHICH GENE HOLDS WHICH PROFILE changes nothing. Among 154 profiles almost any two
+      differ somewhere, so 'resolves somewhere' is satisfied by construction, and my own H3
+      criterion was vacuous as written. The 99.3% is an artefact of expression-profile overlap and
+      is retired, not quoted.
+
+  AND THE ROUTE IS CLOSED RATHER THAN UNFINISHED, WHICH IS THE USEFUL PART. The conflicting
+  regulators are TP53, RELA, NR3C1, MYC and STAT3 -- all broadly expressed. Their contradictions
+  were never about PRESENCE, which is exactly why a presence matrix cannot adjudicate them and why
+  permuting it is harmless. The variable that would work is ACTIVITY, and no reference atlas
+  carries activity. So the missing object was never the expression matrix: fetching it, validating
+  it and failing with it establishes that. FIFTH independent arrival at the same place, and the
+  most specific yet -- what is needed is a measurement of the system being modelled, in a named
+  cell type, with the perturbation applied.
