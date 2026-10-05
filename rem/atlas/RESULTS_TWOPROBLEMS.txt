@@ -4336,3 +4336,58 @@ DBDEXTEND -- DNA-BINDING REGIONS FOR THE REST, AND A WHITELIST BUG ITS OWN GATE 
       intact DBD is necessary and not sufficient, and the target side of every edge is untouched.
 
   Artifact: outputs/dbd_regions.json, 1,704 proteins, each tagged DNA_BIND / ZN_FING / DOMAIN.
+
+=================================================================================================
+DYNCELL -- A DYNAMIC MEMORY BANK: THE CELL AS STATE THAT CHANGES ITSELF
+=================================================================================================
+  The existing memory bank holds 52 static facts, each pinned to a script, a commit and a data
+  hash, with a checker that refuses contradictions. A fact store cannot be WRONG about a cell, only
+  inconsistent with itself -- and the record's own verdict is that this project's central weakness
+  is a model that cannot be falsified. So the cell is held here as mutable STATE with the same
+  provenance discipline, carrying DIRECTION only, because 27,000 of ~860,000 rate constants exist.
+
+  D1  PROVENANCE AND REPLAY, BLOCKING, RAN FIRST. 11,413 journal entries, 5,617 genes assigned,
+      0 state changes with no cited rule, and replaying the journal from the initial state
+      reproduces the final state EXACTLY (fingerprint 6e5ddfa44841962c). PASS. A dynamic store
+      without replay is a pile of mutations, which is why this gate blocks the rest.
+
+  D0  AND MY OWN GATE WAS BADLY DESIGNED, WHICH IS RECORDED RATHER THAN HIDDEN. D0 compared REACH
+      against a sign-shuffled control: 5,617 vs 5,670 genes, 34.1% vs 34.4% of the genome.
+      Shuffling signs preserves topology exactly, so reach CANNOT differ by construction and that
+      comparison is evidence of nothing. The quantity the control can speak to is contradiction
+      count, which is D3. The reach number itself stands (34.1% is neither trivial nor the whole
+      graph); the control attached to it was the wrong instrument.
+
+  D2  THE INVARIANTS BITE -- 4 of 5 FIRED:
+        contradiction: incoming signs disagree              1,169
+        regulator blocked: no protein                         100
+        regulator blocked: all isoforms DBD-dead                0   (silent)
+        direction on a gene with no protein record             63   <- the bank's own inconsistency
+        direction on a tier-5 gene (no product record)         40
+      A run with zero violations was predeclared as SUSPICIOUS rather than successful, precisely
+      because an invariant that cannot fire is decoration.
+
+  AND THE CONTRADICTIONS ARE REAL BIOLOGY, WHICH IS THE RESULT WORTH HAVING:
+        BCL2  UP from NR3C1, TP53   vs  DOWN from RELA        (7 votes)
+        CSN2  UP from RELA          vs  DOWN from NR3C1, TP53 (6 votes)
+        CRH   UP from NR3C1         vs  DOWN from RELA        (2 votes)
+      p53 represses BCL2 and NF-kB induces it; glucocorticoid receptor and NF-kB antagonise at
+      CRH. Both directions are correct IN DIFFERENT CONTEXTS. The gene-level network has no
+      context variable, so genuine context-dependency surfaces as unexplainable contradiction. The
+      object therefore locates, by normal operation, exactly the places where a context-free
+      representation is insufficient -- which is a diagnostic no static fact store can produce.
+
+  D3  SELF-REVISION, AND AN HONEST DEFLATION. Edges implicated in contradictions are downgraded in
+      the bank: 4,257 real, 5,418 under shuffled signs. Contradictions 1,169 vs 1,507 = 22.4%
+      FEWER than a sign-randomised network of identical topology. PASS -- the signs do carry
+      information -- but 22.4% is modest, and it means the real signed network is only slightly
+      more internally consistent than a random sign assignment over the same edges. Most-
+      contradicted: RUNX2->GNAS, RELA->CDKN2A, CUX1->PIK3IP1, RELA->BMP4, RELA->MET.
+
+  WHAT IT IS AND IS NOT. Not a simulator: no magnitudes, no time, no concentrations. 'Unanimous
+  incoming sign' is a rule chosen here, not a measured mechanism, and real genes integrate
+  regulators non-linearly. The signs inherit the default-activation defect. And a contradiction
+  names an edge the network cannot reconcile WITH ITSELF -- no measurement enters this loop
+  anywhere. Making the loop touch data is the next step and it is the whole remaining problem.
+
+  Bank: memory_bank/cell/{state.json, journal.jsonl, edge_confidence.json, schema.json}

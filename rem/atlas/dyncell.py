@@ -261,6 +261,11 @@ def main():
     informative = 2.0 < frac < 90.0
     P_(f"\n  D0: {'PASS' if informative else 'FAIL'} -- reached {frac:.1f}% of the genome"
        f" ({'neither trivial nor everything' if informative else 'uninformative'})")
+    P_( "\n  AND D0's CONTROL IS THE WRONG CONTROL FOR REACH, WHICH IS A FLAW IN MY OWN GATE.")
+    P_( "  Shuffling signs preserves the topology exactly, so REACH cannot differ by construction")
+    P_(f"  -- {len(C.dir):,} vs {len(Csh.dir):,} is not evidence of anything. The quantity the")
+    P_( "  control CAN speak to is contradiction count, and that is D3. Recorded rather than")
+    P_( "  presented as a passed comparison.")
 
     # ---- D2  invariants ----------------------------------------------------------------------
     P_("\n" + RULE); P_("D2  THE INVARIANTS, AND WHETHER THEY BITE"); P_(RULE)
@@ -279,7 +284,10 @@ def main():
     P_(f"  D2: {'PASS -- the checks bite' if fired >= 2 else 'SUSPICIOUS -- too weak to be a check'}")
     ex = list(C.conflict.items())[:3]
     for g, vs in ex:
-        P_(f"    e.g. {g}: {[(s, sg) for s, sg in vs][:4]}  <- network cannot explain this gene")
+        pos = [s for s, sg in vs if sg > 0][:2]
+        neg = [s for s, sg in vs if sg < 0][:2]
+        P_(f"    e.g. {g}: UP from {pos} vs DOWN from {neg}"
+           f"  <- {len(vs)} votes, network cannot reconcile them")
 
     # ---- D3  self-revision -------------------------------------------------------------------
     P_("\n" + RULE); P_("D3  SELF-REVISION, AGAINST THE MATCHED CONTROL"); P_(RULE)
@@ -287,6 +295,9 @@ def main():
     dnsh = [e for e in Csh.journal if e["op"] == "downgrade"]
     P_(f"  edges downgraded, real network       {len({tuple(e['edge']) for e in dn}):>8,}")
     P_(f"  edges downgraded, sign-shuffled      {len({tuple(e['edge']) for e in dnsh}):>8,}")
+    ratio = len(Csh.conflict) / max(len(C.conflict), 1)
+    P_(f"  contradictions, real / shuffled      {len(C.conflict):,} / {len(Csh.conflict):,}"
+       f"  = {1/ratio:.3f}x  ({100*(1-1/ratio):.1f}% fewer)")
     ok3 = len(dnsh) > len(dn)
     P_(f"\n  D3: {'PASS' if ok3 else 'FAIL'} -- shuffled signs produce"
        f" {'MORE' if ok3 else 'NO MORE'} contradictions, so the real signs"
