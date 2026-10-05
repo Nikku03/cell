@@ -25,6 +25,21 @@ THE TWO FIXES, AND THE SECOND IS REAL BIOPHYSICS RATHER THAN A CHOICE OF ACTIVAT
                  out = v + g_dep * m * (+1 - v) + g_hyp * m * (-1 - v)
       learnable: w (one per child), theta, g_dep, g_hyp.
 
+AND THE FIRST SWEEP CAME BACK ENTIRELY VOID, WHICH IS RECORDED RATHER THAN QUIETLY RETUNED.
+At input width 16 with parity order k in 4/6/8/10, NO model learnt ANY row -- channel tree, tanh
+tree and both MLPs all sat at 0.488-0.503, and the channel tree agreed with the MLP to three
+decimals INCLUDING the spread, which is the signature of every model emitting a constant. The task
+coupled two hard problems: finding which k of 16 bits matter AND computing parity on them. The
+learnability gate correctly returned VOID instead of a comparison.
+
+TWO CHANGES, AND THE SECOND IS A CONTROL I SHOULD HAVE HAD FROM THE START.
+  Input width drops 16 -> 8, so feature selection is near-trivial and the COMPOSITION difficulty
+  that the dendrite question is actually about is what the sweep varies.
+  And k = 2 is added as a HARNESS POSITIVE CONTROL: XOR of 2 of 8 bits must be learnable by a
+  plain MLP. If it is not, the optimiser or the budget is broken and nothing about architectures
+  can be concluded -- a distinction the first run could not make, because with every row void
+  there was no way to tell an unlearnable task from a broken harness.
+
 AND THE SWEEP DESIGN IS FIXED TOO. dendrite.py's "depth" did not order difficulty: its subset size
 was min(2^depth, 12), so the deepest point used all 12 inputs and was the EASIEST, which is why the
 only learnable row was the last one. Here the input width is fixed at 16 and the parity subset size
@@ -295,7 +310,7 @@ def main():
 
     # ---- C3  parameter split ----------------------------------------------------------------
     P_("\n" + RULE); P_("C3  WHERE THE PARAMETERS NOW SIT"); P_(RULE)
-    D, U, STEPS, LR, BS, NTR, NTE = 16, 8, 8000, 0.01, 128, 8000, 4000
+    D, U, STEPS, LR, BS, NTR, NTE = 8, 8, 12000, 0.01, 128, 8000, 4000
     probe = ChannelTree(D, U, b, L, np.random.default_rng(1))
     lf, inn, hd = probe.split()
     tot = lf + inn + hd
@@ -308,13 +323,13 @@ def main():
 
     # ---- C0 / C2 / C4 ------------------------------------------------------------------------
     P_("\n" + RULE); P_("C0 + C2 + C4  THE CEILING GATE, SWEPT OVER PARITY ORDER k"); P_(RULE)
-    P_(f"  inputs {D} (fixed), neurons {U}, steps {STEPS}, {NTR} train / {NTE} test, 4 seeds")
+    P_(f"  inputs {D} (fixed), neurons {U}, steps {STEPS}, {NTR} train / {NTE} test, 3 seeds")
     P_(f"\n    {'k':>3} {'channel tree':>17} {'tanh tree':>17} {'MLP eq-param':>17}"
        f" {'MLP eq-par+depth':>17} {'learnt':>7}")
     rows = []
-    for k in (4, 6, 8, 10):
+    for k in (2, 3, 4, 5, 6):
         acc = collections.defaultdict(list)
-        for seed in range(4):
+        for seed in range(3):
             r1 = np.random.default_rng(100 + seed)
             Xtr, ytr = make_task(D, k, NTR, r1)
             Xte, yte = make_task(D, k, NTE, r1)
@@ -342,8 +357,17 @@ def main():
     pp = rows[0]["params"]
     P_(f"\n  parameters: channel tree {pp['ct']:,}  tanh tree {pp['tt']:,}"
        f"  MLP {pp['m1']:,}  MLP deep {pp['m2']:,}")
-    live = [r for r in rows if r["learnt"]]
-    P_(f"\n  C2 LEARNABILITY: {len(live)} of {len(rows)} k values learnt by any model."
+    ctrl = [r for r in rows if r["k"] == 2]
+    harness_ok = bool(ctrl) and ctrl[0]["m1"] > 0.90
+    P_(f"\n  HARNESS POSITIVE CONTROL (k=2, XOR of 2 of {D} bits, plain MLP):"
+       f" {ctrl[0]['m1']:.3f}" if ctrl else "")
+    P_(f"  {'PASS -- the optimiser and budget can learn a 2-bit composition, so a void row above'  if harness_ok else 'FAIL -- a plain MLP cannot even learn XOR here, so the HARNESS is broken'}")
+    P_(f"  {'means the task is hard, not that training is broken.' if harness_ok else 'and no statement about architectures can be made from this run at all.'}")
+    if not harness_ok:
+        P_("\n  C0: VOID -- harness control failed. Untested, and the fault is mine, not the models'.")
+        open(OUT, "w").write("\n".join(out) + "\n"); return
+    live = [r for r in rows if r["learnt"] and r["k"] > 2]
+    P_(f"\n  C2 LEARNABILITY: {len(live)} of {len(rows)-1} non-control k values learnt by any model."
        f" {'Only those are used.' if live else ''}")
     if not live:
         P_("\n  C0: VOID -- nothing was learnt at any k. Untested, not answered.")

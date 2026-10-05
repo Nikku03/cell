@@ -1,0 +1,51 @@
+=================================================================================================
+CHANNEL DYNAMICS AND PER-NODE PARAMETERS INSIDE THE DENDRITIC TREE
+=================================================================================================
+  morphology: 389 Markram-lab cells; pyramidal median n_stems 7, n_branch 142
+  tree from morphology: branching b = 4, depth L = 4, leaves 256
+
+=================================================================================================
+C1  GRADIENT CHECK, HAND-DERIVED BACKWARD (BLOCKING)
+=================================================================================================
+    Wl       analytic -1.967102e-02  numeric -1.967102e-02  rel 3.84e-09
+    W[0]     analytic -1.090727e-02  numeric -1.090727e-02  rel 6.93e-09
+    W[1]     analytic -1.588447e-02  numeric -1.588447e-02  rel 2.27e-09
+    th[0]    analytic -3.867759e-03  numeric -3.867759e-03  rel 1.28e-08
+    th[1]    analytic +5.620234e-03  numeric +5.620234e-03  rel 4.69e-09
+    gd[0]    analytic -1.216379e-01  numeric -1.216379e-01  rel 1.57e-10
+    gd[1]    analytic +1.567289e-02  numeric +1.567289e-02  rel 6.15e-09
+    gh[0]    analytic -1.218024e-01  numeric -1.218024e-01  rel 4.95e-11
+    gh[1]    analytic -1.897306e-02  numeric -1.897306e-02  rel 1.07e-09
+    wo       analytic -1.245796e-01  numeric -1.245796e-01  rel 9.15e-10
+    bo       analytic -1.452259e-01  numeric -1.452259e-01  rel 2.46e-10
+
+  worst relative error 1.28e-08
+
+  C1: PASS -- every parameter group matches a central finite difference
+
+=================================================================================================
+C3  WHERE THE PARAMETERS NOW SIT
+=================================================================================================
+  leaves (synapses)        32,768   87.3%
+  INSIDE the hierarchy      4,760   12.7%   (dendrite.py: 32 = 0.1%)
+  readout                       9    0.0%
+  total                    37,537
+
+  C3: the hierarchy holds 12.7% of parameters against 0.1% before. Applied in substance.
+
+=================================================================================================
+C0 + C2 + C4  THE CEILING GATE, SWEPT OVER PARITY ORDER k
+=================================================================================================
+  inputs 16 (fixed), neurons 8, steps 8000, 8000 train / 4000 test, 4 seeds
+
+      k      channel tree         tanh tree      MLP eq-param  MLP eq-par+depth  learnt
+      4     0.500+/-0.007     0.503+/-0.003     0.500+/-0.007     0.500+/-0.007      NO
+      6     0.496+/-0.008     0.496+/-0.004     0.496+/-0.008     0.497+/-0.008      NO
+      8     0.488+/-0.006     0.498+/-0.004     0.488+/-0.006     0.488+/-0.006      NO
+     10     0.497+/-0.007     0.502+/-0.008     0.497+/-0.007     0.498+/-0.006      NO
+
+  parameters: channel tree 37,537  tanh tree 32,809  MLP 37,531  MLP deep 37,933
+
+  C2 LEARNABILITY: 0 of 4 k values learnt by any model. 
+
+  C0: VOID -- nothing was learnt at any k. Untested, not answered.
