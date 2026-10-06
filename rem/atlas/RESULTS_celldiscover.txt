@@ -9,82 +9,82 @@ WHAT CAN THE MEMORY BANK DISCOVER WITH THE NEW DATA?
 =================================================================================================
 D1  NEW DIRECT REGULATORY LINKS IN K562 (knockdown x ChIP x not in any database)
 =================================================================================================
-  triangulated pairs 1,117 over 109 TFs
+  triangulated pairs 1,109 over 109 TFs
   D1a positive control: agreement with OmniPath's sign 14/20 = 0.700, p 0.0577 -> FAIL
   D1b share of OmniPath-known pairs by category:
-     triangulated      20 /     1,117 = 0.0179
-     moved only        44 /     8,625 = 0.0051
-     bound only     1,415 /   129,229 = 0.0109
-     neither        3,415 /   759,966 = 0.0045
+     triangulated      20 /     1,109 = 0.0180
+     moved only        44 /     8,541 = 0.0052
+     bound only     1,415 /   129,237 = 0.0109
+     neither        3,415 /   760,050 = 0.0045
   D1b triangulated is the most enriched category: True
-  D1c null (another TF's ChIP set): 1,382 +/- 252 expected vs 1,117 observed -> estimated FDR 1.24
-  CANDIDATE NEW DIRECT LINKS (in neither OmniPath nor the bank): 1,090   [UNVALIDATED -- D1a/D1b did not pass]
-        EP300 represses LRWD1      (knockdown z +inf; bound in K562 ChIP)
-        HCFC1 represses SHQ1       (knockdown z +inf; bound in K562 ChIP)
-         NRF1 represses FBXO42     (knockdown z +inf; bound in K562 ChIP)
-         NRF1 represses LRWD1      (knockdown z +inf; bound in K562 ChIP)
-         NRF1 represses CBY1       (knockdown z +inf; bound in K562 ChIP)
-        SIRT6 represses COMMD10    (knockdown z +inf; bound in K562 ChIP)
-          TBP represses LRWD1      (knockdown z +inf; bound in K562 ChIP)
-          TBP represses POLL       (knockdown z +inf; bound in K562 ChIP)
-        KDM1A represses LYZ        (knockdown z +3.8; bound in K562 ChIP)
-        KDM1A represses VIM        (knockdown z +3.7; bound in K562 ChIP)
-        KDM1A represses TYROBP     (knockdown z +3.6; bound in K562 ChIP)
-        KDM1A represses PLAUR      (knockdown z +3.2; bound in K562 ChIP)
-        NELFE represses FTL        (knockdown z +3.1; bound in K562 ChIP)
-          MAX represses BLVRB      (knockdown z +2.9; bound in K562 ChIP)
-        KDM1A represses BST2       (knockdown z +2.9; bound in K562 ChIP)
-         CHD4 represses MDK        (knockdown z +2.6; bound in K562 ChIP)
-        RAD21 represses GP1BB      (knockdown z +2.5; bound in K562 ChIP)
-        KDM1A represses LGALS1     (knockdown z +2.5; bound in K562 ChIP)
-         TAF1 represses CTSC       (knockdown z +2.4; bound in K562 ChIP)
-        KDM1A represses ACOX1      (knockdown z +2.2; bound in K562 ChIP)
-         SMC3 represses UBE2H      (knockdown z +2.2; bound in K562 ChIP)
-         SMC3 represses ASAH1      (knockdown z +2.1; bound in K562 ChIP)
-       SETDB1 represses MS4A3      (knockdown z +2.0; bound in K562 ChIP)
-         SMC3 represses CREG1      (knockdown z +1.9; bound in K562 ChIP)
-         SMC3 represses ERP29      (knockdown z +1.8; bound in K562 ChIP)
+  D1c null (another TF's ChIP set): 1,369 +/- 252 expected vs 1,109 observed -> estimated FDR 1.23
+  CANDIDATE NEW DIRECT LINKS (in neither OmniPath nor the bank): 1,082   [UNVALIDATED -- D1a/D1b did not pass]
+        KDM1A represses LYZ        (knockdown z-equiv +25.9; bound in K562 ChIP)
+        KDM1A represses VIM        (knockdown z-equiv +25.5; bound in K562 ChIP)
+        KDM1A represses TYROBP     (knockdown z-equiv +24.6; bound in K562 ChIP)
+        KDM1A represses PLAUR      (knockdown z-equiv +21.6; bound in K562 ChIP)
+        NELFE represses FTL        (knockdown z-equiv +21.5; bound in K562 ChIP)
+          MAX represses BLVRB      (knockdown z-equiv +20.0; bound in K562 ChIP)
+        KDM1A represses BST2       (knockdown z-equiv +19.6; bound in K562 ChIP)
+         CHD4 represses MDK        (knockdown z-equiv +17.9; bound in K562 ChIP)
+        RAD21 represses GP1BB      (knockdown z-equiv +17.3; bound in K562 ChIP)
+        KDM1A represses LGALS1     (knockdown z-equiv +17.0; bound in K562 ChIP)
+         TAF1 represses CTSC       (knockdown z-equiv +16.4; bound in K562 ChIP)
+        KDM1A represses ACOX1      (knockdown z-equiv +15.4; bound in K562 ChIP)
+         SMC3 represses UBE2H      (knockdown z-equiv +15.3; bound in K562 ChIP)
+         SMC3 represses ASAH1      (knockdown z-equiv +14.5; bound in K562 ChIP)
+       SETDB1 represses MS4A3      (knockdown z-equiv +13.9; bound in K562 ChIP)
+         SMC3 represses CREG1      (knockdown z-equiv +13.2; bound in K562 ChIP)
+         SMC3 represses ERP29      (knockdown z-equiv +12.6; bound in K562 ChIP)
+         TAF1 activates RPL18A     (knockdown z-equiv -12.5; bound in K562 ChIP)
+         TAF1 represses SAT1       (knockdown z-equiv +11.4; bound in K562 ChIP)
+        GATA1 represses YPEL3      (knockdown z-equiv +11.3; bound in K562 ChIP)
+        KDM1A represses TUBA1A     (knockdown z-equiv +11.3; bound in K562 ChIP)
+        KDM1A represses CREG1      (knockdown z-equiv +11.1; bound in K562 ChIP)
+        GATA1 represses ATM        (knockdown z-equiv +10.9; bound in K562 ChIP)
+        KDM1A represses IQGAP1     (knockdown z-equiv +10.9; bound in K562 ChIP)
+         TAF1 activates RPL23A     (knockdown z-equiv -10.8; bound in K562 ChIP)
   by TF: {'SMC3': 223, 'KDM1A': 136, 'TAF1': 87, 'GATA1': 77, 'MAX': 58, 'RBBP5': 46, 'TAF7': 41, 'GTF2B': 37, 'CBX3': 35, 'RAD21': 30}
 
 =================================================================================================
 D2  WHERE THE LITERATURE AND K562 DISAGREE
 =================================================================================================
-  OmniPath transcriptional signed edges testable in K562 (source knocked down, target moved): 142
-  agreement overall 0.486 (p 0.663 for > 0.5)
+  OmniPath transcriptional signed edges testable in K562 (source knocked down, target moved): 141
+  agreement overall 0.489 (p 0.632 for > 0.5)
      ChIP-supported   0.700 over 20
-     no ChIP support  0.451 over 122
-  by curation effort: top tertile (> 4) 0.641 (n 39) vs bottom (<= 2) 0.424 (n 66); Fisher p 0.0433 -> EVIDENCE PREDICTS CORRECTNESS
-  the bank's own signed regulatory edges: agreement 0.756 over 348 (p 1.34e-22)
+     no ChIP support  0.455 over 121
+  by curation effort: top tertile (> 4) 0.641 (n 39) vs bottom (<= 2) 0.431 (n 65); Fisher p 0.0445 -> EVIDENCE PREDICTS CORRECTNESS
+  the bank's own signed regulatory edges: agreement 0.760 over 346 (p 3.13e-23)
   strongest ChIP-supported contradictions (literature sign vs what K562 shows):
-          MAX -> GADD45A    literature activates (curation 4); in K562 knockdown z +0.8
-          MYC -> GSTP1      literature activates (curation 4); in K562 knockdown z +0.7
-          MYC -> HMBS       literature activates (curation 4); in K562 knockdown z +0.5
-          SP1 -> EEF1A1     literature activates (curation 2); in K562 knockdown z +0.6
-        EP300 -> HSPA5      literature activates (curation 1); in K562 knockdown z +0.6
-        GATA1 -> BTG2       literature activates (curation 0); in K562 knockdown z +0.7
+          MAX -> GADD45A    literature activates (curation 4); in K562 knockdown z-equiv +5.3
+          MYC -> GSTP1      literature activates (curation 4); in K562 knockdown z-equiv +4.9
+          MYC -> HMBS       literature activates (curation 4); in K562 knockdown z-equiv +3.3
+          SP1 -> EEF1A1     literature activates (curation 2); in K562 knockdown z-equiv +4.4
+        EP300 -> HSPA5      literature activates (curation 1); in K562 knockdown z-equiv +3.8
+        GATA1 -> BTG2       literature activates (curation 0); in K562 knockdown z-equiv +5.1
 
 =================================================================================================
 D3  DOES BETTER INFORMATION FIX THE DIRECTION PROBLEM?
 =================================================================================================
-  facts: v2 71,052   v2+OmniPath 208,284   v3 (+ K562-measured from 4,936 TRAIN knockdowns) 503,640
+  facts: v2 71,052   v2+OmniPath 208,284   v3 (+ K562-measured from 4,936 TRAIN knockdowns) 500,406
   TEST knockdowns scored: 400 (first 400 eligible by hash)
-  v2      hop 1: enrichment 5.66x (49 movers), direction 0.796   hop 2: enrichment 1.52x (468 movers), direction 0.455   hop 3: enrichment 1.29x (1,824 movers), direction 0.467
-  v2+O    hop 1: enrichment 5.34x (50 movers), direction 0.780   hop 2: enrichment 1.54x (538 movers), direction 0.448   hop 3: enrichment 1.26x (2,208 movers), direction 0.464
-  v3      hop 1: enrichment 5.34x (50 movers), direction 0.780   hop 2: enrichment 2.52x (1,361 movers), direction 0.701   hop 3: enrichment 1.05x (5,051 movers), direction 0.547
-  direction accuracy v2+O vs v2: better 24, worse 31 of 60, mean -0.019, p 0.419 -> NO DIFFERENCE
-  direction accuracy v3 vs v2+O: better 42, worse 26 of 70, mean +0.062, p 0.0681 -> NO DIFFERENCE
-  direction accuracy v3 vs v2: better 37, worse 24 of 61, mean +0.060, p 0.124 -> NO DIFFERENCE
+  v2      hop 1: enrichment 5.54x (48 movers), direction 0.812   hop 2: enrichment 1.50x (462 movers), direction 0.457   hop 3: enrichment 1.27x (1,793 movers), direction 0.468
+  v2+O    hop 1: enrichment 5.23x (49 movers), direction 0.796   hop 2: enrichment 1.53x (533 movers), direction 0.448   hop 3: enrichment 1.24x (2,163 movers), direction 0.465
+  v3      hop 1: enrichment 5.23x (49 movers), direction 0.796   hop 2: enrichment 2.49x (1,334 movers), direction 0.699   hop 3: enrichment 1.02x (4,918 movers), direction 0.549
+  direction accuracy v2+O vs v2: better 24, worse 30 of 59, mean -0.016, p 0.497 -> NO DIFFERENCE
+  direction accuracy v3 vs v2+O: better 40, worse 25 of 67, mean +0.057, p 0.0817 -> NO DIFFERENCE
+  direction accuracy v3 vs v2: better 36, worse 24 of 60, mean +0.055, p 0.155 -> NO DIFFERENCE
 
 =================================================================================================
 D4  WHAT DO UNCHARACTERISED GENES DO? (knockdown profiles x DepMap co-essentiality)
 =================================================================================================
   genes with a phenotype and DepMap data: 4,826; same-group pairs 26,921 (803 groups of 2-50)
-     AUROC knockdown profile  nan
+     AUROC knockdown profile  0.637
      AUROC co-essentiality    0.659
-     AUROC combined           nan
-  D4 validation: FAIL
-  uncharacterised genes with both assays: 43; assigned a group (>= 3 of top-5 partners): 1; null 0.6 +/- 0.7 -> estimated FDR 0.60   [UNVALIDATED]
-     C1orf53    (chromosome 1 open reading frame 53        ) -> SSU processome                                   partners A1BG, ABT1, DDX49, DDX47, ACTR5
+     AUROC combined           0.673
+  D4 validation: PASS
+  uncharacterised genes with both assays: 43; assigned a group (>= 3 of top-5 partners): 1; null 1.2 +/- 0.9 -> estimated FDR 1.20
+     C19orf25   (chromosome 19 open reading frame 25       ) -> NRZ tethering complex                            partners NBAS, BNIP1, RINT1, ZW10, STX18
 
-  bank written to memory_bank/cell_v3/ ; artifact outputs/celldiscover.json ; runtime 127s
+  bank written to memory_bank/cell_v3/ ; artifact outputs/celldiscover.json ; runtime 111s
   D5: candidates, not findings -- one cell line, CRISPRi, steady state; nothing validated at the bench.

@@ -1,5 +1,4 @@
 source	target	literature	curation_effort	knockdown_z	chip_bound
-RELA	LRWD1	activates	1	inf	False
 GATA1	FCER1G	activates	6	4.71	False
 GATA1	FCGRT	activates	8	2.92	False
 GATA1	HLA-E	activates	2	2.77	False

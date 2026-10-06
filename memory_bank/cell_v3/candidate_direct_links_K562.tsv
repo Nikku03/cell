@@ -1,12 +1,4 @@
 tf	target	direction	knockdown_z	evidence
-EP300	LRWD1	represses	inf	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
-HCFC1	SHQ1	represses	inf	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
-NRF1	FBXO42	represses	inf	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
-NRF1	LRWD1	represses	inf	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
-NRF1	CBY1	represses	inf	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
-SIRT6	COMMD10	represses	inf	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
-TBP	LRWD1	represses	inf	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
-TBP	POLL	represses	inf	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
 KDM1A	LYZ	represses	3.79	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
 KDM1A	VIM	represses	3.72	K562 CRISPRi + K562 ChIP; not in OmniPath or bank
 KDM1A	TYROBP	represses	3.59	K562 CRISPRi + K562 ChIP; not in OmniPath or bank

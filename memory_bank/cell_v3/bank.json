@@ -6,73 +6,73 @@
   "encode": "ENCODE TF ChIP-seq K562 via Enrichr 2015 library",
   "depmap": "24Q4 CRISPRGeneEffect, figshare 27993248, CC BY 4.0"
  },
- "n_facts_v3": 503640,
+ "n_facts_v3": 500406,
  "results": {
   "D1": {
-   "triangulated": 1117,
+   "triangulated": 1109,
    "tfs": 109,
    "control_agree": 14,
    "control_n": 20,
    "control_p": 0.057659149169921875,
    "d1a": false,
    "d1b": true,
-   "null_mean": 1382.27,
-   "fdr": 1.237484333034915,
-   "novel": 1090,
+   "null_mean": 1369.29,
+   "fdr": 1.234706943192065,
+   "novel": 1082,
    "known_share": {
-    "neither": 0.004493622083093191,
-    "bound only": 0.01094955466652222,
-    "moved only": 0.005101449275362319,
-    "triangulated": 0.017905102954341987
+    "neither": 0.004493125452272877,
+    "bound only": 0.010948876869627118,
+    "moved only": 0.0051516215899777545,
+    "triangulated": 0.018034265103697024
    }
   },
   "D2": {
-   "n": 142,
-   "agree": 0.4859154929577465,
+   "n": 141,
+   "agree": 0.48936170212765956,
    "chip_agree": 0.7,
-   "nochip_agree": 0.45081967213114754,
+   "nochip_agree": 0.45454545454545453,
    "top_tertile": 0.6410256410256411,
-   "bottom_tertile": 0.42424242424242425,
-   "fisher_p": 0.04334192185213423,
-   "bank_agree": 0.7557471264367817,
-   "bank_n": 348
+   "bottom_tertile": 0.4307692307692308,
+   "fisher_p": 0.04453790280597679,
+   "bank_agree": 0.7601156069364162,
+   "bank_n": 346
   },
   "D3_v2+O_vs_v2": {
    "better": 24,
-   "worse": 31,
-   "p": 0.41875418826901556,
-   "n": 60,
-   "mean": -0.018881424868845396,
+   "worse": 30,
+   "p": 0.4966174353179338,
+   "n": 59,
+   "mean": -0.016360385367596066,
    "verdict": "NO DIFFERENCE"
   },
   "D3_v3_vs_v2+O": {
-   "better": 42,
-   "worse": 26,
-   "p": 0.06811867428409976,
-   "n": 70,
-   "mean": 0.06208763532071042,
+   "better": 40,
+   "worse": 25,
+   "p": 0.08168153394154005,
+   "n": 67,
+   "mean": 0.05709519429328057,
    "verdict": "NO DIFFERENCE"
   },
   "D3_v3_vs_v2": {
-   "better": 37,
+   "better": 36,
    "worse": 24,
-   "p": 0.12373144253809217,
-   "n": 61,
-   "mean": 0.05961640548322384,
+   "p": 0.1550019040032606,
+   "n": 60,
+   "mean": 0.05498649255954146,
    "verdict": "NO DIFFERENCE"
   },
   "D4": {
    "n_genes": 4826,
    "auroc": {
-    "knockdown profile": NaN,
+    "knockdown profile": 0.6367213491326473,
     "co-essentiality": 0.6592133265851937,
-    "combined": NaN
+    "combined": 0.6726221161918206
    },
-   "validated": false,
+   "validated": true,
    "n_unk": 43,
    "assigned": 1,
-   "null_mean": 0.6,
-   "fdr": 0.6
+   "null_mean": 1.2,
+   "fdr": 1.2
   }
  }
 }

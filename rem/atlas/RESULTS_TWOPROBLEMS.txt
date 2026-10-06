@@ -5192,3 +5192,51 @@ CELLBANK2 -- THE CELL MEMORY BANK ON THE REASONING ENGINE, SCORED ON REAL KNOCKD
   Better reasoning over the same facts cannot fix wrong or context-free signs; measured, cell-type-
   specific signs (Perturb-seq itself, used as facts) are the next input, not a better engine.
   Licence: the HuggingFace mirror declares none -- aggregates only, raw file in the gitignored cache.
+
+=================================================================================================
+CELLDISCOVER -- NEW DATA IN THE MEMORY BANK: WHAT IT CONFIRMS, AND WHY NO DISCOVERY SURVIVES ITS NULL
+=================================================================================================
+  celldiscover.py (committed 0bfa2b2 before running). Data added this session, licences recorded:
+  K562 genome-wide CRISPRi Perturb-seq (Replogle 2022, figshare, CC BY 4.0; 9,865 knockdowns x
+  8,248 genes), OmniPath commercial-licence subset (137,232 signed), ENCODE K562 TF ChIP sets (113
+  TFs; Enrichr 2015 packaging, academic terms -- flagged), DepMap 24Q4 (figshare, CC BY 4.0; 1,178
+  lines x 17,916 genes). Two amendments, both recorded in the module: (1) before the first run, the
+  gwps values are ~7x smaller than z-scores -- thresholds set from a run-time measured scale of 6.85;
+  (2) after the first run (output kept in history), 6,300 non-finite entries had been counted as
+  movers and had poisoned D4 -- now missing; all four questions re-run under unchanged gates.
+
+  WHAT THE DATA CONFIRM
+    D2 OmniPath's transcriptional signs agree with K562 only 0.489 of the time (141 testable edges,
+       coin flip) -- but EVIDENCE PREDICTS CORRECTNESS: curation effort > 4 agrees 0.641, <= 2 agrees
+       0.431 (Fisher p 0.045, predeclared PASS); ChIP-supported edges 0.700 (n 20).
+       The bank's own signed regulatory edges agree 0.760 over 346 direct tests (p 3e-23) -- the
+       first data-backed number for the bank's direct facts. Why they beat OmniPath's here is not
+       examined.
+    D4 VALIDATION PASS: knockdown-profile similarity (AUROC 0.637) and DepMap co-essentiality
+       (0.659) each find gene families; together they find them better (0.673).
+    D3 K562-MEASURED facts from TRAIN knockdowns, pooled over 400 TEST knockdowns: 2-hop direction
+       0.457 -> 0.699, 2-hop enrichment 1.50x -> 2.49x; OmniPath facts change nothing (0.448).
+       The predeclared per-knockdown test (all hops pooled) is NOT significant: 40 better / 25
+       worse, p 0.082 -> NO DIFFERENCE. Suggestive, not established; the hop-specific gain was not
+       the predeclared unit and is not re-tested here.
+
+  WHY NO DISCOVERY IS CLAIMED
+    D1 new direct links (knockdown x ChIP x absent from every database): positive control 14/20 =
+       0.70, p 0.058 -> FAIL; and the NULL produces MORE triangulated pairs than the real pairing
+       (1,369 +/- 252 vs 1,109; FDR 1.23). A TF's knockdown movers overlap OTHER TFs' ChIP sets as
+       often as its own -- these 2015 ENCODE gene sets (~1,200 targets per TF) are too broad to
+       name direct targets. The 1,082 candidates are kept, marked UNVALIDATED. (Their top, KDM1A/LSD1
+       repressing myeloid genes LYZ, TYROBP, VIM, PLAUR, matches known LSD1 biology -- which shows
+       the list contains real signal mixed with noise the method cannot separate.)
+    D4 mystery genes: of 43 uncharacterised genes measured by both assays, 1 is assigned (>= 3 of
+       top-5 partners in one group): C19orf25 -> NRZ tethering complex, partners NBAS, BNIP1, RINT1,
+       ZW10, STX18 -- coherent ER-Golgi retrograde machinery. But the null assigns 1.2 +/- 0.9 genes
+       by chance (FDR 1.20). Kept as a candidate; not a finding.
+    D2 lists literature-vs-K562 contradictions (e.g. MAX -> GADD45A, MYC -> GSTP1 and HMBS listed as
+       activations, rising on knockdown): candidates for context-dependent regulation, not errors.
+
+  WHAT THIS MEANS. Measured, cell-type-specific facts are what move the bank (2-hop direction 0.46
+  -> 0.70 pooled); more literature does not. Discovery needs sharper instruments than these: peak-
+  level ChIP (not 2015 gene sets) to name direct targets, and more than 43 measured mystery genes to
+  beat chance. memory_bank/cell_v3/ holds the facts summary, the three candidate lists (all marked),
+  and the gates they passed or failed.
