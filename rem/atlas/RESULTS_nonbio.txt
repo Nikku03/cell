@@ -1,0 +1,15 @@
+=================================================================================================
+IS THE EDGE BIOLOGICAL? TWO NON-BIOLOGICAL TWINS AT EXACTLY MATCHED SIZE
+=================================================================================================
+  channel tree            37,537 parameters
+  sine tree               37,537 parameters
+  bump tree               37,537 parameters
+  tanh tree (monotone)    36,857 parameters
+
+=================================================================================================
+B1  THE TWINS MUST BE VALID (BLOCKING)
+=================================================================================================
+  sine tree    gradient 5.55e-08   not odd 2.02e-01   params equal to channel: True
+  bump tree    gradient 1.72e-04   not odd 3.76e-01   params equal to channel: True
+
+  B1: FAIL -- a twin is invalid. Nothing reported.
