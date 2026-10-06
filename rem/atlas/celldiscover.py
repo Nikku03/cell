@@ -20,6 +20,12 @@ essential-screen z-scores used in cellbank2.py (all-entry median |value| 0.059; 
 (median |z_ess| / |value| over entries with |z_ess| > 3), and every threshold is the cellbank2
 threshold divided by it: MOVER |value| >= 3 / scale; G0 own-gene median <= -1 / scale. Gate: the
 scale must lie in [3, 15].
+SECOND AMENDMENT, AFTER THE FIRST RUN (its output is committed in history): the matrix holds 6,300
+non-finite entries (73 readout genes with zero control variance). The first run counted infinite
+values as movers (they topped the D1 list) and they turned the D4 knockdown-profile similarity
+into NaN (AUROC nan -> D4 FAIL). Fix: non-finite entries are MISSING -- never movers, never scored;
+the 73 affected readout columns are dropped from profile similarities. Every question re-runs
+under its unchanged gates. Values are printed as z-equivalents (value x scale).
 
 =================================================================================================
 GATES, PREDECLARED
@@ -105,7 +111,9 @@ def load_gwps():
             best[sym] = (i, fv)
     kos = sorted(best)
     rows = [best[k][0] for k in kos]
-    return X[rows].astype(np.float32), kos, genes, np.array([ep[r] for r in rows]), np.array([best[k][1] for k in kos])
+    Xs = X[rows].astype(np.float32)
+    Xs[~np.isfinite(Xs)] = np.nan
+    return Xs, kos, genes, np.array([ep[r] for r in rows]), np.array([best[k][1] for k in kos])
 
 
 def load_omnipath():
@@ -196,7 +204,7 @@ def main():
     ZMOV = 3.0 / scale
     cb.ZMOV = ZMOV
     P_(f"  measured scale (essential z / gwps value) {scale:.2f} over {int(m_.sum()):,} shared large entries -> mover |value| >= {ZMOV:.3f}")
-    own = [X[kidx[k], gidx[k]] for k in kos if k in gidx]
+    own = [X[kidx[k], gidx[k]] for k in kos if k in gidx and np.isfinite(X[kidx[k], gidx[k]])]
     tfs = sorted(set(enc) & set(kos))
     omni_tx = {(s, t): (sg, ce) for s, t, sg, ty, ce in omni if ty == "transcriptional"}
     omni_all = {(s, t) for s, t, _, _, _ in omni}
@@ -259,7 +267,7 @@ def main():
     P_(f"  CANDIDATE NEW DIRECT LINKS (in neither OmniPath nor the bank): {len(novel):,}"
        + ("" if d1a and d1b else "   [UNVALIDATED -- D1a/D1b did not pass]"))
     for tf, g, zz in novel[:25]:
-        P_(f"     {tf:>8} {'activates' if zz < 0 else 'represses'} {g:<10} (knockdown z {zz:+.1f}; bound in K562 ChIP)")
+        P_(f"     {tf:>8} {'activates' if zz < 0 else 'represses'} {g:<10} (knockdown z-equiv {zz * scale:+.1f}; bound in K562 ChIP)")
     per_tf = collections.Counter(tf for tf, _, _ in novel)
     P_(f"  by TF: {dict(per_tf.most_common(10))}")
     res["D1"] = dict(triangulated=len(tri), tfs=len(tfs), control_agree=k_, control_n=n_, control_p=pa, d1a=d1a, d1b=d1b,
@@ -294,7 +302,7 @@ def main():
     contra = sorted([o for o in obs if o[5] and (-np.sign(o[4]) != o[2])], key=lambda o: -(abs(o[4]) * (1 + o[3])))
     P_("  strongest ChIP-supported contradictions (literature sign vs what K562 shows):")
     for s, t, sg, cev, zz, _ in contra[:12]:
-        P_(f"     {s:>8} -> {t:<10} literature {'activates' if sg > 0 else 'represses'} (curation {cev}); in K562 knockdown z {zz:+.1f}")
+        P_(f"     {s:>8} -> {t:<10} literature {'activates' if sg > 0 else 'represses'} (curation {cev}); in K562 knockdown z-equiv {zz * scale:+.1f}")
     res["D2"] = dict(n=len(obs), agree=float(ag.mean()), chip_agree=float(ag[chip].mean()) if chip.sum() else None,
                      nochip_agree=float(ag[~chip].mean()) if (~chip).sum() else None, top_tertile=float(ag[top].mean()),
                      bottom_tertile=float(ag[bot].mean()), fisher_p=pf, bank_agree=float(bag.mean()), bank_n=len(bag))
@@ -360,7 +368,8 @@ def main():
     # =========================================================================== D4 ============
     P_("\n" + RULE); P_("D4  WHAT DO UNCHARACTERISED GENES DO? (knockdown profiles x DepMap co-essentiality)"); P_(RULE)
     G = [k for k, e in zip(kos, ep) if np.isfinite(e) and e < 0.05 and k in dep.columns and k in names]
-    A = X[[kidx[g] for g in G]].astype(np.float64)
+    okc = np.all(np.isfinite(X), 0)
+    A = X[[kidx[g] for g in G]][:, okc].astype(np.float64)
     A = (A - A.mean(1, keepdims=True)) / (A.std(1, keepdims=True) + 1e-9)
     SA = (A @ A.T) / A.shape[1]
     Bm = dep[G].values.astype(np.float64)
