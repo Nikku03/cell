@@ -5148,3 +5148,47 @@ BIOABLATE -- THE BLUE BRAIN SYNAPSE NUMBERS ARE FINE; THE ACTIVITY LEAK IS WHAT 
   (the measured timescale itself) the leak would be ~0.63 and the synaptic decay ~0.36 -- untested.
   "The brain is slower per step than we assumed" and "the leak is the wrong place for this number"
   are both open.
+
+=================================================================================================
+CELLBANK2 -- THE CELL MEMORY BANK ON THE REASONING ENGINE, SCORED ON REAL KNOCKDOWNS FOR THE FIRST TIME
+=================================================================================================
+  cellbank2.py (committed 5e1202a before running). The bank rebuilt with the engine's lessons:
+  facts kept individually and looked up by content (transformer-style memory); one regulatory hop
+  per step, snapped to a direction and written down; weighted votes instead of unanimity vetoes;
+  learnt content-based attention and data self-revision fitted on TRAIN knockdowns only. Scored on
+  Replogle 2022 K562 essential CRISPRi Perturb-seq (1,971 knockdowns x 8,563 genes; mover |z| >= 3):
+  330 eligible knockdowns, 168 TRAIN / 162 TEST. E0 PASS (own-gene z median -2.84); E1 replay PASS.
+  New bank written to memory_bank/cell_v2/ (the original memory_bank/cell/ is untouched).
+
+  WHICH GENES MOVE. V1 as predeclared -- per-knockdown sign test of enrichment -- read "ANTI-
+  PREDICTS" at hops 1-2. WITHDRAWN AS AN INSTRUMENT DEFECT: with a 0.5% base rate most knockdowns
+  expect < 1 mover among their predictions, so "none found" scores as depleted even when calibrated.
+  POST-RUN fair test (committed before running), pooled observed vs knockdown-specific expected:
+        hop 1   57 movers vs 18.1 expected   3.15x   z +9.6
+        hop 2  818 vs 480.2                  1.70x   z +15.9
+        hop 3 1,777 vs 1,373.3               1.29x   z +11.1
+  (pooled z treats genes as independent; clustering by knockdown would shrink it -- not computed).
+  The bank DOES know which genes a knockdown reaches, and the signal fades with every hop.
+
+  WHICH DIRECTION. V2: real signs 0.501 vs shuffled 0.427 over 87 knockdowns, p 0.19 -> NO DIRECTION
+  SIGNAL across hops 1-3. Post-run P3 at hop 1 only: regulatory facts 0.661 over 56 fact-votes on
+  movers (signalling 0.333 over 3 -- too few). Direction survives one hop, weakly, then is a coin flip.
+
+  THE ENGINE'S UPGRADES, on 162 TEST knockdowns (paired sign tests):
+    V3 votes vs vetoes: movers given a direction 1,545 vs 1,151 (better in 42 knockdowns, worse in 0,
+       p 5e-13) at unchanged accuracy (0.509 vs 0.514, no difference). Coverage up 34% for free.
+    V4 learnt attention: AUROC 0.631 vs 0.518 (better 56 / worse 19, p 2e-5) -- BUT post-run P2:
+       ranking the same genes by target protein abundance ALONE gives 0.607. Most of the gain is an
+       expression prior ("abundant genes are the ones seen to move"), not network reasoning.
+       Direction no different (0.490 vs 0.509); the direction model learnt "right" 0.487 of the
+       time and flipped every fact -- the data saying the signs carry ~no direction information.
+    V5 data self-revision: 232 facts downgraded from TRAIN; TEST accuracy at hops 2-3 no different.
+
+  WHAT THIS MEANS. The reasoning machinery is not the bottleneck: it runs, replays, covers more
+  and ranks better. The KNOWLEDGE is: literature-signed edges predict which genes a knockdown
+  reaches (3x at one hop) but not which way they move beyond the first hop. This matches the
+  record's earlier walls (half of the regulatory signs are a default, not evidence; "specific
+  far-field genes ... chance from the graph") and the protocol's existing 0.092 direction agreement.
+  Better reasoning over the same facts cannot fix wrong or context-free signs; measured, cell-type-
+  specific signs (Perturb-seq itself, used as facts) are the next input, not a better engine.
+  Licence: the HuggingFace mirror declares none -- aggregates only, raw file in the gitignored cache.

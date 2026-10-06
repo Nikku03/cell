@@ -45,3 +45,14 @@ V3-V5  ON THE 162 TEST KNOCKDOWNS
 
   bank written to memory_bank/cell_v2/ ; artifact outputs/cellbank2.json ; runtime 78s
   V6: one cell line, CRISPRi, steady state; a right sign through a wrong path counts as right.
+
+=================================================================================================
+POST-RUN CHECKS (see posthoc docstring)
+=================================================================================================
+  P1 fair enrichment, OLD bank, pooled over all eligible knockdowns:
+     hop 1: observed movers 57 vs expected 18.1 -> enrichment 3.15x, z +9.6
+     hop 2: observed movers 818 vs expected 480.2 -> enrichment 1.70x, z +15.9
+     hop 3: observed movers 1,777 vs expected 1,373.3 -> enrichment 1.29x, z +11.1
+  P2 AUROC on TEST knockdowns ranking reached genes by target PROTEIN ABUNDANCE ALONE: 0.607 (n 75); learnt attention 0.631; symbolic 0.518
+  P3 hop-1 direction accuracy, signalling facts: 0.333 over 3 fact-votes on movers
+  P3 hop-1 direction accuracy, regulatory facts: 0.661 over 56 fact-votes on movers
