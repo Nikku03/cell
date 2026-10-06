@@ -235,6 +235,11 @@ def job(args):
                 seconds=round(time.time() - t0, 1))
 
 
+def harness_job(args):
+    """lim.job, re-exported here so worker processes can pickle it."""
+    return lim.job(args)
+
+
 def decide(units, a, b, seeds):
     diffs = [units[(a, s)] - units[(b, s)] for s in seeds]
     w = sum(d > 0 for d in diffs); l = sum(d < 0 for d in diffs); n = len(diffs)
@@ -278,7 +283,7 @@ def main():
     P_("\n  B1: PASS")
 
     pool = mp.get_context("fork").Pool(4)
-    hv = float(np.mean([r["test"] for r in pool.map(lim.job, [("mlp", 2, s, 4000) for s in (30, 31)])]))
+    hv = float(np.mean([r["test"] for r in pool.map(harness_job, [("mlp", 2, s, 4000) for s in (30, 31)])]))
     P_(f"\n  B2 harness, shallow MLP at k=2: {hv:.3f}  -> {'PASS' if hv >= 0.99 else 'FAIL'}")
     if hv < 0.99:
         open(OUT, "w").write("\n".join(out) + "\n"); return
