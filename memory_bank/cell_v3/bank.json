@@ -1,0 +1,78 @@
+{
+ "schema": "cell_v2 engine + OmniPath (commercial) + K562-measured facts; discoveries with evidence",
+ "sources": {
+  "perturbseq": "Replogle 2022 K562 gwps, figshare 20029387, CC BY 4.0",
+  "omnipath": "commercial-licence subset",
+  "encode": "ENCODE TF ChIP-seq K562 via Enrichr 2015 library",
+  "depmap": "24Q4 CRISPRGeneEffect, figshare 27993248, CC BY 4.0"
+ },
+ "n_facts_v3": 503640,
+ "results": {
+  "D1": {
+   "triangulated": 1117,
+   "tfs": 109,
+   "control_agree": 14,
+   "control_n": 20,
+   "control_p": 0.057659149169921875,
+   "d1a": false,
+   "d1b": true,
+   "null_mean": 1382.27,
+   "fdr": 1.237484333034915,
+   "novel": 1090,
+   "known_share": {
+    "neither": 0.004493622083093191,
+    "bound only": 0.01094955466652222,
+    "moved only": 0.005101449275362319,
+    "triangulated": 0.017905102954341987
+   }
+  },
+  "D2": {
+   "n": 142,
+   "agree": 0.4859154929577465,
+   "chip_agree": 0.7,
+   "nochip_agree": 0.45081967213114754,
+   "top_tertile": 0.6410256410256411,
+   "bottom_tertile": 0.42424242424242425,
+   "fisher_p": 0.04334192185213423,
+   "bank_agree": 0.7557471264367817,
+   "bank_n": 348
+  },
+  "D3_v2+O_vs_v2": {
+   "better": 24,
+   "worse": 31,
+   "p": 0.41875418826901556,
+   "n": 60,
+   "mean": -0.018881424868845396,
+   "verdict": "NO DIFFERENCE"
+  },
+  "D3_v3_vs_v2+O": {
+   "better": 42,
+   "worse": 26,
+   "p": 0.06811867428409976,
+   "n": 70,
+   "mean": 0.06208763532071042,
+   "verdict": "NO DIFFERENCE"
+  },
+  "D3_v3_vs_v2": {
+   "better": 37,
+   "worse": 24,
+   "p": 0.12373144253809217,
+   "n": 61,
+   "mean": 0.05961640548322384,
+   "verdict": "NO DIFFERENCE"
+  },
+  "D4": {
+   "n_genes": 4826,
+   "auroc": {
+    "knockdown profile": NaN,
+    "co-essentiality": 0.6592133265851937,
+    "combined": NaN
+   },
+   "validated": false,
+   "n_unk": 43,
+   "assigned": 1,
+   "null_mean": 0.6,
+   "fdr": 0.6
+  }
+ }
+}
