@@ -4688,3 +4688,51 @@ EDGEDECIDE -- THE CHANNEL TREE BEATS THE DEEP MLP ON SAMPLE EFFICIENCY, PREDECLA
   sample efficiency is not reasoning and does not move ARC's 0/400 by itself. But it is the first
   result in this record where a biologically derived component does measurable work under a
   predeclared, replicated, ablation-matched test.
+
+=================================================================================================
+NONBIO -- THE EDGE IS NON-MONOTONICITY, NOT BIOLOGY. THE BIOLOGICAL NODE IS THE WEAKER INSTANCE.
+=================================================================================================
+  The attribution test named at the end of EDGEDECIDE, predeclared (nonbio.py, commit ab8fc8c).
+  Two twins of the channel tree with EXACTLY its parameter count (37,537) and skeleton -- leaves,
+  per-node weights, three free parameters per node, readout -- the node replaced by a generic,
+  non-biological, non-monotone function:
+        sine tree   out = v + a sin(w v + phi)
+        bump tree   out = v + a exp(-(v - mu)^2 / (s^2 + 0.01))
+  Fresh seeds 30-39, k = 12, n = 1500..4000, budget 30,000, one unit per seed.
+
+  B1, RECORDED: the first run STOPPED at the blocking gradient gate (bump 1.72e-04). Every large
+  relative error sat on a near-zero gradient (finite-difference roundoff); where |g| > 1e-5 the
+  analytic gradient agreed to <= 6e-06. The gate was revised to a 1e-9 absolute floor plus 1e-5
+  relative AND required to fail deliberately broken copies of both twins -- it does, by 4.9e4 and
+  1.3e5 times its tolerance. Amendment committed (959dfec) before the re-run; the failed run's output
+  is committed (in history) beside it. No run was budget-capped (0/240).
+
+        mean test accuracy          n=1500   2000   2500   3000   3500   4000
+          channel tree               0.607  0.722  0.723  0.864  0.935  0.965
+          sine tree                  0.881  0.970  0.994  0.996  1.000  1.000
+          bump tree                  0.877  0.959  0.983  0.989  0.993  0.996
+          tanh tree (monotone)       0.554  0.603  0.673  0.757  0.841  0.905
+
+        channel vs sine tree    channel higher on 0/10   mean -0.171   t -10.45   -> IS BEATEN BY
+        channel vs bump tree    channel higher on 0/10   mean -0.163   t -10.99   -> IS BEATEN BY
+        channel vs tanh tree    channel higher on 10/10  mean +0.081   t  +4.70   -> BEATS (replicates)
+  Per n afterwards: the bump tree beats the channel tree on 10/10 seeds at EVERY n; the sine tree on
+  10/10 at every n except 1,500 (8/10). B3: both twins beat the monotone tanh tree 10/10 -- healthy.
+
+  PREDECLARED VERDICT: NOT SPECIFICALLY BIOLOGICAL. It is stronger than the gate asked for. The
+  gated-conductance node is not merely matched by generic non-monotone activations of identical
+  size -- it is beaten by both, by ~17 points, on every seed. The sample-efficiency edge recorded in
+  SAMPLEEDGE and EDGEDECIDE belongs to non-monotonicity; the biological form is a WORSE way to get it.
+
+  CORRECTIONS TO EARLIER ENTRIES IN THIS LEDGER (kept above, corrected here):
+    SAMPLEEDGE: "the first time in this record that a biological ingredient has been shown to do
+      measurable work" -- WITHDRAWN. The ingredient that does the work is a bend in the activation;
+      the conductance form is one (inferior) way to supply it.
+    EDGEDECIDE: "the first result where a biologically derived component does measurable work" --
+      WITHDRAWN on the same grounds. Its measured result (channel beats deep MLP, 9/10) stands as a
+      measurement; its biological reading does not.
+
+  WHAT IS STILL BIOLOGICAL AND STILL UNTESTED. The twins keep the Blue Brain-derived TREE (branching
+  4, depth 4, per-branch leaves). Whether the TREE matters -- against a deep MLP given the same
+  sine/bump activation -- is the remaining attribution question, and the only one in which a
+  biological ingredient could still be doing work here.

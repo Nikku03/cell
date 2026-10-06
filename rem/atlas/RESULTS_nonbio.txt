@@ -9,7 +9,77 @@ IS THE EDGE BIOLOGICAL? TWO NON-BIOLOGICAL TWINS AT EXACTLY MATCHED SIZE
 =================================================================================================
 B1  THE TWINS MUST BE VALID (BLOCKING)
 =================================================================================================
-  sine tree    gradient 5.55e-08   not odd 2.02e-01   params equal to channel: True
-  bump tree    gradient 1.72e-04   not odd 3.76e-01   params equal to channel: True
+  sine tree    worst rel err 5.55e-08   worst / revised tolerance 0.00   not odd 2.02e-01   params equal: True
+  bump tree    worst rel err 1.72e-04   worst / revised tolerance 0.15   not odd 3.76e-01   params equal: True
+  negative controls -- the gate MUST fail these:
+  broken sine  worst / revised tolerance 1.31e+05   -> caught
+  broken bump  worst / revised tolerance 4.87e+04   -> caught
 
-  B1: FAIL -- a twin is invalid. Nothing reported.
+  B1: PASS
+
+  B2 harness, shallow MLP at k=2: 1.000  -> PASS
+
+=================================================================================================
+FRESH-SEED SWEEP: k = 12, seeds 30-39, n = 1500..4000, budget 30,000
+=================================================================================================
+  mean test accuracy over 10 seeds [min - max]
+        n               channel tree                 sine tree                 bump tree      tanh tree (monotone)
+     1500         0.607 [0.48-0.77]        0.881 [0.55-1.00]        0.877 [0.79-0.94]        0.554 [0.49-0.59]
+     2000         0.722 [0.48-0.93]        0.970 [0.84-1.00]        0.959 [0.91-0.99]        0.603 [0.53-0.68]
+     2500         0.723 [0.49-0.90]        0.994 [0.94-1.00]        0.983 [0.97-0.99]        0.673 [0.61-0.76]
+     3000         0.864 [0.73-0.96]        0.996 [0.97-1.00]        0.989 [0.97-1.00]        0.757 [0.64-0.83]
+     3500         0.935 [0.84-0.99]        1.000 [1.00-1.00]        0.993 [0.99-1.00]        0.841 [0.76-0.89]
+     4000         0.965 [0.91-0.99]        1.000 [1.00-1.00]        0.996 [0.99-1.00]        0.905 [0.75-0.96]
+
+  B4 budget: runs ending at the cap unfitted, and max steps used
+    channel tree            0/60   max steps 1,500
+    sine tree               0/60   max steps 1,000
+    bump tree               0/60   max steps 2,000
+    tanh tree (monotone)    0/60   max steps 2,000
+
+=================================================================================================
+B0  THE ATTRIBUTION, ONE UNIT PER SEED
+=================================================================================================
+    seed           channel tree             sine tree             bump tree  tanh tree (monotone)
+      30                  0.872                 0.999                 0.970                 0.693
+      31                  0.760                 0.986                 0.971                 0.743
+      32                  0.835                 0.998                 0.972                 0.721
+      33                  0.741                 0.988                 0.955                 0.697
+      34                  0.836                 0.987                 0.971                 0.725
+      35                  0.810                 0.907                 0.975                 0.746
+      36                  0.797                 0.919                 0.951                 0.737
+      37                  0.782                 0.987                 0.950                 0.735
+      38                  0.856                 1.000                 0.964                 0.711
+      39                  0.739                 0.964                 0.980                 0.715
+
+  channel tree vs sine tree              channel higher on 0/10   sign p 1.0000   mean diff -0.171   t -10.45
+    -> channel tree IS BEATEN BY the sine tree
+
+  channel tree vs bump tree              channel higher on 0/10   sign p 1.0000   mean diff -0.163   t -10.99
+    -> channel tree IS BEATEN BY the bump tree
+
+  channel tree vs tanh tree (monotone)   channel higher on 10/10   sign p 0.0010   mean diff +0.081   t 4.70
+    -> channel tree BEATS the tanh tree (monotone)
+
+  ATTRIBUTION VERDICT:
+    NOT SPECIFICALLY BIOLOGICAL. At least one generic non-monotone activation of
+    identical size is not beaten by the channel tree, so the edge established earlier
+    belongs to non-monotonicity, not to the biological form.
+
+=================================================================================================
+B3  ARE THE TWINS THEMSELVES HEALTHY? (vs the monotone tanh tree)
+=================================================================================================
+  sine tree    vs monotone tanh tree: higher on 10/10, mean diff +0.251  -> healthy
+  bump tree    vs monotone tanh tree: higher on 10/10, mean diff +0.244  -> healthy
+
+  artifact: outputs/nonbio.json (240 runs)
+
+=================================================================================================
+B5  WHAT THIS IS AND IS NOT
+=================================================================================================
+  1. Two non-biological twins, not every possible activation. If both lose, the conductance
+     form beats THESE TWO; a third generic family could still match it.
+  2. Initial values for the twins' node parameters are a design choice and were not swept.
+  3. One task (12-bit parity over 16 inputs), one tree shape.
+
+  runtime 606s
