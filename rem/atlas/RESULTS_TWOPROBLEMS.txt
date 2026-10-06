@@ -4625,3 +4625,33 @@ LIMITS -- THE FIRST UNSATURATED TEST OF THE BIOLOGICAL NEURON, AND IT SAYS NO AD
   PERFECTLY and score chance on the test set. Only 1 failed to fit. Every architecture can
   memorise; none can generalise parity from ~1,000 examples. The limit is not capacity, it is
   learning a rule from few examples -- exactly the capability ARC found missing at 0/400.
+
+=================================================================================================
+SAMPLEEDGE -- THE FIRST POSITIVE RESULT IN THIS ARC, AND EXACTLY HOW FAR IT REACHES
+=================================================================================================
+  limits.py's exploratory signal, tested predeclared on FIVE FRESH SEEDS (10-14) and a finer grid,
+  with a WEIGHTED tanh tree identical to the channel tree except the node nonlinearity. S1 PASS
+  (gradient 1.71e-08, not odd, parameters within 1.8%); S2 harness PASS.
+        sample limit: channel 3,500   weighted tanh 4,000   deep MLP 4,000   shallow MLP none
+        mean test over grid: channel 0.824+/-0.027  deep MLP 0.739+/-0.047
+                             weighted tanh 0.712+/-0.015  shallow MLP 0.616+/-0.011
+  PREDECLARED S0: REPLICATED (pooled sign p 0.021 vs deep MLP, 4e-07 vs shallow).
+  PREDECLARED S3: CHANNEL DYNAMICS CONTRIBUTE (26/4 over the structurally identical tanh tree).
+
+  THE CONSERVATIVE RE-ANALYSIS THE MODULE ITSELF FLAGGED, CLUSTERING BY SEED:
+        vs weighted tanh tree   5/5 seeds   sign p 0.031   t 8.17    ROBUST
+        vs shallow MLP          5/5 seeds   sign p 0.031   t 18.08   ROBUST
+        vs deep MLP             4/5 seeds   sign p 0.188   t 2.89    NOT ESTABLISHED
+  plus a budget confound: the deep MLP ended 5 of 30 runs at the step cap unfitted.
+
+  WHAT IS ESTABLISHED. With everything else held identical -- leaves, per-node weights, biases,
+  gains, parameter count within 1.8% -- replacing tanh with the gated conductance
+  g * m(v) * (E_rev - v) makes the tree learn 12-bit parity from fewer examples, on every one of
+  five fresh seeds. It fits FASTER (never more than 1,000 steps) and GENERALISES better. That is an
+  inductive-bias difference, and it is the first time in this record that a biological ingredient
+  has been shown to do measurable work in an ablation with everything else matched.
+
+  WHAT IS NOT. That the channel tree beats the best CONVENTIONAL network. Against the deep MLP it
+  wins 4 of 5 seeds and the conservative test does not clear 0.05, with the deep MLP budget-limited
+  on a sixth of its runs. A predeclared decider follows: ten fresh seeds, a budget large enough
+  that the deep MLP is not capped, and per-seed clustering as the PRIMARY criterion this time.
