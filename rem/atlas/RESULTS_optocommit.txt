@@ -1,0 +1,5 @@
+=================================================================================================
+THE BRAIN TARGET: HOW A MOUSE COMMITS TO A DECISION, MEASURED BY OPTOGENETICS
+=================================================================================================
+  O0 files 98/98 at DANDI size; unreadable/incomplete 0; trials 40,341; distractor time not in onset list: 875
+  O0: FAIL. Nothing reported.

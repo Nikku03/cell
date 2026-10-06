@@ -34,6 +34,13 @@ O0  DATA INTEGRITY, BLOCKING. All 98 files present at their DANDI sizes; every f
     in the sample window on a no-sample trial) is kept as its own condition. O0's consistency check
     now applies to standard names. O2 is unchanged: intensity-agnostic, as first written; the
     by-intensity split is reported beside it.
+    SECOND AMENDMENT (after the re-run, commit 3c1f0d4's parent): O0 failed again -- 875 standard
+    trials (2.2%, all 9 mice) carry onsets SHIFTED later relative to the go cue with their spacing
+    intact (e.g. nominal 2.5 + 0.8 s recorded as 4.70 + 3.00 s): the go cue came late. Only onset
+    fields were inspected, no outcomes. The commitment curve is defined by time-to-go, so a trial
+    whose pulses are not at their nominal times (sample 2.5 s on right trials, the distractor at its
+    named time, +/- 0.02 s) is a different condition: COUNTED PER MOUSE AND EXCLUDED. O0 now checks
+    that every kept trial is nominal.
 
 O1  CENSUS. Sessions, mice, task names, trial-type names, distractor times and intensities.
 
@@ -150,6 +157,15 @@ def main():
     man = fetch()
     rows, bad, variants = load(man)
     ok_files = sum(m["ok"] for m in man)
+    def nominal(r):
+        want = sorted(([2.5] if r["side"] == "r" else []) + ([r["dt"]] if r["dt"] is not None else []))
+        got = sorted(r["onsets"])
+        return len(want) == len(got) and all(abs(a - b) <= 0.02 for a, b in zip(want, got))
+
+    shifted = [r for r in rows if not nominal(r)]
+    P_(f"  timing-shifted trials excluded (second amendment): {len(shifted):,} of {len(rows):,}  per mouse "
+       f"{dict(collections.Counter(r['mouse'] for r in shifted))}")
+    rows = [r for r in rows if nominal(r)]
     incons = [r for r in rows if r["dt"] is not None and r["dt"] not in r["onsets"]]
     P_(f"  O0 files {ok_files}/{len(man)} at DANDI size; unreadable/incomplete {len(bad)}; "
        f"trials {len(rows):,}; distractor time not in onset list: {len(incons)}")
