@@ -4858,3 +4858,38 @@ OPTOUNITS + TWOGATE -- REAL NEURONS UNDER GRADED OPTOGENETIC DRIVE; THE DATA DOE
   NET FOR THE WEAK PARTS. Untying the gates (the biologically faithful single-node repair) does
   nothing measurable. What helps remains: generic bend nodes (+0.15 to +0.17, decided), leaf L1
   (+0.03, screen), the matmul leaf contraction (~30% per step, measured).
+
+=================================================================================================
+MEMCOMMIT -- MEMORY ADDED; THE BIOLOGICAL NODE IS THE ONE THAT COMMITS LIKE THE MOUSE
+=================================================================================================
+  memcommit.py (committed 40c4b40 before running): 32-unit recurrent rate networks with tanh,
+  channel or bump nodes, run on the mouse's exact trial timeline; probed with the mouse's distractor
+  pulses. H0 BPTT gradients PASS (broken copies caught); H1 harness PASS (committing latch 10/10,
+  pure latch 3/10). All 60 networks learnt.
+
+  P(lick right) on no-sample trials     none  -3.8F  -2.5M  -1.6F  -0.8F   commitment index
+        MOUSE                           0.19   0.61   0.34   0.58   0.32   +0.256
+    A zero-shot (never saw a distractor)
+        tanh                            0.01   0.49   0.19   0.57   0.25   +0.329  7/10  NO COMMITMENT
+        channel                         0.00   1.00   0.12   1.00   0.64   +0.364  8/10  NO COMMITMENT
+        bump                            0.00   0.40   0.10   0.26   0.04   +0.228  4/10  NO COMMITMENT
+    B mouse trial mix and labels
+        tanh                            0.00   0.11   0.02   0.16   0.00   +0.155  7/10  NO COMMITMENT
+        channel                         0.00   0.60   0.01   0.54   0.17   +0.364 10/10  COMMITS
+        bump                            0.00   0.00   0.00   0.08   0.00   +0.081  4/10  NO COMMITMENT
+  C2 regime B: CHANNEL CLOSER TO THE MOUSE than bump on 10/10 seeds (MAE 0.207 vs 0.245); channel
+  vs tanh 8/10, not clear. Regime A: no clear differences.
+  The channel network's fine curve (B): fooled 0.59 before the sample, 0.93 at it, then falling
+  0.68 / 0.54 / 0.28 / 0.17 / 0.05 through the delay -- the mouse's shape. Its pre-sample and
+  early-delay fooling (0.60, 0.54) sit beside the mouse's Full-pulse values (0.61, 0.58).
+
+  RECORDED AFTER THE RUN: regime B was NOT skill-matched -- networks were at 0.86-1.00 plain-trial
+  accuracy at the first 50-step check (mice 0.82), and every verdict is about networks after 50-150
+  steps. The networks also ignore weak (Mini) pulses the mice partly obey (-2.5 Mini: 0.01 vs 0.34).
+
+  THE READING, with that caveat. The two node types split along the line the record keeps finding.
+  The bump node -- best at parity -- builds the BETTER MEMORY: trained like the mouse, it ignores
+  almost every distractor. The gated-conductance node -- worst at parity -- builds the MORE
+  MOUSE-LIKE memory: fooled early, resistant late, committing on 10/10 seeds and closest to the
+  mouse on 10/10. Biological form predicts biological behaviour here; it does not predict better
+  computation. For a reasoning engine that is a design choice, not a free win.
