@@ -34,7 +34,7 @@ O0  DATA INTEGRITY, BLOCKING. All 98 files present at their DANDI sizes; every f
     in the sample window on a no-sample trial) is kept as its own condition. O0's consistency check
     now applies to standard names. O2 is unchanged: intensity-agnostic, as first written; the
     by-intensity split is reported beside it.
-    SECOND AMENDMENT (after the re-run, commit 3c1f0d4's parent): O0 failed again -- 875 standard
+    SECOND AMENDMENT (after the re-run of the parser fix): O0 failed again -- 875 standard
     trials (2.2%, all 9 mice) carry onsets SHIFTED later relative to the go cue with their spacing
     intact (e.g. nominal 2.5 + 0.8 s recorded as 4.70 + 3.00 s): the go cue came late. Only onset
     fields were inspected, no outcomes. The commitment curve is defined by time-to-go, so a trial
