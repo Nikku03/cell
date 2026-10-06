@@ -413,5 +413,44 @@ def main():
     open(OUT, "w").write("\n".join(out) + "\n")
 
 
+def diagnose():
+    """POST-RUN (added after seeing the plateau near 0.90): retrain C2 on seeds 10 and 11 exactly as
+    in the run and split accuracy at 16 hops by the length of the cycle containing the start item."""
+    out = ["", RULE, "POST-RUN DIAGNOSTIC: WHERE DOES THE FIXED COMBINED NETWORK FAIL? (C2, seeds 10-11, 16 hops)", RULE]
+    for seed in (10, 11):
+        r_net = {}
+        V = VERSIONS["P1"]; W = widths(V["m"], V["fmt"])
+        net = make("combined", np.random.default_rng(seed), V["m"], V["fmt"], W)
+        rng = np.random.default_rng(700 + seed); st = {}
+        for _ in range(STEPS):
+            k = int(rng.choice(TRAIN_K)); X, Y = batch(rng, BS, k, V["m"], V["fmt"])
+            net.run(X, NOISE, rng); dl, _ = step_losses(net, Y, True); adam_clip(net.ps, net.backward(dl), st, LR)
+        X, Y = batch(np.random.default_rng(10_000 + 97 * seed + 16 + 6000), 4000, 16, 6, "every")
+        perm = X[:, 0, :36].reshape(-1, 6, 6).argmax(2); s0 = X[:, 0, 36:].argmax(1)
+        cyc = np.zeros(len(s0), int)
+        for i in range(len(s0)):
+            c, L = perm[i, s0[i]], 1
+            while c != s0[i]:
+                c, L = perm[i, c], L + 1
+            cyc[i] = L
+        ok = net_predict(net)(X) == Y[:, -1]
+        out.append(f"  seed {seed}: overall {ok.mean():.3f}   by cycle length of the start item: " + "   ".join(
+            f"{L}: {ok[cyc == L].mean():.3f} (n {int((cyc == L).sum())})" for L in range(1, 7) if (cyc == L).any()))
+        acc1 = []
+        for kk in (1, 2, 3, 4, 8, 16):
+            Xk, Yk = batch(np.random.default_rng(55 + kk), 2000, kk, 6, "every")
+            pk = Xk[:, 0, :36].reshape(-1, 6, 6).argmax(2); sk = Xk[:, 0, 36:].argmax(1)
+            fixed = pk[np.arange(len(sk)), sk] == sk
+            okk = net_predict(net)(Xk) == Yk[:, -1]
+            acc1.append(f"k={kk}: fixed-point starts {okk[fixed].mean():.3f}, others {okk[~fixed].mean():.3f}")
+        out.append("      " + "  |  ".join(acc1))
+    print("\n".join(out))
+    open(OUT, "a").write("\n".join(out) + "\n")
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--diagnose" in sys.argv:
+        diagnose()
+    else:
+        main()
