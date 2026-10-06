@@ -1,0 +1,47 @@
+=================================================================================================
+THE CELL MEMORY BANK ON THE REASONING ENGINE, SCORED ON K562 PERTURB-SEQ
+=================================================================================================
+  facts in memory 71,052 (regulatory 54,128, signalling 16,924) from 4,320 sources
+  Perturb-seq: 1,971 knockdowns x 8,563 genes; knocked-down gene measured in 1,791
+  E0 CRISPRi visible: median own-gene z -2.84 -> PASS
+  eligible knockdowns 330 -> TRAIN 168, TEST 162
+  E1 new bank journal replays exactly (5-regulator knockdown, 7,524 genes set, 573 ties): PASS
+
+=================================================================================================
+V1/V2  THE OLD BANK (dyncell rule) ON ALL ELIGIBLE KNOCKDOWNS
+=================================================================================================
+  hop 1: genes given a direction 3,569, movers 57 (precision 0.016 vs mean base rate 0.005); enriched in 18, depleted in 55 knockdowns, p 1.69e-05 -> WHICH GENES MOVE: ANTI-PREDICTS
+  hop 2: genes given a direction 89,947, movers 818 (precision 0.009 vs mean base rate 0.005); enriched in 77, depleted in 135 knockdowns, p 8.24e-05 -> WHICH GENES MOVE: ANTI-PREDICTS
+  hop 3: genes given a direction 307,454, movers 1,777 (precision 0.006 vs mean base rate 0.005); enriched in 118, depleted in 136 knockdowns, p 0.286 -> WHICH GENES MOVE: NO SIGNAL
+  V2 direction accuracy, real signs 0.501 vs shuffled signs 0.427 over 87 knockdowns; real better in 49, worse in 36, p 0.193 -> NO DIRECTION SIGNAL
+
+=================================================================================================
+LEARNED ATTENTION, fitted on TRAIN knockdowns only
+=================================================================================================
+  training facts 630,518 (movers 4,754); direction-labelled 4,754 (right 0.487)
+  feature              relevance R     reliability G
+  bias                     -5.074         +0.009
+  signalling layer         -0.255         +0.064
+  positive sign            -0.006         -0.030
+  log src out-degree       -0.096         +0.068
+  log tgt in-degree        +0.074         +0.131
+  log tgt protein          +0.515         -0.064
+  hop                      -0.183         +0.126
+  facts whose learnt hop-1 vote weight is NEGATIVE (the data says they usually point the wrong way): 1.000
+  data self-revision: facts judged on TRAIN 3,165; downgraded (contradicted >= 2 more than confirmed) 232
+
+=================================================================================================
+V3-V5  ON THE 162 TEST KNOCKDOWNS
+=================================================================================================
+  OLD bank (unanimity, no data)      direction accuracy 0.514 (over 40 knockdowns)   movers given a direction 1,151   AUROC 0.500
+  NEW engine, symbolic votes         direction accuracy 0.509 (over 43 knockdowns)   movers given a direction 1,545   AUROC 0.518
+  NEW engine, learnt attention       direction accuracy 0.490 (over 46 knockdowns)   movers given a direction 1,725   AUROC 0.631
+  NEW engine, data-revised facts     direction accuracy 0.543 (over 40 knockdowns)   movers given a direction 1,337   AUROC 0.542
+  V3 new vs old, direction accuracy              better 15, worse 15 of 40, mean +0.001, p 1 -> NO DIFFERENCE
+  V3 new vs old, movers given a direction        better 42, worse 0 of 162, mean +2.432, p 4.55e-13 -> BETTER
+  V4 learnt vs symbolic, direction accuracy      better 20, worse 21 of 43, mean -0.018, p 1 -> NO DIFFERENCE
+  V4 learnt vs symbolic, AUROC                   better 56, worse 19 of 75, mean +0.111, p 2.24e-05 -> BETTER
+  V5 revised vs unrevised, accuracy hops 2-3     better 14, worse 13 of 38, mean -0.010, p 1 -> NO DIFFERENCE
+
+  bank written to memory_bank/cell_v2/ ; artifact outputs/cellbank2.json ; runtime 78s
+  V6: one cell line, CRISPRi, steady state; a right sign through a wrong path counts as right.

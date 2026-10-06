@@ -429,5 +429,65 @@ def by_src_lookup(by_src, rows, srcs, t):
     return out
 
 
+def posthoc():
+    """POST-RUN CHECKS (added after reading the results; committed before running them).
+    P1 the per-knockdown sign test of V1 is biased toward 'depleted' when a knockdown expects < 1
+       mover (zero found => enrichment - 1 < 0). Fair test: pooled observed movers vs the
+       knockdown-specific expectation sum_k n_k * base_k, one-sided binomial-normal z, per hop.
+    P2 is the learnt attention's AUROC gain network reasoning, or an expression prior? Rank the SAME
+       reached genes (TEST knockdowns) by target protein abundance alone.
+    P3 direction accuracy by layer: signalling facts (97% evidence-signed) vs regulatory, hop 1."""
+    import pyarrow.parquet as pq
+    out = ["", RULE, "POST-RUN CHECKS (see posthoc docstring)", RULE]
+    D = json.load(gzip.open(dc.ENCY)); names = [r["name"] for r in D["genes"]]
+    protein = {names[int(k)]: v for k, v in D["ppm"].items() if k.isdigit()}
+    dbd_dead = {}
+    ij = R("outputs", "isoform_edge_bounds.json")
+    if os.path.exists(ij):
+        for g, v in json.load(open(ij)).items():
+            dbd_dead[g] = len(v.get("dbd_disrupted", [])) / max(v.get("n_isoforms") or 1, 1)
+    rows, by_src, outdeg, indeg = facts_table(D, names)
+    tab = pq.read_table(PSEQ).to_pandas()
+    kos = list(tab.index); gcols = [c for c in tab.columns if c != "__index_level_0__"]
+    Z = tab[gcols].values.astype(float); gidx = {g: j for j, g in enumerate(gcols)}; kidx = {k: i for i, k in enumerate(kos)}
+    art = json.load(open(ART)); test = art["test"]; elig = art["train"] + art["test"]
+    mk = lambda: dc.Cell(names, protein, {}, dbd_dead, {})
+    obs = collections.Counter(); exp_ = collections.Counter(); var = collections.Counter()
+    au_net, au_prot = [], []
+    lay = {0: [0, 0], 1: [0, 0]}
+    for k in elig:
+        C = mk(); pr = old_bank(C, rows, by_src, {k: -1})
+        sc = score(pr, Z[kidx[k]], gidx, k)
+        for h in range(1, HOPS + 1):
+            obs[h] += sc[h]["movers"]; exp_[h] += sc[h]["n"] * sc[h]["base"]; var[h] += sc[h]["n"] * sc[h]["base"] * (1 - sc[h]["base"])
+        C2 = mk(); pn = new_engine(C2, rows, by_src, {k: -1})
+        zk = Z[kidx[k]]
+        for t, vs in C2.voters.items():
+            if t == k or t not in gidx or abs(zk[gidx[t]]) < ZMOV or pn[t][1] != 1:
+                continue
+            for i in vs:
+                lay[rows[i][3]][0] += int(np.sign(zk[gidx[t]]) == -1 * rows[i][2]); lay[rows[i][3]][1] += 1
+        if k in test:
+            prot_pred = {g: (d, hop, protein.get(g, 0.0)) for g, (d, hop, c) in pn.items()}
+            a = auroc(prot_pred, zk, gidx, k)
+            if a is not None:
+                au_prot.append(a)
+    out.append("  P1 fair enrichment, OLD bank, pooled over all eligible knockdowns:")
+    for h in range(1, HOPS + 1):
+        zz = (obs[h] - exp_[h]) / math.sqrt(max(var[h], 1e-9))
+        out.append(f"     hop {h}: observed movers {obs[h]:,} vs expected {exp_[h]:,.1f} -> enrichment {obs[h] / max(exp_[h], 1e-9):.2f}x, z {zz:+.1f}")
+    out.append(f"  P2 AUROC on TEST knockdowns ranking reached genes by target PROTEIN ABUNDANCE ALONE: {np.mean(au_prot):.3f} "
+               f"(n {len(au_prot)}); learnt attention {art['results']['test_learned']['auroc']:.3f}; symbolic {art['results']['test_new']['auroc']:.3f}")
+    for l, nm in ((1, "signalling"), (0, "regulatory")):
+        h_, n_ = lay[l]
+        out.append(f"  P3 hop-1 direction accuracy, {nm} facts: {h_ / max(n_, 1):.3f} over {n_:,} fact-votes on movers")
+    print("\n".join(out))
+    open(OUT, "a").write("\n".join(out) + "\n")
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--posthoc" in sys.argv:
+        posthoc()
+    else:
+        main()
