@@ -1,0 +1,107 @@
+=================================================================================================
+PART A -- THE CHANNEL TREE, INSTRUMENTED WHILE IT LEARNS
+=================================================================================================
+  A0 instrumentation leaves training untouched (steps, train, test identical on 10/10): PASS
+
+  A1/A2  FIT VERSUS GENERALISE
+    n = 1500
+      seed 40  stop   500  train 1.000  test 0.491  best-seen 0.506   [step:train/test] 100:0.83/0.51  300:0.99/0.50  500:1.00/0.49
+      seed 41  stop  1000  train 1.000  test 0.500  best-seen 0.508   [step:train/test] 100:0.84/0.50  300:1.00/0.49  500:0.99/0.50  700:1.00/0.50  900:1.00/0.50
+      seed 42  stop   500  train 1.000  test 0.605  best-seen 0.605   [step:train/test] 100:0.85/0.48  300:1.00/0.57  500:1.00/0.61
+      seed 43  stop   500  train 1.000  test 0.567  best-seen 0.567   [step:train/test] 100:0.79/0.50  300:0.98/0.55  500:1.00/0.57
+      seed 44  stop  1000  train 1.000  test 0.543  best-seen 0.543   [step:train/test] 100:0.82/0.50  300:0.99/0.48  500:0.98/0.49  700:1.00/0.54  900:1.00/0.54
+    n = 4000
+      seed 40  stop  1500  train 1.000  test 0.910  best-seen 0.910   [step:train/test] 100:0.59/0.50  300:0.85/0.60  500:0.94/0.68  700:0.99/0.79  900:1.00/0.82  1100:0.99/0.88  1300:1.00/0.91  1500:1.00/0.91
+      seed 41  stop  1000  train 1.000  test 0.965  best-seen 0.965   [step:train/test] 100:0.60/0.49  300:0.91/0.77  500:1.00/0.94  700:1.00/0.96  900:1.00/0.96
+      seed 42  stop  1000  train 1.000  test 0.982  best-seen 0.984   [step:train/test] 100:0.60/0.50  300:0.94/0.85  500:1.00/0.98  700:1.00/0.98  900:1.00/0.98
+      seed 43  stop  1000  train 1.000  test 0.965  best-seen 0.965   [step:train/test] 100:0.59/0.50  300:0.98/0.91  500:1.00/0.95  700:1.00/0.96  900:1.00/0.97
+      seed 44  stop  1000  train 1.000  test 0.971  best-seen 0.971   [step:train/test] 100:0.60/0.49  300:0.94/0.81  500:0.99/0.94  700:1.00/0.96  900:1.00/0.97
+    A1 seeds memorising (train 1.0, test < 0.70): n=1500: 5/5, n=4000: 0/5  -> FLAG
+    A2 best-seen minus final test: n=1500: +0.005, n=4000: +0.001  -> ok
+
+  A3  WHICH INPUTS THE LEAVES LISTEN TO (12 relevant, 4 irrelevant)
+    n = 1500: leaf mass on relevant inputs 0.752 at init -> 0.756 at stop   |   flip sensitivity: relevant bits 0.367, irrelevant bits 0.313
+    n = 4000: leaf mass on relevant inputs 0.752 at init -> 0.760 at stop   |   flip sensitivity: relevant bits 0.928, irrelevant bits 0.040
+    A3a -> FLAG   A3b -> FLAG
+
+  A4  GRADIENT FLOW, mean |g|/|p| per group (all 10 runs)
+    leaf W      1.69e-03
+    W L1        2.12e-03
+    W L2        5.12e-03
+    W L3        8.44e-03
+    W L4        1.51e-02
+    theta L1    1.19e+06
+    theta L2    1.53e+06
+    theta L3    1.56e+06
+    theta L4    1.83e+06
+    g_dep L1    2.85e-03
+    g_dep L2    9.81e-03
+    g_dep L3    2.16e-02
+    g_dep L4    2.63e-02
+    g_hyp L1    5.52e-03
+    g_hyp L2    1.68e-02
+    g_hyp L3    3.78e-02
+    g_hyp L4    6.32e-02
+    readout w   2.96e-02
+    readout b   3.62e+07
+    A4 groups below 1/100 of the largest: ['leaf W', 'W L1', 'W L2', 'W L3', 'W L4', 'g_dep L1', 'g_dep L2', 'g_dep L3', 'g_dep L4', 'g_hyp L1', 'g_hyp L2', 'g_hyp L3', 'g_hyp L4', 'readout w']  -> FLAG
+
+  A5/A6  CHANNELS AND THE BEND, per level (1 = just above the leaves, 4 = the soma)
+    level   moved g_dep  g_hyp  theta   saturated   nodes using bend (init -> stop)   falling share
+    L1            0.306  0.206  0.328       0.213            0.392 -> 0.775           0.314
+    L2            0.237  0.193  0.447       0.275            0.111 -> 0.702           0.314
+    L3            0.191  0.218  0.555       0.310            0.013 -> 0.541           0.229
+    L4            0.187  0.261  0.669       0.411            0.000 -> 0.438           0.138
+    learned values at stop, mean over runs: L1 g_dep 0.74 g_hyp 0.58 theta +0.03   L2 g_dep 0.66 g_hyp 0.52 theta +0.31   L3 g_dep 0.61 g_hyp 0.40 theta +0.49   L4 g_dep 0.61 g_hyp 0.27 theta +0.61
+    A5 unused -> ok   saturated -> ok   A6 -> ok
+
+  A7  SUBUNIT USE (8 subunits)
+    n = 1500: effective subunits 5.74 at init -> 7.64 at stop   (largest share 0.20)
+    n = 4000: effective subunits 5.77 at init -> 4.93 at stop   (largest share 0.44)
+    A7 -> ok
+
+=================================================================================================
+PART B -- REPAIR SCREEN (seeds 40-44, n = 1500/2000/2500)
+=================================================================================================
+    seed            unmodified tree        leaf sparsity (L1)           validation stop           frozen channels  shallower tree (depth 3)
+      40                      0.636                     0.686                     0.714                     0.578                     0.706
+      41                      0.651                     0.665                     0.502                     0.535                     0.714
+      42                      0.788                     0.874                     0.629                     0.560                     0.627
+      43                      0.770                     0.741                     0.688                     0.576                     0.760
+      44                      0.704                     0.738                     0.606                     0.585                     0.495
+    mean                      0.710                     0.741                     0.628                     0.566                     0.660
+    params                   37,537                    37,537                    37,537                    37,537                     9,377  
+    capped                        0/15                       0/15                       0/15                       0/15                       0/15
+  R1 leaf sparsity (L1)         higher on 4/5, lower on 1/5, mean +0.031  -> PROMISING
+  R2 validation stop            higher on 1/5, lower on 4/5, mean -0.082  -> HARMFUL
+  R3 frozen channels            higher on 0/5, lower on 5/5, mean -0.143  -> HARMFUL, NOT a safe simplification
+  R4 shallower tree (depth 3)   higher on 2/5, lower on 3/5, mean -0.050  -> NO CLEAR EFFECT, NOT a safe simplification
+
+=================================================================================================
+A8  COST PER TRAINING STEP (batch 128, single process)
+=================================================================================================
+    channel  11.24 ms/step   forward 5.10  backward 5.59  adam 0.55
+    mlpdeep  1.30 ms/step   forward 0.38  backward 0.56  adam 0.37
+    channel / deep MLP: 8.6x  -> FLAG
+    leaf contraction, same arithmetic two ways (max disagreement 1.8e-15):
+      leaf fwd einsum    1.771 ms
+      leaf fwd matmul    0.283 ms
+      leaf grad einsum   1.945 ms
+      leaf grad matmul   0.257 ms
+    matmul speed-up: forward 6.3x, gradient 7.6x
+
+=================================================================================================
+FLAGS THAT FIRED
+=================================================================================================
+    FLAG  A1 memorisation
+     ok   A2 stopping rule
+    FLAG  A3a leaf mass off-target
+    FLAG  A3b irrelevant-bit sensitivity
+    FLAG  A4 vanishing gradient
+     ok   A5 unused channels
+     ok   A5 saturated gates
+     ok   A6 bend not in use
+     ok   A7 redundant subunits
+    FLAG  A8 cost
+
+  artifact: outputs/netprobe.json   runtime 240s

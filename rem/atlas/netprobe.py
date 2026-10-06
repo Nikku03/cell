@@ -415,5 +415,57 @@ def main():
     open(OUT, "w").write("\n".join(out) + "\n")
 
 
+def a4_job(args):
+    """POST-RUN RECHECK OF A4 (added after the run; the original instrument divided by |p| of groups
+    initialised at exactly zero -- theta and the readout bias -- so their ratio exploded and every
+    other group fell below 1/100 of it). Here: RMS gradient per element, absolute, and |g|/|p|
+    averaged only from step 100 on, when no group is still at zero. Same training, same stopping."""
+    seed, ntr = args
+    Xtr, ytr, Xte, yte = lim.data(K, seed, ntr)
+    m = lim.build("channel", np.random.default_rng(200 + seed))
+    rng = np.random.default_rng(300 + seed)
+    st, steps, t = {}, 0, 0
+    rms = np.zeros(len(m.ps)); rel = np.zeros(len(m.ps)); nr = 0
+    while steps < nb.MAXSTEPS:
+        for _ in range(lim.CHECK):
+            i = rng.integers(0, len(Xtr), lim.BS)
+            z = m.forward(Xtr[i])
+            gs = m.backward((1 / (1 + np.exp(-z)) - ytr[i]) / lim.BS)
+            t += 1
+            rms += [float(np.sqrt((g ** 2).mean())) for g in gs]
+            if t > 100:
+                rel += [np.linalg.norm(g) / np.linalg.norm(p) for p, g in zip(m.ps, gs)]
+                nr += 1
+            ch.adam(m.ps, gs, st, lim.LR)
+        steps += lim.CHECK
+        if lim.acc(m, Xtr, ytr) == 1.0:
+            break
+    return dict(seed=seed, ntr=ntr, steps=steps, groups=groups(m),
+                rms=(rms / t).tolist(), rel=(rel / max(nr, 1)).tolist())
+
+
+def a4_recheck():
+    pool = mp.get_context("fork").Pool(4)
+    rs = pool.map(a4_job, [(s, n) for n in N_PROBE for s in SEEDS]); pool.close()
+    names = rs[0]["groups"]
+    rms = np.mean([r["rms"] for r in rs], 0); rel = np.mean([r["rel"] for r in rs], 0)
+    out = ["", RULE, "POST-RUN RECHECK OF A4 (added after the run; see a4_job's docstring)", RULE,
+           "  The original A4 flag is an INSTRUMENT DEFECT: theta and the readout bias start at exactly",
+           "  zero, so |g|/|p| for them was ~1e6-1e7 and every other group fell under 1/100 of it.",
+           "    group        RMS grad/element   |g|/|p| from step 100"]
+    for g, a, b in zip(names, rms, rel):
+        out.append(f"    {g:<11}  {a:>16.2e}   {b:>20.2e}")
+    top = rel.max()
+    weak = [g for g, b in zip(names, rel) if b < top / 100]
+    out.append(f"  corrected A4, same 1/100 criterion on |g|/|p| from step 100: below it -> {weak if weak else 'none'}")
+    out.append(f"  soma-to-leaf attenuation of |g|/|p|, W L4 / leaf W: {rel[names.index('W L4')] / rel[names.index('leaf W')]:.1f}x")
+    print("\n".join(out))
+    open(OUT, "a").write("\n".join(out) + "\n")
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--a4-recheck" in sys.argv:
+        a4_recheck()
+    else:
+        main()
