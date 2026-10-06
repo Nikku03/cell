@@ -24,6 +24,17 @@ O0  DATA INTEGRITY, BLOCKING. All 98 files present at their DANDI sizes; every f
     table has outcome, trial_instruction, trial_type_name, photostim_onset, early_lick. Every
     distractor time parsed from trial_type_name must appear in that trial's photostim_onset list.
 
+    AMENDMENT AFTER THE FIRST RUN (commit f3e48c8), RECORDED. O0 FAILED: 59 of 98 files raised in MY
+    name parser ('-2.50.75' from names like 'r_-2.5Mini(FullX0.75)'), and 402 parsed distractor times
+    were missing from their onset lists. The full name vocabulary was then listed (names and counts
+    only, no outcomes). Standard names are  side  or  side_-{t}{Full|Mini}  (Full 2.25 mW, Mini
+    0.75 mW). Everything else -- reduced or doubled SAMPLE intensities '(FullX0.75)', '(FullX0.5)',
+    'FullX0.5', 'FullX2' (the last at an anomalous onset 4.97 s), and 'r_NoAudCue' -- is a variant
+    of the sample or cue, not a distractor, and is COUNTED AND EXCLUDED. 'l_-2.5Mini' (a weak pulse
+    in the sample window on a no-sample trial) is kept as its own condition. O0's consistency check
+    now applies to standard names. O2 is unchanged: intensity-agnostic, as first written; the
+    by-intensity split is reported beside it.
+
 O1  CENSUS. Sessions, mice, task names, trial-type names, distractor times and intensities.
 
     EXCLUSIONS, fixed now: outcome 'ignore' (no response); any early lick. Left-instruction trials:
@@ -50,6 +61,7 @@ from __future__ import annotations
 import collections
 import json
 import os
+import re
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -83,20 +95,22 @@ def fetch():
     return man
 
 
+STD = re.compile(r"^(l|r)(?:_-(\d+\.\d+)(Full|Mini))?$")
+
+
 def parse_type(name):
-    """'l' / 'r' -> (side, None); 'l_-1.6Full' -> (side, 1.6, 'Full')."""
-    side = name.split("_")[0]
-    if "_" not in name:
-        return side, None, None
-    rest = name.split("_", 1)[1]
-    num = "".join(ch for ch in rest if ch in "-.0123456789")
-    return side, round(abs(float(num)), 2), rest[len(num):]
+    """Standard names only: 'l' -> ('l', None, None); 'l_-1.6Full' -> ('l', 1.6, 'Full').
+    Anything else (sample/cue variants) -> None."""
+    m = STD.match(name)
+    if not m:
+        return None
+    return m.group(1), (round(float(m.group(2)), 2) if m.group(2) else None), m.group(3)
 
 
 def load(man):
     import h5py
     dec = lambda a: [x.decode() if isinstance(x, bytes) else str(x) for x in a[()]]
-    rows, bad = [], []
+    rows, bad, variants = [], [], collections.Counter()
     for m in man:
         fn = os.path.join(CACHE, m["path"].replace("/", "__"))
         try:
@@ -109,7 +123,11 @@ def load(man):
             task = dec(t["task"]) if "task" in t else ["?"] * len(cols["outcome"])
             mouse = m["path"].split("/")[0]
             for i in range(len(cols["outcome"])):
-                side, dt, inten = parse_type(cols["trial_type_name"][i])
+                pt = parse_type(cols["trial_type_name"][i])
+                if pt is None:
+                    variants[cols["trial_type_name"][i]] += 1
+                    continue
+                side, dt, inten = pt
                 onsets = [round(float(x), 2) for x in cols["photostim_onset"][i].split(",")
                           if x.strip() not in ("N/A", "", "nan", "None")]
                 rows.append(dict(mouse=mouse, session=m["path"], task=task[i],
@@ -119,7 +137,7 @@ def load(man):
             f.close()
         except Exception as e:
             bad.append((m["path"], repr(e)))
-    return rows, bad
+    return rows, bad, variants
 
 
 def main():
@@ -130,7 +148,7 @@ def main():
 
     P_(RULE); P_("THE BRAIN TARGET: HOW A MOUSE COMMITS TO A DECISION, MEASURED BY OPTOGENETICS"); P_(RULE)
     man = fetch()
-    rows, bad = load(man)
+    rows, bad, variants = load(man)
     ok_files = sum(m["ok"] for m in man)
     incons = [r for r in rows if r["dt"] is not None and r["dt"] not in r["onsets"]]
     P_(f"  O0 files {ok_files}/{len(man)} at DANDI size; unreadable/incomplete {len(bad)}; "
@@ -146,6 +164,7 @@ def main():
     P_(f"    mice {len(mice)}, sessions {len({r['session'] for r in rows})}")
     P_(f"    tasks {dict(collections.Counter(r['task'] for r in rows))}")
     P_(f"    trial types {dict(collections.Counter(r['type'] for r in rows).most_common())}")
+    P_(f"    sample/cue VARIANTS excluded (counted): {dict(variants)}  total {sum(variants.values()):,}")
     P_(f"    outcomes {dict(collections.Counter(r['outcome'] for r in rows))}   early licks "
        f"{sum(r['early'] != 'no early' for r in rows)}")
     keep = [r for r in rows if r["outcome"] in ("hit", "miss") and r["early"] == "no early"
@@ -154,6 +173,7 @@ def main():
         r["right"] = (r["outcome"] == "miss") if r["instr"] == "left" else (r["outcome"] == "hit")
     P_(f"    kept after predeclared exclusions: {len(keep):,}")
     times = sorted({r["dt"] for r in keep if r["dt"] is not None}, reverse=True)
+    sub_conds = sorted({(r["dt"], r["inten"]) for r in keep if r["dt"] is not None}, key=lambda x: (-x[0], x[1]))
     intens = collections.Counter(r["inten"] for r in keep if r["dt"] is not None)
     P_(f"    distractor times (s before go cue) {times}; intensities {dict(intens)}")
 
@@ -200,6 +220,12 @@ def main():
             curve[f"{instr}|{lab}"] = dict(pooled=pr, n=n, mouse_mean=float(np.mean(mm)) if mm else None,
                                            mice=len(mm), per_mouse={mo: pm[(mo, instr, t)] for mo in mice})
         P_(f"    {lab:<10} {cells[0]:<42} {cells[1]}")
+    P_("\n  BY INTENSITY, pooled P(lick right) [n]:   no-sample trials | sample trials")
+    for (t, it) in sub_conds:
+        a = p_right([r for r in keep if r["instr"] == "left" and r["dt"] == t and r["inten"] == it])
+        b = p_right([r for r in keep if r["instr"] == "right" and r["dt"] == t and r["inten"] == it])
+        curve[f"by_intensity|-{t:.1f} s|{it}"] = dict(left=a, right=b)
+        P_(f"    -{t:.1f} s {it:<5}   {a[0]:.3f} [{a[1]:>5}]   |   {b[0]:.3f} [{b[1]:>5}]")
     P_("\n  FOOLING(t) on no-sample trials = P(right | distractor t) - P(right | none), per mouse:")
     P_("    mouse        " + "".join(f"{'-' + format(t, '.1f') + ' s':>10}" for t in times))
     fool = {}
