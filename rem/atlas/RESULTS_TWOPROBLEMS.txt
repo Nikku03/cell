@@ -5026,3 +5026,46 @@ CHAINSNAP -- A WRITTEN-DOWN POINTER MAKES CHAINS EXACT; ON 12 ITEMS ONLY THE TRE
   NET. Exact long chains: achieved, by a designed discrete scratchpad, and not unique to our network.
   The combined tree's lasting advantage is on the harder 12-item version, where it is the only model
   that learns to chain at all. Still open: facts shown once, and exactness at 12 items.
+
+=================================================================================================
+TRANSVS -- OUR CHAIN NETWORK vs TRANSFORMERS: SAME QUESTIONS, PLUS THE PUBLISHED RECORD
+=================================================================================================
+  transvs.py (committed 84587fa before running; a 300-step timing preview on P1 seed 10 disclosed
+  there). Decoder-only NoPE transformers sized to ours (35.1k vs our 32.6k; 78.4k vs 76.6k), same
+  3,000-step budget (direct also at 9,000 on P1). T0 same questions PASS; T1 harness PASS. The run
+  crashed AFTER printing, writing its JSON; RESULTS_transvs.txt is the printed record (noted there).
+
+  WITHOUT A SCRATCHPAD (6 items)    3      4      8     16     32     64
+    transformer direct (3k)       0.697  0.308  0.200  0.220  0.180  0.206   learnt 5/10
+    transformer direct (9k)       0.990  0.242  0.194  0.179  0.142  0.184   learnt 10/10
+    OUR combined, no snap         0.999  0.996  0.950  0.904  0.882    -     learnt 10/10
+    T3 no verdict by rule (transformer learnt 5/10 at the matched budget). Given 3x the budget it
+    learns the trained depths and is at chance one hop beyond them; ours carries the step to 32.
+
+  WITH A SCRATCHPAD                 4      8     16     32     64   exact
+    6 items  transformer + CoT    1.000  0.993  0.921  0.752  0.554   0/10
+             OUR combined + snap  0.995  0.988  0.990  0.989  0.991   9/10 EXACT
+             T3 ours higher 8/10, transformer 1/10 (mean +0.067 over 4-32) -> NO DIFFERENCE by the
+             9/10 rule; exactness 9/10 vs 0/10; at 64 hops 0.99 vs 0.55.
+    12 items transformer + CoT    1.000  1.000  1.000    -      -    10/10 EXACT
+             OUR combined + snap  0.948  0.907  0.892    -      -     0/10
+             T3 TRANSFORMER BETTER, 10/10 seeds (mean -0.086 for us).
+    facts once (6 items): transformer + CoT EXACT 10/10 (the facts stay in its context); ours 0/10
+             learnt. Not the same memory problem: the transformer never has to hold the facts.
+
+  READING. The transformer's CoT fails exactly where its SEQUENCE grows past training: 6-item chains
+  at 64 hops are 70 tokens against ~9 trained, and it fades (0.92 -> 0.75 -> 0.55); 12-item chains to
+  16 hops stay within ~2x and it is perfect. Our recurrent network has no length to extrapolate --
+  one step repeated -- and with the snap it is flat to 64 hops. Where facts must be looked up from a
+  bigger table (12 items) or kept from one showing, the transformer's attention over its context
+  wins outright. Recurrence buys depth; attention buys lookup.
+
+  PUBLISHED RECORD (literature sweep by a research subagent; Deletang Table 2 re-checked here from
+  the paper PDF): transformers fail length generalisation where RNN/LSTM succeed -- Deletang et al.
+  ICLR 2023 (train <= 40, test 41-500): parity 52.0 vs RNN 100.0 and LSTM 100.0, cycle navigation 61.9
+  vs 100/100, modular arithmetic (simple) 24.2 vs 100/100; more layers did not help (their B.6).
+  Sanford et al. 2024: k-hop needs depth ~log2 k (6 layers for k <= 16, 5 for k <= 8, 4 for k <= 4).
+  Fan et al. ICLR 2025: LOOPED transformers length-generalise where plain ones fail. Wang et al. 2024:
+  out-of-distribution 2-hop composition never appears in a plain transformer even after 2M steps.
+  RULER: GPT-4 100 / 99.6 on 4-hop variable tracking to 128K context; Mixtral-8x22B 0.0 at 128K.
+  These agree with the head-to-head above.

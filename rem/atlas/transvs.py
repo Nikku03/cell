@@ -263,6 +263,8 @@ def main():
             res[(ver, md)] = dict(ours_higher=w, transformer_higher=l, mean_diff=float(np.mean(d)), verdict=v)
             P_(f"  T3 {name}: ours higher on {w}/10, transformer on {l}/10, mean {np.mean(d):+.3f} -> {v}")
     os.makedirs(os.path.dirname(ART), exist_ok=True)
+    res = {k: {kk: (int(vv) if isinstance(vv, (np.integer,)) else float(vv) if isinstance(vv, np.floating) else vv)
+               for kk, vv in v.items()} for k, v in res.items()}
     json.dump({"results": {"|".join(k): v for k, v in res.items()},
                "runs": [{**r, "acc": {str(k_): v for k_, v in r["acc"].items()}} for r in runs]}, open(ART, "w"), indent=1)
     P_(f"\n  artifact: outputs/transvs.json   runtime {time.time() - t0:.0f}s")
