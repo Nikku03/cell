@@ -4583,3 +4583,45 @@ CHANNELTREE -- CHANNEL DYNAMICS INSIDE THE TREE: TIES THE MLP, AND A SYMMETRY CO
   0/400 and was verified genuine here with 7/8 synthetic positive controls and a negative control.
   The missing capability it identifies is learning abstractions from few examples, which no
   change of neuron type addresses.
+
+=================================================================================================
+LIMITS -- THE FIRST UNSATURATED TEST OF THE BIOLOGICAL NEURON, AND IT SAYS NO ADVANTAGE (YET)
+=================================================================================================
+  Four models at matched parameters (37,531-37,933): channel tree, BIASED tanh tree (the control
+  whose absence left channeltree's result unattributable), shallow MLP, deep MLP. Parity over 16
+  inputs; train and test disjoint; identical budget and early stopping for all. 132 runs.
+
+  L1 PASS (new control: gradient check 4.44e-09, and NOT odd, 1.16e+00). L2 PASS (harness 1.000).
+
+  SWEEP 1, DIFFICULTY, k up to 12 at 8,000 examples -- SATURATED AT THE THRESHOLD. Every model
+  clears 0.90 at every k. Channel tree is 1.000 on every row and every seed; at k = 12 the others
+  are biased tanh 0.903, shallow MLP 0.987, deep MLP 0.941 (deep MLP budget-limited, all 3 seeds
+  at 10,000 steps). The 0.90 bar does not separate them.
+
+  SWEEP 2, SAMPLES, at k = 12 -- UNSATURATED, so L3 PASSES for the first time in this arc.
+        n      channel    biased tanh    MLP shallow    MLP deep
+     1000       0.495        0.499          0.491         0.489
+     2000       0.733        0.489          0.512         0.529
+     4000       0.963        0.549          0.792         0.925
+  Sample limit: channel 4,000 = deep MLP 4,000; biased tanh and shallow MLP never reach 0.90.
+
+  L0 PREDECLARED VERDICT: NO ADVANTAGE. The channel tree is worse than no control, but on the
+  predeclared grid and threshold it is not strictly better than all of them on either axis -- it
+  ties the deep MLP. That verdict stands and is not reworded.
+
+  WHAT THE PREDECLARED RULE DID NOT CAPTURE, LABELLED AS EXPLORATORY. At n = 2,000 every channel
+  tree seed (0.761, 0.788, 0.651) beats every control seed (highest 0.600), and it reached that
+  in FEWER steps (500-1,000) than the controls took to fit. The doubling grid jumps straight from
+  2,000 to 4,000 and so cannot see a limit between them. This is a signal found AFTER looking, so
+  it is a hypothesis for a predeclared replication on fresh seeds and a finer grid, not a finding.
+
+  THE ATTRIBUTION QUESTION, PARTLY ANSWERED. The predeclared sub-condition -- "if the biased tanh
+  tree matches the channel tree, the driving force adds nothing" -- did NOT fire: the biased tanh
+  tree is the WORST model on both axes. But it also lacks the channel tree's PER-NODE WEIGHTS, so
+  the comparison confounds two differences. Isolating the channel dynamics needs a tanh tree with
+  per-node weights, biases and gains -- identical to the channel tree except the nonlinearity.
+
+  L5, AND IT IS THE ARC FAILURE IN MINIATURE. 58 failing runs; 57 fit their training set
+  PERFECTLY and score chance on the test set. Only 1 failed to fit. Every architecture can
+  memorise; none can generalise parity from ~1,000 examples. The limit is not capacity, it is
+  learning a rule from few examples -- exactly the capability ARC found missing at 0/400.
