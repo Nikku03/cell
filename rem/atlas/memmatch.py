@@ -14,6 +14,8 @@ M0 SAME NETWORKS, BLOCKING. Retrained networks must reproduce memcommit.json's s
    accuracy exactly, run for run.
 M1 HARNESS, BLOCKING. memcommit's latch harness must still pass (committing COMMITS, pure does not).
 M2 CALIBRATION. A run counts only if its calibrated accuracy is within 0.02 of 0.824.
+FIRST RUN STOPPED AT M0 (recorded): probing set the shared noise global, so the NEXT job in the
+   same worker trained at the calibrated noise. The training noise is now reset per job.
 C1/C2 unchanged from memcommit: COMMITS if the commitment index > 0 on >= 9/10 calibrated seeds;
    CLOSER TO THE MOUSE if lower 14-condition MAE on >= 9/10 paired seeds.
 """
@@ -36,6 +38,7 @@ RULE = "=" * 97
 _s = importlib.util.spec_from_file_location("memcommit", os.path.join(HERE, "memcommit.py"))
 mc = importlib.util.module_from_spec(_s); _s.loader.exec_module(mc)
 TARGET = 0.824
+TRAIN_NOISE = mc.NOISE
 
 
 def trained(node, seed, regime):
@@ -80,6 +83,7 @@ def calibrate(m, seed):
 
 def job(args):
     node, seed, regime = args
+    mc.NOISE = TRAIN_NOISE              # reset: a previous job in this worker raised it for probing
     m, steps, acc = trained(node, seed, regime)
     sd, cacc = calibrate(m, seed)
     mc.NOISE = sd                       # probe at the calibrated noise (fork-local global)
