@@ -4736,3 +4736,49 @@ NONBIO -- THE EDGE IS NON-MONOTONICITY, NOT BIOLOGY. THE BIOLOGICAL NODE IS THE 
   4, depth 4, per-branch leaves). Whether the TREE matters -- against a deep MLP given the same
   sine/bump activation -- is the remaining attribution question, and the only one in which a
   biological ingredient could still be doing work here.
+
+=================================================================================================
+NETPROBE -- THE CHANNEL TREE WATCHED WHILE IT LEARNS: WEAK POINTS AND A REPAIR SCREEN
+=================================================================================================
+  netprobe.py, flags and repairs predeclared (commit 13e3d23), fresh seeds 40-44, k = 12.
+  A0 PASS: instrumented training identical to uninstrumented on 10/10 (steps, train, test).
+
+  WEAK POINTS THAT ARE REAL
+    MEMORISATION (A1). At 1,500 examples all 5 seeds hit 100% train within 300-1,000 steps while
+      test stays at chance (0.49-0.61). At 4,000 none do (0.91-0.98).
+    NO INPUT SELECTION (A3). The leaves -- 87% of the parameters -- never learn to ignore the 4
+      irrelevant inputs: share of leaf weight on the 12 relevant ones is 0.752 at init, 0.756 at stop
+      (n=1500), 0.760 (n=4000); chance is 0.75. Successful runs cancel irrelevant inputs downstream
+      (flip sensitivity relevant 0.928 / irrelevant 0.040); failing runs do not (0.367 / 0.313 --
+      almost as sensitive to noise inputs as to signal).
+    COST (A8). 11.2 ms per step vs 1.3 for the deep MLP (8.6x). A third of it is the leaf
+      contraction written as einsum; the same arithmetic as a matmul (agreement 1.8e-15) is 6.3x
+      faster forward, 7.6x on the gradient. Wall-clock per run is still comparable to the deep MLP
+      because the tree needs ~20x fewer steps (edgedecide: 568 s vs 494 s for 60 runs).
+
+  NOT WEAK POINTS (flags that did not fire, or were withdrawn)
+    A2 stopping: best test seen during training beats the final by only +0.005 / +0.001.
+    A4 gradient flow: ORIGINAL FLAG WITHDRAWN as an instrument defect (zero-initialised groups made
+      |g|/|p| explode). Post-run recheck: ~9x attenuation soma -> leaves, nothing below 1/100
+      excluding the near-zero scalar bias; lowest-level thresholds borderline (1/81 - 1/93).
+    A5/A6 channels: conductances move 0.19-0.31 from init, gates 21-41% saturated, and nodes USING
+      the bend rise from 0-39% at init to 44-78% at stop, at every level.
+    A7 subunits: none dead. A SIGNATURE: failing runs spread over all 8 (7.64 effective), successful
+      runs specialise (4.93, largest share 0.44).
+
+  REPAIR SCREEN (5 seeds, n = 1500/2000/2500, unit = per-seed mean; a screen, not a decision)
+        unmodified 0.710 | leaf L1 0.741 | validation stop 0.628 | frozen channels 0.566 | depth 3 0.660
+    R1 leaf sparsity     +0.031, 4/5   PROMISING  -> earns a predeclared 10-seed decision
+    R2 validation stop   -0.082, 1/5   HARMFUL    (losing 10% of the data costs more than A2 can win)
+    R3 frozen channels   -0.143, 0/5   HARMFUL    learning the conductances matters; the fixed init
+                                                   bend v - SiLU(v) alone does not do it
+    R4 depth 3 (1/4 size) -0.050, 2/5  NO CLEAR EFFECT, not a safe simplification
+
+  AREAS OF IMPROVEMENT, RANKED BY EVIDENCE
+    1. The node function (DECIDED, NONBIO): generic bends beat the conductance node by ~0.17, 10/10.
+    2. Leaf input selection (SCREENED): L1 on leaves +0.031 on 4/5; the A3 mechanism explains why.
+    3. Leaf contraction as matmul (MEASURED): ~30% off every step, identical arithmetic.
+    4. HYPOTHESIS, UNTESTED: the gate m = sigmoid(v - theta) has no slope factor, so a node cannot
+       sharpen its bend without rescaling everything feeding it; the bump twin has a free width.
+       Real Hodgkin-Huxley / Boltzmann gates carry a slope factor k -- a biologically faithful
+       repair that also targets the mechanism. Needs a matched, predeclared test.

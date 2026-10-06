@@ -105,3 +105,39 @@ FLAGS THAT FIRED
     FLAG  A8 cost
 
   artifact: outputs/netprobe.json   runtime 240s
+
+=================================================================================================
+POST-RUN RECHECK OF A4 (added after the run; see a4_job's docstring)
+=================================================================================================
+  The original A4 flag is an INSTRUMENT DEFECT: theta and the readout bias start at exactly
+  zero, so |g|/|p| for them was ~1e6-1e7 and every other group fell under 1/100 of it.
+    group        RMS grad/element   |g|/|p| from step 100
+    leaf W               5.94e-04               1.80e-03
+    W L1                 1.28e-03               2.28e-03
+    W L2                 3.43e-03               5.54e-03
+    W L3                 6.19e-03               9.01e-03
+    W L4                 1.19e-02               1.57e-02
+    theta L1             2.50e-04               8.44e-04
+    theta L2             4.86e-04               1.25e-03
+    theta L3             7.36e-04               1.62e-03
+    theta L4             1.20e-03               2.33e-03
+    g_dep L1             2.14e-03               3.11e-03
+    g_dep L2             6.64e-03               1.08e-02
+    g_dep L3             1.35e-02               2.36e-02
+    g_dep L4             1.61e-02               2.77e-02
+    g_hyp L1             3.35e-03               6.02e-03
+    g_hyp L2             9.50e-03               1.85e-02
+    g_hyp L3             1.81e-02               4.16e-02
+    g_hyp L4             2.33e-02               6.87e-02
+    readout w            2.07e-02               2.77e-02
+    readout b            1.53e-02               4.27e+00
+  corrected A4, same 1/100 criterion on |g|/|p| from step 100: below it -> ['leaf W', 'W L1', 'W L2', 'W L3', 'W L4', 'theta L1', 'theta L2', 'theta L3', 'theta L4', 'g_dep L1', 'g_dep L2', 'g_dep L3', 'g_dep L4', 'g_hyp L1', 'g_hyp L2', 'g_hyp L3', 'readout w']
+  soma-to-leaf attenuation of |g|/|p|, W L4 / leaf W: 8.7x
+  READING OF THE RECHECK, written after seeing it. The readout bias is a single scalar that stays
+  near zero (balanced labels), so |g|/|p| is still undefined for it and it still tops the column.
+  Excluding that one scalar (stated here, not hidden): the largest group is g_hyp L4 (6.87e-02);
+  the smallest is theta L1 (8.44e-04, 1/81) -- no group below 1/100. The absolute RMS column agrees
+  (largest g_hyp L4 2.33e-02; smallest theta L1 2.50e-04, 1/93 -- borderline).
+  A4 VERDICT: the original flag is WITHDRAWN as an instrument defect. Gradients ATTENUATE ~9x from
+  the soma down to the leaves, and the lowest-level thresholds sit near the line, but nothing
+  vanishes by the predeclared criterion.
