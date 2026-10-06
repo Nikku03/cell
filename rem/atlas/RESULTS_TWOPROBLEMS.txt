@@ -5289,3 +5289,45 @@ RAWCHIP2 -- THE FAIR TEST: FOR 40 SEQUENCE-SPECIFIC FACTORS, PROMOTER BINDING DO
   effects -- e.g. SLAM-seq after degron/inhibitor perturbation, which defined direct MYC and BRD4
   targets (Muhar et al., Science 2018, doi 10.1126/science.aao2793, via PubMed). The record already
   named time-resolved perturbation as the highest-value missing data (CAPABILITIES.md).
+
+=================================================================================================
+WHOLECELL -- THE WHOLE-CELL VIEW WORKS WHERE THE GENE-BY-GENE VIEW FAILED
+=================================================================================================
+  wholecell.py (committed before running). Each K562 knockdown (Replogle gwps, CC BY 4.0) scored as
+  the activity of 981 Reactome processes (CC0, 15-300 measured genes); 5,051 knockdowns with a
+  phenotype, TRAIN 2,527 / TEST 2,524; survival from DepMap 24Q4 K562 (CC BY 4.0).
+
+  P0 POSITIVE CONTROL PASS: knocking down cholesterol-synthesis genes raises the rest of the
+     process (SREBP2 feedback), 15 knockdowns, z +5.7 -- the instrument sees the textbook feedback.
+
+  W  PREDICTING THE WHOLE CELL'S RESPONSE TO UNSEEN KNOCKDOWNS (Pearson r, all 8,248 genes):
+        tide (average knockdown) median r 0.145 / mean 0.157
+        whole-cell process       median r 0.138 / mean 0.180     (1,516 TEST knockdowns have a process)
+        shuffled-process null    median r 0.122 / mean 0.133
+        gene network (bank v3)   median r -0.004 (first 500 TEST by hash)
+     V1 process beats the tide: better 871 / worse 645, p 7e-9.  V2 process beats the null: 1,042 /
+     474, p 4e-49.  V3 process beats the gene network: 100 / 38, p 1e-7.  V4 adding the gene network
+     to the process view makes it WORSE: 224 / 272, p 0.035.
+     The gene-by-gene literature network carries ~no information about the whole cell's response;
+     knowing which PROCESS a gene belongs to does. Absolute accuracy is still low (median r ~0.14).
+
+  F  THE CELL'S BOTTOM LINE.
+     F1 the more of the cell a knockdown disturbs, the more it kills: Spearman +0.366 over 9,350 genes
+        (p 8e-295).
+     F2 process knowledge predicts which unseen genes K562 cannot live without: AUROC 0.780 vs a
+        membership-shuffled null's 95th percentile 0.678 -> PASS (838 essential of 4,691 TEST genes).
+
+  C  THE WHOLE-CELL COUPLING MAP: 77,987 process-to-process couplings replicated in both halves
+     (|z| >= 5) vs 74 in the membership-shuffled null (FDR ~0.001) -- real and reproducible. NOT 78,000
+     discoveries: Reactome processes share genes and a few strong knockdown classes (ribosome
+     biogenesis, translation, splicing) shift hundreds of processes at once, so the couplings
+     collapse onto a few whole-cell response axes. The strongest: knocking down rRNA processing
+     (173 knockdowns) raises the ubiquitin-proteasome system (antigen processing via ubiquitination,
+     neddylation, class I MHC processing; z ~ +36), nucleotide-excision repair and chromatin
+     organisation -- a coherent cell-wide response to failed ribosome production. Dimensionality of
+     the map (how many independent axes) is not computed here.
+
+  WHAT IT MEANS. Asking about the whole cell is the right level for this data: process-level memory
+  predicts unseen whole-cell responses, predicts survival, and recovers a known feedback, while
+  gene-to-gene literature reasoning contributes nothing at this scale and even hurts. Map saved to
+  memory_bank/cell_v3/whole_cell_map.json.
