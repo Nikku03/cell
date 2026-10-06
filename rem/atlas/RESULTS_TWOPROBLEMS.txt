@@ -4922,3 +4922,36 @@ MEMMATCH -- SKILL-MATCHED: EVERY MEMORY COMMITS; THE CHANNEL NODE IS NOT SPECIAL
   under-react (0.24-0.37), but it over-reacts late (0.42 vs 0.32) and its overall error is not lower.
   For a reasoning engine: protecting a held conclusion needs a trained recurrent memory, not a
   biological neuron.
+
+=================================================================================================
+CHAINREASON -- THE COMBINED NETWORK FOLLOWS CHAINS FAR PAST ITS TRAINING DEPTH (10/10 SEEDS)
+=================================================================================================
+  chainreason.py (committed dac64a7 before running). The combined network: a dendritic TREE of BUMP
+  nodes (24 units, branching 4, depth 2) as the update of a MEMORY loop, h_t = tanh(F([x_t, h_t-1])).
+  Controls at matched size: bump point-neuron memory, tanh memory (26,226-26,466 parameters; the
+  combined net 26,334). Task: pointer chasing over a fresh random permutation of 6 items every trial,
+  facts shown every step; TRAINED on 1-3 hops, TESTED on 1-8. Budget 6,000 from one baseline-only
+  pilot (seed 999: 0.994 in distribution at 2,750 steps, 0.263 on unseen depths). Q0 gradients PASS
+  (broken copies caught), Q1 harness PASS (exact solver 1.000, constant guesser 0.165). All 30 learnt.
+
+        accuracy by hops      1      2      3   |   4      5      6      7      8     (chance 0.167)
+        combined           1.000  0.998  0.982 | 0.913  0.840  0.773  0.723  0.675
+        bump memory        1.000  0.999  0.975 | 0.673  0.479  0.368  0.322  0.293
+        tanh memory        1.000  0.996  0.982 | 0.325  0.248  0.208  0.190  0.187
+
+    R1 PRIMARY combined vs tanh memory   higher 10/10, sign p 0.0010, mean +0.553 -> REASONS FURTHER
+    R2 combined vs bump memory (tree?)   higher 10/10, sign p 0.0010, mean +0.358 -> REASONS FURTHER
+    R3 deepest depth still >= 0.5: combined 8, bump memory 4, tanh memory 3.
+
+  WHAT IS ESTABLISHED. Every model learns the trained depths equally well (0.98-1.00). Only the
+  combined network carries the step it learnt to depths it never saw: 0.91 at 4 hops, still 0.68 at
+  8 (four times chance), where the conventional memory falls to chance immediately after its
+  training depth. Both ingredients matter at matched size: the bump node (bump memory 0.43 vs tanh
+  0.23 on unseen depths) and the TREE on top of it (+0.36). This is also the first test in which
+  the dendritic tree STRUCTURE -- the one biological ingredient NONBIO left open -- does measurable
+  work against a matched tree-less control. (Here branching 4, depth 2, not the depth-4 morphology.)
+
+  WHAT IT IS NOT. Accuracy still decays with depth (0.91 -> 0.68): the step is learnt approximately,
+  not exactly. One synthetic task, 6 items, the facts re-shown every step, one tree shape, one
+  budget. The combined net costs ~8x more per training step (it needed fewer steps: median 1,750 vs
+  2,750). Chain-following is a component of reasoning, not reasoning in general.

@@ -1,0 +1,47 @@
+=================================================================================================
+MULTI-STEP REASONING: FOLLOW A CHAIN FOR MORE HOPS THAN EVER TRAINED
+=================================================================================================
+  budget MAXSTEPS 6,000 (set by one baseline-only pilot, seed 999)
+  combined   26,334 parameters  (24 tree units, 16 leaves each)
+  bumprnn    26,226 parameters  (width 138)
+  tanhrnn    26,466 parameters  (width 140)
+  Q0 combined  gradient / tolerance 0.043   broken copy 1.18e+05 (caught)
+  Q0 bumprnn   gradient / tolerance 0.018   broken copy 1.53e+05 (caught)
+  Q0 tanhrnn   gradient / tolerance 0.020   broken copy 1.15e+05 (caught)
+  Q1 harness: exact solver min accuracy 1.000; constant guesser 0.165  -> PASS
+
+  accuracy by number of hops (mean over seeds that learnt; chance 0.167); TRAINED on 1-3
+                              k=1    k=2    k=3    k=4    k=5    k=6    k=7    k=8   learnt   steps(median)
+    combined                1.000  0.998  0.982  0.913  0.840  0.773  0.723  0.675   10/10    1,750
+    bumprnn                 1.000  0.999  0.975  0.673  0.479  0.368  0.322  0.293   10/10    2,000
+    tanhrnn                 1.000  0.996  0.982  0.325  0.248  0.208  0.190  0.187   10/10    2,750
+
+  per-seed generalisation score (mean accuracy at unseen k = 4..8):
+    seed     combined     bumprnn     tanhrnn
+       0        0.794       0.451       0.232
+       1        0.839       0.389       0.232
+       2        0.815       0.459       0.242
+       3        0.835       0.446       0.233
+       4        0.681       0.425       0.232
+       5        0.766       0.443       0.242
+       6        0.737       0.419       0.231
+       7        0.833       0.425       0.222
+       8        0.783       0.387       0.208
+       9        0.766       0.424       0.241
+
+  R1 PRIMARY: combined vs conventional memory: higher on 10/10, lower on 0/10, sign p 0.0010, mean +0.553  -> THE COMBINED NETWORK REASONS FURTHER
+
+  R2 does the tree add anything?: higher on 10/10, lower on 0/10, sign p 0.0010, mean +0.358  -> THE COMBINED NETWORK REASONS FURTHER
+
+  R3 deepest k with accuracy >= 0.5 (per model, mean over learnt seeds):
+    combined  8
+    bumprnn   4
+    tanhrnn   3
+
+  artifact: outputs/chainreason.json   runtime 68s
+
+=================================================================================================
+R4  WHAT THIS IS AND IS NOT
+=================================================================================================
+  One synthetic multi-step task (6 items, facts re-shown every step). Following a chain is one
+  component of reasoning, not reasoning in general.
