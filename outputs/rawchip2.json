@@ -1,0 +1,341 @@
+{
+ "files": [
+  {
+   "tf": "MYC",
+   "experiment": "ENCSR000DLZ",
+   "file": "ENCFF763SRL",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/MYC_ENCFF763SRL.bed.gz"
+  },
+  {
+   "tf": "CLOCK",
+   "experiment": "ENCSR228OQM",
+   "file": "ENCFF475CFL",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/CLOCK_ENCFF475CFL.bed.gz"
+  },
+  {
+   "tf": "NRF1",
+   "experiment": "ENCSR000EHH",
+   "file": "ENCFF017SIC",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/NRF1_ENCFF017SIC.bed.gz"
+  },
+  {
+   "tf": "CHCHD3",
+   "experiment": "ENCSR775NLJ",
+   "file": "ENCFF549CIN",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/CHCHD3_ENCFF549CIN.bed.gz"
+  },
+  {
+   "tf": "LCOR",
+   "experiment": "ENCSR672OHP",
+   "file": "ENCFF416DJN",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/LCOR_ENCFF416DJN.bed.gz"
+  },
+  {
+   "tf": "THAP1",
+   "experiment": "ENCSR000BNN",
+   "file": "ENCFF041ABM",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/THAP1_ENCFF041ABM.bed.gz"
+  },
+  {
+   "tf": "MAX",
+   "experiment": "ENCSR000BLP",
+   "file": "ENCFF448ZSO",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/MAX_ENCFF448ZSO.bed.gz"
+  },
+  {
+   "tf": "PHF21A",
+   "experiment": "ENCSR119VCX",
+   "file": "ENCFF552BXT",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/PHF21A_ENCFF552BXT.bed.gz"
+  },
+  {
+   "tf": "SREBF1",
+   "experiment": "ENCSR815ZDS",
+   "file": "ENCFF040KFQ",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/SREBF1_ENCFF040KFQ.bed.gz"
+  },
+  {
+   "tf": "CDC5L",
+   "experiment": "ENCSR121PFY",
+   "file": "ENCFF575VHZ",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/CDC5L_ENCFF575VHZ.bed.gz"
+  },
+  {
+   "tf": "KLF16",
+   "experiment": "ENCSR760UVO",
+   "file": "ENCFF468NWV",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/KLF16_ENCFF468NWV.bed.gz"
+  },
+  {
+   "tf": "ATF7",
+   "experiment": "ENCSR972ZBV",
+   "file": "ENCFF116GFV",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ATF7_ENCFF116GFV.bed.gz"
+  },
+  {
+   "tf": "DNMT1",
+   "experiment": "ENCSR987PBI",
+   "file": "ENCFF505HOV",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/DNMT1_ENCFF505HOV.bed.gz"
+  },
+  {
+   "tf": "TBPL1",
+   "experiment": "ENCSR783EPA",
+   "file": "ENCFF521IEC",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/TBPL1_ENCFF521IEC.bed.gz"
+  },
+  {
+   "tf": "TCF3",
+   "experiment": "ENCSR970OJY",
+   "file": "ENCFF564PCC",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/TCF3_ENCFF564PCC.bed.gz"
+  },
+  {
+   "tf": "TFAP4",
+   "experiment": "ENCSR784IMK",
+   "file": "ENCFF928NLO",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/TFAP4_ENCFF928NLO.bed.gz"
+  },
+  {
+   "tf": "CAMTA2",
+   "experiment": "ENCSR336GFK",
+   "file": "ENCFF123IHX",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/CAMTA2_ENCFF123IHX.bed.gz"
+  },
+  {
+   "tf": "ZNF324",
+   "experiment": "ENCSR712KVZ",
+   "file": "ENCFF359UUX",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZNF324_ENCFF359UUX.bed.gz"
+  },
+  {
+   "tf": "ZNF511",
+   "experiment": "ENCSR652OGX",
+   "file": "ENCFF404IHI",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZNF511_ENCFF404IHI.bed.gz"
+  },
+  {
+   "tf": "TFDP1",
+   "experiment": "ENCSR017GBO",
+   "file": "ENCFF701EYT",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/TFDP1_ENCFF701EYT.bed.gz"
+  },
+  {
+   "tf": "GATA1",
+   "experiment": "ENCSR000EFT",
+   "file": "ENCFF221OWW",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/GATA1_ENCFF221OWW.bed.gz"
+  },
+  {
+   "tf": "ZNF695",
+   "experiment": "ENCSR187RGF",
+   "file": "ENCFF909WQY",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZNF695_ENCFF909WQY.bed.gz"
+  },
+  {
+   "tf": "SP1",
+   "experiment": "ENCSR000BKO",
+   "file": "ENCFF528QDU",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/SP1_ENCFF528QDU.bed.gz"
+  },
+  {
+   "tf": "KAT7",
+   "experiment": "ENCSR924JOW",
+   "file": "ENCFF879XRZ",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/KAT7_ENCFF879XRZ.bed.gz"
+  },
+  {
+   "tf": "CEBPZ",
+   "experiment": "ENCSR618GDK",
+   "file": "ENCFF161IQF",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/CEBPZ_ENCFF161IQF.bed.gz"
+  },
+  {
+   "tf": "MNT",
+   "experiment": "ENCSR390VGH",
+   "file": "ENCFF461QQT",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/MNT_ENCFF461QQT.bed.gz"
+  },
+  {
+   "tf": "ZSCAN32",
+   "experiment": "ENCSR870YEN",
+   "file": "ENCFF209PYR",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZSCAN32_ENCFF209PYR.bed.gz"
+  },
+  {
+   "tf": "ZBTB17",
+   "experiment": "ENCSR026KKZ",
+   "file": "ENCFF157HXO",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZBTB17_ENCFF157HXO.bed.gz"
+  },
+  {
+   "tf": "ZNF830",
+   "experiment": "ENCSR033NQK",
+   "file": "ENCFF208OCT",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZNF830_ENCFF208OCT.bed.gz"
+  },
+  {
+   "tf": "ZNF397",
+   "experiment": "ENCSR508EEX",
+   "file": "ENCFF167SUN",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZNF397_ENCFF167SUN.bed.gz"
+  },
+  {
+   "tf": "ZBTB9",
+   "experiment": "ENCSR536CBU",
+   "file": "ENCFF939MFW",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZBTB9_ENCFF939MFW.bed.gz"
+  },
+  {
+   "tf": "CEBPG",
+   "experiment": "ENCSR058DRG",
+   "file": "ENCFF334EWM",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/CEBPG_ENCFF334EWM.bed.gz"
+  },
+  {
+   "tf": "TBP",
+   "experiment": "ENCSR000EHA",
+   "file": "ENCFF609UTS",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/TBP_ENCFF609UTS.bed.gz"
+  },
+  {
+   "tf": "ZNF143",
+   "experiment": "ENCSR427WZJ",
+   "file": "ENCFF978YEJ",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZNF143_ENCFF978YEJ.bed.gz"
+  },
+  {
+   "tf": "ZNF395",
+   "experiment": "ENCSR462QZZ",
+   "file": "ENCFF112CRP",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZNF395_ENCFF112CRP.bed.gz"
+  },
+  {
+   "tf": "ZC3H8",
+   "experiment": "ENCSR143CEO",
+   "file": "ENCFF015XIL",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ZC3H8_ENCFF015XIL.bed.gz"
+  },
+  {
+   "tf": "ELF1",
+   "experiment": "ENCSR000BMD",
+   "file": "ENCFF590XME",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/ELF1_ENCFF590XME.bed.gz"
+  },
+  {
+   "tf": "MYBL2",
+   "experiment": "ENCSR162IEM",
+   "file": "ENCFF061UNO",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/MYBL2_ENCFF061UNO.bed.gz"
+  },
+  {
+   "tf": "PBX2",
+   "experiment": "ENCSR263DFP",
+   "file": "ENCFF345BUG",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/PBX2_ENCFF345BUG.bed.gz"
+  },
+  {
+   "tf": "DMTF1",
+   "experiment": "ENCSR015KAM",
+   "file": "ENCFF404OQS",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/DMTF1_ENCFF404OQS.bed.gz"
+  }
+ ],
+ "results": {
+  "chosen": [
+   "MYC",
+   "CLOCK",
+   "NRF1",
+   "CHCHD3",
+   "LCOR",
+   "THAP1",
+   "MAX",
+   "PHF21A",
+   "SREBF1",
+   "CDC5L",
+   "KLF16",
+   "ATF7",
+   "DNMT1",
+   "TBPL1",
+   "TCF3",
+   "TFAP4",
+   "CAMTA2",
+   "ZNF324",
+   "ZNF511",
+   "TFDP1",
+   "GATA1",
+   "ZNF695",
+   "SP1",
+   "KAT7",
+   "CEBPZ",
+   "MNT",
+   "ZSCAN32",
+   "ZBTB17",
+   "ZNF830",
+   "ZNF397",
+   "ZBTB9",
+   "CEBPG",
+   "TBP",
+   "ZNF143",
+   "ZNF395",
+   "ZC3H8",
+   "ELF1",
+   "MYBL2",
+   "PBX2",
+   "DMTF1"
+  ],
+  "real": 1211,
+  "null_mean": 2259.289,
+  "p": 0.986013986013986,
+  "verdict": "NOT SHARP ENOUGH",
+  "sig_factors": 0,
+  "or_above_1": 15.0,
+  "median_or": 0.9075912261285028,
+  "dose_pos": 20.0,
+  "dose_n": 40,
+  "dose_p": 1.0,
+  "dose_verdict": "NO DOSE-RESPONSE",
+  "sign_agree": 8,
+  "sign_n": 10
+ }
+}

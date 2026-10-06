@@ -5264,3 +5264,28 @@ RAWCHIP -- RAWER BINDING DATA DOES NOT RESCUE THE DIRECT-LINK SEARCH (12 K562 FA
   knockdown triggers broad stress responses. Those are the factors where binding should be LEAST
   specific. Three peak files are near-empty (POLR3A 8, CBX3 5, TAF7 65 promoters). The fair next
   test is sequence-specific factors (GATA1-type), chosen by that criterion before looking.
+
+=================================================================================================
+RAWCHIP2 -- THE FAIR TEST: FOR 40 SEQUENCE-SPECIFIC FACTORS, PROMOTER BINDING DOES NOT PREDICT RESPONSE
+=================================================================================================
+  rawchip2.py (committed before running). Every Lambert 2018 sequence-specific TF with a released
+  K562 ENCODE ChIP-seq experiment and >= 20 movers in its own K562 knockdown: 66 qualified, first
+  40 by hash (1 dropped: < 50 promoters bound). rawchip's gates unchanged.
+    T1 triangulated 1,211 vs null 2,259 +/- 635, p 0.99 -> NOT SHARP ENOUGH
+    T2 significantly enriched factors 0/40 (OR > 1 in 15/40; median OR 0.91)
+    T3 dose-response: stronger peaks bigger effects in 20/40 factors (median rho 0.000) -> NONE
+    T4 sign control 8/10 -- too few for a verdict
+  A caveat on T1, recorded: bound-set sizes span 127 to 15,687 promoters and mover counts 22 to
+  3,001, so pairing a many-mover knockdown with a near-universal binder inflates the derangement
+  null; T1 alone would be weak evidence. T2 (per-factor, size-controlled) and T3 carry the result.
+
+  WHAT IS ESTABLISHED. Neither resolution (rawchip) nor factor choice (here) was the problem. In
+  K562 steady-state CRISPRi Perturb-seq, being bound within 1 kb of a gene's start -- by a
+  sequence-specific factor, at any strength -- does not predict that the gene changes when the
+  factor is knocked down. This is the published pattern: knocking down 59 factors, "only a small
+  subset of genes bound by a factor were differentially expressed" (Cusanovich et al., PLoS Genet
+  2014, doi 10.1371/journal.pgen.1004226, via PubMed).
+  WHAT WOULD NAME DIRECT TARGETS: acute depletion read out in NEW RNA within hours, before secondary
+  effects -- e.g. SLAM-seq after degron/inhibitor perturbation, which defined direct MYC and BRD4
+  targets (Muhar et al., Science 2018, doi 10.1126/science.aao2793, via PubMed). The record already
+  named time-resolved perturbation as the highest-value missing data (CAPABILITIES.md).
