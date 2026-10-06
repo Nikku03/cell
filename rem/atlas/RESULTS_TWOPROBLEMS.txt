@@ -4992,3 +4992,37 @@ CHAINEXACT -- FIXES MAKE THE COMBINED NETWORK BETTER BUT NOT EXACT; HARDER CHAIN
   memories on long chains, with or without the training fixes, and the fixes lift it to ~0.90 at 16-32
   hops -- but it is not exact, and none of the three networks handles 12 items or once-shown facts at
   this scale. Those are the next walls, and they are walls for every model tested, not only ours.
+
+=================================================================================================
+CHAINSNAP -- A WRITTEN-DOWN POINTER MAKES CHAINS EXACT; ON 12 ITEMS ONLY THE TREE LEARNS AND CARRIES
+=================================================================================================
+  chainsnap.py (committed c99ac61 before running). The state is split into a continuous memory and a
+  discrete written-down pointer (a learnt code for one item), re-snapped to the network's own argmax
+  after every hop at test (teacher-forced in training). Same seeds and test questions as chainexact,
+  whose no-snap runs are the reference. Q0 gradients PASS, all broken copies caught. Matched params
+  within 0.5%; snapped nets are ~24% larger than chainexact's (disclosed confound for Z2).
+
+  P1, 6 items, trained 1-3 hops      4      8     16     32     64   exact (>= 0.99 at 16 AND 64)
+     combined   SNAP              0.995  0.988  0.990  0.989  0.991   9/10  EXACT
+     tanh mem   SNAP              1.000  1.000  0.999  0.999  0.998  10/10  EXACT
+     bump mem   SNAP              1.000  0.969  0.865  0.805  0.792   0/10
+   Z2 snap helps: combined 9/10 (+0.059), tanh 10/10 (+0.641), bump 10/10 (+0.511).
+   Z3 with snapping: combined vs tanh NO DIFFERENCE (7/10, -0.009); combined vs bump TREE BETTER 10/10.
+   READING, predeclared in Z4: exactness here BELONGS TO THE SNAP. With a written-down pointer even the
+   conventional tanh memory is exact to 64 hops; the tree's 6-item advantage disappears against it.
+
+  H1, 12 items                       1      4      8     16   learnt
+     combined   SNAP              0.989  0.948  0.907  0.892  10/10   (no snap: 0.966 / 0.101 / 0.094 / 0.092)
+     tanh mem   SNAP              0.942  0.609  0.274  0.186   1/10
+     bump mem   SNAP              1.000  0.636  0.251  0.167  10/10
+   Z2 snap helps all three (10/10 each; combined +0.819). Z3 combined vs bump TREE BETTER 10/10
+   (+0.594); vs tanh NO VERDICT (tanh learnt 1/10). Not exact (0/10 at 16 hops).
+   READING: on the harder version the tree is the only update that, with the snap, both learns and
+   carries chains: 0.89 at 16 hops where the bump memory falls to chance and tanh mostly fails to learn.
+
+  H2, facts shown once: NO MODEL LEARNT (all 0.16-0.38). The snap writes down the pointer but cannot
+   store the table; holding facts seen once remains unsolved by every network here.
+
+  NET. Exact long chains: achieved, by a designed discrete scratchpad, and not unique to our network.
+  The combined tree's lasting advantage is on the harder 12-item version, where it is the only model
+  that learns to chain at all. Still open: facts shown once, and exactness at 12 items.
