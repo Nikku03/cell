@@ -5116,3 +5116,35 @@ BIOMEMORY -- A SYNAPTIC MEMORY SOLVES "FACTS SHOWN ONCE"; THE BIOLOGICAL CONSTAN
   is the likely cause of the P1 collapse, since the generic arm has none -- untested. Adding the
   memory also broke the 12-item task within budget. The step-to-seconds mapping (0.1 s) is a
   convention from memcommit.py, not a measurement; a different mapping changes every bio constant.
+
+=================================================================================================
+BIOABLATE -- THE BLUE BRAIN SYNAPSE NUMBERS ARE FINE; THE ACTIVITY LEAK IS WHAT HURT
+=================================================================================================
+  bioablate.py (committed 5285b5d before running). One biological constant at a time, the rest
+  learnt; references GENERIC and BIO from biomemory.json (same code, seeds, questions). Q0 PASS.
+
+                                    H2 facts once: 4 hops  8 hops  learnt exact | P1: 16 hops  64 hops  exact
+    GENERIC (all learnt)                         1.000   1.000  10/10 10/10 |      0.977    0.975   8/10
+    decay only, Blue Brain (tau_F 680 ms)        1.000   0.999  10/10 10/10 |      0.903    0.897   5/10
+    write gain only, Blue Brain (U 0.092)        1.000   1.000  10/10 10/10 |      0.973    0.960   4/10
+    activity leak only, ALM (tau 0.692 s)        0.488   0.460   1/10  0/10 |      0.583    0.572   0/10
+    BIO (all three)                              0.897   0.772  10/10  0/10 |      0.521    0.500   0/10
+  C1 vs GENERIC (long score, >= 9/10 rule):
+    H2  decay NO CLEAR EFFECT (3/10 lower, -0.000)   gain NO CLEAR EFFECT (1/10, -0.000)
+        LEAK HURTS (10/10 lower, -0.536)
+    P1  decay NO CLEAR EFFECT (5/10 lower, -0.054)   gain NO CLEAR EFFECT (6/10, -0.005)
+        LEAK HURTS (10/10 lower, -0.377)
+  C3 the leak alone accounts for BIO's loss (P1 -0.377 of -0.408; on H2 the leak alone is WORSE
+     than all three together, -0.536 vs -0.159 -- the constants interact; not additive).
+
+  WHAT IS ESTABLISHED. A memory running on the Blue Brain facilitating synapse's own constants --
+  a trace fading with tau_F 680 ms and written at release probability 0.092 -- holds facts shown
+  once EXACTLY (10/10 seeds, 1.000 at 8 hops), as well as freely learnt constants; on P1 neither
+  synaptic constant has a measurable effect. The single harmful number is the activity leak taken
+  from the ALM timescale: renewing 13% of the state per 0.1-s hop breaks multi-step chaining (P1
+  and H2, 10/10 each). This corrects BIOMEMORY's reading "the biological constants make it worse":
+  the SYNAPTIC constants do not; the ACTIVITY constant does.
+  WHAT IT IS NOT. The leak's harm depends on the 0.1-s-per-hop convention: at one hop per ~0.7 s
+  (the measured timescale itself) the leak would be ~0.63 and the synaptic decay ~0.36 -- untested.
+  "The brain is slower per step than we assumed" and "the leak is the wrong place for this number"
+  are both open.
