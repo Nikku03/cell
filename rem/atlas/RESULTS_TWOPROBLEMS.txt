@@ -5240,3 +5240,27 @@ CELLDISCOVER -- NEW DATA IN THE MEMORY BANK: WHAT IT CONFIRMS, AND WHY NO DISCOV
   level ChIP (not 2015 gene sets) to name direct targets, and more than 43 measured mystery genes to
   beat chance. memory_bank/cell_v3/ holds the facts summary, the three candidate lists (all marked),
   and the gates they passed or failed.
+
+=================================================================================================
+RAWCHIP -- RAWER BINDING DATA DOES NOT RESCUE THE DIRECT-LINK SEARCH (12 K562 FACTORS)
+=================================================================================================
+  rawchip.py (committed before the analysis ran; peak files fetched beforehand). ENCODE GRCh38 IDR
+  peak files (summit position + signal strength; ENCODE data unrestricted), a gene BOUND if a summit
+  lies within 1 kb of a refGene TSS; compared with the 2015 gene sets on the SAME 12 factors (those
+  with the most movers in their own K562 knockdown), the same null (factor <-> binding derangements).
+
+                              T1 triangulated vs null           T2 enriched factors   T3 dose-response
+    PEAKS (raw)             1,375 vs 1,562 +/- 492, p 0.62        0/12 (median OR 0.88)   5/10 positive, median rho -0.007
+    2015 GENE SETS            826 vs 1,082 +/- 138, p 0.97        2/12 (KDM1A, TAF7)      --
+  Both NOT SHARP ENOUGH; no candidates listed. Sign control too small for a verdict (1/3, 5/7).
+
+  WHAT IT MEANS. The direct-link search did not fail for lack of resolution: with exact positions
+  and strengths, being bound at a gene's promoter still does not predict that the gene responds
+  when the factor is knocked down -- not even more strongly for stronger binding. Binding is not
+  regulation, and for these factors it is close to uninformative about it.
+  AND A FLAW IN MY OWN SELECTION RULE, recorded: "most movers in their own knockdown" chose mostly
+  GENERAL machinery -- cohesin (SMC3, RAD21), basal transcription (TAF1, TAF7, GTF2B), RBBP5, MAX,
+  POLR3A -- that binds thousands of promoters (TAF1 12,672; MAX 15,687; RBBP5 14,401) and whose
+  knockdown triggers broad stress responses. Those are the factors where binding should be LEAST
+  specific. Three peak files are near-empty (POLR3A 8, CBX3 5, TAF7 65 promoters). The fair next
+  test is sequence-specific factors (GATA1-type), chosen by that criterion before looking.

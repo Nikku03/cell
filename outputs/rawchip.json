@@ -1,0 +1,129 @@
+{
+ "factors": [
+  "GATA1",
+  "SMC3",
+  "POLR3A",
+  "KDM1A",
+  "TAF1",
+  "RBBP5",
+  "TAF7",
+  "RAD21",
+  "GTF2B",
+  "MAX",
+  "CBX3",
+  "CHD4"
+ ],
+ "files": [
+  {
+   "tf": "GATA1",
+   "experiment": "ENCSR000EFT",
+   "file": "ENCFF221OWW",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/GATA1_ENCFF221OWW.bed.gz"
+  },
+  {
+   "tf": "SMC3",
+   "experiment": "ENCSR000EGW",
+   "file": "ENCFF289LLT",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/SMC3_ENCFF289LLT.bed.gz"
+  },
+  {
+   "tf": "POLR3A",
+   "experiment": "ENCSR000DOI",
+   "file": "ENCFF050FPP",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/POLR3A_ENCFF050FPP.bed.gz"
+  },
+  {
+   "tf": "KDM1A",
+   "experiment": "ENCSR000ATX",
+   "file": "ENCFF682CDK",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/KDM1A_ENCFF682CDK.bed.gz"
+  },
+  {
+   "tf": "TAF1",
+   "experiment": "ENCSR000BKS",
+   "file": "ENCFF598CIP",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/TAF1_ENCFF598CIP.bed.gz"
+  },
+  {
+   "tf": "RBBP5",
+   "experiment": "ENCSR000AQI",
+   "file": "ENCFF044FPH",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/RBBP5_ENCFF044FPH.bed.gz"
+  },
+  {
+   "tf": "TAF7",
+   "experiment": "ENCSR000BNM",
+   "file": "ENCFF270QLC",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/TAF7_ENCFF270QLC.bed.gz"
+  },
+  {
+   "tf": "RAD21",
+   "experiment": "ENCSR000BKV",
+   "file": "ENCFF960TEU",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/RAD21_ENCFF960TEU.bed.gz"
+  },
+  {
+   "tf": "GTF2B",
+   "experiment": "ENCSR000DOE",
+   "file": "ENCFF579OUH",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/GTF2B_ENCFF579OUH.bed.gz"
+  },
+  {
+   "tf": "MAX",
+   "experiment": "ENCSR000BLP",
+   "file": "ENCFF448ZSO",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/MAX_ENCFF448ZSO.bed.gz"
+  },
+  {
+   "tf": "CBX3",
+   "experiment": "ENCSR000ATV",
+   "file": "ENCFF068OEJ",
+   "output_type": "IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/CBX3_ENCFF068OEJ.bed.gz"
+  },
+  {
+   "tf": "CHD4",
+   "experiment": "ENCSR000ATL",
+   "file": "ENCFF319EST",
+   "output_type": "conservative IDR thresholded peaks",
+   "path": "/home/user/cell/rem/atlas/_cache/encode/peaks/CHD4_ENCFF319EST.bed.gz"
+  }
+ ],
+ "results": {
+  "PEAKS": {
+   "real": 1375,
+   "null_mean": 1562.447,
+   "p": 0.6173826173826173,
+   "verdict": "NOT SHARP ENOUGH",
+   "sig_factors": 0,
+   "median_or": 0.8834725419838236,
+   "sign_agree": 1,
+   "sign_n": 3,
+   "dose_pos": 5.0,
+   "dose_n": 10,
+   "dose_median": -0.007339045634729591,
+   "dose_p": 1.0,
+   "dose_verdict": "NO DOSE-RESPONSE"
+  },
+  "2015": {
+   "real": 826,
+   "null_mean": 1082.265,
+   "p": 0.9660339660339661,
+   "verdict": "NOT SHARP ENOUGH",
+   "sig_factors": 2,
+   "median_or": 1.1235072398397403,
+   "sign_agree": 5,
+   "sign_n": 7
+  }
+ }
+}
