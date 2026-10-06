@@ -1,399 +1,367 @@
-"""A coupled genome-scale model of metabolism AND gene expression, and what it can be asked.
+"""The whole cell, not a bunch of proteins: can the memory bank predict what happens to the WHOLE
+cell when any gene is knocked down -- every process at once, and whether the cell survives?
 
-WHAT THIS IS, AND WHAT IT IS NOT. This couples the two largest subsystems of a human cell at
-genome scale: metabolism, from Recon3D (10,600 reactions, 5,835 metabolites, 2,248 genes), and
-gene expression for the whole protein-coding genome (19,900 genes, four rates each). In systems
-biology this is called an ME-model -- Metabolism and Expression -- and it is the largest thing
-that can honestly be built from public data plus the machinery in this build order.
+WHY THE FRAME CHANGES. rawchip / rawchip2 asked "does factor X directly control gene Y" and found
+that steady-state knockdowns cannot answer it: the cell rewires, and responses are cell-wide. So
+ask the cell-wide question directly. A knockdown is a perturbation of the whole system; its
+transcriptome response (8,248 genes) is a snapshot of the whole cell; Reactome's catalogue of human
+processes (CC0) turns each snapshot into the activity of every process at once.
 
-It is NOT a whole human cell, and W8 enumerates what is missing rather than letting the name imply
-coverage. Absent entirely: DNA replication and the cell cycle, signal transduction, splicing and
-RNA processing, protein folding and chaperones, secretion and trafficking, the cytoskeleton,
-organelle biogenesis and dynamics, membrane potential, and every spatial degree of freedom. A
-model with none of those is not a cell; it is the metabolic and biosynthetic core of one.
-
-THE COUPLING, which is what makes it more than two models side by side.
-
-  1. ENZYME CAPACITY. Each metabolic reaction is limited by the enzyme catalysing it,
-     v_j <= kcat_j * E_j, so metabolic flux is bounded by what expression produced.
-  2. PROTEOME BUDGET. Total protein is finite: sum over enzymes of E_j * MW <= P_metabolic.
-     Every enzyme made is one not made elsewhere.
-  3. BIOSYNTHETIC COST. Sustaining the proteome at growth rate mu costs amino acids and ATP,
-     (mu + k_dp,g) * E_g per protein per unit time, and that demand is charged to metabolism --
-     including for the ~18,000 non-metabolic genes, which pay but do not catalyse.
-  4. SELF-CONSISTENCY. Growth appears on both sides: it dilutes the proteome and it is what
-     metabolism produces. The model is solved by bisection on mu, each step one linear program,
-     which is the standard ME formulation.
-
-WHAT IS ASSUMED, ALL DECLARED AND SWEPT IN W7. kcat values are not known genome-wide, so they are
-drawn from a lognormal and swept; a single mean protein length and mass stand in for per-gene
-values; the enzyme pool is held per reaction rather than per subunit, the standard GECKO
-simplification. None of these is a measurement and none is quoted as one.
+DATA. K562 genome-wide CRISPRi Perturb-seq (Replogle 2022, CC BY 4.0; values scaled as in
+celldiscover: z-equivalent = value x 6.85, mover |value| >= 3/6.85, non-finite = missing); DepMap 24Q4
+K562 gene effect (CC BY 4.0) as the cell's survival; Reactome human pathways (CC0) with 15-300
+measured genes as PROCESSES; the bank's facts (cellbank2/celldiscover v3) for gene-level reasoning.
+Knockdowns WITH A PHENOTYPE: energy-test p < 0.05. TRAIN / TEST: the SHA-256 parity split used by
+cellbank2 and celldiscover. The TIDE: the mean response of all TRAIN phenotype knockdowns -- what
+"any knockdown" does to the cell; every model must beat it.
 
 =================================================================================================
-GATES, PREDECLARED BEFORE THE FIRST RUN
+GATES, PREDECLARED
 =================================================================================================
+P0 POSITIVE CONTROL, BLOCKING FOR THE COUPLING MAP. Knocking down cholesterol-biosynthesis genes must
+   RAISE the rest of the cholesterol-biosynthesis process (SREBP2 feedback; Reactome R-HSA-191273):
+   z > 3. If the map cannot see the best-known whole-cell feedback, it is not reported.
 
-W1  THE PARTS CONNECT. Recon3D's gene identifiers must map into the expression layer, and the
-    overlap is reported: how many of the 19,900 genes are metabolic, how many reactions get an
-    enzyme, and how many are left orphaned. An ME-model whose layers do not actually share genes
-    is two models in one file.
-
-W2  THE LINEAR PROGRAM IS WELL POSED. Mass balance satisfied to 1e-6, the proteome budget binding,
-    and the solution finite.
-
-W3  THE FIXED POINT EXISTS AND IS FOUND. Bisection on growth must bracket and converge, with the
-    feasible-infeasible boundary located to a stated tolerance.
-
-W4  THE COUPLING CHANGES THE ANSWER. Compare growth under the coupled model against plain FBA with
-    no enzyme or proteome constraints. Predeclared: if they agree, the expression layer is
-    decorative and this is FBA with extra steps.
-
-W5  WHICH LAYER LIMITS. Report whether growth is bounded by a binding enzyme capacity, by the
-    proteome budget, or by nutrient uptake, and the shadow price of each.
-
-W6  THE WHOLE-CELL SENSITIVITY. The projection run over BOTH rate classes at once -- metabolic
-    kcats and expression rates -- to find which rates the coupled answer depends on. This is the
-    question the whole build order has been walking towards, asked of the largest model available.
-
-W7  THE ASSUMPTIONS DO NOT CARRY THE CONCLUSION. Sweep the kcat distribution, the proteome budget
-    and the mean protein length. Predeclared: if the identity of the limiting layer or the rank
-    ordering of sensitive rates changes across the sweep, the result is a property of my assumed
-    constants and must be reported as such.
-
-W8  WHAT IS ABSENT, quantified. List the subsystems not modelled and estimate the fraction of
-    cellular protein mass they represent, so the reader can see how much of a cell this is.
+W  PREDICT THE WHOLE CELL for every TEST knockdown with a phenotype; score = Pearson r between the
+   predicted and measured response over all measured genes (the knocked-down gene excluded):
+     W0 TIDE                the average knockdown response (TRAIN)
+     W1 GENE NETWORK        the bank's v3 engine (literature + OmniPath + TRAIN-measured facts):
+                            signed, hop-decayed confidence at reached genes, 0 elsewhere
+     W2 WHOLE-CELL PROCESS  mean TRAIN response of knockdowns of genes sharing >= 1 process with
+                            the target gene (weighted by processes shared); no shared process -> tide
+     W2n PROCESS NULL       W2 with every gene's process memberships shuffled (sizes kept)
+     W3 PROCESS + NETWORK   equal-weight sum of z-scored W2 and W1
+   Paired per-knockdown sign tests, two-sided p < 0.05:
+     V1 W2 vs W0   does whole-cell process knowledge beat the generic tide?
+     V2 W2 vs W2n  is it the biology of the processes, not the averaging?
+     V3 W2 vs W1   process-level vs gene-level reasoning        } on the first 500 TEST knockdowns
+     V4 W3 vs W2   does gene-level reasoning add anything?       } by hash (W1 is slow)
+F  THE CELL'S BOTTOM LINE (DepMap K562 survival):
+     F1 do knockdowns that disturb more of the cell kill it more? Spearman(movers, -gene effect) > 0,
+        p < 0.05.
+     F2 can process knowledge predict which TEST genes the cell cannot live without (gene effect
+        <= -0.5)? Score = weighted mean gene effect of TRAIN genes sharing processes; AUROC must beat
+        the 95th percentile of 200 membership-shuffled nulls AND exceed 0.60.
+C  THE WHOLE-CELL COUPLING MAP. For process A (>= 8 phenotype knockdowns, all data) and process B
+   (gene overlap with A < 20%): effect of knocking down A on B, relative to the tide, as
+   z = mean / (sd_B / sqrt(n_A)). A coupling is REPLICATED if |z| >= 5 overall and the same sign with
+   |z| >= 2 in each of two random halves of A's knockdowns. Null: the whole procedure with knockdown
+   -> process memberships shuffled; estimated FDR = null replicated count / real. Couplings are
+   summarised by Reactome top-level system.
+X  WHAT THIS IS NOT. One cell line (K562, p53-null leukaemia), CRISPRi, steady state; the transcriptome
+   is not the whole cell (no metabolite, protein or flux readout here); Reactome processes overlap.
 """
 
 from __future__ import annotations
-import os
-for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
-    os.environ.setdefault(_v, "1")
+import collections
+import gzip
+import hashlib
+import importlib.util
 import json
-import re
+import math
+import os
 import time
+import zipfile
 import numpy as np
-from scipy.sparse import lil_matrix, csc_matrix, hstack, vstack, eye, coo_matrix
-from scipy.optimize import linprog
 
-from rem.atlas.hybrid_tune import RULE
-from rem.atlas.recon import MODEL, MEDIUM, fetch_if_missing, boundary_reactions
-
-# ---- declared assumptions, all swept in W7 ---------------------------------------------------
-# CORRECTED UNITS. The first run put kcat in 1/h against an enzyme budget normalised to 1.0, so
-# any flux could be bought with almost no protein, enzymes became free and the optimiser spent the
-# whole budget on ribosome. Flux, enzyme and ribosome are now carried in ONE consistent system:
-# flux in mmol/gDW/h, protein in g/gDW, capacity v <= kcat * E / MW.
-N_GENES_TOTAL = 19900          # human protein-coding genes
-MW_PROT = 50.0                 # g/mmol, a 50 kDa average protein
-KCAT_MEDIAN = 25.0             # 1/s
-KCAT_SIGMA = 1.2               # lognormal spread in ln units
-PROT_TOTAL = 0.5               # g protein per gDW
-OTHER_FRAC = 0.45              # non-metabolic, non-ribosomal share of the proteome
-# CORRECTED AGAIN. The second run charged the FULL ribosome mass against a PROTEIN budget and
-# came out 53.8% ribosome against a few per cent in real cells. A mammalian 80S ribosome is about
-# 4.3 MDa of which only ~1/3 is protein; the rest is rRNA, which is not made by ribosomes and does
-# not compete for the protein budget. So capacity is expressed per gram of ribosomal PROTEIN:
-#   5.6 aa/s * 110 g/mol * 3600 s/h / (4.3e6 * 0.33) = 1.56 g protein per g ribosomal protein per h
-# and a declared fraction of ribosomes are not elongating at any moment.
-RIB_MW = 4.3e6                 # g/mol, mammalian 80S
-RIB_PROT_FRAC = 0.33           # protein share of ribosome mass; the rest is rRNA
-ELONG_AA_PER_S = 5.6
-AA_MW = 110.0
-ACTIVE_RIB_FRAC = 0.80         # fraction of ribosomes elongating at any instant
-K_ELONG_MASS = (ELONG_AA_PER_S * AA_MW * 3600.0 / (RIB_MW * RIB_PROT_FRAC)) * ACTIVE_RIB_FRAC
-MU_MAX_SEARCH = 2.0
+HERE = os.path.dirname(os.path.abspath(__file__))
+R = lambda *p: os.path.normpath(os.path.join(HERE, "..", "..", *p))
+CA = os.path.join(HERE, "_cache")
+RE = os.path.join(CA, "reactome")
+OUT = os.path.join(HERE, "RESULTS_wholecell.txt")
+ART = R("outputs", "wholecell.json")
+BANK = R("memory_bank", "cell_v3")
+RULE = "=" * 97
+SCALE = 6.85
+_s = importlib.util.spec_from_file_location("celldiscover", os.path.join(HERE, "celldiscover.py"))
+cd = importlib.util.module_from_spec(_s); _s.loader.exec_module(cd)
+cb, dc = cd.cb, cd.dc
 
 
-def parse_gpr(rule):
-    """Enzyme availability for a reaction: sum over isozymes, minimum over complex subunits."""
-    if not rule or not rule.strip():
-        return []
-    parts = re.split(r"\s+or\s+", rule.replace("(", " ").replace(")", " "))
-    out = []
-    for p in parts:
-        subs = [t for t in re.split(r"\s+and\s+", p) if t.strip()]
-        if subs:
-            out.append([t.strip() for t in subs])
+def reactome(genes_measured):
+    names, parent = {}, collections.defaultdict(set)
+    for line in open(os.path.join(RE, "ReactomePathways.txt")):
+        p = line.rstrip("\n").split("\t")
+        if len(p) >= 3 and p[2] == "Homo sapiens":
+            names[p[0]] = p[1]
+    for line in open(os.path.join(RE, "ReactomePathwaysRelation.txt")):
+        a, b = line.rstrip("\n").split("\t")[:2]
+        if a in names and b in names:
+            parent[b].add(a)
+
+    def tops(pid, seen=None):
+        seen = seen or set()
+        if not parent.get(pid):
+            return {pid}
+        out = set()
+        for q in parent[pid]:
+            if q not in seen:
+                out |= tops(q, seen | {q})
+        return out
+    z = zipfile.ZipFile(os.path.join(RE, "ReactomePathways.gmt.zip"))
+    mods = {}
+    for line in z.read(z.namelist()[0]).decode().splitlines():
+        p = line.split("\t")
+        pid = p[1]
+        if pid not in names:
+            continue
+        g = {x for x in p[2:] if x in genes_measured}
+        if 15 <= len(g) <= 300:
+            mods[pid] = g
+    top = {pid: sorted(names[t] for t in tops(pid)) for pid in mods}
+    return mods, names, top
+
+
+def pearson_rows(P, A):
+    """Row-wise Pearson r between prediction P and actual A, ignoring NaN in A."""
+    out = np.full(len(A), np.nan)
+    for i in range(len(A)):
+        m = np.isfinite(A[i]) & np.isfinite(P[i])
+        if m.sum() > 10 and np.std(P[i][m]) > 0 and np.std(A[i][m]) > 0:
+            out[i] = np.corrcoef(P[i][m], A[i][m])[0, 1]
     return out
 
 
-def load_model():
-    fetch_if_missing()
-    d = json.load(open(MODEL))
-    return d["reactions"], d["metabolites"]
-
-
-def build_lp(S, lb, ub, kcat, enz_idx, mu, obj_idx, k_dp, budget, k_elong,
-             other_frac, k_dp_other, k_dp_rib):
-    """One linear program at fixed growth mu. Variables are [v (nR), E (nE), R_ribosome (1)].
-
-    Three couplings, all linear once mu is fixed:
-      capacity      v_j - kcat_j E_j <= 0                       metabolism limited by expression
-      budget        sum_j E_j + R + P_other <= budget           protein is finite
-      translation   sum_j (mu + k_dp_j) E_j + (mu+k_dp_r) R
-                      + (mu+k_dp_o) P_other  <=  R * k_elong    the ribosome must keep up
-
-    The third is what makes protein DEGRADATION rates enter a whole-cell answer: a protein with a
-    short lifetime must be resynthesised continuously whether the cell is growing or not, and that
-    consumes the same ribosome capacity as growth does. Biomass already carries the metabolic cost
-    of growth, so no amino-acid or ATP drain is added here -- that would double-count it."""
-    nR = S.shape[1]
-    nE = len(enz_idx)
-    n = nR + nE + 1
-    Sb = hstack([S, csc_matrix((S.shape[0], nE + 1))]).tocsc()
-
-    rows, cols, vals = [], [], []
-    for k, j in enumerate(enz_idx):
-        rows += [k, k]; cols += [j, nR + k]; vals += [1.0, -kcat[j] / MW_PROT]
-    Acap = coo_matrix((vals, (rows, cols)), shape=(nE, n))
-
-    P_other = other_frac * budget
-    rb = np.concatenate([np.ones(nE), [1.0]])
-    Abud = coo_matrix((rb, (np.zeros(nE + 1), np.arange(nR, n))), shape=(1, n))
-
-    tr = np.concatenate([mu + k_dp[enz_idx], [(mu + k_dp_rib) - k_elong]])
-    Atr = coo_matrix((tr, (np.zeros(nE + 1), np.arange(nR, n))), shape=(1, n))
-
-    A_ub = vstack([Acap, Abud, Atr]).tocsc()
-    b_ub = np.concatenate([np.zeros(nE),
-                           [budget - P_other],
-                           [-(mu + k_dp_other) * P_other]])
-    lo = np.concatenate([lb, np.zeros(nE + 1)])
-    hi = np.concatenate([ub, np.full(nE + 1, np.inf)])
-    lo[obj_idx] = hi[obj_idx] = mu
-    c = np.zeros(n)
-    c[nR:] = 1.0
-    return linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=Sb, b_eq=np.zeros(S.shape[0]),
-                   bounds=list(zip(lo, hi)), method="highs"), nR, nE
-
-
-def max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, budget, k_elong,
-               other_frac, k_dp_other, k_dp_rib, tol=1e-6, hi0=MU_MAX_SEARCH):
-    """Bisection on growth: the largest mu for which the coupled program is feasible."""
-    lo, hi = 0.0, hi0
-    r0, _, _ = build_lp(S, lb, ub, kcat, enz_idx, 0.0, obj_idx, k_dp, budget,
-                        k_elong, other_frac, k_dp_other, k_dp_rib)
-    if r0.status != 0:
-        return None, None, 0
-    rhi, _, _ = build_lp(S, lb, ub, kcat, enz_idx, hi, obj_idx, k_dp, budget,
-                         k_elong, other_frac, k_dp_other, k_dp_rib)
-    if rhi.status == 0:
-        return hi, rhi, 1
-    best = r0
-    steps = 0
-    while hi - lo > tol:
-        mid = 0.5 * (lo + hi)
-        r, _, _ = build_lp(S, lb, ub, kcat, enz_idx, mid, obj_idx, k_dp, budget,
-                           k_elong, other_frac, k_dp_other, k_dp_rib)
-        steps += 1
-        if r.status == 0:
-            lo, best = mid, r
-        else:
-            hi = mid
-    return lo, best, steps
+def sign_test(d):
+    d = [x for x in d if np.isfinite(x) and x != 0]
+    n = len(d); w = sum(x > 0 for x in d)
+    k = min(w, n - w)
+    p = min(1.0, 2 * sum(math.comb(n, i) for i in range(0, k + 1)) / 2 ** n) if n else 1.0
+    return w, n - w, p
 
 
 def main():
+    from scipy.stats import spearmanr, rankdata
     out = []
 
-    def P(s=""):
-        print(s, flush=True)
-        out.append(s)
+    def P_(s=""):
+        print(s, flush=True); out.append(s)
 
-    P(RULE); P("A COUPLED GENOME-SCALE MODEL OF METABOLISM AND EXPRESSION"); P(RULE)
-    R, M = load_model()
-    nR = len(R)
-    idx = {r["id"]: j for j, r in enumerate(R)}
-    mi = {m["id"]: i for i, m in enumerate(M)}
-    Sl = lil_matrix((len(M), nR))
-    for j, r in enumerate(R):
-        for met, co in r["metabolites"].items():
-            Sl[mi[met], j] = co
-    S = csc_matrix(Sl)
-    lb = np.array([r["lower_bound"] for r in R], float)
-    ub = np.array([r["upper_bound"] for r in R], float)
-    # Close the SUPPLY direction of every boundary reaction, then reopen only the declared
-    # medium. Identified structurally so no naming convention can leak past it. Removal is left
-    # open: a cell that cannot excrete waste cannot run metabolism at all, and closing both
-    # directions gives exactly zero growth.
-    for j in boundary_reactions(R):
-        lb[j] = 0.0
-    for k, v in MEDIUM.items():
-        if k in idx:
-            lb[idx[k]] = v
-    obj_idx = idx["BIOMASS_maintenance"]
-
-    # ---- W1 -------------------------------------------------------------------------------------
-    P("\n" + RULE); P("W1  THE PARTS CONNECT"); P(RULE)
-    gpr = [parse_gpr(r.get("gene_reaction_rule", "")) for r in R]
-    enz_idx = np.array([j for j in range(nR) if gpr[j]], dtype=int)
-    toks = set()
-    for g in gpr:
-        for iso in g:
-            toks.update(iso)
-    base = {t.split("_")[0] for t in toks}
-    ncomplex = sum(1 for g in gpr if any(len(iso) > 1 for iso in g))
-    niso = sum(1 for g in gpr if len(g) > 1)
-    P(f"  expression layer: {N_GENES_TOTAL} protein-coding genes, 4 rates each"
-      f" = {4*N_GENES_TOTAL:,} rates")
-    P(f"  metabolism layer: {nR} reactions, {len(M)} metabolites")
-    P(f"  reactions carrying an enzyme (a GPR): {len(enz_idx)} of {nR}")
-    P(f"  distinct gene identifiers in those rules: {len(toks)}"
-      f" ({len(base)} distinct base genes)")
-    P(f"  of the {N_GENES_TOTAL} genes, {len(base)} are metabolic"
-      f" ({100*len(base)/N_GENES_TOTAL:.1f}%); the other"
-      f" {N_GENES_TOTAL-len(base):,} pay the proteome and ribosome costs but catalyse nothing here")
-    P(f"  reactions needing a complex (an 'and'): {ncomplex};"
-      f" with isozymes (an 'or'): {niso}")
-    P(f"  orphan reactions with no enzyme at all: {nR-len(enz_idx)}"
-      f"   {'PASS' if len(enz_idx) > 0.4*nR else 'FAIL -- the layers barely share genes'}")
-
-    rng = np.random.default_rng(20260905)
-    kcat = np.zeros(nR)
-    kcat[enz_idx] = np.exp(rng.normal(np.log(KCAT_MEDIAN), KCAT_SIGMA, len(enz_idx))) * 3600.0
-    # v [mmol/gDW/h] <= kcat [1/h] * E [g/gDW] / MW [g/mmol]
-    k_dp = np.zeros(nR)
-    k_dp[enz_idx] = np.exp(rng.normal(np.log(0.015), 0.7, len(enz_idx)))
-    K_ELONG = K_ELONG_MASS
-    KDP_OTHER, KDP_RIB = 0.015, 0.010
-
-    # ---- W3, W4 ---------------------------------------------------------------------------------
-    P("\n" + RULE); P("W3  THE FIXED POINT EXISTS AND IS FOUND"); P(RULE)
     t0 = time.time()
-    mu, best, steps = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp,
-                                 PROT_TOTAL, K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB,
-                                 tol=1e-6)
-    P(f"  bisection: {steps} linear programs in {time.time()-t0:.1f}s")
-    if mu is None:
-        P("  FAIL -- infeasible even at zero growth; the coupled model has no solution")
-        open(os.path.join(os.path.dirname(__file__), "RESULTS_wholecell.txt"),
-             "w").write("\n".join(out) + "\n")
-        return
-    P(f"  coupled growth rate mu = {mu:.6f} /h   (doubling time {np.log(2)/max(mu,1e-12):.2f} h)")
-    P(f"  {'PASS' if mu > 0 else 'FAIL'} (a fixed point was located)")
+    rng = np.random.default_rng(20261009)
+    X, kos, genes, ep, fold = cd.load_gwps()
+    gidx = {g: j for j, g in enumerate(genes)}; kidx = {k: i for i, k in enumerate(kos)}
+    zmov = 3.0 / SCALE
+    mods, rnames, rtop = reactome(set(genes))
+    mid = sorted(mods); M = len(mid)
+    Mm = np.zeros((len(genes), M), dtype=np.float32)
+    for c, pid in enumerate(mid):
+        for g in mods[pid]:
+            Mm[gidx[g], c] = 1.0
+    gene_mods = collections.defaultdict(set)
+    for c, pid in enumerate(mid):
+        for g in mods[pid]:
+            gene_mods[g].add(c)
+    split = lambda k: "TRAIN" if int(hashlib.sha256(k.encode()).hexdigest(), 16) % 2 == 0 else "TEST"
+    phen = [k for k, e in zip(kos, ep) if np.isfinite(e) and e < 0.05]
+    train = [k for k in phen if split(k) == "TRAIN"]; test = [k for k in phen if split(k) == "TEST"]
+    P_(RULE); P_("THE WHOLE CELL: PREDICTING EVERY PROCESS AT ONCE, AND WHETHER THE CELL SURVIVES"); P_(RULE)
+    P_(f"  knockdowns {len(kos):,} ({len(phen):,} with a phenotype: TRAIN {len(train):,}, TEST {len(test):,}); "
+       f"measured genes {len(genes):,}; Reactome processes (15-300 measured genes) {M:,}")
+    Xf = np.where(np.isfinite(X), X, 0.0).astype(np.float32)
+    fin = np.isfinite(X).astype(np.float32)
+    S = (Xf @ Mm) / np.maximum(fin @ Mm, 1)                     # process scores, knockdown x process
+    tr_i = np.array([kidx[k] for k in train]); te_i = np.array([kidx[k] for k in test])
+    tide = np.nanmean(X[tr_i], 0)
+    ph_i = np.array([kidx[k] for k in phen])
+    tideS_all = S[ph_i].mean(0); sdS = S[ph_i].std(0)
 
-    r_fba = linprog(-np.eye(nR)[obj_idx], A_eq=S, b_eq=np.zeros(S.shape[0]),
-                    bounds=list(zip(lb, ub)), method="highs")
-    mu_fba = -r_fba.fun if r_fba.status == 0 else float("nan")
-    P("\n" + RULE); P("W4  THE COUPLING CHANGES THE ANSWER"); P(RULE)
-    P(f"  plain FBA, no enzyme or proteome constraint : mu = {mu_fba:.6f} /h")
-    P(f"  coupled metabolism + expression             : mu = {mu:.6f} /h")
-    P(f"  ratio {mu/max(mu_fba,1e-12):.4f}"
-      f"   {'PASS -- expression genuinely constrains metabolism' if mu < 0.95*mu_fba else 'FAIL -- the expression layer is decorative'}")
+    # ---------------------------------------------------------------- P0 positive control -------
+    P_("\n" + RULE); P_("P0  POSITIVE CONTROL: CHOLESTEROL-SYNTHESIS KNOCKDOWNS RAISE CHOLESTEROL SYNTHESIS (SREBP2 FEEDBACK)"); P_(RULE)
+    chol = "R-HSA-191273"
+    if chol in mods:
+        c = mid.index(chol)
+        members = [k for k in phen if k in mods[chol]]
+        vals = []
+        for k in members:
+            gs = [gidx[g] for g in mods[chol] if g != k and np.isfinite(X[kidx[k], gidx[g]])]
+            vals.append(np.mean(X[kidx[k], gs]) - tideS_all[c])
+        zc = np.mean(vals) / (sdS[c] / math.sqrt(len(vals))) if vals else float("nan")
+        p0 = bool(len(vals) >= 3 and zc > 3)
+        P_(f"  {len(vals)} cholesterol-synthesis knockdowns: mean shift of the rest of the process {np.mean(vals) * SCALE:+.2f} "
+           f"(z-equiv), z {zc:+.1f} -> {'PASS' if p0 else 'FAIL'}")
+    else:
+        p0 = False
+        P_("  cholesterol biosynthesis not among the processes -> FAIL")
+    res = {"P0": p0}
 
-    # ---- W2, W5 ---------------------------------------------------------------------------------
-    x = best.x
-    v, E, Rrib = x[:nR], x[nR:nR + len(enz_idx)], x[-1]
-    P("\n" + RULE); P("W2  THE LINEAR PROGRAM IS WELL POSED"); P(RULE)
-    mb = float(np.abs(S @ v).max())
-    P(f"  worst |S v| = {mb:.2e}   {'PASS' if mb < 1e-6 else 'FAIL'}")
-    used = float(E.sum() + Rrib)
-    avail = PROT_TOTAL * (1.0 - OTHER_FRAC)
-    P(f"  protein used {used:.6f} g/gDW of the {avail:.6f} available to metabolism + ribosome"
-      f"   binding: {abs(used - avail) < 1e-8}")
-    P(f"  ribosome {Rrib:.6f} g/gDW = {100*Rrib/PROT_TOTAL:.2f}% of total protein"
-      f"  (mammalian cells are a few per cent)")
+    # ---------------------------------------------------------------- W predictions --------------
+    P_("\n" + RULE); P_("W  PREDICT THE WHOLE CELL FOR UNSEEN KNOCKDOWNS"); P_(RULE)
+    tr_set = set(train)
+    mod_tr = collections.defaultdict(list)
+    for k in train:
+        for c in gene_mods.get(k, ()):
+            mod_tr[c].append(kidx[k])
+    Pm = np.zeros((M, len(genes)), dtype=np.float32); has = np.zeros(M, bool)
+    for c, rows in mod_tr.items():
+        Pm[c] = np.nanmean(X[rows], 0); has[c] = True
 
-    P("\n" + RULE); P("W5  WHICH LAYER LIMITS"); P(RULE)
-    nE = len(enz_idx)
-    marg = np.asarray(best.ineqlin.marginals) if hasattr(best, "ineqlin") else np.zeros(nE + 2)
-    cap_m, bud_m, tr_m = marg[:nE], float(marg[nE]), float(marg[nE + 1])
-    nbind = int((np.abs(cap_m) > 1e-9).sum())
-    P(f"  enzyme-capacity constraints binding : {nbind} of {nE}")
-    P(f"  proteome-budget shadow price        : {bud_m:.6e}")
-    P(f"  translation-capacity shadow price   : {tr_m:.6e}")
-    P(f"  ribosome mass fraction of the metabolic proteome: {Rrib/max(used,1e-12):.4f}")
-    lim = max((abs(bud_m), "proteome budget"), (abs(tr_m), "translation capacity"),
-              (float(np.abs(cap_m).max()) if nE else 0.0, "an enzyme capacity"))[1]
-    P(f"  the binding limitation is: {lim}")
+    def process_pred(k, gm):
+        cs = [c for c in gm.get(k, ()) if has_[c]]
+        if not cs:
+            return tide, False
+        return np.mean(Pm_[cs], 0), True
+    actual = X[te_i].copy()
+    for r, k in enumerate(test):
+        if k in gidx:
+            actual[r, gidx[k]] = np.nan
+    W0 = np.tile(tide, (len(test), 1))
+    has_, Pm_ = has, Pm
+    W2 = np.zeros_like(W0); cov = 0
+    for r, k in enumerate(test):
+        W2[r], ok = process_pred(k, gene_mods); cov += ok
+    # null: shuffled memberships (sizes kept) -- rebuild module profiles from shuffled membership
+    allg = sorted(gene_mods)
+    perm = rng.permutation(len(allg)); shuf = {allg[i]: gene_mods[allg[perm[i]]] for i in range(len(allg))}
+    mod_tr_n = collections.defaultdict(list)
+    for k in train:
+        for c in shuf.get(k, ()):
+            mod_tr_n[c].append(kidx[k])
+    Pm_n = np.zeros_like(Pm); has_n = np.zeros(M, bool)
+    for c, rows in mod_tr_n.items():
+        Pm_n[c] = np.nanmean(X[rows], 0); has_n[c] = True
+    has_, Pm_ = has_n, Pm_n
+    W2n = np.zeros_like(W0)
+    for r, k in enumerate(test):
+        W2n[r], _ = process_pred(k, shuf)
+    r0, r2, r2n = pearson_rows(W0, actual), pearson_rows(W2, actual), pearson_rows(W2n, actual)
+    P_(f"  TEST knockdowns {len(test):,}; with a process carrying TRAIN knockdowns: {cov:,}")
+    for nm, rr in (("W0 tide", r0), ("W2 whole-cell process", r2), ("W2n process null", r2n)):
+        P_(f"     {nm:<24} median r {np.nanmedian(rr):.3f}   mean r {np.nanmean(rr):.3f}")
+    for key, a, b, nm in (("V1", r2, r0, "W2 process vs W0 tide"), ("V2", r2, r2n, "W2 process vs W2n null")):
+        w, l, p = sign_test(a - b)
+        v = "BETTER" if p < 0.05 and w > l else "WORSE" if p < 0.05 else "NO DIFFERENCE"
+        res[key] = dict(better=w, worse=l, p=p, verdict=v, median_a=float(np.nanmedian(a)), median_b=float(np.nanmedian(b)))
+        P_(f"  {key} {nm:<26} better {w}, worse {l}, p {p:.3g} -> {v}")
+    # gene-level network on the first 500 TEST knockdowns by hash
+    D = json.load(gzip.open(dc.ENCY)); bn = [r["name"] for r in D["genes"]]
+    protein = {bn[int(k)]: v for k, v in D["ppm"].items() if k.isdigit()}
+    bank_rows = cb.facts_table(D, bn)[0]
+    omni_rows = [(s, t, sg, 0 if ty == "transcriptional" else 1) for s, t, sg, ty, _ in cd.load_omnipath()]
+    meas_rows = []
+    for k in [k for k in kos if split(k) == "TRAIN"]:
+        z = X[kidx[k]]
+        for j in np.where(np.isfinite(z) & (np.abs(z) >= zmov))[0]:
+            if genes[j] != k:
+                meas_rows.append((k, genes[j], int(-np.sign(z[j])), 0))
+    rows3 = list(bank_rows) + omni_rows + meas_rows
+    by3 = collections.defaultdict(list)
+    for i, r_ in enumerate(rows3):
+        by3[r_[0]].append(i)
+    sub = sorted(range(len(test)), key=lambda r: hashlib.sha256(test[r].encode()).hexdigest())[:500]
+    W1 = np.zeros((len(sub), len(genes)), dtype=np.float32)
+    for q, r in enumerate(sub):
+        C = dc.Cell(bn, protein, {}, {}, {}); pr = cb.new_engine(C, rows3, by3, {test[r]: -1})
+        for g, (d, hop, cf) in pr.items():
+            if g in gidx:
+                W1[q, gidx[g]] = d * cf
+    zs = lambda A: (A - A.mean(1, keepdims=True)) / (A.std(1, keepdims=True) + 1e-9)
+    W3 = zs(W2[sub]) + zs(W1)
+    r1, r3 = pearson_rows(W1, actual[sub]), pearson_rows(W3, actual[sub])
+    r2s = r2[sub]
+    P_(f"  on the first {len(sub)} TEST knockdowns by hash: W1 gene network median r {np.nanmedian(r1):.3f}; "
+       f"W2 process {np.nanmedian(r2s):.3f}; W3 process + network {np.nanmedian(r3):.3f}")
+    for key, a, b, nm in (("V3", r2s, r1, "W2 process vs W1 gene network"), ("V4", r3, r2s, "W3 process+network vs W2")):
+        w, l, p = sign_test(a - b)
+        v = "BETTER" if p < 0.05 and w > l else "WORSE" if p < 0.05 else "NO DIFFERENCE"
+        res[key] = dict(better=w, worse=l, p=p, verdict=v, median_a=float(np.nanmedian(a)), median_b=float(np.nanmedian(b)))
+        P_(f"  {key} {nm:<30} better {w}, worse {l}, p {p:.3g} -> {v}")
 
-    # ---- W6 -------------------------------------------------------------------------------------
-    P("\n" + RULE); P("W6  THE WHOLE-CELL SENSITIVITY"); P(RULE)
-    P("  Screening by dual, then verifying by finite difference on the bisection -- the two-stage")
-    P("  pattern recon.py's R3 forced, since LP duals fire falsely at degenerate optima.")
-    PROBE_TOL, PROBE_STEP = 1e-9, 1.05
-    floor = PROBE_TOL / max(mu, 1e-12) / np.log(PROBE_STEP)
-    P(f"  bisection tolerance {PROBE_TOL:.0e} on mu = {mu:.6f} with a {100*(PROBE_STEP-1):.0f}%")
-    P(f"  perturbation puts the RESOLUTION FLOOR at |d log mu / d log k| = {floor:.2e}.")
-    P(f"  Anything at or below that is noise, not a sensitivity, and is marked so.")
-    cand = [int(enz_idx[k]) for k in np.argsort(-np.abs(cap_m))[:12] if abs(cap_m[k]) > 1e-12]
-    P(f"  {'rate':>26}{'d log mu / d log k':>21}{'':>4}")
-    rows_out = []
-    for j in cand[:8]:
-        k2 = kcat.copy(); k2[j] *= PROBE_STEP
-        m2, _, _ = max_growth(S, lb, ub, k2, enz_idx, obj_idx, k_dp, PROT_TOTAL,
-                              K_ELONG, OTHER_FRAC, KDP_OTHER, KDP_RIB, tol=PROBE_TOL)
-        d = (np.log(max(m2, 1e-300)) - np.log(mu)) / np.log(PROBE_STEP) if m2 else 0.0
-        rows_out.append((f"kcat[{R[j]['id']}]", d))
-        P(f"  {('kcat '+R[j]['id']):>26}{d:>21.6f}{('  NOISE' if abs(d) <= floor else ''):>4}")
-    for nm, mult in (("k_elong (ribosome speed)", "elong"), ("proteome budget", "budget"),
-                     ("k_dp of the non-metabolic proteome", "kdpo")):
-        if mult == "elong":
-            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_TOTAL,
-                                  K_ELONG * PROBE_STEP, OTHER_FRAC, KDP_OTHER, KDP_RIB,
-                                  tol=PROBE_TOL)
-        elif mult == "budget":
-            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp,
-                                  PROT_TOTAL * PROBE_STEP, K_ELONG, OTHER_FRAC, KDP_OTHER,
-                                  KDP_RIB, tol=PROBE_TOL)
-        else:
-            m2, _, _ = max_growth(S, lb, ub, kcat, enz_idx, obj_idx, k_dp, PROT_TOTAL,
-                                  K_ELONG, OTHER_FRAC, KDP_OTHER * PROBE_STEP, KDP_RIB,
-                                  tol=PROBE_TOL)
-        d = (np.log(max(m2, 1e-300)) - np.log(mu)) / np.log(PROBE_STEP) if m2 else 0.0
-        rows_out.append((nm, d))
-        P(f"  {nm:>26}{d:>21.6f}{('  NOISE' if abs(d) <= floor else ''):>4}")
-    P("  A global parameter that outranks every individual kcat means the whole-cell answer is")
-    P("  set by allocation, not by any one enzyme.")
+    # ---------------------------------------------------------------- F survival ----------------
+    P_("\n" + RULE); P_("F  THE CELL'S BOTTOM LINE: DOES IT SURVIVE? (DepMap K562 gene effect)"); P_(RULE)
+    dep = cd.load_depmap()
+    k562 = dep.loc["ACH-000551"]
+    nm_ = {k: int(np.nansum(np.abs(X[kidx[k]]) >= zmov)) for k in kos}
+    both = [k for k in kos if k in k562.index and np.isfinite(k562[k])]
+    rho, pr_ = spearmanr([nm_[k] for k in both], [-k562[k] for k in both])
+    f1 = rho > 0 and pr_ < 0.05
+    P_(f"  F1 knockdowns that disturb more of the cell kill it more: Spearman {rho:+.3f} over {len(both):,} genes, p {pr_:.2g} -> {'YES' if f1 else 'NO'}")
+    trg = [k for k in both if split(k) == "TRAIN"]; teg = [k for k in both if split(k) == "TEST"]
 
-    # ---- W7 -------------------------------------------------------------------------------------
-    P("\n" + RULE); P("W7  THE ASSUMPTIONS DO NOT CARRY THE CONCLUSION"); P(RULE)
-    P(f"  {'variant':>34}{'mu':>12}{'ratio to base':>15}{'limiting':>26}")
-    for nm, kw in (("base", {}),
-                   ("kcat median x10", {"kc": 10.0}),
-                   ("kcat median /10", {"kc": 0.1}),
-                   ("proteome budget x2", {"bud": 2.0}),
-                   ("ribosome speed x2", {"el": 2.0}),
-                   ("non-metabolic fraction 0.7", {"of": 0.7}),
-                   ("non-metabolic fraction 0.2", {"of": 0.2}),
-                   ("ribosome speed /2", {"el": 0.5})):
-        kc = kcat * kw.get("kc", 1.0)
-        m2, b2, _ = max_growth(S, lb, ub, kc, enz_idx, obj_idx, k_dp,
-                               PROT_TOTAL * kw.get("bud", 1.0), K_ELONG * kw.get("el", 1.0),
-                               kw.get("of", OTHER_FRAC), KDP_OTHER, KDP_RIB, tol=1e-4)
-        if m2 is None or b2 is None:
-            P(f"  {nm:>34}{'infeasible':>12}")
-            continue
-        mg = np.asarray(b2.ineqlin.marginals)
-        l2 = max((abs(float(mg[nE])), "proteome budget"),
-                 (abs(float(mg[nE + 1])), "translation capacity"),
-                 (float(np.abs(mg[:nE]).max()), "an enzyme capacity"))[1]
-        P(f"  {nm:>34}{m2:>12.6f}{m2/max(mu,1e-12):>15.4f}{l2:>26}")
+    def ess_auc(gm):
+        msum = collections.defaultdict(list)
+        for k in trg:
+            for c in gm.get(k, ()):
+                msum[c].append(k562[k])
+        mm = {c: float(np.mean(v)) for c, v in msum.items()}
+        sc, y = [], []
+        base = float(np.mean([k562[k] for k in trg]))
+        for k in teg:
+            cs = [mm[c] for c in gm.get(k, ()) if c in mm]
+            sc.append(-(np.mean(cs) if cs else base)); y.append(k562[k] <= -0.5)
+        sc, y = np.array(sc), np.array(y)
+        rk = rankdata(sc)
+        return float((rk[y].sum() - y.sum() * (y.sum() + 1) / 2) / (y.sum() * (len(y) - y.sum())))
+    auc = ess_auc(gene_mods)
+    nulls = []
+    for _ in range(200):
+        pm = rng.permutation(len(allg))
+        nulls.append(ess_auc({allg[i]: gene_mods[allg[pm[i]]] for i in range(len(allg))}))
+    f2 = auc > np.percentile(nulls, 95) and auc > 0.60
+    P_(f"  F2 process knowledge predicts which TEST genes the cell cannot live without: AUROC {auc:.3f} "
+       f"(null 95th pct {np.percentile(nulls, 95):.3f}) -> {'PASS' if f2 else 'FAIL'}; essential TEST genes "
+       f"{sum(k562[k] <= -0.5 for k in teg):,} of {len(teg):,}")
+    res["F1"] = dict(rho=float(rho), p=float(pr_), verdict=f1); res["F2"] = dict(auc=auc, null95=float(np.percentile(nulls, 95)), verdict=f2)
 
-    # ---- W8 -------------------------------------------------------------------------------------
-    P("\n" + RULE); P("W8  WHAT IS ABSENT"); P(RULE)
-    P("  Modelled: metabolism (10,600 reactions), the metabolic proteome, ribosome allocation,")
-    P("  and the translation cost of the whole proteome including non-metabolic genes.")
-    P("  NOT modelled, at all:")
-    for line in ("DNA replication and the cell cycle",
-                 "signal transduction and regulation -- the model has no controller",
-                 "splicing, RNA processing, export",
-                 "protein folding, chaperones, quality control",
-                 "secretion, trafficking, the endomembrane system",
-                 "the cytoskeleton and mechanics",
-                 "organelle biogenesis; mitochondria appear only as compartment labels",
-                 "membrane potential and electrochemical gradients beyond stoichiometry",
-                 "every spatial degree of freedom -- the cell is one well-mixed bag",
-                 "cell-to-cell variation; this is one deterministic allocation"):
-        P(f"    - {line}")
-    P(f"  {len(base)} of {N_GENES_TOTAL} genes ({100*len(base)/N_GENES_TOTAL:.1f}%) have a")
-    P(f"  mechanism in this model. The other {100*(1-len(base)/N_GENES_TOTAL):.1f}% appear only as")
-    P("  a mass and a ribosome burden. That is the honest measure of how much of a cell this is.")
+    # ---------------------------------------------------------------- C coupling map ------------
+    P_("\n" + RULE); P_("C  THE WHOLE-CELL COUPLING MAP: WHICH PROCESSES PUSH WHICH"); P_(RULE)
 
-    P("\n" + RULE)
-    open(os.path.join(os.path.dirname(__file__), "RESULTS_wholecell.txt"),
-         "w").write("\n".join(out) + "\n")
+    def couplings(gm, seed):
+        rr = np.random.default_rng(seed)
+        memb = collections.defaultdict(list)
+        for k in phen:
+            for c in gm.get(k, ()):
+                memb[c].append(kidx[k])
+        found = []
+        for a, rows in memb.items():
+            if len(rows) < 8:
+                continue
+            rows = np.array(rows)
+            dlt = S[rows] - tideS_all
+            zz = dlt.mean(0) / (sdS / math.sqrt(len(rows)) + 1e-12)
+            h = rr.permutation(len(rows)); h1, h2 = rows[h[: len(rows) // 2]], rows[h[len(rows) // 2:]]
+            z1 = (S[h1] - tideS_all).mean(0) / (sdS / math.sqrt(len(h1)) + 1e-12)
+            z2 = (S[h2] - tideS_all).mean(0) / (sdS / math.sqrt(len(h2)) + 1e-12)
+            for b in np.where(np.abs(zz) >= 5)[0]:
+                if b == a:
+                    continue
+                ov = len(mods[mid[a]] & mods[mid[b]]) / max(1, min(len(mods[mid[a]]), len(mods[mid[b]])))
+                if ov >= 0.2:
+                    continue
+                if np.sign(z1[b]) == np.sign(zz[b]) == np.sign(z2[b]) and abs(z1[b]) >= 2 and abs(z2[b]) >= 2:
+                    found.append((a, int(b), float(zz[b]), len(rows)))
+        return found
+    real = couplings(gene_mods, 1)
+    pm = rng.permutation(len(allg))
+    nullc = couplings({allg[i]: gene_mods[allg[pm[i]]] for i in range(len(allg))}, 1)
+    fdr = len(nullc) / max(len(real), 1)
+    P_(f"  replicated couplings (|z| >= 5, same sign in both halves, overlap < 20%): {len(real):,}; null {len(nullc):,} -> estimated FDR {fdr:.2f}"
+       + ("" if p0 else "   [NOT REPORTED AS A MAP: P0 failed]"))
+    res["C"] = dict(real=len(real), null=len(nullc), fdr=fdr)
+    if p0:
+        sysmap = collections.Counter()
+        for a, b, zz, n in real:
+            for ta in rtop[mid[a]][:1]:
+                for tb in rtop[mid[b]][:1]:
+                    if ta != tb:
+                        sysmap[(ta, tb, "raises" if zz > 0 else "lowers")] += 1
+        P_("  between whole-cell SYSTEMS (Reactome top level), most frequent replicated couplings:")
+        for (ta, tb, dirn), n in sysmap.most_common(15):
+            P_(f"     {ta[:34]:<34} {dirn:<7} {tb[:34]:<34} ({n} process pairs)")
+        P_("  strongest single couplings:")
+        for a, b, zz, n in sorted(real, key=lambda x: -abs(x[2]))[:15]:
+            P_(f"     knocking down {rnames[mid[a]][:38]:<38} {'raises' if zz > 0 else 'lowers'} {rnames[mid[b]][:38]:<38} z {zz:+.1f} ({n} knockdowns)")
+        res["C"]["systems"] = [[ta, tb, d_, n] for (ta, tb, d_), n in sysmap.most_common(40)]
+        res["C"]["top"] = [[rnames[mid[a]], rnames[mid[b]], zz, n] for a, b, zz, n in sorted(real, key=lambda x: -abs(x[2]))[:200]]
+    os.makedirs(BANK, exist_ok=True)
+    json.dump({"whole_cell_couplings": res["C"], "process_definitions": "Reactome human pathways (CC0), 15-300 measured genes",
+               "data": "K562 gwps Perturb-seq (CC BY 4.0), DepMap 24Q4 K562 (CC BY 4.0)"},
+              open(os.path.join(BANK, "whole_cell_map.json"), "w"), indent=1, default=float)
+    os.makedirs(os.path.dirname(ART), exist_ok=True)
+    json.dump(res, open(ART, "w"), indent=1, default=float)
+    P_(f"\n  map written to memory_bank/cell_v3/whole_cell_map.json ; artifact outputs/wholecell.json ; runtime {time.time() - t0:.0f}s")
+    P_("  X: one cell line, CRISPRi, steady state; transcriptome only -- no metabolite, protein or flux readout.")
+    open(OUT, "w").write("\n".join(out) + "\n")
 
 
 if __name__ == "__main__":
