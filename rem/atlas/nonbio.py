@@ -20,6 +20,15 @@ GATES, PREDECLARED BEFORE THE FIRST RUN
 B1  THE TWINS MUST BE VALID, BLOCKING. Gradient check < 1e-5 on every group for both; parameter
     count EXACTLY equal to the channel tree's; neither odd once parameters are nonzero.
 
+    AMENDMENT AFTER THE FIRST RUN (commit ab8fc8c), RECORDED NOT HIDDEN. The first run STOPPED at B1:
+    bump tree relative gradient error 1.72e-04 (sine 5.55e-08). Diagnosis, every entry printed: all
+    large relative errors sit on near-zero gradients (Wl 1.7e-08: rel 1.8e-03; a0 1.2e-06: rel 1.3e-04)
+    where central differences at eps 1e-6 carry ~1e-10 absolute roundoff; wherever |g| > 1e-5 the
+    analytic gradient agrees to <= 6e-06. The criterion, not the gradient, was at fault. REVISED B1:
+    |num - ana| <= 1e-5 * max(|num|, |ana|) + 1e-9 on every sampled entry, AND the gate must FAIL a
+    deliberately broken copy of each twin (bump: s-gradient missing its factor 2; sine: w-gradient
+    missing its factor v). A gate that passes a broken gradient is blind and stops the module.
+
 B2  THE HARNESS MUST WORK, BLOCKING. Shallow MLP >= 0.99 at k = 2.
 
 B0  THE ATTRIBUTION. Ten FRESH seeds, 30-39, disjoint from every earlier run. k = 12, n = 1500..4000,
@@ -154,6 +163,49 @@ class BumpTree(NodeTree):
         return dh * (1 - k), dh * e, dh * k, dh * a * e * q * 2 * s / Dn
 
 
+class BrokenBump(BumpTree):
+    """B1 negative control: the s-gradient loses its factor 2."""
+
+    def node_b(self, dh, c, a, mu, s):
+        dv, d1, d2, d3 = super().node_b(dh, c, a, mu, s)
+        return dv, d1, d2, d3 * 0.5
+
+
+class BrokenSine(SineTree):
+    """B1 negative control: the w-gradient loses its factor v."""
+
+    def node_b(self, dh, c, a, w, phi):
+        v, u = c
+        cu = np.cos(u)
+        return dh * (1 + a * w * cu), dh * np.sin(u), dh * a * cu, dh * a * cu
+
+
+def gradcheck(cls, seed=1):
+    """Worst old-style relative error, and worst ratio to the revised tolerance (pass <= 1)."""
+    rng = np.random.default_rng(seed)
+    net = cls(6, 3, 2, 2, rng)
+    for p in net.p1 + net.p2 + net.p3:
+        p[...] = rng.normal(0.3, 0.4, p.shape)
+    X = rng.normal(size=(7, 6)); y = rng.integers(0, 2, 7).astype(float)
+    z = net.forward(X); gs = net.backward((1 / (1 + np.exp(-z)) - y) / len(y))
+    rel = ratio = 0.0
+    for p, g in zip(net.ps, gs):
+        for _ in range(3):
+            idx = tuple(rng.integers(0, s) for s in p.shape)
+            o = p[idx]
+            p[idx] = o + 1e-6; lp = ch.loss_of(net, X, y)
+            p[idx] = o - 1e-6; lm = ch.loss_of(net, X, y)
+            p[idx] = o
+            num = (lp - lm) / 2e-6
+            big = max(abs(num), abs(g[idx]))
+            rel = max(rel, abs(num - g[idx]) / max(big, 1e-9))
+            ratio = max(ratio, abs(num - g[idx]) / (1e-5 * big + 1e-9))
+    rng2 = np.random.default_rng(seed + 1)
+    Xs = rng2.choice([-1.0, 1.0], size=(400, 6))
+    odd = float(np.abs((net.forward(-Xs) - net.bo) + (net.forward(Xs) - net.bo)).max())
+    return rel, ratio, odd
+
+
 def build(name, rng):
     if name == "sine":
         return SineTree(lim.D, 8, lim.B, lim.LV, rng)
@@ -209,27 +261,17 @@ def main():
     P_("\n" + RULE); P_("B1  THE TWINS MUST BE VALID (BLOCKING)"); P_(RULE)
     ok = True
     for cls, nm in ((SineTree, "sine"), (BumpTree, "bump")):
-        rng = np.random.default_rng(1)
-        net = cls(6, 3, 2, 2, rng)
-        for p in net.p1 + net.p2 + net.p3:
-            p[...] = rng.normal(0.3, 0.4, p.shape)
-        X = rng.normal(size=(7, 6)); y = rng.integers(0, 2, 7).astype(float)
-        z = net.forward(X); gs = net.backward((1 / (1 + np.exp(-z)) - y) / len(y))
-        worst = 0.0
-        for p, g in zip(net.ps, gs):
-            for _ in range(3):
-                idx = tuple(rng.integers(0, s) for s in p.shape)
-                o = p[idx]
-                p[idx] = o + 1e-6; lp = ch.loss_of(net, X, y)
-                p[idx] = o - 1e-6; lm = ch.loss_of(net, X, y)
-                p[idx] = o
-                num = (lp - lm) / 2e-6
-                worst = max(worst, abs(num - g[idx]) / max(abs(num), abs(g[idx]), 1e-9))
-        Xs = rng.choice([-1.0, 1.0], size=(400, 6))
-        odd = float(np.abs((net.forward(-Xs) - net.bo) + (net.forward(Xs) - net.bo)).max())
+        rel, ratio, odd = gradcheck(cls)
         same = pc[nm] == pc["channel"]
-        P_(f"  {LABEL[nm]:<12} gradient {worst:.2e}   not odd {odd:.2e}   params equal to channel: {same}")
-        ok = ok and worst < 1e-5 and odd > 1e-9 and same
+        P_(f"  {LABEL[nm]:<12} worst rel err {rel:.2e}   worst / revised tolerance {ratio:.2f}"
+           f"   not odd {odd:.2e}   params equal: {same}")
+        ok = ok and ratio <= 1.0 and odd > 1e-9 and same
+    P_("  negative controls -- the gate MUST fail these:")
+    for cls, nm in ((BrokenSine, "broken sine"), (BrokenBump, "broken bump")):
+        rel, ratio, _ = gradcheck(cls)
+        caught = ratio > 1.0
+        P_(f"  {nm:<12} worst / revised tolerance {ratio:.2e}   -> {'caught' if caught else 'NOT CAUGHT: gate is blind'}")
+        ok = ok and caught
     if not ok:
         P_("\n  B1: FAIL -- a twin is invalid. Nothing reported.")
         open(OUT, "w").write("\n".join(out) + "\n"); return
