@@ -4820,3 +4820,41 @@ OPTOCOMMIT -- OPTOGENETICS (NOBEL 2026): THE CAUSAL TARGET FOR "HOLDING A DECISI
   approaches. Caution fixed now: a free network can learn to ignore every distractor; beating the
   mouse is not matching it. The comparison is the SHAPE at matched baseline accuracy (~0.82).
   Licence: draft dandiset, none declared -- aggregates only, raw data not redistributed.
+
+=================================================================================================
+OPTOUNITS + TWOGATE -- REAL NEURONS UNDER GRADED OPTOGENETIC DRIVE; THE DATA DOES NOT REPAIR THE NODE
+=================================================================================================
+  The weak part targeted: the channel node's two conductances share ONE gate, and it loses ~0.17 to
+  generic bends (NONBIO). Both modules committed together before either ran (3a8aa21), after a
+  structure-only census.
+
+  THE DATA (DANDI 000060, spikes of ALM and vS1 units; drive = channelrhodopsin pulse power at the
+  sample time, 0 to full; 28,272 trials, 2,256 good/ok units in the curve analysis).
+    U0 alignment PASS: go cue 100%, recorded pulse matches the trial table 6,452/6,452.
+    U1 positive control PASS: 25% of vS1 units excited at full drive (where the light lands).
+    U3 SHAPE: single units are MONOTONE. ALM: 428 responsive, 14 "tuned" (3.3%) -- BELOW the
+       permutation null (9.6%); vS1 0/129. No evidence that real units bend.
+    U4 ORDER: none. x50 excited 0.51 vs suppressed 0.43 (Mann-Whitney p 0.48; 3/7 mice agree).
+       -> ORDER = 0 by the predeclared rule. Thresholds are DIVERSE (IQR ~0.26-0.69 for both).
+    U5 graded, not switch-like: median 0.42 of the full response at 1/3 drive (linear 0.33). The
+       ANIMAL is steeper: P(lick right) 0.16 / 0.35 / 0.39 / 0.56 / 0.92 at 0 / 1/3 / 1/2 / 3/4 / 1.
+
+  THE TEST (twogate.py, fresh seeds 50-59, k = 12, ORDER = 0: gates untied, starting equal, so the
+  node begins exactly as the channel node; 38,217 parameters, +1.8%). G1, G2 PASS; nothing capped.
+        mean over seeds and n:  two-gate 0.815   channel tree 0.812   bump tree 0.963
+    G0 two-gate vs channel tree   higher 7/10, mean +0.003, t 0.36   -> NO CLEAR EFFECT
+    G3 two-gate vs bump tree      higher 0/10, mean -0.148, t -12.0  -> gap NOT closed (rule label
+                                  "HARMS" = loses on >= 9/10; read: the bump tree beats it 10/10)
+    G4 not run: the data supplied no ordering.
+
+  WHAT THE DATA DID TELL US, plainly. Real cortical units do not bend: each rises or falls
+  monotonically and gradedly with drive, with thresholds spread widely and no excitation-first or
+  inhibition-first order. Where the brain computes a non-monotone function of its input, it does so
+  by MIXING many monotone units of both signs and diverse thresholds -- a population property, not
+  a single-neuron one. Our tree asks ONE node to bend. So the data does not justify a more
+  "biological" single node; it is consistent with treating each tree node as a small POPULATION,
+  for which a generic bend (bump, sine) is a fair summary. That reading is post hoc and untested.
+
+  NET FOR THE WEAK PARTS. Untying the gates (the biologically faithful single-node repair) does
+  nothing measurable. What helps remains: generic bend nodes (+0.15 to +0.17, decided), leaf L1
+  (+0.03, screen), the matmul leaf contraction (~30% per step, measured).
