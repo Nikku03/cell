@@ -4782,3 +4782,41 @@ NETPROBE -- THE CHANNEL TREE WATCHED WHILE IT LEARNS: WEAK POINTS AND A REPAIR S
        sharpen its bend without rescaling everything feeding it; the bump twin has a free width.
        Real Hodgkin-Huxley / Boltzmann gates carry a slope factor k -- a biologically faithful
        repair that also targets the mechanism. Needs a matched, predeclared test.
+
+=================================================================================================
+OPTOCOMMIT -- OPTOGENETICS (NOBEL 2026): THE CAUSAL TARGET FOR "HOLDING A DECISION"
+=================================================================================================
+  Why: recordings show what neurons do; optogenetics shows what they CAUSE. For a reasoning network
+  built from brain data, it turns "brain-like" into a causal test: perturb the brain and the model
+  the same way, compare what breaks.
+
+  Data: DANDI 000060 (Finkelstein, Fontolan ... Svoboda, Nat Neurosci 2021). Mice report whether
+  their touch cortex was optogenetically stimulated in a SAMPLE window, hold the answer through a
+  DELAY, act at a go cue; an identical light pulse -- a distractor -- arrives at other times.
+  98 sessions, 9 mice, 40,341 trials; 26,746 kept after predeclared exclusions.
+
+  Recorded on the way: O0 (blocking) stopped the first run on MY parser (59 files) and the second
+  on 2.2% timing-shifted trials (late go cue, spacing intact); both amendments committed before
+  re-running, only name/onset fields inspected. Sample/cue variants (2,181) and shifted trials
+  (1,222) counted and excluded.
+
+  O2 HARNESS PASS -- the published headline reproduced from raw files: early-delay distractors fool
+  more than late ones, pooled 0.430 vs 0.258, 7/9 mice; baseline accuracy 0.824.
+
+  THE TARGET, P(lick right) on no-sample trials (correct = left):
+        no distractor                0.186
+        pulse at -3.8 s (pre-sample) 0.383    Full 0.610   Mini 0.214
+        weak pulse at -2.5 s         0.337    (in the sample window, below the trained intensity)
+        pulse at -1.6 s (early delay) 0.430   Full 0.578   Mini 0.317
+        pulse at -0.8 s (late delay)  0.258   Full 0.322   Mini 0.179
+  Fooling falls from +0.23 (early delay) to +0.07 (late delay), mouse means; a full-power pulse
+  from +0.39 to +0.14. The animal COMMITS roughly a second before acting. Not every animal: 2 of 9
+  mice are fooled more late than early. Also observed, not interpreted: on SAMPLE trials a late
+  full pulse LOWERS right licks (0.728 vs 0.835).
+
+  WHAT IT IS FOR. The first causal, quantitative target in this record for a reasoning property --
+  protecting a held conclusion from later irrelevant input. A model that claims brain-like
+  commitment must, under the same pulse at the same times, show fooling that FALLS as action
+  approaches. Caution fixed now: a free network can learn to ignore every distractor; beating the
+  mouse is not matching it. The comparison is the SHAPE at matched baseline accuracy (~0.82).
+  Licence: draft dandiset, none declared -- aggregates only, raw data not redistributed.
