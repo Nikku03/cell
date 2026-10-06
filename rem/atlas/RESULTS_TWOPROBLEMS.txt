@@ -4955,3 +4955,40 @@ CHAINREASON -- THE COMBINED NETWORK FOLLOWS CHAINS FAR PAST ITS TRAINING DEPTH (
   not exactly. One synthetic task, 6 items, the facts re-shown every step, one tree shape, one
   budget. The combined net costs ~8x more per training step (it needed fewer steps: median 1,750 vs
   2,750). Chain-following is a component of reasoning, not reasoning in general.
+
+=================================================================================================
+CHAINEXACT -- FIXES MAKE THE COMBINED NETWORK BETTER BUT NOT EXACT; HARDER CHAINS DEFEAT EVERY MODEL
+=================================================================================================
+  chainexact.py (committed 93657b5 before running). Q0 gradients PASS in both formats (all broken
+  copies caught); Q1 harness PASS for all three versions. Fixed budget 3,000 steps; matched params.
+
+  PART 1, 6 items, facts every step, trained 1-3 hops (seeds 10-19), accuracy at depth:
+                         4      8     12     16     24     32    exact@16 (>= 0.99)
+    combined           0.969  0.835  0.779  0.750  0.733  0.727    0/10
+    combined +S        0.975  0.883  0.818  0.793  0.772  0.760    0/10
+    combined +S+N      0.996  0.950  0.917  0.904  0.889  0.882    0/10
+    tanh memory +S+N   0.851  0.324  0.239  0.213  0.206  0.188    0/10
+    bump memory +S+N   0.923  0.373  0.258  0.218  0.209  0.205    0/10
+  X1 EXACT: NOT ACHIEVED by any arm (best 0.904 at 16 hops, 0.882 at 32).
+  X2/X3: the fixes raise the long score (+0.118 for both) but on 8/10 seeds (p 0.055) -- NOT
+    established by the 9/10 rule; supervision alone 7/10 (+0.033), noise on top 8/10 (+0.084).
+  X4: with the same fixes, the combined network beats the tanh memory and the bump memory on
+    10/10 seeds (+0.57, +0.53). The fixes do not rescue the conventional memories: they are near
+    chance by 16 hops. The architecture, not the training trick, carries the long chains.
+  POST-RUN DIAGNOSTIC (committed before running; seeds 10-11 retrained): errors are spread evenly
+    over every cycle length (0.92-0.97) and fixed-point starts -- no structural blind spot. Each hop
+    carries a small residual error (~0.3%) that accumulates. Exactness needs a step that is
+    discrete by construction (or far more training), not a different curriculum.
+
+  PART 2 -- HARDER VERSIONS (all with S+N, seeds 20-29): NO MODEL LEARNT EITHER.
+    H1 twelve items: no model reached 0.90 on the trained depths (combined 0.966 / 0.283 / 0.116
+      at 1 / 2 / 3 hops; bump memory 1.000 / 0.441 / 0.169; tanh memory 0.214 at 1 hop). Single hops
+      are learnt; COMPOSING two hops over 12 items is not, at this size and budget. No verdict.
+    H2 facts shown once: every model near chance at every depth (0.13-0.42). Holding a whole
+      table in memory and then chasing it is beyond all three here. No verdict. (Disclosed beforehand:
+      the RNNs had five times the tree's state size; they failed too.)
+
+  WHAT IS ESTABLISHED. The combined bump-tree memory remains far ahead of matched conventional
+  memories on long chains, with or without the training fixes, and the fixes lift it to ~0.90 at 16-32
+  hops -- but it is not exact, and none of the three networks handles 12 items or once-shown facts at
+  this scale. Those are the next walls, and they are walls for every model tested, not only ours.
