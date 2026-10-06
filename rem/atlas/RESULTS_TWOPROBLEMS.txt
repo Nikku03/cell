@@ -4655,3 +4655,36 @@ SAMPLEEDGE -- THE FIRST POSITIVE RESULT IN THIS ARC, AND EXACTLY HOW FAR IT REAC
   wins 4 of 5 seeds and the conservative test does not clear 0.05, with the deep MLP budget-limited
   on a sixth of its runs. A predeclared decider follows: ten fresh seeds, a budget large enough
   that the deep MLP is not capped, and per-seed clustering as the PRIMARY criterion this time.
+
+=================================================================================================
+EDGEDECIDE -- THE CHANNEL TREE BEATS THE DEEP MLP ON SAMPLE EFFICIENCY, PREDECLARED, REPLICATED
+=================================================================================================
+  Ten fresh seeds (20-29), disjoint from limits.py (0-2) and sampleedge.py (10-14); budget raised
+  to 30,000 steps; per-seed clustering as the PRIMARY criterion from the start.
+        channel higher on 9/10 seeds   sign p 0.0107   paired t 3.65   ->   E0: BEATS
+  Checked afterwards, both ways:
+    the ninth win is a tie (+0.000042); tie-aware it is 8 of 9 decided, p 0.0195 -- still passes.
+    dropping all 7 budget-capped deep-MLP cells from both models: 9/10, p 0.0107, t 3.72.
+
+  THE CHAIN OF EVIDENCE, ON DISJOINT SEEDS: exploratory signal (limits, seeds 0-2) -> replicated
+  against the structurally identical tanh tree and the shallow MLP (sampleedge, 10-14) -> decided
+  against the deep MLP (edgedecide, 20-29). Each test was committed before it ran.
+
+  WHAT IS NOW ESTABLISHED, AND IT IS NARROW. A dendritic-tree unit whose branching and depth come
+  from Blue Brain morphology, with per-node weights and a gated conductance g * m(v) * (E_rev - v),
+  learns 12-bit parity over 16 inputs from FEWER EXAMPLES than a matched deep MLP, a matched shallow
+  MLP and a structurally identical tanh tree, and in roughly TWENTY TIMES FEWER optimisation steps
+  than the deep MLP. The edge is largest at small n (1,500-3,000 examples); by 4,000 examples, given
+  enough steps, the deep MLP catches up.
+
+  THE ATTRIBUTION QUESTION THAT REMAINS, NAMED BEFORE IT CAN BE OVERCLAIMED. Expanding the node,
+  out = v * (1 - (g_dep + g_hyp) m(v)) + (g_dep - g_hyp) m(v): a LEARNABLE NON-MONOTONE activation.
+  Non-monotone units are known to make parity easier. So the established statement is "the gated
+  conductance beats tanh", and NOT YET "because it is biological". A tree with a generic
+  non-monotone, non-biological activation is the control that separates those -- the same kind of
+  question the biased tanh tree answered for symmetry.
+
+  AND WHAT IT IS NOT. One task family, one tree shape, one conventional baseline type. Parity
+  sample efficiency is not reasoning and does not move ARC's 0/400 by itself. But it is the first
+  result in this record where a biologically derived component does measurable work under a
+  predeclared, replicated, ablation-matched test.
