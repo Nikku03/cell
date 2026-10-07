@@ -1,0 +1,33 @@
+=================================================================================================
+GIVE IT THE DATA AND A QUESTION -- NO REASONING SUPPLIED
+=================================================================================================
+  data blocks per gene: dep 1,178, net 256, proc 2,164, chip 113, prot 2   genes 18,020
+
+=================================================================================================
+Q1 WHOLE CELL: TRAIN 2,527 knockdowns, TEST 2,524
+=================================================================================================
+  H0 shuffled-answer learner vs tide: median r 0.145 vs 0.145; better 1158, worse 1366, p 3.75e-05 -> PASS (no leakage)
+  inner-CV median r: KR 0.145 (lambda 1000)   NN 0.145   -> LEARNER = NN
+     tide                                 median r 0.145   mean r 0.157
+     W2 hand-designed process reasoning   median r 0.138   mean r 0.180
+     KR (free)                            median r 0.149   mean r 0.168
+     NN (free)                            median r 0.146   mean r 0.184
+  A1 NN vs tide                       better 1587, worse 937, p 1.38e-38 -> BETTER
+  A2 NN vs hand-designed W2           better 1374, worse 1150, p 8.93e-06 -> BETTER
+  A3 what it relies on -- KR with one block removed (lambda re-chosen on TRAIN):
+     without dep   median r 0.148 (full 0.149); full better on 1370, worse on 1154, p 1.85e-05  <- NEEDED
+     without net   median r 0.149 (full 0.149); full better on 1328, worse on 1196, p 0.00911  <- NEEDED
+     without proc  median r 0.146 (full 0.149); full better on 1618, worse on 906, p 4.61e-46  <- NEEDED
+     without chip  median r 0.149 (full 0.149); full better on 1244, worse on 1280, p 0.486
+     without prot  median r 0.149 (full 0.149); full better on 1294, worse on 1230, p 0.21
+     each block ALONE: dep 0.150, net 0.145, proc 0.151, chip 0.145, prot 0.146
+
+=================================================================================================
+Q2 SURVIVAL: CAN K562 LIVE WITHOUT THIS GENE? (K562 column removed from the data)
+=================================================================================================
+  inner-CV Spearman: KR 0.751  NN 0.729 -> LEARNER = KR
+  TEST genes 8,920 (essential 910): Spearman 0.754; AUROC essential 0.984   (wholecell F2 hand-designed process prior: 0.780)
+  without each block, AUROC: dep 0.886, net 0.985, proc 0.984, chip 0.983, prot 0.984
+
+  artifact: outputs/askdata.json   runtime 767s
+  X: one cell line, steady state; the learners' 'reasoning' is judged only by what they predict and which data they need.

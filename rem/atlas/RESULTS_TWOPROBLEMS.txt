@@ -5331,3 +5331,31 @@ WHOLECELL -- THE WHOLE-CELL VIEW WORKS WHERE THE GENE-BY-GENE VIEW FAILED
   predicts unseen whole-cell responses, predicts survival, and recovers a known feedback, while
   gene-to-gene literature reasoning contributes nothing at this scale and even hurts. Map saved to
   memory_bank/cell_v3/whole_cell_map.json.
+
+=================================================================================================
+ASKDATA -- DATA AND A QUESTION, NO REASONING SUPPLIED: THE FREE LEARNER BEATS THE DESIGNED REASONING
+=================================================================================================
+  askdata.py (committed before running). Raw per-gene data blocks -- DepMap (1,177 lines, K562
+  removed), the literature network (unsupervised SVD), Reactome memberships, ENCODE binding, protein
+  abundance -- and two questions. Generic learners only (ridge; a small neural net), chosen by
+  5-fold inner CV on TRAIN; TEST = the same SHA-256 split as every earlier module.
+  H0 PASS: trained on shuffled answers, the learner is WORSE than the tide (1,158 / 1,366) -- no leak.
+
+  Q1 WHOLE-CELL RESPONSE OF UNSEEN KNOCKDOWNS (2,524 TEST; per-knockdown Pearson r, 8,248 genes)
+        tide 0.145 / 0.157 (median / mean)     hand-designed process W2 0.138 / 0.180
+        ridge 0.149 / 0.168                     neural net 0.146 / 0.184 (chosen by inner CV)
+    A1 learner beats the tide: better 1,587 / worse 937, p 1e-38.
+    A2 learner beats the hand-designed reasoning: better 1,374 / worse 1,150, p 9e-6.
+    A3 what it chose to rely on (ridge, one block removed): process memberships (full better 1,618 /
+       906, p 5e-46) >> DepMap co-dependency (1,370 / 1,154, p 2e-5) > literature network (p 0.009);
+       ENCODE binding and protein abundance NOT needed. Alone: process 0.151, DepMap 0.150.
+    The gains are real and small: most of every response is the shared tide; the knockdown-specific
+    part remains hard (median r still ~0.15).
+  Q2 SURVIVAL OF UNSEEN GENES (8,920 TEST; 910 essential): ridge, Spearman 0.754, AUROC 0.984 -- vs
+    the hand-designed process prior's 0.780. Without DepMap's other cell lines: 0.886 (still above the
+    hand rule). Most of the 0.984 is "essential elsewhere -> essential in K562", which is data, not
+    insight.
+
+  WHAT IT MEANS. Given only data and a question, a generic learner outperformed every reasoning rule
+  I wrote for these questions, and told us which data matter (process membership and co-dependency)
+  and which do not (binding, abundance) -- the same verdict the rawchip modules reached the hard way.
