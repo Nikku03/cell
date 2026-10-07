@@ -1,0 +1,1 @@
+{"n_perturbations": 5120, "n_genes": 8246, "control_fp_rate": 0.18461538461538463, "n_controls_dropped": 585, "n_rows_total": 11258, "n_rows_kept": 5218, "n_tide": 3, "n_scorable": 838, "max_specific": 443, "n_ge300": 6, "n_ge500": 0, "replicate_genes": 714, "replicate_median_corr": 0.006762849053578782, "control_median_corr": 0.00473365623635935, "replicate_median_jaccard": 0.0}

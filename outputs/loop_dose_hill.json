@@ -1,0 +1,151 @@
+{
+ "test": "Hill dose-response on sci-Plex A549, held out by dose",
+ "S1": {
+  "spearman": {
+   "BMS": 0.8928571428571429,
+   "Dex": -0.14285714285714288,
+   "Nutlin": 1.0,
+   "SAHA": 0.7857142857142859
+  },
+  "n_positive": 3
+ },
+ "constants": {
+  "BMS": {
+   "K_shared": 1.0,
+   "eta_shared": 5.0,
+   "n_genes": 16091,
+   "note": "from the fold holding out the top dose"
+  },
+  "Dex": {
+   "K_shared": 0.03,
+   "eta_shared": 1.0,
+   "n_genes": 16091,
+   "note": "from the fold holding out the top dose"
+  },
+  "Nutlin": {
+   "K_shared": 2.0,
+   "eta_shared": 1.5,
+   "n_genes": 16091,
+   "note": "from the fold holding out the top dose"
+  },
+  "SAHA": {
+   "K_shared": 0.3,
+   "eta_shared": 1.5,
+   "n_genes": 16091,
+   "note": "from the fold holding out the top dose"
+  }
+ },
+ "arms": {
+  "D0_BLIND": 0.6619346955062299,
+  "D1_LOGLIN": 0.7087525165677963,
+  "D2_HILL_SHARED": 0.5854063408321316,
+  "D3_HILL_FULL": 0.6621734774819983
+ },
+ "S2": {
+  "best": "D1_LOGLIN",
+  "delta": 0.04681782106156667,
+  "se": 0.028292137719427013,
+  "z": 1.6547997018061613
+ },
+ "S3": {
+  "best_hill": "D3_HILL_FULL",
+  "delta": -0.04657903908579814,
+  "se": 0.03323918974376922,
+  "z": -1.401328956718312
+ },
+ "S4": {
+  "interior": 0.048287109393886196,
+  "extrapolation": 0.03800209106764956,
+  "se": 0.04320268192807504,
+  "top_dose": 100.0
+ },
+ "S5": {
+  "fraction_plausible": 0.199502796768179,
+  "n_responsive": 6436
+ },
+ "S6": {
+  "real": 0.04681782106156667,
+  "shuffled": -0.02204766752670583,
+  "fraction": -0.47092468266971604
+ },
+ "gates": {
+  "S1": true,
+  "S2": false,
+  "S3": false,
+  "S4": false,
+  "S5": false,
+  "S6": false
+ },
+ "void": [
+  "S6"
+ ],
+ "seconds": 19.830827951431274,
+ "log": [
+  "========================================================================================================",
+  "LOOP 244 -- DOSE AS A CONTINUOUS PARAMETER, HELD OUT BY DOSE",
+  "========================================================================================================",
+  "     THE LABELLING TRAP, found before any model was fitted: perturbation == 'control'",
+  "     is 529 cells from ONE well whose top_oligo is SAHA_100_E09 -- 100 uM vorinostat",
+  "     mislabelled as control. Using it as baseline would have subtracted a maximal drug",
+  "     response from every condition. The baseline here is each drug's own dose-0 cells.",
+  "     24,262 cells x 58,347 genes, 60,135,001 non-zero counts",
+  "     dropped 529 mislabelled 'control' cells (all from well E09)",
+  "     16,091 genes detected in 200+ cells",
+  "     drugs [np.str_('BMS'), np.str_('Dex'), np.str_('Nutlin'), np.str_('SAHA')], non-zero doses [np.float64(0.1), np.float64(0.5), np.float64(1.0), np.float64(5.0), np.float64(10.0), np.float64(50.0), np.float64(100.0)]",
+  "     28 (drug, dose) response profiles built against each drug's own vehicle",
+  "S1 IS THE DOSE AXIS REAL, WITHOUT ASSUMING IT IS MONOTONE?",
+  "     loop 234's R3 gated for a monotone increase across a saturating range -- it gated",
+  "     against its own hypothesis. Saturation is PREDICTED here, so the test is a positive",
+  "     rank correlation between dose and response magnitude, not monotonicity.",
+  "       BMS     magnitudes 0.126 0.316 0.368 0.517 0.519 0.431 0.572   Spearman(dose, magnitude) +0.893",
+  "       Dex     magnitudes 0.136 0.177 0.170 0.169 0.175 0.165 0.163   Spearman(dose, magnitude) -0.143",
+  "       Nutlin  magnitudes 0.084 0.105 0.124 0.248 0.279 0.283 0.645   Spearman(dose, magnitude) +1.000",
+  "       SAHA    magnitudes 0.187 0.353 0.509 0.528 0.540 0.559 0.513   Spearman(dose, magnitude) +0.786",
+  "     S1 PASS -- 3 of 4 drugs show a positive dose-magnitude rank correlation",
+  "     fitting, leave-one-dose-out within each drug ...",
+  "     28 held-out (drug, dose) units",
+  "       D0_BLIND         +0.6619  (sd 0.3311)",
+  "       D1_LOGLIN        +0.7088  (sd 0.2674)",
+  "       D2_HILL_SHARED   +0.5854  (sd 0.3933)",
+  "       D3_HILL_FULL     +0.6622  (sd 0.2892)",
+  "S2 DOES A GRADED MODEL BEAT A DOSE-BLIND ONE?",
+  "     best graded arm D1_LOGLIN +0.7088 vs D0_BLIND +0.6619   paired +0.0468 +/- 0.0283 (+1.7 se)",
+  "     S2 FAIL -- knowing the dose is worth +0.0468 against a 0.05 bar",
+  "S3 DOES THE HILL CURVE BEAT A STRAIGHT LINE IN LOG DOSE?",
+  "     D3_HILL_FULL +0.6622 vs D1_LOGLIN +0.7088   paired -0.0466 +/- 0.0332 (-1.4 se)",
+  "     S3 FAIL -- the saturating form adds -0.0466 over a straight line in log dose, against a 0.02 bar; the S2 gain is 'dose matters', not 'the curve is a Hill curve'",
+  "S4 CAN IT EXTRAPOLATE PAST THE DOSES IT SAW?",
+  "     interior doses (24 units): D1_LOGLIN beats D0 by +0.0483",
+  "     highest dose 100 uM (4 units, extrapolation): +0.0380 +/- 0.0432 (+0.9 se)",
+  "     S4 FAIL -- outside its training range the advantage is +0.0380 against +0.0483 inside it",
+  "S5 ARE THE FITTED CONSTANTS PHARMACOLOGY OR CURVE-FITTING ARTEFACTS?",
+  "       BMS     shared K 1 uM, eta 5   |   responsive genes 1,609, with EC50 inside 0.1-100 uM and eta in [0.3,5]: 6%",
+  "       Dex     shared K 0.03 uM, eta 1   |   responsive genes 1,609, with EC50 inside 0.1-100 uM and eta in [0.3,5]: 18%",
+  "       Nutlin  shared K 2 uM, eta 1.5   |   responsive genes 1,609, with EC50 inside 0.1-100 uM and eta in [0.3,5]: 0%",
+  "       SAHA    shared K 0.3 uM, eta 1.5   |   responsive genes 1,609, with EC50 inside 0.1-100 uM and eta in [0.3,5]: 56%",
+  "     pooled: 20% of responsive genes have both constants off the grid edge",
+  "     S5 FAIL -- only 20%; most fits are pinned at the grid edge, which is a fit that ran out of road rather than a measured EC50",
+  "S6 CONTROL: DOSE LABELS PERMUTED WITHIN DRUG",
+  "     doses reassigned within drug: -0.0220 against a real +0.0468  (-47%)",
+  "     S6 VOID -- S2 did not pass, so there is nothing here to test",
+  "S7 WHAT THIS CANNOT SHOW",
+  "     Four compounds with four mechanisms -- a nuclear receptor agonist, an HDAC",
+  "     inhibitor, an MDM2 antagonist and an IKK inhibitor. Nothing general about drugs",
+  "     follows from four of them.",
+  "     Nutlin at 100 uM has 86 cells and BMS 129. The extrapolation gate S4 lands exactly",
+  "     on the thinnest pseudobulk in the dataset.",
+  "     One cell line, one timepoint: nothing here separates a dose response from a time",
+  "     response.",
+  "     A Hill curve on seven points cannot tell cooperativity from curvature caused by",
+  "     cell death, and three of these compounds are cytotoxic at the top dose.",
+  "========================================================================================================",
+  "  S1  PASS",
+  "  S2  FAIL",
+  "  S3  FAIL",
+  "  S4  FAIL",
+  "  S5  FAIL",
+  "  S6  VOID",
+  "  1/5   [20s]   (1 VOID: S6)",
+  "========================================================================================================"
+ ]
+}

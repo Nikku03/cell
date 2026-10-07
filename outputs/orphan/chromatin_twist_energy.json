@@ -1,0 +1,232 @@
+{
+  "n_pairs": 84,
+  "baseline_twist_mean": 45.9234372142379,
+  "marks": {
+    "5mC": {
+      "twist": [
+        {
+          "lo": 0,
+          "hi": 2,
+          "n": 1,
+          "rms_deg": 0.03952269979985701
+        },
+        {
+          "lo": 2,
+          "hi": 5,
+          "n": 3,
+          "rms_deg": 0.014647123386105326
+        },
+        {
+          "lo": 5,
+          "hi": 10,
+          "n": 5,
+          "rms_deg": 0.010122128093214012
+        },
+        {
+          "lo": 10,
+          "hi": 20,
+          "n": 10,
+          "rms_deg": 0.002180822687742938
+        },
+        {
+          "lo": 20,
+          "hi": 40,
+          "n": 20,
+          "rms_deg": 0.0005374942631883706
+        },
+        {
+          "lo": 40,
+          "hi": 80,
+          "n": 40,
+          "rms_deg": 0.0025962809977806587
+        }
+      ],
+      "bp_site": 83,
+      "energy": {
+        "dna": 2.1685619112704377,
+        "histone": 0.00046207927221705744,
+        "interface": 0.0007918716420634966
+      },
+      "springs": {
+        "dna": 113450,
+        "histone": 136634,
+        "interface": 13681
+      },
+      "energy_frac": {
+        "dna": 0.9994220933968941,
+        "histone": 0.00021295782756044774,
+        "interface": 0.000364948775545491
+      },
+      "spring_frac": {
+        "dna": 0.43011771842359675,
+        "histone": 0.5180141413758459,
+        "interface": 0.051868140200557314
+      }
+    },
+    "acetyl": {
+      "twist": [
+        {
+          "lo": 0,
+          "hi": 2,
+          "n": 2,
+          "rms_deg": 8.174705018421491e-06
+        },
+        {
+          "lo": 2,
+          "hi": 5,
+          "n": 3,
+          "rms_deg": 4.855644494201062e-06
+        },
+        {
+          "lo": 5,
+          "hi": 10,
+          "n": 5,
+          "rms_deg": 6.314604540994987e-07
+        },
+        {
+          "lo": 10,
+          "hi": 20,
+          "n": 10,
+          "rms_deg": 2.3247375980367052e-07
+        },
+        {
+          "lo": 20,
+          "hi": 40,
+          "n": 20,
+          "rms_deg": 1.7608766250370556e-07
+        },
+        {
+          "lo": 40,
+          "hi": 80,
+          "n": 40,
+          "rms_deg": 3.0147617027408816e-07
+        }
+      ],
+      "bp_site": 0,
+      "energy": {
+        "dna": 8.219587837318136e-10,
+        "histone": 0.5769154772563109,
+        "interface": 1.534323067657277e-09
+      },
+      "springs": {
+        "dna": 113450,
+        "histone": 136634,
+        "interface": 13681
+      },
+      "energy_frac": {
+        "dna": 1.4247473204979192e-09,
+        "histone": 0.9999999959157242,
+        "interface": 2.6595283397276796e-09
+      },
+      "spring_frac": {
+        "dna": 0.43011771842359675,
+        "histone": 0.5180141413758459,
+        "interface": 0.051868140200557314
+      }
+    },
+    "shuffled": {
+      "twist": [
+        {
+          "lo": 0,
+          "hi": 2,
+          "n": 1,
+          "rms_deg": 0.011923013911150804
+        },
+        {
+          "lo": 2,
+          "hi": 5,
+          "n": 3,
+          "rms_deg": 0.221553073811634
+        },
+        {
+          "lo": 5,
+          "hi": 10,
+          "n": 5,
+          "rms_deg": 0.12529978393352967
+        },
+        {
+          "lo": 10,
+          "hi": 20,
+          "n": 10,
+          "rms_deg": 0.17094609501285163
+        },
+        {
+          "lo": 20,
+          "hi": 40,
+          "n": 20,
+          "rms_deg": 0.26167850152558136
+        },
+        {
+          "lo": 40,
+          "hi": 80,
+          "n": 40,
+          "rms_deg": 0.1823781313861569
+        }
+      ],
+      "bp_site": 83,
+      "energy": {
+        "dna": 8.336588690008435,
+        "histone": 5.731594071535226,
+        "interface": 1.1985790277138753
+      },
+      "springs": {
+        "dna": 113450,
+        "histone": 136634,
+        "interface": 13681
+      },
+      "energy_frac": {
+        "dna": 0.5460613589893358,
+        "histone": 0.3754295868799279,
+        "interface": 0.07850905413073622
+      },
+      "spring_frac": {
+        "dna": 0.43011771842359675,
+        "histone": 0.5180141413758459,
+        "interface": 0.051868140200557314
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "DNA ROTATION AND WHERE THE ENERGY GOES",
+    "====================================================================================================",
+    "  Displacement is one projection of the response and it hides two things. TWIST is a degree of",
+    "  freedom translation does not capture, and it travels along a rod rather than through space --",
+    "  the mechanism of supercoiling -- so it may carry a mark much further than the ~15 A",
+    "  displacement reach measured earlier. ENERGY says what is STRAINED rather than what moved, and",
+    "  strain at the DNA-histone interface is mechanical coupling to how tightly the DNA is held,",
+    "  which is the closest thing to accessibility this line has produced.",
+    "\n  1KX5 no waters: 13625 atoms, 263765 springs | 84 base pairs resolved by C1'-C1'",
+    "  baseline twist: 45.92 deg/step (sd 29.96) over 83 steps",
+    "  = 7.8 bp per turn, against ~10.5 for ideal B-DNA.",
+    "  Reported as the control it is: change is measured against THIS helix, not against the ideal.",
+    "\n  TWIST CHANGE by SEQUENCE separation from the mark (degrees, RMS over steps in each bin).",
+    "  Separation is in BASE PAIRS, not Angstroms, because torsion travels along the helix.",
+    "    mark                       0-2bp     2-5bp    5-10bp   10-20bp   20-40bp   40-80bp",
+    "    5mC      on DNA           0.0395    0.0146    0.0101    0.0022    0.0005    0.0026",
+    "    acetyl   on histone       0.0000    0.0000    0.0000    0.0000    0.0000    0.0000",
+    "    shuffled control          0.0119    0.2216    0.1253    0.1709    0.2617    0.1824",
+    "\n  WHERE THE STRAIN IS STORED. `share` is the compartment's fraction of the springs -- only",
+    "  the RATIO is evidence, since a channel holding 20% of the energy while being 20% of the",
+    "  network has done nothing selective.",
+    "    mark                  compartment   energy %  springs %   ratio",
+    "    5mC                   dna              99.94      43.01    2.32",
+    "    5mC                   histone           0.02      51.80    0.00",
+    "    5mC                   interface         0.04       5.19    0.01",
+    "    acetyl                dna               0.00      43.01    0.00",
+    "    acetyl                histone         100.00      51.80    1.93",
+    "    acetyl                interface         0.00       5.19    0.00",
+    "    shuffled              dna              54.61      43.01    1.27",
+    "    shuffled              histone          37.54      51.80    0.72",
+    "    shuffled              interface         7.85       5.19    1.51",
+    "\n  READING",
+    "    5mC: twist falls 15.2x from 0-2 bp to the farthest bin; interface energy ratio 0.01",
+    "    acetyl: twist falls 27.1x from 0-2 bp to the farthest bin; interface energy ratio 0.00",
+    "    shuffled: twist falls 0.1x from 0-2 bp to the farthest bin; interface energy ratio 1.51",
+    "    TWIST DOES NOT BEAT THE SHUFFLED CONTROL AT RANGE: whatever rotation appears far",
+    "    from the mark is what the rod does for any force, not something the mark carries.",
+    "    INTERFACE LOADING IS 0.01x ITS SHARE -- strain distributes with the network's",
+    "    own connectivity rather than concentrating on the grip, so the accessibility bridge",
+    "    is NOT supported by this evidence and should not be assumed downstream."
+  ]
+}

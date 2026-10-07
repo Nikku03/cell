@@ -1,0 +1,259 @@
+{
+ "test": "loop_recovery",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2809nnn/GSM2809538/suppl/GSM2809538_Rao-2017-HIC007_30.hic",
+    "kind": "remote",
+    "hash": null,
+    "method": "none:remote"
+   },
+   {
+    "path": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2809nnn/GSM2809541/suppl/GSM2809541_Rao-2017-HIC010_30.hic",
+    "kind": "remote",
+    "hash": null,
+    "method": "none:remote"
+   },
+   {
+    "path": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2809nnn/GSM2809563/suppl/GSM2809563_Rao-2017-HIC032_30.hic",
+    "kind": "remote",
+    "hash": null,
+    "method": "none:remote"
+   },
+   {
+    "path": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2809nnn/GSM2809569/suppl/GSM2809569_Rao-2017-HIC038_30.hic",
+    "kind": "remote",
+    "hash": null,
+    "method": "none:remote"
+   },
+   {
+    "path": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2809nnn/GSM2809572/suppl/GSM2809572_Rao-2017-HIC041_30.hic",
+    "kind": "remote",
+    "hash": null,
+    "method": "none:remote"
+   },
+   {
+    "path": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2809nnn/GSM2809576/suppl/GSM2809576_Rao-2017-HIC045_30.hic",
+    "kind": "remote",
+    "hash": null,
+    "method": "none:remote"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ctcf_gm12878_hg19.bed.gz",
+    "bytes": 655789,
+    "hash": "8795b92127be542e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hg19_chr21.fa.gz",
+    "bytes": 11549785,
+    "hash": "1953ac4ea94b6588",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ctcf_pfm.json",
+    "bytes": 509,
+    "hash": "987a2fd393dc17e8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 6,
+   "used": 6,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 8901,
+  "controls": [
+   "the prediction written into the source before any file was read",
+   "residence time x10 as a control that must slow recovery",
+   "CTCF landscape shuffled to price the cell-type mismatch",
+   "both directions tested in T2, not just the easy one",
+   "no parameter fitted -- speed and residence are literature",
+   "the depleted and untreated maps bracket every recovery fraction"
+  ],
+  "note": "first test of the model's TIME behaviour against measured time-resolved data; loops 33-88 validated a static average",
+  "warnings": []
+ },
+ "gates": {
+  "T1 the perturbation is visible in the data": false,
+  "T2 the model reproduces the depleted state": false,
+  "T3 the recovery timescale matches within a factor of two": false,
+  "T4 recovery depends on residence time": false,
+  "T5 nothing fitted, nothing held back": true,
+  "T6 the cell-type mismatch is measured": true
+ },
+ "prediction": {
+  "monotone": true,
+  "frac_at_20min": 0.5,
+  "frac_at_60min": 0.9,
+  "half_time_min": [
+   15.0,
+   30.0
+  ]
+ },
+ "measured": {
+  "untreated": {
+   "ps": -0.6041185625904462,
+   "short": -0.7255527610049121,
+   "long": -0.4350895148152917,
+   "loop_strength": 0.4550575994936937,
+   "orient": 0.22052611582498535,
+   "orient_pairs": 1806,
+   "t_min": null,
+   "gsm": "GSM2809538"
+  },
+  "auxin 360 min": {
+   "ps": -0.544818157092347,
+   "short": -0.8749474390399904,
+   "long": -0.48962471676481484,
+   "loop_strength": 0.35139754910780374,
+   "orient": 0.024851285370969256,
+   "orient_pairs": 1914,
+   "t_min": 0.0,
+   "gsm": "GSM2809541"
+  },
+  "withdrawal 20 min": {
+   "ps": -0.4413745551644312,
+   "short": -0.9511279159613872,
+   "long": -0.3193459087425405,
+   "loop_strength": 0.361078642215947,
+   "orient": 0.03108838623522815,
+   "orient_pairs": 1707,
+   "t_min": 20.0,
+   "gsm": "GSM2809563"
+  },
+  "withdrawal 40 min": {
+   "ps": -0.3878055349812367,
+   "short": -0.892806111707407,
+   "long": -0.2704069967237945,
+   "loop_strength": 0.3761371647096724,
+   "orient": 0.09775786804716584,
+   "orient_pairs": 1714,
+   "t_min": 40.0,
+   "gsm": "GSM2809569"
+  },
+  "withdrawal 60 min": {
+   "ps": -0.392192784832,
+   "short": -0.820944941542426,
+   "long": -0.2672591773649594,
+   "loop_strength": 0.37308954980683984,
+   "orient": 0.19255176619865066,
+   "orient_pairs": 1608,
+   "t_min": 60.0,
+   "gsm": "GSM2809572"
+  },
+  "withdrawal 180 min": {
+   "ps": -0.45901813725727464,
+   "short": -0.8065791588314265,
+   "long": -0.3319855621552715,
+   "loop_strength": 0.40007695171864344,
+   "orient": 0.24727353179967745,
+   "orient_pairs": 1688,
+   "t_min": 180.0,
+   "gsm": "GSM2809576"
+  }
+ },
+ "t2_rho": {
+  "no-cohesin vs untreated": 0.7451654097923651,
+  "no-cohesin vs auxin": 0.6783167601894633,
+  "loops-on vs untreated": 0.7748231808812119,
+  "loops-on vs auxin": 0.6864990660217576
+ },
+ "recovery": {
+  "times_min": [
+   20.0,
+   40.0,
+   60.0,
+   180.0
+  ],
+  "measured_frac": [
+   0.09339271080907195,
+   0.2386610416430608,
+   0.20926095075474496,
+   0.46960620248228113
+  ],
+  "model_frac": [
+   1.0250515637538398,
+   1.0717984576509583,
+   1.0018603277171356,
+   1.062856303215455
+  ],
+  "model_raw": [
+   0.12888858955860807,
+   0.13398560894715086,
+   0.12635994712124093,
+   0.13301060653023278
+  ],
+  "half_measured": NaN,
+  "half_model": 20.0,
+  "half_model_slow": 20.0,
+  "monotone": false
+ },
+ "celltype": {
+  "rho_real_sites": 0.6494988887989199,
+  "rho_shuffled_sites": 0.6451530812885928
+ },
+ "seconds": 130.51739168167114,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 89 -- the 4D test: predict loop re-formation after cohesin returns",
+  "====================================================================================================",
+  "",
+  "  PREDICTION, written before any Rao file was read:",
+  "    monotone recovery; >= 50% by 20 min, >= 90% by 60 min; half-time 15-30 min",
+  "    from extrusion speed 0.75 kb/s and residence 600 s, both literature, neither ever fitted here",
+  "",
+  "T1 THE PERTURBATION IS VISIBLE IN THE DATA",
+  "     untreated              1,371 mappable  P(s) -0.6041  loop-strength 0.4551  orient +0.2205  [14s]",
+  "     auxin 360 min          1,372 mappable  P(s) -0.5448  loop-strength 0.3514  orient +0.0249  [14s]",
+  "     withdrawal 20 min      1,370 mappable  P(s) -0.4414  loop-strength 0.3611  orient +0.0311  [14s]",
+  "     withdrawal 40 min      1,360 mappable  P(s) -0.3878  loop-strength 0.3761  orient +0.0978  [14s]",
+  "     withdrawal 60 min      1,366 mappable  P(s) -0.3922  loop-strength 0.3731  orient +0.1926  [14s]",
+  "     withdrawal 180 min     1,365 mappable  P(s) -0.4590  loop-strength 0.4001  orient +0.2473  [14s]",
+  "     cohesin loss:  loop-strength 0.4551 -> 0.3514 (drop +0.1037)",
+  "                    P(s) -0.6041 -> -0.5448 (change +0.0593)",
+  "                    orientation +0.2205 -> +0.0249 (drop +0.1957)",
+  "     T1 FAIL -- all three do NOT move as predicted",
+  "",
+  "T2 THE MODEL REPRODUCES THE DEPLETED STATE BY SETTING ONE THING TO ZERO",
+  "     no-cohesin  vs untreated  rho +0.7452",
+  "     no-cohesin  vs auxin      rho +0.6783",
+  "     loops-on    vs untreated  rho +0.7748",
+  "     loops-on    vs auxin      rho +0.6865",
+  "     T2 FAIL -- both directions do NOT both agree",
+  "",
+  "T3 THE RECOVERY TIMESCALE",
+  "     t =    20 min   measured loop-strength 0.3611  recovered   9.3%   model 0.1289",
+  "     t =    40 min   measured loop-strength 0.3761  recovered  23.9%   model 0.1340",
+  "     t =    60 min   measured loop-strength 0.3731  recovered  20.9%   model 0.1264",
+  "     t =   180 min   measured loop-strength 0.4001  recovered  47.0%   model 0.1330",
+  "     t =    20 min   measured   9.3%   MODEL 102.5%",
+  "     t =    40 min   measured  23.9%   MODEL 107.2%",
+  "     t =    60 min   measured  20.9%   MODEL 100.2%",
+  "     t =   180 min   measured  47.0%   MODEL 106.3%",
+  "     measured half-recovery nan min   model 20.0 min   predicted 15-30 min",
+  "     measured recovery monotone: False",
+  "     half-times agree within a factor of nan (gate: 2)",
+  "     T3 FAIL",
+  "",
+  "T4 THE CONTROL THAT MUST FIRE",
+  "     residence x10 (6000 s): recovery 20min 77%  40min 86%  60min 85%  180min 105%",
+  "     half-time 20.0 min at 1x -> 20.0 min at 10x",
+  "     T4 FAIL -- recovery is INSENSITIVE to residence time, so T3 is not about the dynamics",
+  "",
+  "T6 THE CELL-TYPE MISMATCH, DECLARED AND MEASURED",
+  "     CTCF sites are GM12878; the Rao data is HCT-116. Shuffling the landscape:",
+  "     t=60 min map vs measured: real sites +0.6495   shuffled sites +0.6452",
+  "     the difference +0.0043 is what correct CTCF positions are worth here",
+  "",
+  "  FAIL  T1 the perturbation is visible in the data",
+  "  FAIL  T2 the model reproduces the depleted state",
+  "  FAIL  T3 the recovery timescale matches within a factor of two",
+  "  FAIL  T4 recovery depends on residence time",
+  "  PASS  T5 nothing fitted, nothing held back",
+  "  PASS  T6 the cell-type mismatch is measured",
+  "    manifest: 9 inputs, coverage 6/6 (100.0%) by 'all', seed 8901, controls 6"
+ ]
+}

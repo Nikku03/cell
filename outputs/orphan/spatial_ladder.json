@@ -1,0 +1,13 @@
+{
+ "validation": {
+  "n_nuclear": 1744,
+  "n_membrane": 1939,
+  "mean_tier_nuclear": 0.682,
+  "mean_tier_membrane": 0.721,
+  "nuclear_more_downstream_by": -0.039,
+  "downstream_tf_frac": 0.085,
+  "upstream_tf_frac": 0.242
+ },
+ "directional_ladder_is_real": false,
+ "note": "MEASURED NEGATIVE: the regulatory 'tier' does NOT track compartment depth \u2014 nuclear and membrane signalling genes have near-identical tier means (diff -0.039), and there are MORE TFs upstream (24%) than downstream (8%), the opposite of a membrane->nucleus flow. So there is NO directional ladder. What IS delivered: a per-pathway compartment LAYOUT from localization (~100% coverage). Proteins are multi-compartment (source is not primacy-ordered) so each is counted in EVERY layer it's annotated in \u2014 a PROFILE/occupancy view + per-layer gene lists, NOT a route and NOT a phenotype predictor."
+}

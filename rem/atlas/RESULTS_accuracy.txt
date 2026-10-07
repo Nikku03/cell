@@ -1,0 +1,183 @@
+=================================================================================================
+WHAT ACCURACY SHOULD THE ENGINE TARGET? PRICED AGAINST WHAT IT ALREADY LOSES
+=================================================================================================
+
+=================================================================================================
+A0  THE CORRECTION THAT COMES FIRST
+=================================================================================================
+  whatdata inverted a law fitted INSIDE a simulation to get an accuracy per class count,
+  and reported it as the useful new object. It was not new. signed.py MEASURED it, on
+  held-out yeast promoters, and the column has been sitting beside the cap column this
+  ledger has quoted throughout:
+
+       C   MEASURED floors from identity    whatdata SIMULATED
+       1                            6.29                 0.930
+       2                            2.61                 0.480
+       4                            2.09                 0.247
+       8                            1.52                 0.127
+      16                            1.45                 0.066
+      64                            0.19                 0.017
+
+  The simulated column is between 7 and 11 times too small at every point. It is
+  WITHDRAWN. whatdata's claim that C = 64 demands 1.7% of a noise floor is wrong: the
+  measured demand is 0.19 floors, 19%. The finding whatdata's simulation DID establish --
+  that the ladder criterion returns a resolution and not a structural count -- stands,
+  because that came from the estimator's behaviour and not from the fitted constant.
+
+=================================================================================================
+A1  THE CEILING GATE: IS THE OBSERVABLE EVEN DETERMINED TO THAT PRECISION?
+=================================================================================================
+  The engine reports a rare-event tail, not a log2 expression. Before choosing how
+  accurate the class map should be, price the choice at zero: sweep the pruning budget
+  and see how far the reported tail moves on its own.
+
+  controller block: 10 controllers by out-degree, 200 target rows,
+  window L = 6, dt = 0.5. TRRUST sha 9b909319ccc8.
+
+        budget             tail   log10 tail   certificate       kept
+         1e-01       0.0000e+00         -inf        1.0000          0
+         1e-02       0.0000e+00         -inf        1.0000          0
+         1e-03       3.7208e-98       -97.43        1.0000      19531
+         1e-04       3.7208e-98       -97.43        1.0000      19531
+         1e-05       3.7208e-98       -97.43        1.0000      19531
+
+  A1 IS DEGENERATE AND IS SUPERSEDED, NOT DELETED. Two of those rows retained NO paths
+  at all -- a tail of exactly zero is an absent number, not a small one -- and the other
+  three returned the IDENTICAL tail from the IDENTICAL retained set, because
+  engine_budget carries a hard cap of 2e7/n retained paths and that cap, not the budget,
+  decided every one of them. The sweep did not vary what it claimed to vary, and the
+  'spread' it produced was infinity manufactured from two absent rows. Ledger U, in this
+  module's own gate, in the module that opened by correcting another for the same thing.
+
+=================================================================================================
+A1b  SWEEPING THE QUANTITY THAT ACTUALLY BINDS: THE RETAINED-PATH CAP
+=================================================================================================
+  If the reported tail is still moving as the retained set grows, the pruning error is
+  not converged and the increments show its size. If it has stopped moving, it has
+  converged and comparing it with the class ladder is legitimate.
+
+  THE BUDGET IS SET TO ZERO FOR THIS SWEEP, AND THAT IS NOT A DETAIL. The first attempt
+  swept the cap at a fixed budget of 1e-3 and four of six rows returned NO paths. That is
+  a real interaction and not a crash: the per-level budget is ABSOLUTE, so a small cap
+  retains less mass, the retained mass falls below the budget at the next level, and the
+  pruner then drops everything. Cap and budget were confounded and the sweep measured
+  their interaction rather than the cap. With the budget at zero the cap alone decides.
+
+      path cap       kept             tail   log10 tail      step
+           100        100       1.5395e-99       -98.81          
+           300        300       2.9663e-99       -98.53     +0.28
+          1000       1000       7.3706e-99       -98.13     +0.40
+          3000       3000       1.2285e-98       -97.91     +0.22
+         10000      10000       2.6793e-98       -97.57     +0.34
+         19531      19531       3.7208e-98       -97.43     +0.14
+
+  movement between the two largest retained sets: 0.14 orders of magnitude.
+  movement across the whole retained-set sweep:   1.38 orders of magnitude.
+  The certificate column is not used for this and cannot be: the pruner certifies the
+  MASS it dropped, which runs to essentially 1 in every row above, and realkinetics
+  measured that the mass certificate misses the tail by a factor of 1.9e29.
+
+=================================================================================================
+A2  THE CLASS LADDER IN THE UNIT THAT MATTERS, AFTER TWO CHECKS
+=================================================================================================
+  CHECK 1, one controller per class reproduces the unprojected weights: PASS
+  CHECK 2, every row's total weight preserved at every C:                PASS
+
+  reference tail at the identity representation, 19531 retained paths: 3.7208e-98
+  Run in the SAME regime as A1b -- budget zero, cap fixed -- so the two gates' numbers
+  are differences of the same object and can be put in one table.
+
+       C  ctrl per class            tail   log10 error vs identity
+       1            10.0     3.0622e-103                      5.08
+       2             5.0     6.2615e-103                      4.77
+       3             3.3     2.8072e-101                      3.12
+       5             2.0     7.7753e-101                      2.68
+      10             1.0     3.9166e-100                      1.98
+
+=================================================================================================
+A3  WHERE THE LEDGER'S OWN CAP TABLE SITS ON THAT LADDER
+=================================================================================================
+  What a class map costs depends on how many controllers share a class, not on C alone.
+
+    ledger row                          controllers     C  ctrl per class
+    class count C = 64                           13    64            0.20
+    + hub demotion + factored block             140    64            2.19
+    pattern (exact)                               3     3            1.00
+
+  AND THERE IS THE THING THE CAP TABLE HIDES. At the C = 64 row the cap is THIRTEEN
+  controllers, and sixty-four classes over thirteen controllers is about one class each.
+  SO THE CLASS MAP MAKES NO APPROXIMATION AT ITS OWN OPERATING POINT: with each
+  controller alone in its class the projection is exact and costs ZERO accuracy.
+  BE PRECISE ABOUT WHAT THAT DOES AND DOES NOT MEAN, because the loose version of this
+  sentence is wrong. It does NOT mean the representation buys nothing -- it still buys
+  the cap, 13 controllers against the exact pattern's 3, because the per-gene factor is
+  a product of slot() terms rather than a 2^(k(L+1)) pattern table. What it means is that
+  the ACCURACY cost of classing is zero there, so the 0.19 floors signed.py measured at
+  C = 64 is not being paid at the operating point the cap describes. The accuracy is
+  paid only where controllers SHARE a class -- the 140-controller row, at 2.2 per class,
+  which on the ladder above sits between C = 5 and C = 10.
+
+=================================================================================================
+A4  THE TARGET
+=================================================================================================
+    error term                                    orders of magnitude in the tail
+    pruning, across the retained-set sweep                                   1.38
+    pruning, still moving at the largest set                                 0.14
+    class map, across the whole ladder to C = 1                              5.08
+
+  READ AT A POINT this says the class map binds: 0.14 against 5.08. A4b shows that
+  reading is wrong, and why.
+
+=================================================================================================
+A4b  THE SAME RANKING DONE AS A SCALING LAW, WHICH REVERSES IT
+=================================================================================================
+  The pruner's LAST STEP is not its error. Its error is how far the tail still has to
+  travel, and the sweep shows it rising and not levelling off. It rises for a structural
+  reason: retaining more paths can only ADD mass, so every tail this engine reports is a
+  LOWER BOUND on the tail it is approximating.
+
+    log10 tail  =  -100.01 + 0.608 * log10(retained paths)      R^2 = 0.997
+    measured over 2.00 to 4.29 decades of retained paths
+
+    the pruning error reaches the class ladder's whole span of 5.08 orders
+    at 10^12.7 retained paths.
+    the full path set this engine is approximating is 10^21.1 paths.
+
+  A4b AS PREDECLARED: the crossing at 10^12.7 lies BELOW the full set of
+  10^21.1, by 8.4 decades. PRUNING IS THE BINDING TERM. The point
+  comparison in A4 was wrong in the way this build order has been wrong three times
+  before: it ranked an approximation at a point instead of by its scaling law.
+
+  AND THE HONEST SIZE OF THE EXTRAPOLATION. The slope is measured over about two decades
+  of retained paths and the full set is nineteen decades further out. This is NOT a
+  prediction of the true tail. The claim it supports is narrower and does not need the
+  far end: the tail is still rising at the largest set that can be enumerated, and it
+  only has to keep rising for a few more decades -- a tiny fraction of the way -- before
+  the pruner's error exceeds every representation choice inside the engine. Nothing
+  measured here suggests it stops.
+
+  SO THE ANSWER TO 'WHAT ACCURACY SHOULD WE TARGET', IN ORDER:
+    1. A BOUND ON THE OBSERVABLE, not on the dropped mass. The pruner certifies mass and
+       the tail is not a function of mass; realkinetics measured that gap at 1.9e29 and
+       this module measures its consequence: the reported tail is a lower bound still
+       rising at 0.6 orders per decade of retained paths.
+    2. THEN the class map. Its whole ladder is worth 5.08 orders, and at the operating
+       point of the C = 64 cap row it is worth NOTHING, because 64 classes over 13
+       controllers is one class each.
+  Choosing C first optimises the smaller term. That is what this build order has been
+  doing for several modules, including the one that asked this question.
+
+=================================================================================================
+A5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. Measured at 10 controllers and L = 6, which is what can be enumerated. The
+     140-controller row cannot be run; its ratio is placed on the ladder by analogy and
+     that step is an assumption, not a measurement.
+  2. The retained-set sweep measures how far the tail MOVES, a lower bound on the
+     pruning error, not a bound on it. The true error could be larger and nothing here
+     bounds it -- that is the open problem, restated in the unit that matters.
+  3. base and gain are fixed at the module defaults. realkinetics recorded that base
+     moves the tail eight to nine orders for a change of 0.5, so the ABSOLUTE tail is not
+     a physical prediction. Every number here is a DIFFERENCE at fixed base, which is why
+     the comparison between error terms survives that even though the tail itself does
+     not.

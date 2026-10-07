@@ -1,0 +1,196 @@
+{
+ "test": "pathway timing coherence",
+ "gates": {
+  "V1": true,
+  "V2": true,
+  "V3": false,
+  "V4": false,
+  "V5": false,
+  "V6": false,
+  "V7": true
+ },
+ "void": [
+  "V4",
+  "V6"
+ ],
+ "grid": [
+  30,
+  60,
+  120,
+  180,
+  240,
+  420,
+  480,
+  600,
+  720
+ ],
+ "n_metabolic_responders": 306,
+ "n_symbols": 306,
+ "hub_deg": 50,
+ "n_hubs": 126,
+ "graph": {
+  "edges": 1210,
+  "density": 0.02592949748205293
+ },
+ "v3": {
+  "n_edges": 1210,
+  "observed": 143.4350615089071,
+  "null_mean": 139.7743402176068,
+  "null_sd": 4.5654012420065175,
+  "z": -0.8018399911091681
+ },
+ "v4": {
+  "25": {
+   "edges": 1006,
+   "density": 0.02155791278259938,
+   "n_edges": 1006,
+   "observed": 143.9678017766494,
+   "null_mean": 140.04714356012457,
+   "null_sd": 5.194292404431602,
+   "z": -0.7548012147294306
+  },
+  "50": {
+   "edges": 1210,
+   "density": 0.02592949748205293,
+   "n_edges": 1210,
+   "observed": 143.4350615089071,
+   "null_mean": 139.69115043350837,
+   "null_sd": 4.6614663777334115,
+   "z": -0.8031616603055206
+  },
+  "100": {
+   "edges": 1582,
+   "density": 0.033901210757527056,
+   "n_edges": 1582,
+   "observed": 145.71588377177224,
+   "null_mean": 139.14186350308375,
+   "null_sd": 4.510003479734029,
+   "z": -1.457653036905457
+  }
+ },
+ "v5": {
+  "n_edges": 152,
+  "observed": 128.5642161524146,
+  "null_mean": 139.68702868713623,
+  "null_sd": 9.798511548086601,
+  "z": 1.135153281203577
+ },
+ "v6": null,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/grtc/rna.npz",
+    "bytes": 3789429,
+    "hash": "5496b7c455b82c23",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/rem_enzyme.npz",
+    "bytes": 140408,
+    "hash": "6cc33410bbe926e1",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/rem_bipartite.npz",
+    "bytes": 259723,
+    "hash": "e2ebbd1dc38e146a",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 58735,
+   "used": 306,
+   "selection": "filtered",
+   "fraction": 0.005209840810419681
+  },
+  "seed": 194194,
+  "controls": [
+   "1000 permutations holding the coupling graph fixed",
+   "three hub thresholds",
+   "an independently curated grouping",
+   "a null stratified by baseline expression decile"
+  ],
+  "note": "timing coherence among enzymes sharing chemistry, A549 dexamethasone",
+  "warnings": []
+ },
+ "seconds": 7.623013496398926,
+ "log": [
+  "========================================================================================================",
+  "LOOP 194  IS THE REGULATORY INPUT TO METABOLISM TIME-STRUCTURED?",
+  "========================================================================================================",
+  "  PREDECLARED: flux balance is steady-state BY CONSTRUCTION, so this loop does not and",
+  "  cannot put metabolism in 4D. It asks one link upstream, whether enzymes working on the",
+  "  same chemistry are switched on together in time. There is NO measured flux time course",
+  "  on this disk and transcript is not flux, so a pass means the regulatory INPUT is",
+  "  coordinated and must not be quoted as though flux were. The grouping comes from the",
+  "  model's own metabolite sharing with hubs excluded at degree > 50; V2 gates on",
+  "  the graph not being near-complete, V4 repeats at other thresholds, V5 checks a curated",
+  "  grouping independently, and V6 repeats everything against a null stratified by baseline",
+  "  expression. Every coherence gate is z > 3.0 against 1000 permutations.",
+  "",
+  "    Human-GEM: 12,931 reactions, 2,848 genes, 7,782 reactions with a gene",
+  "    A549 grid (post-boundary, constant composition): [30, 60, 120, 180, 240, 420, 480, 600, 720]",
+  "     Ensembl GTF: 42,670 gene ids carry a symbol",
+  "",
+  "V1 DOES THE METABOLIC LAYER RESPOND AT ALL?",
+  "     2,278 responders overall; 306 are modelled enzymes (2,842 Human-GEM genes present in the RNA table)",
+  "     median response time, metabolic 136 min vs non-metabolic 89 min",
+  "     V1 PASS -- 306 modelled enzymes respond, above the 100 floor",
+  "     306 distinct responding metabolic symbols carried forward",
+  "",
+  "V2 IS THE COUPLING GRAPH SANE?",
+  "     hub degree > 50: 126 metabolites excluded; 93,158 gene pairs coupled",
+  "     among the 306 responding metabolic genes: 1,210 edges, density 0.0259, median degree 7",
+  "     V2 PASS -- 1,210 edges at density 0.0259, so a within-group statistic is not the global statistic in disguise",
+  "",
+  "V3 IS TIMING COHERENT ACROSS COUPLED ENZYMES?",
+  "     observed mean |delta t| over 1,210 coupled pairs: 143.4 min",
+  "     null 139.8 +/- 4.6 over 1000 permutations -> z -0.8",
+  "     V3 FAIL -- z -0.8; coupled enzymes are no closer in time than chance, so transcriptional control of metabolism here is gene-by-gene and the steady-state description loses nothing",
+  "",
+  "V4 IS IT ROBUST TO THE HUB THRESHOLD?",
+  "     V4 VOID -- V3 found nothing to be robust ABOUT. The thresholds are swept below anyway, since a negative holding at every threshold is worth recording.",
+  "       hub> 25:   1,006 edges  z -0.8",
+  "       hub> 50:   1,210 edges  z -0.8",
+  "       hub>100:   1,582 edges  z -1.5",
+  "",
+  "V5 DOES THE CURATED GROUPING AGREE?",
+  "     171 curated pathways cover 262 of the 306 responding metabolic genes; 152 within-pathway pairs",
+  "     observed 128.6 min, null 139.7 +/- 9.8 -> z +1.1",
+  "     V5 FAIL -- the curated pathway labels do not carry the timing structure. If V3 passed, the structure is in the chemistry and not in the naming",
+  "",
+  "V6 IS IT JUST EXPRESSION LEVEL?",
+  "     V6 VOID -- V3 found no coherence for an abundance-matched null to remove.",
+  "",
+  "V7 WHAT THIS CANNOT SHOW",
+  "     TRANSCRIPT IS NOT FLUX, and this is the limit that matters. An enzyme can be",
+  "     transcribed without being translated, translated without being active, and active",
+  "     without carrying flux. Metabolic control analysis exists because flux is usually not",
+  "     set by any one enzyme's level. Nothing here licenses a claim about flux dynamics.",
+  "     Flux balance remains steady-state by construction. Whatever this loop finds, the",
+  "     solver in this project still cannot represent a trajectory, so a pass describes the",
+  "     INPUT to a layer that has no time axis of its own.",
+  "     One stimulus in one cell line, and a glucocorticoid response is not a metabolic",
+  "     perturbation. Enzymes may be coordinated here because GR happens to hit them",
+  "     together, which is a fact about dexamethasone rather than about metabolism.",
+  "     Metabolite sharing is not pathway membership. Two enzymes joined by an uncommon",
+  "     metabolite may sit in different subsystems, and the degree cut that removes H+ and",
+  "     ATP is a threshold, not a definition of what counts as currency.",
+  "     The response time is loop 196's incumbent statistic, which that loop measured to be",
+  "     sound on this eleven-point grid and unusable below about eight points. Nothing here",
+  "     extends to a coarser series.",
+  "     V7 PASS",
+  "",
+  "========================================================================================================",
+  "  V1  PASS",
+  "  V2  PASS",
+  "  V3  FAIL",
+  "  V4  VOID",
+  "  V5  FAIL",
+  "  V6  VOID",
+  "  V7  PASS",
+  "  3/5   [8s]   (2 VOID: V4, V6)",
+  "========================================================================================================"
+ ]
+}

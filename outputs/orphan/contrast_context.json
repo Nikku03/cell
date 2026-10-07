@@ -1,0 +1,27 @@
+{
+ "model": "contrast-context-v1",
+ "status": "VOID -- NOT RUN. The data cannot support the experiment and that is the result.",
+ "why": "The nlz benches record only each knockout's top ~250 genes, so 96.5% of every response matrix is exactly zero. A zero there means NOT RECORDED for that perturbation, not 'no response'. A contrast target Y[a,p,g]-Y[b,p,g] built by sampling (p,g) cells is therefore overwhelmingly censored-minus-censored, and training on it is the same error this project files elsewhere as treating a lookup that returned nothing as a measurement.",
+ "measured_sparsity_fraction_nonzero": {
+  "K562": 0.03461155831569787,
+  "RPE1": 0.03325854883858992,
+  "HepG2": 0.030439373117197386,
+  "Jurkat": 0.033175967792506936
+ },
+ "shared_rectangle": {
+  "n_cell_lines": 4,
+  "n_perturbations": 1397,
+  "n_genes": 5770
+ },
+ "jointly_observed_genes_per_perturbation_across_all_4_cells": {
+  "median": 3.0,
+  "mean": 6.9713672154617035,
+  "max": 80,
+  "frac_perturbations_with_zero_overlap": 0.26055833929849676,
+  "total_usable_observations": 9739
+ },
+ "what_this_changes": "The blocker is not the objective and not the number of cell lines. It is that the cross-cell contrast for a fixed perturbation is essentially unmeasured in these deposits: where two cells were both recorded for the same perturbation and gene, it is a median of 2 genes. No objective, gate, or context-conditioned attention fixes a target that does not exist.",
+ "data_requirement_restated": "DENSE response matrices, not more cell lines. A deposit truncated to each knockout's top-N genes cannot support cross-cell contrasts at ANY number of cell lines because the recorded gene sets barely intersect. What is needed is the full measured gene set per perturbation for a modest number of shared perturbations across several lines.",
+ "route_that_would_unblock_it": "The full matrices exist upstream: rpe1.h5ad, nadig_hepg2.h5ad and nadig_jurkat.h5ad are cell-level, and colab/reliable_edges.py already pseudobulks RPE1 to a dense 2,122 x 8,749 matrix. Rebuilding dense per-cell response matrices from those, instead of using the top-250 benches, is what makes the contrast tests runnable. That is a pipeline job, not a tweak.",
+ "criteria_status": "none evaluated; the seven success criteria in colab/contrast_context.py stand unused"
+}

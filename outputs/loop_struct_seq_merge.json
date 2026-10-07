@@ -1,0 +1,223 @@
+{
+ "test": "sequence x structure merge, five rules",
+ "gates": {
+  "M1": true,
+  "M2": true,
+  "M3": true,
+  "M4": true,
+  "M5": true,
+  "M6": true,
+  "M7": true
+ },
+ "arms": {
+  "sequence": [
+   0.7941178641268083,
+   0.004866947453024697
+  ],
+  "structure": [
+   0.6993085118069162,
+   0.005113864735539699
+  ],
+  "concatenation": [
+   0.7929579787175689,
+   0.004871157850942571
+  ],
+  "popularity": [
+   0.48022696206492294,
+   0.0011195981437052153
+  ],
+  "oracle": [
+   0.8070913569330971,
+   0.00468454172174451
+  ]
+ },
+ "spearman_between_arms": 0.5858304748256685,
+ "oracle_gain": [
+  0.012973492806288789,
+  0.0012533463103793288
+ ],
+ "m3_weighted": [
+  {
+   "w": 0.1,
+   "fused": 0.8152547436422413,
+   "seq": 0.8082909763945496,
+   "delta": 0.006963767247691469,
+   "sem": 0.0017732052698891444
+  },
+  {
+   "w": 0.1,
+   "fused": 0.7848294767731181,
+   "seq": 0.7801288182521545,
+   "delta": 0.00470065852096349,
+   "sem": 0.0016129694130906488
+  }
+ ],
+ "m4_rules": {
+  "RRF k=5": {
+   "auc": 0.7986746178190378,
+   "delta": 0.004556753692229425,
+   "sem": 0.0012958123095249754
+  },
+  "RRF k=60": {
+   "auc": 0.7986543006555519,
+   "delta": 0.00453643652874345,
+   "sem": 0.0013060527761883896
+  },
+  "max(rank)": {
+   "auc": 0.7984310660850826,
+   "delta": 0.004313201958274341,
+   "sem": 0.0012968353153371072
+  },
+  "rank product": {
+   "auc": 0.7947258889994041,
+   "delta": 0.0006080248725957401,
+   "sem": 0.0013659459412342773
+  },
+  "min(rank)": {
+   "auc": 0.7347404194709266,
+   "delta": -0.05937744465588187,
+   "sem": 0.0035619085121765884
+  }
+ },
+ "m5_learned": [
+  {
+   "fused": 0.8153274399175702,
+   "delta": 0.007036463523020533,
+   "sem": 0.0017807202518903347,
+   "coef": [
+    4.442059106743273,
+    0.7608935952391835,
+    5.319897635679393,
+    0.4261995188464677
+   ]
+  },
+  {
+   "fused": 0.7847451775553461,
+   "delta": 0.004616359303191397,
+   "sem": 0.001611363150277016,
+   "coef": [
+    4.482914354562676,
+    -2.097588934652404,
+    5.216148373528918,
+    2.1074098405985886
+   ]
+  }
+ ],
+ "concat_vs_seq": [
+  -0.001159885409239361,
+  0.0010027706941661888
+ ],
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/esm_enzymes.npz",
+    "bytes": 6475346,
+    "hash": "f23e386cab80d238",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/struct_enzymes.npz",
+    "bytes": 410607,
+    "hash": "6cd642194f3083c0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/rem_enzyme.npz",
+    "bytes": 140408,
+    "hash": "6cc33410bbe926e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2171,
+   "used": 1989,
+   "selection": "all",
+   "fraction": 0.9161676646706587
+  },
+  "seed": 16300,
+  "controls": [
+   "the symmetric frequency-matched instrument loop 163b needed three attempts to get right",
+   "M1 re-gates that instrument here rather than assuming it carried over",
+   "M2 measures the oracle ceiling BEFORE searching merge rules, so a null is diagnosable",
+   "every fitted weight held out: fitted on one half of the enzymes, scored on the other",
+   "five merge rules, not one, after loop 161's single-rule negative was overturned"
+  ],
+  "note": "does structure add to sequence under any merge rule, not only under concatenation",
+  "warnings": []
+ },
+ "seconds": 860.3073256015778,
+ "log": [
+  "========================================================================================================",
+  "  MERGING SEQUENCE AND STRUCTURE PROPERLY -- five rules, not one concatenation",
+  "========================================================================================================",
+  "",
+  "     2,171 enzymes | 34,901 mini-contests of 41 | 1,948 positives dropped for want of a symmetric match",
+  "     2,062 homology clusters, folds [435, 434, 434, 434, 434]",
+  "     fold 0 arms computed [10s]",
+  "     fold 1 arms computed [10s]",
+  "     fold 2 arms computed [10s]",
+  "     fold 3 arms computed [10s]",
+  "     fold 4 arms computed [11s]",
+  "",
+  "M1 popularity on the matched contests: 0.4802 (gate |AUC-0.5| <= 0.02)",
+  "     the clean instrument from loop 163b carries over.",
+  "     M1 PASS",
+  "",
+  "     sequence      0.7941 +/- 0.0049",
+  "     structure     0.6993 +/- 0.0051",
+  "     concatenation 0.7930 +/- 0.0049   <- what C5 tested",
+  "",
+  "M2 HEADROOM",
+  "     Spearman between the two arms' per-case scores: +0.5858",
+  "     ORACLE (per-case best, uses the answer -- a ceiling, not a predictor): 0.8071",
+  "     oracle minus sequence: +0.0130 sem 0.0013 = +10.4 sem",
+  "     the arms succeed on different cases, so a merge has something to recover and the rules below are a real search.",
+  "     M2 PASS",
+  "",
+  "M3 SCORE-SPACE WEIGHTED FUSION, weight fitted on one half and scored on the other",
+  "       fold 0->1: best w=0.1 | fused 0.8153 vs sequence 0.8083 | delta +0.0070 sem 0.0018",
+  "       fold 1->0: best w=0.1 | fused 0.7848 vs sequence 0.7801 | delta +0.0047 sem 0.0016",
+  "     score-space fusion helps: +0.0058 averaged over both held-out halves.",
+  "     M3 PASS",
+  "",
+  "M4 RULES THAT ARE NOT SUMS",
+  "       RRF k=5        0.7987   vs sequence +0.0046 sem 0.0013 = +3.5 sem",
+  "       RRF k=60       0.7987   vs sequence +0.0045 sem 0.0013 = +3.5 sem",
+  "       max(rank)      0.7984   vs sequence +0.0043 sem 0.0013 = +3.3 sem",
+  "       rank product   0.7947   vs sequence +0.0006 sem 0.0014 = +0.4 sem",
+  "       min(rank)      0.7347   vs sequence -0.0594 sem 0.0036 = -16.7 sem",
+  "     RRF k=5 beats sequence alone.",
+  "     M4 PASS",
+  "",
+  "M5 A LEARNED MERGE, enzymes grouped so none both fits and scores",
+  "       fold 0->1: 0.8153 vs sequence 0.8083 | delta +0.0070 sem 0.0018 | coefficients [4.442, 0.761, 5.32, 0.426]",
+  "       fold 1->0: 0.7847 vs sequence 0.7801 | delta +0.0046 sem 0.0016 | coefficients [4.483, -2.098, 5.216, 2.107]",
+  "     the learned merge helps: +0.0058.",
+  "     M5 PASS",
+  "",
+  "M6 DOES ANYTHING WIN?",
+  "     concatenation (C5's rule) vs sequence: -0.0012 sem 0.0010",
+  "     best of five merge rules vs sequence : +0.0058",
+  "     at least one merge rule beats sequence alone, so C5's negative was a statement about concatenation and not about structure.",
+  "     M6 PASS",
+  "",
+  "M7 WHAT THIS CANNOT SHOW",
+  "     k-NN is a floor on a representation, not a ceiling.",
+  "     The structure arm is 64 hand-chosen geometric descriptors, not a learned structural",
+  "     encoder, so this bounds THOSE descriptors and not structure as such.",
+  "     Monomer geometry only: no ligand, no cofactor, no partner in any structure here.",
+  "     M7 PASS",
+  "",
+  "========================================================================================================",
+  "  M1  PASS",
+  "  M2  PASS",
+  "  M3  PASS",
+  "  M4  PASS",
+  "  M5  PASS",
+  "  M6  PASS",
+  "  M7  PASS",
+  "  7/7   [860s]",
+  "========================================================================================================"
+ ]
+}

@@ -1,0 +1,182 @@
+{
+ "test": "loop_type_system",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/paxdb_hela.txt",
+    "bytes": 232026,
+    "hash": "dd78bb8089b6196e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/orphan/kinetics_refined_corrected.json",
+    "bytes": 289631,
+    "hash": "bfaf573ad1f8cad9",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 16492,
+   "selection": "filtered",
+   "fraction": 1.0
+  },
+  "seed": 0,
+  "controls": [
+   "protein lengths from real UniProt sequence, not assumed",
+   "mean-length calibration against the literature value",
+   "abundance mass coverage floor before costing",
+   "publication count tested against slot coverage",
+   "all four literature constants swept over their full range",
+   "abundance vector checked against a real cellular proteome before any budget was computed on it"
+  ],
+  "note": "TOTAL_COPIES, N_RIBOSOMES, DOUBLING_S and ELONGATION_AA_S are LITERATURE and are not measured here; they are swept rather than fixed",
+  "warnings": []
+ },
+ "gates": {
+  "T1 slot census recorded": true,
+  "T2 costs computed from sequence": true,
+  "T3 the abundance vector describes a cell": false,
+  "T4 the ribosome budget closes": true,
+  "T5 typed fraction is not just fame": true,
+  "T6 verdict stated over the parameter range": true
+ },
+ "slots": {
+  "flux (generxn)": 2549,
+  "cost (ppm)": 15741,
+  "capacity (kcat, any tier)": 2549,
+  "capacity (kcat, MEASURED only)": 420,
+  "lifetime": 0,
+  "producers": 0
+ },
+ "n_entities": 16492,
+ "fully_typed": 2533,
+ "mean_length": 596.6036866359447,
+ "abundance_mass_covered": 1.0,
+ "weighted_mean_length": 621.2702283113722,
+ "demand_aa": 1428921525116.156,
+ "supply_aa": 4838400000000.0,
+ "ratio": 0.2953293496023801,
+ "plasma_mass_model": 0.29177685151438076,
+ "plasma_mass_hela": 0.00043178941929412765,
+ "abundance_rank_rho": 0.6834729978906713,
+ "ratio_model_vector": 0.1743967871448309,
+ "costed_on": "hela_cellular",
+ "ribosome_self_fraction": 0.005785823294851718,
+ "n_ribosomal_proteins": 87,
+ "fame_auc_flux": 0.5894699703075688,
+ "fame_auc_capacity": 0.5894699703075688,
+ "corner_ratios": {
+  "min": 0.03195834507774548,
+  "max": 3.835001409329458,
+  "median": 0.3195834507774548,
+  "n_closing": 68,
+  "n_corners": 81
+ },
+ "literature_constants": {
+  "TOTAL_COPIES": [
+   1000000000.0,
+   2300000000.0,
+   4000000000.0
+  ],
+  "N_RIBOSOMES": [
+   3000000.0,
+   10000000.0,
+   20000000.0
+  ],
+  "DOUBLING_S": [
+   72000.0,
+   86400.0,
+   108000.0
+  ],
+  "ELONGATION_AA_S": [
+   3.0,
+   5.6,
+   9.0
+  ]
+ },
+ "seconds": 5.729344129562378,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 65 -- the type system: five slots per entity, and a budget that must close",
+  "  the first gate in this project that fame cannot defeat: a budget balances or it does not",
+  "====================================================================================================",
+  "",
+  "T1 THE SLOT CENSUS -- reported, not judged",
+  "     flux (generxn)                       2,549 / 16,492    15.5%",
+  "     cost (ppm)                          15,741 / 16,492    95.4%",
+  "     capacity (kcat, any tier)            2,549 / 16,492    15.5%",
+  "     capacity (kcat, MEASURED only)         420 / 16,492     2.5%",
+  "     lifetime                                 0 / 16,492     0.0%",
+  "     producers                                0 / 16,492     0.0%",
+  "     FULLY TYPED (flux+cost+capacity)     2,533 / 16,492    15.4%",
+  "     the type system rejects 84.6% of this cell as untyped",
+  "     T1 PASS (census)",
+  "",
+  "T2 COSTS COME FROM SEQUENCE, NOT ASSUMPTION",
+  "     20,213 symbols in the reviewed proteome; 16,492 of 16,492 model genes matched (100.0%)",
+  "     abundance mass covered by a sequence: 1.0000",
+  "     mean protein length 597 aa   (literature ~550, gate 450-650)",
+  "     mean carbon/residue 4.924, nitrogen/residue 1.372",
+  "     T2 PASS",
+  "",
+  "T3 THE ABUNDANCE VECTOR DESCRIBES A CELL",
+  "     cellular reference: PaxDb HeLa iBAQ (Geiger 2012), mapped to 6,497 of 16,492 genes",
+  "     22 canonical plasma proteins hold 0.2918 of the model's abundance mass",
+  "     the same proteins hold 0.0004 of HeLa's        (676x enrichment)",
+  "     rank correlation where both present: 0.6835  (n=6,487)",
+  "     model top 5:  TMSB4X, APOA2, RBP4, ORM1, APOA1",
+  "     HeLa  top 5:  PLEC, RTN4, TPM2, EEF1D, RBBP7",
+  "     T3 FAIL  (ceiling 1%) -- the model's `ppm` layer is A PLASMA PROTEOME, not a cell",
+  "     the cost slot has been populated with the wrong compartment for the whole project.",
+  "     No gate in 64 previous loops could have caught this, because none of them ever had",
+  "     to spend the budget. The remaining arithmetic runs on the CELLULAR vector.",
+  "",
+  "T4 THE RIBOSOME BUDGET CLOSES",
+  "     costed on the HeLa cellular vector",
+  "     abundance-weighted mean protein length  621.3 aa",
+  "     demand  2.30e+09 copies x 621 aa   = 1.429e+12 aa per new cell",
+  "     supply  1.00e+07 ribosomes x 86400 s x 5.6 aa/s = 4.838e+12 aa",
+  "     demand / supply = 0.2953",
+  "     T4 PASS  -- this abundance vector CAN be built in one doubling",
+  "     for comparison, the model's own plasma-weighted vector gives demand/supply 0.1744 at the same constants",
+  "",
+  "     CONSTRAINT CLOSURE, literally: 87 cytoplasmic ribosomal proteins (RPL/RPS)",
+  "     fraction of the ribosome-second budget spent building ribosomes: 0.0058",
+  "     this is the self-production term the previous 64 loops had no way to ask for",
+  "",
+  "T5 IS THE TYPED FRACTION JUST THE FAMOUS FRACTION?",
+  "     publication count predicts HAS-FLUX      AUC 0.5895",
+  "     publication count predicts HAS-CAPACITY  AUC 0.5895",
+  "     loop 61 median layer for comparison      AUC 0.7173",
+  "     NOTE the two AUCs are identical because kcat coverage IS generxn coverage -- the same 2,549 genes, not two independent confirmations",
+  "     T5 PASS  (ceiling 0.75)",
+  "",
+  "T6 THE VERDICT SURVIVES THE PARAMETER RANGE",
+  "     demand/supply over all 81 literature corners: 0.0320 to 3.8350, median 0.3196",
+  "     closes at 68 of 81 corners",
+  "     the budget closes in SOME corners and not others, so the honest statement is that this test does not resolve at the precision the literature constants allow",
+  "     T6 PASS (range reported, conclusion stated for the range)",
+  "",
+  "  PASS  T1 slot census recorded",
+  "  PASS  T2 costs computed from sequence",
+  "  FAIL  T3 the abundance vector describes a cell",
+  "  PASS  T4 the ribosome budget closes",
+  "  PASS  T5 typed fraction is not just fame",
+  "  PASS  T6 verdict stated over the parameter range",
+  "    manifest: 4 inputs, coverage 16492/16492 (100.0%) by 'filtered', seed 0, controls 6"
+ ]
+}

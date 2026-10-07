@@ -1,0 +1,318 @@
+{
+ "model": "corum-v1",
+ "source": "CORUM 5.3 human complexes (mips.helmholtz-muenchen.de/fastapi-corum, file_id=human)",
+ "release": {
+  "version": "5.3",
+  "date": "2026-04-14",
+  "is_current": true
+ },
+ "n_complexes_parsed": 5628,
+ "n_complexes_usable": 5315,
+ "n_subunit_genes": 5076,
+ "n_cocomplex_pairs": 48377,
+ "join": {
+  "protein_uniprot": {
+   "joined": 5136,
+   "of": 5162,
+   "rate": 0.9949631925610228,
+   "via": "uniprot",
+   "label": "CORUM subunit accessions -> protein"
+  },
+  "gene_uniprot": {
+   "joined": 5136,
+   "of": 5162,
+   "rate": 0.9949631925610228,
+   "via": "uniprot",
+   "label": "CORUM subunit accessions -> gene"
+  },
+  "gene_symbol_fallback": {
+   "joined": 18,
+   "of": 23,
+   "rate": 0.782608695652174,
+   "via": "symbol",
+   "label": "CORUM residue accessions -> gene by symbol"
+  },
+  "n_admitted_via_symbol": 18
+ },
+ "stoichiometry": {
+  "numeric_tokens_in_n_complexes": 469,
+  "of": 5628,
+  "verdict": "CORUM ships no usable subunit stoichiometry; none is invented"
+ },
+ "overlap_with_existing": {
+  "n_existing_complexes": 2039,
+  "name_matches": 45,
+  "pairs_shared": 11282,
+  "pairs_corum_only": 37095,
+  "pairs_existing_only": 4561,
+  "pair_jaccard": 0.21311723147833314,
+  "frac_existing_with_exact_twin": 0.22756253065228052,
+  "frac_existing_jaccard_ge_half": 0.5796959293771456,
+  "frac_existing_no_overlap": 0.11280039234919079,
+  "provenance_of_existing": "UNKNOWN -- 0/2,039 names appear in CORUM 5.3; the naming convention resembles the EBI Complex Portal but no Complex Portal file was fetched here, so this is not asserted"
+ },
+ "fast_test": {
+  "deciles": {
+   "all": {
+    "n_linked": 86364,
+    "n_pool": 86364,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.4628870487213135,
+    "raw_mean_abs_z_matched": 1.2065946996212005,
+    "ratio": 1.2124426305294036,
+    "ratio_sd": 0.006302201919557245,
+    "p_median": 0.0,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.03247033685559887,
+    "residual_gene_responsiveness_p": 3.2909952741506693e-06
+   },
+   "small": {
+    "n_linked": 10121,
+    "n_pool": 10121,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.0103737115859985,
+    "raw_mean_abs_z_matched": 0.9587756395339966,
+    "ratio": 1.0538659155368806,
+    "ratio_sd": 0.007209641115781545,
+    "p_median": 0.5453568994998932,
+    "frac_draws_p05": 0.0,
+    "residual_pert_strength_p": 0.9430150196288751,
+    "residual_gene_responsiveness_p": 0.9413116595357186
+   },
+   "large": {
+    "n_linked": 76243,
+    "n_pool": 76243,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.5229566097259521,
+    "raw_mean_abs_z_matched": 1.2385335922241212,
+    "ratio": 1.2296592831611632,
+    "ratio_sd": 0.004198117601880806,
+    "p_median": 0.0,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.016393018646750034,
+    "residual_gene_responsiveness_p": 1.0008352441144925e-07
+   },
+   "large_n_matched_to_small": {
+    "n_linked": 10121,
+    "n_pool": 76243,
+    "n_draws": 20,
+    "capped_to": 10121,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.5223569989204406,
+    "raw_mean_abs_z_matched": 1.2380260169506072,
+    "ratio": 1.2297653794288634,
+    "ratio_sd": 0.013668799989019416,
+    "p_median": 4.473531770728471e-18,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.4008410373309452,
+    "residual_gene_responsiveness_p": 0.05500317691724327
+   }
+  },
+  "tight_50x50": {
+   "all": {
+    "n_linked": 86364,
+    "n_pool": 86364,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 50,
+    "raw_mean_abs_z_linked": 1.4628870487213135,
+    "raw_mean_abs_z_matched": 1.2552311062812804,
+    "ratio": 1.1654452621936797,
+    "ratio_sd": 0.0038653984949412216,
+    "p_median": 0.0,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.7914505736404851,
+    "residual_gene_responsiveness_p": 0.46747489020172955
+   },
+   "small": {
+    "n_linked": 10121,
+    "n_pool": 10121,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 50,
+    "raw_mean_abs_z_linked": 1.0103737115859985,
+    "raw_mean_abs_z_matched": 0.9523509204387665,
+    "ratio": 1.0610109627246858,
+    "ratio_sd": 0.009499321993887725,
+    "p_median": 0.49005940556526184,
+    "frac_draws_p05": 0.0,
+    "residual_pert_strength_p": 0.9728988498973067,
+    "residual_gene_responsiveness_p": 0.9789544533622643
+   },
+   "large": {
+    "n_linked": 76243,
+    "n_pool": 76243,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 50,
+    "raw_mean_abs_z_linked": 1.5229566097259521,
+    "raw_mean_abs_z_matched": 1.2953282594680786,
+    "ratio": 1.175760531425476,
+    "ratio_sd": 0.005960775761772893,
+    "p_median": 0.0,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.7512611533676442,
+    "residual_gene_responsiveness_p": 0.4049490662930714
+   }
+  },
+  "size_bands": {
+   "2 (heterodimer)": {
+    "n_linked": 2125,
+    "n_pool": 2125,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 0.9756762385368347,
+    "raw_mean_abs_z_matched": 0.9181344121694565,
+    "ratio": 1.063112384080887,
+    "ratio_sd": 0.02160415268998423,
+    "p_median": 0.456403449177742,
+    "frac_draws_p05": 0.05,
+    "residual_pert_strength_p": 0.8551855593567632,
+    "residual_gene_responsiveness_p": 0.9476223777359662
+   },
+   "3-5": {
+    "n_linked": 7996,
+    "n_pool": 7996,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.0195949077606201,
+    "raw_mean_abs_z_matched": 0.9703090757131576,
+    "ratio": 1.0508719503879547,
+    "ratio_sd": 0.009040199573482897,
+    "p_median": 0.7257103621959686,
+    "frac_draws_p05": 0.0,
+    "residual_pert_strength_p": 0.9120534828968809,
+    "residual_gene_responsiveness_p": 0.9364472613055448
+   },
+   "6-10": {
+    "n_linked": 7963,
+    "n_pool": 7963,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.1236159801483154,
+    "raw_mean_abs_z_matched": 1.0733354330062865,
+    "ratio": 1.046949064731598,
+    "ratio_sd": 0.010431250349889556,
+    "p_median": 0.02415637020021677,
+    "frac_draws_p05": 0.65,
+    "residual_pert_strength_p": 0.4012518069075283,
+    "residual_gene_responsiveness_p": 0.8437303140386725
+   },
+   "11-20": {
+    "n_linked": 11692,
+    "n_pool": 11692,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.2801198959350586,
+    "raw_mean_abs_z_matched": 1.0828354358673096,
+    "ratio": 1.1822344839572907,
+    "ratio_sd": 0.007047746178986832,
+    "p_median": 1.1891477250591462e-13,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.49063672885400483,
+    "residual_gene_responsiveness_p": 0.7744322562686694
+   },
+   ">20": {
+    "n_linked": 56588,
+    "n_pool": 56588,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.6293253898620605,
+    "raw_mean_abs_z_matched": 1.2942176043987275,
+    "ratio": 1.258955365419388,
+    "ratio_sd": 0.0059855306448564,
+    "p_median": 0.0,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.027045290842632852,
+    "residual_gene_responsiveness_p": 5.164390847151154e-14
+   }
+  },
+  "existing_layer": {
+   "all": {
+    "n_linked": 27609,
+    "n_pool": 27609,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.54372239112854,
+    "raw_mean_abs_z_matched": 1.2337534606456757,
+    "ratio": 1.2512856662273406,
+    "ratio_sd": 0.0074926283902330415,
+    "p_median": 0.0,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.01947080485332265,
+    "residual_gene_responsiveness_p": 0.035400244430359024
+   },
+   "small": {
+    "n_linked": 3408,
+    "n_pool": 3408,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.0859984159469604,
+    "raw_mean_abs_z_matched": 0.9760767608880997,
+    "ratio": 1.1130035936832428,
+    "ratio_sd": 0.020845575959005616,
+    "p_median": 0.03172324784100056,
+    "frac_draws_p05": 0.6,
+    "residual_pert_strength_p": 0.9137408604399642,
+    "residual_gene_responsiveness_p": 0.9283733818909734
+   },
+   "large": {
+    "n_linked": 24201,
+    "n_pool": 24201,
+    "n_draws": 20,
+    "capped_to": null,
+    "bins": 10,
+    "raw_mean_abs_z_linked": 1.6081793308258057,
+    "raw_mean_abs_z_matched": 1.2663496077060699,
+    "ratio": 1.2699881732463836,
+    "ratio_sd": 0.008354233781031938,
+    "p_median": 0.0,
+    "frac_draws_p05": 1.0,
+    "residual_pert_strength_p": 0.007099389209022272,
+    "residual_gene_responsiveness_p": 0.01575222970833858
+   }
+  }
+ },
+ "limiting_subunit": {
+  "assumption": "ASSUMED_1_1_1",
+  "n_complexes_with_capacity": 1677,
+  "test": {
+   "n_complexes": 833,
+   "mean_delta": -0.09444146811964826,
+   "median_delta": -0.11001798577839339,
+   "wilcoxon_p": 1.7210912482683156e-12,
+   "frac_limiting_more_disruptive": 0.38415366146458585,
+   "n_complexes_ge3": 2630,
+   "n_complexes_ge3_all_measured": 908
+  }
+ },
+ "coverage": {
+  "n_subunits_in_cell": 4811,
+  "n_subunits_measured_gwps": 3267,
+  "n_subunits_perturbed_gwps": 3569
+ },
+ "limits": [
+  "CORUM 5.3 is a LITERATURE-CURATED set, so it inherits publication bias: the complexes with many subunits are the ones many groups have worked on, and the size effect below is therefore confounded with how well studied a machine is. Nothing here separates those two.",
+  "most CORUM complexes were characterised in HEK293, HeLa or in vitro, NOT in K562 -- membership is imported from a different cellular context than the Perturb-seq matrix it is tested against",
+  "no stoichiometry: 5,576/5,628 complexes carry an empty subunits_stoechiometrie column. Any limiting-subunit capacity in this layer is ASSUMED 1:1:1 and is labelled ASSUMED_1_1_1",
+  "the capacity is computed only where EVERY subunit has a K562 protein measurement (a minimum over a partially measured complex is not a minimum); the rest carry null, and K562 protein coverage is itself abundance-biased, so those nulls are not missing at random",
+  "a co-complex pair here is UNDIRECTED and UNSIGNED: the test measures |z| only, so it says nothing about whether losing a subunit raises or lowers its partners",
+  "the pairs tested are only those where one member is perturbed and the other measured in GWPS; 48,377 curated pairs collapse to 86,364 testable cells, and the survivors are biased toward well-expressed genes",
+  "complexes are treated as flat membership sets -- CORUM's own hierarchy (a complex that is a module of a larger one) is discarded, so the size bands mix modules with the machines that contain them",
+  "the existing 2,039-complex layer is compared, not replaced, and its provenance remains UNKNOWN; this module cannot say which of the two is right where they disagree"
+ ],
+ "verdict": "CO-COMPLEX MEMBERSHIP CARRIES REAL SIGNAL, BUT ONLY FOR LARGE MACHINES. CORUM 5.3 contributes 5,315 human complexes over 48,377 distinct co-complex gene pairs, which resolve to 86,364 testable (perturbation, gene) cells in GWPS -- 3.1x the testable surface of the 2,039 complexes already in the cell object, which share only 11,282 of those gene pairs with CORUM and not one complex NAME. Matched over 20 draws, co-complex pairs reach a RAW mean |z| of 1.4629 against 1.2066 matched -- a ratio of 1.212 over 86,364 pairs, median p 0, 100% of draws p<0.05. That is the strongest link type this test has scored, level with PPI (1.208x) and well above co-dependency (1.070x) and regulatory (1.021x). Decile matching leaves a residual imbalance on gene responsiveness (p 3e-06), so the test was re-run at 50x50 bins where that clears (p 0.47); the ratio softens to 1.165 and stays significant in 100% of draws, so the effect is not the covariate talking. The signal is entirely in the big complexes: >5 subunits gives 1.230 over 76,243 pairs (100% of draws p<0.05) while <=5 subunits gives 1.054 over 10,121 pairs and reaches p<0.05 in 0% of them. That is not a power artefact: subsampled to the small set's exact n of 10,121, large complexes still score 1.230 at median p 4.47e-18 in 100% of draws. Across bands the effect is a GRADIENT rather than a threshold: 2 (heterodimer) 1.063, 3-5 1.051, 6-10 1.047, 11-20 1.182, >20 1.259. The practical consequence is that a CORUM heterodimer edge should not be admitted on the strength of the pooled number -- the pooled number is the ribosome and the spliceosome. CORUM IS BROADER, NOT BETTER PER PAIR: on the identical test the existing untraceable layer scores 1.251 over its 27,609 cells, slightly ABOVE CORUM's 1.212 -- what CORUM buys is 3.1x the coverage and a citable provenance, not a stronger edge, so the two should be unioned rather than one swapped for the other. And the ASSUMED 1:1:1 limiting-subunit capacity earns nothing: the lowest-abundance subunit is LESS disruptive to knock down than its complex-mates (-0.0944, Wilcoxon p 1.72e-12, 38% positive over 833 complexes), so the assumption is recorded as falsified rather than carried."
+}

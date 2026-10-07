@@ -1,0 +1,114 @@
+=================================================================================================
+PHYSIOLOGY PLUS ONE MEASURED RATE  --  DOES THE GAP CLOSE?
+=================================================================================================
+  chemistry error 1.0 kcal/mol, sigma = 0.7330 orders per rate
+  true physiology: doubling 1.1217 h, log-kill -0.1747, plateau -0.1438, outgrowth 3.4000 h
+
+=================================================================================================
+D1  THE MACHINERY IS EXACT
+=================================================================================================
+  (a) closed form vs matrix-exponential outgrowth, 12 random rate vectors: 1.11e-16   PASS (bar 1e-10)
+  (b) true rate vector satisfies its own observables: 0.00e+00   PASS (bar 1e-10)
+
+  solve-set chosen by best-conditioned 4x4 Jacobian block, from the six rates that are
+  neither d_death nor kd_kill so that both can be held in turn:
+             primary: ['a_off', 'b_off', 'a_on', 'b_on']  smallest singular value 9.6462e-03
+      D8 alternative: ['mu', 'a_off', 'a_on', 'b_on']  smallest singular value 9.6462e-03
+
+  repaired Jacobian rank 4, ||g|| 2.9063, ||g_null|| 0.9462  (constrain_rank R5 recorded 0.9462)
+/home/user/cell/rem/atlas/ddeath.py:116: RuntimeWarning: overflow encountered in scalar power
+  r = {nm: CANDIDATE[nm] * 10.0 ** x[k] for k, nm in enumerate(NAMES)}
+/home/user/cell/rem/atlas/ddeath.py:109: RuntimeWarning: invalid value encountered in scalar subtract
+  disc = np.sqrt(max((a - d) ** 2 + 4.0 * b * c, 0.0))
+/home/user/cell/rem/atlas/ddeath.py:137: RuntimeWarning: overflow encountered in exp
+  tot = u1 * np.exp(l1 * LAG_GRID) + u2 * np.exp(l2 * LAG_GRID)
+/home/user/cell/rem/atlas/ddeath.py:110: RuntimeWarning: invalid value encountered in scalar add
+  return 0.5 * (a + d + disc), 0.5 * (a + d - disc)
+/home/user/cell/rem/atlas/ddeath.py:135: RuntimeWarning: invalid value encountered in scalar subtract
+  u1 = (((a - l2) * vG + b * vD) + (c * vG + (d - l2) * vD)) / g12
+/home/user/cell/rem/atlas/ddeath.py:137: RuntimeWarning: invalid value encountered in multiply
+  tot = u1 * np.exp(l1 * LAG_GRID) + u2 * np.exp(l2 * LAG_GRID)
+/home/user/cell/rem/atlas/ddeath.py:109: RuntimeWarning: overflow encountered in scalar power
+  disc = np.sqrt(max((a - d) ** 2 + 4.0 * b * c, 0.0))
+/home/user/cell/rem/atlas/ddeath.py:128: RuntimeWarning: invalid value encountered in scalar multiply
+  vG = (ep * (A - lm) - em * (A - lp)) / gap
+/home/user/cell/rem/atlas/ddeath.py:129: RuntimeWarning: invalid value encountered in scalar divide
+  vD = C * (ep - em) / gap
+/home/user/cell/rem/atlas/ddeath.py:132: RuntimeWarning: invalid value encountered in scalar divide
+  plateau = np.log10(max(abs((A - lm + C) / gap), 1e-300))
+/home/user/cell/rem/atlas/ddeath.py:135: RuntimeWarning: invalid value encountered in scalar divide
+  u1 = (((a - l2) * vG + b * vD) + (c * vG + (d - l2) * vD)) / g12
+/home/user/cell/rem/atlas/ddeath.py:127: RuntimeWarning: overflow encountered in exp
+  ep, em = np.exp(lp * T_ON), np.exp(lm * T_ON)
+/home/user/cell/rem/atlas/ddeath.py:135: RuntimeWarning: invalid value encountered in scalar multiply
+  u1 = (((a - l2) * vG + b * vD) + (c * vG + (d - l2) * vD)) / g12
+/home/user/cell/rem/atlas/ddeath.py:135: RuntimeWarning: invalid value encountered in scalar add
+  u1 = (((a - l2) * vG + b * vD) + (c * vG + (d - l2) * vD)) / g12
+/home/user/cell/rem/atlas/ddeath.py:136: RuntimeWarning: invalid value encountered in scalar subtract
+  u2 = 1.0 * (vG + vD) - u1
+/home/user/cell/rem/atlas/ddeath.py:109: RuntimeWarning: overflow encountered in scalar multiply
+  disc = np.sqrt(max((a - d) ** 2 + 4.0 * b * c, 0.0))
+/home/user/cell/rem/atlas/ddeath.py:109: RuntimeWarning: invalid value encountered in scalar multiply
+  disc = np.sqrt(max((a - d) ** 2 + 4.0 * b * c, 0.0))
+/home/user/cell/rem/atlas/ddeath.py:128: RuntimeWarning: invalid value encountered in scalar subtract
+  vG = (ep * (A - lm) - em * (A - lp)) / gap
+/home/user/cell/rem/atlas/ddeath.py:132: RuntimeWarning: invalid value encountered in scalar subtract
+  plateau = np.log10(max(abs((A - lm + C) / gap), 1e-300))
+
+=================================================================================================
+D2  SOLVER HONESTY
+=================================================================================================
+  solve-set primary, g0=6: failures A 594/600, B 596/600, C 590/600
+  solve-set primary, g0=8: failures A 594/600, B 596/600, C 590/600
+  solve-set alternative, g0=6: failures A 600/600, B 600/600, C 600/600
+  solve-set alternative, g0=8: failures A 600/600, B 600/600, C 600/600
+  worst observable residual among ACCEPTED manifold points: 1.14e-15   PASS (bar 1e-8)
+
+=================================================================================================
+THE FOUR ARMS  --  solve-set primary, g0 = 6, Y_true = 1.723690e-02
+=================================================================================================
+                                 arm      n        sd       p05       p95     range  within x2  within x10
+                  A physiology alone                                    too few points
+              B physiology + d_death                                    too few points
+              C physiology + kd_kill     10    0.2555   -0.4238    0.2490    0.8255     0.4000      1.0000
+      D d_death alone, no physiology    600    1.4335   -2.5586    1.7380    6.0499     0.1017      0.3900
+
+=================================================================================================
+THE FOUR ARMS  --  solve-set alternative, g0 = 6, Y_true = 1.723690e-02
+=================================================================================================
+                                 arm      n        sd       p05       p95     range  within x2  within x10
+                  A physiology alone                                    too few points
+              B physiology + d_death                                    too few points
+              C physiology + kd_kill                                    too few points
+      D d_death alone, no physiology    600    1.4335   -2.5586    1.7380    6.0499     0.1017      0.3900
+
+=================================================================================================
+THE FOUR ARMS  --  solve-set primary, g0 = 8, Y_true = 4.475797e-03
+=================================================================================================
+                                 arm      n        sd       p05       p95     range  within x2  within x10
+                  A physiology alone                                    too few points
+              B physiology + d_death                                    too few points
+              C physiology + kd_kill     10    0.3410   -0.5653    0.3324    1.1021     0.3000      1.0000
+      D d_death alone, no physiology    600    1.9077   -3.3890    2.3151    8.0535     0.0767      0.2683
+
+=================================================================================================
+THE FOUR ARMS  --  solve-set alternative, g0 = 8, Y_true = 4.475797e-03
+=================================================================================================
+                                 arm      n        sd       p05       p95     range  within x2  within x10
+                  A physiology alone                                    too few points
+              B physiology + d_death                                    too few points
+              C physiology + kd_kill                                    too few points
+      D d_death alone, no physiology    600    1.9077   -3.3890    2.3151    8.0535     0.0767      0.2683
+
+=================================================================================================
+D3  IT REPRODUCES WHAT IT EXTENDS
+=================================================================================================
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/user/cell/rem/atlas/ddeath.py", line 365, in <module>
+    main()
+  File "/home/user/cell/rem/atlas/ddeath.py", line 303, in main
+    dv = abs(A["sd"] - R4_SD) / R4_SD
+             ~^^^^^^
+TypeError: 'NoneType' object is not subscriptable

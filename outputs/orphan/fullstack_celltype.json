@@ -1,0 +1,25 @@
+{
+ "n_active_genes": 8561,
+ "n_network_genes": 16492,
+ "active_thresh": 0.05,
+ "BASELINE_all_genes": {
+  "magnitude_spearman": 0.459,
+  "top10_mean": 1.98,
+  "top10_STRONG": 9.0,
+  "top10_WEAK": 0.77,
+  "n_strong": 7,
+  "n_weak": 48,
+  "mean_movers_reachable_frac": 0.633
+ },
+ "CELLTYPE_masked_active_only": {
+  "magnitude_spearman": 0.426,
+  "top10_mean": 2.03,
+  "top10_STRONG": 9.29,
+  "top10_WEAK": 0.79,
+  "n_strong": 7,
+  "n_weak": 48,
+  "mean_movers_reachable_frac": 0.633
+ },
+ "verdict": "CELL-TYPE-SPECIFIC NETWORK ACTIVATION IS ~NEUTRAL here (honest). Restricting the network to K562-active genes (8561 of 16492, ~51%) changes the 60-KO deployment only marginally: top-10 1.98->2.03 (delta +0.05), STRONG 9.0->9.29 (+0.29), magnitude Spearman 0.459->0.426 (-0.033). Two honest reasons it doesn't move much: (1) the candidate UNIVERSE was already effectively cell-type-specific -- deployment scores the KO's MEASURED (i.e. K562-expressed) genes, so inactive genes were never in the running -- so masking mostly changes network-DEGREE features, which the magnitude model already handles; (2) the forecast's dominant signal is the generic expression/abundance prior, not fine graph topology. Masking does keep 63% of real movers reachable (a few low-expressed movers become unreachable, a small cost). NET: cell-type activation is the CORRECT thing to do (it cannot hurt much and is principled), but on THIS K562-native deployment it is close to a wash because the readout was already K562's expressed transcriptome -- the bigger win from cell-type conditioning would show when TRANSFERRING a model to a DIFFERENT cell line (masking to that line's active genes), which the cross-line result says is where it matters.",
+ "note": "CELL-TYPE-SPECIFIC NETWORK ACTIVATION IS ~NEUTRAL here (honest). Restricting the network to K562-active genes (8561 of 16492, ~51%) changes the 60-KO deployment only marginally: top-10 1.98->2.03 (delta +0.05), STRONG 9.0->9.29 (+0.29), magnitude Spearman 0.459->0.426 (-0.033). Two honest reasons it doesn't move much: (1) the candidate UNIVERSE was already effectively cell-type-specific -- deployment scores the KO's MEASURED (i.e. K562-expressed) genes, so inactive genes were never in the running -- so masking mostly changes network-DEGREE features, which the magnitude model already handles; (2) the forecast's dominant signal is the generic expression/abundance prior, not fine graph topology. Masking does keep 63% of real movers reachable (a few low-expressed movers become unreachable, a small cost). NET: cell-type activation is the CORRECT thing to do (it cannot hurt much and is principled), but on THIS K562-native deployment it is close to a wash because the readout was already K562's expressed transcriptome -- the bigger win from cell-type conditioning would show when TRANSFERRING a model to a DIFFERENT cell line (masking to that line's active genes), which the cross-line result says is where it matters."
+}

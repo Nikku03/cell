@@ -1,0 +1,73 @@
+{
+  "test": "adrn_catalyst_rank",
+  "n": 283,
+  "n_train": 10249,
+  "arms": {
+    "tournament (LLM)": {
+      "@1": 0.7102473498233216,
+      "@3": 0.8268551236749117,
+      "@5": 0.8409893992932862,
+      "@1_obscure": 0.4794520547945205
+    },
+    "adrn": {
+      "@1": 0.3321554770318021,
+      "@3": 0.5618374558303887,
+      "@5": 0.6501766784452296,
+      "@1_obscure": 0.0136986301369863
+    },
+    "adrn_shuffled_rxn": {
+      "@1": 0.28975265017667845,
+      "@3": 0.5265017667844523,
+      "@5": 0.6183745583038869,
+      "@1_obscure": 0.0273972602739726
+    },
+    "adrn_untrained": {
+      "@1": 0.34275618374558303,
+      "@3": 0.5971731448763251,
+      "@5": 0.734982332155477,
+      "@1_obscure": 0.136986301369863
+    },
+    "freq": {
+      "@1": 0.33568904593639576,
+      "@3": 0.5300353356890459,
+      "@5": 0.5971731448763251,
+      "@1_obscure": 0.0136986301369863
+    },
+    "random": {
+      "@1": 0.16607773851590105,
+      "@3": 0.3710247349823322,
+      "@5": 0.5265017667844523,
+      "@1_obscure": 0.0547945205479452
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "ADRN AS A CATALYST RE-RANKER -- trained on the solved half, given bare candidate lists",
+    "====================================================================================================",
+    "  The held-out reactions arrive as chemistry plus ten candidates in NO order: the language",
+    "  model's ranking and confidence are withheld, so the network cannot inherit what it is being",
+    "  asked to beat. Two controls decide whether any number here means anything -- a zero-parameter",
+    "  frequency bag, which has beaten every learned model on this task, and the same trained network",
+    "  scoring candidates against the WRONG reaction, which exposes learning gene popularity.",
+    "\n  vocabulary: 13315 participants, 5500 genes",
+    "  10249 training reactions (held-out excluded, asserted)",
+    "  10249 usable training pairs",
+    "  ADRN core: 48 neurons, 4 branches, 4 internal steps, 470688 parameters",
+    "    epoch 1/3  loss 0.4896  (41s)",
+    "    epoch 2/3  loss 0.3070  (60s)",
+    "    epoch 3/3  loss 0.2212  (77s)",
+    "\n  283 held-out reactions scored",
+    "    arm                         @1      @3      @5   @1 obs",
+    "    tournament (LLM)         0.710   0.827   0.841    0.479",
+    "    adrn                     0.332   0.562   0.650    0.014",
+    "    adrn_shuffled_rxn        0.290   0.527   0.618    0.027",
+    "    adrn_untrained           0.343   0.597   0.735    0.137",
+    "    freq                     0.336   0.530   0.597    0.014",
+    "    random                   0.166   0.371   0.527    0.055",
+    "\n  READING",
+    "  adrn 0.332 | LLM 0.710 | freq 0.336 | shuffled-reaction 0.290 | untrained 0.343",
+    "  IT DID NOT BEAT COUNTING. A zero-parameter frequency bag matches it, which is the same",
+    "  outcome the set transformer had here (0.365 against 0.367). Learned scorers keep",
+    "  rediscovering the prior over catalysts rather than the mapping from chemistry."
+  ]
+}

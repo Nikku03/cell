@@ -1,0 +1,15 @@
+{
+ "noise_sd": 0.06746203451034313,
+ "signal_sd": 0.0870283340093949,
+ "reliability": 0.3991064682163954,
+ "stage1_gain": 0.0005,
+ "n_genes": 13431,
+ "links_matched": 569,
+ "validated": {
+  "ar": 0.04731431597931168,
+  "linked": 0.0434923709845689,
+  "random": 0.04685744166995126,
+  "linked_minus_random": -0.0033650706853823598
+ },
+ "verdict": "THE NULL SURVIVES A PROPER CONTROL. Reliability +0.3991 says the delta target has power, and on 569 CRISPR-validated pairs the validated enhancer beats a distance-matched random peak by only -0.0034. So Stage 1's conclusion holds for a better reason than it was originally reached: even real, perturbation-validated enhancers do not forecast their gene's expression change on this trajectory."
+}

@@ -1,0 +1,66 @@
+{
+ "n_cells": 20729,
+ "tags": [
+  "CD86",
+  "PDL1",
+  "PDL2",
+  "CD366"
+ ],
+ "n_guides": 98,
+ "n_control_cells": 2386,
+ "direct": {
+  "CD86": {
+   "gene": "CD86",
+   "n_guides": 4,
+   "n_cells": 1197,
+   "mrna_lfc": -0.2720255969253017,
+   "protein_lfc": -0.4928337561475801
+  },
+  "PDL2": {
+   "gene": "PDCD1LG2",
+   "n_guides": 4,
+   "n_cells": 617,
+   "mrna_lfc": -0.09189939515337284,
+   "protein_lfc": -0.26613225681905756
+  }
+ },
+ "response": {
+  "CD86": {
+   "gene": "CD86",
+   "n_guides": 91,
+   "pearson_r": 0.32274665802316554,
+   "r2": 0.10416540526512216,
+   "spearman": 0.10442745660136964,
+   "shuffled_abs_r_mean": 0.07160458208723652,
+   "shuffled_abs_r_sd": 0.07350471603373666
+  },
+  "PDL1": {
+   "gene": "CD274",
+   "n_guides": 91,
+   "pearson_r": 0.8989514007681509,
+   "r2": 0.8081136209430207,
+   "spearman": 0.7039974518235389,
+   "shuffled_abs_r_mean": 0.0773423057363784,
+   "shuffled_abs_r_sd": 0.05602953252696817
+  },
+  "PDL2": {
+   "gene": "PDCD1LG2",
+   "n_guides": 91,
+   "pearson_r": -0.15841650412522412,
+   "r2": 0.025095788779257153,
+   "spearman": -0.19050804268195576,
+   "shuffled_abs_r_mean": 0.07990198016809037,
+   "shuffled_abs_r_sd": 0.06865406680255957
+  },
+  "CD366": {
+   "gene": "HAVCR2",
+   "n_guides": 91,
+   "pearson_r": -0.24475486183541306,
+   "r2": 0.059904942392072134,
+   "spearman": -0.13139034878165312,
+   "shuffled_abs_r_mean": 0.07655660956902587,
+   "shuffled_abs_r_sd": 0.062346348537603014
+  }
+ },
+ "mean_r2": 0.24931993934486804
+}

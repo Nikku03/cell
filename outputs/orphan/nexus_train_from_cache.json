@@ -1,0 +1,10 @@
+{
+ "n_usable": 6,
+ "epochs": 40,
+ "device": "cpu",
+ "dmasif_heldout_auc": 0.851,
+ "n_train": 5,
+ "n_test": 1,
+ "model": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/tcache/clouds/../nexus_dmasif.pt",
+ "working_check": true
+}

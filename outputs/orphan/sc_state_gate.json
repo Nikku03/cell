@@ -1,0 +1,247 @@
+{
+  "test": "sc_state_gate",
+  "axes": [
+    "g2m",
+    "s",
+    "umi"
+  ],
+  "min_cells": 45,
+  "detail": {
+    "HepG2|g2m": {
+      "n": 193,
+      "rms_interaction": 0.15915708946440504,
+      "rms_noise": 0.12150816712045917,
+      "ratio": 1.309846845987085,
+      "frac_above": 0.9119170984455959
+    },
+    "HepG2|s": {
+      "n": 193,
+      "rms_interaction": 0.1581281708852615,
+      "rms_noise": 0.12121833862804378,
+      "ratio": 1.3044904976834804,
+      "frac_above": 0.9481865284974094
+    },
+    "HepG2|umi": {
+      "n": 193,
+      "rms_interaction": 0.13944441228718954,
+      "rms_noise": 0.12259962618196567,
+      "ratio": 1.1373967166932661,
+      "frac_above": 0.8082901554404145
+    },
+    "Jurkat|g2m": {
+      "n": 188,
+      "rms_interaction": 0.17379822689009475,
+      "rms_noise": 0.1315253224382375,
+      "ratio": 1.321405062296715,
+      "frac_above": 0.9574468085106383
+    },
+    "Jurkat|s": {
+      "n": 188,
+      "rms_interaction": 0.1807417800412216,
+      "rms_noise": 0.1319251756599926,
+      "ratio": 1.3700325137867757,
+      "frac_above": 0.9414893617021277
+    },
+    "Jurkat|umi": {
+      "n": 188,
+      "rms_interaction": 0.15893942282158643,
+      "rms_noise": 0.13197237370099793,
+      "ratio": 1.204338592724612,
+      "frac_above": 0.8617021276595744
+    },
+    "RPE1|g2m": {
+      "n": 189,
+      "rms_interaction": 0.2004594409434253,
+      "rms_noise": 0.12241433135100774,
+      "ratio": 1.6375487962159676,
+      "frac_above": 0.9947089947089947
+    },
+    "RPE1|s": {
+      "n": 189,
+      "rms_interaction": 0.17691763415538445,
+      "rms_noise": 0.12270751424015515,
+      "ratio": 1.4417832131219999,
+      "frac_above": 0.9947089947089947
+    },
+    "RPE1|umi": {
+      "n": 189,
+      "rms_interaction": 0.15895267575979233,
+      "rms_noise": 0.12420026244467529,
+      "ratio": 1.2798094998438303,
+      "frac_above": 0.9365079365079365
+    }
+  },
+  "sweep": {
+    "name": "RMS(interaction) - RMS(random split)",
+    "verdict": "ROBUST",
+    "n_cells": 9,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 9,
+    "n_resolved_pos": 9,
+    "n_resolved_neg": 0,
+    "sign_consistent": true,
+    "cells_needed_for_robust": 6,
+    "passing_configs": [
+      {
+        "line": "HepG2",
+        "axis": "g2m"
+      },
+      {
+        "line": "HepG2",
+        "axis": "s"
+      },
+      {
+        "line": "HepG2",
+        "axis": "umi"
+      },
+      {
+        "line": "Jurkat",
+        "axis": "g2m"
+      },
+      {
+        "line": "Jurkat",
+        "axis": "s"
+      },
+      {
+        "line": "Jurkat",
+        "axis": "umi"
+      },
+      {
+        "line": "RPE1",
+        "axis": "g2m"
+      },
+      {
+        "line": "RPE1",
+        "axis": "s"
+      },
+      {
+        "line": "RPE1",
+        "axis": "umi"
+      }
+    ],
+    "cells": [
+      {
+        "config": {
+          "line": "HepG2",
+          "axis": "g2m"
+        },
+        "cohort": "HepG2|g2m",
+        "n": 193,
+        "delta": 0.03764892234394587,
+        "lo": 0.033402329527922554,
+        "hi": 0.041946227947935226
+      },
+      {
+        "config": {
+          "line": "HepG2",
+          "axis": "s"
+        },
+        "cohort": "HepG2|s",
+        "n": 193,
+        "delta": 0.036909832257217695,
+        "lo": 0.03292436656431136,
+        "hi": 0.041058581332565125
+      },
+      {
+        "config": {
+          "line": "HepG2",
+          "axis": "umi"
+        },
+        "cohort": "HepG2|umi",
+        "n": 193,
+        "delta": 0.01684478610522389,
+        "lo": 0.012626240635049467,
+        "hi": 0.02148035044777038
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "axis": "g2m"
+        },
+        "cohort": "Jurkat|g2m",
+        "n": 188,
+        "delta": 0.042272904451857225,
+        "lo": 0.03706744670560781,
+        "hi": 0.04770265997516269
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "axis": "s"
+        },
+        "cohort": "Jurkat|s",
+        "n": 188,
+        "delta": 0.04881660438122901,
+        "lo": 0.04174030626123335,
+        "hi": 0.05630470566411918
+      },
+      {
+        "config": {
+          "line": "Jurkat",
+          "axis": "umi"
+        },
+        "cohort": "Jurkat|umi",
+        "n": 188,
+        "delta": 0.026967049120588504,
+        "lo": 0.022747208151787993,
+        "hi": 0.031423635070925535
+      },
+      {
+        "config": {
+          "line": "RPE1",
+          "axis": "g2m"
+        },
+        "cohort": "RPE1|g2m",
+        "n": 189,
+        "delta": 0.07804510959241756,
+        "lo": 0.07229382802274019,
+        "hi": 0.08384583823717932
+      },
+      {
+        "config": {
+          "line": "RPE1",
+          "axis": "s"
+        },
+        "cohort": "RPE1|s",
+        "n": 189,
+        "delta": 0.0542101199152293,
+        "lo": 0.049888528989401285,
+        "hi": 0.058683209761326745
+      },
+      {
+        "config": {
+          "line": "RPE1",
+          "axis": "umi"
+        },
+        "cohort": "RPE1|umi",
+        "n": 189,
+        "delta": 0.034752413315117046,
+        "lo": 0.02949068938140516,
+        "hi": 0.04053600364458308
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "STEP 3 -- CELL-STATE GATE on the cohort tensor",
+    "====================================================================================================",
+    "  PREDECLARED: ratio ~= 1 closes the single-cell direction; ratio >> 1 justifies conditioning.",
+    "  tensor (107082, 2000); 78,608 perturbed, 28,474 NTC cells",
+    "    HepG2   g2m  n=193 | interaction 0.1592 | noise 0.1215 | ratio 1.310 | 91% of perts above noise",
+    "    HepG2   s    n=193 | interaction 0.1581 | noise 0.1212 | ratio 1.304 | 95% of perts above noise",
+    "    HepG2   umi  n=193 | interaction 0.1394 | noise 0.1226 | ratio 1.137 | 81% of perts above noise",
+    "    Jurkat  g2m  n=188 | interaction 0.1738 | noise 0.1315 | ratio 1.321 | 96% of perts above noise",
+    "    Jurkat  s    n=188 | interaction 0.1807 | noise 0.1319 | ratio 1.370 | 94% of perts above noise",
+    "    Jurkat  umi  n=188 | interaction 0.1589 | noise 0.1320 | ratio 1.204 | 86% of perts above noise",
+    "    RPE1    g2m  n=189 | interaction 0.2005 | noise 0.1224 | ratio 1.638 | 99% of perts above noise",
+    "    RPE1    s    n=189 | interaction 0.1769 | noise 0.1227 | ratio 1.442 | 99% of perts above noise",
+    "    RPE1    umi  n=189 | interaction 0.1590 | noise 0.1242 | ratio 1.280 | 94% of perts above noise",
+    "\n  SWEEP RMS(interaction) - RMS(random split)   axes[line,axis]  9 cells\n  config                       cohort         delta                 95% CI\n  line=HepG2 axis=g2m          HepG2|g2m    +0.0376 [ +0.0334, +0.0419] RES+\n  line=HepG2 axis=s            HepG2|s      +0.0369 [ +0.0329, +0.0411] RES+\n  line=HepG2 axis=umi          HepG2|umi    +0.0168 [ +0.0126, +0.0215] RES+\n  line=Jurkat axis=g2m         Jurkat|g2m   +0.0423 [ +0.0371, +0.0477] RES+\n  line=Jurkat axis=s           Jurkat|s     +0.0488 [ +0.0417, +0.0563] RES+\n  line=Jurkat axis=umi         Jurkat|umi   +0.0270 [ +0.0227, +0.0314] RES+\n  line=RPE1 axis=g2m           RPE1|g2m     +0.0780 [ +0.0723, +0.0838] RES+\n  line=RPE1 axis=s             RPE1|s       +0.0542 [ +0.0499, +0.0587] RES+\n  line=RPE1 axis=umi           RPE1|umi     +0.0348 [ +0.0295, +0.0405] RES+\n  -> ROBUST   resolved +9/-0 of 9 (>= 6 needed), sign-consistent True",
+    "\n  READING",
+    "  cycle ratios [1.31, 1.304, 1.321, 1.37, 1.638, 1.442]  vs  umi ratios [1.137, 1.204, 1.28]",
+    "  cycle exceeds depth, so the interaction is not merely a depth artefact.",
+    "  State-dependent knockout effects are REAL. Pseudobulk averages over signal and conditioning",
+    "  the model on cell state is justified -- proceed to the conditioned models."
+  ]
+}

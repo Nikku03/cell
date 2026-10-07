@@ -1,0 +1,129 @@
+<style>
+:root { --bg:#f6f7f9; --panel:#fff; --ink:#1a2230; --muted:#66707e; --line:#d9dee6; --chord:#8892a3; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0e1219; --panel:#151b25; --ink:#e6eaf1; --muted:#8b95a5; --line:#26303d; --chord:#9aa4b4; } }
+:root[data-theme="light"] { --bg:#f6f7f9; --panel:#fff; --ink:#1a2230; --muted:#66707e; --line:#d9dee6; --chord:#8892a3; }
+:root[data-theme="dark"] { --bg:#0e1219; --panel:#151b25; --ink:#e6eaf1; --muted:#8b95a5; --line:#26303d; --chord:#9aa4b4; }
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 48px}
+h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em} .sub{color:var(--muted);font-size:13.5px;margin:0 0 14px;max-width:880px;line-height:1.5}
+.legend{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:0 0 10px;font-size:12.5px}
+.lg{display:inline-flex;align-items:center;gap:6px} .lg i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px;overflow-x:auto;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+svg{display:block;width:100%;height:auto;min-width:720px}
+.chord{fill:none;stroke:var(--chord)} .node circle{stroke:var(--panel);stroke-width:2}
+.nlab{font-size:11.5px;font-weight:600}
+.foot{color:var(--muted);font-size:12px;line-height:1.55;margin-top:16px;max-width:940px} .foot b{color:var(--ink);font-weight:600} .stats{font-family:ui-monospace,monospace;color:var(--ink)}
+</style>
+<div class="wrap">
+  <h1>The whole cell as interconnected pathways</h1>
+  <p class="sub">The cell's biology at its coarsest honest resolution: the <b>25 top-level Reactome systems</b> (node
+  size = number of genes), linked by how much they <b>interconnect</b> &mdash; a chord's thickness is the fraction of
+  proteins two systems <b>share</b> (Jaccard &ge; 0.08), corroborated by cross&#8209;system PPI. These systems span
+  <b>9,682</b> annotated genes of the cell.</p>
+  <div class="legend"><span class="lg"><i style="background:#7c6cd6"></i>gene expression</span><span class="lg"><i style="background:#3d7fd1"></i>genome / cycle</span><span class="lg"><i style="background:#c65b7c"></i>stress / death</span><span class="lg"><i style="background:#2ca6a4"></i>signalling</span><span class="lg"><i style="background:#d1495b"></i>immune / blood</span><span class="lg"><i style="background:#b07d48"></i>tissue / structure</span><span class="lg"><i style="background:#e08a2b"></i>protein handling</span><span class="lg"><i style="background:#4c9f70"></i>metabolism</span></div>
+  <div class="card">
+    <svg viewBox="0 0 1000 1000" role="img" aria-label="Circular interconnection map of the whole cell's top-level pathway systems"><path d="M778.6,343.2 Q541.5,546.4 458.6,847.4" class="chord" style="stroke-width:2.69;opacity:0.35"><title>DNA repair ↔ Adaptive immunity: 94 shared proteins (Jaccard 0.08), 954 cross-PPI</title></path>
+<path d="M778.6,343.2 Q556.0,546.4 541.4,847.4" class="chord" style="stroke-width:2.70;opacity:0.35"><title>DNA repair ↔ Cell-cell comm.: 46 shared proteins (Jaccard 0.08), 246 cross-PPI</title></path>
+<path d="M824.2,581.8 Q564.0,588.1 541.4,847.4" class="chord" style="stroke-width:2.72;opacity:0.35"><title>Cell death ↔ Cell-cell comm.: 36 shared proteins (Jaccard 0.08), 274 cross-PPI</title></path>
+<path d="M500.0,190.0 Q548.8,431.3 778.6,343.2" class="chord" style="stroke-width:2.79;opacity:0.36"><title>Gene expression ↔ DNA repair: 135 shared proteins (Jaccard 0.08), 703 cross-PPI</title></path>
+<path d="M378.5,826.8 Q421.1,570.1 170.7,499.3" class="chord" style="stroke-width:2.88;opacity:0.37"><title>Hemostasis ↔ Vesicle transport: 100 shared proteins (Jaccard 0.09), 709 cross-PPI</title></path>
+<path d="M621.5,826.8 Q528.5,631.0 541.4,847.4" class="chord" style="stroke-width:2.90;opacity:0.37"><title>Development ↔ Cell-cell comm.: 125 shared proteins (Jaccard 0.09), 659 cross-PPI</title></path>
+<path d="M694.0,787.0 Q485.2,535.8 221.4,343.2" class="chord" style="stroke-width:2.90;opacity:0.37"><title>Signal transduction ↔ Protein modification: 304 shared proteins (Jaccard 0.09), 3,442 cross-PPI</title></path>
+<path d="M582.1,200.4 Q535.6,517.8 621.5,826.8" class="chord" style="stroke-width:2.95;opacity:0.38"><title>RNA metabolism ↔ Development: 162 shared proteins (Jaccard 0.09), 1,381 cross-PPI</title></path>
+<path d="M813.8,418.0 Q588.9,548.9 694.0,787.0" class="chord" style="stroke-width:2.99;opacity:0.38"><title>Cell cycle ↔ Signal transduction: 252 shared proteins (Jaccard 0.09), 1,553 cross-PPI</title></path>
+<path d="M458.6,847.4 Q435.1,573.7 170.7,499.3" class="chord" style="stroke-width:3.00;opacity:0.38"><title>Adaptive immunity ↔ Vesicle transport: 135 shared proteins (Jaccard 0.09), 1,033 cross-PPI</title></path>
+<path d="M694.0,787.0 Q512.7,620.4 378.5,826.8" class="chord" style="stroke-width:3.01;opacity:0.38"><title>Signal transduction ↔ Hemostasis: 253 shared proteins (Jaccard 0.09), 1,113 cross-PPI</title></path>
+<path d="M541.4,847.4 Q500.0,634.6 458.6,847.4" class="chord" style="stroke-width:3.03;opacity:0.38"><title>Cell-cell comm. ↔ Adaptive immunity: 106 shared proteins (Jaccard 0.09), 509 cross-PPI</title></path>
+<path d="M813.8,418.0 Q506.2,471.2 221.4,343.2" class="chord" style="stroke-width:3.09;opacity:0.39"><title>Cell cycle ↔ Protein modification: 170 shared proteins (Jaccard 0.10), 1,634 cross-PPI</title></path>
+<path d="M458.6,847.4 Q471.5,631.0 378.5,826.8" class="chord" style="stroke-width:3.11;opacity:0.39"><title>Adaptive immunity ↔ Hemostasis: 135 shared proteins (Jaccard 0.10), 755 cross-PPI</title></path>
+<path d="M500.0,190.0 Q527.8,411.6 659.0,230.8" class="chord" style="stroke-width:3.24;opacity:0.40"><title>Gene expression ↔ Chromatin: 160 shared proteins (Jaccard 0.10), 707 cross-PPI</title></path>
+<path d="M725.9,279.4 Q596.3,488.7 824.2,581.8" class="chord" style="stroke-width:3.25;opacity:0.41"><title>DNA replication ↔ Cell death: 28 shared proteins (Jaccard 0.10), 69 cross-PPI</title></path>
+<path d="M500.0,190.0 Q554.9,444.4 813.8,418.0" class="chord" style="stroke-width:3.41;opacity:0.42"><title>Gene expression ↔ Cell cycle: 197 shared proteins (Jaccard 0.11), 1,248 cross-PPI</title></path>
+<path d="M754.3,730.3 Q495.7,525.9 221.4,343.2" class="chord" style="stroke-width:3.41;opacity:0.42"><title>Responses to stimuli ↔ Protein modification: 209 shared proteins (Jaccard 0.11), 1,977 cross-PPI</title></path>
+<path d="M694.0,787.0 Q526.7,624.0 458.6,847.4" class="chord" style="stroke-width:3.46;opacity:0.43"><title>Signal transduction ↔ Adaptive immunity: 331 shared proteins (Jaccard 0.11), 2,282 cross-PPI</title></path>
+<path d="M754.3,730.3 Q530.1,500.9 417.9,200.4" class="chord" style="stroke-width:3.51;opacity:0.43"><title>Responses to stimuli ↔ Metabolism: 280 shared proteins (Jaccard 0.11), 1,215 cross-PPI</title></path>
+<path d="M813.8,418.0 Q515.4,460.1 274.1,279.4" class="chord" style="stroke-width:3.54;opacity:0.43"><title>Cell cycle ↔ Organelle biogenesis: 93 shared proteins (Jaccard 0.11), 367 cross-PPI</title></path>
+<path d="M725.9,279.4 Q597.2,474.3 829.3,499.3" class="chord" style="stroke-width:3.54;opacity:0.43"><title>DNA replication ↔ Reproduction: 24 shared proteins (Jaccard 0.11), 61 cross-PPI</title></path>
+<path d="M813.8,418.0 Q547.7,559.4 458.6,847.4" class="chord" style="stroke-width:3.55;opacity:0.43"><title>Cell cycle ↔ Adaptive immunity: 158 shared proteins (Jaccard 0.11), 1,143 cross-PPI</title></path>
+<path d="M778.6,343.2 Q606.4,485.4 829.3,499.3" class="chord" style="stroke-width:3.61;opacity:0.44"><title>DNA repair ↔ Reproduction: 45 shared proteins (Jaccard 0.12), 33 cross-PPI</title></path>
+<path d="M621.5,826.8 Q514.0,631.0 458.6,847.4" class="chord" style="stroke-width:3.62;opacity:0.44"><title>Development ↔ Adaptive immunity: 228 shared proteins (Jaccard 0.12), 2,406 cross-PPI</title></path>
+<path d="M500.0,190.0 Q533.9,509.0 694.0,787.0" class="chord" style="stroke-width:3.63;opacity:0.44"><title>Gene expression ↔ Signal transduction: 397 shared proteins (Jaccard 0.12), 2,364 cross-PPI</title></path>
+<path d="M754.3,730.3 Q578.4,603.5 694.0,787.0" class="chord" style="stroke-width:3.63;opacity:0.44"><title>Responses to stimuli ↔ Signal transduction: 333 shared proteins (Jaccard 0.12), 1,996 cross-PPI</title></path>
+<path d="M582.1,200.4 Q558.9,500.9 754.3,730.3" class="chord" style="stroke-width:3.73;opacity:0.45"><title>RNA metabolism ↔ Responses to stimuli: 162 shared proteins (Jaccard 0.12), 1,029 cross-PPI</title></path>
+<path d="M725.9,279.4 Q546.8,535.2 541.4,847.4" class="chord" style="stroke-width:3.74;opacity:0.45"><title>DNA replication ↔ Cell-cell comm.: 45 shared proteins (Jaccard 0.12), 53 cross-PPI</title></path>
+<path d="M813.8,418.0 Q612.6,498.5 829.3,499.3" class="chord" style="stroke-width:3.75;opacity:0.46"><title>Cell cycle ↔ Reproduction: 78 shared proteins (Jaccard 0.12), 24 cross-PPI</title></path>
+<path d="M754.3,730.3 Q537.3,614.1 458.6,847.4" class="chord" style="stroke-width:3.78;opacity:0.46"><title>Responses to stimuli ↔ Adaptive immunity: 190 shared proteins (Jaccard 0.12), 1,597 cross-PPI</title></path>
+<path d="M458.6,847.4 Q444.0,546.4 221.4,343.2" class="chord" style="stroke-width:3.82;opacity:0.46"><title>Adaptive immunity ↔ Protein modification: 252 shared proteins (Jaccard 0.12), 2,124 cross-PPI</title></path>
+<path d="M500.0,190.0 Q492.8,519.5 458.6,847.4" class="chord" style="stroke-width:3.83;opacity:0.46"><title>Gene expression ↔ Adaptive immunity: 261 shared proteins (Jaccard 0.12), 1,358 cross-PPI</title></path>
+<path d="M500.0,190.0 Q544.5,499.1 754.3,730.3" class="chord" style="stroke-width:3.94;opacity:0.47"><title>Gene expression ↔ Responses to stimuli: 252 shared proteins (Jaccard 0.13), 1,879 cross-PPI</title></path>
+<path d="M170.7,499.3 Q393.6,485.4 221.4,343.2" class="chord" style="stroke-width:4.03;opacity:0.48"><title>Vesicle transport ↔ Protein modification: 233 shared proteins (Jaccard 0.13), 723 cross-PPI</title></path>
+<path d="M500.0,190.0 Q521.3,515.9 621.5,826.8" class="chord" style="stroke-width:4.59;opacity:0.54"><title>Gene expression ↔ Development: 354 shared proteins (Jaccard 0.15), 2,137 cross-PPI</title></path>
+<path d="M813.8,418.0 Q599.4,539.0 754.3,730.3" class="chord" style="stroke-width:4.62;opacity:0.54"><title>Cell cycle ↔ Responses to stimuli: 188 shared proteins (Jaccard 0.15), 1,058 cross-PPI</title></path>
+<path d="M754.3,730.3 Q565.8,610.5 621.5,826.8" class="chord" style="stroke-width:4.75;opacity:0.55"><title>Responses to stimuli ↔ Development: 281 shared proteins (Jaccard 0.16), 1,160 cross-PPI</title></path>
+<path d="M694.0,787.0 Q555.2,620.4 621.5,826.8" class="chord" style="stroke-width:5.24;opacity:0.60"><title>Signal transduction ↔ Development: 551 shared proteins (Jaccard 0.18), 2,069 cross-PPI</title></path>
+<path d="M725.9,279.4 Q594.5,460.1 813.8,418.0" class="chord" style="stroke-width:5.33;opacity:0.61"><title>DNA replication ↔ Cell cycle: 112 shared proteins (Jaccard 0.18), 28 cross-PPI</title></path>
+<path d="M778.6,343.2 Q603.7,471.2 813.8,418.0" class="chord" style="stroke-width:5.43;opacity:0.62"><title>DNA repair ↔ Cell cycle: 145 shared proteins (Jaccard 0.18), 332 cross-PPI</title></path>
+<path d="M725.9,279.4 Q588.3,447.0 778.6,343.2" class="chord" style="stroke-width:5.60;opacity:0.64"><title>DNA replication ↔ DNA repair: 71 shared proteins (Jaccard 0.19), 159 cross-PPI</title></path>
+<g class="node"><title>Gene expression (Transcription) — 1,422 genes</title><circle cx="500.0" cy="190.0" r="24.5" fill="#7c6cd6"/></g>
+<text x="500.0" y="156.5" class="nlab" text-anchor="middle" fill="#7c6cd6">Gene expression</text>
+<g class="node"><title>Metabolism of RNA — 711 genes</title><circle cx="582.1" cy="200.4" r="19.1" fill="#7c6cd6"/></g>
+<text x="589.8" y="173.3" class="nlab" text-anchor="start" fill="#7c6cd6">RNA metabolism</text>
+<g class="node"><title>Chromatin organization — 322 genes</title><circle cx="659.0" cy="230.8" r="14.8" fill="#7c6cd6"/></g>
+<text x="671.9" y="210.3" class="nlab" text-anchor="start" fill="#7c6cd6">Chromatin</text>
+<g class="node"><title>DNA Replication — 122 genes</title><circle cx="725.9" cy="279.4" r="11.4" fill="#3d7fd1"/></g>
+<text x="741.9" y="265.4" class="nlab" text-anchor="start" fill="#3d7fd1">DNA replication</text>
+<g class="node"><title>DNA Repair — 320 genes</title><circle cx="778.6" cy="343.2" r="14.8" fill="#3d7fd1"/></g>
+<text x="801.2" y="331.8" class="nlab" text-anchor="start" fill="#3d7fd1">DNA repair</text>
+<g class="node"><title>Cell Cycle — 609 genes</title><circle cx="813.8" cy="418.0" r="18.1" fill="#3d7fd1"/></g>
+<text x="842.5" y="411.7" class="nlab" text-anchor="start" fill="#3d7fd1">Cell cycle</text>
+<g class="node"><title>Reproduction — 115 genes</title><circle cx="829.3" cy="499.3" r="11.3" fill="#3d7fd1"/></g>
+<text x="852.6" y="500.8" class="nlab" text-anchor="start" fill="#3d7fd1">Reproduction</text>
+<g class="node"><title>Programmed Cell Death — 182 genes</title><circle cx="824.2" cy="581.8" r="12.6" fill="#c65b7c"/></g>
+<text x="848.3" y="589.4" class="nlab" text-anchor="start" fill="#c65b7c">Cell death</text>
+<g class="node"><title>Autophagy — 153 genes</title><circle cx="798.6" cy="660.5" r="12.1" fill="#c65b7c"/></g>
+<text x="820.4" y="673.7" class="nlab" text-anchor="start" fill="#c65b7c">Autophagy</text>
+<g class="node"><title>Cellular responses to stimuli — 802 genes</title><circle cx="754.3" cy="730.3" r="19.9" fill="#c65b7c"/></g>
+<text x="778.8" y="753.7" class="nlab" text-anchor="start" fill="#c65b7c">Responses to stimuli</text>
+<g class="node"><title>Signal Transduction — 2,403 genes</title><circle cx="694.0" cy="787.0" r="30.0" fill="#2ca6a4"/></g>
+<text x="718.7" y="824.0" class="nlab" text-anchor="start" fill="#2ca6a4">Signal transduction</text>
+<g class="node"><title>Developmental Biology — 1,250 genes</title><circle cx="621.5" cy="826.8" r="23.3" fill="#2ca6a4"/></g>
+<text x="634.5" y="862.7" class="nlab" text-anchor="start" fill="#2ca6a4">Development</text>
+<g class="node"><title>Cell-Cell communication — 297 genes</title><circle cx="541.4" cy="847.4" r="14.4" fill="#2ca6a4"/></g>
+<text x="544.7" y="876.6" class="nlab" text-anchor="start" fill="#2ca6a4">Cell-cell comm.</text>
+<g class="node"><title>Adaptive Immune System — 949 genes</title><circle cx="458.6" cy="847.4" r="21.1" fill="#d1495b"/></g>
+<text x="454.5" y="883.2" class="nlab" text-anchor="end" fill="#d1495b">Adaptive immunity</text>
+<g class="node"><title>Hemostasis — 590 genes</title><circle cx="378.5" cy="826.8" r="17.9" fill="#d1495b"/></g>
+<text x="367.5" y="857.6" class="nlab" text-anchor="end" fill="#d1495b">Hemostasis</text>
+<g class="node"><title>Neuronal System — 391 genes</title><circle cx="306.0" cy="787.0" r="15.7" fill="#b07d48"/></g>
+<text x="289.8" y="812.4" class="nlab" text-anchor="end" fill="#b07d48">Neuronal system</text>
+<g class="node"><title>Sensory Perception — 614 genes</title><circle cx="245.7" cy="730.3" r="18.1" fill="#b07d48"/></g>
+<text x="222.5" y="752.6" class="nlab" text-anchor="end" fill="#b07d48">Sensory perception</text>
+<g class="node"><title>Muscle contraction — 179 genes</title><circle cx="201.4" cy="660.5" r="12.6" fill="#b07d48"/></g>
+<text x="179.2" y="674.0" class="nlab" text-anchor="end" fill="#b07d48">Muscle contraction</text>
+<g class="node"><title>Extracellular matrix organization — 312 genes</title><circle cx="175.8" cy="581.8" r="14.6" fill="#b07d48"/></g>
+<text x="149.7" y="589.8" class="nlab" text-anchor="end" fill="#b07d48">ECM organization</text>
+<g class="node"><title>Vesicle-mediated transport — 658 genes</title><circle cx="170.7" cy="499.3" r="18.6" fill="#e08a2b"/></g>
+<text x="140.2" y="500.4" class="nlab" text-anchor="end" fill="#e08a2b">Vesicle transport</text>
+<g class="node"><title>Protein localization — 163 genes</title><circle cx="186.2" cy="418.0" r="12.3" fill="#e08a2b"/></g>
+<text x="163.1" y="413.5" class="nlab" text-anchor="end" fill="#e08a2b">Protein localization</text>
+<g class="node"><title>Post-translational protein modification — 1,348 genes</title><circle cx="221.4" cy="343.2" r="24.0" fill="#e08a2b"/></g>
+<text x="191.0" y="326.9" class="nlab" text-anchor="end" fill="#e08a2b">Protein modification</text>
+<g class="node"><title>Organelle biogenesis and maintenance — 310 genes</title><circle cx="274.1" cy="279.4" r="14.6" fill="#e08a2b"/></g>
+<text x="255.9" y="263.0" class="nlab" text-anchor="end" fill="#e08a2b">Organelle biogenesis</text>
+<g class="node"><title>Transport of small molecules — 694 genes</title><circle cx="341.0" cy="230.8" r="18.9" fill="#4c9f70"/></g>
+<text x="326.1" y="206.7" class="nlab" text-anchor="end" fill="#4c9f70">Small-mol. transport</text>
+<g class="node"><title>Metabolism — 1,996 genes</title><circle cx="417.9" cy="200.4" r="27.9" fill="#4c9f70"/></g>
+<text x="408.0" y="164.7" class="nlab" text-anchor="end" fill="#4c9f70">Metabolism</text></svg>
+  </div>
+  <p class="foot">
+    <b>What you're seeing.</b> Each node is a major cell system; a chord means the two systems share machinery. The
+    strongest links are textbook &mdash; DNA replication&ndash;DNA repair; DNA repair&ndash;Cell cycle; DNA replication&ndash;Cell cycle; Signal transduction&ndash;Development; Responses to stimuli&ndash;Development &mdash; which is the sanity check that the map is real. <b>42</b>
+    interconnections above the threshold.<br>
+    <b>Honest scope.</b> Interconnection = <b>shared proteins + physical contact</b> &mdash; DESCRIPTIVE crosstalk, <b>not</b>
+    causal signal flow and <b>not</b> directional. The biggest hubs (Signal transduction, Metabolism, Gene expression)
+    connect broadly partly because they are huge and full of multifunctional proteins, and Reactome's own annotation
+    choices shape the overlaps. Dark / orphan genes are <b>not</b> here &mdash; they have no pathway (that's what the
+    orphan&#8209;network view adds). A map of who&#8209;shares&#8209;and&#8209;touches&#8209;whom across the cell, not a
+    wiring diagram of control.
+  </p>
+</div>

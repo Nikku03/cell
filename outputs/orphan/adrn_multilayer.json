@@ -1,0 +1,507 @@
+{
+  "test": "adrn_multilayer",
+  "K_values": [
+    30,
+    60
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "layers": {
+    "complex": 46,
+    "genomic": 91,
+    "molfunc": 75,
+    "network": 15,
+    "pathway": 211,
+    "response": 128,
+    "spatial": 96,
+    "structure": 162
+  },
+  "detail": {
+    "K30|s0": {
+      "ridge_all": 0.25675,
+      "best_single": "pathway",
+      "best_single_score": 0.23975,
+      "tf_multiplex": 0.23037499999999997,
+      "tf_flat": 0.242,
+      "params_multiplex": 232350,
+      "params_flat": 232871,
+      "singles": {
+        "complex": 0.21825,
+        "genomic": 0.207,
+        "molfunc": 0.20237499999999997,
+        "network": 0.202875,
+        "pathway": 0.23975,
+        "response": 0.198,
+        "spatial": 0.22649999999999998,
+        "structure": 0.1775
+      },
+      "perms": {
+        "complex": 0.18075,
+        "genomic": 0.17962500000000003,
+        "molfunc": 0.178375,
+        "network": 0.1805,
+        "pathway": 0.17762499999999998,
+        "response": 0.17775000000000002,
+        "spatial": 0.1805,
+        "structure": 0.17975000000000002
+      },
+      "drops": {
+        "complex": 0.24924999999999997,
+        "genomic": 0.25625,
+        "molfunc": 0.255625,
+        "network": 0.258625,
+        "pathway": 0.24525,
+        "response": 0.2595,
+        "spatial": 0.250625,
+        "structure": 0.25787499999999997
+      }
+    },
+    "K30|s1": {
+      "ridge_all": 0.25675,
+      "best_single": "pathway",
+      "best_single_score": 0.23975,
+      "tf_multiplex": 0.233,
+      "tf_flat": 0.248625,
+      "params_multiplex": 232350,
+      "params_flat": 232871,
+      "singles": {
+        "complex": 0.21825,
+        "genomic": 0.207,
+        "molfunc": 0.20237499999999997,
+        "network": 0.202875,
+        "pathway": 0.23975,
+        "response": 0.198,
+        "spatial": 0.22649999999999998,
+        "structure": 0.1775
+      },
+      "perms": {
+        "complex": 0.18075,
+        "genomic": 0.17962500000000003,
+        "molfunc": 0.178375,
+        "network": 0.1805,
+        "pathway": 0.17762499999999998,
+        "response": 0.17775000000000002,
+        "spatial": 0.1805,
+        "structure": 0.17975000000000002
+      },
+      "drops": {
+        "complex": 0.24924999999999997,
+        "genomic": 0.25625,
+        "molfunc": 0.255625,
+        "network": 0.258625,
+        "pathway": 0.24525,
+        "response": 0.2595,
+        "spatial": 0.250625,
+        "structure": 0.25787499999999997
+      }
+    },
+    "K30|s2": {
+      "ridge_all": 0.25675,
+      "best_single": "pathway",
+      "best_single_score": 0.23975,
+      "tf_multiplex": 0.23349999999999999,
+      "tf_flat": 0.248125,
+      "params_multiplex": 232350,
+      "params_flat": 232871,
+      "singles": {
+        "complex": 0.21825,
+        "genomic": 0.207,
+        "molfunc": 0.20237499999999997,
+        "network": 0.202875,
+        "pathway": 0.23975,
+        "response": 0.198,
+        "spatial": 0.22649999999999998,
+        "structure": 0.1775
+      },
+      "perms": {
+        "complex": 0.18075,
+        "genomic": 0.17962500000000003,
+        "molfunc": 0.178375,
+        "network": 0.1805,
+        "pathway": 0.17762499999999998,
+        "response": 0.17775000000000002,
+        "spatial": 0.1805,
+        "structure": 0.17975000000000002
+      },
+      "drops": {
+        "complex": 0.24924999999999997,
+        "genomic": 0.25625,
+        "molfunc": 0.255625,
+        "network": 0.258625,
+        "pathway": 0.24525,
+        "response": 0.2595,
+        "spatial": 0.250625,
+        "structure": 0.25787499999999997
+      }
+    },
+    "K60|s0": {
+      "ridge_all": 0.261,
+      "best_single": "pathway",
+      "best_single_score": 0.244875,
+      "tf_multiplex": 0.13,
+      "tf_flat": 0.1495,
+      "params_multiplex": 235260,
+      "params_flat": 239411,
+      "singles": {
+        "complex": 0.22049999999999997,
+        "genomic": 0.20600000000000002,
+        "molfunc": 0.205625,
+        "network": 0.2,
+        "pathway": 0.244875,
+        "response": 0.19575,
+        "spatial": 0.229375,
+        "structure": 0.181
+      },
+      "perms": {
+        "complex": 0.18112499999999998,
+        "genomic": 0.17912499999999998,
+        "molfunc": 0.17875000000000002,
+        "network": 0.178625,
+        "pathway": 0.177625,
+        "response": 0.1775,
+        "spatial": 0.17825000000000002,
+        "structure": 0.18
+      },
+      "drops": {
+        "complex": 0.2535,
+        "genomic": 0.260125,
+        "molfunc": 0.260125,
+        "network": 0.262625,
+        "pathway": 0.24987499999999999,
+        "response": 0.263625,
+        "spatial": 0.25425,
+        "structure": 0.263625
+      }
+    },
+    "K60|s1": {
+      "ridge_all": 0.261,
+      "best_single": "pathway",
+      "best_single_score": 0.244875,
+      "tf_multiplex": 0.10287500000000001,
+      "tf_flat": 0.14425,
+      "params_multiplex": 235260,
+      "params_flat": 239411,
+      "singles": {
+        "complex": 0.22049999999999997,
+        "genomic": 0.20600000000000002,
+        "molfunc": 0.205625,
+        "network": 0.2,
+        "pathway": 0.244875,
+        "response": 0.19575,
+        "spatial": 0.229375,
+        "structure": 0.181
+      },
+      "perms": {
+        "complex": 0.18112499999999998,
+        "genomic": 0.17912499999999998,
+        "molfunc": 0.17875000000000002,
+        "network": 0.178625,
+        "pathway": 0.177625,
+        "response": 0.1775,
+        "spatial": 0.17825000000000002,
+        "structure": 0.18
+      },
+      "drops": {
+        "complex": 0.2535,
+        "genomic": 0.260125,
+        "molfunc": 0.260125,
+        "network": 0.262625,
+        "pathway": 0.24987499999999999,
+        "response": 0.263625,
+        "spatial": 0.25425,
+        "structure": 0.263625
+      }
+    },
+    "K60|s2": {
+      "ridge_all": 0.261,
+      "best_single": "pathway",
+      "best_single_score": 0.244875,
+      "tf_multiplex": 0.162625,
+      "tf_flat": 0.170375,
+      "params_multiplex": 235260,
+      "params_flat": 239411,
+      "singles": {
+        "complex": 0.22049999999999997,
+        "genomic": 0.20600000000000002,
+        "molfunc": 0.205625,
+        "network": 0.2,
+        "pathway": 0.244875,
+        "response": 0.19575,
+        "spatial": 0.229375,
+        "structure": 0.181
+      },
+      "perms": {
+        "complex": 0.18112499999999998,
+        "genomic": 0.17912499999999998,
+        "molfunc": 0.17875000000000002,
+        "network": 0.178625,
+        "pathway": 0.177625,
+        "response": 0.1775,
+        "spatial": 0.17825000000000002,
+        "structure": 0.18
+      },
+      "drops": {
+        "complex": 0.2535,
+        "genomic": 0.260125,
+        "molfunc": 0.260125,
+        "network": 0.262625,
+        "pathway": 0.24987499999999999,
+        "response": 0.263625,
+        "spatial": 0.25425,
+        "structure": 0.263625
+      }
+    }
+  },
+  "G1_multiplex_minus_flat": -0.01841666666666667,
+  "G2_all_minus_best_single": 0.016562499999999994,
+  "G3_decorative": [
+    "structure"
+  ],
+  "sweeps": {
+    "G1": {
+      "name": "multiplex - flat (G1)",
+      "verdict": "HARMFUL",
+      "n_cells": 6,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 6,
+      "n_resolved_pos": 0,
+      "n_resolved_neg": 5,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 4,
+      "passing_configs": [],
+      "cells": [
+        {
+          "config": {
+            "K": 30,
+            "seed": 0
+          },
+          "cohort": "K30|s0",
+          "n": 400,
+          "delta": -0.011625000000000002,
+          "lo": -0.02175,
+          "hi": -0.0014999999999999996
+        },
+        {
+          "config": {
+            "K": 30,
+            "seed": 1
+          },
+          "cohort": "K30|s1",
+          "n": 400,
+          "delta": -0.015625,
+          "lo": -0.024249999999999997,
+          "hi": -0.007124999999999998
+        },
+        {
+          "config": {
+            "K": 30,
+            "seed": 2
+          },
+          "cohort": "K30|s2",
+          "n": 400,
+          "delta": -0.014624999999999999,
+          "lo": -0.023250000000000003,
+          "hi": -0.005999999999999998
+        },
+        {
+          "config": {
+            "K": 60,
+            "seed": 0
+          },
+          "cohort": "K60|s0",
+          "n": 400,
+          "delta": -0.0195,
+          "lo": -0.0355,
+          "hi": -0.0032500000000000007
+        },
+        {
+          "config": {
+            "K": 60,
+            "seed": 1
+          },
+          "cohort": "K60|s1",
+          "n": 400,
+          "delta": -0.041375,
+          "lo": -0.0565,
+          "hi": -0.02625
+        },
+        {
+          "config": {
+            "K": 60,
+            "seed": 2
+          },
+          "cohort": "K60|s2",
+          "n": 400,
+          "delta": -0.007749999999999999,
+          "lo": -0.024749999999999998,
+          "hi": 0.00925
+        }
+      ]
+    },
+    "G2": {
+      "name": "ridge_all - best single layer (G2)",
+      "verdict": "ROBUST",
+      "n_cells": 6,
+      "inert_axes": [],
+      "n_duplicate_cells": 4,
+      "n_effective_cells": 2,
+      "n_resolved_pos": 6,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 4,
+      "passing_configs": [
+        {
+          "K": 30,
+          "seed": 0
+        },
+        {
+          "K": 30,
+          "seed": 1
+        },
+        {
+          "K": 30,
+          "seed": 2
+        },
+        {
+          "K": 60,
+          "seed": 0
+        },
+        {
+          "K": 60,
+          "seed": 1
+        },
+        {
+          "K": 60,
+          "seed": 2
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "K": 30,
+            "seed": 0
+          },
+          "cohort": "K30|s0",
+          "n": 400,
+          "delta": 0.016999999999999998,
+          "lo": 0.008624999999999999,
+          "hi": 0.0255
+        },
+        {
+          "config": {
+            "K": 30,
+            "seed": 1
+          },
+          "cohort": "K30|s1",
+          "n": 400,
+          "delta": 0.016999999999999998,
+          "lo": 0.008624999999999999,
+          "hi": 0.0255
+        },
+        {
+          "config": {
+            "K": 30,
+            "seed": 2
+          },
+          "cohort": "K30|s2",
+          "n": 400,
+          "delta": 0.016999999999999998,
+          "lo": 0.008624999999999999,
+          "hi": 0.0255
+        },
+        {
+          "config": {
+            "K": 60,
+            "seed": 0
+          },
+          "cohort": "K60|s0",
+          "n": 400,
+          "delta": 0.016125,
+          "lo": 0.006875000000000003,
+          "hi": 0.025249999999999995
+        },
+        {
+          "config": {
+            "K": 60,
+            "seed": 1
+          },
+          "cohort": "K60|s1",
+          "n": 400,
+          "delta": 0.016125,
+          "lo": 0.006875000000000003,
+          "hi": 0.025249999999999995
+        },
+        {
+          "config": {
+            "K": 60,
+            "seed": 2
+          },
+          "cohort": "K60|s2",
+          "n": 400,
+          "delta": 0.016125,
+          "lo": 0.006875000000000003,
+          "hi": 0.025249999999999995
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "MULTIPLEX vs FLAT: does layering the features earn its complexity?",
+    "====================================================================================================",
+    "  PREDECLARED: G1 multiplex > flat at MATCHED params. G2 all > best single. G3 each layer > its perm.",
+    "\n  5,120 perturbations x 8,246 genes; sealed 400; train 4,720",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "\n  LAYERS",
+    "    complex      46 dims",
+    "    genomic      91 dims",
+    "    molfunc      75 dims",
+    "    network      15 dims",
+    "    pathway     211 dims",
+    "    response    128 dims",
+    "    spatial      96 dims",
+    "    structure   162 dims",
+    "\n  K=30  ridge_all 0.2567",
+    "    layer         alone  permuted   drop-it     G3",
+    "    complex      0.2182    0.1807    0.2492     ok",
+    "    genomic      0.2070    0.1796    0.2562     ok",
+    "    molfunc      0.2024    0.1784    0.2556     ok",
+    "    network      0.2029    0.1805    0.2586     ok",
+    "    pathway      0.2397    0.1776    0.2452     ok",
+    "    response     0.1980    0.1778    0.2595     ok",
+    "    spatial      0.2265    0.1805    0.2506     ok",
+    "    structure    0.1775    0.1798    0.2579  DECOR",
+    "    seed0: multiplex 0.2304 (232,350 par) | flat 0.2420 (232,871 par) | ridge_all 0.2567",
+    "    seed1: multiplex 0.2330 (232,350 par) | flat 0.2486 (232,871 par) | ridge_all 0.2567",
+    "    seed2: multiplex 0.2335 (232,350 par) | flat 0.2481 (232,871 par) | ridge_all 0.2567",
+    "\n  K=60  ridge_all 0.2610",
+    "    layer         alone  permuted   drop-it     G3",
+    "    complex      0.2205    0.1811    0.2535     ok",
+    "    genomic      0.2060    0.1791    0.2601     ok",
+    "    molfunc      0.2056    0.1788    0.2601     ok",
+    "    network      0.2000    0.1786    0.2626     ok",
+    "    pathway      0.2449    0.1776    0.2499     ok",
+    "    response     0.1958    0.1775    0.2636     ok",
+    "    spatial      0.2294    0.1783    0.2542     ok",
+    "    structure    0.1810    0.1800    0.2636     ok",
+    "    seed0: multiplex 0.1300 (235,260 par) | flat 0.1495 (239,411 par) | ridge_all 0.2610",
+    "    seed1: multiplex 0.1029 (235,260 par) | flat 0.1442 (239,411 par) | ridge_all 0.2610",
+    "    seed2: multiplex 0.1626 (235,260 par) | flat 0.1704 (239,411 par) | ridge_all 0.2610",
+    "\n  SWEEP multiplex - flat (G1)   axes[K,seed]  6 cells\n  config                       cohort         delta                 95% CI\n  K=30 seed=0                  K30|s0       -0.0116 [ -0.0217, -0.0015] RES-\n  K=30 seed=1                  K30|s1       -0.0156 [ -0.0242, -0.0071] RES-\n  K=30 seed=2                  K30|s2       -0.0146 [ -0.0233, -0.0060] RES-\n  K=60 seed=0                  K60|s0       -0.0195 [ -0.0355, -0.0033] RES-\n  K=60 seed=1                  K60|s1       -0.0414 [ -0.0565, -0.0262] RES-\n  K=60 seed=2                  K60|s2       -0.0077 [ -0.0247, +0.0092] ns\n  -> HARMFUL   resolved +0/-5 of 6 (>= 4 needed), sign-consistent True",
+    "\n  SWEEP ridge_all - best single layer (G2)   axes[K,seed]  6 cells\n  config                       cohort         delta                 95% CI\n  K=30 seed=0                  K30|s0       +0.0170 [ +0.0086, +0.0255] RES+\n  K=30 seed=1                  K30|s1       +0.0170 [ +0.0086, +0.0255] RES+\n  K=30 seed=2                  K30|s2       +0.0170 [ +0.0086, +0.0255] RES+\n  K=60 seed=0                  K60|s0       +0.0161 [ +0.0069, +0.0252] RES+\n  K=60 seed=1                  K60|s1       +0.0161 [ +0.0069, +0.0252] RES+\n  K=60 seed=2                  K60|s2       +0.0161 [ +0.0069, +0.0252] RES+\n  -> ROBUST   resolved +6/-0 of 6 (>= 4 needed), sign-consistent True\n     WARNING: 4 of 6 cells are numerically identical to another cell -- they duplicate rather than test. Real observations: 2.",
+    "  GUARD G2: inert axes [], duplicate cells 4",
+    "\n  READING",
+    "  G1 multiplex - flat      -0.0184",
+    "  G2 all - best single     +0.0166",
+    "  G3 decorative layers     ['structure']",
+    "  Cross-layer attention does NOT beat concatenation at matched parameters. The layers are a",
+    "  useful account of where the numbers CAME FROM, but the model gains nothing from being told",
+    "  which layer a feature belongs to -- flattening loses nothing. The multiplex structure is",
+    "  documentation, not architecture."
+  ]
+}

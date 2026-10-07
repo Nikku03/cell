@@ -1,0 +1,109 @@
+{
+ "threshold": 4.200000000000003,
+ "table": [
+  {
+   "config": "baseline",
+   "dims": 175,
+   "all": 0.3498,
+   "in_complex": 0.4276,
+   "no_complex": 0.1425,
+   "n_all": 293,
+   "n_no_complex": 80
+  },
+  {
+   "config": "+dense(raw)",
+   "dims": 580,
+   "all": 0.3434,
+   "in_complex": 0.4084,
+   "no_complex": 0.1705,
+   "n_all": 293,
+   "n_no_complex": 80
+  },
+  {
+   "config": "+dense(PCA)",
+   "dims": 195,
+   "all": 0.3711,
+   "in_complex": 0.4505,
+   "no_complex": 0.1596,
+   "n_all": 293,
+   "n_no_complex": 80
+  },
+  {
+   "config": "+dense(PCA,gated)",
+   "dims": 196,
+   "all": 0.3575,
+   "in_complex": 0.4373,
+   "no_complex": 0.145,
+   "n_all": 293,
+   "n_no_complex": 80
+  },
+  {
+   "config": "+dense(PCA,gated)-noDepMap",
+   "dims": 194,
+   "all": 0.3621,
+   "in_complex": 0.4402,
+   "no_complex": 0.1543,
+   "n_all": 293,
+   "n_no_complex": 80
+  },
+  {
+   "config": "[ref] tide-null",
+   "dims": null,
+   "all": 0.1163,
+   "in_complex": 0.1155,
+   "no_complex": 0.1184,
+   "n_all": 293,
+   "n_no_complex": 80
+  }
+ ],
+ "paired_vs_baseline": {
+  "+dense(raw)": {
+   "no_complex_delta": 0.0365,
+   "no_complex_p": 0.08402656404511685,
+   "no_complex_p_bonf": 0.3361062561804674,
+   "no_complex_n": 56,
+   "all_delta": -0.0003,
+   "all_p": 0.6461508912385728,
+   "all_p_bonf": 1.0,
+   "all_n": 218
+  },
+  "+dense(PCA)": {
+   "no_complex_delta": 0.0156,
+   "no_complex_p": 0.05689299188125912,
+   "no_complex_p_bonf": 0.22757196752503647,
+   "no_complex_n": 56,
+   "all_delta": 0.0222,
+   "all_p": 0.0004995241590397735,
+   "all_p_bonf": 0.001998096636159094,
+   "all_n": 218
+  },
+  "+dense(PCA,gated)": {
+   "no_complex_delta": 0.0091,
+   "no_complex_p": 0.8758871741401559,
+   "no_complex_p_bonf": 1.0,
+   "no_complex_n": 56,
+   "all_delta": 0.0091,
+   "all_p": 0.15310108987192783,
+   "all_p_bonf": 0.6124043594877113,
+   "all_n": 218
+  },
+  "+dense(PCA,gated)-noDepMap": {
+   "no_complex_delta": 0.0192,
+   "no_complex_p": 0.5089967485011815,
+   "no_complex_p_bonf": 1.0,
+   "no_complex_n": 56,
+   "all_delta": 0.0144,
+   "all_p": 0.018992763210508485,
+   "all_p_bonf": 0.07597105284203394,
+   "all_n": 218
+  }
+ },
+ "best_config": "+dense(PCA)",
+ "n_pcs": 20,
+ "overall_improvement": true,
+ "coverage_hypothesis_confirmed": false,
+ "oracle_no_complex": 0.6982,
+ "oracle_in_complex": 0.73,
+ "verdict": "COLD-START COVERAGE (coldstart_coverage.py): built to act on the finding that the model is an annotation lookup -- recall 0.428 on genes inside a curated complex against 0.142 on genes in none, with a tide-null of 0.118. That the gap is fixable in principle was established first: the best-possible-copy oracle (a CEILING, the partner is chosen by peeking at the answer) reaches 0.698 on the no-complex genes versus 0.730 on complex members, at equal truth-set size and strength, so a predicting profile exists in the data. Two all-gene blocks were added from data already on disk: GO terms (16,412 genes annotated vs 3,257 with a curated complex) and SOFT COMPLEX AFFINITY, which replaces binary membership with mean similarity to a complex's members over PPI, co-expression and co-dependency. THE HEADLINE RESULT IS NOT THE ONE THE HYPOTHESIS PREDICTED. Adding the block RAW (580 columns) made the model WORSE overall (-0.0003) because 580 features against 235 training samples dilutes: the uncurated genes gained +0.0365 but complex members lost. COMPRESSING the same information to 20 principal components (fitted on train rows only) removes the dilution and improves the model overall: +dense(PCA) scores 0.3711 against a baseline 0.3498, +0.0222 with paired p=0.0005 on 218 unique sources (0.002 after Bonferroni over the 4 configurations tried). That is a real improvement to the model and the first one in this line of work. BUT THE COVERAGE HYPOTHESIS IS REFUTED, in two ways. First, the gain is NOT concentrated where the deficit is: complex members went 0.4276 -> 0.4505 (+0.0229) while uncurated genes went 0.1425 -> 0.1596 (+0.0171, bonf p=0.228) -- the already-well-annotated genes gained at least as much. Second, GATING the compressed block so that ONLY uncurated genes can use it, which is what the coverage story predicts should work best, instead destroys the benefit (+dense(PCA,gated): no-complex +0.0091, p=0.876). So GO and similarity-based affinity are not filling a hole for genes that lack curation; they are extra information for every gene, and what was actually limiting the model was feature dimensionality against a 235-sample training set, not annotation coverage. THE ORIGINAL PROBLEM REMAINS: uncurated genes are still at 0.160 against 0.451 for complex members, a gap of 0.291 that is essentially unchanged. Whatever those genes need, it is not GO terms or network-similarity affinity. The DepMap-free variant is reported throughout because co-dependency is a viability screen and so a perturbation of the test gene. Significance is on one value per unique source, not per split-level observation. Deterministic.",
+ "note": "COLD-START COVERAGE (coldstart_coverage.py): built to act on the finding that the model is an annotation lookup -- recall 0.428 on genes inside a curated complex against 0.142 on genes in none, with a tide-null of 0.118. That the gap is fixable in principle was established first: the best-possible-copy oracle (a CEILING, the partner is chosen by peeking at the answer) reaches 0.698 on the no-complex genes versus 0.730 on complex members, at equal truth-set size and strength, so a predicting profile exists in the data. Two all-gene blocks were added from data already on disk: GO terms (16,412 genes annotated vs 3,257 with a curated complex) and SOFT COMPLEX AFFINITY, which replaces binary membership with mean similarity to a complex's members over PPI, co-expression and co-dependency. THE HEADLINE RESULT IS NOT THE ONE THE HYPOTHESIS PREDICTED. Adding the block RAW (580 columns) made the model WORSE overall (-0.0003) because 580 features against 235 training samples dilutes: the uncurated genes gained +0.0365 but complex members lost. COMPRESSING the same information to 20 principal components (fitted on train rows only) removes the dilution and improves the model overall: +dense(PCA) scores 0.3711 against a baseline 0.3498, +0.0222 with paired p=0.0005 on 218 unique sources (0.002 after Bonferroni over the 4 configurations tried). That is a real improvement to the model and the first one in this line of work. BUT THE COVERAGE HYPOTHESIS IS REFUTED, in two ways. First, the gain is NOT concentrated where the deficit is: complex members went 0.4276 -> 0.4505 (+0.0229) while uncurated genes went 0.1425 -> 0.1596 (+0.0171, bonf p=0.228) -- the already-well-annotated genes gained at least as much. Second, GATING the compressed block so that ONLY uncurated genes can use it, which is what the coverage story predicts should work best, instead destroys the benefit (+dense(PCA,gated): no-complex +0.0091, p=0.876). So GO and similarity-based affinity are not filling a hole for genes that lack curation; they are extra information for every gene, and what was actually limiting the model was feature dimensionality against a 235-sample training set, not annotation coverage. THE ORIGINAL PROBLEM REMAINS: uncurated genes are still at 0.160 against 0.451 for complex members, a gap of 0.291 that is essentially unchanged. Whatever those genes need, it is not GO terms or network-similarity affinity. The DepMap-free variant is reported throughout because co-dependency is a viability screen and so a perturbation of the test gene. Significance is on one value per unique source, not per split-level observation. Deterministic."
+}

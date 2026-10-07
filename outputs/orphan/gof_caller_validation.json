@@ -1,0 +1,26 @@
+{
+  "auc_gof_score": 0.653,
+  "auc_esm_alone": 0.625,
+  "gof_calls": {
+    "BRAF V600E": "functional (direction unresolved)",
+    "KRAS G12D": "functional (direction unresolved)",
+    "JAK2 V617F": "GOF-candidate",
+    "PIK3CA E545K": "neutral",
+    "PIK3CA H1047R": "neutral",
+    "EGFR L858R": "functional (direction unresolved)",
+    "KIT D816V": "GOF-candidate",
+    "IDH1 R132H": "neutral",
+    "NRAS Q61R": "GOF-candidate"
+  },
+  "lof_calls": {
+    "TP53 R175H": "LOF",
+    "VHL R167W": "LOF",
+    "PTEN R130G": "LOF",
+    "STK11 W354C": "neutral",
+    "BRCA1 M1775R": "functional (direction unresolved)",
+    "RB1 C661W": "neutral",
+    "APC T1450M": "neutral",
+    "NF1 R1276Q": "neutral"
+  },
+  "note": "burial+recurrence fallback (no complex structures here); interface evidence in Colab raises it"
+}

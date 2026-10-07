@@ -1,0 +1,49 @@
+{
+ "threshold": 4.200000000000003,
+ "n_rpe1_sources": 855,
+ "n_rpe1_pairs_used": 250000,
+ "rpe1_pairs_after_guard": [
+  212992,
+  210209,
+  209110
+ ],
+ "table": [
+  {
+   "metric": "K562 pairs only",
+   "k_star": [
+    5,
+    1,
+    3
+   ],
+   "recall50": 0.3848,
+   "in_complex": 0.431,
+   "no_complex": 0.2618,
+   "median_rank_best_partner": 10.0,
+   "best_in_top10": 0.49829351535836175,
+   "best_in_top25": 0.658703071672355
+  },
+  {
+   "metric": "K562+RPE1 pairs",
+   "k_star": [
+    3,
+    3,
+    3
+   ],
+   "recall50": 0.3885,
+   "in_complex": 0.4512,
+   "no_complex": 0.2216,
+   "median_rank_best_partner": 11.0,
+   "best_in_top10": 0.4539249146757679,
+   "best_in_top25": 0.5972696245733788
+  }
+ ],
+ "delta_recall": -0.0004,
+ "p_recall": 0.6504704115591637,
+ "delta_recall_no_complex": -0.04,
+ "p_no_complex": 0.41525401178549826,
+ "p_rank": 0.0002806322973918695,
+ "helps": false,
+ "ranking_improved": false,
+ "verdict": "MULTI-CELL-LINE PAIR RETRIEVAL (pair_retrieval_multi.py): the audit localised 88% of the retrieval model's remaining gap to RANKING rather than weighting, so the only thing worth improving is the similarity model, which trains on pairs. RPE1 was already on disk and supplies 855 knockouts with >=20 movers against K562's 337. Pooling was gated first: on the 224 genes knocked out in both lines, the two lines' pair labels agree at Pearson +0.537 and RPE1's label identifies K562's top-decile pairs at AUC 0.903, so knockout similarity is substantially gene-intrinsic and the extra pairs are legitimate. Every RPE1 pair containing a held-out K562 test gene is dropped, because an RPE1 knockout of that gene is still a perturbation measurement of it; [212992, 210209, 209110] pairs survived that guard per seed. K is pre-registered on an inner split, so these numbers are comparable to the honest 0.3848, not to the test-selected 0.4047. RESULT: recall 0.3848 -> 0.3885 (-0.0004 paired, p=0.65 on 218 unique sources). The extra cell line does NOT significantly improve recall. THE NUMBER THIS EXPERIMENT WAS REALLY ABOUT is ranking quality, since that is what the audit said was limiting: the true best partner moves from median rank 10 to 11, and the top-10 hit rate from 49.8% to 45.4% (paired p=0.000281). Ranking did NOT significantly improve, so more pairs from a second cell line is not sufficient to fix retrieval quality -- the limitation is the annotation features themselves, not the number of pair labels they are fitted on. Deterministic; K562 tide mask, splits, features, retrieval and metric identical to pair_retrieval.py.",
+ "note": "MULTI-CELL-LINE PAIR RETRIEVAL (pair_retrieval_multi.py): the audit localised 88% of the retrieval model's remaining gap to RANKING rather than weighting, so the only thing worth improving is the similarity model, which trains on pairs. RPE1 was already on disk and supplies 855 knockouts with >=20 movers against K562's 337. Pooling was gated first: on the 224 genes knocked out in both lines, the two lines' pair labels agree at Pearson +0.537 and RPE1's label identifies K562's top-decile pairs at AUC 0.903, so knockout similarity is substantially gene-intrinsic and the extra pairs are legitimate. Every RPE1 pair containing a held-out K562 test gene is dropped, because an RPE1 knockout of that gene is still a perturbation measurement of it; [212992, 210209, 209110] pairs survived that guard per seed. K is pre-registered on an inner split, so these numbers are comparable to the honest 0.3848, not to the test-selected 0.4047. RESULT: recall 0.3848 -> 0.3885 (-0.0004 paired, p=0.65 on 218 unique sources). The extra cell line does NOT significantly improve recall. THE NUMBER THIS EXPERIMENT WAS REALLY ABOUT is ranking quality, since that is what the audit said was limiting: the true best partner moves from median rank 10 to 11, and the top-10 hit rate from 49.8% to 45.4% (paired p=0.000281). Ranking did NOT significantly improve, so more pairs from a second cell line is not sufficient to fix retrieval quality -- the limitation is the annotation features themselves, not the number of pair labels they are fitted on. Deterministic; K562 tide mask, splits, features, retrieval and metric identical to pair_retrieval.py."
+}

@@ -1,0 +1,64 @@
+=================================================================================================
+HOW FAST DOES A BULK DEPENDENCE MEASURE VANISH COMPARED WITH THE TAIL ERROR IT MISSES?
+=================================================================================================
+  parsed 13 rows from RESULTS_grouping.txt (sweep + zero-coupling control)
+
+    speed           MI    mean err    tail err    x4 MI  x4 tail
+     0.25   2.5981e-01  2.0210e-01  8.8230e-01      nan      nan
+     0.50   2.0766e-01  1.7000e-01  8.8700e-01      nan      nan
+     1.00   1.4364e-01  1.2900e-01  8.9060e-01      nan      nan
+     2.00   8.2380e-02  8.6950e-02  8.8590e-01      nan      nan
+     4.00   3.8264e-02  5.2630e-02  8.5940e-01      nan      nan
+     8.00   1.4520e-02  2.9410e-02  7.8910e-01      nan      nan
+    16.00   4.6830e-03  1.5620e-02  6.5590e-01      nan      nan
+    32.00   1.3520e-03  8.0650e-03  4.7590e-01      nan      nan
+    64.00   3.6500e-04  4.0980e-03  3.0210e-01      nan      nan
+   128.00   9.5000e-05  2.0660e-03  1.7330e-01      nan      nan
+   256.00   2.4220e-05  1.0370e-03  9.3360e-02      nan      nan
+  1024.00   1.5370e-06  2.6010e-04  2.4750e-02    15.76     3.77
+  4096.00   9.6430e-08  6.5090e-05  6.2810e-03    15.94     3.94
+
+  weak-coupling exponents (speed >= 16):  MI ~ s^-1.9542   tail_err ~ s^-0.8567
+  ratio 2.2810; the deepest pair gives MI x15.94 against tail x3.94 per 4x speed, i.e. exactly 2 and 1.
+
+=================================================================================================
+THE LAW:  tail_err = c * sqrt(MI)
+=================================================================================================
+    speed           MI    sqrt(MI)    tail err        c
+     8.00   1.4520e-02  1.2050e-01  7.8910e-01     6.55
+    16.00   4.6830e-03  6.8432e-02  6.5590e-01     9.58
+    32.00   1.3520e-03  3.6770e-02  4.7590e-01    12.94
+    64.00   3.6500e-04  1.9105e-02  3.0210e-01    15.81
+   128.00   9.5000e-05  9.7468e-03  1.7330e-01    17.78
+   256.00   2.4220e-05  4.9214e-03  9.3360e-02    18.97
+  1024.00   1.5370e-06  1.2398e-03  2.4750e-02    19.96
+  4096.00   9.6430e-08  3.1053e-04  6.2810e-03    20.23
+  c converges to 20.23 as coupling weakens (rows at speed >= 128: 17.78, 18.97, 19.96, 20.23)
+
+  WHY, and this is derivable rather than fitted. For weak dependence with correlation rho:
+      MI        = -0.5*log(1 - rho^2)  ~  rho^2 / 2      QUADRATIC in rho
+      tail lift ~  rho * (tail z-scores)                 LINEAR   in rho
+  A mutual information is an average of log[P_AB/(P_A P_B)] taken under P, and that
+  average is second order in the coupling. A tail functional is first order in it. So the
+  bulk measure vanishes as the SQUARE of the quantity it is being used to bound, and the
+  gap widens without limit as coupling weakens -- which is exactly the regime in which a
+  split is ADMITTED.
+
+=================================================================================================
+CONSEQUENCE FOR THE ARCHITECTURE'S SECTION 14 THRESHOLD
+=================================================================================================
+  Using the measured c = 20.23 for this tail depth:
+     target tail error   naive MI bar   CORRECT MI bar       factor
+                 1e-01          1e-01        2.444e-05         4091x
+                 1e-02          1e-02        2.444e-07        40912x
+                 1e-03          1e-03        2.444e-09       409115x
+                 1e-04          1e-04        2.444e-11      4091150x
+
+  A threshold set on mutual information is therefore wrong by a SQUARE ROOT, and the
+  error is always in the unsafe direction: it admits splits that look decoupled in the
+  bulk while the conjunctive tail is still strongly dependent.
+
+  MEASURED AT THE CALIBRATED THRESHOLD in RESULTS_grouping.txt: tau = 0.001352 was fixed
+  as the largest MI keeping the joint MEAN accurate to 1%. At that same threshold the
+  joint TAIL is wrong by 47.6% -- a 59x amplification from the quantity the threshold
+  controls to the quantity it does not.

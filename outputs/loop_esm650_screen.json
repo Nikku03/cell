@@ -1,0 +1,150 @@
+{
+ "test": "esm650 vs esm35 screen at n=500",
+ "gates": {
+  "G1": true,
+  "G2": true,
+  "G3": false,
+  "G4": false,
+  "G5": true,
+  "G6": true
+ },
+ "arms": {
+  "esm35": 0.683269948587357,
+  "esm650": 0.6663208553590202,
+  "geometry": 0.6185137059869996,
+  "electrostatics": 0.5594036847357272,
+  "sterics": 0.6048392988230488,
+  "popularity": 0.4870714941672538
+ },
+ "n": 471,
+ "paired_sem": 0.006353832359339503,
+ "mde_3sem": 0.01906149707801851,
+ "g3": [
+  -0.01694909322833687,
+  0.006353832359339503
+ ],
+ "g4": [
+  -0.0006452402493162969,
+  0.004874573521120542
+ ],
+ "spearman": 0.7056136190842017,
+ "oracle_gain": [
+  0.025597011548861806,
+  0.0035058293996054926
+ ],
+ "merged": {
+  "esm35": 0.6883600130644404,
+  "esm650": 0.6877147728151242
+ },
+ "weights": [
+  0.1,
+  0.1,
+  0.1
+ ],
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/esm_enzymes.npz",
+    "bytes": 6475346,
+    "hash": "f23e386cab80d238",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/struct_enzymes.npz",
+    "bytes": 410607,
+    "hash": "6cd642194f3083c0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/elecster_enzymes.npz",
+    "bytes": 257828,
+    "hash": "036f02c7c74b0d3e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/esm650_subset.npz",
+    "bytes": 2380032,
+    "hash": "3b0fe5fd1a105797",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 499,
+   "used": 471,
+   "selection": "random",
+   "fraction": 0.9438877755511023
+  },
+  "seed": 16300,
+  "controls": [
+   "popularity re-gated on the subset rather than assumed from n=2,178",
+   "the minimum detectable effect stated BEFORE any comparison (G2)",
+   "35M re-measured on the identical 500 proteins and folds",
+   "merge weights frozen from loop 163d, nothing tuned here",
+   "the encoders' agreement measured, so a null is diagnosable"
+  ],
+  "note": "does ESM-2 650M beat 35M -- a screen that states its own resolution",
+  "warnings": []
+ },
+ "seconds": 3.3084800243377686,
+ "log": [
+  "========================================================================================================",
+  "  ESM-2 650M vs 35M -- a SCREEN at n=500, sized from a measured 2.58 s/protein",
+  "========================================================================================================",
+  "",
+  "     500 proteins in all five blocks | esm35 480d, esm650 1280d, geometry 64d, elec 17d, steric 17d",
+  "     9,082 mini-contests, 510 positives dropped | 492 homology clusters, folds [100, 100, 100, 100, 99]",
+  "",
+  "G1 popularity on this subset: 0.4871 (gate |AUC-0.5| <= 0.02)",
+  "     the frequency matching re-earns itself on 500 proteins.",
+  "     G1 PASS",
+  "",
+  "G2 WHAT THIS SCREEN CAN AND CANNOT SEE",
+  "     n = 471 enzymes scored",
+  "     paired sem on the 650M-vs-35M difference: 0.0064",
+  "     minimum detectable effect at 3 sem      : 0.0191",
+  "     for scale, the effects this arc has measured: geometry +0.0058, four blocks +0.0123",
+  "     8M -> 35M was +0.0181 for 4.4x the parameters; 650M is 18.6x the parameters again",
+  "     G2 PASS",
+  "",
+  "     esm35            0.6833",
+  "     esm650           0.6663",
+  "     geometry         0.6185",
+  "     sterics          0.6048",
+  "     electrostatics   0.5594",
+  "     popularity       0.4871",
+  "",
+  "G3 650M minus 35M, as a sequence arm alone: -0.0169 sem 0.0064 = -2.7 sem",
+  "     this screen did not see a gain of 0.0191 or more. That is NOT evidence that 650M is no better -- the measured difference is -0.0169 and anything below 0.0191 is invisible at n=471. What it rules out is a LARGE gain, and a large gain was the hypothesis worth screening cheaply.",
+  "     G3 FAIL",
+  "",
+  "G4 inside loop 163d's four-block merge at frozen weights (0.1, 0.1, 0.1):",
+  "     with 35M  0.6884   with 650M 0.6877",
+  "     difference -0.0006 sem 0.0049 = -0.1 sem",
+  "     the screen did not see a gain inside the merge either, at this resolution.",
+  "     G4 FAIL",
+  "",
+  "G5 ARE THE TWO ENCODERS EVEN DIFFERENT?",
+  "     Spearman between per-case scores: +0.7056",
+  "     per-case oracle over the pair 0.7089, i.e. +0.0256 over 35M (+7.3 sem)",
+  "     the encoders disagree case by case at rho +0.7056, so there is something a larger model could be reading differently even if the mean gain is small.",
+  "     G5 PASS",
+  "",
+  "G6 WHAT THIS CANNOT SHOW",
+  "     n=471 cannot resolve an effect below 0.0191.",
+  "     Fewer training proteins per fold degrades k-NN for EVERY arm, so the absolute numbers",
+  "     here sit below the 2,178-protein run and only the PAIRED differences are comparable.",
+  "     A screen that fails to see an effect has not shown that there is none.",
+  "     G6 PASS",
+  "",
+  "========================================================================================================",
+  "  G1  PASS",
+  "  G2  PASS",
+  "  G3  FAIL",
+  "  G4  FAIL",
+  "  G5  PASS",
+  "  G6  PASS",
+  "  4/6   [3s]",
+  "========================================================================================================"
+ ]
+}

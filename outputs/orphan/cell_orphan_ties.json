@@ -1,0 +1,77 @@
+{
+  "test": "cell_orphan_ties",
+  "n_eval": 1308,
+  "ks": [
+    1,
+    5,
+    20
+  ],
+  "recall": {
+    "random": {
+      "1": 0.29434250764525993,
+      "5": 0.4938837920489297,
+      "20": 0.6292048929663608
+    },
+    "freq": {
+      "1": 0.3547400611620795,
+      "5": 0.5175840978593272,
+      "20": 0.6345565749235474
+    },
+    "ppi_degree": {
+      "1": 0.3211009174311927,
+      "5": 0.5068807339449541,
+      "20": 0.6307339449541285
+    },
+    "pathway_ctx": {
+      "1": 0.3241590214067278,
+      "5": 0.5122324159021406,
+      "20": 0.6314984709480123
+    },
+    "n_pathways": {
+      "1": 0.30504587155963303,
+      "5": 0.5114678899082569,
+      "20": 0.6307339449541285
+    },
+    "compartment": {
+      "1": 0.29434250764525993,
+      "5": 0.4808868501529052,
+      "20": 0.6253822629969419
+    },
+    "oracle": {
+      "1": 0.4877675840978593,
+      "5": 0.558868501529052,
+      "20": 0.6399082568807339
+    }
+  },
+  "tie_median": 3.0,
+  "tie_mean": 8.281345565749236,
+  "tie_p90": 21.0,
+  "truth_in_tie": 0.4877675840978593,
+  "headroom": 0.19342507645259938,
+  "log": [
+    "====================================================================================================",
+    "BREAKING THE TIES -- the missing-piece ranking problem, where the headroom actually is",
+    "====================================================================================================",
+    "  Measured first: the top chemistry score is shared by a median of 3 candidates (p90 21), and the",
+    "  TRUTH is inside that tie group 48.8% of the time against a current recall@1 of 0.249.",
+    "  Perfect tie-breaking would nearly double recall@1. Every arm below differs ONLY in how the tie",
+    "  group is ordered; the rest of the ranking is identical, so any difference is the tie-break.",
+    "  PREDECLARED: a tie-breaker moving materially toward 0.488 => ordering was the bottleneck, not",
+    "  retrieval. All ~ random => the tie group is unordered by anything we have.",
+    "\n  5,282 catalysts | pathway annotation for 4,559 | PPI degree for 4,509",
+    "\n  1,308 reactions with candidates | tie-group median 3, mean 8.3, p90 21",
+    "  truth inside the top tie group: 638/1,308 = 0.488  <- the ceiling for @1",
+    "\n  RECALL@k, differing ONLY in how the top tie group is ordered",
+    "    arm                  @1       @5      @20",
+    "    random            0.294    0.494    0.629   <- floor",
+    "    freq              0.355    0.518    0.635",
+    "    ppi_degree        0.321    0.507    0.631",
+    "    pathway_ctx       0.324    0.512    0.631",
+    "    n_pathways        0.305    0.511    0.631",
+    "    compartment       0.294    0.481    0.625",
+    "    oracle            0.488    0.559    0.640   <- ceiling",
+    "\n  READING",
+    "  'freq' lifts recall@1 from 0.294 to 0.355 against a ceiling of 0.488 -- 31% of the",
+    "  available headroom. Ordering within the tie group was a real and unexploited bottleneck."
+  ]
+}

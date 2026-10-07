@@ -1,0 +1,181 @@
+{
+ "test": "regulation prediction",
+ "sources": {
+  "counts": {
+   "net_bundle": 610256,
+   "collectri": 43536,
+   "signor": 19533,
+   "omnipath": 85526
+  },
+  "contained": {
+   "collectri": 0.906031789783168,
+   "signor": 0.13515589003225312,
+   "omnipath": 0.016930524051165727
+  },
+  "signor_omnipath_shared": 14635,
+  "held_out": 16893
+ },
+ "reciprocity": {
+  "base_rate": 0.013364882934375082,
+  "n_pos": 8156,
+  "n_neg": 81560,
+  "auc_full": 0.9038200499636394,
+  "auc_degree": 0.8932504319438346,
+  "auc_full_seeds": [
+   0.9039062687981905,
+   0.906927971798962,
+   0.8996106002712094,
+   0.9054473467554175,
+   0.9032080621944177
+  ],
+  "auc_degree_seeds": [
+   0.8944041960631671,
+   0.8957513393823816,
+   0.8902603917766064,
+   0.8940806648267621,
+   0.8917555676702555
+  ],
+  "prec_top10": 0.5339279078409513
+ },
+ "cross_source": {
+  "n_heldout": 15015,
+  "n_neg": 15015,
+  "auc_full": 0.7000801246033178,
+  "auc_degree": 0.58548125712085,
+  "auc_full_seeds": [
+   0.694079465503921,
+   0.705875177671279,
+   0.7014447146514317,
+   0.7049212144390582,
+   0.6940800507508991
+  ],
+  "auc_degree_seeds": [
+   0.5835413795435114,
+   0.5863783545618887,
+   0.5920505647663409,
+   0.5893046605015544,
+   0.5761313262309542
+  ]
+ },
+ "motif_ablation": {
+  "auc_full": 0.7000801246033178,
+  "auc_no_ffl": 0.7000822043903608,
+  "auc_no_reciprocal": 0.6995785185103932,
+  "cost_ffl": -2.0797870430744327e-06,
+  "sem_ffl": 1.623270000704654e-06,
+  "cost_reciprocal": 0.0005016060929245337,
+  "sem_reciprocal": 0.0001318752226806535,
+  "moved_beyond_noise": true,
+  "compare": {
+   "real": 0.0005016060929245337,
+   "control": -2.0797870430744327e-06,
+   "ratio": 0.00414625554276777,
+   "weakened": true
+  }
+ },
+ "sign": {
+  "n": 52251,
+  "activating": 44764,
+  "repressing": 7487,
+  "majority": 0.8567108763468642,
+  "balanced_acc": 0.5757477567522779,
+  "seeds": [
+   0.5814456640334114,
+   0.5724440988554218,
+   0.5718772119262794,
+   0.5738675278226982,
+   0.5791042811235788
+  ]
+ },
+ "epigenome": {
+  "available": true,
+  "n": 4392,
+  "rho": 0.2898147391781711,
+  "rho_seeds": [
+   0.29158738602849055,
+   0.27602626328789426,
+   0.2813350253536131,
+   0.28344111873177025,
+   0.3166839024890873
+  ],
+  "beats_mean": 5
+ },
+ "gates": {
+  "P1": true,
+  "P2": true,
+  "P3": false,
+  "P4": true,
+  "P5": true,
+  "P6": true,
+  "P7": true,
+  "P8": false
+ },
+ "void": [],
+ "seconds": 77.74186038970947,
+ "log": [
+  "========================================================================================================",
+  "LOOP 201 -- ALL THE REGULATION DATA, AND WHAT IT PREDICTS THAT IS NOT IN IT",
+  "========================================================================================================",
+  "P1 IS THE INSTRUMENT HONEST ABOUT WHAT IT HAS?",
+  "     net_bundle    610,256",
+  "     collectri      43,536   contained in net_bundle 0.906",
+  "     signor         19,533   contained in net_bundle 0.135",
+  "     omnipath       85,526   contained in net_bundle 0.017",
+  "     SIGNOR & OmniPath share 14,635 edges -- never counted as two confirmations",
+  "     held-out set (SIGNOR minus net_bundle)  16,893   leak into features 0",
+  "     P1 PASS -- four sources, counts reproduce, CollecTRI is contained and excluded as a test set, SIGNOR is held out and does not leak",
+  "P2 CAN RECIPROCITY BE PREDICTED?  (the feedback finding, cashed out)",
+  "     base rate of reciprocity in net_bundle  0.0134",
+  "     reciprocal pairs 8,156   sampled non-reciprocal 81,560",
+  "     negatives are restricted to targets that ARE regulators (95,849 available of 602,100 non-reciprocal edges) -- see the tautology guard in the source",
+  "     held-out AUC   full 0.9038   degree-only 0.8933",
+  "     precision in top decile 0.5339   vs base rate 0.0134   = 40.0x",
+  "     NOTE the test set is enriched 1:10 by construction, so the base rate to beat inside it is 0.0909; the 1.34% figure is the population rate",
+  "     P2 PASS -- AUC 0.9038, top-decile precision 0.5339",
+  "P3 DOES FAME ALREADY DO IT?",
+  "     full minus degree-only  +0.0106   (0/5 seeds at >= +0.02)",
+  "     P3 FAIL -- structure beats degree by only +0.0106 (0/5 at the bar). Reciprocity prediction is largely popularity",
+  "P4 CAN WE RECOVER EDGES THIS NETWORK HAS NEVER SEEN?",
+  "     held-out SIGNOR edges usable (both endpoints in net_bundle)  15,015",
+  "     degree-matched negatives drawn  15,015",
+  "     held-out AUC on an INDEPENDENT literature catalogue   full 0.7001   degree-only 0.5855",
+  "     P4 PASS -- AUC 0.7001 recovering SIGNOR edges net_bundle never saw",
+  "P5 IS P4 ALSO JUST FAME?",
+  "     full minus degree-only  +0.1146   (5/5 seeds at >= +0.02)",
+  "     P5 PASS -- +0.1146 in 5/5",
+  "P6 DOES FEEDFORWARD MEMBERSHIP PREDICT ANYTHING?  (the paired negative prediction)",
+  "     drop feedforward feature   AUC 0.7001   costs -0.0000 +/- 0.0000",
+  "     drop reciprocity feature   AUC 0.6996   costs +0.0005 +/- 0.0001",
+  "     P6 PASS -- the enriched motif carries more (+0.0005) than the non-enriched one (-0.0000), which is what loop 187 predicts",
+  "P7 CAN THE SIGN BE PREDICTED?",
+  "     signed edges 52,251   activating 44,764  repressing 7,487   majority-class accuracy 0.8567",
+  "     balanced accuracy 0.5757  (raw majority would score 0.8567)",
+  "     P7 PASS -- balanced accuracy 0.5757",
+  "P8 CAN A MISSING EPIGENETIC MARK BE IMPUTED?",
+  "     elements with a defined 5mC value  4,392 of 4,482 (0.0201 dropped as non-finite)",
+  "     held-out Spearman 0.2898   beats the training mean in 5/5 seeds",
+  "     P8 FAIL -- rho 0.2898 (bar 0.30), beats mean 5/5. The measured marks do not predict each other well enough for an imputed epigenome to be worth much",
+  "P9 WHAT THIS CANNOT SHOW",
+  "     SIGNOR is literature curation, so an edge absent from it is not a proven non-edge.",
+  "     Every AUC here is against SAMPLED negatives and is a lower bound by an unknown",
+  "     amount, exactly as loop 177's H8 said about genomic decoys.",
+  "     SIGNOR and OmniPath overlap by 14,635 edges, so recovering SIGNOR does not",
+  "     independently confirm OmniPath and no claim below treats it as two results.",
+  "     Reciprocity is measured on THIS network's edge set. A network assembled from",
+  "     different sources would have a different base rate, and loop 187 already showed",
+  "     the curated and binding tiers disagree on feedforward by 22 sigma.",
+  "     Nothing here is a time course: predicting that an edge EXISTS is not predicting",
+  "     what it DOES, and loop 198 measured that this project cannot step state forward.",
+  "========================================================================================================",
+  "  P1  PASS",
+  "  P2  PASS",
+  "  P3  FAIL",
+  "  P4  PASS",
+  "  P5  PASS",
+  "  P6  PASS",
+  "  P7  PASS",
+  "  P8  FAIL",
+  "  6/8   [78s]",
+  "========================================================================================================"
+ ]
+}

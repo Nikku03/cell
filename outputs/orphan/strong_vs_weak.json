@@ -1,0 +1,126 @@
+{
+ "n_strong": 189,
+ "n_weak": 1412,
+ "property_comparison": {
+  "dep_frac": {
+   "strong_median": 0.99,
+   "weak_median": 0.77,
+   "strong_mean": 0.882,
+   "weak_mean": 0.648,
+   "p": 7.001780922885834e-29
+  },
+  "essential": {
+   "strong_median": 1.0,
+   "weak_median": 1.0,
+   "strong_mean": 0.91,
+   "weak_mean": 0.664,
+   "p": 5.412414990983536e-12
+  },
+  "ppi_degree": {
+   "strong_median": 65.0,
+   "weak_median": 13.0,
+   "strong_mean": 73.958,
+   "weak_mean": 27.081,
+   "p": 3.239557139377678e-30
+  },
+  "coexpr_degree": {
+   "strong_median": 12.0,
+   "weak_median": 12.0,
+   "strong_mean": 12.0,
+   "weak_mean": 11.931,
+   "p": 0.18565422954315502
+  },
+  "codep_degree": {
+   "strong_median": 7.0,
+   "weak_median": 7.0,
+   "strong_mean": 5.979,
+   "weak_mean": 6.27,
+   "p": 0.47978268189999407
+  },
+  "centrality": {
+   "strong_median": 8244.0,
+   "weak_median": 2461.0,
+   "strong_mean": 11467.45,
+   "weak_mean": 4676.818,
+   "p": 5.881398520489523e-25
+  },
+  "abundance_ppm": {
+   "strong_median": 11.8,
+   "weak_median": 5.435,
+   "strong_mean": 99.476,
+   "weak_mean": 76.866,
+   "p": 2.9473401736446227e-09
+  },
+  "is_TF": {
+   "strong_median": 0.0,
+   "weak_median": 0.0,
+   "strong_mean": 0.079,
+   "weak_mean": 0.077,
+   "p": 0.9167110245575523
+  },
+  "regulon_size": {
+   "strong_median": 0.0,
+   "weak_median": 0.0,
+   "strong_mean": 0.571,
+   "weak_mean": 0.657,
+   "p": 0.658959320444392
+  },
+  "n_pathways": {
+   "strong_median": 7.0,
+   "weak_median": 2.0,
+   "strong_mean": 12.053,
+   "weak_mean": 5.709,
+   "p": 1.2917800185348227e-16
+  }
+ },
+ "process_enrichment_strong_vs_weak": [
+  {
+   "process": "transcription",
+   "strong_frac": 0.418,
+   "weak_frac": 0.2,
+   "enrichment": 2.09
+  },
+  {
+   "process": "translation",
+   "strong_frac": 0.312,
+   "weak_frac": 0.132,
+   "enrichment": 2.37
+  },
+  {
+   "process": "other",
+   "strong_frac": 0.175,
+   "weak_frac": 0.312,
+   "enrichment": 0.56
+  }
+ ],
+ "example_strong": [
+  "GATA1",
+  "POT1",
+  "RPL7A",
+  "SUPT6H",
+  "RBM22",
+  "AQR",
+  "SNRPD2",
+  "PPP1R10",
+  "POLR2K",
+  "MED9",
+  "INTS2",
+  "MED30"
+ ],
+ "example_weak": [
+  "ZFP69B",
+  "ZMAT2",
+  "ZNF100",
+  "ZNF133",
+  "ZNF207",
+  "ZNF24",
+  "ZNF253",
+  "ZNF284",
+  "C1D",
+  "ZNF407",
+  "C1QTNF4",
+  "ZNF468"
+ ],
+ "verdict": "WHAT DIFFERENTIATES STRONG vs WEAK KNOCKOUTS -- measured on deep k562 (189 strong >=50 movers vs 1412 weak <15), and it is the capacity model made concrete, with ONE correction to my prior guess. Strong KOs separate from weak on THREE measured axes (and, importantly, NOT on a fourth). (1) ESSENTIALITY, by degree: dep_frac 0.99 vs 0.77 -- strong KOs are depended-on more completely. (Note the BINARY essential flag is ~1 for BOTH groups: nearly every profiled KO is essential-ish; the separation is in the DEGREE of dependence, not essential-yes/no.) (2) PHYSICAL CONNECTIVITY: PPI degree 65 vs 13 (5x), network centrality 8244 vs 2461 (3.3x), pathway membership 7 vs 2 (3.5x) -- strong KOs sit at PHYSICAL/pathway hubs. CORRECTION to what I guessed before: coexpression degree (12 vs 12) and codependency degree (7 vs 7) are FLAT -- transcriptional co-regulation breadth does NOT separate them; it is specifically physical-interaction and pathway centrality that does. (3) FUNCTION: strong KOs are heavily enriched for the CORE GENE-EXPRESSION MACHINERY -- transcription 42% vs 20% (2.1x), translation 31% vs 13% (2.4x), while 'other/peripheral' is DEPLETED (18% vs 31%). Concretely, strong = GATA1, RPL7A (ribosome), SUPT6H/POLR2K/MED9/MED30/INTS2 (Pol II / Mediator / Integrator), RBM22/AQR/SNRPD2 (spliceosome); weak = zinc-finger genes (ZNF100/133/207/253/468, ZMAT2...) -- redundant paralog families, specialised, low-connectivity. (Strong KOs are also themselves more highly EXPRESSED, 11.8 vs 5.4 ppm -- consistent with being abundant core machinery.) MECHANISM (the capacity model): knocking out an essential, physically-central core-machinery gene creates a large CAPACITY DEFICIT in a fundamental process -> a big hit to the global budget -> a large generic stress response (many genes move, so the top-10 usual-suspects land = ~9/10). Knocking out a peripheral/redundant gene (a zinc finger with paralogs) is BUFFERED -> few genes move -> little to predict (~1/10). So 'strong vs weak' = 'essential + PPI/pathway-central + core-machinery' vs 'dispensable + peripheral + redundant', which is why RESPONSE SIZE is predictable (Spearman ~0.5 from exactly these features) even though which SPECIFIC genes move is not -- the size is set by the node's importance, the identity by chaos.",
+ "note": "What differentiates strong (>=50 movers, ~9/10) vs weak (<15, ~1/10) knockouts, measured on deep k562 (189 vs 1412). Strong KOs separate on THREE axes: (1) ESSENTIALITY by degree -- dep_frac 0.99 vs 0.77 (the BINARY essential flag is ~1 for both; separation is in degree of dependence). (2) PHYSICAL CONNECTIVITY -- PPI degree 65 vs 13 (5x), centrality 3.3x, pathway membership 7 vs 2 (3.5x); BUT coexpr degree (12 vs 12) and codep degree (7 vs 7) are FLAT -- correction to my earlier guess: it is physical-interaction/pathway centrality, NOT co-regulation breadth, that separates them. (3) FUNCTION -- strong enriched for CORE GENE-EXPRESSION MACHINERY: transcription 42% vs 20% (2.1x), translation 31% vs 13% (2.4x); concretely strong = GATA1, RPL7A, POLR2K/MED9/MED30/INTS2 (Pol II/Mediator), RBM22/AQR/SNRPD2 (spliceosome); weak = zinc-finger paralog families (ZNF100/133/207..., ZMAT2). Strong KOs are also more highly expressed (11.8 vs 5.4 ppm). Mechanism = capacity model: essential PPI-central core-machinery hub -> large capacity deficit -> big generic stress response (top-10 usual-suspects land = ~9/10); peripheral/redundant gene -> buffered -> few movers -> ~1/10. So strong-vs-weak = essential+PPI-central+core-machinery vs dispensable+peripheral+redundant; response SIZE is set by node importance (predictable ~0.5) while gene IDENTITY stays chaos."
+}

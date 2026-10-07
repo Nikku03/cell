@@ -1,0 +1,155 @@
+{
+ "test": "signed edges scored within perturbation, and reversed under over-expression",
+ "qualifying": 365,
+ "R2": {
+  "mean": -0.005442721225091652,
+  "se": 0.003391245473156151,
+  "z": -1.6049328390333955
+ },
+ "R3": {
+  "real": -0.005442721225091652,
+  "permuted": 0.0004110212687224354,
+  "fraction": 0.07551760447100872
+ },
+ "R4": {
+  "reversed": 0.0025422799985295834,
+  "fraction": 0.4670972282778957,
+  "n": 469
+ },
+ "R5": {
+  "mean": 0.037796106189489365,
+  "se": 0.03946378413371771,
+  "z": 0.957741560247298,
+  "per_tf": {
+   "FOXO1": [
+    -0.03162747025489807,
+    59,
+    26,
+    5
+   ],
+   "FOXO3": [
+    -0.14191547632217408,
+    52,
+    10,
+    5
+   ],
+   "KLF6": [
+    0.30600660145282743,
+    12,
+    3,
+    5
+   ],
+   "OCT4": [
+    0.01872076988220215,
+    10,
+    11,
+    5
+   ]
+  },
+  "excluded": [
+   "CEBPB (65 act / 2 inh)",
+   "CEBPD (14 act / 1 inh)",
+   "FOSL2 (16 act / 1 inh)",
+   "KLF15 (1 act / 2 inh)",
+   "KLF9 (2 act / 1 inh)",
+   "TFCP2L1 (0 act / 0 inh)"
+  ],
+  "knockdown": -0.005442721225091652
+ },
+ "R6": {
+  "k562_only": 0.004353064249493612,
+  "others_only": 0.8766554955178143,
+  "joint": 0.62175457303264,
+  "best_single": "OTHER ARMS",
+  "delta": -0.25490092248517443,
+  "se": 0.011458872259469578,
+  "z": -22.244852435153472,
+  "n_units": 50
+ },
+ "gates": {
+  "R1": true,
+  "R2": false,
+  "R3": false,
+  "R4": true,
+  "R5": false,
+  "R6": false
+ },
+ "void": [
+  "R3",
+  "R5"
+ ],
+ "seconds": 16.410520553588867,
+ "log": [
+  "========================================================================================================",
+  "LOOP 243 -- THE SIGN, SCORED WHERE IT MAKES A CLAIM",
+  "========================================================================================================",
+  "     Loop 242's Q3 compared signed against unsigned over all 8,175 genes and got +0.0001.",
+  "     The signed graph speaks about a MEDIAN OF 3 of those genes -- 0.037% of the profile,",
+  "     carrying 0.146% of the response's energy. That gate could not have detected what it",
+  "     was built to detect. Restricting the correlation instead makes the unsigned arm",
+  "     degenerate (one value for every target, zero variance), so the instrument changes to",
+  "     a two-group contrast WITHIN each perturbation, where every perturbation-level",
+  "     confound cancels exactly.",
+  "     OmniPath: 98,287 activating, 32,294 inhibiting directed edges",
+  "     K562: 11,258 screened rows x 8,175 genes finite everywhere",
+  "R1 IS THE LOCAL TEST EVEN AVAILABLE?",
+  "     K562 perturbations with 3+ activating AND 3+ inhibiting measured targets: 365",
+  "     R1 PASS -- 365 perturbations can carry a within-perturbation contrast",
+  "R2 DOES THE SIGN SEPARATE UP FROM DOWN WITHIN ONE PERTURBATION?",
+  "     n=365  activated minus inhibited, within perturbation: -0.0054 +/- 0.0034  (-1.6 se)",
+  "     removing an activator should lower its activated targets MORE than its inhibited",
+  "     ones, so the prediction is a NEGATIVE number",
+  "     R2 FAIL -- -0.0054 at -1.6 se against a bar of -3 se",
+  "R3 CONTROL: LABELS PERMUTED INSIDE EACH PERTURBATION",
+  "     labels shuffled among each perturbation's OWN targets, 5 draws: +0.0004 against a real -0.0054  (8% of the magnitude)",
+  "     R3 VOID -- R2 did not pass, so there is nothing here to test",
+  "R4 CONTROL: ARROWS REVERSED",
+  "     a gene's REGULATORS in place of its targets, n=469: +0.0025 +/- 0.0029  (47% of the real magnitude)",
+  "     loop 242's Q6 found 102% of the GLOBAL effect surviving reversal",
+  "     R4 PASS -- reversal removes 53%; the local effect is directional where the global one was not",
+  "     loading the matched A549 over-expression arms ...",
+  "     10 arms loaded, 19,814 genes, 19,573 resolved to a symbol, timepoints [np.str_('00h'), np.str_('01h'), np.str_('04h'), np.str_('08h'), np.str_('12h')]",
+  "R5 THE MATCHED EXPERIMENTS: DOES THE PREDICTION REVERSE UNDER OVER-EXPRESSION?",
+  "     over-expressing an ACTIVATOR should RAISE its targets, so R5 must be POSITIVE while",
+  "     R2 is negative. A sign AGREEMENT would mean both read a direction-free artefact.",
+  "       FOXO1     -0.0316   (59 activating / 26 inhibiting targets, 5 timepoints)",
+  "       FOXO3     -0.1419   (52 activating / 10 inhibiting targets, 5 timepoints)",
+  "       KLF6      +0.3060   (12 activating / 3 inhibiting targets, 5 timepoints)",
+  "       OCT4      +0.0187   (10 activating / 11 inhibiting targets, 5 timepoints)",
+  "     excluded for too few signed targets: CEBPB (65 act / 2 inh), CEBPD (14 act / 1 inh), FOSL2 (16 act / 1 inh), KLF15 (1 act / 2 inh), KLF9 (2 act / 1 inh), TFCP2L1 (0 act / 0 inh)",
+  "     pooled over 20 (factor, timepoint) units: +0.0378 +/- 0.0395 (+1.0 se)",
+  "     R5 VOID -- R2 did not pass, so there is nothing here to test",
+  "R6 DO THE MATCHED EXPERIMENTS HELP TRAINING?",
+  "     7,742 genes measured in BOTH K562 and the A549 arms",
+  "     leave-one-factor-out over 10 factors, 50 (factor, timepoint) units",
+  "     K562 knockdown profile alone, negated:   +0.0044",
+  "     the other nine matched arms alone:       +0.8767",
+  "     both together:                           +0.6218",
+  "     the gate is JOINT against the BEST SINGLE arm, not against K562 alone. Every A549",
+  "     arm shares a dexamethasone timecourse, so 'the other arms resemble this one' is",
+  "     shared batch structure; beating K562-alone with it would prove nothing about",
+  "     whether the matched experiments ADD anything.",
+  "     best single arm is OTHER ARMS; joint minus it: -0.2549 +/- 0.0115 (-22.2 se)",
+  "     R6 FAIL -- combining adds -0.2549 over OTHER ARMS alone, against a 0.02 bar",
+  "R7 WHAT THIS CANNOT SHOW",
+  "     Seven usable factors is few. R5's power comes from the target genes inside them,",
+  "     not from the count of factors, so one unusual factor can move it -- which is why",
+  "     the per-factor numbers are printed above rather than only the pooled one.",
+  "     Over-expression is not the inverse of knockdown. A factor pushed far above its",
+  "     normal level can occupy sites it never normally occupies, so a failed reversal has",
+  "     a biological reading as well as a graph-quality one.",
+  "     The A549 arms sit in a dexamethasone timecourse shared with their control and",
+  "     matched timepoint by timepoint, so it divides out of the contrast -- but it is not",
+  "     absent from the biology.",
+  "     OmniPath signs are a consensus across sources and cell types.",
+  "========================================================================================================",
+  "  R1  PASS",
+  "  R2  FAIL",
+  "  R3  VOID",
+  "  R4  PASS",
+  "  R5  VOID",
+  "  R6  FAIL",
+  "  2/4   [16s]   (2 VOID: R3, R5)",
+  "========================================================================================================"
+ ]
+}

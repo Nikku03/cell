@@ -1,0 +1,104 @@
+{
+  "test": "loop_loading",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb.npy",
+        "bytes": 14838032,
+        "hash": "3768cedcefe29085",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hg19_chr21.fa.gz",
+        "bytes": 11549785,
+        "hash": "1953ac4ea94b6588",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1926,
+      "used": 1377,
+      "selection": "filtered",
+      "fraction": 0.7149532710280374
+    },
+    "seed": 1904,
+    "controls": [
+      "shuffled-CpG loading, equally non-uniform",
+      "uniform loading rerun side by side",
+      "the replicate ceiling",
+      "P(s) and orientation carried forward",
+      "a stopping rule declared before the run"
+    ],
+    "note": "CpG is a PROMOTER PROXY, not a measured accessibility track; ENCODE's search API was returning 504. It is sequence-derived, so it cannot have been contaminated by the Hi-C map, and the shuffled control is what protects against the GC/compartment route",
+    "warnings": []
+  },
+  "gates": {
+    "L1 loading is biased": true,
+    "L2 insulation improves": false,
+    "L3 clears the original gate": false,
+    "L4 the track, not non-uniformity": true,
+    "L5 nothing else breaks": false
+  },
+  "results": {
+    "loading from CpG": {
+      "insul_r": 0.2504810970897661,
+      "orient": 0.44578967806773356,
+      "ps": -1.17503870267141
+    },
+    "loading from SHUFFLED CpG": {
+      "insul_r": 0.06269659755370041,
+      "orient": 0.3956160745210605,
+      "ps": -1.178503548728061
+    },
+    "uniform loading (loop 43)": {
+      "insul_r": 0.23907148968145875,
+      "orient": 0.4868353774880568,
+      "ps": -1.1291818543068617
+    }
+  },
+  "prev_insul_r": 0.36174533689735433,
+  "prev_orient": 0.49946994111242815,
+  "ceiling": 0.9284982756748776,
+  "measured_orient": 0.3788,
+  "load_track_r": 0.729830965563741,
+  "seconds": 65.72610259056091,
+  "log": [
+    "====================================================================================================",
+    "WHERE COHESIN LANDS -- the last uniform assumption",
+    "====================================================================================================",
+    "  loop 43 overshoots the anchors (+0.4995 vs a measured +0.3788) and undershoots the domains",
+    "  (+0.3617 vs a 0.40 gate). Too much anchor loop, not enough domain body. Every loop so far",
+    "  has loaded cohesin uniformly at random, and cohesin is loaded by NIPBL at active promoters.",
+    "\n  loop 43 left insulation +0.3617 and orientation +0.4995; the replicate",
+    "  ceiling is 0.9285 and the measured orientation effect is +0.3788",
+    "\n  CpG observed/expected computed from the chr21 sequence: 1,410 usable bins, PROMOTER PROXY not an accessibility measurement",
+    "    loading from CpG                 insulation +0.2505   P(s) -1.1750   orientation +0.4458",
+    "    loading from SHUFFLED CpG        insulation +0.0627   P(s) -1.1785   orientation +0.3956",
+    "    uniform loading (loop 43)        insulation +0.2391   P(s) -1.1292   orientation +0.4868",
+    "\n  L1 LOADING IS ACTUALLY BIASED -- realised load positions vs the CpG track: r = +0.7298   L1 PASS",
+    "  L2 INSULATION IMPROVES -- +0.2505 vs loop 43's +0.3617   L2 FAIL",
+    "  L3 IT CLEARS THE ORIGINAL GATE -- +0.2505 vs 0.4 (27% of the 0.928 ceiling)   L3 FAIL",
+    "  L4 IT IS THE TRACK, NOT MERELY NON-UNIFORMITY -- CpG +0.2505 vs shuffled-CpG +0.0627   L4 PASS",
+    "  L5 NOTHING ELSE BREAKS -- P(s) -1.1750, orientation +0.4458   L5 FAIL",
+    "     the stated secondary expectation was that the orientation OVERSHOOT would come down toward",
+    "     the measured +0.3788: it went +0.4995 -> +0.4458, closer.",
+    "\n====================================================================================================",
+    "  L1 loading is biased                    PASS",
+    "  L2 insulation improves                  FAIL",
+    "  L3 clears the original gate             FAIL",
+    "  L4 the track, not non-uniformity        PASS",
+    "  L5 nothing else breaks                  FAIL",
+    "  THE STOPPING RULE APPLIES AND IT WAS DECLARED BEFORE THE RUN. Three principled",
+    "  corrections have now been aimed at insulation: loop-bond stiffness, barrier",
+    "  persistence, and loading bias. It stands at +0.2505 against 0.40, which is",
+    "  27% of an achievable 0.928. No fourth is attempted.",
+    "  THE REMAINING SHORTFALL IS RECORDED AGAINST THE GAUSSIAN CONTACT MODEL. Every boundary",
+    "  it produces is smoothed by construction: P ~ <R^2>^(-3/2) is a thermal average, and",
+    "  averaging over configurations averages again, so a sharp insulation dip cannot survive",
+    "  two averagings. That is the same wall loops 36, 39 and 40 hit, and its cost is now",
+    "  measured rather than asserted: +0.1495 of correlation.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1377/1926 (71.5%) by 'filtered', seed 1904, controls 5"
+  ]
+}

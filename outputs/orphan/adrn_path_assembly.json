@@ -1,0 +1,81 @@
+{
+  "test": "adrn_path_assembly",
+  "summary": {
+    "cohort1": {
+      "means": {
+        "resp_only": 0.14925,
+        "resp+paths": 0.146,
+        "resp+rewire": 0.14975000000000002,
+        "paths_only": 0.03
+      },
+      "contrasts": {
+        "GATE paths - rewire": {
+          "gap": -0.0037500000000000016,
+          "ci": [
+            -0.01525,
+            0.007249999999999999
+          ]
+        },
+        "paths - resp_only": {
+          "gap": -0.003250000000000001,
+          "ci": [
+            -0.0165,
+            0.009499999999999998
+          ]
+        }
+      }
+    },
+    "_holdout": {
+      "means": {
+        "resp_only": 0.19950000000000004,
+        "resp+paths": 0.1855,
+        "resp+rewire": 0.18225000000000002,
+        "paths_only": 0.03775
+      },
+      "contrasts": {
+        "GATE paths - rewire": {
+          "gap": 0.0032500000000000007,
+          "ci": [
+            -0.006749999999999998,
+            0.013500000000000002
+          ]
+        },
+        "paths - resp_only": {
+          "gap": -0.013999999999999999,
+          "ci": [
+            -0.02675,
+            -0.0014999999999999946
+          ]
+        }
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "MULTI-HOP PATH ASSEMBLY: can a learner find mechanism in the networks?",
+    "====================================================================================================",
+    "  PREDECLARED: passes only if resp+paths beats resp+rewire on BOTH cohorts.",
+    "  graph over 9,050 nodes; 8,243 candidate response genes",
+    "  layers: ppi 202,272 edges \u00b7 cplx 23,478 edges \u00b7 tf 16,642 edges \u00b7 chip 280,555 edges \u00b7 codep 27,423 edges",
+    "  degree-matched rewiring built for 5 layers",
+    "  building training pairs from 465 knockouts with >= 5 movers ...",
+    "    0/465",
+    "    300/465",
+    "  training pairs 310,061 (14,970 positive); 10 features",
+    "  four models fitted",
+    "\n### cohort 1  (200 knockouts)",
+    "  resp+paths     0.1460",
+    "  resp+rewire    0.1498",
+    "  resp_only      0.1492",
+    "  paths_only     0.0300",
+    "  GATE paths - rewire     -0.0038 [-0.0152, +0.0072]  within noise",
+    "  paths - resp_only       -0.0033 [-0.0165, +0.0095]  within noise",
+    "\n### cohort 2 (holdout)  (200 knockouts)",
+    "  resp+paths     0.1855",
+    "  resp+rewire    0.1823",
+    "  resp_only      0.1995",
+    "  paths_only     0.0377",
+    "  GATE paths - rewire     +0.0033 [-0.0067, +0.0135]  within noise",
+    "  paths - resp_only       -0.0140 [-0.0267, -0.0015]  RESOLVED"
+  ]
+}

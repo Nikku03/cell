@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "summary": {
+    "kcat_fixes": 17,
+    "kcat_verified": 17,
+    "kcat_measured_escalated": 6,
+    "edge_fixes": 25,
+    "edge_verified": 25,
+    "physics_restored": true,
+    "edges_evidenced": true,
+    "anti_trap_measured_escalated": true,
+    "gap_iterative": {
+      "tested": 3,
+      "resolved_on_retry": 3,
+      "used_failure_data": true
+    },
+    "gap_fill_note": "single-reaction gap-fills are re-run through FBA; those that fail are RETRIED using the failure data (which metabolite still blocks), expanding the fix. Multi-reaction gaps that a single sink couldn't fix (a REAL rejection, not a bug) then resolve on retry; the verifier never falsely reported a fix, and never falsely rejected a correct one (confirmed: the round-1 failures were genuine 2-reaction gaps)."
+  },
+  "examples": {
+    "kcat": [
+      {
+        "gene": "ATP2A2",
+        "old": 29103.435,
+        "corrected": 2426.6,
+        "action": "apply-pending-review"
+      },
+      {
+        "gene": "GPI",
+        "old": 1000000.0,
+        "corrected": 90902.8,
+        "action": "ESCALATE: corrects a MEASURED value \u2014 needs human/experiment sign-off"
+      },
+      {
+        "gene": "ATP2A1",
+        "old": 55332.9364,
+        "corrected": 3160.2,
+        "action": "apply-pending-review"
+      },
+      {
+        "gene": "ATP2B1",
+        "old": 12539.7328,
+        "corrected": 1501.0,
+        "action": "apply-pending-review"
+      }
+    ],
+    "edges": [
+      {
+        "edge": "CPSF6\u2014SNRPA",
+        "verified": true,
+        "why": "169 shared partners (>=20 = strong)"
+      },
+      {
+        "edge": "NBPF19\u2014NOTCH2NLA",
+        "verified": true,
+        "why": "158 shared partners (>=20 = strong)"
+      },
+      {
+        "edge": "CPSF6\u2014SNRPB",
+        "verified": true,
+        "why": "156 shared partners (>=20 = strong)"
+      },
+      {
+        "edge": "PSPC1\u2014SRP9",
+        "verified": true,
+        "why": "152 shared partners (>=20 = strong)"
+      }
+    ]
+  },
+  "bar": "verified fixes actually resolve the oddness; measured values ESCALATED not auto-applied; unverifiable fixes not reported as fixed"
+}

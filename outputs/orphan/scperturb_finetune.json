@@ -1,0 +1,68 @@
+{
+ "THP-1_monocytic_leukemia": {
+  "n_kos": 23,
+  "n_train": 16,
+  "n_panel": 7,
+  "top10": 2.86,
+  "median_movers": 179,
+  "n_cells": 20729,
+  "n_pert_categories": 99,
+  "n_gene_kos": 23,
+  "control_found": true,
+  "cells_per_ko": 901
+ },
+ "Melanoma": {
+  "n_kos": 218,
+  "n_train": 178,
+  "n_panel": 40,
+  "top10": 7.85,
+  "median_movers": 210,
+  "n_cells": 218331,
+  "n_pert_categories": 249,
+  "n_gene_kos": 218,
+  "control_found": true,
+  "cells_per_ko": 1001
+ },
+ "HepG2_liver": {
+  "n_kos": 2151,
+  "n_train": 2111,
+  "n_panel": 40,
+  "top10": 5.47,
+  "median_movers": 122,
+  "n_cells": 145473,
+  "n_pert_categories": 2394,
+  "n_gene_kos": 2151,
+  "control_found": true,
+  "cells_per_ko": 67
+ },
+ "Jurkat_T-ALL": {
+  "n_kos": 2151,
+  "n_train": 2111,
+  "n_panel": 40,
+  "top10": 5.42,
+  "median_movers": 112,
+  "n_cells": 262956,
+  "n_pert_categories": 2394,
+  "n_gene_kos": 2151,
+  "control_found": true,
+  "cells_per_ko": 122
+ },
+ "RPE1_noncancer_ref": {
+  "n_kos": 2151,
+  "n_train": 2111,
+  "n_panel": 40,
+  "top10": 7.72,
+  "median_movers": 113,
+  "n_cells": 247914,
+  "n_pert_categories": 2394,
+  "n_gene_kos": 2151,
+  "control_found": true,
+  "cells_per_ko": 115
+ },
+ "verdict": "YES -- CANCER CELL MODELS FINE-TUNE FROM FREE DATA, and fixing the pseudobulk NORMALISATION confirmed the earlier low scores were a PROCESSING FLOOR, not biology. Replacing the crude sum-CPM cross-KO z with proper per-cell log-normalisation + control-relative z (variance-shrunk) roughly TRIPLED every raw-count line: THP-1 0.57->2.86, Melanoma 3.0->7.85, HepG2 1.43->5.47, Jurkat 2.5->5.42, RPE1 2.22->7.72. So from perturb-seq other labs already paid for and released free (scPerturb/Zenodo), 6 distinct cell types now score >=5/10 held-out top-10: Melanoma 7.85, RPE1 7.72, HCT116 6.98, HepG2 5.47, Jurkat 5.42, K562 5.05 (the first two, K562/HCT116, from pre-z-scored matrices; the rest fine-tuned here from raw counts). That is a real, ZERO-wet-lab-cost multi-cell-type asset. HONEST CAVEATS: (1) this is the deployable TIDE (which genes tend to move) -- a cleaner tide is more predictable, so much of the gain is measuring the generic stress program well, NOT cracking the knockout-specific far field (still walled); (2) THP-1 (0.57->2.86) has only 23 distinct KOs, below the fine-tuning floor, though its deep per-KO coverage still lifted it ~5x; (3) numbers reflect a proper but still-simple pseudobulk -- a production normaliser (scran/edgeR-style) could refine further; (4) all cancer/immortalised lines plus RPE1 (near-normal) -- normal tissue remains uncovered. BOTTOM LINE: with correct normalisation the free perturb-seq corpus yields SIX fine-tuned cell-type models at >=5/10 deployable top-10 at zero cost; the hard ceiling stays the generic tide, not the specific far field.",
+ "note": "YES -- CANCER CELL MODELS FINE-TUNE FROM FREE DATA, and fixing the pseudobulk NORMALISATION confirmed the earlier low scores were a PROCESSING FLOOR, not biology. Replacing the crude sum-CPM cross-KO z with proper per-cell log-normalisation + control-relative z (variance-shrunk) roughly TRIPLED every raw-count line: THP-1 0.57->2.86, Melanoma 3.0->7.85, HepG2 1.43->5.47, Jurkat 2.5->5.42, RPE1 2.22->7.72. So from perturb-seq other labs already paid for and released free (scPerturb/Zenodo), 6 distinct cell types now score >=5/10 held-out top-10: Melanoma 7.85, RPE1 7.72, HCT116 6.98, HepG2 5.47, Jurkat 5.42, K562 5.05 (the first two, K562/HCT116, from pre-z-scored matrices; the rest fine-tuned here from raw counts). That is a real, ZERO-wet-lab-cost multi-cell-type asset. HONEST CAVEATS: (1) this is the deployable TIDE (which genes tend to move) -- a cleaner tide is more predictable, so much of the gain is measuring the generic stress program well, NOT cracking the knockout-specific far field (still walled); (2) THP-1 (0.57->2.86) has only 23 distinct KOs, below the fine-tuning floor, though its deep per-KO coverage still lifted it ~5x; (3) numbers reflect a proper but still-simple pseudobulk -- a production normaliser (scran/edgeR-style) could refine further; (4) all cancer/immortalised lines plus RPE1 (near-normal) -- normal tissue remains uncovered. BOTTOM LINE: with correct normalisation the free perturb-seq corpus yields SIX fine-tuned cell-type models at >=5/10 deployable top-10 at zero cost; the hard ceiling stays the generic tide, not the specific far field.",
+ "reference": {
+  "K562": 5.05,
+  "HCT116": 6.98
+ }
+}

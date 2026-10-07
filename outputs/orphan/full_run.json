@@ -1,0 +1,9 @@
+{
+ "genome": 16509,
+ "coverage": 0.9944878551093344,
+ "reason_essentiality_auc": 0.8865926159816705,
+ "reason_disease_auc": 0.6516031652057404,
+ "levels_placed": 5259,
+ "localization_genes": 16451,
+ "string_genes": 15112
+}

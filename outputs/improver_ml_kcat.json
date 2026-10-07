@@ -1,0 +1,352 @@
+{
+ "track": "ml_kcat",
+ "answers": {
+  "question": "predict log10 kcat from enzyme sequence and substrate",
+  "n_runs": 3,
+  "all_scores": {
+   "loop_ml_kcat.json:XGB composition": 1.4686410863797956,
+   "loop_ml_kcat.json:XGB substrate": 1.4197315006996734,
+   "loop_ml_kcat.json:XGB esm": 1.3922708631847949,
+   "loop_ml_kcat.json:XGB esm+substrate": 1.3755987103105032,
+   "loop_ml_kcat.json:XGB all": 1.3662989492808546,
+   "loop_ml_kcat.json:MLP all": 1.437413699844415,
+   "loop_ml_kcat.json:constant (train median)": 1.5090860292875687,
+   "loop_ml_kcat.json:1-NN on ESM embedding": 1.8094420084166627,
+   "loop_ml_kcat.json:5-NN on ESM embedding": 1.6012652781259444,
+   "loop_ml_kcat.json:1-NN on composition": 2.01968808270727,
+   "loop_ml_kcat.json:EC median": 1.5015377566146224,
+   "loop_ml_kcat.json:constant_rmse": 1.504,
+   "loop_ml_audit.json:model_rmse": 1.3768263740087427,
+   "loop_ml_audit.json:constant_rmse": 1.5090860292875687,
+   "loop_ml_audit.json:mlp_tuned_rmse": 1.3867215456859623,
+   "loop_ml_audit.json:ec_rmse": 1.5015377566146224
+  },
+  "Q1_previous": {
+   "best_model": "XGB all",
+   "rmse": 1.3662989492808546,
+   "constant": 1.504,
+   "note": "loop 131, reported with no error bar"
+  },
+  "Q2_new": {
+   "rmse": 1.3768263740087427,
+   "mlp_tuned": 1.3867215456859623,
+   "gain_vs_constant": 0.13229049047105587,
+   "ci": [
+    0.10029573458110118,
+    0.16681991756016107
+   ],
+   "paired_ci": [
+    -0.014316574423367572,
+    0.03452278029788722
+   ],
+   "note": "loop 132, cluster-bootstrapped. 'ci' is on the gain over a constant; 'paired_ci' is on a model-vs-model difference on the SAME folds and is the correct yardstick for a paired change"
+  },
+  "Q3_changed_and_why": [
+   {
+    "what": "the gain acquired a confidence interval",
+    "why": "loop 131 reported 1.3663 with no spread; a cluster bootstrap gives 0.13229049047105587 [0.10029573458110118, 0.16681991756016107]",
+    "verdict": "the gain is REAL"
+   },
+   {
+    "what": "the MLP verdict reversed",
+    "why": "loop 131 gave it 40 fixed epochs and no early stopping. With nested CV it reaches 1.3867215456859623 against gradient boosting's 1.3768263740087427, CI on the difference [0.009546593688911245, -0.014316574423367572, 0.03452278029788722]",
+    "verdict": "'the neural network lost' was a TUNING ARTEFACT"
+   },
+   {
+    "what": "the ceiling moved",
+    "why": "loop 132 said 0.5625 over all sequences; debiased it is 0.8326689633988986",
+    "verdict": "loop 132's ceiling was OVERSTATED and is corrected"
+   }
+  ],
+  "Q4_flat": [
+   {
+    "what": "the sequence beyond the EC number",
+    "evidence": "B4 refit on the EC-median residual: RMSE 1.5386104927315152 against a residual sd of 1.4848906482578186, R2 -0.07366410883972563",
+    "verdict": "FLAT AND NEGATIVE -- everything the model knows is in the EC number"
+   },
+   {
+    "what": "the substrate channel",
+    "evidence": "shuffling substrates within a protein costs 0.019075568720891126 of a 0.13229049047105587 total gain",
+    "verdict": "about 15% of the gain; nearly flat"
+   }
+  ],
+  "Q5_cost": {
+   "esm_8M_embedding_min": 46,
+   "esm_650M_projected_h": 3.9,
+   "loop_runtimes_s": {
+    "loop_ml_kcat.json": 427.72041869163513,
+    "loop_ml_audit.json": 486.51827573776245,
+    "loop_ml_probe.json": 521.478563785553
+   },
+   "note": "650M was stopped after loop 133 B1 showed a mean-pooled readout cannot see the mutants, so a larger encoder would have inherited the same blindness"
+  },
+  "Q6_same_data": {
+   "IMPLICIT -- same inputs, used differently": [
+    {
+     "change": "pool the embedding over ACTIVE-SITE residues instead of the whole chain",
+     "deficit": "mutant_irreducible_rmse",
+     "cost": "one re-embedding, ~46 min at 8M"
+    },
+    {
+     "change": "add a mutant flag and substitution count from the sequences already held",
+     "deficit": "mutant_irreducible_rmse",
+     "cost": "free, computed from sequences.json"
+    },
+    {
+     "change": "normalise the target to 37 C with Q10, rather than feeding temperature",
+     "deficit": "missing_conditions_rmse",
+     "cost": "free where temperature is recoverable"
+    },
+    {
+     "change": "add EC number as an explicit feature",
+     "deficit": "b4_flat",
+     "cost": "free"
+    }
+   ],
+   "EXPLICIT -- new information": [
+    {
+     "change": "UniProt active-site and binding-site annotations",
+     "deficit": "mutant_irreducible_rmse",
+     "cost": "one fetch, 216,664 enzymes"
+    },
+    {
+     "change": "temperature and pH parsed from UniProt kinetics free text",
+     "deficit": "missing_conditions_rmse",
+     "cost": "free, already on disk"
+    }
+   ]
+  }
+ },
+ "plan": [
+  {
+   "id": "P1",
+   "change": "active-site pooling replaces mean pooling",
+   "kind": "implicit+explicit",
+   "depends_on": [],
+   "mechanism": "kcat is set by a few catalytic residues; averaging 320 dims over ~400 residues moves the vector ~1% when 5 residues change, so 18,595 point mutants differing a median 4.5x in kcat are indistinguishable",
+   "cites": "mutant_irreducible_rmse",
+   "predicted_gain": 0.15,
+   "nearest_refuted": "650M with mean pooling",
+   "distinguisher": "this changes the READOUT, which is the thing that refutation named as the cause. It is the fix, not a repeat",
+   "falsifier": "B4 still fails: the EC-median residual is still unlearnable",
+   "cost_min": 60,
+   "promised_rmse": 1.2268263740087428,
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": true,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": true
+   },
+   "verdict": "ACCEPT",
+   "rejected_on": []
+  },
+  {
+   "id": "P2",
+   "change": "mutant flag and substitution count as features",
+   "kind": "implicit",
+   "depends_on": [],
+   "mechanism": "the model cannot resolve a variant, but it can at least be told it is looking at one",
+   "cites": "mutant_irreducible_rmse",
+   "predicted_gain": 0.05,
+   "nearest_refuted": "more kcat records",
+   "distinguisher": "adds a COLUMN, not rows; the refutation was about n",
+   "falsifier": "no change beyond the paired interval",
+   "cost_min": 5,
+   "promised_rmse": 1.3268263740087427,
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": true,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": true
+   },
+   "verdict": "ACCEPT",
+   "rejected_on": []
+  },
+  {
+   "id": "P3",
+   "change": "Q10-normalise the target to 37 C",
+   "kind": "implicit",
+   "depends_on": [],
+   "mechanism": "kcat(T2) = kcat(T1)*Q10^((T2-T1)/10) removes a known variance component using physics instead of asking the network to learn Arrhenius",
+   "cites": "missing_conditions_rmse",
+   "predicted_gain": 0.04,
+   "nearest_refuted": "predict kcat/KM instead",
+   "distinguisher": "that changed the target to a NOISIER one; this changes the target to the same quantity at a common temperature, which cannot add variance",
+   "falsifier": "target variance does not fall on the subset with a known temperature",
+   "cost_min": 5,
+   "promised_rmse": 1.3368263740087427,
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": false,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": true
+   },
+   "verdict": "ACCEPT-IN-BUNDLE",
+   "rejected_on": [
+    "T2_gain_exceeds_noise"
+   ]
+  },
+  {
+   "id": "P4",
+   "change": "EC number as an explicit categorical feature",
+   "kind": "implicit",
+   "depends_on": [],
+   "mechanism": "B4 shows the EC number carries everything the model has; give it directly rather than via a proxy",
+   "cites": "b4_flat",
+   "predicted_gain": 0.02,
+   "nearest_refuted": "bigger substrate fingerprint",
+   "distinguisher": "different channel: that priced the SUBSTRATE side, this the enzyme's declared chemistry",
+   "falsifier": "no gain, which would mean ESM already encodes EC fully",
+   "cost_min": 2,
+   "promised_rmse": 1.3568263740087427,
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": false,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": true
+   },
+   "verdict": "ACCEPT-IN-BUNDLE",
+   "rejected_on": [
+    "T2_gain_exceeds_noise"
+   ]
+  },
+  {
+   "id": "P5",
+   "change": "ESM2-650M with the fixed readout",
+   "kind": "explicit",
+   "depends_on": [
+    "P1"
+   ],
+   "mechanism": "a larger encoder, once the readout no longer discards the signal it would add",
+   "cites": "b3_family_detector",
+   "predicted_gain": 0.08,
+   "nearest_refuted": "650M with mean pooling",
+   "distinguisher": "ONLY the fixed readout distinguishes it, so it is refuted unless P1 is accepted AND has actually moved B4",
+   "falsifier": "gain smaller than the paired interval, as at 8M",
+   "cost_min": 240,
+   "promised_rmse": 1.2968263740087427,
+   "checks": {
+    "T1_cites_measured_deficit": true,
+    "T2_gain_exceeds_noise": true,
+    "T3_has_falsifier": true,
+    "T4_not_already_refuted": true,
+    "T5_not_circular": true,
+    "T6_respects_bounds": true
+   },
+   "verdict": "ACCEPT",
+   "rejected_on": []
+  }
+ ],
+ "bundle": {
+  "id": "B",
+  "members": [
+   "P3",
+   "P4"
+  ],
+  "change": "the sub-noise items, run and tested as ONE change",
+  "why": "each is smaller than the paired interval alone, so alone each is unmeasurable. Removed variance adds where RMSE gains do not",
+  "naive_sum_gain": 0.06,
+  "combined_gain": 0.060607661451816286,
+  "promised_rmse": 1.3162187125569265,
+  "cost_min": 7,
+  "falsifier": "the bundle's paired difference interval contains zero",
+  "checks": {
+   "T2_gain_exceeds_noise": true,
+   "T6_respects_bounds": true,
+   "T4_members_all_pass_T4": true
+  },
+  "verdict": "ACCEPT",
+  "rejected_on": []
+ },
+ "refuted": {
+  "predict kcat/KM instead": "measured: sd 1.553 against kcat's 1.483, a 10% WORSE target",
+  "more kcat records": "loop 133 B5: the binding constraint is missing conditions, not n",
+  "bigger substrate fingerprint": "loop 132 A5: substrate is ~15% of the gain",
+  "650M with mean pooling": "loop 133 B1: the readout, not the encoder, is what discards it"
+ },
+ "whole_picture": {
+  "result": {
+   "current_rmse": 1.3768263740087427,
+   "constant": 1.504,
+   "gain_ci": [
+    0.10029573458110118,
+    0.16681991756016107
+   ]
+  },
+  "what_the_model_needs_it_for": "the enzyme-capacity constraint v <= kcat*[E]; loop 133 B6 measured the cell's own enzymes as EASIER than average, reaction-weighted 1.1895 against 1.3072",
+  "dataset": {
+   "records": 17004,
+   "sequences": 7856,
+   "clusters": 3006,
+   "point_mutant_pairs": 18595,
+   "singletons_contributing_zero_within_variance": 4257
+  },
+  "bounds_that_cap_any_plan": {
+   "experimental_floor_rmse": [
+    0.0607,
+    "loop 129: same protein AND same substrate measured twice, 1.15x median over 101 values"
+   ],
+   "missing_conditions_rmse": [
+    0.5137,
+    "loop 133 B5: within (protein, substrate) pairs, 3.26x, because temperature, pH and mutation are not in the file"
+   ],
+   "per_protein_ceiling_rmse": [
+    0.8327,
+    "loop 133 B2: a perfect per-protein predictor, after merging near-duplicates and debiasing singletons"
+   ],
+   "mutant_irreducible_rmse": [
+    0.947,
+    "loop 133 B1: 18,595 point-mutant pairs a mean-pooled embedding cannot distinguish"
+   ]
+  },
+  "the_uncomfortable_reading": "B4 says the sequence adds nothing beyond the EC number. If P1 does not change that, kcat is not predictable from sequence at this data scale, and loop 127's measured-or-flagged-constant is already the right design."
+ },
+ "upgrades": [
+  {
+   "change": "order by cost, not by predicted gain",
+   "why": "the cheapest accepted unit costs 5 min and the dearest 240. Spending the cheap ones first means the dear ones are only paid for if the cheap ones move B4",
+   "new_order": [
+    "P2",
+    "B",
+    "P1",
+    "P5"
+   ]
+  },
+  {
+   "change": "make B4 the stopping rule, not the RMSE",
+   "why": "RMSE can improve while the model still knows nothing the EC number did not. B4 -- learnability of the EC-median residual -- is the only gate that distinguishes those, so it decides whether P5's 4 hours are spent"
+  },
+  {
+   "change": "price the whole plan by removed variance, not by adding gains",
+   "why": "the accepted units promise 0.34 if gains are added, which would land at 1.0368. Combined by removed variance the plan promises 0.9964. The floor is 0.5137: the additive reading is the one that would have to be walked back",
+   "naive_rmse": 1.0368263740087427,
+   "honest_rmse": 0.9963979776375086
+  },
+  {
+   "change": "P5 is not schedulable yet",
+   "why": "its only distinguisher from the refuted '650M with mean pooling' is P1's fixed readout, so its 240 minutes are conditional on P1 having moved B4. Listing it as a queued item would be pretending that condition is met"
+  },
+  {
+   "change": "test P3+P4 as ONE change, and report no per-item attribution",
+   "why": "individually each predicts less than the paired interval 0.0488; together 0.0606. Any per-item number read off a joint run would be inside its own noise, which is exactly the loop 120 failure"
+  }
+ ],
+ "execute_order": [
+  "P2",
+  "B",
+  "P1",
+  "P5"
+ ],
+ "noise": 0.048839354721254793,
+ "noise_source": "paired model-vs-model CI, loop 132 A3",
+ "n_rejected": 0,
+ "seconds": 0.002173900604248047
+}

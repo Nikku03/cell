@@ -1,0 +1,403 @@
+{
+ "test": "enhancer autoregulation split",
+ "gates": {
+  "A1": true,
+  "A2": false,
+  "A3": false,
+  "A4": false,
+  "A5": false,
+  "A6": false,
+  "A7": false,
+  "A8": true
+ },
+ "n_matrices": 736,
+ "n_curated_self": 21,
+ "n_dropped_half": 366,
+ "z_coverage": 0.9959239130434783,
+ "curated_vs_predicted": {
+  "n_self": 21,
+  "n_no_self": 404,
+  "median_self": 0.7044856284987127,
+  "median_no_self": 0.27609227020722577,
+  "mannwhitney_p": 0.2389358975571298
+ },
+ "arms": {
+  "all_matrices": {
+   "r1": [
+    0.5979899497487438,
+    0.6180904522613065,
+    0.5979899497487438,
+    0.6080402010050251,
+    0.6030150753768844
+   ],
+   "mrr": [
+    0.7161560435136143,
+    0.7268283277966446,
+    0.716392710634992,
+    0.7190470801245263,
+    0.7153258254391344
+   ],
+   "ap": [
+    0.30063384044060354,
+    0.29319084623905695,
+    0.2838649878514959,
+    0.30920983427895177,
+    0.2984446872817107
+   ]
+  },
+  "drop_curated": {
+   "r1": [
+    0.6180904522613065,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5678391959798995,
+    0.5979899497487438
+   ],
+   "mrr": [
+    0.7240986699862277,
+    0.7079322128657248,
+    0.7143801387710813,
+    0.6988018289185267,
+    0.7117164217354117
+   ],
+   "ap": [
+    0.29353024619685325,
+    0.2936502545931035,
+    0.27460222325115596,
+    0.29004727018185866,
+    0.30282006524563454
+   ]
+  },
+  "drop_top_half": {
+   "r1": [
+    0.5728643216080402,
+    0.628140703517588,
+    0.6080402010050251,
+    0.6231155778894473,
+    0.6130653266331658
+   ],
+   "mrr": [
+    0.700072313844585,
+    0.7316595849731257,
+    0.7281567057601639,
+    0.7352394889404547,
+    0.7345950034443544
+   ],
+   "ap": [
+    0.2957047639171967,
+    0.29058699915893516,
+    0.29130271471373953,
+    0.3051509321217856,
+    0.299551706291603
+   ]
+  },
+  "drop_top_half_shuffled": {
+   "r1": [
+    0.5879396984924623,
+    0.6080402010050251,
+    0.6080402010050251,
+    0.6080402010050251,
+    0.5678391959798995
+   ],
+   "mrr": [
+    0.7064676909289679,
+    0.7214808082611867,
+    0.7161496321754132,
+    0.725506035864284,
+    0.7019936300493497
+   ],
+   "ap": [
+    0.29736542470462624,
+    0.27558074149269784,
+    0.27429881667605693,
+    0.30340067083944083,
+    0.2771037657487103
+   ]
+  },
+  "distance": {
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "mrr": [
+    0.7071378448077316,
+    0.7195726988440554,
+    0.721787040662669,
+    0.7227528100889471,
+    0.7165514073557581
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ]
+  }
+ },
+ "matched_draws": [
+  0.6180904522613065,
+  0.6055276381909548,
+  0.6256281407035176,
+  0.6105527638190955,
+  0.6180904522613065,
+  0.5979899497487438,
+  0.6105527638190955,
+  0.6105527638190955,
+  0.5954773869346734,
+  0.628140703517588,
+  0.6256281407035176,
+  0.5778894472361809
+ ],
+ "matched_frac_beaten": 0.25,
+ "increments": {
+  "A3": {
+   "d_r1": [
+    0.02010050251256279,
+    -0.03015075376884424,
+    0.0,
+    -0.04020100502512558,
+    -0.005025125628140614
+   ],
+   "d_ap": [
+    -0.007103594243750289,
+    0.0004594083540465643,
+    -0.009262764600339923,
+    -0.019162564097093104,
+    0.004375377963923843
+   ],
+   "mean_r1": -0.01105527638190953,
+   "sem_r1": 0.01082445187363719,
+   "mean_ap": -0.006138827324642581,
+   "n_pos_r1": 1,
+   "n_ap_pass": 0
+  },
+  "A4": {
+   "d_r1": [
+    -0.025125628140703515,
+    0.01005025125628145,
+    0.01005025125628134,
+    0.015075376884422176,
+    0.01005025125628145
+   ],
+   "d_ap": [
+    -0.00492907652340685,
+    -0.0026038470801217906,
+    0.007437726862243643,
+    -0.004058902157166144,
+    0.001107019009892296
+   ],
+   "mean_r1": 0.004020100502512581,
+   "sem_r1": 0.00735112504438583,
+   "mean_ap": -0.0006094159777117692,
+   "n_pos_r1": 4,
+   "n_ap_pass": 0
+  },
+  "A6": {
+   "d_r1": [
+    -0.01005025125628134,
+    0.04020100502512569,
+    0.01005025125628134,
+    0.025125628140703515,
+    0.015075376884422065
+   ],
+   "d_ap": [
+    0.012799718496760204,
+    0.008882509430528318,
+    0.0021304871319142715,
+    0.015324539598628784,
+    0.020940114501373175
+   ],
+   "mean_r1": 0.016080402010050253,
+   "sem_r1": 0.008318062993591382,
+   "mean_ap": 0.01201547383184095,
+   "n_pos_r1": 4,
+   "n_ap_pass": 3
+  },
+  "A7": {
+   "d_r1": [
+    -0.015075376884422065,
+    0.0201005025125629,
+    0.0,
+    0.015075376884422176,
+    0.045226130653266305
+   ],
+   "d_ap": [
+    -0.0016606607874295465,
+    0.01500625766623731,
+    0.017003898037682597,
+    0.0017502612823447894,
+    0.022447940542892675
+   ],
+   "mean_r1": 0.013065326633165864,
+   "sem_r1": 0.010125347577693402,
+   "mean_ap": 0.010909539348345565,
+   "n_pos_r1": 3,
+   "n_ap_pass": 3
+  }
+ },
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/tf_autoregulation.json",
+    "bytes": 73460,
+    "hash": "368248422c749fb8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_self_binding.npz",
+    "bytes": 11482,
+    "hash": "9395200dc4a67597",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 736,
+   "used": 370,
+   "selection": "lowest-half self-binding z",
+   "fraction": 0.5027173913043478
+  },
+  "seed": 5000,
+  "controls": [
+   "12 size-matched random matrix drops",
+   "the curated split checked against the predicted one",
+   "dinucleotide shuffle on the retained half",
+   "identical pairs, folds and seeds as loop 173"
+  ],
+  "note": "does removing self-regulating factors rescue the sequence chain",
+  "warnings": [
+   "selection 'lowest-half self-binding z' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 204.5172290802002,
+ "log": [
+  "========================================================================================================",
+  "LOOP 175  DROP THE SELF-REGULATING FACTORS AND RUN THE ENHANCER TEST ON THE REST",
+  "========================================================================================================",
+  "  PREDECLARED: z defined for >= 95% of matrices; the curated split must",
+  "  separate on the predicted one (Mann-Whitney p < 0.05); each drop judged against loop",
+  "  173's all-matrix R@1 0.6050 in >= 4/5 seeds past 3 sem; the",
+  "  50/50 drop must beat a size-matched random drop in >= 90% of 12 draws;",
+  "  and the winner must clear the distance floor 0.5930 on loop 173's E3 bar.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "A1 IS THE SPLIT OVER A COMPLETE SET?",
+  "       743/743 motif genes have an hg19 TSS",
+  "       chr1: 64 regions from 249,250,621 bp",
+  "       chr2: 59 regions from 243,199,373 bp",
+  "       chr3: 32 regions from 198,022,430 bp",
+  "       chr4: 23 regions from 191,154,276 bp",
+  "       chr5: 24 regions from 180,915,260 bp",
+  "       chr6: 49 regions from 171,115,067 bp",
+  "       chr7: 48 regions from 159,138,663 bp",
+  "       chr8: 30 regions from 146,364,022 bp",
+  "       chr9: 29 regions from 141,213,431 bp",
+  "       chr10: 23 regions from 135,534,747 bp",
+  "       chr11: 30 regions from 135,006,516 bp",
+  "       chr12: 47 regions from 133,851,895 bp",
+  "       chr13: 14 regions from 115,169,878 bp",
+  "       chr14: 25 regions from 107,349,540 bp",
+  "       chr15: 17 regions from 102,531,392 bp",
+  "       chr16: 22 regions from 90,354,753 bp",
+  "       chr17: 44 regions from 81,195,210 bp",
+  "       chr18: 10 regions from 78,077,248 bp",
+  "       chr19: 76 regions from 59,128,983 bp",
+  "       chr20: 29 regions from 63,025,520 bp",
+  "       chr21: 9 regions from 48,129,895 bp",
+  "       chr22: 13 regions from 51,304,566 bp",
+  "       chrX: 23 regions from 155,270,560 bp",
+  "       chrY: FASTA missing, 2 regions filled with N",
+  "       chrUn_gl000228: FASTA missing, 1 regions filled with N",
+  "       sequence cached -> tfprom_3e0b906c8d6f45db.npz (400,763 bytes)",
+  "       736 distinct motifs, width 5-29 (median 9)",
+  "       scanning 743 factor promoters, 764,547 bp",
+  "         tfprom motif 100/736 (width 7)  [4s, eta 23s]",
+  "         tfprom motif 200/736 (width 8)  [8s, eta 21s]",
+  "         tfprom motif 300/736 (width 9)  [12s, eta 17s]",
+  "         tfprom motif 400/736 (width 10)  [17s, eta 14s]",
+  "         tfprom motif 500/736 (width 10)  [22s, eta 10s]",
+  "         tfprom motif 600/736 (width 13)  [28s, eta 6s]",
+  "         tfprom motif 700/736 (width 16)  [34s, eta 2s]",
+  "       self-binding z computed for 733/736 matrices; median 0.193, IQR [-0.467, 1.001]",
+  "     -> /home/user/cell/colab/data/tf_self_binding.npz",
+  "     self-binding z defined for 733/736 matrices (0.9959)",
+  "     SELF         21 matrices",
+  "     NO_SELF     406 matrices",
+  "     UNCURATED   309 matrices",
+  "     A1 PASS -- the 50/50 split is over 733 matrices, not over the curated subset",
+  "",
+  "A2 DOES THE PREDICTED CALL MEASURE AUTOREGULATION AT ALL?",
+  "     curated SELF    n  21  self-binding z median +0.704",
+  "     curated NO_SELF n 404  self-binding z median +0.276",
+  "     one-sided Mann-Whitney p = 0.2389",
+  "     A2 FAIL -- the predicted score does not recover the curated label, so the 50/50 split below is splitting on something else and must be read that way",
+  "",
+  "   the arms, all on loop 173's pairs, folds and seeds",
+  "    all 736 matrices       R@1 0.6050 +/- 0.0038   MRR 0.7187   AUPRC 0.2971",
+  "    drop curated SELF (21) R@1 0.5940 +/- 0.0082   MRR 0.7114   AUPRC 0.2909",
+  "    drop top-half self-binding (366) R@1 0.6090 +/- 0.0097   MRR 0.7259   AUPRC 0.2965",
+  "    drop top-half, SHUFFLED elements R@1 0.5960 +/- 0.0080   MRR 0.7143   AUPRC 0.2855",
+  "    distance               R@1 0.5930 +/- 0.0032   MRR 0.7176   AUPRC 0.2844",
+  "",
+  "A3 THE LITERAL REQUEST: drop the curated self-loop matrices",
+  "     dR@1 -0.0111 +/- 0.0108 (1/5 up)   dAUPRC -0.0061 (0/5 >= 0.01)",
+  "     A3 FAIL -- removing them changes nothing measurable, which is what 21 matrices out of 736 was always likely to do",
+  "",
+  "A4 THE 50/50 SPLIT: drop the half that binds its own promoter most",
+  "     dR@1 +0.0040 +/- 0.0074 (4/5 up)   dAUPRC -0.0006 (0/5 >= 0.01)",
+  "     A4 FAIL -- the least self-binding half does no better than all of them",
+  "",
+  "A5 THE SIZE-MATCHED CONTROL: 12 random drops of the same size",
+  "     draw  1/12  R@1 0.6181",
+  "     draw  2/12  R@1 0.6055",
+  "     draw  3/12  R@1 0.6256",
+  "     draw  4/12  R@1 0.6106",
+  "     draw  5/12  R@1 0.6181",
+  "     draw  6/12  R@1 0.5980",
+  "     draw  7/12  R@1 0.6106",
+  "     draw  8/12  R@1 0.6106",
+  "     draw  9/12  R@1 0.5955",
+  "     draw 10/12  R@1 0.6281",
+  "     draw 11/12  R@1 0.6256",
+  "     draw 12/12  R@1 0.5779",
+  "     real drop 0.6005 against matched draws mean 0.6103 (min 0.5779, max 0.6281); real beats 25% of them",
+  "     A5 FAIL -- a random drop of the same size does as well, so whatever A4 showed is about how many matrices are summed, not about which ones",
+  "",
+  "A6 DOES ANY OF IT BEAT THE DISTANCE FLOOR?",
+  "     best arm is drop_top_half at R@1 0.6090",
+  "     drop_top_half vs distance   dR@1 +0.0161 +/- 0.0083 (4/5 up)   dAUPRC +0.0120 (3/5 >= 0.01)",
+  "     A6 FAIL -- no matrix subset clears the distance floor on loop 173's bar",
+  "",
+  "A7 THE SHUFFLE STILL DECIDES",
+  "     drop_top_half vs the same on shuffled elements   dR@1 +0.0131 +/- 0.0101 (3/5 up)   dAUPRC +0.0109 (3/5 >= 0.01)",
+  "     A7 FAIL -- the shuffle matches it on the retained half too, so removing the self-regulating factors did not turn composition into sites",
+  "",
+  "A8 WHAT THIS CANNOT SHOW",
+  "     Autoregulation is a statement about a factor's OWN gene. That a factor holds itself",
+  "     in a loop does not mean its TARGETS are enhancer-independent, and nothing here tests",
+  "     that step -- it is the load-bearing assumption of the whole request and it is",
+  "     untested by this loop.",
+  "     The predicted split uses a 1 kb promoter window and a single motif per factor, so a",
+  "     factor that autoregulates through a distal element of its own is scored as not",
+  "     self-regulating.",
+  "     TRRUST curation is biased toward studied factors, which is why A5 exists and why the",
+  "     curated arm is reported but not leaned on.",
+  "     A8 PASS",
+  "",
+  "========================================================================================================",
+  "  A1  PASS",
+  "  A2  FAIL",
+  "  A3  FAIL",
+  "  A4  FAIL",
+  "  A5  FAIL",
+  "  A6  FAIL",
+  "  A7  FAIL",
+  "  A8  PASS",
+  "  2/8   [205s]",
+  "========================================================================================================"
+ ]
+}

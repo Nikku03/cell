@@ -1,0 +1,73 @@
+=================================================================================================
+TRAFFICKING: TRANSPORT BETWEEN COMPARTMENTS, AND WHETHER IT LIMITS THE CELL
+=================================================================================================
+
+=================================================================================================
+T1  THE INVENTORY
+=================================================================================================
+                 compartment  metabolites
+                     cytosol         2125
+               extracellular         1579
+               mitochondrion          690
+       endoplasmic reticulum          571
+                  peroxisome          312
+                    lysosome          234
+                       Golgi          228
+                     nucleus           95
+         inner mito membrane            1
+
+  reactions spanning more than one compartment: 4230 of 10600 (39.9%)
+  most common compartment pairs:
+                               cytosol <-> extracellular    2870
+                               cytosol <-> mitochondrion     491
+                       cytosol <-> endoplasmic reticulum     359
+                                  cytosol <-> peroxisome     166
+                                       cytosol <-> Golgi      93
+                                    cytosol <-> lysosome      89
+
+=================================================================================================
+T2/T3  ARE TRANSPORTERS OVER-REPRESENTED AMONG THE RATES THAT MATTER?
+=================================================================================================
+  enzyme-catalysed reactions: 5938, of which transport: 2337 (39.4%)
+  BASELINE: if transport mattered in proportion, 39.4% of the sensitive
+  set would be transport reactions.
+  base growth 1.688875 /h
+  probing the top 0 by dual, verifying each in BOTH directions at threshold 0.001
+  0 verification solves in 0s
+
+  sensitive reactions above 0.001: 0   no candidates -- the dual screen found nothing to probe
+
+=================================================================================================
+T4  THE SECRETORY CHAIN  (does multi-step transit change the tail?)
+=================================================================================================
+  A protein transits ER -> Golgi -> surface. Against a single effective step matched on
+  the SAME mean transit time, does the number of stages change the late tail?
+    stages  CV of transit        P(t>2)        P(t>3)        P(t>5)
+         1         1.0000    1.3534e-01    4.9787e-02    6.7379e-03
+         2         0.7071    9.1578e-02    1.7351e-02    4.9940e-04
+         3         0.5774    6.1969e-02    6.2322e-03    3.9308e-05
+         5         0.4472    2.9253e-02    8.5664e-04    2.6691e-07
+         8         0.3536    9.9998e-03    4.7500e-05    1.6640e-10
+
+  a three-stage chain against one step, at five times the mean transit: 6.7379e-03 against 3.9308e-05, a factor of 171.4
+  Multi-step trafficking is a NOISE FILTER on transit time: the coefficient of variation
+  falls as 1/sqrt(stages), and the late tail falls by orders. A model that collapses the
+  secretory pathway into one effective step OVERSTATES how often a protein arrives late by
+  that factor. This is residence.py's question asked of trafficking, and unlike there the
+  answer is that the structure matters a great deal.
+
+=================================================================================================
+T5  WHAT TRAFFICKING COSTS IN PARAMETERS
+=================================================================================================
+  transport reactions in Recon3D                     4230
+  of which enzyme-catalysed, so carrying a kcat      2337
+  as a share of all enzyme-catalysed reactions       39.4%
+
+  The asymmetry that matters: a diffusion coefficient follows from size and viscosity to
+  within a factor of a few, so space is nearly free to parameterise. A transport rate is a
+  pump's or a carrier's turnover number -- active, protein-mediated, and derivable from no
+  physics at all. Every one of these must be measured exactly like a metabolic kcat.
+  So of the two things usually filed together under 'spatial biology', the one that is
+  safe to ignore is cheap to parameterise, and the one that is not is expensive.
+
+=================================================================================================

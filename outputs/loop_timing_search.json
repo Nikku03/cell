@@ -1,0 +1,879 @@
+{
+ "test": "timing replication search",
+ "gates": {
+  "Y1": true,
+  "Y2": false,
+  "Y3": true,
+  "Y4": false,
+  "Y5": true,
+  "Y6": true
+ },
+ "void": [],
+ "min_points": 8,
+ "max_span_min": 1440.0,
+ "positive_control": {
+  "cell": "A549",
+  "source": "treatment:dexamethasone",
+  "n_shared": 11,
+  "span_min": 690.0,
+  "n_acc": 11,
+  "n_rna": 16,
+  "shared": [
+   30.0,
+   60.0,
+   120.0,
+   180.0,
+   240.0,
+   300.0,
+   360.0,
+   420.0,
+   480.0,
+   600.0,
+   720.0
+  ]
+ },
+ "encode_ranked": [
+  {
+   "cell": "dendritic cell",
+   "source": "treatment:lipopolysaccharide",
+   "n_shared": 4,
+   "span_min": 300.0,
+   "n_acc": 5,
+   "n_rna": 4,
+   "shared": [
+    60.0,
+    120.0,
+    240.0,
+    360.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:Panobinostat",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:Galeterone",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:Chaetocin",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:C646",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:MB-3",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:Bortezomib",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:Crizotinib",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:AR-42",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:Vorinostat",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:GSK J4",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:JQ1",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "K562",
+   "source": "treatment:DMSO",
+   "n_shared": 4,
+   "span_min": 2640.0,
+   "n_acc": 4,
+   "n_rna": 4,
+   "shared": [
+    240.0,
+    720.0,
+    1440.0,
+    2880.0
+   ]
+  },
+  {
+   "cell": "activated CD4-positive, alpha-beta T cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 4,
+   "span_min": 18720.0,
+   "n_acc": 8,
+   "n_rna": 4,
+   "shared": [
+    1440.0,
+    2160.0,
+    10080.0,
+    20160.0
+   ]
+  },
+  {
+   "cell": "CD4-positive, alpha-beta T cell",
+   "source": "treatment:Interleukin-15",
+   "n_shared": 3,
+   "span_min": 1380.0,
+   "n_acc": 3,
+   "n_rna": 3,
+   "shared": [
+    60.0,
+    240.0,
+    1440.0
+   ]
+  },
+  {
+   "cell": "CD4-positive, alpha-beta T cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 3,
+   "span_min": 1380.0,
+   "n_acc": 3,
+   "n_rna": 3,
+   "shared": [
+    60.0,
+    240.0,
+    1440.0
+   ]
+  },
+  {
+   "cell": "activated naive CD4-positive, alpha-beta T cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 2,
+   "span_min": 2160.0,
+   "n_acc": 4,
+   "n_rna": 2,
+   "shared": [
+    2160.0,
+    4320.0
+   ]
+  },
+  {
+   "cell": "activated naive CD4-positive, alpha-beta T cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 2,
+   "span_min": 2880.0,
+   "n_acc": 3,
+   "n_rna": 2,
+   "shared": [
+    4320.0,
+    7200.0
+   ]
+  },
+  {
+   "cell": "activated T-cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 2,
+   "span_min": 4080.0,
+   "n_acc": 5,
+   "n_rna": 2,
+   "shared": [
+    240.0,
+    4320.0
+   ]
+  },
+  {
+   "cell": "activated T-cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 2,
+   "span_min": 4080.0,
+   "n_acc": 5,
+   "n_rna": 2,
+   "shared": [
+    240.0,
+    4320.0
+   ]
+  },
+  {
+   "cell": "foreskin keratinocyte",
+   "source": "treatment:calcium",
+   "n_shared": 2,
+   "span_min": 4320.0,
+   "n_acc": 11,
+   "n_rna": 2,
+   "shared": [
+    3600.0,
+    7920.0
+   ]
+  },
+  {
+   "cell": "activated CD4-positive, alpha-beta memory T cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 2,
+   "span_min": 7920.0,
+   "n_acc": 2,
+   "n_rna": 2,
+   "shared": [
+    2160.0,
+    10080.0
+   ]
+  },
+  {
+   "cell": "activated CD8-positive, alpha-beta T cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 2,
+   "span_min": 7920.0,
+   "n_acc": 2,
+   "n_rna": 2,
+   "shared": [
+    2160.0,
+    10080.0
+   ]
+  },
+  {
+   "cell": "activated naive CD8-positive, alpha-beta T cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 2,
+   "span_min": 7920.0,
+   "n_acc": 4,
+   "n_rna": 2,
+   "shared": [
+    2160.0,
+    10080.0
+   ]
+  },
+  {
+   "cell": "activated CD4-positive, alpha-beta T cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 2,
+   "span_min": 12960.0,
+   "n_acc": 7,
+   "n_rna": 2,
+   "shared": [
+    7200.0,
+    20160.0
+   ]
+  },
+  {
+   "cell": "activated T-helper 1 cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 2,
+   "span_min": 18720.0,
+   "n_acc": 3,
+   "n_rna": 2,
+   "shared": [
+    1440.0,
+    20160.0
+   ]
+  },
+  {
+   "cell": "activated T-helper 2 cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 2,
+   "span_min": 18720.0,
+   "n_acc": 2,
+   "n_rna": 2,
+   "shared": [
+    1440.0,
+    20160.0
+   ]
+  },
+  {
+   "cell": "activated CD8-positive, alpha-beta memory T cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 5,
+   "n_rna": 2,
+   "shared": [
+    10080.0
+   ]
+  },
+  {
+   "cell": "activated CD8-positive, alpha-beta memory T cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 5,
+   "n_rna": 1,
+   "shared": [
+    7200.0
+   ]
+  },
+  {
+   "cell": "activated T-helper 17 cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 2,
+   "n_rna": 1,
+   "shared": [
+    4320.0
+   ]
+  },
+  {
+   "cell": "activated T-helper 17 cell",
+   "source": "treatment:anti-CD3 and anti-CD28 coated beads",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 2,
+   "n_rna": 1,
+   "shared": [
+    4320.0
+   ]
+  },
+  {
+   "cell": "HCT116",
+   "source": "treatment:5-Phenyl-1H-indole-3-acetic acid",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 1,
+   "n_rna": 1,
+   "shared": [
+    360.0
+   ]
+  },
+  {
+   "cell": "activated T-helper 1 cell",
+   "source": "treatment:Interleukin-4 antibody",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 1,
+   "n_rna": 1,
+   "shared": [
+    2160.0
+   ]
+  },
+  {
+   "cell": "activated T-helper 1 cell",
+   "source": "treatment:Interleukin-12 subunit beta",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 1,
+   "n_rna": 1,
+   "shared": [
+    2160.0
+   ]
+  },
+  {
+   "cell": "activated T-helper 1 cell",
+   "source": "treatment:Interleukin-12 subunit alpha",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 1,
+   "n_rna": 1,
+   "shared": [
+    2160.0
+   ]
+  },
+  {
+   "cell": "activated T-helper 1 cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 2,
+   "n_rna": 1,
+   "shared": [
+    20160.0
+   ]
+  },
+  {
+   "cell": "activated CD8-positive, alpha-beta T cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 1,
+   "n_rna": 1,
+   "shared": [
+    7200.0
+   ]
+  },
+  {
+   "cell": "activated CD4-positive, alpha-beta memory T cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 1,
+   "n_rna": 1,
+   "shared": [
+    7200.0
+   ]
+  },
+  {
+   "cell": "activated naive CD8-positive, alpha-beta T cell",
+   "source": "treatment:Interleukin-2",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 3,
+   "n_rna": 1,
+   "shared": [
+    7200.0
+   ]
+  },
+  {
+   "cell": "SK-N-DZ",
+   "source": "treatment:dimethyl sulfoxide",
+   "n_shared": 1,
+   "span_min": 0.0,
+   "n_acc": 1,
+   "n_rna": 1,
+   "shared": [
+    4320.0
+   ]
+  }
+ ],
+ "qualifying": [],
+ "geo_shortlist": [
+  {
+   "acc": "GSE256354",
+   "title": "Hypomethylating agents induce epigenetic and transcriptional heterogeneity with implications for acute myeloid",
+   "n_samples": 2765,
+   "gdstype": "Expression profiling by high throughput sequencing; Methylat"
+  },
+  {
+   "acc": "GSE316178",
+   "title": "LncRNAs coordinate doxycycline-induced gene expression response in human iPSCs (RNA-seq)",
+   "n_samples": 658,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE315440",
+   "title": "LncRNAs coordinate doxycycline-induced gene expression response in human iPSCs (ATAC-seq)",
+   "n_samples": 341,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE335210",
+   "title": "SOX9-BAF multi-omics profiling in human colon cancer cell models",
+   "n_samples": 173,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE175533",
+   "title": "Revisiting the Hayflick Limit: Insights from an Integrated Analysis of Changing Transcripts, Proteins, Metabol",
+   "n_samples": 147,
+   "gdstype": "Expression profiling by high throughput sequencing; Genome b"
+  },
+  {
+   "acc": "GSE164361",
+   "title": "Comparative Chromatin Dynamics and Expression Profiles of Neural Progenitor and Definitive Endoderm Lineage Di",
+   "n_samples": 118,
+   "gdstype": "Expression profiling by high throughput sequencing; Genome b"
+  },
+  {
+   "acc": "GSE155604",
+   "title": "BANP opens chromatin and activates CpG-island-regulated genes",
+   "n_samples": 115,
+   "gdstype": "Expression profiling by high throughput sequencing; Genome b"
+  },
+  {
+   "acc": "GSE276176",
+   "title": "Divergence from the human astrocyte developmental trajectory in glioblastoma [bulk RNA]",
+   "n_samples": 101,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE201376",
+   "title": "Temporal analysis suggests a reciprocal relationship between 3D chromatin structure and transcription",
+   "n_samples": 88,
+   "gdstype": "Expression profiling by high throughput sequencing; Genome b"
+  },
+  {
+   "acc": "GSE164498",
+   "title": "Uncovering the Gene Regulatory Networks Underlying Macrophage Polarization Through Comparative Analysis of Bul",
+   "n_samples": 80,
+   "gdstype": "Expression profiling by high throughput sequencing; Genome b"
+  },
+  {
+   "acc": "GSE343495",
+   "title": "Stepwise reorganization of chromosome conformation and nuclear organization during stem cell differentiation [",
+   "n_samples": 73,
+   "gdstype": "Other"
+  },
+  {
+   "acc": "GSE343494",
+   "title": "Stepwise reorganization of chromosome conformation and nuclear organization during stem cell differentiation [",
+   "n_samples": 59,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE295258",
+   "title": "CDK4/6 inhibition induces a senescence-associated secretory phenotype via delayed NF-\u03baB activation",
+   "n_samples": 54,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE276101",
+   "title": "Divergence from the human astrocyte developmental trajectory in glioblastoma [bulk ATAC-seq]",
+   "n_samples": 50,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE207039",
+   "title": "Molecular genomic studies of the obesogenic effects of tributyltin during adipogenic differentiation implicate",
+   "n_samples": 50,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE343493",
+   "title": "Stepwise reorganization of chromosome conformation and nuclear organization during stem cell differentiation [",
+   "n_samples": 40,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE295260",
+   "title": "CDK4/6 inhibition induces a senescence-associated secretory phenotype via delayed NF-\u03baB activation",
+   "n_samples": 40,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE201353",
+   "title": "Temporal analysis suggests a reciprocal relationship between 3D chromatin structure and transcription [Hi-C]",
+   "n_samples": 40,
+   "gdstype": "Other"
+  },
+  {
+   "acc": "GSE282760",
+   "title": "Epigenomic manipulation reveals the relationship between locus specific chromatin dynamics and gene expression",
+   "n_samples": 36,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE183273",
+   "title": "An atlas of healthy and injured cell states and niches in the human kidney [SNARE-Seq2]",
+   "n_samples": 34,
+   "gdstype": "Expression profiling by high throughput sequencing; Genome b"
+  },
+  {
+   "acc": "GSE282266",
+   "title": "Gene regulatory network determinants of rapid recall in human memory T cells",
+   "n_samples": 34,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE193413",
+   "title": "Super-silencer perturbation by EZH2 and REST inhibition leads to large loss of chromatin interactions and redu",
+   "n_samples": 28,
+   "gdstype": "Other"
+  },
+  {
+   "acc": "GSE134174",
+   "title": "Dissecting the cellular specificity of smoking effects and reconstructing lineages in the human airway epithel",
+   "n_samples": 28,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE295261",
+   "title": "CDK4/6 inhibition induces a senescence-associated secretory phenotype via delayed NF-\u03baB activation [CUT&Tag]",
+   "n_samples": 24,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE121600",
+   "title": "Single-cell RNA-seq reveals novel cell differentiation dynamics during human airway epithelium regeneration",
+   "n_samples": 22,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE193486",
+   "title": "Super-silencer perturbation by EZH2 and REST inhibition leads to large loss of chromatin interactions and redu",
+   "n_samples": 20,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE343496",
+   "title": "Stepwise reorganization of chromosome conformation and nuclear organization during stem cell differentiation [",
+   "n_samples": 19,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE328410",
+   "title": "ATAC-seq of synovial sarcoma cell lines treated with the BRD9 PROTAC degrader WA-68",
+   "n_samples": 17,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE336040",
+   "title": "CDK4/6 inhibition induces a senescence-associated secretory phenotype via delayed NF-\u03baB activation [CUT&Run]",
+   "n_samples": 17,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE201354",
+   "title": "Temporal analysis suggests a reciprocal relationship between 3D chromatin structure and transcription [RNA-Seq",
+   "n_samples": 16,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE201352",
+   "title": "Temporal analysis suggests a reciprocal relationship between 3D chromatin structure and transcription [ChIP-Se",
+   "n_samples": 16,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE201351",
+   "title": "Temporal analysis suggests a reciprocal relationship between 3D chromatin structure and transcription [ATAC-Se",
+   "n_samples": 16,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE155345",
+   "title": "A Multi-Omics Approach to Epstein-Barr Virus (EBV) Immortalization of B-Cells Reveals Viral-Induced Changes in",
+   "n_samples": 16,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE328411",
+   "title": "ChIP-seq of GLTSCR1 and SS18::SSX fusion in HS-SY-II synovial sarcoma cells treated with the BRD9 PROTAC degra",
+   "n_samples": 14,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE282762",
+   "title": "Epigenomic manipulation reveals the relationship between locus specific chromatin dynamics and gene expression",
+   "n_samples": 12,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE282758",
+   "title": "Disruption of histone acetylation homeostasis reveals multilayered chromatin regulation for transcriptional re",
+   "n_samples": 12,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE343497",
+   "title": "Stepwise reorganization of chromosome conformation and nuclear organization during stem cell differentiation [",
+   "n_samples": 10,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  },
+  {
+   "acc": "GSE328412",
+   "title": "RNA-seq of HS-SY-II synovial sarcoma cells treated with the BRD9 PROTAC degrader WA-68 across a time course",
+   "n_samples": 10,
+   "gdstype": "Expression profiling by high throughput sequencing"
+  },
+  {
+   "acc": "GSE276177",
+   "title": "Divergence from the human astrocyte developmental trajectory in glioblastoma",
+   "n_samples": 10,
+   "gdstype": "Expression profiling by high throughput sequencing; Genome b"
+  },
+  {
+   "acc": "GSE329313",
+   "title": "Hyperosmotic stress induces a large-scale rewiring of 3D chromatin interactions",
+   "n_samples": 8,
+   "gdstype": "Genome binding/occupancy profiling by high throughput sequen"
+  }
+ ],
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [],
+  "coverage": {
+   "available": 54,
+   "used": 53,
+   "selection": "filtered",
+   "fraction": 0.9814814814814815
+  },
+  "seed": 0,
+  "controls": [
+   "the query checked against A549 as a positive control before any absence is believed",
+   "GEO reported as a shortlist rather than a parsed count"
+  ],
+  "note": "search for a series dense enough to replicate the accessibility clock",
+  "warnings": []
+ },
+ "seconds": 12.390217304229736,
+ "log": [
+  "========================================================================================================",
+  "LOOP 197  IS THERE A PUBLIC SERIES DENSE ENOUGH TO REPLICATE THE ACCESSIBILITY CLOCK?",
+  "========================================================================================================",
+  "  PREDECLARED: qualifying means >= 8 timepoints carrying BOTH an accessibility",
+  "  assay and RNA, in ONE cell system, spanning at most 24 hours -- four",
+  "  is measured too few (loops 192, 196), the A549 series that works has eleven, and an",
+  "  hour-scale effect cannot be resolved over days however many points there are. The",
+  "  ENCODE query is BROADENED beyond loop 192's treatment-duration filter, which could not",
+  "  see a differentiation series. Y1 checks the query can find A549 before any absence is",
+  "  believed. The GEO arm is a shortlist and says so: its timepoints live in prose and",
+  "  parsing a count out of prose would give it standing it has not earned.",
+  "",
+  "Y1 CAN THE SEARCH FIND WHAT IT IS LOOKING FOR?",
+  "     5,792 released human accessibility/RNA experiments returned",
+  "     positive control: A549 / treatment:dexamethasone -- 11 matched timepoints over 11.5 h  [30.0, 60.0, 120.0, 180.0, 240.0, 300.0, 360.0, 420.0, 480.0, 600.0, 720.0]",
+  "     Y1 PASS -- the broadened query recovers the A549 series at 11 matched timepoints, so an absence below is about the archive and not about the query",
+  "",
+  "Y2 DOES ENCODE HOLD ANYTHING ELSE?",
+  "     53 (cell, time-source) series carry at least one matched timepoint",
+  "     top by matched timepoint count:",
+  "         4 pts  span     5.0 h  dendritic cell                     treatment:lipopolysaccharide       too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:Panobinostat             too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:Galeterone               too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:Chaetocin                too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:C646                     too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:MB-3                     too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:Bortezomib               too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:Crizotinib               too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:AR-42                    too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:Vorinostat               too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:GSK J4                   too coarse",
+  "         4 pts  span    44.0 h  K562                               treatment:JQ1                      too coarse",
+  "     Y2 FAIL -- no other ENCODE series reaches 8 matched timepoints within 24 hours. The A549 series is the archive's only densely sampled matched accessibility/RNA course",
+  "",
+  "Y3 DOES GEO? -- a shortlist, not a decision",
+  "     59 distinct GEO series across 3 queries",
+  "          GSE256354  2765 samples  Hypomethylating agents induce epigenetic and transcriptional heterogeneity with implications for acute myeloid",
+  "          GSE316178   658 samples  LncRNAs coordinate doxycycline-induced gene expression response in human iPSCs (RNA-seq)",
+  "          GSE315440   341 samples  LncRNAs coordinate doxycycline-induced gene expression response in human iPSCs (ATAC-seq)",
+  "          GSE335210   173 samples  SOX9-BAF multi-omics profiling in human colon cancer cell models",
+  "          GSE175533   147 samples  Revisiting the Hayflick Limit: Insights from an Integrated Analysis of Changing Transcripts, Proteins, Metabol",
+  "          GSE164361   118 samples  Comparative Chromatin Dynamics and Expression Profiles of Neural Progenitor and Definitive Endoderm Lineage Di",
+  "          GSE155604   115 samples  BANP opens chromatin and activates CpG-island-regulated genes",
+  "          GSE276176   101 samples  Divergence from the human astrocyte developmental trajectory in glioblastoma [bulk RNA]",
+  "          GSE201376    88 samples  Temporal analysis suggests a reciprocal relationship between 3D chromatin structure and transcription",
+  "          GSE164498    80 samples  Uncovering the Gene Regulatory Networks Underlying Macrophage Polarization Through Comparative Analysis of Bul",
+  "          GSE343495    73 samples  Stepwise reorganization of chromosome conformation and nuclear organization during stem cell differentiation [",
+  "          GSE343494    59 samples  Stepwise reorganization of chromosome conformation and nuclear organization during stem cell differentiation [",
+  "     these counts are SAMPLES, not matched timepoints. GEO records the time grid in free",
+  "     text, so which of these carry >= 8 matched accessibility and RNA points cannot be",
+  "     read from the metadata and is not claimed here.",
+  "     Y3 (descriptive)",
+  "",
+  "Y4 IS THE CLOCK REPLICABLE WITH PUBLIC DATA?",
+  "     Y4 FAIL -- and this is the finding. No structured public series other than A549 is dense enough. The GEO shortlist may contain one, but that cannot be established from metadata and needs a per-series check",
+  "",
+  "Y5 THE CAVEAT IS WRITTEN EITHER WAY",
+  "     wrote NOTES_accessibility_clock_status.md",
+  "     Y5 PASS -- NOTES_accessibility_clock_status.md records what is measured, what is not established, and how the number must be quoted",
+  "",
+  "Y6 WHAT THIS CANNOT SHOW",
+  "     An absence in a structured archive is not an absence in the literature. ENCODE models",
+  "     time in three fields and this loop reads all three, but a series that records its",
+  "     grid only in a description is invisible to it and would be invisible to any query.",
+  "     The 8-point threshold is a guess placed between the 4 that is measured to fail and",
+  "     the 11 that works. Nothing here establishes that 8 is sufficient -- a candidate found",
+  "     at 8 would still have to pass loop 192's W3 calibration before being believed.",
+  "     The GEO arm ranks by sample count, which is not timepoint count. A 200-sample series",
+  "     may be one timepoint across many conditions.",
+  "     This loop searched human data only. A dense mouse series would be a weaker but real",
+  "     test and is not considered here.",
+  "     Y6 PASS",
+  "",
+  "========================================================================================================",
+  "  Y1  PASS",
+  "  Y2  FAIL",
+  "  Y3  PASS",
+  "  Y4  FAIL",
+  "  Y5  PASS",
+  "  Y6  PASS",
+  "  4/6   [12s]",
+  "========================================================================================================"
+ ]
+}

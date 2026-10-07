@@ -1,0 +1,14 @@
+{
+  "question": "Does adding more public Perturb-seq screens raise the 55% trustworthy coverage?",
+  "screens_combined": {
+    "K562_gwps": 8693,
+    "+RPE1": "+2",
+    "+K562_essential": "+1",
+    "+Norman2019": "+16",
+    "combined_total": 8712
+  },
+  "trustworthy_before": 0.55,
+  "trustworthy_after": 0.55,
+  "catalog_surveyed": "scPerturb (50 datasets)",
+  "verdict": "NO. All available large Perturb-seq screens target the same K562-expressed / essential-gene space the genome-wide screen already covers, so the union adds only ~19 genes (55%->55%). The only screen that could add many new genes (Joung 2023 TF atlas, ~1,700 TFs) is OVEREXPRESSION -- a different modality from the knockdown debugger -- and 5.8GB (download throttled). The deeper barrier: the ~7,800 unmeasured genes are largely NOT EXPRESSED in K562, so no K562 screen reaches them, and no public genome-scale KNOCKOUT Perturb-seq exists in a complementary cell type. The 55% ceiling is DATA-GENERATION-limited (needs new wet-lab screens in other cell types), not fetch-limited."
+}

@@ -1,0 +1,73 @@
+=================================================================================================
+CHOOSING THE BASE POINT FOR THE HYBRID TEST
+=================================================================================================
+  Superseding an unbounded-birth model that failed its own cap criterion; see the
+  CORRECTION block in this file's docstring for the numbers that condemned it.
+
+2  EXACTNESS OF THE CLOSED STATE SPACE  (replaces the failed cap-convergence criterion)
+  states in the triangle g+d <= 20: 231   (a 21x21 grid would be 441)
+  worst |column sum| of the generator: 2.64e-15   (exact conservation if ~1e-15)
+  propagated mass with NO renormalisation: 0.999999999999997, 0.999999999999995, 0.999999999999993
+  worst deviation from 1: 6.55e-15
+
+3  K, g0 AND cycles -- Y must not be saturated, and needs upward headroom
+     K  states  g0              Y   headroom up   ms/eval
+    14     120   4   6.685579e-02         1.175      4.13
+    14     120   6   1.738663e-02         1.760      4.05
+    14     120   8   4.540911e-03         2.343      3.99
+    20     231   4   6.656058e-02         1.177     21.66
+    20     231   6   1.723690e-02         1.764     23.45
+    20     231   8   4.475797e-03         2.349     22.96
+    26     378   4   6.640959e-02         1.178     98.93
+    26     378   6   1.716150e-02         1.765     87.26
+    26     378   8   4.443557e-03         2.352     87.20
+  CHOICE: K = 20, g0 = 6, cycles = 3 for the main run; g0 = 8 for the depth gate.
+  K is a carrying capacity, a property of the model. Y still depends on it -- more room to
+  regrow means harder eradication -- and that dependence is biology, not truncation.
+
+4  SENSITIVITIES AT THE CHOSEN BASE POINT, WITH SIGNS
+  base Y = 1.723690e-02
+       rate  phase    S (h=.02)    S (h=.01)   rel change
+         mu    off      -0.1324      -0.1325     2.31e-04
+      a_off    off      +0.0078      +0.0078     4.03e-04
+      b_off    off      -0.0484      -0.0484     2.56e-04
+    d_death    off      +0.9434      +0.9434     4.76e-05
+     k_kill     on      +1.9685      +1.9688     1.29e-04
+       a_on     on      -1.6757      -1.6760     1.80e-04
+       b_on     on      +0.1435      +0.1435     2.07e-04
+    kd_kill     on      +0.9126      +0.9125     5.49e-05
+  worst step-halving change 4.03e-04   (a derivative, not a difference, if < 1%)
+  signed sum +2.1193   quadrature norm 2.9063   correlated/independent ratio 0.7292
+  greedy order by |S|: ['k_kill', 'a_on', 'd_death', 'kd_kill', 'b_on', 'mu', 'b_off', 'a_off']
+  near-ties, where greedy has the least to stand on:
+    d_death (0.9434) vs kd_kill (0.9126) -- ratio 1.034
+    b_on (0.1435) vs mu (0.1324) -- ratio 1.084
+
+5  THE LINEAR PREDICTION, WRITTEN DOWN BEFORE THE MONTE-CARLO CAN SEE IT
+  Measure the top m by |S| exactly, let chemistry supply the rest at sigma = eps*0.7328
+  orders. Residual spread sd(m) = sigma * sqrt(sum of S^2 over the UNMEASURED rates).
+  A two-sided 90% band needs 1.645*sd(m) <= delta, delta = 0.3010 (x2) or 1.0000 (x10).
+    m  measured last   resid |S|   sd@0.5   sd@1.0   sd@2.0   m* x2  m* x10
+    0             --      2.9063   1.0651   2.1302   4.2605
+    1         k_kill      2.1380   0.7836   1.5672   3.1343
+    2           a_on      1.3279   0.4867   0.9733   1.9467
+    3        d_death      0.9345   0.3425   0.6850   1.3700
+    4        kd_kill      0.2013   0.0738   0.1476   0.2952
+    5           b_on      0.1412   0.0518   0.1035   0.2070
+    6             mu      0.0490   0.0180   0.0359   0.0718
+    7          b_off      0.0078   0.0028   0.0057   0.0114
+    8          a_off      0.0000   0.0000   0.0000   0.0000
+  PREDICTED SMALLEST m REACHING 90% COVERAGE:
+    eps = 0.5 kcal/mol :  within x2 needs m = 4,   within x10 needs m = 2   (of 8)
+    eps = 1.0 kcal/mol :  within x2 needs m = 4,   within x10 needs m = 4   (of 8)
+    eps = 2.0 kcal/mol :  within x2 needs m = 6,   within x10 needs m = 4   (of 8)
+
+6  COST FORECAST FOR hybrid.py
+  one matrix exponential at n = 231: 10.36 ms, one BLAS thread
+  the 4/4 phase split means 16 + 16 = 32 exponentials per trial cover all 256 subsets
+  naive cost would be 256 subsets x 2 exponentials = 512 per trial, a 16x saving
+  full enumeration at 3 error levels, N_TRIALS = 600: 10.0 minutes of exponentials
+  binomial standard error at p = 0.9, n = 600: 0.0122
+  CHOICE: N_TRIALS = 600, common random numbers shared across all subsets, so that
+  greedy and its competitors are compared on identical draws and the paired standard
+  error of a subset-vs-subset difference is far below the unpaired one.

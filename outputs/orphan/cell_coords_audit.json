@@ -1,0 +1,131 @@
+{
+  "test": "cell_coords",
+  "written": true,
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/science_data/genes.parquet",
+        "bytes": 4442866,
+        "hash": "0eb2dd458cd4dabf",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/invivo/crispr_egpairs.tsv",
+        "bytes": 3298116,
+        "hash": "3fe657eaceb46a8a",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 16492,
+      "used": 16460,
+      "selection": "filtered",
+      "fraction": 0.9980596652922629
+    },
+    "seed": 8891,
+    "controls": [
+      "permuted symbol join",
+      "independent strand (crispr_egpairs)"
+    ],
+    "note": "genes matched to GRCh38.p14 by HGNC symbol then Ensembl external name",
+    "warnings": []
+  },
+  "true": {
+    "matched": 16357,
+    "chrom_agree": 16355,
+    "exact_tss": 1088,
+    "within_10kb": 15018,
+    "median_offset_bp": 75.0,
+    "chrom_frac": 0.9998777281897658,
+    "near_frac": 0.9181390230482362
+  },
+  "permuted": {
+    "matched": 16357,
+    "chrom_agree": 839,
+    "exact_tss": 0,
+    "within_10kb": 1,
+    "median_offset_bp": 49851462.0,
+    "chrom_frac": 0.05129302439322614,
+    "near_frac": 6.113590511707526e-05
+  },
+  "independent_strand": {
+    "overlap": 2026,
+    "agree": 2024,
+    "disagree": 2,
+    "frac": 0.9990128331688055,
+    "examples": [
+      "CSAG1",
+      "MAGEA6"
+    ],
+    "source_genes": 2146
+  },
+  "source_meta": {
+    "source": "Ensembl BioMart (mcp-biomart connector; ENSEMBL_MART_ENSEMBL / hsapiens_gene_ensembl)",
+    "source_version": "Ensembl human genes GRCh38.p14 (dataset display: 'Human genes (GRCh38.p14)')",
+    "retrieved_on": "2026-07-13"
+  },
+  "genome": {
+    "build_evidence": "GRCh38",
+    "status": "INFERRED from consistency with a declared-GRCh38 source, not declared by this file",
+    "declared_by": "outputs/orphan/science_data/genes.parquet",
+    "declared_build": "Ensembl human genes GRCh38.p14 (dataset display: 'Human genes (GRCh38.p14)')",
+    "source": "Ensembl BioMart (mcp-biomart connector; ENSEMBL_MART_ENSEMBL / hsapiens_gene_ensembl)",
+    "retrieved_on": "2026-07-13",
+    "evidence": {
+      "symbol_matched": 16357,
+      "chrom_agree_frac": 0.9998777281897658,
+      "median_tss_offset_bp": 75.0,
+      "within_10kb_frac": 0.9181390230482362,
+      "exact_tss_frac": 0.06651586476737788,
+      "permuted_chrom_agree_frac": 0.05129302439322614
+    },
+    "caveat": "`tss` is NOT from this source and its provenance is unrecorded; `ens_tss` is the GRCh38.p14 annotated TSS and the two differ by a median of 75 bp",
+    "fields_added": [
+      "strand",
+      "gene_start",
+      "gene_end",
+      "ens_tss"
+    ],
+    "coverage": {
+      "with_strand": 16460,
+      "without": 32,
+      "total": 16492
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "ADD STRAND AND A GENOME BUILD TO cell_complete.json",
+    "====================================================================================================",
+    "  strand is absent from all 16,492 gene records, which kills every SIGNED mechanism -- there",
+    "  is no 'behind the polymerase' without it. And no build is declared in the file that carries",
+    "  the coordinates, so they cannot be joined to an external track with confidence.",
+    "\n  SOURCE  outputs/orphan/science_data/genes.parquet",
+    "    86411 rows, 41827 symbols on primary assemblies",
+    "    source          Ensembl BioMart (mcp-biomart connector; ENSEMBL_MART_ENSEMBL / hsapiens_gene_ensembl)",
+    "    source_version  Ensembl human genes GRCh38.p14 (dataset display: 'Human genes (GRCh38.p14)')",
+    "    retrieved_on    2026-07-13",
+    "\n  TARGET  outputs/orphan/cell_complete.json   16492 gene records",
+    "\n  CONTROL A -- is the symbol join real? permuted mapping must collapse",
+    "        statistic                         TRUE    PERMUTED",
+    "        matched by symbol                16357       16357",
+    "        chromosome agrees              100.0%        5.1%",
+    "        TSS within 10 kb                91.8%        0.0%",
+    "        median |offset| bp                  75  49,851,462",
+    "\n  CONTROL B -- strand against an INDEPENDENT source (crispr_egpairs.tsv strandGene)",
+    "    2026 genes overlap; agree 2024, disagree 2 (99.90%)",
+    "    disagreements: CSAG1, MAGEA6",
+    "\n  THE BUILD -- what can be claimed",
+    "    genes.parquet DECLARES its build: Ensembl human genes GRCh38.p14 (dataset display: 'Human genes (GRCh38.p14)')",
+    "    cell_complete does NOT. No module in this repo writes `tss`; every one reads it, so its",
+    "    provenance is upstream and unrecorded. The build is therefore INFERRED from consistency:",
+    "      chromosome agrees 100.0%, median TSS offset 75 bp, 91.8% within 10 kb",
+    "    A build mismatch moves genes by 1e4-1e7 bp. 75 bp does not",
+    "    look like that; it looks like a different transcript annotation (gene start vs canonical",
+    "    TSS), which is why only 6.7% match exactly and",
+    "    why the annotated TSS is written as a SEPARATE field rather than overwriting `tss`.",
+    "\n  PATCHED  strand + gene_start + gene_end + ens_tss on 16460 of 16492 records (99.8%); 32 left null rather than guessed",
+    "  PATCHED  top-level `genome` block with the evidence above",
+    "    manifest: 2 inputs, coverage 16460/16492 (99.8%) by 'filtered', seed 8891, controls 2"
+  ]
+}

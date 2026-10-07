@@ -1,0 +1,118 @@
+{
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "walk_steps": 2,
+ "walk_damping": 0.5,
+ "scores": {
+  "curated": [
+   0.5044282978081887,
+   0.49685453015594966,
+   0.433993268803886
+  ],
+  "__TIDE-null": [
+   0.26442391327567494,
+   0.2460632244465115,
+   0.2359538220411241,
+   0.26442391327567494,
+   0.2460632244465115,
+   0.2359538220411241,
+   0.26442391327567494,
+   0.2460632244465115,
+   0.2359538220411241,
+   0.26442391327567494,
+   0.2460632244465115,
+   0.2359538220411241
+  ],
+  "__ORACLE* (ceiling)": [
+   0.6463036214375751,
+   0.6074632744920468,
+   0.5673734488381561,
+   0.6463036214375751,
+   0.6074632744920468,
+   0.5673734488381561,
+   0.6463036214375751,
+   0.6074632744920468,
+   0.5673734488381561,
+   0.6463036214375751,
+   0.6074632744920468,
+   0.5673734488381561
+  ],
+  "__MLP-self (feats, no neighbourhood)": [
+   0.44566645712385494,
+   0.45427463124072504,
+   0.3788354886293041,
+   0.43404807874568185,
+   0.3786276363025354,
+   0.3713360869360474,
+   0.4648380034343287,
+   0.43350593337261706,
+   0.39498957497894277,
+   0.4403820230889548,
+   0.4722712190565037,
+   0.3316595859361139
+  ],
+  "markov": [
+   0.4848037831808683,
+   0.4889463653158234,
+   0.43478876862439514
+  ],
+  "union": [
+   0.5056272423974315,
+   0.4999275221380408,
+   0.42138659583266014
+  ],
+  "markov_rewired": [
+   0.15829349677124144,
+   0.17528532675115688,
+   0.14155890210639147
+  ]
+ },
+ "aggregate": {
+  "curated": {
+   "mean": 0.4784253655893414,
+   "sd": 0.03157001644679737
+  },
+  "markov": {
+   "mean": 0.46951297237369566,
+   "sd": 0.02461189402441311
+  },
+  "union": {
+   "mean": 0.4756471201227108,
+   "sd": 0.03843847963462492
+  },
+  "markov_rewired": {
+   "mean": 0.15837924187626326,
+   "sd": 0.013768888698730346
+  }
+ },
+ "references": {
+  "tide": 0.24881365325443683,
+  "oracle": 0.6070467815892593,
+  "mlp_self": 0.41670289323713416
+ },
+ "paired": {
+  "markov_minus_curated": {
+   "mean": -0.008912393215645817,
+   "se": 0.0059160967843401675,
+   "verdict": "indistinguishable"
+  },
+  "union_minus_curated": {
+   "mean": -0.002778245466630617,
+   "se": 0.0049439020964373755,
+   "verdict": "indistinguishable"
+  },
+  "markov_minus_rewired": {
+   "mean": 0.31113373049743237,
+   "se": 0.009689978527508337,
+   "verdict": "BETTER"
+  }
+ },
+ "walk_helps": false,
+ "wiring_beats_rewired": true,
+ "best_arm": "curated",
+ "verdict": "TRANSFORMER x MARKOV WALK: change the TOKENS, not the architecture. The architecture here is already exhausted -- transformer_graphnet got +0.004 from message-passing over curated wiring and +0.005 against SHUFFLED wiring of the same density, transformer_selfgraph found a self-built kNN graph LOSES to curated (0.340 vs 0.462), transformer_ko6 found regulatory features HURT by 0.021, and ceiling_cartography put the remaining encoder head-room near +0.012 -- so no architectural change was attempted. What IS new is a specific reason to doubt the INPUT: transformer_graphnet's 'wiring adds nothing' was measured on the CURATED graph, and this session established that the curated map is 94% disjoint from measured causality, while the PPI walk's advantage is real wiring rather than hubness (collapses 0.4725 -> 0.1516 under a degree-preserving rewire, z=+46). So only the partner source varies, over one shared feature matrix built on the union token universe. RESULT (3 seeds, tide-null 0.249, oracle 0.607): curated 0.4784, markov-walk 0.4695, union 0.4756, rewired-walk control 0.1584. THE WALK NEIGHBOURHOOD DOES NOT HELP: markov - curated = -0.0089 +- 0.0059 (indistinguishable) and union - curated = -0.0028 +- 0.0049 (indistinguishable). transformer_graphnet's finding therefore stands and generalises -- for THIS encoder a knockout is well described as a bag of partners, and it does not matter much which sensible graph supplies them. The walk's large advantage as a standalone retrieval scorer (0.4763, above every hand-built component) does NOT transfer into the transformer, because the encoder was already extracting that information from the curated bag. The rewired control confirms the tokens are chosen by wiring rather than degree (+0.3111 +- 0.0097). Best configuration: curated at 0.4784, closing 64% of the tide-to-oracle head-room. NO LEAKAGE BY CONSTRUCTION: the walk uses only the static PPI graph and touches no response data, unlike the measured causal graph that won in bridge_measured, so it needs no edge-level train/test partitioning. WHAT THIS CANNOT SAY: three seeds is a small paired sample and differences below ~0.01 are not resolvable here. This tests the WALK neighbourhood, not the MEASURED-CAUSAL one that won in bridge_measured -- that would require rebuilding the token context per split to avoid leaking response data into the tokens, which is the obvious follow-up and is not done here. Deterministic given the fixed seeds.",
+ "note": "TRANSFORMER x MARKOV WALK: change the TOKENS, not the architecture. The architecture here is already exhausted -- transformer_graphnet got +0.004 from message-passing over curated wiring and +0.005 against SHUFFLED wiring of the same density, transformer_selfgraph found a self-built kNN graph LOSES to curated (0.340 vs 0.462), transformer_ko6 found regulatory features HURT by 0.021, and ceiling_cartography put the remaining encoder head-room near +0.012 -- so no architectural change was attempted. What IS new is a specific reason to doubt the INPUT: transformer_graphnet's 'wiring adds nothing' was measured on the CURATED graph, and this session established that the curated map is 94% disjoint from measured causality, while the PPI walk's advantage is real wiring rather than hubness (collapses 0.4725 -> 0.1516 under a degree-preserving rewire, z=+46). So only the partner source varies, over one shared feature matrix built on the union token universe. RESULT (3 seeds, tide-null 0.249, oracle 0.607): curated 0.4784, markov-walk 0.4695, union 0.4756, rewired-walk control 0.1584. THE WALK NEIGHBOURHOOD DOES NOT HELP: markov - curated = -0.0089 +- 0.0059 (indistinguishable) and union - curated = -0.0028 +- 0.0049 (indistinguishable). transformer_graphnet's finding therefore stands and generalises -- for THIS encoder a knockout is well described as a bag of partners, and it does not matter much which sensible graph supplies them. The walk's large advantage as a standalone retrieval scorer (0.4763, above every hand-built component) does NOT transfer into the transformer, because the encoder was already extracting that information from the curated bag. The rewired control confirms the tokens are chosen by wiring rather than degree (+0.3111 +- 0.0097). Best configuration: curated at 0.4784, closing 64% of the tide-to-oracle head-room. NO LEAKAGE BY CONSTRUCTION: the walk uses only the static PPI graph and touches no response data, unlike the measured causal graph that won in bridge_measured, so it needs no edge-level train/test partitioning. WHAT THIS CANNOT SAY: three seeds is a small paired sample and differences below ~0.01 are not resolvable here. This tests the WALK neighbourhood, not the MEASURED-CAUSAL one that won in bridge_measured -- that would require rebuilding the token context per split to avoid leaking response data into the tokens, which is the obvious follow-up and is not done here. Deterministic given the fixed seeds."
+}

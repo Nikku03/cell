@@ -1,0 +1,152 @@
+{
+  "test": "physics_doctrine",
+  "n_pt": 700,
+  "rules": [
+    {
+      "rule": 1,
+      "name": "speed is structure, not arithmetic",
+      "checked": false,
+      "note": "Every large factor measured in this repo came from noticing the system HAD A PROPERTY and then not doing the work that property made unnecessary -- not from faster arithmetic, and not from a network that predicts forces. This is a claim about where to look. It cannot be unit-tested, and saying so is more honest than inventing a check that would pass either way."
+    },
+    {
+      "rule": 2,
+      "name": "every test must be able to fail",
+      "checked": true,
+      "verdict": "HOLDS",
+      "note": "7 probes audited; controls (declared, unfalsifiable by construction): ['linearity -> superposition']; discriminators all seen failing somewhere"
+    },
+    {
+      "rule": 3,
+      "name": "a threshold must be anchored to something invariant",
+      "checked": true,
+      "verdict": "HOLDS",
+      "note": "n_null 6 unchanged when the operator is multiplied by 1e12 (gap 1.45e+13 -> 1.45e+13)"
+    },
+    {
+      "rule": 4,
+      "name": "\"could not tell\" is not \"none\"",
+      "checked": true,
+      "verdict": "HOLDS",
+      "note": "grounded operator: noise 4.8e-02 relative, calibration declined, verdict NOT TESTABLE"
+    },
+    {
+      "rule": 5,
+      "name": "graded, not binary",
+      "checked": true,
+      "verdict": "HOLDS",
+      "note": "1.5x from the threshold -> MARGINAL; 1e6x over -> FAILS; 1e-6x under -> HOLDS"
+    },
+    {
+      "rule": 6,
+      "name": "two independent computations, or you will not notice",
+      "checked": true,
+      "verdict": "HOLDS",
+      "note": "setup 6 @ gap 1.45e+13; independent k=64 solve 6 @ gap 1.45e+13"
+    },
+    {
+      "rule": 7,
+      "name": "a probe must confirm it perturbed something",
+      "checked": true,
+      "verdict": "HOLDS",
+      "note": "a perturbation of 5.0e-02 bond lengths -> NOT TESTABLE"
+    },
+    {
+      "rule": 8,
+      "name": "the negative is the deliverable",
+      "checked": true,
+      "verdict": "HOLDS",
+      "note": "a FAILS record carries the same fields as a HOLDS record"
+    },
+    {
+      "rule": 9,
+      "name": "predeclare",
+      "checked": false,
+      "note": "The gates go in the docstring before the run, so that a surprising number cannot be reinterpreted after the fact into a result. Nothing mechanical can verify this -- the check would be whether I wrote the gate before or after seeing the number, and only the commit history knows that. Claimed, not proven, and marked as such."
+    }
+  ],
+  "mutations": [
+    {
+      "mutation": "absolute cut instead of the gap",
+      "rule": 3,
+      "caught": true,
+      "note": "n_null CHANGED under pure rescaling: 6 -> 0"
+    },
+    {
+      "mutation": "assume the calibration is valid",
+      "rule": 4,
+      "caught": true,
+      "note": "grounded operator answered anyway: calibrated=True, verdict FAILS"
+    },
+    {
+      "mutation": "binary verdicts (BAND = 1)",
+      "rule": 5,
+      "caught": true,
+      "note": "grading collapsed: FAILS / FAILS / HOLDS"
+    },
+    {
+      "mutation": "desynchronise the two gap computations",
+      "rule": 6,
+      "caught": true,
+      "note": "THE TWO DISAGREE: setup 6 @ 1.45e+13, independent 6 @ 1.45e+19"
+    },
+    {
+      "mutation": "grade without the amplitude window",
+      "rule": 7,
+      "caught": true,
+      "note": "graded a non-perturbation: HOLDS"
+    }
+  ],
+  "violated": [],
+  "vacuous": [],
+  "log": [
+    "====================================================================================================",
+    "THE DOCTRINE -- the rules, and a check for each that can fail",
+    "====================================================================================================",
+    "  Every rule below is the generalisation of a specific defect that produced a specific wrong",
+    "  number in this repo. Stated principles are free, so each one that can be checked is checked",
+    "  against the toolchain as it stands -- and each check is then run against a deliberate",
+    "  reintroduction of the original defect, because a check that cannot fail is not a check.",
+    "\n  corpus: 700 points, three operators (plain, rescaled 1e12, grounded)",
+    "\n  DECLARED CONTROLS -- exempt from rule 2, and never counted as a reduction",
+    "    linearity -> superposition",
+    "      cannot fail on a linear solver -- every Hessian is linear, so this verifies the operator and",
+    "      the solve rather than a property of the system. A FAILS here means the Hessian is wrong and",
+    "      nothing else in the run means anything. It is the reason probe_finite_linearity exists.",
+    "\n  #  rule                                                verdict       ",
+    "  1  speed is structure, not arithmetic                  NOT CHECKABLE ",
+    "      Every large factor measured in this repo came from noticing the system HAD A PROPERTY and then",
+    "      not doing the work that property made unnecessary -- not from faster arithmetic, and not from",
+    "      a network that predicts forces. This is a claim about where to look. It cannot be unit-tested,",
+    "      and saying so is more honest than inventing a check that would pass either way.",
+    "  2  every test must be able to fail                     HOLDS         ",
+    "      7 probes audited; controls (declared, unfalsifiable by construction): ['linearity -> superposition']; discriminators all seen failing somewhere",
+    "  3  a threshold must be anchored to something invariant HOLDS         ",
+    "      n_null 6 unchanged when the operator is multiplied by 1e12 (gap 1.45e+13 -> 1.45e+13)",
+    "  4  \"could not tell\" is not \"none\"                      HOLDS         ",
+    "      grounded operator: noise 4.8e-02 relative, calibration declined, verdict NOT TESTABLE",
+    "  5  graded, not binary                                  HOLDS         ",
+    "      1.5x from the threshold -> MARGINAL; 1e6x over -> FAILS; 1e-6x under -> HOLDS",
+    "  6  two independent computations, or you will not noticeHOLDS         ",
+    "      setup 6 @ gap 1.45e+13; independent k=64 solve 6 @ gap 1.45e+13",
+    "  7  a probe must confirm it perturbed something         HOLDS         ",
+    "      a perturbation of 5.0e-02 bond lengths -> NOT TESTABLE",
+    "  8  the negative is the deliverable                     HOLDS         ",
+    "      a FAILS record carries the same fields as a HOLDS record",
+    "  9  predeclare                                          NOT CHECKABLE ",
+    "      The gates go in the docstring before the run, so that a surprising number cannot be",
+    "      reinterpreted after the fact into a result. Nothing mechanical can verify this -- the check",
+    "      would be whether I wrote the gate before or after seeing the number, and only the commit",
+    "      history knows that. Claimed, not proven, and marked as such.",
+    "\n  MUTATION TEST -- reintroduce each original defect and confirm its rule catches it",
+    "  mutation                                    rule  caught    ",
+    "  absolute cut instead of the gap             3     yes       ",
+    "  assume the calibration is valid             4     yes       ",
+    "  binary verdicts (BAND = 1)                  5     yes       ",
+    "  desynchronise the two gap computations      6     yes       ",
+    "  grade without the amplitude window          7     yes       ",
+    "\n  READING",
+    "    7 of 9 rules are mechanically checkable; 2 are claims about method and are marked as unproven.",
+    "    No rule is violated by the current toolchain.",
+    "    Every check caught its own mutation, so none of them is decorative."
+  ]
+}

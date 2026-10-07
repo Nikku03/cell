@@ -1,0 +1,106 @@
+=================================================================================================
+VALIDATING THE COUNT SUMMARY AGAINST REAL PROMOTER MEASUREMENTS
+=================================================================================================
+  Sharon et al. 2012, Nature Biotechnology 30:521-30, doi:10.1038/nbt.2205, found via
+  PubMed. Data from NCBI GEO GSE37851 (GSM929011/GSM929012), sha256[:32] 6a68ee26db7a1d3f4813ae29ed4e69bd.
+  6016 designed yeast promoters with both replicates and a parsed context.
+  Design varies site COUNT and site IDENTITY independently, which is what makes it the
+  right experiment: if expression is a function of how many sites there are, promoters
+  with the same count but different factors should be interchangeable.
+
+=================================================================================================
+V1  THE REPLICATE NOISE FLOOR, MEASURED BEFORE ANY MODEL IS FITTED
+=================================================================================================
+  replicate Pearson r on log2 expression : 0.9974
+  RMS replicate-to-replicate difference   : 0.1646 log2 units
+  noise in a SINGLE replicate             : 0.1164 log2
+  NOISE FLOOR, the noise in y = (l1+l2)/2 : 0.0823 log2
+  The first version of this module used the per-replicate figure as the floor, which is
+  sqrt(2) too large, because y is the MEAN of two replicates and not one of them. Every
+  'floors' number in this module and in signed/poscount/multiplier was understated by
+  1.414x. Checked empirically: std(l1 - y) = 0.0823.
+  Correcting it makes every REFUTATION stronger and every VALIDATION margin tighter; no
+  gate verdict in the arc changes, which was checked before the change was made.
+  No model difference smaller than this is a result.
+
+=================================================================================================
+V2  THE BASELINE THAT MUST FAIL
+=================================================================================================
+  restricted to the 5790 promoters carrying at least one TF site
+    model                               held-out RMSE   fallback
+    context only (no site info)                1.9570      0.6%
+    context + site COUNT                       1.8960      2.6%
+    context + factor IDENTITY                  1.1641     11.1%
+  spread of the response itself: 2.0155 log2
+  best site model beats the no-site baseline by 9.63 floors
+  the COUNT model alone beats it by only 0.74 floors -- which is
+  a result for V3, not a gate failure. The first run tested V2 against the count model and
+  reported FAIL, conflating 'the data cannot test this' with 'the count is useless'.
+  V2: PASS -- the data test site dependence decisively
+
+=================================================================================================
+V3  COUNT AGAINST IDENTITY, HELD OUT
+=================================================================================================
+  count model RMSE    1.8960
+  identity model RMSE 1.1641
+  identity advantage  +0.7319 log2   against a noise floor of 0.0823
+  ratio to floor      8.89
+  V3: the count summary is REFUTED on this data -- identity buys more than the noise
+      floor, by a factor of 8.9.
+
+  ridge-regression check, in case the group-mean estimator is doing the work:
+    context only 1.9408   +count 1.9055   +per-factor counts 1.1299
+
+=================================================================================================
+V4  WHERE DOES IT BREAK?
+=================================================================================================
+     site count      n   count RMSE  identity RMSE  gap/floor
+              1   2133       1.6611         1.0039       7.99
+              2   3018       2.0226         1.2594       9.27
+              3    385       2.0444         1.0704      11.84
+              4    114       1.8651         1.6250       2.92
+              5     76       2.2003         1.9348       3.23
+
+  the factors whose identity matters most (single-site promoters, one context):
+    factor                        n  mean log2 shift vs context mean
+    MATALPHA2                    14                           -3.794
+    GAL4                         98                            2.328
+    ADR1                         16                           -1.606
+    MIG1_2                       18                           -1.549
+    CBF1                         11                           -1.456
+    GCN4                        141                            1.444
+    FHL1                         18                           -1.316
+    GCR1                         28                           -1.128
+    BAS1_Hovring                 23                           -1.088
+    SWI4                         14                           -1.077
+
+=================================================================================================
+V5  THE AXIS A COUNT ALSO DISCARDS: POSITION AND ORIENTATION
+=================================================================================================
+  The same paper reports a ~10 bp periodic dependence of expression on site location. A
+  count discards position too, so if position carries more than identity then
+  count-versus-identity is not the operative question.
+    identity only                    1.1641
+    identity + orientation           1.1945   gain -0.37 floors
+    identity + position (10 bp bins) 1.3774   gain -2.59 floors
+    fallback rates: identity 11.1%, +orientation 13.9%, +position 25.7%
+    Both refinements make it WORSE, and the fallback column says why: finer groups are
+    sparser, so the held-out promoter more often has no training group and drops to the
+    context mean. This does NOT show position is unimportant -- the paper reports a 10 bp
+    periodicity -- it shows a group-mean estimator cannot exploit position at this sample
+    size. The count-versus-identity comparison is unaffected: both sides are coarse.
+
+=================================================================================================
+V6  WHAT THIS DOES AND DOES NOT VALIDATE
+=================================================================================================
+  1. These are SYNTHETIC yeast promoters in two sequence contexts, measured at steady
+     state in one growth condition. They are the cleanest available separation of count
+     from identity; they are not human promoters and not a time course.
+  2. The engine's summary is over controller HISTORY -- how many controllers were active
+     and for how long. This data has no time axis, so it tests the count-versus-identity
+     half of that claim and says nothing about the temporal half.
+  3. Site occupancy is designed, not measured. A designed site is not necessarily a bound
+     factor, so this tests the promoter's response to SITES rather than to bound TFs.
+  4. Whatever the verdict, it bounds only what a count can do on THIS observable --
+     mean expression. summary.py's K7 showed that a symmetric observable can be blind to
+     identity even when the mechanism is not.

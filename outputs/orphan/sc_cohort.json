@@ -1,0 +1,7033 @@
+{
+  "test": "sc_cohort",
+  "n_hvg": 400,
+  "min_cells": 40,
+  "n_shared": 1075,
+  "n_after_ntc_filter": 1075,
+  "max_guides_observed": 5,
+  "cohort": [
+    {
+      "gene": "UBE2I",
+      "cls": 0,
+      "min_cells": 74,
+      "tot_cells": 240,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06980908404724388
+    },
+    {
+      "gene": "C14orf178",
+      "cls": 1,
+      "min_cells": 111,
+      "tot_cells": 528,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.14459851553264386
+    },
+    {
+      "gene": "PHB2",
+      "cls": 2,
+      "min_cells": 41,
+      "tot_cells": 176,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.114245120612729
+    },
+    {
+      "gene": "SLU7",
+      "cls": 3,
+      "min_cells": 52,
+      "tot_cells": 472,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.16355196643534933
+    },
+    {
+      "gene": "KPNB1",
+      "cls": 4,
+      "min_cells": 76,
+      "tot_cells": 385,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08455166398549534
+    },
+    {
+      "gene": "PSMD14",
+      "cls": 5,
+      "min_cells": 50,
+      "tot_cells": 195,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.14775635919873678
+    },
+    {
+      "gene": "MRPL34",
+      "cls": 6,
+      "min_cells": 172,
+      "tot_cells": 1384,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07024477542758135
+    },
+    {
+      "gene": "MYC",
+      "cls": 7,
+      "min_cells": 52,
+      "tot_cells": 258,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.1450090369607648
+    },
+    {
+      "gene": "TIMM23B",
+      "cls": 8,
+      "min_cells": 256,
+      "tot_cells": 873,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09326808247965114
+    },
+    {
+      "gene": "DHX16",
+      "cls": 9,
+      "min_cells": 73,
+      "tot_cells": 231,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.099026893548059
+    },
+    {
+      "gene": "RPL10A",
+      "cls": 10,
+      "min_cells": 95,
+      "tot_cells": 324,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.11215195040651758
+    },
+    {
+      "gene": "ICE1",
+      "cls": 11,
+      "min_cells": 51,
+      "tot_cells": 167,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.12716939986321482
+    },
+    {
+      "gene": "DERL2",
+      "cls": 12,
+      "min_cells": 73,
+      "tot_cells": 298,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.14343614260952806
+    },
+    {
+      "gene": "PABPC1",
+      "cls": 13,
+      "min_cells": 66,
+      "tot_cells": 246,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.21282930643904266
+    },
+    {
+      "gene": "IMPA2",
+      "cls": 14,
+      "min_cells": 41,
+      "tot_cells": 182,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07964010520217109
+    },
+    {
+      "gene": "TAF7",
+      "cls": 15,
+      "min_cells": 49,
+      "tot_cells": 205,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.16759095712532937
+    },
+    {
+      "gene": "PMF1",
+      "cls": 16,
+      "min_cells": 124,
+      "tot_cells": 611,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.13803088428865565
+    },
+    {
+      "gene": "SF3B3",
+      "cls": 17,
+      "min_cells": 126,
+      "tot_cells": 617,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.13573933174357267
+    },
+    {
+      "gene": "NPLOC4",
+      "cls": 18,
+      "min_cells": 54,
+      "tot_cells": 383,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09954711313684772
+    },
+    {
+      "gene": "ATR",
+      "cls": 19,
+      "min_cells": 100,
+      "tot_cells": 387,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10122644891663751
+    },
+    {
+      "gene": "SEH1L",
+      "cls": 0,
+      "min_cells": 83,
+      "tot_cells": 300,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05944721899341413
+    },
+    {
+      "gene": "SMN2",
+      "cls": 1,
+      "min_cells": 309,
+      "tot_cells": 1185,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09323170827621136
+    },
+    {
+      "gene": "HSPA9",
+      "cls": 2,
+      "min_cells": 64,
+      "tot_cells": 281,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09707740717879211
+    },
+    {
+      "gene": "DHX8",
+      "cls": 3,
+      "min_cells": 61,
+      "tot_cells": 276,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.15280056648392634
+    },
+    {
+      "gene": "MTOR",
+      "cls": 4,
+      "min_cells": 81,
+      "tot_cells": 313,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05822412508968189
+    },
+    {
+      "gene": "PSMD8",
+      "cls": 5,
+      "min_cells": 49,
+      "tot_cells": 154,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.12773488750871348
+    },
+    {
+      "gene": "NDUFAB1",
+      "cls": 6,
+      "min_cells": 66,
+      "tot_cells": 335,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.03505077961803214
+    },
+    {
+      "gene": "SFPQ",
+      "cls": 7,
+      "min_cells": 48,
+      "tot_cells": 244,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.11019938292126714
+    },
+    {
+      "gene": "MEIS3",
+      "cls": 8,
+      "min_cells": 51,
+      "tot_cells": 354,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.12161957972014213
+    },
+    {
+      "gene": "SNRNP70",
+      "cls": 9,
+      "min_cells": 41,
+      "tot_cells": 167,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08206374230735118
+    },
+    {
+      "gene": "RPL35A",
+      "cls": 10,
+      "min_cells": 112,
+      "tot_cells": 447,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0986377034088654
+    },
+    {
+      "gene": "SETD1A",
+      "cls": 11,
+      "min_cells": 66,
+      "tot_cells": 230,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09240547630482493
+    },
+    {
+      "gene": "ZDHHC7",
+      "cls": 12,
+      "min_cells": 405,
+      "tot_cells": 1494,
+      "max_guides": 3,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08086175104091646
+    },
+    {
+      "gene": "EIF2B5",
+      "cls": 13,
+      "min_cells": 115,
+      "tot_cells": 369,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07390688566327004
+    },
+    {
+      "gene": "FBXL14",
+      "cls": 14,
+      "min_cells": 91,
+      "tot_cells": 508,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06522161156383359
+    },
+    {
+      "gene": "TAF8",
+      "cls": 15,
+      "min_cells": 68,
+      "tot_cells": 318,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.15111519229720272
+    },
+    {
+      "gene": "CDK1",
+      "cls": 16,
+      "min_cells": 86,
+      "tot_cells": 351,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.1091502434776937
+    },
+    {
+      "gene": "SF3B1",
+      "cls": 17,
+      "min_cells": 43,
+      "tot_cells": 169,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.15330251000079115
+    },
+    {
+      "gene": "CHMP6",
+      "cls": 18,
+      "min_cells": 67,
+      "tot_cells": 313,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07747416147038932
+    },
+    {
+      "gene": "EXOSC2",
+      "cls": 19,
+      "min_cells": 45,
+      "tot_cells": 277,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10913030480440244
+    },
+    {
+      "gene": "NUP107",
+      "cls": 0,
+      "min_cells": 43,
+      "tot_cells": 323,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05981325590529263
+    },
+    {
+      "gene": "RABGGTA",
+      "cls": 1,
+      "min_cells": 172,
+      "tot_cells": 603,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09074130120632734
+    },
+    {
+      "gene": "SLC25A42",
+      "cls": 2,
+      "min_cells": 47,
+      "tot_cells": 173,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09989263773921159
+    },
+    {
+      "gene": "SART1",
+      "cls": 3,
+      "min_cells": 70,
+      "tot_cells": 288,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.12915569873426483
+    },
+    {
+      "gene": "CSNK2B",
+      "cls": 4,
+      "min_cells": 78,
+      "tot_cells": 338,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05776698474322824
+    },
+    {
+      "gene": "PSMC5",
+      "cls": 5,
+      "min_cells": 77,
+      "tot_cells": 300,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.11117696730175695
+    },
+    {
+      "gene": "MRPS34",
+      "cls": 6,
+      "min_cells": 52,
+      "tot_cells": 292,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.036407761105591796
+    },
+    {
+      "gene": "MAX",
+      "cls": 7,
+      "min_cells": 47,
+      "tot_cells": 214,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08803126075616102
+    },
+    {
+      "gene": "IGBP1",
+      "cls": 8,
+      "min_cells": 61,
+      "tot_cells": 208,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10833468103316529
+    },
+    {
+      "gene": "SF3A2",
+      "cls": 9,
+      "min_cells": 103,
+      "tot_cells": 428,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06307229670837843
+    },
+    {
+      "gene": "RPL12",
+      "cls": 10,
+      "min_cells": 75,
+      "tot_cells": 259,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10162077575213539
+    },
+    {
+      "gene": "RRN3",
+      "cls": 11,
+      "min_cells": 44,
+      "tot_cells": 207,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09143160702412216
+    },
+    {
+      "gene": "ARCN1",
+      "cls": 12,
+      "min_cells": 77,
+      "tot_cells": 300,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09373509821023608
+    },
+    {
+      "gene": "EIF2S1",
+      "cls": 13,
+      "min_cells": 45,
+      "tot_cells": 206,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08996559884430504
+    },
+    {
+      "gene": "HMGCS1",
+      "cls": 14,
+      "min_cells": 59,
+      "tot_cells": 453,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07044699210980786
+    },
+    {
+      "gene": "MED4",
+      "cls": 15,
+      "min_cells": 76,
+      "tot_cells": 433,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.1332804403082617
+    },
+    {
+      "gene": "DYNC1I2",
+      "cls": 16,
+      "min_cells": 44,
+      "tot_cells": 162,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.11954498631287352
+    },
+    {
+      "gene": "POLR2I",
+      "cls": 17,
+      "min_cells": 128,
+      "tot_cells": 442,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.11351873351999654
+    },
+    {
+      "gene": "ARPC4",
+      "cls": 18,
+      "min_cells": 66,
+      "tot_cells": 298,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07754261338441366
+    },
+    {
+      "gene": "EXOSC5",
+      "cls": 19,
+      "min_cells": 64,
+      "tot_cells": 365,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09973640397424273
+    },
+    {
+      "gene": "NUP85",
+      "cls": 0,
+      "min_cells": 42,
+      "tot_cells": 255,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.04377888977283573
+    },
+    {
+      "gene": "QARS",
+      "cls": 1,
+      "min_cells": 79,
+      "tot_cells": 272,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09446945074812801
+    },
+    {
+      "gene": "PMPCB",
+      "cls": 2,
+      "min_cells": 126,
+      "tot_cells": 616,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07574641363848723
+    },
+    {
+      "gene": "DDX47",
+      "cls": 3,
+      "min_cells": 93,
+      "tot_cells": 580,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09120110762572338
+    },
+    {
+      "gene": "TNRC6A",
+      "cls": 4,
+      "min_cells": 89,
+      "tot_cells": 369,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05318612322398627
+    },
+    {
+      "gene": "PSMB5",
+      "cls": 5,
+      "min_cells": 123,
+      "tot_cells": 1513,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09736658987908697
+    },
+    {
+      "gene": "MRPL35",
+      "cls": 6,
+      "min_cells": 333,
+      "tot_cells": 2822,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.02129583321101658
+    },
+    {
+      "gene": "ZNF335",
+      "cls": 7,
+      "min_cells": 47,
+      "tot_cells": 156,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08472005309450421
+    },
+    {
+      "gene": "SCAF1",
+      "cls": 8,
+      "min_cells": 73,
+      "tot_cells": 240,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0934392495953304
+    },
+    {
+      "gene": "SF3B4",
+      "cls": 9,
+      "min_cells": 43,
+      "tot_cells": 159,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07541345129796427
+    },
+    {
+      "gene": "RPS13",
+      "cls": 10,
+      "min_cells": 132,
+      "tot_cells": 570,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08420081384479773
+    },
+    {
+      "gene": "UHRF1",
+      "cls": 11,
+      "min_cells": 60,
+      "tot_cells": 245,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07308623197039378
+    },
+    {
+      "gene": "ATP2A2",
+      "cls": 12,
+      "min_cells": 74,
+      "tot_cells": 349,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06780280075283962
+    },
+    {
+      "gene": "EIF2B2",
+      "cls": 13,
+      "min_cells": 148,
+      "tot_cells": 530,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06768743391179295
+    },
+    {
+      "gene": "NAA38",
+      "cls": 14,
+      "min_cells": 52,
+      "tot_cells": 238,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06323649379630826
+    },
+    {
+      "gene": "TAF2",
+      "cls": 15,
+      "min_cells": 49,
+      "tot_cells": 228,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.1301503020090683
+    },
+    {
+      "gene": "SMC1A",
+      "cls": 16,
+      "min_cells": 59,
+      "tot_cells": 229,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10473332935754413
+    },
+    {
+      "gene": "SYMPK",
+      "cls": 17,
+      "min_cells": 68,
+      "tot_cells": 229,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.11885562798463001
+    },
+    {
+      "gene": "EEF2",
+      "cls": 18,
+      "min_cells": 76,
+      "tot_cells": 368,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0745777309181133
+    },
+    {
+      "gene": "EXOSC8",
+      "cls": 19,
+      "min_cells": 47,
+      "tot_cells": 223,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10414370976745868
+    },
+    {
+      "gene": "NUP35",
+      "cls": 0,
+      "min_cells": 52,
+      "tot_cells": 213,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.038819752386810936
+    },
+    {
+      "gene": "FAM102B",
+      "cls": 1,
+      "min_cells": 47,
+      "tot_cells": 247,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10435966977019091
+    },
+    {
+      "gene": "GRPEL1",
+      "cls": 2,
+      "min_cells": 80,
+      "tot_cells": 301,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06782754243641469
+    },
+    {
+      "gene": "UTP18",
+      "cls": 3,
+      "min_cells": 51,
+      "tot_cells": 237,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10207497260711278
+    },
+    {
+      "gene": "FYN",
+      "cls": 4,
+      "min_cells": 104,
+      "tot_cells": 494,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.047370424706971594
+    },
+    {
+      "gene": "PSMB2",
+      "cls": 5,
+      "min_cells": 40,
+      "tot_cells": 178,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.11586167286215376
+    },
+    {
+      "gene": "MALSU1",
+      "cls": 6,
+      "min_cells": 40,
+      "tot_cells": 306,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.029384915230250625
+    },
+    {
+      "gene": "ZBTB14",
+      "cls": 7,
+      "min_cells": 41,
+      "tot_cells": 142,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08720952514768755
+    },
+    {
+      "gene": "MLLT6",
+      "cls": 8,
+      "min_cells": 105,
+      "tot_cells": 477,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0746052467894849
+    },
+    {
+      "gene": "DHX15",
+      "cls": 9,
+      "min_cells": 41,
+      "tot_cells": 171,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07564755179351422
+    },
+    {
+      "gene": "FAU",
+      "cls": 10,
+      "min_cells": 60,
+      "tot_cells": 285,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09479092598198224
+    },
+    {
+      "gene": "TAF1D",
+      "cls": 11,
+      "min_cells": 90,
+      "tot_cells": 383,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06243424887976231
+    },
+    {
+      "gene": "ATP11B",
+      "cls": 12,
+      "min_cells": 62,
+      "tot_cells": 382,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06769689918232008
+    },
+    {
+      "gene": "EIF2B3",
+      "cls": 13,
+      "min_cells": 73,
+      "tot_cells": 252,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0743944141340507
+    },
+    {
+      "gene": "WDR26",
+      "cls": 14,
+      "min_cells": 51,
+      "tot_cells": 211,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0627221510135001
+    },
+    {
+      "gene": "GTF2E2",
+      "cls": 15,
+      "min_cells": 280,
+      "tot_cells": 1500,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08364967928359994
+    },
+    {
+      "gene": "BUB1B",
+      "cls": 16,
+      "min_cells": 47,
+      "tot_cells": 256,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09579919484053996
+    },
+    {
+      "gene": "SNRPE",
+      "cls": 17,
+      "min_cells": 45,
+      "tot_cells": 142,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.13117452601445323
+    },
+    {
+      "gene": "GPS1",
+      "cls": 18,
+      "min_cells": 242,
+      "tot_cells": 922,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05674031439335545
+    },
+    {
+      "gene": "EXOSC7",
+      "cls": 19,
+      "min_cells": 47,
+      "tot_cells": 176,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.1040946136509807
+    },
+    {
+      "gene": "NUP43",
+      "cls": 0,
+      "min_cells": 67,
+      "tot_cells": 211,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.021508937001074573
+    },
+    {
+      "gene": "AARS",
+      "cls": 1,
+      "min_cells": 53,
+      "tot_cells": 168,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09843660303679097
+    },
+    {
+      "gene": "HSPE1",
+      "cls": 2,
+      "min_cells": 87,
+      "tot_cells": 348,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06644508352838235
+    },
+    {
+      "gene": "INTS8",
+      "cls": 3,
+      "min_cells": 140,
+      "tot_cells": 452,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08060487225971029
+    },
+    {
+      "gene": "RAC1",
+      "cls": 4,
+      "min_cells": 42,
+      "tot_cells": 194,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.04410322579527801
+    },
+    {
+      "gene": "PSMB3",
+      "cls": 5,
+      "min_cells": 49,
+      "tot_cells": 151,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10724192711503745
+    },
+    {
+      "gene": "MRPS21",
+      "cls": 6,
+      "min_cells": 86,
+      "tot_cells": 522,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.021191492657458306
+    },
+    {
+      "gene": "EHMT2",
+      "cls": 7,
+      "min_cells": 101,
+      "tot_cells": 400,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06268370851269951
+    },
+    {
+      "gene": "URI1",
+      "cls": 8,
+      "min_cells": 86,
+      "tot_cells": 384,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07789826680648969
+    },
+    {
+      "gene": "RBM10",
+      "cls": 9,
+      "min_cells": 88,
+      "tot_cells": 395,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.059434932813659636
+    },
+    {
+      "gene": "RPL32",
+      "cls": 10,
+      "min_cells": 75,
+      "tot_cells": 310,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08834166823751531
+    },
+    {
+      "gene": "DCUN1D5",
+      "cls": 11,
+      "min_cells": 78,
+      "tot_cells": 254,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.061557637516180076
+    },
+    {
+      "gene": "RAC3",
+      "cls": 12,
+      "min_cells": 92,
+      "tot_cells": 514,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05533002010110397
+    },
+    {
+      "gene": "EIF3B",
+      "cls": 13,
+      "min_cells": 123,
+      "tot_cells": 416,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06612648385795195
+    },
+    {
+      "gene": "TRNT1",
+      "cls": 14,
+      "min_cells": 228,
+      "tot_cells": 1245,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.04498466870911764
+    },
+    {
+      "gene": "MED14",
+      "cls": 15,
+      "min_cells": 99,
+      "tot_cells": 583,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10059708549701758
+    },
+    {
+      "gene": "MAD2L1",
+      "cls": 16,
+      "min_cells": 73,
+      "tot_cells": 272,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08474099610706891
+    },
+    {
+      "gene": "CPSF3",
+      "cls": 17,
+      "min_cells": 188,
+      "tot_cells": 745,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08272171302527469
+    },
+    {
+      "gene": "CCT7",
+      "cls": 18,
+      "min_cells": 44,
+      "tot_cells": 216,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08127014842201064
+    },
+    {
+      "gene": "EXOSC3",
+      "cls": 19,
+      "min_cells": 60,
+      "tot_cells": 277,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09538421614496023
+    },
+    {
+      "gene": "NDC1",
+      "cls": 0,
+      "min_cells": 45,
+      "tot_cells": 274,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.01001386620830271
+    },
+    {
+      "gene": "WDR70",
+      "cls": 1,
+      "min_cells": 86,
+      "tot_cells": 384,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08268125187404139
+    },
+    {
+      "gene": "PRELID1",
+      "cls": 2,
+      "min_cells": 43,
+      "tot_cells": 161,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07539851247300285
+    },
+    {
+      "gene": "SIRT7",
+      "cls": 3,
+      "min_cells": 242,
+      "tot_cells": 768,
+      "max_guides": 3,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07190472590777579
+    },
+    {
+      "gene": "ELOB",
+      "cls": 4,
+      "min_cells": 64,
+      "tot_cells": 393,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.039476720151142286
+    },
+    {
+      "gene": "PSMB6",
+      "cls": 5,
+      "min_cells": 61,
+      "tot_cells": 246,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09050327200434538
+    },
+    {
+      "gene": "MRPL24",
+      "cls": 6,
+      "min_cells": 61,
+      "tot_cells": 425,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.022659088483146
+    },
+    {
+      "gene": "E4F1",
+      "cls": 7,
+      "min_cells": 51,
+      "tot_cells": 361,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07082663780242683
+    },
+    {
+      "gene": "BRIX1",
+      "cls": 8,
+      "min_cells": 42,
+      "tot_cells": 295,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0924035676255416
+    },
+    {
+      "gene": "PTBP1",
+      "cls": 9,
+      "min_cells": 43,
+      "tot_cells": 155,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06925225179283194
+    },
+    {
+      "gene": "RPS3",
+      "cls": 10,
+      "min_cells": 50,
+      "tot_cells": 205,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09747071874876097
+    },
+    {
+      "gene": "CNOT1",
+      "cls": 11,
+      "min_cells": 43,
+      "tot_cells": 204,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07102569409749916
+    },
+    {
+      "gene": "DYNLRB1",
+      "cls": 12,
+      "min_cells": 124,
+      "tot_cells": 590,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.04833580493757269
+    },
+    {
+      "gene": "ETF1",
+      "cls": 13,
+      "min_cells": 68,
+      "tot_cells": 259,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07459319228805077
+    },
+    {
+      "gene": "OGFOD1",
+      "cls": 14,
+      "min_cells": 55,
+      "tot_cells": 182,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06033350465373812
+    },
+    {
+      "gene": "ELL",
+      "cls": 15,
+      "min_cells": 92,
+      "tot_cells": 495,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0799549572148852
+    },
+    {
+      "gene": "CDCA5",
+      "cls": 16,
+      "min_cells": 91,
+      "tot_cells": 276,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07067495878493585
+    },
+    {
+      "gene": "PRPF19",
+      "cls": 17,
+      "min_cells": 50,
+      "tot_cells": 210,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.1104814656968746
+    },
+    {
+      "gene": "COPS3",
+      "cls": 18,
+      "min_cells": 40,
+      "tot_cells": 157,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08085170131867418
+    },
+    {
+      "gene": "RPA2",
+      "cls": 19,
+      "min_cells": 46,
+      "tot_cells": 173,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10137907868089928
+    },
+    {
+      "gene": "HARS",
+      "cls": 1,
+      "min_cells": 59,
+      "tot_cells": 271,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09005894642516915
+    },
+    {
+      "gene": "IARS2",
+      "cls": 2,
+      "min_cells": 59,
+      "tot_cells": 233,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06776076127689791
+    },
+    {
+      "gene": "SSU72",
+      "cls": 3,
+      "min_cells": 212,
+      "tot_cells": 741,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07115716110318847
+    },
+    {
+      "gene": "CALR",
+      "cls": 4,
+      "min_cells": 74,
+      "tot_cells": 241,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.03042863804762891
+    },
+    {
+      "gene": "PSMA4",
+      "cls": 5,
+      "min_cells": 47,
+      "tot_cells": 268,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09425588459576995
+    },
+    {
+      "gene": "MRPL38",
+      "cls": 6,
+      "min_cells": 55,
+      "tot_cells": 451,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.02309218043339149
+    },
+    {
+      "gene": "THAP1",
+      "cls": 7,
+      "min_cells": 152,
+      "tot_cells": 976,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.053775007160315934
+    },
+    {
+      "gene": "CSE1L",
+      "cls": 8,
+      "min_cells": 55,
+      "tot_cells": 571,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08455926049775803
+    },
+    {
+      "gene": "HNRNPK",
+      "cls": 9,
+      "min_cells": 40,
+      "tot_cells": 185,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07008319021594266
+    },
+    {
+      "gene": "RPS3A",
+      "cls": 10,
+      "min_cells": 40,
+      "tot_cells": 213,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10221331278857944
+    },
+    {
+      "gene": "NCAPH2",
+      "cls": 11,
+      "min_cells": 55,
+      "tot_cells": 281,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06604477022351189
+    },
+    {
+      "gene": "GLB1",
+      "cls": 12,
+      "min_cells": 45,
+      "tot_cells": 209,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05449842807869023
+    },
+    {
+      "gene": "SEC61A1",
+      "cls": 13,
+      "min_cells": 90,
+      "tot_cells": 363,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06783945622201061
+    },
+    {
+      "gene": "TUBGCP2",
+      "cls": 14,
+      "min_cells": 58,
+      "tot_cells": 288,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05877138354267789
+    },
+    {
+      "gene": "GTF2A1",
+      "cls": 15,
+      "min_cells": 40,
+      "tot_cells": 222,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09417903938731133
+    },
+    {
+      "gene": "CENPN",
+      "cls": 16,
+      "min_cells": 41,
+      "tot_cells": 168,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06596273820510283
+    },
+    {
+      "gene": "SNRPB",
+      "cls": 17,
+      "min_cells": 42,
+      "tot_cells": 141,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10785632648896344
+    },
+    {
+      "gene": "CCT4",
+      "cls": 18,
+      "min_cells": 60,
+      "tot_cells": 212,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07185743799998
+    },
+    {
+      "gene": "EXOSC4",
+      "cls": 19,
+      "min_cells": 61,
+      "tot_cells": 374,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09286203838127229
+    },
+    {
+      "gene": "EPRS",
+      "cls": 1,
+      "min_cells": 47,
+      "tot_cells": 167,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09318282107632937
+    },
+    {
+      "gene": "DLD",
+      "cls": 2,
+      "min_cells": 56,
+      "tot_cells": 234,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06361480885411346
+    },
+    {
+      "gene": "PFDN2",
+      "cls": 3,
+      "min_cells": 40,
+      "tot_cells": 140,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.10241497961760371
+    },
+    {
+      "gene": "ACTB",
+      "cls": 4,
+      "min_cells": 47,
+      "tot_cells": 420,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.029240440226603492
+    },
+    {
+      "gene": "RBX1",
+      "cls": 5,
+      "min_cells": 55,
+      "tot_cells": 222,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08874802110030088
+    },
+    {
+      "gene": "MRPL27",
+      "cls": 6,
+      "min_cells": 60,
+      "tot_cells": 420,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.018036503181978174
+    },
+    {
+      "gene": "POU3F1",
+      "cls": 7,
+      "min_cells": 133,
+      "tot_cells": 550,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05398276470177399
+    },
+    {
+      "gene": "NOM1",
+      "cls": 8,
+      "min_cells": 59,
+      "tot_cells": 488,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08300505759191414
+    },
+    {
+      "gene": "GPKOW",
+      "cls": 9,
+      "min_cells": 42,
+      "tot_cells": 215,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06717663780552817
+    },
+    {
+      "gene": "RPS14",
+      "cls": 10,
+      "min_cells": 68,
+      "tot_cells": 259,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08758038771596692
+    },
+    {
+      "gene": "GTF3C1",
+      "cls": 11,
+      "min_cells": 64,
+      "tot_cells": 206,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06333163772263563
+    },
+    {
+      "gene": "COPZ1",
+      "cls": 12,
+      "min_cells": 55,
+      "tot_cells": 333,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.044655085385804316
+    },
+    {
+      "gene": "EIF2B4",
+      "cls": 13,
+      "min_cells": 63,
+      "tot_cells": 198,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07244177900759032
+    },
+    {
+      "gene": "CIAPIN1",
+      "cls": 14,
+      "min_cells": 99,
+      "tot_cells": 345,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05191650254770808
+    },
+    {
+      "gene": "MED19",
+      "cls": 15,
+      "min_cells": 112,
+      "tot_cells": 580,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06857328300645464
+    },
+    {
+      "gene": "PPP2CB",
+      "cls": 16,
+      "min_cells": 67,
+      "tot_cells": 330,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05821738797725775
+    },
+    {
+      "gene": "CSTF3",
+      "cls": 17,
+      "min_cells": 49,
+      "tot_cells": 186,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09486486476373522
+    },
+    {
+      "gene": "PXN",
+      "cls": 18,
+      "min_cells": 56,
+      "tot_cells": 295,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.060023623978669616
+    },
+    {
+      "gene": "CDT1",
+      "cls": 19,
+      "min_cells": 74,
+      "tot_cells": 279,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08818641671304989
+    },
+    {
+      "gene": "VARS",
+      "cls": 1,
+      "min_cells": 87,
+      "tot_cells": 297,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07892825490659895
+    },
+    {
+      "gene": "PMPCA",
+      "cls": 2,
+      "min_cells": 51,
+      "tot_cells": 216,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0645686939986474
+    },
+    {
+      "gene": "RBMX2",
+      "cls": 3,
+      "min_cells": 105,
+      "tot_cells": 369,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07165900437405633
+    },
+    {
+      "gene": "GRB2",
+      "cls": 4,
+      "min_cells": 78,
+      "tot_cells": 411,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.023241653680076302
+    },
+    {
+      "gene": "RPS27A",
+      "cls": 5,
+      "min_cells": 69,
+      "tot_cells": 375,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.08057679539818226
+    },
+    {
+      "gene": "MRPL54",
+      "cls": 6,
+      "min_cells": 55,
+      "tot_cells": 376,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.01654632422093087
+    },
+    {
+      "gene": "DNMT1",
+      "cls": 7,
+      "min_cells": 82,
+      "tot_cells": 372,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05856728980413287
+    },
+    {
+      "gene": "NAA50",
+      "cls": 8,
+      "min_cells": 64,
+      "tot_cells": 202,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07829552516874422
+    },
+    {
+      "gene": "DDX46",
+      "cls": 9,
+      "min_cells": 166,
+      "tot_cells": 641,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.04357582124824346
+    },
+    {
+      "gene": "RPS19",
+      "cls": 10,
+      "min_cells": 57,
+      "tot_cells": 276,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09124042299634534
+    },
+    {
+      "gene": "BRF1",
+      "cls": 11,
+      "min_cells": 61,
+      "tot_cells": 227,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06351793195803974
+    },
+    {
+      "gene": "PPP6C",
+      "cls": 12,
+      "min_cells": 459,
+      "tot_cells": 3226,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.028171800636079696
+    },
+    {
+      "gene": "EIF3A",
+      "cls": 13,
+      "min_cells": 56,
+      "tot_cells": 181,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0745275508307835
+    },
+    {
+      "gene": "ABCF1",
+      "cls": 14,
+      "min_cells": 96,
+      "tot_cells": 398,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.051834431717575326
+    },
+    {
+      "gene": "TAF6",
+      "cls": 15,
+      "min_cells": 47,
+      "tot_cells": 217,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.07849886275767627
+    },
+    {
+      "gene": "PPP2R1A",
+      "cls": 16,
+      "min_cells": 198,
+      "tot_cells": 1023,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.02908144794452966
+    },
+    {
+      "gene": "POLR2F",
+      "cls": 17,
+      "min_cells": 48,
+      "tot_cells": 213,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.09338327892673842
+    },
+    {
+      "gene": "CCT8",
+      "cls": 18,
+      "min_cells": 48,
+      "tot_cells": 164,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06083887553731212
+    },
+    {
+      "gene": "RPA3",
+      "cls": 19,
+      "min_cells": 85,
+      "tot_cells": 281,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.0760468340703802
+    },
+    {
+      "gene": "FAM136A",
+      "cls": 1,
+      "min_cells": 291,
+      "tot_cells": 1321,
+      "max_guides": 3,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05995431092037969
+    },
+    {
+      "gene": "POLRMT",
+      "cls": 2,
+      "min_cells": 65,
+      "tot_cells": 467,
+      "max_guides": 1,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.05636557816132637
+    },
+    {
+      "gene": "TSR1",
+      "cls": 3,
+      "min_cells": 182,
+      "tot_cells": 805,
+      "max_guides": 2,
+      "min_frac_ntc": 1.0,
+      "mean_disp_excess": 0.06289234589650967
+    }
+  ],
+  "cohort_detail": {
+    "UBE2I": {
+      "RPE1": {
+        "cells": 74,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5269054174423218,
+        "disp_excess": 0.09661226014833191
+      },
+      "Jurkat": {
+        "cells": 92,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5521240830421448,
+        "disp_excess": 0.07770303993121436
+      },
+      "HepG2": {
+        "cells": 74,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47259604930877686,
+        "disp_excess": 0.03511195206218537
+      }
+    },
+    "C14orf178": {
+      "RPE1": {
+        "cells": 292,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5685719847679138,
+        "disp_excess": 0.13658903447324283
+      },
+      "Jurkat": {
+        "cells": 111,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5825652480125427,
+        "disp_excess": 0.10233518615499271
+      },
+      "HepG2": {
+        "cells": 125,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6288684606552124,
+        "disp_excess": 0.19487132596969603
+      }
+    },
+    "PHB2": {
+      "RPE1": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5005790591239929,
+        "disp_excess": 0.06717266677281797
+      },
+      "Jurkat": {
+        "cells": 41,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6773597598075867,
+        "disp_excess": 0.20650413196261336
+      },
+      "HepG2": {
+        "cells": 57,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5007362961769104,
+        "disp_excess": 0.06905856310275565
+      }
+    },
+    "SLU7": {
+      "RPE1": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5730798840522766,
+        "disp_excess": 0.13797430273814076
+      },
+      "Jurkat": {
+        "cells": 52,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.7192798852920532,
+        "disp_excess": 0.23677351497686827
+      },
+      "HepG2": {
+        "cells": 342,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5490292906761169,
+        "disp_excess": 0.11590808159103894
+      }
+    },
+    "KPNB1": {
+      "RPE1": {
+        "cells": 210,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4961106777191162,
+        "disp_excess": 0.06214787718795595
+      },
+      "Jurkat": {
+        "cells": 99,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5259230136871338,
+        "disp_excess": 0.05189809594491518
+      },
+      "HepG2": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5694001913070679,
+        "disp_excess": 0.13960901882361487
+      }
+    },
+    "PSMD14": {
+      "RPE1": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6912826299667358,
+        "disp_excess": 0.2554349699190685
+      },
+      "Jurkat": {
+        "cells": 50,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5438322424888611,
+        "disp_excess": 0.07431784570217131
+      },
+      "HepG2": {
+        "cells": 75,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5511021614074707,
+        "disp_excess": 0.1135162619749705
+      }
+    },
+    "MRPL34": {
+      "RPE1": {
+        "cells": 172,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49543094635009766,
+        "disp_excess": 0.06407595980306002
+      },
+      "Jurkat": {
+        "cells": 798,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5897059440612793,
+        "disp_excess": 0.11317790294052066
+      },
+      "HepG2": {
+        "cells": 414,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46630939841270447,
+        "disp_excess": 0.033480463539163396
+      }
+    },
+    "MYC": {
+      "RPE1": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5305722951889038,
+        "disp_excess": 0.09496395289897919
+      },
+      "Jurkat": {
+        "cells": 120,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.7658845782279968,
+        "disp_excess": 0.29373309860626856
+      },
+      "HepG2": {
+        "cells": 52,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4771479666233063,
+        "disp_excess": 0.046330059377046706
+      }
+    },
+    "TIMM23B": {
+      "RPE1": {
+        "cells": 348,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5112809538841248,
+        "disp_excess": 0.07922192191940614
+      },
+      "Jurkat": {
+        "cells": 256,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6255266070365906,
+        "disp_excess": 0.15365587186533958
+      },
+      "HepG2": {
+        "cells": 269,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4802759885787964,
+        "disp_excess": 0.04692645365420772
+      }
+    },
+    "DHX16": {
+      "RPE1": {
+        "cells": 73,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5364723205566406,
+        "disp_excess": 0.10205313563346863
+      },
+      "Jurkat": {
+        "cells": 83,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5678079128265381,
+        "disp_excess": 0.0938851822571582
+      },
+      "HepG2": {
+        "cells": 75,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5320990085601807,
+        "disp_excess": 0.10114236275355021
+      }
+    },
+    "RPL10A": {
+      "RPE1": {
+        "cells": 95,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.519148051738739,
+        "disp_excess": 0.0828466616178814
+      },
+      "Jurkat": {
+        "cells": 113,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6896138787269592,
+        "disp_excess": 0.21481590091654684
+      },
+      "HepG2": {
+        "cells": 116,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4769539535045624,
+        "disp_excess": 0.038793288685124494
+      }
+    },
+    "ICE1": {
+      "RPE1": {
+        "cells": 65,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5554162263870239,
+        "disp_excess": 0.12265749069360588
+      },
+      "Jurkat": {
+        "cells": 51,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6208174824714661,
+        "disp_excess": 0.140461758071301
+      },
+      "HepG2": {
+        "cells": 51,
+        "guides": 1,
+        "batches": 28,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5498732924461365,
+        "disp_excess": 0.11838895082473755
+      }
+    },
+    "DERL2": {
+      "RPE1": {
+        "cells": 147,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5431270003318787,
+        "disp_excess": 0.10790333293733145
+      },
+      "Jurkat": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.644103467464447,
+        "disp_excess": 0.17562413330261523
+      },
+      "HepG2": {
+        "cells": 73,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5791964530944824,
+        "disp_excess": 0.14678096158863746
+      }
+    },
+    "PABPC1": {
+      "RPE1": {
+        "cells": 102,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6778108477592468,
+        "disp_excess": 0.24843820403603945
+      },
+      "Jurkat": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6106261610984802,
+        "disp_excess": 0.13842297402712017
+      },
+      "HepG2": {
+        "cells": 66,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6863738894462585,
+        "disp_excess": 0.25162674125396844
+      }
+    },
+    "IMPA2": {
+      "RPE1": {
+        "cells": 41,
+        "guides": 1,
+        "batches": 28,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5080647468566895,
+        "disp_excess": 0.07676896380215159
+      },
+      "Jurkat": {
+        "cells": 77,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6157597303390503,
+        "disp_excess": 0.14167537936916597
+      },
+      "HepG2": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4585491120815277,
+        "disp_excess": 0.020475972435195722
+      }
+    },
+    "TAF7": {
+      "RPE1": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5627745985984802,
+        "disp_excess": 0.12771118295436001
+      },
+      "Jurkat": {
+        "cells": 103,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.7180113792419434,
+        "disp_excess": 0.2475303859965315
+      },
+      "HepG2": {
+        "cells": 53,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5616408586502075,
+        "disp_excess": 0.12753130242509664
+      }
+    },
+    "PMF1": {
+      "RPE1": {
+        "cells": 338,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5302312970161438,
+        "disp_excess": 0.1013222914299316
+      },
+      "Jurkat": {
+        "cells": 149,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6700010895729065,
+        "disp_excess": 0.19845159741856105
+      },
+      "HepG2": {
+        "cells": 124,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5517588257789612,
+        "disp_excess": 0.11431876401747426
+      }
+    },
+    "SF3B3": {
+      "RPE1": {
+        "cells": 165,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5600706338882446,
+        "disp_excess": 0.1292163489442883
+      },
+      "Jurkat": {
+        "cells": 126,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6322035789489746,
+        "disp_excess": 0.15491562703299144
+      },
+      "HepG2": {
+        "cells": 326,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5528123378753662,
+        "disp_excess": 0.12308601925343826
+      }
+    },
+    "NPLOC4": {
+      "RPE1": {
+        "cells": 193,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5089211463928223,
+        "disp_excess": 0.07531463760168439
+      },
+      "Jurkat": {
+        "cells": 136,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5642727017402649,
+        "disp_excess": 0.09355203807353973
+      },
+      "HepG2": {
+        "cells": 54,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5607038140296936,
+        "disp_excess": 0.12977466373531904
+      }
+    },
+    "ATR": {
+      "RPE1": {
+        "cells": 161,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5070114731788635,
+        "disp_excess": 0.0711792722251845
+      },
+      "Jurkat": {
+        "cells": 126,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6109763979911804,
+        "disp_excess": 0.14183395864471554
+      },
+      "HepG2": {
+        "cells": 100,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.524546205997467,
+        "disp_excess": 0.0906661158800125
+      }
+    },
+    "SEH1L": {
+      "RPE1": {
+        "cells": 124,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46709778904914856,
+        "disp_excess": 0.03678298068623387
+      },
+      "Jurkat": {
+        "cells": 93,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5612195730209351,
+        "disp_excess": 0.08540415122944822
+      },
+      "HepG2": {
+        "cells": 83,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.491536945104599,
+        "disp_excess": 0.05615452506456031
+      }
+    },
+    "SMN2": {
+      "RPE1": {
+        "cells": 424,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5106027722358704,
+        "disp_excess": 0.0787730671043666
+      },
+      "Jurkat": {
+        "cells": 309,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5926209092140198,
+        "disp_excess": 0.11890972171786535
+      },
+      "HepG2": {
+        "cells": 452,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5163490176200867,
+        "disp_excess": 0.08201233600640212
+      }
+    },
+    "HSPA9": {
+      "RPE1": {
+        "cells": 113,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.525905966758728,
+        "disp_excess": 0.09506900990958761
+      },
+      "Jurkat": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6320825219154358,
+        "disp_excess": 0.15841255942359567
+      },
+      "HepG2": {
+        "cells": 104,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47271454334259033,
+        "disp_excess": 0.03775065220319307
+      }
+    },
+    "DHX8": {
+      "RPE1": {
+        "cells": 95,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5874646902084351,
+        "disp_excess": 0.15229400835539164
+      },
+      "Jurkat": {
+        "cells": 120,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6095452308654785,
+        "disp_excess": 0.1364675926665465
+      },
+      "HepG2": {
+        "cells": 61,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6055716872215271,
+        "disp_excess": 0.1696400984298409
+      }
+    },
+    "MTOR": {
+      "RPE1": {
+        "cells": 102,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48986098170280457,
+        "disp_excess": 0.06015364416674074
+      },
+      "Jurkat": {
+        "cells": 130,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5799883604049683,
+        "disp_excess": 0.10518628175442035
+      },
+      "HepG2": {
+        "cells": 81,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4368512034416199,
+        "disp_excess": 0.009332449347884575
+      }
+    },
+    "PSMD8": {
+      "RPE1": {
+        "cells": 56,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6270313858985901,
+        "disp_excess": 0.19371519876377924
+      },
+      "Jurkat": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4991088807582855,
+        "disp_excess": 0.02253086347969213
+      },
+      "HepG2": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6028110384941101,
+        "disp_excess": 0.16695860028266907
+      }
+    },
+    "NDUFAB1": {
+      "RPE1": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46150097250938416,
+        "disp_excess": 0.03195920547372416
+      },
+      "Jurkat": {
+        "cells": 193,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49380654096603394,
+        "disp_excess": 0.02017914260607312
+      },
+      "HepG2": {
+        "cells": 66,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48539450764656067,
+        "disp_excess": 0.053013990774299136
+      }
+    },
+    "SFPQ": {
+      "RPE1": {
+        "cells": 118,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5268630385398865,
+        "disp_excess": 0.09683337252018814
+      },
+      "Jurkat": {
+        "cells": 48,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5873160362243652,
+        "disp_excess": 0.11181452622016269
+      },
+      "HepG2": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5454088449478149,
+        "disp_excess": 0.12195025002345061
+      }
+    },
+    "MEIS3": {
+      "RPE1": {
+        "cells": 114,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5260543823242188,
+        "disp_excess": 0.0932200943168841
+      },
+      "Jurkat": {
+        "cells": 189,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.656381368637085,
+        "disp_excess": 0.18335109381448655
+      },
+      "HepG2": {
+        "cells": 51,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5219258069992065,
+        "disp_excess": 0.08828755102905572
+      }
+    },
+    "SNRNP70": {
+      "RPE1": {
+        "cells": 56,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5354641675949097,
+        "disp_excess": 0.1028616651892662
+      },
+      "Jurkat": {
+        "cells": 41,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5186233520507812,
+        "disp_excess": 0.046141027677349955
+      },
+      "HepG2": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5308048725128174,
+        "disp_excess": 0.09718853405543737
+      }
+    },
+    "RPL35A": {
+      "RPE1": {
+        "cells": 112,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5539602637290955,
+        "disp_excess": 0.12224919508610455
+      },
+      "Jurkat": {
+        "cells": 139,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5928028225898743,
+        "disp_excess": 0.12329575376544927
+      },
+      "HepG2": {
+        "cells": 196,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48652443289756775,
+        "disp_excess": 0.05036816137504235
+      }
+    },
+    "SETD1A": {
+      "RPE1": {
+        "cells": 83,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5105900764465332,
+        "disp_excess": 0.08103961003832072
+      },
+      "Jurkat": {
+        "cells": 66,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5810630917549133,
+        "disp_excess": 0.11615843980601337
+      },
+      "HepG2": {
+        "cells": 81,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5087177157402039,
+        "disp_excess": 0.0800183790701407
+      }
+    },
+    "ZDHHC7": {
+      "RPE1": {
+        "cells": 405,
+        "guides": 3,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4790623188018799,
+        "disp_excess": 0.04870081956003919
+      },
+      "Jurkat": {
+        "cells": 623,
+        "guides": 3,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6228397488594055,
+        "disp_excess": 0.15120721423032768
+      },
+      "HepG2": {
+        "cells": 466,
+        "guides": 3,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47862160205841064,
+        "disp_excess": 0.0426772193323825
+      }
+    },
+    "EIF2B5": {
+      "RPE1": {
+        "cells": 116,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49480631947517395,
+        "disp_excess": 0.06789677538748445
+      },
+      "Jurkat": {
+        "cells": 138,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5741081237792969,
+        "disp_excess": 0.10497140214926953
+      },
+      "HepG2": {
+        "cells": 115,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4799417555332184,
+        "disp_excess": 0.04885247945305615
+      }
+    },
+    "FBXL14": {
+      "RPE1": {
+        "cells": 91,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4977218508720398,
+        "disp_excess": 0.06734325270076374
+      },
+      "Jurkat": {
+        "cells": 311,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5440983176231384,
+        "disp_excess": 0.07104014717880935
+      },
+      "HepG2": {
+        "cells": 106,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4864508807659149,
+        "disp_excess": 0.057281434811927656
+      }
+    },
+    "TAF8": {
+      "RPE1": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5592183470726013,
+        "disp_excess": 0.12385470929898712
+      },
+      "Jurkat": {
+        "cells": 174,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.7223901152610779,
+        "disp_excess": 0.2479205249712385
+      },
+      "HepG2": {
+        "cells": 68,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5146856307983398,
+        "disp_excess": 0.08157034262138252
+      }
+    },
+    "CDK1": {
+      "RPE1": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.490375280380249,
+        "disp_excess": 0.06224593693433805
+      },
+      "Jurkat": {
+        "cells": 126,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5330352783203125,
+        "disp_excess": 0.06120043567248751
+      },
+      "HepG2": {
+        "cells": 139,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6342630982398987,
+        "disp_excess": 0.20400435782625553
+      }
+    },
+    "SF3B1": {
+      "RPE1": {
+        "cells": 43,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.61639404296875,
+        "disp_excess": 0.18971216886542563
+      },
+      "Jurkat": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6501721143722534,
+        "disp_excess": 0.18185817465490223
+      },
+      "HepG2": {
+        "cells": 77,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5224464535713196,
+        "disp_excess": 0.08833718648204558
+      }
+    },
+    "CHMP6": {
+      "RPE1": {
+        "cells": 107,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48826804757118225,
+        "disp_excess": 0.058749738140640995
+      },
+      "Jurkat": {
+        "cells": 139,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5283963680267334,
+        "disp_excess": 0.059335890004960756
+      },
+      "HepG2": {
+        "cells": 67,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5355266332626343,
+        "disp_excess": 0.11433685626556622
+      }
+    },
+    "EXOSC2": {
+      "RPE1": {
+        "cells": 45,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47326356172561646,
+        "disp_excess": 0.035037251975801265
+      },
+      "Jurkat": {
+        "cells": 116,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6851912140846252,
+        "disp_excess": 0.21474550279050036
+      },
+      "HepG2": {
+        "cells": 116,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5110543966293335,
+        "disp_excess": 0.0776081596469057
+      }
+    },
+    "NUP107": {
+      "RPE1": {
+        "cells": 143,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5198072791099548,
+        "disp_excess": 0.08969161101988143
+      },
+      "Jurkat": {
+        "cells": 43,
+        "guides": 1,
+        "batches": 25,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4947715401649475,
+        "disp_excess": 0.02794182924337163
+      },
+      "HepG2": {
+        "cells": 137,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49254822731018066,
+        "disp_excess": 0.06180632745262482
+      }
+    },
+    "RABGGTA": {
+      "RPE1": {
+        "cells": 190,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5084945559501648,
+        "disp_excess": 0.0778136609416259
+      },
+      "Jurkat": {
+        "cells": 172,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5655060410499573,
+        "disp_excess": 0.08891412511814473
+      },
+      "HepG2": {
+        "cells": 241,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5385218858718872,
+        "disp_excess": 0.1054961175592114
+      }
+    },
+    "SLC25A42": {
+      "RPE1": {
+        "cells": 53,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5374839305877686,
+        "disp_excess": 0.10318842474019752
+      },
+      "Jurkat": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5676338076591492,
+        "disp_excess": 0.10672831091474977
+      },
+      "HepG2": {
+        "cells": 73,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5167458057403564,
+        "disp_excess": 0.08976117756268748
+      }
+    },
+    "SART1": {
+      "RPE1": {
+        "cells": 105,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6119574904441833,
+        "disp_excess": 0.18216802421070283
+      },
+      "Jurkat": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5559095144271851,
+        "disp_excess": 0.0878924740212304
+      },
+      "HepG2": {
+        "cells": 113,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5521650910377502,
+        "disp_excess": 0.11740659797086123
+      }
+    },
+    "CSNK2B": {
+      "RPE1": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4478968679904938,
+        "disp_excess": 0.014677195976942004
+      },
+      "Jurkat": {
+        "cells": 149,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.580371081829071,
+        "disp_excess": 0.10965356370746687
+      },
+      "HepG2": {
+        "cells": 111,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4849354028701782,
+        "disp_excess": 0.04897019454527585
+      }
+    },
+    "PSMC5": {
+      "RPE1": {
+        "cells": 106,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6190103888511658,
+        "disp_excess": 0.1821414642738846
+      },
+      "Jurkat": {
+        "cells": 77,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5069688558578491,
+        "disp_excess": 0.03503464839675208
+      },
+      "HepG2": {
+        "cells": 117,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5460606217384338,
+        "disp_excess": 0.11635478923463416
+      }
+    },
+    "MRPS34": {
+      "RPE1": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5537984371185303,
+        "disp_excess": 0.12173445778233666
+      },
+      "Jurkat": {
+        "cells": 170,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4726186692714691,
+        "disp_excess": -0.0003940442029167768
+      },
+      "HepG2": {
+        "cells": 52,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.42305901646614075,
+        "disp_excess": -0.012117130262644493
+      }
+    },
+    "MAX": {
+      "RPE1": {
+        "cells": 89,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49523356556892395,
+        "disp_excess": 0.0622102849269181
+      },
+      "Jurkat": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5951341986656189,
+        "disp_excess": 0.12805612729145932
+      },
+      "HepG2": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5115923285484314,
+        "disp_excess": 0.07382737005010565
+      }
+    },
+    "IGBP1": {
+      "RPE1": {
+        "cells": 75,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5429866313934326,
+        "disp_excess": 0.11183135827382407
+      },
+      "Jurkat": {
+        "cells": 72,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5226758718490601,
+        "disp_excess": 0.04653854047258693
+      },
+      "HepG2": {
+        "cells": 61,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6014895439147949,
+        "disp_excess": 0.16663414435308488
+      }
+    },
+    "SF3A2": {
+      "RPE1": {
+        "cells": 156,
+        "guides": 2,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5129331350326538,
+        "disp_excess": 0.08251151289695347
+      },
+      "Jurkat": {
+        "cells": 169,
+        "guides": 2,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5134996771812439,
+        "disp_excess": 0.04166061797085596
+      },
+      "HepG2": {
+        "cells": 103,
+        "guides": 2,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49415838718414307,
+        "disp_excess": 0.06504475925732583
+      }
+    },
+    "RPL12": {
+      "RPE1": {
+        "cells": 81,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5590413212776184,
+        "disp_excess": 0.12591856681270364
+      },
+      "Jurkat": {
+        "cells": 75,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5770215392112732,
+        "disp_excess": 0.10664012273152668
+      },
+      "HepG2": {
+        "cells": 103,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.511192262172699,
+        "disp_excess": 0.07230363771217585
+      }
+    },
+    "RRN3": {
+      "RPE1": {
+        "cells": 44,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5361053347587585,
+        "disp_excess": 0.10112906992435455
+      },
+      "Jurkat": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5985226035118103,
+        "disp_excess": 0.1286552201869876
+      },
+      "HepG2": {
+        "cells": 77,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48040154576301575,
+        "disp_excess": 0.04451053096102431
+      }
+    },
+    "ARCN1": {
+      "RPE1": {
+        "cells": 77,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5962436199188232,
+        "disp_excess": 0.1566254051474782
+      },
+      "Jurkat": {
+        "cells": 129,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4669395685195923,
+        "disp_excess": -0.0076127967169118405
+      },
+      "HepG2": {
+        "cells": 94,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5632131695747375,
+        "disp_excess": 0.1321926862001419
+      }
+    },
+    "EIF2S1": {
+      "RPE1": {
+        "cells": 83,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5527107119560242,
+        "disp_excess": 0.12066752221210891
+      },
+      "Jurkat": {
+        "cells": 45,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5965970754623413,
+        "disp_excess": 0.12259175644980536
+      },
+      "HepG2": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4631718397140503,
+        "disp_excess": 0.026637517871000826
+      }
+    },
+    "HMGCS1": {
+      "RPE1": {
+        "cells": 259,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47365802526474,
+        "disp_excess": 0.04545877603490378
+      },
+      "Jurkat": {
+        "cells": 135,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5605800151824951,
+        "disp_excess": 0.08872189389334784
+      },
+      "HepG2": {
+        "cells": 59,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5158271193504333,
+        "disp_excess": 0.07716030640117194
+      }
+    },
+    "MED4": {
+      "RPE1": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.524172842502594,
+        "disp_excess": 0.0959121702533019
+      },
+      "Jurkat": {
+        "cells": 219,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6912906765937805,
+        "disp_excess": 0.21622934325100623
+      },
+      "HepG2": {
+        "cells": 138,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5258178114891052,
+        "disp_excess": 0.08769980742047695
+      }
+    },
+    "DYNC1I2": {
+      "RPE1": {
+        "cells": 60,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.599084198474884,
+        "disp_excess": 0.17421880563100178
+      },
+      "Jurkat": {
+        "cells": 44,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.585957944393158,
+        "disp_excess": 0.11813841760158539
+      },
+      "HepG2": {
+        "cells": 58,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49219048023223877,
+        "disp_excess": 0.0662777357060334
+      }
+    },
+    "POLR2I": {
+      "RPE1": {
+        "cells": 174,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5383981466293335,
+        "disp_excess": 0.11036979073080522
+      },
+      "Jurkat": {
+        "cells": 128,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6061730980873108,
+        "disp_excess": 0.13081127661280334
+      },
+      "HepG2": {
+        "cells": 140,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5339694619178772,
+        "disp_excess": 0.09937513321638108
+      }
+    },
+    "ARPC4": {
+      "RPE1": {
+        "cells": 84,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.521776020526886,
+        "disp_excess": 0.09253800802287604
+      },
+      "Jurkat": {
+        "cells": 148,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5665838718414307,
+        "disp_excess": 0.08594313545806986
+      },
+      "HepG2": {
+        "cells": 66,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4857481122016907,
+        "disp_excess": 0.0541466966722951
+      }
+    },
+    "EXOSC5": {
+      "RPE1": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4745611548423767,
+        "disp_excess": 0.041589252185076475
+      },
+      "Jurkat": {
+        "cells": 167,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6865912079811096,
+        "disp_excess": 0.2110531326539502
+      },
+      "HepG2": {
+        "cells": 134,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4808146357536316,
+        "disp_excess": 0.04656682708370152
+      }
+    },
+    "NUP85": {
+      "RPE1": {
+        "cells": 77,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5153003931045532,
+        "disp_excess": 0.08296480658766509
+      },
+      "Jurkat": {
+        "cells": 42,
+        "guides": 1,
+        "batches": 28,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49838021397590637,
+        "disp_excess": 0.017628131877808317
+      },
+      "HepG2": {
+        "cells": 136,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46423590183258057,
+        "disp_excess": 0.03074373085303378
+      }
+    },
+    "QARS": {
+      "RPE1": {
+        "cells": 80,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48184481263160706,
+        "disp_excess": 0.050540965422987916
+      },
+      "Jurkat": {
+        "cells": 113,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6183642148971558,
+        "disp_excess": 0.1436287262270936
+      },
+      "HepG2": {
+        "cells": 79,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5203693509101868,
+        "disp_excess": 0.08923866059430252
+      }
+    },
+    "PMPCB": {
+      "RPE1": {
+        "cells": 196,
+        "guides": 2,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5301932692527771,
+        "disp_excess": 0.0980848303558875
+      },
+      "Jurkat": {
+        "cells": 294,
+        "guides": 2,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5496811866760254,
+        "disp_excess": 0.07579416360984853
+      },
+      "HepG2": {
+        "cells": 126,
+        "guides": 2,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4878990054130554,
+        "disp_excess": 0.05336024694972569
+      }
+    },
+    "DDX47": {
+      "RPE1": {
+        "cells": 93,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49983566999435425,
+        "disp_excess": 0.07069689355870729
+      },
+      "Jurkat": {
+        "cells": 270,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6137806177139282,
+        "disp_excess": 0.14138191728680222
+      },
+      "HepG2": {
+        "cells": 217,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4967469871044159,
+        "disp_excess": 0.06152451203166065
+      }
+    },
+    "TNRC6A": {
+      "RPE1": {
+        "cells": 112,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47647643089294434,
+        "disp_excess": 0.04282422603241037
+      },
+      "Jurkat": {
+        "cells": 168,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5572526454925537,
+        "disp_excess": 0.08242698758840561
+      },
+      "HepG2": {
+        "cells": 89,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47649070620536804,
+        "disp_excess": 0.03430715605114282
+      }
+    },
+    "PSMB5": {
+      "RPE1": {
+        "cells": 147,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5680842399597168,
+        "disp_excess": 0.13818429481415523
+      },
+      "Jurkat": {
+        "cells": 1243,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5111361145973206,
+        "disp_excess": 0.03893692344307226
+      },
+      "HepG2": {
+        "cells": 123,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5496634244918823,
+        "disp_excess": 0.11497855138003343
+      }
+    },
+    "MRPL35": {
+      "RPE1": {
+        "cells": 1491,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.43508896231651306,
+        "disp_excess": 0.004147563721812242
+      },
+      "Jurkat": {
+        "cells": 998,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5096372961997986,
+        "disp_excess": 0.035808880815286215
+      },
+      "HepG2": {
+        "cells": 333,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4549860656261444,
+        "disp_excess": 0.02393105509595128
+      }
+    },
+    "ZNF335": {
+      "RPE1": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5674289464950562,
+        "disp_excess": 0.1301450380619536
+      },
+      "Jurkat": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 26,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5200287103652954,
+        "disp_excess": 0.04779803562671581
+      },
+      "HepG2": {
+        "cells": 62,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5148255228996277,
+        "disp_excess": 0.07621708559484325
+      }
+    },
+    "SCAF1": {
+      "RPE1": {
+        "cells": 73,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5801324248313904,
+        "disp_excess": 0.1491285060366539
+      },
+      "Jurkat": {
+        "cells": 85,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4932475984096527,
+        "disp_excess": 0.019295761515112475
+      },
+      "HepG2": {
+        "cells": 82,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5421438813209534,
+        "disp_excess": 0.11189348123422482
+      }
+    },
+    "SF3B4": {
+      "RPE1": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5216780304908752,
+        "disp_excess": 0.09173123410769873
+      },
+      "Jurkat": {
+        "cells": 46,
+        "guides": 1,
+        "batches": 27,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5861662030220032,
+        "disp_excess": 0.11013901363248413
+      },
+      "HepG2": {
+        "cells": 43,
+        "guides": 1,
+        "batches": 25,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45962411165237427,
+        "disp_excess": 0.024370106153709936
+      }
+    },
+    "RPS13": {
+      "RPE1": {
+        "cells": 132,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.499601811170578,
+        "disp_excess": 0.06659697899312683
+      },
+      "Jurkat": {
+        "cells": 290,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5967851877212524,
+        "disp_excess": 0.12482581436634066
+      },
+      "HepG2": {
+        "cells": 148,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49473854899406433,
+        "disp_excess": 0.061179648174925716
+      }
+    },
+    "UHRF1": {
+      "RPE1": {
+        "cells": 107,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47326740622520447,
+        "disp_excess": 0.04061803110292023
+      },
+      "Jurkat": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6269018054008484,
+        "disp_excess": 0.15854428479304683
+      },
+      "HepG2": {
+        "cells": 60,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45366448163986206,
+        "disp_excess": 0.0200963800152143
+      }
+    },
+    "ATP2A2": {
+      "RPE1": {
+        "cells": 144,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48195236921310425,
+        "disp_excess": 0.053224874039491
+      },
+      "Jurkat": {
+        "cells": 131,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.609203577041626,
+        "disp_excess": 0.13418064363130178
+      },
+      "HepG2": {
+        "cells": 74,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4525350332260132,
+        "disp_excess": 0.016002884587726085
+      }
+    },
+    "EIF2B2": {
+      "RPE1": {
+        "cells": 148,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4968639016151428,
+        "disp_excess": 0.0682692415005452
+      },
+      "Jurkat": {
+        "cells": 202,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5715792179107666,
+        "disp_excess": 0.09503637077194627
+      },
+      "HepG2": {
+        "cells": 180,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47421279549598694,
+        "disp_excess": 0.03975668946288741
+      }
+    },
+    "NAA38": {
+      "RPE1": {
+        "cells": 90,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47653883695602417,
+        "disp_excess": 0.04212585853205786
+      },
+      "Jurkat": {
+        "cells": 52,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5247116088867188,
+        "disp_excess": 0.04835026596601194
+      },
+      "HepG2": {
+        "cells": 96,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5338704586029053,
+        "disp_excess": 0.099233356890855
+      }
+    },
+    "TAF2": {
+      "RPE1": {
+        "cells": 67,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5278799533843994,
+        "disp_excess": 0.10077139512816474
+      },
+      "Jurkat": {
+        "cells": 112,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6927931904792786,
+        "disp_excess": 0.2213932762720755
+      },
+      "HepG2": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5040841698646545,
+        "disp_excess": 0.06828623462696465
+      }
+    },
+    "SMC1A": {
+      "RPE1": {
+        "cells": 94,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.43765121698379517,
+        "disp_excess": 0.008566466100672465
+      },
+      "Jurkat": {
+        "cells": 59,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6963726282119751,
+        "disp_excess": 0.2278039551387399
+      },
+      "HepG2": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.504077672958374,
+        "disp_excess": 0.07782956683322001
+      }
+    },
+    "SYMPK": {
+      "RPE1": {
+        "cells": 69,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5408347845077515,
+        "disp_excess": 0.10165137138919556
+      },
+      "Jurkat": {
+        "cells": 68,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6302747130393982,
+        "disp_excess": 0.16217280223089103
+      },
+      "HepG2": {
+        "cells": 92,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5321274399757385,
+        "disp_excess": 0.09274271033380344
+      }
+    },
+    "EEF2": {
+      "RPE1": {
+        "cells": 109,
+        "guides": 2,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5055177807807922,
+        "disp_excess": 0.07682274104258335
+      },
+      "Jurkat": {
+        "cells": 183,
+        "guides": 2,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5484104752540588,
+        "disp_excess": 0.07530397958442814
+      },
+      "HepG2": {
+        "cells": 76,
+        "guides": 2,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.509019672870636,
+        "disp_excess": 0.0716064721273284
+      }
+    },
+    "EXOSC8": {
+      "RPE1": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47170478105545044,
+        "disp_excess": 0.03354187658492552
+      },
+      "Jurkat": {
+        "cells": 92,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6776944994926453,
+        "disp_excess": 0.2088791983930961
+      },
+      "HepG2": {
+        "cells": 84,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.502581000328064,
+        "disp_excess": 0.07001005432435442
+      }
+    },
+    "NUP35": {
+      "RPE1": {
+        "cells": 65,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4815787374973297,
+        "disp_excess": 0.04934151126788211
+      },
+      "Jurkat": {
+        "cells": 96,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5265673995018005,
+        "disp_excess": 0.05357351309309405
+      },
+      "HepG2": {
+        "cells": 52,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4509436786174774,
+        "disp_excess": 0.013544232799456657
+      }
+    },
+    "FAM102B": {
+      "RPE1": {
+        "cells": 81,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.566694974899292,
+        "disp_excess": 0.13012032597153272
+      },
+      "Jurkat": {
+        "cells": 119,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6560526490211487,
+        "disp_excess": 0.18443972623648763
+      },
+      "HepG2": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.43464821577072144,
+        "disp_excess": -0.0014810428974476042
+      }
+    },
+    "GRPEL1": {
+      "RPE1": {
+        "cells": 101,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5050232410430908,
+        "disp_excess": 0.07259881378400446
+      },
+      "Jurkat": {
+        "cells": 120,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5751587748527527,
+        "disp_excess": 0.10104203919569649
+      },
+      "HepG2": {
+        "cells": 80,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46428582072257996,
+        "disp_excess": 0.029841774329543103
+      }
+    },
+    "UTP18": {
+      "RPE1": {
+        "cells": 51,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5199484825134277,
+        "disp_excess": 0.0843508337058273
+      },
+      "Jurkat": {
+        "cells": 91,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6048297882080078,
+        "disp_excess": 0.12973641202999997
+      },
+      "HepG2": {
+        "cells": 95,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5238654613494873,
+        "disp_excess": 0.09213767208551105
+      }
+    },
+    "FYN": {
+      "RPE1": {
+        "cells": 152,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4756900370121002,
+        "disp_excess": 0.046681501363453115
+      },
+      "Jurkat": {
+        "cells": 238,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5384215712547302,
+        "disp_excess": 0.06505446060865866
+      },
+      "HepG2": {
+        "cells": 104,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46641814708709717,
+        "disp_excess": 0.030375312148803013
+      }
+    },
+    "PSMB2": {
+      "RPE1": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5608441233634949,
+        "disp_excess": 0.1284692006451743
+      },
+      "Jurkat": {
+        "cells": 40,
+        "guides": 1,
+        "batches": 27,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.592745304107666,
+        "disp_excess": 0.11871702894568442
+      },
+      "HepG2": {
+        "cells": 68,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5405703783035278,
+        "disp_excess": 0.10039878899560256
+      }
+    },
+    "MALSU1": {
+      "RPE1": {
+        "cells": 170,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45074447989463806,
+        "disp_excess": 0.018322112455087525
+      },
+      "Jurkat": {
+        "cells": 96,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5522096753120422,
+        "disp_excess": 0.0787911107763648
+      },
+      "HepG2": {
+        "cells": 40,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.43092095851898193,
+        "disp_excess": -0.008958477540700449
+      }
+    },
+    "ZBTB14": {
+      "RPE1": {
+        "cells": 58,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5021730661392212,
+        "disp_excess": 0.06969191082592668
+      },
+      "Jurkat": {
+        "cells": 41,
+        "guides": 1,
+        "batches": 27,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6409053206443787,
+        "disp_excess": 0.1696720530347126
+      },
+      "HepG2": {
+        "cells": 43,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4517666697502136,
+        "disp_excess": 0.022264611582423377
+      }
+    },
+    "MLLT6": {
+      "RPE1": {
+        "cells": 105,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5025076866149902,
+        "disp_excess": 0.07639384298097518
+      },
+      "Jurkat": {
+        "cells": 243,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5725066065788269,
+        "disp_excess": 0.10062842776255354
+      },
+      "HepG2": {
+        "cells": 129,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4771974980831146,
+        "disp_excess": 0.046793469624925976
+      }
+    },
+    "DHX15": {
+      "RPE1": {
+        "cells": 82,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47982192039489746,
+        "disp_excess": 0.04811548932296472
+      },
+      "Jurkat": {
+        "cells": 41,
+        "guides": 1,
+        "batches": 28,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5483046174049377,
+        "disp_excess": 0.07247871669327338
+      },
+      "HepG2": {
+        "cells": 48,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5431897044181824,
+        "disp_excess": 0.10634844936430454
+      }
+    },
+    "FAU": {
+      "RPE1": {
+        "cells": 60,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5188004970550537,
+        "disp_excess": 0.07956949869791669
+      },
+      "Jurkat": {
+        "cells": 134,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5756596922874451,
+        "disp_excess": 0.10769792190238608
+      },
+      "HepG2": {
+        "cells": 91,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.533592164516449,
+        "disp_excess": 0.09710535734564396
+      }
+    },
+    "TAF1D": {
+      "RPE1": {
+        "cells": 90,
+        "guides": 2,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48570141196250916,
+        "disp_excess": 0.05432199736436211
+      },
+      "Jurkat": {
+        "cells": 179,
+        "guides": 2,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5528839230537415,
+        "disp_excess": 0.08418617568202524
+      },
+      "HepG2": {
+        "cells": 114,
+        "guides": 2,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48176926374435425,
+        "disp_excess": 0.04879457359289957
+      }
+    },
+    "ATP11B": {
+      "RPE1": {
+        "cells": 128,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48301300406455994,
+        "disp_excess": 0.054201750084757805
+      },
+      "Jurkat": {
+        "cells": 192,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5754907727241516,
+        "disp_excess": 0.09635975087682408
+      },
+      "HepG2": {
+        "cells": 62,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48071348667144775,
+        "disp_excess": 0.05252919658537836
+      }
+    },
+    "EIF2B3": {
+      "RPE1": {
+        "cells": 104,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5163983702659607,
+        "disp_excess": 0.0883224130823062
+      },
+      "Jurkat": {
+        "cells": 73,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5595849752426147,
+        "disp_excess": 0.09079017541179918
+      },
+      "HepG2": {
+        "cells": 75,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4830090403556824,
+        "disp_excess": 0.04407065390804671
+      }
+    },
+    "WDR26": {
+      "RPE1": {
+        "cells": 51,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.527163565158844,
+        "disp_excess": 0.10217320393113527
+      },
+      "Jurkat": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5486428141593933,
+        "disp_excess": 0.08272016009217814
+      },
+      "HepG2": {
+        "cells": 84,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4346247613430023,
+        "disp_excess": 0.00327308901718687
+      }
+    },
+    "GTF2E2": {
+      "RPE1": {
+        "cells": 280,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5220847129821777,
+        "disp_excess": 0.09291336525763783
+      },
+      "Jurkat": {
+        "cells": 744,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5739572644233704,
+        "disp_excess": 0.10068756149661157
+      },
+      "HepG2": {
+        "cells": 476,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4932347238063812,
+        "disp_excess": 0.057348111096550414
+      }
+    },
+    "BUB1B": {
+      "RPE1": {
+        "cells": 106,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4936603903770447,
+        "disp_excess": 0.06430050084051098
+      },
+      "Jurkat": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 29,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6562143564224243,
+        "disp_excess": 0.1801951267617814
+      },
+      "HepG2": {
+        "cells": 103,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4768297076225281,
+        "disp_excess": 0.04290195691932752
+      }
+    },
+    "SNRPE": {
+      "RPE1": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5554408431053162,
+        "disp_excess": 0.12095364989066609
+      },
+      "Jurkat": {
+        "cells": 45,
+        "guides": 1,
+        "batches": 29,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6148155331611633,
+        "disp_excess": 0.1408712440066867
+      },
+      "HepG2": {
+        "cells": 48,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5604069232940674,
+        "disp_excess": 0.13169868414600688
+      }
+    },
+    "GPS1": {
+      "RPE1": {
+        "cells": 242,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4790438711643219,
+        "disp_excess": 0.04810743070830986
+      },
+      "Jurkat": {
+        "cells": 363,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5481579899787903,
+        "disp_excess": 0.07292448727224154
+      },
+      "HepG2": {
+        "cells": 317,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48104575276374817,
+        "disp_excess": 0.04918902519951496
+      }
+    },
+    "EXOSC7": {
+      "RPE1": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46315106749534607,
+        "disp_excess": 0.03197982400021654
+      },
+      "Jurkat": {
+        "cells": 74,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6927492022514343,
+        "disp_excess": 0.22376193468635147
+      },
+      "HepG2": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48651623725891113,
+        "disp_excess": 0.05654208226637408
+      }
+    },
+    "NUP43": {
+      "RPE1": {
+        "cells": 72,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46397238969802856,
+        "disp_excess": 0.02951674908399582
+      },
+      "Jurkat": {
+        "cells": 72,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5177724957466125,
+        "disp_excess": 0.03967941552400589
+      },
+      "HepG2": {
+        "cells": 67,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4272933602333069,
+        "disp_excess": -0.004669353604777993
+      }
+    },
+    "AARS": {
+      "RPE1": {
+        "cells": 59,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5399850606918335,
+        "disp_excess": 0.10243878778764759
+      },
+      "Jurkat": {
+        "cells": 56,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6374891996383667,
+        "disp_excess": 0.1576004108147962
+      },
+      "HepG2": {
+        "cells": 53,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46505364775657654,
+        "disp_excess": 0.03527061050792912
+      }
+    },
+    "HSPE1": {
+      "RPE1": {
+        "cells": 102,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5032503604888916,
+        "disp_excess": 0.07154060637249665
+      },
+      "Jurkat": {
+        "cells": 159,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5701920986175537,
+        "disp_excess": 0.08978103729164078
+      },
+      "HepG2": {
+        "cells": 87,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4752447009086609,
+        "disp_excess": 0.038013606921009635
+      }
+    },
+    "INTS8": {
+      "RPE1": {
+        "cells": 153,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.490666002035141,
+        "disp_excess": 0.06085054780922683
+      },
+      "Jurkat": {
+        "cells": 140,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5742252469062805,
+        "disp_excess": 0.09959094609533037
+      },
+      "HepG2": {
+        "cells": 159,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.518092930316925,
+        "disp_excess": 0.08137312287457366
+      }
+    },
+    "RAC1": {
+      "RPE1": {
+        "cells": 43,
+        "guides": 1,
+        "batches": 29,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5083021521568298,
+        "disp_excess": 0.08177199543908586
+      },
+      "Jurkat": {
+        "cells": 109,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5206124782562256,
+        "disp_excess": 0.04022601028101158
+      },
+      "HepG2": {
+        "cells": 42,
+        "guides": 1,
+        "batches": 26,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4373133182525635,
+        "disp_excess": 0.0103116716657366
+      }
+    },
+    "PSMB3": {
+      "RPE1": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5951963067054749,
+        "disp_excess": 0.16297516409231694
+      },
+      "Jurkat": {
+        "cells": 52,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5010578632354736,
+        "disp_excess": 0.02449034727536714
+      },
+      "HepG2": {
+        "cells": 50,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5678143501281738,
+        "disp_excess": 0.1342602699774283
+      }
+    },
+    "MRPS21": {
+      "RPE1": {
+        "cells": 251,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4433327913284302,
+        "disp_excess": 0.009827304171376006
+      },
+      "Jurkat": {
+        "cells": 185,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4993305504322052,
+        "disp_excess": 0.027384256350027558
+      },
+      "HepG2": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4579637944698334,
+        "disp_excess": 0.026362917450971357
+      }
+    },
+    "EHMT2": {
+      "RPE1": {
+        "cells": 174,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47696053981781006,
+        "disp_excess": 0.0468206040818116
+      },
+      "Jurkat": {
+        "cells": 125,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6294934749603271,
+        "disp_excess": 0.15793913006782534
+      },
+      "HepG2": {
+        "cells": 101,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4206908345222473,
+        "disp_excess": -0.01670860861153839
+      }
+    },
+    "URI1": {
+      "RPE1": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48685431480407715,
+        "disp_excess": 0.0587976207566816
+      },
+      "Jurkat": {
+        "cells": 165,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6021785736083984,
+        "disp_excess": 0.12659139705426764
+      },
+      "HepG2": {
+        "cells": 133,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4802262783050537,
+        "disp_excess": 0.04830578260851981
+      }
+    },
+    "RBM10": {
+      "RPE1": {
+        "cells": 136,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5170215964317322,
+        "disp_excess": 0.08013345366891694
+      },
+      "Jurkat": {
+        "cells": 88,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5532828569412231,
+        "disp_excess": 0.08050652220845222
+      },
+      "HepG2": {
+        "cells": 171,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.44662171602249146,
+        "disp_excess": 0.01766482256360974
+      }
+    },
+    "RPL32": {
+      "RPE1": {
+        "cells": 75,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5250748991966248,
+        "disp_excess": 0.0922253652413686
+      },
+      "Jurkat": {
+        "cells": 127,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.59325110912323,
+        "disp_excess": 0.12292688733010781
+      },
+      "HepG2": {
+        "cells": 108,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.480500727891922,
+        "disp_excess": 0.04987275214106951
+      }
+    },
+    "DCUN1D5": {
+      "RPE1": {
+        "cells": 87,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5172255635261536,
+        "disp_excess": 0.08849282785393725
+      },
+      "Jurkat": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5262988209724426,
+        "disp_excess": 0.05718655731433475
+      },
+      "HepG2": {
+        "cells": 89,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4751991629600525,
+        "disp_excess": 0.038993527380268234
+      }
+    },
+    "RAC3": {
+      "RPE1": {
+        "cells": 130,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5312085151672363,
+        "disp_excess": 0.10471654305091271
+      },
+      "Jurkat": {
+        "cells": 292,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49201640486717224,
+        "disp_excess": 0.01879794936474055
+      },
+      "HepG2": {
+        "cells": 92,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48106735944747925,
+        "disp_excess": 0.04247556788765866
+      }
+    },
+    "EIF3B": {
+      "RPE1": {
+        "cells": 123,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49963638186454773,
+        "disp_excess": 0.06672315868904921
+      },
+      "Jurkat": {
+        "cells": 167,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.55509352684021,
+        "disp_excess": 0.08235269927692984
+      },
+      "HepG2": {
+        "cells": 126,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4834265112876892,
+        "disp_excess": 0.04930359360787678
+      }
+    },
+    "TRNT1": {
+      "RPE1": {
+        "cells": 354,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49254241585731506,
+        "disp_excess": 0.05905586354813336
+      },
+      "Jurkat": {
+        "cells": 663,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4949755370616913,
+        "disp_excess": 0.022213312700323395
+      },
+      "HepG2": {
+        "cells": 228,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4888104200363159,
+        "disp_excess": 0.05368482987889617
+      }
+    },
+    "MED14": {
+      "RPE1": {
+        "cells": 99,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5374529957771301,
+        "disp_excess": 0.10653927681421993
+      },
+      "Jurkat": {
+        "cells": 273,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6291784644126892,
+        "disp_excess": 0.1579866721516564
+      },
+      "HepG2": {
+        "cells": 211,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46836745738983154,
+        "disp_excess": 0.03726530752517643
+      }
+    },
+    "MAD2L1": {
+      "RPE1": {
+        "cells": 108,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5211462378501892,
+        "disp_excess": 0.09535204895116667
+      },
+      "Jurkat": {
+        "cells": 73,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5885151028633118,
+        "disp_excess": 0.10613682866096497
+      },
+      "HepG2": {
+        "cells": 91,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49218472838401794,
+        "disp_excess": 0.05273411070907508
+      }
+    },
+    "CPSF3": {
+      "RPE1": {
+        "cells": 188,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5313018560409546,
+        "disp_excess": 0.09858482870015695
+      },
+      "Jurkat": {
+        "cells": 357,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5906065702438354,
+        "disp_excess": 0.11829492741940068
+      },
+      "HepG2": {
+        "cells": 200,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46392062306404114,
+        "disp_excess": 0.03128538295626643
+      }
+    },
+    "CCT7": {
+      "RPE1": {
+        "cells": 61,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49942970275878906,
+        "disp_excess": 0.06331320913111577
+      },
+      "Jurkat": {
+        "cells": 44,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5628251433372498,
+        "disp_excess": 0.09060462428764865
+      },
+      "HepG2": {
+        "cells": 111,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5223379731178284,
+        "disp_excess": 0.08989261184726749
+      }
+    },
+    "EXOSC3": {
+      "RPE1": {
+        "cells": 60,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4530518651008606,
+        "disp_excess": 0.021487920482953393
+      },
+      "Jurkat": {
+        "cells": 129,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6836451888084412,
+        "disp_excess": 0.20965926799663276
+      },
+      "HepG2": {
+        "cells": 88,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4958716630935669,
+        "disp_excess": 0.055005459955294544
+      }
+    },
+    "NDC1": {
+      "RPE1": {
+        "cells": 111,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4565267860889435,
+        "disp_excess": 0.02373981905413103
+      },
+      "Jurkat": {
+        "cells": 118,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49228233098983765,
+        "disp_excess": 0.021309858914148994
+      },
+      "HepG2": {
+        "cells": 45,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4264530837535858,
+        "disp_excess": -0.015008079343371894
+      }
+    },
+    "WDR70": {
+      "RPE1": {
+        "cells": 144,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5335928201675415,
+        "disp_excess": 0.10417064734631115
+      },
+      "Jurkat": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5466386675834656,
+        "disp_excess": 0.07466954166112943
+      },
+      "HepG2": {
+        "cells": 154,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5019320845603943,
+        "disp_excess": 0.06920356661468358
+      }
+    },
+    "PRELID1": {
+      "RPE1": {
+        "cells": 43,
+        "guides": 1,
+        "batches": 28,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.495148241519928,
+        "disp_excess": 0.06417586914328643
+      },
+      "Jurkat": {
+        "cells": 62,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6190688610076904,
+        "disp_excess": 0.13590086131326612
+      },
+      "HepG2": {
+        "cells": 56,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47015875577926636,
+        "disp_excess": 0.026118806962455998
+      }
+    },
+    "SIRT7": {
+      "RPE1": {
+        "cells": 255,
+        "guides": 3,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5101970434188843,
+        "disp_excess": 0.0812984270208022
+      },
+      "Jurkat": {
+        "cells": 271,
+        "guides": 3,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5820258855819702,
+        "disp_excess": 0.10598347789686985
+      },
+      "HepG2": {
+        "cells": 242,
+        "guides": 3,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.460226446390152,
+        "disp_excess": 0.0284322728056553
+      }
+    },
+    "ELOB": {
+      "RPE1": {
+        "cells": 134,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49363774061203003,
+        "disp_excess": 0.060239776524145194
+      },
+      "Jurkat": {
+        "cells": 195,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5113674402236938,
+        "disp_excess": 0.03787015004035754
+      },
+      "HepG2": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4594777822494507,
+        "disp_excess": 0.020320233888924122
+      }
+    },
+    "PSMB6": {
+      "RPE1": {
+        "cells": 68,
+        "guides": 2,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5611460208892822,
+        "disp_excess": 0.12612545051995444
+      },
+      "Jurkat": {
+        "cells": 117,
+        "guides": 2,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49499884247779846,
+        "disp_excess": 0.02372883145625776
+      },
+      "HepG2": {
+        "cells": 61,
+        "guides": 2,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.558548629283905,
+        "disp_excess": 0.12165553403682394
+      }
+    },
+    "MRPL24": {
+      "RPE1": {
+        "cells": 217,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4451480209827423,
+        "disp_excess": 0.01129894473585663
+      },
+      "Jurkat": {
+        "cells": 147,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5235453248023987,
+        "disp_excess": 0.04589209710659625
+      },
+      "HepG2": {
+        "cells": 61,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4383622705936432,
+        "disp_excess": 0.010786223606985113
+      }
+    },
+    "E4F1": {
+      "RPE1": {
+        "cells": 51,
+        "guides": 1,
+        "batches": 29,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5793340802192688,
+        "disp_excess": 0.14536267226817562
+      },
+      "Jurkat": {
+        "cells": 228,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4933042824268341,
+        "disp_excess": 0.01745431347374332
+      },
+      "HepG2": {
+        "cells": 82,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48520344495773315,
+        "disp_excess": 0.04966292766536157
+      }
+    },
+    "BRIX1": {
+      "RPE1": {
+        "cells": 42,
+        "guides": 1,
+        "batches": 26,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49047020077705383,
+        "disp_excess": 0.06031290619146257
+      },
+      "Jurkat": {
+        "cells": 151,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6614793539047241,
+        "disp_excess": 0.19221700106235529
+      },
+      "HepG2": {
+        "cells": 102,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4645459055900574,
+        "disp_excess": 0.02468079562280695
+      }
+    },
+    "PTBP1": {
+      "RPE1": {
+        "cells": 43,
+        "guides": 1,
+        "batches": 29,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5187247395515442,
+        "disp_excess": 0.08391327636186469
+      },
+      "Jurkat": {
+        "cells": 61,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5196390748023987,
+        "disp_excess": 0.04325625788970072
+      },
+      "HepG2": {
+        "cells": 51,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5206379890441895,
+        "disp_excess": 0.0805872211269304
+      }
+    },
+    "RPS3": {
+      "RPE1": {
+        "cells": 50,
+        "guides": 2,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5289773344993591,
+        "disp_excess": 0.09767606616020202
+      },
+      "Jurkat": {
+        "cells": 101,
+        "guides": 2,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.60052889585495,
+        "disp_excess": 0.13005849896091048
+      },
+      "HepG2": {
+        "cells": 54,
+        "guides": 2,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4976951479911804,
+        "disp_excess": 0.06467759112517041
+      }
+    },
+    "CNOT1": {
+      "RPE1": {
+        "cells": 99,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5053157210350037,
+        "disp_excess": 0.08171290189328823
+      },
+      "Jurkat": {
+        "cells": 43,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5429370999336243,
+        "disp_excess": 0.06478443811106127
+      },
+      "HepG2": {
+        "cells": 62,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5035109519958496,
+        "disp_excess": 0.066579742288148
+      }
+    },
+    "DYNLRB1": {
+      "RPE1": {
+        "cells": 242,
+        "guides": 2,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49259817600250244,
+        "disp_excess": 0.061775874377282214
+      },
+      "Jurkat": {
+        "cells": 224,
+        "guides": 2,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5116043090820312,
+        "disp_excess": 0.041642612245466004
+      },
+      "HepG2": {
+        "cells": 124,
+        "guides": 2,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4738803207874298,
+        "disp_excess": 0.04158892818996984
+      }
+    },
+    "ETF1": {
+      "RPE1": {
+        "cells": 94,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5255292057991028,
+        "disp_excess": 0.09131498412883027
+      },
+      "Jurkat": {
+        "cells": 68,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5810460448265076,
+        "disp_excess": 0.11227390213924293
+      },
+      "HepG2": {
+        "cells": 97,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45492157340049744,
+        "disp_excess": 0.020190690596079086
+      }
+    },
+    "OGFOD1": {
+      "RPE1": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46981051564216614,
+        "disp_excess": 0.035024407776919286
+      },
+      "Jurkat": {
+        "cells": 69,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5807446837425232,
+        "disp_excess": 0.1111797228239585
+      },
+      "HepG2": {
+        "cells": 58,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4734344482421875,
+        "disp_excess": 0.03479638336033658
+      }
+    },
+    "ELL": {
+      "RPE1": {
+        "cells": 171,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5036496520042419,
+        "disp_excess": 0.071613248502999
+      },
+      "Jurkat": {
+        "cells": 92,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6118485927581787,
+        "disp_excess": 0.13765521736248681
+      },
+      "HepG2": {
+        "cells": 232,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4652388095855713,
+        "disp_excess": 0.030596405779169777
+      }
+    },
+    "CDCA5": {
+      "RPE1": {
+        "cells": 91,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5425662398338318,
+        "disp_excess": 0.10797116455141004
+      },
+      "Jurkat": {
+        "cells": 92,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5040916204452515,
+        "disp_excess": 0.029889980735986144
+      },
+      "HepG2": {
+        "cells": 93,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5147920250892639,
+        "disp_excess": 0.07416373106741136
+      }
+    },
+    "PRPF19": {
+      "RPE1": {
+        "cells": 96,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5048372745513916,
+        "disp_excess": 0.0759624435255925
+      },
+      "Jurkat": {
+        "cells": 50,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6415163278579712,
+        "disp_excess": 0.17843791127204894
+      },
+      "HepG2": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5143555998802185,
+        "disp_excess": 0.07704404229298234
+      }
+    },
+    "COPS3": {
+      "RPE1": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 29,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.44962459802627563,
+        "disp_excess": 0.01712665342270059
+      },
+      "Jurkat": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5734075903892517,
+        "disp_excess": 0.10751532358782634
+      },
+      "HepG2": {
+        "cells": 40,
+        "guides": 1,
+        "batches": 23,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5388453602790833,
+        "disp_excess": 0.1179131269454956
+      }
+    },
+    "RPA2": {
+      "RPE1": {
+        "cells": 75,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.538475751876831,
+        "disp_excess": 0.10686323245366414
+      },
+      "Jurkat": {
+        "cells": 46,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47886061668395996,
+        "disp_excess": 0.00938100724116614
+      },
+      "HepG2": {
+        "cells": 52,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6238468289375305,
+        "disp_excess": 0.18789299634786755
+      }
+    },
+    "HARS": {
+      "RPE1": {
+        "cells": 87,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4974343180656433,
+        "disp_excess": 0.0653372146617407
+      },
+      "Jurkat": {
+        "cells": 125,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6136196255683899,
+        "disp_excess": 0.13650595235824586
+      },
+      "HepG2": {
+        "cells": 59,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5068117380142212,
+        "disp_excess": 0.0683336722555209
+      }
+    },
+    "IARS2": {
+      "RPE1": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4892680048942566,
+        "disp_excess": 0.05913749371850213
+      },
+      "Jurkat": {
+        "cells": 88,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5762056112289429,
+        "disp_excess": 0.1075879264284264
+      },
+      "HepG2": {
+        "cells": 59,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4762333333492279,
+        "disp_excess": 0.036556863683765206
+      }
+    },
+    "SSU72": {
+      "RPE1": {
+        "cells": 255,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5278053283691406,
+        "disp_excess": 0.09585335885777191
+      },
+      "Jurkat": {
+        "cells": 274,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.574747622013092,
+        "disp_excess": 0.10326639437762491
+      },
+      "HepG2": {
+        "cells": 212,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4498143792152405,
+        "disp_excess": 0.014351730074168567
+      }
+    },
+    "CALR": {
+      "RPE1": {
+        "cells": 74,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5002499222755432,
+        "disp_excess": 0.06711379499048797
+      },
+      "Jurkat": {
+        "cells": 81,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5013043284416199,
+        "disp_excess": 0.029341868412347483
+      },
+      "HepG2": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.42737579345703125,
+        "disp_excess": -0.0051697492599487305
+      }
+    },
+    "PSMA4": {
+      "RPE1": {
+        "cells": 94,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5826596021652222,
+        "disp_excess": 0.15075615016703908
+      },
+      "Jurkat": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 29,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4862050712108612,
+        "disp_excess": 0.012544907153920926
+      },
+      "HepG2": {
+        "cells": 127,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5509322881698608,
+        "disp_excess": 0.11946659646634983
+      }
+    },
+    "MRPL38": {
+      "RPE1": {
+        "cells": 265,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4249705374240875,
+        "disp_excess": -0.00946266437476534
+      },
+      "Jurkat": {
+        "cells": 131,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5204604268074036,
+        "disp_excess": 0.04844185641703713
+      },
+      "HepG2": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47135382890701294,
+        "disp_excess": 0.030297349257902673
+      }
+    },
+    "THAP1": {
+      "RPE1": {
+        "cells": 152,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.489106684923172,
+        "disp_excess": 0.05975219823027911
+      },
+      "Jurkat": {
+        "cells": 637,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49359405040740967,
+        "disp_excess": 0.02095315005378784
+      },
+      "HepG2": {
+        "cells": 187,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5135092735290527,
+        "disp_excess": 0.08061967319688085
+      }
+    },
+    "CSE1L": {
+      "RPE1": {
+        "cells": 276,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4954482913017273,
+        "disp_excess": 0.06256687878698541
+      },
+      "Jurkat": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5563318133354187,
+        "disp_excess": 0.08707072951576927
+      },
+      "HepG2": {
+        "cells": 240,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5373950004577637,
+        "disp_excess": 0.10404017319051939
+      }
+    },
+    "HNRNPK": {
+      "RPE1": {
+        "cells": 88,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46335142850875854,
+        "disp_excess": 0.0315387076274915
+      },
+      "Jurkat": {
+        "cells": 40,
+        "guides": 1,
+        "batches": 28,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5673941969871521,
+        "disp_excess": 0.1038279876112938
+      },
+      "HepG2": {
+        "cells": 57,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5135027170181274,
+        "disp_excess": 0.07488287540904265
+      }
+    },
+    "RPS3A": {
+      "RPE1": {
+        "cells": 40,
+        "guides": 1,
+        "batches": 25,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5174543261528015,
+        "disp_excess": 0.08799971863627432
+      },
+      "Jurkat": {
+        "cells": 120,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5854078531265259,
+        "disp_excess": 0.10808738246560096
+      },
+      "HepG2": {
+        "cells": 53,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5411703586578369,
+        "disp_excess": 0.11055283726386306
+      }
+    },
+    "NCAPH2": {
+      "RPE1": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5264536142349243,
+        "disp_excess": 0.094947409350425
+      },
+      "Jurkat": {
+        "cells": 162,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.505492091178894,
+        "disp_excess": 0.034085676074028015
+      },
+      "HepG2": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4964195191860199,
+        "disp_excess": 0.06910122524608264
+      }
+    },
+    "GLB1": {
+      "RPE1": {
+        "cells": 45,
+        "guides": 1,
+        "batches": 27,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48299622535705566,
+        "disp_excess": 0.052503160635630264
+      },
+      "Jurkat": {
+        "cells": 109,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5619852542877197,
+        "disp_excess": 0.08509546600350548
+      },
+      "HepG2": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46168631315231323,
+        "disp_excess": 0.025896657596934936
+      }
+    },
+    "SEC61A1": {
+      "RPE1": {
+        "cells": 90,
+        "guides": 2,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5089170336723328,
+        "disp_excess": 0.07353030211395689
+      },
+      "Jurkat": {
+        "cells": 163,
+        "guides": 2,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5615194439888,
+        "disp_excess": 0.08961162848706627
+      },
+      "HepG2": {
+        "cells": 110,
+        "guides": 2,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4749114215373993,
+        "disp_excess": 0.04037643806500868
+      }
+    },
+    "TUBGCP2": {
+      "RPE1": {
+        "cells": 166,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4818393588066101,
+        "disp_excess": 0.05118796642286233
+      },
+      "Jurkat": {
+        "cells": 58,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5422404408454895,
+        "disp_excess": 0.07265426475426245
+      },
+      "HepG2": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4939928352832794,
+        "disp_excess": 0.0524719194509089
+      }
+    },
+    "GTF2A1": {
+      "RPE1": {
+        "cells": 40,
+        "guides": 1,
+        "batches": 27,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47064507007598877,
+        "disp_excess": 0.041203658282756794
+      },
+      "Jurkat": {
+        "cells": 92,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6327514052391052,
+        "disp_excess": 0.1557227045945499
+      },
+      "HepG2": {
+        "cells": 90,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5277767777442932,
+        "disp_excess": 0.0856107552846273
+      }
+    },
+    "CENPN": {
+      "RPE1": {
+        "cells": 78,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49539580941200256,
+        "disp_excess": 0.0597364657964462
+      },
+      "Jurkat": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5843901038169861,
+        "disp_excess": 0.10926325649631269
+      },
+      "HepG2": {
+        "cells": 41,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4689767360687256,
+        "disp_excess": 0.028888492322549586
+      }
+    },
+    "SNRPB": {
+      "RPE1": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5692343711853027,
+        "disp_excess": 0.14757938655939967
+      },
+      "Jurkat": {
+        "cells": 42,
+        "guides": 1,
+        "batches": 28,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5576480031013489,
+        "disp_excess": 0.08013827247279032
+      },
+      "HepG2": {
+        "cells": 44,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5328567624092102,
+        "disp_excess": 0.09585132043470035
+      }
+    },
+    "CCT4": {
+      "RPE1": {
+        "cells": 65,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47044891119003296,
+        "disp_excess": 0.04075402800853434
+      },
+      "Jurkat": {
+        "cells": 60,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5438311696052551,
+        "disp_excess": 0.07352590362230937
+      },
+      "HepG2": {
+        "cells": 87,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5343038439750671,
+        "disp_excess": 0.10129238236909627
+      }
+    },
+    "EXOSC4": {
+      "RPE1": {
+        "cells": 61,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45039448142051697,
+        "disp_excess": 0.01642487332469128
+      },
+      "Jurkat": {
+        "cells": 185,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6767010688781738,
+        "disp_excess": 0.20060236470119375
+      },
+      "HepG2": {
+        "cells": 128,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4919711947441101,
+        "disp_excess": 0.06155887711793184
+      }
+    },
+    "EPRS": {
+      "RPE1": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48991817235946655,
+        "disp_excess": 0.061499994485936293
+      },
+      "Jurkat": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6253610849380493,
+        "disp_excess": 0.1634842144591468
+      },
+      "HepG2": {
+        "cells": 50,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47501906752586365,
+        "disp_excess": 0.054564254283905045
+      }
+    },
+    "DLD": {
+      "RPE1": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5205615758895874,
+        "disp_excess": 0.08596369349642802
+      },
+      "Jurkat": {
+        "cells": 56,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4857119023799896,
+        "disp_excess": 0.021011303578104268
+      },
+      "HepG2": {
+        "cells": 102,
+        "guides": 1,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5166569352149963,
+        "disp_excess": 0.08386942948780807
+      }
+    },
+    "PFDN2": {
+      "RPE1": {
+        "cells": 40,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5222485065460205,
+        "disp_excess": 0.09627946615219118
+      },
+      "Jurkat": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6368851661682129,
+        "disp_excess": 0.15372598062862047
+      },
+      "HepG2": {
+        "cells": 45,
+        "guides": 1,
+        "batches": 31,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48548218607902527,
+        "disp_excess": 0.057239492071999465
+      }
+    },
+    "ACTB": {
+      "RPE1": {
+        "cells": 235,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.41410377621650696,
+        "disp_excess": -0.015935196140979213
+      },
+      "Jurkat": {
+        "cells": 138,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5504728555679321,
+        "disp_excess": 0.07879054395185003
+      },
+      "HepG2": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 28,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45878779888153076,
+        "disp_excess": 0.024865972868939656
+      }
+    },
+    "RBX1": {
+      "RPE1": {
+        "cells": 79,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5323903560638428,
+        "disp_excess": 0.10391820382468309
+      },
+      "Jurkat": {
+        "cells": 88,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.537026047706604,
+        "disp_excess": 0.0689939497546716
+      },
+      "HepG2": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5274601578712463,
+        "disp_excess": 0.09333190972154792
+      }
+    },
+    "MRPL27": {
+      "RPE1": {
+        "cells": 191,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.44764572381973267,
+        "disp_excess": 0.013913656560538334
+      },
+      "Jurkat": {
+        "cells": 169,
+        "guides": 1,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5030280947685242,
+        "disp_excess": 0.033806179931177904
+      },
+      "HepG2": {
+        "cells": 60,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.43679970502853394,
+        "disp_excess": 0.006389673054218281
+      }
+    },
+    "POU3F1": {
+      "RPE1": {
+        "cells": 133,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5235300660133362,
+        "disp_excess": 0.09235438816529468
+      },
+      "Jurkat": {
+        "cells": 250,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5247342586517334,
+        "disp_excess": 0.050804204463958724
+      },
+      "HepG2": {
+        "cells": 167,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4566074311733246,
+        "disp_excess": 0.018789701476068565
+      }
+    },
+    "NOM1": {
+      "RPE1": {
+        "cells": 59,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5164592266082764,
+        "disp_excess": 0.07746011776439216
+      },
+      "Jurkat": {
+        "cells": 298,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.588248074054718,
+        "disp_excess": 0.11033218599005834
+      },
+      "HepG2": {
+        "cells": 131,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.495625376701355,
+        "disp_excess": 0.061222869021291926
+      }
+    },
+    "GPKOW": {
+      "RPE1": {
+        "cells": 42,
+        "guides": 1,
+        "batches": 29,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5728298425674438,
+        "disp_excess": 0.1367632093883696
+      },
+      "Jurkat": {
+        "cells": 123,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5067072510719299,
+        "disp_excess": 0.032102879469956824
+      },
+      "HepG2": {
+        "cells": 50,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46672189235687256,
+        "disp_excess": 0.03266382455825806
+      }
+    },
+    "RPS14": {
+      "RPE1": {
+        "cells": 68,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5364776849746704,
+        "disp_excess": 0.10086666967938929
+      },
+      "Jurkat": {
+        "cells": 115,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5659013986587524,
+        "disp_excess": 0.09465752658636672
+      },
+      "HepG2": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.504319965839386,
+        "disp_excess": 0.06721696688214474
+      }
+    },
+    "GTF3C1": {
+      "RPE1": {
+        "cells": 66,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5065754055976868,
+        "disp_excess": 0.07678158942497137
+      },
+      "Jurkat": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5763577818870544,
+        "disp_excess": 0.10650299675762653
+      },
+      "HepG2": {
+        "cells": 76,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.44403502345085144,
+        "disp_excess": 0.00671032698530899
+      }
+    },
+    "COPZ1": {
+      "RPE1": {
+        "cells": 145,
+        "guides": 2,
+        "batches": 51,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4759503901004791,
+        "disp_excess": 0.04254760433887611
+      },
+      "Jurkat": {
+        "cells": 133,
+        "guides": 2,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48186883330345154,
+        "disp_excess": 0.005555791738338034
+      },
+      "HepG2": {
+        "cells": 55,
+        "guides": 2,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5192463397979736,
+        "disp_excess": 0.0858618600801988
+      }
+    },
+    "EIF2B4": {
+      "RPE1": {
+        "cells": 67,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4908292889595032,
+        "disp_excess": 0.060492284262358254
+      },
+      "Jurkat": {
+        "cells": 68,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5614994168281555,
+        "disp_excess": 0.09049612721976114
+      },
+      "HepG2": {
+        "cells": 63,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.502821147441864,
+        "disp_excess": 0.06633692554065157
+      }
+    },
+    "CIAPIN1": {
+      "RPE1": {
+        "cells": 99,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5003429651260376,
+        "disp_excess": 0.06524108214811847
+      },
+      "Jurkat": {
+        "cells": 147,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4854615032672882,
+        "disp_excess": 0.010820201870535506
+      },
+      "HepG2": {
+        "cells": 99,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5123912692070007,
+        "disp_excess": 0.07968822362447026
+      }
+    },
+    "MED19": {
+      "RPE1": {
+        "cells": 201,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4379229247570038,
+        "disp_excess": 0.008252389988495923
+      },
+      "Jurkat": {
+        "cells": 267,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6499444842338562,
+        "disp_excess": 0.17863050069701808
+      },
+      "HepG2": {
+        "cells": 112,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45959946513175964,
+        "disp_excess": 0.018836958333849907
+      }
+    },
+    "PPP2CB": {
+      "RPE1": {
+        "cells": 95,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4877811074256897,
+        "disp_excess": 0.05431226209590312
+      },
+      "Jurkat": {
+        "cells": 168,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5482025146484375,
+        "disp_excess": 0.0714730093521731
+      },
+      "HepG2": {
+        "cells": 67,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4758261740207672,
+        "disp_excess": 0.04886689248369702
+      }
+    },
+    "CSTF3": {
+      "RPE1": {
+        "cells": 67,
+        "guides": 1,
+        "batches": 38,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5269119143486023,
+        "disp_excess": 0.09124242725656995
+      },
+      "Jurkat": {
+        "cells": 49,
+        "guides": 1,
+        "batches": 34,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5880948305130005,
+        "disp_excess": 0.11803844692755716
+      },
+      "HepG2": {
+        "cells": 70,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5115657448768616,
+        "disp_excess": 0.07531372010707854
+      }
+    },
+    "PXN": {
+      "RPE1": {
+        "cells": 150,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4561825096607208,
+        "disp_excess": 0.023400991757710765
+      },
+      "Jurkat": {
+        "cells": 89,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5438424944877625,
+        "disp_excess": 0.0690055362294229
+      },
+      "HepG2": {
+        "cells": 56,
+        "guides": 1,
+        "batches": 32,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5200388431549072,
+        "disp_excess": 0.08766434394887518
+      }
+    },
+    "CDT1": {
+      "RPE1": {
+        "cells": 106,
+        "guides": 1,
+        "batches": 49,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.577572226524353,
+        "disp_excess": 0.14818643764504846
+      },
+      "Jurkat": {
+        "cells": 74,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4879966080188751,
+        "disp_excess": 0.007767743758253176
+      },
+      "HepG2": {
+        "cells": 99,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5459980368614197,
+        "disp_excess": 0.10860506873584802
+      }
+    },
+    "VARS": {
+      "RPE1": {
+        "cells": 87,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4787522554397583,
+        "disp_excess": 0.04999112089474994
+      },
+      "Jurkat": {
+        "cells": 122,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.59745854139328,
+        "disp_excess": 0.12231908689756865
+      },
+      "HepG2": {
+        "cells": 88,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4991167187690735,
+        "disp_excess": 0.06447455692747828
+      }
+    },
+    "PMPCA": {
+      "RPE1": {
+        "cells": 67,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5178007483482361,
+        "disp_excess": 0.08610884867497343
+      },
+      "Jurkat": {
+        "cells": 98,
+        "guides": 1,
+        "batches": 45,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5464675426483154,
+        "disp_excess": 0.07946228251165272
+      },
+      "HepG2": {
+        "cells": 51,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47093665599823,
+        "disp_excess": 0.02813495080931605
+      }
+    },
+    "RBMX2": {
+      "RPE1": {
+        "cells": 105,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.505893886089325,
+        "disp_excess": 0.07392616442271643
+      },
+      "Jurkat": {
+        "cells": 150,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.54741370677948,
+        "disp_excess": 0.07155401865641275
+      },
+      "HepG2": {
+        "cells": 114,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5078583359718323,
+        "disp_excess": 0.0694968300430398
+      }
+    },
+    "GRB2": {
+      "RPE1": {
+        "cells": 186,
+        "guides": 2,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45910659432411194,
+        "disp_excess": 0.02566629359799044
+      },
+      "Jurkat": {
+        "cells": 147,
+        "guides": 2,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48202186822891235,
+        "disp_excess": 0.008677755691567257
+      },
+      "HepG2": {
+        "cells": 78,
+        "guides": 2,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4715367555618286,
+        "disp_excess": 0.03538091175067121
+      }
+    },
+    "RPS27A": {
+      "RPE1": {
+        "cells": 69,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5023713707923889,
+        "disp_excess": 0.06788254302480945
+      },
+      "Jurkat": {
+        "cells": 190,
+        "guides": 1,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5962973237037659,
+        "disp_excess": 0.12694923203242453
+      },
+      "HepG2": {
+        "cells": 116,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47997528314590454,
+        "disp_excess": 0.04689861113731281
+      }
+    },
+    "MRPL54": {
+      "RPE1": {
+        "cells": 165,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4555930197238922,
+        "disp_excess": 0.022874129902232754
+      },
+      "Jurkat": {
+        "cells": 156,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4965248107910156,
+        "disp_excess": 0.02222572419887936
+      },
+      "HepG2": {
+        "cells": 55,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4381193518638611,
+        "disp_excess": 0.0045391185616804886
+      }
+    },
+    "DNMT1": {
+      "RPE1": {
+        "cells": 113,
+        "guides": 1,
+        "batches": 46,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47830069065093994,
+        "disp_excess": 0.04297879180022046
+      },
+      "Jurkat": {
+        "cells": 177,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5992496609687805,
+        "disp_excess": 0.12316365851520816
+      },
+      "HepG2": {
+        "cells": 82,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.44454795122146606,
+        "disp_excess": 0.009559419096970001
+      }
+    },
+    "NAA50": {
+      "RPE1": {
+        "cells": 64,
+        "guides": 1,
+        "batches": 39,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5590892434120178,
+        "disp_excess": 0.1327557503245771
+      },
+      "Jurkat": {
+        "cells": 73,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5223203301429749,
+        "disp_excess": 0.05118855139980577
+      },
+      "HepG2": {
+        "cells": 65,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4862646460533142,
+        "disp_excess": 0.05094227378184979
+      }
+    },
+    "DDX46": {
+      "RPE1": {
+        "cells": 225,
+        "guides": 2,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4653668999671936,
+        "disp_excess": 0.029340240160624198
+      },
+      "Jurkat": {
+        "cells": 250,
+        "guides": 2,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5532321929931641,
+        "disp_excess": 0.07663917076587679
+      },
+      "HepG2": {
+        "cells": 166,
+        "guides": 2,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.45680567622184753,
+        "disp_excess": 0.024748052818229394
+      }
+    },
+    "RPS19": {
+      "RPE1": {
+        "cells": 57,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.534018874168396,
+        "disp_excess": 0.10627854968372147
+      },
+      "Jurkat": {
+        "cells": 140,
+        "guides": 1,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.6011940240859985,
+        "disp_excess": 0.13605340250900816
+      },
+      "HepG2": {
+        "cells": 79,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4677387475967407,
+        "disp_excess": 0.03138931679630641
+      }
+    },
+    "BRF1": {
+      "RPE1": {
+        "cells": 61,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5195126533508301,
+        "disp_excess": 0.08096134760340706
+      },
+      "Jurkat": {
+        "cells": 103,
+        "guides": 1,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5425255298614502,
+        "disp_excess": 0.06921778749493718
+      },
+      "HepG2": {
+        "cells": 63,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.47184574604034424,
+        "disp_excess": 0.040374660775775006
+      }
+    },
+    "PPP6C": {
+      "RPE1": {
+        "cells": 1581,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46183204650878906,
+        "disp_excess": 0.03056410605360027
+      },
+      "Jurkat": {
+        "cells": 1186,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49776214361190796,
+        "disp_excess": 0.02491041352033213
+      },
+      "HepG2": {
+        "cells": 459,
+        "guides": 1,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4624880850315094,
+        "disp_excess": 0.029040882334306684
+      }
+    },
+    "EIF3A": {
+      "RPE1": {
+        "cells": 62,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5112863779067993,
+        "disp_excess": 0.08377256749137757
+      },
+      "Jurkat": {
+        "cells": 56,
+        "guides": 1,
+        "batches": 35,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5479463338851929,
+        "disp_excess": 0.07297039191637722
+      },
+      "HepG2": {
+        "cells": 63,
+        "guides": 1,
+        "batches": 36,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49846088886260986,
+        "disp_excess": 0.0668396930845957
+      }
+    },
+    "ABCF1": {
+      "RPE1": {
+        "cells": 157,
+        "guides": 2,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4871755838394165,
+        "disp_excess": 0.05749975496036991
+      },
+      "Jurkat": {
+        "cells": 145,
+        "guides": 2,
+        "batches": 50,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5208103060722351,
+        "disp_excess": 0.0488429659399493
+      },
+      "HepG2": {
+        "cells": 96,
+        "guides": 2,
+        "batches": 47,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4857677221298218,
+        "disp_excess": 0.049160574252406775
+      }
+    },
+    "TAF6": {
+      "RPE1": {
+        "cells": 75,
+        "guides": 1,
+        "batches": 40,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4831523895263672,
+        "disp_excess": 0.05098102649052938
+      },
+      "Jurkat": {
+        "cells": 95,
+        "guides": 1,
+        "batches": 48,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.627199113368988,
+        "disp_excess": 0.1565803929379112
+      },
+      "HepG2": {
+        "cells": 47,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.46427223086357117,
+        "disp_excess": 0.027935168844588243
+      }
+    },
+    "PPP2R1A": {
+      "RPE1": {
+        "cells": 296,
+        "guides": 2,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4692905843257904,
+        "disp_excess": 0.04062355944030993
+      },
+      "Jurkat": {
+        "cells": 529,
+        "guides": 2,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49668875336647034,
+        "disp_excess": 0.02116529494242314
+      },
+      "HepG2": {
+        "cells": 198,
+        "guides": 2,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4562455415725708,
+        "disp_excess": 0.025455489450855906
+      }
+    },
+    "POLR2F": {
+      "RPE1": {
+        "cells": 85,
+        "guides": 1,
+        "batches": 43,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4800742268562317,
+        "disp_excess": 0.04952398819081921
+      },
+      "Jurkat": {
+        "cells": 48,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.64310622215271,
+        "disp_excess": 0.16551720288892585
+      },
+      "HepG2": {
+        "cells": 80,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49750396609306335,
+        "disp_excess": 0.0651086457004702
+      }
+    },
+    "CCT8": {
+      "RPE1": {
+        "cells": 48,
+        "guides": 1,
+        "batches": 30,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5088238716125488,
+        "disp_excess": 0.07768235790232819
+      },
+      "Jurkat": {
+        "cells": 48,
+        "guides": 1,
+        "batches": 33,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5245267748832703,
+        "disp_excess": 0.05368472511569661
+      },
+      "HepG2": {
+        "cells": 68,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4764302968978882,
+        "disp_excess": 0.05114954359391155
+      }
+    },
+    "RPA3": {
+      "RPE1": {
+        "cells": 110,
+        "guides": 1,
+        "batches": 44,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5033899545669556,
+        "disp_excess": 0.07445882396264508
+      },
+      "Jurkat": {
+        "cells": 85,
+        "guides": 1,
+        "batches": 41,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49981117248535156,
+        "disp_excess": 0.035886625331990885
+      },
+      "HepG2": {
+        "cells": 86,
+        "guides": 1,
+        "batches": 42,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.55532306432724,
+        "disp_excess": 0.1177950529165046
+      }
+    },
+    "FAM136A": {
+      "RPE1": {
+        "cells": 528,
+        "guides": 3,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4610867202281952,
+        "disp_excess": 0.028929551555351762
+      },
+      "Jurkat": {
+        "cells": 502,
+        "guides": 3,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5593331456184387,
+        "disp_excess": 0.083482855166572
+      },
+      "HepG2": {
+        "cells": 291,
+        "guides": 3,
+        "batches": 54,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5021018981933594,
+        "disp_excess": 0.06745052603921531
+      }
+    },
+    "POLRMT": {
+      "RPE1": {
+        "cells": 212,
+        "guides": 1,
+        "batches": 56,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.4776313900947571,
+        "disp_excess": 0.04637298016053326
+      },
+      "Jurkat": {
+        "cells": 190,
+        "guides": 1,
+        "batches": 53,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5446090698242188,
+        "disp_excess": 0.07059963047504425
+      },
+      "HepG2": {
+        "cells": 65,
+        "guides": 1,
+        "batches": 37,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48472198843955994,
+        "disp_excess": 0.05212412384840159
+      }
+    },
+    "TSR1": {
+      "RPE1": {
+        "cells": 207,
+        "guides": 2,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.48408785462379456,
+        "disp_excess": 0.05556500490736849
+      },
+      "Jurkat": {
+        "cells": 416,
+        "guides": 2,
+        "batches": 55,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.5430567264556885,
+        "disp_excess": 0.07001163437962532
+      },
+      "HepG2": {
+        "cells": 182,
+        "guides": 2,
+        "batches": 52,
+        "frac_ntc_batch": 1.0,
+        "disp": 0.49605774879455566,
+        "disp_excess": 0.06310039840253523
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "STEP 1 -- COHORT SELECTION on measured criteria",
+    "====================================================================================================",
+    "\n  RPE1: 247,914 cells, 2394 labels, NTC=['non-targeting'] (11,485 cells) in 56 batches",
+    "    1,821 perturbations with >= 40 cells; median cells 89; guides/gene median 1; control dispersion 0.4305",
+    "\n  Jurkat: 262,956 cells, 2394 labels, NTC=['non-targeting'] (12,013 cells) in 55 batches",
+    "    1,982 perturbations with >= 40 cells; median cells 94; guides/gene median 1; control dispersion 0.4744",
+    "\n  HepG2: 145,473 cells, 2394 labels, NTC=['non-targeting'] (4,976 cells) in 56 batches",
+    "    1,399 perturbations with >= 40 cells; median cells 63; guides/gene median 1; control dispersion 0.4324",
+    "\n  perturbations passing in ALL THREE lines: 1,075",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 537 kept of 691 built  (TIER A 528, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  after the NTC-batch filter (>=50% of cells in NTC-containing batches): 1,075",
+    "  guides per gene: max observed 5 -- 'multiple guides' is AVAILABLE in this library; the criterion cannot be met by selection and is reported, not silently dropped",
+    "\n  COHORT: 200 perturbations over 20 functional classes",
+    "    total cells across 3 lines: 78,608",
+    "    min cells per line: median 64, range 40-459",
+    "    heterogeneity excess: median +0.0787, 200 of 200 above their control",
+    "    first 12: UBE2I, C14orf178, PHB2, SLU7, KPNB1, PSMD14, MRPL34, MYC, TIMM23B, DHX16, RPL10A, ICE1"
+  ]
+}

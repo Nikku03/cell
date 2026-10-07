@@ -1,0 +1,131 @@
+{
+  "test": "loop_cancer",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/intogen.zip",
+        "bytes": 964758,
+        "hash": "854def4465bcd7f9",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 16492,
+      "used": 16460,
+      "selection": "filtered",
+      "fraction": 0.9980596652922629
+    },
+    "seed": 1904,
+    "controls": [
+      "200 label shuffles",
+      "gene length and publication count partialled out",
+      "length and citations as standalone predictors",
+      "LOEUF and abundance lookups",
+      "loss-of-function subset scored separately"
+    ],
+    "note": "IntOGen 2024-06 driver compendium as the held-out label",
+    "warnings": []
+  },
+  "gates": {
+    "K1 join": true,
+    "K2 signal": true,
+    "K3 beats length and citations": true,
+    "K4 beats lookups": true
+  },
+  "n_drivers": 601,
+  "auc_length": 0.6753567917942425,
+  "auc_pubs": 0.825946498778388,
+  "predictors": {
+    "essentiality (model)": {
+      "raw": 0.5188927297012913,
+      "partial": 0.29904454385302087,
+      "n": 16460
+    },
+    "metabolic cost (loop 4)": {
+      "raw": 0.5373364825581395,
+      "partial": 0.32540879360465114,
+      "n": 1784
+    },
+    "LOEUF (lookup)": {
+      "raw": 0.7078022431244393,
+      "partial": 0.6588077188963178,
+      "n": 16460
+    },
+    "protein abundance (lookup)": {
+      "raw": 0.6062440963990172,
+      "partial": 0.3691283596427293,
+      "n": 16460
+    }
+  },
+  "best_model": "essentiality (model)",
+  "auc_lof_only": 0.507318418324518,
+  "direction": "ANTI-predicts drivers",
+  "partial_best": 0.29904454385302087,
+  "null": {
+    "lo": 0.49037648121827343,
+    "hi": 0.5111214583508852
+  },
+  "null_partial": {
+    "lo": 0.475052302901432,
+    "hi": 0.523023959898687
+  },
+  "log": [
+    "====================================================================================================",
+    "CANCER DRIVERS -- the last row with no pipeline",
+    "====================================================================================================",
+    "  Two confounds decide this and both could produce the whole result alone: long genes collect",
+    "  more mutations by chance, and well-studied genes get called more often. Both are partialled",
+    "  out and both are reported as standalone predictors.",
+    "\n  IntOGen 2024-06: 4,478 cohort-by-gene findings over 633 distinct driver genes; 440 with a loss-of-function role",
+    "  16,460 genes with coordinates; 601 of them IntOGen drivers",
+    "  K1 JOIN (>= 200 drivers)   PASS",
+    "\n  THE CONFOUNDS, measured before anything is claimed:",
+    "    gene length alone        AUC 0.6754",
+    "    publication count alone  AUC 0.8259   <- study bias, measurable here because cell_complete carries `pubs`",
+    "\n  predictor                             raw   partial        n",
+    "  essentiality (model)               0.5189    0.2990   16,460",
+    "  metabolic cost (loop 4)            0.5373    0.3254    1,784",
+    "  LOEUF (lookup)                     0.7078    0.6588   16,460",
+    "  protein abundance (lookup)         0.6062    0.3691   16,460",
+    "    'partial' is the AUC of what remains after length and citations are regressed out.",
+    "\n  K2 SIGNAL -- best model predictor 'essentiality (model)': raw 0.5189 against a shuffled null of [0.4904, 0.5111]   K2 PASS",
+    "\n  K3 BEATS LENGTH AND CITATIONS -- partial 0.2990 against [0.4751, 0.5230]   K3 PASS",
+    "    DIRECTION: ANTI-predicts drivers. An AUC of 0.2990 is not a weak prediction of",
+    "    drivers, it is a 0.7010 prediction of NON-drivers. Among genes",
+    "    matched for length and citations, the MORE essential a gene is the LESS likely it is to",
+    "    be called a driver -- which is what purifying selection predicts, since a tumour cannot",
+    "    be driven by breaking something every cell needs. Real, interpretable, and the opposite",
+    "\n  K4 BEATS LOOKUPS -- vs LOEUF (lookup): |0.2990-0.5| against |0.6588-0.5|   PASS",
+    "\n  loss-of-function drivers only (422 positives): raw AUC 0.5073",
+    "    reported separately because an ACTIVATING driver is a gain of function, and nothing in",
+    "    this model represents one -- it only knows how to remove things.",
+    "\n====================================================================================================",
+    "  K1 join                             PASS",
+    "  K2 signal                           PASS",
+    "  K3 beats length and citations       PASS",
+    "  K4 beats lookups                    PASS",
+    "  THE MODEL CARRIES REAL INFORMATION, IN THE OPPOSITE DIRECTION TO THE ONE PROPOSED.",
+    "  After length and citations are removed, essentiality ANTI-predicts driver status at",
+    "  0.2990 -- i.e. it predicts NON-drivers at 0.7010.",
+    "  That is a genuine, interpretable finding (purifying selection keeps pan-essential genes",
+    "  out of the driver list) and it is NOT what this module set out to show.",
+    "  And the subset this model could mechanistically explain -- loss-of-function drivers --",
+    "  sits at 0.5073, which is chance. The model can say what is not a driver. It cannot",
+    "  say what is.",
+    "====================================================================================================",
+    "    manifest: 3 inputs, coverage 16460/16492 (99.8%) by 'filtered', seed 1904, controls 5"
+  ]
+}

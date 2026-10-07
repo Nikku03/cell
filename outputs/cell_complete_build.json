@@ -1,0 +1,538 @@
+{
+  "test": "cell_complete_build",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "cf872c8620cd7649",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 42,
+      "used": 42,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "round-trip canonical hash",
+      "key-order preservation"
+    ],
+    "note": "one gzipped artefact per top-level block, independently hashed",
+    "warnings": []
+  },
+  "original_hash": "9f71da1d7ba8de79",
+  "rebuilt_hash": "9f71da1d7ba8de79",
+  "round_trip_ok": true,
+  "n_blocks": 42,
+  "raw_bytes": 34024217,
+  "gz_bytes": 6863638,
+  "known_producer": [
+    "cellcycle"
+  ],
+  "partial_producer": [
+    "genes"
+  ],
+  "no_producer": [
+    "reg",
+    "ppi",
+    "reactions",
+    "generxn",
+    "gf_perturb",
+    "codep",
+    "sl",
+    "loops3d",
+    "ti_priority",
+    "ti_whitespace",
+    "biomarkers",
+    "struct",
+    "fold",
+    "otdis",
+    "pathways",
+    "sig",
+    "complexes",
+    "gene2cplx",
+    "drugs",
+    "lr",
+    "ptm",
+    "ctnames",
+    "abund",
+    "emask",
+    "procs",
+    "comps",
+    "hiv",
+    "hiv_targets",
+    "hiv_weakpoints",
+    "dark_count",
+    "celltypes",
+    "darkfn",
+    "model4",
+    "model4_meta",
+    "coexpr",
+    "ncrna",
+    "nichenet",
+    "ppm",
+    "go",
+    "genome"
+  ],
+  "parts": [
+    {
+      "block": "genes",
+      "type": "list",
+      "items": 16492,
+      "raw_bytes": 5815008,
+      "gz_bytes": 854302,
+      "sha256": "bbfb76e205e736aa",
+      "producer": null,
+      "partial": "colab/cell_coords.py rebuilds strand, gene_start, gene_end, ens_tss from genes.parquet (GRCh38.p14); the remaining 20 fields have no known source"
+    },
+    {
+      "block": "reg",
+      "type": "list",
+      "items": 612133,
+      "raw_bytes": 9036777,
+      "gz_bytes": 1928642,
+      "sha256": "457e2cb3041920fc",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "ppi",
+      "type": "list",
+      "items": 191447,
+      "raw_bytes": 2437859,
+      "gz_bytes": 675029,
+      "sha256": "0906a5b630506322",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "reactions",
+      "type": "list",
+      "items": 31,
+      "raw_bytes": 2962,
+      "gz_bytes": 877,
+      "sha256": "69b5f18b90b6951d",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "generxn",
+      "type": "dict",
+      "items": 2549,
+      "raw_bytes": 688945,
+      "gz_bytes": 75080,
+      "sha256": "517c787be03588f2",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "gf_perturb",
+      "type": "dict",
+      "items": 0,
+      "raw_bytes": 2,
+      "gz_bytes": 38,
+      "sha256": "44136fa355b3678a",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "codep",
+      "type": "dict",
+      "items": 13451,
+      "raw_bytes": 1140175,
+      "gz_bytes": 355766,
+      "sha256": "5be25aae4e75d422",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "sl",
+      "type": "list",
+      "items": 1256,
+      "raw_bytes": 23223,
+      "gz_bytes": 7569,
+      "sha256": "88d52c5eee32f666",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "loops3d",
+      "type": "dict",
+      "items": 767,
+      "raw_bytes": 19240,
+      "gz_bytes": 5920,
+      "sha256": "367ced8f698522fa",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "ti_priority",
+      "type": "list",
+      "items": 200,
+      "raw_bytes": 24808,
+      "gz_bytes": 3986,
+      "sha256": "27198b5b11a580a7",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "ti_whitespace",
+      "type": "list",
+      "items": 200,
+      "raw_bytes": 11166,
+      "gz_bytes": 2077,
+      "sha256": "71f9c42fb25f67a4",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "biomarkers",
+      "type": "dict",
+      "items": 599,
+      "raw_bytes": 64430,
+      "gz_bytes": 16310,
+      "sha256": "58d58a56485c3113",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "struct",
+      "type": "dict",
+      "items": 13,
+      "raw_bytes": 871,
+      "gz_bytes": 323,
+      "sha256": "e18d98dc627c6b26",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "fold",
+      "type": "dict",
+      "items": 1,
+      "raw_bytes": 198,
+      "gz_bytes": 180,
+      "sha256": "1e03783ad641287e",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "otdis",
+      "type": "dict",
+      "items": 48,
+      "raw_bytes": 9350,
+      "gz_bytes": 2681,
+      "sha256": "311b32f6dbd54c1e",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "pathways",
+      "type": "dict",
+      "items": 60,
+      "raw_bytes": 22218,
+      "gz_bytes": 10589,
+      "sha256": "552dc31f5fadd222",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "sig",
+      "type": "list",
+      "items": 17432,
+      "raw_bytes": 260106,
+      "gz_bytes": 87101,
+      "sha256": "a36d1402c8b712bc",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "complexes",
+      "type": "dict",
+      "items": 2039,
+      "raw_bytes": 145282,
+      "gz_bytes": 29531,
+      "sha256": "c898f29678ad76c8",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "gene2cplx",
+      "type": "dict",
+      "items": 3257,
+      "raw_bytes": 290840,
+      "gz_bytes": 40325,
+      "sha256": "65cb9f4c9ac4b570",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "drugs",
+      "type": "dict",
+      "items": 4275,
+      "raw_bytes": 844338,
+      "gz_bytes": 134170,
+      "sha256": "c72413cc4d56259a",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "lr",
+      "type": "list",
+      "items": 948,
+      "raw_bytes": 11907,
+      "gz_bytes": 3297,
+      "sha256": "15a44ed7725c4d12",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "ptm",
+      "type": "dict",
+      "items": 8425,
+      "raw_bytes": 295217,
+      "gz_bytes": 35965,
+      "sha256": "292be88e6e47a61a",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "cellcycle",
+      "type": "dict",
+      "items": 153,
+      "raw_bytes": 2412,
+      "gz_bytes": 508,
+      "sha256": "f0945cd5240a74dd",
+      "producer": "colab/cellcycle.py",
+      "partial": null
+    },
+    {
+      "block": "ctnames",
+      "type": "list",
+      "items": 200,
+      "raw_bytes": 5790,
+      "gz_bytes": 1673,
+      "sha256": "a359274f517fc094",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "abund",
+      "type": "dict",
+      "items": 16286,
+      "raw_bytes": 151984,
+      "gz_bytes": 42181,
+      "sha256": "ffdff3a5cecb3b96",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "emask",
+      "type": "dict",
+      "items": 7496,
+      "raw_bytes": 441974,
+      "gz_bytes": 171042,
+      "sha256": "8f608257f530a09f",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "procs",
+      "type": "list",
+      "items": 12,
+      "raw_bytes": 189,
+      "gz_bytes": 150,
+      "sha256": "a932dfb5987586de",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "comps",
+      "type": "list",
+      "items": 12,
+      "raw_bytes": 147,
+      "gz_bytes": 130,
+      "sha256": "db97809309a99607",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "hiv",
+      "type": "dict",
+      "items": 19,
+      "raw_bytes": 345534,
+      "gz_bytes": 46409,
+      "sha256": "9b5ba166b2aaab9e",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "hiv_targets",
+      "type": "dict",
+      "items": 19,
+      "raw_bytes": 226,
+      "gz_bytes": 203,
+      "sha256": "73822e201f91bb9c",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "hiv_weakpoints",
+      "type": "list",
+      "items": 40,
+      "raw_bytes": 3478,
+      "gz_bytes": 622,
+      "sha256": "1c0cf37fe7e59897",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "dark_count",
+      "type": "int",
+      "items": 1,
+      "raw_bytes": 4,
+      "gz_bytes": 40,
+      "sha256": "b722c9caaa55038b",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "celltypes",
+      "type": "dict",
+      "items": 40,
+      "raw_bytes": 1876,
+      "gz_bytes": 860,
+      "sha256": "f2c558b9e60416d9",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "darkfn",
+      "type": "dict",
+      "items": 4993,
+      "raw_bytes": 737014,
+      "gz_bytes": 142744,
+      "sha256": "3b35d1cfa4d2da91",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "model4",
+      "type": "dict",
+      "items": 7700,
+      "raw_bytes": 1430577,
+      "gz_bytes": 356114,
+      "sha256": "79acfc7bd687870b",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "model4_meta",
+      "type": "dict",
+      "items": 5,
+      "raw_bytes": 139,
+      "gz_bytes": 144,
+      "sha256": "5e81c44601cefc11",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "coexpr",
+      "type": "dict",
+      "items": 16374,
+      "raw_bytes": 2732038,
+      "gz_bytes": 871600,
+      "sha256": "044ca6b4c9016168",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "ncrna",
+      "type": "dict",
+      "items": 0,
+      "raw_bytes": 2,
+      "gz_bytes": 33,
+      "sha256": "44136fa355b3678a",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "nichenet",
+      "type": "dict",
+      "items": 1195,
+      "raw_bytes": 214720,
+      "gz_bytes": 56143,
+      "sha256": "8bee23494bf59703",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "ppm",
+      "type": "dict",
+      "items": 16015,
+      "raw_bytes": 206111,
+      "gz_bytes": 67632,
+      "sha256": "b66dbdb64d9f3212",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "go",
+      "type": "dict",
+      "items": 16412,
+      "raw_bytes": 6604178,
+      "gz_bytes": 835067,
+      "sha256": "5e78967bc4b35c00",
+      "producer": null,
+      "partial": null
+    },
+    {
+      "block": "genome",
+      "type": "dict",
+      "items": 10,
+      "raw_bytes": 902,
+      "gz_bytes": 585,
+      "sha256": "303faa1e158ebaf3",
+      "producer": null,
+      "partial": null
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "A BUILDER FOR cell_complete.json -- because it did not have one",
+    "====================================================================================================",
+    "  38.5 MB, read by 56 modules in the traced sweep and named by 227, gitignored, and produced",
+    "  by NOTHING: zero writers by static scan and zero by the runtime tracer, against 56 readers.",
+    "  It is the most depended-upon artefact here and the least recoverable.",
+    "\n  original: 42 blocks, 38.5 MB on disk, canonical hash 9f71da1d7ba8de79",
+    "\n  SPLIT into 42 parts: 34.0 MB raw -> 6.9 MB gzipped (20.2%)",
+    "    block                  items    gz MB  producer",
+    "    reg                  612,133     1.93  -- none known --",
+    "    coexpr                16,374     0.87  -- none known --",
+    "    genes                 16,492     0.85  PARTIAL",
+    "    go                    16,412     0.84  -- none known --",
+    "    ppi                  191,447     0.68  -- none known --",
+    "    model4                 7,700     0.36  -- none known --",
+    "    codep                 13,451     0.36  -- none known --",
+    "    emask                  7,496     0.17  -- none known --",
+    "    darkfn                 4,993     0.14  -- none known --",
+    "    drugs                  4,275     0.13  -- none known --",
+    "\n  ROUND TRIP -- assemble(split(x)) must reproduce x exactly",
+    "    key order preserved : True   (42 blocks)",
+    "    canonical hash      : 9f71da1d7ba8de79  MATCHES",
+    "    gene count          : 16492 unchanged",
+    "    The assembly is faithful. cell_complete can now be STORED and REBUILT as parts.",
+    "\n  THE RECOVERY BACKLOG -- what a builder still cannot make",
+    "    1 block(s) have a known producer:  ['cellcycle']",
+    "    1 partially sourced:               ['genes']",
+    "    40 have NO known producer, 6.0 MB gzipped",
+    "    Those 40 came from processes that are not in this repository. This builder does not",
+    "    invent them, and listing them by name is the point: it converts a vague worry into a",
+    "    finite backlog, where each entry can be closed independently by finding one source.",
+    "    largest unsourced: reg, coexpr, go, ppi, model4, codep, emask, darkfn",
+    "    manifest: 1 inputs, coverage 42/42 (100.0%) by 'all', seed 1904, controls 2"
+  ]
+}

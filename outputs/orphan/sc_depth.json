@@ -1,0 +1,408 @@
+{
+  "test": "sc_depth",
+  "depths": [
+    10,
+    20,
+    35,
+    60
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "curves": {
+    "d=10|seed=0": {
+      "n": 229,
+      "score": 0.1368995633187773,
+      "ceiling": 0.1631004366812227,
+      "ratio": 0.8393574297188756
+    },
+    "d=10|seed=1": {
+      "n": 229,
+      "score": 0.13493449781659392,
+      "ceiling": 0.15458515283842797,
+      "ratio": 0.8728813559322035
+    },
+    "d=10|seed=2": {
+      "n": 229,
+      "score": 0.1277292576419214,
+      "ceiling": 0.15087336244541485,
+      "ratio": 0.8465991316931982
+    },
+    "d=20|seed=0": {
+      "n": 229,
+      "score": 0.16397379912663754,
+      "ceiling": 0.23275109170305674,
+      "ratio": 0.7045028142589118
+    },
+    "d=20|seed=1": {
+      "n": 229,
+      "score": 0.15982532751091705,
+      "ceiling": 0.22314410480349348,
+      "ratio": 0.7162426614481409
+    },
+    "d=20|seed=2": {
+      "n": 229,
+      "score": 0.15327510917030568,
+      "ceiling": 0.23165938864628818,
+      "ratio": 0.6616399622997173
+    },
+    "d=35|seed=0": {
+      "n": 229,
+      "score": 0.17161572052401747,
+      "ceiling": 0.2986899563318778,
+      "ratio": 0.5745614035087718
+    },
+    "d=35|seed=1": {
+      "n": 229,
+      "score": 0.15982532751091705,
+      "ceiling": 0.29563318777292585,
+      "ratio": 0.5406203840472672
+    },
+    "d=35|seed=2": {
+      "n": 229,
+      "score": 0.17991266375545853,
+      "ceiling": 0.3052401746724891,
+      "ratio": 0.5894134477825466
+    },
+    "d=60|seed=0": {
+      "n": 229,
+      "score": 0.18777292576419213,
+      "ceiling": 0.37336244541484714,
+      "ratio": 0.5029239766081871
+    },
+    "d=60|seed=1": {
+      "n": 229,
+      "score": 0.18733624454148473,
+      "ceiling": 0.3744541484716158,
+      "ratio": 0.5002915451895044
+    },
+    "d=60|seed=2": {
+      "n": 229,
+      "score": 0.1965065502183406,
+      "ceiling": 0.3748908296943232,
+      "ratio": 0.5241700640652299
+    }
+  },
+  "trend": [
+    {
+      "depth": 10,
+      "score": 0.1331877729257642,
+      "ceiling": 0.1561863173216885,
+      "ratio": 0.8529459724480924
+    },
+    {
+      "depth": 20,
+      "score": 0.15902474526928675,
+      "ceiling": 0.2291848617176128,
+      "ratio": 0.69412847933559
+    },
+    {
+      "depth": 35,
+      "score": 0.17045123726346434,
+      "ceiling": 0.2998544395924309,
+      "ratio": 0.5681984117795286
+    },
+    {
+      "depth": 60,
+      "score": 0.19053857350800582,
+      "ceiling": 0.37423580786026206,
+      "ratio": 0.5091285286209738
+    }
+  ],
+  "slope_per_doubling": {
+    "score": 0.02148705210548532,
+    "ceiling": 0.08433029600568177,
+    "ratio": -0.1361018978092871
+  },
+  "sweep_liveness": {
+    "name": "score - ceiling (liveness only, negative by construction)",
+    "verdict": "HARMFUL",
+    "n_cells": 12,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 12,
+    "n_resolved_pos": 0,
+    "n_resolved_neg": 12,
+    "sign_consistent": true,
+    "cells_needed_for_robust": 8,
+    "passing_configs": [],
+    "cells": [
+      {
+        "config": {
+          "depth": 10,
+          "seed": 0
+        },
+        "cohort": "d10|s0",
+        "n": 229,
+        "delta": -0.02620087336244542,
+        "lo": -0.042358078602620086,
+        "hi": -0.01004366812227074
+      },
+      {
+        "config": {
+          "depth": 10,
+          "seed": 1
+        },
+        "cohort": "d10|s1",
+        "n": 229,
+        "delta": -0.019650655021834062,
+        "lo": -0.037554585152838424,
+        "hi": -0.0015283842794759832
+      },
+      {
+        "config": {
+          "depth": 10,
+          "seed": 2
+        },
+        "cohort": "d10|s2",
+        "n": 229,
+        "delta": -0.023144104803493448,
+        "lo": -0.04082969432314411,
+        "hi": -0.005676855895196506
+      },
+      {
+        "config": {
+          "depth": 20,
+          "seed": 0
+        },
+        "cohort": "d20|s0",
+        "n": 229,
+        "delta": -0.06877729257641922,
+        "lo": -0.09192139737991267,
+        "hi": -0.046069868995633194
+      },
+      {
+        "config": {
+          "depth": 20,
+          "seed": 1
+        },
+        "cohort": "d20|s1",
+        "n": 229,
+        "delta": -0.06331877729257641,
+        "lo": -0.0851528384279476,
+        "hi": -0.04213973799126637
+      },
+      {
+        "config": {
+          "depth": 20,
+          "seed": 2
+        },
+        "cohort": "d20|s2",
+        "n": 229,
+        "delta": -0.07838427947598255,
+        "lo": -0.10000545851528386,
+        "hi": -0.05698689956331878
+      },
+      {
+        "config": {
+          "depth": 35,
+          "seed": 0
+        },
+        "cohort": "d35|s0",
+        "n": 229,
+        "delta": -0.12707423580786026,
+        "lo": -0.15240174672489082,
+        "hi": -0.10283842794759826
+      },
+      {
+        "config": {
+          "depth": 35,
+          "seed": 1
+        },
+        "cohort": "d35|s1",
+        "n": 229,
+        "delta": -0.13580786026200875,
+        "lo": -0.15895196506550222,
+        "hi": -0.11310043668122272
+      },
+      {
+        "config": {
+          "depth": 35,
+          "seed": 2
+        },
+        "cohort": "d35|s2",
+        "n": 229,
+        "delta": -0.12532751091703054,
+        "lo": -0.1517467248908297,
+        "hi": -0.09978165938864629
+      },
+      {
+        "config": {
+          "depth": 60,
+          "seed": 0
+        },
+        "cohort": "d60|s0",
+        "n": 229,
+        "delta": -0.185589519650655,
+        "lo": -0.2131004366812227,
+        "hi": -0.15895196506550222
+      },
+      {
+        "config": {
+          "depth": 60,
+          "seed": 1
+        },
+        "cohort": "d60|s1",
+        "n": 229,
+        "delta": -0.187117903930131,
+        "lo": -0.21375545851528382,
+        "hi": -0.161353711790393
+      },
+      {
+        "config": {
+          "depth": 60,
+          "seed": 2
+        },
+        "cohort": "d60|s2",
+        "n": 229,
+        "delta": -0.17838427947598254,
+        "lo": -0.20676855895196505,
+        "hi": -0.15109170305676856
+      }
+    ]
+  },
+  "sweep_gap_widening": {
+    "name": "gap widening: (ceiling-score) at high depth minus at low depth",
+    "verdict": "ROBUST",
+    "n_cells": 6,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 6,
+    "n_resolved_pos": 6,
+    "n_resolved_neg": 0,
+    "sign_consistent": true,
+    "cells_needed_for_robust": 4,
+    "passing_configs": [
+      {
+        "contrast": "d10->d35",
+        "seed": 0
+      },
+      {
+        "contrast": "d10->d35",
+        "seed": 1
+      },
+      {
+        "contrast": "d10->d35",
+        "seed": 2
+      },
+      {
+        "contrast": "d10->d60",
+        "seed": 0
+      },
+      {
+        "contrast": "d10->d60",
+        "seed": 1
+      },
+      {
+        "contrast": "d10->d60",
+        "seed": 2
+      }
+    ],
+    "cells": [
+      {
+        "config": {
+          "contrast": "d10->d35",
+          "seed": 0
+        },
+        "cohort": "d10v35|s0",
+        "n": 229,
+        "delta": 0.10087336244541485,
+        "lo": 0.08034934497816593,
+        "hi": 0.12161572052401748
+      },
+      {
+        "config": {
+          "contrast": "d10->d35",
+          "seed": 1
+        },
+        "cohort": "d10v35|s1",
+        "n": 229,
+        "delta": 0.11615720524017469,
+        "lo": 0.09563318777292577,
+        "hi": 0.13711790393013099
+      },
+      {
+        "config": {
+          "contrast": "d10->d35",
+          "seed": 2
+        },
+        "cohort": "d10v35|s2",
+        "n": 229,
+        "delta": 0.10218340611353711,
+        "lo": 0.08100436681222706,
+        "hi": 0.12401746724890829
+      },
+      {
+        "config": {
+          "contrast": "d10->d60",
+          "seed": 0
+        },
+        "cohort": "d10v60|s0",
+        "n": 229,
+        "delta": 0.15938864628820962,
+        "lo": 0.13646288209606988,
+        "hi": 0.18253275109170305
+      },
+      {
+        "config": {
+          "contrast": "d10->d60",
+          "seed": 1
+        },
+        "cohort": "d10v60|s1",
+        "n": 229,
+        "delta": 0.16746724890829695,
+        "lo": 0.14344978165938865,
+        "hi": 0.19192139737991268
+      },
+      {
+        "config": {
+          "contrast": "d10->d60",
+          "seed": 2
+        },
+        "cohort": "d10v60|s2",
+        "n": 229,
+        "delta": 0.15524017467248907,
+        "lo": 0.13209606986899564,
+        "hi": 0.17903930131004367
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "DEPTH TEST -- is the limit the model, or the precision of the answer key?",
+    "====================================================================================================",
+    "  PREDECLARED: ratio flat in depth => measurement-limited. ratio falls => model-limited.",
+    "  421,610 cells, 1000 perturbations, 2,000 genes",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 537 kept of 691 built  (TIER A 528, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  control means for 3 lines",
+    "  3,000 (line,pert) groups; cells per group median 95, range 40-3580",
+    "  model fitted on 2,400 full-depth training groups (penalty 100.0)",
+    "  evaluated on 229 held-out groups with >= 120 cells (the same groups at every depth)",
+    "  depth  10 seed0: n= 229  score 0.1369  ceiling 0.1631  ratio 0.839",
+    "  depth  10 seed1: n= 229  score 0.1349  ceiling 0.1546  ratio 0.873",
+    "  depth  10 seed2: n= 229  score 0.1277  ceiling 0.1509  ratio 0.847",
+    "  depth  20 seed0: n= 229  score 0.1640  ceiling 0.2328  ratio 0.705",
+    "  depth  20 seed1: n= 229  score 0.1598  ceiling 0.2231  ratio 0.716",
+    "  depth  20 seed2: n= 229  score 0.1533  ceiling 0.2317  ratio 0.662",
+    "  depth  35 seed0: n= 229  score 0.1716  ceiling 0.2987  ratio 0.575",
+    "  depth  35 seed1: n= 229  score 0.1598  ceiling 0.2956  ratio 0.541",
+    "  depth  35 seed2: n= 229  score 0.1799  ceiling 0.3052  ratio 0.589",
+    "  depth  60 seed0: n= 229  score 0.1878  ceiling 0.3734  ratio 0.503",
+    "  depth  60 seed1: n= 229  score 0.1873  ceiling 0.3745  ratio 0.500",
+    "  depth  60 seed2: n= 229  score 0.1965  ceiling 0.3749  ratio 0.524",
+    "\n   depth     score   ceiling    ratio",
+    "      10    0.1332    0.1562    0.853",
+    "      20    0.1590    0.2292    0.694",
+    "      35    0.1705    0.2999    0.568",
+    "      60    0.1905    0.3742    0.509",
+    "\n  SWEEP score - ceiling (liveness only, negative by construction)   axes[depth,seed]  12 cells\n  config                       cohort         delta                 95% CI\n  depth=10 seed=0              d10|s0       -0.0262 [ -0.0424, -0.0100] RES-\n  depth=10 seed=1              d10|s1       -0.0197 [ -0.0376, -0.0015] RES-\n  depth=10 seed=2              d10|s2       -0.0231 [ -0.0408, -0.0057] RES-\n  depth=20 seed=0              d20|s0       -0.0688 [ -0.0919, -0.0461] RES-\n  depth=20 seed=1              d20|s1       -0.0633 [ -0.0852, -0.0421] RES-\n  depth=20 seed=2              d20|s2       -0.0784 [ -0.1000, -0.0570] RES-\n  depth=35 seed=0              d35|s0       -0.1271 [ -0.1524, -0.1028] RES-\n  depth=35 seed=1              d35|s1       -0.1358 [ -0.1590, -0.1131] RES-\n  depth=35 seed=2              d35|s2       -0.1253 [ -0.1517, -0.0998] RES-\n  depth=60 seed=0              d60|s0       -0.1856 [ -0.2131, -0.1590] RES-\n  depth=60 seed=1              d60|s1       -0.1871 [ -0.2138, -0.1614] RES-\n  depth=60 seed=2              d60|s2       -0.1784 [ -0.2068, -0.1511] RES-\n  -> HARMFUL   resolved +0/-12 of 12 (>= 8 needed), sign-consistent True",
+    "\n  SWEEP gap widening: (ceiling-score) at high depth minus at low depth   axes[contrast,seed]  6 cells\n  config                       cohort         delta                 95% CI\n  contrast=d10->d35 seed=0     d10v35|s0    +0.1009 [ +0.0803, +0.1216] RES+\n  contrast=d10->d35 seed=1     d10v35|s1    +0.1162 [ +0.0956, +0.1371] RES+\n  contrast=d10->d35 seed=2     d10v35|s2    +0.1022 [ +0.0810, +0.1240] RES+\n  contrast=d10->d60 seed=0     d10v60|s0    +0.1594 [ +0.1365, +0.1825] RES+\n  contrast=d10->d60 seed=1     d10v60|s1    +0.1675 [ +0.1434, +0.1919] RES+\n  contrast=d10->d60 seed=2     d10v60|s2    +0.1552 [ +0.1321, +0.1790] RES+\n  -> ROBUST   resolved +6/-0 of 6 (>= 4 needed), sign-consistent True",
+    "\n  per doubling of depth:  score +0.0215   ceiling +0.0843   ratio -0.1361",
+    "\n  READING",
+    "  The ratio FALLS with depth: the ceiling climbs faster than the model follows. The MODEL",
+    "  is the limit, extra depth exposes signal it cannot use, and my UPDATES.md reading is wrong."
+  ]
+}

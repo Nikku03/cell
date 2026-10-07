@@ -1,0 +1,246 @@
+{
+  "test": "adrn_ppi_replicate",
+  "ranks": [
+    64,
+    128,
+    256
+  ],
+  "pint": 0.75,
+  "n_bioplex_edges": 114329,
+  "n_mixed_edges": 191447,
+  "overlap": 81641,
+  "chan2a": {
+    "cohort1": 0.23274999999999998,
+    "_holdout": 0.28925
+  },
+  "results": {
+    "bioplex|64": {
+      "cells": [
+        {
+          "cohort": "cohort1",
+          "real": 0.24050000000000002,
+          "rw": 0.23550000000000001,
+          "vs_rw": [
+            0.004999999999999998,
+            -0.0017500000000000033,
+            0.011749999999999998
+          ],
+          "vs_chan2a": [
+            0.00775,
+            -0.0007500000000000001
+          ]
+        },
+        {
+          "cohort": "_holdout",
+          "real": 0.2985,
+          "rw": 0.28174999999999994,
+          "vs_rw": [
+            0.01675,
+            0.004999999999999999,
+            0.03
+          ],
+          "vs_chan2a": [
+            0.009250000000000003,
+            -0.0010062499999999959
+          ]
+        }
+      ],
+      "beats_rewired": false,
+      "beats_chan2a": false
+    },
+    "bioplex|128": {
+      "cells": [
+        {
+          "cohort": "cohort1",
+          "real": 0.23975,
+          "rw": 0.23475000000000001,
+          "vs_rw": [
+            0.0049999999999999975,
+            -0.004000000000000001,
+            0.014249999999999999
+          ],
+          "vs_chan2a": [
+            0.006999999999999999,
+            -0.0022500000000000007
+          ]
+        },
+        {
+          "cohort": "_holdout",
+          "real": 0.29675,
+          "rw": 0.28275,
+          "vs_rw": [
+            0.013999999999999999,
+            0.001249999999999999,
+            0.0275
+          ],
+          "vs_chan2a": [
+            0.0075,
+            -0.004
+          ]
+        }
+      ],
+      "beats_rewired": false,
+      "beats_chan2a": false
+    },
+    "bioplex|256": {
+      "cells": [
+        {
+          "cohort": "cohort1",
+          "real": 0.2415,
+          "rw": 0.22475,
+          "vs_rw": [
+            0.016749999999999998,
+            0.003749999999999999,
+            0.030750000000000003
+          ],
+          "vs_chan2a": [
+            0.008750000000000003,
+            -0.0020000000000000013
+          ]
+        },
+        {
+          "cohort": "_holdout",
+          "real": 0.2955,
+          "rw": 0.27375,
+          "vs_rw": [
+            0.021750000000000002,
+            0.006250000000000005,
+            0.03875
+          ],
+          "vs_chan2a": [
+            0.006250000000000003,
+            -0.005999999999999998
+          ]
+        }
+      ],
+      "beats_rewired": true,
+      "beats_chan2a": false
+    },
+    "mixed|64": {
+      "cells": [
+        {
+          "cohort": "cohort1",
+          "real": 0.24625,
+          "rw": 0.23525,
+          "vs_rw": [
+            0.010999999999999996,
+            0.0012499999999999972,
+            0.021756249999999908
+          ],
+          "vs_chan2a": [
+            0.013499999999999998,
+            0.0020000000000000005
+          ]
+        },
+        {
+          "cohort": "_holdout",
+          "real": 0.30025,
+          "rw": 0.27949999999999997,
+          "vs_rw": [
+            0.020749999999999998,
+            0.008499999999999999,
+            0.034
+          ],
+          "vs_chan2a": [
+            0.010999999999999996,
+            -0.000749999999999999
+          ]
+        }
+      ],
+      "beats_rewired": true,
+      "beats_chan2a": false
+    },
+    "mixed|128": {
+      "cells": [
+        {
+          "cohort": "cohort1",
+          "real": 0.24675,
+          "rw": 0.23125,
+          "vs_rw": [
+            0.0155,
+            0.0017499999999999974,
+            0.029500000000000002
+          ],
+          "vs_chan2a": [
+            0.013999999999999999,
+            0.0007500000000000012
+          ]
+        },
+        {
+          "cohort": "_holdout",
+          "real": 0.30450000000000005,
+          "rw": 0.272,
+          "vs_rw": [
+            0.0325,
+            0.01625,
+            0.050499999999999996
+          ],
+          "vs_chan2a": [
+            0.01525,
+            1.6653345369377347e-18
+          ]
+        }
+      ],
+      "beats_rewired": true,
+      "beats_chan2a": true
+    },
+    "mixed|256": {
+      "cells": [
+        {
+          "cohort": "cohort1",
+          "real": 0.24224999999999997,
+          "rw": 0.23324999999999999,
+          "vs_rw": [
+            0.009,
+            -0.004750000000000001,
+            0.0225
+          ],
+          "vs_chan2a": [
+            0.009500000000000001,
+            -0.005250000000000002
+          ]
+        },
+        {
+          "cohort": "_holdout",
+          "real": 0.30725,
+          "rw": 0.26975,
+          "vs_rw": [
+            0.0375,
+            0.02075,
+            0.05575
+          ],
+          "vs_chan2a": [
+            0.018000000000000002,
+            0.0025000000000000044
+          ]
+        }
+      ],
+      "beats_rewired": false,
+      "beats_chan2a": false
+    }
+  },
+  "bioplex_ranks_passing": 1,
+  "gate_pass": false,
+  "log": [
+    "====================================================================================================",
+    "REPLICATE the PPI result: independent edge set (BioPlex AP-MS) x embedding rank",
+    "====================================================================================================",
+    "  PREDECLARED: bioplex must beat its rewired twin on BOTH cohorts at >1 of ranks (64, 128, 256).",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  bioplex: 114,329 distinct edges at pInt>=0.75 (59,311 rows dropped: gene not in the cell's symbol space or self-loop)",
+    "  mixed (cell_complete): 191,447 edges",
+    "  overlap between the two edge sets: 81,641 (71.4% of bioplex) -- they are related but not the same graph",
+    "  chan2a baseline cohort1: 0.2327",
+    "  chan2a baseline _holdout: 0.2893",
+    "  bioplex  rank  64  real 0.2405/0.2985  rw 0.2355/0.2817  vs_rw +0.0050/+0.0168  ties rw  ~chan2a",
+    "  bioplex  rank 128  real 0.2397/0.2968  rw 0.2348/0.2828  vs_rw +0.0050/+0.0140  ties rw  ~chan2a",
+    "  bioplex  rank 256  real 0.2415/0.2955  rw 0.2248/0.2737  vs_rw +0.0167/+0.0218  BEATS RW  ~chan2a",
+    "  mixed    rank  64  real 0.2462/0.3003  rw 0.2352/0.2795  vs_rw +0.0110/+0.0207  BEATS RW  ~chan2a",
+    "  mixed    rank 128  real 0.2467/0.3045  rw 0.2313/0.2720  vs_rw +0.0155/+0.0325  BEATS RW  >chan2a",
+    "  mixed    rank 256  real 0.2422/0.3073  rw 0.2332/0.2697  vs_rw +0.0090/+0.0375  ties rw  ~chan2a",
+    "\n  bioplex beats its rewired twin on both cohorts at 1 of 3 ranks",
+    "  GATE: FAIL",
+    "  (mixed edge set for comparison: 2 of 3 ranks)"
+  ]
+}

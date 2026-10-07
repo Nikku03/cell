@@ -1,0 +1,68 @@
+=================================================================================================
+THE WHOLE CELL: PREDICTING EVERY PROCESS AT ONCE, AND WHETHER THE CELL SURVIVES
+=================================================================================================
+  knockdowns 9,865 (5,051 with a phenotype: TRAIN 2,527, TEST 2,524); measured genes 8,248; Reactome processes (15-300 measured genes) 981
+
+=================================================================================================
+P0  POSITIVE CONTROL: CHOLESTEROL-SYNTHESIS KNOCKDOWNS RAISE CHOLESTEROL SYNTHESIS (SREBP2 FEEDBACK)
+=================================================================================================
+  15 cholesterol-synthesis knockdowns: mean shift of the rest of the process +0.68 (z-equiv), z +5.7 -> PASS
+
+=================================================================================================
+W  PREDICT THE WHOLE CELL FOR UNSEEN KNOCKDOWNS
+=================================================================================================
+  TEST knockdowns 2,524; with a process carrying TRAIN knockdowns: 1,516
+     W0 tide                  median r 0.145   mean r 0.157
+     W2 whole-cell process    median r 0.138   mean r 0.180
+     W2n process null         median r 0.122   mean r 0.133
+  V1 W2 process vs W0 tide      better 871, worse 645, p 7.08e-09 -> BETTER
+  V2 W2 process vs W2n null     better 1042, worse 474, p 3.54e-49 -> BETTER
+  on the first 500 TEST knockdowns by hash: W1 gene network median r -0.004; W2 process 0.137; W3 process + network 0.128
+  V3 W2 process vs W1 gene network  better 100, worse 38, p 1.29e-07 -> BETTER
+  V4 W3 process+network vs W2       better 224, worse 272, p 0.0347 -> WORSE
+
+=================================================================================================
+F  THE CELL'S BOTTOM LINE: DOES IT SURVIVE? (DepMap K562 gene effect)
+=================================================================================================
+  F1 knockdowns that disturb more of the cell kill it more: Spearman +0.366 over 9,350 genes, p 7.6e-295 -> YES
+  F2 process knowledge predicts which TEST genes the cell cannot live without: AUROC 0.780 (null 95th pct 0.678) -> PASS; essential TEST genes 838 of 4,691
+
+=================================================================================================
+C  THE WHOLE-CELL COUPLING MAP: WHICH PROCESSES PUSH WHICH
+=================================================================================================
+  replicated couplings (|z| >= 5, same sign in both halves, overlap < 20%): 77,987; null 74 -> estimated FDR 0.00
+  between whole-cell SYSTEMS (Reactome top level), most frequent replicated couplings:
+     Metabolism of proteins             raises  Signal Transduction                (2645 process pairs)
+     Disease                            raises  Signal Transduction                (2401 process pairs)
+     Metabolism of proteins             raises  Disease                            (2232 process pairs)
+     Gene expression (Transcription)    raises  Signal Transduction                (1666 process pairs)
+     Metabolism of proteins             raises  Immune System                      (1563 process pairs)
+     Metabolism of proteins             raises  Cell Cycle                         (1455 process pairs)
+     Metabolism of RNA                  raises  Signal Transduction                (1424 process pairs)
+     Disease                            raises  Immune System                      (1317 process pairs)
+     Metabolism of proteins             raises  Gene expression (Transcription)    (1224 process pairs)
+     Metabolism of RNA                  raises  Disease                            (1128 process pairs)
+     Disease                            raises  Gene expression (Transcription)    (918 process pairs)
+     Metabolism of proteins             raises  Metabolism                         (884 process pairs)
+     Gene expression (Transcription)    raises  Disease                            (871 process pairs)
+     Immune System                      raises  Signal Transduction                (841 process pairs)
+     Disease                            raises  Cell Cycle                         (772 process pairs)
+  strongest single couplings:
+     knocking down rRNA processing in the nucleus and cyt raises Antigen processing: Ubiquitination & P z +37.5 (173 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Somatic hypermutation of immunoglobuli z +36.9 (173 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Neddylation                            z +36.8 (173 knockdowns)
+     knocking down Major pathway of rRNA processing in th raises Antigen processing: Ubiquitination & P z +36.6 (163 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Nucleotide Excision Repair             z +36.5 (173 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Formation of TC-NER Pre-Incision Compl z +36.5 (173 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Transcription-Coupled Nucleotide Excis z +36.4 (173 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Protein ubiquitination                 z +36.2 (173 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Global Genome Nucleotide Excision Repa z +35.9 (173 knockdowns)
+     knocking down Major pathway of rRNA processing in th raises Somatic hypermutation of immunoglobuli z +35.9 (163 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Chromatin organization                 z +35.9 (173 knockdowns)
+     knocking down Major pathway of rRNA processing in th raises Neddylation                            z +35.9 (163 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Class I MHC mediated antigen processin z +35.9 (173 knockdowns)
+     knocking down rRNA processing in the nucleus and cyt raises Formation of Incision Complex in GG-NE z +35.8 (173 knockdowns)
+     knocking down rRNA processing                        raises Antigen processing: Ubiquitination & P z +35.7 (187 knockdowns)
+
+  map written to memory_bank/cell_v3/whole_cell_map.json ; artifact outputs/wholecell.json ; runtime 67s
+  X: one cell line, CRISPRi, steady state; transcriptome only -- no metabolite, protein or flux readout.

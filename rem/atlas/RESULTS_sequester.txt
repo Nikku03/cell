@@ -1,0 +1,100 @@
+=================================================================================================
+DOES A SHARED RESOURCE POOL TRANSMIT ITS FLUCTUATIONS -- AND BY WHAT LAW?
+=================================================================================================
+  Three models: non-consuming pool, linear consumption, sequestered catalyst.
+  phi is the dual-reporter extrinsic fraction. Vacuity threshold phi > 0.02:
+  below it every candidate law collapses to tau_X = tau_p and cannot be discriminated.
+
+=================================================================================================
+M1  NON-CONSUMING POOL   dP: birth kR, death muR*P.   X made at c*P, removed at muX*X
+=================================================================================================
+      kR     muR      c     muX       phi     tau_R     tau_X    tau_p    L_A err    L_B err
+    20.0    1.00   0.80    0.50   0.34783   1.00000   2.34783   2.0000   1.32e-15   2.96e-01
+    20.0    2.00   0.80    0.50   0.24242   0.50000   2.12121   2.0000   2.83e-14   2.29e-01
+    20.0    0.50   0.80    0.50   0.44444   2.00000   2.88889   2.0000   2.15e-15   3.08e-01
+    20.0    1.00   2.00    0.50   0.57143   1.00000   2.57143   2.0000   1.90e-15   4.44e-01
+    20.0    1.00   0.80    1.00   0.28571   1.00000   1.28571   1.0000   6.91e-16   2.22e-01
+    40.0    1.00   0.80    0.25   0.39024   1.00000   4.39024   4.0000   7.69e-15   3.56e-01
+
+  worst relative error of every candidate over these rows:
+    L_A  tau_p + phi*tau_R              2.826e-14   PASS
+    L_B  tau_p + phi*(tau_p+tau_R)      4.444e-01   MISS
+    L_C  (1-phi)*tau_p + phi*tau_R      4.444e-01   MISS
+    L_D  tau_p*(1+phi)                  2.667e-01   MISS
+    L_E  tau_p + tau_R                  5.556e-01   MISS
+  S0 vacuity: min phi over rows = 0.24242 (OK, discriminating)
+  S1 discrimination: best rival misses by 5.556e-01 (PASS)
+  WINNER: L_A  tau_p + phi*tau_R
+
+=================================================================================================
+S4  FAST-DRIVER CONTROL -- speed the pool up at fixed stationary law; tau_X must -> tau_p
+=================================================================================================
+     speed      tau_R       phi      tau_X    tau_p    rel dev
+         1   1.000000   0.34783   2.347826   2.0000  1.739e-01
+         4   0.250000   0.15094   2.037736   2.0000  1.887e-02
+        16   0.062500   0.04624   2.002890   2.0000  1.445e-03
+        64   0.015625   0.01225   2.000191   2.0000  9.571e-05
+       256   0.003906   0.00311   2.000012   2.0000  6.073e-06
+  S4 PASS (bar 1e-4 at the fastest driver)
+
+=================================================================================================
+M2  LINEAR CONSUMPTION -- every production event removes one pool molecule
+=================================================================================================
+      kR     muR      c     muX          phi     tau_R     tau_X    tau_p
+    20.0    1.00   0.80    0.50    9.992e-16   0.55556   2.00000   2.0000
+    20.0    2.00   0.80    0.50   -2.220e-16   0.35714   2.00000   2.0000
+    20.0    1.00   2.00    0.50   -4.441e-16   0.33333   2.00000   2.0000
+    40.0    1.00   0.80    0.25    9.992e-16   0.55556   4.00000   4.0000
+  S5 predicted collapse phi -> 0: worst |phi| = 9.992e-16   CONFIRMED
+  Every law test on M2 is therefore VOID, not passed: at phi = 0 both sides of every
+  candidate collapse to tau_X = tau_p and no evidence could distinguish them.
+
+=================================================================================================
+M3  SEQUESTERED CATALYST   R + M <-> C -> X + R + M,  total R fixed
+=================================================================================================
+   Rtot  Mtot     kon   koff   kcat    muX       phi     tau_R     tau_X    tau_p       L_A       L_B
+     12    10   0.050   1.00   2.00   0.50  -0.11888   0.25503   1.96969   2.0000  4.67e-06  1.21e-01
+     12    10   0.050   1.00   2.00   0.25  -0.12691   0.25503   3.96764   4.0000  2.37e-06  1.28e-01
+     20     6   0.050   1.00   2.00   0.50  -0.13419   0.24197   1.96754   2.0000  3.15e-06  1.36e-01
+     12    10   0.020   0.50   1.00   0.50  -0.09228   0.53279   1.95085   2.0000  6.06e-06  9.46e-02
+      8     8   0.100   2.00   4.00   0.50  -0.10392   0.13582   1.98589   2.0000  1.81e-06  1.05e-01
+     12    10   0.050   1.00   2.00   1.00  -0.10553   0.25503   0.97309   1.0000  9.04e-06  1.08e-01
+
+  S6 DECISION  min phi = -0.13419, max phi = -0.09228
+     |phi| ranges 0.09228 to 0.13419, clearing the 0.02 vacuity bar by 4.6x at worst.
+     phi is NOT zero for a sequestered catalyst -- it is NEGATIVE. Sequestration
+     transmits pool fluctuation with the OPPOSITE SIGN to a non-consuming pool,
+     where strictly linear consumption transmits none at all.
+
+  worst relative error of every candidate over the M3 rows:
+    L_A  tau_p + phi*tau_R              9.038e-06   MISS
+    L_B  tau_p + phi*(tau_p+tau_R)      1.364e-01   MISS
+    L_C  (1-phi)*tau_p + phi*tau_R      1.364e-01   MISS
+    L_D  tau_p*(1+phi)                  1.199e-01   MISS
+    L_E  tau_p + tau_R                  2.983e-01   MISS
+  S1 discrimination on M3: best rival misses by 2.983e-01 (PASS)
+  WINNER on M3: L_A  tau_p + phi*tau_R
+
+=================================================================================================
+DIRECTION -- does the reporter decorrelate FASTER or SLOWER than its own removal time?
+=================================================================================================
+  This is the experimentally visible prediction, and the two models disagree in SIGN.
+  model                        tau_p      tau_X     Fano  tau_X/tau_p   verdict
+  M1 non-consuming pool        2.000   2.347826  1.53333     1.173913    SLOWER
+  M1 non-consuming pool        2.000   2.121212  1.32000     1.060606    SLOWER
+  M3 sequestered catalyst      2.000   1.969691  0.89375     0.984845    FASTER
+  M3 sequestered catalyst      2.000   1.967536  0.88169     0.983768    FASTER
+  M3 sequestered catalyst      2.000   1.985889  0.90586     0.992944    FASTER
+
+  A non-consuming shared driver makes the reporter super-Poissonian (Fano > 1) and SLOWER.
+  A sequestered catalyst makes it sub-Poissonian (Fano < 1) and FASTER. The sign of the
+  effect is set by whether producing the protein DEPLETES the driver, and translation --
+  which holds the ribosome and releases it -- is on the depleting side.
+
+=================================================================================================
+S3  THE phi IDENTITY -- cheap 2-D route against a full 3-D dual-reporter CME
+=================================================================================================
+  phi = 1 - <X>/Var(X), large cap        : -0.0991062108
+  phi = 1 - <X>/Var(X), matched cap      : -0.0991062329
+  phi = Cov(X1,X2)/Var(X1), 3-D CME      : -0.0430023638
+  matched-cap relative difference        : 1.305e+00   FAIL (bar 1e-9)

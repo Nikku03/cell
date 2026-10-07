@@ -1,0 +1,114 @@
+=================================================================================================
+DOES THE YEAST PROMOTER RESULT TRANSFER TO HUMAN CELLS?
+=================================================================================================
+  ENCODE CRISPRi RNA-seq, K562. 48 transcription factors silenced, each with two
+  biological replicates. HGNC map sha256[:32] 6f43d6ff43aa9fdfa5fb2f20a20a7cac.
+  TRRUST provides the regulator sets; 2816 of its genes are quantified here.
+  carried: 153 target genes that are EXPRESSED and have >= 2 of these factors as
+  TRRUST regulators; 57 have >= 3, most-regulated has 7.
+  400 (gene, regulator) pairs measured twice each.
+
+=================================================================================================
+H1  THE REPLICATE NOISE FLOOR, MEASURED BEFORE ANY MODEL
+=================================================================================================
+  RMS replicate-to-replicate difference in the centred response : 0.3112 log2
+  NOISE FLOOR, the noise in ONE replicate's response            : 0.2200 log2
+  The quantity every model below is scored against is a SINGLE replicate's response, so
+  the floor is the single-replicate noise. Stated explicitly because the yeast module got
+  exactly this wrong -- it scored against a two-replicate MEAN while dividing by the
+  single-replicate figure -- and had to be corrected by an audit.
+  spread of the response itself: 0.3513 log2   (signal-to-noise 1.60)
+
+=================================================================================================
+H2  THE BASELINE THAT MUST FAIL -- AND IT IS THE GATE THAT WAS WRONG
+=================================================================================================
+    model                                         held-out RMSE  floors vs identity
+    no information at all (predict zero)                 0.3520                0.18
+    the GENE only, blind to which regulator              0.3360                0.11
+    the (gene, regulator) pair -- IDENTITY               0.3116                0.00
+
+  H2 as predeclared FAILS: knowing the gene beats knowing nothing by only 0.07 floors.
+  But H2 could not have passed WHATEVER the data said, and that is a defect in the gate
+  rather than a verdict on the data. Each gene's response is CENTRED ACROSS THE PANEL
+  before anything is fitted, which removes the gene's own level by construction -- so a
+  gene-level predictor has almost nothing left to predict. A bar no evidence can clear is
+  ledger P, and this one was built into the preprocessing.
+
+  THE QUESTION H2 SHOULD HAVE ASKED -- is there reproducible signal here at all?
+    correlation between the two replicates across all 400 pairs: r = 0.6284
+  There is. The data are not dead; the baseline was.
+
+=================================================================================================
+H3  DOES IT MATTER WHICH REGULATOR YOU PERTURB?
+=================================================================================================
+  Held-out prediction comparison, as predeclared: regulator-blind 0.3360 against
+  identity 0.3116, an advantage of 0.11 floors. Taken at face value that
+  says the regulators ARE interchangeable and the yeast result does not transfer.
+
+  IT IS THE WRONG INSTRUMENT, and the reason is arithmetic rather than biological. The
+  blind model predicts from the MEAN of 2.61
+  noisy measurements while the identity model predicts from ONE, so the blind model's
+  predictor is quieter by roughly sqrt(K). With K this small that advantage in noise
+  cancels most of identity's advantage in signal, and the comparison measures the two
+  together. In the yeast experiment the groups were large and this did not bite.
+
+  THE RIGHT INSTRUMENT IS A VARIANCE COMPONENT, which separates them: within a target
+  gene, how much of the response variance is attributable to WHICH regulator, after the
+  replicate noise the averaging leaves behind is subtracted? Bootstrapped over genes.
+
+    between-regulator variance   0.05301      sd 0.2302 log2
+    95% CI on that sd            [0.1987, 0.2590] log2
+    IN FLOORS                    1.05   CI [0.90, 1.18]
+    for scale, the between-GENE variance is 0.04200 -- regulators of one gene differ by
+    MORE than genes differ from each other.
+
+  H3: the regulators of a human gene are NOT interchangeable -- the between-regulator variance excludes zero.
+
+=================================================================================================
+H3b  THE SAME ESTIMATOR ON THE YEAST DATA, SO THE TWO ARE COMPARABLE
+=================================================================================================
+                 grouping unit               floor  sd of the effect              in floors
+    HUMAN        target gene                0.2200            0.2302      1.05 [0.90, 1.18]
+    YEAST        sequence context           0.0823            1.3049    15.86 [9.32, 21.36]
+
+  ratio yeast/human: 5.67x in absolute log2, 15.15x in floors.
+
+  THE VERDICT, IN TWO PARTS, BECAUSE THE ANSWER IS NOT ONE WORD.
+  QUALITATIVELY IT TRANSFERS. A human gene's regulators are demonstrably not
+  interchangeable; the effect excludes zero and is larger than the variation between
+  genes. Every count-like summary in this build order assumes the opposite, and that
+  assumption is refuted on human data as it was on yeast.
+  QUANTITATIVELY IT DOES NOT. The effect is 15 times smaller relative to measurement noise than in
+  yeast. Since the entire regulator-identity effect spans about ONE noise floor here, the
+  yeast bar -- 'within one floor of identity' -- is met by almost any class resolution,
+  including C = 1. The specific requirement of 64 classes out of 404, on which every cap
+  in this build order rests, is NOT reproduced on human data and is not currently
+  testable there: this panel cannot distinguish class resolutions at all.
+
+=================================================================================================
+H4  THE CLASS LADDER, AND WHY IT IS FLAT HERE
+=================================================================================================
+
+=================================================================================================
+H6  WHAT DIFFERS BETWEEN THE TWO EXPERIMENTS
+=================================================================================================
+  1. Yeast measured SITES designed into a promoter; this measures PERTURBATIONS of factors
+     in their native network. A knockdown effect includes everything downstream of that
+     factor, not only its direct action on the gene -- so this test is, if anything,
+     biased TOWARD regulators looking interchangeable, since indirect effects are shared.
+  2. Yeast varied the number of sites; here exactly one factor is perturbed at a time, so
+     the count-versus-identity question becomes which-versus-whether, which is the half
+     that matters for the engine's per-gene factor.
+  3. TRRUST's regulator sets are literature-curated and incomplete, so a gene's true
+     regulator set is larger than the one used here.
+  4. One cell line, one assay, and CRISPRi silences transcription rather than removing
+     protein, so factors acting post-translationally are under-represented.
+
+=================================================================================================
+H7  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  It settles whether a HUMAN gene's response depends on WHICH of its regulators is hit,
+  on this panel, which is the assumption every count-like summary in this build order
+  makes. It does not settle the temporal half of the engine's summary, it does not
+  validate any cap directly, and it cannot say anything about factors absent from the
+  panel or edges absent from TRRUST.

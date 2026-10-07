@@ -1,0 +1,179 @@
+{
+ "test": "motif denominator",
+ "scaling": {
+  "edges": [
+   12093,
+   18140,
+   24186,
+   30232,
+   36279,
+   42326,
+   51395,
+   60465
+  ],
+  "feedback": [
+   211.6,
+   357.4,
+   541.2,
+   745.6,
+   994.6,
+   1257.0,
+   1728.6,
+   2280.0
+  ],
+  "feedforward": [
+   3828.8,
+   9586.4,
+   19833.0,
+   34952.6,
+   56795.4,
+   85174.2,
+   144231.4,
+   226062.0
+  ],
+  "k_feedback": 1.4798766405705843,
+  "k_feedforward": 2.547048737076638,
+  "r2_feedback": 0.9978440258162913,
+  "r2_feedforward": 0.9988322731234495
+ },
+ "capture_recapture": {
+  "estimates": {
+   "CollecTRIxSIGNOR": 326570.1566820277,
+   "CollecTRIxOmniPath": 3271933.159929701,
+   "SIGNORxOmniPath": 114149.59740348479
+  },
+  "low": 114149.59740348479,
+  "high": 3271933.159929701,
+  "spread": 28.66355409353213
+ },
+ "projection": {
+  "observed_fb": 2280,
+  "observed_ffl": 226062,
+  "by_estimate": {
+   "SIGNORxOmniPath": {
+    "N_edges": 114149.59740348479,
+    "ratio": 1.8878623567929347,
+    "feedback": 5838.978649927897,
+    "feedforward": 1140610.691543554,
+    "frac_fb_seen": 0.39047924931668565,
+    "frac_ffl_seen": 0.1981938286884521
+   },
+   "CollecTRIxSIGNOR": {
+    "N_edges": 326570.1566820277,
+    "ratio": 5.400978362391924,
+    "feedback": 27663.281553875026,
+    "feedforward": 16590923.551277313,
+    "frac_fb_seen": 0.08241972289367172,
+    "frac_ffl_seen": 0.013625642918630396
+   },
+   "CollecTRIxOmniPath": {
+    "N_edges": 3271933.159929701,
+    "ratio": 54.112844785077336,
+    "feedback": 837540.0232720328,
+    "feedforward": 5875273302.66946,
+    "frac_fb_seen": 0.002722257965765842,
+    "frac_ffl_seen": 3.847684837014945e-05
+   }
+  },
+  "fb_range": [
+   5838.978649927897,
+   837540.0232720328
+  ],
+  "ffl_range": [
+   1140610.691543554,
+   5875273302.66946
+  ],
+  "span": 5150.989155395896
+ },
+ "bound": {
+  "n_tf": 1600,
+  "n_gene": 16492,
+  "possible_edges": 26387200,
+  "occupancy": {
+   "CollecTRIxSIGNOR": 0.012376082217212423,
+   "CollecTRIxOmniPath": 0.12399698186733345,
+   "SIGNORxOmniPath": 0.004325945814769464
+  }
+ },
+ "gates": {
+  "R1": true,
+  "R2": true,
+  "R3": false,
+  "R4": false,
+  "R5": true
+ },
+ "void": [],
+ "seconds": 4.599253416061401,
+ "log": [
+  "========================================================================================================",
+  "LOOP 203 -- OUT OF HOW MANY FEEDBACK AND FEEDFORWARD LOOPS DOES A CELL ACTUALLY HAVE?",
+  "========================================================================================================",
+  "     literature union (CollecTRI + SIGNOR)  60,465 edges",
+  "R1 IS THE SUBSAMPLING INSTRUMENT SOUND?",
+  "     full-set recount   feedback 2,280   feedforward 226,062",
+  "     loop 202 reported  feedback 2,280        feedforward 226,062",
+  "     R1 PASS -- the same counter reproduces loop 202 exactly",
+  "R2 HOW STEEPLY DOES MOTIF COUNT SCALE WITH EDGE COUNT?",
+  "       frac      edges     feedback   feedforward",
+  "       0.20     12,093          212         3,829",
+  "       0.30     18,140          357         9,586",
+  "       0.40     24,186          541        19,833",
+  "       0.50     30,232          746        34,953",
+  "       0.60     36,279          995        56,795",
+  "       0.70     42,326        1,257        85,174",
+  "       0.85     51,395        1,729       144,231",
+  "       1.00     60,465        2,280       226,062",
+  "     feedback     count ~ E^1.480   R^2 0.9978",
+  "     feedforward  count ~ E^2.547   R^2 0.9988",
+  "     R2 PASS -- feedback scales as E^1.48, feedforward as E^2.55; the three-edge motif is lost faster, as it must be",
+  "R3 DO THE CATALOGUES BEHAVE AS INDEPENDENT SAMPLES?",
+  "     CollecTRI  x SIGNOR     |A| 43,536  |B| 19,533  overlap  2,604   ->  N =      326,570",
+  "     CollecTRI  x OmniPath   |A| 43,536  |B| 85,526  overlap  1,138   ->  N =    3,271,933",
+  "     SIGNOR     x OmniPath   |A| 19,533  |B| 85,526  overlap 14,635   ->  N =      114,150",
+  "     spread between the three estimates  28.7x",
+  "     R3 FAIL -- the three estimates span 28.7x (114,150 to 3,271,933). The catalogues are NOT independent samples -- SIGNOR is largely inside OmniPath -- so capture-recapture cannot pin the edge total and no single denominator can be quoted",
+  "R4 WHAT IS THE MOTIF DENOMINATOR?",
+  "     observed on 60,465 edges:  feedback 2,280   feedforward 226,062",
+  "     if there are     114,150 edges (  1.9x what we have):",
+  "         feedback    ~          5,839   we have seen  39.05%",
+  "         feedforward ~      1,140,611   we have seen  19.82%",
+  "     if there are     326,570 edges (  5.4x what we have):",
+  "         feedback    ~         27,663   we have seen   8.24%",
+  "         feedforward ~     16,590,924   we have seen   1.36%",
+  "     if there are   3,271,933 edges ( 54.1x what we have):",
+  "         feedback    ~        837,540   we have seen   0.27%",
+  "         feedforward ~  5,875,273,303   we have seen   0.00%",
+  "     feedback denominator    5,839 to 837,540",
+  "     feedforward denominator 1,140,611 to 5,875,273,303",
+  "     widest span 5,151x",
+  "     R4 FAIL -- the motif denominator spans 5,151x. The edge total is uncertain by 28.7x and the exponent AMPLIFIES that, so the question 'out of how many' has no answer at this resolution",
+  "R5 HOW MUCH OF THE POSSIBLE SPACE IS EVEN OCCUPIED?",
+  "     upper bound on directed edges: 1,600 TFs x 16,492 genes = 26,387,200",
+  "     SIGNORxOmniPath             114,150   = 0.4326% of the possible space",
+  "     CollecTRIxSIGNOR            326,570   = 1.2376% of the possible space",
+  "     CollecTRIxOmniPath        3,271,933   = 12.3997% of the possible space",
+  "     R5 PASS -- every estimate sits below the 26,387,200 bound, the highest at 12.40% of the possible space",
+  "R6 WHAT THIS CANNOT SHOW",
+  "     Capture-recapture assumes every edge is equally catchable. Curation is biased to",
+  "     well-studied genes, so rarely-studied edges are under-caught in EVERY catalogue at",
+  "     once. That inflates the overlap and DEFLATES N, so all three estimates are lower",
+  "     bounds and the true edge count is above even the highest of them.",
+  "     The extrapolation assumes missing edges attach like observed ones. They do not:",
+  "     curated edges concentrate on studied hubs, and loop 202 measured that evidence",
+  "     CLUSTERS (both-E3 at 0.2215 against p^2 of 0.0686). Clustered missing edges would",
+  "     make fewer new motifs than the exponent predicts, so the projections above are",
+  "     upper bounds in that direction while being lower bounds in the direction above.",
+  "     Those two biases point opposite ways and this design cannot net them out.",
+  "     A cell does not run all its edges at once. These counts are of a static wiring",
+  "     diagram pooled over cell types; loop 187's curated and binding tiers already",
+  "     disagreed on feedforward by 22 sigma, which is what pooling looks like.",
+  "========================================================================================================",
+  "  R1  PASS",
+  "  R2  PASS",
+  "  R3  FAIL",
+  "  R4  FAIL",
+  "  R5  PASS",
+  "  3/5   [5s]",
+  "========================================================================================================"
+ ]
+}

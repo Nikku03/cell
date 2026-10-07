@@ -1,0 +1,107 @@
+{
+  "test": "norman_gate2",
+  "n_pairs": 131,
+  "K": 16,
+  "summary": {
+    "pair": {
+      "means": {
+        "ridge": 0.38294954596410613,
+        "gbm": 0.3411480428123564,
+        "knn": 0.37145248278511506,
+        "marginal": 0.21724323301340553,
+        "shuffled": 0.0567258787018209
+      },
+      "contrasts": {
+        "ridge - marginal": {
+          "gap": 0.1657063129507006,
+          "ci": [
+            0.12962930465391342,
+            0.20236325004970426
+          ],
+          "n": 131
+        },
+        "gbm - marginal": {
+          "gap": 0.12390480979895085,
+          "ci": [
+            0.08902826731901729,
+            0.15763094839354466
+          ],
+          "n": 131
+        },
+        "ridge - shuffled": {
+          "gap": 0.32622366726228524,
+          "ci": [
+            0.27881447872943804,
+            0.37710497450792635
+          ],
+          "n": 131
+        }
+      }
+    },
+    "gene": {
+      "means": {
+        "ridge": 0.10172384863137651,
+        "gbm": 0.11615417909487315,
+        "knn": 0.09245158163501509,
+        "marginal": 0.123186709662274,
+        "shuffled": 0.05017842844715384
+      },
+      "contrasts": {
+        "ridge - marginal": {
+          "gap": -0.021462861030897493,
+          "ci": [
+            -0.03925136030291733,
+            -0.003984096887769093
+          ],
+          "n": 131
+        },
+        "gbm - marginal": {
+          "gap": -0.007032530567400858,
+          "ci": [
+            -0.01847955366235056,
+            0.0036896107423147716
+          ],
+          "n": 131
+        },
+        "ridge - shuffled": {
+          "gap": 0.05154542018422268,
+          "ci": [
+            0.02438348554410691,
+            0.0781395383910473
+          ],
+          "n": 131
+        }
+      }
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "GATE 2: is the non-additive interaction predictable from annotation?",
+    "====================================================================================================",
+    "  PREDECLARED: passes only if ridge or gbm beats marginal under the GENE split.",
+    "  105 singles, 131 pairs",
+    "  residual matrix (131, 33694)",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 536 kept of 691 built  (TIER A 527, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  channels 697; 105/105 Norman genes have annotation",
+    "  symmetric pair features: 2091 columns (sum | absdiff | product)",
+    "\n### pair split  (131 held-out pairs scored)",
+    "  gbm        mean corr(pred, true residual) +0.3411",
+    "  ridge      mean corr(pred, true residual) +0.3829",
+    "  knn        mean corr(pred, true residual) +0.3715",
+    "  marginal   mean corr(pred, true residual) +0.2172",
+    "  shuffled   mean corr(pred, true residual) +0.0567",
+    "  ridge - marginal      +0.1657 [+0.1296, +0.2024]  RESOLVED   (n=131)",
+    "  gbm - marginal        +0.1239 [+0.0890, +0.1576]  RESOLVED   (n=131)",
+    "  ridge - shuffled      +0.3262 [+0.2788, +0.3771]  RESOLVED   (n=131)",
+    "\n### gene split  (131 held-out pairs scored)",
+    "  gbm        mean corr(pred, true residual) +0.1162",
+    "  ridge      mean corr(pred, true residual) +0.1017",
+    "  knn        mean corr(pred, true residual) +0.0925",
+    "  marginal   mean corr(pred, true residual) +0.1232",
+    "  shuffled   mean corr(pred, true residual) +0.0502",
+    "  ridge - marginal      -0.0215 [-0.0393, -0.0040]  RESOLVED   (n=131)",
+    "  gbm - marginal        -0.0070 [-0.0185, +0.0037]  within noise   (n=131)",
+    "  ridge - shuffled      +0.0515 [+0.0244, +0.0781]  RESOLVED   (n=131)"
+  ]
+}

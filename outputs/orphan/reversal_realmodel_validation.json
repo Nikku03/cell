@@ -1,0 +1,289 @@
+{
+  "core": {
+    "n_tf": 1146,
+    "n_edges": 9906,
+    "provenance": "tf_core.json from user-provided cell_explorer.html"
+  },
+  "landscape": {
+    "n_seeds": 120,
+    "distinct_attractors": 120,
+    "max_active": 1005,
+    "min_active": 160,
+    "median_active": 956,
+    "note": "activation-dominated: random seeds do not self-organize into few clean attractors"
+  },
+  "coherence": {
+    "attractor_sizes": {
+      "iPSC": 80,
+      "cardiac": 64,
+      "neuron": 60,
+      "myeloid": 58,
+      "Bcell": 59,
+      "hepatocyte": 60
+    },
+    "pairwise_jaccard": {
+      "iPSC|cardiac": 0.52,
+      "iPSC|neuron": 0.54,
+      "iPSC|myeloid": 0.55,
+      "iPSC|Bcell": 0.53,
+      "iPSC|hepatocyte": 0.52,
+      "cardiac|neuron": 0.8,
+      "cardiac|myeloid": 0.77,
+      "cardiac|Bcell": 0.73,
+      "cardiac|hepatocyte": 0.72,
+      "neuron|myeloid": 0.82,
+      "neuron|Bcell": 0.8,
+      "neuron|hepatocyte": 0.76,
+      "myeloid|Bcell": 0.83,
+      "myeloid|hepatocyte": 0.82,
+      "Bcell|hepatocyte": 0.78
+    },
+    "foreign_master_leak": {
+      "iPSC": [],
+      "cardiac": [],
+      "neuron": [],
+      "myeloid": [],
+      "Bcell": [],
+      "hepatocyte": []
+    },
+    "lineage_exclusive": true
+  },
+  "reprogramming": {
+    "summary": {
+      "n_pairs": 12,
+      "reached_rate": 0.667,
+      "mean_recipe_recall": 0.972,
+      "mean_random_expected": 0.176,
+      "mean_enrichment": 6.18,
+      "mean_path_len": 4.83
+    },
+    "pairs": [
+      {
+        "pair": "cardiac->iPSC",
+        "reached": true,
+        "residual": 0,
+        "path_len": 6,
+        "n_recipe_in_diff": 4,
+        "recipe_recall": 1.0,
+        "random_expected": 0.15,
+        "enrichment": 6.67,
+        "recovered": [
+          "MEF2C",
+          "POU5F1",
+          "MYC",
+          "SHOX2",
+          "KLF4",
+          "SOX2"
+        ]
+      },
+      {
+        "pair": "neuron->iPSC",
+        "reached": true,
+        "residual": 0,
+        "path_len": 6,
+        "n_recipe_in_diff": 4,
+        "recipe_recall": 1.0,
+        "random_expected": 0.15,
+        "enrichment": 6.67,
+        "recovered": [
+          "ASCL1",
+          "POU5F1",
+          "MYC",
+          "FOXP2",
+          "KLF4",
+          "SOX2"
+        ]
+      },
+      {
+        "pair": "hepatocyte->iPSC",
+        "reached": true,
+        "residual": 0,
+        "path_len": 4,
+        "n_recipe_in_diff": 4,
+        "recipe_recall": 1.0,
+        "random_expected": 0.1,
+        "enrichment": 10.0,
+        "recovered": [
+          "POU5F1",
+          "MYC",
+          "KLF4",
+          "SOX2"
+        ]
+      },
+      {
+        "pair": "myeloid->iPSC",
+        "reached": true,
+        "residual": 0,
+        "path_len": 5,
+        "n_recipe_in_diff": 4,
+        "recipe_recall": 1.0,
+        "random_expected": 0.125,
+        "enrichment": 8.0,
+        "recovered": [
+          "ZFPM1",
+          "POU5F1",
+          "MYC",
+          "KLF4",
+          "SOX2"
+        ]
+      },
+      {
+        "pair": "iPSC->cardiac",
+        "reached": false,
+        "residual": 4,
+        "path_len": 6,
+        "n_recipe_in_diff": 3,
+        "recipe_recall": 1.0,
+        "random_expected": 0.15,
+        "enrichment": 6.67,
+        "recovered": [
+          "GATA4",
+          "MEF2C",
+          "TBX5",
+          "MYC",
+          "FOXO4",
+          "UBTF"
+        ]
+      },
+      {
+        "pair": "iPSC->neuron",
+        "reached": false,
+        "residual": 4,
+        "path_len": 6,
+        "n_recipe_in_diff": 3,
+        "recipe_recall": 0.667,
+        "random_expected": 0.15,
+        "enrichment": 4.44,
+        "recovered": [
+          "POU3F2",
+          "ASCL2",
+          "FOXO4",
+          "MYT1L",
+          "UBTF",
+          "DLX5"
+        ]
+      },
+      {
+        "pair": "iPSC->hepatocyte",
+        "reached": false,
+        "residual": 4,
+        "path_len": 6,
+        "n_recipe_in_diff": 3,
+        "recipe_recall": 1.0,
+        "random_expected": 0.15,
+        "enrichment": 6.67,
+        "recovered": [
+          "ASCL2",
+          "FOXA1",
+          "FOXA2",
+          "HNF4A",
+          "FOXO4",
+          "UBTF"
+        ]
+      },
+      {
+        "pair": "iPSC->myeloid",
+        "reached": false,
+        "residual": 3,
+        "path_len": 6,
+        "n_recipe_in_diff": 2,
+        "recipe_recall": 1.0,
+        "random_expected": 0.15,
+        "enrichment": 6.67,
+        "recovered": [
+          "ASCL2",
+          "SPI1",
+          "CEBPA",
+          "MEIS2",
+          "FOXO4",
+          "UBTF"
+        ]
+      },
+      {
+        "pair": "Bcell->myeloid",
+        "reached": true,
+        "residual": 0,
+        "path_len": 2,
+        "n_recipe_in_diff": 2,
+        "recipe_recall": 1.0,
+        "random_expected": 0.182,
+        "enrichment": 5.5,
+        "recovered": [
+          "CEBPA",
+          "SPI1"
+        ]
+      },
+      {
+        "pair": "myeloid->Bcell",
+        "reached": true,
+        "residual": 0,
+        "path_len": 4,
+        "n_recipe_in_diff": 3,
+        "recipe_recall": 1.0,
+        "random_expected": 0.364,
+        "enrichment": 2.75,
+        "recovered": [
+          "TCF3",
+          "EBF1",
+          "PAX5",
+          "ZFPM1"
+        ]
+      },
+      {
+        "pair": "hepatocyte->cardiac",
+        "reached": true,
+        "residual": 0,
+        "path_len": 3,
+        "n_recipe_in_diff": 3,
+        "recipe_recall": 1.0,
+        "random_expected": 0.15,
+        "enrichment": 6.67,
+        "recovered": [
+          "TBX5",
+          "GATA4",
+          "MEF2C"
+        ]
+      },
+      {
+        "pair": "neuron->cardiac",
+        "reached": true,
+        "residual": 0,
+        "path_len": 4,
+        "n_recipe_in_diff": 3,
+        "recipe_recall": 1.0,
+        "random_expected": 0.286,
+        "enrichment": 3.5,
+        "recovered": [
+          "TBX5",
+          "GATA4",
+          "MEF2C",
+          "FOXP2"
+        ]
+      }
+    ]
+  },
+  "bootstrap_robustness": [
+    {
+      "pair": "cardiac->iPSC",
+      "recovered": [
+        "KLF4",
+        "MEF2C",
+        "MYC",
+        "POU5F1",
+        "SOX2"
+      ],
+      "recipe_stability": 1.0,
+      "passenger_stability": 0.333,
+      "robust": [
+        "KLF4",
+        "MYC",
+        "POU5F1",
+        "SOX2"
+      ],
+      "fragile": [
+        "MEF2C"
+      ],
+      "separates": true
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+ "n_mutations": 3306,
+ "n_complexes": 63,
+ "n_single": 2677,
+ "n_multi": 629,
+ "r_all": 0.45,
+ "r_nonala": 0.318,
+ "r_alanine": 0.518,
+ "r_multi": 0.383,
+ "hotspot_auc": 0.791,
+ "model": "bind_ddg_model.pkl",
+ "features": [
+  "dHyd",
+  "dVol",
+  "dChg",
+  "absdChg",
+  "wt_arom",
+  "wt_vol",
+  "wt_chg",
+  "mut_vol",
+  "mut_chg",
+  "vdw",
+  "contacts",
+  "elec",
+  "induc",
+  "rot_bestwell",
+  "charge_field",
+  "n_sites"
+ ],
+ "esm_used": false,
+ "note": "JOINT single+multi model (n_sites feature). r_all/r_nonala/r_alanine are SINGLE-mutation (NEXUS's use); r_multi is multi-point (a free scope-add \u2014 neutral to single). Structure-only physics+rotamer+charge; ESM excluded (partner-blind/fold-axis, r=0.09 on binding). Held-out by complex."
+}

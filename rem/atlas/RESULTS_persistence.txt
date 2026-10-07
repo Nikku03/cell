@@ -1,0 +1,101 @@
+======================================================================================================
+V1  VALIDATION -- does the survival-maximising lag equal the drug exposure duration?
+======================================================================================================
+  Proven result being reproduced (PubMed; Fridman et al., Nature 513:418, 2014,
+  doi:10.1038/nature13469): evolved lag time matches the antibiotic-exposure interval.
+  Nothing in this model was told that. The optimum is computed.
+
+   T_on (h)  argmax lag   match   survival vs lag
+        1.5         1.5    True   0.704 0.720 0.722 0.720 0.717 0.713 0.709 0.705 0.698 0.691 0.678
+        2.5         2.0    True   0.405 0.461 0.482 0.488 0.488 0.485 0.480 0.474 0.463 0.451 0.431
+        3.5         3.0    True   0.144 0.247 0.299 0.321 0.330 0.333 0.332 0.329 0.320 0.310 0.290
+        5.0         5.0    True   0.006 0.036 0.087 0.128 0.154 0.169 0.178 0.182 0.184 0.181 0.171
+
+  V1 PASS -- the matching is a computed optimum at every exposure duration tested
+
+======================================================================================================
+V-CONTROL  remove the dormant state; the matching MUST vanish
+======================================================================================================
+   T_on (h)  argmax lag   survival vs lag (no persisters, a = 0)
+        1.5         2.5   spread across lag = 1.332e-15
+        2.5         2.5   spread across lag = 1.110e-16
+        3.5         0.5   spread across lag = 0.000e+00
+        5.0         0.5   spread across lag = 0.000e+00
+  worst spread across lag with no persisters: 1.332e-15
+  V-CONTROL PASS -- with no dormant state the lag parameter has nothing to act on,
+  so a surviving optimum would mean the testbed measures the driver rather than the mechanism
+
+======================================================================================================
+V2  BIPHASIC KILLING -- the universally reproduced persister signature
+======================================================================================================
+    t (h)   mean survivors
+     0.00       8.0000e+00
+     0.25       6.6821e+00
+     0.50       5.6635e+00
+     0.75       4.8667e+00
+     1.00       4.2353e+00
+     1.50       3.3135e+00
+     2.00       2.6821e+00
+     3.00       1.8731e+00
+     4.00       1.3660e+00
+     6.00       7.5722e-01
+     8.00       4.2507e-01
+
+  early log-slope 0.288 /h   late log-slope 0.129 /h   ratio 2.2x
+  V2 FAIL -- fast phase then slow phase (bar: 5x)
+  control, no persisters: early 0.478 late 0.478  ratio 1.00x -- single-exponential, as it must be
+
+======================================================================================================
+V3  THE NEW QUANTITY -- exact P(eradication) vs dosing period at FIXED total drug
+======================================================================================================
+  9 total drug-hours held FIXED; only the SPLIT changes.
+  lag fixed at 2.5 h (the evolved-tolerance regime)
+
+   cycles  T_on (h)  T_off (h)   P(eradicate)
+        1      9.00      13.50       0.890551
+        2      4.50       6.75       0.678364
+        3      3.00       4.50       0.568787
+        5      1.80       2.70       0.440160
+        6      1.50       2.25       0.395977
+       10      0.90       1.35       0.292899
+       15      0.60       0.90       0.237261
+       30      0.30       0.45       0.182482
+
+  BEST   1 doses of 9.00 h -> P(eradicate) = 0.890551
+  WORST 30 doses of 0.30 h -> P(eradicate) = 0.182482
+  spread at IDENTICAL total drug: 4.88x in eradication probability
+  and in FAILURE probability: 7.47x
+  optimum is interior (not simply 'dose as often as possible'): False
+  V-VACUITY PASS
+
+  MY HYPOTHESIS OF AN INTERIOR OPTIMUM WAS WRONG, and it is recorded rather than reworded. I
+  expected a resonance -- a worst dosing period matched to the lag -- and the answer is
+  MONOTONE: at identical total drug, fewer and longer exposures always eradicate better. The
+  mechanism is the same lag-matching V1 validates, running the other way: a short exposure ends
+  before the persister pool has woken, so the survivors wake into a drug-free window and regrow,
+  while one long exposure outlasts the lag distribution and catches them as they emerge.
+
+======================================================================================================
+V4  WHAT THE STANDARD APPROXIMATION MISSES -- periodic driver vs its time average
+======================================================================================================
+  The mean-field/PK-PD move is to replace the cycling drug level by its average.
+  Same total drug, same duty cycle, same model -- only the driver is averaged.
+
+   cycles    T_on        exact   time-averaged   error in P(fail)
+        1    9.00     0.890551        0.131839              0.90 orders
+        3    3.00     0.568787        0.131839              0.30 orders
+        6    1.50     0.395977        0.131839              0.16 orders
+       15    0.60     0.237261        0.131839              0.06 orders
+       30    0.30     0.182482        0.131839              0.03 orders
+
+  worst error from averaging the driver: 0.90 orders in the probability
+  of treatment FAILURE, at identical total drug.   V4 PASS
+
+======================================================================================================
+V-BAND  no tail number without a band (standing rule 8)
+======================================================================================================
+  headline: 1 long dose vs 30 short doses, ratio of FAILURE probabilities
+  point estimate 7.47x
+  under 40% lognormal rate uncertainty, 60 replicates:
+    median 6.37x   IQR [3.26, 8.64]   range [1.72, 26.06]
+  the direction survives the band (25th percentile above 1x): PASS

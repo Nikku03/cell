@@ -1,0 +1,97 @@
+=================================================================================================
+HOW RELIABLY DOES sampcert's BOUND HOLD? COVERAGE, NOT ONE DRAW
+=================================================================================================
+
+  the mass-selected partition: 3,069,000 dropped candidates of 3,072,000, true sum 1.421285e-76. sha 9b909319ccc8.
+  analytic range on the importance weight, total dropped mass / N = 1.390279e-08
+  the largest weight that actually occurs:                        3.944527e-82
+
+=================================================================================================
+K0  THE CEILING GATE: IS THE RANGE THE HEURISTIC USES EVEN AN UPPER BOUND?
+=================================================================================================
+
+      sample    draws where sample max < true max   median shortfall
+          30                               100.0%               2.2x
+         306                               100.0%               1.6x
+       3,069                               100.0%               1.4x
+      30,690                               100.0%               1.2x
+
+  K0: the sample maximum understates the true maximum in most draws at the sizes sampcert quoted. The reported 95% was NOT established.
+
+=================================================================================================
+K1  EMPIRICAL COVERAGE OF THE BOUND AS sampcert COMPUTED IT
+=================================================================================================
+  400 independent repetitions per sample size. Nominal coverage 95%.
+
+      sample   coverage   median UCB/true   worst UCB/true
+          30      99.8%             3.142            0.985
+         306     100.0%             1.373            1.165
+       3,069     100.0%             1.075            1.010
+      30,690     100.0%             1.019            1.002
+
+  K1: coverage at the headline size of 306 is 100.0% against a nominal 95%. The guarantee HOLDS.
+
+=================================================================================================
+K2  THE MECHANISM: THE IMPORTANCE WEIGHTS' TAIL
+=================================================================================================
+  weight mean 3.2022e-83, max 3.9445e-82, max/mean 12x
+  rank correlation of bound against mass: 0.9386
+  the heaviest 0.1% by BOUND sit at a median mass-rank displacement of 3,137 places
+  and carry 18.37% of the sum.
+
+=================================================================================================
+K3  THE BOUND BUILT ON THE RANGE THAT IS ACTUALLY KNOWN
+=================================================================================================
+  Every summand is a mass times an ON-probability at most one, so bound <= mass, and under
+  sampling proportional to mass the weight is at most (total dropped mass)/N -- known
+  before any bound is evaluated. This bound is valid by construction.
+
+      sample   coverage   median UCB/true
+          30     100.0% 122914156789088423194059152971404098821664646060734838639969986834172215296.000
+         306     100.0% 12050407528342003227800670864780321839915514905158606235158914289551540224.000
+       3,069     100.0% 1201506908984246561803743154093231753368641386616135570295693351808139264.000
+      30,690     100.0% 120150690898424670892331507721856215576995599304581719769464908143394816.000
+
+  K3: the valid bound does not reach 2x tightness at any size tested against 3,072,000 for the full scan.
+
+=================================================================================================
+K3b  THE RANGE THAT IS BOTH VALID AND TIGHT
+=================================================================================================
+  K3's range is valid and worthless: bound <= mass assumes an ON-probability of ONE, and
+  the real ones here are around 1e-76. So it overstates every weight by about that much.
+  THE FIX IS CHEAP AND STILL VALID. For a fixed parent, lg over its children is at most
+  ls_p + max_c g_p.v_c, and that maximum is bounded per target by the largest increment any
+  child can supply -- O(parents*targets + states*targets), touching no candidate at all.
+
+    ON-probability ceiling over all candidates : 1.3292e-72
+    resulting weight range                     : 1.8480e-80
+    the largest weight that actually occurs    : 3.9445e-82
+    looseness of the valid range               : 46.8x
+    (K3's range was                              1.3903e-08, 3.52e+73x)
+
+      sample   coverage   median UCB/true
+          30     100.0%           164.897
+         306     100.0%            17.185
+       3,069     100.0%             2.648
+      30,690     100.0%             1.177
+
+  K3b: a VALID bound within 2x at 30,690 evaluations, a factor of 100 against the full scan.
+  This is the honest version of sampcert's headline: valid by construction rather than by
+  luck, and the cost of validity is the difference between this size and the 306 the
+  heuristic quoted.
+
+=================================================================================================
+K4  THE VERDICT, AND WHAT IT DOES NOT SETTLE
+=================================================================================================
+  heuristic range, coverage at 306: 100.0%
+  known range (mass only), coverage at 306: 100.0%  -- valid and useless, 1.21e+73x the true sum
+  valid AND tight range,   coverage at 306: 100.0%  at 17.18x the true sum
+
+  NOT SETTLED.
+  1. One pruning level, one width, one partition. Coverage is a property of the summand
+     distribution and that changes with level.
+  2. Coverage is measured against the TRUE sum for this partition, which required the full
+     scan to know. In use there is nothing to check against -- that is what a guarantee is
+     for -- so this validates the procedure, not any particular run of it.
+  3. A 95% bound is still not a certificate in the sense exactcert used. It is a
+     confidence statement, and the engine's guarantee is demoted by adopting it.

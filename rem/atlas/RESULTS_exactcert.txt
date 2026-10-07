@@ -1,0 +1,162 @@
+=================================================================================================
+DOES THE EXACT BOUND CLOSE THE CERTIFICATE? AND CAN ANY BOUND OF THAT SHAPE?
+=================================================================================================
+
+=================================================================================================
+E0  THE CEILING GATE: PRICING THE SUBSTITUTION THAT EVERY BOUND OF THIS SHAPE MAKES
+=================================================================================================
+  4 controllers, n = 16, L = 4, 1,048,576 paths, 200 targets.
+  exact tail 1.187971e-102. Every quantity below is computed on the SAME prefix set at each
+  level, so the three ratios multiply to the total looseness.
+
+     level  prefixes   TANGENT/EXACT   EXACT/BESTCOMP   BESTCOMP/TRUTH        total
+         1       256       1.099e+00        2.147e+20        3.755e+01    8.855e+21
+         2      4096       1.297e+00        7.436e+16        2.046e+01    1.973e+18
+         3     65536       2.028e+00        4.860e+10        9.880e+00    9.738e+11
+         4   1048576       5.990e+00        1.000e+00        1.000e+00    5.990e+00
+
+  medians across levels: the IRREDUCIBLE step -- best single completion over the
+  subtree's weighted average -- is 1.517e+01.
+
+  E0 AS PREDECLARED: this is BELOW the 1e3 bar, so the shape is capable of a useful certificate.
+
+=================================================================================================
+E0b  THE CERTIFICATE ITSELF: SUMMED BOUND OVER DROPPED, AGAINST THE ACTUAL DEFICIT
+=================================================================================================
+  E0's ratios are per prefix. A certificate is the SUM of the bound over the dropped set
+  against the deficit dropping them actually caused. Both are formed here on the SAME
+  dropped set, once with the exact box bound and once with BESTCOMP.
+
+     level    kept    EXACT cert/deficit   BESTCOMP cert/deficit
+         2      1%             9.081e+17               1.304e+01
+         2     10%             1.067e+18               1.566e+01
+         2     50%             1.496e+18               2.270e+01
+         3      1%             2.643e+11               4.514e+00
+         3     10%             3.074e+11               5.814e+00
+         3     50%             4.220e+11               1.023e+01
+
+  E0b AS PREDECLARED: the exact box certificate runs 2.64e+11 to 1.50e+18; BESTCOMP runs 4.51 to 22.70.
+  THE CERTIFICATE IS CLOSABLE, AND THE THING TO FIX IS THE COMPLETION SET RATHER THAN
+  THE BOUND'S ALGEBRA. Describing the reachable completions instead of relaxing them to
+  a box moves the certificate from 1.5e+18 times the deficit to about 23 times it,
+  which clears the 1e3 bar by two orders.
+
+  AND THE LIMIT, STATED WITH THE RESULT: BESTCOMP IS NOT AN ALGORITHM. It is computed by
+  ENUMERATING the completions, which is exactly what the engine cannot do at its own
+  width. It measures what a bound would deliver IF the reachable completion set could be
+  described tightly. Quoting it as an achieved certificate would be the same error as
+  reading a loop ceiling as a cap, which this build order has now done three times.
+
+=================================================================================================
+E0c  THE SCALING OF THE IRREDUCIBLE FLOOR, SINCE E0b's VERDICT RESTS ON IT
+=================================================================================================
+  BESTCOMP / TRUTH is a MAXIMUM over completions against their weighted average, so it
+  grows with the number of completions. The engine runs at 10 controllers, n = 1024,
+  L = 6. E0b's encouraging verdict was measured at n = 16 and holds only if the floor
+  does not grow too fast on the way.
+
+  A ONE-VARIABLE LAW IN THE COMPLETION COUNT WAS TRIED FIRST AND IT FAILED, WHICH IS WHY
+  THERE ARE TWO VARIABLES BELOW. Fitting the floor against completions-per-prefix alone
+  gave exponent 0.538 across WIDTHS and 0.241 across DEPTHS -- the same nominal quantity,
+  two different laws. A single variable that yields two exponents is the wrong model, not
+  an impossible extrapolation: the floor depends on the state count n and on the number of
+  levels remaining m SEPARATELY, and n^m does not capture it.
+
+         n  m levels left   completions   BESTCOMP/TRUTH
+         8              1             8            5.043
+         8              2            64            9.389
+         8              3           512           13.565
+         8              4         4,096           16.196
+        16              1            16            9.880
+        16              2           256           20.463
+        16              3         4,096           37.548
+        32              1            32           16.525
+        32              2         1,024           41.602
+
+    log10(floor) = -0.280 + 1.048*log10(n) + 1.028*log10(m)      R^2 = 0.963, 9 points
+    the exponent on n is 1.05: the floor grows very nearly LINEARLY in the number
+    of states, and only as m^1.03 in the levels left to complete.
+
+    EXTRAPOLATED TO THE ENGINE (n = 1024, L = 6):
+      decisions made at                     m        floor
+      the last level                        1        750.5
+      two levels from the leaves            2       1530.3
+      mid-window                            4       3120.4
+      the root                              7       5546.6
+
+  E0c AS PREDECLARED: the floor at the engine's width runs 750 at the last level to 5547 at the root.
+  IT STRADDLES THE BAR -- under it near the leaves, over it near the root. Since the
+  pruner drops at every level and the certificate SUMS those drops, the shallow drops
+  dominate and the total does not close. E0b's verdict survives only for the deepest
+  decisions, which are not the ones that matter.
+
+    THE EXTRAPOLATION'S HONEST REACH: n is fitted over 8 to 32 and the engine is at 1024,
+    five doublings beyond. The two-variable form is what makes this readable at all -- it
+    reduces the extrapolation to ONE well-determined exponent per axis instead of one
+    exponent that changed depending on which axis produced it -- but it is still an
+    extrapolation five doublings out and should be read as a magnitude, not a value.
+
+=================================================================================================
+E1  THE EXACT BOUND AT THE ENGINE'S WIDTH, RUN REGARDLESS OF E0
+=================================================================================================
+  E0's width is not the engine's, and the question was asked directly, so it is answered
+  directly. rank='exact' forms the true per-candidate bound, chunked over parents so the
+  parents x children x targets tensor never exists in full.
+
+  10 controllers, 1024 states, L = 6, 200 target rows.
+
+        cap     rank            tail     cert/tail   seconds
+        100     mass      1.5395e-99     6.496e+98       0.6
+        100    bound      6.1775e-99     2.880e+27       1.0
+        100    exact      6.1713e-99     2.875e+27      14.3
+       1000     mass      7.3706e-99     1.357e+98       1.0
+       1000    bound      2.3093e-98     1.839e+26       1.7
+       1000    exact      2.3137e-98     1.810e+26     125.7
+      10000     mass      2.6793e-98     3.732e+97       8.8
+      10000    bound      7.6642e-98     3.088e+25      10.8
+      10000    exact      7.7094e-98     3.027e+25    1080.3
+      19531     mass      3.7208e-98     2.687e+97      20.4
+      19531    bound      1.0567e-97     1.701e+25      24.5
+      19531    exact      1.0640e-97     1.666e+25    2055.1
+
+    (for rank='mass' the certificate is dropped MASS, which bounds the wrong thing at
+     all; it is listed so the three are in one table.)
+
+  E1 AS PREDECLARED: the exact bound's certificate / tail is 1.666e+25 to 2.875e+27.
+  It does NOT close: a certificate larger than the tail it bounds is not a guarantee.
+    at cap 100: exact is 1.00x tighter than the tangent relaxation.
+    at cap 1000: exact is 1.02x tighter than the tangent relaxation.
+    at cap 10000: exact is 1.02x tighter than the tangent relaxation.
+    at cap 19531: exact is 1.02x tighter than the tangent relaxation.
+
+=================================================================================================
+E2  DOES THE TIGHTER BOUND ALSO RANK BETTER?
+=================================================================================================
+  Nothing guarantees it does. A looser bound can order candidates differently and the
+  ordering is what determines the recovered tail.
+
+        cap   tail, tangent     tail, exact   orders, exact - tangent
+        100      6.1775e-99      6.1713e-99                    -0.000
+       1000      2.3093e-98      2.3137e-98                     0.001
+      10000      7.6642e-98      7.7094e-98                     0.003
+      19531      1.0567e-97      1.0640e-97                     0.003
+
+  E2: the exact bound ranks essentially IDENTICALLY -- the two orderings agree to within a thousandth of an order.
+  That is itself informative: the tangent relaxation gives away orders in the
+  CERTIFICATE while barely changing the ORDER, which is why boundprune's 6x-8x
+  ranking win did not need the exact bound and the certificate could not be
+  rescued by it.
+
+=================================================================================================
+E3  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. E0c MEASURES the floor's growth rather than asserting it, but it still extrapolates
+     about three decades of completion count beyond the widest enumerable point. The
+     DIRECTION is measured; the engine-width VALUE is extrapolated.
+  2. BESTCOMP is the tightest bound of the form mass x best-single-completion. A bound
+     that distributes the ON-probability over the subtree is outside the family and is
+     not bounded by E0's floor. That is where a closing certificate would have to come
+     from, and it is not built here.
+  3. Certificate / tail is the readable ratio at the engine's width because the true
+     deficit is unknowable there. It understates the guarantee's quality when the tail
+     itself is far below the truth, which it is.

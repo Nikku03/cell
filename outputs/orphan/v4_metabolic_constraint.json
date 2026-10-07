@@ -1,0 +1,451 @@
+{
+ "model": "v4-metabolic-constraint-v1",
+ "title": "V4 Block 7A -- HumanGEM as a constraint layer vs abundance-only",
+ "question": "Does imposing Sv = 0 via HumanGEM predict metabolic-gene essentiality better than predicted enzyme abundance alone, better than stoichiometry-free connectivity, and better than a shuffled-stoichiometry model with the same sparsity?",
+ "smoke": true,
+ "solver": {
+  "parser": "cobrapy 0.31.1",
+  "lp": "scipy.optimize.linprog(method='highs') -- HiGHS",
+  "wt_growth_linprog": 124.8681483774457,
+  "wt_growth_cobrapy": 124.86814837744568
+ },
+ "inputs": {
+  "sbml": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM.xml",
+  "kcat": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/kcat_dl.json",
+  "depmap": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/CRISPRGeneEffect.csv",
+  "genemap": "/home/user/cell/HumanGEM_genes.tsv"
+ },
+ "endpoint": {
+  "source": "DepMap CRISPRGeneEffect.csv (Chronos gene effect)",
+  "truth": "per-gene MEAN gene effect across measured cell lines; essential = mean <= -0.5",
+  "nan_policy": "NaNs dropped from the mean, NEVER read as 0.0; a gene needs >= 100 measured lines",
+  "nan_fraction": 0.01512450238076653,
+  "n_genes": 96,
+  "n_essential": 9,
+  "prevalence": 0.09375,
+  "n_cell_lines": 1150,
+  "primary_metric": "AUROC with midranks (FBA's large tie block scores at chance, which is honest)",
+  "secondary_metric": "Spearman rho against the continuous mean gene effect (threshold-free)"
+ },
+ "model_structure": {
+  "reactions": 12931,
+  "metabolites": 8461,
+  "nnz": 55198,
+  "objective_reaction": "MAR13082",
+  "genes_with_nonempty_gpr_knockout_set": 1115,
+  "kcat_tier_counts": {
+   "EC3": 2093,
+   "any_EC": 1260,
+   "global_median": 7767,
+   "human_EC": 1811
+  },
+  "kcat_global_median_per_s": 4.805000000000001,
+  "currency_metabolite_degree_cut": 14.0,
+  "rewiring_stub_collisions": 1326
+ },
+ "wt_growth": {
+  "real_S": 124.8681483774457,
+  "shuffled_S": -0.0,
+  "magnitude_shuffled_S": -0.0,
+  "rewired_S": -0.0,
+  "degenerate": {
+   "shuffled_S": true,
+   "magnitude_shuffled_S": true,
+   "rewired_S": true
+  }
+ },
+ "lp_solves": {
+  "real_S": 37,
+  "shuffled_S": 0,
+  "magnitude_shuffled_S": 0,
+  "rewired_S": 0,
+  "note": "every solve is the FULL model; no reduced model, no FVA approximation, no gene subsampling in a full run"
+ },
+ "arms": {
+  "0N uniform random (null floor)": {
+   "auroc_mean": 0.6245210727969349,
+   "auroc_sd": 0.32313641096131424,
+   "auroc_per_fold": [
+    0.25287356321839083,
+    0.7816091954022989,
+    0.8390804597701149
+   ],
+   "spearman_mean": 0.06121700879765395,
+   "spearman_sd": 0.11348016888148822,
+   "spearman_per_fold": [
+    -0.05828445747800586,
+    0.16752199413489735,
+    0.07441348973607037
+   ],
+   "sign_fit_per_fold": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "degenerate": false
+  },
+  "0 reaction count (cheapest baseline)": {
+   "auroc_mean": 0.6015325670498085,
+   "auroc_sd": 0.17109971771208105,
+   "auroc_per_fold": [
+    0.4942528735632184,
+    0.7988505747126436,
+    0.5114942528735632
+   ],
+   "spearman_mean": 0.23758506685359093,
+   "spearman_sd": 0.06471496313309687,
+   "spearman_per_fold": [
+    0.3082131165886045,
+    0.22340834068505278,
+    0.18113374328711548
+   ],
+   "sign_fit_per_fold": [
+    -1.0,
+    -1.0,
+    -1.0
+   ],
+   "degenerate": false
+  },
+  "1 ABUNDANCE-ONLY (kcat demand)": {
+   "auroc_mean": 0.3103448275862069,
+   "auroc_sd": 0.15559754449058488,
+   "auroc_per_fold": [
+    0.4885057471264368,
+    0.20114942528735633,
+    0.2413793103448276
+   ],
+   "spearman_mean": -0.09881226970202517,
+   "spearman_sd": 0.02265490036677562,
+   "spearman_per_fold": [
+    -0.12482815559713038,
+    -0.08817598681615497,
+    -0.08343266669279016
+   ],
+   "sign_fit_per_fold": [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   "degenerate": false
+  },
+  "2 reaction-neighbourhood (no stoich)": {
+   "auroc_mean": 0.6436781609195403,
+   "auroc_sd": 0.10069779004560474,
+   "auroc_per_fold": [
+    0.5459770114942529,
+    0.6379310344827587,
+    0.7471264367816092
+   ],
+   "spearman_mean": 0.06867576538216812,
+   "spearman_sd": 0.08732002582153407,
+   "spearman_per_fold": [
+    0.15122353651634737,
+    0.0775435393414419,
+    -0.022739779711284908
+   ],
+   "sign_fit_per_fold": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "degenerate": false
+  },
+  "2R random partners (CONTROL)": {
+   "auroc_mean": 0.5862068965517241,
+   "auroc_sd": 0.050102286707364066,
+   "auroc_per_fold": [
+    0.5632183908045977,
+    0.6436781609195402,
+    0.5517241379310345
+   ],
+   "spearman_mean": 0.06091363456503796,
+   "spearman_sd": 0.056310939441743625,
+   "spearman_per_fold": [
+    0.11290322580645161,
+    0.06873797114379425,
+    0.001099706744868035
+   ],
+   "sign_fit_per_fold": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "degenerate": false
+  },
+  "2S neighbourhood SWAP (COUNTERFACT)": {
+   "auroc_mean": 0.3390804597701149,
+   "auroc_sd": 0.19983147874383575,
+   "auroc_per_fold": [
+    0.5229885057471264,
+    0.367816091954023,
+    0.12643678160919541
+   ],
+   "spearman_mean": 0.015034813155642007,
+   "spearman_sd": 0.16768790362430028,
+   "spearman_per_fold": [
+    0.19631564558667638,
+    -0.016680414330894074,
+    -0.1345307917888563
+   ],
+   "sign_fit_per_fold": [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   "degenerate": false
+  },
+  "3 FBA-CONSTRAINED (Sv=0)": {
+   "auroc_mean": 0.7509578544061303,
+   "auroc_sd": 0.09449319888995039,
+   "auroc_per_fold": [
+    0.7873563218390804,
+    0.6436781609195402,
+    0.8218390804597702
+   ],
+   "spearman_mean": 0.3151360767519458,
+   "spearman_sd": 0.12753795595651227,
+   "spearman_per_fold": [
+    0.453890947706215,
+    0.20302405868163095,
+    0.28849322386799164
+   ],
+   "sign_fit_per_fold": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "degenerate": false
+  },
+  "4 SHUFFLED STOICHIOMETRY (CONTROL)": {
+   "auroc_mean": 0.5,
+   "auroc_sd": 0.0,
+   "auroc_per_fold": [
+    0.5,
+    0.5,
+    0.5
+   ],
+   "spearman_mean": 0.0,
+   "spearman_sd": 0.0,
+   "spearman_per_fold": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sign_fit_per_fold": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "degenerate": true
+  },
+  "4b magnitude-shuffled (CONTROL)": {
+   "auroc_mean": 0.5,
+   "auroc_sd": 0.0,
+   "auroc_per_fold": [
+    0.5,
+    0.5,
+    0.5
+   ],
+   "spearman_mean": 0.0,
+   "spearman_sd": 0.0,
+   "spearman_per_fold": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sign_fit_per_fold": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "degenerate": true
+  },
+  "5 degree-matched rewiring (CONTROL)": {
+   "auroc_mean": 0.5,
+   "auroc_sd": 0.0,
+   "auroc_per_fold": [
+    0.5,
+    0.5,
+    0.5
+   ],
+   "spearman_mean": 0.0,
+   "spearman_sd": 0.0,
+   "spearman_per_fold": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sign_fit_per_fold": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "degenerate": true
+  },
+  "I wrong-gene identity (CONTROL)": {
+   "auroc_mean": 0.3620689655172414,
+   "auroc_sd": 0.03448275862068967,
+   "auroc_per_fold": [
+    0.3275862068965517,
+    0.3620689655172414,
+    0.39655172413793105
+   ],
+   "spearman_mean": -0.13732859663259353,
+   "spearman_sd": 0.26492851088035957,
+   "spearman_per_fold": [
+    -0.4318745400078918,
+    -0.06160372979861247,
+    0.08149247990872371
+   ],
+   "sign_fit_per_fold": [
+    -1.0,
+    1.0,
+    1.0
+   ],
+   "degenerate": false
+  }
+ },
+ "unit_of_replication": "a DISJOINT HELD-OUT GENE BLOCK. The per_fold lists hold one value per held-out block (n = 3), NOT cell lines and NOT solver restarts.",
+ "mde": {
+  "value": 0.17784086532816065,
+  "convention": "3*sd/sqrt(n)",
+  "n": 3,
+  "n_counts": "disjoint held-out metabolic-gene blocks, stratified on the essentiality label",
+  "pooled_across_block_sd": 0.10267647147012954,
+  "spearman_mde": 0.14244312908027618,
+  "pooled_across_block_sd_spearman": 0.08223957891871005
+ },
+ "per_cell_line_REPORTED_NOT_GRADED": {
+  "3 FBA-CONSTRAINED (Sv=0)": {
+   "mean": 0.7042098423757894,
+   "sd": 0.06282804111755927,
+   "n_lines": 1150
+  },
+  "1 ABUNDANCE-ONLY (kcat demand)": {
+   "mean": 0.47785978178209343,
+   "sd": 0.05231946699400668,
+   "n_lines": 1150
+  },
+  "0 reaction count (cheapest baseline)": {
+   "mean": 0.6290646345753876,
+   "sd": 0.05115675846051195,
+   "n_lines": 1150
+  }
+ },
+ "per_cell_line_note": "cell lines are strongly correlated and none of them is an unseen gene; an n of ~1,150 there would manufacture significance for a claim about genes. No gate reads this.",
+ "gates": {
+  "PRIMARY  FBA beats BOTH the stoichiometry-free neighbourhood AND the shuffled-S control by > MDE": false,
+  "SHARP    FBA beats the sign-preserving magnitude shuffle by > MDE (coefficients, not sign pattern)": true,
+  "WIRING   FBA beats the degree-matched configuration-model rewiring by > MDE": true,
+  "ABUNDANCE FBA beats ABUNDANCE-ONLY by > MDE (the headline sentence)": true,
+  "FREE     FBA beats a bare reaction count per gene by > MDE": false,
+  "AGREE    threshold-free Spearman reaches the same verdict as AUROC on both PRIMARY gaps": false
+ },
+ "gate_shuffle_arm_used_for_PRIMARY": "4b magnitude-shuffled (CONTROL)",
+ "gaps": {
+  "fba_minus_neighbourhood": 0.10727969348658994,
+  "fba_minus_shuffled_stoichiometry": 0.2509578544061303,
+  "fba_minus_magnitude_shuffled": 0.2509578544061303,
+  "fba_minus_degree_matched_rewiring": 0.2509578544061303,
+  "fba_minus_abundance_only": 0.44061302681992337,
+  "fba_minus_reaction_count": 0.14942528735632177,
+  "fba_minus_wrong_gene_identity": 0.3888888888888889,
+  "neighbourhood_minus_abundance_only": 0.3333333333333334,
+  "neighbourhood_minus_random_partners": 0.057471264367816244,
+  "neighbourhood_minus_counterfactual_swap": 0.3045977011494254,
+  "fba_minus_neighbourhood_spearman": 0.2464603113697777,
+  "fba_minus_shuffled_spearman": 0.3151360767519458
+ },
+ "controls_reproducing_the_effect": {
+  "shuffled_stoichiometry": -0.9848484848484856,
+  "magnitude_shuffled": -0.9848484848484856,
+  "degree_matched_rewiring": -0.9848484848484856,
+  "stoichiometry_free_neighbourhood": 0.15151515151515196,
+  "abundance_only": -2.484848484848486,
+  "bare_reaction_count": -0.18181818181818166
+ },
+ "controls_reproducing_the_effect_denominator": 0.12643678160919536,
+ "controls_reproducing_the_effect_note": "each value is the fraction of arm 3's RAW lift over the uniform-random floor that the named arm reproduces. If the denominator is itself below the MDE these are ratios of two undetected quantities and mean nothing, and the flag below is then false.",
+ "controls_reproducing_the_effect_are_meaningful": false,
+ "best_arm_overall": "3 FBA-CONSTRAINED (Sv=0)",
+ "best_zero_cost_arm": "0N uniform random (null floor)",
+ "circularity_check": "HumanGEM is a literature-curated reconstruction, its EC annotations come from the model file, and kcat values come from a BRENDA/SABIO-derived deposit. The scored endpoint is DepMap CRISPR gene effect. No arm's score is derived from DepMap. The only quantity fit from the endpoint anywhere in this module is one SIGN per arm per fold, fit on training genes and applied to held-out genes.",
+ "limits": [
+  "n = 3 held-out gene blocks gives the sd 2 degrees of freedom, so the MDE is itself poorly estimated and a gap just under it is not evidence of equality. Raising MC_FOLDS is the cheapest way to falsify or confirm a near-threshold call",
+  "WHAT WOULD FALSIFY A POSITIVE: if arm 4 or arm 5 moves up to arm 3 under a different shuffle seed, the separation was one draw of the permutation and not stoichiometry. Only one seed per shuffled variant is run here (MC_SEED); a seed sweep is the direct falsification test and it was NOT run",
+  "WHAT WOULD FALSIFY A NEGATIVE: this uses HumanGEM's own default bounds as the medium and makes no cell-line-specific model. Context-specific FBA (expression-constrained models, a defined medium) is the standard way this prediction is made and it is not what was run. A null here is a null for the GENERIC reconstruction, not for constraint-based modelling",
+  "'predicted enzyme abundance' is a PROXY. No proteomics was available in this environment, so arm 1 is enzyme demand per unit flux, sum_r 1/(kcat_r * n_isozymes_r). A real abundance measurement could beat it, which would make arm 1 a stronger baseline and the headline claim harder, not easier",
+  "kcat coverage is partial: reactions with no usable EC match fall back to the global median, which collapses arm 1 toward arm 0 (a reaction count) for those genes. The per-tier counts are in model_structure.kcat_tier_counts and this WEAKENS the abundance baseline, which biases the experiment toward a positive verdict and must be read as such",
+  "CONFOUNDED: DepMap essentiality is correlated with gene expression, with pathway membership and with how well-studied a gene is, and HumanGEM's curation is itself denser around well-studied central metabolism. A gene that is essential and well-curated is over-represented in both, so part of any positive AUROC is annotation depth rather than mass balance. Nothing here separates those",
+  "the essentiality label is a MEAN across ~1,150 heterogeneous cell lines thresholded at -0.5. That discards context-specific essentiality entirely, which is exactly the regime where a constraint-based model should have its advantage. The per-cell-line numbers are reported but the design is not powered for them",
+  "arm 3's score is a huge tie block: every gene whose GPR leaves its reactions isozyme-covered gets exactly 0.0 and is scored at chance by midranks. That is the honest treatment of an arm that asserts no order, but it caps arm 3's achievable AUROC in a way arms 0-2 are not capped, and the cap depends on GPR curation rather than on stoichiometry",
+  "the objective (biomass) column is excluded from the shuffled and rewired matrices, because shuffling it would change what growth MEANS rather than changing the network. That makes the controls slightly closer to the real model than a full shuffle would be, i.e. it is the conservative direction for a positive verdict but the anti-conservative direction for a null",
+  "the degree-matched rewiring merges stub collisions, so a small fraction of nonzeros (reported as rewiring_stub_collisions) leaves it not exactly degree-matched",
+  "single-gene knockouts only. Synthetic lethality, isozyme pairs and any epistasis are outside this design entirely, and they are where a network model would be expected to earn its keep",
+  "arm 2's currency-metabolite cut (top 5% by reaction degree) is a declared preprocessing choice, not a fitted one, but a different cut changes arm 2's neighbourhood size and therefore the difficulty of the PRIMARY gate. It was not swept"
+ ],
+ "verdict": "SMOKE RUN -- THIS IS A PLUMBING CHECK AND NOT A RESULT. The gene universe was deliberately subsampled to 96 genes (9 essential) across 3 blocks, so every AUROC here is decided by which two or three essential genes landed in which block, no arm can be separated from any other, and the MDE is an artifact of that subsample. Nothing in this paragraph or this JSON is quotable as a finding. Rerun with MC_SMOKE unset for the full 1,115-LP-per-arm result. BLOCK 7A FAILS: on 96 HumanGEM metabolic genes with a DepMap column and >= 100 measured cell lines (9 essential at mean Chronos gene effect <= -0.5), a real Sv = 0 solve of the full 12,931-reaction reconstruction -- 37 full single-gene-knockout LPs through scipy.optimize.linprog/HiGHS, cross-checked against cobrapy's own wild-type solution to 2.8e-14 -- reaches held-out AUROC 0.7510, while predicted enzyme abundance alone reaches 0.3103 (+0.4406), the stoichiometry-free reaction neighbourhood reaches 0.6437 (+0.1073) and the SHUFFLED-STOICHIOMETRY control -- same sparsity, same per-reaction coefficient multiset, entries permuted within the column -- reaches 0.5000 (+0.2510), all against a cross-block minimum detectable increment of 0.1778 (3*sd/sqrt(n), n = 3 DISJOINT HELD-OUT GENE BLOCKS; the per-cell-line spread is reported in the JSON and is deliberately NOT what anything is graded on, because cell lines are correlated and none of them is an unseen gene). The shuffled model's wild-type objective is -0, so arm 4 is DEGENERATE -- it cannot grow, every knockout score is identically zero, and by the rule declared before the run the PRIMARY gate was taken against the sign-preserving magnitude shuffle instead (0.5000, gap +0.2510). ATTRIBUTION, as fractions of FBA's raw lift over the uniform-random floor: the shuffled-stoichiometry control reproduces -98.5%, the sign-preserving magnitude shuffle -98.5%, the degree-matched configuration-model rewiring -98.5%, the stoichiometry-free neighbourhood 15.2%, and a bare count of reactions per gene -- no kcat, no stoichiometry, no solver -- -18.2% (though FBA's own lift over the floor is itself below the MDE, so these percentages are ratios of two undetected quantities). THE CHEAPEST NON-LEARNED ARM, a bare reaction count, scores 0.6015 -- A TRIVIAL ZERO-COST BASELINE MATCHES OR BEATS THE FULL LP PIPELINE, WHICH IS THE HEADLINE AND NOT A FOOTNOTE. The best arm overall is '3 FBA-CONSTRAINED (Sv=0)' at 0.7510. The wrong-gene identity control sits at 0.3621, bounding the metric's own degeneracy, and the uniform-random floor at 0.6245. The stoichiometry-free neighbourhood channel is live rather than ignored: swapping a gene's neighbours for another gene's while keeping its own demand term moves AUROC by +0.3046 and random count-matched and tier-matched partners by +0.0575. The threshold-free Spearman correlation against the continuous mean gene effect DISAGREES with AUROC on both PRIMARY gaps (+0.2465 and +0.3151 against a 0.1424 Spearman MDE), and when the two metrics disagree the result is a metric artifact and is not reportable as biology. All effect sizes quoted are RAW held-out values; the shuffled, rewired, random-partner, swap and wrong-gene arms establish significance and attribution only, and nothing is reported net of a control.",
+ "runtime_seconds": 54.417545795440674,
+ "log": [
+  "============================================================================================================",
+  "V4 BLOCK 7A -- HumanGEM as a CONSTRAINT LAYER vs abundance alone (Sv = 0 vs an enzyme list)",
+  "============================================================================================================",
+  "  GATE, declared before the run: the constraint layer is credited only if the FBA arm beats BOTH",
+  "  the stoichiometry-free reaction-neighbourhood arm AND the shuffled-stoichiometry control by",
+  "  more than MDE = 3*sd/sqrt(n), n = 3 DISJOINT HELD-OUT GENE BLOCKS. A shuffled model that",
+  "  cannot grow is DEGENERATE, cannot satisfy the gate, and forces the gate onto arm 4b instead.",
+  "  *** SMOKE MODE: universe subsampled to 96 genes. PLUMBING CHECK, NOT A RESULT. ***",
+  "\n  HumanGEM parsed with cobrapy 0.31.1 in 17.3s: 12,931 reactions x 8,461 metabolites, 2,848 genes",
+  "  S: 8,461 x 12,931, 55,198 nonzeros (0.050% dense); objective = MAR13082; all bounds finite so no shuffle can make the LP unbounded",
+  "  WT growth: linprog/HiGHS 124.868148   cobrapy 124.868148 (agree to 2.84e-14; cobra took 2.7s)",
+  "  GPR: 1,115/2,848 genes inactivate >= 1 reaction when deleted alone; the rest are fully isozyme-covered and score exactly 0 in every FBA arm WITHOUT an LP (a prediction of non-essentiality, not a missing value)",
+  "\n  DepMap CRISPRGeneEffect: 1,150 cell lines x 2,785 matched metabolic gene columns, loaded in 3.3s (2,776 matched on Entrez id, 9 on symbol)",
+  "  1.51% of gene-effect entries are NaN. THEY ARE DROPPED FROM THE PER-GENE MEAN, NEVER READ AS 0.0, and a gene needs >= 100 measured lines to enter the universe",
+  "  metabolic-gene universe: 2,754 genes with a HumanGEM GPR and >= 100 measured lines; 263 essential at mean effect <= -0.5 (9.5% prevalence)",
+  "  *** SMOKE SUBSAMPLE: 96 genes, 9 essential. LOUD, NOT SILENT. A full run never subsamples. ***",
+  "\n  kcat from kcat_dl.json (17,010 records, 1,706 EC numbers) in 0.2s. Reaction coverage by tier: global_median 7,767, EC3 2,093, human_EC 1,811, any_EC 1,260  (global median 4.81 1/s); isozyme redundancy from the GPR: 3,827 reactions have >= 2 independently-sufficient genes",
+  "  arm 2 neighbourhood (SPARSITY of S only, never its values): currency metabolites = the top 5% by reaction degree (degree >= 14, 483 of 8,461) are excluded from tier 2. co-reaction partners median 0; metabolite-adjacent median 0",
+  "\n  S variants (objective column MAR13082 excluded from all of them): arm 4 permutes entries within each reaction column; arm 4b permutes magnitudes and keeps every sign; arm 5 is a degree-matched configuration model (1,326 stub collisions merged, 2.40% of nonzeros)",
+  "\n  FBA arms -- every knockout is a FULL solve of the complete 12,931-reaction model (no reduced model, no FVA approximation, no gene subsampling):",
+  "    3 FBA-constrained (real S)         WT growth   124.8681   37 full LP solves in 19.1s   lethal (ratio < 0.01) 4   any growth loss 6",
+  "    4 shuffled stoichiometry           WT growth -0 -> DEGENERATE: this model cannot grow, so every knockout score is identically 0 and its AUROC is 0.5 BY CONSTRUCTION. Declared in advance: it cannot satisfy the PRIMARY gate.",
+  "    4b magnitude-shuffled              WT growth -0 -> DEGENERATE: this model cannot grow, so every knockout score is identically 0 and its AUROC is 0.5 BY CONSTRUCTION. Declared in advance: it cannot satisfy the PRIMARY gate.",
+  "    5 degree-matched rewiring          WT growth -0 -> DEGENERATE: this model cannot grow, so every knockout score is identically 0 and its AUROC is 0.5 BY CONSTRUCTION. Declared in advance: it cannot satisfy the PRIMARY gate.",
+  "\n  3 DISJOINT held-out GENE blocks (stratified on the label), sizes 32/32/32; essential per block 3/3/3",
+  "\n  arm                                         AUROC      sd  spearman      sd  note",
+  "  0N uniform random (null floor)             0.6245  0.3231   +0.0612  0.1135  ",
+  "  0 reaction count (cheapest baseline)       0.6015  0.1711   +0.2376  0.0647  ",
+  "  1 ABUNDANCE-ONLY (kcat demand)             0.3103  0.1556   -0.0988  0.0227  ",
+  "  2 reaction-neighbourhood (no stoich)       0.6437  0.1007   +0.0687  0.0873  ",
+  "  2R random partners (CONTROL)               0.5862  0.0501   +0.0609  0.0563  ",
+  "  2S neighbourhood SWAP (COUNTERFACT)        0.3391  0.1998   +0.0150  0.1677  ",
+  "  3 FBA-CONSTRAINED (Sv=0)                   0.7510  0.0945   +0.3151  0.1275  ",
+  "  4 SHUFFLED STOICHIOMETRY (CONTROL)         0.5000  0.0000   +0.0000  0.0000  DEGENERATE (model cannot grow)",
+  "  4b magnitude-shuffled (CONTROL)            0.5000  0.0000   +0.0000  0.0000  DEGENERATE (model cannot grow)",
+  "  5 degree-matched rewiring (CONTROL)        0.5000  0.0000   +0.0000  0.0000  DEGENERATE (model cannot grow)",
+  "  I wrong-gene identity (CONTROL)            0.3621  0.0345   -0.1373  0.2649  ",
+  "\n  MDE = 3*sd/sqrt(n), n = 3 DISJOINT HELD-OUT GENE BLOCKS -- the unit of replication, because the\n  claim is about generalising to metabolic genes, not to solver restarts or to cell lines. Pooled\n  across-block sd 0.1027 -> MDE +0.1778 AUROC; Spearman MDE +0.1424",
+  "  REPORTED AND NOT GRADED -- per-cell-line AUROC (n = 1,150 lines, each scored on the whole gene universe): 3 0.7042 +/- 0.0628; 1 0.4779 +/- 0.0523; 0 0.6291 +/- 0.0512. Cell lines are not the unit of replication and no gate reads this.",
+  "\n  PREDECLARED GATES",
+  "    FAIL  PRIMARY  FBA beats BOTH the stoichiometry-free neighbourhood AND the shuffled-S control by > MDE",
+  "    PASS  SHARP    FBA beats the sign-preserving magnitude shuffle by > MDE (coefficients, not sign pattern)",
+  "    PASS  WIRING   FBA beats the degree-matched configuration-model rewiring by > MDE",
+  "    PASS  ABUNDANCE FBA beats ABUNDANCE-ONLY by > MDE (the headline sentence)",
+  "    FAIL  FREE     FBA beats a bare reaction count per gene by > MDE",
+  "    FAIL  AGREE    threshold-free Spearman reaches the same verdict as AUROC on both PRIMARY gaps",
+  "    FBA 0.7510 | neighbourhood 0.6437 (+0.1073) | shuffled-S 0.5000 (+0.2510) | magnitude-shuffled 0.5000 (+0.2510)",
+  "    abundance-only 0.3103 (+0.4406) | reaction count 0.6015 (+0.1494) | null floor 0.6245 | wrong-gene identity 0.3621 (+0.3889) -- all against MDE 0.1778",
+  "    arm 2 channel is LIVE not ignored: neighbourhood vs random partners +0.0575, vs the COUNTERFACTUAL swap +0.3046 (a swap gap at or below the MDE would mean the neighbourhood is IGNORED rather than useless -- accuracy alone cannot tell those apart)",
+  "\n  CONTROLS AND BASELINES THAT REPRODUCE THE EFFECT (the finding, not a footnote)",
+  "    denominator = FBA's raw lift over the uniform-random floor, +0.1264 AUROC",
+  "      -98.5%  shuffled_stoichiometry",
+  "      -98.5%  magnitude_shuffled",
+  "      -98.5%  degree_matched_rewiring",
+  "       15.2%  stoichiometry_free_neighbourhood",
+  "     -248.5%  abundance_only",
+  "      -18.2%  bare_reaction_count",
+  "    ^ FBA's own lift over the null floor is +0.1264, itself at or below the 0.1778 MDE, so these are ratios of two undetected quantities and mean nothing. They are printed rather than suppressed so the denominator stays visible.",
+  "\n============================================================================================================",
+  "  VERDICT: SMOKE RUN -- THIS IS A PLUMBING CHECK AND NOT A RESULT. The gene universe was deliberately subsampled to 96 genes (9 essential) across 3 blocks, so every AUROC here is decided by which two or three essential genes landed in which block, no arm can be separated from any other, and the MDE is an artifact of that subsample. Nothing in this paragraph or this JSON is quotable as a finding. Rerun with MC_SMOKE unset for the full 1,115-LP-per-arm result. BLOCK 7A FAILS: on 96 HumanGEM metabolic genes with a DepMap column and >= 100 measured cell lines (9 essential at mean Chronos gene effect <= -0.5), a real Sv = 0 solve of the full 12,931-reaction reconstruction -- 37 full single-gene-knockout LPs through scipy.optimize.linprog/HiGHS, cross-checked against cobrapy's own wild-type solution to 2.8e-14 -- reaches held-out AUROC 0.7510, while predicted enzyme abundance alone reaches 0.3103 (+0.4406), the stoichiometry-free reaction neighbourhood reaches 0.6437 (+0.1073) and the SHUFFLED-STOICHIOMETRY control -- same sparsity, same per-reaction coefficient multiset, entries permuted within the column -- reaches 0.5000 (+0.2510), all against a cross-block minimum detectable increment of 0.1778 (3*sd/sqrt(n), n = 3 DISJOINT HELD-OUT GENE BLOCKS; the per-cell-line spread is reported in the JSON and is deliberately NOT what anything is graded on, because cell lines are correlated and none of them is an unseen gene). The shuffled model's wild-type objective is -0, so arm 4 is DEGENERATE -- it cannot grow, every knockout score is identically zero, and by the rule declared before the run the PRIMARY gate was taken against the sign-preserving magnitude shuffle instead (0.5000, gap +0.2510). ATTRIBUTION, as fractions of FBA's raw lift over the uniform-random floor: the shuffled-stoichiometry control reproduces -98.5%, the sign-preserving magnitude shuffle -98.5%, the degree-matched configuration-model rewiring -98.5%, the stoichiometry-free neighbourhood 15.2%, and a bare count of reactions per gene -- no kcat, no stoichiometry, no solver -- -18.2% (though FBA's own lift over the floor is itself below the MDE, so these percentages are ratios of two undetected quantities). THE CHEAPEST NON-LEARNED ARM, a bare reaction count, scores 0.6015 -- A TRIVIAL ZERO-COST BASELINE MATCHES OR BEATS THE FULL LP PIPELINE, WHICH IS THE HEADLINE AND NOT A FOOTNOTE. The best arm overall is '3 FBA-CONSTRAINED (Sv=0)' at 0.7510. The wrong-gene identity control sits at 0.3621, bounding the metric's own degeneracy, and the uniform-random floor at 0.6245. The stoichiometry-free neighbourhood channel is live rather than ignored: swapping a gene's neighbours for another gene's while keeping its own demand term moves AUROC by +0.3046 and random count-matched and tier-matched partners by +0.0575. The threshold-free Spearman correlation against the continuous mean gene effect DISAGREES with AUROC on both PRIMARY gaps (+0.2465 and +0.3151 against a 0.1424 Spearman MDE), and when the two metrics disagree the result is a metric artifact and is not reportable as biology. All effect sizes quoted are RAW held-out values; the shuffled, rewired, random-partner, swap and wrong-gene arms establish significance and attribution only, and nothing is reported net of a control."
+ ]
+}

@@ -1,0 +1,56 @@
+{
+ "genome": 16509,
+ "axes": {
+  "essentiality_measured": {
+   "n": 15913,
+   "frac": 0.9638984796171786,
+   "grade": "C measured"
+  },
+  "response_predictable_55pct": {
+   "n": 9119,
+   "frac": 0.5523653764613241,
+   "grade": "C measured/modeled",
+   "note": "the data-generation-limited ceiling (measured Perturb-seq + complex r0.23)"
+  },
+  "viability_physics_FBA": {
+   "n": 2846,
+   "frac": 0.17239081713005028,
+   "grade": "FBA modeled"
+  },
+  "reprogrammable_TF": {
+   "n": 1221,
+   "frac": 0.07395965836816282,
+   "grade": "modeled (forward, 0.99)"
+  },
+  "documented": {
+   "n": 16250,
+   "frac": 0.9843115876188746,
+   "grade": "LIT"
+  }
+ },
+ "union_any_trustworthy_answer": {
+  "n": 16418,
+  "frac": 0.9944878551093344
+ },
+ "truly_dark": {
+  "n": 91,
+  "frac": 0.0055121448906656975,
+  "examples": [
+   "ARIH2OS",
+   "BAGE4",
+   "C18orf15",
+   "C8orf17",
+   "CELF2-AS1",
+   "CFAP99",
+   "CTXND2",
+   "CXorf1",
+   "DEFB131B",
+   "FAM237B",
+   "FAM87A",
+   "GTSCR1",
+   "HSFX3",
+   "HSFX4",
+   "IGKV6-21"
+  ]
+ }
+}

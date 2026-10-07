@@ -1,0 +1,95 @@
+{
+ "model": "dense-response-v1",
+ "purpose": "unblock colab/contrast_context.py, which is void on the 3.5%-dense nlz benches",
+ "lines": [
+  "HepG2",
+  "Jurkat",
+  "K562",
+  "RPE1"
+ ],
+ "n_perturbations": 1763,
+ "n_genes": 6550,
+ "density_per_line": {
+  "HepG2": 1.0,
+  "Jurkat": 1.0,
+  "K562": 0.9999617238139362,
+  "RPE1": 1.0
+ },
+ "mean_density": 0.999990430953484,
+ "jointly_observed_per_perturbation": {
+  "median": 6550.0,
+  "mean": 6549.749290981282,
+  "min": 6543
+ },
+ "total_usable_observations": 11547208,
+ "benches_gave": 9739,
+ "gain_factor": 1185.6667008933155,
+ "unblocked": true,
+ "cache": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/dense_response.npz",
+ "cache_mb": 85.397993,
+ "cross_line_variance_correlation": {
+  "HepG2": {
+   "HepG2": 1.0,
+   "Jurkat": 0.6578757973637026,
+   "K562": 0.15800308561614196,
+   "RPE1": 0.560138890603007
+  },
+  "Jurkat": {
+   "HepG2": 0.6578757973637026,
+   "Jurkat": 1.0,
+   "K562": 0.17987856242848288,
+   "RPE1": 0.5401148410347233
+  },
+  "K562": {
+   "HepG2": 0.15800308561614196,
+   "Jurkat": 0.17987856242848288,
+   "K562": 1.0,
+   "RPE1": 0.19574235424512285
+  },
+  "RPE1": {
+   "HepG2": 0.560138890603007,
+   "Jurkat": 0.5401148410347233,
+   "K562": 0.19574235424512285,
+   "RPE1": 1.0
+  }
+ },
+ "limits": [
+  "K562 is NOT re-derived: its deposit is already a pseudobulk log fold change from its own authors' pipeline, while the other three are pseudobulked here. That asymmetry is real and the cross-line variance correlation above is what makes it inspectable rather than assumed",
+  "the three rebuilt lines use a single pooled non-targeting profile per deposit as the reference, so batch structure within a deposit is not removed",
+  "perturbations with fewer than 25 cells are dropped, which removes the weakest-powered rows and therefore makes the retained set easier than the full deposit",
+  "the cache is written to the scratchpad, which this container restores from a snapshot on restart. It is regenerable from this module in one run and is deliberately NOT committed: at float16 the shared rectangle is still far too large to version",
+  "robust z is computed per gene WITHIN each line, so a gene that is uniformly unresponsive in one line gets a NaN column there and drops out of the joint-observation count"
+ ],
+ "verdict": "UNBLOCKED: mean density 100.0% against the benches' 3.5%, and 11,547,208 observations jointly measured in all 4 lines against ~9,700 before -- a factor of 1186. Genes jointly observed per perturbation: median 6,550 against 3.",
+ "log": [
+  "====================================================================================================",
+  "DENSE RESPONSE MATRICES -- rebuilding what the top-250 bench format threw away",
+  "====================================================================================================",
+  "  the benches are 3.5% dense; below ~50% here the contrast target is still absent",
+  "    K562     11,258 perturbations x 8,248 genes (deposit is ALREADY a pseudobulk log fold change; not re-derived)",
+  "      RPE1 pseudobulk 20,000/247,914 cells",
+  "      RPE1 pseudobulk 120,000/247,914 cells",
+  "      RPE1 pseudobulk 220,000/247,914 cells",
+  "    RPE1     2,122 perturbations x 8,749 genes (>= 25 cells; 1 control categories, 11,485 control cells)",
+  "      HepG2 pseudobulk 20,000/145,473 cells",
+  "      HepG2 pseudobulk 120,000/145,473 cells",
+  "    HepG2    2,010 perturbations x 9,624 genes (>= 25 cells; 1 control categories, 4,976 control cells)",
+  "      Jurkat pseudobulk 20,000/262,956 cells",
+  "      Jurkat pseudobulk 120,000/262,956 cells",
+  "      Jurkat pseudobulk 220,000/262,956 cells",
+  "    Jurkat   2,201 perturbations x 8,882 genes (>= 25 cells; 1 control categories, 12,013 control cells)",
+  "\n  shared rectangle: 4 lines x 1,763 perturbations x 6,550 genes",
+  "    HepG2    density 100.0%   |z| median 0.674   p99 3.75",
+  "    Jurkat   density 100.0%   |z| median 0.674   p99 3.72",
+  "    K562     density 100.0%   |z| median 0.674   p99 4.56",
+  "    RPE1     density 100.0%   |z| median 0.674   p99 4.01",
+  "\n  JOINTLY OBSERVED IN ALL 4 LINES, per perturbation: median 6,550, mean 6,549.7, min 6,543",
+  "  total usable observations 11,547,208  (the top-250 benches gave ~9,700 over the same four lines)",
+  "\n  cross-line correlation of per-gene response VARIANCE (K562 is the odd pipeline out):",
+  "    HepG2    +1.000  +0.658  +0.158  +0.560",
+  "    Jurkat   +0.658  +1.000  +0.180  +0.540",
+  "    K562     +0.158  +0.180  +1.000  +0.196",
+  "    RPE1     +0.560  +0.540  +0.196  +1.000",
+  "\n  -> /tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/dense_response.npz  (85 MB, float16)"
+ ]
+}

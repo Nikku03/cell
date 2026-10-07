@@ -1,0 +1,174 @@
+{
+ "threshold": 4.200000000000003,
+ "n_train": [
+  40,
+  80,
+  120,
+  160,
+  200,
+  235
+ ],
+ "alphas": [
+  10.0,
+  100.0
+ ],
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "curve": {
+  "FULL a=10.0 n=40": 0.173,
+  "FULL a=100.0 n=40": 0.1753,
+  "REGR a=10.0 n=40": 0.2246,
+  "REGR a=100.0 n=40": 0.2023,
+  "FULL a=10.0 n=80": 0.2577,
+  "FULL a=100.0 n=80": 0.2484,
+  "REGR a=10.0 n=80": 0.2942,
+  "REGR a=100.0 n=80": 0.2829,
+  "FULL a=10.0 n=120": 0.285,
+  "FULL a=100.0 n=120": 0.28,
+  "REGR a=10.0 n=120": 0.3081,
+  "REGR a=100.0 n=120": 0.3105,
+  "FULL a=10.0 n=160": 0.3192,
+  "FULL a=100.0 n=160": 0.3128,
+  "REGR a=10.0 n=160": 0.3243,
+  "REGR a=100.0 n=160": 0.3297,
+  "FULL a=10.0 n=200": 0.3404,
+  "FULL a=100.0 n=200": 0.3453,
+  "REGR a=10.0 n=200": 0.3343,
+  "REGR a=100.0 n=200": 0.3438,
+  "FULL a=10.0 n=235": 0.3369,
+  "FULL a=100.0 n=235": 0.3476,
+  "REGR a=10.0 n=235": 0.3369,
+  "REGR a=100.0 n=235": 0.3476
+ },
+ "summary": {
+  "FULL a=10.0": {
+   "final": 0.3369,
+   "slope_per_doubling": 0.0663,
+   "r2": 0.9795,
+   "segments_per_doubling": [
+    0.0848,
+    0.0466,
+    0.0823,
+    0.0659,
+    -0.0148
+   ],
+   "se_at_largest": 0.0192,
+   "extrapolate_one_doubling": 0.4032
+  },
+  "FULL a=100.0": {
+   "final": 0.3476,
+   "slope_per_doubling": 0.0692,
+   "r2": 0.9933,
+   "segments_per_doubling": [
+    0.0731,
+    0.054,
+    0.0791,
+    0.1009,
+    0.0099
+   ],
+   "se_at_largest": 0.0159,
+   "extrapolate_one_doubling": 0.4168
+  },
+  "REGR a=10.0": {
+   "final": 0.3369,
+   "slope_per_doubling": 0.0431,
+   "r2": 0.9475,
+   "segments_per_doubling": [
+    0.0696,
+    0.0238,
+    0.0388,
+    0.0311,
+    0.0114
+   ],
+   "se_at_largest": 0.0192,
+   "extrapolate_one_doubling": 0.38
+  },
+  "REGR a=100.0": {
+   "final": 0.3476,
+   "slope_per_doubling": 0.0567,
+   "r2": 0.9692,
+   "segments_per_doubling": [
+    0.0805,
+    0.0472,
+    0.0463,
+    0.0439,
+    0.0162
+   ],
+   "se_at_largest": 0.0159,
+   "extrapolate_one_doubling": 0.4043
+  }
+ },
+ "fits": {
+  "FULL a=10.0": {
+   "slope_per_doubling": 0.0663,
+   "r2": 0.9795,
+   "segments_per_doubling": [
+    0.0848,
+    0.0466,
+    0.0823,
+    0.0659,
+    -0.0148
+   ],
+   "se_at_largest": 0.0192,
+   "extrapolate_one_doubling": 0.4032
+  },
+  "FULL a=100.0": {
+   "slope_per_doubling": 0.0692,
+   "r2": 0.9933,
+   "segments_per_doubling": [
+    0.0731,
+    0.054,
+    0.0791,
+    0.1009,
+    0.0099
+   ],
+   "se_at_largest": 0.0159,
+   "extrapolate_one_doubling": 0.4168
+  },
+  "REGR a=10.0": {
+   "slope_per_doubling": 0.0431,
+   "r2": 0.9475,
+   "segments_per_doubling": [
+    0.0696,
+    0.0238,
+    0.0388,
+    0.0311,
+    0.0114
+   ],
+   "se_at_largest": 0.0192,
+   "extrapolate_one_doubling": 0.38
+  },
+  "REGR a=100.0": {
+   "slope_per_doubling": 0.0567,
+   "r2": 0.9692,
+   "segments_per_doubling": [
+    0.0805,
+    0.0472,
+    0.0463,
+    0.0439,
+    0.0162
+   ],
+   "se_at_largest": 0.0159,
+   "extrapolate_one_doubling": 0.4043
+  }
+ },
+ "regr_minus_full": {
+  "40": 0.027,
+  "80": 0.0345,
+  "120": 0.0305,
+  "160": 0.0169,
+  "200": -0.0015,
+  "235": 0.0
+ },
+ "basis_saturates_at": 200,
+ "slope_per_doubling": 0.0692,
+ "se_at_largest": 0.0159,
+ "still_climbing": true,
+ "verdict": "COLD-START SCALING (coldstart_scaling.py): a learning curve to decide whether the cold-start model is limited by DATA or by MODEL CAPACITY -- i.e. whether it is worth training a transformer or other high-capacity model on this task. Held-out test set fixed within each split; training set grown from 40 to 235 knockouts over 5 seeds. RESULT at alpha=100: 0.1753 at 40 knockouts rising to 0.3476 at 235. THE CURVE MUST BE READ ON LOG-X, and getting this wrong reverses the conclusion: the raw final step from 200 to 235 is only +0.0023, which looks like saturation, but it is a 0.23-doubling step while the first step was a full doubling. Normalised, recall grows +0.0692 per doubling of training knockouts with R^2=0.993, and the across-seed SE on a single point is +-0.0159. THE CURVE HAS NOT FLATTENED (slope +0.0692 is more than 2x the 0.0159 noise), so the binding constraint is the NUMBER OF MEASURED KNOCKOUTS, not model capacity. Adding parameters would add variance in a regime that already prefers more regularisation (alpha=100 beats alpha=10) and where a zero-parameter 1-NN retrieval reaches 0.288 against the ridge's 0.341. The lever is more knockouts -- a lower mover threshold takes 337 sources to 664, and the fit predicts that doubling is worth about +0.069, landing near 0.417. Extrapolation from six points, so treat it as a direction, not a promise. WHERE THE SHORTAGE IS: holding the program basis, mu, tide mask and vocabularies fixed at the full training half (REGR) and subsampling only the ridge rows is worth +0.027 at 40 knockouts but only -0.002 by n=200. So below roughly 200 knockouts the missing ingredient is the program basis itself -- there are not enough measured responses to define the response space -- and above it the limit shifts to the annotation-to-loading map, which is what better gene features (protein sequence embeddings) would attack. Deterministic.",
+ "note": "COLD-START SCALING (coldstart_scaling.py): a learning curve to decide whether the cold-start model is limited by DATA or by MODEL CAPACITY -- i.e. whether it is worth training a transformer or other high-capacity model on this task. Held-out test set fixed within each split; training set grown from 40 to 235 knockouts over 5 seeds. RESULT at alpha=100: 0.1753 at 40 knockouts rising to 0.3476 at 235. THE CURVE MUST BE READ ON LOG-X, and getting this wrong reverses the conclusion: the raw final step from 200 to 235 is only +0.0023, which looks like saturation, but it is a 0.23-doubling step while the first step was a full doubling. Normalised, recall grows +0.0692 per doubling of training knockouts with R^2=0.993, and the across-seed SE on a single point is +-0.0159. THE CURVE HAS NOT FLATTENED (slope +0.0692 is more than 2x the 0.0159 noise), so the binding constraint is the NUMBER OF MEASURED KNOCKOUTS, not model capacity. Adding parameters would add variance in a regime that already prefers more regularisation (alpha=100 beats alpha=10) and where a zero-parameter 1-NN retrieval reaches 0.288 against the ridge's 0.341. The lever is more knockouts -- a lower mover threshold takes 337 sources to 664, and the fit predicts that doubling is worth about +0.069, landing near 0.417. Extrapolation from six points, so treat it as a direction, not a promise. WHERE THE SHORTAGE IS: holding the program basis, mu, tide mask and vocabularies fixed at the full training half (REGR) and subsampling only the ridge rows is worth +0.027 at 40 knockouts but only -0.002 by n=200. So below roughly 200 knockouts the missing ingredient is the program basis itself -- there are not enough measured responses to define the response space -- and above it the limit shifts to the annotation-to-loading map, which is what better gene features (protein sequence embeddings) would attack. Deterministic."
+}

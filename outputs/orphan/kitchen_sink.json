@@ -1,0 +1,203 @@
+{
+ "n_splits": 5,
+ "ladder": [
+  "L1 static pairs",
+  "L2 +DepMap/SVD",
+  "L3 +Markov walks",
+  "L4 +causal footprint",
+  "L5 +everything"
+ ],
+ "n_features": {
+  "L1 static pairs": 14,
+  "L2 +DepMap/SVD": 17,
+  "L3 +Markov walks": 21,
+  "L4 +causal footprint": 22,
+  "L5 +everything": 55
+ },
+ "aggregate": {
+  "L1 static pairs [real]": {
+   "mean": 0.4347860681366938,
+   "sd": 0.0199914856874345
+  },
+  "L2 +DepMap/SVD [real]": {
+   "mean": 0.46037585392238095,
+   "sd": 0.022241860859286887
+  },
+  "L2 +DepMap/SVD [noise]": {
+   "mean": 0.4349661389353231,
+   "sd": 0.021884722595493955
+  },
+  "L3 +Markov walks [real]": {
+   "mean": 0.4646099501281055,
+   "sd": 0.020461803077957065
+  },
+  "L3 +Markov walks [noise]": {
+   "mean": 0.46045607121297233,
+   "sd": 0.022279956562080743
+  },
+  "L4 +causal footprint [real]": {
+   "mean": 0.46106196649965947,
+   "sd": 0.025159236236231078
+  },
+  "L4 +causal footprint [noise]": {
+   "mean": 0.4638730844418418,
+   "sd": 0.023502727710332006
+  },
+  "L5 +everything [real]": {
+   "mean": 0.4630587719132683,
+   "sd": 0.030131214166824887
+  },
+  "L5 +everything [noise]": {
+   "mean": 0.4646456615125789,
+   "sd": 0.02209051192083963
+  },
+  "TIDE": {
+   "mean": 0.26811619796006225,
+   "sd": 0.02276772272694153
+  },
+  "ORACLE*": {
+   "mean": 0.5822488996764719,
+   "sd": 0.03359877209830218
+  }
+ },
+ "per_split": {
+  "L1 static pairs [real]": [
+   0.4330542131198097,
+   0.39823696452197305,
+   0.4495019208954903,
+   0.45565838931267594,
+   0.43747885283352
+  ],
+  "L2 +DepMap/SVD [real]": [
+   0.4621091160887226,
+   0.4228325105637645,
+   0.4656748516279754,
+   0.4924755721028412,
+   0.45878721922860105
+  ],
+  "L2 +DepMap/SVD [noise]": [
+   0.4423331897517402,
+   0.3923703197230348,
+   0.45142507560644013,
+   0.45063509312823913,
+   0.438067016467161
+  ],
+  "L3 +Markov walks [real]": [
+   0.4655276241788755,
+   0.4263980075691568,
+   0.48032038134232924,
+   0.484139247704453,
+   0.46666448984571307
+  ],
+  "L3 +Markov walks [noise]": [
+   0.45397250264454087,
+   0.421139525248991,
+   0.47681042750384284,
+   0.48500655342969723,
+   0.4653513472377899
+  ],
+  "L4 +causal footprint [real]": [
+   0.46519537661936744,
+   0.41413207347858105,
+   0.4807455882300554,
+   0.4846784294562716,
+   0.460558364714022
+  ],
+  "L4 +causal footprint [noise]": [
+   0.4668330009928854,
+   0.42149000922780855,
+   0.4727214326673662,
+   0.493497541232967,
+   0.4648234380881819
+  ],
+  "L5 +everything [real]": [
+   0.45173645845146854,
+   0.41157069185995915,
+   0.48673845345501165,
+   0.497353342720207,
+   0.46789491307969516
+  ],
+  "L5 +everything [noise]": [
+   0.46373966300603303,
+   0.4233286528986511,
+   0.4879656260588711,
+   0.476282851439418,
+   0.4719115141599213
+  ],
+  "TIDE": [
+   0.2707611305620684,
+   0.2361633748271715,
+   0.2700275590210879,
+   0.30615505843155355,
+   0.2574738669584298
+  ],
+  "ORACLE*": [
+   0.5870379419818673,
+   0.5189424361989008,
+   0.6097516689102316,
+   0.6114745993716787,
+   0.5840378519196812
+  ]
+ },
+ "steps": {
+  "L2 +DepMap/SVD": {
+   "vs_below": [
+    0.025589785785687158,
+    0.0035075468945494344,
+    "BETTER"
+   ],
+   "vs_noise": [
+    0.025409714987057897,
+    0.004867097978510622,
+    "BETTER"
+   ]
+  },
+  "L3 +Markov walks": {
+   "vs_below": [
+    0.004234096205724569,
+    0.0037469877937194216,
+    "indistinguishable"
+   ],
+   "vs_noise": [
+    0.004153878915133147,
+    0.0021177258847038206,
+    "indistinguishable"
+   ]
+  },
+  "L4 +causal footprint": {
+   "vs_below": [
+    -0.0035479836284460164,
+    0.0025037858374796725,
+    "indistinguishable"
+   ],
+   "vs_noise": [
+    -0.0028111179421823063,
+    0.002980467811982333,
+    "indistinguishable"
+   ]
+  },
+  "L5 +everything": {
+   "vs_below": [
+    0.001996805413608793,
+    0.0045725255413281325,
+    "indistinguishable"
+   ],
+   "vs_noise": [
+    -0.0015868895993106148,
+    0.006047065875345068,
+    "indistinguishable"
+   ]
+  }
+ },
+ "full_ladder_L5_minus_L1": [
+  0.028272703776574502,
+  0.005386329449531619,
+  "BETTER"
+ ],
+ "best_rung": "L3 +Markov walks",
+ "best_score": 0.4646099501281055,
+ "beats_existing_ensemble": false,
+ "headroom_closed": 0.6255119288581181,
+ "verdict": "KITCHEN SINK: one model, every leak-free signal, and a ladder to show where 'more' stops helping. Every component in this project was deliberately narrow so attribution stayed clean, which leaves the obvious objection -- that it keeps losing because it is blindfolded -- untested. The architecture is unchanged (learned neighbour retrieval; rank TRAIN knockouts, average the top ten MEASURED profiles); ONLY the feature set varies, cumulatively, from 14 static pairwise features up to 55. RESULT (5 splits, tide 0.2681, oracle 0.5822): L1 static pairs 0.4348, L2 +DepMap/SVD 0.4604, L3 +Markov walks 0.4646, L4 +causal footprint 0.4611, L5 +everything 0.4631. THE LADDER RISES ONCE AND THEN GOES FLAT, AND THE DISTINCTION MATTERS. The full stack beats the 14-feature baseline by +0.0283 +- 0.0054, which is real -- but it is ENTIRELY ONE RUNG: the only significant step is ['L2 +DepMap/SVD'], worth +0.0256 +- 0.0035, and every rung after it is indistinguishable from the rung below AND from its own noise-matched twin. Going from 17 features to 55 -- adding Markov walks, the measured causal footprint, and every remaining per-gene scalar and GO overlap -- moves the score by +0.0027. So 'show it everything' buys one thing (a learned gene representation) and then nothing at all. THE NOISE-MATCHED CONTROL is what makes that readable: at each rung a twin is fitted with the identical feature COUNT but the new block replaced by random numbers, so a gain that is really extra capacity cannot masquerade as extra information. At L2 +DepMap/SVD, real minus noise is +0.0254 +- 0.0049 (BETTER). At L3 +Markov walks, real minus noise is +0.0042 +- 0.0021 (indistinguishable). At L4 +causal footprint, real minus noise is -0.0028 +- 0.0030 (indistinguishable). At L5 +everything, real minus noise is -0.0016 +- 0.0060 (indistinguishable). BEST RUNG: L3 +Markov walks at 0.4646, closing 63% of the tide-to-oracle gap -- against the existing 4-way+MARKOV-P ensemble at 0.5173, which this single model does NOT reach (short by 0.0527). THE CONSEQUENCE FOR THE ORACLE GAP: the oracle picks its neighbours by peeking at the held-out response and reaches 0.582; a model shown every feature this project holds reaches 0.465. The remaining gap is therefore NOT explained by having withheld data from the model. Either the identity of the right neighbours is not determined by any static or measured property we hold, or ~250 training knockouts is too few to learn the mapping -- and the flat ladder points at the first. WHAT THIS CANNOT SAY: the effective sample is the number of independent KNOCKOUTS, about 250 per split, not the ~60,000 pairs; a richer feature set may simply be unlearnable at that size, and this cannot separate 'the information is absent' from 'the information is present but unlearnable here'. One cell line, five splits sharing the same data, so paired SEs understate true uncertainty. Deterministic given seed 0.",
+ "note": "KITCHEN SINK: one model, every leak-free signal, and a ladder to show where 'more' stops helping. Every component in this project was deliberately narrow so attribution stayed clean, which leaves the obvious objection -- that it keeps losing because it is blindfolded -- untested. The architecture is unchanged (learned neighbour retrieval; rank TRAIN knockouts, average the top ten MEASURED profiles); ONLY the feature set varies, cumulatively, from 14 static pairwise features up to 55. RESULT (5 splits, tide 0.2681, oracle 0.5822): L1 static pairs 0.4348, L2 +DepMap/SVD 0.4604, L3 +Markov walks 0.4646, L4 +causal footprint 0.4611, L5 +everything 0.4631. THE LADDER RISES ONCE AND THEN GOES FLAT, AND THE DISTINCTION MATTERS. The full stack beats the 14-feature baseline by +0.0283 +- 0.0054, which is real -- but it is ENTIRELY ONE RUNG: the only significant step is ['L2 +DepMap/SVD'], worth +0.0256 +- 0.0035, and every rung after it is indistinguishable from the rung below AND from its own noise-matched twin. Going from 17 features to 55 -- adding Markov walks, the measured causal footprint, and every remaining per-gene scalar and GO overlap -- moves the score by +0.0027. So 'show it everything' buys one thing (a learned gene representation) and then nothing at all. THE NOISE-MATCHED CONTROL is what makes that readable: at each rung a twin is fitted with the identical feature COUNT but the new block replaced by random numbers, so a gain that is really extra capacity cannot masquerade as extra information. At L2 +DepMap/SVD, real minus noise is +0.0254 +- 0.0049 (BETTER). At L3 +Markov walks, real minus noise is +0.0042 +- 0.0021 (indistinguishable). At L4 +causal footprint, real minus noise is -0.0028 +- 0.0030 (indistinguishable). At L5 +everything, real minus noise is -0.0016 +- 0.0060 (indistinguishable). BEST RUNG: L3 +Markov walks at 0.4646, closing 63% of the tide-to-oracle gap -- against the existing 4-way+MARKOV-P ensemble at 0.5173, which this single model does NOT reach (short by 0.0527). THE CONSEQUENCE FOR THE ORACLE GAP: the oracle picks its neighbours by peeking at the held-out response and reaches 0.582; a model shown every feature this project holds reaches 0.465. The remaining gap is therefore NOT explained by having withheld data from the model. Either the identity of the right neighbours is not determined by any static or measured property we hold, or ~250 training knockouts is too few to learn the mapping -- and the flat ladder points at the first. WHAT THIS CANNOT SAY: the effective sample is the number of independent KNOCKOUTS, about 250 per split, not the ~60,000 pairs; a richer feature set may simply be unlearnable at that size, and this cannot separate 'the information is absent' from 'the information is present but unlearnable here'. One cell line, five splits sharing the same data, so paired SEs understate true uncertainty. Deterministic given seed 0."
+}

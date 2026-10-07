@@ -1,0 +1,211 @@
+{
+ "ceiling": 0.09832462473177012,
+ "n_pairs": 102,
+ "learner": "ridge",
+ "cv_ridge": 0.32580767447820097,
+ "cv_nn": 0.3084246724967069,
+ "n2_median": 0.3224478356317759,
+ "n2_fraction_of_ceiling": 3.279420964091291,
+ "n2_p": 2.1507714170418823e-137,
+ "n3": {
+  "better": 1555.0,
+  "worse": 969.0,
+  "p": 1.3202276141734495e-31,
+  "w2_median": 0.0
+ },
+ "n4": {
+  "overlap": 2.8700475435816166,
+  "null": 2.6022325673534077,
+  "null95": 2.670800316957211
+ },
+ "n5_learnable": 981,
+ "n_pathways": 981,
+ "n_measured": 5051,
+ "n_predicted": 13251,
+ "posthoc": {
+  "pc1_var": 0.5560910802758601,
+  "pc5_var": 0.8310004823488274,
+  "k1": {
+   "ceiling": 0.11869605105742381,
+   "learner": 0.2872305473587319,
+   "p": 2.0050371446555717e-144,
+   "top10": 2.1838351822503963,
+   "null": 2.10997028526149,
+   "null95": 2.1434429477020602,
+   "learnable": 967,
+   "top_learnable": [
+    [
+     "Transport to the Golgi and subsequent modification",
+     0.3848670332045166
+    ],
+    [
+     "Asparagine N-linked glycosylation",
+     0.37934154698343914
+    ],
+    [
+     "ER to Golgi Anterograde Transport",
+     0.37693658370721284
+    ],
+    [
+     "COPI-mediated anterograde transport",
+     0.37411240632024645
+    ],
+    [
+     "Regulation of MITF-M-dependent genes involved in lysosome biogenesis and autophagy",
+     0.36522881971698407
+    ],
+    [
+     "Intra-Golgi traffic",
+     0.3650456688629058
+    ],
+    [
+     "RSV-host interactions",
+     0.3622925190010426
+    ],
+    [
+     "Ion channel transport",
+     0.3598951941028145
+    ],
+    [
+     "Signaling by NOTCH2",
+     0.3591196379042408
+    ],
+    [
+     "Rab regulation of trafficking",
+     0.3586383913578188
+    ],
+    [
+     "Interactions of Rev with host cellular proteins",
+     0.356295247821844
+    ],
+    [
+     "Amyloid fiber formation",
+     0.35556960004627336
+    ],
+    [
+     "Signaling by MET",
+     0.3554005754655858
+    ],
+    [
+     "Intra-Golgi and retrograde Golgi-to-ER traffic",
+     0.3549583327832883
+    ],
+    [
+     "Negative regulators of DDX58/IFIH1 signaling",
+     0.3539883867679353
+    ],
+    [
+     "TNF signaling",
+     0.35306193510233613
+    ],
+    [
+     "Glucose metabolism",
+     0.35219038460510455
+    ],
+    [
+     "Iron uptake and transport",
+     0.3498321236481313
+    ],
+    [
+     "Regulation of TNFR1 signaling",
+     0.3494655121025116
+    ],
+    [
+     "Gene and protein expression by JAK-STAT signaling after Interleukin-12 stimulation",
+     0.34424287917318735
+    ]
+   ]
+  },
+  "k5": {
+   "ceiling": 0.03829653438843113,
+   "learner": 0.08618820833882809,
+   "p": 5.1300373981130344e-90,
+   "top10": 0.9996038034865293,
+   "null": 0.778155705229794,
+   "null95": 0.8070721077654517,
+   "learnable": 936,
+   "top_learnable": [
+    [
+     "mRNA Polyadenylation",
+     0.28260085267042045
+    ],
+    [
+     "mRNA 3'-end processing",
+     0.276559956165861
+    ],
+    [
+     "Gene and protein expression by JAK-STAT signaling after Interleukin-12 stimulation",
+     0.2593731776671834
+    ],
+    [
+     "Dengue Virus-Host Interactions",
+     0.25666153071570863
+    ],
+    [
+     "Dengue Virus Infection",
+     0.2565663648097793
+    ],
+    [
+     "Interleukin-12 signaling",
+     0.2490973371521911
+    ],
+    [
+     "Interleukin-12 family signaling",
+     0.23807469984600535
+    ],
+    [
+     "EPHB-mediated forward signaling",
+     0.22804387924265906
+    ],
+    [
+     "mRNA Splicing - Major Pathway",
+     0.22649343776899203
+    ],
+    [
+     "mRNA Splicing",
+     0.2263869225095301
+    ],
+    [
+     "HDR through Homologous Recombination (HRR)",
+     0.2240051142132143
+    ],
+    [
+     "mRNA Splicing - Minor Pathway",
+     0.22001136616393538
+    ],
+    [
+     "HDR through Homologous Recombination (HRR) or Single Strand Annealing (SSA)",
+     0.21300293344593357
+    ],
+    [
+     "Axon guidance",
+     0.21099137872749996
+    ],
+    [
+     "Nervous system development",
+     0.209584937284267
+    ],
+    [
+     "HIV Infection",
+     0.20736865612428965
+    ],
+    [
+     "Cross-presentation of soluble exogenous antigens (endosomes)",
+     0.20641131063400947
+    ],
+    [
+     "Homology Directed Repair",
+     0.20632396706896802
+    ],
+    [
+     "EPH-Ephrin signaling",
+     0.20271921499072165
+    ],
+    [
+     "Antigen processing: Ubiquitination & Proteasome degradation",
+     0.20194909185436846
+    ]
+   ]
+  }
+ }
+}

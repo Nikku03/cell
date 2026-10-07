@@ -1,0 +1,91 @@
+=================================================================================================
+WHICH HUMAN METABOLIC RATES SHOULD BE MEASURED?  Recon3D, via the LP dual
+=================================================================================================
+  model: http://bigg.ucsd.edu/static/models/Recon3D.json
+  sha256 aba925f17547a42f9fdb4c1f685d89364cbf4979bbe7862e9f793af7169b26d5
+  matches the file this was written against: True
+  10600 reactions, 5835 metabolites, 5938 enzyme-catalysed
+
+=================================================================================================
+R1  THE MODEL IS LOADED CORRECTLY
+=================================================================================================
+  stoichiometric matrix (5835, 10600), 40425 nonzeros   PASS (published 5835 x 10600)
+  LP status 0, solved in 0.59s, worst |S v| = 2.41e-12   PASS
+
+=================================================================================================
+R2  THE MEDIUM IS DECLARED, ACCOUNTED FOR, AND ACTUALLY SEALS
+=================================================================================================
+  boundary reactions, found structurally (exactly one metabolite): 1806
+    by name prefix: EX_ 1560, DM_ 145, SK_ 101
+
+  R2a  every boundary reaction is either declared medium or closed
+       declared medium 43, supply-closed 1763, UNACCOUNTED 0
+       PASS
+
+  R2b  THE SEAL TEST: close the medium as well and growth must be EXACTLY zero
+       growth with every boundary reaction closed: -1.898540e-14 /h
+       PASS -- the medium is the only supply
+       This is the test the old R2 lacked. It passed the leaky model because it checked
+       only that growth fell below the all-open value and that glucose bound -- necessary
+       conditions treated as sufficient, both true while 246 boundary reactions were open.
+
+  R2c  necessary conditions (NOT sufficient on their own)
+       all boundary reactions open, as distributed : growth = 755.0032
+       defined medium (43 components, glucose-limited) : growth = 1.688875
+       glucose uptake -1.0000 against its bound -1.0000   binding: True
+
+  R2 overall: PASS
+
+  reactions with nonzero sensitivity in this single solve: 1 of 10600
+
+=================================================================================================
+R4  THE DEGENERACY CONTROL
+=================================================================================================
+  FBA duals are not unique. Re-solving 40 times with tiny random objective
+  perturbations, so ties break differently, and counting how often each is nonzero.
+  40 solves in 28.4s
+  of the top 20 by magnitude in the reference solve, 1 are nonzero in >= 90% of perturbed solves
+  FAIL -- NO LIST MAY BE REPORTED; the ranking is an artefact of tie-breaking (bar: at least 10 of 20)
+  reactions stably nonzero across perturbations: 240
+
+=================================================================================================
+R3/R9  THE DUAL SCREENS, FINITE DIFFERENCES VERIFY
+=================================================================================================
+  verifying all 240 reactions that survived R4, both directions, 1% steps ...
+  480 verification solves in 272s
+  reactions with a nonzero DUAL but zero realised derivative in both directions: 587 of 588
+  that fraction, 99.8%, is the degeneracy the first run hit;
+  the dual is kept as a screen and the list below is built from realised derivatives only.
+  where the realised derivative is nonzero, |dual| vs realised: median relative difference 0.0253, worst 0.0253
+
+=================================================================================================
+R5  SPARSITY  --  how many rates actually matter
+=================================================================================================
+  enzyme-catalysed reactions               : 5938
+  of those, stably sensitive               : 0
+  as a fraction                            : 0.00000
+  every other enzyme-catalysed reaction has EXACTLY zero realised sensitivity: either
+  its capacity does not bind, or it binds degenerately and moving it changes nothing.
+
+=================================================================================================
+R6  WHAT PHYSIOLOGY ALREADY PINS
+=================================================================================================
+  stable & boundary (exchange / transport, measurable by standard flux assays): 1
+  stable & internal enzyme-catalysed (NOT measurable that way)               : 0
+  -> the targeted-measurement requirement for THIS question is 0 rates
+
+=================================================================================================
+R7  THE LIST
+=================================================================================================
+  d- is the operative column: how far log(growth) falls if the enzyme is 1% slower.
+  rank  reaction          d- (slower)  d+ (faster)      dual  subsystem                          genes
+
+=================================================================================================
+R8  DOMAIN  --  does the list depend on the question?
+=================================================================================================
+  objective = BIOMASS_reaction: growth 1.688864, top-20 overlap with the base list 0/20
+  medium 10x richer: growth 16.888754, top-20 overlap with the base list 0/20
+  PREDECLARED: overlap below 10 of 20 means the list is a property of the question, not of
+  human metabolism, and must always be quoted with its objective and medium attached.
+
+=================================================================================================

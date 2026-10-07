@@ -1,0 +1,435 @@
+{
+ "test": "loop 149b -- post-hoc controls on the ubiquitin Markov chain",
+ "post_hoc": true,
+ "predeclared": false,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "outputs/loop_ubiquitin_markov.json",
+    "bytes": 13294,
+    "hash": "78280e0815363cca",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_pulse_equation.json",
+    "bytes": 11233,
+    "hash": "05f5dd83ae13fda3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio.json",
+    "bytes": 13968,
+    "hash": "2a9bbe03961188a9",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio_controls.json",
+    "bytes": 9700,
+    "hash": "78fc01bb66f3f5b0",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 3,
+   "used": 3,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 14901,
+  "controls": [
+   "the singular closed form replaced by the recursion it came from, and the exponent bound [1, n] enforced (N1)",
+   "the grid edge extended four decades to separate an asymptote from a truncation, and minimality of n shown (N2)",
+   "the dissociation sweep re-run with every ill-conditioned point discarded, and the conclusion reversed (N3)",
+   "a rate band narrow enough to separate the branches, justified independently of the values it separates (N4)"
+  ],
+  "note": "POST-HOC. Loop 149's gates are unchanged; what changes is what may be quoted from them. Its M1 table, its M5 conclusion and one row of its M4 are withdrawn. The headline -- n=8 for a 1.51x receptor change -- survives, is shown to be minimal, and is the branch physical rate plausibility selects.",
+  "warnings": []
+ },
+ "gates": {
+  "N1": true,
+  "N2": true,
+  "N3": true,
+  "N4": true
+ },
+ "n1": {
+  "cancellation": [
+   {
+    "one_minus_rho": 0.1,
+    "closed": 28.742048900000004,
+    "stable": 28.7420489,
+    "rel_err": 1.2360683440353138e-16
+   },
+   {
+    "one_minus_rho": 0.001,
+    "closed": 35.91612587405277,
+    "stable": 35.91612587408396,
+    "rel_err": 8.684908335945064e-13
+   },
+   {
+    "one_minus_rho": 1e-05,
+    "closed": 35.999160549668524,
+    "stable": 35.99916001259988,
+    "rel_err": 1.4918921541281146e-08
+   },
+   {
+    "one_minus_rho": 1e-07,
+    "closed": 35.99982190690408,
+    "stable": 35.999991600001266,
+    "rel_err": 4.71369824387998e-06
+   },
+   {
+    "one_minus_rho": 1e-08,
+    "closed": 35.75557503207462,
+    "stable": 35.99999916000001,
+    "rel_err": 0.0067895592674617035
+   }
+  ],
+  "stable_table": {
+   "1": {
+    "0.001": 1.0,
+    "0.1": 1.0,
+    "1": 1.0,
+    "10": 1.0,
+    "100": 1.0,
+    "1000": 1.0
+   },
+   "2": {
+    "0.001": 1.0004997497691865,
+    "0.1": 1.0476190250971007,
+    "1": 1.3333332224296148,
+    "10": 1.8333332639630964,
+    "100": 1.9803921471000547,
+    "1000": 1.9980039910584269
+   },
+   "4": {
+    "0.001": 1.0007504371144886,
+    "0.1": 1.0793797312533364,
+    "1": 1.9999995000452004,
+    "10": 3.7795784861403554,
+    "100": 3.979798167324746,
+    "1000": 3.9979979969769213
+   },
+   "8": {
+    "0.001": 1.0008757343798171,
+    "0.1": 1.095461608296996,
+    "1": 3.3333313889668457,
+    "10": 7.777778301997368,
+    "100": 7.9797979691513525,
+    "1000": 7.997997996452697
+   },
+   "12": {
+    "0.001": 1.000917493177529,
+    "0.1": 1.1007268398410117,
+    "1": 4.666662388958675,
+    "10": 11.777777654012217,
+    "100": 11.979797969019527,
+    "1000": 11.99799799657278
+   }
+  },
+  "out_of_bounds": [],
+  "monotone": true,
+  "gate_columns_unchanged": true,
+  "defect": "printed table only, gate unaffected",
+  "pass": true
+ },
+ "n2": {
+  "convergence": {
+   "median receptor": {
+    "n": 8,
+    "r": 1.5086461786578265,
+    "asymptote_r_pow_n": 26.83485026933899,
+    "sweep": [
+     {
+      "rho": 1000.0,
+      "amp": 26.807531011679863
+     },
+     {
+      "rho": 10000.0,
+      "amp": 26.8321201769552
+     },
+     {
+      "rho": 1000000.0,
+      "amp": 26.834822970430537
+     },
+     {
+      "rho": 100000000.0,
+      "amp": 26.834849996350115
+     },
+     {
+      "rho": 10000000000.0,
+      "amp": 26.8348502666091
+     }
+    ]
+   },
+   "CDC20 (LFQ)": {
+    "n": 2,
+    "r": 19.64944476695193,
+    "asymptote_r_pow_n": 386.1006796494946,
+    "sweep": [
+     {
+      "rho": 1000.0,
+      "amp": 372.24410119623536
+     },
+     {
+      "rho": 10000.0,
+      "amp": 384.66620431833127
+     },
+     {
+      "rho": 1000000.0,
+      "amp": 386.0862790888214
+     },
+     {
+      "rho": 100000000.0,
+      "amp": 386.1005356382852
+     },
+     {
+      "rho": 10000000000.0,
+      "amp": 386.10067820938195
+     }
+    ]
+   },
+   "CDC20 (raw Intensity)": {
+    "n": 1,
+    "r": 39.719904648390944,
+    "asymptote_r_pow_n": 39.719904648390944,
+    "sweep": [
+     {
+      "rho": 1000.0,
+      "amp": 39.719904648390944
+     },
+     {
+      "rho": 10000.0,
+      "amp": 39.719904648390944
+     },
+     {
+      "rho": 1000000.0,
+      "amp": 39.719904648390944
+     },
+     {
+      "rho": 100000000.0,
+      "amp": 39.719904648390944
+     },
+     {
+      "rho": 10000000000.0,
+      "amp": 39.719904648390944
+     }
+    ]
+   }
+  },
+  "r_pow_7": 17.78737165079537,
+  "r_pow_8": 26.83485026933899,
+  "n8_is_minimal": true,
+  "edge_is_asymptote_not_truncation": true,
+  "pass": true
+ },
+ "n3": {
+  "n": 8,
+  "rho": 4.906253681833185,
+  "sweep": [
+   {
+    "koff_over_lambda": 0.0,
+    "amplification": 20.311511778019177,
+    "cond": 2766150.5506515033,
+    "trusted": true
+   },
+   {
+    "koff_over_lambda": 0.001,
+    "amplification": 20.309999913305532,
+    "cond": 2770984.659478723,
+    "trusted": true
+   },
+   {
+    "koff_over_lambda": 0.01,
+    "amplification": 20.296528870329205,
+    "cond": 2814802.5482489504,
+    "trusted": true
+   },
+   {
+    "koff_over_lambda": 0.1,
+    "amplification": 20.174387003737312,
+    "cond": 3284961.526100871,
+    "trusted": true
+   },
+   {
+    "koff_over_lambda": 0.3,
+    "amplification": 19.970663585809273,
+    "cond": 4562934.543459902,
+    "trusted": true
+   },
+   {
+    "koff_over_lambda": 1.0,
+    "amplification": 19.688217167422618,
+    "cond": 12692246.40625646,
+    "trusted": true
+   },
+   {
+    "koff_over_lambda": 3.0,
+    "amplification": 20.029465327269353,
+    "cond": 120860178.17454472,
+    "trusted": true
+   },
+   {
+    "koff_over_lambda": 10.0,
+    "amplification": 21.933675046150498,
+    "cond": 19883062578.08051,
+    "trusted": true
+   },
+   {
+    "koff_over_lambda": 30.0,
+    "amplification": 24.235983272764756,
+    "cond": 18473675911203.113,
+    "trusted": false
+   },
+   {
+    "koff_over_lambda": 100.0,
+    "amplification": 26.200031637272446,
+    "cond": 3.972600712282076e+17,
+    "trusted": false
+   },
+   {
+    "koff_over_lambda": 300.0,
+    "amplification": 0.7143592670089909,
+    "cond": 3.5546843918219756e+16,
+    "trusted": false
+   },
+   {
+    "koff_over_lambda": 1000.0,
+    "amplification": 3.5047891426798192,
+    "cond": 2.3278149043739612e+16,
+    "trusted": false
+   }
+  ],
+  "trusted_points": 8,
+  "spread": 1.1140508487707743,
+  "robust_to_dissociation": true,
+  "m5_prose_was_backwards": true,
+  "pass": true
+ },
+ "n4": {
+  "band_per_h": [
+   360.0,
+   36000.0
+  ],
+  "solutions": {
+   "median receptor": {
+    "n": 8,
+    "rho": 4.906253681833185,
+    "k_u_per_h": 2533.854034011212,
+    "k_d_per_h": 12431.730683595379,
+    "seconds_per_ubiquitin": 1.4207606088110085,
+    "b_hi": 0.4767648872941049,
+    "matches_b_hi": true,
+    "k_u_in_band": true
+   },
+   "CDC20 (LFQ)": {
+    "n": 2,
+    "rho": 0.06850937412626064,
+    "k_u_per_h": 0.04855338437647933,
+    "k_d_per_h": 0.0033263619753443607,
+    "seconds_per_ubiquitin": 74145.19185904463,
+    "b_hi": 0.47619337896408315,
+    "matches_b_hi": true,
+    "k_u_in_band": false
+   },
+   "CDC20 (raw Intensity)": {
+    "n": 1,
+    "rho": 39.08408957924025,
+    "k_u_per_h": 0.023472644109717077,
+    "k_d_per_h": 0.9174069250458082,
+    "seconds_per_ubiquitin": 153370.02440682394,
+    "b_hi": 0.9323311858835776,
+    "matches_b_hi": false,
+    "k_u_in_band": false
+   }
+  },
+  "winners": [
+   "median receptor"
+  ],
+  "band_is_post_hoc": true,
+  "pass": true
+ },
+ "seconds": 0.0032062530517578125,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 149b -- POST-HOC controls on loop 149. Four defects, named in its commit and fixed here.",
+  "====================================================================================================",
+  "",
+  "  loop 149 recorded 6/7. Its gates are unchanged by anything here; what changes is what may be QUOTED from them.",
+  "",
+  "N1 THE rho ~ 1 SINGULARITY",
+  "     loop 149's M1 printed an exponent of 8.041 for a chain of length n=2. The exponent is bounded above by n. That entry is impossible.",
+  "       1-rho = 0.1        closed 28.7420489000   stable 28.7420489000   rel.err 1.24e-16",
+  "       1-rho = 0.001      closed 35.9161258741   stable 35.9161258741   rel.err 8.68e-13",
+  "       1-rho = 1e-05      closed 35.9991605497   stable 35.9991600126   rel.err 1.49e-08",
+  "       1-rho = 1e-07      closed 35.9998219069   stable 35.9999916000   rel.err 4.71e-06",
+  "       1-rho = 1e-08      closed 35.7555750321   stable 35.9999991600   rel.err 6.79e-03",
+  "     roughly one significant digit lost per decade of |1-rho|, which at M1's 1e-6 probe leaves nothing.",
+  "       n= 1   rho=0.001   1.000   rho=0.1     1.000   rho=1       1.000   rho=10      1.000   rho=100     1.000   rho=1000    1.000",
+  "       n= 2   rho=0.001   1.000   rho=0.1     1.048   rho=1       1.333   rho=10      1.833   rho=100     1.980   rho=1000    1.998",
+  "       n= 4   rho=0.001   1.001   rho=0.1     1.079   rho=1       2.000   rho=10      3.780   rho=100     3.980   rho=1000    3.998",
+  "       n= 8   rho=0.001   1.001   rho=0.1     1.095   rho=1       3.333   rho=10      7.778   rho=100     7.980   rho=1000    7.998",
+  "       n=12   rho=0.001   1.001   rho=0.1     1.101   rho=1       4.667   rho=10     11.778   rho=100    11.980   rho=1000   11.998",
+  "     on the stable form: exponent inside [1, n] everywhere: True   monotone rising in rho: True",
+  "     M1's two GATE columns (rho=1e-3, rho=1e3) sit decades from the singularity and are unchanged: True. The gate was sound; the printed table was not.",
+  "     N1 PASS",
+  "",
+  "N2 THE GRID EDGE -- asymptote or loop 147's truncation?",
+  "       median receptor: n=8, r=1.51, asymptote r^n = 26.835",
+  "         rho=1000 26.808  rho=10000 26.832  rho=1e+06 26.835  rho=1e+08 26.835  rho=1e+10 26.835",
+  "       CDC20 (LFQ): n=2, r=19.65, asymptote r^n = 386.101",
+  "         rho=1000 372.244  rho=10000 384.666  rho=1e+06 386.086  rho=1e+08 386.101  rho=1e+10 386.101",
+  "       CDC20 (raw Intensity): n=1, r=39.72, asymptote r^n = 39.720",
+  "         rho=1000 39.720  rho=10000 39.720  rho=1e+06 39.720  rho=1e+08 39.720  rho=1e+10 39.720",
+  "     IS n=8 MINIMAL for the measured 1.51x? loop 149 asserted it and never showed it.",
+  "       r^7 = 17.79x  < 20.29x required     r^8 = 26.83x  >= 20.29x",
+  "       n=8 is minimal: True. Seven ubiquitins fall 2.5x short.",
+  "     N2 PASS",
+  "",
+  "N3 M5's PROSE AGAINST M5's NUMBERS",
+  "       k_off/lambda 0        amplification  20.312x   cond(A) 2.77e+06   kept",
+  "       k_off/lambda 0.001    amplification  20.310x   cond(A) 2.77e+06   kept",
+  "       k_off/lambda 0.01     amplification  20.297x   cond(A) 2.81e+06   kept",
+  "       k_off/lambda 0.1      amplification  20.174x   cond(A) 3.28e+06   kept",
+  "       k_off/lambda 0.3      amplification  19.971x   cond(A) 4.56e+06   kept",
+  "       k_off/lambda 1        amplification  19.688x   cond(A) 1.27e+07   kept",
+  "       k_off/lambda 3        amplification  20.029x   cond(A) 1.21e+08   kept",
+  "       k_off/lambda 10       amplification  21.934x   cond(A) 1.99e+10   kept",
+  "       k_off/lambda 30       amplification  24.236x   cond(A) 1.85e+13   DISCARDED, ill-conditioned",
+  "       k_off/lambda 100      amplification  26.200x   cond(A) 3.97e+17   DISCARDED, ill-conditioned",
+  "       k_off/lambda 300      amplification   0.714x   cond(A) 3.55e+16   DISCARDED, ill-conditioned",
+  "       k_off/lambda 1000     amplification   3.505x   cond(A) 2.33e+16   DISCARDED, ill-conditioned",
+  "     across every trusted point the amplification moves by 1.11x -- from 19.69x to 21.93x, against 20.31x at k_off = 0.",
+  "     the 0.402x at k_off=1000 that made the sweep look like a collapse sat at cond(A) = 2.2e16. That is the linear solve failing, not the substrate letting go.",
+  "     CORRECTED CONCLUSION, and it is the OPPOSITE of what M5 wrote: the amplification does NOT require processivity. At rho = 4.91 the chain already falls back to zero",
+  "     far more often than dissociation resets it -- a DUB-dominated ladder is failing constantly by construction -- so a reset channel is a minor perturbation. M5 said",
+  "     processivity was a real requirement of the mechanism. Its own numbers said it was not, and the numbers were right.",
+  "     N3 PASS",
+  "",
+  "N4 THE RATE BAND THAT WAS TOO WIDE TO SAY ANYTHING",
+  "     M4's band was 1e-3 to 1e5 /h. Eight orders passes everything. The band that means something: ubiquitin transfer is one enzymatic step on a bound substrate, seconds",
+  "     timescale; a generous 0.1-10 s per ubiquitin is 360-36000 /h.",
+  "       median receptor: n=8  k_u       2534/h =       1.421 s per ubiquitin   IN BAND",
+  "          b_hi delivered 0.47676/h against target 0.47617/h   matches",
+  "       CDC20 (LFQ): n=2  k_u    0.04855/h =   7.415e+04 s per ubiquitin   outside",
+  "          b_hi delivered 0.47619/h against target 0.47617/h   matches",
+  "       CDC20 (raw Intensity): n=1  k_u    0.02347/h =   1.534e+05 s per ubiquitin   outside",
+  "          b_hi delivered 0.93233/h against target 0.47617/h   OVERSHOOTS by 1.96x",
+  "     branches that both match b_hi and use a real ubiquitination rate: ['median receptor']",
+  "     THIS IS THE ARGUMENT M4's BAND WAS TOO WIDE TO MAKE. At n=1 the chain has no",
+  "     amplification, so b = k_u outright and matching a 29.5 h resting half-life forces one ubiquitin every 43 hours.",
+  "     The n=8 branch needs k_u = 2534/h -- 1.42 s per ubiquitin -- precisely because most attempts fall back and the",
+  "     ladder is churning fast while rarely completing. The slow resting rate is an EMERGENT property of the race, not a slow enzyme, and that is what a real ubiquitin",
+  "     system looks like. Physical rate plausibility selects the amplification branch.",
+  "     N4 PASS",
+  "",
+  "====================================================================================================",
+  "  N1  PASS",
+  "  N2  PASS",
+  "  N3  PASS",
+  "  N4  PASS",
+  "  4/4   [POST-HOC -- written after loop 149's output]",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 3/3 (100.0%) by 'all', seed 14901, controls 4"
+ ]
+}

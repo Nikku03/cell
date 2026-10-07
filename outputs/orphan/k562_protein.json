@@ -1,0 +1,34 @@
+{
+ "model": "k562-protein-v1",
+ "source": "PaxDb 9606-iBAQ_K562_Geiger_2012 (Geiger et al., Mol Cell Proteomics 2012)",
+ "n_measured": 7031,
+ "vs_generic": {
+  "n_shared": 6205,
+  "pearson_log": 0.5176721029031144,
+  "spearman": 0.6545818805035003,
+  "r2": 0.26798440612413266
+ },
+ "rna_to_protein": {
+  "n": 5874,
+  "pearson_log": 0.3992002145533127,
+  "r2": 0.1593608112994109
+ },
+ "coverage": {
+  "n_genes_in_cell": 16492,
+  "frac_measured": 0.37684938151831193,
+  "abundance_dependent": true
+ },
+ "join": {
+  "namespace": "symbol",
+  "rate": 0.9837860901720951,
+  "note": "the source file offers gene symbol and Ensembl PROTEIN id only; symbol is the weakest namespace in the registry and the join is recorded as such"
+ },
+ "limits": [
+  "one study, one laboratory, one growth condition -- K562 protein levels shift with medium, density and passage, and none of those are recorded here",
+  "iBAQ is a within-sample relative measure; it is not comparable across datasets without renormalisation",
+  "36% coverage, and missing is abundance-dependent, so absence is unknown rather than zero",
+  "joined by gene symbol, the weakest key available in the source file",
+  "measured in unperturbed K562, so it is a STATE, not a response -- it says nothing about how protein moves after a perturbation, which is the arrow the chain is actually missing"
+ ],
+ "verdict": "THE GENERIC TABLE IS ROUGHLY RIGHT IN BROAD ORDERING BUT MATERIALLY WRONG IN DETAIL FOR THIS CELL. Rank correlation with the K562 measurement is 0.655 over 6,205 shared genes -- the fair statistic, since ppm and iBAQ are different units -- yet 25% of genes shift more than a quarter of the abundance range between them, and the disagreement is structured rather than random: histones are the most over-stated by the generic table and regulatory proteins such as EP300 and TCF3 the most under-stated. Every matched analysis in this project that used `ppm` as its abundance covariate was matching on that. Second, and independent of it, mRNA explains only 16% of protein LEVEL variance in K562 (r 0.399, Spearman 0.501, 5,874 genes both measured in this cell type) -- consistent with the literature range for a single cell type, and an upper bound on the chain's missing dRNA -> dprotein arrow. It is a generous bound, because a delta is harder to predict than a level. Third, coverage is 38% and steeply abundance-dependent (2.2% of the lowest generic-abundance quintile against 74.5% of the highest), and measured genes carry mean dep_frac 0.236 against 0.017 for unmeasured -- so absence is unknown, never zero."
+}

@@ -1,0 +1,59 @@
+=================================================================================================
+RAWER BINDING DATA ON ONE SMALL PART: 12 FACTORS, PEAKS vs 2015 GENE SETS
+=================================================================================================
+  factors (most movers in their own K562 knockdown): GATA1 (1859), SMC3 (1540), POLR3A (1316), KDM1A (801), TAF1 (777), RBBP5 (368), TAF7 (302), RAD21 (253), GTF2B (218), MAX (198), CBX3 (188), CHD4 (151)
+    GATA1    ENCSR000EFT ENCFF221OWW (conservative IDR thresholded peaks): promoter-bound genes 1,313 (2015 gene set 727)
+    SMC3     ENCSR000EGW ENCFF289LLT (conservative IDR thresholded peaks): promoter-bound genes 6,551 (2015 gene set 2,000)
+    POLR3A   ENCSR000DOI ENCFF050FPP (conservative IDR thresholded peaks): promoter-bound genes 8 (2015 gene set 192)
+    KDM1A    ENCSR000ATX ENCFF682CDK (conservative IDR thresholded peaks): promoter-bound genes 719 (2015 gene set 2,000)
+    TAF1     ENCSR000BKS ENCFF598CIP (conservative IDR thresholded peaks): promoter-bound genes 12,672 (2015 gene set 1,543)
+    RBBP5    ENCSR000AQI ENCFF044FPH (conservative IDR thresholded peaks): promoter-bound genes 14,401 (2015 gene set 2,000)
+    TAF7     ENCSR000BNM ENCFF270QLC (conservative IDR thresholded peaks): promoter-bound genes 65 (2015 gene set 793)
+    RAD21    ENCSR000BKV ENCFF960TEU (conservative IDR thresholded peaks): promoter-bound genes 2,868 (2015 gene set 2,100)
+    GTF2B    ENCSR000DOE ENCFF579OUH (conservative IDR thresholded peaks): promoter-bound genes 1,559 (2015 gene set 2,000)
+    MAX      ENCSR000BLP ENCFF448ZSO (conservative IDR thresholded peaks): promoter-bound genes 15,687 (2015 gene set 3,845)
+    CBX3     ENCSR000ATV ENCFF068OEJ (IDR thresholded peaks): promoter-bound genes 5 (2015 gene set 2,682)
+    CHD4     ENCSR000ATL ENCFF319EST (conservative IDR thresholded peaks): promoter-bound genes 785 (2015 gene set 2,000)
+
+=================================================================================================
+PEAKS (raw positions + strength)
+=================================================================================================
+  T1 triangulated pairs 1,375 vs null 1,562.4 +/- 492.5; permutation p 0.6174 -> NOT SHARP ENOUGH
+     GATA1    movers  1858  bound    582  both  140  odds ratio   1.10  p 0.35
+     SMC3     movers  1539  bound   2435  both  440  odds ratio   0.95  p 0.39
+     POLR3A   movers  1315  bound      2  both    1  odds ratio   5.27  p 0.29
+     KDM1A    movers   800  bound    301  both   25  odds ratio   0.84  p 0.49
+     TAF1     movers   777  bound   4437  both  405  odds ratio   0.93  p 0.34
+     RBBP5    movers   368  bound   4888  both  217  odds ratio   0.99  p 0.91
+     TAF7     movers   301  bound     27  both    1  odds ratio   1.02  p 1
+     RAD21    movers   252  bound   1024  both   20  odds ratio   0.60  p 0.026
+     GTF2B    movers   217  bound    621  both   10  odds ratio   0.59  p 0.12
+     MAX      movers   197  bound   5173  both  113  odds ratio   0.80  p 0.12
+     CBX3     movers   187  bound      1  both    0  odds ratio   0.00  p 1
+     CHD4     movers   150  bound    294  both    3  odds ratio   0.55  p 0.38
+  T2 factors with significant enrichment (OR > 1, p < 0.05): 0/12; median OR 0.88
+  T4 sign control: agreement with OmniPath 1/3 (fewer than 20: no verdict)
+  T3 dose-response: Spearman(peak strength, |effect|) positive in 5/10 factors (median -0.007), p 1 -> NO DOSE-RESPONSE
+  DISCOVERY: none listed -- T1 did not pass for the peaks.
+
+=================================================================================================
+2015 GENE SETS
+=================================================================================================
+  T1 triangulated pairs 826 vs null 1,082.3 +/- 138.2; permutation p 0.9660 -> NOT SHARP ENOUGH
+     GATA1    movers  1858  bound    338  both   83  odds ratio   1.13  p 0.35
+     SMC3     movers  1539  bound   1236  both  224  odds ratio   0.96  p 0.63
+     POLR3A   movers  1315  bound     88  both   18  odds ratio   1.36  p 0.24
+     KDM1A    movers   800  bound   1197  both  136  odds ratio   1.23  p 0.039
+     TAF1     movers   777  bound   1043  both   87  odds ratio   0.86  p 0.21
+     RBBP5    movers   368  bound    940  both   46  odds ratio   1.12  p 0.5
+     TAF7     movers   301  bound    512  both   41  odds ratio   2.50  p 2e-06
+     RAD21    movers   252  bound    948  both   30  odds ratio   1.04  p 0.84
+     GTF2B    movers   217  bound   1438  both   37  odds ratio   0.97  p 0.93
+     MAX      movers   197  bound   2266  both   61  odds ratio   1.19  p 0.26
+     CBX3     movers   187  bound   1570  both   35  odds ratio   0.98  p 1
+     CHD4     movers   150  bound   1181  both   28  odds ratio   1.38  p 0.13
+  T2 factors with significant enrichment (OR > 1, p < 0.05): 2/12; median OR 1.12
+  T4 sign control: agreement with OmniPath 5/7 (fewer than 20: no verdict)
+
+  artifact: outputs/rawchip.json   runtime 23s
+  NOT: 12 factors, one cell line; promoter peaks within 1 kb miss distal enhancers; binding is not regulation.

@@ -1,0 +1,106 @@
+=================================================================================================
+ADAPTIVE PARTITIONS: CERTIFYING A PRUNER THAT CHOOSES USING ITS OWN SAMPLES
+=================================================================================================
+
+  7 pruning levels, 10 controllers, n = 1024. sha 9b909319ccc8.
+  studying level 2, which carries 98.4% of the composed certificate: 1,023,000 candidates.
+
+  NOTE ON SAMPLE SIZES. The naive procedure needs MORE samples than the cap of 1000: with
+  fewer, the rule keeps every candidate it sampled and the dropped side of the sample is
+  empty, so there is nothing to estimate from. That is a degenerate configuration rather
+  than a small-sample one, and the sizes below are chosen to avoid it rather than to
+  flatter the method.
+
+=================================================================================================
+P0  THE CEILING GATE: DOES THE WINNER'S CURSE ACTUALLY BITE?
+=================================================================================================
+  The naive procedure: one sample selects the partition, and the same sample restricted to
+  the dropped side estimates the dropped sum.
+
+       evals   coverage   median UCB/true   median est/true
+       3,000       0.0%             0.705             0.632
+      10,000       0.0%             0.939             0.910
+      30,000      87.2%             1.003             0.990
+
+  P0: read the last column. An estimator that is unbiased would sit at 1.000; the
+  winner's curse shows up as a systematic shortfall, and the coverage column says whether
+  the bound's slack absorbs it.
+
+=================================================================================================
+P1  THE SUBTRACTION IDENTITY: UCB(TOTAL) MINUS THE EXACT RETAINED SUM
+=================================================================================================
+  T = 4.225322e-72 is the total bound over the CANDIDATE POPULATION being partitioned
+  here -- which is this level's mass-dropped set, the population a second-stage pruner
+  would re-partition. It is fixed whatever the pruner then decides, and that is the only
+  property the identity needs. The first version of this line called T the total over ALL
+  candidates and then reported a retained share of 0.00%, which was a quantity compared
+  with itself; both are corrected.
+  a typical adaptive keep of 1000 from 1,023,000 captures 8.65% of T.
+
+       evals   coverage   median UCB/true
+       3,000     100.0%             1.089
+      10,000     100.0%             1.027
+      30,000     100.0%             1.011
+
+  P1: coverage is by construction -- the retained term cancels out of the inequality, so
+  the guarantee cannot depend on how the partition was chosen. The evals column includes
+  the 1000 evaluations spent on the retained set, which the identity requires be exact.
+
+=================================================================================================
+P2  SAMPLE SPLITTING, HEAD TO HEAD AT EQUAL TOTAL EVALUATIONS
+=================================================================================================
+
+       evals   coverage   median UCB/true   vs identity
+       3,000     100.0%             1.162         1.07x
+      10,000     100.0%             1.050         1.02x
+      30,000     100.0%             1.021         1.01x
+
+  P2: splitting is valid too -- conditional on the first half, the partition is fixed --
+  but it certifies with half the budget and pays for it in width.
+
+=================================================================================================
+P3  THE IDENTITY'S REAL COST: WHERE THE SUBTRACTION DEGRADES
+=================================================================================================
+  D = T - R is a difference, and the error in UCB(T) is ABSOLUTE, so the relative width on
+  D grows as the retained set captures more of the total bound. That is the regime a good
+  pruner is trying to reach, so this is the identity's real limit.
+
+         cap   retained share of T   median UCB/true   coverage
+         100                 2.06%             1.061     100.0%
+       1,000                13.49%             1.069     100.0%
+      10,000                49.05%             1.117     100.0%
+     100,000                87.97%             1.488     100.0%
+     400,000                98.76%             5.737     100.0%
+
+  P3: the width blows up as the retained share approaches one, exactly as the algebra
+  says it must. The identity is free of the selection effect and is NOT free of this.
+
+=================================================================================================
+P4  COMPOSED ACROSS ALL LEVELS, ADAPTIVE PARTITIONS AT EVERY ONE
+=================================================================================================
+  Carrying composecert's failure budget: delta/K per level with K = 7.
+  true composed dropped bound under these partitions: 3.714355e-72
+
+     evals/level   coverage   median total/true
+           1,000     100.0%               1.266
+           3,000     100.0%               1.098
+          10,000     100.0%               1.036
+
+  P4: the identity composes exactly as composecert's sum does, because each level's
+  guarantee is still a statement about a fixed T, and the failure budget adds as before.
+
+=================================================================================================
+P5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. The identity needs the retained set evaluated EXACTLY. That is cheap when the cap is
+     small and it is the dominant cost when the cap is large -- the same regime P3 says
+     the width degrades in. Both limits bite from the same side.
+  2. It bounds the dropped sum for WHATEVER partition was chosen. It says nothing about
+     whether the partition was a good one; a pruner that adapts badly gets a valid
+     certificate for a bad decision.
+  3. T is fixed only within a level. Across levels the candidate set at level d+1 depends
+     on what level d retained, so T at the next level IS random. The composition in P4
+     conditions on the realised chain, which is what composecert also did; a guarantee
+     unconditional on the whole trajectory is not established here.
+  4. The object is still the certificate and not the tail, and exactcert's finding that
+     the bound is far looser than the quantity it bounds is untouched.

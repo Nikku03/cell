@@ -1,0 +1,91 @@
+{
+ "test": "is the cell-line operator a property of the cell or of the batch?",
+ "V1": {
+  "min_plates_per_line": 7,
+  "n_plates": 8
+ },
+ "V2": {
+  "drug": 0.19994700126443812,
+  "line": 0.07799106105778203,
+  "plate": 0.06259782196271106
+ },
+ "V3": {
+  "own_across_plate": 0.028294685856907163,
+  "baseline": 0.44129815537383055
+ },
+ "V4": {
+  "within_line_across_plate": 0.1820356605974331,
+  "across_line_same_plate": -0.022021702522904647,
+  "delta": 0.20405736312033773
+ },
+ "V5": {
+  "own": 0.028294685856907163,
+  "other": -0.037086632877490346,
+  "delta": 0.06538131873439751
+ },
+ "gates": {
+  "V1": true,
+  "V2": true,
+  "V3": true,
+  "V4": true,
+  "V5": true
+ },
+ "void": [],
+ "seconds": 12.376579523086548,
+ "log": [
+  "========================================================================================================",
+  "LOOP 269 -- IS THE LEARNED OPERATOR CELL BIOLOGY, OR IS IT BATCH?",
+  "========================================================================================================",
+  "     Everything in this arc rests on W_c. Loop 255 measured why that is dangerous:",
+  "     on LINCS, profiles sharing a PLATE correlated at 0.7788, against a construct",
+  "     ceiling of 0.2487 and a random baseline of 0.2683 -- batch structure three times",
+  "     larger than the biological ceiling. If lines had their own plates, W_c would be",
+  "     a batch effect wearing a cell's name.",
+  "     Tahoe can settle it and LINCS could not: 8 plates, 50 lines, every plate carries",
+  "     all 50. A property of the CELL survives a change of plate. A property of the",
+  "     BATCH does not.",
+  "V1 ARE PLATE AND LINE ACTUALLY CROSSED?",
+  "     49 cell lines, 8 plates; plates per line min 7, max 8",
+  "     V1 PASS -- every line is on at least 7 plates, so plate is a control axis and not confounded with the variable under test",
+  "V2 HOW LARGE IS THE PLATE EFFECT HERE?",
+  "     drug 20.0%, line 7.8%, plate 6.3%",
+  "     LINCS plate correlation was 0.7788 against a 0.2487 construct ceiling",
+  "     V2 PASS -- plate accounts for 6.3%, less than drug or line",
+  "     plate halves: A=['1', '2', '3', '4']  B=['5', '6', '7', '8']",
+  "     operator on K=169 genes, ~339 conditions per line per plate-half (2.0 obs per parameter)",
+  "     fitted 2 x 49 operators   [12s]",
+  "V3 LOAD-BEARING -- DOES THE OPERATOR SURVIVE A CHANGE OF PLATE?",
+  "     own-line operator from plates A, scored on the same line's plates B: +0.0283",
+  "     (baseline on those conditions 0.4413)",
+  "     V3 PASS -- the operator is worth +0.0283 on plates it was never fitted on, so it describes the cell outside its own batch",
+  "V4 IS IT MORE A PROPERTY OF THE LINE THAN OF THE PLATE?",
+  "     within-line across-plate  +0.1820",
+  "     across-line same-plate    -0.0220",
+  "     difference +0.2041",
+  "     V4 PASS -- the same line across different plates is +0.2041 more similar than different lines on the same plate; the operator tracks the CELL",
+  "V5 DOES THE OWN-LINE OPERATOR BEAT ANOTHER LINE'S ON HELD-OUT PLATES?",
+  "     own line +0.0283 vs another line's operator -0.0371   +0.0654",
+  "     both fitted on plate-half A, both scored on plate-half B, same estimator",
+  "     V5 PASS -- the own-line operator is worth +0.0654 over another line's on the same held-out plates",
+  "V6 WHAT THIS CANNOT SHOW",
+  "     Plate is the only batch variable in this table. Run date, passage number,",
+  "     confluence and operator are not recorded here, so 'survives a plate change' is",
+  "     not 'survives every technical factor'.",
+  "     A PASS says the operator is a stable property of the cell line as cultured in",
+  "     this laboratory. It does not say the operator is MECHANISM: loops 263 and 264",
+  "     showed it aligns with no pathway, no interaction graph and no annotation tested.",
+  "     Stable and unexplained are compatible.",
+  "     50 cancer lines, one platform, drug perturbations. Nothing here extends to",
+  "     primary cells or to genetic perturbation.",
+  "     Everything is on the double-centred residual, so by loop 260 any arm constant",
+  "     across lines is pinned near zero however expressive it is.",
+  "========================================================================================================",
+  "  V1  PASS",
+  "  V2  PASS",
+  "  V3  PASS",
+  "  V4  PASS",
+  "  V5  PASS",
+  "  5/5   [12s]",
+  "========================================================================================================"
+ ]
+}

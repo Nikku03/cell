@@ -1,0 +1,100 @@
+{
+  "test": "loop_insulation",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb.npy",
+        "bytes": 14838032,
+        "hash": "3768cedcefe29085",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb_rep.npy",
+        "bytes": 14838032,
+        "hash": "40818f388ba58741",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1926,
+      "used": 1376,
+      "selection": "filtered",
+      "fraction": 0.7144340602284528
+    },
+    "seed": 1904,
+    "controls": [
+      "replicate Hi-C as an independent ceiling",
+      "the old per-step barrier rerun side by side",
+      "shuffled-orientation twin",
+      "P(s) and orientation carried forward",
+      "the 0.40 gate left exactly where loop 36 set it"
+    ],
+    "note": "fixes physics rather than resuming parameter search; the ceiling was measured to check the gate was achievable before blaming the model",
+    "warnings": []
+  },
+  "gates": {
+    "I1 ceiling real, gate fair": true,
+    "I2 barrier persists": true,
+    "I3 insulation improves": true,
+    "I4 clears the original gate": false,
+    "I5 nothing else breaks": true
+  },
+  "ceiling_replicate": 0.9284982756748776,
+  "prev_insul_r": 0.2974227712424471,
+  "prev_orient": 0.22783980942910131,
+  "stall_min_new": 2.912646198830409,
+  "stall_min_old_expected": 1.0582010582010581,
+  "results": {
+    "occupancy, real orientation": {
+      "insul_r": 0.36174533689735433,
+      "orient": 0.49946994111242815,
+      "ps": -1.1221663719603865
+    },
+    "occupancy, SHUFFLED orientation": {
+      "insul_r": 0.17637725686605965,
+      "orient": 0.09477607485084026,
+      "ps": -1.1400702725704925
+    },
+    "old per-step barrier": {
+      "insul_r": 0.29671160857680023,
+      "orient": 0.22785305570989214,
+      "ps": -1.0096291673530375
+    }
+  },
+  "seconds": 68.12740778923035,
+  "log": [
+    "====================================================================================================",
+    "THE INSULATION GAP -- a barrier re-rolled every timestep is not a barrier",
+    "====================================================================================================",
+    "\n  I1 THE CEILING IS REAL AND THE GATE WAS FAIR",
+    "     GM12878 in situ PRIMARY vs REPLICATE, same protocol, different library:",
+    "     insulation r = 0.9285 over 1,362 bins",
+    "     so 0.40 is 43% of what is achievable, and loop 36's +0.2974 was 32%.",
+    "     The gate was soft and the model was genuinely short. It is NOT moved.",
+    "     I1 PASS",
+    "\n  loop 36 left insulation at +0.2974, orientation +0.2278, P(s) -1.0095",
+    "\n  I2 THE BARRIER NOW PERSISTS",
+    "     old per-step re-roll, median site: expected stall 1.1 min (1/(1-p) at p = 0.47)",
+    "     new occupancy model, measured stall 2.9 min over 1,520 encounters",
+    "     CTCF residence is 2.0 min and cohesin's is 15 min, so a site now turns over 8x inside one cohesin lifetime",
+    "     I2 PASS",
+    "    occupancy, real orientation        insulation +0.3617   P(s) -1.1222   orientation +0.4995",
+    "    occupancy, SHUFFLED orientation    insulation +0.1764   P(s) -1.1401   orientation +0.0948",
+    "    old per-step barrier               insulation +0.2967   P(s) -1.0096   orientation +0.2279",
+    "\n  I3 INSULATION IMPROVES -- +0.3617 vs loop 36's +0.2974, shuffled twin +0.1764   I3 PASS",
+    "  I4 IT CLEARS THE ORIGINAL GATE -- +0.3617 vs 0.4 (39% of the 0.928 ceiling)   I4 FAIL",
+    "  I5 NOTHING ELSE BREAKS -- P(s) -1.1222, orientation +0.4995 (loop 36: +0.2278)   I5 PASS",
+    "\n====================================================================================================",
+    "  I1 ceiling real, gate fair              PASS",
+    "  I2 barrier persists                     PASS",
+    "  I3 insulation improves                  PASS",
+    "  I4 clears the original gate             FAIL",
+    "  I5 nothing else breaks                  PASS",
+    "  REAL IMPROVEMENT, GATE STILL NOT CLEARED: +0.2974 -> +0.3617 against",
+    "  0.4. The barrier physics was genuinely wrong and fixing it was worth +0.0643,",
+    "  and it is not the whole gap. Recorded as measured.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 1376/1926 (71.4%) by 'filtered', seed 1904, controls 5"
+  ]
+}

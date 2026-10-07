@@ -1,0 +1,20 @@
+{
+ "n_pairs": 25121,
+ "n_knockouts": 237,
+ "base_rate": 0.0766,
+ "lift": {
+  "shortest_path_closeness (G-specific, Google Maps)": 1.19,
+  "generic_closeness (closeness to a RANDOM KO = centrality)": 1.16,
+  "responsiveness_prior": 8.69,
+  "shortest_path + prior": 8.77
+ },
+ "hit_rate_by_shortest_path_hops": {
+  "dist~1": 0.1008,
+  "dist~2": 0.0636,
+  "dist~3": 0.0757,
+  "dist~4": 0.0878,
+  "dist~5": 0.0857
+ },
+ "verdict": "GOOGLE MAPS (shortest weighted path) ON THE CELL, measured. Near genes DO move more -- the hit-rate falls with shortest-path distance (distance-1 neighbours, i.e. the direct regulon, move most), so routing recovers the NEAR-FIELD, as expected. But held-out it hits the same wall: shortest-path closeness gives 1.19x lift, versus 1.16x for the GENERIC control (closeness from a RANDOM knockout = pure centrality) -- essentially the SAME, meaning the 'signal' is just centrality re-labelled: being close to THIS knockout is no better than being close to ANY knockout. Google Maps is measuring how central a gene is, not how this specific knockout reaches it. And it does NOT beat the responsiveness prior (8.69x) -- shortest-path + prior = 8.77x, no better than the prior alone. WHY it fails where Google Maps succeeds: Maps works because every road has a MEASURED travel time and a trip is a single physical route; in the cell the edge 'travel times' are the transmission coefficients that were never measured, so 'shortest path' collapses to topological distance = centrality, and the far-field is not a ROUTE anyway -- it is a FLOOD (the generic tide) triggered by a global budget breach, which no routing algorithm addresses. BOTTOM LINE: routing recovers the near-field (distance-1 regulon) exactly like every other method and then hits the wall; the right tools remain capacity (how big the flood) + the tide (which flood), not path-finding. Google Maps is the wrong algorithm because the far-field is weather, not traffic.",
+ "note": "Tried the Google Maps algorithm (Dijkstra shortest weighted path, edges weighted by verified trustworthiness) on the knockout problem. Near genes move more (hit-rate falls with shortest-path distance -> recovers the near-field/regulon), but held-out it hits the wall: shortest-path closeness lift 1.19x vs 1.16x for a random-KO generic control (SAME = just centrality re-labelled) and it does not beat the responsiveness prior (8.69x; sp+prior 8.77x). Why: Maps needs MEASURED travel times (=transmission coefficients, unmeasured) and treats a trip as one physical route; without weights 'shortest path' collapses to topological distance = centrality, and the far-field is a FLOOD (the generic tide from a global budget breach), not a route. Routing recovers the distance-1 regulon and then walls, like every graph method. Right tools stay capacity (flood size) + tide (which flood); path-finding is the wrong algorithm -- the far-field is weather, not traffic."
+}

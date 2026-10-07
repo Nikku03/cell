@@ -1,0 +1,79 @@
+=================================================================================================
+A VERIFIED ENCLOSURE OF THE BACKWARD FUNCTION: LOWER AND UPPER FUNCTIONS, NO BOX
+=================================================================================================
+  hlo_d <= K_d hlo_{d+1} and hhi_d >= K_d hhi_{d+1}, verified at every REACHABLE point
+  rather than relaxed over a box. Acceptance gate: final interval width under ONE ORDER,
+  reported with its computational cost.
+
+     nCtrl   L  targets      exact tail             hlo             hhi  contains
+         3   3      200    6.973226e-99    6.957371e-99    6.984161e-99       yes
+         3   4      200    5.977817e-99    5.958236e-99    6.018769e-99       yes
+         4   3      200   1.503368e-102   1.500887e-102   1.505960e-102       yes
+         4   4      200   1.187971e-102   1.183855e-102   1.191630e-102       yes
+         4   3      100    1.275136e-52    1.274992e-52    1.275295e-52       yes
+         3   4      100    4.420102e-52    4.418218e-52    4.420870e-52       yes
+
+=================================================================================================
+E0  THE CEILING GATE: DOES THE ENCLOSURE CONTAIN THE TRUTH?
+=================================================================================================
+  PASS -- the exact tail lies inside the enclosure on every instance.
+
+=================================================================================================
+E1  THE VERIFIER: EVERY CHECK AT A REACHABLE POINT, NO RELAXATION
+=================================================================================================
+
+     nCtrl   L        paths       checks   violations
+         3   3        4,096        1,168            0
+         3   4       32,768        9,360            0
+         4   3       65,536        8,736            0
+         4   4    1,048,576      139,808            0
+         4   3       65,536        8,736            0
+         3   4       32,768        9,360            0
+
+  The checks are the reachable (state, accumulation) pairs at every level, twice -- once
+  for each inequality. Violations are zero because the corrections are BUILT from the
+  residuals at those same points; a nonzero count would mean construction and verification
+  disagreed about what is reachable.
+
+=================================================================================================
+E2  THE ACCEPTANCE GATE: INTERVAL WIDTH AT TOTAL COMPUTATIONAL COST
+=================================================================================================
+
+     nCtrl   L  targets  width, orders   seconds  under 1 order
+         3   3      200          0.002       0.0            yes
+         3   4      200          0.004       0.2            yes
+         4   3      200          0.001       0.4            yes
+         4   4      200          0.003       5.5            yes
+         4   3      100          0.000       0.2            yes
+         3   4      100          0.000       0.1            yes
+
+  E2 AS PREDECLARED: PASS -- every instance is under one order.
+  For scale, tailtight measured the previous certificate's interval at 22 to 27 orders on
+  the same kind of instance.
+
+=================================================================================================
+E3  THE SCALING IN DEGREE
+=================================================================================================
+
+     degree  coefficients  width, orders   seconds
+          1             5          0.270       5.8
+          2            15          0.044       5.6
+          3            35          0.003       5.5
+          4            70          0.001       5.6
+
+  The width falls with degree because the corrections shrink as the fit improves: the
+  enclosure's width IS the accumulated fit residual, made rigorous.
+
+=================================================================================================
+E4  WHAT THIS DOES NOT DO
+=================================================================================================
+  1. THE VERIFIER COSTS O(PATHS). It is exact because it visits every reachable point, and
+     that is precisely why it does not yet scale. The gate is width AT a stated cost, and
+     the cost stated here is enumeration. Making the verification cheap without
+     reintroducing a relaxation is the next problem and it is not solved here.
+  2. These are small instances. Nothing here shows the width stays under an order at the
+     engine's width, where the verifier cannot run at all.
+  3. The enclosure is of the tail computed with this engine's fixed base and gain. It is a
+     rigorous interval for THAT quantity, not for a biological probability.
+  4. It does not touch class-map validity, transfer to other instances, or anything
+     biological. It addresses one term of one calculation.

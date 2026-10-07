@@ -1,0 +1,3354 @@
+{
+ "results": {
+  "V1_hop1": {
+   "enriched": 18,
+   "depleted": 55,
+   "p": 1.6913617102985627e-05,
+   "verdict": "ANTI-PREDICTS",
+   "pooled_precision": 0.015970860184925748,
+   "mean_base": 0.004617639224175993
+  },
+  "V1_hop2": {
+   "enriched": 77,
+   "depleted": 135,
+   "p": 8.236337782292405e-05,
+   "verdict": "ANTI-PREDICTS",
+   "pooled_precision": 0.009094244388362035,
+   "mean_base": 0.004617639224175993
+  },
+  "V1_hop3": {
+   "enriched": 118,
+   "depleted": 136,
+   "p": 0.2860976625024311,
+   "verdict": "NO SIGNAL",
+   "pooled_precision": 0.005779726398095325,
+   "mean_base": 0.004617639224175993
+  },
+  "V2": {
+   "n": 87,
+   "real_mean": 0.501452350229932,
+   "shuffled_mean": 0.42735628201666725,
+   "wins": 49,
+   "losses": 36,
+   "p": 0.19276043534155876,
+   "verdict": "NO DIRECTION SIGNAL"
+  },
+  "test_old": {
+   "acc": 0.5140891987735337,
+   "n": 40,
+   "movers": 1151,
+   "auroc": 0.5
+  },
+  "test_new": {
+   "acc": 0.5089851743064736,
+   "n": 43,
+   "movers": 1545,
+   "auroc": 0.5182833929261564
+  },
+  "test_learned": {
+   "acc": 0.48969769119076484,
+   "n": 46,
+   "movers": 1725,
+   "auroc": 0.6307051960186452
+  },
+  "test_revised": {
+   "acc": 0.5431651618538905,
+   "n": 40,
+   "movers": 1337,
+   "auroc": 0.5422104058639995
+  },
+  "V3_direction": {
+   "better": 15,
+   "worse": 15,
+   "p": 1.0,
+   "n": 40,
+   "mean_diff": 0.0009270064630682625,
+   "verdict": "NO DIFFERENCE"
+  },
+  "V3_coverage": {
+   "better": 42,
+   "worse": 0,
+   "p": 4.547473508864641e-13,
+   "n": 162,
+   "mean_diff": 2.432098765432099,
+   "verdict": "BETTER"
+  },
+  "V4_direction": {
+   "better": 20,
+   "worse": 21,
+   "p": 1.0,
+   "n": 43,
+   "mean_diff": -0.018455861249686387,
+   "verdict": "NO DIFFERENCE"
+  },
+  "V4_auroc": {
+   "better": 56,
+   "worse": 19,
+   "p": 2.242964215897027e-05,
+   "n": 75,
+   "mean_diff": 0.11050087537574015,
+   "verdict": "BETTER"
+  },
+  "V5_direction_hops23": {
+   "better": 14,
+   "worse": 13,
+   "p": 1.0,
+   "n": 38,
+   "mean_diff": -0.010251549202331322,
+   "verdict": "NO DIFFERENCE"
+  }
+ },
+ "eligible": 330,
+ "train": [
+  "RPL11",
+  "YBX1",
+  "RPL5",
+  "ENO1",
+  "HMGA1",
+  "BTF3",
+  "RPL10",
+  "EEF1A1",
+  "SOD1",
+  "HNRNPU",
+  "XRCC5",
+  "GTF3A",
+  "DDX5",
+  "ILF3",
+  "EIF3I",
+  "EIF3E",
+  "CSNK2B",
+  "CHD4",
+  "RBX1",
+  "RBMX",
+  "RUVBL1",
+  "XPO1",
+  "UBE2I",
+  "SMARCE1",
+  "GMPS",
+  "CSNK1A1",
+  "PPP4C",
+  "SSU72",
+  "DRAP1",
+  "EIF2S1",
+  "CEBPZ",
+  "TFDP1",
+  "SRSF1",
+  "SRP19",
+  "PSMA7",
+  "COPS5",
+  "C1D",
+  "PPP2CA",
+  "URI1",
+  "ATF4",
+  "AATF",
+  "EIF2B1",
+  "NELFCD",
+  "SRP54",
+  "EIF3F",
+  "PSMA6",
+  "RANBP2",
+  "UBC",
+  "SON",
+  "UBR5",
+  "AIFM1",
+  "SETD2",
+  "CLSPN",
+  "RPA2",
+  "MAD2L2",
+  "MYBL2",
+  "GATA1",
+  "TLN1",
+  "PPP1CB",
+  "RAD21",
+  "YEATS4",
+  "GTF2F1",
+  "PRPF19",
+  "ANKLE2",
+  "BRCA2",
+  "PRMT5",
+  "DR1",
+  "WNK1",
+  "TAF12",
+  "RBBP6",
+  "NAT10",
+  "CASP8AP2",
+  "UFL1",
+  "TOPBP1",
+  "ZNF207",
+  "BPTF",
+  "CENPE",
+  "STAT5A",
+  "OGT",
+  "RANGAP1",
+  "ATR",
+  "HDAC3",
+  "GTF2H2",
+  "POGZ",
+  "PMPCB",
+  "PPP1R8",
+  "ATP6V1H",
+  "CHEK1",
+  "USP9X",
+  "EP400",
+  "TSG101",
+  "RBM10",
+  "CDK1",
+  "THAP11",
+  "PELP1",
+  "USP7",
+  "DDX41",
+  "NCBP1",
+  "MTOR",
+  "DDB1",
+  "DDX20",
+  "CEP152",
+  "SNIP1",
+  "PREB",
+  "PPP2R3C",
+  "E4F1",
+  "FOXL2",
+  "BIRC5",
+  "PPP2R1A",
+  "MCL1",
+  "USP37",
+  "MAX",
+  "UBQLN4",
+  "BRD4",
+  "PLK4",
+  "CDC7",
+  "MCRS1",
+  "ERCC2",
+  "NFRKB",
+  "BAP1",
+  "FBXO5",
+  "MBTPS1",
+  "EIF2B4",
+  "STIL",
+  "RBBP8",
+  "USP8",
+  "PLK1",
+  "SMARCB1",
+  "PALB2",
+  "KAT8",
+  "USP36",
+  "TAF5",
+  "RPA1",
+  "CXXC1",
+  "EGLN2",
+  "RNF123",
+  "CDC20",
+  "TBP",
+  "KAT5",
+  "SUGP1",
+  "RNF168",
+  "SMG1",
+  "XRCC3",
+  "BCL2L1",
+  "TADA2A",
+  "BNIP1",
+  "HDAC7",
+  "SP2",
+  "UBTF",
+  "GABPA",
+  "ZBTB17",
+  "PHF12",
+  "MYC",
+  "VCP",
+  "SRF",
+  "INCENP",
+  "PXN",
+  "PIAS4",
+  "SRCAP",
+  "SIN3A",
+  "BCAR1",
+  "BCR",
+  "ARHGAP11B",
+  "LTB4R2",
+  "NFKBIE",
+  "NRF1",
+  "VPS18",
+  "ZNF687"
+ ],
+ "test": [
+  "UBE2L3",
+  "PFN1",
+  "UBA52",
+  "HSPA9",
+  "EIF5A",
+  "DDX21",
+  "NASP",
+  "DYNLL1",
+  "PGK1",
+  "NUP214",
+  "DDX1",
+  "RAC1",
+  "BCLAF1",
+  "UBE2D3",
+  "GTF2A2",
+  "PRMT1",
+  "TUBB",
+  "SSRP1",
+  "PHB2",
+  "EIF2S2",
+  "DNMT1",
+  "SFPQ",
+  "CDC42",
+  "IMPDH2",
+  "TFAM",
+  "KPNB1",
+  "UBE2N",
+  "SRSF2",
+  "MDN1",
+  "NCL",
+  "EIF2B3",
+  "HSPA8",
+  "TCOF1",
+  "DENR",
+  "EWSR1",
+  "SMC3",
+  "HUWE1",
+  "RAN",
+  "TARDBP",
+  "HNRNPH1",
+  "ARID3A",
+  "RAD51C",
+  "ANKRD11",
+  "SF1",
+  "MED1",
+  "RNF8",
+  "CUL3",
+  "CENPK",
+  "BRCA1",
+  "BUB1",
+  "PCBP2",
+  "GTF2B",
+  "SUPT5H",
+  "CDC73",
+  "TIMELESS",
+  "SKP2",
+  "USP10",
+  "RIOK1",
+  "ZNF24",
+  "SPC25",
+  "LAMTOR3",
+  "TP53RK",
+  "METTL3",
+  "PPP6C",
+  "TERF2",
+  "EIF2B5",
+  "WAC",
+  "AP2M1",
+  "HGS",
+  "AURKA",
+  "VHL",
+  "NCAPH2",
+  "E2F6",
+  "MNAT1",
+  "PRC1",
+  "PKM",
+  "PKMYT1",
+  "MVD",
+  "WDHD1",
+  "PIK3C3",
+  "RNF20",
+  "TERF1",
+  "SCAP",
+  "HSPA5",
+  "POLR1A",
+  "PDPK1",
+  "BUB1B",
+  "DCTN6",
+  "ECD",
+  "ATP6AP1",
+  "CCP110",
+  "TRPM7",
+  "GTF2H1",
+  "PHF5A",
+  "CTCF",
+  "BRIP1",
+  "CDK2",
+  "RNF14",
+  "ECT2",
+  "BARD1",
+  "RACGAP1",
+  "CLCC1",
+  "PTK2",
+  "GTF2A1",
+  "DMAP1",
+  "SETDB1",
+  "RAD9A",
+  "CDK9",
+  "CEP192",
+  "TAF1",
+  "USF2",
+  "EIF2B2",
+  "MED12",
+  "RAD51",
+  "PPARGC1B",
+  "HOXC10",
+  "KCTD10",
+  "PIK3R4",
+  "TRRAP",
+  "HSF1",
+  "MBTPS2",
+  "USP5",
+  "PPP1CA",
+  "HMGB1",
+  "ELL",
+  "XAB2",
+  "SNW1",
+  "HINFP",
+  "YY1",
+  "ACD",
+  "CLK2",
+  "NUMA1",
+  "CEP68",
+  "CDK11A",
+  "ATF5",
+  "HCFC1",
+  "NCOA4",
+  "DNM1",
+  "RNF4",
+  "GRB2",
+  "WEE1",
+  "AURKB",
+  "MZF1",
+  "BANP",
+  "ZNF335",
+  "KDM2A",
+  "ESPL1",
+  "RCOR1",
+  "CCND1",
+  "CTBP2",
+  "CTDP1",
+  "DMRTA2",
+  "FBLIM1",
+  "FOXD4",
+  "HCRTR1",
+  "JAZF1",
+  "KLF7",
+  "MST1",
+  "NANOG",
+  "OTX1",
+  "U2AF1",
+  "ZNF236"
+ ],
+ "per_ko_test": {
+  "UBE2L3": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PFN1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "UBA52": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "HSPA9": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "EIF5A": {
+   "old": [
+    0.8,
+    5
+   ],
+   "new": [
+    0.625,
+    8
+   ],
+   "learned": [
+    0.4444444444444444,
+    9
+   ],
+   "revised": [
+    0.5,
+    6
+   ]
+  },
+  "DDX21": {
+   "old": [
+    0.875,
+    16
+   ],
+   "new": [
+    0.8947368421052632,
+    19
+   ],
+   "learned": [
+    0.5263157894736842,
+    19
+   ],
+   "revised": [
+    0.8,
+    10
+   ]
+  },
+  "NASP": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "DYNLL1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PGK1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "NUP214": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "DDX1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "RAC1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "BCLAF1": {
+   "old": [
+    null,
+    2
+   ],
+   "new": [
+    null,
+    2
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "UBE2D3": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "GTF2A2": {
+   "old": [
+    1.0,
+    13
+   ],
+   "new": [
+    1.0,
+    13
+   ],
+   "learned": [
+    0.3076923076923077,
+    13
+   ],
+   "revised": [
+    1.0,
+    9
+   ]
+  },
+  "PRMT1": {
+   "old": [
+    null,
+    4
+   ],
+   "new": [
+    null,
+    4
+   ],
+   "learned": [
+    0.0,
+    6
+   ],
+   "revised": [
+    null,
+    3
+   ]
+  },
+  "TUBB": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    2
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "SSRP1": {
+   "old": [
+    0.5434782608695652,
+    46
+   ],
+   "new": [
+    0.5576923076923077,
+    52
+   ],
+   "learned": [
+    0.6101694915254238,
+    59
+   ],
+   "revised": [
+    0.4634146341463415,
+    41
+   ]
+  },
+  "PHB2": {
+   "old": [
+    0.6451612903225806,
+    62
+   ],
+   "new": [
+    0.5729166666666666,
+    96
+   ],
+   "learned": [
+    0.5833333333333334,
+    108
+   ],
+   "revised": [
+    0.5806451612903226,
+    93
+   ]
+  },
+  "EIF2S2": {
+   "old": [
+    null,
+    3
+   ],
+   "new": [
+    null,
+    3
+   ],
+   "learned": [
+    null,
+    3
+   ],
+   "revised": [
+    null,
+    3
+   ]
+  },
+  "DNMT1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    2
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "SFPQ": {
+   "old": [
+    0.29508196721311475,
+    61
+   ],
+   "new": [
+    0.2871287128712871,
+    101
+   ],
+   "learned": [
+    0.45794392523364486,
+    107
+   ],
+   "revised": [
+    0.32558139534883723,
+    86
+   ]
+  },
+  "CDC42": {
+   "old": [
+    null,
+    3
+   ],
+   "new": [
+    null,
+    3
+   ],
+   "learned": [
+    null,
+    3
+   ],
+   "revised": [
+    null,
+    3
+   ]
+  },
+  "IMPDH2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "TFAM": {
+   "old": [
+    null,
+    2
+   ],
+   "new": [
+    null,
+    2
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "KPNB1": {
+   "old": [
+    0.42857142857142855,
+    7
+   ],
+   "new": [
+    0.36363636363636365,
+    11
+   ],
+   "learned": [
+    0.5625,
+    16
+   ],
+   "revised": [
+    0.25,
+    8
+   ]
+  },
+  "UBE2N": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "SRSF2": {
+   "old": [
+    0.625,
+    8
+   ],
+   "new": [
+    0.5454545454545454,
+    11
+   ],
+   "learned": [
+    0.5454545454545454,
+    11
+   ],
+   "revised": [
+    0.5454545454545454,
+    11
+   ]
+  },
+  "MDN1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "NCL": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "EIF2B3": {
+   "old": [
+    0.0,
+    12
+   ],
+   "new": [
+    0.0,
+    12
+   ],
+   "learned": [
+    0.25,
+    12
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "HSPA8": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "TCOF1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "DENR": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "EWSR1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "SMC3": {
+   "old": [
+    0.6,
+    40
+   ],
+   "new": [
+    0.6,
+    50
+   ],
+   "learned": [
+    0.543859649122807,
+    57
+   ],
+   "revised": [
+    0.5641025641025641,
+    39
+   ]
+  },
+  "HUWE1": {
+   "old": [
+    0.6,
+    5
+   ],
+   "new": [
+    0.6666666666666666,
+    6
+   ],
+   "learned": [
+    0.3333333333333333,
+    6
+   ],
+   "revised": [
+    0.6666666666666666,
+    6
+   ]
+  },
+  "RAN": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "TARDBP": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "HNRNPH1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "ARID3A": {
+   "old": [
+    0.1,
+    10
+   ],
+   "new": [
+    0.15384615384615385,
+    13
+   ],
+   "learned": [
+    0.4666666666666667,
+    15
+   ],
+   "revised": [
+    0.15384615384615385,
+    13
+   ]
+  },
+  "RAD51C": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "ANKRD11": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    4
+   ],
+   "learned": [
+    null,
+    4
+   ],
+   "revised": [
+    null,
+    4
+   ]
+  },
+  "SF1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "MED1": {
+   "old": [
+    0.5446428571428571,
+    112
+   ],
+   "new": [
+    0.5405405405405406,
+    148
+   ],
+   "learned": [
+    0.6127167630057804,
+    173
+   ],
+   "revised": [
+    0.46564885496183206,
+    131
+   ]
+  },
+  "RNF8": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CUL3": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CENPK": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "BRCA1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "BUB1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PCBP2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "GTF2B": {
+   "old": [
+    null,
+    4
+   ],
+   "new": [
+    null,
+    4
+   ],
+   "learned": [
+    null,
+    4
+   ],
+   "revised": [
+    null,
+    4
+   ]
+  },
+  "SUPT5H": {
+   "old": [
+    0.6,
+    15
+   ],
+   "new": [
+    0.6,
+    15
+   ],
+   "learned": [
+    0.4666666666666667,
+    15
+   ],
+   "revised": [
+    0.6,
+    15
+   ]
+  },
+  "CDC73": {
+   "old": [
+    0.42857142857142855,
+    49
+   ],
+   "new": [
+    0.38181818181818183,
+    55
+   ],
+   "learned": [
+    0.5555555555555556,
+    63
+   ],
+   "revised": [
+    0.40816326530612246,
+    49
+   ]
+  },
+  "TIMELESS": {
+   "old": [
+    null,
+    2
+   ],
+   "new": [
+    null,
+    3
+   ],
+   "learned": [
+    null,
+    3
+   ],
+   "revised": [
+    null,
+    3
+   ]
+  },
+  "SKP2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "USP10": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "RIOK1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "ZNF24": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "SPC25": {
+   "old": [
+    0.8,
+    5
+   ],
+   "new": [
+    0.8,
+    5
+   ],
+   "learned": [
+    0.8,
+    5
+   ],
+   "revised": [
+    0.8,
+    5
+   ]
+  },
+  "LAMTOR3": {
+   "old": [
+    null,
+    4
+   ],
+   "new": [
+    0.2857142857142857,
+    7
+   ],
+   "learned": [
+    0.42857142857142855,
+    7
+   ],
+   "revised": [
+    0.2857142857142857,
+    7
+   ]
+  },
+  "TP53RK": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "METTL3": {
+   "old": [
+    null,
+    3
+   ],
+   "new": [
+    null,
+    3
+   ],
+   "learned": [
+    null,
+    3
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "PPP6C": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "TERF2": {
+   "old": [
+    0.25,
+    28
+   ],
+   "new": [
+    0.2564102564102564,
+    39
+   ],
+   "learned": [
+    0.5,
+    46
+   ],
+   "revised": [
+    0.2619047619047619,
+    42
+   ]
+  },
+  "EIF2B5": {
+   "old": [
+    0.0,
+    13
+   ],
+   "new": [
+    0.0,
+    13
+   ],
+   "learned": [
+    0.3076923076923077,
+    13
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "WAC": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "AP2M1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "HGS": {
+   "old": [
+    0.2222222222222222,
+    27
+   ],
+   "new": [
+    0.20689655172413793,
+    29
+   ],
+   "learned": [
+    0.45161290322580644,
+    31
+   ],
+   "revised": [
+    0.2608695652173913,
+    23
+   ]
+  },
+  "AURKA": {
+   "old": [
+    null,
+    3
+   ],
+   "new": [
+    null,
+    4
+   ],
+   "learned": [
+    0.8333333333333334,
+    6
+   ],
+   "revised": [
+    0.4,
+    5
+   ]
+  },
+  "VHL": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "NCAPH2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "E2F6": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "MNAT1": {
+   "old": [
+    null,
+    2
+   ],
+   "new": [
+    null,
+    4
+   ],
+   "learned": [
+    0.6,
+    5
+   ],
+   "revised": [
+    null,
+    4
+   ]
+  },
+  "PRC1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PKM": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PKMYT1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "MVD": {
+   "old": [
+    0.875,
+    8
+   ],
+   "new": [
+    0.875,
+    8
+   ],
+   "learned": [
+    0.25,
+    8
+   ],
+   "revised": [
+    0.875,
+    8
+   ]
+  },
+  "WDHD1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PIK3C3": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "RNF20": {
+   "old": [
+    0.7333333333333333,
+    15
+   ],
+   "new": [
+    0.75,
+    16
+   ],
+   "learned": [
+    0.6470588235294118,
+    17
+   ],
+   "revised": [
+    0.8461538461538461,
+    13
+   ]
+  },
+  "TERF1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "SCAP": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "HSPA5": {
+   "old": [
+    0.8571428571428571,
+    49
+   ],
+   "new": [
+    0.8431372549019608,
+    51
+   ],
+   "learned": [
+    0.6792452830188679,
+    53
+   ],
+   "revised": [
+    0.8461538461538461,
+    52
+   ]
+  },
+  "POLR1A": {
+   "old": [
+    0.42857142857142855,
+    21
+   ],
+   "new": [
+    0.5625,
+    32
+   ],
+   "learned": [
+    0.40625,
+    32
+   ],
+   "revised": [
+    0.7083333333333334,
+    24
+   ]
+  },
+  "PDPK1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "BUB1B": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "DCTN6": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "ECD": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "ATP6AP1": {
+   "old": [
+    null,
+    4
+   ],
+   "new": [
+    0.8,
+    5
+   ],
+   "learned": [
+    0.6666666666666666,
+    6
+   ],
+   "revised": [
+    0.8,
+    5
+   ]
+  },
+  "CCP110": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "TRPM7": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "GTF2H1": {
+   "old": [
+    0.2,
+    15
+   ],
+   "new": [
+    0.2777777777777778,
+    18
+   ],
+   "learned": [
+    0.3684210526315789,
+    19
+   ],
+   "revised": [
+    0.35714285714285715,
+    14
+   ]
+  },
+  "PHF5A": {
+   "old": [
+    0.75,
+    8
+   ],
+   "new": [
+    0.75,
+    8
+   ],
+   "learned": [
+    0.4444444444444444,
+    9
+   ],
+   "revised": [
+    0.75,
+    8
+   ]
+  },
+  "CTCF": {
+   "old": [
+    null,
+    2
+   ],
+   "new": [
+    0.2,
+    5
+   ],
+   "learned": [
+    0.6,
+    5
+   ],
+   "revised": [
+    null,
+    4
+   ]
+  },
+  "BRIP1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CDK2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "RNF14": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "ECT2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "BARD1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "RACGAP1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CLCC1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PTK2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "GTF2A1": {
+   "old": [
+    0.7727272727272727,
+    22
+   ],
+   "new": [
+    0.76,
+    25
+   ],
+   "learned": [
+    0.64,
+    25
+   ],
+   "revised": [
+    0.5384615384615384,
+    13
+   ]
+  },
+  "DMAP1": {
+   "old": [
+    0.5185185185185185,
+    27
+   ],
+   "new": [
+    0.54,
+    50
+   ],
+   "learned": [
+    0.3888888888888889,
+    54
+   ],
+   "revised": [
+    0.6046511627906976,
+    43
+   ]
+  },
+  "SETDB1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "RAD9A": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CDK9": {
+   "old": [
+    null,
+    2
+   ],
+   "new": [
+    null,
+    2
+   ],
+   "learned": [
+    null,
+    3
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "CEP192": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "TAF1": {
+   "old": [
+    0.5232558139534884,
+    86
+   ],
+   "new": [
+    0.5859375,
+    128
+   ],
+   "learned": [
+    0.5492957746478874,
+    142
+   ],
+   "revised": [
+    0.514018691588785,
+    107
+   ]
+  },
+  "USF2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "EIF2B2": {
+   "old": [
+    0.0,
+    16
+   ],
+   "new": [
+    0.0,
+    16
+   ],
+   "learned": [
+    0.35294117647058826,
+    17
+   ],
+   "revised": [
+    null,
+    4
+   ]
+  },
+  "MED12": {
+   "old": [
+    0.3584905660377358,
+    53
+   ],
+   "new": [
+    0.3793103448275862,
+    58
+   ],
+   "learned": [
+    0.3384615384615385,
+    65
+   ],
+   "revised": [
+    0.39285714285714285,
+    56
+   ]
+  },
+  "RAD51": {
+   "old": [
+    0.0,
+    7
+   ],
+   "new": [
+    0.0,
+    7
+   ],
+   "learned": [
+    0.14285714285714285,
+    7
+   ],
+   "revised": [
+    0.0,
+    6
+   ]
+  },
+  "PPARGC1B": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "HOXC10": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "KCTD10": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PIK3R4": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "TRRAP": {
+   "old": [
+    0.5454545454545454,
+    22
+   ],
+   "new": [
+    0.5714285714285714,
+    28
+   ],
+   "learned": [
+    0.6666666666666666,
+    33
+   ],
+   "revised": [
+    0.5172413793103449,
+    29
+   ]
+  },
+  "HSF1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    2
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "MBTPS2": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "USP5": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "PPP1CA": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "HMGB1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "ELL": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "XAB2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "SNW1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    2
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "HINFP": {
+   "old": [
+    0.26666666666666666,
+    15
+   ],
+   "new": [
+    0.43333333333333335,
+    30
+   ],
+   "learned": [
+    0.5581395348837209,
+    43
+   ],
+   "revised": [
+    0.3870967741935484,
+    31
+   ]
+  },
+  "YY1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "ACD": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CLK2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "NUMA1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CEP68": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CDK11A": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "ATF5": {
+   "old": [
+    0.46511627906976744,
+    43
+   ],
+   "new": [
+    0.40625,
+    64
+   ],
+   "learned": [
+    0.4875,
+    80
+   ],
+   "revised": [
+    0.4032258064516129,
+    62
+   ]
+  },
+  "HCFC1": {
+   "old": [
+    0.5882352941176471,
+    17
+   ],
+   "new": [
+    0.41379310344827586,
+    29
+   ],
+   "learned": [
+    0.5151515151515151,
+    33
+   ],
+   "revised": [
+    0.375,
+    24
+   ]
+  },
+  "NCOA4": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "DNM1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "RNF4": {
+   "old": [
+    0.6666666666666666,
+    15
+   ],
+   "new": [
+    0.6470588235294118,
+    17
+   ],
+   "learned": [
+    0.5882352941176471,
+    17
+   ],
+   "revised": [
+    0.6875,
+    16
+   ]
+  },
+  "GRB2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "WEE1": {
+   "old": [
+    0.8421052631578947,
+    19
+   ],
+   "new": [
+    0.8846153846153846,
+    26
+   ],
+   "learned": [
+    0.4444444444444444,
+    27
+   ],
+   "revised": [
+    0.8846153846153846,
+    26
+   ]
+  },
+  "AURKB": {
+   "old": [
+    0.4444444444444444,
+    9
+   ],
+   "new": [
+    0.4,
+    10
+   ],
+   "learned": [
+    0.36363636363636365,
+    11
+   ],
+   "revised": [
+    0.5,
+    10
+   ]
+  },
+  "MZF1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "BANP": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "ZNF335": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "KDM2A": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "ESPL1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "RCOR1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "CCND1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CTBP2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "CTDP1": {
+   "old": [
+    null,
+    2
+   ],
+   "new": [
+    null,
+    2
+   ],
+   "learned": [
+    null,
+    2
+   ],
+   "revised": [
+    null,
+    2
+   ]
+  },
+  "DMRTA2": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "FBLIM1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "FOXD4": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "HCRTR1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "JAZF1": {
+   "old": [
+    null,
+    1
+   ],
+   "new": [
+    null,
+    1
+   ],
+   "learned": [
+    null,
+    1
+   ],
+   "revised": [
+    null,
+    1
+   ]
+  },
+  "KLF7": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "MST1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "NANOG": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "OTX1": {
+   "old": [
+    null,
+    0
+   ],
+   "new": [
+    null,
+    0
+   ],
+   "learned": [
+    null,
+    0
+   ],
+   "revised": [
+    null,
+    0
+   ]
+  },
+  "U2AF1": {
+   "old": [
+    0.647887323943662,
+    71
+   ],
+   "new": [
+    0.6106194690265486,
+    113
+   ],
+   "learned": [
+    0.5476190476190477,
+    126
+   ],
+   "revised": [
+    0.6571428571428571,
+    105
+   ]
+  },
+  "ZNF236": {
+   "old": [
+    0.7222222222222222,
+    18
+   ],
+   "new": [
+    0.8571428571428571,
+    35
+   ],
+   "learned": [
+    0.6923076923076923,
+    39
+   ],
+   "revised": [
+    0.75,
+    20
+   ]
+  }
+ }
+}

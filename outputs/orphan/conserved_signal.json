@@ -1,0 +1,23 @@
+{
+ "n_shared_knockouts": 1694,
+ "topK": 100,
+ "common_genes": 7228,
+ "Q1_median_jaccard": 0.025,
+ "Q1_mean_conserved_movers": 6.2,
+ "Q2_prior_conserved": 167.69,
+ "Q2_prior_specific": 91.07,
+ "Q3_mech_frac_conserved": 0.0146,
+ "Q3_mech_frac_specific": 0.0068,
+ "p10_vs_k562": {
+  "full_stack": 2.73,
+  "prior": 2.8,
+  "n": 1694
+ },
+ "p10_vs_conserved": {
+  "full_stack": 0.98,
+  "prior": 0.99,
+  "n": 1106
+ },
+ "verdict": "CROSS-CELL-LINE CONSERVATION (the recommended lever), measured on 1694 shared K562+HCT116 knockouts. Honest result: it CONFIRMS the wall from a second lineage rather than breaking it. (Q1) the response is OVERWHELMINGLY CELL-SPECIFIC: median Jaccard of the top-100 movers = 0.025 -- only ~6.2 of 100 top movers reproduce across K562 and HCT116. A knockout's transcriptional response barely transfers between lineages, which also FALSIFIES the CellOS-2.0 'cell-agnostic simulator' premise (you cannot read one line's response off another). (Q2) those ~6.2 conserved genes are the USUAL SUSPECTS -- responsiveness-prior 167.69 vs 91.07 for cell-specific movers (~2x more generic); conservation preferentially re-selects genes that move under many knockouts in any line. (Q3) conservation does enrich the knockout's own MECHANISM by ~2.1x (0.0146 vs 0.0068) -- REAL but off a NEGLIGIBLE base: 98.5% of even the conserved core is still non-mechanism, so it is nowhere near a usable filter. (precision@10) and it does NOT translate: vs the conserved target the full stack is 0.98 (mechanism adds -0.01), vs single-line 2.73 (mechanism -0.07) -- mechanism adds ~0 either way, and the conserved target is so small (~6 genes) that a top-10 scores lower against it. NET: the lever did not pan out -- a second cell line confirms responses are mostly cell-specific and the conserved core is mostly generic; the 2x mechanism concentration is real but too small and non-actionable to build a specific predictor on. The far-field wall stands from a second lineage. The one genuinely useful takeaway is negative-but-important: KO responses are lineage-specific, so a 'universal' predictor is the wrong frame -- the honest path is a high-precision ABSTAINING near-field tool per cell line, not a broad cross-line one.",
+ "note": "Cross-cell-line conserved-signal test (K562 + HCT116, the recommended lever to add knockout-specific signal). Movers = rank-based top-100 by |z| per line (datasets on different scales). RESULTS: (Q1) response is OVERWHELMINGLY cell-specific -- median top-100 Jaccard 0.025 (~6.2/100 conserved), which also falsifies the CellOS-2.0 'cell-agnostic simulator' premise; (Q2) conserved movers are ~2x MORE generic (prior 167.69 vs 91.07) -- conservation re-selects usual-suspect genes; (Q3) conservation enriches mechanism ~2.1x (0.0146 vs 0.0068) -- REAL but off a negligible base (98.5% of the conserved core is still non-mechanism); precision@10 vs conserved 0.98 (mechanism -0.01) vs single-line 2.73 -- mechanism adds ~0 either way. CONCLUSION: the recommended lever did NOT pan out -- a second lineage confirms the wall (responses do not reproduce across lines) and the conserved core is dominated by generic responsive genes; the 2x mechanism concentration is real but too small/non-actionable to build a specific predictor on. Genuinely useful negative: KO responses are lineage-specific, so a 'universal' predictor is the wrong frame -- the honest path is a high-precision ABSTAINING near-field tool per cell line, not a broad cross-line one."
+}

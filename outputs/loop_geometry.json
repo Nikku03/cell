@@ -1,0 +1,282 @@
+{
+ "test": "loop_geometry",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/human_proteome.fasta.gz",
+    "bytes": 7507899,
+    "hash": "b12dcc9f8f5f588e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM.xml",
+    "bytes": 43115559,
+    "hash": "cc5a4383c6116b0c",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 3179,
+   "selection": "filtered",
+   "fraction": 0.192760126121756
+  },
+  "seed": 11600,
+  "controls": [
+   "organelle volumes as literature RANGES, swept, never fitted",
+   "a crowding ceiling that the assembled proteome could exceed",
+   "unmappable compartment labels named rather than defaulted",
+   "a compartment shuffle checked for capability before its verdict",
+   "publication mass per compartment reported next to protein mass",
+   "coverage by gene, by mass and by reaction, all three"
+  ],
+  "note": "the cell had compartments and transport but no volumes, so no concentration, so nothing could be physically impossible",
+  "warnings": []
+ },
+ "gates": {
+  "V1 one compartment system, unmappable labels declared": false,
+  "V2 volumes from literature ranges, swept": true,
+  "V3 the protein concentrations are physically possible": true,
+  "V4 transport acquires a direction": true,
+  "V5 the null is capable and fame reported": true,
+  "V6 coverage by all three denominators": true
+ },
+ "v1": {
+  "naive_agreement": 0.4028417653390743,
+  "mapped_agreement": 0.4028417653390743,
+  "unmappable": {
+   "endosome": 50,
+   "membrane": 1050,
+   "plasma membrane": 4524,
+   "cytoskeleton": 30
+  },
+  "n_pairs": 23225
+ },
+ "v2": {
+  "vol_fraction": {
+   "c": [
+    0.45,
+    0.6
+   ],
+   "n": [
+    0.06,
+    0.12
+   ],
+   "m": [
+    0.08,
+    0.22
+   ],
+   "r": [
+    0.08,
+    0.15
+   ],
+   "g": [
+    0.02,
+    0.04
+   ],
+   "l": [
+    0.005,
+    0.015
+   ],
+   "x": [
+    0.002,
+    0.008
+   ]
+  },
+  "cell_vol_um3": [
+   2000.0,
+   3000.0,
+   4000.0
+  ]
+ },
+ "v3": {
+  "rows": [
+   {
+    "cell_vol_um3": 2000.0,
+    "end": "low-volume",
+    "conc_c": 66.03773467873859,
+    "conc_n": 227.16051288340668,
+    "conc_m": 56.2159354305303,
+    "conc_r": 54.21062113904632,
+    "conc_g": 17.594822371201918,
+    "conc_l": 19.07641263717323,
+    "conc_x": 30.978044796108357
+   },
+   {
+    "cell_vol_um3": 2000.0,
+    "end": "high-volume",
+    "conc_c": 49.52830100905395,
+    "conc_n": 113.58025644170334,
+    "conc_m": 20.442158338374654,
+    "conc_r": 28.912331274158035,
+    "conc_g": 8.797411185600959,
+    "conc_l": 6.358804212391077,
+    "conc_x": 7.744511199027089
+   },
+   {
+    "cell_vol_um3": 3000.0,
+    "end": "low-volume",
+    "conc_c": 44.0251564524924,
+    "conc_n": 151.44034192227113,
+    "conc_m": 37.477290287020196,
+    "conc_r": 36.14041409269755,
+    "conc_g": 11.72988158080128,
+    "conc_l": 12.717608424782155,
+    "conc_x": 20.652029864072237
+   },
+   {
+    "cell_vol_um3": 3000.0,
+    "end": "high-volume",
+    "conc_c": 33.018867339369294,
+    "conc_n": 75.72017096113557,
+    "conc_m": 13.628105558916435,
+    "conc_r": 19.27488751610536,
+    "conc_g": 5.86494079040064,
+    "conc_l": 4.239202808260718,
+    "conc_x": 5.163007466018059
+   },
+   {
+    "cell_vol_um3": 4000.0,
+    "end": "low-volume",
+    "conc_c": 33.018867339369294,
+    "conc_n": 113.58025644170334,
+    "conc_m": 28.10796771526515,
+    "conc_r": 27.10531056952316,
+    "conc_g": 8.797411185600959,
+    "conc_l": 9.538206318586615,
+    "conc_x": 15.489022398054178
+   },
+   {
+    "cell_vol_um3": 4000.0,
+    "end": "high-volume",
+    "conc_c": 24.764150504526974,
+    "conc_n": 56.79012822085167,
+    "conc_m": 10.221079169187327,
+    "conc_r": 14.456165637079017,
+    "conc_g": 4.3987055928004795,
+    "conc_l": 3.1794021061955386,
+    "conc_x": 3.8722555995135446
+   }
+  ],
+  "cytosol_central_mg_ml": 38.522011895930845,
+  "worst_mg_ml": 66.03773467873859,
+  "ceiling": [
+   200.0,
+   300.0
+  ],
+  "n_assigned": 3179
+ },
+ "v4": {
+  "n_active_transport": 714,
+  "n_volumed": 714,
+  "median_M_per_h": 0.00041904761904761913,
+  "p90": 0.044000000000000004,
+  "max": 24.091851799840164,
+  "frac_above_1M_h": 0.008403361344537815
+ },
+ "v5": {
+  "capability": {
+   "capable": true,
+   "changed": 0.6986473733878578,
+   "reason": "the null changes the statistic's input"
+  },
+  "survival": {
+   "real": 37.73584838785063,
+   "n_null": 20,
+   "null_mean": 24.481591051627767,
+   "null_sd": 2.030985888122352,
+   "z": 6.52602138386911,
+   "defined": true,
+   "fraction": 0.648762174365472,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "pubs_rho": 1.0
+ },
+ "v6": {
+  "by_gene": 0.192760126121756,
+  "by_mass": 0.742707844384421
+ },
+ "seconds": 31.42189884185791,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 116 -- give the cell geometry: one compartment system, real volumes, possible concentrations",
+  "====================================================================================================",
+  "",
+  "  16,492 genes, 12,931 reactions, 9 GEM compartments",
+  "",
+  "V1 ONE COMPARTMENT SYSTEM, WITH WHAT CANNOT BE MAPPED DECLARED",
+  "     naive label-vs-GEM agreement      9,356/23,225 = 40.3%",
+  "     under the explicit mapping        9,356/23,225 = 40.3%",
+  "     gene-reaction pairs whose label has NO GEM counterpart: 5,654",
+  "       plasma membrane     4,524  -- named, not defaulted",
+  "       membrane            1,050  -- named, not defaulted",
+  "       endosome               50  -- named, not defaulted",
+  "       cytoskeleton           30  -- named, not defaulted",
+  "     of the reconcilable pairs alone: 53.2%",
+  "     V1 FAIL -- the mapping does NOT improve, so the systems are not reconcilable",
+  "",
+  "V2 VOLUMES FROM LITERATURE RANGES, SWEPT, NOT FITTED",
+  "     cytoplasm       (c)  0.450 - 0.600 of cell volume",
+  "     nucleus         (n)  0.060 - 0.120 of cell volume",
+  "     mitochondrion   (m)  0.080 - 0.220 of cell volume",
+  "     ER              (r)  0.080 - 0.150 of cell volume",
+  "     Golgi           (g)  0.020 - 0.040 of cell volume",
+  "     lysosome        (l)  0.005 - 0.015 of cell volume",
+  "     peroxisome      (x)  0.002 - 0.008 of cell volume",
+  "     cell volume swept over (2000.0, 3000.0, 4000.0) um^3",
+  "     nothing here is tuned to make V3 pass; the sweep is the honesty",
+  "",
+  "V3 THE PROTEIN CONCENTRATIONS ARE PHYSICALLY POSSIBLE",
+  "     3,179 measured proteins assigned to an intracellular GEM compartment",
+  "     total assigned protein mass 105.4 pg",
+  "     cell 2,000 um^3, low-volume  cytosol    66.0 mg/mL   Golg   17.6  lyso   19.1  mito   56.2  nucl  227.2  ER   54.2  pero   31.0",
+  "     cell 2,000 um^3, high-volume cytosol    49.5 mg/mL   Golg    8.8  lyso    6.4  mito   20.4  nucl  113.6  ER   28.9  pero    7.7",
+  "     cell 3,000 um^3, low-volume  cytosol    44.0 mg/mL   Golg   11.7  lyso   12.7  mito   37.5  nucl  151.4  ER   36.1  pero   20.7",
+  "     cell 3,000 um^3, high-volume cytosol    33.0 mg/mL   Golg    5.9  lyso    4.2  mito   13.6  nucl   75.7  ER   19.3  pero    5.2",
+  "     cell 4,000 um^3, low-volume  cytosol    33.0 mg/mL   Golg    8.8  lyso    9.5  mito   28.1  nucl  113.6  ER   27.1  pero   15.5",
+  "     cell 4,000 um^3, high-volume cytosol    24.8 mg/mL   Golg    4.4  lyso    3.2  mito   10.2  nucl   56.8  ER   14.5  pero    3.9",
+  "     crowding ceiling 200-300 mg/mL protein",
+  "     cytosol at the central volume: 38.5 mg/mL",
+  "     worst across the whole sweep:  66.0 mg/mL (0.22x the ceiling; gate allows 2x)",
+  "     V3 PASS -- the assembled proteome fits inside a cell",
+  "",
+  "V4 TRANSPORT ACQUIRES A DIRECTION",
+  "     714 transport reactions carry flux, 714 into a volumed compartment",
+  "     implied concentration change: median 0.000419 M/h, 90th 0.044, max 24.1",
+  "     above 1 M/h (implausible for any metabolite pool): 6 (0.8%)",
+  "     this quantity has not existed before in this repository -- reported, not gated",
+  "",
+  "V5 A NULL THAT CAN FIRE, AND THE FAME CONTROL",
+  "     CAPABILITY: shuffling compartment labels changes 69.9% of assignments -- capable: True",
+  "     cytosolic protein concentration under a compartment shuffle: real +37.7358  null +24.4816 +/- 2.0310  z +6.5  survives 65%",
+  "     per-compartment protein mass vs publication mass: rho +1.0000 over 7 compartments (loop 102 found +0.4056 on its own 12-bucket version)",
+  "     V5 PASS",
+  "",
+  "V6 COVERAGE DECLARED BY ALL THREE DENOMINATORS",
+  "     by GENE           3,179 of 16,492 = 19.3%",
+  "     by PROTEOME MASS  74.3% of measured mass",
+  "     by REACTION       every one of 12,931 reactions is compartment-resolved in GEM already",
+  "     the gene layer is the sparse one; the chemistry layer was never missing compartments",
+  "",
+  "  FAIL  V1 one compartment system, unmappable labels declared",
+  "  PASS  V2 volumes from literature ranges, swept",
+  "  PASS  V3 the protein concentrations are physically possible",
+  "  PASS  V4 transport acquires a direction",
+  "  PASS  V5 the null is capable and fame reported",
+  "  PASS  V6 coverage by all three denominators",
+  "    manifest: 4 inputs, coverage 3179/16492 (19.3%) by 'filtered', seed 11600, controls 6"
+ ]
+}

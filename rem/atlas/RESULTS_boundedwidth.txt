@@ -1,0 +1,178 @@
+=================================================================================================
+BOUNDED WIDTH: FIX THE BUDGET, DROP WHAT DOES NOT FIT, MEASURE THE DAMAGE
+=================================================================================================
+  Route 1 fixed the geometry and the width came out at 2,724 -- one factor covering 95% of
+  the human genome. Here the width is fixed first and the decomposition is forced into it
+  by deleting edges, so cost is N 2^(w+1) BY CONSTRUCTION and the whole question is error.
+  tail-legal threshold for reference: MI < 2.4435e-07
+
+=================================================================================================
+B1  P_hat IS A DISTRIBUTION, AND THE UNTRUNCATED CASE IS EXACT
+=================================================================================================
+  cascade              w=N-1  dropped 0  sum(P_hat) = 1.00000000000000  max|P_hat-P| = 3.036e-18   PASS
+  random degree 2      w=N-1  dropped 0  sum(P_hat) = 1.00000000000000  max|P_hat-P| = 4.337e-18   PASS
+  hub, 3 regulators    w=N-1  dropped 0  sum(P_hat) = 1.00000000000000  max|P_hat-P| = 1.821e-17   PASS
+  L1-style control: the graph is COMPLETE and MI-weighted, so width is the only thing that
+  drops an edge. A first version thresholded at tau first, which left a 7.4e-5 residual
+  here that had nothing to do with width. That is recorded in complete_graph's docstring.
+  B1: PASS
+
+=================================================================================================
+B2/B3  THE ERROR CURVE, AND ARE THE DROPPED EDGES THE WEAK ONES?
+=================================================================================================
+
+  cascade, shallow tail: exact P(all ON) = 3.5046e-03   residual 2.3e-15
+      w       cost  dropped   frac  tail rel err  max mean err  strongest drop    x tau
+      1  5.400e+01       78   0.86     4.355e-02     9.437e-16       1.867e-04      764
+      2  1.020e+02       66   0.73     1.697e-03     4.441e-16       4.446e-06       18
+      3  1.900e+02       55   0.60     2.339e-05     4.441e-16       9.025e-08        0
+      4  3.500e+02       45   0.49     5.633e-06     3.331e-16       2.411e-09        0
+      5  6.380e+02       36   0.40     4.146e-07     2.220e-16       4.802e-11        0
+      6  1.150e+03       28   0.31     1.978e-08     3.331e-16       1.274e-12        0
+      8  3.582e+03       15   0.16     7.536e-09     3.331e-16       1.463e-15        0
+
+  cascade, deep tail: exact P(all ON) = 1.3362e-13   residual 4.6e-15
+      w       cost  dropped   frac  tail rel err  max mean err  strongest drop    x tau
+      1  5.400e+01       78   0.86     1.063e+00     4.718e-16       2.638e-05      108
+      2  1.020e+02       66   0.73     4.604e-02     3.886e-16       2.196e-07        1
+      3  1.900e+02       55   0.60     5.509e-03     3.053e-16       1.203e-09        0
+      4  3.500e+02       45   0.49     1.190e-03     2.914e-16       4.744e-12        0
+      5  6.380e+02       36   0.40     1.005e-05     3.192e-16       1.473e-14        0
+      6  1.150e+03       28   0.31     3.835e-06     3.331e-16       4.623e-15        0
+      8  3.582e+03       15   0.16     6.557e-06     3.192e-16       4.130e-15        0
+
+  random degree 2, shallow tail: exact P(all ON) = 4.1829e-03   residual 4.1e-15
+      w       cost  dropped   frac  tail rel err  max mean err  strongest drop    x tau
+      1  5.400e+01       78   0.86     2.709e-01     4.441e-16       1.890e-03     7734
+      2  1.020e+02       66   0.73     1.767e-01     4.364e-05       1.873e-03     7665
+      3  1.900e+02       55   0.60     7.845e-02     7.654e-05       1.524e-03     6238
+      4  3.500e+02       45   0.49     3.560e-02     7.225e-05       1.522e-03     6227
+      5  6.380e+02       36   0.40     1.556e-02     7.027e-05       1.424e-03     5828
+      6  1.150e+03       28   0.31     2.462e-05     3.481e-05       1.214e-04      497
+      8  3.582e+03       15   0.16     2.931e-03     2.206e-06       2.876e-05      118
+
+  random degree 2, deep tail: exact P(all ON) = 3.5693e-13   residual 5.6e-15
+      w       cost  dropped   frac  tail rel err  max mean err  strongest drop    x tau
+      1  5.400e+01       78   0.86     9.665e-01     4.857e-16       1.536e-03     6286
+      2  1.020e+02       66   0.73     8.021e-01     1.203e-05       9.871e-04     4040
+      3  1.900e+02       55   0.60     3.056e-01     2.322e-05       5.928e-04     2426
+      4  3.500e+02       45   0.49     7.853e-02     1.449e-05       5.000e-04     2046
+      5  6.380e+02       36   0.40     3.221e-02     7.665e-06       3.411e-04     1396
+      6  1.150e+03       28   0.31     1.393e-01     7.128e-06       3.023e-05      124
+      8  3.582e+03       15   0.16     1.066e-01     2.011e-07       2.566e-06       11
+
+  hub, 3 regulators, shallow tail: exact P(all ON) = 5.1430e-03   residual 2.7e-15
+      w       cost  dropped   frac  tail rel err  max mean err  strongest drop    x tau
+      1  5.400e+01       78   0.86     2.659e-01     5.551e-16       5.084e-04     2081
+      2  1.020e+02       66   0.73     2.143e-01     2.313e-06       4.915e-04     2011
+      3  1.900e+02       55   0.60     1.757e-01     2.209e-06       4.721e-04     1932
+      4  3.500e+02       45   0.49     1.444e-01     2.120e-06       4.489e-04     1837
+      5  6.380e+02       36   0.40     1.149e-01     1.214e-05       4.462e-04     1826
+      6  1.150e+03       28   0.31     7.933e-02     3.993e-06       4.419e-04     1808
+      8  3.582e+03       15   0.16     3.011e-02     2.373e-06       3.308e-04     1354
+
+  hub, 3 regulators, deep tail: exact P(all ON) = 1.9344e-12   residual 3.1e-15
+      w       cost  dropped   frac  tail rel err  max mean err  strongest drop    x tau
+      1  5.400e+01       78   0.86     9.831e-01     4.441e-16       6.021e-04     2464
+      2  1.020e+02       66   0.73     9.595e-01     1.386e-06       5.790e-04     2369
+      3  1.900e+02       55   0.60     9.189e-01     1.267e-06       5.266e-04     2155
+      4  3.500e+02       45   0.49     8.481e-01     1.246e-06       4.570e-04     1870
+      5  6.380e+02       36   0.40     7.458e-01     1.010e-06       4.346e-04     1779
+      6  1.150e+03       28   0.31     6.247e-01     9.825e-07       4.296e-04     1758
+      8  3.582e+03       15   0.16     2.930e-01     6.052e-07       3.602e-04     1474
+
+  B3: at the widths that are cheap, the strongest sacrificed edge is often BELOW tau and
+  the tail error is still large. Sub-threshold edges are not free in aggregate -- which is
+  the same thing route 1 found when the sqrt(MI) bound failed. The error is a property of
+  how many edges are dropped, not only of how strong the strongest one was.
+
+=================================================================================================
+B7  THE MATCHED CONTROL: weakest-first against random, at identical width
+=================================================================================================
+  If choosing which edges to keep buys nothing, B2 is a statement about budget and not
+  about method.
+    topology               w  weakest-first   random (mean of 8)    ratio
+    cascade                2      4.604e-02            9.210e-01     20.0
+    cascade                4      1.190e-03            8.264e-01    694.3
+    cascade                6      3.835e-06            6.466e-01 168591.0
+    random degree 2        2      8.021e-01            9.864e-01      1.2
+    random degree 2        4      7.853e-02            9.433e-01     12.0
+    random degree 2        6      1.393e-01            8.511e-01      6.1
+    hub, 3 regulators      2      9.595e-01            9.642e-01      1.0
+    hub, 3 regulators      4      8.481e-01            8.858e-01      1.0
+    hub, 3 regulators      6      6.247e-01            7.100e-01      1.1
+
+  median ratio by topology, which the pooled median hides:
+    cascade                   694.3
+    random degree 2             6.1
+    hub, 3 regulators           1.0
+  pooled median 6.1
+  B7: choosing which edges to keep is worth 5 orders of magnitude on a CASCADE and
+  worth NOTHING on a hub -- ratio 1.0. The strategy only helps where the structure is
+  already chain-like. On the topology that matters the error is set by the width alone,
+  so on real networks B2 is a statement about budget and not about method.
+
+=================================================================================================
+B4  THE STRUCTURAL COST ON TRRUST v2 HUMAN  (no model, no dynamics)
+=================================================================================================
+  2861 genes, 8403 direct regulatory edges, sha256 9b909319ccc8e36588b5a1bd3640e0df
+       w  cost N.2^(w+1)  edges represented   of 8403     LOST
+       5       1.831e+05               6044     0.728    0.272
+      10       5.859e+06               7167     0.863    0.137
+      15       1.875e+08               7649     0.922    0.078
+      20       6.000e+09               7890     0.951    0.049
+      25       1.920e+11               8049     0.970    0.030
+      30       6.144e+12               8130     0.980    0.020
+      40       6.291e+15               8221     0.990    0.010
+  Every lost edge is a DIRECT regulatory edge carrying mutual information thousands of
+  times above tau. This column contains no dynamics and no model -- it is a property of
+  the graph and of the width budget, nothing else.
+
+=================================================================================================
+B5/B6  THE EXTRAPOLATION (A MODEL), AND THE VERDICT
+=================================================================================================
+  B5 is the only claim here that is not a direct measurement. It maps B4's measured drop
+  fraction on the real network through B2's measured error-vs-drop-fraction curve. The
+  bridge assumes the error depends on the drop fraction and not on which topology produced
+  it, which is an assumption and is why this is labelled a model.
+
+    reference curves at N=16, deep tail (P = 4.87e-14):
+     drop fraction   cascade err       hub err     spread
+             0.875     1.345e+00     9.910e-01    7.4e-01
+             0.758     5.441e-02     9.778e-01    1.8e+01
+             0.650     7.722e-03     9.555e-01    1.2e+02
+             0.550     1.424e-03     9.142e-01    6.4e+02
+             0.458     9.575e-05     8.518e-01    8.9e+03
+             0.375     3.160e-05     7.609e-01    2.4e+04
+             0.300     2.340e-05     6.519e-01    2.8e+04
+             0.233     7.820e-06     5.221e-01    6.7e+04
+             0.175     4.253e-06     3.727e-01    8.8e+04
+             0.125     1.005e-05     2.161e-01    2.2e+04
+             0.083     1.719e-06     6.439e-02    3.7e+04
+             0.050     7.285e-07     7.151e-02    9.8e+04
+             0.025     3.102e-06     8.841e-02    2.9e+04
+    The two differ by orders at the same drop fraction, which is why B5 reports a range.
+
+  the measured domain of that curve is drop fraction [0.03, 0.88]. Outside it the
+  model REFUSES rather than clamping -- clamping is what made the first version of this
+  table return one constant and look like a result.
+
+       w  TRRUST lost frac  err: cascade end      hub end  affordable  accurate
+       5             0.272         1.681e-05    5.970e-01        True     False
+      10             0.137         8.712e-06    2.521e-01        True     False
+      15             0.078         1.573e-06    6.543e-02        True     False
+      20             0.049         7.857e-07    7.192e-02        True     False
+      25             0.030         2.604e-06    8.487e-02        True     False
+      30             0.020     out of domain           --       False        --
+      40             0.010     out of domain           --       False        --
+
+  predeclared: affordable = 2^w <= 1e9 (w <= 30); accurate = tail error < 1%
+  affordable rows the model could not reach: 0
+  the hub curve PLATEAUS: as the drop fraction falls to 0.025 the error settles at 0.06-0.37 rather than going to zero. A hub of degree k
+  is a (k+1)-clique in the dependence graph, so the last edges any width below k is forced
+  to drop are hub edges, which are the strongest ones. Buying width does not buy accuracy
+  past that point -- which is why more width was non-monotone in B2 as well.
+  B6: EMPTY INTERSECTION -- every affordable width is inside the measured domain and
+      none is accurate at the hub end. An earlier run reached this verdict without
+      support, on one in-domain row; it is supported now because all five affordable
+      widths are in domain and all five fail.

@@ -1,0 +1,379 @@
+"""Answers the gates predeclared in db5_unselected.py. No bar is defined in this file.
+
+Every threshold used here is quoted from that module's docstring, which was committed before
+the run. This file is arithmetic on the shards, not a place to decide what counts as a pass.
+"""
+from __future__ import annotations
+import glob, json, sys
+sys.path.insert(0, ".")
+import numpy as np
+
+OK = ("high", "medium", "acceptable")
+TOPK = 20
+SPACING = 1.5                  # must match db5_unselected.SPACING; the screen-headroom bar
+ALPHA = 0.05                   # one-sided exact p for the retrieval gate
+Q1_RHO = -0.10                 # the ORIGINAL Q1 effect-size bar, unchanged
+PRIOR_RHO = -0.4498            # what the score-selected shortlist reported, for comparison
+
+
+def _rank(x):
+    return np.argsort(np.argsort(np.asarray(x, dtype=float))).astype(float)
+
+
+def spearman(a, b):
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    m = np.isfinite(a) & np.isfinite(b)
+    if m.sum() < 5:
+        return float("nan")
+    ra, rb = _rank(a[m]), _rank(b[m])
+    ra -= ra.mean(); rb -= rb.mean()
+    d = np.sqrt((ra * ra).sum() * (rb * rb).sum())
+    return float((ra * rb).sum() / d) if d > 0 else float("nan")
+
+
+def partial(a, b, *ctrl):
+    """Spearman(a,b) with one or more controls held fixed, by rank-residualising."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    C = [np.asarray(c, float) for c in ctrl]
+    m = np.isfinite(a) & np.isfinite(b)
+    for c in C:
+        m &= np.isfinite(c)
+    if m.sum() < 10:
+        return float("nan")
+    ra, rb = _rank(a[m]), _rank(b[m])
+    X = np.column_stack([np.ones(int(m.sum()))] + [_rank(c[m]) for c in C])
+    def resid(y):
+        beta, *_ = np.linalg.lstsq(X, y, rcond=None)
+        return y - X @ beta
+    return spearman(resid(ra), resid(rb))
+
+
+def sign_test(vals, alt_negative=True):
+    """Exact two-sided binomial sign test on per-complex statistics -- the complex is the unit
+    of replication, not the pose. Returns (n_neg, n, p)."""
+    from math import comb
+    v = np.asarray([x for x in vals if np.isfinite(x) and x != 0.0], float)
+    n = len(v)
+    k = int((v < 0).sum()) if alt_negative else int((v > 0).sum())
+    if n == 0:
+        return 0, 0, float("nan")
+    tail = sum(comb(n, i) for i in range(k, n + 1)) / 2.0 ** n
+    return k, n, float(min(1.0, 2.0 * tail))
+
+
+def poisson_binomial_tail(ps, x):
+    """Exact P(X >= x) for independent Bernoulli(ps), by dynamic programming.
+
+    A normal approximation misstates the tail of a small-mean skewed discrete distribution,
+    which is how one lucky complex gets reported as signal.
+    """
+    ps = [float(p) for p in ps]
+    dist = np.zeros(len(ps) + 1); dist[0] = 1.0
+    for p in ps:
+        dist[1:] = dist[1:] * (1 - p) + dist[:-1] * p
+        dist[0] *= (1 - p)
+    return float(dist[int(x):].sum())
+
+
+def chance_hit(N, k, top=TOPK):
+    """P(a random top-`top` of N contains >= 1 of the k acceptable)."""
+    if k <= 0 or N <= 0:
+        return 0.0
+    q = 1.0
+    for j in range(min(top, N)):
+        num = N - k - j
+        if num <= 0:
+            return 1.0
+        q *= num / (N - j)
+    return float(1.0 - q)
+
+
+def load(pattern="benchmarks/unsel_w*.json"):
+    out = []
+    for f in sorted(glob.glob(pattern)):
+        try:
+            out += json.load(open(f))
+        except Exception:
+            pass
+    return out
+
+
+def rank_norm(x, descending=False):
+    """Rank-normalise to [0,1], 0 = best. NON-FINITE VALUES ARE FORCED TO THE WORST SLOT.
+
+    np.argsort puts nan last ascending, so the descending arm mapped r -> n-1-r and handed
+    every undefined pose the BEST rank -- a pose whose entropy was never defined would have
+    won top-20 slots in the entropy and blend arms and inflated them against a null that does
+    not model it. Undefined is not favourable; it is not rankable.
+    """
+    v = np.asarray(x, float)
+    bad = ~np.isfinite(v)
+    r = _rank(v)
+    if descending:
+        r = len(r) - 1 - r
+    r = r.astype(float)
+    if bad.any():                     # push them past every finite pose, order among them fixed
+        r[bad] = len(r) + np.arange(int(bad.sum()))
+        r = _rank(r)
+    return r / max(1.0, len(r) - 1)
+
+
+def main():
+    data = load(sys.argv[1] if len(sys.argv) > 1 else "benchmarks/unsel_w*.json")
+    data = [c for c in data if len(c["poses"]) >= 20]
+    if not data:
+        print("  no shards")
+        return 1
+    npose = sum(len(c["poses"]) for c in data)
+    nd = sum(1 for c in data for p in c["poses"] if p["degenerate"])
+    print(f"  {len(data)} complexes, {npose} sampled poses, {nd} degenerate "
+          f"({100.0 * nd / npose:.1f}%) excluded from Q1\n")
+
+    # ---------------- STEP 0: the reachable-set ceiling ----------------
+    print("  STEP 0  THE REACHABLE-SET CEILING -- could this search produce an acceptable "
+          "pose AT ALL?")
+    nacc = np.array([c["ceiling"]["n_acceptable"] for c in data])
+    nen = np.array([c["ceiling"]["n_enumerated"] for c in data])
+    capped = [c["id"] for c in data if c["ceiling"]["capped"]]
+    lmin = np.array([c["ceiling"]["min_L_rmsd_over_rotations"] for c in data])
+    ceil = int((nacc > 0).sum())
+    print(f"      translations enumerated in closed form  {int(nen.sum())} total, "
+          f"{int(np.median(nen))} median/complex")
+    print(f"      enumeration cap hit on                  {len(capped)} complexes"
+          f"{'  ' + ','.join(capped[:8]) if capped else ''}")
+    print(f"      best L_rmsd ANY rotation could reach    min {lmin.min():.2f}, median "
+          f"{np.median(lmin):.2f} A   (rotation-set limit, translation optimal)")
+    print(f"      CEILING                                 {ceil}/{len(data)} complexes can "
+          f"produce >= 1 CAPRI-acceptable pose")
+    # the screen behind the I_rmsd branch, validated rather than assumed
+    md = [c["screen"]["max_direct_given_I_ok"] for c in data
+          if c["screen"]["max_direct_given_I_ok"] is not None]
+    nw = sum(c["screen"]["n_within_I_bar"] for c in data)
+    if md:
+        # THE SCREEN VERDICT IS NOT A STRICT INEQUALITY. It used to be `max(md) < limit`, which
+        # returns SAFE on a quantity that has saturated: this run's maximum is 11.9985 A against
+        # a 12 A screen, a headroom of 0.0015 A, and it printed SAFE. The screen exists because
+        # the superimposed I_rmsd is not affine in the translation and so cannot be enumerated
+        # in closed form; poses are kept only if their DIRECT interface rmsd is within 12 A. If
+        # qualifying poses sit right at that boundary then poses just outside it plausibly
+        # qualify too and were never enumerated. The honest bar is headroom of at least one grid
+        # spacing -- if no pose came within one translation step of the boundary, the next shell
+        # out cannot be hiding qualifying poses; if one did, the screen is BINDING and the
+        # acceptable counts are a LOWER BOUND rather than a census.
+        lim = float(data[0]["screen"]["limit"])
+        head = lim - max(md)
+        safe = head > SPACING
+        verdict = "SAFE" if safe else "SATURATED -- the screen is binding"
+        print(f"      screen validation: {nw} poses had exact I_rmsd <= 4; the largest DIRECT "
+              f"interface rmsd among them was {max(md):.4f} A vs a screen at {lim:.0f} A "
+              f"(headroom {head:.4f} A, one grid step is {SPACING} A) -> {verdict}")
+        if not safe:
+            near = sum(1 for x in md if lim - x <= SPACING)
+            print(f"      {near}/{len(md)} complexes came within one grid step of the screen. "
+                  f"n_acceptable is therefore a LOWER BOUND, not a count. This does NOT weaken "
+                  f"the CEILING verdict, which asserts >= 1 acceptable pose and can only be "
+                  f"helped by finding more, but any statement about HOW MANY is undercounted.")
+    else:
+        print(f"      screen validation: no pose anywhere reached exact I_rmsd <= 4, so the "
+              f"I-branch screen was never exercised (the L-branch is exact by construction)")
+
+    # ---------------- STEP 2: Q1 off the collider ----------------
+    # Runs regardless of the ceiling: a correlation needs variation in I_rmsd, not acceptable
+    # poses. Degenerate poses carry TS = nan and drop out of every statistic below.
+    print("\n  STEP 2  Q1 RETEST -- does basin breadth track nativeness when the poses were "
+          "NOT chosen by a scorer?")
+    TS = np.array([p["TS"] for c in data for p in c["poses"]], float)
+    IR = np.array([p["I_rmsd"] for c in data for p in c["poses"]], float)
+    CN = np.array([p["contacts"] for c in data for p in c["poses"]], float)
+    NR = np.array([p["n_repack"] for c in data for p in c["poses"]], float)
+    rho = spearman(TS, IR)
+    per = np.array([spearman([p["TS"] for p in c["poses"]],
+                             [p["I_rmsd"] for p in c["poses"]]) for c in data])
+    k, n, psign = sign_test(per)
+    print(f"      pooled Spearman(T*S_conf, I_rmsd)     {rho:+.4f}   "
+          f"(prior, score-selected: {PRIOR_RHO:+.4f})")
+    print(f"      per-complex median                    {np.median(per[np.isfinite(per)]):+.4f}")
+    print(f"      sign test over complexes              {k}/{n} negative, p = {psign:.2e}"
+          f"   <- the complex is the unit of replication, not the pose")
+    print(f"      partial | geometric contact count     "
+          f"{partial(TS, IR, CN):+.4f}")
+    print(f"      partial | n_repack (extensivity)      {partial(TS, IR, NR):+.4f}")
+    print(f"      partial | BOTH                        {partial(TS, IR, CN, NR):+.4f}")
+    par = partial(TS, IR, CN, NR)
+    # LEDGER DEFECT P, MECHANISED. The sign clause requires psign < ALPHA, and the SMALLEST
+    # two-sided p a sign test can return on n complexes is 2 * 0.5**n. At n = 5 that is 0.0625,
+    # so with ALPHA = 0.05 the clause CANNOT PASS even when every complex agrees -- the gate
+    # would print FAILS on perfect evidence and the reader would credit the science. So the
+    # clause's reachability is computed first, and an unreachable clause is DROPPED FROM THE
+    # CONJUNCTION and reported, rather than silently deciding the verdict.
+    best_psign = 2.0 * 0.5 ** n if n else 1.0
+    sign_reachable = best_psign < ALPHA
+    clauses = {"pooled rho <= bar": bool(rho <= Q1_RHO),
+               "per-complex median negative": bool(np.median(per[np.isfinite(per)]) < 0),
+               "survives the size control": bool(np.isfinite(par) and par <= Q1_RHO)}
+    if sign_reachable:
+        clauses["sign test significant"] = bool(psign < ALPHA)
+    else:
+        print(f"      SIGN CLAUSE UNREACHABLE at n = {n}: the smallest two-sided p a sign test "
+              f"can return is {best_psign:.4f} >= ALPHA {ALPHA}, so it cannot pass on ANY "
+              f"evidence (ledger defect P). Dropped from the conjunction rather than allowed "
+              f"to decide it; {k}/{n} negative is reported as a direction, not a test.")
+    q1 = all(clauses.values())
+    failed = [name for name, ok in clauses.items() if not ok]
+    if failed:
+        print(f"      failing clause(s): {', '.join(failed)}")
+    print(f"      Q1 {'REPLICATES off the collider' if q1 else 'FAILS'}   "
+          f"(bar: rho <= {Q1_RHO}, majority negative by sign test, and survives the size "
+          f"control)")
+    if np.isfinite(rho) and rho < 0 and PRIOR_RHO < 0:
+        print(f"      effect retained vs the score-selected estimate: "
+              f"{100.0 * rho / PRIOR_RHO:.0f}%")
+    # Does the sign depend on the zero-entropy poses? Reported, not hidden: a pose with an
+    # interface but no rotameric freedom genuinely has T*S_conf = 0, but those poses also sit
+    # at bad geometry, so the correlation is recomputed on progressively stricter domains.
+    print(f"      DOMAIN SENSITIVITY -- the same correlation on stricter subsets:")
+    for lo_nr, lab in ((0, "all defined     "), (1, "n_repack >= 1   "),
+                       (2, "n_repack >= 2   ")):
+        sub = [[p for p in c["poses"] if p["n_repack"] >= lo_nr and np.isfinite(p["TS"])]
+               for c in data]
+        t_ = np.array([p["TS"] for q in sub for p in q], float)
+        i_ = np.array([p["I_rmsd"] for q in sub for p in q], float)
+        pc = np.array([spearman([p["TS"] for p in q], [p["I_rmsd"] for p in q])
+                       for q in sub if len(q) >= 10])
+        kk, nn, pp = sign_test(pc)
+        print(f"        {lab} n={len(t_):6d}  pooled {spearman(t_, i_):+.4f}  "
+              f"per-complex median {np.median(pc[np.isfinite(pc)]):+.4f}  "
+              f"sign {kk}/{nn} p={pp:.2e}")
+    fin = np.isfinite(IR)
+    print(f"      domain of the claim: I_rmsd spans {IR[fin].min():.2f} to "
+          f"{IR[fin].max():.2f} A")
+
+    # THE COLLIDER, MEASURED. Same poses, same complexes; only the selection rule changes.
+    sel, whole = [], []
+    for c in data:
+        ps = c["poses"]
+        if len(ps) < 40:
+            continue
+        g = np.array([p["grid"] for p in ps], float)          # lower = better grid score
+        t = np.array([p["TS"] for p in ps], float)
+        i_ = np.array([p["I_rmsd"] for p in ps], float)
+        top = np.argsort(g)[:TOPK]
+        sel.append(spearman(t[top], i_[top]))
+        whole.append(spearman(t, i_))
+    sel = np.array([x for x in sel if np.isfinite(x)])
+    whole = np.array([x for x in whole if np.isfinite(x)])
+    print(f"      COLLIDER CHECK -- the prior study's selection rule reapplied to THIS sample:")
+    print(f"        top {TOPK} by grid score   median rho {np.median(sel):+.4f}  (n={len(sel)})")
+    print(f"        whole sample           median rho {np.median(whole):+.4f}  (n={len(whole)})")
+    print(f"        -> a correlation much stronger in the selected slice is the selection "
+          f"effect itself.")
+
+    # ---------------- STEP 3: retrieval, power first ----------------
+    print(f"\n  STEP 3  RETRIEVAL -- how often does an acceptable pose reach the top {TOPK}?")
+    usable = [c for c in data if any(p["quality"] in OK for p in c["poses"])]
+    if not usable:
+        print(f"      VOID. No sampled pose in ANY of {len(data)} complexes is "
+              f"CAPRI-acceptable, so an oracle scores 0 and no ranking -- energy, entropy, "
+              f"blend, size, or one reading the answer key -- could score above it.")
+        print(f"      Declared VOID and NOT null (ledger defect N): the test has no power, so "
+              f"it reports nothing about the rankings.")
+        print(f"      The finding is STEP 0's: the SEARCH is the binding constraint.")
+        return 0
+    ps_chance = []
+    for c in usable:
+        N = len(c["poses"]); kk = sum(p["quality"] in OK for p in c["poses"])
+        ps_chance.append(chance_hit(N, kk))
+    oracle = len(usable)
+    # THE POWER CHECK, BEFORE ANY VERDICT (ledger defect N).
+    p_oracle = poisson_binomial_tail(ps_chance, oracle)
+    print(f"      complexes with >= 1 acceptable pose in the sample: {oracle}/{len(data)}")
+    print(f"      chance expectation {np.sum(ps_chance):.2f} hits; an ORACLE scores {oracle}, "
+          f"exact p = {p_oracle:.3g}")
+    if p_oracle >= ALPHA:
+        print(f"      VOID. Even a perfect oracle cannot reach p < {ALPHA} against this "
+              f"chance baseline, so the gate cannot be passed by any ranking and has no "
+              f"power (ledger defect N). No verdict is issued.")
+        return 0
+    rankings = {
+        "energy": lambda q: rank_norm([p["ve"] for p in q]),
+        "entropy": lambda q: rank_norm([p["TS"] for p in q], descending=True),
+        "50/50": lambda q: 0.5 * rank_norm([p["ve"] for p in q])
+                         + 0.5 * rank_norm([p["TS"] for p in q], descending=True),
+        "size(ctrl)": lambda q: rank_norm([p["contacts"] for p in q], descending=True),
+    }
+    hits, pvals = {}, {}
+    for name, fn in rankings.items():
+        h, per_c = 0, []
+        for c in usable:
+            q = c["poses"]
+            order = np.argsort(fn(q))[:TOPK]
+            got = any(q[int(j)]["quality"] in OK for j in order)
+            per_c.append(bool(got)); h += got
+        hits[name] = (h, per_c)
+        pvals[name] = poisson_binomial_tail(ps_chance, h)
+    # HOLM ACROSS THE FAMILY. Four rankings are gated on one null, so an uncorrected alpha
+    # gives the family several independent chances to fire -- and in the small-mean regime
+    # this run is headed for, a single lucky complex can carry a verdict.
+    order_p = sorted(pvals, key=lambda k: pvals[k])
+    m = len(order_p)
+    holm, running = {}, 0.0
+    for i, name in enumerate(order_p):
+        thr = ALPHA / (m - i)
+        running = max(running, pvals[name])
+        holm[name] = (thr, running <= thr)
+    print(f"      {'ranking':>12s} {'hits':>6s} {'exact p':>10s} {'Holm thr':>10s}  verdict")
+    for name in rankings:
+        h = hits[name][0]
+        thr, ok = holm[name]
+        print(f"      {name:>12s} {h:6d} {pvals[name]:10.3g} {thr:10.4f}  "
+              f"{'SIGNAL' if ok else 'not above chance'}")
+    # The actual hypothesis: does entropy ADD to energy? Paired, same complexes.
+    # WHAT WAS ACTUALLY RETRIEVED, not just whether something was. A hit count hides the
+    # margin: this run's energy arm scores 4/5, and all four qualify ONLY through the
+    # L_rmsd <= 10 branch at 9.70-9.88 A, i.e. every one of them within 0.30 A of failing,
+    # with f_nat barely over the 0.1 floor. The size control's 5/5 are medium-quality poses
+    # at 1.1-2.0 A interface rmsd. Reporting "4 versus 5" for that is nearly a lie by
+    # omission, so the qualifying pose itself is printed.
+    print("\n      WHAT WAS RETRIEVED -- the best qualifying pose in each top 20, and its "
+          "margin to the bar")
+    print(f"        {'ranking':<11s} {'cid':6s} {'quality':<11s} {'f_nat':>6s} "
+          f"{'I_rmsd':>7s} {'L_rmsd':>7s}  margin to the CAPRI bar")
+    for name, fn in rankings.items():
+        for c in usable:
+            q = c["poses"]
+            order = np.argsort(fn(q))[:TOPK]
+            good = [q[int(j)] for j in order if q[int(j)]["quality"] in OK]
+            if not good:
+                print(f"        {name:<11s} {c['id']:6s} {'-- none --':<11s}")
+                continue
+            b = min(good, key=lambda z: z["I_rmsd"])
+            mL, mI = 10.0 - b["L_rmsd"], 4.0 - b["I_rmsd"]
+            marg = f"L {mL:+.2f} A" + (f", I {mI:+.2f} A" if mI >= 0 else "")
+            print(f"        {name:<11s} {c['id']:6s} {b['quality']:<11s} {b['f_nat']:6.3f} "
+                  f"{b['I_rmsd']:7.2f} {b['L_rmsd']:7.2f}  {marg}")
+
+    a = np.array(hits["energy"][1]); c50 = np.array(hits["50/50"][1])
+    gain = int((c50 & ~a).sum()); loss = int((a & ~c50).sum())
+    from math import comb
+    nb = gain + loss
+    pmc = (sum(comb(nb, i) for i in range(gain, nb + 1)) / 2.0 ** nb) if nb else float("nan")
+    print(f"      PAIRED, the hypothesis itself: 50/50 vs energy alone -- "
+          f"{gain} complexes gained, {loss} lost, exact one-sided p = {pmc:.3g}")
+    print(f"      and against the size control: entropy {hits['entropy'][0]} vs "
+          f"size {hits['size(ctrl)'][0]} hits "
+          f"-- beating chance is not the bar, beating size is.")
+    print(f"      lambda sweep of rank(E) + lambda*rank(-T*S) -- DIAGNOSTIC, NOT A GATE:")
+    for lam in (0.0, 0.25, 0.5, 1.0, 2.0, 4.0, 1e9):
+        h = 0
+        for c in usable:
+            q = c["poses"]
+            s = rank_norm([p["ve"] for p in q]) + lam * rank_norm(
+                [p["TS"] for p in q], descending=True)
+            h += any(q[int(j)]["quality"] in OK for j in np.argsort(s)[:TOPK])
+        tag = "entropy only" if lam > 1e8 else ("energy only" if lam == 0 else "")
+        print(f"        lambda={lam:<8.2f} hits={h:3d}  {tag}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

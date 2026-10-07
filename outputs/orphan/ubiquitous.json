@@ -1,0 +1,20 @@
+{
+ "n_ubiquitous_genes": 847,
+ "pairs_ubiquitous": 2680,
+ "hit_ubiquitous": 0.014552238805970149,
+ "hit_non_ubiquitous": 0.06927199058946543,
+ "identity": 0.6050020469159778,
+ "ctcf_bar": 0.6573372875993357,
+ "plus_ubiquitous": 0.6698289118774575,
+ "plus_competition": 0.6794791673481569,
+ "full_stack": 0.6880754020863338,
+ "delta_ubiq_on_bar": 0.012491624278121782,
+ "control": 0.0029733120507099554,
+ "net_of_control": 0.009518312227411826,
+ "se": 0.0022922876008239774,
+ "z": 4.152320251608223,
+ "sign_consistent": true,
+ "delta_ubiq_on_competition": 0.008596234738176856,
+ "delta_full_stack_over_bar": 0.030738114486998036,
+ "paper_reported_for_abc": 0.044
+}

@@ -1,0 +1,31 @@
+==================================================================================================
+SELECTION ON LAG -- the curvature of the optimum Fridman et al. located
+==================================================================================================
+  Their Nature 2014 result gives the PEAK: evolved lag matches the exposure
+  interval. This is the SHAPE around it, which predicts how tightly replicate
+  populations should cluster -- testable against experiments they already ran.
+
+   T_on (h)  peak lag  fold-width of the peak  max |selection|   curvature
+        1.5      1.48        15.0x (>= grid)            0.067      -0.050
+        2.5      2.32        15.0x (>= grid)            0.200      -0.174
+        3.5      2.91        15.0x (>= grid)            0.841      -0.371
+        5.0      4.57                   6.8x            2.800      -0.704
+
+  READING IT. 'fold-width' is the range of lag over which survival stays within
+  a factor of e of its best value. A narrow width means selection pins lag; a wide
+  one means it drifts and the matching is a tendency, not a law.
+
+  3 of 4 widths are GRID-LIMITED, not measured -- the e-fold
+  region reaches both ends of the lag grid, so those rows are lower bounds and
+  the true peaks are wider still. Only the longest exposure gives a measured
+  width. That strengthens the direction of the trend and weakens its magnitude.
+  THE TESTABLE PREDICTION: across replicate evolved populations at a given
+  exposure duration, evolved lag should scatter by roughly this factor and no
+  more. Their replicates already carry that number.
+
+  THE ROBUST STATEMENT IS THE SELECTION STRENGTH, which is not grid-limited:
+  it rises 42x from 0.067 at a 1.5 h exposure to 2.800 at 5.0 h.
+  PREDICTION: evolved lag should scatter WIDELY across replicate populations at
+  short exposures and cluster TIGHTLY at long ones. That is a trend across
+  conditions rather than a single number, which is harder to match by chance, and
+  their replicate populations already carry it.

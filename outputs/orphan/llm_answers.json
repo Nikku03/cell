@@ -1,0 +1,1002 @@
+{
+ "0": {
+  "tie": "MGAT5",
+  "open": "MGAT4A",
+  "scram": "MGAT5"
+ },
+ "1": {
+  "tie": "RBX1",
+  "open": "PSMD14",
+  "scram": "RBX1"
+ },
+ "2": {
+  "tie": "IDH1",
+  "open": "SLC25A17",
+  "scram": "IDH1"
+ },
+ "3": {
+  "tie": "ADCY1",
+  "open": "ADCY10",
+  "scram": "GNAS"
+ },
+ "4": {
+  "tie": "SLC22A10",
+  "open": "SLCO2A1",
+  "scram": "SLC22A10"
+ },
+ "5": {
+  "tie": "SLC28A3",
+  "open": "SLC28A1",
+  "scram": "SLC29A1"
+ },
+ "6": {
+  "tie": "CYP17A1",
+  "open": "CYP17A1",
+  "scram": "CYP17A1"
+ },
+ "7": {
+  "tie": "PIAS1",
+  "open": "UBE2I",
+  "scram": "TRIM28"
+ },
+ "8": {
+  "tie": "ACADVL",
+  "open": "ACADVL",
+  "scram": "ACADM"
+ },
+ "9": {
+  "tie": "CRAT",
+  "open": "SLC25A20",
+  "scram": "CRAT"
+ },
+ "10": {
+  "tie": "FABP1",
+  "open": "SLC27A2",
+  "scram": "SLC27A2"
+ },
+ "11": {
+  "tie": "SOS1",
+  "open": "SOS1",
+  "scram": "EGFR"
+ },
+ "12": {
+  "tie": "SCLY",
+  "open": "SCLY",
+  "scram": "SCLY"
+ },
+ "13": {
+  "tie": "SLC7A6",
+  "open": "SLC7A9",
+  "scram": "SLC7A6"
+ },
+ "14": {
+  "tie": "ALOX12",
+  "open": "CYP4F3",
+  "scram": "ALOX12"
+ },
+ "15": {
+  "tie": "SLC25A20",
+  "open": "SLC25A20",
+  "scram": "SLC22A4"
+ },
+ "16": {
+  "tie": "ACOX1",
+  "open": "ACOX1",
+  "scram": "HADHA"
+ },
+ "17": {
+  "tie": "SLC16A1",
+  "open": "SLC26A6",
+  "scram": "SLC16A1"
+ },
+ "18": {
+  "tie": "GSTM2",
+  "open": "NQO1",
+  "scram": "GSTO1"
+ },
+ "19": {
+  "tie": "PYCR1",
+  "open": "PYCR2",
+  "scram": "PRODH"
+ },
+ "20": {
+  "tie": "BAAT",
+  "open": "CPT1A",
+  "scram": "SLC25A20"
+ },
+ "21": {
+  "tie": "ITCH",
+  "open": "ITCH",
+  "scram": "ITCH"
+ },
+ "22": {
+  "tie": "ST6GALNAC6",
+  "open": "ST6GALNAC6",
+  "scram": "ST3GAL1"
+ },
+ "23": {
+  "tie": "CEL",
+  "open": "SOAT1",
+  "scram": "LIPA"
+ },
+ "24": {
+  "tie": "SLCO1B1",
+  "open": "ABCB1",
+  "scram": "SLCO1B1"
+ },
+ "25": {
+  "tie": "CPT2",
+  "open": "CPT2",
+  "scram": "CRAT"
+ },
+ "26": {
+  "tie": "GALT",
+  "open": "GALT",
+  "scram": "GALT"
+ },
+ "27": {
+  "tie": "MAPKAPK2",
+  "open": "MAPKAPK2",
+  "scram": "MAPKAPK2"
+ },
+ "28": {
+  "tie": "CYP24A1",
+  "open": "CYP24A1",
+  "scram": "CYP27B1"
+ },
+ "29": {
+  "tie": "GPAM",
+  "open": "AGPAT5",
+  "scram": "GPAM"
+ },
+ "30": {
+  "tie": "CPT1A",
+  "open": "GPAM",
+  "scram": "GK"
+ },
+ "31": {
+  "tie": "CYP2E1",
+  "open": "CYP24A1",
+  "scram": "CYP4V2"
+ },
+ "32": {
+  "tie": "SLC7A8",
+  "open": "SLC7A8",
+  "scram": "SLC3A2"
+ },
+ "33": {
+  "tie": "SEPHS2",
+  "open": "TXNRD1",
+  "scram": "SEPHS1"
+ },
+ "34": {
+  "tie": "PIAS1",
+  "open": "UBE2I",
+  "scram": "RANBP2"
+ },
+ "35": {
+  "tie": "SUCLG2",
+  "open": "SUCLG2",
+  "scram": "SUCLA2"
+ },
+ "36": {
+  "tie": "CHST3",
+  "open": "UST",
+  "scram": "CHST3"
+ },
+ "37": {
+  "tie": "TYR",
+  "open": "TYR",
+  "scram": "TYR"
+ },
+ "38": {
+  "tie": "CYP11A1",
+  "open": "CYP11A1",
+  "scram": "CYP11A1"
+ },
+ "39": {
+  "tie": "HSD17B4",
+  "open": "HSD17B4",
+  "scram": "HSD17B4"
+ },
+ "40": {
+  "tie": "SLC18A2",
+  "open": "SLC22A3",
+  "scram": "SLC18A2"
+ },
+ "41": {
+  "tie": "ATP8A1",
+  "open": "ATP8A1",
+  "scram": "FABP1"
+ },
+ "42": {
+  "tie": "SLC25A10",
+  "open": "SLC25A10",
+  "scram": "SLC25A10"
+ },
+ "43": {
+  "tie": "CFB",
+  "open": "CFB",
+  "scram": "CFB"
+ },
+ "44": {
+  "tie": "SLCO1B1",
+  "open": "SLC10A1",
+  "scram": "ABCB11"
+ },
+ "45": {
+  "tie": "SLC1A5",
+  "open": "SLC1A5",
+  "scram": "SLC7A5"
+ },
+ "46": {
+  "tie": "CMPK1",
+  "open": "CMPK1",
+  "scram": "CMPK1"
+ },
+ "47": {
+  "tie": "CPOX",
+  "open": "UROD",
+  "scram": "CPOX"
+ },
+ "48": {
+  "tie": "PLCB1",
+  "open": "NUP62",
+  "scram": "PLCB1"
+ },
+ "49": {
+  "tie": "SLC27A2",
+  "open": "ACSL1",
+  "scram": "ACSL1"
+ },
+ "50": {
+  "tie": "SLC27A2",
+  "open": "SLC27A1",
+  "scram": "SLC27A2"
+ },
+ "51": {
+  "tie": "MTHFD2L",
+  "open": "MTHFD2",
+  "scram": "MTHFD2"
+ },
+ "52": {
+  "tie": "FASN",
+  "open": "FASN",
+  "scram": "FASN"
+ },
+ "53": {
+  "tie": "SLC16A1",
+  "open": "SLC16A1",
+  "scram": "SLC27A4"
+ },
+ "54": {
+  "tie": "ALOX5",
+  "open": "ALOX5",
+  "scram": "ALOX5"
+ },
+ "55": {
+  "tie": "PIAS1",
+  "open": "PIAS1",
+  "scram": "UBE2I"
+ },
+ "56": {
+  "tie": "CYB5D1",
+  "open": "LDHD",
+  "scram": "CYB5D1"
+ },
+ "57": {
+  "tie": "KCNMA1",
+  "open": "KCNJ2",
+  "scram": "ABCC9"
+ },
+ "58": {
+  "tie": "SLC7A6",
+  "open": "SLC1A5",
+  "scram": "SLC7A5"
+ },
+ "59": {
+  "tie": "ITCH",
+  "open": "PSMB5",
+  "scram": "ITCH"
+ },
+ "60": {
+  "tie": "SLC36A1",
+  "open": "SLC36A1",
+  "scram": "DAO"
+ },
+ "61": {
+  "tie": "GUSB",
+  "open": "GUSB",
+  "scram": "KL"
+ },
+ "62": {
+  "tie": "SLC26A2",
+  "open": "SLC26A2",
+  "scram": "SLC26A2"
+ },
+ "63": {
+  "tie": "PRKAA2",
+  "open": "STK11",
+  "scram": "PRKACA"
+ },
+ "64": {
+  "tie": "PIP5K1A",
+  "open": "PIP4K2A",
+  "scram": "PIK3C3"
+ },
+ "65": {
+  "tie": "SRC",
+  "open": "PAK1",
+  "scram": "SRC"
+ },
+ "66": {
+  "tie": "PIK3CA",
+  "open": "PIK3CA",
+  "scram": "PTEN"
+ },
+ "67": {
+  "tie": "UGT1A3",
+  "open": "UGT1A3",
+  "scram": "UGT1A1"
+ },
+ "68": {
+  "tie": "CYP4F3",
+  "open": "CYP4F3",
+  "scram": "CYP4F2"
+ },
+ "69": {
+  "tie": "MAT2A",
+  "open": "MARS1",
+  "scram": "MAT2A"
+ },
+ "70": {
+  "tie": "PIP5K1A",
+  "open": "PIP4K2A",
+  "scram": "PIP5K1A"
+ },
+ "71": {
+  "tie": "PI4KA",
+  "open": "SLC35B1",
+  "scram": "PI4KA"
+ },
+ "72": {
+  "tie": "ALDH3A2",
+  "open": "ALDH3A2",
+  "scram": "H6PD"
+ },
+ "73": {
+  "tie": "CPT2",
+  "open": "SLC25A20",
+  "scram": "CPT2"
+ },
+ "74": {
+  "tie": "AOX1",
+  "open": "ALDH2",
+  "scram": "AOX1"
+ },
+ "75": {
+  "tie": "APEX2",
+  "open": "APEX2",
+  "scram": "REV1"
+ },
+ "76": {
+  "tie": "MAN1A1",
+  "open": "MAN1A1",
+  "scram": "MAN1A1"
+ },
+ "77": {
+  "tie": "GNAI1",
+  "open": "GNAL",
+  "scram": "GNAI1"
+ },
+ "78": {
+  "tie": "ELOVL1",
+  "open": "HACD1",
+  "scram": "ELOVL1"
+ },
+ "79": {
+  "tie": "RANBP2",
+  "open": "RANBP2",
+  "scram": "RANBP2"
+ },
+ "80": {
+  "tie": "FASN",
+  "open": "FASN",
+  "scram": "FASN"
+ },
+ "81": {
+  "tie": "CPS1",
+  "open": "OTC",
+  "scram": "CPS1"
+ },
+ "82": {
+  "tie": "HACD1",
+  "open": "TECR",
+  "scram": "SLC27A2"
+ },
+ "83": {
+  "tie": "B4GALT1",
+  "open": "B4GALT4",
+  "scram": "UGT8"
+ },
+ "84": {
+  "tie": "SLC22A5",
+  "open": "CPT1A",
+  "scram": "SLC22A5"
+ },
+ "85": {
+  "tie": "PIK3CA",
+  "open": "PIK3CA",
+  "scram": "NPM1"
+ },
+ "86": {
+  "tie": "CYP3A4",
+  "open": "CYP3A4",
+  "scram": "CYP3A4"
+ },
+ "87": {
+  "tie": "ALOX5",
+  "open": "ALOX15",
+  "scram": "ALOX5"
+ },
+ "88": {
+  "tie": "UST",
+  "open": "CHST3",
+  "scram": "UST"
+ },
+ "89": {
+  "tie": "SLC8A1",
+  "open": "SLC24A1",
+  "scram": "ATP2A2"
+ },
+ "90": {
+  "tie": "RHCG",
+  "open": "PADI2",
+  "scram": "SLC9A1"
+ },
+ "91": {
+  "tie": "COQ3",
+  "open": "COQ3",
+  "scram": "PEMT"
+ },
+ "92": {
+  "tie": "HACD1",
+  "open": "TECR",
+  "scram": "CPT1C"
+ },
+ "93": {
+  "tie": "DUOX1",
+  "open": "CAT",
+  "scram": "DUOX1"
+ },
+ "94": {
+  "tie": "SDHA",
+  "open": "SDHA",
+  "scram": "SDHA"
+ },
+ "95": {
+  "tie": "CYP3A4",
+  "open": "CYP3A4",
+  "scram": "CYP3A4"
+ },
+ "96": {
+  "tie": "AASS",
+  "open": "AASS",
+  "scram": "GLUD1"
+ },
+ "97": {
+  "tie": "CPT1A",
+  "open": "SLC25A20",
+  "scram": "CPT1A"
+ },
+ "98": {
+  "tie": "DECR2",
+  "open": "PTGR1",
+  "scram": "CYP2E1"
+ },
+ "99": {
+  "tie": "ACSL1",
+  "open": "ACOT1",
+  "scram": "ACSL4"
+ },
+ "100": {
+  "tie": "AKT1",
+  "open": "AKT1",
+  "scram": "AKT1"
+ },
+ "101": {
+  "tie": "CBS",
+  "open": "CTH",
+  "scram": "CBS"
+ },
+ "102": {
+  "tie": "ABCB11",
+  "open": "ABCD3",
+  "scram": "SLC27A2"
+ },
+ "103": {
+  "tie": "CYP2J2",
+  "open": "EPHX2",
+  "scram": "CYP3A4"
+ },
+ "104": {
+  "tie": "CYP19A1",
+  "open": "CYP3A4",
+  "scram": "CYP19A1"
+ },
+ "105": {
+  "tie": "SI",
+  "open": "GAA",
+  "scram": "SI"
+ },
+ "106": {
+  "tie": "DCXR",
+  "open": "AKR1B1",
+  "scram": "DHDH"
+ },
+ "107": {
+  "tie": "RDH5",
+  "open": "RDH11",
+  "scram": "ADH5"
+ },
+ "108": {
+  "tie": "XDH",
+  "open": "XDH",
+  "scram": "XDH"
+ },
+ "109": {
+  "tie": "ABCC3",
+  "open": "SLC10A1",
+  "scram": "ABCC3"
+ },
+ "110": {
+  "tie": "SLC25A1",
+  "open": "SLC25A1",
+  "scram": "SLC25A1"
+ },
+ "111": {
+  "tie": "PIK3CA",
+  "open": "PIK3CA",
+  "scram": "VAV1"
+ },
+ "112": {
+  "tie": "PDE1A",
+  "open": "B3GALNT1",
+  "scram": "PDE1A"
+ },
+ "113": {
+  "tie": "SLC13A3",
+  "open": "SLC22A6",
+  "scram": "SLC13A3"
+ },
+ "114": {
+  "tie": "GPX1",
+  "open": "LTC4S",
+  "scram": "CYP4F2"
+ },
+ "115": {
+  "tie": "HSD3B7",
+  "open": "HSD3B7",
+  "scram": "HSD3B7"
+ },
+ "116": {
+  "tie": "BLM",
+  "open": "RTEL1",
+  "scram": "BLM"
+ },
+ "117": {
+  "tie": "ACSL1",
+  "open": "ACSL1",
+  "scram": "SLC27A2"
+ },
+ "118": {
+  "tie": "CAT",
+  "open": "ADH1C",
+  "scram": "CAT"
+ },
+ "119": {
+  "tie": "SLC22A3",
+  "open": "SLCO1B1",
+  "scram": "SLC22A3"
+ },
+ "120": {
+  "tie": "AK3",
+  "open": "NME4",
+  "scram": "AK3"
+ },
+ "121": {
+  "tie": "TNFAIP3",
+  "open": "UBE2N",
+  "scram": "TNFAIP3"
+ },
+ "122": {
+  "tie": "PRKN",
+  "open": "PRKN",
+  "scram": "PRKN"
+ },
+ "123": {
+  "tie": "LIPA",
+  "open": "LIPA",
+  "scram": "CEL"
+ },
+ "124": {
+  "tie": "NT5C2",
+  "open": "PNP",
+  "scram": "ACP3"
+ },
+ "125": {
+  "tie": "SLC7A5",
+  "open": "SLC1A5",
+  "scram": "SLC7A5"
+ },
+ "126": {
+  "tie": "CRAT",
+  "open": "SLC25A20",
+  "scram": "CRAT"
+ },
+ "127": {
+  "tie": "SLC13A1",
+  "open": "SLC13A1",
+  "scram": "SLC26A2"
+ },
+ "128": {
+  "tie": "BAAT",
+  "open": "BAAT",
+  "scram": "BAAT"
+ },
+ "129": {
+  "tie": "CYP4F11",
+  "open": "PTGR1",
+  "scram": "CYP2U1"
+ },
+ "130": {
+  "tie": "RPS6KB1",
+  "open": "EIF4A1",
+  "scram": "RPS6KB1"
+ },
+ "131": {
+  "tie": "UCP1",
+  "open": "UCP2",
+  "scram": "UCP2"
+ },
+ "132": {
+  "tie": "APOC2",
+  "open": "APOC1",
+  "scram": "APOC2"
+ },
+ "133": {
+  "tie": "ALDH4A1",
+  "open": "ALDH4A1",
+  "scram": "ALDH4A1"
+ },
+ "134": {
+  "tie": "CPT2",
+  "open": "SLC25A20",
+  "scram": "CRAT"
+ },
+ "135": {
+  "tie": "KDR",
+  "open": "CDK5",
+  "scram": "PTK2B"
+ },
+ "136": {
+  "tie": "GALT",
+  "open": "UGP2",
+  "scram": "GALT"
+ },
+ "137": {
+  "tie": "ALDH1A1",
+  "open": "ALDH1A1",
+  "scram": "ALDH1A1"
+ },
+ "138": {
+  "tie": "ALDH6A1",
+  "open": "MLYCD",
+  "scram": "ALDH6A1"
+ },
+ "139": {
+  "tie": "CBR1",
+  "open": "PTGR1",
+  "scram": "DHRS4"
+ },
+ "140": {
+  "tie": "MLXIPL",
+  "open": "MLXIPL",
+  "scram": "MLX"
+ },
+ "141": {
+  "tie": "SOAT1",
+  "open": "CES1",
+  "scram": "SOAT1"
+ },
+ "142": {
+  "tie": "SLC16A1",
+  "open": "SLC5A8",
+  "scram": "SLC16A1"
+ },
+ "143": {
+  "tie": "ACAA1",
+  "open": "ACAA1",
+  "scram": "ACAA1"
+ },
+ "144": {
+  "tie": "ACSL1",
+  "open": "ACSL1",
+  "scram": "SLC27A2"
+ },
+ "145": {
+  "tie": "TPO",
+  "open": "TPO",
+  "scram": "TPO"
+ },
+ "146": {
+  "tie": "MOGS",
+  "open": "STT3A",
+  "scram": "DOLPP1"
+ },
+ "147": {
+  "tie": "SLC16A1",
+  "open": "SLC16A1",
+  "scram": "SLC16A1"
+ },
+ "148": {
+  "tie": "GALNS",
+  "open": "GALNS",
+  "scram": "ARSA"
+ },
+ "149": {
+  "tie": "PGAM1",
+  "open": "PHGDH",
+  "scram": "ACYP1"
+ },
+ "150": {
+  "tie": "SLC7A6",
+  "open": "SLC1A5",
+  "scram": "SLC7A6"
+ },
+ "151": {
+  "tie": "CEL",
+  "open": "SOAT1",
+  "scram": "CEL"
+ },
+ "152": {
+  "tie": "SLC7A7",
+  "open": "SLC7A7",
+  "scram": "SLC3A2"
+ },
+ "153": {
+  "tie": "ACOT6",
+  "open": "SLC27A2",
+  "scram": "ACOT6"
+ },
+ "154": {
+  "tie": "IDH2",
+  "open": "IDH3A",
+  "scram": "IDH2"
+ },
+ "155": {
+  "tie": "SULT2A1",
+  "open": "SULT2A1",
+  "scram": "SULT2A1"
+ },
+ "156": {
+  "tie": "PIK3CA",
+  "open": "PIK3CA",
+  "scram": "SRC"
+ },
+ "157": {
+  "tie": "SLC27A1",
+  "open": "ABCA1",
+  "scram": "SLC27A1"
+ },
+ "158": {
+  "tie": "ALOX5",
+  "open": "ALOX5",
+  "scram": "NOX4"
+ },
+ "159": {
+  "tie": "B3GALT4",
+  "open": "C1GALT1",
+  "scram": "STT3B"
+ },
+ "160": {
+  "tie": "UBE2I",
+  "open": "NSMCE2",
+  "scram": "RANBP2"
+ },
+ "161": {
+  "tie": "CYP27A1",
+  "open": "CYP7B1",
+  "scram": "CYP27A1"
+ },
+ "162": {
+  "tie": "EHMT2",
+  "open": "EHMT2",
+  "scram": "SETD7"
+ },
+ "163": {
+  "tie": "UGT1A3",
+  "open": "ABCC2",
+  "scram": "UGT1A3"
+ },
+ "164": {
+  "tie": "SLCO1C1",
+  "open": "SLC16A2",
+  "scram": "SLCO1B1"
+ },
+ "165": {
+  "tie": "SLC25A4",
+  "open": "NME4",
+  "scram": "SLC25A5"
+ },
+ "166": {
+  "tie": "SLC37A4",
+  "open": "SGPP1",
+  "scram": "SLC37A4"
+ },
+ "167": {
+  "tie": "MLYCD",
+  "open": "ACACB",
+  "scram": "MLYCD"
+ },
+ "168": {
+  "tie": "CYP2E1",
+  "open": "CYP24A1",
+  "scram": "CYP4V2"
+ },
+ "169": {
+  "tie": "MYLK",
+  "open": "MYLK",
+  "scram": "MYLK"
+ },
+ "170": {
+  "tie": "CAD",
+  "open": "NADSYN1",
+  "scram": "CAD"
+ },
+ "171": {
+  "tie": "CA2",
+  "open": "UMPS",
+  "scram": "CA2"
+ },
+ "172": {
+  "tie": "TKT",
+  "open": "TKT",
+  "scram": "TKT"
+ },
+ "173": {
+  "tie": "ALOX15",
+  "open": "ALOX15",
+  "scram": "ALOX15"
+ },
+ "174": {
+  "tie": "ELOVL1",
+  "open": "ACY3",
+  "scram": "ELOVL1"
+ },
+ "175": {
+  "tie": "FASN",
+  "open": "FASN",
+  "scram": "FASN"
+ },
+ "176": {
+  "tie": "ABCC1",
+  "open": "ABCC1",
+  "scram": "ABCC1"
+ },
+ "177": {
+  "tie": "GALC",
+  "open": "GALC",
+  "scram": "SAPCD1"
+ },
+ "178": {
+  "tie": "SLC10A6",
+  "open": "SLCO1B3",
+  "scram": "ABCC5"
+ },
+ "179": {
+  "tie": "SLCO2A1",
+  "open": "SLCO2A1",
+  "scram": "ABCC4"
+ },
+ "180": {
+  "tie": "EPHX1",
+  "open": "CYP1A1",
+  "scram": "EPHX1"
+ },
+ "181": {
+  "tie": "AKT1",
+  "open": "AKT1",
+  "scram": "AKT1"
+ },
+ "182": {
+  "tie": "KCNJ2",
+  "open": "KCNJ2",
+  "scram": "KCNJ2"
+ },
+ "183": {
+  "tie": "AKR1C4",
+  "open": "AKR1D1",
+  "scram": "CYP8B1"
+ },
+ "184": {
+  "tie": "CRAT",
+  "open": "SLC25A20",
+  "scram": "CRAT"
+ },
+ "185": {
+  "tie": "UNG",
+  "open": "NEIL2",
+  "scram": "UNG"
+ },
+ "186": {
+  "tie": "SLC25A20",
+  "open": "CPT2",
+  "scram": "SLC22A1"
+ },
+ "187": {
+  "tie": "MTMR9",
+  "open": "MTMR9",
+  "scram": "MTMR9"
+ },
+ "188": {
+  "tie": "SLC7A5",
+  "open": "SLC7A8",
+  "scram": "SLC7A5"
+ },
+ "189": {
+  "tie": "UGT1A3",
+  "open": "UGT1A3",
+  "scram": "UGT1A1"
+ },
+ "190": {
+  "tie": "SLC27A2",
+  "open": "SLC27A2",
+  "scram": "ACSL1"
+ },
+ "191": {
+  "tie": "ELOVL1",
+  "open": "HSD17B12",
+  "scram": "ELOVL1"
+ },
+ "192": {
+  "tie": "SLC22A5",
+  "open": "CPT1A",
+  "scram": "SLC22A5"
+ },
+ "193": {
+  "tie": "CBR1",
+  "open": "HPGD",
+  "scram": "CBR1"
+ },
+ "194": {
+  "tie": "RBP2",
+  "open": "STRA6",
+  "scram": "RBP2"
+ },
+ "195": {
+  "tie": "PFKL",
+  "open": "FBP1",
+  "scram": "PFKL"
+ },
+ "196": {
+  "tie": "SLC10A1",
+  "open": "ABCG5",
+  "scram": "SLC10A1"
+ },
+ "197": {
+  "tie": "A4GNT",
+  "open": "GCNT1",
+  "scram": "A4GNT"
+ },
+ "198": {
+  "tie": "SLC2A9",
+  "open": "MPO",
+  "scram": "ABCC4"
+ },
+ "199": {
+  "tie": "HSD17B12",
+  "open": "HSD17B12",
+  "scram": "HACD1"
+ }
+}

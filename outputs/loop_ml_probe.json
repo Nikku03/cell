@@ -1,0 +1,168 @@
+{
+ "test": "loop_ml_probe",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/ml/kcat_records.tsv",
+    "bytes": 1376344,
+    "hash": "130cb6f337cb17e6",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/esm2_8M_mean.npy",
+    "bytes": 5027968,
+    "hash": "077dfe7c9708fafc",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/ml/sequences.json",
+    "bytes": 3310515,
+    "hash": "47bffec241c1becf",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 17004,
+   "used": 17004,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 13300,
+  "controls": [
+   "point mutants detected by equal-length Hamming distance",
+   "the decomposition recomputed three ways, including merged",
+   "the embedding probed on class, organism and length, not only kcat",
+   "the EC-median residual as the target the sequence must still beat",
+   "repeat (protein, substrate) pairs as the missing-condition floor",
+   "error reweighted by how much the cell model uses each enzyme"
+  ],
+  "note": "loop 132's 86% between-protein share is biased by singletons and by mutants counted as separate proteins; this measures both",
+  "warnings": []
+ },
+ "gates": {
+  "B1": true,
+  "B2": true,
+  "B3": true,
+  "B4": false,
+  "B5": true,
+  "B6": true
+ },
+ "b1": {
+  "near_pairs": 18595,
+  "mutant_pairs": 18595,
+  "mutant_spread_median": 0.6485173925669638,
+  "irreducible_rmse": 0.9473651091817341
+ },
+ "b2": {
+  "all": [
+   1.9470099093076008,
+   0.3164621559030817,
+   0.8601872933326326,
+   0.562549691941149
+  ],
+  "ge3": [
+   1.394986726224998,
+   0.5238649447678286,
+   0.7269903908222476,
+   0.723785150972185,
+   1571
+  ],
+  "merged": [
+   1.570134462602886,
+   0.6933376026077964,
+   0.6936840470601253,
+   0.8326689633988986,
+   3597
+  ]
+ },
+ "b3": {
+  "ec_class_acc": 0.7794636556104446,
+  "ec_majority": 0.39420136438485065,
+  "organism_acc": 0.6008209338122114,
+  "organism_majority": 0.4167949375748247,
+  "length_r2": 0.7631442899956118,
+  "kcat_r2": 0.1381361891527626
+ },
+ "b4": {
+  "resid_sd": 1.4848906482578186,
+  "model_rmse": 1.5386104927315152,
+  "r2": -0.07366410883972563
+ },
+ "b5": {
+  "n_pairs": 385,
+  "within_sd": 0.5137153394156134,
+  "within_fold": 3.263738386128061
+ },
+ "b6": {
+  "n_human": 1256,
+  "unweighted": 1.307196248622146,
+  "weighted": 1.1895208713495653
+ },
+ "seconds": 521.478563785553,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 133 -- what is the model learning, and what is the data hiding?",
+  "====================================================================================================",
+  "",
+  "  17,004 records | 7,856 sequences | ESM (7856, 320)",
+  "",
+  "B1 HOW MANY NEAR-DUPLICATE SEQUENCES, AND WHAT DO THEY COST?",
+  "     sequence pairs at >= 0.95 k-mer Jaccard inside a cluster: 18,595",
+  "     of those, equal length differing at 1-5 residues (point mutants): 18,595",
+  "     |log10 kcat| difference within a point-mutant pair: median 0.649, 90th 2.271, max 6.661",
+  "     as an RMSE contribution that no representation can remove: 0.947 log10",
+  "     for scale, the model's RMSE is 1.3768 and a constant is 1.5091",
+  "     |log10 kcat| difference within ANY near-duplicate pair: median 0.649",
+  "     B1 PASS -- counted and priced",
+  "",
+  "B2 THE VARIANCE DECOMPOSITION, DEBIASED",
+  "     loop 132, ALL sequences        between 1.9470 (86.0%)  within 0.3165  ceiling 0.5625",
+  "     sequences with >= 3 records    between 1.3950 (72.7%)  within 0.5239  ceiling 0.7238   n=8,691 on 1,571 sequences",
+  "     near-duplicates MERGED         between 1.5701 (69.4%)  within 0.6933  ceiling 0.8327   3,597 merged proteins",
+  "     the singleton bias is real: 4,257 sequences carry one measurement and contribute exactly zero within-variance",
+  "     B2 PASS",
+  "",
+  "B3 WHAT DOES THE EMBEDDING ACTUALLY ENCODE?",
+  "     EC top-level class (7 classes)   accuracy 0.779   majority baseline 0.394",
+  "     organism, top 6 (5,847 records)   accuracy 0.601   majority 0.417",
+  "     log10 sequence length            R2 +0.7631",
+  "     log10 kcat                       R2 +0.1381",
+  "     the same 320 numbers, the same folds. The embedding is a far better family and",
+  "     length detector than a turnover-number predictor.",
+  "     B3 PASS -- probed",
+  "",
+  "B4 IS THE MODEL JUST DOING EC-CLASS LOOKUP?",
+  "     target = log10 kcat minus the EC median (what class membership already explains)",
+  "     residual sd 1.4849  -> model RMSE 1.5386  R2 -0.0737",
+  "     B4 FAIL -- the sequence ADDS NOTHING beyond the EC number",
+  "",
+  "B5 THE CEILING SET BY MISSING CONDITIONS",
+  "     385 (protein, substrate) pairs measured more than once, 782 records",
+  "     these share an ENZYME and a SUBSTRATE, so any disagreement is temperature, pH, buffer, a mutation or an error",
+  "     residual sd within such a pair: 0.5137 log10 = 3.26x",
+  "     NO MODEL USING THESE COLUMNS CAN BEAT THAT, because the distinguishing information",
+  "     is not in the file. DLKcat records no temperature, no pH and no mutant flag.",
+  "     loop 129 measured 1.15x for the same protein AND same substrate in HUMAN records;",
+  "     the gap between 3.26x and 1.15x is what the missing columns cost",
+  "     B5 PASS",
+  "",
+  "B6 THE METRIC THE CELL MODEL WOULD CHOOSE",
+  "     human records with a gene: 1,256; 1,178 catalyse at least one model reaction",
+  "     unweighted RMSE on that subset      1.3072",
+  "     weighted by reactions catalysed     1.1895",
+  "     the enzymes the cell model leans on are easier than average for this model",
+  "     B6 PASS",
+  "",
+  "====================================================================================================",
+  "  B1  PASS",
+  "  B2  PASS",
+  "  B3  PASS",
+  "  B4  FAIL",
+  "  B5  PASS",
+  "  B6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 17004/17004 (100.0%) by 'all', seed 13300, controls 6"
+ ]
+}

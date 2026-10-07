@@ -1,0 +1,880 @@
+{
+  "test": "dock_coverage",
+  "n_rot_max": 4800,
+  "rot_steps": [
+    600,
+    1200,
+    2400,
+    4800
+  ],
+  "peak_steps": [
+    4,
+    12
+  ],
+  "peaks_max": 12,
+  "near_native_A": 5.0,
+  "neighbourhood_A": 10.0,
+  "coverage_near": {
+    "600x4": 6,
+    "600x12": 6,
+    "1200x4": 10,
+    "1200x12": 10,
+    "2400x4": 12,
+    "2400x12": 12,
+    "4800x4": 12,
+    "4800x12": 12
+  },
+  "coverage_neigh": {
+    "600x4": 10,
+    "600x12": 11,
+    "1200x4": 11,
+    "1200x12": 11,
+    "2400x4": 12,
+    "2400x12": 12,
+    "4800x4": 12,
+    "4800x12": 12
+  },
+  "complexes": [
+    {
+      "pdb": "1CHO",
+      "chains": [
+        "F",
+        "G"
+      ],
+      "rg_ligand": 14.546003529676518,
+      "rot_tol_deg": 19.694680877874262,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 14.74537717629324,
+          "n_near": 0,
+          "n_neigh": 0
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 14.74537717629324,
+          "n_near": 0,
+          "n_neigh": 0
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 14.74537717629324,
+          "n_near": 0,
+          "n_neigh": 0
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 14.74537717629324,
+          "n_near": 0,
+          "n_neigh": 0
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 2.145475537401659,
+          "n_near": 1,
+          "n_neigh": 1
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 2.145475537401659,
+          "n_near": 1,
+          "n_neigh": 1
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 2.145475537401659,
+          "n_near": 1,
+          "n_neigh": 1
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 2.145475537401659,
+          "n_near": 1,
+          "n_neigh": 1
+        }
+      },
+      "theory_cover": {
+        "600": 0.7258796434631969,
+        "1200": 0.924858030132136,
+        "2400": 0.994353684364377,
+        "4800": 0.9999681191197429
+      },
+      "secs": 119.43791222572327
+    },
+    {
+      "pdb": "1CSE",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "rg_ligand": 11.095772486939358,
+      "rot_tol_deg": 25.81874294039653,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 5.853631863108785,
+          "n_near": 0,
+          "n_neigh": 5
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 5.853631863108785,
+          "n_near": 0,
+          "n_neigh": 10
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 5.853631863108785,
+          "n_near": 0,
+          "n_neigh": 8
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 5.787110179268279,
+          "n_near": 0,
+          "n_neigh": 16
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 1.9812390425392,
+          "n_near": 4,
+          "n_neigh": 21
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 1.9812390425392,
+          "n_near": 5,
+          "n_neigh": 35
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 1.9812390425392,
+          "n_near": 8,
+          "n_neigh": 46
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 1.9812390425392,
+          "n_near": 10,
+          "n_neigh": 82
+        }
+      },
+      "theory_cover": {
+        "600": 0.9460521396924373,
+        "1200": 0.9970896283682357,
+        "2400": 0.999991529736965,
+        "4800": 0.9999999999282546
+      },
+      "secs": 123.27747797966003
+    },
+    {
+      "pdb": "1CSO",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "rg_ligand": 10.124284191239376,
+      "rot_tol_deg": 28.296212567136756,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 3.761069240423829,
+          "n_near": 4,
+          "n_neigh": 11
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 3.761069240423829,
+          "n_near": 4,
+          "n_neigh": 24
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 3.761069240423829,
+          "n_near": 4,
+          "n_neigh": 22
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 3.1244809795107966,
+          "n_near": 5,
+          "n_neigh": 42
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 1.9321441743130439,
+          "n_near": 7,
+          "n_neigh": 37
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 1.9321441743130439,
+          "n_near": 8,
+          "n_neigh": 77
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 1.9321441743130439,
+          "n_near": 10,
+          "n_neigh": 72
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 1.9321441743130439,
+          "n_near": 14,
+          "n_neigh": 164
+        }
+      },
+      "theory_cover": {
+        "600": 0.978644282583561,
+        "1200": 0.9995439333336292,
+        "2400": 0.9999997920031958,
+        "4800": 0.9999999999999567
+      },
+      "secs": 128.3552122116089
+    },
+    {
+      "pdb": "1CT0",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "rg_ligand": 10.121305558369288,
+      "rot_tol_deg": 28.304539954188296,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 4.027057916433033,
+          "n_near": 4,
+          "n_neigh": 8
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 3.4481662578104273,
+          "n_near": 5,
+          "n_neigh": 17
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 4.027057916433033,
+          "n_near": 4,
+          "n_neigh": 21
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 3.4481662578104273,
+          "n_near": 5,
+          "n_neigh": 40
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 2.234860093279005,
+          "n_near": 7,
+          "n_neigh": 39
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 2.234860093279005,
+          "n_near": 9,
+          "n_neigh": 75
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 2.234860093279005,
+          "n_near": 11,
+          "n_neigh": 82
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 2.234860093279005,
+          "n_near": 16,
+          "n_neigh": 173
+        }
+      },
+      "theory_cover": {
+        "600": 0.9787169360603827,
+        "1200": 0.9995470311893422,
+        "2400": 0.9999997948192566,
+        "4800": 0.9999999999999579
+      },
+      "secs": 131.6524543762207
+    },
+    {
+      "pdb": "1CT2",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "rg_ligand": 10.111564942834029,
+      "rot_tol_deg": 28.331806123486007,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 3.9039834606811086,
+          "n_near": 3,
+          "n_neigh": 13
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 3.3890471861511706,
+          "n_near": 4,
+          "n_neigh": 26
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 3.9039834606811086,
+          "n_near": 3,
+          "n_neigh": 22
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 3.3890471861511706,
+          "n_near": 4,
+          "n_neigh": 45
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 1.8446814992091358,
+          "n_near": 8,
+          "n_neigh": 42
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 1.8446814992091358,
+          "n_near": 10,
+          "n_neigh": 82
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 1.8446814992091358,
+          "n_near": 12,
+          "n_neigh": 89
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 1.8446814992091358,
+          "n_near": 16,
+          "n_neigh": 177
+        }
+      },
+      "theory_cover": {
+        "600": 0.9789533968311129,
+        "1200": 0.9995570404950513,
+        "2400": 0.999999803786877,
+        "4800": 0.9999999999999615
+      },
+      "secs": 134.35696601867676
+    },
+    {
+      "pdb": "1CT4",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "rg_ligand": 10.11916706478034,
+      "rot_tol_deg": 28.31052158062481,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 3.994226957316726,
+          "n_near": 3,
+          "n_neigh": 13
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 3.394966734354418,
+          "n_near": 4,
+          "n_neigh": 26
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 2.1598273909110786,
+          "n_near": 4,
+          "n_neigh": 25
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 2.1598273909110786,
+          "n_near": 5,
+          "n_neigh": 46
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 1.4141806084735815,
+          "n_near": 7,
+          "n_neigh": 48
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 1.4141806084735815,
+          "n_near": 9,
+          "n_neigh": 90
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 1.4141806084735815,
+          "n_near": 11,
+          "n_neigh": 94
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 1.4141806084735815,
+          "n_near": 15,
+          "n_neigh": 192
+        }
+      },
+      "theory_cover": {
+        "600": 0.9787689975606578,
+        "1200": 0.9995492445354206,
+        "2400": 0.9999997968195111,
+        "4800": 0.9999999999999587
+      },
+      "secs": 149.06384086608887
+    },
+    {
+      "pdb": "1DVF",
+      "chains": [
+        "C",
+        "D"
+      ],
+      "rg_ligand": 14.020906275723114,
+      "rot_tol_deg": 20.432266783028386,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 5.697064676622666,
+          "n_near": 0,
+          "n_neigh": 4
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 5.697064676622666,
+          "n_near": 0,
+          "n_neigh": 7
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 3.943555012591506,
+          "n_near": 1,
+          "n_neigh": 9
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 3.943555012591506,
+          "n_near": 1,
+          "n_neigh": 16
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 2.86329008707265,
+          "n_near": 4,
+          "n_neigh": 18
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 2.86329008707265,
+          "n_near": 4,
+          "n_neigh": 31
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 2.86329008707265,
+          "n_near": 5,
+          "n_neigh": 43
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 2.86329008707265,
+          "n_near": 5,
+          "n_neigh": 65
+        }
+      },
+      "theory_cover": {
+        "600": 0.7643221595370261,
+        "1200": 0.9444559555147091,
+        "2400": 0.996914859122216,
+        "4800": 0.9999904819057642
+      },
+      "secs": 136.43121695518494
+    },
+    {
+      "pdb": "1E50",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "rg_ligand": 15.191727096979472,
+      "rot_tol_deg": 18.857559495152554,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 6.527330644642334,
+          "n_near": 0,
+          "n_neigh": 6
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 5.6422435621163345,
+          "n_near": 0,
+          "n_neigh": 7
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 4.223231831641856,
+          "n_near": 1,
+          "n_neigh": 8
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 4.223231831641856,
+          "n_near": 1,
+          "n_neigh": 11
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 3.168242445759575,
+          "n_near": 3,
+          "n_neigh": 16
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 3.168242445759575,
+          "n_near": 3,
+          "n_neigh": 24
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 3.168242445759575,
+          "n_near": 4,
+          "n_neigh": 27
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 3.168242445759575,
+          "n_near": 4,
+          "n_neigh": 41
+        }
+      },
+      "theory_cover": {
+        "600": 0.6788751172817273,
+        "1200": 0.8968788096991757,
+        "2400": 0.9893660201109412,
+        "4800": 0.9998869184717191
+      },
+      "secs": 139.15360760688782
+    },
+    {
+      "pdb": "1E96",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "rg_ligand": 17.1186759089703,
+      "rot_tol_deg": 16.73487477003375,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 15.570978096418282,
+          "n_near": 0,
+          "n_neigh": 0
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 5.724537494910711,
+          "n_near": 0,
+          "n_neigh": 1
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 4.481246224778554,
+          "n_near": 1,
+          "n_neigh": 1
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 4.481246224778554,
+          "n_near": 1,
+          "n_neigh": 2
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 3.7222003473482426,
+          "n_near": 2,
+          "n_neigh": 2
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 3.7222003473482426,
+          "n_near": 2,
+          "n_neigh": 7
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 3.7222003473482426,
+          "n_near": 2,
+          "n_neigh": 6
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 3.7222003473482426,
+          "n_near": 2,
+          "n_neigh": 14
+        }
+      },
+      "theory_cover": {
+        "600": 0.5478151766396109,
+        "1200": 0.7955288855225336,
+        "2400": 0.9581915633443429,
+        "4800": 0.9982520546244099
+      },
+      "secs": 133.73489475250244
+    },
+    {
+      "pdb": "1EAW",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "rg_ligand": 10.759104248103927,
+      "rot_tol_deg": 26.626649483008556,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 4.155564056272324,
+          "n_near": 2,
+          "n_neigh": 5
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 4.155564056272324,
+          "n_near": 2,
+          "n_neigh": 8
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 3.908297072455391,
+          "n_near": 3,
+          "n_neigh": 10
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 3.908297072455391,
+          "n_near": 3,
+          "n_neigh": 16
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 1.925554952947786,
+          "n_near": 4,
+          "n_neigh": 16
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 1.925554952947786,
+          "n_near": 4,
+          "n_neigh": 30
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 1.925554952947786,
+          "n_near": 5,
+          "n_neigh": 33
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 1.925554952947786,
+          "n_near": 5,
+          "n_neigh": 66
+        }
+      },
+      "theory_cover": {
+        "600": 0.9593699793992844,
+        "1200": 0.9983492014259854,
+        "2400": 0.9999972748640681,
+        "4800": 0.9999999999925736
+      },
+      "secs": 138.95400071144104
+    },
+    {
+      "pdb": "1EFN",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "rg_ligand": 13.355577010354864,
+      "rot_tol_deg": 21.45013258081612,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 3.540874192543911,
+          "n_near": 2,
+          "n_neigh": 5
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 3.540874192543911,
+          "n_near": 2,
+          "n_neigh": 9
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 3.540874192543911,
+          "n_near": 2,
+          "n_neigh": 8
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 3.540874192543911,
+          "n_near": 2,
+          "n_neigh": 13
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 2.678629450375432,
+          "n_near": 4,
+          "n_neigh": 15
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 2.678629450375432,
+          "n_near": 6,
+          "n_neigh": 28
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 2.678629450375432,
+          "n_near": 4,
+          "n_neigh": 30
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 2.678629450375432,
+          "n_near": 6,
+          "n_neigh": 60
+        }
+      },
+      "theory_cover": {
+        "600": 0.8122310772297986,
+        "1200": 0.9647428316417181,
+        "2400": 0.9987569320793558,
+        "4800": 0.9999984547821447
+      },
+      "secs": 134.45453906059265
+    },
+    {
+      "pdb": "1EMV",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "rg_ligand": 14.177200898958196,
+      "rot_tol_deg": 20.207014036632813,
+      "grid": {
+        "600x4": {
+          "n_poses": 2400,
+          "best_rmsd": 5.7956613379908495,
+          "n_near": 0,
+          "n_neigh": 4
+        },
+        "600x12": {
+          "n_poses": 7200,
+          "best_rmsd": 5.604585717404138,
+          "n_near": 0,
+          "n_neigh": 7
+        },
+        "1200x4": {
+          "n_poses": 4800,
+          "best_rmsd": 3.502505649809915,
+          "n_near": 1,
+          "n_neigh": 5
+        },
+        "1200x12": {
+          "n_poses": 14400,
+          "best_rmsd": 3.502505649809915,
+          "n_near": 1,
+          "n_neigh": 10
+        },
+        "2400x4": {
+          "n_poses": 9600,
+          "best_rmsd": 2.6657875712277947,
+          "n_near": 3,
+          "n_neigh": 10
+        },
+        "2400x12": {
+          "n_poses": 28800,
+          "best_rmsd": 2.6657875712277947,
+          "n_near": 3,
+          "n_neigh": 21
+        },
+        "4800x4": {
+          "n_poses": 19200,
+          "best_rmsd": 2.6657875712277947,
+          "n_near": 5,
+          "n_neigh": 19
+        },
+        "4800x12": {
+          "n_poses": 57600,
+          "best_rmsd": 2.6657875712277947,
+          "n_near": 6,
+          "n_neigh": 42
+        }
+      },
+      "theory_cover": {
+        "600": 0.7528992695272141,
+        "1200": 0.9389412289998156,
+        "2400": 0.9962718264839471,
+        "4800": 0.9999861007222342
+      },
+      "secs": 135.6138632297516
+    }
+  ],
+  "n_complexes": 12,
+  "log": [
+    "====================================================================================================",
+    "IS THE RIGHT ANSWER EVEN IN THE SET? -- pure sampling recall, no ranking anywhere",
+    "====================================================================================================",
+    "  Five ranking experiments ran against pose sets where 6 of 12 complexes had NO near-native pose",
+    "  and the rest had 2-4 out of 2,400. Ranking a set that lacks the answer measures nothing.",
+    "  Sweeping rotations (600, 1200, 2400, 4800) and peaks-per-rotation (4, 12) in ONE pass, since the",
+    "  rotation sets are nested prefixes and peak rank is recorded per pose.",
+    "  PREDECLARED: still rising at the largest budget => SAMPLING-limited, and every ranking result so",
+    "  far was measured under a ceiling. Plateau below 12/12 => a resolution or rigid-body limit that",
+    "  more rotations cannot touch. 12/12 covered => ranking is the sole problem and clustering is next.",
+    "  NO POSE IS EVER SELECTED BY SCORE HERE. Coverage is what the search can REACH.",
+    "\n  test complexes (pinned from dock_fft.json): ['1CHO', '1CSE', '1CSO', '1CT0', '1CT2', '1CT4', '1DVF', '1E50', '1E96', '1EAW', '1EFN', '1EMV']",
+    "    1CHO F/G (Rg 15 A, tol 20 deg) 119s | best RMSD by rotations: 600:14.7  1200:14.7  2400:2.1  4800:2.1 | near-native: 600:0 1200:0 2400:1 4800:1",
+    "    1CSE E/I (Rg 11 A, tol 26 deg) 123s | best RMSD by rotations: 600:5.9  1200:5.8  2400:2.0  4800:2.0 | near-native: 600:0 1200:0 2400:5 4800:10",
+    "    1CSO E/I (Rg 10 A, tol 28 deg) 128s | best RMSD by rotations: 600:3.8  1200:3.1  2400:1.9  4800:1.9 | near-native: 600:4 1200:5 2400:8 4800:14",
+    "    1CT0 E/I (Rg 10 A, tol 28 deg) 132s | best RMSD by rotations: 600:3.4  1200:3.4  2400:2.2  4800:2.2 | near-native: 600:5 1200:5 2400:9 4800:16",
+    "    1CT2 E/I (Rg 10 A, tol 28 deg) 134s | best RMSD by rotations: 600:3.4  1200:3.4  2400:1.8  4800:1.8 | near-native: 600:4 1200:4 2400:10 4800:16",
+    "    1CT4 E/I (Rg 10 A, tol 28 deg) 149s | best RMSD by rotations: 600:3.4  1200:2.2  2400:1.4  4800:1.4 | near-native: 600:4 1200:5 2400:9 4800:15",
+    "    1DVF C/D (Rg 14 A, tol 20 deg) 136s | best RMSD by rotations: 600:5.7  1200:3.9  2400:2.9  4800:2.9 | near-native: 600:0 1200:1 2400:4 4800:5",
+    "    1E50 A/B (Rg 15 A, tol 19 deg) 139s | best RMSD by rotations: 600:5.6  1200:4.2  2400:3.2  4800:3.2 | near-native: 600:0 1200:1 2400:3 4800:4",
+    "    1E96 A/B (Rg 17 A, tol 17 deg) 134s | best RMSD by rotations: 600:5.7  1200:4.5  2400:3.7  4800:3.7 | near-native: 600:0 1200:1 2400:2 4800:2",
+    "    1EAW A/B (Rg 11 A, tol 27 deg) 139s | best RMSD by rotations: 600:4.2  1200:3.9  2400:1.9  4800:1.9 | near-native: 600:2 1200:3 2400:4 4800:5",
+    "    1EFN A/B (Rg 13 A, tol 21 deg) 134s | best RMSD by rotations: 600:3.5  1200:3.5  2400:2.7  4800:2.7 | near-native: 600:2 1200:2 2400:6 4800:6",
+    "    1EMV A/B (Rg 14 A, tol 20 deg) 136s | best RMSD by rotations: 600:5.6  1200:3.5  2400:2.7  4800:2.7 | near-native: 600:0 1200:1 2400:3 4800:6",
+    "\n  12 complexes\n",
+    "  COVERAGE -- complexes with at least one pose within 5 A (the gate on every ranking test)",
+    "     rotations     peaks=4    peaks=12    theory  poses/cx",
+    "           600        6/12        6/12      10.1      7200",
+    "          1200       10/12       10/12      11.5     14400",
+    "          2400       12/12       12/12      11.9     28800",
+    "          4800       12/12       12/12      12.0     57600",
+    "\n  COVERAGE at the looser 10 A neighbourhood criterion",
+    "           600       10/12       11/12",
+    "          1200       11/12       11/12",
+    "          2400       12/12       12/12",
+    "          4800       12/12       12/12",
+    "\n  MEDIAN best RMSD reachable, and median near-native COUNT (peaks=12)",
+    "     rotations   best RMSD  n near-native",
+    "           600         4.9            1.0",
+    "          1200         3.7            1.5",
+    "          2400         2.2            4.5",
+    "          4800         2.2            6.0",
+    "\n  READING",
+    "  coverage went 6/12 at the budget every ranking test used (600 rotations, 4 peaks) -> 12/12 at 4800 rotations, 12 peaks",
+    "  FULLY COVERED at the largest budget. The answer is now in every pose set, so ranking is the",
+    "  sole remaining problem -- and clustering should be tried at THIS budget, not the old one."
+  ]
+}

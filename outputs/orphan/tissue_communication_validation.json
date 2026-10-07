@@ -1,0 +1,109 @@
+{
+  "summary": {
+    "n_axes": 16,
+    "recall": 0.812,
+    "context_recall": 0.562,
+    "random_baseline": 0.0077,
+    "recall_over_random": 106.0,
+    "n_channels": 8425,
+    "n_unique_lr": 1950
+  },
+  "per_axis": [
+    {
+      "axis": "CTLA4->CD86",
+      "present": true,
+      "right_cells": false,
+      "example": "Liver:t-cells->kupffer cells"
+    },
+    {
+      "axis": "CD28->CD86",
+      "present": true,
+      "right_cells": false,
+      "example": "Liver:t-cells->kupffer cells"
+    },
+    {
+      "axis": "CTLA4->CD80",
+      "present": true,
+      "right_cells": true,
+      "example": "Liver:t-cells->kupffer cells"
+    },
+    {
+      "axis": "COL1A1->ITGB1",
+      "present": true,
+      "right_cells": false,
+      "example": "Liver:hepatic stellate cells->cholangiocytes"
+    },
+    {
+      "axis": "COL1A1->CD93",
+      "present": true,
+      "right_cells": true,
+      "example": "Liver:hepatic stellate cells->cholangiocytes"
+    },
+    {
+      "axis": "INS->INSR",
+      "present": true,
+      "right_cells": true,
+      "example": "Pancreas:pancreatic islet cells->pancreatic acinar cells"
+    },
+    {
+      "axis": "GCG->GCGR",
+      "present": false,
+      "right_cells": false,
+      "example": null
+    },
+    {
+      "axis": "VEGFA->KDR",
+      "present": true,
+      "right_cells": true,
+      "example": "Lung:alveolar cells type 1->vascular endothelial cells"
+    },
+    {
+      "axis": "GDF2->ACVRL1",
+      "present": true,
+      "right_cells": true,
+      "example": "Liver:hepatic stellate cells->kupffer cells"
+    },
+    {
+      "axis": "PDGFB->PDGFRB",
+      "present": true,
+      "right_cells": true,
+      "example": "Liver:vascular endothelial cells->hepatic stellate cells"
+    },
+    {
+      "axis": "TGFB1->TGFBR2",
+      "present": false,
+      "right_cells": false,
+      "example": null
+    },
+    {
+      "axis": "CXCL12->CXCR4",
+      "present": true,
+      "right_cells": true,
+      "example": "Liver:kupffer cells->hepatocytes"
+    },
+    {
+      "axis": "DLL4->NOTCH1",
+      "present": true,
+      "right_cells": true,
+      "example": "Brain:vascular endothelial cells->astrocytes"
+    },
+    {
+      "axis": "WNT2->FZD1",
+      "present": false,
+      "right_cells": false,
+      "example": null
+    },
+    {
+      "axis": "EGF->EGFR",
+      "present": true,
+      "right_cells": true,
+      "example": "Kidney:distal convoluted tubule cells->proximal tubule cells"
+    },
+    {
+      "axis": "IL7->IL7R",
+      "present": true,
+      "right_cells": false,
+      "example": "Heart:cardiomyocytes->t-cells"
+    }
+  ]
+}

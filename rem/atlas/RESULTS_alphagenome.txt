@@ -1,0 +1,94 @@
+=================================================================================================
+ALPHAGENOME: WHAT IT CAN DO, WHAT IT WOULD GIVE THIS ENGINE, AND WHETHER TO USE IT
+=================================================================================================
+
+=================================================================================================
+A1  CAPABILITY AND ACCESS, READ FROM THE INSTALLED CLIENT AND PROBED
+=================================================================================================
+  output modalities (11): ATAC, CAGE, CHIP_HISTONE, CHIP_TF, CONTACT_MAPS, DNASE, PROCAP, RNA_SEQ, SPLICE_JUNCTIONS, SPLICE_SITES, SPLICE_SITE_USAGE
+  sequence lengths : 16KB=16,384, 100KB=131,072, 500KB=524,288, 1MB=1,048,576
+  organisms        : HOMO_SAPIENS, MUS_MUSCULUS
+
+  endpoint gdmscience.googleapis.com:443 : reachable
+  API key in environment                 : NONE of ALPHAGENOME_API_KEY, ALPHA_GENOME_API_KEY, GDM_API_KEY
+
+  A1: THE ENDPOINT IS REACHABLE AND THERE IS NO KEY, so the live experiment CANNOT run here. That is reported as the state of affairs rather than replaced by a proxy measurement called a test.
+
+=================================================================================================
+A0  THE CEILING GATE: WOULD THE MODEL ANSWER SOMETHING THE DATA CANNOT?
+=================================================================================================
+  PART ONE: in single-perturbation data, does the perturbed COUNT ever vary?
+    153 target genes, 400 (gene, regulator) observations
+    distinct values of the perturbed count across all observations: [1]
+    THE COUNT IS ONE IN EVERY OBSERVATION. A summary saying the response depends on HOW
+    MANY regulators are perturbed predicts a CONSTANT for each gene here, so this data can
+    REFUTE the count -- which humantransfer did, at 1.05 floors -- and can never CALIBRATE
+    it, and cannot test a class-count functional at all, because per-class counts never
+    move either.
+
+  PART TWO: what share of the engine's own per-gene degrees of freedom do marginals pin?
+
+     targets with k >=    count   median marginals / joint dof
+                     2     1416                         0.1562
+                     4      639                         0.0547
+                     8      221                         0.0054
+                    20       42                         0.0000
+
+  A0: single knockdowns pin down a median 15.6% of the joint degrees of
+  freedom at k >= 2, falling to 0.00% at k >= 20.
+  A vanishing share, so the joint experiment is the only route and an in-silico one is the only available source.
+  AND THE NUANCE THAT MATTERS: if the class hypothesis is TRUE, marginals plus the class
+  map determine the counts and the joint response follows. The joint data is needed to
+  TEST the hypothesis, not to fit it under the hypothesis -- which is exactly the test
+  this record has never been able to run.
+
+=================================================================================================
+A3  THE DECOMPOSITION, VALIDATED ON RESPONSES WHOSE TRUTH IS KNOWN
+=================================================================================================
+  No dataset in this record varies the perturbed count, which is A0's first finding, so the
+  count-versus-identity decomposition is validated on synthetic responses instead.
+
+    synthetic truth      var by COUNT   var by IDENTITY   recovered?
+    pure count                  1.000             0.000          yes
+    pure identity               0.005             0.995          yes
+    half and half               0.244             0.756          yes
+
+  A3: PASS -- the decomposition recovers each known truth.
+
+=================================================================================================
+A2  THE PRE-REGISTERED EXPERIMENT, TO RUN UNCHANGED WHEN A KEY EXISTS
+=================================================================================================
+  TARGETS. TRRUST genes with the most annotated regulators, taken in order, so the deep
+  regime is reached: the cap-binding regime is k >= 20 and TRRUST offers 42 such genes.
+  SITES. For each target, a 100KB window centred on the TSS; candidate sites are the
+    positions where CHIP_TF predicted binding for that target's annotated regulators is
+    highest, one site per regulator, so site identity maps to regulator identity.
+  PERTURBATION. Delete or scramble each chosen subset of sites and predict RNA_SEQ for the
+    target, giving a response per subset. Subsets: all singletons, all pairs, and a
+    stratified sample at each larger size, so the COUNT varies -- which is the property no
+    real dataset here has.
+  STATISTIC. The A3 decomposition: the share of response variance explained by the count
+    alone against the share explained by which sites, at matched count. Then the class
+    ladder: group sites into C classes and ask the smallest C whose per-class counts
+    reproduce the response, which is signed.py's question asked where the count actually
+    varies.
+  PREDECLARED BARS. The count summary survives if identity explains under 5% of the
+    variance at matched count. The class-count functional survives if some C well below the
+    regulator count reproduces the response to within the model's own perturbation
+    reproducibility, which must be measured first by re-predicting identical sequences.
+
+=================================================================================================
+A4  WHAT IT WOULD AND WOULD NOT SETTLE
+=================================================================================================
+  1. A CLASS COUNT MEASURED ON A MODEL'S PREDICTIONS IS A CLASS COUNT FOR THAT MODEL. It
+     is evidence about biology only to the extent the model is right about the joint
+     effect of deleting several sites, which is the regime it is LEAST constrained in --
+     its training data is overwhelmingly observational, not combinatorially perturbed.
+     That is ledger S, and it is the reason this is a test of a hypothesis's coherence
+     rather than a measurement of a constant.
+  2. The model is deterministic, so there is no replicate noise -- and that removes the
+     thing that blocked whatdata, while ALSO removing the yardstick every accuracy figure
+     in this record is quoted in. A new one has to be defined, and re-predicting identical
+     sequences is not it: that measures serialisation, not uncertainty.
+  3. It says nothing about the pruning certificate, the enclosure width, or anything else
+     in the engine's cost line. It addresses the accuracy standard only.

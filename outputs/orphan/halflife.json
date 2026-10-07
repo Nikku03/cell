@@ -1,0 +1,45 @@
+{
+ "n_genes": 8556,
+ "n_features": 69,
+ "target": "K562 avg_log_kdeg (RNAdecayCafe, uniformly-reprocessed SLAM/TimeLapse-seq)",
+ "full_model_ridge": {
+  "R2": 0.2793,
+  "pearson_r": 0.5288,
+  "spearman_r": 0.526
+ },
+ "baseline_utr3_length_only": {
+  "R2": 0.0684,
+  "pearson_r": 0.2615,
+  "spearman_r": 0.2941
+ },
+ "baseline_codon_only": {
+  "R2": 0.1994,
+  "pearson_r": 0.4469,
+  "spearman_r": 0.435
+ },
+ "baseline_seqfeat_no_codon": {
+  "R2": 0.1488,
+  "pearson_r": 0.3857,
+  "spearman_r": 0.3955
+ },
+ "full_model_xgboost": {
+  "R2": 0.3266,
+  "pearson_r": 0.5717,
+  "spearman_r": 0.5583
+ },
+ "top_features": [
+  [
+   "cds_gc",
+   0.394
+  ],
+  [
+   "log_utr3_len",
+   0.213
+  ],
+  [
+   "utr3_gc",
+   -0.151
+  ]
+ ],
+ "ceiling_note": "sequence-only ceiling R2~0.5-0.6 (Saluki, Agarwal & Kelley 2022, deep CNN+RNN, denoised consensus); interpretable Lasso ~r0.67. This linear first-principles model is a floor. Absolute half-life needs measurement; sequence predicts ranking/direction. Ground truth RNAdecayCafe K562 (Zenodo 15785218)."
+}

@@ -1,0 +1,57 @@
+=================================================================================================
+SEQUENCE-SPECIFIC FACTORS, CHOSEN BEFORE LOOKING: DOES PROMOTER BINDING PREDICT RESPONSE?
+=================================================================================================
+  Lambert TFs 1,639; ENCODE K562 ChIP targets 526; knocked down 9,865; all three with >= 20 movers: 66
+  chosen 40; dropped {'< 50 promoters bound': 1}
+  MYC (45 movers, 7,471 promoters), CLOCK (40 movers, 704 promoters), NRF1 (109 movers, 3,937 promoters), CHCHD3 (61 movers, 1,739 promoters), LCOR (30 movers, 7,527 promoters), THAP1 (27 movers, 3,674 promoters), MAX (198 movers, 15,687 promoters), PHF21A (33 movers, 4,524 promoters), SREBF1 (120 movers, 2,203 promoters), CDC5L (496 movers, 1,554 promoters), KLF16 (30 movers, 1,521 promoters), ATF7 (266 movers, 14,036 promoters), DNMT1 (92 movers, 956 promoters), TBPL1 (38 movers, 7,100 promoters), TCF3 (23 movers, 6,383 promoters), TFAP4 (403 movers, 14,666 promoters), CAMTA2 (42 movers, 3,125 promoters), ZNF324 (232 movers, 949 promoters), ZNF511 (55 movers, 8,650 promoters), TFDP1 (44 movers, 7,846 promoters), GATA1 (1859 movers, 1,313 promoters), ZNF695 (100 movers, 2,003 promoters), SP1 (42 movers, 5,693 promoters), KAT7 (43 movers, 5,380 promoters), CEBPZ (245 movers, 1,052 promoters), MNT (28 movers, 14,817 promoters), ZSCAN32 (71 movers, 1,927 promoters), ZBTB17 (34 movers, 6,823 promoters), ZNF830 (3001 movers, 895 promoters), ZNF397 (91 movers, 3,023 promoters), ZBTB9 (70 movers, 7,762 promoters), CEBPG (359 movers, 3,522 promoters), TBP (56 movers, 12,410 promoters), ZNF143 (32 movers, 1,906 promoters), ZNF395 (24 movers, 8,486 promoters), ZC3H8 (1317 movers, 263 promoters), ELF1 (46 movers, 12,704 promoters), MYBL2 (36 movers, 1,526 promoters), PBX2 (183 movers, 4,453 promoters), DMTF1 (81 movers, 2,223 promoters)
+
+=================================================================================================
+RESULTS
+=================================================================================================
+  T1 triangulated pairs 1,211 vs null 2,259.3 +/- 634.9; permutation p 0.9860 -> NOT SHARP ENOUGH
+     ZNF395   movers    24  bound   3196  both    3  odds ratio   0.22  p 0.01
+     ZBTB9    movers    70  bound   2713  both   15  odds ratio   0.55  p 0.041
+     ZNF511   movers    54  bound   2945  both   26  odds ratio   1.68  p 0.064
+     MAX      movers   197  bound   5173  both  113  odds ratio   0.79  p 0.12
+     DMTF1    movers    81  bound    728  both   11  odds ratio   1.63  p 0.16
+     MYBL2    movers    35  bound    627  both    5  odds ratio   2.03  p 0.19
+     TBP      movers    56  bound   4347  both   25  odds ratio   0.72  p 0.23
+     ATF7     movers   265  bound   4696  both  159  odds ratio   1.14  p 0.31
+     TCF3     movers    22  bound   2272  both    8  odds ratio   1.50  p 0.35
+     GATA1    movers  1858  bound    582  both  140  odds ratio   1.10  p 0.35
+     CAMTA2   movers    42  bound   1091  both    3  odds ratio   0.50  p 0.36
+     CEBPZ    movers   244  bound    276  both    5  odds ratio   0.60  p 0.36
+     ZNF324   movers   232  bound    258  both    9  odds ratio   1.26  p 0.44
+     ZNF830   movers  3001  bound    346  both  119  odds ratio   0.91  p 0.46
+     ZNF397   movers    91  bound   1187  both   15  odds ratio   1.18  p 0.55
+     SREBF1   movers   120  bound    925  both   11  odds ratio   0.80  p 0.56
+     TBPL1    movers    37  bound   2433  both    9  odds ratio   0.77  p 0.59
+     CHCHD3   movers    60  bound    627  both    3  odds ratio   0.64  p 0.63
+     ELF1     movers    46  bound   4345  both   26  odds ratio   1.17  p 0.66
+     ZBTB17   movers    34  bound   2306  both    8  odds ratio   0.79  p 0.7
+     PBX2     movers   182  bound   1668  both   39  odds ratio   1.08  p 0.71
+     CDC5L    movers   495  bound    547  both   30  odds ratio   0.90  p 0.71
+     ZC3H8    movers  1315  bound    127  both   18  odds ratio   0.87  p 0.71
+     KLF16    movers    30  bound    541  both    1  odds ratio   0.49  p 0.72
+     ZNF143   movers    32  bound    603  both    1  odds ratio   0.41  p 0.73
+     ZNF695   movers   100  bound    829  both   11  odds ratio   1.11  p 0.74
+     MYC      movers    45  bound   2637  both   13  odds ratio   0.86  p 0.75
+     TFAP4    movers   402  bound   4817  both  238  odds ratio   1.03  p 0.76
+     THAP1    movers    27  bound   1276  both    3  odds ratio   0.68  p 0.79
+     CEBPG    movers   358  bound   1200  both   50  odds ratio   0.95  p 0.82
+     PHF21A   movers    33  bound   1571  both    5  odds ratio   0.76  p 0.82
+     SP1      movers    42  bound   1847  both   10  odds ratio   1.08  p 0.85
+     CLOCK    movers    40  bound    302  both    1  odds ratio   0.67  p 1
+     NRF1     movers   109  bound   1387  both   18  odds ratio   0.98  p 1
+     LCOR     movers    30  bound   2398  both    9  odds ratio   1.05  p 1
+     DNMT1    movers    91  bound    323  both    3  odds ratio   0.83  p 1
+     TFDP1    movers    43  bound   2915  both   15  odds ratio   0.98  p 1
+     KAT7     movers    42  bound   2021  both   10  odds ratio   0.96  p 1
+     MNT      movers    28  bound   4956  both   17  odds ratio   1.03  p 1
+     ZSCAN32  movers    71  bound    798  both    6  odds ratio   0.86  p 1
+  T2 factors with significant enrichment (OR > 1, p < 0.05): 0/40; OR > 1 in 15/40; median OR 0.91
+  T3 dose-response: positive in 20/40 factors (median rho -0.000), p 1 -> NO DOSE-RESPONSE
+  T4 sign control: 8/10 (fewer than 20: no verdict)
+  DISCOVERY: none listed -- T1 did not pass.
+
+  artifact: outputs/rawchip2.json   runtime 95s

@@ -1,0 +1,353 @@
+{
+ "propagate_GATA1": {
+  "gene": "GATA1",
+  "is_tf": true,
+  "nexus_activity": 0.308,
+  "L1_regulation": {
+   "n": 50,
+   "genes": [
+    "AGGF1",
+    "ALAS2",
+    "BACE1",
+    "BACH1",
+    "BDKRB1",
+    "BST2",
+    "CBFB",
+    "CCR3",
+    "CDC6",
+    "CEBPA",
+    "COPS5",
+    "CYBB",
+    "DACH1",
+    "DICER1",
+    "DPYSL2",
+    "EPO",
+    "EPOR",
+    "F13A1",
+    "FCER1A",
+    "FLI1",
+    "FURIN",
+    "GATA1",
+    "GFI1B",
+    "GNAS",
+    "GP1BB",
+    "GP6",
+    "GP9",
+    "GYPB",
+    "HEMGN",
+    "IFNG"
+   ],
+   "rate_weighted_top": [
+    {
+     "target": "CBFB",
+     "sign": -1,
+     "promoter_rate": 162.1,
+     "delta_rate": 112.2
+    },
+    {
+     "target": "CDC6",
+     "sign": 1,
+     "promoter_rate": 154.2,
+     "delta_rate": -106.8
+    },
+    {
+     "target": "BST2",
+     "sign": 1,
+     "promoter_rate": 89.8,
+     "delta_rate": -62.2
+    },
+    {
+     "target": "AGGF1",
+     "sign": 1,
+     "promoter_rate": 80.1,
+     "delta_rate": -55.5
+    },
+    {
+     "target": "ZNF268",
+     "sign": -1,
+     "promoter_rate": 55.4,
+     "delta_rate": 38.3
+    },
+    {
+     "target": "TBXA2R",
+     "sign": 1,
+     "promoter_rate": 42.2,
+     "delta_rate": -29.2
+    },
+    {
+     "target": "SPI1",
+     "sign": -1,
+     "promoter_rate": 34.2,
+     "delta_rate": 23.7
+    },
+    {
+     "target": "GP6",
+     "sign": 1,
+     "promoter_rate": 29.5,
+     "delta_rate": -20.5
+    }
+   ]
+  },
+  "L2_ppi_complex": {
+   "n": 1136,
+   "genes": [
+    "AAMP",
+    "ABCD1",
+    "ABCD3",
+    "ACOT9",
+    "ADAM33",
+    "ADAMTS1",
+    "ADAMTS13",
+    "ADAMTS2",
+    "ADAMTS4",
+    "ADAR",
+    "ADCY2",
+    "ADCY5",
+    "ADCYAP1",
+    "ADCYAP1R1",
+    "ADGRB3",
+    "ADIPOQ",
+    "ADIPOR1",
+    "ADM",
+    "ADM2",
+    "ADORA2A",
+    "ADORA2B",
+    "ADRB2",
+    "AGO1",
+    "AGO2",
+    "AGO3",
+    "AGO4",
+    "AGRN",
+    "AHCTF1",
+    "AHCYL1",
+    "AKT1"
+   ]
+  },
+  "L3_pathways": {
+   "n_pathways": 1874,
+   "pathways": [
+    "7SL RNA (ENSG00000222619)",
+    "ABC transporter disorders",
+    "ABC transporters in lipid homeostasis",
+    "ABC-family protein mediated transport",
+    "ADORA2B mediated anti-inflammatory cytokines production",
+    "ADP signalling through P2Y purinoceptor 1",
+    "ADP signalling through P2Y purinoceptor 12",
+    "AKT phosphorylates targets in the cytosol",
+    "AKT phosphorylates targets in the nucleus",
+    "AKT-mediated inactivation of FOXO1A",
+    "ALK mutants bind TKIs",
+    "AMPK inhibits chREBP transcriptional activation activity",
+    "AMPK-induced ERAD and lysosome mediated degradation of PD-L1(CD274)",
+    "APC truncation mutants have impaired AXIN binding",
+    "APC-Cdc20 mediated degradation of Nek2A",
+    "APC/C-mediated degradation of cell cycle proteins",
+    "APC/C:Cdc20 mediated degradation of Cyclin B",
+    "APC/C:Cdc20 mediated degradation of Securin",
+    "APC/C:Cdc20 mediated degradation of mitotic proteins",
+    "APC/C:Cdh1 mediated degradation of Cdc20 and other APC/C:Cdh1 targeted proteins in late mitosis/early G1"
+   ],
+   "n_genes": 10489
+  },
+  "L4_crosstalk_pathways": {
+   "n": 521,
+   "pathways": [
+    "2-LTR circle formation",
+    "ABO blood group biosynthesis",
+    "ALKBH3 mediated reversal of alkylation damage",
+    "APEX1-Independent Resolution of AP Sites via the Single Nucleotide Replacement Pathway",
+    "APOBEC3G mediated resistance to HIV-1 infection",
+    "ARL13B-mediated ciliary trafficking of INPP5E",
+    "ATF6B (ATF6-beta) activates chaperones",
+    "ATP sensitive Potassium channels",
+    "Abacavir metabolism",
+    "Aberrant regulation of mitotic exit in cancer due to RB1 defects",
+    "Abortive elongation of HIV-1 transcript in the absence of Tat",
+    "Acrosome Reaction and Sperm:Oocyte Membrane Binding",
+    "Activated NTRK2 signals through CDK5",
+    "Activated point mutants of FGFR2",
+    "Activation of AKT2",
+    "Activation of AMPA receptors",
+    "Activation of Ca-permeable Kainate Receptor",
+    "Activation of NIMA Kinases NEK9, NEK6, NEK7",
+    "Activation of PPARGC1A (PGC-1alpha) by phosphorylation",
+    "Activation of RAC1 downstream of NMDARs"
+   ]
+  }
+ },
+ "validation": {
+  "gene": "GATA1",
+  "n_movers": 54,
+  "universe": 7223,
+  "base_rate": 0.0075,
+  "layers": [
+   {
+    "layer": "L1 regulation (direct regulon)",
+    "n_reachable": 29,
+    "captures_movers": 2,
+    "precision": 0.069,
+    "recall": 0.037,
+    "enrichment_vs_chance": 9.22
+   },
+   {
+    "layer": "L2 + PPI/complex",
+    "n_reachable": 631,
+    "captures_movers": 10,
+    "precision": 0.016,
+    "recall": 0.185,
+    "enrichment_vs_chance": 2.12
+   },
+   {
+    "layer": "L3 + pathway members (blast radius)",
+    "n_reachable": 5183,
+    "captures_movers": 42,
+    "precision": 0.008,
+    "recall": 0.778,
+    "enrichment_vs_chance": 1.08
+   }
+  ]
+ },
+ "ranked_precision_fix": {
+  "ranked_top": [
+   {
+    "gene": "CBFB",
+    "score": 8.4767,
+    "tier": "regulon-core",
+    "direction": "up",
+    "rwr_pctl": 0.949
+   },
+   {
+    "gene": "CDC6",
+    "score": 8.3088,
+    "tier": "regulon-core",
+    "direction": "down",
+    "rwr_pctl": 0.984
+   },
+   {
+    "gene": "NFE2",
+    "score": 7.7959,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.945
+   },
+   {
+    "gene": "PPOX",
+    "score": 7.7837,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.947
+   },
+   {
+    "gene": "KLF1",
+    "score": 6.9309,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.995
+   },
+   {
+    "gene": "COPS5",
+    "score": 6.9284,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.981
+   },
+   {
+    "gene": "BST2",
+    "score": 6.9258,
+    "tier": "regulon-core",
+    "direction": "down",
+    "rwr_pctl": 0.949
+   },
+   {
+    "gene": "AGGF1",
+    "score": 6.7186,
+    "tier": "regulon-core",
+    "direction": "down",
+    "rwr_pctl": 0.964
+   },
+   {
+    "gene": "WT1",
+    "score": 6.2991,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.956
+   },
+   {
+    "gene": "TAL1",
+    "score": 6.2956,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.996
+   },
+   {
+    "gene": "ZNF268",
+    "score": 6.1882,
+    "tier": "regulon-core",
+    "direction": "up",
+    "rwr_pctl": 0.947
+   },
+   {
+    "gene": "GFI1B",
+    "score": 5.931,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.943
+   }
+  ],
+  "validation": {
+   "gene": "GATA1",
+   "n_movers": 54,
+   "universe": 7222,
+   "base_rate": 0.0075,
+   "methods": {
+    "composite": {
+     "AUPRC": 0.0173,
+     "lift": 2.32,
+     "P@10": 0.1,
+     "P@25": 0.08,
+     "P@50": 0.06
+    },
+    "RWR": {
+     "AUPRC": 0.0128,
+     "lift": 1.71,
+     "P@10": 0.0,
+     "P@25": 0.04,
+     "P@50": 0.04
+    },
+    "degree": {
+     "AUPRC": 0.0074,
+     "lift": 0.98,
+     "P@10": 0.0,
+     "P@25": 0.0,
+     "P@50": 0.0
+    },
+    "promoter_rate": {
+     "AUPRC": 0.0087,
+     "lift": 1.16,
+     "P@10": 0.0,
+     "P@25": 0.0,
+     "P@50": 0.0
+    }
+   },
+   "composite_shuffle": {
+    "real_lift": 2.32,
+    "null_mean": 1.17,
+    "null_p95": 1.72,
+    "p_value": 0.0133
+   },
+   "composite_decile_enrichment_top_to_bottom": [
+    2.41,
+    0.56,
+    0.19,
+    0.93,
+    0.74,
+    0.56,
+    0.93,
+    1.3,
+    1.3,
+    1.11
+   ]
+  }
+ },
+ "note": "Multi-layer FORWARD structural propagation with NEXUS as the mutation entry point: protein mutation -> activity -> regulation (direct regulon) -> products/PPI/complex -> pathways -> interconnected pathways. STRUCTURAL reachability / blast-radius map (what is mechanistically connected and could be affected), NOT the quantitative dynamical cascade (measured wall). validate() quantifies the map-vs-simulator boundary: enriched at the regulon layer, dilutes to ~chance through PPI/pathways. TRANSCRIPTION RATE: L1 includes a rate model (\u0394rate = |\u0394TF-activity| x promoter Pol II x sign) that captures the mechanism (promoter sets baseline rate, TF modulates it) but whose magnitudes do NOT match measured effect sizes (r~0) -- the per-TF->target rate coefficient is the unmeasured quantity; direction is more reliable than rate. Missing layers acknowledged: splicing, 5' capping, poly-A tail, full epigenetic state (each its own hard problem). PRECISION FIX (rank_targets/validate_ranked): the flat blast radius has good recall but ~chance precision because it is UNRANKED (all reachable genes equal). The fix emits a single RANKED, CALIBRATED score composite = 10*regulon*(0.5+promoter_rate) + RWR_nearfield (random-walk-with-restart over the directed regulatory + PPI + complex graph; pathway co-membership dropped as it was the dilution source). MEASURED on GATA1's real movers: composite AUPRC ~2.3x base, top decile ~2.4x, P@10 ~12x base; beats degree (0.99x=chance), promoter-rate-alone (1.17x), and RWR-alone (1.71x); label-shuffle p~0.02, robust across |z| thresholds. It RANKS the radius so the top is usable but does NOT make the far field precise -- GATA1's real movers are a de-repressed secondary program (all UP) that the curated edges do not connect to (SPI1/CEBPA relay 0x) = the measured wall, now located at the missing edges rather than the algorithm."
+}

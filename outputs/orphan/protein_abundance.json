@@ -1,0 +1,39 @@
+{
+ "n_genes": 7515,
+ "n_features": 71,
+ "target": "measured protein abundance log10(ppm); base = measured K562 log mRNA (RNAdecayCafe)",
+ "mrna_only": {
+  "R2": 0.3523,
+  "pearson_r": 0.5936,
+  "spearman_r": 0.5645
+ },
+ "mrna+translation": {
+  "R2": 0.5012,
+  "pearson_r": 0.7081,
+  "spearman_r": 0.6929
+ },
+ "mrna+degradation": {
+  "R2": 0.3716,
+  "pearson_r": 0.6096,
+  "spearman_r": 0.5875
+ },
+ "full_ridge": {
+  "R2": 0.504,
+  "pearson_r": 0.7101,
+  "spearman_r": 0.696
+ },
+ "full_xgboost": {
+  "R2": 0.5384,
+  "pearson_r": 0.7338,
+  "spearman_r": 0.7179
+ },
+ "essentiality_vs_abundance": {
+  "n": 15418,
+  "abundance_vs_dep_frac_spearman": 0.348,
+  "degree_vs_dep_frac_spearman": 0.366,
+  "median_log_abundance_essential": 1.03,
+  "median_log_abundance_nonessential": -0.59,
+  "verdict": "abundance is a MODEST, real predictor of a knockout's importance (~0.35, essential proteins ~40x more abundant), on par with network degree -- it ranks the SEED, not the genome-wide cascade (still the wall)."
+ },
+ "note": "Predict measured protein abundance log10(ppm) from measured K562 mRNA + sequence proxies for translation (codon composition, 5'UTR uORF/len/GC, CDS len) and degradation (protein length, N-end-rule N-terminal class, PEST fraction, disorder-prone fraction, hydrophobic fraction). Chromosome-held-out. Tests the user's step-1 chain [protein]=k_transl*[mRNA]/k_deg: does modeling translation+turnover beat mRNA-alone? Honest -- absolute protein concentration needs measured proteomics (ppm, already in the image); this validates the mechanism."
+}

@@ -1,0 +1,535 @@
+{
+ "test": "loop 151b -- post-hoc controls on the price of reversibility",
+ "post_hoc": true,
+ "predeclared": false,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "outputs/loop_reversibility_price.json",
+    "bytes": 18288,
+    "hash": "d654eddf3d2f0d23",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_proteostasis.json",
+    "bytes": 23916,
+    "hash": "cd8c97b832fc31c4",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_pulse_equation.json",
+    "bytes": 11233,
+    "hash": "05f5dd83ae13fda3",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio.json",
+    "bytes": 13968,
+    "hash": "2a9bbe03961188a9",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_signalling_cost.json",
+    "bytes": 7112,
+    "hash": "e00b6b9157dadd44",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 29,
+   "used": 29,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 15101,
+  "controls": [
+   "the identity settled in exact rational arithmetic, with the float arm fenced by conditioning (U1)",
+   "the frontier recomputed on BOTH loads rather than the one the loop chose (U3)",
+   "every conclusion emitted through gate_guard.verdict"
+  ],
+  "note": "POST-HOC. T0's FAIL was a tolerance the instrument could not meet, the fourth instance of that defect in this arc and one the verdict helper does not catch, because it conditions prose on gates and this was not prose. With T0 settled the answer reads: n = 8 reaches the amplification and cannot pay for it, the affordable window is n = 9-10 -- and that window exists only on the dilution-free load, which makes the whole answer turn on whether Schwanhausser's half-lives are division-corrected.",
+  "warnings": []
+ },
+ "gates": {
+  "U1": true,
+  "U2": true,
+  "U3": false
+ },
+ "u1": {
+  "exact_settings": 25,
+  "exact_disagreements": 0,
+  "float_worst": 2.2702621337503246e-09,
+  "float_cells_kept": 18,
+  "t0_reported": 0.013211639196568458,
+  "instance_number_in_arc": 4,
+  "prior_instances": [
+   "149b N1",
+   "150b S1",
+   "150b S1 (transform arm)"
+  ],
+  "escaped_the_verdict_helper": true,
+  "class": "tolerance incompatible with the instrument, NOT prose contradicting a gate",
+  "pass": true
+ },
+ "u2": {
+  "n8": {
+   "n": 8,
+   "rho": 4.897788193684462,
+   "reachable": true,
+   "transfers": 106746.55464436454,
+   "flux_per_h": 420405679735.7989,
+   "e1_utilisation": 14.488797913418752,
+   "atp_vs_translation": 6.833123124380161,
+   "affordable": false
+  },
+  "n9": {
+   "n": 9,
+   "rho": 2.6915348039269165,
+   "reachable": true,
+   "transfers": 6967.035096457506,
+   "flux_per_h": 27438647881.68144,
+   "e1_utilisation": 0.9456414205083465,
+   "atp_vs_translation": 0.44597794078298375,
+   "affordable": true
+  },
+  "n10": {
+   "n": 10,
+   "rho": 2.0941124558508935,
+   "reachable": true,
+   "transfers": 2826.220177250464,
+   "flux_per_h": 11130654461.480904,
+   "e1_utilisation": 0.3836051959094333,
+   "atp_vs_translation": 0.18091366519602675,
+   "affordable": true
+  },
+  "window": [
+   9,
+   10
+  ],
+  "cost_drop_8_to_9": 15.321661677668516,
+  "narrowing_not_contradiction": true,
+  "pass": true
+ },
+ "u3": {
+  "by_load": {
+   "dilution-free (loop 151 gated on this)": {
+    "rows": [
+     {
+      "n": 8,
+      "rho": 4.897788193684462,
+      "e1_utilisation": 14.488797913418752,
+      "atp_vs_translation": 6.833123124380161,
+      "affordable": false
+     },
+     {
+      "n": 9,
+      "rho": 2.6915348039269165,
+      "e1_utilisation": 0.9456414205083465,
+      "atp_vs_translation": 0.44597794078298375,
+      "affordable": true
+     },
+     {
+      "n": 10,
+      "rho": 2.0941124558508935,
+      "e1_utilisation": 0.3836051959094333,
+      "atp_vs_translation": 0.18091366519602675,
+      "affordable": true
+     },
+     {
+      "n": 11,
+      "rho": 1.8071741260109275,
+      "e1_utilisation": 0.25055457208108567,
+      "atp_vs_translation": 0.1181650990397771,
+      "affordable": true
+     },
+     {
+      "n": 12,
+      "rho": 1.6330519478943346,
+      "e1_utilisation": 0.1958496045397118,
+      "atp_vs_translation": 0.09236545845128984,
+      "affordable": true
+     },
+     {
+      "n": 13,
+      "rho": 1.5205475297324955,
+      "e1_utilisation": 0.17276081420059963,
+      "atp_vs_translation": 0.08147645660842226,
+      "affordable": true
+     },
+     {
+      "n": 14,
+      "rho": 1.435489433353656,
+      "e1_utilisation": 0.15668689207473727,
+      "atp_vs_translation": 0.0738957663652384,
+      "affordable": true
+     },
+     {
+      "n": 15,
+      "rho": 1.3740419750125148,
+      "e1_utilisation": 0.1498404427221881,
+      "atp_vs_translation": 0.07066688349515063,
+      "affordable": true
+     },
+     {
+      "n": 16,
+      "rho": 1.32739445772974,
+      "e1_utilisation": 0.14783365142506644,
+      "atp_vs_translation": 0.0697204521831736,
+      "affordable": true
+     },
+     {
+      "n": 17,
+      "rho": 1.2882495516931336,
+      "e1_utilisation": 0.14589655086109762,
+      "atp_vs_translation": 0.06880688801194265,
+      "affordable": true
+     },
+     {
+      "n": 18,
+      "rho": 1.2560299636948755,
+      "e1_utilisation": 0.14529021234465286,
+      "atp_vs_translation": 0.06852093014554962,
+      "affordable": true
+     },
+     {
+      "n": 19,
+      "rho": 1.2302687708123812,
+      "e1_utilisation": 0.14716462356995846,
+      "atp_vs_translation": 0.06940492913323454,
+      "affordable": true
+     },
+     {
+      "n": 20,
+      "rho": 1.2078138351067798,
+      "e1_utilisation": 0.1488439341005965,
+      "atp_vs_translation": 0.07019691585901323,
+      "affordable": true
+     },
+     {
+      "n": 21,
+      "rho": 1.188502227437019,
+      "e1_utilisation": 0.1509652009634011,
+      "atp_vs_translation": 0.07119733547559076,
+      "affordable": true
+     },
+     {
+      "n": 22,
+      "rho": 1.1721953655481303,
+      "e1_utilisation": 0.15415538722712108,
+      "atp_vs_translation": 0.07270187268150458,
+      "affordable": true
+     },
+     {
+      "n": 23,
+      "rho": 1.1561122421920993,
+      "e1_utilisation": 0.15461651402714538,
+      "atp_vs_translation": 0.07291934663754611,
+      "affordable": true
+     },
+     {
+      "n": 24,
+      "rho": 1.145512941445536,
+      "e1_utilisation": 0.1616409857815337,
+      "atp_vs_translation": 0.07623218740379159,
+      "affordable": true
+     },
+     {
+      "n": 25,
+      "rho": 1.1324003632355577,
+      "e1_utilisation": 0.16189403229538293,
+      "atp_vs_translation": 0.07635152773800424,
+      "affordable": true
+     },
+     {
+      "n": 26,
+      "rho": 1.1220184543019642,
+      "e1_utilisation": 0.1649419585292258,
+      "atp_vs_translation": 0.0777889730909129,
+      "affordable": true
+     },
+     {
+      "n": 27,
+      "rho": 1.1142945335917305,
+      "e1_utilisation": 0.17145186619832478,
+      "atp_vs_translation": 0.08085913811751613,
+      "affordable": true
+     },
+     {
+      "n": 28,
+      "rho": 1.1066237839776665,
+      "e1_utilisation": 0.17655278473124067,
+      "atp_vs_translation": 0.08326480383189303,
+      "affordable": true
+     },
+     {
+      "n": 29,
+      "rho": 1.0990058394325208,
+      "e1_utilisation": 0.18018127049890545,
+      "atp_vs_translation": 0.08497604931641674,
+      "affordable": true
+     },
+     {
+      "n": 30,
+      "rho": 1.091440336448757,
+      "e1_utilisation": 0.18232135284816636,
+      "atp_vs_translation": 0.08598534258396029,
+      "affordable": true
+     }
+    ],
+    "affordable": [
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30
+    ],
+    "within_bound": [
+     9,
+     10
+    ]
+   },
+   "gross (carried but never gated)": {
+    "rows": [
+     {
+      "n": 8,
+      "rho": 4.897788193684462,
+      "e1_utilisation": 107.90493651365017,
+      "atp_vs_translation": 50.889502450946786,
+      "affordable": false
+     },
+     {
+      "n": 9,
+      "rho": 2.6915348039269165,
+      "e1_utilisation": 7.0426392896354555,
+      "atp_vs_translation": 3.3214088342075048,
+      "affordable": false
+     },
+     {
+      "n": 10,
+      "rho": 2.0941124558508935,
+      "e1_utilisation": 2.856889478220816,
+      "atp_vs_translation": 1.3473497024448993,
+      "affordable": false
+     },
+     {
+      "n": 11,
+      "rho": 1.8071741260109275,
+      "e1_utilisation": 1.8659985014060392,
+      "atp_vs_translation": 0.8800314274662779,
+      "affordable": false
+     },
+     {
+      "n": 12,
+      "rho": 1.6330519478943346,
+      "e1_utilisation": 1.4585847128496912,
+      "atp_vs_translation": 0.6878892914235492,
+      "affordable": false
+     },
+     {
+      "n": 13,
+      "rho": 1.5205475297324955,
+      "e1_utilisation": 1.2866315618286892,
+      "atp_vs_translation": 0.6067937402554676,
+      "affordable": false
+     },
+     {
+      "n": 14,
+      "rho": 1.435489433353656,
+      "e1_utilisation": 1.1669214549667404,
+      "atp_vs_translation": 0.5503367516006104,
+      "affordable": false
+     },
+     {
+      "n": 15,
+      "rho": 1.3740419750125148,
+      "e1_utilisation": 1.1159327057864836,
+      "atp_vs_translation": 0.5262897324352624,
+      "affordable": false
+     },
+     {
+      "n": 16,
+      "rho": 1.32739445772974,
+      "e1_utilisation": 1.1009871810572367,
+      "atp_vs_translation": 0.5192412104499547,
+      "affordable": false
+     },
+     {
+      "n": 17,
+      "rho": 1.2882495516931336,
+      "e1_utilisation": 1.0865606762067532,
+      "atp_vs_translation": 0.5124374656198524,
+      "affordable": false
+     },
+     {
+      "n": 18,
+      "rho": 1.2560299636948755,
+      "e1_utilisation": 1.0820449862569228,
+      "atp_vs_translation": 0.5103078020271162,
+      "affordable": false
+     },
+     {
+      "n": 19,
+      "rho": 1.2302687708123812,
+      "e1_utilisation": 1.096004613927604,
+      "atp_vs_translation": 0.5168913609403045,
+      "affordable": false
+     },
+     {
+      "n": 20,
+      "rho": 1.2078138351067798,
+      "e1_utilisation": 1.1085112343717596,
+      "atp_vs_translation": 0.5227896609839303,
+      "affordable": false
+     },
+     {
+      "n": 21,
+      "rho": 1.188502227437019,
+      "e1_utilisation": 1.1243093128270778,
+      "atp_vs_translation": 0.5302402594296324,
+      "affordable": false
+     },
+     {
+      "n": 22,
+      "rho": 1.1721953655481303,
+      "e1_utilisation": 1.1480681400472856,
+      "atp_vs_translation": 0.541445260193443,
+      "affordable": false
+     },
+     {
+      "n": 23,
+      "rho": 1.1561122421920993,
+      "e1_utilisation": 1.151502369607164,
+      "atp_vs_translation": 0.543064891688082,
+      "affordable": false
+     },
+     {
+      "n": 24,
+      "rho": 1.145512941445536,
+      "e1_utilisation": 1.2038169358830317,
+      "atp_vs_translation": 0.5677371850486291,
+      "affordable": false
+     },
+     {
+      "n": 25,
+      "rho": 1.1324003632355577,
+      "e1_utilisation": 1.2057014930543768,
+      "atp_vs_translation": 0.5686259690087401,
+      "affordable": false
+     },
+     {
+      "n": 26,
+      "rho": 1.1220184543019642,
+      "e1_utilisation": 1.228400842491538,
+      "atp_vs_translation": 0.5793313049844596,
+      "affordable": false
+     },
+     {
+      "n": 27,
+      "rho": 1.1142945335917305,
+      "e1_utilisation": 1.2768832064489561,
+      "atp_vs_translation": 0.6021962772383157,
+      "affordable": false
+     },
+     {
+      "n": 28,
+      "rho": 1.1066237839776665,
+      "e1_utilisation": 1.314872161346714,
+      "atp_vs_translation": 0.620112408565021,
+      "affordable": false
+     },
+     {
+      "n": 29,
+      "rho": 1.0990058394325208,
+      "e1_utilisation": 1.3418952124473118,
+      "atp_vs_translation": 0.6328568637275703,
+      "affordable": false
+     },
+     {
+      "n": 30,
+      "rho": 1.091440336448757,
+      "e1_utilisation": 1.3578334187368146,
+      "atp_vs_translation": 0.6403735484524692,
+      "affordable": false
+     }
+    ],
+    "affordable": [],
+    "within_bound": []
+   }
+  },
+  "window_dilution_free": [
+   9,
+   10
+  ],
+  "window_gross": [],
+  "answer_depends_on_load_choice": true,
+  "hinge": "whether Schwanhausser protein half-lives are division-corrected",
+  "pass": false
+ },
+ "seconds": 2.7106313705444336,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 151b -- POST-HOC controls on loop 151. The capability gate failed, and it failed the same way for the fourth time.",
+  "====================================================================================================",
+  "",
+  "  loop 151 recorded 4/7 with T0 FAILING at 1.32e-02 against a 1e-08 gate.",
+  "",
+  "U1 SETTLE T0(b) THE WAY THE ARC ALREADY KNOWS HOW",
+  "     EXACT RATIONAL: f_shape vs a Gaussian solve for expected up-transitions, 25 settings (rho 0.1..100, n 2..16): 0 disagreements",
+  "     FLOAT arm fenced at cond(A) < 1e+10: worst 2.27e-09 over 18 cells",
+  "     the 1.32e-02 sits at n=12, rho=20 where cond(A) = 2.06e15. The identity was never in question; the instrument was.",
+  "     the identity is EXACT. T0's FAIL was the gate, not the arithmetic, and T1-T5 are readable.",
+  "",
+  "     AND IT ESCAPED THE FIX. gate_guard.verdict, added at loop 150b, conditions a SENTENCE on its gate, and in loop 151 it worked -- T3 and T4 printed their negatives",
+  "     correctly. T0's failure was a different animal: a TOLERANCE the instrument could not meet. Conditioning prose on gates does nothing about that, and the honest record is",
+  "     that I fixed one class and went on committing the other. No second helper is added here; naming the class is worth more than a wrapper I would forget to call.",
+  "     U1 PASS",
+  "",
+  "U2 RE-READ THE ANSWER WITH T0 SETTLED",
+  "     n=8 -- loop 149's answer, the shortest ladder that REACHES 20.29x:",
+  "       106,747 transfers per degradation, E1 at 1449% of capacity, ATP at 6.83x translation",
+  "     n=9  6,967 transfers, E1 95%, ATP 0.446x",
+  "     n=10 2,826 transfers, E1 38%, ATP 0.181x",
+  "     ONE ubiquitin between n=8 and n=9 drops the cost 15-fold, because the minimum rho that still delivers 20.3x falls from 4.90 to 2.69 and the cost goes as rho^(n-1).",
+  "     n = 8 REACHES the amplification and cannot PAY for it. The window is n = [9, 10]: still inside the observed K48 range, but pinned to two values instead of one. That is a narrowing of loop 149's prediction, not a contradiction of it -- 8 was the shortest ladder that reaches 20.29x, and the shortest AFFORDABLE ladder is one longer.",
+  "     U2 PASS",
+  "",
+  "U3 THE HINGE THE ANSWER TURNS ON",
+  "     loop 151 gated on the dilution-free load and carried the gross figure without ever gating on it. That choice is worth 7.4x.",
+  "     dilution-free (loop 151 gated on this): load 3,938,354 /h",
+  "       affordable at any n <= 30: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]",
+  "       affordable AND n <= 10: [9, 10]",
+  "       cheapest configuration anywhere: n=18, E1 at 15% of capacity",
+  "     gross (carried but never gated): load 29,330,784 /h",
+  "       affordable at any n <= 30: NONE",
+  "       affordable AND n <= 10: NONE",
+  "       cheapest configuration anywhere: n=18, E1 at 108% of capacity",
+  "     THE ANSWER TURNS ENTIRELY ON THIS. On the dilution-free load the window is n = [9, 10]; on the gross load it is EMPTY -- no ladder of any length up to 30 is affordable. So 'can chains stay reversible out to 8' reduces to 'are Schwanhausser's half-lives division-corrected'. If the gross figure is true proteolysis, the amplification mechanism is dead at every chain length and CDC20 is the only branch left. That is the hinge, and it belongs in the headline rather than in a caveat.",
+  "     U3 FAIL",
+  "",
+  "====================================================================================================",
+  "  U1  PASS",
+  "  U2  PASS",
+  "  U3  FAIL",
+  "  2/3   [POST-HOC -- written after loop 151's output]",
+  "====================================================================================================",
+  "    manifest: 5 inputs, coverage 29/29 (100.0%) by 'all', seed 15101, controls 3"
+ ]
+}

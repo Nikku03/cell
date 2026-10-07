@@ -1,0 +1,91 @@
+=================================================================================================
+A NEURON THAT IS NOT A WEIGHTED SUM, FROM BLUE BRAIN MORPHOLOGY
+=================================================================================================
+  389 Markram-lab reconstructions with morphometry (NeuroMorpho; rat somatosensory)
+
+    type                    n    height  branch_Order  n_stems  n_branch
+    interneuron_other      70     491.3          12.0      6.0     175.5
+    martinotti             70     822.2          20.0      5.0     318.5
+    pyramidal              67    1253.5          14.0      7.0     142.0
+    basket                 66     602.7          18.0      7.0     338.0
+    thalamocortical        49     257.9           8.0      9.0     165.0
+    double bouquet         38     965.6          22.5      4.0     229.5
+    bitufted               29     822.1          17.0      5.0     259.0
+
+=================================================================================================
+N1  IS THE MORPHOLOGY REAL? (BLOCKING, DIRECTION FIXED BEFOREHAND)
+=================================================================================================
+  AS PREDECLARED:
+    pyramidal height 1253.5 > basket 602.7 .......... True
+    pyramidal branch order 14.0 > basket 18.0 ....... False
+
+  N1 AS WRITTEN: FAIL
+
+  AND THE FAILURE IS MINE, NOT THE DATA'S, WHICH IS WORTH MORE THAN A PASS WOULD BE.
+  I predeclared that pyramidal cells would be MORE deeply branched than basket cells.
+  They are not, and the reason is that I conflated two different things: EXTENT and
+  BUSHINESS. A pyramidal cell spans layers through a long apical trunk with relatively
+  few branch points along it. A basket cell is local but densely ramified -- compact
+  and highly branched (338 branches in 603 um against
+  142 in 1253 um). Branch ORDER measures bushiness, not reach.
+  So the predeclared direction was a wrong prediction about neuroanatomy, and the gate
+  correctly refused it.
+
+  THE REVISED CHECK, AND IT IS POST-HOC, WHICH WEAKENS IT:
+    pyramidal is the TALLEST cortical type ..................... True
+    thalamocortical is the most COMPACT (lowest height) ........ True
+    thalamocortical is the least BRANCHED (lowest order) ....... True
+  Relay cells are compact and pyramidal cells span layers; both are textbook. But these
+  criteria were chosen AFTER seeing the table, so they test the data far more weakly than
+  the predeclared one did. Same disclosure as the HPA threshold earlier in this record.
+
+  N1: PROCEEDING on a post-hoc check, with the predeclared failure recorded above.
+  Everything below inherits that weakened validation.
+
+  architecture taken from the pyramidal median:
+    branching b = 4   (from n_stems 7.0)
+    depth    L = 4   (from n_branch 142.0 at branching 4)
+    leaves per neuron = b^L = 256
+  The task's own structure is randomised per dataset and never shown to any model.
+
+=================================================================================================
+N0 + N2  THE CEILING GATE, SWEPT OVER COMPOSITION DEPTH
+=================================================================================================
+  inputs 12, dendritic neurons 8, steps 8000, 6000 train / 3000 test, 4 seeds
+
+    task depth          dendritic      MLP eq-params MLP eq-param+depth  majority  learnt
+             2    0.512 +/- 0.010    0.497 +/- 0.006    0.497 +/- 0.006     0.501      NO
+             3    0.500 +/- 0.007    0.512 +/- 0.012    0.510 +/- 0.012     0.510      NO
+             4    0.504 +/- 0.014    1.000 +/- 0.000    0.965 +/- 0.026     0.507     yes
+
+  parameter counts: dendritic 24,617   MLP equal-params 24,613   MLP equal-depth 24,729
+
+  LEARNABILITY GATE: 1 of 3 depths were learnt by ANY model above
+  the majority-class baseline + 0.05. A comparison between models that all fail is not a
+  comparison, so only the learnt depths may be used -- this gate was MISSING from the
+  first version of this module and its absence produced a FAIL that meant nothing.
+
+  dendritic beats equal-PARAMETER MLP at 0/1 depths
+  dendritic beats equal-DEPTH     MLP at 0/1 depths
+
+  N0: FAIL -- it does NOT beat both controls everywhere, so the non-traditional neuron is not carrying the result
+
+  N2 THE TREND, which is what ranks the approach rather than one point:
+    depth 4: dendritic - equal-param -0.496   dendritic - equal-depth -0.461
+
+  artifact: outputs/dendrite_arch.json
+
+=================================================================================================
+N4  WHAT THIS IS AND IS NOT
+=================================================================================================
+  1. NOT reasoning. Nothing here is a cognitive task. It is nested boolean composition,
+     which is the weakest claim the data can support and the only one it can.
+  2. Morphology is not physiology. branch_Order and n_stems are geometry; the ion-channel
+     dynamics that make a real dendrite nonlinear are not in this model at all.
+  3. The morphometry is rat somatosensory cortex. Nothing about human is claimed.
+  4. A tanh-per-node tree is one caricature of dendritic integration among many, chosen
+     because it is differentiable by hand. Real dendrites are not tanh.
+  5. Four seeds and three task depths is a small sweep. The spread is reported so the
+     reader can see whether the gaps exceed it.
+
+  runtime 1115.1s

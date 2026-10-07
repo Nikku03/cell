@@ -1,0 +1,200 @@
+{
+  "n_suspects": 3906,
+  "recall_at15": {
+    "generative": 0,
+    "regulon": 1,
+    "genetics": 5,
+    "consensus_net_gen": 0,
+    "consensus_corroborate": 2,
+    "consensus_full": 2
+  },
+  "recall_at15_noncircular": {
+    "generative": 0,
+    "regulon": 0,
+    "genetics": 0,
+    "consensus_net_gen": 0,
+    "consensus_corroborate": 0,
+    "consensus_full": 0
+  },
+  "top8": {
+    "generative": [
+      "CRP",
+      "PARK7",
+      "CFHR1",
+      "SAG",
+      "ZFP36L1",
+      "PCNT",
+      "CEP72",
+      "SPAG5"
+    ],
+    "regulon": [
+      "CRP",
+      "DDIT3",
+      "CEBPE",
+      "NFKBIB",
+      "HIVEP3",
+      "ANXA1",
+      "PARK7",
+      "HOXB9"
+    ],
+    "genetics": [
+      "STAT3",
+      "ETS1",
+      "REL",
+      "STAT4",
+      "KLF4",
+      "RUNX3",
+      "NFKBIA",
+      "SOCS1"
+    ],
+    "consensus_net_gen": [
+      "CRP",
+      "PARK7",
+      "ANXA1",
+      "HOXB9",
+      "AGRP",
+      "ASIP",
+      "MRAP",
+      "MRAP2"
+    ],
+    "consensus_corroborate": [
+      "STAT3",
+      "REL",
+      "KLF4",
+      "RUNX3",
+      "SOCS1",
+      "TNFAIP3",
+      "PTPN22",
+      "AGRP"
+    ],
+    "consensus_full": [
+      "STAT3",
+      "GRK3",
+      "SPX",
+      "KLF4",
+      "COL3A1",
+      "TJP1",
+      "DLGAP3",
+      "PLPPR1"
+    ]
+  },
+  "driver_ranks": {
+    "generative": {
+      "IL23A": 259,
+      "IL23R": 2031,
+      "STAT3": 1847,
+      "RORC": 1501,
+      "RELA": 2094,
+      "NFKB1": 2235,
+      "STAT4": 881
+    },
+    "regulon": {
+      "IL23A": 1540,
+      "IL23R": 636,
+      "STAT3": 14,
+      "RORC": 47,
+      "RELA": 54,
+      "NFKB1": 91,
+      "STAT4": 2866
+    },
+    "genetics": {
+      "IL23A": 14,
+      "IL23R": 10,
+      "STAT3": 1,
+      "RORC": 155,
+      "RELA": 80,
+      "NFKB1": 44,
+      "STAT4": 4
+    },
+    "consensus_net_gen": {
+      "IL23A": 289,
+      "IL23R": 1189,
+      "STAT3": 510,
+      "RORC": 392,
+      "RELA": 610,
+      "NFKB1": 661,
+      "STAT4": 1414
+    },
+    "consensus_corroborate": {
+      "IL23A": 367,
+      "IL23R": 893,
+      "STAT3": 1,
+      "RORC": 3198,
+      "RELA": 3545,
+      "NFKB1": 3669,
+      "STAT4": 1780
+    },
+    "consensus_full": {
+      "IL23A": 709,
+      "IL23R": 887,
+      "STAT3": 1,
+      "RORC": 2580,
+      "RELA": 3108,
+      "NFKB1": 3416,
+      "STAT4": 1149
+    }
+  },
+  "confound_ranks": {
+    "generative": {
+      "DDIT3": 2990,
+      "STAT6": 2358,
+      "CEBPE": 2815,
+      "CRP": 1
+    },
+    "regulon": {
+      "DDIT3": 2,
+      "STAT6": 40,
+      "CEBPE": 3,
+      "CRP": 1
+    },
+    "genetics": {
+      "DDIT3": 58,
+      "STAT6": 79,
+      "CEBPE": 19,
+      "CRP": 334
+    },
+    "consensus_net_gen": {
+      "DDIT3": 1243,
+      "STAT6": 707,
+      "CEBPE": 1035,
+      "CRP": 1
+    },
+    "consensus_corroborate": {
+      "DDIT3": 3613,
+      "STAT6": 3551,
+      "CEBPE": 3821,
+      "CRP": 2703
+    },
+    "consensus_full": {
+      "DDIT3": 3509,
+      "STAT6": 3212,
+      "CEBPE": 3849,
+      "CRP": 3781
+    }
+  },
+  "verdict": {
+    "corroboration_top1": "STAT3",
+    "top1_is_real_driver": true,
+    "confounds_eliminated": true,
+    "precision_at5_corroboration": 1.0,
+    "precision_at5_regulon": 0.0,
+    "recall_at15_corroboration": 2,
+    "recall_at15_genetics": 5,
+    "network_only_finds_cause": false,
+    "noncircular_drivers": [
+      "RORC",
+      "RORA",
+      "RELA",
+      "NFKB1",
+      "NFKB2",
+      "IRF4",
+      "BATF",
+      "AHR",
+      "TNF",
+      "IL6",
+      "JAK2",
+      "IL12RB1"
+    ],
+    "note": "Corroboration (network-mechanism x genetics) NAMES the master driver STAT3 #1 and ELIMINATES every confound (all pushed >500) -> high precision at the top. But recall is LOW (drivers high on only one witness are dropped: IL-23/RORC/NF-kB) and it still needs the genetic witness. The interventional 'generative' witness FAILED on this static dense network. So: it names the top culprit by triangulation, but does not recover the full cast, and cannot do it from the network alone."
+  }
+}

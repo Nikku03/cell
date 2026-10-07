@@ -1,0 +1,597 @@
+{
+ "module": "screen_ccre",
+ "source": "ENCODE Registry of cCREs V3 (SCREEN), GRCh38; K562 classification ENCFF210CAN (ENCSR940SYU, zhiping-weng:cCREs-GRCh38-V6-EFO_0002067-ENCSR000EOT-7group)",
+ "assembly": "GRCh38",
+ "provenance_asserted": {
+  "registry_version": "ENCODE Registry of cCREs V3 (SCREEN), GRCh38",
+  "n_ccres": 1063878,
+  "k562_file": "ENCFF210CAN",
+  "k562_annotation": "ENCSR940SYU",
+  "k562_alias": "zhiping-weng:cCREs-GRCh38-V6-EFO_0002067-ENCSR000EOT-7group",
+  "classification_status": "All-data/Full-classification on 100% of rows (asserted)",
+  "aggregate_and_k562_accession_vectors_identical": true
+ },
+ "element_set": {
+  "n_registered": 1063878,
+  "k562_class_counts": {
+   "CTCF-only": 27649,
+   "DNase-H3K4me3": 5607,
+   "DNase-only": 25461,
+   "Low-DNase": 912020,
+   "PLS": 19320,
+   "dELS": 33965,
+   "pELS": 39856
+  },
+  "n_k562_accessible": 151858,
+  "n_k562_marked": 126397,
+  "aggregate_dELS": 789200,
+  "aggregate_dELS_accessible_in_K562": 74166
+ },
+ "gene_universe": {
+  "n_genes_with_tss": 16380,
+  "n_gene_entities": 86431
+ },
+ "reachability_census_element_level": {
+  "K562-accessible": {
+   "n": 151858,
+   "emittable_within_100kb": 130552,
+   "scored_never_emitted_100_250kb": 15351,
+   "outside_250kb_never_considered": 5955,
+   "frac_emittable": 0.859697875646986,
+   "frac_unreachable": 0.140302124353014
+  },
+  "K562-marked": {
+   "n": 126397,
+   "emittable_within_100kb": 109914,
+   "scored_never_emitted_100_250kb": 11753,
+   "outside_250kb_never_considered": 4730,
+   "frac_emittable": 0.8695934238945544,
+   "frac_unreachable": 0.13040657610544554
+  },
+  "ELS (dELS+pELS)": {
+   "n": 73821,
+   "emittable_within_100kb": 65210,
+   "scored_never_emitted_100_250kb": 6300,
+   "outside_250kb_never_considered": 2311,
+   "frac_emittable": 0.8833529754405928,
+   "frac_unreachable": 0.11664702455940722
+  },
+  "dELS (K562)": {
+   "n": 33965,
+   "emittable_within_100kb": 27268,
+   "scored_never_emitted_100_250kb": 4861,
+   "outside_250kb_never_considered": 1836,
+   "frac_emittable": 0.8028264389813042,
+   "frac_unreachable": 0.1971735610186957
+  },
+  "pELS (K562)": {
+   "n": 39856,
+   "emittable_within_100kb": 37942,
+   "scored_never_emitted_100_250kb": 1439,
+   "outside_250kb_never_considered": 475,
+   "frac_emittable": 0.9519771176234444,
+   "frac_unreachable": 0.0480228823765556
+  },
+  "PLS (K562)": {
+   "n": 19320,
+   "emittable_within_100kb": 18435,
+   "scored_never_emitted_100_250kb": 631,
+   "outside_250kb_never_considered": 254,
+   "frac_emittable": 0.9541925465838509,
+   "frac_unreachable": 0.04580745341614907
+  },
+  "CTCF-only (K562)": {
+   "n": 27649,
+   "emittable_within_100kb": 21208,
+   "scored_never_emitted_100_250kb": 4428,
+   "outside_250kb_never_considered": 2013,
+   "frac_emittable": 0.767044016058447,
+   "frac_unreachable": 0.23295598394155304
+  },
+  "DNase-only (K562)": {
+   "n": 25461,
+   "emittable_within_100kb": 20638,
+   "scored_never_emitted_100_250kb": 3598,
+   "outside_250kb_never_considered": 1225,
+   "frac_emittable": 0.8105730332665646,
+   "frac_unreachable": 0.18942696673343545
+  }
+ },
+ "reachability_link_level": {
+  "n_validated_positives": 483,
+  "frac_within_100kb_emittable": 0.6853002070393375,
+  "frac_100_250kb_scored_never_emitted": 0.11180124223602485,
+  "frac_beyond_250kb_never_considered": 0.2028985507246377,
+  "median_distance_bp": 37026.0,
+  "frac_unreachable": 0.3146997929606625,
+  "per_dataset": {
+   "Gasperini2019": {
+    "n": 275,
+    "frac_unreachable": 0.26181818181818184,
+    "median_distance_bp": 34942.0
+   },
+   "K562_DC_TAP": {
+    "n": 29,
+    "frac_unreachable": 0.8275862068965517,
+    "median_distance_bp": 417055.0
+   },
+   "Morris": {
+    "n": 31,
+    "frac_unreachable": 0.41935483870967744,
+    "median_distance_bp": 73962.0
+   },
+   "Nasser2021": {
+    "n": 97,
+    "frac_unreachable": 0.30927835051546393,
+    "median_distance_bp": 25420.0
+   },
+   "Schraivogel2020": {
+    "n": 16,
+    "frac_unreachable": 0.125,
+    "median_distance_bp": 19760.5
+   },
+   "Xie": {
+    "n": 35,
+    "frac_unreachable": 0.3142857142857143,
+    "median_distance_bp": 41858.0
+   }
+  }
+ },
+ "headline_unreachable_fraction_elements": 0.140302124353014,
+ "headline_unreachable_fraction_validated_links": 0.3146997929606625,
+ "candidate_universe": {
+  "ccre_pairs_within_250kb": 997388,
+  "ccre_pairs_within_100kb": 443659,
+  "eg_layer_k562_candidate_pairs": 389703,
+  "eg_layer_k562_edges_emitted": 122562,
+  "ratio_ccre_to_eg_candidates": 2.5593541748459723
+ },
+ "scope_gap": {
+  "100kb": {
+   "genes": 2022,
+   "genome_wide_ccre_gene_pairs": 87686,
+   "benchmark_tested_pairs": 1899,
+   "pooled_fraction_tested": 0.021656820929224732,
+   "median_per_gene_fraction_tested": 0.0,
+   "median_ccres_per_gene": 36.0,
+   "median_tested_per_gene": 0.0
+  },
+  "250kb": {
+   "genes": 2022,
+   "genome_wide_ccre_gene_pairs": 183273,
+   "benchmark_tested_pairs": 4061,
+   "pooled_fraction_tested": 0.022158201153470506,
+   "median_per_gene_fraction_tested": 0.008064516129032258,
+   "median_ccres_per_gene": 78.0,
+   "median_tested_per_gene": 1.0
+  },
+  "1000kb": {
+   "genes": 2022,
+   "genome_wide_ccre_gene_pairs": 559294,
+   "benchmark_tested_pairs": 10604,
+   "pooled_fraction_tested": 0.018959616945649335,
+   "median_per_gene_fraction_tested": 0.009287925696594427,
+   "median_ccres_per_gene": 249.0,
+   "median_tested_per_gene": 2.0
+  }
+ },
+ "benchmark": {
+  "n_pairs_k562_arm": 12274,
+  "registry_join": {
+   "joined": 12268,
+   "of": 12274,
+   "rate": 0.9995111618054424,
+   "via": "ensembl",
+   "label": "EP CRISPR benchmark K562 arm -> gene/ensembl"
+  },
+  "n_pairs_gene_has_tss": 11113,
+  "n_distinct_elements": 4644,
+  "n_ccres_overlapped": 7413,
+  "n_k562_accessible_ccres_overlapped": 5907,
+  "frac_of_all_k562_accessible": 0.03889818119559062,
+  "frac_of_k562_accessible_within_250kb_of_a_gene": 0.04048580221105803,
+  "datasets": {
+   "Gasperini2019": 5299,
+   "K562_DC_TAP": 1252,
+   "Klann": 33,
+   "Morris": 184,
+   "Nasser2021": 3751,
+   "Reilly": 8,
+   "Schraivogel2020": 1306,
+   "Xie": 441
+  }
+ },
+ "eg_layer_reference": {
+  "window_bp": 250000,
+  "emit_max_bp": 100000,
+  "k562_candidate_pairs": 389703,
+  "k562_edges": 122562,
+  "distal_stratum_threshold": null
+ },
+ "predictive_test": {
+  "min_power": 0.8,
+  "power_col": "PowerAtEffectSize25",
+  "n_powered": 12040,
+  "n_positives_powered": 483,
+  "overall_positive_rate_powered": 0.04011627906976744,
+  "matching": "dataset x distance decile x power tercile",
+  "draws": 25,
+  "recall_of_positives_overlapping_accessible_ccre": 0.9565217391304348,
+  "recall_of_positives_overlapping_marked_ccre": 0.9213250517598344,
+  "recall_of_positives_overlapping_ELS_ccre": 0.8716356107660456,
+  "universe_fraction_kept": {
+   "K562-accessible": 0.14274005102088774,
+   "K562-marked": 0.11880779563070201,
+   "ELS": 0.0693885953088606
+  },
+  "tests": {
+   "accessible_vs_not": {
+    "ok": true,
+    "label": "K562-accessible cCRE overlap",
+    "n_treated": 10467,
+    "n_matchable": 10373,
+    "n_dropped_no_stratum": 94,
+    "n_control_pool": 1573,
+    "n_strata_used": 103,
+    "EFFECT_raw_treated_positive_rate": 0.04280343198688904,
+    "matched_control_positive_rate_mean": 0.01708281114431698,
+    "matched_control_positive_rate_sd": 0.0010386621884627887,
+    "ratio_treated_over_control": 2.5056433408577874,
+    "draws": 25,
+    "frac_draws_p_lt_0.05": 1.0,
+    "median_p": 3.469923716641641e-28,
+    "balanced_n_per_arm": 1573,
+    "balanced_treated_rate_mean": 0.02410680228862047,
+    "balanced_control_rate_mean": 0.013350286077558804,
+    "balanced_frac_draws_p_lt_0.05": 0.6,
+    "balanced_median_p": 0.045903122566035647,
+    "cmh": {
+     "ok": true,
+     "chi2": 8.159097140814296,
+     "p": 0.004284569554445504,
+     "n_treated_used": 10373,
+     "n_control_used": 1573,
+     "n_strata_with_both_arms": 103
+    },
+    "residual_imbalance_treated_minus_control": {
+     "log10_distance": -0.009984803518144006,
+     "power": 0.0011124832471265168
+    },
+    "residual_imbalance_max_abs": {
+     "log10_distance": 0.011982685020262451,
+     "power": 0.0015460882498581352
+    },
+    "dataset_imbalance": 0.0
+   },
+   "class_ELS": {
+    "ok": true,
+    "label": "ELS vs no K562-accessible cCRE",
+    "n_treated": 6913,
+    "n_matchable": 6846,
+    "n_dropped_no_stratum": 67,
+    "n_control_pool": 1573,
+    "n_strata_used": 102,
+    "EFFECT_raw_treated_positive_rate": 0.05930470347648262,
+    "matched_control_positive_rate_mean": 0.018510078878177037,
+    "matched_control_positive_rate_sd": 0.0016115616773965688,
+    "ratio_treated_over_control": 3.2039141414141414,
+    "draws": 25,
+    "frac_draws_p_lt_0.05": 1.0,
+    "median_p": 2.7440457937498636e-36,
+    "balanced_n_per_arm": 1521,
+    "balanced_treated_rate_mean": 0.030716633793556873,
+    "balanced_control_rate_mean": 0.01349112426035503,
+    "balanced_frac_draws_p_lt_0.05": 1.0,
+    "balanced_median_p": 0.0013699863709371524,
+    "cmh": {
+     "ok": true,
+     "chi2": 17.10056166023869,
+     "p": 3.545181907232571e-05,
+     "n_treated_used": 6846,
+     "n_control_used": 1572,
+     "n_strata_with_both_arms": 102
+    },
+    "residual_imbalance_treated_minus_control": {
+     "log10_distance": -0.014790105895562249,
+     "power": 0.0007243359138085825
+    },
+    "residual_imbalance_max_abs": {
+     "log10_distance": 0.016957894426796294,
+     "power": 0.00111666741569183
+    },
+    "dataset_imbalance": 0.0
+   },
+   "class_dELS": {
+    "ok": true,
+    "label": "dELS vs no K562-accessible cCRE",
+    "n_treated": 5832,
+    "n_matchable": 5773,
+    "n_dropped_no_stratum": 59,
+    "n_control_pool": 1573,
+    "n_strata_used": 101,
+    "EFFECT_raw_treated_positive_rate": 0.058548415035510136,
+    "matched_control_positive_rate_mean": 0.018936428200242505,
+    "matched_control_positive_rate_sd": 0.0014465449753449215,
+    "ratio_treated_over_control": 3.0918404683497993,
+    "draws": 25,
+    "frac_draws_p_lt_0.05": 1.0,
+    "median_p": 1.0876495101650634e-29,
+    "balanced_n_per_arm": 1467,
+    "balanced_treated_rate_mean": 0.031738241308793456,
+    "balanced_control_rate_mean": 0.013605998636673484,
+    "balanced_frac_draws_p_lt_0.05": 1.0,
+    "balanced_median_p": 0.0016500646668142016,
+    "cmh": {
+     "ok": true,
+     "chi2": 16.766813147499814,
+     "p": 4.2266078924879874e-05,
+     "n_treated_used": 5773,
+     "n_control_used": 1571,
+     "n_strata_with_both_arms": 101
+    },
+    "residual_imbalance_treated_minus_control": {
+     "log10_distance": -0.011566283806661809,
+     "power": 0.00032976032442708634
+    },
+    "residual_imbalance_max_abs": {
+     "log10_distance": 0.013887183187076602,
+     "power": 0.0007453272403532551
+    },
+    "dataset_imbalance": 0.0
+   },
+   "class_pELS": {
+    "ok": true,
+    "label": "pELS vs no K562-accessible cCRE",
+    "n_treated": 1081,
+    "n_matchable": 1073,
+    "n_dropped_no_stratum": 8,
+    "n_control_pool": 1573,
+    "n_strata_used": 84,
+    "EFFECT_raw_treated_positive_rate": 0.06337371854613234,
+    "matched_control_positive_rate_mean": 0.01990680335507922,
+    "matched_control_positive_rate_sd": 0.0045571539354888725,
+    "ratio_treated_over_control": 3.183520599250936,
+    "draws": 25,
+    "frac_draws_p_lt_0.05": 1.0,
+    "median_p": 3.508720970092476e-07,
+    "balanced_n_per_arm": 827,
+    "balanced_treated_rate_mean": 0.04386940749697702,
+    "balanced_control_rate_mean": 0.016783555018137844,
+    "balanced_frac_draws_p_lt_0.05": 1.0,
+    "balanced_median_p": 0.0012500451626109225,
+    "cmh": {
+     "ok": true,
+     "chi2": 13.087532283755621,
+     "p": 0.00029726770262043946,
+     "n_treated_used": 1073,
+     "n_control_used": 1502,
+     "n_strata_with_both_arms": 84
+    },
+    "residual_imbalance_treated_minus_control": {
+     "log10_distance": -0.03249352368345004,
+     "power": 0.002618836998177576
+    },
+    "residual_imbalance_max_abs": {
+     "log10_distance": 0.041754846881223884,
+     "power": 0.003877379348682042
+    },
+    "dataset_imbalance": 0.0
+   },
+   "class_PLS": {
+    "ok": true,
+    "label": "PLS vs no K562-accessible cCRE",
+    "n_treated": 122,
+    "n_matchable": 121,
+    "n_dropped_no_stratum": 1,
+    "n_control_pool": 1573,
+    "n_strata_used": 37,
+    "EFFECT_raw_treated_positive_rate": 0.01652892561983471,
+    "matched_control_positive_rate_mean": 0.00859504132231405,
+    "matched_control_positive_rate_sd": 0.007197203655232146,
+    "ratio_treated_over_control": 1.9230769230769231,
+    "draws": 25,
+    "frac_draws_p_lt_0.05": 0.0,
+    "median_p": 1.0,
+    "balanced_n_per_arm": 121,
+    "balanced_treated_rate_mean": 0.01652892561983471,
+    "balanced_control_rate_mean": 0.010247933884297521,
+    "balanced_frac_draws_p_lt_0.05": 0.0,
+    "balanced_median_p": 1.0,
+    "cmh": {
+     "ok": true,
+     "chi2": 0.00028281158576160263,
+     "p": 0.9865826054809631,
+     "n_treated_used": 121,
+     "n_control_used": 943,
+     "n_strata_with_both_arms": 37
+    },
+    "residual_imbalance_treated_minus_control": {
+     "log10_distance": 0.00033642728052669214,
+     "power": 0.0031651137514588255
+    },
+    "residual_imbalance_max_abs": {
+     "log10_distance": 0.014027390081309932,
+     "power": 0.006414661207454597
+    },
+    "dataset_imbalance": 0.0
+   },
+   "class_CTCF-only": {
+    "ok": true,
+    "label": "CTCF-only vs no K562-accessible cCRE",
+    "n_treated": 1621,
+    "n_matchable": 1609,
+    "n_dropped_no_stratum": 12,
+    "n_control_pool": 1573,
+    "n_strata_used": 90,
+    "EFFECT_raw_treated_positive_rate": 0.011187072715972654,
+    "matched_control_positive_rate_mean": 0.013623368551895585,
+    "matched_control_positive_rate_sd": 0.002784560055079349,
+    "ratio_treated_over_control": 0.821167883211679,
+    "draws": 25,
+    "frac_draws_p_lt_0.05": 0.0,
+    "median_p": 0.6336948277384836,
+    "balanced_n_per_arm": 1168,
+    "balanced_treated_rate_mean": 0.011643835616438357,
+    "balanced_control_rate_mean": 0.013287671232876712,
+    "balanced_frac_draws_p_lt_0.05": 0.0,
+    "balanced_median_p": 0.8590817521581813,
+    "cmh": {
+     "ok": true,
+     "chi2": 0.36659725374196916,
+     "p": 0.5448649239584329,
+     "n_treated_used": 1609,
+     "n_control_used": 1557,
+     "n_strata_with_both_arms": 90
+    },
+    "residual_imbalance_treated_minus_control": {
+     "log10_distance": -0.0005656573163021505,
+     "power": 0.002791568618000091
+    },
+    "residual_imbalance_max_abs": {
+     "log10_distance": 0.003318538698270146,
+     "power": 0.003634063466123716
+    },
+    "dataset_imbalance": 0.0
+   },
+   "class_DNase-only": {
+    "ok": true,
+    "label": "DNase-only vs no K562-accessible cCRE",
+    "n_treated": 1523,
+    "n_matchable": 1510,
+    "n_dropped_no_stratum": 13,
+    "n_control_pool": 1573,
+    "n_strata_used": 93,
+    "EFFECT_raw_treated_positive_rate": 0.009933774834437087,
+    "matched_control_positive_rate_mean": 0.012158940397350992,
+    "matched_control_positive_rate_sd": 0.002300826569600897,
+    "ratio_treated_over_control": 0.8169934640522877,
+    "draws": 25,
+    "frac_draws_p_lt_0.05": 0.0,
+    "median_p": 0.8593027891518913,
+    "balanced_n_per_arm": 1140,
+    "balanced_treated_rate_mean": 0.008947368421052631,
+    "balanced_control_rate_mean": 0.011087719298245613,
+    "balanced_frac_draws_p_lt_0.05": 0.0,
+    "balanced_median_p": 0.6883939567936156,
+    "cmh": {
+     "ok": true,
+     "chi2": 0.23339694244700596,
+     "p": 0.6290164066359714,
+     "n_treated_used": 1510,
+     "n_control_used": 1557,
+     "n_strata_with_both_arms": 93
+    },
+    "residual_imbalance_treated_minus_control": {
+     "log10_distance": -0.004141746744661105,
+     "power": 0.0009692687520833587
+    },
+    "residual_imbalance_max_abs": {
+     "log10_distance": 0.008879699840163902,
+     "power": 0.0017985453080231473
+    },
+    "dataset_imbalance": 0.0
+   }
+  }
+ },
+ "layer_file": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/cell_screen_ccre.json.gz",
+ "layer_pairs_within_250kb": 997388,
+ "limits": [
+  "ENCODE Registry V3 only. V4 (2.35M cCREs, different class vocabulary) is NOT merged; mixing the two would put two annotation versions on one axis.",
+  "K562 classification comes from ONE file, ENCFF210CAN (zhiping-weng:cCREs-GRCh38-V6-EFO_0002067-ENCSR000EOT-7group). Five of the six V3 K562 annotations on the ENCODE portal are DNase-only and classify 0 elements as enhancers; this module asserts 100% All-data/Full-classification and would raise on any of them.",
+  "the cCRE class is a QUALITATIVE call (PLS/pELS/dELS/CTCF-only/DNase-only/Low-DNase). No accessibility z-score is carried, because the portal's bed9+ cell-type files do not contain one. 'K562-accessible' is therefore a threshold someone else chose, not a continuous covariate this module can re-tune.",
+  "gene coordinates come from the registry's 16,380 genes with a TSS, which is the cell object's gene set. cCREs whose only nearby gene is outside that set are counted as unreachable, which is true of the model but not of the genome.",
+  "one TSS per gene. Alternative promoters would move some distances across the 100 kb / 250 kb boundaries the census turns on; the direction of that bias is toward UNDER-stating reachability.",
+  "the E-G geometry (250 kb window, empty 100-250 kb stratum) is read from outputs/orphan/eg_layer.json, not recomputed; if that layer is retrained the census must be rerun.",
+  "the benchmark K562 arm is EIGHT screens (Gasperini2019, Nasser2021, Schraivogel2020, K562_DC_TAP, Xie, Morris, Klann, Reilly) with different libraries and hit rates. Dataset is a matching stratum in test 4 for exactly that reason; the pooled positive rate across them is not a property of K562.",
+  "absence of a cCRE call is UNKNOWN, not 'not an element': SCREEN's universe is itself derived from DNase peaks, so an element with no DNase in any biosample was never registered and is invisible here as well as to the E-G layer.",
+  "no edge is scored or emitted. This module delivers a candidate universe and a census; it does not claim any element regulates any gene.",
+  "the 95.7% recall of validated positives by K562-accessible cCREs is measured ONLY among elements the benchmark chose to test, and those screens preferentially targeted accessible chromatin. Genome-wide recall is therefore at most this and probably lower; it cannot be estimated from a benchmark that shares the selection criterion.",
+  "the matched test reuses controls (10,467 treated vs a 1,573-pair control pool), so the Fisher p on the full draw is optimistic. A balanced without-replacement variant is reported alongside it and is the one to read for significance.",
+  "'Significant' is the benchmark's own call at its own FDR, and power differs by screen. Pairs below PowerAtEffectSize25 0.8 are excluded rather than counted as negatives, because not-detected is not not-linked.",
+  "the (cCRE, gene) pair count is compared to the E-G layer's peak-derived candidate count as a SIZE comparison only; the K562 accessibility peak file is not on disk, so their overlap is unmeasured."
+ ],
+ "log": [
+  "====================================================================================================",
+  "ENCODE SCREEN cCREs IN K562 -- the genome-wide element universe, and what the E-G layer misses",
+  "====================================================================================================",
+  "\n  1  ELEMENT SET   ENCODE Registry of cCREs V3 (SCREEN), GRCh38",
+  "     K562 classification: ENCFF210CAN / ENCSR940SYU",
+  "     alias zhiping-weng:cCREs-GRCh38-V6-EFO_0002067-ENCSR000EOT-7group",
+  "    element table from cache: 1,063,878 cCREs",
+  "\n     K562-specific class of the 1,063,878 registered cCREs:",
+  "       Low-DNase          912,020  (85.73%)   CTCF-bound 0",
+  "       pELS                39,856  ( 3.75%)   CTCF-bound 6,580",
+  "       dELS                33,965  ( 3.19%)   CTCF-bound 3,846",
+  "       CTCF-only           27,649  ( 2.60%)   CTCF-bound 27,649",
+  "       DNase-only          25,461  ( 2.39%)   CTCF-bound 0",
+  "       PLS                 19,320  ( 1.82%)   CTCF-bound 6,568",
+  "       DNase-H3K4me3        5,607  ( 0.53%)   CTCF-bound 1,956",
+  "     K562-ACCESSIBLE (class != Low-DNase)      151,858  (14.27%)",
+  "     K562-MARKED     (excludes DNase-only)     126,397  (11.88%)",
+  "\n     the aggregate (cell-type-agnostic) registry calls 789,200 elements dELS; in K562 74,166 of those (9.4%) are accessible at all",
+  "\n     registry supplies TSS coordinates for 16,380 genes (of 86,431 gene entities; the rest are not in the cell object and are invisible to any layer built on it)",
+  "     0 cCREs sit on a chromosome with no registry gene at all (counted as unreachable, not as distance 0)",
+  "\n  3  REACHABILITY CENSUS -- what the E-G layer can ever do with a K562-accessible cCRE",
+  "     the layer scores (element, gene) inside 250 kb and, per its own calibration, emits NO edge in the 100-250 kb stratum",
+  "       K562-accessible      n= 151,858   emittable(<100kb)  130,552 (85.97%)   scored-but-never-emitted(100-250kb)  15,351 (10.11%)   outside 250kb   5,955 ( 3.92%)",
+  "       K562-marked          n= 126,397   emittable(<100kb)  109,914 (86.96%)   scored-but-never-emitted(100-250kb)  11,753 ( 9.30%)   outside 250kb   4,730 ( 3.74%)",
+  "       ELS (dELS+pELS)      n=  73,821   emittable(<100kb)   65,210 (88.34%)   scored-but-never-emitted(100-250kb)   6,300 ( 8.53%)   outside 250kb   2,311 ( 3.13%)",
+  "       dELS (K562)          n=  33,965   emittable(<100kb)   27,268 (80.28%)   scored-but-never-emitted(100-250kb)   4,861 (14.31%)   outside 250kb   1,836 ( 5.41%)",
+  "       pELS (K562)          n=  39,856   emittable(<100kb)   37,942 (95.20%)   scored-but-never-emitted(100-250kb)   1,439 ( 3.61%)   outside 250kb     475 ( 1.19%)",
+  "       PLS (K562)           n=  19,320   emittable(<100kb)   18,435 (95.42%)   scored-but-never-emitted(100-250kb)     631 ( 3.27%)   outside 250kb     254 ( 1.31%)",
+  "       CTCF-only (K562)     n=  27,649   emittable(<100kb)   21,208 (76.70%)   scored-but-never-emitted(100-250kb)   4,428 (16.02%)   outside 250kb   2,013 ( 7.28%)",
+  "       DNase-only (K562)    n=  25,461   emittable(<100kb)   20,638 (81.06%)   scored-but-never-emitted(100-250kb)   3,598 (14.13%)   outside 250kb   1,225 ( 4.81%)",
+  "\n     HEADLINE: 14.0% of K562-accessible cCREs (21,306 of 151,858) can NEVER receive an edge from the current E-G layer -- not because they were scored and rejected, but because of the window and the empty distal stratum.",
+  "\n  2  SCOPE GAP -- benchmark-tested elements vs K562-accessible cCREs, per gene",
+  "     benchmark K562 arm: 12,274 pairs; registry join 12,268/12,274 (100.0%) via ensembl",
+  "     11,113/12,274 of those pairs name a gene the registry has a TSS for; the rest are outside the cell object entirely",
+  "     2,022 genes carry at least one tested element",
+  "       within   100 kb of a tested gene:    87,686 K562-accessible cCREs,   1,899 tested (2.17%)   median per gene 36 vs 0",
+  "       within   250 kb of a tested gene:   183,273 K562-accessible cCREs,   4,061 tested (2.22%)   median per gene 78 vs 1",
+  "       within  1000 kb of a tested gene:   559,294 K562-accessible cCREs,  10,604 tested (1.90%)   median per gene 249 vs 2",
+  "\n     the benchmark's 4,644 distinct K562 elements overlap 7,413 registered cCREs, 5,907 of them K562-accessible",
+  "     that is 3.890% of the 151,858 K562-accessible cCREs in the genome",
+  "     restricted to the 145,903 that sit within 250 kb of a registry gene at all, the benchmark touches 4.049%",
+  "\n  4  DOES SCREEN's K562 CLASSIFICATION PREDICT A VALIDATED E-G LINK?",
+  "     12,040/12,274 pairs are powered at PowerAtEffectSize25 >= 0.8; an unpowered non-significant pair is 'not detected', which is NOT 'no link'",
+  "     positive rate overall 0.0401 (483 positives)",
+  "     datasets in the powered K562 arm: {'Gasperini2019': 5172, 'K562_DC_TAP': 1250, 'Morris': 164, 'Nasser2021': 3729, 'Schraivogel2020': 1297, 'Xie': 428}",
+  "     treated (element overlaps a K562-accessible cCRE) 10,467; control (no K562-accessible cCRE) 1,573",
+  "       EFFECT (raw held-out positive rate, treated)   0.0428",
+  "       matched control rate over 25 draws          0.0171 +/- 0.0010",
+  "       ratio 2.506x   full draws with p<0.05: 100% (median p 3.47e-28) -- OPTIMISTIC, controls are reused",
+  "       balanced draws (n=1,573/arm, no reuse): treated 0.0241 vs control 0.0134, p<0.05 in 60% of draws (median p 0.0459)",
+  "       Mantel-Haenszel over 103 strata, every unit used once: chi2 8.2, p 0.00428",
+  "       residual imbalance (treated - control): {'log10_distance': -0.01, 'power': 0.0011}  max|.| {'log10_distance': 0.012, 'power': 0.0015}",
+  "       ELS          raw rate 0.0593  matched control 0.0185  ratio 3.204x  full-draw p<0.05 100%  MH p 3.55e-05  n=6,846  -> ELEVATED",
+  "       dELS         raw rate 0.0585  matched control 0.0189  ratio 3.092x  full-draw p<0.05 100%  MH p 4.23e-05  n=5,773  -> ELEVATED",
+  "       pELS         raw rate 0.0634  matched control 0.0199  ratio 3.184x  full-draw p<0.05 100%  MH p 0.000297  n=1,073  -> ELEVATED",
+  "       PLS          raw rate 0.0165  matched control 0.0086  ratio 1.923x  full-draw p<0.05 0%  MH p 0.987  n=121  -> NOT DETECTED (not reversed)",
+  "       CTCF-only    raw rate 0.0112  matched control 0.0136  ratio 0.821x  full-draw p<0.05 0%  MH p 0.545  n=1,609  -> NOT DETECTED (not reversed)",
+  "       DNase-only   raw rate 0.0099  matched control 0.0122  ratio 0.817x  full-draw p<0.05 0%  MH p 0.629  n=1,510  -> NOT DETECTED (not reversed)",
+  "     RECALL of validated positives, and the size of the universe each filter keeps:",
+  "       K562-accessible    recall  95.7%   keeps 14.27% of the 1,063,878 registered cCREs (  6.7x enrichment)",
+  "       K562-marked        recall  92.1%   keeps 11.88% of the 1,063,878 registered cCREs (  7.8x enrichment)",
+  "       ELS (dELS+pELS)    recall  87.2%   keeps  6.94% of the 1,063,878 registered cCREs ( 12.6x enrichment)",
+  "     (483 positives; see limits -- recall is measured only among elements the benchmark chose to test, and those screens targeted accessible chromatin.)",
+  "\n  5  LINK-LEVEL REACHABILITY -- validated K562 E-G links vs the layer's geometry",
+  "     483 powered, validated positives; median distance to TSS 37,026 bp",
+  "       within 100 kb (an edge is emittable)           68.5%",
+  "       100-250 kb (scored, stratum emits nothing)     11.2%",
+  "       beyond 250 kb (outside the window entirely)    20.3%",
+  "     LINK-LEVEL HEADLINE: 31.5% of experimentally validated K562 enhancer-gene links are at a distance the current E-G layer cannot express.",
+  "       Gasperini2019    n= 275  unreachable  26.2%  median    34,942 bp",
+  "       K562_DC_TAP      n=  29  unreachable  82.8%  median   417,055 bp",
+  "       Morris           n=  31  unreachable  41.9%  median    73,962 bp",
+  "       Nasser2021       n=  97  unreachable  30.9%  median    25,420 bp",
+  "       Schraivogel2020  n=  16  unreachable  12.5%  median    19,760 bp",
+  "       Xie              n=  35  unreachable  31.4%  median    41,858 bp",
+  "     each screen has its own library design and distance range, so the pooled figure is a property of the benchmark's composition, not of K562 -- both are reported.",
+  "\n  WRITING THE LAYER",
+  "    /tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/cell_screen_ccre.json.gz  5.8 MB  151,858 elements, 997,388 (element, gene) pairs within 250 kb, 16,111 genes",
+  "    candidate-universe size: 997,388 (cCRE, gene) pairs within 250 kb vs the 389,703 peak-derived pairs the E-G layer scored in K562 (2.56x) -- the two are different objects (DNase peaks vs registered cCREs) and the peak file is not on disk to recompute, so this is a size comparison and not an overlap.",
+  "\n====================================================================================================",
+  "VERDICT: 151,858 K562-accessible cCREs genome-wide, of which the CRISPR benchmark tested 3.89% and the E-G layer can never emit an edge for 14.0%; 31.5% of experimentally VALIDATED K562 E-G links are at a distance that layer cannot express. Near the genes it did test, the benchmark scored 2.22% of the cCREs within 250 kb. K562 cCRE overlap does carry signal: 0.0428 raw held-out positive rate vs 0.0171 matched (2.51x; p<0.05 in 100% of 25 full draws and 60% of 25 balanced draws).",
+  "===================================================================================================="
+ ]
+}

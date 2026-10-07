@@ -1,0 +1,92 @@
+{
+  "chain_equals_degree": 1.0,
+  "n_ppi": 191447,
+  "n_signor_directed": 3164,
+  "n_reg_directed": 2507,
+  "n_perturb_evaluable": 95,
+  "results": {
+    "SIGNOR": {
+      "CHAIN": {
+        "acc": 0.5663887107119948,
+        "se": 0.012556530884216478,
+        "n": 1559,
+        "orient": 1.0
+      },
+      "DEGREE": {
+        "acc": 0.5663887107119948,
+        "se": 0.012574912957709291,
+        "n": 1559,
+        "orient": 1.0
+      },
+      "TF": {
+        "acc": 0.7647058823529411,
+        "se": 0.0265194550936125,
+        "n": 255,
+        "orient": -1.0
+      },
+      "ABUNDANCE": {
+        "acc": 0.5474683544303798,
+        "se": 0.012703037750753154,
+        "n": 1580,
+        "orient": -1.0
+      }
+    },
+    "REG": {
+      "CHAIN": {
+        "acc": 0.5201288244766505,
+        "se": 0.014054945601003722,
+        "n": 1242,
+        "orient": -1.0
+      },
+      "DEGREE": {
+        "acc": 0.5201288244766505,
+        "se": 0.01426466221126652,
+        "n": 1242,
+        "orient": -1.0
+      },
+      "TF": {
+        "acc": 0.915129151291513,
+        "se": 0.011963637195021285,
+        "n": 542,
+        "orient": 1.0
+      },
+      "ABUNDANCE": {
+        "acc": 0.5406698564593302,
+        "se": 0.014149161593965856,
+        "n": 1254,
+        "orient": -1.0
+      }
+    },
+    "PERTURB": {
+      "CHAIN": {
+        "acc": 0.6041666666666666,
+        "se": 0.07114041813822818,
+        "n": 48,
+        "orient": 1.0
+      },
+      "DEGREE": {
+        "acc": 0.6041666666666666,
+        "se": 0.0706056689067587,
+        "n": 48,
+        "orient": 1.0
+      },
+      "TF": {
+        "acc": null,
+        "decided": 4,
+        "total": 48
+      },
+      "ABUNDANCE": {
+        "acc": 0.4583333333333333,
+        "se": 0.07121443968234836,
+        "n": 48,
+        "orient": -1.0
+      },
+      "PERTURB": {
+        "acc": null,
+        "decided": 5,
+        "total": 48
+      }
+    }
+  },
+  "verdict": "CAN A MARKOV CHAIN ORIENT PPI EDGES? NO, AND NOT FOR WANT OF TUNING. On an undirected graph the walk's kernel is P[a,b] = 1/deg(a), so sign(P[a,b] - P[b,a]) equals sign(deg(b) - deg(a)) IDENTICALLY. Measured across 189,440 edges, the chain's direction and the pure degree rule agree 1.0000 of the time -- they are the same rule. Whatever the chain says about direction is a statement about which protein has more recorded partners, and a symmetric input cannot yield an asymmetric output except through the normalisation, which is degree. AND THE DEGREE RULE ITSELF IS WEAK: on 3164 SIGNOR-directed PPI edges it scores 0.5664 +/- 0.0126 against a 0.500 chance baseline, with the orientation of the rule fitted on a training half so the sign is not chosen after seeing the answer. The best non-Perturb-seq rule is TF at 0.7647. THE ONE GENUINELY DIRECTIONAL MEASUREMENT WE HOLD IS PERTURB-SEQ -- knock out A, watch B, then the reverse -- AND IT TURNS OUT TO BE UNUSABLE HERE FOR A REASON WORTH STATING: it has an opinion about only 5 of 48 test edges. A zero means NEITHER knockout detectably moved the other protein's transcript, so there is no readout at all, and across ALL 16,870 knockout-knockout PPI edges with both ends measured, only 25.4% show any effect in either direction and only 22.7% are asymmetric enough to orient. The limit is COVERAGE, not accuracy. The average signal is real -- 0.109 against 0.019 for random pairs -- but averages over 17,000 edges do not orient any particular one. WHAT WOULD ACTUALLY ORIENT THESE EDGES. Direction is a causal claim, and the library holds almost no causal measurement at the protein level: SIGNOR gives an unambiguous direction for 3164 of 191,447 PPI edges (1.7%), and only 95 of those have both endpoints knocked out and measured. Kinase-substrate assays, time-resolved perturbation (which protein moves FIRST), and degron/rapid-depletion experiments all measure direction directly; co-expression, co-dependency, abundance and topology do not, and no amount of them will. WHAT THIS CANNOT SAY. The `reg` arm is TF->target REGULATION, a different relation from physical binding, and is reported separately rather than pooled for that reason. Edges recorded in both directions were dropped as uninformative rather than counted as errors. One cell line for the Perturb-seq arm."
+}

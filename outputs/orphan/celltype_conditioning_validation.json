@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "gate_specificity": [
+    {
+      "lineage": "erythroid",
+      "n_markers": 6,
+      "native_expr": 0.833,
+      "control_mean": 0.0,
+      "background": 0.085,
+      "specificity": 0.833,
+      "fold_over_background": 9.9
+    },
+    {
+      "lineage": "monocyte",
+      "n_markers": 6,
+      "native_expr": 0.833,
+      "control_mean": 0.033,
+      "background": 0.085,
+      "specificity": 0.8,
+      "fold_over_background": 9.8
+    },
+    {
+      "lineage": "B cell",
+      "n_markers": 5,
+      "native_expr": 0.8,
+      "control_mean": 0.0,
+      "background": 0.071,
+      "specificity": 0.8,
+      "fold_over_background": 11.3
+    },
+    {
+      "lineage": "Treg",
+      "n_markers": 4,
+      "native_expr": 1.0,
+      "control_mean": 0.0,
+      "background": 0.091,
+      "specificity": 1.0,
+      "fold_over_background": 11.0
+    },
+    {
+      "lineage": "NK",
+      "n_markers": 5,
+      "native_expr": 0.6,
+      "control_mean": 0.0,
+      "background": 0.09,
+      "specificity": 0.6,
+      "fold_over_background": 6.6
+    },
+    {
+      "lineage": "hepatocyte",
+      "n_markers": 6,
+      "native_expr": 1.0,
+      "control_mean": 0.033,
+      "background": 0.129,
+      "specificity": 0.967,
+      "fold_over_background": 7.7
+    }
+  ],
+  "summary": {
+    "n_lineages": 6,
+    "min_specificity": 0.6,
+    "mean_specificity": 0.833,
+    "mean_fold_over_background": 9.4
+  },
+  "program_enrichment": [
+    {
+      "tf": "FOXP3",
+      "celltype": "regulatory T cell",
+      "n_targets": 35,
+      "target_expr_frac": 0.257,
+      "background": 0.091,
+      "enrichment": 2.84
+    },
+    {
+      "tf": "PAX5",
+      "celltype": "B cell",
+      "n_targets": 582,
+      "target_expr_frac": 0.137,
+      "background": 0.071,
+      "enrichment": 1.94
+    },
+    {
+      "tf": "SPI1",
+      "celltype": "classical monocyte",
+      "n_targets": 2281,
+      "target_expr_frac": 0.11,
+      "background": 0.085,
+      "enrichment": 1.29
+    }
+  ],
+  "honest_negatives": {
+    "coexpr_ppi": {
+      "auc_random_neg": 0.71,
+      "auc_degree_matched": 0.568
+    },
+    "note": "conditioning is a correct-gate CAPABILITY, not a predictive lift over the global model: co-expression PPI AUC collapses from ~0.72 (random neg) to ~0.57 (expression-degree matched, a hub artifact); reachability specificity saturates on the dense directed graph (a random TF reaches the same markers); only small CURATED regulatory programs (e.g. FOXP3) show cell-type enrichment, bulk-inferred target sets do not."
+  },
+  "bar": "external canonical markers: min specificity>=0.4 across >=5 lineages & mean >=4x background"
+}

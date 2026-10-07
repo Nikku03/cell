@@ -1,0 +1,212 @@
+<style>
+:root { --bg:#f6f7f9; --panel:#fff; --ink:#1a2230; --muted:#66707e; --line:#d9dee6;
+  --band0:#eef4f3; --band1:#eaf0f6; --band2:#f0eef7; --band3:#f3edf0; --edge:#c8cfd8; --inter:#7a828f; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0e1219; --panel:#151b25; --ink:#e6eaf1; --muted:#8b95a5; --line:#26303d;
+  --band0:#111a1a; --band1:#101722; --band2:#15131f; --band3:#1a1218; --edge:#2c3644; --inter:#7c8698; } }
+:root[data-theme="light"] { --bg:#f6f7f9; --panel:#fff; --ink:#1a2230; --muted:#66707e; --line:#d9dee6;
+  --band0:#eef4f3; --band1:#eaf0f6; --band2:#f0eef7; --band3:#f3edf0; --edge:#c8cfd8; --inter:#7a828f; }
+:root[data-theme="dark"] { --bg:#0e1219; --panel:#151b25; --ink:#e6eaf1; --muted:#8b95a5; --line:#26303d;
+  --band0:#111a1a; --band1:#101722; --band2:#15131f; --band3:#1a1218; --edge:#2c3644; --inter:#7c8698; }
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1300px;margin:0 auto;padding:28px 20px 48px}
+h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em} .sub{color:var(--muted);font-size:13.5px;margin:0 0 16px;max-width:960px;line-height:1.5}
+.legend{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin:0 0 12px;font-size:12.5px}
+.lg{display:inline-flex;align-items:center;gap:6px} .lg i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.lg.dia i{width:11px;height:11px;border-radius:2px;transform:rotate(45deg)} .lg.dia.un i{background:transparent!important;border:1.6px solid var(--muted)}
+.lg.e span{display:inline-block;width:20px;border-top:2px solid var(--edge)} .lg.e.wire span{border-top:2.5px solid #caa43a} .lg.e.wire.un span{border-top:2px dashed var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px;overflow-x:auto;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+svg{display:block;width:100%;height:auto;min-width:1020px}
+.band0{fill:var(--band0)} .band1{fill:var(--band1)} .band2{fill:var(--band2)} .band3{fill:var(--band3)}
+.bandlab{fill:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.colhdr{font-size:13px;font-weight:700;text-anchor:middle} .colrule{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+.edge{fill:none} .edge.intra{stroke:var(--edge);stroke-width:.9;opacity:.5} .edge.inter{stroke:var(--inter);stroke-width:1.5;opacity:.6}
+.owire{fill:none} .owire.cor{stroke:#caa43a;stroke-width:2;opacity:.9} .owire.un{stroke:var(--muted);stroke-width:1.3;opacity:.5;stroke-dasharray:3 3}
+.node circle{stroke:var(--panel);stroke-width:1.8} .node.shared circle{stroke:#caa43a;stroke-width:2.4}
+.orph rect{stroke-width:2.2} .orph.cor rect{filter:drop-shadow(0 0 3px #caa43a)}
+.glab{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9px;fill:var(--ink);text-anchor:middle} .orphlab{font-weight:700}
+.foot{color:var(--muted);font-size:12px;line-height:1.55;margin-top:16px;max-width:1000px} .foot b{color:var(--ink);font-weight:600} .stats{font-family:ui-monospace,monospace;color:var(--ink)}
+</style>
+<div class="wrap">
+  <h1>Wiring the unknowns in &mdash; orphan genes connected into the pathway network</h1>
+  <p class="sub">Circles are known pathway proteins (the anchors the orphans touch); <b>diamonds are orphan / dark genes</b>
+  with <b>no pathway annotation</b>, wired in by their <b>measured PPI links</b>. Gold filled diamonds + gold links are
+  <b>corroborated</b> (literature and PPI agree on the pathway, ~71% precision); hollow diamonds + dashed links are wired
+  by <b>PPI only</b>. Columns are the five pathways, rows are compartments (top&#8209;to&#8209;down).</p>
+  <div class="legend"><span class="lg"><i style="background:#2ca6a4"></i>PI3K/AKT</span><span class="lg"><i style="background:#7c6cd6"></i>EGFR receptor</span><span class="lg"><i style="background:#e08a2b"></i>MAPK activation</span><span class="lg"><i style="background:#d1495b"></i>MAPK nuclear targets</span><span class="lg"><i style="background:#4c9f70"></i>WNT</span>
+    <span class="lg dia"><i style="background:#caa43a"></i>orphan &mdash; corroborated</span>
+    <span class="lg dia un"><i></i>orphan &mdash; PPI&#8209;only</span>
+    <span class="lg e wire"><span></span>corroborated link</span>
+    <span class="lg e wire un"><span></span>PPI&#8209;only link</span>
+  </div>
+  <div class="card">
+    <svg viewBox="0 0 1240 860" role="img" aria-label="Network of orphan genes wired into five signaling pathways by PPI"><rect x="34" y="150" width="1172" height="158" class="band band0"/>
+<text x="28" y="166" class="bandlab">extracellular</text>
+<rect x="34" y="308" width="1172" height="158" class="band band1"/>
+<text x="28" y="324" class="bandlab">membrane</text>
+<rect x="34" y="465" width="1172" height="158" class="band band2"/>
+<text x="28" y="481" class="bandlab">cytoplasm</text>
+<rect x="34" y="622" width="1172" height="158" class="band band3"/>
+<text x="28" y="638" class="bandlab">nucleus</text>
+<text x="188" y="108" class="colhdr" fill="#2ca6a4">PI3K/AKT</text>
+<line x1="188" y1="118" x2="188" y2="788" class="colrule"/>
+<text x="404" y="108" class="colhdr" fill="#7c6cd6">EGFR receptor</text>
+<line x1="404" y1="118" x2="404" y2="788" class="colrule"/>
+<text x="620" y="108" class="colhdr" fill="#e08a2b">MAPK activation</text>
+<line x1="620" y1="118" x2="620" y2="788" class="colrule"/>
+<text x="836" y="108" class="colhdr" fill="#d1495b">MAPK nuclear targets</text>
+<line x1="836" y1="118" x2="836" y2="788" class="colrule"/>
+<text x="1052" y="108" class="colhdr" fill="#4c9f70">WNT</text>
+<line x1="1052" y1="118" x2="1052" y2="788" class="colrule"/>
+<line x1="828.0" y1="386.2" x2="828.0" y2="501.8" class="edge intra"/>
+<line x1="828.0" y1="386.2" x2="828.0" y2="701.2" class="edge intra"/>
+<line x1="828.0" y1="386.2" x2="828.0" y2="543.8" class="edge intra"/>
+<line x1="828.0" y1="701.2" x2="828.0" y2="501.8" class="edge intra"/>
+<line x1="828.0" y1="543.8" x2="828.0" y2="701.2" class="edge intra"/>
+<line x1="396.0" y1="386.2" x2="396.0" y2="470.2" class="edge intra"/>
+<line x1="396.0" y1="386.2" x2="396.0" y2="302.2" class="edge intra"/>
+<line x1="396.0" y1="344.2" x2="396.0" y2="501.8" class="edge intra"/>
+<line x1="396.0" y1="344.2" x2="396.0" y2="302.2" class="edge intra"/>
+<line x1="396.0" y1="344.2" x2="396.0" y2="470.2" class="edge intra"/>
+<line x1="396.0" y1="344.2" x2="396.0" y2="428.2" class="edge intra"/>
+<line x1="396.0" y1="344.2" x2="396.0" y2="386.2" class="edge intra"/>
+<line x1="396.0" y1="428.2" x2="396.0" y2="386.2" class="edge intra"/>
+<line x1="396.0" y1="428.2" x2="396.0" y2="470.2" class="edge intra"/>
+<line x1="396.0" y1="428.2" x2="396.0" y2="302.2" class="edge intra"/>
+<line x1="1044.0" y1="386.2" x2="1044.0" y2="302.2" class="edge intra"/>
+<line x1="1044.0" y1="386.2" x2="396.0" y2="228.8" class="edge inter"/>
+<line x1="1044.0" y1="386.2" x2="1044.0" y2="344.2" class="edge intra"/>
+<line x1="1044.0" y1="386.2" x2="1044.0" y2="428.2" class="edge intra"/>
+<line x1="1044.0" y1="344.2" x2="1044.0" y2="428.2" class="edge intra"/>
+<line x1="1044.0" y1="302.2" x2="1044.0" y2="344.2" class="edge intra"/>
+<line x1="1044.0" y1="302.2" x2="1044.0" y2="428.2" class="edge intra"/>
+<line x1="396.0" y1="228.8" x2="396.0" y2="543.8" class="edge intra"/>
+<line x1="396.0" y1="228.8" x2="396.0" y2="501.8" class="edge intra"/>
+<line x1="396.0" y1="228.8" x2="396.0" y2="302.2" class="edge intra"/>
+<line x1="396.0" y1="228.8" x2="396.0" y2="344.2" class="edge intra"/>
+<line x1="396.0" y1="228.8" x2="288.0" y2="501.8" class="edge intra"/>
+<line x1="396.0" y1="228.8" x2="396.0" y2="386.2" class="edge intra"/>
+<line x1="288.0" y1="501.8" x2="396.0" y2="543.8" class="edge intra"/>
+<line x1="612.0" y1="543.8" x2="612.0" y2="386.2" class="edge intra"/>
+<line x1="612.0" y1="543.8" x2="828.0" y2="386.2" class="edge inter"/>
+<line x1="612.0" y1="543.8" x2="612.0" y2="501.8" class="edge intra"/>
+<line x1="396.0" y1="501.8" x2="396.0" y2="428.2" class="edge intra"/>
+<line x1="396.0" y1="501.8" x2="396.0" y2="386.2" class="edge intra"/>
+<line x1="396.0" y1="501.8" x2="396.0" y2="302.2" class="edge intra"/>
+<line x1="396.0" y1="501.8" x2="396.0" y2="470.2" class="edge intra"/>
+<line x1="396.0" y1="470.2" x2="396.0" y2="302.2" class="edge intra"/>
+<line x1="396.0" y1="260.2" x2="180.0" y2="270.8" class="edge inter"/>
+<line x1="396.0" y1="260.2" x2="180.0" y2="186.8" class="edge inter"/>
+<line x1="396.0" y1="260.2" x2="180.0" y2="166.0" class="edge inter"/>
+<line x1="396.0" y1="260.2" x2="396.0" y2="228.8" class="edge intra"/>
+<line x1="396.0" y1="260.2" x2="288.0" y2="501.8" class="edge intra"/>
+<line x1="396.0" y1="512.2" x2="396.0" y2="228.8" class="edge intra"/>
+<line x1="396.0" y1="512.2" x2="396.0" y2="260.2" class="edge intra"/>
+<line x1="612.0" y1="228.8" x2="612.0" y2="270.8" class="edge intra"/>
+<line x1="612.0" y1="186.8" x2="612.0" y2="228.8" class="edge intra"/>
+<line x1="612.0" y1="186.8" x2="612.0" y2="270.8" class="edge intra"/>
+<line x1="612.0" y1="344.2" x2="612.0" y2="386.2" class="edge intra"/>
+<line x1="886.0" y1="585.8" x2="828.0" y2="386.2" class="owire cor"/>
+<line x1="886.0" y1="585.8" x2="828.0" y2="701.2" class="owire cor"/>
+<line x1="886.0" y1="585.8" x2="828.0" y2="543.8" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="386.2" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="344.2" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="428.2" class="owire cor"/>
+<line x1="1102.0" y1="543.8" x2="1044.0" y2="386.2" class="owire cor"/>
+<line x1="1102.0" y1="543.8" x2="1044.0" y2="344.2" class="owire cor"/>
+<line x1="1102.0" y1="543.8" x2="1044.0" y2="428.2" class="owire cor"/>
+<line x1="1102.0" y1="501.8" x2="1044.0" y2="302.2" class="owire cor"/>
+<line x1="1102.0" y1="501.8" x2="396.0" y2="543.8" class="owire cor"/>
+<line x1="1102.0" y1="501.8" x2="1044.0" y2="470.2" class="owire cor"/>
+<line x1="886.0" y1="459.8" x2="828.0" y2="501.8" class="owire cor"/>
+<line x1="886.0" y1="459.8" x2="828.0" y2="543.8" class="owire cor"/>
+<line x1="886.0" y1="459.8" x2="1044.0" y2="701.2" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="228.8" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="288.0" y2="501.8" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="543.8" class="owire cor"/>
+<line x1="670.0" y1="585.8" x2="612.0" y2="386.2" class="owire cor"/>
+<line x1="670.0" y1="585.8" x2="612.0" y2="543.8" class="owire cor"/>
+<line x1="670.0" y1="585.8" x2="612.0" y2="501.8" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="501.8" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="302.2" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="470.2" class="owire cor"/>
+<line x1="1102.0" y1="585.8" x2="396.0" y2="470.2" class="owire cor"/>
+<line x1="1102.0" y1="585.8" x2="1044.0" y2="470.2" class="owire cor"/>
+<line x1="1102.0" y1="585.8" x2="1044.0" y2="260.2" class="owire cor"/>
+<line x1="454.0" y1="186.8" x2="396.0" y2="260.2" class="owire cor"/>
+<line x1="454.0" y1="186.8" x2="180.0" y2="228.8" class="owire cor"/>
+<line x1="454.0" y1="186.8" x2="396.0" y2="512.2" class="owire cor"/>
+<line x1="670.0" y1="302.2" x2="612.0" y2="228.8" class="owire cor"/>
+<line x1="670.0" y1="302.2" x2="612.0" y2="186.8" class="owire cor"/>
+<line x1="670.0" y1="302.2" x2="612.0" y2="270.8" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="501.8" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="302.2" class="owire cor"/>
+<line x1="454.0" y1="386.2" x2="396.0" y2="470.2" class="owire cor"/>
+<line x1="1102.0" y1="512.2" x2="1044.0" y2="386.2" class="owire un"/>
+<line x1="1102.0" y1="512.2" x2="1044.0" y2="344.2" class="owire un"/>
+<line x1="1102.0" y1="512.2" x2="1044.0" y2="428.2" class="owire un"/>
+<line x1="238.0" y1="543.8" x2="180.0" y2="186.8" class="owire un"/>
+<line x1="238.0" y1="543.8" x2="180.0" y2="270.8" class="owire un"/>
+<line x1="238.0" y1="543.8" x2="180.0" y2="166.0" class="owire un"/>
+<line x1="670.0" y1="470.2" x2="612.0" y2="386.2" class="owire un"/>
+<line x1="670.0" y1="470.2" x2="612.0" y2="344.2" class="owire un"/>
+<line x1="670.0" y1="470.2" x2="612.0" y2="428.2" class="owire un"/>
+<g class="node"><title>ATF2 — MAPK nuclear targets</title><circle cx="828.0" cy="386.2" r="8" fill="#d1495b"/><text x="828.0" y="404.2" class="glab">ATF2</text></g>
+<g class="node"><title>JUN — MAPK nuclear targets</title><circle cx="828.0" cy="701.2" r="8" fill="#d1495b"/><text x="828.0" y="719.2" class="glab">JUN</text></g>
+<g class="node"><title>FOS — MAPK nuclear targets</title><circle cx="828.0" cy="543.8" r="8" fill="#d1495b"/><text x="828.0" y="561.8" class="glab">FOS</text></g>
+<g class="node"><title>STAM2 — EGFR receptor</title><circle cx="396.0" cy="386.2" r="8" fill="#7c6cd6"/><text x="396.0" y="404.2" class="glab">STAM2</text></g>
+<g class="node"><title>HGS — EGFR receptor</title><circle cx="396.0" cy="344.2" r="8" fill="#7c6cd6"/><text x="396.0" y="362.2" class="glab">HGS</text></g>
+<g class="node"><title>STAM — EGFR receptor</title><circle cx="396.0" cy="428.2" r="8" fill="#7c6cd6"/><text x="396.0" y="446.2" class="glab">STAM</text></g>
+<g class="node"><title>CTNNB1 — WNT</title><circle cx="1044.0" cy="386.2" r="8" fill="#4c9f70"/><text x="1044.0" y="404.2" class="glab">CTNNB1</text></g>
+<g class="node"><title>LRP5 — WNT</title><circle cx="1044.0" cy="344.2" r="8" fill="#4c9f70"/><text x="1044.0" y="362.2" class="glab">LRP5</text></g>
+<g class="node"><title>LRP6 — WNT</title><circle cx="1044.0" cy="428.2" r="8" fill="#4c9f70"/><text x="1044.0" y="446.2" class="glab">LRP6</text></g>
+<g class="node"><title>GSK3B — WNT</title><circle cx="1044.0" cy="302.2" r="8" fill="#4c9f70"/><text x="1044.0" y="320.2" class="glab">GSK3B</text></g>
+<g class="node"><title>PLCG1 — EGFR receptor</title><circle cx="396.0" cy="543.8" r="8" fill="#7c6cd6"/><text x="396.0" y="561.8" class="glab">PLCG1</text></g>
+<g class="node"><title>TNKS — WNT</title><circle cx="1044.0" cy="470.2" r="8" fill="#4c9f70"/><text x="1044.0" y="488.2" class="glab">TNKS</text></g>
+<g class="node"><title>MAPK9 — MAPK nuclear targets</title><circle cx="828.0" cy="501.8" r="8" fill="#d1495b"/><text x="828.0" y="519.8" class="glab">MAPK9</text></g>
+<g class="node"><title>CTBP2 — WNT</title><circle cx="1044.0" cy="701.2" r="8" fill="#4c9f70"/><text x="1044.0" y="719.2" class="glab">CTBP2</text></g>
+<g class="node"><title>EGFR — EGFR receptor</title><circle cx="396.0" cy="228.8" r="8" fill="#7c6cd6"/><text x="396.0" y="246.8" class="glab">EGFR</text></g>
+<g class="node shared"><title>GRB2 — PI3K/AKT/EGFR receptor</title><circle cx="288.0" cy="501.8" r="10" fill="#caa43a"/><text x="288.0" y="521.8" class="glab">GRB2</text></g>
+<g class="node"><title>YWHAB — MAPK activation</title><circle cx="612.0" cy="386.2" r="8" fill="#e08a2b"/><text x="612.0" y="404.2" class="glab">YWHAB</text></g>
+<g class="node"><title>ACTB — MAPK activation</title><circle cx="612.0" cy="543.8" r="8" fill="#e08a2b"/><text x="612.0" y="561.8" class="glab">ACTB</text></g>
+<g class="node"><title>ACTG1 — MAPK activation</title><circle cx="612.0" cy="501.8" r="8" fill="#e08a2b"/><text x="612.0" y="519.8" class="glab">ACTG1</text></g>
+<g class="node"><title>RPS27A — EGFR receptor</title><circle cx="396.0" cy="501.8" r="8" fill="#7c6cd6"/><text x="396.0" y="519.8" class="glab">RPS27A</text></g>
+<g class="node"><title>UBC — EGFR receptor</title><circle cx="396.0" cy="302.2" r="8" fill="#7c6cd6"/><text x="396.0" y="320.2" class="glab">UBC</text></g>
+<g class="node"><title>UBB — EGFR receptor</title><circle cx="396.0" cy="470.2" r="8" fill="#7c6cd6"/><text x="396.0" y="488.2" class="glab">UBB</text></g>
+<g class="node"><title>TNKS2 — WNT</title><circle cx="1044.0" cy="260.2" r="8" fill="#4c9f70"/><text x="1044.0" y="278.2" class="glab">TNKS2</text></g>
+<g class="node"><title>EGF — EGFR receptor</title><circle cx="396.0" cy="260.2" r="8" fill="#7c6cd6"/><text x="396.0" y="278.2" class="glab">EGF</text></g>
+<g class="node"><title>FGF2 — PI3K/AKT</title><circle cx="180.0" cy="228.8" r="8" fill="#2ca6a4"/><text x="180.0" y="246.8" class="glab">FGF2</text></g>
+<g class="node"><title>AREG — EGFR receptor</title><circle cx="396.0" cy="512.2" r="8" fill="#7c6cd6"/><text x="396.0" y="530.2" class="glab">AREG</text></g>
+<g class="node"><title>FGB — MAPK activation</title><circle cx="612.0" cy="228.8" r="8" fill="#e08a2b"/><text x="612.0" y="246.8" class="glab">FGB</text></g>
+<g class="node"><title>FGA — MAPK activation</title><circle cx="612.0" cy="186.8" r="8" fill="#e08a2b"/><text x="612.0" y="204.8" class="glab">FGA</text></g>
+<g class="node"><title>FGG — MAPK activation</title><circle cx="612.0" cy="270.8" r="8" fill="#e08a2b"/><text x="612.0" y="288.8" class="glab">FGG</text></g>
+<g class="node"><title>FGF17 — PI3K/AKT</title><circle cx="180.0" cy="186.8" r="8" fill="#2ca6a4"/><text x="180.0" y="204.8" class="glab">FGF17</text></g>
+<g class="node"><title>FGF8 — PI3K/AKT</title><circle cx="180.0" cy="270.8" r="8" fill="#2ca6a4"/><text x="180.0" y="288.8" class="glab">FGF8</text></g>
+<g class="node"><title>FGF3 — PI3K/AKT</title><circle cx="180.0" cy="166.0" r="8" fill="#2ca6a4"/><text x="180.0" y="184.0" class="glab">FGF3</text></g>
+<g class="node"><title>RAF1 — MAPK activation</title><circle cx="612.0" cy="344.2" r="8" fill="#e08a2b"/><text x="612.0" y="362.2" class="glab">RAF1</text></g>
+<g class="node"><title>LAMTOR2 — MAPK activation</title><circle cx="612.0" cy="428.2" r="8" fill="#e08a2b"/><text x="612.0" y="446.2" class="glab">LAMTOR2</text></g>
+<g class="orph cor"><title>ATF7 (orphan) → MAPK nuclear targets · corroborated (lit+PPI) · links ATF2, JUN, FOS</title><rect x="878.0" y="577.8" width="16" height="16" transform="rotate(45 886.0 585.8)" fill="#d1495b" stroke="#d1495b"/><text x="886.0" y="605.8" class="glab orphlab">ATF7</text></g>
+<g class="orph cor"><title>CHMP1B (orphan) → EGFR receptor · corroborated (lit+PPI) · links STAM2, HGS, STAM</title><rect x="446.0" y="378.2" width="16" height="16" transform="rotate(45 454.0 386.2)" fill="#7c6cd6" stroke="#7c6cd6"/><text x="454.0" y="406.2" class="glab orphlab">CHMP1B</text></g>
+<g class="orph cor"><title>CSNK1A1L (orphan) → WNT · corroborated (lit+PPI) · links CTNNB1, LRP5, LRP6</title><rect x="1094.0" y="535.8" width="16" height="16" transform="rotate(45 1102.0 543.8)" fill="#4c9f70" stroke="#4c9f70"/><text x="1102.0" y="563.8" class="glab orphlab">CSNK1A1L</text></g>
+<g class="orph cor"><title>DISC1 (orphan) → WNT · corroborated (lit+PPI) · links GSK3B, PLCG1, TNKS</title><rect x="1094.0" y="493.8" width="16" height="16" transform="rotate(45 1102.0 501.8)" fill="#4c9f70" stroke="#4c9f70"/><text x="1102.0" y="521.8" class="glab orphlab">DISC1</text></g>
+<g class="orph cor"><title>ENKD1 (orphan) → MAPK nuclear targets · corroborated (lit+PPI) · links MAPK9, FOS, CTBP2</title><rect x="878.0" y="451.8" width="16" height="16" transform="rotate(45 886.0 459.8)" fill="#d1495b" stroke="#d1495b"/><text x="886.0" y="479.8" class="glab orphlab">ENKD1</text></g>
+<g class="orph cor"><title>ERRFI1 (orphan) → EGFR receptor · corroborated (lit+PPI) · links EGFR, GRB2, PLCG1</title><rect x="446.0" y="378.2" width="16" height="16" transform="rotate(45 454.0 386.2)" fill="#7c6cd6" stroke="#7c6cd6"/><text x="454.0" y="406.2" class="glab orphlab">ERRFI1</text></g>
+<g class="orph cor"><title>PHACTR4 (orphan) → MAPK activation · corroborated (lit+PPI) · links YWHAB, ACTB, ACTG1</title><rect x="662.0" y="577.8" width="16" height="16" transform="rotate(45 670.0 585.8)" fill="#e08a2b" stroke="#e08a2b"/><text x="670.0" y="605.8" class="glab orphlab">PHACTR4</text></g>
+<g class="orph cor"><title>PLEKHB2 (orphan) → EGFR receptor · corroborated (lit+PPI) · links RPS27A, UBC, UBB</title><rect x="446.0" y="378.2" width="16" height="16" transform="rotate(45 454.0 386.2)" fill="#7c6cd6" stroke="#7c6cd6"/><text x="454.0" y="406.2" class="glab orphlab">PLEKHB2</text></g>
+<g class="orph cor"><title>RNF166 (orphan) → WNT · corroborated (lit+PPI) · links UBB, TNKS, TNKS2</title><rect x="1094.0" y="577.8" width="16" height="16" transform="rotate(45 1102.0 585.8)" fill="#4c9f70" stroke="#4c9f70"/><text x="1102.0" y="605.8" class="glab orphlab">RNF166</text></g>
+<g class="orph cor"><title>S100A4 (orphan) → EGFR receptor · corroborated (lit+PPI) · links EGF, FGF2, AREG</title><rect x="446.0" y="178.8" width="16" height="16" transform="rotate(45 454.0 186.8)" fill="#7c6cd6" stroke="#7c6cd6"/><text x="454.0" y="206.8" class="glab orphlab">S100A4</text></g>
+<g class="orph cor"><title>SNX27 (orphan) → MAPK activation · corroborated (lit+PPI) · links FGB, FGA, FGG</title><rect x="662.0" y="294.2" width="16" height="16" transform="rotate(45 670.0 302.2)" fill="#e08a2b" stroke="#e08a2b"/><text x="670.0" y="322.2" class="glab orphlab">SNX27</text></g>
+<g class="orph cor"><title>TRIM23 (orphan) → EGFR receptor · corroborated (lit+PPI) · links RPS27A, UBC, UBB</title><rect x="446.0" y="378.2" width="16" height="16" transform="rotate(45 454.0 386.2)" fill="#7c6cd6" stroke="#7c6cd6"/><text x="454.0" y="406.2" class="glab orphlab">TRIM23</text></g>
+<g class="orph un"><title>ADGRA2 (orphan) → WNT · PPI-only lead · links CTNNB1, LRP5, LRP6</title><rect x="1094.0" y="504.2" width="16" height="16" transform="rotate(45 1102.0 512.2)" fill="none" stroke="#4c9f70"/><text x="1102.0" y="532.2" class="glab orphlab">ADGRA2</text></g>
+<g class="orph un"><title>ANKHD1 (orphan) → PI3K/AKT · PPI-only lead · links FGF17, FGF8, FGF3</title><rect x="230.0" y="535.8" width="16" height="16" transform="rotate(45 238.0 543.8)" fill="none" stroke="#2ca6a4"/><text x="238.0" y="563.8" class="glab orphlab">ANKHD1</text></g>
+<g class="orph un"><title>ARL8B (orphan) → MAPK activation · PPI-only lead · links YWHAB, RAF1, LAMTOR2</title><rect x="662.0" y="462.2" width="16" height="16" transform="rotate(45 670.0 470.2)" fill="none" stroke="#e08a2b"/><text x="670.0" y="490.2" class="glab orphlab">ARL8B</text></g></svg>
+  </div>
+  <p class="foot">
+    <b>What you're seeing.</b> Each diamond is an uncharacterised gene placed by <span class="stats">connect</span>; the
+    line from it is a <b>real measured physical interaction</b> to a known pathway protein &mdash; that's how it wires
+    into the network. Corroborated placements this run: <span class="stats">ATF7</span> &rarr; MAPK nuclear targets (via ATF2, JUN); <span class="stats">CHMP1B</span> &rarr; EGFR receptor (via STAM2, HGS); <span class="stats">CSNK1A1L</span> &rarr; WNT (via CTNNB1, LRP5). <b>15</b> orphans (12 corroborated) wired to
+    <b>34</b> known anchors.<br>
+    <b>Honest scope.</b> The <b>edges are measured</b> (PPI); the <b>placement is a hypothesis</b> &mdash; gold is the
+    ~71%&#8209;precision corroborated tier, hollow is a PPI&#8209;only lead. Vertical = observed compartment. A descriptive
+    near&#8209;field map that slots the unknowns next to the machinery they physically touch &mdash; a hypothesis to test.
+  </p>
+</div>

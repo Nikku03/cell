@@ -1,0 +1,41 @@
+{
+ "knockout_detail": "GATA1",
+ "n_specific": 233,
+ "operative_shortest_chains": 5,
+ "operative_shortest_frac": 0.0215,
+ "gata1_operative_reach": 27,
+ "gata1_operative_frac": 0.1159,
+ "gata1_null_mean": 8.47,
+ "gata1_null_sd": 5.76,
+ "gata1_sigma": 3.22,
+ "break_reasons": {
+  "SILENT": 137,
+  "unreachable": 75,
+  "WRONG_DIR": 10,
+  "DIR_UNKNOWN": 6
+ },
+ "n_signed_regulator_kos": 71,
+ "direct_signed_pairs": 396,
+ "direct_moved": 12,
+ "direct_moved_frac": 0.0303,
+ "direct_confirmed": 2,
+ "direct_wrong": 10,
+ "direct_wrong_gata1_share": [
+  7,
+  10
+ ],
+ "direct_moved_gata1_share": [
+  8,
+  12
+ ],
+ "operative_reach_specific_frac": 0.0019,
+ "operative_null_frac": 0.0007,
+ "operative_over_null": 2.593,
+ "comovement_real": 0.0856,
+ "comovement_null_permuted": 0.0614,
+ "comovement_lift": 1.395,
+ "comovement_z": 4.13,
+ "comovement_n_pairs": 137,
+ "verdict": "HOP ACCOUNTABILITY (hop_accountability.py): the user's correction -- a hop only carries causation if the intermediate ACTUALLY CHANGED the required way, not merely 'was reachable'. Auditing every hop's measured abundance change AND direction. GATA1 detail: of 233 specific movers, only 5 (2%) have a shortest chain that is fully confirmed; the rest break, 137 of them at a SILENT intermediate that didn't change at all (e.g. GATA1==represses==>MYC but MYC's mRNA is flat, so GATA1->MYC->LTB never actually fired). Allowing ANY confirmed path, operative reach is 27/233 (12%), +3.2sigma above the sign-flip null -- so the confirmed agreement that exists is real, but small. THE HEADLINE is the aggregate direct-target audit: across the 71 scorable KOs that are annotated signed regulators (396 unique signed KO->target pairs), only 12 (3%) of a knockout's OWN direct targets even change (|z|>=1) -- 97% are transcriptionally SILENT. That near-total SILENCE is the robust, general result (SSRP1 0/48 targets moved, NRF1 1/45, CHEK1 0/24). Of the 12 that DO move, 2 match the annotated direction and 10 go the opposite way -- but that direction split is small-n and NOT general: 7 of the 10 wrong-direction cases are GATA1 alone, whose curated 'activation' targets (FCER1G/HLA-E/TIMP1) rise on KO because in K562 GATA1 represses that myeloid program; for the other regulators the targets are simply silent, not sign-flipped. So 'the protein that was supposed to work one way' overwhelmingly (a) doesn't respond at the mRNA level; only occasionally (b) responds the other way (a real but GATA1-specific de-repression). Operative chains reach just 0.2% of specific movers (2.6x the null), and co-movement supports coupling only weakly (1.40x a pairing-permuted null, z=4.1). MEANING: the hop critique is decisive -- demanding that each intermediate's state actually changed as required dissolves almost all the 'named' chains from case_study; what survives is a small, direction-confirmed core. The knockout-specific response is not a traceable cascade of confirmed state-changes through the curated wiring -- most of that wiring is SILENT here (and, for GATA1, partly sign-flipped). This is an ABUNDANCE audit; silent intermediates could still act through activity/PTM mRNA cannot see -- exactly the unmeasured layer the ceiling lives in. Deterministic; GATA1 detailed + all scorable KOs.",
+ "note": "HOP ACCOUNTABILITY (hop_accountability.py): the user's correction -- a hop only carries causation if the intermediate ACTUALLY CHANGED the required way, not merely 'was reachable'. Auditing every hop's measured abundance change AND direction. GATA1 detail: of 233 specific movers, only 5 (2%) have a shortest chain that is fully confirmed; the rest break, 137 of them at a SILENT intermediate that didn't change at all (e.g. GATA1==represses==>MYC but MYC's mRNA is flat, so GATA1->MYC->LTB never actually fired). Allowing ANY confirmed path, operative reach is 27/233 (12%), +3.2sigma above the sign-flip null -- so the confirmed agreement that exists is real, but small. THE HEADLINE is the aggregate direct-target audit: across the 71 scorable KOs that are annotated signed regulators (396 unique signed KO->target pairs), only 12 (3%) of a knockout's OWN direct targets even change (|z|>=1) -- 97% are transcriptionally SILENT. That near-total SILENCE is the robust, general result (SSRP1 0/48 targets moved, NRF1 1/45, CHEK1 0/24). Of the 12 that DO move, 2 match the annotated direction and 10 go the opposite way -- but that direction split is small-n and NOT general: 7 of the 10 wrong-direction cases are GATA1 alone, whose curated 'activation' targets (FCER1G/HLA-E/TIMP1) rise on KO because in K562 GATA1 represses that myeloid program; for the other regulators the targets are simply silent, not sign-flipped. So 'the protein that was supposed to work one way' overwhelmingly (a) doesn't respond at the mRNA level; only occasionally (b) responds the other way (a real but GATA1-specific de-repression). Operative chains reach just 0.2% of specific movers (2.6x the null), and co-movement supports coupling only weakly (1.40x a pairing-permuted null, z=4.1). MEANING: the hop critique is decisive -- demanding that each intermediate's state actually changed as required dissolves almost all the 'named' chains from case_study; what survives is a small, direction-confirmed core. The knockout-specific response is not a traceable cascade of confirmed state-changes through the curated wiring -- most of that wiring is SILENT here (and, for GATA1, partly sign-flipped). This is an ABUNDANCE audit; silent intermediates could still act through activity/PTM mRNA cannot see -- exactly the unmeasured layer the ceiling lives in. Deterministic; GATA1 detailed + all scorable KOs."
+}

@@ -1,0 +1,82 @@
+{
+  "passed": true,
+  "summary": {
+    "n_ran": 5,
+    "n_correct": 5,
+    "accuracy": 1.0,
+    "n_with_twilight_homolog": 5
+  },
+  "proteins": [
+    {
+      "gene": "LDHA",
+      "ok": true,
+      "prediction": "L-lactate dehydrogenase A chain",
+      "correct": true,
+      "best_seqId": 98.7,
+      "confidence": 1.0,
+      "n_twilight": 10,
+      "n_twilight_correct": 10,
+      "twilight_example": {
+        "desc": "Malate dehydrogenase",
+        "seqId": 29.4
+      }
+    },
+    {
+      "gene": "CA2",
+      "ok": true,
+      "prediction": "Carbonic anhydrase 2",
+      "correct": true,
+      "best_seqId": 85.3,
+      "confidence": 1.0,
+      "n_twilight": 10,
+      "n_twilight_correct": 1,
+      "twilight_example": {
+        "desc": "Putative carbonic anhydrase-like protein 1",
+        "seqId": 25.8
+      }
+    },
+    {
+      "gene": "SOD1",
+      "ok": true,
+      "prediction": "Superoxide dismutase [Cu-Zn]",
+      "correct": true,
+      "best_seqId": 100,
+      "confidence": 1.0,
+      "n_twilight": 10,
+      "n_twilight_correct": 10,
+      "twilight_example": {
+        "desc": "Superoxide dismutase [Cu-Zn]",
+        "seqId": 26.7
+      }
+    },
+    {
+      "gene": "MB",
+      "ok": true,
+      "prediction": "Myoglobin",
+      "correct": true,
+      "best_seqId": 99.3,
+      "confidence": 1.0,
+      "n_twilight": 10,
+      "n_twilight_correct": 10,
+      "twilight_example": {
+        "desc": "Hemoglobin subunit zeta",
+        "seqId": 29.9
+      }
+    },
+    {
+      "gene": "CTSD",
+      "ok": true,
+      "prediction": "Cathepsin D",
+      "correct": true,
+      "best_seqId": 88.1,
+      "confidence": 1.0,
+      "n_twilight": 10,
+      "n_twilight_correct": 3,
+      "twilight_example": {
+        "desc": "Aspartic protease 2",
+        "seqId": 26.5
+      }
+    }
+  ],
+  "bar": "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 with a correct twilight-zone (<30% seqId) structural homolog"
+}

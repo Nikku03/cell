@@ -1,0 +1,607 @@
+{
+ "model": "v4-protein-head-v1",
+ "question": "Can a protein head predict perturbation-induced surface-protein change better than (a) that protein's own marginal and (b) that protein's own transcript? mRNA was measured in this project to explain 15.9% of protein variance, so the naive translator is the baseline that decides whether a head is worth building at all.",
+ "dataset_inventory": {
+  "file": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/papalexi.h5ad",
+  "shape_cells_x_genes": [
+   20729,
+   18649
+  ],
+  "stored_values": 69529049,
+  "density": 0.17985908875910306,
+  "protein_modality_in_h5ad": false,
+  "empty_slots": {
+   "obsm": [],
+   "layers": [],
+   "uns": [],
+   "obsp": [],
+   "varm": [],
+   "varp": []
+  },
+  "obs_columns": [
+   "cancer",
+   "cell_line",
+   "celltype",
+   "disease",
+   "gdo_barcode",
+   "guide_id",
+   "hto",
+   "hto_barcode",
+   "ncounts",
+   "ngenes",
+   "nperts",
+   "organism",
+   "percent_mito",
+   "percent_ribo",
+   "perturbation",
+   "perturbation_type",
+   "tissue_type"
+  ],
+  "n_perturbation_categories": 99,
+  "n_guide_categories": 107,
+  "n_knockout_genes": 25,
+  "protein_source": "GSE153056 / GSM4633615 ECCITE_ADT_counts.tsv.gz -- the protein half of the SAME experiment, same barcodes, NOT a substitute dataset",
+  "protein_source_url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4633nnn/GSM4633615/suppl/GSM4633615_ECCITE_ADT_counts.tsv.gz",
+  "n_proteins": 4,
+  "protein_tags": [
+   "CD86",
+   "PDL1",
+   "PDL2",
+   "CD366"
+  ],
+  "barcode_join": "asserted exact, 20,729/20,729 positional agreement",
+  "zeros_mean": "zero UMI observed at that depth -- a real measurement. NOT the nlz_* case where 96.5% of entries are structural zeros meaning NOT RECORDED; nlz_* is untouched."
+ },
+ "design": {
+  "target": "Y[p,j] = log2 ratio of ADT-total-normalised mean of tag j in knockout p's cells to the same in non-targeting cells",
+  "feature": "R[p,g] = log2 ratio of UMI-total-normalised mean of gene g, same reference",
+  "disjoint_cells": "RNA is read from one half of each knockout's cells and protein from the other half, stratified by HTO replicate, so no per-droplet technical factor can create the association. Same-cell version reported as SENSITIVITY 1.",
+  "gene_universe": 12038,
+  "gene_filter": "detected in >= 2% of NT cells; NT is never a held-out knockout so the filter leaks nothing about any test perturbation",
+  "min_cells_per_half": 20,
+  "n_knockouts": 8,
+  "scorable_universe": 32,
+  "cells_per_knockout_rna_median": 431.5,
+  "cells_per_knockout_adt_median": 430.0,
+  "identity_features": "6 DepMap CRISPR gene-effect PCs",
+  "rna_pcs": 3
+ },
+ "positive_control": {
+  "self_knockouts_lowering_own_protein": 1,
+  "n": 1,
+  "detail": [
+   {
+    "ko": "CD86",
+    "tag": "CD86",
+    "protein_log2fc": -0.47238503659207376
+   }
+  ]
+ },
+ "arms": {
+  "MARGINAL-protein (0 param)": {
+   "rmse_mean": 0.20878324607125331,
+   "rmse_sd": 0.15839508868747387,
+   "rmse_per_heldout_knockout": [
+    0.03951384778082725,
+    0.3421765975715721,
+    0.04331607954372887,
+    0.2742731024602359,
+    0.2650392990844594,
+    0.1985654719903821,
+    0.04131577664555298,
+    0.4660657934932679
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.0,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -1.0,
+   "r_pooled": -0.22847507597113684,
+   "r_per_protein": {
+    "CD86": 0.0,
+    "PDL1": 0.0,
+    "PDL2": 0.0,
+    "CD366": 0.0
+   }
+  },
+  "NAIVE TRANSLATOR raw, uncalibrated": {
+   "rmse_mean": 0.36320855338897134,
+   "rmse_sd": 0.33836191525448334,
+   "rmse_per_heldout_knockout": [
+    0.12836973011225813,
+    0.3687222470675373,
+    0.16533165517110332,
+    0.26118018443802743,
+    0.2531785798650576,
+    0.40476905479063463,
+    0.15995275483395774,
+    1.1641642208331946
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.3093931629729541,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": 0.22591101184174345,
+   "r_pooled": 0.31752602653880296,
+   "r_per_protein": {
+    "CD86": 0.3045056508675045,
+    "PDL1": 0.8351770165933664,
+    "PDL2": 0.047128685236220595,
+    "CD366": 0.05076129919472514
+   }
+  },
+  "NAIVE TRANSLATOR calibrated (2 param)": {
+   "rmse_mean": 0.27026281150111064,
+   "rmse_sd": 0.24772659636962066,
+   "rmse_per_heldout_knockout": [
+    0.0362421441623788,
+    0.6142140038425156,
+    0.03202875946001408,
+    0.3310929106526707,
+    0.27641784715286283,
+    0.2044603186401283,
+    0.03083175777550824,
+    0.6368147503228067
+   ],
+   "r_within_protein_centred_on_fold_train_mean": -0.24306937855119995,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -0.31141948325866153,
+   "r_pooled": -0.2494999411923884,
+   "r_per_protein": {
+    "CD86": -0.6797175360484871,
+    "PDL1": 0.807710527286407,
+    "PDL2": -0.22292231020185638,
+    "CD366": -0.8773481952408634
+   }
+  },
+  "RANDOM-TRANSCRIPT calibrated (CONTROL)": {
+   "rmse_mean": 0.2311135356736161,
+   "rmse_sd": 0.1391948367835389,
+   "rmse_per_heldout_knockout": [
+    0.07132116821817579,
+    0.4394236190632875,
+    0.08878799175105342,
+    0.2561818029463385,
+    0.2697360395709542,
+    0.19212713764025907,
+    0.12351135474741676,
+    0.4078191714514435
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.3333324733869708,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": 0.08434945555594082,
+   "r_pooled": 0.2611140815747059,
+   "r_per_protein": {
+    "CD86": 0.5751819728932709,
+    "PDL1": -0.015728184084836002,
+    "PDL2": 0.24240809273474306,
+    "CD366": 0.5314680120047053
+   }
+  },
+  "MODEL ridge (RNA + identity)": {
+   "rmse_mean": 0.24278302320597012,
+   "rmse_sd": 0.11428540592228438,
+   "rmse_per_heldout_knockout": [
+    0.267099975222372,
+    0.3033678290409297,
+    0.02465012053779457,
+    0.26385114553942085,
+    0.24588988356204192,
+    0.1833520189107442,
+    0.2235743065107874,
+    0.43047890632367036
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.1619401333880497,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -0.18001315248886596,
+   "r_pooled": 0.06171370371692474,
+   "r_per_protein": {
+    "CD86": 0.22641487400084695,
+    "PDL1": 0.2418442217315386,
+    "PDL2": 0.0060099930787190945,
+    "CD366": 0.1734914447410941
+   }
+  },
+  "MODEL ridge, RNA only": {
+   "rmse_mean": 0.2063155310854636,
+   "rmse_sd": 0.15492172036687962,
+   "rmse_per_heldout_knockout": [
+    0.03954148358605813,
+    0.32661612215759506,
+    0.04333655118325204,
+    0.27426948296492354,
+    0.268937471319343,
+    0.19851942065078643,
+    0.04132385714397868,
+    0.45797985967777205
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.5098748666711015,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -0.9597559526166533,
+   "r_pooled": -0.17099477175538305,
+   "r_per_protein": {
+    "CD86": 0.14646672297256086,
+    "PDL1": 0.38774671586511317,
+    "PDL2": 0.6432758718766487,
+    "CD366": 0.8620101559700835
+   }
+  },
+  "MODEL ridge, identity only": {
+   "rmse_mean": 0.25426989842898473,
+   "rmse_sd": 0.12016074980971594,
+   "rmse_per_heldout_knockout": [
+    0.265053934657679,
+    0.3323957460449524,
+    0.03146702759775844,
+    0.24794857084127583,
+    0.2309123302493351,
+    0.18232226576596997,
+    0.2955036484033634,
+    0.4485556638715435
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.09245351091594561,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -0.20071479356080993,
+   "r_pooled": 0.021704250532700448,
+   "r_per_protein": {
+    "CD86": 0.27569288994148955,
+    "PDL1": 0.11051703688612631,
+    "PDL2": -0.04004932277878045,
+    "CD366": 0.023653439614947015
+   }
+  },
+  "SWAP-RNA (COUNTERFACTUAL)": {
+   "rmse_mean": 0.24743793213493126,
+   "rmse_sd": 0.1335877181168279,
+   "rmse_per_heldout_knockout": [
+    0.13460798548841757,
+    0.3095240159353505,
+    0.022881103610633266,
+    0.26155549653756605,
+    0.2671540457107182,
+    0.173380429952846,
+    0.37311984726448494,
+    0.4372805325794336
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.08991862677625921,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -0.15637936107438113,
+   "r_pooled": 0.030639595379709617,
+   "r_per_protein": {
+    "CD86": 0.20178554750087693,
+    "PDL1": 0.13575507643454088,
+    "PDL2": -0.05120322154422723,
+    "CD366": 0.07333710471384626
+   }
+  },
+  "SWAP-IDENTITY (COUNTERFACTUAL)": {
+   "rmse_mean": 0.22537273101466526,
+   "rmse_sd": 0.13069351973808788,
+   "rmse_per_heldout_knockout": [
+    0.11108598758098177,
+    0.3131906645626198,
+    0.04352580270338888,
+    0.2849195066446027,
+    0.3175150645627968,
+    0.184972178460081,
+    0.12002201721980685,
+    0.4277506263830443
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.13103506025322045,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -0.4061498774469515,
+   "r_pooled": -0.09102906710550958,
+   "r_per_protein": {
+    "CD86": -0.02556360672920841,
+    "PDL1": 0.16390532058649865,
+    "PDL2": 0.03448391372214512,
+    "CD366": 0.35131461343344644
+   }
+  },
+  "MODEL MLP (RNA + identity)": {
+   "rmse_mean": 0.2799723381232476,
+   "rmse_sd": 0.06040877676550196,
+   "rmse_per_heldout_knockout": [
+    0.3001856653391402,
+    0.2314451809337335,
+    0.18090299454382744,
+    0.29489139096566414,
+    0.2257197037510943,
+    0.3413031113981183,
+    0.31707926237289935,
+    0.3482513956815036
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.2314340953290933,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": 0.05788205136157341,
+   "r_pooled": 0.19581421970767887,
+   "r_per_protein": {
+    "CD86": 0.23994709809874526,
+    "PDL1": 0.46427535303113526,
+    "PDL2": -0.058214701408551846,
+    "CD366": 0.2797286315950446
+   }
+  },
+  "SHUFFLED-RNA structure-preserving (CONTROL)": {
+   "rmse_mean": 0.2521400445499627,
+   "rmse_sd": 0.12300167947830162,
+   "rmse_per_heldout_knockout": [
+    0.31582248849324995,
+    0.35455207927413335,
+    0.034248319731700706,
+    0.2839664986962717,
+    0.24394683992104232,
+    0.19538704932546402,
+    0.16047358417231153,
+    0.4287234967855279
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.019188555342575755,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -0.3013305255416298,
+   "r_pooled": -0.0358944806416049,
+   "r_per_protein": {
+    "CD86": 0.0751416255479929,
+    "PDL1": 0.01411500207337969,
+    "PDL2": -0.033234251590411525,
+    "CD366": 0.020731845339341942
+   }
+  },
+  "SHUFFLED-RNA gene-wise (CONTROL)": {
+   "rmse_mean": 0.2169105846276173,
+   "rmse_sd": 0.13665935278938637,
+   "rmse_per_heldout_knockout": [
+    0.14035630682394476,
+    0.3420677334731126,
+    0.025856410976206712,
+    0.27069517371893026,
+    0.2498171444247232,
+    0.18708082712162197,
+    0.08057482020595025,
+    0.4388362602764489
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.1828655345058815,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": -0.5152014609345743,
+   "r_pooled": -0.057519829859692236,
+   "r_per_protein": {
+    "CD86": 0.3222035018591098,
+    "PDL1": 0.19648205479865702,
+    "PDL2": 0.05588410019734837,
+    "CD366": 0.1568924811684108
+   }
+  },
+  "WRONG-KNOCKOUT (identity CONTROL)": {
+   "rmse_mean": 0.20547054584529711,
+   "rmse_sd": 0.14214545165516868,
+   "rmse_per_heldout_knockout": [
+    0.036858838395942256,
+    0.2762536985824497,
+    0.03915023724345898,
+    0.24298948480867694,
+    0.3284367706012104,
+    0.36338145607354283,
+    0.04160064328722514,
+    0.3150932377698707
+   ],
+   "r_within_protein_centred_on_fold_train_mean": 0.31854583868128694,
+   "r_within_protein_UNCENTRED_LOO_ARTIFACT_DO_NOT_GRADE": 0.012588951634554243,
+   "r_pooled": 0.2192128036353614,
+   "r_per_protein": {
+    "CD86": 0.2009884078309805,
+    "PDL1": 0.6057363869306771,
+    "PDL2": -0.031004030252683574,
+    "CD366": 0.49846259021617373
+   }
+  }
+ },
+ "secondary_metric_note": "r_within is the Pearson between PREDICTED and OBSERVED deviations from the fold's TRAINING mean. The uncentred version is also stored and must not be graded on: under leave-one-out an intercept-only predictor equals (sum_of_all - held_out)/(n-1), a decreasing linear function of the value it predicts, so it scores exactly -1 for arithmetic reasons, and every arm with an intercept inherits part of that bias. The graded primary metric (RMSE) is unaffected and is fully raw.",
+ "held_out_knockout_order": [
+  "ATF2",
+  "BRD4",
+  "CAV1",
+  "CD86",
+  "CMTM6",
+  "CUL3",
+  "ETV7",
+  "IFNGR1"
+ ],
+ "unit_of_replication": "a HELD-OUT KNOCKOUT (leave-one-knockout-out, n = 8). The per-fold lists above hold one value per held-out knockout, NOT per guide and NOT per model-init seed. Four guides against one gene are four measurements of the same perturbation.",
+ "mde": {
+  "value": 0.16314118632141236,
+  "convention": "3*sd/sqrt(n)",
+  "n": 8,
+  "n_counts": "held-out knockouts, one per leave-one-out fold",
+  "pooled_across_knockout_sd": 0.15381098551825162,
+  "primary_metric": "per-held-out-knockout RMSE in log2 protein-change units, lower better",
+  "secondary_metric_mde": {
+   "model_minus_translator_r_within": 0.4050095119392496,
+   "jackknife_sd": 0.09192410686438354,
+   "mde": 0.09750023897748368,
+   "detected": true,
+   "convention": "3*sd/sqrt(n) with sd from a DELETE-ONE-KNOCKOUT jackknife, so the secondary metric is thresholded on the same unit of replication as the primary. Without this the AGREE gate compares a threshold test against a bare sign test and disagrees at chance."
+  },
+  "paired": {
+   "model_vs_marginal": {
+    "gap": -0.033999777134716816,
+    "sd": 0.10663252645364162,
+    "mde": 0.11310087382563584,
+    "detected": false
+   },
+   "model_vs_translator": {
+    "gap": 0.027479788295140525,
+    "sd": 0.18109080563972074,
+    "mde": 0.19207580501757243,
+    "detected": false
+   },
+   "model_vs_shuffled_rna": {
+    "gap": 0.009357021343992564,
+    "sd": 0.035704007062552216,
+    "mde": 0.03786981826419458,
+    "detected": false
+   },
+   "translator_vs_marginal": {
+    "gap": -0.06147956542985734,
+    "sd": 0.10458243120179404,
+    "mde": 0.1109264194436462,
+    "detected": false
+   }
+  }
+ },
+ "gates": {
+  "PRIMARY-A  MODEL beats MARGINAL-protein by > MDE": false,
+  "PRIMARY-B  MODEL beats the CALIBRATED NAIVE TRANSLATOR by > MDE": false,
+  "SIG        MODEL beats structure-preserving SHUFFLED-RNA by > MDE": false,
+  "TRIVIAL    MODEL beats the best non-learned arm by > MDE": false,
+  "AGREE      within-protein r reaches the same verdict as RMSE on PRIMARY-B": false
+ },
+ "gaps_positive_means_first_arm_better": {
+  "model_minus_marginal": -0.0339997771347168,
+  "model_minus_calibrated_translator": 0.027479788295140528,
+  "model_minus_best_non_learned": -0.0339997771347168,
+  "best_non_learned_arm": "MARGINAL-protein (0 param)",
+  "model_minus_shuffled_rna_structure_preserving": 0.009357021343992578,
+  "model_minus_shuffled_rna_genewise": -0.025872438578352808,
+  "model_minus_swap_rna_counterfactual": 0.004654908928961143,
+  "model_minus_swap_identity_counterfactual": -0.017410292191304855,
+  "model_minus_wrong_knockout": -0.037312477360673,
+  "translator_minus_marginal": -0.06147956542985733,
+  "translator_minus_random_transcript": -0.039149275827494556,
+  "mlp_minus_ridge": -0.037189314917277505
+ },
+ "controls_reproducing_the_effect": {
+  "the CALIBRATED TRANSLATOR reproduces this fraction of the model's gain over the marginal": 1.8082343653682722,
+  "the EXPRESSION-MATCHED RANDOM TRANSCRIPT reproduces this fraction of it": 0.6567775286844912,
+  "the STRUCTURE-PRESERVING SHUFFLED-RNA model reproduces this fraction of it": 1.2752083140697479,
+  "the IDENTITY-ONLY model (no RNA at all) reproduces this fraction of it": 1.3378514858347554
+ },
+ "controls_reproducing_the_effect_are_meaningful": false,
+ "controls_reproducing_the_effect_note": "fractions of the model's raw RMSE gain over the marginal. If that denominator is itself below the MDE the ratios are meaningless and the flag above is false.",
+ "sensitivity_same_cells_for_both_modalities": {
+  "rmse": {
+   "MARGINAL-protein (0 param)": 0.20761787799233322,
+   "NAIVE TRANSLATOR raw, uncalibrated": 0.3311585503816421,
+   "NAIVE TRANSLATOR calibrated (2 param)": 0.23683847272106073,
+   "RANDOM-TRANSCRIPT calibrated (CONTROL)": 0.22557686055595944,
+   "MODEL ridge (RNA + identity)": 0.25134602296050157,
+   "MODEL ridge, RNA only": 0.20519248581127053,
+   "MODEL ridge, identity only": 0.2674674378952482,
+   "SWAP-RNA (COUNTERFACTUAL)": 0.26087626310098044,
+   "SWAP-IDENTITY (COUNTERFACTUAL)": 0.22929612500328278
+  },
+  "r_within": {
+   "MARGINAL-protein (0 param)": 0.0,
+   "NAIVE TRANSLATOR raw, uncalibrated": 0.30491629306187684,
+   "NAIVE TRANSLATOR calibrated (2 param)": -0.15791527573808883,
+   "RANDOM-TRANSCRIPT calibrated (CONTROL)": 0.3364630442439909,
+   "MODEL ridge (RNA + identity)": 0.19104162722105567,
+   "MODEL ridge, RNA only": 0.41075299084584493,
+   "MODEL ridge, identity only": 0.1430087569595356,
+   "SWAP-RNA (COUNTERFACTUAL)": 0.11762495166169024,
+   "SWAP-IDENTITY (COUNTERFACTUAL)": 0.17761812765842697
+  },
+  "note": "if the same-cell numbers are markedly better than the graded split-half numbers, the difference is per-droplet technical coupling between UMI and ADT capture, not biology"
+ },
+ "sensitivity_wrong_unit_guide_level_NOT_GRADED": {
+  "n_guides": 28,
+  "mde": 0.07382373968741705,
+  "model_minus_marginal": 0.08332424575693925,
+  "would_pass": true,
+  "model_rmse": 0.10769703509427764,
+  "marginal_rmse": 0.1910212808512169,
+  "translator_rmse": 0.18552027306374005
+ },
+ "circularity_check": "RNA feature and protein target come from the same experiment but DISJOINT CELLS, so no per-droplet technical factor can manufacture the association; the same-cell version is reported as a sensitivity rather than assumed away. Identity features are DepMap CRISPR gene-effect PCs -- a different assay in different cell lines, never derived from Papalexi. The gene detection filter is computed on non-targeting cells only, which are never a held-out knockout. Every target-side quantity (marginal, translator slope/intercept, per-gene z-scores, PCA basis, ridge alpha, feature scaler) is refit on the training knockouts inside every fold.",
+ "smoke": true,
+ "n_pcs": 3,
+ "mlp_epochs": 40,
+ "limits": [
+  "FOUR PROTEINS. The scorable universe is 8 knockouts x 4 proteins = 32 values and no model can enlarge it. Any null here is underpowered by construction, and any positive rests on four surface markers of one immune axis (CD86, PD-L1, PD-L2, CD366) in one cell line. This is the single binding constraint on the module and it is not fixable by analysis",
+  "n = 8 held-out knockouts gives the sd 7 degrees of freedom. A gap just under the MDE is not evidence of equality. The cheapest falsification is more knockouts -- a CITE-seq screen with a larger panel -- not more epochs",
+  "the four proteins do not respond independently: PD-L1 falls where CD86 and CD366 rise across the IFN-axis knockouts (IFNGR1/2, JAK2, STAT1, IRF1). The effective dimensionality of the target is therefore well below four, so the per-knockout RMSE replicate is the honest unit and the 100 (knockout, protein) cells must never be treated as 100 independent observations",
+  "RNA and protein come from disjoint cells but from the SAME knockout, so a knockout-level batch effect (unequal 10x lane or HTO composition) still couples the two channels. The split is stratified by HTO to reduce this and it is NOT eliminated. A cross-replicate design, RNA from one replicate and protein from another, would close it and was not run",
+  "the calibrated translator gets a single per-protein slope and intercept fit on the training knockouts. A richer translator -- non-linear, or using the transcript's absolute level or its measurement precision -- is a different and probably stronger arm and was not run, so 'the model beats the translator' should be read as 'beats a LINEAR translator'",
+  "the model's capacity is bounded by the data, not chosen: with 24 training knockouts a ridge on a handful of PCs is near the limit of what can be fit, and the MLP arm is expected to overfit. A finding that the MLP loses to the ridge is a statement about sample size, not about architecture",
+  "the ADT readout is a 4-tag panel normalised by ADT total, so the four values are compositional -- they sum to one before the log. A perturbation that raises one tag mechanically depresses the others. A CLR normalisation or an isotype/spike-in reference would break that and neither is available in this file",
+  "MYC and SPI1 contribute ~50 and ~25 cells per half. Their protein estimates are the noisiest in the set and they are retained rather than dropped; re-running with VPH_MIN_CELLS raised is the obvious robustness check and a verdict that flips under it is not a verdict",
+  "DepMap identity features exist for 24 of 25 knockouts (MARCH8 via the MARCHF8 alias). A gene with no DepMap profile silently receives a zero identity vector, which is a real weakness of the identity channel and is reported rather than patched",
+  "one cell line (THP-1 monocytes), one time point, CRISPR knockout only. Nothing here speaks to whether a protein head generalises across cell context, dose or perturbation modality"
+ ],
+ "verdict": "SMOKE RUN (8 knockouts, 3 RNA PCs, 40 MLP epochs) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. The knockout set is truncated to 8, so the MDE has 7 degrees of freedom, every arm sits inside it, and the arms cannot be separated at this size. No sentence below is a measurement and none of it should be quoted as a finding. Rerun with VPH_SMOKE unset. FIRST, THE PREMISE WAS WRONG AND THAT IS PART OF THE RESULT: papalexi.h5ad contains NO protein modality -- obsm, layers, uns, obsp, varm and varp are all present and all empty, and the file is a 20,729 x 18,649 RNA count matrix. The protein half of the same ECCITE experiment is a separate GEO file (GSE153056/GSM4633615, 4 ADT tags x 20,729 cells), joined here at an asserted-exact 20,729/20,729 barcode match; it is the other half of this experiment, not a substitute dataset. FOUR PROTEINS AND 8 KNOCKOUTS IS THE WHOLE UNIVERSE -- 32 scorable values -- and that ceiling, not the modelling, is what bounds everything here. PROTEIN HEAD FAILS: on held-out knockouts, with RNA read from cells DISJOINT from the cells the protein was read from, the ridge model on RNA-response PCs plus DepMap identity PCs reaches RMSE 0.2428 in log2 protein-change units, against 0.2088 for the per-protein MARGINAL and 0.2703 for the CALIBRATED NAIVE TRANSLATOR (protein follows its own transcript, slope and intercept fit on training knockouts only). Those are gaps of -0.0340 and +0.0275 against a minimum detectable increment of 0.1631 (3*sd/sqrt(n), n = 8 HELD-OUT KNOCKOUTS -- not guides, because four guides against one gene are four measurements of the same perturbation, and not seeds, because seeds measure optimiser noise). The gate was declared as BOTH, and it is met on neither. The sharper PAIRED test on the same held-out knockouts gives model-minus-translator +0.0275 against a paired MDE of 0.1921, i.e. still not detected, so the call does not turn on the choice of unpaired versus paired error bar. THE CHEAPEST ARM IS REPORTED NEXT TO THE MODEL, NOT BENEATH IT: the best non-learned arm is 'MARGINAL-protein (0 param)' at 0.2088, WHICH MATCHES OR BEATS THE TRAINED MODEL -- that is the headline, not a footnote. Attribution: a STRUCTURE-PRESERVING permutation of the RNA rows (every knockout keeps a real response vector with its real magnitude and gene-gene structure, only the pairing is destroyed) gives 0.2521, a gene-wise permutation 0.2169, an expression-decile-matched RANDOM TRANSCRIPT read through the same calibration 0.2311, and the identity-only model with no RNA at all 0.2543. The counterfactual swaps separate 'ignored' from 'useless': handing the trained model another knockout's RNA moves RMSE by +0.0047 and another knockout's identity by -0.0174, and a swap gap inside the MDE means the channel is being IGNORED rather than being uninformative -- accuracy alone cannot tell those apart. The secondary metric -- the within-protein Pearson taken on deviations from each fold's TRAINING mean, on which an intercept-only predictor scores exactly 0 because that is its true within-protein content -- gives model +0.1619 and translator -0.2431, a difference of +0.4050 against a delete-one-knockout jackknife MDE of 0.0975 on the SAME unit, and it DISAGREES with RMSE on the primary comparison, and when the two metrics disagree the result is a metric artifact and is not reportable as biology.  The UNCENTRED form of that same correlation is reported in the JSON and must not be read as a result: under leave-one-out the intercept-only arm scores exactly -1.00 on it, because the mean of the other knockouts is by construction a decreasing linear function of the held-out value, and every arm carrying an intercept inherits some of that bias. The positive control holds at 1/1 self-knockouts lowering their own protein. All effect sizes quoted are RAW held-out values; the shuffles, swaps and identity control establish significance and attribution and nothing is reported net of any of them.",
+ "log": [
+  "==============================================================================================================",
+  "V4 BLOCK 8 -- protein head from ECCITE vs the naive translator",
+  "==============================================================================================================",
+  "  GATE, declared before the run: the MODEL is retained only if it beats BOTH the per-protein",
+  "  MARGINAL and the CALIBRATED NAIVE TRANSLATOR by more than the MDE = 3*sd/sqrt(n), where",
+  "  n counts HELD-OUT KNOCKOUTS (leave-one-knockout-out). Guides are not the unit: four guides",
+  "  against one gene are four measurements of the SAME perturbation. Effect sizes are RAW",
+  "  held-out values; shuffles and swaps establish significance only and are never subtracted.",
+  "  *** SMOKE MODE: PLUMBING CHECK ONLY. Nothing below is a measurement. ***",
+  "\n  papalexi.h5ad INVENTORY -- the premise handed to this module was that it holds paired",
+  "  RNA and protein. IT DOES NOT. X = 20,729 cells x 18,649 genes, 69,529,049 stored values (18.0% dense), raw integer counts.",
+  "    obsm     present and EMPTY",
+  "    layers   present and EMPTY",
+  "    uns      present and EMPTY",
+  "    obsp     present and EMPTY",
+  "    varm     present and EMPTY",
+  "    varp     present and EMPTY",
+  "    obs (17 columns): cancer, cell_line, celltype, disease, gdo_barcode, guide_id, hto, hto_barcode, ncounts, ngenes, nperts, organism, percent_mito, percent_ribo, perturbation, perturbation_type, tissue_type",
+  "  => NO protein/ADT modality inside the h5ad. The four ADT tags exist in `var` only as the",
+  "     TRANSCRIPTS CD86/CD274/PDCD1LG2/HAVCR2, which is the translator's INPUT, not the target.",
+  "     The protein half of this same experiment is GSE153056/GSM4633615 (4 tags x 20,729 cells)",
+  "     and is joined here on barcodes with an asserted exact match. A zero in X is zero UMI",
+  "     observed -- a real measurement -- NOT the nlz_* case where zeros mean NOT RECORDED.",
+  "\n  gene universe: 12,038/18,649 genes detected in >= 2% of the 1,194 NT RNA-half cells (filter fit on NT cells only -- no test knockout informs it)",
+  "  translator transcripts, NT detection rate: CD86->CD86 16.3%, PDL1->CD274 35.4%, PDL2->PDCD1LG2 20.6%, CD366->HAVCR2 44.4%",
+  "\n  usable knockouts (>= 20 cells in BOTH halves): 8 of 25; proteins 4. THE ENTIRE SCORABLE UNIVERSE IS 8 x 4 = 32 VALUES.",
+  "  cells per knockout: RNA half median 432 (min 138), ADT half median 430 (min 136); NT reference 1,194 RNA / 1,192 ADT cells",
+  "  protein log2FC spread 0.232 (range -0.517..+0.574); own-transcript mRNA log2FC spread 0.468 -- the arms are NOT on the same scale, which is why the translator is calibrated",
+  "\n  POSITIVE CONTROL -- knock out the gene, does its OWN protein fall?",
+  "    CD86       -> CD86   protein log2FC -0.4724  OK",
+  "    1/1 self-knockouts lower their own protein",
+  "\n  identity features: 6 DepMap CRISPR gene-effect PCs (8/8 knockouts covered). DepMap is a different assay in different cell lines and is NOT derived from Papalexi, so no feature is scored on its own source dataset.",
+  "  random-transcript control: 3 draws, each gene matched to the true transcript's NT EXPRESSION DECILE (so the contrast is 'the right transcript' vs 'a comparable transcript', not 'a transcript' vs 'a dropout')",
+  "\n  arm                                              RMSE      sd  r_within    (raw)  r_pooled   per-protein r (centred)",
+  "  MARGINAL-protein (0 param)                     0.2088  0.1584   +0.0000  -1.0000   -0.2285   CD86:+0.00 PDL1:+0.00 PDL2:+0.00 CD36:+0.00",
+  "  NAIVE TRANSLATOR raw, uncalibrated             0.3632  0.3384   +0.3094  +0.2259   +0.3175   CD86:+0.30 PDL1:+0.84 PDL2:+0.05 CD36:+0.05",
+  "  NAIVE TRANSLATOR calibrated (2 param)          0.2703  0.2477   -0.2431  -0.3114   -0.2495   CD86:-0.68 PDL1:+0.81 PDL2:-0.22 CD36:-0.88",
+  "  RANDOM-TRANSCRIPT calibrated (CONTROL)         0.2311  0.1392   +0.3333  +0.0843   +0.2611   CD86:+0.58 PDL1:-0.02 PDL2:+0.24 CD36:+0.53",
+  "  MODEL ridge (RNA + identity)                   0.2428  0.1143   +0.1619  -0.1800   +0.0617   CD86:+0.23 PDL1:+0.24 PDL2:+0.01 CD36:+0.17",
+  "  MODEL ridge, RNA only                          0.2063  0.1549   +0.5099  -0.9598   -0.1710   CD86:+0.15 PDL1:+0.39 PDL2:+0.64 CD36:+0.86",
+  "  MODEL ridge, identity only                     0.2543  0.1202   +0.0925  -0.2007   +0.0217   CD86:+0.28 PDL1:+0.11 PDL2:-0.04 CD36:+0.02",
+  "  SWAP-RNA (COUNTERFACTUAL)                      0.2474  0.1336   +0.0899  -0.1564   +0.0306   CD86:+0.20 PDL1:+0.14 PDL2:-0.05 CD36:+0.07",
+  "  SWAP-IDENTITY (COUNTERFACTUAL)                 0.2254  0.1307   +0.1310  -0.4061   -0.0910   CD86:-0.03 PDL1:+0.16 PDL2:+0.03 CD36:+0.35",
+  "  MODEL MLP (RNA + identity)                     0.2800  0.0604   +0.2314  +0.0579   +0.1958   CD86:+0.24 PDL1:+0.46 PDL2:-0.06 CD36:+0.28",
+  "  SHUFFLED-RNA structure-preserving (CONTROL)    0.2521  0.1230   +0.0192  -0.3013   -0.0359   CD86:+0.08 PDL1:+0.01 PDL2:-0.03 CD36:+0.02",
+  "  SHUFFLED-RNA gene-wise (CONTROL)               0.2169  0.1367   +0.1829  -0.5152   -0.0575   CD86:+0.32 PDL1:+0.20 PDL2:+0.06 CD36:+0.16",
+  "  WRONG-KNOCKOUT (identity CONTROL)              0.2055  0.1421   +0.3185  +0.0126   +0.2192   CD86:+0.20 PDL1:+0.61 PDL2:-0.03 CD36:+0.50",
+  "  r_within is taken on deviations from the fold's TRAINING mean, so the MARGINAL arm is exactly 0 -- its true within-protein content.",
+  "  the (raw) column shows the SAME correlation uncentred: the marginal arm sits at -1.0000 there, which is a leave-one-out arithmetic artifact (the mean of the others decreases as the held-out value rises), not a property of the data. Nothing is graded on it.",
+  "\n  MDE = 3*sd/sqrt(n), n = 8 HELD-OUT KNOCKOUTS (leave-one-knockout-out; the claim is",
+  "  generalisation to an unseen perturbation, so the error bar is computed ACROSS knockouts).",
+  "  pooled across-knockout sd of per-knockout RMSE 0.1538 -> MDE 0.1631",
+  "  the point estimate is the same either way (a mean of differences IS a difference of means);",
+  "  only the error bar changes, because the arms share held-out knockouts. Unpaired is the",
+  "  conservative bar and is what the gate uses; paired is the powerful one and is reported next",
+  "  to it so no call can turn silently on that choice.",
+  "    model vs marginal        gap -0.0340  vs UNPAIRED MDE 0.1631 (not detected)  |  vs PAIRED MDE 0.1131 (not detected)",
+  "    model vs translator      gap +0.0275  vs UNPAIRED MDE 0.1631 (not detected)  |  vs PAIRED MDE 0.1921 (not detected)",
+  "    model vs shuffled-RNA    gap +0.0094  vs UNPAIRED MDE 0.1631 (not detected)  |  vs PAIRED MDE 0.0379 (not detected)",
+  "    translator vs marginal   gap -0.0615  vs UNPAIRED MDE 0.1631 (not detected)  |  vs PAIRED MDE 0.1109 (not detected)",
+  "\n  SECONDARY METRIC, same unit and same MDE form: model-minus-translator within-protein r = +0.4050",
+  "  against a delete-one-knockout jackknife MDE of 0.0975 (3*sd/sqrt(8), jackknife sd 0.0919) -> DETECTED, which DISAGREES with the RMSE call.",
+  "\n  PREDECLARED GATES",
+  "    FAIL  PRIMARY-A  MODEL beats MARGINAL-protein by > MDE",
+  "    FAIL  PRIMARY-B  MODEL beats the CALIBRATED NAIVE TRANSLATOR by > MDE",
+  "    FAIL  SIG        MODEL beats structure-preserving SHUFFLED-RNA by > MDE",
+  "    FAIL  TRIVIAL    MODEL beats the best non-learned arm by > MDE",
+  "    FAIL  AGREE      within-protein r reaches the same verdict as RMSE on PRIMARY-B",
+  "    best non-learned arm = 'MARGINAL-protein (0 param)' at RMSE 0.2088; MODEL 0.2428; gap -0.0340",
+  "\n  CONTROLS THAT REPRODUCE THE EFFECT (reported as the finding, not as a footnote)",
+  "      180.8%  the CALIBRATED TRANSLATOR reproduces this fraction of the model's gain over the marginal",
+  "       65.7%  the EXPRESSION-MATCHED RANDOM TRANSCRIPT reproduces this fraction of it",
+  "      127.5%  the STRUCTURE-PRESERVING SHUFFLED-RNA model reproduces this fraction of it",
+  "      133.8%  the IDENTITY-ONLY model (no RNA at all) reproduces this fraction of it",
+  "    ^ the model's gain over the marginal is -0.0340, itself below the 0.1631 MDE, so these are ratios of two undetected quantities and mean nothing. They are printed rather than suppressed so the denominator stays visible.",
+  "\n  COUNTERFACTUALS -- 'ignored' vs 'useless', which accuracy alone cannot separate:",
+  "    handing the trained model another knockout's RNA changes RMSE by +0.0047; another knockout's IDENTITY by -0.0174. A swap gap at or below the 0.1631 MDE means that channel is IGNORED, not merely uninformative.",
+  "\n  SENSITIVITY 1 -- SAME cells for RNA and protein (the confound the split-half design closes)",
+  "    arm                                           RMSE split   RMSE same  r_w split   r_w same",
+  "    MARGINAL-protein (0 param)                        0.2088      0.2076    +0.0000    +0.0000",
+  "    NAIVE TRANSLATOR calibrated (2 param)             0.2703      0.2368    -0.2431    -0.1579",
+  "    MODEL ridge (RNA + identity)                      0.2428      0.2513    +0.1619    +0.1910",
+  "    a same-cell number that is much better than the split-half one is per-droplet technical coupling, not biology. The split-half figures above are the graded ones.",
+  "\n  SENSITIVITY 2 -- THE WRONG UNIT, RUN ON PURPOSE AND NOT GRADED ON. Splitting by GUIDE",
+  "    (28 guides) leaves sibling guides against the SAME gene in the training set, so the",
+  "    'unseen perturbation' is not unseen. n rises 28/8 = 3.5x and the MDE falls",
+  "    to 0.0738 from 0.1631. Under that wrong unit the model-vs-marginal gap is +0.0833",
+  "    -> it would be reported as A PASS; the graded knockout-level answer is A FAIL. This is the exact substitution",
+  "    that once flipped a verdict in this project from 4/7 to 0/7.",
+  "\n==============================================================================================================",
+  "  VERDICT: SMOKE RUN (8 knockouts, 3 RNA PCs, 40 MLP epochs) -- THIS IS A PLUMBING CHECK AND NOT A RESULT. The knockout set is truncated to 8, so the MDE has 7 degrees of freedom, every arm sits inside it, and the arms cannot be separated at this size. No sentence below is a measurement and none of it should be quoted as a finding. Rerun with VPH_SMOKE unset. FIRST, THE PREMISE WAS WRONG AND THAT IS PART OF THE RESULT: papalexi.h5ad contains NO protein modality -- obsm, layers, uns, obsp, varm and varp are all present and all empty, and the file is a 20,729 x 18,649 RNA count matrix. The protein half of the same ECCITE experiment is a separate GEO file (GSE153056/GSM4633615, 4 ADT tags x 20,729 cells), joined here at an asserted-exact 20,729/20,729 barcode match; it is the other half of this experiment, not a substitute dataset. FOUR PROTEINS AND 8 KNOCKOUTS IS THE WHOLE UNIVERSE -- 32 scorable values -- and that ceiling, not the modelling, is what bounds everything here. PROTEIN HEAD FAILS: on held-out knockouts, with RNA read from cells DISJOINT from the cells the protein was read from, the ridge model on RNA-response PCs plus DepMap identity PCs reaches RMSE 0.2428 in log2 protein-change units, against 0.2088 for the per-protein MARGINAL and 0.2703 for the CALIBRATED NAIVE TRANSLATOR (protein follows its own transcript, slope and intercept fit on training knockouts only). Those are gaps of -0.0340 and +0.0275 against a minimum detectable increment of 0.1631 (3*sd/sqrt(n), n = 8 HELD-OUT KNOCKOUTS -- not guides, because four guides against one gene are four measurements of the same perturbation, and not seeds, because seeds measure optimiser noise). The gate was declared as BOTH, and it is met on neither. The sharper PAIRED test on the same held-out knockouts gives model-minus-translator +0.0275 against a paired MDE of 0.1921, i.e. still not detected, so the call does not turn on the choice of unpaired versus paired error bar. THE CHEAPEST ARM IS REPORTED NEXT TO THE MODEL, NOT BENEATH IT: the best non-learned arm is 'MARGINAL-protein (0 param)' at 0.2088, WHICH MATCHES OR BEATS THE TRAINED MODEL -- that is the headline, not a footnote. Attribution: a STRUCTURE-PRESERVING permutation of the RNA rows (every knockout keeps a real response vector with its real magnitude and gene-gene structure, only the pairing is destroyed) gives 0.2521, a gene-wise permutation 0.2169, an expression-decile-matched RANDOM TRANSCRIPT read through the same calibration 0.2311, and the identity-only model with no RNA at all 0.2543. The counterfactual swaps separate 'ignored' from 'useless': handing the trained model another knockout's RNA moves RMSE by +0.0047 and another knockout's identity by -0.0174, and a swap gap inside the MDE means the channel is being IGNORED rather than being uninformative -- accuracy alone cannot tell those apart. The secondary metric -- the within-protein Pearson taken on deviations from each fold's TRAINING mean, on which an intercept-only predictor scores exactly 0 because that is its true within-protein content -- gives model +0.1619 and translator -0.2431, a difference of +0.4050 against a delete-one-knockout jackknife MDE of 0.0975 on the SAME unit, and it DISAGREES with RMSE on the primary comparison, and when the two metrics disagree the result is a metric artifact and is not reportable as biology.  The UNCENTRED form of that same correlation is reported in the JSON and must not be read as a result: under leave-one-out the intercept-only arm scores exactly -1.00 on it, because the mean of the other knockouts is by construction a decreasing linear function of the held-out value, and every arm carrying an intercept inherits some of that bias. The positive control holds at 1/1 self-knockouts lowering their own protein. All effect sizes quoted are RAW held-out values; the shuffles, swaps and identity control establish significance and attribution and nothing is reported net of any of them."
+ ]
+}

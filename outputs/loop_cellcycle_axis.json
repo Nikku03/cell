@@ -1,0 +1,240 @@
+{
+ "test": "loop_cellcycle_axis",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/proteinatlas.tsv",
+    "bytes": 43055808,
+    "hash": "5c546331ec5dda4b",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/itzhak_supp1.xlsx",
+    "bytes": 1653563,
+    "hash": "ce542f6561706a9a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 20162,
+   "used": 1524,
+   "selection": "filtered",
+   "fraction": 0.07558773931157624
+  },
+  "seed": 11900,
+  "controls": [
+   "776 imaged non-CCD genes as the assay-matched control",
+   "measured copy number tested for the abundance confound",
+   "transcript-label permutation, capability-checked",
+   "group-label permutation at four cycle periods",
+   "publication count against the half-life prediction",
+   "the model's own integrator run as the falsifier"
+  ],
+  "note": "Mahdessian 2021 Nature 590:649 via HPA; CCD calls are binary, so the per-cell pseudotime that loop 99 needed is still not in this repository",
+  "warnings": []
+ },
+ "gates": {
+  "C1": true,
+  "C2": true,
+  "C3": true,
+  "C4": true,
+  "C6": true,
+  "C5": true
+ },
+ "source": "Mahdessian et al. 2021 Nature 590:649, via Human Protein Atlas",
+ "c1": {
+  "n_yes": 748,
+  "n_no": 776,
+  "n_yes_abund": 399,
+  "n_no_abund": 472,
+  "auc_abundance": 0.46483794231341063,
+  "median_yes": 99446.7530299507,
+  "median_no": 154274.70770536788
+ },
+ "c2": {
+  "n_both": 1130,
+  "n11": 88,
+  "n10": 362,
+  "n01": 38,
+  "n00": 642,
+  "survival": {
+   "real": 88.0,
+   "n_null": 2000,
+   "null_mean": 50.0945,
+   "null_sd": 5.0911265698271535,
+   "z": 7.445405153478028,
+   "defined": true,
+   "fraction": 0.5692556818181818,
+   "reason": "effect is distinguishable from the null and exceeds it"
+  },
+  "capability": {
+   "capable": true,
+   "changed": 0.19646017699115045,
+   "achievable": 0.19814237606703733,
+   "threshold": 0.09907118803351866,
+   "reason": "the null changes the statistic's input"
+  },
+  "unreachable_fraction": 0.8044444444444444
+ },
+ "c3": {
+  "n_yes": 212,
+  "n_no": 266,
+  "sweep": {
+   "16.0": {
+    "gain_yes": 0.1509334436814709,
+    "gain_no": 0.1207931053455535,
+    "delta": 0.030140338335917408,
+    "p": 0.0,
+    "auc": 0.5999166548446588,
+    "null_capable": true,
+    "null_changed": 0.5062761506276151,
+    "null_achievable": 0.49361880919451695
+   },
+   "20.0": {
+    "gain_yes": 0.18537467102228508,
+    "gain_no": 0.1495194395501403,
+    "delta": 0.03585523147214478,
+    "p": 0.0,
+    "auc": 0.5999166548446588,
+    "null_capable": true,
+    "null_changed": 0.5188284518828452,
+    "null_achievable": 0.49361880919451695
+   },
+   "24.0": {
+    "gain_yes": 0.21832471913780935,
+    "gain_no": 0.17748927580427493,
+    "delta": 0.04083544333353442,
+    "p": 0.0,
+    "auc": 0.5999166548446588,
+    "null_capable": true,
+    "null_changed": 0.47280334728033474,
+    "null_achievable": 0.49361880919451695
+   },
+   "28.0": {
+    "gain_yes": 0.24977293723851768,
+    "gain_no": 0.20466897851939153,
+    "delta": 0.04510395871912615,
+    "p": 0.0,
+    "auc": 0.5999166548446588,
+    "null_capable": true,
+    "null_changed": 0.5313807531380753,
+    "null_achievable": 0.49361880919451695
+   }
+  }
+ },
+ "c4": {
+  "auc_pubs": 0.5063129521918003,
+  "auc_gain": 0.5999166548446588,
+  "auc_pubs_all": 0.48248163487513096
+ },
+ "c6": {
+  "forced_fraction": 1.0,
+  "median_relM": 0.17668743097995518,
+  "median_relP": 0.03087518372990547,
+  "median_attenuation": 0.16473695732275634,
+  "damped_fraction": 0.8193317422434367,
+  "mcnemar_p": 2.0339193244994747e-67,
+  "n_genes_integrated": 4190
+ },
+ "mass": {
+  "ccd_yes_of_proteome": 0.054923177218972205,
+  "called_of_proteome": 0.15361928499586475,
+  "ccd_yes_of_called": 0.35752787952665366,
+  "ccd_with_full_state": 179
+ },
+ "seconds": 3.8218743801116943,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 119 -- the time axis, fetched: the cell cycle exists, and the wiring cannot make it",
+  "====================================================================================================",
+  "",
+  "  Mahdessian 2021 via HPA: 20,162 genes; CCD Protein called for 1,524 (748 Yes), CCD Transcript for 1,634 (530 Yes)",
+  "  model: 16,492 genes; full dynamical state for 4,190",
+  "  Itzhak 2016 copy numbers for abundance control: 8,469 proteins",
+  "",
+  "C1 THE CALLED SET IS MATCHED, NOT SELECTED",
+  "     CCD Yes 748 genes (399 with a measured copy number), No 776 (472)",
+  "     median copies  Yes       99,447   No      154,275",
+  "     AUC(abundance separates Yes from No) = 0.4648   gate < 0.65",
+  "     IF reliability, Yes: Approved 376, Supported 250, Enhanced 83, Uncertain 39",
+  "     IF reliability,  No: Approved 350, Supported 284, Enhanced 119, Uncertain 23",
+  "     C1 PASS -- abundance does not explain the call",
+  "",
+  "C2 THE POST-TRANSCRIPTIONAL GAP IS REAL AND SIZED",
+  "     1,130 genes called for BOTH",
+  "                          transcript Yes   transcript No",
+  "       protein Yes              88             362",
+  "       protein No               38             642",
+  "     null: shuffled transcript labels -- the null changes the statistic's input",
+  "     Yes/Yes overlap: real +88.0000  null +50.0945 +/- 5.0911  z +7.4  survives 57%",
+  "     CCD proteins with a NON-CCD transcript: 362 of 450 = 80.4% -- the model has no mechanism for these",
+  "     C2 PASS",
+  "",
+  "C3 THE FILTER'S OWN PREDICTION, ON AN INDEPENDENT DATASET",
+  "     Schwanhausser protein half-lives on the called set: Yes 212, No 266",
+  "     T=  16 h   gain Yes 0.1509  No 0.1208  delta +0.0301  p 0.0000  AUC 0.5999",
+  "     T=  20 h   gain Yes 0.1854  No 0.1495  delta +0.0359  p 0.0000  AUC 0.5999",
+  "     T=  24 h   gain Yes 0.2183  No 0.1775  delta +0.0408  p 0.0000  AUC 0.5999",
+  "     T=  28 h   gain Yes 0.2498  No 0.2047  delta +0.0451  p 0.0000  AUC 0.5999",
+  "     median half-life  Yes 36.1 h   No 51.3 h",
+  "     C3 PASS -- the prediction holds at every swept period",
+  "",
+  "C4 FAME",
+  "     AUC(pubs)              0.5063   median pubs  Yes 110  No 107",
+  "     AUC(half-life gain)    0.5999   at T = 24 h",
+  "     AUC(pubs), all 1,524 called genes  0.4825",
+  "     C4 PASS -- biology beats fame",
+  "",
+  "C6 THE STRUCTURAL CONTRADICTION",
+  "     (a) the model's inequality, measured by integrating the committed equations",
+  "     driven k_sm at T=24 h, amplitude 50%, 12 cycles, 4,190 genes with a full state",
+  "     relative swing:  mRNA median 0.1767   protein median 0.0309",
+  "     protein swing <= mRNA swing for 100.0000% of genes   gate >= 99%",
+  "     attenuation protein/mRNA: median 0.1647, 90th pct 0.3042, max 0.9749",
+  "     81.9% of proteins are damped below a tenth of the drive",
+  "     (b) the measurement, McNemar on the paired calls",
+  "     protein-Yes/transcript-No  362    protein-No/transcript-Yes  38",
+  "     exact two-sided binomial on the 400 discordant pairs: p = 2.034e-67",
+  "     protein-only oscillation dominates -- the direction the filter CANNOT make",
+  "     C6 PASS",
+  "",
+  "C5 EVERY NULL CHECKED FOR CAPABILITY",
+  "     C2 transcript-label shuffle: CAPABLE -- moved 19.6% of an achievable 19.8% -- the null changes the statistic's input",
+  "     C3 group-label shuffle: CAPABLE -- moved 47.3% of an achievable 49.4% -- one permutation per swept period, each checked",
+  "     the bar is a fraction of the ACHIEVABLE move, not a fixed 0.5. A binary label vector",
+  "     of prevalence p can never change more than 2p(1-p) of its entries under permutation,",
+  "     so the old fixed bar was unreachable for every binary null -- gate_guard's own",
+  "     family-two error, found by this loop and corrected in that module.",
+  "     C2 survival passed through gate_guard.survival: defined=True",
+  "     C5 PASS",
+  "",
+  "  HOW MUCH OF THE CELL IS TIME-VARYING (measured, not gated)",
+  "     CCD-Yes proteins carry 5.49% of measured proteome mass",
+  "     of the mass that was CALLED at all, CCD-Yes is 35.8% (15.4% of the proteome was called)",
+  "     179 of 748 CCD proteins have a full dynamical state in this model (23.9%)",
+  "",
+  "====================================================================================================",
+  "  C1  PASS",
+  "  C2  PASS",
+  "  C3  PASS",
+  "  C4  PASS",
+  "  C5  PASS",
+  "  C6  PASS",
+  "  6/6",
+  "====================================================================================================",
+  "    manifest: 4 inputs, coverage 1524/20162 (7.6%) by 'filtered', seed 11900, controls 6"
+ ]
+}

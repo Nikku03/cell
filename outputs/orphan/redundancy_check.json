@@ -1,0 +1,80 @@
+{
+ "n_splits": 5,
+ "component_scores": {
+  "TIDE": {
+   "broken": 0.2670929329168469,
+   "fixed": 0.2670929329168469
+  },
+  "NEXUS": {
+   "broken": 0.2631963906998858,
+   "fixed": 0.2631963906998858
+  },
+  "PHYS": {
+   "broken": 0.36021359751490634,
+   "fixed": 0.41397120623925493
+  },
+  "LEARNED": {
+   "broken": 0.4067786610864794,
+   "fixed": 0.42891372931529154
+  },
+  "MARKOV-P": {
+   "broken": 0.43805049377208843,
+   "fixed": 0.43805049377208843
+  }
+ },
+ "redundancy": {
+  "PHYS-MARKOV-P": {
+   "corr_broken": 0.6261089134867408,
+   "corr_fixed": 0.6811217064470363,
+   "jac_broken": 0.4389960141397487,
+   "jac_fixed": 0.5210904907594063
+  },
+  "LEARNED-MARKOV-P": {
+   "corr_broken": 0.5866118666147198,
+   "corr_fixed": 0.64582153050836,
+   "jac_broken": 0.4321763890629694,
+   "jac_fixed": 0.4985478525172076
+  },
+  "PHYS-LEARNED": {
+   "corr_broken": 0.674191263803128,
+   "corr_fixed": 0.6214216115584865,
+   "jac_broken": 0.4818523094386613,
+   "jac_fixed": 0.47708305358975933
+  },
+  "NEXUS-MARKOV-P": {
+   "corr_broken": 0.39244697744003265,
+   "corr_fixed": 0.39244697744003265,
+   "jac_broken": 0.2606117859481454,
+   "jac_fixed": 0.2606117859481454
+  }
+ },
+ "drop_one": {
+  "TIDE": {
+   "broken": -0.0011621926881938526,
+   "fixed": 0.0025689982321217553
+  },
+  "NEXUS": {
+   "broken": 0.012500768469087842,
+   "fixed": 0.014382697395959121
+  },
+  "PHYS": {
+   "broken": 0.012507143764603657,
+   "fixed": 0.006750573684591954
+  },
+  "LEARNED": {
+   "broken": 0.0023552692686166442,
+   "fixed": 0.008796198215763617
+  },
+  "MARKOV-P": {
+   "broken": 0.011431186126795601,
+   "fixed": 0.008392494497920632
+  }
+ },
+ "ensemble": {
+  "broken": 0.4720498362750461,
+  "fixed": 0.47088395176274733
+ },
+ "redundancy_hypothesis_holds": true,
+ "verdict": "WHY FIXING THE PPI GRAPH HELPED THE PARTS AND NOT THE WHOLE. Restoring 34,440 KO-KO PPI edges moved PHYS 0.3602 -> 0.4140 and LEARNED 0.4068 -> 0.4289, both large real gains, while the full ensemble moved 0.4720 -> 0.4709. An ensemble is paid in COMPLEMENTARITY, not component quality, so the hypothesis was that the fix made the components better individually and MORE REDUNDANT collectively. That was turned into three checkable predictions. ALL THREE HOLD. Spearman between the PHYS and MARKOV-P score vectors rises 0.626 -> 0.681 (+0.055), the overlap of their top-50 nominations rises 0.439 -> 0.521 (+0.082), and MARKOV-P's unique contribution -- what the ensemble loses when it is dropped -- falls +0.0114 -> +0.0084 (-0.0030). So the PPI information was never MISSING from the ensemble; it was entering through ONE door instead of three. Fixing the bug opened the other two doors into the same room. THE OBVIOUS OBJECTION IS THAT BETTER PREDICTORS SIMPLY CORRELATE MORE WITH EVERYTHING, which would make the correlation rise vacuous. The table refutes that: PHYS and LEARNED both improved, and yet corr(PHYS, LEARNED) MOVED -0.053 (0.674 -> 0.621). Rising quality cannot produce a rise in one pair and a fall in another; a newly SHARED INPUT can, and the pairs that rise are exactly the two that now read the same physical graph MARKOV-P was already reading (NEXUS vs MARKOV-P, the untouched control pair, moves +0.000). THE BROADER READING, and it is consistent with kitchen_sink, where 55 features scored the same as 17: the ensemble was ALREADY extracting what the physical graph has to offer, through whichever component could reach it. Adding a second and third route to the same information cannot help, and in a z-score-sum fusion three correlated votes can slightly crowd out the uncorrelated ones. That is why a genuine data recovery produced no headline gain -- and it is a stronger statement about the ceiling than the bug itself, because it says the limit is not access to the graph. WHAT THIS CANNOT SAY: five splits of one cell line, so the ensemble difference of -0.0012 is itself within split-to-split noise and should not be read as a real degradation -- the claim here is that it did not IMPROVE, not that it got worse. Drop-one attribution assumes the other four components are held fixed, which understates shared credit. AND THE LEVELS HERE ARE NOT THE HEADLINE LEVELS: this is a lean rebuild (14 features, PHYS unranked), so every component scores below its protein_chain_combine twin. Both arms share that identical lean pipeline and differ ONLY in the PPI wiring, so the broken-vs-fixed DELTAS are the measurement and the absolute values are not. Deterministic given the fixed seeds.",
+ "note": "WHY FIXING THE PPI GRAPH HELPED THE PARTS AND NOT THE WHOLE. Restoring 34,440 KO-KO PPI edges moved PHYS 0.3602 -> 0.4140 and LEARNED 0.4068 -> 0.4289, both large real gains, while the full ensemble moved 0.4720 -> 0.4709. An ensemble is paid in COMPLEMENTARITY, not component quality, so the hypothesis was that the fix made the components better individually and MORE REDUNDANT collectively. That was turned into three checkable predictions. ALL THREE HOLD. Spearman between the PHYS and MARKOV-P score vectors rises 0.626 -> 0.681 (+0.055), the overlap of their top-50 nominations rises 0.439 -> 0.521 (+0.082), and MARKOV-P's unique contribution -- what the ensemble loses when it is dropped -- falls +0.0114 -> +0.0084 (-0.0030). So the PPI information was never MISSING from the ensemble; it was entering through ONE door instead of three. Fixing the bug opened the other two doors into the same room. THE OBVIOUS OBJECTION IS THAT BETTER PREDICTORS SIMPLY CORRELATE MORE WITH EVERYTHING, which would make the correlation rise vacuous. The table refutes that: PHYS and LEARNED both improved, and yet corr(PHYS, LEARNED) MOVED -0.053 (0.674 -> 0.621). Rising quality cannot produce a rise in one pair and a fall in another; a newly SHARED INPUT can, and the pairs that rise are exactly the two that now read the same physical graph MARKOV-P was already reading (NEXUS vs MARKOV-P, the untouched control pair, moves +0.000). THE BROADER READING, and it is consistent with kitchen_sink, where 55 features scored the same as 17: the ensemble was ALREADY extracting what the physical graph has to offer, through whichever component could reach it. Adding a second and third route to the same information cannot help, and in a z-score-sum fusion three correlated votes can slightly crowd out the uncorrelated ones. That is why a genuine data recovery produced no headline gain -- and it is a stronger statement about the ceiling than the bug itself, because it says the limit is not access to the graph. WHAT THIS CANNOT SAY: five splits of one cell line, so the ensemble difference of -0.0012 is itself within split-to-split noise and should not be read as a real degradation -- the claim here is that it did not IMPROVE, not that it got worse. Drop-one attribution assumes the other four components are held fixed, which understates shared credit. AND THE LEVELS HERE ARE NOT THE HEADLINE LEVELS: this is a lean rebuild (14 features, PHYS unranked), so every component scores below its protein_chain_combine twin. Both arms share that identical lean pipeline and differ ONLY in the PPI wiring, so the broken-vs-fixed DELTAS are the measurement and the absolute values are not. Deterministic given the fixed seeds."
+}

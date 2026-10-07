@@ -1,0 +1,1808 @@
+{
+ "test": "loop_complex_stoich",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/paxdb_hela.txt",
+    "bytes": 232026,
+    "hash": "dd78bb8089b6196e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ens_gtf.gz",
+    "bytes": 55529204,
+    "hash": "8c87436bab973c87",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 2039,
+   "used": 410,
+   "selection": "filtered",
+   "fraction": 0.20107896027464445
+  },
+  "seed": 9701,
+  "controls": [
+   "size-matched random gene sets from the same measured proteome",
+   "the null checked for capability before its verdict is read",
+   "publication spread run through the identical estimator",
+   "the ribosome and proteasome as complexes whose answer is known",
+   "one abundance dataset throughout, per loop 92's rule",
+   "coverage stated against all 2,039 complexes"
+  ],
+  "note": "a complex is a stoichiometric object, not a graph; matched subunit abundance is a hard prediction that a parts list cannot make",
+  "warnings": []
+ },
+ "gates": {
+  "X1 complex members are more matched than chance": true,
+  "X2 the null can move": true,
+  "X3 abundance is more matched than fame": false,
+  "X4 limiting subunits identified": true,
+  "X5 the well-known complexes behave": true,
+  "X6 coverage declared": true
+ },
+ "x1": {
+  "median_real_spread": 0.07663405703374515,
+  "null_mean": 0.25711691089915995,
+  "null_sd": 0.007269799620444441,
+  "survival": {
+   "real": 0.07663405703374515,
+   "n_null": 20,
+   "null_mean": 0.25711691089915995,
+   "null_sd": 0.007269799620444441,
+   "z": -24.82638632265093,
+   "defined": false,
+   "fraction": "UNDEFINED",
+   "raw_fraction": 3.3551259172660104,
+   "reason": "the null (+0.2571) equals or exceeds the real value (+0.0766): there is no effect in the claimed direction, so 'survival' has no meaning"
+  }
+ },
+ "x2": {
+  "capable": true,
+  "changed": 1.0,
+  "reason": "the null changes the statistic's input"
+ },
+ "x3": {
+  "pub_spread_real": 0.23204299649686477,
+  "pub_spread_null": 0.4898084006600101,
+  "tightening_abundance": 0.1804828538654148,
+  "tightening_pubs": 0.2577654041631453
+ },
+ "x4": {
+  "median_ratio": 1.850764794869474,
+  "p90_ratio": 3.976486280487805,
+  "worst": [
+   {
+    "complex": "Nuclear pore complex",
+    "n_measured": 31,
+    "limiting": "POM121",
+    "limiting_ppm": 19.3,
+    "median_ppm": 190.0,
+    "ratio": 9.844559585492227
+   },
+   {
+    "complex": "Major Post-catalytic P Spliceosome complex",
+    "n_measured": 35,
+    "limiting": "PRKRIP1",
+    "limiting_ppm": 21.8,
+    "median_ppm": 194.0,
+    "ratio": 8.899082568807339
+   },
+   {
+    "complex": "Major Spliceosomal C* complex",
+    "n_measured": 38,
+    "limiting": "PRKRIP1",
+    "limiting_ppm": 21.8,
+    "median_ppm": 191.0,
+    "ratio": 8.761467889908257
+   },
+   {
+    "complex": "Major Spliceosomal Pre-C*-II complex",
+    "n_measured": 37,
+    "limiting": "PRKRIP1",
+    "limiting_ppm": 21.8,
+    "median_ppm": 191.0,
+    "ratio": 8.761467889908257
+   },
+   {
+    "complex": "WASH complex, variant WASH2P/WASHC2A",
+    "n_measured": 4,
+    "limiting": "WASHC2A",
+    "limiting_ppm": 16.2,
+    "median_ppm": 130.5,
+    "ratio": 8.055555555555555
+   }
+  ],
+  "all": [
+   {
+    "complex": "19S proteasome regulatory complex",
+    "n_measured": 8,
+    "limiting": "ADRM1",
+    "limiting_ppm": 187.0,
+    "median_ppm": 207.0,
+    "ratio": 1.106951871657754
+   },
+   {
+    "complex": "19S-20S-PA28-alphabeta hybrid proteasome complex",
+    "n_measured": 22,
+    "limiting": "PSMA2",
+    "limiting_ppm": 102.0,
+    "median_ppm": 209.5,
+    "ratio": 2.053921568627451
+   },
+   {
+    "complex": "19S-20S-PA28-gamma hybrid proteasome complex",
+    "n_measured": 23,
+    "limiting": "PSMA2",
+    "limiting_ppm": 102.0,
+    "median_ppm": 211.0,
+    "ratio": 2.0686274509803924
+   },
+   {
+    "complex": "20S immunoproteasome complex",
+    "n_measured": 11,
+    "limiting": "PSMA2",
+    "limiting_ppm": 102.0,
+    "median_ppm": 213.0,
+    "ratio": 2.088235294117647
+   },
+   {
+    "complex": "20S proteasome complex",
+    "n_measured": 14,
+    "limiting": "PSMA2",
+    "limiting_ppm": 102.0,
+    "median_ppm": 212.5,
+    "ratio": 2.0833333333333335
+   },
+   {
+    "complex": "20S spermatoproteasome complex",
+    "n_measured": 13,
+    "limiting": "PSMA2",
+    "limiting_ppm": 102.0,
+    "median_ppm": 212.0,
+    "ratio": 2.0784313725490198
+   },
+   {
+    "complex": "20S thymoproteasome complex",
+    "n_measured": 11,
+    "limiting": "PSMA2",
+    "limiting_ppm": 102.0,
+    "median_ppm": 213.0,
+    "ratio": 2.088235294117647
+   },
+   {
+    "complex": "26S proteasome complex",
+    "n_measured": 22,
+    "limiting": "PSMA2",
+    "limiting_ppm": 102.0,
+    "median_ppm": 209.5,
+    "ratio": 2.053921568627451
+   },
+   {
+    "complex": "28S mitochondrial small ribosomal subunit",
+    "n_measured": 28,
+    "limiting": "CHCHD1",
+    "limiting_ppm": 55.4,
+    "median_ppm": 181.0,
+    "ratio": 3.2671480144404335
+   },
+   {
+    "complex": "30S proteasome complex",
+    "n_measured": 22,
+    "limiting": "PSMA2",
+    "limiting_ppm": 102.0,
+    "median_ppm": 209.5,
+    "ratio": 2.053921568627451
+   },
+   {
+    "complex": "39S mitochondrial large ribosomal subunit",
+    "n_measured": 51,
+    "limiting": "MRPL52",
+    "limiting_ppm": 45.4,
+    "median_ppm": 178.0,
+    "ratio": 3.9207048458149782
+   },
+   {
+    "complex": "40S cytosolic small ribosomal subunit",
+    "n_measured": 29,
+    "limiting": "RPS27A",
+    "limiting_ppm": 90.8,
+    "median_ppm": 231.0,
+    "ratio": 2.5440528634361232
+   },
+   {
+    "complex": "60S cytosolic large ribosomal subunit",
+    "n_measured": 38,
+    "limiting": "UBA52",
+    "limiting_ppm": 90.8,
+    "median_ppm": 230.0,
+    "ratio": 2.5330396475770924
+   },
+   {
+    "complex": "60S cytosolic large ribosomal subunit, striated muscle variant",
+    "n_measured": 38,
+    "limiting": "UBA52",
+    "limiting_ppm": 90.8,
+    "median_ppm": 230.0,
+    "ratio": 2.5330396475770924
+   },
+   {
+    "complex": "60S cytosolic large ribosomal subunit, testis-specific variant",
+    "n_measured": 38,
+    "limiting": "RPL10L",
+    "limiting_ppm": 75.0,
+    "median_ppm": 230.0,
+    "ratio": 3.066666666666667
+   },
+   {
+    "complex": "AP-2 Adaptor complex, alpha1 variant",
+    "n_measured": 4,
+    "limiting": "AP2A1",
+    "limiting_ppm": 187.0,
+    "median_ppm": 189.0,
+    "ratio": 1.0106951871657754
+   },
+   {
+    "complex": "AP-2 Adaptor complex, alpha2 variant",
+    "n_measured": 4,
+    "limiting": "AP2A2",
+    "limiting_ppm": 167.0,
+    "median_ppm": 189.0,
+    "ratio": 1.1317365269461077
+   },
+   {
+    "complex": "AP-4 Adaptor complex",
+    "n_measured": 4,
+    "limiting": "AP4B1",
+    "limiting_ppm": 38.5,
+    "median_ppm": 41.6,
+    "ratio": 1.0805194805194807
+   },
+   {
+    "complex": "APPBP2-Elongin C-Elongin B E3 ubiquitin ligase complex",
+    "n_measured": 5,
+    "limiting": "APPBP2",
+    "limiting_ppm": 64.3,
+    "median_ppm": 203.0,
+    "ratio": 3.157076205287714
+   },
+   {
+    "complex": "Actin-related protein 2/3 complex, ARPC1A-ACTR3-ARPC5 variant",
+    "n_measured": 7,
+    "limiting": "ARPC4",
+    "limiting_ppm": 104.0,
+    "median_ppm": 199.0,
+    "ratio": 1.9134615384615385
+   },
+   {
+    "complex": "Actin-related protein 2/3 complex, ARPC1A-ACTR3-ARPC5L variant",
+    "n_measured": 7,
+    "limiting": "ARPC4",
+    "limiting_ppm": 104.0,
+    "median_ppm": 199.0,
+    "ratio": 1.9134615384615385
+   },
+   {
+    "complex": "Actin-related protein 2/3 complex, ARPC1A-ACTR3B-ARPC5 variant",
+    "n_measured": 7,
+    "limiting": "ACTR3B",
+    "limiting_ppm": 65.5,
+    "median_ppm": 191.0,
+    "ratio": 2.9160305343511452
+   },
+   {
+    "complex": "Actin-related protein 2/3 complex, ARPC1B-ACTR3-ARPC5 variant",
+    "n_measured": 7,
+    "limiting": "ARPC4",
+    "limiting_ppm": 104.0,
+    "median_ppm": 199.0,
+    "ratio": 1.9134615384615385
+   },
+   {
+    "complex": "Actin-related protein 2/3 complex, ARPC1B-ACTR3-ARPC5L variant",
+    "n_measured": 7,
+    "limiting": "ARPC4",
+    "limiting_ppm": 104.0,
+    "median_ppm": 199.0,
+    "ratio": 1.9134615384615385
+   },
+   {
+    "complex": "Actin-related protein 2/3 complex, ARPC1B-ACTR3B-ARPC5 variant",
+    "n_measured": 7,
+    "limiting": "ACTR3B",
+    "limiting_ppm": 65.5,
+    "median_ppm": 199.0,
+    "ratio": 3.0381679389312977
+   },
+   {
+    "complex": "Actin-related protein 2/3 complex, ARPC1B-ACTR3B-ARPC5L variant",
+    "n_measured": 7,
+    "limiting": "ACTR3B",
+    "limiting_ppm": 65.5,
+    "median_ppm": 177.0,
+    "ratio": 2.7022900763358777
+   },
+   {
+    "complex": "Anaphase-promoting core complex",
+    "n_measured": 7,
+    "limiting": "ANAPC13",
+    "limiting_ppm": 52.4,
+    "median_ppm": 158.0,
+    "ratio": 3.0152671755725193
+   },
+   {
+    "complex": "B-WICH chromatin remodelling complex",
+    "n_measured": 7,
+    "limiting": "ERCC6",
+    "limiting_ppm": 153.0,
+    "median_ppm": 202.0,
+    "ratio": 1.3202614379084967
+   },
+   {
+    "complex": "BLOC-1 complex",
+    "n_measured": 7,
+    "limiting": "BLOC1S2",
+    "limiting_ppm": 57.6,
+    "median_ppm": 95.1,
+    "ratio": 1.6510416666666665
+   },
+   {
+    "complex": "BORC complex",
+    "n_measured": 8,
+    "limiting": "BORCS8",
+    "limiting_ppm": 23.4,
+    "median_ppm": 75.8,
+    "ratio": 3.2393162393162394
+   },
+   {
+    "complex": "BRCA1-A complex",
+    "n_measured": 4,
+    "limiting": "BRCC3",
+    "limiting_ppm": 80.8,
+    "median_ppm": 128.95,
+    "ratio": 1.5959158415841583
+   },
+   {
+    "complex": "BRCC E3 ubiquitin ligase complex",
+    "n_measured": 6,
+    "limiting": "BARD1",
+    "limiting_ppm": 22.4,
+    "median_ppm": 89.25,
+    "ratio": 3.9843750000000004
+   },
+   {
+    "complex": "BRISC complex",
+    "n_measured": 4,
+    "limiting": "BRCC3",
+    "limiting_ppm": 80.8,
+    "median_ppm": 164.5,
+    "ratio": 2.035891089108911
+   },
+   {
+    "complex": "BRISC-SHMT2 complex",
+    "n_measured": 5,
+    "limiting": "BRCC3",
+    "limiting_ppm": 80.8,
+    "median_ppm": 165.0,
+    "ratio": 2.0420792079207923
+   },
+   {
+    "complex": "BTR double Holliday Junction dissolution complex",
+    "n_measured": 4,
+    "limiting": "RMI2",
+    "limiting_ppm": 44.5,
+    "median_ppm": 112.3,
+    "ratio": 2.5235955056179775
+   },
+   {
+    "complex": "Beta-catenin destruction core complex, APC-AXIN1-GSK3B variant",
+    "n_measured": 4,
+    "limiting": "AXIN1",
+    "limiting_ppm": 42.5,
+    "median_ppm": 87.4,
+    "ratio": 2.0564705882352943
+   },
+   {
+    "complex": "Box C/D snoRNA-guided RNP methyltransferase complex, FBL variant",
+    "n_measured": 4,
+    "limiting": "NOP56",
+    "limiting_ppm": 212.0,
+    "median_ppm": 214.0,
+    "ratio": 1.009433962264151
+   },
+   {
+    "complex": "Brain-specific SWI/SNF ATP-dependent chromatin remodeling complex, ARID1A-SMARCA2 variant",
+    "n_measured": 6,
+    "limiting": "ARID1A",
+    "limiting_ppm": 151.0,
+    "median_ppm": 167.5,
+    "ratio": 1.109271523178808
+   },
+   {
+    "complex": "Brain-specific SWI/SNF ATP-dependent chromatin remodeling complex, ARID1A-SMARCA4 variant",
+    "n_measured": 6,
+    "limiting": "ARID1A",
+    "limiting_ppm": 151.0,
+    "median_ppm": 178.0,
+    "ratio": 1.1788079470198676
+   },
+   {
+    "complex": "Brain-specific SWI/SNF ATP-dependent chromatin remodeling complex, ARID1B-SMARCA2 variant",
+    "n_measured": 6,
+    "limiting": "ARID1B",
+    "limiting_ppm": 120.0,
+    "median_ppm": 167.5,
+    "ratio": 1.3958333333333333
+   },
+   {
+    "complex": "Brain-specific SWI/SNF ATP-dependent chromatin remodeling complex, ARID1B-SMARCA4 variant",
+    "n_measured": 6,
+    "limiting": "ARID1B",
+    "limiting_ppm": 120.0,
+    "median_ppm": 178.0,
+    "ratio": 1.4833333333333334
+   },
+   {
+    "complex": "CCR4-NOT mRNA deadenylase complex, CNOT6-CNOT7 variant",
+    "n_measured": 9,
+    "limiting": "CNOT4",
+    "limiting_ppm": 89.6,
+    "median_ppm": 161.0,
+    "ratio": 1.7968750000000002
+   },
+   {
+    "complex": "CCR4-NOT mRNA deadenylase complex, CNOT6-CNOT8 variant",
+    "n_measured": 9,
+    "limiting": "CNOT4",
+    "limiting_ppm": 89.6,
+    "median_ppm": 104.0,
+    "ratio": 1.1607142857142858
+   },
+   {
+    "complex": "CCR4-NOT mRNA deadenylase complex, CNOT6L-CNOT7 variant",
+    "n_measured": 9,
+    "limiting": "CNOT6L",
+    "limiting_ppm": 86.9,
+    "median_ppm": 161.0,
+    "ratio": 1.8527042577675488
+   },
+   {
+    "complex": "CCR4-NOT mRNA deadenylase complex, CNOT6L-CNOT8 variant",
+    "n_measured": 9,
+    "limiting": "CNOT6L",
+    "limiting_ppm": 86.9,
+    "median_ppm": 104.0,
+    "ratio": 1.1967779056386652
+   },
+   {
+    "complex": "CHRAC chromatin remodeling complex",
+    "n_measured": 4,
+    "limiting": "BAZ1A",
+    "limiting_ppm": 157.0,
+    "median_ppm": 189.0,
+    "ratio": 1.2038216560509554
+   },
+   {
+    "complex": "CKM complex variant 1",
+    "n_measured": 4,
+    "limiting": "CDK8",
+    "limiting_ppm": 45.0,
+    "median_ppm": 63.5,
+    "ratio": 1.4111111111111112
+   },
+   {
+    "complex": "CKM complex variant 2",
+    "n_measured": 4,
+    "limiting": "CDK19",
+    "limiting_ppm": 40.0,
+    "median_ppm": 63.5,
+    "ratio": 1.5875
+   },
+   {
+    "complex": "COG tethering complex",
+    "n_measured": 7,
+    "limiting": "COG1",
+    "limiting_ppm": 133.0,
+    "median_ppm": 145.0,
+    "ratio": 1.0902255639097744
+   },
+   {
+    "complex": "COP9 signalosome variant 1",
+    "n_measured": 8,
+    "limiting": "COPS7A",
+    "limiting_ppm": 179.0,
+    "median_ppm": 192.5,
+    "ratio": 1.0754189944134078
+   },
+   {
+    "complex": "COP9 signalosome variant 2",
+    "n_measured": 8,
+    "limiting": "COPS7B",
+    "limiting_ppm": 53.5,
+    "median_ppm": 192.5,
+    "ratio": 3.5981308411214954
+   },
+   {
+    "complex": "COPI vesicle coat complex, COPG1-COPZ1 variant",
+    "n_measured": 7,
+    "limiting": "ARCN1",
+    "limiting_ppm": 102.0,
+    "median_ppm": 204.0,
+    "ratio": 2.0
+   },
+   {
+    "complex": "COPI vesicle coat complex, COPG1-COPZ2 variant",
+    "n_measured": 6,
+    "limiting": "ARCN1",
+    "limiting_ppm": 102.0,
+    "median_ppm": 204.0,
+    "ratio": 2.0
+   },
+   {
+    "complex": "COPI vesicle coat complex, COPG2-COPZ1 variant",
+    "n_measured": 6,
+    "limiting": "ARCN1",
+    "limiting_ppm": 102.0,
+    "median_ppm": 204.5,
+    "ratio": 2.0049019607843137
+   },
+   {
+    "complex": "COPII vesicle coat complex",
+    "n_measured": 8,
+    "limiting": "SAR1B",
+    "limiting_ppm": 117.0,
+    "median_ppm": 178.5,
+    "ratio": 1.5256410256410255
+   },
+   {
+    "complex": "CORVET tethering complex",
+    "n_measured": 5,
+    "limiting": "VPS8",
+    "limiting_ppm": 73.0,
+    "median_ppm": 152.0,
+    "ratio": 2.0821917808219177
+   },
+   {
+    "complex": "CRD-mediated mRNA stability complex",
+    "n_measured": 5,
+    "limiting": "YBX1",
+    "limiting_ppm": 110.0,
+    "median_ppm": 218.0,
+    "ratio": 1.981818181818182
+   },
+   {
+    "complex": "CRL4-AMBRA1 E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "AMBRA1",
+    "limiting_ppm": 85.9,
+    "median_ppm": 194.5,
+    "ratio": 2.2642607683352733
+   },
+   {
+    "complex": "CRL4-CRBN E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "CRBN",
+    "limiting_ppm": 144.0,
+    "median_ppm": 194.5,
+    "ratio": 1.3506944444444444
+   },
+   {
+    "complex": "CRL4-DCAF1 E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "DCAF1",
+    "limiting_ppm": 81.2,
+    "median_ppm": 194.5,
+    "ratio": 2.395320197044335
+   },
+   {
+    "complex": "CRL4-DCAF13 E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "CUL4B",
+    "limiting_ppm": 186.0,
+    "median_ppm": 195.0,
+    "ratio": 1.0483870967741935
+   },
+   {
+    "complex": "CRL4-DCAF14 E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "PHIP",
+    "limiting_ppm": 169.0,
+    "median_ppm": 194.5,
+    "ratio": 1.150887573964497
+   },
+   {
+    "complex": "CRL4-DCAF6 E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "DCAF6",
+    "limiting_ppm": 119.0,
+    "median_ppm": 194.5,
+    "ratio": 1.634453781512605
+   },
+   {
+    "complex": "CRL4-DCAF7 E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "DCAF7",
+    "limiting_ppm": 165.0,
+    "median_ppm": 194.5,
+    "ratio": 1.1787878787878787
+   },
+   {
+    "complex": "CRL4-DCAF8 E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "DCAF8",
+    "limiting_ppm": 81.9,
+    "median_ppm": 194.5,
+    "ratio": 2.374847374847375
+   },
+   {
+    "complex": "CRL4-DDB2 E3 ubiquitin ligase complex, CUL4B variant",
+    "n_measured": 4,
+    "limiting": "DDB2",
+    "limiting_ppm": 93.5,
+    "median_ppm": 194.5,
+    "ratio": 2.0802139037433154
+   },
+   {
+    "complex": "Chaperonin-containing T-complex",
+    "n_measured": 8,
+    "limiting": "CCT7",
+    "limiting_ppm": 220.0,
+    "median_ppm": 224.0,
+    "ratio": 1.018181818181818
+   },
+   {
+    "complex": "Chromosomal passenger complex, AURKB variant",
+    "n_measured": 4,
+    "limiting": "INCENP",
+    "limiting_ppm": 104.0,
+    "median_ppm": 156.0,
+    "ratio": 1.5
+   },
+   {
+    "complex": "CoQ biosynthetic complex",
+    "n_measured": 4,
+    "limiting": "COQ6",
+    "limiting_ppm": 99.4,
+    "median_ppm": 157.0,
+    "ratio": 1.5794768611670018
+   },
+   {
+    "complex": "Commander complex",
+    "n_measured": 16,
+    "limiting": "COMMD1",
+    "limiting_ppm": 52.0,
+    "median_ppm": 155.0,
+    "ratio": 2.980769230769231
+   },
+   {
+    "complex": "Condensin I complex",
+    "n_measured": 5,
+    "limiting": "NCAPG",
+    "limiting_ppm": 181.0,
+    "median_ppm": 184.0,
+    "ratio": 1.0165745856353592
+   },
+   {
+    "complex": "Condensin II complex",
+    "n_measured": 5,
+    "limiting": "NCAPH2",
+    "limiting_ppm": 89.4,
+    "median_ppm": 149.0,
+    "ratio": 1.6666666666666665
+   },
+   {
+    "complex": "Core mediator complex",
+    "n_measured": 21,
+    "limiting": "MED7",
+    "limiting_ppm": 43.8,
+    "median_ppm": 105.0,
+    "ratio": 2.397260273972603
+   },
+   {
+    "complex": "Cortical microtubule stabilization complex, KANK1 variant",
+    "n_measured": 8,
+    "limiting": "KANK1",
+    "limiting_ppm": 126.0,
+    "median_ppm": 165.5,
+    "ratio": 1.3134920634920635
+   },
+   {
+    "complex": "Cortical microtubule stabilization complex, KANK2 variant",
+    "n_measured": 8,
+    "limiting": "KANK2",
+    "limiting_ppm": 135.0,
+    "median_ppm": 165.5,
+    "ratio": 1.2259259259259259
+   },
+   {
+    "complex": "Cytoplasmic exosome complex, DIS3L variant",
+    "n_measured": 10,
+    "limiting": "DIS3L",
+    "limiting_ppm": 117.0,
+    "median_ppm": 181.5,
+    "ratio": 1.5512820512820513
+   },
+   {
+    "complex": "Cytoplasmic exosome complex, DIS3L-EXOSC10 variant",
+    "n_measured": 11,
+    "limiting": "DIS3L",
+    "limiting_ppm": 117.0,
+    "median_ppm": 181.0,
+    "ratio": 1.547008547008547
+   },
+   {
+    "complex": "DNA polymerase epsilon complex",
+    "n_measured": 4,
+    "limiting": "POLE4",
+    "limiting_ppm": 57.8,
+    "median_ppm": 112.75,
+    "ratio": 1.9506920415224915
+   },
+   {
+    "complex": "DNA replication factor C complex, ATAD5 variant",
+    "n_measured": 4,
+    "limiting": "ATAD5",
+    "limiting_ppm": 38.2,
+    "median_ppm": 186.0,
+    "ratio": 4.869109947643978
+   },
+   {
+    "complex": "DNA replication factor C complex, CHTF18 variant",
+    "n_measured": 5,
+    "limiting": "DSCC1",
+    "limiting_ppm": 97.9,
+    "median_ppm": 181.0,
+    "ratio": 1.8488253319713992
+   },
+   {
+    "complex": "DNA replication factor C complex, RAD17 variant",
+    "n_measured": 4,
+    "limiting": "RAD17",
+    "limiting_ppm": 119.0,
+    "median_ppm": 186.0,
+    "ratio": 1.5630252100840336
+   },
+   {
+    "complex": "DNA replication factor C complex, RFC1 variant",
+    "n_measured": 4,
+    "limiting": "RFC1",
+    "limiting_ppm": 160.0,
+    "median_ppm": 186.0,
+    "ratio": 1.1625
+   },
+   {
+    "complex": "DNA-directed RNA polymerase I complex",
+    "n_measured": 10,
+    "limiting": "POLR2F",
+    "limiting_ppm": 64.0,
+    "median_ppm": 178.5,
+    "ratio": 2.7890625
+   },
+   {
+    "complex": "DNA-directed RNA polymerase II complex",
+    "n_measured": 10,
+    "limiting": "POLR2J",
+    "limiting_ppm": 40.1,
+    "median_ppm": 175.0,
+    "ratio": 4.364089775561097
+   },
+   {
+    "complex": "DNA-directed RNA polymerase II complex, Pol II(G) variant",
+    "n_measured": 10,
+    "limiting": "POLR2J",
+    "limiting_ppm": 40.1,
+    "median_ppm": 175.0,
+    "ratio": 4.364089775561097
+   },
+   {
+    "complex": "DNA-directed RNA polymerase III complex, POLR3G variant",
+    "n_measured": 14,
+    "limiting": "CRCP",
+    "limiting_ppm": 47.3,
+    "median_ppm": 146.5,
+    "ratio": 3.097251585623679
+   },
+   {
+    "complex": "DNA-directed RNA polymerase III complex, POLR3GL variant",
+    "n_measured": 13,
+    "limiting": "CRCP",
+    "limiting_ppm": 47.3,
+    "median_ppm": 151.0,
+    "ratio": 3.192389006342495
+   },
+   {
+    "complex": "Dynactin complex",
+    "n_measured": 8,
+    "limiting": "DCTN5",
+    "limiting_ppm": 107.0,
+    "median_ppm": 167.5,
+    "ratio": 1.5654205607476634
+   },
+   {
+    "complex": "Dynein-1 complex, variant 1",
+    "n_measured": 6,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 185.0,
+    "ratio": 1.9290928050052136
+   },
+   {
+    "complex": "Dynein-1 complex, variant 10",
+    "n_measured": 5,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 189.0,
+    "ratio": 1.970802919708029
+   },
+   {
+    "complex": "Dynein-1 complex, variant 11",
+    "n_measured": 6,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 185.0,
+    "ratio": 1.9290928050052136
+   },
+   {
+    "complex": "Dynein-1 complex, variant 12",
+    "n_measured": 6,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 187.5,
+    "ratio": 1.9551616266944734
+   },
+   {
+    "complex": "Dynein-1 complex, variant 13",
+    "n_measured": 5,
+    "limiting": "DYNC1LI2",
+    "limiting_ppm": 179.0,
+    "median_ppm": 194.0,
+    "ratio": 1.0837988826815643
+   },
+   {
+    "complex": "Dynein-1 complex, variant 14",
+    "n_measured": 5,
+    "limiting": "DYNLRB1",
+    "limiting_ppm": 184.0,
+    "median_ppm": 194.0,
+    "ratio": 1.0543478260869565
+   },
+   {
+    "complex": "Dynein-1 complex, variant 15",
+    "n_measured": 6,
+    "limiting": "DYNC1LI2",
+    "limiting_ppm": 179.0,
+    "median_ppm": 190.0,
+    "ratio": 1.0614525139664805
+   },
+   {
+    "complex": "Dynein-1 complex, variant 16",
+    "n_measured": 6,
+    "limiting": "DYNLRB1",
+    "limiting_ppm": 184.0,
+    "median_ppm": 191.5,
+    "ratio": 1.0407608695652173
+   },
+   {
+    "complex": "Dynein-1 complex, variant 2",
+    "n_measured": 6,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 187.5,
+    "ratio": 1.9551616266944734
+   },
+   {
+    "complex": "Dynein-1 complex, variant 3",
+    "n_measured": 5,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 184.0,
+    "ratio": 1.9186652763295098
+   },
+   {
+    "complex": "Dynein-1 complex, variant 4",
+    "n_measured": 5,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 189.0,
+    "ratio": 1.970802919708029
+   },
+   {
+    "complex": "Dynein-1 complex, variant 5",
+    "n_measured": 4,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 186.5,
+    "ratio": 1.9447340980187695
+   },
+   {
+    "complex": "Dynein-1 complex, variant 6",
+    "n_measured": 4,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 191.5,
+    "ratio": 1.9968717413972887
+   },
+   {
+    "complex": "Dynein-1 complex, variant 7",
+    "n_measured": 5,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 186.0,
+    "ratio": 1.9395203336809175
+   },
+   {
+    "complex": "Dynein-1 complex, variant 8",
+    "n_measured": 5,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 189.0,
+    "ratio": 1.970802919708029
+   },
+   {
+    "complex": "Dynein-1 complex, variant 9",
+    "n_measured": 5,
+    "limiting": "DYNLT1",
+    "limiting_ppm": 95.9,
+    "median_ppm": 184.0,
+    "ratio": 1.9186652763295098
+   },
+   {
+    "complex": "Dynein-2 complex, light-chain variant 1",
+    "n_measured": 7,
+    "limiting": "DYNC2I1",
+    "limiting_ppm": 36.2,
+    "median_ppm": 91.6,
+    "ratio": 2.5303867403314912
+   },
+   {
+    "complex": "Dynein-2 complex, light-chain variant 2",
+    "n_measured": 7,
+    "limiting": "DYNC2I1",
+    "limiting_ppm": 36.2,
+    "median_ppm": 91.6,
+    "ratio": 2.5303867403314912
+   },
+   {
+    "complex": "Dynein-2 complex, light-chain variant 3",
+    "n_measured": 7,
+    "limiting": "DYNC2I1",
+    "limiting_ppm": 36.2,
+    "median_ppm": 91.6,
+    "ratio": 2.5303867403314912
+   },
+   {
+    "complex": "Dynein-2 complex, light-chain variant 4",
+    "n_measured": 7,
+    "limiting": "DYNC2I1",
+    "limiting_ppm": 36.2,
+    "median_ppm": 91.6,
+    "ratio": 2.5303867403314912
+   },
+   {
+    "complex": "Dynein-2 complex, light-chain variant 5",
+    "n_measured": 6,
+    "limiting": "DYNC2I1",
+    "limiting_ppm": 36.2,
+    "median_ppm": 86.35,
+    "ratio": 2.3853591160220993
+   },
+   {
+    "complex": "Dynein-2 complex, light-chain variant 6",
+    "n_measured": 6,
+    "limiting": "DYNC2I1",
+    "limiting_ppm": 36.2,
+    "median_ppm": 86.35,
+    "ratio": 2.3853591160220993
+   },
+   {
+    "complex": "Dynein-2 complex, light-chain variant 7",
+    "n_measured": 6,
+    "limiting": "DYNC2I1",
+    "limiting_ppm": 36.2,
+    "median_ppm": 86.35,
+    "ratio": 2.3853591160220993
+   },
+   {
+    "complex": "Dynein-2 complex, light-chain variant 8",
+    "n_measured": 6,
+    "limiting": "DYNC2I1",
+    "limiting_ppm": 36.2,
+    "median_ppm": 86.35,
+    "ratio": 2.3853591160220993
+   },
+   {
+    "complex": "EARP tethering complex",
+    "n_measured": 4,
+    "limiting": "VPS52",
+    "limiting_ppm": 49.2,
+    "median_ppm": 141.0,
+    "ratio": 2.8658536585365852
+   },
+   {
+    "complex": "ESCRT-I complex, VPS37B-MVB12A variant",
+    "n_measured": 4,
+    "limiting": "VPS28",
+    "limiting_ppm": 88.1,
+    "median_ppm": 161.5,
+    "ratio": 1.8331441543700342
+   },
+   {
+    "complex": "ESCRT-I complex, VPS37B-UBAP1 variant",
+    "n_measured": 4,
+    "limiting": "VPS28",
+    "limiting_ppm": 88.1,
+    "median_ppm": 154.0,
+    "ratio": 1.7480136208853576
+   },
+   {
+    "complex": "ESCRT-I complex, VPS37C-MVB12A variant",
+    "n_measured": 4,
+    "limiting": "VPS28",
+    "limiting_ppm": 88.1,
+    "median_ppm": 154.0,
+    "ratio": 1.7480136208853576
+   },
+   {
+    "complex": "ESCRT-I complex, VPS37C-UBAP1 variant",
+    "n_measured": 4,
+    "limiting": "VPS28",
+    "limiting_ppm": 88.1,
+    "median_ppm": 146.5,
+    "ratio": 1.6628830874006812
+   },
+   {
+    "complex": "ESCRT-III complex",
+    "n_measured": 7,
+    "limiting": "CHMP2B",
+    "limiting_ppm": 37.8,
+    "median_ppm": 146.0,
+    "ratio": 3.8624338624338628
+   },
+   {
+    "complex": "Elongator holoenzyme complex",
+    "n_measured": 6,
+    "limiting": "ELP6",
+    "limiting_ppm": 49.3,
+    "median_ppm": 156.0,
+    "ratio": 3.164300202839757
+   },
+   {
+    "complex": "Embryonic stem cell-specific SWI/SNF ATP-dependent chromatin remodeling complex",
+    "n_measured": 9,
+    "limiting": "ARID1A",
+    "limiting_ppm": 151.0,
+    "median_ppm": 180.0,
+    "ratio": 1.1920529801324504
+   },
+   {
+    "complex": "Endoplasmic reticulum membrane complex, EMC8 variant",
+    "n_measured": 8,
+    "limiting": "MMGT1",
+    "limiting_ppm": 59.2,
+    "median_ppm": 187.5,
+    "ratio": 3.1672297297297294
+   },
+   {
+    "complex": "Endoplasmic reticulum membrane complex, EMC9 variant",
+    "n_measured": 8,
+    "limiting": "EMC9",
+    "limiting_ppm": 48.6,
+    "median_ppm": 186.0,
+    "ratio": 3.82716049382716
+   },
+   {
+    "complex": "Eukaryotic translation initiation factor 2B complex",
+    "n_measured": 5,
+    "limiting": "EIF2B5",
+    "limiting_ppm": 165.0,
+    "median_ppm": 180.0,
+    "ratio": 1.0909090909090908
+   },
+   {
+    "complex": "Eukaryotic translation initiation factor 3 complex",
+    "n_measured": 13,
+    "limiting": "EIF3C",
+    "limiting_ppm": 103.0,
+    "median_ppm": 206.0,
+    "ratio": 2.0
+   },
+   {
+    "complex": "Exocyst, EXOC6 variant",
+    "n_measured": 8,
+    "limiting": "EXOC6",
+    "limiting_ppm": 141.0,
+    "median_ppm": 151.0,
+    "ratio": 1.070921985815603
+   },
+   {
+    "complex": "Exocyst, EXOC6B variant",
+    "n_measured": 7,
+    "limiting": "EXOC8",
+    "limiting_ppm": 142.0,
+    "median_ppm": 154.0,
+    "ratio": 1.0845070422535212
+   },
+   {
+    "complex": "Exosome complex, DIS3 variant",
+    "n_measured": 10,
+    "limiting": "EXOSC1",
+    "limiting_ppm": 173.0,
+    "median_ppm": 183.0,
+    "ratio": 1.0578034682080926
+   },
+   {
+    "complex": "FEB1B-Elongin C-Elongin B E3 ubiquitin ligase complex",
+    "n_measured": 4,
+    "limiting": "CUL2",
+    "limiting_ppm": 182.0,
+    "median_ppm": 207.5,
+    "ratio": 1.14010989010989
+   },
+   {
+    "complex": "FEB1C-Elongin C-Elongin B E3 ubiquitin ligase complex",
+    "n_measured": 4,
+    "limiting": "CUL2",
+    "limiting_ppm": 182.0,
+    "median_ppm": 207.5,
+    "ratio": 1.14010989010989
+   },
+   {
+    "complex": "FEM1A-Elongin C-Elongin B E3 ubiquitin ligase complex",
+    "n_measured": 4,
+    "limiting": "CUL2",
+    "limiting_ppm": 182.0,
+    "median_ppm": 207.5,
+    "ratio": 1.14010989010989
+   },
+   {
+    "complex": "FTS-Hook-FHIP cargo adaptor complex, FHIP2B-HOOK1/2/3 variant",
+    "n_measured": 4,
+    "limiting": "HOOK2",
+    "limiting_ppm": 40.9,
+    "median_ppm": 87.9,
+    "ratio": 2.149144254278729
+   },
+   {
+    "complex": "Fanconi anemia ubiquitin ligase complex",
+    "n_measured": 4,
+    "limiting": "FANCB",
+    "limiting_ppm": 39.1,
+    "median_ppm": 71.3,
+    "ratio": 1.8235294117647058
+   },
+   {
+    "complex": "GAIT complex",
+    "n_measured": 4,
+    "limiting": "EPRS1",
+    "limiting_ppm": 212.0,
+    "median_ppm": 224.0,
+    "ratio": 1.0566037735849056
+   },
+   {
+    "complex": "GARP tethering complex",
+    "n_measured": 4,
+    "limiting": "VPS52",
+    "limiting_ppm": 49.2,
+    "median_ppm": 106.35,
+    "ratio": 2.161585365853658
+   },
+   {
+    "complex": "GATOR2 complex",
+    "n_measured": 5,
+    "limiting": "WDR24",
+    "limiting_ppm": 85.2,
+    "median_ppm": 136.0,
+    "ratio": 1.596244131455399
+   },
+   {
+    "complex": "GBAF (SWI/SNF) ATP-dependent chromatin remodeling complex, ACTL6A-BICRA-SMARCA2 variant",
+    "n_measured": 6,
+    "limiting": "BRD9",
+    "limiting_ppm": 98.7,
+    "median_ppm": 166.5,
+    "ratio": 1.6869300911854104
+   },
+   {
+    "complex": "GBAF (SWI/SNF) ATP-dependent chromatin remodeling complex, ACTL6A-BICRA-SMARCA4 variant",
+    "n_measured": 6,
+    "limiting": "BRD9",
+    "limiting_ppm": 98.7,
+    "median_ppm": 176.5,
+    "ratio": 1.7882472137791285
+   },
+   {
+    "complex": "GBAF (SWI/SNF) ATP-dependent chromatin remodeling complex, ACTL6A-BICRAL-SMARCA2 variant",
+    "n_measured": 6,
+    "limiting": "BRD9",
+    "limiting_ppm": 98.7,
+    "median_ppm": 166.5,
+    "ratio": 1.6869300911854104
+   },
+   {
+    "complex": "GBAF (SWI/SNF) ATP-dependent chromatin remodeling complex, ACTL6A-BICRAL-SMARCA4 variant",
+    "n_measured": 6,
+    "limiting": "BRD9",
+    "limiting_ppm": 98.7,
+    "median_ppm": 176.5,
+    "ratio": 1.7882472137791285
+   },
+   {
+    "complex": "GBAF (SWI/SNF) ATP-dependent chromatin remodeling complex, ACTL6B-BICRA-SMARCA2 variant",
+    "n_measured": 5,
+    "limiting": "BRD9",
+    "limiting_ppm": 98.7,
+    "median_ppm": 161.0,
+    "ratio": 1.6312056737588652
+   },
+   {
+    "complex": "GBAF (SWI/SNF) ATP-dependent chromatin remodeling complex, ACTL6B-BICRA-SMARCA4 variant",
+    "n_measured": 5,
+    "limiting": "BRD9",
+    "limiting_ppm": 98.7,
+    "median_ppm": 172.0,
+    "ratio": 1.7426545086119554
+   },
+   {
+    "complex": "GBAF (SWI/SNF) ATP-dependent chromatin remodeling complex, ACTL6B-BICRAL-SMARCA2 variant",
+    "n_measured": 5,
+    "limiting": "BRD9",
+    "limiting_ppm": 98.7,
+    "median_ppm": 161.0,
+    "ratio": 1.6312056737588652
+   },
+   {
+    "complex": "GBAF (SWI/SNF) ATP-dependent chromatin remodeling complex, ACTL6B-BICRAL-SMARCA4 variant",
+    "n_measured": 5,
+    "limiting": "BRD9",
+    "limiting_ppm": 98.7,
+    "median_ppm": 172.0,
+    "ratio": 1.7426545086119554
+   },
+   {
+    "complex": "GCN5-containing ATAC complex",
+    "n_measured": 8,
+    "limiting": "KAT2A",
+    "limiting_ppm": 22.0,
+    "median_ppm": 110.5,
+    "ratio": 5.0227272727272725
+   },
+   {
+    "complex": "GID E3 ubiquitin ligase complex, RMND5A-RANBP10 variant",
+    "n_measured": 8,
+    "limiting": "RANBP10",
+    "limiting_ppm": 83.1,
+    "median_ppm": 140.5,
+    "ratio": 1.690734055354994
+   },
+   {
+    "complex": "GID E3 ubiquitin ligase complex, RMND5A-RANBP9 variant",
+    "n_measured": 8,
+    "limiting": "MAEA",
+    "limiting_ppm": 105.0,
+    "median_ppm": 140.5,
+    "ratio": 1.338095238095238
+   },
+   {
+    "complex": "GID E3 ubiquitin ligase complex, RMND5B-RANBP10 variant",
+    "n_measured": 7,
+    "limiting": "RANBP10",
+    "limiting_ppm": 83.1,
+    "median_ppm": 137.0,
+    "ratio": 1.6486161251504212
+   },
+   {
+    "complex": "GID E3 ubiquitin ligase complex, RMND5B-RANBP9 variant",
+    "n_measured": 7,
+    "limiting": "MAEA",
+    "limiting_ppm": 105.0,
+    "median_ppm": 137.0,
+    "ratio": 1.3047619047619048
+   },
+   {
+    "complex": "GINS complex",
+    "n_measured": 4,
+    "limiting": "GINS1",
+    "limiting_ppm": 54.4,
+    "median_ppm": 131.0,
+    "ratio": 2.4080882352941178
+   },
+   {
+    "complex": "GPI-anchor transamidase complex",
+    "n_measured": 5,
+    "limiting": "GPAA1",
+    "limiting_ppm": 87.4,
+    "median_ppm": 171.0,
+    "ratio": 1.9565217391304346
+   },
+   {
+    "complex": "Gamma tubulin ring complex",
+    "n_measured": 8,
+    "limiting": "MZT1",
+    "limiting_ppm": 56.9,
+    "median_ppm": 145.0,
+    "ratio": 2.5483304042179262
+   },
+   {
+    "complex": "General transcription factor TFIIH complex",
+    "n_measured": 7,
+    "limiting": "GTF2H5",
+    "limiting_ppm": 51.9,
+    "median_ppm": 142.0,
+    "ratio": 2.7360308285163777
+   },
+   {
+    "complex": "General transcription factor TFIIIC complex",
+    "n_measured": 6,
+    "limiting": "GTF3C6",
+    "limiting_ppm": 110.0,
+    "median_ppm": 166.0,
+    "ratio": 1.509090909090909
+   },
+   {
+    "complex": "General transcription factor complex TFIID",
+    "n_measured": 9,
+    "limiting": "TAF11",
+    "limiting_ppm": 44.9,
+    "median_ppm": 98.6,
+    "ratio": 2.1959910913140313
+   },
+   {
+    "complex": "General transcription factor complex TFIID, TAF4B variant",
+    "n_measured": 8,
+    "limiting": "TAF11",
+    "limiting_ppm": 44.9,
+    "median_ppm": 100.8,
+    "ratio": 2.244988864142539
+   },
+   {
+    "complex": "HAUS complex",
+    "n_measured": 8,
+    "limiting": "HAUS4",
+    "limiting_ppm": 49.6,
+    "median_ppm": 129.5,
+    "ratio": 2.6108870967741935
+   },
+   {
+    "complex": "HBO1-5.1 histone acetyltransferase complex",
+    "n_measured": 4,
+    "limiting": "JADE1",
+    "limiting_ppm": 35.9,
+    "median_ppm": 83.75,
+    "ratio": 2.3328690807799446
+   },
+   {
+    "complex": "HOPS tethering complex",
+    "n_measured": 5,
+    "limiting": "VPS39",
+    "limiting_ppm": 136.0,
+    "median_ppm": 152.0,
+    "ratio": 1.1176470588235294
+   },
+   {
+    "complex": "Histone pre-RNA core cleavage complex",
+    "n_measured": 4,
+    "limiting": "SYMPK",
+    "limiting_ppm": 172.0,
+    "median_ppm": 177.5,
+    "ratio": 1.0319767441860466
+   },
+   {
+    "complex": "Histone-lysine N-methyltransferase complex, KMT2A variant",
+    "n_measured": 7,
+    "limiting": "HCFC1",
+    "limiting_ppm": 24.6,
+    "median_ppm": 160.0,
+    "ratio": 6.504065040650406
+   },
+   {
+    "complex": "Histone-lysine N-methyltransferase complex, KMT2B variant",
+    "n_measured": 7,
+    "limiting": "HCFC1",
+    "limiting_ppm": 24.6,
+    "median_ppm": 160.0,
+    "ratio": 6.504065040650406
+   },
+   {
+    "complex": "Histone-lysine N-methyltransferase complex, KMT2C variant",
+    "n_measured": 8,
+    "limiting": "NCOA6",
+    "limiting_ppm": 28.9,
+    "median_ppm": 142.5,
+    "ratio": 4.930795847750865
+   },
+   {
+    "complex": "Histone-lysine N-methyltransferase complex, KMT2D variant",
+    "n_measured": 8,
+    "limiting": "NCOA6",
+    "limiting_ppm": 28.9,
+    "median_ppm": 142.5,
+    "ratio": 4.930795847750865
+   },
+   {
+    "complex": "Histone-lysine N-methyltransferase complex, SET1A variant",
+    "n_measured": 9,
+    "limiting": "HCFC1",
+    "limiting_ppm": 24.6,
+    "median_ppm": 170.0,
+    "ratio": 6.9105691056910565
+   },
+   {
+    "complex": "Histone-lysine N-methyltransferase complex, SET1B variant",
+    "n_measured": 10,
+    "limiting": "HCFC1",
+    "limiting_ppm": 24.6,
+    "median_ppm": 165.0,
+    "ratio": 6.7073170731707314
+   },
+   {
+    "complex": "INO80 chromatin remodeling complex",
+    "n_measured": 13,
+    "limiting": "MCRS1",
+    "limiting_ppm": 43.7,
+    "median_ppm": 144.0,
+    "ratio": 3.295194508009153
+   },
+   {
+    "complex": "Integrator core complex",
+    "n_measured": 14,
+    "limiting": "INTS12",
+    "limiting_ppm": 96.3,
+    "median_ppm": 146.0,
+    "ratio": 1.5160955347871237
+   },
+   {
+    "complex": "Integrator-PP2A complex",
+    "n_measured": 16,
+    "limiting": "INTS12",
+    "limiting_ppm": 96.3,
+    "median_ppm": 147.5,
+    "ratio": 1.5316718587746625
+   },
+   {
+    "complex": "Intraflagellar transport complex A",
+    "n_measured": 5,
+    "limiting": "TTC21B",
+    "limiting_ppm": 39.8,
+    "median_ppm": 86.1,
+    "ratio": 2.163316582914573
+   },
+   {
+    "complex": "Intraflagellar transport complex B",
+    "n_measured": 8,
+    "limiting": "IFT46",
+    "limiting_ppm": 20.1,
+    "median_ppm": 74.65,
+    "ratio": 3.7139303482587063
+   },
+   {
+    "complex": "Intron Lariat Spliceosome, type 1 complex",
+    "n_measured": 26,
+    "limiting": "SNRPB",
+    "limiting_ppm": 108.0,
+    "median_ppm": 195.5,
+    "ratio": 1.8101851851851851
+   },
+   {
+    "complex": "Intron Lariat Spliceosome, type 2 complex",
+    "n_measured": 27,
+    "limiting": "SNRPB",
+    "limiting_ppm": 108.0,
+    "median_ppm": 196.0,
+    "ratio": 1.8148148148148149
+   },
+   {
+    "complex": "Intron-binding complex",
+    "n_measured": 5,
+    "limiting": "ISY1",
+    "limiting_ppm": 84.4,
+    "median_ppm": 171.0,
+    "ratio": 2.0260663507109005
+   },
+   {
+    "complex": "KEOPS tRNA N6-adenosine threonylcarbamoyltransferase complex",
+    "n_measured": 4,
+    "limiting": "GON7",
+    "limiting_ppm": 61.2,
+    "median_ppm": 137.0,
+    "ratio": 2.238562091503268
+   },
+   {
+    "complex": "KLHDC10-Elongin C-Elongin B E3 ubiquitin ligase complex",
+    "n_measured": 4,
+    "limiting": "CUL2",
+    "limiting_ppm": 182.0,
+    "median_ppm": 207.5,
+    "ratio": 1.14010989010989
+   },
+   {
+    "complex": "KLHDC2-Elongin C-Elongin B E3 ubiquitin ligase complex",
+    "n_measured": 4,
+    "limiting": "CUL2",
+    "limiting_ppm": 182.0,
+    "median_ppm": 207.5,
+    "ratio": 1.14010989010989
+   },
+   {
+    "complex": "KLHDC3-Elongin C-Elongin B E3 ubiquitin ligase complex",
+    "n_measured": 5,
+    "limiting": "KLHDC3",
+    "limiting_ppm": 46.6,
+    "median_ppm": 203.0,
+    "ratio": 4.356223175965665
+   },
+   {
+    "complex": "Kinetochore CCAN complex",
+    "n_measured": 12,
+    "limiting": "CENPL",
+    "limiting_ppm": 43.8,
+    "median_ppm": 83.05000000000001,
+    "ratio": 1.8961187214611877
+   },
+   {
+    "complex": "LIFT actin modulation complex",
+    "n_measured": 4,
+    "limiting": "MYO6",
+    "limiting_ppm": 31.4,
+    "median_ppm": 106.35,
+    "ratio": 3.3869426751592355
+   },
+   {
+    "complex": "LRR1-Elongin C-Elongin B E3 ubiquitin ligase complex",
+    "n_measured": 4,
+    "limiting": "CUL2",
+    "limiting_ppm": 182.0,
+    "median_ppm": 207.5,
+    "ratio": 1.14010989010989
+   },
+   {
+    "complex": "LSM1-7 complex",
+    "n_measured": 6,
+    "limiting": "LSM1",
+    "limiting_ppm": 168.0,
+    "median_ppm": 186.0,
+    "ratio": 1.1071428571428572
+   },
+   {
+    "complex": "LSM1-7, PATL1 complex",
+    "n_measured": 7,
+    "limiting": "PATL1",
+    "limiting_ppm": 145.0,
+    "median_ppm": 186.0,
+    "ratio": 1.282758620689655
+   },
+   {
+    "complex": "LSM2-8 complex",
+    "n_measured": 6,
+    "limiting": "LSM6",
+    "limiting_ppm": 172.0,
+    "median_ppm": 187.0,
+    "ratio": 1.0872093023255813
+   },
+   {
+    "complex": "Little elongation complex, ELL variant",
+    "n_measured": 4,
+    "limiting": "ICE2",
+    "limiting_ppm": 44.4,
+    "median_ppm": 48.3,
+    "ratio": 1.0878378378378377
+   },
+   {
+    "complex": "Little elongation complex, ELL2 variant",
+    "n_measured": 4,
+    "limiting": "ICE2",
+    "limiting_ppm": 44.4,
+    "median_ppm": 48.3,
+    "ratio": 1.0878378378378377
+   },
+   {
+    "complex": "MBD2/NuRD nucleosome remodeling and deacetylase complex",
+    "n_measured": 12,
+    "limiting": "GATAD2B",
+    "limiting_ppm": 60.0,
+    "median_ppm": 179.5,
+    "ratio": 2.9916666666666667
+   },
+   {
+    "complex": "MBD3/NuRD nucleosome remodeling and deacetylase complex",
+    "n_measured": 12,
+    "limiting": "GATAD2B",
+    "limiting_ppm": 60.0,
+    "median_ppm": 183.0,
+    "ratio": 3.05
+   },
+   {
+    "complex": "MCM complex",
+    "n_measured": 6,
+    "limiting": "MCM5",
+    "limiting_ppm": 201.0,
+    "median_ppm": 203.5,
+    "ratio": 1.0124378109452736
+   },
+   {
+    "complex": "MICOS mitochondrial contact site and cristae organizing system complex",
+    "n_measured": 6,
+    "limiting": "APOOL",
+    "limiting_ppm": 162.0,
+    "median_ppm": 200.0,
+    "ratio": 1.2345679012345678
+   },
+   {
+    "complex": "MOZ1 histone acetyltransferase complex",
+    "n_measured": 4,
+    "limiting": "KAT6A",
+    "limiting_ppm": 44.9,
+    "median_ppm": 65.25,
+    "ratio": 1.453229398663697
+   },
+   {
+    "complex": "MOZ2 histone acetyltransferase complex",
+    "n_measured": 4,
+    "limiting": "KAT6A",
+    "limiting_ppm": 44.9,
+    "median_ppm": 54.1,
+    "ratio": 1.204899777282851
+   },
+   {
+    "complex": "MOZ3 histone acetyltransferase complex",
+    "n_measured": 4,
+    "limiting": "BRPF3",
+    "limiting_ppm": 36.0,
+    "median_ppm": 52.7,
+    "ratio": 1.463888888888889
+   },
+   {
+    "complex": "Major Post-catalytic P Spliceosome complex",
+    "n_measured": 35,
+    "limiting": "PRKRIP1",
+    "limiting_ppm": 21.8,
+    "median_ppm": 194.0,
+    "ratio": 8.899082568807339
+   },
+   {
+    "complex": "Major Spliceosomal B complex",
+    "n_measured": 36,
+    "limiting": "SNRPB",
+    "limiting_ppm": 108.0,
+    "median_ppm": 197.0,
+    "ratio": 1.8240740740740742
+   },
+   {
+    "complex": "Major Spliceosomal B-act-I complex",
+    "n_measured": 37,
+    "limiting": "SNRPB",
+    "limiting_ppm": 108.0,
+    "median_ppm": 197.0,
+    "ratio": 1.8240740740740742
+   },
+   {
+    "complex": "Major Spliceosomal B-act-II complex",
+    "n_measured": 36,
+    "limiting": "SNRPB",
+    "limiting_ppm": 108.0,
+    "median_ppm": 198.0,
+    "ratio": 1.8333333333333333
+   },
+   {
+    "complex": "Major Spliceosomal B-act-III complex",
+    "n_measured": 39,
+    "limiting": "SNRPB",
+    "limiting_ppm": 108.0,
+    "median_ppm": 197.0,
+    "ratio": 1.8240740740740742
+   },
+   {
+    "complex": "Major Spliceosomal B-act-IV complex",
+    "n_measured": 36,
+    "limiting": "SNRPB",
+    "limiting_ppm": 108.0,
+    "median_ppm": 195.5,
+    "ratio": 1.8101851851851851
+   },
+   {
+    "complex": "Major Spliceosomal C complex",
+    "n_measured": 34,
+    "limiting": "CWC25",
+    "limiting_ppm": 44.8,
+    "median_ppm": 191.0,
+    "ratio": 4.263392857142858
+   },
+   {
+    "complex": "Major Spliceosomal C* complex",
+    "n_measured": 38,
+    "limiting": "PRKRIP1",
+    "limiting_ppm": 21.8,
+    "median_ppm": 191.0,
+    "ratio": 8.761467889908257
+   }
+  ]
+ },
+ "x5": [
+  {
+   "complex": "28S mitochondrial small ribosomal subunit",
+   "n": 28,
+   "spread": 0.03226873849967271
+  },
+  {
+   "complex": "39S mitochondrial large ribosomal subunit",
+   "n": 51,
+   "spread": 0.04345254667885046
+  },
+  {
+   "complex": "19S proteasome regulatory complex",
+   "n": 8,
+   "spread": 0.006863905330774411
+  },
+  {
+   "complex": "19S-20S-PA28-alphabeta hybrid proteasome complex",
+   "n": 22,
+   "spread": 0.015453400339470402
+  }
+ ],
+ "x6": {
+  "n_complexes": 2039,
+  "n_tested": 410
+ },
+ "seconds": 8.91704797744751,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 97 -- protein complexes: matched subunits, and the one that runs out first",
+  "====================================================================================================",
+  "",
+  "  2,039 complexes in the model; PaxDb HeLa measures 7,222 genes",
+  "  410 complexes have at least 4 measured members",
+  "",
+  "X1 COMPLEX MEMBERS ARE MORE MATCHED THAN RANDOM GENE SETS",
+  "     median within-complex log10 spread   0.0766",
+  "     size-matched random sets             0.2571 +/- 0.0073",
+  "     (smaller = better matched; a complex should be TIGHTER than a random set)",
+  "     within-complex spread vs random sets: real +0.0766  null +0.2571 +/- 0.0073  survival UNDEFINED -- the null (+0.2571) equals or exceeds the real value (+0.0766): there is no effect in the claimed direction, so 'survival' has no meaning",
+  "     X1 PASS -- complex members are more matched than chance",
+  "",
+  "X2 THE NULL IS CHECKED FOR THE ABILITY TO MOVE",
+  "     a size-matched random set differs from the real membership in 100.0% of slots -- capable: True",
+  "     X2 PASS",
+  "",
+  "X3 THE FAME CONFOUND",
+  "     within-complex PUBLICATION spread 0.2320 against random 0.4898 +/- 0.0138",
+  "     tightening: abundance +0.1805   publications +0.2578",
+  "     X3 FAIL -- abundance is NOT more matched than fame, so X1 is curation",
+  "",
+  "X4 LIMITING SUBUNITS ARE IDENTIFIED",
+  "     median-to-limiting ratio: median 1.9x, 90th percentile 4.0x",
+  "       Nuclear pore complex                         limited by POM121           10x below the median member",
+  "       Major Post-catalytic P Spliceosome complex   limited by PRKRIP1           9x below the median member",
+  "       Major Spliceosomal C* complex                limited by PRKRIP1           9x below the median member",
+  "       Major Spliceosomal Pre-C*-II complex         limited by PRKRIP1           9x below the median member",
+  "       WASH complex, variant WASH2P/WASHC2A         limited by WASHC2A           8x below the median member",
+  "     a ratio near 1 means the cell builds matched subunits; a large ratio means one",
+  "     subunit caps the functional amount however much of the rest is made",
+  "",
+  "X5 THE WELL-KNOWN COMPLEXES BEHAVE",
+  "     28S mitochondrial small ribosomal subunit             28 measured, log10 spread 0.032",
+  "     39S mitochondrial large ribosomal subunit             51 measured, log10 spread 0.043",
+  "     19S proteasome regulatory complex                      8 measured, log10 spread 0.007",
+  "     19S-20S-PA28-alphabeta hybrid proteasome complex      22 measured, log10 spread 0.015",
+  "     random size-matched reference 0.257",
+  "     X5 PASS -- the complexes whose stoichiometry is least in doubt are tighter than chance",
+  "",
+  "X6 COVERAGE DECLARED",
+  "     410 of 2,039 complexes testable (20.1%)",
+  "     median measured members per tested complex: 6",
+  "     PaxDb HeLa covers 7,222 genes, so most complexes are measured in part only",
+  "",
+  "  PASS  X1 complex members are more matched than chance",
+  "  PASS  X2 the null can move",
+  "  FAIL  X3 abundance is more matched than fame",
+  "  PASS  X4 limiting subunits identified",
+  "  PASS  X5 the well-known complexes behave",
+  "  PASS  X6 coverage declared",
+  "    manifest: 3 inputs, coverage 410/2039 (20.1%) by 'filtered', seed 9701, controls 6"
+ ]
+}

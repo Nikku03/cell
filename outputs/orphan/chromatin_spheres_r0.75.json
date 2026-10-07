@@ -1,0 +1,83 @@
+{
+  "test": "chromatin_spheres",
+  "windows": 8,
+  "res": 25000,
+  "arms": {
+    "phantom": {
+      "mean": 0.09968891787260052,
+      "sd": 0.07629098919163495,
+      "n": 8
+    },
+    "spheres": {
+      "mean": 0.0842180651932215,
+      "sd": 0.059716308828057105,
+      "n": 8
+    },
+    "spheres_shuffled_ctcf": {
+      "mean": -0.012757049757246609,
+      "sd": 0.056559852905892355,
+      "n": 8
+    },
+    "overlap_before": 0.08307347005208333,
+    "overlap_after": 0.011860644531249999,
+    "bond_stretch": 1.0011408043131667,
+    "exponent": {
+      "measured": -1.4053096461003798,
+      "phantom": -0.9605206529048974,
+      "spheres": -1.1166155438292722
+    }
+  },
+  "r_frac": 0.75,
+  "n_conf": 300,
+  "log": [
+    "====================================================================================================",
+    "SPHERE COVERAGE FOR CHROMATIN -- excluded volume without an integrator",
+    "====================================================================================================",
+    "  rouse_gate's GNM treats the fibre as a PHANTOM chain that passes through itself. Self-avoidance",
+    "  is the largest piece of physics it discards. Brute force restores it with Langevin dynamics at",
+    "  ~1 GPU-day/region; spheres restore it as 'spheres do not overlap' -- a geometric projection on",
+    "  an ensemble drawn free from the analytic covariance. No timestep, no force law, no trajectory.",
+    "  Scored against measured K562 Hi-C streamed from a 32 GB remote file by range request.",
+    "  EVERY ARM IS DISTANCE-CONTROLLED: both sides z-scored within each separation bin, so 'contacts",
+    "  fall off with distance' scores zero and only topology can earn anything.",
+    "  SPHERE RADIUS 0.75 x bond length (0.50 = adjacent beads just touch). A null result here",
+    "  is only about chromatin if this is large enough to crowd the chain -- see the overlap fraction.",
+    "    window 16-20 Mb | 151 anchors | phantom +0.082  spheres +0.078  shuffled -0.007",
+    "    window 20-24 Mb | 198 anchors | phantom -0.000  spheres -0.007  shuffled -0.139",
+    "    window 24-28 Mb | 105 anchors | phantom +0.091  spheres +0.098  shuffled -0.006",
+    "    window 28-32 Mb | 114 anchors | phantom +0.145  spheres +0.083  shuffled +0.071",
+    "    window 32-36 Mb | 69 anchors | phantom +0.274  spheres +0.217  shuffled +0.018",
+    "    window 36-40 Mb | 183 anchors | phantom +0.049  spheres +0.036  shuffled +0.011",
+    "    window 40-44 Mb | 105 anchors | phantom +0.066  spheres +0.080  shuffled -0.043",
+    "    window 44-48 Mb | 93 anchors | phantom +0.091  spheres +0.090  shuffled -0.008",
+    "\n  DISTANCE-CONTROLLED SPEARMAN vs measured Hi-C, 8 windows of 4 Mb at 25 kb",
+    "    arm                          mean r      sd  windows",
+    "    distance_only (null)          0.000   0.000        8",
+    "    phantom                       0.100   0.076        8",
+    "    spheres                       0.084   0.060        8",
+    "    spheres_shuffled_ctcf        -0.013   0.057        8",
+    "\n  LIVENESS -- did the relaxation actually do anything?",
+    "    overlapping non-bonded sphere pairs: 0.0831 before -> 0.0119 after (86% removed)",
+    "    mean bonded separation after relaxation: 1.001 x its pre-relaxation value",
+    "\n  CONTACT-DECAY EXPONENT  P(s) ~ s^a   (a theory check the correlation cannot give)",
+    "    measured                     -1.405",
+    "    phantom                      -0.961",
+    "    spheres                      -1.117",
+    "    A FREE Gaussian chain gives -1.5; this chain is crosslinked by loop bonds and the fit runs",
+    "    over 50-2000 kb, so -1.5 is not the expectation here and the phantom",
+    "    arm's -0.961 is not an error.",
+    "    THE PHYSICS BEHAVES CORRECTLY: spheres steepen the decay -0.961 -> -1.117, i.e. -0.156",
+    "    TOWARD the measured -1.405. Self-avoidance compacts the chain exactly as it should.",
+    "    It closes 35% of the gap to the data -- real, and not enough to matter",
+    "    for contact prediction, which is the distinction the correlation table makes.",
+    "\n  READING",
+    "  SELF-AVOIDANCE CHANGES NOTHING AT THIS SCALE. spheres 0.084 vs phantom 0.100. The",
+    "  phantom approximation was adequate at 25 kb, so rouse_gate was right to skip it and the",
+    "  redundancy against CTCF counting was NOT caused by the missing physics. Restoring it by",
+    "  brute force would have bought the same nothing at a GPU-day per region.",
+    "  BUT THE TOPOLOGY ITSELF IS NOT NOTHING: +0.100 against -0.013 for the same",
+    "  anchors relocated at matched count and spacing. WHERE the loops are carries the signal; the",
+    "  null sits at zero, so the polymer model earns its number -- excluded volume just is not the",
+    "  part that earns it."
+  ]
+}

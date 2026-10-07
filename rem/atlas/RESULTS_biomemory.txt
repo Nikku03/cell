@@ -1,0 +1,61 @@
+=================================================================================================
+PART A -- BLUE BRAIN SYNAPSES AND OPTOGENETIC RECORDINGS -> THE MEMORY'S NUMBERS
+=================================================================================================
+  Excitatory, depressing     pathways   527   U 0.500 (w 0.500)   tau_F     17 ms (w 17)   tau_D    670 ms (w 670)
+  Excitatory, facilitating   pathways    44   U 0.092 (w 0.092)   tau_F    680 ms (w 680)   tau_D    140 ms (w 140)
+  Excitatory, pseudo-linear  pathways    11   U 0.220 (w 0.270)   tau_F    110 ms (w 110)   tau_D    530 ms (w 560)
+  Inhibitory, depressing     pathways  1215   U 0.250 (w 0.260)   tau_F     21 ms (w 21)   tau_D    700 ms (w 710)
+  Inhibitory, facilitating   pathways    95   U 0.220 (w 0.230)   tau_F     40 ms (w 29)   tau_D    540 ms (w 630)
+  Inhibitory, pseudo-linear  pathways    40   U 0.250 (w 0.250)   tau_F     21 ms (w 21)   tau_D    710 ms (w 700)
+  A1 excitatory facilitating pathways >= 5: PASS
+  A2 ALM intrinsic timescale: tau 0.692 s  95% CI [0.655, 0.743]  R^2 0.988  units 2330  -> PASS
+     population autocorrelation by lag: 0.1:0.270  0.2:0.272  0.3:0.245  0.4:0.229  0.5:0.213  0.6:0.200  0.7:0.187  0.8:0.179
+  TRANSLATED: lambda = exp(-0.1/0.680) = 0.8632 per step;  write gain U = 0.092;  alpha = 1 - exp(-0.1/0.692) = 0.1346
+
+=================================================================================================
+PART B -- THE MEMORY IN THE CHAIN NETWORK
+=================================================================================================
+  Q0 bio      every gradient/tol 0.170   broken 1.20e+05 (caught)
+  Q0 bio      once  gradient/tol 0.141   broken 8.01e+04 (caught)
+  Q0 generic  every gradient/tol 0.165   broken 2.92e+04 (caught)
+  Q0 generic  once  gradient/tol 0.076   broken 9.98e+04 (caught)
+
+=================================================================================================
+P1 -- 6 items, facts every step; trained on 1-3 hops; same seeds and questions as chainsnap
+=================================================================================================
+                                  k=1    k=2    k=3    k=4    k=6    k=8   k=12   k=16   k=24   k=32   k=64  learnt exact
+    BIO memory                  1.000  0.968  0.874  0.765  0.652  0.581  0.536  0.521  0.500  0.494  0.500   8/10  0/10
+    GENERIC memory (learnt)     1.000  1.000  1.000  1.000  0.999  0.995  0.980  0.977  0.979  0.976  0.975  10/10  8/10
+      learnt lambda 0.864 (bio 0.863), U 1.103 (bio 0.092)
+    no memory (chainsnap)       1.000  0.999  0.996  0.995  0.991  0.988  0.987  0.990  0.989  0.989  0.991
+    transformer + CoT (means)                        1.000         0.993         0.921         0.752  0.554
+  bio memory vs no memory    bio higher on 0/10, lower on 10/10, mean -0.411 -> NO-MEMORY BETTER
+  BIO vs GENERIC             bio higher on 0/10, lower on 10/10, mean -0.408 -> GENERIC BETTER
+
+=================================================================================================
+H1 -- 12 items; trained on 1-3 hops; same seeds and questions as chainsnap
+=================================================================================================
+                                  k=1    k=2    k=3    k=4    k=6    k=8   k=12   k=16  learnt exact
+    BIO memory                  0.966  0.829  0.541  0.342  0.226  0.209  0.216  0.213   0/10  0/10
+    GENERIC memory (learnt)     0.407  0.301  0.281  0.281  0.282  0.280  0.284  0.283   2/10  2/10
+      learnt lambda 0.386 (bio 0.863), U 0.185 (bio 0.092)
+    no memory (chainsnap)       0.989  0.974  0.959  0.948  0.921  0.907  0.904  0.892
+    transformer + CoT (means)                        1.000         1.000         1.000
+  bio memory vs no memory    bio higher on 0/10, lower on 10/10, mean -0.673 -> NO-MEMORY BETTER
+  BIO vs GENERIC             bio higher on 8/10, lower on 2/10, mean -0.041 -> NO DIFFERENCE
+
+=================================================================================================
+H2 -- 6 items, FACTS SHOWN ONCE; trained on 1-3 hops; same seeds and questions as chainsnap
+=================================================================================================
+                                  k=1    k=2    k=3    k=4    k=6    k=8  learnt exact
+    BIO memory                  1.000  0.993  0.932  0.897  0.852  0.772  10/10  0/10
+    GENERIC memory (learnt)     1.000  1.000  1.000  1.000  1.000  1.000  10/10 10/10  EXACT
+      learnt lambda 0.978 (bio 0.863), U 1.278 (bio 0.092)
+    no memory (chainsnap)       0.289  0.241  0.209  0.271  0.312  0.261
+    transformer + CoT (means)                        1.000         0.999
+  bio memory vs no memory    bio higher on 10/10, lower on 0/10, mean +0.559 -> BIO BETTER
+  BIO vs GENERIC             bio higher on 0/10, lower on 10/10, mean -0.159 -> GENERIC BETTER
+
+  artifact: outputs/biomemory.json   runtime 609s
+  Licences: Blue Brain NMC portal data (EPFL, all rights reserved; no open licence found) and DANDI 000060
+  (draft, none declared) -- aggregates only; raw files stay in the gitignored cache.

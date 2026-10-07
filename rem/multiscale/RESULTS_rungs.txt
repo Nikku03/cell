@@ -1,0 +1,32 @@
+================================================================================================
+G2r  RUNG TABLE -- measured prices beside the predeclared ones
+================================================================================================
+  rung          domain  spec tail err    measured
+  COARSE_40         40          0.45%       0.39%
+  COARSE_20         20          2.09%       1.45%
+  COARSE_8           8         11.64%       6.64%
+  DELETED            1          1.75%      19.98%   (spec column is 7/(4N) at N=100)
+
+================================================================================================
+G2o  ORDERING -- delete what you can, coarsen only what survives
+================================================================================================
+  a 600-state species inside a bucket:
+    coarsen to 20 : the bucket keeps a factor of 20   -> saves 1.48 orders
+    delete        : the variable leaves the product   -> saves 2.78 orders
+  gap per species = 1.30 orders; over the spec's 57 metabolism variables that is 74 orders
+  spec quotes 10^82 (coarsen) vs 10^22.9 (delete) = 59.1 orders   FAIL
+
+================================================================================================
+G4  LINEAR ADDITION over the gated neighbourhood
+================================================================================================
+    K    states  joint err %  sum of singles    ratio  expected
+    1     1,394      2.6277%         2.6277%    1.000     1.000
+    2    47,396      5.3244%         5.2553%    1.013     1.035
+    3        --  reference did not fit the budget -> UNVERIFIED
+
+================================================================================================
+G4c  NEGATIVE CONTROL -- a demoted species that does NOT gate Y must add nothing
+================================================================================================
+  demoting gating species 1: +2.6277%    demoting gating species 2: +2.6277%
+  the two gating species are exchangeable, so these must agree: |difference| = 0.00e+00%
+  G4c PASS -- an asymmetry here would mean the testbed is not measuring the gate

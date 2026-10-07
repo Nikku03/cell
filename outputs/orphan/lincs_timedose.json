@@ -1,0 +1,715 @@
+{
+ "build": "LINCS2020_beta",
+ "matrix": "https://s3.amazonaws.com/macchiato.clue.io/builds/LINCS2020/level5/level5_beta_trt_cp_n720216x12328.gctx",
+ "pert_type": "trt_cp",
+ "feature_space": "landmark (978 measured)",
+ "census": {
+  "build": "LINCS2020_beta",
+  "n_signatures": 1201944,
+  "per_cell": {
+   "MCF7": {
+    "perturbations": 43729,
+    "ge2_times": 13589,
+    "ge3_times": 419,
+    "ge3_times_and_ge3_doses": 391
+   },
+   "PC3": {
+    "perturbations": 46892,
+    "ge2_times": 14283,
+    "ge3_times": 373,
+    "ge3_times_and_ge3_doses": 12
+   },
+   "A549": {
+    "perturbations": 51415,
+    "ge2_times": 4855,
+    "ge3_times": 333,
+    "ge3_times_and_ge3_doses": 333
+   },
+   "U2OS": {
+    "perturbations": 21572,
+    "ge2_times": 337,
+    "ge3_times": 330,
+    "ge3_times_and_ge3_doses": 330
+   },
+   "A375": {
+    "perturbations": 48010,
+    "ge2_times": 2455,
+    "ge3_times": 268,
+    "ge3_times_and_ge3_doses": 9
+   },
+   "MCF10A": {
+    "perturbations": 1838,
+    "ge2_times": 442,
+    "ge3_times": 222,
+    "ge3_times_and_ge3_doses": 194
+   },
+   "SKBR3": {
+    "perturbations": 235,
+    "ge2_times": 235,
+    "ge3_times": 119,
+    "ge3_times_and_ge3_doses": 91
+   },
+   "MDAMB231": {
+    "perturbations": 1412,
+    "ge2_times": 228,
+    "ge3_times": 117,
+    "ge3_times_and_ge3_doses": 89
+   },
+   "BT20": {
+    "perturbations": 227,
+    "ge2_times": 227,
+    "ge3_times": 117,
+    "ge3_times_and_ge3_doses": 89
+   },
+   "HS578T": {
+    "perturbations": 227,
+    "ge2_times": 227,
+    "ge3_times": 117,
+    "ge3_times_and_ge3_doses": 89
+   },
+   "HEPG2": {
+    "perturbations": 25981,
+    "ge2_times": 797,
+    "ge3_times": 114,
+    "ge3_times_and_ge3_doses": 114
+   },
+   "VCAP": {
+    "perturbations": 42546,
+    "ge2_times": 15745,
+    "ge3_times": 94,
+    "ge3_times_and_ge3_doses": 23
+   }
+  },
+  "k562": {
+   "perturbations": 142,
+   "ge2_times": 91,
+   "ge3_times": 0,
+   "ge3_times_and_ge3_doses": 0
+  },
+  "gse92742_phase1": {
+   "n_signatures": 473647,
+   "n_cell_lines": 76,
+   "k562_signatures": 0
+  }
+ },
+ "arms": {
+  "K562_time_4h_to_24h": {
+   "n_pairs": 546,
+   "n_compounds": 91,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -5.996227264404297e-05,
+    "L1": 0.035025715827941895,
+    "L2": 0.10826736688613892,
+    "L3": 0.13861793279647827,
+    "L4": 0.15345430374145508
+   },
+   "pair_r": 0.10129154036903543,
+   "share_plate_frac": 0.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.0901709000269572,
+    "L3_mean": 0.0912381038069725,
+    "L3_sd": 0.005294980792998634,
+    "L4_mean": 0.09194476157426834,
+    "pair_r_mean": 0.026771489950785664,
+    "pair_r_sd": 0.002719223192502107,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 0.08333333333333333,
+    "per_pair_improvement_rate": 0.4513888888888889,
+    "imbalance_mean_abs_dnorm": 1.9401613424221675,
+    "norm_sd": 12.473417282104492,
+    "imbalance_mean_abs_dTAS": 0.05791413512362637,
+    "tas_sd": 0.13274865016955892,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.0
+   },
+   "well_position_control": {
+    "n": 426,
+    "real_L3": 0.09196919202804565,
+    "well_L3": 0.036226511001586914,
+    "real_L2": 0.060578763484954834,
+    "well_L2": 0.036032676696777344,
+    "real_L1": 0.031017184257507324,
+    "p_ttest": 0.0035599039401859045,
+    "imbalance_mean_abs_dnorm": 8.504722595214844
+   },
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.06148725748062134,
+     "L2": 0.14076846837997437,
+     "L3": 0.18657004833221436,
+     "swap_L3": 0.12098437547683716
+    },
+    "weak early (bottom two terciles)": {
+     "L1": -0.055299997329711914,
+     "L2": -0.002637147903442383,
+     "L3": -0.024953603744506836,
+     "swap_L3": -0.010277479887008667
+    }
+   },
+   "note": "AICHI only"
+  },
+  "K562_time_24h_to_4h": {
+   "n_pairs": 546,
+   "n_compounds": 91,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -0.001101374626159668,
+    "L1": 0.03504306077957153,
+    "L2": 0.04653751850128174,
+    "L3": 0.0810546875,
+    "L4": 0.10404592752456665
+   },
+   "pair_r": 0.10129154036903543,
+   "share_plate_frac": 0.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.042321667075157166,
+    "L3_mean": 0.04319526503483454,
+    "L3_sd": 0.0014381501303026257,
+    "L4_mean": 0.044363888601462044,
+    "pair_r_mean": 0.02872364533289265,
+    "pair_r_sd": 0.0023688621598242665,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 0.8333333333333334,
+    "per_pair_improvement_rate": 0.4634462759462759,
+    "imbalance_mean_abs_dnorm": 4.404727399349213,
+    "norm_sd": 28.309446334838867,
+    "imbalance_mean_abs_dTAS": 0.057532414096459095,
+    "tas_sd": 0.20503757612401838,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.0
+   },
+   "well_position_control": {
+    "n": 426,
+    "real_L3": 0.0769008994102478,
+    "well_L3": 0.03630995750427246,
+    "real_L2": 0.04030954837799072,
+    "well_L2": 0.036000847816467285,
+    "real_L1": 0.03561776876449585,
+    "p_ttest": 3.487850506189716e-07,
+    "imbalance_mean_abs_dnorm": 19.469799041748047
+   },
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.04428982734680176,
+     "L2": 0.05876564979553223,
+     "L3": 0.12447255849838257,
+     "swap_L3": 0.05330435559153557
+    },
+    "weak early (bottom two terciles)": {
+     "L1": 0.022909879684448242,
+     "L2": 0.030508339405059814,
+     "L3": 0.02426433563232422,
+     "swap_L3": 0.029935427010059357
+    }
+   },
+   "note": "attenuation bracket"
+  },
+  "K562_dose_ladder_24h": {
+   "n_pairs": 455,
+   "n_compounds": 91,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -2.0742416381835938e-05,
+    "L1": 0.04205906391143799,
+    "L2": 0.13855856657028198,
+    "L3": 0.3200398087501526,
+    "L4": 0.3303382396697998
+   },
+   "pair_r": 0.2864868053925535,
+   "share_plate_frac": 1.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.09473640471696854,
+    "L3_mean": 0.10063751290241878,
+    "L3_sd": 0.013143715764135326,
+    "L4_mean": 0.10161505391200383,
+    "pair_r_mean": 0.09047708963655993,
+    "pair_r_sd": 0.004885402867295444,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 1.0,
+    "per_pair_improvement_rate": 0.49496336996337,
+    "imbalance_mean_abs_dnorm": 4.212494860092799,
+    "norm_sd": 22.657262802124023,
+    "imbalance_mean_abs_dTAS": 0.057956123628205125,
+    "tas_sd": 0.16898216338600622,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.0
+   },
+   "well_position_control": null,
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.07288950681686401,
+     "L2": 0.1806601881980896,
+     "L3": 0.4272158145904541,
+     "swap_L3": 0.13373559713363647
+    },
+    "weak early (bottom two terciles)": {
+     "L1": -0.0529247522354126,
+     "L2": 0.008911430835723877,
+     "L3": -0.009787440299987793,
+     "swap_L3": -0.0013147741556167603
+    }
+   },
+   "note": "quality matched, plate SHARED"
+  },
+  "LKCP_A549_6h_to_24h": {
+   "n_pairs": 693,
+   "n_compounds": 231,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -6.651878356933594e-05,
+    "L1": 0.03785139322280884,
+    "L2": 0.14573436975479126,
+    "L3": 0.29981017112731934,
+    "L4": 0.31796687841415405
+   },
+   "pair_r": 0.23321317859354596,
+   "share_plate_frac": 0.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.13489985714356104,
+    "L3_mean": 0.1511513590812683,
+    "L3_sd": 0.0053848589377628805,
+    "L4_mean": 0.15558388829231262,
+    "pair_r_mean": 0.09195762905322187,
+    "pair_r_sd": 0.003783595460406154,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 0.375,
+    "per_pair_improvement_rate": 0.35714285714285715,
+    "imbalance_mean_abs_dnorm": 1.4882131566603978,
+    "norm_sd": 17.512218475341797,
+    "imbalance_mean_abs_dTAS": 0.04817093765632516,
+    "tas_sd": 0.16763193097889353,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.007215007215007215
+   },
+   "well_position_control": {
+    "n": 693,
+    "real_L3": 0.29981017112731934,
+    "well_L3": 0.04279071092605591,
+    "real_L2": 0.14573436975479126,
+    "well_L2": 0.041761934757232666,
+    "real_L1": 0.03785139322280884,
+    "p_ttest": 1.9742458536031737e-12,
+    "imbalance_mean_abs_dnorm": 13.122907638549805
+   },
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.06675642728805542,
+     "L2": 0.17873847484588623,
+     "L3": 0.3915283679962158,
+     "swap_L3": 0.19093306362628937
+    },
+    "weak early (bottom two terciles)": {
+     "L1": -0.09181773662567139,
+     "L2": -0.0022886991500854492,
+     "L3": -0.11131405830383301,
+     "swap_L3": -0.027244603261351585
+    }
+   },
+   "note": "3-point clock, one project"
+  },
+  "LKCP_A549_24h_to_48h": {
+   "n_pairs": 691,
+   "n_compounds": 231,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -7.68899917602539e-05,
+    "L1": 0.06075179576873779,
+    "L2": 0.29850369691848755,
+    "L3": 0.48437070846557617,
+    "L4": 0.501593828201294
+   },
+   "pair_r": 0.319142852062317,
+   "share_plate_frac": 0.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.27631855259339017,
+    "L3_mean": 0.29716933021942776,
+    "L3_sd": 0.005061793982712957,
+    "L4_mean": 0.3048104370633761,
+    "pair_r_mean": 0.12938585372238945,
+    "pair_r_sd": 0.0029602515391418567,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 1.0,
+    "per_pair_improvement_rate": 0.5059696092619392,
+    "imbalance_mean_abs_dnorm": 2.156505286693573,
+    "norm_sd": 27.26685905456543,
+    "imbalance_mean_abs_dTAS": 0.049691271568982155,
+    "tas_sd": 0.21953212123364024,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.00723589001447178
+   },
+   "well_position_control": {
+    "n": 691,
+    "real_L3": 0.48437070846557617,
+    "well_L3": 0.06751644611358643,
+    "real_L2": 0.29850369691848755,
+    "well_L2": 0.06682729721069336,
+    "real_L1": 0.06075179576873779,
+    "p_ttest": 8.629909899486815e-21,
+    "imbalance_mean_abs_dnorm": 21.017553329467773
+   },
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.11759960651397705,
+     "L2": 0.3656066656112671,
+     "L3": 0.60067218542099,
+     "swap_L3": 0.3687863349914551
+    },
+    "weak early (bottom two terciles)": {
+     "L1": -0.1950981616973877,
+     "L2": -0.0029381513595581055,
+     "L3": -0.03711414337158203,
+     "swap_L3": -0.024487262591719627
+    }
+   },
+   "note": "3-point clock, one project"
+  },
+  "LKCP_A549_trajectory": {
+   "n_series": 691,
+   "from_24h": {
+    "L0": -7.68899917602539e-05,
+    "L1": 0.06075179576873779,
+    "L2": 0.29850369691848755,
+    "L3": 0.48437070846557617,
+    "L4": 0.501593828201294
+   },
+   "from_24h_and_6h": {
+    "L0": -7.68899917602539e-05,
+    "L1": 0.06075179576873779,
+    "L2": 0.29870498180389404,
+    "L3": 0.4895421266555786,
+    "L4": 0.5085200071334839
+   },
+   "from_6h": {
+    "L0": -7.68899917602539e-05,
+    "L1": 0.06075179576873779,
+    "L2": 0.24719440937042236,
+    "L3": 0.307697057723999,
+    "L4": 0.3192718029022217
+   }
+  },
+  "LKCP_MCF7_6h_to_24h": {
+   "n_pairs": 693,
+   "n_compounds": 231,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -0.0002529621124267578,
+    "L1": 0.04745239019393921,
+    "L2": 0.15114045143127441,
+    "L3": 0.2981274724006653,
+    "L4": 0.3146395683288574
+   },
+   "pair_r": 0.2668129586077707,
+   "share_plate_frac": 0.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.1411806990702947,
+    "L3_mean": 0.15873082230488458,
+    "L3_sd": 0.005875743284546286,
+    "L4_mean": 0.1635312313834826,
+    "pair_r_mean": 0.10522919192097002,
+    "pair_r_sd": 0.003317442329569615,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 1.0,
+    "per_pair_improvement_rate": 0.4785954785954785,
+    "imbalance_mean_abs_dnorm": 1.6350601414839427,
+    "norm_sd": 17.60427474975586,
+    "imbalance_mean_abs_dTAS": 0.048773731463443964,
+    "tas_sd": 0.17269454938021198,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.007215007215007215
+   },
+   "well_position_control": {
+    "n": 693,
+    "real_L3": 0.2981274724006653,
+    "well_L3": 0.052428245544433594,
+    "real_L2": 0.15114045143127441,
+    "well_L2": 0.05059051513671875,
+    "real_L1": 0.04745239019393921,
+    "p_ttest": 1.0064902877067114e-13,
+    "imbalance_mean_abs_dnorm": 13.108386993408203
+   },
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.08094966411590576,
+     "L2": 0.19010889530181885,
+     "L3": 0.38670384883880615,
+     "swap_L3": 0.20558474957942963
+    },
+    "weak early (bottom two terciles)": {
+     "L1": -0.07359147071838379,
+     "L2": 0.010357856750488281,
+     "L3": -0.02172255516052246,
+     "swap_L3": -0.010517303831875324
+    }
+   },
+   "note": "3-point clock, one project"
+  },
+  "LKCP_MCF7_24h_to_48h": {
+   "n_pairs": 693,
+   "n_compounds": 231,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -7.975101470947266e-05,
+    "L1": 0.06850039958953857,
+    "L2": 0.310771644115448,
+    "L3": 0.49093472957611084,
+    "L4": 0.50750732421875
+   },
+   "pair_r": 0.32340695987731316,
+   "share_plate_frac": 0.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.2874800090988477,
+    "L3_mean": 0.3123879333337148,
+    "L3_sd": 0.005852640903047437,
+    "L4_mean": 0.32183267672856647,
+    "pair_r_mean": 0.14776535029753765,
+    "pair_r_sd": 0.0031602768379100778,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 1.0,
+    "per_pair_improvement_rate": 0.4990981240981241,
+    "imbalance_mean_abs_dnorm": 1.872230922182401,
+    "norm_sd": 25.08184051513672,
+    "imbalance_mean_abs_dTAS": 0.05347856981120732,
+    "tas_sd": 0.20766888675931583,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.007215007215007215
+   },
+   "well_position_control": {
+    "n": 693,
+    "real_L3": 0.49093472957611084,
+    "well_L3": 0.07562392950057983,
+    "real_L2": 0.310771644115448,
+    "well_L2": 0.07449543476104736,
+    "real_L1": 0.06850039958953857,
+    "p_ttest": 3.3444502761539324e-23,
+    "imbalance_mean_abs_dnorm": 19.410823822021484
+   },
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.13187497854232788,
+     "L2": 0.37346315383911133,
+     "L3": 0.5997753143310547,
+     "swap_L3": 0.3834846317768097
+    },
+    "weak early (bottom two terciles)": {
+     "L1": -0.23778462409973145,
+     "L2": 0.007893264293670654,
+     "L3": -0.03458821773529053,
+     "swap_L3": -0.031055113300681114
+    }
+   },
+   "note": "3-point clock, one project"
+  },
+  "LKCP_MCF7_trajectory": {
+   "n_series": 693,
+   "from_24h": {
+    "L0": -7.975101470947266e-05,
+    "L1": 0.06850039958953857,
+    "L2": 0.310771644115448,
+    "L3": 0.49093472957611084,
+    "L4": 0.50750732421875
+   },
+   "from_24h_and_6h": {
+    "L0": -7.975101470947266e-05,
+    "L1": 0.06850039958953857,
+    "L2": 0.31032323837280273,
+    "L3": 0.4953962564468384,
+    "L4": 0.5123565793037415
+   },
+   "from_6h": {
+    "L0": -7.975101470947266e-05,
+    "L1": 0.06850039958953857,
+    "L2": 0.23522257804870605,
+    "L3": 0.2964596152305603,
+    "L4": 0.3064294457435608
+   }
+  },
+  "LKCP_U2OS_6h_to_24h": {
+   "n_pairs": 693,
+   "n_compounds": 231,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -0.00031638145446777344,
+    "L1": 0.04622828960418701,
+    "L2": 0.16201329231262207,
+    "L3": 0.2955394387245178,
+    "L4": 0.31142932176589966
+   },
+   "pair_r": 0.25041878712442567,
+   "share_plate_frac": 0.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.14938858896493912,
+    "L3_mean": 0.17255700379610062,
+    "L3_sd": 0.007951127382196449,
+    "L4_mean": 0.17833012839158377,
+    "pair_r_mean": 0.1027815906581423,
+    "pair_r_sd": 0.0037343582729042236,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 0.875,
+    "per_pair_improvement_rate": 0.46915584415584416,
+    "imbalance_mean_abs_dnorm": 1.65459743142128,
+    "norm_sd": 18.76947021484375,
+    "imbalance_mean_abs_dTAS": 0.05301476662938912,
+    "tas_sd": 0.16896209302891427,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.007215007215007215
+   },
+   "well_position_control": {
+    "n": 693,
+    "real_L3": 0.2955394387245178,
+    "well_L3": 0.05855560302734375,
+    "real_L2": 0.16201329231262207,
+    "well_L2": 0.05283409357070923,
+    "real_L1": 0.04622828960418701,
+    "p_ttest": 5.048383378003507e-10,
+    "imbalance_mean_abs_dnorm": 13.56717300415039
+   },
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.07531017065048218,
+     "L2": 0.2028462290763855,
+     "L3": 0.3827155828475952,
+     "swap_L3": 0.22305716574192047
+    },
+    "weak early (bottom two terciles)": {
+     "L1": -0.06360137462615967,
+     "L2": 0.007810711860656738,
+     "L3": -0.033663034439086914,
+     "swap_L3": -0.01815078593790531
+    }
+   },
+   "note": "3-point clock, one project"
+  },
+  "LKCP_U2OS_24h_to_48h": {
+   "n_pairs": 693,
+   "n_compounds": 231,
+   "n_genes": 978,
+   "rungs": {
+    "L0": -0.0002560615539550781,
+    "L1": 0.06186091899871826,
+    "L2": 0.31981098651885986,
+    "L3": 0.4797452688217163,
+    "L4": 0.4966609477996826
+   },
+   "pair_r": 0.32167425491849105,
+   "share_plate_frac": 0.0,
+   "swap": {
+    "n_draws": 24,
+    "L2_mean": 0.28648140529791516,
+    "L3_mean": 0.3112463156382243,
+    "L3_sd": 0.007809816772032726,
+    "L4_mean": 0.3229738126198451,
+    "pair_r_mean": 0.12649569390916204,
+    "pair_r_sd": 0.0042454111483890495,
+    "draws_real_beats_swap": 24,
+    "frac_draws_p_lt_05_ttest": 1.0,
+    "frac_draws_p_lt_05_wilcoxon": 1.0,
+    "per_pair_improvement_rate": 0.5896464646464646,
+    "imbalance_mean_abs_dnorm": 1.931469236811002,
+    "norm_sd": 23.972171783447266,
+    "imbalance_mean_abs_dTAS": 0.04941764859307359,
+    "tas_sd": 0.19573146520634993,
+    "imbalance_dose_mismatch": 0.0,
+    "unswapped_frac": 0.007215007215007215
+   },
+   "well_position_control": {
+    "n": 693,
+    "real_L3": 0.4797452688217163,
+    "well_L3": 0.07093733549118042,
+    "real_L2": 0.31981098651885986,
+    "well_L2": 0.06739866733551025,
+    "real_L1": 0.06186091899871826,
+    "p_ttest": 2.858280989152418e-19,
+    "imbalance_mean_abs_dnorm": 17.26386833190918
+   },
+   "stratified": {
+    "strong early (top tercile ||z||)": {
+     "L1": 0.11572688817977905,
+     "L2": 0.3981212377548218,
+     "L3": 0.598731517791748,
+     "swap_L3": 0.393599271774292
+    },
+    "weak early (bottom two terciles)": {
+     "L1": -0.15604853630065918,
+     "L2": 0.003555774688720703,
+     "L3": -0.0003731250762939453,
+     "swap_L3": -0.021313944831490517
+    }
+   },
+   "note": "3-point clock, one project"
+  },
+  "LKCP_U2OS_trajectory": {
+   "n_series": 693,
+   "from_24h": {
+    "L0": -0.0002560615539550781,
+    "L1": 0.06186091899871826,
+    "L2": 0.31981098651885986,
+    "L3": 0.4797452688217163,
+    "L4": 0.4966609477996826
+   },
+   "from_24h_and_6h": {
+    "L0": -0.0002560615539550781,
+    "L1": 0.06186091899871826,
+    "L2": 0.3186197280883789,
+    "L3": 0.4838863015174866,
+    "L4": 0.5014389753341675
+   },
+   "from_6h": {
+    "L0": -0.0002560615539550781,
+    "L1": 0.06186091899871826,
+    "L2": 0.24610579013824463,
+    "L3": 0.3016669750213623,
+    "L4": 0.3113037347793579
+   }
+  }
+ },
+ "n_signatures_read": 7654,
+ "registry_joins": {
+  "landmark_ensembl": {
+   "joined": 978,
+   "of": 978,
+   "rate": 1.0,
+   "via": "ensembl",
+   "label": "L1000 landmark genes"
+  },
+  "landmark_symbol": {
+   "joined": 964,
+   "of": 978,
+   "rate": 0.9856850715746421,
+   "via": "symbol",
+   "label": "L1000 landmarks (symbol)"
+  },
+  "landmarks_in_cell_object": 896
+ },
+ "limits": [
+  "K562 HAS NO THREE-POINT TIME COURSE IN LINCS. Its entire time axis is 4 h vs 24 h in one project (AICHI); the second K562 project (EMU, 336 signatures) is 24 h only and is excluded because including it would confound time with project. Any three-point result here is in U2OS / MCF7 / A549 and is labelled as such.",
+  "GSE92742 (CMap phase 1, 473,647 signatures, 76 cell lines) contains ZERO K562 signatures, so no amount of phase-1 data would improve the K562 time axis.",
+  "L1000 measures 978 landmark genes and INFERS 11,350; every number here is landmarks only, so nothing is said about the inferred space and the inferred space cannot be used for this test without measuring the inference model instead of the biology.",
+  "In K562/AICHI qc_pass is almost perfectly confounded with time (4 h: 8/588 pass; 24 h: 569/588) and mean TAS is 0.166 at 4 h against 0.223 at 24 h. The 4 h arm is the noisier one, so the forward test is attenuated; the reversed direction and the dose ladder are reported as the bracket, not as independent replicates.",
+  "Level 5 is a MODZ-weighted collapse of replicates, already differential against plate controls, so it carries no absolute expression and the L0 rung is a floor of exactly zero by construction rather than an estimate.",
+  "trt_cp only. Compounds are not registry entities -- BRD ids have no namespace in the registry -- so the perturbation axis of this layer is joined by nothing and is stored as an opaque key. Only the gene axis is registry-joined.",
+  "Doses are nominal treatment concentrations, not intracellular exposure; a 'dose ladder' is a ladder in what was added to the well.",
+  "Signature selection among replicate plates is the first sig_id alphabetically, which is deterministic and outcome-independent but discards real replicate information.",
+  "The two controls fail in opposite directions and neither alone is sufficient. The 24-draw source swap is matched on ||z_early|| to within ~8-15% of its sd but leaves plate POSITION free; the same-well control fixes position exactly but leaves the norm free (mean |d norm| 8.5-21 against sds of 12-27), so it is a position control and NOT a magnitude control. The claim rests on both, not on either.",
+  "A negative stratified R2 on the weak-response stratum is not a bug: within that stratum the total sum of squares is taken about the stratum's own mean, and a constant per-gene vector fitted on all compounds is actively worse than predicting nothing for a compound that did not respond. It is the honest statement that the consensus profile misleads on non-responders.",
+  "The K562 dose ladder compares two wells of the SAME detection plate (100% shared plate), while the time arms compare different plates (0% shared). The dose arm therefore carries a plate-artifact risk the time arms do not, and its larger effect should not be read as a cleaner result.",
+  "Compound identity is not deduplicated across pert_ids: the same molecule under two BRD ids would appear as two compounds and could place chemically identical material on both sides of a held-out split. Compounds are held out by pert_id, not by structure."
+ ],
+ "verdict": "THE NULL DOES NOT REPLICATE: THE EARLY PROFILE CARRIES GENE-SPECIFIC INFORMATION IN 9 OF 9 ARMS, BUT MOST OF WHAT LOOKS LIKE DYNAMICS IS ONE SCALAR TIMES A CONSTANT PER-GENE VECTOR. In K562, 4 h -> 24 h (546 compound x dose pairs, 91 compounds, 978 measured landmarks, AICHI project only, predictor and target on different plates), held-out R2 is 0.0350 for a constant per-gene vector with no perturbation identity at all; 0.1083 once that same vector is scaled by a SINGLE SCALAR read off the early profile; 0.1386 and 0.1535 once the gene-specific part of the early profile is used. So 62% of everything the early measurement buys is one number per perturbation. A source swap matched on ||z_early|| within dose (24 draws, mean |d norm| 1.940 against a norm sd of 12.473) gives L3 0.0912 +/- 0.0053, beaten by the real profile in 24/24 draws; the paired t-test on per-pair error fires on 100% of draws while the rank test fires on 8%, because only 45% of pairs improve and the gain is carried by the responsive minority. With a real three-point clock (LKCP, 6/24/48 h, one project, 2,077 complete series across 3 cell lines -- in U2OS/MCF7/A549 because K562 has no such series anywhere in LINCS), predicting the 48 h profile from the 24 h profile alone gives L3 0.4797-0.4909; from the 6 h profile alone 0.2965-0.3077; and from BOTH with their own fitted slopes 0.4839-0.4954. The earlier point adds +0.0041 to +0.0052 once the later one is in hand, in all 3 cell lines, so the response is close to Markov in the measured state: what is worth carrying is the most recent profile, not the trajectory that produced it. The census is the other half of the answer: across 1,201,944 signatures K562 has 142 perturbations, 91 at two or more times and 0 at three or more, and CMap phase 1 (473,647 signatures) has no K562 at all -- so LINCS cannot supply a K562 time course longer than two points to anyone, ever."
+}

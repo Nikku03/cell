@@ -1,0 +1,525 @@
+{
+ "medium": {
+  "blocked": 26,
+  "capped": 1634,
+  "generous": {
+   "glucose": 10.0,
+   "O2": 20.0,
+   "H2O": 1000.0,
+   "H+": 1000.0,
+   "Pi": 10.0,
+   "glutamine": 5.0
+  }
+ },
+ "baseline": {
+  "growth": 20.557610706398954,
+  "lactate_export": 547.542086360004,
+  "n_imports": 430,
+  "n_exports": 111,
+  "imports": [
+   [
+    "H2O",
+    1000.0
+   ],
+   [
+    "O2",
+    20.0
+   ],
+   [
+    "glucose",
+    10.0
+   ],
+   [
+    "glutamine",
+    5.0
+   ],
+   [
+    "1,2-diacylglycerol-LD-TAG pool",
+    1.0
+   ],
+   [
+    "glycogenin G4G7",
+    1.0
+   ],
+   [
+    "Glycogen, Structure 4 (Glycogenin-1,6-{2[1,4-Glc], [1,4-Glc]})",
+    1.0
+   ],
+   [
+    "2-lysolecithin pool",
+    1.0
+   ],
+   [
+    "1-acylglycerol-3P pool",
+    1.0
+   ],
+   [
+    "PC-LD pool",
+    1.0
+   ],
+   [
+    "PE-LD pool",
+    1.0
+   ],
+   [
+    "PS-LD pool",
+    1.0
+   ],
+   [
+    "cholest-5-ene-3beta,7alpha,27-triol",
+    1.0
+   ],
+   [
+    "4-aminobutanal",
+    1.0
+   ],
+   [
+    "glycerone",
+    1.0
+   ],
+   [
+    "DHAP",
+    1.0
+   ],
+   [
+    "formaldehyde",
+    1.0
+   ],
+   [
+    "isomaltose",
+    1.0
+   ],
+   [
+    "lactose-6-phosphate",
+    1.0
+   ],
+   [
+    "3-ketolactose",
+    1.0
+   ]
+  ],
+  "exports": [
+   [
+    "fatty acid-uptake pool",
+    1000.0000000000002
+   ],
+   [
+    "H+",
+    1000.0
+   ],
+   [
+    "L-lactate",
+    547.542086360004
+   ],
+   [
+    "pyruvate",
+    141.1847622211358
+   ],
+   [
+    "D-alanine",
+    135.6319889255411
+   ],
+   [
+    "proline",
+    102.56599842209255
+   ],
+   [
+    "CO2",
+    82.79809863090772
+   ],
+   [
+    "N-acetyl-L-alanine",
+    75.59783412669358
+   ],
+   [
+    "fatty acid-chylomicron pool",
+    68.67424848627408
+   ],
+   [
+    "Pi",
+    35.552437612926624
+   ],
+   [
+    "alanine",
+    34.21270069386897
+   ],
+   [
+    "4-coumarate",
+    27.86301858942079
+   ],
+   [
+    "urocanate",
+    23.077584773328162
+   ],
+   [
+    "biomass",
+    20.557610706398954
+   ],
+   [
+    "acetaldehyde",
+    18.35777944733305
+   ],
+   [
+    "sulfate",
+    17.599822047648956
+   ],
+   [
+    "arginine",
+    16.914127122235588
+   ],
+   [
+    "cysteine",
+    16.807133028395384
+   ],
+   [
+    "tryptophan",
+    13.3209523798306
+   ],
+   [
+    "fatty acid pool",
+    11.705151576140615
+   ]
+  ]
+ },
+ "no_glucose": {
+  "growth": 20.110990186842177,
+  "lactate_export": 514.2292335388769,
+  "n_imports": 426,
+  "n_exports": 110,
+  "imports": [
+   [
+    "H2O",
+    1000.0
+   ],
+   [
+    "O2",
+    20.0
+   ],
+   [
+    "glutamine",
+    5.0
+   ],
+   [
+    "palmitate",
+    1.000000000000001
+   ],
+   [
+    "1,2-diacylglycerol-LD-TAG pool",
+    1.0
+   ],
+   [
+    "glycogenin G4G7",
+    1.0
+   ],
+   [
+    "Glycogen, Structure 4 (Glycogenin-1,6-{2[1,4-Glc], [1,4-Glc]})",
+    1.0
+   ],
+   [
+    "2-lysolecithin pool",
+    1.0
+   ],
+   [
+    "1-acylglycerol-3P pool",
+    1.0
+   ],
+   [
+    "PC-LD pool",
+    1.0
+   ],
+   [
+    "PE-LD pool",
+    1.0
+   ],
+   [
+    "PS-LD pool",
+    1.0
+   ],
+   [
+    "cholest-5-ene-3beta,7alpha,27-triol",
+    1.0
+   ],
+   [
+    "4-aminobutanal",
+    1.0
+   ],
+   [
+    "glycerone",
+    1.0
+   ],
+   [
+    "DHAP",
+    1.0
+   ],
+   [
+    "formaldehyde",
+    1.0
+   ],
+   [
+    "isomaltose",
+    1.0
+   ],
+   [
+    "lactose-6-phosphate",
+    1.0
+   ],
+   [
+    "3-ketolactose",
+    1.0
+   ]
+  ],
+  "exports": [
+   [
+    "fatty acid-uptake pool",
+    1000.0000000000002
+   ],
+   [
+    "H+",
+    1000.0
+   ],
+   [
+    "L-lactate",
+    514.2292335388769
+   ],
+   [
+    "pyruvate",
+    151.13911779350647
+   ],
+   [
+    "D-alanine",
+    136.23574127097223
+   ],
+   [
+    "proline",
+    102.74080293487528
+   ],
+   [
+    "CO2",
+    83.15280438111056
+   ],
+   [
+    "N-acetyl-L-alanine",
+    75.60824248391572
+   ],
+   [
+    "fatty acid-chylomicron pool",
+    74.86189131202657
+   ],
+   [
+    "alanine",
+    34.43844145431323
+   ],
+   [
+    "Pi",
+    32.692512921499585
+   ],
+   [
+    "4-coumarate",
+    27.93117049128537
+   ],
+   [
+    "urocanate",
+    23.271427033557238
+   ],
+   [
+    "biomass",
+    20.11099018684217
+   ],
+   [
+    "acetaldehyde",
+    18.380158697851538
+   ],
+   [
+    "sulfate",
+    17.610187216666848
+   ],
+   [
+    "arginine",
+    16.9860403714117
+   ],
+   [
+    "cysteine",
+    16.732848681356426
+   ],
+   [
+    "tryptophan",
+    13.183627713248804
+   ],
+   [
+    "fatty acid pool",
+    11.86363443874964
+   ]
+  ]
+ },
+ "anaerobic": {
+  "growth": 18.038212903770813,
+  "lactate_export": 558.773770935107,
+  "n_imports": 426,
+  "n_exports": 110,
+  "imports": [
+   [
+    "H2O",
+    1000.0
+   ],
+   [
+    "glucose",
+    10.0
+   ],
+   [
+    "glutamine",
+    5.0
+   ],
+   [
+    "palmitate",
+    1.0000000000000002
+   ],
+   [
+    "1,2-diacylglycerol-LD-TAG pool",
+    1.0
+   ],
+   [
+    "glycogenin G4G7",
+    1.0
+   ],
+   [
+    "Glycogen, Structure 4 (Glycogenin-1,6-{2[1,4-Glc], [1,4-Glc]})",
+    1.0
+   ],
+   [
+    "2-lysolecithin pool",
+    1.0
+   ],
+   [
+    "1-acylglycerol-3P pool",
+    1.0
+   ],
+   [
+    "PC-LD pool",
+    1.0
+   ],
+   [
+    "PE-LD pool",
+    1.0
+   ],
+   [
+    "PS-LD pool",
+    1.0
+   ],
+   [
+    "cholest-5-ene-3beta,7alpha,27-triol",
+    1.0
+   ],
+   [
+    "4-aminobutanal",
+    1.0
+   ],
+   [
+    "glycerone",
+    1.0
+   ],
+   [
+    "DHAP",
+    1.0
+   ],
+   [
+    "formaldehyde",
+    1.0
+   ],
+   [
+    "isomaltose",
+    1.0
+   ],
+   [
+    "lactose-6-phosphate",
+    1.0
+   ],
+   [
+    "3-ketolactose",
+    1.0
+   ]
+  ],
+  "exports": [
+   [
+    "fatty acid-uptake pool",
+    1000.0000000000002
+   ],
+   [
+    "H+",
+    1000.0
+   ],
+   [
+    "L-lactate",
+    558.773770935107
+   ],
+   [
+    "D-alanine",
+    139.04087072226247
+   ],
+   [
+    "pyruvate",
+    114.43881332912754
+   ],
+   [
+    "proline",
+    103.81065404742007
+   ],
+   [
+    "CO2",
+    85.08440108991155
+   ],
+   [
+    "N-acetyl-L-alanine",
+    75.65654793666452
+   ],
+   [
+    "Pi",
+    36.34260602025645
+   ],
+   [
+    "alanine",
+    35.35625136045059
+   ],
+   [
+    "4-coumarate",
+    28.247465215323604
+   ],
+   [
+    "urocanate",
+    24.1710539335946
+   ],
+   [
+    "fatty acid-chylomicron pool",
+    24.091720836671602
+   ],
+   [
+    "acetaldehyde",
+    18.17180380570616
+   ],
+   [
+    "biomass",
+    18.038212903770813
+   ],
+   [
+    "sulfate",
+    17.658292231852364
+   ],
+   [
+    "arginine",
+    17.582810016187505
+   ],
+   [
+    "cysteine",
+    16.075875554393154
+   ],
+   [
+    "tryptophan",
+    12.907717138334727
+   ],
+   [
+    "fatty acid pool",
+    12.599157467781316
+   ]
+  ]
+ },
+ "validation": null
+}

@@ -1,0 +1,27 @@
+{
+ "n_nodes": 16492,
+ "relations": [
+  "ppi",
+  "path",
+  "lit"
+ ],
+ "maxpath": 50,
+ "edges_by_type": {
+  "ppi": 191447,
+  "path": 208881,
+  "lit": 4395
+ },
+ "genes_covered_by_type": {
+  "ppi": 14230,
+  "path": 7282,
+  "lit": 2677
+ },
+ "total_labeled_edges": 383246,
+ "genes_with_any_edge": 15103,
+ "cross_type_overlap_frac": {
+  "ppi&path": 0.111,
+  "ppi&lit": 0.033,
+  "path&lit": 0.0
+ },
+ "note": "DESCRIPTIVE knowledge graph (near-field). Edge types predict knockout effect at r~0.03-0.09 (floor); good for representation / link-prediction / querying, NOT a causal/phenotype predictor. path capped at <= 50 genes/pathway."
+}

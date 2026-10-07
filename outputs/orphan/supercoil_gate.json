@@ -1,0 +1,91 @@
+{
+  "test": "supercoil_gate",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/orphan/supercoil/GSM8523629_supercoil_rep1_hg38.bw",
+        "bytes": 1437675,
+        "hash": "5a22b743af5798b4",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/orphan/supercoil/GSM8523630_supercoil_rep2_hg38.bw",
+        "bytes": 1437304,
+        "hash": "b74136ed78bfb469",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/orphan/crispr_features_compendium.csv",
+        "bytes": 1241443,
+        "hash": "23ef417996da8b6e",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/orphan/invivo/crispr_egpairs.tsv",
+        "bytes": 3298116,
+        "hash": "3fe657eaceb46a8a",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 10331,
+      "used": 10331,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 6021,
+    "controls": [
+      "displaced 2 Mb track",
+      "replicate agreement",
+      "CTCF-count bar"
+    ],
+    "note": "protocol copied from rouse_gate: same folds, same metric, same thresholds",
+    "warnings": []
+  },
+  "arms": {
+    "epi + TF identity (311)": 0.6075574090157142,
+    "+ CTCF-count contact  [the 0.663 bar]": 0.6737319791377248,
+    "+ TORSION only": 0.6175391211843998,
+    "+ TORSION + CTCF-count": 0.6737747206514956,
+    "+ TORSION [displaced 2 Mb]": 0.6035910916898248
+  },
+  "verdict": "PARTIAL",
+  "note": "Torsion beats its displaced control, so the track is reading something real about position -- but it adds nothing beyond CTCF counting. Redundant, not absent.",
+  "replicate_r": 0.7963138880921201,
+  "accession": "GSE277502",
+  "cell_line_track": "hTERT-RPE1",
+  "cell_line_assay": "K562",
+  "bin_bp": 20000,
+  "log": [
+    "====================================================================================================",
+    "MEASURED DNA TORSION vs THE 0.663 BAR",
+    "====================================================================================================",
+    "  GSE277502 bTMP-seq, hTERT-RPE1, hg38, 20 kb bins. The CRISPR assay is K562, so this is a",
+    "  CROSS-CELL-LINE transfer and a null has two possible causes this test cannot separate.",
+    "",
+    "  THE BAR IS RECOMPUTED, NOT ASSUMED. The CTCF peak file the recorded 0.6632 was produced",
+    "  from lived in the ephemeral scratch directory and is gone, so the arm is rebuilt from",
+    "  ENCODE ENCFF362OPG (K562 CTCF IDR thresholded, ENCSR000AKO, GRCh38, 44,104 peaks). That is",
+    "  a DIFFERENT peak set, so the bar measured here is the one torsion is judged against, and",
+    "  its distance from the recorded 0.6632 is reported as a check on the reconstruction.",
+    "\n  10,331 pairs, torsion window 20 kb, shuffled control displaced 2 Mb",
+    "  torsion at enhancer: median 1.0411   at TSS: 1.0754   |difference| median 0.1093",
+    "  replicate agreement on the enhancer feature across pairs: r = 0.7963",
+    "",
+    "    epi + TF identity (311)                  AUPRC 0.6076",
+    "    + CTCF-count contact  [the 0.663 bar]    AUPRC 0.6737",
+    "    + TORSION only                           AUPRC 0.6175",
+    "    + TORSION + CTCF-count                   AUPRC 0.6738",
+    "    + TORSION [displaced 2 Mb]               AUPRC 0.6036",
+    "\n  reconstructed bar 0.6737 against the recorded 0.6632  (delta +0.0105) -- a different CTCF peak set, so exact agreement is not expected",
+    "\n  ------------------------------------------------------------------------------------------------",
+    "  TORSION+count MINUS the bar     : +0.0000",
+    "  TORSION-only  MINUS the bar     : -0.0562",
+    "  TORSION-only  MINUS its displaced control : +0.0139",
+    "\n  VERDICT: PARTIAL",
+    "    Torsion beats its displaced control, so the track is reading something real about position -- ",
+    "    but it adds nothing beyond CTCF counting. Redundant, not absent.",
+    "    manifest: 4 inputs, coverage 10331/10331 (100.0%) by 'all', seed 6021, controls 3"
+  ]
+}

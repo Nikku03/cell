@@ -1,0 +1,158 @@
+{
+  "ok": true,
+  "disease": "psoriasis (IL23/IL17 axis)",
+  "apex": [
+    "IL23A",
+    "IL12B"
+  ],
+  "readout": [
+    "IL17A",
+    "IL17F",
+    "IL22",
+    "CCL20",
+    "IL21"
+  ],
+  "readout_on_disease": [
+    "IL17A",
+    "IL17F",
+    "IL22",
+    "CCL20",
+    "IL21"
+  ],
+  "celltype_localization": [
+    "13/21 group 3 innate lymphoid cell, human",
+    "7/21 CD14-positive monocyte",
+    "6/21 regulatory T cell",
+    "6/21 innate lymphoid cell",
+    "5/21 neutrophil",
+    "5/21 microglial cell",
+    "5/21 leukocyte",
+    "5/21 central nervous system macrophage",
+    "4/21 perivascular cell",
+    "4/21 myeloid cell",
+    "4/21 monocyte",
+    "4/21 mature T cell"
+  ],
+  "n_nodes": 39,
+  "alpha": 0.55,
+  "khop": 5,
+  "candidates": [
+    {
+      "gene": "IL23R",
+      "idx": 6369,
+      "influence": 0.031,
+      "disable": 1.0,
+      "activate": 0.0,
+      "rescue": 1.0,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": [],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "group 3 innate lymphoid cell, human"
+      ]
+    },
+    {
+      "gene": "IL23A",
+      "idx": 6368,
+      "influence": 0.017,
+      "disable": 1.0,
+      "activate": 0.0,
+      "rescue": 1.0,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": [
+        "inhibitor"
+      ],
+      "celltype_role": "not in disease compartment (paracrine/inducible)",
+      "celltype_hits": []
+    },
+    {
+      "gene": "STAT4",
+      "idx": 13545,
+      "influence": 0.101,
+      "disable": 0.6,
+      "activate": 0.0,
+      "rescue": 0.6,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": [],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "group 3 innate lymphoid cell, human",
+        "innate lymphoid cell",
+        "leukocyte",
+        "mature T cell"
+      ]
+    },
+    {
+      "gene": "STAT3",
+      "idx": 13544,
+      "influence": 0.125,
+      "disable": 0.2,
+      "activate": 0.0,
+      "rescue": 0.2,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": [],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "group 3 innate lymphoid cell, human",
+        "CD14-positive monocyte",
+        "regulatory T cell",
+        "innate lymphoid cell"
+      ]
+    },
+    {
+      "gene": "STAT1",
+      "idx": 13542,
+      "influence": 0.045,
+      "disable": 0.0,
+      "activate": 0.2,
+      "rescue": 0.2,
+      "best_dir": "activate",
+      "druggable": true,
+      "drug_actions": [],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "group 3 innate lymphoid cell, human",
+        "CD14-positive monocyte",
+        "regulatory T cell",
+        "microglial cell"
+      ]
+    },
+    {
+      "gene": "IRF4",
+      "idx": 6521,
+      "influence": 0.113,
+      "disable": 0.0,
+      "activate": 0.0,
+      "rescue": 0.0,
+      "best_dir": "disable",
+      "druggable": false,
+      "drug_actions": [],
+      "celltype_role": "not in disease compartment (paracrine/inducible)",
+      "celltype_hits": []
+    },
+    {
+      "gene": "JAK2",
+      "idx": 6628,
+      "influence": 0.012,
+      "disable": 0.0,
+      "activate": 0.0,
+      "rescue": 0.0,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": [
+        "inhibitor"
+      ],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "CD14-positive monocyte",
+        "microglial cell",
+        "central nervous system macrophage",
+        "myeloid cell"
+      ]
+    }
+  ]
+}

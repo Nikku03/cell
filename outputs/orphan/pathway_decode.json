@@ -1,0 +1,85 @@
+{
+ "n_labeled": 10197,
+ "ablation": {
+  "co-dependency only": {
+   "top1": 0.174,
+   "top3": 0.24466666666666667
+  },
+  "+ Perturb-seq signature": {
+   "top1": 0.17733333333333334,
+   "top3": 0.246
+  },
+  "+ PPI + complex (all help)": {
+   "top1": 0.21333333333333335,
+   "top3": 0.2613333333333333
+  }
+ },
+ "baseline_top1": 0.028,
+ "k": 15,
+ "sample": 1500,
+ "unannotated_fillable": 8246,
+ "confident_fill_frac": 0.015,
+ "confident_fill_est": 123,
+ "examples": [
+  {
+   "gene": "MORN2",
+   "pathway": "Generic Transcription Pathway",
+   "confidence": 0.4
+  },
+  {
+   "gene": "ZNF146",
+   "pathway": "Generic Transcription Pathway",
+   "confidence": 0.54
+  },
+  {
+   "gene": "TMEM242",
+   "pathway": "Cristae formation",
+   "confidence": 0.48
+  },
+  {
+   "gene": "H2BC4",
+   "pathway": "DNA methylation",
+   "confidence": 0.74
+  },
+  {
+   "gene": "H4C5",
+   "pathway": "DNA methylation",
+   "confidence": 0.71
+  },
+  {
+   "gene": "DOHH",
+   "pathway": "tRNA modification in the nucleus and cytosol",
+   "confidence": 0.34
+  },
+  {
+   "gene": "NEPRO",
+   "pathway": "tRNA processing in the nucleus",
+   "confidence": 0.59
+  },
+  {
+   "gene": "PSMD7",
+   "pathway": "Neddylation",
+   "confidence": 0.52
+  },
+  {
+   "gene": "YBEY",
+   "pathway": "rRNA modification in the mitochondrion",
+   "confidence": 0.28
+  },
+  {
+   "gene": "MYMX",
+   "pathway": "Generic Transcription Pathway",
+   "confidence": 0.25
+  },
+  {
+   "gene": "XPNPEP3",
+   "pathway": "Mitochondrial translation initiation",
+   "confidence": 0.59
+  },
+  {
+   "gene": "WASHC3",
+   "pathway": "Neddylation",
+   "confidence": 0.52
+  }
+ ]
+}

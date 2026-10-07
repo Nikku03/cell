@@ -1,0 +1,124 @@
+{
+ "test": "noise ceiling",
+ "ceiling": {
+  "pairs": {
+   "1v2": -0.9714814885652434,
+   "1v3": -0.8843840803759222,
+   "2v3": 0.23502247073230864
+  },
+  "mean": -0.5402810327362856
+ },
+ "variance": {
+  "total": 0.06942935914414071,
+  "within": 0.09837688859931767,
+  "between": 0.03663706294436815,
+  "snr": 0.3724153453723099,
+  "shrinkage": 0.5276883352517597
+ },
+ "bootstrap": {
+  "model": [
+   -0.07301852732619821,
+   -0.09204235450365408,
+   -0.0544506701323717
+  ],
+  "persistence": [
+   -0.059863360090956934,
+   -0.0757272335170995,
+   -0.04538261740172872
+  ],
+  "ceiling": [
+   -0.5408016476464333,
+   -0.5917347412180698,
+   -0.49429648439995694
+  ],
+  "n_boot": 1000
+ },
+ "plateau_ceiling": {
+  "pairs": [
+   0.888228734053484,
+   0.7946010996675319,
+   0.8185805242096758
+  ],
+  "mean": 0.8338034526435639
+ },
+ "gates": {
+  "K1": true,
+  "K2": false,
+  "K3": true,
+  "K4": false,
+  "K5": true
+ },
+ "void": [
+  "K4"
+ ],
+ "seconds": 30.27595806121826,
+ "log": [
+  "========================================================================================================",
+  "LOOP 216 -- WHAT IS COMPARED AGAINST WHAT, AND CAN ANY MODEL BEAT THE MEASUREMENT NOISE?",
+  "========================================================================================================",
+  "K1 THE DATA DICTIONARY",
+  "     RAW: A549 lung adenocarcinoma, 100 nM dexamethasone, ENCODE polyA RNA-seq.",
+  "          TPM matrix (56, 58735) = (samples, genes); 16 timepoints, replicates [1, 2, 3, 4]",
+  "     GRID USED: [30, 60, 120, 180, 240, 420, 480, 600, 720] minutes -- the 9 points where replicates [1, 2, 3] all exist and t >= 30",
+  "     TARGET m(t,g) = mean over replicates r of",
+  "               [ log2(1 + TPM(t,g,r)) - log2(1 + TPM(30,g,r)) ]",
+  "          EACH REPLICATE IS BASELINE-SUBTRACTED AGAINST ITS OWN t=30 BEFORE AVERAGING.",
+  "          That order matters and is deliberate: averaging TPM first and taking one log",
+  "          lets a replicate entering or leaving the series shift the level, which is the",
+  "          defect that put a batch step at t=30 in loop 191 and made every half-time",
+  "          28 minutes (loop_response_timing_d.py:302-317). My first statement of this",
+  "          dictionary had the order wrong and K1 caught it at 8.53e-01.",
+  "     SET POINT S(g) = mean of m over the last three grid points (480, 600, 720 min).",
+  "     FORWARD TARGET dm(t,g) = m(t,g) - m(t_prev,g). THIS is what persistence predicts",
+  "          as zero and what every R2 since loop 198 is computed on.",
+  "     INPUTS, per gene, all measured BEFORE or independently of the target:",
+  "          chip     9 ENCODE A549 ChIP/DNase tracks x 3 summaries = 27 columns",
+  "          gains    200 Perturb-seq CRISPRi signatures, K562 = 200 columns",
+  "          physics  879 JASPAR motifs x 3 chemical potentials = 2,637 columns",
+  "     independent recomputation of m from raw TPM: max abs difference 0.000e+00",
+  "     K1 PASS -- the stated target reproduces from raw TPM to 0.0e+00",
+  "K2 WHAT IS THE NOISE CEILING ON A PER-INTERVAL CHANGE?",
+  "       replicate 1 predicting replicate 2:  R2 -0.97148   pearson +0.1245",
+  "       replicate 1 predicting replicate 3:  R2 -0.88438   pearson +0.1195",
+  "       replicate 2 predicting replicate 3:  R2 +0.23502   pearson +0.6007",
+  "     mean replicate-to-replicate R2 on interval changes: -0.54028",
+  "     NO MODEL CAN BEAT THIS -- it is what the instrument says about itself",
+  "     K2 FAIL -- one replicate predicts another at R2 -0.5403 on the per-interval change. The target is mostly measurement noise, no model can predict noise, and every negative R2 since loop 198 is a property of the MEASUREMENT and not of the models",
+  "K3 IS PERSISTENCE THE OPTIMAL ESTIMATOR UNDER THAT NOISE?",
+  "     variance of the 3-replicate MEAN change      0.069429",
+  "     mean within-gene variance across replicates  0.098377",
+  "     implied signal variance                      0.036637",
+  "     signal-to-noise (signal / per-replicate noise) 0.3724",
+  "     optimal shrinkage for a linear predictor       0.5277",
+  "     (shrinkage near 0 means the variance-minimising prediction is near ZERO CHANGE)",
+  "     K3 PASS -- optimal shrinkage 0.528, a real fraction of the measured change is signal worth predicting",
+  "K4 WHERE DOES THE MODEL SIT RELATIVE TO THE CEILING?  (Monte Carlo over genes)",
+  "       model        R2 -0.07302   95% CI [-0.09204, -0.05445]",
+  "       persistence  R2 -0.05986   95% CI [-0.07573, -0.04538]",
+  "       CEILING      R2 -0.54080   95% CI [-0.59173, -0.49430]",
+  "     K4 VOID -- K2 did not pass, so there is nothing here to test",
+  "K5 DOES THE SAME HOLD FOR THE SET POINT?",
+  "       plateau, replicate 1 predicting 2:  R2 +0.88823",
+  "       plateau, replicate 1 predicting 3:  R2 +0.79460",
+  "       plateau, replicate 2 predicting 3:  R2 +0.81858",
+  "     plateau ceiling +0.83380   interval ceiling -0.54028   difference +1.37408",
+  "     K5 PASS -- the plateau is measurable at R2 0.834 while a single interval is at -0.540. The problem is the DIFFERENCING, not the data: averaging three timepoints keeps the signal and cancels the noise, subtracting two adjacent ones cancels the signal and keeps it",
+  "K6 WHAT THIS CANNOT SHOW",
+  "     A replicate ceiling assumes the replicates are independent measurements of the same",
+  "     quantity. ENCODE isogenic replicates share library prep and batch, so they",
+  "     UNDERSTATE the true noise and the real ceiling is lower than measured here.",
+  "     The ceiling is for the target AS DEFINED -- a difference of two three-replicate",
+  "     means. A different target definition, such as a fitted trajectory slope, would have",
+  "     a different and probably higher ceiling, and that is the constructive reading.",
+  "     Nothing here says the models are good. It says the target they were scored on may",
+  "     not have been predictable, which is a different and more useful claim.",
+  "========================================================================================================",
+  "  K1  PASS",
+  "  K2  FAIL",
+  "  K3  PASS",
+  "  K4  VOID",
+  "  K5  PASS",
+  "  3/4   [30s]   (1 VOID: K4)",
+  "========================================================================================================"
+ ]
+}

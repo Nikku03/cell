@@ -1,0 +1,76 @@
+=================================================================================================
+A DYNAMIC MEMORY BANK: THE CELL AS STATE THAT CHANGES ITSELF
+=================================================================================================
+  genes 16,492  protein 16,015  isoforms 16,491  DBD bounds 123  product tiers 16,492
+  signed edges loaded: 71,052 from 4,320 regulators
+  perturbation: ['TP53', 'NR3C1', 'RELA', 'MYC', 'STAT3'] each set DOWN (-1), a knockdown
+
+=================================================================================================
+D1  PROVENANCE COMPLETENESS AND REPLAY (BLOCKING)
+=================================================================================================
+  journal entries                    11,413
+  state genes assigned                5,617
+  replay reproduces state exactly  True
+  state changes with no cited rule        0
+  state fingerprint                6e5ddfa44841962c
+
+  D1: PASS -- every change cites a rule and the journal replays to the same state
+
+=================================================================================================
+D0  THE CEILING GATE: DOES PROPAGATION CARRY INFORMATION?
+=================================================================================================
+                                     real   sign-shuffled
+    genes reached                   5,617           5,670
+    % of genome                     34.1%           34.4%
+    contradictions                  1,169           1,507
+
+  D0: PASS -- reached 34.1% of the genome (neither trivial nor everything)
+
+  AND D0's CONTROL IS THE WRONG CONTROL FOR REACH, WHICH IS A FLAW IN MY OWN GATE.
+  Shuffling signs preserves the topology exactly, so REACH cannot differ by construction
+  -- 5,617 vs 5,670 is not evidence of anything. The quantity the
+  control CAN speak to is contradiction count, and that is D3. Recorded rather than
+  presented as a passed comparison.
+
+=================================================================================================
+D2  THE INVARIANTS, AND WHETHER THEY BITE
+=================================================================================================
+    FIRED   contradiction: incoming signs disagree              1,169
+    FIRED   regulator blocked: no protein                         100
+    silent  regulator blocked: all isoforms DBD-dead                0
+    FIRED   direction on a gene with no protein record             63
+    FIRED   direction on a tier-5 gene (no product record)         40
+
+  4 of 5 invariants fired.
+  D2: PASS -- the checks bite
+    e.g. BCL2: UP from ['NR3C1', 'TP53'] vs DOWN from ['RELA', 'RELA']  <- 7 votes, network cannot reconcile them
+    e.g. CSN2: UP from ['RELA', 'RELA'] vs DOWN from ['NR3C1', 'TP53']  <- 6 votes, network cannot reconcile them
+    e.g. CRH: UP from ['NR3C1'] vs DOWN from ['RELA']  <- 2 votes, network cannot reconcile them
+
+=================================================================================================
+D3  SELF-REVISION, AGAINST THE MATCHED CONTROL
+=================================================================================================
+  edges downgraded, real network          4,257
+  edges downgraded, sign-shuffled         5,418
+  contradictions, real / shuffled      1,169 / 1,507  = 0.776x  (22.4% fewer)
+
+  D3: PASS -- shuffled signs produce MORE contradictions, so the real signs carry information
+  most-contradicted edges: [('RUNX2->GNAS', -4), ('RELA->CDKN2A', -4), ('CUX1->PIK3IP1', -3), ('RELA->BMP4', -3), ('RELA->MET', -3)]
+
+  bank written to memory_bank/cell/: state.json, journal.jsonl, edge_confidence.json, schema.json
+
+=================================================================================================
+D4  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. It is not a simulator. No magnitudes, no time, no concentrations -- direction only,
+     because the record measured that the rate constants do not exist.
+  2. 'Unanimous incoming sign' is a rule I chose, not a measured mechanism. Real genes
+     integrate regulators non-linearly and this treats disagreement as unexplainable
+     rather than resolving it.
+  3. The signs inherit the default-activation defect: about half the regulatory signs are
+     a rule, not evidence. The sig layer (97.1% signed) is the trustworthy half.
+  4. A contradiction names an edge the network cannot reconcile WITH ITSELF. It is not
+     evidence against the edge in biology -- no measurement enters this loop anywhere.
+     Making that loop touch data is the next step, and it is the whole remaining problem.
+
+  runtime 2.8s

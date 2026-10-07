@@ -1,0 +1,59 @@
+{
+ "by_class": {
+  "transporter": {
+   "n": 2,
+   "tide_frac": 0.283,
+   "codep_cov": 0.0,
+   "codep_enr": 0.0,
+   "reg_cov": 0.0
+  },
+  "mito_energy": {
+   "n": 7,
+   "tide_frac": 0.231,
+   "codep_cov": 0.0,
+   "codep_enr": 0.0,
+   "reg_cov": 0.0
+  },
+  "kinase_phos": {
+   "n": 5,
+   "tide_frac": 0.356,
+   "codep_cov": 0.0,
+   "codep_enr": 0.0,
+   "reg_cov": 0.0
+  },
+  "ribo_transl": {
+   "n": 63,
+   "tide_frac": 0.372,
+   "codep_cov": 0.003,
+   "codep_enr": 13.086,
+   "reg_cov": 0.0
+  },
+  "proteostasis": {
+   "n": 20,
+   "tide_frac": 0.107,
+   "codep_cov": 0.01,
+   "codep_enr": 4.685,
+   "reg_cov": 0.0
+  },
+  "TF_regulator": {
+   "n": 72,
+   "tide_frac": 0.209,
+   "codep_cov": 0.0,
+   "codep_enr": 0.13,
+   "reg_cov": 0.003
+  },
+  "other": {
+   "n": 209,
+   "tide_frac": 0.236,
+   "codep_cov": 0.002,
+   "codep_enr": 2.001,
+   "reg_cov": 0.0
+  }
+ },
+ "hubness_vs_tidefrac_spearman": -0.058,
+ "util_tidefrac": 0.304,
+ "tf_tidefrac": 0.209,
+ "util_codep_enrichment": 9.113,
+ "verdict": "SHARED DEPENDENCY (shared_dependency.py): the zoom-out -- utility-hub knockouts (transporter/energy/kinase/ribosome/proteostasis) break a SHARED function many proteins depend on, so their response should be co-dependency-driven and/or generic (tide). K562. Utility-hub KOs are 30% tide (generic) vs TF/regulator KOs 21%; hub-ness (co-dependency degree) vs tide-fraction Spearman -0.06. So the user is RIGHT that hub knockouts give a more GENERIC response -- losing a shared utility triggers the common stress program (the tide), which is exactly why their response is more tide-dominated. But for the tide-removed SPECIFIC part, co-dependency (shared-function) edges explain it at only 9.11x enrichment -- real signal, so shared-dependency edges DO add a new explanatory channel for hub knockouts. READING: the shared-dependency idea explains the GENERIC part of the response (the tide is the common-utility-loss program), which is why we removed it -- but the knockout-SPECIFIC residue, even for utility hubs, remains the idiosyncratic part no shared-function edge names. It reframes WHAT the tide is (a real, mechanistic shared-dependency response) more than it moves the specific ceiling. Deterministic.",
+ "note": "SHARED DEPENDENCY (shared_dependency.py): the zoom-out -- utility-hub knockouts (transporter/energy/kinase/ribosome/proteostasis) break a SHARED function many proteins depend on, so their response should be co-dependency-driven and/or generic (tide). K562. Utility-hub KOs are 30% tide (generic) vs TF/regulator KOs 21%; hub-ness (co-dependency degree) vs tide-fraction Spearman -0.06. So the user is RIGHT that hub knockouts give a more GENERIC response -- losing a shared utility triggers the common stress program (the tide), which is exactly why their response is more tide-dominated. But for the tide-removed SPECIFIC part, co-dependency (shared-function) edges explain it at only 9.11x enrichment -- real signal, so shared-dependency edges DO add a new explanatory channel for hub knockouts. READING: the shared-dependency idea explains the GENERIC part of the response (the tide is the common-utility-loss program), which is why we removed it -- but the knockout-SPECIFIC residue, even for utility hubs, remains the idiosyncratic part no shared-function edge names. It reframes WHAT the tide is (a real, mechanistic shared-dependency response) more than it moves the specific ceiling. Deterministic."
+}

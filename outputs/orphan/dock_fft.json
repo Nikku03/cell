@@ -1,0 +1,652 @@
+{
+  "test": "dock_fft",
+  "grid": 96,
+  "spacing": 1.4,
+  "n_rot": 600,
+  "skin": 2,
+  "weights_swept": [
+    1.0,
+    3.0,
+    5.0,
+    10.0,
+    15.0,
+    30.0,
+    50.0,
+    100.0
+  ],
+  "clash_w_chosen": 50.0,
+  "tune_pdbs": [
+    "1ACB",
+    "1AK4",
+    "1B2S",
+    "1B2U",
+    "1B3S",
+    "1BRS",
+    "1C1Y",
+    "1CBW"
+  ],
+  "test_pdbs": [
+    "1CHO",
+    "1CSE",
+    "1CSO",
+    "1CT0",
+    "1CT2",
+    "1CT4",
+    "1DVF",
+    "1E50",
+    "1E96",
+    "1EAW",
+    "1EFN",
+    "1EMV"
+  ],
+  "tune_median_rank_by_w": {
+    "1.0": 26263.0,
+    "3.0": 16417.5,
+    "5.0": 768.5,
+    "10.0": 19.0,
+    "15.0": 6.5,
+    "30.0": 2.5,
+    "50.0": 1.0,
+    "100.0": 1.0
+  },
+  "representation_fail": [],
+  "near_native_A": 5.0,
+  "complexes": [
+    {
+      "pdb": "1CHO",
+      "chains": [
+        "F",
+        "G"
+      ],
+      "n_contacts": 1996,
+      "rg_ligand": 14.546003529676518,
+      "rot_tol_deg": 19.694680877874262,
+      "p_coverage": 0.7258796434631969,
+      "n_poses": 2400,
+      "best_rmsd": 14.74537717629324,
+      "rank_of_best_rmsd": 1036,
+      "near_native_frac": 0.0,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      },
+      "native_rot_best_rmsd": 0.28320952836556523,
+      "secs": 18.14982295036316
+    },
+    {
+      "pdb": "1CSE",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "n_contacts": 530,
+      "rg_ligand": 11.095772486939358,
+      "rot_tol_deg": 25.81874294039653,
+      "p_coverage": 0.9460521396924373,
+      "n_poses": 2400,
+      "best_rmsd": 5.853631863108785,
+      "rank_of_best_rmsd": 299,
+      "near_native_frac": 0.0,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      },
+      "native_rot_best_rmsd": 1.9504201833421984,
+      "secs": 17.686522006988525
+    },
+    {
+      "pdb": "1CSO",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "n_contacts": 453,
+      "rg_ligand": 10.124284191239376,
+      "rot_tol_deg": 28.296212567136756,
+      "p_coverage": 0.978644282583561,
+      "n_poses": 2400,
+      "best_rmsd": 3.761069240423829,
+      "rank_of_best_rmsd": 264,
+      "near_native_frac": 0.0016666666666666668,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0016666666666667052,
+        "10": 0.016542220605088476,
+        "100": 0.15363596462686013
+      },
+      "native_rot_best_rmsd": 0.7920073702607228,
+      "secs": 17.19320249557495
+    },
+    {
+      "pdb": "1CT0",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "n_contacts": 489,
+      "rg_ligand": 10.121305558369288,
+      "rot_tol_deg": 28.304539954188296,
+      "p_coverage": 0.9787169360603827,
+      "n_poses": 2400,
+      "best_rmsd": 4.027057916433033,
+      "rank_of_best_rmsd": 1365,
+      "near_native_frac": 0.0016666666666666668,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": true
+      },
+      "chance": {
+        "1": 0.0016666666666667052,
+        "10": 0.016542220605088476,
+        "100": 0.15363596462686013
+      },
+      "native_rot_best_rmsd": 21.715705078436777,
+      "secs": 16.579902410507202
+    },
+    {
+      "pdb": "1CT2",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "n_contacts": 457,
+      "rg_ligand": 10.111564942834029,
+      "rot_tol_deg": 28.331806123486007,
+      "p_coverage": 0.9789533968311129,
+      "n_poses": 2400,
+      "best_rmsd": 3.9039834606811086,
+      "rank_of_best_rmsd": 1066,
+      "near_native_frac": 0.00125,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0012499999999999734,
+        "10": 0.012429921363072638,
+        "100": 0.11757209729646811
+      },
+      "native_rot_best_rmsd": 0.7648824395943006,
+      "secs": 18.02223038673401
+    },
+    {
+      "pdb": "1CT4",
+      "chains": [
+        "E",
+        "I"
+      ],
+      "n_contacts": 458,
+      "rg_ligand": 10.11916706478034,
+      "rot_tol_deg": 28.31052158062481,
+      "p_coverage": 0.9787689975606578,
+      "n_poses": 2400,
+      "best_rmsd": 3.994226957316726,
+      "rank_of_best_rmsd": 348,
+      "near_native_frac": 0.00125,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0012499999999999734,
+        "10": 0.012429921363072638,
+        "100": 0.11757209729646811
+      },
+      "native_rot_best_rmsd": 0.755770715784303,
+      "secs": 17.653253316879272
+    },
+    {
+      "pdb": "1DVF",
+      "chains": [
+        "C",
+        "D"
+      ],
+      "n_contacts": 589,
+      "rg_ligand": 14.020906275723114,
+      "rot_tol_deg": 20.432266783028386,
+      "p_coverage": 0.7643221595370261,
+      "n_poses": 2400,
+      "best_rmsd": 5.697064676622666,
+      "rank_of_best_rmsd": 143,
+      "near_native_frac": 0.0,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      },
+      "native_rot_best_rmsd": 1.829879879128621,
+      "secs": 18.190248727798462
+    },
+    {
+      "pdb": "1E50",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_contacts": 711,
+      "rg_ligand": 15.191727096979472,
+      "rot_tol_deg": 18.857559495152554,
+      "p_coverage": 0.6788751172817273,
+      "n_poses": 2400,
+      "best_rmsd": 6.527330644642334,
+      "rank_of_best_rmsd": 1677,
+      "near_native_frac": 0.0,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      },
+      "native_rot_best_rmsd": 1.4693594563763703,
+      "secs": 17.081470727920532
+    },
+    {
+      "pdb": "1E96",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_contacts": 324,
+      "rg_ligand": 17.1186759089703,
+      "rot_tol_deg": 16.73487477003375,
+      "p_coverage": 0.5478151766396109,
+      "n_poses": 2400,
+      "best_rmsd": 15.570978096418282,
+      "rank_of_best_rmsd": 759,
+      "near_native_frac": 0.0,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      },
+      "native_rot_best_rmsd": 1.3678833895394824,
+      "secs": 17.185302019119263
+    },
+    {
+      "pdb": "1EAW",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_contacts": 628,
+      "rg_ligand": 10.759104248103927,
+      "rot_tol_deg": 26.626649483008556,
+      "p_coverage": 0.9593699793992844,
+      "n_poses": 2400,
+      "best_rmsd": 4.155564056272324,
+      "rank_of_best_rmsd": 986,
+      "near_native_frac": 0.0008333333333333334,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0008333333333333526,
+        "10": 0.008302152676606056,
+        "100": 0.07998754856093948
+      },
+      "native_rot_best_rmsd": 1.6925675853376372,
+      "secs": 16.346943378448486
+    },
+    {
+      "pdb": "1EFN",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_contacts": 446,
+      "rg_ligand": 13.355577010354864,
+      "rot_tol_deg": 21.45013258081612,
+      "p_coverage": 0.8122310772297986,
+      "n_poses": 2400,
+      "best_rmsd": 3.540874192543911,
+      "rank_of_best_rmsd": 90,
+      "near_native_frac": 0.0008333333333333334,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": true
+      },
+      "chance": {
+        "1": 0.0008333333333333526,
+        "10": 0.008302152676606056,
+        "100": 0.07998754856093948
+      },
+      "native_rot_best_rmsd": 1.1590537602299433,
+      "secs": 16.30965304374695
+    },
+    {
+      "pdb": "1EMV",
+      "chains": [
+        "A",
+        "B"
+      ],
+      "n_contacts": 477,
+      "rg_ligand": 14.177200898958196,
+      "rot_tol_deg": 20.207014036632813,
+      "p_coverage": 0.7528992695272141,
+      "n_poses": 2400,
+      "best_rmsd": 5.7956613379908495,
+      "rank_of_best_rmsd": 613,
+      "near_native_frac": 0.0,
+      "hits": {
+        "1": false,
+        "10": false,
+        "100": false
+      },
+      "chance": {
+        "1": 0.0,
+        "10": 0.0,
+        "100": 0.0
+      },
+      "native_rot_best_rmsd": 1.5424247259558164,
+      "secs": 15.675711154937744
+    }
+  ],
+  "top_k": {
+    "1": {
+      "hits": 0,
+      "expected_by_chance": 0.007500000000000062
+    },
+    "10": {
+      "hits": 0,
+      "expected_by_chance": 0.07454858928953434
+    },
+    "100": {
+      "hits": 2,
+      "expected_by_chance": 0.7023912209685355
+    }
+  },
+  "n_test": 12,
+  "median_best_rmsd": 4.926314366447494,
+  "median_native_rot_best_rmsd": 1.4186214229579264,
+  "sanity": [
+    {
+      "pdb": "1ACB",
+      "pair": "E/I",
+      "n_contacts": 509,
+      "nat_interlock": 177.0,
+      "nat_clash": 4.722724497696618e-06,
+      "max_interlock": 1056.0,
+      "nat_over_best": 0.16761363636363635
+    },
+    {
+      "pdb": "1AK4",
+      "pair": "B/C",
+      "n_contacts": 351,
+      "nat_interlock": 153.00001525878906,
+      "nat_clash": 6.777606813557213e-06,
+      "max_interlock": 1758.0,
+      "nat_over_best": 0.08703072540317922
+    },
+    {
+      "pdb": "1B2S",
+      "pair": "B/E",
+      "n_contacts": 574,
+      "nat_interlock": 180.0,
+      "nat_clash": -6.35782896551973e-07,
+      "max_interlock": 1336.0,
+      "nat_over_best": 0.1347305389221557
+    },
+    {
+      "pdb": "1B2U",
+      "pair": "B/E",
+      "n_contacts": 482,
+      "nat_interlock": 177.0000457763672,
+      "nat_clash": 6.35782896551973e-07,
+      "max_interlock": 1202.0,
+      "nat_over_best": 0.1472546137906549
+    },
+    {
+      "pdb": "1B3S",
+      "pair": "B/E",
+      "n_contacts": 470,
+      "nat_interlock": 180.99993896484375,
+      "nat_clash": 8.265177712019067e-06,
+      "max_interlock": 1180.0001220703125,
+      "nat_over_best": 0.1533897629156843
+    },
+    {
+      "pdb": "1BRS",
+      "pair": "B/E",
+      "n_contacts": 568,
+      "nat_interlock": 173.00009155273438,
+      "nat_clash": -1.9073486328125e-06,
+      "max_interlock": 1246.0,
+      "nat_over_best": 0.138844375242965
+    },
+    {
+      "pdb": "1C1Y",
+      "pair": "A/B",
+      "n_contacts": 485,
+      "nat_interlock": 153.99998474121094,
+      "nat_clash": 3.814697265625e-06,
+      "max_interlock": 1219.0001220703125,
+      "nat_over_best": 0.12633303471673332
+    },
+    {
+      "pdb": "1CBW",
+      "pair": "B/C",
+      "n_contacts": 1905,
+      "nat_interlock": 716.0,
+      "nat_clash": 1.0000102519989014,
+      "max_interlock": 1179.0,
+      "nat_over_best": 0.6072943172179813
+    },
+    {
+      "pdb": "1CHO",
+      "pair": "F/G",
+      "n_contacts": 1996,
+      "nat_interlock": 713.0,
+      "nat_clash": 2.0000085830688477,
+      "max_interlock": 1195.0,
+      "nat_over_best": 0.596652719665272
+    },
+    {
+      "pdb": "1CSE",
+      "pair": "E/I",
+      "n_contacts": 530,
+      "nat_interlock": 200.00003051757812,
+      "nat_clash": 7.498568720620824e-06,
+      "max_interlock": 1028.000244140625,
+      "nat_over_best": 0.19455251266479193
+    },
+    {
+      "pdb": "1CSO",
+      "pair": "E/I",
+      "n_contacts": 453,
+      "nat_interlock": 171.0,
+      "nat_clash": 1.0000003576278687,
+      "max_interlock": 726.0001220703125,
+      "nat_over_best": 0.23553715047920998
+    },
+    {
+      "pdb": "1CT0",
+      "pair": "E/I",
+      "n_contacts": 489,
+      "nat_interlock": 171.0,
+      "nat_clash": 2.0000038146972656,
+      "max_interlock": 739.0,
+      "nat_over_best": 0.2313937753721245
+    },
+    {
+      "pdb": "1CT2",
+      "pair": "E/I",
+      "n_contacts": 457,
+      "nat_interlock": 177.00003051757812,
+      "nat_clash": 0.9999994039535522,
+      "max_interlock": 732.0,
+      "nat_over_best": 0.2418033203792051
+    },
+    {
+      "pdb": "1CT4",
+      "pair": "E/I",
+      "n_contacts": 458,
+      "nat_interlock": 181.0,
+      "nat_clash": 2.000002861022949,
+      "max_interlock": 736.0,
+      "nat_over_best": 0.24592391304347827
+    },
+    {
+      "pdb": "1DVF",
+      "pair": "C/D",
+      "n_contacts": 589,
+      "nat_interlock": 250.00009155273438,
+      "nat_clash": 0.9999930262565613,
+      "max_interlock": 1416.0,
+      "nat_over_best": 0.17655373697227003
+    },
+    {
+      "pdb": "1E50",
+      "pair": "A/B",
+      "n_contacts": 711,
+      "nat_interlock": 315.00006103515625,
+      "nat_clash": 2.00000262260437,
+      "max_interlock": 1547.000244140625,
+      "nat_over_best": 0.20361991682175987
+    },
+    {
+      "pdb": "1E96",
+      "pair": "A/B",
+      "n_contacts": 324,
+      "nat_interlock": 150.00003051757812,
+      "nat_clash": 1.0172526344831567e-05,
+      "max_interlock": 2439.0,
+      "nat_over_best": 0.06150062751848222
+    },
+    {
+      "pdb": "1EAW",
+      "pair": "A/B",
+      "n_contacts": 628,
+      "nat_interlock": 247.0000457763672,
+      "nat_clash": 1.2873783816758078e-05,
+      "max_interlock": 920.0,
+      "nat_over_best": 0.2684783106264861
+    },
+    {
+      "pdb": "1EFN",
+      "pair": "A/B",
+      "n_contacts": 446,
+      "nat_interlock": 121.0,
+      "nat_clash": -1.413393761140469e-06,
+      "max_interlock": 1329.0001220703125,
+      "nat_over_best": 0.09104589080963105
+    },
+    {
+      "pdb": "1EMV",
+      "pair": "A/B",
+      "n_contacts": 477,
+      "nat_interlock": 208.0,
+      "nat_clash": 1.0000098943710327,
+      "max_interlock": 1715.000244140625,
+      "nat_over_best": 0.12128278156848157
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "EXHAUSTIVE RIGID DOCKING BY FFT -- does the TRUE pose rank near the top?",
+    "====================================================================================================",
+    "  grid 96^3 at 1.4 A (134 A box) | 600 blind rotations + the native",
+    "  rotation as a diagnostic | vdW-radius rasterisation, 2-cell outward shell",
+    "  clash weight TUNED on the first 8 complexes, blind-tested on the rest -- never both",
+    "  PREDECLARED: near-native in top-10 for a majority of TEST complexes AND above the chance rate",
+    "  1-(1-f)^10 => search AND score work. Hit rate ~ chance => search works, score does not.",
+    "\n  345 structures in the cache; selecting complexes with a real interface (>= 100 atom pairs within 5 A)",
+    "    20 usable   TUNE ['1ACB', '1AK4', '1B2S', '1B2U', '1B3S', '1BRS', '1C1Y', '1CBW']",
+    "                    TEST ['1CHO', '1CSE', '1CSO', '1CT0', '1CT2', '1CT4', '1DVF', '1E50', '1E96', '1EAW', '1EFN', '1EMV']",
+    "\n  SANITY -- native pose components (the check the first version of this file did not have)",
+    "    pdb     pair  contacts  nat interlock  nat clash  best cell  nat/best",
+    "    1ACB     E/I       509            177          0       1056    0.1676",
+    "    1AK4     B/C       351            153          0       1758    0.0870",
+    "    1B2S     B/E       574            180         -0       1336    0.1347",
+    "    1B2U     B/E       482            177          0       1202    0.1473",
+    "    1B3S     B/E       470            181          0       1180    0.1534",
+    "    1BRS     B/E       568            173         -0       1246    0.1388",
+    "    1C1Y     A/B       485            154          0       1219    0.1263",
+    "    1CBW     B/C      1905            716          1       1179    0.6073",
+    "    1CHO     F/G      1996            713          2       1195    0.5967",
+    "    1CSE     E/I       530            200          0       1028    0.1946",
+    "    1CSO     E/I       453            171          1        726    0.2355",
+    "    1CT0     E/I       489            171          2        739    0.2314",
+    "    1CT2     E/I       457            177          1        732    0.2418",
+    "    1CT4     E/I       458            181          2        736    0.2459",
+    "    1DVF     C/D       589            250          1       1416    0.1766",
+    "    1E50     A/B       711            315          2       1547    0.2036",
+    "    1E96     A/B       324            150          0       2439    0.0615",
+    "    1EAW     A/B       628            247          0        920    0.2685",
+    "    1EFN     A/B       446            121         -0       1329    0.0910",
+    "    1EMV     A/B       477            208          1       1715    0.1213",
+    "\n  TUNING the clash weight on 8 held-out complexes: rank of the native TRANSLATION at the native rotation, out of 884,736",
+    "    pdb          w=1       w=3       w=5      w=10      w=15      w=30      w=50     w=100",
+    "    1ACB      36,728    18,218     1,371        38         8         1         1         1",
+    "    1AK4      52,015    34,981     4,195        78         8         2         1         1",
+    "    1B2S      26,614    16,069       760        18         5         3         1         0",
+    "    1B2U      25,074    13,670       511        12         8         4         2         2",
+    "    1B3S      24,515    12,133       342        15         4         2         0         0",
+    "    1BRS      25,912    16,766       777        20         5         3         1         1",
+    "    1C1Y      38,083    28,006     4,678        75        17         3         1         1",
+    "    1CBW       3,011        10         5         3         2         0         0         0",
+    "    MEDIAN    26,263    16,418       768        19         6         2         1         1",
+    "    -> clash weight 50 (median native rank 1). The TEST complexes have not been looked at.",
+    "\n  BLIND SEARCH on 12 complexes never used for tuning",
+    "    1CHO F/G: 2400 poses in 18s | best RMSD  14.7 A at rank 1036 | top1 False top10 False (chance 0.000) | native-rot best   0.3 A | P(cov) 0.73",
+    "    1CSE E/I: 2400 poses in 18s | best RMSD   5.9 A at rank  299 | top1 False top10 False (chance 0.000) | native-rot best   2.0 A | P(cov) 0.95",
+    "    1CSO E/I: 2400 poses in 17s | best RMSD   3.8 A at rank  264 | top1 False top10 False (chance 0.017) | native-rot best   0.8 A | P(cov) 0.98",
+    "    1CT0 E/I: 2400 poses in 17s | best RMSD   4.0 A at rank 1365 | top1 False top10 False (chance 0.017) | native-rot best  21.7 A | P(cov) 0.98",
+    "    1CT2 E/I: 2400 poses in 18s | best RMSD   3.9 A at rank 1066 | top1 False top10 False (chance 0.012) | native-rot best   0.8 A | P(cov) 0.98",
+    "    1CT4 E/I: 2400 poses in 18s | best RMSD   4.0 A at rank  348 | top1 False top10 False (chance 0.012) | native-rot best   0.8 A | P(cov) 0.98",
+    "    1DVF C/D: 2400 poses in 18s | best RMSD   5.7 A at rank  143 | top1 False top10 False (chance 0.000) | native-rot best   1.8 A | P(cov) 0.76",
+    "    1E50 A/B: 2400 poses in 17s | best RMSD   6.5 A at rank 1677 | top1 False top10 False (chance 0.000) | native-rot best   1.5 A | P(cov) 0.68",
+    "    1E96 A/B: 2400 poses in 17s | best RMSD  15.6 A at rank  759 | top1 False top10 False (chance 0.000) | native-rot best   1.4 A | P(cov) 0.55",
+    "    1EAW A/B: 2400 poses in 16s | best RMSD   4.2 A at rank  986 | top1 False top10 False (chance 0.008) | native-rot best   1.7 A | P(cov) 0.96",
+    "    1EFN A/B: 2400 poses in 16s | best RMSD   3.5 A at rank   90 | top1 False top10 False (chance 0.008) | native-rot best   1.2 A | P(cov) 0.81",
+    "    1EMV A/B: 2400 poses in 16s | best RMSD   5.8 A at rank  613 | top1 False top10 False (chance 0.000) | native-rot best   1.5 A | P(cov) 0.75",
+    "\n  12 TEST complexes docked blind at clash weight 50",
+    "\n     top-k       hits   expected by chance",
+    "         1       0/12                 0.01",
+    "        10       0/12                 0.07",
+    "       100       2/12                 0.70",
+    "\n    median best RMSD anywhere in the blind pose set : 4.9 A",
+    "    median best RMSD at the NATIVE rotation          : 1.4 A  <- translation scoring alone",
+    "    median P(rotation set covers the native)         : 0.88",
+    "\n  READING",
+    "  The search REACHES near-native (6/12 complexes have a pose <= 5.0 A,",
+    "  median 4.9 A) but does not RANK it: top-10 hits 0 vs 0.1 by chance.",
+    "  Sampling is solved; RANKING is the open problem, and more rotations cannot fix a score that",
+    "  cannot tell the right pose from the wrong one."
+  ]
+}

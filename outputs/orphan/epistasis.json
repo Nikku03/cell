@@ -1,0 +1,126 @@
+{
+  "data": "Norman 2019 CRISPRa GI map (K562)",
+  "n_doubles_tested": 131,
+  "mean_r_additive": 0.884,
+  "mean_r_best_single": 0.832,
+  "additive_lift_over_single": 0.051,
+  "mean_epistasis_frac": 0.541,
+  "frac_pairs_strong_synergy(>0.5)": 0.359,
+  "most_synergistic_pairs": [
+    {
+      "pair": "DUSP9_MAPK1",
+      "r_additive": 0.796,
+      "r_best_single": 0.708,
+      "epistasis_frac": 2.315,
+      "double_mag": 5.39
+    },
+    {
+      "pair": "ZC3HAV1_CEBPE",
+      "r_additive": 0.733,
+      "r_best_single": 0.546,
+      "epistasis_frac": 2.307,
+      "double_mag": 4.11
+    },
+    {
+      "pair": "UBASH3B_OSR2",
+      "r_additive": 0.678,
+      "r_best_single": 0.785,
+      "epistasis_frac": 1.883,
+      "double_mag": 3.21
+    },
+    {
+      "pair": "CEBPE_KLF1",
+      "r_additive": 0.686,
+      "r_best_single": 0.7,
+      "epistasis_frac": 1.857,
+      "double_mag": 4.92
+    },
+    {
+      "pair": "PTPN12_OSR2",
+      "r_additive": 0.682,
+      "r_best_single": 0.513,
+      "epistasis_frac": 1.709,
+      "double_mag": 3.44
+    },
+    {
+      "pair": "MAPK1_PRTG",
+      "r_additive": 0.814,
+      "r_best_single": 0.668,
+      "epistasis_frac": 1.386,
+      "double_mag": 5.94
+    },
+    {
+      "pair": "IGDCC3_MAPK1",
+      "r_additive": 0.833,
+      "r_best_single": 0.614,
+      "epistasis_frac": 1.286,
+      "double_mag": 5.97
+    },
+    {
+      "pair": "SET_CEBPE",
+      "r_additive": 0.9,
+      "r_best_single": 0.816,
+      "epistasis_frac": 1.279,
+      "double_mag": 8.43
+    },
+    {
+      "pair": "MAP2K6_SPI1",
+      "r_additive": 0.788,
+      "r_best_single": 0.707,
+      "epistasis_frac": 1.211,
+      "double_mag": 4.55
+    },
+    {
+      "pair": "AHR_KLF1",
+      "r_additive": 0.788,
+      "r_best_single": 0.848,
+      "epistasis_frac": 1.191,
+      "double_mag": 6.02
+    }
+  ],
+  "most_additive_pairs": [
+    {
+      "pair": "MAP2K3_ELMSAN1",
+      "r_additive": 0.935,
+      "r_best_single": 0.878,
+      "epistasis_frac": 0.21,
+      "double_mag": 12.71
+    },
+    {
+      "pair": "SAMD1_UBASH3B",
+      "r_additive": 0.941,
+      "r_best_single": 0.904,
+      "epistasis_frac": 0.209,
+      "double_mag": 13.28
+    },
+    {
+      "pair": "POU3F2_FOXL2",
+      "r_additive": 0.945,
+      "r_best_single": 0.9,
+      "epistasis_frac": 0.201,
+      "double_mag": 17.1
+    },
+    {
+      "pair": "FOXA3_HOXB9",
+      "r_additive": 0.944,
+      "r_best_single": 0.892,
+      "epistasis_frac": 0.199,
+      "double_mag": 15.5
+    },
+    {
+      "pair": "FOXL2_HOXB9",
+      "r_additive": 0.933,
+      "r_best_single": 0.894,
+      "epistasis_frac": 0.197,
+      "double_mag": 18.56
+    },
+    {
+      "pair": "FOXA1_HOXB9",
+      "r_additive": 0.936,
+      "r_best_single": 0.891,
+      "epistasis_frac": 0.195,
+      "double_mag": 15.03
+    }
+  ],
+  "verdict": "Additive predicts the real double at r=0.88 (vs best single r=0.83, so combining the two singles genuinely adds +0.05). Mean epistasis residual = 54% of the double's magnitude; 47/131 pairs are strongly non-additive (>50% residual). => simulate/cure's additive model is a REAL first-order predictor, but 47 pairs need the measured double \u2014 epistasis is not negligible, and it is exactly the synergy combination therapy cares about."
+}

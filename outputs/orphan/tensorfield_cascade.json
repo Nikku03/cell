@@ -1,0 +1,18 @@
+{
+ "n_knockouts": 88,
+ "n_pairs": 23040,
+ "base_rate": 0.0625,
+ "prior_only": 0.5542,
+ "rwr_scalar_mechanism": 0.0637,
+ "tensorfield_mechanism": 0.0699,
+ "rwr_plus_tensorfield_mechanism": 0.0841,
+ "full_with_prior": 0.5588,
+ "prior_only_lift": 8.87,
+ "rwr_scalar_mechanism_lift": 1.02,
+ "tensorfield_mechanism_lift": 1.12,
+ "rwr_plus_tensorfield_mechanism_lift": 1.35,
+ "full_with_prior_lift": 8.94,
+ "tensorfield_beats_rwr": false,
+ "verdict": "HONEST NEGATIVE -- the continuous equivariant tensor field lands at the SAME wall as the scalar RWR (tensor 0.0699 vs RWR 0.0637, both ~chance / ~1.12x). Adding a directional, rotation-equivariant vector field on top of the walk did NOT recover mechanism the scalar diffusion missed, and combining them (0.0841) adds nothing over the prior (0.5542). This is the DECISIVE evidence that Stage 4's wall is INFORMATIONAL, not representational: the missing quantity is the per-edge transmission coefficient (which is not in the graph geometry at all), so no propagator -- scalar, vector, or tensor, learned or fixed, equivariant or not -- can manufacture it. Consistent with the earlier learned-GNN head-to-heads. CAVEAT: no physical 3D exists, so the equivariance is over a manufactured embedding -- this fairly tests richer geometric/tensor propagation, not physical E(3) symmetry (which would need Hi-C coordinates).",
+ "note": "Replaced the scalar RWR (Stage 4) with a continuous equivariant TENSOR FIELD: genes as points in a manufactured spectral-embedding geometry (no physical 3D -- loops3d 767 anchors, no Hi-C), knockout seeds a scalar RWR field AND an E(d)-equivariant vector field v_i=sum_j K_ij h_j (x_j-x_i); readouts ||v|| and alignment (rotation-invariant) fed into the SAME xgboost, GroupKFold BY KNOCKOUT as cascade_all. Parameter-free operator (a trained net can relearn the prior; a torch EGNN also segfaulted in-sandbox). MEASURED: tensor-field mechanism vs scalar-RWR mechanism, both held-out -- the tensor field does not beat the scalar wall at extracting G-specific signal; the wall is informational (missing per-edge transmission coefficient), not a weak propagator. Caveat: manufactured geometry, so this tests richer geometric propagation, not physical E(3) equivariance."
+}

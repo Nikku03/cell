@@ -1,0 +1,31 @@
+{
+  "test": "reg_ppi_provenance",
+  "reg": {
+    "edges": 612133,
+    "sources": 1831,
+    "targets": 15865,
+    "signed": 52251,
+    "unsigned": 558005,
+    "established": [
+      "TF-derived: 68.5% of 1,831 sources are Lambert TFs vs 10.0% control (6.9x)",
+      "TRRUST v2 is a component: 93.1% of its 8,427 edges are in REG-signed, control 0.4%",
+      "the sig block is a component: 14.6% of its edges in REG-signed, control 0.1%"
+    ],
+    "unresolved": [
+      "43,067 of 52,251 signed edges (82.4%) unaccounted",
+      "558,005 unsigned edges have no identified source; top sources CTCF/TFAP2C/EGR1 and out-degree to 12,122 indicate a ChIP-derived set (ChEA/GTRD/ENCODE), untested"
+    ]
+  },
+  "ppi": {
+    "edges": 191447,
+    "nodes": 14230,
+    "self_loops": 0,
+    "established": [
+      "degree correlates with STRING v12.0 physical: Spearman 0.4547 vs shuffled 0.0062",
+      "16.9% of edges appear in STRING stored top-8 partner lists against ~6.5% expected for a random STRING subset"
+    ],
+    "unresolved": [
+      "rho 0.45 is far below the ~0.9 a clean STRING subset would give, so PPI is RELATED to STRING but not identified as a subset of it. Settling it needs the full STRING edge list, which is not in the container."
+    ]
+  }
+}

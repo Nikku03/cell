@@ -1,0 +1,30 @@
+{
+ "metric_propagation": {
+  "base": 0.8865926159816705,
+  "minus_localization": 0.8511095230442912,
+  "minus_string": 0.8578014119671347
+ },
+ "knockouts": [
+  {
+   "artifact": "localization.json",
+   "class": "ROBUST",
+   "still_runs": true,
+   "line_dropped": false
+  },
+  {
+   "artifact": "string_degree.json",
+   "class": "ROBUST",
+   "still_runs": true,
+   "line_dropped": true
+  },
+  {
+   "artifact": "reason.json",
+   "class": "ROBUST",
+   "still_runs": true,
+   "line_dropped": true
+  }
+ ],
+ "connected": true,
+ "robust": true,
+ "verdict": "CONNECTED AND ROBUST \u2014 like the cell. The layers ARE wired in: removing localization or STRING directly drops the engine (0.887\u21920.851/0.858), so a change propagates to the answer. But knocking out an artifact does NOT crash the software \u2014 the dependent syscall runs DEGRADED via a fallback (a backup pathway), exactly like a cell buffering a gene knockout. The honest catch is the SAME as the cell's: this robustness can HIDE damage \u2014 a corrupted layer silently lowers accuracy unless you RE-RUN the audit (which regenerates and re-checks the number). Connectivity is real at the reasoning layer; it is NOT a live signal \u2014 most modules are batch scripts writing artifacts, wired through the reason engine + ID backbone, not a continuously-propagating network."
+}

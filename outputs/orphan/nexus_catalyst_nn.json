@@ -1,0 +1,104 @@
+{
+  "test": "nexus_catalyst_nn",
+  "n_groups": 60,
+  "arms": {
+    "logistic": {
+      "auc": 0.4726543209876544,
+      "sd": 5.551115123125783e-17,
+      "top1": 0.1
+    },
+    "mlp": {
+      "auc": 0.5033641975308643,
+      "sd": 0.020868580151875454,
+      "top1": 0.12
+    },
+    "mlp_untrained": {
+      "auc": 0.48157407407407404,
+      "sd": 0.037464742354337346,
+      "top1": 0.06
+    },
+    "set_transformer": {
+      "auc": 0.5386913580246914,
+      "sd": 0.045398070824968675,
+      "top1": 0.11333333333333333
+    },
+    "set_transformer_untrained": {
+      "auc": 0.4768086419753087,
+      "sd": 0.0424435960745155,
+      "top1": 0.06
+    },
+    "midpack_best": {
+      "auc": 0.6332870370370369,
+      "sd": 0.0,
+      "top1": 0.15
+    },
+    "midpack_allfeat": {
+      "auc": 0.5998765432098765,
+      "sd": 0.0,
+      "top1": 0.0
+    },
+    "midpack_alt_draw": {
+      "auc": 0.49117283950617285,
+      "z_sd": 1.0211803944303028
+    }
+  },
+  "permutation": {
+    "logistic": {
+      "median": 0.5013271604938272,
+      "p95": 0.5654274691358024,
+      "p_value": 0.64
+    },
+    "set_transformer": {
+      "median": 0.5087962962962963,
+      "p95": 0.5719660493827159,
+      "p_value": 0.1
+    }
+  },
+  "best_single": 0.498,
+  "size_only": 0.532,
+  "log": [
+    "====================================================================================================",
+    "DOES A LEARNED MODEL BEAT THE SINGLE DOCKING FEATURES?",
+    "====================================================================================================",
+    "  The pilot scored eight statistics one at a time; all landed in [0.450, 0.549] with the size",
+    "  control at 0.532. 'No single feature works' is not 'no function of them works'.",
+    "  n = 60 GROUPS, so the null for a flexible model is NOT 0.5. Every arm is judged against a",
+    "  within-group label permutation refit end to end 50 times, plus an untrained twin.",
+    "\n  60 reactions x 10 candidates | 8 features, z-scored within group",
+    "\n  arm                              AUC     sd   top-1   (5-fold grouped CV x 5 seeds)",
+    "  logistic                       0.473  0.000   0.100",
+    "  mlp                            0.503  0.021   0.120",
+    "  mlp_untrained                  0.482  0.037   0.060",
+    "  set_transformer                0.539  0.045   0.113",
+    "  set_transformer_untrained      0.477  0.042   0.060",
+    "  midpack (-|z| of best)         0.633      -   0.150   <- ONE RULE, 0 params",
+    "  midpack (-mean|z| all feats)   0.600      -       -   <- ONE RULE, 0 params",
+    "  best_single (pilot)            0.498      -       -",
+    "  size_only (pilot control)      0.532      -       -   <- artefact control",
+    "\n  PERMUTATION NULL -- labels shuffled WITHIN each group, model refit end to end, 50 times.",
+    "  This is the null for THIS much capacity on 60 groups. It is not 0.5, and 0.5 is not the bar.",
+    "    logistic                 median 0.501  95th 0.565  | observed 0.473  p=0.640",
+    "    set_transformer          median 0.509  95th 0.572  | observed 0.539  p=0.100",
+    "\n  READING",
+    "  THE LIMIT IS THE FEATURES, NOT THE MODEL. No learned arm clears its own permutation band:",
+    "    logistic 0.473 vs 95th 0.565 (p=0.640)",
+    "    set transformer 0.539 vs 95th 0.572 (p=0.100)",
+    "  Eight statistics off a rigid-body scan do not contain which of ten enzymes is the catalyst,",
+    "  and neither a weighted combination nor attention across the group conjures it. Capacity was",
+    "  never the bottleneck here -- the representation is. A bigger head on the same features is",
+    "  not the next move; a different measurement is.",
+    "\n  DOES THE MID-PACK RULE SURVIVE A DIFFERENT DECOY DRAW? (run 1 of the pilot, same 60",
+    "  reactions, decoys drawn on a different criterion -- an independent sample of decoys)",
+    "    draw                                midpack AUC    true-catalyst z sd",
+    "    this run (atom-matched)                   0.633                 0.731",
+    "    run 1 (length-matched)                    0.491                 1.021",
+    "    A random member of a z-scored set of 10 has sd ~1.0.",
+    "    IT DOES NOT SURVIVE. On the other draw the rule is worth 0.491 and the true",
+    "    catalyst's z has sd 1.021 -- indistinguishable from a random member. So the",
+    "    mid-pack regularity is a property of WHICH DECOYS WERE SAMPLED, not of catalysts, and",
+    "    the network's apparent margin is fitted to one draw. It would not transfer.",
+    "\n  For contrast, where a network DID earn its margin in this project: GeoConv reached 0.617 on",
+    "  interface point pairs against a 0.566 best single feature -- but that task is scored on a",
+    "  complex that already exists. The model was not the difference; having the true interface was."
+  ]
+}

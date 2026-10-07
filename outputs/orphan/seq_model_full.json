@@ -1,0 +1,13 @@
+{
+ "device": "cuda (Colab GPU)",
+ "pretrain_aux_tf_binding_auc": 0.77,
+ "pretrain_aux_auc_per_epoch": [0.718,0.751,0.747,0.761,0.760,0.769,0.766,0.771,0.768,0.770,0.764,0.767],
+ "scratch_auprc": 0.491,
+ "scratch_seeds": [0.509, 0.473],
+ "pretrained_auprc": 0.479,
+ "pretrained_seeds": [0.488, 0.471],
+ "shuffle_control": 0.074,
+ "baselines": {"distance": 0.393, "epigenetics_gbm": 0.519, "tf_identity_gbm": 0.608},
+ "verdict": "NO-GO (fair, complete test of the FULL architecture). Pretraining SUCCEEDED -- the encoder learned to predict 311-TF binding from sequence at AUC 0.77 -- but it did NOT transfer to regulation: pretrained fine-tune 0.479 is within noise of from-scratch 0.491, both below epigenetics-only GBM 0.519 and well below the TF-identity GBM 0.608. Shuffle control 0.074 (~base rate) = clean. This time nothing was crippled, so the ceiling is REAL, not an implementation shortcut. Ship the Tier-1 GBM (0.608).",
+ "note": "FULL Tier-2 as designed: shared encoder PRETRAINED on 100k genome-wide ENCODE cCREs to predict 311-TF ChIP binding from sequence (reached AUC 0.77 -- a good TF-binding-from-sequence model, so the encoder DID learn the motif grammar), THEN fine-tuned with the sparse CRISPR head, compared WITH vs WITHOUT pretraining. Genome-wide pretraining did NOT help (0.479 ~ 0.491). WHY: (1) you cannot out-predict a measurement -- the GBM gets 311 TFs' binding MEASURED (perfect), the pretrained encoder only PREDICTS it (AUC 0.77, lossy); (2) the fine-tune head already receives the measured epigenetic tracks (accessibility/H3K27ac/PolII/eRNA) as tabular features, and the sequence-derived binding is largely redundant with those; (3) 569 CRISPR positives cap the fine-tune head regardless of encoder quality. Consistent with the field: element-gene regulation (the CRISPR benchmark) is dominated by measured activity+contact, not pure sequence. The architecture was sound; the data reality (measured > predicted) decides it. Real ENCODE K562 data, Colab GPU, chromosome-held-out, shuffle-controlled."
+}

@@ -1,0 +1,83 @@
+{
+  "test": "loop_polymer",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [],
+    "coverage": {
+      "available": 1400,
+      "used": 1400,
+      "selection": "all",
+      "fraction": 1.0
+    },
+    "seed": 1904,
+    "controls": [
+      "ideal-chain identity as an exact positive control",
+      "textbook exponents fixed before the run",
+      "confined vs unconfined on the same chain",
+      "free-chain exponent compared to loop 33's measured window"
+    ],
+    "note": "validated only against physics known in advance; no Hi-C is touched, so the engine cannot have been tuned to the thing it will be scored on",
+    "warnings": []
+  },
+  "gates": {
+    "P1 ideal chain is exact": true,
+    "P2 textbook exponent, wrong for chromatin": true,
+    "P3 dynamics are Rouse": true,
+    "P4 confinement saturates both": true
+  },
+  "n_beads": 1400,
+  "solve_seconds": 0.46482205390930176,
+  "identity_max_rel_err": 5.141068076591701e-11,
+  "ps_slope_free": -1.499999999990209,
+  "chromatin_window": [
+    -1.16,
+    -0.76
+  ],
+  "msd_exponent": 0.4939127592473176,
+  "confined_r2_spread": 0.001212940961866302,
+  "confined_msd_late_exponent": 0.0019635933035422,
+  "log": [
+    "====================================================================================================",
+    "THE ENGINE -- one eigendecomposition, then the 3D map and the 4D dynamics are arithmetic",
+    "====================================================================================================",
+    "  Four CPUs, no GPU. So the chromosome is not integrated, it is diagonalised: a harmonic",
+    "  network is a linear system, and a linear system has closed forms for both its equilibrium",
+    "  contacts and its trajectory. No Hi-C is touched here -- the engine is checked against",
+    "  physics whose answer was fixed before the code existed.",
+    "\n  chain of 1,400 beads; one decomposition took 0.46s and yields all 979,300 pair distances",
+    "\n  P1 THE IDEAL CHAIN IS EXACT -- <R_ij^2> vs the identity b^2|i-j|",
+    "     max relative error 5.141e-11 over 979,300 pairs   (gate 1e-08)",
+    "     the effective resistance between two nodes of a path graph IS the edge count between",
+    "     them, so this is an identity and not a fit",
+    "     P1 PASS",
+    "\n  P2 THE FREE CHAIN GIVES THE TEXTBOOK EXPONENT, AND IT IS THE WRONG ONE FOR CHROMATIN",
+    "     simulated P(s) slope -1.5000   (Gaussian theory -1.5, gate [-1.55, -1.45])",
+    "     real chromatin measured in loop 33: -0.964, window [-1.16, -0.76]",
+    "     the bare polymer is 0.536 away from the chromosome, and OUTSIDE its",
+    "     window: True. That gap is what loops and confinement have to close, and",
+    "     quantifying it now means they can be credited later instead of assumed.",
+    "     P2 PASS  (engine correct AND bare polymer is not a chromosome)",
+    "\n  P3 THE DYNAMICS ARE ROUSE -- monomer MSD exponent 0.4939   (theory 0.5, gate [0.45, 0.55])",
+    "     computed from the modes in closed form; the time axis costs one exponential per mode",
+    "     and no timesteps at all, which is the entire reason 4D is affordable here",
+    "     P3 PASS",
+    "\n  P4 CONFINEMENT SATURATES BOTH -- harmonic tether c = 0.003, a nucleus of finite size",
+    "     <R^2> at large separation: relative spread 0.0012  (flat = plateau, gate < 0.05)",
+    "     free chain at the same separations rises without limit; confined one stops at 18.4 b^2",
+    "     MSD late-time exponent 0.0020  (0 = plateau, gate < 0.15; free chain gives 0.49)",
+    "     P4 PASS",
+    "\n====================================================================================================",
+    "  P1 ideal chain is exact                     PASS",
+    "  P2 textbook exponent, wrong for chromatin   PASS",
+    "  P3 dynamics are Rouse                       PASS",
+    "  P4 confinement saturates both               PASS",
+    "  THE ENGINE IS PHYSICS AND IT IS CHEAP. One 0.46s decomposition of a 1,400-bead",
+    "  chain gives every pair distance and every timepoint, checked against an exact identity",
+    "  (5e-11), the Gaussian exponent (-1.500), the Rouse exponent (0.494) and",
+    "  confinement in both space and time.",
+    "  AND IT IS NOT YET A CHROMOSOME. Its P(s) is -1.500 where chr21 measures -0.964. The",
+    "  bare polymer is the null model, not the answer, and the distance is now on the record.",
+    "====================================================================================================",
+    "    manifest: 0 inputs, coverage 1400/1400 (100.0%) by 'all', seed 1904, controls 4"
+  ]
+}

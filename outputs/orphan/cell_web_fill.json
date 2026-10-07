@@ -1,0 +1,154 @@
+{
+  "test": "cell_web_fill",
+  "n_real_orphans": 9186,
+  "n_no_local_candidate": 2583,
+  "n_queryable": 1636,
+  "n_validate": 60,
+  "n_queries_ok": 60,
+  "web_recall": 0.15,
+  "control_recall": 0.0,
+  "web_beats_control": true,
+  "n_filled": 7,
+  "filled": [
+    {
+      "reaction": "R-HSA-901074",
+      "metabolites": [
+        "H2O",
+        "Man"
+      ],
+      "web_candidates": [
+        "GANAB",
+        "MAN1B1",
+        "MAN1A1",
+        "EDEM3",
+        "MAN1A2",
+        "MAN1C1",
+        "MOGS",
+        "MAN2B1",
+        "MAN2A2",
+        "MAN2B2"
+      ],
+      "source": "UniProtKB reviewed, human"
+    },
+    {
+      "reaction": "R-HSA-9919050",
+      "metabolites": [
+        "H2O"
+      ],
+      "web_candidates": [
+        "ACE2",
+        "RNASE1",
+        "RNASE2",
+        "NT5C",
+        "ENTPD3",
+        "ACER3",
+        "EPHX2",
+        "NT5E",
+        "HACD1",
+        "MIP"
+      ],
+      "source": "UniProtKB reviewed, human"
+    },
+    {
+      "reaction": "MAR00666",
+      "metabolites": [
+        "retinyl-ester"
+      ],
+      "web_candidates": [
+        "RPE65",
+        "PNPLA4",
+        "AWAT2",
+        "LRAT",
+        "DGAT2",
+        "DGAT1",
+        "PNPLA2"
+      ],
+      "source": "UniProtKB reviewed, human"
+    },
+    {
+      "reaction": "MAR09429",
+      "metabolites": [
+        "testosterone"
+      ],
+      "web_candidates": [
+        "UGT2B17",
+        "SLC10A6",
+        "HSD17B1",
+        "SRD5A2",
+        "HSD17B2",
+        "SRD5A1",
+        "DHRS1",
+        "HSD17B8",
+        "SRD5A3",
+        "CYP2B6"
+      ],
+      "source": "UniProtKB reviewed, human"
+    },
+    {
+      "reaction": "R-HSA-9931043",
+      "metabolites": [
+        "H+"
+      ],
+      "web_candidates": [
+        "SLC15A1",
+        "SLC36A1",
+        "SLC46A3",
+        "SLC36A2",
+        "SPNS1",
+        "SLC11A2",
+        "SLC11A1",
+        "SLC16A7",
+        "SLC46A2",
+        "SLC32A1"
+      ],
+      "source": "UniProtKB reviewed, human"
+    },
+    {
+      "reaction": "MAR10491",
+      "metabolites": [
+        "16alpha-hydroxyestrone"
+      ],
+      "web_candidates": [
+        "UGT1A10",
+        "UGT2B7",
+        "CYP3A7",
+        "CYP2C8",
+        "CYP1A1",
+        "CYP3A4"
+      ],
+      "source": "UniProtKB reviewed, human"
+    },
+    {
+      "reaction": "R-HSA-9911513",
+      "metabolites": [
+        "substituted \u03b2-amino acid"
+      ],
+      "web_candidates": [
+        "DCLRE1A",
+        "DCLRE1B",
+        "DPEP1",
+        "MBLAC2"
+      ],
+      "source": "UniProtKB reviewed, human"
+    }
+  ],
+  "log": [
+    "====================================================================================================",
+    "THE MISSING LIST, AND FILLING IT FROM THE WEB",
+    "====================================================================================================",
+    "  PREDECLARED: web recall > stripped-query control => the web adds vocabulary we lack.",
+    "               web recall ~ control => we are retrieving generic enzymes. List stays empty.",
+    "\n  orphans in the real pool          : 9,186",
+    "  of those, NO local candidate      : 2,583",
+    "  of those, with named metabolites  : 1,636  <- the only ones a text database can be asked",
+    "  the remaining 947 have only opaque IDs and cannot be queried at all",
+    "  -> missing list written: outputs/orphan/cell_missing_list.json (2,583 reactions)",
+    "\n  VALIDATION on 60 reactions whose catalyst IS known (pool 8,727)",
+    "    queries returning anything : 60/60",
+    "    web query recall           : 0.150  (9/60)",
+    "    stripped-query control     : 0.000  (0/60)",
+    "\n  FILLING a sample of 40 missing reactions from UniProt",
+    "    7/40 got >=1 candidate from outside our vocabulary",
+    "    example: R-HSA-901074 -> ['GANAB', 'MAN1B1', 'MAN1A1', 'EDEM3', 'MAN1A2']"
+  ]
+}

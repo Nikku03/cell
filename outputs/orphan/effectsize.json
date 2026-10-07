@@ -1,0 +1,112 @@
+{
+ "n_sig": 820,
+ "median_abs_effect": 0.116494544035846,
+ "frac_repressive": 0.19390243902439025,
+ "abs_effect_vs_power_spearman": -0.05824232113250032,
+ "features": [
+  "log_dist",
+  "DHS.RPM",
+  "DHS.percentile",
+  "H3K27ac.RPM",
+  "H3K27ac.percentile",
+  "H3K27ac.RPM.expandedRegion",
+  "H3K4me1.RPM",
+  "H3K27me3.RPM",
+  "H3K27ac_peak_overlap",
+  "H3K4me1_peak_overlap",
+  "H3K27me3_peak_overlap",
+  "CTCF.RPM",
+  "CTCF_peak_overlap",
+  "n_candidates",
+  "dist_rank",
+  "activity_rank",
+  "activity_share",
+  "dist_excess"
+ ],
+ "magnitude": {
+  "distance only": {
+   "r2": -0.011216337233435913,
+   "permuted": -0.0024792602253286646,
+   "net": -0.008737077008107249,
+   "spearman": -0.05309682741725759
+  },
+  "+activity": {
+   "r2": -0.009837162181512982,
+   "permuted": -0.002691995246581702,
+   "net": -0.00714516693493128,
+   "spearman": -0.010332388663394872
+  },
+  "+CTCF": {
+   "r2": -0.009735605963097416,
+   "permuted": -0.003724956041996297,
+   "net": -0.006010649921101119,
+   "spearman": 0.003640630187672759
+  },
+  "+competition (full)": {
+   "r2": -0.011621843588686986,
+   "permuted": -0.0012776434462314912,
+   "net": -0.010344200142455495,
+   "spearman": -0.101022400353971
+  },
+  "CTRL +power as feature": {
+   "r2": 0.08807883205846781,
+   "permuted": -0.004726093780507849,
+   "net": 0.09280492583897566,
+   "spearman": 0.04614777397523008
+  }
+ },
+ "sign": {
+  "distance only": {
+   "auprc": 0.5152132270091524,
+   "auroc": 0.8037945175501193,
+   "permuted_auprc": 0.1865078787028851,
+   "base_rate": 0.19390243902439025
+  },
+  "+activity": {
+   "auprc": 0.6339182328899159,
+   "auroc": 0.8583040752052827,
+   "permuted_auprc": 0.17752265497102995,
+   "base_rate": 0.19390243902439025
+  },
+  "+CTCF": {
+   "auprc": 0.6507407468516606,
+   "auroc": 0.8584334770073931,
+   "permuted_auprc": 0.17373386138509128,
+   "base_rate": 0.19390243902439025
+  },
+  "+competition (full)": {
+   "auprc": 0.6274039508853969,
+   "auroc": 0.8547636038401889,
+   "permuted_auprc": 0.18260531624400786,
+   "base_rate": 0.19390243902439025
+  }
+ },
+ "classifier_ranks_strength": {
+  "spearman": 0.08626588593611549,
+  "p": 0.013469113800725695,
+  "n": 820,
+  "per_cell_type": {
+   "GM12878": {
+    "n": 21,
+    "spearman": 0.6558441558441558,
+    "p": 0.0012463317417583516
+   },
+   "HCT116": {
+    "n": 40,
+    "spearman": 0.10431519699812385,
+    "p": 0.5217969135408704
+   },
+   "K562": {
+    "n": 717,
+    "spearman": 0.04877225364060438,
+    "p": 0.19207496628852191
+   },
+   "WTC11": {
+    "n": 35,
+    "spearman": 0.4759103641456583,
+    "p": 0.0038562324248526633
+   }
+  }
+ },
+ "verdict": "MAGNITUDE IS NOT PREDICTABLE FROM BIOLOGY (every biological arm is net-negative; best +CTCF R2 -0.0097 vs permuted -0.0037, net -0.0060) -- but adding DETECTION POWER as a feature reaches R2 +0.0881 (net +0.0928), so effect magnitude in this benchmark is predictable from a technical variable and not from regulatory biology. The marginal correlation of |EffectSize| with power is only -0.058, so this would have been missed without the arm. SIGN IS PARTLY PREDICTABLE (+CTCF: AUPRC 0.6507 vs base rate 0.194, 3.36x lift, AUROC 0.8584). the edge-finder does NOT rank strength where the sample is large: pooled Spearman +0.0863 (p 0.0135) is carried by small cell types, while in K562 (n=717) it is +0.0488 (p 0.192). n=820 causal pairs, so this is a small-sample result and 19.4% of those elements are repressive, a subclass the binary label erases entirely."
+}

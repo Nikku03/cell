@@ -1,0 +1,276 @@
+{
+  "test": "physics_design",
+  "n_pt": 1200,
+  "reductions": [
+    {
+      "name": "linearity -> superposition",
+      "quantity": 1.963936541228236e-15,
+      "threshold": 1e-08,
+      "direction": "below",
+      "verdict": "HOLDS",
+      "margin": 1.9639365412282358e-07,
+      "speedup": 178.6863572433193,
+      "note": "add 17 us against solve 3 ms",
+      "detail": {}
+    },
+    {
+      "name": "reusable factorisation",
+      "quantity": 510.3656293037884,
+      "threshold": 10.0,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 51.03656293037884,
+      "speedup": 510.3656293037884,
+      "note": "setup 2.4 s, each solve 5 ms",
+      "detail": {}
+    },
+    {
+      "name": "locality (norm) -> truncate",
+      "quantity": 1.0,
+      "threshold": 0.25,
+      "direction": "below",
+      "verdict": "FAILS",
+      "margin": 4.0,
+      "speedup": 1.0,
+      "note": "100% of atoms carry 90% of the norm (R=10)",
+      "detail": {
+        "rows": [
+          {
+            "R": 10.0,
+            "atoms": 1200,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 20.0,
+            "atoms": 1200,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 30.0,
+            "atoms": 1200,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 50.0,
+            "atoms": 1200,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 70.0,
+            "atoms": 1200,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          },
+          {
+            "R": 100.0,
+            "atoms": 1200,
+            "frac": 1.0,
+            "norm_in": 1.0,
+            "peak_in": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "modal truncation",
+      "quantity": 0.6689756283433895,
+      "threshold": 0.9,
+      "direction": "above",
+      "verdict": "FAILS",
+      "margin": 3.3102437165661054,
+      "speedup": 105.88235294117646,
+      "note": "34 of 3600 dimensions capture 66.9% of a real response",
+      "detail": {
+        "n_modes": 34
+      }
+    },
+    {
+      "name": "conserved directions (null space)",
+      "quantity": 6.0,
+      "threshold": 1.0,
+      "direction": "above",
+      "verdict": "HOLDS",
+      "margin": 6.0,
+      "speedup": 1.001669449081803,
+      "note": "6 directions at numerical zero, gap 1.2e+13 to the first real mode; zero calibrated against rigid translation at 1.5e-18 relative",
+      "detail": {
+        "n_null": 6,
+        "gap": 12340281477743.127
+      }
+    },
+    {
+      "name": "timescale separation -> event stepping",
+      "quantity": 364.9511265600519,
+      "threshold": 1000.0,
+      "direction": "above",
+      "verdict": "MARGINAL",
+      "margin": 0.36495112656005185,
+      "speedup": 364.9511265600519,
+      "note": "lambda spans 2.94e-01 to 1.07e+02",
+      "detail": {}
+    }
+  ],
+  "plan": {
+    "used": [
+      "reusable factorisation",
+      "conserved directions (null space)"
+    ],
+    "per_axis": {
+      "solves": {
+        "name": "reusable factorisation",
+        "speedup": 510.3656293037884
+      },
+      "dimensions": {
+        "name": "conserved directions (null space)",
+        "speedup": 1.001669449081803
+      }
+    },
+    "composed": 511.2176587350134,
+    "naive_product": 511.2176587350134,
+    "error_budget": 0.0,
+    "blocked": [
+      {
+        "name": "locality (norm) -> truncate",
+        "why": "FAILS: 100% of atoms carry 90% of the norm (R=10)"
+      },
+      {
+        "name": "modal truncation",
+        "why": "FAILS: 34 of 3600 dimensions capture 66.9% of a real response"
+      }
+    ],
+    "unverified": [
+      {
+        "name": "linearity -> superposition",
+        "why": "finite-amplitude linearity never ran on this system, so the operator-level result does not license superposition at finite amplitude"
+      },
+      {
+        "name": "timescale separation -> event stepping",
+        "why": "MARGINAL at 365 against a 1000 threshold -- available if you accept the margin"
+      }
+    ]
+  },
+  "improvements": [
+    {
+      "name": "locality (norm) -> truncate",
+      "boundary": true,
+      "note": "holds at R=10 where 100% of atoms carry 90% of the norm, against the 25% target -- 4.0x more work per event than a scheme that assumed locality"
+    },
+    {
+      "name": "modal truncation",
+      "boundary": true,
+      "note": "holds at 54 modes, capturing 92.3%, still 67x fewer dimensions than the full problem"
+    },
+    {
+      "name": "timescale separation -> event stepping",
+      "boundary": false,
+      "note": "separation is 365 against the 1e+03 needed. This is a property of the spectrum and cannot be tuned -- to gain it you would have to change the model, e.g. by constraining the fast modes out"
+    }
+  ],
+  "upgrades": {
+    "direct solve per event": {
+      "running": [],
+      "unused": [
+        "conserved directions (null space)",
+        "reusable factorisation"
+      ],
+      "unsupported": [],
+      "gain_available": 511.2176587350134
+    },
+    "factorise once, solve per event": {
+      "running": [
+        "reusable factorisation"
+      ],
+      "unused": [
+        "conserved directions (null space)"
+      ],
+      "unsupported": [],
+      "gain_available": 1.001669449081803
+    },
+    "factorise + superpose": {
+      "running": [
+        "linearity -> superposition",
+        "reusable factorisation"
+      ],
+      "unused": [
+        "conserved directions (null space)"
+      ],
+      "unsupported": [
+        "linearity -> superposition"
+      ],
+      "gain_available": 1.001669449081803
+    },
+    "modal, factorised": {
+      "running": [
+        "modal truncation",
+        "reusable factorisation"
+      ],
+      "unused": [
+        "conserved directions (null space)"
+      ],
+      "unsupported": [
+        "modal truncation"
+      ],
+      "gain_available": 1.0
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "FROM VERDICTS TO A SCHEME -- design, improve, upgrade",
+    "====================================================================================================",
+    "  Reductions multiply only when they cut INDEPENDENT costs: how many solves, how big each",
+    "  solve is, how many steps. Two on the same axis are alternatives, not partners.",
+    "  Superposition is GATED on finite-amplitude linearity, because every Hessian is linear and",
+    "  the operator-level result licenses nothing on its own.",
+    "\n  system: 1200 points, 28411 couplings, null space 6, gap 1.23e+13",
+    "\n  MEASURED\n    reduction                                 verdict           quantity     speedup",
+    "    linearity -> superposition                HOLDS            1.964e-15       178.7",
+    "    reusable factorisation                    HOLDS                510.4       510.4",
+    "    locality (norm) -> truncate               FAILS                    1           1",
+    "    modal truncation                          FAILS                0.669       105.9",
+    "    conserved directions (null space)         HOLDS                    6       1.002",
+    "    timescale separation -> event stepping    MARGINAL               365         365",
+    "\n  DESIGNED SCHEME",
+    "    solves        reusable factorisation  x510.4",
+    "    dimensions    conserved directions (null space)  x1.002",
+    "    steps         nothing available",
+    "    composed speedup     511.2",
+    "    naive product        511.2  (1x optimistic)",
+    "    error budget         0.000e+00",
+    "    NOT AVAILABLE",
+    "      locality (norm) -> truncate: FAILS: 100% of atoms carry 90% of the norm (R=10)",
+    "      modal truncation: FAILS: 34 of 3600 dimensions capture 66.9% of a real response",
+    "    NOT COUNTED, and why",
+    "      linearity -> superposition: finite-amplitude linearity never ran on this system, so the operator-level result does not license superpositi",
+    "      timescale separation -> event stepping: MARGINAL at 365 against a 1000 threshold -- available if you accept the margin",
+    "\n  IMPROVER -- every NO turned into a boundary, or shown not to have one",
+    "    locality (norm) -> truncate               BOUNDARY",
+    "      holds at R=10 where 100% of atoms carry 90% of the norm, against the 25% target -- 4.0x more",
+    "      work per event than a scheme that assumed locality",
+    "    modal truncation                          BOUNDARY",
+    "      holds at 54 modes, capturing 92.3%, still 67x fewer dimensions than the full problem",
+    "    timescale separation -> event stepping    NO SETTING WORKS",
+    "      separation is 365 against the 1e+03 needed. This is a property of the spectrum and cannot be",
+    "      tuned -- to gain it you would have to change the model, e.g. by constraining the fast modes",
+    "      out",
+    "\n  UPGRADER -- what existing schemes are leaving on the table",
+    "    scheme in use                     unused                                              gain",
+    "    direct solve per event            conserved directions (null space), reusable        511.2",
+    "    factorise once, solve per event   conserved directions (null space)                  1.002",
+    "    factorise + superpose             conserved directions (null space)                  1.002",
+    "      RELIES ON UNSUPPORTED: linearity -> superposition",
+    "    modal, factorised                 conserved directions (null space)                      1",
+    "      RELIES ON UNSUPPORTED: modal truncation",
+    "\n  READING",
+    "    The axis rule removed a factor of 1 of double counting.",
+    "    2 of 3 failed reductions have a setting where they hold; 1 have none at any setting."
+  ]
+}

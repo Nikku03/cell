@@ -1,0 +1,352 @@
+{
+  "test": "cell_parts_provenance",
+  "rows": [
+    {
+      "block": "genes",
+      "items": 16492,
+      "gz_bytes": 854302,
+      "status": "PARTIAL",
+      "evidence_class": "external source, verified join",
+      "source": "colab/cell_coords.py sources strand/gene_start/gene_end/ens_tss from genes.parquet (GRCh38.p14); 20 of 24 fields unsourced"
+    },
+    {
+      "block": "reg",
+      "items": 612133,
+      "gz_bytes": 1928642,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "SIGNOR + TRRUST + a large ChIP set"
+    },
+    {
+      "block": "ppi",
+      "items": 191447,
+      "gz_bytes": 675029,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "STRING or BioGRID"
+    },
+    {
+      "block": "reactions",
+      "items": 31,
+      "gz_bytes": 877,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "generxn",
+      "items": 2549,
+      "gz_bytes": 75080,
+      "status": "RESOLVED",
+      "evidence_class": "verbatim copy in another output",
+      "source": "outputs/orphan/metab_reactions.json::generxn"
+    },
+    {
+      "block": "gf_perturb",
+      "items": 0,
+      "gz_bytes": 38,
+      "status": "EMPTY",
+      "evidence_class": "zero items; nothing to source",
+      "source": "-"
+    },
+    {
+      "block": "codep",
+      "items": 13451,
+      "gz_bytes": 355766,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "DepMap"
+    },
+    {
+      "block": "sl",
+      "items": 1256,
+      "gz_bytes": 7569,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "DepMap"
+    },
+    {
+      "block": "loops3d",
+      "items": 767,
+      "gz_bytes": 5920,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "Hi-C"
+    },
+    {
+      "block": "ti_priority",
+      "items": 200,
+      "gz_bytes": 3986,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "ti_whitespace",
+      "items": 200,
+      "gz_bytes": 2077,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "biomarkers",
+      "items": 599,
+      "gz_bytes": 16310,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "struct",
+      "items": 13,
+      "gz_bytes": 323,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "fold",
+      "items": 1,
+      "gz_bytes": 180,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "otdis",
+      "items": 48,
+      "gz_bytes": 2681,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "Open Targets"
+    },
+    {
+      "block": "pathways",
+      "items": 60,
+      "gz_bytes": 10589,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "Reactome"
+    },
+    {
+      "block": "sig",
+      "items": 17432,
+      "gz_bytes": 87101,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "SIGNOR"
+    },
+    {
+      "block": "complexes",
+      "items": 2039,
+      "gz_bytes": 29531,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "CORUM"
+    },
+    {
+      "block": "gene2cplx",
+      "items": 3257,
+      "gz_bytes": 40325,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "CORUM"
+    },
+    {
+      "block": "drugs",
+      "items": 4275,
+      "gz_bytes": 134170,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "DGIdb or DrugBank"
+    },
+    {
+      "block": "lr",
+      "items": 948,
+      "gz_bytes": 3297,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "NicheNet"
+    },
+    {
+      "block": "ptm",
+      "items": 8425,
+      "gz_bytes": 35965,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "UniProt or PhosphoSitePlus"
+    },
+    {
+      "block": "cellcycle",
+      "items": 153,
+      "gz_bytes": 508,
+      "status": "RESOLVED",
+      "evidence_class": "producer module in repo",
+      "source": "colab/cellcycle.py (name match)"
+    },
+    {
+      "block": "ctnames",
+      "items": 200,
+      "gz_bytes": 1673,
+      "status": "RESOLVED",
+      "evidence_class": "verbatim copy in another output",
+      "source": "outputs/orphan/celltype_mask.json::ctnames"
+    },
+    {
+      "block": "abund",
+      "items": 16286,
+      "gz_bytes": 42181,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "PaxDb"
+    },
+    {
+      "block": "emask",
+      "items": 7496,
+      "gz_bytes": 171042,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "ARCHS4"
+    },
+    {
+      "block": "procs",
+      "items": 12,
+      "gz_bytes": 150,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "comps",
+      "items": 12,
+      "gz_bytes": 130,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "hiv",
+      "items": 19,
+      "gz_bytes": 46409,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "hiv_targets",
+      "items": 19,
+      "gz_bytes": 203,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "hiv_weakpoints",
+      "items": 40,
+      "gz_bytes": 622,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "dark_count",
+      "items": 1,
+      "gz_bytes": 40,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "celltypes",
+      "items": 40,
+      "gz_bytes": 860,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "darkfn",
+      "items": 4993,
+      "gz_bytes": 142744,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "UniProt"
+    },
+    {
+      "block": "model4",
+      "items": 7700,
+      "gz_bytes": 356114,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "model4_meta",
+      "items": 5,
+      "gz_bytes": 144,
+      "status": "UNKNOWN",
+      "evidence_class": "none",
+      "source": "-"
+    },
+    {
+      "block": "coexpr",
+      "items": 16374,
+      "gz_bytes": 871600,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "ARCHS4 or CCLE"
+    },
+    {
+      "block": "ncrna",
+      "items": 0,
+      "gz_bytes": 33,
+      "status": "EMPTY",
+      "evidence_class": "zero items; nothing to source",
+      "source": "-"
+    },
+    {
+      "block": "nichenet",
+      "items": 1195,
+      "gz_bytes": 56143,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "NicheNet"
+    },
+    {
+      "block": "ppm",
+      "items": 16015,
+      "gz_bytes": 67632,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "PaxDb"
+    },
+    {
+      "block": "go",
+      "items": 16412,
+      "gz_bytes": 835067,
+      "status": "HYPOTHESIS",
+      "evidence_class": "docstring proximity only (WEAK)",
+      "source": "Gene Ontology"
+    },
+    {
+      "block": "genome",
+      "items": 10,
+      "gz_bytes": 585,
+      "status": "RESOLVED",
+      "evidence_class": "verbatim copy in another output",
+      "source": "outputs/orphan/cell_coords_audit.json::genome (written by colab/cell_coords.py today)"
+    }
+  ],
+  "counts": {
+    "PARTIAL": 1,
+    "HYPOTHESIS": 20,
+    "UNKNOWN": 15,
+    "RESOLVED": 4,
+    "EMPTY": 2
+  },
+  "empty": [
+    "gf_perturb",
+    "ncrna"
+  ]
+}

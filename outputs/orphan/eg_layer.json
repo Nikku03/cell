@@ -1,0 +1,344 @@
+{
+ "model": "eg-peakfeat-v2-nocompetition",
+ "n_edges": 452330,
+ "min_precision": 0.3,
+ "calibration_is_per_distance_stratum": true,
+ "strata_thresholds": {
+  "<10 kb": 0.05,
+  "10-100 kb": 0.5499999999999999,
+  "100-250 kb": null
+ },
+ "features": [
+  "log_dist",
+  "elem_accessibility",
+  "elem_h3k27ac",
+  "elem_ctcf",
+  "elem_polr2a",
+  "tss_accessibility",
+  "tss_h3k27ac",
+  "tss_ctcf",
+  "tss_polr2a"
+ ],
+ "window_bp": 250000,
+ "calibration": {
+  "<10 kb": [
+   [
+    0.05,
+    0.5723905723905723,
+    297
+   ],
+   [
+    0.1,
+    0.5743243243243243,
+    296
+   ],
+   [
+    0.15,
+    0.5743243243243243,
+    296
+   ],
+   [
+    0.2,
+    0.576271186440678,
+    295
+   ],
+   [
+    0.25,
+    0.5787671232876712,
+    292
+   ],
+   [
+    0.3,
+    0.5827586206896552,
+    290
+   ],
+   [
+    0.35,
+    0.5813148788927336,
+    289
+   ],
+   [
+    0.39999999999999997,
+    0.5880281690140845,
+    284
+   ],
+   [
+    0.44999999999999996,
+    0.5964285714285714,
+    280
+   ],
+   [
+    0.49999999999999994,
+    0.5992779783393501,
+    277
+   ],
+   [
+    0.5499999999999999,
+    0.6036363636363636,
+    275
+   ],
+   [
+    0.6,
+    0.6125461254612546,
+    271
+   ],
+   [
+    0.65,
+    0.6384615384615384,
+    260
+   ],
+   [
+    0.7,
+    0.6470588235294118,
+    255
+   ],
+   [
+    0.75,
+    0.6778242677824268,
+    239
+   ],
+   [
+    0.7999999999999999,
+    0.7066666666666667,
+    225
+   ],
+   [
+    0.85,
+    0.7368421052631579,
+    209
+   ],
+   [
+    0.9,
+    0.7586206896551724,
+    174
+   ],
+   [
+    0.95,
+    0.8165137614678899,
+    109
+   ]
+  ],
+  "10-100 kb": [
+   [
+    0.05,
+    0.17105263157894737,
+    2128
+   ],
+   [
+    0.1,
+    0.17943648047454275,
+    2023
+   ],
+   [
+    0.15,
+    0.19060331019754403,
+    1873
+   ],
+   [
+    0.2,
+    0.2020845396641575,
+    1727
+   ],
+   [
+    0.25,
+    0.21532615579480685,
+    1579
+   ],
+   [
+    0.3,
+    0.2279863481228669,
+    1465
+   ],
+   [
+    0.35,
+    0.2410979228486647,
+    1348
+   ],
+   [
+    0.39999999999999997,
+    0.2581699346405229,
+    1224
+   ],
+   [
+    0.44999999999999996,
+    0.272887323943662,
+    1136
+   ],
+   [
+    0.49999999999999994,
+    0.28516377649325625,
+    1038
+   ],
+   [
+    0.5499999999999999,
+    0.3025210084033613,
+    952
+   ],
+   [
+    0.6,
+    0.32667450058754405,
+    851
+   ],
+   [
+    0.65,
+    0.3506666666666667,
+    750
+   ],
+   [
+    0.7,
+    0.38366718027734975,
+    649
+   ],
+   [
+    0.75,
+    0.4159132007233273,
+    553
+   ],
+   [
+    0.7999999999999999,
+    0.45964125560538116,
+    446
+   ],
+   [
+    0.85,
+    0.5366568914956011,
+    341
+   ],
+   [
+    0.9,
+    0.5650224215246636,
+    223
+   ],
+   [
+    0.95,
+    0.711340206185567,
+    97
+   ]
+  ],
+  "100-250 kb": [
+   [
+    0.05,
+    0.043925603482390184,
+    2527
+   ],
+   [
+    0.1,
+    0.04971590909090909,
+    2112
+   ],
+   [
+    0.15,
+    0.05652680652680653,
+    1716
+   ],
+   [
+    0.2,
+    0.06531204644412192,
+    1378
+   ],
+   [
+    0.25,
+    0.07370336669699727,
+    1099
+   ],
+   [
+    0.3,
+    0.07394766780432309,
+    879
+   ],
+   [
+    0.35,
+    0.08089260808926081,
+    717
+   ],
+   [
+    0.39999999999999997,
+    0.08916083916083917,
+    572
+   ],
+   [
+    0.44999999999999996,
+    0.09655172413793103,
+    435
+   ],
+   [
+    0.49999999999999994,
+    0.11538461538461539,
+    338
+   ],
+   [
+    0.5499999999999999,
+    0.124,
+    250
+   ],
+   [
+    0.6,
+    0.14917127071823205,
+    181
+   ],
+   [
+    0.65,
+    0.1780821917808219,
+    146
+   ],
+   [
+    0.7,
+    0.19387755102040816,
+    98
+   ],
+   [
+    0.75,
+    0.15873015873015872,
+    63
+   ],
+   [
+    0.7999999999999999,
+    0.17857142857142858,
+    28
+   ]
+  ]
+ },
+ "measured_accuracy": {
+  "pooled_auprc_peak_features": 0.44858833448370977,
+  "within_gene_recall_at_1": 0.674909090909091,
+  "within_gene_mrr": 0.7785006156406993,
+  "n_evaluable_groups": 275,
+  "distance_only_floor_r1": 0.6509,
+  "benchmark_column_model_r1": 0.697,
+  "cost_of_peak_features_r1": -0.02209090909090894
+ },
+ "limits": [
+  "717 of 820 training positives are K562, so non-K562 edges are extrapolation",
+  "cross-cell-type transfer penalty measured at +0.0597 AUPRC (pooled minus LOCO)",
+  "distance alone reaches R@1 0.6509; judge these edges against that floor, not against zero",
+  "effect MAGNITUDE is deliberately absent: not predictable from biology in this benchmark and confounded with detection power (R2 +0.0881 from power alone)",
+  "POLARITY is deliberately absent: 19.4% of validated pairs are positive-effect, and both candidate mechanisms (silencer, indirect-via-neighbour) are measured out",
+  "quantitative Hi-C adds +0.0042 MRR (p 0.26) over CTCF, so these edges encode no measured 3D",
+  "scored only for cell types with a full ENCODE peak panel",
+  "competition features are EXCLUDED: n_candidates alone scores AUROC 0.2733 (per-group base-rate leakage), the block is worth -0.0068 restricted to groups with >=5 candidates, and it is defined relative to a candidate set so training on the benchmark's and scoring genome-wide cost -0.1201 AUPRC in v1 of this layer",
+  "precision is calibrated WITHIN distance strata because the benchmark is distal-heavy (63.5% beyond 250 kb, 1.9% under 10 kb) while genome-wide candidates in a 250 kb window are proximal-heavy; a single global curve overstated precision on proximal edges",
+  "strata the benchmark cannot support emit no edges at all rather than edges carrying an unsupported precision"
+ ],
+ "per_cell": {
+  "GM12878": {
+   "candidates": 300214,
+   "edges": 92015,
+   "frac_kept": 0.30649803140426496
+  },
+  "HCT116": {
+   "candidates": 529165,
+   "edges": 158554,
+   "frac_kept": 0.29963055001748035
+  },
+  "K562": {
+   "candidates": 389703,
+   "edges": 122562,
+   "frac_kept": 0.3145010431020546
+  },
+  "WTC11": {
+   "candidates": 481237,
+   "edges": 79199,
+   "frac_kept": 0.1645737962791722
+  }
+ }
+}

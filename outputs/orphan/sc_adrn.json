@@ -1,0 +1,471 @@
+{
+  "test": "sc_adrn",
+  "n_holdout": 40,
+  "bins": [
+    2,
+    3
+  ],
+  "ranks": [
+    16,
+    32,
+    64
+  ],
+  "means": {
+    "bins=2|rank=16": {
+      "gene_x_state_r": 0.4676371298316233,
+      "gene_state_r": 0.4589481691431281,
+      "gene_only_r": 0.40284606819779245,
+      "gene_x_state_p20": 0.2845177664974619,
+      "gene_state_p20": 0.2733502538071066,
+      "gene_only_p20": 0.22360406091370558
+    },
+    "bins=2|rank=32": {
+      "gene_x_state_r": 0.4553763770536583,
+      "gene_state_r": 0.4589481691431281,
+      "gene_only_r": 0.40284606819779245,
+      "gene_x_state_p20": 0.27639593908629445,
+      "gene_state_p20": 0.2733502538071066,
+      "gene_only_p20": 0.22360406091370558
+    },
+    "bins=2|rank=64": {
+      "gene_x_state_r": 0.4461404369430592,
+      "gene_state_r": 0.4589481691431281,
+      "gene_only_r": 0.40284606819779245,
+      "gene_x_state_p20": 0.2687817258883249,
+      "gene_state_p20": 0.2733502538071066,
+      "gene_only_p20": 0.22360406091370558
+    },
+    "bins=2|mean_train": {
+      "r": 0.3421970556330003,
+      "p20": 0.16116751269035534
+    },
+    "bins=2|state_only": {
+      "r": 0.41624918357319174,
+      "p20": 0.22918781725888324
+    },
+    "bins=3|rank=16": {
+      "gene_x_state_r": 0.44763586919328263,
+      "gene_state_r": 0.42516654627200884,
+      "gene_only_r": 0.376516194182597,
+      "gene_x_state_p20": 0.27569444444444446,
+      "gene_state_p20": 0.25324074074074077,
+      "gene_only_p20": 0.20162037037037037
+    },
+    "bins=3|rank=32": {
+      "gene_x_state_r": 0.43205787412237434,
+      "gene_state_r": 0.42516654627200884,
+      "gene_only_r": 0.376516194182597,
+      "gene_x_state_p20": 0.26967592592592593,
+      "gene_state_p20": 0.25324074074074077,
+      "gene_only_p20": 0.20162037037037037
+    },
+    "bins=3|rank=64": {
+      "gene_x_state_r": 0.42324875565832093,
+      "gene_state_r": 0.42516654627200884,
+      "gene_only_r": 0.376516194182597,
+      "gene_x_state_p20": 0.2553240740740741,
+      "gene_state_p20": 0.25324074074074077,
+      "gene_only_p20": 0.20162037037037037
+    },
+    "bins=3|mean_train": {
+      "r": 0.3068005332698377,
+      "p20": 0.13310185185185186
+    },
+    "bins=3|state_only": {
+      "r": 0.3880796022519688,
+      "p20": 0.19814814814814813
+    }
+  },
+  "G1_gene_x_state_vs_gene_state": {
+    "name": "gene_x_state - gene_state",
+    "verdict": "FRAGILE",
+    "n_cells": 12,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 12,
+    "n_resolved_pos": 4,
+    "n_resolved_neg": 1,
+    "sign_consistent": false,
+    "cells_needed_for_robust": 8,
+    "passing_configs": [
+      {
+        "bins": 2,
+        "rank": 16
+      },
+      {
+        "bins": 3,
+        "rank": 16
+      },
+      {
+        "bins": 3,
+        "rank": 16
+      },
+      {
+        "bins": 3,
+        "rank": 32
+      }
+    ],
+    "cells": [
+      {
+        "config": {
+          "bins": 2,
+          "rank": 16
+        },
+        "cohort": "r|2",
+        "n": 197,
+        "delta": 0.008688960688495277,
+        "lo": 4.0381352879621206e-05,
+        "hi": 0.017453256377232634
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 16
+        },
+        "cohort": "p@20|2",
+        "n": 197,
+        "delta": 0.011167512690355331,
+        "lo": -0.0005076142131979717,
+        "hi": 0.02309644670050761
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 32
+        },
+        "cohort": "r|2",
+        "n": 197,
+        "delta": -0.0035717920894697244,
+        "lo": -0.014841029406742043,
+        "hi": 0.007402977164932998
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 32
+        },
+        "cohort": "p@20|2",
+        "n": 197,
+        "delta": 0.0030456852791878155,
+        "lo": -0.010659898477157363,
+        "hi": 0.017005076142131977
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 64
+        },
+        "cohort": "r|2",
+        "n": 197,
+        "delta": -0.012807732200068853,
+        "lo": -0.02197950208011981,
+        "hi": -0.00372459457827327
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 64
+        },
+        "cohort": "p@20|2",
+        "n": 197,
+        "delta": -0.004568527918781728,
+        "lo": -0.015989847715736045,
+        "hi": 0.007106598984771572
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 16
+        },
+        "cohort": "r|3",
+        "n": 216,
+        "delta": 0.02246932292127371,
+        "lo": 0.01323648155919609,
+        "hi": 0.03148974944417913
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 16
+        },
+        "cohort": "p@20|3",
+        "n": 216,
+        "delta": 0.0224537037037037,
+        "lo": 0.010648148148148144,
+        "hi": 0.03449074074074074
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 32
+        },
+        "cohort": "r|3",
+        "n": 216,
+        "delta": 0.0068913278503654925,
+        "lo": -0.0035353456714746685,
+        "hi": 0.01736896820676355
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 32
+        },
+        "cohort": "p@20|3",
+        "n": 216,
+        "delta": 0.016435185185185185,
+        "lo": 0.0027777777777777757,
+        "hi": 0.030555555555555555
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 64
+        },
+        "cohort": "r|3",
+        "n": 216,
+        "delta": -0.001917790613687921,
+        "lo": -0.012104720820344018,
+        "hi": 0.008240133509280451
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 64
+        },
+        "cohort": "p@20|3",
+        "n": 216,
+        "delta": 0.0020833333333333333,
+        "lo": -0.010185185185185184,
+        "hi": 0.014351851851851852
+      }
+    ]
+  },
+  "G2_gene_state_vs_gene_only": {
+    "name": "gene_state - gene_only",
+    "verdict": "ROBUST",
+    "n_cells": 12,
+    "inert_axes": [
+      "rank"
+    ],
+    "n_duplicate_cells": 8,
+    "n_effective_cells": 4,
+    "n_resolved_pos": 12,
+    "n_resolved_neg": 0,
+    "sign_consistent": true,
+    "cells_needed_for_robust": 8,
+    "passing_configs": [
+      {
+        "bins": 2,
+        "rank": 16
+      },
+      {
+        "bins": 2,
+        "rank": 16
+      },
+      {
+        "bins": 2,
+        "rank": 32
+      },
+      {
+        "bins": 2,
+        "rank": 32
+      },
+      {
+        "bins": 2,
+        "rank": 64
+      },
+      {
+        "bins": 2,
+        "rank": 64
+      },
+      {
+        "bins": 3,
+        "rank": 16
+      },
+      {
+        "bins": 3,
+        "rank": 16
+      },
+      {
+        "bins": 3,
+        "rank": 32
+      },
+      {
+        "bins": 3,
+        "rank": 32
+      },
+      {
+        "bins": 3,
+        "rank": 64
+      },
+      {
+        "bins": 3,
+        "rank": 64
+      }
+    ],
+    "cells": [
+      {
+        "config": {
+          "bins": 2,
+          "rank": 16
+        },
+        "cohort": "r|2",
+        "n": 197,
+        "delta": 0.05610210094533552,
+        "lo": 0.047784379019179625,
+        "hi": 0.06457937495730584
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 16
+        },
+        "cohort": "p@20|2",
+        "n": 197,
+        "delta": 0.04974619289340102,
+        "lo": 0.03781725888324873,
+        "hi": 0.06218274111675127
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 32
+        },
+        "cohort": "r|2",
+        "n": 197,
+        "delta": 0.05610210094533552,
+        "lo": 0.047784379019179625,
+        "hi": 0.06457937495730584
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 32
+        },
+        "cohort": "p@20|2",
+        "n": 197,
+        "delta": 0.04974619289340102,
+        "lo": 0.03781725888324873,
+        "hi": 0.06218274111675127
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 64
+        },
+        "cohort": "r|2",
+        "n": 197,
+        "delta": 0.05610210094533552,
+        "lo": 0.047784379019179625,
+        "hi": 0.06457937495730584
+      },
+      {
+        "config": {
+          "bins": 2,
+          "rank": 64
+        },
+        "cohort": "p@20|2",
+        "n": 197,
+        "delta": 0.04974619289340102,
+        "lo": 0.03781725888324873,
+        "hi": 0.06218274111675127
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 16
+        },
+        "cohort": "r|3",
+        "n": 216,
+        "delta": 0.048650352089411875,
+        "lo": 0.03896552932801582,
+        "hi": 0.05818328584354244
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 16
+        },
+        "cohort": "p@20|3",
+        "n": 216,
+        "delta": 0.05162037037037038,
+        "lo": 0.039120370370370375,
+        "hi": 0.06435185185185184
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 32
+        },
+        "cohort": "r|3",
+        "n": 216,
+        "delta": 0.048650352089411875,
+        "lo": 0.03896552932801582,
+        "hi": 0.05818328584354244
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 32
+        },
+        "cohort": "p@20|3",
+        "n": 216,
+        "delta": 0.05162037037037038,
+        "lo": 0.039120370370370375,
+        "hi": 0.06435185185185184
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 64
+        },
+        "cohort": "r|3",
+        "n": 216,
+        "delta": 0.048650352089411875,
+        "lo": 0.03896552932801582,
+        "hi": 0.05818328584354244
+      },
+      {
+        "config": {
+          "bins": 3,
+          "rank": 64
+        },
+        "cohort": "p@20|3",
+        "n": 216,
+        "delta": 0.05162037037037038,
+        "lo": 0.039120370370370375,
+        "hi": 0.06435185185185184
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "STEP 4 -- STATE-CONDITIONED ADRN",
+    "====================================================================================================",
+    "  PREDECLARED  G1 gene_x_state > gene_state | G2 gene_state > gene_only",
+    "  107,082 cells, 200 perturbations, 3 lines, 2,000 genes",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 15.0",
+    "  extra channels: 536 kept of 691 built  (TIER A 527, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  gene descriptors (200, 697)",
+    "  held out 40 perturbations entirely; 160 for training",
+    "\n  bins=2: 946 (line x pert x state) groups with >= 25 cells",
+    "    train groups 749 | held-out groups 197",
+    "    rank  16  r: gene 0.4028 -> +state 0.4589 -> xstate 0.4676   p@20: 0.2236 / 0.2734 / 0.2845",
+    "    rank  32  r: gene 0.4028 -> +state 0.4589 -> xstate 0.4554   p@20: 0.2236 / 0.2734 / 0.2764",
+    "    rank  64  r: gene 0.4028 -> +state 0.4589 -> xstate 0.4461   p@20: 0.2236 / 0.2734 / 0.2688",
+    "    mean_train  r 0.3422  p@20 0.1612",
+    "    state_only  r 0.4162  p@20 0.2292",
+    "\n  bins=3: 1,059 (line x pert x state) groups with >= 25 cells",
+    "    train groups 843 | held-out groups 216",
+    "    rank  16  r: gene 0.3765 -> +state 0.4252 -> xstate 0.4476   p@20: 0.2016 / 0.2532 / 0.2757",
+    "    rank  32  r: gene 0.3765 -> +state 0.4252 -> xstate 0.4321   p@20: 0.2016 / 0.2532 / 0.2697",
+    "    rank  64  r: gene 0.3765 -> +state 0.4252 -> xstate 0.4232   p@20: 0.2016 / 0.2532 / 0.2553",
+    "    mean_train  r 0.3068  p@20 0.1331",
+    "    state_only  r 0.3881  p@20 0.1981",
+    "\n  SWEEP gene_x_state - gene_state   axes[bins,rank]  12 cells\n  config                       cohort         delta                 95% CI\n  bins=2 rank=16               r|2          +0.0087 [ +0.0000, +0.0175] RES+\n  bins=2 rank=16               p@20|2       +0.0112 [ -0.0005, +0.0231] ns\n  bins=2 rank=32               r|2          -0.0036 [ -0.0148, +0.0074] ns\n  bins=2 rank=32               p@20|2       +0.0030 [ -0.0107, +0.0170] ns\n  bins=2 rank=64               r|2          -0.0128 [ -0.0220, -0.0037] RES-\n  bins=2 rank=64               p@20|2       -0.0046 [ -0.0160, +0.0071] ns\n  bins=3 rank=16               r|3          +0.0225 [ +0.0132, +0.0315] RES+\n  bins=3 rank=16               p@20|3       +0.0225 [ +0.0106, +0.0345] RES+\n  bins=3 rank=32               r|3          +0.0069 [ -0.0035, +0.0174] ns\n  bins=3 rank=32               p@20|3       +0.0164 [ +0.0028, +0.0306] RES+\n  bins=3 rank=64               r|3          -0.0019 [ -0.0121, +0.0082] ns\n  bins=3 rank=64               p@20|3       +0.0021 [ -0.0102, +0.0144] ns\n  -> FRAGILE   resolved +4/-1 of 12 (>= 8 needed), sign-consistent False\n     FRAGILE means the effect lives in a corner of the grid -- the argmax of choices nobody deliberated. Do not report it as a finding.",
+    "\n  SWEEP gene_state - gene_only   axes[bins,rank]  12 cells\n  config                       cohort         delta                 95% CI\n  bins=2 rank=16               r|2          +0.0561 [ +0.0478, +0.0646] RES+\n  bins=2 rank=16               p@20|2       +0.0497 [ +0.0378, +0.0622] RES+\n  bins=2 rank=32               r|2          +0.0561 [ +0.0478, +0.0646] RES+\n  bins=2 rank=32               p@20|2       +0.0497 [ +0.0378, +0.0622] RES+\n  bins=2 rank=64               r|2          +0.0561 [ +0.0478, +0.0646] RES+\n  bins=2 rank=64               p@20|2       +0.0497 [ +0.0378, +0.0622] RES+\n  bins=3 rank=16               r|3          +0.0487 [ +0.0390, +0.0582] RES+\n  bins=3 rank=16               p@20|3       +0.0516 [ +0.0391, +0.0644] RES+\n  bins=3 rank=32               r|3          +0.0487 [ +0.0390, +0.0582] RES+\n  bins=3 rank=32               p@20|3       +0.0516 [ +0.0391, +0.0644] RES+\n  bins=3 rank=64               r|3          +0.0487 [ +0.0390, +0.0582] RES+\n  bins=3 rank=64               p@20|3       +0.0516 [ +0.0391, +0.0644] RES+\n  -> ROBUST   resolved +12/-0 of 12 (>= 8 needed), sign-consistent True\n     WARNING: 8 of 12 cells are numerically identical to another cell -- they duplicate rather than test. Real observations: 4.\n     WARNING: axes ['rank'] change nothing -- they duplicate cells rather than test anything. Real observations: ~4, not 12.",
+    "\n  READING",
+    "  G1 fails, G2 passes: state is a MAIN EFFECT, not an interaction. Pseudobulk was losing little,",
+    "  and 'conditioning' here is just extra features."
+  ]
+}

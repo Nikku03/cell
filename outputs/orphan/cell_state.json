@@ -1,0 +1,117 @@
+{
+ "wt_growth": 0.02887815562957231,
+ "scale": 0.00032590290099741707,
+ "n_capacity": 1651,
+ "n_P": 2538,
+ "T0": {
+  "n_capacity": 1651,
+  "n_active_at_optimum": 126,
+  "n_active_genes": 185
+ },
+ "T1": {
+  "n_essential_tested": 60,
+  "n_reduced": 18,
+  "nutrient": {
+   "capacity-calibrated | anaerobic (O2 = 0)": {
+    "growth_ratio": 0.9999999999999996,
+    "lactate_yield": 62.807323868344625,
+    "wt_lactate_yield": 98.71120044390317
+   },
+   "capacity-calibrated | glucose withdrawn": {
+    "growth_ratio": 1.0,
+    "lactate_yield": 62.80732386834459,
+    "wt_lactate_yield": 98.71120044390317
+   },
+   "capacity-calibrated | glucose halved": {
+    "growth_ratio": 1.0,
+    "lactate_yield": 62.80732386834459,
+    "wt_lactate_yield": 98.71120044390317
+   },
+   "capacity removed | anaerobic (O2 = 0)": {
+    "growth_ratio": 0.877446954385424,
+    "lactate_yield": 27.060589030811002,
+    "wt_lactate_yield": 25.22526633343142
+   },
+   "capacity removed | glucose withdrawn": {
+    "growth_ratio": 0.9832882210525575,
+    "lactate_yield": 25.231221768972468,
+    "wt_lactate_yield": 25.22526633343142
+   },
+   "capacity removed | glucose halved": {
+    "growth_ratio": 0.9916441105262734,
+    "lactate_yield": 25.498940623597413,
+    "wt_lactate_yield": 25.22526633343142
+   }
+  },
+  "anaerobic_reduces_growth": true,
+  "warburg_yield_correct": true,
+  "pass": true
+ },
+ "T2": {
+  "genes behind ACTIVE ceilings": {
+   "n": 80,
+   "n_monotone": 80,
+   "n_graded": 1,
+   "examples": [
+    {
+     "gene": "GARS1",
+     "ratios": [
+      1.0,
+      0.75,
+      0.5,
+      0.25,
+      0.1,
+      0.01,
+      -0.0
+     ]
+    }
+   ]
+  },
+  "random capacity genes (contrast)": {
+   "n": 40,
+   "n_monotone": 40,
+   "n_graded": 0,
+   "examples": []
+  },
+  "pass": true
+ },
+ "T3": {
+  "n_tested": 160,
+  "n_agree": 160,
+  "max_gap": 1.5017609661681314e-17,
+  "pass": true
+ },
+ "T4": {
+  "n_tested": 80,
+  "n_different": 1,
+  "examples": [
+   {
+    "gene": "GARS1",
+    "hypomorph": 0.1,
+    "knockout": 0.0
+   }
+  ],
+  "pass": true
+ },
+ "T5": {
+  "n_sl_total": 1256,
+  "n_in_model": 162,
+  "mean_real": 4.188543202263311e-12,
+  "mean_ctrl": 9.875491848895996e-12,
+  "ci": [
+   -1.3764404974619145e-11,
+   3.1817615961497546e-12
+  ],
+  "pass": false
+ },
+ "passed": [
+  "T1",
+  "T2",
+  "T3",
+  "T4"
+ ],
+ "failed": [
+  "T5"
+ ],
+ "refused": []
+}

@@ -1,0 +1,219 @@
+{
+ "test": "loop 148b -- post-hoc controls on the capacity ratio",
+ "post_hoc": true,
+ "predeclared": false,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ly2014_supp1-v1.txt",
+    "bytes": 5458223,
+    "hash": "73d036e6c3232913",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/_schwan2011.json",
+    "bytes": 469617,
+    "hash": "7aae9e39013f859d",
+    "method": "sha256:full"
+   },
+   {
+    "path": "outputs/loop_capacity_ratio.json",
+    "bytes": 13968,
+    "hash": "2a9bbe03961188a9",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 6470,
+   "used": 77,
+   "selection": "filtered",
+   "fraction": 0.011901081916537867
+  },
+  "seed": 14801,
+  "controls": [
+   "a publication-matched null alongside the abundance-matched one, closing a control loop 148 computed but never connected (L1)",
+   "loop 144's raw-channel rule applied to the one positive (L2)",
+   "both duplicate-resolution rules run side by side (L3)",
+   "the envelope reported at three cuts instead of one (L4)"
+  ],
+  "note": "POST-HOC. Written after loop 148's numbers were visible and labelled as such throughout. Every threshold is a standing repo rule -- loop 137's fame strike, loop 144's channel check, reproduce-first -- applied to a new finding, not a threshold invented to fit one. Loop 148's 4/7 is unchanged by anything here.",
+  "warnings": []
+ },
+ "gates": {
+  "L1": true,
+  "L2": true,
+  "L3": true,
+  "L4": true
+ },
+ "l1": {
+  "rho_pubs_fold_unhandled_by_k5": -0.36475732727881555,
+  "receptor_median_fold": 1.5086461786578265,
+  "abundance_null_median": 1.6052383471876417,
+  "pct_vs_abundance": 0.204,
+  "pubs_null_median": 1.3697566962079235,
+  "pct_vs_pubs": 0.896,
+  "receptor_median_pubs": 122.0,
+  "proteome_median_pubs": 98.0,
+  "k3_fail_stands": true,
+  "flaw_recorded_against_loop_148": true,
+  "pass": true
+ },
+ "l2": {
+  "channels": {
+   "LFQ": {
+    "fold": 19.64944476695193,
+    "peak": 5,
+    "trough": 1,
+    "pct": 0.9990843888295438,
+    "n": 6553,
+    "n_reaching_req": 5,
+    "trace": [
+     534010.0,
+     884580.0,
+     3274900.0,
+     5985400.0,
+     10493000.0,
+     9688600.0
+    ]
+   },
+   "rawIntensity": {
+    "fold": 39.719904648390944,
+    "peak": 5,
+    "trough": 1,
+    "pct": 0.9559868087265347,
+    "n": 7884,
+    "n_reaching_req": 560,
+    "trace": [
+     10068000.0,
+     32882000.0,
+     54225000.0,
+     206350000.0,
+     399900000.0,
+     199730000.0
+    ]
+   },
+   "iBAQ": {
+    "fold": 39.71990464479856,
+    "peak": 5,
+    "trough": 1,
+    "pct": 0.9559868087265347,
+    "n": 7884,
+    "n_reaching_req": 560,
+    "trace": [
+     479428.5714,
+     1565809.524,
+     2582142.857,
+     9826190.476,
+     19042857.14,
+     9510952.381
+    ]
+   }
+  },
+  "present_in_all": true,
+  "same_peak_and_trough": true,
+  "above_percentile_in_all": true,
+  "cdc20_pubs": 425.0,
+  "predeclared_in_source": true,
+  "pass": true
+ },
+ "l3": {
+  "n_rule_maxfold": 80,
+  "n_rule_firstrow": 77,
+  "median_A_maxfold": 0.4452698110682305,
+  "median_A_firstrow": 0.44513343873368105,
+  "required_maxfold": 20.28617706991229,
+  "required_firstrow": 20.279124312694343,
+  "recovered_80": true,
+  "rules_agree": true,
+  "pass": true
+ },
+ "l4": {
+  "n": 77,
+  "cuts": {
+   "p99": 0.15541416604483077,
+   "p99.9": 0.7671201457971574,
+   "max": 1.3862943611198906
+  },
+  "fraction_below": {
+   "p99": 0.0,
+   "p99.9": 0.8181818181818182,
+   "max": 0.987012987012987
+  },
+  "median_required": 0.4870285204784122,
+  "requirement_within_measured_reach": true,
+  "pass": true
+ },
+ "seconds": 2.7382543087005615,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 148b -- POST-HOC controls on loop 148. Written after seeing its output, and labelled as such.",
+  "====================================================================================================",
+  "",
+  "  loop 148 recorded 4/7 and a requirement of 20.29x. Nothing below changes those gates.",
+  "",
+  "L1 THE HOLE IN LOOP 148's OWN K5",
+  "     K5 printed rho(pubs, Ly fold-range) = -0.3648 and struck on nothing, because its predeclared handling was written for K2's envelope only.",
+  "     The strike threshold since loop 137 is |rho| >= 0.2. 0.3648 is past it. That control was computed and then not connected to anything --",
+  "     the same family of error as loop 147's gate ORDER flaw, and it is recorded here as a flaw in loop 148 rather than quietly fixed.",
+  "     receptor median fold-range 1.51x",
+  "       vs ABUNDANCE-matched null  median 1.61x   receptors at the 20.4% percentile",
+  "       vs PUBLICATION-matched null median 1.37x   receptors at the 89.6% percentile",
+  "     receptor median pubs 122 against a proteome median 98 -- they ARE better published, which is exactly the confound.",
+  "     gate: K3's FAIL stands only if 1.51x is below 20.29x under BOTH nulls. It is 1.51x either way.",
+  "     the two nulls disagree on DIRECTION (20% vs 90%) and abundance is the mechanistic one, since fold-range noise is driven by intensity and fame is only a",
+  "     proxy for it. They agree on the thing that matters: 1.5x is not 20.3x under either, so fame does not rescue the receptors and K3's FAIL is real.",
+  "     L1 PASS",
+  "",
+  "L2 THE CHANNEL CHECK ON CDC20",
+  "     K3's median FAILED and stays failed. One receptor in the PREDECLARED set moved: CDC20 at 19.65x against a requirement of 20.29x.",
+  "     Loop 144 withdrew a 526-gene list for being LFQ-only. Same rule, applied here before the number is allowed to mean anything.",
+  "                 LFQ   19.65x   peak F5  trough F1   99.91% percentile of 6,553   (5 proteins reach 20.3x)",
+  "        rawIntensity   39.72x   peak F5  trough F1   95.60% percentile of 7,884   (560 proteins reach 20.3x)",
+  "                iBAQ   39.72x   peak F5  trough F1   95.60% percentile of 7,884   (560 proteins reach 20.3x)",
+  "     present in all three channels: True;  same peak and trough in all three: True;  above the 95%th percentile in all three: True",
+  "     the swing is LARGER in raw Intensity than in LFQ, which is the opposite of loop 144's failure mode. But raw Intensity carries 2.01x the per-point noise, so many more",
+  "     proteins clear 20.3x there and CDC20's PERCENTILE falls from 99.91% to 95.60%. The percentile is the comparable statistic and both readings are reported.",
+  "     CDC20 pubs 425, the 93.5th percentile -- it is a famous gene, and a fold-range measured on a mass spectrometer is not something fame can",
+  "     manufacture. It was named in loop 148's APC_ACTIVATORS constant in the commit BEFORE the run, which git can check.",
+  "     L2 PASS",
+  "",
+  "L3 THE REGRESSION DISCREPANCY: 77 OSCILLATORS WHERE LOOP 123 RECORDED 80",
+  "     duplicate gene names are the cause. Loop 123 keeps the row with the LARGEST 3-phase fold; loop 148 keeps the first row.",
+  "       loop 123's rule (max fold):  80 genes   median A 0.4453   required 20.29x",
+  "       loop 148's rule (first row): 77 genes   median A 0.4451   required 20.28x",
+  "     loop 123's rule selects the most-oscillating row of each duplicate, which biases the set upward. Loop 148's does not, which is why it is the smaller set.",
+  "     gate: recover 80 under loop 123's rule (80) AND the two rules agree to 1% (True)",
+  "     the choice does not move the answer. K0(e)'s 1% tolerance on two statistics hid a 4% difference in the SET, and that is worth knowing even when it changes nothing.",
+  "     L3 PASS",
+  "",
+  "L4 WHAT K6's PERCENTILE CHOICE HID",
+  "     77 required rates against the measured envelope of 4,821 rates:",
+  "       below   p99 of the envelope (0.155 /h):    0.0%",
+  "       below p99.9 of the envelope (0.767 /h):   81.8%",
+  "       below   max of the envelope (1.386 /h):   98.7%",
+  "     median requirement 0.487 /h; fastest rate the assay measured 1.386 /h",
+  "     K6 chose p99 before the run and its FAIL stands. But 0.0% below p99 and 81.8%-level figures below p99.9 are the same distribution read at two cuts, and reporting only the",
+  "     first makes the requirement sound unreachable when it sits BETWEEN the 99th and 99.9th percentile of rates the machine already delivers at rest.",
+  "     L4 PASS",
+  "",
+  "====================================================================================================",
+  "  L1  PASS",
+  "  L2  PASS",
+  "  L3  PASS",
+  "  L4  PASS",
+  "  4/4   [POST-HOC -- these gates were written after loop 148's output was on screen]",
+  "====================================================================================================",
+  "    manifest: 3 inputs, coverage 77/6470 (1.2%) by 'filtered', seed 14801, controls 4"
+ ],
+ "corrections": [
+  {
+   "gate": "L2",
+   "what_was_claimed": "present in all three channels (LFQ, raw Intensity, iBAQ)",
+   "what_is_true": "iBAQ is raw Intensity divided by a per-protein peptide count, so the constant cancels in any across-fraction ratio; median per-protein CV of Intensity/iBAQ across the six fractions is 1.02e-10 and both return 39.72x at the same 95.60th percentile because they are the same numbers.",
+   "effect": "L2 is a TWO-channel check, LFQ against raw Intensity. That is what loop 144's rule demands, so the substance and the PASS both stand; one third of the arithmetic was vacuous and the word 'three' is wrong.",
+   "already_known_in_repo": "loop 144 recorded 'iBAQ is not independent' and this gate was written as three channels anyway.",
+   "added": "after the run, by inspection of the source table"
+  }
+ ]
+}

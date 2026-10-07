@@ -1,0 +1,65 @@
+{
+  "criticality": {
+    "p": 0.009406313674044715,
+    "background": 0.0015014536896026582,
+    "excess_degree": 76.21831512451172,
+    "R0": 0.7169333696365356,
+    "R0_naive": 0.25310054421424866,
+    "p_c": 0.013120206072926521,
+    "p_over_pc": 0.7169333696365356
+  },
+  "feasibility": {
+    "replicates": 3000,
+    "split_half": 0.2757178217280538,
+    "vs_linear": 0.41886072212891656,
+    "per_gene_mc_usable": false
+  },
+  "blast_radius": {
+    "TRAIN-MEAN": {
+      "spearman": -0.04009099237890618,
+      "se": 0.02768708129571139,
+      "auc_zero": 0.4771372114338439
+    },
+    "DEGREE": {
+      "spearman": 0.31345672824171283,
+      "se": 0.02514143227619514,
+      "auc_zero": 0.6599731770498429
+    },
+    "ESSENTIALITY": {
+      "spearman": 0.42860587494841745,
+      "se": 0.023457179693777874,
+      "auc_zero": 0.718459048050641
+    },
+    "NODE-GBM": {
+      "spearman": 0.43246557900110316,
+      "se": 0.02127994958632901,
+      "auc_zero": 0.7161401080675025
+    },
+    "MEAN-FIELD": {
+      "spearman": 0.317138229966556,
+      "se": 0.024047620781222488,
+      "auc_zero": 0.6699389032801978
+    },
+    "NODE-GBM+MF": {
+      "spearman": 0.41203190932843836,
+      "se": 0.02168701131402121,
+      "auc_zero": 0.7048618128150013
+    },
+    "NODE-GBM+MF+MC": {
+      "spearman": 0.3957029818628801,
+      "se": 0.022948997353657966,
+      "auc_zero": 0.6968537128556236
+    }
+  },
+  "mc_value": {
+    "sd_vs_mean": 0.9749318297320818,
+    "p0_vs_mean": -0.9221049732659325,
+    "gain": -0.01632892746555825,
+    "decorative": true
+  },
+  "coverage": {
+    "movers_total": 15183,
+    "movers_that_are_ppi_partners": 674
+  },
+  "verdict": "ULAM'S METHOD APPLIED TO PERTURBATION SPREAD, AND IT DOES NOT WORK HERE. Two claims this module originally made are WITHDRAWN, both refuted by checks that cost minutes. FIRST, the response-size distribution was offered as evidence for branching -- heavy tail, Fano 91.3, log-log slope -1.41 against critical Galton-Watson's -1.5, 689/1400 exact zeros. Permuting each knockout's z-scores WITHIN its own non-tide columns leaves the count above threshold unchanged by construction, and measured, all seven statistics are BIT-IDENTICAL under that permutation. They are functions of the per-knockout marginal and carry ZERO bits about topology. A heavy tail is consistent with branching and equally consistent with anything else that makes heavy-tailed responses. SECOND, Monte Carlo was justified on the grounds that two-terminal reliability is #P-complete. It is -- in general, and not here: at depth 2 the direct edge and each 2-path through a common neighbour are EDGE-DISJOINT, hence independent, so P(reach) = 1 - (1-p_st) * prod_x (1 - p_sx p_xt) exactly, and at depth 3 the correction is both tiny and monotone, so it cannot reorder. There was never a quantity here without a closed form. WHAT SURVIVES IS THE CROSS-SECTION, because it contrasts partners against non-partners and the permutation destroys it: P(PPI partner moves | gene knocked out) = 0.00941 against 0.00150, 6.26x. That is measured against a FLAT background, and against a degree- and move-frequency-matched background the enrichment is much smaller; the flat number should not be quoted alone. R0 IS A RANGE AND NOT A NUMBER: the naive p*<k> gives 0.25, the excess-degree formula 0.72 (p/p_c = 0.72), and both assume a locally tree-like graph that this one is not -- PPI clustering is ~0.20 against ~0.002 for a degree-matched random graph, so the configuration-model figure is an upper bound of unknown tightness. Estimators span roughly 0.56 to 1.25, which straddles 1, so THE SUB- VERSUS SUPERCRITICAL QUESTION IS NOT ANSWERABLE FROM THIS DATA and the earlier flat assertion of 'subcritical' overstated it. MONTE CARLO IS NOT USABLE AT PER-GENE RESOLUTION HERE, AND THIS WAS TESTED FIRST, BEFORE ANY PERFORMANCE NUMBER. Two independent runs at 3000 replicates agree with each other at Spearman 0.276 -- the estimator does not reproduce ITSELF -- while agreeing with the cheap linear walk at 0.419. So the MC-vs-linear disagreement is sampling noise, not nonlinearity. The arithmetic is elementary: at R0 = 0.72 the reachability probabilities are ~1e-4, so at 3000 replicates most genes are hit zero or one times and the ranking is Poisson noise. THIS IS A DIFFERENT FAILURE FROM THE PREVIOUS TWO Monte Carlos in this repo, which were rank-decorative; this one is statistically infeasible, and the distinction matters because it says WHERE MC can still work. SO THE MC IS SPENT WHERE ULAM SPENT IT: ON THE AGGREGATE. He never computed the probability that a particular neutron reached a particular place; he computed the multiplication factor. An aggregate over ~10^4 genes has a relative standard error smaller by sqrt(n). The aggregate here is the BLAST RADIUS, the number of genes a knockout moves, which is the direct neutron-count analogue and is measured and held out. Baseline ladder, Spearman against the true count over all 1400 knockouts in 5-fold CV: train mean -0.0401, PPI degree alone 0.3135, essentiality alone 0.4286, a GBM on node features 0.4325, the analytic mean-field cascade alone 0.3171, node-GBM plus the cascade 0.4120 (-0.0204 over the GBM without it), and adding the MC moments 0.3957 (-0.0163). THE CASCADE FEATURE DOES NOT BEAT THE NODE FEATURES IT IS BUILT FROM. A branching simulation that cannot beat degree-plus-essentiality in a GBM has demonstrated nothing beyond restating degree, and that is the honest reading of -0.0204. AND THE MC MOMENTS ADD -0.0163 ON TOP -- a LOSS, so sampling does not pay for itself here either. The cascade SD tracks the cascade mean at +0.975 and P(zero) at -0.922; those are not quite the perfect monotonicity that would make them the mean in disguise, but near-monotone features that cost a 600-replicate simulation and then REDUCE held-out accuracy are not a finding to defend on a technicality. This is the third Monte Carlo in this repo to fail to earn its cost, and the three failed differently: the first two were rank-decorative, this one is unaffordable at per-gene resolution and unhelpful at aggregate resolution. WHAT THIS CANNOT SAY. Only 674 of 15,183 specific movers (4.4%) are direct PPI partners of the knocked-out gene, so a cascade on this graph could never have explained WHICH genes move -- it was only ever testable on HOW MANY, which is why blast radius is the target. The cross-section is measured at hop 1, from a gene that was destroyed, and then applied at hops 2-3 where the source is merely perturbed; that is the same assumption Ulam made in reusing one cross-section at every collision, but it is far less safe here, and it would bias R0 upward. CRISPRi knockdown is partial (median 42.8% transcript remaining), so 'knocked out' is itself an idealisation. Evaluation is all 1400 knockouts, deliberately NOT the 378 scorable ones, because filtering on >=5 movers would condition the evaluation set on the target being predicted."
+}

@@ -1,0 +1,78 @@
+=================================================================================================
+MAPPING ISOFORMS ONTO EDGES BY RULING OUT
+=================================================================================================
+  20,190 reviewed entries parsed for DNA_BIND + VAR_SEQ coordinates
+
+=================================================================================================
+I1  VALIDATION ON DOCUMENTED BIOLOGY (BLOCKING)
+=================================================================================================
+  TP53  DBD [(102, 292)]   named isoforms 9
+        DISRUPTED : ['isoform 7', 'isoform 8', 'isoform 9']
+        INTACT    : ['isoform 2', 'isoform 3', 'isoform 4', 'isoform 5', 'isoform 6']
+        Delta-133 (7,8,9) disrupted ....... True
+        beta/gamma (2,3) intact ........... True
+
+  NR3C1 DBD [(418, 493)]   named isoforms 16
+        DISRUPTED : ['isoform Alpha-2', 'isoform Beta-2', 'isoform GR-A alpha', 'isoform GR-A beta']
+        N-terminal translational isoforms intact ... True
+
+  I1: PASS -- the coordinate parse reproduces known cases
+
+=================================================================================================
+I0  THE CEILING GATE: HOW MANY EDGES ARE EVEN ELIGIBLE?
+=================================================================================================
+  distinct regulators on SIGNED edges      4,320
+  ...with a DNA_BIND annotation              467
+  ...and >1 named isoform                    270
+  ...and a splice event hitting the DBD      123   <- eligible
+
+  signed edges total                      71,052
+  signed edges with an eligible regulator  8,769   12.3%
+
+  I0: PASS against the predeclared 5% bar -- the constraint is worth carrying
+
+=================================================================================================
+I2  THE CONSTRAINT, AS A DISTRIBUTION
+=================================================================================================
+     isoforms  candidates after ruling out     edges
+            3                            2     1,315
+            9                            6     1,310
+            2                            1     1,217
+            4                            2       987
+            5                            4       545
+            7                            5       451
+            4                            3       393
+           16                           12       350
+            5                            2       318
+           11                           10       301
+            8                            5       288
+           12                           10       218
+
+  across eligible edges: candidate isoforms fall from 53,088 to 36,057
+  = 32.1% of the regulator-side isoform space removed
+
+=================================================================================================
+I3  THE TARGET SIDE, WHICH THIS DOES NOT TOUCH
+=================================================================================================
+  signed edges whose TARGET has >1 isoform  43,420   61.1%
+  mean target isoforms per edge               2.75
+  Nothing here constrains which target transcript responds; that needs isoform-level
+  expression which no dataset in this record supplies. A regulator-side bound does NOT
+  make the edge resolved, and the residual above is the size of what is left.
+
+  artifact: outputs/isoform_edge_bounds.json  (123 regulators)
+    TP53: {"acc": "P04637", "dbd": [[102, 292]], "n_isoforms": 9, "dbd_disrupted": ["isoform 7", "isoform 8", "isoform 9"], "n_candidate_isoforms": 6, "n_signed_edges": 1310}
+    NR3C1: {"acc": "P04150", "dbd": [[418, 493]], "n_isoforms": 16, "dbd_disrupted": ["isoform Alpha-2", "isoform Beta-2", "isoform GR-A alpha", "isoform GR-A beta"], "n_candidate_i
+
+=================================================================================================
+I4  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. An intact DBD is NECESSARY, not sufficient. Dimerisation, cofactor availability and
+     localisation all still gate binding and none is modelled here.
+  2. Only sequence-specific DNA binding is treated. Cofactors and chromatin regulators
+     with no DNA_BIND annotation are never eligible, by construction.
+  3. UniProt's named isoforms are curated, not exhaustive; transcript catalogues list more.
+  4. The edges themselves remain gene-level in every artifact this repo ships. This module
+     bounds them; it does not rewrite them.
+
+  runtime 68.1s

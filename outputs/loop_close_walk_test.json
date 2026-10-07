@@ -1,0 +1,217 @@
+{
+ "test": "CLOSE_WALK on the locked TEST split",
+ "gates": {
+  "T1": true,
+  "T2": true,
+  "T3": true,
+  "T4": true,
+  "T5": true,
+  "T6": true
+ },
+ "n_scored": 5583,
+ "results": {
+  "close_walk": {
+   "auc": 0.9900634220139345,
+   "sem": 0.0008970372833717169,
+   "mrr": 0.56334648637329,
+   "hit@1": 0.45566899516389037,
+   "hit@5": 0.6996238581407845,
+   "hit@20": 0.8848289450116424,
+   "hit@100": 0.9792226401576214
+  },
+  "eclose": {
+   "auc": 0.9730927177074736,
+   "sem": 0.001405504370877987,
+   "mrr": 0.4288522337317951,
+   "hit@1": 0.3152427010567795,
+   "hit@5": 0.5699444742969729,
+   "hit@20": 0.7795092244313093,
+   "hit@100": 0.9296077377753896
+  },
+  "walk": {
+   "auc": 0.700774287873349,
+   "sem": 0.004344627621677272,
+   "mrr": 0.3676281229232235,
+   "hit@1": 0.3125559734909547,
+   "hit@5": 0.43023464087408203,
+   "hit@20": 0.5018807092960774,
+   "hit@100": 0.5464803868887694
+  },
+  "balance": {
+   "auc": 0.8709778115785264,
+   "sem": 0.002849671668565496,
+   "mrr": 0.3620972384077554,
+   "hit@1": 0.2736879813720222,
+   "hit@5": 0.47286405158516925,
+   "hit@20": 0.6174099946265449,
+   "hit@100": 0.7259537882858678
+  },
+  "degree_honest": {
+   "auc": 0.592640580989824,
+   "sem": 0.004738654577779133,
+   "mrr": 0.03724058032717024,
+   "hit@1": 0.01755328676338886,
+   "hit@5": 0.04656994447429697,
+   "hit@20": 0.12197743148844707,
+   "hit@100": 0.3125559734909547
+  },
+  "degree_leaky": {
+   "auc": 0.7241246813752867,
+   "sem": 0.0033510934188789947,
+   "mrr": 0.03801158393913574,
+   "hit@1": 0.01755328676338886,
+   "hit@5": 0.04656994447429697,
+   "hit@20": 0.13487372380440624,
+   "hit@100": 0.31649650725416445
+  }
+ },
+ "paired": {
+  "vs_walk_auc": [
+   0.28928913414058555,
+   0.004356916850292563
+  ],
+  "vs_walk_mrr": [
+   0.19571836345006652,
+   0.007107293178348981
+  ],
+  "vs_balance_auc": [
+   0.11908561043540816,
+   0.002683091596312276
+  ],
+  "vs_balance_mrr": [
+   0.20124924796553464,
+   0.005170685418956942
+  ],
+  "vs_eclose_auc": [
+   0.016970704306461068,
+   0.0010367417089213696
+  ],
+  "vs_eclose_mrr": [
+   0.13449425264149498,
+   0.004072815377663218
+  ]
+ },
+ "duplicate_free": {
+  "n": 400,
+  "frac": 0.9375,
+  "vs_walk_mrr": [
+   0.3720980460725674,
+   0.024787699689615465
+  ],
+  "vs_balance_mrr": [
+   0.12856942387797948,
+   0.016167480779395504
+  ],
+  "vs_eclose_mrr": [
+   0.09051756321659991,
+   0.012784966631802657
+  ]
+ },
+ "leak_reproduced": 0.13148410038546277,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/rem_bipartite.npz",
+    "bytes": 259723,
+    "hash": "e2ebbd1dc38e146a",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/rem_chem.npz",
+    "bytes": 256207,
+    "hash": "d0d2cbabfb22280d",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 5583,
+   "used": 5583,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 90210,
+  "controls": [
+   "the LOCKED test split, read once, nothing fitted on it",
+   "every constant frozen on DEV and its provenance stated in the docstring",
+   "the de-leaked j-deleted degree baseline, gated at T1",
+   "AUC, MRR and hit@k together, with verdicts on the rank metric",
+   "duplicate-surviving cases separated out at T5",
+   "CLOSE_WALK vs E-CLOSE head to head, which DEV never did"
+  ],
+  "note": "the design workflow's predeclared merge, measured once on 5,583 unseen reactions",
+  "warnings": []
+ },
+ "seconds": 574.9467482566833,
+ "log": [
+  "========================================================================================================",
+  "  CLOSE_WALK ON THE LOCKED TEST SPLIT -- read once, nothing fitted",
+  "========================================================================================================",
+  "",
+  "     DEV 5,582 reactions (design only) | TEST 5,583 (never touched) | overlap 0",
+  "     closure tables: 15,758 / 15,758 distinct keys over 8,380 formula-bearing candidates x 6 coefficients [1s]",
+  "",
+  "SCORING 5,583 LOCKED TEST REACTIONS",
+  "     500/5,583 [54s]",
+  "     1,000/5,583 [103s]",
+  "     1,500/5,583 [156s]",
+  "     2,000/5,583 [211s]",
+  "     2,500/5,583 [266s]",
+  "     3,000/5,583 [320s]",
+  "     3,500/5,583 [372s]",
+  "     4,000/5,583 [424s]",
+  "     4,500/5,583 [471s]",
+  "     5,000/5,583 [519s]",
+  "     5,500/5,583 [567s]",
+  "",
+  "T1 honest degree 0.5926 vs the leaky column 0.7241, difference +0.1315",
+  "     the de-leaked degree is measurably different from the leaky one, so the honest baseline is genuinely the one being used, and the leak reproduces on TEST at the size DEV found.",
+  "     T1 PASS",
+  "",
+  "T4 EVERY SCORER, EVERY METRIC",
+  "     scorer                AUC     sem     MRR   hit@1  hit@20  hit@100",
+  "     close_walk         0.9901  0.0009  0.5633   0.456   0.885    0.979",
+  "     eclose             0.9731  0.0014  0.4289   0.315   0.780    0.930",
+  "     walk               0.7008  0.0043  0.3676   0.313   0.502    0.546",
+  "     balance            0.8710  0.0028  0.3621   0.274   0.617    0.726",
+  "     degree_leaky       0.7241  0.0034  0.0380   0.018   0.135    0.316",
+  "     degree_honest      0.5926  0.0047  0.0372   0.018   0.122    0.313",
+  "     T4 PASS  (n = 5,583 scored)",
+  "",
+  "T2 CLOSE_WALK AGAINST BOTH SINGLES",
+  "     vs walk    AUC +0.2893 (+66.4 sem) | MRR +0.1957 (+27.5 sem)",
+  "     vs balance AUC +0.1191 (+44.4 sem) | MRR +0.2012 (+38.9 sem)",
+  "     the merge beats both singles on the locked split, on the rank metric as well as on AUC.",
+  "     T2 PASS",
+  "",
+  "T3 CLOSE_WALK vs E-CLOSE, the brief's open question",
+  "     AUC +0.0170 (+16.4 sem) | MRR +0.1345 (+33.0 sem)",
+  "     the connectivity arm earns its place: adding the walk to the chemistry closure improves the top of the list beyond what the chemistry does alone.",
+  "     T3 PASS",
+  "",
+  "T5 DUPLICATE STRATUM: of the first 400 TEST cases, 375 (93.8%) have NO surviving duplicate reaction",
+  "     duplicate-free, MRR: vs walk +0.3721 (+15.0 sem) | vs balance +0.1286 (+8.0 sem) | vs eclose +0.0905 (+7.1 sem)",
+  "     T2's verdict is unchanged once memorisable duplicates are removed.",
+  "     T5 PASS",
+  "",
+  "T6 WHAT THIS CANNOT SHOW",
+  "     Every held-out reaction was curated INTO Human-GEM by somebody, so this measures",
+  "     recovery and not discovery. The 389 dead ends and 259 orphans are where a genuine",
+  "     proposal would have to be tested and they are not tested here.",
+  "     The scorer is granted the elemental total of the answer: 98.8% of reactions balance",
+  "     and 57% have one non-currency product, so a high score is subset-sum inversion of a",
+  "     granted total, not unconditional gap prediction.",
+  "     One split, read once. There is no second locked set behind this one.",
+  "     T6 PASS",
+  "",
+  "========================================================================================================",
+  "  T1  PASS",
+  "  T2  PASS",
+  "  T3  PASS",
+  "  T4  PASS",
+  "  T5  PASS",
+  "  T6  PASS",
+  "  6/6   [575s]",
+  "========================================================================================================"
+ ]
+}

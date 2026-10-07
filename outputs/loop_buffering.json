@@ -1,0 +1,196 @@
+{
+  "test": "loop_buffering",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "outputs/loop_medium.json",
+        "bytes": 630150,
+        "hash": "27f9b5d490c811b1",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM.xml",
+        "bytes": 43115559,
+        "hash": "cc5a4383c6116b0c",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1775,
+      "used": 206,
+      "selection": "filtered",
+      "fraction": 0.11605633802816902
+    },
+    "seed": 1904,
+    "controls": [
+      "cost matched between groups as a design check",
+      "200 label shuffles per feature",
+      "expression carried so it cannot hide",
+      "DepMap-derived features quarantined and reported separately",
+      "5-fold held-out CV",
+      "operating point held fixed when comparing precision"
+    ],
+    "note": "sl and codep are computed from the same DepMap matrix as the label, so they are reported and excluded from every gate",
+    "warnings": []
+  },
+  "gates": {
+    "B1 groups matched on cost": true,
+    "B2 redundancy separates them": true,
+    "B3 not expression": true,
+    "B4 holds out of sample": true,
+    "B5 fixes the predictor": true
+  },
+  "n_tail": 206,
+  "n_buffered": 48,
+  "n_not_buffered": 158,
+  "cost_auc": 0.5329641350210971,
+  "features": {
+    "isozymes (most alternatives)": {
+      "auc": 0.33247626582278483,
+      "band95": 0.584107990506329,
+      "significant": true,
+      "independent": true
+    },
+    "fraction of reactions with an isozyme": {
+      "auc": 0.38633966244725737,
+      "band95": 0.572448575949367,
+      "significant": true,
+      "independent": true
+    },
+    "sole-catalyst reactions": {
+      "auc": 0.6412842827004219,
+      "band95": 0.5753823839662446,
+      "significant": true,
+      "independent": true
+    },
+    "paralogue family size": {
+      "auc": 0.39088871308016876,
+      "band95": 0.5901964662447257,
+      "significant": true,
+      "independent": true
+    },
+    "PPI degree": {
+      "auc": 0.26015295358649787,
+      "band95": 0.5889537183544303,
+      "significant": true,
+      "independent": true
+    },
+    "in a complex": {
+      "auc": 0.36893459915611815,
+      "band95": 0.5726529535864979,
+      "significant": true,
+      "independent": true
+    },
+    "expression": {
+      "auc": 0.3647151898734177,
+      "band95": 0.5883999208860758,
+      "significant": true,
+      "independent": true
+    },
+    "co-dependency partners": {
+      "auc": 0.395371835443038,
+      "band95": 0.5805050105485231,
+      "significant": true,
+      "independent": false
+    },
+    "synthetic-lethal partners": {
+      "auc": 0.5786524261603375,
+      "band95": 0.5562005537974684,
+      "significant": true,
+      "independent": false
+    }
+  },
+  "oof_auc": 0.696334388185654,
+  "precision_base": 0.7658227848101266,
+  "precision_with_buffering": 0.8227848101265823,
+  "precision_null95": 0.7784810126582279,
+  "precision_null_mean": 0.7608544303797469,
+  "seconds": 35.725363969802856,
+  "log": [
+    "====================================================================================================",
+    "IS BUFFERING PREDICTABLE FROM REDUNDANCY STRUCTURE -- engineering or theory",
+    "====================================================================================================",
+    "  Five results measured the same thing: mechanism is right locally and does not reach the",
+    "  far field. loop_slack measured why -- only 11.7% of knockouts cost >1% of growth. Cells",
+    "  buffer. If that buffering is predictable from redundancy STRUCTURE, the composition gap is",
+    "  engineering. If not, it is theory and no data collection closes it.",
+    "\n  15,913 genes with a DepMap dependency; 13,451 with co-dependency; 921 in a synthetic-lethal pair",
+    "\n  loading Human-GEM for GPR structure (isozymes are metabolic redundancy, and they are",
+    "  written down in the model rather than inferred)",
+    "  ENSG -> symbol map: 2,848 entries from HumanGEM_genes.tsv (the SBML itself carries empty gene names)",
+    "  2,848 genes carry at least one reaction; isozyme counts read from 12,931 GPR rules",
+    "\n  the model's own tail: 206 genes it calls costly",
+    "    NOT BUFFERED  158   high cost, and the cell does depend on them",
+    "    BUFFERED      48   high cost, and the cell shrugs",
+    "",
+    "  feature sanity: 9/9 columns vary and are populated",
+    "\n  B1 THE GROUPS ARE MATCHED ON COST -- cost itself separates them at 0.5330 against a shuffled band of 0.5779",
+    "     medians 1 buffered vs 1 not",
+    "     B1 PASS  (if cost separated them, this would be measuring",
+    "     importance again and calling it buffering)",
+    "\n  B2 REDUNDANCY SEPARATES THEM -- above 0.5 means MORE of it predicts BUFFERED",
+    "     feature                                 AUC   |null| 95th",
+    "     isozymes (most alternatives)         0.3325        0.5841   SIGNIFICANT ",
+    "     fraction of reactions with an isozyme   0.3863        0.5724   SIGNIFICANT ",
+    "     sole-catalyst reactions              0.6413        0.5754   SIGNIFICANT ",
+    "     paralogue family size                0.3909        0.5902   SIGNIFICANT ",
+    "     PPI degree                           0.2602        0.5890   SIGNIFICANT ",
+    "     in a complex                         0.3689        0.5727   SIGNIFICANT ",
+    "     expression                           0.3647        0.5884   SIGNIFICANT ",
+    "     co-dependency partners               0.3954        0.5805   SIGNIFICANT    <- DepMap-derived, NOT COUNTED",
+    "     synthetic-lethal partners            0.5787        0.5562   SIGNIFICANT    <- DepMap-derived, NOT COUNTED",
+    "     B2 PASS  (independent features only)",
+    "\n  WHICH STORY -- each feature's predicted direction under each hypothesis",
+    "     feature                               hypothesis  predicted  observed  verdict",
+    "     isozymes (most alternatives)          redundancy  more       less      CONTRADICTS",
+    "     fraction of reactions with an isozyme redundancy  more       less      CONTRADICTS",
+    "     sole-catalyst reactions               redundancy  less       more      CONTRADICTS",
+    "     paralogue family size                 redundancy  more       less      CONTRADICTS",
+    "     PPI degree                            centrality  less       less      supports",
+    "     in a complex                          centrality  less       less      supports",
+    "     expression                            centrality  less       less      supports",
+    "     redundancy hypothesis: 0 support, 4 contradict",
+    "     centrality hypothesis: 3 support, 0 contradict",
+    "  B3 IT IS NOT EXPRESSION -- best non-expression independent feature is PPI degree at 0.2602   B3 PASS",
+    "\n  B4 IT HOLDS OUT OF SAMPLE -- 5-fold CV over the 7 independent features: 0.6963 vs band 0.5988   B4 PASS",
+    "\n  B5 IT ACTUALLY FIXES THE PREDICTOR -- re-rank the model's own tail and call the same",
+    "     number of genes, so the operating point cannot drift",
+    "     calling the top 158 of 206:",
+    "       cost alone                      precision 0.7658",
+    "       cost minus predicted buffering  precision 0.8228   (+0.0570, 9 genes)",
+    "       shuffled-prediction null        95th 0.7785, mean 0.7609",
+    "     loop_tail's headline precision on this tail was 0.7670",
+    "     B5 PASS  (must beat both the baseline AND the shuffled null)",
+    "\n====================================================================================================",
+    "  B1 groups matched on cost               PASS",
+    "  B2 redundancy separates them            PASS",
+    "  B3 not expression                       PASS",
+    "  B4 holds out of sample                  PASS",
+    "  B5 fixes the predictor                  PASS",
+    "  BUFFERING IS PREDICTABLE AND USABLE. Structure separates buffered from not-buffered out",
+    "  of sample at 0.6963, and using it raises the model's own precision from",
+    "  0.7658 to 0.8228 against a shuffled 95th of 0.7785. That is the first",
+    "  time in this project that naming a missing layer also let us USE it -- loop_recall named",
+    "  one and made the predictor worse.",
+    "",
+    "  BUT IT IS NOT REDUNDANCY, AND THAT WAS THE HYPOTHESIS. All four redundancy features",
+    "  point the WRONG WAY: more isozymes predicts NOT buffered (0.3325),",
+    "  and more sole-catalyst reactions predicts buffered (0.6413) -- both",
+    "  the reverse of 'something else covers the job'. What actually separates them is",
+    "  CENTRALITY: buffered genes have fewer interactions (0.2602), sit outside",
+    "  complexes (0.3689) and are lowly expressed (0.3647).",
+    "  So the model is not being defeated by biological back-up. It is over-calling",
+    "  PERIPHERAL genes -- ones carrying unique chemistry in parts of the network the cell",
+    "  does not lean on. That is a model-scope problem, which is engineering, and it is a",
+    "  different problem from the one the buffering story predicted.",
+    "====================================================================================================",
+    "    manifest: 3 inputs, coverage 206/1775 (11.6%) by 'filtered', seed 1904, controls 6"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+ "dataset": "kcat from enzyme sequence and substrate",
+ "built_by": "colab/ml_dataset.py",
+ "source": {
+  "file": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/dlkcat.json",
+  "sha256_16": "7dd69e66772febcf",
+  "citation": "DLKcat Kcat_combination_0918 (BRENDA + SABIO-RK compilation)"
+ },
+ "units": {
+  "kcat": "per second",
+  "target": "log10(kcat / s^-1)"
+ },
+ "n_records": 17004,
+ "n_sequences": 7856,
+ "n_substrates": 2705,
+ "target_mean": 0.5674590420746042,
+ "target_sd": 1.504483986359005,
+ "constant_baseline_rmse_log10": 1.504483986359005,
+ "experimental_floor_rmse_log10": 0.06069784035361165,
+ "split": {
+  "rule": "MinHash 5-mer LSH clusters, whole clusters assigned to folds",
+  "n_clusters": 3006,
+  "n_folds": 5,
+  "seed": 13100,
+  "leakage_audit": {
+   "fold0": {
+    "n_sampled": 200,
+    "median": 0.009965417000801925,
+    "p90": 0.17712177121771217,
+    "max": 0.37142857142857144
+   }
+  },
+  "WARNING": "a random split leaks badly here; homologous enzymes share kcat"
+ },
+ "files": {
+  "kcat_records.tsv": "one row per measurement; fold is the ONLY split to use",
+  "esm2_8M_mean.npy": "float16 [n_seq, 320] mean-pooled ESM2-t6-8M, row order = sequences.json",
+  "sequences.json": "sequence strings, index-aligned to seq_id and the embedding",
+  "substrate_ecfp.npy": "uint8 [n_smiles, 256], Morgan r=2 2048-bit packed; np.unpackbits to use",
+  "substrate_smiles.json": "SMILES, index-aligned to smiles_id",
+  "seq_features.npy": "float32 [n_seq, 25]: log10 length, 20 aa frequencies, 4 class fractions"
+ },
+ "forbidden": [
+  "random splits -- use the fold column",
+  "training on physical law; tanh(b*T/4) and Smoluchowski are exact and belong in evaluation, not in the loss",
+  "scoring against DLKcat any model whose features were derived from DLKcat (loop 129 lost 160 of 169 validation genes to exactly this)",
+  "reporting a score without the constant, nearest-neighbour and composition baselines"
+ ],
+ "seconds": 42.61025619506836
+}

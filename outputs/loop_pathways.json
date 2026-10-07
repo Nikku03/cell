@@ -1,0 +1,272 @@
+{
+ "test": "loop_pathways",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/NCBI2Reactome.txt",
+    "bytes": 35534151,
+    "hash": "44aec2f3d6c0d6f0",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/NCBI2Reactome_All_Levels.txt",
+    "bytes": 98024930,
+    "hash": "1935e18b56473357",
+    "method": "sha256:ends8M"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ReactomePathwaysRelation.txt",
+    "bytes": 634259,
+    "hash": "fd49a624d80c14eb",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ReactomePathways.txt",
+    "bytes": 1592393,
+    "hash": "f6d7a2bf89b5bcfe",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ReactomePathways.gmt",
+    "bytes": 1032186,
+    "hash": "89983d5c1f0af11c",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hs_gene_info.gz",
+    "bytes": 5175468,
+    "hash": "6882e00f46856dfe",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+    "bytes": 38524393,
+    "hash": "b857a72939e09be8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 16492,
+   "used": 10405,
+   "selection": "filtered",
+   "fraction": 0.6309119573126364
+  },
+  "seed": 7501,
+  "controls": [
+   "three competing reconstructions scored, two refuted",
+   "stored npath shuffled across genes as the null",
+   "two measured targets (codep, coexpr) as independent replicates",
+   "PPI excluded as a target because it is the fame confound",
+   "four negative sets: random, pubs, degree, deg+pubs+npath",
+   "covariate balance printed for every negative set",
+   "bar set at the better trivial baseline, not at 0.5",
+   "pathway size capped 2-60 before pair expansion",
+   "predeclared against altdata_sources' known 0.51 negative"
+  ],
+  "note": "build_cell_complete.py declared npath/path SOURCE_NOT_IDENTIFIED; cell_complete.json has no producer in this repository",
+  "warnings": []
+ },
+ "gates": {
+  "R1 rebuild reproduces npath by discrimination": true,
+  "R2 matrix complete where the old layer was not": true,
+  "R3 fame correlation reported": true,
+  "R4 shared-pathway pairs survive a three-way matched null": false,
+  "R5 write additive": true
+ },
+ "npath_candidates": {
+  "A lowest-level, ROWS": {
+   "exact": 0.9808391947610963,
+   "rho": 0.9823264690458828,
+   "within1": 0.9924812030075187,
+   "max": 241
+  },
+  "B lowest-level, UNIQUE ids": {
+   "exact": 0.8690880426873636,
+   "rho": 0.9782741882649212,
+   "within1": 0.9502182876546205,
+   "max": 223
+  },
+  "C all-levels, ROWS": {
+   "exact": 0.36575309240844045,
+   "rho": 0.9637953725165209,
+   "within1": 0.3871574096531652,
+   "max": 525
+  }
+ },
+ "npath_null_exact_mean": 0.22310817365995633,
+ "npath_null_exact_sd": 0.003219537355159081,
+ "winner": "A lowest-level, ROWS",
+ "winner_exact": 0.9808391947610963,
+ "winner_rho": 0.9823264690458828,
+ "old_pathways_derived_fraction": 1.0,
+ "old_genes_covered": 3833,
+ "new_genes_covered": 10405,
+ "n_leaf_pathways": 2310,
+ "n_all_levels_pathways": 2868,
+ "n_hierarchy_edges": 2899,
+ "max_memberships_per_gene": 223,
+ "max_source_rows_per_gene": 241,
+ "rho_npath_pubs": 0.5441629743744667,
+ "rho_npath_ppideg": 0.3543543191316402,
+ "r4": {
+  "codep": {
+   "RANDOM": {
+    "shared_pathway": 0.5221048552440534,
+    "PUBS": 0.5118179220634561,
+    "PREF-ATT": 0.8821619949202565,
+    "bar": 0.8821619949202565,
+    "beats_bar": false
+   },
+   "PUBS-MATCHED": {
+    "shared_pathway": 0.5220144682142545,
+    "PUBS": 0.5047728445226236,
+    "PREF-ATT": 0.8808815758380296,
+    "bar": 0.8808815758380296,
+    "beats_bar": false
+   },
+   "DEGREE-MATCHED": {
+    "shared_pathway": 0.5219232631232495,
+    "PUBS": 0.48935748975855714,
+    "PREF-ATT": 0.627382699766513,
+    "bar": 0.627382699766513,
+    "beats_bar": false
+   },
+   "DEG+PUBS+NPATH-MATCHED": {
+    "shared_pathway": 0.521558902248531,
+    "PUBS": 0.5012935017818041,
+    "PREF-ATT": 0.6264450866823811,
+    "bar": 0.6264450866823811,
+    "beats_bar": false
+   }
+  },
+  "coexpr": {
+   "RANDOM": {
+    "shared_pathway": 0.5083379461259322,
+    "PUBS": 0.5279891405418523,
+    "PREF-ATT": 0.7355882528284381,
+    "bar": 0.7355882528284381,
+    "beats_bar": false
+   },
+   "PUBS-MATCHED": {
+    "shared_pathway": 0.5080242223698385,
+    "PUBS": 0.5013798063349714,
+    "PREF-ATT": 0.7327097127570078,
+    "bar": 0.7327097127570078,
+    "beats_bar": false
+   },
+   "DEGREE-MATCHED": {
+    "shared_pathway": 0.5082165532509572,
+    "PUBS": 0.5045105130157668,
+    "PREF-ATT": 0.5441815054593527,
+    "bar": 0.5441815054593527,
+    "beats_bar": false
+   },
+   "DEG+PUBS+NPATH-MATCHED": {
+    "shared_pathway": 0.5078599640077167,
+    "PUBS": 0.5010223541921712,
+    "PREF-ATT": 0.5433814139692572,
+    "bar": 0.5433814139692572,
+    "beats_bar": false
+   }
+  }
+ },
+ "altdata_known_negative": 0.51,
+ "bytes": 2297352,
+ "existing_fields_changed": [],
+ "seconds": 55.12971377372742,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 75 -- rebuild the pathway membership layer, and identify the source that was lost",
+  "  the model stored HOW MANY pathways each gene is in, and threw away WHICH",
+  "====================================================================================================",
+  "",
+  "THE OLD LAYER, MEASURED BEFORE ANYTHING IS REBUILT",
+  "     pathways key: 60 pathways, 3,833 genes (23.2%), max memberships per gene 1",
+  "     of its 3,833 member entries, 1.0000 have the gene's own `path` string equal to the pathway name",
+  "     -> it is groupby(path), not a source. A one-pathway-per-gene structure cannot reproduce npath's max of 241.",
+  "     npath > 0 agrees with path non-null on 1.0000 of genes -- the same pass wrote both",
+  "",
+  "R1 THE REBUILD REPRODUCES npath, BY DISCRIMINATION",
+  "     NCBI gene_info: 193,811 human Entrez -> symbol",
+  "     Reactome LOWEST-LEVEL : 52,845 human rows, 11,363 genes, 2,310 pathways",
+  "     Reactome ALL-LEVELS   : 156,310 human rows, 11,363 genes, 2,835 pathways",
+  "     null (npath shuffled across genes, 20 draws): exact 0.2231 +/- 0.0032",
+  "       A lowest-level, ROWS         exact 0.9808  within1 0.9925  rho +0.9823  max  241 (stored 241)  z    235.4",
+  "       B lowest-level, UNIQUE ids   exact 0.8691  within1 0.9502  rho +0.9783  max  223 (stored 241)  z    200.6",
+  "       C all-levels, ROWS           exact 0.3658  within1 0.3872  rho +0.9638  max  525 (stored 241)  z     44.3",
+  "     WINNER: A lowest-level, ROWS",
+  "       316 mismatches; median |diff| 1, 0.6076 within +/-1; 121 gained / 195 lost vs the stored count",
+  "       residual disagreement is Reactome curation drift between the stored release and the current one; the release was never recorded and cannot be pinned.",
+  "     R1 PASS -- the lost source is identified: Reactome, human, lowest level, rows not unique ids",
+  "",
+  "R2 THE MATRIX IS COMPLETE WHERE THE OLD LAYER WAS NOT",
+  "     leaf membership   10,405 genes, 2,310 pathways, 43,211 unique gene-pathway links",
+  "     all-levels (GMT)  2,868 human pathways carrying symbols, 125,159 links (pre-rolled-up; do NOT re-propagate)",
+  "     hierarchy         2,899 human parent->child edges, 29 roots, 2,035 leaves",
+  "     genes the old layer says have a pathway: 10,352;  the rebuild gives one to 10,405",
+  "     max memberships per gene  old 1  ->  new 223 distinct pathways (241 source ROWS, which is what npath counts: stored max 241)",
+  "     R2 PASS",
+  "",
+  "R3 THE LAYER IS PARTLY A FAME AXIS -- REPORTED, NOT JUDGED",
+  "     rho(npath, publication count) +0.5442",
+  "     rho(npath, PPI degree)        +0.3544",
+  "     rho(PPI degree, pubs)         +0.5284   <- why PPI is the confound and not the referee",
+  "     most-annotated genes: RPS27A 241, UBA52 235, UBB 225, UBC 221, GRB2 117, PIK3R1 86",
+  "     R3 PASS (reported)",
+  "",
+  "R4 SHARED-PATHWAY PAIRS SURVIVE A THREE-WAY MATCHED NULL",
+  "     predeclared: altdata_sources.py already records shared-Reactome-pathway at AUC ~0.51 vs degree-matched.",
+  "     A result near 0.51 is a REPLICATION of a known negative, not a discovery.",
+  "     pathway size cap 2-60: 1,852 of 2,292 pathways kept, 7,962 genes still covered",
+  "       (uncapped, the largest pathway holds 446 genes and would dominate every pair count)",
+  "     --- target codep: 65,571 positive pairs ---",
+  "     COVARIATE BALANCE (link_completion.py:227-233 -- a module that does not print this cannot claim its null is matched)",
+  "       set                             n             log1p(pubs)            log1p(deg)               npath",
+  "       POSITIVES                  65,571                    8.03                  5.58                 5.9",
+  "       RANDOM                    327,855                    7.94                  3.40                 5.7",
+  "       PUBS-MATCHED              327,855                    7.99                  3.41                 5.7",
+  "       DEGREE-MATCHED            327,855                    8.09                  5.06                 6.1",
+  "       DEG+PUBS+NPATH-MATCHED    327,855                    8.03                  5.06                 6.0",
+  "       RANDOM                   shared-pathway AUC 0.5221   trivial: PUBS 0.5118 PREF-ATT 0.8822   bar 0.8822   BELOW",
+  "       PUBS-MATCHED             shared-pathway AUC 0.5220   trivial: PUBS 0.5048 PREF-ATT 0.8809   bar 0.8809   BELOW",
+  "       DEGREE-MATCHED           shared-pathway AUC 0.5219   trivial: PUBS 0.4894 PREF-ATT 0.6274   bar 0.6274   BELOW",
+  "       DEG+PUBS+NPATH-MATCHED   shared-pathway AUC 0.5216   trivial: PUBS 0.5013 PREF-ATT 0.6264   bar 0.6264   BELOW",
+  "",
+  "     --- target coexpr: 170,536 positive pairs ---",
+  "     COVARIATE BALANCE (link_completion.py:227-233 -- a module that does not print this cannot claim its null is matched)",
+  "       set                             n             log1p(pubs)            log1p(deg)               npath",
+  "       POSITIVES                 170,536                    8.06                  6.54                 6.1",
+  "       RANDOM                    852,680                    7.94                  5.84                 5.7",
+  "       PUBS-MATCHED              852,680                    8.07                  5.85                 6.0",
+  "       DEGREE-MATCHED            852,680                    8.08                  6.38                 6.2",
+  "       DEG+PUBS+NPATH-MATCHED    852,680                    8.07                  6.38                 6.2",
+  "       RANDOM                   shared-pathway AUC 0.5083   trivial: PUBS 0.5280 PREF-ATT 0.7356   bar 0.7356   BELOW",
+  "       PUBS-MATCHED             shared-pathway AUC 0.5080   trivial: PUBS 0.5014 PREF-ATT 0.7327   bar 0.7327   BELOW",
+  "       DEGREE-MATCHED           shared-pathway AUC 0.5082   trivial: PUBS 0.5045 PREF-ATT 0.5442   bar 0.5442   BELOW",
+  "       DEG+PUBS+NPATH-MATCHED   shared-pathway AUC 0.5079   trivial: PUBS 0.5010 PREF-ATT 0.5434   bar 0.5434   BELOW",
+  "",
+  "     codep    under the three-way matched null: AUC 0.5216  bar 0.6264  (altdata_sources' known negative 0.51)",
+  "     coexpr   under the three-way matched null: AUC 0.5079  bar 0.5434  (altdata_sources' known negative 0.51)",
+  "     R4 FAIL",
+  "     This REPLICATES the negative already in the repository. Shared pathway membership",
+  "     does not identify functionally related gene pairs once degree, publication count",
+  "     and annotation depth are held fixed. The layer is still worth rebuilding -- R1/R2",
+  "     restore data that was destroyed -- but it must not be sold as a predictor.",
+  "",
+  "R5 THE WRITE IS ADDITIVE",
+  "     wrote 2.3 MB to cell_pathways.json; cell_complete.json fields changed: 0",
+  "     LAYER CENSUS  pathways 60 -> 2,310 leaf / 2,868 all-levels",
+  "                   genes covered 3,833 -> 10,405",
+  "                   max memberships per gene 1 -> 223 distinct (241 rows)",
+  "                   hierarchy 0 -> 2,899 edges",
+  "     R5 PASS",
+  "",
+  "  PASS  R1 rebuild reproduces npath by discrimination",
+  "  PASS  R2 matrix complete where the old layer was not",
+  "  PASS  R3 fame correlation reported",
+  "  FAIL  R4 shared-pathway pairs survive a three-way matched null",
+  "  PASS  R5 write additive",
+  "    manifest: 7 inputs, coverage 10405/16492 (63.1%) by 'filtered', seed 7501, controls 9"
+ ]
+}

@@ -1,0 +1,123 @@
+{
+ "n_splits": 5,
+ "mc_replicates": 24,
+ "tau_range": [
+  0.7,
+  1.8
+ ],
+ "idf_strength": 50.0,
+ "n_scorable": 378,
+ "aggregate": {
+  "CAUSAL-FOOTPRINT resp-size-matched": {
+   "mean": 0.16835562472626758,
+   "sd": 0.011941023413402696
+  },
+  "CAUSAL-FOOTPRINT": {
+   "mean": 0.2574834481388481,
+   "sd": 0.009238204777232079
+  },
+  "CAUSAL-FOOTPRINT-MC": {
+   "mean": 0.20871011841742262,
+   "sd": 0.011746083173549167
+  },
+  "PPI-neighbour comparator": {
+   "mean": 0.3841796520772589,
+   "sd": 0.01644665737632385
+  },
+  "TIDE": {
+   "mean": 0.268588842233099,
+   "sd": 0.005527236507094851
+  },
+  "ORACLE*": {
+   "mean": 0.5703402976742544,
+   "sd": 0.014759511680803528
+  },
+  "CAUSAL-FOOTPRINT-shuf": {
+   "mean": 0.13656691398459886,
+   "sd": 0.01563203778380617
+  }
+ },
+ "per_split": {
+  "CAUSAL-FOOTPRINT resp-size-matched": [
+   0.14571476215340037,
+   0.17420839036806837,
+   0.172057088419211,
+   0.1691220105481366,
+   0.1806758721425216
+  ],
+  "CAUSAL-FOOTPRINT": [
+   0.2636924250373614,
+   0.2679323786622696,
+   0.24085653706261076,
+   0.25634190778273563,
+   0.2585939921492634
+  ],
+  "CAUSAL-FOOTPRINT-MC": [
+   0.20750975000402716,
+   0.21563718806115215,
+   0.18761200054012458,
+   0.22260696063863514,
+   0.21018469284317393
+  ],
+  "PPI-neighbour comparator": [
+   0.4068279786780468,
+   0.3899705177620659,
+   0.37226593206654485,
+   0.35967654141168814,
+   0.39215729046794884
+  ],
+  "TIDE": [
+   0.2739742876358778,
+   0.2682709451031527,
+   0.2627839161642434,
+   0.26226131553633764,
+   0.27565374672588333
+  ],
+  "ORACLE*": [
+   0.5958189863926467,
+   0.564648969303379,
+   0.5545146378164545,
+   0.5597176281034345,
+   0.5770012667553576
+  ],
+  "CAUSAL-FOOTPRINT-shuf": [
+   0.1300099507468034,
+   0.15614503726076187,
+   0.11003392598833571,
+   0.14365610642186163,
+   0.14298954950523163
+  ]
+ },
+ "paired": {
+  "vs_tide": [
+   -0.011105394094250815,
+   0.003847512211944121,
+   "WORSE"
+  ],
+  "vs_response_size_matched": [
+   0.08912782341258056,
+   0.008354574862454799,
+   "BETTER"
+  ],
+  "vs_label_shuffled": [
+   0.1209165341542493,
+   0.004692574060975822,
+   "BETTER"
+  ],
+  "vs_ppi_comparator": [
+   -0.12669620393841077,
+   0.006734552357974153,
+   "WORSE"
+  ],
+  "mc_vs_deterministic": [
+   -0.04877332972142556,
+   0.003959665774722292,
+   "WORSE"
+  ]
+ },
+ "works": false,
+ "mc_pays": false,
+ "headroom_closed": -0.036803116916254736,
+ "verdict": "CAUSAL FOOTPRINT: making the measured causal graph PREDICT, which bridge_measured structurally could not. That module scored +0.3587 with measured causal edges, far above any curated alternative, but it conditions on the TEST knockout's measured movers -- fine for route inference where both endpoints are known by construction, fatal for prediction, because that is precisely what a predictor must output. Carrying its number into the harness would have been the easiest way to fake a result here, so it was not carried. This scores a candidate TRAIN knockout by how much its MEASURED downstream footprint lands on the STATIC PPI neighbourhood of the held-out gene: nothing about the test knockout but its position in a protein graph enters the nomination. It aims at the ORACLE GAP, since the oracle reaches 0.570 only by peeking to choose neighbours -- the information exists, and choosing blind is the whole problem. RESULT (5 splits): CAUSAL-FOOTPRINT 0.2575, Monte-Carlo variant 0.2087, PPI-neighbour comparator 0.3842, tide-null 0.2686, label-shuffled 0.1366, response-size-matched control 0.1684, oracle 0.5703. THE OUTCOME SPLITS IN TWO AND BOTH HALVES MATTER. It DOES carry genuine knockout-specific information: +0.1209 +- 0.0047 over its label-shuffled twin and +0.0891 +- 0.0084 over a RESPONSE-SIZE-MATCHED control, so this is not the big-responder artifact it structurally could have been. BUT IT IS STILL NOT USEFUL: it scores -0.0111 +- 0.0038 against the tide-null, i.e. BELOW the do-nothing baseline, and -0.1267 +- 0.0067 against simply averaging the knocked-out gene's PPI partners. Real signal that loses to predicting nothing is still a negative. THE SHAPE OF THE FAILURE IS THE FINDING: the same measured causal edges are decisive when BOTH endpoints are known (bridge_measured, +0.3587) and worse than useless when only the start is known. Route inference and prediction are not the same problem, and an edge set can be excellent at one while contributing nothing to the other -- which also means bridge_measured's number must never be quoted as predictive performance. THE MONTE CARLO DOES NOT EARN ITS COST (-0.0488 +- 0.0040, WORSE). Sampling the edge-calling threshold changes which edges exist, so unlike mc_outofgame it genuinely COULD have reordered the ranking -- it simply does not. That is now the second independent demonstration in this project that Monte Carlo adds nothing here beyond the point estimate, and the first where the mechanism was not arithmetically ruled out in advance. WHAT THIS CANNOT SAY: the causal graph is thresholded response data, so 'measured' means reproducible in this screen, not mechanistically verified. Only 378 knockouts are scorable and 3 of them have an empty PPI neighbourhood. Promiscuous genes are down-weighted by a 1/(1+50f) inverse-frequency term, a choice that was not swept. Five splits of one cell line share the same underlying data, so the paired SE understates true uncertainty. Deterministic given seed 0.",
+ "note": "CAUSAL FOOTPRINT: making the measured causal graph PREDICT, which bridge_measured structurally could not. That module scored +0.3587 with measured causal edges, far above any curated alternative, but it conditions on the TEST knockout's measured movers -- fine for route inference where both endpoints are known by construction, fatal for prediction, because that is precisely what a predictor must output. Carrying its number into the harness would have been the easiest way to fake a result here, so it was not carried. This scores a candidate TRAIN knockout by how much its MEASURED downstream footprint lands on the STATIC PPI neighbourhood of the held-out gene: nothing about the test knockout but its position in a protein graph enters the nomination. It aims at the ORACLE GAP, since the oracle reaches 0.570 only by peeking to choose neighbours -- the information exists, and choosing blind is the whole problem. RESULT (5 splits): CAUSAL-FOOTPRINT 0.2575, Monte-Carlo variant 0.2087, PPI-neighbour comparator 0.3842, tide-null 0.2686, label-shuffled 0.1366, response-size-matched control 0.1684, oracle 0.5703. THE OUTCOME SPLITS IN TWO AND BOTH HALVES MATTER. It DOES carry genuine knockout-specific information: +0.1209 +- 0.0047 over its label-shuffled twin and +0.0891 +- 0.0084 over a RESPONSE-SIZE-MATCHED control, so this is not the big-responder artifact it structurally could have been. BUT IT IS STILL NOT USEFUL: it scores -0.0111 +- 0.0038 against the tide-null, i.e. BELOW the do-nothing baseline, and -0.1267 +- 0.0067 against simply averaging the knocked-out gene's PPI partners. Real signal that loses to predicting nothing is still a negative. THE SHAPE OF THE FAILURE IS THE FINDING: the same measured causal edges are decisive when BOTH endpoints are known (bridge_measured, +0.3587) and worse than useless when only the start is known. Route inference and prediction are not the same problem, and an edge set can be excellent at one while contributing nothing to the other -- which also means bridge_measured's number must never be quoted as predictive performance. THE MONTE CARLO DOES NOT EARN ITS COST (-0.0488 +- 0.0040, WORSE). Sampling the edge-calling threshold changes which edges exist, so unlike mc_outofgame it genuinely COULD have reordered the ranking -- it simply does not. That is now the second independent demonstration in this project that Monte Carlo adds nothing here beyond the point estimate, and the first where the mechanism was not arithmetically ruled out in advance. WHAT THIS CANNOT SAY: the causal graph is thresholded response data, so 'measured' means reproducible in this screen, not mechanistically verified. Only 378 knockouts are scorable and 3 of them have an empty PPI neighbourhood. Promiscuous genes are down-weighted by a 1/(1+50f) inverse-frequency term, a choice that was not swept. Five splits of one cell line share the same underlying data, so the paired SE understates true uncertainty. Deterministic given seed 0."
+}

@@ -1,0 +1,68 @@
+{
+ "cell": "K562",
+ "n_pairs": 12274,
+ "n_pos": 717,
+ "contact_read_frac": 1.0,
+ "contact_features": [
+  "contact_residual",
+  "obs_over_exp",
+  "log_contact",
+  "contact_rank_in_gene"
+ ],
+ "n_groups": 249,
+ "arms": {
+  "M4 baseline (K562)": {
+   "pooled_auprc": 0.5556573593596618,
+   "r1": 0.6771084337349399,
+   "r3": 0.8570281124497992,
+   "mrr": 0.7804160631657275,
+   "rank": 2.5180722891566263,
+   "nrank": 0.16293733643989583,
+   "ap": 0.7457499311480665,
+   "dmrr_sign_p": NaN
+  },
+  "+residual contact": {
+   "pooled_auprc": 0.556687966337073,
+   "r1": 0.6803212851405622,
+   "r3": 0.8650602409638555,
+   "mrr": 0.7846353602370034,
+   "rank": 2.427309236947791,
+   "nrank": 0.16071270398385784,
+   "ap": 0.7497231317392353,
+   "dmrr_sign_p": 0.26014579678753663
+  },
+  "+all 4 contact feats": {
+   "pooled_auprc": 0.5548209174986355,
+   "r1": 0.672289156626506,
+   "r3": 0.8610441767068273,
+   "mrr": 0.7802834966252506,
+   "rank": 2.363855421686747,
+   "nrank": 0.1608756327761292,
+   "ap": 0.7463332893073394,
+   "dmrr_sign_p": 0.1740706451596034
+  },
+  "CTRL +shuffled contact": {
+   "pooled_auprc": 0.5472332765307886,
+   "r1": 0.6779116465863453,
+   "r3": 0.8610441767068272,
+   "mrr": 0.7803851877981293,
+   "rank": 2.4795180722891565,
+   "nrank": 0.16759572413155088,
+   "ap": 0.7437767934284688,
+   "dmrr_sign_p": 0.415186504842877
+  }
+ },
+ "zero_fraction": 0.1833957959915268,
+ "resolution_bp": 25000,
+ "residual_arm": {
+  "d_pooled": 0.001030606977411197,
+  "d_r1": 0.00321285140562233,
+  "d_mrr": 0.004219297071275885,
+  "sign_p": 0.26014579678753663,
+  "shuffled_d_mrr": -3.087536759827092e-05,
+  "resid_vs_distance_spearman": -0.017033251138142774,
+  "margin_over_shuffled_mrr": 0.004250172438874156,
+  "margin_over_shuffled_r1": 0.002409638554216942
+ },
+ "verdict": "NO -- quantitative contact adds +0.0010 pooled and +0.0042 MRR on top of CTCF, on 12,274 K562 pairs with contact read for 100% of them. This is the FAIR version of the test the binary loop feature failed, and it agrees: buy CTCF ChIP, not Hi-C. K562 only, so not a cross-cell-type claim."
+}

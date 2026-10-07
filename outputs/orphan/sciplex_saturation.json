@@ -1,0 +1,155 @@
+{
+ "cell_line": "K562",
+ "time_h": 24,
+ "n_drugs": 188,
+ "n_genes_kept": 8365,
+ "dose_magnitude_spearman_median": 0.4,
+ "frac_drugs_magnitude_rises_with_dose": 0.707,
+ "program_stability_lo_vs_hi_dose_median": 0.007,
+ "program_stability_top2_responding_median": 0.022,
+ "n_responding_drugs": 188,
+ "example_strong": [
+  {
+   "drug": "Flavopiridol HCl",
+   "doses": 4,
+   "mags": [
+    2442,
+    3045,
+    6087,
+    5406
+   ],
+   "dose_mag_spearman": 0.7999999999999999,
+   "program_stability_lo_hi": -0.0068927364464963625,
+   "program_stability_top2": 0.058316829004847796,
+   "max_movers": 6087
+  },
+  {
+   "drug": "Bisindolylmaleimide IX (Ro 31-8220 Mesyl",
+   "doses": 4,
+   "mags": [
+    1214,
+    1844,
+    2192,
+    5838
+   ],
+   "dose_mag_spearman": 1.0,
+   "program_stability_lo_hi": 0.008765646539551955,
+   "program_stability_top2": -0.001924031743009993,
+   "max_movers": 5838
+  },
+  {
+   "drug": "Panobinostat (LBH589)",
+   "doses": 4,
+   "mags": [
+    3683,
+    4817,
+    5343,
+    5220
+   ],
+   "dose_mag_spearman": 0.7999999999999999,
+   "program_stability_lo_hi": 0.25442477352164605,
+   "program_stability_top2": 0.3038421943725173,
+   "max_movers": 5343
+  },
+  {
+   "drug": "Dacinostat (LAQ824)",
+   "doses": 4,
+   "mags": [
+    3739,
+    4492,
+    4851,
+    5207
+   ],
+   "dose_mag_spearman": 1.0,
+   "program_stability_lo_hi": 0.2783034982204733,
+   "program_stability_top2": 0.37039832368935366,
+   "max_movers": 5207
+  },
+  {
+   "drug": "Quisinostat (JNJ-26481585) 2HCl",
+   "doses": 4,
+   "mags": [
+    4604,
+    4865,
+    4790,
+    5200
+   ],
+   "dose_mag_spearman": 0.7999999999999999,
+   "program_stability_lo_hi": 0.34444584989768134,
+   "program_stability_top2": 0.3301613189262605,
+   "max_movers": 5200
+  },
+  {
+   "drug": "Givinostat (ITF2357)",
+   "doses": 4,
+   "mags": [
+    1664,
+    2237,
+    3416,
+    5110
+   ],
+   "dose_mag_spearman": 1.0,
+   "program_stability_lo_hi": 0.0898498097796076,
+   "program_stability_top2": 0.2195904382916779,
+   "max_movers": 5110
+  },
+  {
+   "drug": "CUDC-907",
+   "doses": 4,
+   "mags": [
+    3680,
+    4535,
+    4368,
+    5084
+   ],
+   "dose_mag_spearman": 0.7999999999999999,
+   "program_stability_lo_hi": 0.160026874962116,
+   "program_stability_top2": 0.19528881014013813,
+   "max_movers": 5084
+  },
+  {
+   "drug": "Pracinostat (SB939)",
+   "doses": 4,
+   "mags": [
+    1720,
+    2994,
+    4379,
+    5027
+   ],
+   "dose_mag_spearman": 1.0,
+   "program_stability_lo_hi": 0.07556831894357806,
+   "program_stability_top2": 0.29460515100524537,
+   "max_movers": 5027
+  },
+  {
+   "drug": "M344",
+   "doses": 4,
+   "mags": [
+    1652,
+    2062,
+    3733,
+    4970
+   ],
+   "dose_mag_spearman": 1.0,
+   "program_stability_lo_hi": 0.037385131944783594,
+   "program_stability_top2": 0.2551502660328499,
+   "max_movers": 4970
+  },
+  {
+   "drug": "Mocetinostat (MGCD0103)",
+   "doses": 4,
+   "mags": [
+    2247,
+    2468,
+    3509,
+    4962
+   ],
+   "dose_mag_spearman": 1.0,
+   "program_stability_lo_hi": -0.014104674817988017,
+   "program_stability_top2": 0.28344471015627537,
+   "max_movers": 4962
+  }
+ ],
+ "verdict": "SCI-PLEX SATURATION TEST (K562, 24h, 188 drugs x 4 doses, graded chemical titration) -- HONEST split result: one half confirmed, the other NOT. Q1 CONFIRMED -- response MAGNITUDE scales with dose: median Spearman(log dose, n_movers) = 0.4, and 71% of drugs show magnitude rising with dose (more choke -> bigger response), extending the K562-knockout magnitude finding (~0.5) to graded chemical perturbation. Q2 NOT SUPPORTED -- no dose-invariant program: low-vs-high profile Spearman 0.007 (~0), and even between the two highest both-responding doses only 0.022 (~0). Either the program reorganises with dose or (more likely) per-drug pseudobulk profiles are too noisy for a stable-program rank-correlation to survive (only HDAC/CDK inhibitors drive big responses). I will NOT claim program stability. NET: Sci-Plex confirms MAGNITUDE is dose-tunable (the predictable axis) but does NOT here demonstrate a fixed dose-invariant identity program -- 'dose predicts how big', 'which genes' stays the hard part. Downloaded via scPerturb/Zenodo (Sci-Plex 3).",
+ "note": "SCI-PLEX SATURATION TEST (K562, 24h, 188 drugs x 4 doses, graded chemical titration) -- HONEST split result: one half confirmed, the other NOT. Q1 CONFIRMED -- response MAGNITUDE scales with dose: median Spearman(log dose, n_movers) = 0.4, and 71% of drugs show magnitude rising with dose (more choke -> bigger response), extending the K562-knockout magnitude finding (~0.5) to graded chemical perturbation. Q2 NOT SUPPORTED -- no dose-invariant program: low-vs-high profile Spearman 0.007 (~0), and even between the two highest both-responding doses only 0.022 (~0). Either the program reorganises with dose or (more likely) per-drug pseudobulk profiles are too noisy for a stable-program rank-correlation to survive (only HDAC/CDK inhibitors drive big responses). I will NOT claim program stability. NET: Sci-Plex confirms MAGNITUDE is dose-tunable (the predictable axis) but does NOT here demonstrate a fixed dose-invariant identity program -- 'dose predicts how big', 'which genes' stays the hard part. Downloaded via scPerturb/Zenodo (Sci-Plex 3)."
+}

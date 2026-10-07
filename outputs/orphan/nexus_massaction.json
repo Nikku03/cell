@@ -1,0 +1,67 @@
+{
+ "solver": {
+  "conservation_maxres": 0.0,
+  "AB_solver": 0.5,
+  "AB_analytic": 0.5,
+  "match": true
+ },
+ "funneling": {
+  "AB_wt": 0.87,
+  "AZ_wt": 0.063,
+  "AB_mut": 0.063,
+  "AZ_mut": 0.364,
+  "rerouted_to_Z": 0.301,
+  "funnels": true
+ },
+ "transmission": {
+  "downstream_fraction_vs_ddg": {
+   "0": 1.0,
+   "1": 0.948,
+   "2": 0.845,
+   "3": 0.67,
+   "4": 0.431
+  },
+  "transmission_dlnY_per_kcal": -0.203
+ },
+ "skempi_regime": {
+  "n_skempi_measured_ddg": 6798,
+  "median_destabilizing_ddg": 1.32,
+  "frac_ddg_gt_2kcal": 0.27,
+  "complex_loss_by_conc_over_Kd": {
+   "0.1": 0.873,
+   "1": 0.764,
+   "10": 0.457,
+   "100": 0.183
+  }
+ },
+ "reach": {
+  "1.0": {
+   "2": 0.916,
+   "3": 0.861,
+   "4": 0.807,
+   "5": 0.755,
+   "6": 0.708,
+   "7": 0.665,
+   "8": 0.626
+  },
+  "30.0": {
+   "2": 0.536,
+   "3": 0.159,
+   "4": 0.057,
+   "5": 0.026,
+   "6": 0.014,
+   "7": 0.008,
+   "8": 0.005
+  }
+ },
+ "mapk": {
+  "active_ERK_complex_fraction_vs_RAF:MEK_ddg": {
+   "0": 1.0,
+   "1": 0.913,
+   "2": 0.656,
+   "3": 0.293
+  }
+ },
+ "verdict": "The physics is CORRECT and it DOES compute the transmission coefficient for binding cascades: the solver is exact (matches analytic + conserves mass), competitive mass action funnels protein by affinity (kills the hairball), and a mutation's ddG propagates a quantitative downstream collapse (transmission coefficient d ln[Y]/d ddG measured). THE PAYOFF: run at cellular saturation, the SAME physics reproduces the measured far-field wall -- signal collapses to an effective reach of ~2-3 hops, mirroring the empirical regulon decay 9.2x->2.1x->1.08x -- and it NAMES the cause: per-step saturation-buffering (complexes with [conc]>>Kd barely move; SKEMPI confirms a median real ddG loses only ~18% when saturated), NOT topological dilution. BUT the honest limits stand: (a) it needs WT Kd + absolute concentrations we only have for curated pathways/SKEMPI -- a SUB-network engine, not whole-cell, so it cannot itself break the GENOME-WIDE wall (it is a validated mutation->KNOWN-pathway-output quantifier); (b) binding != catalysis (no kcat for kinase steps); (c) it closes to the transcriptional far-field only through a TERMINAL TF's near-field regulon (same structure as the metabolic bridge). So: the right physics, genuinely computing the missing coefficient where parameterizable -- and, run on real abundances, it EXPLAINS why the far field dies rather than breaking it. Correct engine; sub-network scope; the wall is re-derived from first principles, not removed.",
+ "note": "NEXUS thermodynamic mass-action sub-network simulator: PPI edges as coupled binding equilibria, mutation ddG -> Kd shift -> re-solved concentrations -> quantitative downstream transmission. Solver validated (analytic + mass conservation); competitive funneling and chain transmission demonstrated; RAF:MEK MAPK demo. Reality check on 4,800 SKEMPI measured interface ddG: transmission is concentration-gated -- BUFFERED when [conc]>>Kd (saturation), fires only near/below Kd. Honest scope: physically correct and computes the transmission coefficient for binding cascades where WT Kd + concentrations are known (curated pathways, SKEMPI); a sub-network variant->pathway-output quantifier, NOT a genome-wide far-field-wall breaker (needs Kd/kcat/absolute-conc we lack at scale, and mass action self-buffers at cellular saturation)."
+}

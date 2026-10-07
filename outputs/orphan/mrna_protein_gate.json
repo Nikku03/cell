@@ -1,0 +1,46 @@
+{
+ "cohorts": {
+  "Brca": {
+   "n_genes": 9869,
+   "n_samples": 121,
+   "median_rho": 0.4512667660208643,
+   "frac_above_0.5": 0.42334583037795115,
+   "frac_negative": 0.029688924916404905
+  },
+  "Ccrcc": {
+   "n_genes": 9544,
+   "n_samples": 185,
+   "median_rho": 0.47044842879344984,
+   "frac_above_0.5": 0.46238474434199495,
+   "frac_negative": 0.07889773679798827
+  },
+  "Luad": {
+   "n_genes": 10826,
+   "n_samples": 211,
+   "median_rho": 0.4273610678446051,
+   "frac_above_0.5": 0.40042490301126915,
+   "frac_negative": 0.07888416774431924
+  }
+ },
+ "n_genes_pooled": 11636,
+ "median_rho": 0.43891832027170596,
+ "iqr": [
+  0.2679377337521543,
+  0.6025123355593451
+ ],
+ "frac_rho_above_0.5": 0.40400481265039534,
+ "frac_rho_negative": 0.034633894809212785,
+ "predict_r2": 0.2694726941257072,
+ "predict_r2_control": -0.022784983113597113,
+ "predict_net": 0.2922576772393043,
+ "features": [
+  "prot_mean",
+  "prot_sd",
+  "rna_mean",
+  "rna_sd",
+  "n_samples",
+  "log_ppi_degree",
+  "ubiquitous"
+ ],
+ "verdict": "PREDICTABLE -- per-gene mRNA-protein agreement can be estimated from gene properties, so mRNA can be given a per-node confidence and propagated on the network."
+}

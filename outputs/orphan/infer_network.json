@@ -1,0 +1,45 @@
+{
+ "threshold": 4.2,
+ "n_knockouts": 1971,
+ "usable_sources": 337,
+ "measured_edges": 21228,
+ "top10pct_source_share": 0.3215,
+ "reciprocity": {
+  "testable": 2610,
+  "mirrored": 140,
+  "rate": 0.0536
+ },
+ "curated_overlap": {
+  "regulatory": 14,
+  "ppi": 1261,
+  "complex": 289,
+  "any": 1273,
+  "novel_fraction": 0.94,
+  "specific_edges": 8726,
+  "specific_novel_frac": 0.9803,
+  "tide_edges": 12502,
+  "tide_novel_frac": 0.9119
+ },
+ "cross_line_reproduction": {
+  "tested": 2716,
+  "reproduced": 865,
+  "rate": 0.3185
+ },
+ "predict_without_perturbseq": {
+  "auc_all": 0.5421,
+  "auc_by_feature": {
+   "DepMap co-dependency": 0.5055,
+   "PPI edge": 0.5044,
+   "shared complex": 0.5017,
+   "shared pathway": 0.5,
+   "curated regulatory edge": 0.4998,
+   "source essential": 0.4914,
+   "target essential": 0.4893,
+   "source is TF": 0.4952,
+   "log target publications": 0.4885
+  },
+  "n_pos": 8726
+ },
+ "verdict": "INFER NETWORK (infer_network.py): built the cell's wiring FROM the knockout data instead of testing databases against it. Each row is an intervention, so |z[A,B]| past a calibrated threshold is a directed, signed, MEASURED causal edge. BUILD: of 1971 knockouts only 337 (17%) move >=20 genes and can carry an edge at all; those yield 21,228 measured directed edges. PATTERN: the network is extremely asymmetric -- the top 10% of sources carry 32% of all edges, and of the 2,610 edges whose target is itself a usable knockout only 5.4% are mirrored back, so measured causation is one-way, not mutual. THE HEADLINE: 94.0% of these measured causal edges appear in NO curated layer we hold (and this is NOT a tide artifact -- restricting to the 8,726 knockout-SPECIFIC edges makes it 98.0% novel, worse than the tide edges' 91.2%) (regulatory 0.07%, PPI 5.94%, complex 1.36%) -- the databases and the measured causal graph are almost disjoint objects, which is why every annotation-first attempt in this project stalled. VERIFY: on a random sample, cross-cell-line reproduction where testable runs 32%, giving a graded confidence (curated support / reciprocity / cross-line) rather than a binary edge. DRAW IT WITHOUT PERTURB-SEQ: against DEGREE-MATCHED negatives, non-perturbation features reach AUC 0.542 (best single: DepMap co-dependency 0.506). That is only modestly above chance, so static annotation and co-dependency can rank candidate edges but cannot reconstruct the causal graph on their own -- consistent with the near-disjointness above. MEANING: the measured knockout graph is a different object from the curated interactome, mostly one-way, hub-dominated, and largely absent from databases. That is the map worth building; the open question is how cheaply it can be drafted from static features and how much must be measured. Deterministic; degree-matched controls throughout.",
+ "note": "INFER NETWORK (infer_network.py): built the cell's wiring FROM the knockout data instead of testing databases against it. Each row is an intervention, so |z[A,B]| past a calibrated threshold is a directed, signed, MEASURED causal edge. BUILD: of 1971 knockouts only 337 (17%) move >=20 genes and can carry an edge at all; those yield 21,228 measured directed edges. PATTERN: the network is extremely asymmetric -- the top 10% of sources carry 32% of all edges, and of the 2,610 edges whose target is itself a usable knockout only 5.4% are mirrored back, so measured causation is one-way, not mutual. THE HEADLINE: 94.0% of these measured causal edges appear in NO curated layer we hold (and this is NOT a tide artifact -- restricting to the 8,726 knockout-SPECIFIC edges makes it 98.0% novel, worse than the tide edges' 91.2%) (regulatory 0.07%, PPI 5.94%, complex 1.36%) -- the databases and the measured causal graph are almost disjoint objects, which is why every annotation-first attempt in this project stalled. VERIFY: on a random sample, cross-cell-line reproduction where testable runs 32%, giving a graded confidence (curated support / reciprocity / cross-line) rather than a binary edge. DRAW IT WITHOUT PERTURB-SEQ: against DEGREE-MATCHED negatives, non-perturbation features reach AUC 0.542 (best single: DepMap co-dependency 0.506). That is only modestly above chance, so static annotation and co-dependency can rank candidate edges but cannot reconstruct the causal graph on their own -- consistent with the near-disjointness above. MEANING: the measured knockout graph is a different object from the curated interactome, mostly one-way, hub-dominated, and largely absent from databases. That is the map worth building; the open question is how cheaply it can be drafted from static features and how much must be measured. Deterministic; degree-matched controls throughout."
+}

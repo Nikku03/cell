@@ -1,0 +1,356 @@
+{
+ "knockout": "GATA1",
+ "n_movers": 621,
+ "n_panel": 8533,
+ "background_rate": 0.0728,
+ "n_transporters_among_movers": 153,
+ "sets": [
+  {
+   "stage": "MAKE IT",
+   "set": "Pol II core",
+   "in_panel": 14,
+   "moved": 1,
+   "rate": 0.0714,
+   "enrichment": 0.98,
+   "p": 0.6530878251568799,
+   "up": 1,
+   "down": 0,
+   "median_abs_z": 6.94,
+   "movers": [
+    "POLR2J3"
+   ]
+  },
+  {
+   "stage": "MAKE IT",
+   "set": "Mediator",
+   "in_panel": 27,
+   "moved": 1,
+   "rate": 0.037,
+   "enrichment": 0.51,
+   "p": 0.8704082919920058,
+   "up": 1,
+   "down": 0,
+   "median_abs_z": 4.94,
+   "movers": [
+    "MED13L"
+   ]
+  },
+  {
+   "stage": "MAKE IT",
+   "set": "general TFs (TAF/GTF)",
+   "in_panel": 44,
+   "moved": 1,
+   "rate": 0.0227,
+   "enrichment": 0.31,
+   "p": 0.9643280351851706,
+   "up": 1,
+   "down": 0,
+   "median_abs_z": 4.94,
+   "movers": [
+    "GTF2I"
+   ]
+  },
+  {
+   "stage": "MAKE IT",
+   "set": "spliceosome",
+   "in_panel": 55,
+   "moved": 1,
+   "rate": 0.0182,
+   "enrichment": 0.25,
+   "p": 0.9845406670579174,
+   "up": 0,
+   "down": 1,
+   "median_abs_z": 4.74,
+   "movers": [
+    "SNRPE"
+   ]
+  },
+  {
+   "stage": "MAKE IT",
+   "set": "mRNA export",
+   "in_panel": 31,
+   "moved": 0,
+   "rate": 0.0,
+   "enrichment": 0.0,
+   "p": 1.0,
+   "up": 0,
+   "down": 0,
+   "median_abs_z": 0.0,
+   "movers": []
+  },
+  {
+   "stage": "MAKE IT",
+   "set": "ribosome (large)",
+   "in_panel": 44,
+   "moved": 27,
+   "rate": 0.6136,
+   "enrichment": 8.43,
+   "p": 2.3138940262687307e-20,
+   "up": 0,
+   "down": 27,
+   "median_abs_z": 5.56,
+   "movers": [
+    "RPL10A",
+    "RPL11",
+    "RPL13",
+    "RPL14",
+    "RPL17",
+    "RPL19",
+    "RPL21",
+    "RPL22",
+    "RPL23A",
+    "RPL24",
+    "RPL27",
+    "RPL29",
+    "RPL32",
+    "RPL34"
+   ]
+  },
+  {
+   "stage": "MAKE IT",
+   "set": "ribosome (small)",
+   "in_panel": 30,
+   "moved": 18,
+   "rate": 0.6,
+   "enrichment": 8.24,
+   "p": 9.791452080583574e-14,
+   "up": 1,
+   "down": 17,
+   "median_abs_z": 5.07,
+   "movers": [
+    "RPS12",
+    "RPS13",
+    "RPS15",
+    "RPS16",
+    "RPS17",
+    "RPS19",
+    "RPS2",
+    "RPS20",
+    "RPS21",
+    "RPS25",
+    "RPS26",
+    "RPS27A",
+    "RPS29",
+    "RPS3A"
+   ]
+  },
+  {
+   "stage": "MAKE IT",
+   "set": "translation init/elong",
+   "in_panel": 62,
+   "moved": 6,
+   "rate": 0.0968,
+   "enrichment": 1.33,
+   "p": 0.2954782537394766,
+   "up": 1,
+   "down": 5,
+   "median_abs_z": 5.17,
+   "movers": [
+    "EEF1B2",
+    "EEF1G",
+    "EIF1AX",
+    "EIF3J-DT",
+    "EIF4A1",
+    "EIF5A"
+   ]
+  },
+  {
+   "stage": "MATURE IT",
+   "set": "SRP + Sec61 translocon",
+   "in_panel": 23,
+   "moved": 0,
+   "rate": 0.0,
+   "enrichment": 0.0,
+   "p": 1.0,
+   "up": 0,
+   "down": 0,
+   "median_abs_z": 0.0,
+   "movers": []
+  },
+  {
+   "stage": "MATURE IT",
+   "set": "N-glycosylation (OST)",
+   "in_panel": 25,
+   "moved": 1,
+   "rate": 0.04,
+   "enrichment": 0.55,
+   "p": 0.8491961204183153,
+   "up": 1,
+   "down": 0,
+   "median_abs_z": 4.69,
+   "movers": [
+    "ALG2"
+   ]
+  },
+  {
+   "stage": "MATURE IT",
+   "set": "ER chaperones / folding",
+   "in_panel": 37,
+   "moved": 1,
+   "rate": 0.027,
+   "enrichment": 0.37,
+   "p": 0.9393041056047436,
+   "up": 1,
+   "down": 0,
+   "median_abs_z": 6.36,
+   "movers": [
+    "DNAJC4"
+   ]
+  },
+  {
+   "stage": "MATURE IT",
+   "set": "ERAD / quality control",
+   "in_panel": 11,
+   "moved": 3,
+   "rate": 0.2727,
+   "enrichment": 3.75,
+   "p": 0.0407449261251127,
+   "up": 3,
+   "down": 0,
+   "median_abs_z": 6.69,
+   "movers": [
+    "EDEM1",
+    "EDEM3",
+    "OS9"
+   ]
+  },
+  {
+   "stage": "MOVE IT",
+   "set": "COPII / ER exit",
+   "in_panel": 12,
+   "moved": 0,
+   "rate": 0.0,
+   "enrichment": 0.0,
+   "p": 1.0,
+   "up": 0,
+   "down": 0,
+   "median_abs_z": 0.0,
+   "movers": []
+  },
+  {
+   "stage": "MOVE IT",
+   "set": "COPI / retrograde",
+   "in_panel": 20,
+   "moved": 1,
+   "rate": 0.05,
+   "enrichment": 0.69,
+   "p": 0.7797426266611519,
+   "up": 1,
+   "down": 0,
+   "median_abs_z": 6.32,
+   "movers": [
+    "ARF6"
+   ]
+  },
+  {
+   "stage": "MOVE IT",
+   "set": "Golgi glycosyltransferases",
+   "in_panel": 33,
+   "moved": 5,
+   "rate": 0.1515,
+   "enrichment": 2.08,
+   "p": 0.08797912449619161,
+   "up": 5,
+   "down": 0,
+   "median_abs_z": 5.54,
+   "movers": [
+    "B3GNT5",
+    "B4GALT1",
+    "GALNT7",
+    "ST3GAL3",
+    "ST6GAL1"
+   ]
+  },
+  {
+   "stage": "MOVE IT",
+   "set": "SNARE / vesicle fusion",
+   "in_panel": 42,
+   "moved": 7,
+   "rate": 0.1667,
+   "enrichment": 2.29,
+   "p": 0.030295081185153665,
+   "up": 7,
+   "down": 0,
+   "median_abs_z": 5.38,
+   "movers": [
+    "SNAP29",
+    "SNAPC5",
+    "SNAPIN",
+    "STX16",
+    "STXBP2",
+    "VAMP2",
+    "VAMP8"
+   ]
+  },
+  {
+   "stage": "MOVE IT",
+   "set": "lysosomal targeting (M6P)",
+   "in_panel": 6,
+   "moved": 2,
+   "rate": 0.3333,
+   "enrichment": 4.58,
+   "p": 0.065181627463305,
+   "up": 2,
+   "down": 0,
+   "median_abs_z": 8.51,
+   "movers": [
+    "GNPTAB",
+    "LAMP2"
+   ]
+  },
+  {
+   "stage": "MOVE IT",
+   "set": "ESCRT / sorting",
+   "in_panel": 62,
+   "moved": 5,
+   "rate": 0.0806,
+   "enrichment": 1.11,
+   "p": 0.474164130249441,
+   "up": 5,
+   "down": 0,
+   "median_abs_z": 4.95,
+   "movers": [
+    "SNX10",
+    "SNX8",
+    "VPS28",
+    "VPS35",
+    "VPS53"
+   ]
+  }
+ ],
+ "by_stage": {
+  "MAKE IT": {
+   "in_panel": 307,
+   "moved": 55,
+   "rate": 0.1792,
+   "enrichment": 2.46,
+   "p": 2.2876681225802904e-10,
+   "sets_significant": [
+    "ribosome (large)",
+    "ribosome (small)"
+   ]
+  },
+  "MATURE IT": {
+   "in_panel": 96,
+   "moved": 5,
+   "rate": 0.0521,
+   "enrichment": 0.72,
+   "p": 0.8375347643645423,
+   "sets_significant": [
+    "ERAD / quality control"
+   ]
+  },
+  "MOVE IT": {
+   "in_panel": 175,
+   "moved": 20,
+   "rate": 0.1143,
+   "enrichment": 1.57,
+   "p": 0.02904748026152331,
+   "sets_significant": [
+    "SNARE / vesicle fusion"
+   ]
+  }
+ },
+ "verdict": "TRANSPORT MACHINERY (GATA1, K562): asked whether the knockout affected the transporters' production, maturation or function, rather than only the transporters themselves. 153 of the 621 movers are transport proteins. WHAT THIS DATA CANNOT SAY, stated first: Perturb-seq measures mRNA, so it cannot show a protein's structure, its folding state, its glycans, or whether a transporter actually transports. Structure and function are NOT observed here. What is observable is whether the transcripts encoding each step of the production-and-maturation pipeline changed, which is a statement about the cell's CAPACITY to make and mature those proteins. Background: 621 of 8533 testable genes moved, 7.3%, so every set is tested against that with a hypergeometric test. MAKE IT: 55/307 (17.9%, 2.46x background, p=2.3e-10); significant sets ['ribosome (large)', 'ribosome (small)']. MATURE IT: 5/96 (5.2%, 0.72x background, p=0.84); significant sets ['ERAD / quality control']. MOVE IT: 20/175 (11.4%, 1.57x background, p=0.029); significant sets ['SNARE / vesicle fusion']. Enrichment above background is the only evidence that counts here, because any large gene set will contain some movers by chance. Deterministic.",
+ "note": "TRANSPORT MACHINERY (GATA1, K562): asked whether the knockout affected the transporters' production, maturation or function, rather than only the transporters themselves. 153 of the 621 movers are transport proteins. WHAT THIS DATA CANNOT SAY, stated first: Perturb-seq measures mRNA, so it cannot show a protein's structure, its folding state, its glycans, or whether a transporter actually transports. Structure and function are NOT observed here. What is observable is whether the transcripts encoding each step of the production-and-maturation pipeline changed, which is a statement about the cell's CAPACITY to make and mature those proteins. Background: 621 of 8533 testable genes moved, 7.3%, so every set is tested against that with a hypergeometric test. MAKE IT: 55/307 (17.9%, 2.46x background, p=2.3e-10); significant sets ['ribosome (large)', 'ribosome (small)']. MATURE IT: 5/96 (5.2%, 0.72x background, p=0.84); significant sets ['ERAD / quality control']. MOVE IT: 20/175 (11.4%, 1.57x background, p=0.029); significant sets ['SNARE / vesicle fusion']. Enrichment above background is the only evidence that counts here, because any large gene set will contain some movers by chance. Deterministic."
+}

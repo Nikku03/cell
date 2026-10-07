@@ -1,0 +1,174 @@
+{
+ "n": 820,
+ "n_repressive": 159,
+ "direct_rate_vs_distance": -0.9995528712393654,
+ "indirect_rate_vs_distance": 0.1372124793419419,
+ "within_screen": {
+  "Gasperini2019": {
+   "n": 402,
+   "spearman": 0.41045472753179213,
+   "p": 9.066868130312921e-18
+  },
+  "Nasser2021": {
+   "n": 147,
+   "spearman": 0.4857524652472457,
+   "p": 4.478169045863406e-10
+  },
+  "Morris": {
+   "n": 51,
+   "spearman": 0.37608085990490553,
+   "p": 0.006531934934290864
+  },
+  "Xie": {
+   "n": 48,
+   "spearman": 0.4410777168977525,
+   "p": 0.0017014302658606764
+  },
+  "HCT116": {
+   "n": 40,
+   "spearman": 0.00606528632413376,
+   "p": 0.9703700824193608
+  },
+  "WTC11_DC_TAP": {
+   "n": 35,
+   "spearman": 0.6688444820557844,
+   "p": 1.1226176873952903e-05
+  },
+  "Klann": {
+   "n": 33,
+   "spearman": 0.41678919766965844,
+   "p": 0.01582599031362816
+  },
+  "K562_DC_TAP": {
+   "n": 31,
+   "spearman": 0.4812834631792627,
+   "p": 0.006123915660816627
+  }
+ },
+ "category": {
+  "High H3K27ac": {
+   "n": 568,
+   "repressive_frac": 0.13380281690140844,
+   "median_dist": 42533.0
+  },
+  "H3K27ac": {
+   "n": 220,
+   "repressive_frac": 0.2636363636363636,
+   "median_dist": 41701.5
+  },
+  "CTCF element": {
+   "n": 17,
+   "repressive_frac": 0.7058823529411765,
+   "median_dist": 166073.0
+  },
+  "No H3K27ac": {
+   "n": 13,
+   "repressive_frac": 0.8461538461538461,
+   "median_dist": 332937.0
+  },
+  "H3K27me3 element": {
+   "n": 2,
+   "repressive_frac": 1.0,
+   "median_dist": 150731.0
+  }
+ },
+ "mechanisms": {
+  "M1 insulator|CTCF.RPM": {
+   "predicted": "higher",
+   "observed": "lower",
+   "rep_median": 0.866552,
+   "act_median": 0.866552,
+   "p": 0.8426551822172975,
+   "verdict": "no difference"
+  },
+  "M1 insulator|CTCF_peak_overlap": {
+   "predicted": "higher",
+   "observed": "lower",
+   "rep_median": 0.0,
+   "act_median": 0.0,
+   "p": 0.07317137400184462,
+   "verdict": "no difference"
+  },
+  "M2 polycomb|H3K27me3.RPM": {
+   "predicted": "higher",
+   "observed": "higher",
+   "rep_median": 0.2472905,
+   "act_median": 0.2463105,
+   "p": 0.7156754407563839,
+   "verdict": "no difference"
+  },
+  "M3 not-an-enhancer|H3K27ac.RPM": {
+   "predicted": "lower",
+   "observed": "lower",
+   "rep_median": 3.573511,
+   "act_median": 9.362402,
+   "p": 6.193302797978201e-08,
+   "verdict": "as predicted"
+  },
+  "M3 not-an-enhancer|DHS.RPM": {
+   "predicted": "lower",
+   "observed": "lower",
+   "rep_median": 4.2100729999999995,
+   "act_median": 9.363216,
+   "p": 4.440779362941754e-06,
+   "verdict": "as predicted"
+  },
+  "M3 not-an-enhancer|H3K4me1.RPM": {
+   "predicted": "lower",
+   "observed": "lower",
+   "rep_median": 1.7252934999999998,
+   "act_median": 3.1442825,
+   "p": 1.2769290395932116e-08,
+   "verdict": "as predicted"
+  },
+  "M4 indirect|indirect_rate_negative": {
+   "predicted": "higher",
+   "observed": "higher",
+   "rep_median": 0.00254172115579289,
+   "act_median": 0.0004713209611581,
+   "p": 0.0007661776879366415,
+   "verdict": "as predicted"
+  },
+  "M4 indirect|dist to other TSS": {
+   "predicted": "lower",
+   "observed": "lower",
+   "rep_median": 14108.0,
+   "act_median": 58938.0,
+   "p": 4.3230065081728195e-10,
+   "verdict": "as predicted"
+  }
+ },
+ "blocks": {
+  "CTCF only (M1)": {
+   "auprc": 0.47609702519593816,
+   "auroc": 0.4673037877196668,
+   "permuted_auroc": 0.48966209829867674
+  },
+  "H3K27me3 only (M2)": {
+   "auprc": 0.5653587410441795,
+   "auroc": 0.48999684940138627,
+   "permuted_auroc": 0.5149029878176854
+  },
+  "activity only (M3)": {
+   "auprc": 0.6844382746476941,
+   "auroc": 0.6731078904991948,
+   "permuted_auroc": 0.46372216971224534
+  },
+  "indirect only (M4)": {
+   "auprc": 0.6404833489032761,
+   "auroc": 0.6705086466428621,
+   "permuted_auroc": 0.49099782083595883
+  },
+  "chromatin category": {
+   "auprc": 0.6189741845894049,
+   "auroc": 0.5905534551564796,
+   "permuted_auroc": 0.47226160470489387
+  },
+  "all four blocks": {
+   "auprc": 0.7160404606005178,
+   "auroc": 0.7019358678148849,
+   "permuted_auroc": 0.4668793320730939
+  }
+ },
+ "verdict": "distal-repressive replicates in 7/8 screens, so it is not a batch effect; and direct_rate_negative was excluded because it is distance relabelled (rho -0.9996). mechanisms supported with distance held fixed: M3 not-an-enhancer|H3K27ac.RPM, M3 not-an-enhancer|DHS.RPM, M3 not-an-enhancer|H3K4me1.RPM, M4 indirect|indirect_rate_negative, M4 indirect|dist to other TSS. best single block is all four blocks (AUROC 0.7019 vs permuted 0.4669)."
+}

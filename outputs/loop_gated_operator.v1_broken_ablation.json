@@ -1,0 +1,104 @@
+{
+ "test": "context-gated low-rank operator on a dense learned substrate",
+ "arms": {
+  "gated": 0.4401375895492034,
+  "additive": 0.45179227675988715,
+  "single_operator": 0.4517912069617593,
+  "linear_twin": 0.4504405776741781
+ },
+ "I2": {
+  "delta": -0.015184851050457986,
+  "se": 0.00027745601606220764,
+  "z": -54.728858526727464
+ },
+ "I3": {
+  "delta": -0.015183781252330096,
+  "se": 0.00027734644769968086,
+  "z": -54.746622422117895
+ },
+ "I4": {
+  "delta": -0.01383315196474888,
+  "se": 0.0002815170646577847,
+  "z": -49.13788079441867
+ },
+ "I5": {
+  "seed_sd": 0.0031948717737755733,
+  "per_seed": [
+   0.4366074257094292,
+   0.44283039076884173,
+   0.44097495216933913
+  ]
+ },
+ "gates": {
+  "I1": true,
+  "I2": false,
+  "I3": false,
+  "I4": false,
+  "I5": false,
+  "I6": false
+ },
+ "void": [
+  "I5",
+  "I6"
+ ],
+ "seconds": 1406.1426348686218,
+ "log": [
+  "========================================================================================================",
+  "LOOP 257 -- CONTEXT PARAMETERISES THE OPERATOR, ON A SUBSTRATE THAT IS ACTUALLY DENSE",
+  "========================================================================================================",
+  "     Loop 256 showed concatenation is not the fix: two-tower 0.3001/0.3017 against the",
+  "     additive baseline's 0.4518. Its decoder had to rebuild 978 landmarks through a",
+  "     160-dim bottleneck and threw away what the gene mean already carried. Here the",
+  "     output is baseline + correction, correction initialised at ZERO.",
+  "     OmniPath is not the substrate: 9,087 signed gene-to-landmark edges, 0.21% density,",
+  "     median 0 targets per gene, and loop 242 found 102% survived reversing every arrow.",
+  "     The substrate is a learned low-rank basis, mixed by a context hypernetwork.",
+  "     33,197 (gene, line) pairs, 3,801 genes, 978 landmarks",
+  "     context vector: 101 MEASURED dims, principal components fitted on the",
+  "     full DepMap panel (1,076 lines) which never sees a LINCS response",
+  "     training: 9 leave-one-cell-line-out folds x 3 seeds, K=8 experts ...",
+  "       seed 0: gated 0.4366   additive 0.4518   [462s]",
+  "       seed 1: gated 0.4428   additive 0.4518   [883s]",
+  "       seed 2: gated 0.4410   additive 0.4518   [1307s]",
+  "       K=1, context-blind operator   0.4518",
+  "       linear twin, same inputs      0.4504",
+  "I1 DOES THE HARNESS REPRODUCE THE BASELINE?",
+  "     additive here 0.4518 against loop 252's 0.4477",
+  "     I1 PASS -- reproduces to 0.0041",
+  "I2 DOES THE GATED OPERATOR BEAT THE ADDITIVE BASELINE?",
+  "     gated 0.4366 vs additive 0.4518   paired -0.0152 +/- 0.0003 (-54.7 se)",
+  "     loop 256's concatenated two-tower reached 0.3001 on the same target",
+  "     I2 FAIL -- the correction adds -0.0152 against a 0.02 bar",
+  "I3 DOES CONTEXT-GATING MATTER, OR ONLY THE EXTRA CAPACITY?",
+  "     K=8 gated 0.4366 vs K=1 context-blind 0.4518",
+  "     paired -0.0152 +/- 0.0003  (-54.7 se)",
+  "     I3 FAIL -- gating adds -0.0152; the correction is a better GENE model, not a context model",
+  "I4 DID THE NETWORK HELP, OR THE FEATURES?",
+  "     gated 0.4366 vs linear twin 0.4504   paired -0.0138 +/- 0.0003 (-49.1 se)",
+  "     I4 FAIL -- -0.0138 against a linear model on identical inputs",
+  "I5 IS THE ADVANTAGE LARGER THAN THE SEED NOISE?",
+  "     seeds: 0.4366, 0.4428, 0.4410   sd 0.00319",
+  "     I5 VOID -- I2 did not pass, so there is nothing here to test",
+  "I6 CONTROL: THE WRONG CELL LINE",
+  "     I6 VOID -- I3 did not pass, so there is nothing here to test",
+  "I7 WHAT THIS CANNOT SHOW",
+  "     Nine cell lines is nine points for the hypernetwork, and it maps measured properties",
+  "     to K gates from eight training examples. Any positive should be suspected of",
+  "     memorising those eight; I6 catches that and I5 uses three seeds.",
+  "     A learned operator basis is dense but is NOT a physical network. Nothing here says",
+  "     which interactions the gates correspond to, and a win would not recover the",
+  "     mechanism loops 253 and 255 failed to find.",
+  "     The gene embedding comes from the gene's own response elsewhere, so this generalises",
+  "     across CONTEXTS, not across genes.",
+  "     978 landmarks and shRNA, not a transcriptome and not a clean knockout.",
+  "========================================================================================================",
+  "  I1  PASS",
+  "  I2  FAIL",
+  "  I3  FAIL",
+  "  I4  FAIL",
+  "  I5  VOID",
+  "  I6  VOID",
+  "  1/4   [1406s]   (2 VOID: I5, I6)",
+  "========================================================================================================"
+ ]
+}

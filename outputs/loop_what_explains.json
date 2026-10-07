@@ -1,0 +1,87 @@
+{
+ "test": "is the gene x line interaction biology or the shRNA construct",
+ "G1": {
+  "random": 0.26826468611065557,
+  "loop253": 0.3567,
+  "n": 33195
+ },
+ "G2": {
+  "construct": 0.24866871925179615,
+  "fraction_of_random": 0.9269528645646027,
+  "n": 33195
+ },
+ "G3": {
+  "plate": 0.7788023509363966,
+  "fraction_of_random": 2.9031117074244768,
+  "n": 30398
+ },
+ "G4": {
+  "random": 0.26826468611065557,
+  "plate": 0.7788023509363966,
+  "construct": 0.24866871925179615,
+  "gap": 0.01959596685885942
+ },
+ "G5": {
+  "expression": -0.001593615347607276
+ },
+ "gates": {
+  "G1": false,
+  "G2": false,
+  "G3": false,
+  "G5": false
+ },
+ "void": [
+  "G2",
+  "G3",
+  "G5"
+ ],
+ "seconds": 39.39787578582764,
+ "log": [
+  "========================================================================================================",
+  "LOOP 254 -- IS THE INTERACTION BIOLOGY, OR IS IT THE HAIRPIN?",
+  "========================================================================================================",
+  "     Loop 253 measured the interaction reproducing at 0.3567 while nothing explained it.",
+  "     But that split was RANDOM within each (gene, line), and those signatures share their",
+  "     shRNA constructs -- median 4 per pair, at least 2 in 100% of pairs. A random split",
+  "     puts the same hairpins on both sides, so 0.3567 is equally consistent with construct",
+  "     signal reproducing because it is the same construct twice. Loop 253's F7 named this",
+  "     and did not test it.",
+  "     33,197 (gene, line) pairs from 3,801 genes",
+  "G1 IS THE RANDOM-SPLIT NUMBER REPRODUCED HERE?",
+  "     random split within each (gene, line): 0.2683  (n=33,195)",
+  "     loop 253's F1 on the same data: 0.3567",
+  "     G1 FAIL -- 0.2683 here against 0.3567 in loop 253",
+  "G2 DOES THE INTERACTION SURVIVE A CONSTRUCT SPLIT?",
+  "     DISJOINT shRNA constructs, same gene, same line: 0.2487  (n=33,195)",
+  "     that is 93% of the random-split value",
+  "     G2 VOID -- G1 did not pass, so there is nothing here to test",
+  "G3 DOES IT SURVIVE A PLATE SPLIT?",
+  "     DISJOINT plates, same gene, same line: 0.7788  (n=30,398) -- 290%",
+  "     G3 VOID -- G1 did not pass, so there is nothing here to test",
+  "G4 HOW MUCH OF THE INTERACTION IS EACH? -- reported, not gated",
+  "     random split    0.2683   same constructs, same plates on both sides",
+  "     plate split     0.7788   290%",
+  "     construct split 0.2487   93%  <- the part two hairpins agree on",
+  "     the gap between the random and construct splits, 0.0196, is what",
+  "     hairpin identity and batch contribute together",
+  "G5 DOES ANYTHING EXPLAIN THE PART THAT SURVIVES?",
+  "     expression context against the construct-reproducible component: -0.0016",
+  "     G5 VOID -- G2 did not pass, so there is nothing here to test",
+  "G6 WHAT THIS CANNOT SHOW",
+  "     Two hairpins against one gene can share seed families, so a construct split is a",
+  "     LOWER BOUND on how much construct signal is removed, not a guarantee.",
+  "     Constructs and plates are correlated by the LINCS design -- hairpins for a gene were",
+  "     often run together -- so G2 and G3 overlap and neither is a clean single factor.",
+  "     Both gates run on pairs with at least two constructs or plates, which is the",
+  "     better-replicated subset.",
+  "     If the interaction is construct, that is a fact about this ASSAY. Loop 252's E4 and",
+  "     E6 stand on the raw response, not on this residual, and are unaffected.",
+  "========================================================================================================",
+  "  G1  FAIL",
+  "  G2  VOID",
+  "  G3  VOID",
+  "  G5  VOID",
+  "  0/1   [39s]   (3 VOID: G2, G3, G5)",
+  "========================================================================================================"
+ ]
+}

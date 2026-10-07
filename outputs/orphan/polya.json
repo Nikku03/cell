@@ -1,0 +1,33 @@
+{
+ "validation_recognition": {
+  "n_genes": 20,
+  "upstream_hexamer_frac": 0.85,
+  "control_downstream_frac": 0.0,
+  "enrichment_vs_control": 34.0,
+  "median_hexamer_position": -22,
+  "note": "hexamer expected to peak ~ -21 nt upstream of the cleavage site"
+ },
+ "apa_bias": {
+  "CFIm25_NUDT21_ppm": 115.0,
+  "CstF64_CSTF2_ppm": 13.6,
+  "cfim_over_cstf": 8.46,
+  "predicted_apa_bias": "distal / long-3'UTR"
+ },
+ "demo_pas_strength": {
+  "strong": {
+   "score": 2.725,
+   "hexamer": 0.946,
+   "dse_gu": 0.533,
+   "ugua": 0.0,
+   "ca_cut": 1.0
+  },
+  "weak": {
+   "score": 0.917,
+   "hexamer": 0.458,
+   "dse_gu": 0.0,
+   "ugua": 0.0,
+   "ca_cut": 0.0
+  }
+ },
+ "note": "3' cleavage & polyadenylation + APA (FIRST_PRINCIPLES.md sec2). SITE STRENGTH is sequence-computable (hexamer AATAAA read at ~3nM + position ~-21, GU/U downstream element, UGUA upstream, CA cut) and VALIDATED vs real transcript 3' ends (AATAAA enriched upstream of the annotated cleavage site, peaking ~-21nt). The APA RATIO (proximal vs distal 3'UTR) is cell-state: set by CFIm25(NUDT21)/CstF64(CSTF2) abundance (this cell's ppm ratio reported) + Pol II speed -- sequence gives the menu, the cell picks the ratio. Chosen 3'UTR -> miRNA/ARE load -> stability DIRECTION for the decay layer (shorter UTR = fewer sites = more stable). Honest: site/direction reliable; cell-type APA ratio and tail-length->half-life need 3'-seq/TAIL-seq (tail length is not even a clean monotonic half-life predictor -- Lima 2017)."
+}

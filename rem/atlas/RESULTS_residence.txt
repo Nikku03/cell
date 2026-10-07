@@ -1,0 +1,53 @@
+=================================================================================================
+DO GEOMETRIC RESIDENCE TIMES SURVIVE A NON-EXPONENTIAL GATING STEP?
+=================================================================================================
+  Strasser, Theis & Marr (Biophys J 102:19-29, 2012, doi:10.1016/j.bpj.2011.11.4000)
+  derive geometrically distributed residence times for an all-exponential two-stage model.
+  This asks whether that survives Erlang-k waiting on the production step, at FIXED mean
+  production flux -- so any movement is attributable to shape, never to flux.
+
+  R-CONTROL  started from the quasi-stationary distribution, exit is exponential BY
+  CONSTRUCTION, so CV must be 1. This validates the moment code before any claim.
+        k    CV from QSD    |CV - 1|
+        1     1.000000000   4.441e-16
+        2     1.000000000   1.887e-15
+        4     1.000000000   1.554e-15
+        8     1.000000000   3.775e-15
+     worst |CV - 1| = 3.775e-15   PASS (bar 1e-9)
+
+  R-VACUITY  is the basin a real attractor?
+        k=1  stationary occupancy of basin 0.998405  mean residence 1.866349e+03
+        k=2  stationary occupancy of basin 0.999752  mean residence 1.261062e+04
+        k=4  stationary occupancy of basin 0.999954  mean residence 6.987761e+04
+        k=8  stationary occupancy of basin 0.999987  mean residence 2.456200e+05
+     PASS (bar: occupancy > 0.9, mean finite and positive)
+
+  R1  ALL-EXPONENTIAL (k = 1): does the memoryless result reproduce?
+        exit-time CV = 1.000330   |CV - 1| = 0.000330
+     PASS (bar |CV - 1| < 0.05)
+     The Strasser/Theis/Marr regime reproduces: residence in this attractor is
+     memoryless to within 5%, started from where the circuit actually sits.
+
+  R2  ERLANG-k ON THE PRODUCTION STEP, mean flux held fixed:
+        k    mean residence    CV      |CV - 1|   vs R1 deviation
+        1      1.866349e+03  1.000330   0.000330       1.00x
+        2      1.261062e+04  1.000052   0.000052       0.16x
+        4      6.987761e+04  1.000010   0.000010       0.03x
+        8      2.456200e+05  1.000003   0.000003       0.01x
+     worst departure 1.00x the R1 deviation   MEMORYLESSNESS SURVIVES (bar 3x)
+
+  R3  WHAT IT COSTS -- the mean residence time is the circuit reliability number:
+        mean residence spans 1.866349e+03 to 2.456200e+05
+        = 2.1193 orders across k = 1 to 8 at IDENTICAL mean flux
+
+  R-ABLATION  Erlang-1 IS the exponential, so the k = 1 row must equal the
+  all-exponential row exactly. It is the same computation by construction; recorded so
+  that a future change to the Erlang code cannot silently alter the baseline.
+
+=================================================================================================
+WHAT IS NOT CLAIMED
+=================================================================================================
+  * This is one autoactivating gene, not their two-stage toggle. It tests whether the
+    MEMORYLESS PROPERTY is robust to waiting-time shape, not whether their analytical
+    expression is right -- it is right, for the model they state it for.
+  * Novelty is NOT established. They may already know this. It is sent as a question.

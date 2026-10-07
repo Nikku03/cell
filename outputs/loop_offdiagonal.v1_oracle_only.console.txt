@@ -1,0 +1,75 @@
+========================================================================================================
+LOOP 262 -- IS THE INTERACTION OFF-DIAGONAL, AND CAN THAT BE PREDICTED?
+========================================================================================================
+     Loop 261 closed the diagonal: s_c worth +0.0247, reliable at 0.9518, predicted
+     from annotation at 0.0549. Its M8 named what it could not see -- s_c is a
+     diagonal scaling and cannot express a rotation. Here the operator is full 978x978.
+     DECLARED FIRST, from loop 260: R is double-centred, so ANY function of the gene
+     alone is pinned at a 0.027% ceiling. A SHARED operator W applied to xg IS such a
+     function, so a universal propagation operator cannot work however rich it is.
+     The constant arm below confirms that geometry; it does not test a hypothesis.
+     33,197 pairs, 3,801 genes, 978 landmarks, 9 lines
+     W_c has 956,484 free parameters against roughly 3,700 rows per line
+     lambda per fold: 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000
+
+     baseline                               0.4515
+     + ORACLE diagonal s_c (loop 261)       0.4762   +0.0247
+     + ORACLE full W_c                      0.5899   +0.1385
+     + ORACLE W_c, off-diagonal zeroed      0.4580   +0.0065
+     + best combination of training W (cheat) 0.4611   +0.0097
+     + constant combination (no annotation) 0.4516   +0.0001
+     + ridge from z_c                       0.4483   -0.0032
+     + ridge, line labels shuffled          0.4447   -0.0068
+N1 IS THERE OFF-DIAGONAL STRUCTURE AT ALL?
+     full W_c oracle 0.5899 vs diagonal s_c oracle 0.4762   +0.1138
+     diagonal oracle reproduces loop 261's +0.0247 at +0.0247
+     N1 PASS -- the off-diagonal is worth +0.1138 beyond the diagonal, so there is structure loop 261 could not see
+N2 IS W_c RELIABLE, OR IS IT NOISE?
+     split-half over GENES, entrywise correlation of the two operators:
+     0.468, 0.482, 0.439, 0.480, 0.452, 0.461, 0.435, 0.438, 0.385
+     mean 0.4490   (s_c reached 0.9518 on the same test)
+     N2 PASS -- W_c reproduces at 0.449 from disjoint gene halves
+N3 LOAD-BEARING -- IS THE HELD-OUT OPERATOR IN THE SPAN OF THE TRAINING ONES?
+     best combination of the 8 training operators, coefficients fitted on the
+     held-out line's own residual: +0.0097
+     this is the ceiling for EVERY method that builds W_hold from training lines,
+     ridge from annotation included, since 8 lines give a coefficient vector over 8
+     N3 PASS -- +0.0097 is reachable by combining training operators
+N4 DOES ANNOTATION PICK THE COEFFICIENTS?
+     ridge 0.4483 vs constant, equal-weight 0.4516   -0.0033
+     the constant arm is a shared operator, which loop 260 forbids from exceeding
+     the 0.027% gene-only ceiling -- it landed at +0.0001
+     N4 FAIL -- annotation is worth -0.0033 beyond equal weights
+N5 PERMUTED CONTROL
+     N5 VOID -- N4 did not pass, so there is nothing here to test
+N6 HOW MUCH OF THE OFF-DIAGONAL HEADROOM IS RECOVERED?
+     best arm +0.0097 of the full-W oracle's +0.1385 = 7.0%
+     (the best arm here INCLUDES the cheating span coefficients)
+     N6 FAIL -- 7.0% of the +0.1385 headroom is reachable even allowing a cheating combination of training operators
+N7 HOW DIAGONAL IS THE OPERATOR?
+     fraction of W_c's squared Frobenius norm on its own diagonal: 10.4370%
+     W_c with the off-diagonal zeroed scores +0.0065 against
+     the full operator's +0.1385 and the direct diagonal fit's +0.0247
+N8 WHAT THIS CANNOT SHOW
+     W_c has 956,484 parameters and each line supplies about 3,700 rows, so the
+     operator is underdetermined by roughly 250 to 1 and the ridge lambda is carrying
+     the fit. N2 is the gate that decides whether the oracle above is signal or a
+     noise fit scored against itself; read every other number through it.
+     LINEAR operators only. A genuinely nonlinear interaction -- saturation, a
+     threshold, a sign flip above some dose -- is invisible to every number here.
+     The span test asks whether W_hold is reachable from EIGHT other operators. A
+     failure is about nine cell lines, not about the biology: more lines could span
+     a space these eight do not.
+     Everything is measured on the double-centred residual, so by loop 260 no arm
+     that is constant across lines can exceed 0.027% however expressive it is.
+     978 landmarks and shRNA, under loop 254's construct ceiling of 0.2487.
+========================================================================================================
+  N1  PASS
+  N2  PASS
+  N3  PASS
+  N4  FAIL
+  N5  VOID
+  N6  FAIL
+  3/5   [95s]   (1 VOID: N5)
+========================================================================================================
+     written outputs/loop_offdiagonal.json

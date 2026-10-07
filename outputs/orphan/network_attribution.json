@@ -1,0 +1,15 @@
+{
+ "n_kos": 378,
+ "tf_share": 0.241,
+ "coverage": {
+  "physical": 0.0638,
+  "regulatory": 0.0408,
+  "either": 0.0997,
+  "neither": 0.9003
+ },
+ "nonphysical_reg_frac": 0.0396,
+ "base_reg_frac": 0.0214,
+ "nonphys_reg_enrichment": 1.848,
+ "verdict": "NETWORK ATTRIBUTION (network_attribution.py): the scheme = strengthen the network (PPI + complex + pathway), then attribute any mover with no physical path to TF regulation (protein->DNA). Held-out K562 specific movers, 378 knockouts. The combined network mechanistically explains only 10% of a knockout's specific movers (PHYSICAL 6% + REGULATORY 4%), leaving 90% UNEXPLAINED by either. The key inference -- that non-physical movers are regulatory -- gets 1.85x enrichment over base (4.0% vs 2.1%): real but small -- some of the non-PPI response IS TF-regulated, so the partition carries signal, but either way 90% of the specific response is named by NEITHER physical nor regulatory edges. WHY: the curated networks (PPI + TRRUST/SIGNOR) cover only the well-studied, canonical edges; the knockout-SPECIFIC response is dominated by non-canonical, indirect, context-dependent changes that no current edge -- physical or regulatory -- annotates. So the scheme is SOUND (it correctly splits the explainable part, and the missing-PPI->regulation logic has a little signal), but it cannot close the gap on THIS data: the bottleneck is edge COVERAGE of the specific response, not the physical-vs-regulatory distinction. Strengthening the network helps attribute the ~explainable fraction; it does not reveal the idiosyncratic majority. Deterministic.",
+ "note": "NETWORK ATTRIBUTION (network_attribution.py): the scheme = strengthen the network (PPI + complex + pathway), then attribute any mover with no physical path to TF regulation (protein->DNA). Held-out K562 specific movers, 378 knockouts. The combined network mechanistically explains only 10% of a knockout's specific movers (PHYSICAL 6% + REGULATORY 4%), leaving 90% UNEXPLAINED by either. The key inference -- that non-physical movers are regulatory -- gets 1.85x enrichment over base (4.0% vs 2.1%): real but small -- some of the non-PPI response IS TF-regulated, so the partition carries signal, but either way 90% of the specific response is named by NEITHER physical nor regulatory edges. WHY: the curated networks (PPI + TRRUST/SIGNOR) cover only the well-studied, canonical edges; the knockout-SPECIFIC response is dominated by non-canonical, indirect, context-dependent changes that no current edge -- physical or regulatory -- annotates. So the scheme is SOUND (it correctly splits the explainable part, and the missing-PPI->regulation logic has a little signal), but it cannot close the gap on THIS data: the bottleneck is edge COVERAGE of the specific response, not the physical-vs-regulatory distinction. Strengthening the network helps attribute the ~explainable fraction; it does not reveal the idiosyncratic majority. Deterministic."
+}
