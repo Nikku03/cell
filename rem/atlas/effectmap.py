@@ -213,5 +213,79 @@ def main():
     open(OUT, "w").write("\n".join(out) + "\n")
 
 
+def posthoc():
+    """POST-RUN CHECK (added after the run, committed before running it). The run showed red flags:
+    the learner (median r 0.322) beat the replicate ceiling (0.098) by 3x, all 981 pathways came out
+    'learnable', and shuffled predictions nearly matched the top-10 overlap. Suspected cause: the
+    'specific' effects still share one dominant cell-wide axis (how hard a knockdown hits the cell),
+    which the learner predicts from essentiality. Test: project out the top k principal components of
+    TRAIN specific effects (k = 1 and k = 5) from every effect vector, then recompute the ceiling, N2,
+    N4 and N5 on what remains."""
+    from scipy.stats import spearmanr, t as tdist
+    out = ["", RULE, "POST-RUN CHECK: REMOVE THE SHARED CELL-WIDE AXES, THEN ASK AGAIN", RULE]
+    rng = np.random.default_rng(7)
+    X, kos, genes, ep, fold = cd.load_gwps()
+    gidx = {g: j for j, g in enumerate(genes)}; kidx = {k: i for i, k in enumerate(kos)}
+    mods, rnames, rtop = wc.reactome(set(genes)); mid = sorted(mods); M = len(mid)
+    Mm = np.zeros((len(genes), M), np.float32)
+    for c, pid in enumerate(mid):
+        for g in mods[pid]:
+            Mm[gidx[g], c] = 1
+    score = lambda A: (np.where(np.isfinite(A), A, 0) @ Mm) / np.maximum(np.isfinite(A).astype(np.float32) @ Mm, 1)
+    S = score(X)
+    phen = [k for k, e in zip(kos, ep) if np.isfinite(e) and e < 0.05]
+    tr_k = [k for k in phen if ad.split(k) == "TRAIN"]; te_k = [k for k in phen if ad.split(k) == "TEST"]
+    tideS = S[[kidx[k] for k in tr_k]].mean(0)
+    E = (S - tideS).astype(np.float64)
+    Etr = E[[kidx[k] for k in tr_k]]
+    U, Sv, Vt = np.linalg.svd(Etr, full_matrices=False)
+    var = Sv ** 2 / (Sv ** 2).sum()
+    out.append(f"  variance of TRAIN specific effects explained by PC1 {var[0]:.1%}, PCs 1-5 {var[:5].sum():.1%}")
+    Xr, pairs, _ = replicate_rows(genes)
+    Er = (score(Xr) - tideS).astype(np.float64)
+    dep = cd.load_depmap(); k562 = dep.loc["ACH-000551"]
+    D = json.load(gzip.open(dc.ENCY)); bn = [r["name"] for r in D["genes"]]
+    feat_genes = sorted(set(kos) | {g for g in dep.columns if np.isfinite(k562[g])})
+    fi = {g: i for i, g in enumerate(feat_genes)}
+    blocks = ad.feature_blocks(feat_genes, genes, dep, D, bn)
+    names_ = ["dep", "net", "proc", "chip", "prot"]
+    tr = np.array([fi[k] for k in tr_k]); te = np.array([fi[k] for k in te_k])
+    Ftr, Fte = ad.design(blocks, names_, tr), ad.design(blocks, names_, te)
+    sc = lambda P, A: float(np.nanmedian(wc.pearson_rows(P, A)))
+    res = {"pc1_var": float(var[0]), "pc5_var": float(var[:5].sum())}
+    for k in (1, 5):
+        V = Vt[:k]
+        proj = lambda A: A - (A @ V.T) @ V
+        Ytr, Yte, Erk = proj(Etr), proj(E[[kidx[x] for x in te_k]]), proj(Er)
+        rc = [np.corrcoef(Erk[a], Erk[b])[0, 1] for a, b in pairs.values()]
+        lam, _ = ad.cv_lambda(Ftr, Ytr, sc)
+        Pl = ad.ridge_multi(Ftr, Ytr, Fte, [lam])[lam]
+        r_l = wc.pearson_rows(Pl, Yte); r_l = np.where(np.isfinite(r_l), r_l, 0.0)
+        w = int((r_l > 0).sum()); l = int((r_l < 0).sum()); p2 = wc.sign_test(list(r_l))[2]
+        top = lambda A: [set(np.argsort(-np.abs(a))[:10]) for a in A]
+        tp, tm = top(Pl), top(Yte)
+        ov = float(np.mean([len(a & b) for a, b in zip(tp, tm)]))
+        nul = [float(np.mean([len(tp[i] & tm[j]) for i, j in enumerate(rng.permutation(len(tm)))])) for _ in range(200)]
+        rho = np.array([spearmanr(Pl[:, c], Yte[:, c]).correlation for c in range(M)])
+        n_ = len(te_k)
+        tt = rho * np.sqrt((n_ - 2) / np.maximum(1 - rho ** 2, 1e-12)); pv = 2 * tdist.sf(np.abs(tt), n_ - 2)
+        o = np.argsort(pv); q = np.empty(M); q[o] = np.minimum.accumulate((pv[o] * M / np.arange(1, M + 1))[::-1])[::-1]
+        learn = (q < 0.05) & (rho > 0)
+        out.append(f"  k = {k} axes removed: ceiling median r {np.median(rc):.3f}; learner median r {np.median(r_l):.3f} "
+                   f"(r > 0 {w} / < 0 {l}, p {p2:.2g}); top-10 overlap {ov:.2f} vs null {np.mean(nul):.2f} (95th {np.percentile(nul, 95):.2f}); "
+                   f"learnable pathways {int(learn.sum())}/{M}")
+        out.append("      most learnable: " + "; ".join(f"{rnames[mid[c]][:38]} ({rho[c]:.2f})" for c in np.argsort(-rho)[:6]))
+        res[f"k{k}"] = dict(ceiling=float(np.median(rc)), learner=float(np.median(r_l)), p=p2, top10=ov, null=float(np.mean(nul)),
+                            null95=float(np.percentile(nul, 95)), learnable=int(learn.sum()),
+                            top_learnable=[[rnames[mid[c]], float(rho[c])] for c in np.argsort(-rho)[:20]])
+    print("\n".join(out))
+    open(OUT, "a").write("\n".join(out) + "\n")
+    a = json.load(open(ART)); a["posthoc"] = res; json.dump(a, open(ART, "w"), indent=1, default=float)
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--posthoc" in sys.argv:
+        posthoc()
+    else:
+        main()

@@ -1,0 +1,22 @@
+=================================================================================================
+THE NETWORK OF EFFECTS: EVERY PROTEIN ON EVERY PATHWAY
+=================================================================================================
+  measured map: 5,051 proteins with a phenotype x 981 pathways (TRAIN 2,527, TEST 2,524)
+  N1 CEILING: 102 genes knocked down twice independently (of 788 with two promoters), agreement of specific pathway effects median r 0.098 (IQR -0.106-0.412)
+  inner-CV median r: ridge 0.326 (lambda 100)  neural net 0.308 -> LEARNER = ridge
+  N2 protein-specific effects on unseen proteins: median r 0.322 = 328% of the ceiling; r > 0 for 1876, < 0 for 648, p 2.15e-137 -> LEARNS SPECIFIC EFFECTS
+  N3 learner vs hand-designed process analogy: median r 0.322 vs 0.000; better 1555, worse 969, p 1.32e-31 -> BETTER
+  N4 top-10 most-affected pathways: predicted vs measured overlap 2.87 of 10; shuffled null 2.60 (95th pct 2.67) -> ABOVE CHANCE
+  N5 LEARNABLE pathways (effect across unseen proteins predicted, BH FDR < 0.05): 981 of 981
+     by system: Signal Transduction 157/157, Disease 140/140, Immune System 97/97, Cell Cycle 91/91, Metabolism of proteins 76/76, Gene expression (Transcription) 74/74, Metabolism 59/59, DNA Repair 41/41, Metabolism of RNA 40/40, Cellular responses to stimuli 32/32, Developmental Biology 31/31, Chromatin organization 19/19
+     most learnable: Amyloid fiber formation (0.38); Signaling by NOTCH2 (0.38); Iron uptake and transport (0.37); Mitochondrial protein import (0.37); Interactions of Rev with host cellular p (0.36); Plasma lipoprotein assembly, remodeling, (0.36); Nuclear import of Rev protein (0.36); Regulation of MITF-M-dependent genes inv (0.36)
+     least learnable: Transport of vitamins, nucleosides, and  (0.09); SLC-mediated transmembrane transport (0.11); Signaling by ALK (0.11); Non-integrin membrane-ECM interactions (0.11); Base-Excision Repair, AP Site Formation (0.11)
+  FILL: measured map 5,051 proteins; predicted map 13,251 proteins never measured (effects restricted to the 981 learnable pathways)
+     e.g. TP53 (predicted): FASTK family proteins regulate pro +1.35 (rel 0.23); tRNA processing in the mitochondri +1.24 (rel 0.23); Mitochondrial RNA degradation +0.91 (rel 0.23)
+     e.g. BRCA1 (measured): FASTK family proteins regulate pro +0.89; tRNA processing in the mitochondri +0.83; Mitochondrial RNA degradation +0.73
+     e.g. KRAS (predicted): Viral mRNA Translation -0.44 (rel 0.27); Peptide chain elongation -0.44 (rel 0.27); SARS-CoV-1 modulates host translat -0.44 (rel 0.26)
+     e.g. PTEN (measured): SARS-CoV-1 modulates host translat -1.93; Peptide chain elongation -1.82; Eukaryotic Translation Elongation -1.81
+     e.g. EGFR (predicted): SARS-CoV-1 modulates host translat -0.81 (rel 0.26); Peptide chain elongation -0.81 (rel 0.27); Eukaryotic Translation Elongation -0.80 (rel 0.27)
+
+  maps in memory_bank/cell_v3/ ; artifact outputs/effectmap.json ; runtime 97s
+  X: one cell line, steady state; pathway effects are averages over their genes.
