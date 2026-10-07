@@ -20,3 +20,12 @@ THE NETWORK OF EFFECTS: EVERY PROTEIN ON EVERY PATHWAY
 
   maps in memory_bank/cell_v3/ ; artifact outputs/effectmap.json ; runtime 97s
   X: one cell line, steady state; pathway effects are averages over their genes.
+
+=================================================================================================
+POST-RUN CHECK: REMOVE THE SHARED CELL-WIDE AXES, THEN ASK AGAIN
+=================================================================================================
+  variance of TRAIN specific effects explained by PC1 55.6%, PCs 1-5 83.1%
+  k = 1 axes removed: ceiling median r 0.119; learner median r 0.287 (r > 0 1891 / < 0 633, p 2e-144); top-10 overlap 2.18 vs null 2.11 (95th 2.14); learnable pathways 967/981
+      most learnable: Transport to the Golgi and subsequent  (0.38); Asparagine N-linked glycosylation (0.38); ER to Golgi Anterograde Transport (0.38); COPI-mediated anterograde transport (0.37); Regulation of MITF-M-dependent genes i (0.37); Intra-Golgi traffic (0.37)
+  k = 5 axes removed: ceiling median r 0.038; learner median r 0.086 (r > 0 1761 / < 0 763, p 5.1e-90); top-10 overlap 1.00 vs null 0.78 (95th 0.81); learnable pathways 936/981
+      most learnable: mRNA Polyadenylation (0.28); mRNA 3'-end processing (0.28); Gene and protein expression by JAK-STA (0.26); Dengue Virus-Host Interactions (0.26); Dengue Virus Infection (0.26); Interleukin-12 signaling (0.25)

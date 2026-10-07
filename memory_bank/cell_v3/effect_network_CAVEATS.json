@@ -1,0 +1,9 @@
+{
+  "applies_to": ["effect_network_measured.json.gz", "effect_network_predicted.json.gz"],
+  "caveat_1": "Tide-removed 'specific' pathway effects are still dominated by shared cell-wide axes: PC1 carries 55.6% and PCs 1-5 83.1% of their variance (K562 gwps, TRAIN). Most entries describe how hard and in which general direction a knockdown hits the cell, not that protein's own wiring.",
+  "axis_1": "protein-production machinery (cytoplasmic translation) up vs recycling machinery (proteasome, lysosomal V-ATPase pathways) down; hit hardest by MTOR, tRNA synthetases (HARS, FARSB), EIF3H, DNAJA3, OGDH knockdowns",
+  "axis_2": "mitochondrial RNA processing up vs cytoplasmic translation down; hit hardest by TFIID subunits (TAF5, TAF2, TAF10, TAF6, TAF12), WDR5, TELO2, MRPL49, EXOSC4 knockdowns",
+  "caveat_2": "Predicted entries (proteins never measured) reach essentially the full reproducible signal of the raw effects (r 0.322 vs noise ceiling sqrt(0.098)=0.313) but that signal is mostly the shared axes; after removing 5 axes the learner recovers ~44% of the protein-specific signal (r 0.086 vs ceiling sqrt(0.038)=0.195).",
+  "withdrawn": "The run's '981 of 981 pathways learnable' is withdrawn: pathways share genes and shared axes remain, so per-pathway learnability is not interpretable from this test.",
+  "source": "rem/atlas/effectmap.py (main run + posthoc), ledger entry EFFECTMAP"
+}

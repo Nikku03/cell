@@ -5359,3 +5359,38 @@ ASKDATA -- DATA AND A QUESTION, NO REASONING SUPPLIED: THE FREE LEARNER BEATS TH
   WHAT IT MEANS. Given only data and a question, a generic learner outperformed every reasoning rule
   I wrote for these questions, and told us which data matter (process membership and co-dependency)
   and which do not (binding, abundance) -- the same verdict the rawchip modules reached the hard way.
+
+=================================================================================================
+EFFECTMAP -- THE PROTEIN -> PATHWAY EFFECT NETWORK: A FEW CELL-WIDE AXES, A LITTLE SPECIFIC WIRING
+=================================================================================================
+  effectmap.py (committed before running; post-run check committed before it ran). Specific (tide-
+  removed) effects of 5,051 K562 knockdowns on 981 Reactome processes; replicate check from 102 genes
+  knocked down twice by independent guides at two promoters; askdata's learners (ridge chosen).
+
+  AS RUN: learner median r 0.322 on unseen proteins (r > 0 for 1,876 / < 0 for 648, p 2e-137); beats
+  the hand-designed analogy (1,555 / 969); top-10 overlap 2.87 vs shuffled 2.60 (95th 2.67); "981 of
+  981 pathways learnable"; replicate ceiling 0.098. Red flags: beats the ceiling 3x; every pathway
+  learnable; shuffled predictions nearly match.
+
+  POST-RUN CHECK, AND TWO CORRECTIONS.
+    (1) The 'specific' effects are dominated by SHARED axes: PC1 = 55.6% of variance, PCs 1-5 = 83.1%.
+        AXIS 1: cytoplasmic translation machinery up / proteasome + lysosomal V-ATPase pathways down
+        (hit hardest by MTOR, tRNA synthetases HARS and FARSB, EIF3H, DNAJA3, OGDH knockdowns).
+        AXIS 2: mitochondrial RNA processing up / cytoplasmic translation down (TFIID subunits TAF5,
+        TAF2, TAF10, TAF6, TAF12; WDR5; TELO2; MRPL49; EXOSC4).
+    (2) MY CEILING WAS THE WRONG YARDSTICK. Two noisy replicates agree with each other less than each
+        agrees with the truth; the limit for predicting one measurement is sqrt(replicate r)
+        (classical attenuation). Corrected:
+                                       replicate r   noise ceiling   learner   share of ceiling
+          raw specific effects           0.098           0.313        0.322        ~100%
+          shared axis 1 removed          0.119           0.345        0.287         83%
+          shared axes 1-5 removed        0.038           0.195        0.086         44%
+        top-10 overlap after removing 5 axes: 1.00 vs null 0.78 (95th 0.81) -- above chance.
+    N5's "981 of 981 learnable" is WITHDRAWN (pathways share genes; shared axes remain).
+
+  WHAT IT MEANS. The effect network of proteins on pathways in this cell is mostly a few cell-wide
+  programmes -- grow-and-translate vs recycle, mitochondrial vs cytoplasmic expression -- which a
+  learner predicts for unseen proteins essentially to the limit the data allow. Each protein's OWN
+  wiring is a small part (after 5 axes, two independent knockdowns of the same gene agree at r 0.038)
+  and is ~44% recovered. The data's reproducibility, not the learner, is now the bound. The measured
+  and predicted maps are in memory_bank/cell_v3/ with effect_network_CAVEATS.json beside them.
