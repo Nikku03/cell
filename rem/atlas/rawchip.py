@@ -67,17 +67,36 @@ def get_json(url):
     """ENCODE answers an EMPTY search with HTTP 404; that means 'no results', not failure."""
     import urllib.error
     req = urllib.request.Request(url, headers={"Accept": "application/json"})
-    try:
-        return json.load(urllib.request.urlopen(req, timeout=120))
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            return {"@graph": []}
-        raise
+    for attempt in range(6):          # transient tunnel resets: retry with backoff (2026-10-13)
+        try:
+            return json.load(urllib.request.urlopen(req, timeout=120))
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return {"@graph": []}
+            raise
+        except (urllib.error.URLError, ConnectionError, TimeoutError):
+            if attempt == 5:
+                raise
+            time.sleep(2 ** (attempt + 1))
+
+
+META = os.path.join(EDIR, "_fetch_meta.json")
 
 
 def fetch_peaks(tf):
-    """First released K562 TF ChIP-seq experiment (by accession) with GRCh38 conservative IDR peaks."""
+    """First released K562 TF ChIP-seq experiment (by accession) with GRCh38 conservative IDR peaks.
+    The answer is cached in META (seeded from earlier runs' recorded accessions), so a re-run reads
+    the same files without the ENCODE search API."""
     os.makedirs(EDIR, exist_ok=True)
+    cache = json.load(open(META)) if os.path.exists(META) else {}
+    if tf in cache and (cache[tf] is None or os.path.exists(cache[tf]["path"])):
+        return cache[tf]
+    cache[tf] = _fetch_peaks(tf)
+    json.dump(cache, open(META, "w"), indent=1, sort_keys=True)
+    return cache[tf]
+
+
+def _fetch_peaks(tf):
     exps = get_json(f"{ENC}/search/?type=Experiment&assay_title=TF+ChIP-seq&biosample_ontology.term_name=K562"
                     f"&status=released&target.label={tf}&format=json&limit=all")["@graph"]
     for e in sorted(exps, key=lambda x: x["accession"]):
