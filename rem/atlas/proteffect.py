@@ -216,7 +216,7 @@ def load_screen(path):
     Xs = X[rows].astype(np.float32); Xs[~np.isfinite(Xs)] = np.nan
     Xc = X[sorted(ctrl)].astype(np.float32); Xc[~np.isfinite(Xc)] = np.nan
     return dict(X=Xs, kos=kos, kos_ens=[ens.get(k) for k in kos], genes=genes, genes_ens=gens,
-                ep=np.array([ep[r] for r in rows]), Xc=Xc)
+                ep=np.array([ep[r] for r in rows]), Xc=Xc, rows=rows)
 
 
 def hgnc_tables():
@@ -253,6 +253,7 @@ def canonicalise(s, canon):
             seen.add(k); keep.append(i)
     s["dup_kos"] = len(kc) - len(keep)
     s["X"], s["ep"], s["kos"] = s["X"][keep], s["ep"][keep], [kc[i] for i in keep]
+    s["rows"] = [s["rows"][i] for i in keep]
     s["renamed_kos"] = sum(1 for i in keep if kc[i] != s["kos_raw"][i])
     gc = [canon(g, e) for g, e in zip(s["genes"], s["genes_ens"])]
     s["renamed_genes"] = sum(1 for a, b in zip(gc, s["genes"]) if a != b)
@@ -816,5 +817,81 @@ def main():
     finish()
 
 
+def posthoc():
+    """POST-RUN CHECKS, written after reading the results (two red flags), committed before running.
+    P1 UP/DOWN SKEW. Effects lean up (SPECIFIC 21,443 up / 7,146 down). If this is a composition artefact
+       (a knockdown that lowers total mRNA per cell makes the rest look relatively up), a protein's share
+       of up effects should track its UMI depth change (obs z_gemgroup_UMI): Spearman over proteins with
+       >= 10 specific effects, and the up share among proteins with normal depth (|z_gemgroup_UMI| < 1).
+    P2 WELL-MEASURED GENES. The most-hit genes are highly expressed. Spearman between a gene's number of
+       specific hits and its mean expression (var/mean, screen A), and the share of hits in the top
+       expression decile (10% expected if unrelated).
+    P3 RESIDUAL NEIGHBOUR ARTEFACT. H1 showed a small excess of down-effects 100-500 kb from the target.
+       Down share among catalogue entries whose gene lies 100 kb-1 Mb from the protein vs all others.
+    Descriptive; no verdict changes. Printed and appended to RESULTS_proteffect.txt."""
+    import h5py
+    from scipy.stats import spearmanr
+    out = []
+
+    def P_(x=""):
+        print(x, flush=True); out.append(x)
+
+    ens2sym, prev, groups = hgnc_tables()
+    canon = make_canon(ens2sym, prev, set(groups))
+    A = load_screen(FILES["A"]); A["kos_raw"] = list(A["kos"]); canonicalise(A, canon)
+    f = h5py.File(FILES["A"], "r")
+    zumi = f["obs/z_gemgroup_UMI"][()]; gmean = f["var/mean"][()]
+    row_of = {p: r for p, r in zip(A["kos"], A["rows"])}
+    mean_of = {}
+    for g, m in zip(A["genes"], gmean):
+        mean_of.setdefault(g, float(m))
+    ent = []
+    with gzip.open(os.path.join(BANK, "protein_gene_effects_reproduced.tsv.gz"), "rt") as fh:
+        next(fh); hdr = next(fh).rstrip("\n").split("\t")
+        for line in fh:
+            ent.append(dict(zip(hdr, line.rstrip("\n").split("\t"))))
+    P_(RULE); P_("POST-RUN CHECKS (post hoc, descriptive)"); P_(RULE)
+    for tag, key in (("SPECIFIC", "direction_specific"), ("ALL", "direction_all")):
+        ev = [e for e in ent if e[key]]
+        per = collections.defaultdict(lambda: [0, 0])
+        for e in ev:
+            per[e["protein"]][0 if e[key] == "up" else 1] += 1
+        ps = [p for p, (u, d) in per.items() if u + d >= 10 and p in row_of]
+        fu = np.array([per[p][0] / sum(per[p]) for p in ps]); zu = np.array([zumi[row_of[p]] for p in ps])
+        ok = np.isfinite(zu)
+        rho, pr = spearmanr(fu[ok], zu[ok])
+        norm = ok & (np.abs(zu) < 1)
+        upn = sum(per[p][0] for p, m in zip(ps, norm) if m); totn = sum(sum(per[p]) for p, m in zip(ps, norm) if m)
+        upa = sum(e[key] == "up" for e in ev)
+        P_(f"  P1 {tag:8s} up share overall {upa / len(ev):.1%}; Spearman(protein up share, UMI depth z) {rho:+.2f} (p {pr:.2g}, "
+           f"{int(ok.sum())} proteins); among normal-depth knockdowns ({int(norm.sum())}): up share {upn / max(totn, 1):.1%}")
+    hits = collections.Counter(e["gene"] for e in ent if e["direction_specific"])
+    gs = [g for g in mean_of if np.isfinite(mean_of[g])]
+    hc = np.array([hits.get(g, 0) for g in gs]); mm = np.array([mean_of[g] for g in gs])
+    rho, pr = spearmanr(hc, mm)
+    top = mm >= np.percentile(mm, 90)
+    P_(f"  P2 genes' specific hit count vs mean expression: Spearman {rho:+.2f} (p {pr:.2g}); share of hits in the top expression "
+       f"decile {hc[top].sum() / max(hc.sum(), 1):.1%} (10% if unrelated); genes never hit {int((hc == 0).sum()):,} of {len(gs):,}")
+    tss = rc.tss_table(); gpos = tss_positions(tss)
+
+    def dist(p, g):
+        best = None
+        for c1, x1 in gpos.get(p, ()):
+            for c2, x2 in gpos.get(g, ()):
+                if c1 == c2:
+                    d = abs(x1 - x2); best = d if best is None or d < best else best
+        return best
+
+    for tag, key in (("SPECIFIC", "direction_specific"), ("ALL", "direction_all")):
+        ev = [e for e in ent if e[key]]
+        mid = [e for e in ev if (lambda d: d is not None and 100_000 < d <= 1_000_000)(dist(e["protein"], e["gene"]))]
+        dn_mid = sum(e[key] == "down" for e in mid) / max(len(mid), 1)
+        dn_all = sum(e[key] == "down" for e in ev) / len(ev)
+        P_(f"  P3 {tag:8s} entries with the gene 100 kb-1 Mb from the protein: {len(mid):,} of {len(ev):,}; down share {dn_mid:.1%} "
+           f"vs {dn_all:.1%} overall")
+    open(OUT, "a").write("\n" + "\n".join(out) + "\n")
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+    posthoc() if "--posthoc" in sys.argv else main()
