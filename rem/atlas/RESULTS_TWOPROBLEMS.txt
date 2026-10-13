@@ -5394,3 +5394,39 @@ EFFECTMAP -- THE PROTEIN -> PATHWAY EFFECT NETWORK: A FEW CELL-WIDE AXES, A LITT
   wiring is a small part (after 5 axes, two independent knockdowns of the same gene agree at r 0.038)
   and is ~44% recovered. The data's reproducibility, not the learner, is now the bound. The measured
   and predicted maps are in memory_bank/cell_v3/ with effect_network_CAVEATS.json beside them.
+
+=================================================================================================
+CORRECTION -- RAWCHIP AND RAWCHIP2: A SORTING BUG; BINDING DOES PREDICT RESPONSE FOR SOME FACTORS
+=================================================================================================
+  Found 2026-10-13 while reusing rawchip.tss_table for proteffect.py. tss_table returned each
+  chromosome's TSS positions in refGene FILE order (34,397 descending steps among 88,819 TSSs) and
+  bound_genes located the TSSs near each peak summit with np.searchsorted, which needs sorted input.
+  Every bound-gene set in both modules was wrong. Fixed (commit a3b81e8; amendment in rawchip.py's
+  docstring); both modules re-run with gates, factors and peak files unchanged; the first outputs
+  stay in history. (A metadata cache and retries were added so the re-run reads the same ENCODE
+  files despite tunnel resets -- 0a958ea; no analysis change.)
+
+  RAWCHIP (12 factors)        before            after
+    T1 pooled triangulation    NOT SHARP ENOUGH  NOT SHARP ENOUGH (1,974 vs null 2,379 +/- 707)
+    T2 factors enriched        0/12              3/12 (KDM1A OR 1.84 p 3e-8, TAF7 3.64, CHD4 2.00)
+    "near-empty peak files"    POLR3A 8, CBX3 5, TAF7 65 promoters -- WRONG; now 175, 100, 237
+  RAWCHIP2 (40 sequence-specific factors)
+    T1 pooled triangulation    NOT SHARP ENOUGH  NOT SHARP ENOUGH (2,024 vs null 3,417 +/- 949)
+    T2 factors enriched        0/40              10/40: NRF1 (OR 2.65, p 2e-6), CHCHD3, ZSCAN32, TBPL1,
+                                                 ZNF324, CDC5L, THAP1, ZBTB17, DNMT1, ZNF830
+                                                 (depleted: TBP 0.11, CEBPZ 0.29, MAX 0.52)
+    T3 dose-response           NONE              STRONGER BINDING, BIGGER EFFECT (27/40, p 0.039,
+                                                 median rho +0.020 -- weak)
+    T4 sign control            too few           16/25 = 0.64 agree with OmniPath, p 0.12
+    (HMG20B, dropped first for < 50 promoters, now qualifies; the chosen 40 are otherwise the same.)
+
+  WITHDRAWN: RAWCHIP2's "for 40 sequence-specific factors, promoter binding does not predict
+  response", "T2 0/40", "T3 NONE", and the reading "binding is close to uninformative about
+  regulation". CORRECTED READING: for a quarter of sequence-specific factors, genes bound at their
+  promoter respond to the factor's knockdown more often than unbound genes (up to 2.8x), and
+  stronger binding goes with slightly bigger effects; for near-universal binders (TBP, MAX) bound
+  genes respond LESS often. What still holds: the pooled triangulation does not beat the null, so
+  no list of direct targets is named; binding alone remains a weak predictor, and acute-depletion
+  time courses remain the instrument for direct targets.
+  Also affected: HANDOFF_REASONING_ENGINE_AND_MEMORY_BANK.md quoted "0/40" -- corrected there.
+  Not affected: askdata.py's ENCODE block (2015 gene sets, no positions) and celldiscover D1.

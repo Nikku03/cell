@@ -313,7 +313,7 @@ Gate E1 passed: the v2 journal replays exactly (7,524 genes set, 573 ties).
 | Data self-revision | 232 facts downgraded; no change in TEST accuracy | `cellbank2.py` V5 |
 | Are literature signs right in K562? | OmniPath transcriptional signs 0.489 (coin flip). High-evidence edges 0.641, ChIP-supported 0.700 (n 20). The bank's own direct edges 0.760 over 346 tests | `celldiscover.py` D2 |
 | Do K562-measured facts help? | 2-hop direction 0.457 → 0.699 pooled. The predeclared per-knockdown test is not significant (40 vs 25, p 0.082) | `celldiscover.py` D3 |
-| Does promoter binding predict response? | No. 0/40 sequence-specific TFs enriched; no dose-response | `rawchip.py`, `rawchip2.py` |
+| Does promoter binding predict response? | Weakly, for some factors: 10/40 sequence-specific TFs enriched (NRF1 OR 2.65), weak dose-response (27/40, p 0.039); pooled triangulation still fails its null. Corrected 2026-10-13: the first run's "0/40" came from an unsorted-TSS bug | `rawchip.py`, `rawchip2.py` |
 
 The conclusion recorded in the ledger: better reasoning over the same facts cannot fix wrong or
 context-free signs. Measured, cell-type-specific facts are the input that moves the bank.
@@ -469,6 +469,7 @@ These extend your rules for facts to rules for experiments:
 | `cellbank2.py` V1 | "Anti-predicts which genes move" | WITHDRAWN: biased when expected movers < 1; fair pooled test shows 3.15× |
 | `celldiscover.py` | genome-wide values on a different scale; 6,300 inf values counted as movers | Scale set from measurement; non-finite set missing; re-run, first run kept in history |
 | `rawchip.py` | My factor-selection rule picked general machinery | Recorded; fair test `rawchip2.py` run |
+| `rawchip.py`, `rawchip2.py` | TSS positions unsorted before `searchsorted`, so bound-gene sets were wrong; "0/40" and "no dose-response" | WITHDRAWN; fixed and re-run: 10/40 enriched, weak dose-response |
 | `askdata.py` | Kernel version too large, no intercept | Switched to primal ridge with intercept before running |
 | `effectmap.py` | Learner beat my "ceiling" 3×; "981/981 pathways learnable" | Ceiling was wrong (√r is right); 981/981 WITHDRAWN; caveats file added |
 | `transvs.py`, `biomemory.py` | A short timing preview ran on an evaluation seed | Disclosed in commits and docstrings |
