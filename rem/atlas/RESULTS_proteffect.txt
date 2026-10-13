@@ -1,0 +1,134 @@
+=================================================================================================
+THE EFFECT OF EACH PROTEIN ON EVERY OTHER GENE AND PATHWAY: REAL, SHARED, OR ITS OWN
+=================================================================================================
+  screen A: 9,865 knockdowns x 8,248 genes; control rows 585; median noise sd 0.086; renamed to current symbols: 279 knockdowns, 294 genes; duplicates dropped: 1 knockdowns, 1 gene columns
+  screen B: 2,057 knockdowns x 8,563 genes; control rows 109; median noise sd 0.097; renamed to current symbols: 70 knockdowns, 314 genes; duplicates dropped: 0 knockdowns, 1 gene columns
+  screen C: 2,393 knockdowns x 8,749 genes; control rows 130; median noise sd 0.105; renamed to current symbols: 77 knockdowns, 254 genes; duplicates dropped: 0 knockdowns, 1 gene columns
+  H0 (a) loader identical to celldiscover.load_gwps (apart from ['NONO']): True; (b) own-gene median Z A -5.4, B -7.5, C -6.2; (c) without a TSS after name mapping: 28 shared knockdowns ['AFG2A', 'AFG2B', 'AIRIM', 'ALG1L1P', 'BBLN', 'CHLSN', 'COXFA4', 'CPAP'], 273 measured genes (dropped) -> PASS
+  H1 CRISPRi neighbour artefact in A, P(Z <= -3) by distance from the target's TSS:
+     0-1 kb 0.4436 (1,400)   1-10 kb 0.1233 (1,046)   10-50 kb 0.0309 (7,207)   50-100 kb 0.0181 (8,839)   100-500 kb 0.0112 (52,963)   same chr > 1 Mb 0.0099 (4,017,031)   other chr 0.0098 (73,231,449)
+     < 10 kb vs other chromosomes: OR 44.5, p 0 -> PASS
+  cis zones zeroed: median 2 genes per knockdown in A (self + TSS within 100 kb)
+
+  H2 KNOWN REGULATION (raw Z, expected DOWN; z vs the same set score over control rows)
+     GATA1   A   6 targets  z    -3.2  pass   (not measured: HBA2)
+     GATA1   B   6 targets  z    -6.3  pass   (not measured: HBA2)
+     GATA1   C  only 0 targets measured outside the cis zone -- not evaluable; missing ['HBG1', 'HBG2', 'HBZ', 'HBA1', 'HBA2', 'ALAS2', 'GYPA']
+     SREBF2  A  21 targets  z    -9.9  pass
+     SCAP    A  21 targets  z    -9.1  pass
+     MBTPS1  A  21 targets  z    -9.2  pass
+     MBTPS2  A  21 targets  z   -13.6  pass
+     SCAP    B  21 targets  z    -9.6  pass
+     MBTPS1  B  21 targets  z    -9.6  pass
+     MBTPS2  B  21 targets  z   -12.0  pass
+     SCAP    C  17 targets  z    -2.0  fail   (not measured: LSS, MVK, HSD17B7, STARD4)
+     MBTPS1  C  17 targets  z    -2.2  fail   (not measured: LSS, MVK, HSD17B7, STARD4)
+     MBTPS2  C  17 targets  z    -0.5  fail   (not measured: LSS, MVK, HSD17B7, STARD4)
+     ATF4    A  22 targets  z    -6.3  pass   (not measured: ASNS, CHAC1)
+     ATF4    B  21 targets  z    -5.9  pass   (not measured: ASNS, CHAC1, ATF3)
+     ATF4    C  22 targets  z    -3.9  pass   (not measured: ASNS, CHAC1)
+     HSF1    A   6 targets  z    -2.0  fail
+     HSF1    B   6 targets  z    -1.9  fail
+     HSF1    C   6 targets  z    -3.5  pass
+     MYC     A  18 targets  z    -4.1  pass   (not measured: NCL)
+     MYC     B  18 targets  z    -6.4  pass   (not measured: NCL)
+     MYC     C  18 targets  z    -5.4  pass   (not measured: NCL)
+     TFAM    A  10 targets  z   -35.9  pass
+     TFAM    B  10 targets  z   -21.0  pass
+     TFAM    C  10 targets  z   -12.5  pass
+     NRF1    A   5 targets  z    -1.0  fail
+     NRF1    B   5 targets  z    -3.1  pass
+     NRF1    C   5 targets  z    -2.2  fail
+     NFE2L1  A  27 targets  z    -4.6  pass   (reported, not counted: NFE2L1)
+     TP53    A   9 targets  z    +0.8  pass   (reported, not counted: TP53 (negative))
+  H2 15/20 (family, screen) pairs pass: GATA1/A +, GATA1/B +, SREBP/A +, SREBP/B +, SREBP/C -, ATF4/A +, ATF4/B +, ATF4/C +, HSF1/A -, HSF1/B -, HSF1/C +, MYC/A +, MYC/B +, MYC/C +, TFAM/A +, TFAM/B +, TFAM/C +, NRF1/A -, NRF1/B +, NRF1/C - -> PASS
+
+  SHARED SUBSPACE from 3,331 screen-A knockdowns not in B (phenotype), 7,928 genes: top 5 axes = 14.6% of their centred variance
+  shared proteins 2,025 (with a TSS): share of their energy in the tide+axes span  A 32.4%  B 27.8%
+  shared proteins with an expression phenotype in both screens: 1,534 of 2,025
+
+  R1/R2 DO EFFECT PROFILES REPEAT ACROSS EXPERIMENTS? (per protein, A vs B)
+     raw      median r +0.268 (IQR +0.075 to +0.493); deranged medians 95th pct +0.026 -> REPEATS
+              proteins individually reproducible (exact p over all partners, BH < 0.05): 1,113 of 2,025; their median r +0.450; in an HGNC group with >= 2 other tested proteins: 885
+     specific median r +0.153 (IQR +0.046 to +0.314); deranged medians 95th pct +0.001 -> REPEATS
+              proteins individually reproducible (exact p over all partners, BH < 0.05): 1,443 of 2,025; their median r +0.234; in an HGNC group with >= 2 other tested proteins: 1121
+
+  R3 GENE-LEVEL CATALOGUE: |Z| >= t in A and B, same sign; sign-flip FDR; ladder (3.0, 4.0, 5.0); >= 20 effects
+     ALL      t 3: reproduced 384,319, opposite-sign 26,414, FDR 0.069; mismatched-partner ratio 0.225
+     ALL      -> CATALOGUE AT t = 3
+     SPECIFIC t 3: reproduced 145,137, opposite-sign 28,065, FDR 0.193; mismatched-partner ratio 0.159
+     SPECIFIC t 4: reproduced 58,971, opposite-sign 6,650, FDR 0.113; mismatched-partner ratio 0.093
+     SPECIFIC t 5: reproduced 28,589, opposite-sign 1,582, FDR 0.055; mismatched-partner ratio 0.061
+     SPECIFIC -> CATALOGUE AT t = 5
+
+  R4 DO REPRODUCED K562 EFFECTS HOLD IN RPE1? (among |Z_C| >= 3: same sign as K562?)
+     ALL      342,963 evaluable; reach |Z_C| >= 3: 156,111 (45.5%; deranged 23.8%, description only); same sign 84.9% (binomial p 0) vs deranged 66.1% (max 67.2%) -> GENERAL BEYOND CHANCE
+     SPECIFIC 23,640 evaluable; reach |Z_C| >= 3: 13,576 (57.4%; deranged 21.9%, description only); same sign 87.6% (binomial p 0) vs deranged 53.1% (max 54.7%) -> GENERAL BEYOND CHANCE
+
+  R5 PROTEIN -> PATHWAY CATALOGUE (specific Z averaged over each process; z vs control rows; ladder (3.0, 4.0, 5.0, 7.0, 10.0))
+     t 3: reproduced 69,185, opposite-sign 3,143, FDR 0.045; mismatched-partner ratio 0.162
+     -> CATALOGUE AT t = 3
+
+  R6 THE NETWORK'S SHAPE
+     ALL      384,319 effects from 1,752 proteins onto 7,922 genes; up 265,167 / down 119,152; paralog-flagged 21; MT-/histone readouts 1,918
+        most effects: MED30 2375, MED12 2198, GATA1 2047, MED9 2033, SUPT6H 2015, INTS2 1837, RPS6 1798, RPL17 1661, RPS4X 1633, MED21 1519, MED19 1515, MED7 1502
+        most often hit (flagged readouts left out): PTMA 668, SNHG29 616, RPS18 614, EEF1A1 609, TPT1 603, FTH1 569, RPS3 558, HSPD1 534, BTG1 515, RPL12 511, GAS5 497, RPL13A 483
+     SPECIFIC 28,589 effects from 1,277 proteins onto 5,182 genes; up 21,443 / down 7,146; paralog-flagged 1; MT-/histone readouts 413
+        most effects: GATA1 393, SUPT6H 356, INTS2 348, DNAJC17 334, CSE1L 289, NUDT21 267, SNRPD2 254, POLR2K 250, POLR3A 233, PSMD2 229, RPL7A 224, SUPT5H 217
+        most often hit (flagged readouts left out): FTH1 129, GP1BB 128, FTL 120, OAZ1 106, SNHG29 99, RPLP0 95, APOE 91, SNHG1 86, ACTB 80, PHGDH 77, GAPDH 75, MDK 74
+     strongest reproduced SPECIFIC protein -> gene effects (no flags):
+              SMG5 -> SNHG12     UP    specific z A +432.5  B +219.2  RPE1 +441.4
+            ZFC3H1 -> SNHG19     UP    specific z A +217.1  B +192.8  RPE1 +199.0
+             GATA1 -> LST1       UP    specific z A +185.0  B +159.6  RPE1    n/a
+             INTS2 -> CLCA1      UP    specific z A +126.0  B +142.3  RPE1    n/a
+              SMG5 -> ZFAS1      UP    specific z A +153.7  B +121.6  RPE1 +224.6
+              SMG5 -> GAS5       UP    specific z A +110.0  B +107.1  RPE1 +157.5
+            ZFC3H1 -> SNHG3      UP    specific z A +106.0  B +106.7  RPE1 +110.2
+            EXOSC2 -> SNHG19     UP    specific z A +105.5  B +111.4  RPE1  +41.6
+            EXOSC4 -> SNHG19     UP    specific z A  +97.6  B  +99.1  RPE1  +63.2
+            EXOSC3 -> SNHG19     UP    specific z A +101.9  B  +95.2  RPE1  +45.8
+            TSG101 -> SOD2       UP    specific z A  +94.4  B +103.9  RPE1  +82.3
+             GATA1 -> CTSC       UP    specific z A  +93.6  B +194.9  RPE1   -0.8
+            EXOSC8 -> SNHG19     UP    specific z A  +89.4  B  +93.6  RPE1  +49.9
+            PABPN1 -> SNHG19     UP    specific z A  +87.7  B  +87.1  RPE1  +84.5
+            EXOSC5 -> SNHG19     UP    specific z A +102.7  B  +86.2  RPE1  +50.3
+              SMG5 -> EPB41L4A-AS1 UP    specific z A  +83.1  B  +86.9  RPE1  +85.1
+             INTS8 -> CLCA1      UP    specific z A  +80.7  B +102.5  RPE1    n/a
+            EXOSC2 -> SNHG3      UP    specific z A  +81.2  B  +79.7  RPE1  +12.5
+            EXOSC6 -> SNHG19     UP    specific z A  +81.7  B  +76.7  RPE1  +57.6
+            EXOSC5 -> SNHG3      UP    specific z A  +75.3  B  +79.9  RPE1  +13.7
+             VPS28 -> SOD2       UP    specific z A  +82.3  B  +73.0  RPE1 +130.2
+             GATA1 -> TMSB4X     UP    specific z A  +71.4  B  +79.2  RPE1   +1.0
+           CIAPIN1 -> MT2A       UP    specific z A +118.1  B  +70.1  RPE1   +6.1
+              SMG5 -> SNHG6      UP    specific z A  +69.8  B  +84.7  RPE1  +88.3
+            EXOSC9 -> SNHG19     UP    specific z A  +69.4  B  +75.5  RPE1  +43.7
+     strongest reproduced protein -> pathway effects (non-redundant per protein):
+            SUPT6H -> Glycosphingolipid catabolism                               UP   z A  +29.8 B  +30.2
+             EP400 -> Metabolism of porphyrins                                   UP   z A  +31.3 B  +28.1
+             DHDDS -> Maturation of DENV proteins                                UP   z A  +35.4 B  +28.0
+            LRPPRC -> Response of EIF2AK4 (GCN2) to amino acid deficiency        UP   z A  +27.9 B  +27.7
+             INTS2 -> Stimuli-sensing channels                                   UP   z A  +27.7 B  +27.6
+             DHDDS -> Unfolded Protein Response (UPR)                            UP   z A  +29.0 B  +27.2
+             HSPA5 -> Unfolded Protein Response (UPR)                            UP   z A  +27.2 B  +66.2
+           DNAJC17 -> mRNA Splicing - Major Pathway                              UP   z A  +44.6 B  +27.1
+             VPS28 -> Aggrephagy                                                 UP   z A  +26.5 B  +32.9
+             GATA1 -> Fcgamma receptor (FCGR) dependent phagocytosis             UP   z A  +26.4 B  +29.3
+            POLRMT -> Response of EIF2AK4 (GCN2) to amino acid deficiency        UP   z A  +32.2 B  +25.8
+             PSMD2 -> Nuclear events mediated by NFE2L2                          UP   z A  +25.5 B  +27.3
+            TSG101 -> Deregulated CDK5 triggers multiple neurodegenerative pathw UP   z A  +24.7 B  +27.3
+             PSMD2 -> AUF1 (hnRNP D0) binds and destabilizes mRNA                UP   z A  +24.7 B  +28.2
+             HSPA5 -> Maturation of DENV proteins                                UP   z A  +24.3 B  +55.2
+            TSG101 -> Detoxification of Reactive Oxygen Species                  UP   z A  +24.6 B  +24.2
+             PSMD2 -> Hedgehog 'off' state                                       UP   z A  +24.2 B  +31.8
+             DHDDS -> Antigen Presentation: Folding, assembly and peptide loadin UP   z A  +26.8 B  +24.1
+              TAF1 -> Response of EIF2AK4 (GCN2) to amino acid deficiency        DOWN z A  -24.4 B  -23.9
+             PSMD2 -> Neddylation                                                UP   z A  +23.8 B  +24.2
+            POLRMT -> Metabolism of amino acids and derivatives                  UP   z A  +26.7 B  +23.4
+             PSMD2 -> Interleukin-1 signaling                                    UP   z A  +23.1 B  +28.2
+             MTPAP -> Response of EIF2AK4 (GCN2) to amino acid deficiency        UP   z A  +24.5 B  +22.8
+             PSMD2 -> Macroautophagy                                             UP   z A  +22.7 B  +36.8
+             PSMD2 -> Aggrephagy                                                 UP   z A  +22.7 B  +50.8
+     69,185 reproduced pathway effects from 1,212 proteins; most: PSMD2 470, VPS28 431, PSMD14 418, ZNF830 400, CHMP6 367, EXOSC2 364, EXOSC5 358, EXOSC4 357, DNAJC17 355, SUPT16H 355
+
+  written: memory_bank/cell_v3/protein_gene_effects_reproduced.tsv.gz, memory_bank/cell_v3/protein_pathway_effects_reproduced.tsv.gz, memory_bank/cell_v3/protein_effects_CAVEATS.json; artifact outputs/proteffect.json; runtime 83s
+  data: Replogle et al., Cell 2022, doi 10.1016/j.cell.2022.05.013; figshare 20029387; CC BY 4.0

@@ -1,0 +1,22 @@
+{
+ "applies_to": [
+  "protein_gene_effects_reproduced.tsv.gz",
+  "protein_pathway_effects_reproduced.tsv.gz"
+ ],
+ "source": "rem/atlas/proteffect.py",
+ "data": "Replogle et al., Cell 2022, doi 10.1016/j.cell.2022.05.013; figshare 20029387; CC BY 4.0",
+ "interpretable": true,
+ "caveats": [
+  "Same sgRNA library elements in all three screens: reproduction is across cells, days and sequencing, not across reagents; guide off-target effects would reproduce.",
+  "Steady state (day 6 and day 8): direct and indirect effects are mixed.",
+  "SPECIFIC = beyond the tide and 5 cell-wide axes learnt from other knockdowns. It still contains programmes shared by members of a complex or pathway, and removes the defining effects of regulators that drive a shared axis.",
+  "Cis zone: self + genes with a TSS within 100 kb were zeroed; trans effects of a co-silenced promoter partner (e.g. head-to-head genes) are attributed to the targeted protein.",
+  "paralog_flag is a heuristic (shared HGNC family + symbol prefix), not sequence paralogy.",
+  "FDR is a sign-flip estimate (opposite-sign co-hits / same-sign co-hits)."
+ ],
+ "gates": {
+  "H0": true,
+  "H1": true,
+  "H2": true
+ }
+}
