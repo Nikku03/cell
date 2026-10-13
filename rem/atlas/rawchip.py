@@ -29,6 +29,14 @@ T3 DOSE-RESPONSE (peaks only): among bound genes, Spearman between peak strength
 T4 SIGN CONTROL: agreement of triangulated pairs with OmniPath's sign; a verdict only if >= 20.
 DISCOVERY only if T1 passes for the peaks: triangulated pairs in neither OmniPath nor the bank,
 with estimated FDR = null mean / observed. If T1 fails, nothing is listed as a candidate.
+
+AMENDMENT 2026-10-13, AFTER BOTH RUNS (rawchip and rawchip2), FOUND WHILE REUSING tss_table.
+tss_table returned each chromosome's TSS positions in refGene FILE order, which is not sorted
+(34,397 descending steps among 88,819 TSSs), and bound_genes finds the TSSs near a summit with
+np.searchsorted, which requires sorted input. Bound-gene sets were therefore wrong (genes missed
+and others included) in every T1-T4 number of both modules. Fixed by sorting each chromosome's
+(position, name) pairs. Both modules are re-run with gates, factors and peak files unchanged;
+the first outputs stay in git history.
 """
 
 from __future__ import annotations
@@ -94,7 +102,11 @@ def tss_table():
         p = line.split("\t")
         chrom, strand, txs, txe, name = p[2], p[3], int(p[4]), int(p[5]), p[12]
         by_chr[chrom].append((txs if strand == "+" else txe, name))
-    return {c: (np.array([x[0] for x in v]), [x[1] for x in v]) for c, v in by_chr.items()}
+    out = {}
+    for c, v in by_chr.items():
+        v.sort()                      # AMENDMENT 2026-10-13: bound_genes searchsorts these positions
+        out[c] = (np.array([x[0] for x in v]), [x[1] for x in v])
+    return out
 
 
 def bound_genes(path, tss):
