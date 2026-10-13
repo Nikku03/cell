@@ -5430,3 +5430,40 @@ CORRECTION -- RAWCHIP AND RAWCHIP2: A SORTING BUG; BINDING DOES PREDICT RESPONSE
   time courses remain the instrument for direct targets.
   Also affected: HANDOFF_REASONING_ENGINE_AND_MEMORY_BANK.md quoted "0/40" -- corrected there.
   Not affected: askdata.py's ENCODE block (2015 gene sets, no positions) and celldiscover D1.
+
+=================================================================================================
+PROTEFFECT -- WHAT EACH PROTEIN DOES TO EVERY GENE AND PATHWAY, REPRODUCED ACROSS EXPERIMENTS
+=================================================================================================
+  proteffect.py (draft 8bc6dc8; blind pre-run review by 3 lenses + 21 adversarial verifiers + a PubMed
+  check of the controls confirmed 16 defects, all fixed before the first run, c24c5ea). Data: Replogle
+  2022 K562 genome-wide (A, day 8) and K562 essential (B, day 6) as replicates for 2,025 proteins, RPE1
+  essential (C) as a second cell type (figshare 20029387, CC BY 4.0). SAME sgRNA reagents in all three:
+  reproduction is across cells, days and sequencing, not reagents.
+
+  H1 the CRISPRi neighbour artefact is large and local: P(down) 44% < 1 kb, 12% 1-10 kb, 3.1% 10-50 kb,
+     1.8% 50-100 kb, 1.1% 100-500 kb vs 0.98% on other chromosomes -> the 100 kb exclusion is right.
+  H2 15/20 literature (family, screen) controls pass: TFAM (z -36/-21/-13), MYC, ATF4 in all three
+     screens; GATA1 and the SREBP pathway in both K562 screens. Fail: HSF1 in K562 (predicted weak at
+     basal), NRF1 in 2/3, SREBP pathway in RPE1. TP53-null negative control passes.
+  R1/R2 whole effect profiles repeat (median r 0.27 vs deranged 95th 0.03); protein-specific parts too
+     (0.15 vs 0.00); 1,443 of 2,025 proteins individually (BH < 0.05; 1,121 are in HGNC groups with
+     other tested proteins -- complexes share programmes).
+  R3 catalogue ALL: 384,319 reproduced protein -> gene effects at |z| >= 3, sign-flip FDR 0.069;
+     SPECIFIC: 28,589 at |z| >= 5, FDR 0.055 (|z| >= 3 and 4 failed the 0.10 bar).
+  R4 they hold in RPE1: of specific effects reaching |z| >= 3 there, 87.6% keep their sign (deranged
+     53.1%); ALL 84.9% (deranged 66.1%).
+  R5 69,185 reproduced protein -> pathway effects (|z| >= 3, FDR 0.045).
+  STRONGEST SPECIFIC EFFECTS are recognisable biology the method was not told: RNA-decay machinery
+     (SMG5/NMD, ZFC3H1, PABPN1, the RNA exosome EXOSC2-9) -> snoRNA host genes up (GAS5, ZFAS1, SNHGs),
+     also in RPE1; HSPA5 and DHDDS -> unfolded protein response up; PSMD2 -> NFE2L2 targets and
+     autophagy up; POLRMT, LRPPRC, MTPAP -> amino-acid (GCN2) stress response up; ESCRT-I (TSG101,
+     VPS28) -> SOD2 up; GATA1 -> myeloid genes up (K562 only). (Literature check started, stopped to
+     save usage; these readings are mine and not yet cited.)
+  POST-RUN CHECKS (committed before running): P1 the 3:1 up-skew is NOT a UMI-depth artefact
+     (Spearman with depth +0.08; up share 76% among normal-depth knockdowns) -- biology or a detection
+     asymmetry for low-expressed genes, unresolved. P2 hits favour well-measured genes: 36.8% in the top
+     expression decile; 3,065 of 8,247 genes never hit -- absence of an effect is often absence of power.
+     P3 residual neighbour artefact negligible (47 of 28,589 specific entries at 100 kb-1 Mb).
+  WRITTEN: memory_bank/cell_v3/protein_gene_effects_reproduced.tsv.gz, protein_pathway_effects_
+     reproduced.tsv.gz, protein_effects_CAVEATS.json. These are the measured, error-rated facts the
+     memory bank lacked: cell-type-specific, reproduced, with an FDR.

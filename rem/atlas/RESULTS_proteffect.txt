@@ -132,3 +132,12 @@ THE EFFECT OF EACH PROTEIN ON EVERY OTHER GENE AND PATHWAY: REAL, SHARED, OR ITS
 
   written: memory_bank/cell_v3/protein_gene_effects_reproduced.tsv.gz, memory_bank/cell_v3/protein_pathway_effects_reproduced.tsv.gz, memory_bank/cell_v3/protein_effects_CAVEATS.json; artifact outputs/proteffect.json; runtime 83s
   data: Replogle et al., Cell 2022, doi 10.1016/j.cell.2022.05.013; figshare 20029387; CC BY 4.0
+
+=================================================================================================
+POST-RUN CHECKS (post hoc, descriptive)
+=================================================================================================
+  P1 SPECIFIC up share overall 75.0%; Spearman(protein up share, UMI depth z) +0.08 (p 0.057, 502 proteins); among normal-depth knockdowns (484): up share 76.2%
+  P1 ALL      up share overall 69.0%; Spearman(protein up share, UMI depth z) +0.13 (p 8.8e-07, 1367 proteins); among normal-depth knockdowns (1349): up share 69.2%
+  P2 genes' specific hit count vs mean expression: Spearman +0.34 (p 1.3e-219); share of hits in the top expression decile 36.8% (10% if unrelated); genes never hit 3,065 of 8,247
+  P3 SPECIFIC entries with the gene 100 kb-1 Mb from the protein: 47 of 28,589; down share 27.7% vs 25.0% overall
+  P3 ALL      entries with the gene 100 kb-1 Mb from the protein: 558 of 384,319; down share 33.3% vs 31.0% overall
