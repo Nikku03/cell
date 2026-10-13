@@ -5467,3 +5467,27 @@ PROTEFFECT -- WHAT EACH PROTEIN DOES TO EVERY GENE AND PATHWAY, REPRODUCED ACROS
   WRITTEN: memory_bank/cell_v3/protein_gene_effects_reproduced.tsv.gz, protein_pathway_effects_
      reproduced.tsv.gz, protein_effects_CAVEATS.json. These are the measured, error-rated facts the
      memory bank lacked: cell-type-specific, reproduced, with an FDR.
+
+=================================================================================================
+EXPMEM -- A MEMORY OF MEASURED EXPERIMENTS INSTEAD OF LITERATURE; AND THE HUMAN PROTEIN ATLAS
+=================================================================================================
+  expmem.py (committed 8f58deb before running; design chosen by both judges who finished a 4-design
+  panel, stopped early to save usage). Unseen K562 knockdowns (2,527 TRAIN / 2,525 TEST, askdata's
+  split), predicting the SPECIFIC (tide-removed) whole-cell response; identical inputs for every arm
+  (askdata blocks + HPA v25 location, protein class, K-562 RNA; CC BY 4.0). H0 PASS (shuffled-answer
+  r -0.009).
+        median r on TEST: ridge without HPA 0.170 | ridge with HPA 0.169 | memory, guess-then-snap 0.169
+        | two snapped hops 0.153 | feature retrieval 0.152 | shuffled memory 0.145 | CEILING (same protein
+        in screen B) 0.315
+  E1 experiment memory vs the plain learner: better on 1,413 / worse 1,112 (p 2e-9) but median gain
+     +0.005, below the predeclared +0.01 -> NO DIFFERENCE. A small, consistent edge, not a meaningful one.
+  E2 a second hop: worse on 1,403 / better 1,122, median -0.001 -> NO DIFFERENCE (if anything it hurts).
+  E3 memory content matters: +0.016 over shuffled memory, 1,615 / 910 -> BETTER (E1 is not void).
+  E4 the Protein Atlas blocks: no difference (1,235 / 1,290, p 0.28).
+  E5 retrieval by features alone: no difference by the rule (worse on 1,387 / 1,138).
+  WHAT IT MEANS. Replacing literature with measured experiments as the memory works as well as the
+  best plain learner, with a slight consistent edge -- but multi-step reasoning over it adds nothing,
+  and neither do HPA's location, class or K562 RNA. Every model reaches about half (0.17 / 0.315) of
+  what an independent measurement of the same protein gives. The limit is what the inputs say about an
+  unmeasured protein, not how the model reasons over them. HPA's value is elsewhere (explaining K562 vs
+  RPE1 differences, untested here).
