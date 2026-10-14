@@ -1,0 +1,355 @@
+{
+ "test": "enhancer sub-kb loops",
+ "gates": {
+  "A1": true,
+  "A2": false,
+  "A3": false,
+  "A4": false,
+  "A5": false,
+  "A6": true,
+  "A7": false,
+  "A8": true
+ },
+ "n_loops": 1490261,
+ "provenance": {
+  "ENCFF511QFN": 734671,
+  "ENCFF953LXY": 228037,
+  "ENCFF030PMM": 186714,
+  "ENCFF118PBQ": 129669,
+  "ENCFF759YBZ": 115183,
+  "ENCFF287ZOF": 95987
+ },
+ "n_domains": 27113,
+ "anchor_width_median": 900.0,
+ "gene_cover": 0.6733668341708543,
+ "frac_pairs_linked": 0.1266236487052711,
+ "frac_pairs_linked_rao": 0.0036872538339059752,
+ "arms": {
+  "distance": {
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ]
+  },
+  "dist+loops": {
+   "r1": [
+    0.5778894472361809,
+    0.5979899497487438,
+    0.6080402010050251,
+    0.6130653266331658,
+    0.5778894472361809
+   ],
+   "ap": [
+    0.2875107672731458,
+    0.28332311757949447,
+    0.28030275259929555,
+    0.28098041706971993,
+    0.2810400549022723
+   ]
+  },
+  "dist+loops+pmi": {
+   "r1": [
+    0.5979899497487438,
+    0.5678391959798995,
+    0.5728643216080402,
+    0.5979899497487438,
+    0.6030150753768844
+   ],
+   "ap": [
+    0.30640649310136947,
+    0.28328750995586366,
+    0.2799009113767388,
+    0.31657762581025894,
+    0.28648438235720913
+   ]
+  },
+  "dist+rao": {
+   "r1": [
+    0.6080402010050251,
+    0.6080402010050251,
+    0.5879396984924623,
+    0.6130653266331658,
+    0.6180904522613065
+   ],
+   "ap": [
+    0.2860018077584981,
+    0.2824379410155388,
+    0.28442188049600947,
+    0.28772833666563474,
+    0.2759566968808314
+   ]
+  },
+  "l185": {
+   "r1": [
+    0.6683417085427136,
+    0.6834170854271356,
+    0.6482412060301508,
+    0.6834170854271356,
+    0.6733668341708543
+   ],
+   "ap": [
+    0.45393104505801923,
+    0.45118421479819215,
+    0.43765901964611503,
+    0.442003557006506,
+    0.4560148802569989
+   ]
+  },
+  "l185+loops": {
+   "r1": [
+    0.6482412060301508,
+    0.6582914572864321,
+    0.678391959798995,
+    0.6532663316582915,
+    0.6834170854271356
+   ],
+   "ap": [
+    0.509440953720922,
+    0.4895301034010771,
+    0.4955427570277231,
+    0.5067648900005998,
+    0.5168652327472475
+   ]
+  }
+ },
+ "deltas": {
+  "A2": {
+   "d_r1": [
+    -0.005025125628140725,
+    0.01005025125628145,
+    0.01005025125628134,
+    0.015075376884422065,
+    -0.0201005025125629
+   ],
+   "d_ap": [
+    0.004605721852709299,
+    0.0016186278510876284,
+    -0.008869474982529713,
+    -0.008845975453436905,
+    0.0024284631120424782
+   ],
+   "mean_r1": 0.0020100502512562456,
+   "sem_r1": 0.006474421470716153,
+   "mean_ap": -0.0018125275240254424,
+   "n_pos_r1": 3,
+   "n_ap_pass": 0
+  },
+  "A3": {
+   "d_r1": [
+    0.015075376884422176,
+    -0.02010050251256279,
+    -0.025125628140703515,
+    0.0,
+    0.005025125628140614
+   ],
+   "d_ap": [
+    0.023501447680932985,
+    0.0015830202274568217,
+    -0.009271316205086477,
+    0.026751233287102105,
+    0.007872790566979315
+   ],
+   "mean_r1": -0.005025125628140703,
+   "sem_r1": 0.007620980345780452,
+   "mean_ap": 0.01008743511147695,
+   "n_pos_r1": 2,
+   "n_ap_pass": 2
+  },
+  "A4": {
+   "d_r1": [
+    -0.02010050251256279,
+    -0.025125628140703515,
+    0.03015075376884424,
+    -0.03015075376884413,
+    0.01005025125628134
+   ],
+   "d_ap": [
+    0.055509908662902785,
+    0.03834588860288496,
+    0.05788373738160807,
+    0.06476133299409376,
+    0.060850352490248616
+   ],
+   "mean_r1": -0.007035175879396971,
+   "sem_r1": 0.011634006937477601,
+   "mean_ap": 0.055470244026347634,
+   "n_pos_r1": 2,
+   "n_ap_pass": 5
+  },
+  "A6": {
+   "d_r1": [
+    0.085427135678392,
+    0.09547738693467334,
+    0.05025125628140703,
+    0.08542713567839189,
+    0.07537688442211055
+   ],
+   "d_ap": [
+    0.17102599963758275,
+    0.16947972506978531,
+    0.14848679206428977,
+    0.15217716448334917,
+    0.17740328846676906
+   ],
+   "mean_r1": 0.07839195979899496,
+   "sem_r1": 0.007719744470219703,
+   "mean_ap": 0.16371459394435522,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  }
+ },
+ "swap_draws": [
+  0.6090452261306533,
+  0.6040201005025125,
+  0.6160804020100502,
+  0.6160804020100502,
+  0.5969849246231156,
+  0.5819095477386935,
+  0.6,
+  0.5999999999999999,
+  0.6080402010050252,
+  0.6030150753768844,
+  0.6060301507537689,
+  0.6090452261306533,
+  0.5899497487437186,
+  0.6160804020100502,
+  0.5939698492462312,
+  0.6010050251256281,
+  0.6211055276381909,
+  0.6170854271356785,
+  0.5949748743718593,
+  0.5889447236180905
+ ],
+ "swap_frac_beaten": 0.05,
+ "head_to_head": -0.019095477386934644,
+ "best_arm": "l185",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic/ENCFF511QFN.bedpe.gz",
+    "bytes": 11964739,
+    "hash": "145af802bd55daa5",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 11933,
+   "selection": "loop 173's pairs",
+   "fraction": 1.0
+  },
+  "seed": 91173,
+  "controls": [
+   "the block re-expressed as PMI against both anchor degrees",
+   "20 chromosome-matched promoter-anchor swaps",
+   "loop 181's 5-10 kb Rao loops on identical folds",
+   "identical folds and seeds as every stage-two loop since 173"
+  ],
+  "note": "sub-kilobase K562 loop calls on the stage-two task",
+  "warnings": [
+   "selection 'loop 173's pairs' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 169.53445649147034,
+ "log": [
+  "========================================================================================================",
+  "LOOP 186  CONTACT AT SUB-KILOBASE RESOLUTION: does the prediction hold?",
+  "========================================================================================================",
+  "  PREDECLARED: pooled median anchor width <= 1500 bp and >= 50%",
+  "  of evaluable genes with a linked candidate; every arm on loop 173's E3 bar; the block",
+  "  must survive being expressed as PMI against its own two anchor degrees; the real",
+  "  anchors must beat a stranger's in >= 90% of 20 draws, where loop 181's 5 kb",
+  "  matrix beat 0 of 20; and the sub-kilobase block must beat loop 181's 5-10 kb Rao loops.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    pooled 1,490,261 loop calls from 6 files and 27,113 contact domains, all GRCh38",
+  "      ENCFF511QFN   734,671",
+  "      ENCFF953LXY   228,037",
+  "      ENCFF030PMM   186,714",
+  "      ENCFF118PBQ   129,669",
+  "      ENCFF759YBZ   115,183",
+  "      ENCFF287ZOF    95,987",
+  "",
+  "A1 IS THE RESOLUTION ACTUALLY BETTER?",
+  "     pooled anchor width: median 900 bp, IQR 636-1112; loop 181's Rao list was 5,000-10,000 bp over 6,057 loops",
+  "     pairs with a loop link: 12.7%; evaluable genes with a linked candidate: 134/199 (67.3%)",
+  "     loops anchored per element: median 10; per promoter: median 45",
+  "     A1 PASS -- median anchor 900 bp, below the 500-580 bp median element width's own scale, and 67% of evaluable genes have a linked candidate",
+  "",
+  "   building the comparison stacks",
+  "    loop 181's Rao list: 6,057 loops for the head-to-head",
+  "    Rao block: 0.4% of pairs carry a link, against 12.7% for the sub-kilobase pool",
+  "    distance                                     R@1 0.5930 +/- 0.0032   AUPRC 0.2844",
+  "    distance + loop links                        R@1 0.5950 +/- 0.0074   AUPRC 0.2826",
+  "    distance + loop links as PMI                 R@1 0.5879 +/- 0.0073   AUPRC 0.2945",
+  "    distance + loop 181's 5-10 kb Rao loops      R@1 0.6070 +/- 0.0051   AUPRC 0.2833",
+  "    loop 185's stack                             R@1 0.6714 +/- 0.0065   AUPRC 0.4482",
+  "    loop 185's stack + loop links                R@1 0.6643 +/- 0.0070   AUPRC 0.5036",
+  "",
+  "A2 DOES THE LOOP LINK ADD OVER DISTANCE?",
+  "     dist+loops vs distance   dR@1 +0.0020 +/- 0.0065 (3/5 up)   dAUPRC -0.0018 (0/5 >= 0.01)",
+  "     A2 FAIL -- loop links add nothing over distance",
+  "",
+  "A3 IS IT THE LINK, OR THE TWO ANCHOR DEGREES?",
+  "     dist+loops+pmi vs distance   dR@1 -0.0050 +/- 0.0076 (2/5 up)   dAUPRC +0.0101 (2/5 >= 0.01)",
+  "     A3 FAIL -- once normalised by both anchor degrees the block stops helping -- it was loop-dense neighbourhoods at both ends",
+  "",
+  "A4 DOES IT ADD OVER THE BEST STACK SO FAR?",
+  "     l185+loops vs l185   dR@1 -0.0070 +/- 0.0116 (2/5 up)   dAUPRC +0.0555 (5/5 >= 0.01)",
+  "     A4 FAIL -- loop links add nothing the best stack did not already have",
+  "",
+  "A5 THE STRANGER SWAP: 20 draws giving each gene another gene's promoter anchors",
+  "     draw 5/20  R@1 0.5970",
+  "     draw 10/20  R@1 0.6030",
+  "     draw 15/20  R@1 0.5940",
+  "     draw 20/20  R@1 0.5889",
+  "     real 0.5879 against swapped mean 0.6037 (min 0.5819, max 0.6211); real beats 5%",
+  "     loop 181's 5 kb matrix beat 0% of its twenty swaps",
+  "     A5 FAIL -- a stranger's anchors work as well, so the block reads loop density and not this element-promoter link",
+  "",
+  "A6 THE DECISIVE ONE",
+  "     best arm l185 at R@1 0.6714 / AUPRC 0.4482 against distance 0.5930",
+  "     dR@1 +0.0784 +/- 0.0077 (5/5 up)   dAUPRC +0.1637 (5/5 >= 0.01)",
+  "     loop 185's best stack reached R@1 0.6734",
+  "     A6 PASS -- l185 clears the bar every stage-two loop has been held to",
+  "",
+  "A7 THE HEAD-TO-HEAD: sub-kilobase anchors against loop 181's 5-10 kb loops",
+  "     sub-kb 0.5879 against Rao 0.6070; difference -0.0191 +/- 0.0054 (0/5 up)",
+  "     A7 FAIL -- sub-kilobase anchors do no better than 5-10 kb ones, so resolution was NOT what stopped loop 181 and its conclusion stands for a different reason than the one predicted",
+  "",
+  "A8 WHAT THIS CANNOT SHOW",
+  "     A loop call is a model's decision about a local enrichment, not an observation. Six",
+  "     pooled files means six thresholds, and a pair linked in one and not another is",
+  "     counted as linked here.",
+  "     Loop calls come from the same population-averaged experiment as the matrix. A loop",
+  "     is a frequency across millions of nuclei, not a contact in any one of them.",
+  "     A7 compares two loop lists that differ in depth, caller and assembly at once, so it",
+  "     attributes a difference to resolution that is only mostly about resolution.",
+  "     Everything here is still bounded by what the candidate sets contain: the screens",
+  "     chose which elements to test against which genes.",
+  "     A8 PASS",
+  "",
+  "========================================================================================================",
+  "  A1  PASS",
+  "  A2  FAIL",
+  "  A3  FAIL",
+  "  A4  FAIL",
+  "  A5  FAIL",
+  "  A6  PASS",
+  "  A7  FAIL",
+  "  A8  PASS",
+  "  3/8   [170s]",
+  "========================================================================================================"
+ ]
+}

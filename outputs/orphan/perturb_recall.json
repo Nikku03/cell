@@ -1,0 +1,26 @@
+{
+ "n_heldout_kos": 545,
+ "scorecard": {
+  "random": {
+   "auprc": 0.017,
+   "recall_at50": 0.004
+  },
+  "graph": {
+   "auprc": 0.019,
+   "recall_at50": 0.032
+  },
+  "base-rate": {
+   "auprc": 0.152,
+   "recall_at50": 0.154
+  },
+  "transfer": {
+   "auprc": 0.155,
+   "recall_at50": 0.154
+  },
+  "MODEL": {
+   "auprc": 0.183,
+   "recall_at50": 0.179
+  }
+ },
+ "note": "Held-out-by-knockout recall of measured movers. MODEL fuses base-rate + graph-neighbour transfer + reg/SIGNOR targets + PPI. Beats every baseline (AUPRC ~0.18 vs base-rate 0.15 vs graph 0.02 vs random 0.02) but recall is PARTIAL (top-50 ~18% of movers) and the lift over base-rate is modest. Graph edges alone ~random; recall is base-rate + co-response. Real triage lift, not a solved cascade."
+}

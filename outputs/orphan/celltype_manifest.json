@@ -1,0 +1,292 @@
+{
+ "K562": {
+  "accessibility": null,
+  "accessibility_atac": {
+   "accession": "ENCFF401DLG",
+   "href": "/files/ENCFF401DLG/@@download/ENCFF401DLG.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 1434330,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/K562/accessibility_atac.bed.gz"
+  },
+  "h3k27ac": {
+   "accession": "ENCFF038DDS",
+   "href": "/files/ENCFF038DDS/@@download/ENCFF038DDS.bed.gz",
+   "output_type": "replicated peaks",
+   "size": 1298162,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/K562/h3k27ac.bed.gz"
+  },
+  "ctcf": {
+   "accession": "ENCFF389ELU",
+   "href": "/files/ENCFF389ELU/@@download/ENCFF389ELU.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 625017,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/K562/ctcf.bed.gz"
+  },
+  "polr2a": {
+   "accession": "ENCFF909KNE",
+   "href": "/files/ENCFF909KNE/@@download/ENCFF909KNE.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 430233,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/K562/polr2a.bed.gz"
+  },
+  "hic_loops": {
+   "accession": "ENCFF953LXY",
+   "href": "/files/ENCFF953LXY/@@download/ENCFF953LXY.bedpe.gz",
+   "output_type": "loops",
+   "size": 16738364,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/K562/hic_loops.bedpe.gz"
+  }
+ },
+ "GM12878": {
+  "accessibility": {
+   "accession": "ENCFF598KWZ",
+   "href": "/files/ENCFF598KWZ/@@download/ENCFF598KWZ.bed.gz",
+   "output_type": "peaks",
+   "size": 561767,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/GM12878/accessibility.bed.gz"
+  },
+  "accessibility_atac": {
+   "accession": "ENCFF346CZA",
+   "href": "/files/ENCFF346CZA/@@download/ENCFF346CZA.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 3214602,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/GM12878/accessibility_atac.bed.gz"
+  },
+  "h3k27ac": {
+   "accession": "ENCFF361XMX",
+   "href": "/files/ENCFF361XMX/@@download/ENCFF361XMX.bed.gz",
+   "output_type": "replicated peaks",
+   "size": 1258331,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/GM12878/h3k27ac.bed.gz"
+  },
+  "ctcf": {
+   "accession": "ENCFF796WRU",
+   "href": "/files/ENCFF796WRU/@@download/ENCFF796WRU.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 711745,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/GM12878/ctcf.bed.gz"
+  },
+  "polr2a": {
+   "accession": "ENCFF204EDA",
+   "href": "/files/ENCFF204EDA/@@download/ENCFF204EDA.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 327386,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/GM12878/polr2a.bed.gz"
+  },
+  "hic_loops": {
+   "accession": "ENCFF889DFQ",
+   "href": "/files/ENCFF889DFQ/@@download/ENCFF889DFQ.bedpe.gz",
+   "output_type": "loops",
+   "size": 29695454,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/GM12878/hic_loops.bedpe.gz"
+  }
+ },
+ "HCT116": {
+  "accessibility": {
+   "accession": "ENCFF430DNA",
+   "href": "/files/ENCFF430DNA/@@download/ENCFF430DNA.bed.gz",
+   "output_type": "peaks",
+   "size": 1071288,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/HCT116/accessibility.bed.gz"
+  },
+  "accessibility_atac": {
+   "accession": "ENCFF043EZQ",
+   "href": "/files/ENCFF043EZQ/@@download/ENCFF043EZQ.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 3263083,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/HCT116/accessibility_atac.bed.gz"
+  },
+  "h3k27ac": {
+   "accession": "ENCFF349LKU",
+   "href": "/files/ENCFF349LKU/@@download/ENCFF349LKU.bed.gz",
+   "output_type": "replicated peaks",
+   "size": 1211656,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/HCT116/h3k27ac.bed.gz"
+  },
+  "ctcf": {
+   "accession": "ENCFF970MXD",
+   "href": "/files/ENCFF970MXD/@@download/ENCFF970MXD.bed.gz",
+   "output_type": "IDR thresholded peaks",
+   "size": 743755,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/HCT116/ctcf.bed.gz"
+  },
+  "polr2a": {
+   "accession": "ENCFF786BQV",
+   "href": "/files/ENCFF786BQV/@@download/ENCFF786BQV.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 262712,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/HCT116/polr2a.bed.gz"
+  },
+  "hic_loops": {
+   "accession": "ENCFF841IIU",
+   "href": "/files/ENCFF841IIU/@@download/ENCFF841IIU.bedpe.gz",
+   "output_type": "loops",
+   "size": 14425265,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/HCT116/hic_loops.bedpe.gz"
+  }
+ },
+ "WTC11": {
+  "accessibility": {
+   "accession": "ENCFF297GMW",
+   "href": "/files/ENCFF297GMW/@@download/ENCFF297GMW.bed.gz",
+   "output_type": "peaks",
+   "size": 1092063,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/WTC11/accessibility.bed.gz"
+  },
+  "accessibility_atac": {
+   "accession": "ENCFF121CAA",
+   "href": "/files/ENCFF121CAA/@@download/ENCFF121CAA.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 3780562,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/WTC11/accessibility_atac.bed.gz"
+  },
+  "h3k27ac": {
+   "accession": "ENCFF404WVG",
+   "href": "/files/ENCFF404WVG/@@download/ENCFF404WVG.bed.gz",
+   "output_type": "replicated peaks",
+   "size": 5552570,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/WTC11/h3k27ac.bed.gz"
+  },
+  "ctcf": {
+   "accession": "ENCFF503DSN",
+   "href": "/files/ENCFF503DSN/@@download/ENCFF503DSN.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 541716,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/WTC11/ctcf.bed.gz"
+  },
+  "polr2a": {
+   "accession": "ENCFF663TKJ",
+   "href": "/files/ENCFF663TKJ/@@download/ENCFF663TKJ.bed.gz",
+   "output_type": "peaks",
+   "size": 11668060,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/WTC11/polr2a.bed.gz"
+  },
+  "hic_loops": {
+   "accession": "ENCFF271VMZ",
+   "href": "/files/ENCFF271VMZ/@@download/ENCFF271VMZ.bedpe.gz",
+   "output_type": "loops",
+   "size": 14561084,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/WTC11/hic_loops.bedpe.gz"
+  }
+ },
+ "H1": {
+  "accessibility": {
+   "accession": "ENCFF643ZJV",
+   "href": "/files/ENCFF643ZJV/@@download/ENCFF643ZJV.bed.gz",
+   "output_type": "peaks",
+   "size": 1553165,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/H1/accessibility.bed.gz"
+  },
+  "accessibility_atac": null,
+  "h3k27ac": {
+   "accession": "ENCFF045CUG",
+   "href": "/files/ENCFF045CUG/@@download/ENCFF045CUG.bed.gz",
+   "output_type": "replicated peaks",
+   "size": 1659844,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/H1/h3k27ac.bed.gz"
+  },
+  "ctcf": {
+   "accession": "ENCFF497ZGV",
+   "href": "/files/ENCFF497ZGV/@@download/ENCFF497ZGV.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 723408,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/H1/ctcf.bed.gz"
+  },
+  "polr2a": {
+   "accession": "ENCFF374UIH",
+   "href": "/files/ENCFF374UIH/@@download/ENCFF374UIH.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 594120,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/H1/polr2a.bed.gz"
+  },
+  "hic_loops": {
+   "accession": "ENCFF401IWZ",
+   "href": "/files/ENCFF401IWZ/@@download/ENCFF401IWZ.bedpe.gz",
+   "output_type": "loops",
+   "size": 33072294,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/H1/hic_loops.bedpe.gz"
+  }
+ },
+ "A549": {
+  "accessibility": {
+   "accession": "ENCFF709RFW",
+   "href": "/files/ENCFF709RFW/@@download/ENCFF709RFW.bed.gz",
+   "output_type": "peaks",
+   "size": 1124461,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/A549/accessibility.bed.gz"
+  },
+  "accessibility_atac": {
+   "accession": "ENCFF876UEM",
+   "href": "/files/ENCFF876UEM/@@download/ENCFF876UEM.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 4795872,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/A549/accessibility_atac.bed.gz"
+  },
+  "h3k27ac": {
+   "accession": "ENCFF223FPA",
+   "href": "/files/ENCFF223FPA/@@download/ENCFF223FPA.bed.gz",
+   "output_type": "replicated peaks",
+   "size": 2670024,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/A549/h3k27ac.bed.gz"
+  },
+  "ctcf": {
+   "accession": "ENCFF546GDX",
+   "href": "/files/ENCFF546GDX/@@download/ENCFF546GDX.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 736401,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/A549/ctcf.bed.gz"
+  },
+  "polr2a": {
+   "accession": "ENCFF190JCB",
+   "href": "/files/ENCFF190JCB/@@download/ENCFF190JCB.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 326441,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/A549/polr2a.bed.gz"
+  },
+  "hic_loops": {
+   "accession": "ENCFF684CEM",
+   "href": "/files/ENCFF684CEM/@@download/ENCFF684CEM.bedpe.gz",
+   "output_type": "loops",
+   "size": 19722068,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/A549/hic_loops.bedpe.gz"
+  }
+ },
+ "MCF-7": {
+  "accessibility": null,
+  "accessibility_atac": {
+   "accession": "ENCFF905GGG",
+   "href": "/files/ENCFF905GGG/@@download/ENCFF905GGG.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 3725182,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/MCF-7/accessibility_atac.bed.gz"
+  },
+  "h3k27ac": {
+   "accession": "ENCFF784QFH",
+   "href": "/files/ENCFF784QFH/@@download/ENCFF784QFH.bed.gz",
+   "output_type": "replicated peaks",
+   "size": 1863913,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/MCF-7/h3k27ac.bed.gz"
+  },
+  "ctcf": {
+   "accession": "ENCFF203DXT",
+   "href": "/files/ENCFF203DXT/@@download/ENCFF203DXT.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 944325,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/MCF-7/ctcf.bed.gz"
+  },
+  "polr2a": {
+   "accession": "ENCFF479YTC",
+   "href": "/files/ENCFF479YTC/@@download/ENCFF479YTC.bed.gz",
+   "output_type": "conservative IDR thresholded peaks",
+   "size": 371363,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/MCF-7/polr2a.bed.gz"
+  },
+  "hic_loops": {
+   "accession": "ENCFF633JWS",
+   "href": "/files/ENCFF633JWS/@@download/ENCFF633JWS.bedpe.gz",
+   "output_type": "loops",
+   "size": 27211615,
+   "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/celltypes/MCF-7/hic_loops.bedpe.gz"
+  }
+ }
+}

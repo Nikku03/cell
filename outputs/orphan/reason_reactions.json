@@ -1,0 +1,80 @@
+{
+ "substrate": "metabolic reactions (Human-GEM)",
+ "truth": "FBA single-reaction deletion growth < 50% WT (independent of every evidence line)",
+ "all_lines": {
+  "n": 4000,
+  "n_truth_pos": 29,
+  "lines": [
+   "flux",
+   "solo_gene",
+   "dep",
+   "bottleneck"
+  ],
+  "singles": {
+   "flux": 0.9804835054142533,
+   "solo_gene": 0.5712449743398258,
+   "dep": 0.5990929163931491,
+   "bottleneck": 0.5376991736689795
+  },
+  "convergence_auc": 0.9194765498137358,
+  "weighted_reasoning_auc": 0.9931789959968391,
+  "best_single": 0.9804835054142533,
+  "calibration": {
+   "0": {
+    "n": 742,
+    "p_truth": 0.0
+   },
+   "1": {
+    "n": 2027,
+    "p_truth": 0.000493339911198816
+   },
+   "2": {
+    "n": 1176,
+    "p_truth": 0.011054421768707483
+   },
+   "3": {
+    "n": 54,
+    "p_truth": 0.2777777777777778
+   }
+  },
+  "verdict": "CALIBRATED, MODEST LIFT: confidence rises 0%\u219228% with agreement (trustworthy); fused AUC 0.99 vs best single 0.98 \u2014 value is calibration+coverage."
+ },
+ "independent_lines_only": {
+  "n": 4000,
+  "n_truth_pos": 29,
+  "lines": [
+   "solo_gene",
+   "dep",
+   "bottleneck"
+  ],
+  "singles": {
+   "solo_gene": 0.5712449743398258,
+   "dep": 0.5990929163931491,
+   "bottleneck": 0.5376991736689795
+  },
+  "convergence_auc": 0.6714803011488464,
+  "weighted_reasoning_auc": 0.6601524848253285,
+  "best_single": 0.5990929163931491,
+  "calibration": {
+   "0": {
+    "n": 811,
+    "p_truth": 0.0012330456226880395
+   },
+   "1": {
+    "n": 2043,
+    "p_truth": 0.006363191385217817
+   },
+   "2": {
+    "n": 1120,
+    "p_truth": 0.013392857142857142
+   },
+   "3": {
+    "n": 26,
+    "p_truth": 0.0
+   }
+  },
+  "verdict": "LIFT WITHOUT CLEAN CALIBRATION: fused AUC 0.66 > best single 0.60, but P(truth) is not monotonic in agreement \u2014 rank it, don't quote its confidence."
+ },
+ "flux_is_near_tautological_with_truth": true,
+ "honest_verdict": "PRINCIPLE TRANSFERS, VALUE IS SUBSTRATE-DEPENDENT. The core runs on reactions and reproduces the machinery, but reasoning only ADDS value when several INDEPENDENT informative lines converge. With flux included the fused AUC is 0.99 \u2014 but flux is near-tautological with FBA-deletion truth, so that is one line, not convergence. Dropping it, the genuinely independent lines (measured essentiality + topology) reason to only AUC 0.66 \u2014 reaction-essentiality is a physics property that measured/topological evidence recovers weakly. Contrast genes, where 5 independent lines truly converge (0.80 > best single 0.75)."
+}

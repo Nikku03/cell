@@ -1,0 +1,401 @@
+{
+ "model": "v4-generalization-abc-v1",
+ "smoke": true,
+ "n_genes": 17931,
+ "n_lines": 1150,
+ "regimes": {
+  "A": {
+   "arms": {
+    "GLOBAL-mean (0p)": {
+     "mean": 0.41110990444819134,
+     "per_block": [
+      0.41134876012802124,
+      0.40870317816734314,
+      0.4132777750492096
+     ]
+    },
+    "MARGINAL-gene (0p)": {
+     "mean": 0.160317396124204,
+     "per_block": [
+      0.16130812466144562,
+      0.16051866114139557,
+      0.1591254025697708
+     ]
+    },
+    "MARGINAL-line (0p)": {
+     "mean": 0.41110990444819134,
+     "per_block": [
+      0.41134876012802124,
+      0.40870317816734314,
+      0.4132777750492096
+     ]
+    },
+    "MARGINAL-both (0p)": {
+     "mean": 0.160317396124204,
+     "per_block": [
+      0.16130812466144562,
+      0.16051866114139557,
+      0.1591254025697708
+     ]
+    },
+    "PARTNER-MEAN non-DepMap (0p)": {
+     "mean": 0.3854263226191203,
+     "per_block": [
+      0.38656380772590637,
+      0.38359883427619934,
+      0.3861163258552551
+     ]
+    },
+    "PARTNER-MEAN random (0p CONTROL)": {
+     "mean": 0.43340057134628296,
+     "per_block": [
+      0.4334021210670471,
+      0.4321145713329315,
+      0.43468502163887024
+     ]
+    },
+    "FEATURES-only": {
+     "mean": 0.30692537625630695,
+     "per_block": [
+      0.30735480785369873,
+      0.30678513646125793,
+      0.30663618445396423
+     ]
+    },
+    "FEATURES+PARTNERS": {
+     "mean": 0.29609164595603943,
+     "per_block": [
+      0.29600366950035095,
+      0.29585903882980347,
+      0.29641222953796387
+     ]
+    },
+    "FULL (+gene lookup)": {
+     "mean": 0.16594327489535013,
+     "per_block": [
+      0.1659274697303772,
+      0.1654314249753952,
+      0.16647092998027802
+     ]
+    },
+    "SHUFFLED-FEATURES (CONTROL)": {
+     "mean": 0.34239887197812396,
+     "per_block": [
+      0.3417036831378937,
+      0.34001582860946655,
+      0.3454771041870117
+     ]
+    },
+    "WRONG-GENE (identity CONTROL)": {
+     "mean": 0.4942471881707509,
+     "per_block": [
+      0.49462077021598816,
+      0.48473066091537476,
+      0.5033901333808899
+     ]
+    }
+   },
+   "lookup_available": 1.0,
+   "n_blocks": 3,
+   "n_test": 20431123,
+   "n_test_scored": 240000
+  },
+  "B": {
+   "arms": {
+    "GLOBAL-mean (0p)": {
+     "mean": 0.41172922650973004,
+     "per_block": [
+      0.4160611033439636,
+      0.4225074052810669,
+      0.39661917090415955
+     ]
+    },
+    "MARGINAL-gene (0p)": {
+     "mean": 0.41172922650973004,
+     "per_block": [
+      0.4160611033439636,
+      0.4225074052810669,
+      0.39661917090415955
+     ]
+    },
+    "MARGINAL-line (0p)": {
+     "mean": 0.41167083382606506,
+     "per_block": [
+      0.4160194993019104,
+      0.4224361181259155,
+      0.39655688405036926
+     ]
+    },
+    "MARGINAL-both (0p)": {
+     "mean": 0.41167083382606506,
+     "per_block": [
+      0.4160194993019104,
+      0.4224361181259155,
+      0.39655688405036926
+     ]
+    },
+    "PARTNER-MEAN non-DepMap (0p)": {
+     "mean": 0.39504562815030414,
+     "per_block": [
+      0.3963628113269806,
+      0.40158215165138245,
+      0.38719192147254944
+     ]
+    },
+    "PARTNER-MEAN random (0p CONTROL)": {
+     "mean": 0.44103968143463135,
+     "per_block": [
+      0.4424031972885132,
+      0.45477649569511414,
+      0.4259393513202667
+     ]
+    },
+    "FEATURES-only": {
+     "mean": 0.34490731358528137,
+     "per_block": [
+      0.345353901386261,
+      0.3595447838306427,
+      0.32982325553894043
+     ]
+    },
+    "FEATURES+PARTNERS": {
+     "mean": 0.3346608380476634,
+     "per_block": [
+      0.33449023962020874,
+      0.3449590802192688,
+      0.3245331943035126
+     ]
+    },
+    "FULL (+gene lookup)": {
+     "mean": 0.4057038327058156,
+     "per_block": [
+      0.4152376055717468,
+      0.4154328405857086,
+      0.38644105195999146
+     ]
+    },
+    "SHUFFLED-FEATURES (CONTROL)": {
+     "mean": 0.3824113706747691,
+     "per_block": [
+      0.38405051827430725,
+      0.394176721572876,
+      0.369006872177124
+     ]
+    },
+    "WRONG-GENE (identity CONTROL)": {
+     "mean": 0.4965970516204834,
+     "per_block": [
+      0.49341410398483276,
+      0.517078697681427,
+      0.47929835319519043
+     ]
+    }
+   },
+   "lookup_available": 0.0,
+   "n_blocks": 3,
+   "n_test": 20431123,
+   "n_test_scored": 240000
+  },
+  "C": {
+   "arms": {
+    "GLOBAL-mean (0p)": {
+     "mean": 0.411029855410258,
+     "per_block": [
+      0.4139993488788605,
+      0.42541196942329407,
+      0.3936782479286194
+     ]
+    },
+    "MARGINAL-gene (0p)": {
+     "mean": 0.411029855410258,
+     "per_block": [
+      0.4139993488788605,
+      0.42541196942329407,
+      0.3936782479286194
+     ]
+    },
+    "MARGINAL-line (0p)": {
+     "mean": 0.411029855410258,
+     "per_block": [
+      0.4139993488788605,
+      0.42541196942329407,
+      0.3936782479286194
+     ]
+    },
+    "MARGINAL-both (0p)": {
+     "mean": 0.411029855410258,
+     "per_block": [
+      0.4139993488788605,
+      0.42541196942329407,
+      0.3936782479286194
+     ]
+    },
+    "PARTNER-MEAN non-DepMap (0p)": {
+     "mean": 0.3951982259750366,
+     "per_block": [
+      0.3965981900691986,
+      0.40510421991348267,
+      0.3838922679424286
+     ]
+    },
+    "PARTNER-MEAN random (0p CONTROL)": {
+     "mean": 0.4413343568642934,
+     "per_block": [
+      0.44304990768432617,
+      0.4561316668987274,
+      0.42482149600982666
+     ]
+    },
+    "FEATURES-only": {
+     "mean": 0.34596942861874896,
+     "per_block": [
+      0.3480304777622223,
+      0.3566746115684509,
+      0.33320319652557373
+     ]
+    },
+    "FEATURES+PARTNERS": {
+     "mean": 0.3390793999036153,
+     "per_block": [
+      0.33988136053085327,
+      0.344527930021286,
+      0.33282890915870667
+     ]
+    },
+    "FULL (+gene lookup)": {
+     "mean": 0.40583866834640503,
+     "per_block": [
+      0.4084624648094177,
+      0.4224216341972351,
+      0.38663190603256226
+     ]
+    },
+    "SHUFFLED-FEATURES (CONTROL)": {
+     "mean": 0.38586844007174176,
+     "per_block": [
+      0.39205607771873474,
+      0.40469038486480713,
+      0.36085885763168335
+     ]
+    },
+    "WRONG-GENE (identity CONTROL)": {
+     "mean": 0.5094090501467387,
+     "per_block": [
+      0.5222803354263306,
+      0.5100802779197693,
+      0.4958665370941162
+     ]
+    }
+   },
+   "lookup_available": 0.0,
+   "n_blocks": 3,
+   "n_test": 6810372,
+   "n_test_scored": 240000
+  }
+ },
+ "gates": {
+  "B-USEFUL  FEATURES+PARTNERS beats GLOBAL-mean (0p)": true,
+  "B-REAL  FEATURES+PARTNERS beats SHUFFLED-FEATURES (CONTROL)": true,
+  "B-PARTNERS  PARTNER-MEAN non-DepMap (0p) beats PARTNER-MEAN random (0p CONTROL)": true,
+  "B-FREE  best learned (FEATURES+PARTNERS) beats best 0-param (PARTNER-MEAN non-DepMap (0p))": true,
+  "C-USEFUL  FEATURES+PARTNERS beats GLOBAL-mean (0p)": true,
+  "C-REAL  FEATURES+PARTNERS beats SHUFFLED-FEATURES (CONTROL)": true,
+  "C-PARTNERS  PARTNER-MEAN non-DepMap (0p) beats PARTNER-MEAN random (0p CONTROL)": true,
+  "C-FREE  best learned (FEATURES+PARTNERS) beats best 0-param (PARTNER-MEAN non-DepMap (0p))": true
+ },
+ "summary": {
+  "A_gain_over_marginal_both": -0.00562587877114612,
+  "B_gain_over_global_mean": 0.07706838846206665,
+  "B_retained_fraction_of_A_gain": -13.698906712553647,
+  "B_USEFUL_gap": 0.07706838846206665,
+  "B_USEFUL_mde": 0.008245639809501605,
+  "B_REAL_gap": 0.04775053262710571,
+  "B_REAL_mde": 0.004924230768316649,
+  "B_PARTNERS_gap": 0.04599405328432719,
+  "B_PARTNERS_mde": 0.012511587727121215,
+  "B_free_gap": 0.060384790102640785,
+  "C_USEFUL_gap": 0.07195045550664265,
+  "C_USEFUL_mde": 0.01765255984141244,
+  "C_REAL_gap": 0.046789040168126426,
+  "C_REAL_mde": 0.028976471272436258,
+  "C_PARTNERS_gap": 0.0461361308892568,
+  "C_PARTNERS_mde": 0.008758116675007565,
+  "C_free_gap": 0.0561188260714213
+ },
+ "unit_of_replication": {
+  "A": "held-out LINE block",
+  "B": "held-out GENE block",
+  "C": "held-out (gene, line) block pair"
+ },
+ "banned_features": [
+  "dep_frac",
+  "ess",
+  "ess_src"
+ ],
+ "limits": [
+  "Test B's partner channel is PPI + complex co-membership only. Genes with no such partner fall back to the global mean, so B's headroom is bounded by partner-graph coverage, which is reported above and is NOT uniform across genes",
+  "co-dependency is deliberately absent from B and C. That is not a modelling choice, it is the only way the test is non-circular, and it means B is strictly harder than a co-dependency model would look",
+  "the gene feature table is annotation, not sequence. No ESM/structure channel is used, so a null in B bounds what THESE features recover and not what sequence could",
+  "Test C pairs gene block b with line block b mod N_LINE_BLOCKS rather than running the full cartesian product, so its n is the number of gene blocks and not their product",
+  "both train and test cells are SUBSAMPLED (caps ABC_N_TRAIN / ABC_N_TEST) and the counts actually used are printed per regime; RMSE is therefore a Monte-Carlo estimate over that sample, not the exact value over every held-out cell",
+  "DepMap gene effect is Chronos-scaled and already corrects for copy number and screen quality; a residual batch structure across screens is not removed here"
+ ],
+ "verdict": "SMOKE RUN -- a plumbing check and NOT a result; rerun with ABC_SMOKE unset. TEST A vs B vs C. Test A (unseen cell line, every gene seen) reaches RMSE 0.1659 against a MARGINAL-both of 0.1603. Test B (unseen GENE, every line seen) has the per-gene lookup available for 0.0% of its test genes by construction, and the best non-lookup model reaches 0.3347 against a GLOBAL-mean of 0.4117. Test C (unseen gene AND unseen line) reaches 0.3391 against 0.4110. THE HEADLINE IS THE RETAINED FRACTION: Test A's learned gain over its own marginal is -0.0056 RMSE, and Test B retains -1369.9% of it. CO-DEPENDENCY PARTNERS ARE FORBIDDEN IN B AND C and are not used there: selecting them requires the held-out gene's own DepMap column, which is the label. The partner channel in B and C is PPI and complex co-membership only, and the DepMap-derived gene fields ['dep_frac', 'ess', 'ess_src'] are excluded from the feature matrix with an assertion rather than a comment. All effect sizes are raw held-out RMSE; controls establish significance and attribution and nothing is reported net of a control.",
+ "log": [
+  "============================================================================================================",
+  "TESTS A / B / C -- unseen line, unseen gene, and both. The universal-generalisation test.",
+  "============================================================================================================",
+  "  *** SMOKE RUN -- a plumbing check, NOT a result. Rerun with ABC_SMOKE unset. ***",
+  "  DepMap gene effect: 1,150 cell lines x 17,931 genes with >= 100 measured lines; 99.1% observed",
+  "  gene features: 62 columns from 11 numeric + 3 categorical fields. EXCLUDED as DepMap-derived: ['dep_frac', 'ess', 'ess_src']",
+  "  non-DepMap partner graph (PPI + complex co-membership): 13,822/17,931 genes have >= 1 partner, median 9",
+  "\n  REGIME A  (3 blocks; 20,431,123 test cells exist, 240,000 SAMPLED AND SCORED; 600,000 training cells sampled; gene lookup available for 100.0% of test genes)",
+  "    GLOBAL-mean (0p)                       RMSE 0.4111  sd 0.0023",
+  "    MARGINAL-gene (0p)                     RMSE 0.1603  sd 0.0011",
+  "    MARGINAL-line (0p)                     RMSE 0.4111  sd 0.0023",
+  "    MARGINAL-both (0p)                     RMSE 0.1603  sd 0.0011",
+  "    PARTNER-MEAN non-DepMap (0p)           RMSE 0.3854  sd 0.0016",
+  "    PARTNER-MEAN random (0p CONTROL)       RMSE 0.4334  sd 0.0013",
+  "    FEATURES-only                          RMSE 0.3069  sd 0.0004",
+  "    FEATURES+PARTNERS                      RMSE 0.2961  sd 0.0003",
+  "    FULL (+gene lookup)                    RMSE 0.1659  sd 0.0005",
+  "    SHUFFLED-FEATURES (CONTROL)            RMSE 0.3424  sd 0.0028",
+  "    WRONG-GENE (identity CONTROL)          RMSE 0.4942  sd 0.0093",
+  "\n  REGIME B  (3 blocks; 20,431,123 test cells exist, 240,000 SAMPLED AND SCORED; 600,000 training cells sampled; gene lookup available for 0.0% of test genes)",
+  "    GLOBAL-mean (0p)                       RMSE 0.4117  sd 0.0135",
+  "    MARGINAL-gene (0p)                     RMSE 0.4117  sd 0.0135",
+  "    MARGINAL-line (0p)                     RMSE 0.4117  sd 0.0135",
+  "    MARGINAL-both (0p)                     RMSE 0.4117  sd 0.0135",
+  "    PARTNER-MEAN non-DepMap (0p)           RMSE 0.3950  sd 0.0073",
+  "    PARTNER-MEAN random (0p CONTROL)       RMSE 0.4410  sd 0.0145",
+  "    FEATURES-only                          RMSE 0.3449  sd 0.0149",
+  "    FEATURES+PARTNERS                      RMSE 0.3347  sd 0.0102",
+  "    FULL (+gene lookup)                    RMSE 0.4057  sd 0.0167",
+  "    SHUFFLED-FEATURES (CONTROL)            RMSE 0.3824  sd 0.0127",
+  "    WRONG-GENE (identity CONTROL)          RMSE 0.4966  sd 0.0191",
+  "\n  REGIME C  (3 blocks; 6,810,372 test cells exist, 240,000 SAMPLED AND SCORED; 600,000 training cells sampled; gene lookup available for 0.0% of test genes)",
+  "    GLOBAL-mean (0p)                       RMSE 0.4110  sd 0.0161",
+  "    MARGINAL-gene (0p)                     RMSE 0.4110  sd 0.0161",
+  "    MARGINAL-line (0p)                     RMSE 0.4110  sd 0.0161",
+  "    MARGINAL-both (0p)                     RMSE 0.4110  sd 0.0161",
+  "    PARTNER-MEAN non-DepMap (0p)           RMSE 0.3952  sd 0.0107",
+  "    PARTNER-MEAN random (0p CONTROL)       RMSE 0.4413  sd 0.0157",
+  "    FEATURES-only                          RMSE 0.3460  sd 0.0119",
+  "    FEATURES+PARTNERS                      RMSE 0.3391  sd 0.0059",
+  "    FULL (+gene lookup)                    RMSE 0.4058  sd 0.0180",
+  "    SHUFFLED-FEATURES (CONTROL)            RMSE 0.3859  sd 0.0226",
+  "    WRONG-GENE (identity CONTROL)          RMSE 0.5094  sd 0.0132",
+  "\n  PREDECLARED GATES",
+  "    PASS  B-USEFUL  FEATURES+PARTNERS beats GLOBAL-mean (0p)",
+  "    PASS  B-REAL  FEATURES+PARTNERS beats SHUFFLED-FEATURES (CONTROL)",
+  "    PASS  B-PARTNERS  PARTNER-MEAN non-DepMap (0p) beats PARTNER-MEAN random (0p CONTROL)",
+  "    PASS  B-FREE  best learned (FEATURES+PARTNERS) beats best 0-param (PARTNER-MEAN non-DepMap (0p))",
+  "    PASS  C-USEFUL  FEATURES+PARTNERS beats GLOBAL-mean (0p)",
+  "    PASS  C-REAL  FEATURES+PARTNERS beats SHUFFLED-FEATURES (CONTROL)",
+  "    PASS  C-PARTNERS  PARTNER-MEAN non-DepMap (0p) beats PARTNER-MEAN random (0p CONTROL)",
+  "    PASS  C-FREE  best learned (FEATURES+PARTNERS) beats best 0-param (PARTNER-MEAN non-DepMap (0p))",
+  "\n  G1 RETAINED: Test A's gain over MARGINAL-both is -0.0056 RMSE; Test B's gain over GLOBAL-mean is +0.0771. B retains -1369.9% of it.",
+  "\n============================================================================================================",
+  "  VERDICT: SMOKE RUN -- a plumbing check and NOT a result; rerun with ABC_SMOKE unset. TEST A vs B vs C. Test A (unseen cell line, every gene seen) reaches RMSE 0.1659 against a MARGINAL-both of 0.1603. Test B (unseen GENE, every line seen) has the per-gene lookup available for 0.0% of its test genes by construction, and the best non-lookup model reaches 0.3347 against a GLOBAL-mean of 0.4117. Test C (unseen gene AND unseen line) reaches 0.3391 against 0.4110. THE HEADLINE IS THE RETAINED FRACTION: Test A's learned gain over its own marginal is -0.0056 RMSE, and Test B retains -1369.9% of it. CO-DEPENDENCY PARTNERS ARE FORBIDDEN IN B AND C and are not used there: selecting them requires the held-out gene's own DepMap column, which is the label. The partner channel in B and C is PPI and complex co-membership only, and the DepMap-derived gene fields ['dep_frac', 'ess', 'ess_src'] are excluded from the feature matrix with an assertion rather than a comment. All effect sizes are raw held-out RMSE; controls establish significance and attribution and nothing is reported net of a control."
+ ]
+}

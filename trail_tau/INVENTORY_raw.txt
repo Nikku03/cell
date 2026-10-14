@@ -1,0 +1,230 @@
+# MAT FILES: 39
+
+## Codes for Figures/Figure 2/FRET_R_100ng.mat  (3410 bytes)  vars=['FRET_R_100ng']
+    FRET_R_100ng: ndarray shape=(4, 120) dtype=float64
+      min=1e-05 max=0.75844 n_nan=0
+      first 8: [1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05
+ 1.0000e-05 2.0816e-03]
+
+## Codes for Figures/Figure 2/FRET_R_25ng.mat  (3414 bytes)  vars=['FRET_R_25ng']
+    FRET_R_25ng: ndarray shape=(4, 120) dtype=float64
+      min=1e-05 max=0.80852 n_nan=0
+      first 8: [1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05
+ 2.9446e-03 8.1041e-03]
+
+## Codes for Figures/Figure 2/FRET_R_50ng.mat  (3457 bytes)  vars=['FRET_R_50ng']
+    FRET_R_50ng: ndarray shape=(4, 120) dtype=float64
+      min=1e-05 max=0.67029 n_nan=0
+      first 8: [1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05
+ 6.5887e-03 1.6704e-02]
+
+## Codes for Figures/Figure 2/FRET_S_100ng.mat  (1107 bytes)  vars=['FRET_S_100ng']
+    FRET_S_100ng: ndarray shape=(4, 120) dtype=float64
+      min=1e-05 max=0.41989 n_nan=353
+      first 8: [1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05
+ 3.4285e-03 8.5923e-03]
+
+## Codes for Figures/Figure 2/FRET_S_25ng.mat  (1542 bytes)  vars=['FRET_S_25ng']
+    FRET_S_25ng: ndarray shape=(4, 120) dtype=float64
+      min=1e-05 max=0.58721 n_nan=294
+      first 8: [1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05
+ 3.2417e-03 1.0131e-02]
+
+## Codes for Figures/Figure 2/FRET_S_50ng.mat  (1259 bytes)  vars=['FRET_S_50ng']
+    FRET_S_50ng: ndarray shape=(4, 120) dtype=float64
+      min=1e-05 max=0.54769 n_nan=330
+      first 8: [1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05
+ 1.0000e-05 4.6376e-04]
+
+## Codes for Figures/Figure 2/R_100ng_ind_par.mat  (338 bytes)  vars=['R_100ng_ind_par']
+    R_100ng_ind_par: ndarray shape=(4, 5) dtype=float64
+      min=2.53522 max=450000 n_nan=0
+      first 8: [4.49999945e+05 2.83144271e+04 6.49354958e+02 2.53522500e+00
+ 1.52208997e+03 2.03862924e+05 2.24837276e+04 6.49354981e+02]
+
+## Codes for Figures/Figure 2/R_25ng_ind_par.mat  (349 bytes)  vars=['R_25ng_ind_par']
+    R_25ng_ind_par: ndarray shape=(4, 5) dtype=float64
+      min=2.07428 max=150068 n_nan=0
+      first 8: [1.50068145e+05 6.22304842e+03 5.31342175e+02 2.47215374e+00
+ 1.24535512e+03 5.00000003e+04 4.38787190e+03 6.49354980e+02]
+
+## Codes for Figures/Figure 2/R_50ng_ind_par.mat  (341 bytes)  vars=['R_50ng_ind_par']
+    R_50ng_ind_par: ndarray shape=(4, 5) dtype=float64
+      min=2.07428 max=450000 n_nan=0
+      first 8: [6.29637794e+04 9.99861502e+03 6.49354978e+02 2.53522499e+00
+ 1.31339503e+03 4.50000000e+05 1.71060169e+04 5.31290439e+02]
+
+## Codes for Figures/Figure 2/S_100ng_ind_par.mat  (348 bytes)  vars=['S_100ng_ind_par']
+    S_100ng_ind_par: ndarray shape=(4, 5) dtype=float64
+      min=2.0743 max=150037 n_nan=0
+      first 8: [1.50000320e+05 9.98641962e+03 6.11363882e+02 2.07430335e+00
+ 1.52207076e+03 1.50037298e+05 1.10655446e+04 5.31322031e+02]
+
+## Codes for Figures/Figure 2/S_25ng_ind_par.mat  (345 bytes)  vars=['S_25ng_ind_par']
+    S_25ng_ind_par: ndarray shape=(4, 5) dtype=float64
+      min=2.07428 max=150123 n_nan=0
+      first 8: [1.50122894e+05 6.58905859e+03 6.49350323e+02 2.53522021e+00
+ 1.24535039e+03 1.50090746e+05 3.33333866e+03 6.49353890e+02]
+
+## Codes for Figures/Figure 2/S_50ng_ind_par.mat  (348 bytes)  vars=['S_50ng_ind_par']
+    S_50ng_ind_par: ndarray shape=(4, 5) dtype=float64
+      min=2.07428 max=150054 n_nan=0
+      first 8: [1.50035860e+05 7.70104887e+03 5.31291928e+02 2.07427691e+00
+ 1.52208754e+03 1.49759482e+05 1.05554592e+04 6.49354269e+02]
+
+## Codes for Figures/Figure 2/Tend_R_100ng.mat  (188 bytes)  vars=['Tend_R_100ng']
+    Tend_R_100ng: ndarray shape=(1, 4) dtype=uint16
+      min=600 max=600 n_nan=0
+      first 8: [600 600 600 600]
+
+## Codes for Figures/Figure 2/Tend_R_25ng.mat  (187 bytes)  vars=['Tend_R_25ng']
+    Tend_R_25ng: ndarray shape=(1, 4) dtype=uint16
+      min=600 max=600 n_nan=0
+      first 8: [600 600 600 600]
+
+## Codes for Figures/Figure 2/Tend_R_50ng.mat  (187 bytes)  vars=['Tend_R_50ng']
+    Tend_R_50ng: ndarray shape=(1, 4) dtype=uint16
+      min=600 max=600 n_nan=0
+      first 8: [600 600 600 600]
+
+## Codes for Figures/Figure 2/Tend_S_100ng.mat  (188 bytes)  vars=['Tend_S_100ng']
+    Tend_S_100ng: ndarray shape=(1, 4) dtype=uint8
+      min=100 max=200 n_nan=0
+      first 8: [100 135 200 200]
+
+## Codes for Figures/Figure 2/Tend_S_25ng.mat  (204 bytes)  vars=['Tend_S_25ng']
+    Tend_S_25ng: ndarray shape=(1, 4) dtype=float64
+      min=85 max=355 n_nan=0
+      first 8: [205.  85. 285. 355.]
+
+## Codes for Figures/Figure 2/Tend_S_50ng.mat  (191 bytes)  vars=['Tend_S_50ng']
+    Tend_S_50ng: ndarray shape=(1, 4) dtype=uint16
+      min=115 max=265 n_nan=0
+      first 8: [170 265 115 200]
+
+## Codes for Figures/Figure 2/common_parameters.mat  (255 bytes)  vars=['common_parameters']
+    common_parameters: ndarray shape=(1, 8) dtype=float64
+      min=0.00030046 max=119.478 n_nan=0
+      first 8: [3.32807674e+01 1.19478494e+02 2.60451297e+01 4.96917812e+00
+ 4.36614979e-03 5.04995424e+01 8.49056604e+00 3.00460000e-04]
+
+## Codes for Figures/Figure 3/FLIP0_values_R_100ng.mat  (734 bytes)  vars=['FLIP0_values_R_100ng']
+    FLIP0_values_R_100ng: ndarray shape=(65, 1) dtype=float64
+      min=12730.1 max=40000 n_nan=0
+      first 8: [28314.42709377 25741.86289555 28362.51885973 27772.24270612
+ 25005.19091089 12730.1181426  29674.39064783 28875.51572727]
+
+## Codes for Figures/Figure 3/FLIP0_values_R_25ng.mat  (1376 bytes)  vars=['FLIP0_values_R_25ng']
+    FLIP0_values_R_25ng: ndarray shape=(150, 1) dtype=float64
+      min=3901.52 max=16199.5 n_nan=0
+      first 8: [6821.15698966 6223.04842036 9187.52321532 5626.56103926 5295.9429592
+ 6105.12745285 7652.20873406 5385.4508686 ]
+
+## Codes for Figures/Figure 3/FLIP0_values_R_50ng.mat  (1110 bytes)  vars=['FLIP0_values_R_50ng']
+    FLIP0_values_R_50ng: ndarray shape=(114, 1) dtype=float64
+      min=8335.22 max=20103 n_nan=0
+      first 8: [16882.53122627 16624.1174942  12558.95393406 10376.55930712
+  9767.34163325 10541.13903629  9998.61502342 20011.74881668]
+
+## Codes for Figures/Figure 3/FLIP0_values_S_100ng.mat  (4122 bytes)  vars=['FLIP0_values_S_100ng']
+    FLIP0_values_S_100ng: ndarray shape=(518, 1) dtype=float64
+      min=3333.33 max=40000 n_nan=0
+      first 8: [11659.12751902 13585.29258492  9138.22343683  7265.20665103
+ 10031.59100104  6183.36325532  7397.40842572 11000.54686137]
+
+## Codes for Figures/Figure 3/FLIP0_values_S_25ng.mat  (1560 bytes)  vars=['FLIP0_values_S_25ng']
+    FLIP0_values_S_25ng: ndarray shape=(177, 1) dtype=float64
+      min=3333.33 max=9267.38 n_nan=0
+      first 8: [6589.05859097 7164.93386862 8314.08774841 8180.25366195 4297.38468379
+ 7044.02538931 7765.79712726 4522.85630005]
+
+## Codes for Figures/Figure 3/FLIP0_values_S_50ng.mat  (2504 bytes)  vars=['FLIP0_values_S_50ng']
+    FLIP0_values_S_50ng: ndarray shape=(300, 1) dtype=float64
+      min=3333.33 max=17325.4 n_nan=0
+      first 8: [ 4337.11983617 10309.25679231  4768.22730035  6080.04638339
+  4756.83066387  6373.35959521  7815.2366218   6325.76822122]
+
+## Codes for Figures/Figure 3/pC80_values_R_100ng.mat  (632 bytes)  vars=['pC80_values_R_100ng']
+    pC80_values_R_100ng: ndarray shape=(65, 1) dtype=float64
+      min=50000 max=450000 n_nan=0
+      first 8: [449999.94508035 449999.99950398 449999.28479645 449999.99999773
+ 449999.99999999  50000.00169384 449999.99988232 442726.61792258]
+
+## Codes for Figures/Figure 3/pC80_values_R_25ng.mat  (1097 bytes)  vars=['pC80_values_R_25ng']
+    pC80_values_R_25ng: ndarray shape=(150, 1) dtype=float64
+      min=50000 max=450000 n_nan=0
+      first 8: [449999.99203831 150068.14496872 449999.99030959  50000.20898238
+  50000.00064057  50000.17889137 449999.99443495  50000.00027096]
+
+## Codes for Figures/Figure 3/pC80_values_R_50ng.mat  (1075 bytes)  vars=['pC80_values_R_50ng']
+    pC80_values_R_50ng: ndarray shape=(114, 1) dtype=float64
+      min=50000 max=450000 n_nan=0
+      first 8: [449999.8754699  449999.9997864  449999.99997192 138306.36427893
+ 164049.90380176 149992.60644032  62963.7793854  449999.99993473]
+
+## Codes for Figures/Figure 3/pC80_values_S_100ng.mat  (3649 bytes)  vars=['pC80_values_S_100ng']
+    pC80_values_S_100ng: ndarray shape=(518, 1) dtype=float64
+      min=149092 max=407343 n_nan=0
+      first 8: [150201.19381859 150661.43708733 150022.47441356 150026.66096706
+ 149999.7651547  150036.90696711 150026.02639583 149979.51007633]
+
+## Codes for Figures/Figure 3/pC80_values_S_25ng.mat  (1435 bytes)  vars=['pC80_values_S_25ng']
+    pC80_values_S_25ng: ndarray shape=(177, 1) dtype=float64
+      min=50000 max=450000 n_nan=0
+      first 8: [150122.8935382  150052.1004193  150029.5551719  150033.23641887
+ 149572.61105606 150048.76694063 150040.99129168 150003.49037112]
+
+## Codes for Figures/Figure 3/pC80_values_S_50ng.mat  (2211 bytes)  vars=['pC80_values_S_50ng']
+    pC80_values_S_50ng: ndarray shape=(300, 1) dtype=float64
+      min=50000 max=450000 n_nan=0
+      first 8: [150067.02236258 149996.00189601 150066.74256136 150046.12256732
+ 151322.24556632 150051.24805861 150033.30026542 150109.03198102]
+
+## Codes for Figures/Figure 4/sampling.mat  (37526 bytes)  vars=['sampling']
+    sampling: ndarray shape=(1000, 5) dtype=float64
+      min=2.07579 max=449596 n_nan=0
+      first 8: [3.13648277e+05 1.01761612e+04 5.37477328e+02 2.49713688e+00
+ 1.42128372e+03 3.45642044e+05 3.72648596e+04 6.17184508e+02]
+
+## Codes for Figures/Figure 5/data_classification_100ng.mat  (47555 bytes)  vars=['data_classified_100ng']
+    data_classified_100ng: ndarray shape=(1000, 8) dtype=float64
+      min=-1 max=449596 n_nan=0
+      first 8: [ 5.75000000e+02  2.31612893e+01  3.13788979e+05  3.38634306e+03
+  5.70664299e+02  2.22001503e+00  1.41273754e+03 -1.00000000e+00]
+
+## Codes for Figures/Figure 5/data_classification_25ng.mat  (46394 bytes)  vars=['data_classified_25ng']
+    data_classified_25ng: ndarray shape=(1000, 8) dtype=float64
+      min=-1 max=449596 n_nan=0
+      first 8: [ 3.13000000e+02  1.46982097e+00  1.32563828e+05  3.38216964e+03
+  6.29201302e+02  2.19794494e+00  1.27279365e+03 -1.00000000e+00]
+
+## Codes for Figures/Figure 5/data_classification_50ng.mat  (47100 bytes)  vars=['data_classified_50ng']
+    data_classified_50ng: ndarray shape=(1000, 8) dtype=float64
+      min=-1 max=449596 n_nan=0
+      first 8: [ 3.13000000e+02  5.19787124e+00  1.32563828e+05  3.38216964e+03
+  6.29201302e+02  2.19794494e+00  1.27279365e+03 -1.00000000e+00]
+
+## Codes for Figures/Figure 5/sampling.mat  (37526 bytes)  vars=['sampling']
+    sampling: ndarray shape=(1000, 5) dtype=float64
+      min=2.07579 max=449596 n_nan=0
+      first 8: [3.13648277e+05 1.01761612e+04 5.37477328e+02 2.49713688e+00
+ 1.42128372e+03 3.45642044e+05 3.72648596e+04 6.17184508e+02]
+
+## Codes for Figures/Figure 6/FRET_R_50ng.mat  (3457 bytes)  vars=['FRET_R_50ng']
+    FRET_R_50ng: ndarray shape=(4, 120) dtype=float64
+      min=1e-05 max=0.67029 n_nan=0
+      first 8: [1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05 1.0000e-05
+ 6.5887e-03 1.6704e-02]
+
+## Codes for Figures/Figure 6/R_50ng_ind_par.mat  (341 bytes)  vars=['R_50ng_ind_par']
+    R_50ng_ind_par: ndarray shape=(4, 5) dtype=float64
+      min=2.07428 max=450000 n_nan=0
+      first 8: [6.29637794e+04 9.99861502e+03 6.49354978e+02 2.53522499e+00
+ 1.31339503e+03 4.50000000e+05 1.71060169e+04 5.31290439e+02]
+
+## Codes for Figures/Figure 6/common_parameters.mat  (255 bytes)  vars=['common_parameters']
+    common_parameters: ndarray shape=(1, 8) dtype=float64
+      min=0.00030046 max=119.478 n_nan=0
+      first 8: [3.32807674e+01 1.19478494e+02 2.60451297e+01 4.96917812e+00
+ 4.36614979e-03 5.04995424e+01 8.49056604e+00 3.00460000e-04]
+

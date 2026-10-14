@@ -1,0 +1,55 @@
+{
+ "n_candidates": 24754,
+ "n_positive": 23,
+ "base_rate": 0.001,
+ "tfs": [
+  "GATA1",
+  "GATA2",
+  "KLF1",
+  "MAX",
+  "MYC",
+  "RUNX1",
+  "SPI1",
+  "TAL1"
+ ],
+ "window": 5000,
+ "move_thr": 1.5,
+ "positives_per_tf": {
+  "GATA1": 19,
+  "GATA2": 0,
+  "KLF1": 0,
+  "MAX": 4,
+  "MYC": 0,
+  "RUNX1": 0,
+  "SPI1": 0,
+  "TAL1": 0
+ },
+ "n_tf_evaluable": 2,
+ "mechanism_AUPRC": 0.032,
+ "prior_AUPRC": 0.006,
+ "full_AUPRC": 0.02,
+ "chip_only_AUPRC": 0.009,
+ "per_tf_mechanism": {
+  "GATA1": 0.022,
+  "GATA2": NaN,
+  "KLF1": NaN,
+  "MAX": 0.042,
+  "MYC": NaN,
+  "RUNX1": NaN,
+  "SPI1": NaN,
+  "TAL1": NaN
+ },
+ "per_tf_prior": {
+  "GATA1": 0.012,
+  "GATA2": NaN,
+  "KLF1": NaN,
+  "MAX": 0.001,
+  "MYC": NaN,
+  "RUNX1": NaN,
+  "SPI1": NaN,
+  "TAL1": NaN
+ },
+ "mechanism_beats_prior": false,
+ "verdict": "HONEST NEGATIVE (untestable, not a coding bug) -- the supervised regulon CANNOT be validated for generalization on this data: promoter-proximal ChIP binding almost never coincides with a Perturb-seq mover here. Only 23 functional positives across 8 TFs (mostly GATA1=19, MAX=4); 6 of 8 TF knockouts have ZERO promoter-bound movers. Two real causes, both the project's recurring wall: (1) these TFs act through DISTAL enhancers, not promoters, so promoter-binding is the wrong candidate set; (2) the K562 Perturb-seq footprints are too SPARSE (same emptiness that sank VIPER). With <4 evaluable held-out TFs the leave-one-TF-out AUPRC is noise, so NO generalization claim is made. Recall-collapse is real but is NOT fixable by promoter-ChIP supervision on this dataset.",
+ "note": "Point 1: a K562-specific regulon learned by supervising TF ChIP + promoter chromatin on Perturb-seq movers, for the 8 erythroid-core TFs with genome-wide K562 ChIP. Candidates = ChIP-bound promoters; label = moves in that TF's Perturb-seq KO; the model picks the functional subset (binding!=function). Honesty gate = leave-one-TF-out vs a responsiveness prior: mechanism must beat 'some genes just move' to claim TF-specific generalization. Scope-limited to 8 TFs (only these have genome-wide K562 ChIP locally)."
+}

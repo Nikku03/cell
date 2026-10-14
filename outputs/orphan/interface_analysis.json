@@ -1,0 +1,33 @@
+{
+  "112": {
+    "pdb": "1LM8",
+    "chain": "V",
+    "resnum": 112,
+    "residue_present": true,
+    "contacts": {
+      "HIF1a": 3.32
+    },
+    "at_interface": true,
+    "verdict": "AT the HIF1a interface -> that interaction is the one at risk"
+  },
+  "158": {
+    "pdb": "1LM8",
+    "chain": "V",
+    "resnum": 158,
+    "residue_present": true,
+    "contacts": {
+      "ElonginC": 2.73
+    },
+    "at_interface": true,
+    "verdict": "AT the ElonginC interface -> that interaction is the one at risk"
+  },
+  "167": {
+    "pdb": "1LM8",
+    "chain": "V",
+    "resnum": 167,
+    "residue_present": true,
+    "contacts": {},
+    "at_interface": false,
+    "verdict": "NOT at any inter-chain interface in this structure -> the mutation's effect is intramolecular (stability/allostery), not a specific partner break"
+  }
+}

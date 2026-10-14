@@ -1,0 +1,238 @@
+{
+ "threshold": 4.200000000000003,
+ "n_sources": 337,
+ "by_hop": [
+  {
+   "hop": 1,
+   "n_sources": 298,
+   "reach_pct": 0.89,
+   "mean_effect": 0.1079,
+   "p": 2.793345416488309e-06,
+   "ratio_to_hop1": 1.0
+  },
+  {
+   "hop": 2,
+   "n_sources": 305,
+   "reach_pct": 18.3,
+   "mean_effect": 0.012,
+   "p": 0.3757701756346438,
+   "ratio_to_hop1": 0.111
+  },
+  {
+   "hop": 3,
+   "n_sources": 305,
+   "reach_pct": 71.0,
+   "mean_effect": 0.0044,
+   "p": 0.7372459846827516,
+   "ratio_to_hop1": 0.041
+  },
+  {
+   "hop": 4,
+   "n_sources": 305,
+   "reach_pct": 79.15,
+   "mean_effect": 0.0046,
+   "p": 0.7208542918881858,
+   "ratio_to_hop1": 0.043
+  }
+ ],
+ "attenuation": [
+  0.1112,
+  0.3667,
+  1.0455
+ ],
+ "by_pathcount": [
+  {
+   "hop": 2,
+   "log2_paths": 0,
+   "n_sources": 304,
+   "mean_effect": 0.0039,
+   "p": 0.7715513173676424
+  },
+  {
+   "hop": 2,
+   "log2_paths": 1,
+   "n_sources": 301,
+   "mean_effect": 0.0101,
+   "p": 0.46807192392128233
+  },
+  {
+   "hop": 2,
+   "log2_paths": 2,
+   "n_sources": 287,
+   "mean_effect": 0.0326,
+   "p": 0.0620697745341577
+  },
+  {
+   "hop": 2,
+   "log2_paths": 3,
+   "n_sources": 250,
+   "mean_effect": 0.0807,
+   "p": 0.0002459382935331613
+  },
+  {
+   "hop": 2,
+   "log2_paths": 4,
+   "n_sources": 192,
+   "mean_effect": 0.121,
+   "p": 4.050768077370758e-06
+  },
+  {
+   "hop": 2,
+   "log2_paths": 5,
+   "n_sources": 114,
+   "mean_effect": 0.1216,
+   "p": 0.0009263253466699681
+  },
+  {
+   "hop": 3,
+   "log2_paths": 0,
+   "n_sources": 305,
+   "mean_effect": 0.0051,
+   "p": 0.6927886393782591
+  },
+  {
+   "hop": 3,
+   "log2_paths": 1,
+   "n_sources": 305,
+   "mean_effect": 0.0072,
+   "p": 0.58816193501401
+  },
+  {
+   "hop": 3,
+   "log2_paths": 2,
+   "n_sources": 305,
+   "mean_effect": 0.0077,
+   "p": 0.5643451024293911
+  },
+  {
+   "hop": 3,
+   "log2_paths": 3,
+   "n_sources": 304,
+   "mean_effect": 0.0043,
+   "p": 0.7466233620101379
+  },
+  {
+   "hop": 3,
+   "log2_paths": 4,
+   "n_sources": 301,
+   "mean_effect": 0.0076,
+   "p": 0.5785317240424819
+  },
+  {
+   "hop": 3,
+   "log2_paths": 5,
+   "n_sources": 298,
+   "mean_effect": -0.0077,
+   "p": 0.5820139497368627
+  }
+ ],
+ "by_edge_type": [
+  {
+   "path_type": "phys->phys",
+   "n_sources": 304,
+   "mean_effect": 0.0116,
+   "p": 0.3881427256087731
+  },
+  {
+   "path_type": "phys->reg",
+   "n_sources": 282,
+   "mean_effect": 0.0222,
+   "p": 0.24224775677565785
+  },
+  {
+   "path_type": "reg->phys",
+   "n_sources": 59,
+   "mean_effect": 0.0518,
+   "p": 0.2875589386513964
+  },
+  {
+   "path_type": "reg->reg",
+   "n_sources": 36,
+   "mean_effect": 0.142,
+   "p": 0.10304466654523167
+  }
+ ],
+ "complex_effect": {
+  "mean": 0.1369,
+  "p": 0.0007704573100209429,
+  "n_sources": 213
+ },
+ "hop2_mean_survives": false,
+ "convergence_effect": true,
+ "hop2_single_path": 0.0039,
+ "hop2_manypath": 0.1213,
+ "degree_strata_rising": [
+  6,
+  6
+ ],
+ "degree_strata": [
+  {
+   "deg_bucket": 2,
+   "by_path_bucket": [
+    0.0424,
+    -0.001,
+    0.1039,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "deg_bucket": 3,
+   "by_path_bucket": [
+    0.008,
+    0.0319,
+    0.1521,
+    0.1788,
+    null,
+    null
+   ]
+  },
+  {
+   "deg_bucket": 4,
+   "by_path_bucket": [
+    0.0131,
+    0.0518,
+    0.0755,
+    0.1788,
+    0.0716,
+    null
+   ]
+  },
+  {
+   "deg_bucket": 5,
+   "by_path_bucket": [
+    0.0203,
+    0.0223,
+    0.0398,
+    0.0837,
+    0.0583,
+    0.0927
+   ]
+  },
+  {
+   "deg_bucket": 6,
+   "by_path_bucket": [
+    0.0108,
+    0.0124,
+    -0.0034,
+    0.0615,
+    0.0569,
+    0.0662
+   ]
+  },
+  {
+   "deg_bucket": 7,
+   "by_path_bucket": [
+    -0.0046,
+    -0.0023,
+    0.0185,
+    0.0283,
+    0.0617,
+    0.195
+   ]
+  }
+ ],
+ "verdict": "MULTI-HOP DIAGNOSIS (multihop_diagnosis.py): why the causal signal dies after one hop. Tested on the CONTINUOUS response with no threshold anywhere, controlled by WITHIN-GENE standardisation (a gene's response to this knockout versus that same gene's average response across all other knockouts, so hubness, expression and responsiveness cancel exactly), and clustered at the source level. THE AVERAGE SAYS THE SIGNAL DIES: within-gene effect +0.108 at hop 1 (p=2.8e-06) and +0.012 at hop 2 (p=0.38) -- so binarising is NOT what hid it, the mean hop-2 effect really is near zero. THE AVERAGE IS THE WRONG STATISTIC, AND THAT IS THE FINDING. Splitting hop-2 targets by HOW MANY shortest paths reach them shows a clean monotone gradient: +0.0039 for targets reachable by a single 2-hop path, rising to +0.1213 at 16 or more converging paths -- which is 112% of the DIRECT-edge effect. A single chain transmits nothing detectable; many parallel routes transmit as much as a direct edge. The obvious confound is that many-path targets are simply high-degree targets, and it does not hold: stratifying by the target's own degree, the gradient still rises in 6/6 degree strata. SO THE MECHANISM IS CONVERGENCE, NOT CHAINS. That is precisely why this project's chain reasoning kept dissolving -- a chain IS the single-path case, which is the regime that carries no signal. And it is specific to two hops: at hop 3 the path-count gradient is flat (every bucket within noise of zero), so convergence buys one extra hop and no more. H1 compounds all of this: the hop-4 ball already covers 79% of measured genes, so a reachability-based score is arithmetically incapable of discriminating no matter how correct the biology -- ranking by 'is it reachable' was never going to work. H4 EDGE TYPE, which is the direct test of whether anything other than TF regulation conducts: reg->reg is largest at +0.1420 but rests on only 36 sources and is NOT significant (p=0.1); phys->phys +0.0116 (p=0.39), phys->reg +0.0222 (p=0.24), reg->phys +0.0518 (p=0.29). None of the four combinations is individually significant, so the edge-type question is underpowered here rather than answered. H5 IS THE CLEAREST NEW CONDUIT: knocking out a complex subunit moves its partners' mRNAs by +0.1369 (p=0.00077, 213 sources) -- comparable to a direct regulatory edge (+0.108), and encoded by NO TF-regulation edge. Subunit co-destabilisation is a real propagation route the regulatory graph simply does not contain. WHAT TO DO WITH THIS: (a) score targets by CONVERGENT PATH COUNT rather than reachability or shortest-path membership, since the single-path regime is empty and the many-path regime is as strong as a direct edge; (b) cap propagation at two hops, because hop 3 is dead even at high multiplicity; (c) add complex co-membership as a first-class edge type. Deterministic; within-gene control, source-level clustering, path-count gradient verified inside target-degree strata.",
+ "note": "MULTI-HOP DIAGNOSIS (multihop_diagnosis.py): why the causal signal dies after one hop. Tested on the CONTINUOUS response with no threshold anywhere, controlled by WITHIN-GENE standardisation (a gene's response to this knockout versus that same gene's average response across all other knockouts, so hubness, expression and responsiveness cancel exactly), and clustered at the source level. THE AVERAGE SAYS THE SIGNAL DIES: within-gene effect +0.108 at hop 1 (p=2.8e-06) and +0.012 at hop 2 (p=0.38) -- so binarising is NOT what hid it, the mean hop-2 effect really is near zero. THE AVERAGE IS THE WRONG STATISTIC, AND THAT IS THE FINDING. Splitting hop-2 targets by HOW MANY shortest paths reach them shows a clean monotone gradient: +0.0039 for targets reachable by a single 2-hop path, rising to +0.1213 at 16 or more converging paths -- which is 112% of the DIRECT-edge effect. A single chain transmits nothing detectable; many parallel routes transmit as much as a direct edge. The obvious confound is that many-path targets are simply high-degree targets, and it does not hold: stratifying by the target's own degree, the gradient still rises in 6/6 degree strata. SO THE MECHANISM IS CONVERGENCE, NOT CHAINS. That is precisely why this project's chain reasoning kept dissolving -- a chain IS the single-path case, which is the regime that carries no signal. And it is specific to two hops: at hop 3 the path-count gradient is flat (every bucket within noise of zero), so convergence buys one extra hop and no more. H1 compounds all of this: the hop-4 ball already covers 79% of measured genes, so a reachability-based score is arithmetically incapable of discriminating no matter how correct the biology -- ranking by 'is it reachable' was never going to work. H4 EDGE TYPE, which is the direct test of whether anything other than TF regulation conducts: reg->reg is largest at +0.1420 but rests on only 36 sources and is NOT significant (p=0.1); phys->phys +0.0116 (p=0.39), phys->reg +0.0222 (p=0.24), reg->phys +0.0518 (p=0.29). None of the four combinations is individually significant, so the edge-type question is underpowered here rather than answered. H5 IS THE CLEAREST NEW CONDUIT: knocking out a complex subunit moves its partners' mRNAs by +0.1369 (p=0.00077, 213 sources) -- comparable to a direct regulatory edge (+0.108), and encoded by NO TF-regulation edge. Subunit co-destabilisation is a real propagation route the regulatory graph simply does not contain. WHAT TO DO WITH THIS: (a) score targets by CONVERGENT PATH COUNT rather than reachability or shortest-path membership, since the single-path regime is empty and the many-path regime is as strong as a direct edge; (b) cap propagation at two hops, because hop 3 is dead even at high multiplicity; (c) add complex co-membership as a first-class edge type. Deterministic; within-gene control, source-level clustering, path-count gradient verified inside target-degree strata."
+}

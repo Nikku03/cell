@@ -1,0 +1,127 @@
+{
+ "threshold": 4.200000000000003,
+ "nested_k_per_seed": [
+  5,
+  1,
+  3
+ ],
+ "preregistered_recall": 0.3848,
+ "test_selected_recall": 0.4047,
+ "selection_optimism": 0.0199,
+ "oracle_weights_recall": 0.4224,
+ "architecture_ceiling": 0.548,
+ "frac_gap_from_weighting": 0.1236,
+ "p_oracle_weights": 1.0629253825908618e-06,
+ "median_rank_of_best_partner": 10.0,
+ "best_partner_in_top10": 0.49829351535836175,
+ "best_partner_in_top25": 0.658703071672355,
+ "table": [
+  {
+   "method": "pre-registered K (nested, K*=1)",
+   "recall50": 0.3289,
+   "n": 99
+  },
+  {
+   "method": "pre-registered K (nested, K*=3)",
+   "recall50": 0.4349,
+   "n": 96
+  },
+  {
+   "method": "pre-registered K (nested, K*=5)",
+   "recall50": 0.3923,
+   "n": 98
+  },
+  {
+   "method": "learned rank, learned weights K=1",
+   "recall50": 0.3444,
+   "n": 293
+  },
+  {
+   "method": "learned rank, learned weights K=3",
+   "recall50": 0.4047,
+   "n": 293
+  },
+  {
+   "method": "learned rank, learned weights K=5",
+   "recall50": 0.3951,
+   "n": 293
+  },
+  {
+   "method": "learned rank, learned weights K=10",
+   "recall50": 0.3873,
+   "n": 293
+  },
+  {
+   "method": "learned rank, learned weights K=25",
+   "recall50": 0.339,
+   "n": 293
+  },
+  {
+   "method": "learned rank, learned weights K=50",
+   "recall50": 0.2656,
+   "n": 293
+  },
+  {
+   "method": "learned rank, ORACLE weights K=1",
+   "recall50": 0.3444,
+   "n": 293
+  },
+  {
+   "method": "learned rank, ORACLE weights K=3",
+   "recall50": 0.4224,
+   "n": 293
+  },
+  {
+   "method": "learned rank, ORACLE weights K=5",
+   "recall50": 0.4257,
+   "n": 293
+  },
+  {
+   "method": "learned rank, ORACLE weights K=10",
+   "recall50": 0.4123,
+   "n": 293
+  },
+  {
+   "method": "learned rank, ORACLE weights K=25",
+   "recall50": 0.3821,
+   "n": 293
+  },
+  {
+   "method": "learned rank, ORACLE weights K=50",
+   "recall50": 0.3184,
+   "n": 293
+  },
+  {
+   "method": "ORACLE rank, oracle weights K=1",
+   "recall50": 0.5078,
+   "n": 293
+  },
+  {
+   "method": "ORACLE rank, oracle weights K=3",
+   "recall50": 0.5461,
+   "n": 293
+  },
+  {
+   "method": "ORACLE rank, oracle weights K=5",
+   "recall50": 0.548,
+   "n": 293
+  },
+  {
+   "method": "ORACLE rank, oracle weights K=10",
+   "recall50": 0.5234,
+   "n": 293
+  },
+  {
+   "method": "ORACLE rank, oracle weights K=25",
+   "recall50": 0.4782,
+   "n": 293
+  },
+  {
+   "method": "ORACLE rank, oracle weights K=50",
+   "recall50": 0.3796,
+   "n": 293
+  }
+ ],
+ "verdict": "PAIR RETRIEVAL AUDIT (pair_retrieval_audit.py): removing the last selection optimism from the retrieval result and locating the remaining gap. PRE-REGISTERED K: choosing K on an inner split carved out of TRAIN only and applying it blind to the outer test gives 0.3848, against 0.4047 when K is picked by inspecting the test sweep -- so the selection optimism in the reported headline was +0.0199. The nested procedure chose K*=[5, 1, 3] across the three seeds. DECOMPOSING THE GAP to the 0.5480 architecture ceiling: retrieval has two stages and they need different fixes. Holding the learned top-3 set fixed and replacing only the weights with true similarity gives 0.4224, recovering +0.0177 of the 0.1433 gap (12%, paired p=1.06e-06); the remainder is RANKING -- the retrieved set simply does not contain the right genes. RANKING QUALITY directly: the genuinely most-similar train source lands at median rank 10 of ~235 under the learned metric, and is inside the top 10 only 50% of the time and the top 25 66%. So the binding constraint is RETRIEVAL QUALITY, not the averaging step: better weighting of the current retrieved set buys little, while finding better partners is worth the bulk of the gap. Effort should go into the similarity model and its features, not into the combination rule. Same data, splits, tide mask, features and metric as pair_retrieval.py. The oracle rows are selected by peeking at the answer and bound what is achievable; they are not predictors. Deterministic.",
+ "note": "PAIR RETRIEVAL AUDIT (pair_retrieval_audit.py): removing the last selection optimism from the retrieval result and locating the remaining gap. PRE-REGISTERED K: choosing K on an inner split carved out of TRAIN only and applying it blind to the outer test gives 0.3848, against 0.4047 when K is picked by inspecting the test sweep -- so the selection optimism in the reported headline was +0.0199. The nested procedure chose K*=[5, 1, 3] across the three seeds. DECOMPOSING THE GAP to the 0.5480 architecture ceiling: retrieval has two stages and they need different fixes. Holding the learned top-3 set fixed and replacing only the weights with true similarity gives 0.4224, recovering +0.0177 of the 0.1433 gap (12%, paired p=1.06e-06); the remainder is RANKING -- the retrieved set simply does not contain the right genes. RANKING QUALITY directly: the genuinely most-similar train source lands at median rank 10 of ~235 under the learned metric, and is inside the top 10 only 50% of the time and the top 25 66%. So the binding constraint is RETRIEVAL QUALITY, not the averaging step: better weighting of the current retrieved set buys little, while finding better partners is worth the bulk of the gap. Effort should go into the similarity model and its features, not into the combination rule. Same data, splits, tide mask, features and metric as pair_retrieval.py. The oracle rows are selected by peeking at the answer and bound what is achievable; they are not predictors. Deterministic."
+}

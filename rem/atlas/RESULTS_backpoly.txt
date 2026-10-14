@@ -1,0 +1,116 @@
+=================================================================================================
+THE COMPACT BACKWARD FUNCTION, RUN AGAINST THE ACTUAL REM TAIL
+=================================================================================================
+
+=================================================================================================
+G0  SMOOTH OR OSCILLATORY? THE GATE THAT DECIDES IF THE SAME PROBLEM WAS TESTED
+=================================================================================================
+  exact V at 4 controllers, L = 4, level 2: 4 states x 400 points.
+
+     coefficients   polynomial rel err    Fourier rel err    winner
+                5            5.997e-05          3.500e-02      poly
+               15            2.457e-06          5.773e-03      poly
+               35            3.113e-08          8.740e-04      poly
+
+  G0: POLYNOMIALS WIN AT EVERY SIZE. REM s backward function is SMOOTH in the accumulated statistic -- its obstruction is DIMENSION, not oscillation, so the external round-1 failure mode does not describe it and round-2 s Fourier repair is solving a different problem.
+
+=================================================================================================
+G1  END TO END WHERE THERE IS AN EXACT ANSWER
+=================================================================================================
+  exact tail by full enumeration (1,048,576 paths): 1.187971e-102
+
+     degree  coefficients            tail  error, orders   vs a pruning decade
+          1             5   1.307192e-102         0.0415                 0.068
+          2            15   9.428400e-103         0.1004                 0.165
+          3            35   1.080006e-102         0.0414                 0.068
+          4            70   1.154653e-102         0.0124                 0.020
+
+  G1: best is degree 4 at 0.0124 orders -- USEFUL, well under one pruning decade.
+
+=================================================================================================
+G2  THE SCALING, IN DEGREE AND IN WIDTH
+=================================================================================================
+
+    error vs degree       deg1=0.0415  deg2=0.1004  deg3=0.0414  deg4=0.0124
+
+     nCtrl   deg 2 coefficients   deg 3 coefficients     paths at L=6
+         4                   15                   35        2.684e+08
+         6                   28                   84        4.398e+12
+         8                   45                  165        7.206e+16
+        10                   66                  286        1.181e+21
+        12                   91                  455        1.934e+25
+    C(k+p, p) is POLYNOMIAL in width at fixed degree, against 2^(k(L+1)) for paths. That
+    is the property that makes this worth running at the engine's own size.
+
+=================================================================================================
+G3  THE ACTUAL REM TAIL AT 10 CONTROLLERS AND L = 6
+=================================================================================================
+  No exact answer exists here, but the pruned tail is a LOWER BOUND on the truth, because
+  retaining more paths can only add mass. A value BELOW it refutes the method outright.
+
+  10 controllers, 1024 states, L = 6, 200 targets. sha 9b909319ccc8.
+  best pruned LOWER bound to beat: 1.0640e-97 (bound-ranked, 19,531 paths)
+
+     degree  coefficients            tail   vs lower bound   seconds
+          1            11    3.690152e-95         346.819x       0.3
+          2            66    1.566277e-95         147.206x       2.9
+          3           286    1.603289e-95         150.685x      42.1
+
+  G3 AS PREDECLARED: the polynomial backward lands ABOVE the pruned lower bound at 3 of 3 degrees. That is CONSISTENCY, not accuracy -- it is not refuted, and nothing here says how close to the truth it is.
+
+=================================================================================================
+G3b  WHAT THAT ESTIMATE IMPLIES FOR accuracy.py's RANKING OF THE ENGINE'S ERROR TERMS
+=================================================================================================
+  degrees 2 and 3 give 1.5663e-95 and 1.6033e-95, agreeing to 2.4% -- the representation
+  has converged even though its accuracy is uncertified. Taking 1.5848e-95 as the estimate:
+
+    quantity                                           orders
+    remaining rise implied by this estimate              2.17
+    remaining rise from accuracy.py s slope             10.22
+    the class map s whole ladder                         5.08
+
+  THE SLOPE MUST FLATTEN. 0.608 orders per decade held over the two decades it was
+  measured on, and extrapolating it 16.8 decades gives 10.2 orders where this estimate
+  says 2.17. accuracy.py flagged that extrapolation as a direction and not a value; this
+  is the first independent number to put against it, and it says the local slope is local.
+
+  AND THE RANKING REVERSES. accuracy.py's A4b concluded pruning binds because the
+  extrapolated error crossed 5.08 orders at 10^12.6. If the total pruning error is
+  2.17 orders it never reaches 5.08 at all, and the CLASS MAP is the binding term --
+  which is what A4 said before A4b overturned it on the scaling law. A4b was right to
+  distrust the point comparison; it was wrong about which way the law bent.
+
+  CONDITIONAL, AND THE CONDITION IS NOT SMALL. This rests on an ESTIMATE that carries no
+  bound. Its evidence is G1: 0.012 to 0.10 orders against an exact answer at four
+  controllers. Nothing tests that transfer at ten. If the estimate is low, the pruning
+  error is larger than stated and the reversal weakens or vanishes. What is NOT
+  conditional is the direction: the tail is at least 1.0640e-97 by the lower bound and
+  this estimate puts it near 1.58e-95, so the slope cannot continue at 0.608 for 17 more decades.
+
+=================================================================================================
+G4  THE TIMING, AS A LAW AND NOT AS THE 28x POINT
+=================================================================================================
+  The external comparison was 0.34 s against 0.012 s for exact DP. That baseline does not
+  exist for REM: sufficient.py showed the backward function is indexed by (state,
+  accumulated activity) and is injective on paths at full precision, so there is no cheap
+  exact DP to be 28x slower than. What REM's alternative actually is, is enumeration.
+
+     width  depth   poly backward, s    paths it replaces
+         4      4               0.01            1.049e+06
+        10      6               2.93            1.181e+21
+
+  The engine-width row runs in seconds against a path set of 1.2e21. There is no ratio
+  to quote because the thing it replaces cannot be run at all.
+
+=================================================================================================
+G5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. G3 has no exact reference. Landing above a lower bound is a consistency check that
+     the method could pass while still being far from the truth. It is not accuracy.
+  2. The projection of log-sum-exp onto the polynomial space is the only approximation and
+     it is unbounded -- nothing here certifies it, so this method produces an ESTIMATE and
+     not a certificate. exactcert's problem is untouched by it.
+  3. G0 tests smoothness at 4 controllers. That REM's backward function stays smooth at
+     ten is assumed by G3 and not shown.
+  4. Collocation points are drawn uniformly in the reachable box. A better design would
+     weight where the mass actually is, and that is not tried.

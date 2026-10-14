@@ -1,0 +1,203 @@
+{
+ "test": "spatial re-rank",
+ "gates": {
+  "Z1": true,
+  "Z2": true,
+  "Z3": true,
+  "Z4": true,
+  "Z5": true,
+  "Z6": true,
+  "Z7": true
+ },
+ "n": 5582,
+ "hit1_base": 0.7266212826943748,
+ "hit1_spatial": 0.850591185954855,
+ "delta": [
+  0.12396990326048012,
+  0.004733736497594787
+ ],
+ "per_type": {
+  "transport": {
+   "n": 2298,
+   "base": 0.8054830287206266,
+   "with": 0.9725848563968669,
+   "delta": 0.1671018276762402,
+   "sem": 0.007855022643600733
+  },
+  "multi": {
+   "n": 1779,
+   "base": 0.6902754356379989,
+   "with": 0.7526700393479483,
+   "delta": 0.06239460370994941,
+   "sem": 0.006700105790671603
+  },
+  "single": {
+   "n": 1505,
+   "base": 0.6491694352159468,
+   "with": 0.7800664451827243,
+   "delta": 0.13089700996677742,
+   "sem": 0.0098377762138945
+  }
+ },
+ "solo_auc": {
+  "same_molecule_as_seed": 0.5931474825447444,
+  "same_comp_as_seed": 0.6876670826137333,
+  "cand_is_cytosol": 0.5326083647231274,
+  "log_transport_pairs": 0.41497333980527906,
+  "seed_comp_count": 0.5265633543997293,
+  "log_cand_comp_size": 0.5350165094303904,
+  "twin_exists": 0.5662376828354173
+ },
+ "importance": {
+  "tier": 0.0393912264995524,
+  "solo": 0.0,
+  "pair": 0.004476275738585445,
+  "feas": 0.0,
+  "balance": 0.0017905102954342,
+  "bal_rank": 0.0143240823634736,
+  "walk": 0.006266786034019645,
+  "walk_rank": 0.027752909579230045,
+  "walk_zero": -0.0008952551477170445,
+  "chain": 0.009847806624888045,
+  "chain_rank": 0.0017905102954342,
+  "log_deg_clip": 0.07788719785138765,
+  "log_heavy": 0.0161145926589078,
+  "het_frac": 0.0026857654431512445,
+  "charge": 0.0008952551477171555,
+  "blend_rank": 0.017009847806624845,
+  "resid_cos": -0.004476275738585445,
+  "same_molecule_as_seed": 0.16920322291853174,
+  "same_comp_as_seed": 0.1736794986571173,
+  "cand_is_cytosol": 0.0026857654431512445,
+  "log_transport_pairs": 0.16562220232766334,
+  "seed_comp_count": -0.0008952551477170445,
+  "log_cand_comp_size": 0.0008952551477171555,
+  "twin_exists": 0.0
+ },
+ "curve": [
+  {
+   "coverage": 0.1,
+   "precision": 0.9982078853046595
+  },
+  {
+   "coverage": 0.25,
+   "precision": 0.9992831541218637
+  },
+  {
+   "coverage": 0.5,
+   "precision": 0.9985668219276245
+  },
+  {
+   "coverage": 0.75,
+   "precision": 0.9816053511705686
+  },
+  {
+   "coverage": 1.0,
+   "precision": 0.8509494804729487
+  }
+ ],
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/rem_bipartite.npz",
+    "bytes": 259723,
+    "hash": "e2ebbd1dc38e146a",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 5582,
+   "used": 5582,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 17000,
+  "controls": [
+   "transport-pair counts with reaction j's own contribution subtracted",
+   "every spatial feature's lone AUC gated at Z1 against the degree-leak shape",
+   "the targeted bucket gated separately from the overall number",
+   "the other buckets gated for damage",
+   "identical folds and seed as the no-spatial arm"
+  ],
+  "note": "compartment and transport-topology features added to the shortlist ranker",
+  "warnings": []
+ },
+ "seconds": 198.67159914970398,
+ "log": [
+  "========================================================================================================",
+  "  SPATIAL FEATURES: compartments and transport topology, then re-rank",
+  "========================================================================================================",
+  "",
+  "     spatial precompute: 9 compartments, 23 linked pairs, 4,827 transport reactions",
+  "     features 1,000 [31s]",
+  "     features 2,000 [64s]",
+  "     features 3,000 [96s]",
+  "     features 4,000 [127s]",
+  "     features 5,000 [155s]",
+  "     built and cached: (111640, 24) [173s]",
+  "     5,582 cases | 17 base + 7 spatial features",
+  "     case mix: transport 41.2%, multi 31.9%, single 27.0%",
+  "",
+  "Z1 NO LEAK",
+  "     cases where reaction j itself contributes a transport pair (so the subtraction actually bites): 41.8%",
+  "     same_comp_as_seed        lone AUC 0.6877",
+  "     same_molecule_as_seed    lone AUC 0.5931",
+  "     log_transport_pairs      lone AUC 0.4150",
+  "     twin_exists              lone AUC 0.5662",
+  "     log_cand_comp_size       lone AUC 0.5350",
+  "     cand_is_cytosol          lone AUC 0.5326",
+  "     seed_comp_count          lone AUC 0.5266",
+  "     no spatial feature is a label in disguise, and j's own transport pair is subtracted.",
+  "     Z1 PASS",
+  "",
+  "Z2 OVERALL hit@1: 0.7266 -> 0.8506 = +0.1240 sem 0.0047 (+26.2 sem)",
+  "     spatial features help overall.",
+  "     Z2 PASS",
+  "",
+  "Z3/Z4 BY CASE TYPE",
+  "     type              n   without      with     delta     sem",
+  "     transport     2,298    0.8055    0.9726   +0.1671  0.0079",
+  "     multi         1,779    0.6903    0.7527   +0.0624  0.0067",
+  "     single        1,505    0.6492    0.7801   +0.1309  0.0098",
+  "     the targeted bucket improves: transport cases were 27.9% of all errors and spatial features are what they were missing.",
+  "     Z3 PASS",
+  "     nothing else gets worse.",
+  "     Z4 PASS",
+  "",
+  "Z5 WHICH SPATIAL FEATURE (permutation, drop in hit@1)",
+  "     same_comp_as_seed        +0.1737 (spatial)",
+  "     same_molecule_as_seed    +0.1692 (spatial)",
+  "     log_transport_pairs      +0.1656 (spatial)",
+  "     log_deg_clip             +0.0779",
+  "     tier                     +0.0394",
+  "     walk_rank                +0.0278",
+  "     blend_rank               +0.0170",
+  "     log_heavy                +0.0161",
+  "     Z5 PASS",
+  "",
+  "Z6 THE CONFIDENCE CURVE",
+  "        10%  precision 0.9982",
+  "        25%  precision 0.9993",
+  "        50%  precision 0.9986   (loop 168: 0.9534)",
+  "        75%  precision 0.9816",
+  "       100%  precision 0.8509",
+  "     Z6 PASS",
+  "",
+  "Z7 WHAT THIS CANNOT SHOW",
+  "     DEV only. Compartment assignment is Human-GEM's own curation, so a model learning",
+  "     compartment regularities learns the curators' conventions as well as the biology.",
+  "     Z7 PASS",
+  "",
+  "========================================================================================================",
+  "  Z1  PASS",
+  "  Z2  PASS",
+  "  Z3  PASS",
+  "  Z4  PASS",
+  "  Z5  PASS",
+  "  Z6  PASS",
+  "  Z7  PASS",
+  "  7/7   [199s]",
+  "========================================================================================================"
+ ]
+}

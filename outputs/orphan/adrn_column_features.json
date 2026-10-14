@@ -1,0 +1,721 @@
+{
+  "test": "adrn_column_features",
+  "K_values": [
+    30,
+    60,
+    120
+  ],
+  "penalties": [
+    10.0,
+    100.0,
+    1000.0
+  ],
+  "col_svd": 128,
+  "detail": {
+    "K30|p10": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.22375,
+        "_holdout": 0.27525
+      },
+      "col": {
+        "cohort1": 0.18799999999999997,
+        "_holdout": 0.20800000000000002
+      },
+      "chan_col": {
+        "cohort1": 0.22099999999999997,
+        "_holdout": 0.26925
+      },
+      "col_perm": {
+        "cohort1": 0.15775,
+        "_holdout": 0.18450000000000003
+      }
+    },
+    "K30|p100": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.20199999999999999,
+        "_holdout": 0.23200000000000004
+      },
+      "col": {
+        "cohort1": 0.18675,
+        "_holdout": 0.203
+      },
+      "chan_col": {
+        "cohort1": 0.20975,
+        "_holdout": 0.23125
+      },
+      "col_perm": {
+        "cohort1": 0.16674999999999998,
+        "_holdout": 0.19225
+      }
+    },
+    "K30|p1000": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.18275,
+        "_holdout": 0.20525
+      },
+      "col": {
+        "cohort1": 0.17449999999999996,
+        "_holdout": 0.19875
+      },
+      "chan_col": {
+        "cohort1": 0.185,
+        "_holdout": 0.20775000000000002
+      },
+      "col_perm": {
+        "cohort1": 0.16649999999999998,
+        "_holdout": 0.196
+      }
+    },
+    "K60|p10": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.2255,
+        "_holdout": 0.27849999999999997
+      },
+      "col": {
+        "cohort1": 0.18575,
+        "_holdout": 0.20850000000000002
+      },
+      "chan_col": {
+        "cohort1": 0.22325,
+        "_holdout": 0.26975
+      },
+      "col_perm": {
+        "cohort1": 0.15999999999999998,
+        "_holdout": 0.185
+      }
+    },
+    "K60|p100": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.20600000000000002,
+        "_holdout": 0.23425
+      },
+      "col": {
+        "cohort1": 0.18675,
+        "_holdout": 0.20475000000000002
+      },
+      "chan_col": {
+        "cohort1": 0.21025,
+        "_holdout": 0.23074999999999998
+      },
+      "col_perm": {
+        "cohort1": 0.16574999999999998,
+        "_holdout": 0.1925
+      }
+    },
+    "K60|p1000": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.184,
+        "_holdout": 0.20575000000000002
+      },
+      "col": {
+        "cohort1": 0.177,
+        "_holdout": 0.19975
+      },
+      "chan_col": {
+        "cohort1": 0.18724999999999997,
+        "_holdout": 0.20775000000000002
+      },
+      "col_perm": {
+        "cohort1": 0.165,
+        "_holdout": 0.195
+      }
+    },
+    "K120|p10": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.22724999999999998,
+        "_holdout": 0.27925
+      },
+      "col": {
+        "cohort1": 0.18625,
+        "_holdout": 0.20675000000000002
+      },
+      "chan_col": {
+        "cohort1": 0.22450000000000003,
+        "_holdout": 0.27049999999999996
+      },
+      "col_perm": {
+        "cohort1": 0.159,
+        "_holdout": 0.1855
+      }
+    },
+    "K120|p100": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.20424999999999996,
+        "_holdout": 0.23375
+      },
+      "col": {
+        "cohort1": 0.187,
+        "_holdout": 0.20475000000000002
+      },
+      "chan_col": {
+        "cohort1": 0.21025,
+        "_holdout": 0.23075000000000004
+      },
+      "col_perm": {
+        "cohort1": 0.16625,
+        "_holdout": 0.1925
+      }
+    },
+    "K120|p1000": {
+      "frequency": 0.18025000000000002,
+      "chan": {
+        "cohort1": 0.18175,
+        "_holdout": 0.20450000000000002
+      },
+      "col": {
+        "cohort1": 0.17475000000000002,
+        "_holdout": 0.19725
+      },
+      "chan_col": {
+        "cohort1": 0.187,
+        "_holdout": 0.20575000000000002
+      },
+      "col_perm": {
+        "cohort1": 0.16399999999999998,
+        "_holdout": 0.19425000000000003
+      }
+    }
+  },
+  "means": {
+    "frequency": 0.18025000000000002,
+    "chan": 0.22143055555555555,
+    "col": 0.1932361111111111,
+    "chan_col": 0.22120833333333334,
+    "col_perm": 0.17713888888888887
+  },
+  "sweeps": {
+    "col": {
+      "name": "col - chan",
+      "verdict": "HARMFUL",
+      "n_cells": 9,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 9,
+      "n_resolved_pos": 0,
+      "n_resolved_neg": 9,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 6,
+      "passing_configs": [],
+      "cells": [
+        {
+          "config": {
+            "K": 30,
+            "penalty": 10.0
+          },
+          "cohort": "K30|p10",
+          "n": 400,
+          "delta": -0.051500000000000004,
+          "lo": -0.064625,
+          "hi": -0.03875
+        },
+        {
+          "config": {
+            "K": 30,
+            "penalty": 100.0
+          },
+          "cohort": "K30|p100",
+          "n": 400,
+          "delta": -0.022125000000000002,
+          "lo": -0.029625,
+          "hi": -0.014750000000000001
+        },
+        {
+          "config": {
+            "K": 30,
+            "penalty": 1000.0
+          },
+          "cohort": "K30|p1000",
+          "n": 400,
+          "delta": -0.007375,
+          "lo": -0.010875,
+          "hi": -0.0038749999999999995
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 10.0
+          },
+          "cohort": "K60|p10",
+          "n": 400,
+          "delta": -0.054875,
+          "lo": -0.06824999999999999,
+          "hi": -0.041999999999999996
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 100.0
+          },
+          "cohort": "K60|p100",
+          "n": 400,
+          "delta": -0.024375,
+          "lo": -0.032125,
+          "hi": -0.01675
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 1000.0
+          },
+          "cohort": "K60|p1000",
+          "n": 400,
+          "delta": -0.006499999999999999,
+          "lo": -0.010125,
+          "hi": -0.0028749999999999987
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 10.0
+          },
+          "cohort": "K120|p10",
+          "n": 400,
+          "delta": -0.056749999999999995,
+          "lo": -0.06974999999999999,
+          "hi": -0.04387499999999999
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 100.0
+          },
+          "cohort": "K120|p100",
+          "n": 400,
+          "delta": -0.023125,
+          "lo": -0.030749999999999996,
+          "hi": -0.015375000000000002
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 1000.0
+          },
+          "cohort": "K120|p1000",
+          "n": 400,
+          "delta": -0.007124999999999999,
+          "lo": -0.011124999999999998,
+          "hi": -0.0032499999999999994
+        }
+      ]
+    },
+    "chan_col": {
+      "name": "chan_col - chan",
+      "verdict": "NULL",
+      "n_cells": 9,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 9,
+      "n_resolved_pos": 0,
+      "n_resolved_neg": 0,
+      "sign_consistent": false,
+      "cells_needed_for_robust": 6,
+      "passing_configs": [],
+      "cells": [
+        {
+          "config": {
+            "K": 30,
+            "penalty": 10.0
+          },
+          "cohort": "K30|p10",
+          "n": 400,
+          "delta": -0.004375,
+          "lo": -0.0105,
+          "hi": 0.0017499999999999998
+        },
+        {
+          "config": {
+            "K": 30,
+            "penalty": 100.0
+          },
+          "cohort": "K30|p100",
+          "n": 400,
+          "delta": 0.0034999999999999996,
+          "lo": -0.0020000000000000005,
+          "hi": 0.009125
+        },
+        {
+          "config": {
+            "K": 30,
+            "penalty": 1000.0
+          },
+          "cohort": "K30|p1000",
+          "n": 400,
+          "delta": 0.002375,
+          "lo": -0.0008750000000000011,
+          "hi": 0.005625
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 10.0
+          },
+          "cohort": "K60|p10",
+          "n": 400,
+          "delta": -0.0055000000000000005,
+          "lo": -0.0115,
+          "hi": 0.0004999999999999994
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 100.0
+          },
+          "cohort": "K60|p100",
+          "n": 400,
+          "delta": 0.00037499999999999925,
+          "lo": -0.004875000000000002,
+          "hi": 0.005749999999999998
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 1000.0
+          },
+          "cohort": "K60|p1000",
+          "n": 400,
+          "delta": 0.002625000000000001,
+          "lo": -0.0006249999999999987,
+          "hi": 0.005875
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 10.0
+          },
+          "cohort": "K120|p10",
+          "n": 400,
+          "delta": -0.005750000000000002,
+          "lo": -0.011500000000000003,
+          "hi": 0.00012499999999999846
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 100.0
+          },
+          "cohort": "K120|p100",
+          "n": 400,
+          "delta": 0.0014999999999999985,
+          "lo": -0.0045000000000000005,
+          "hi": 0.0075
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 1000.0
+          },
+          "cohort": "K120|p1000",
+          "n": 400,
+          "delta": 0.0032499999999999994,
+          "lo": -0.00012500000000000065,
+          "hi": 0.006624999999999999
+        }
+      ]
+    },
+    "col_perm": {
+      "name": "col_perm - chan",
+      "verdict": "HARMFUL",
+      "n_cells": 9,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 9,
+      "n_resolved_pos": 0,
+      "n_resolved_neg": 9,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 6,
+      "passing_configs": [],
+      "cells": [
+        {
+          "config": {
+            "K": 30,
+            "penalty": 10.0
+          },
+          "cohort": "K30|p10",
+          "n": 400,
+          "delta": -0.078375,
+          "lo": -0.094,
+          "hi": -0.06325
+        },
+        {
+          "config": {
+            "K": 30,
+            "penalty": 100.0
+          },
+          "cohort": "K30|p100",
+          "n": 400,
+          "delta": -0.0375,
+          "lo": -0.045875000000000006,
+          "hi": -0.029000000000000005
+        },
+        {
+          "config": {
+            "K": 30,
+            "penalty": 1000.0
+          },
+          "cohort": "K30|p1000",
+          "n": 400,
+          "delta": -0.01275,
+          "lo": -0.016375,
+          "hi": -0.009374999999999998
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 10.0
+          },
+          "cohort": "K60|p10",
+          "n": 400,
+          "delta": -0.07949999999999999,
+          "lo": -0.09525,
+          "hi": -0.0645
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 100.0
+          },
+          "cohort": "K60|p100",
+          "n": 400,
+          "delta": -0.04100000000000001,
+          "lo": -0.04925312500000001,
+          "hi": -0.03262187500000004
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 1000.0
+          },
+          "cohort": "K60|p1000",
+          "n": 400,
+          "delta": -0.014875000000000001,
+          "lo": -0.018500000000000003,
+          "hi": -0.01125
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 10.0
+          },
+          "cohort": "K120|p10",
+          "n": 400,
+          "delta": -0.081,
+          "lo": -0.096625,
+          "hi": -0.065875
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 100.0
+          },
+          "cohort": "K120|p100",
+          "n": 400,
+          "delta": -0.039625,
+          "lo": -0.048125,
+          "hi": -0.031375
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 1000.0
+          },
+          "cohort": "K120|p1000",
+          "n": 400,
+          "delta": -0.014000000000000002,
+          "lo": -0.017875000000000002,
+          "hi": -0.010125
+        }
+      ]
+    },
+    "chan_col-freq": {
+      "name": "chan_col - frequency",
+      "verdict": "ROBUST",
+      "n_cells": 9,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 9,
+      "n_resolved_pos": 9,
+      "n_resolved_neg": 0,
+      "sign_consistent": true,
+      "cells_needed_for_robust": 6,
+      "passing_configs": [
+        {
+          "K": 30,
+          "penalty": 10.0
+        },
+        {
+          "K": 30,
+          "penalty": 100.0
+        },
+        {
+          "K": 30,
+          "penalty": 1000.0
+        },
+        {
+          "K": 60,
+          "penalty": 10.0
+        },
+        {
+          "K": 60,
+          "penalty": 100.0
+        },
+        {
+          "K": 60,
+          "penalty": 1000.0
+        },
+        {
+          "K": 120,
+          "penalty": 10.0
+        },
+        {
+          "K": 120,
+          "penalty": 100.0
+        },
+        {
+          "K": 120,
+          "penalty": 1000.0
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "K": 30,
+            "penalty": 10.0
+          },
+          "cohort": "K30|p10",
+          "n": 400,
+          "delta": 0.064875,
+          "lo": 0.050625,
+          "hi": 0.07925312499999995
+        },
+        {
+          "config": {
+            "K": 30,
+            "penalty": 100.0
+          },
+          "cohort": "K30|p100",
+          "n": 400,
+          "delta": 0.040249999999999994,
+          "lo": 0.030625,
+          "hi": 0.049628124999999954
+        },
+        {
+          "config": {
+            "K": 30,
+            "penalty": 1000.0
+          },
+          "cohort": "K30|p1000",
+          "n": 400,
+          "delta": 0.016124999999999997,
+          "lo": 0.010249999999999999,
+          "hi": 0.022
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 10.0
+          },
+          "cohort": "K60|p10",
+          "n": 400,
+          "delta": 0.06625,
+          "lo": 0.051625,
+          "hi": 0.080875
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 100.0
+          },
+          "cohort": "K60|p100",
+          "n": 400,
+          "delta": 0.04025,
+          "lo": 0.030625,
+          "hi": 0.05
+        },
+        {
+          "config": {
+            "K": 60,
+            "penalty": 1000.0
+          },
+          "cohort": "K60|p1000",
+          "n": 400,
+          "delta": 0.017249999999999998,
+          "lo": 0.0115,
+          "hi": 0.023
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 10.0
+          },
+          "cohort": "K120|p10",
+          "n": 400,
+          "delta": 0.06724999999999999,
+          "lo": 0.052875,
+          "hi": 0.08199999999999999
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 100.0
+          },
+          "cohort": "K120|p100",
+          "n": 400,
+          "delta": 0.04025,
+          "lo": 0.03025,
+          "hi": 0.050124999999999996
+        },
+        {
+          "config": {
+            "K": 120,
+            "penalty": 1000.0
+          },
+          "cohort": "K120|p1000",
+          "n": 400,
+          "delta": 0.016124999999999997,
+          "lo": 0.009999999999999998,
+          "hi": 0.022375
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "GETTING THE PARTS: does a gene's COLUMN (how it responds) predict its ROW (what it does)?",
+    "====================================================================================================",
+    "  PREDECLARED: col > frequency => cold start has a measured input.",
+    "               chan_col > chan => columns carry what annotation cannot (the twin ceiling).",
+    "               col ~ col_perm  => columns are decorative and the idea is dead.",
+    "\n  readout 5,120 x 8,246; sealed 400; training pool 4,720",
+    "  genes with a column: 4,314 of 5,120 (84.3%)",
+    "    sealed cohort1: 188/200 have a column",
+    "    sealed _holdout: 191/200 have a column",
+    "  columns reduced 4,720 -> 128 dims, rotation fitted on training genes only (45.2% of training variance)",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  channels 696 dims | columns 128 dims",
+    "  K= 30 pen=  10: freq 0.1803 | chan 0.2495 | col 0.1980 | chan_col 0.2451 | col_perm 0.1711",
+    "  K= 30 pen= 100: freq 0.1803 | chan 0.2170 | col 0.1949 | chan_col 0.2205 | col_perm 0.1795",
+    "  K= 30 pen=1000: freq 0.1803 | chan 0.1940 | col 0.1866 | chan_col 0.1964 | col_perm 0.1812",
+    "  K= 60 pen=  10: freq 0.1803 | chan 0.2520 | col 0.1971 | chan_col 0.2465 | col_perm 0.1725",
+    "  K= 60 pen= 100: freq 0.1803 | chan 0.2201 | col 0.1958 | chan_col 0.2205 | col_perm 0.1791",
+    "  K= 60 pen=1000: freq 0.1803 | chan 0.1949 | col 0.1884 | chan_col 0.1975 | col_perm 0.1800",
+    "  K=120 pen=  10: freq 0.1803 | chan 0.2532 | col 0.1965 | chan_col 0.2475 | col_perm 0.1723",
+    "  K=120 pen= 100: freq 0.1803 | chan 0.2190 | col 0.1959 | chan_col 0.2205 | col_perm 0.1794",
+    "  K=120 pen=1000: freq 0.1803 | chan 0.1931 | col 0.1860 | chan_col 0.1964 | col_perm 0.1791",
+    "\n  SWEEP col - chan   axes[K,penalty]  9 cells\n  config                       cohort         delta                 95% CI\n  K=30 penalty=10.0            K30|p10      -0.0515 [ -0.0646, -0.0387] RES-\n  K=30 penalty=100.0           K30|p100     -0.0221 [ -0.0296, -0.0148] RES-\n  K=30 penalty=1000.0          K30|p1000    -0.0074 [ -0.0109, -0.0039] RES-\n  K=60 penalty=10.0            K60|p10      -0.0549 [ -0.0682, -0.0420] RES-\n  K=60 penalty=100.0           K60|p100     -0.0244 [ -0.0321, -0.0168] RES-\n  K=60 penalty=1000.0          K60|p1000    -0.0065 [ -0.0101, -0.0029] RES-\n  K=120 penalty=10.0           K120|p10     -0.0567 [ -0.0697, -0.0439] RES-\n  K=120 penalty=100.0          K120|p100    -0.0231 [ -0.0307, -0.0154] RES-\n  K=120 penalty=1000.0         K120|p1000   -0.0071 [ -0.0111, -0.0032] RES-\n  -> HARMFUL   resolved +0/-9 of 9 (>= 6 needed), sign-consistent True",
+    "\n  SWEEP chan_col - chan   axes[K,penalty]  9 cells\n  config                       cohort         delta                 95% CI\n  K=30 penalty=10.0            K30|p10      -0.0044 [ -0.0105, +0.0017] ns\n  K=30 penalty=100.0           K30|p100     +0.0035 [ -0.0020, +0.0091] ns\n  K=30 penalty=1000.0          K30|p1000    +0.0024 [ -0.0009, +0.0056] ns\n  K=60 penalty=10.0            K60|p10      -0.0055 [ -0.0115, +0.0005] ns\n  K=60 penalty=100.0           K60|p100     +0.0004 [ -0.0049, +0.0057] ns\n  K=60 penalty=1000.0          K60|p1000    +0.0026 [ -0.0006, +0.0059] ns\n  K=120 penalty=10.0           K120|p10     -0.0058 [ -0.0115, +0.0001] ns\n  K=120 penalty=100.0          K120|p100    +0.0015 [ -0.0045, +0.0075] ns\n  K=120 penalty=1000.0         K120|p1000   +0.0032 [ -0.0001, +0.0066] ns\n  -> NULL   resolved +0/-0 of 9 (>= 6 needed), sign-consistent False",
+    "\n  SWEEP col_perm - chan   axes[K,penalty]  9 cells\n  config                       cohort         delta                 95% CI\n  K=30 penalty=10.0            K30|p10      -0.0784 [ -0.0940, -0.0633] RES-\n  K=30 penalty=100.0           K30|p100     -0.0375 [ -0.0459, -0.0290] RES-\n  K=30 penalty=1000.0          K30|p1000    -0.0127 [ -0.0164, -0.0094] RES-\n  K=60 penalty=10.0            K60|p10      -0.0795 [ -0.0953, -0.0645] RES-\n  K=60 penalty=100.0           K60|p100     -0.0410 [ -0.0493, -0.0326] RES-\n  K=60 penalty=1000.0          K60|p1000    -0.0149 [ -0.0185, -0.0112] RES-\n  K=120 penalty=10.0           K120|p10     -0.0810 [ -0.0966, -0.0659] RES-\n  K=120 penalty=100.0          K120|p100    -0.0396 [ -0.0481, -0.0314] RES-\n  K=120 penalty=1000.0         K120|p1000   -0.0140 [ -0.0179, -0.0101] RES-\n  -> HARMFUL   resolved +0/-9 of 9 (>= 6 needed), sign-consistent True",
+    "\n  SWEEP chan_col - frequency   axes[K,penalty]  9 cells\n  config                       cohort         delta                 95% CI\n  K=30 penalty=10.0            K30|p10      +0.0649 [ +0.0506, +0.0793] RES+\n  K=30 penalty=100.0           K30|p100     +0.0402 [ +0.0306, +0.0496] RES+\n  K=30 penalty=1000.0          K30|p1000    +0.0161 [ +0.0102, +0.0220] RES+\n  K=60 penalty=10.0            K60|p10      +0.0663 [ +0.0516, +0.0809] RES+\n  K=60 penalty=100.0           K60|p100     +0.0403 [ +0.0306, +0.0500] RES+\n  K=60 penalty=1000.0          K60|p1000    +0.0172 [ +0.0115, +0.0230] RES+\n  K=120 penalty=10.0           K120|p10     +0.0672 [ +0.0529, +0.0820] RES+\n  K=120 penalty=100.0          K120|p100    +0.0403 [ +0.0302, +0.0501] RES+\n  K=120 penalty=1000.0         K120|p1000   +0.0161 [ +0.0100, +0.0224] RES+\n  -> ROBUST   resolved +9/-0 of 9 (>= 6 needed), sign-consistent True",
+    "\n  MEANS  frequency 0.1803 | chan 0.2214 | col 0.1932 | chan_col 0.2212 | col_perm 0.1771",
+    "\n  READING",
+    "  Columns add -0.0002, not resolved across the grid. Not a result; read the cells."
+  ]
+}

@@ -1,0 +1,62 @@
+{
+ "mean_sd": {
+  "base": [
+   0.4745,
+   0.037
+  ],
+  "+edge-feats": [
+   0.4556,
+   0.0508
+  ],
+  "+edge-bias": [
+   0.4931,
+   0.0454
+  ],
+  "+full": [
+   0.4803,
+   0.0337
+  ],
+  "+full SHUFFLED-etype (ctrl)": [
+   0.4726,
+   0.0383
+  ],
+  "TIDE-null": [
+   0.2488,
+   0.0118
+  ],
+  "ORACLE* (ceiling)": [
+   0.607,
+   0.0322
+  ],
+  "full wrong-KO shuffle (ctrl)": [
+   0.116,
+   0.0129
+  ]
+ },
+ "full_minus_base": [
+  0.0002,
+  0.0086,
+  0.0086
+ ],
+ "edgefeats_minus_base": [
+  -0.0327,
+  0.0197,
+  -0.0436
+ ],
+ "edgebias_minus_base": [
+  0.0275,
+  0.0213,
+  0.0071
+ ],
+ "full_minus_shuffled_etype": [
+  0.0203,
+  -0.0152,
+  0.0179
+ ],
+ "full_helps_all_splits": false,
+ "topology_control_passes": false,
+ "attribution": "edge-BIAS carries the lift (topology was NOT fully latent in the SVD -- explicit routing along real complexes/edges is needed)",
+ "headroom_used": 0.646,
+ "verdict": "TRANSFORMER v3 (transformer_ko3.py): v2 (CLS+InfoNCE-distillation+val-tuned weighted/hybrid transfer) + the user's fixes -- physics EDGE-FEATURES per partner (codep-cosine, log interface n_pdb, shared-complex count; the real magnitudes at scale, not a full ddG field) + Graphormer EDGE-CONDITIONED ATTENTION (learned per-head bias on edge-type + continuous codep-magnitude between every token pair). 3-split held-out K562 (tide-removed specific recall@50). ABLATION (mean+/-sd): base 0.474 | +edge-feats 0.456 | +edge-bias 0.493 | +full 0.480 | shuffled-etype 0.473 | oracle 0.607. +full - base = +0.006+/-0.004 (not a stable gain). ATTRIBUTION: +edge-bias +0.019, +edge-feats -0.019 -> edge-BIAS carries the lift (topology was NOT fully latent in the SVD -- explicit routing along real complexes/edges is needed). TOPOLOGY CONTROL: full vs shuffled-etype +0.008 -- the edge-bias does NOT clearly need real topology (treat the bias gain cautiously; it may be acting as generic regularisation). Head-room used 65% of tide->oracle. HONEST BOUND: still bounded by the ~0.62 retrieval ceiling (the physics helps the model ROUTE within the reproducible signal, it cannot create signal the 96h buffered data lacks -- breaking 0.62 needs transient kinetics, unavailable here). CPU, deterministic per split.",
+ "note": "TRANSFORMER v3 (transformer_ko3.py): v2 (CLS+InfoNCE-distillation+val-tuned weighted/hybrid transfer) + the user's fixes -- physics EDGE-FEATURES per partner (codep-cosine, log interface n_pdb, shared-complex count; the real magnitudes at scale, not a full ddG field) + Graphormer EDGE-CONDITIONED ATTENTION (learned per-head bias on edge-type + continuous codep-magnitude between every token pair). 3-split held-out K562 (tide-removed specific recall@50). ABLATION (mean+/-sd): base 0.474 | +edge-feats 0.456 | +edge-bias 0.493 | +full 0.480 | shuffled-etype 0.473 | oracle 0.607. +full - base = +0.006+/-0.004 (not a stable gain). ATTRIBUTION: +edge-bias +0.019, +edge-feats -0.019 -> edge-BIAS carries the lift (topology was NOT fully latent in the SVD -- explicit routing along real complexes/edges is needed). TOPOLOGY CONTROL: full vs shuffled-etype +0.008 -- the edge-bias does NOT clearly need real topology (treat the bias gain cautiously; it may be acting as generic regularisation). Head-room used 65% of tide->oracle. HONEST BOUND: still bounded by the ~0.62 retrieval ceiling (the physics helps the model ROUTE within the reproducible signal, it cannot create signal the 96h buffered data lacks -- breaking 0.62 needs transient kinetics, unavailable here). CPU, deterministic per split."
+}

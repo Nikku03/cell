@@ -1,0 +1,585 @@
+{
+ "test": "enhancer epigenome",
+ "gates": {
+  "G1": true,
+  "G2": false,
+  "G3": false,
+  "G4": false,
+  "G5": false,
+  "G6": true,
+  "G7": false,
+  "G8": false,
+  "G9": true,
+  "G10": true
+ },
+ "void": [
+  "G7"
+ ],
+ "n_pairs": 11933,
+ "n_pos": 482,
+ "n_el": 4482,
+ "n_gn": 2205,
+ "defined": {
+  "element": {
+   "el_k27me3": 1.0,
+   "el_ctcf": 1.0,
+   "el_k4me1": 1.0,
+   "el_k27me3_peak": 1.0,
+   "el_ctcf_peak": 1.0,
+   "el_k4me1_peak": 1.0,
+   "cat_high_k27ac": 1.0,
+   "cat_k27ac": 1.0,
+   "cat_no_k27ac": 1.0,
+   "cat_ctcf_element": 1.0,
+   "cat_k27me3_element": 1.0,
+   "el_k4me3_cov": 1.0,
+   "el_k4me3_sig": 1.0,
+   "el_me1_minus_me3": 1.0,
+   "el_5mc": 0.9799196787148594,
+   "el_ncpg": 1.0,
+   "el_cpg_dens": 1.0
+  },
+  "promoter": {
+   "pr_k4me3_cov": 1.0,
+   "pr_k4me3_sig": 1.0,
+   "pr_5mc": 0.999546485260771,
+   "pr_ncpg": 1.0
+  }
+ },
+ "category_rate": {
+  "High H3K27ac": {
+   "n": 4254,
+   "pos": 344,
+   "rate": 0.08086506817113305
+  },
+  "H3K27ac": {
+   "n": 5452,
+   "pos": 122,
+   "rate": 0.022377109317681585
+  },
+  "No H3K27ac": {
+   "n": 1187,
+   "pos": 7,
+   "rate": 0.005897219882055603
+  },
+  "CTCF element": {
+   "n": 976,
+   "pos": 9,
+   "rate": 0.009221311475409836
+  },
+  "H3K27me3 element": {
+   "n": 64,
+   "pos": 0,
+   "rate": 0.0
+  }
+ },
+ "directions": {
+  "el_k27me3": {
+   "predicted": "lower",
+   "median_pos": 0.1006740971412281,
+   "median_neg": 0.08859354089857718,
+   "p": 0.9999612116741319,
+   "holds": false
+  },
+  "el_5mc": {
+   "predicted": "lower",
+   "median_pos": NaN,
+   "median_neg": NaN,
+   "p": NaN,
+   "holds": false
+  },
+  "el_k4me1": {
+   "predicted": "higher",
+   "median_pos": 0.5661407292606123,
+   "median_neg": 0.43678246613783717,
+   "p": 1.0260290984871869e-29,
+   "holds": true
+  }
+ },
+ "arms": {
+  "base": {
+   "r1": [
+    0.592964824120603,
+    0.6130653266331658,
+    0.5778894472361809,
+    0.6180904522613065,
+    0.6080402010050251
+   ],
+   "ap": [
+    0.30260185577031584,
+    0.3287847881594063,
+    0.32348946945808404,
+    0.3204824357258981,
+    0.3345418287490969
+   ],
+   "r1_mean": 0.6020100502512562,
+   "ap_mean": 0.32198007557256025
+  },
+  "+repressive": {
+   "r1": [
+    0.5979899497487438,
+    0.6331658291457286,
+    0.628140703517588,
+    0.6130653266331658,
+    0.628140703517588
+   ],
+   "ap": [
+    0.37185961383251664,
+    0.3688338093690704,
+    0.36493088894673065,
+    0.3666294638999931,
+    0.375845949702634
+   ],
+   "r1_mean": 0.6201005025125628,
+   "ap_mean": 0.369619945150189
+  },
+  "+me1me3": {
+   "r1": [
+    0.6381909547738693,
+    0.6080402010050251,
+    0.592964824120603,
+    0.5829145728643216,
+    0.6180904522613065
+   ],
+   "ap": [
+    0.32454619245403393,
+    0.34120418793478946,
+    0.3396228598979315,
+    0.3244817200933536,
+    0.34040416914567506
+   ],
+   "r1_mean": 0.6080402010050252,
+   "ap_mean": 0.3340518259051567
+  },
+  "+methyl": {
+   "r1": [
+    0.6130653266331658,
+    0.6180904522613065,
+    0.6130653266331658,
+    0.6080402010050251,
+    0.6030150753768844
+   ],
+   "ap": [
+    0.32934685776889394,
+    0.3288900566777693,
+    0.3279396111153606,
+    0.32289955144904675,
+    0.35380339626552426
+   ],
+   "r1_mean": 0.6110552763819095,
+   "ap_mean": 0.33257589465531895
+  },
+  "+promoter": {
+   "r1": [
+    0.6180904522613065,
+    0.6180904522613065,
+    0.6030150753768844,
+    0.6130653266331658,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.3497325945009597,
+    0.3538254049497509,
+    0.3495207043028357,
+    0.33611226975608616,
+    0.363038314340018
+   ],
+   "r1_mean": 0.6100502512562814,
+   "ap_mean": 0.3504458575699301
+  },
+  "+promoter_perm": {
+   "r1": [
+    0.6080402010050251,
+    0.628140703517588,
+    0.6030150753768844,
+    0.5829145728643216,
+    0.6180904522613065
+   ],
+   "ap": [
+    0.29886061071746467,
+    0.3107901455797075,
+    0.30909006372976605,
+    0.2977527920053484,
+    0.3152893899869694
+   ],
+   "r1_mean": 0.6080402010050252,
+   "ap_mean": 0.30635660040385126
+  },
+  "+epi_all": {
+   "r1": [
+    0.6331658291457286,
+    0.6180904522613065,
+    0.6482412060301508,
+    0.6130653266331658,
+    0.628140703517588
+   ],
+   "ap": [
+    0.41026062809945124,
+    0.4008937173244374,
+    0.4002417230878545,
+    0.39535912373132,
+    0.4209381111574175
+   ],
+   "r1_mean": 0.6281407035175879,
+   "ap_mean": 0.4055386606800961
+  },
+  "l185": {
+   "r1": [
+    0.6884422110552764,
+    0.6683417085427136,
+    0.6683417085427136,
+    0.6633165829145728,
+    0.678391959798995
+   ],
+   "ap": [
+    0.4728131959672758,
+    0.4851845184173767,
+    0.4896759808510832,
+    0.49214614724538935,
+    0.5004481858942802
+   ],
+   "r1_mean": 0.6733668341708543,
+   "ap_mean": 0.48805360567508105
+  },
+  "l185+epi": {
+   "r1": [
+    0.6884422110552764,
+    0.6582914572864321,
+    0.6834170854271356,
+    0.6733668341708543,
+    0.6834170854271356
+   ],
+   "ap": [
+    0.4939336433697962,
+    0.49179464732110934,
+    0.4981563706395533,
+    0.49466644934872606,
+    0.5046945114186844
+   ],
+   "r1_mean": 0.6773869346733667,
+   "ap_mean": 0.4966491244195739
+  },
+  "distance": {
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ],
+   "r1_mean": 0.592964824120603,
+   "ap_mean": 0.28444394940881107
+  }
+ },
+ "paired": {
+  "G3": {
+   "d_r1": [
+    0.005025125628140725,
+    0.02010050251256279,
+    0.05025125628140714,
+    -0.005025125628140725,
+    0.0201005025125629
+   ],
+   "d_ap": [
+    0.0692577580622008,
+    0.04004902120966408,
+    0.0414414194886466,
+    0.04614702817409505,
+    0.04130412095353714
+   ],
+   "mean_r1": 0.018090452261306567,
+   "sem_r1": 0.009347273988813222,
+   "mean_ap": 0.04763986957762874,
+   "n_pos_r1": 4,
+   "n_ap_pass": 5
+  },
+  "G4": {
+   "d_r1": [
+    0.045226130653266305,
+    -0.005025125628140725,
+    0.015075376884422176,
+    -0.035175879396984966,
+    0.01005025125628145
+   ],
+   "d_ap": [
+    0.02194433668371809,
+    0.012419399775383144,
+    0.01613339043984746,
+    0.003999284367455502,
+    0.005862340396578181
+   ],
+   "mean_r1": 0.006030150753768848,
+   "sem_r1": 0.01314240887499701,
+   "mean_ap": 0.012071750332596476,
+   "n_pos_r1": 3,
+   "n_ap_pass": 3
+  },
+  "G5": {
+   "d_r1": [
+    0.02010050251256279,
+    0.005025125628140725,
+    0.035175879396984966,
+    -0.01005025125628145,
+    -0.005025125628140725
+   ],
+   "d_ap": [
+    0.0267450019985781,
+    0.00010526851836301088,
+    0.0044501416572765295,
+    0.0024171157231486773,
+    0.01926156751642738
+   ],
+   "mean_r1": 0.00904522613065326,
+   "sem_r1": 0.00831806299359139,
+   "mean_ap": 0.01059581908275874,
+   "n_pos_r1": 3,
+   "n_ap_pass": 2
+  },
+  "G6": {
+   "d_r1": [
+    0.025125628140703515,
+    0.005025125628140725,
+    0.025125628140703515,
+    -0.005025125628140725,
+    -0.01005025125628134
+   ],
+   "d_ap": [
+    0.047130738730643884,
+    0.025040616790344583,
+    0.02603123484475167,
+    0.015629834030188083,
+    0.028496485590921106
+   ],
+   "mean_r1": 0.008040201005025139,
+   "sem_r1": 0.007385396209396509,
+   "mean_ap": 0.028465781997369866,
+   "n_pos_r1": 3,
+   "n_ap_pass": 5
+  },
+  "G7": {
+   "d_r1": [
+    0.01005025125628145,
+    -0.01005025125628145,
+    0.0,
+    0.03015075376884424,
+    -0.02010050251256279
+   ],
+   "d_ap": [
+    0.050871983783495056,
+    0.04303525937004338,
+    0.040430640573069665,
+    0.03835947775073778,
+    0.04774892435304856
+   ],
+   "mean_r1": 0.0020100502512562903,
+   "sem_r1": 0.00864555303220365,
+   "mean_ap": 0.044089257166078887,
+   "n_pos_r1": 2,
+   "n_ap_pass": 5
+  },
+  "G8": {
+   "d_r1": [
+    0.0,
+    -0.01005025125628145,
+    0.015075376884422065,
+    0.01005025125628145,
+    0.005025125628140614
+   ],
+   "d_ap": [
+    0.021120447402520448,
+    0.006610128903732637,
+    0.0084803897884701,
+    0.0025203021033367023,
+    0.004246325524404182
+   ],
+   "mean_r1": 0.0040201005025125355,
+   "sem_r1": 0.004322776516101826,
+   "mean_ap": 0.008595518744492815,
+   "n_pos_r1": 3,
+   "n_ap_pass": 1
+  },
+  "G9": {
+   "d_r1": [
+    0.10552763819095479,
+    0.07035175879396982,
+    0.08542713567839189,
+    0.07537688442211055,
+    0.08542713567839189
+   ],
+   "d_ap": [
+    0.21102859794935974,
+    0.2100901575927025,
+    0.20898414305772806,
+    0.20484005682556922,
+    0.22608291962845456
+   ],
+   "mean_r1": 0.08442211055276379,
+   "sem_r1": 0.006030150753768849,
+   "mean_ap": 0.21220517501076283,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  }
+ },
+ "best_arm": "l185+epi",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/epigenome/k562_marks.npz",
+    "bytes": 127621,
+    "hash": "6863ae130c27d8bf",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 11933,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 188188,
+  "controls": [
+   "promoter marks permuted across genes, every value kept",
+   "three signed direction predictions made before the comparison",
+   "the decisive arm judged over loop 185's best stack, not the base",
+   "distance-only on identical folds"
+  ],
+  "note": "epigenetic marks over the CRISPR element-gene benchmark",
+  "warnings": []
+ },
+ "seconds": 258.5742881298065,
+ "log": [
+  "========================================================================================================",
+  "LOOP 188  THE EPIGENETIC LAYER: does chromatin state say which element a gene uses?",
+  "========================================================================================================",
+  "  PREDECLARED: every element column finite for >= 95% of elements and",
+  "  every promoter column for >= 90% of promoters; three SIGNED direction",
+  "  predictions -- H3K27me3 lower, 5mC lower, H3K4me1 higher in functional pairs -- all",
+  "  three required at one-sided p < 0.05; every increment arm on loop 173's E3 bar,",
+  "  paired R@1 positive in >= 4/5 past 3 sem AND paired AUPRC >= +0.01 in >= 4/5; the promoter arm gated on AUPRC only, because",
+  "  predeclaring an R@1 ceiling for it would repeat loop 185 Z6's refuted mistake; the",
+  "  promoter marks must not be permutable across genes at no cost; the decisive arm judged",
+  "  on top of loop 185's best stack rather than the bare base; and the winner must clear",
+  "  distance-only R@1 0.593.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    11,933 element-gene pairs, 482 functional, 4,482 elements, 2,205 genes",
+  "    epigenome from cache: k562_marks.npz",
+  "     benchmark marks joined for 4,482/4,482 elements",
+  "",
+  "G1 DOES THE MARK LAYER JOIN?",
+  "     element columns: 17, worst defined el_5mc at 98.0%",
+  "     promoter columns: 4, worst defined pr_5mc at 100.0%",
+  "     peak overlap, for description rather than for the gate: H3K27me3 1.3%, CTCF 22.5%, H3K4me1 80.4% of elements; H3K4me3 covers 17.7% of elements and 94.1% of promoters",
+  "     positive rate by chromatin category (a discretisation of columns entered beside it):",
+  "       High H3K27ac          4,254 pairs   8.09% functional",
+  "       H3K27ac               5,452 pairs   2.24% functional",
+  "       No H3K27ac            1,187 pairs   0.59% functional",
+  "       CTCF element            976 pairs   0.92% functional",
+  "       H3K27me3 element         64 pairs   0.00% functional",
+  "     G1 PASS -- every column is defined for essentially every element and promoter, so an arm that fails below fails on the mark and not on absence",
+  "",
+  "G2 DO THE MARKS POINT THE WAY THEY SHOULD?",
+  "     el_k27me3    predicted lower   median functional +0.1007 vs +0.0886   one-sided p 1   REFUTED",
+  "     el_5mc       predicted lower   median functional +nan vs +nan   one-sided p nan   REFUTED",
+  "     el_k4me1     predicted higher  median functional +0.5661 vs +0.4368   one-sided p 1.03e-29   HOLDS",
+  "     el_ctcf      UNSIGNED -- reported only: median functional +0.2710 vs +0.2451   two-sided p 0.158",
+  "     el_k4me3_sig UNSIGNED -- reported only: median functional +0.0000 vs +0.0000   two-sided p 0.00321",
+  "     G2 FAIL -- el_k27me3, el_5mc does not run the predicted way; any arm that gains from it is gaining from something other than the mechanism the mark was chosen for",
+  "",
+  "   building the reference stacks",
+  "     base motif+shape stack: 85 columns",
+  "     loop 185's best stack: 99 columns",
+  "",
+  "   running the arms",
+  "    base motif+shape                           R@1 0.6020 +/- 0.0074   AUPRC 0.3220",
+  "    base +repressive (K27me3, CTCF, category)  R@1 0.6201 +/- 0.0065   AUPRC 0.3696",
+  "    base +H3K4me1/me3                          R@1 0.6080 +/- 0.0097   AUPRC 0.3341",
+  "    base +5mC                                  R@1 0.6111 +/- 0.0026   AUPRC 0.3326",
+  "    base +promoter marks                       R@1 0.6101 +/- 0.0041   AUPRC 0.3504",
+  "    base +promoter marks PERMUTED across genes R@1 0.6080 +/- 0.0076   AUPRC 0.3064",
+  "    base +all epigenetic                       R@1 0.6281 +/- 0.0062   AUPRC 0.4055",
+  "    loop 185 best stack                        R@1 0.6734 +/- 0.0045   AUPRC 0.4881",
+  "    loop 185 best stack +all epigenetic        R@1 0.6774 +/- 0.0054   AUPRC 0.4966",
+  "    distance only                              R@1 0.5930 +/- 0.0032   AUPRC 0.2844",
+  "",
+  "G3 THE REPRESSIVE AND INSULATING ARM",
+  "     dR@1 +0.0181 +/- 0.0093 (4/5 up)   dAUPRC +0.0476 (5/5 >= 0.01)",
+  "     G3 FAIL -- the block does not clear the E3 bar; on this benchmark it adds nothing the motif and shape columns did not have",
+  "",
+  "G4 THE ENHANCER/PROMOTER DISCRIMINATOR",
+  "     dR@1 +0.0060 +/- 0.0131 (3/5 up)   dAUPRC +0.0121 (3/5 >= 0.01)",
+  "     G4 FAIL -- the block does not clear the E3 bar; on this benchmark it adds nothing the motif and shape columns did not have",
+  "",
+  "G5 DNA METHYLATION",
+  "     dR@1 +0.0090 +/- 0.0083 (3/5 up)   dAUPRC +0.0106 (2/5 >= 0.01)",
+  "     G5 FAIL -- the block does not clear the E3 bar; on this benchmark it adds nothing the motif and shape columns did not have",
+  "",
+  "G6 THE PROMOTER SIDE",
+  "     dR@1 +0.0080 +/- 0.0074 (3/5 up)   dAUPRC +0.0285 (5/5 >= 0.01)",
+  "     the promoter columns are constant across a gene's candidates, so an additive main",
+  "     effect cannot reorder them; any R@1 movement here is an interaction with the element",
+  "     columns, and G7 tests whether that interaction is gene-specific",
+  "     G6 PASS -- AUPRC up in 5/5 seeds, which is the channel a gene-level column has; R@1 moved +0.0080 and is reported rather than gated",
+  "",
+  "G7 IS THE PROMOTER SIDE GENE-SPECIFIC?",
+  "     real minus permuted: dR@1 +0.0020 +/- 0.0086 (2/5 up)   dAUPRC +0.0441 (5/5 >= 0.01)",
+  "     G7 VOID -- G6's arm did not move R@1 (+0.0080 +/- 0.0074, 3/5 up), so there is no gene-by-element interaction for this permutation to destroy and a verdict either way would be a statement about nothing",
+  "",
+  "G8 THE DECISIVE ONE: the epigenetic block on top of loop 185's best stack",
+  "     dR@1 +0.0040 +/- 0.0043 (3/5 up)   dAUPRC +0.0086 (1/5 >= 0.01)",
+  "     loop 185 best R@1 0.6734  ->  with epigenetics 0.6774",
+  "     G8 FAIL -- the epigenetic block adds nothing on top of co-binding, accessibility and the network match. Those columns already carry whatever the marks were going to say",
+  "",
+  "G9 AGAINST DISTANCE ALONE",
+  "     best arm is 'l185+epi' at R@1 0.6774; distance only 0.5930",
+  "     dR@1 +0.0844 +/- 0.0060 (5/5 up)   dAUPRC +0.2122 (5/5 >= 0.01)",
+  "     G9 PASS -- 0.6774 clears distance-only 0.593 on the bar every loop in this arc is held to",
+  "",
+  "G10 WHAT THIS CANNOT SHOW",
+  "     The candidate elements were chosen by the screen designers using accessibility and",
+  "     H3K27ac, so every element here is already enhancer-like. These marks are separating",
+  "     functional from non-functional inside a pre-enriched pool. Nothing here says how they",
+  "     would perform at finding enhancers in unselected genome.",
+  "     elementChromatinCategory is a discretisation of H3K27ac, CTCF and H3K27me3, which are",
+  "     entered as columns beside it. It is compact, not independent, and a gain that came",
+  "     only from it would be a gain from re-binning columns already present.",
+  "     Bulk K562 marks average over a population. An element that is Polycomb-marked in half",
+  "     the cells and acetylated in the other half reads as both, and no bulk assay can",
+  "     separate that from an element carrying both marks in every cell.",
+  "     H3K4me1 and H3K27me3 come from the benchmark as RPM; H3K4me3 comes from ENCODE",
+  "     replicated peaks as coverage and signal. The me1-minus-me3 contrast therefore mixes",
+  "     units and is an ordering device, not a physical ratio. The raw columns are entered",
+  "     beside it so nothing depends on that contrast alone.",
+  "     Marks are correlational. A mark that predicts function is not thereby a cause of it,",
+  "     and this loop has no perturbation of any mark to distinguish the two.",
+  "     G10 PASS",
+  "",
+  "========================================================================================================",
+  "  G1  PASS",
+  "  G2  FAIL",
+  "  G3  FAIL",
+  "  G4  FAIL",
+  "  G5  FAIL",
+  "  G6  PASS",
+  "  G7  VOID",
+  "  G8  FAIL",
+  "  G9  PASS",
+  "  G10  PASS",
+  "  4/9   [259s]   (1 VOID: G7)",
+  "========================================================================================================"
+ ]
+}

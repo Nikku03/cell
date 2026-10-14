@@ -1,0 +1,94 @@
+=================================================================================================
+COMPOSING THE GUARANTEE ACROSS LEVELS AND ADAPTIVE DECISIONS
+=================================================================================================
+
+  7 pruning levels, mass-selected, 10 controllers, n = 1024. sha 9b909319ccc8.
+
+     level      dropped       true cert    share
+         1           24    4.138681e-75    0.10%
+         2    1,023,000    4.225322e-72   98.41%
+         3    1,023,000    6.399304e-74    1.49%
+         4    1,023,000    8.552906e-77    0.00%
+         5    1,023,000    6.069607e-81    0.00%
+         6    1,023,000    3.297560e-87    0.00%
+         7    1,023,000    5.316948e-97    0.00%
+
+  TRUE TOTAL DEFICIT BOUND, summed over levels: 4.293539e-72
+  This is the object a composed guarantee has to cover. It is a sum of level-wise subtree
+  bounds, which is the correct composition -- a subtree bound already covers that prefix's
+  whole contribution to the final tail, so dropping it costs at most that much.
+
+=================================================================================================
+Z0  THE CEILING GATE: END-TO-END COVERAGE OF THE NAIVE COMPOSITION
+=================================================================================================
+  Each of the 7 levels certified at nominal 95%. A union bound guarantees only 65%.
+
+     samples/level   coverage   median total/true
+               100     100.0%               2.393
+               300     100.0%               1.485
+             1,000     100.0%               1.161
+             3,000     100.0%               1.061
+
+  Z0: worst end-to-end coverage 100.0% against a nominal 95% and a union-bound
+  guarantee of 65%. THE NAIVE COMPOSITION COVERS. The union bound is a worst case that does not bind here -- and the reason is that each level s bound is far more conservative than its nominal, which certcover measured as 100% coverage where 95% was claimed. The gap is REAL IN PRINCIPLE AND ABSENT IN PRACTICE AT THIS SCALE, which is not the same as closed.
+
+=================================================================================================
+Z1  ALLOCATING A TOTAL FAILURE BUDGET: delta/K PER LEVEL
+=================================================================================================
+
+     samples/level   coverage   median total/true   vs naive
+               100     100.0%               3.022     1.263x
+               300     100.0%               1.702     1.146x
+             1,000     100.0%               1.229     1.058x
+             3,000     100.0%               1.085     1.023x
+
+  Z1: valid by the union bound whenever the schedule of calls is fixed in advance. The
+  last column is the price of that validity at equal sample size.
+
+=================================================================================================
+Z2  ADAPTIVITY, WHERE THE FIXED-TIME CONSTRUCTION SHOULD BREAK
+=================================================================================================
+  A genuinely adaptive rule: take a pilot sample everywhere, then spend the remaining
+  budget on whichever levels look largest. The sample size at each level now depends on
+  data already seen, and a fixed-time bound applied at a data-dependent size is not valid.
+
+    construction        pilot+extra   coverage   median total/true
+    fixed-time             100+2000     100.0%               1.199
+    fixed-time             300+6000     100.0%               1.073
+    sequential             100+2000     100.0%               1.352
+    sequential             300+6000     100.0%               1.129
+
+  Z2 AS PREDECLARED: the fixed-time construction covers 100.0% under the adaptive rule;
+  the sequential one covers 100.0%.
+  THE FIXED-TIME BOUND DID NOT BREAK, AND THAT IS NOT PERMISSION. It is invalid under
+  a data-dependent sample size regardless of what it does here; the reason it survives
+  is the same slack certcover found, not a property of the construction. Reporting it
+  as adequate would repeat exactly the error that made sampcert's 10,039x need
+  relabelling.
+
+=================================================================================================
+Z3  THE SEQUENTIAL CONSTRUCTION'S PRICE, AND Z4 THE RECOMMENDATION
+=================================================================================================
+
+    construction                       valid under                  median total/true
+    per-level 95%, summed              nothing -- 65% guaranteed                1.161
+    failure budget delta/K             a fixed schedule of calls                1.073
+    sequential, delta/K per level      optional stopping, adaptive               1.129
+
+  Z4 THE RECOMMENDATION. The engine's certificate is a SUM over levels, so the failure
+  budget composes additively and delta/K per level is the right default whenever the
+  schedule of calls is fixed. The moment the engine uses its own certificates to decide
+  where to spend -- which is the whole point of an adaptive pruner -- that construction
+  stops being valid and the sequential one is required. Its price is the last column.
+
+=================================================================================================
+Z5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. The partitions here are MASS-selected and therefore fixed given the chain. A pruner
+     that selected using the sampled certificates would make the partitions themselves
+     random, and nothing here covers that -- the sequential bound handles adaptive SAMPLE
+     SIZES, not adaptive PARTITIONS.
+  2. Coverage is measured against the true summed bound, which needed a full scan per
+     level to know. This validates the composition, not any run of it.
+  3. The object composed is the certificate, not the tail. exactcert's finding stands:
+     the bound being composed is far looser than the quantity it bounds.

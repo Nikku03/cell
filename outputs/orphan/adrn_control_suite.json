@@ -1,0 +1,426 @@
+{
+ "model": "adrn-control-suite-v1",
+ "smoke": false,
+ "seeds": 4,
+ "epochs": 45,
+ "budget": 12000,
+ "T": 12,
+ "results": {
+  "1 temporal XOR": {
+   "1 MLP": {
+    "mean": 0.544921875,
+    "sd": 0.030550438038151214,
+    "per_seed": [
+     0.5390625,
+     0.578125,
+     0.556640625,
+     0.505859375
+    ]
+   },
+   "2 GRU": {
+    "mean": 0.48486328125,
+    "sd": 0.034476021952670084,
+    "per_seed": [
+     0.51953125,
+     0.470703125,
+     0.443359375,
+     0.505859375
+    ]
+   },
+   "3 point-spiking LIF": {
+    "mean": 0.51318359375,
+    "sd": 0.011541079362783747,
+    "per_seed": [
+     0.517578125,
+     0.51171875,
+     0.498046875,
+     0.525390625
+    ]
+   },
+   "4 small Transformer": {
+    "mean": 0.77490234375,
+    "sd": 0.19736148532035847,
+    "per_seed": [
+     0.8828125,
+     0.755859375,
+     0.955078125,
+     0.505859375
+    ]
+   },
+   "5 ADRN no dendrites": {
+    "mean": 0.5146484375,
+    "sd": 0.01982205383807074,
+    "per_seed": [
+     0.53515625,
+     0.5078125,
+     0.525390625,
+     0.490234375
+    ]
+   },
+   "6 ADRN no structural": {
+    "mean": 0.58740234375,
+    "sd": 0.057085069319044855,
+    "per_seed": [
+     0.509765625,
+     0.5859375,
+     0.64453125,
+     0.609375
+    ]
+   },
+   "7 ADRN no fast/slow": {
+    "mean": 0.5078125,
+    "sd": 0.04216217411117754,
+    "per_seed": [
+     0.541015625,
+     0.453125,
+     0.541015625,
+     0.49609375
+    ]
+   },
+   "8 ADRN full": {
+    "mean": 0.53173828125,
+    "sd": 0.07852072628017653,
+    "per_seed": [
+     0.486328125,
+     0.484375,
+     0.6484375,
+     0.5078125
+    ]
+   }
+  },
+  "2 delayed association": {
+   "1 MLP": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "2 GRU": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "3 point-spiking LIF": {
+    "mean": 0.978515625,
+    "sd": 0.012145024808709394,
+    "per_seed": [
+     0.97265625,
+     0.99609375,
+     0.9765625,
+     0.96875
+    ]
+   },
+   "4 small Transformer": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "5 ADRN no dendrites": {
+    "mean": 0.99853515625,
+    "sd": 0.0009765625,
+    "per_seed": [
+     0.998046875,
+     1.0,
+     0.998046875,
+     0.998046875
+    ]
+   },
+   "6 ADRN no structural": {
+    "mean": 0.9990234375,
+    "sd": 0.0011276372445109878,
+    "per_seed": [
+     0.998046875,
+     1.0,
+     1.0,
+     0.998046875
+    ]
+   },
+   "7 ADRN no fast/slow": {
+    "mean": 0.9990234375,
+    "sd": 0.0011276372445109878,
+    "per_seed": [
+     0.998046875,
+     1.0,
+     1.0,
+     0.998046875
+    ]
+   },
+   "8 ADRN full": {
+    "mean": 0.998046875,
+    "sd": 0.001594719884624465,
+    "per_seed": [
+     0.99609375,
+     1.0,
+     0.998046875,
+     0.998046875
+    ]
+   }
+  },
+  "3 context-dependent map": {
+   "1 MLP": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "2 GRU": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "3 point-spiking LIF": {
+    "mean": 0.9990234375,
+    "sd": 0.0011276372445109878,
+    "per_seed": [
+     0.998046875,
+     1.0,
+     0.998046875,
+     1.0
+    ]
+   },
+   "4 small Transformer": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "5 ADRN no dendrites": {
+    "mean": 0.5556640625,
+    "sd": 0.12117247944723515,
+    "per_seed": [
+     0.482421875,
+     0.736328125,
+     0.490234375,
+     0.513671875
+    ]
+   },
+   "6 ADRN no structural": {
+    "mean": 0.81298828125,
+    "sd": 0.13692669268301222,
+    "per_seed": [
+     0.7109375,
+     0.84375,
+     0.994140625,
+     0.703125
+    ]
+   },
+   "7 ADRN no fast/slow": {
+    "mean": 0.6552734375,
+    "sd": 0.22251057460387558,
+    "per_seed": [
+     0.486328125,
+     0.494140625,
+     0.9609375,
+     0.6796875
+    ]
+   },
+   "8 ADRN full": {
+    "mean": 0.58154296875,
+    "sd": 0.25397322333863137,
+    "per_seed": [
+     0.486328125,
+     0.515625,
+     0.951171875,
+     0.373046875
+    ]
+   }
+  }
+ },
+ "params": {
+  "1 MLP": 11870,
+  "2 GRU": 11625,
+  "3 point-spiking LIF": 11980,
+  "4 small Transformer": 11018,
+  "5 ADRN no dendrites": 11986,
+  "6 ADRN no structural": 11575,
+  "7 ADRN no fast/slow": 11575,
+  "8 ADRN full": 11575
+ },
+ "energy": {
+  "1 temporal XOR": {
+   "1 MLP": NaN,
+   "2 GRU": NaN,
+   "3 point-spiking LIF": NaN,
+   "4 small Transformer": NaN,
+   "5 ADRN no dendrites": 160.85600662231445,
+   "6 ADRN no structural": 409.89034271240234,
+   "7 ADRN no fast/slow": 149.9739475250244,
+   "8 ADRN full": 306.8730773925781
+  },
+  "2 delayed association": {
+   "1 MLP": NaN,
+   "2 GRU": NaN,
+   "3 point-spiking LIF": NaN,
+   "4 small Transformer": NaN,
+   "5 ADRN no dendrites": 475.40169525146484,
+   "6 ADRN no structural": 751.3214874267578,
+   "7 ADRN no fast/slow": 552.2947235107422,
+   "8 ADRN full": 638.2174072265625
+  },
+  "3 context-dependent map": {
+   "1 MLP": NaN,
+   "2 GRU": NaN,
+   "3 point-spiking LIF": NaN,
+   "4 small Transformer": NaN,
+   "5 ADRN no dendrites": 162.0752182006836,
+   "6 ADRN no structural": 474.51220703125,
+   "7 ADRN no fast/slow": 204.3959846496582,
+   "8 ADRN full": 316.2817611694336
+  }
+ },
+ "firing_rate": {
+  "1 temporal XOR": {
+   "1 MLP": NaN,
+   "2 GRU": NaN,
+   "3 point-spiking LIF": 89.2001953125,
+   "4 small Transformer": NaN,
+   "5 ADRN no dendrites": 224.80419921875,
+   "6 ADRN no structural": 217.2568359375,
+   "7 ADRN no fast/slow": 212.6435546875,
+   "8 ADRN full": 234.232421875
+  },
+  "2 delayed association": {
+   "1 MLP": NaN,
+   "2 GRU": NaN,
+   "3 point-spiking LIF": 288.31494140625,
+   "4 small Transformer": NaN,
+   "5 ADRN no dendrites": 608.87451171875,
+   "6 ADRN no structural": 391.80712890625,
+   "7 ADRN no fast/slow": 320.56591796875,
+   "8 ADRN full": 355.58984375
+  },
+  "3 context-dependent map": {
+   "1 MLP": NaN,
+   "2 GRU": NaN,
+   "3 point-spiking LIF": 141.44384765625,
+   "4 small Transformer": NaN,
+   "5 ADRN no dendrites": 234.48583984375,
+   "6 ADRN no structural": 251.8046875,
+   "7 ADRN no fast/slow": 264.68603515625,
+   "8 ADRN full": 221.77490234375
+  }
+ },
+ "gates": {
+  "1 temporal XOR: ADRN beats best baseline (4 small Transformer)": false,
+  "1 temporal XOR: dendrites contribute": false,
+  "2 delayed association: ADRN beats best baseline (2 GRU)": false,
+  "2 delayed association: dendrites contribute": false,
+  "3 context-dependent map: ADRN beats best baseline (2 GRU)": false,
+  "3 context-dependent map: dendrites contribute": false
+ },
+ "gaps": {
+  "1 temporal XOR": {
+   "best_baseline": "4 small Transformer",
+   "gap": -0.2431640625,
+   "mde": 0.25751825360533454,
+   "adrn": 0.53173828125,
+   "baseline": 0.77490234375,
+   "dendrite_gap": 0.01708984375
+  },
+  "2 delayed association": {
+   "best_baseline": "2 GRU",
+   "gap": -0.001953125,
+   "mde": 0.002392079826936697,
+   "adrn": 0.998046875,
+   "baseline": 1.0,
+   "dendrite_gap": -0.00048828125
+  },
+  "3 context-dependent map": {
+   "best_baseline": "2 GRU",
+   "gap": -0.41845703125,
+   "mde": 0.38095983500794706,
+   "adrn": 0.58154296875,
+   "baseline": 1.0,
+   "dendrite_gap": 0.02587890625
+  }
+ },
+ "baseline_ceiling": {
+  "1 temporal XOR": 0.77490234375,
+  "2 delayed association": 1.0,
+  "3 context-dependent map": 1.0
+ },
+ "unit_of_replication": "seed (independent init AND independent data draw)",
+ "limits": [
+  "these are SYNTHETIC tasks chosen because the ADRN spec nominates them; success here is a prerequisite for interpreting ADRN elsewhere and is NOT evidence about biology",
+  "the parameter budget is matched but the compute budget is not -- ADRN runs T internal steps per example and is therefore slower per parameter than the MLP or GRU. Energy is reported for ADRN arms only because the baselines have no spike/event count to report",
+  "the outer loop trains developmental parameters by backprop through the unrolled dynamics with a surrogate spike gradient; the inner local rules run without gradient. A pure local-only arm is available via local_only=True and is NOT run here",
+  "the MLP baseline receives the WHOLE sequence flattened, so it does not have to solve these tasks temporally at all -- it is the hardest baseline here for that reason and beating it is a stronger claim than beating the GRU",
+  "T is fixed for the baselines and adaptive for ADRN via the halting rule, so ADRN may use fewer effective steps; the realised step count is in the per-episode info dict"
+ ],
+ "verdict": "ADRN POSITIVE CONTROL: 0/6 gates. On 1 temporal XOR, ADRN reaches 0.5317 against the best baseline (4 small Transformer) at 0.7749, a gap of -0.2432 against an MDE of 0.2575; the dendrite ablation costs +0.0171. On 2 delayed association, ADRN reaches 0.9980 against the best baseline (2 GRU) at 1.0000, a gap of -0.0020 against an MDE of 0.0024; the dendrite ablation costs -0.0005. On 3 context-dependent map, ADRN reaches 0.5815 against the best baseline (2 GRU) at 1.0000, a gap of -0.4185 against an MDE of 0.3810; the dendrite ablation costs +0.0259. Every arm is built to a matched budget of ~12,000 parameters and the realised counts are reported per arm, so no baseline loses for being smaller. The unit of replication is the SEED (4 independent initialisations and data draws), not an epoch and not a batch. THIS IS A PREREQUISITE, NOT A BIOLOGY RESULT: if ADRN cannot beat a GRU on the temporal tasks its own specification nominates, then any null it produces on static tabular biology data is uninterpretable, because a broken implementation and an inapplicable mechanism would look identical there.",
+ "log": [
+  "========================================================================================================",
+  "ADRN POSITIVE CONTROL -- spec sec 21 tests vs the sec 22 baseline ladder",
+  "========================================================================================================",
+  "  GATE, declared before any number: a model is credited on a task only if it beats the BEST",
+  "  baseline by more than MDE = 3*sd/sqrt(n), n = 4 SEEDS (independent init AND",
+  "  independent data draw), sd of the PAIRED per-seed gap. Beating the MLP alone is not a result;",
+  "  the gate grades against the BEST of the four baselines, reported per task. Parameter",
+  "  budget matched to ~12,000 and printed per arm.",
+  "\n  \u2500\u2500 TEST 1 temporal XOR \u2500\u2500",
+  "    1 MLP                      acc 0.5449 \u00b1 0.0306   params  11,870",
+  "    2 GRU                      acc 0.4849 \u00b1 0.0345   params  11,625",
+  "    3 point-spiking LIF        acc 0.5132 \u00b1 0.0115   params  11,980   spk/ex   89.20",
+  "    4 small Transformer        acc 0.7749 \u00b1 0.1974   params  11,018",
+  "    5 ADRN no dendrites        acc 0.5146 \u00b1 0.0198   params  11,986   energy    160.9   spk/ex  224.80",
+  "    6 ADRN no structural       acc 0.5874 \u00b1 0.0571   params  11,575   energy    409.9   spk/ex  217.26",
+  "    7 ADRN no fast/slow        acc 0.5078 \u00b1 0.0422   params  11,575   energy    150.0   spk/ex  212.64",
+  "    8 ADRN full                acc 0.5317 \u00b1 0.0785   params  11,575   energy    306.9   spk/ex  234.23",
+  "\n  \u2500\u2500 TEST 2 delayed association \u2500\u2500",
+  "    1 MLP                      acc 1.0000 \u00b1 0.0000   params  11,870",
+  "    2 GRU                      acc 1.0000 \u00b1 0.0000   params  11,625",
+  "    3 point-spiking LIF        acc 0.9785 \u00b1 0.0121   params  11,980   spk/ex  288.31",
+  "    4 small Transformer        acc 1.0000 \u00b1 0.0000   params  11,018",
+  "    5 ADRN no dendrites        acc 0.9985 \u00b1 0.0010   params  11,986   energy    475.4   spk/ex  608.87",
+  "    6 ADRN no structural       acc 0.9990 \u00b1 0.0011   params  11,575   energy    751.3   spk/ex  391.81",
+  "    7 ADRN no fast/slow        acc 0.9990 \u00b1 0.0011   params  11,575   energy    552.3   spk/ex  320.57",
+  "    8 ADRN full                acc 0.9980 \u00b1 0.0016   params  11,575   energy    638.2   spk/ex  355.59",
+  "\n  \u2500\u2500 TEST 3 context-dependent map \u2500\u2500",
+  "    1 MLP                      acc 1.0000 \u00b1 0.0000   params  11,870",
+  "    2 GRU                      acc 1.0000 \u00b1 0.0000   params  11,625",
+  "    3 point-spiking LIF        acc 0.9990 \u00b1 0.0011   params  11,980   spk/ex  141.44",
+  "    4 small Transformer        acc 1.0000 \u00b1 0.0000   params  11,018",
+  "    5 ADRN no dendrites        acc 0.5557 \u00b1 0.1212   params  11,986   energy    162.1   spk/ex  234.49",
+  "    6 ADRN no structural       acc 0.8130 \u00b1 0.1369   params  11,575   energy    474.5   spk/ex  251.80",
+  "    7 ADRN no fast/slow        acc 0.6553 \u00b1 0.2225   params  11,575   energy    204.4   spk/ex  264.69",
+  "    8 ADRN full                acc 0.5815 \u00b1 0.2540   params  11,575   energy    316.3   spk/ex  221.77",
+  "\n  *** 2 delayed association: best baseline (2 GRU) is at 1.0000 -- AT CEILING. This task cannot discriminate any arm and its gate below is UNINFORMATIVE, not a result. ***",
+  "\n  *** 3 context-dependent map: best baseline (2 GRU) is at 1.0000 -- AT CEILING. This task cannot discriminate any arm and its gate below is UNINFORMATIVE, not a result. ***",
+  "\n  PREDECLARED GATES",
+  "    FAIL  1 temporal XOR: ADRN beats best baseline (4 small Transformer)",
+  "    FAIL  1 temporal XOR: dendrites contribute",
+  "    FAIL  2 delayed association: ADRN beats best baseline (2 GRU)",
+  "    FAIL  2 delayed association: dendrites contribute",
+  "    FAIL  3 context-dependent map: ADRN beats best baseline (2 GRU)",
+  "    FAIL  3 context-dependent map: dendrites contribute",
+  "\n========================================================================================================",
+  "  VERDICT: ADRN POSITIVE CONTROL: 0/6 gates. On 1 temporal XOR, ADRN reaches 0.5317 against the best baseline (4 small Transformer) at 0.7749, a gap of -0.2432 against an MDE of 0.2575; the dendrite ablation costs +0.0171. On 2 delayed association, ADRN reaches 0.9980 against the best baseline (2 GRU) at 1.0000, a gap of -0.0020 against an MDE of 0.0024; the dendrite ablation costs -0.0005. On 3 context-dependent map, ADRN reaches 0.5815 against the best baseline (2 GRU) at 1.0000, a gap of -0.4185 against an MDE of 0.3810; the dendrite ablation costs +0.0259. Every arm is built to a matched budget of ~12,000 parameters and the realised counts are reported per arm, so no baseline loses for being smaller. The unit of replication is the SEED (4 independent initialisations and data draws), not an epoch and not a batch. THIS IS A PREREQUISITE, NOT A BIOLOGY RESULT: if ADRN cannot beat a GRU on the temporal tasks its own specification nominates, then any null it produces on static tabular biology data is uninterpretable, because a broken implementation and an inapplicable mechanism would look identical there."
+ ]
+}

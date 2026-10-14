@@ -1,0 +1,24 @@
+{
+ "n_pairs": 25121,
+ "base_rate": 0.0766,
+ "Q1_near_or_far": {
+  "confident_correct_breakdown": {
+   "near_field (regulon/PPI neighbour)": 0.01,
+   "climatology (usual-suspect gene)": 0.629,
+   "specific_far_field (neither)": 0.361
+  },
+  "forecast_lift_by_stratum": {
+   "near_field_pairs": 5.08,
+   "climatology_pairs (far but usual-suspect)": 1.11,
+   "specific_far_pairs (far AND not usual-suspect)": 8.52
+  },
+  "cross_knockout_prediction_similarity": 0.779
+ },
+ "Q2_magnitude_from_forecast": {
+  "spearman_summed_forecast_vs_actual_movers": -0.063,
+  "spearman_capacity_only (dep_frac) vs actual": 0.113,
+  "n_knockouts": 237
+ },
+ "verdict": "TWO CAPSTONE ANSWERS, measured -- and the decisive control overturns the naive read. (Q1 NEAR OR FAR) the forecast is NEAR-FIELD + CLIMATOLOGY, with NO genuine specific far-field skill. The tempting misread is the 8.52x lift on 'specific-far' pairs -- but that is CLIMATOLOGY in disguise, not KO-specific transmission, proven by the cross-knockout control: the forecast predicts almost the SAME gene ranking for ANY two knockouts (Spearman 0.779 between random knockout pairs). It literally issues the same 'which genes will move' list regardless of which gene you knock out, because its only KO-specific feature is the near-field neighbour flag; for far genes it ranks by generic responsiveness (the prior), which is a per-gene property, not a per-knockout one. So the 8.52x on far pairs is the responsiveness gradient among sub-threshold genes = finer-grained climatology. Near-field pairs get a real 5.08x (the one KO-specific signal), and everything else is the tide. (Q2 MAGNITUDE) the forecast does NOT contain the magnitude: summing its per-gene probabilities predicts actual response size at Spearman -0.063 (~zero/negative) vs 0.113 for dep_frac alone (and ~0.22 for the full capacity model) -- the summed probability is dominated by universe size + the constant climatology, not response size. So we DO still need a separate magnitude estimate, and it stays the (weak) capacity model. BOTTOM LINE: the weather forecast is an honest NEAR-FIELD + CLIMATOLOGY predictor -- calibrated and confident exactly where the biology was already predictable (direct neighbours + which genes usually move), issuing essentially the same list for every knockout. It does NOT crack the specific far field (still walled), and it does NOT give the magnitude for free (keep the separate capacity model for 'how big'). Its real value is the honest calibration and the confident near-field+tide subset -- not any hidden far-field or magnitude skill.",
+ "note": "Decomposition of the weather forecast, with a decisive cross-knockout control. Q1 (near or far): the forecast is NEAR-FIELD + CLIMATOLOGY with NO genuine specific far-field skill. The 8.52x lift on 'specific-far' pairs is climatology in disguise: the cross-knockout control shows the forecast predicts nearly the SAME gene ranking for any two knockouts (Spearman 0.779), because its only KO-specific feature is the near-field neighbour flag and far genes are ranked by generic responsiveness (a per-gene property). Near-field pairs get the one real KO-specific lift (5.08x); the rest is the tide. Specific far-field transmission stays walled. Q2 (need magnitude?): the forecast does NOT contain it -- summed per-gene probabilities predict response size at Spearman -0.063 (~zero) vs 0.113 dep_frac / ~0.22 full capacity; the sum is dominated by universe size + constant climatology. Keep the separate (weak) capacity model for magnitude. Net: the forecast's value is honest calibration + a confident near-field/tide subset, NOT hidden far-field or magnitude skill."
+}

@@ -1,0 +1,124 @@
+{
+ "cases": [
+  {
+   "gene": "GHR",
+   "uniprot": "P10912",
+   "mutation": "B304W->A",
+   "pdb": "1A22",
+   "chain": "B",
+   "sign": {
+    "sign": 0,
+    "brake": 0,
+    "snippet": null
+   },
+   "direction": "LOF-only \u2014 no annotated brake (a damaging mutation LOWERS activity)",
+   "ddg_fold": 0.6391612236912966,
+   "ddg_bind": 4.729052751872093,
+   "bind_source": "measured (SKEMPI)",
+   "kd_ratio": 2158.208348310167,
+   "activity_lof": 0.9990055387632827,
+   "activity_gof_if_brake": 0.9990055387632827,
+   "cell": {
+    "conclusion": "NON-ESSENTIAL",
+    "confidence": "MEDIUM",
+    "p_essential": 0.04
+   }
+  },
+  {
+   "gene": "BRAF",
+   "uniprot": "P15056",
+   "mutation": null,
+   "pdb": null,
+   "chain": null,
+   "sign": {
+    "sign": 1,
+    "brake": 4,
+    "snippet": "In quiescent cells, maintained in an inactive state via an intramolecular interaction between the protein kina"
+   },
+   "direction": "GOF-capable \u2014 carries a breakable inhibitory brake (disrupting it can RAISE activity)",
+   "ddg_fold": null,
+   "ddg_bind": null,
+   "bind_source": null,
+   "kd_ratio": null,
+   "activity_lof": null,
+   "activity_gof_if_brake": null,
+   "cell": {
+    "conclusion": "ESSENTIAL",
+    "confidence": "MEDIUM",
+    "p_essential": 0.3
+   }
+  },
+  {
+   "gene": "ABL1",
+   "uniprot": "P00519",
+   "mutation": null,
+   "pdb": null,
+   "chain": null,
+   "sign": {
+    "sign": 1,
+    "brake": 1,
+    "snippet": "Stabilized in the inactive form by an association between the SH3 domain and the SH2-TK linker region, interac"
+   },
+   "direction": "GOF-capable \u2014 carries a breakable inhibitory brake (disrupting it can RAISE activity)",
+   "ddg_fold": null,
+   "ddg_bind": null,
+   "bind_source": null,
+   "kd_ratio": null,
+   "activity_lof": null,
+   "activity_gof_if_brake": null,
+   "cell": {
+    "conclusion": "ESSENTIAL",
+    "confidence": "HIGH",
+    "p_essential": 0.54
+   }
+  },
+  {
+   "gene": "TP53",
+   "uniprot": "P04637",
+   "mutation": "175R->H",
+   "pdb": null,
+   "chain": null,
+   "sign": {
+    "sign": 0,
+    "brake": 0,
+    "snippet": null
+   },
+   "direction": "LOF-only \u2014 no annotated brake (a damaging mutation LOWERS activity)",
+   "ddg_fold": null,
+   "ddg_bind": null,
+   "bind_source": null,
+   "kd_ratio": null,
+   "activity_lof": null,
+   "activity_gof_if_brake": null,
+   "cell": {
+    "conclusion": "ESSENTIAL",
+    "confidence": "HIGH",
+    "p_essential": 0.54
+   }
+  },
+  {
+   "gene": "KRAS",
+   "uniprot": "P01116",
+   "mutation": "12G->D",
+   "pdb": null,
+   "chain": null,
+   "sign": {
+    "sign": 1,
+    "brake": 1,
+    "snippet": "Alternates between an inactive form bound to GDP and an active form bound to GTP (PubMed:22566140, PubMed:2243"
+   },
+   "direction": "GOF-capable \u2014 carries a breakable inhibitory brake (disrupting it can RAISE activity)",
+   "ddg_fold": null,
+   "ddg_bind": null,
+   "bind_source": null,
+   "kd_ratio": null,
+   "activity_lof": null,
+   "activity_gof_if_brake": null,
+   "cell": {
+    "conclusion": "UNCERTAIN (lines split \u2014 inspect)",
+    "confidence": "LOW",
+    "p_essential": 0.13
+   }
+  }
+ ]
+}

@@ -1,0 +1,92 @@
+{
+  "test": "loop_stiffness",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/hic_chr21_25kb.npy",
+        "bytes": 14838032,
+        "hash": "3768cedcefe29085",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 1926,
+      "used": 1377,
+      "selection": "filtered",
+      "fraction": 0.7149532710280374
+    },
+    "seed": 1904,
+    "controls": [
+      "shuffled-orientation twin",
+      "stiffness identity as a positive control",
+      "loop 35's numbers as the direct before/after",
+      "a stopping rule declared before the run"
+    ],
+    "note": "both constants derived from geometry independent of the Hi-C map; if the gates fail the limit is recorded as the Gaussian approximation, not as a need for more tuning",
+    "warnings": []
+  },
+  "gates": {
+    "B1 stiffness calibration self-consistent": true,
+    "B2 insulation clears the gate": false,
+    "B3 orientation effect right order": true,
+    "B4 still affordable": true
+  },
+  "k_loop": 3.8,
+  "anchor_r2": 0.2617801047120425,
+  "anchor_target": 0.25636917160711425,
+  "results": {
+    "real CTCF": {
+      "insul_r": 0.2974227712424471,
+      "orient": 0.22783980942910131,
+      "ps": -1.009463283625513,
+      "n_pairs": 1923
+    },
+    "SHUFFLED orientation": {
+      "insul_r": 0.21530659611596953,
+      "orient": -0.04200597559444092,
+      "ps": -1.0260816154441361,
+      "n_pairs": 1923
+    }
+  },
+  "measured_orient": 0.37879493573816586,
+  "orient_factor_off": 1.662549388042911,
+  "minutes": 0.8527905106544494,
+  "log": [
+    "====================================================================================================",
+    "THE TWO UNSTATED DEFAULTS -- calibrated from geometry, then the stopping rule applies",
+    "====================================================================================================",
+    "  loop 35 had the direction right and the magnitude 14x too small. Two choices in it were",
+    "  never argued for: loop bonds as stiff as backbone bonds, and CTCF blocking normalised by",
+    "  the single strongest peak. Both are calculable.",
+    "\n  B1 THE STIFFNESS CALIBRATION IS SELF-CONSISTENT",
+    "     a cohesin ring is 40 nm across, a 25 kb bead 79 nm, so anchors",
+    "     should sit at (40/79)^2 = 0.2564 b^2",
+    "     isolated 50-bond loop at k = 3.8: anchors at 0.2618 b^2",
+    "     for comparison, k = 1 (loop 35's silent default) gives 0.9804 b^2 -- a 2% pull on a 50-bond span",
+    "     B1 PASS",
+    "\n  CTCF blocking rescaled by RANK: the median IDR peak now blocks at 0.47 where max-normalisation gave 0.15",
+    "    real CTCF                P(s) -1.0095   insulation r +0.2974   orientation +0.2278",
+    "    SHUFFLED orientation     P(s) -1.0261   insulation r +0.2153   orientation -0.0420",
+    "\n  B2 INSULATION CLEARS THE GATE -- +0.2974 vs shuffled +0.2153   (loop 35 got +0.1878)",
+    "     B2 FAIL  (gate 0.4)",
+    "\n  B3 THE ORIENTATION EFFECT REACHES THE RIGHT ORDER",
+    "     measured +0.3788   simulated +0.2278   shuffled -0.0420",
+    "     off by a factor of 1.7   (loop 35 was off by 13.9)",
+    "     B3 PASS  (gate: within 3.0x AND collapses)",
+    "\n  B4 STILL AFFORDABLE -- 0.9 min   B4 PASS",
+    "\n====================================================================================================",
+    "  B1 stiffness calibration self-consistent    PASS",
+    "  B2 insulation clears the gate               FAIL",
+    "  B3 orientation effect right order           PASS",
+    "  B4 still affordable                         PASS",
+    "  THE STOPPING RULE APPLIES, AND IT WAS DECLARED BEFORE THE RUN. Both constants were",
+    "  computed from geometry that has nothing to do with this map, and the gates still do not",
+    "  clear. The recorded conclusion is that the GAUSSIAN MEAN-FIELD TREATMENT is the limit --",
+    "  no excluded volume, and a contact probability that is an average of an average, which",
+    "  smooths exactly the sharp anchor-to-anchor structure being measured. A third calibration",
+    "  is not attempted, because at that point it would be fitting and not physics.",
+    "====================================================================================================",
+    "    manifest: 1 inputs, coverage 1377/1926 (71.5%) by 'filtered', seed 1904, controls 4"
+  ]
+}

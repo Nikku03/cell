@@ -1,0 +1,89 @@
+{
+ "n": 14659,
+ "n_pos": 813,
+ "competition_features": [
+  "n_candidates",
+  "dist_rank",
+  "activity_rank",
+  "activity_share",
+  "dist_excess"
+ ],
+ "group_size": {
+  "n_groups": 2400,
+  "spearman_size_vs_rate": -0.07160278314366343,
+  "p": 0.000447290601280782,
+  "auroc_n_candidates_alone": 0.2733473586360881,
+  "singletons": 976
+ },
+ "candidate_set_shift": {
+  "n_candidates": {
+   "benchmark_median": 19.0,
+   "genomewide_median": 44.0,
+   "median_abs_shift": 35.0
+  },
+  "dist_rank": {
+   "benchmark_median": 8.0,
+   "genomewide_median": 33.0,
+   "median_abs_shift": 23.0
+  },
+  "activity_rank": {
+   "benchmark_median": 8.0,
+   "genomewide_median": 6.0,
+   "median_abs_shift": 9.0
+  },
+  "activity_share": {
+   "benchmark_median": 0.03377053363876824,
+   "genomewide_median": 0.031177839310293852,
+   "median_abs_shift": 0.024742373015822747
+  },
+  "dist_excess": {
+   "benchmark_median": 0.0,
+   "genomewide_median": 0.5118807935256946,
+   "median_abs_shift": 0.5263337036574867
+  }
+ },
+ "definitions": {
+  "benchmark": {
+   "auprc": 0.5321596042506795,
+   "auroc": 0.8690388865466006
+  },
+  "genomewide": {
+   "auprc": 0.5198486588391124,
+   "auroc": 0.8642793448012481
+  },
+  "none": {
+   "auprc": 0.44858833448370977,
+   "auroc": 0.8450317221646866
+  },
+  "gain_benchmark": 0.08357126976696977,
+  "gain_genomewide": 0.07126032435540258,
+  "cross_train_bench_score_genomewide": 0.41202949196275257
+ },
+ "by_group_size": {
+  ">=1": {
+   "n": 14659,
+   "gain": 0.08357126976696977
+  },
+  ">=2": {
+   "n": 13683,
+   "gain": 0.08124515439916763
+  },
+  ">=3": {
+   "n": 12875,
+   "gain": 0.06233031043681447
+  },
+  ">=5": {
+   "n": 11527,
+   "gain": -0.006776459848785998
+  }
+ },
+ "permutations": {
+  "real": 0.5321596042506795,
+  "within_group": 0.5186335018402041,
+  "across_groups": 0.4432269656179579,
+  "none": 0.44858833448370977,
+  "ordering_contribution": 0.013526102410475471,
+  "survives_within_shuffle": 0.0700451673564943
+ },
+ "verdict": "n_candidates alone scores AUROC 0.2733, so group size DOES encode the per-group base rate and part of the block is design leakage. the block is worth +0.0836 AUPRC under the benchmark's candidate definition and +0.0713 under the genome-wide one (difference +0.0123). training on one definition and scoring the other -- which is what the shipped edge layer does -- costs -0.1201 AUPRC. 16% of the gain is the within-group ORDERING (destroyed by a within-group shuffle); the remainder survives it and is therefore not ordering information at all."
+}

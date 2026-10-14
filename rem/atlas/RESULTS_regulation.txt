@@ -1,0 +1,80 @@
+=================================================================================================
+REGULATION: DOES METABOLIC SPARSITY SURVIVE A CELL THAT DOES NOT OPTIMISE?
+=================================================================================================
+  10600 reactions, 5938 enzyme-catalysed, metabolic protein budget 0.2750 g/gDW
+  regulatory floor E_j >= phi * E_ref_j; phi = 0 is recon.py's optimiser
+  unregulated maximum growth mu0 = 1.688875 /h
+
+=================================================================================================
+REGULATORY PROGRAMME: flux-proportional at the optimum
+=================================================================================================
+     phi         mu   mu/mu0       floors probed   >1e-3   >1e-4   >1e-6   recon
+    0.00   1.688875   1.0000            0      0       0       0       0     0/8 CENSORED (3s)
+    0.35   1.688875   1.0000         5772      0       0       0       0     0/8 CENSORED (3s)
+    0.85   1.688875   1.0000         5776      0       0       0       0     0/8 CENSORED (3s)
+
+=================================================================================================
+REGULATORY PROGRAMME: uniform across all enzymes
+=================================================================================================
+     phi         mu   mu/mu0       floors probed   >1e-3   >1e-4   >1e-6   recon
+    0.00   1.688875   1.0000            0      0       0       0       0     0/8 CENSORED (2s)
+    0.35   1.688875   1.0000         5818      0       0       0       0     0/8 CENSORED (2s)
+    0.85   0.829530   0.4912         5892    150      41     108     150     4/8 CENSORED (501s)
+
+=================================================================================================
+REGULATORY PROGRAMME: random
+=================================================================================================
+     phi         mu   mu/mu0       floors probed   >1e-3   >1e-4   >1e-6   recon
+    0.00   1.688875   1.0000            0      0       0       0       0     0/8 CENSORED (2s)
+    0.35   1.688875   1.0000         5814      0       0       0       0     0/8 CENSORED (3s)
+    0.85   0.829565   0.4912         5885    150      40     117     149     4/8 CENSORED (746s)
+
+=================================================================================================
+G1  THE OPERATING POINT IS WHAT IT CLAIMS
+=================================================================================================
+  enzyme floors active at phi > 0: [5772, 5776]
+  PASS
+
+=================================================================================================
+G2  IT REPRODUCES recon.py AT phi = 0
+=================================================================================================
+  sensitive reactions at phi = 0: 0   recon.py measured 8
+  overlap with recon.py's eight: 0/8
+  FAIL -- not measuring the same thing as recon.py (bar: within a factor of two of 8)
+  NOTE: the medium and objective match recon.py, but this model adds a proteome budget
+  and a per-reaction enzyme variable, so exact agreement is not expected.
+
+=================================================================================================
+G3  THE DELIVERABLE
+=================================================================================================
+  counts at the 1e-3 threshold, which is the level that could move a factor-of-two answer
+                           programme   phi=0.0  phi=0.35  phi=0.85
+    flux-proportional at the optimum         0         0         0
+          uniform across all enzymes         0         0        41
+                              random         0         0        40
+
+  count across every programme and phi: min 0, max 41
+  READING: the sensitive set GROWS as the cell is forced away from the optimum, so
+  the sparsity was a property of the optimum. recon.py's metabolic conclusion must
+  be WITHDRAWN for regulated cells, and the count above is what replaces it.
+
+=================================================================================================
+G5  THE IDENTITY OF THE SENSITIVE SET, NOT ONLY ITS SIZE
+=================================================================================================
+     phi   size    overlap with phi=0  overlap with recon 8
+    0.00      0                     0                     0
+    0.35      0                     0                     0
+    0.85      0                     0                     0
+  A constant count made of different reactions is a different result from a constant
+  count made of the same ones.
+
+=================================================================================================
+G6  THE PROGRAMME IS NOT THE RESULT
+=================================================================================================
+    flux-proportional at the optimum: counts [0, 0, 0]
+          uniform across all enzymes: counts [0, 0, 41]
+                              random: counts [0, 0, 40]
+  If the three programmes disagree, the conclusion belongs to the programme imposed and
+  not to regulation in general, and must be reported that way.
+
+=================================================================================================

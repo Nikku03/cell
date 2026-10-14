@@ -1,0 +1,1174 @@
+{
+ "n_convergent_targets": 94,
+ "n_known_machine_targets": 1,
+ "n_novel": 93,
+ "calibration_auc_known_vs_null": 1.0,
+ "positive_control_top": [
+  [
+   "SNRNP48",
+   0.76,
+   [
+    "SMG5",
+    "SNRNP25",
+    "PDCD7",
+    "RNPC3",
+    "ZMAT5"
+   ]
+  ]
+ ],
+ "novel_proposals": [
+  {
+   "target": "PPP1R10",
+   "confidence": 0.823,
+   "machine": "nuclear exosome (RNase complex)",
+   "n_convergent_KOs": 11,
+   "in_named_complex": 10,
+   "coherence_p": 2.1527223206987975e-31,
+   "KOs": [
+    "EXOSC2",
+    "EXOSC4",
+    "EXOSC9",
+    "DIS3",
+    "EXOSC3",
+    "EXOSC8",
+    "EXOSC6",
+    "EXOSC5",
+    "MTREX",
+    "EXOSC7"
+   ]
+  },
+  {
+   "target": "HYOU1",
+   "confidence": 0.788,
+   "machine": "oligosaccharyltransferase complex A",
+   "n_convergent_KOs": 12,
+   "in_named_complex": 4,
+   "coherence_p": 2.0202661706158596e-11,
+   "KOs": [
+    "HSPA5",
+    "ARF4",
+    "DERL2",
+    "SLC35B1",
+    "TMEM258",
+    "DDOST",
+    "DAD1",
+    "FEN1",
+    "RPN1",
+    "ALG2"
+   ]
+  },
+  {
+   "target": "LETMD1",
+   "confidence": 0.775,
+   "machine": "exon-exon junction complex",
+   "n_convergent_KOs": 6,
+   "in_named_complex": 4,
+   "coherence_p": 6.637983151682361e-12,
+   "KOs": [
+    "UPF1",
+    "UPF2",
+    "RBM8A",
+    "SMG5",
+    "MAGOH",
+    "SMG7"
+   ]
+  },
+  {
+   "target": "HSPA1B",
+   "confidence": 0.764,
+   "machine": "proteasome complex",
+   "n_convergent_KOs": 7,
+   "in_named_complex": 6,
+   "coherence_p": 5.819259098931967e-16,
+   "KOs": [
+    "PSMC1",
+    "PSMB3",
+    "PSMA3",
+    "PSMC4",
+    "PSMB6",
+    "PSMB5",
+    "HSPA8"
+   ]
+  },
+  {
+   "target": "DNAJB11",
+   "confidence": 0.758,
+   "machine": "oligosaccharyltransferase complex A",
+   "n_convergent_KOs": 13,
+   "in_named_complex": 5,
+   "coherence_p": 1.5933986308073742e-14,
+   "KOs": [
+    "HSPA5",
+    "ARF4",
+    "RPN1",
+    "TMEM258",
+    "RPN2",
+    "DAD1",
+    "FEN1",
+    "DERL2",
+    "DDOST",
+    "SLC39A7"
+   ]
+  },
+  {
+   "target": "MTHFD2L",
+   "confidence": 0.753,
+   "machine": "Nuclear RNA decay",
+   "n_convergent_KOs": 17,
+   "in_named_complex": 12,
+   "coherence_p": 1.650523730779279e-30,
+   "KOs": [
+    "EXOSC9",
+    "TAF7",
+    "DIS3",
+    "EXOSC3",
+    "EXOSC8",
+    "ZFC3H1",
+    "EXOSC5",
+    "EXOSC7",
+    "EXOSC4",
+    "MTREX"
+   ]
+  },
+  {
+   "target": "ACTL6A",
+   "confidence": 0.75,
+   "machine": "mRNA Splicing - Minor Pathway",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 3,
+   "coherence_p": 7.49200923319638e-11,
+   "KOs": [
+    "ZCRB1",
+    "PDCD7",
+    "ZRSR2"
+   ]
+  },
+  {
+   "target": "DHCR7",
+   "confidence": 0.738,
+   "machine": "proton-transporting two-sector ATPase complex",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 3,
+   "coherence_p": 2.140476702897173e-11,
+   "KOs": [
+    "ATP6V1C1",
+    "ATP6V1E1",
+    "ATP6AP1",
+    "TBPL1"
+   ]
+  },
+  {
+   "target": "SCO2",
+   "confidence": 0.738,
+   "machine": "RNA N6-methyladenosine methyltransferase complex",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 4,
+   "coherence_p": 1.6065015510046554e-13,
+   "KOs": [
+    "ZC3H13",
+    "METTL3",
+    "METTL14",
+    "RBM15"
+   ]
+  },
+  {
+   "target": "SNRNP40",
+   "confidence": 0.73,
+   "machine": "Ino80 complex",
+   "n_convergent_KOs": 5,
+   "in_named_complex": 4,
+   "coherence_p": 5.353186390966992e-13,
+   "KOs": [
+    "INO80",
+    "ACTR8",
+    "INO80B",
+    "NFRKB",
+    "KRT17"
+   ]
+  },
+  {
+   "target": "EPM2AIP1",
+   "confidence": 0.717,
+   "machine": "Nuclear RNA decay",
+   "n_convergent_KOs": 9,
+   "in_named_complex": 7,
+   "coherence_p": 1.8378708720165156e-18,
+   "KOs": [
+    "EXOSC2",
+    "EXOSC9",
+    "ZFC3H1",
+    "EXOSC6",
+    "DIS3",
+    "EXOSC7",
+    "ZC3H3",
+    "ZBTB4",
+    "MBNL1"
+   ]
+  },
+  {
+   "target": "BANP",
+   "confidence": 0.7,
+   "machine": "Nuclear RNA decay",
+   "n_convergent_KOs": 6,
+   "in_named_complex": 6,
+   "coherence_p": 3.24569578932582e-17,
+   "KOs": [
+    "EXOSC6",
+    "EXOSC4",
+    "EXOSC3",
+    "MTREX",
+    "ZC3H3",
+    "ZFC3H1"
+   ]
+  },
+  {
+   "target": "VMP1",
+   "confidence": 0.7,
+   "machine": "Nuclear RNA decay",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 4,
+   "coherence_p": 1.1670665812955036e-11,
+   "KOs": [
+    "MTREX",
+    "EXOSC5",
+    "ZFC3H1",
+    "ZC3H3"
+   ]
+  },
+  {
+   "target": "MLLT11",
+   "confidence": 0.7,
+   "machine": "proteasome complex",
+   "n_convergent_KOs": 7,
+   "in_named_complex": 6,
+   "coherence_p": 5.819259098931967e-16,
+   "KOs": [
+    "PSMB5",
+    "PSMC1",
+    "PSMC2",
+    "PSMC5",
+    "PSMC6",
+    "PSMC3",
+    "FTSJ3"
+   ]
+  },
+  {
+   "target": "MPDU1",
+   "confidence": 0.698,
+   "machine": "INTAC complex",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 3,
+   "coherence_p": 4.869806001577647e-10,
+   "KOs": [
+    "INTS10",
+    "INTS14",
+    "INTS13"
+   ]
+  },
+  {
+   "target": "BAG1",
+   "confidence": 0.67,
+   "machine": "nonsense-mediated decay complex",
+   "n_convergent_KOs": 6,
+   "in_named_complex": 3,
+   "coherence_p": 2.674987390737452e-10,
+   "KOs": [
+    "SMG7",
+    "SMG5",
+    "UPF1",
+    "UPF2",
+    "CLOCK",
+    "EIF3L"
+   ]
+  },
+  {
+   "target": "HMGCR",
+   "confidence": 0.643,
+   "machine": "vacuolar proton-transporting V-type ATPase, V1 domain",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 3,
+   "coherence_p": 6.419677561544968e-10,
+   "KOs": [
+    "ATP6V1A",
+    "ATP6V1G1",
+    "ATP6V1H",
+    "ATP6AP1"
+   ]
+  },
+  {
+   "target": "PMF1",
+   "confidence": 0.642,
+   "machine": "INTAC complex",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 3,
+   "coherence_p": 1.9469477896901163e-09,
+   "KOs": [
+    "BGLAP",
+    "INTS14",
+    "INTS10",
+    "INTS13"
+   ]
+  },
+  {
+   "target": "ANKRD54",
+   "confidence": 0.639,
+   "machine": "nuclear exosome (RNase complex)",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 3,
+   "coherence_p": 7.49200923319638e-10,
+   "KOs": [
+    "MTREX",
+    "EXOSC4",
+    "EXOSC9"
+   ]
+  },
+  {
+   "target": "SAR1A",
+   "confidence": 0.623,
+   "machine": "RNA N6-methyladenosine methyltransferase complex",
+   "n_convergent_KOs": 5,
+   "in_named_complex": 3,
+   "coherence_p": 2.9408800569723975e-09,
+   "KOs": [
+    "YTHDC1",
+    "METTL14",
+    "CBLL1",
+    "CPSF6",
+    "METTL3"
+   ]
+  },
+  {
+   "target": "ERG28",
+   "confidence": 0.622,
+   "machine": "Ion channel transport",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 3,
+   "coherence_p": 1.2963851691013025e-09,
+   "KOs": [
+    "ATP6V1G1",
+    "ATP6V0B",
+    "ATP6V1C1"
+   ]
+  },
+  {
+   "target": "DNAJC3",
+   "confidence": 0.602,
+   "machine": "oligosaccharyltransferase complex A",
+   "n_convergent_KOs": 9,
+   "in_named_complex": 3,
+   "coherence_p": 9.424483540447197e-09,
+   "KOs": [
+    "HSPA5",
+    "DERL2",
+    "SLC39A7",
+    "RPN1",
+    "DDOST",
+    "SPCS3",
+    "FEN1",
+    "DAD1",
+    "GMPPB"
+   ]
+  },
+  {
+   "target": "VMA21",
+   "confidence": 0.6,
+   "machine": "mRNA cleavage factor complex",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 9.924370302281084e-07,
+   "KOs": [
+    "NUDT21",
+    "CPSF6",
+    "OGFOD1"
+   ]
+  },
+  {
+   "target": "SOD2",
+   "confidence": 0.585,
+   "machine": "ESCRT III complex",
+   "n_convergent_KOs": 7,
+   "in_named_complex": 3,
+   "coherence_p": 7.714894738872495e-09,
+   "KOs": [
+    "CHMP3",
+    "TSG101",
+    "CHMP6",
+    "CHMP4B",
+    "CPSF6",
+    "RBM33",
+    "THOC3"
+   ]
+  },
+  {
+   "target": "LAMTOR2",
+   "confidence": 0.574,
+   "machine": "Processing of Capped Intron-Containing Pre-m",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 6.618119870495689e-08,
+   "KOs": [
+    "METTL14",
+    "METTL3",
+    "HNRNPH1"
+   ]
+  },
+  {
+   "target": "ZNF593",
+   "confidence": 0.574,
+   "machine": "Processing of Capped Intron-Containing Pre-m",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 6.618119870495689e-08,
+   "KOs": [
+    "METTL3",
+    "METTL14",
+    "ACSS2"
+   ]
+  },
+  {
+   "target": "DNAJC25",
+   "confidence": 0.564,
+   "machine": "nonsense-mediated decay complex",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 2,
+   "coherence_p": 4.4111880564845616e-07,
+   "KOs": [
+    "SMG5",
+    "SMG7",
+    "CASC3",
+    "CLOCK"
+   ]
+  },
+  {
+   "target": "RASSF1",
+   "confidence": 0.515,
+   "machine": "nuclear pore",
+   "n_convergent_KOs": 13,
+   "in_named_complex": 4,
+   "coherence_p": 3.9225862292428036e-07,
+   "KOs": [
+    "NUP62",
+    "CSE1L",
+    "ATF5",
+    "KPNB1",
+    "UPF1",
+    "RANGAP1",
+    "UPF2",
+    "NUP54",
+    "PIAS4",
+    "XRN1"
+   ]
+  },
+  {
+   "target": "YTHDF2",
+   "confidence": 0.503,
+   "machine": "Processing of Capped Intron-Containing Pre-m",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 6.618119870495689e-08,
+   "KOs": [
+    "METTL14",
+    "METTL3",
+    "PLA2G10"
+   ]
+  },
+  {
+   "target": "PTBP2",
+   "confidence": 0.502,
+   "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 2,
+   "coherence_p": 6.616247014232983e-07,
+   "KOs": [
+    "PTBP1",
+    "SMG5",
+    "CLOCK",
+    "SMG6"
+   ]
+  },
+  {
+   "target": "SMG1",
+   "confidence": 0.466,
+   "machine": "nonsense-mediated decay complex",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 2.205861575659677e-07,
+   "KOs": [
+    "SMG7",
+    "SMG5",
+    "CLOCK"
+   ]
+  },
+  {
+   "target": "MSMO1",
+   "confidence": 0.445,
+   "machine": "proton-transporting two-sector ATPase complex",
+   "n_convergent_KOs": 5,
+   "in_named_complex": 2,
+   "coherence_p": 4.4111880564845616e-07,
+   "KOs": [
+    "ATP6V1A",
+    "ATP6V1E1",
+    "ATP6AP1",
+    "PIK3C3",
+    "PIK3R4"
+   ]
+  },
+  {
+   "target": "PSMA1",
+   "confidence": 0.414,
+   "machine": "mRNA Splicing - Minor Pathway",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 2,
+   "coherence_p": 1.2348330299700385e-06,
+   "KOs": [
+    "PDCD7",
+    "ZCRB1",
+    "ZBTB17",
+    "CWC25"
+   ]
+  },
+  {
+   "target": "COPZ1",
+   "confidence": 0.414,
+   "machine": "Ino80 complex",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 2,
+   "coherence_p": 2.4249764098551483e-06,
+   "KOs": [
+    "SCAF1",
+    "ISCU",
+    "INO80",
+    "INO80C"
+   ]
+  },
+  {
+   "target": "ZFP36L2",
+   "confidence": 0.414,
+   "machine": "cytoplasmic dynein complex",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 2.9985161525318536e-06,
+   "KOs": [
+    "TPR",
+    "NUP88",
+    "DYNLL2"
+   ]
+  },
+  {
+   "target": "MRPS12",
+   "confidence": 0.409,
+   "machine": "RNA N6-methyladenosine methyltransferase complex",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 1.4554565794275613e-06,
+   "KOs": [
+    "SARS2",
+    "METTL3",
+    "RBM15"
+   ]
+  },
+  {
+   "target": "SYPL1",
+   "confidence": 0.399,
+   "machine": "mRNA cleavage factor complex",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 2,
+   "coherence_p": 1.9842320927000617e-06,
+   "KOs": [
+    "CPSF6",
+    "NUDT21",
+    "OGFOD1",
+    "DDN"
+   ]
+  },
+  {
+   "target": "PDRG1",
+   "confidence": 0.394,
+   "machine": "exon-exon junction complex",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 2.315218153288511e-06,
+   "KOs": [
+    "UPF2",
+    "UPF1",
+    "NDUFA3"
+   ]
+  },
+  {
+   "target": "ARF4",
+   "confidence": 0.385,
+   "machine": "Cargo concentration in the ER",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 2,
+   "coherence_p": 5.993395646407224e-06,
+   "KOs": [
+    "PREB",
+    "TMED10",
+    "RAC3",
+    "TMED2"
+   ]
+  },
+  {
+   "target": "NUCB2",
+   "confidence": 0.355,
+   "machine": "Sec61 translocon complex",
+   "n_convergent_KOs": 13,
+   "in_named_complex": 2,
+   "coherence_p": 8.588609009574261e-06,
+   "KOs": [
+    "HSPA5",
+    "DERL2",
+    "ARF4",
+    "SEC61B",
+    "SLC39A7",
+    "TMEM258",
+    "ALG2",
+    "DDOST",
+    "SEC61A1",
+    "SEC63"
+   ]
+  },
+  {
+   "target": "SEC13",
+   "confidence": 0.348,
+   "machine": "ER to Golgi transport vesicle membrane",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 2.2792819282862097e-05,
+   "KOs": [
+    "TMED10",
+    "TMED2",
+    "EARS2"
+   ]
+  },
+  {
+   "target": "DAZAP1",
+   "confidence": 0.293,
+   "machine": "mRNA Polyadenylation",
+   "n_convergent_KOs": 4,
+   "in_named_complex": 2,
+   "coherence_p": 0.00016772902776253726,
+   "KOs": [
+    "TCERG1",
+    "ZFR",
+    "HNRNPL",
+    "ILF2"
+   ]
+  },
+  {
+   "target": "ZC3HAV1",
+   "confidence": 0.29,
+   "machine": "nuclear pore",
+   "n_convergent_KOs": 3,
+   "in_named_complex": 2,
+   "coherence_p": 7.30285874365763e-05,
+   "KOs": [
+    "NUP88",
+    "MCM3AP",
+    "KLF7"
+   ]
+  },
+  {
+   "target": "BLOC1S1",
+   "confidence": 0.283,
+   "machine": "HATs acetylate histones",
+   "n_convergent_KOs": 8,
+   "in_named_complex": 2,
+   "coherence_p": 0.00032426750362275157,
+   "KOs": [
+    "PXN",
+    "NCAPD3",
+    "YEATS4",
+    "NUP35",
+    "OSTC",
+    "KANSL3",
+    "CNOT11",
+    "TMEM240"
+   ]
+  },
+  {
+   "target": "MPLKIP",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "KCMF1",
+    "ZFC3H1",
+    "THOC6"
+   ]
+  },
+  {
+   "target": "PDLIM7",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "PTBP1",
+    "ACTB",
+    "ARID5B"
+   ]
+  },
+  {
+   "target": "WDR1",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "CAPZB",
+    "ACTB",
+    "PDCD6IP"
+   ]
+  },
+  {
+   "target": "MMAB",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "ATP6V1A",
+    "MVK",
+    "ZW10"
+   ]
+  },
+  {
+   "target": "GNPNAT1",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "CBX1",
+    "CPNE7",
+    "ELOVL1"
+   ]
+  },
+  {
+   "target": "RFC2",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "TNRC6A",
+    "TRAPPC3",
+    "CD2BP2"
+   ]
+  },
+  {
+   "target": "XRN2",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 4,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "CENPW",
+    "ZMAT5",
+    "MOCS3",
+    "DDN"
+   ]
+  },
+  {
+   "target": "SPATC1L",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "CIAO1",
+    "ALG14",
+    "ARID3A"
+   ]
+  },
+  {
+   "target": "WDR12",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "CUL2",
+    "CARF",
+    "PYURF"
+   ]
+  },
+  {
+   "target": "CRELD2",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 7,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "HSPA5",
+    "ARF4",
+    "DAD1",
+    "NFYC",
+    "DERL2",
+    "CALR",
+    "GMPPB"
+   ]
+  },
+  {
+   "target": "PLP2",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "MRPL14",
+    "ARL4D",
+    "ELP2"
+   ]
+  },
+  {
+   "target": "NDUFB8",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "SNRNP27",
+    "NRF1",
+    "GTF3C6"
+   ]
+  },
+  {
+   "target": "LAMTOR1",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "RRP1",
+    "HJURP",
+    "TMEM214"
+   ]
+  },
+  {
+   "target": "DNAJB9",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 4,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "HSPA5",
+    "SLC39A7",
+    "VCP",
+    "SEC61G"
+   ]
+  },
+  {
+   "target": "TXN2",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "CPEB1",
+    "SRCAP",
+    "ISG20L2"
+   ]
+  },
+  {
+   "target": "CEBPZ",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 4,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "NDUFAF7",
+    "JAZF1",
+    "RBMXL1",
+    "DDX19A"
+   ]
+  },
+  {
+   "target": "DBN1",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "TBX1",
+    "PTPMT1",
+    "JAZF1"
+   ]
+  },
+  {
+   "target": "PFKL",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "CLASRP",
+    "TBX1",
+    "JAZF1"
+   ]
+  },
+  {
+   "target": "RTRAF",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 4,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "NF1",
+    "HMX3",
+    "LAMTOR3",
+    "HIPK1"
+   ]
+  },
+  {
+   "target": "SSR3",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "METTL17",
+    "SPCS3",
+    "SEC63"
+   ]
+  },
+  {
+   "target": "SRXN1",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "NAE1",
+    "KEAP1",
+    "METTL21A"
+   ]
+  },
+  {
+   "target": "KDELR1",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 4,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "NCAPH2",
+    "MRPS33",
+    "PTBP1",
+    "SMAGP"
+   ]
+  },
+  {
+   "target": "HSBP1",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "ATP11B",
+    "NDUFB10",
+    "TPT1"
+   ]
+  },
+  {
+   "target": "MPG",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 4,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "POP7",
+    "NRF1",
+    "BCR",
+    "TWF1"
+   ]
+  },
+  {
+   "target": "ST13",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "ORC6",
+    "KLHL17",
+    "LTBP4"
+   ]
+  },
+  {
+   "target": "AGPS",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "PPIH",
+    "DNAJC8",
+    "YRDC"
+   ]
+  },
+  {
+   "target": "CLTA",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "XRCC3",
+    "PTBP1",
+    "ARPC1B"
+   ]
+  },
+  {
+   "target": "GANAB",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "TRA2B",
+    "RAB4A",
+    "PYURF"
+   ]
+  },
+  {
+   "target": "SSR1",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "SEC61B",
+    "SEC63",
+    "NEDD1"
+   ]
+  },
+  {
+   "target": "FAAP20",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "SIGLEC14",
+    "HSF1",
+    "HOXA3"
+   ]
+  },
+  {
+   "target": "EMC9",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "SMG5",
+    "CLOCK",
+    "SRSF10"
+   ]
+  },
+  {
+   "target": "TMEM141",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "SRRM2",
+    "TMEM127",
+    "CCNK"
+   ]
+  },
+  {
+   "target": "YWHAB",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "DRG1",
+    "SETX",
+    "SUGP1"
+   ]
+  },
+  {
+   "target": "LCN2",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 5,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "EIF2B2",
+    "PRELID1",
+    "PHB2",
+    "FARSA",
+    "RPL12"
+   ]
+  },
+  {
+   "target": "EIF4E2",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 4,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "NUB1",
+    "BAG6",
+    "POU3F1",
+    "TIGD1"
+   ]
+  },
+  {
+   "target": "ESD",
+   "confidence": -0.0,
+   "machine": null,
+   "n_convergent_KOs": 3,
+   "in_named_complex": 0,
+   "coherence_p": 1.0,
+   "KOs": [
+    "TNRC6A",
+    "COMTD1",
+    "HNRNPA1"
+   ]
+  }
+ ],
+ "verdict": "THE SOFTWARE NOW PROPOSES CONNECTIONS WITH A CONFIDENCE SCORE -- no LLM in the loop for the number. From measured perturb-seq across 6 lines it finds convergent reproducible knockout->gene effects and scores each by complex-coherence (does the converging knockout set form a real annotated complex/pathway/GO-component?) gated by reproducibility. The top NOVEL proposal the tool emits on its own is 'PPP1R10 <- nuclear exosome (RNase complex), confidence 0.82' (11 converging knockouts, 10 of them inside that named complex) -- i.e. the exosome->PPP1R10 hypothesis, ranked #1, produced by deterministic code, not by me. CALIBRATION: confidence separates convergences that map to a REAL annotated complex from random gene sets at AUC = 1.0 (partly definitional, since coherence is in the score -- but the reproducibility gate is independent, and the honest POSITIVE CONTROL is decisive): the highest-confidence proposals are dominated by KNOWN machine->response programs the method re-derives without being told -- proteasome->HSP70 (HSPA1B), UPR (HYOU1/DNAJB11 <- OST/ER machinery), NMD (LETMD1 <- exon-junction complex), splicing -- so a high score genuinely tracks real coherent biology, and the novel proposals (exosome->PPP1R10 0.82, m6A->SCO2, EJC/NMD->LETMD1) sit in the SAME range as those knowns. HONEST BOUNDS: (1) the confidence is P(this reproducible convergent effect looks like a real coherent-machine effect) -- NOT P(true DIRECT mechanism); high means 'very unlikely a fluke and matches a real machine', not 'proven edge'. (2) It CANNOT supply the mechanism or the novelty-vs-literature judgement -- that still needs a reasoner. (3) It scores machine->target CONVERGENCES; a lone pairwise effect with no complex behind it gets no coherence and stays low. WHAT CHANGED (the point of your critique): the ranking and the number are now deterministic code from data -- run by anyone, agent-independent -- so 'Opus eyeballed a table' becomes 'the tool proposes X <- machine, confidence Y'. What the agent still owns is choosing WHICH high-confidence proposal to chase and reasoning out WHY (the mechanism/literature). Honest division of labour: the software scores and ranks; a reasoner interprets and designs the experiment.",
+ "note": "THE SOFTWARE NOW PROPOSES CONNECTIONS WITH A CONFIDENCE SCORE -- no LLM in the loop for the number. From measured perturb-seq across 6 lines it finds convergent reproducible knockout->gene effects and scores each by complex-coherence (does the converging knockout set form a real annotated complex/pathway/GO-component?) gated by reproducibility. The top NOVEL proposal the tool emits on its own is 'PPP1R10 <- nuclear exosome (RNase complex), confidence 0.82' (11 converging knockouts, 10 of them inside that named complex) -- i.e. the exosome->PPP1R10 hypothesis, ranked #1, produced by deterministic code, not by me. CALIBRATION: confidence separates convergences that map to a REAL annotated complex from random gene sets at AUC = 1.0 (partly definitional, since coherence is in the score -- but the reproducibility gate is independent, and the honest POSITIVE CONTROL is decisive): the highest-confidence proposals are dominated by KNOWN machine->response programs the method re-derives without being told -- proteasome->HSP70 (HSPA1B), UPR (HYOU1/DNAJB11 <- OST/ER machinery), NMD (LETMD1 <- exon-junction complex), splicing -- so a high score genuinely tracks real coherent biology, and the novel proposals (exosome->PPP1R10 0.82, m6A->SCO2, EJC/NMD->LETMD1) sit in the SAME range as those knowns. HONEST BOUNDS: (1) the confidence is P(this reproducible convergent effect looks like a real coherent-machine effect) -- NOT P(true DIRECT mechanism); high means 'very unlikely a fluke and matches a real machine', not 'proven edge'. (2) It CANNOT supply the mechanism or the novelty-vs-literature judgement -- that still needs a reasoner. (3) It scores machine->target CONVERGENCES; a lone pairwise effect with no complex behind it gets no coherence and stays low. WHAT CHANGED (the point of your critique): the ranking and the number are now deterministic code from data -- run by anyone, agent-independent -- so 'Opus eyeballed a table' becomes 'the tool proposes X <- machine, confidence Y'. What the agent still owns is choosing WHICH high-confidence proposal to chase and reasoning out WHY (the mechanism/literature). Honest division of labour: the software scores and ranks; a reasoner interprets and designs the experiment."
+}

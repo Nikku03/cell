@@ -1,0 +1,83 @@
+{
+  "test": "loop_quantity",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "b857a72939e09be8",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/rnadecay/AvgKdegs.csv",
+        "bytes": 21962834,
+        "hash": "b8869c749b2b4a24",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 16492,
+      "used": 10136,
+      "selection": "filtered",
+      "fraction": 0.6146010186757216
+    },
+    "seed": 1904,
+    "controls": [
+      "200 gene-label shuffles",
+      "the mean as a zero-R2 baseline",
+      "raw mRNA as the comparator for the turnover term",
+      "residual checked against protein abundance"
+    ],
+    "note": "scored by held-out R-squared, which the mean fails at exactly 0 and a bad model fails below it",
+    "warnings": []
+  },
+  "gates": {
+    "Y1 beats the mean": true,
+    "Y2 slope near 1": true,
+    "Y3 correction earns its place": true,
+    "Y4 beats a shuffle": true
+  },
+  "r2_mrna": 0.37831531285207187,
+  "r2_with_turnover": 0.4332406163006185,
+  "slope": 1.2977041583377038,
+  "null": {
+    "mean": -0.000341317422054967,
+    "sd": 0.00025712922515720076,
+    "p95": 4.935282625333488e-05
+  },
+  "resid_vs_abundance": -0.045977966209871136,
+  "n": 10136,
+  "log": [
+    "====================================================================================================",
+    "PREDICTING A QUANTITY -- the structural gap, tested on the loop's own equation",
+    "====================================================================================================",
+    "  After twenty loops nothing here predicts a number, only a class. AUC cannot fail the way",
+    "  R-squared can: the mean scores exactly zero and a bad model scores negative.",
+    "\n  10,136 genes with measured protein abundance, mRNA abundance and mRNA decay rate",
+    "\n  model                                         held-out R2",
+    "  the mean (baseline, exactly zero by construction)       0.0000",
+    "  log mRNA alone                                     0.3783",
+    "  log mRNA + the loop turnover term                  0.4332",
+    "\n  fitted log-log slope: 1.2977   (1.0 would mean protein is strictly proportional to mRNA)",
+    "\n  Y1 BEATS THE MEAN -- 0.3783 > 0.05   Y1 PASS",
+    "  Y2 THE SLOPE IS NEAR 1 -- 1.2977 in (0.7, 1.3)   Y2 PASS",
+    "  Y3 THE CORRECTION EARNS ITS PLACE -- 0.4332 - 0.3783 = +0.0549   Y3 PASS",
+    "  Y4 BEATS A SHUFFLE -- null -0.0003 +/- 0.0003, 95th +0.0000   Y4 PASS",
+    "\n  residual check: |error| vs protein abundance, Spearman -0.0460",
+    "\n====================================================================================================",
+    "  Y1 beats the mean                   PASS",
+    "  Y2 slope near 1                     PASS",
+    "  Y3 correction earns its place       PASS",
+    "  Y4 beats a shuffle                  PASS",
+    "  A QUANTITY IS PREDICTED. First held-out R-squared in this project, and the first time the",
+    "  loop's distinctive content -- turnover and dilution -- has added anything to anything.",
+    "  BUT READ Y2 CAREFULLY: the slope is 1.2977 against a ceiling of 1.3, which is 0.0023 from failing. A slope of 1.30 means a",
+    "  tenfold change in transcript goes with a 20-fold change in protein.",
+    "  That is AMPLIFICATION, not proportionality. The gate passed because the band was",
+    "  wide, not because the equation's form was vindicated, and calling this",
+    "  'proportional' would be the overstatement this project exists to avoid.",
+    "====================================================================================================",
+    "    manifest: 2 inputs, coverage 10136/16492 (61.5%) by 'filtered', seed 1904, controls 4"
+  ]
+}

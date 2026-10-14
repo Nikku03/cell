@@ -1,0 +1,151 @@
+{
+ "validation_state_expression": {
+  "state_counts": {
+   "quiescent": 2989,
+   "polycomb_repressed": 1754,
+   "primed_weak": 1322,
+   "active_promoter": 9477,
+   "heterochromatin": 124,
+   "bivalent": 714,
+   "no_annotation": 112
+  },
+  "expression_by_state": {
+   "quiescent": {
+    "n": 178,
+    "median_log10_rpkm": 0.575,
+    "frac_expressed_rpkm>1": 0.635
+   },
+   "active_promoter": {
+    "n": 8193,
+    "median_log10_rpkm": 1.084,
+    "frac_expressed_rpkm>1": 0.885
+   },
+   "bivalent": {
+    "n": 220,
+    "median_log10_rpkm": -1.0,
+    "frac_expressed_rpkm>1": 0.427
+   },
+   "primed_weak": {
+    "n": 158,
+    "median_log10_rpkm": 0.459,
+    "frac_expressed_rpkm>1": 0.582
+   },
+   "no_annotation": {
+    "n": 29,
+    "median_log10_rpkm": 0.987,
+    "frac_expressed_rpkm>1": 0.759
+   },
+   "polycomb_repressed": {
+    "n": 79,
+    "median_log10_rpkm": 0.371,
+    "frac_expressed_rpkm>1": 0.582
+   }
+  },
+  "active_vs_bivalent_log10rpkm": [
+   1.084,
+   -1.0
+  ],
+  "H3K27me3_signal_AUC_for_silent": 0.571,
+  "bivalent_silencing_enrichment": 4.07,
+  "base_silent_frac": 0.142
+ },
+ "validation_writer_PRC2": {
+  "H3K27me3_marked_genes": 2468,
+  "writers": {
+   "EZH2": {
+    "mean_z_H3K27me3": 0.07,
+    "mean_z_unmarked": 0.001,
+    "delta_mean_z": 0.069,
+    "top200up_enrichment": 5.33
+   },
+   "EED": {
+    "mean_z_H3K27me3": 0.038,
+    "mean_z_unmarked": 0.005,
+    "delta_mean_z": 0.033,
+    "top200up_enrichment": 1.53
+   },
+   "SUZ12": {
+    "mean_z_H3K27me3": 0.032,
+    "mean_z_unmarked": 0.003,
+    "delta_mean_z": 0.029,
+    "top200up_enrichment": 2.48
+   }
+  },
+  "controls": {
+   "MYC": {
+    "mean_z_H3K27me3": 0.012,
+    "mean_z_unmarked": 0.014,
+    "delta_mean_z": -0.003,
+    "top200up_enrichment": 0.95
+   },
+   "SPI1": {
+    "mean_z_H3K27me3": 0.003,
+    "mean_z_unmarked": 0.009,
+    "delta_mean_z": -0.005,
+    "top200up_enrichment": 0.76
+   },
+   "TP53": {
+    "mean_z_H3K27me3": 0.015,
+    "mean_z_unmarked": 0.01,
+    "delta_mean_z": 0.006,
+    "top200up_enrichment": 1.14
+   },
+   "GATA1": {
+    "mean_z_H3K27me3": 0.227,
+    "mean_z_unmarked": 0.134,
+    "delta_mean_z": 0.093,
+    "top200up_enrichment": 2.86
+   },
+   "RPL13": {
+    "mean_z_H3K27me3": 0.075,
+    "mean_z_unmarked": 0.052,
+    "delta_mean_z": 0.023,
+    "top200up_enrichment": 1.71
+   }
+  },
+  "control_enrichment_max": 2.86,
+  "EZH2_beats_all_controls": true,
+  "interpretation": "H3K27me3 genes de-repress (go UP) on PRC2 loss = predicted direction. Only the CATALYTIC writer EZH2 cleanly exceeds the control perturbations; accessory subunits (EED/SUZ12) fall within control range -- consistent with PRC2 redundancy + the bistability wall (enriched but weak, magnitudes small)."
+ },
+ "demo_mutate_writer_EZH2": {
+  "writer": "EZH2",
+  "mark": "h3k27me3",
+  "nexus_activity": 0.308,
+  "predicted_target_direction": "up",
+  "n_direct_targets": 2468,
+  "target_note": "genes carrying h3k27me3 at their promoter",
+  "example_targets": [
+   "A1CF",
+   "A3GALT2",
+   "A4GALT",
+   "AATK",
+   "ABAT",
+   "ABCB4",
+   "ABCC3",
+   "ABCC8",
+   "ABCG4",
+   "ABCG5",
+   "ABCG8",
+   "ABHD17C",
+   "ABI3",
+   "ABLIM2",
+   "ABRA",
+   "ABRACL",
+   "ACAN",
+   "ACOT11",
+   "ACP7",
+   "ACSBG1",
+   "ACTA1",
+   "ACTC1",
+   "ACTL6B",
+   "ACTL7B",
+   "ACTN2",
+   "ACTRT2",
+   "ACVR1C",
+   "ADA",
+   "ADAM19",
+   "ADAM22"
+  ]
+ },
+ "note": "Epigenetics layer B (FIRST_PRINCIPLES.md sec4): (a) static ChromHMM-style chromatin state per promoter from 6 ENCODE K562 marks -- VALIDATED, state predicts measured K562 expression (active states -> expressed). (c) mutate_writer = epigenetic analogue of nexus_regulate: a writer/eraser mutation -> NEXUS activity -> its mark-carrying loci move first-order; VALIDATED direction vs real Perturb-seq -- H3K27me3-marked genes are enriched among UP-movers when PRC2 (EZH2/EED/SUZ12) is knocked down (de-repression). HONEST 3-tier ceiling: static state knowable; writer->direct-target first-order/direction-only (enriched but weak); genome-wide chromatin cascade does NOT compose (bistability/hysteresis + EZH1/EZH2 & DNMT3A/3B redundancy) = the wall."
+}

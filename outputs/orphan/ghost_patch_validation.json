@@ -1,0 +1,131 @@
+{
+  "passed": true,
+  "summary": {
+    "n_ghosts": 4993,
+    "patched_function": 3933,
+    "patched_pathway": 520,
+    "pathway_theme_comparable": 285,
+    "pathway_function_agreement": 0.463,
+    "shuffled_baseline": 0.239,
+    "lift_over_shuffled": 1.94
+  },
+  "examples": [
+    {
+      "gene": "ACTR6",
+      "function_theme": [
+        "transcription",
+        "translation"
+      ],
+      "pathway": "HATs acetylate histones",
+      "enrichment": 11.6,
+      "agree": false
+    },
+    {
+      "gene": "ADGRB2",
+      "function_theme": [
+        "transcription"
+      ],
+      "pathway": "Generic Transcription Pathway",
+      "enrichment": 3.2,
+      "agree": true
+    },
+    {
+      "gene": "AKAP17A",
+      "function_theme": [
+        "metabolism",
+        "rna_processing"
+      ],
+      "pathway": "mRNA Polyadenylation",
+      "enrichment": 6.2,
+      "agree": true
+    },
+    {
+      "gene": "AKAP8",
+      "function_theme": [
+        "cell_cycle",
+        "chromatin",
+        "metabolism"
+      ],
+      "pathway": "mRNA Polyadenylation",
+      "enrichment": 7.5,
+      "agree": false
+    },
+    {
+      "gene": "AKIRIN1",
+      "function_theme": [
+        "chromatin"
+      ],
+      "pathway": "Neddylation",
+      "enrichment": 4.6,
+      "agree": false
+    },
+    {
+      "gene": "AKIRIN2",
+      "function_theme": [
+        "chromatin",
+        "ubiquitin"
+      ],
+      "pathway": "Neddylation",
+      "enrichment": 7.3,
+      "agree": true
+    },
+    {
+      "gene": "ANGEL1",
+      "function_theme": [
+        "rna_processing"
+      ],
+      "pathway": "Generic Transcription Pathway",
+      "enrichment": 2.4,
+      "agree": false
+    },
+    {
+      "gene": "ANGEL2",
+      "function_theme": [
+        "chromatin"
+      ],
+      "pathway": "Generic Transcription Pathway",
+      "enrichment": 2.6,
+      "agree": false
+    },
+    {
+      "gene": "ANKRD16",
+      "function_theme": [
+        "chromatin",
+        "translation"
+      ],
+      "pathway": "Generic Transcription Pathway",
+      "enrichment": 2.4,
+      "agree": false
+    },
+    {
+      "gene": "ANKRD50",
+      "function_theme": [
+        "cell_cycle",
+        "transport"
+      ],
+      "pathway": "mRNA Splicing - Major Pathway",
+      "enrichment": 5.5,
+      "agree": false
+    },
+    {
+      "gene": "APOBEC3F",
+      "function_theme": [
+        "dna_repair"
+      ],
+      "pathway": "mRNA Polyadenylation",
+      "enrichment": 6.2,
+      "agree": false
+    },
+    {
+      "gene": "APPBP2",
+      "function_theme": [
+        "ubiquitin"
+      ],
+      "pathway": "Neddylation",
+      "enrichment": 3.1,
+      "agree": true
+    }
+  ],
+  "bar": "function patch de-ghosts >=3000; predicted pathway agrees with independent function theme >=0.4 & >=2x shuffled",
+  "note": "function = fact tier (curated literature); pathway = prediction tier, trusted only because it agrees with the independent function signal well above a shuffled baseline"
+}

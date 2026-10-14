@@ -1,0 +1,51 @@
+{
+ "n_cells": 207324,
+ "n_targets": 335,
+ "min_cells": 150,
+ "targets": {},
+ "n_targets_pc_pass": 329,
+ "bands": {
+  "<10 kb": {
+   "n": 146,
+   "frac_up": 0.2945205479452055,
+   "median_lfc": -0.07518900136522494,
+   "p_vs_trans": 9.444581949296406e-10
+  },
+  "10-100 kb": {
+   "n": 658,
+   "frac_up": 0.4331306990881459,
+   "median_lfc": -0.01718326640141417,
+   "p_vs_trans": 0.026099505373005392
+  },
+  "100 kb-1 Mb": {
+   "n": 4758,
+   "frac_up": 0.44388398486759145,
+   "median_lfc": -0.014159116323879393,
+   "p_vs_trans": 0.013754035401469638
+  },
+  ">1 Mb same chrom": {
+   "n": 224824,
+   "frac_up": 0.4633046293989965,
+   "median_lfc": -0.009342126283897932,
+   "p_vs_trans": 0.4580459004958882
+  },
+  "different chrom": {
+   "n": 4009766,
+   "frac_up": 0.4650735229936111,
+   "median_lfc": -0.009008721321569813,
+   "p_vs_trans": NaN
+  }
+ },
+ "near_minus_trans_frac_up": -0.1705529750484056,
+ "frac_up_sequence": [
+  0.2945205479452055,
+  0.4331306990881459,
+  0.44388398486759145,
+  0.4633046293989965,
+  0.4650735229936111
+ ],
+ "monotonic_decline": false,
+ "monotonic_rise": true,
+ "gradient_shape": "monotonic RISE with distance -- neighbours go DOWN, the OPPOSITE of the chain",
+ "verdict": "CHAIN REFUTED, NOT MERELY UNSUPPORTED. Genes within 10 kb of a silenced TSS rise only 29.5% of the time against 46.5% in trans (p 9.44e-10), with median lfc -0.0752 against -0.0090 -- and the gradient is monotonic RISE with distance -- neighbours go DOWN, the OPPOSITE of the chain. Silencing a gene SUPPRESSES its neighbours rather than releasing them, which is the expected behaviour of KRAB-dCas9 CRISPRi spreading heterochromatin locally. The indirect-effect reading of the benchmark's positive-effect pairs therefore loses its proposed mechanism: the local consequence of silencing is co-repression, not de-repression. The POSITIONAL evidence is untouched -- those elements do sit beside other promoters -- but 'the neighbour was repressing the target' is now contradicted by measurement rather than merely unconfirmed by annotation."
+}

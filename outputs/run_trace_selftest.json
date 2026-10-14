@@ -1,0 +1,46 @@
+{
+  "test": "run_trace_selftest",
+  "passed": true,
+  "static": [
+    ".json",
+    "hidden.json",
+    "plain.json",
+    "zipped.json.gz"
+  ],
+  "traced": [
+    "hidden.json",
+    "interp_7.json",
+    "plain.json",
+    "zipped.json.gz"
+  ],
+  "keys": {
+    "interp_7.json": [
+      "beta"
+    ],
+    "plain.json": [
+      "alpha"
+    ],
+    "zipped.json.gz": [
+      "gamma"
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "OBSERVE THE RUN INSTEAD OF PARSING THE SOURCE",
+    "====================================================================================================",
+    "  Static analysis could verify 42 of 357 modules. The other 315 build their paths in",
+    "  variables, interpolate them, or name files the scanner could not locate. Every one of them",
+    "  opens a real file at runtime; the information is not missing, it is just not in the text.",
+    "\n  SELF-TEST -- a module written to be unresolvable from its source",
+    "        static (source text)              ['.json', 'hidden.json', 'plain.json', 'zipped.json.gz']",
+    "        traced (what ran)                 ['hidden.json', 'interp_7.json', 'plain.json', 'zipped.json.gz']",
+    "        tracer found all four             True",
+    "        static missed                     ['interp_7.json']",
+    "        keys observed                     {'interp_7.json': ['beta'], 'plain.json': ['alpha'], 'zipped.json.gz': ['gamma']}",
+    "",
+    "    The tracer resolves paths the source cannot express. The ceiling on rules 1 and 4",
+    "    was an artefact of reading text, and lifts for any module that can be executed.",
+    "\n  THE LIMIT, STATED: a traced input list is what ONE run touched. A branch that did not",
+    "  execute contributes nothing, so traces are a LOWER bound and never a complete input set."
+  ]
+}

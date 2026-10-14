@@ -1,0 +1,30 @@
+=================================================================================================
+ADDING CONTEXT SO THE CONTRADICTIONS CAN RESOLVE
+=================================================================================================
+  200 cell types; expression mask for 7,496 of 16,492 genes  (45.5%)
+
+=================================================================================================
+X1  THE MASK'S OWN VALIDITY (BLOCKING)
+=================================================================================================
+    worst: CD8-positive, alpha-beta memory T cell       0/3
+    worst: CD4-positive, alpha-beta memory T cell       0/1
+    worst: CD16-negative, CD56-bright natural killer cell, human 0/4
+    worst: pancreatic ductal cell                       0/3
+    best:  erythroid progenitor cell                    4/4
+    best:  non-classical monocyte                       1/1
+    best:  classical monocyte                           1/1
+
+  marker TFs recovered in their own cell type  45/89 = 50.6%
+  markers with NO mask coverage at all          21
+
+  X1: FAIL -- 50.6% against a predeclared 70% bar. The mask is not a usable
+  context. NO resolution number is reported, and the module stops here as predeclared.
+
+  WHAT THIS MEANS, STATED PLAINLY: the contradictions dyncell found are real and the
+  context variable that would resolve them is the right one, but the expression data
+  on disk cannot carry it. A marker gene is expressed in the cell type it defines --
+  that is what makes it a marker -- so a mask that misses them is missing ordinary
+  expression, not edge cases. Resolving these contradictions needs a cell-type
+  expression matrix this repository does not have.
+
+  runtime 2.4s

@@ -1,0 +1,94 @@
+========================================================================================================
+LOOP 265 -- DOES CROSS-LINE TRANSFER IMPROVE WITH MORE CELL LINES?
+========================================================================================================
+     Loop 264 ruled out the comfortable explanation: constraining the operator raised
+     its reliability 0.448 -> 0.611 and bought -0.0004 of transfer. A MORE reliable
+     operator transferring WORSE means the line-specificity is real, not noise.
+     One hypothesis is left and it is about DATA: nine lines may be too few to span
+     the space an unseen line lives in. 20 lines were extracted; 9 were ever used.
+     TRAP DECLARED FIRST: loop 262's span test fits coefficients on the held-out
+     line's OWN residual, so it is monotone in n BY CONSTRUCTION and a rising curve
+     would mean nothing. Coefficients here are fitted on HALF the held-out line's
+     genes and scored on the other half, which can and should turn over.
+R1 IS THE ORIGINAL HARNESS UNTOUCHED?
+     nine-line dense operator, half the genes: +0.0671 against loop 262's +0.0670
+     R1 PASS -- reproduces to 0.0001; load() is untouched and every earlier loop's numbers still stand
+R2 HOW MUCH DOES THE EXTENSION ACTUALLY ADD?
+     lines with >= 500 distinct genes: 12 (9 original + 3 new)
+       VCAP      3,741 (gene, line) pairs, 4,134 genes in the raw block
+       PC3       3,801 (gene, line) pairs, 3,980 genes in the raw block
+       A375      3,694 (gene, line) pairs, 3,826 genes in the raw block
+       HA1E      3,801 (gene, line) pairs, 3,801 genes in the raw block
+       A549      3,724 (gene, line) pairs, 3,724 genes in the raw block
+       MCF7      3,687 (gene, line) pairs, 3,688 genes in the raw block
+       HT29      3,665 (gene, line) pairs, 3,665 genes in the raw block
+       HEPG2     3,562 (gene, line) pairs, 3,562 genes in the raw block
+       HCC515    3,522 (gene, line) pairs, 3,522 genes in the raw block
+       NPC       1,075 (gene, line) pairs, 1,075 genes in the raw block  <-- NEW
+       ASC       1,075 (gene, line) pairs, 1,075 genes in the raw block  <-- NEW
+       SKL         561 (gene, line) pairs,   561 genes in the raw block  <-- NEW
+     genes present in >= 6 of these lines: 3,801 (nine-line set was 3,801)
+     R2 PASS -- 3 new lines survive: NPC, ASC, SKL
+R3 DO THE NEW LINES SUPPORT AN OPERATOR?
+     own dense operator, fit on half the line's genes, scored on the other half:
+       VCAP      +0.0538
+       PC3       +0.0753
+       A375      +0.0727
+       HA1E      +0.0664
+       A549      +0.0699
+       MCF7      +0.0797
+       HT29      +0.0715
+       HEPG2     +0.0660
+       HCC515    +0.0458
+       NPC       +0.0385   <-- NEW
+       ASC       +0.0353   <-- NEW
+       SKL       +0.0291   <-- NEW
+     new lines mean +0.0343   original nine mean +0.0668
+     R3 PASS -- the new lines carry an operator at +0.0343
+R4 LOAD-BEARING -- DOES TRANSFER IMPROVE WITH THE NUMBER OF LINES?
+     combination of n training operators, weights fitted on half the held-out
+     line's genes and scored on the other half:
+          n       real   PERMUTED null   difference
+          2    +0.0026         +0.0002      +0.0024
+          3    +0.0047         +0.0002      +0.0045
+          4    +0.0056         +0.0003      +0.0054
+          5    +0.0073         +0.0003      +0.0070
+          6    +0.0078         +0.0003      +0.0074
+          7    +0.0087         +0.0005      +0.0083
+          8    +0.0095         +0.0005      +0.0090
+          9    +0.0105         +0.0006      +0.0099
+         10    +0.0113         +0.0006      +0.0107
+         11    +0.0122         +0.0007      +0.0115
+     RAW slope per added line +0.00099 -- but adding basis vectors to a least
+     squares fit helps almost automatically, which is why the null curve exists.
+     EXCESS slope over the permuted null: +0.00094 +/- 0.00010 (+9.0 se)
+     R4 PASS -- transfer rises +0.00094 per added line IN EXCESS of the permuted null, 9.0 se from zero
+R5 THE PRACTICAL QUESTION -- DOES IT ADD TO THE LINE'S OWN OPERATOR?
+     own operator +0.0587, blended with all 11 training operators: -0.0076 on top
+     R5 FAIL -- other lines add -0.0076 to a line's own operator; once you have measured half a line, the other lines are surplus
+R6 EXTRAPOLATION
+     at +0.00094 per line, reaching the own-operator's +0.0587 needs about 61 cell lines
+     R6 PASS -- about 61 lines would suffice, which is a reachable experiment
+R7 WHAT THIS CANNOT SHOW
+     The new lines are thin. NPC and ASC carry about a quarter of the genes the
+     original nine do, so their operators are estimated from fewer rows and R3 is
+     the gate that says whether that mattered.
+     R4's slope is measured over n up to the lines available here. A curve that is
+     flat from 2 to 11 could still rise at 50; the honest claim is only that lines
+     OF THIS KIND, added at this rate, do not help.
+     NPC and ASC are not cancer lines, which is what makes them a real spanning test,
+     but it also means a failure could be distance rather than count -- they may be
+     too far from the nine to interpolate rather than too few.
+     Everything is on the double-centred residual, so by loop 260 any arm constant
+     across lines is capped at 0.027%.
+     978 landmarks and shRNA, under loop 254's construct ceiling of 0.2487.
+========================================================================================================
+  R1  PASS
+  R2  PASS
+  R3  PASS
+  R4  PASS
+  R5  FAIL
+  R6  PASS
+  5/6   [278s]
+========================================================================================================
+     written outputs/loop_more_lines.json

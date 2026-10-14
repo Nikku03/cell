@@ -1,0 +1,127 @@
+{
+  "n_atoms": 13625,
+  "n_bonds": 263765,
+  "iface_share": 0.051868140200557314,
+  "marks": {
+    "5mC": {
+      "top_fracs": {
+        "0.001": 0.991178892594047,
+        "0.01": 0.999633546133455,
+        "0.1": 0.9999814261449272
+      },
+      "bonds_for_90pct": 42,
+      "total_energy": 2.169815862184719,
+      "iface_top100": 0.0,
+      "iface_top1000": 0.026,
+      "iface_top1pct": 0.08304891922639362,
+      "iface_ratio_top1pct": 1.6011547532892123,
+      "covalent_frac": 0.45892146616066504,
+      "atom_shell_energy": [
+        0.24426999118173695,
+        0.012640858112724565,
+        0.0003004800057953529,
+        1.3410876144651398e-05,
+        2.1577032875735394e-06,
+        1.3421739976896315e-07,
+        1.4872908495760247e-08
+      ]
+    },
+    "acetyl": {
+      "top_fracs": {
+        "0.001": 0.9981841637853146,
+        "0.01": 0.9999999995060054,
+        "0.1": 0.9999999999969001
+      },
+      "bonds_for_90pct": 54,
+      "total_energy": 0.5769154796125926,
+      "iface_top100": 0.0,
+      "iface_top1000": 0.0,
+      "iface_top1pct": 0.03261281759575275,
+      "iface_ratio_top1pct": 0.6287639670450789,
+      "covalent_frac": 0.02529717399206255,
+      "atom_shell_energy": [
+        0.07536415472159878,
+        0.031176337116527952,
+        0.004646940661437974,
+        0.00012099887757582228,
+        1.9651162967559873e-05,
+        3.899416897014338e-08,
+        1.6437947876603443e-11
+      ]
+    },
+    "shuffled": {
+      "top_fracs": {
+        "0.001": 0.5012272750741533,
+        "0.01": 0.7301444445630279,
+        "0.1": 0.9570054695910212
+      },
+      "bonds_for_90pct": 12506,
+      "total_energy": 13.085917247857775,
+      "iface_top100": 0.1,
+      "iface_top1000": 0.1,
+      "iface_top1pct": 0.08494501327265833,
+      "iface_ratio_top1pct": 1.6377107978848566,
+      "covalent_frac": 0.035965595169980914,
+      "atom_shell_energy": [
+        3.372860461484706e-05,
+        3.299828882701444e-05,
+        9.007153947398877e-05,
+        0.0006080390144986941,
+        0.0015432848506149364,
+        0.0004146151967641716,
+        0.0015197605282585196
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "ENERGY PER BOND AND PER ATOM",
+    "====================================================================================================",
+    "  The compartment totals said a methyl puts 0.04% of its strain at the DNA-histone interface,",
+    "  which reads as 'marks do not touch the grip'. But that is a total over 264,000 springs, and",
+    "  a total cannot tell energy spread thinly over every bond from energy concentrated in a few.",
+    "  Those have identical bucket sums and completely different meanings. A 0.04% share is also",
+    "  entirely compatible with the single most-strained bond being an interface contact.",
+    "\n  13625 atoms, 263765 springs | interface 5.19% of springs | covalent 5.47%",
+    "\n  CONCENTRATION -- what fraction of the total strain sits in the most-strained bonds",
+    "    mark          top 0.1%    top 1%   top 10%   bonds for 90%",
+    "    5mC              0.991     1.000     1.000              42",
+    "    acetyl           0.998     1.000     1.000              54",
+    "    shuffled         0.501     0.730     0.957          12,506",
+    "\n  THE TAIL TEST -- are DNA-histone contacts OVER-REPRESENTED where strain concentrates?",
+    "    Interface bonds are 5.19% of the network. A ratio above 1 means the mark",
+    "    selectively loads the grip; at or below 1 the aggregate negative survives at full",
+    "    resolution, which is a far stronger negative than the bucket totals could support.",
+    "    mark           top 100  top 1000    top 1%   ratio @1%",
+    "    5mC              0.000     0.026     0.083        1.60",
+    "    acetyl           0.000     0.000     0.033        0.63",
+    "    shuffled         0.100     0.100     0.085        1.64",
+    "\n  COVALENT vs NON-BONDED share of the strain (covalent springs are stiffened 20x, so equal",
+    "  strain stores more energy there; separated so stiffness cannot masquerade as mechanism)",
+    "    mark          covalent %  nonbonded %",
+    "    5mC                45.89        54.11",
+    "    acetyl              2.53        97.47",
+    "    shuffled            3.60        96.40",
+    "\n  PER-ATOM STRAIN, decay with distance from the mark (mean energy per atom in each shell)",
+    "    mark               0-3A       3-6A      6-10A     10-15A     15-25A     25-40A     40-70A",
+    "    5mC           2.443e-01  1.264e-02  3.005e-04  1.341e-05  2.158e-06  1.342e-07  1.487e-08",
+    "    acetyl        7.536e-02  3.118e-02  4.647e-03  1.210e-04  1.965e-05  3.899e-08  1.644e-11",
+    "    shuffled      3.373e-05  3.300e-05  9.007e-05  6.080e-04  1.543e-03  4.146e-04  1.520e-03",
+    "\n  THE 200 MOST-STRAINED BONDS for 5mC are written to bond_energy_top.tsv, with residues",
+    "  and atom names, so the result is a chemical statement rather than a number.",
+    "    top 5:",
+    "      1. DC:J.C4            -- DC:J.C5            0.5231  covalent",
+    "      2. DC:J.C5            -- DC:J.C6            0.3831  covalent",
+    "      3. DC:J.C2            -- DC:J.C5            0.0905  contact",
+    "      4. DC:J.O2            -- DC:J.C5            0.08791  contact",
+    "      5. DC:J.N3            -- DC:J.C5            0.08108  contact",
+    "\n  READING",
+    "    5mC: top 1% of bonds hold 100.0% of the strain (shuffled 73.0%); interface ratio in that tail 1.60",
+    "    acetyl: top 1% of bonds hold 100.0% of the strain (shuffled 73.0%); interface ratio in that tail 0.63",
+    "    INTERFACE CONTACTS ARE NOT OVER-REPRESENTED IN THE TAIL EITHER. The negative from the",
+    "    bucket totals survives at full bond resolution, which is a much stronger result than",
+    "    the aggregate alone: it is not that the effect is small, it is that the strain does not",
+    "    reach the grip at any resolution. The accessibility bridge should be abandoned on this",
+    "    route rather than retried with a bigger model."
+  ]
+}

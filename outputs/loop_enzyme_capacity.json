@@ -1,0 +1,151 @@
+{
+ "test": "loop_enzyme_capacity",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/HumanGEM.xml",
+    "bytes": 43115559,
+    "hash": "cc5a4383c6116b0c",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/paxdb_hela.txt",
+    "bytes": 232026,
+    "hash": "dd78bb8089b6196e",
+    "method": "sha256:full"
+   },
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/ens_gtf.gz",
+    "bytes": 55529204,
+    "hash": "8c87436bab973c87",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 12931,
+   "used": 772,
+   "selection": "filtered",
+   "fraction": 0.05970149253731343
+  },
+  "seed": 9301,
+  "controls": [
+   "apparent k_cat inverted from flux rather than looked up",
+   "the enzyme budget computed from proteome mass, not fitted to growth",
+   "a re-routing test that a uniform rescaling would fail",
+   "the anaerobic and baseline conditions separated explicitly",
+   "coverage of the capacity evidence stated against total flux",
+   "growth compared to a measured doubling time, not to itself"
+  ],
+  "note": "FBA has no notion of enzyme cost, so it runs at its bounds; this prices the enzymes and corrects cell_sim.py's Warburg claim",
+  "warnings": []
+ },
+ "gates": {
+  "K1 the unconstrained solution is not a cell": true,
+  "K2 the required turnover numbers are impossible": false,
+  "K3 enzyme capacity brings growth into range": false,
+  "K4 the Warburg claim tested on the right condition": true,
+  "K5 the constraint re-routes rather than rescales": true,
+  "K6 coverage declared": true
+ },
+ "k1": {
+  "growth_unconstrained": 20.557610706398954,
+  "doubling_min": 2.023038154947228,
+  "target_mu": 0.028881132523331052,
+  "factor_too_fast": 711.8007124475432
+ },
+ "k2": {
+  "n_reactions": 772,
+  "median_kcat_per_s": 0.10819526666666662,
+  "p25": 0.0001770582849557199,
+  "p75": 0.3259708233051268,
+  "max": 132.88147235462515,
+  "n_above_1e6": 0
+ },
+ "k3": {
+  "enzyme_g_per_gdw": 0.11000000000000001,
+  "budget_mmol_per_gdw": 0.0022,
+  "kcat_per_s": 30.0,
+  "flux_cap": 237.60000000000002,
+  "growth_constrained": 1.033886053247167,
+  "doubling_h": 0.6704289881684258,
+  "factor_off": 35.79797476473481
+ },
+ "k4": {
+  "baseline_lactate": 547.542086360004,
+  "baseline_o2": 20.0,
+  "anaerobic_lactate": 558.773770935107,
+  "anaerobic_o2": 0.0,
+  "aerobic_glycolysis_present": true
+ },
+ "k5": {
+  "spearman": -0.24950548780299167,
+  "switched_off": 1839,
+  "switched_on": 274
+ },
+ "k6": {
+  "n_gene_reactions": 7782,
+  "n_with_enzyme": 772,
+  "flux_fraction_covered": 0.446537946085363
+ },
+ "seconds": 42.9301643371582,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 93 -- enzyme capacity: the constraint that turns an uncalibrated FBA into a cell",
+  "====================================================================================================",
+  "",
+  "  Human-GEM: 12,931 reactions, 8,461 metabolites, 2,848 genes",
+  "",
+  "K1 THE UNCONSTRAINED SOLUTION IS NOT A CELL",
+  "     growth 20.5576 /h -> doubling 2.0 minutes",
+  "     a mammalian cell doubles in 24 h -> 0.0289 /h",
+  "     the model is 712x too fast",
+  "     expectation written before the run: more than 100x",
+  "     K1 reported (not gated on my expectation)",
+  "",
+  "K2 THE REQUIRED TURNOVER NUMBERS ARE IMPOSSIBLE",
+  "     772 reactions carry flux, have a gene, and have a measured HeLa enzyme",
+  "     apparent k_cat required: median 0.1 /s, IQR 0.0-0.3, max 133 /s",
+  "     ordinary enzymes run at 1-100 /s; the fastest known reach about 1e6 /s",
+  "     reactions demanding more than 1e6 /s: 0 (0.0%)",
+  "     K2 FAIL -- the flux solution IS payable, so the premise is wrong",
+  "",
+  "K3 ENZYME CAPACITY BRINGS GROWTH INTO RANGE",
+  "     protein 0.55 g/gDW x 20% metabolic = 0.110 g enzyme/gDW",
+  "     at 50 kDa -> 0.00220 mmol enzyme/gDW",
+  "     at k_cat 30/s = 108,000/h -> total enzymatic flux <= 237.6 mmol/gDW/h",
+  "     applied to the 7,782 gene-associated reactions as one pooled constraint",
+  "     constrained growth 1.0339 /h -> doubling 0.67 h (target 24 h)",
+  "     off by a factor of 35.80   (gate: <= 3.0)",
+  "     K3 FAIL",
+  "",
+  "K4 THE WARBURG CLAIM, TESTED ON THE RIGHT CONDITION",
+  "     BASELINE   lactate 547.5   O2 imported 20.0",
+  "     ANAEROBIC  lactate 558.8   O2 imported 0.0",
+  "     cell_sim.py printed the ANAEROBIC pair and called it Warburg, adding 'the model was",
+  "     never told this' -- but the anaerobic run is precisely the one where oxygen was",
+  "     removed by hand. Fermenting without oxygen is anaerobic glycolysis, not Warburg.",
+  "     on the BASELINE condition, where oxygen IS available: aerobic glycolysis is genuinely present",
+  "     so the phenomenon is real and the printed check was reading the wrong solve",
+  "",
+  "K5 THE CONSTRAINT RE-ROUTES, IT DOES NOT MERELY RESCALE",
+  "     Spearman between unconstrained and constrained flux: -0.2495 over 2,579 active reactions",
+  "     reactions switched OFF by the constraint: 1,839; switched ON: 274",
+  "     K5 PASS -- the constraint changes which reactions carry flux",
+  "",
+  "K6 COVERAGE DECLARED",
+  "     reactions with a gene: 7,782 of 12,931",
+  "     carrying flux with a measured HeLa enzyme: 772",
+  "     those carry 44.7% of total active flux",
+  "     the pooled constraint applies to all 7,782 gene-associated reactions, but the",
+  "     k_cat EVIDENCE in K2 rests on the 772 with measured enzymes",
+  "",
+  "  PASS  K1 the unconstrained solution is not a cell",
+  "  FAIL  K2 the required turnover numbers are impossible",
+  "  FAIL  K3 enzyme capacity brings growth into range",
+  "  PASS  K4 the Warburg claim tested on the right condition",
+  "  PASS  K5 the constraint re-routes rather than rescales",
+  "  PASS  K6 coverage declared",
+  "    manifest: 3 inputs, coverage 772/12931 (6.0%) by 'filtered', seed 9301, controls 6"
+ ]
+}

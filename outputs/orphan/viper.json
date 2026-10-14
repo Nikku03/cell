@@ -1,0 +1,49 @@
+{
+ "n_ko": 228,
+ "n_tf_scored": 259,
+ "min_targets": 15,
+ "recovery_AUC": 0.564,
+ "median_percentile_of_true_TF": 0.405,
+ "true_TF_is_top1_frac": 0.018,
+ "true_TF_in_top10_frac": 0.066,
+ "shuffled_regulon_AUC": 0.495,
+ "shuffled_seeds": [
+  0.527,
+  0.477,
+  0.481
+ ],
+ "own_mRNA_vs_activity_r": 0.034,
+ "diagnosis": {
+  "frac_KO_footprint_lt5": 0.974,
+  "strong_footprint_sign_agreement": [
+   {
+    "TF": "GATA1",
+    "footprint": 68,
+    "regulon_sign_agreement_vs_K562": 0.33
+   },
+   {
+    "TF": "TAF1",
+    "footprint": 19,
+    "regulon_sign_agreement_vs_K562": 0.0
+   },
+   {
+    "TF": "ETV4",
+    "footprint": 11,
+    "regulon_sign_agreement_vs_K562": 0.25
+   },
+   {
+    "TF": "CLOCK",
+    "footprint": 8,
+    "regulon_sign_agreement_vs_K562": 0.0
+   },
+   {
+    "TF": "CEBPG",
+    "footprint": 7,
+    "regulon_sign_agreement_vs_K562": NaN
+   }
+  ],
+  "abs_NES_vs_regulon_size_r": 0.636
+ },
+ "verdict": "WEAK, and precisely diagnosed -- standard VIPER/aREA on the CANONICAL pan-tissue regulon (CollecTRI) recovers the perturbed TF only at AUC 0.564 vs 0.495 shuffled. NOT a coding error: the method is faithful. The cause is the project's recurring wall in the INFERENCE direction -- (1) most pseudobulk TF-KO footprints are near-empty, (2) where a footprint exists the pan-tissue regulon predicts the WRONG direction for K562 (e.g. GATA1 sign-agreement ~0.33 < chance), (3) |NES| is confounded by regulon size. The fix is a CONTEXT-SPECIFIC (K562) regulon -- exactly the Perturb-seq-supervised regulon (Point 1). Recorded as an honest negative that motivates the next build.",
+ "note": "VIPER/DoRothEA activity inference (aREA, one-tail, uniform likelihood) on the CollecTRI signed regulon, validated on Perturb-seq: the knocked-out TF's activity -- read from its TARGETS' footprint, never its own mRNA -- is recovered as among the most-inactivated regulons (AUC reported vs shuffled-regulon control). Fixes activity!=abundance (an expressed regulator can be inactive). Honest scope: INFERENCE (data->activity), not forward prediction; does not break the forward far-field wall (transmission coefficient still unmeasured)."
+}

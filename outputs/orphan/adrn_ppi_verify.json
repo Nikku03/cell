@@ -1,0 +1,29 @@
+{
+  "test": "adrn_ppi_verify",
+  "n_edges": 191447,
+  "degree_preserved": true,
+  "frac_edges_moved": [
+    0.9820472506751216,
+    0.9823240896958427,
+    0.9814517856116837
+  ],
+  "coresponse_ratio_linked_vs_shuffled": 1.0451885728603725,
+  "log": [
+    "====================================================================================================",
+    "VERIFY the PPI-beats-rewiring result: is the control real?",
+    "====================================================================================================",
+    "  191,447 edges over 16,492 genes",
+    "\n    seed  degree identical   edges moved  jaccard vs real",
+    "  20260802              True        98.2%            0.009",
+    "  20260803              True        98.2%            0.009",
+    "  20260804              True        98.1%            0.009",
+    "  -> degree exactly preserved on every seed: True",
+    "\n  edges with BOTH genes measured in the K562 screen: 54,213",
+    "  cosine of measured response profiles:",
+    "    linked pairs   0.6219",
+    "    shuffled pairs 0.5950",
+    "    ratio          1.05x",
+    "  A modest ratio is expected and is biology -- interacting proteins do share responses.",
+    "  A very large ratio would mean the edge list was DERIVED from this response data (leakage)."
+  ]
+}

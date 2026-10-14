@@ -1,0 +1,24 @@
+{
+ "gene_FUNCTION_GO_BP": {
+  "n_cell_types": 200,
+  "chance_top1": 0.005,
+  "exact_top1_accuracy": 0.255,
+  "exact_top3_accuracy": 0.485,
+  "exact_top5_accuracy": 0.565,
+  "same_lineage_top1": 0.68,
+  "median_rank_of_correct_of_N": 3,
+  "N": 200
+ },
+ "protein_TYPE_GO_MF": {
+  "n_cell_types": 200,
+  "chance_top1": 0.005,
+  "exact_top1_accuracy": 0.175,
+  "exact_top3_accuracy": 0.385,
+  "exact_top5_accuracy": 0.505,
+  "same_lineage_top1": 0.435,
+  "median_rank_of_correct_of_N": 4,
+  "N": 200
+ },
+ "verdict": "HELD-OUT CELL IDENTIFICATION -- the honest 'guess exactly which cell' recalculation (out of all 200 cell types, chance 0.5%). Using ONE independent half of the genes to identify a profile built from the OTHER half: by GENE FUNCTION, the exact cell is the #1 match 26% of the time (top-5 56%, median rank 3/200); by PROTEIN TYPE, exact top-1 18% (top-5 50%). So the earlier 78-80% was FAMILY matching (same lineage top-1 here 68%); the harder EXACT-cell number is lower -- top-1 ~26% but far above the 0.5% chance, and the correct cell sits near the very top of the ranking (median rank 3 of 200). HONEST READING: from just the functions/types of a cell's expressed genes we can (a) almost always name the right FAMILY, and (b) pick the EXACT cell far better than chance and usually within the top few -- but distinguishing very close sub-types (e.g. memory vs effector CD8 T cells, which share most genes) is where exact-top-1 loses points. The mRNA->function->identity loop is real; the honest accuracy is 'right family almost always, right exact cell often and near-top otherwise', not a literal ~80% exact-ID.",
+ "note": "HELD-OUT CELL IDENTIFICATION -- the honest 'guess exactly which cell' recalculation (out of all 200 cell types, chance 0.5%). Using ONE independent half of the genes to identify a profile built from the OTHER half: by GENE FUNCTION, the exact cell is the #1 match 26% of the time (top-5 56%, median rank 3/200); by PROTEIN TYPE, exact top-1 18% (top-5 50%). So the earlier 78-80% was FAMILY matching (same lineage top-1 here 68%); the harder EXACT-cell number is lower -- top-1 ~26% but far above the 0.5% chance, and the correct cell sits near the very top of the ranking (median rank 3 of 200). HONEST READING: from just the functions/types of a cell's expressed genes we can (a) almost always name the right FAMILY, and (b) pick the EXACT cell far better than chance and usually within the top few -- but distinguishing very close sub-types (e.g. memory vs effector CD8 T cells, which share most genes) is where exact-top-1 loses points. The mRNA->function->identity loop is real; the honest accuracy is 'right family almost always, right exact cell often and near-top otherwise', not a literal ~80% exact-ID."
+}

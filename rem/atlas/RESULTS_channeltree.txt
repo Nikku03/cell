@@ -1,0 +1,80 @@
+=================================================================================================
+CHANNEL DYNAMICS AND PER-NODE PARAMETERS INSIDE THE DENDRITIC TREE
+=================================================================================================
+  morphology: 389 Markram-lab cells; pyramidal median n_stems 7, n_branch 142
+  tree from morphology: branching b = 4, depth L = 4, leaves 256
+
+=================================================================================================
+C1  GRADIENT CHECK, HAND-DERIVED BACKWARD (BLOCKING)
+=================================================================================================
+    Wl       analytic -1.967102e-02  numeric -1.967102e-02  rel 3.84e-09
+    W[0]     analytic -1.090727e-02  numeric -1.090727e-02  rel 6.93e-09
+    W[1]     analytic -1.588447e-02  numeric -1.588447e-02  rel 2.27e-09
+    th[0]    analytic -3.867759e-03  numeric -3.867759e-03  rel 1.28e-08
+    th[1]    analytic +5.620234e-03  numeric +5.620234e-03  rel 4.69e-09
+    gd[0]    analytic -1.216379e-01  numeric -1.216379e-01  rel 1.57e-10
+    gd[1]    analytic +1.567289e-02  numeric +1.567289e-02  rel 6.15e-09
+    gh[0]    analytic -1.218024e-01  numeric -1.218024e-01  rel 4.95e-11
+    gh[1]    analytic -1.897306e-02  numeric -1.897306e-02  rel 1.07e-09
+    wo       analytic -1.245796e-01  numeric -1.245796e-01  rel 9.15e-10
+    bo       analytic -1.452259e-01  numeric -1.452259e-01  rel 2.46e-10
+
+  worst relative error 1.28e-08
+
+  C1: PASS -- every parameter group matches a central finite difference
+
+=================================================================================================
+C3  WHERE THE PARAMETERS NOW SIT
+=================================================================================================
+  leaves (synapses)        16,384   77.5%
+  INSIDE the hierarchy      4,760   22.5%   (dendrite.py: 32 = 0.1%)
+  readout                       9    0.0%
+  total                    21,153
+
+  C3: the hierarchy holds 22.5% of parameters against 0.1% before. Applied in substance.
+
+=================================================================================================
+C0 + C2 + C4  THE CEILING GATE, SWEPT OVER PARITY ORDER k
+=================================================================================================
+  inputs 8 (fixed), neurons 8, steps 12000, 8000 train / 4000 test, 3 seeds
+
+      k      channel tree         tanh tree      MLP eq-param  MLP eq-par+depth  learnt
+      2     1.000+/-0.000     0.508+/-0.016     1.000+/-0.000     1.000+/-0.000     yes
+      3     1.000+/-0.000     1.000+/-0.000     1.000+/-0.000     1.000+/-0.000     yes
+      4     1.000+/-0.000     0.477+/-0.009     1.000+/-0.000     1.000+/-0.000     yes
+      5     1.000+/-0.000     1.000+/-0.000     1.000+/-0.000     1.000+/-0.000     yes
+      6     1.000+/-0.000     0.502+/-0.015     1.000+/-0.000     1.000+/-0.000     yes
+
+  parameters: channel tree 21,153  tanh tree 16,425  MLP 21,151  MLP deep 21,239
+
+  HARNESS POSITIVE CONTROL (k=2, XOR of 2 of 8 bits, plain MLP): 1.000
+  PASS -- the optimiser and budget can learn a 2-bit composition, so a void row above
+  means the task is hard, not that training is broken.
+
+  C2 LEARNABILITY: 4 of 4 non-control k values learnt by any model. Only those are used.
+
+  channel tree beats the TANH TREE at      2/4 learnt k   <- did the two fixes do anything?
+  channel tree beats equal-param MLP at    0/4
+  channel tree beats equal-param+depth MLP 0/4
+
+  C0: FAIL -- it does NOT beat both conventional controls, so the biological neuron still is not carrying the result
+  The fixes helped at 2 of 4 k values but not uniformly.
+
+  C4 THE SWEEP, which ranks the approach rather than one point:
+    k=2: ct-tanh +0.492   ct-MLP +0.000   ct-MLPdeep +0.000
+    k=3: ct-tanh +0.000   ct-MLP +0.000   ct-MLPdeep +0.000
+    k=4: ct-tanh +0.523   ct-MLP +0.000   ct-MLPdeep +0.000
+    k=5: ct-tanh +0.000   ct-MLP +0.000   ct-MLPdeep +0.000
+    k=6: ct-tanh +0.498   ct-MLP +0.000   ct-MLPdeep +0.000
+
+  [RUN NOTE] The run crashed AFTER every gate above was computed and printed, while
+  serialising the artifact (numpy bool -> JSON). This file is reconstituted from that run's stdout;
+  the serialisation bug is fixed and C6 below was added and measured separately in seconds.
+
+=================================================================================================
+C6  WHY THE TANH TREE ALTERNATES: SYMMETRY, MEASURED
+=================================================================================================
+  tanh tree     max |f(-x) + f(x)| = 0.00e+00   -> EXACTLY ODD
+  channel tree  max |g(-x) + g(x)| = 3.13e-01   -> NOT odd
+  Even-k parity is an EVEN function in +/-1 encoding; an odd network plus one output bias
+  cannot represent it. Hence chance at k=2,4,6 and 1.000 at k=3,5.

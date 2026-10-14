@@ -1,0 +1,163 @@
+{
+ "test": "loop 137 -- ubiquitin annotation vs the 362",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/proteinatlas.tsv",
+    "bytes": 43055808,
+    "hash": "5c546331ec5dda4b",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/protein_dynamics_source.tsv.gz",
+    "bytes": 78716,
+    "hash": "e66eb11d7aa9d5ab",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 1130,
+   "used": 1031,
+   "selection": "all",
+   "fraction": 0.9123893805309734
+  },
+  "seed": 13700,
+  "controls": [
+   "the 88/362/38/642 split required to reproduce loop 119 exactly",
+   "gate_guard capability check before the test is read",
+   "publication count as a fame control, with a MATCHED comparison that can strike the result",
+   "the tanh(b*T/4) ceiling as a confound-free physical cross-check"
+  ],
+  "note": "loops 121 and 122 were both partly measuring publication count; U4 is built so that it can kill U3.",
+  "warnings": []
+ },
+ "gates": {
+  "U1": true,
+  "U2": true,
+  "U3": false,
+  "U4": true,
+  "U5": true,
+  "U6": true
+ },
+ "u1": {
+  "n11": 88,
+  "n10": 362,
+  "n01": 38,
+  "n00": 642,
+  "n_both": 1130
+ },
+ "u2": {
+  "cov_362": 359,
+  "cov_38": 38,
+  "cov_642": 634,
+  "ann_362": 0.28969359331476324,
+  "ann_38": 0.3157894736842105,
+  "ann_642": 0.24132492113564669,
+  "achievable": 0.3856736042056106
+ },
+ "u3": {
+  "p_362_vs_38": 0.7114538498344268,
+  "or_362_vs_38": 0.8670841487279843,
+  "p_362_vs_642": 0.09762785680247497,
+  "or_362_vs_642": 1.2829605359612946
+ },
+ "u4": {
+  "auc_pub_ann": 0.7169453273998728,
+  "auc_pub_mem": 0.4760067687583699,
+  "auc_ann_mem": 0.5269797777740423,
+  "matched_auc": 0.5337199674499784,
+  "per_decile": [
+   0.4676,
+   0.5115,
+   0.5256,
+   0.5269,
+   0.5307,
+   0.5086,
+   0.5663,
+   0.5802,
+   0.5403,
+   0.5767
+  ],
+  "n": 892
+ },
+ "u5": {
+  "period_h": 24.0,
+  "ceiling_by_halflife": {
+   "2": 0.9692307692307692,
+   "6": 0.6,
+   "12": 0.3333333333333333,
+   "24": 0.1715728752538099,
+   "48": 0.08642723372588978
+  }
+ },
+ "u6": {
+  "u3_survived_u4": false
+ },
+ "seconds": 2.0339646339416504,
+ "log": [
+  "====================================================================================================",
+  "  LOOP 137 -- C3: does annotated ubiquitin targeting explain the 362?",
+  "====================================================================================================",
+  "",
+  "U1 REBUILD THE SPLIT EXACTLY AS LOOP 119 DID",
+  "     publication counts for 16,492 genes (model bundle, as in loops 121/122)",
+  "     genes with both calls: 1,130",
+  "     protein+transcript 88   protein only 362   transcript only 38   neither 642",
+  "     loop 119 recorded    88                362                 38            642",
+  "     U1 PASS -- the population reproduces exactly",
+  "",
+  "U2 CAN THE ANNOTATION EVEN SEPARATE THESE GENES?",
+  "     the 362 (protein only)   covered 359   annotated 29.0%",
+  "     the  38 (transcript only) covered 38   annotated 31.6%",
+  "     the 642 (neither)        covered 634   annotated 24.1%",
+  "     gate_guard achievable bound on the pooled vector: 0.3857",
+  "     U2 PASS -- both groups are large enough and the annotation varies",
+  "",
+  "U3 THE TEST",
+  "     362 vs 38   104/359 against 12/38   OR 0.87   Fisher p = 0.7115",
+  "     362 vs 642  104/359 against 153/634   OR 1.28   Fisher p = 9.7628e-02",
+  "     U3 FAIL -- ubiquitin annotation is NOT enriched",
+  "",
+  "U4 IS IT FAME?",
+  "     publication count -> ubiquitin annotation   AUC 0.7169",
+  "     publication count -> membership of the 362  AUC 0.4760",
+  "     annotation        -> membership of the 362  AUC 0.5270",
+  "     annotation -> membership, MATCHED within publication deciles: AUC 0.5337",
+  "       per-decile: [0.4676, 0.5115, 0.5256, 0.5269, 0.5307, 0.5086, 0.5663, 0.5802, 0.5403, 0.5767]",
+  "     U4 PASS -- the annotation still separates within publication-matched strata",
+  "",
+  "U5 THE PHYSICAL CHECK THAT NEEDS NO ANNOTATION",
+  "     loop 123's ceiling: relative amplitude <= tanh(b*T/4), T = 24.0 h",
+  "     a protein with half-life t half has b = ln2/t half",
+  "       t half   2 h -> b 0.3466 /h -> ceiling 0.9692",
+  "       t half   6 h -> b 0.1155 /h -> ceiling 0.6000",
+  "       t half  12 h -> b 0.0578 /h -> ceiling 0.3333",
+  "       t half  24 h -> b 0.0289 /h -> ceiling 0.1716",
+  "       t half  48 h -> b 0.0144 /h -> ceiling 0.0864",
+  "     a protein with a 48 h half-life cannot exceed 0.086 relative amplitude no matter what drives it.",
+  "     This is unfitted, needs no curator, and cannot be contaminated by publication count.",
+  "     It is why degradation is the only candidate left: the 362 MUST be short-lived or",
+  "     actively destroyed, and loop 123 measured 68.8% of MS-oscillating genes above the",
+  "     ceiling their steady-state b permits.",
+  "     U5 PASS -- stated and computed",
+  "",
+  "U6 THE HONEST NEGATIVE",
+  "     The mechanism is NOT identified. Eliminated so far: transcription (119),",
+  "     the TF network (120, 130), degron motifs (121), translation control (122),",
+  "     relocalisation (123), and now annotated ubiquitin targeting.",
+  "     What survives is U5: the physics still says degradation, and no available",
+  "     annotation locates it. The layer stays FAILED with a sharper statement.",
+  "",
+  "====================================================================================================",
+  "  U1  PASS",
+  "  U2  PASS",
+  "  U3  FAIL",
+  "  U4  PASS",
+  "  U5  PASS",
+  "  U6  PASS",
+  "  5/6",
+  "====================================================================================================",
+  "    manifest: 2 inputs, coverage 1031/1130 (91.2%) by 'all', seed 13700, controls 4"
+ ]
+}

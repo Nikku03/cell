@@ -1,0 +1,80 @@
+{
+  "test": "nexus_catalyst_compose",
+  "n": 400,
+  "arms": {
+    "llm_position1": {
+      "top1": 0.675,
+      "sd": 0.0
+    },
+    "random_rerank": {
+      "top1": 0.195,
+      "sd": 0.0
+    },
+    "freq_rerank": {
+      "top1": 0.365,
+      "sd": 0.0
+    },
+    "esm_rerank": {
+      "top1": 0.1225,
+      "sd": 0.010206207261596578
+    },
+    "esm_hardneg": {
+      "top1": 0.14083333333333334,
+      "sd": 0.007168604389202184
+    },
+    "esm_untrained": {
+      "top1": 0.21,
+      "sd": 0.011365151414154881
+    },
+    "fusion_rerank": {
+      "top1": 0.6325,
+      "sd": 0.007359800721939854
+    },
+    "fusion_hardneg": {
+      "top1": 0.6433333333333333,
+      "sd": 0.004249182927993998
+    },
+    "oracle_in_shortlist": {
+      "top1": 0.92,
+      "sd": 0.0
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "COMPOSITION: LLM PROPOSES TEN, ESM RE-RANKS",
+    "====================================================================================================",
+    "  Measured BEFORE running, and both bound the result:",
+    "   * the LLM's ten are 4.8x more family-concentrated than random decoys (largest-family share",
+    "     0.48 vs 0.10), so ESM faces far harder negatives than the 0.682 was scored against;",
+    "   * only 3 of 2,231 protein-substrate reactions have a catalyst under 20 papers, so the obscure",
+    "     stratum that forecasts orphan work does not exist here. Nothing below is an orphan number.",
+    "\n  400 test reactions | ESM trained on 716 reactions, homology-disjoint from every test catalyst",
+    "  400 test reactions scored | candidates with an ESM embedding: 86.8% (the rest keep their LLM rank)",
+    "\n  arm                           top-1     sd   note",
+    "  llm_position1                 0.675  0.000   the ordering to beat",
+    "  random_rerank                 0.195  0.000   what a know-nothing re-ranker costs",
+    "  freq_rerank                   0.365  0.000   strongest hand-built signal",
+    "  esm_rerank                    0.122  0.010   trained on random decoys, as measured",
+    "  esm_hardneg                   0.141  0.007   trained on family-matched decoys",
+    "  esm_untrained                 0.210  0.011   random init",
+    "  fusion_rerank                 0.632  0.007   LLM rank prior + 0.5 x ESM z",
+    "  fusion_hardneg                0.643  0.004   LLM rank prior + 0.5 x ESM z",
+    "  oracle (truth in the ten)     0.920  0.000   ceiling for any re-ranker",
+    "\n  READING",
+    "  best ESM arm 'fusion_hardneg' 0.643 vs the LLM's own ordering 0.675  (-0.032)",
+    "  ceiling if a re-ranker were perfect: 0.920",
+    "  REPLACING the LLM ordering: 0.141. FUSING with it (rank prior + ESM): 0.643. LLM alone: 0.675.",
+    "  NO GAIN. Fusion recovers almost all of what replacement threw away, which shows the loss",
+    "  was mostly discarding the LLM's ordering rather than ESM being actively wrong -- but it",
+    "  still does not beat leaving the shortlist alone. ESM's 0.682 was earned against decoys",
+    "  drawn at random from the whole vocabulary; the LLM's ten are 4.8x more family-concentrated,",
+    "  and within one family the sequence model has nothing left to say. Telling ALDH1A1 from",
+    "  ALDH3A2 is the hard problem, and it is precisely the one the composition needed solved.",
+    "  NOTE the replacement arms (0.141) fall BELOW random re-ranking (0.195), and below the untrained twin (0.210).",
+    "  Training made it worse on this distribution, so the coarse enzyme/substrate compatibility it",
+    "  learned is mildly ANTI-correlated with which family member is right. That is a sharper",
+    "  negative than noise would give, and it is the thing to explain before trying this again.",
+    "  For scale, random_rerank is 0.195 -- a re-ranker that knows",
+    "  nothing does not leave a good ordering alone, it flattens it to chance-within-the-list."
+  ]
+}

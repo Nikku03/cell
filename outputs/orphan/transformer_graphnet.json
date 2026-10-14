@@ -1,0 +1,26 @@
+{
+ "base": [
+  0.4857,
+  0.0372
+ ],
+ "graph-real": [
+  0.4899,
+  0.0322
+ ],
+ "graph-shuf": [
+  0.4844,
+  0.0397
+ ],
+ "TIDE-null": [
+  0.2488,
+  0.0118
+ ],
+ "ORACLE*": [
+  0.607,
+  0.0322
+ ],
+ "graph_minus_base": 0.0042,
+ "graph_minus_shuffled": 0.0055,
+ "verdict": "GRAPH-NATIVE ENCODER (transformer_graphnet.py): build ON the curated network by MESSAGE-PASSING over a KO's real within-neighbourhood wiring (typed complex/codep/PPI edges + CLS global node) instead of a bag-of-partners set-transformer. Same features, same distillation + retrieval readout; only attention CONNECTIVITY changes. 3 splits, held-out K562. base(set) 0.486 -> graph-real(masked to real edges) 0.490 = +0.004 -- the wiring does NOT help beyond the partner set (a KO is well-described as a BAG of its curated partners; which-connects-to-which adds nothing the set-transformer didn't already get). Real-vs-shuffled-wiring +0.005 (indistinguishable from random wiring of the same density) tide 0.249 < [base 0.486, graph 0.490] < oracle 0.607. Consistent with ceiling_cartography (all doors shut, ~+0.012 encoder headroom): building on the graph's wiring is a wash -- the partner SET already carried the reproducible signal; the ceiling is the DATA, not the graph representation. Deterministic.",
+ "note": "GRAPH-NATIVE ENCODER (transformer_graphnet.py): build ON the curated network by MESSAGE-PASSING over a KO's real within-neighbourhood wiring (typed complex/codep/PPI edges + CLS global node) instead of a bag-of-partners set-transformer. Same features, same distillation + retrieval readout; only attention CONNECTIVITY changes. 3 splits, held-out K562. base(set) 0.486 -> graph-real(masked to real edges) 0.490 = +0.004 -- the wiring does NOT help beyond the partner set (a KO is well-described as a BAG of its curated partners; which-connects-to-which adds nothing the set-transformer didn't already get). Real-vs-shuffled-wiring +0.005 (indistinguishable from random wiring of the same density) tide 0.249 < [base 0.486, graph 0.490] < oracle 0.607. Consistent with ceiling_cartography (all doors shut, ~+0.012 encoder headroom): building on the graph's wiring is a wash -- the partner SET already carried the reproducible signal; the ceiling is the DATA, not the graph representation. Deterministic."
+}

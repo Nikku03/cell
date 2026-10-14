@@ -1,0 +1,490 @@
+{
+  "test": "adrn_markov",
+  "alphas": [
+    0.3,
+    0.6,
+    0.9
+  ],
+  "npreds": [
+    10,
+    20,
+    50
+  ],
+  "steps": 8,
+  "cells": {
+    "a0.3|n10": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.1975,
+      "adrn": 0.3165,
+      "adrn_markov": 0.316,
+      "mk_column": 0.19949999999999998,
+      "mk_ppi": 0.18750000000000003,
+      "rw_ppi": 0.18450000000000003,
+      "mk_tf": 0.009250000000000001,
+      "rw_tf": 0.009750000000000002,
+      "mk_complex": 0.09325,
+      "rw_complex": 0.09975000000000002,
+      "mk_pathway": 0.15325,
+      "rw_pathway": 0.14625,
+      "mk_spatial": 0.114,
+      "rw_spatial": 0.11375,
+      "mk_all": 0.20625,
+      "rw_all": 0.20375
+    },
+    "a0.3|n20": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.18025000000000002,
+      "adrn": 0.261625,
+      "adrn_markov": 0.264875,
+      "mk_column": 0.16912500000000003,
+      "mk_ppi": 0.154125,
+      "rw_ppi": 0.156625,
+      "mk_tf": 0.00875,
+      "rw_tf": 0.009375,
+      "mk_complex": 0.075375,
+      "rw_complex": 0.08575,
+      "mk_pathway": 0.12325,
+      "rw_pathway": 0.12525,
+      "mk_spatial": 0.09925,
+      "rw_spatial": 0.09925,
+      "mk_all": 0.174,
+      "rw_all": 0.17362499999999997
+    },
+    "a0.3|n50": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.13995000000000002,
+      "adrn": 0.1795,
+      "adrn_markov": 0.18140000000000003,
+      "mk_column": 0.13450000000000004,
+      "mk_ppi": 0.1273,
+      "rw_ppi": 0.12555,
+      "mk_tf": 0.0082,
+      "rw_tf": 0.009250000000000001,
+      "mk_complex": 0.06545000000000001,
+      "rw_complex": 0.0727,
+      "mk_pathway": 0.1044,
+      "rw_pathway": 0.10344999999999999,
+      "mk_spatial": 0.08289999999999999,
+      "rw_spatial": 0.08289999999999999,
+      "mk_all": 0.14025,
+      "rw_all": 0.13935000000000003
+    },
+    "a0.6|n10": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.1975,
+      "adrn": 0.3165,
+      "adrn_markov": 0.31500000000000006,
+      "mk_column": 0.19925,
+      "mk_ppi": 0.18650000000000003,
+      "rw_ppi": 0.18425,
+      "mk_tf": 0.009250000000000001,
+      "rw_tf": 0.009750000000000002,
+      "mk_complex": 0.09275,
+      "rw_complex": 0.10025,
+      "mk_pathway": 0.15200000000000002,
+      "rw_pathway": 0.14675000000000002,
+      "mk_spatial": 0.11324999999999999,
+      "rw_spatial": 0.114,
+      "mk_all": 0.20575,
+      "rw_all": 0.20375
+    },
+    "a0.6|n20": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.18025000000000002,
+      "adrn": 0.261625,
+      "adrn_markov": 0.26275,
+      "mk_column": 0.16912500000000003,
+      "mk_ppi": 0.157,
+      "rw_ppi": 0.15649999999999997,
+      "mk_tf": 0.00875,
+      "rw_tf": 0.00925,
+      "mk_complex": 0.07525,
+      "rw_complex": 0.085625,
+      "mk_pathway": 0.12537500000000001,
+      "rw_pathway": 0.12525,
+      "mk_spatial": 0.09925,
+      "rw_spatial": 0.09925,
+      "mk_all": 0.17375,
+      "rw_all": 0.17375
+    },
+    "a0.6|n50": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.13995000000000002,
+      "adrn": 0.1795,
+      "adrn_markov": 0.18065000000000006,
+      "mk_column": 0.13450000000000004,
+      "mk_ppi": 0.12625,
+      "rw_ppi": 0.12530000000000002,
+      "mk_tf": 0.0082,
+      "rw_tf": 0.009349999999999999,
+      "mk_complex": 0.06530000000000001,
+      "rw_complex": 0.07260000000000001,
+      "mk_pathway": 0.1039,
+      "rw_pathway": 0.10350000000000001,
+      "mk_spatial": 0.08289999999999999,
+      "rw_spatial": 0.08289999999999999,
+      "mk_all": 0.13970000000000002,
+      "rw_all": 0.13925
+    },
+    "a0.9|n10": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.1975,
+      "adrn": 0.3165,
+      "adrn_markov": 0.313,
+      "mk_column": 0.1975,
+      "mk_ppi": 0.18450000000000003,
+      "rw_ppi": 0.183,
+      "mk_tf": 0.009250000000000001,
+      "rw_tf": 0.009500000000000001,
+      "mk_complex": 0.08925000000000001,
+      "rw_complex": 0.10099999999999999,
+      "mk_pathway": 0.15,
+      "rw_pathway": 0.147,
+      "mk_spatial": 0.11449999999999999,
+      "rw_spatial": 0.11399999999999999,
+      "mk_all": 0.205,
+      "rw_all": 0.204
+    },
+    "a0.9|n20": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.18025000000000002,
+      "adrn": 0.261625,
+      "adrn_markov": 0.262125,
+      "mk_column": 0.16912500000000003,
+      "mk_ppi": 0.15637500000000001,
+      "rw_ppi": 0.15637500000000001,
+      "mk_tf": 0.008625,
+      "rw_tf": 0.009250000000000001,
+      "mk_complex": 0.07362500000000001,
+      "rw_complex": 0.085625,
+      "mk_pathway": 0.1255,
+      "rw_pathway": 0.1255,
+      "mk_spatial": 0.09925,
+      "rw_spatial": 0.09925,
+      "mk_all": 0.17375,
+      "rw_all": 0.17375
+    },
+    "a0.9|n50": {
+      "best_seed": "all",
+      "best_rewired": "all",
+      "frequency": 0.13995000000000002,
+      "adrn": 0.1795,
+      "adrn_markov": 0.18015,
+      "mk_column": 0.13450000000000004,
+      "mk_ppi": 0.1254,
+      "rw_ppi": 0.125,
+      "mk_tf": 0.0083,
+      "rw_tf": 0.00935,
+      "mk_complex": 0.06405000000000001,
+      "rw_complex": 0.07225,
+      "mk_pathway": 0.10345,
+      "rw_pathway": 0.10345,
+      "mk_spatial": 0.08289999999999999,
+      "rw_spatial": 0.08289999999999999,
+      "mk_all": 0.13910000000000003,
+      "rw_all": 0.13910000000000003
+    }
+  },
+  "gap_markov_rewired": 0.0008027777777777788,
+  "gap_adrn": 0.00034166666666668764,
+  "sweeps": {
+    "rewired": {
+      "name": "markov - REWIRED",
+      "verdict": "FRAGILE",
+      "n_cells": 9,
+      "inert_axes": [],
+      "n_duplicate_cells": 1,
+      "n_effective_cells": 8,
+      "n_resolved_pos": 2,
+      "n_resolved_neg": 0,
+      "sign_consistent": false,
+      "cells_needed_for_robust": 6,
+      "passing_configs": [
+        {
+          "alpha": 0.3,
+          "npred": 50
+        },
+        {
+          "alpha": 0.6,
+          "npred": 50
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "alpha": 0.3,
+            "npred": 10
+          },
+          "cohort": "a0.3|n10",
+          "n": 400,
+          "delta": 0.0025,
+          "lo": -0.00024999999999999995,
+          "hi": 0.0055
+        },
+        {
+          "config": {
+            "alpha": 0.3,
+            "npred": 20
+          },
+          "cohort": "a0.3|n20",
+          "n": 400,
+          "delta": 0.00037499999999999963,
+          "lo": -0.00037500000000000066,
+          "hi": 0.001125
+        },
+        {
+          "config": {
+            "alpha": 0.3,
+            "npred": 50
+          },
+          "cohort": "a0.3|n50",
+          "n": 400,
+          "delta": 0.0009,
+          "lo": 0.0003500000000000001,
+          "hi": 0.0015000000000000002
+        },
+        {
+          "config": {
+            "alpha": 0.6,
+            "npred": 10
+          },
+          "cohort": "a0.6|n10",
+          "n": 400,
+          "delta": 0.0019999999999999996,
+          "lo": -0.0007499999999999997,
+          "hi": 0.00475
+        },
+        {
+          "config": {
+            "alpha": 0.6,
+            "npred": 20
+          },
+          "cohort": "a0.6|n20",
+          "n": 400,
+          "delta": -1.3877787807814457e-19,
+          "lo": -0.00037500000000000033,
+          "hi": 0.0003749999999999999
+        },
+        {
+          "config": {
+            "alpha": 0.6,
+            "npred": 50
+          },
+          "cohort": "a0.6|n50",
+          "n": 400,
+          "delta": 0.0004499999999999998,
+          "lo": 0.00014999999999999985,
+          "hi": 0.0007999999999999997
+        },
+        {
+          "config": {
+            "alpha": 0.9,
+            "npred": 10
+          },
+          "cohort": "a0.9|n10",
+          "n": 400,
+          "delta": 0.0009999999999999998,
+          "lo": -0.0017500000000000003,
+          "hi": 0.00375
+        },
+        {
+          "config": {
+            "alpha": 0.9,
+            "npred": 20
+          },
+          "cohort": "a0.9|n20",
+          "n": 400,
+          "delta": 0.0,
+          "lo": 0.0,
+          "hi": 0.0
+        },
+        {
+          "config": {
+            "alpha": 0.9,
+            "npred": 50
+          },
+          "cohort": "a0.9|n50",
+          "n": 400,
+          "delta": 0.0,
+          "lo": 0.0,
+          "hi": 0.0
+        }
+      ]
+    },
+    "adrn": {
+      "name": "adrn_markov - adrn",
+      "verdict": "FRAGILE",
+      "n_cells": 9,
+      "inert_axes": [],
+      "n_duplicate_cells": 0,
+      "n_effective_cells": 9,
+      "n_resolved_pos": 1,
+      "n_resolved_neg": 1,
+      "sign_consistent": false,
+      "cells_needed_for_robust": 6,
+      "passing_configs": [
+        {
+          "alpha": 0.3,
+          "npred": 20
+        }
+      ],
+      "cells": [
+        {
+          "config": {
+            "alpha": 0.3,
+            "npred": 10
+          },
+          "cohort": "a0.3|n10",
+          "n": 400,
+          "delta": -0.0005000000000000002,
+          "lo": -0.00425,
+          "hi": 0.0032500000000000003
+        },
+        {
+          "config": {
+            "alpha": 0.3,
+            "npred": 20
+          },
+          "cohort": "a0.3|n20",
+          "n": 400,
+          "delta": 0.0032499999999999994,
+          "lo": 0.0005000000000000001,
+          "hi": 0.006249999999999999
+        },
+        {
+          "config": {
+            "alpha": 0.3,
+            "npred": 50
+          },
+          "cohort": "a0.3|n50",
+          "n": 400,
+          "delta": 0.0019000000000000009,
+          "lo": -0.0002999999999999987,
+          "hi": 0.0042000000000000015
+        },
+        {
+          "config": {
+            "alpha": 0.6,
+            "npred": 10
+          },
+          "cohort": "a0.6|n10",
+          "n": 400,
+          "delta": -0.0014999999999999996,
+          "lo": -0.005,
+          "hi": 0.0020000000000000005
+        },
+        {
+          "config": {
+            "alpha": 0.6,
+            "npred": 20
+          },
+          "cohort": "a0.6|n20",
+          "n": 400,
+          "delta": 0.0011250000000000003,
+          "lo": -0.0013749999999999995,
+          "hi": 0.00375
+        },
+        {
+          "config": {
+            "alpha": 0.6,
+            "npred": 50
+          },
+          "cohort": "a0.6|n50",
+          "n": 400,
+          "delta": 0.0011500000000000008,
+          "lo": -0.0008499999999999985,
+          "hi": 0.0032000000000000006
+        },
+        {
+          "config": {
+            "alpha": 0.9,
+            "npred": 10
+          },
+          "cohort": "a0.9|n10",
+          "n": 400,
+          "delta": -0.0034999999999999996,
+          "lo": -0.006499999999999999,
+          "hi": -0.0007499999999999996
+        },
+        {
+          "config": {
+            "alpha": 0.9,
+            "npred": 20
+          },
+          "cohort": "a0.9|n20",
+          "n": 400,
+          "delta": 0.0005000000000000004,
+          "lo": -0.0013749999999999995,
+          "hi": 0.0025
+        },
+        {
+          "config": {
+            "alpha": 0.9,
+            "npred": 50
+          },
+          "cohort": "a0.9|n50",
+          "n": 400,
+          "delta": 0.0006500000000000006,
+          "lo": -0.0005499999999999998,
+          "hi": 0.0019
+        }
+      ]
+    }
+  },
+  "log": [
+    "====================================================================================================",
+    "MARKOV PROPAGATION INSIDE THE ADRN -- curated layers seed the walk, measured data drives it",
+    "====================================================================================================",
+    "  PREDECLARED: markov > REWIRED => topology is real. markov ~ REWIRED => degree again, 9th failure.",
+    "               adrn_markov > adrn => the walk carries what channels do not.",
+    "\n  5,120 perturbations; sealed 400; train 4,720",
+    "  measured operator T (4720, 8246) | square walk Q (3935, 3935) (genes on both axes)",
+    "  named channels: 170 kept of 170 built (120 pathways, 12 compartments, 9 lesion classes, rest structural); mean channels per gene 14.9",
+    "  extra channels: 535 kept of 691 built  (TIER A 526, TIER B 9); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "  layer ppi       108,426 edges -> degree-matched rewired copy built",
+    "  layer tf          1,665 edges -> degree-matched rewired copy built",
+    "  layer complex    23,230 edges -> degree-matched rewired copy built",
+    "    (layer pathway subsampled 428,264 -> 400,000 edges; BOTH arms use this set)",
+    "  layer pathway   400,000 edges -> degree-matched rewired copy built",
+    "    (layer spatial subsampled 581,595 -> 400,000 edges; BOTH arms use this set)",
+    "  layer spatial   400,000 edges -> degree-matched rewired copy built",
+    "\n  alpha=0.3",
+    "    N=10: freq 0.1975 | adrn 0.3165 | adrn+mk 0.3160 | best markov (all) 0.2062 | best REWIRED (all) 0.2037",
+    "      seeds: column 0.1995 ppi 0.1875 tf 0.0093 complex 0.0932 pathway 0.1532 spatial 0.1140 all 0.2062",
+    "    N=20: freq 0.1803 | adrn 0.2616 | adrn+mk 0.2649 | best markov (all) 0.1740 | best REWIRED (all) 0.1736",
+    "      seeds: column 0.1691 ppi 0.1541 tf 0.0088 complex 0.0754 pathway 0.1232 spatial 0.0993 all 0.1740",
+    "    N=50: freq 0.1400 | adrn 0.1795 | adrn+mk 0.1814 | best markov (all) 0.1403 | best REWIRED (all) 0.1394",
+    "      seeds: column 0.1345 ppi 0.1273 tf 0.0082 complex 0.0655 pathway 0.1044 spatial 0.0829 all 0.1403",
+    "\n  alpha=0.6",
+    "    N=10: freq 0.1975 | adrn 0.3165 | adrn+mk 0.3150 | best markov (all) 0.2057 | best REWIRED (all) 0.2037",
+    "      seeds: column 0.1993 ppi 0.1865 tf 0.0093 complex 0.0927 pathway 0.1520 spatial 0.1132 all 0.2057",
+    "    N=20: freq 0.1803 | adrn 0.2616 | adrn+mk 0.2627 | best markov (all) 0.1737 | best REWIRED (all) 0.1737",
+    "      seeds: column 0.1691 ppi 0.1570 tf 0.0088 complex 0.0752 pathway 0.1254 spatial 0.0993 all 0.1737",
+    "    N=50: freq 0.1400 | adrn 0.1795 | adrn+mk 0.1807 | best markov (all) 0.1397 | best REWIRED (all) 0.1393",
+    "      seeds: column 0.1345 ppi 0.1263 tf 0.0082 complex 0.0653 pathway 0.1039 spatial 0.0829 all 0.1397",
+    "\n  alpha=0.9",
+    "    N=10: freq 0.1975 | adrn 0.3165 | adrn+mk 0.3130 | best markov (all) 0.2050 | best REWIRED (all) 0.2040",
+    "      seeds: column 0.1975 ppi 0.1845 tf 0.0093 complex 0.0893 pathway 0.1500 spatial 0.1145 all 0.2050",
+    "    N=20: freq 0.1803 | adrn 0.2616 | adrn+mk 0.2621 | best markov (all) 0.1737 | best REWIRED (all) 0.1737",
+    "      seeds: column 0.1691 ppi 0.1564 tf 0.0086 complex 0.0736 pathway 0.1255 spatial 0.0993 all 0.1737",
+    "    N=50: freq 0.1400 | adrn 0.1795 | adrn+mk 0.1802 | best markov (all) 0.1391 | best REWIRED (all) 0.1391",
+    "      seeds: column 0.1345 ppi 0.1254 tf 0.0083 complex 0.0641 pathway 0.1035 spatial 0.0829 all 0.1391",
+    "\n  SWEEP markov - REWIRED   axes[alpha,npred]  9 cells\n  config                       cohort         delta                 95% CI\n  alpha=0.3 npred=10           a0.3|n10     +0.0025 [ -0.0002, +0.0055] ns\n  alpha=0.3 npred=20           a0.3|n20     +0.0004 [ -0.0004, +0.0011] ns\n  alpha=0.3 npred=50           a0.3|n50     +0.0009 [ +0.0004, +0.0015] RES+\n  alpha=0.6 npred=10           a0.6|n10     +0.0020 [ -0.0007, +0.0047] ns\n  alpha=0.6 npred=20           a0.6|n20     -0.0000 [ -0.0004, +0.0004] ns\n  alpha=0.6 npred=50           a0.6|n50     +0.0004 [ +0.0001, +0.0008] RES+\n  alpha=0.9 npred=10           a0.9|n10     +0.0010 [ -0.0018, +0.0037] ns\n  alpha=0.9 npred=20           a0.9|n20     +0.0000 [ +0.0000, +0.0000] ns\n  alpha=0.9 npred=50           a0.9|n50     +0.0000 [ +0.0000, +0.0000] ns\n  -> FRAGILE   resolved +2/-0 of 9 (>= 6 needed), sign-consistent False\n     WARNING: 1 of 9 cells are numerically identical to another cell -- they duplicate rather than test. Real observations: 8.\n     FRAGILE means the effect lives in a corner of the grid -- the argmax of choices nobody deliberated. Do not report it as a finding.",
+    "  GUARD rewired: inert axes [], duplicate cells 1",
+    "\n  SWEEP adrn_markov - adrn   axes[alpha,npred]  9 cells\n  config                       cohort         delta                 95% CI\n  alpha=0.3 npred=10           a0.3|n10     -0.0005 [ -0.0043, +0.0033] ns\n  alpha=0.3 npred=20           a0.3|n20     +0.0032 [ +0.0005, +0.0062] RES+\n  alpha=0.3 npred=50           a0.3|n50     +0.0019 [ -0.0003, +0.0042] ns\n  alpha=0.6 npred=10           a0.6|n10     -0.0015 [ -0.0050, +0.0020] ns\n  alpha=0.6 npred=20           a0.6|n20     +0.0011 [ -0.0014, +0.0037] ns\n  alpha=0.6 npred=50           a0.6|n50     +0.0012 [ -0.0008, +0.0032] ns\n  alpha=0.9 npred=10           a0.9|n10     -0.0035 [ -0.0065, -0.0007] RES-\n  alpha=0.9 npred=20           a0.9|n20     +0.0005 [ -0.0014, +0.0025] ns\n  alpha=0.9 npred=50           a0.9|n50     +0.0007 [ -0.0005, +0.0019] ns\n  -> FRAGILE   resolved +1/-1 of 9 (>= 6 needed), sign-consistent False\n     FRAGILE means the effect lives in a corner of the grid -- the argmax of choices nobody deliberated. Do not report it as a finding.",
+    "\n  markov - REWIRED +0.0008 (resolved 2/9) | adrn_markov - adrn +0.0003 (resolved 1/9)",
+    "\n  READING",
+    "  Propagation does NOT beat degree-matched rewiring. Ninth failure of the same kind: the walk is",
+    "  reading node degree, and the curated seeds are decoration even with a measured operator.",
+    "  It adds nothing to the ADRN. Whatever the walk knows, the annotation already knew -- the same",
+    "  outcome as the DepMap block and the response column."
+  ]
+}

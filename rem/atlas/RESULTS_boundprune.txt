@@ -1,0 +1,115 @@
+=================================================================================================
+THE TARGET-AWARE BOUND, WIRED INTO THE REAL PRUNER
+=================================================================================================
+  10 controllers, 1024 states, L = 6, dt = 0.5, 200 target rows.
+  TRRUST sha 9b909319ccc8. Same width, depth and rows as accuracy.py, so the numbers here
+  are comparable with its 8.4-decade finding rather than with a fresh baseline.
+
+=================================================================================================
+P0  THE WIRING CHECK: DOES rank="mass" REPRODUCE THE PRUNER AS IT WAS?
+=================================================================================================
+  rank='mass' at cap 19531: tail 3.720818e-98, kept 19531
+  accuracy.py's A1b reported 3.7208e-98 at 19531 retained paths.
+  P0: PASS -- the baseline is unchanged, so what follows measures the RANKING.
+
+=================================================================================================
+P2  HEAD TO HEAD AT EQUAL RETAINED-PATH COUNT
+=================================================================================================
+
+         cap      tail, MASS     tail, BOUND  gain, orders   s mass  s bound
+         100      1.5395e-99      6.1775e-99         0.603      0.4      0.4
+         300      2.9663e-99      1.1583e-98         0.592      0.4      0.5
+        1000      7.3706e-99      2.3093e-98         0.496      0.8      0.8
+        3000      1.2285e-98      4.1759e-98         0.531      1.9      1.9
+       10000      2.6793e-98      7.6642e-98         0.456      9.8     10.2
+       19531      3.7208e-98      1.0567e-97         0.453     22.9     25.4
+
+  DECADES OF RETAINED PATHS SAVED, which is what the engine actually buys: the
+  bound-ranked run at the SMALLEST cap reaches -98.21; mass ranking needs
+  10^2.90 retained paths to match it, against 10^2.00 for the bound --
+  a saving of 0.90 decades of retained paths at that accuracy.
+
+=================================================================================================
+P1  THE CEILING GATE: HOW MUCH WAS THERE TO WIN?
+=================================================================================================
+  MY FIRST ORACLE WAS CIRCULAR AND ITS OUTPUT PROVED IT. It re-ranked the paths that the
+  MASS-ranked run retained, and asked what share of the mass-to-oracle gap the bound
+  captured. The answer came back 99.2%, 98.6%, 99.4%, then 116.8%, then 320.1%, then a
+  division by zero. A share above 100% of a ceiling is impossible, so the ceiling was not
+  one: defining it from the LOSER's candidate set means the bound can and does escape it.
+  THAT FAILURE IS ITSELF THE MOST INTERESTING RESULT IN THIS MODULE -- it proves the bound
+  is not merely re-ordering the same candidates. It reaches parts of the path tree that
+  mass ranking never generates at all, which is a stronger claim than better ranking.
+
+  THE NON-CIRCULAR VERSION: run BOTH rankings at a cap three times the largest compared,
+  score each retained path's EXACT contribution, and take for each k the better of the two
+  best-possible re-rankings. That is a ceiling on re-ranking what EITHER rule can reach --
+  explicitly not a ceiling over all 10^21 paths, which is not computable.
+    oracle candidate set from rank='mass' at cap 60000: 60,000 paths, tail 6.7193e-98
+    oracle candidate set from rank='bound' at cap 60000: 60,000 paths, tail 1.7709e-97
+
+         cap            MASS           BOUND          ORACLE   share of gap
+         100      1.5395e-99      6.1775e-99      6.2490e-99          99.2%
+         300      2.9663e-99      1.1583e-98      1.1807e-98          98.6%
+        1000      7.3706e-99      2.3093e-98      2.3328e-98          99.1%
+        3000      1.2285e-98      4.1759e-98      4.2087e-98          99.4%
+       10000      2.6793e-98      7.6642e-98      7.7256e-98          99.2%
+       19531      3.7208e-98      1.0567e-97      1.0654e-97          99.2%
+
+  P1: the bound captures 99% to 99% of the gap between mass
+  ranking and the best re-ranking either rule can reach.
+  Nothing exceeds the ceiling now, so the ceiling is behaving as one over the range
+  it covers, and the bound is close to the best available re-ranking.
+
+=================================================================================================
+P3  THE DECISIVE GATE: DOES IT REDUCE THE SLOPE?
+=================================================================================================
+  accuracy.py's finding was not that the tail was wrong somewhere but that it was still
+  RISING. A better ranking that leaves the slope alone reorders without converging.
+
+    ranking        slope, orders per decade   crossing of 5.08 orders
+    mass                              0.608                   10^12.6
+    bound                             0.539                   10^13.7
+
+  the full path set being approximated is 10^21.1.
+
+  P3 AS PREDECLARED: the crossing moves from 10^12.6 to 10^13.7, still BELOW the
+  full set of 10^21.1. THE BOUND HELPS AND DOES NOT FIX IT. Pruning remains the
+  binding term, and that is the honest verdict rather than the one this module was
+  built hoping for.
+
+=================================================================================================
+P4  THE CERTIFICATE THE NEW RANKING PRODUCES
+=================================================================================================
+  With rank='bound' the accumulated certificate is the summed dropped BOUND, which bounds
+  the TAIL DEFICIT rather than the discarded mass. The true deficit is not knowable at
+  this width, so the readable question is whether the guarantee is even in the range
+  where it could be quoted: how does it compare with the tail itself?
+
+         cap     MASS cert / tail     BOUND cert / tail
+         100            6.496e+98             2.880e+27
+         300            3.371e+98             7.867e+26
+        1000            1.357e+98             1.839e+26
+        3000            8.140e+97             8.179e+25
+       10000            3.732e+97             3.088e+25
+       19531            2.687e+97             1.701e+25
+
+  A certificate must be small COMPARED WITH THE TAIL to be worth quoting. The mass
+  certificate is order 1 against a tail of 1e-98, so it is about 1e98 times the quantity
+  it is supposed to bound -- which is the 1.9e29-style gap realkinetics recorded, restated
+  at this width. Whether the bound certificate is usable is read off the second column.
+
+=================================================================================================
+P5  WHAT THIS DOES NOT SETTLE
+=================================================================================================
+  1. The tangent relaxation is LOOSER than the exact bound pathbound verified. Everything
+     measured here is therefore a lower bound on what the exact bound would achieve, and
+     the exact bound is not computable at this width by the method used.
+  2. The oracle in P1 re-ranks the paths the mass-ranked run generated. A rule that
+     reaches paths that run never generated is outside its ceiling.
+  3. Slopes are fitted over about two decades of retained paths and the crossing points
+     are far outside that range. The comparison BETWEEN the two slopes is what the
+     extrapolation is used for, and it is much better conditioned than either absolute
+     crossing point.
+  4. base and gain are at their defaults. The absolute tail is not a physical prediction;
+     every number here is a difference at fixed base.

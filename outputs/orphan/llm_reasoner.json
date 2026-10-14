@@ -1,0 +1,1396 @@
+{
+ "model": "gpt-5.5",
+ "mode": "mock",
+ "cost_estimate_usd": 0.55,
+ "candidates_audited": 40,
+ "ranked": [
+  {
+   "target": "PPP1R10",
+   "machine": "nuclear exosome (RNase complex)",
+   "combined_score": 0.7,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "LETMD1",
+   "machine": "exon-exon junction complex",
+   "combined_score": 0.659,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "MTHFD2L",
+   "machine": "Nuclear RNA decay",
+   "combined_score": 0.64,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 3
+  },
+  {
+   "target": "SCO2",
+   "machine": "RNA N6-methyladenosine methyltransferase complex",
+   "combined_score": 0.627,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 3
+  },
+  {
+   "target": "DHCR7",
+   "machine": "proton-transporting two-sector ATPase complex",
+   "combined_score": 0.627,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "SNRNP40",
+   "machine": "Ino80 complex",
+   "combined_score": 0.62,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "VMP1",
+   "machine": "Nuclear RNA decay",
+   "combined_score": 0.595,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "BAG1",
+   "machine": "nonsense-mediated decay complex",
+   "combined_score": 0.57,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "SAR1A",
+   "machine": "RNA N6-methyladenosine methyltransferase complex",
+   "combined_score": 0.53,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.75,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "ACTL6A",
+   "machine": "mRNA Splicing - Minor Pathway",
+   "combined_score": 0.471,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.38,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "EPM2AIP1",
+   "machine": "Nuclear RNA decay",
+   "combined_score": 0.45,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.38,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "ARL2",
+   "machine": "lamellipodium",
+   "combined_score": 0.447,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.45,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "FADS2",
+   "machine": "COPI-dependent Golgi-to-ER retrograde traffi",
+   "combined_score": 0.447,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.45,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "BANP",
+   "machine": "Nuclear RNA decay",
+   "combined_score": 0.44,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.38,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "MPDU1",
+   "machine": "INTAC complex",
+   "combined_score": 0.438,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.38,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "HMGCR",
+   "machine": "vacuolar proton-transporting V-type ATPase, V1 domain",
+   "combined_score": 0.404,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.38,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "ANKRD54",
+   "machine": "nuclear exosome (RNase complex)",
+   "combined_score": 0.401,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.38,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "PMF1",
+   "machine": "INTAC complex",
+   "combined_score": 0.392,
+   "novelty": "uncertain",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.35,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "36197289"
+   ],
+   "comentions": 5,
+   "n_lines": 2
+  },
+  {
+   "target": "SOD2",
+   "machine": "ESCRT III complex",
+   "combined_score": 0.367,
+   "novelty": "novel",
+   "verdict": "PURSUE",
+   "known_stress": false,
+   "llm_confidence": 0.38,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "VMA21",
+   "machine": "mRNA cleavage factor complex",
+   "combined_score": 0.319,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.22,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "LAMTOR2",
+   "machine": "Processing of Capped Intron-Containing Pre-m",
+   "combined_score": 0.305,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.22,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "ZNF593",
+   "machine": "Processing of Capped Intron-Containing Pre-m",
+   "combined_score": 0.305,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.22,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "DNAJC25",
+   "machine": "nonsense-mediated decay complex",
+   "combined_score": 0.3,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.22,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 1
+  },
+  {
+   "target": "MSMO1",
+   "machine": "proton-transporting two-sector ATPase complex",
+   "combined_score": 0.298,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.45,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "ZFP36L2",
+   "machine": "cytoplasmic dynein complex",
+   "combined_score": 0.277,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.45,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "NUCB2",
+   "machine": "Sec61 translocon complex",
+   "combined_score": 0.238,
+   "novelty": "novel",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.45,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "RASSF1",
+   "machine": "nuclear pore",
+   "combined_score": 0.237,
+   "novelty": "uncertain",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.1,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "32949393"
+   ],
+   "comentions": 2,
+   "n_lines": 1
+  },
+  {
+   "target": "YTHDF2",
+   "machine": "Processing of Capped Intron-Containing Pre-m",
+   "combined_score": 0.231,
+   "novelty": "uncertain",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.1,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "37236197"
+   ],
+   "comentions": 445,
+   "n_lines": 1
+  },
+  {
+   "target": "PTBP2",
+   "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+   "combined_score": 0.231,
+   "novelty": "uncertain",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.1,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [
+    "37149717"
+   ],
+   "comentions": 48,
+   "n_lines": 1
+  },
+  {
+   "target": "SMG1",
+   "machine": "nonsense-mediated decay complex",
+   "combined_score": 0.214,
+   "novelty": "uncertain",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": false,
+   "llm_confidence": 0.1,
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "supporting_pmids": [
+    "36400430"
+   ],
+   "comentions": 25,
+   "n_lines": 1
+  },
+  {
+   "target": "HYOU1",
+   "machine": "oligosaccharyltransferase complex A",
+   "combined_score": 0.144,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.35,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "36724577"
+   ],
+   "comentions": 59,
+   "n_lines": 2
+  },
+  {
+   "target": "HSPA1B",
+   "machine": "proteasome complex",
+   "combined_score": 0.14,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.35,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "41299718"
+   ],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "DNAJB11",
+   "machine": "oligosaccharyltransferase complex A",
+   "combined_score": 0.139,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.35,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "37332102"
+   ],
+   "comentions": 22,
+   "n_lines": 2
+  },
+  {
+   "target": "MLLT11",
+   "machine": "proteasome complex",
+   "combined_score": 0.128,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.35,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "35379703"
+   ],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "ERG28",
+   "machine": "Ion channel transport",
+   "combined_score": 0.114,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.35,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "36216146"
+   ],
+   "comentions": 0,
+   "n_lines": 2
+  },
+  {
+   "target": "ACAT2",
+   "machine": "Ion channel transport",
+   "combined_score": 0.105,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.21,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "40503938"
+   ],
+   "comentions": 3,
+   "n_lines": 2
+  },
+  {
+   "target": "MVD",
+   "machine": "Ion channel transport",
+   "combined_score": 0.105,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.21,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "38345052"
+   ],
+   "comentions": 32,
+   "n_lines": 2
+  },
+  {
+   "target": "INSIG1",
+   "machine": "Ion channel transport",
+   "combined_score": 0.105,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.21,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "32322062"
+   ],
+   "comentions": 6,
+   "n_lines": 2
+  },
+  {
+   "target": "HMGCS1",
+   "machine": "Ion channel transport",
+   "combined_score": 0.105,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.21,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "38308184"
+   ],
+   "comentions": 1,
+   "n_lines": 2
+  },
+  {
+   "target": "DNAJC3",
+   "machine": "oligosaccharyltransferase complex A",
+   "combined_score": 0.091,
+   "novelty": "known",
+   "verdict": "DEPRIORITIZE",
+   "known_stress": true,
+   "llm_confidence": 0.17,
+   "mechanism": "convergent regulation of the target",
+   "supporting_pmids": [
+    "39416210"
+   ],
+   "comentions": 35,
+   "n_lines": 1
+  }
+ ],
+ "verdicts": [
+  {
+   "target": "MTHFD2L",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure MTHFD2L mRNA half-life on EXOSC9 knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 16
+   }
+  },
+  {
+   "target": "SCO2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure SCO2 mRNA half-life on ZC3H13 knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 545
+   }
+  },
+  {
+   "target": "PPP1R10",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure PPP1R10 mRNA half-life on EXOSC2 knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 69
+   }
+  },
+  {
+   "target": "HSPA1B",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "41299718"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure HSPA1B mRNA half-life on PSMC1 knockout",
+   "llm_confidence": 0.35,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 445
+   }
+  },
+  {
+   "target": "MLLT11",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "35379703"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure MLLT11 mRNA half-life on PSMB5 knockout",
+   "llm_confidence": 0.35,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 68
+   }
+  },
+  {
+   "target": "DNAJB11",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "37332102"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure DNAJB11 mRNA half-life on HSPA5 knockout",
+   "llm_confidence": 0.35,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 22,
+    "target_papers": 98
+   }
+  },
+  {
+   "target": "SNRNP40",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure SNRNP40 mRNA half-life on INO80 knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 11
+   }
+  },
+  {
+   "target": "LETMD1",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure LETMD1 mRNA half-life on UPF1 knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 47
+   }
+  },
+  {
+   "target": "VMP1",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure VMP1 mRNA half-life on MTREX knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 220
+   }
+  },
+  {
+   "target": "HYOU1",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "36724577"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure HYOU1 mRNA half-life on HSPA5 knockout",
+   "llm_confidence": 0.35,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 59,
+    "target_papers": 272
+   }
+  },
+  {
+   "target": "DHCR7",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure DHCR7 mRNA half-life on ATP6V1C1 knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 870
+   }
+  },
+  {
+   "target": "BAG1",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure BAG1 mRNA half-life on SMG7 knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 840
+   }
+  },
+  {
+   "target": "ERG28",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "36216146"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure ERG28 mRNA half-life on ATP6V1G1 knockout",
+   "llm_confidence": 0.35,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 32
+   }
+  },
+  {
+   "target": "PMF1",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "uncertain",
+   "supporting_pmids": [
+    "36197289"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure PMF1 mRNA half-life on BGLAP knockout",
+   "llm_confidence": 0.35,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 5,
+    "target_papers": 79
+   }
+  },
+  {
+   "target": "SAR1A",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure SAR1A mRNA half-life on YTHDC1 knockout",
+   "llm_confidence": 0.75,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 123
+   }
+  },
+  {
+   "target": "MSMO1",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure MSMO1 mRNA half-life on ATP6V1A knockout",
+   "llm_confidence": 0.45,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 95
+   }
+  },
+  {
+   "target": "ZFP36L2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure ZFP36L2 mRNA half-life on TPR knockout",
+   "llm_confidence": 0.45,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 176
+   }
+  },
+  {
+   "target": "NUCB2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure NUCB2 mRNA half-life on HSPA5 knockout",
+   "llm_confidence": 0.45,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 652
+   }
+  },
+  {
+   "target": "ACAT2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "40503938"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure ACAT2 mRNA half-life on the machine knockout",
+   "llm_confidence": 0.21,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 3,
+    "target_papers": 431
+   }
+  },
+  {
+   "target": "MVD",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "38345052"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure MVD mRNA half-life on the machine knockout",
+   "llm_confidence": 0.21,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 32,
+    "target_papers": 8625
+   }
+  },
+  {
+   "target": "INSIG1",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "32322062"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure INSIG1 mRNA half-life on the machine knockout",
+   "llm_confidence": 0.21,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 6,
+    "target_papers": 478
+   }
+  },
+  {
+   "target": "HMGCS1",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "38308184"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure HMGCS1 mRNA half-life on the machine knockout",
+   "llm_confidence": 0.21,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 1,
+    "target_papers": 317
+   }
+  },
+  {
+   "target": "ARL2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure ARL2 mRNA half-life on the machine knockout",
+   "llm_confidence": 0.45,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 167
+   }
+  },
+  {
+   "target": "FADS2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure FADS2 mRNA half-life on the machine knockout",
+   "llm_confidence": 0.45,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 1013
+   }
+  },
+  {
+   "target": "EPM2AIP1",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure EPM2AIP1 mRNA half-life on EXOSC2 knockout",
+   "llm_confidence": 0.38,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 27
+   }
+  },
+  {
+   "target": "BANP",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure BANP mRNA half-life on EXOSC6 knockout",
+   "llm_confidence": 0.38,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 119
+   }
+  },
+  {
+   "target": "ACTL6A",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure ACTL6A mRNA half-life on ZCRB1 knockout",
+   "llm_confidence": 0.38,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 127
+   }
+  },
+  {
+   "target": "MPDU1",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure MPDU1 mRNA half-life on INTS10 knockout",
+   "llm_confidence": 0.38,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 29
+   }
+  },
+  {
+   "target": "HMGCR",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure HMGCR mRNA half-life on ATP6V1A knockout",
+   "llm_confidence": 0.38,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 2559
+   }
+  },
+  {
+   "target": "ANKRD54",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure ANKRD54 mRNA half-life on MTREX knockout",
+   "llm_confidence": 0.38,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 4
+   }
+  },
+  {
+   "target": "SOD2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure SOD2 mRNA half-life on CHMP3 knockout",
+   "llm_confidence": 0.38,
+   "verdict": "PURSUE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 6189
+   }
+  },
+  {
+   "target": "DNAJC3",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "stress-program",
+   "is_known_stress_program": true,
+   "novelty": "known",
+   "supporting_pmids": [
+    "39416210"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure DNAJC3 mRNA half-life on HSPA5 knockout",
+   "llm_confidence": 0.17,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 35,
+    "target_papers": 150
+   }
+  },
+  {
+   "target": "LAMTOR2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure LAMTOR2 mRNA half-life on METTL14 knockout",
+   "llm_confidence": 0.22,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 84
+   }
+  },
+  {
+   "target": "ZNF593",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure ZNF593 mRNA half-life on METTL3 knockout",
+   "llm_confidence": 0.22,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 9
+   }
+  },
+  {
+   "target": "YTHDF2",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "uncertain",
+   "supporting_pmids": [
+    "37236197"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure YTHDF2 mRNA half-life on METTL14 knockout",
+   "llm_confidence": 0.1,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 445,
+    "target_papers": 1199
+   }
+  },
+  {
+   "target": "SMG1",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "uncertain",
+   "supporting_pmids": [
+    "36400430"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure SMG1 mRNA half-life on SMG7 knockout",
+   "llm_confidence": 0.1,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 25,
+    "target_papers": 253
+   }
+  },
+  {
+   "target": "RASSF1",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "uncertain",
+   "supporting_pmids": [
+    "32949393"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure RASSF1 mRNA half-life on NUP62 knockout",
+   "llm_confidence": 0.1,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 2,
+    "target_papers": 1361
+   }
+  },
+  {
+   "target": "DNAJC25",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure DNAJC25 mRNA half-life on SMG5 knockout",
+   "llm_confidence": 0.22,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 6
+   }
+  },
+  {
+   "target": "PTBP2",
+   "mechanism": "machine degrades/regulates the target transcript (surveillance-substrate hypothesis)",
+   "mechanism_class": "RNA-surveillance-substrate",
+   "is_known_stress_program": false,
+   "novelty": "uncertain",
+   "supporting_pmids": [
+    "37149717"
+   ],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure PTBP2 mRNA half-life on PTBP1 knockout",
+   "llm_confidence": 0.1,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 48,
+    "target_papers": 131
+   }
+  },
+  {
+   "target": "VMA21",
+   "mechanism": "convergent regulation of the target",
+   "mechanism_class": "unknown",
+   "is_known_stress_program": false,
+   "novelty": "novel",
+   "supporting_pmids": [],
+   "refutation": "target may move as a generic stress response, not a direct substrate; convergence could reflect shared essentiality rather than a specific edge",
+   "wet_lab_test": "measure VMA21 mRNA half-life on NUDT21 knockout",
+   "llm_confidence": 0.22,
+   "verdict": "DEPRIORITIZE",
+   "_mock": true,
+   "_grounding": {
+    "comentions": 0,
+    "target_papers": 82
+   }
+  }
+ ],
+ "scorer_feedback": {
+  "known_stress_targets": [
+   "ACAT2",
+   "DNAJB11",
+   "DNAJC3",
+   "ERG28",
+   "HMGCS1",
+   "HSPA1B",
+   "HYOU1",
+   "INSIG1",
+   "MLLT11",
+   "MVD"
+  ],
+  "known_stress_machines": [
+   "Ion channel transport",
+   "oligosaccharyltransferase complex A",
+   "proteasome complex"
+  ],
+  "machine_reliability_prior": {
+   "Nuclear RNA decay": 0.565,
+   "RNA N6-methyladenosine methyltransferase complex": 0.75,
+   "nuclear exosome (RNase complex)": 0.565,
+   "proteasome complex": 0.35,
+   "oligosaccharyltransferase complex A": 0.29,
+   "Ino80 complex": 0.75,
+   "exon-exon junction complex": 0.75,
+   "proton-transporting two-sector ATPase complex": 0.6,
+   "nonsense-mediated decay complex": 0.357,
+   "Ion channel transport": 0.238,
+   "INTAC complex": 0.365,
+   "cytoplasmic dynein complex": 0.45,
+   "Sec61 translocon complex": 0.45,
+   "lamellipodium": 0.45,
+   "COPI-dependent Golgi-to-ER retrograde traffi": 0.45,
+   "mRNA Splicing - Minor Pathway": 0.38,
+   "vacuolar proton-transporting V-type ATPase, V1 domain": 0.38,
+   "ESCRT III complex": 0.38,
+   "Processing of Capped Intron-Containing Pre-m": 0.18,
+   "nuclear pore": 0.1,
+   "Nonsense Mediated Decay (NMD) enhanced by th": 0.1,
+   "mRNA cleavage factor complex": 0.22
+  },
+  "confirmed_novel_pursue": [
+   {
+    "target": "MTHFD2L",
+    "machine": "Nuclear RNA decay",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "SCO2",
+    "machine": "RNA N6-methyladenosine methyltransferase complex",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "PPP1R10",
+    "machine": "nuclear exosome (RNase complex)",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "SNRNP40",
+    "machine": "Ino80 complex",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "LETMD1",
+    "machine": "exon-exon junction complex",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "VMP1",
+    "machine": "Nuclear RNA decay",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "DHCR7",
+    "machine": "proton-transporting two-sector ATPase complex",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "BAG1",
+    "machine": "nonsense-mediated decay complex",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "SAR1A",
+    "machine": "RNA N6-methyladenosine methyltransferase complex",
+    "llm_confidence": 0.75
+   },
+   {
+    "target": "EPM2AIP1",
+    "machine": "Nuclear RNA decay",
+    "llm_confidence": 0.38
+   },
+   {
+    "target": "BANP",
+    "machine": "Nuclear RNA decay",
+    "llm_confidence": 0.38
+   },
+   {
+    "target": "ACTL6A",
+    "machine": "mRNA Splicing - Minor Pathway",
+    "llm_confidence": 0.38
+   },
+   {
+    "target": "MPDU1",
+    "machine": "INTAC complex",
+    "llm_confidence": 0.38
+   },
+   {
+    "target": "HMGCR",
+    "machine": "vacuolar proton-transporting V-type ATPase, V1 domain",
+    "llm_confidence": 0.38
+   },
+   {
+    "target": "ANKRD54",
+    "machine": "nuclear exosome (RNase complex)",
+    "llm_confidence": 0.38
+   },
+   {
+    "target": "SOD2",
+    "machine": "ESCRT III complex",
+    "llm_confidence": 0.38
+   }
+  ],
+  "how_the_scorer_uses_this": "next connection_proposer run: (1) label/down-rank targets in known_stress_targets; (2) multiply a machine's candidates by machine_reliability_prior as a learned weight; (3) promote confirmed_novel_pursue. Distilled from LLM verdicts -- no further LLM spend."
+ }
+}

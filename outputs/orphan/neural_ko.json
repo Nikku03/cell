@@ -1,0 +1,83 @@
+{
+ "recall": {
+  "TIDE-null (floor)": 0.2644,
+  "classical co-dep transfer (raw cosine)": 0.3944,
+  "LINEAR map (same features)": 0.2789,
+  "DEEP regression (naive |z|)": 0.2145,
+  "DEEP residual regression": 0.3402,
+  "DEEP metric-learning retrieval": 0.4077,
+  "DEEP metric-learning FUSED (+network)": 0.4354,
+  "DEEP regression shuffle (control)": 0.2142,
+  "ORACLE* (ceiling)": 0.6463
+ },
+ "n_test": 112,
+ "n_train": 1245,
+ "n_val": 28,
+ "best_deep": "metric-learning-fused",
+ "best_deep_recall": 0.4354,
+ "deep_beats_tide": true,
+ "learned_minus_classical": 0.0134,
+ "fused_minus_learned": 0.0277,
+ "fused_minus_classical": 0.041,
+ "best_deep_minus_classical": 0.041,
+ "best_deep_minus_oracle": -0.2109,
+ "headroom_used": 0.448,
+ "verdict": "DEEP NEURAL FAR-FIELD (neural_ko.py): three deep models on a knockout's DepMap dependency profile (1150-d) -> its tide-removed mRNA response, trained on 1245 knockouts, scored on 112 held-out KOs (specific-mover recall@50). SCORES: TIDE-null 0.264 (floor) | classical raw-cosine transfer 0.394 | linear map 0.279 | DEEP naive-regression 0.214 | DEEP residual-regression 0.340 | DEEP metric-learning retrieval 0.408 | ORACLE* 0.646 (ceiling). (1) NAIVE REGRESSION COLLAPSES TO THE MEAN: 0.214 ~= tide, and its feature-shuffle is identical (0.214) -- MSE against a sparse 7223-dim magnitude target has one optimum, the per-gene average = the tide, so the net stops using gene identity. This reproduces the single-cell field's finding that a regression net does NOT beat simple baselines on unseen perturbations; here it loses to plain retrieval. (2) RESIDUAL REGRESSION (predict Y - per-gene-mean to force specific structure) scores 0.340 -- recovers above the tide but still below retrieval. (3) THE PRINCIPLED DEEP MOVE = LEARN THE RETRIEVAL METRIC (the thing that works IS retrieval; raw DepMap cosine gets 0.394, the true-response oracle 0.646, so learn a similarity closer to the true one): metric-learning retrieval scores 0.408, vs raw-cosine +0.013 (a TIE on DepMap alone). (4) DEEP MULTI-VIEW FUSION (learn the metric over DepMap + an orthogonal PPI/complex/pathway network-SVD view, the deep analog of the classical wall_combine ensemble): FUSED scores 0.435, beating the single-view learned metric by +0.028 and raw-cosine by +0.041, closing 45% of the tide->oracle head-room -- fusing orthogonal views in a LEARNED space is where the net adds real value, exactly as the classical ensemble found, now end-to-end. HONEST BOTTOM LINE: the deep net's best is metric-learning-fused at 0.435 (beats the tide-null; beats the best classical in-split). The decisive lesson: on N~1400 perturbations x 7200 genes, DEPTH-as-regression is the wrong tool (it averages away the specific signal); DEPTH-as-learned-retrieval is the right frame, and whether it wins depends on whether the DepMap features contain similarity structure beyond their raw cosine. Single cell type, steady-state mRNA, magnitude target, CPU. STABILITY (3 random splits): FUSED metric-learner beats classical raw-cosine by +0.053+/-0.009 and single-view learned by +0.030+/-0.016 (positive on EVERY split -- the multi-view learned-retrieval gain is stable, not a single-split artifact).",
+ "note": "DEEP NEURAL FAR-FIELD (neural_ko.py): three deep models on a knockout's DepMap dependency profile (1150-d) -> its tide-removed mRNA response, trained on 1245 knockouts, scored on 112 held-out KOs (specific-mover recall@50). SCORES: TIDE-null 0.264 (floor) | classical raw-cosine transfer 0.394 | linear map 0.279 | DEEP naive-regression 0.214 | DEEP residual-regression 0.340 | DEEP metric-learning retrieval 0.408 | ORACLE* 0.646 (ceiling). (1) NAIVE REGRESSION COLLAPSES TO THE MEAN: 0.214 ~= tide, and its feature-shuffle is identical (0.214) -- MSE against a sparse 7223-dim magnitude target has one optimum, the per-gene average = the tide, so the net stops using gene identity. This reproduces the single-cell field's finding that a regression net does NOT beat simple baselines on unseen perturbations; here it loses to plain retrieval. (2) RESIDUAL REGRESSION (predict Y - per-gene-mean to force specific structure) scores 0.340 -- recovers above the tide but still below retrieval. (3) THE PRINCIPLED DEEP MOVE = LEARN THE RETRIEVAL METRIC (the thing that works IS retrieval; raw DepMap cosine gets 0.394, the true-response oracle 0.646, so learn a similarity closer to the true one): metric-learning retrieval scores 0.408, vs raw-cosine +0.013 (a TIE on DepMap alone). (4) DEEP MULTI-VIEW FUSION (learn the metric over DepMap + an orthogonal PPI/complex/pathway network-SVD view, the deep analog of the classical wall_combine ensemble): FUSED scores 0.435, beating the single-view learned metric by +0.028 and raw-cosine by +0.041, closing 45% of the tide->oracle head-room -- fusing orthogonal views in a LEARNED space is where the net adds real value, exactly as the classical ensemble found, now end-to-end. HONEST BOTTOM LINE: the deep net's best is metric-learning-fused at 0.435 (beats the tide-null; beats the best classical in-split). The decisive lesson: on N~1400 perturbations x 7200 genes, DEPTH-as-regression is the wrong tool (it averages away the specific signal); DEPTH-as-learned-retrieval is the right frame, and whether it wins depends on whether the DepMap features contain similarity structure beyond their raw cosine. Single cell type, steady-state mRNA, magnitude target, CPU. STABILITY (3 random splits): FUSED metric-learner beats classical raw-cosine by +0.053+/-0.009 and single-view learned by +0.030+/-0.016 (positive on EVERY split -- the multi-view learned-retrieval gain is stable, not a single-split artifact).",
+ "stability": {
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "mean_sd": {
+   "TIDE-null (floor)": [
+    0.2488,
+    0.0118
+   ],
+   "classical co-dep transfer (raw cosine)": [
+    0.3594,
+    0.037
+   ],
+   "LINEAR map (same features)": [
+    0.2665,
+    0.0089
+   ],
+   "DEEP regression (naive |z|)": [
+    0.2105,
+    0.0115
+   ],
+   "DEEP residual regression": [
+    0.3321,
+    0.0146
+   ],
+   "DEEP metric-learning retrieval": [
+    0.3829,
+    0.0234
+   ],
+   "DEEP metric-learning FUSED (+network)": [
+    0.4125,
+    0.0352
+   ],
+   "DEEP regression shuffle (control)": [
+    0.1992,
+    0.0107
+   ],
+   "ORACLE* (ceiling)": [
+    0.607,
+    0.0322
+   ]
+  },
+  "fused_minus_classical_persplit": [
+   0.041,
+   0.0635,
+   0.0545
+  ],
+  "fused_minus_learned_persplit": [
+   0.0277,
+   0.0498,
+   0.0112
+  ],
+  "fused_beats_classical_all_splits": true
+ }
+}

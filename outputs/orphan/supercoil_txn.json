@@ -1,0 +1,88 @@
+{
+  "test": "supercoil_txn",
+  "manifest": {
+    "manifest_version": 1,
+    "inputs": [
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/rnadecay/AvgKdegs.csv",
+        "bytes": 21962834,
+        "hash": "b8869c749b2b4a24",
+        "method": "sha256:full"
+      },
+      {
+        "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/k562_atac.bed.gz",
+        "bytes": 1268446,
+        "hash": "2f50c1a82609dccb",
+        "method": "sha256:full"
+      },
+      {
+        "path": "outputs/orphan/supercoil/GSM8706920_1_RPKM.bw",
+        "bytes": 107688596,
+        "hash": "d5666543ffbdba3e",
+        "method": "sha256:ends8M"
+      },
+      {
+        "path": "/home/user/cell/outputs/orphan/cell_complete.json",
+        "bytes": 38524393,
+        "hash": "cf872c8620cd7649",
+        "method": "sha256:full"
+      }
+    ],
+    "coverage": {
+      "available": 8867,
+      "used": 7267,
+      "selection": "filtered",
+      "fraction": 0.8195556558024134
+    },
+    "seed": 3312,
+    "controls": [
+      "displaced 2 Mb torsion",
+      "L1/L2 reconstruction against recorded"
+    ],
+    "note": "K562 rates; L3/L4/L5 not reproducible (_abcfeat.json has no producer)",
+    "warnings": []
+  },
+  "arms": {
+    "L1 basal promoter": 0.1465614019091223,
+    "L2 + M_ATAC": 0.16125406241657225,
+    "+ TORSION": 0.16611562245239658,
+    "+ TORSION [displaced 2 Mb]": 0.16321085679512157
+  },
+  "verdict": "NO-GO",
+  "note": "Torsion adds nothing here either. Three-way negative: a strong twin-domain signature at the promoter (z = +23.21), no predictive value on the enhancer-gene task, none on rate. The signature is real and, on these two tasks, not useful.",
+  "faithful": true,
+  "n_genes": 12224,
+  "n_scored": 7267,
+  "target": "RNADecayCafe v1.1 (10.5281/zenodo.16884513)",
+  "torsion_track": "GSE285699 SH-SY5Y WT",
+  "log": [
+    "====================================================================================================",
+    "DOES MEASURED DNA TORSION PREDICT TRANSCRIPTION RATE?",
+    "====================================================================================================",
+    "  Torsion returned PARTIAL twice on the enhancer-gene bar, but the same run measured the",
+    "  twin-domain signature at the promoter at z = +23.21. That is a claim about TRANSCRIPTION,",
+    "  and this is the first test that asks it.",
+    "\n  target: RNADecayCafe v1.1, 88,695 usable rows, 8,867 K562",
+    "  ATAC: ENCODE ENCFF926KTI, 55,575 K562 peaks (GRCh38)",
+    "  12,224 genes with a rate, coordinates, strand and torsion",
+    "  8,849 (72.4%) have an ATAC peak at the promoter",
+    "  twin-domain asymmetry over these genes: mean +0.12141, z = +19.31",
+    "  7,267 K562 genes scored",
+    "\n  HELD-OUT GENES, 5 splits, 70/30, same regressor and settings as nexus_txn",
+    "    arm                                    r      R2",
+    "    L1 basal promoter                 0.3828  0.1466",
+    "    L2 + M_ATAC                       0.4016  0.1613",
+    "    + TORSION                         0.4076  0.1661",
+    "    + TORSION [displaced 2 Mb]        0.4040  0.1632",
+    "\n  reconstruction check: L1 0.1466 vs recorded 0.1582   L2 0.1613 vs recorded 0.1667",
+    "  FAITHFUL",
+    "\n  ------------------------------------------------------------------------------------------------",
+    "  TORSION MINUS L1+L2               : +0.0049",
+    "  TORSION MINUS its displaced twin  : +0.0029",
+    "\n  VERDICT: NO-GO",
+    "    Torsion adds nothing here either. Three-way negative: a strong twin-domain signature at the pr",
+    "    omoter (z = +23.21), no predictive value on the enhancer-gene task, none on rate. The signatur",
+    "    e is real and, on these two tasks, not useful.",
+    "    manifest: 4 inputs, coverage 7267/8867 (82.0%) by 'filtered', seed 3312, controls 2"
+  ]
+}

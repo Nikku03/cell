@@ -1,0 +1,2026 @@
+{
+ "config": {
+  "ns": "8,10,12,14,16",
+  "seeds": 3,
+  "ratio": 8.0,
+  "out": "benchmarks/tt_ordering.json"
+ },
+ "rows": [
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "index",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 16,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 1,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 4,
+    "1e-06": 4,
+    "1e-10": 4
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random0",
+   "cutwidth": 5,
+   "mid_edges": 3,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 8,
+    "1e-06": 13,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random1",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 13,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random2",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 16,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random3",
+   "cutwidth": 4,
+   "mid_edges": 3,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 8,
+    "1e-06": 13,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random4",
+   "cutwidth": 5,
+   "mid_edges": 3,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 4,
+    "1e-06": 4,
+    "1e-10": 4
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random5",
+   "cutwidth": 5,
+   "mid_edges": 3,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 4,
+    "1e-06": 4,
+    "1e-10": 4
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random6",
+   "cutwidth": 2,
+   "mid_edges": 2,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 4,
+    "1e-06": 4,
+    "1e-10": 4
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random7",
+   "cutwidth": 4,
+   "mid_edges": 1,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 4,
+    "1e-06": 4,
+    "1e-10": 4
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random8",
+   "cutwidth": 4,
+   "mid_edges": 2,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 4,
+    "1e-06": 4,
+    "1e-10": 4
+   }
+  },
+  {
+   "n": 8,
+   "seed": 0,
+   "ordering": "random~med",
+   "cutwidth": 5,
+   "mid_edges": 3,
+   "bound": 16,
+   "solve_s": 0.008769336999989719,
+   "r": {
+    "0.001": 4,
+    "1e-06": 4,
+    "1e-10": 4
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "index",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 11,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 2,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 4,
+    "1e-06": 9,
+    "1e-10": 15
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random0",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 8,
+    "1e-06": 15,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random1",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 9,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random2",
+   "cutwidth": 4,
+   "mid_edges": 2,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 7,
+    "1e-06": 15,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random3",
+   "cutwidth": 5,
+   "mid_edges": 2,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 7,
+    "1e-06": 13,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random4",
+   "cutwidth": 4,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 8,
+    "1e-06": 14,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random5",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 11,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random6",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 9,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random7",
+   "cutwidth": 5,
+   "mid_edges": 2,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 8,
+    "1e-06": 14,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random8",
+   "cutwidth": 4,
+   "mid_edges": 3,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 7,
+    "1e-06": 14,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 1,
+   "ordering": "random~med",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.005581106999898111,
+   "r": {
+    "0.001": 8,
+    "1e-06": 15,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "index",
+   "cutwidth": 4,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 2,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 2,
+    "1e-06": 2,
+    "1e-10": 2
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random0",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random1",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random2",
+   "cutwidth": 4,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random3",
+   "cutwidth": 4,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random4",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random5",
+   "cutwidth": 4,
+   "mid_edges": 3,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random6",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random7",
+   "cutwidth": 4,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random8",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 8,
+   "seed": 2,
+   "ordering": "random~med",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 16,
+   "solve_s": 0.0058892970000670175,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "index",
+   "cutwidth": 9,
+   "mid_edges": 8,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 17,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 2,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 7,
+    "1e-06": 16,
+    "1e-10": 28
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random0",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 16,
+    "1e-06": 31,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random1",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 16,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random2",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 17,
+    "1e-06": 30,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random3",
+   "cutwidth": 5,
+   "mid_edges": 3,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 10,
+    "1e-06": 22,
+    "1e-10": 28
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random4",
+   "cutwidth": 4,
+   "mid_edges": 4,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 17,
+    "1e-06": 29,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random5",
+   "cutwidth": 4,
+   "mid_edges": 3,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 7,
+    "1e-06": 20,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random6",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 15,
+    "1e-06": 27,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random7",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 12,
+    "1e-06": 26,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random8",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 21,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 0,
+   "ordering": "random~med",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 32,
+   "solve_s": 0.09096885700000712,
+   "r": {
+    "0.001": 16,
+    "1e-06": 29,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "index",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 25,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 1,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 4,
+    "1e-06": 11,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random0",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 16,
+    "1e-06": 29,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random1",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 16,
+    "1e-06": 31,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random2",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 25,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random3",
+   "cutwidth": 4,
+   "mid_edges": 3,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 13,
+    "1e-06": 27,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random4",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 25,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random5",
+   "cutwidth": 8,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 18,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random6",
+   "cutwidth": 5,
+   "mid_edges": 3,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 11,
+    "1e-06": 22,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random7",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 24,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random8",
+   "cutwidth": 5,
+   "mid_edges": 3,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 11,
+    "1e-06": 26,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 1,
+   "ordering": "random~med",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08375107300003037,
+   "r": {
+    "0.001": 16,
+    "1e-06": 31,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "index",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 18,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 2,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 5,
+    "1e-06": 13,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random0",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 12,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random1",
+   "cutwidth": 8,
+   "mid_edges": 7,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 19,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random2",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 17,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random3",
+   "cutwidth": 6,
+   "mid_edges": 5,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 15,
+    "1e-06": 29,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random4",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 19,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random5",
+   "cutwidth": 4,
+   "mid_edges": 4,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 15,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random6",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 12,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random7",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 16,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random8",
+   "cutwidth": 4,
+   "mid_edges": 3,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 8,
+    "1e-06": 20,
+    "1e-10": 30
+   }
+  },
+  {
+   "n": 10,
+   "seed": 2,
+   "ordering": "random~med",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 32,
+   "solve_s": 0.08890881700006048,
+   "r": {
+    "0.001": 15,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "index",
+   "cutwidth": 9,
+   "mid_edges": 7,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 22,
+    "1e-06": 54,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 1,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 5,
+    "1e-06": 13,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random0",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 31,
+    "1e-06": 63,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random1",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 23,
+    "1e-06": 51,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random2",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 36,
+    "1e-06": 64,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random3",
+   "cutwidth": 7,
+   "mid_edges": 5,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 14,
+    "1e-06": 36,
+    "1e-10": 63
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random4",
+   "cutwidth": 10,
+   "mid_edges": 9,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 36,
+    "1e-06": 64,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random5",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 21,
+    "1e-06": 51,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random6",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 35,
+    "1e-06": 64,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random7",
+   "cutwidth": 6,
+   "mid_edges": 4,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 14,
+    "1e-06": 42,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random8",
+   "cutwidth": 8,
+   "mid_edges": 8,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 26,
+    "1e-06": 57,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 0,
+   "ordering": "random~med",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 7.515247363000071,
+   "r": {
+    "0.001": 26,
+    "1e-06": 57,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "index",
+   "cutwidth": 8,
+   "mid_edges": 7,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 16,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 2,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 6,
+    "1e-06": 12,
+    "1e-10": 12
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random0",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 16,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random1",
+   "cutwidth": 10,
+   "mid_edges": 9,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 33,
+    "1e-06": 48,
+    "1e-10": 48
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random2",
+   "cutwidth": 9,
+   "mid_edges": 9,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 34,
+    "1e-06": 62,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random3",
+   "cutwidth": 8,
+   "mid_edges": 8,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 16,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random4",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 32,
+    "1e-06": 63,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random5",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 9,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random6",
+   "cutwidth": 7,
+   "mid_edges": 5,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 16,
+    "1e-06": 16,
+    "1e-10": 16
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random7",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 34,
+    "1e-06": 64,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random8",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 22,
+    "1e-06": 42,
+    "1e-10": 48
+   }
+  },
+  {
+   "n": 12,
+   "seed": 1,
+   "ordering": "random~med",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 6.917999932999919,
+   "r": {
+    "0.001": 22,
+    "1e-06": 42,
+    "1e-10": 48
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "index",
+   "cutwidth": 6,
+   "mid_edges": 4,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 13,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 2,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 6,
+    "1e-06": 16,
+    "1e-10": 22
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random0",
+   "cutwidth": 6,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 19,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random1",
+   "cutwidth": 6,
+   "mid_edges": 4,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 12,
+    "1e-06": 29,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random2",
+   "cutwidth": 9,
+   "mid_edges": 7,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 16,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random3",
+   "cutwidth": 6,
+   "mid_edges": 5,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 14,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random4",
+   "cutwidth": 9,
+   "mid_edges": 9,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 18,
+    "1e-06": 24,
+    "1e-10": 24
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random5",
+   "cutwidth": 9,
+   "mid_edges": 9,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 31,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random6",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 18,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random7",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 15,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random8",
+   "cutwidth": 7,
+   "mid_edges": 5,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 15,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 12,
+   "seed": 2,
+   "ordering": "random~med",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 64,
+   "solve_s": 6.539764337999941,
+   "r": {
+    "0.001": 16,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "index",
+   "cutwidth": 8,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 33,
+    "1e-06": 85,
+    "1e-10": 128
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 1,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 5,
+    "1e-06": 12,
+    "1e-10": 27
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random0",
+   "cutwidth": 9,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 30,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random1",
+   "cutwidth": 8,
+   "mid_edges": 6,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 26,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random2",
+   "cutwidth": 6,
+   "mid_edges": 5,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 18,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random3",
+   "cutwidth": 10,
+   "mid_edges": 10,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 69,
+    "1e-06": 128,
+    "1e-10": 128
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random4",
+   "cutwidth": 8,
+   "mid_edges": 8,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 60,
+    "1e-06": 125,
+    "1e-10": 128
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random5",
+   "cutwidth": 10,
+   "mid_edges": 9,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 29,
+    "1e-06": 68,
+    "1e-10": 112
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random6",
+   "cutwidth": 10,
+   "mid_edges": 8,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 31,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random7",
+   "cutwidth": 7,
+   "mid_edges": 5,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 25,
+    "1e-06": 72,
+    "1e-10": 121
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random8",
+   "cutwidth": 9,
+   "mid_edges": 8,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 64,
+    "1e-06": 127,
+    "1e-10": 128
+   }
+  },
+  {
+   "n": 14,
+   "seed": 0,
+   "ordering": "random~med",
+   "cutwidth": 9,
+   "mid_edges": 8,
+   "bound": 128,
+   "solve_s": 20.181876824000028,
+   "r": {
+    "0.001": 30,
+    "1e-06": 68,
+    "1e-10": 112
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "index",
+   "cutwidth": 9,
+   "mid_edges": 8,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 24,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "annealed",
+   "cutwidth": 3,
+   "mid_edges": 2,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 7,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random0",
+   "cutwidth": 5,
+   "mid_edges": 4,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 15,
+    "1e-06": 30,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random1",
+   "cutwidth": 10,
+   "mid_edges": 9,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 32,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random2",
+   "cutwidth": 12,
+   "mid_edges": 11,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 32,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random3",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random4",
+   "cutwidth": 9,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 31,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random5",
+   "cutwidth": 7,
+   "mid_edges": 3,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 8,
+    "1e-06": 8,
+    "1e-10": 8
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random6",
+   "cutwidth": 7,
+   "mid_edges": 5,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 21,
+    "1e-06": 51,
+    "1e-10": 108
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random7",
+   "cutwidth": 7,
+   "mid_edges": 5,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 21,
+    "1e-06": 51,
+    "1e-10": 108
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random8",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 62,
+    "1e-06": 127,
+    "1e-10": 128
+   }
+  },
+  {
+   "n": 14,
+   "seed": 1,
+   "ordering": "random~med",
+   "cutwidth": 7,
+   "mid_edges": 6,
+   "bound": 128,
+   "solve_s": 20.49178456499999,
+   "r": {
+    "0.001": 21,
+    "1e-06": 32,
+    "1e-10": 32
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "index",
+   "cutwidth": 5,
+   "mid_edges": 5,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 24,
+    "1e-06": 62,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "annealed",
+   "cutwidth": 2,
+   "mid_edges": 2,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 4,
+    "1e-06": 14,
+    "1e-10": 35
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random0",
+   "cutwidth": 10,
+   "mid_edges": 8,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 32,
+    "1e-06": 64,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random1",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 16,
+    "1e-06": 33,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random2",
+   "cutwidth": 10,
+   "mid_edges": 10,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 44,
+    "1e-06": 64,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random3",
+   "cutwidth": 8,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 43,
+    "1e-06": 64,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random4",
+   "cutwidth": 9,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 26,
+    "1e-06": 56,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random5",
+   "cutwidth": 8,
+   "mid_edges": 6,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 23,
+    "1e-06": 59,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random6",
+   "cutwidth": 11,
+   "mid_edges": 11,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 37,
+    "1e-06": 64,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random7",
+   "cutwidth": 8,
+   "mid_edges": 8,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 22,
+    "1e-06": 44,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random8",
+   "cutwidth": 7,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 22,
+    "1e-06": 50,
+    "1e-10": 64
+   }
+  },
+  {
+   "n": 14,
+   "seed": 2,
+   "ordering": "random~med",
+   "cutwidth": 8,
+   "mid_edges": 7,
+   "bound": 128,
+   "solve_s": 20.447453164999956,
+   "r": {
+    "0.001": 26,
+    "1e-06": 59,
+    "1e-10": 64
+   }
+  }
+ ]
+}

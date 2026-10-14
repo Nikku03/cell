@@ -1,0 +1,17 @@
+{
+ "cell": "HCT116",
+ "perturbations": 17768,
+ "genes_measured": 16380,
+ "knockouts_in_cell_model": 15341,
+ "K562_knockouts_in_model": 8696,
+ "in_both_celltypes": 8288,
+ "union_coverage": 15749,
+ "cell_model_size": 16509,
+ "union_coverage_frac": 0.954,
+ "new_knockouts_not_in_K562": 7053,
+ "genes_readout_K562": 6977,
+ "genes_readout_union": 16383,
+ "cross_celltype_strong_pearson": 0.611,
+ "cross_celltype_shuffled": 0.064,
+ "n_paired_perturbations": 1128
+}

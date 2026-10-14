@@ -1,0 +1,190 @@
+{
+  "n_high_coessential_pairs": 325,
+  "n_proposals_non_edge": 223,
+  "oracle_precision_on_heldout_edges": 0.0987,
+  "random_baseline_precision": 0.0,
+  "discovery_lift_over_random": 44.0,
+  "n_validated_by_oracle": 22,
+  "top_novel_candidates_for_wetlab": [
+    [
+      0.602,
+      "ATIC",
+      "CAD"
+    ],
+    [
+      0.601,
+      "AARS2",
+      "BCS1L"
+    ],
+    [
+      0.599,
+      "AARS2",
+      "CARS2"
+    ],
+    [
+      0.59,
+      "ALG3",
+      "ALG9"
+    ],
+    [
+      0.589,
+      "BCS1L",
+      "CARS2"
+    ],
+    [
+      0.581,
+      "ADSS2",
+      "ATIC"
+    ],
+    [
+      0.578,
+      "AHCY",
+      "ATIC"
+    ],
+    [
+      0.574,
+      "ALAD",
+      "ALAS1"
+    ],
+    [
+      0.572,
+      "CDAN1",
+      "CDIN1"
+    ],
+    [
+      0.571,
+      "ATG101",
+      "ATG9A"
+    ],
+    [
+      0.567,
+      "ALG12",
+      "ALG9"
+    ],
+    [
+      0.555,
+      "ALG12",
+      "ALG3"
+    ],
+    [
+      0.537,
+      "ATP5ME",
+      "CARS2"
+    ],
+    [
+      0.535,
+      "ACAD9",
+      "BCS1L"
+    ],
+    [
+      0.534,
+      "ATP5ME",
+      "C1QBP"
+    ],
+    [
+      0.517,
+      "ACAD9",
+      "CARS2"
+    ],
+    [
+      0.51,
+      "ADSS2",
+      "CAD"
+    ],
+    [
+      0.507,
+      "CFHR1",
+      "CFHR3"
+    ],
+    [
+      0.502,
+      "ABCD1",
+      "ACOX1"
+    ],
+    [
+      0.498,
+      "AHCY",
+      "CAD"
+    ]
+  ],
+  "attribution_leave_one_out": [
+    {
+      "driver": "BRAF",
+      "recovered_context_partners": [
+        [
+          "SOX10",
+          0.59
+        ],
+        [
+          "MITF",
+          0.345
+        ],
+        [
+          "MDM2",
+          0.225
+        ]
+      ]
+    },
+    {
+      "driver": "KRAS",
+      "recovered_context_partners": [
+        [
+          "CTNNB1",
+          0.26
+        ]
+      ]
+    },
+    {
+      "driver": "NRAS",
+      "recovered_context_partners": []
+    },
+    {
+      "driver": "HRAS",
+      "recovered_context_partners": []
+    },
+    {
+      "driver": "EGFR",
+      "recovered_context_partners": [
+        [
+          "TP63",
+          0.367
+        ],
+        [
+          "ERBB2",
+          0.236
+        ]
+      ]
+    },
+    {
+      "driver": "KIT",
+      "recovered_context_partners": [
+        [
+          "PDGFRA",
+          0.242
+        ]
+      ]
+    },
+    {
+      "driver": "PDGFRA",
+      "recovered_context_partners": [
+        [
+          "KIT",
+          0.242
+        ]
+      ]
+    },
+    {
+      "driver": "MET",
+      "recovered_context_partners": []
+    },
+    {
+      "driver": "ALK",
+      "recovered_context_partners": []
+    },
+    {
+      "driver": "FLT3",
+      "recovered_context_partners": []
+    }
+  ],
+  "verdict": "co-essentiality top proposals recover 22 held-out real edges (precision 0.099) vs ~0 for random -- a real if modest discovery signal in the high-confidence tail; top novel candidates (e.g. ATIC-CAD, both nucleotide-biosynthesis enzymes) are biologically sensible. Bulk co-essentiality still weak (piece-1 HARD-edge AUC 0.516); the strong tail is where measured-data discovery lives."
+}

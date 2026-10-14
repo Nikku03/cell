@@ -1,0 +1,110 @@
+{
+ "test": "signed edges and chromatin against the gene x line interaction",
+ "F1": {
+  "split_half": 0.3567453999668618,
+  "n": 33195
+ },
+ "F2": {
+  "hi": 19.292470932006836,
+  "lo": 19.066650390625,
+  "relative": 0.023548007011413574,
+  "paired": 0.22582175671408752,
+  "se": 0.04945741917309007,
+  "z": 4.565983435645138,
+  "n": 3601
+ },
+ "F3": {
+  "r": 0.0036987483538907266
+ },
+ "F4": {
+  "delta": -8.728064482160835e-07,
+  "se": 1.8037650066560858e-06,
+  "z": -0.4838803530367506,
+  "with": 0.0036978755474425104
+ },
+ "F5": {
+  "delta": 1.9670054299378578e-05,
+  "se": 0.00010613626523579905,
+  "z": 0.1853283065470444,
+  "base": 0.003108882164733542,
+  "with": 0.003128552219032921,
+  "lines": [
+   "A549",
+   "MCF7",
+   "HEPG2",
+   "PC3"
+  ]
+ },
+ "gates": {
+  "F1": true,
+  "F2": false,
+  "F3": false,
+  "F4": false,
+  "F5": false,
+  "F6": false
+ },
+ "void": [
+  "F6"
+ ],
+ "seconds": 287.7273931503296,
+ "log": [
+  "========================================================================================================",
+  "LOOP 253 -- SIGNED EDGES AND CHROMATIN, WHERE THE INTERACTION TERM ACTUALLY EXISTS",
+  "========================================================================================================",
+  "     Loop 242 put signed edges at +0.0001 and loop 245 put chromatin at +0.0328. Both ran",
+  "     on data whose gene x line interaction was near-vacuous (DepMap: 85% between-gene).",
+  "     LINCS is 68.7% interaction. The target here is the residual A3_ADDITIVE cannot",
+  "     explain -- 69% of the variance rather than 15%.",
+  "     33,197 (gene, line) profiles, 3,801 genes, 978 landmarks",
+  "F1 IS THERE INTERACTION STRUCTURE TO PREDICT, OR ONLY NOISE?",
+  "     signatures split in half within each (gene, line); residual computed independently",
+  "     split-half correlation of the interaction residual: 0.3567  (n=33,195)",
+  "     F1 PASS -- the interaction reproduces at 0.3567; there is structure to explain, not only replicate noise",
+  "     expression matched for all 9 lines; 949 of 978 landmarks resolve to a DepMap gene",
+  "F2 CAN YOU KNOCK DOWN A GENE THAT IS NOT EXPRESSED?",
+  "     loop 240's Z1 asked this on DepMap fitness and FAILED (+0.0228, within-gene corr",
+  "     -0.0169). Here the readout is transcriptional.",
+  "     3,601 genes; response magnitude where the gene is in its TOP expression",
+  "     third 19.292 vs BOTTOM third 19.067",
+  "     paired within gene: +0.2258 +/- 0.0495 (+4.6 se); relative +2.4%",
+  "     F2 FAIL -- +2.4% against a 20% bar",
+  "     OmniPath: 1,412 of 3,801 knocked-down genes have a signed edge to at least one landmark",
+  "       A549    landmarks with ATAC at TSS: 844, H3K27ac:  46",
+  "       MCF7    landmarks with ATAC at TSS: 844, H3K27ac: 764",
+  "       HEPG2   landmarks with ATAC at TSS: 825, H3K27ac: 705",
+  "       PC3     landmarks with ATAC at TSS: 837, H3K27ac: 707",
+  "F3 DOES EXPRESSION CONTEXT PREDICT THE INTERACTION?",
+  "     expression only, held out by cell line: 0.0037  (n=33,197)",
+  "     F3 FAIL -- 0.0037 against a 0.05 bar",
+  "F4 DO SIGNED EDGES PREDICT THE INTERACTION?  (the loop 242 rerun)",
+  "     expression + signed edges 0.0037 vs expression alone 0.0037",
+  "     paired -0.0000 +/- 0.0000  (-0.5 se)",
+  "     loop 242's equivalent, on data with almost no interaction term: +0.0001",
+  "     F4 FAIL -- signed edges add -0.0000 against a 0.02 bar, even where the interaction term is 69% of the variance",
+  "F5 DOES CHROMATIN PREDICT THE INTERACTION?  (the loop 245 rerun)",
+  "     restricted to ['A549', 'MCF7', 'HEPG2', 'PC3']; the other five lines have no ENCODE ATAC + H3K27ac",
+  "     expression + chromatin 0.0031 vs expression alone 0.0031   paired +0.0000 +/- 0.0001 (+0.2 se)",
+  "     F5 FAIL -- chromatin adds +0.0000 against a 0.02 bar",
+  "F6 CONTROL: THE WRONG CELL LINE",
+  "     F6 VOID -- F3 did not pass, so there is nothing here to test",
+  "F7 WHAT THIS CANNOT SHOW",
+  "     978 landmarks: a signed edge whose target is not among them is invisible here.",
+  "     Chromatin covers four of nine lines, and they are the best-studied ones, so the",
+  "     mechanism is tested where the data is best rather than where it is representative.",
+  "     shRNA seed effects put construct signal into every signature, which inflates the",
+  "     gene term and makes the interaction HARDER to explain, not easier.",
+  "     DepMap expression and LINCS signatures come from different labs and stocks of",
+  "     nominally the same lines.",
+  "     A mechanism failing here failed on the best data this project has; that is not the",
+  "     same as being absent from biology.",
+  "========================================================================================================",
+  "  F1  PASS",
+  "  F2  FAIL",
+  "  F3  FAIL",
+  "  F4  FAIL",
+  "  F5  FAIL",
+  "  F6  VOID",
+  "  1/5   [288s]   (1 VOID: F6)",
+  "========================================================================================================"
+ ]
+}

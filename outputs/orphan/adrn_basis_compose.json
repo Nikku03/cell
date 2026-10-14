@@ -1,0 +1,230 @@
+{
+  "test": "adrn_basis_compose",
+  "clusters": [
+    8,
+    16,
+    32
+  ],
+  "K_values": [
+    30,
+    60,
+    120
+  ],
+  "detail": {
+    "ncl=8|K=30": {
+      "n": 838,
+      "class_holdout": 0.4855011933174225,
+      "random_holdout": 0.5164081145584726,
+      "in_basis": 0.540692124105012,
+      "gap": -0.0309069212410501
+    },
+    "ncl=8|K=60": {
+      "n": 838,
+      "class_holdout": 0.5239856801909308,
+      "random_holdout": 0.5517899761336515,
+      "in_basis": 0.6041169451073986,
+      "gap": -0.027804295942720714
+    },
+    "ncl=8|K=120": {
+      "n": 838,
+      "class_holdout": 0.5498210023866349,
+      "random_holdout": 0.5813245823389022,
+      "in_basis": 0.6638424821002387,
+      "gap": -0.03150357995226727
+    },
+    "ncl=16|K=30": {
+      "n": 785,
+      "class_holdout": 0.4953503184713376,
+      "random_holdout": 0.5152229299363057,
+      "in_basis": 0.5493630573248408,
+      "gap": -0.019872611464968104
+    },
+    "ncl=16|K=60": {
+      "n": 785,
+      "class_holdout": 0.5327388535031847,
+      "random_holdout": 0.5576433121019109,
+      "in_basis": 0.6104458598726115,
+      "gap": -0.024904458598726142
+    },
+    "ncl=16|K=120": {
+      "n": 785,
+      "class_holdout": 0.5592993630573247,
+      "random_holdout": 0.5823566878980891,
+      "in_basis": 0.6547770700636942,
+      "gap": -0.023057324840764393
+    },
+    "ncl=32|K=30": {
+      "n": 568,
+      "class_holdout": 0.5172535211267605,
+      "random_holdout": 0.5163732394366197,
+      "in_basis": 0.5395246478873239,
+      "gap": 0.0008802816901407606
+    },
+    "ncl=32|K=60": {
+      "n": 568,
+      "class_holdout": 0.5494718309859156,
+      "random_holdout": 0.5630281690140845,
+      "in_basis": 0.5941901408450704,
+      "gap": -0.013556338028168913
+    },
+    "ncl=32|K=120": {
+      "n": 568,
+      "class_holdout": 0.5722711267605634,
+      "random_holdout": 0.591637323943662,
+      "in_basis": 0.6550176056338028,
+      "gap": -0.01936619718309862
+    }
+  },
+  "means": {
+    "class_holdout": 0.5317436544222305,
+    "random_holdout": 0.5528649261512998,
+    "in_basis": 0.6013299925488881,
+    "gap": -0.021121271729069278
+  },
+  "sweep": {
+    "name": "class-holdout - random-holdout (>=0 is composition)",
+    "verdict": "HARMFUL",
+    "n_cells": 9,
+    "inert_axes": [],
+    "n_duplicate_cells": 0,
+    "n_effective_cells": 9,
+    "n_resolved_pos": 0,
+    "n_resolved_neg": 6,
+    "sign_consistent": false,
+    "cells_needed_for_robust": 6,
+    "passing_configs": [],
+    "cells": [
+      {
+        "config": {
+          "clusters": 8,
+          "K": 30
+        },
+        "cohort": "ncl8|K30",
+        "n": 838,
+        "delta": -0.030906921241050118,
+        "lo": -0.04958383054892601,
+        "hi": -0.012768496420047732
+      },
+      {
+        "config": {
+          "clusters": 8,
+          "K": 60
+        },
+        "cohort": "ncl8|K60",
+        "n": 838,
+        "delta": -0.02780429594272077,
+        "lo": -0.046420047732696895,
+        "hi": -0.009248210023866348
+      },
+      {
+        "config": {
+          "clusters": 8,
+          "K": 120
+        },
+        "cohort": "ncl8|K120",
+        "n": 838,
+        "delta": -0.031503579952267304,
+        "lo": -0.04892601431980907,
+        "hi": -0.013960322195704073
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 30
+        },
+        "cohort": "ncl16|K30",
+        "n": 785,
+        "delta": -0.01987261146496815,
+        "lo": -0.03872611464968153,
+        "hi": -0.0007006369426751613
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 60
+        },
+        "cohort": "ncl16|K60",
+        "n": 785,
+        "delta": -0.024904458598726115,
+        "lo": -0.042993630573248405,
+        "hi": -0.006751592356687899
+      },
+      {
+        "config": {
+          "clusters": 16,
+          "K": 120
+        },
+        "cohort": "ncl16|K120",
+        "n": 785,
+        "delta": -0.023057324840764334,
+        "lo": -0.0410828025477707,
+        "hi": -0.004904458598726117
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 30
+        },
+        "cohort": "ncl32|K30",
+        "n": 568,
+        "delta": 0.0008802816901408482,
+        "lo": -0.0210387323943662,
+        "hi": 0.022887323943661966
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 60
+        },
+        "cohort": "ncl32|K60",
+        "n": 568,
+        "delta": -0.013556338028169015,
+        "lo": -0.03512323943661972,
+        "hi": 0.008010563380281686
+      },
+      {
+        "config": {
+          "clusters": 32,
+          "K": 120
+        },
+        "cohort": "ncl32|K120",
+        "n": 568,
+        "delta": -0.019366197183098594,
+        "lo": -0.03996478873239437,
+        "hi": 0.0009683098591549249
+      }
+    ]
+  },
+  "log": [
+    "====================================================================================================",
+    "DOES THE RESPONSE SPACE COMPOSE ACROSS FUNCTIONAL CLASSES?  (go/no-go, oracle upper bound)",
+    "====================================================================================================",
+    "  PREDECLARED: class-holdout ~ random-holdout => composes, build it.",
+    "               class-holdout << random-holdout => classes are private, do not build it.",
+    "  Sign convention as in adrn_loco.py: a gap at or above zero is the GOOD outcome.",
+    "  5,120 perturbations x 8,246 genes; 3 tide genes zeroed",
+    "  scorable (>= 5 specific movers): 838",
+    "  named channels: 162 kept of 164 built (120 pathways, 7 compartments, 8 lesion classes, rest structural); mean channels per gene 20.1",
+    "  extra channels: 257 kept of 681 built  (TIER A 249, TIER B 8); 250 GO, 120 complexes, 120 pfam, 120 domains",
+    "\n  clusters=8: 8 classes with >= 25 members (sizes [np.int64(33), np.int64(42), np.int64(44), np.int64(66), np.int64(73), np.int64(158), np.int64(168), np.int64(254)])",
+    "    K= 30: class-holdout 0.4855 | random-holdout 0.5164 | in-basis 0.5407 | gap -0.0309",
+    "    K= 60: class-holdout 0.5240 | random-holdout 0.5518 | in-basis 0.6041 | gap -0.0278",
+    "    K=120: class-holdout 0.5498 | random-holdout 0.5813 | in-basis 0.6638 | gap -0.0315",
+    "\n  clusters=16: 12 classes with >= 25 members (sizes [np.int64(25), np.int64(30), np.int64(33), np.int64(41), np.int64(43), np.int64(56), np.int64(66), np.int64(73), np.int64(75), np.int64(76), np.int64(109), np.int64(158)])",
+    "    K= 30: class-holdout 0.4954 | random-holdout 0.5152 | in-basis 0.5494 | gap -0.0199",
+    "    K= 60: class-holdout 0.5327 | random-holdout 0.5576 | in-basis 0.6104 | gap -0.0249",
+    "    K=120: class-holdout 0.5593 | random-holdout 0.5824 | in-basis 0.6548 | gap -0.0231",
+    "\n  clusters=32: 13 classes with >= 25 members (sizes [np.int64(25), np.int64(28), np.int64(31), np.int64(33), np.int64(36), np.int64(37), np.int64(38), np.int64(44), np.int64(46), np.int64(52), np.int64(59), np.int64(69), np.int64(70)])",
+    "    K= 30: class-holdout 0.5173 | random-holdout 0.5164 | in-basis 0.5395 | gap +0.0009",
+    "    K= 60: class-holdout 0.5495 | random-holdout 0.5630 | in-basis 0.5942 | gap -0.0136",
+    "    K=120: class-holdout 0.5723 | random-holdout 0.5916 | in-basis 0.6550 | gap -0.0194",
+    "\n  SWEEP class-holdout - random-holdout (>=0 is composition)   axes[clusters,K]  9 cells\n  config                       cohort         delta                 95% CI\n  clusters=8 K=30              ncl8|K30     -0.0309 [ -0.0496, -0.0128] RES-\n  clusters=8 K=60              ncl8|K60     -0.0278 [ -0.0464, -0.0092] RES-\n  clusters=8 K=120             ncl8|K120    -0.0315 [ -0.0489, -0.0140] RES-\n  clusters=16 K=30             ncl16|K30    -0.0199 [ -0.0387, -0.0007] RES-\n  clusters=16 K=60             ncl16|K60    -0.0249 [ -0.0430, -0.0068] RES-\n  clusters=16 K=120            ncl16|K120   -0.0231 [ -0.0411, -0.0049] RES-\n  clusters=32 K=30             ncl32|K30    +0.0009 [ -0.0210, +0.0229] ns\n  clusters=32 K=60             ncl32|K60    -0.0136 [ -0.0351, +0.0080] ns\n  clusters=32 K=120            ncl32|K120   -0.0194 [ -0.0400, +0.0010] ns\n  -> HARMFUL   resolved +0/-6 of 9 (>= 6 needed), sign-consistent False",
+    "\n  MEANS  class-holdout 0.5317 | random-holdout 0.5529 | in-basis ceiling 0.6013 | gap -0.0211",
+    "\n  READING",
+    "  Removing a whole FUNCTION costs more than removing the same number of perturbations at random.",
+    "  Each functional class carries response directions the other classes do not span. An oracle with",
+    "  the true response in hand cannot rebuild a held-out class from the rest -- so no mapping from",
+    "  annotations to coefficients can either. A compositional model does NOT exist for this data;",
+    "  the constraint is coverage of function space, not architecture."
+  ]
+}

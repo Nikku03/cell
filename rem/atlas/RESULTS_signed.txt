@@ -1,0 +1,205 @@
+=================================================================================================
+THE SIGNED COUNT, RANKED AS A CURVE
+=================================================================================================
+  Sharon et al. 2012, Nat Biotechnol 30:521-30, doi:10.1038/nbt.2205, via NCBI GEO
+  GSE37851, sha256[:32] 6a68ee26db7a1d3f4813ae29ed4e69bd. 5790 promoters with at least one site,
+  404 distinct factors. Replicate noise floor 0.0823 log2, measured before any model.
+  leaky oracle over all folds: 170 activating factors, 234 repressing.
+
+=================================================================================================
+S0  THE CEILING GATE, BOTH HALVES
+=================================================================================================
+  (a) ACCURACY CEILING. The signed count is given a DELIBERATELY LEAKY sign oracle --
+      per-factor effects fitted on all the data, held-out promoters included -- so the
+      number below is an upper bound on any honest sign-learning scheme.
+      plain count RMSE   1.8960   fallback  2.6%
+      SIGNED count RMSE  1.4451   fallback  3.0%   (leaky oracle)
+      identity RMSE      1.1641   fallback 11.1%
+      the signed count closes 61.6% of the count-to-identity gap
+      and leaves 3.42 noise floors open.
+      S0(a): FAIL -- REFUTED AT ITS OWN CEILING. The signed count does not reach identity even
+      when handed the answer, so no honest sign estimator can make it do so. What follows
+      is therefore not a verdict on C = 2 but the curve C = 2 sits on.
+
+  (b) COST CEILING. summary.py's cap function with the class-count term added, and the
+      elimination hoisted so every representation is scored on the SAME decomposition.
+
+      representation            cap |C| at L=8   edge coverage
+      pattern (exact)                        3          12.8%
+      total count (C=1)                    419          93.3%
+      SIGNED count (C=2)                   419          93.3%
+      class count C=3                      419          93.3%
+      class count C=4                      419          93.3%
+      class count C=6                       55          50.7%
+      class count C=8                       25          36.5%
+      class count C=12                      15          28.6%
+      class count C=16                      15          28.6%
+      class count C=32                      13          26.6%
+      class count C=64                      13          26.6%
+      class count C=128                     13          26.6%
+      class count C=404                     12          25.6%
+      total count, summary.py              419          93.3%
+      A class count is polynomial of degree (occupied classes), so the cap falls as C
+      rises. That is the trade this module exists to price.
+
+=================================================================================================
+S1  THE SCALING LAW: ERROR AGAINST C, WITH THE CAP BESIDE IT
+=================================================================================================
+        C  honest RMSE  leaky RMSE  floors from  % of gap  fallback  cap |C|  coverage
+                                       identity    closed             at L=8          
+        1       1.8960      1.8960         8.89      0.0%     2.6%      419    93.3%
+        2       1.4683      1.4605         3.70     58.4%     3.1%      419    93.3%
+        3       1.4466      1.4389         3.43     61.4%     3.2%      419    93.3%
+        4       1.4077      1.3930         2.96     66.7%     3.4%      419    93.3%
+        6       1.3425      1.3242         2.17     75.6%     3.5%       55    50.7%
+        8       1.3410      1.3235         2.15     75.8%     3.8%       25    36.5%
+       12       1.3323      1.3050         2.04     77.0%     3.9%       15    28.6%
+       16       1.3330      1.2901         2.05     76.9%     4.0%       15    28.6%
+       32       1.3151      1.2806         1.84     79.4%     7.4%       13    26.6%
+       64       1.1858      1.1534         0.26     97.0%     9.8%       13    26.6%
+      128       1.2078      1.1524         0.53     94.0%    10.1%       13    26.6%
+      404       1.2065      1.1641         0.52     94.2%    10.3%       12    25.6%
+    ident       1.1641      1.1641         0.00    100.0%    11.1%        3    12.8%
+
+  S1: the smallest C inside one noise floor of identity is 64.
+  The signed count (C = 2) is one point on this curve and it is not the knee.
+  The C = 404 row is close to identity but not equal to it: classes are fitted IN-FOLD,
+  so factors absent from a training fold have no bin and fall together into class 0,
+  where the identity model keys on the factor name. That merging is why C = 404 abstains
+  slightly less often than identity and scores slightly worse.
+
+  S0's PREDECLARED bar, evaluated: a C counts as a candidate only if its cap beats the
+  pattern cap by more than one AND its error is inside one noise floor of identity.
+    inside one floor of identity : [64, 128, 404]
+    cap beats pattern by > 1     : [1, 2, 3, 4, 6, 8, 12, 16, 32, 64, 128, 404]
+    BOTH                         : [64, 128, 404]
+  So a candidate exists, and it is C = 64: cap 3 -> 13, coverage 12.8% -> 26.6%. That is a real gain and a modest one. It
+  is emphatically NOT the polynomial collapse the total count promised, which was
+  cap 419 and 93.3% coverage --
+  and which this data refutes. Both ends of the family fail in opposite directions:
+  everything cheap enough to keep the 419-controller cap (C <= 4) is
+  two or more noise floors from identity, and everything accurate enough to be inside
+  one floor has already given back nine tenths of the coverage. What survives is the
+  middle, and the middle is worth cap 3 -> 13, not 3 -> 419.
+
+=================================================================================================
+S2  WHAT THE SIGN ORACLE WAS WORTH: HONEST MINUS LEAKY
+=================================================================================================
+        C  honest - leaky   in floors
+        1          0.0000        0.00
+        2          0.0078        0.09
+        3          0.0078        0.09
+        4          0.0147        0.18
+        6          0.0183        0.22
+        8          0.0175        0.21
+       12          0.0273        0.33
+       16          0.0429        0.52
+       32          0.0345        0.42
+       64          0.0325        0.39
+      128          0.0554        0.67
+      404          0.0424        0.52
+
+  largest leakage advantage 0.0554 log2 = 0.67 floors
+  S2: PASS -- the classes can be learned in-fold, so the leaky ceiling was a fair upper bound
+
+=================================================================================================
+S3  FALLBACK IS PART OF THE ANSWER
+=================================================================================================
+  A finer summary buys accuracy where it has a training group and abstains where it does
+  not, dropping to the context mean. An RMSE mixing the two is not a comparison, and the
+  identity model abstains four times as often as a class count.
+
+  5146 of 5790 promoters are scored by every model without fallback
+    model                     all promoters  no-fallback subset  floors from ident
+    plain count                      1.8960              1.9105              10.04
+    SIGNED count (C=2)               1.4683              1.4665               4.64
+    class count C=8                  1.3410              1.3051               2.68
+    class count C=64                 1.1858              1.0978               0.17
+    class count C=128                1.2078              1.0857               0.02
+    identity                         1.1641              1.0842               0.00
+  This is the comparison that counts, because it is the only one where every model is
+  answering the same questions.
+
+=================================================================================================
+S4  CAN THE SIGN BE ASSIGNED ON THE REAL NETWORK AT ALL?
+=================================================================================================
+  TRRUST, 8403 distinct directed pairs after deduplication:
+    Unknown           3558   42.3%
+    Activation        2927   34.8%
+    Repression        1918   22.8%
+
+  42.3% of real regulatory edges carry NO SIGN. A signed count needs one per edge,
+  so on this network the representation is not two classes but three -- activator,
+  repressor, and unknown -- and the third class is the largest single obstruction to
+  using it, before any question of accuracy. This is the same shape of problem as the
+  42.3% figure trrust_engine.py had to correct: the annotation, not the method, is the
+  limit.
+
+=================================================================================================
+S5  THE ENGINE SIDE, AND WHAT THE SYNTHETIC SYSTEM WAS ACTUALLY TESTING
+=================================================================================================
+  block.py's generator drives every target by (1+g*b)^(1/nC) with ONE g, so all
+  controllers act identically and positively and the drive is a symmetric function of the
+  count. The total count was count-sufficient there BY CONSTRUCTION. Three variants:
+
+    nC=4 controllers, nT=5 targets, L=2, dt=0.25; signed relative error on
+    the variance of the target count, against the exact joint
+    Every summary is scored against the FULL PATTERN of the same construction, not
+    against zero. The pattern is not exact either -- the product over targets and the
+    finite window L, dt both cost something -- so the pattern's own error is the floor
+    of this experiment, and a summary's EXCESS over it is the only part that is about
+    the summary.
+
+    variant                                       pattern   total count  signed count  signed diff
+    A  all activators, equal strength            -2.2e-02     -3.71e-02     -3.71e-02    -3.71e-02
+    B  half repressors, equal magnitude          -1.9e-02     -1.77e-01     -2.50e-02    -2.58e-02
+    C  half repressors, HETEROGENEOUS magnitude   -2.2e-02     -1.86e-01     -5.93e-02    -6.21e-02
+    (no conditioning, the baseline that must fail)                -1.98e-01
+
+    variant                                      total count  signed count   repaired
+    excess over the pattern floor, A                1.55e-02      1.55e-02       0.0%
+    excess over the pattern floor, B                1.58e-01      5.55e-03      96.5%
+    excess over the pattern floor, C                1.64e-01      3.74e-02      77.3%
+
+    the span this is measured on -- no conditioning at all, minus the pattern floor:
+      variant A: 2.18e-01   total count uses 92.9% of it, signed count 92.9%
+      variant B: 1.68e-01   total count uses 5.9% of it, signed count 96.7%
+      variant C: 1.76e-01   total count uses 6.6% of it, signed count 78.8%
+
+  Variant A reproduces summary.py: the total count's excess over the pattern is
+  1.6e-02, which is 7.1% of
+  the span between the pattern and no conditioning at all -- so the count recovers
+  93% of what the full history is worth, because the system was
+  built so that the drive is a symmetric function of the count. Not zero, but close.
+  Variant B: the total count's excess rises to 1.58e-01 and the
+  signed count's is 5.55e-03 -- and that is BY CONSTRUCTION, since
+  the drive is a function of the signed difference. Not evidence, and not exactly zero
+  either: the drive is a function of the signed difference at each INSTANT, while the
+  summary is over a window of L+1 slices, so the construction makes the signed count
+  sufficient for the drive and not for the history.
+  Variant C is the only informative one. Heterogeneous magnitudes WITHIN each sign class
+  are the synthetic analogue of what the promoter data has. The total count's excess is
+  1.64e-01, the signed count repairs 77.3% of it.
+  On real promoters the signed count closed 61.6% of the
+  count-to-identity gap. The synthetic number is 16 points MORE FORGIVING than the measurement, which is the honest way to put it -- the
+  two are the same order and the same sign, and the synthetic one flatters the summary.
+  The finding is still that the synthetic system only reproduces the measured behaviour
+  once it is given repressors AND within-sign heterogeneity. Before that it had neither,
+  which is why summary.py's synthetic verdict and promoter.py's measured verdict
+  disagreed: they were not testing the same thing.
+
+=================================================================================================
+S6  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  1. The promoter half tests SITES, not bound factors, at steady state, in two sequence
+     contexts, with no time axis. The engine's summary is over controller HISTORY; this
+     settles the identity half of that claim and says nothing about the temporal half.
+  2. The class map here is fitted from the response itself. That is legitimate for the
+     question asked -- is there ANY partition into C classes that suffices -- and it is
+     the most generous possible reading of the family. A partition chosen from
+     biology alone could only be worse.
+  3. The cap is a COST statement from graph arithmetic. It says the engine could be built
+     at that size, not that it would be accurate there.
+  4. The random class assignment used for the cap is the realistic case, not the best
+     one. A class map that happened to align with the network's structure would give a
+     higher cap, and one that cut across it a lower.

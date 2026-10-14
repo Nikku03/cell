@@ -1,0 +1,729 @@
+{
+ "test": "enhancer epigenome corrected",
+ "gates": {
+  "H1": true,
+  "H2": false,
+  "H3": false,
+  "H4": true,
+  "H5": false,
+  "H6": true,
+  "H7": false,
+  "H8": false,
+  "H9": true,
+  "H10": true,
+  "H11": false,
+  "H12": true,
+  "H13": true
+ },
+ "void": [],
+ "n_pairs": 11933,
+ "n_pos": 482,
+ "defined": {
+  "element": {
+   "el_k27me3": 1.0,
+   "el_ctcf": 1.0,
+   "el_k4me1": 1.0,
+   "el_k27me3_peak": 1.0,
+   "el_ctcf_peak": 1.0,
+   "el_k4me1_peak": 1.0,
+   "cat_high_k27ac": 1.0,
+   "cat_k27ac": 1.0,
+   "cat_no_k27ac": 1.0,
+   "cat_ctcf_element": 1.0,
+   "cat_k27me3_element": 1.0,
+   "el_k4me3_cov": 1.0,
+   "el_k4me3_sig": 1.0,
+   "el_me1_minus_me3": 1.0,
+   "el_5mc": 0.9799196787148594,
+   "el_ncpg": 1.0,
+   "el_cpg_dens": 1.0
+  },
+  "promoter": {
+   "pr_k4me3_cov": 1.0,
+   "pr_k4me3_sig": 1.0,
+   "pr_5mc": 0.999546485260771,
+   "pr_ncpg": 1.0
+  }
+ },
+ "directions": {
+  "el_k27me3": {
+   "n_a": 482,
+   "n_b": 11451,
+   "dropped": 0,
+   "median_a": 0.1006740971412281,
+   "median_b": 0.08859354089857718,
+   "p": 0.9999612116741319,
+   "defined": true,
+   "predicted": "lower",
+   "holds": false
+  },
+  "el_5mc": {
+   "n_a": 479,
+   "n_b": 11303,
+   "dropped": 151,
+   "median_a": 4.0,
+   "median_b": 9.555555555555555,
+   "p": 3.549090446689524e-16,
+   "defined": true,
+   "predicted": "lower",
+   "holds": true
+  },
+  "el_k4me1": {
+   "n_a": 482,
+   "n_b": 11451,
+   "dropped": 0,
+   "median_a": 0.5661407292606123,
+   "median_b": 0.43678246613783717,
+   "p": 1.0260290984871869e-29,
+   "defined": true,
+   "predicted": "higher",
+   "holds": true
+  }
+ },
+ "undefined_predictions": [],
+ "k27me3_vs_dhs": {
+  "rho": 0.23210896668242942,
+  "p": 6.823702584746041e-56,
+  "strata": [
+   {
+    "q": 1,
+    "n": 2384,
+    "n_pos": 35,
+    "median_pos": 0.06372693588484778,
+    "median_neg": 0.07028728329304079,
+    "p": 0.45102397101541125,
+    "direction_gone": true
+   },
+   {
+    "q": 2,
+    "n": 2389,
+    "n_pos": 40,
+    "median_pos": 0.0833063020817934,
+    "median_neg": 0.08039593223519767,
+    "p": 0.7529821649504439,
+    "direction_gone": false
+   },
+   {
+    "q": 3,
+    "n": 2387,
+    "n_pos": 56,
+    "median_pos": 0.07975495549844853,
+    "median_neg": 0.08597555928871628,
+    "p": 0.14103070453279204,
+    "direction_gone": true
+   },
+   {
+    "q": 4,
+    "n": 2385,
+    "n_pos": 120,
+    "median_pos": 0.1011370169302658,
+    "median_neg": 0.09839795981123055,
+    "p": 0.8540334174183248,
+    "direction_gone": false
+   },
+   {
+    "q": 5,
+    "n": 2388,
+    "n_pos": 231,
+    "median_pos": 0.11616292887676384,
+    "median_neg": 0.11384980188186553,
+    "p": 0.754881824543616,
+    "direction_gone": false
+   }
+  ],
+  "n_direction_gone": 2
+ },
+ "posthoc_thresholded": {
+  "H3K27me3 peak": {
+   "n": 144,
+   "pos": 2,
+   "rate": 0.013888888888888888
+  },
+  "no H3K27me3 peak": {
+   "n": 11789,
+   "pos": 480,
+   "rate": 0.04071592162185088
+  },
+  "cat_high_k27ac": {
+   "n": 4254,
+   "pos": 344,
+   "rate": 0.08086506817113305
+  },
+  "cat_k27ac": {
+   "n": 5452,
+   "pos": 122,
+   "rate": 0.022377109317681585
+  },
+  "cat_no_k27ac": {
+   "n": 1187,
+   "pos": 7,
+   "rate": 0.005897219882055603
+  },
+  "cat_ctcf_element": {
+   "n": 976,
+   "pos": 9,
+   "rate": 0.009221311475409836
+  },
+  "cat_k27me3_element": {
+   "n": 64,
+   "pos": 0,
+   "rate": 0.0
+  }
+ },
+ "arms": {
+  "base": {
+   "r1_mean": 0.6020100502512562,
+   "ap_mean": 0.32198007557256025,
+   "r1": [
+    0.592964824120603,
+    0.6130653266331658,
+    0.5778894472361809,
+    0.6180904522613065,
+    0.6080402010050251
+   ],
+   "ap": [
+    0.30260185577031584,
+    0.3287847881594063,
+    0.32348946945808404,
+    0.3204824357258981,
+    0.3345418287490969
+   ]
+  },
+  "+repress": {
+   "r1_mean": 0.6130653266331658,
+   "ap_mean": 0.3199466047737531,
+   "r1": [
+    0.6130653266331658,
+    0.6231155778894473,
+    0.5879396984924623,
+    0.6231155778894473,
+    0.6180904522613065
+   ],
+   "ap": [
+    0.3126333712882484,
+    0.3217462692977305,
+    0.31737783680029896,
+    0.3249107131792257,
+    0.3230648333032617
+   ]
+  },
+  "+category": {
+   "r1_mean": 0.6211055276381909,
+   "ap_mean": 0.3725728506189735,
+   "r1": [
+    0.6130653266331658,
+    0.6331658291457286,
+    0.5829145728643216,
+    0.6331658291457286,
+    0.6432160804020101
+   ],
+   "ap": [
+    0.3795610636717777,
+    0.3767855085549016,
+    0.3588023553970736,
+    0.3543970402412404,
+    0.39331828522987416
+   ]
+  },
+  "+me1me3": {
+   "r1_mean": 0.6080402010050252,
+   "ap_mean": 0.3340518259051567,
+   "r1": [
+    0.6381909547738693,
+    0.6080402010050251,
+    0.592964824120603,
+    0.5829145728643216,
+    0.6180904522613065
+   ],
+   "ap": [
+    0.32454619245403393,
+    0.34120418793478946,
+    0.3396228598979315,
+    0.3244817200933536,
+    0.34040416914567506
+   ]
+  },
+  "+methyl": {
+   "r1_mean": 0.6110552763819095,
+   "ap_mean": 0.33257589465531895,
+   "r1": [
+    0.6130653266331658,
+    0.6180904522613065,
+    0.6130653266331658,
+    0.6080402010050251,
+    0.6030150753768844
+   ],
+   "ap": [
+    0.32934685776889394,
+    0.3288900566777693,
+    0.3279396111153606,
+    0.32289955144904675,
+    0.35380339626552426
+   ]
+  },
+  "+promoter": {
+   "r1_mean": 0.6100502512562814,
+   "ap_mean": 0.3504458575699301,
+   "r1": [
+    0.6180904522613065,
+    0.6180904522613065,
+    0.6030150753768844,
+    0.6130653266331658,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.3497325945009597,
+    0.3538254049497509,
+    0.3495207043028357,
+    0.33611226975608616,
+    0.363038314340018
+   ]
+  },
+  "+promoter_perm": {
+   "r1_mean": 0.5979899497487438,
+   "ap_mean": 0.30390886268030204,
+   "r1": [
+    0.6030150753768844,
+    0.5979899497487438,
+    0.6030150753768844,
+    0.5879396984924623,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2930979790217653,
+    0.3058162770652881,
+    0.3079021958094699,
+    0.29879814544037686,
+    0.3139297160646103
+   ]
+  },
+  "+epi_all": {
+   "r1_mean": 0.6281407035175879,
+   "ap_mean": 0.4055386606800961,
+   "r1": [
+    0.6331658291457286,
+    0.6180904522613065,
+    0.6482412060301508,
+    0.6130653266331658,
+    0.628140703517588
+   ],
+   "ap": [
+    0.41026062809945124,
+    0.4008937173244374,
+    0.4002417230878545,
+    0.39535912373132,
+    0.4209381111574175
+   ]
+  },
+  "l185": {
+   "r1_mean": 0.6733668341708543,
+   "ap_mean": 0.48805360567508105,
+   "r1": [
+    0.6884422110552764,
+    0.6683417085427136,
+    0.6683417085427136,
+    0.6633165829145728,
+    0.678391959798995
+   ],
+   "ap": [
+    0.4728131959672758,
+    0.4851845184173767,
+    0.4896759808510832,
+    0.49214614724538935,
+    0.5004481858942802
+   ]
+  },
+  "l185+epi": {
+   "r1_mean": 0.6773869346733667,
+   "ap_mean": 0.4966491244195739,
+   "r1": [
+    0.6884422110552764,
+    0.6582914572864321,
+    0.6834170854271356,
+    0.6733668341708543,
+    0.6834170854271356
+   ],
+   "ap": [
+    0.4939336433697962,
+    0.49179464732110934,
+    0.4981563706395533,
+    0.49466644934872606,
+    0.5046945114186844
+   ]
+  },
+  "distance": {
+   "r1_mean": 0.592964824120603,
+   "ap_mean": 0.28444394940881107,
+   "r1": [
+    0.5829145728643216,
+    0.5879396984924623,
+    0.5979899497487438,
+    0.5979899497487438,
+    0.5979899497487438
+   ],
+   "ap": [
+    0.2829050454204365,
+    0.28170448972840684,
+    0.28917222758182526,
+    0.28982639252315684,
+    0.2786115917902298
+   ]
+  }
+ },
+ "paired": {
+  "H5": {
+   "d_r1": [
+    0.02010050251256279,
+    0.01005025125628145,
+    0.01005025125628145,
+    0.005025125628140725,
+    0.01005025125628145
+   ],
+   "d_ap": [
+    0.010031515517932577,
+    -0.007038518861675835,
+    -0.006111632657785082,
+    0.004428277453327634,
+    -0.011476995445835192
+   ],
+   "mean_r1": 0.011055276381909573,
+   "sem_r1": 0.0024617987364654956,
+   "mean_ap": -0.00203347079880718,
+   "n_pos_r1": 5,
+   "n_ap_pass": 1
+  },
+  "H6": {
+   "d_r1": [
+    0.02010050251256279,
+    0.02010050251256279,
+    0.005025125628140725,
+    0.015075376884422065,
+    0.035175879396984966
+   ],
+   "d_ap": [
+    0.07695920790146188,
+    0.0480007203954953,
+    0.03531288593898957,
+    0.03391460451534234,
+    0.058776456480777284
+   ],
+   "mean_r1": 0.019095477386934668,
+   "sem_r1": 0.004872040057704858,
+   "mean_ap": 0.050592775046413276,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  },
+  "H7": {
+   "d_r1": [
+    0.045226130653266305,
+    -0.005025125628140725,
+    0.015075376884422176,
+    -0.035175879396984966,
+    0.01005025125628145
+   ],
+   "d_ap": [
+    0.02194433668371809,
+    0.012419399775383144,
+    0.01613339043984746,
+    0.003999284367455502,
+    0.005862340396578181
+   ],
+   "mean_r1": 0.006030150753768848,
+   "sem_r1": 0.01314240887499701,
+   "mean_ap": 0.012071750332596476,
+   "n_pos_r1": 3,
+   "n_ap_pass": 3
+  },
+  "H8": {
+   "d_r1": [
+    0.02010050251256279,
+    0.005025125628140725,
+    0.035175879396984966,
+    -0.01005025125628145,
+    -0.005025125628140725
+   ],
+   "d_ap": [
+    0.0267450019985781,
+    0.00010526851836301088,
+    0.0044501416572765295,
+    0.0024171157231486773,
+    0.01926156751642738
+   ],
+   "mean_r1": 0.00904522613065326,
+   "sem_r1": 0.00831806299359139,
+   "mean_ap": 0.01059581908275874,
+   "n_pos_r1": 3,
+   "n_ap_pass": 2
+  },
+  "H9": {
+   "d_r1": [
+    0.025125628140703515,
+    0.005025125628140725,
+    0.025125628140703515,
+    -0.005025125628140725,
+    -0.01005025125628134
+   ],
+   "d_ap": [
+    0.047130738730643884,
+    0.025040616790344583,
+    0.02603123484475167,
+    0.015629834030188083,
+    0.028496485590921106
+   ],
+   "mean_r1": 0.008040201005025139,
+   "sem_r1": 0.007385396209396509,
+   "mean_ap": 0.028465781997369866,
+   "n_pos_r1": 3,
+   "n_ap_pass": 5
+  },
+  "H10": {
+   "d_r1": [
+    0.015075376884422176,
+    0.02010050251256279,
+    0.0,
+    0.025125628140703515,
+    0.0
+   ],
+   "d_ap": [
+    0.056634615479194406,
+    0.04800912788446282,
+    0.04161850849336579,
+    0.037314124315709296,
+    0.0491085982754077
+   ],
+   "mean_r1": 0.012060301507537697,
+   "sem_r1": 0.005173683487933165,
+   "mean_ap": 0.046536994889628,
+   "n_pos_r1": 3,
+   "n_ap_pass": 5
+  },
+  "H11": {
+   "d_r1": [
+    0.0,
+    -0.01005025125628145,
+    0.015075376884422065,
+    0.01005025125628145,
+    0.005025125628140614
+   ],
+   "d_ap": [
+    0.021120447402520448,
+    0.006610128903732637,
+    0.0084803897884701,
+    0.0025203021033367023,
+    0.004246325524404182
+   ],
+   "mean_r1": 0.0040201005025125355,
+   "sem_r1": 0.004322776516101826,
+   "mean_ap": 0.008595518744492815,
+   "n_pos_r1": 3,
+   "n_ap_pass": 1
+  },
+  "H12": {
+   "d_r1": [
+    0.10552763819095479,
+    0.07035175879396982,
+    0.08542713567839189,
+    0.07537688442211055,
+    0.08542713567839189
+   ],
+   "d_ap": [
+    0.21102859794935974,
+    0.2100901575927025,
+    0.20898414305772806,
+    0.20484005682556922,
+    0.22608291962845456
+   ],
+   "mean_r1": 0.08442211055276379,
+   "sem_r1": 0.006030150753768849,
+   "mean_ap": 0.21220517501076283,
+   "n_pos_r1": 5,
+   "n_ap_pass": 5
+  }
+ },
+ "h9_channel": "AUPRC",
+ "best_arm": "l185+epi",
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/epigenome/k562_marks.npz",
+    "bytes": 127621,
+    "hash": "6863ae130c27d8bf",
+    "method": "sha256:full"
+   },
+   {
+    "path": "colab/data/tf_domains.json",
+    "bytes": 317744,
+    "hash": "19829e4c188e98e1",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 11933,
+   "used": 11933,
+   "selection": "all",
+   "fraction": 1.0
+  },
+  "seed": 188288,
+  "controls": [
+   "non-finite values dropped and counted in every comparison",
+   "repression and the chromatin category as separate arms",
+   "promoter marks permuted across genes, scored in H9's channel",
+   "H3K27me3 checked against accessibility prospectively",
+   "distance-only on identical folds"
+  ],
+  "note": "epigenetic marks over the CRISPR benchmark, loop 188 defects corrected",
+  "warnings": []
+ },
+ "seconds": 203.80536770820618,
+ "log": [
+  "========================================================================================================",
+  "LOOP 188b  THE EPIGENETIC LAYER, with loop 188's three machinery defects corrected",
+  "========================================================================================================",
+  "  PREDECLARED: non-finite values dropped and COUNTED in every comparison, and a",
+  "  prediction whose test is undefined is VOID rather than refuted -- loop 188's G2 printed",
+  "  5mC as REFUTED on a nan median over 90 elements with no measured CpG; repression and",
+  "  the chromatin category run as SEPARATE arms, because loop 188's G3 put an H3K27ac",
+  "  discretisation inside the arm named for repression; every bar verdict names which half",
+  "  failed; H3 tests the coverage explanation for loop 188's H3K27me3 refutation",
+  "  prospectively (rho > 0.3 against DHS, and the direction gone in >= 3",
+  "  of 5 accessibility strata); H4 is POST-HOC and not gated; H10 gates the permutation on",
+  "  whichever channel H9 passed on; and the winner must clear distance-only R@1 0.593.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    11,933 element-gene pairs, 482 functional, 4,482 elements, 2,205 genes",
+  "    epigenome from cache: k562_marks.npz",
+  "     benchmark marks joined for 4,482/4,482 elements",
+  "",
+  "H1 DOES THE MARK LAYER JOIN?",
+  "     element el_5mc               defined 97.99%  (90 non-finite)",
+  "     promoter pr_5mc              defined 99.95%  (1 non-finite)",
+  "     every other column is finite everywhere; 17 element and 4 promoter columns in total",
+  "     H1 PASS -- worst is el_5mc at 97.99%. Note this gate protects the MODEL, which imputes, and not the statistics below, which propagate a single nan; that is loop 188's lesson and mw() is the fix",
+  "",
+  "H2 DO THE MARKS POINT THE WAY THEY SHOULD?",
+  "     el_k27me3    predicted lower   median functional +0.1007 vs +0.0886   one-sided p 1   (0 non-finite dropped)   REFUTED",
+  "     el_5mc       predicted lower   median functional +4.0000 vs +9.5556   one-sided p 3.55e-16   (151 non-finite dropped)   HOLDS",
+  "     el_k4me1     predicted higher  median functional +0.5661 vs +0.4368   one-sided p 1.03e-29   (0 non-finite dropped)   HOLDS",
+  "     el_ctcf      UNSIGNED -- reported only: median functional +0.2710 vs +0.2451   two-sided p 0.158",
+  "     el_k4me3_sig UNSIGNED -- reported only: median functional +0.0000 vs +0.0000   two-sided p 0.00321",
+  "     H2 FAIL -- el_k27me3 runs against its prediction on a test that is defined",
+  "",
+  "H3 IS THE H3K27ME3 RESULT A COVERAGE ARTEFACT?",
+  "     loop 188 predicted H3K27me3 LOWER at functional pairs and found it HIGHER at one-sided p = 1.",
+  "     that refutation stands. this gate asks only whether the column is measuring Polycomb or read depth,",
+  "     and it is prospective: both parts are about H3K27me3 against ACCESSIBILITY and neither looks at the label.",
+  "     (a) Spearman(H3K27me3 RPM, DHS RPM) over 4,482 elements = +0.232  (p 6.82e-56)",
+  "     (b) the same comparison inside 5 quintiles of accessibility:",
+  "         Q1  n 2,384 ( 35 functional)   median functional +0.0637 vs +0.0703   direction GONE",
+  "         Q2  n 2,389 ( 40 functional)   median functional +0.0833 vs +0.0804   still higher at functional",
+  "         Q3  n 2,387 ( 56 functional)   median functional +0.0798 vs +0.0860   direction GONE",
+  "         Q4  n 2,385 (120 functional)   median functional +0.1011 vs +0.0984   still higher at functional",
+  "         Q5  n 2,388 (231 functional)   median functional +0.1162 vs +0.1138   still higher at functional",
+  "     H3 FAIL -- rho +0.232 (bar 0.3) and the direction is gone in 2/5 strata (bar 3). The coverage explanation does not carry it, so H3K27me3 really is elevated at functional elements and the Polycomb reading was simply wrong",
+  "",
+  "H4 THE THRESHOLDED CALL -- POST-HOC, NOT GATED",
+  "     this observation came from loop 188's descriptive table on these same pairs, so",
+  "     re-testing it here cannot be independent evidence however it comes out. it is a",
+  "     hypothesis for a loop with different data, and it is recorded as one.",
+  "       H3K27me3 peak             144 pairs   1.39% functional",
+  "       no H3K27me3 peak       11,789 pairs   4.07% functional",
+  "       cat_high_k27ac          4,254 pairs   8.09% functional",
+  "       cat_k27ac               5,452 pairs   2.24% functional",
+  "       cat_no_k27ac            1,187 pairs   0.59% functional",
+  "       cat_ctcf_element          976 pairs   0.92% functional",
+  "       cat_k27me3_element         64 pairs   0.00% functional",
+  "     H4 (descriptive)",
+  "",
+  "   building the reference stacks",
+  "     base 85 columns; loop 185's best stack 99 columns",
+  "",
+  "   running the arms",
+  "    base motif+shape                           R@1 0.6020 +/- 0.0074   AUPRC 0.3220",
+  "    base +H3K27me3/CTCF only (no category)     R@1 0.6131 +/- 0.0066   AUPRC 0.3199",
+  "    base +chromatin category only              R@1 0.6211 +/- 0.0107   AUPRC 0.3726",
+  "    base +H3K4me1/me3                          R@1 0.6080 +/- 0.0097   AUPRC 0.3341",
+  "    base +5mC                                  R@1 0.6111 +/- 0.0026   AUPRC 0.3326",
+  "    base +promoter marks                       R@1 0.6101 +/- 0.0041   AUPRC 0.3504",
+  "    base +promoter marks PERMUTED across genes R@1 0.5980 +/- 0.0028   AUPRC 0.3039",
+  "    base +all epigenetic                       R@1 0.6281 +/- 0.0062   AUPRC 0.4055",
+  "    loop 185 best stack                        R@1 0.6734 +/- 0.0045   AUPRC 0.4881",
+  "    loop 185 best stack +all epigenetic        R@1 0.6774 +/- 0.0054   AUPRC 0.4966",
+  "    distance only                              R@1 0.5930 +/- 0.0032   AUPRC 0.2844",
+  "",
+  "H5 REPRESSION AND INSULATION, CLEAN",
+  "     H3K27me3 and CTCF only. loop 188's G3 had the H3K27ac category in here",
+  "     the R@1 half CLEARS (R@1 +0.0111 +/- 0.0025 (5/5 up, needs > 0.0074)) and the AUPRC half does not (AUPRC -0.0020 (1/5 at >= 0.01))",
+  "     H5 FAIL on the E3 bar -- the R@1 half CLEARS (R@1 +0.0111 +/- 0.0025 (5/5 up, needs > 0.0074)) and the AUPRC half does not (AUPRC -0.0020 (1/5 at >= 0.01))",
+  "",
+  "H6 WHAT THE CATEGORY IS WORTH ON ITS OWN",
+  "     three of its five levels encode H3K27ac, which the base stack does not carry",
+  "     both halves clear: R@1 +0.0191 +/- 0.0049 (5/5 up, needs > 0.0146); AUPRC +0.0506 (5/5 at >= 0.01)",
+  "     H6 PASS -- clears the E3 bar over the base stack",
+  "",
+  "H7 THE ENHANCER/PROMOTER DISCRIMINATOR",
+  "     neither half clears: R@1 +0.0060 +/- 0.0131 (3/5 up, needs > 0.0394); AUPRC +0.0121 (3/5 at >= 0.01)",
+  "     H7 FAIL on the E3 bar -- neither half clears: R@1 +0.0060 +/- 0.0131 (3/5 up, needs > 0.0394); AUPRC +0.0121 (3/5 at >= 0.01)",
+  "",
+  "H8 DNA METHYLATION",
+  "     neither half clears: R@1 +0.0090 +/- 0.0083 (3/5 up, needs > 0.0250); AUPRC +0.0106 (2/5 at >= 0.01)",
+  "     H8 FAIL on the E3 bar -- neither half clears: R@1 +0.0090 +/- 0.0083 (3/5 up, needs > 0.0250); AUPRC +0.0106 (2/5 at >= 0.01)",
+  "",
+  "H9 THE PROMOTER SIDE",
+  "     the AUPRC half CLEARS (AUPRC +0.0285 (5/5 at >= 0.01)) and the R@1 half does not (R@1 +0.0080 +/- 0.0074 (3/5 up, needs > 0.0222))",
+  "     these columns are constant across a gene's candidates, so an additive main effect",
+  "     cannot reorder them; any R@1 movement is an interaction with the element columns",
+  "     H9 PASS -- AUPRC up in 5/5, the channel a gene-level column has; R@1 moved +0.0080 and is reported not gated",
+  "",
+  "H10 IS THE PROMOTER SIDE GENE-SPECIFIC?",
+  "     real minus permuted: the AUPRC half CLEARS (AUPRC +0.0465 (5/5 at >= 0.01)) and the R@1 half does not (R@1 +0.0121 +/- 0.0052 (3/5 up, needs > 0.0155))",
+  "     H9 passed on AUPRC, so that is the channel this control is scored in -- loop",
+  "     188's G7 scored R@1 when G6 had passed on AUPRC, and voided on a channel where no",
+  "     claim had been made",
+  "     H10 PASS -- giving a gene another gene's promoter marks costs AUPRC, so the gain is about WHICH gene's promoter it is",
+  "",
+  "H11 THE DECISIVE ONE: the epigenetic block on top of loop 185's best stack",
+  "     neither half clears: R@1 +0.0040 +/- 0.0043 (3/5 up, needs > 0.0130); AUPRC +0.0086 (1/5 at >= 0.01)",
+  "     loop 185 best R@1 0.6734  ->  with epigenetics 0.6774; over the bare base the same block was worth +0.0261",
+  "     H11 FAIL on the E3 bar -- neither half clears: R@1 +0.0040 +/- 0.0043 (3/5 up, needs > 0.0130); AUPRC +0.0086 (1/5 at >= 0.01). Measured co-binding, accessibility and the network match already carry what the marks would say",
+  "",
+  "H12 AGAINST DISTANCE ALONE",
+  "     best arm 'l185+epi' R@1 0.6774; distance only 0.5930",
+  "     both halves clear: R@1 +0.0844 +/- 0.0060 (5/5 up, needs > 0.0181); AUPRC +0.2122 (5/5 at >= 0.01)",
+  "     H12 PASS -- 0.6774 clears distance-only 0.593",
+  "",
+  "H13 WHAT THIS CANNOT SHOW",
+  "     The candidates were chosen by the screen designers on accessibility and H3K27ac, so",
+  "     every element here is already enhancer-like and these marks are separating",
+  "     functional from non-functional inside a pre-enriched pool.",
+  "     H4 is post-hoc on the same pairs and is not evidence. H3 is prospective only in the",
+  "     sense that it never looks at the label; it was still written after seeing loop 188's",
+  "     refutation, and a coverage confound found by looking is not the same as one",
+  "     predicted in advance.",
+  "     Bulk K562 marks average over a population, so an element Polycomb-marked in half the",
+  "     cells and acetylated in the other half reads as both.",
+  "     The me1-minus-me3 contrast mixes RPM with peak signal from a different assay and is",
+  "     an ordering device, not a physical ratio; the raw columns are entered beside it.",
+  "     Marks are correlational and nothing here perturbs one.",
+  "     H5 and H6 separate repression from the category, but neither is independent of the",
+  "     accessibility columns in loop 185's stack, which is why H11 and not H5 is decisive.",
+  "     H13 PASS",
+  "",
+  "========================================================================================================",
+  "  H1  PASS",
+  "  H2  FAIL",
+  "  H3  FAIL",
+  "  H4  PASS",
+  "  H5  FAIL",
+  "  H6  PASS",
+  "  H7  FAIL",
+  "  H8  FAIL",
+  "  H9  PASS",
+  "  H10  PASS",
+  "  H11  FAIL",
+  "  H12  PASS",
+  "  H13  PASS",
+  "  7/13   [204s]",
+  "========================================================================================================"
+ ]
+}

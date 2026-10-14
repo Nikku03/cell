@@ -1,0 +1,82 @@
+{
+ "n_tf_knockouts": 24,
+ "by_step": {
+  "step1": {
+   "median_new_predicted": 3.0,
+   "total_predicted": 97,
+   "total_correct": 2,
+   "precision": 0.0206,
+   "enrichment": 6.63,
+   "sign_accuracy": 0.5,
+   "mean_cumulative_recall": 0.002,
+   "n_knockouts_reaching_step": 17
+  },
+  "step2": {
+   "median_new_predicted": 26.0,
+   "total_predicted": 727,
+   "total_correct": 3,
+   "precision": 0.0041,
+   "enrichment": 2.83,
+   "sign_accuracy": 0.667,
+   "mean_cumulative_recall": 0.007,
+   "n_knockouts_reaching_step": 17
+  },
+  "step3": {
+   "median_new_predicted": 164.0,
+   "total_predicted": 3544,
+   "total_correct": 21,
+   "precision": 0.0059,
+   "enrichment": 3.78,
+   "sign_accuracy": 0.524,
+   "mean_cumulative_recall": 0.158,
+   "n_knockouts_reaching_step": 17
+  },
+  "step4": {
+   "median_new_predicted": 370.0,
+   "total_predicted": 5843,
+   "total_correct": 27,
+   "precision": 0.0046,
+   "enrichment": 3.12,
+   "sign_accuracy": 0.444,
+   "mean_cumulative_recall": 0.318,
+   "n_knockouts_reaching_step": 17
+  }
+ },
+ "GATA1_layout": [
+  {
+   "step": 1,
+   "n_predicted": 56,
+   "carriers_to_next": 14,
+   "correct_movers": [
+    "BST2",
+    "DPYSL2"
+   ]
+  },
+  {
+   "step": 2,
+   "n_predicted": 204,
+   "carriers_to_next": 35,
+   "correct_movers": [
+    "CSF3R",
+    "ADGRE5"
+   ]
+  },
+  {
+   "step": 3,
+   "n_predicted": 806,
+   "carriers_to_next": 146,
+   "correct_movers": [
+    "HLA-C",
+    "HLA-E",
+    "PIM1",
+    "SOCS1",
+    "S100A4",
+    "TXNIP",
+    "PNRC1",
+    "BHLHE40"
+   ]
+  }
+ ],
+ "verdict": "WHERE IT DIES, from the actual pooled numbers -- and it does NOT die the simple way I expected. TWO things happen at once, and they tell the real story: (A) PRECISION COLLAPSES after the first hop and never recovers: step 1 (the direct curated regulon) is 2.1% correct, then step 2-4 sit at the ~0.5% floor (0.5% by step 4). The chain stops being confident immediately -- only step 1's predictions are meaningfully better than a coin toss on WHICH genes move. (B) ENRICHMENT does NOT monotonically decay -- it drops from 6.63x at step 1 to a ~3x PLATEAU (2.83x, 3.78x, 3.12x). But that plateau is NOT surviving transmission: it is the RESPONSIVENESS PRIOR re-entering by breadth. By step 3-4 the TF-gated fan-out has ballooned to a median of 370 predictions and simply reaches the highly-connected, generically-responsive hub genes -- the same genes that move under almost any knockout. The tells that it's generic, not specific: precision is pinned at the floor, and SIGN accuracy has drifted to chance/below (52% at step 3, 44% at step 4 -- worse than a coin flip), so the composed up/down direction is no longer preserved. (C) CUMULATIVE RECALL reaches 32% by step 4 -- but only by carpet-bombing: you must emit ~370 predictions to recover that fraction, which is exactly the wall stated as a trade-off (recall is available only at <1% precision). BOTTOM LINE: doing it step-by-step, re-laying-out the graph each hop, is MORE honest and interpretable than diffuse RWR (you can see precisely which TF carries what and watch confidence evaporate), and it confirms the wall from a new angle: the ONLY genuinely confident step is step 1, the validated near-field regulon. Every subsequent hop is either precise-but-negligible or broad-but-generic -- the chain never compounds into a correct FAR field, because each discrete step carries sign+topology but not per-edge MAGNITUDE, so after one hop the confident signal is gone and only the generic responsiveness prior (reached by breadth) remains. Even step 1's sign is at chance here (small N), matching the earlier finding that the curated regulon predicts WHICH genes move (~6x) far better than the DIRECTION they move.",
+ "note": "Step-by-step cascade: chain the VALIDATED near-field regulon one hop at a time (discrete, sign-aware, TF-gated on the curated TRRUST regulon), re-layout the TF carriers each hop, take the next step, scored per step vs K562 Perturb-seq (pooled over 17-24 TF knockouts that have a curated regulon). RESULT (per-step precision/enrichment/sign/cumulative recall + GATA1 layout): step 1 (direct regulon) = 6.6x enrichment, ~2% precision (small absolute N); then PRECISION COLLAPSES to a ~0.5% floor for steps 2-4 and never recovers. Enrichment does NOT monotonically die -- it plateaus at ~3x, but that plateau is the responsiveness prior re-entering via breadth (the fan-out reaches generically-responsive hub genes), NOT transmission: precision is at floor and SIGN accuracy drifts to chance/below (52%, 44%). Cumulative recall reaches ~32% only by emitting ~370 predictions (carpet-bombing). Conclusion: the only confident hop is step 1 (validated regulon); the chained cascade never compounds into a correct far field because each discrete step lacks per-edge MAGNITUDE -- more honest/interpretable than diffuse RWR, same wall, new angle."
+}

@@ -1,0 +1,222 @@
+=================================================================================================
+REAL TRANSCRIPTION FACTOR KINETICS AGAINST THE PRUNABLE REGIME, AND THE ASSEMBLY
+=================================================================================================
+
+=================================================================================================
+K0  THE NUMBERS, AND WHICH OF THEM ARE MEASURED
+=================================================================================================
+  From PubMed. Absolute residence times depend on imaging acquisition parameters through
+  sampling bias (Presman 2017 doi:10.1016/j.ymeth.2017.03.014; Paakinaho 2017
+  doi:10.1038/ncomms15896), so every number is carried as a RANGE and swept.
+
+  Chen et al. 2014, Cell 156:1274-1285, doi:10.1016/j.cell.2014.01.062 (Sox2/Oct4, mESC):
+    specific target dwell           12.0-14.6 s
+    nonspecific collisions          0.75-0.9 s
+    3D diffusion between            3.3-3.7 s
+    sampling events before target   84-97
+  Gebhardt 2013 doi:10.1038/nmeth.2411; Loffreda 2017 doi:10.1038/s41467-017-00398-7
+  (p53 residence is MODULATED by acetylation, so it is not a constant of the protein);
+  Schwanhausser 2011 doi:10.1038/nature10098 (mRNA and protein half-lives measured
+  together for >5,000 genes and uncorrelated with each other).
+
+  prune.py's transition: POLYNOMIAL at or below 0.3 switches per window,
+  EXPONENTIAL at or above 2.13. Dimensionless, so it is directly testable.
+
+=================================================================================================
+K1  THE BINDING-LEVEL TEST
+=================================================================================================
+  off-rate 0.0685-0.0833 /s; search before rebinding 391 s; full cycle 405 s
+
+    window                          switches per window         regime
+    4 seconds                                      0.27     polynomial
+    1 minute                                       4.11    EXPONENTIAL
+    10 minutes                                    41.10    EXPONENTIAL
+    1 hour                                       246.58    EXPONENTIAL
+    9 h, one mRNA lifetime                      2219.18    EXPONENTIAL
+
+  K1: FAIL. Prunability needs a window under 4.4 SECONDS; the engine needs hours. Short by 7397x.
+
+=================================================================================================
+K2  THE ACTIVITY-LEVEL TEST
+=================================================================================================
+  A controller is a factor being present and active, changing on its turnover timescale:
+      switches per window = ln2 * (target mRNA lifetime) / (TF protein half-life)
+
+  PRUNABLE REQUIRES  tau_protein  >=  2.31 x  tau_mRNA(target)
+
+      tau_protein / tau_mRNA   switches/window         regime
+                        0.50             1.386     transition
+                        1.00             0.693     transition
+                        2.00             0.347     transition
+                        2.31             0.300     transition
+                        3.00             0.231     polynomial
+                        5.00             0.139     polynomial
+                       10.00             0.069     polynomial
+                       20.00             0.035     polynomial
+
+  K2: a criterion, not a verdict. Schwanhausser measured both distributions genome-wide
+  and found them UNCORRELATED, so this is per gene pair and a median of medians would not
+  settle it. What can be settled here is whether the coarse-graining it rests on is legal.
+
+=================================================================================================
+K3  THE LOAD-BEARING ASSUMPTION, AND A DEFECT IN THE FIRST VERSION OF IT
+=================================================================================================
+  K2 is only allowed to be asked if the engine may track slow ACTIVITY and forget fast
+  BINDING. Full model: slow activity bit and fast binding bit per controller, binding
+  gated by activity, targets reading the BOUND state. Coarse model: activity only.
+
+  WHICH QUANTITY IS AVERAGED IS THE WHOLE THING. The drive exp(sum s m b / nC) is
+  NONLINEAR in the binding state. The first version of this module substituted the mean
+  OCCUPANCY inside it. Both are run below and the difference is the result.
+
+  coarse tail, mean OCCUPANCY substituted : 1.247828e-01
+  coarse tail, DRIVE averaged (correct QSS): 9.773204e-02   residual 6.8e-15
+
+     separation     full tail  err, occupancy   err, drive  err, drive (mean)
+              1  1.039538e-01       2.004e-01    5.985e-02          1.149e-01
+              3  1.009671e-01       2.359e-01    3.204e-02          6.415e-02
+             10  9.887522e-02       2.620e-01    1.156e-02          2.376e-02
+             30  9.811739e-02       2.718e-01    3.927e-03          8.005e-03
+            100  9.784433e-02       2.753e-01    1.148e-03          2.341e-03
+            300  9.776879e-02       2.763e-01    3.758e-04          7.700e-04
+           1000  9.774298e-02       2.766e-01    1.118e-04          2.297e-04
+           3000  9.773568e-02       2.767e-01    3.719e-05          7.644e-05
+
+  The occupancy-substituted column does not converge -- it gets WORSE as the timescales
+  separate, saturating near 28%. That is not a slow convergence, it is convergence to the
+  WRONG LIMIT: separation makes the fast variable equilibrate, not become deterministic,
+  and E[exp(X)] is not exp(E[X]) however fast X is. The drive-averaged column converges
+  as 1/separation.
+
+  K3: the correct coarse-graining reaches 1% on the TAIL at separation 30.0.
+  Real separation, binding off-rate 0.0752/s over TF turnover at a 46 h half-life: 1.80e+04
+  Margin: 6e+02x. K3 PASSES, and it passes on the CORRECTED averaging --
+  the version that substitutes occupancy would have been wrong by 28% forever, with no
+  amount of timescale separation revealing it.
+
+=================================================================================================
+K4  THE MARGIN, AND WHAT WOULD PUSH IT OUT
+=================================================================================================
+  criterion            tau_protein >= 2.31 tau_mRNA
+  at the pessimistic end of the transition band it relaxes to 0.33x
+  a window longer than one mRNA lifetime scales the requirement linearly
+  a TF whose ACTIVITY is switched by SIGNALLING rather than by turnover switches faster
+  than its half-life implies, and this criterion does not cover that case
+  coarse-graining margin 6e+02x, which is the one comfortable number here
+
+  K4: the pass is CONDITIONAL and the condition is one line. Proceeding to K5 under it,
+  which is what the conditional was for.
+
+=================================================================================================
+K5  THE ASSEMBLED ENGINE, RUN
+=================================================================================================
+  Controller block wired by TRRUST, top controllers by OUT-degree, real signs, activity-
+  level rates. Strata are PATHS through the controller chain -- in this block the state is
+  the code, so a stratum is a single path and its mass is the path probability, which is
+  exactly the prefix bound. Targets carried by the SIGNED CLASS COUNT times the shared
+  TEMPORAL MULTIPLIER, which is the composed form multiplier.py measured.
+
+  TWO DEFECTS IN THE FIRST RUN OF THIS GATE, FIXED HERE AND RECORDED.
+  (a) A FIXED tau DOES NOT SCALE. Path probabilities fall like n^-L, so tau = 1e-6 was
+      gentle at |C| = 4 and destroyed the answer at |C| = 8, where the certificate reached
+      0.92 -- the pruner had dropped 92% of the mass and the tail it returned meant
+      nothing. The threshold is now found by binary search against a stated error BUDGET,
+      which is also the honest interface.
+  (b) THE TARGET SET MOVED WITH |C|, so tails at different |C| were different observables
+      and their comparison was meaningless. The target set is now fixed once, from the
+      widest controller set, and carried unchanged at every |C|.
+
+  TRRUST sha256[:32] 9b909319ccc8e36588b5a1bd3640e0df, 8403 distinct directed pairs.
+  controllers by out-degree: SP1, NFKB1, RELA, TP53, JUN, STAT3, E2F1, SP3 ...
+  60 target genes carried, FIXED across every row below, each with its real
+  regulators among the controllers and TRRUST's own signs.
+  error budget: 1e-03 of the stratum mass, spent level by level in ONE pass.
+
+     |C|  sw/window       regime  nodes touched  paths kept  % of full  certificate    vs exact
+  path cap 2e+07 entries; a row whose certificate EXCEEDS the budget is one
+  where the pruner could not meet it at that width, which is the result for that row.
+       4       0.20   polynomial         39,200      17,483     56.08%     7.45e-04    5.46e-04
+       5       0.20   polynomial        381,472     124,020     35.24%     7.48e-04    4.27e-04
+       6       0.20   polynomial      3,800,640     312,500     22.30%     3.00e-03              BUDGET MISSED
+       8       0.20   polynomial     27,252,224      78,125      0.63%     1.63e-01              BUDGET MISSED
+       4       1.05   transition         68,592      61,855     98.12%     4.97e-04    4.37e-04
+       5       1.05   transition      1,026,080     625,000     94.80%     7.33e-03    3.89e-03  BUDGET MISSED
+       6       1.05   transition     15,434,176     312,500     90.56%     3.51e-01              BUDGET MISSED
+
+  K5, read off the table rather than asserted. The budget is MET in 3 of 7 rows and MISSED in 4.
+    at 0.20 switches per window the budget holds up to |C| = 5
+    at 1.05 switches per window the budget holds up to |C| = 4
+  Beyond that the PATH CAP binds before the width does: the retained set grows like n^L
+  and the pruner cannot carry it, so the mass it drops shows up in the certificate. That
+  is a real limit and it is reported rather than hidden by a gentler budget.
+
+  The regime is worth about 117x in certificate at |C| = 6:
+    prunable window   touches 22.3% of the tree, certificate 3.00e-03
+    transition window touches 90.6% of the tree, certificate 3.51e-01
+  Where exact enumeration is still affordable the pruned answer is checked against it
+  rather than trusted, and it agrees to the fourth decimal at every such row.
+
+=================================================================================================
+K5b  TWO THINGS THE FIRST REPORTING OF THIS GATE GOT WRONG
+=================================================================================================
+  (a) THE TAIL VALUE IS SET BY A CONSTANT I INVENTED, NOT BY THE NETWORK. engine_tail's
+  target response has a base log-odds and a gain, and neither has any measurement behind
+  it -- they were chosen. Sensitivity, on the exact 60-target conjunction:
+
+    parameter                    value     exact tail   orders vs nominal
+    nominal                    -1.0/2.0     4.7851e-33                0.00
+    base                          -1.5     2.0333e-42               -9.37
+    base                          -0.5     6.4732e-25                8.13
+    gain                           1.0     7.6324e-34               -0.80
+    gain                           3.0     2.0319e-32                0.63
+
+  Moving the base by half a log-odds unit moves the reported tail by EIGHT TO NINE ORDERS
+  OF MAGNITUDE. So the tail column in K5 is NOT a calibrated prediction about CDKN1A or
+  anything else, and must never be quoted as one. What it legitimately is: a fixed
+  reference against which the PRUNED computation is checked, at identical constants, which
+  is what the 'vs exact' column measures. That check is unaffected -- both sides move
+  together -- and it is the only thing K5 establishes about the number.
+
+  (b) THE CERTIFICATE BOUNDS DROPPED MASS, NOT THE TAIL, AND HERE THE TWO ARE 29 ORDERS
+  APART. The observable is a 60-way conjunction of order 1e-33. The certificate is stratum
+  mass of order 1e-3. As a bound on the reported tail it is vacuous:
+
+     |C|     exact tail   certificate (mass)        ratio
+       4     4.7851e-33             7.45e-04     1.56e+29
+       5     6.4453e-33             7.48e-04     1.16e+29
+
+  So 'the certificate is honoured in every row' is true as a statement about MASS and was
+  wrong to present as though it validated the TAIL. The distinction is the observable's
+  magnitude: prune.py's N3 certificate was meaningful because its observable was of order
+  one (tail 1.52e-01, certificate 1.29e-03, ratio 8.5), and that claim stands unchanged.
+  A mass bound is a usable tail bound only when the tail is a decent fraction of the mass.
+  For a deep conjunction it is not, and bounding it needs a bound on the OBSERVABLE, which
+  this build order does not have.
+
+=================================================================================================
+K6  WHAT BREAKS FIRST
+=================================================================================================
+  The pruner touches n = 2^|C| children per surviving node, so its cost carries a factor
+  2^|C| NO MATTER how well it prunes. Pruning removes the exponential in the WINDOW DEPTH
+  and leaves the exponential in the WIDTH untouched -- which is what prune.py's nC sweep
+  already said (kept ~ nominal^0.96) and what this assembly confirms in the node column.
+
+  So the binding constraint is unchanged: the cap of 25 controllers from the
+  representation work, and 36.5% of TRRUST's regulatory edges. Pruning does not move it.
+  What pruning buys is that the WINDOW may now be refined for tail accuracy -- which
+  history.py showed goes as dt^1.753 -- without paying 2^(|C| W / dt) for it.
+
+=================================================================================================
+K7  WHAT THIS DOES AND DOES NOT SETTLE
+=================================================================================================
+  1. K2 is a CRITERION and not a verdict on real cells. Settling it needs the joint
+     distribution of TF protein half-life against target mRNA lifetime, per edge, which
+     Schwanhausser's data could supply and this module does not use.
+  2. K3's separation is measured on a two-controller synthetic system. The correct
+     averaging is a general fact about nonlinear drives; the required separation is not.
+  3. K5 is the engine's CONTROLLER BLOCK with real wiring, not a whole cell. Metabolism,
+     trafficking, division and space are not in it, and the targets are carried by a
+     fitted response rather than by mechanism.
+  4. The rates here are a single activity timescale for every controller. Real TFs differ
+     by orders of magnitude in turnover, and a mixture is not the same as its mean --
+     which is exactly the lesson K3 just paid for.

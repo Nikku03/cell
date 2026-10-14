@@ -1,0 +1,11 @@
+{
+ "validation": {
+  "n": 5625,
+  "pathway_top1": 0.124,
+  "pathway_top5": 0.207,
+  "random_top5": 0.05,
+  "lift_top5": 4.1
+ },
+ "n_orphans_with_lit": 4708,
+ "note": "Orphan-gene placement from literature. COMPARTMENT is read DIRECTLY from localization (~100%, solid). PATHWAY association is inferred by IDF-weighted co-mention vote and is a REAL but NOISY HYPOTHESIS (leave-one-out top-5 0.207 = 4.1x chance), NOT a confident annotation and NOT a phenotype predictor. Symbol mining is a curated regex+stoplist, not full NER."
+}

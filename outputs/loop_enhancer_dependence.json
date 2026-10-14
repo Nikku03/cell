@@ -1,0 +1,186 @@
+{
+ "test": "enhancer dependence by gene",
+ "gates": {
+  "R1": false,
+  "R2": false,
+  "R3": false,
+  "R4": false,
+  "R5": true,
+  "R6": false,
+  "R7": true
+ },
+ "n_evaluable": 199,
+ "n_autoreg": 2,
+ "autoreg_genes": [
+  "MYB",
+  "GATA1"
+ ],
+ "n_ubiquitous": 55,
+ "n_specific": 144,
+ "increments": {
+  "all": [
+   0.01005025125628145,
+   0.025125628140703515,
+   -0.0201005025125629,
+   0.02010050251256279,
+   0.01005025125628134
+  ],
+  "ubiquitous": [
+   -0.018181818181818188,
+   0.036363636363636376,
+   -0.054545454545454564,
+   0.0,
+   0.0
+  ],
+  "specific": [
+   0.02083333333333337,
+   0.02083333333333337,
+   -0.00694444444444442,
+   0.02777777777777768,
+   0.01388888888888884
+  ]
+ },
+ "matched_draws": [
+  0.016666666666666653,
+  0.01944444444444444,
+  0.008333333333333326,
+  -0.002777777777777768,
+  0.00972222222222221,
+  0.018055555555555512,
+  -2.2204460492503132e-17,
+  0.029166666666666695,
+  0.0069444444444444866,
+  -0.004166666666666652,
+  0.002777777777777768,
+  0.005555555555555558,
+  0.008333333333333326,
+  -0.016666666666666673,
+  0.011111111111111117,
+  0.02222222222222219,
+  0.012500000000000022,
+  0.006944444444444464,
+  -0.001388888888888906,
+  0.008333333333333349
+ ],
+ "matched_frac_beaten": 0.75,
+ "candidates": {
+  "ubiquitous": 9.0,
+  "specific": 4.0
+ },
+ "distance_r1": {
+  "ubiquitous": 0.3781818181818181,
+  "specific": 0.675
+ },
+ "cpg_quartile_increment": [
+  0.03199999999999999,
+  -0.02400000000000002,
+  0.004081632653061229,
+  0.024
+ ],
+ "cpg_spearman": -0.19999999999999998,
+ "manifest": {
+  "manifest_version": 1,
+  "inputs": [
+   {
+    "path": "colab/data/tf_autoregulation.json",
+    "bytes": 73460,
+    "hash": "368248422c749fb8",
+    "method": "sha256:full"
+   }
+  ],
+  "coverage": {
+   "available": 199,
+   "used": 199,
+   "selection": "evaluable genes, stratified",
+   "fraction": 1.0
+  },
+  "seed": 91173,
+  "controls": [
+   "20 size-matched random gene drops",
+   "candidate-count and distance-only comparison across strata",
+   "a label-free promoter-CpG axis beside the annotation one",
+   "dinucleotide shuffle on the winning stratum"
+  ],
+  "note": "does removing enhancer-independent genes rescue stage two",
+  "warnings": [
+   "selection 'evaluable genes, stratified' is not one of ('all', 'random', 'stratified', 'prefix', 'filtered', 'manual'); coverage cannot be interpreted"
+  ]
+ },
+ "seconds": 55.05751633644104,
+ "log": [
+  "========================================================================================================",
+  "LOOP 180  WHICH GENES SHOULD AN ENHANCER PREDICTOR BE SCORED ON AT ALL?",
+  "========================================================================================================",
+  "  PREDECLARED: the curated autoregulating-factor stratum needs >= 10",
+  "  genes for any claim; every comparison is on the sequence stack's INCREMENT over",
+  "  distance, never on a raw R@1 across different gene sets; the split must beat 90% of",
+  "  20 size-matched random gene drops; the strata's median candidate counts must",
+  "  be within a factor of 2.0; and the CpG increment must decrease from",
+  "  CpG-poor to CpG-rich, which is the direction the hypothesis predicts.",
+  "",
+  "    scan cache: enh_scan.npz (218.1 MB)",
+  "    199 evaluable genes",
+  "    curated autoregulating factors among them: 2 (MYB, GATA1)",
+  "    ubiquitously expressed: 55 (27.6%);  tissue-restricted: 144",
+  "",
+  "R1 IS THE LITERAL VERSION POWERED?",
+  "     TRRUST curates 19 self-looping factor symbols that also carry a matrix here; 2 of the 199 evaluable genes are among them",
+  "     2 genes move within-gene R@1 by at most 0.0101 -- smaller than the seed spread of every arm measured",
+  "     R1 FAIL -- 2 genes cannot support a claim in either direction, so the literal version is UNTESTABLE on this benchmark and nothing below is reported as testing it",
+  "    element frame (el): 27 intrinsic + 51 class/family columns",
+  "    element frame (sh): 27 intrinsic + 51 class/family columns",
+  "    stack: 85 columns (loop 173's 34 plus loop 177's class/family)",
+  "    all genes            n=199   stack R@1 0.6020   distance R@1 0.5930   increment +0.0090",
+  "    ubiquitous           n= 55   stack R@1 0.3709   distance R@1 0.3782   increment -0.0073",
+  "    tissue-restricted    n=144   stack R@1 0.6903   distance R@1 0.6750   increment +0.0153",
+  "",
+  "R2 DOES DROPPING ENHANCER-INDEPENDENT GENES HELP?",
+  "     tissue-restricted increment +0.0153 against ubiquitous -0.0073; difference +0.0226 +/- 0.0111 (4/5 up)",
+  "     R2 FAIL -- the sequence stack buys no more on tissue-restricted genes than on housekeeping ones, so enhancer-independent targets are not what was holding stage two back",
+  "",
+  "R3 THE SIZE-MATCHED CONTROL: 20 random 55-gene drops",
+  "     real split +0.0153 against matched draws mean +0.0081 (min -0.0167, max +0.0292); real beats 75%",
+  "     R3 FAIL -- a random gene drop of the same size does as well, so whatever R2 showed is subset noise",
+  "",
+  "R4 ARE THE STRATA DIFFERENT FOR A REASON THAT IS NOT ABOUT ENHANCERS?",
+  "     median candidates per gene: ubiquitous 9, tissue-restricted 4",
+  "     distance-only R@1: ubiquitous 0.3782, tissue-restricted 0.6750",
+  "     R4 FAIL -- candidate counts differ by 2.25x, so the strata differ in ranking difficulty and R2 cannot be attributed to enhancer dependence",
+  "",
+  "R5 THE LABEL-FREE AXIS: promoter CpG observed/expected",
+  "    sequence from cache: prom_e1522e12104dbabf.npz",
+  "    promoter CpG observed/expected: median 0.775, IQR [0.665, 0.861]",
+  "     Q1 CpG o/e <= 0.587   n= 50   increment +0.0320",
+  "     Q2 CpG o/e <= 0.754   n= 50   increment -0.0240",
+  "     Q3 CpG o/e <= 0.858   n= 49   increment +0.0041",
+  "     Q4 CpG o/e <= 1.079   n= 50   increment +0.0240",
+  "     Spearman(quartile, increment) = -0.200   (the hypothesis predicts NEGATIVE: CpG-poor promoters gain more)",
+  "     R5 PASS -- the sequence increment falls as promoters become more CpG-island-like, which is the direction enhancer dependence predicts and which uses no labels and no annotation",
+  "",
+  "R6 THE SHUFFLE STILL DECIDES",
+  "     on the tissue-restricted stratum: real 0.6903, shuffled 0.6847, difference +0.0056 +/- 0.0060 (3/5 up)",
+  "     R6 FAIL -- the shuffle matches it on this stratum too, so restricting the gene set did not turn composition into sites",
+  "",
+  "R7 WHAT THIS CANNOT SHOW",
+  "     The literal request -- drop the autoregulating factors' own genes -- is untestable",
+  "     here at n=2 and stays untested. R2 through R5 test a GENERALISATION of it, not it.",
+  "     `measuredGeneUbiquitousExpressed` is the benchmark's annotation, and a gene being",
+  "     broadly expressed is evidence about, not proof of, enhancer independence.",
+  "     Every stratum is a subset of 199 genes, so even the well-powered arms here are",
+  "     working with tens of genes and the seed spread is correspondingly wide.",
+  "     None of this touches the real missing variable for stage two, which is which promoter",
+  "     the element is physically looped to.",
+  "     R7 PASS",
+  "",
+  "========================================================================================================",
+  "  R1  FAIL",
+  "  R2  FAIL",
+  "  R3  FAIL",
+  "  R4  FAIL",
+  "  R5  PASS",
+  "  R6  FAIL",
+  "  R7  PASS",
+  "  2/7   [55s]",
+  "========================================================================================================"
+ ]
+}

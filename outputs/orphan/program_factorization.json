@@ -1,0 +1,84 @@
+{
+ "threshold": 4.200000000000003,
+ "n_splits": 5,
+ "table": [
+  {
+   "model": "K=5",
+   "recall50": 0.2186,
+   "profile_r": 0.464,
+   "n": 343
+  },
+  {
+   "model": "K=10",
+   "recall50": 0.2994,
+   "profile_r": 0.4936,
+   "n": 343
+  },
+  {
+   "model": "K=20",
+   "recall50": 0.3272,
+   "profile_r": 0.5068,
+   "n": 343
+  },
+  {
+   "model": "K=50",
+   "recall50": 0.3456,
+   "profile_r": 0.5066,
+   "n": 343
+  },
+  {
+   "model": "K=100",
+   "recall50": 0.3436,
+   "profile_r": 0.5037,
+   "n": 343
+  },
+  {
+   "model": "K=200",
+   "recall50": 0.3492,
+   "profile_r": 0.4998,
+   "n": 343
+  },
+  {
+   "model": "full rank (= neighbour averaging)",
+   "recall50": 0.3496,
+   "profile_r": 0.4992,
+   "n": 343
+  },
+  {
+   "model": "[ref] tide-null (no network)",
+   "recall50": 0.1138,
+   "profile_r": 0.0,
+   "n": 343
+  },
+  {
+   "model": "[ref] random",
+   "recall50": 0.0048,
+   "profile_r": 0.0,
+   "n": 343
+  }
+ ],
+ "best_factorisation": {
+  "model": "K=200",
+  "recall50": 0.3492,
+  "profile_r": 0.4998,
+  "n": 343
+ },
+ "full_rank": {
+  "model": "full rank (= neighbour averaging)",
+  "recall50": 0.3496,
+  "profile_r": 0.4992,
+  "n": 343
+ },
+ "tide_null": {
+  "model": "[ref] tide-null (no network)",
+  "recall50": 0.1138,
+  "profile_r": 0.0,
+  "n": 343
+ },
+ "interior_optimum": false,
+ "beats_tide_null": true,
+ "p_vs_full_rank": 0.6429528674071082,
+ "p_vs_tide_null": 1.6309348002239302e-33,
+ "verdict": "PROGRAM FACTORISATION (program_factorization.py): the network replaced by two matrices -- a knockout's response modelled as its PROGRAM LOADINGS times a program-to-gene matrix, with the programs learned by SVD of the training responses. Motivated by four independent results that all pointed the same way (complex partners co-move, neighbour SETS reconstruct a profile at r=0.49, convergent paths beat single paths, and the response matrix has ~20 effective dimensions whose top components ARE complexes: ribosome, Mediator, spliceosome, RNA exosome). Held-out knockouts get their loadings PREDICTED FROM NEIGHBOURS, so nothing about a test source's own response is ever used; programs are fitted on train rows only and even the tide mask is computed from train only. 5 splits. RESULT on specific-mover recall@50: best factorisation K=200 scores 0.3492, plain neighbour averaging (= full rank, no factorisation) scores 0.3496, the tide-null that uses no network at all scores 0.1138. NO INTERIOR OPTIMUM ON RECALL: truncation does not beat full rank (0.3492 vs 0.3496, p=0.64). The factorisation is NOT what is doing the work -- plain neighbour averaging is just as good, and the honest reading is that the programs are a good DESCRIPTION of the data without being a better PREDICTOR. The one place truncation does help is overall profile shape, where r peaks around K=20-50 and decays slightly at full rank, consistent with the tail directions being noise; but the top-50 ranking is set by the high-variance genes that the leading components already capture, so denoising buys nothing there. WHAT DOES CLEAR THE BAR THE GRAPH COULD NOT: the completed network scored 0.031 where its tide-null scored 0.143 -- worse than ignoring the network entirely. Here the prediction scores 0.3492 against a tide-null of 0.1138 (paired p=1.6e-33), the first representation in this project to beat the no-network baseline on held-out knockouts. STATE THE INFORMATION DIFFERENCE HONESTLY THOUGH: the graph model had only topology, whereas this uses the MEASURED response profiles of the test source's neighbours. That is strictly more information, so this is not a like-for-like win over the graph -- it is evidence that measured neighbour responses carry what graph topology does not. Deterministic; split by source, programs and tide mask fitted on train only, one value per held-out source.",
+ "note": "PROGRAM FACTORISATION (program_factorization.py): the network replaced by two matrices -- a knockout's response modelled as its PROGRAM LOADINGS times a program-to-gene matrix, with the programs learned by SVD of the training responses. Motivated by four independent results that all pointed the same way (complex partners co-move, neighbour SETS reconstruct a profile at r=0.49, convergent paths beat single paths, and the response matrix has ~20 effective dimensions whose top components ARE complexes: ribosome, Mediator, spliceosome, RNA exosome). Held-out knockouts get their loadings PREDICTED FROM NEIGHBOURS, so nothing about a test source's own response is ever used; programs are fitted on train rows only and even the tide mask is computed from train only. 5 splits. RESULT on specific-mover recall@50: best factorisation K=200 scores 0.3492, plain neighbour averaging (= full rank, no factorisation) scores 0.3496, the tide-null that uses no network at all scores 0.1138. NO INTERIOR OPTIMUM ON RECALL: truncation does not beat full rank (0.3492 vs 0.3496, p=0.64). The factorisation is NOT what is doing the work -- plain neighbour averaging is just as good, and the honest reading is that the programs are a good DESCRIPTION of the data without being a better PREDICTOR. The one place truncation does help is overall profile shape, where r peaks around K=20-50 and decays slightly at full rank, consistent with the tail directions being noise; but the top-50 ranking is set by the high-variance genes that the leading components already capture, so denoising buys nothing there. WHAT DOES CLEAR THE BAR THE GRAPH COULD NOT: the completed network scored 0.031 where its tide-null scored 0.143 -- worse than ignoring the network entirely. Here the prediction scores 0.3492 against a tide-null of 0.1138 (paired p=1.6e-33), the first representation in this project to beat the no-network baseline on held-out knockouts. STATE THE INFORMATION DIFFERENCE HONESTLY THOUGH: the graph model had only topology, whereas this uses the MEASURED response profiles of the test source's neighbours. That is strictly more information, so this is not a like-for-like win over the graph -- it is evidence that measured neighbour responses carry what graph topology does not. Deterministic; split by source, programs and tide mask fitted on train only, one value per held-out source."
+}
